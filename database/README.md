@@ -39,6 +39,21 @@ See [africatourismgate_database_tables.txt](africatourismgate_database_tables.tx
 - **`user_role_assignments`**: grants with `assigned_by_user_id`, optional `expires_at`, soft revoke via `revoked_at` / `revoked_by_user_id` / `revoke_reason`; optional `scope_type` + `scope_id` for scoped admin (e.g. one property or agency). Effective roles: `revoked_at IS NULL` and (`expires_at` IS NULL or future).
 - **`rbac_audit_logs`**: append-only trail (`event_type`, `actor_user_id`, targets, `payload` JSON, IP, user agent). NestJS should insert a row on each grant/revoke and role/permission change.
 
+## Audit columns (all business tables)
+
+Every table includes:
+
+| Column | Purpose |
+|--------|---------|
+| `created_by_user_id` | User who created the row (`create_by` in APIs) |
+| `updated_by_user_id` | User who last updated the row (`edit_by`) |
+| `deleted_by_user_id` | User who soft-deleted the row (`delete_by`) |
+| `created_at` | Creation time |
+| `updated_at` | Last update time (`edit_at`); nullable until first update |
+| `deleted_at` | Soft delete time (`delete_at`); `NULL` means active |
+
+All `*_by_user_id` columns reference `users(id)` with `ON DELETE SET NULL`. List queries should filter `deleted_at IS NULL` unless you need history.
+
 ## Notes
 
 - `package_items` and `booking_items` use polymorphic `item_type` / `reference_id` (no single FK to all product tables).
