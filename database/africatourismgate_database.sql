@@ -32,6 +32,7 @@ CREATE TABLE `users` (
   `first_name` VARCHAR(100) NOT NULL,
   `last_name` VARCHAR(100) NOT NULL,
   `phone` VARCHAR(32) DEFAULT NULL,
+  `organization_id` CHAR(36) DEFAULT NULL COMMENT 'ID de l''organisation à laquelle appartient l''utilisateur',
   `status` ENUM('active','suspended','deleted') NOT NULL DEFAULT 'active',
   `created_by_user_id` CHAR(36) DEFAULT NULL,
   `updated_by_user_id` CHAR(36) DEFAULT NULL,
@@ -41,7 +42,9 @@ CREATE TABLE `users` (
   `deleted_at` DATETIME DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_users_email` (`email`),
+  KEY `idx_users_org` (`organization_id`),
   KEY `idx_users_deleted_at` (`deleted_at`),
+  CONSTRAINT `fk_users_organization` FOREIGN KEY (`organization_id`) REFERENCES `organizations` (`id`) ON DELETE SET NULL,
   CONSTRAINT `fk_users_created_by` FOREIGN KEY (`created_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   CONSTRAINT `fk_users_updated_by` FOREIGN KEY (`updated_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   CONSTRAINT `fk_users_deleted_by` FOREIGN KEY (`deleted_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
@@ -137,6 +140,84 @@ CREATE TABLE `loyalty_accounts` (
   CONSTRAINT `fk_loyalty_accounts_deleted_by` FOREIGN KEY (`deleted_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- -----------------------------------------------------------------------------
+-- Organizations
+-- -----------------------------------------------------------------------------
+CREATE TABLE `organizations` (
+  `id` CHAR(36) NOT NULL,
+  `name` VARCHAR(255) NOT NULL,
+  `slug` VARCHAR(255) NOT NULL,
+  `description` TEXT,
+  `website` VARCHAR(255) DEFAULT NULL,
+  `contact_email` VARCHAR(255) DEFAULT NULL,
+  `contact_phone` VARCHAR(32) DEFAULT NULL,
+  `logo_url` VARCHAR(512) DEFAULT NULL,
+  `favicon_url` VARCHAR(512) DEFAULT NULL,
+  `legal_form` VARCHAR(50) DEFAULT NULL COMMENT 'Forme juridique (SARL, SA, Ets, etc.)',
+  `rccm` VARCHAR(100) DEFAULT NULL COMMENT 'Registre du Commerce et du Crédit Mobilier',
+  `id_nat` VARCHAR(100) DEFAULT NULL COMMENT 'Identification Nationale',
+  `nif` VARCHAR(100) DEFAULT NULL COMMENT 'Numéro d''Identification Fiscale',
+  `cnss` VARCHAR(100) DEFAULT NULL COMMENT 'Caisse Nationale de Sécurité Sociale',
+  `currency` CHAR(3) NOT NULL DEFAULT 'USD' COMMENT 'Devise par défaut de l''organisation (ex: USD, CDF)',
+  `status` ENUM('active','suspended','deleted') NOT NULL DEFAULT 'active',
+  `created_by_user_id` CHAR(36) DEFAULT NULL,
+  `updated_by_user_id` CHAR(36) DEFAULT NULL,
+  `deleted_by_user_id` CHAR(36) DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` DATETIME DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_organizations_slug` (`slug`),
+  KEY `idx_organizations_deleted_at` (`deleted_at`),
+  CONSTRAINT `fk_organizations_created_by` FOREIGN KEY (`created_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_organizations_updated_by` FOREIGN KEY (`updated_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_organizations_deleted_by` FOREIGN KEY (`deleted_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `organization_settings` (
+  `id` CHAR(36) NOT NULL,
+  `organization_id` CHAR(36) NOT NULL,
+  `setting_group` VARCHAR(50) NOT NULL DEFAULT 'general',
+  `setting_key` VARCHAR(100) NOT NULL,
+  `setting_value` JSON NOT NULL,
+  `created_by_user_id` CHAR(36) DEFAULT NULL,
+  `updated_by_user_id` CHAR(36) DEFAULT NULL,
+  `deleted_by_user_id` CHAR(36) DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` DATETIME DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_org_settings_key` (`organization_id`, `setting_key`),
+  KEY `idx_org_settings_deleted_at` (`deleted_at`),
+  CONSTRAINT `fk_org_settings_org` FOREIGN KEY (`organization_id`) REFERENCES `organizations` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_org_settings_created_by` FOREIGN KEY (`created_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_org_settings_updated_by` FOREIGN KEY (`updated_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_org_settings_deleted_by` FOREIGN KEY (`deleted_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `organization_bank_accounts` (
+  `id` CHAR(36) NOT NULL,
+  `organization_id` CHAR(36) NOT NULL,
+  `bank_name` VARCHAR(150) NOT NULL,
+  `account_name` VARCHAR(150) NOT NULL,
+  `account_number` VARCHAR(100) NOT NULL,
+  `swift_bic` VARCHAR(32) DEFAULT NULL,
+  `currency` CHAR(3) NOT NULL DEFAULT 'USD',
+  `is_default` TINYINT(1) NOT NULL DEFAULT 0,
+  `created_by_user_id` CHAR(36) DEFAULT NULL,
+  `updated_by_user_id` CHAR(36) DEFAULT NULL,
+  `deleted_by_user_id` CHAR(36) DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` DATETIME DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_org_banks_org` (`organization_id`),
+  KEY `idx_org_banks_deleted_at` (`deleted_at`),
+  CONSTRAINT `fk_org_banks_org` FOREIGN KEY (`organization_id`) REFERENCES `organizations` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_org_banks_created_by` FOREIGN KEY (`created_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_org_banks_updated_by` FOREIGN KEY (`updated_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_org_banks_deleted_by` FOREIGN KEY (`deleted_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 -- -----------------------------------------------------------------------------
 -- RBAC (roles, permissions) & audit trail
 -- -----------------------------------------------------------------------------

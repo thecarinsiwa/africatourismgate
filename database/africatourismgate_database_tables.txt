@@ -9,6 +9,12 @@ user_addresses
 user_payment_methods
 loyalty_accounts
 
+Organizations
+-------------
+organizations
+organization_settings
+organization_bank_accounts
+
 RBAC & audit
 ------------
 permissions
