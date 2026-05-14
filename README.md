@@ -50,76 +50,91 @@ This repository contains the code and docs needed to run the full stack.
 
 ## 📁 Project structure
 
+**pnpm monorepo** (`pnpm-workspace.yaml`): applications under `apps/`, shared libraries under `packages/`.
+
 ```
 africatourismgate/
-├── README.md                              # This file
-├── documentation_structure_bdd_expedia.md  # Educational DB documentation
-├── GITHUB_DESCRIPTION.md                  # GitHub profile/repo copy
-├── .github/                               # CI/CD workflows
-├── api/                                   # NestJS backend
-│   ├── README.md                          # API setup and endpoints
-│   ├── package.json
-│   ├── nest-cli.json
-│   └── src/                               # main.ts, modules, controllers, services
-├── web/
-│   ├── admin/                             # Admin UI (Next.js, port 3001)
-│   └── client/                            # Customer UI (Next.js)
+├── README.md
+├── pnpm-workspace.yaml
+├── package.json                         # Root scripts (dev, build, lint)
+├── .env.example
+├── apps/
+│   ├── api/                             # NestJS API (port 3000, prefix /api)
+│   ├── admin/                           # Next.js admin (port 3001)
+│   ├── web/                             # Next.js public site (port 3002)
+│   └── pos/                             # Next.js POS (port 3003)
+├── packages/
+│   ├── api-client/                      # Typed HTTP client for the API
+│   ├── config/                        # Shared ESLint / Prettier config
+│   ├── types/                         # Shared TypeScript types
+│   ├── ui/                            # Shared React UI (App Shell, etc.)
+│   └── utils/                         # Shared helpers
+├── nginx/
+│   └── africatourismgate.conf           # Example reverse-proxy vhosts
+├── scripts/                           # deploy.sh, setup-nginx.sh, setup-server.sh
+├── scratch/                           # Local debug scripts (tokens, roles)
 └── database/
-    ├── README.md                          # DB setup and layout
-    ├── africatourismgate_database.sql     # Database creation script
-    └── africatourismgate_database_tables.txt  # Tables listed by domain
+    ├── README.md
+    ├── africatourismgate_database.sql
+    └── africatourismgate_database_tables.txt
 ```
 
 ## 🛠️ Technologies
 
 | Layer            | Stack                                                                 |
 | ---------------- | --------------------------------------------------------------------- |
-| **API**          | NestJS, TypeScript, MySQL (e.g. TypeORM or Prisma), CORS              |
-| **Frontend**     | Next.js 14, React 18, TypeScript, Tailwind CSS, Radix UI, Zustand     |
-| **Database**     | MySQL 5.7+ / MariaDB, relational schemas, UUID keys                  |
-| **Documentation**| Markdown, ASCII diagrams, SQL examples                                  |
+| **Monorepo**     | pnpm workspaces                                                       |
+| **API**          | NestJS 10, TypeScript, MySQL (e.g. TypeORM or Prisma), CORS          |
+| **Frontend**     | Next.js 14, React 18, TypeScript, Tailwind CSS                        |
+| **Database**     | MySQL 8+ / MariaDB, relational schemas, UUID keys                    |
+| **Documentation**| Markdown, ASCII diagrams, SQL examples                                |
 
 ## 🚀 Quick start
 
 ### Prerequisites
 
-- **Node.js 18+** (NestJS API and Next.js apps)
-- **MySQL 5.7+** or MariaDB 10.2+
+- **Node.js 18+** and **pnpm 9** (`corepack enable` then `corepack prepare pnpm@9.15.4 --activate`)
+- **MySQL 8+** (or MariaDB) for the schema script
 
-### 1. Database
+### 1. Install dependencies
 
 ```bash
-# Create database and tables (from project root)
+pnpm install
+```
+
+### 2. Database
+
+```bash
 mysql -u root -p < database/africatourismgate_database.sql
 ```
 
-Details and troubleshooting: see [database/README.md](database/README.md).
+See [database/README.md](database/README.md).
 
-### 2. NestJS API
+### 3. Environment
 
-```bash
-cd api
-npm install
-# Configure environment (e.g. .env): DATABASE_URL / MySQL host, port, etc.
-npm run start:dev
-```
+Copy `.env.example` to `.env` and adjust values (database, JWT placeholders, `NEXT_PUBLIC_API_URL`, optional `CORS_ORIGIN`).
 
-API (development, default NestJS port): **[http://localhost:3000](http://localhost:3000)**  
-Full guide: [api/README.md](api/README.md).
-
-### 3. Admin UI (Next.js)
+### 4. Run apps
 
 ```bash
-cd web/admin
-npm install
-npm run dev
+# API only
+pnpm dev:api
+# Or all Next + Nest in parallel (heavy)
+pnpm dev
 ```
 
-Admin: **[http://localhost:3001](http://localhost:3001)**
+| App   | URL / port |
+| ----- | ---------- |
+| API   | [http://localhost:3000/api/health](http://localhost:3000/api/health) |
+| Admin | [http://localhost:3001](http://localhost:3001) |
+| Web   | [http://localhost:3002](http://localhost:3002) |
+| POS   | [http://localhost:3003](http://localhost:3003) |
 
-### 4. Documentation and schemas
+Build all applications: `pnpm build`. Lint: `pnpm lint`.
 
-- **Educational DB doc**: [documentation_structure_bdd_expedia.md](documentation_structure_bdd_expedia.md)
+### 5. Documentation and schemas
+
+- **Educational DB doc**: [documentation_structure_bdd_expedia.md](documentation_structure_bdd_expedia.md) *(add file when available)*
 - **Table list**: [database/africatourismgate_database_tables.txt](database/africatourismgate_database_tables.txt)
 
 ## 📚 Documentation
@@ -128,7 +143,7 @@ Admin: **[http://localhost:3001](http://localhost:3001)**
 | ------------------------------------------------------------------------ | --------------------------------------------------------------------- |
 | [Educational DB documentation](documentation_structure_bdd_expedia.md)   | Concepts, architecture, domains, relationships, use cases, SQL samples |
 | [Table list](database/africatourismgate_database_tables.txt)             | Tables grouped by functional domain                                   |
-| [API](api/README.md)                                                     | Setup, endpoints, NestJS authentication                               |
+| [API source](apps/api)                                                   | NestJS app entry: `src/main.ts`, global prefix `api`, sample `GET /api/health` |
 | [Database](database/README.md)                                           | MySQL setup, structure, UUIDs, indexes, maintenance                   |
 
 ## 🗂️ Functional domains

@@ -1,0 +1,29 @@
+{
+  "name": "africatourismgate",
+  "private": true,
+  "packageManager": "pnpm@9.15.4",
+  "prettier": "packages/config/prettier.config.cjs",
+  "engines": {
+    "node": ">=18.18.0"
+  },
+  "scripts": {
+    "dev": "pnpm -r --parallel --filter \"./apps/*\" dev",
+    "dev:api": "pnpm --filter @africatourismgate/api dev",
+    "dev:web": "pnpm --filter @africatourismgate/web dev",
+    "dev:admin": "pnpm --filter @africatourismgate/admin dev",
+    "dev:pos": "pnpm --filter @africatourismgate/pos dev",
+    "build": "pnpm -r --filter \"./apps/*\" build",
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\""
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "eslint": "^9.17.0",
+    "eslint-config-prettier": "^9.1.0",
+    "globals": "^15.14.0",
+    "prettier": "^3.4.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.19.0"
+  }
+}
