@@ -85,6 +85,112 @@ CREATE TABLE `loyalty_accounts` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- -----------------------------------------------------------------------------
+-- RBAC (roles, permissions) & audit trail
+-- -----------------------------------------------------------------------------
+CREATE TABLE `permissions` (
+  `id` CHAR(36) NOT NULL,
+  `code` VARCHAR(128) NOT NULL,
+  `resource` VARCHAR(64) NOT NULL,
+  `action` VARCHAR(64) NOT NULL,
+  `description` VARCHAR(255) DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_permissions_code` (`code`),
+  UNIQUE KEY `uk_permissions_resource_action` (`resource`,`action`),
+  KEY `idx_permissions_resource` (`resource`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `roles` (
+  `id` CHAR(36) NOT NULL,
+  `code` VARCHAR(64) NOT NULL,
+  `name` VARCHAR(128) NOT NULL,
+  `description` TEXT,
+  `is_system` TINYINT(1) NOT NULL DEFAULT 0,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_roles_code` (`code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `role_permissions` (
+  `role_id` CHAR(36) NOT NULL,
+  `permission_id` CHAR(36) NOT NULL,
+  `granted_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `granted_by_user_id` CHAR(36) DEFAULT NULL,
+  PRIMARY KEY (`role_id`,`permission_id`),
+  KEY `idx_role_permissions_permission` (`permission_id`),
+  KEY `idx_role_permissions_granted_by` (`granted_by_user_id`),
+  CONSTRAINT `fk_role_permissions_role` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_role_permissions_permission` FOREIGN KEY (`permission_id`) REFERENCES `permissions` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_role_permissions_granted_by` FOREIGN KEY (`granted_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `user_role_assignments` (
+  `id` CHAR(36) NOT NULL,
+  `user_id` CHAR(36) NOT NULL,
+  `role_id` CHAR(36) NOT NULL,
+  `scope_type` ENUM('global','property','agency','support_queue') NOT NULL DEFAULT 'global',
+  `scope_id` CHAR(36) DEFAULT NULL,
+  `assigned_by_user_id` CHAR(36) DEFAULT NULL,
+  `assigned_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `expires_at` DATETIME DEFAULT NULL,
+  `revoked_at` DATETIME DEFAULT NULL,
+  `revoked_by_user_id` CHAR(36) DEFAULT NULL,
+  `revoke_reason` VARCHAR(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_ura_user_active` (`user_id`,`revoked_at`),
+  KEY `idx_ura_role` (`role_id`),
+  KEY `idx_ura_scope` (`scope_type`,`scope_id`),
+  KEY `idx_ura_assigned_by` (`assigned_by_user_id`),
+  KEY `idx_ura_revoked_by` (`revoked_by_user_id`),
+  CONSTRAINT `fk_ura_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_ura_role` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE RESTRICT,
+  CONSTRAINT `fk_ura_assigned_by` FOREIGN KEY (`assigned_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_ura_revoked_by` FOREIGN KEY (`revoked_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `rbac_audit_logs` (
+  `id` CHAR(36) NOT NULL,
+  `event_type` ENUM(
+    'role_created',
+    'role_updated',
+    'role_deleted',
+    'permission_created',
+    'permission_updated',
+    'permission_deleted',
+    'role_permission_granted',
+    'role_permission_revoked',
+    'user_role_granted',
+    'user_role_revoked',
+    'user_role_extended',
+    'impersonation_started',
+    'impersonation_ended'
+  ) NOT NULL,
+  `actor_user_id` CHAR(36) DEFAULT NULL,
+  `target_user_id` CHAR(36) DEFAULT NULL,
+  `role_id` CHAR(36) DEFAULT NULL,
+  `permission_id` CHAR(36) DEFAULT NULL,
+  `assignment_id` CHAR(36) DEFAULT NULL,
+  `correlation_id` CHAR(36) DEFAULT NULL,
+  `ip_address` VARCHAR(45) DEFAULT NULL,
+  `user_agent` VARCHAR(512) DEFAULT NULL,
+  `payload` JSON DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_rbac_audit_created` (`created_at`),
+  KEY `idx_rbac_audit_actor` (`actor_user_id`),
+  KEY `idx_rbac_audit_target` (`target_user_id`),
+  KEY `idx_rbac_audit_event` (`event_type`,`created_at`),
+  KEY `idx_rbac_audit_role` (`role_id`),
+  KEY `idx_rbac_audit_assignment` (`assignment_id`),
+  CONSTRAINT `fk_rbac_audit_actor` FOREIGN KEY (`actor_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_rbac_audit_target` FOREIGN KEY (`target_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_rbac_audit_role` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_rbac_audit_permission` FOREIGN KEY (`permission_id`) REFERENCES `permissions` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_rbac_audit_assignment` FOREIGN KEY (`assignment_id`) REFERENCES `user_role_assignments` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- -----------------------------------------------------------------------------
 -- Geography & destinations
 -- -----------------------------------------------------------------------------
 CREATE TABLE `destinations` (

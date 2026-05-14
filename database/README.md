@@ -32,6 +32,13 @@ Primary keys are **CHAR(36)** UUIDs: generate IDs in the application (e.g. `uuid
 
 See [africatourismgate_database_tables.txt](africatourismgate_database_tables.txt) for a list of tables grouped by domain.
 
+## RBAC
+
+- **`permissions`**: stable `code` plus `resource` + `action` (unique pair) for checks in NestJS.
+- **`roles`** / **`role_permissions`**: many-to-many; optional `granted_by_user_id` on bindings.
+- **`user_role_assignments`**: grants with `assigned_by_user_id`, optional `expires_at`, soft revoke via `revoked_at` / `revoked_by_user_id` / `revoke_reason`; optional `scope_type` + `scope_id` for scoped admin (e.g. one property or agency). Effective roles: `revoked_at IS NULL` and (`expires_at` IS NULL or future).
+- **`rbac_audit_logs`**: append-only trail (`event_type`, `actor_user_id`, targets, `payload` JSON, IP, user agent). NestJS should insert a row on each grant/revoke and role/permission change.
+
 ## Notes
 
 - `package_items` and `booking_items` use polymorphic `item_type` / `reference_id` (no single FK to all product tables).

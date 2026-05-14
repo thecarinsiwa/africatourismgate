@@ -9,6 +9,14 @@ user_addresses
 user_payment_methods
 loyalty_accounts
 
+RBAC & audit
+------------
+permissions
+roles
+role_permissions
+user_role_assignments
+rbac_audit_logs
+
 Geography
 ---------
 destinations
