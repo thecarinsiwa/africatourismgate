@@ -4,6 +4,7 @@ Africa Tourism Gate — tables by domain
 Users & loyalty
 ---------------
 users
+employees
 user_sessions
 user_addresses
 user_payment_methods
