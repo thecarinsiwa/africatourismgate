@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'node:path';
 import * as entities from '../entities/generated';
 import { ensureSchema } from './ensure-schema';
+import { ensureSeeds } from './ensure-seeds';
 
 const entityList = Object.values(entities).filter(
   (v) => typeof v === 'function',
@@ -24,6 +25,7 @@ const entityList = Object.values(entities).filter(
       inject: [ConfigService],
       useFactory: async (config: ConfigService) => {
         await ensureSchema(config);
+        await ensureSeeds(config);
         return {
           type: 'mysql' as const,
           host: config.get<string>('DATABASE_HOST', 'localhost'),

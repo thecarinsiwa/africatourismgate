@@ -32,3 +32,7 @@ export function getMysqlConfig(config: ConfigService): MysqlConfig {
 export function isAutoSchemaEnabled(config: ConfigService): boolean {
   return config.get<string>('DATABASE_AUTO_SCHEMA', 'true') !== 'false';
 }
+
+export function isAutoSeedEnabled(config: ConfigService): boolean {
+  return config.get<string>('DATABASE_AUTO_SEED', 'true') !== 'false';
+}

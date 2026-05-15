@@ -54,6 +54,10 @@ Every table includes:
 
 All `*_by_user_id` columns reference `users(id)` with `ON DELETE SET NULL`. List queries should filter `deleted_at IS NULL` unless you need history.
 
+## Seeds
+
+Installation data (RBAC, default org, admin user, referentials, demo catalog) lives in [seeds/](seeds/README.md). The API imports `seeds/install.seed.sql` on startup when no users exist (`DATABASE_AUTO_SEED=true`).
+
 ## Notes
 
 - `package_items` and `booking_items` use polymorphic `item_type` / `reference_id` (no single FK to all product tables).
