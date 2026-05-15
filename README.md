@@ -117,11 +117,19 @@ Copy `.env.example` to `.env` and adjust values (database, JWT placeholders, `NE
 ### 4. Run apps
 
 ```bash
-# API only
-pnpm dev:api
-# Or all Next + Nest in parallel (heavy)
+# All apps (API + Admin + Web + POS) on ports 3000–3003
 pnpm dev
+
+# Or one app only
+pnpm dev:api
+pnpm dev:admin
+pnpm dev:web
+pnpm dev:pos
 ```
+
+Ensure `.env` includes `CORS_ORIGIN` for the three frontends (see `.env.example`) when using `pnpm dev`.
+
+If `pnpm dev` fails with `exited with code 1`, a port is likely already in use (often **3000**). Run `node scripts/check-ports.mjs` or stop the old process with `taskkill /PID <pid> /F`. Optional labeled logs: `pnpm dev:tui`.
 
 | App   | URL / port |
 | ----- | ---------- |
