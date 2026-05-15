@@ -32,6 +32,11 @@ CREATE TABLE `users` (
   `first_name` VARCHAR(100) NOT NULL,
   `last_name` VARCHAR(100) NOT NULL,
   `phone` VARCHAR(32) DEFAULT NULL,
+  `gender` ENUM('M', 'F', 'other') DEFAULT NULL,
+  `date_of_birth` DATE DEFAULT NULL,
+  `avatar_url` VARCHAR(512) DEFAULT NULL,
+  `preferred_language` CHAR(2) DEFAULT 'fr',
+  `last_login_at` DATETIME DEFAULT NULL,
   `organization_id` CHAR(36) DEFAULT NULL COMMENT 'ID de l''organisation à laquelle appartient l''utilisateur',
   `status` ENUM('active','suspended','deleted') NOT NULL DEFAULT 'active',
   `created_by_user_id` CHAR(36) DEFAULT NULL,
@@ -48,6 +53,38 @@ CREATE TABLE `users` (
   CONSTRAINT `fk_users_created_by` FOREIGN KEY (`created_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   CONSTRAINT `fk_users_updated_by` FOREIGN KEY (`updated_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   CONSTRAINT `fk_users_deleted_by` FOREIGN KEY (`deleted_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `employees` (
+  `id` CHAR(36) NOT NULL,
+  `user_id` CHAR(36) NOT NULL,
+  `organization_id` CHAR(36) DEFAULT NULL,
+  `employee_code` VARCHAR(50) DEFAULT NULL,
+  `job_title` VARCHAR(100) DEFAULT NULL,
+  `department` VARCHAR(100) DEFAULT NULL,
+  `hire_date` DATE DEFAULT NULL,
+  `termination_date` DATE DEFAULT NULL,
+  `salary` DECIMAL(15,2) DEFAULT NULL,
+  `currency` CHAR(3) DEFAULT 'USD',
+  `manager_id` CHAR(36) DEFAULT NULL,
+  `status` ENUM('active','on_leave','terminated') NOT NULL DEFAULT 'active',
+  `created_by_user_id` CHAR(36) DEFAULT NULL,
+  `updated_by_user_id` CHAR(36) DEFAULT NULL,
+  `deleted_by_user_id` CHAR(36) DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` DATETIME DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_employees_user` (`user_id`),
+  KEY `idx_employees_org` (`organization_id`),
+  KEY `idx_employees_manager` (`manager_id`),
+  KEY `idx_employees_deleted_at` (`deleted_at`),
+  CONSTRAINT `fk_employees_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_employees_org` FOREIGN KEY (`organization_id`) REFERENCES `organizations` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_employees_manager` FOREIGN KEY (`manager_id`) REFERENCES `employees` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_employees_created_by` FOREIGN KEY (`created_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_employees_updated_by` FOREIGN KEY (`updated_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_employees_deleted_by` FOREIGN KEY (`deleted_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `user_sessions` (
