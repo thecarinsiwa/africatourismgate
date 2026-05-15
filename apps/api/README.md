@@ -20,9 +20,17 @@ Environment variables (see root `.env.example`):
 - `API_GLOBAL_PREFIX` (default `api`)
 - `CORS_ORIGIN` — optional comma-separated list of allowed origins
 
-On startup, the API runs `CREATE DATABASE IF NOT EXISTS` for `DATABASE_NAME` (empty database only).
+On **application startup** (not `nest build`), the API:
 
-Import tables before using the REST endpoints:
+1. Runs `CREATE DATABASE IF NOT EXISTS` for `DATABASE_NAME`
+2. If `DATABASE_AUTO_SCHEMA=true` (default) and the database has **no tables**, imports `database/africatourismgate_database.sql`
+3. If `DATABASE_AUTO_SEED=true` (default) and **no users** exist, imports `database/seeds/install.seed.sql` (RBAC, admin, referentials, demo data)
+
+To disable: `DATABASE_AUTO_SCHEMA=false` and/or `DATABASE_AUTO_SEED=false` in `.env`.
+
+**Default admin:** `admin@africatourismgate.local` / `ChangeMe123!` — see [database/seeds/README.md](../../database/seeds/README.md).
+
+Manual import (optional):
 
 ```bash
 mysql -u root -p < database/africatourismgate_database.sql

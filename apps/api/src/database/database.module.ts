@@ -3,7 +3,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'node:path';
 import * as entities from '../entities/generated';
-import { ensureDatabaseExists } from './ensure-database';
+import { ensureSchema } from './ensure-schema';
+import { ensureSeeds } from './ensure-seeds';
 
 const entityList = Object.values(entities).filter(
   (v) => typeof v === 'function',
@@ -23,7 +24,8 @@ const entityList = Object.values(entities).filter(
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (config: ConfigService) => {
-        await ensureDatabaseExists(config);
+        await ensureSchema(config);
+        await ensureSeeds(config);
         return {
           type: 'mysql' as const,
           host: config.get<string>('DATABASE_HOST', 'localhost'),
