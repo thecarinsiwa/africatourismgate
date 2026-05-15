@@ -20,9 +20,14 @@ Environment variables (see root `.env.example`):
 - `API_GLOBAL_PREFIX` (default `api`)
 - `CORS_ORIGIN` — optional comma-separated list of allowed origins
 
-On startup, the API runs `CREATE DATABASE IF NOT EXISTS` for `DATABASE_NAME` (empty database only).
+On **application startup** (not `nest build`), the API:
 
-Import tables before using the REST endpoints:
+1. Runs `CREATE DATABASE IF NOT EXISTS` for `DATABASE_NAME`
+2. If `DATABASE_AUTO_SCHEMA=true` (default) and the database has **no tables**, imports `database/africatourismgate_database.sql`
+
+To disable automatic schema import: `DATABASE_AUTO_SCHEMA=false` in `.env`.
+
+Manual import (optional):
 
 ```bash
 mysql -u root -p < database/africatourismgate_database.sql
