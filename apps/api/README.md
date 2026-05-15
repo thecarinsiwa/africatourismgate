@@ -20,7 +20,9 @@ Environment variables (see root `.env.example`):
 - `API_GLOBAL_PREFIX` (default `api`)
 - `CORS_ORIGIN` — optional comma-separated list of allowed origins
 
-Import the schema before starting the API:
+On startup, the API runs `CREATE DATABASE IF NOT EXISTS` for `DATABASE_NAME` (empty database only).
+
+Import tables before using the REST endpoints:
 
 ```bash
 mysql -u root -p < database/africatourismgate_database.sql
