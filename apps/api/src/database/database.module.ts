@@ -15,8 +15,8 @@ const entityList = Object.values(entities).filter(
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: [
-        join(__dirname, '../../../.env'),
-        join(__dirname, '../../../.env.local'),
+        join(__dirname, '../../../../.env'),
+        join(__dirname, '../../../../.env.local'),
         '.env',
       ],
     }),
