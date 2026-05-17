@@ -31,8 +31,8 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    // Set target date to September 1, 2026
-    const targetDate = new Date('2026-09-01T00:00:00');
+    // Set target date to July 17, 2026 (2 months from now)
+    const targetDate = new Date('2026-07-17T00:00:00');
 
     const interval = setInterval(() => {
       const now = new Date();
