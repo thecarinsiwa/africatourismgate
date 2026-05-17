@@ -79,10 +79,17 @@ export default function HomePage() {
         <h1 className="text-4xl sm:text-5xl md:text-7xl font-medium tracking-wide">
           Coming Soon
         </h1>
+        <h2 className="text-4xl sm:text-5xl md:text-7xl font-medium tracking-wide">
+          Africa Tourism Gate
+        </h2>
         
         <p className="text-sm sm:text-base md:text-lg font-light text-white/90 max-w-2xl mx-auto leading-relaxed pb-4">
           Our website is currently undergoing scheduled maintenance.<br className="hidden sm:block"/>
           We Should be back shortly. Thank you for your patience.
+        </p>
+
+        <p className="text-sm sm:text-base md:text-lg font-light text-white/90 max-w-2xl mx-auto leading-relaxed pb-4">
+          Discover the best destinations, hotels, and tours across Africa with Africa Tourism Gate.
         </p>
         
         {/* Timer */}
