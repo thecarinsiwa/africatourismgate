@@ -29,8 +29,13 @@ issue() {
 
 issue africatourismgate.org -d www.africatourismgate.org
 issue app-africatourismgate.org -d www.app-africatourismgate.org
-issue api.africatourismgate.org
-issue pos.africatourismgate.org || echo "==> POS cert skipped (optional — enable later with ATG_ENABLE_POS=1)."
+
+echo ""
+echo "==> API (nécessite un enregistrement DNS A : api → IP du VPS)"
+issue api.africatourismgate.org || echo "==> API ignoré — configurez le DNS puis relancez certbot pour api."
+
+echo ""
+issue pos.africatourismgate.org || echo "==> POS ignoré (optionnel)."
 
 echo ""
 echo "==> Reinstall HTTPS nginx config:"
