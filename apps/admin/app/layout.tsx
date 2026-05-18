@@ -1,23 +1,28 @@
 import type { Metadata } from 'next';
+import { Montserrat } from 'next/font/google';
 import './globals.css';
-import { AppShell } from '@africatourismgate/ui';
 import { getAdminAppUrl } from '@africatourismgate/utils';
+
+const montserrat = Montserrat({
+  subsets: ['latin'],
+  variable: '--font-montserrat',
+});
 
 const adminUrl = getAdminAppUrl();
 
 export const metadata: Metadata = {
   metadataBase: new URL(adminUrl),
-  title: 'Africa Tourism Gate — Admin',
-  description: 'Back office',
-  alternates: { canonical: '/' },
+  title: {
+    default: 'Africa Tourism Gate — Admin',
+    template: '%s | Africa Tourism Gate Admin',
+  },
+  description: 'Back office Africa Tourism Gate',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body>
-        <AppShell>{children}</AppShell>
-      </body>
+    <html lang="fr" className={montserrat.variable}>
+      <body className="font-sans">{children}</body>
     </html>
   );
 }
