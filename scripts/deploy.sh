@@ -19,9 +19,8 @@ pnpm install --frozen-lockfile 2>/dev/null || pnpm install
 pnpm build
 
 if command -v pm2 >/dev/null 2>&1; then
-  pm2 reload ecosystem.config.cjs --update-env
-  pm2 save
-  pm2 status
+  # reload can leave EADDRINUSE if an orphan still holds the port — prefer clean restart
+  bash "${REPO_DIR}/scripts/restart-production.sh"
 else
   echo "PM2 not installed. Run: ./scripts/setup-server.sh"
   exit 1
