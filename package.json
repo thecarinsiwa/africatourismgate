@@ -20,6 +20,8 @@
     "start": "pnpm run start:all",
     "start:all": "concurrently -n api,admin,web,pos -c cyan,magenta,green,yellow \"pnpm --filter @africatourismgate/api start\" \"pnpm --filter @africatourismgate/admin start\" \"pnpm --filter @africatourismgate/web start\" \"pnpm --filter @africatourismgate/pos start\"",
     "build": "pnpm -r --filter \"./apps/*\" build",
+    "start:prod": "pm2 start ecosystem.config.cjs --only atg-api,atg-web,atg-admin",
+    "deploy": "bash scripts/deploy.sh",
     "lint": "eslint . --max-warnings 0",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\""
   },

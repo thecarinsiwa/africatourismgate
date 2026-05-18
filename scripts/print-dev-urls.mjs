@@ -12,6 +12,7 @@ console.log('──────────────────────�
 console.log(`  API     http://localhost:${ports.api}/${apiPrefix}`);
 console.log(`          http://localhost:${ports.api}/${apiPrefix}/health`);
 console.log(`  Admin   http://localhost:${ports.admin}`);
+console.log('          Production: https://app-africatourismgate.org');
 console.log(`  Web     http://localhost:${ports.web}`);
 console.log(`  POS     http://localhost:${ports.pos}`);
 console.log('');
