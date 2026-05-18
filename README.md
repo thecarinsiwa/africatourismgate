@@ -148,14 +148,17 @@ On a small VPS, use PM2 (not `pnpm start`, which launches all four apps and over
 cp .env.production.example .env   # edit database, JWT, domains
 ./scripts/setup-server.sh         # Node, pnpm, build, PM2 (api + web + admin)
 sudo ./scripts/setup-nginx.sh     # reverse proxy + disable default nginx site
-sudo certbot --nginx -d app-africatourismgate.org …
+sudo ./scripts/issue-ssl-certs.sh   # Let's Encrypt (web, admin, api, pos)
+sudo ./scripts/setup-nginx.sh     # again after certs → HTTPS config
 ```
 
-| App | Production URL |
-| --- | -------------- |
-| Public site | https://africatourismgate.org |
-| **Admin** | **https://app-africatourismgate.org** |
-| API | https://api.africatourismgate.org/api |
+| Rôle | App | URL production |
+| --- | --- | --- |
+| **Site public** | `apps/web` (port 3002) | https://africatourismgate.org |
+| **Admin** (connexion) | `apps/admin` (port 3001) | https://app-africatourismgate.org/login |
+| API | `apps/api` (port 3000) | https://api.africatourismgate.org/api |
+
+Ne pas ouvrir `/login` sur le domaine public : nginx et Next.js redirigent vers `app-africatourismgate.org`.
 
 Updates: `pnpm deploy` or `./scripts/deploy.sh`.
 
