@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss';
+import { tailwindColors } from '@africatourismgate/config/theme';
 
 const config: Config = {
   content: [
@@ -11,18 +12,7 @@ const config: Config = {
       fontFamily: {
         sans: ['var(--font-montserrat)', 'system-ui', 'sans-serif'],
       },
-      colors: {
-        primary: {
-          DEFAULT: '#ed5d0f',
-          hover: '#c94b0b',
-        },
-        atg: {
-          surface: '#0b0f1a',
-          elevated: '#12182a',
-          border: '#2a3348',
-          muted: '#8b95a8',
-        },
-      },
+      colors: tailwindColors,
     },
   },
   plugins: [],
