@@ -28,10 +28,10 @@ export const adminLoginPageConfig = {
   title: 'Se connecter',
   subtitle:
     'Accédez à votre tableau de bord et gérez votre plateforme touristique en toute simplicité.',
-  dividerLabel: "Besoin d'un accès ?",
+  dividerLabel: 'Pas encore de compte ?',
   secondaryAction: {
-    href: 'mailto:contact@africatourismgate.local',
-    label: "Contacter l'administrateur",
+    href: '/register',
+    label: 'Créer un compte',
   },
   footer: {
     prefix: 'Pour assistance, contactez',

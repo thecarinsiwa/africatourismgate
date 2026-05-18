@@ -19,3 +19,10 @@ export {
   type LoginFormConfig,
   type LoginFormProps,
 } from './components/login-form';
+export {
+  RegisterForm,
+  defaultRegisterFormConfig,
+  type RegisterFormConfig,
+  type RegisterFormData,
+  type RegisterFormProps,
+} from './components/register-form';
