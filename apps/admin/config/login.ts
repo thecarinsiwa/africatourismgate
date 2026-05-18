@@ -4,7 +4,7 @@ import type { LoginFormConfig } from '@africatourismgate/ui';
 export const adminLoginFormConfig: LoginFormConfig = {
   email: {
     label: 'Adresse email',
-    placeholder: 'admin@africatourismgate.local',
+    placeholder: 'your-email@example.com',
   },
   password: {
     label: 'Mot de passe',
