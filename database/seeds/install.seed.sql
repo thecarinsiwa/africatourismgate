@@ -158,7 +158,7 @@ INSERT INTO `organization_settings` (
   '00000000-0000-4000-8000-000000000001',
   'branding',
   'platform',
-  '{"displayName":"Africa Tourism Gate","primaryColor":"#0B6E4F"}',
+  '{"displayName":"Africa Tourism Gate","primaryColor":"#0B6E4F","secondaryColor":"#199a45"}',
   '00000000-0000-4000-8000-000000000010'
 );
 

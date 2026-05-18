@@ -5,7 +5,9 @@
   "main": "./eslint.config.mjs",
   "exports": {
     "./eslint": "./eslint.config.mjs",
-    "./prettier": "./prettier.config.cjs"
+    "./prettier": "./prettier.config.cjs",
+    "./theme": "./theme.mjs",
+    "./theme.css": "./theme.css"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

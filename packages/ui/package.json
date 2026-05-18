@@ -4,10 +4,15 @@
   "private": true,
   "main": "./src/index.tsx",
   "types": "./src/index.tsx",
-  "sideEffects": false,
+  "sideEffects": [
+    "**/*.css"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "lint": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "next-themes": "^0.4.6"
   },
   "peerDependencies": {
     "react": "^18.3.1",
