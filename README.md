@@ -140,6 +140,29 @@ If `pnpm dev` fails with `exited with code 1`, a port is likely already in use (
 
 Build all applications: `pnpm build`. Lint: `pnpm lint`.
 
+### Production (VPS / Hostinger)
+
+On a small VPS, use PM2 (not `pnpm start`, which launches all four apps and overloads CPU).
+
+```bash
+cp .env.production.example .env   # edit database, JWT, domains
+./scripts/setup-server.sh         # Node, pnpm, build, PM2 (api + web + admin)
+sudo ./scripts/setup-nginx.sh     # reverse proxy + disable default nginx site
+sudo certbot --nginx -d app-africatourismgate.org …
+```
+
+| App | Production URL |
+| --- | -------------- |
+| Public site | https://africatourismgate.org |
+| **Admin** | **https://app-africatourismgate.org** |
+| API | https://api.africatourismgate.org/api |
+
+Updates: `pnpm deploy` or `./scripts/deploy.sh`.
+
+Optional POS: `ATG_ENABLE_POS=1 pm2 start ecosystem.config.cjs --only atg-pos`
+
+See `ecosystem.config.cjs` and `nginx/africatourismgate.conf`.
+
 ### 5. Documentation and schemas
 
 - **Educational DB doc**: [documentation_structure_bdd_expedia.md](documentation_structure_bdd_expedia.md) *(add file when available)*
