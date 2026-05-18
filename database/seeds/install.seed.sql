@@ -72,7 +72,7 @@ INSERT INTO `users` (
 ) VALUES (
   '00000000-0000-4000-8000-000000000010',
   'admin@africatourismgate.local',
-  '$2b$10$7XPNsb3MW964k0f6VWM7KOfPJI1HO2kN9767.mz0UIxOFFWPpsbKS',
+  '$2b$10$7XPNsb3MW964k0f6VWM7KOfPJI1HO2kN9767.mz0UIxOFFWPpsbKS', -- ChangeMe123!
   'Super',
   'Admin',
   'fr',
