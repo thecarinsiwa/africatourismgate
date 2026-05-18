@@ -14,7 +14,7 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen flex-col">
       <header className="px-6 py-6 md:px-10">
-        <Logo name={logo.name} />
+        <Logo name={logo.name} centered />
       </header>
 
       <main className="flex flex-1 flex-col items-center justify-center px-4 pb-16">

@@ -4,6 +4,8 @@ export type LogoProps = {
   name: string;
   href?: string;
   icon?: React.ReactNode;
+  /** Centre le logo horizontalement dans son conteneur. */
+  centered?: boolean;
   className?: string;
   iconClassName?: string;
 };
@@ -14,7 +16,14 @@ const defaultIcon = (
   </svg>
 );
 
-export function Logo({ name, href, icon = defaultIcon, className, iconClassName }: LogoProps) {
+export function Logo({
+  name,
+  href,
+  icon = defaultIcon,
+  centered = false,
+  className,
+  iconClassName,
+}: LogoProps) {
   const content = (
     <div className={cn('flex items-center gap-2.5', className)}>
       <div
@@ -29,13 +38,20 @@ export function Logo({ name, href, icon = defaultIcon, className, iconClassName 
     </div>
   );
 
-  if (href) {
-    return (
-      <a href={href} className="inline-flex focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md">
-        {content}
-      </a>
-    );
+  const inner = href ? (
+    <a
+      href={href}
+      className="inline-flex focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md"
+    >
+      {content}
+    </a>
+  ) : (
+    content
+  );
+
+  if (centered) {
+    return <div className="flex w-full justify-center">{inner}</div>;
   }
 
-  return content;
+  return inner;
 }
