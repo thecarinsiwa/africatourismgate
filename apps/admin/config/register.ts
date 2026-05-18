@@ -4,11 +4,11 @@ import type { RegisterFormConfig } from '@africatourismgate/ui';
 export const adminRegisterFormConfig: RegisterFormConfig = {
   firstName: {
     label: 'Prénom',
-    placeholder: 'Jean',
+    placeholder: 'Carin',
   },
   lastName: {
     label: 'Nom',
-    placeholder: 'Dupont',
+    placeholder: 'Siwa',
   },
   email: {
     label: 'Adresse email',
