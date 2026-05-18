@@ -23,6 +23,13 @@ fi
 
 bash "${REPO_DIR}/scripts/free-prod-ports.sh"
 
+chmod +x "${REPO_DIR}"/scripts/pm2-start-*.sh "${REPO_DIR}"/scripts/free-prod-ports.sh
+
+if [[ ! -d "${REPO_DIR}/apps/web/.next" ]] || [[ ! -d "${REPO_DIR}/apps/admin/.next" ]]; then
+  echo "==> Missing Next.js build — running pnpm build…"
+  (cd "${REPO_DIR}" && pnpm build)
+fi
+
 echo "==> Starting PM2…"
 pm2 start "${REPO_DIR}/ecosystem.config.cjs" --only atg-api,atg-web,atg-admin
 pm2 save
