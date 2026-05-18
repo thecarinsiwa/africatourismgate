@@ -34,7 +34,7 @@ export function Logo({
       >
         {icon}
       </div>
-      <span className="text-lg font-bold tracking-tight text-white">{name}</span>
+      <span className="text-lg font-bold tracking-tight text-atg-fg">{name}</span>
     </div>
   );
 

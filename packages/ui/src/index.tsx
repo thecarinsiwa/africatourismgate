@@ -3,6 +3,8 @@ import type { ReactNode } from 'react';
 export { cn } from './lib/cn';
 
 export { AppShell } from './app-shell';
+export { ThemeProvider } from './theme-provider';
+export { ThemeToggle, type ThemeToggleProps } from './components/theme-toggle';
 export { Button, type ButtonProps, type ButtonVariant, type ButtonSize } from './components/button';
 export { Input, type InputProps } from './components/input';
 export { PasswordInput, type PasswordInputProps } from './components/password-input';

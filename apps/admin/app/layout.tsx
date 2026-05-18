@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Montserrat } from 'next/font/google';
+import { ThemeProvider } from '@africatourismgate/ui';
 import './globals.css';
 import { getAdminAppUrl } from '@africatourismgate/utils';
 
@@ -21,8 +22,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className={montserrat.variable}>
-      <body className="font-sans">{children}</body>
+    <html lang="fr" className={montserrat.variable} suppressHydrationWarning>
+      <body className="font-sans">
+        <ThemeProvider defaultTheme="system">{children}</ThemeProvider>
+      </body>
     </html>
   );
 }

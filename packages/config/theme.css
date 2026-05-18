@@ -1,0 +1,27 @@
+/**
+ * Variables CSS mode clair / sombre — import dans globals.css de chaque app.
+ * Bascule via class="dark" sur <html> (next-themes).
+ */
+
+:root {
+  --atg-primary: #0b6e4f;
+  --atg-primary-hover: #095a40;
+  --atg-primary-light: #0d8a63;
+  --atg-secondary: #199a45;
+  --atg-secondary-hover: #137a36;
+
+  /* Mode clair (défaut) */
+  --atg-surface: #f4f8f6;
+  --atg-elevated: #ffffff;
+  --atg-border: #d4e5de;
+  --atg-muted: #5c6d66;
+  --atg-fg: #0f1a16;
+}
+
+.dark {
+  --atg-surface: #0b1210;
+  --atg-elevated: #121f1a;
+  --atg-border: #1e3329;
+  --atg-muted: #8b9a94;
+  --atg-fg: #ffffff;
+}

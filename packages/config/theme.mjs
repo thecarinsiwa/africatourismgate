@@ -1,9 +1,6 @@
 /**
  * Charte graphique Africa Tourism Gate
- * Source officielle : organization_settings.branding (install.seed.sql)
- *
- * primaryColor  : #0B6E4F — vert tourisme (boutons, liens, accents)
- * secondaryColor: #199a45 — vert complémentaire (web public)
+ * @see database/seeds/install.seed.sql (organization_settings.branding)
  */
 
 export const brand = {
@@ -14,47 +11,44 @@ export const brand = {
   secondaryHover: '#137a36',
 };
 
-/** Surfaces sombres admin / auth — teintées vert pour rester cohérentes avec la marque */
-export const adminSurfaces = {
+/** Mode clair — surfaces admin / auth */
+export const lightSurfaces = {
+  surface: '#f4f8f6',
+  elevated: '#ffffff',
+  border: '#d4e5de',
+  muted: '#5c6d66',
+  fg: '#0f1a16',
+};
+
+/** Mode sombre — surfaces admin / auth */
+export const darkSurfaces = {
   surface: '#0b1210',
   elevated: '#121f1a',
   border: '#1e3329',
   muted: '#8b9a94',
+  fg: '#ffffff',
 };
 
-/** Couleurs prêtes pour theme.extend.colors dans Tailwind */
+/** Couleurs Tailwind (référencent les variables CSS --atg-* définies dans theme.css) */
 export const tailwindColors = {
   primary: {
-    DEFAULT: brand.primary,
-    hover: brand.primaryHover,
-    light: brand.primaryLight,
+    DEFAULT: 'var(--atg-primary)',
+    hover: 'var(--atg-primary-hover)',
+    light: 'var(--atg-primary-light)',
   },
   secondary: {
-    DEFAULT: brand.secondary,
-    hover: brand.secondaryHover,
+    DEFAULT: 'var(--atg-secondary)',
+    hover: 'var(--atg-secondary-hover)',
   },
   atg: {
-    surface: adminSurfaces.surface,
-    elevated: adminSurfaces.elevated,
-    border: adminSurfaces.border,
-    muted: adminSurfaces.muted,
+    surface: 'var(--atg-surface)',
+    elevated: 'var(--atg-elevated)',
+    border: 'var(--atg-border)',
+    muted: 'var(--atg-muted)',
+    fg: 'var(--atg-fg)',
   },
 };
 
-/** Variables CSS (--atg-*) pour styles hors Tailwind */
-export const cssVariables = {
-  '--atg-primary': brand.primary,
-  '--atg-primary-hover': brand.primaryHover,
-  '--atg-primary-light': brand.primaryLight,
-  '--atg-secondary': brand.secondary,
-  '--atg-secondary-hover': brand.secondaryHover,
-  '--atg-surface': adminSurfaces.surface,
-  '--atg-elevated': adminSurfaces.elevated,
-  '--atg-border': adminSurfaces.border,
-  '--atg-muted': adminSurfaces.muted,
-};
-
-/** Objet branding JSON (aligné base de données) */
 export const brandingJson = {
   displayName: 'Africa Tourism Gate',
   primaryColor: brand.primary,

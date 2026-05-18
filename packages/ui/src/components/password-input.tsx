@@ -53,7 +53,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
           <button
             type="button"
             onClick={() => setVisible((v) => !v)}
-            className="text-atg-muted hover:text-white transition-colors"
+            className="text-atg-muted hover:text-atg-fg transition-colors"
             aria-label={visible ? hidePasswordLabel : showPasswordLabel}
             tabIndex={-1}
           >

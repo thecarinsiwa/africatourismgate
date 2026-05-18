@@ -6,7 +6,7 @@ export type TextLinkProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
 
 const variantClasses = {
   primary: 'text-primary hover:text-primary-hover',
-  muted: 'text-atg-muted hover:text-white',
+  muted: 'text-atg-muted hover:text-atg-fg',
 };
 
 export function TextLink({ variant = 'primary', className, children, ...props }: TextLinkProps) {

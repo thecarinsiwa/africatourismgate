@@ -3,18 +3,16 @@ import { cn } from '../lib/cn';
 
 export type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
-  /** Contenu à droite du label (ex. lien « Mot de passe oublié »). */
   labelExtra?: React.ReactNode;
   hint?: string;
   error?: string;
   wrapperClassName?: string;
   inputClassName?: string;
-  /** Élément à droite dans le champ (icône, bouton, etc.). */
   trailing?: React.ReactNode;
 };
 
 const baseInputClass =
-  'w-full rounded-lg border bg-atg-elevated/80 px-4 py-3 text-sm text-white placeholder:text-atg-muted/70 outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary';
+  'w-full rounded-lg border bg-atg-elevated px-4 py-3 text-sm text-atg-fg placeholder:text-atg-muted/70 outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary';
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   {
@@ -39,7 +37,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       {(label || labelExtra) && (
         <div className={cn('mb-2 flex items-center justify-between gap-2', !label && 'justify-end')}>
           {label && (
-            <label htmlFor={id} className="text-sm font-medium text-white">
+            <label htmlFor={id} className="text-sm font-medium text-atg-fg">
               {label}
             </label>
           )}
@@ -51,9 +49,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           ref={ref}
           id={id}
           aria-invalid={hasError || undefined}
-          aria-describedby={
-            hasError ? `${id}-error` : hint ? `${id}-hint` : undefined
-          }
+          aria-describedby={hasError ? `${id}-error` : hint ? `${id}-hint` : undefined}
           className={cn(
             baseInputClass,
             hasError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-atg-border',
@@ -73,7 +69,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         </p>
       )}
       {error && (
-        <p id={`${id}-error`} className="mt-1.5 text-xs text-red-400" role="alert">
+        <p id={`${id}-error`} className="mt-1.5 text-xs text-red-500 dark:text-red-400" role="alert">
           {error}
         </p>
       )}

@@ -1,12 +1,5 @@
+@import '@africatourismgate/config/theme.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@layer base {
-  :root {
-    --atg-primary: #0b6e4f;
-    --atg-primary-hover: #095a40;
-    --atg-secondary: #199a45;
-    --atg-secondary-hover: #137a36;
-  }
-}

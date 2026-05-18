@@ -1,21 +1,13 @@
+@import '@africatourismgate/config/theme.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --atg-primary: #0b6e4f;
-    --atg-primary-hover: #095a40;
-    --atg-primary-light: #0d8a63;
-    --atg-secondary: #199a45;
-    --atg-secondary-hover: #137a36;
-    --atg-surface: #0b1210;
-    --atg-elevated: #121f1a;
-    --atg-border: #1e3329;
-    --atg-muted: #8b9a94;
-  }
-
   body {
-    @apply bg-atg-surface text-white antialiased;
+    background-color: var(--atg-surface);
+    color: var(--atg-fg);
+    @apply antialiased transition-colors duration-200;
   }
 }

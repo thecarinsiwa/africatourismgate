@@ -26,10 +26,10 @@ const variantClasses: Record<ButtonVariant, string> = {
   primary:
     'bg-primary text-white hover:bg-primary-hover focus-visible:ring-primary disabled:opacity-60',
   secondary:
-    'bg-atg-elevated text-white border border-atg-border hover:border-atg-muted hover:bg-white/5',
+    'bg-atg-elevated text-atg-fg border border-atg-border hover:border-atg-muted hover:bg-atg-surface',
   outline:
-    'border border-atg-border bg-transparent text-white hover:border-atg-muted hover:bg-white/5',
-  ghost: 'bg-transparent text-atg-muted hover:text-white hover:bg-white/5',
+    'border border-atg-border bg-transparent text-atg-fg hover:border-atg-muted hover:bg-atg-surface',
+  ghost: 'bg-transparent text-atg-muted hover:text-atg-fg hover:bg-atg-surface',
 };
 
 const sizeClasses: Record<ButtonSize, string> = {

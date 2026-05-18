@@ -41,4 +41,8 @@ export const adminLoginPageConfig = {
   logo: {
     name: 'Africa Tourism Gate',
   },
+  theme: {
+    light: 'Mode clair',
+    dark: 'Mode sombre',
+  },
 } as const;

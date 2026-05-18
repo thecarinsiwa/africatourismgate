@@ -36,7 +36,7 @@ export function Card({
       )}
       <div
         className={cn(
-          'rounded-2xl border border-atg-border bg-atg-elevated shadow-2xl shadow-black/40',
+          'rounded-2xl border border-atg-border bg-atg-elevated shadow-lg shadow-black/5 dark:shadow-2xl dark:shadow-black/40',
           paddingClasses[padding],
         )}
       >
