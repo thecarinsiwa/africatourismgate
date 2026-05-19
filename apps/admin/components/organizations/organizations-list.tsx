@@ -3,14 +3,13 @@
 import {
   Button,
   Card,
-  cn,
   DataTable,
+  DataTableBadge,
   DataTablePagination,
   Input,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { Organization, OrganizationStatus } from '@africatourismgate/types';
-import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getOrganizationsErrorMessage } from '../../lib/organizations-errors';
@@ -23,10 +22,10 @@ const statusLabels: Record<OrganizationStatus, string> = {
   deleted: 'Supprimé',
 };
 
-const statusStyles: Record<OrganizationStatus, string> = {
-  active: 'bg-primary/10 text-primary',
-  suspended: 'bg-atg-border/80 text-atg-muted',
-  deleted: 'bg-red-100 text-red-700 dark:bg-red-950/40 dark:text-red-400',
+const statusVariants: Record<OrganizationStatus, 'success' | 'muted' | 'danger'> = {
+  active: 'success',
+  suspended: 'muted',
+  deleted: 'danger',
 };
 
 export function OrganizationsList() {
@@ -96,60 +95,76 @@ export function OrganizationsList() {
     () => [
       {
         accessorKey: 'name',
-        header: 'Nom',
-        cell: ({ row }) => (
-          <span className="font-medium text-atg-fg">{row.original.name}</span>
-        ),
+        header: 'Organisation',
+        cell: ({ row }) => {
+          const name = row.original.name;
+          const initial = name.trim().charAt(0).toUpperCase() || '?';
+          return (
+            <div className="flex items-center gap-3">
+              <span
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-sm font-semibold text-primary ring-1 ring-primary/15"
+                aria-hidden
+              >
+                {initial}
+              </span>
+              <span className="font-medium text-atg-fg">{name}</span>
+            </div>
+          );
+        },
       },
       {
         accessorKey: 'slug',
         header: 'Slug',
         cell: ({ row }) => (
-          <span className="font-mono text-xs text-atg-muted">{row.original.slug}</span>
+          <code className="rounded-md bg-atg-surface px-2 py-0.5 font-mono text-xs text-atg-muted ring-1 ring-atg-border/60">
+            {row.original.slug}
+          </code>
         ),
       },
       {
         accessorKey: 'currency',
         header: 'Devise',
+        meta: { align: 'center' },
+        cell: ({ row }) => (
+          <span className="tabular-nums text-atg-muted">{row.original.currency}</span>
+        ),
       },
       {
         accessorKey: 'status',
         header: 'Statut',
+        meta: { align: 'center' },
         cell: ({ row }) => {
           const status = row.original.status;
           return (
-            <span
-              className={cn(
-                'inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium',
-                statusStyles[status],
-              )}
-            >
+            <DataTableBadge variant={statusVariants[status]}>
               {statusLabels[status]}
-            </span>
+            </DataTableBadge>
           );
         },
       },
       {
         id: 'actions',
-        header: () => <div className="text-right">Actions</div>,
+        header: 'Actions',
+        meta: { align: 'right' },
         cell: ({ row }) => {
           const org = row.original;
           return (
-            <div className="flex justify-end gap-2">
-              <Link
-                href={`/organisations/${org.id}`}
-                className="text-sm font-medium text-primary hover:text-primary-hover"
-              >
+            <div className="flex justify-end gap-1.5 opacity-90 transition-opacity group-hover:opacity-100">
+              <Button href={`/organisations/${org.id}`} variant="ghost" size="sm">
                 Modifier
-              </Link>
-              <button
+              </Button>
+              <Button
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={() => void handleDelete(org)}
                 disabled={deletingId === org.id}
-                className="text-sm font-medium text-red-600 hover:text-red-700 disabled:opacity-50 dark:text-red-400"
+                loading={deletingId === org.id}
+                loadingText="…"
+                className="!text-red-600 hover:!bg-red-50 hover:!text-red-700 dark:!text-red-400 dark:hover:!bg-red-950/30"
               >
-                {deletingId === org.id ? 'Suppression…' : 'Supprimer'}
-              </button>
+                Supprimer
+              </Button>
             </div>
           );
         },
@@ -170,7 +185,7 @@ export function OrganizationsList() {
   const emptyMessage =
     search.trim().length > 0
       ? 'Aucune organisation ne correspond à votre recherche.'
-      : 'Aucune organisation.';
+      : 'Aucune organisation pour le moment.';
 
   return (
     <div className="space-y-6">
@@ -202,12 +217,13 @@ export function OrganizationsList() {
         </p>
       ) : (
         <>
-          <Card variant="dashboard" padding="none">
+          <Card variant="dashboard" padding="none" className="overflow-hidden">
             <DataTable
               columns={columns}
               data={organizations}
               isLoading={isLoading}
               emptyMessage={emptyMessage}
+              emptyVariant={search.trim().length > 0 ? 'search' : 'default'}
               getRowId={(row) => row.id}
               aria-label="Liste des organisations"
             />
@@ -216,6 +232,7 @@ export function OrganizationsList() {
           {state.status === 'ready' ? (
             <DataTablePagination
               page={page}
+              pageSize={PAGE_SIZE}
               totalPages={state.totalPages}
               totalItems={state.total}
               itemLabel="organisation"
