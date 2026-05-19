@@ -1,4 +1,11 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiConflictResponse,
   ApiOkResponse,
@@ -6,6 +13,8 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { Public } from './decorators/public.decorator';
+import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { AuthService } from './auth.service';
 import {
   AuthResponseDto,
@@ -16,6 +25,7 @@ import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { RegisterDto } from './dto/register.dto';
 
+@Public()
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
@@ -40,6 +50,7 @@ export class AuthController {
   }
 
   @Post('refresh')
+  @UseGuards(JwtRefreshGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Obtain new access and refresh tokens' })
   @ApiOkResponse({ type: AuthTokensResponseDto })
