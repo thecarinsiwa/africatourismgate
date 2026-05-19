@@ -8,11 +8,15 @@ const adminUrl =
     ? 'https://app-africatourismgate.org'
     : `http://localhost:${process.env.ADMIN_PORT ?? '3001'}`);
 
+const apiUrl =
+  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') ?? 'http://localhost:3000/api';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   transpilePackages: ['@africatourismgate/ui'],
   env: {
     NEXT_PUBLIC_ADMIN_URL: adminUrl,
+    NEXT_PUBLIC_API_URL: apiUrl,
   },
 };
 

@@ -9,6 +9,9 @@ import type {
   ResetPasswordRequest,
   ResetPasswordResponse,
 } from '@africatourismgate/types';
+import { ApiHttpError, parseApiErrorMessage } from './http-error';
+
+export { ApiHttpError, parseApiErrorMessage } from './http-error';
 
 export type {
   AuthResponse,
@@ -88,7 +91,14 @@ export class ApiClient {
     });
 
     if (!res.ok) {
-      throw new Error(`HTTP ${res.status} ${res.statusText}`);
+      let body: unknown;
+      try {
+        body = await res.json();
+      } catch {
+        body = undefined;
+      }
+      const apiMessage = parseApiErrorMessage(body);
+      throw new ApiHttpError(res.status, res.statusText, body, apiMessage);
     }
 
     if (res.status === 204) {

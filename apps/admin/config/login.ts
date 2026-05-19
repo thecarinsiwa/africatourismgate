@@ -25,7 +25,10 @@ export const adminLoginFormConfig: LoginFormConfig = {
 
 export const adminLoginErrors = {
   invalidCredentials: 'Adresse e-mail ou mot de passe incorrect.',
-  network: 'Impossible de joindre le serveur. Vérifiez votre connexion.',
+  network:
+    'Impossible de joindre le serveur. Vérifiez que l’API tourne (pnpm dev:api) et NEXT_PUBLIC_API_URL dans .env.',
+  envMissing:
+    'Configuration manquante : définissez NEXT_PUBLIC_API_URL dans le fichier .env à la racine du projet, puis redémarrez pnpm dev.',
   generic: 'Une erreur est survenue. Veuillez réessayer.',
 } as const;
 
