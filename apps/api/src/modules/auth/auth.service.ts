@@ -22,20 +22,12 @@ import {
   AuthTokensResponseDto,
 } from './dto/auth-tokens-response.dto';
 import { toAuthUserDto } from './dto/auth-user.dto';
+import {
+  AccessJwtPayload,
+  RefreshJwtPayload,
+} from './interfaces/jwt-payload.interface';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
-
-interface AccessJwtPayload {
-  sub: string;
-  email: string;
-  type: typeof ACCESS_TOKEN_TYPE;
-}
-
-interface RefreshJwtPayload {
-  sub: string;
-  sid: string;
-  type: typeof REFRESH_TOKEN_TYPE;
-}
 
 @Injectable()
 export class AuthService {
