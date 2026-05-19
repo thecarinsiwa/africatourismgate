@@ -43,7 +43,7 @@ export const adminRegisterErrors = {
   emailAlreadyRegistered:
     'Cette adresse e-mail est déjà utilisée. Connectez-vous ou utilisez une autre adresse.',
   network:
-    'Impossible de joindre l’API (https://api.africatourismgate.org). Vérifiez que le service atg-api tourne sur le serveur, que le DNS api.africatourismgate.org pointe vers le VPS, puis refaites pnpm build et redémarrez PM2.',
+    'Impossible de joindre l’API (https://app-africatourismgate.org/api). Vérifiez que atg-api tourne, que nginx proxy /api/, puis refaites pnpm build et redémarrez PM2.',
   envMissing:
     'Configuration manquante : définissez NEXT_PUBLIC_API_URL dans le fichier .env à la racine du projet, puis redémarrez pnpm dev.',
   server:

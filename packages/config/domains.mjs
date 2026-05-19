@@ -5,7 +5,7 @@
  * |-------------|----------------------------------------|------------|------|
  * | Site public | https://africatourismgate.org          | atg-web    | 3002 |
  * | Admin       | https://app-africatourismgate.org      | atg-admin  | 3001 |
- * | API         | https://api.africatourismgate.org/api  | atg-api    | 3000 |
+ * | API         | https://app-africatourismgate.org/api  | atg-api    | 3000 |
  * | POS         | https://pos.africatourismgate.org      | atg-pos    | 3003 |
  */
 
@@ -28,12 +28,12 @@ export const ATG_DOMAINS = {
     label: 'Back-office admin (apps/admin)',
   },
   api: {
-    host: 'api.africatourismgate.org',
-    hosts: ['api.africatourismgate.org'],
-    url: 'https://api.africatourismgate.org/api',
+    host: 'app-africatourismgate.org',
+    pathPrefix: '/api',
+    url: 'https://app-africatourismgate.org/api',
     pm2: 'atg-api',
     port: 3000,
-    label: 'API NestJS (apps/api)',
+    label: 'API NestJS (apps/api) — nginx /api → port 3000',
   },
   pos: {
     host: 'pos.africatourismgate.org',

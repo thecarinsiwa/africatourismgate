@@ -156,7 +156,7 @@ sudo ./scripts/setup-nginx.sh     # again after certs → HTTPS config
 | --- | --- | --- |
 | **Site public** | `apps/web` (port 3002) | https://africatourismgate.org |
 | **Admin** (connexion) | `apps/admin` (port 3001) | https://app-africatourismgate.org/login |
-| API | `apps/api` (port 3000) | https://api.africatourismgate.org/api |
+| API | `apps/api` (port 3000) | https://app-africatourismgate.org/api |
 
 Ne pas ouvrir `/login` sur le domaine public : nginx et Next.js redirigent vers `app-africatourismgate.org`.
 
