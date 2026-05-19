@@ -2,8 +2,10 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { ensureJwtSecrets } from './config/ensure-jwt-secrets';
 
 async function bootstrap() {
+  ensureJwtSecrets();
   const app = await NestFactory.create(AppModule);
   const globalPrefix = process.env.API_GLOBAL_PREFIX ?? 'api';
   app.setGlobalPrefix(globalPrefix);
