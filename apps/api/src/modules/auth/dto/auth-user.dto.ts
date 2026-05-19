@@ -39,3 +39,26 @@ export function toAuthUserDto(user: Users): AuthUserDto {
     status: user.status,
   };
 }
+
+export class UserDto extends AuthUserDto {
+  @ApiProperty()
+  createdAt!: string;
+
+  @ApiPropertyOptional({ nullable: true })
+  updatedAt!: string | null;
+}
+
+export function toUserDto(user: Users): UserDto {
+  return {
+    ...toAuthUserDto(user),
+    createdAt:
+      user.createdAt instanceof Date
+        ? user.createdAt.toISOString()
+        : String(user.createdAt),
+    updatedAt: user.updatedAt
+      ? user.updatedAt instanceof Date
+        ? user.updatedAt.toISOString()
+        : String(user.updatedAt)
+      : null,
+  };
+}

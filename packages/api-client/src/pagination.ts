@@ -3,6 +3,7 @@ import type {
   PaginationQuery,
   PaymentListItem,
   SucceededPaymentsRevenue,
+  UsersListQuery,
 } from '@africatourismgate/types';
 import type { RequestOptions } from './index';
 
@@ -12,7 +13,7 @@ export interface PaginatedRequestClient {
 
 const DEFAULT_CURRENCY = 'CDF';
 
-function buildQueryString(query?: PaginationQuery): string {
+function buildQueryString(query?: PaginationQuery | UsersListQuery): string {
   const params = new URLSearchParams();
   if (query?.page !== undefined) {
     params.set('page', String(query.page));
@@ -23,6 +24,17 @@ function buildQueryString(query?: PaginationQuery): string {
   if (query?.search !== undefined && query.search !== '') {
     params.set('search', query.search);
   }
+  if ('status' in (query ?? {}) && query && 'status' in query && query.status) {
+    params.set('status', query.status);
+  }
+  if (
+    'organizationId' in (query ?? {}) &&
+    query &&
+    'organizationId' in query &&
+    query.organizationId
+  ) {
+    params.set('organizationId', query.organizationId);
+  }
   const qs = params.toString();
   return qs ? `?${qs}` : '';
 }
@@ -30,7 +42,7 @@ function buildQueryString(query?: PaginationQuery): string {
 export async function fetchPaginated<T>(
   client: PaginatedRequestClient,
   path: string,
-  query?: PaginationQuery,
+  query?: PaginationQuery | UsersListQuery,
 ): Promise<PaginatedResponse<T>> {
   return client.request<PaginatedResponse<T>>(`${path}${buildQueryString(query)}`);
 }

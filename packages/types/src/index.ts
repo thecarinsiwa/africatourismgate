@@ -40,3 +40,10 @@ export type {
   OrganizationStatus,
   UpdateOrganizationRequest,
 } from './organization.js';
+
+export type {
+  CreateUserRequest,
+  UpdateUserRequest,
+  User,
+  UsersListQuery,
+} from './user.js';

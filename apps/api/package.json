@@ -9,7 +9,8 @@
     "lint": "nest build",
     "generate": "node scripts/generate-entities.mjs && node scripts/generate-modules.mjs",
     "test:rbac": "node scripts/test-rbac-permissions.mjs",
-    "test:organizations": "node scripts/test-organizations-crud.mjs"
+    "test:organizations": "node scripts/test-organizations-crud.mjs",
+    "test:users": "node scripts/test-users-crud.mjs"
   },
   "dependencies": {
     "@africatourismgate/types": "workspace:*",

@@ -2,6 +2,7 @@ import type {
   AuthResponse,
   AuthTokens,
   CreateOrganizationRequest,
+  CreateUserRequest,
   ForgotPasswordRequest,
   ForgotPasswordResponse,
   LoginRequest,
@@ -15,6 +16,9 @@ import type {
   ResetPasswordResponse,
   SucceededPaymentsRevenue,
   UpdateOrganizationRequest,
+  UpdateUserRequest,
+  User,
+  UsersListQuery,
 } from '@africatourismgate/types';
 import { ApiHttpError, parseApiErrorMessage } from './http-error';
 import {
@@ -48,6 +52,10 @@ export type {
   OrganizationStatus,
   CreateOrganizationRequest,
   UpdateOrganizationRequest,
+  CreateUserRequest,
+  UpdateUserRequest,
+  User,
+  UsersListQuery,
 } from '@africatourismgate/types';
 
 export { fetchPaginated, fetchTotal, sumSucceededPaymentsRevenue } from './pagination';
@@ -184,8 +192,30 @@ export class ApiClient {
     });
   }
 
-  listUsers(query?: PaginationQuery): Promise<PaginatedResponse<unknown>> {
-    return fetchPaginated(this, '/users', query);
+  listUsers(query?: UsersListQuery): Promise<PaginatedResponse<User>> {
+    return fetchPaginated<User>(this, '/users', query);
+  }
+
+  getUser(id: string): Promise<User> {
+    return this.request<User>(`/users/${id}`);
+  }
+
+  createUser(body: CreateUserRequest): Promise<User> {
+    return this.request<User>('/users', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateUser(id: string, body: UpdateUserRequest): Promise<User> {
+    return this.request<User>(`/users/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteUser(id: string): Promise<void> {
+    return this.request<void>(`/users/${id}`, { method: 'DELETE' });
   }
 
   listBookings(query?: PaginationQuery): Promise<PaginatedResponse<unknown>> {
