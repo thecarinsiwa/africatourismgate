@@ -6,15 +6,21 @@ import { DatabaseModule } from './database/database.module';
 import { ApiResourcesModule } from './modules/api-resources.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
+import { PermissionsGuard } from './modules/rbac/guards/permissions.guard';
+import { RbacModule } from './modules/rbac/rbac.module';
 
 @Module({
-  imports: [DatabaseModule, AuthModule, ApiResourcesModule],
+  imports: [DatabaseModule, AuthModule, RbacModule, ApiResourcesModule],
   controllers: [AppController],
   providers: [
     AppService,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: PermissionsGuard,
     },
   ],
 })
