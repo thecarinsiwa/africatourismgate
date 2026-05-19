@@ -15,6 +15,7 @@ import { getApiClient } from '../../lib/auth/api';
 import { getOrganizationsErrorMessage } from '../../lib/organizations-errors';
 
 const PAGE_SIZE = 20;
+const SEARCH_DEBOUNCE_MS = 300;
 
 const statusLabels: Record<OrganizationStatus, string> = {
   active: 'Actif',
@@ -67,6 +68,19 @@ export function OrganizationsList() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  useEffect(() => {
+    const query = searchInput.trim();
+    const timer = window.setTimeout(() => {
+      setSearch((prev) => {
+        if (prev !== query) {
+          setPage(1);
+        }
+        return query;
+      });
+    }, SEARCH_DEBOUNCE_MS);
+    return () => window.clearTimeout(timer);
+  }, [searchInput]);
 
   const handleDelete = useCallback(
     async (org: Organization) => {
@@ -173,12 +187,6 @@ export function OrganizationsList() {
     [deletingId, handleDelete],
   );
 
-  function handleSearchSubmit(event: React.FormEvent) {
-    event.preventDefault();
-    setPage(1);
-    setSearch(searchInput.trim());
-  }
-
   const isLoading = state.status === 'loading';
   const isError = state.status === 'error';
   const organizations = state.status === 'ready' ? state.organizations : [];
@@ -190,18 +198,16 @@ export function OrganizationsList() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <form onSubmit={handleSearchSubmit} className="flex flex-1 flex-col gap-2 sm:max-w-md sm:flex-row">
+        <div className="flex-1 sm:max-w-md">
           <Input
             name="search"
+            type="search"
             placeholder="Rechercher par nom ou slug…"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             aria-label="Rechercher par nom ou slug"
           />
-          <Button type="submit" variant="secondary" className="shrink-0">
-            Rechercher
-          </Button>
-        </form>
+        </div>
         <Button href="/organisations/nouveau">Nouvelle organisation</Button>
       </div>
 
