@@ -1,7 +1,10 @@
+import { createHash, randomBytes } from 'node:crypto';
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   InternalServerErrorException,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -11,7 +14,11 @@ import * as bcrypt from 'bcryptjs';
 import { DeepPartial, IsNull, Repository } from 'typeorm';
 import { Organizations } from '../../entities/generated/organizations.entity';
 import { UserRoleAssignments } from '../../entities/generated/rbac.entity';
-import { Users, UserSessions } from '../../entities/generated/users.entity';
+import {
+  PasswordResetTokens,
+  Users,
+  UserSessions,
+} from '../../entities/generated/users.entity';
 import { newId } from '../../common/utils/uuid';
 import {
   ACCESS_TOKEN_TYPE,
@@ -19,6 +26,9 @@ import {
   JWT_ACCESS_EXPIRES_IN,
   JWT_REFRESH_EXPIRES_IN,
   REFRESH_TOKEN_TYPE,
+  FORGOT_PASSWORD_GENERIC_MESSAGE,
+  PASSWORD_RESET_TTL_SECONDS,
+  RESET_PASSWORD_INVALID_MESSAGE,
   SEED_ORG_PLATFORM_ID,
   SEED_ROLE_ORG_ADMIN_ID,
 } from './auth.constants';
@@ -31,11 +41,15 @@ import {
   AccessJwtPayload,
   RefreshJwtPayload,
 } from './interfaces/jwt-payload.interface';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ForgotPasswordResponseDto } from './dto/forgot-password-response.dto';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
   private readonly accessSecret: string;
   private readonly refreshSecret: string;
   private readonly accessExpiresInSeconds: number;
@@ -50,6 +64,8 @@ export class AuthService {
     private readonly organizationsRepo: Repository<Organizations>,
     @InjectRepository(UserRoleAssignments)
     private readonly roleAssignmentsRepo: Repository<UserRoleAssignments>,
+    @InjectRepository(PasswordResetTokens)
+    private readonly passwordResetRepo: Repository<PasswordResetTokens>,
     private readonly jwtService: JwtService,
     private readonly config: ConfigService,
   ) {
@@ -197,6 +213,98 @@ export class AuthService {
     return { success: true };
   }
 
+  async forgotPassword(
+    dto: ForgotPasswordDto,
+  ): Promise<ForgotPasswordResponseDto> {
+    const email = dto.email.trim().toLowerCase();
+    const user = await this.usersRepo.findOne({
+      where: { email, deletedAt: IsNull(), status: 'active' },
+    });
+
+    if (user) {
+      const rawToken = randomBytes(32).toString('hex');
+      const tokenHash = hashResetToken(rawToken);
+
+      await this.passwordResetRepo.update(
+        { userId: user.id, usedAt: IsNull() },
+        { usedAt: new Date() },
+      );
+
+      const resetRow = this.passwordResetRepo.create({
+        id: newId(),
+        userId: user.id,
+        tokenHash,
+        expiresAt: new Date(
+          Date.now() + PASSWORD_RESET_TTL_SECONDS * 1000,
+        ),
+        usedAt: null,
+        createdAt: new Date(),
+      });
+      await this.passwordResetRepo.save(resetRow);
+
+      if (process.env.NODE_ENV !== 'production') {
+        const baseUrl = this.getResetPasswordBaseUrl();
+        this.logger.log(
+          `Password reset link: ${baseUrl}?token=${rawToken}`,
+        );
+      }
+    }
+
+    return { message: FORGOT_PASSWORD_GENERIC_MESSAGE };
+  }
+
+  async resetPassword(
+    dto: ResetPasswordDto,
+  ): Promise<{ success: true }> {
+    const tokenHash = hashResetToken(dto.token.trim());
+    const resetRow = await this.passwordResetRepo.findOne({
+      where: { tokenHash, usedAt: IsNull() },
+    });
+
+    if (!resetRow || resetRow.expiresAt <= new Date()) {
+      throw new BadRequestException(RESET_PASSWORD_INVALID_MESSAGE);
+    }
+
+    const user = await this.usersRepo
+      .createQueryBuilder('user')
+      .addSelect('user.passwordHash')
+      .where('user.id = :id', { id: resetRow.userId })
+      .andWhere('user.deletedAt IS NULL')
+      .getOne();
+
+    if (!user || user.status !== 'active') {
+      throw new BadRequestException(RESET_PASSWORD_INVALID_MESSAGE);
+    }
+
+    user.passwordHash = await bcrypt.hash(dto.password, BCRYPT_ROUNDS);
+    await this.usersRepo.save(user);
+
+    resetRow.usedAt = new Date();
+    await this.passwordResetRepo.save(resetRow);
+
+    await this.revokeAllUserSessions(user.id);
+
+    return { success: true };
+  }
+
+  private getResetPasswordBaseUrl(): string {
+    const configured = this.config.get<string>('ADMIN_RESET_PASSWORD_URL');
+    if (configured?.trim()) {
+      return configured.trim().replace(/\/$/, '');
+    }
+    const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL?.replace(/\/$/, '');
+    return adminUrl ? `${adminUrl}/reset-password` : 'http://localhost:3001/reset-password';
+  }
+
+  private async revokeAllUserSessions(userId: string): Promise<void> {
+    const sessions = await this.sessionsRepo.find({
+      where: { userId, deletedAt: IsNull() },
+    });
+    for (const session of sessions) {
+      await this.sessionsRepo.softRemove(session);
+    }
+  }
+
   private async issueTokenPair(user: Users): Promise<AuthTokensResponseDto> {
     const session = this.sessionsRepo.create({
       id: newId(),
@@ -275,6 +383,10 @@ export class AuthService {
     }
     return value;
   }
+}
+
+function hashResetToken(token: string): string {
+  return createHash('sha256').update(token).digest('hex');
 }
 
 function expiresInToSeconds(value: string): number {

@@ -24,6 +24,7 @@ const DOMAIN_MAP = {
   users: 'users',
   employees: 'users',
   user_sessions: 'users',
+  password_reset_tokens: 'users',
   user_addresses: 'users',
   user_payment_methods: 'users',
   loyalty_accounts: 'users',

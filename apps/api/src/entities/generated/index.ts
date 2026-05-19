@@ -1,6 +1,7 @@
 export { Users } from './users.entity';
 export { Employees } from './users.entity';
 export { UserSessions } from './users.entity';
+export { PasswordResetTokens } from './users.entity';
 export { UserAddresses } from './users.entity';
 export { UserPaymentMethods } from './users.entity';
 export { LoyaltyAccounts } from './users.entity';

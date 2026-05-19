@@ -14,9 +14,13 @@ export type {
   AuthResponse,
   AuthTokens,
   AuthUser,
+  ForgotPasswordRequest,
+  ForgotPasswordResponse,
   LoginRequest,
   LogoutResponse,
   RefreshTokenRequest,
   RegisterRequest,
+  ResetPasswordRequest,
+  ResetPasswordResponse,
   UserStatus,
 } from './auth.js';
