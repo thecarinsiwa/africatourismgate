@@ -4,7 +4,7 @@ import type { LoginFormConfig } from '@africatourismgate/ui';
 export const adminLoginFormConfig: LoginFormConfig = {
   email: {
     label: 'Adresse email',
-    placeholder: 'your-email@example.com',
+    placeholder: 'admin@africatourismgate.local',
   },
   password: {
     label: 'Mot de passe',
@@ -22,6 +22,12 @@ export const adminLoginFormConfig: LoginFormConfig = {
     loadingLabel: 'Connexion…',
   },
 };
+
+export const adminLoginErrors = {
+  invalidCredentials: 'Adresse e-mail ou mot de passe incorrect.',
+  network: 'Impossible de joindre le serveur. Vérifiez votre connexion.',
+  generic: 'Une erreur est survenue. Veuillez réessayer.',
+} as const;
 
 /** Contenu de la page /login (carte, pied de page). */
 export const adminLoginPageConfig = {
