@@ -142,6 +142,7 @@ export function getAdminRouteRootSegments(entries: AdminNavEntryConfig[]): strin
   return Array.from(roots).sort();
 }
 
+/** @deprecated Prefer the literal `adminMiddlewareMatcher` in middleware.ts (Next.js static analysis). */
 export function buildAdminMiddlewareMatcher(entries: AdminNavEntryConfig[]): string[] {
   const matchers = new Set<string>(['/login', '/register']);
   for (const root of getAdminRouteRootSegments(entries)) {

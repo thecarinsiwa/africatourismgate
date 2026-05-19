@@ -20,6 +20,9 @@ function buildQueryString(query?: PaginationQuery): string {
   if (query?.limit !== undefined) {
     params.set('limit', String(query.limit));
   }
+  if (query?.search !== undefined && query.search !== '') {
+    params.set('search', query.search);
+  }
   const qs = params.toString();
   return qs ? `?${qs}` : '';
 }

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useCallback, useEffect, useId, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import { cn } from '../lib/cn';
 import { Logo } from './logo';
 
@@ -285,6 +285,7 @@ export function Sidebar({
   closeMenuLabel,
 }: SidebarProps) {
   const pathname = usePathname();
+  const mobileAsideRef = useRef<HTMLElement>(null);
   const [openGroupId, setOpenGroupId] = useState<string | null>(() =>
     resolveInitialOpenGroupId(pathname, navItems),
   );
@@ -326,6 +327,20 @@ export function Sidebar({
     };
   }, [mobileOpen, onMobileClose]);
 
+  useEffect(() => {
+    const el = mobileAsideRef.current;
+    if (!el) return;
+
+    el.inert = !mobileOpen;
+
+    if (!mobileOpen) {
+      const active = document.activeElement;
+      if (active instanceof HTMLElement && el.contains(active)) {
+        active.blur();
+      }
+    }
+  }, [mobileOpen]);
+
   return (
     <>
       <div
@@ -338,13 +353,13 @@ export function Sidebar({
       />
 
       <aside
+        ref={mobileAsideRef}
         className={cn(
           'fixed inset-y-0 left-0 z-50 flex w-[min(100%,16rem)] flex-col border-r border-atg-border bg-atg-elevated',
           'transition-transform duration-200 ease-out md:hidden',
           mobileOpen ? 'translate-x-0' : '-translate-x-full',
           className,
         )}
-        aria-hidden={!mobileOpen}
         role="dialog"
         aria-modal={mobileOpen}
         aria-label="Navigation"

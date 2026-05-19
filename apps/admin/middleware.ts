@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { adminProtectedPaths } from './config/dashboard';
-import { buildAdminMiddlewareMatcher } from './config/dashboard-nav';
-import { adminDashboardNavConfig } from './config/dashboard-nav.config';
 import {
   clearSessionCookies,
   getRememberFromRequest,
@@ -92,6 +90,35 @@ export async function middleware(request: NextRequest) {
   return NextResponse.next();
 }
 
+/**
+ * Doit rester un tableau littéral (pas de fonction) pour que Next.js l’analyse au build.
+ * Racines alignées sur `adminDashboardNavConfig` dans dashboard-nav.config.ts.
+ */
 export const config = {
-  matcher: buildAdminMiddlewareMatcher(adminDashboardNavConfig),
+  matcher: [
+    '/login',
+    '/register',
+    '/dashboard',
+    '/dashboard/:path*',
+    '/utilisateurs',
+    '/utilisateurs/:path*',
+    '/fidelite',
+    '/fidelite/:path*',
+    '/hebergements',
+    '/hebergements/:path*',
+    '/produits',
+    '/produits/:path*',
+    '/reservations',
+    '/reservations/:path*',
+    '/paiements',
+    '/paiements/:path*',
+    '/contenu',
+    '/contenu/:path*',
+    '/organisations',
+    '/organisations/:path*',
+    '/systeme',
+    '/systeme/:path*',
+    '/parametres',
+    '/parametres/:path*',
+  ],
 };

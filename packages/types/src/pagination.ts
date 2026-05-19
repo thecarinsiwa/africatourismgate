@@ -13,6 +13,8 @@ export interface PaginatedResponse<T> {
 export interface PaginationQuery {
   page?: number;
   limit?: number;
+  /** Partial match on resource-specific fields (e.g. organization name/slug). */
+  search?: string;
 }
 
 export type PaymentStatus = 'pending' | 'succeeded' | 'failed' | 'refunded';
