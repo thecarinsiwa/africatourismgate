@@ -9,3 +9,14 @@ export interface AuditFields {
 }
 
 export type UUID = string;
+
+export type {
+  AuthResponse,
+  AuthTokens,
+  AuthUser,
+  LoginRequest,
+  LogoutResponse,
+  RefreshTokenRequest,
+  RegisterRequest,
+  UserStatus,
+} from './auth.js';
