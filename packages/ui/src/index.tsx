@@ -48,6 +48,12 @@ export { Input, type InputProps } from './components/input';
 export { PasswordInput, type PasswordInputProps } from './components/password-input';
 export { Checkbox, type CheckboxProps } from './components/checkbox';
 export { Card, type CardProps } from './components/card';
+export { DataTable, type DataTableProps } from './components/data-table';
+export type { ColumnDef } from './components/data-table';
+export {
+  DataTablePagination,
+  type DataTablePaginationProps,
+} from './components/data-table-pagination';
 export { Divider, type DividerProps } from './components/divider';
 export { TextLink, type TextLinkProps } from './components/text-link';
 export { Logo, type LogoProps } from './components/logo';

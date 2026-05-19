@@ -1,9 +1,17 @@
 'use client';
 
-import { Button, Card, cn, Input } from '@africatourismgate/ui';
+import {
+  Button,
+  Card,
+  cn,
+  DataTable,
+  DataTablePagination,
+  Input,
+  type ColumnDef,
+} from '@africatourismgate/ui';
 import type { Organization, OrganizationStatus } from '@africatourismgate/types';
 import Link from 'next/link';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getOrganizationsErrorMessage } from '../../lib/organizations-errors';
 
@@ -61,31 +69,108 @@ export function OrganizationsList() {
     void load();
   }, [load]);
 
+  const handleDelete = useCallback(
+    async (org: Organization) => {
+      if (
+        !window.confirm(
+          `Supprimer l’organisation « ${org.name} » ? Cette action est réversible côté base.`,
+        )
+      ) {
+        return;
+      }
+      setDeleteError(null);
+      setDeletingId(org.id);
+      try {
+        await getApiClient().deleteOrganization(org.id);
+        await load();
+      } catch (error) {
+        setDeleteError(getOrganizationsErrorMessage(error));
+      } finally {
+        setDeletingId(null);
+      }
+    },
+    [load],
+  );
+
+  const columns = useMemo<ColumnDef<Organization, unknown>[]>(
+    () => [
+      {
+        accessorKey: 'name',
+        header: 'Nom',
+        cell: ({ row }) => (
+          <span className="font-medium text-atg-fg">{row.original.name}</span>
+        ),
+      },
+      {
+        accessorKey: 'slug',
+        header: 'Slug',
+        cell: ({ row }) => (
+          <span className="font-mono text-xs text-atg-muted">{row.original.slug}</span>
+        ),
+      },
+      {
+        accessorKey: 'currency',
+        header: 'Devise',
+      },
+      {
+        accessorKey: 'status',
+        header: 'Statut',
+        cell: ({ row }) => {
+          const status = row.original.status;
+          return (
+            <span
+              className={cn(
+                'inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium',
+                statusStyles[status],
+              )}
+            >
+              {statusLabels[status]}
+            </span>
+          );
+        },
+      },
+      {
+        id: 'actions',
+        header: () => <div className="text-right">Actions</div>,
+        cell: ({ row }) => {
+          const org = row.original;
+          return (
+            <div className="flex justify-end gap-2">
+              <Link
+                href={`/organisations/${org.id}`}
+                className="text-sm font-medium text-primary hover:text-primary-hover"
+              >
+                Modifier
+              </Link>
+              <button
+                type="button"
+                onClick={() => void handleDelete(org)}
+                disabled={deletingId === org.id}
+                className="text-sm font-medium text-red-600 hover:text-red-700 disabled:opacity-50 dark:text-red-400"
+              >
+                {deletingId === org.id ? 'Suppression…' : 'Supprimer'}
+              </button>
+            </div>
+          );
+        },
+      },
+    ],
+    [deletingId, handleDelete],
+  );
+
   function handleSearchSubmit(event: React.FormEvent) {
     event.preventDefault();
     setPage(1);
     setSearch(searchInput.trim());
   }
 
-  async function handleDelete(org: Organization) {
-    if (
-      !window.confirm(
-        `Supprimer l’organisation « ${org.name} » ? Cette action est réversible côté base.`,
-      )
-    ) {
-      return;
-    }
-    setDeleteError(null);
-    setDeletingId(org.id);
-    try {
-      await getApiClient().deleteOrganization(org.id);
-      await load();
-    } catch (error) {
-      setDeleteError(getOrganizationsErrorMessage(error));
-    } finally {
-      setDeletingId(null);
-    }
-  }
+  const isLoading = state.status === 'loading';
+  const isError = state.status === 'error';
+  const organizations = state.status === 'ready' ? state.organizations : [];
+  const emptyMessage =
+    search.trim().length > 0
+      ? 'Aucune organisation ne correspond à votre recherche.'
+      : 'Aucune organisation.';
 
   return (
     <div className="space-y-6">
@@ -111,100 +196,34 @@ export function OrganizationsList() {
         </p>
       ) : null}
 
-      <Card variant="dashboard" padding="none">
-        {state.status === 'loading' ? (
-          <p className="p-5 text-sm text-atg-muted" aria-busy="true">
-            Chargement…
-          </p>
-        ) : state.status === 'error' ? (
-          <p className="p-5 text-sm text-red-600 dark:text-red-400" role="alert">
-            {state.message}
-          </p>
-        ) : state.organizations.length === 0 ? (
-          <p className="p-5 text-sm text-atg-muted">
-            {search ? 'Aucune organisation ne correspond à votre recherche.' : 'Aucune organisation.'}
-          </p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[640px] text-left text-sm">
-              <thead>
-                <tr className="border-b border-atg-border text-atg-muted">
-                  <th className="px-5 py-3 font-medium">Nom</th>
-                  <th className="px-5 py-3 font-medium">Slug</th>
-                  <th className="px-5 py-3 font-medium">Devise</th>
-                  <th className="px-5 py-3 font-medium">Statut</th>
-                  <th className="px-5 py-3 font-medium text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {state.organizations.map((org) => (
-                  <tr key={org.id} className="border-b border-atg-border/60 last:border-0">
-                    <td className="px-5 py-3 font-medium text-atg-fg">{org.name}</td>
-                    <td className="px-5 py-3 font-mono text-xs text-atg-muted">{org.slug}</td>
-                    <td className="px-5 py-3 text-atg-fg">{org.currency}</td>
-                    <td className="px-5 py-3">
-                      <span
-                        className={cn(
-                          'inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium',
-                          statusStyles[org.status],
-                        )}
-                      >
-                        {statusLabels[org.status]}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3 text-right">
-                      <div className="flex justify-end gap-2">
-                        <Link
-                          href={`/organisations/${org.id}`}
-                          className="text-sm font-medium text-primary hover:text-primary-hover"
-                        >
-                          Modifier
-                        </Link>
-                        <button
-                          type="button"
-                          onClick={() => void handleDelete(org)}
-                          disabled={deletingId === org.id}
-                          className="text-sm font-medium text-red-600 hover:text-red-700 disabled:opacity-50 dark:text-red-400"
-                        >
-                          {deletingId === org.id ? 'Suppression…' : 'Supprimer'}
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </Card>
+      {isError ? (
+        <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+          {state.message}
+        </p>
+      ) : (
+        <>
+          <Card variant="dashboard" padding="none">
+            <DataTable
+              columns={columns}
+              data={organizations}
+              isLoading={isLoading}
+              emptyMessage={emptyMessage}
+              getRowId={(row) => row.id}
+              aria-label="Liste des organisations"
+            />
+          </Card>
 
-      {state.status === 'ready' && state.totalPages > 1 ? (
-        <div className="flex items-center justify-between gap-4">
-          <p className="text-sm text-atg-muted">
-            {state.total} organisation{state.total > 1 ? 's' : ''} — page {page} / {state.totalPages}
-          </p>
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={page <= 1}
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-            >
-              Précédent
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={page >= state.totalPages}
-              onClick={() => setPage((p) => p + 1)}
-            >
-              Suivant
-            </Button>
-          </div>
-        </div>
-      ) : null}
+          {state.status === 'ready' ? (
+            <DataTablePagination
+              page={page}
+              totalPages={state.totalPages}
+              totalItems={state.total}
+              itemLabel="organisation"
+              onPageChange={setPage}
+            />
+          ) : null}
+        </>
+      )}
     </div>
   );
 }
