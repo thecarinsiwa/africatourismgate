@@ -385,7 +385,8 @@ CREATE TABLE `rbac_audit_logs` (
     'user_role_revoked',
     'user_role_extended',
     'impersonation_started',
-    'impersonation_ended'
+    'impersonation_ended',
+    'permission_denied'
   ) NOT NULL,
   `actor_user_id` CHAR(36) DEFAULT NULL,
   `target_user_id` CHAR(36) DEFAULT NULL,

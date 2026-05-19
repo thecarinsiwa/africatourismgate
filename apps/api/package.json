@@ -7,7 +7,8 @@
     "dev": "nest start --watch",
     "start": "node dist/main",
     "lint": "nest build",
-    "generate": "node scripts/generate-entities.mjs && node scripts/generate-modules.mjs"
+    "generate": "node scripts/generate-entities.mjs && node scripts/generate-modules.mjs",
+    "test:rbac": "node scripts/test-rbac-permissions.mjs"
   },
   "dependencies": {
     "@africatourismgate/types": "workspace:*",
