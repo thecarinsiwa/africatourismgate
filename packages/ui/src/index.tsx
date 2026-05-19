@@ -3,6 +3,10 @@ import type { ReactNode } from 'react';
 export { cn } from './lib/cn';
 
 export { AppShell } from './app-shell';
+export { DashboardShell, type DashboardShellProps } from './components/dashboard-shell';
+export { Sidebar, type SidebarNavItem, type SidebarProps } from './components/sidebar';
+export { AppHeader, type AppHeaderProps } from './components/app-header';
+export { UserMenu, type UserMenuProps } from './components/user-menu';
 export { ThemeProvider } from './theme-provider';
 export { ThemeToggle, type ThemeToggleProps } from './components/theme-toggle';
 export { Button, type ButtonProps, type ButtonVariant, type ButtonSize } from './components/button';

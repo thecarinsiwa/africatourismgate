@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { adminProtectedPaths } from './config/dashboard';
 import {
   clearSessionCookies,
   getRememberFromRequest,
@@ -19,8 +20,10 @@ function isAuthPath(pathname: string): boolean {
   return AUTH_PATHS.has(pathname);
 }
 
-function isDashboardPath(pathname: string): boolean {
-  return pathname === '/dashboard' || pathname.startsWith('/dashboard/');
+function isProtectedPath(pathname: string): boolean {
+  return adminProtectedPaths.some(
+    (path) => pathname === path || pathname.startsWith(`${path}/`),
+  );
 }
 
 type ValidSession = {
@@ -58,13 +61,13 @@ async function ensureValidSession(
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (!isAuthPath(pathname) && !isDashboardPath(pathname)) {
+  if (!isAuthPath(pathname) && !isProtectedPath(pathname)) {
     return NextResponse.next();
   }
 
   const valid = await ensureValidSession(request);
 
-  if (isDashboardPath(pathname)) {
+  if (isProtectedPath(pathname)) {
     if (!valid) {
       const loginUrl = new URL('/login', request.url);
       loginUrl.searchParams.set('next', pathname);
@@ -88,5 +91,20 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard', '/dashboard/:path*', '/login', '/register'],
+  matcher: [
+    '/dashboard',
+    '/dashboard/:path*',
+    '/organisations',
+    '/organisations/:path*',
+    '/utilisateurs',
+    '/utilisateurs/:path*',
+    '/hebergements',
+    '/hebergements/:path*',
+    '/reservations',
+    '/reservations/:path*',
+    '/parametres',
+    '/parametres/:path*',
+    '/login',
+    '/register',
+  ],
 };

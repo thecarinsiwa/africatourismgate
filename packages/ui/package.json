@@ -15,10 +15,12 @@
     "next-themes": "^0.4.6"
   },
   "peerDependencies": {
+    "next": "^14.2.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "next": "14.2.18",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "react": "^18.3.1",

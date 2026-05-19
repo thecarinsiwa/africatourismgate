@@ -1,14 +1,9 @@
-import { SessionSync } from '../../components/session-sync';
+import { DashboardShellLayout } from '../../components/dashboard-shell-layout';
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <>
-      <SessionSync />
-      {children}
-    </>
-  );
+  return <DashboardShellLayout>{children}</DashboardShellLayout>;
 }
