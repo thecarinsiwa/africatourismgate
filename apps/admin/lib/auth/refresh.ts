@@ -1,8 +1,9 @@
 import type { AuthTokens } from '@africatourismgate/types';
+import { getApiBaseUrl } from './api';
 
 export async function refreshAccessToken(
   refreshToken: string,
-  apiUrl = process.env.NEXT_PUBLIC_API_URL,
+  apiUrl = getApiBaseUrl(),
 ): Promise<AuthTokens | null> {
   if (!apiUrl) {
     return null;
