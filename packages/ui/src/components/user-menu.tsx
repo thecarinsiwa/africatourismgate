@@ -1,13 +1,20 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useId, useRef, useState } from 'react';
 import { cn } from '../lib/cn';
+
+export type UserMenuLink = {
+  href: string;
+  label: string;
+};
 
 export type UserMenuProps = {
   displayName: string;
   email: string;
   onLogout: () => void | Promise<void>;
   logoutLabel?: string;
+  menuLinks?: UserMenuLink[];
   className?: string;
 };
 
@@ -27,6 +34,7 @@ export function UserMenu({
   email,
   onLogout,
   logoutLabel = 'Se déconnecter',
+  menuLinks = [],
   className,
 }: UserMenuProps) {
   const menuId = useId();
@@ -90,7 +98,10 @@ export function UserMenu({
         >
           {initials}
         </span>
-        <span className="hidden max-w-[8rem] truncate font-medium sm:inline">{displayName}</span>
+        <span className="hidden max-w-[10rem] truncate text-left sm:inline">
+          <span className="block truncate font-medium">{displayName}</span>
+          <span className="block truncate text-xs text-atg-muted">{email}</span>
+        </span>
         <svg
           className={cn('h-4 w-4 text-atg-muted transition-transform', open && 'rotate-180')}
           fill="none"
@@ -112,6 +123,24 @@ export function UserMenu({
             <p className="truncate text-sm font-semibold text-atg-fg">{displayName}</p>
             <p className="mt-0.5 truncate text-xs text-atg-muted">{email}</p>
           </div>
+          {menuLinks.length > 0 ? (
+            <div className="border-b border-atg-border p-2">
+              {menuLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  role="menuitem"
+                  onClick={() => setOpen(false)}
+                  className={cn(
+                    'block rounded-md px-3 py-2 text-sm text-atg-fg transition-colors hover:bg-atg-surface',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+                  )}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          ) : null}
           <div className="p-2">
             <button
               type="button"

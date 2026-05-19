@@ -24,3 +24,12 @@ export type {
   ResetPasswordResponse,
   UserStatus,
 } from './auth.js';
+
+export type {
+  PaginatedResponse,
+  PaginationMeta,
+  PaginationQuery,
+  PaymentListItem,
+  PaymentStatus,
+  SucceededPaymentsRevenue,
+} from './pagination.js';

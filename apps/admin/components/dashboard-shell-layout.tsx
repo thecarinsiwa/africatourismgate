@@ -44,9 +44,16 @@ export function DashboardShellLayout({ children }: { children: React.ReactNode }
     <>
       <SessionSync />
       <DashboardShell
-        navItems={[...adminDashboardNav]}
+        navItems={adminDashboardNav}
         logo={adminDashboardConfig.logo}
-        user={{ ...user, onLogout: handleLogout }}
+        user={{
+          ...user,
+          onLogout: handleLogout,
+          menuLinks: [
+            { href: '/dashboard', label: 'Tableau de bord' },
+            { href: '/parametres', label: 'Paramètres' },
+          ],
+        }}
         themeLabels={{
           light: adminLoginPageConfig.theme.light,
           dark: adminLoginPageConfig.theme.dark,

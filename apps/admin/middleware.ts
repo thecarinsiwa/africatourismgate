@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { adminProtectedPaths } from './config/dashboard';
+import { buildAdminMiddlewareMatcher } from './config/dashboard-nav';
+import { adminDashboardNavConfig } from './config/dashboard-nav.config';
 import {
   clearSessionCookies,
   getRememberFromRequest,
@@ -91,20 +93,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    '/dashboard',
-    '/dashboard/:path*',
-    '/organisations',
-    '/organisations/:path*',
-    '/utilisateurs',
-    '/utilisateurs/:path*',
-    '/hebergements',
-    '/hebergements/:path*',
-    '/reservations',
-    '/reservations/:path*',
-    '/parametres',
-    '/parametres/:path*',
-    '/login',
-    '/register',
-  ],
+  matcher: buildAdminMiddlewareMatcher(adminDashboardNavConfig),
 };
