@@ -39,6 +39,13 @@ export const adminRegisterFormConfig: RegisterFormConfig = {
   },
 };
 
+export const adminRegisterErrors = {
+  emailAlreadyRegistered:
+    'Cette adresse e-mail est déjà utilisée. Connectez-vous ou utilisez une autre adresse.',
+  network: 'Impossible de joindre le serveur. Vérifiez votre connexion.',
+  generic: 'Une erreur est survenue. Veuillez réessayer.',
+} as const;
+
 /** Contenu de la page /register (carte, pied de page). */
 export const adminRegisterPageConfig = {
   title: 'Créer un compte',

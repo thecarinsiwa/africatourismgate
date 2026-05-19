@@ -1,6 +1,7 @@
 import {
   ConflictException,
   Injectable,
+  InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -8,6 +9,8 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcryptjs';
 import { DeepPartial, IsNull, Repository } from 'typeorm';
+import { Organizations } from '../../entities/generated/organizations.entity';
+import { UserRoleAssignments } from '../../entities/generated/rbac.entity';
 import { Users, UserSessions } from '../../entities/generated/users.entity';
 import { newId } from '../../common/utils/uuid';
 import {
@@ -16,6 +19,8 @@ import {
   JWT_ACCESS_EXPIRES_IN,
   JWT_REFRESH_EXPIRES_IN,
   REFRESH_TOKEN_TYPE,
+  SEED_ORG_PLATFORM_ID,
+  SEED_ROLE_ORG_ADMIN_ID,
 } from './auth.constants';
 import {
   AuthResponseDto,
@@ -41,6 +46,10 @@ export class AuthService {
     private readonly usersRepo: Repository<Users>,
     @InjectRepository(UserSessions)
     private readonly sessionsRepo: Repository<UserSessions>,
+    @InjectRepository(Organizations)
+    private readonly organizationsRepo: Repository<Organizations>,
+    @InjectRepository(UserRoleAssignments)
+    private readonly roleAssignmentsRepo: Repository<UserRoleAssignments>,
     private readonly jwtService: JwtService,
     private readonly config: ConfigService,
   ) {
@@ -59,13 +68,24 @@ export class AuthService {
       throw new ConflictException('Email already registered');
     }
 
+    const defaultOrg = await this.organizationsRepo.findOne({
+      where: { id: SEED_ORG_PLATFORM_ID, deletedAt: IsNull() },
+    });
+    if (!defaultOrg) {
+      throw new InternalServerErrorException(
+        'Default organization is not configured. Run database seeds.',
+      );
+    }
+
     const passwordHash = await bcrypt.hash(dto.password, BCRYPT_ROUNDS);
+    const userId = newId();
     const user = this.usersRepo.create({
-      id: newId(),
+      id: userId,
       email,
       passwordHash,
       firstName: dto.firstName.trim(),
       lastName: dto.lastName.trim(),
+      organizationId: SEED_ORG_PLATFORM_ID,
       ...(dto.phone ? { phone: dto.phone.trim() } : {}),
       ...(dto.preferredLanguage
         ? { preferredLanguage: dto.preferredLanguage.trim() }
@@ -73,6 +93,17 @@ export class AuthService {
       status: 'active',
     } as DeepPartial<Users>);
     await this.usersRepo.save(user);
+
+    const assignment = this.roleAssignmentsRepo.create({
+      id: newId(),
+      userId,
+      roleId: SEED_ROLE_ORG_ADMIN_ID,
+      scopeType: 'agency',
+      scopeId: SEED_ORG_PLATFORM_ID,
+      assignedByUserId: userId,
+      assignedAt: new Date(),
+    } as DeepPartial<UserRoleAssignments>);
+    await this.roleAssignmentsRepo.save(assignment);
 
     const tokens = await this.issueTokenPair(user);
     return { ...tokens, user: toAuthUserDto(user) };
