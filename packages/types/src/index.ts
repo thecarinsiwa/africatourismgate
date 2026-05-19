@@ -33,3 +33,10 @@ export type {
   PaymentStatus,
   SucceededPaymentsRevenue,
 } from './pagination.js';
+
+export type {
+  CreateOrganizationRequest,
+  Organization,
+  OrganizationStatus,
+  UpdateOrganizationRequest,
+} from './organization.js';

@@ -1,10 +1,12 @@
 import type {
   AuthResponse,
   AuthTokens,
+  CreateOrganizationRequest,
   ForgotPasswordRequest,
   ForgotPasswordResponse,
   LoginRequest,
   LogoutResponse,
+  Organization,
   PaginatedResponse,
   PaginationQuery,
   PaymentListItem,
@@ -12,6 +14,7 @@ import type {
   ResetPasswordRequest,
   ResetPasswordResponse,
   SucceededPaymentsRevenue,
+  UpdateOrganizationRequest,
 } from '@africatourismgate/types';
 import { ApiHttpError, parseApiErrorMessage } from './http-error';
 import {
@@ -41,6 +44,10 @@ export type {
   ResetPasswordResponse,
   SucceededPaymentsRevenue,
   UserStatus,
+  Organization,
+  OrganizationStatus,
+  CreateOrganizationRequest,
+  UpdateOrganizationRequest,
 } from '@africatourismgate/types';
 
 export { fetchPaginated, fetchTotal, sumSucceededPaymentsRevenue } from './pagination';
@@ -203,6 +210,37 @@ export class ApiClient {
 
   countProperties(): Promise<number> {
     return fetchTotal(this, '/properties');
+  }
+
+  listOrganizations(
+    query?: PaginationQuery,
+  ): Promise<PaginatedResponse<Organization>> {
+    return fetchPaginated<Organization>(this, '/organizations', query);
+  }
+
+  getOrganization(id: string): Promise<Organization> {
+    return this.request<Organization>(`/organizations/${id}`);
+  }
+
+  createOrganization(body: CreateOrganizationRequest): Promise<Organization> {
+    return this.request<Organization>('/organizations', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateOrganization(
+    id: string,
+    body: UpdateOrganizationRequest,
+  ): Promise<Organization> {
+    return this.request<Organization>(`/organizations/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteOrganization(id: string): Promise<void> {
+    return this.request<void>(`/organizations/${id}`, { method: 'DELETE' });
   }
 
   countOrganizations(): Promise<number> {
