@@ -48,8 +48,9 @@ export { Input, type InputProps } from './components/input';
 export { PasswordInput, type PasswordInputProps } from './components/password-input';
 export { Checkbox, type CheckboxProps } from './components/checkbox';
 export { Card, type CardProps } from './components/card';
-export { DataTable, type DataTableProps } from './components/data-table';
+export { DataTable, type DataTableProps, type DataTableAlign } from './components/data-table';
 export type { ColumnDef } from './components/data-table';
+export { DataTableBadge, type DataTableBadgeProps, type DataTableBadgeVariant } from './components/data-table-badge';
 export {
   DataTablePagination,
   type DataTablePaginationProps,
