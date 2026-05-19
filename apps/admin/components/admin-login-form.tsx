@@ -4,18 +4,16 @@ import { LoginForm } from '@africatourismgate/ui';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { adminLoginErrors, adminLoginFormConfig } from '../config/login';
+import { getAuthErrorMessage } from '../lib/auth/api-errors';
 import { getApiClient } from '../lib/auth/api';
 import { authResponseToStoredSession, saveSession } from '../lib/auth/session';
 
-function getLoginErrorMessage(error: unknown): string {
-  if (error instanceof TypeError) {
-    return adminLoginErrors.network;
-  }
-  if (error instanceof Error && error.message.includes('HTTP 401')) {
-    return adminLoginErrors.invalidCredentials;
-  }
-  return adminLoginErrors.generic;
-}
+const loginErrorMessages = {
+  network: adminLoginErrors.network,
+  generic: adminLoginErrors.generic,
+  envMissing: adminLoginErrors.envMissing,
+  unauthorized: adminLoginErrors.invalidCredentials,
+};
 
 export function AdminLoginForm() {
   const router = useRouter();
@@ -42,7 +40,7 @@ export function AdminLoginForm() {
             router.refresh();
             router.push('/dashboard');
           } catch (err) {
-            setError(getLoginErrorMessage(err));
+            setError(getAuthErrorMessage(err, loginErrorMessages));
           }
         }}
       />

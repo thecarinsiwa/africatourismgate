@@ -42,7 +42,12 @@ export const adminRegisterFormConfig: RegisterFormConfig = {
 export const adminRegisterErrors = {
   emailAlreadyRegistered:
     'Cette adresse e-mail est déjà utilisée. Connectez-vous ou utilisez une autre adresse.',
-  network: 'Impossible de joindre le serveur. Vérifiez votre connexion.',
+  network:
+    'Impossible de joindre le serveur. Vérifiez que l’API tourne (pnpm dev:api) et NEXT_PUBLIC_API_URL dans .env.',
+  envMissing:
+    'Configuration manquante : définissez NEXT_PUBLIC_API_URL dans le fichier .env à la racine du projet, puis redémarrez pnpm dev.',
+  server:
+    'Le serveur n’est pas prêt (base de données). Vérifiez MySQL, importez les seeds (database/seeds/install.seed.sql) et redémarrez l’API.',
   generic: 'Une erreur est survenue. Veuillez réessayer.',
 } as const;
 

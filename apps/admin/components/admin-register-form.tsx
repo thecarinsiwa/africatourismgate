@@ -4,18 +4,17 @@ import { RegisterForm } from '@africatourismgate/ui';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { adminRegisterErrors, adminRegisterFormConfig } from '../config/register';
+import { getAuthErrorMessage } from '../lib/auth/api-errors';
 import { getApiClient } from '../lib/auth/api';
 import { authResponseToStoredSession, saveSession } from '../lib/auth/session';
 
-function getRegisterErrorMessage(error: unknown): string {
-  if (error instanceof TypeError) {
-    return adminRegisterErrors.network;
-  }
-  if (error instanceof Error && error.message.includes('HTTP 409')) {
-    return adminRegisterErrors.emailAlreadyRegistered;
-  }
-  return adminRegisterErrors.generic;
-}
+const registerErrorMessages = {
+  network: adminRegisterErrors.network,
+  generic: adminRegisterErrors.generic,
+  envMissing: adminRegisterErrors.envMissing,
+  conflict: adminRegisterErrors.emailAlreadyRegistered,
+  server: adminRegisterErrors.server,
+};
 
 export function AdminRegisterForm() {
   const router = useRouter();
@@ -48,7 +47,7 @@ export function AdminRegisterForm() {
             router.refresh();
             router.push('/dashboard');
           } catch (err) {
-            setError(getRegisterErrorMessage(err));
+            setError(getAuthErrorMessage(err, registerErrorMessages));
           }
         }}
       />

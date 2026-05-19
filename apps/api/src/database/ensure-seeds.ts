@@ -8,6 +8,7 @@ import { getMysqlConfig, isAutoSeedEnabled } from './mysql-config';
 const logger = new Logger('DatabaseBootstrap');
 
 const SEED_FILE = 'install.seed.sql';
+const PLATFORM_ORG_ID = '00000000-0000-4000-8000-000000000001';
 
 function resolveSeedSqlPath(): string {
   const candidates = [
@@ -23,7 +24,7 @@ function resolveSeedSqlPath(): string {
   );
 }
 
-async function databaseHasSeedUsers(
+async function databaseHasPlatformOrganization(
   config: ConfigService,
 ): Promise<boolean> {
   const mysql = getMysqlConfig(config);
@@ -39,14 +40,16 @@ async function databaseHasSeedUsers(
     const [tables] = await connection.query(
       `SELECT COUNT(*) AS count
        FROM information_schema.tables
-       WHERE table_schema = ? AND table_name = 'users'`,
+       WHERE table_schema = ? AND table_name = 'organizations'`,
       [mysql.database],
     );
     const tableExists = Number((tables as { count: number }[])[0]?.count ?? 0) > 0;
     if (!tableExists) return false;
 
     const [rows] = await connection.query(
-      `SELECT COUNT(*) AS count FROM \`users\` WHERE \`deleted_at\` IS NULL`,
+      `SELECT COUNT(*) AS count FROM \`organizations\`
+       WHERE \`id\` = ? AND \`deleted_at\` IS NULL`,
+      [PLATFORM_ORG_ID],
     );
     return Number((rows as { count: number }[])[0]?.count ?? 0) > 0;
   } finally {
@@ -55,7 +58,7 @@ async function databaseHasSeedUsers(
 }
 
 /**
- * Imports `database/seeds/install.seed.sql` when the `users` table is empty.
+ * Imports `database/seeds/install.seed.sql` when the platform organization is missing.
  */
 export async function ensureSeeds(config: ConfigService): Promise<void> {
   if (!isAutoSeedEnabled(config)) {
@@ -63,8 +66,8 @@ export async function ensureSeeds(config: ConfigService): Promise<void> {
     return;
   }
 
-  if (await databaseHasSeedUsers(config)) {
-    logger.log('Seed data already present — skipping seed import');
+  if (await databaseHasPlatformOrganization(config)) {
+    logger.log('Platform organization present — skipping seed import');
     return;
   }
 
