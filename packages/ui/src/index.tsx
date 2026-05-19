@@ -4,9 +4,43 @@ export { cn } from './lib/cn';
 
 export { AppShell } from './app-shell';
 export { DashboardShell, type DashboardShellProps } from './components/dashboard-shell';
-export { Sidebar, type SidebarNavItem, type SidebarProps } from './components/sidebar';
+export {
+  Sidebar,
+  type SidebarNavEntry,
+  type SidebarNavGroup,
+  type SidebarNavItem,
+  type SidebarNavLink,
+  type SidebarProps,
+} from './components/sidebar';
+export {
+  SidebarActivityIcon,
+  SidebarBookingsIcon,
+  SidebarCarIcon,
+  SidebarChatIcon,
+  SidebarCreditCardIcon,
+  SidebarDashboardIcon,
+  SidebarDocumentIcon,
+  SidebarGiftIcon,
+  SidebarGlobeIcon,
+  SidebarHeadsetIcon,
+  SidebarListIcon,
+  SidebarMapPinIcon,
+  SidebarOrganisationsIcon,
+  SidebarPackageIcon,
+  SidebarPaymentsIcon,
+  SidebarPlaneIcon,
+  SidebarPropertiesIcon,
+  SidebarRolesIcon,
+  SidebarSettingsIcon,
+  SidebarShipIcon,
+  SidebarShieldIcon,
+  SidebarStarIcon,
+  SidebarTicketIcon,
+  SidebarUserCircleIcon,
+  SidebarUsersIcon,
+} from './components/sidebar-nav-icons';
 export { AppHeader, type AppHeaderProps } from './components/app-header';
-export { UserMenu, type UserMenuProps } from './components/user-menu';
+export { UserMenu, type UserMenuLink, type UserMenuProps } from './components/user-menu';
 export { ThemeProvider } from './theme-provider';
 export { ThemeToggle, type ThemeToggleProps } from './components/theme-toggle';
 export { Button, type ButtonProps, type ButtonVariant, type ButtonSize } from './components/button';

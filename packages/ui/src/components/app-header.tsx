@@ -7,13 +7,31 @@ import { UserMenu, type UserMenuProps } from './user-menu';
 
 export type AppHeaderProps = {
   title?: string;
-  user: Pick<UserMenuProps, 'displayName' | 'email' | 'onLogout' | 'logoutLabel'>;
+  user: Pick<UserMenuProps, 'displayName' | 'email' | 'onLogout' | 'logoutLabel' | 'menuLinks'>;
   themeLabels?: ThemeToggleProps['labels'];
   actions?: ReactNode;
   className?: string;
+  onMenuClick?: () => void;
+  openMenuLabel?: string;
 };
 
-export function AppHeader({ title, user, themeLabels, actions, className }: AppHeaderProps) {
+function MenuIcon() {
+  return (
+    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+  );
+}
+
+export function AppHeader({
+  title,
+  user,
+  themeLabels,
+  actions,
+  className,
+  onMenuClick,
+  openMenuLabel = 'Ouvrir le menu',
+}: AppHeaderProps) {
   return (
     <header
       className={cn(
@@ -21,7 +39,22 @@ export function AppHeader({ title, user, themeLabels, actions, className }: AppH
         className,
       )}
     >
-      <div className="min-w-0 flex-1">
+      <div className="flex min-w-0 flex-1 items-center gap-3">
+        {onMenuClick ? (
+          <button
+            type="button"
+            onClick={onMenuClick}
+            className={cn(
+              'inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-atg-border',
+              'bg-atg-elevated text-atg-fg transition-colors hover:bg-atg-surface md:hidden',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+            )}
+            aria-label={openMenuLabel}
+          >
+            <MenuIcon />
+          </button>
+        ) : null}
+
         {title ? (
           <h1 className="truncate text-lg font-bold text-atg-fg md:text-xl">{title}</h1>
         ) : (

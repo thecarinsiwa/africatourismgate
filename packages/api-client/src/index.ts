@@ -5,11 +5,20 @@ import type {
   ForgotPasswordResponse,
   LoginRequest,
   LogoutResponse,
+  PaginatedResponse,
+  PaginationQuery,
+  PaymentListItem,
   RegisterRequest,
   ResetPasswordRequest,
   ResetPasswordResponse,
+  SucceededPaymentsRevenue,
 } from '@africatourismgate/types';
 import { ApiHttpError, parseApiErrorMessage } from './http-error';
+import {
+  fetchPaginated,
+  fetchTotal,
+  sumSucceededPaymentsRevenue,
+} from './pagination';
 
 export { ApiHttpError, parseApiErrorMessage } from './http-error';
 
@@ -21,12 +30,20 @@ export type {
   ForgotPasswordResponse,
   LoginRequest,
   LogoutResponse,
+  PaginatedResponse,
+  PaginationMeta,
+  PaginationQuery,
+  PaymentListItem,
+  PaymentStatus,
   RefreshTokenRequest,
   RegisterRequest,
   ResetPasswordRequest,
   ResetPasswordResponse,
+  SucceededPaymentsRevenue,
   UserStatus,
 } from '@africatourismgate/types';
+
+export { fetchPaginated, fetchTotal, sumSucceededPaymentsRevenue } from './pagination';
 
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
@@ -158,6 +175,42 @@ export class ApiClient {
       body,
       skipAuth: true,
     });
+  }
+
+  listUsers(query?: PaginationQuery): Promise<PaginatedResponse<unknown>> {
+    return fetchPaginated(this, '/users', query);
+  }
+
+  listBookings(query?: PaginationQuery): Promise<PaginatedResponse<unknown>> {
+    return fetchPaginated(this, '/bookings', query);
+  }
+
+  listProperties(query?: PaginationQuery): Promise<PaginatedResponse<unknown>> {
+    return fetchPaginated(this, '/properties', query);
+  }
+
+  listPayments(query?: PaginationQuery): Promise<PaginatedResponse<PaymentListItem>> {
+    return fetchPaginated<PaymentListItem>(this, '/payments', query);
+  }
+
+  countUsers(): Promise<number> {
+    return fetchTotal(this, '/users');
+  }
+
+  countBookings(): Promise<number> {
+    return fetchTotal(this, '/bookings');
+  }
+
+  countProperties(): Promise<number> {
+    return fetchTotal(this, '/properties');
+  }
+
+  countOrganizations(): Promise<number> {
+    return fetchTotal(this, '/organizations');
+  }
+
+  getSucceededPaymentsRevenue(): Promise<SucceededPaymentsRevenue> {
+    return sumSucceededPaymentsRevenue(this);
   }
 }
 
