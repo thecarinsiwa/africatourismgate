@@ -1,7 +1,8 @@
-import { ValidationPipe } from '@nestjs/common';
+import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { formatValidationErrors } from './common/utils/format-validation-errors';
 import { ensureJwtSecrets } from './config/ensure-jwt-secrets';
 
 async function bootstrap() {
@@ -15,6 +16,12 @@ async function bootstrap() {
       whitelist: true,
       transform: true,
       forbidNonWhitelisted: true,
+      exceptionFactory: (errors) =>
+        new BadRequestException({
+          statusCode: 400,
+          message: formatValidationErrors(errors),
+          error: 'Requête invalide',
+        }),
     }),
   );
 
