@@ -3,6 +3,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Organizations } from '../../entities/generated/organizations.entity';
+import { UserRoleAssignments } from '../../entities/generated/rbac.entity';
 import { Users, UserSessions } from '../../entities/generated/users.entity';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -13,7 +15,12 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Users, UserSessions]),
+    TypeOrmModule.forFeature([
+      Users,
+      UserSessions,
+      Organizations,
+      UserRoleAssignments,
+    ]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({}),
     ThrottlerModule.forRoot([

@@ -39,6 +39,7 @@ export function AdminLoginForm() {
           try {
             const response = await getApiClient().login({ email, password });
             saveSession(authResponseToStoredSession(response), remember);
+            router.refresh();
             router.push('/dashboard');
           } catch (err) {
             setError(getLoginErrorMessage(err));
