@@ -1,13 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
 
 export class LoginDto {
   @ApiProperty({ example: 'admin@africatourismgate.local' })
-  @IsEmail()
+  @IsNotEmpty({ message: "L'adresse e-mail est obligatoire." })
+  @IsEmail({}, { message: "L'adresse e-mail doit être valide." })
   email!: string;
 
   @ApiProperty({ example: 'ChangeMe123!', minLength: 8 })
-  @IsString()
-  @MinLength(8)
+  @IsNotEmpty({ message: 'Le mot de passe est obligatoire.' })
+  @IsString({ message: 'Le mot de passe doit être une chaîne de caractères.' })
+  @MinLength(8, {
+    message: 'Le mot de passe doit contenir au moins 8 caractères.',
+  })
   password!: string;
 }

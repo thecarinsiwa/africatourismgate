@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Users, UserSessions } from '../../entities/generated/users.entity';
 import { AuthController } from './auth.controller';
@@ -15,6 +16,13 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     TypeOrmModule.forFeature([Users, UserSessions]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({}),
+    ThrottlerModule.forRoot([
+      {
+        name: 'login',
+        ttl: 60_000,
+        limit: 5,
+      },
+    ]),
   ],
   controllers: [AuthController],
   providers: [
