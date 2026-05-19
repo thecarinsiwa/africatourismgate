@@ -45,5 +45,19 @@ export const ATG_DOMAINS = {
   },
 };
 
-/** Chemins réservés à l’admin — redirigés depuis le site public en production. */
-export const ADMIN_ONLY_PATHS = ['/login'];
+/**
+ * Chemins réservés à l’admin — redirigés depuis africatourismgate.org vers app-africatourismgate.org.
+ * Garder synchronisé avec nginx/africatourismgate*.conf (location admin_redirect).
+ */
+export const ADMIN_ONLY_PATHS = [
+  '/login',
+  '/register',
+  '/forgot-password',
+  '/reset-password',
+  '/dashboard',
+  '/organisations',
+  '/utilisateurs',
+  '/hebergements',
+  '/reservations',
+  '/parametres',
+];
