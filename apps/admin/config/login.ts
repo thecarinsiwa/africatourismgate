@@ -10,7 +10,7 @@ export const adminLoginFormConfig: LoginFormConfig = {
     label: 'Mot de passe',
     placeholder: '••••••••',
     forgotPassword: {
-      href: '#',
+      href: '/forgot-password',
       label: 'Mot de passe oublié ?',
     },
   },

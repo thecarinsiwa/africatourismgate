@@ -5,7 +5,11 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Organizations } from '../../entities/generated/organizations.entity';
 import { UserRoleAssignments } from '../../entities/generated/rbac.entity';
-import { Users, UserSessions } from '../../entities/generated/users.entity';
+import {
+  PasswordResetTokens,
+  Users,
+  UserSessions,
+} from '../../entities/generated/users.entity';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -20,12 +24,18 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       UserSessions,
       Organizations,
       UserRoleAssignments,
+      PasswordResetTokens,
     ]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({}),
     ThrottlerModule.forRoot([
       {
         name: 'login',
+        ttl: 60_000,
+        limit: 5,
+      },
+      {
+        name: 'forgotPassword',
         ttl: 60_000,
         limit: 5,
       },

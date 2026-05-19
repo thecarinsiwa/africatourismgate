@@ -6,6 +6,7 @@ Users & loyalty
 users
 employees
 user_sessions
+password_reset_tokens
 user_addresses
 user_payment_methods
 loyalty_accounts

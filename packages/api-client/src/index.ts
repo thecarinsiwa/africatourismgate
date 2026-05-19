@@ -1,19 +1,27 @@
 import type {
   AuthResponse,
   AuthTokens,
+  ForgotPasswordRequest,
+  ForgotPasswordResponse,
   LoginRequest,
   LogoutResponse,
   RegisterRequest,
+  ResetPasswordRequest,
+  ResetPasswordResponse,
 } from '@africatourismgate/types';
 
 export type {
   AuthResponse,
   AuthTokens,
   AuthUser,
+  ForgotPasswordRequest,
+  ForgotPasswordResponse,
   LoginRequest,
   LogoutResponse,
   RefreshTokenRequest,
   RegisterRequest,
+  ResetPasswordRequest,
+  ResetPasswordResponse,
   UserStatus,
 } from '@africatourismgate/types';
 
@@ -122,6 +130,22 @@ export class ApiClient {
     return this.request<LogoutResponse>('/auth/logout', {
       method: 'POST',
       body: { refreshToken },
+      skipAuth: true,
+    });
+  }
+
+  forgotPassword(body: ForgotPasswordRequest): Promise<ForgotPasswordResponse> {
+    return this.request<ForgotPasswordResponse>('/auth/forgot-password', {
+      method: 'POST',
+      body,
+      skipAuth: true,
+    });
+  }
+
+  resetPassword(body: ResetPasswordRequest): Promise<ResetPasswordResponse> {
+    return this.request<ResetPasswordResponse>('/auth/reset-password', {
+      method: 'POST',
+      body,
       skipAuth: true,
     });
   }

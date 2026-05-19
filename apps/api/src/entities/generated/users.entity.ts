@@ -99,6 +99,27 @@ export class UserSessions extends BaseAuditEntity {
 
 }
 
+@Entity('password_reset_tokens')
+export class PasswordResetTokens {
+  @PrimaryColumn('uuid', { name: 'id', length: 36 })
+  id!: string;
+
+  @Column({ type: 'varchar', name: 'user_id', length: 36 })
+  userId!: string;
+
+  @Column({ type: 'varchar', name: 'token_hash', length: 64 })
+  tokenHash!: string;
+
+  @Column({ type: 'datetime', name: 'expires_at' })
+  expiresAt!: Date;
+
+  @Column({ type: 'datetime', name: 'used_at', nullable: true })
+  usedAt!: Date | null;
+
+  @Column({ type: 'timestamp', name: 'created_at' })
+  createdAt!: Date;
+}
+
 @Entity('user_addresses')
 export class UserAddresses extends BaseAuditEntity {
   @PrimaryColumn('uuid', { name: 'id', length: 36 })
