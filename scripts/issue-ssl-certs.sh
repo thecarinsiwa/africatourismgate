@@ -7,7 +7,7 @@ echo "Africa Tourism Gate — certificats SSL par rôle"
 echo ""
 echo "  Site public : africatourismgate.org (+ www)"
 echo "  Admin       : app-africatourismgate.org (+ www)  → /login"
-echo "  API         : api.africatourismgate.org"
+echo "  API         : app-africatourismgate.org/api (nginx) — api.* optionnel"
 echo "  POS         : pos.africatourismgate.org (optionnel)"
 echo ""
 

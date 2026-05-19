@@ -2,7 +2,7 @@ import { ApiClient } from '@africatourismgate/api-client';
 import { getSession } from './session';
 
 const DEFAULT_DEV_API_URL = 'http://localhost:3000/api';
-const PRODUCTION_API_URL = 'https://api.africatourismgate.org/api';
+const PRODUCTION_API_URL = 'https://app-africatourismgate.org/api';
 
 function isLocalApiUrl(url: string): boolean {
   return url.includes('localhost') || url.includes('127.0.0.1');

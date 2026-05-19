@@ -26,7 +26,7 @@ export const adminLoginFormConfig: LoginFormConfig = {
 export const adminLoginErrors = {
   invalidCredentials: 'Adresse e-mail ou mot de passe incorrect.',
   network:
-    'Impossible de joindre l’API (https://api.africatourismgate.org). Vérifiez atg-api, le DNS api.* et refaites pnpm build sur le VPS.',
+    'Impossible de joindre l’API (https://app-africatourismgate.org/api). Vérifiez atg-api, nginx /api/ et refaites pnpm build sur le VPS.',
   envMissing:
     'Configuration manquante : définissez NEXT_PUBLIC_API_URL dans le fichier .env à la racine du projet, puis redémarrez pnpm dev.',
   generic: 'Une erreur est survenue. Veuillez réessayer.',

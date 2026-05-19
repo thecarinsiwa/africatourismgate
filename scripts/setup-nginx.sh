@@ -134,7 +134,7 @@ print_domain_row "Site public (web)" "https://africatourismgate.org" "3002"
 print_domain_row "Admin (back-office)" "https://app-africatourismgate.org" "3001"
 echo "  www.africatourismgate.org      → redirige vers africatourismgate.org"
 echo "  www.app-africatourismgate.org  → redirige vers app-africatourismgate.org"
-print_domain_row "API" "https://api.africatourismgate.org/api" "3000"
+print_domain_row "API" "https://app-africatourismgate.org/api" "3000"
 print_domain_row "POS (optionnel)" "https://pos.africatourismgate.org" "3003"
 
 echo ""
