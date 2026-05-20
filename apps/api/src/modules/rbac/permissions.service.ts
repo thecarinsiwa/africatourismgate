@@ -53,6 +53,7 @@ export class PermissionsService {
         now: new Date(),
       })
       .andWhere('role.deletedAt IS NULL')
+      .andWhere('rp.deletedAt IS NULL')
       .andWhere('perm.deletedAt IS NULL')
       .getRawMany<{ code: string }>();
 

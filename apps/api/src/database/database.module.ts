@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'node:path';
 import * as entities from '../entities/generated';
+import { ensureRbacPermissions } from './ensure-rbac-permissions';
 import { ensureSchema } from './ensure-schema';
 import { ensureSeeds } from './ensure-seeds';
 
@@ -26,6 +27,7 @@ const entityList = Object.values(entities).filter(
       useFactory: async (config: ConfigService) => {
         await ensureSchema(config);
         await ensureSeeds(config);
+        await ensureRbacPermissions(config);
         return {
           type: 'mysql' as const,
           host: config.get<string>('DATABASE_HOST', 'localhost'),
