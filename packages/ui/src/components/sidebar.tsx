@@ -46,7 +46,11 @@ function normalizePath(path: string): string {
 }
 
 function isActivePath(pathname: string, href: string): boolean {
-  return normalizePath(pathname) === normalizePath(href);
+  const current = normalizePath(pathname);
+  const target = normalizePath(href);
+  if (current === target) return true;
+  // Nested routes (e.g. /systeme/roles/assignations under /systeme/roles)
+  return current.startsWith(`${target}/`);
 }
 
 function isGroupActive(pathname: string, children: SidebarNavLink[]): boolean {
@@ -292,8 +296,10 @@ export function Sidebar({
 
   useEffect(() => {
     const activeId = findActiveGroupId(pathname, navItems);
-    setOpenGroupId(activeId);
-    writeStoredOpenGroupId(activeId);
+    if (activeId) {
+      setOpenGroupId(activeId);
+      writeStoredOpenGroupId(activeId);
+    }
   }, [pathname, navItems]);
 
   const handleGroupToggle = useCallback((groupId: string) => {
