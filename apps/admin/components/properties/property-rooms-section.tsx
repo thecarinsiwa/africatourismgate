@@ -8,6 +8,7 @@ import {
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { Room } from '@africatourismgate/types';
+import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getHebergementsErrorMessage } from '../../lib/hebergements-errors';
@@ -189,6 +190,12 @@ export function PropertyRoomsSection({ propertyId }: PropertyRoomsSectionProps) 
         meta: { align: 'right' },
         cell: ({ row }) => (
           <div className="flex justify-end gap-1.5">
+            <Link
+              href={`/hebergements/${propertyId}/chambres/${row.original.id}/disponibilites`}
+              className="inline-flex items-center rounded-md px-2 py-1 text-sm font-medium text-primary hover:underline"
+            >
+              Disponibilités
+            </Link>
             <Button type="button" variant="ghost" size="sm" onClick={() => openEdit(row.original)}>
               Modifier
             </Button>
@@ -207,7 +214,7 @@ export function PropertyRoomsSection({ propertyId }: PropertyRoomsSectionProps) 
         ),
       },
     ],
-    [deletingId, handleDelete],
+    [deletingId, handleDelete, propertyId],
   );
 
   const rooms = state.status === 'ready' ? state.rooms : [];
