@@ -1,5 +1,5 @@
 import type { Config } from 'tailwindcss';
-import { tailwindColors } from '@africatourismgate/config/theme';
+import { tailwindColors } from '../../packages/config/theme.mjs';
 
 const config: Config = {
   darkMode: 'class',

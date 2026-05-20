@@ -43,6 +43,18 @@ curl -I https://app-africatourismgate.org/login
 
 Réponse health attendue : `{"status":"ok","service":"africatourismgate-api"}`.
 
+## Erreur build admin : `@africatourismgate/config/theme`
+
+Après `git pull`, depuis la racine du monorepo :
+
+```bash
+cd /var/www/africatourismgate
+pnpm install
+pnpm --filter @africatourismgate/admin build
+```
+
+Ne lancez pas `pnpm install` uniquement dans `apps/admin` — les liens workspace (`packages/config`) se font à la racine.
+
 ## Erreur « Impossible de joindre l’API »
 
 1. **`atg-api` online** : `pm2 list`
