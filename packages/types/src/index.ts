@@ -63,6 +63,10 @@ export type {
   CreateUserRoleAssignmentRequest,
   Permission,
   PermissionsListQuery,
+  RbacAuditActor,
+  RbacAuditEventType,
+  RbacAuditLog,
+  RbacAuditLogsListQuery,
   ReplaceRolePermissionsRequest,
   Role,
   RolePermissionsPayload,
@@ -72,3 +76,5 @@ export type {
   UserRoleAssignment,
   UserRoleAssignmentsListQuery,
 } from './rbac.js';
+
+export { RBAC_AUDIT_EVENT_LABELS, RBAC_AUDIT_EVENT_TYPES } from './rbac.js';

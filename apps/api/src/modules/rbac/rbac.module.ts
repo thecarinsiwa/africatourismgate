@@ -8,6 +8,7 @@ import {
 } from '../../entities/generated/rbac.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PermissionsGuard } from './guards/permissions.guard';
+import { SuperAdminGuard } from './guards/super-admin.guard';
 import { PermissionsService } from './permissions.service';
 import { RbacAuditService } from './rbac-audit.service';
 
@@ -22,7 +23,7 @@ import { RbacAuditService } from './rbac-audit.service';
       RbacAuditLogs,
     ]),
   ],
-  providers: [PermissionsService, RbacAuditService, PermissionsGuard],
-  exports: [PermissionsService, RbacAuditService, PermissionsGuard],
+  providers: [PermissionsService, RbacAuditService, PermissionsGuard, SuperAdminGuard],
+  exports: [PermissionsService, RbacAuditService, PermissionsGuard, SuperAdminGuard],
 })
 export class RbacModule {}

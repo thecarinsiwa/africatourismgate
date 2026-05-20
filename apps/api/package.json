@@ -13,7 +13,8 @@
     "test:users": "node scripts/test-users-crud.mjs",
     "test:employees": "node scripts/test-employees-crud.mjs",
     "test:rbac-crud": "node scripts/test-rbac-crud.mjs",
-    "sync:rbac": "node scripts/sync-rbac-permissions.mjs"
+    "sync:rbac": "node scripts/sync-rbac-permissions.mjs",
+    "test:rbac-audit": "node scripts/test-rbac-audit-logs.mjs"
   },
   "dependencies": {
     "@africatourismgate/types": "workspace:*",

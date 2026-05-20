@@ -1,4 +1,5 @@
 import type {
+  AuthMe,
   AuthResponse,
   AuthTokens,
   CreateEmployeeRequest,
@@ -10,6 +11,8 @@ import type {
   EmployeesListQuery,
   Permission,
   PermissionsListQuery,
+  RbacAuditLog,
+  RbacAuditLogsListQuery,
   ReplaceRolePermissionsRequest,
   Role,
   RolePermissionsPayload,
@@ -45,6 +48,7 @@ import {
 export { ApiHttpError, parseApiErrorMessage } from './http-error';
 
 export type {
+  AuthMe,
   AuthResponse,
   AuthTokens,
   AuthUser,
@@ -78,6 +82,8 @@ export type {
   EmployeesListQuery,
   Permission,
   PermissionsListQuery,
+  RbacAuditLog,
+  RbacAuditLogsListQuery,
   ReplaceRolePermissionsRequest,
   Role,
   RolePermissionsPayload,
@@ -188,6 +194,10 @@ export class ApiClient {
       body,
       skipAuth: true,
     });
+  }
+
+  getAuthMe(): Promise<AuthMe> {
+    return this.request<AuthMe>('/auth/me');
   }
 
   refresh(refreshToken: string): Promise<AuthTokens> {
@@ -406,6 +416,16 @@ export class ApiClient {
     return this.request<UserRoleAssignment>(`/user-role-assignments/${id}/revoke`, {
       method: 'PATCH',
     });
+  }
+
+  listRbacAuditLogs(
+    query?: RbacAuditLogsListQuery,
+  ): Promise<PaginatedResponse<RbacAuditLog>> {
+    return fetchPaginated<RbacAuditLog>(this, '/rbac-audit-logs', query);
+  }
+
+  getRbacAuditLog(id: string): Promise<RbacAuditLog> {
+    return this.request<RbacAuditLog>(`/rbac-audit-logs/${id}`);
   }
 }
 
