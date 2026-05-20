@@ -3,9 +3,17 @@ import type {
   AuthTokens,
   CreateEmployeeRequest,
   CreateOrganizationRequest,
+  CreateRoleRequest,
   CreateUserRequest,
+  CreateUserRoleAssignmentRequest,
   Employee,
   EmployeesListQuery,
+  Permission,
+  PermissionsListQuery,
+  ReplaceRolePermissionsRequest,
+  Role,
+  RolePermissionsPayload,
+  RolesListQuery,
   ForgotPasswordRequest,
   ForgotPasswordResponse,
   LoginRequest,
@@ -20,7 +28,10 @@ import type {
   SucceededPaymentsRevenue,
   UpdateEmployeeRequest,
   UpdateOrganizationRequest,
+  UpdateRoleRequest,
   UpdateUserRequest,
+  UserRoleAssignment,
+  UserRoleAssignmentsListQuery,
   User,
   UsersListQuery,
 } from '@africatourismgate/types';
@@ -56,14 +67,25 @@ export type {
   OrganizationStatus,
   CreateEmployeeRequest,
   CreateOrganizationRequest,
+  CreateRoleRequest,
+  CreateUserRoleAssignmentRequest,
   UpdateEmployeeRequest,
   UpdateOrganizationRequest,
+  UpdateRoleRequest,
   CreateUserRequest,
   UpdateUserRequest,
   Employee,
   EmployeesListQuery,
+  Permission,
+  PermissionsListQuery,
+  ReplaceRolePermissionsRequest,
+  Role,
+  RolePermissionsPayload,
+  RolesListQuery,
   User,
   UsersListQuery,
+  UserRoleAssignment,
+  UserRoleAssignmentsListQuery,
 } from '@africatourismgate/types';
 
 export { fetchPaginated, fetchTotal, sumSucceededPaymentsRevenue } from './pagination';
@@ -315,6 +337,75 @@ export class ApiClient {
 
   getSucceededPaymentsRevenue(): Promise<SucceededPaymentsRevenue> {
     return sumSucceededPaymentsRevenue(this);
+  }
+
+  listRoles(query?: RolesListQuery): Promise<PaginatedResponse<Role>> {
+    return fetchPaginated<Role>(this, '/roles', query);
+  }
+
+  getRole(id: string): Promise<Role> {
+    return this.request<Role>(`/roles/${id}`);
+  }
+
+  createRole(body: CreateRoleRequest): Promise<Role> {
+    return this.request<Role>('/roles', { method: 'POST', body });
+  }
+
+  updateRole(id: string, body: UpdateRoleRequest): Promise<Role> {
+    return this.request<Role>(`/roles/${id}`, { method: 'PATCH', body });
+  }
+
+  deleteRole(id: string): Promise<void> {
+    return this.request<void>(`/roles/${id}`, { method: 'DELETE' });
+  }
+
+  getRolePermissions(roleId: string): Promise<RolePermissionsPayload> {
+    return this.request<RolePermissionsPayload>(`/roles/${roleId}/permissions`);
+  }
+
+  replaceRolePermissions(
+    roleId: string,
+    body: ReplaceRolePermissionsRequest,
+  ): Promise<RolePermissionsPayload> {
+    return this.request<RolePermissionsPayload>(`/roles/${roleId}/permissions`, {
+      method: 'PUT',
+      body,
+    });
+  }
+
+  listPermissions(
+    query?: PermissionsListQuery,
+  ): Promise<PaginatedResponse<Permission>> {
+    return fetchPaginated<Permission>(this, '/permissions', query);
+  }
+
+  getPermission(id: string): Promise<Permission> {
+    return this.request<Permission>(`/permissions/${id}`);
+  }
+
+  listUserRoleAssignments(
+    query?: UserRoleAssignmentsListQuery,
+  ): Promise<PaginatedResponse<UserRoleAssignment>> {
+    return fetchPaginated<UserRoleAssignment>(this, '/user-role-assignments', query);
+  }
+
+  getUserRoleAssignment(id: string): Promise<UserRoleAssignment> {
+    return this.request<UserRoleAssignment>(`/user-role-assignments/${id}`);
+  }
+
+  createUserRoleAssignment(
+    body: CreateUserRoleAssignmentRequest,
+  ): Promise<UserRoleAssignment> {
+    return this.request<UserRoleAssignment>('/user-role-assignments', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  revokeUserRoleAssignment(id: string): Promise<UserRoleAssignment> {
+    return this.request<UserRoleAssignment>(`/user-role-assignments/${id}/revoke`, {
+      method: 'PATCH',
+    });
   }
 }
 

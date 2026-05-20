@@ -21,6 +21,12 @@ export interface AuthResponse extends AuthTokens {
   user: AuthUser;
 }
 
+export interface AuthMe {
+  user: AuthUser;
+  permissions: string[];
+  isSuperAdmin: boolean;
+}
+
 export interface LogoutResponse {
   success: boolean;
 }

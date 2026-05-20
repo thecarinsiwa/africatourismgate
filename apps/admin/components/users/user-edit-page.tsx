@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getUsersErrorMessage } from '../../lib/users-errors';
+import { UserRoleAssignmentsPanel } from '../rbac/user-role-assignments-panel';
 import { UserForm } from './user-form';
 
 type UserEditPageProps = {
@@ -69,6 +70,7 @@ export function UserEditPage({ userId }: UserEditPageProps) {
         <p className="mt-2 text-sm text-atg-muted">{user.email}</p>
       </div>
       <UserForm mode="edit" userId={userId} initialUser={user} />
+      <UserRoleAssignmentsPanel userId={userId} />
     </div>
   );
 }

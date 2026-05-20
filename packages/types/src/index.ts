@@ -12,6 +12,7 @@ export type UUID = string;
 
 export type {
   AuthResponse,
+  AuthMe,
   AuthTokens,
   AuthUser,
   ForgotPasswordRequest,
@@ -56,3 +57,18 @@ export type {
   EmployeesListQuery,
   UpdateEmployeeRequest,
 } from './employee.js';
+
+export type {
+  CreateRoleRequest,
+  CreateUserRoleAssignmentRequest,
+  Permission,
+  PermissionsListQuery,
+  ReplaceRolePermissionsRequest,
+  Role,
+  RolePermissionsPayload,
+  RolesListQuery,
+  ScopeType,
+  UpdateRoleRequest,
+  UserRoleAssignment,
+  UserRoleAssignmentsListQuery,
+} from './rbac.js';
