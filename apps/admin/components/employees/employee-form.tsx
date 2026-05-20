@@ -129,9 +129,9 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
       try {
         const client = getApiClient();
         const [usersResult, orgsResult, employeesResult] = await Promise.all([
-          client.listUsers({ page: 1, limit: 200, status: 'active' }),
-          client.listOrganizations({ page: 1, limit: 200 }),
-          client.listEmployees({ page: 1, limit: 200 }),
+          client.listUsers({ page: 1, limit: 100, status: 'active' }),
+          client.listOrganizations({ page: 1, limit: 100 }),
+          client.listEmployees({ page: 1, limit: 100 }),
         ]);
         if (!cancelled) {
           setUsers(usersResult.data);

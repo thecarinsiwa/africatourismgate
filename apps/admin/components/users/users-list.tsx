@@ -57,7 +57,7 @@ export function UsersList() {
     let cancelled = false;
     async function loadOrganizations() {
       try {
-        const result = await getApiClient().listOrganizations({ page: 1, limit: 200 });
+        const result = await getApiClient().listOrganizations({ page: 1, limit: 100 });
         if (!cancelled) {
           setOrganizations(result.data);
         }
