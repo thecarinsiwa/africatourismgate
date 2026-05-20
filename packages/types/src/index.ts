@@ -12,6 +12,7 @@ export type UUID = string;
 
 export type {
   AuthResponse,
+  AuthMe,
   AuthTokens,
   AuthUser,
   ForgotPasswordRequest,

@@ -1,9 +1,11 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
+  SetMetadata,
   UseGuards,
 } from '@nestjs/common';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
@@ -15,7 +17,8 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Public } from './decorators/public.decorator';
+import { IS_PUBLIC_KEY, Public } from './decorators/public.decorator';
+import { CurrentUser } from './decorators/current-user.decorator';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { AuthService } from './auth.service';
 import {
@@ -30,12 +33,24 @@ import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { RegisterDto } from './dto/register.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { ResetPasswordResponseDto } from './dto/reset-password-response.dto';
+import { AuthMeDto } from './dto/auth-me.dto';
+import { AuthUserDto } from './dto/auth-user.dto';
 
 @Public()
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @Get('me')
+  @SetMetadata(IS_PUBLIC_KEY, false)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Current user profile and effective permissions' })
+  @ApiOkResponse({ type: AuthMeDto })
+  @ApiUnauthorizedResponse()
+  me(@CurrentUser() user: AuthUserDto): Promise<AuthMeDto> {
+    return this.authService.getAuthMe(user.id);
+  }
 
   @Post('login')
   @UseGuards(ThrottlerGuard)

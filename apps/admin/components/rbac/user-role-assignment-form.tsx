@@ -40,6 +40,7 @@ export function UserRoleAssignmentForm({
   const [users, setUsers] = useState<User[]>([]);
   const [roles, setRoles] = useState<Role[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -49,6 +50,7 @@ export function UserRoleAssignmentForm({
   useEffect(() => {
     let cancelled = false;
     async function load() {
+      setLoadError(null);
       try {
         const client = getApiClient();
         const [usersResult, rolesResult] = await Promise.all([
@@ -59,10 +61,11 @@ export function UserRoleAssignmentForm({
           setUsers(usersResult.data);
           setRoles(rolesResult.data.filter((r) => !r.isSystem || r.code !== 'super_admin'));
         }
-      } catch {
+      } catch (err) {
         if (!cancelled) {
           setUsers([]);
           setRoles([]);
+          setLoadError(getRbacErrorMessage(err));
         }
       }
     }
@@ -111,6 +114,11 @@ export function UserRoleAssignmentForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4 rounded-lg border border-atg-border p-4">
       <h3 className="text-sm font-semibold text-atg-fg">Assigner un rôle</h3>
+      {loadError ? (
+        <p role="alert" className="text-sm text-red-600">
+          {loadError}
+        </p>
+      ) : null}
       {error ? (
         <p role="alert" className="text-sm text-red-600">
           {error}

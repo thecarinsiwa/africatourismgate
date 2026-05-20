@@ -56,11 +56,28 @@ const PERMISSION_UPSERTS: Array<{
   },
 ];
 
-/** org_admin needs these to use the RBAC admin UI. */
-const ORG_ADMIN_RBAC_PERMISSION_IDS = [
+/** Full org_admin set (install.seed.sql) — repairs partial or missing grants. */
+const ORG_ADMIN_PERMISSION_IDS = [
+  '00000000-0000-4000-8000-000000001001',
+  '00000000-0000-4000-8000-000000001002',
+  '00000000-0000-4000-8000-000000001004',
+  '00000000-0000-4000-8000-000000001005',
+  '00000000-0000-4000-8000-000000001006',
+  '00000000-0000-4000-8000-000000001007',
+  '00000000-0000-4000-8000-000000001008',
+  '00000000-0000-4000-8000-000000001009',
+  '00000000-0000-4000-8000-000000001010',
+  '00000000-0000-4000-8000-000000001011',
+  '00000000-0000-4000-8000-000000001012',
+  '00000000-0000-4000-8000-000000001013',
+  '00000000-0000-4000-8000-000000001014',
   '00000000-0000-4000-8000-000000001016',
   '00000000-0000-4000-8000-000000001017',
   '00000000-0000-4000-8000-000000001018',
+  '00000000-0000-4000-8000-000000001025',
+  '00000000-0000-4000-8000-000000001026',
+  '00000000-0000-4000-8000-000000001027',
+  '00000000-0000-4000-8000-000000001028',
 ];
 
 async function platformOrgExists(config: ConfigService): Promise<boolean> {
@@ -99,7 +116,7 @@ async function platformOrgExists(config: ConfigService): Promise<boolean> {
  * Idempotent RBAC repair for existing databases:
  * - upsert permissions added after initial seed
  * - grant all permissions to super_admin
- * - grant roles.* / permissions.read to org_admin
+ * - repair full org_admin permission set (incl. users.read, roles.*)
  * - ensure seed admin keeps an active super_admin assignment
  */
 export async function ensureRbacPermissions(config: ConfigService): Promise<void> {
@@ -144,7 +161,7 @@ export async function ensureRbacPermissions(config: ConfigService): Promise<void
     const superAdminLinked = (superAdminResult as { affectedRows?: number })
       .affectedRows;
 
-    for (const permissionId of ORG_ADMIN_RBAC_PERMISSION_IDS) {
+    for (const permissionId of ORG_ADMIN_PERMISSION_IDS) {
       await connection.query(
         `INSERT INTO \`role_permissions\` (\`role_id\`, \`permission_id\`, \`granted_by_user_id\`)
          VALUES (?, ?, ?)
@@ -176,8 +193,8 @@ export async function ensureRbacPermissions(config: ConfigService): Promise<void
       `RBAC permissions synchronized (super_admin links: ${superAdminLinked ?? 'ok'})`,
     );
   } catch (err) {
-    logger.warn(
-      `RBAC permission sync skipped or failed: ${err instanceof Error ? err.message : String(err)}`,
+    logger.error(
+      `RBAC permission sync failed: ${err instanceof Error ? err.message : String(err)}`,
     );
   } finally {
     await connection.end();

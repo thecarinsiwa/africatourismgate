@@ -46,6 +46,8 @@ import { ForgotPasswordResponseDto } from './dto/forgot-password-response.dto';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { AuthMeDto } from './dto/auth-me.dto';
+import { PermissionsService } from '../rbac/permissions.service';
 
 @Injectable()
 export class AuthService {
@@ -68,6 +70,7 @@ export class AuthService {
     private readonly passwordResetRepo: Repository<PasswordResetTokens>,
     private readonly jwtService: JwtService,
     private readonly config: ConfigService,
+    private readonly permissionsService: PermissionsService,
   ) {
     this.accessSecret = this.requireSecret('JWT_ACCESS_SECRET');
     this.refreshSecret = this.requireSecret('JWT_REFRESH_SECRET');
@@ -123,6 +126,26 @@ export class AuthService {
 
     const tokens = await this.issueTokenPair(user);
     return { ...tokens, user: toAuthUserDto(user) };
+  }
+
+  async getAuthMe(userId: string): Promise<AuthMeDto> {
+    const user = await this.usersRepo.findOne({
+      where: { id: userId, deletedAt: IsNull() },
+    });
+    if (!user || user.status !== 'active') {
+      throw new UnauthorizedException();
+    }
+
+    const [permissions, isSuperAdmin] = await Promise.all([
+      this.permissionsService.getUserPermissionCodes(userId),
+      this.permissionsService.hasSuperAdminRole(userId),
+    ]);
+
+    return {
+      user: toAuthUserDto(user),
+      permissions: [...permissions].sort(),
+      isSuperAdmin,
+    };
   }
 
   async login(dto: LoginDto): Promise<AuthResponseDto> {

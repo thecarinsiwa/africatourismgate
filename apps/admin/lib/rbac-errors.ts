@@ -7,9 +7,13 @@ export function getRbacErrorMessage(error: unknown): string {
 
   if (error instanceof ApiHttpError) {
     if (error.status === 403) {
-      return error.message?.includes('système')
-        ? error.message
-        : 'Vous n’avez pas la permission d’effectuer cette action.';
+      if (error.message?.includes('système')) {
+        return error.message;
+      }
+      return (
+        'Accès refusé : votre compte n’a pas les permissions requises (users.read, roles.read). ' +
+        'Reconnectez-vous avec admin@africatourismgate.local ou exécutez pnpm --filter @africatourismgate/api sync:rbac puis redémarrez l’API.'
+      );
     }
     if (error.status === 409) {
       return 'Cette assignation existe déjà pour ce périmètre.';
