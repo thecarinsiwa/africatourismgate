@@ -1,4 +1,4 @@
-@import '@africatourismgate/config/theme.css';
+@import '../../../packages/config/theme.css';
 
 @tailwind base;
 @tailwind components;
