@@ -1,8 +1,11 @@
 import type {
   AuthResponse,
   AuthTokens,
+  CreateEmployeeRequest,
   CreateOrganizationRequest,
   CreateUserRequest,
+  Employee,
+  EmployeesListQuery,
   ForgotPasswordRequest,
   ForgotPasswordResponse,
   LoginRequest,
@@ -15,6 +18,7 @@ import type {
   ResetPasswordRequest,
   ResetPasswordResponse,
   SucceededPaymentsRevenue,
+  UpdateEmployeeRequest,
   UpdateOrganizationRequest,
   UpdateUserRequest,
   User,
@@ -50,10 +54,14 @@ export type {
   UserStatus,
   Organization,
   OrganizationStatus,
+  CreateEmployeeRequest,
   CreateOrganizationRequest,
+  UpdateEmployeeRequest,
   UpdateOrganizationRequest,
   CreateUserRequest,
   UpdateUserRequest,
+  Employee,
+  EmployeesListQuery,
   User,
   UsersListQuery,
 } from '@africatourismgate/types';
@@ -275,6 +283,34 @@ export class ApiClient {
 
   countOrganizations(): Promise<number> {
     return fetchTotal(this, '/organizations');
+  }
+
+  listEmployees(
+    query?: EmployeesListQuery,
+  ): Promise<PaginatedResponse<Employee>> {
+    return fetchPaginated<Employee>(this, '/employees', query);
+  }
+
+  getEmployee(id: string): Promise<Employee> {
+    return this.request<Employee>(`/employees/${id}`);
+  }
+
+  createEmployee(body: CreateEmployeeRequest): Promise<Employee> {
+    return this.request<Employee>('/employees', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateEmployee(id: string, body: UpdateEmployeeRequest): Promise<Employee> {
+    return this.request<Employee>(`/employees/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteEmployee(id: string): Promise<void> {
+    return this.request<void>(`/employees/${id}`, { method: 'DELETE' });
   }
 
   getSucceededPaymentsRevenue(): Promise<SucceededPaymentsRevenue> {

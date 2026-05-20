@@ -9,29 +9,36 @@ import {
   Input,
   type ColumnDef,
 } from '@africatourismgate/ui';
-import type { Organization, User, UserStatus } from '@africatourismgate/types';
+import type { Employee, EmployeeStatus, Organization } from '@africatourismgate/types';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getUsersErrorMessage } from '../../lib/users-errors';
+import { getEmployeesErrorMessage } from '../../lib/employees-errors';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
 
-type StatusFilter = '' | 'active' | 'suspended';
+type StatusFilter = '' | EmployeeStatus;
 
-const statusLabels: Record<UserStatus, string> = {
+const statusLabels: Record<EmployeeStatus, string> = {
   active: 'Actif',
-  suspended: 'Suspendu',
-  deleted: 'Supprimé',
+  on_leave: 'En congé',
+  terminated: 'Terminé',
 };
 
-const statusVariants: Record<UserStatus, 'success' | 'muted' | 'danger'> = {
+const statusVariants: Record<EmployeeStatus, 'success' | 'muted' | 'danger'> = {
   active: 'success',
-  suspended: 'muted',
-  deleted: 'danger',
+  on_leave: 'muted',
+  terminated: 'danger',
 };
 
-export function UsersList() {
+function userDisplayName(employee: Employee): string {
+  if (employee.user) {
+    return `${employee.user.firstName} ${employee.user.lastName}`;
+  }
+  return employee.userId.slice(0, 8);
+}
+
+export function EmployeesList() {
   const statusFilterId = useId();
   const orgFilterId = useId();
   const [searchInput, setSearchInput] = useState('');
@@ -45,7 +52,7 @@ export function UsersList() {
     | { status: 'error'; message: string }
     | {
         status: 'ready';
-        users: User[];
+        employees: Employee[];
         total: number;
         totalPages: number;
       }
@@ -84,7 +91,7 @@ export function UsersList() {
   const load = useCallback(async () => {
     setState({ status: 'loading' });
     try {
-      const result = await getApiClient().listUsers({
+      const result = await getApiClient().listEmployees({
         page,
         limit: PAGE_SIZE,
         search: search || undefined,
@@ -93,12 +100,12 @@ export function UsersList() {
       });
       setState({
         status: 'ready',
-        users: result.data,
+        employees: result.data,
         total: result.meta.total,
         totalPages: result.meta.totalPages,
       });
     } catch (error) {
-      setState({ status: 'error', message: getUsersErrorMessage(error) });
+      setState({ status: 'error', message: getEmployeesErrorMessage(error) });
     }
   }, [page, search, statusFilter, organizationFilter]);
 
@@ -120,21 +127,22 @@ export function UsersList() {
   }, [searchInput]);
 
   const handleDelete = useCallback(
-    async (user: User) => {
+    async (employee: Employee) => {
+      const label = employee.user?.email ?? employee.employeeCode ?? employee.id;
       if (
         !window.confirm(
-          `Supprimer l’utilisateur « ${user.email} » ? Cette action est réversible côté base.`,
+          `Supprimer l’employé « ${label} » ? Cette action est réversible côté base.`,
         )
       ) {
         return;
       }
       setDeleteError(null);
-      setDeletingId(user.id);
+      setDeletingId(employee.id);
       try {
-        await getApiClient().deleteUser(user.id);
+        await getApiClient().deleteEmployee(employee.id);
         await load();
       } catch (error) {
-        setDeleteError(getUsersErrorMessage(error));
+        setDeleteError(getEmployeesErrorMessage(error));
       } finally {
         setDeletingId(null);
       }
@@ -142,22 +150,35 @@ export function UsersList() {
     [load],
   );
 
-  const columns = useMemo<ColumnDef<User, unknown>[]>(
+  const columns = useMemo<ColumnDef<Employee, unknown>[]>(
     () => [
       {
-        accessorKey: 'email',
-        header: 'E-mail',
+        id: 'user',
+        header: 'Utilisateur',
+        cell: ({ row }) => {
+          const emp = row.original;
+          return (
+            <div>
+              <span className="font-medium text-atg-fg">{userDisplayName(emp)}</span>
+              {emp.user?.email ? (
+                <p className="text-xs text-atg-muted">{emp.user.email}</p>
+              ) : null}
+            </div>
+          );
+        },
+      },
+      {
+        accessorKey: 'employeeCode',
+        header: 'Code',
         cell: ({ row }) => (
-          <span className="font-medium text-atg-fg">{row.original.email}</span>
+          <span className="text-atg-fg">{row.original.employeeCode ?? '—'}</span>
         ),
       },
       {
-        id: 'name',
-        header: 'Nom',
+        accessorKey: 'jobTitle',
+        header: 'Poste',
         cell: ({ row }) => (
-          <span className="text-atg-fg">
-            {row.original.firstName} {row.original.lastName}
-          </span>
+          <span className="text-atg-muted">{row.original.jobTitle ?? '—'}</span>
         ),
       },
       {
@@ -191,19 +212,19 @@ export function UsersList() {
         header: 'Actions',
         meta: { align: 'right' },
         cell: ({ row }) => {
-          const user = row.original;
+          const employee = row.original;
           return (
             <div className="flex justify-end gap-1.5 opacity-90 transition-opacity group-hover:opacity-100">
-              <Button href={`/utilisateurs/${user.id}`} variant="ghost" size="sm">
+              <Button href={`/utilisateurs/employes/${employee.id}`} variant="ghost" size="sm">
                 Modifier
               </Button>
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
-                onClick={() => void handleDelete(user)}
-                disabled={deletingId === user.id}
-                loading={deletingId === user.id}
+                onClick={() => void handleDelete(employee)}
+                disabled={deletingId === employee.id}
+                loading={deletingId === employee.id}
                 loadingText="…"
                 className="!text-red-600 hover:!bg-red-50 hover:!text-red-700 dark:!text-red-400 dark:hover:!bg-red-950/30"
               >
@@ -219,12 +240,12 @@ export function UsersList() {
 
   const isLoading = state.status === 'loading';
   const isError = state.status === 'error';
-  const users = state.status === 'ready' ? state.users : [];
+  const employees = state.status === 'ready' ? state.employees : [];
   const hasFilters =
     search.trim().length > 0 || statusFilter !== '' || organizationFilter !== '';
   const emptyMessage = hasFilters
-    ? 'Aucun utilisateur ne correspond à vos critères.'
-    : 'Aucun utilisateur pour le moment.';
+    ? 'Aucun employé ne correspond à vos critères.'
+    : 'Aucun employé pour le moment.';
 
   return (
     <div className="space-y-6">
@@ -234,10 +255,10 @@ export function UsersList() {
             <Input
               name="search"
               type="search"
-              placeholder="Rechercher par e-mail ou nom…"
+              placeholder="Rechercher par code, poste ou utilisateur…"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              aria-label="Rechercher par e-mail ou nom"
+              aria-label="Rechercher des employés"
             />
           </div>
           <div>
@@ -255,7 +276,8 @@ export function UsersList() {
             >
               <option value="">Tous</option>
               <option value="active">Actif</option>
-              <option value="suspended">Suspendu</option>
+              <option value="on_leave">En congé</option>
+              <option value="terminated">Terminé</option>
             </select>
           </div>
           <div>
@@ -280,7 +302,7 @@ export function UsersList() {
             </select>
           </div>
         </div>
-        <Button href="/utilisateurs/nouveau">Nouvel utilisateur</Button>
+        <Button href="/utilisateurs/employes/nouveau">Nouvel employé</Button>
       </div>
 
       {deleteError ? (
@@ -298,12 +320,12 @@ export function UsersList() {
           <Card variant="dashboard" padding="none" className="overflow-hidden">
             <DataTable
               columns={columns}
-              data={users}
+              data={employees}
               isLoading={isLoading}
               emptyMessage={emptyMessage}
               emptyVariant={hasFilters ? 'search' : 'default'}
               getRowId={(row) => row.id}
-              aria-label="Liste des utilisateurs"
+              aria-label="Liste des employés"
             />
           </Card>
 
@@ -313,7 +335,7 @@ export function UsersList() {
               pageSize={PAGE_SIZE}
               totalPages={state.totalPages}
               totalItems={state.total}
-              itemLabel="utilisateur"
+              itemLabel="employé"
               onPageChange={setPage}
             />
           ) : null}
