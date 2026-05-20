@@ -175,6 +175,13 @@ async function main() {
     throw new Error('PATCH did not set status to on_leave');
   }
 
+  console.log('6b. PATCH invalid dates (expect 400)');
+  const badDates = await request('PATCH', `/employees/${employeeId}`, {
+    token,
+    body: { hireDate: '2025-12-01', terminationDate: '2025-06-01' },
+  });
+  assertStatus('PATCH invalid employment dates', badDates.status, 400);
+
   console.log('7. POST invalid organizationId (expect 404)');
   const badOrg = await request('POST', '/employees', {
     token,

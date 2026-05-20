@@ -13,6 +13,11 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { suggestNextEmployeeCode } from '../../lib/employee-code';
+import {
+  dayAfter,
+  dayBefore,
+  employmentDateFieldErrors,
+} from '../../lib/employee-dates';
 import { getEmployeesErrorMessage } from '../../lib/employees-errors';
 
 export type EmployeeFormValues = {
@@ -203,6 +208,7 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
         errors.salary = 'Le salaire doit être un nombre positif.';
       }
     }
+    Object.assign(errors, employmentDateFieldErrors(values.hireDate, values.terminationDate));
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
   }
@@ -332,6 +338,10 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
           type="date"
           value={values.hireDate}
           onChange={(e) => updateField('hireDate', e.target.value)}
+          max={
+            values.terminationDate ? dayBefore(values.terminationDate) : undefined
+          }
+          error={fieldErrors.hireDate}
         />
         <Input
           label="Date de fin"
@@ -339,6 +349,8 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
           type="date"
           value={values.terminationDate}
           onChange={(e) => updateField('terminationDate', e.target.value)}
+          min={values.hireDate ? dayAfter(values.hireDate) : undefined}
+          error={fieldErrors.terminationDate}
         />
       </div>
 

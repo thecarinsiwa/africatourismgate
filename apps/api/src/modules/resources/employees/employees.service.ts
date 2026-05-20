@@ -12,6 +12,7 @@ import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { EmployeeDto, toEmployeeDto } from './dto/employee.dto';
 import { EmployeesListQueryDto } from './dto/employees-list-query.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import { assertHireDateBeforeTermination } from './employee-dates.util';
 import {
   formatEmployeeCode,
   organizationPrefixFromSlug,
@@ -106,6 +107,7 @@ export class EmployeesService {
     if (dto.managerId) {
       await this.assertManagerExists(dto.managerId);
     }
+    assertHireDateBeforeTermination(dto.hireDate, dto.terminationDate);
 
     const payload = this.buildCreatePayload(dto);
     if (!dto.employeeCode?.trim()) {
@@ -126,7 +128,7 @@ export class EmployeesService {
     dto: UpdateEmployeeDto,
     actorUserId?: string,
   ): Promise<EmployeeDto> {
-    await this.getActiveEmployee(id);
+    const existing = await this.getActiveEmployee(id);
 
     if (dto.userId !== undefined) {
       await this.assertUserAvailable(dto.userId, id);
@@ -140,6 +142,14 @@ export class EmployeesService {
       }
       await this.assertManagerExists(dto.managerId);
     }
+
+    const hireDate =
+      dto.hireDate !== undefined ? dto.hireDate : existing.hireDate;
+    const terminationDate =
+      dto.terminationDate !== undefined
+        ? dto.terminationDate
+        : existing.terminationDate;
+    assertHireDateBeforeTermination(hireDate, terminationDate);
 
     const employee = await this.crud.update(
       id,
