@@ -1,12 +1,16 @@
 import {
   ConflictException,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, DeepPartial, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import { Organizations } from '../../../entities/generated';
 import { CrudService } from '../../../common/crud/crud.service';
+import { OrgScopeService } from '../../../common/org-scope/org-scope.service';
+import { AuthUserDto } from '../../auth/dto/auth-user.dto';
+import { PermissionsService } from '../../rbac/permissions.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { OrganizationsListQueryDto } from './dto/organizations-list-query.dto';
 import { UpdateOrganizationDto } from './dto/update-organization.dto';
@@ -16,6 +20,8 @@ export class OrganizationsService extends CrudService<Organizations> {
   constructor(
     @InjectRepository(Organizations)
     private readonly orgRepository: Repository<Organizations>,
+    private readonly orgScope: OrgScopeService,
+    private readonly permissionsService: PermissionsService,
   ) {
     super(orgRepository);
   }
@@ -78,12 +84,48 @@ export class OrganizationsService extends CrudService<Organizations> {
   override async update(
     id: string,
     dto: UpdateOrganizationDto,
-    actorUserId?: string,
+    userOrActorId?: AuthUserDto | string,
+  ): Promise<Organizations> {
+    const existing = await this.orgRepository.findOne({
+      where: { id },
+    });
+    if (!existing) {
+      throw new NotFoundException('Organisation introuvable.');
+    }
+
+    const actorUserId =
+      typeof userOrActorId === 'string'
+        ? userOrActorId
+        : userOrActorId?.id;
+
+    if (userOrActorId && typeof userOrActorId !== 'string') {
+      const isSuperAdmin = await this.permissionsService.hasSuperAdminRole(
+        userOrActorId.id,
+      );
+      if (!isSuperAdmin) {
+        await this.orgScope.assertCanAccessOrganization(userOrActorId, id);
+        const restricted: UpdateOrganizationDto = { ...dto };
+        delete restricted.slug;
+        delete restricted.status;
+        return this.applyUpdate(id, restricted, actorUserId);
+      }
+    }
+
+    return this.applyUpdate(id, dto, actorUserId);
+  }
+
+  private async applyUpdate(
+    id: string,
+    dto: UpdateOrganizationDto,
+    actorUserId: string | undefined,
   ): Promise<Organizations> {
     const payload = { ...dto } as UpdateOrganizationDto;
     if (dto.slug !== undefined) {
       payload.slug = dto.slug.trim().toLowerCase();
       await this.assertSlugAvailable(payload.slug, id);
+    }
+    if (dto.currency !== undefined) {
+      payload.currency = dto.currency.trim().toUpperCase();
     }
     return super.update(id, payload as DeepPartial<Organizations>, actorUserId);
   }

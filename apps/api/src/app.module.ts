@@ -7,10 +7,11 @@ import { ApiResourcesModule } from './modules/api-resources.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from './modules/rbac/guards/permissions.guard';
+import { OrgScopeModule } from './common/org-scope/org-scope.module';
 import { RbacModule } from './modules/rbac/rbac.module';
 
 @Module({
-  imports: [DatabaseModule, AuthModule, RbacModule, ApiResourcesModule],
+  imports: [DatabaseModule, AuthModule, RbacModule, OrgScopeModule, ApiResourcesModule],
   controllers: [AppController],
   providers: [
     AppService,

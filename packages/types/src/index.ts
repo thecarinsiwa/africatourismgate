@@ -43,6 +43,20 @@ export type {
 } from './organization.js';
 
 export type {
+  BookingDefaultsValue,
+  BrandingPlatformValue,
+  BulkUpsertOrganizationSettingsRequest,
+  CreateOrganizationBankAccountRequest,
+  LocaleSettingValue,
+  OrganizationBankAccount,
+  OrganizationBankAccountsListQuery,
+  OrganizationSetting,
+  OrganizationSettingsListQuery,
+  UpdateOrganizationBankAccountRequest,
+  UpsertOrganizationSettingItem,
+} from './organization-settings.js';
+
+export type {
   CreateUserRequest,
   UpdateUserRequest,
   User,
