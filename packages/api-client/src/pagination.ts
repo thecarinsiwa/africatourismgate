@@ -1,10 +1,15 @@
 import type {
+  AmenitiesListQuery,
   DestinationsListQuery,
   PaginatedResponse,
   PaginationQuery,
   PaymentListItem,
   PointsOfInterestListQuery,
+  PropertiesListQuery,
+  PropertyAmenitiesListQuery,
+  PropertyImagesListQuery,
   RbacAuditLogsListQuery,
+  RoomsListQuery,
   SucceededPaymentsRevenue,
   UsersListQuery,
 } from '@africatourismgate/types';
@@ -22,7 +27,12 @@ function buildQueryString(
     | UsersListQuery
     | RbacAuditLogsListQuery
     | DestinationsListQuery
-    | PointsOfInterestListQuery,
+    | PointsOfInterestListQuery
+    | PropertiesListQuery
+    | PropertyImagesListQuery
+    | RoomsListQuery
+    | AmenitiesListQuery
+    | PropertyAmenitiesListQuery,
 ): string {
   const params = new URLSearchParams();
   if (query?.page !== undefined) {
@@ -70,6 +80,14 @@ function buildQueryString(
   ) {
     params.set('destinationId', query.destinationId);
   }
+  if (
+    'propertyId' in (query ?? {}) &&
+    query &&
+    'propertyId' in query &&
+    query.propertyId
+  ) {
+    params.set('propertyId', query.propertyId);
+  }
   const qs = params.toString();
   return qs ? `?${qs}` : '';
 }
@@ -82,7 +100,12 @@ export async function fetchPaginated<T>(
     | UsersListQuery
     | RbacAuditLogsListQuery
     | DestinationsListQuery
-    | PointsOfInterestListQuery,
+    | PointsOfInterestListQuery
+    | PropertiesListQuery
+    | PropertyImagesListQuery
+    | RoomsListQuery
+    | AmenitiesListQuery
+    | PropertyAmenitiesListQuery,
 ): Promise<PaginatedResponse<T>> {
   return client.request<PaginatedResponse<T>>(`${path}${buildQueryString(query)}`);
 }

@@ -1,11 +1,17 @@
 import type {
+  Amenity,
+  AmenitiesListQuery,
   AuthMe,
   AuthResponse,
   AuthTokens,
+  CreateAmenityRequest,
   CreateDestinationRequest,
   CreateEmployeeRequest,
   CreateOrganizationRequest,
   CreatePointOfInterestRequest,
+  CreatePropertyImageRequest,
+  CreatePropertyRequest,
+  CreateRoomRequest,
   CreateRoleRequest,
   CreateUserRequest,
   CreateUserRoleAssignmentRequest,
@@ -15,10 +21,13 @@ import type {
   PermissionsListQuery,
   RbacAuditLog,
   RbacAuditLogsListQuery,
+  ReplacePropertyAmenitiesRequest,
   ReplaceRolePermissionsRequest,
   Role,
   RolePermissionsPayload,
   RolesListQuery,
+  Room,
+  RoomsListQuery,
   Destination,
   DestinationsListQuery,
   ForgotPasswordRequest,
@@ -26,6 +35,12 @@ import type {
   LoginRequest,
   LogoutResponse,
   Organization,
+  Property,
+  PropertyAmenitiesListQuery,
+  PropertyAmenitiesPayload,
+  PropertyImage,
+  PropertyImagesListQuery,
+  PropertiesListQuery,
   PointOfInterest,
   PointsOfInterestListQuery,
   PaginatedResponse,
@@ -35,8 +50,12 @@ import type {
   ResetPasswordRequest,
   ResetPasswordResponse,
   SucceededPaymentsRevenue,
+  UpdateAmenityRequest,
   UpdateDestinationRequest,
   UpdateEmployeeRequest,
+  UpdatePropertyImageRequest,
+  UpdatePropertyRequest,
+  UpdateRoomRequest,
   UpdatePointOfInterestRequest,
   BulkUpsertOrganizationSettingsRequest,
   CreateOrganizationBankAccountRequest,
@@ -122,6 +141,26 @@ export type {
   UsersListQuery,
   UserRoleAssignment,
   UserRoleAssignmentsListQuery,
+  Amenity,
+  AmenitiesListQuery,
+  CreateAmenityRequest,
+  CreatePropertyImageRequest,
+  CreatePropertyRequest,
+  CreateRoomRequest,
+  Property,
+  PropertyAmenitiesListQuery,
+  PropertyAmenitiesPayload,
+  PropertyImage,
+  PropertyImagesListQuery,
+  PropertiesListQuery,
+  PropertyType,
+  ReplacePropertyAmenitiesRequest,
+  Room,
+  RoomsListQuery,
+  UpdateAmenityRequest,
+  UpdatePropertyImageRequest,
+  UpdatePropertyRequest,
+  UpdateRoomRequest,
 } from '@africatourismgate/types';
 
 export { fetchPaginated, fetchTotal, sumSucceededPaymentsRevenue } from './pagination';
@@ -292,8 +331,109 @@ export class ApiClient {
     return fetchPaginated(this, '/bookings', query);
   }
 
-  listProperties(query?: PaginationQuery): Promise<PaginatedResponse<unknown>> {
-    return fetchPaginated(this, '/properties', query);
+  listProperties(
+    query?: PropertiesListQuery,
+  ): Promise<PaginatedResponse<Property>> {
+    return fetchPaginated<Property>(this, '/properties', query);
+  }
+
+  getProperty(id: string): Promise<Property> {
+    return this.request<Property>(`/properties/${id}`);
+  }
+
+  createProperty(body: CreatePropertyRequest): Promise<Property> {
+    return this.request<Property>('/properties', { method: 'POST', body });
+  }
+
+  updateProperty(id: string, body: UpdatePropertyRequest): Promise<Property> {
+    return this.request<Property>(`/properties/${id}`, { method: 'PATCH', body });
+  }
+
+  deleteProperty(id: string): Promise<void> {
+    return this.request<void>(`/properties/${id}`, { method: 'DELETE' });
+  }
+
+  listPropertyImages(
+    query?: PropertyImagesListQuery,
+  ): Promise<PaginatedResponse<PropertyImage>> {
+    return fetchPaginated<PropertyImage>(this, '/property-images', query);
+  }
+
+  getPropertyImage(id: string): Promise<PropertyImage> {
+    return this.request<PropertyImage>(`/property-images/${id}`);
+  }
+
+  createPropertyImage(body: CreatePropertyImageRequest): Promise<PropertyImage> {
+    return this.request<PropertyImage>('/property-images', { method: 'POST', body });
+  }
+
+  updatePropertyImage(
+    id: string,
+    body: UpdatePropertyImageRequest,
+  ): Promise<PropertyImage> {
+    return this.request<PropertyImage>(`/property-images/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deletePropertyImage(id: string): Promise<void> {
+    return this.request<void>(`/property-images/${id}`, { method: 'DELETE' });
+  }
+
+  listRooms(query?: RoomsListQuery): Promise<PaginatedResponse<Room>> {
+    return fetchPaginated<Room>(this, '/rooms', query);
+  }
+
+  getRoom(id: string): Promise<Room> {
+    return this.request<Room>(`/rooms/${id}`);
+  }
+
+  createRoom(body: CreateRoomRequest): Promise<Room> {
+    return this.request<Room>('/rooms', { method: 'POST', body });
+  }
+
+  updateRoom(id: string, body: UpdateRoomRequest): Promise<Room> {
+    return this.request<Room>(`/rooms/${id}`, { method: 'PATCH', body });
+  }
+
+  deleteRoom(id: string): Promise<void> {
+    return this.request<void>(`/rooms/${id}`, { method: 'DELETE' });
+  }
+
+  listAmenities(query?: AmenitiesListQuery): Promise<PaginatedResponse<Amenity>> {
+    return fetchPaginated<Amenity>(this, '/amenities', query);
+  }
+
+  getAmenity(id: string): Promise<Amenity> {
+    return this.request<Amenity>(`/amenities/${id}`);
+  }
+
+  createAmenity(body: CreateAmenityRequest): Promise<Amenity> {
+    return this.request<Amenity>('/amenities', { method: 'POST', body });
+  }
+
+  updateAmenity(id: string, body: UpdateAmenityRequest): Promise<Amenity> {
+    return this.request<Amenity>(`/amenities/${id}`, { method: 'PATCH', body });
+  }
+
+  deleteAmenity(id: string): Promise<void> {
+    return this.request<void>(`/amenities/${id}`, { method: 'DELETE' });
+  }
+
+  listPropertyAmenities(
+    query?: PropertyAmenitiesListQuery,
+  ): Promise<PaginatedResponse<{ propertyId: string; amenityId: string }>> {
+    return fetchPaginated(this, '/property-amenities', query);
+  }
+
+  replacePropertyAmenities(
+    body: ReplacePropertyAmenitiesRequest,
+  ): Promise<PropertyAmenitiesPayload> {
+    return this.request<PropertyAmenitiesPayload>('/property-amenities/sync', {
+      method: 'PUT',
+      body,
+    });
   }
 
   listPayments(query?: PaginationQuery): Promise<PaginatedResponse<PaymentListItem>> {

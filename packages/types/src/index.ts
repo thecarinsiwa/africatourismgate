@@ -54,6 +54,30 @@ export type {
 } from './destination.js';
 
 export type {
+  Amenity,
+  AmenitiesListQuery,
+  CreateAmenityRequest,
+  CreatePropertyImageRequest,
+  CreatePropertyRequest,
+  CreateRoomRequest,
+  Property,
+  PropertyAmenitiesListQuery,
+  PropertyAmenitiesPayload,
+  PropertyAmenity,
+  PropertiesListQuery,
+  PropertyImage,
+  PropertyImagesListQuery,
+  PropertyType,
+  ReplacePropertyAmenitiesRequest,
+  Room,
+  RoomsListQuery,
+  UpdateAmenityRequest,
+  UpdatePropertyImageRequest,
+  UpdatePropertyRequest,
+  UpdateRoomRequest,
+} from './accommodation.js';
+
+export type {
   BookingDefaultsValue,
   BrandingPlatformValue,
   BulkUpsertOrganizationSettingsRequest,
