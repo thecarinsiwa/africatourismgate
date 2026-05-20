@@ -9,9 +9,9 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
-import { Destinations } from '../../../entities/generated';
+import { CreateDestinationDto } from './dto/create-destination.dto';
+import { DestinationsListQueryDto } from './dto/destinations-list-query.dto';
+import { UpdateDestinationDto } from './dto/update-destination.dto';
 import { DestinationsService } from './destinations.service';
 
 @ApiTags('destinations')
@@ -21,7 +21,7 @@ export class DestinationsController {
 
   @Get()
   @ApiOperation({ summary: 'List destinations' })
-  findAll(@Query() query: PaginationQueryDto) {
+  findAll(@Query() query: DestinationsListQueryDto) {
     return this.service.findAll(query);
   }
 
@@ -33,13 +33,13 @@ export class DestinationsController {
 
   @Post()
   @ApiOperation({ summary: 'Create destinations' })
-  create(@Body() dto: DeepPartial<Destinations>) {
+  create(@Body() dto: CreateDestinationDto) {
     return this.service.create(dto);
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update destinations' })
-  update(@Param('id') id: string, @Body() dto: DeepPartial<Destinations>) {
+  update(@Param('id') id: string, @Body() dto: UpdateDestinationDto) {
     return this.service.update(id, dto);
   }
 

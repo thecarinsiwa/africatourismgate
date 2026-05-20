@@ -1,7 +1,9 @@
 import type {
+  DestinationsListQuery,
   PaginatedResponse,
   PaginationQuery,
   PaymentListItem,
+  PointsOfInterestListQuery,
   RbacAuditLogsListQuery,
   SucceededPaymentsRevenue,
   UsersListQuery,
@@ -15,7 +17,12 @@ export interface PaginatedRequestClient {
 const DEFAULT_CURRENCY = 'CDF';
 
 function buildQueryString(
-  query?: PaginationQuery | UsersListQuery | RbacAuditLogsListQuery,
+  query?:
+    | PaginationQuery
+    | UsersListQuery
+    | RbacAuditLogsListQuery
+    | DestinationsListQuery
+    | PointsOfInterestListQuery,
 ): string {
   const params = new URLSearchParams();
   if (query?.page !== undefined) {
@@ -24,7 +31,7 @@ function buildQueryString(
   if (query?.limit !== undefined) {
     params.set('limit', String(query.limit));
   }
-  if (query?.search !== undefined && query.search !== '') {
+  if ('search' in (query ?? {}) && query && 'search' in query && query.search) {
     params.set('search', query.search);
   }
   if ('status' in (query ?? {}) && query && 'status' in query && query.status) {
@@ -55,6 +62,14 @@ function buildQueryString(
   if ('dateTo' in (query ?? {}) && query && 'dateTo' in query && query.dateTo) {
     params.set('dateTo', query.dateTo);
   }
+  if (
+    'destinationId' in (query ?? {}) &&
+    query &&
+    'destinationId' in query &&
+    query.destinationId
+  ) {
+    params.set('destinationId', query.destinationId);
+  }
   const qs = params.toString();
   return qs ? `?${qs}` : '';
 }
@@ -62,7 +77,12 @@ function buildQueryString(
 export async function fetchPaginated<T>(
   client: PaginatedRequestClient,
   path: string,
-  query?: PaginationQuery | UsersListQuery | RbacAuditLogsListQuery,
+  query?:
+    | PaginationQuery
+    | UsersListQuery
+    | RbacAuditLogsListQuery
+    | DestinationsListQuery
+    | PointsOfInterestListQuery,
 ): Promise<PaginatedResponse<T>> {
   return client.request<PaginatedResponse<T>>(`${path}${buildQueryString(query)}`);
 }

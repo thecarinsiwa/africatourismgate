@@ -9,9 +9,9 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
-import { PointsOfInterest } from '../../../entities/generated';
+import { CreatePointOfInterestDto } from './dto/create-point-of-interest.dto';
+import { PointsOfInterestListQueryDto } from './dto/points-of-interest-list-query.dto';
+import { UpdatePointOfInterestDto } from './dto/update-point-of-interest.dto';
 import { PointsOfInterestService } from './points-of-interest.service';
 
 @ApiTags('points-of-interest')
@@ -21,7 +21,7 @@ export class PointsOfInterestController {
 
   @Get()
   @ApiOperation({ summary: 'List points-of-interest' })
-  findAll(@Query() query: PaginationQueryDto) {
+  findAll(@Query() query: PointsOfInterestListQueryDto) {
     return this.service.findAll(query);
   }
 
@@ -33,14 +33,14 @@ export class PointsOfInterestController {
 
   @Post()
   @ApiOperation({ summary: 'Create points-of-interest' })
-  create(@Body() dto: DeepPartial<PointsOfInterest>) {
-    return this.service.create(dto);
+  create(@Body() dto: CreatePointOfInterestDto) {
+    return this.service.createPoint(dto);
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update points-of-interest' })
-  update(@Param('id') id: string, @Body() dto: DeepPartial<PointsOfInterest>) {
-    return this.service.update(id, dto);
+  update(@Param('id') id: string, @Body() dto: UpdatePointOfInterestDto) {
+    return this.service.updatePoint(id, dto);
   }
 
   @Delete(':id')
