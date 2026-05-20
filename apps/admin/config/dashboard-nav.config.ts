@@ -62,6 +62,7 @@ export const adminDashboardNavConfig: AdminNavEntryConfig[] = [
     iconKey: 'package',
     children: [
       { href: '/hebergements', label: 'Hébergements', iconKey: 'properties' },
+      { href: '/hebergements/equipements', label: 'Équipements', iconKey: 'properties' },
       { href: '/produits/vols', label: 'Vols', iconKey: 'plane' },
       { href: '/produits/locations', label: 'Locations véhicules', iconKey: 'car' },
       { href: '/produits/croisieres', label: 'Croisières', iconKey: 'ship' },

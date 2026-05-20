@@ -46,6 +46,11 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Propriétés, chambres et disponibilités.',
     apiResource: 'properties',
   },
+  'hebergements/equipements': {
+    title: 'Équipements',
+    description: 'Catalogue global des équipements (amenities).',
+    apiResource: 'amenities',
+  },
   'produits/vols': {
     title: 'Vols',
     description: 'Compagnies, aéroports et vols.',

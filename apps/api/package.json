@@ -11,6 +11,8 @@
     "test:rbac": "node scripts/test-rbac-permissions.mjs",
     "test:organizations": "node scripts/test-organizations-crud.mjs",
     "test:destinations": "node scripts/test-destinations-crud.mjs",
+    "test:properties": "node scripts/test-properties-crud.mjs",
+    "test:rooms-amenities": "node scripts/test-rooms-amenities.mjs",
     "test:users": "node scripts/test-users-crud.mjs",
     "test:employees": "node scripts/test-employees-crud.mjs",
     "test:rbac-crud": "node scripts/test-rbac-crud.mjs",
