@@ -11,7 +11,10 @@ import type {
   CreatePointOfInterestRequest,
   CreatePropertyImageRequest,
   CreatePropertyRequest,
+  CreateRoomAvailabilityRequest,
   CreateRoomRequest,
+  BulkUpsertRoomAvailabilityRequest,
+  BulkUpsertRoomAvailabilityResponse,
   CreateRoleRequest,
   CreateUserRequest,
   CreateUserRoleAssignmentRequest,
@@ -27,6 +30,8 @@ import type {
   RolePermissionsPayload,
   RolesListQuery,
   Room,
+  RoomAvailability,
+  RoomAvailabilityListQuery,
   RoomsListQuery,
   Destination,
   DestinationsListQuery,
@@ -55,6 +60,7 @@ import type {
   UpdateEmployeeRequest,
   UpdatePropertyImageRequest,
   UpdatePropertyRequest,
+  UpdateRoomAvailabilityRequest,
   UpdateRoomRequest,
   UpdatePointOfInterestRequest,
   BulkUpsertOrganizationSettingsRequest,
@@ -399,6 +405,48 @@ export class ApiClient {
 
   deleteRoom(id: string): Promise<void> {
     return this.request<void>(`/rooms/${id}`, { method: 'DELETE' });
+  }
+
+  listRoomAvailability(
+    query: RoomAvailabilityListQuery,
+  ): Promise<PaginatedResponse<RoomAvailability>> {
+    return fetchPaginated<RoomAvailability>(this, '/room-availability', query);
+  }
+
+  getRoomAvailability(id: string): Promise<RoomAvailability> {
+    return this.request<RoomAvailability>(`/room-availability/${id}`);
+  }
+
+  createRoomAvailability(
+    body: CreateRoomAvailabilityRequest,
+  ): Promise<RoomAvailability> {
+    return this.request<RoomAvailability>('/room-availability', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateRoomAvailability(
+    id: string,
+    body: UpdateRoomAvailabilityRequest,
+  ): Promise<RoomAvailability> {
+    return this.request<RoomAvailability>(`/room-availability/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteRoomAvailability(id: string): Promise<void> {
+    return this.request<void>(`/room-availability/${id}`, { method: 'DELETE' });
+  }
+
+  bulkUpsertRoomAvailability(
+    body: BulkUpsertRoomAvailabilityRequest,
+  ): Promise<BulkUpsertRoomAvailabilityResponse> {
+    return this.request<BulkUpsertRoomAvailabilityResponse>(
+      '/room-availability/bulk',
+      { method: 'PUT', body },
+    );
   }
 
   listAmenities(query?: AmenitiesListQuery): Promise<PaginatedResponse<Amenity>> {

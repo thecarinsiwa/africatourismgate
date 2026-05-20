@@ -10,11 +10,22 @@ export function getHebergementsErrorMessage(error: unknown): string {
       return 'Vous n’avez pas la permission d’effectuer cette action.';
     }
     if (error.status === 409) {
-      return error.message?.includes('slug')
-        ? 'Ce slug est déjà utilisé par une autre propriété.'
-        : error.message?.includes('code')
-          ? 'Ce code est déjà utilisé par un autre équipement.'
-          : 'Conflit : cette ressource existe déjà.';
+      if (error.message?.includes('slug')) {
+        return 'Ce slug est déjà utilisé par une autre propriété.';
+      }
+      if (error.message?.includes('code')) {
+        return 'Ce code est déjà utilisé par un autre équipement.';
+      }
+      if (
+        error.message?.includes('disponibilité') ||
+        error.message?.includes('date')
+      ) {
+        return (
+          error.message ||
+          'Une disponibilité existe déjà pour cette date.'
+        );
+      }
+      return 'Conflit : cette ressource existe déjà.';
     }
     if (error.message && !error.message.startsWith('HTTP ')) {
       return error.message;

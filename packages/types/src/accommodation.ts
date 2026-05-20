@@ -139,3 +139,48 @@ export interface PropertyAmenitiesPayload {
   propertyId: string;
   amenityIds: string[];
 }
+
+export interface RoomAvailability {
+  id: string;
+  roomId: string;
+  date: string;
+  availableUnits: number;
+  priceCents: number;
+  createdAt: string;
+  updatedAt: string | null;
+}
+
+export interface CreateRoomAvailabilityRequest {
+  roomId: string;
+  date: string;
+  availableUnits: number;
+  priceCents: number;
+}
+
+export type UpdateRoomAvailabilityRequest = Partial<
+  Pick<CreateRoomAvailabilityRequest, 'availableUnits' | 'priceCents'>
+>;
+
+export interface RoomAvailabilityListQuery {
+  roomId: string;
+  page?: number;
+  limit?: number;
+  dateFrom?: string;
+  dateTo?: string;
+}
+
+export interface BulkUpsertRoomAvailabilityRequest {
+  roomId: string;
+  dateFrom: string;
+  dateTo: string;
+  availableUnits: number;
+  priceCents: number;
+}
+
+export interface BulkUpsertRoomAvailabilityResponse {
+  roomId: string;
+  dateFrom: string;
+  dateTo: string;
+  upsertedCount: number;
+  items: RoomAvailability[];
+}

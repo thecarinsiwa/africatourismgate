@@ -9,6 +9,7 @@ import type {
   PropertyAmenitiesListQuery,
   PropertyImagesListQuery,
   RbacAuditLogsListQuery,
+  RoomAvailabilityListQuery,
   RoomsListQuery,
   SucceededPaymentsRevenue,
   UsersListQuery,
@@ -31,6 +32,7 @@ function buildQueryString(
     | PropertiesListQuery
     | PropertyImagesListQuery
     | RoomsListQuery
+    | RoomAvailabilityListQuery
     | AmenitiesListQuery
     | PropertyAmenitiesListQuery,
 ): string {
@@ -88,6 +90,9 @@ function buildQueryString(
   ) {
     params.set('propertyId', query.propertyId);
   }
+  if ('roomId' in (query ?? {}) && query && 'roomId' in query && query.roomId) {
+    params.set('roomId', query.roomId);
+  }
   const qs = params.toString();
   return qs ? `?${qs}` : '';
 }
@@ -104,6 +109,7 @@ export async function fetchPaginated<T>(
     | PropertiesListQuery
     | PropertyImagesListQuery
     | RoomsListQuery
+    | RoomAvailabilityListQuery
     | AmenitiesListQuery
     | PropertyAmenitiesListQuery,
 ): Promise<PaginatedResponse<T>> {
