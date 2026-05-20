@@ -41,6 +41,9 @@ importers:
       '@africatourismgate/api-client':
         specifier: workspace:*
         version: link:../../packages/api-client
+      '@africatourismgate/config':
+        specifier: workspace:*
+        version: link:../../packages/config
       '@africatourismgate/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -63,9 +66,6 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
     devDependencies:
-      '@africatourismgate/config':
-        specifier: workspace:*
-        version: link:../../packages/config
       '@types/node':
         specifier: ^22.10.2
         version: 22.19.19

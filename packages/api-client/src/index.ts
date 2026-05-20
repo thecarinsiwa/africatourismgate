@@ -30,6 +30,13 @@ import type {
   ResetPasswordResponse,
   SucceededPaymentsRevenue,
   UpdateEmployeeRequest,
+  BulkUpsertOrganizationSettingsRequest,
+  CreateOrganizationBankAccountRequest,
+  OrganizationBankAccount,
+  OrganizationBankAccountsListQuery,
+  OrganizationSetting,
+  OrganizationSettingsListQuery,
+  UpdateOrganizationBankAccountRequest,
   UpdateOrganizationRequest,
   UpdateRoleRequest,
   UpdateUserRequest,
@@ -74,6 +81,13 @@ export type {
   CreateRoleRequest,
   CreateUserRoleAssignmentRequest,
   UpdateEmployeeRequest,
+  BulkUpsertOrganizationSettingsRequest,
+  CreateOrganizationBankAccountRequest,
+  OrganizationBankAccount,
+  OrganizationBankAccountsListQuery,
+  OrganizationSetting,
+  OrganizationSettingsListQuery,
+  UpdateOrganizationBankAccountRequest,
   UpdateOrganizationRequest,
   UpdateRoleRequest,
   CreateUserRequest,
@@ -311,6 +325,78 @@ export class ApiClient {
 
   deleteOrganization(id: string): Promise<void> {
     return this.request<void>(`/organizations/${id}`, { method: 'DELETE' });
+  }
+
+  listOrganizationSettings(
+    query?: OrganizationSettingsListQuery,
+  ): Promise<PaginatedResponse<OrganizationSetting>> {
+    return fetchPaginated<OrganizationSetting>(this, '/organization-settings', query);
+  }
+
+  bulkUpsertOrganizationSettings(
+    body: BulkUpsertOrganizationSettingsRequest,
+  ): Promise<OrganizationSetting[]> {
+    return this.request<OrganizationSetting[]>('/organization-settings/bulk', {
+      method: 'PUT',
+      body,
+    });
+  }
+
+  listOrganizationBankAccounts(
+    query?: OrganizationBankAccountsListQuery,
+  ): Promise<PaginatedResponse<OrganizationBankAccount>> {
+    return fetchPaginated<OrganizationBankAccount>(
+      this,
+      '/organization-bank-accounts',
+      query,
+    );
+  }
+
+  getOrganizationBankAccount(
+    id: string,
+    organizationId?: string,
+  ): Promise<OrganizationBankAccount> {
+    const qs = organizationId
+      ? `?organizationId=${encodeURIComponent(organizationId)}`
+      : '';
+    return this.request<OrganizationBankAccount>(
+      `/organization-bank-accounts/${id}${qs}`,
+    );
+  }
+
+  createOrganizationBankAccount(
+    body: CreateOrganizationBankAccountRequest,
+  ): Promise<OrganizationBankAccount> {
+    return this.request<OrganizationBankAccount>('/organization-bank-accounts', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateOrganizationBankAccount(
+    id: string,
+    body: UpdateOrganizationBankAccountRequest,
+    organizationId?: string,
+  ): Promise<OrganizationBankAccount> {
+    const qs = organizationId
+      ? `?organizationId=${encodeURIComponent(organizationId)}`
+      : '';
+    return this.request<OrganizationBankAccount>(
+      `/organization-bank-accounts/${id}${qs}`,
+      { method: 'PATCH', body },
+    );
+  }
+
+  deleteOrganizationBankAccount(
+    id: string,
+    organizationId?: string,
+  ): Promise<void> {
+    const qs = organizationId
+      ? `?organizationId=${encodeURIComponent(organizationId)}`
+      : '';
+    return this.request<void>(`/organization-bank-accounts/${id}${qs}`, {
+      method: 'DELETE',
+    });
   }
 
   countOrganizations(): Promise<number> {

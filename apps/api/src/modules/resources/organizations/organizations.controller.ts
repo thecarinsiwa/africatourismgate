@@ -9,6 +9,8 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiForbiddenResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { AuthUserDto } from '../../auth/dto/auth-user.dto';
 import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { OrganizationsListQueryDto } from './dto/organizations-list-query.dto';
@@ -45,8 +47,12 @@ export class OrganizationsController {
   @Patch(':id')
   @RequirePermissions('organizations.write')
   @ApiOperation({ summary: 'Update organization' })
-  update(@Param('id') id: string, @Body() dto: UpdateOrganizationDto) {
-    return this.service.update(id, dto);
+  update(
+    @CurrentUser() user: AuthUserDto,
+    @Param('id') id: string,
+    @Body() dto: UpdateOrganizationDto,
+  ) {
+    return this.service.update(id, dto, user);
   }
 
   @Delete(':id')

@@ -45,21 +45,54 @@ function normalizePath(path: string): string {
   return path;
 }
 
-function isActivePath(pathname: string, href: string): boolean {
-  const current = normalizePath(pathname);
-  const target = normalizePath(href);
-  if (current === target) return true;
-  // Nested routes (e.g. /systeme/roles/assignations under /systeme/roles)
-  return current.startsWith(`${target}/`);
+function collectNavHrefs(navItems: SidebarNavEntry[]): string[] {
+  const hrefs: string[] = [];
+  for (const entry of navItems) {
+    if (entry.type === 'link') {
+      hrefs.push(entry.href);
+    } else {
+      for (const child of entry.children) {
+        hrefs.push(child.href);
+      }
+    }
+  }
+  return hrefs;
 }
 
-function isGroupActive(pathname: string, children: SidebarNavLink[]): boolean {
-  return children.some((child) => isActivePath(pathname, child.href));
+/** Plus long préfixe correspondant (évite /utilisateurs actif sur /utilisateurs/employes). */
+function resolveActiveHref(pathname: string, allHrefs: string[]): string | null {
+  const current = normalizePath(pathname);
+  let best: string | null = null;
+
+  for (const href of allHrefs) {
+    const target = normalizePath(href);
+    const matches =
+      current === target || current.startsWith(`${target}/`);
+    if (matches && (!best || target.length > best.length)) {
+      best = target;
+    }
+  }
+
+  return best;
+}
+
+function isActivePath(pathname: string, href: string, allHrefs: string[]): boolean {
+  const active = resolveActiveHref(pathname, allHrefs);
+  return active !== null && active === normalizePath(href);
+}
+
+function isGroupActive(
+  pathname: string,
+  children: SidebarNavLink[],
+  allHrefs: string[],
+): boolean {
+  return children.some((child) => isActivePath(pathname, child.href, allHrefs));
 }
 
 function findActiveGroupId(pathname: string, navItems: SidebarNavEntry[]): string | null {
+  const allHrefs = collectNavHrefs(navItems);
   for (const entry of navItems) {
-    if (entry.type === 'group' && isGroupActive(pathname, entry.children)) {
+    if (entry.type === 'group' && isGroupActive(pathname, entry.children, allHrefs)) {
       return entry.id;
     }
   }
@@ -138,12 +171,13 @@ const linkClassName = (active: boolean, nested = false) =>
 type SidebarNavLinkRowProps = {
   item: SidebarNavLink;
   pathname: string;
+  allHrefs: string[];
   nested?: boolean;
   onNavigate?: () => void;
 };
 
-function SidebarNavLinkRow({ item, pathname, nested, onNavigate }: SidebarNavLinkRowProps) {
-  const active = isActivePath(pathname, item.href);
+function SidebarNavLinkRow({ item, pathname, allHrefs, nested, onNavigate }: SidebarNavLinkRowProps) {
+  const active = isActivePath(pathname, item.href, allHrefs);
   return (
     <Link
       href={item.href}
@@ -160,6 +194,7 @@ function SidebarNavLinkRow({ item, pathname, nested, onNavigate }: SidebarNavLin
 type SidebarNavGroupRowProps = {
   group: SidebarNavGroup;
   pathname: string;
+  allHrefs: string[];
   open: boolean;
   onToggle: () => void;
   onNavigate?: () => void;
@@ -168,12 +203,13 @@ type SidebarNavGroupRowProps = {
 function SidebarNavGroupRow({
   group,
   pathname,
+  allHrefs,
   open,
   onToggle,
   onNavigate,
 }: SidebarNavGroupRowProps) {
   const panelId = useId();
-  const groupActive = isGroupActive(pathname, group.children);
+  const groupActive = isGroupActive(pathname, group.children, allHrefs);
 
   return (
     <div className="flex flex-col">
@@ -199,6 +235,7 @@ function SidebarNavGroupRow({
               key={child.href}
               item={child}
               pathname={pathname}
+              allHrefs={allHrefs}
               nested
               onNavigate={onNavigate}
             />
@@ -223,6 +260,7 @@ function SidebarContent({
   onGroupToggle,
 }: SidebarContentProps) {
   const pathname = usePathname();
+  const allHrefs = collectNavHrefs(navItems);
 
   const closeButton = onMobileClose ? (
     <button
@@ -260,6 +298,7 @@ function SidebarContent({
                 key={entry.href}
                 item={entry}
                 pathname={pathname}
+                allHrefs={allHrefs}
                 onNavigate={onMobileClose}
               />
             );
@@ -269,6 +308,7 @@ function SidebarContent({
               key={entry.id}
               group={entry}
               pathname={pathname}
+              allHrefs={allHrefs}
               open={openGroupId === entry.id}
               onToggle={() => onGroupToggle(entry.id)}
               onNavigate={onMobileClose}

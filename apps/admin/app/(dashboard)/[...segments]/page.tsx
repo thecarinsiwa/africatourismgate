@@ -17,7 +17,20 @@ export function generateMetadata({ params }: PageProps): Metadata {
   };
 }
 
+/** Routes avec pages dédiées (ne pas servir via ce catch-all). */
+const RESERVED_ROOT_SEGMENTS = new Set([
+  'dashboard',
+  'parametres',
+  'organisations',
+  'utilisateurs',
+  'systeme',
+]);
+
 export default function AdminSectionPage({ params }: PageProps) {
+  if (params.segments[0] && RESERVED_ROOT_SEGMENTS.has(params.segments[0])) {
+    notFound();
+  }
+
   const section = getAdminSectionByPath(params.segments);
   if (!section) {
     notFound();

@@ -1,0 +1,116 @@
+'use client';
+
+import type { Organization } from '@africatourismgate/types';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
+import { getApiClient } from '../../lib/auth/api';
+import { getOrganizationSettingsErrorMessage } from '../../lib/organization-settings-errors';
+import { ParametresSubnav } from './parametres-subnav';
+import {
+  OrganizationSettingsForm,
+  resolveInitialOrganizationId,
+} from './organization-settings-form';
+
+export function OrganizationSettingsPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [accessError, setAccessError] = useState<string | null>(null);
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+  const [organizationId, setOrganizationId] = useState<string | null>(null);
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function init() {
+      try {
+        const client = getApiClient();
+        const me = await client.getAuthMe();
+        const canRead =
+          me.isSuperAdmin ||
+          me.permissions.includes('organization_settings.read');
+        if (!canRead) {
+          if (!cancelled) {
+            setAccessError('Vous n’avez pas la permission de consulter les paramètres.');
+          }
+          return;
+        }
+
+        const orgId = resolveInitialOrganizationId(
+          me.isSuperAdmin,
+          me.user.organizationId,
+          searchParams.get('organizationId'),
+        );
+
+        if (!cancelled) {
+          setIsSuperAdmin(me.isSuperAdmin);
+          setOrganizationId(orgId);
+        }
+
+        if (me.isSuperAdmin) {
+          const orgs = await client.listOrganizations({ page: 1, limit: 100 });
+          if (!cancelled) {
+            setOrganizations(orgs.data);
+          }
+        }
+      } catch (error) {
+        if (!cancelled) {
+          setAccessError(getOrganizationSettingsErrorMessage(error));
+        }
+      }
+    }
+
+    void init();
+    return () => {
+      cancelled = true;
+    };
+  }, [searchParams]);
+
+  const handleOrganizationChange = useCallback(
+    (id: string) => {
+      setOrganizationId(id);
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('organizationId', id);
+      router.replace(`/parametres?${params.toString()}`);
+    },
+    [router, searchParams],
+  );
+
+  if (accessError) {
+    return (
+      <div>
+        <ParametresSubnav />
+        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+          {accessError}
+        </p>
+      </div>
+    );
+  }
+
+  if (!organizationId) {
+    return (
+      <div>
+        <ParametresSubnav />
+        <p className="text-sm text-atg-muted">Chargement…</p>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <ParametresSubnav />
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-atg-fg">Paramètres</h1>
+        <p className="mt-2 text-sm text-atg-muted">
+          Configuration de l’organisation : coordonnées, locale, réservation et branding.
+        </p>
+      </div>
+      <OrganizationSettingsForm
+        organizationId={organizationId}
+        isSuperAdmin={isSuperAdmin}
+        organizations={organizations}
+        onOrganizationIdChange={isSuperAdmin ? handleOrganizationChange : undefined}
+      />
+    </div>
+  );
+}
