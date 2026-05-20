@@ -17,6 +17,7 @@ import {
   isValidCurrency,
 } from '../../lib/org-settings-constants';
 import { getOrganizationSettingsErrorMessage } from '../../lib/organization-settings-errors';
+import { BrandColorPaletteField } from './brand-color-palette-field';
 
 type SettingsFormValues = {
   contactEmail: string;
@@ -318,15 +319,17 @@ export function OrganizationSettingsForm({
           onChange={(e) => updateField('displayName', e.target.value)}
           error={fieldErrors.displayName}
         />
-        <Input
+        <BrandColorPaletteField
           label="Couleur primaire"
+          hint="Couleur dominante de l’interface (boutons, liens, accents)."
           value={values.primaryColor}
-          onChange={(e) => updateField('primaryColor', e.target.value)}
+          onChange={(hex) => updateField('primaryColor', hex)}
         />
-        <Input
+        <BrandColorPaletteField
           label="Couleur secondaire"
+          hint="Couleur d’accompagnement (badges, éléments secondaires)."
           value={values.secondaryColor}
-          onChange={(e) => updateField('secondaryColor', e.target.value)}
+          onChange={(hex) => updateField('secondaryColor', hex)}
         />
       </section>
 
