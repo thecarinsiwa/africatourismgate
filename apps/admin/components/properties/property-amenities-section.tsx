@@ -24,8 +24,8 @@ export function PropertyAmenitiesSection({ propertyId }: PropertyAmenitiesSectio
     try {
       const client = getApiClient();
       const [allAmenities, links] = await Promise.all([
-        client.listAmenities({ page: 1, limit: 200 }),
-        client.listPropertyAmenities({ propertyId, page: 1, limit: 200 }),
+        client.listAmenities({ page: 1, limit: 100 }),
+        client.listPropertyAmenities({ propertyId, page: 1, limit: 100 }),
       ]);
       setAmenities(allAmenities.data);
       setSelected(new Set(links.data.map((l) => l.amenityId)));
