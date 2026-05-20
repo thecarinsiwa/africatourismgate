@@ -6,7 +6,10 @@
   "exports": {
     "./eslint": "./eslint.config.mjs",
     "./prettier": "./prettier.config.cjs",
-    "./theme": "./theme.mjs",
+    "./theme": {
+      "types": "./theme.d.ts",
+      "default": "./theme.mjs"
+    },
     "./theme.css": "./theme.css"
   },
   "devDependencies": {
