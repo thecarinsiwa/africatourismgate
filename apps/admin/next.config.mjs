@@ -17,7 +17,12 @@ const apiUrl =
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ['@africatourismgate/ui', 'next-themes'],
+  transpilePackages: [
+    '@africatourismgate/ui',
+    '@africatourismgate/types',
+    '@africatourismgate/api-client',
+    'next-themes',
+  ],
   env: {
     NEXT_PUBLIC_ADMIN_URL: adminUrl,
     NEXT_PUBLIC_API_URL: apiUrl,

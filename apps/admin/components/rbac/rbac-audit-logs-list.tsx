@@ -10,9 +10,11 @@ import {
 import {
   RBAC_AUDIT_EVENT_LABELS,
   RBAC_AUDIT_EVENT_TYPES,
-  type RbacAuditEventType,
-  type RbacAuditLog,
-  type User,
+} from '@africatourismgate/types/rbac';
+import type {
+  RbacAuditEventType,
+  RbacAuditLog,
+  User,
 } from '@africatourismgate/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
