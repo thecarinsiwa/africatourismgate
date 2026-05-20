@@ -2,8 +2,10 @@ import type {
   AuthMe,
   AuthResponse,
   AuthTokens,
+  CreateDestinationRequest,
   CreateEmployeeRequest,
   CreateOrganizationRequest,
+  CreatePointOfInterestRequest,
   CreateRoleRequest,
   CreateUserRequest,
   CreateUserRoleAssignmentRequest,
@@ -17,11 +19,15 @@ import type {
   Role,
   RolePermissionsPayload,
   RolesListQuery,
+  Destination,
+  DestinationsListQuery,
   ForgotPasswordRequest,
   ForgotPasswordResponse,
   LoginRequest,
   LogoutResponse,
   Organization,
+  PointOfInterest,
+  PointsOfInterestListQuery,
   PaginatedResponse,
   PaginationQuery,
   PaymentListItem,
@@ -29,7 +35,9 @@ import type {
   ResetPasswordRequest,
   ResetPasswordResponse,
   SucceededPaymentsRevenue,
+  UpdateDestinationRequest,
   UpdateEmployeeRequest,
+  UpdatePointOfInterestRequest,
   BulkUpsertOrganizationSettingsRequest,
   CreateOrganizationBankAccountRequest,
   OrganizationBankAccount,
@@ -76,8 +84,16 @@ export type {
   UserStatus,
   Organization,
   OrganizationStatus,
+  Destination,
+  DestinationsListQuery,
+  CreateDestinationRequest,
   CreateEmployeeRequest,
   CreateOrganizationRequest,
+  CreatePointOfInterestRequest,
+  PointOfInterest,
+  PointsOfInterestListQuery,
+  UpdateDestinationRequest,
+  UpdatePointOfInterestRequest,
   CreateRoleRequest,
   CreateUserRoleAssignmentRequest,
   UpdateEmployeeRequest,
@@ -512,6 +528,70 @@ export class ApiClient {
 
   getRbacAuditLog(id: string): Promise<RbacAuditLog> {
     return this.request<RbacAuditLog>(`/rbac-audit-logs/${id}`);
+  }
+
+  listDestinations(
+    query?: DestinationsListQuery,
+  ): Promise<PaginatedResponse<Destination>> {
+    return fetchPaginated<Destination>(this, '/destinations', query);
+  }
+
+  getDestination(id: string): Promise<Destination> {
+    return this.request<Destination>(`/destinations/${id}`);
+  }
+
+  createDestination(body: CreateDestinationRequest): Promise<Destination> {
+    return this.request<Destination>('/destinations', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateDestination(
+    id: string,
+    body: UpdateDestinationRequest,
+  ): Promise<Destination> {
+    return this.request<Destination>(`/destinations/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteDestination(id: string): Promise<void> {
+    return this.request<void>(`/destinations/${id}`, { method: 'DELETE' });
+  }
+
+  listPointsOfInterest(
+    query?: PointsOfInterestListQuery,
+  ): Promise<PaginatedResponse<PointOfInterest>> {
+    return fetchPaginated<PointOfInterest>(this, '/points-of-interest', query);
+  }
+
+  getPointOfInterest(id: string): Promise<PointOfInterest> {
+    return this.request<PointOfInterest>(`/points-of-interest/${id}`);
+  }
+
+  createPointOfInterest(
+    body: CreatePointOfInterestRequest,
+  ): Promise<PointOfInterest> {
+    return this.request<PointOfInterest>('/points-of-interest', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updatePointOfInterest(
+    id: string,
+    body: UpdatePointOfInterestRequest,
+  ): Promise<PointOfInterest> {
+    return this.request<PointOfInterest>(`/points-of-interest/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deletePointOfInterest(id: string): Promise<void> {
+    return this.request<void>(`/points-of-interest/${id}`, { method: 'DELETE' });
   }
 }
 

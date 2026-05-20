@@ -43,6 +43,17 @@ export type {
 } from './organization.js';
 
 export type {
+  CreateDestinationRequest,
+  CreatePointOfInterestRequest,
+  Destination,
+  DestinationsListQuery,
+  PointOfInterest,
+  PointsOfInterestListQuery,
+  UpdateDestinationRequest,
+  UpdatePointOfInterestRequest,
+} from './destination.js';
+
+export type {
   BookingDefaultsValue,
   BrandingPlatformValue,
   BulkUpsertOrganizationSettingsRequest,
