@@ -47,3 +47,12 @@ export type {
   User,
   UsersListQuery,
 } from './user.js';
+
+export type {
+  CreateEmployeeRequest,
+  Employee,
+  EmployeeStatus,
+  EmployeeUserSummary,
+  EmployeesListQuery,
+  UpdateEmployeeRequest,
+} from './employee.js';
