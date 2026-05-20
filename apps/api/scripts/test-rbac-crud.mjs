@@ -3,25 +3,12 @@
  * Run: pnpm --filter @africatourismgate/api test:rbac-crud
  */
 import { randomUUID } from 'node:crypto';
-import { existsSync, readFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const root = join(__dirname, '../../..');
-
-function loadEnv() {
-  for (const name of ['.env', '.env.local']) {
-    const path = join(root, name);
-    if (!existsSync(path)) continue;
-    for (const line of readFileSync(path, 'utf8').split('\n')) {
-      const m = line.match(/^([^#=]+)=(.*)$/);
-      if (m && !process.env[m[1].trim()]) {
-        process.env[m[1].trim()] = m[2].trim();
-      }
-    }
-  }
-}
+import { loadEnv } from './lib/load-env.mjs';
+import {
+  SEED_ADMIN_EMAIL,
+  ephemeralTestPassword,
+  getSeedAdminPassword,
+} from './lib/test-credentials.mjs';
 
 loadEnv();
 
@@ -29,8 +16,6 @@ const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000/api')
   /\/$/,
   '',
 );
-const ADMIN_EMAIL = 'admin@africatourismgate.local';
-const ADMIN_PASSWORD = 'ChangeMe123!';
 const ROLE_ORG_ADMIN_ID = '00000000-0000-4000-8000-000000000101';
 const ROLE_SUPER_ADMIN_ID = '00000000-0000-4000-8000-000000000100';
 const PROP_DEMO_ID = '00000000-0000-4000-8000-000000002010';
@@ -74,7 +59,7 @@ function assertStatus(label, actual, expected) {
 
 async function main() {
   console.log(`API: ${API_URL}\n`);
-  const token = await login(ADMIN_EMAIL, ADMIN_PASSWORD);
+  const token = await login(SEED_ADMIN_EMAIL, getSeedAdminPassword());
   const suffix = randomUUID().slice(0, 8);
   const roleCode = `test_role_${suffix}`;
   let customRoleId;
@@ -139,7 +124,7 @@ async function main() {
     token,
     body: {
       email,
-      password: 'TestPass123!',
+      password: ephemeralTestPassword(),
       firstName: 'RBAC',
       lastName: `Test ${suffix}`,
     },

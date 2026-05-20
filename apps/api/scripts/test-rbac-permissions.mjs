@@ -4,25 +4,13 @@
  */
 import { createConnection } from 'mysql2/promise';
 import { randomUUID } from 'node:crypto';
-import { readFileSync, existsSync } from 'node:fs';
-import { join, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const root = join(__dirname, '../../..');
-
-function loadEnv() {
-  for (const name of ['.env', '.env.local']) {
-    const path = join(root, name);
-    if (!existsSync(path)) continue;
-    for (const line of readFileSync(path, 'utf8').split('\n')) {
-      const m = line.match(/^([^#=]+)=(.*)$/);
-      if (m && !process.env[m[1].trim()]) {
-        process.env[m[1].trim()] = m[2].trim();
-      }
-    }
-  }
-}
+import { loadEnv } from './lib/load-env.mjs';
+import {
+  SEED_ADMIN_EMAIL,
+  getRbacTestSupportEmail,
+  getRbacTestSupportPassword,
+  getSeedAdminPassword,
+} from './lib/test-credentials.mjs';
 
 loadEnv();
 
@@ -30,10 +18,7 @@ const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000/api')
   /\/$/,
   '',
 );
-const ADMIN_EMAIL = 'admin@africatourismgate.local';
-const ADMIN_PASSWORD = 'ChangeMe123!';
-const SUPPORT_EMAIL = 'rbac.support.test@africatourismgate.local';
-const SUPPORT_PASSWORD = 'SupportTest123!';
+const RBAC_TEST_SUPPORT_EMAIL = getRbacTestSupportEmail();
 const ROLE_SUPPORT_ID = '00000000-0000-4000-8000-000000000102';
 const ROLE_ORG_ADMIN_ID = '00000000-0000-4000-8000-000000000101';
 
@@ -77,15 +62,15 @@ function assertStatus(label, actual, expected) {
 async function ensureSupportUser(mysql) {
   const [rows] = await mysql.execute(
     'SELECT id FROM users WHERE email = ? AND deleted_at IS NULL LIMIT 1',
-    [SUPPORT_EMAIL],
+    [RBAC_TEST_SUPPORT_EMAIL],
   );
   let userId = rows[0]?.id;
 
   if (!userId) {
     const reg = await request('POST', '/auth/register', {
       body: {
-        email: SUPPORT_EMAIL,
-        password: SUPPORT_PASSWORD,
+        email: RBAC_TEST_SUPPORT_EMAIL,
+        password: getRbacTestSupportPassword(),
         firstName: 'RBAC',
         lastName: 'Support',
       },
@@ -94,7 +79,7 @@ async function ensureSupportUser(mysql) {
       throw new Error(`Register support user failed: ${reg.status}`);
     }
     userId = reg.data.user.id;
-    console.log(`  Created support test user ${SUPPORT_EMAIL}`);
+    console.log(`  Created support test user ${RBAC_TEST_SUPPORT_EMAIL}`);
   }
 
   await mysql.execute(
@@ -136,7 +121,7 @@ async function main() {
     const deniedBefore = await countPermissionDenied(mysql);
 
     console.log('1. super_admin — GET /users');
-    const adminToken = await login(ADMIN_EMAIL, ADMIN_PASSWORD);
+    const adminToken = await login(SEED_ADMIN_EMAIL, getSeedAdminPassword());
     assertStatus('GET /users', (await request('GET', '/users', { token: adminToken })).status, 200);
 
     console.log('2. super_admin — GET /payments');
@@ -148,7 +133,10 @@ async function main() {
 
     console.log('3. support user — GET /payments (expect 403)');
     await ensureSupportUser(mysql);
-    const supportToken = await login(SUPPORT_EMAIL, SUPPORT_PASSWORD);
+    const supportToken = await login(
+      RBAC_TEST_SUPPORT_EMAIL,
+      getRbacTestSupportPassword(),
+    );
     assertStatus(
       'GET /payments',
       (await request('GET', '/payments', { token: supportToken })).status,

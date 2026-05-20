@@ -1,51 +1,32 @@
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-  Query,
-} from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
-import { RbacAuditLogs } from '../../../entities/generated';
+  ApiForbiddenResponse,
+  ApiOperation,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { SuperAdminGuard } from '../../rbac/guards/super-admin.guard';
+import { RbacAuditLogDto } from './dto/rbac-audit-log.dto';
+import { RbacAuditLogsListQueryDto } from './dto/rbac-audit-logs-list-query.dto';
 import { RbacAuditLogsService } from './rbac-audit-logs.service';
 
 @ApiTags('rbac-audit-logs')
 @Controller('rbac-audit-logs')
+@UseGuards(SuperAdminGuard)
+@ApiUnauthorizedResponse()
+@ApiForbiddenResponse({ description: 'Super administrator only' })
 export class RbacAuditLogsController {
   constructor(private readonly service: RbacAuditLogsService) {}
 
   @Get()
-  @ApiOperation({ summary: 'List rbac-audit-logs' })
-  findAll(@Query() query: PaginationQueryDto) {
+  @ApiOperation({ summary: 'List RBAC audit logs (super admin only)' })
+  findAll(@Query() query: RbacAuditLogsListQueryDto) {
     return this.service.findAll(query);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get rbac-audit-logs by id' })
-  findOne(@Param('id') id: string) {
+  @ApiOperation({ summary: 'Get RBAC audit log by id (super admin only)' })
+  findOne(@Param('id') id: string): Promise<RbacAuditLogDto> {
     return this.service.findOne(id);
-  }
-
-  @Post()
-  @ApiOperation({ summary: 'Create rbac-audit-logs' })
-  create(@Body() dto: DeepPartial<RbacAuditLogs>) {
-    return this.service.create(dto);
-  }
-
-  @Patch(':id')
-  @ApiOperation({ summary: 'Update rbac-audit-logs' })
-  update(@Param('id') id: string, @Body() dto: DeepPartial<RbacAuditLogs>) {
-    return this.service.update(id, dto);
-  }
-
-  @Delete(':id')
-  @ApiOperation({ summary: 'Soft-delete rbac-audit-logs' })
-  remove(@Param('id') id: string) {
-    return this.service.remove(id);
   }
 }

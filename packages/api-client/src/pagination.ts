@@ -2,6 +2,7 @@ import type {
   PaginatedResponse,
   PaginationQuery,
   PaymentListItem,
+  RbacAuditLogsListQuery,
   SucceededPaymentsRevenue,
   UsersListQuery,
 } from '@africatourismgate/types';
@@ -13,7 +14,9 @@ export interface PaginatedRequestClient {
 
 const DEFAULT_CURRENCY = 'CDF';
 
-function buildQueryString(query?: PaginationQuery | UsersListQuery): string {
+function buildQueryString(
+  query?: PaginationQuery | UsersListQuery | RbacAuditLogsListQuery,
+): string {
   const params = new URLSearchParams();
   if (query?.page !== undefined) {
     params.set('page', String(query.page));
@@ -35,6 +38,23 @@ function buildQueryString(query?: PaginationQuery | UsersListQuery): string {
   ) {
     params.set('organizationId', query.organizationId);
   }
+  if ('eventType' in (query ?? {}) && query && 'eventType' in query && query.eventType) {
+    params.set('eventType', query.eventType);
+  }
+  if (
+    'actorUserId' in (query ?? {}) &&
+    query &&
+    'actorUserId' in query &&
+    query.actorUserId
+  ) {
+    params.set('actorUserId', query.actorUserId);
+  }
+  if ('dateFrom' in (query ?? {}) && query && 'dateFrom' in query && query.dateFrom) {
+    params.set('dateFrom', query.dateFrom);
+  }
+  if ('dateTo' in (query ?? {}) && query && 'dateTo' in query && query.dateTo) {
+    params.set('dateTo', query.dateTo);
+  }
   const qs = params.toString();
   return qs ? `?${qs}` : '';
 }
@@ -42,7 +62,7 @@ function buildQueryString(query?: PaginationQuery | UsersListQuery): string {
 export async function fetchPaginated<T>(
   client: PaginatedRequestClient,
   path: string,
-  query?: PaginationQuery | UsersListQuery,
+  query?: PaginationQuery | UsersListQuery | RbacAuditLogsListQuery,
 ): Promise<PaginatedResponse<T>> {
   return client.request<PaginatedResponse<T>>(`${path}${buildQueryString(query)}`);
 }

@@ -43,6 +43,9 @@ export function UserRoleAssignmentForm({
   const [loadError, setLoadError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
+  const selectedRole = roles.find((r) => r.id === roleId);
+  const isSuperAdminRole = selectedRole?.code === 'super_admin';
+
   useEffect(() => {
     setUserId(defaultUserId);
   }, [defaultUserId]);
@@ -53,13 +56,18 @@ export function UserRoleAssignmentForm({
       setLoadError(null);
       try {
         const client = getApiClient();
-        const [usersResult, rolesResult] = await Promise.all([
+        const [me, usersResult, rolesResult] = await Promise.all([
+          client.getAuthMe(),
           client.listUsers({ page: 1, limit: 100, status: 'active' }),
           client.listRoles({ page: 1, limit: 100, includeSystem: true }),
         ]);
         if (!cancelled) {
           setUsers(usersResult.data);
-          setRoles(rolesResult.data.filter((r) => !r.isSystem || r.code !== 'super_admin'));
+          setRoles(
+            rolesResult.data.filter(
+              (r) => r.code !== 'super_admin' || me.isSuperAdmin,
+            ),
+          );
         }
       } catch (err) {
         if (!cancelled) {
@@ -88,13 +96,23 @@ export function UserRoleAssignmentForm({
         return;
       }
 
+      if (isSuperAdminRole) {
+        const label = selectedRole?.name ?? 'super_admin';
+        const confirmed = window.confirm(
+          `Attribuer le rôle « ${label} » ? Cet utilisateur obtiendra un accès complet à la plateforme.`,
+        );
+        if (!confirmed) return;
+      }
+
       setSubmitting(true);
       try {
         const body: CreateUserRoleAssignmentRequest = {
           userId,
           roleId,
-          scopeType,
-          ...(scopeType !== 'global' ? { scopeId: scopeId.trim() } : {}),
+          scopeType: isSuperAdminRole ? 'global' : scopeType,
+          ...(scopeType !== 'global' && !isSuperAdminRole
+            ? { scopeId: scopeId.trim() }
+            : {}),
           ...(expiresAt ? { expiresAt } : {}),
         };
         await getApiClient().createUserRoleAssignment(body);
@@ -108,7 +126,16 @@ export function UserRoleAssignmentForm({
         setSubmitting(false);
       }
     },
-    [userId, roleId, scopeType, scopeId, expiresAt, onSuccess],
+    [
+      userId,
+      roleId,
+      scopeType,
+      scopeId,
+      expiresAt,
+      onSuccess,
+      isSuperAdminRole,
+      selectedRole?.name,
+    ],
   );
 
   return (
@@ -152,7 +179,15 @@ export function UserRoleAssignmentForm({
         <select
           id={roleFieldId}
           value={roleId}
-          onChange={(e) => setRoleId(e.target.value)}
+          onChange={(e) => {
+            const nextId = e.target.value;
+            setRoleId(nextId);
+            const nextRole = roles.find((r) => r.id === nextId);
+            if (nextRole?.code === 'super_admin') {
+              setScopeType('global');
+              setScopeId('');
+            }
+          }}
           className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm"
         >
           <option value="">Sélectionner…</option>
@@ -162,6 +197,11 @@ export function UserRoleAssignmentForm({
             </option>
           ))}
         </select>
+        {isSuperAdminRole ? (
+          <p className="mt-1 text-xs text-amber-700 dark:text-amber-400">
+            Réservé aux super administrateurs — périmètre forcé à Global.
+          </p>
+        ) : null}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -172,11 +212,12 @@ export function UserRoleAssignmentForm({
           <select
             id={scopeTypeId}
             value={scopeType}
+            disabled={isSuperAdminRole}
             onChange={(e) => {
               setScopeType(e.target.value as ScopeType);
               if (e.target.value === 'global') setScopeId('');
             }}
-            className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm"
+            className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm disabled:opacity-60"
           >
             {(Object.keys(scopeLabels) as ScopeType[]).map((s) => (
               <option key={s} value={s}>

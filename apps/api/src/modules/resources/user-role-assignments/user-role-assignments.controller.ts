@@ -8,6 +8,8 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiForbiddenResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { AuthUserDto } from '../../auth/dto/auth-user.dto';
 import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
 import { CreateUserRoleAssignmentDto } from './dto/create-user-role-assignment.dto';
 import { UserRoleAssignmentsListQueryDto } from './dto/user-role-assignments-list-query.dto';
@@ -36,14 +38,17 @@ export class UserRoleAssignmentsController {
   @Post()
   @RequirePermissions('roles.write')
   @ApiOperation({ summary: 'Assign role to user' })
-  create(@Body() dto: CreateUserRoleAssignmentDto) {
-    return this.service.create(dto);
+  create(
+    @Body() dto: CreateUserRoleAssignmentDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.service.create(dto, user.id);
   }
 
   @Patch(':id/revoke')
   @RequirePermissions('roles.write')
   @ApiOperation({ summary: 'Revoke role assignment' })
-  revoke(@Param('id') id: string) {
-    return this.service.revoke(id);
+  revoke(@Param('id') id: string, @CurrentUser() user: AuthUserDto) {
+    return this.service.revoke(id, user.id);
   }
 }

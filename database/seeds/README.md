@@ -11,6 +11,12 @@ Applied automatically on API startup when `DATABASE_AUTO_SEED=true` and the `use
 
 Change this password immediately after first login in production.
 
+For API integration scripts (`pnpm --filter @africatourismgate/api test:*`), set the same value in `.env.local` (gitignored):
+
+```env
+SEED_ADMIN_PASSWORD=your_seed_password_here
+```
+
 ## What is seeded
 
 | # | Table | Content |

@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -15,6 +16,8 @@ import {
   UserRoleAssignmentDto,
 } from './dto/user-role-assignment.dto';
 import { UserRoleAssignmentsListQueryDto } from './dto/user-role-assignments-list-query.dto';
+import { PermissionsService } from '../../rbac/permissions.service';
+import { SUPER_ADMIN_ROLE_CODE } from '../../rbac/rbac.constants';
 
 @Injectable()
 export class UserRoleAssignmentsService {
@@ -27,6 +30,7 @@ export class UserRoleAssignmentsService {
     private readonly usersRepository: Repository<Users>,
     @InjectRepository(Roles)
     private readonly rolesRepository: Repository<Roles>,
+    private readonly permissionsService: PermissionsService,
   ) {
     this.crud = new CrudService(assignmentsRepository);
   }
@@ -93,7 +97,8 @@ export class UserRoleAssignmentsService {
     actorUserId?: string,
   ): Promise<UserRoleAssignmentDto> {
     await this.assertUserExists(dto.userId);
-    await this.assertRoleExists(dto.roleId);
+    const role = await this.getRoleOrThrow(dto.roleId);
+    await this.assertCanAssignRole(role, dto, actorUserId);
 
     const scopeId = this.normalizeScope(dto.scopeType, dto.scopeId);
     await this.assertNoDuplicateActive(dto.userId, dto.roleId, dto.scopeType, scopeId);
@@ -113,7 +118,6 @@ export class UserRoleAssignmentsService {
     );
 
     const user = await this.usersRepository.findOne({ where: { id: dto.userId } });
-    const role = await this.rolesRepository.findOne({ where: { id: dto.roleId } });
     return toUserRoleAssignmentDto(assignment, user, role);
   }
 
@@ -165,10 +169,36 @@ export class UserRoleAssignmentsService {
     }
   }
 
-  private async assertRoleExists(roleId: string): Promise<void> {
+  private async getRoleOrThrow(roleId: string): Promise<Roles> {
     const role = await this.rolesRepository.findOne({ where: { id: roleId } });
     if (!role || role.deletedAt) {
       throw new NotFoundException('Rôle introuvable.');
+    }
+    return role;
+  }
+
+  private async assertCanAssignRole(
+    role: Roles,
+    dto: CreateUserRoleAssignmentDto,
+    actorUserId?: string,
+  ): Promise<void> {
+    if (role.code !== SUPER_ADMIN_ROLE_CODE) {
+      return;
+    }
+
+    if (
+      !actorUserId ||
+      !(await this.permissionsService.hasSuperAdminRole(actorUserId))
+    ) {
+      throw new ForbiddenException(
+        'Seul un super administrateur peut attribuer le rôle super_admin.',
+      );
+    }
+
+    if (dto.scopeType !== 'global') {
+      throw new BadRequestException(
+        'Le rôle super_admin doit être assigné avec un périmètre global.',
+      );
     }
   }
 

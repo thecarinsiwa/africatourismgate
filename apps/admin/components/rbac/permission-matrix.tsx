@@ -49,10 +49,10 @@ export function PermissionMatrix({ roleId, isSystem }: PermissionMatrixProps) {
       list.push(p);
       map.set(p.resource, list);
     }
-    for (const [, list] of map) {
+    map.forEach((list) => {
       list.sort((a, b) => a.action.localeCompare(b.action));
-    }
-    return [...map.entries()].sort(([a], [b]) => a.localeCompare(b));
+    });
+    return Array.from(map.entries()).sort(([a], [b]) => a.localeCompare(b));
   }, [permissions]);
 
   function toggle(permissionId: string) {
@@ -72,7 +72,7 @@ export function PermissionMatrix({ roleId, isSystem }: PermissionMatrixProps) {
     setSuccess(null);
     try {
       await getApiClient().replaceRolePermissions(roleId, {
-        permissionIds: [...selected],
+        permissionIds: Array.from(selected),
       });
       setSuccess('Permissions enregistrées.');
     } catch (err) {
