@@ -41,20 +41,19 @@ export interface CreateEmployeeRequest {
   status?: EmployeeStatus;
 }
 
-export type UpdateEmployeeRequest = Partial<
-  Omit<CreateEmployeeRequest, 'userId'> & {
-    userId?: string;
-    organizationId?: string | null;
-    managerId?: string | null;
-    employeeCode?: string | null;
-    jobTitle?: string | null;
-    department?: string | null;
-    hireDate?: string | null;
-    terminationDate?: string | null;
-    salary?: number | null;
-    currency?: string | null;
-  }
->;
+export type UpdateEmployeeRequest = Partial<{
+  userId: string;
+  organizationId: string | null;
+  employeeCode: string | null;
+  jobTitle: string | null;
+  department: string | null;
+  hireDate: string | null;
+  terminationDate: string | null;
+  salary: number | null;
+  currency: string | null;
+  managerId: string | null;
+  status: EmployeeStatus;
+}>;
 
 export interface EmployeesListQuery extends PaginationQuery {
   organizationId?: string;

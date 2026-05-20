@@ -99,6 +99,7 @@ export function RbacAuditLogsList() {
   }, [access.status]);
 
   const load = useCallback(async () => {
+    void filterTick;
     if (access.status !== 'allowed') return;
     setState({ status: 'loading' });
     try {
@@ -311,8 +312,10 @@ export function RbacAuditLogsList() {
       {state.status === 'ready' && state.totalPages > 1 ? (
         <DataTablePagination
           page={page}
+          pageSize={PAGE_SIZE}
           totalPages={state.totalPages}
-          total={state.total}
+          totalItems={state.total}
+          itemLabel="événement"
           onPageChange={setPage}
         />
       ) : null}
