@@ -109,13 +109,11 @@ async function main() {
   if (!userId) throw new Error('User create missing id');
 
   console.log('1. POST /employees (create)');
-  const code = `EMP-${suffix}`;
   const create = await request('POST', '/employees', {
     token,
     body: {
       userId,
       organizationId: orgId,
-      employeeCode: code,
       jobTitle: 'Test Role',
       status: 'active',
       currency: 'USD',
@@ -123,7 +121,11 @@ async function main() {
   });
   assertStatus('POST /employees', create.status, 201);
   employeeId = create.data?.id;
+  const code = create.data?.employeeCode;
   if (!employeeId) throw new Error('Create response missing id');
+  if (!code || !/-EMP-\d{4}$/.test(code)) {
+    throw new Error(`Auto employeeCode invalid: ${code}`);
+  }
   if (create.data?.userId !== userId) {
     throw new Error('Create response userId FK mismatch');
   }
@@ -134,7 +136,7 @@ async function main() {
   console.log('2. POST duplicate userId (expect 409)');
   const dup = await request('POST', '/employees', {
     token,
-    body: { userId, employeeCode: `DUP-${suffix}` },
+    body: { userId, organizationId: orgId },
   });
   assertStatus('POST duplicate userId', dup.status, 409);
 

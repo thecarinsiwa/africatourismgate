@@ -12,6 +12,10 @@ import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { EmployeeDto, toEmployeeDto } from './dto/employee.dto';
 import { EmployeesListQueryDto } from './dto/employees-list-query.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import {
+  formatEmployeeCode,
+  organizationPrefixFromSlug,
+} from './employee-code.util';
 
 @Injectable()
 export class EmployeesService {
@@ -103,10 +107,14 @@ export class EmployeesService {
       await this.assertManagerExists(dto.managerId);
     }
 
-    const employee = await this.crud.create(
-      this.buildCreatePayload(dto),
-      actorUserId,
-    );
+    const payload = this.buildCreatePayload(dto);
+    if (!dto.employeeCode?.trim()) {
+      payload.employeeCode = (await this.generateEmployeeCode(
+        dto.organizationId ?? null,
+      )) as DeepPartial<Employees>['employeeCode'];
+    }
+
+    const employee = await this.crud.create(payload, actorUserId);
     const user = await this.usersRepository.findOne({
       where: { id: employee.userId },
     });
@@ -264,5 +272,52 @@ export class EmployeesService {
     if (!manager || manager.deletedAt) {
       throw new NotFoundException('Manager (employé) introuvable.');
     }
+  }
+
+  private async resolveOrganizationPrefix(
+    organizationId: string | null,
+  ): Promise<string> {
+    if (!organizationId) return organizationPrefixFromSlug(null);
+    const org = await this.organizationsRepository.findOne({
+      where: { id: organizationId },
+    });
+    return organizationPrefixFromSlug(org?.slug);
+  }
+
+  private async nextEmployeeSequence(organizationId: string | null): Promise<number> {
+    const qb = this.employeesRepository
+      .createQueryBuilder('emp')
+      .where('emp.deletedAt IS NULL');
+
+    if (organizationId) {
+      qb.andWhere('emp.organizationId = :organizationId', { organizationId });
+    } else {
+      qb.andWhere('emp.organizationId IS NULL');
+    }
+
+    return (await qb.getCount()) + 1;
+  }
+
+  private async generateEmployeeCode(
+    organizationId: string | null,
+  ): Promise<string> {
+    const prefix = await this.resolveOrganizationPrefix(organizationId);
+    let sequence = await this.nextEmployeeSequence(organizationId);
+
+    for (let attempt = 0; attempt < 100; attempt++) {
+      const code = formatEmployeeCode(prefix, sequence);
+      const existing = await this.employeesRepository
+        .createQueryBuilder('emp')
+        .where('emp.employeeCode = :code', { code })
+        .andWhere('emp.deletedAt IS NULL')
+        .getOne();
+
+      if (!existing) return code;
+      sequence++;
+    }
+
+    throw new ConflictException(
+      'Impossible de générer un code employé unique.',
+    );
   }
 }

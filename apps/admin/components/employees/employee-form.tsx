@@ -12,6 +12,7 @@ import type {
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import { suggestNextEmployeeCode } from '../../lib/employee-code';
 import { getEmployeesErrorMessage } from '../../lib/employees-errors';
 
 export type EmployeeFormValues = {
@@ -64,7 +65,6 @@ function toCreatePayload(values: EmployeeFormValues): CreateEmployeeRequest {
     userId: values.userId,
     status: values.status,
     ...(values.organizationId ? { organizationId: values.organizationId } : {}),
-    ...(values.employeeCode.trim() ? { employeeCode: values.employeeCode.trim() } : {}),
     ...(values.jobTitle.trim() ? { jobTitle: values.jobTitle.trim() } : {}),
     ...(values.department.trim() ? { department: values.department.trim() } : {}),
     ...(values.hireDate ? { hireDate: values.hireDate } : {}),
@@ -116,6 +116,7 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
   );
   const [users, setUsers] = useState<User[]>([]);
   const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [existingEmployees, setExistingEmployees] = useState<Employee[]>([]);
   const [managers, setManagers] = useState<Employee[]>([]);
   const [fieldErrors, setFieldErrors] = useState<
     Partial<Record<keyof EmployeeFormValues, string>>
@@ -136,6 +137,7 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
         if (!cancelled) {
           setUsers(usersResult.data);
           setOrganizations(orgsResult.data);
+          setExistingEmployees(employeesResult.data);
           setManagers(
             employeesResult.data.filter((e) => e.id !== employeeId && e.status !== 'terminated'),
           );
@@ -144,6 +146,7 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
         if (!cancelled) {
           setUsers([]);
           setOrganizations([]);
+          setExistingEmployees([]);
           setManagers([]);
         }
       }
@@ -153,6 +156,15 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
       cancelled = true;
     };
   }, [employeeId]);
+
+  const suggestedEmployeeCode = useMemo(() => {
+    if (mode !== 'create') return null;
+    return suggestNextEmployeeCode(
+      values.organizationId,
+      organizations,
+      existingEmployees,
+    );
+  }, [mode, values.organizationId, organizations, existingEmployees]);
 
   const userOptions = useMemo(() => {
     if (mode === 'edit' && initialEmployee?.user) {
@@ -283,9 +295,18 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
         <Input
           label="Code employé"
           name="employeeCode"
-          value={values.employeeCode}
-          onChange={(e) => updateField('employeeCode', e.target.value)}
-          maxLength={50}
+          value={
+            mode === 'create'
+              ? (suggestedEmployeeCode ?? '')
+              : values.employeeCode
+          }
+          readOnly
+          disabled={mode === 'create'}
+          hint={
+            mode === 'create'
+              ? 'Attribué automatiquement à l’enregistrement (préfixe organisation + numéro séquentiel).'
+              : 'Le matricule ne change pas après la création.'
+          }
         />
         <Input
           label="Poste"
