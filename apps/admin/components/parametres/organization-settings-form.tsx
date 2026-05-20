@@ -17,6 +17,8 @@ import {
   isValidCurrency,
 } from '../../lib/org-settings-constants';
 import { getOrganizationSettingsErrorMessage } from '../../lib/organization-settings-errors';
+import { applyOrganizationBrandingToDocument } from '../../lib/organization-theme';
+import { useOrganizationThemeOptional } from '../organization-theme-provider';
 import { BrandColorPaletteField } from './brand-color-palette-field';
 
 type SettingsFormValues = {
@@ -85,6 +87,7 @@ export function OrganizationSettingsForm({
   organizations = [],
 }: OrganizationSettingsFormProps) {
   const router = useRouter();
+  const orgTheme = useOrganizationThemeOptional();
   const [values, setValues] = useState<SettingsFormValues>(defaultValues);
   const [fieldErrors, setFieldErrors] = useState<
     Partial<Record<keyof SettingsFormValues, string>>
@@ -96,11 +99,27 @@ export function OrganizationSettingsForm({
 
   const updateField = useCallback(
     <K extends keyof SettingsFormValues>(key: K, value: SettingsFormValues[K]) => {
-      setValues((prev) => ({ ...prev, [key]: value }));
+      setValues((prev) => {
+        const next = { ...prev, [key]: value };
+        if (key === 'primaryColor' || key === 'secondaryColor') {
+          applyOrganizationBrandingToDocument({
+            primaryColor: String(next.primaryColor),
+            secondaryColor: String(next.secondaryColor),
+          });
+        }
+        return next;
+      });
       setFieldErrors((prev) => ({ ...prev, [key]: undefined }));
     },
     [],
   );
+
+  useEffect(() => {
+    applyOrganizationBrandingToDocument({
+      primaryColor: values.primaryColor,
+      secondaryColor: values.secondaryColor,
+    });
+  }, [values.primaryColor, values.secondaryColor]);
 
   useEffect(() => {
     let cancelled = false;
@@ -203,6 +222,13 @@ export function OrganizationSettingsForm({
           },
         ],
       });
+
+      const savedBranding = {
+        primaryColor: values.primaryColor.trim(),
+        secondaryColor: values.secondaryColor.trim(),
+      };
+      applyOrganizationBrandingToDocument(savedBranding);
+      await orgTheme?.refreshTheme();
 
       router.refresh();
     } catch (error) {
