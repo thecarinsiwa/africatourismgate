@@ -139,6 +139,18 @@ export type {
 } from './activity.js';
 
 export type {
+  Booking,
+  BookingCheckoutLine,
+  BookingCheckoutPreview,
+  BookingCheckoutRequest,
+  BookingCheckoutRoomItem,
+  BookingDetail,
+  BookingItem,
+  BookingsListQuery,
+  BookingStatus,
+} from './booking.js';
+
+export type {
   CreatePackageItemRequest,
   CreatePackageRequest,
   Package,

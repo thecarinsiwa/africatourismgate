@@ -69,6 +69,11 @@ import type {
   UpdateActivityProviderRequest,
   UpdateActivityRequest,
   UpdateActivityScheduleRequest,
+  Booking,
+  BookingCheckoutPreview,
+  BookingCheckoutRequest,
+  BookingDetail,
+  BookingsListQuery,
   CreatePackageItemRequest,
   CreatePackageRequest,
   Package,
@@ -1005,6 +1010,39 @@ export class ApiClient {
 
   deletePackageItem(id: string): Promise<void> {
     return this.request<void>(`/package-items/${id}`, { method: 'DELETE' });
+  }
+
+  previewBookingCheckout(
+    body: BookingCheckoutRequest,
+  ): Promise<BookingCheckoutPreview> {
+    return this.request<BookingCheckoutPreview>('/bookings/checkout-preview', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  createBooking(body: BookingCheckoutRequest): Promise<BookingDetail> {
+    return this.request<BookingDetail>('/bookings', { method: 'POST', body });
+  }
+
+  listBookings(query?: BookingsListQuery): Promise<PaginatedResponse<Booking>> {
+    return fetchPaginated<Booking>(this, '/bookings', query);
+  }
+
+  getBooking(id: string): Promise<BookingDetail> {
+    return this.request<BookingDetail>(`/bookings/${id}`);
+  }
+
+  confirmBooking(id: string): Promise<BookingDetail> {
+    return this.request<BookingDetail>(`/bookings/${id}/confirm`, {
+      method: 'POST',
+    });
+  }
+
+  cancelBooking(id: string): Promise<BookingDetail> {
+    return this.request<BookingDetail>(`/bookings/${id}/cancel`, {
+      method: 'POST',
+    });
   }
 
   listAirlines(query?: AirlinesListQuery): Promise<PaginatedResponse<Airline>> {
