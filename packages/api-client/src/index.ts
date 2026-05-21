@@ -70,11 +70,14 @@ import type {
   UpdateActivityRequest,
   UpdateActivityScheduleRequest,
   Booking,
+  BookingAdminDetail,
   BookingCheckoutPreview,
   BookingCheckoutRequest,
   BookingDetail,
   BookingListItem,
   BookingsListQuery,
+  CancelBookingRequest,
+  UpdateBookingStatusRequest,
   CreatePackageItemRequest,
   CreatePackageRequest,
   Package,
@@ -1026,8 +1029,18 @@ export class ApiClient {
     return fetchPaginated<BookingListItem>(this, '/bookings', query);
   }
 
-  getBooking(id: string): Promise<BookingDetail> {
-    return this.request<BookingDetail>(`/bookings/${id}`);
+  getBooking(id: string): Promise<BookingAdminDetail> {
+    return this.request<BookingAdminDetail>(`/bookings/${id}`);
+  }
+
+  updateBookingStatus(
+    id: string,
+    body: UpdateBookingStatusRequest,
+  ): Promise<BookingDetail> {
+    return this.request<BookingDetail>(`/bookings/${id}/status`, {
+      method: 'PATCH',
+      body,
+    });
   }
 
   confirmBooking(id: string): Promise<BookingDetail> {
@@ -1036,9 +1049,10 @@ export class ApiClient {
     });
   }
 
-  cancelBooking(id: string): Promise<BookingDetail> {
+  cancelBooking(id: string, body?: CancelBookingRequest): Promise<BookingDetail> {
     return this.request<BookingDetail>(`/bookings/${id}/cancel`, {
       method: 'POST',
+      body: body ?? {},
     });
   }
 

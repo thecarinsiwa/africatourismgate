@@ -76,6 +76,52 @@ export interface BookingDetail {
   currency: string;
 }
 
+export interface BookingClient {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  organizationId: string | null;
+  organizationName: string | null;
+}
+
+export interface BookingPayment {
+  id: string;
+  bookingId: string;
+  amountCents: number;
+  currency: string;
+  status: 'pending' | 'succeeded' | 'failed' | 'refunded';
+  provider: string | null;
+  externalId: string | null;
+  createdAt: string;
+  updatedAt: string | null;
+}
+
+export interface BookingStatusHistoryEntry {
+  id: string;
+  bookingId: string;
+  fromStatus: BookingStatus | null;
+  toStatus: BookingStatus;
+  reason: string | null;
+  changedByUserId: string | null;
+  createdAt: string;
+}
+
+export interface BookingAdminDetail extends BookingDetail {
+  client: BookingClient;
+  payments: BookingPayment[];
+  statusHistory: BookingStatusHistoryEntry[];
+}
+
+export interface UpdateBookingStatusRequest {
+  status: BookingStatus;
+  reason?: string;
+}
+
+export interface CancelBookingRequest {
+  reason?: string;
+}
+
 export interface BookingListItem extends Booking {
   clientEmail: string;
   clientFirstName: string;

@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  Button,
   Card,
   DataTable,
   DataTableBadge,
@@ -210,10 +211,17 @@ export function BookingsList() {
         ),
       },
       {
-        accessorKey: 'id',
-        header: 'Réf.',
+        id: 'actions',
+        header: 'Actions',
+        meta: { align: 'right' },
         cell: ({ row }) => (
-          <span className="font-mono text-xs text-atg-muted">{row.original.id.slice(0, 8)}…</span>
+          <Button
+            href={`/dashboard/bookings/${row.original.id}`}
+            variant="ghost"
+            size="sm"
+          >
+            Voir
+          </Button>
         ),
       },
     ],
