@@ -53,7 +53,21 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
   },
   'produits/vols': {
     title: 'Vols',
-    description: 'Compagnies, aéroports et vols.',
+    description: 'Compagnies, aéroports, vols, classes et disponibilités.',
+    apiResource: 'flights',
+  },
+  'produits/vols/compagnies': {
+    title: 'Compagnies aériennes',
+    description: 'Référentiel des compagnies (IATA).',
+    apiResource: 'airlines',
+  },
+  'produits/vols/aeroports': {
+    title: 'Aéroports',
+    description: 'Référentiel des aéroports (IATA).',
+    apiResource: 'airports',
+  },
+  'produits/vols/nouveau': {
+    title: 'Nouveau vol',
     apiResource: 'flights',
   },
   'produits/locations': {
