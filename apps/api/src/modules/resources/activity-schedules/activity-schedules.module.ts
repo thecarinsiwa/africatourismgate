@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ActivitySchedules } from '../../../entities/generated';
+import { Activities, ActivitySchedules } from '../../../entities/generated';
 import { ActivitySchedulesController } from './activity-schedules.controller';
 import { ActivitySchedulesService } from './activity-schedules.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ActivitySchedules])],
+  imports: [TypeOrmModule.forFeature([ActivitySchedules, Activities])],
   controllers: [ActivitySchedulesController],
   providers: [ActivitySchedulesService],
 })
