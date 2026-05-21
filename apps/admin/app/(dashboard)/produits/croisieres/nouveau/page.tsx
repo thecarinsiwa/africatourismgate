@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { SailingForm } from '../../../../components/cruises/sailing-form';
+import { SailingForm } from '../../../../../components/cruises/sailing-form';
 
 export const metadata: Metadata = {
   title: 'Nouveau départ — Africa Tourism Gate Admin',

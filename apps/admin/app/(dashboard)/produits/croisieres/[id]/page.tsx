@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { SailingEditPage } from '../../../../components/cruises/sailing-edit-page';
+import { SailingEditPage } from '../../../../../components/cruises/sailing-edit-page';
 
 export const metadata: Metadata = {
   title: 'Départ — Africa Tourism Gate Admin',
