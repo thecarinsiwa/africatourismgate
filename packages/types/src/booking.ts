@@ -122,6 +122,22 @@ export interface CancelBookingRequest {
   reason?: string;
 }
 
+export interface BookingPaymentIntentResponse {
+  paymentId: string;
+  paymentIntentId: string;
+  clientSecret: string;
+  amountCents: number;
+  currency: string;
+}
+
+export interface BookingCheckoutSessionResponse {
+  paymentId: string;
+  sessionId: string;
+  url: string;
+  amountCents: number;
+  currency: string;
+}
+
 export interface BookingListItem extends Booking {
   clientEmail: string;
   clientFirstName: string;

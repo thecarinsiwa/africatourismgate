@@ -7,7 +7,7 @@ import { ensureJwtSecrets } from './config/ensure-jwt-secrets';
 
 async function bootstrap() {
   ensureJwtSecrets();
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { rawBody: true });
   const globalPrefix = process.env.API_GLOBAL_PREFIX ?? 'api';
   app.setGlobalPrefix(globalPrefix);
 

@@ -73,7 +73,9 @@ import type {
   BookingAdminDetail,
   BookingCheckoutPreview,
   BookingCheckoutRequest,
+  BookingCheckoutSessionResponse,
   BookingDetail,
+  BookingPaymentIntentResponse,
   BookingListItem,
   BookingsListQuery,
   CancelBookingRequest,
@@ -1053,6 +1055,18 @@ export class ApiClient {
     return this.request<BookingDetail>(`/bookings/${id}/cancel`, {
       method: 'POST',
       body: body ?? {},
+    });
+  }
+
+  createBookingPaymentIntent(id: string): Promise<BookingPaymentIntentResponse> {
+    return this.request<BookingPaymentIntentResponse>(`/bookings/${id}/payment-intent`, {
+      method: 'POST',
+    });
+  }
+
+  createBookingCheckoutSession(id: string): Promise<BookingCheckoutSessionResponse> {
+    return this.request<BookingCheckoutSessionResponse>(`/bookings/${id}/checkout-session`, {
+      method: 'POST',
     });
   }
 

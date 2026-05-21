@@ -11,6 +11,7 @@ import { ApiForbiddenResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { AuthUserDto } from '../../auth/dto/auth-user.dto';
 import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
+import { StripeService } from '../../stripe/stripe.service';
 import { BookingEngineService } from './booking-engine.service';
 import { BookingsService } from './bookings.service';
 import { BookingCheckoutDto } from './dto/booking-checkout.dto';
@@ -25,6 +26,7 @@ export class BookingsController {
   constructor(
     private readonly bookingsService: BookingsService,
     private readonly bookingEngine: BookingEngineService,
+    private readonly stripeService: StripeService,
   ) {}
 
   @Post('checkout-preview')
@@ -70,6 +72,26 @@ export class BookingsController {
     @CurrentUser() user: AuthUserDto,
   ) {
     return this.bookingsService.updateStatus(id, dto, user.id);
+  }
+
+  @Post(':id/payment-intent')
+  @RequirePermissions('bookings.write')
+  @ApiOperation({ summary: 'Create Stripe PaymentIntent for booking (test / custom UI)' })
+  createPaymentIntent(
+    @Param('id') id: string,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.stripeService.createPaymentIntentForBooking(id, user.id);
+  }
+
+  @Post(':id/checkout-session')
+  @RequirePermissions('bookings.write')
+  @ApiOperation({ summary: 'Create Stripe Checkout Session (hosted payment page)' })
+  createCheckoutSession(
+    @Param('id') id: string,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.stripeService.createCheckoutSessionForBooking(id, user.id);
   }
 
   @Post(':id/confirm')
