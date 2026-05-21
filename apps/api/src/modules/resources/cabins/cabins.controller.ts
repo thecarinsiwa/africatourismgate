@@ -9,9 +9,9 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
-import { Cabins } from '../../../entities/generated';
+import { CreateCabinDto } from './dto/create-cabin.dto';
+import { CabinsListQueryDto } from './dto/cabins-list-query.dto';
+import { UpdateCabinDto } from './dto/update-cabin.dto';
 import { CabinsService } from './cabins.service';
 
 @ApiTags('cabins')
@@ -21,30 +21,30 @@ export class CabinsController {
 
   @Get()
   @ApiOperation({ summary: 'List cabins' })
-  findAll(@Query() query: PaginationQueryDto) {
+  findAll(@Query() query: CabinsListQueryDto) {
     return this.service.findAll(query);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get cabins by id' })
+  @ApiOperation({ summary: 'Get cabin by id' })
   findOne(@Param('id') id: string) {
     return this.service.findOne(id);
   }
 
   @Post()
-  @ApiOperation({ summary: 'Create cabins' })
-  create(@Body() dto: DeepPartial<Cabins>) {
-    return this.service.create(dto);
+  @ApiOperation({ summary: 'Create cabin' })
+  create(@Body() dto: CreateCabinDto) {
+    return this.service.createCabin(dto);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update cabins' })
-  update(@Param('id') id: string, @Body() dto: DeepPartial<Cabins>) {
-    return this.service.update(id, dto);
+  @ApiOperation({ summary: 'Update cabin' })
+  update(@Param('id') id: string, @Body() dto: UpdateCabinDto) {
+    return this.service.updateCabin(id, dto);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Soft-delete cabins' })
+  @ApiOperation({ summary: 'Soft-delete cabin' })
   remove(@Param('id') id: string) {
     return this.service.remove(id);
   }

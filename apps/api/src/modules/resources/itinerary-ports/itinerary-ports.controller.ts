@@ -9,9 +9,9 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
-import { ItineraryPorts } from '../../../entities/generated';
+import { CreateItineraryPortDto } from './dto/create-itinerary-port.dto';
+import { ItineraryPortsListQueryDto } from './dto/itinerary-ports-list-query.dto';
+import { UpdateItineraryPortDto } from './dto/update-itinerary-port.dto';
 import { ItineraryPortsService } from './itinerary-ports.service';
 
 @ApiTags('itinerary-ports')
@@ -20,31 +20,31 @@ export class ItineraryPortsController {
   constructor(private readonly service: ItineraryPortsService) {}
 
   @Get()
-  @ApiOperation({ summary: 'List itinerary-ports' })
-  findAll(@Query() query: PaginationQueryDto) {
+  @ApiOperation({ summary: 'List itinerary ports' })
+  findAll(@Query() query: ItineraryPortsListQueryDto) {
     return this.service.findAll(query);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get itinerary-ports by id' })
+  @ApiOperation({ summary: 'Get itinerary port by id' })
   findOne(@Param('id') id: string) {
     return this.service.findOne(id);
   }
 
   @Post()
-  @ApiOperation({ summary: 'Create itinerary-ports' })
-  create(@Body() dto: DeepPartial<ItineraryPorts>) {
-    return this.service.create(dto);
+  @ApiOperation({ summary: 'Create itinerary port' })
+  create(@Body() dto: CreateItineraryPortDto) {
+    return this.service.createItineraryPort(dto);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update itinerary-ports' })
-  update(@Param('id') id: string, @Body() dto: DeepPartial<ItineraryPorts>) {
-    return this.service.update(id, dto);
+  @ApiOperation({ summary: 'Update itinerary port' })
+  update(@Param('id') id: string, @Body() dto: UpdateItineraryPortDto) {
+    return this.service.updateItineraryPort(id, dto);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Soft-delete itinerary-ports' })
+  @ApiOperation({ summary: 'Soft-delete itinerary port' })
   remove(@Param('id') id: string) {
     return this.service.remove(id);
   }
