@@ -54,7 +54,8 @@ function assertStatus(label, actual, expected) {
 const checkoutBody = {
   items: [
     {
-      roomId: SEED_ROOM_ID,
+      itemType: 'room',
+      referenceId: SEED_ROOM_ID,
       startDate: TEST_DATE,
       endDate: TEST_DATE,
       quantity: 1,
@@ -156,7 +157,8 @@ async function main() {
     body: {
       items: [
         {
-          roomId: SEED_ROOM_ID,
+          itemType: 'room',
+          referenceId: SEED_ROOM_ID,
           startDate: TEST_DATE,
           endDate: TEST_DATE,
           quantity: 99,

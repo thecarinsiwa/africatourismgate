@@ -18,6 +18,7 @@
     "test:activities": "node scripts/test-activities-crud.mjs",
     "test:packages": "node scripts/test-packages-crud.mjs",
     "test:bookings": "node scripts/test-bookings-engine.mjs",
+    "test:bookings-polymorphic": "node scripts/test-bookings-polymorphic.mjs",
     "test:rooms-amenities": "node scripts/test-rooms-amenities.mjs",
     "test:room-availability": "node scripts/test-room-availability.mjs",
     "test:users": "node scripts/test-users-crud.mjs",
