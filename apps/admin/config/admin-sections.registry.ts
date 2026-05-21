@@ -91,8 +91,31 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
   },
   'produits/croisieres': {
     title: 'Croisières',
-    description: 'Lignes, navires et croisières.',
+    description: 'Départs, itinéraires, cabines et disponibilités.',
     apiResource: 'cruise-sailings',
+  },
+  'produits/croisieres/lignes': {
+    title: 'Lignes de croisière',
+    description: 'Référentiel des lignes.',
+    apiResource: 'cruise-lines',
+  },
+  'produits/croisieres/ports': {
+    title: 'Ports de croisière',
+    description: 'Référentiel des ports.',
+    apiResource: 'cruise-ports',
+  },
+  'produits/croisieres/navires': {
+    title: 'Navires',
+    description: 'Navires, itinéraires et cabines.',
+    apiResource: 'ships',
+  },
+  'produits/croisieres/nouveau': {
+    title: 'Nouveau départ',
+    apiResource: 'cruise-sailings',
+  },
+  'produits/croisieres/navires/nouveau': {
+    title: 'Nouveau navire',
+    apiResource: 'ships',
   },
   'produits/activites': {
     title: 'Activités',

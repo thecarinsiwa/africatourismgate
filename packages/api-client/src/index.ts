@@ -25,6 +25,38 @@ import type {
   CreateVehicleAvailabilityRequest,
   CreateVehicleCategoryRequest,
   CreateVehicleRequest,
+  Cabin,
+  CabinAvailability,
+  CabinAvailabilityListQuery,
+  CabinsListQuery,
+  CreateCabinAvailabilityRequest,
+  CreateCabinRequest,
+  CreateCruiseLineRequest,
+  CreateCruisePortRequest,
+  CreateCruiseSailingRequest,
+  CreateItineraryPortRequest,
+  CreateItineraryRequest,
+  CreateShipRequest,
+  CruiseLine,
+  CruiseLinesListQuery,
+  CruisePort,
+  CruisePortsListQuery,
+  CruiseSailing,
+  CruiseSailingsListQuery,
+  Itinerary,
+  ItinerariesListQuery,
+  ItineraryPort,
+  ItineraryPortsListQuery,
+  Ship,
+  ShipsListQuery,
+  UpdateCabinAvailabilityRequest,
+  UpdateCabinRequest,
+  UpdateCruiseLineRequest,
+  UpdateCruisePortRequest,
+  UpdateCruiseSailingRequest,
+  UpdateItineraryPortRequest,
+  UpdateItineraryRequest,
+  UpdateShipRequest,
   CreateAirlineRequest,
   CreateAirportRequest,
   CreateFlightClassAvailabilityRequest,
@@ -1057,6 +1089,201 @@ export class ApiClient {
 
   deleteVehicleAvailability(id: string): Promise<void> {
     return this.request<void>(`/vehicle-availability/${id}`, { method: 'DELETE' });
+  }
+
+  listCruiseLines(
+    query?: CruiseLinesListQuery,
+  ): Promise<PaginatedResponse<CruiseLine>> {
+    return fetchPaginated<CruiseLine>(this, '/cruise-lines', query);
+  }
+
+  getCruiseLine(id: string): Promise<CruiseLine> {
+    return this.request<CruiseLine>(`/cruise-lines/${id}`);
+  }
+
+  createCruiseLine(body: CreateCruiseLineRequest): Promise<CruiseLine> {
+    return this.request<CruiseLine>('/cruise-lines', { method: 'POST', body });
+  }
+
+  updateCruiseLine(id: string, body: UpdateCruiseLineRequest): Promise<CruiseLine> {
+    return this.request<CruiseLine>(`/cruise-lines/${id}`, { method: 'PATCH', body });
+  }
+
+  deleteCruiseLine(id: string): Promise<void> {
+    return this.request<void>(`/cruise-lines/${id}`, { method: 'DELETE' });
+  }
+
+  listCruisePorts(
+    query?: CruisePortsListQuery,
+  ): Promise<PaginatedResponse<CruisePort>> {
+    return fetchPaginated<CruisePort>(this, '/cruise-ports', query);
+  }
+
+  getCruisePort(id: string): Promise<CruisePort> {
+    return this.request<CruisePort>(`/cruise-ports/${id}`);
+  }
+
+  createCruisePort(body: CreateCruisePortRequest): Promise<CruisePort> {
+    return this.request<CruisePort>('/cruise-ports', { method: 'POST', body });
+  }
+
+  updateCruisePort(id: string, body: UpdateCruisePortRequest): Promise<CruisePort> {
+    return this.request<CruisePort>(`/cruise-ports/${id}`, { method: 'PATCH', body });
+  }
+
+  deleteCruisePort(id: string): Promise<void> {
+    return this.request<void>(`/cruise-ports/${id}`, { method: 'DELETE' });
+  }
+
+  listShips(query?: ShipsListQuery): Promise<PaginatedResponse<Ship>> {
+    return fetchPaginated<Ship>(this, '/ships', query);
+  }
+
+  getShip(id: string): Promise<Ship> {
+    return this.request<Ship>(`/ships/${id}`);
+  }
+
+  createShip(body: CreateShipRequest): Promise<Ship> {
+    return this.request<Ship>('/ships', { method: 'POST', body });
+  }
+
+  updateShip(id: string, body: UpdateShipRequest): Promise<Ship> {
+    return this.request<Ship>(`/ships/${id}`, { method: 'PATCH', body });
+  }
+
+  deleteShip(id: string): Promise<void> {
+    return this.request<void>(`/ships/${id}`, { method: 'DELETE' });
+  }
+
+  listItineraries(
+    query?: ItinerariesListQuery,
+  ): Promise<PaginatedResponse<Itinerary>> {
+    return fetchPaginated<Itinerary>(this, '/itineraries', query);
+  }
+
+  getItinerary(id: string): Promise<Itinerary> {
+    return this.request<Itinerary>(`/itineraries/${id}`);
+  }
+
+  createItinerary(body: CreateItineraryRequest): Promise<Itinerary> {
+    return this.request<Itinerary>('/itineraries', { method: 'POST', body });
+  }
+
+  updateItinerary(id: string, body: UpdateItineraryRequest): Promise<Itinerary> {
+    return this.request<Itinerary>(`/itineraries/${id}`, { method: 'PATCH', body });
+  }
+
+  deleteItinerary(id: string): Promise<void> {
+    return this.request<void>(`/itineraries/${id}`, { method: 'DELETE' });
+  }
+
+  listItineraryPorts(
+    query?: ItineraryPortsListQuery,
+  ): Promise<PaginatedResponse<ItineraryPort>> {
+    return fetchPaginated<ItineraryPort>(this, '/itinerary-ports', query);
+  }
+
+  getItineraryPort(id: string): Promise<ItineraryPort> {
+    return this.request<ItineraryPort>(`/itinerary-ports/${id}`);
+  }
+
+  createItineraryPort(body: CreateItineraryPortRequest): Promise<ItineraryPort> {
+    return this.request<ItineraryPort>('/itinerary-ports', { method: 'POST', body });
+  }
+
+  updateItineraryPort(
+    id: string,
+    body: UpdateItineraryPortRequest,
+  ): Promise<ItineraryPort> {
+    return this.request<ItineraryPort>(`/itinerary-ports/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteItineraryPort(id: string): Promise<void> {
+    return this.request<void>(`/itinerary-ports/${id}`, { method: 'DELETE' });
+  }
+
+  listCabins(query?: CabinsListQuery): Promise<PaginatedResponse<Cabin>> {
+    return fetchPaginated<Cabin>(this, '/cabins', query);
+  }
+
+  getCabin(id: string): Promise<Cabin> {
+    return this.request<Cabin>(`/cabins/${id}`);
+  }
+
+  createCabin(body: CreateCabinRequest): Promise<Cabin> {
+    return this.request<Cabin>('/cabins', { method: 'POST', body });
+  }
+
+  updateCabin(id: string, body: UpdateCabinRequest): Promise<Cabin> {
+    return this.request<Cabin>(`/cabins/${id}`, { method: 'PATCH', body });
+  }
+
+  deleteCabin(id: string): Promise<void> {
+    return this.request<void>(`/cabins/${id}`, { method: 'DELETE' });
+  }
+
+  listCruiseSailings(
+    query?: CruiseSailingsListQuery,
+  ): Promise<PaginatedResponse<CruiseSailing>> {
+    return fetchPaginated<CruiseSailing>(this, '/cruise-sailings', query);
+  }
+
+  getCruiseSailing(id: string): Promise<CruiseSailing> {
+    return this.request<CruiseSailing>(`/cruise-sailings/${id}`);
+  }
+
+  createCruiseSailing(body: CreateCruiseSailingRequest): Promise<CruiseSailing> {
+    return this.request<CruiseSailing>('/cruise-sailings', { method: 'POST', body });
+  }
+
+  updateCruiseSailing(
+    id: string,
+    body: UpdateCruiseSailingRequest,
+  ): Promise<CruiseSailing> {
+    return this.request<CruiseSailing>(`/cruise-sailings/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteCruiseSailing(id: string): Promise<void> {
+    return this.request<void>(`/cruise-sailings/${id}`, { method: 'DELETE' });
+  }
+
+  listCabinAvailability(
+    query: CabinAvailabilityListQuery,
+  ): Promise<PaginatedResponse<CabinAvailability>> {
+    return fetchPaginated<CabinAvailability>(this, '/cabin-availability', query);
+  }
+
+  getCabinAvailability(id: string): Promise<CabinAvailability> {
+    return this.request<CabinAvailability>(`/cabin-availability/${id}`);
+  }
+
+  createCabinAvailability(
+    body: CreateCabinAvailabilityRequest,
+  ): Promise<CabinAvailability> {
+    return this.request<CabinAvailability>('/cabin-availability', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateCabinAvailability(
+    id: string,
+    body: UpdateCabinAvailabilityRequest,
+  ): Promise<CabinAvailability> {
+    return this.request<CabinAvailability>(`/cabin-availability/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteCabinAvailability(id: string): Promise<void> {
+    return this.request<void>(`/cabin-availability/${id}`, { method: 'DELETE' });
   }
 }
 
