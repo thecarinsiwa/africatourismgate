@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common';
@@ -14,6 +15,8 @@ import { BookingEngineService } from './booking-engine.service';
 import { BookingsService } from './bookings.service';
 import { BookingCheckoutDto } from './dto/booking-checkout.dto';
 import { BookingsListQueryDto } from './dto/bookings-list-query.dto';
+import { CancelBookingDto } from './dto/cancel-booking.dto';
+import { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
 
 @ApiTags('bookings')
 @ApiForbiddenResponse({ description: 'Missing permission' })
@@ -53,9 +56,20 @@ export class BookingsController {
 
   @Get(':id')
   @RequirePermissions('bookings.read')
-  @ApiOperation({ summary: 'Get booking detail with items' })
+  @ApiOperation({ summary: 'Get booking detail with client, items, payments, status history' })
   findOne(@Param('id') id: string) {
-    return this.bookingsService.getDetail(id);
+    return this.bookingsService.getAdminDetail(id);
+  }
+
+  @Patch(':id/status')
+  @RequirePermissions('bookings.write')
+  @ApiOperation({ summary: 'Change booking status (records history)' })
+  updateStatus(
+    @Param('id') id: string,
+    @Body() dto: UpdateBookingStatusDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.bookingsService.updateStatus(id, dto, user.id);
   }
 
   @Post(':id/confirm')
@@ -70,8 +84,12 @@ export class BookingsController {
 
   @Post(':id/cancel')
   @RequirePermissions('bookings.write')
-  @ApiOperation({ summary: 'Cancel booking and restore room stock' })
-  cancel(@Param('id') id: string, @CurrentUser() user: AuthUserDto) {
-    return this.bookingEngine.cancelBooking(id, user.id);
+  @ApiOperation({ summary: 'Cancel booking, restore stock, optional reason' })
+  cancel(
+    @Param('id') id: string,
+    @Body() dto: CancelBookingDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.bookingsService.cancelWithReason(id, dto.reason, user.id);
   }
 }

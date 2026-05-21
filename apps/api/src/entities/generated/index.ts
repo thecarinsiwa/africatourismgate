@@ -45,6 +45,7 @@ export { Packages } from './packages.entity';
 export { PackageItems } from './packages.entity';
 export { Bookings } from './commerce.entity';
 export { BookingItems } from './commerce.entity';
+export { BookingStatusHistory } from './commerce.entity';
 export { Payments } from './commerce.entity';
 export { PromoCodes } from './commerce.entity';
 export { Promotions } from './commerce.entity';

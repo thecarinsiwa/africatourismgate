@@ -30,6 +30,7 @@ import {
   BookingCheckoutPreviewResponseDto,
 } from './dto/booking-checkout-preview-response.dto';
 import { BookingDetailDto } from './dto/booking-detail.dto';
+import { BookingStatusHistoryService } from './booking-status-history.service';
 
 type StockTarget =
   | { kind: 'room'; roomId: string; date: string }
@@ -67,6 +68,7 @@ export class BookingEngineService {
     private readonly activitySchedulesRepository: Repository<ActivitySchedules>,
     @InjectRepository(Activities)
     private readonly activitiesRepository: Repository<Activities>,
+    private readonly statusHistory: BookingStatusHistoryService,
   ) {}
 
   async previewCheckout(
@@ -128,29 +130,55 @@ export class BookingEngineService {
       },
     );
 
+    await this.statusHistory.record({
+      bookingId,
+      fromStatus: null,
+      toStatus: 'pending_payment',
+      reason: 'Création de la réservation',
+      changedByUserId: actorUserId ?? null,
+    });
+
     return this.getBookingDetail(bookingId);
   }
 
-  async confirmBooking(id: string, actorUserId?: string): Promise<BookingDetailDto> {
+  async confirmBooking(
+    id: string,
+    actorUserId?: string,
+    reason?: string,
+  ): Promise<BookingDetailDto> {
     const booking = await this.findBookingOrThrow(id);
     if (booking.status !== 'pending_payment') {
       throw new BadRequestException(
         `Impossible de confirmer une réservation au statut « ${booking.status} ».`,
       );
     }
+    const fromStatus = booking.status;
     booking.status = 'confirmed';
     booking.updatedByUserId = actorUserId ?? null;
     await this.bookingsRepository.save(booking);
+    await this.statusHistory.record({
+      bookingId: id,
+      fromStatus,
+      toStatus: 'confirmed',
+      reason: reason?.trim() || 'Confirmation',
+      changedByUserId: actorUserId ?? null,
+    });
     return this.getBookingDetail(id);
   }
 
-  async cancelBooking(id: string, actorUserId?: string): Promise<BookingDetailDto> {
+  async cancelBooking(
+    id: string,
+    actorUserId?: string,
+    reason?: string,
+  ): Promise<BookingDetailDto> {
     const booking = await this.findBookingOrThrow(id);
     if (booking.status !== 'pending_payment' && booking.status !== 'confirmed') {
       throw new BadRequestException(
         `Impossible d'annuler une réservation au statut « ${booking.status} ».`,
       );
     }
+
+    const fromStatus = booking.status;
 
     await this.bookingsRepository.manager.transaction(async (manager) => {
       const items = await manager.getRepository(BookingItems).find({
@@ -167,6 +195,60 @@ export class BookingEngineService {
       row.status = 'cancelled';
       row.updatedByUserId = actorUserId ?? null;
       await bookingsRepo.save(row);
+    });
+
+    await this.statusHistory.record({
+      bookingId: id,
+      fromStatus,
+      toStatus: 'cancelled',
+      reason: reason?.trim() || 'Annulation',
+      changedByUserId: actorUserId ?? null,
+    });
+
+    return this.getBookingDetail(id);
+  }
+
+  async updateBookingStatus(
+    id: string,
+    status: Bookings['status'],
+    actorUserId?: string,
+    reason?: string,
+  ): Promise<BookingDetailDto> {
+    const booking = await this.findBookingOrThrow(id);
+    if (booking.status === status) {
+      throw new BadRequestException(`La réservation est déjà au statut « ${status} ».`);
+    }
+
+    if (status === 'confirmed' && booking.status === 'pending_payment') {
+      return this.confirmBooking(id, actorUserId, reason);
+    }
+    if (status === 'cancelled') {
+      return this.cancelBooking(id, actorUserId, reason);
+    }
+
+    const allowed: Partial<Record<Bookings['status'], Bookings['status'][]>> = {
+      draft: ['pending_payment'],
+      pending_payment: ['draft', 'refunded'],
+      confirmed: ['refunded'],
+    };
+
+    const permitted = allowed[booking.status];
+    if (!permitted?.includes(status)) {
+      throw new BadRequestException(
+        `Transition « ${booking.status} » → « ${status} » non autorisée.`,
+      );
+    }
+
+    const fromStatus = booking.status;
+    booking.status = status;
+    booking.updatedByUserId = actorUserId ?? null;
+    await this.bookingsRepository.save(booking);
+    await this.statusHistory.record({
+      bookingId: id,
+      fromStatus,
+      toStatus: status,
+      reason: reason?.trim() || `Statut → ${status}`,
+      changedByUserId: actorUserId ?? null,
     });
 
     return this.getBookingDetail(id);

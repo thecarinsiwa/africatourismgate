@@ -68,6 +68,7 @@ const DOMAIN_MAP = {
   package_items: 'packages',
   bookings: 'commerce',
   booking_items: 'commerce',
+  booking_status_history: 'commerce',
   payments: 'commerce',
   promo_codes: 'commerce',
   promotions: 'commerce',

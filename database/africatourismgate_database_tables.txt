@@ -79,6 +79,7 @@ package_items
 Commerce
 --------
 bookings
+booking_status_history
 booking_items
 payments
 promo_codes

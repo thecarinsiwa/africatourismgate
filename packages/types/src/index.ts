@@ -140,7 +140,13 @@ export type {
 
 export type {
   Booking,
+  BookingAdminDetail,
+  BookingClient,
   BookingListItem,
+  BookingPayment,
+  BookingStatusHistoryEntry,
+  CancelBookingRequest,
+  UpdateBookingStatusRequest,
   BookingCheckoutItem,
   BookingCheckoutItemType,
   BookingCheckoutLine,

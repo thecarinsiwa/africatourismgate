@@ -1,13 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { In, IsNull, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
-import { Bookings, Users } from '../../../entities/generated';
+import { Bookings, Organizations, Payments, Users } from '../../../entities/generated';
 import { CrudService } from '../../../common/crud/crud.service';
 import { BookingEngineService } from './booking-engine.service';
-import { BookingDetailDto } from './dto/booking-detail.dto';
+import { BookingStatusHistoryService } from './booking-status-history.service';
+import { BookingAdminDetailDto } from './dto/booking-admin-detail.dto';
 import { BookingListItemDto } from './dto/booking-list-item.dto';
 import { BookingsListQueryDto } from './dto/bookings-list-query.dto';
+import { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
+import { BookingDetailDto } from './dto/booking-detail.dto';
 
 @Injectable()
 export class BookingsService extends CrudService<Bookings> {
@@ -16,7 +19,12 @@ export class BookingsService extends CrudService<Bookings> {
     private readonly bookingsRepository: Repository<Bookings>,
     @InjectRepository(Users)
     private readonly usersRepository: Repository<Users>,
+    @InjectRepository(Organizations)
+    private readonly organizationsRepository: Repository<Organizations>,
+    @InjectRepository(Payments)
+    private readonly paymentsRepository: Repository<Payments>,
     private readonly bookingEngine: BookingEngineService,
+    private readonly statusHistory: BookingStatusHistoryService,
   ) {
     super(bookingsRepository);
   }
@@ -101,7 +109,79 @@ export class BookingsService extends CrudService<Bookings> {
     };
   }
 
-  getDetail(id: string): Promise<BookingDetailDto> {
-    return this.bookingEngine.getBookingDetail(id);
+  async getAdminDetail(id: string): Promise<BookingAdminDetailDto> {
+    const base = await this.bookingEngine.getBookingDetail(id);
+    const clientUser = await this.usersRepository.findOne({
+      where: { id: base.booking.userId },
+    });
+    if (!clientUser) {
+      throw new NotFoundException('Client introuvable.');
+    }
+
+    let organizationName: string | null = null;
+    if (clientUser.organizationId) {
+      const org = await this.organizationsRepository.findOne({
+        where: { id: clientUser.organizationId },
+      });
+      organizationName = org?.name ?? null;
+    }
+
+    const payments = await this.paymentsRepository.find({
+      where: { bookingId: id, deletedAt: IsNull() },
+      order: { createdAt: 'DESC' },
+    });
+
+    let statusHistory = await this.statusHistory.listByBookingId(id);
+    if (statusHistory.length === 0) {
+      statusHistory = [
+        {
+          id: 'legacy',
+          bookingId: id,
+          fromStatus: null,
+          toStatus: base.booking.status,
+          reason: 'Statut actuel (historique non enregistré)',
+          changedByUserId: null,
+          createdAt: base.booking.createdAt,
+        },
+      ];
+    }
+
+    return {
+      booking: base.booking,
+      items: base.items,
+      totalCents: base.totalCents,
+      currency: base.currency,
+      client: {
+        id: clientUser.id,
+        email: clientUser.email,
+        firstName: clientUser.firstName,
+        lastName: clientUser.lastName,
+        organizationId: clientUser.organizationId ?? null,
+        organizationName,
+      },
+      payments,
+      statusHistory,
+    };
+  }
+
+  updateStatus(
+    id: string,
+    dto: UpdateBookingStatusDto,
+    actorUserId?: string,
+  ): Promise<BookingDetailDto> {
+    return this.bookingEngine.updateBookingStatus(
+      id,
+      dto.status,
+      actorUserId,
+      dto.reason,
+    );
+  }
+
+  cancelWithReason(
+    id: string,
+    reason: string | undefined,
+    actorUserId?: string,
+  ): Promise<BookingDetailDto> {
+    return this.bookingEngine.cancelBooking(id, actorUserId, reason);
   }
 }

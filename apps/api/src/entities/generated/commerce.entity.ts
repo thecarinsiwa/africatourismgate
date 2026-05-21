@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn, CreateDateColumn } from 'typeorm';
 import { BaseAuditEntity } from '../../common/entities/base-audit.entity';
 @Entity('bookings')
 export class Bookings extends BaseAuditEntity {
@@ -51,6 +51,37 @@ export class BookingItems extends BaseAuditEntity {
   @Column({ type: 'date', name: 'end_date', nullable: true })
   endDate!: string;
 
+}
+
+@Entity('booking_status_history')
+export class BookingStatusHistory {
+  @PrimaryColumn('uuid', { name: 'id', length: 36 })
+  id!: string;
+
+  @Column({ type: 'varchar', name: 'booking_id', length: 36 })
+  bookingId!: string;
+
+  @Column({
+    name: 'from_status',
+    enum: ['draft', 'pending_payment', 'confirmed', 'cancelled', 'refunded'],
+    nullable: true,
+  })
+  fromStatus!: Bookings['status'] | null;
+
+  @Column({
+    name: 'to_status',
+    enum: ['draft', 'pending_payment', 'confirmed', 'cancelled', 'refunded'],
+  })
+  toStatus!: Bookings['status'];
+
+  @Column({ type: 'text', name: 'reason', nullable: true })
+  reason!: string | null;
+
+  @Column({ type: 'varchar', name: 'changed_by_user_id', length: 36, nullable: true })
+  changedByUserId!: string | null;
+
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
+  createdAt!: Date;
 }
 
 @Entity('payments')

@@ -5,10 +5,13 @@ import {
   ActivitySchedules,
   BookingItems,
   Bookings,
+  BookingStatusHistory,
   CabinAvailability,
   Cabins,
   FlightClassAvailability,
   FlightClasses,
+  Organizations,
+  Payments,
   RoomAvailability,
   Rooms,
   Users,
@@ -16,6 +19,7 @@ import {
   Vehicles,
 } from '../../../entities/generated';
 import { BookingEngineService } from './booking-engine.service';
+import { BookingStatusHistoryService } from './booking-status-history.service';
 import { BookingsController } from './bookings.controller';
 import { BookingsService } from './bookings.service';
 
@@ -24,7 +28,10 @@ import { BookingsService } from './bookings.service';
     TypeOrmModule.forFeature([
       Bookings,
       BookingItems,
+      BookingStatusHistory,
       Users,
+      Organizations,
+      Payments,
       RoomAvailability,
       Rooms,
       FlightClassAvailability,
@@ -38,7 +45,7 @@ import { BookingsService } from './bookings.service';
     ]),
   ],
   controllers: [BookingsController],
-  providers: [BookingsService, BookingEngineService],
-  exports: [BookingEngineService],
+  providers: [BookingsService, BookingEngineService, BookingStatusHistoryService],
+  exports: [BookingEngineService, BookingStatusHistoryService],
 })
 export class BookingsModule {}
