@@ -10,6 +10,7 @@ import {
   IsString,
   IsUUID,
   Length,
+  MaxLength,
   Min,
   ValidateNested,
 } from 'class-validator';
@@ -73,4 +74,15 @@ export class BookingCheckoutDto {
   @IsString()
   @Length(3, 3)
   currency?: string;
+
+  @ApiPropertyOptional({ example: 'SUMMER20', description: 'Promo code (case-insensitive)' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(64)
+  promoCode?: string;
+
+  @ApiPropertyOptional({ format: 'uuid', description: 'Active promotion with discount rules' })
+  @IsOptional()
+  @IsUUID('4')
+  promotionId?: string;
 }

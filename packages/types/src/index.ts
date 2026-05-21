@@ -152,6 +152,7 @@ export type {
   BookingCheckoutItem,
   BookingCheckoutItemType,
   BookingCheckoutLine,
+  AppliedCheckoutDiscount,
   BookingCheckoutPreview,
   BookingCheckoutRequest,
   BookingDetail,

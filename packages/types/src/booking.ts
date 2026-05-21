@@ -19,6 +19,7 @@ export interface Booking {
   totalCents: number;
   currency: string;
   promoCodeId: string | null;
+  promotionId?: string | null;
   createdAt: string;
   updatedAt: string | null;
 }
@@ -35,6 +36,17 @@ export interface BookingCheckoutItem {
 export interface BookingCheckoutRequest {
   items: BookingCheckoutItem[];
   currency?: string;
+  promoCode?: string;
+  promotionId?: string;
+}
+
+export interface AppliedCheckoutDiscount {
+  kind: 'promo_code' | 'promotion';
+  id: string;
+  label: string;
+  discountType: 'percent' | 'fixed_amount';
+  discountValue: number;
+  discountCents: number;
 }
 
 export interface BookingCheckoutLine {
@@ -51,8 +63,11 @@ export interface BookingCheckoutLine {
 
 export interface BookingCheckoutPreview {
   lines: BookingCheckoutLine[];
+  subtotalCents: number;
+  discountCents: number;
   totalCents: number;
   currency: string;
+  appliedDiscount: AppliedCheckoutDiscount | null;
 }
 
 export interface BookingItem {

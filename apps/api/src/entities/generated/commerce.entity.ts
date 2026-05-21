@@ -20,6 +20,9 @@ export class Bookings extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'promo_code_id', length: 36, nullable: true })
   promoCodeId!: string;
 
+  @Column({ type: 'varchar', name: 'promotion_id', length: 36, nullable: true })
+  promotionId!: string;
+
 }
 
 @Entity('booking_items')
@@ -150,6 +153,24 @@ export class Promotions extends BaseAuditEntity {
 
   @Column({ type: 'text', name: 'description', nullable: true })
   description!: string;
+
+  @Column({ name: 'discount_type', enum: ['percent', 'fixed_amount'], nullable: true })
+  discountType!: 'percent' | 'fixed_amount' | null;
+
+  @Column({ type: 'decimal', name: 'discount_value', precision: 12, scale: 2, nullable: true })
+  discountValue!: string | null;
+
+  @Column({ type: 'date', name: 'valid_from', nullable: true })
+  validFrom!: string | null;
+
+  @Column({ type: 'date', name: 'valid_until', nullable: true })
+  validUntil!: string | null;
+
+  @Column({ type: 'int', name: 'max_redemptions', nullable: true })
+  maxRedemptions!: number | null;
+
+  @Column({ type: 'int', name: 'redemption_count' })
+  redemptionCount!: number;
 
   @Column({ type: 'int', name: 'active' })
   active!: number;

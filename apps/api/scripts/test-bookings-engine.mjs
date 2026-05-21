@@ -111,8 +111,10 @@ async function main() {
     body: checkoutBody,
   });
   assertStatus('POST checkout-preview', preview.status, 200);
-  if (preview.data?.totalCents !== 9000) {
-    throw new Error(`Expected totalCents 9000, got ${preview.data?.totalCents}`);
+  if (preview.data?.subtotalCents !== 9000 || preview.data?.totalCents !== 9000) {
+    throw new Error(
+      `Expected subtotal/total 9000, got subtotal=${preview.data?.subtotalCents} total=${preview.data?.totalCents}`,
+    );
   }
 
   console.log('2. POST /bookings (create)');

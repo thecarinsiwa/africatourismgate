@@ -165,8 +165,10 @@ async function main() {
     throw new Error(`Preview missing line types: ${[...lineTypes].join(', ')}`);
   }
   const expectedTotal = 9000 + 2 * 5000;
-  if (preview.data?.totalCents !== expectedTotal) {
-    throw new Error(`Expected total ${expectedTotal}, got ${preview.data?.totalCents}`);
+  if (preview.data?.subtotalCents !== expectedTotal || preview.data?.totalCents !== expectedTotal) {
+    throw new Error(
+      `Expected subtotal/total ${expectedTotal}, got subtotal=${preview.data?.subtotalCents} total=${preview.data?.totalCents}`,
+    );
   }
   console.log(`  OK preview totalCents=${preview.data.totalCents}`);
 

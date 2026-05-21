@@ -1075,6 +1075,7 @@ CREATE TABLE `bookings` (
   `total_cents` INT UNSIGNED NOT NULL DEFAULT 0,
   `currency` CHAR(3) NOT NULL DEFAULT 'USD',
   `promo_code_id` CHAR(36) DEFAULT NULL,
+  `promotion_id` CHAR(36) DEFAULT NULL,
   `created_by_user_id` CHAR(36) DEFAULT NULL,
   `updated_by_user_id` CHAR(36) DEFAULT NULL,
   `deleted_by_user_id` CHAR(36) DEFAULT NULL,
@@ -1187,6 +1188,12 @@ CREATE TABLE `promotions` (
   `id` CHAR(36) NOT NULL,
   `name` VARCHAR(180) NOT NULL,
   `description` TEXT,
+  `discount_type` ENUM('percent','fixed_amount') DEFAULT NULL,
+  `discount_value` DECIMAL(12,2) DEFAULT NULL,
+  `valid_from` DATE DEFAULT NULL,
+  `valid_until` DATE DEFAULT NULL,
+  `max_redemptions` INT UNSIGNED DEFAULT NULL,
+  `redemption_count` INT UNSIGNED NOT NULL DEFAULT 0,
   `active` TINYINT(1) NOT NULL DEFAULT 1,
   `created_by_user_id` CHAR(36) DEFAULT NULL,
   `updated_by_user_id` CHAR(36) DEFAULT NULL,
@@ -1203,6 +1210,9 @@ CREATE TABLE `promotions` (
 
 ALTER TABLE `bookings`
   ADD CONSTRAINT `fk_bookings_promo` FOREIGN KEY (`promo_code_id`) REFERENCES `promo_codes` (`id`) ON DELETE SET NULL;
+
+ALTER TABLE `bookings`
+  ADD CONSTRAINT `fk_bookings_promotion` FOREIGN KEY (`promotion_id`) REFERENCES `promotions` (`id`) ON DELETE SET NULL;
 
 -- -----------------------------------------------------------------------------
 -- Reviews
