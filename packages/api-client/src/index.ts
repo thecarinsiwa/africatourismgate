@@ -69,6 +69,15 @@ import type {
   UpdateActivityProviderRequest,
   UpdateActivityRequest,
   UpdateActivityScheduleRequest,
+  CreatePackageItemRequest,
+  CreatePackageRequest,
+  Package,
+  PackageDetail,
+  PackageItem,
+  PackageItemsListQuery,
+  PackagesListQuery,
+  UpdatePackageItemRequest,
+  UpdatePackageRequest,
   CreateAirlineRequest,
   CreateAirportRequest,
   CreateFlightClassAvailabilityRequest,
@@ -948,6 +957,54 @@ export class ApiClient {
 
   deleteActivitySchedule(id: string): Promise<void> {
     return this.request<void>(`/activity-schedules/${id}`, { method: 'DELETE' });
+  }
+
+  listPackages(query?: PackagesListQuery): Promise<PaginatedResponse<Package>> {
+    return fetchPaginated<Package>(this, '/packages', query);
+  }
+
+  getPackage(id: string): Promise<PackageDetail> {
+    return this.request<PackageDetail>(`/packages/${id}`);
+  }
+
+  createPackage(body: CreatePackageRequest): Promise<Package> {
+    return this.request<Package>('/packages', { method: 'POST', body });
+  }
+
+  updatePackage(id: string, body: UpdatePackageRequest): Promise<Package> {
+    return this.request<Package>(`/packages/${id}`, { method: 'PATCH', body });
+  }
+
+  deletePackage(id: string): Promise<void> {
+    return this.request<void>(`/packages/${id}`, { method: 'DELETE' });
+  }
+
+  listPackageItems(
+    query?: PackageItemsListQuery,
+  ): Promise<PaginatedResponse<PackageItem>> {
+    return fetchPaginated<PackageItem>(this, '/package-items', query);
+  }
+
+  getPackageItem(id: string): Promise<PackageItem> {
+    return this.request<PackageItem>(`/package-items/${id}`);
+  }
+
+  createPackageItem(body: CreatePackageItemRequest): Promise<PackageItem> {
+    return this.request<PackageItem>('/package-items', { method: 'POST', body });
+  }
+
+  updatePackageItem(
+    id: string,
+    body: UpdatePackageItemRequest,
+  ): Promise<PackageItem> {
+    return this.request<PackageItem>(`/package-items/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deletePackageItem(id: string): Promise<void> {
+    return this.request<void>(`/package-items/${id}`, { method: 'DELETE' });
   }
 
   listAirlines(query?: AirlinesListQuery): Promise<PaginatedResponse<Airline>> {

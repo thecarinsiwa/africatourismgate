@@ -16,6 +16,7 @@
     "test:vehicles": "node scripts/test-vehicles-crud.mjs",
     "test:properties": "node scripts/test-properties-crud.mjs",
     "test:activities": "node scripts/test-activities-crud.mjs",
+    "test:packages": "node scripts/test-packages-crud.mjs",
     "test:rooms-amenities": "node scripts/test-rooms-amenities.mjs",
     "test:room-availability": "node scripts/test-room-availability.mjs",
     "test:users": "node scripts/test-users-crud.mjs",

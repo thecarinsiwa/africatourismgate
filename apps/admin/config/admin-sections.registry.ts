@@ -124,7 +124,7 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
   },
   'produits/forfaits': {
     title: 'Forfaits',
-    description: 'Packages combinés (hôtel + vol, etc.).',
+    description: 'Packages combinés, items polymorphes et remise calculée.',
     apiResource: 'packages',
   },
   'produits/destinations': {
