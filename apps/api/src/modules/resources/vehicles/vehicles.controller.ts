@@ -9,9 +9,9 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
-import { Vehicles } from '../../../entities/generated';
+import { CreateVehicleDto } from './dto/create-vehicle.dto';
+import { UpdateVehicleDto } from './dto/update-vehicle.dto';
+import { VehiclesListQueryDto } from './dto/vehicles-list-query.dto';
 import { VehiclesService } from './vehicles.service';
 
 @ApiTags('vehicles')
@@ -21,30 +21,30 @@ export class VehiclesController {
 
   @Get()
   @ApiOperation({ summary: 'List vehicles' })
-  findAll(@Query() query: PaginationQueryDto) {
+  findAll(@Query() query: VehiclesListQueryDto) {
     return this.service.findAll(query);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get vehicles by id' })
+  @ApiOperation({ summary: 'Get vehicle by id' })
   findOne(@Param('id') id: string) {
     return this.service.findOne(id);
   }
 
   @Post()
-  @ApiOperation({ summary: 'Create vehicles' })
-  create(@Body() dto: DeepPartial<Vehicles>) {
-    return this.service.create(dto);
+  @ApiOperation({ summary: 'Create vehicle' })
+  create(@Body() dto: CreateVehicleDto) {
+    return this.service.createVehicle(dto);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update vehicles' })
-  update(@Param('id') id: string, @Body() dto: DeepPartial<Vehicles>) {
-    return this.service.update(id, dto);
+  @ApiOperation({ summary: 'Update vehicle' })
+  update(@Param('id') id: string, @Body() dto: UpdateVehicleDto) {
+    return this.service.updateVehicle(id, dto);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Soft-delete vehicles' })
+  @ApiOperation({ summary: 'Soft-delete vehicle' })
   remove(@Param('id') id: string) {
     return this.service.remove(id);
   }

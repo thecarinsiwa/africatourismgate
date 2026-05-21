@@ -72,7 +72,21 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
   },
   'produits/locations': {
     title: 'Locations véhicules',
-    description: 'Agences, véhicules et disponibilités.',
+    description: 'Agences, catégories, véhicules et disponibilités par dates.',
+    apiResource: 'vehicles',
+  },
+  'produits/locations/agences': {
+    title: 'Agences de location',
+    description: 'Référentiel des agences.',
+    apiResource: 'rental-agencies',
+  },
+  'produits/locations/categories': {
+    title: 'Catégories véhicules',
+    description: 'Types de véhicules (économique, SUV, etc.).',
+    apiResource: 'vehicle-categories',
+  },
+  'produits/locations/nouveau': {
+    title: 'Nouveau véhicule',
     apiResource: 'vehicles',
   },
   'produits/croisieres': {

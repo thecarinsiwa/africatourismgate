@@ -21,6 +21,10 @@ import type {
   BulkUpsertRoomAvailabilityResponse,
   BulkUpsertFlightClassAvailabilityRequest,
   BulkUpsertFlightClassAvailabilityResponse,
+  CreateRentalAgencyRequest,
+  CreateVehicleAvailabilityRequest,
+  CreateVehicleCategoryRequest,
+  CreateVehicleRequest,
   CreateAirlineRequest,
   CreateAirportRequest,
   CreateFlightClassAvailabilityRequest,
@@ -52,6 +56,8 @@ import type {
   FlightClassAvailabilityListQuery,
   FlightClassesListQuery,
   FlightsListQuery,
+  RentalAgenciesListQuery,
+  RentalAgency,
   ForgotPasswordRequest,
   ForgotPasswordResponse,
   LoginRequest,
@@ -80,6 +86,16 @@ import type {
   UpdateFlightClassAvailabilityRequest,
   UpdateFlightClassRequest,
   UpdateFlightRequest,
+  UpdateRentalAgencyRequest,
+  UpdateVehicleAvailabilityRequest,
+  UpdateVehicleCategoryRequest,
+  UpdateVehicleRequest,
+  Vehicle,
+  VehicleAvailability,
+  VehicleAvailabilityListQuery,
+  VehicleCategoriesListQuery,
+  VehicleCategory,
+  VehiclesListQuery,
   UpdatePropertyImageRequest,
   UpdatePropertyRequest,
   UpdateRoomAvailabilityRequest,
@@ -931,6 +947,116 @@ export class ApiClient {
       '/flight-class-availability/bulk',
       { method: 'PUT', body },
     );
+  }
+
+  listRentalAgencies(
+    query?: RentalAgenciesListQuery,
+  ): Promise<PaginatedResponse<RentalAgency>> {
+    return fetchPaginated<RentalAgency>(this, '/rental-agencies', query);
+  }
+
+  getRentalAgency(id: string): Promise<RentalAgency> {
+    return this.request<RentalAgency>(`/rental-agencies/${id}`);
+  }
+
+  createRentalAgency(body: CreateRentalAgencyRequest): Promise<RentalAgency> {
+    return this.request<RentalAgency>('/rental-agencies', { method: 'POST', body });
+  }
+
+  updateRentalAgency(
+    id: string,
+    body: UpdateRentalAgencyRequest,
+  ): Promise<RentalAgency> {
+    return this.request<RentalAgency>(`/rental-agencies/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteRentalAgency(id: string): Promise<void> {
+    return this.request<void>(`/rental-agencies/${id}`, { method: 'DELETE' });
+  }
+
+  listVehicleCategories(
+    query?: VehicleCategoriesListQuery,
+  ): Promise<PaginatedResponse<VehicleCategory>> {
+    return fetchPaginated<VehicleCategory>(this, '/vehicle-categories', query);
+  }
+
+  getVehicleCategory(id: string): Promise<VehicleCategory> {
+    return this.request<VehicleCategory>(`/vehicle-categories/${id}`);
+  }
+
+  createVehicleCategory(
+    body: CreateVehicleCategoryRequest,
+  ): Promise<VehicleCategory> {
+    return this.request<VehicleCategory>('/vehicle-categories', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateVehicleCategory(
+    id: string,
+    body: UpdateVehicleCategoryRequest,
+  ): Promise<VehicleCategory> {
+    return this.request<VehicleCategory>(`/vehicle-categories/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteVehicleCategory(id: string): Promise<void> {
+    return this.request<void>(`/vehicle-categories/${id}`, { method: 'DELETE' });
+  }
+
+  listVehicles(query?: VehiclesListQuery): Promise<PaginatedResponse<Vehicle>> {
+    return fetchPaginated<Vehicle>(this, '/vehicles', query);
+  }
+
+  getVehicle(id: string): Promise<Vehicle> {
+    return this.request<Vehicle>(`/vehicles/${id}`);
+  }
+
+  createVehicle(body: CreateVehicleRequest): Promise<Vehicle> {
+    return this.request<Vehicle>('/vehicles', { method: 'POST', body });
+  }
+
+  updateVehicle(id: string, body: UpdateVehicleRequest): Promise<Vehicle> {
+    return this.request<Vehicle>(`/vehicles/${id}`, { method: 'PATCH', body });
+  }
+
+  deleteVehicle(id: string): Promise<void> {
+    return this.request<void>(`/vehicles/${id}`, { method: 'DELETE' });
+  }
+
+  listVehicleAvailability(
+    query: VehicleAvailabilityListQuery,
+  ): Promise<PaginatedResponse<VehicleAvailability>> {
+    return fetchPaginated<VehicleAvailability>(this, '/vehicle-availability', query);
+  }
+
+  createVehicleAvailability(
+    body: CreateVehicleAvailabilityRequest,
+  ): Promise<VehicleAvailability> {
+    return this.request<VehicleAvailability>('/vehicle-availability', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateVehicleAvailability(
+    id: string,
+    body: UpdateVehicleAvailabilityRequest,
+  ): Promise<VehicleAvailability> {
+    return this.request<VehicleAvailability>(`/vehicle-availability/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteVehicleAvailability(id: string): Promise<void> {
+    return this.request<void>(`/vehicle-availability/${id}`, { method: 'DELETE' });
   }
 }
 

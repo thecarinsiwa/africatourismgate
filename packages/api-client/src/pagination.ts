@@ -1,6 +1,11 @@
 import type {
+  AirlinesListQuery,
+  AirportsListQuery,
   AmenitiesListQuery,
   DestinationsListQuery,
+  FlightClassAvailabilityListQuery,
+  FlightClassesListQuery,
+  FlightsListQuery,
   PaginatedResponse,
   PaginationQuery,
   PaymentListItem,
@@ -9,10 +14,14 @@ import type {
   PropertyAmenitiesListQuery,
   PropertyImagesListQuery,
   RbacAuditLogsListQuery,
+  RentalAgenciesListQuery,
   RoomAvailabilityListQuery,
   RoomsListQuery,
   SucceededPaymentsRevenue,
   UsersListQuery,
+  VehicleAvailabilityListQuery,
+  VehicleCategoriesListQuery,
+  VehiclesListQuery,
 } from '@africatourismgate/types';
 import type { RequestOptions } from './index';
 
@@ -22,20 +31,50 @@ export interface PaginatedRequestClient {
 
 const DEFAULT_CURRENCY = 'CDF';
 
-function buildQueryString(
-  query?:
-    | PaginationQuery
-    | UsersListQuery
-    | RbacAuditLogsListQuery
-    | DestinationsListQuery
-    | PointsOfInterestListQuery
-    | PropertiesListQuery
-    | PropertyImagesListQuery
-    | RoomsListQuery
-    | RoomAvailabilityListQuery
-    | AmenitiesListQuery
-    | PropertyAmenitiesListQuery,
-): string {
+/** Query keys forwarded as URL search params (beyond page/limit). */
+const RESOURCE_QUERY_KEYS = [
+  'search',
+  'status',
+  'organizationId',
+  'eventType',
+  'actorUserId',
+  'dateFrom',
+  'dateTo',
+  'destinationId',
+  'propertyId',
+  'roomId',
+  'vehicleId',
+  'startFrom',
+  'endTo',
+  'flightClassId',
+  'flightId',
+  'agencyId',
+  'categoryId',
+] as const;
+
+export type PaginatedListQuery =
+  | PaginationQuery
+  | UsersListQuery
+  | RbacAuditLogsListQuery
+  | DestinationsListQuery
+  | PointsOfInterestListQuery
+  | PropertiesListQuery
+  | PropertyImagesListQuery
+  | RoomsListQuery
+  | RoomAvailabilityListQuery
+  | AmenitiesListQuery
+  | PropertyAmenitiesListQuery
+  | AirlinesListQuery
+  | AirportsListQuery
+  | FlightsListQuery
+  | FlightClassesListQuery
+  | FlightClassAvailabilityListQuery
+  | RentalAgenciesListQuery
+  | VehicleCategoriesListQuery
+  | VehiclesListQuery
+  | VehicleAvailabilityListQuery;
+
+function buildQueryString(query?: PaginatedListQuery): string {
   const params = new URLSearchParams();
   if (query?.page !== undefined) {
     params.set('page', String(query.page));
@@ -43,56 +82,15 @@ function buildQueryString(
   if (query?.limit !== undefined) {
     params.set('limit', String(query.limit));
   }
-  if ('search' in (query ?? {}) && query && 'search' in query && query.search) {
-    params.set('search', query.search);
+
+  const record = query as Record<string, unknown> | undefined;
+  for (const key of RESOURCE_QUERY_KEYS) {
+    const value = record?.[key];
+    if (value !== undefined && value !== null && value !== '') {
+      params.set(key, String(value));
+    }
   }
-  if ('status' in (query ?? {}) && query && 'status' in query && query.status) {
-    params.set('status', query.status);
-  }
-  if (
-    'organizationId' in (query ?? {}) &&
-    query &&
-    'organizationId' in query &&
-    query.organizationId
-  ) {
-    params.set('organizationId', query.organizationId);
-  }
-  if ('eventType' in (query ?? {}) && query && 'eventType' in query && query.eventType) {
-    params.set('eventType', query.eventType);
-  }
-  if (
-    'actorUserId' in (query ?? {}) &&
-    query &&
-    'actorUserId' in query &&
-    query.actorUserId
-  ) {
-    params.set('actorUserId', query.actorUserId);
-  }
-  if ('dateFrom' in (query ?? {}) && query && 'dateFrom' in query && query.dateFrom) {
-    params.set('dateFrom', query.dateFrom);
-  }
-  if ('dateTo' in (query ?? {}) && query && 'dateTo' in query && query.dateTo) {
-    params.set('dateTo', query.dateTo);
-  }
-  if (
-    'destinationId' in (query ?? {}) &&
-    query &&
-    'destinationId' in query &&
-    query.destinationId
-  ) {
-    params.set('destinationId', query.destinationId);
-  }
-  if (
-    'propertyId' in (query ?? {}) &&
-    query &&
-    'propertyId' in query &&
-    query.propertyId
-  ) {
-    params.set('propertyId', query.propertyId);
-  }
-  if ('roomId' in (query ?? {}) && query && 'roomId' in query && query.roomId) {
-    params.set('roomId', query.roomId);
-  }
+
   const qs = params.toString();
   return qs ? `?${qs}` : '';
 }
@@ -100,18 +98,7 @@ function buildQueryString(
 export async function fetchPaginated<T>(
   client: PaginatedRequestClient,
   path: string,
-  query?:
-    | PaginationQuery
-    | UsersListQuery
-    | RbacAuditLogsListQuery
-    | DestinationsListQuery
-    | PointsOfInterestListQuery
-    | PropertiesListQuery
-    | PropertyImagesListQuery
-    | RoomsListQuery
-    | RoomAvailabilityListQuery
-    | AmenitiesListQuery
-    | PropertyAmenitiesListQuery,
+  query?: PaginatedListQuery,
 ): Promise<PaginatedResponse<T>> {
   return client.request<PaginatedResponse<T>>(`${path}${buildQueryString(query)}`);
 }
