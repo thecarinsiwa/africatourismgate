@@ -48,7 +48,7 @@ export class BookingsController {
   @RequirePermissions('bookings.read')
   @ApiOperation({ summary: 'List bookings' })
   findAll(@Query() query: BookingsListQueryDto) {
-    return this.bookingsService.findAll(query);
+    return this.bookingsService.list(query);
   }
 
   @Get(':id')

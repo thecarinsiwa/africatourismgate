@@ -140,6 +140,7 @@ export type {
 
 export type {
   Booking,
+  BookingListItem,
   BookingCheckoutItem,
   BookingCheckoutItemType,
   BookingCheckoutLine,

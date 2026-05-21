@@ -76,9 +76,19 @@ export interface BookingDetail {
   currency: string;
 }
 
+export interface BookingListItem extends Booking {
+  clientEmail: string;
+  clientFirstName: string;
+  clientLastName: string;
+  organizationId: string | null;
+}
+
 export interface BookingsListQuery {
   page?: number;
   limit?: number;
   status?: BookingStatus;
   userId?: string;
+  organizationId?: string;
+  dateFrom?: string;
+  dateTo?: string;
 }
