@@ -5,6 +5,13 @@ export type BookingStatus =
   | 'cancelled'
   | 'refunded';
 
+export type BookingCheckoutItemType =
+  | 'room'
+  | 'flight_class'
+  | 'vehicle'
+  | 'cabin'
+  | 'activity_schedule';
+
 export interface Booking {
   id: string;
   userId: string;
@@ -16,26 +23,30 @@ export interface Booking {
   updatedAt: string | null;
 }
 
-export interface BookingCheckoutRoomItem {
-  roomId: string;
-  startDate: string;
-  endDate: string;
+export interface BookingCheckoutItem {
+  itemType: BookingCheckoutItemType;
+  referenceId: string;
   quantity: number;
+  startDate?: string;
+  endDate?: string;
+  date?: string;
 }
 
 export interface BookingCheckoutRequest {
-  items: BookingCheckoutRoomItem[];
+  items: BookingCheckoutItem[];
   currency?: string;
 }
 
 export interface BookingCheckoutLine {
-  roomId: string;
-  date: string;
+  itemType: BookingCheckoutItemType;
+  referenceId: string;
   quantity: number;
   unitPriceCents: number;
   lineTotalCents: number;
   titleSnapshot: string;
   currency: string;
+  startDate: string | null;
+  endDate: string | null;
 }
 
 export interface BookingCheckoutPreview {

@@ -140,10 +140,11 @@ export type {
 
 export type {
   Booking,
+  BookingCheckoutItem,
+  BookingCheckoutItemType,
   BookingCheckoutLine,
   BookingCheckoutPreview,
   BookingCheckoutRequest,
-  BookingCheckoutRoomItem,
   BookingDetail,
   BookingItem,
   BookingsListQuery,
