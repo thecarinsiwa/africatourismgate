@@ -56,8 +56,8 @@ export function SailingForm({ mode, sailingId, initialSailing }: SailingFormProp
   useEffect(() => {
     const client = getApiClient();
     void Promise.all([
-      client.listItineraries({ page: 1, limit: 200 }),
-      client.listShips({ page: 1, limit: 200 }),
+      client.listItineraries({ page: 1, limit: 100 }),
+      client.listShips({ page: 1, limit: 100 }),
     ])
       .then(([i, s]) => {
         setItineraries(i.data);
