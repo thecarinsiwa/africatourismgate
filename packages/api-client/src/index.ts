@@ -429,10 +429,6 @@ export class ApiClient {
     return this.request<void>(`/users/${id}`, { method: 'DELETE' });
   }
 
-  listBookings(query?: PaginationQuery): Promise<PaginatedResponse<unknown>> {
-    return fetchPaginated(this, '/bookings', query);
-  }
-
   listProperties(
     query?: PropertiesListQuery,
   ): Promise<PaginatedResponse<Property>> {
