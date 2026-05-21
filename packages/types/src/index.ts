@@ -139,6 +139,21 @@ export type {
 } from './activity.js';
 
 export type {
+  CreatePackageItemRequest,
+  CreatePackageRequest,
+  Package,
+  PackageDetail,
+  PackageItem,
+  PackageItemEnriched,
+  PackageItemType,
+  PackageItemsListQuery,
+  PackagePricing,
+  PackagesListQuery,
+  UpdatePackageItemRequest,
+  UpdatePackageRequest,
+} from './package.js';
+
+export type {
   CreateDestinationRequest,
   CreatePointOfInterestRequest,
   Destination,

@@ -9,9 +9,9 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
-import { Packages } from '../../../entities/generated';
+import { CreatePackageDto } from './dto/create-package.dto';
+import { PackagesListQueryDto } from './dto/packages-list-query.dto';
+import { UpdatePackageDto } from './dto/update-package.dto';
 import { PackagesService } from './packages.service';
 
 @ApiTags('packages')
@@ -21,30 +21,30 @@ export class PackagesController {
 
   @Get()
   @ApiOperation({ summary: 'List packages' })
-  findAll(@Query() query: PaginationQueryDto) {
+  findAll(@Query() query: PackagesListQueryDto) {
     return this.service.findAll(query);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get packages by id' })
+  @ApiOperation({ summary: 'Get package detail with items and pricing' })
   findOne(@Param('id') id: string) {
-    return this.service.findOne(id);
+    return this.service.getPackageDetail(id);
   }
 
   @Post()
-  @ApiOperation({ summary: 'Create packages' })
-  create(@Body() dto: DeepPartial<Packages>) {
-    return this.service.create(dto);
+  @ApiOperation({ summary: 'Create package' })
+  create(@Body() dto: CreatePackageDto) {
+    return this.service.createPackage(dto);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update packages' })
-  update(@Param('id') id: string, @Body() dto: DeepPartial<Packages>) {
-    return this.service.update(id, dto);
+  @ApiOperation({ summary: 'Update package' })
+  update(@Param('id') id: string, @Body() dto: UpdatePackageDto) {
+    return this.service.updatePackage(id, dto);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Soft-delete packages' })
+  @ApiOperation({ summary: 'Soft-delete package' })
   remove(@Param('id') id: string) {
     return this.service.remove(id);
   }
