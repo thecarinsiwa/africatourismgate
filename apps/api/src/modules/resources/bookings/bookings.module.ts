@@ -12,12 +12,15 @@ import {
   FlightClasses,
   Organizations,
   Payments,
+  PromoCodes,
+  Promotions,
   RoomAvailability,
   Rooms,
   Users,
   VehicleAvailability,
   Vehicles,
 } from '../../../entities/generated';
+import { BookingCheckoutPromoService } from './booking-checkout-promo.service';
 import { BookingEngineService } from './booking-engine.service';
 import { BookingStatusHistoryService } from './booking-status-history.service';
 import { StripeModule } from '../../stripe/stripe.module';
@@ -34,6 +37,8 @@ import { BookingsService } from './bookings.service';
       Users,
       Organizations,
       Payments,
+      PromoCodes,
+      Promotions,
       RoomAvailability,
       Rooms,
       FlightClassAvailability,
@@ -47,7 +52,12 @@ import { BookingsService } from './bookings.service';
     ]),
   ],
   controllers: [BookingsController],
-  providers: [BookingsService, BookingEngineService, BookingStatusHistoryService],
+  providers: [
+    BookingsService,
+    BookingEngineService,
+    BookingStatusHistoryService,
+    BookingCheckoutPromoService,
+  ],
   exports: [BookingEngineService, BookingStatusHistoryService],
 })
 export class BookingsModule {}

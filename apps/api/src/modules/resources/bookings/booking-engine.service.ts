@@ -30,7 +30,9 @@ import {
   BookingCheckoutPreviewResponseDto,
 } from './dto/booking-checkout-preview-response.dto';
 import { BookingDetailDto } from './dto/booking-detail.dto';
+import { BookingCheckoutPromoService } from './booking-checkout-promo.service';
 import { BookingStatusHistoryService } from './booking-status-history.service';
+import type { AppliedCheckoutDiscountDto } from './dto/booking-checkout-preview-response.dto';
 
 type StockTarget =
   | { kind: 'room'; roomId: string; date: string }
@@ -69,18 +71,21 @@ export class BookingEngineService {
     @InjectRepository(Activities)
     private readonly activitiesRepository: Repository<Activities>,
     private readonly statusHistory: BookingStatusHistoryService,
+    private readonly checkoutPromo: BookingCheckoutPromoService,
   ) {}
 
   async previewCheckout(
     dto: BookingCheckoutDto,
     _userId: string,
   ): Promise<BookingCheckoutPreviewResponseDto> {
-    const { lines, currency } = await this.resolveCheckoutLines(dto);
-    const totalCents = lines.reduce((sum, l) => sum + l.lineTotalCents, 0);
+    const pricing = await this.resolveCheckoutPricing(dto);
     return {
-      lines: lines.map(({ stock: _s, ...rest }) => rest),
-      totalCents,
-      currency,
+      lines: pricing.lines.map(({ stock: _s, ...rest }) => rest),
+      subtotalCents: pricing.subtotalCents,
+      discountCents: pricing.discountCents,
+      totalCents: pricing.totalCents,
+      currency: pricing.currency,
+      appliedDiscount: pricing.appliedDiscount,
     };
   }
 
@@ -89,12 +94,11 @@ export class BookingEngineService {
     userId: string,
     actorUserId?: string,
   ): Promise<BookingDetailDto> {
-    const { lines, currency } = await this.resolveCheckoutLines(dto);
-    const totalCents = lines.reduce((sum, l) => sum + l.lineTotalCents, 0);
+    const pricing = await this.resolveCheckoutPricing(dto);
 
     const bookingId = await this.bookingsRepository.manager.transaction(
       async (manager) => {
-        await this.allocateStock(manager, lines, 'decrement', actorUserId);
+        await this.allocateStock(manager, pricing.lines, 'decrement', actorUserId);
 
         const bookingsRepo = manager.getRepository(Bookings);
         const itemsRepo = manager.getRepository(BookingItems);
@@ -104,13 +108,15 @@ export class BookingEngineService {
           id,
           userId,
           status: 'pending_payment',
-          totalCents,
-          currency,
+          totalCents: pricing.totalCents,
+          currency: pricing.currency,
+          promoCodeId: pricing.discount?.promoCodeId ?? null,
+          promotionId: pricing.discount?.promotionId ?? null,
           createdByUserId: actorUserId ?? null,
         } as Bookings);
         await bookingsRepo.save(booking);
 
-        for (const line of lines) {
+        for (const line of pricing.lines) {
           const item = itemsRepo.create({
             id: newId(),
             bookingId: id,
@@ -124,6 +130,10 @@ export class BookingEngineService {
             createdByUserId: actorUserId ?? null,
           } as BookingItems);
           await itemsRepo.save(item);
+        }
+
+        if (pricing.discount) {
+          await this.checkoutPromo.recordRedemption(manager, pricing.discount);
         }
 
         return id;
@@ -269,6 +279,41 @@ export class BookingEngineService {
       items,
       totalCents: booking.totalCents,
       currency: booking.currency,
+    };
+  }
+
+  private async resolveCheckoutPricing(dto: BookingCheckoutDto): Promise<{
+    lines: ResolvedBookingLine[];
+    currency: string;
+    subtotalCents: number;
+    discountCents: number;
+    totalCents: number;
+    appliedDiscount: AppliedCheckoutDiscountDto | null;
+    discount: import('./booking-checkout-promo.service').AppliedCheckoutDiscount | null;
+  }> {
+    const { lines, currency } = await this.resolveCheckoutLines(dto);
+    const subtotalCents = lines.reduce((sum, l) => sum + l.lineTotalCents, 0);
+    const discount = await this.checkoutPromo.resolveDiscount(dto, subtotalCents);
+    const discountCents = discount?.discountCents ?? 0;
+    const totalCents = Math.max(0, subtotalCents - discountCents);
+
+    return {
+      lines,
+      currency,
+      subtotalCents,
+      discountCents,
+      totalCents,
+      appliedDiscount: discount
+        ? {
+            kind: discount.kind,
+            id: discount.id,
+            label: discount.label,
+            discountType: discount.discountType,
+            discountValue: discount.discountValue,
+            discountCents: discount.discountCents,
+          }
+        : null,
+      discount,
     };
   }
 
