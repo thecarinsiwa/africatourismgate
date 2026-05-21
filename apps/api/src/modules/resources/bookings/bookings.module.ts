@@ -11,6 +11,7 @@ import {
   FlightClasses,
   RoomAvailability,
   Rooms,
+  Users,
   VehicleAvailability,
   Vehicles,
 } from '../../../entities/generated';
@@ -23,6 +24,7 @@ import { BookingsService } from './bookings.service';
     TypeOrmModule.forFeature([
       Bookings,
       BookingItems,
+      Users,
       RoomAvailability,
       Rooms,
       FlightClassAvailability,

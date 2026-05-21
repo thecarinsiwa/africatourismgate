@@ -13,6 +13,7 @@ import type {
   PropertiesListQuery,
   PropertyAmenitiesListQuery,
   PropertyImagesListQuery,
+  BookingsListQuery,
   RbacAuditLogsListQuery,
   RentalAgenciesListQuery,
   RoomAvailabilityListQuery,
@@ -38,6 +39,7 @@ const RESOURCE_QUERY_KEYS = [
   'organizationId',
   'eventType',
   'actorUserId',
+  'userId',
   'dateFrom',
   'dateTo',
   'destinationId',
@@ -55,6 +57,7 @@ const RESOURCE_QUERY_KEYS = [
 export type PaginatedListQuery =
   | PaginationQuery
   | UsersListQuery
+  | BookingsListQuery
   | RbacAuditLogsListQuery
   | DestinationsListQuery
   | PointsOfInterestListQuery

@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsIn, IsOptional, IsUUID } from 'class-validator';
+import { IsDateString, IsIn, IsOptional, IsUUID } from 'class-validator';
 import { PaginationQueryDto } from '../../../../common/dto/pagination-query.dto';
 import type { Bookings } from '../../../../entities/generated';
 
@@ -17,8 +17,23 @@ export class BookingsListQueryDto extends PaginationQueryDto {
   @IsIn(BOOKING_STATUSES)
   status?: Bookings['status'];
 
-  @ApiPropertyOptional({ format: 'uuid' })
+  @ApiPropertyOptional({ format: 'uuid', description: 'Filter by client (booking owner)' })
   @IsOptional()
   @IsUUID('4')
   userId?: string;
+
+  @ApiPropertyOptional({ format: 'uuid', description: 'Filter by client organization' })
+  @IsOptional()
+  @IsUUID('4')
+  organizationId?: string;
+
+  @ApiPropertyOptional({ example: '2026-01-01', description: 'Inclusive start (created_at)' })
+  @IsOptional()
+  @IsDateString()
+  dateFrom?: string;
+
+  @ApiPropertyOptional({ example: '2026-12-31', description: 'Inclusive end (created_at)' })
+  @IsOptional()
+  @IsDateString()
+  dateTo?: string;
 }

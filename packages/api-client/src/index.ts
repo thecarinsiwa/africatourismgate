@@ -73,6 +73,7 @@ import type {
   BookingCheckoutPreview,
   BookingCheckoutRequest,
   BookingDetail,
+  BookingListItem,
   BookingsListQuery,
   CreatePackageItemRequest,
   CreatePackageRequest,
@@ -1021,8 +1022,8 @@ export class ApiClient {
     return this.request<BookingDetail>('/bookings', { method: 'POST', body });
   }
 
-  listBookings(query?: BookingsListQuery): Promise<PaginatedResponse<Booking>> {
-    return fetchPaginated<Booking>(this, '/bookings', query);
+  listBookings(query?: BookingsListQuery): Promise<PaginatedResponse<BookingListItem>> {
+    return fetchPaginated<BookingListItem>(this, '/bookings', query);
   }
 
   getBooking(id: string): Promise<BookingDetail> {
