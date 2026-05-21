@@ -119,7 +119,7 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
   },
   'produits/activites': {
     title: 'Activités',
-    description: 'Expériences et fournisseurs.',
+    description: 'Expériences, fournisseurs et créneaux par destination.',
     apiResource: 'activities',
   },
   'produits/forfaits': {

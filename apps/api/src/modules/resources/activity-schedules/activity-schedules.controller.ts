@@ -9,9 +9,9 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
-import { ActivitySchedules } from '../../../entities/generated';
+import { ActivitySchedulesListQueryDto } from './dto/activity-schedules-list-query.dto';
+import { CreateActivityScheduleDto } from './dto/create-activity-schedule.dto';
+import { UpdateActivityScheduleDto } from './dto/update-activity-schedule.dto';
 import { ActivitySchedulesService } from './activity-schedules.service';
 
 @ApiTags('activity-schedules')
@@ -20,31 +20,31 @@ export class ActivitySchedulesController {
   constructor(private readonly service: ActivitySchedulesService) {}
 
   @Get()
-  @ApiOperation({ summary: 'List activity-schedules' })
-  findAll(@Query() query: PaginationQueryDto) {
+  @ApiOperation({ summary: 'List activity schedules' })
+  findAll(@Query() query: ActivitySchedulesListQueryDto) {
     return this.service.findAll(query);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get activity-schedules by id' })
+  @ApiOperation({ summary: 'Get activity schedule by id' })
   findOne(@Param('id') id: string) {
     return this.service.findOne(id);
   }
 
   @Post()
-  @ApiOperation({ summary: 'Create activity-schedules' })
-  create(@Body() dto: DeepPartial<ActivitySchedules>) {
-    return this.service.create(dto);
+  @ApiOperation({ summary: 'Create activity schedule' })
+  create(@Body() dto: CreateActivityScheduleDto) {
+    return this.service.createSchedule(dto);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update activity-schedules' })
-  update(@Param('id') id: string, @Body() dto: DeepPartial<ActivitySchedules>) {
-    return this.service.update(id, dto);
+  @ApiOperation({ summary: 'Update activity schedule' })
+  update(@Param('id') id: string, @Body() dto: UpdateActivityScheduleDto) {
+    return this.service.updateSchedule(id, dto);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Soft-delete activity-schedules' })
+  @ApiOperation({ summary: 'Soft-delete activity schedule' })
   remove(@Param('id') id: string) {
     return this.service.remove(id);
   }

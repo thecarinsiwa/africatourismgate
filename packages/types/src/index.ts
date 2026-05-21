@@ -124,6 +124,21 @@ export type {
 } from './car-rental.js';
 
 export type {
+  Activity,
+  ActivitiesListQuery,
+  ActivityProvider,
+  ActivityProvidersListQuery,
+  ActivitySchedule,
+  ActivitySchedulesListQuery,
+  CreateActivityProviderRequest,
+  CreateActivityRequest,
+  CreateActivityScheduleRequest,
+  UpdateActivityProviderRequest,
+  UpdateActivityRequest,
+  UpdateActivityScheduleRequest,
+} from './activity.js';
+
+export type {
   CreateDestinationRequest,
   CreatePointOfInterestRequest,
   Destination,

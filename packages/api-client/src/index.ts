@@ -57,6 +57,18 @@ import type {
   UpdateItineraryPortRequest,
   UpdateItineraryRequest,
   UpdateShipRequest,
+  Activity,
+  ActivitiesListQuery,
+  ActivityProvider,
+  ActivityProvidersListQuery,
+  ActivitySchedule,
+  ActivitySchedulesListQuery,
+  CreateActivityProviderRequest,
+  CreateActivityRequest,
+  CreateActivityScheduleRequest,
+  UpdateActivityProviderRequest,
+  UpdateActivityRequest,
+  UpdateActivityScheduleRequest,
   CreateAirlineRequest,
   CreateAirportRequest,
   CreateFlightClassAvailabilityRequest,
@@ -850,6 +862,92 @@ export class ApiClient {
 
   deletePointOfInterest(id: string): Promise<void> {
     return this.request<void>(`/points-of-interest/${id}`, { method: 'DELETE' });
+  }
+
+  listActivityProviders(
+    query?: ActivityProvidersListQuery,
+  ): Promise<PaginatedResponse<ActivityProvider>> {
+    return fetchPaginated<ActivityProvider>(this, '/activity-providers', query);
+  }
+
+  getActivityProvider(id: string): Promise<ActivityProvider> {
+    return this.request<ActivityProvider>(`/activity-providers/${id}`);
+  }
+
+  createActivityProvider(
+    body: CreateActivityProviderRequest,
+  ): Promise<ActivityProvider> {
+    return this.request<ActivityProvider>('/activity-providers', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateActivityProvider(
+    id: string,
+    body: UpdateActivityProviderRequest,
+  ): Promise<ActivityProvider> {
+    return this.request<ActivityProvider>(`/activity-providers/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteActivityProvider(id: string): Promise<void> {
+    return this.request<void>(`/activity-providers/${id}`, { method: 'DELETE' });
+  }
+
+  listActivities(query?: ActivitiesListQuery): Promise<PaginatedResponse<Activity>> {
+    return fetchPaginated<Activity>(this, '/activities', query);
+  }
+
+  getActivity(id: string): Promise<Activity> {
+    return this.request<Activity>(`/activities/${id}`);
+  }
+
+  createActivity(body: CreateActivityRequest): Promise<Activity> {
+    return this.request<Activity>('/activities', { method: 'POST', body });
+  }
+
+  updateActivity(id: string, body: UpdateActivityRequest): Promise<Activity> {
+    return this.request<Activity>(`/activities/${id}`, { method: 'PATCH', body });
+  }
+
+  deleteActivity(id: string): Promise<void> {
+    return this.request<void>(`/activities/${id}`, { method: 'DELETE' });
+  }
+
+  listActivitySchedules(
+    query?: ActivitySchedulesListQuery,
+  ): Promise<PaginatedResponse<ActivitySchedule>> {
+    return fetchPaginated<ActivitySchedule>(this, '/activity-schedules', query);
+  }
+
+  getActivitySchedule(id: string): Promise<ActivitySchedule> {
+    return this.request<ActivitySchedule>(`/activity-schedules/${id}`);
+  }
+
+  createActivitySchedule(
+    body: CreateActivityScheduleRequest,
+  ): Promise<ActivitySchedule> {
+    return this.request<ActivitySchedule>('/activity-schedules', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateActivitySchedule(
+    id: string,
+    body: UpdateActivityScheduleRequest,
+  ): Promise<ActivitySchedule> {
+    return this.request<ActivitySchedule>(`/activity-schedules/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteActivitySchedule(id: string): Promise<void> {
+    return this.request<void>(`/activity-schedules/${id}`, { method: 'DELETE' });
   }
 
   listAirlines(query?: AirlinesListQuery): Promise<PaginatedResponse<Airline>> {
