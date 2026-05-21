@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   Activities,
@@ -20,11 +20,13 @@ import {
 } from '../../../entities/generated';
 import { BookingEngineService } from './booking-engine.service';
 import { BookingStatusHistoryService } from './booking-status-history.service';
+import { StripeModule } from '../../stripe/stripe.module';
 import { BookingsController } from './bookings.controller';
 import { BookingsService } from './bookings.service';
 
 @Module({
   imports: [
+    forwardRef(() => StripeModule),
     TypeOrmModule.forFeature([
       Bookings,
       BookingItems,

@@ -42,6 +42,7 @@ import { ActivitiesModule } from './resources/activities/activities.module';
 import { ActivitySchedulesModule } from './resources/activity-schedules/activity-schedules.module';
 import { PackagesModule } from './resources/packages/packages.module';
 import { PackageItemsModule } from './resources/package-items/package-items.module';
+import { StripeModule } from './stripe/stripe.module';
 import { BookingsModule } from './resources/bookings/bookings.module';
 import { BookingItemsModule } from './resources/booking-items/booking-items.module';
 import { PaymentsModule } from './resources/payments/payments.module';
@@ -100,6 +101,7 @@ import { Module } from '@nestjs/common';
     PackagesModule,
     PackageItemsModule,
     BookingsModule,
+    StripeModule,
     BookingItemsModule,
     PaymentsModule,
     PromoCodesModule,
