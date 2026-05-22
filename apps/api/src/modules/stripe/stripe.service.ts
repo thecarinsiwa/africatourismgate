@@ -17,12 +17,15 @@ type StripePaymentIntent = Awaited<
 type StripeCheckoutSession = Awaited<
   ReturnType<StripeClient['checkout']['sessions']['retrieve']>
 >;
+type StripeRefund = Awaited<ReturnType<StripeClient['refunds']['retrieve']>>;
+type StripeCharge = Awaited<ReturnType<StripeClient['charges']['retrieve']>>;
 import { newId } from '../../common/utils/uuid';
 import { Bookings, Payments } from '../../entities/generated';
 import { BookingEngineService } from '../resources/bookings/booking-engine.service';
 import {
   STRIPE_METADATA_BOOKING_ID,
   STRIPE_METADATA_PAYMENT_ID,
+  STRIPE_PROVIDER,
 } from './stripe.constants';
 
 export type BookingPaymentIntentResult = {
@@ -39,6 +42,16 @@ export type BookingCheckoutSessionResult = {
   url: string;
   amountCents: number;
   currency: string;
+};
+
+export type RefundPaymentResult = {
+  refundId: string;
+  amountCents: number;
+  stripeStatus: string;
+  paymentId: string;
+  bookingId: string;
+  paymentStatus: Payments['status'];
+  bookingStatus: Bookings['status'];
 };
 
 @Injectable()
@@ -215,6 +228,98 @@ export class StripeService {
     };
   }
 
+  async createRefundForPayment(
+    paymentId: string,
+    amountCents?: number,
+    actorUserId?: string,
+  ): Promise<RefundPaymentResult> {
+    const payment = await this.paymentsRepository.findOne({
+      where: { id: paymentId, deletedAt: IsNull() },
+    });
+    if (!payment) {
+      throw new NotFoundException('Paiement introuvable.');
+    }
+
+    if (payment.status === 'refunded') {
+      throw new BadRequestException('Ce paiement est déjà entièrement remboursé.');
+    }
+    if (payment.status !== 'succeeded') {
+      throw new BadRequestException(
+        `Remboursement impossible : statut paiement « ${payment.status} ».`,
+      );
+    }
+    if (payment.provider !== STRIPE_PROVIDER) {
+      throw new BadRequestException('Remboursement réservé aux paiements Stripe.');
+    }
+
+    const booking = await this.bookingsRepository.findOne({
+      where: { id: payment.bookingId, deletedAt: IsNull() },
+    });
+    if (!booking) {
+      throw new NotFoundException('Réservation introuvable.');
+    }
+    if (booking.status !== 'cancelled') {
+      throw new BadRequestException(
+        `Remboursement impossible : la réservation doit être annulée (statut actuel « ${booking.status} »).`,
+      );
+    }
+
+    const paymentIntentId = await this.resolvePaymentIntentId(payment.externalId);
+    const stripe = this.getStripe();
+    const refundedSoFar = await this.getTotalRefundedCents(paymentIntentId);
+    const remaining = payment.amountCents - refundedSoFar;
+
+    if (remaining < 1) {
+      throw new BadRequestException('Ce paiement est déjà entièrement remboursé sur Stripe.');
+    }
+
+    const refundAmount = amountCents ?? remaining;
+    if (refundAmount < 1 || refundAmount > remaining) {
+      throw new BadRequestException(
+        `Montant invalide : ${refundAmount} centimes (reste remboursable : ${remaining}).`,
+      );
+    }
+
+    const idempotencyKey = `refund-${paymentId}-${refundAmount}`;
+    const refund = await stripe.refunds.create(
+      {
+        payment_intent: paymentIntentId,
+        amount: refundAmount,
+        metadata: {
+          [STRIPE_METADATA_BOOKING_ID]: payment.bookingId,
+          [STRIPE_METADATA_PAYMENT_ID]: paymentId,
+        },
+      },
+      { idempotencyKey },
+    );
+
+    if (refund.status === 'succeeded') {
+      await this.markPaymentRefundedAndFinalizeBooking({
+        paymentId,
+        bookingId: payment.bookingId,
+        paymentIntentId,
+        actorUserId,
+      });
+    }
+
+    const updatedPayment = await this.paymentsRepository.findOne({
+      where: { id: paymentId, deletedAt: IsNull() },
+    });
+    const updatedBooking = await this.bookingsRepository.findOne({
+      where: { id: payment.bookingId, deletedAt: IsNull() },
+    });
+
+    return {
+      refundId: refund.id,
+      amountCents: refundAmount,
+      stripeStatus: refund.status ?? 'pending',
+      paymentId,
+      bookingId: payment.bookingId,
+      paymentStatus: updatedPayment?.status ?? payment.status,
+      bookingStatus: updatedBooking?.status ?? booking.status,
+    };
+  }
+
   async handleWebhookEvent(event: StripeEvent): Promise<void> {
     switch (event.type) {
       case 'payment_intent.succeeded':
@@ -225,6 +330,12 @@ export class StripeService {
         break;
       case 'checkout.session.completed':
         await this.handleCheckoutSessionCompleted(event.data.object as StripeCheckoutSession);
+        break;
+      case 'refund.updated':
+        await this.handleRefundUpdated(event.data.object as StripeRefund);
+        break;
+      case 'charge.refunded':
+        await this.handleChargeRefunded(event.data.object as StripeCharge);
         break;
       default:
         this.logger.debug(`Stripe event ignored: ${event.type}`);
@@ -359,11 +470,167 @@ export class StripeService {
     return this.paymentsRepository.findOne({
       where: {
         bookingId,
-        provider: 'stripe',
+        provider: STRIPE_PROVIDER,
         status: 'pending',
         deletedAt: IsNull(),
       },
       order: { createdAt: 'DESC' },
     });
+  }
+
+  private async handleRefundUpdated(refund: StripeRefund): Promise<void> {
+    if (refund.status !== 'succeeded') {
+      return;
+    }
+
+    const paymentId = refund.metadata?.[STRIPE_METADATA_PAYMENT_ID];
+    const bookingId = refund.metadata?.[STRIPE_METADATA_BOOKING_ID];
+    if (!paymentId || !bookingId) {
+      this.logger.warn(`refund.updated missing metadata: ${refund.id}`);
+      return;
+    }
+
+    const paymentIntentId =
+      typeof refund.payment_intent === 'string'
+        ? refund.payment_intent
+        : refund.payment_intent?.id;
+    if (!paymentIntentId) {
+      this.logger.warn(`refund.updated without payment_intent: ${refund.id}`);
+      return;
+    }
+
+    await this.markPaymentRefundedAndFinalizeBooking({
+      paymentId,
+      bookingId,
+      paymentIntentId,
+    });
+  }
+
+  private async handleChargeRefunded(charge: StripeCharge): Promise<void> {
+    const paymentIntentId =
+      typeof charge.payment_intent === 'string'
+        ? charge.payment_intent
+        : charge.payment_intent?.id;
+    if (!paymentIntentId) {
+      return;
+    }
+
+    const stripe = this.getStripe();
+    const intent = await stripe.paymentIntents.retrieve(paymentIntentId);
+    const paymentId = intent.metadata[STRIPE_METADATA_PAYMENT_ID];
+    const bookingId = intent.metadata[STRIPE_METADATA_BOOKING_ID];
+    if (!paymentId || !bookingId) {
+      return;
+    }
+
+    await this.markPaymentRefundedAndFinalizeBooking({
+      paymentId,
+      bookingId,
+      paymentIntentId,
+    });
+  }
+
+  private async markPaymentRefundedAndFinalizeBooking(params: {
+    paymentId: string;
+    bookingId: string;
+    paymentIntentId: string;
+    actorUserId?: string;
+  }): Promise<void> {
+    const booking = await this.bookingsRepository.findOne({
+      where: { id: params.bookingId, deletedAt: IsNull() },
+    });
+    if (!booking) {
+      throw new NotFoundException(`Réservation introuvable : ${params.bookingId}.`);
+    }
+
+    const payment = await this.paymentsRepository.findOne({
+      where: { id: params.paymentId, deletedAt: IsNull() },
+    });
+    if (!payment) {
+      throw new NotFoundException(`Paiement introuvable : ${params.paymentId}.`);
+    }
+
+    if (payment.status === 'refunded') {
+      if (booking.status !== 'refunded') {
+        await this.bookingEngine.markBookingRefunded(
+          params.bookingId,
+          params.actorUserId,
+          'Remboursement via webhook Stripe (idempotent)',
+        );
+      }
+      return;
+    }
+
+    if (payment.status !== 'succeeded') {
+      return;
+    }
+
+    const totalRefunded = await this.getTotalRefundedCents(params.paymentIntentId);
+    if (totalRefunded < payment.amountCents) {
+      return;
+    }
+
+    payment.status = 'refunded';
+    payment.updatedByUserId = params.actorUserId ?? payment.updatedByUserId;
+    await this.paymentsRepository.save(payment);
+
+    if (booking.status === 'cancelled') {
+      await this.bookingEngine.markBookingRefunded(
+        params.bookingId,
+        params.actorUserId,
+        'Remboursement Stripe confirmé (webhook)',
+      );
+    }
+  }
+
+  private async resolvePaymentIntentId(externalId: string | null): Promise<string> {
+    if (!externalId?.trim()) {
+      throw new BadRequestException('Paiement sans identifiant Stripe (external_id).');
+    }
+    if (externalId.startsWith('pi_')) {
+      return externalId;
+    }
+    if (externalId.startsWith('cs_')) {
+      const stripe = this.getStripe();
+      const session = await stripe.checkout.sessions.retrieve(externalId);
+      const paymentIntentId =
+        typeof session.payment_intent === 'string'
+          ? session.payment_intent
+          : session.payment_intent?.id;
+      if (!paymentIntentId) {
+        throw new BadRequestException(
+          'Checkout Session Stripe sans PaymentIntent associé.',
+        );
+      }
+      return paymentIntentId;
+    }
+    throw new BadRequestException(
+      `Identifiant Stripe non pris en charge pour remboursement : ${externalId}.`,
+    );
+  }
+
+  private async getTotalRefundedCents(paymentIntentId: string): Promise<number> {
+    const stripe = this.getStripe();
+    let total = 0;
+    let startingAfter: string | undefined;
+
+    do {
+      const page = await stripe.refunds.list({
+        payment_intent: paymentIntentId,
+        limit: 100,
+        ...(startingAfter ? { starting_after: startingAfter } : {}),
+      });
+      for (const refund of page.data) {
+        if (refund.status === 'succeeded') {
+          total += refund.amount;
+        }
+      }
+      if (!page.has_more || page.data.length === 0) {
+        break;
+      }
+      startingAfter = page.data[page.data.length - 1]?.id;
+    } while (startingAfter);
+
+    return total;
   }
 }

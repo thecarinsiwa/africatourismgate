@@ -153,6 +153,16 @@ export interface BookingCheckoutSessionResponse {
   currency: string;
 }
 
+export interface RefundPaymentResponse {
+  refundId: string;
+  amountCents: number;
+  stripeStatus: string;
+  paymentId: string;
+  bookingId: string;
+  paymentStatus: BookingPayment['status'];
+  bookingStatus: BookingStatus;
+}
+
 export interface BookingListItem extends Booking {
   clientEmail: string;
   clientFirstName: string;
