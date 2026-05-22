@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { HomeFooter } from '../components/home/home-footer';
 import { HomeHeader } from '../components/home/home-header';
 import { HeroSearch } from '../components/home/hero-search';
+import { DestinationsCarousel } from '../components/home/destinations-carousel';
 import { VerticalsSection } from '../components/home/verticals-section';
 
 export const metadata: Metadata = {
@@ -17,6 +18,7 @@ export default function HomePage() {
       <HomeHeader />
       <HeroSearch />
 
+      {/* ── Membership / promo callout ────────────────── */}
       <section className="border-b border-atg-border bg-primary/5 py-10 sm:py-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-start gap-6 rounded-2xl bg-atg-elevated p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8 shadow-sm border border-atg-border">
@@ -42,6 +44,7 @@ export default function HomePage() {
         </div>
       </section>
 
+      <DestinationsCarousel />
       <VerticalsSection />
       <HomeFooter />
     </div>

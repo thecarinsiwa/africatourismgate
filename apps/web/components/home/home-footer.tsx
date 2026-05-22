@@ -4,21 +4,60 @@ const PRODUCT_LINKS = [
   { href: '/hotels', label: 'Hébergements' },
   { href: '#vols', label: 'Vols' },
   { href: '#voitures', label: 'Voitures' },
+  { href: '#forfaits', label: 'Forfaits' },
+  { href: '#activites', label: 'Activités' },
   { href: '#croisieres', label: 'Croisières' },
 ] as const;
 
 const DESTINATION_LINKS = [
-  { href: '/hotels?destination=Kenya', label: 'Kenya' },
-  { href: '/hotels?destination=Tanzanie', label: 'Tanzanie' },
-  { href: '/hotels?destination=Rwanda', label: 'Rwanda' },
-  { href: '/hotels?destination=Afrique%20du%20Sud', label: 'Afrique du Sud' },
+  { href: '/hotels?destination=Nairobi', label: 'Nairobi' },
+  { href: '/hotels?destination=Le%20Cap', label: 'Le Cap' },
+  { href: '/hotels?destination=Marrakech', label: 'Marrakech' },
+  { href: '/hotels?destination=Zanzibar', label: 'Zanzibar' },
+  { href: '/hotels?destination=Kigali', label: 'Kigali' },
+  { href: '/hotels?destination=Lagos', label: 'Lagos' },
+  { href: '/hotels?destination=Accra', label: 'Accra' },
+  { href: '/hotels?destination=Le%20Caire', label: 'Le Caire' },
 ] as const;
+
+const ABOUT_LINKS = [
+  { href: '#about', label: 'Qui sommes-nous' },
+  { href: '#careers', label: 'Carrières' },
+  { href: '#press', label: 'Presse' },
+] as const;
+
+const SUPPORT_LINKS = [
+  { href: '#help', label: 'Centre d\'aide' },
+  { href: '#cancel', label: 'Annulations' },
+  { href: '#contact', label: 'Nous contacter' },
+] as const;
+
+function FooterColumn({ title, links }: { title: string; links: ReadonlyArray<{ href: string; label: string }> }) {
+  return (
+    <div>
+      <h3 className="text-sm font-semibold uppercase tracking-wide text-atg-fg">{title}</h3>
+      <ul className="mt-4 space-y-2">
+        {links.map((link) => (
+          <li key={link.href}>
+            <Link
+              href={link.href}
+              className="text-sm text-atg-muted hover:text-primary transition-colors"
+            >
+              {link.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 export function HomeFooter() {
   return (
     <footer className="border-t border-atg-border bg-atg-elevated">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
+          {/* Brand column */}
           <div className="sm:col-span-2 lg:col-span-1">
             <p className="text-lg font-bold text-atg-fg">Africa Tourism Gate</p>
             <p className="mt-2 text-sm text-atg-muted max-w-xs">
@@ -27,7 +66,7 @@ export function HomeFooter() {
             <div className="mt-4 flex gap-2">
               <a
                 href="https://www.facebook.com/africatourismgate/"
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-[#3b5998] text-white hover:opacity-90"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-[#3b5998] text-white hover:opacity-90 transition-opacity"
                 aria-label="Facebook"
               >
                 <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24" aria-hidden>
@@ -36,7 +75,7 @@ export function HomeFooter() {
               </a>
               <a
                 href="https://x.com/Congotourismga1"
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-[#55acee] text-white hover:opacity-90"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-[#55acee] text-white hover:opacity-90 transition-opacity"
                 aria-label="X"
               >
                 <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24" aria-hidden>
@@ -45,7 +84,7 @@ export function HomeFooter() {
               </a>
               <a
                 href="https://www.instagram.com/africatourismgate/"
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-tr from-[#fd5949] to-[#d6249f] text-white hover:opacity-90"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-tr from-[#fd5949] to-[#d6249f] text-white hover:opacity-90 transition-opacity"
                 aria-label="Instagram"
               >
                 <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24" aria-hidden>
@@ -55,42 +94,27 @@ export function HomeFooter() {
             </div>
           </div>
 
+          <FooterColumn title="Produit" links={PRODUCT_LINKS} />
+          <FooterColumn title="Destinations" links={DESTINATION_LINKS} />
+          <FooterColumn title="À propos" links={ABOUT_LINKS} />
+
+          {/* Support + Legal combined */}
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wide text-atg-fg">Produit</h3>
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-atg-fg">Assistance</h3>
             <ul className="mt-4 space-y-2">
-              {PRODUCT_LINKS.map((link) => (
+              {SUPPORT_LINKS.map((link) => (
                 <li key={link.href}>
-                  <Link
+                  <a
                     href={link.href}
                     className="text-sm text-atg-muted hover:text-primary transition-colors"
                   >
                     {link.label}
-                  </Link>
+                  </a>
                 </li>
               ))}
             </ul>
-          </div>
 
-          <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wide text-atg-fg">
-              Destinations
-            </h3>
-            <ul className="mt-4 space-y-2">
-              {DESTINATION_LINKS.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-atg-muted hover:text-primary transition-colors"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wide text-atg-fg">Légal</h3>
+            <h3 className="mt-6 text-sm font-semibold uppercase tracking-wide text-atg-fg">Légal</h3>
             <ul className="mt-4 space-y-2 text-sm text-atg-muted">
               <li>
                 <span className="cursor-default">Conditions générales</span>
@@ -107,16 +131,25 @@ export function HomeFooter() {
           </div>
         </div>
 
+        {/* Bottom bar */}
         <div className="mt-10 border-t border-atg-border pt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-atg-muted">
             © {new Date().getFullYear()} Africa Tourism Gate. Tous droits réservés.
           </p>
-          <Link
-            href="/hotels"
-            className="text-sm font-semibold text-primary hover:underline"
-          >
-            Rechercher un hébergement →
-          </Link>
+          <div className="flex items-center gap-4">
+            <span className="text-xs text-atg-muted flex items-center gap-1.5">
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+              </svg>
+              Français
+            </span>
+            <Link
+              href="/hotels"
+              className="text-sm font-semibold text-primary hover:underline"
+            >
+              Rechercher un hébergement →
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
