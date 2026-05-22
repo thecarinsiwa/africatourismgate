@@ -1,4 +1,8 @@
 import type {
+  Airline,
+  AirlinesListQuery,
+  Airport,
+  AirportsListQuery,
   Amenity,
   AmenitiesListQuery,
   AuthMe,
@@ -15,6 +19,13 @@ import type {
   CreateRoomRequest,
   BulkUpsertRoomAvailabilityRequest,
   BulkUpsertRoomAvailabilityResponse,
+  BulkUpsertFlightClassAvailabilityRequest,
+  BulkUpsertFlightClassAvailabilityResponse,
+  CreateAirlineRequest,
+  CreateAirportRequest,
+  CreateFlightClassAvailabilityRequest,
+  CreateFlightClassRequest,
+  CreateFlightRequest,
   CreateRoleRequest,
   CreateUserRequest,
   CreateUserRoleAssignmentRequest,
@@ -35,6 +46,12 @@ import type {
   RoomsListQuery,
   Destination,
   DestinationsListQuery,
+  Flight,
+  FlightClass,
+  FlightClassAvailability,
+  FlightClassAvailabilityListQuery,
+  FlightClassesListQuery,
+  FlightsListQuery,
   ForgotPasswordRequest,
   ForgotPasswordResponse,
   LoginRequest,
@@ -56,8 +73,13 @@ import type {
   ResetPasswordResponse,
   SucceededPaymentsRevenue,
   UpdateAmenityRequest,
+  UpdateAirlineRequest,
+  UpdateAirportRequest,
   UpdateDestinationRequest,
   UpdateEmployeeRequest,
+  UpdateFlightClassAvailabilityRequest,
+  UpdateFlightClassRequest,
+  UpdateFlightRequest,
   UpdatePropertyImageRequest,
   UpdatePropertyRequest,
   UpdateRoomAvailabilityRequest,
@@ -780,6 +802,135 @@ export class ApiClient {
 
   deletePointOfInterest(id: string): Promise<void> {
     return this.request<void>(`/points-of-interest/${id}`, { method: 'DELETE' });
+  }
+
+  listAirlines(query?: AirlinesListQuery): Promise<PaginatedResponse<Airline>> {
+    return fetchPaginated<Airline>(this, '/airlines', query);
+  }
+
+  getAirline(id: string): Promise<Airline> {
+    return this.request<Airline>(`/airlines/${id}`);
+  }
+
+  createAirline(body: CreateAirlineRequest): Promise<Airline> {
+    return this.request<Airline>('/airlines', { method: 'POST', body });
+  }
+
+  updateAirline(id: string, body: UpdateAirlineRequest): Promise<Airline> {
+    return this.request<Airline>(`/airlines/${id}`, { method: 'PATCH', body });
+  }
+
+  deleteAirline(id: string): Promise<void> {
+    return this.request<void>(`/airlines/${id}`, { method: 'DELETE' });
+  }
+
+  listAirports(query?: AirportsListQuery): Promise<PaginatedResponse<Airport>> {
+    return fetchPaginated<Airport>(this, '/airports', query);
+  }
+
+  getAirport(id: string): Promise<Airport> {
+    return this.request<Airport>(`/airports/${id}`);
+  }
+
+  createAirport(body: CreateAirportRequest): Promise<Airport> {
+    return this.request<Airport>('/airports', { method: 'POST', body });
+  }
+
+  updateAirport(id: string, body: UpdateAirportRequest): Promise<Airport> {
+    return this.request<Airport>(`/airports/${id}`, { method: 'PATCH', body });
+  }
+
+  deleteAirport(id: string): Promise<void> {
+    return this.request<void>(`/airports/${id}`, { method: 'DELETE' });
+  }
+
+  listFlights(query?: FlightsListQuery): Promise<PaginatedResponse<Flight>> {
+    return fetchPaginated<Flight>(this, '/flights', query);
+  }
+
+  getFlight(id: string): Promise<Flight> {
+    return this.request<Flight>(`/flights/${id}`);
+  }
+
+  createFlight(body: CreateFlightRequest): Promise<Flight> {
+    return this.request<Flight>('/flights', { method: 'POST', body });
+  }
+
+  updateFlight(id: string, body: UpdateFlightRequest): Promise<Flight> {
+    return this.request<Flight>(`/flights/${id}`, { method: 'PATCH', body });
+  }
+
+  deleteFlight(id: string): Promise<void> {
+    return this.request<void>(`/flights/${id}`, { method: 'DELETE' });
+  }
+
+  listFlightClasses(
+    query?: FlightClassesListQuery,
+  ): Promise<PaginatedResponse<FlightClass>> {
+    return fetchPaginated<FlightClass>(this, '/flight-classes', query);
+  }
+
+  getFlightClass(id: string): Promise<FlightClass> {
+    return this.request<FlightClass>(`/flight-classes/${id}`);
+  }
+
+  createFlightClass(body: CreateFlightClassRequest): Promise<FlightClass> {
+    return this.request<FlightClass>('/flight-classes', { method: 'POST', body });
+  }
+
+  updateFlightClass(id: string, body: UpdateFlightClassRequest): Promise<FlightClass> {
+    return this.request<FlightClass>(`/flight-classes/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteFlightClass(id: string): Promise<void> {
+    return this.request<void>(`/flight-classes/${id}`, { method: 'DELETE' });
+  }
+
+  listFlightClassAvailability(
+    query: FlightClassAvailabilityListQuery,
+  ): Promise<PaginatedResponse<FlightClassAvailability>> {
+    return fetchPaginated<FlightClassAvailability>(
+      this,
+      '/flight-class-availability',
+      query,
+    );
+  }
+
+  createFlightClassAvailability(
+    body: CreateFlightClassAvailabilityRequest,
+  ): Promise<FlightClassAvailability> {
+    return this.request<FlightClassAvailability>('/flight-class-availability', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateFlightClassAvailability(
+    id: string,
+    body: UpdateFlightClassAvailabilityRequest,
+  ): Promise<FlightClassAvailability> {
+    return this.request<FlightClassAvailability>(`/flight-class-availability/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteFlightClassAvailability(id: string): Promise<void> {
+    return this.request<void>(`/flight-class-availability/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  bulkUpsertFlightClassAvailability(
+    body: BulkUpsertFlightClassAvailabilityRequest,
+  ): Promise<BulkUpsertFlightClassAvailabilityResponse> {
+    return this.request<BulkUpsertFlightClassAvailabilityResponse>(
+      '/flight-class-availability/bulk',
+      { method: 'PUT', body },
+    );
   }
 }
 

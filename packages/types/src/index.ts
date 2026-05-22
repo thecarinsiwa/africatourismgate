@@ -43,6 +43,32 @@ export type {
 } from './organization.js';
 
 export type {
+  Airline,
+  AirlinesListQuery,
+  Airport,
+  AirportsListQuery,
+  BulkUpsertFlightClassAvailabilityRequest,
+  BulkUpsertFlightClassAvailabilityResponse,
+  CreateAirlineRequest,
+  CreateAirportRequest,
+  CreateFlightClassAvailabilityRequest,
+  CreateFlightClassRequest,
+  CreateFlightRequest,
+  Flight,
+  FlightClass,
+  FlightClassAvailability,
+  FlightClassAvailabilityListQuery,
+  FlightClassName,
+  FlightClassesListQuery,
+  FlightsListQuery,
+  UpdateAirlineRequest,
+  UpdateAirportRequest,
+  UpdateFlightClassAvailabilityRequest,
+  UpdateFlightClassRequest,
+  UpdateFlightRequest,
+} from './flight.js';
+
+export type {
   CreateDestinationRequest,
   CreatePointOfInterestRequest,
   Destination,

@@ -9,9 +9,9 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
-import { Airlines } from '../../../entities/generated';
+import { CreateAirlineDto } from './dto/create-airline.dto';
+import { AirlinesListQueryDto } from './dto/airlines-list-query.dto';
+import { UpdateAirlineDto } from './dto/update-airline.dto';
 import { AirlinesService } from './airlines.service';
 
 @ApiTags('airlines')
@@ -21,30 +21,30 @@ export class AirlinesController {
 
   @Get()
   @ApiOperation({ summary: 'List airlines' })
-  findAll(@Query() query: PaginationQueryDto) {
+  findAll(@Query() query: AirlinesListQueryDto) {
     return this.service.findAll(query);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get airlines by id' })
+  @ApiOperation({ summary: 'Get airline by id' })
   findOne(@Param('id') id: string) {
     return this.service.findOne(id);
   }
 
   @Post()
-  @ApiOperation({ summary: 'Create airlines' })
-  create(@Body() dto: DeepPartial<Airlines>) {
-    return this.service.create(dto);
+  @ApiOperation({ summary: 'Create airline' })
+  create(@Body() dto: CreateAirlineDto) {
+    return this.service.createAirline(dto);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update airlines' })
-  update(@Param('id') id: string, @Body() dto: DeepPartial<Airlines>) {
-    return this.service.update(id, dto);
+  @ApiOperation({ summary: 'Update airline' })
+  update(@Param('id') id: string, @Body() dto: UpdateAirlineDto) {
+    return this.service.updateAirline(id, dto);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Soft-delete airlines' })
+  @ApiOperation({ summary: 'Soft-delete airline' })
   remove(@Param('id') id: string) {
     return this.service.remove(id);
   }

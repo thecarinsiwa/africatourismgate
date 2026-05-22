@@ -64,6 +64,8 @@ export const adminDashboardNavConfig: AdminNavEntryConfig[] = [
       { href: '/hebergements', label: 'Hébergements', iconKey: 'properties' },
       { href: '/hebergements/equipements', label: 'Équipements', iconKey: 'properties' },
       { href: '/produits/vols', label: 'Vols', iconKey: 'plane' },
+      { href: '/produits/vols/compagnies', label: 'Compagnies', iconKey: 'plane' },
+      { href: '/produits/vols/aeroports', label: 'Aéroports', iconKey: 'plane' },
       { href: '/produits/locations', label: 'Locations véhicules', iconKey: 'car' },
       { href: '/produits/croisieres', label: 'Croisières', iconKey: 'ship' },
       { href: '/produits/activites', label: 'Activités', iconKey: 'activity' },
