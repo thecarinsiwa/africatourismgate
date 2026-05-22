@@ -69,6 +69,26 @@ export type {
 } from './flight.js';
 
 export type {
+  CreateRentalAgencyRequest,
+  CreateVehicleAvailabilityRequest,
+  CreateVehicleCategoryRequest,
+  CreateVehicleRequest,
+  RentalAgenciesListQuery,
+  RentalAgency,
+  UpdateRentalAgencyRequest,
+  UpdateVehicleAvailabilityRequest,
+  UpdateVehicleCategoryRequest,
+  UpdateVehicleRequest,
+  Vehicle,
+  VehicleAvailability,
+  VehicleAvailabilityListQuery,
+  VehicleAvailabilityStatus,
+  VehicleCategoriesListQuery,
+  VehicleCategory,
+  VehiclesListQuery,
+} from './car-rental.js';
+
+export type {
   CreateDestinationRequest,
   CreatePointOfInterestRequest,
   Destination,

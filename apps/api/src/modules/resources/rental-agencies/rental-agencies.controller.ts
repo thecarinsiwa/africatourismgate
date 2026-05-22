@@ -9,9 +9,9 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
-import { RentalAgencies } from '../../../entities/generated';
+import { CreateRentalAgencyDto } from './dto/create-rental-agency.dto';
+import { RentalAgenciesListQueryDto } from './dto/rental-agencies-list-query.dto';
+import { UpdateRentalAgencyDto } from './dto/update-rental-agency.dto';
 import { RentalAgenciesService } from './rental-agencies.service';
 
 @ApiTags('rental-agencies')
@@ -20,31 +20,31 @@ export class RentalAgenciesController {
   constructor(private readonly service: RentalAgenciesService) {}
 
   @Get()
-  @ApiOperation({ summary: 'List rental-agencies' })
-  findAll(@Query() query: PaginationQueryDto) {
+  @ApiOperation({ summary: 'List rental agencies' })
+  findAll(@Query() query: RentalAgenciesListQueryDto) {
     return this.service.findAll(query);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get rental-agencies by id' })
+  @ApiOperation({ summary: 'Get rental agency by id' })
   findOne(@Param('id') id: string) {
     return this.service.findOne(id);
   }
 
   @Post()
-  @ApiOperation({ summary: 'Create rental-agencies' })
-  create(@Body() dto: DeepPartial<RentalAgencies>) {
-    return this.service.create(dto);
+  @ApiOperation({ summary: 'Create rental agency' })
+  create(@Body() dto: CreateRentalAgencyDto) {
+    return this.service.createAgency(dto);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update rental-agencies' })
-  update(@Param('id') id: string, @Body() dto: DeepPartial<RentalAgencies>) {
-    return this.service.update(id, dto);
+  @ApiOperation({ summary: 'Update rental agency' })
+  update(@Param('id') id: string, @Body() dto: UpdateRentalAgencyDto) {
+    return this.service.updateAgency(id, dto);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Soft-delete rental-agencies' })
+  @ApiOperation({ summary: 'Soft-delete rental agency' })
   remove(@Param('id') id: string) {
     return this.service.remove(id);
   }
