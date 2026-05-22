@@ -12,14 +12,21 @@ import { ApiForbiddenResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DeepPartial } from 'typeorm';
 import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import { Payments } from '../../../entities/generated';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { AuthUserDto } from '../../auth/dto/auth-user.dto';
 import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
+import { StripeService } from '../../stripe/stripe.service';
+import { RefundPaymentDto } from './dto/refund-payment.dto';
 import { PaymentsService } from './payments.service';
 
 @ApiTags('payments')
 @ApiForbiddenResponse({ description: 'Missing permission' })
 @Controller('payments')
 export class PaymentsController {
-  constructor(private readonly service: PaymentsService) {}
+  constructor(
+    private readonly service: PaymentsService,
+    private readonly stripeService: StripeService,
+  ) {}
 
   @Get()
   @RequirePermissions('payments.read')
@@ -40,6 +47,19 @@ export class PaymentsController {
   @ApiOperation({ summary: 'Create payments' })
   create(@Body() dto: DeepPartial<Payments>) {
     return this.service.create(dto);
+  }
+
+  @Post(':id/refund')
+  @RequirePermissions('payments.write')
+  @ApiOperation({
+    summary: 'Refund payment via Stripe (partial or full; booking must be cancelled)',
+  })
+  refund(
+    @Param('id') id: string,
+    @Body() dto: RefundPaymentDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.stripeService.createRefundForPayment(id, dto.amountCents, user.id);
   }
 
   @Patch(':id')

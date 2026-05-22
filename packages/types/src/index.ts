@@ -147,6 +147,7 @@ export type {
   BookingStatusHistoryEntry,
   BookingCheckoutSessionResponse,
   BookingPaymentIntentResponse,
+  RefundPaymentResponse,
   CancelBookingRequest,
   UpdateBookingStatusRequest,
   BookingCheckoutItem,

@@ -218,6 +218,36 @@ export class BookingEngineService {
     return this.getBookingDetail(id);
   }
 
+  async markBookingRefunded(
+    id: string,
+    actorUserId?: string,
+    reason?: string,
+  ): Promise<BookingDetailDto> {
+    const booking = await this.findBookingOrThrow(id);
+    if (booking.status === 'refunded') {
+      return this.getBookingDetail(id);
+    }
+    if (booking.status !== 'cancelled') {
+      throw new BadRequestException(
+        `Impossible de marquer remboursée une réservation au statut « ${booking.status} ».`,
+      );
+    }
+
+    const fromStatus = booking.status;
+    booking.status = 'refunded';
+    booking.updatedByUserId = actorUserId ?? null;
+    await this.bookingsRepository.save(booking);
+    await this.statusHistory.record({
+      bookingId: id,
+      fromStatus,
+      toStatus: 'refunded',
+      reason: reason?.trim() || 'Remboursement',
+      changedByUserId: actorUserId ?? null,
+    });
+
+    return this.getBookingDetail(id);
+  }
+
   async updateBookingStatus(
     id: string,
     status: Bookings['status'],
@@ -235,11 +265,15 @@ export class BookingEngineService {
     if (status === 'cancelled') {
       return this.cancelBooking(id, actorUserId, reason);
     }
+    if (status === 'refunded' && booking.status === 'cancelled') {
+      return this.markBookingRefunded(id, actorUserId, reason);
+    }
 
     const allowed: Partial<Record<Bookings['status'], Bookings['status'][]>> = {
       draft: ['pending_payment'],
       pending_payment: ['draft', 'refunded'],
       confirmed: ['refunded'],
+      cancelled: ['refunded'],
     };
 
     const permitted = allowed[booking.status];
