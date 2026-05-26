@@ -3,3 +3,47 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ── Scroll-snap carousel ─────────────────────────────── */
+.carousel-scroll {
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  scrollbar-width: none;          /* Firefox */
+}
+.carousel-scroll::-webkit-scrollbar {
+  display: none;                  /* Chrome / Safari */
+}
+.carousel-card {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+}
+
+/* ── Travellers panel ─────────────────────────────────── */
+@keyframes panel-slide-down {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.travellers-panel {
+  animation: panel-slide-down 0.2s ease-out;
+}
+
+/* ── Fade-in on scroll / mount ────────────────────────── */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s ease-out both;
+}
+
+/* ── Staggered delay helpers ──────────────────────────── */
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+
+/* ── Membership banner gradient ───────────────────────── */
+.membership-gradient {
+  background: linear-gradient(135deg, var(--atg-primary) 0%, var(--atg-secondary) 100%);
+}

@@ -154,11 +154,11 @@ function VerticalCard({
 
 export function VerticalsSection() {
   return (
-    <section className="bg-atg-surface py-14 sm:py-20" aria-labelledby="verticals-heading">
+    <section className="bg-gradient-to-b from-atg-elevated to-atg-surface py-14 sm:py-20" aria-labelledby="verticals-heading">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto">
           <h2 id="verticals-heading" className="text-2xl font-bold text-atg-fg sm:text-3xl">
-            Tout pour voyager en Afrique
+            Explorez nos services
           </h2>
           <p className="mt-3 text-atg-muted">
             Une plateforme, plusieurs verticales — commencez par les hébergements disponibles dès
