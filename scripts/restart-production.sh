@@ -30,6 +30,15 @@ if [[ ! -d "${REPO_DIR}/apps/web/.next" ]] || [[ ! -d "${REPO_DIR}/apps/admin/.n
   (cd "${REPO_DIR}" && pnpm build)
 fi
 
+if [[ "${ATG_SKIP_DB_SYNC:-0}" == "1" ]]; then
+  echo "==> Skipping database sync (ATG_SKIP_DB_SYNC=1)."
+elif [[ "${ATG_DB_SYNC_ALREADY_RUN:-0}" == "1" ]]; then
+  echo "==> Database sync already completed."
+else
+  echo "==> Synchronizing database…"
+  pnpm db:sync
+fi
+
 echo "==> Starting PM2…"
 pm2 start "${REPO_DIR}/ecosystem.config.cjs" --only atg-api,atg-web,atg-admin
 pm2 save

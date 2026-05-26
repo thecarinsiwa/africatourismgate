@@ -18,6 +18,14 @@ fi
 pnpm install --frozen-lockfile 2>/dev/null || pnpm install
 pnpm build
 
+if [[ "${ATG_SKIP_DB_SYNC:-0}" == "1" ]]; then
+  echo "==> Skipping database sync (ATG_SKIP_DB_SYNC=1)."
+else
+  echo "==> Synchronizing database…"
+  pnpm db:sync
+  export ATG_DB_SYNC_ALREADY_RUN=1
+fi
+
 if command -v pm2 >/dev/null 2>&1; then
   # reload can leave EADDRINUSE if an orphan still holds the port — prefer clean restart
   bash "${REPO_DIR}/scripts/restart-production.sh"

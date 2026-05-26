@@ -55,6 +55,13 @@ log "Installing dependencies and building apps…"
 pnpm install --frozen-lockfile 2>/dev/null || pnpm install
 pnpm build
 
+if [[ "${ATG_SKIP_DB_SYNC:-0}" == "1" ]]; then
+  log "Skipping database sync (ATG_SKIP_DB_SYNC=1)."
+else
+  log "Synchronizing database…"
+  pnpm db:sync
+fi
+
 log "Starting PM2 (API + web + admin)…"
 pm2 delete atg-api atg-web atg-admin 2>/dev/null || true
 pm2 start "${REPO_DIR}/ecosystem.config.cjs" --only atg-api,atg-web,atg-admin
@@ -65,7 +72,7 @@ pm2 startup systemd -u "${DEPLOY_USER}" --hp "${HOME}" || true
 
 log "Done. Next steps:"
 echo "  1. Edit ${REPO_DIR}/.env (database, JWT, NEXT_PUBLIC_API_URL, CORS_ORIGIN)"
-echo "  2. Import MySQL schema if needed: mysql … < database/africatourismgate_database.sql"
+echo "  2. Synchronize MySQL schema/seeds if needed: pnpm db:sync"
 echo "  3. Rebuild after URL changes: pnpm build && pm2 reload ecosystem.config.cjs"
 echo "  4. Configure nginx: sudo ./scripts/setup-nginx.sh"
 echo "  5. TLS (tous les domaines): sudo ./scripts/issue-ssl-certs.sh && sudo ./scripts/setup-nginx.sh"

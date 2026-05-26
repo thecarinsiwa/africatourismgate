@@ -10,6 +10,7 @@ NestJS HTTP API for Africa Tourism Gate, mapped to the MySQL schema in `database
 | `pnpm build` | Compile to `dist/` |
 | `pnpm start` | Run compiled `dist/main` |
 | `pnpm generate` | Regenerate TypeORM entities + CRUD modules from SQL |
+| `pnpm db:sync` | Apply database schema migrations and insert-only seeds |
 
 ## Configuration
 
@@ -24,16 +25,18 @@ On **application startup** (not `nest build`), the API:
 
 1. Runs `CREATE DATABASE IF NOT EXISTS` for `DATABASE_NAME`
 2. If `DATABASE_AUTO_SCHEMA=true` (default) and the database has **no tables**, imports `database/africatourismgate_database.sql`
-3. If `DATABASE_AUTO_SEED=true` (default) and **no users** exist, imports `database/seeds/install.seed.sql` (RBAC, admin, referentials, demo data)
+3. If `DATABASE_AUTO_SEED=true` (default) and the platform organization is missing, imports `database/seeds/install.seed.sql` (RBAC, admin, referentials, demo data)
 
 To disable: `DATABASE_AUTO_SCHEMA=false` and/or `DATABASE_AUTO_SEED=false` in `.env`.
 
+Deployments run `pnpm db:sync` after build and before PM2 restart. That command applies pending SQL migrations and inserts missing seed rows without modifying existing rows.
+
 **Default admin:** `admin@africatourismgate.local` / `ChangeMe123!` — see [database/seeds/README.md](../../database/seeds/README.md).
 
-Manual import (optional):
+Manual sync (optional):
 
 ```bash
-mysql -u root -p < database/africatourismgate_database.sql
+pnpm db:sync
 ```
 
 ## Endpoints
