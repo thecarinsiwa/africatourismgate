@@ -1,6 +1,5 @@
 'use client';
 
-import { Button, Input } from '@africatourismgate/ui';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -120,6 +119,24 @@ function Stepper({
   );
 }
 
+/* ── Compact field wrapper (Expedia pill-style) ──────── */
+function FieldWrapper({
+  label,
+  children,
+  className = '',
+}: {
+  label: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={`flex flex-col gap-0.5 ${className}`}>
+      <label className="text-xs font-semibold text-atg-muted uppercase tracking-wide">{label}</label>
+      {children}
+    </div>
+  );
+}
+
 /* ── Main component ──────────────────────────────────── */
 export function HeroSearch() {
   const router = useRouter();
@@ -141,7 +158,6 @@ export function HeroSearch() {
       ? `1 chambre, ${totalGuests} voyageur${totalGuests > 1 ? 's' : ''}`
       : `${rooms.length} chambres, ${totalGuests} voyageur${totalGuests > 1 ? 's' : ''}`;
 
-  /* Close panel on outside click */
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
@@ -158,7 +174,6 @@ export function HeroSearch() {
         prev.map((r, i) => {
           if (i !== idx) return r;
           const updated = { ...r, ...patch };
-          /* sync childAges array length */
           if (patch.children !== undefined) {
             const ages = [...updated.childAges];
             while (ages.length < updated.children) ages.push(0);
@@ -179,10 +194,8 @@ export function HeroSearch() {
     if (rooms.length > 1) setRooms((prev) => prev.filter((_, i) => i !== idx));
   };
 
-  /* ── Search handler ───────────────────────────────── */
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
-
     if (activeTab === 'stays') {
       const params = new URLSearchParams();
       if (destination.trim()) params.set('destination', destination.trim());
@@ -194,7 +207,6 @@ export function HeroSearch() {
       router.push(qs ? `/hotels?${qs}` : '/hotels');
       return;
     }
-
     const params = new URLSearchParams({ vertical: activeTab });
     if (destination.trim()) params.set('destination', destination.trim());
     if (from.trim()) params.set('from', from.trim());
@@ -204,33 +216,34 @@ export function HeroSearch() {
   }
 
   return (
-    <section className="relative min-h-[440px] sm:min-h-[500px] lg:min-h-[540px]">
-      {/* Background */}
+    <section className="relative min-h-[560px] sm:min-h-[600px] lg:min-h-[640px] flex items-center">
+      {/* Background image */}
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url("${HERO_IMAGE}")` }}
         role="img"
         aria-label="Paysage africain au coucher du soleil"
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#1b1b2f]/70 via-black/40 to-[#1b1b2f]/80" />
 
-      <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+      {/* Content */}
+      <div className="relative mx-auto w-full max-w-7xl px-4 pt-24 pb-12 sm:px-6 sm:pt-28 lg:px-8 lg:pt-32">
         {/* Headline */}
-        <div className="max-w-3xl animate-fade-in-up">
-          <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
-            Où partez-vous&nbsp;?
+        <div className="text-center max-w-3xl mx-auto animate-fade-in-up mb-10">
+          <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl drop-shadow-lg">
+            Explorez l&apos;Afrique
           </h1>
-          <p className="mt-3 text-base text-white/90 sm:text-lg">
-            Comparez hôtels, vols et expériences à travers l&apos;Afrique avec Africa Tourism Gate.
+          <p className="mt-4 text-lg text-white/85 sm:text-xl">
+            Trouvez et réservez hébergements, vols et expériences à travers tout le continent.
           </p>
         </div>
 
         {/* ── Search card ─────────────────────────────── */}
-        <div className="mt-8 max-w-5xl animate-fade-in-up delay-200">
-          <div className="overflow-hidden rounded-2xl bg-atg-elevated shadow-2xl" role="search">
+        <div className="max-w-5xl mx-auto animate-fade-in-up delay-200">
+          <div className="rounded-2xl bg-white shadow-2xl overflow-hidden" role="search">
             {/* Tabs */}
             <div
-              className="flex overflow-x-auto border-b border-atg-border scrollbar-thin"
+              className="flex overflow-x-auto border-b border-gray-200 bg-gray-50"
               role="tablist"
               aria-label="Type de recherche"
             >
@@ -240,10 +253,10 @@ export function HeroSearch() {
                   type="button"
                   role="tab"
                   aria-selected={activeTab === tab.id}
-                  className={`flex min-h-[48px] shrink-0 items-center gap-2 border-b-2 -mb-px px-4 sm:px-5 text-sm font-semibold transition-colors ${
+                  className={`flex min-h-[52px] shrink-0 items-center gap-2 border-b-[3px] -mb-px px-4 sm:px-5 text-sm font-semibold transition-colors ${
                     activeTab === tab.id
-                      ? 'border-primary text-primary bg-primary/5'
-                      : 'border-transparent text-atg-muted hover:text-atg-fg hover:bg-atg-surface'
+                      ? 'border-[#1b1b2f] text-[#1b1b2f] bg-white'
+                      : 'border-transparent text-gray-500 hover:text-gray-800 hover:bg-gray-100'
                   }`}
                   onClick={() => setActiveTab(tab.id)}
                 >
@@ -255,55 +268,63 @@ export function HeroSearch() {
 
             {/* Form */}
             <form onSubmit={handleSearch} className="p-4 sm:p-6">
-              {/* ── Stays form ──────────────────────────── */}
+              {/* ── Stays ────────────────────────────────── */}
               {activeTab === 'stays' && (
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                  <Input
-                    label="Destination"
-                    name="destination"
-                    placeholder="Ville, région ou pays"
-                    value={destination}
-                    onChange={(e) => setDestination(e.target.value)}
-                    className="sm:col-span-2 lg:col-span-1"
-                  />
-                  <Input
-                    label="Arrivée"
-                    name="checkIn"
-                    type="date"
-                    value={checkIn}
-                    onChange={(e) => setCheckIn(e.target.value)}
-                  />
-                  <Input
-                    label="Départ"
-                    name="checkOut"
-                    type="date"
-                    value={checkOut}
-                    onChange={(e) => setCheckOut(e.target.value)}
-                  />
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_auto]">
+                  <FieldWrapper label="Où allez-vous ?" className="sm:col-span-2 lg:col-span-1">
+                    <input
+                      name="destination"
+                      placeholder="Nairobi, Le Cap, Marrakech…"
+                      value={destination}
+                      onChange={(e) => setDestination(e.target.value)}
+                      className="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#1b1b2f] focus:ring-2 focus:ring-[#1b1b2f]/20 focus:outline-none transition-colors"
+                    />
+                  </FieldWrapper>
+
+                  <FieldWrapper label="Dates">
+                    <div className="flex min-h-[44px] items-center rounded-lg border border-gray-300 overflow-hidden">
+                      <input
+                        name="checkIn"
+                        type="date"
+                        value={checkIn}
+                        onChange={(e) => setCheckIn(e.target.value)}
+                        className="flex-1 min-w-0 border-0 bg-white px-3 py-2 text-sm text-gray-900 focus:ring-0 focus:outline-none"
+                      />
+                      <div className="w-px h-6 bg-gray-300" />
+                      <input
+                        name="checkOut"
+                        type="date"
+                        value={checkOut}
+                        onChange={(e) => setCheckOut(e.target.value)}
+                        className="flex-1 min-w-0 border-0 bg-white px-3 py-2 text-sm text-gray-900 focus:ring-0 focus:outline-none"
+                      />
+                    </div>
+                  </FieldWrapper>
 
                   {/* Travellers trigger */}
                   <div className="relative" ref={panelRef}>
-                    <label className="mb-1 block text-sm font-medium text-atg-fg">Voyageurs</label>
-                    <button
-                      type="button"
-                      onClick={() => setTravellersOpen((o) => !o)}
-                      className="flex min-h-[44px] w-full items-center justify-between gap-2 rounded-lg border border-atg-border bg-atg-surface px-3 py-2 text-sm text-atg-fg hover:border-primary transition-colors"
-                      aria-expanded={travellersOpen}
-                      aria-haspopup="dialog"
-                    >
-                      <span className="truncate">{travellersSummary}</span>
-                      <svg className={`h-4 w-4 shrink-0 text-atg-muted transition-transform ${travellersOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </button>
+                    <FieldWrapper label="Voyageurs">
+                      <button
+                        type="button"
+                        onClick={() => setTravellersOpen((o) => !o)}
+                        className="flex min-h-[44px] w-full items-center justify-between gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 hover:border-[#1b1b2f] transition-colors"
+                        aria-expanded={travellersOpen}
+                        aria-haspopup="dialog"
+                      >
+                        <span className="truncate">{travellersSummary}</span>
+                        <svg className={`h-4 w-4 shrink-0 text-gray-400 transition-transform ${travellersOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+                    </FieldWrapper>
 
                     {/* Travellers panel */}
                     {travellersOpen && (
-                      <div className="travellers-panel absolute left-0 right-0 top-full z-30 mt-2 max-h-[70vh] overflow-y-auto rounded-xl border border-atg-border bg-atg-elevated p-4 shadow-xl sm:min-w-[320px] sm:right-auto sm:w-[360px]">
+                      <div className="travellers-panel absolute left-0 right-0 top-full z-30 mt-2 max-h-[70vh] overflow-y-auto rounded-xl border border-gray-200 bg-white p-4 shadow-xl sm:min-w-[320px] sm:right-auto sm:w-[360px]">
                         {rooms.map((room, idx) => (
-                          <div key={idx} className={idx > 0 ? 'mt-4 border-t border-atg-border pt-4' : ''}>
+                          <div key={idx} className={idx > 0 ? 'mt-4 border-t border-gray-100 pt-4' : ''}>
                             <div className="mb-3 flex items-center justify-between">
-                              <p className="text-sm font-semibold text-atg-fg">
+                              <p className="text-sm font-semibold text-gray-900">
                                 Chambre {idx + 1}
                               </p>
                               {rooms.length > 1 && (
@@ -316,31 +337,14 @@ export function HeroSearch() {
                                 </button>
                               )}
                             </div>
-
                             <div className="space-y-3">
-                              <Stepper
-                                label="Adultes"
-                                value={room.adults}
-                                min={1}
-                                max={14}
-                                onChange={(v) => updateRoom(idx, { adults: v })}
-                              />
-                              <Stepper
-                                label="Enfants"
-                                value={room.children}
-                                min={0}
-                                max={6}
-                                onChange={(v) => updateRoom(idx, { children: v })}
-                              />
-
-                              {/* Child age selectors */}
+                              <Stepper label="Adultes" value={room.adults} min={1} max={14} onChange={(v) => updateRoom(idx, { adults: v })} />
+                              <Stepper label="Enfants" value={room.children} min={0} max={6} onChange={(v) => updateRoom(idx, { children: v })} />
                               {room.childAges.length > 0 && (
                                 <div className="mt-2 grid grid-cols-2 gap-2">
                                   {room.childAges.map((age, ci) => (
                                     <div key={ci}>
-                                      <label className="mb-0.5 block text-xs text-atg-muted">
-                                        Âge enfant {ci + 1}
-                                      </label>
+                                      <label className="mb-0.5 block text-xs text-gray-500">Âge enfant {ci + 1}</label>
                                       <select
                                         value={age}
                                         onChange={(e) => {
@@ -348,7 +352,7 @@ export function HeroSearch() {
                                           ages[ci] = Number(e.target.value);
                                           updateRoom(idx, { childAges: ages });
                                         }}
-                                        className="w-full rounded-md border border-atg-border bg-atg-surface px-2 py-1.5 text-sm text-atg-fg"
+                                        className="w-full rounded-md border border-gray-300 bg-white px-2 py-1.5 text-sm text-gray-900"
                                       >
                                         {Array.from({ length: 18 }, (_, i) => (
                                           <option key={i} value={i}>
@@ -363,7 +367,6 @@ export function HeroSearch() {
                             </div>
                           </div>
                         ))}
-
                         {rooms.length < 4 && (
                           <button
                             type="button"
@@ -376,108 +379,94 @@ export function HeroSearch() {
                             Ajouter une chambre
                           </button>
                         )}
-
                         <button
                           type="button"
                           onClick={() => setTravellersOpen(false)}
-                          className="mt-4 flex min-h-[44px] w-full items-center justify-center rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-hover transition-colors"
+                          className="mt-4 flex min-h-[44px] w-full items-center justify-center rounded-lg bg-[#1b1b2f] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2a2a45] transition-colors"
                         >
                           Terminé
                         </button>
                       </div>
                     )}
                   </div>
+
+                  {/* Search button */}
+                  <div className="flex items-end">
+                    <button
+                      type="submit"
+                      className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-lg bg-[#1b1b2f] px-6 py-3 text-sm font-bold text-white hover:bg-[#2a2a45] transition-colors lg:w-auto"
+                    >
+                      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                      Rechercher
+                    </button>
+                  </div>
                 </div>
               )}
 
-              {/* ── Flights form ────────────────────────── */}
+              {/* ── Flights ──────────────────────────────── */}
               {activeTab === 'flights' && (
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                  <Input
-                    label="Départ"
-                    placeholder="Aéroport ou ville"
-                    value={from}
-                    onChange={(e) => setFrom(e.target.value)}
-                  />
-                  <Input
-                    label="Arrivée"
-                    placeholder="Aéroport ou ville"
-                    value={to}
-                    onChange={(e) => setTo(e.target.value)}
-                  />
-                  <Input
-                    label="Aller"
-                    type="date"
-                    value={checkIn}
-                    onChange={(e) => setCheckIn(e.target.value)}
-                  />
-                  <Input
-                    label="Retour"
-                    type="date"
-                    value={checkOut}
-                    onChange={(e) => setCheckOut(e.target.value)}
-                  />
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                  <FieldWrapper label="Départ">
+                    <input placeholder="Aéroport ou ville" value={from} onChange={(e) => setFrom(e.target.value)} className="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#1b1b2f] focus:ring-2 focus:ring-[#1b1b2f]/20 focus:outline-none" />
+                  </FieldWrapper>
+                  <FieldWrapper label="Arrivée">
+                    <input placeholder="Aéroport ou ville" value={to} onChange={(e) => setTo(e.target.value)} className="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#1b1b2f] focus:ring-2 focus:ring-[#1b1b2f]/20 focus:outline-none" />
+                  </FieldWrapper>
+                  <FieldWrapper label="Aller">
+                    <input type="date" value={checkIn} onChange={(e) => setCheckIn(e.target.value)} className="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-[#1b1b2f] focus:ring-2 focus:ring-[#1b1b2f]/20 focus:outline-none" />
+                  </FieldWrapper>
+                  <FieldWrapper label="Retour">
+                    <input type="date" value={checkOut} onChange={(e) => setCheckOut(e.target.value)} className="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-[#1b1b2f] focus:ring-2 focus:ring-[#1b1b2f]/20 focus:outline-none" />
+                  </FieldWrapper>
                 </div>
               )}
 
-              {/* ── Other verticals form ────────────────── */}
+              {/* ── Other verticals ──────────────────────── */}
               {(activeTab === 'cars' || activeTab === 'cruises' || activeTab === 'activities' || activeTab === 'packages') && (
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  <Input
-                    label="Destination"
-                    placeholder={
-                      activeTab === 'cars'
-                        ? 'Lieu de prise en charge'
-                        : activeTab === 'cruises'
-                          ? 'Port ou région'
-                          : activeTab === 'packages'
-                            ? 'Ville ou pays'
-                            : 'Ville ou activité'
-                    }
-                    value={destination}
-                    onChange={(e) => setDestination(e.target.value)}
-                    wrapperClassName="sm:col-span-2"
-                  />
-                  <Input
-                    label={activeTab === 'activities' ? 'Date' : 'Dates'}
-                    type="date"
-                    value={checkIn}
-                    onChange={(e) => setCheckIn(e.target.value)}
-                  />
-                  {activeTab !== 'activities' && (
-                    <Input
-                      label="Retour"
-                      type="date"
-                      value={checkOut}
-                      onChange={(e) => setCheckOut(e.target.value)}
-                      wrapperClassName="sm:col-span-2 lg:col-span-1"
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                  <FieldWrapper label="Destination" className="sm:col-span-2">
+                    <input
+                      placeholder={
+                        activeTab === 'cars' ? 'Lieu de prise en charge' : activeTab === 'cruises' ? 'Port ou région' : activeTab === 'packages' ? 'Ville ou pays' : 'Ville ou activité'
+                      }
+                      value={destination}
+                      onChange={(e) => setDestination(e.target.value)}
+                      className="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#1b1b2f] focus:ring-2 focus:ring-[#1b1b2f]/20 focus:outline-none"
                     />
-                  )}
+                  </FieldWrapper>
+                  <FieldWrapper label={activeTab === 'activities' ? 'Date' : 'Dates'}>
+                    <input type="date" value={checkIn} onChange={(e) => setCheckIn(e.target.value)} className="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-[#1b1b2f] focus:ring-2 focus:ring-[#1b1b2f]/20 focus:outline-none" />
+                  </FieldWrapper>
                 </div>
               )}
 
-              <p className="mt-3 text-xs text-atg-muted">
-                {activeTab !== 'stays' && (
-                  <span className="mr-2 rounded bg-atg-surface px-2 py-0.5 font-medium">
-                    Bientôt disponible
-                  </span>
-                )}
-                La recherche hébergements redirige vers nos offres d&apos;hôtels.
-              </p>
-
-              <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <Button type="submit" size="lg" className="min-h-[48px] sm:min-w-[200px]">
-                  Rechercher
-                </Button>
-                <Button href="/hotels" variant="outline" size="lg" className="min-h-[48px]">
-                  Voir tous les hébergements
-                </Button>
-              </div>
+              {/* Non-stays notice + search button for non-stays */}
+              {activeTab !== 'stays' && (
+                <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <p className="text-xs text-gray-500">
+                    <span className="mr-2 rounded-full bg-gray-100 px-2.5 py-1 font-medium text-gray-600">
+                      Bientôt disponible
+                    </span>
+                    La recherche redirige vers nos offres d&apos;hôtels.
+                  </p>
+                  <button
+                    type="submit"
+                    className="flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-[#1b1b2f] px-6 py-3 text-sm font-bold text-white hover:bg-[#2a2a45] transition-colors sm:w-auto"
+                  >
+                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    Rechercher
+                  </button>
+                </div>
+              )}
             </form>
           </div>
 
-          {/* ── Membership banner ─────────────────────── */}
-          <div className="mt-4 flex items-center gap-3 rounded-xl membership-gradient px-5 py-3 text-white shadow-lg">
+          {/* Membership banner */}
+          <div className="mt-4 flex items-center gap-3 rounded-xl bg-white/15 backdrop-blur-sm border border-white/20 px-5 py-3 text-white">
             <svg className="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>

@@ -65,7 +65,7 @@ export class VehicleAvailability extends BaseAuditEntity {
   @Column({ type: 'datetime', name: 'end_datetime' })
   endDatetime!: Date;
 
-  @Column({ name: 'status', enum: ["available","maintenance","rented"] })
+  @Column({ type: 'enum', name: 'status', enum: ["available","maintenance","rented"] })
   status!: 'available' | 'maintenance' | 'rented';
 
 }

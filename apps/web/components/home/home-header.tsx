@@ -4,7 +4,7 @@ import { Logo } from '@africatourismgate/ui';
 import Link from 'next/link';
 import { useState } from 'react';
 
-/* ── Icon components (inline SVGs, no deps) ────────────── */
+/* ── Icon components ───────────────────────────────────── */
 function IconBed() {
   return (
     <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -58,7 +58,7 @@ const NAV_LINKS = [
 ] as const;
 
 const SECONDARY_LINKS = [
-  { href: '#deals', label: 'Deals' },
+  { href: '#deals', label: '🏷️ Deals' },
   { href: '#support', label: 'Support' },
   { href: '#connexion', label: 'Connexion' },
 ] as const;
@@ -67,72 +67,79 @@ export function HomeHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-atg-elevated/95 backdrop-blur-md shadow-sm">
-      {/* ── Secondary bar ─────────────────────────────── */}
-      <div className="hidden border-b border-atg-border md:block">
-        <div className="mx-auto flex max-w-7xl items-center justify-end gap-5 px-4 py-1.5 sm:px-6 lg:px-8">
-          {SECONDARY_LINKS.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="text-xs font-medium text-atg-muted hover:text-primary transition-colors"
+    <header className="absolute top-0 left-0 right-0 z-50">
+      {/* ── Single header row — dark overlay on hero ──── */}
+      <div className="bg-[#1b1b2f]/80 backdrop-blur-md border-b border-white/10">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-0 sm:px-6 lg:px-8">
+          {/* Logo */}
+          <div className="shrink-0 py-3">
+            <Logo name="Africa Tourism Gate" href="/" />
+          </div>
+
+          {/* Center nav — desktop */}
+          <nav className="hidden items-center gap-0 lg:flex" aria-label="Navigation principale">
+            {NAV_LINKS.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`relative flex items-center gap-1.5 px-4 py-4 text-sm font-medium transition-colors ${
+                  link.href === '/hotels'
+                    ? 'text-white after:absolute after:bottom-0 after:left-2 after:right-2 after:h-[3px] after:rounded-full after:bg-white'
+                    : 'text-white/70 hover:text-white'
+                }`}
+              >
+                {link.icon}
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+
+          {/* Right side — utility links + burger */}
+          <div className="flex items-center gap-4">
+            {/* Desktop utility links */}
+            <div className="hidden items-center gap-4 lg:flex">
+              {SECONDARY_LINKS.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className="text-sm font-medium text-white/70 hover:text-white transition-colors"
+                >
+                  {link.label}
+                </a>
+              ))}
+            </div>
+
+            {/* Burger — mobile/tablet */}
+            <button
+              type="button"
+              className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-white/80 hover:text-white hover:bg-white/10 lg:hidden transition-colors"
+              aria-expanded={menuOpen}
+              aria-controls="mobile-nav"
+              onClick={() => setMenuOpen((o) => !o)}
             >
-              {link.label}
-            </a>
-          ))}
+              <span className="sr-only">Menu</span>
+              {menuOpen ? (
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              )}
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* ── Main nav bar ──────────────────────────────── */}
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-2.5 sm:px-6 lg:px-8">
-        <Logo name="Africa Tourism Gate" href="/" />
-
-        <nav className="hidden items-center gap-1 md:flex" aria-label="Navigation principale">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-medium transition-colors ${
-                link.href === '/hotels'
-                  ? 'bg-primary/10 text-primary'
-                  : 'text-atg-fg hover:bg-atg-surface hover:text-primary'
-              }`}
-            >
-              {link.icon}
-              {link.label}
-            </Link>
-          ))}
-        </nav>
-
-        {/* Burger — mobile */}
-        <button
-          type="button"
-          className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-atg-border md:hidden"
-          aria-expanded={menuOpen}
-          aria-controls="mobile-nav"
-          onClick={() => setMenuOpen((o) => !o)}
-        >
-          <span className="sr-only">Menu</span>
-          {menuOpen ? (
-            <svg className="h-6 w-6 text-atg-fg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          ) : (
-            <svg className="h-6 w-6 text-atg-fg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          )}
-        </button>
-      </div>
-
-      {/* ── Mobile menu ───────────────────────────────── */}
+      {/* ── Mobile menu ─────────────────────────────────── */}
       {menuOpen && (
         <nav
           id="mobile-nav"
-          className="border-t border-atg-border bg-atg-elevated px-4 py-4 md:hidden"
+          className="bg-[#1b1b2f]/95 backdrop-blur-lg border-b border-white/10 px-4 py-4 lg:hidden"
           aria-label="Navigation mobile"
         >
-          <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-atg-muted">
+          <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-white/50">
             Voyager
           </p>
           <ul className="flex flex-col gap-0.5">
@@ -140,13 +147,13 @@ export function HomeHeader() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-atg-fg hover:bg-atg-surface"
+                  className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-white/90 hover:bg-white/10"
                   onClick={() => setMenuOpen(false)}
                 >
-                  <span className="text-primary">{link.icon}</span>
+                  <span className="text-white/60">{link.icon}</span>
                   {link.label}
                   {link.href !== '/hotels' && (
-                    <span className="ml-auto rounded bg-atg-surface px-1.5 py-0.5 text-[10px] font-semibold text-atg-muted">
+                    <span className="ml-auto rounded bg-white/10 px-1.5 py-0.5 text-[10px] font-semibold text-white/50">
                       Bientôt
                     </span>
                   )}
@@ -155,14 +162,14 @@ export function HomeHeader() {
             ))}
           </ul>
 
-          <div className="my-3 border-t border-atg-border" />
+          <div className="my-3 border-t border-white/10" />
 
           <ul className="flex flex-col gap-0.5">
             {SECONDARY_LINKS.map((link) => (
               <li key={link.href}>
                 <a
                   href={link.href}
-                  className="block min-h-[44px] rounded-lg px-3 py-3 text-sm text-atg-muted hover:bg-atg-surface hover:text-atg-fg"
+                  className="block min-h-[44px] rounded-lg px-3 py-3 text-sm text-white/60 hover:bg-white/10 hover:text-white/90"
                   onClick={() => setMenuOpen(false)}
                 >
                   {link.label}

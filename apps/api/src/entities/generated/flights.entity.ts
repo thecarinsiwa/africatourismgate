@@ -74,7 +74,7 @@ export class FlightClasses extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'flight_id', length: 36 })
   flightId!: string;
 
-  @Column({ name: 'class_name', enum: ["economy","premium_economy","business","first"] })
+  @Column({ type: 'enum', name: 'class_name', enum: ["economy","premium_economy","business","first"] })
   className!: 'economy' | 'premium_economy' | 'business' | 'first';
 
   @Column({ type: 'int', name: 'base_price_cents' })

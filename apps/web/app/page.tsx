@@ -14,12 +14,18 @@ export const metadata: Metadata = {
 
 export default function HomePage() {
   return (
-    <div className="flex min-h-screen flex-col bg-atg-surface">
+    <div className="flex min-h-screen flex-col">
+      {/* Header overlays the hero (position: absolute) */}
       <HomeHeader />
+
+      {/* Hero + Search — full bleed */}
       <HeroSearch />
 
-      {/* ── Membership / promo callout ────────────────── */}
-      <section className="border-b border-atg-border bg-primary/5 py-10 sm:py-12">
+      {/* Destinations carousel */}
+      <DestinationsCarousel />
+
+      {/* Promo / membership callout */}
+      <section className="border-y border-atg-border bg-primary/5 py-10 sm:py-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-start gap-6 rounded-2xl bg-atg-elevated p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8 shadow-sm border border-atg-border">
             <div>
@@ -44,8 +50,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      <DestinationsCarousel />
+      {/* Services / Verticals */}
       <VerticalsSection />
+
+      {/* Footer */}
       <HomeFooter />
     </div>
   );

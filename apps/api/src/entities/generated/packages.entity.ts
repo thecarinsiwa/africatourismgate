@@ -27,7 +27,7 @@ export class PackageItems extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'package_id', length: 36 })
   packageId!: string;
 
-  @Column({ name: 'item_type', enum: ["property","flight","vehicle","cruise","activity"] })
+  @Column({ type: 'enum', name: 'item_type', enum: ["property","flight","vehicle","cruise","activity"] })
   itemType!: 'property' | 'flight' | 'vehicle' | 'cruise' | 'activity';
 
   @Column({ type: 'varchar', name: 'item_id', length: 36 })
