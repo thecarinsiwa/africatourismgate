@@ -12,6 +12,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { Public } from '../../auth/decorators/public.decorator';
 import { AuthUserDto } from '../../auth/dto/auth-user.dto';
 import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
 import { BulkUpsertOrganizationSettingsDto } from './dto/bulk-upsert-organization-settings.dto';
@@ -24,6 +25,15 @@ import { OrganizationSettingsService } from './organization-settings.service';
 @Controller('organization-settings')
 export class OrganizationSettingsController {
   constructor(private readonly service: OrganizationSettingsService) {}
+
+  @Public()
+  @Get('public/branding')
+  @ApiOperation({
+    summary: 'Get public branding for the active/default organization',
+  })
+  findPublicBranding(@Query('organizationSlug') organizationSlug?: string) {
+    return this.service.findPublicBranding(organizationSlug);
+  }
 
   @Get()
   @RequirePermissions('organization_settings.read')

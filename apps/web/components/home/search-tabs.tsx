@@ -86,7 +86,7 @@ function FormInput({
       placeholder={placeholder}
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors placeholder:text-gray-400 focus:border-[#0B6E4F] focus:outline-none focus:ring-2 focus:ring-[#0B6E4F]/20 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg dark:placeholder:text-atg-muted"
+      className="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg dark:placeholder:text-atg-muted"
     />
   );
 }
@@ -109,7 +109,7 @@ function FormSelect({
       name={name}
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors focus:border-[#0B6E4F] focus:outline-none focus:ring-2 focus:ring-[#0B6E4F]/20 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg"
+      className="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg"
     >
       <option value="">{placeholder}</option>
       {options.map((opt) => (
@@ -162,7 +162,7 @@ export function SearchTabs() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex flex-1 items-center justify-center gap-2 py-4 text-xs sm:text-sm font-semibold uppercase tracking-wide transition-all border-b-[3px] ${
                   activeTab === tab.id
-                    ? 'bg-[#0B6E4F] text-white border-[#095a40]'
+                    ? 'bg-primary text-white border-primary-hover'
                     : 'bg-gray-50 text-gray-500 border-transparent hover:bg-gray-100 hover:text-gray-700 dark:bg-atg-surface dark:text-atg-muted dark:hover:bg-white/5 dark:hover:text-white'
                 }`}
               >
@@ -198,7 +198,7 @@ export function SearchTabs() {
                   <FormInput name="adults" placeholder="1" value={adults} onChange={setAdults} />
                 </div>
                 <div className="flex items-end">
-                  <button type="submit" className="w-full min-h-[44px] rounded-lg bg-[#0B6E4F] px-5 py-2.5 text-sm font-bold text-white uppercase tracking-wide hover:bg-[#095a40] transition-colors">
+                  <button type="submit" className="min-h-[44px] w-full rounded-lg bg-primary px-5 py-2.5 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover">
                     Rechercher
                   </button>
                 </div>
@@ -225,7 +225,7 @@ export function SearchTabs() {
                   <FormSelect name="roomType" placeholder="Sélectionner" options={['Chambre Double', 'Chambre Simple', 'Suite']} value="" onChange={() => {}} />
                 </div>
                 <div className="flex items-end">
-                  <button type="submit" className="w-full min-h-[44px] rounded-lg bg-[#0B6E4F] px-5 py-2.5 text-sm font-bold text-white uppercase tracking-wide hover:bg-[#095a40] transition-colors">
+                  <button type="submit" className="min-h-[44px] w-full rounded-lg bg-primary px-5 py-2.5 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover">
                     Rechercher
                   </button>
                 </div>
@@ -256,7 +256,7 @@ export function SearchTabs() {
                   <FormSelect name="location" placeholder="Lieu" options={['Aéroport', 'Centre-ville', 'Gare']} value="" onChange={() => {}} />
                 </div>
                 <div className="flex items-end">
-                  <button type="submit" className="w-full min-h-[44px] rounded-lg bg-[#0B6E4F] px-5 py-2.5 text-sm font-bold text-white uppercase tracking-wide hover:bg-[#095a40] transition-colors">
+                  <button type="submit" className="min-h-[44px] w-full rounded-lg bg-primary px-5 py-2.5 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover">
                     Rechercher
                   </button>
                 </div>
@@ -287,7 +287,7 @@ export function SearchTabs() {
                   <FormSelect name="ship" placeholder="Navire" options={['African Queen', 'Safari Voyager', 'Indian Ocean Star']} value="" onChange={() => {}} />
                 </div>
                 <div className="flex items-end">
-                  <button type="submit" className="w-full min-h-[44px] rounded-lg bg-[#0B6E4F] px-5 py-2.5 text-sm font-bold text-white uppercase tracking-wide hover:bg-[#095a40] transition-colors">
+                  <button type="submit" className="min-h-[44px] w-full rounded-lg bg-primary px-5 py-2.5 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover">
                     Rechercher
                   </button>
                 </div>
@@ -318,7 +318,7 @@ export function SearchTabs() {
                   <FormInput name="days" placeholder="7" value="" onChange={() => {}} />
                 </div>
                 <div className="flex items-end">
-                  <button type="submit" className="w-full min-h-[44px] rounded-lg bg-[#0B6E4F] px-5 py-2.5 text-sm font-bold text-white uppercase tracking-wide hover:bg-[#095a40] transition-colors">
+                  <button type="submit" className="min-h-[44px] w-full rounded-lg bg-primary px-5 py-2.5 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover">
                     Rechercher
                   </button>
                 </div>

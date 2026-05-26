@@ -42,7 +42,7 @@ export function ParallaxPromo() {
           <div className={`shrink-0 ${isVisible ? 'animate-fade-in-right delay-200' : 'opacity-0'}`}>
             <a
               href="/hotels?destination=Kenya"
-              className="inline-flex min-h-[52px] items-center justify-center rounded-lg bg-[#0B6E4F] px-8 py-3 text-sm font-bold text-white uppercase tracking-wider hover:bg-[#095a40] transition-colors shadow-lg hover:shadow-xl"
+              className="inline-flex min-h-[52px] items-center justify-center rounded-lg bg-primary px-8 py-3 text-sm font-bold uppercase tracking-wider text-white shadow-lg transition-colors hover:bg-primary-hover hover:shadow-xl"
             >
               Détails
             </a>

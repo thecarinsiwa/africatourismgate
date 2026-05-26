@@ -114,7 +114,7 @@ export function DestinationsCarousel() {
                     <StarRating count={dest.rating} />
                     <span className="text-xs text-gray-400 dark:text-atg-muted">- {dest.reviews} Avis</span>
                   </div>
-                  <span className="inline-flex items-center rounded-md bg-[#0B6E4F] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#095a40] transition-colors">
+                  <span className="inline-flex items-center rounded-md bg-primary px-3 py-1.5 text-xs font-bold text-white transition-colors hover:bg-primary-hover">
                     Détails
                   </span>
                 </div>

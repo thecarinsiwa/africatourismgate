@@ -4,10 +4,10 @@ import Image from 'next/image';
 import { useScrollAnimation } from './use-scroll-animation';
 
 const SATISFACTION_BARS = [
-  { label: 'Vols', value: 94, color: '#0B6E4F' },
-  { label: 'Hôtels', value: 87, color: '#199a45' },
-  { label: 'Voitures', value: 48, color: '#0B6E4F' },
-  { label: 'Croisières', value: 51, color: '#199a45' },
+  { label: 'Vols', value: 94, color: 'var(--atg-primary)' },
+  { label: 'Hôtels', value: 87, color: 'var(--atg-secondary)' },
+  { label: 'Voitures', value: 48, color: 'var(--atg-primary)' },
+  { label: 'Croisières', value: 51, color: 'var(--atg-secondary)' },
 ];
 
 export function HappyCustomers() {
@@ -31,7 +31,7 @@ export function HappyCustomers() {
                 />
               </div>
               {/* Decorative badge */}
-              <div className="absolute -bottom-4 -right-4 flex h-20 w-20 items-center justify-center rounded-full bg-[#0B6E4F] text-white shadow-lg sm:h-24 sm:w-24">
+              <div className="absolute -bottom-4 -right-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary text-white shadow-lg sm:h-24 sm:w-24">
                 <div className="text-center">
                   <span className="block text-2xl font-bold sm:text-3xl">10K+</span>
                   <span className="block text-[10px] font-medium uppercase tracking-wide">Clients</span>

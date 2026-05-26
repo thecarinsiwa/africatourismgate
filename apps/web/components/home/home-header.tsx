@@ -118,14 +118,14 @@ export function HomeHeader() {
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-0 sm:px-6 lg:px-8">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 py-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#0B6E4F]">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
               <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
             <div>
               <span className="text-lg font-bold text-[#0f1a16] dark:text-white">Africa Tourism</span>
-              <span className="text-lg font-bold text-[#0B6E4F]"> Gate</span>
+              <span className="text-lg font-bold text-primary"> Gate</span>
             </div>
           </Link>
 
@@ -142,8 +142,8 @@ export function HomeHeader() {
                   href={link.href}
                   className={`relative flex items-center gap-1 px-4 py-5 text-sm font-medium transition-colors ${
                     link.href === '/'
-                      ? 'text-[#0B6E4F]'
-                      : 'text-[#333] hover:text-[#0B6E4F] dark:text-white/75 dark:hover:text-white'
+                      ? 'text-primary'
+                      : 'text-[#333] hover:text-primary dark:text-white/75 dark:hover:text-white'
                   }`}
                 >
                   {link.label}
@@ -161,7 +161,7 @@ export function HomeHeader() {
                       <Link
                         key={child.href}
                         href={child.href}
-                        className="block px-4 py-2 text-sm text-gray-600 transition-colors hover:bg-gray-50 hover:text-[#0B6E4F] dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white"
+                        className="block px-4 py-2 text-sm text-gray-600 transition-colors hover:bg-gray-50 hover:text-primary dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white"
                       >
                         {child.label}
                       </Link>
@@ -175,7 +175,7 @@ export function HomeHeader() {
           <button
             type="button"
             onClick={toggleTheme}
-            className="ml-auto mr-2 inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-gray-200 text-gray-600 transition-colors hover:border-[#0B6E4F] hover:text-[#0B6E4F] dark:border-atg-border dark:text-white/75 dark:hover:border-primary dark:hover:text-white lg:ml-4"
+            className="ml-auto mr-2 inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-gray-200 text-gray-600 transition-colors hover:border-primary hover:text-primary dark:border-atg-border dark:text-white/75 dark:hover:border-primary dark:hover:text-white lg:ml-4"
             aria-label={theme === 'dark' ? 'Activer le mode clair' : 'Activer le mode sombre'}
             title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
           >
@@ -193,7 +193,7 @@ export function HomeHeader() {
           {/* Burger — mobile */}
           <button
             type="button"
-            className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-gray-600 transition-colors hover:bg-gray-50 hover:text-[#0B6E4F] dark:text-white/75 dark:hover:bg-white/5 dark:hover:text-white lg:hidden"
+            className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-gray-600 transition-colors hover:bg-gray-50 hover:text-primary dark:text-white/75 dark:hover:bg-white/5 dark:hover:text-white lg:hidden"
             aria-expanded={menuOpen}
             aria-controls="mobile-nav"
             onClick={() => setMenuOpen((o) => !o)}
@@ -224,7 +224,7 @@ export function HomeHeader() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="flex min-h-[44px] items-center rounded-lg px-3 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-[#0B6E4F] dark:text-white/75 dark:hover:bg-white/5 dark:hover:text-white"
+                  className="flex min-h-[44px] items-center rounded-lg px-3 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-primary dark:text-white/75 dark:hover:bg-white/5 dark:hover:text-white"
                   onClick={() => setMenuOpen(false)}
                 >
                   {link.label}
@@ -235,7 +235,7 @@ export function HomeHeader() {
                       <li key={child.href}>
                         <Link
                           href={child.href}
-                          className="flex min-h-[40px] items-center rounded-lg px-3 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-[#0B6E4F] dark:text-white/55 dark:hover:bg-white/5 dark:hover:text-white"
+                          className="flex min-h-[40px] items-center rounded-lg px-3 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-primary dark:text-white/55 dark:hover:bg-white/5 dark:hover:text-white"
                           onClick={() => setMenuOpen(false)}
                         >
                           {child.label}

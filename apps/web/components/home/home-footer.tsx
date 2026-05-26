@@ -52,7 +52,7 @@ export function HomeFooter() {
             {/* Column 1 — Brand */}
             <div>
               <Link href="/" className="flex items-center gap-2 mb-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#0B6E4F]">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
                   <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
@@ -64,7 +64,7 @@ export function HomeFooter() {
               </p>
               <a
                 href="#about"
-                className="inline-flex items-center gap-1.5 rounded-md bg-[#0B6E4F] px-4 py-2 text-xs font-semibold text-white uppercase tracking-wide hover:bg-[#095a40] transition-colors"
+                className="inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover"
               >
                 En savoir plus
               </a>
@@ -82,7 +82,7 @@ export function HomeFooter() {
                       href={link.href}
                       className="text-sm text-white/60 hover:text-white transition-colors flex items-center gap-1.5"
                     >
-                      <svg className="h-3 w-3 text-[#0B6E4F]" fill="currentColor" viewBox="0 0 6 10" aria-hidden>
+                      <svg className="h-3 w-3 text-primary" fill="currentColor" viewBox="0 0 6 10" aria-hidden>
                         <path d="M1 1l4 4-4 4" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                       {link.label}
@@ -98,7 +98,7 @@ export function HomeFooter() {
                     href={s.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white/70 hover:bg-[#0B6E4F] hover:text-white transition-colors"
+                    className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white/70 transition-colors hover:bg-primary hover:text-white"
                     aria-label={s.label}
                   >
                     {s.icon}
@@ -127,11 +127,11 @@ export function HomeFooter() {
                   placeholder="Adresse email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="min-h-[42px] flex-1 min-w-0 border-0 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-[#0B6E4F]"
+                  className="min-h-[42px] min-w-0 flex-1 border-0 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-primary"
                 />
                 <button
                   type="submit"
-                  className="shrink-0 bg-[#0B6E4F] px-4 text-xs font-bold text-white uppercase tracking-wide hover:bg-[#095a40] transition-colors"
+                  className="shrink-0 bg-primary px-4 text-xs font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover"
                 >
                   OK
                 </button>
@@ -146,14 +146,14 @@ export function HomeFooter() {
 
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
-                  <svg className="h-5 w-5 shrink-0 text-[#0B6E4F] mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                  <svg className="mt-0.5 h-5 w-5 shrink-0 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 5z" />
                   </svg>
                   <span className="text-lg font-bold text-white">+243 815 000 000</span>
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <svg className="h-5 w-5 shrink-0 text-[#0B6E4F] mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                  <svg className="mt-0.5 h-5 w-5 shrink-0 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                   <a
@@ -165,7 +165,7 @@ export function HomeFooter() {
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <svg className="h-5 w-5 shrink-0 text-[#0B6E4F] mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                  <svg className="mt-0.5 h-5 w-5 shrink-0 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
