@@ -1,48 +1,26 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslations } from '../../lib/i18n/locale-provider';
 
-/* ── Slide data ───────────────────────────────────────── */
-const SLIDES = [
-  {
-    subtitle: 'Bienvenue chez',
-    title: 'AFRICA TOURISM GATE',
-    description:
-      'Votre passerelle vers les plus belles destinations africaines. Explorez, réservez et vivez des expériences inoubliables.',
-    image:
-      'https://upload.wikimedia.org/wikipedia/commons/d/de/Mountain_gorilla_from_Susa_Group_in_Karisimbi_thicket_of_Volcanoes_National_Park_in_Rwanda._Emmanuel_Kwizera.jpg',
-  },
-  {
-    subtitle: 'Safari de 7 jours',
-    title: 'MASAI MARA MAGIQUE',
-    description:
-      'Découvrez la migration des gnous et les Big Five dans la réserve la plus célèbre d\'Afrique.',
-    image:
-      'https://upload.wikimedia.org/wikipedia/commons/4/48/Volcanoes_National_Park_Banner_Image.gif',
-  },
-  {
-    subtitle: '5 jours à',
-    title: 'MARRAKECH (Perle du Sud)',
-    description:
-      'Plongez dans les souks, les riads et les saveurs épicées de la ville ocre du Maroc.',
-    image:
-      'https://upload.wikimedia.org/wikipedia/commons/e/e8/Serengeti_sunset-1001.jpg',
-  },
-  {
-    subtitle: 'Croisière de 12 jours',
-    title: 'ZANZIBAR À MADAGASCAR',
-    description:
-      'Navigation côtière le long de l\'Océan Indien — plages de rêve et faune unique.',
-    image:
-      'https://upload.wikimedia.org/wikipedia/commons/9/95/Serengeti_-_Stefan_Swanepoel.jpg',
-  },
+const SLIDE_IMAGES = [
+  'https://upload.wikimedia.org/wikipedia/commons/d/de/Mountain_gorilla_from_Susa_Group_in_Karisimbi_thicket_of_Volcanoes_National_Park_in_Rwanda._Emmanuel_Kwizera.jpg',
+  'https://upload.wikimedia.org/wikipedia/commons/4/48/Volcanoes_National_Park_Banner_Image.gif',
+  'https://upload.wikimedia.org/wikipedia/commons/e/e8/Serengeti_sunset-1001.jpg',
+  'https://upload.wikimedia.org/wikipedia/commons/9/95/Serengeti_-_Stefan_Swanepoel.jpg',
 ];
 
 const AUTO_PLAY_INTERVAL = 6000;
 
 export function HeroSlider() {
+  const t = useTranslations();
   const [current, setCurrent] = useState(0);
   const [transitioning, setTransitioning] = useState(false);
+
+  const slides = t.hero.slides.map((slide, i) => ({
+    ...slide,
+    image: SLIDE_IMAGES[i] ?? SLIDE_IMAGES[0],
+  }));
 
   const goTo = useCallback(
     (idx: number) => {
@@ -55,21 +33,19 @@ export function HeroSlider() {
   );
 
   const next = useCallback(() => {
-    goTo((current + 1) % SLIDES.length);
-  }, [current, goTo]);
+    goTo((current + 1) % slides.length);
+  }, [current, goTo, slides.length]);
 
-  /* Auto-play */
   useEffect(() => {
     const timer = setInterval(next, AUTO_PLAY_INTERVAL);
     return () => clearInterval(timer);
   }, [next]);
 
-  const slide = SLIDES[current];
+  const slide = slides[current];
 
   return (
     <section className="relative h-[520px] sm:h-[600px] lg:h-[680px] overflow-hidden">
-      {/* Background images — all layered, only current one visible */}
-      {SLIDES.map((s, i) => (
+      {slides.map((s, i) => (
         <div
           key={i}
           className="absolute inset-0 bg-cover bg-center transition-opacity duration-1000"
@@ -82,15 +58,10 @@ export function HeroSlider() {
         />
       ))}
 
-      {/* Dark overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/60" />
 
-      {/* Content */}
       <div className="relative flex h-full items-center justify-center text-center">
-        <div
-          key={current}
-          className="hero-slide-content max-w-3xl px-6"
-        >
+        <div key={current} className="hero-slide-content max-w-3xl px-6">
           <p className="hero-subtitle text-sm sm:text-base font-medium tracking-widest text-white/90 uppercase mb-3">
             {slide.subtitle}
           </p>
@@ -103,30 +74,26 @@ export function HeroSlider() {
         </div>
       </div>
 
-      {/* Pagination dots */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2.5 z-10">
-        {SLIDES.map((_, i) => (
+        {slides.map((_, i) => (
           <button
             key={i}
             type="button"
             onClick={() => goTo(i)}
             className={`h-3 rounded-full transition-all duration-300 ${
-              i === current
-                ? 'w-8 bg-white'
-                : 'w-3 bg-white/40 hover:bg-white/70'
+              i === current ? 'w-8 bg-white' : 'w-3 bg-white/40 hover:bg-white/70'
             }`}
-            aria-label={`Aller au slide ${i + 1}`}
+            aria-label={`${t.hero.next} ${i + 1}`}
             aria-current={i === current ? 'step' : undefined}
           />
         ))}
       </div>
 
-      {/* Arrow buttons */}
       <button
         type="button"
-        onClick={() => goTo((current - 1 + SLIDES.length) % SLIDES.length)}
+        onClick={() => goTo((current - 1 + slides.length) % slides.length)}
         className="absolute left-4 top-1/2 -translate-y-1/2 z-10 hidden sm:flex h-12 w-12 items-center justify-center rounded-full bg-black/30 text-white/80 backdrop-blur-sm hover:bg-black/50 hover:text-white transition-all"
-        aria-label="Slide précédent"
+        aria-label={t.hero.prev}
       >
         <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -134,9 +101,9 @@ export function HeroSlider() {
       </button>
       <button
         type="button"
-        onClick={() => goTo((current + 1) % SLIDES.length)}
+        onClick={() => goTo((current + 1) % slides.length)}
         className="absolute right-4 top-1/2 -translate-y-1/2 z-10 hidden sm:flex h-12 w-12 items-center justify-center rounded-full bg-black/30 text-white/80 backdrop-blur-sm hover:bg-black/50 hover:text-white transition-all"
-        aria-label="Slide suivant"
+        aria-label={t.hero.next}
       >
         <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
