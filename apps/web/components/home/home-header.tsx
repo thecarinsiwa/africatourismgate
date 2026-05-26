@@ -1,27 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
-
-/* ── Navigation items ─────────────────────────────────── */
-const NAV_LINKS = [
-  { href: '/', label: 'Accueil', children: [] },
-  { href: '#about', label: 'À propos', children: [] },
-  { href: '#gallery', label: 'Galerie', children: [] },
-  {
-    href: '#pages',
-    label: 'Pages',
-    children: [
-      { href: '/hotels', label: 'Hôtels' },
-      { href: '#vols', label: 'Vols' },
-      { href: '#voitures', label: 'Location de Voitures' },
-      { href: '#croisieres', label: 'Croisières' },
-      { href: '#tours', label: 'Tours' },
-    ],
-  },
-  { href: '#blog', label: 'Blog', children: [] },
-  { href: '#contact', label: 'Contacts', children: [] },
-] as const;
+import { useEffect, useMemo, useState } from 'react';
+import { LanguageSwitcher } from '../language-switcher';
+import { useTranslations } from '../../lib/i18n/locale-provider';
 
 const SOCIAL_LINKS = [
   {
@@ -56,9 +38,32 @@ const SOCIAL_LINKS = [
 type ThemeMode = 'light' | 'dark';
 
 export function HomeHeader() {
+  const t = useTranslations();
   const [menuOpen, setMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [theme, setTheme] = useState<ThemeMode>('light');
+
+  const navLinks = useMemo(
+    () => [
+      { href: '/', label: t.nav.home, children: [] as { href: string; label: string }[] },
+      { href: '#about', label: t.nav.about, children: [] },
+      { href: '#gallery', label: t.nav.gallery, children: [] },
+      {
+        href: '#pages',
+        label: t.nav.pages,
+        children: [
+          { href: '/hotels', label: t.nav.hotels },
+          { href: '#vols', label: t.nav.flights },
+          { href: '#voitures', label: t.nav.cars },
+          { href: '#croisieres', label: t.nav.cruises },
+          { href: '#tours', label: t.nav.tours },
+        ],
+      },
+      { href: '#blog', label: t.nav.blog, children: [] },
+      { href: '#contact', label: t.nav.contact, children: [] },
+    ],
+    [t],
+  );
 
   useEffect(() => {
     setTheme(document.documentElement.classList.contains('dark') ? 'dark' : 'light');
@@ -73,10 +78,8 @@ export function HomeHeader() {
 
   return (
     <header className="w-full z-50">
-      {/* ── Top Bar ────────────────────────────────────── */}
       <div className="bg-[#1b1b2f] text-white">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2 sm:px-6 lg:px-8">
-          {/* Left — email + phone */}
           <div className="flex items-center gap-4 text-xs sm:text-sm">
             <a
               href="mailto:support@africatourismgate.com"
@@ -95,8 +98,8 @@ export function HomeHeader() {
             </span>
           </div>
 
-          {/* Right — social icons */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
+            <LanguageSwitcher variant="topbar" />
             {SOCIAL_LINKS.map((s) => (
               <a
                 key={s.label}
@@ -113,10 +116,8 @@ export function HomeHeader() {
         </div>
       </div>
 
-      {/* ── Main Navbar ────────────────────────────────── */}
       <div className="border-b border-gray-100 bg-white shadow-sm transition-colors dark:border-atg-border dark:bg-atg-elevated">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-0 sm:px-6 lg:px-8">
-          {/* Logo */}
           <Link href="/" className="flex items-center gap-2 py-4">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
               <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -129,13 +130,12 @@ export function HomeHeader() {
             </div>
           </Link>
 
-          {/* Desktop Nav */}
-          <nav className="hidden items-center gap-0 lg:flex" aria-label="Navigation principale">
-            {NAV_LINKS.map((link) => (
+          <nav className="hidden items-center gap-0 lg:flex" aria-label={t.nav.mainAria}>
+            {navLinks.map((link) => (
               <div
                 key={link.href}
                 className="relative"
-                onMouseEnter={() => link.children.length > 0 ? setOpenDropdown(link.href) : undefined}
+                onMouseEnter={() => (link.children.length > 0 ? setOpenDropdown(link.href) : undefined)}
                 onMouseLeave={() => setOpenDropdown(null)}
               >
                 <Link
@@ -154,7 +154,6 @@ export function HomeHeader() {
                   )}
                 </Link>
 
-                {/* Dropdown */}
                 {link.children.length > 0 && openDropdown === link.href && (
                   <div className="absolute left-0 top-full z-50 min-w-[200px] rounded-lg border border-gray-100 bg-white py-2 shadow-xl dark:border-atg-border dark:bg-atg-elevated">
                     {link.children.map((child) => (
@@ -176,8 +175,8 @@ export function HomeHeader() {
             type="button"
             onClick={toggleTheme}
             className="ml-auto mr-2 inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-gray-200 text-gray-600 transition-colors hover:border-primary hover:text-primary dark:border-atg-border dark:text-white/75 dark:hover:border-primary dark:hover:text-white lg:ml-4"
-            aria-label={theme === 'dark' ? 'Activer le mode clair' : 'Activer le mode sombre'}
-            title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
+            aria-label={theme === 'dark' ? t.theme.enableLight : t.theme.enableDark}
+            title={theme === 'dark' ? t.theme.lightMode : t.theme.darkMode}
           >
             {theme === 'dark' ? (
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -190,7 +189,6 @@ export function HomeHeader() {
             )}
           </button>
 
-          {/* Burger — mobile */}
           <button
             type="button"
             className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-gray-600 transition-colors hover:bg-gray-50 hover:text-primary dark:text-white/75 dark:hover:bg-white/5 dark:hover:text-white lg:hidden"
@@ -198,7 +196,7 @@ export function HomeHeader() {
             aria-controls="mobile-nav"
             onClick={() => setMenuOpen((o) => !o)}
           >
-            <span className="sr-only">Menu</span>
+            <span className="sr-only">{t.nav.menu}</span>
             {menuOpen ? (
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -212,15 +210,20 @@ export function HomeHeader() {
         </div>
       </div>
 
-      {/* ── Mobile menu ─────────────────────────────────── */}
       {menuOpen && (
         <nav
           id="mobile-nav"
           className="border-b border-gray-100 bg-white px-4 py-4 shadow-lg dark:border-atg-border dark:bg-atg-elevated lg:hidden"
-          aria-label="Navigation mobile"
+          aria-label={t.nav.mobileAria}
         >
+          <div className="mb-3 flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-atg-muted">
+              {t.language.label}
+            </span>
+            <LanguageSwitcher variant="navbar" />
+          </div>
           <ul className="flex flex-col gap-0.5">
-            {NAV_LINKS.map((link) => (
+            {navLinks.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}

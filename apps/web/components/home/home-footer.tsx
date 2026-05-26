@@ -1,14 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
-
-const SPECIALIST_LINKS = [
-  { href: '/hotels', label: 'Hébergements Premium' },
-  { href: '#vols', label: 'Vols Première Classe' },
-  { href: '#tours', label: 'Safaris & Tours' },
-  { href: '#croisieres', label: 'Croisières Côtières' },
-];
+import { useMemo, useState } from 'react';
+import { useTranslations } from '../../lib/i18n/locale-provider';
 
 const SOCIAL_FOOTER = [
   {
@@ -41,15 +35,24 @@ const SOCIAL_FOOTER = [
 ];
 
 export function HomeFooter() {
+  const t = useTranslations();
   const [email, setEmail] = useState('');
+
+  const specialistLinks = useMemo(
+    () => [
+      { href: '/hotels', label: t.footer.specialistLinks.premium },
+      { href: '#vols', label: t.footer.specialistLinks.flights },
+      { href: '#tours', label: t.footer.specialistLinks.safaris },
+      { href: '#croisieres', label: t.footer.specialistLinks.cruises },
+    ],
+    [t],
+  );
 
   return (
     <footer>
-      {/* ── Main footer ──────────────────────────────── */}
       <div className="bg-[#1b1b2f] text-white">
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
           <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
-            {/* Column 1 — Brand */}
             <div>
               <Link href="/" className="flex items-center gap-2 mb-4">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
@@ -59,24 +62,21 @@ export function HomeFooter() {
                 </div>
                 <span className="text-lg font-bold">Africa Tourism Gate</span>
               </Link>
-              <p className="text-sm text-white/60 leading-relaxed mb-5">
-                Votre passerelle vers les meilleures expériences de voyage en Afrique. Découvrez des destinations uniques et réservez en toute confiance.
-              </p>
+              <p className="text-sm text-white/60 leading-relaxed mb-5">{t.footer.tagline}</p>
               <a
                 href="#about"
                 className="inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover"
               >
-                En savoir plus
+                {t.footer.learnMore}
               </a>
             </div>
 
-            {/* Column 2 — Travel Specialists */}
             <div>
               <h3 className="text-sm font-bold uppercase tracking-wide text-white mb-5">
-                Spécialistes Voyage
+                {t.footer.specialists}
               </h3>
               <ul className="space-y-2.5">
-                {SPECIALIST_LINKS.map((link) => (
+                {specialistLinks.map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
@@ -107,14 +107,11 @@ export function HomeFooter() {
               </div>
             </div>
 
-            {/* Column 3 — Newsletter */}
             <div>
               <h3 className="text-sm font-bold uppercase tracking-wide text-white mb-5">
-                Newsletter
+                {t.footer.newsletter}
               </h3>
-              <p className="text-sm text-white/60 leading-relaxed mb-4">
-                Inspiration, idées de voyages, bons plans et actualités.
-              </p>
+              <p className="text-sm text-white/60 leading-relaxed mb-4">{t.footer.newsletterDesc}</p>
               <form
                 className="flex gap-0 rounded-lg overflow-hidden"
                 onSubmit={(e) => {
@@ -124,7 +121,7 @@ export function HomeFooter() {
               >
                 <input
                   type="email"
-                  placeholder="Adresse email"
+                  placeholder={t.footer.emailPlaceholder}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="min-h-[42px] min-w-0 flex-1 border-0 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-primary"
@@ -138,10 +135,13 @@ export function HomeFooter() {
               </form>
             </div>
 
+<<<<<<< HEAD
             {/* Column 4 — Contact */}
-            <div>
+=======
+>>>>>>> feature/web-i18n-fr-en-es
+            <div id="contact" className="scroll-mt-24">
               <h3 className="text-sm font-bold uppercase tracking-wide text-white mb-5">
-                Contact
+                {t.footer.contact}
               </h3>
 
               <div className="space-y-4">
@@ -169,7 +169,7 @@ export function HomeFooter() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
-                  <span className="text-sm text-white/60">Kinshasa, RD Congo</span>
+                  <span className="text-sm text-white/60">{t.footer.location}</span>
                 </div>
               </div>
             </div>
@@ -177,22 +177,29 @@ export function HomeFooter() {
         </div>
       </div>
 
-      {/* ── Copyright bar ────────────────────────────── */}
       <div className="bg-[#14142a] text-white/50">
         <div className="mx-auto max-w-7xl flex flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <p className="text-xs">
             © {new Date().getFullYear()} Africa Tourism Gate
             <span className="mx-2">|</span>
-            <a href="#" className="hover:text-white transition-colors">Politique de Confidentialité</a>
+            <a href="#" className="hover:text-white transition-colors">
+              {t.footer.privacy}
+            </a>
             <span className="mx-2">|</span>
-            <a href="#" className="hover:text-white transition-colors">À propos</a>
+            <a href="#about" className="hover:text-white transition-colors">
+              {t.footer.about}
+            </a>
             <span className="mx-2">|</span>
-            <a href="#" className="hover:text-white transition-colors">FAQ</a>
+            <a href="#" className="hover:text-white transition-colors">
+              {t.footer.faq}
+            </a>
             <span className="mx-2">|</span>
-            <a href="#" className="hover:text-white transition-colors">Contact</a>
+            <a href="#contact" className="hover:text-white transition-colors">
+              {t.footer.contact}
+            </a>
           </p>
           <p className="text-xs">
-            Conçu par <strong className="text-white/70">Africa Tourism Gate</strong>
+            {t.footer.designedBy} <strong className="text-white/70">Africa Tourism Gate</strong>
           </p>
         </div>
       </div>

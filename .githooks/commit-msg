@@ -1,0 +1,12 @@
+#!/bin/sh
+# Final pass: strip attribution trailers before commit is recorded.
+msg="$1"
+[ -f "$msg" ] || exit 0
+tmp="${msg}.tmp"
+awk '
+/cursoragent@cursor\.com/ { next }
+/^[[:space:]]*[Mm]ade-with:[[:space:]]*[Cc]ursor/ { next }
+/^[[:space:]]*[Mm]ade with [Cc]ursor/ { next }
+/^[[:space:]]*[Cc]o-[Aa]uthored-by:[[:space:]]*[Cc]ursor/ { next }
+{ print }
+' "$msg" > "$tmp" && mv "$tmp" "$msg"
