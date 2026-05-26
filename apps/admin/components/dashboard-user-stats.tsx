@@ -21,7 +21,7 @@ const statRows = [
   {
     key: 'active' as const,
     label: 'Actifs',
-    iconClass: 'bg-secondary/15 text-secondary',
+    iconClass: 'bg-primary/10 text-primary',
     icon: (
       <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />

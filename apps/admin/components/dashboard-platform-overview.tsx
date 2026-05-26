@@ -36,7 +36,7 @@ const metrics: PlatformMetric[] = [
     key: 'properties',
     label: 'Hébergements',
     href: '/hebergements',
-    iconClass: 'bg-secondary/15 text-secondary',
+    iconClass: 'bg-primary/10 text-primary',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
         <path
@@ -52,7 +52,7 @@ const metrics: PlatformMetric[] = [
     key: 'bookings',
     label: 'Réservations',
     href: '/reservations',
-    iconClass: 'bg-primary-light/15 text-primary-light',
+    iconClass: 'bg-primary/10 text-primary',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
         <path
