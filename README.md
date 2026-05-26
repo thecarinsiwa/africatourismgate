@@ -105,7 +105,7 @@ pnpm install
 ### 2. Database
 
 ```bash
-mysql -u root -p < database/africatourismgate_database.sql
+pnpm db:sync
 ```
 
 See [database/README.md](database/README.md).

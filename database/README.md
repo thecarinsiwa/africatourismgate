@@ -5,19 +5,20 @@
 - **MySQL 8.0+** or **MariaDB 10.3+** (recommended; uses `CHECK` on `reviews.rating` and modern defaults)
 - User with permission to create databases, or run the script as `root` for local development
 
-## Create the schema
+## Synchronize the schema
 
 From the repository root:
 
 ```bash
-mysql -u root -p < database/africatourismgate_database.sql
+pnpm db:sync
 ```
 
 This will:
 
-1. Drop the database `africatourismgate` if it already exists
-2. Create `africatourismgate` with `utf8mb4` / `utf8mb4_unicode_ci`
-3. Create all tables, primary keys, and foreign keys
+1. Create `africatourismgate` if it does not exist
+2. Import `africatourismgate_database.sql` only when no application tables exist
+3. Apply pending SQL migrations from `migrations/` and record them in `schema_migrations`
+4. Insert missing rows from `seeds/install.seed.sql` without updating or deleting existing rows
 
 ## Configure the app
 
@@ -56,7 +57,7 @@ All `*_by_user_id` columns reference `users(id)` with `ON DELETE SET NULL`. List
 
 ## Seeds
 
-Installation data (RBAC, default org, admin user, referentials, demo catalog) lives in [seeds/](seeds/README.md). The API imports `seeds/install.seed.sql` on startup when no users exist (`DATABASE_AUTO_SEED=true`).
+Installation data (RBAC, default org, admin user, referentials, demo catalog) lives in [seeds/](seeds/README.md). Deployments apply it through `pnpm db:sync` in insert-only mode. The API startup fallback imports `seeds/install.seed.sql` when the platform organization is missing (`DATABASE_AUTO_SEED=true`).
 
 ## Notes
 

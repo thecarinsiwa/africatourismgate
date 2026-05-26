@@ -47,7 +47,7 @@ export const adminRegisterErrors = {
   envMissing:
     'Configuration manquante : définissez NEXT_PUBLIC_API_URL dans le fichier .env à la racine du projet, puis redémarrez pnpm dev.',
   server:
-    'Le serveur n’est pas prêt (base de données). Vérifiez MySQL, importez les seeds (database/seeds/install.seed.sql) et redémarrez l’API.',
+    'Le serveur n’est pas prêt (base de données). Vérifiez MySQL, exécutez pnpm db:sync et redémarrez l’API.',
   generic: 'Une erreur est survenue. Veuillez réessayer.',
 } as const;
 

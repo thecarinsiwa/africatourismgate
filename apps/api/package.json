@@ -8,6 +8,7 @@
     "start": "node dist/main",
     "lint": "nest build",
     "generate": "node scripts/generate-entities.mjs && node scripts/generate-modules.mjs",
+    "db:sync": "node scripts/db-sync.mjs",
     "test:rbac": "node scripts/test-rbac-permissions.mjs",
     "test:organizations": "node scripts/test-organizations-crud.mjs",
     "test:destinations": "node scripts/test-destinations-crud.mjs",

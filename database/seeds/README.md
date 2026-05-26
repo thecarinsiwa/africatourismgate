@@ -1,6 +1,8 @@
 # Database seeds — installation
 
-Applied automatically on API startup when `DATABASE_AUTO_SEED=true` and the `users` table is empty (after schema import).
+Deployments run `pnpm db:sync` after the app build and before the PM2 restart. That command applies pending migrations and then replays `install.seed.sql` in insert-only mode: new rows are inserted, existing rows with the same primary/unique key are left unchanged, and non-insert statements are skipped.
+
+The API startup bootstrap still imports this file when `DATABASE_AUTO_SEED=true` and the platform organization is missing. In production, prefer `pnpm db:sync` through the deployment scripts.
 
 ## Default credentials
 
@@ -36,10 +38,10 @@ SEED_ADMIN_PASSWORD=your_seed_password_here
 
 Fixed UUIDs are documented in [seed-ids.txt](seed-ids.txt).
 
-## Manual import
+## Manual sync
 
 ```bash
-mysql -u root -p africatourismgate < database/seeds/install.seed.sql
+pnpm db:sync
 ```
 
 ## Disable auto-seed
