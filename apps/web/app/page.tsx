@@ -1,10 +1,13 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { HomeFooter } from '../components/home/home-footer';
 import { HomeHeader } from '../components/home/home-header';
-import { HeroSearch } from '../components/home/hero-search';
+import { HeroSlider } from '../components/home/hero-search';
+import { SearchTabs } from '../components/home/search-tabs';
+import { WhyUsSection } from '../components/home/verticals-section';
+import { ParallaxPromo } from '../components/home/parallax-promo';
 import { DestinationsCarousel } from '../components/home/destinations-carousel';
-import { VerticalsSection } from '../components/home/verticals-section';
+import { HappyCustomers } from '../components/home/happy-customers';
+import { PartnersSection } from '../components/home/partners-section';
 
 export const metadata: Metadata = {
   title: 'Réservez votre voyage en Afrique',
@@ -15,45 +18,31 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <div className="flex min-h-screen flex-col">
-      {/* Header overlays the hero (position: absolute) */}
+      {/* 1. Header — top bar + navbar */}
       <HomeHeader />
 
-      {/* Hero + Search — full bleed */}
-      <HeroSearch />
+      {/* 2. Hero Slider — full-screen carousel */}
+      <HeroSlider />
 
-      {/* Destinations carousel */}
+      {/* 3. Search Tabs — overlapping the hero */}
+      <SearchTabs />
+
+      {/* 4. Why Us — 4-column feature cards */}
+      <WhyUsSection />
+
+      {/* 5. Parallax Promo — safari package promotion */}
+      <ParallaxPromo />
+
+      {/* 6. Popular Destinations — card grid */}
       <DestinationsCarousel />
 
-      {/* Promo / membership callout */}
-      <section className="border-y border-atg-border bg-primary/5 py-10 sm:py-12">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col items-start gap-6 rounded-2xl bg-atg-elevated p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8 shadow-sm border border-atg-border">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-wide text-primary">
-                Offre du moment
-              </p>
-              <h2 className="mt-2 text-xl font-bold text-atg-fg sm:text-2xl">
-                Économisez sur votre prochain séjour
-              </h2>
-              <p className="mt-2 text-sm text-atg-muted max-w-xl">
-                Des hébergements sélectionnés au Kenya, en Tanzanie, au Rwanda et ailleurs — réservez
-                en quelques clics.
-              </p>
-            </div>
-            <Link
-              href="/hotels"
-              className="inline-flex min-h-[48px] shrink-0 items-center justify-center rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-white hover:bg-primary-hover transition-colors"
-            >
-              Voir les hébergements
-            </Link>
-          </div>
-        </div>
-      </section>
+      {/* 7. Happy Customers — satisfaction bars */}
+      <HappyCustomers />
 
-      {/* Services / Verticals */}
-      <VerticalsSection />
+      {/* 8. Partners — airline logos */}
+      <PartnersSection />
 
-      {/* Footer */}
+      {/* 9. Footer — dark multi-column + copyright */}
       <HomeFooter />
     </div>
   );

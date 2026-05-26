@@ -3,10 +3,14 @@ import { tailwindColors } from '@africatourismgate/config/theme';
 
 const config: Config = {
   darkMode: 'class',
-  content: [
-    './app/**/*.{js,ts,jsx,tsx,mdx}',
-    '../../packages/ui/src/**/*.{js,ts,jsx,tsx}',
-  ],
+  content: {
+    relative: true,
+    files: [
+      './app/**/*.{js,ts,jsx,tsx,mdx}',
+      './components/**/*.{js,ts,jsx,tsx,mdx}',
+      '../../packages/ui/src/**/*.{js,ts,jsx,tsx}',
+    ],
+  },
   theme: {
     extend: {
       fontFamily: {
