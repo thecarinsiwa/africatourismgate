@@ -107,6 +107,46 @@ export type Translations = {
     faq: string;
     designedBy: string;
   };
+  hotels: {
+    metaTitle: string;
+    metaDescription: string;
+    breadcrumbHome: string;
+    breadcrumbHotels: string;
+    heroTitle: string;
+    heroSubtitle: string;
+    resultsFor: string;
+    allAfrica: string;
+    propertiesFound: string;
+    sortBy: string;
+    sortRecommended: string;
+    sortPriceLow: string;
+    sortPriceHigh: string;
+    sortRating: string;
+    filters: string;
+    filterStars: string;
+    filterType: string;
+    types: { hotel: string; resort: string; lodge: string; riad: string };
+    perNight: string;
+    viewDetails: string;
+    bookNow: string;
+    freeCancel: string;
+    amenities: { wifi: string; pool: string; breakfast: string; spa: string; parking: string };
+    excellent: string;
+    veryGood: string;
+    modifySearch: string;
+    checkIn: string;
+    checkOut: string;
+    guests: string;
+    noResults: string;
+    noResultsHint: string;
+    backHome: string;
+    previewNotice: string;
+    stars: string;
+    allTypes: string;
+    allStars: string;
+    reviews: string;
+    featuredBadge: string;
+  };
 };
 
 const fr: Translations = {
@@ -301,6 +341,55 @@ const fr: Translations = {
     faq: 'FAQ',
     designedBy: 'Conçu par',
   },
+  hotels: {
+    metaTitle: 'Hébergements en Afrique',
+    metaDescription:
+      'Comparez hôtels, lodges et resorts en Afrique. Trouvez le séjour idéal avec Africa Tourism Gate.',
+    breadcrumbHome: 'Accueil',
+    breadcrumbHotels: 'Hébergements',
+    heroTitle: 'Hébergements d\'exception en Afrique',
+    heroSubtitle:
+      'Lodges de safari, riads authentiques et resorts en bord de mer — sélectionnés par nos experts voyage.',
+    resultsFor: 'Résultats pour',
+    allAfrica: 'Toute l\'Afrique',
+    propertiesFound: 'établissements',
+    sortBy: 'Trier par',
+    sortRecommended: 'Recommandés',
+    sortPriceLow: 'Prix croissant',
+    sortPriceHigh: 'Prix décroissant',
+    sortRating: 'Meilleures notes',
+    filters: 'Filtres',
+    filterStars: 'Étoiles',
+    filterType: 'Type',
+    types: { hotel: 'Hôtel', resort: 'Resort', lodge: 'Lodge', riad: 'Riad' },
+    perNight: '/ nuit',
+    viewDetails: 'Voir détails',
+    bookNow: 'Réserver',
+    freeCancel: 'Annulation gratuite',
+    amenities: {
+      wifi: 'Wi-Fi',
+      pool: 'Piscine',
+      breakfast: 'Petit-déjeuner',
+      spa: 'Spa',
+      parking: 'Parking',
+    },
+    excellent: 'Exceptionnel',
+    veryGood: 'Très bien',
+    modifySearch: 'Modifier la recherche',
+    checkIn: 'Arrivée',
+    checkOut: 'Départ',
+    guests: 'Voyageurs',
+    noResults: 'Aucun hébergement pour ces critères',
+    noResultsHint: 'Élargissez votre recherche ou explorez toutes nos destinations.',
+    backHome: 'Retour à l\'accueil',
+    previewNotice:
+      'Catalogue de démonstration — réservation en ligne bientôt disponible. Contactez-nous pour un devis personnalisé.',
+    stars: 'étoiles',
+    allTypes: 'Tous les types',
+    allStars: 'Toutes',
+    reviews: 'avis',
+    featuredBadge: 'Coup de cœur',
+  },
 };
 
 const en: Translations = {
@@ -493,6 +582,55 @@ const en: Translations = {
     about: 'About',
     faq: 'FAQ',
     designedBy: 'Designed by',
+  },
+  hotels: {
+    metaTitle: 'Stays in Africa',
+    metaDescription:
+      'Compare hotels, lodges and resorts across Africa. Find your perfect stay with Africa Tourism Gate.',
+    breadcrumbHome: 'Home',
+    breadcrumbHotels: 'Stays',
+    heroTitle: 'Exceptional stays across Africa',
+    heroSubtitle:
+      'Safari lodges, authentic riads and beach resorts — curated by our travel experts.',
+    resultsFor: 'Results for',
+    allAfrica: 'All Africa',
+    propertiesFound: 'properties',
+    sortBy: 'Sort by',
+    sortRecommended: 'Recommended',
+    sortPriceLow: 'Price: low to high',
+    sortPriceHigh: 'Price: high to low',
+    sortRating: 'Top rated',
+    filters: 'Filters',
+    filterStars: 'Stars',
+    filterType: 'Type',
+    types: { hotel: 'Hotel', resort: 'Resort', lodge: 'Lodge', riad: 'Riad' },
+    perNight: '/ night',
+    viewDetails: 'View details',
+    bookNow: 'Book now',
+    freeCancel: 'Free cancellation',
+    amenities: {
+      wifi: 'Wi-Fi',
+      pool: 'Pool',
+      breakfast: 'Breakfast',
+      spa: 'Spa',
+      parking: 'Parking',
+    },
+    excellent: 'Exceptional',
+    veryGood: 'Very good',
+    modifySearch: 'Modify search',
+    checkIn: 'Check-in',
+    checkOut: 'Check-out',
+    guests: 'Guests',
+    noResults: 'No properties match your criteria',
+    noResultsHint: 'Broaden your search or browse all destinations.',
+    backHome: 'Back to home',
+    previewNotice:
+      'Demo catalogue — online booking coming soon. Contact us for a personalized quote.',
+    stars: 'stars',
+    allTypes: 'All types',
+    allStars: 'All',
+    reviews: 'reviews',
+    featuredBadge: 'Top pick',
   },
 };
 
@@ -687,6 +825,55 @@ const es: Translations = {
     about: 'Acerca de',
     faq: 'FAQ',
     designedBy: 'Diseñado por',
+  },
+  hotels: {
+    metaTitle: 'Alojamientos en África',
+    metaDescription:
+      'Compare hoteles, lodges y resorts en África. Encuentre su estancia ideal con Africa Tourism Gate.',
+    breadcrumbHome: 'Inicio',
+    breadcrumbHotels: 'Alojamientos',
+    heroTitle: 'Alojamientos excepcionales en África',
+    heroSubtitle:
+      'Lodges de safari, riads auténticos y resorts en la playa — seleccionados por nuestros expertos.',
+    resultsFor: 'Resultados para',
+    allAfrica: 'Toda África',
+    propertiesFound: 'establecimientos',
+    sortBy: 'Ordenar por',
+    sortRecommended: 'Recomendados',
+    sortPriceLow: 'Precio: menor a mayor',
+    sortPriceHigh: 'Precio: mayor a menor',
+    sortRating: 'Mejor valorados',
+    filters: 'Filtros',
+    filterStars: 'Estrellas',
+    filterType: 'Tipo',
+    types: { hotel: 'Hotel', resort: 'Resort', lodge: 'Lodge', riad: 'Riad' },
+    perNight: '/ noche',
+    viewDetails: 'Ver detalles',
+    bookNow: 'Reservar',
+    freeCancel: 'Cancelación gratuita',
+    amenities: {
+      wifi: 'Wi-Fi',
+      pool: 'Piscina',
+      breakfast: 'Desayuno',
+      spa: 'Spa',
+      parking: 'Aparcamiento',
+    },
+    excellent: 'Excepcional',
+    veryGood: 'Muy bien',
+    modifySearch: 'Modificar búsqueda',
+    checkIn: 'Entrada',
+    checkOut: 'Salida',
+    guests: 'Huéspedes',
+    noResults: 'Ningún alojamiento coincide con sus criterios',
+    noResultsHint: 'Amplíe su búsqueda o explore todos los destinos.',
+    backHome: 'Volver al inicio',
+    previewNotice:
+      'Catálogo de demostración — reserva en línea próximamente. Contáctenos para un presupuesto personalizado.',
+    stars: 'estrellas',
+    allTypes: 'Todos los tipos',
+    allStars: 'Todas',
+    reviews: 'opiniones',
+    featuredBadge: 'Favorito',
   },
 };
 
