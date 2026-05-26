@@ -65,7 +65,7 @@ export class UserRoleAssignments extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'role_id', length: 36 })
   roleId!: string;
 
-  @Column({ name: 'scope_type', enum: ["global","property","agency","support_queue"] })
+  @Column({ type: 'enum', name: 'scope_type', enum: ["global","property","agency","support_queue"] })
   scopeType!: 'global' | 'property' | 'agency' | 'support_queue';
 
   @Column({ type: 'varchar', name: 'scope_id', length: 36, nullable: true })

@@ -20,7 +20,7 @@ export class Users extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'phone', length: 32, nullable: true })
   phone!: string;
 
-  @Column({ name: 'gender', enum: ["M","F","other"], nullable: true })
+  @Column({ type: 'enum', name: 'gender', enum: ["M","F","other"], nullable: true })
   gender!: 'M' | 'F' | 'other';
 
   @Column({ type: 'date', name: 'date_of_birth', nullable: true })
@@ -38,7 +38,7 @@ export class Users extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'organization_id', length: 36, nullable: true })
   organizationId!: string;
 
-  @Column({ name: 'status', enum: ["active","suspended","deleted"] })
+  @Column({ type: 'enum', name: 'status', enum: ["active","suspended","deleted"] })
   status!: 'active' | 'suspended' | 'deleted';
 
 }
@@ -78,7 +78,7 @@ export class Employees extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'manager_id', length: 36, nullable: true })
   managerId!: string;
 
-  @Column({ name: 'status', enum: ["active","on_leave","terminated"] })
+  @Column({ type: 'enum', name: 'status', enum: ["active","on_leave","terminated"] })
   status!: 'active' | 'on_leave' | 'terminated';
 
 }
@@ -162,7 +162,7 @@ export class UserPaymentMethods extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'user_id', length: 36 })
   userId!: string;
 
-  @Column({ name: 'type', enum: ["card","paypal","other"] })
+  @Column({ type: 'enum', name: 'type', enum: ["card","paypal","other"] })
   type!: 'card' | 'paypal' | 'other';
 
   @Column({ type: 'varchar', name: 'provider', length: 64, nullable: true })
@@ -193,7 +193,7 @@ export class LoyaltyAccounts extends BaseAuditEntity {
   @Column({ type: 'int', name: 'points_balance' })
   pointsBalance!: number;
 
-  @Column({ name: 'tier', enum: ["member","silver","gold","platinum"] })
+  @Column({ type: 'enum', name: 'tier', enum: ["member","silver","gold","platinum"] })
   tier!: 'member' | 'silver' | 'gold' | 'platinum';
 
 }
