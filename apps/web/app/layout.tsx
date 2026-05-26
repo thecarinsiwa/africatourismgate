@@ -3,6 +3,7 @@ import { Montserrat } from 'next/font/google';
 import './globals.css';
 import { AppShell } from '@africatourismgate/ui';
 import type { CSSProperties } from 'react';
+import { Providers } from '../components/providers';
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -21,6 +22,15 @@ const themeInitScript = `
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     if (storedTheme === 'dark' || (!storedTheme && prefersDark)) {
       document.documentElement.classList.add('dark');
+    }
+  } catch {}
+`;
+
+const localeInitScript = `
+  try {
+    const storedLocale = localStorage.getItem('atg-locale');
+    if (storedLocale === 'en' || storedLocale === 'es' || storedLocale === 'fr') {
+      document.documentElement.lang = storedLocale;
     }
   } catch {}
 `;
@@ -136,7 +146,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         style={themeStyle}
       >
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
-        <AppShell>{children}</AppShell>
+        <script dangerouslySetInnerHTML={{ __html: localeInitScript }} />
+        <Providers>
+          <AppShell>{children}</AppShell>
+        </Providers>
       </body>
     </html>
   );
