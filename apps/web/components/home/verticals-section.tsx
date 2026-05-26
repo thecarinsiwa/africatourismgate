@@ -1,174 +1,105 @@
-import Link from 'next/link';
+'use client';
 
-const VERTICALS = [
-  {
-    id: 'stays',
-    title: 'Hébergements',
-    description: 'Hôtels, lodges et résidences dans toute l\'Afrique.',
-    href: '/hotels',
-    available: true,
-    icon: (
-      <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={1.5}
-          d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4M9 9v.01M9 12v.01M9 15v.01M9 18v.01"
-        />
-      </svg>
-    ),
-  },
-  {
-    id: 'flights',
-    title: 'Vols',
-    description: 'Comparez les vols vers les grandes capitales africaines.',
-    href: '#vols',
-    available: false,
-    icon: (
-      <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={1.5}
-          d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-        />
-      </svg>
-    ),
-  },
-  {
-    id: 'cars',
-    title: 'Location de voitures',
-    description: 'Louez un véhicule pour explorer à votre rythme.',
-    href: '#voitures',
-    available: false,
-    icon: (
-      <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={1.5}
-          d="M8 17h8M6 11l2-4h8l2 4M5 17a2 2 0 104 0 2 2 0 00-4 0zm10 0a2 2 0 104 0 2 2 0 00-4 0z"
-        />
-      </svg>
-    ),
-  },
-  {
-    id: 'cruises',
-    title: 'Croisières',
-    description: 'Croisières côtières et fluviales sur le continent.',
-    href: '#croisieres',
-    available: false,
-    icon: (
-      <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={1.5}
-          d="M3 18h18M5 14l-2-6h18l-2 6M8 10V6a4 4 0 018 0v4"
-        />
-      </svg>
-    ),
-  },
-  {
-    id: 'activities',
-    title: 'Activités',
-    description: 'Safaris, excursions et expériences locales.',
-    href: '#activites',
-    available: false,
-    icon: (
-      <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={1.5}
-          d="M15 12a3 3 0 11-6 0 3 3 0 016 0zM2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-        />
-      </svg>
-    ),
-  },
-  {
-    id: 'packages',
-    title: 'Forfaits',
-    description: 'Séjours combinés vol + hôtel + activités.',
-    href: '#forfaits',
-    available: false,
-    icon: (
-      <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={1.5}
-          d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-        />
-      </svg>
-    ),
-  },
-] as const;
+import { useScrollAnimation } from './use-scroll-animation';
 
-function VerticalCard({
-  vertical,
-}: {
-  vertical: (typeof VERTICALS)[number];
-}) {
-  const inner = (
-    <>
-      <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10 text-primary">
-        {vertical.icon}
-      </div>
-      <div className="mt-4">
-        <div className="flex items-center gap-2">
-          <h3 className="text-lg font-semibold text-atg-fg">{vertical.title}</h3>
-          {!vertical.available && (
-            <span className="rounded-full bg-atg-surface px-2 py-0.5 text-xs font-medium text-atg-muted">
-              Bientôt
-            </span>
-          )}
-        </div>
-        <p className="mt-2 text-sm text-atg-muted leading-relaxed">{vertical.description}</p>
-      </div>
-      {vertical.available && (
-        <span className="mt-4 inline-flex text-sm font-semibold text-primary group-hover:underline">
-          Explorer →
-        </span>
-      )}
-    </>
-  );
+/* ── Why Us items ─────────────────────────────────────── */
+const WHY_US = [
+  {
+    title: 'Voyages Incroyables',
+    description:
+      'Des destinations uniques sélectionnées avec soin à travers tout le continent africain pour des expériences inoubliables.',
+    color: '#0B6E4F',
+    icon: (
+      <svg className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    ),
+  },
+  {
+    title: 'Découvertes',
+    description:
+      'Explorez la richesse culturelle, les paysages époustouflants et la faune sauvage de l\'Afrique.',
+    color: '#199a45',
+    icon: (
+      <svg className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+    ),
+  },
+  {
+    title: 'Réservation Facile',
+    description:
+      'Réservez vos hébergements, vols et activités en quelques clics grâce à notre plateforme intuitive.',
+    color: '#0B6E4F',
+    icon: (
+      <svg className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+      </svg>
+    ),
+  },
+  {
+    title: 'Support 24/7',
+    description:
+      'Notre équipe de spécialistes du voyage est disponible jour et nuit pour vous accompagner.',
+    color: '#199a45',
+    icon: (
+      <svg className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+      </svg>
+    ),
+  },
+];
 
-  const className =
-    'group flex flex-col rounded-2xl border border-atg-border bg-atg-elevated p-6 shadow-sm transition-shadow hover:shadow-md hover:border-primary/30';
-
-  if (vertical.available) {
-    return (
-      <Link href={vertical.href} className={className}>
-        {inner}
-      </Link>
-    );
-  }
+export function WhyUsSection() {
+  const { ref, isVisible } = useScrollAnimation(0.1);
 
   return (
-    <div className={className} aria-disabled>
-      {inner}
-    </div>
-  );
-}
-
-export function VerticalsSection() {
-  return (
-    <section className="bg-gradient-to-b from-atg-elevated to-atg-surface py-14 sm:py-20" aria-labelledby="verticals-heading">
+    <section ref={ref} className="bg-white py-16 sm:py-24" aria-labelledby="why-heading">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto">
-          <h2 id="verticals-heading" className="text-2xl font-bold text-atg-fg sm:text-3xl">
-            Explorez nos services
+        {/* Section header */}
+        <div className={`text-center max-w-2xl mx-auto mb-14 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
+          <h2 id="why-heading" className="text-2xl sm:text-3xl font-bold text-[#0f1a16] uppercase tracking-wide">
+            Pourquoi nous choisir
           </h2>
-          <p className="mt-3 text-atg-muted">
-            Une plateforme, plusieurs verticales — commencez par les hébergements disponibles dès
-            maintenant.
+          <p className="mt-4 text-gray-500 leading-relaxed">
+            Africa Tourism Gate vous offre une expérience de voyage unique avec les meilleurs services et un accompagnement personnalisé pour découvrir l&apos;Afrique.
           </p>
         </div>
 
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {VERTICALS.map((vertical) => (
-            <VerticalCard key={vertical.id} vertical={vertical} />
+        {/* Cards */}
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          {WHY_US.map((item, i) => (
+            <div
+              key={item.title}
+              className={`group text-center ${
+                isVisible ? 'animate-flip-in-y' : 'opacity-0'
+              }`}
+              style={{ animationDelay: `${(i + 1) * 150}ms` }}
+            >
+              {/* Icon circle */}
+              <div className="mx-auto mb-5 flex h-24 w-24 items-center justify-center rounded-full border-2 transition-all duration-500 group-hover:scale-110 group-hover:shadow-lg"
+                style={{
+                  borderColor: item.color,
+                  color: item.color,
+                }}
+              >
+                {item.icon}
+              </div>
+
+              <h3 className="text-lg font-bold text-[#0f1a16] mb-2">{item.title}</h3>
+              <p className="text-sm text-gray-500 leading-relaxed mb-4">{item.description}</p>
+
+              <a
+                href="#"
+                className="inline-flex items-center gap-1 text-sm font-semibold transition-colors hover:underline"
+                style={{ color: item.color }}
+              >
+                En savoir plus
+                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </a>
+            </div>
           ))}
         </div>
       </div>

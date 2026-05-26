@@ -19,6 +19,14 @@ const AUTH_EXACT_PATHS = new Set([
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   transpilePackages: ['@africatourismgate/ui'],
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'upload.wikimedia.org',
+      },
+    ],
+  },
   async redirects() {
     const redirects = [];
 

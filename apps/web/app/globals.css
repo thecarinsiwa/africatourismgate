@@ -4,19 +4,41 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ══════════════════════════════════════════════════════════
+   Travel Agency Theme — Global Styles
+   ══════════════════════════════════════════════════════════ */
+
 /* ── Scroll-snap carousel ─────────────────────────────── */
 .carousel-scroll {
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
-  scrollbar-width: none;          /* Firefox */
+  scrollbar-width: none;
 }
 .carousel-scroll::-webkit-scrollbar {
-  display: none;                  /* Chrome / Safari */
+  display: none;
 }
 .carousel-card {
   scroll-snap-align: start;
   flex-shrink: 0;
+}
+
+/* ── Hero Slider ──────────────────────────────────────── */
+@keyframes hero-fade-in {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero-slide-content {
+  animation: hero-fade-in 0.8s ease-out both;
+}
+.hero-slide-content .hero-subtitle {
+  animation: hero-fade-in 0.6s 0.1s ease-out both;
+}
+.hero-slide-content .hero-title {
+  animation: hero-fade-in 0.7s 0.25s ease-out both;
+}
+.hero-slide-content .hero-desc {
+  animation: hero-fade-in 0.7s 0.4s ease-out both;
 }
 
 /* ── Travellers panel ─────────────────────────────────── */
@@ -30,11 +52,56 @@
 
 /* ── Fade-in on scroll / mount ────────────────────────── */
 @keyframes fade-in-up {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(24px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 .animate-fade-in-up {
-  animation: fade-in-up 0.5s ease-out both;
+  animation: fade-in-up 0.6s ease-out both;
+}
+
+@keyframes fade-in-left {
+  from { opacity: 0; transform: translateX(-30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.animate-fade-in-left {
+  animation: fade-in-left 0.6s ease-out both;
+}
+
+@keyframes fade-in-right {
+  from { opacity: 0; transform: translateX(30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.animate-fade-in-right {
+  animation: fade-in-right 0.6s ease-out both;
+}
+
+/* ── Flip animations (for "Why Us" cards) ─────────────── */
+@keyframes flip-in-y {
+  from {
+    opacity: 0;
+    transform: perspective(600px) rotateY(90deg);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(600px) rotateY(0);
+  }
+}
+.animate-flip-in-y {
+  animation: flip-in-y 0.6s ease-out both;
+}
+
+@keyframes flip-in-x {
+  from {
+    opacity: 0;
+    transform: perspective(600px) rotateX(90deg);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(600px) rotateX(0);
+  }
+}
+.animate-flip-in-x {
+  animation: flip-in-x 0.6s ease-out both;
 }
 
 /* ── Staggered delay helpers ──────────────────────────── */
@@ -42,8 +109,49 @@
 .delay-200 { animation-delay: 200ms; }
 .delay-300 { animation-delay: 300ms; }
 .delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+.delay-600 { animation-delay: 600ms; }
+
+/* ── Parallax section ─────────────────────────────────── */
+.parallax-bg {
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+@media (max-width: 768px) {
+  /* Disable parallax on mobile for performance */
+  .parallax-bg {
+    background-attachment: scroll;
+  }
+}
+
+/* ── Progress bars (Happy Customers) ──────────────────── */
+@keyframes progress-fill {
+  from { width: 0; }
+}
+.progress-bar-fill {
+  animation: progress-fill 1.3s ease-out both;
+}
 
 /* ── Membership banner gradient ───────────────────────── */
 .membership-gradient {
   background: linear-gradient(135deg, var(--atg-primary) 0%, var(--atg-secondary) 100%);
+}
+
+/* ── Search tabs active state ─────────────────────────── */
+.search-tab-active {
+  background: var(--atg-primary);
+  color: white;
+}
+.search-tab-active svg {
+  color: white;
+}
+
+/* ── Intersection observer animation trigger ──────────── */
+.scroll-animate {
+  opacity: 0;
+}
+.scroll-animate.is-visible {
+  opacity: 1;
 }

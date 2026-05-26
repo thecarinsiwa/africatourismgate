@@ -1,202 +1,126 @@
 'use client';
 
 import Link from 'next/link';
-import { useRef, useState, useEffect, useCallback } from 'react';
+import { useScrollAnimation } from './use-scroll-animation';
 
 /* ── Destination data ────────────────────────────────── */
 const DESTINATIONS = [
   {
-    city: 'Nairobi',
-    country: 'Kenya',
-    image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Nairobi_Skyline_%28cropped%29.jpg/1280px-Nairobi_Skyline_%28cropped%29.jpg',
+    title: 'Safari au Masai Mara',
+    subtitle: 'De Nairobi, Kenya',
+    description: 'Safari de 7 jours au départ de Nairobi. Big Five et migration des gnous.',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Elephants_at_Amboseli_national_park_against_Mount_Kilimanjaro.jpg/1280px-Elephants_at_Amboseli_national_park_against_Mount_Kilimanjaro.jpg',
+    rating: 5,
+    reviews: 42,
+    href: '/hotels?destination=Nairobi',
   },
   {
-    city: 'Le Cap',
-    country: 'Afrique du Sud',
-    image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Table_Mountain_DanieVDM.jpg/1280px-Table_Mountain_DanieVDM.jpg',
+    title: 'Escapade au Cap',
+    subtitle: 'Le Cap, Afrique du Sud',
+    description: 'Explorez Table Mountain, le Cap de Bonne Espérance et les vignobles.',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Table_Mountain_DanieVDM.jpg/1280px-Table_Mountain_DanieVDM.jpg',
+    rating: 4,
+    reviews: 38,
+    href: '/hotels?destination=Le%20Cap',
   },
   {
-    city: 'Marrakech',
-    country: 'Maroc',
-    image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Koutoubia_Mosque%2C_Marrakech.jpg/1280px-Koutoubia_Mosque%2C_Marrakech.jpg',
+    title: 'Médina de Marrakech',
+    subtitle: '5 jours, Maroc',
+    description: 'Perdez-vous dans les souks, savourez les épices et dormez dans un riad.',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Koutoubia_Mosque%2C_Marrakech.jpg/1280px-Koutoubia_Mosque%2C_Marrakech.jpg',
+    rating: 5,
+    reviews: 56,
+    href: '/hotels?destination=Marrakech',
   },
   {
-    city: 'Zanzibar',
-    country: 'Tanzanie',
-    image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Zanzibar_beach.jpg/1280px-Zanzibar_beach.jpg',
+    title: 'Plages de Zanzibar',
+    subtitle: 'Tanzanie, 6 jours',
+    description: 'Sable blanc, eaux turquoise et épices — le paradis de l\'Océan Indien.',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Zanzibar_beach.jpg/1280px-Zanzibar_beach.jpg',
+    rating: 4,
+    reviews: 31,
+    href: '/hotels?destination=Zanzibar',
   },
-  {
-    city: 'Kigali',
-    country: 'Rwanda',
-    image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Kigali_skyline_2.jpg/1280px-Kigali_skyline_2.jpg',
-  },
-  {
-    city: 'Lagos',
-    country: 'Nigeria',
-    image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Lagos_Island.jpg/1280px-Lagos_Island.jpg',
-  },
-  {
-    city: 'Accra',
-    country: 'Ghana',
-    image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Independence_Arch_-_Accra%2C_Ghana.jpg/1280px-Independence_Arch_-_Accra%2C_Ghana.jpg',
-  },
-  {
-    city: 'Le Caire',
-    country: 'Égypte',
-    image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Cairo_From_Tower_of_Cairo_31march2007.jpg/1280px-Cairo_From_Tower_of_Cairo_31march2007.jpg',
-  },
-] as const;
+];
 
-/* ── Arrow button ────────────────────────────────────── */
-function ScrollArrow({
-  direction,
-  onClick,
-  disabled,
-}: {
-  direction: 'left' | 'right';
-  onClick: () => void;
-  disabled: boolean;
-}) {
+function StarRating({ count }: { count: number }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      className={`hidden lg:flex absolute top-1/2 -translate-y-1/2 z-10 h-10 w-10 items-center justify-center rounded-full border border-atg-border bg-atg-elevated/90 shadow-md backdrop-blur transition-all hover:bg-atg-elevated hover:shadow-lg disabled:opacity-0 disabled:pointer-events-none ${
-        direction === 'left' ? 'left-2' : 'right-2'
-      }`}
-      aria-label={direction === 'left' ? 'Précédent' : 'Suivant'}
-    >
-      <svg
-        className="h-5 w-5 text-atg-fg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        aria-hidden
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d={direction === 'left' ? 'M15 19l-7-7 7-7' : 'M9 5l7 7-7 7'}
-        />
-      </svg>
-    </button>
+    <div className="flex items-center gap-0.5">
+      {Array.from({ length: 5 }, (_, i) => (
+        <svg
+          key={i}
+          className={`h-3.5 w-3.5 ${i < count ? 'text-amber-400' : 'text-gray-300'}`}
+          fill="currentColor"
+          viewBox="0 0 20 20"
+          aria-hidden
+        >
+          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+        </svg>
+      ))}
+    </div>
   );
 }
 
-/* ── Main component ──────────────────────────────────── */
 export function DestinationsCarousel() {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
-
-  const checkScroll = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    setCanScrollLeft(el.scrollLeft > 8);
-    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 8);
-  }, []);
-
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    checkScroll();
-    el.addEventListener('scroll', checkScroll, { passive: true });
-    window.addEventListener('resize', checkScroll);
-    return () => {
-      el.removeEventListener('scroll', checkScroll);
-      window.removeEventListener('resize', checkScroll);
-    };
-  }, [checkScroll]);
-
-  const scroll = (dir: 'left' | 'right') => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const card = el.querySelector('.carousel-card') as HTMLElement | null;
-    const distance = card ? card.offsetWidth + 16 : 300; // card width + gap
-    el.scrollBy({ left: dir === 'left' ? -distance : distance, behavior: 'smooth' });
-  };
+  const { ref, isVisible } = useScrollAnimation(0.1);
 
   return (
     <section
-      className="bg-atg-surface py-12 sm:py-16"
+      ref={ref}
+      className="bg-gray-50 py-16 sm:py-24"
       aria-labelledby="destinations-heading"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-8 flex items-end justify-between">
-          <div>
-            <h2
-              id="destinations-heading"
-              className="text-2xl font-bold text-atg-fg sm:text-3xl"
-            >
-              Trouvez votre prochaine destination
-            </h2>
-            <p className="mt-2 text-atg-muted">
-              Des villes vibrantes aux plages paradisiaques, l&apos;Afrique n&apos;attend que vous.
-            </p>
-          </div>
-          <Link
-            href="/hotels"
-            className="hidden shrink-0 text-sm font-semibold text-primary hover:underline sm:block"
-          >
-            Voir tout →
-          </Link>
+        {/* Section header */}
+        <div className={`text-center max-w-2xl mx-auto mb-14 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
+          <h2 id="destinations-heading" className="text-2xl sm:text-3xl font-bold text-[#0f1a16] uppercase tracking-wide">
+            Destinations Populaires
+          </h2>
+          <p className="mt-4 text-gray-500 leading-relaxed">
+            Découvrez nos destinations africaines les plus prisées. Des safaris aux plages paradisiaques, chaque voyage est une aventure unique.
+          </p>
         </div>
-      </div>
 
-      {/* Carousel wrapper */}
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <ScrollArrow direction="left" onClick={() => scroll('left')} disabled={!canScrollLeft} />
-        <ScrollArrow direction="right" onClick={() => scroll('right')} disabled={!canScrollRight} />
-
-        <div
-          ref={scrollRef}
-          className="carousel-scroll flex gap-4 overflow-x-auto pb-2"
-        >
-          {DESTINATIONS.map((dest, i) => (
+        {/* Cards grid */}
+        <div className={`grid gap-6 sm:grid-cols-2 lg:grid-cols-4 ${isVisible ? 'animate-fade-in-up delay-200' : 'opacity-0'}`}>
+          {DESTINATIONS.map((dest) => (
             <Link
-              key={dest.city}
-              href={`/hotels?destination=${encodeURIComponent(dest.city)}`}
-              className={`carousel-card group relative flex h-[280px] w-[240px] flex-col justify-end overflow-hidden rounded-2xl sm:h-[320px] sm:w-[280px] animate-fade-in-up`}
-              style={{ animationDelay: `${i * 80}ms` }}
+              key={dest.title}
+              href={dest.href}
+              className="group overflow-hidden rounded-xl bg-white shadow-md hover:shadow-xl transition-shadow duration-300"
             >
-              {/* Image */}
-              <div
-                className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
-                style={{ backgroundImage: `url("${dest.image}")` }}
-              />
-              {/* Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+              {/* Image with hover overlay */}
+              <div className="relative h-52 overflow-hidden">
+                <div
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
+                  style={{ backgroundImage: `url("${dest.image}")` }}
+                />
+                {/* Hover overlay */}
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300 flex items-center justify-center">
+                  <div className="text-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-2 group-hover:translate-y-0">
+                    <p className="text-lg font-bold">{dest.title}</p>
+                    <p className="text-sm text-white/80 mt-1">{dest.subtitle}</p>
+                  </div>
+                </div>
+              </div>
 
-              {/* Text */}
-              <div className="relative z-10 p-5">
-                <h3 className="text-lg font-bold text-white">{dest.city}</h3>
-                <p className="text-sm text-white/80">{dest.country}</p>
-                <span className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-white/90 opacity-0 transition-opacity group-hover:opacity-100">
-                  Voir les hôtels
-                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </span>
+              {/* Caption */}
+              <div className="p-4">
+                <h3 className="font-bold text-[#0f1a16] mb-1">{dest.title}</h3>
+                <p className="text-sm text-gray-500 mb-3 line-clamp-2">{dest.description}</p>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <StarRating count={dest.rating} />
+                    <span className="text-xs text-gray-400">- {dest.reviews} Avis</span>
+                  </div>
+                  <span className="inline-flex items-center rounded-md bg-[#0B6E4F] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#095a40] transition-colors">
+                    Détails
+                  </span>
+                </div>
               </div>
             </Link>
           ))}
-        </div>
-
-        {/* Mobile "See all" link */}
-        <div className="mt-4 text-center sm:hidden">
-          <Link href="/hotels" className="text-sm font-semibold text-primary hover:underline">
-            Voir toutes les destinations →
-          </Link>
         </div>
       </div>
     </section>
