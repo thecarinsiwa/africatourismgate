@@ -10,7 +10,7 @@ const SLIDES = [
     description:
       'Votre passerelle vers les plus belles destinations africaines. Explorez, réservez et vivez des expériences inoubliables.',
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/e/e8/Serengeti_sunset-1001.jpg',
+      'https://upload.wikimedia.org/wikipedia/commons/d/de/Mountain_gorilla_from_Susa_Group_in_Karisimbi_thicket_of_Volcanoes_National_Park_in_Rwanda._Emmanuel_Kwizera.jpg',
   },
   {
     subtitle: 'Safari de 7 jours',
@@ -18,7 +18,7 @@ const SLIDES = [
     description:
       'Découvrez la migration des gnous et les Big Five dans la réserve la plus célèbre d\'Afrique.',
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Elephants_at_Amboseli_national_park_against_Mount_Kilimanjaro.jpg/1280px-Elephants_at_Amboseli_national_park_against_Mount_Kilimanjaro.jpg',
+      'https://upload.wikimedia.org/wikipedia/commons/4/48/Volcanoes_National_Park_Banner_Image.gif',
   },
   {
     subtitle: '5 jours à',
@@ -26,7 +26,7 @@ const SLIDES = [
     description:
       'Plongez dans les souks, les riads et les saveurs épicées de la ville ocre du Maroc.',
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Koutoubia_Mosque%2C_Marrakech.jpg/1280px-Koutoubia_Mosque%2C_Marrakech.jpg',
+      'https://upload.wikimedia.org/wikipedia/commons/e/e8/Serengeti_sunset-1001.jpg',
   },
   {
     subtitle: 'Croisière de 12 jours',
@@ -34,7 +34,7 @@ const SLIDES = [
     description:
       'Navigation côtière le long de l\'Océan Indien — plages de rêve et faune unique.',
     image:
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Zanzibar_beach.jpg/1280px-Zanzibar_beach.jpg',
+      'https://upload.wikimedia.org/wikipedia/commons/9/95/Serengeti_-_Stefan_Swanepoel.jpg',
   },
 ];
 
