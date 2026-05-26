@@ -4,7 +4,7 @@ import { IsNull, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import { OrgScopeService } from '../../../common/org-scope/org-scope.service';
 import { newId } from '../../../common/utils/uuid';
-import { OrganizationSettings } from '../../../entities/generated';
+import { OrganizationSettings, Organizations } from '../../../entities/generated';
 import { AuthUserDto } from '../../auth/dto/auth-user.dto';
 import { BulkUpsertOrganizationSettingsDto } from './dto/bulk-upsert-organization-settings.dto';
 import {
@@ -14,13 +14,87 @@ import {
 import { OrganizationSettingsListQueryDto } from './dto/organization-settings-list-query.dto';
 import { validateSettingValue } from './validate-setting-value';
 
+type PublicOrganizationBranding = {
+  organizationId: string | null;
+  organizationSlug: string | null;
+  organizationName: string;
+  displayName: string;
+  primaryColor: string;
+  secondaryColor: string;
+};
+
+const DEFAULT_PUBLIC_BRANDING: PublicOrganizationBranding = {
+  organizationId: null,
+  organizationSlug: null,
+  organizationName: 'Africa Tourism Gate',
+  displayName: 'Africa Tourism Gate',
+  primaryColor: '#0B6E4F',
+  secondaryColor: '#199a45',
+};
+
 @Injectable()
 export class OrganizationSettingsService {
   constructor(
     @InjectRepository(OrganizationSettings)
     private readonly settingsRepository: Repository<OrganizationSettings>,
+    @InjectRepository(Organizations)
+    private readonly organizationsRepository: Repository<Organizations>,
     private readonly orgScope: OrgScopeService,
   ) {}
+
+  async findPublicBranding(
+    organizationSlug?: string,
+  ): Promise<PublicOrganizationBranding> {
+    const qb = this.organizationsRepository
+      .createQueryBuilder('org')
+      .where('org.deletedAt IS NULL')
+      .andWhere('org.status = :status', { status: 'active' });
+
+    if (organizationSlug?.trim()) {
+      qb.andWhere('LOWER(org.slug) = :slug', {
+        slug: organizationSlug.trim().toLowerCase(),
+      });
+    } else {
+      qb.orderBy('org.createdAt', 'ASC');
+    }
+
+    const organization = await qb.getOne();
+    if (!organization) {
+      return DEFAULT_PUBLIC_BRANDING;
+    }
+
+    const brandingSetting = await this.settingsRepository.findOne({
+      where: {
+        organizationId: organization.id,
+        settingKey: 'platform',
+        deletedAt: IsNull(),
+      },
+    });
+
+    const branding = brandingSetting?.settingValue ?? {};
+    const displayName =
+      typeof branding.displayName === 'string' && branding.displayName.trim()
+        ? branding.displayName.trim()
+        : organization.name;
+    const primaryColor =
+      typeof branding.primaryColor === 'string' && branding.primaryColor.trim()
+        ? branding.primaryColor.trim()
+        : DEFAULT_PUBLIC_BRANDING.primaryColor;
+    const secondaryColor =
+      typeof branding.secondaryColor === 'string' &&
+      branding.secondaryColor.trim()
+        ? branding.secondaryColor.trim()
+        : DEFAULT_PUBLIC_BRANDING.secondaryColor;
+
+    return {
+      organizationId: organization.id,
+      organizationSlug: organization.slug,
+      organizationName: organization.name,
+      displayName,
+      primaryColor,
+      secondaryColor,
+    };
+  }
 
   async findAll(
     user: AuthUserDto,

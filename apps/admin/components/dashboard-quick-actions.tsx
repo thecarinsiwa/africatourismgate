@@ -24,7 +24,7 @@ const actions = [
     href: '/organisations',
     label: 'Organisations',
     description: 'Partenaires & entités',
-    iconClass: 'bg-secondary/15 text-secondary',
+    iconClass: 'bg-primary/10 text-primary',
     icon: (
       <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
         <path
@@ -40,7 +40,7 @@ const actions = [
     href: '/hebergements',
     label: 'Hébergements',
     description: 'Catalogue & fiches',
-    iconClass: 'bg-primary-light/15 text-primary-light',
+    iconClass: 'bg-primary/10 text-primary',
     icon: (
       <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
         <path

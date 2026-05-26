@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 /* ── Navigation items ─────────────────────────────────── */
 const NAV_LINKS = [
@@ -53,9 +53,23 @@ const SOCIAL_LINKS = [
   },
 ];
 
+type ThemeMode = 'light' | 'dark';
+
 export function HomeHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [theme, setTheme] = useState<ThemeMode>('light');
+
+  useEffect(() => {
+    setTheme(document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+  }, []);
+
+  function toggleTheme() {
+    const nextTheme: ThemeMode = theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.classList.toggle('dark', nextTheme === 'dark');
+    localStorage.setItem('atg-theme', nextTheme);
+    setTheme(nextTheme);
+  }
 
   return (
     <header className="w-full z-50">
@@ -100,18 +114,18 @@ export function HomeHeader() {
       </div>
 
       {/* ── Main Navbar ────────────────────────────────── */}
-      <div className="bg-white shadow-sm border-b border-gray-100">
+      <div className="border-b border-gray-100 bg-white shadow-sm transition-colors dark:border-atg-border dark:bg-atg-elevated">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-0 sm:px-6 lg:px-8">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 py-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#0B6E4F]">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
               <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
             <div>
-              <span className="text-lg font-bold text-[#0f1a16]">Africa Tourism</span>
-              <span className="text-lg font-bold text-[#0B6E4F]"> Gate</span>
+              <span className="text-lg font-bold text-[#0f1a16] dark:text-white">Africa Tourism</span>
+              <span className="text-lg font-bold text-primary"> Gate</span>
             </div>
           </Link>
 
@@ -128,8 +142,8 @@ export function HomeHeader() {
                   href={link.href}
                   className={`relative flex items-center gap-1 px-4 py-5 text-sm font-medium transition-colors ${
                     link.href === '/'
-                      ? 'text-[#0B6E4F]'
-                      : 'text-[#333] hover:text-[#0B6E4F]'
+                      ? 'text-primary'
+                      : 'text-[#333] hover:text-primary dark:text-white/75 dark:hover:text-white'
                   }`}
                 >
                   {link.label}
@@ -142,12 +156,12 @@ export function HomeHeader() {
 
                 {/* Dropdown */}
                 {link.children.length > 0 && openDropdown === link.href && (
-                  <div className="absolute left-0 top-full z-50 min-w-[200px] rounded-lg border border-gray-100 bg-white py-2 shadow-xl">
+                  <div className="absolute left-0 top-full z-50 min-w-[200px] rounded-lg border border-gray-100 bg-white py-2 shadow-xl dark:border-atg-border dark:bg-atg-elevated">
                     {link.children.map((child) => (
                       <Link
                         key={child.href}
                         href={child.href}
-                        className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#0B6E4F] transition-colors"
+                        className="block px-4 py-2 text-sm text-gray-600 transition-colors hover:bg-gray-50 hover:text-primary dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white"
                       >
                         {child.label}
                       </Link>
@@ -158,10 +172,28 @@ export function HomeHeader() {
             ))}
           </nav>
 
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="ml-auto mr-2 inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-gray-200 text-gray-600 transition-colors hover:border-primary hover:text-primary dark:border-atg-border dark:text-white/75 dark:hover:border-primary dark:hover:text-white lg:ml-4"
+            aria-label={theme === 'dark' ? 'Activer le mode clair' : 'Activer le mode sombre'}
+            title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
+          >
+            {theme === 'dark' ? (
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.7} d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364-6.364-1.414 1.414M7.05 16.95l-1.414 1.414m12.728 0-1.414-1.414M7.05 7.05 5.636 5.636M12 8a4 4 0 100 8 4 4 0 000-8z" />
+              </svg>
+            ) : (
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.7} d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+              </svg>
+            )}
+          </button>
+
           {/* Burger — mobile */}
           <button
             type="button"
-            className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-gray-600 hover:text-[#0B6E4F] hover:bg-gray-50 lg:hidden transition-colors"
+            className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-gray-600 transition-colors hover:bg-gray-50 hover:text-primary dark:text-white/75 dark:hover:bg-white/5 dark:hover:text-white lg:hidden"
             aria-expanded={menuOpen}
             aria-controls="mobile-nav"
             onClick={() => setMenuOpen((o) => !o)}
@@ -184,7 +216,7 @@ export function HomeHeader() {
       {menuOpen && (
         <nav
           id="mobile-nav"
-          className="bg-white border-b border-gray-100 shadow-lg px-4 py-4 lg:hidden"
+          className="border-b border-gray-100 bg-white px-4 py-4 shadow-lg dark:border-atg-border dark:bg-atg-elevated lg:hidden"
           aria-label="Navigation mobile"
         >
           <ul className="flex flex-col gap-0.5">
@@ -192,7 +224,7 @@ export function HomeHeader() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="flex min-h-[44px] items-center rounded-lg px-3 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-[#0B6E4F]"
+                  className="flex min-h-[44px] items-center rounded-lg px-3 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-primary dark:text-white/75 dark:hover:bg-white/5 dark:hover:text-white"
                   onClick={() => setMenuOpen(false)}
                 >
                   {link.label}
@@ -203,7 +235,7 @@ export function HomeHeader() {
                       <li key={child.href}>
                         <Link
                           href={child.href}
-                          className="flex min-h-[40px] items-center rounded-lg px-3 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-[#0B6E4F]"
+                          className="flex min-h-[40px] items-center rounded-lg px-3 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-primary dark:text-white/55 dark:hover:bg-white/5 dark:hover:text-white"
                           onClick={() => setMenuOpen(false)}
                         >
                           {child.label}
