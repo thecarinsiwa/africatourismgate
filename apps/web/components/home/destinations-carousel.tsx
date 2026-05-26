@@ -66,8 +66,9 @@ export function DestinationsCarousel() {
 
   return (
     <section
+      id="gallery"
       ref={ref}
-      className="bg-gray-50 py-16 transition-colors dark:bg-[#0f1915] sm:py-24"
+      className="scroll-mt-24 bg-gray-50 py-16 transition-colors dark:bg-[#0f1915] sm:py-24"
       aria-labelledby="destinations-heading"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

@@ -139,7 +139,7 @@ export function HomeFooter() {
             </div>
 
             {/* Column 4 — Contact */}
-            <div>
+            <div id="contact" className="scroll-mt-24">
               <h3 className="text-sm font-bold uppercase tracking-wide text-white mb-5">
                 Contact
               </h3>
@@ -185,11 +185,15 @@ export function HomeFooter() {
             <span className="mx-2">|</span>
             <a href="#" className="hover:text-white transition-colors">Politique de Confidentialité</a>
             <span className="mx-2">|</span>
-            <a href="#" className="hover:text-white transition-colors">À propos</a>
+            <a href="#about" className="hover:text-white transition-colors">
+              À propos
+            </a>
             <span className="mx-2">|</span>
             <a href="#" className="hover:text-white transition-colors">FAQ</a>
             <span className="mx-2">|</span>
-            <a href="#" className="hover:text-white transition-colors">Contact</a>
+            <a href="#contact" className="hover:text-white transition-colors">
+              Contact
+            </a>
           </p>
           <p className="text-xs">
             Conçu par <strong className="text-white/70">Africa Tourism Gate</strong>

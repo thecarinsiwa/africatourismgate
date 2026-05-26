@@ -54,7 +54,12 @@ export function WhyUsSection() {
   const { ref, isVisible } = useScrollAnimation(0.1);
 
   return (
-    <section ref={ref} className="bg-white py-16 transition-colors dark:bg-atg-surface sm:py-24" aria-labelledby="why-heading">
+    <section
+      id="about"
+      ref={ref}
+      className="scroll-mt-24 bg-white py-16 transition-colors dark:bg-atg-surface sm:py-24"
+      aria-labelledby="why-heading"
+    >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section header */}
         <div className={`text-center max-w-2xl mx-auto mb-14 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
