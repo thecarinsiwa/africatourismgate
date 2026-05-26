@@ -9,6 +9,7 @@ import {
   Input,
   type ColumnDef,
 } from '@africatourismgate/ui';
+import { ApiHttpError } from '@africatourismgate/api-client';
 import type { Organization, OrganizationStatus } from '@africatourismgate/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
@@ -97,6 +98,10 @@ export function OrganizationsList() {
         await getApiClient().deleteOrganization(org.id);
         await load();
       } catch (error) {
+        if (error instanceof ApiHttpError && error.status === 404) {
+          await load();
+          return;
+        }
         setDeleteError(getOrganizationsErrorMessage(error));
       } finally {
         setDeletingId(null);
