@@ -60,7 +60,7 @@ const AFRICAN_CITIES = [
 /* ── Styled form components ──────────────────────────── */
 function FormLabel({ children }: { children: React.ReactNode }) {
   return (
-    <label className="block mb-1.5 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+    <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-atg-muted">
       {children}
     </label>
   );
@@ -86,7 +86,7 @@ function FormInput({
       placeholder={placeholder}
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-[#0B6E4F] focus:ring-2 focus:ring-[#0B6E4F]/20 focus:outline-none transition-colors"
+      className="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors placeholder:text-gray-400 focus:border-[#0B6E4F] focus:outline-none focus:ring-2 focus:ring-[#0B6E4F]/20 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg dark:placeholder:text-atg-muted"
     />
   );
 }
@@ -109,7 +109,7 @@ function FormSelect({
       name={name}
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-[#0B6E4F] focus:ring-2 focus:ring-[#0B6E4F]/20 focus:outline-none transition-colors"
+      className="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors focus:border-[#0B6E4F] focus:outline-none focus:ring-2 focus:ring-[#0B6E4F]/20 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg"
     >
       <option value="">{placeholder}</option>
       {options.map((opt) => (
@@ -150,7 +150,7 @@ export function SearchTabs() {
   return (
     <section className="relative -mt-12 z-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="rounded-xl bg-white shadow-2xl overflow-hidden border border-gray-100">
+        <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-2xl transition-colors dark:border-atg-border dark:bg-atg-elevated">
           {/* ── Tab Bar ─────────────────────────────────── */}
           <div className="flex" role="tablist" aria-label="Type de recherche">
             {TABS.map((tab) => (
@@ -163,7 +163,7 @@ export function SearchTabs() {
                 className={`flex flex-1 items-center justify-center gap-2 py-4 text-xs sm:text-sm font-semibold uppercase tracking-wide transition-all border-b-[3px] ${
                   activeTab === tab.id
                     ? 'bg-[#0B6E4F] text-white border-[#095a40]'
-                    : 'bg-gray-50 text-gray-500 border-transparent hover:bg-gray-100 hover:text-gray-700'
+                    : 'bg-gray-50 text-gray-500 border-transparent hover:bg-gray-100 hover:text-gray-700 dark:bg-atg-surface dark:text-atg-muted dark:hover:bg-white/5 dark:hover:text-white'
                 }`}
               >
                 <TabIcon tab={tab.id} />

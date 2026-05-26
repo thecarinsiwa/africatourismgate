@@ -14,7 +14,7 @@ export function HappyCustomers() {
   const { ref, isVisible } = useScrollAnimation(0.15);
 
   return (
-    <section ref={ref} className="bg-white py-16 sm:py-24 overflow-hidden">
+    <section ref={ref} className="overflow-hidden bg-white py-16 transition-colors dark:bg-atg-surface sm:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
           {/* Left — Image */}
@@ -43,16 +43,16 @@ export function HappyCustomers() {
           {/* Right — Content */}
           <div>
             <div className={`${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
-              <h2 className="text-2xl sm:text-3xl font-bold text-[#0f1a16] uppercase tracking-wide">
+              <h2 className="text-2xl font-bold uppercase tracking-wide text-[#0f1a16] dark:text-white sm:text-3xl">
                 Clients Satisfaits
               </h2>
-              <p className="mt-2 text-lg text-gray-500">
+              <p className="mt-2 text-lg text-gray-500 dark:text-atg-muted">
                 La satisfaction de nos voyageurs est notre priorité absolue.
               </p>
-              <p className="mt-4 text-sm text-gray-500 leading-relaxed">
+              <p className="mt-4 text-sm leading-relaxed text-gray-500 dark:text-atg-muted">
                 Depuis notre lancement, nous avons accompagné des milliers de voyageurs dans la découverte de l&apos;Afrique. Notre engagement envers un service d&apos;excellence et des expériences authentiques nous a valu la confiance de notre communauté grandissante.
               </p>
-              <p className="mt-3 text-sm text-gray-500 leading-relaxed">
+              <p className="mt-3 text-sm leading-relaxed text-gray-500 dark:text-atg-muted">
                 Chaque retour positif nous motive à continuer d&apos;améliorer nos services et à proposer des voyages toujours plus mémorables à travers le continent.
               </p>
             </div>
@@ -66,12 +66,12 @@ export function HappyCustomers() {
                   style={{ animationDelay: `${(i + 1) * 100}ms` }}
                 >
                   <div className="mb-1.5 flex items-center justify-between">
-                    <span className="text-sm font-semibold text-[#0f1a16]">{bar.label}</span>
+                    <span className="text-sm font-semibold text-[#0f1a16] dark:text-white">{bar.label}</span>
                     <span className="text-sm font-bold" style={{ color: bar.color }}>
                       {bar.value}%
                     </span>
                   </div>
-                  <div className="h-2.5 w-full overflow-hidden rounded-full bg-gray-100">
+                  <div className="h-2.5 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-white/10">
                     <div
                       className={`h-full rounded-full ${isVisible ? 'progress-bar-fill' : ''}`}
                       style={{

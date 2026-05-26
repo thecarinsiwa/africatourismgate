@@ -67,16 +67,16 @@ export function DestinationsCarousel() {
   return (
     <section
       ref={ref}
-      className="bg-gray-50 py-16 sm:py-24"
+      className="bg-gray-50 py-16 transition-colors dark:bg-[#0f1915] sm:py-24"
       aria-labelledby="destinations-heading"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section header */}
         <div className={`text-center max-w-2xl mx-auto mb-14 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
-          <h2 id="destinations-heading" className="text-2xl sm:text-3xl font-bold text-[#0f1a16] uppercase tracking-wide">
+          <h2 id="destinations-heading" className="text-2xl font-bold uppercase tracking-wide text-[#0f1a16] dark:text-white sm:text-3xl">
             Destinations Populaires
           </h2>
-          <p className="mt-4 text-gray-500 leading-relaxed">
+          <p className="mt-4 leading-relaxed text-gray-500 dark:text-atg-muted">
             Découvrez nos destinations africaines les plus prisées. Des safaris aux plages paradisiaques, chaque voyage est une aventure unique.
           </p>
         </div>
@@ -87,7 +87,7 @@ export function DestinationsCarousel() {
             <Link
               key={dest.title}
               href={dest.href}
-              className="group overflow-hidden rounded-xl bg-white shadow-md hover:shadow-xl transition-shadow duration-300"
+              className="group overflow-hidden rounded-xl bg-white shadow-md transition-all duration-300 hover:shadow-xl dark:border dark:border-atg-border dark:bg-atg-elevated"
             >
               {/* Image with hover overlay */}
               <div className="relative h-52 overflow-hidden">
@@ -106,13 +106,13 @@ export function DestinationsCarousel() {
 
               {/* Caption */}
               <div className="p-4">
-                <h3 className="font-bold text-[#0f1a16] mb-1">{dest.title}</h3>
-                <p className="text-sm text-gray-500 mb-3 line-clamp-2">{dest.description}</p>
+                <h3 className="mb-1 font-bold text-[#0f1a16] dark:text-white">{dest.title}</h3>
+                <p className="mb-3 line-clamp-2 text-sm text-gray-500 dark:text-atg-muted">{dest.description}</p>
 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <StarRating count={dest.rating} />
-                    <span className="text-xs text-gray-400">- {dest.reviews} Avis</span>
+                    <span className="text-xs text-gray-400 dark:text-atg-muted">- {dest.reviews} Avis</span>
                   </div>
                   <span className="inline-flex items-center rounded-md bg-[#0B6E4F] px-3 py-1.5 text-xs font-bold text-white hover:bg-[#095a40] transition-colors">
                     Détails

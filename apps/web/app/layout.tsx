@@ -10,6 +10,16 @@ const montserrat = Montserrat({
 
 const siteUrl = process.env.NEXT_PUBLIC_WEB_URL ?? 'http://localhost:3002';
 
+const themeInitScript = `
+  try {
+    const storedTheme = localStorage.getItem('atg-theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (storedTheme === 'dark' || (!storedTheme && prefersDark)) {
+      document.documentElement.classList.add('dark');
+    }
+  } catch {}
+`;
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
@@ -51,8 +61,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className={montserrat.variable}>
-      <body className="font-sans antialiased text-atg-fg bg-atg-surface">
+    <html lang="fr" className={montserrat.variable} suppressHydrationWarning>
+      <body className="bg-atg-surface font-sans text-atg-fg antialiased transition-colors duration-300">
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <AppShell>{children}</AppShell>
       </body>
     </html>

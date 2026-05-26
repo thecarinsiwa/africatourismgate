@@ -54,14 +54,14 @@ export function WhyUsSection() {
   const { ref, isVisible } = useScrollAnimation(0.1);
 
   return (
-    <section ref={ref} className="bg-white py-16 sm:py-24" aria-labelledby="why-heading">
+    <section ref={ref} className="bg-white py-16 transition-colors dark:bg-atg-surface sm:py-24" aria-labelledby="why-heading">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section header */}
         <div className={`text-center max-w-2xl mx-auto mb-14 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
-          <h2 id="why-heading" className="text-2xl sm:text-3xl font-bold text-[#0f1a16] uppercase tracking-wide">
+          <h2 id="why-heading" className="text-2xl font-bold uppercase tracking-wide text-[#0f1a16] dark:text-white sm:text-3xl">
             Pourquoi nous choisir
           </h2>
-          <p className="mt-4 text-gray-500 leading-relaxed">
+          <p className="mt-4 leading-relaxed text-gray-500 dark:text-atg-muted">
             Africa Tourism Gate vous offre une expérience de voyage unique avec les meilleurs services et un accompagnement personnalisé pour découvrir l&apos;Afrique.
           </p>
         </div>
@@ -86,8 +86,8 @@ export function WhyUsSection() {
                 {item.icon}
               </div>
 
-              <h3 className="text-lg font-bold text-[#0f1a16] mb-2">{item.title}</h3>
-              <p className="text-sm text-gray-500 leading-relaxed mb-4">{item.description}</p>
+              <h3 className="mb-2 text-lg font-bold text-[#0f1a16] dark:text-white">{item.title}</h3>
+              <p className="mb-4 text-sm leading-relaxed text-gray-500 dark:text-atg-muted">{item.description}</p>
 
               <a
                 href="#"
