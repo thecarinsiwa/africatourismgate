@@ -189,8 +189,8 @@ export class StripeService {
           },
         },
       ],
-      success_url: `${webUrl}/reservations/success?booking_id=${bookingId}`,
-      cancel_url: `${webUrl}/reservations/cancel?booking_id=${bookingId}`,
+      success_url: `${webUrl}/booking/success?booking_id=${bookingId}`,
+      cancel_url: `${webUrl}/booking/cancel?booking_id=${bookingId}`,
       metadata: {
         [STRIPE_METADATA_BOOKING_ID]: bookingId,
         [STRIPE_METADATA_PAYMENT_ID]: paymentId,
