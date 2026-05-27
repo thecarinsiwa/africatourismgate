@@ -170,10 +170,11 @@ export class StripeService {
     const paymentId = newId();
     const stripe = this.getStripe();
 
-    const webUrl = (process.env.NEXT_PUBLIC_WEB_URL ?? 'http://localhost:3002').replace(
-      /\/$/,
-      '',
-    );
+    const defaultWebUrl =
+      process.env.NODE_ENV === 'production'
+        ? 'https://africatourismgate.org'
+        : 'http://localhost:3002';
+    const webUrl = (process.env.NEXT_PUBLIC_WEB_URL ?? defaultWebUrl).replace(/\/$/, '');
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
