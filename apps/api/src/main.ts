@@ -1,6 +1,9 @@
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { json, static as serveStatic, urlencoded } from 'express';
+import { existsSync, mkdirSync } from 'node:fs';
+import { join } from 'node:path';
 import { AppModule } from './app.module';
 import { formatValidationErrors } from './common/utils/format-validation-errors';
 import { ensureJwtSecrets } from './config/ensure-jwt-secrets';
@@ -8,6 +11,13 @@ import { ensureJwtSecrets } from './config/ensure-jwt-secrets';
 async function bootstrap() {
   ensureJwtSecrets();
   const app = await NestFactory.create(AppModule, { rawBody: true });
+  const uploadsDir = join(process.cwd(), 'uploads');
+  if (!existsSync(uploadsDir)) {
+    mkdirSync(uploadsDir, { recursive: true });
+  }
+  app.use('/uploads', serveStatic(uploadsDir));
+  app.use(json({ limit: '5mb' }));
+  app.use(urlencoded({ extended: true, limit: '5mb' }));
   const globalPrefix = process.env.API_GLOBAL_PREFIX ?? 'api';
   app.setGlobalPrefix(globalPrefix);
 

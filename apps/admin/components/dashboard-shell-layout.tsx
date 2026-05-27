@@ -8,6 +8,7 @@ import { adminDashboardConfig, adminDashboardNav } from '../config/dashboard';
 import { adminLoginPageConfig } from '../config/login';
 import { logout } from '../lib/auth/logout';
 import { getSession } from '../lib/auth/session';
+import { useOrganizationThemeOptional } from './organization-theme-provider';
 import { SessionSync } from './session-sync';
 
 function formatDisplayName(firstName: string, lastName: string, email: string): string {
@@ -17,6 +18,7 @@ function formatDisplayName(firstName: string, lastName: string, email: string): 
 
 export function DashboardShellLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const orgTheme = useOrganizationThemeOptional();
   const [session, setSession] = useState<StoredSession | null>(null);
 
   useEffect(() => {
@@ -45,7 +47,11 @@ export function DashboardShellLayout({ children }: { children: React.ReactNode }
       <SessionSync />
       <DashboardShell
         navItems={adminDashboardNav}
-        logo={adminDashboardConfig.logo}
+        logo={{
+          name: orgTheme?.branding?.displayName ?? adminDashboardConfig.logo.name,
+          href: adminDashboardConfig.logo.href,
+          logoUrl: orgTheme?.branding?.logoUrl,
+        }}
         user={{
           ...user,
           onLogout: handleLogout,

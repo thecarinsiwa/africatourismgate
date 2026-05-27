@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
-import { Card, Logo, TextLink, ThemeToggle } from '@africatourismgate/ui';
+import { Card, TextLink, ThemeToggle } from '@africatourismgate/ui';
 import { AdminForgotPasswordForm } from '../../../components/admin-forgot-password-form';
+import { BrandingLogo } from '../../../components/branding-logo';
 import { adminForgotPasswordPageConfig } from '../../../config/forgot-password';
 
-const { logo, title, subtitle, backToLogin, theme } = adminForgotPasswordPageConfig;
+const { title, subtitle, backToLogin, theme } = adminForgotPasswordPageConfig;
 
 export const metadata: Metadata = {
   title: 'Mot de passe oublié — Africa Tourism Gate Admin',
@@ -14,7 +15,7 @@ export default function ForgotPasswordPage() {
   return (
     <div className="flex min-h-screen flex-col">
       <header className="relative px-6 py-6 md:px-10">
-        <Logo name={logo.name} centered />
+        <BrandingLogo centered />
         <div className="absolute right-6 top-6 md:right-10">
           <ThemeToggle labels={{ light: theme.light, dark: theme.dark }} />
         </div>

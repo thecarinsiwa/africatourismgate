@@ -1,10 +1,11 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
-import { Card, Logo, TextLink, ThemeToggle } from '@africatourismgate/ui';
+import { Card, TextLink, ThemeToggle } from '@africatourismgate/ui';
 import { AdminResetPasswordForm } from '../../../components/admin-reset-password-form';
+import { BrandingLogo } from '../../../components/branding-logo';
 import { adminResetPasswordPageConfig } from '../../../config/reset-password';
 
-const { logo, title, subtitle, theme } = adminResetPasswordPageConfig;
+const { title, subtitle, theme } = adminResetPasswordPageConfig;
 
 export const metadata: Metadata = {
   title: 'Réinitialiser le mot de passe — Africa Tourism Gate Admin',
@@ -15,7 +16,7 @@ export default function ResetPasswordPage() {
   return (
     <div className="flex min-h-screen flex-col">
       <header className="relative px-6 py-6 md:px-10">
-        <Logo name={logo.name} centered />
+        <BrandingLogo centered />
         <div className="absolute right-6 top-6 md:right-10">
           <ThemeToggle labels={{ light: theme.light, dark: theme.dark }} />
         </div>

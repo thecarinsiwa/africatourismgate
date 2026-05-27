@@ -21,6 +21,8 @@ type PublicOrganizationBranding = {
   displayName: string;
   primaryColor: string;
   secondaryColor: string;
+  logoUrl: string | null;
+  faviconUrl: string | null;
 };
 
 const DEFAULT_PUBLIC_BRANDING: PublicOrganizationBranding = {
@@ -30,6 +32,8 @@ const DEFAULT_PUBLIC_BRANDING: PublicOrganizationBranding = {
   displayName: 'Africa Tourism Gate',
   primaryColor: '#0B6E4F',
   secondaryColor: '#199a45',
+  logoUrl: null,
+  faviconUrl: null,
 };
 
 @Injectable()
@@ -85,6 +89,14 @@ export class OrganizationSettingsService {
       branding.secondaryColor.trim()
         ? branding.secondaryColor.trim()
         : DEFAULT_PUBLIC_BRANDING.secondaryColor;
+    const logoUrl =
+      typeof branding.logoUrl === 'string' && branding.logoUrl.trim()
+        ? branding.logoUrl.trim()
+        : DEFAULT_PUBLIC_BRANDING.logoUrl;
+    const faviconUrl =
+      typeof branding.faviconUrl === 'string' && branding.faviconUrl.trim()
+        ? branding.faviconUrl.trim()
+        : DEFAULT_PUBLIC_BRANDING.faviconUrl;
 
     return {
       organizationId: organization.id,
@@ -93,6 +105,8 @@ export class OrganizationSettingsService {
       displayName,
       primaryColor,
       secondaryColor,
+      logoUrl,
+      faviconUrl,
     };
   }
 

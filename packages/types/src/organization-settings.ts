@@ -13,6 +13,8 @@ export interface BrandingPlatformValue {
   displayName: string;
   primaryColor?: string;
   secondaryColor?: string;
+  logoUrl?: string;
+  faviconUrl?: string;
 }
 
 export interface OrganizationSetting {

@@ -29,7 +29,7 @@ export type SidebarNavItem = SidebarNavLink;
 
 export type SidebarProps = {
   navItems: SidebarNavEntry[];
-  logo?: { name: string; href?: string };
+  logo?: { name: string; href?: string; logoUrl?: string | null };
   className?: string;
   mobileOpen?: boolean;
   onMobileClose?: () => void;
@@ -281,7 +281,11 @@ function SidebarContent({
     <>
       {logo ? (
         <div className="flex items-center justify-between gap-3 border-b border-atg-border px-4 py-5 md:px-5">
-          <Logo name={logo.name} href={logo.href ?? '/dashboard'} />
+          <Logo
+            name={logo.name}
+            href={logo.href ?? '/dashboard'}
+            logoUrl={logo.logoUrl}
+          />
           {closeButton}
         </div>
       ) : closeButton ? (
