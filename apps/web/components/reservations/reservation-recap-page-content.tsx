@@ -111,7 +111,8 @@ export function ReservationRecapPageContent({ draft }: Props) {
                 <h2 className="text-xl font-bold text-[#0f1a16] dark:text-white">{detail.name}</h2>
                 <p className="text-sm text-gray-600 dark:text-atg-muted">{room.name}</p>
                 <p className="text-sm text-gray-600 dark:text-atg-muted">
-                  {formatDisplayDate(draft.checkIn, locale)} -> {formatDisplayDate(draft.checkOut, locale)}
+                  {formatDisplayDate(draft.checkIn, locale)} {'->'}{' '}
+                  {formatDisplayDate(draft.checkOut, locale)}
                 </p>
                 <p className="text-sm text-gray-600 dark:text-atg-muted">
                   {draft.guests} voyageur{draft.guests > 1 ? 's' : ''}
