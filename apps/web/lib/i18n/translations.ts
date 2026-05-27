@@ -156,6 +156,30 @@ export type Translations = {
     allStars: string;
     reviews: string;
     featuredBadge: string;
+    detailMetaDescription: string;
+    galleryAria: string;
+    amenitiesTitle: string;
+    roomsTitle: string;
+    descriptionTitle: string;
+    calendarTitle: string;
+    selectRoom: string;
+    selectRoomHint: string;
+    totalStay: string;
+    nightsLabel: string;
+    nightSingular: string;
+    nightPlural: string;
+    unavailable: string;
+    updateDates: string;
+    notFound: string;
+    notFoundHint: string;
+    backToList: string;
+    prevMonth: string;
+    nextMonth: string;
+    fromPrice: string;
+    selectDatesHint: string;
+    maxGuests: string;
+    bedConfig: string;
+    reserveSection: string;
   };
 };
 
@@ -409,6 +433,30 @@ const fr: Translations = {
     allStars: 'Toutes',
     reviews: 'avis',
     featuredBadge: 'Coup de cœur',
+    detailMetaDescription: 'Réservez votre séjour à {name}. Galerie, équipements et chambres.',
+    galleryAria: 'Galerie photos',
+    amenitiesTitle: 'Équipements',
+    roomsTitle: 'Chambres',
+    descriptionTitle: 'Description',
+    calendarTitle: 'Disponibilités et tarifs',
+    selectRoom: 'Choisir cette chambre',
+    selectRoomHint: 'Sélectionnez une chambre pour réserver.',
+    totalStay: 'Total séjour',
+    nightsLabel: 'nuits',
+    nightSingular: 'nuit',
+    nightPlural: 'nuits',
+    unavailable: 'Indisponible',
+    updateDates: 'Modifier les dates',
+    notFound: 'Hébergement introuvable',
+    notFoundHint: 'Cet établissement n’existe pas ou n’est plus disponible.',
+    backToList: 'Retour aux résultats',
+    prevMonth: 'Mois précédent',
+    nextMonth: 'Mois suivant',
+    fromPrice: 'À partir de',
+    selectDatesHint: 'Choisissez vos dates d’arrivée et de départ.',
+    maxGuests: 'jusqu’à {n} voyageurs',
+    bedConfig: 'Literie',
+    reserveSection: 'Réserver',
   },
 };
 
@@ -661,6 +709,30 @@ const en: Translations = {
     allStars: 'All',
     reviews: 'reviews',
     featuredBadge: 'Top pick',
+    detailMetaDescription: 'Book your stay at {name}. Gallery, amenities and rooms.',
+    galleryAria: 'Photo gallery',
+    amenitiesTitle: 'Amenities',
+    roomsTitle: 'Rooms',
+    descriptionTitle: 'Description',
+    calendarTitle: 'Availability and rates',
+    selectRoom: 'Select this room',
+    selectRoomHint: 'Select a room to book.',
+    totalStay: 'Stay total',
+    nightsLabel: 'nights',
+    nightSingular: 'night',
+    nightPlural: 'nights',
+    unavailable: 'Unavailable',
+    updateDates: 'Change dates',
+    notFound: 'Property not found',
+    notFoundHint: 'This property does not exist or is no longer available.',
+    backToList: 'Back to results',
+    prevMonth: 'Previous month',
+    nextMonth: 'Next month',
+    fromPrice: 'From',
+    selectDatesHint: 'Choose your check-in and check-out dates.',
+    maxGuests: 'up to {n} guests',
+    bedConfig: 'Bedding',
+    reserveSection: 'Book',
   },
 };
 
@@ -914,6 +986,30 @@ const es: Translations = {
     allStars: 'Todas',
     reviews: 'opiniones',
     featuredBadge: 'Favorito',
+    detailMetaDescription: 'Reserve su estancia en {name}. Galería, servicios y habitaciones.',
+    galleryAria: 'Galería de fotos',
+    amenitiesTitle: 'Servicios',
+    roomsTitle: 'Habitaciones',
+    descriptionTitle: 'Descripción',
+    calendarTitle: 'Disponibilidad y tarifas',
+    selectRoom: 'Elegir esta habitación',
+    selectRoomHint: 'Seleccione una habitación para reservar.',
+    totalStay: 'Total estancia',
+    nightsLabel: 'noches',
+    nightSingular: 'noche',
+    nightPlural: 'noches',
+    unavailable: 'No disponible',
+    updateDates: 'Cambiar fechas',
+    notFound: 'Alojamiento no encontrado',
+    notFoundHint: 'Este establecimiento no existe o ya no está disponible.',
+    backToList: 'Volver a resultados',
+    prevMonth: 'Mes anterior',
+    nextMonth: 'Mes siguiente',
+    fromPrice: 'Desde',
+    selectDatesHint: 'Elija fechas de entrada y salida.',
+    maxGuests: 'hasta {n} viajeros',
+    bedConfig: 'Camas',
+    reserveSection: 'Reservar',
   },
 };
 

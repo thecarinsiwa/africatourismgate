@@ -1,0 +1,67 @@
+export function formatDateISO(year: number, month: number, day: number): string {
+  const m = String(month).padStart(2, '0');
+  const d = String(day).padStart(2, '0');
+  return `${year}-${m}-${d}`;
+}
+
+export function parseYearMonth(isoMonth: string): { year: number; month: number } {
+  const [y, m] = isoMonth.split('-').map(Number);
+  return { year: y, month: m };
+}
+
+export function currentYearMonth(): string {
+  const now = new Date();
+  return formatDateISO(now.getFullYear(), now.getMonth() + 1, 1).slice(0, 7);
+}
+
+export function shiftYearMonth(isoMonth: string, delta: number): string {
+  const { year, month } = parseYearMonth(isoMonth);
+  const date = new Date(Date.UTC(year, month - 1 + delta, 1));
+  return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}`;
+}
+
+export function enumerateMonthDays(isoMonth: string): string[] {
+  const { year, month } = parseYearMonth(isoMonth);
+  const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
+  return Array.from({ length: daysInMonth }, (_, i) =>
+    formatDateISO(year, month, i + 1),
+  );
+}
+
+const MONTH_NAMES_FR = [
+  'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
+  'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre',
+] as const;
+
+const MONTH_NAMES_EN = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+] as const;
+
+export function formatMonthLabel(isoMonth: string, locale: 'fr' | 'en' | 'es' = 'fr'): string {
+  const { year, month } = parseYearMonth(isoMonth);
+  const names = locale === 'en' ? MONTH_NAMES_EN : MONTH_NAMES_FR;
+  return `${names[month - 1]} ${year}`;
+}
+
+export function formatDisplayDate(iso: string, locale?: string): string {
+  try {
+    return new Date(`${iso}T12:00:00`).toLocaleDateString(locale, {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+  } catch {
+    return iso;
+  }
+}
+
+export function isDateBefore(a: string, b: string): boolean {
+  return a < b;
+}
+
+export function addDays(iso: string, days: number): string {
+  const [y, m, d] = iso.split('-').map(Number);
+  const date = new Date(Date.UTC(y, m - 1, d + days));
+  return date.toISOString().slice(0, 10);
+}

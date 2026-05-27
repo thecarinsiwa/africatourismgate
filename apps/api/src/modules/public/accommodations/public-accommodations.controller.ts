@@ -1,6 +1,7 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Public } from '../../auth/decorators/public.decorator';
+import { PropertyDetailQueryDto } from './dto/property-detail-query.dto';
 import { PropertySearchQueryDto } from './dto/property-search-query.dto';
 import { PublicAccommodationsService } from './public-accommodations.service';
 
@@ -21,5 +22,12 @@ export class PublicAccommodationsController {
   @ApiOperation({ summary: 'Search accommodations with min nightly price' })
   search(@Query() query: PropertySearchQueryDto) {
     return this.service.search(query);
+  }
+
+  @Public()
+  @Get('accommodations/:id')
+  @ApiOperation({ summary: 'Accommodation detail with rooms and date pricing' })
+  getById(@Param('id') id: string, @Query() query: PropertyDetailQueryDto) {
+    return this.service.getById(id, query);
   }
 }

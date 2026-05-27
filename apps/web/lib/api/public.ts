@@ -1,5 +1,7 @@
 import type {
   PaginatedResponse,
+  PropertyDetail,
+  PropertyDetailQuery,
   PropertySearchQuery,
   PropertySearchResult,
   PublicDestination,
@@ -44,5 +46,24 @@ export async function searchAccommodations(
 ): Promise<PaginatedResponse<PropertySearchResult>> {
   return fetchPublic<PaginatedResponse<PropertySearchResult>>(
     `/public/accommodations/search${buildSearchQuery(params)}`,
+  );
+}
+
+function buildDetailQuery(params: PropertyDetailQuery): string {
+  const qs = new URLSearchParams();
+  if (params.checkIn) qs.set('checkIn', params.checkIn);
+  if (params.checkOut) qs.set('checkOut', params.checkOut);
+  if (params.guests !== undefined) qs.set('guests', String(params.guests));
+  if (params.month) qs.set('month', params.month);
+  const s = qs.toString();
+  return s ? `?${s}` : '';
+}
+
+export async function getAccommodationDetail(
+  id: string,
+  params: PropertyDetailQuery = {},
+): Promise<PropertyDetail> {
+  return fetchPublic<PropertyDetail>(
+    `/public/accommodations/${encodeURIComponent(id)}${buildDetailQuery(params)}`,
   );
 }
