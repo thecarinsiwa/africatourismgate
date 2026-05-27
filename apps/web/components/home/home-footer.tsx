@@ -135,10 +135,6 @@ export function HomeFooter() {
               </form>
             </div>
 
-<<<<<<< HEAD
-            {/* Column 4 — Contact */}
-=======
->>>>>>> feature/web-i18n-fr-en-es
             <div id="contact" className="scroll-mt-24">
               <h3 className="text-sm font-bold uppercase tracking-wide text-white mb-5">
                 {t.footer.contact}
