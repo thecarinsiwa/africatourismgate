@@ -4,8 +4,9 @@ import type { PropertyType } from '@africatourismgate/types';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { searchAccommodations } from '../../lib/api/public';
+import { formatDisplayDate } from '../../lib/hotels/dates';
 import { parseGuestsParam, type HotelSearchResult, type HotelTypeFilter } from '../../lib/hotels/listings';
-import { useTranslations } from '../../lib/i18n/locale-provider';
+import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { HotelCard } from './hotel-card';
@@ -35,6 +36,7 @@ type HotelsPageContentProps = {
 
 export function HotelsPageContent({ initialSearch }: HotelsPageContentProps) {
   const t = useTranslations();
+  const { locale } = useLocale();
   const h = t.hotels;
 
   const [sort, setSort] = useState<SortKey>('recommended');
@@ -108,8 +110,8 @@ export function HotelsPageContent({ initialSearch }: HotelsPageContentProps) {
   }, [results, sort, starFilter, typeFilter]);
 
   const searchSummary = [
-    initialSearch.checkIn && `${h.checkIn}: ${formatDate(initialSearch.checkIn)}`,
-    initialSearch.checkOut && `${h.checkOut}: ${formatDate(initialSearch.checkOut)}`,
+    initialSearch.checkIn && `${h.checkIn}: ${formatDisplayDate(initialSearch.checkIn, locale)}`,
+    initialSearch.checkOut && `${h.checkOut}: ${formatDisplayDate(initialSearch.checkOut, locale)}`,
     initialSearch.guests && `${h.guests}: ${initialSearch.guests}`,
   ]
     .filter(Boolean)
@@ -314,16 +316,4 @@ export function HotelsPageContent({ initialSearch }: HotelsPageContentProps) {
       <HomeFooter />
     </div>
   );
-}
-
-function formatDate(iso: string): string {
-  try {
-    return new Date(iso).toLocaleDateString(undefined, {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-    });
-  } catch {
-    return iso;
-  }
 }
