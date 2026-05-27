@@ -9,7 +9,11 @@ import type {
 } from '@africatourismgate/types';
 
 function getApiBaseUrl(): string {
-  return (process.env.NEXT_PUBLIC_API_URL ?? '/api').replace(/\/$/, '');
+  const defaultApiUrl =
+    process.env.NODE_ENV === 'production'
+      ? 'https://app-africatourismgate.org/api'
+      : 'http://localhost:3000/api';
+  return (process.env.NEXT_PUBLIC_API_URL ?? defaultApiUrl).replace(/\/$/, '');
 }
 
 function createBookingClient(accessToken: string) {
