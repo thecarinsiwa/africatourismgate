@@ -10,7 +10,7 @@ export type DashboardShellProps = {
   navItems: SidebarNavEntry[];
   user: AppHeaderProps['user'];
   themeLabels?: AppHeaderProps['themeLabels'];
-  logo?: { name: string; href?: string };
+  logo?: { name: string; href?: string; logoUrl?: string | null };
   children: ReactNode;
   openMenuLabel?: string;
   closeMenuLabel?: string;

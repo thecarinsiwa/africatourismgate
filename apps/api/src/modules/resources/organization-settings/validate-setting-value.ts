@@ -76,10 +76,14 @@ export function validateSettingValue(
         'secondaryColor',
         32,
       );
+      const logoUrl = optionalString(value.logoUrl, 'logoUrl', 2048);
+      const faviconUrl = optionalString(value.faviconUrl, 'faviconUrl', 2048);
       return {
         displayName,
         ...(primaryColor ? { primaryColor } : {}),
         ...(secondaryColor ? { secondaryColor } : {}),
+        ...(logoUrl ? { logoUrl } : {}),
+        ...(faviconUrl ? { faviconUrl } : {}),
       };
     }
     default:

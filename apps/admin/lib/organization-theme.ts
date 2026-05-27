@@ -2,13 +2,19 @@ import type { BrandingPlatformValue } from '@africatourismgate/types';
 import { PLATFORM_ORG_ID } from './org-settings-constants';
 
 export type OrganizationBranding = {
+  displayName: string;
   primaryColor: string;
   secondaryColor: string;
+  logoUrl: string | null;
+  faviconUrl: string | null;
 };
 
 const DEFAULT_BRANDING: OrganizationBranding = {
+  displayName: 'Africa Tourism Gate',
   primaryColor: '#0B6E4F',
   secondaryColor: '#199a45',
+  logoUrl: null,
+  faviconUrl: null,
 };
 
 const CSS_VARS = {
@@ -58,13 +64,60 @@ export function brandingFromPlatformSetting(
   if (!value || typeof value !== 'object') {
     return { ...DEFAULT_BRANDING };
   }
+  const platform = value as BrandingPlatformValue;
+  const displayName =
+    typeof platform.displayName === 'string' && platform.displayName.trim()
+      ? platform.displayName.trim()
+      : DEFAULT_BRANDING.displayName;
   const primary =
-    normalizeHex(String((value as BrandingPlatformValue).primaryColor ?? '')) ??
-    DEFAULT_BRANDING.primaryColor;
+    normalizeHex(String(platform.primaryColor ?? '')) ?? DEFAULT_BRANDING.primaryColor;
   const secondary =
-    normalizeHex(String((value as BrandingPlatformValue).secondaryColor ?? '')) ??
-    DEFAULT_BRANDING.secondaryColor;
-  return { primaryColor: primary, secondaryColor: secondary };
+    normalizeHex(String(platform.secondaryColor ?? '')) ?? DEFAULT_BRANDING.secondaryColor;
+  const logoUrl =
+    typeof platform.logoUrl === 'string' && platform.logoUrl.trim()
+      ? platform.logoUrl.trim()
+      : null;
+  const faviconUrl =
+    typeof platform.faviconUrl === 'string' && platform.faviconUrl.trim()
+      ? platform.faviconUrl.trim()
+      : null;
+  return { displayName, primaryColor: primary, secondaryColor: secondary, logoUrl, faviconUrl };
+}
+
+export function applyFaviconToDocument(faviconUrl: string | null): void {
+  if (typeof document === 'undefined') return;
+
+  const selector = 'link[data-atg-dynamic-favicon="1"]';
+  const existing = document.querySelector<HTMLLinkElement>(selector);
+
+  if (!faviconUrl) {
+    existing?.remove();
+    return;
+  }
+
+  const link = existing ?? document.createElement('link');
+  link.rel = 'icon';
+  link.href = faviconUrl;
+  link.setAttribute('data-atg-dynamic-favicon', '1');
+  if (!existing) {
+    document.head.appendChild(link);
+  }
+}
+
+export function brandingFromSettingsForm(values: {
+  displayName: string;
+  primaryColor: string;
+  secondaryColor: string;
+  logoUrl?: string;
+  faviconUrl?: string;
+}): OrganizationBranding {
+  return brandingFromPlatformSetting({
+    displayName: values.displayName,
+    primaryColor: values.primaryColor,
+    secondaryColor: values.secondaryColor,
+    logoUrl: values.logoUrl,
+    faviconUrl: values.faviconUrl,
+  });
 }
 
 export function applyOrganizationBrandingToDocument(

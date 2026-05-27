@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
-import { Button, Card, Divider, Logo, TextLink, ThemeToggle } from '@africatourismgate/ui';
+import { Button, Card, Divider, TextLink, ThemeToggle } from '@africatourismgate/ui';
 import { AdminLoginForm } from '../../../components/admin-login-form';
+import { BrandingLogo } from '../../../components/branding-logo';
 import { adminLoginPageConfig } from '../../../config/login';
 
-const { logo, title, subtitle, dividerLabel, secondaryAction, footer, theme } =
-  adminLoginPageConfig;
+const { title, subtitle, dividerLabel, secondaryAction, footer, theme } = adminLoginPageConfig;
 
 export const metadata: Metadata = {
   title: 'Connexion — Africa Tourism Gate Admin',
@@ -15,7 +15,7 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen flex-col">
       <header className="relative px-6 py-6 md:px-10">
-        <Logo name={logo.name} centered />
+        <BrandingLogo centered />
         <div className="absolute right-6 top-6 md:right-10">
           <ThemeToggle labels={{ light: theme.light, dark: theme.dark }} />
         </div>

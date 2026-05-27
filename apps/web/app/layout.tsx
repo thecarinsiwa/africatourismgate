@@ -43,12 +43,16 @@ type PublicBranding = {
   displayName: string;
   primaryColor: string;
   secondaryColor: string;
+  logoUrl: string | null;
+  faviconUrl: string | null;
 };
 
 const defaultBranding: PublicBranding = {
   displayName: 'Africa Tourism Gate',
   primaryColor: '#0B6E4F',
   secondaryColor: '#199a45',
+  logoUrl: null,
+  faviconUrl: null,
 };
 
 function clamp(value: number, min: number, max: number) {
@@ -88,50 +92,57 @@ async function getPublicBranding(): Promise<PublicBranding> {
       displayName: branding.displayName ?? defaultBranding.displayName,
       primaryColor: branding.primaryColor ?? defaultBranding.primaryColor,
       secondaryColor: branding.secondaryColor ?? defaultBranding.secondaryColor,
+      logoUrl: branding.logoUrl ?? defaultBranding.logoUrl,
+      faviconUrl: branding.faviconUrl ?? defaultBranding.faviconUrl,
     };
   } catch {
     return defaultBranding;
   }
 }
 
-export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
-  title: {
-    default: 'Africa Tourism Gate — Réservez votre voyage en Afrique',
-    template: '%s | Africa Tourism Gate',
-  },
-  description:
-    'Hôtels, vols, activités et forfaits en Afrique. Comparez et réservez avec Africa Tourism Gate.',
-  keywords: [
-    'Afrique',
-    'tourisme',
-    'hôtels',
-    'voyage',
-    'réservation',
-    'safari',
-    'hébergement',
-  ],
-  authors: [{ name: 'Africa Tourism Gate' }],
-  openGraph: {
-    type: 'website',
-    locale: 'fr_FR',
-    url: siteUrl,
-    siteName: 'Africa Tourism Gate',
-    title: 'Africa Tourism Gate — Réservez votre voyage en Afrique',
-    description:
-      'Hôtels, vols, activités et forfaits en Afrique. Comparez et réservez avec Africa Tourism Gate.',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Africa Tourism Gate',
-    description:
-      'Hôtels, vols, activités et forfaits en Afrique. Comparez et réservez avec Africa Tourism Gate.',
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const branding = await getPublicBranding();
+  const siteName = branding.displayName;
+  const icon = branding.faviconUrl || undefined;
+  return {
+    metadataBase: new URL(siteUrl),
+    title: {
+      default: `${siteName} — Réservez votre voyage en Afrique`,
+      template: `%s | ${siteName}`,
+    },
+    description: `Hôtels, vols, activités et forfaits en Afrique. Comparez et réservez avec ${siteName}.`,
+    keywords: [
+      'Afrique',
+      'tourisme',
+      'hôtels',
+      'voyage',
+      'réservation',
+      'safari',
+      'hébergement',
+    ],
+    authors: [{ name: siteName }],
+    openGraph: {
+      type: 'website',
+      locale: 'fr_FR',
+      url: siteUrl,
+      siteName,
+      title: `${siteName} — Réservez votre voyage en Afrique`,
+      description: `Hôtels, vols, activités et forfaits en Afrique. Comparez et réservez avec ${siteName}.`,
+      ...(icon ? { images: [icon] } : {}),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: siteName,
+      description: `Hôtels, vols, activités et forfaits en Afrique. Comparez et réservez avec ${siteName}.`,
+      ...(icon ? { images: [icon] } : {}),
+    },
+    ...(icon ? { icons: { icon, shortcut: icon, apple: icon } } : {}),
+    robots: {
+      index: true,
+      follow: true,
+    },
+  };
+}
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const branding = await getPublicBranding();

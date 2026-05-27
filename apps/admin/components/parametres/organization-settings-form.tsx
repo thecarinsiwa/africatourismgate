@@ -10,14 +10,18 @@ import type {
 } from '@africatourismgate/types';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
-import { getApiClient } from '../../lib/auth/api';
+import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
+import { getSession } from '../../lib/auth/session';
 import {
   PLATFORM_ORG_ID,
   isValidContactEmail,
   isValidCurrency,
 } from '../../lib/org-settings-constants';
 import { getOrganizationSettingsErrorMessage } from '../../lib/organization-settings-errors';
-import { applyOrganizationBrandingToDocument } from '../../lib/organization-theme';
+import {
+  applyOrganizationBrandingToDocument,
+  brandingFromSettingsForm,
+} from '../../lib/organization-theme';
 import { useOrganizationThemeOptional } from '../organization-theme-provider';
 import { BrandColorPaletteField } from './brand-color-palette-field';
 
@@ -31,6 +35,8 @@ type SettingsFormValues = {
   displayName: string;
   primaryColor: string;
   secondaryColor: string;
+  logoUrl: string;
+  faviconUrl: string;
 };
 
 const defaultValues: SettingsFormValues = {
@@ -43,6 +49,8 @@ const defaultValues: SettingsFormValues = {
   displayName: 'Africa Tourism Gate',
   primaryColor: '#0B6E4F',
   secondaryColor: '#199a45',
+  logoUrl: '',
+  faviconUrl: '',
 };
 
 function settingByKey(
@@ -70,6 +78,8 @@ function toFormValues(
     displayName: platform?.displayName ?? org.name,
     primaryColor: platform?.primaryColor ?? '#0B6E4F',
     secondaryColor: platform?.secondaryColor ?? '#199a45',
+    logoUrl: platform?.logoUrl ?? '',
+    faviconUrl: platform?.faviconUrl ?? '',
   };
 }
 
@@ -96,16 +106,14 @@ export function OrganizationSettingsForm({
   const [loadError, setLoadError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [uploadingField, setUploadingField] = useState<'logoUrl' | 'faviconUrl' | null>(null);
 
   const updateField = useCallback(
     <K extends keyof SettingsFormValues>(key: K, value: SettingsFormValues[K]) => {
       setValues((prev) => {
         const next = { ...prev, [key]: value };
         if (key === 'primaryColor' || key === 'secondaryColor') {
-          applyOrganizationBrandingToDocument({
-            primaryColor: String(next.primaryColor),
-            secondaryColor: String(next.secondaryColor),
-          });
+          applyOrganizationBrandingToDocument(brandingFromSettingsForm(next));
         }
         return next;
       });
@@ -115,11 +123,14 @@ export function OrganizationSettingsForm({
   );
 
   useEffect(() => {
-    applyOrganizationBrandingToDocument({
-      primaryColor: values.primaryColor,
-      secondaryColor: values.secondaryColor,
-    });
-  }, [values.primaryColor, values.secondaryColor]);
+    applyOrganizationBrandingToDocument(brandingFromSettingsForm(values));
+  }, [
+    values.displayName,
+    values.primaryColor,
+    values.secondaryColor,
+    values.logoUrl,
+    values.faviconUrl,
+  ]);
 
   useEffect(() => {
     let cancelled = false;
@@ -218,16 +229,14 @@ export function OrganizationSettingsForm({
               displayName: values.displayName.trim(),
               primaryColor: values.primaryColor.trim() || undefined,
               secondaryColor: values.secondaryColor.trim() || undefined,
+              logoUrl: values.logoUrl.trim() || undefined,
+              faviconUrl: values.faviconUrl.trim() || undefined,
             },
           },
         ],
       });
 
-      const savedBranding = {
-        primaryColor: values.primaryColor.trim(),
-        secondaryColor: values.secondaryColor.trim(),
-      };
-      applyOrganizationBrandingToDocument(savedBranding);
+      applyOrganizationBrandingToDocument(brandingFromSettingsForm(values));
       await orgTheme?.refreshTheme();
 
       router.refresh();
@@ -235,6 +244,53 @@ export function OrganizationSettingsForm({
       setFormError(getOrganizationSettingsErrorMessage(error));
     } finally {
       setSubmitting(false);
+    }
+  }
+
+  async function handleLocalImagePick(
+    event: React.ChangeEvent<HTMLInputElement>,
+    field: 'logoUrl' | 'faviconUrl',
+  ) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    try {
+      if (!file.type.startsWith('image/')) {
+        setFormError('Veuillez sélectionner une image valide.');
+        return;
+      }
+      if (file.size > 2 * 1024 * 1024) {
+        setFormError('Image trop lourde (max 2 MB).');
+        return;
+      }
+      const session = getSession();
+      if (!session?.accessToken) {
+        setFormError('Session expirée. Reconnectez-vous puis réessayez.');
+        return;
+      }
+      setUploadingField(field);
+      const body = new FormData();
+      body.append('file', file);
+      const response = await fetch(`${resolveApiBaseUrl()}/organization-settings/upload-branding`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${session.accessToken}`,
+        },
+        body,
+      });
+      if (!response.ok) {
+        throw new Error('Upload branding failed');
+      }
+      const payload = (await response.json()) as { url?: string };
+      if (!payload.url) {
+        throw new Error('Invalid upload response');
+      }
+      updateField(field, payload.url);
+      setFormError(null);
+    } catch {
+      setFormError("Impossible d'uploader l'image locale.");
+    } finally {
+      setUploadingField(null);
+      event.target.value = '';
     }
   }
 
@@ -357,6 +413,44 @@ export function OrganizationSettingsForm({
           value={values.secondaryColor}
           onChange={(hex) => updateField('secondaryColor', hex)}
         />
+        <Input
+          label="URL du logo"
+          value={values.logoUrl}
+          onChange={(e) => updateField('logoUrl', e.target.value)}
+          placeholder="https://..."
+        />
+        <div className="flex items-center gap-3">
+          <label className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10">
+            {uploadingField === 'logoUrl' ? 'Upload en cours…' : 'Choisir un logo local'}
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => void handleLocalImagePick(e, 'logoUrl')}
+              disabled={uploadingField !== null}
+            />
+          </label>
+          <span className="text-xs text-atg-muted">PNG/JPG/SVG/WebP, max 2 MB</span>
+        </div>
+        <Input
+          label="URL de l'icône (favicon)"
+          value={values.faviconUrl}
+          onChange={(e) => updateField('faviconUrl', e.target.value)}
+          placeholder="https://..."
+        />
+        <div className="flex items-center gap-3">
+          <label className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10">
+            {uploadingField === 'faviconUrl' ? 'Upload en cours…' : 'Choisir une icône locale'}
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => void handleLocalImagePick(e, 'faviconUrl')}
+              disabled={uploadingField !== null}
+            />
+          </label>
+          <span className="text-xs text-atg-muted">PNG/ICO/SVG, max 2 MB</span>
+        </div>
       </section>
 
       <div className="flex gap-3">
