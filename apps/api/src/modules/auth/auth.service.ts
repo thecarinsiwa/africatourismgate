@@ -177,6 +177,81 @@ export class AuthService {
     return { ...tokens, user: toAuthUserDto(user) };
   }
 
+  async loginWithGoogleProfile(profile: {
+    emails?: Array<{ value?: string }>;
+    name?: { givenName?: string; familyName?: string };
+  }): Promise<AuthResponseDto> {
+    const email = profile.emails?.[0]?.value?.trim().toLowerCase();
+    if (!email) {
+      throw new UnauthorizedException('Google account has no email');
+    }
+
+    let user = await this.usersRepo.findOne({
+      where: { email, deletedAt: IsNull() },
+    });
+
+    if (!user) {
+      const defaultOrg = await this.organizationsRepo.findOne({
+        where: { id: SEED_ORG_PLATFORM_ID, deletedAt: IsNull() },
+      });
+      if (!defaultOrg) {
+        throw new InternalServerErrorException(
+          'Default organization is not configured. Run database seeds.',
+        );
+      }
+
+      const generatedPassword = randomBytes(24).toString('hex');
+      user = this.usersRepo.create({
+        id: newId(),
+        email,
+        passwordHash: await bcrypt.hash(generatedPassword, BCRYPT_ROUNDS),
+        firstName: profile.name?.givenName?.trim() || 'Google',
+        lastName: profile.name?.familyName?.trim() || 'User',
+        organizationId: SEED_ORG_PLATFORM_ID,
+        status: 'active',
+      } as DeepPartial<Users>);
+      await this.usersRepo.save(user);
+
+      const assignment = this.roleAssignmentsRepo.create({
+        id: newId(),
+        userId: user.id,
+        roleId: SEED_ROLE_ORG_ADMIN_ID,
+        scopeType: 'agency',
+        scopeId: SEED_ORG_PLATFORM_ID,
+        assignedByUserId: user.id,
+        assignedAt: new Date(),
+      } as DeepPartial<UserRoleAssignments>);
+      await this.roleAssignmentsRepo.save(assignment);
+    }
+
+    if (user.status !== 'active') {
+      throw new UnauthorizedException('Account is not active');
+    }
+
+    user.lastLoginAt = new Date();
+    await this.usersRepo.save(user);
+
+    const tokens = await this.issueTokenPair(user);
+    return { ...tokens, user: toAuthUserDto(user) };
+  }
+
+  buildWebOAuthCallbackUrl(
+    next: string | undefined,
+    accessToken: string,
+    refreshToken: string,
+    expiresIn: number,
+  ): string {
+    const webUrl = (process.env.NEXT_PUBLIC_WEB_URL ?? 'http://localhost:3002').replace(/\/$/, '');
+    const safeNext = normalizeNextPath(next);
+    const query = new URLSearchParams({
+      accessToken,
+      refreshToken,
+      expiresIn: String(expiresIn),
+      next: safeNext,
+    });
+    return `${webUrl}/booking/oauth/callback?${query.toString()}`;
+  }
+
   async refresh(refreshToken: string): Promise<AuthTokensResponseDto> {
     const payload = await this.verifyRefreshToken(refreshToken);
     const session = await this.sessionsRepo.findOne({
@@ -427,4 +502,11 @@ function expiresInToSeconds(value: string): number {
     d: 86400,
   };
   return amount * (multipliers[unit] ?? 1);
+}
+
+function normalizeNextPath(next: string | undefined): string {
+  if (!next) return '/booking/cart';
+  if (!next.startsWith('/')) return '/booking/cart';
+  if (next.startsWith('//')) return '/booking/cart';
+  return next;
 }

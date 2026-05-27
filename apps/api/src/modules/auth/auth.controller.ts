@@ -4,10 +4,14 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Query,
   Post,
+  Req,
+  Res,
   SetMetadata,
   UseGuards,
 } from '@nestjs/common';
+import type { Request, Response } from 'express';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import {
   ApiBadRequestResponse,
@@ -20,6 +24,7 @@ import {
 import { IS_PUBLIC_KEY, Public } from './decorators/public.decorator';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
+import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { AuthService } from './auth.service';
 import {
   AuthResponseDto,
@@ -41,6 +46,39 @@ import { AuthUserDto } from './dto/auth-user.dto';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @Get('google')
+  @UseGuards(GoogleAuthGuard)
+  @ApiOperation({ summary: 'Start Google OAuth login flow' })
+  googleAuth(@Query('next') _next?: string): void {
+    // handled by passport redirect
+  }
+
+  @Get('google/callback')
+  @UseGuards(GoogleAuthGuard)
+  @ApiOperation({ summary: 'Google OAuth callback for web login' })
+  async googleAuthCallback(
+    @Req()
+    req: Request & {
+      user: {
+        profile: {
+          name?: { givenName?: string; familyName?: string };
+          emails?: Array<{ value?: string }>;
+        };
+        state?: string;
+      };
+    },
+    @Res() res: Response,
+  ): Promise<void> {
+    const auth = await this.authService.loginWithGoogleProfile(req.user.profile);
+    const redirectUrl = this.authService.buildWebOAuthCallbackUrl(
+      req.user.state,
+      auth.accessToken,
+      auth.refreshToken,
+      auth.expiresIn,
+    );
+    res.redirect(redirectUrl);
+  }
 
   @Get('me')
   @SetMetadata(IS_PUBLIC_KEY, false)
