@@ -261,7 +261,10 @@ export type {
   PropertyImage,
   PropertyImagesListQuery,
   PropertiesListQuery,
+  PropertySearchQuery,
+  PropertySearchResult,
   PropertyType,
+  PublicDestination,
   ReplacePropertyAmenitiesRequest,
   Room,
   RoomsListQuery,
@@ -439,6 +442,23 @@ export class ApiClient {
     query?: PropertiesListQuery,
   ): Promise<PaginatedResponse<Property>> {
     return fetchPaginated<Property>(this, '/properties', query);
+  }
+
+  listPublicDestinations(): Promise<PublicDestination[]> {
+    return this.request<PublicDestination[]>('/public/destinations', {
+      skipAuth: true,
+    });
+  }
+
+  searchAccommodations(
+    query?: PropertySearchQuery,
+  ): Promise<PaginatedResponse<PropertySearchResult>> {
+    return fetchPaginated<PropertySearchResult>(
+      this,
+      '/public/accommodations/search',
+      query,
+      { skipAuth: true },
+    );
   }
 
   getProperty(id: string): Promise<Property> {

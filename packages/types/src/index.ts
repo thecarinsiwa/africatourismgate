@@ -216,6 +216,9 @@ export type {
   UpdatePropertyImageRequest,
   UpdatePropertyRequest,
   UpdateRoomRequest,
+  PropertySearchQuery,
+  PropertySearchResult,
+  PublicDestination,
 } from './accommodation.js';
 
 export type {

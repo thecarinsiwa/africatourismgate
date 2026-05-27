@@ -122,10 +122,20 @@ export type Translations = {
     sortPriceLow: string;
     sortPriceHigh: string;
     sortRating: string;
+    loading: string;
+    loadError: string;
+    retry: string;
     filters: string;
     filterStars: string;
     filterType: string;
-    types: { hotel: string; resort: string; lodge: string; riad: string };
+    types: {
+      hotel: string;
+      resort: string;
+      apartment: string;
+      villa: string;
+      hostel: string;
+      other: string;
+    };
     perNight: string;
     viewDetails: string;
     bookNow: string;
@@ -358,10 +368,20 @@ const fr: Translations = {
     sortPriceLow: 'Prix croissant',
     sortPriceHigh: 'Prix décroissant',
     sortRating: 'Meilleures notes',
+    loading: 'Recherche des hébergements…',
+    loadError: 'Impossible de charger les résultats. Vérifiez que l’API est démarrée.',
+    retry: 'Réessayer',
     filters: 'Filtres',
     filterStars: 'Étoiles',
     filterType: 'Type',
-    types: { hotel: 'Hôtel', resort: 'Resort', lodge: 'Lodge', riad: 'Riad' },
+    types: {
+      hotel: 'Hôtel',
+      resort: 'Resort',
+      apartment: 'Appartement',
+      villa: 'Villa',
+      hostel: 'Auberge',
+      other: 'Autre',
+    },
     perNight: '/ nuit',
     viewDetails: 'Voir détails',
     bookNow: 'Réserver',
@@ -383,7 +403,7 @@ const fr: Translations = {
     noResultsHint: 'Élargissez votre recherche ou explorez toutes nos destinations.',
     backHome: 'Retour à l\'accueil',
     previewNotice:
-      'Catalogue de démonstration — réservation en ligne bientôt disponible. Contactez-nous pour un devis personnalisé.',
+      'Prix affichés : minimum par nuit pour votre séjour. La réservation en ligne arrive bientôt.',
     stars: 'étoiles',
     allTypes: 'Tous les types',
     allStars: 'Toutes',
@@ -600,10 +620,20 @@ const en: Translations = {
     sortPriceLow: 'Price: low to high',
     sortPriceHigh: 'Price: high to low',
     sortRating: 'Top rated',
+    loading: 'Searching accommodations…',
+    loadError: 'Could not load results. Make sure the API is running.',
+    retry: 'Retry',
     filters: 'Filters',
     filterStars: 'Stars',
     filterType: 'Type',
-    types: { hotel: 'Hotel', resort: 'Resort', lodge: 'Lodge', riad: 'Riad' },
+    types: {
+      hotel: 'Hotel',
+      resort: 'Resort',
+      apartment: 'Apartment',
+      villa: 'Villa',
+      hostel: 'Hostel',
+      other: 'Other',
+    },
     perNight: '/ night',
     viewDetails: 'View details',
     bookNow: 'Book now',
@@ -625,7 +655,7 @@ const en: Translations = {
     noResultsHint: 'Broaden your search or browse all destinations.',
     backHome: 'Back to home',
     previewNotice:
-      'Demo catalogue — online booking coming soon. Contact us for a personalized quote.',
+      'Prices shown are the minimum per night for your stay. Online booking is coming soon.',
     stars: 'stars',
     allTypes: 'All types',
     allStars: 'All',
@@ -843,10 +873,20 @@ const es: Translations = {
     sortPriceLow: 'Precio: menor a mayor',
     sortPriceHigh: 'Precio: mayor a menor',
     sortRating: 'Mejor valorados',
+    loading: 'Buscando alojamientos…',
+    loadError: 'No se pudieron cargar los resultados. Compruebe que la API esté en marcha.',
+    retry: 'Reintentar',
     filters: 'Filtros',
     filterStars: 'Estrellas',
     filterType: 'Tipo',
-    types: { hotel: 'Hotel', resort: 'Resort', lodge: 'Lodge', riad: 'Riad' },
+    types: {
+      hotel: 'Hotel',
+      resort: 'Resort',
+      apartment: 'Apartamento',
+      villa: 'Villa',
+      hostel: 'Hostal',
+      other: 'Otro',
+    },
     perNight: '/ noche',
     viewDetails: 'Ver detalles',
     bookNow: 'Reservar',
@@ -868,7 +908,7 @@ const es: Translations = {
     noResultsHint: 'Amplíe su búsqueda o explore todos los destinos.',
     backHome: 'Volver al inicio',
     previewNotice:
-      'Catálogo de demostración — reserva en línea próximamente. Contáctenos para un presupuesto personalizado.',
+      'Precios mostrados: mínimo por noche para su estancia. La reserva en línea llegará pronto.',
     stars: 'estrellas',
     allTypes: 'Todos los tipos',
     allStars: 'Todas',
