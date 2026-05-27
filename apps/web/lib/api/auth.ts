@@ -1,7 +1,7 @@
 import { createApiClient, type AuthMe, type AuthTokens } from '@africatourismgate/api-client';
 
 function getApiBaseUrl(): string {
-  return (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000/api').replace(/\/$/, '');
+  return (process.env.NEXT_PUBLIC_API_URL ?? '/api').replace(/\/$/, '');
 }
 
 export function buildGoogleOAuthStartUrl(nextPath: string): string {
