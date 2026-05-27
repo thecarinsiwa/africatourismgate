@@ -1,10 +1,12 @@
 import {
   createApiClient,
-  type BookingCheckoutPreview,
-  type BookingCheckoutRequest,
-  type BookingCheckoutSessionResponse,
-  type BookingDetail,
 } from '@africatourismgate/api-client';
+import type {
+  BookingCheckoutPreview,
+  BookingCheckoutRequest,
+  BookingCheckoutSessionResponse,
+  BookingDetail,
+} from '@africatourismgate/types';
 
 function getApiBaseUrl(): string {
   return (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000/api').replace(/\/$/, '');
