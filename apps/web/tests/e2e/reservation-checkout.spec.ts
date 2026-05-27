@@ -2,7 +2,22 @@ import { expect, test } from '@playwright/test';
 
 test('panier -> recap -> Stripe -> confirmation', async ({ page }) => {
   await page.addInitScript(() => {
-    window.localStorage.setItem('atg.web.accessToken', 'e2e-token');
+    window.localStorage.setItem(
+      'atg.web.session',
+      JSON.stringify({
+        accessToken: 'e2e-token',
+        refreshToken: 'e2e-refresh-token',
+        expiresAt: Date.now() + 60 * 60 * 1000,
+        user: {
+          id: 'user-e2e',
+          email: 'client.e2e@example.com',
+          firstName: 'Client',
+          lastName: 'E2E',
+          organizationId: null,
+          status: 'active',
+        },
+      }),
+    );
   });
 
   await page.route('**/api/public/accommodations/test-hotel**', async (route) => {

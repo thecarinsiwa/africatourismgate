@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { createBooking, createBookingCheckoutSession } from '../../lib/api/booking';
 import { getAccommodationDetail } from '../../lib/api/public';
-import { getClientAccessToken } from '../../lib/auth/client-session';
+import { ensureClientAccessToken, getClientAccessToken } from '../../lib/auth/client-session';
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import { formatHotelPrice } from '../../lib/hotels/listings';
 import { useLocale } from '../../lib/i18n/locale-provider';
@@ -51,7 +51,7 @@ export function ReservationRecapPageContent({ draft }: Props) {
 
   async function handleCheckout() {
     if (!draft) return;
-    const accessToken = getClientAccessToken();
+    const accessToken = await ensureClientAccessToken();
     if (!accessToken) {
       setError('Authentification requise pour continuer vers le paiement.');
       return;
@@ -94,7 +94,7 @@ export function ReservationRecapPageContent({ draft }: Props) {
               Donnees de reservation invalides. Revenez au panier.
             </p>
             <Link
-              href="/reservations/cart"
+              href="/booking/cart"
               className="mt-4 inline-flex min-h-[44px] items-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-hover"
             >
               Retour panier

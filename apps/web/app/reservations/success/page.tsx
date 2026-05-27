@@ -1,16 +1,18 @@
 'use client';
 
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import type { BookingDetail } from '@africatourismgate/types';
 import { HomeFooter } from '../../../components/home/home-footer';
 import { HomeHeader } from '../../../components/home/home-header';
 import { getBooking } from '../../../lib/api/booking';
-import { getClientAccessToken } from '../../../lib/auth/client-session';
+import { ensureClientAccessToken } from '../../../lib/auth/client-session';
 import { formatHotelPrice } from '../../../lib/hotels/listings';
 
 export default function ReservationSuccessPage() {
+  const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const bookingId = searchParams.get('booking_id');
   const [booking, setBooking] = useState<BookingDetail | null>(null);
@@ -19,27 +21,35 @@ export default function ReservationSuccessPage() {
   useEffect(() => {
     let cancelled = false;
     if (!bookingId) return;
-    const token = getClientAccessToken();
-    if (!token) return;
-
     setStatus('loading');
-    void getBooking(token, bookingId)
-      .then((data) => {
-        if (!cancelled) {
-          setBooking(data);
-          setStatus('ready');
+    void ensureClientAccessToken()
+      .then((token) => {
+        if (!token) {
+          const next = encodeURIComponent(`${pathname}?${searchParams.toString()}`);
+          router.replace(`/booking/login?next=${next}`);
+          return;
         }
+        return getBooking(token, bookingId)
+          .then((data) => {
+            if (!cancelled) {
+              setBooking(data);
+              setStatus('ready');
+            }
+          })
+          .catch(() => {
+            if (!cancelled) {
+              setStatus('error');
+            }
+          });
       })
       .catch(() => {
-        if (!cancelled) {
-          setStatus('error');
-        }
+        if (!cancelled) setStatus('error');
       });
 
     return () => {
       cancelled = true;
     };
-  }, [bookingId]);
+  }, [bookingId, pathname, router, searchParams]);
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
@@ -90,6 +100,12 @@ export default function ReservationSuccessPage() {
               className="inline-flex min-h-[44px] items-center rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 dark:border-atg-border dark:text-white/80 dark:hover:bg-white/5"
             >
               Voir les hotels
+            </Link>
+            <Link
+              href="/booking/logout"
+              className="inline-flex min-h-[44px] items-center rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 dark:border-atg-border dark:text-white/80 dark:hover:bg-white/5"
+            >
+              Se deconnecter
             </Link>
           </div>
         </div>

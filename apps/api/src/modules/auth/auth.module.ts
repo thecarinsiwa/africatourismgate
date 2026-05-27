@@ -14,8 +14,10 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
+import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { GoogleStrategy } from './strategies/google.strategy';
 
 @Module({
   imports: [
@@ -46,9 +48,11 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     AuthService,
     JwtStrategy,
     JwtRefreshStrategy,
+    GoogleStrategy,
     JwtAuthGuard,
     JwtRefreshGuard,
+    GoogleAuthGuard,
   ],
-  exports: [AuthService, JwtAuthGuard, JwtRefreshGuard],
+  exports: [AuthService, JwtAuthGuard, JwtRefreshGuard, GoogleAuthGuard],
 })
 export class AuthModule {}
