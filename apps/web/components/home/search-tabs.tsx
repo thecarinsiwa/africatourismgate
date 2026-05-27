@@ -1,7 +1,8 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { listPublicDestinations } from '../../lib/api/public';
 import { useTranslations } from '../../lib/i18n/locale-provider';
 
 type SearchTab = 'flights' | 'hotels' | 'cars' | 'cruises' | 'tours';
@@ -139,6 +140,27 @@ export function SearchTabs() {
   const [to, setTo] = useState('');
   const [destination, setDestination] = useState('');
   const [adults, setAdults] = useState('');
+  const [hotelGuests, setHotelGuests] = useState('2');
+  const [destinationOptions, setDestinationOptions] = useState<string[]>(AFRICAN_CITIES);
+
+  useEffect(() => {
+    let cancelled = false;
+    void listPublicDestinations()
+      .then((dests) => {
+        if (cancelled || !dests.length) return;
+        const names = dests.map((d) => d.name);
+        const merged = Array.from(new Set([...names, ...AFRICAN_CITIES])).sort((a, b) =>
+          a.localeCompare(b),
+        );
+        setDestinationOptions(merged);
+      })
+      .catch(() => {
+        /* keep static fallback */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -148,7 +170,8 @@ export function SearchTabs() {
     if (to) params.set('to', to);
     if (departDate) params.set('checkIn', departDate);
     if (returnDate) params.set('checkOut', returnDate);
-    if (adults) params.set('guests', adults);
+    const guestsValue = activeTab === 'hotels' ? hotelGuests : adults;
+    if (guestsValue) params.set('guests', guestsValue);
     const qs = params.toString();
     router.push(qs ? `/hotels?${qs}` : '/hotels');
   }
@@ -163,7 +186,7 @@ export function SearchTabs() {
   );
 
   return (
-    <section className="relative -mt-12 z-20">
+    <section id="search" className="relative -mt-12 z-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-2xl transition-colors dark:border-atg-border dark:bg-atg-elevated">
           <div className="flex" role="tablist" aria-label={t.search.tablistAria}>
@@ -214,7 +237,7 @@ export function SearchTabs() {
             )}
 
             {activeTab === 'hotels' && (
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
                 <div>
                   <FormLabel>{t.search.checkIn}</FormLabel>
                   <FormInput type="date" name="checkIn" value={departDate} onChange={setDepartDate} />
@@ -225,7 +248,23 @@ export function SearchTabs() {
                 </div>
                 <div>
                   <FormLabel>{t.search.destination}</FormLabel>
-                  <FormSelect name="destination" placeholder={t.search.destinationPh} options={AFRICAN_CITIES} value={destination} onChange={setDestination} />
+                  <FormSelect
+                    name="destination"
+                    placeholder={t.search.destinationPh}
+                    options={destinationOptions}
+                    value={destination}
+                    onChange={setDestination}
+                  />
+                </div>
+                <div>
+                  <FormLabel>{t.hotels.guests}</FormLabel>
+                  <FormInput
+                    name="guests"
+                    type="number"
+                    placeholder="2"
+                    value={hotelGuests}
+                    onChange={setHotelGuests}
+                  />
                 </div>
                 <div>
                   <FormLabel>{t.search.roomType}</FormLabel>

@@ -184,3 +184,35 @@ export interface BulkUpsertRoomAvailabilityResponse {
   upsertedCount: number;
   items: RoomAvailability[];
 }
+
+export interface PropertySearchQuery {
+  destination?: string;
+  destinationId?: string;
+  checkIn?: string;
+  checkOut?: string;
+  guests?: number;
+  propertyType?: PropertyType;
+  page?: number;
+  limit?: number;
+}
+
+export interface PropertySearchResult {
+  id: string;
+  slug: string;
+  name: string;
+  propertyType: PropertyType;
+  starRating: number | null;
+  destinationName: string;
+  countryCode: string;
+  addressLine: string | null;
+  imageUrl: string | null;
+  minPriceCents: number;
+  currency: string;
+  amenityCodes: string[];
+}
+
+export interface PublicDestination {
+  id: string;
+  name: string;
+  countryCode: string;
+}
