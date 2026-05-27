@@ -11,6 +11,7 @@ import {
   parseGuestsParam,
   type HotelDetailSearchParams,
 } from '../../lib/hotels/listings';
+import { buildReservationQuery } from '../../lib/reservations/flow';
 import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
@@ -156,8 +157,18 @@ export function HotelDetailPageContent({
       document.getElementById('rooms')?.scrollIntoView({ behavior: 'smooth' });
       return;
     }
-    syncUrl({ roomId: selectedRoomId });
-    document.getElementById('reserve')?.scrollIntoView({ behavior: 'smooth' });
+    if (!checkIn || !checkOut || checkOut <= checkIn) {
+      document.getElementById('reserve')?.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+    const query = buildReservationQuery({
+      propertyId,
+      roomId: selectedRoomId,
+      checkIn,
+      checkOut,
+      guests,
+    });
+    router.push(`/booking/cart?${query}`);
   }
 
   if (loading && !detail) {
