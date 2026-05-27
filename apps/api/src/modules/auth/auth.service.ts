@@ -241,7 +241,11 @@ export class AuthService {
     refreshToken: string,
     expiresIn: number,
   ): string {
-    const webUrl = (process.env.NEXT_PUBLIC_WEB_URL ?? 'http://localhost:3002').replace(/\/$/, '');
+    const defaultWebUrl =
+      process.env.NODE_ENV === 'production'
+        ? 'https://africatourismgate.org'
+        : 'http://localhost:3002';
+    const webUrl = (process.env.NEXT_PUBLIC_WEB_URL ?? defaultWebUrl).replace(/\/$/, '');
     const safeNext = normalizeNextPath(next);
     const query = new URLSearchParams({
       accessToken,
