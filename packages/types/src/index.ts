@@ -218,6 +218,14 @@ export type {
   UpdateRoomRequest,
   PropertySearchQuery,
   PropertySearchResult,
+  PropertyDetail,
+  PropertyDetailQuery,
+  PropertyDetailImage,
+  PropertyDetailAmenity,
+  PropertyDetailRoom,
+  PropertyDetailNightlyPrice,
+  PropertyDetailStay,
+  PropertyCalendarDay,
   PublicDestination,
 } from './accommodation.js';
 

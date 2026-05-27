@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
@@ -11,10 +11,12 @@ import {
   RoomAvailability,
   Rooms,
 } from '../../../entities/generated';
+import { PropertyDetailQueryDto } from './dto/property-detail-query.dto';
+import { PropertyDetailDto } from './dto/property-detail.dto';
 import { PropertySearchQueryDto } from './dto/property-search-query.dto';
 import { PropertySearchResultDto } from './dto/property-search-result.dto';
 import { PublicDestinationDto } from './dto/public-destination.dto';
-import { enumerateStayNights } from './stay-dates.util';
+import { enumerateMonthDays, enumerateStayNights } from './stay-dates.util';
 
 const DISPLAY_AMENITY_CODES = new Set([
   'wifi',
@@ -150,20 +152,7 @@ export class PublicAccommodationsService {
     }
 
     const roomIds = eligibleRooms.map((r) => r.id);
-    const availabilityByRoomDate = new Map<string, RoomAvailability>();
-
-    if (stayNights?.length && roomIds.length) {
-      const availabilityRows = await this.availabilityRepository
-        .createQueryBuilder('ra')
-        .where('ra.deletedAt IS NULL')
-        .andWhere('ra.roomId IN (:...roomIds)', { roomIds })
-        .andWhere('ra.date IN (:...dates)', { dates: stayNights })
-        .getMany();
-
-      for (const row of availabilityRows) {
-        availabilityByRoomDate.set(`${row.roomId}:${row.date}`, row);
-      }
-    }
+    const availabilityByRoomDate = await this.loadAvailabilityMap(roomIds, stayNights);
 
     const images = await this.imagesRepository.find({
       where: { propertyId: In(propertyIds) },
@@ -194,17 +183,14 @@ export class PublicAccommodationsService {
       const dest = destById.get(prop.destinationId);
       if (!dest) continue;
 
-      const starRating =
-        prop.starRating != null && prop.starRating !== ''
-          ? Number.parseFloat(String(prop.starRating))
-          : null;
+      const starRating = this.parseStarRating(prop.starRating);
 
       results.push({
         id: prop.id,
         slug: prop.slug,
         name: prop.name,
         propertyType: prop.propertyType,
-        starRating: Number.isFinite(starRating) ? starRating : null,
+        starRating,
         destinationName: dest.name,
         countryCode: dest.countryCode,
         addressLine: prop.addressLine ?? null,
@@ -232,24 +218,237 @@ export class PublicAccommodationsService {
     };
   }
 
+  async getById(id: string, query: PropertyDetailQueryDto): Promise<PropertyDetailDto> {
+    const guests = query.guests ?? 1;
+    const prop = await this.propertiesRepository.findOne({ where: { id } });
+
+    if (!prop || prop.deletedAt) {
+      throw new NotFoundException('Hébergement introuvable.');
+    }
+
+    const dest = await this.destinationsRepository.findOne({
+      where: { id: prop.destinationId },
+    });
+    if (!dest || dest.deletedAt) {
+      throw new NotFoundException('Hébergement introuvable.');
+    }
+
+    const stayNights =
+      query.checkIn && query.checkOut
+        ? enumerateStayNights(query.checkIn, query.checkOut)
+        : null;
+
+    const calendarDates = query.month ? enumerateMonthDays(query.month) : [];
+    const allDates = [
+      ...new Set([...(stayNights ?? []), ...calendarDates]),
+    ];
+
+    const allRooms = await this.roomsRepository.find({
+      where: { propertyId: prop.id },
+    });
+    const eligibleRooms = allRooms.filter(
+      (r) => !r.deletedAt && r.maxGuests >= guests,
+    );
+
+    const roomIds = eligibleRooms.map((r) => r.id);
+    const availabilityByRoomDate = await this.loadAvailabilityMap(
+      roomIds,
+      allDates.length ? allDates : null,
+    );
+
+    const imageRows = await this.imagesRepository.find({
+      where: { propertyId: prop.id },
+      order: { sortOrder: 'ASC' },
+    });
+    const activeImages = imageRows.filter((img) => !img.deletedAt);
+    const images =
+      activeImages.length > 0
+        ? activeImages.map((img) => ({
+            id: img.id,
+            url: img.url,
+            caption: img.caption ?? null,
+            sortOrder: img.sortOrder,
+          }))
+        : [
+            {
+              id: 'placeholder',
+              url: PLACEHOLDER_IMAGE,
+              caption: null,
+              sortOrder: 0,
+            },
+          ];
+
+    const amenities = await this.loadPropertyAmenities(prop.id);
+
+    const roomDtos = eligibleRooms.map((room) => {
+      const stayPricing = stayNights?.length
+        ? this.computeRoomStayPricing(room, stayNights, availabilityByRoomDate)
+        : null;
+
+      return {
+        id: room.id,
+        name: room.name,
+        roomType: room.roomType ?? null,
+        maxGuests: room.maxGuests,
+        bedConfig: room.bedConfig ?? null,
+        basePriceCents: room.basePriceCents,
+        currency: room.currency,
+        totalPriceCents: stayPricing?.totalPriceCents ?? null,
+        available: stayPricing?.available ?? true,
+        nightlyBreakdown: stayPricing?.nightlyBreakdown ?? [],
+      };
+    });
+
+    let minTotalCents: number | null = null;
+    let stayCurrency = eligibleRooms[0]?.currency ?? 'USD';
+    for (const room of roomDtos) {
+      if (
+        room.available &&
+        room.totalPriceCents != null &&
+        (minTotalCents === null || room.totalPriceCents < minTotalCents)
+      ) {
+        minTotalCents = room.totalPriceCents;
+        stayCurrency = room.currency;
+      }
+    }
+
+    const calendarDays = calendarDates.map((date) => {
+      const dayPricing = this.computeMinNightlyPrice(
+        eligibleRooms,
+        [date],
+        availabilityByRoomDate,
+      );
+      const anyAvailable = eligibleRooms.some((room) => {
+        const avail = availabilityByRoomDate.get(`${room.id}:${date}`);
+        return !avail || avail.availableUnits > 0;
+      });
+      return {
+        date,
+        minPriceCents: dayPricing?.minPriceCents ?? 0,
+        available: anyAvailable && (dayPricing !== null),
+        currency: dayPricing?.currency ?? stayCurrency,
+      };
+    });
+
+    const basePricing = this.computeMinNightlyPrice(
+      eligibleRooms,
+      null,
+      availabilityByRoomDate,
+    );
+
+    return {
+      id: prop.id,
+      slug: prop.slug,
+      name: prop.name,
+      description: prop.description ?? null,
+      propertyType: prop.propertyType,
+      starRating: this.parseStarRating(prop.starRating),
+      destinationName: dest.name,
+      countryCode: dest.countryCode,
+      addressLine: prop.addressLine ?? null,
+      images,
+      amenities,
+      rooms: roomDtos,
+      stay: {
+        checkIn: query.checkIn ?? null,
+        checkOut: query.checkOut ?? null,
+        nights: stayNights?.length ?? 0,
+        guests,
+        minTotalCents,
+        currency: stayCurrency || basePricing?.currency || 'USD',
+      },
+      calendarDays,
+    };
+  }
+
+  private parseStarRating(value: unknown): number | null {
+    if (value == null || value === '') return null;
+    const n = Number.parseFloat(String(value));
+    return Number.isFinite(n) ? n : null;
+  }
+
+  private resolveNightPrice(
+    room: Rooms,
+    date: string,
+    availabilityByRoomDate: Map<string, RoomAvailability>,
+  ): { priceCents: number; available: boolean } {
+    const avail = availabilityByRoomDate.get(`${room.id}:${date}`);
+    if (avail) {
+      return {
+        priceCents: avail.availableUnits > 0 ? avail.priceCents : room.basePriceCents,
+        available: avail.availableUnits > 0,
+      };
+    }
+    return { priceCents: room.basePriceCents, available: true };
+  }
+
+  private computeRoomStayPricing(
+    room: Rooms,
+    stayNights: string[],
+    availabilityByRoomDate: Map<string, RoomAvailability>,
+  ): {
+    totalPriceCents: number;
+    available: boolean;
+    nightlyBreakdown: { date: string; priceCents: number }[];
+  } {
+    let total = 0;
+    let available = true;
+    const nightlyBreakdown: { date: string; priceCents: number }[] = [];
+
+    for (const night of stayNights) {
+      const { priceCents, available: nightAvailable } = this.resolveNightPrice(
+        room,
+        night,
+        availabilityByRoomDate,
+      );
+      if (!nightAvailable) available = false;
+      total += priceCents;
+      nightlyBreakdown.push({ date: night, priceCents });
+    }
+
+    return { totalPriceCents: total, available, nightlyBreakdown };
+  }
+
+  private async loadAvailabilityMap(
+    roomIds: string[],
+    dates: string[] | null,
+  ): Promise<Map<string, RoomAvailability>> {
+    const map = new Map<string, RoomAvailability>();
+    if (!dates?.length || !roomIds.length) return map;
+
+    const availabilityRows = await this.availabilityRepository
+      .createQueryBuilder('ra')
+      .where('ra.deletedAt IS NULL')
+      .andWhere('ra.roomId IN (:...roomIds)', { roomIds })
+      .andWhere('ra.date IN (:...dates)', { dates })
+      .getMany();
+
+    for (const row of availabilityRows) {
+      map.set(`${row.roomId}:${row.date}`, row);
+    }
+    return map;
+  }
+
   private computeMinNightlyPrice(
     rooms: Rooms[],
     stayNights: string[] | null,
     availabilityByRoomDate: Map<string, RoomAvailability>,
   ): { minPriceCents: number; currency: string } | null {
+    if (!rooms.length) return null;
+
     let globalMin: number | null = null;
     let currency = rooms[0]?.currency ?? 'USD';
 
     for (const room of rooms) {
       if (stayNights?.length) {
         for (const night of stayNights) {
-          const avail = availabilityByRoomDate.get(`${room.id}:${night}`);
-          const nightPrice =
-            avail && avail.availableUnits > 0
-              ? avail.priceCents
-              : room.basePriceCents;
-          if (globalMin === null || nightPrice < globalMin) {
-            globalMin = nightPrice;
+          const { priceCents } = this.resolveNightPrice(
+            room,
+            night,
+            availabilityByRoomDate,
+          );
+          if (globalMin === null || priceCents < globalMin) {
+            globalMin = priceCents;
             currency = room.currency;
           }
         }
@@ -261,6 +460,26 @@ export class PublicAccommodationsService {
 
     if (globalMin === null) return null;
     return { minPriceCents: globalMin, currency };
+  }
+
+  private async loadPropertyAmenities(
+    propertyId: string,
+  ): Promise<{ code: string; name: string }[]> {
+    const links = await this.propertyAmenitiesRepository.find({
+      where: { propertyId },
+    });
+    const activeLinks = links.filter((l) => !l.deletedAt);
+    if (!activeLinks.length) return [];
+
+    const amenityIds = [...new Set(activeLinks.map((l) => l.amenityId))];
+    const amenities = await this.amenitiesRepository.find({
+      where: { id: In(amenityIds) },
+    });
+
+    return amenities
+      .filter((a) => !a.deletedAt)
+      .map((a) => ({ code: a.code, name: a.name }))
+      .sort((a, b) => a.name.localeCompare(b.name));
   }
 
   private async loadAmenityCodes(

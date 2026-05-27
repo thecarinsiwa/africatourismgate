@@ -28,6 +28,7 @@
     "test:rooms-amenities": "node scripts/test-rooms-amenities.mjs",
     "test:room-availability": "node scripts/test-room-availability.mjs",
     "test:public-accommodation-search": "node scripts/test-public-accommodation-search.mjs",
+    "test:public-accommodation-detail": "node scripts/test-public-accommodation-detail.mjs",
     "test:users": "node scripts/test-users-crud.mjs",
     "test:employees": "node scripts/test-employees-crud.mjs",
     "test:rbac-crud": "node scripts/test-rbac-crud.mjs",

@@ -294,7 +294,18 @@ export function HotelsPageContent({ initialSearch }: HotelsPageContentProps) {
                 </Link>
               </div>
             ) : (
-              listings.map((hotel) => <HotelCard key={hotel.id} hotel={hotel} t={h} />)
+              listings.map((hotel) => (
+                <HotelCard
+                  key={hotel.id}
+                  hotel={hotel}
+                  t={h}
+                  searchParams={{
+                    checkIn: initialSearch.checkIn,
+                    checkOut: initialSearch.checkOut,
+                    guests: initialSearch.guests,
+                  }}
+                />
+              ))
             )}
           </div>
         </div>

@@ -36,3 +36,22 @@ function parseDateOnly(iso: string): Date {
 function formatDateOnly(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
+
+/** All calendar days in a month (YYYY-MM). */
+export function enumerateMonthDays(isoMonth: string): string[] {
+  const match = /^(\d{4})-(\d{2})$/.exec(isoMonth);
+  if (!match) {
+    throw new BadRequestException('month invalide (format attendu : YYYY-MM).');
+  }
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  if (month < 1 || month > 12) {
+    throw new BadRequestException('month invalide (format attendu : YYYY-MM).');
+  }
+  const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
+  const monthStr = String(month).padStart(2, '0');
+  return Array.from({ length: daysInMonth }, (_, i) => {
+    const day = String(i + 1).padStart(2, '0');
+    return `${year}-${monthStr}-${day}`;
+  });
+}
