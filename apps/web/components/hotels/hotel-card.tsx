@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import type { HotelListing } from '../../lib/hotels/types';
-import type { Translations } from '../../lib/i18n/translations';
+import type { Translations } from '../../lib/i18n/schema';
 
 type HotelCardProps = {
   hotel: HotelListing;
