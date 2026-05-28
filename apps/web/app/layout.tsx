@@ -127,6 +127,14 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  alternates: {
+    canonical: '/',
+    languages: {
+      fr: '/?lang=fr',
+      en: '/?lang=en',
+      es: '/?lang=es',
+    },
+  },
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

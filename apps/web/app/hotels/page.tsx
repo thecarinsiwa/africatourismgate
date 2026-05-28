@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { HotelsPageContent, type HotelsSearchParams } from '../../components/hotels/hotels-page-content';
+import { fetchHotelListings } from '../../lib/hotels/api';
 
 type PageProps = {
   searchParams: Record<string, string | string[] | undefined>;
@@ -15,9 +16,17 @@ export const metadata: Metadata = {
   title: 'Hébergements en Afrique',
   description:
     'Comparez hôtels, lodges et resorts en Afrique. Trouvez le séjour idéal avec Africa Tourism Gate.',
+  alternates: {
+    canonical: '/hotels',
+    languages: {
+      fr: '/hotels?lang=fr',
+      en: '/hotels?lang=en',
+      es: '/hotels?lang=es',
+    },
+  },
 };
 
-export default function HotelsPage({ searchParams }: PageProps) {
+export default async function HotelsPage({ searchParams }: PageProps) {
   const initialSearch: HotelsSearchParams = {
     destination: pickParam(searchParams.destination),
     checkIn: pickParam(searchParams.checkIn),
@@ -25,5 +34,7 @@ export default function HotelsPage({ searchParams }: PageProps) {
     guests: pickParam(searchParams.guests),
   };
 
-  return <HotelsPageContent initialSearch={initialSearch} />;
+  const initialListings = await fetchHotelListings(initialSearch.destination);
+
+  return <HotelsPageContent initialSearch={initialSearch} initialListings={initialListings} />;
 }

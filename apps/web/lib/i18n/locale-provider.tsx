@@ -28,6 +28,8 @@ const LocaleContext = createContext<LocaleContextValue | null>(null);
 function readStoredLocale(): Locale {
   if (typeof window === 'undefined') return DEFAULT_LOCALE;
   try {
+    const queryLocale = new URLSearchParams(window.location.search).get('lang');
+    if (queryLocale && isLocale(queryLocale)) return queryLocale;
     const stored = localStorage.getItem(LOCALE_STORAGE_KEY);
     if (stored && isLocale(stored)) return stored;
   } catch {
@@ -57,6 +59,13 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
 
   const setLocale = useCallback((next: Locale) => {
     setLocaleState(next);
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set('lang', next);
+      window.history.replaceState({}, '', url.toString());
+    } catch {
+      /* ignore */
+    }
   }, []);
 
   const value = useMemo(
