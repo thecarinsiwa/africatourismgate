@@ -187,6 +187,7 @@ export type Translations = {
   account: {
     title: string;
     subtitle: string;
+    browseSite: string;
     navAria: string;
     loading: string;
     nav: {
@@ -206,6 +207,19 @@ export type Translations = {
       saved: string;
       loadError: string;
       saveError: string;
+      personalInfo: string;
+      personalInfoHint: string;
+      preferences: string;
+      preferencesHint: string;
+      emailHint: string;
+      memberId: string;
+      quickLinks: string;
+      viewReservations: string;
+      statusActive: string;
+      statusSuspended: string;
+      statusDeleted: string;
+      reset: string;
+      unsavedChanges: string;
     };
     addresses: {
       empty: string;
@@ -236,6 +250,25 @@ export type Translations = {
       back: string;
       notFound: string;
       loadError: string;
+      detail: {
+        bookedOn: string;
+        itemsCount: string;
+        itemsTitle: string;
+        noItems: string;
+        item: string;
+        dates: string;
+        quantity: string;
+        lineTotal: string;
+        actions: string;
+        payNow: string;
+        paying: string;
+        payError: string;
+        cancelBooking: string;
+        cancelling: string;
+        cancelConfirm: string;
+        cancelError: string;
+        title: string;
+      };
     };
     paymentMethods: {
       empty: string;
@@ -540,6 +573,7 @@ const fr: Translations = {
   account: {
     title: 'Mon compte',
     subtitle: 'Gérez votre profil, vos adresses et vos réservations.',
+    browseSite: 'Explorer les hébergements',
     navAria: 'Navigation du compte',
     loading: 'Chargement…',
     nav: {
@@ -556,9 +590,22 @@ const fr: Translations = {
       language: 'Langue préférée',
       save: 'Enregistrer',
       saving: 'Enregistrement…',
-      saved: 'Profil mis à jour.',
+      saved: 'Profil mis à jour avec succès.',
       loadError: 'Impossible de charger le profil.',
       saveError: 'Impossible de mettre à jour le profil.',
+      personalInfo: 'Informations personnelles',
+      personalInfoHint: 'Vos coordonnées utilisées pour les réservations.',
+      preferences: 'Préférences',
+      preferencesHint: 'Langue d’affichage du site et des communications.',
+      emailHint: 'L’adresse e-mail ne peut pas être modifiée ici.',
+      memberId: 'Identifiant client',
+      quickLinks: 'Accès rapide',
+      viewReservations: 'Mes réservations',
+      statusActive: 'Compte actif',
+      statusSuspended: 'Compte suspendu',
+      statusDeleted: 'Compte supprimé',
+      reset: 'Annuler les modifications',
+      unsavedChanges: 'Modifications non enregistrées',
     },
     addresses: {
       empty: 'Aucune adresse enregistrée.',
@@ -589,6 +636,25 @@ const fr: Translations = {
       back: 'Retour aux réservations',
       notFound: 'Réservation introuvable.',
       loadError: 'Impossible de charger les réservations.',
+      detail: {
+        bookedOn: 'Réservée le',
+        itemsCount: 'Articles',
+        itemsTitle: 'Détail de la réservation',
+        noItems: 'Aucun article enregistré.',
+        item: 'Prestation',
+        dates: 'Dates',
+        quantity: 'Qté',
+        lineTotal: 'Montant',
+        actions: 'Actions',
+        payNow: 'Payer maintenant',
+        paying: 'Redirection vers le paiement…',
+        payError: 'Impossible d’ouvrir la page de paiement.',
+        cancelBooking: 'Annuler la réservation',
+        cancelling: 'Annulation…',
+        cancelConfirm: 'Annuler cette réservation ?',
+        cancelError: 'Impossible d’annuler la réservation.',
+        title: 'Détail de la réservation',
+      },
     },
     paymentMethods: {
       empty: 'Aucun moyen de paiement enregistré.',
@@ -892,6 +958,7 @@ const en: Translations = {
   account: {
     title: 'My account',
     subtitle: 'Manage your profile, addresses and bookings.',
+    browseSite: 'Browse accommodations',
     navAria: 'Account navigation',
     loading: 'Loading…',
     nav: {
@@ -908,9 +975,22 @@ const en: Translations = {
       language: 'Preferred language',
       save: 'Save',
       saving: 'Saving…',
-      saved: 'Profile updated.',
+      saved: 'Profile updated successfully.',
       loadError: 'Could not load profile.',
       saveError: 'Could not update profile.',
+      personalInfo: 'Personal information',
+      personalInfoHint: 'Your contact details used for bookings.',
+      preferences: 'Preferences',
+      preferencesHint: 'Site display language and communications.',
+      emailHint: 'Email address cannot be changed here.',
+      memberId: 'Customer ID',
+      quickLinks: 'Quick links',
+      viewReservations: 'My bookings',
+      statusActive: 'Active account',
+      statusSuspended: 'Suspended account',
+      statusDeleted: 'Deleted account',
+      reset: 'Discard changes',
+      unsavedChanges: 'Unsaved changes',
     },
     addresses: {
       empty: 'No saved addresses.',
@@ -941,6 +1021,25 @@ const en: Translations = {
       back: 'Back to bookings',
       notFound: 'Booking not found.',
       loadError: 'Could not load bookings.',
+      detail: {
+        bookedOn: 'Booked on',
+        itemsCount: 'Items',
+        itemsTitle: 'Booking details',
+        noItems: 'No items recorded.',
+        item: 'Service',
+        dates: 'Dates',
+        quantity: 'Qty',
+        lineTotal: 'Amount',
+        actions: 'Actions',
+        payNow: 'Pay now',
+        paying: 'Redirecting to payment…',
+        payError: 'Could not open the payment page.',
+        cancelBooking: 'Cancel booking',
+        cancelling: 'Cancelling…',
+        cancelConfirm: 'Cancel this booking?',
+        cancelError: 'Could not cancel the booking.',
+        title: 'Booking details',
+      },
     },
     paymentMethods: {
       empty: 'No payment methods saved.',
@@ -1245,6 +1344,7 @@ const es: Translations = {
   account: {
     title: 'Mi cuenta',
     subtitle: 'Gestione su perfil, direcciones y reservas.',
+    browseSite: 'Explorar alojamientos',
     navAria: 'Navegación de la cuenta',
     loading: 'Cargando…',
     nav: {
@@ -1261,9 +1361,22 @@ const es: Translations = {
       language: 'Idioma preferido',
       save: 'Guardar',
       saving: 'Guardando…',
-      saved: 'Perfil actualizado.',
+      saved: 'Perfil actualizado con éxito.',
       loadError: 'No se pudo cargar el perfil.',
       saveError: 'No se pudo actualizar el perfil.',
+      personalInfo: 'Información personal',
+      personalInfoHint: 'Sus datos de contacto para las reservas.',
+      preferences: 'Preferencias',
+      preferencesHint: 'Idioma del sitio y comunicaciones.',
+      emailHint: 'El correo no se puede modificar aquí.',
+      memberId: 'ID de cliente',
+      quickLinks: 'Accesos rápidos',
+      viewReservations: 'Mis reservas',
+      statusActive: 'Cuenta activa',
+      statusSuspended: 'Cuenta suspendida',
+      statusDeleted: 'Cuenta eliminada',
+      reset: 'Descartar cambios',
+      unsavedChanges: 'Cambios sin guardar',
     },
     addresses: {
       empty: 'Sin direcciones guardadas.',
@@ -1294,6 +1407,25 @@ const es: Translations = {
       back: 'Volver a reservas',
       notFound: 'Reserva no encontrada.',
       loadError: 'No se pudieron cargar las reservas.',
+      detail: {
+        bookedOn: 'Reservada el',
+        itemsCount: 'Artículos',
+        itemsTitle: 'Detalle de la reserva',
+        noItems: 'Sin artículos registrados.',
+        item: 'Servicio',
+        dates: 'Fechas',
+        quantity: 'Cant.',
+        lineTotal: 'Importe',
+        actions: 'Acciones',
+        payNow: 'Pagar ahora',
+        paying: 'Redirigiendo al pago…',
+        payError: 'No se pudo abrir la página de pago.',
+        cancelBooking: 'Cancelar reserva',
+        cancelling: 'Cancelando…',
+        cancelConfirm: '¿Cancelar esta reserva?',
+        cancelError: 'No se pudo cancelar la reserva.',
+        title: 'Detalle de la reserva',
+      },
     },
     paymentMethods: {
       empty: 'Sin medios de pago guardados.',

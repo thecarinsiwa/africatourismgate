@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { LanguageSwitcher } from '../language-switcher';
 import { getWebSession } from '../../lib/auth/client-session';
@@ -44,6 +45,8 @@ type PublicBranding = {
 
 export function HomeHeader() {
   const t = useTranslations();
+  const pathname = usePathname();
+  const onAccountArea = pathname.startsWith('/account');
   const [menuOpen, setMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [theme, setTheme] = useState<ThemeMode>('light');
@@ -221,7 +224,12 @@ export function HomeHeader() {
           <div className="hidden items-center gap-2 lg:flex">
             <Link
               href={hasSession ? '/account' : '/booking/login?next=%2Faccount'}
-              className="inline-flex min-h-[44px] items-center rounded-lg px-4 py-2.5 text-sm font-medium text-[#333] transition-colors hover:text-primary dark:text-white/75 dark:hover:text-white"
+              className={`inline-flex min-h-[44px] items-center rounded-lg px-4 py-2.5 text-sm font-medium transition-colors ${
+                onAccountArea && hasSession
+                  ? 'bg-primary/10 text-primary'
+                  : 'text-[#333] hover:text-primary dark:text-white/75 dark:hover:text-white'
+              }`}
+              aria-current={onAccountArea && hasSession ? 'page' : undefined}
             >
               {hasSession ? t.nav.myAccount : t.nav.signIn}
             </Link>
@@ -290,7 +298,10 @@ export function HomeHeader() {
             <li>
               <Link
                 href={hasSession ? '/account' : '/booking/login?next=%2Faccount'}
-                className="flex min-h-[44px] items-center rounded-lg px-3 py-3 text-sm font-medium text-primary hover:bg-gray-50 dark:hover:bg-white/5"
+                className={`flex min-h-[44px] items-center rounded-lg px-3 py-3 text-sm font-medium hover:bg-gray-50 dark:hover:bg-white/5 ${
+                  onAccountArea && hasSession ? 'bg-primary/10 text-primary' : 'text-primary'
+                }`}
+                aria-current={onAccountArea && hasSession ? 'page' : undefined}
                 onClick={() => setMenuOpen(false)}
               >
                 {hasSession ? t.nav.myAccount : t.nav.signIn}
