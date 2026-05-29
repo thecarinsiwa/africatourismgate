@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, IsNull, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
@@ -11,6 +11,7 @@ import { BookingListItemDto } from './dto/booking-list-item.dto';
 import { BookingsListQueryDto } from './dto/bookings-list-query.dto';
 import { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
 import { BookingDetailDto } from './dto/booking-detail.dto';
+import { PermissionsService } from '../../rbac/permissions.service';
 
 @Injectable()
 export class BookingsService extends CrudService<Bookings> {
@@ -25,44 +26,55 @@ export class BookingsService extends CrudService<Bookings> {
     private readonly paymentsRepository: Repository<Payments>,
     private readonly bookingEngine: BookingEngineService,
     private readonly statusHistory: BookingStatusHistoryService,
+    private readonly permissionsService: PermissionsService,
   ) {
     super(bookingsRepository);
   }
 
   async list(
     query: BookingsListQueryDto,
+    currentUserId: string,
   ): Promise<PaginatedResult<BookingListItemDto>> {
     const page = query.page ?? 1;
     const limit = query.limit ?? 20;
+    const staff = await this.permissionsService.hasAnyPermission(currentUserId, [
+      'users.read',
+    ]);
+
+    const scopedQuery = { ...query };
+    if (!staff) {
+      scopedQuery.userId = currentUserId;
+      scopedQuery.organizationId = undefined;
+    }
 
     const qb = this.bookingsRepository
       .createQueryBuilder('booking')
       .where('booking.deletedAt IS NULL');
 
-    if (query.status) {
-      qb.andWhere('booking.status = :status', { status: query.status });
+    if (scopedQuery.status) {
+      qb.andWhere('booking.status = :status', { status: scopedQuery.status });
     }
-    if (query.userId) {
-      qb.andWhere('booking.userId = :userId', { userId: query.userId });
+    if (scopedQuery.userId) {
+      qb.andWhere('booking.userId = :userId', { userId: scopedQuery.userId });
     }
-    if (query.dateFrom) {
+    if (scopedQuery.dateFrom) {
       qb.andWhere('booking.createdAt >= :dateFrom', {
-        dateFrom: `${query.dateFrom}T00:00:00.000Z`,
+        dateFrom: `${scopedQuery.dateFrom}T00:00:00.000Z`,
       });
     }
-    if (query.dateTo) {
+    if (scopedQuery.dateTo) {
       qb.andWhere('booking.createdAt <= :dateTo', {
-        dateTo: `${query.dateTo}T23:59:59.999Z`,
+        dateTo: `${scopedQuery.dateTo}T23:59:59.999Z`,
       });
     }
-    if (query.organizationId) {
+    if (scopedQuery.organizationId) {
       qb.innerJoin(
         Users,
         'client',
         'client.id = booking.userId AND client.deletedAt IS NULL',
       );
       qb.andWhere('client.organizationId = :organizationId', {
-        organizationId: query.organizationId,
+        organizationId: scopedQuery.organizationId,
       });
     }
 
@@ -107,6 +119,36 @@ export class BookingsService extends CrudService<Bookings> {
         totalPages: Math.ceil(total / limit) || 1,
       },
     };
+  }
+
+  async getCustomerDetail(
+    id: string,
+    currentUserId: string,
+  ): Promise<BookingDetailDto> {
+    const detail = await this.bookingEngine.getBookingDetail(id);
+    if (detail.booking.userId !== currentUserId) {
+      throw new ForbiddenException('Access denied.');
+    }
+    return detail;
+  }
+
+  async assertBookingOwnerOrStaff(
+    bookingId: string,
+    currentUserId: string,
+  ): Promise<Bookings> {
+    const booking = await this.bookingsRepository.findOne({
+      where: { id: bookingId, deletedAt: IsNull() },
+    });
+    if (!booking) {
+      throw new NotFoundException('Réservation introuvable.');
+    }
+    const staff = await this.permissionsService.hasAnyPermission(currentUserId, [
+      'users.read',
+    ]);
+    if (!staff && booking.userId !== currentUserId) {
+      throw new ForbiddenException('Access denied.');
+    }
+    return booking;
   }
 
   async getAdminDetail(id: string): Promise<BookingAdminDetailDto> {
@@ -169,6 +211,16 @@ export class BookingsService extends CrudService<Bookings> {
     dto: UpdateBookingStatusDto,
     actorUserId?: string,
   ): Promise<BookingDetailDto> {
+    if (actorUserId) {
+      return this.assertBookingOwnerOrStaff(id, actorUserId).then(() =>
+        this.bookingEngine.updateBookingStatus(
+          id,
+          dto.status,
+          actorUserId,
+          dto.reason,
+        ),
+      );
+    }
     return this.bookingEngine.updateBookingStatus(
       id,
       dto.status,
@@ -182,6 +234,11 @@ export class BookingsService extends CrudService<Bookings> {
     reason: string | undefined,
     actorUserId?: string,
   ): Promise<BookingDetailDto> {
+    if (actorUserId) {
+      return this.assertBookingOwnerOrStaff(id, actorUserId).then(() =>
+        this.bookingEngine.cancelBooking(id, actorUserId, reason),
+      );
+    }
     return this.bookingEngine.cancelBooking(id, actorUserId, reason);
   }
 }

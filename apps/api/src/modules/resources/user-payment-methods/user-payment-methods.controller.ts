@@ -9,9 +9,13 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { DeepPartial } from 'typeorm';
 import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
-import { UserPaymentMethods } from '../../../entities/generated';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { AuthUserDto } from '../../auth/dto/auth-user.dto';
+import {
+  CreateUserPaymentMethodDto,
+  UpdateUserPaymentMethodDto,
+} from './dto/user-payment-method.dto';
 import { UserPaymentMethodsService } from './user-payment-methods.service';
 
 @ApiTags('user-payment-methods')
@@ -21,31 +25,41 @@ export class UserPaymentMethodsController {
 
   @Get()
   @ApiOperation({ summary: 'List user-payment-methods' })
-  findAll(@Query() query: PaginationQueryDto) {
-    return this.service.findAll(query);
+  findAll(
+    @Query() query: PaginationQueryDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.service.findAll(query, user.id);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get user-payment-methods by id' })
-  findOne(@Param('id') id: string) {
-    return this.service.findOne(id);
+  findOne(@Param('id') id: string, @CurrentUser() user: AuthUserDto) {
+    return this.service.findOne(id, user.id);
   }
 
   @Post()
   @ApiOperation({ summary: 'Create user-payment-methods' })
-  create(@Body() dto: DeepPartial<UserPaymentMethods>) {
-    return this.service.create(dto);
+  create(
+    @Body() dto: CreateUserPaymentMethodDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.service.create(dto, user.id);
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update user-payment-methods' })
-  update(@Param('id') id: string, @Body() dto: DeepPartial<UserPaymentMethods>) {
-    return this.service.update(id, dto);
+  update(
+    @Param('id') id: string,
+    @Body() dto: UpdateUserPaymentMethodDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.service.update(id, dto, user.id);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Soft-delete user-payment-methods' })
-  remove(@Param('id') id: string) {
-    return this.service.remove(id);
+  remove(@Param('id') id: string, @CurrentUser() user: AuthUserDto) {
+    return this.service.remove(id, user.id);
   }
 }

@@ -8,6 +8,7 @@ import type {
   AuthMe,
   AuthResponse,
   AuthTokens,
+  AuthUser,
   CreateAmenityRequest,
   CreateDestinationRequest,
   CreateEmployeeRequest,
@@ -97,6 +98,8 @@ import type {
   CreateRoleRequest,
   CreateUserRequest,
   CreateUserRoleAssignmentRequest,
+  CreateUserAddressRequest,
+  CreateUserPaymentMethodRequest,
   Employee,
   EmployeesListQuery,
   Permission,
@@ -176,8 +179,15 @@ import type {
   OrganizationSettingsListQuery,
   UpdateOrganizationBankAccountRequest,
   UpdateOrganizationRequest,
+  UpdateProfileRequest,
   UpdateRoleRequest,
   UpdateUserRequest,
+  UpdateUserAddressRequest,
+  UpdateUserPaymentMethodRequest,
+  UserAddress,
+  UserAddressesListQuery,
+  UserPaymentMethod,
+  UserPaymentMethodsListQuery,
   UserRoleAssignment,
   UserRoleAssignmentsListQuery,
   User,
@@ -383,6 +393,13 @@ export class ApiClient {
     return this.request<AuthMe>('/auth/me');
   }
 
+  updateAuthProfile(body: UpdateProfileRequest): Promise<AuthUser> {
+    return this.request<AuthUser>('/auth/me', {
+      method: 'PATCH',
+      body,
+    });
+  }
+
   refresh(refreshToken: string): Promise<AuthTokens> {
     return this.request<AuthTokens>('/auth/refresh', {
       method: 'POST',
@@ -439,6 +456,70 @@ export class ApiClient {
 
   deleteUser(id: string): Promise<void> {
     return this.request<void>(`/users/${id}`, { method: 'DELETE' });
+  }
+
+  listUserAddresses(
+    query?: UserAddressesListQuery,
+  ): Promise<PaginatedResponse<UserAddress>> {
+    return fetchPaginated<UserAddress>(this, '/user-addresses', query);
+  }
+
+  getUserAddress(id: string): Promise<UserAddress> {
+    return this.request<UserAddress>(`/user-addresses/${id}`);
+  }
+
+  createUserAddress(body: CreateUserAddressRequest): Promise<UserAddress> {
+    return this.request<UserAddress>('/user-addresses', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateUserAddress(
+    id: string,
+    body: UpdateUserAddressRequest,
+  ): Promise<UserAddress> {
+    return this.request<UserAddress>(`/user-addresses/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteUserAddress(id: string): Promise<void> {
+    return this.request<void>(`/user-addresses/${id}`, { method: 'DELETE' });
+  }
+
+  listUserPaymentMethods(
+    query?: UserPaymentMethodsListQuery,
+  ): Promise<PaginatedResponse<UserPaymentMethod>> {
+    return fetchPaginated<UserPaymentMethod>(this, '/user-payment-methods', query);
+  }
+
+  getUserPaymentMethod(id: string): Promise<UserPaymentMethod> {
+    return this.request<UserPaymentMethod>(`/user-payment-methods/${id}`);
+  }
+
+  createUserPaymentMethod(
+    body: CreateUserPaymentMethodRequest,
+  ): Promise<UserPaymentMethod> {
+    return this.request<UserPaymentMethod>('/user-payment-methods', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateUserPaymentMethod(
+    id: string,
+    body: UpdateUserPaymentMethodRequest,
+  ): Promise<UserPaymentMethod> {
+    return this.request<UserPaymentMethod>(`/user-payment-methods/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteUserPaymentMethod(id: string): Promise<void> {
+    return this.request<void>(`/user-payment-methods/${id}`, { method: 'DELETE' });
   }
 
   listProperties(

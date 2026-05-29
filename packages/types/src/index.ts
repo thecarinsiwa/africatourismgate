@@ -27,6 +27,19 @@ export type {
 } from './auth.js';
 
 export type {
+  CreateUserAddressRequest,
+  CreateUserPaymentMethodRequest,
+  UpdateProfileRequest,
+  UpdateUserAddressRequest,
+  UpdateUserPaymentMethodRequest,
+  UserAddress,
+  UserAddressesListQuery,
+  UserPaymentMethod,
+  UserPaymentMethodsListQuery,
+  UserPaymentMethodType,
+} from './account.js';
+
+export type {
   PaginatedResponse,
   PaginationMeta,
   PaginationQuery,
