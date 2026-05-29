@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { Button, Input } from '@africatourismgate/ui';
 import type { AuthUser, UserStatus } from '@africatourismgate/types';
 import { useEffect, useMemo, useState } from 'react';
@@ -200,34 +199,7 @@ export function AccountProfileForm() {
         </div>
       ) : null}
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
-        <aside className="space-y-3">
-          <p className="text-sm font-semibold text-gray-900 dark:text-white">
-            {t.account.profile.quickLinks}
-          </p>
-          <nav className="flex flex-col gap-2" aria-label={t.account.profile.quickLinks}>
-            <Link
-              href="/account/reservations"
-              className="rounded-lg border border-gray-200 px-4 py-3 text-sm font-medium text-gray-700 transition-colors hover:border-primary hover:text-primary dark:border-atg-border dark:text-white/80 dark:hover:border-primary dark:hover:text-primary"
-            >
-              {t.account.profile.viewReservations}
-            </Link>
-            <Link
-              href="/account/addresses"
-              className="rounded-lg border border-gray-200 px-4 py-3 text-sm font-medium text-gray-700 transition-colors hover:border-primary hover:text-primary dark:border-atg-border dark:text-white/80 dark:hover:border-primary dark:hover:text-primary"
-            >
-              {t.account.nav.addresses}
-            </Link>
-            <Link
-              href="/booking/logout"
-              className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700 transition-colors hover:bg-red-100 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300 dark:hover:bg-red-950/60"
-            >
-              {t.nav.signOut}
-            </Link>
-          </nav>
-        </aside>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="max-w-2xl space-y-6">
           <section className="rounded-lg border border-gray-100 p-4 dark:border-atg-border">
             <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
               {t.account.profile.personalInfo}
@@ -341,8 +313,7 @@ export function AccountProfileForm() {
               </span>
             ) : null}
           </div>
-        </form>
-      </div>
+      </form>
     </div>
   );
 }
