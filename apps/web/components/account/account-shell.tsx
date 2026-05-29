@@ -14,9 +14,17 @@ const NAV = [
 
 type NavKey = (typeof NAV)[number]['key'];
 
-function resolvePageTitle(pathname: string, labels: Record<NavKey, string>, fallback: string): string {
+function resolvePageTitle(
+  pathname: string,
+  labels: Record<NavKey, string>,
+  fallback: string,
+  detailTitle: string,
+): string {
   if (pathname.startsWith('/account/profile')) return labels.profile;
   if (pathname.startsWith('/account/addresses')) return labels.addresses;
+  if (pathname.startsWith('/account/reservations/') && pathname !== '/account/reservations') {
+    return detailTitle;
+  }
   if (pathname.startsWith('/account/reservations')) return labels.reservations;
   if (pathname.startsWith('/account/payment-methods')) return labels.paymentMethods;
   return fallback;
@@ -29,7 +37,12 @@ type Props = {
 export function AccountShell({ children }: Props) {
   const pathname = usePathname();
   const t = useTranslations();
-  const pageTitle = resolvePageTitle(pathname, t.account.nav, t.account.title);
+  const pageTitle = resolvePageTitle(
+    pathname,
+    t.account.nav,
+    t.account.title,
+    t.account.reservations.detail.title,
+  );
 
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
@@ -42,7 +55,9 @@ export function AccountShell({ children }: Props) {
         </Link>
         <span aria-hidden>/</span>
         <span className="font-medium text-gray-900 dark:text-white">{t.account.title}</span>
-        {pathname !== '/account' && pathname !== '/account/profile' ? (
+        {pathname !== '/account' &&
+        pathname !== '/account/profile' &&
+        !pathname.match(/^\/account\/reservations\/[^/]+$/) ? (
           <>
             <span aria-hidden>/</span>
             <span className="text-gray-700 dark:text-white/80">{pageTitle}</span>

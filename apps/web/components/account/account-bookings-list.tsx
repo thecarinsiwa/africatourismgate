@@ -1,36 +1,20 @@
 'use client';
 
 import Link from 'next/link';
-import type { BookingListItem, BookingStatus } from '@africatourismgate/types';
+import type { BookingListItem } from '@africatourismgate/types';
 import { useCallback, useEffect, useState } from 'react';
 import { getAccountApiClient } from '../../lib/api/account';
-import { useTranslations } from '../../lib/i18n/locale-provider';
-
-const statusLabels: Record<BookingStatus, string> = {
-  draft: 'Brouillon',
-  pending_payment: 'En attente',
-  confirmed: 'Confirmée',
-  cancelled: 'Annulée',
-  refunded: 'Remboursée',
-};
-
-function formatDateTime(iso: string): string {
-  try {
-    return new Date(iso).toLocaleString('fr-FR', {
-      dateStyle: 'short',
-      timeStyle: 'short',
-    });
-  } catch {
-    return iso;
-  }
-}
-
-function formatMoney(cents: number, currency: string): string {
-  return `${(cents / 100).toFixed(2)} ${currency}`;
-}
+import {
+  bookingStatusLabels,
+  formatBookingDateTime,
+  formatBookingMoney,
+} from '../../lib/bookings/display';
+import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
 
 export function AccountBookingsList() {
   const t = useTranslations();
+  const { locale } = useLocale();
+  const localeTag = locale === 'en' ? 'en-US' : locale === 'es' ? 'es-ES' : 'fr-FR';
   const [bookings, setBookings] = useState<BookingListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -90,10 +74,10 @@ export function AccountBookingsList() {
               className="border-b border-gray-100 last:border-0 dark:border-atg-border"
             >
               <td className="px-4 py-3 font-mono text-xs">{booking.id.slice(0, 8)}…</td>
-              <td className="px-4 py-3">{formatDateTime(booking.createdAt)}</td>
-              <td className="px-4 py-3">{statusLabels[booking.status] ?? booking.status}</td>
+              <td className="px-4 py-3">{formatBookingDateTime(booking.createdAt, localeTag)}</td>
+              <td className="px-4 py-3">{bookingStatusLabels[booking.status] ?? booking.status}</td>
               <td className="px-4 py-3">
-                {formatMoney(booking.totalCents, booking.currency)}
+                {formatBookingMoney(booking.totalCents, booking.currency)}
               </td>
               <td className="px-4 py-3">
                 <Link

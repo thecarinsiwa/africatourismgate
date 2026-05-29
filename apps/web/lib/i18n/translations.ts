@@ -237,6 +237,25 @@ export type Translations = {
       back: string;
       notFound: string;
       loadError: string;
+      detail: {
+        bookedOn: string;
+        itemsCount: string;
+        itemsTitle: string;
+        noItems: string;
+        item: string;
+        dates: string;
+        quantity: string;
+        lineTotal: string;
+        actions: string;
+        payNow: string;
+        paying: string;
+        payError: string;
+        cancelBooking: string;
+        cancelling: string;
+        cancelConfirm: string;
+        cancelError: string;
+        title: string;
+      };
     };
     paymentMethods: {
       empty: string;
@@ -591,6 +610,25 @@ const fr: Translations = {
       back: 'Retour aux réservations',
       notFound: 'Réservation introuvable.',
       loadError: 'Impossible de charger les réservations.',
+      detail: {
+        bookedOn: 'Réservée le',
+        itemsCount: 'Articles',
+        itemsTitle: 'Détail de la réservation',
+        noItems: 'Aucun article enregistré.',
+        item: 'Prestation',
+        dates: 'Dates',
+        quantity: 'Qté',
+        lineTotal: 'Montant',
+        actions: 'Actions',
+        payNow: 'Payer maintenant',
+        paying: 'Redirection vers le paiement…',
+        payError: 'Impossible d’ouvrir la page de paiement.',
+        cancelBooking: 'Annuler la réservation',
+        cancelling: 'Annulation…',
+        cancelConfirm: 'Annuler cette réservation ?',
+        cancelError: 'Impossible d’annuler la réservation.',
+        title: 'Détail de la réservation',
+      },
     },
     paymentMethods: {
       empty: 'Aucun moyen de paiement enregistré.',
@@ -944,6 +982,25 @@ const en: Translations = {
       back: 'Back to bookings',
       notFound: 'Booking not found.',
       loadError: 'Could not load bookings.',
+      detail: {
+        bookedOn: 'Booked on',
+        itemsCount: 'Items',
+        itemsTitle: 'Booking details',
+        noItems: 'No items recorded.',
+        item: 'Service',
+        dates: 'Dates',
+        quantity: 'Qty',
+        lineTotal: 'Amount',
+        actions: 'Actions',
+        payNow: 'Pay now',
+        paying: 'Redirecting to payment…',
+        payError: 'Could not open the payment page.',
+        cancelBooking: 'Cancel booking',
+        cancelling: 'Cancelling…',
+        cancelConfirm: 'Cancel this booking?',
+        cancelError: 'Could not cancel the booking.',
+        title: 'Booking details',
+      },
     },
     paymentMethods: {
       empty: 'No payment methods saved.',
@@ -1298,6 +1355,25 @@ const es: Translations = {
       back: 'Volver a reservas',
       notFound: 'Reserva no encontrada.',
       loadError: 'No se pudieron cargar las reservas.',
+      detail: {
+        bookedOn: 'Reservada el',
+        itemsCount: 'Artículos',
+        itemsTitle: 'Detalle de la reserva',
+        noItems: 'Sin artículos registrados.',
+        item: 'Servicio',
+        dates: 'Fechas',
+        quantity: 'Cant.',
+        lineTotal: 'Importe',
+        actions: 'Acciones',
+        payNow: 'Pagar ahora',
+        paying: 'Redirigiendo al pago…',
+        payError: 'No se pudo abrir la página de pago.',
+        cancelBooking: 'Cancelar reserva',
+        cancelling: 'Cancelando…',
+        cancelConfirm: '¿Cancelar esta reserva?',
+        cancelError: 'No se pudo cancelar la reserva.',
+        title: 'Detalle de la reserva',
+      },
     },
     paymentMethods: {
       empty: 'Sin medios de pago guardados.',
