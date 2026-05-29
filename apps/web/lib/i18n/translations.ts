@@ -187,6 +187,7 @@ export type Translations = {
   account: {
     title: string;
     subtitle: string;
+    browseSite: string;
     navAria: string;
     loading: string;
     nav: {
@@ -540,6 +541,7 @@ const fr: Translations = {
   account: {
     title: 'Mon compte',
     subtitle: 'Gérez votre profil, vos adresses et vos réservations.',
+    browseSite: 'Explorer les hébergements',
     navAria: 'Navigation du compte',
     loading: 'Chargement…',
     nav: {
@@ -892,6 +894,7 @@ const en: Translations = {
   account: {
     title: 'My account',
     subtitle: 'Manage your profile, addresses and bookings.',
+    browseSite: 'Browse accommodations',
     navAria: 'Account navigation',
     loading: 'Loading…',
     nav: {
@@ -1245,6 +1248,7 @@ const es: Translations = {
   account: {
     title: 'Mi cuenta',
     subtitle: 'Gestione su perfil, direcciones y reservas.',
+    browseSite: 'Explorar alojamientos',
     navAria: 'Navegación de la cuenta',
     loading: 'Cargando…',
     nav: {
