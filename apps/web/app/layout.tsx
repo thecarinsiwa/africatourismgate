@@ -34,6 +34,7 @@ const localeInitScript = `
   try {
     var locale = localStorage.getItem('atg-locale');
     var sessionRaw = localStorage.getItem('atg.web.session');
+    if (!sessionRaw) sessionRaw = sessionStorage.getItem('atg.web.session');
     if (sessionRaw) {
       var session = JSON.parse(sessionRaw);
       var pref = session && session.user && session.user.preferredLanguage;

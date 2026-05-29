@@ -54,7 +54,7 @@ export function BookingOAuthCallbackPageContent({
             expiresAt: Date.now() + ttlSeconds * 1000,
             user: me.user,
           },
-          true,
+          false,
         );
         const locale = localeFromPreferredLanguage(me.user.preferredLanguage);
         if (locale) {

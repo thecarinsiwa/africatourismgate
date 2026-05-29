@@ -4,6 +4,10 @@ import { refreshAuthTokens } from '../api/auth';
 const WEB_SESSION_KEY = 'atg.web.session';
 const ACCESS_SKEW_MS = 30_000;
 
+export const AUTH_CHANGED_EVENT = 'atg:auth-changed';
+
+export type WebSessionPersistence = 'local' | 'session';
+
 export type WebStoredSession = {
   accessToken: string;
   refreshToken: string;
@@ -48,10 +52,18 @@ export function authTokensToWebSession(
   };
 }
 
-export function saveWebSession(session: WebStoredSession, remember = true): void {
+export function getWebSessionPersistence(): WebSessionPersistence | null {
+  if (typeof window === 'undefined') return null;
+  if (localStorage.getItem(WEB_SESSION_KEY)) return 'local';
+  if (sessionStorage.getItem(WEB_SESSION_KEY)) return 'session';
+  return null;
+}
+
+export function saveWebSession(session: WebStoredSession, remember?: boolean): void {
   if (typeof window === 'undefined') return;
-  const storage = remember ? localStorage : sessionStorage;
-  const otherStorage = remember ? sessionStorage : localStorage;
+  const useLocal = remember ?? getWebSessionPersistence() === 'local';
+  const storage = useLocal ? localStorage : sessionStorage;
+  const otherStorage = useLocal ? sessionStorage : localStorage;
   storage.setItem(WEB_SESSION_KEY, JSON.stringify(session));
   otherStorage.removeItem(WEB_SESSION_KEY);
 }
@@ -65,10 +77,22 @@ export function getWebSession(): WebStoredSession | null {
   return null;
 }
 
+export function hasWebSession(): boolean {
+  return Boolean(getWebSession()?.accessToken);
+}
+
 export function clearWebSession(): void {
   if (typeof window === 'undefined') return;
   localStorage.removeItem(WEB_SESSION_KEY);
   sessionStorage.removeItem(WEB_SESSION_KEY);
+}
+
+export function clearWebAuthState(): void {
+  clearWebSession();
+  if (typeof window === 'undefined') return;
+  window.dispatchEvent(
+    new CustomEvent(AUTH_CHANGED_EVENT, { detail: { loggedIn: false } }),
+  );
 }
 
 function isAccessTokenExpired(session: WebStoredSession): boolean {
@@ -80,13 +104,15 @@ export async function ensureClientAccessToken(): Promise<string | null> {
   if (!session) return null;
   if (!isAccessTokenExpired(session)) return session.accessToken;
 
+  const persistence = getWebSessionPersistence();
+
   try {
     const refreshed = await refreshAuthTokens(session.refreshToken);
     const nextSession = authTokensToWebSession(refreshed, session.user);
-    saveWebSession(nextSession, true);
+    saveWebSession(nextSession, persistence === 'local');
     return nextSession.accessToken;
   } catch {
-    clearWebSession();
+    clearWebAuthState();
     return null;
   }
 }

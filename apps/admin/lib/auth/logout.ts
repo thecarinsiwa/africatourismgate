@@ -1,15 +1,16 @@
 import { getApiClient } from './api';
-import { clearSession, getSession } from './session';
+import { clearAuthState, getSession } from './session';
 
 /** Révoque le refresh token côté API (best-effort) puis efface la session locale. */
 export async function logout(): Promise<void> {
   const session = getSession();
-  if (session?.refreshToken) {
+  const refreshToken = session?.refreshToken;
+  if (refreshToken) {
     try {
-      await getApiClient().logout(session.refreshToken);
+      await getApiClient().logout(refreshToken);
     } catch {
       // Idempotent : session locale toujours effacée
     }
   }
-  clearSession();
+  clearAuthState();
 }

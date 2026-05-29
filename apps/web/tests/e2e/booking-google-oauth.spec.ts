@@ -25,7 +25,11 @@ test('google oauth callback stores session and redirects to next', async ({ page
   );
 
   await expect(page).toHaveURL(/\/booking\/cart$/);
-  const stored = await page.evaluate(() => window.localStorage.getItem('atg.web.session'));
-  expect(stored).toContain('access_google');
-  expect(stored).toContain('refresh_google');
+  const stored = await page.evaluate(() => ({
+    session: window.sessionStorage.getItem('atg.web.session'),
+    local: window.localStorage.getItem('atg.web.session'),
+  }));
+  expect(stored.session).toContain('access_google');
+  expect(stored.session).toContain('refresh_google');
+  expect(stored.local).toBeNull();
 });
