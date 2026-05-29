@@ -11,6 +11,7 @@ import { ApiForbiddenResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { AuthUserDto } from '../../auth/dto/auth-user.dto';
 import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
+import { PermissionsService } from '../../rbac/permissions.service';
 import { StripeService } from '../../stripe/stripe.service';
 import { BookingEngineService } from './booking-engine.service';
 import { BookingsService } from './bookings.service';
@@ -27,6 +28,7 @@ export class BookingsController {
     private readonly bookingsService: BookingsService,
     private readonly bookingEngine: BookingEngineService,
     private readonly stripeService: StripeService,
+    private readonly permissionsService: PermissionsService,
   ) {}
 
   @Post('checkout-preview')
@@ -52,15 +54,27 @@ export class BookingsController {
   @Get()
   @RequirePermissions('bookings.read')
   @ApiOperation({ summary: 'List bookings' })
-  findAll(@Query() query: BookingsListQueryDto) {
-    return this.bookingsService.list(query);
+  findAll(
+    @Query() query: BookingsListQueryDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.bookingsService.list(query, user.id);
   }
 
   @Get(':id')
   @RequirePermissions('bookings.read')
   @ApiOperation({ summary: 'Get booking detail with client, items, payments, status history' })
-  findOne(@Param('id') id: string) {
-    return this.bookingsService.getAdminDetail(id);
+  async findOne(
+    @Param('id') id: string,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    const staff = await this.permissionsService.hasAnyPermission(user.id, [
+      'users.read',
+    ]);
+    if (staff) {
+      return this.bookingsService.getAdminDetail(id);
+    }
+    return this.bookingsService.getCustomerDetail(id, user.id);
   }
 
   @Patch(':id/status')
@@ -77,30 +91,33 @@ export class BookingsController {
   @Post(':id/payment-intent')
   @RequirePermissions('bookings.write')
   @ApiOperation({ summary: 'Create Stripe PaymentIntent for booking (test / custom UI)' })
-  createPaymentIntent(
+  async createPaymentIntent(
     @Param('id') id: string,
     @CurrentUser() user: AuthUserDto,
   ) {
+    await this.bookingsService.assertBookingOwnerOrStaff(id, user.id);
     return this.stripeService.createPaymentIntentForBooking(id, user.id);
   }
 
   @Post(':id/checkout-session')
   @RequirePermissions('bookings.write')
   @ApiOperation({ summary: 'Create Stripe Checkout Session (hosted payment page)' })
-  createCheckoutSession(
+  async createCheckoutSession(
     @Param('id') id: string,
     @CurrentUser() user: AuthUserDto,
   ) {
+    await this.bookingsService.assertBookingOwnerOrStaff(id, user.id);
     return this.stripeService.createCheckoutSessionForBooking(id, user.id);
   }
 
   @Post(':id/confirm')
   @RequirePermissions('bookings.write')
   @ApiOperation({ summary: 'Confirm booking (pending_payment → confirmed)' })
-  confirm(
+  async confirm(
     @Param('id') id: string,
     @CurrentUser() user: AuthUserDto,
   ) {
+    await this.bookingsService.assertBookingOwnerOrStaff(id, user.id);
     return this.bookingEngine.confirmBooking(id, user.id);
   }
 

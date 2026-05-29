@@ -17,6 +17,8 @@ export type Translations = {
     mainAria: string;
     mobileAria: string;
     menu: string;
+    myAccount: string;
+    signIn: string;
   };
   theme: { lightMode: string; darkMode: string; enableLight: string; enableDark: string };
   language: { label: string; select: string };
@@ -181,6 +183,79 @@ export type Translations = {
     bedConfig: string;
     reserveSection: string;
   };
+  account: {
+    title: string;
+    subtitle: string;
+    navAria: string;
+    loading: string;
+    nav: {
+      profile: string;
+      addresses: string;
+      reservations: string;
+      paymentMethods: string;
+    };
+    profile: {
+      email: string;
+      firstName: string;
+      lastName: string;
+      phone: string;
+      language: string;
+      save: string;
+      saving: string;
+      saved: string;
+      loadError: string;
+      saveError: string;
+    };
+    addresses: {
+      empty: string;
+      addNew: string;
+      add: string;
+      saving: string;
+      cancel: string;
+      delete: string;
+      deleteConfirm: string;
+      deleteError: string;
+      loadError: string;
+      saveError: string;
+      defaultBadge: string;
+      isDefault: string;
+      label: string;
+      line1: string;
+      line2: string;
+      city: string;
+      countryCode: string;
+    };
+    reservations: {
+      empty: string;
+      reference: string;
+      date: string;
+      status: string;
+      total: string;
+      view: string;
+      back: string;
+      notFound: string;
+      loadError: string;
+    };
+    paymentMethods: {
+      empty: string;
+      addNew: string;
+      add: string;
+      saving: string;
+      cancel: string;
+      delete: string;
+      deleteConfirm: string;
+      deleteError: string;
+      loadError: string;
+      saveError: string;
+      defaultBadge: string;
+      isDefault: string;
+      typeCard: string;
+      typePaypal: string;
+      typeOther: string;
+      provider: string;
+      lastFour: string;
+    };
+  };
 };
 
 const fr: Translations = {
@@ -204,6 +279,8 @@ const fr: Translations = {
     mainAria: 'Navigation principale',
     mobileAria: 'Navigation mobile',
     menu: 'Menu',
+    myAccount: 'Mon compte',
+    signIn: 'Connexion',
   },
   theme: {
     lightMode: 'Mode clair',
@@ -458,6 +535,79 @@ const fr: Translations = {
     bedConfig: 'Literie',
     reserveSection: 'Réserver',
   },
+  account: {
+    title: 'Mon compte',
+    subtitle: 'Gérez votre profil, vos adresses et vos réservations.',
+    navAria: 'Navigation du compte',
+    loading: 'Chargement…',
+    nav: {
+      profile: 'Profil',
+      addresses: 'Adresses',
+      reservations: 'Réservations',
+      paymentMethods: 'Moyens de paiement',
+    },
+    profile: {
+      email: 'E-mail',
+      firstName: 'Prénom',
+      lastName: 'Nom',
+      phone: 'Téléphone',
+      language: 'Langue préférée',
+      save: 'Enregistrer',
+      saving: 'Enregistrement…',
+      saved: 'Profil mis à jour.',
+      loadError: 'Impossible de charger le profil.',
+      saveError: 'Impossible de mettre à jour le profil.',
+    },
+    addresses: {
+      empty: 'Aucune adresse enregistrée.',
+      addNew: 'Ajouter une adresse',
+      add: 'Ajouter',
+      saving: 'Enregistrement…',
+      cancel: 'Annuler',
+      delete: 'Supprimer',
+      deleteConfirm: 'Supprimer cette adresse ?',
+      deleteError: 'Impossible de supprimer l’adresse.',
+      loadError: 'Impossible de charger les adresses.',
+      saveError: 'Impossible d’enregistrer l’adresse.',
+      defaultBadge: 'Par défaut',
+      isDefault: 'Adresse par défaut',
+      label: 'Libellé (ex. Domicile)',
+      line1: 'Adresse ligne 1',
+      line2: 'Adresse ligne 2',
+      city: 'Ville',
+      countryCode: 'Code pays (ex. CD)',
+    },
+    reservations: {
+      empty: 'Aucune réservation pour le moment.',
+      reference: 'Référence',
+      date: 'Date',
+      status: 'Statut',
+      total: 'Total',
+      view: 'Voir',
+      back: 'Retour aux réservations',
+      notFound: 'Réservation introuvable.',
+      loadError: 'Impossible de charger les réservations.',
+    },
+    paymentMethods: {
+      empty: 'Aucun moyen de paiement enregistré.',
+      addNew: 'Ajouter un moyen de paiement',
+      add: 'Ajouter',
+      saving: 'Enregistrement…',
+      cancel: 'Annuler',
+      delete: 'Supprimer',
+      deleteConfirm: 'Supprimer ce moyen de paiement ?',
+      deleteError: 'Impossible de supprimer.',
+      loadError: 'Impossible de charger les moyens de paiement.',
+      saveError: 'Impossible d’enregistrer.',
+      defaultBadge: 'Par défaut',
+      isDefault: 'Par défaut',
+      typeCard: 'Carte bancaire',
+      typePaypal: 'PayPal',
+      typeOther: 'Autre',
+      provider: 'Fournisseur (ex. visa)',
+      lastFour: '4 derniers chiffres',
+    },
+  },
 };
 
 const en: Translations = {
@@ -481,6 +631,8 @@ const en: Translations = {
     mainAria: 'Main navigation',
     mobileAria: 'Mobile navigation',
     menu: 'Menu',
+    myAccount: 'My account',
+    signIn: 'Sign in',
   },
   theme: {
     lightMode: 'Light mode',
@@ -734,6 +886,79 @@ const en: Translations = {
     bedConfig: 'Bedding',
     reserveSection: 'Book',
   },
+  account: {
+    title: 'My account',
+    subtitle: 'Manage your profile, addresses and bookings.',
+    navAria: 'Account navigation',
+    loading: 'Loading…',
+    nav: {
+      profile: 'Profile',
+      addresses: 'Addresses',
+      reservations: 'Bookings',
+      paymentMethods: 'Payment methods',
+    },
+    profile: {
+      email: 'Email',
+      firstName: 'First name',
+      lastName: 'Last name',
+      phone: 'Phone',
+      language: 'Preferred language',
+      save: 'Save',
+      saving: 'Saving…',
+      saved: 'Profile updated.',
+      loadError: 'Could not load profile.',
+      saveError: 'Could not update profile.',
+    },
+    addresses: {
+      empty: 'No saved addresses.',
+      addNew: 'Add address',
+      add: 'Add',
+      saving: 'Saving…',
+      cancel: 'Cancel',
+      delete: 'Delete',
+      deleteConfirm: 'Delete this address?',
+      deleteError: 'Could not delete address.',
+      loadError: 'Could not load addresses.',
+      saveError: 'Could not save address.',
+      defaultBadge: 'Default',
+      isDefault: 'Default address',
+      label: 'Label (e.g. Home)',
+      line1: 'Address line 1',
+      line2: 'Address line 2',
+      city: 'City',
+      countryCode: 'Country code (e.g. CD)',
+    },
+    reservations: {
+      empty: 'No bookings yet.',
+      reference: 'Reference',
+      date: 'Date',
+      status: 'Status',
+      total: 'Total',
+      view: 'View',
+      back: 'Back to bookings',
+      notFound: 'Booking not found.',
+      loadError: 'Could not load bookings.',
+    },
+    paymentMethods: {
+      empty: 'No payment methods saved.',
+      addNew: 'Add payment method',
+      add: 'Add',
+      saving: 'Saving…',
+      cancel: 'Cancel',
+      delete: 'Delete',
+      deleteConfirm: 'Delete this payment method?',
+      deleteError: 'Could not delete.',
+      loadError: 'Could not load payment methods.',
+      saveError: 'Could not save.',
+      defaultBadge: 'Default',
+      isDefault: 'Default',
+      typeCard: 'Card',
+      typePaypal: 'PayPal',
+      typeOther: 'Other',
+      provider: 'Provider (e.g. visa)',
+      lastFour: 'Last 4 digits',
+    },
+  },
 };
 
 const es: Translations = {
@@ -757,6 +982,8 @@ const es: Translations = {
     mainAria: 'Navegación principal',
     mobileAria: 'Navegación móvil',
     menu: 'Menú',
+    myAccount: 'Mi cuenta',
+    signIn: 'Iniciar sesión',
   },
   theme: {
     lightMode: 'Modo claro',
@@ -1010,6 +1237,79 @@ const es: Translations = {
     maxGuests: 'hasta {n} viajeros',
     bedConfig: 'Camas',
     reserveSection: 'Reservar',
+  },
+  account: {
+    title: 'Mi cuenta',
+    subtitle: 'Gestione su perfil, direcciones y reservas.',
+    navAria: 'Navegación de la cuenta',
+    loading: 'Cargando…',
+    nav: {
+      profile: 'Perfil',
+      addresses: 'Direcciones',
+      reservations: 'Reservas',
+      paymentMethods: 'Medios de pago',
+    },
+    profile: {
+      email: 'Correo',
+      firstName: 'Nombre',
+      lastName: 'Apellido',
+      phone: 'Teléfono',
+      language: 'Idioma preferido',
+      save: 'Guardar',
+      saving: 'Guardando…',
+      saved: 'Perfil actualizado.',
+      loadError: 'No se pudo cargar el perfil.',
+      saveError: 'No se pudo actualizar el perfil.',
+    },
+    addresses: {
+      empty: 'Sin direcciones guardadas.',
+      addNew: 'Añadir dirección',
+      add: 'Añadir',
+      saving: 'Guardando…',
+      cancel: 'Cancelar',
+      delete: 'Eliminar',
+      deleteConfirm: '¿Eliminar esta dirección?',
+      deleteError: 'No se pudo eliminar.',
+      loadError: 'No se pudieron cargar las direcciones.',
+      saveError: 'No se pudo guardar.',
+      defaultBadge: 'Predeterminada',
+      isDefault: 'Dirección predeterminada',
+      label: 'Etiqueta (ej. Casa)',
+      line1: 'Dirección línea 1',
+      line2: 'Dirección línea 2',
+      city: 'Ciudad',
+      countryCode: 'Código país (ej. CD)',
+    },
+    reservations: {
+      empty: 'Sin reservas por ahora.',
+      reference: 'Referencia',
+      date: 'Fecha',
+      status: 'Estado',
+      total: 'Total',
+      view: 'Ver',
+      back: 'Volver a reservas',
+      notFound: 'Reserva no encontrada.',
+      loadError: 'No se pudieron cargar las reservas.',
+    },
+    paymentMethods: {
+      empty: 'Sin medios de pago guardados.',
+      addNew: 'Añadir medio de pago',
+      add: 'Añadir',
+      saving: 'Guardando…',
+      cancel: 'Cancelar',
+      delete: 'Eliminar',
+      deleteConfirm: '¿Eliminar este medio de pago?',
+      deleteError: 'No se pudo eliminar.',
+      loadError: 'No se pudieron cargar los medios de pago.',
+      saveError: 'No se pudo guardar.',
+      defaultBadge: 'Predeterminado',
+      isDefault: 'Predeterminado',
+      typeCard: 'Tarjeta',
+      typePaypal: 'PayPal',
+      typeOther: 'Otro',
+      provider: 'Proveedor (ej. visa)',
+      lastFour: 'Últimos 4 dígitos',
+    },
   },
 };
 

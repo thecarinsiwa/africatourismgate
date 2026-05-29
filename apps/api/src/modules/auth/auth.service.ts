@@ -30,6 +30,7 @@ import {
   PASSWORD_RESET_TTL_SECONDS,
   RESET_PASSWORD_INVALID_MESSAGE,
   SEED_ORG_PLATFORM_ID,
+  SEED_ROLE_CUSTOMER_ID,
   SEED_ROLE_ORG_ADMIN_ID,
 } from './auth.constants';
 import {
@@ -47,6 +48,8 @@ import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { AuthMeDto } from './dto/auth-me.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
+import { AuthUserDto } from './dto/auth-user.dto';
 import { PermissionsService } from '../rbac/permissions.service';
 
 @Injectable()
@@ -215,9 +218,8 @@ export class AuthService {
       const assignment = this.roleAssignmentsRepo.create({
         id: newId(),
         userId: user.id,
-        roleId: SEED_ROLE_ORG_ADMIN_ID,
-        scopeType: 'agency',
-        scopeId: SEED_ORG_PLATFORM_ID,
+        roleId: SEED_ROLE_CUSTOMER_ID,
+        scopeType: 'global',
         assignedByUserId: user.id,
         assignedAt: new Date(),
       } as DeepPartial<UserRoleAssignments>);
@@ -233,6 +235,34 @@ export class AuthService {
 
     const tokens = await this.issueTokenPair(user);
     return { ...tokens, user: toAuthUserDto(user) };
+  }
+
+  async updateProfile(
+    userId: string,
+    dto: UpdateProfileDto,
+  ): Promise<AuthUserDto> {
+    const user = await this.usersRepo.findOne({
+      where: { id: userId, deletedAt: IsNull() },
+    });
+    if (!user || user.status !== 'active') {
+      throw new UnauthorizedException();
+    }
+
+    if (dto.firstName !== undefined) {
+      user.firstName = dto.firstName.trim();
+    }
+    if (dto.lastName !== undefined) {
+      user.lastName = dto.lastName.trim();
+    }
+    if (dto.phone !== undefined) {
+      user.phone = dto.phone?.trim() ?? '';
+    }
+    if (dto.preferredLanguage !== undefined) {
+      user.preferredLanguage = dto.preferredLanguage?.trim() ?? '';
+    }
+
+    await this.usersRepo.save(user);
+    return toAuthUserDto(user);
   }
 
   buildWebOAuthCallbackUrl(

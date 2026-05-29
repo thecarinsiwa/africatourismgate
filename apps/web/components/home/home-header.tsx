@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { LanguageSwitcher } from '../language-switcher';
+import { getWebSession } from '../../lib/auth/client-session';
 import { useTranslations } from '../../lib/i18n/locale-provider';
 
 const SOCIAL_LINKS = [
@@ -50,6 +51,7 @@ export function HomeHeader() {
     displayName: 'Africa Tourism Gate',
     logoUrl: null,
   });
+  const [hasSession, setHasSession] = useState(false);
 
   const navLinks = useMemo(
     () => [
@@ -75,6 +77,7 @@ export function HomeHeader() {
 
   useEffect(() => {
     setTheme(document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    setHasSession(Boolean(getWebSession()?.accessToken));
   }, []);
 
   useEffect(() => {
@@ -215,10 +218,17 @@ export function HomeHeader() {
             ))}
           </nav>
 
+          <Link
+            href={hasSession ? '/account' : '/booking/login?next=%2Faccount'}
+            className="hidden rounded-lg px-3 py-2 text-sm font-medium text-[#333] transition-colors hover:text-primary dark:text-white/75 dark:hover:text-white lg:inline-flex"
+          >
+            {hasSession ? t.nav.myAccount : t.nav.signIn}
+          </Link>
+
           <button
             type="button"
             onClick={toggleTheme}
-            className="ml-auto mr-2 inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-gray-200 text-gray-600 transition-colors hover:border-primary hover:text-primary dark:border-atg-border dark:text-white/75 dark:hover:border-primary dark:hover:text-white lg:ml-4"
+            className="ml-2 mr-2 inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-gray-200 text-gray-600 transition-colors hover:border-primary hover:text-primary dark:border-atg-border dark:text-white/75 dark:hover:border-primary dark:hover:text-white lg:ml-2 lg:mr-2"
             aria-label={theme === 'dark' ? t.theme.enableLight : t.theme.enableDark}
             title={theme === 'dark' ? t.theme.lightMode : t.theme.darkMode}
           >
@@ -267,6 +277,15 @@ export function HomeHeader() {
             <LanguageSwitcher variant="navbar" />
           </div>
           <ul className="flex flex-col gap-0.5">
+            <li>
+              <Link
+                href={hasSession ? '/account' : '/booking/login?next=%2Faccount'}
+                className="flex min-h-[44px] items-center rounded-lg px-3 py-3 text-sm font-medium text-primary hover:bg-gray-50 dark:hover:bg-white/5"
+                onClick={() => setMenuOpen(false)}
+              >
+                {hasSession ? t.nav.myAccount : t.nav.signIn}
+              </Link>
+            </li>
             {navLinks.map((link) => (
               <li key={link.href}>
                 <Link

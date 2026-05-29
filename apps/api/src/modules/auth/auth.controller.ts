@@ -5,6 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Query,
+  Patch,
   Post,
   Req,
   Res,
@@ -40,6 +41,7 @@ import { ResetPasswordDto } from './dto/reset-password.dto';
 import { ResetPasswordResponseDto } from './dto/reset-password-response.dto';
 import { AuthMeDto } from './dto/auth-me.dto';
 import { AuthUserDto } from './dto/auth-user.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @Public()
 @ApiTags('auth')
@@ -88,6 +90,19 @@ export class AuthController {
   @ApiUnauthorizedResponse()
   me(@CurrentUser() user: AuthUserDto): Promise<AuthMeDto> {
     return this.authService.getAuthMe(user.id);
+  }
+
+  @Patch('me')
+  @SetMetadata(IS_PUBLIC_KEY, false)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Update current user profile' })
+  @ApiOkResponse({ type: AuthUserDto })
+  @ApiUnauthorizedResponse()
+  updateMe(
+    @CurrentUser() user: AuthUserDto,
+    @Body() dto: UpdateProfileDto,
+  ): Promise<AuthUserDto> {
+    return this.authService.updateProfile(user.id, dto);
   }
 
   @Post('login')
