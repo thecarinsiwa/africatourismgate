@@ -207,6 +207,19 @@ export type Translations = {
       saved: string;
       loadError: string;
       saveError: string;
+      personalInfo: string;
+      personalInfoHint: string;
+      preferences: string;
+      preferencesHint: string;
+      emailHint: string;
+      memberId: string;
+      quickLinks: string;
+      viewReservations: string;
+      statusActive: string;
+      statusSuspended: string;
+      statusDeleted: string;
+      reset: string;
+      unsavedChanges: string;
     };
     addresses: {
       empty: string;
@@ -577,9 +590,22 @@ const fr: Translations = {
       language: 'Langue préférée',
       save: 'Enregistrer',
       saving: 'Enregistrement…',
-      saved: 'Profil mis à jour.',
+      saved: 'Profil mis à jour avec succès.',
       loadError: 'Impossible de charger le profil.',
       saveError: 'Impossible de mettre à jour le profil.',
+      personalInfo: 'Informations personnelles',
+      personalInfoHint: 'Vos coordonnées utilisées pour les réservations.',
+      preferences: 'Préférences',
+      preferencesHint: 'Langue d’affichage du site et des communications.',
+      emailHint: 'L’adresse e-mail ne peut pas être modifiée ici.',
+      memberId: 'Identifiant client',
+      quickLinks: 'Accès rapide',
+      viewReservations: 'Mes réservations',
+      statusActive: 'Compte actif',
+      statusSuspended: 'Compte suspendu',
+      statusDeleted: 'Compte supprimé',
+      reset: 'Annuler les modifications',
+      unsavedChanges: 'Modifications non enregistrées',
     },
     addresses: {
       empty: 'Aucune adresse enregistrée.',
@@ -949,9 +975,22 @@ const en: Translations = {
       language: 'Preferred language',
       save: 'Save',
       saving: 'Saving…',
-      saved: 'Profile updated.',
+      saved: 'Profile updated successfully.',
       loadError: 'Could not load profile.',
       saveError: 'Could not update profile.',
+      personalInfo: 'Personal information',
+      personalInfoHint: 'Your contact details used for bookings.',
+      preferences: 'Preferences',
+      preferencesHint: 'Site display language and communications.',
+      emailHint: 'Email address cannot be changed here.',
+      memberId: 'Customer ID',
+      quickLinks: 'Quick links',
+      viewReservations: 'My bookings',
+      statusActive: 'Active account',
+      statusSuspended: 'Suspended account',
+      statusDeleted: 'Deleted account',
+      reset: 'Discard changes',
+      unsavedChanges: 'Unsaved changes',
     },
     addresses: {
       empty: 'No saved addresses.',
@@ -1322,9 +1361,22 @@ const es: Translations = {
       language: 'Idioma preferido',
       save: 'Guardar',
       saving: 'Guardando…',
-      saved: 'Perfil actualizado.',
+      saved: 'Perfil actualizado con éxito.',
       loadError: 'No se pudo cargar el perfil.',
       saveError: 'No se pudo actualizar el perfil.',
+      personalInfo: 'Información personal',
+      personalInfoHint: 'Sus datos de contacto para las reservas.',
+      preferences: 'Preferencias',
+      preferencesHint: 'Idioma del sitio y comunicaciones.',
+      emailHint: 'El correo no se puede modificar aquí.',
+      memberId: 'ID de cliente',
+      quickLinks: 'Accesos rápidos',
+      viewReservations: 'Mis reservas',
+      statusActive: 'Cuenta activa',
+      statusSuspended: 'Cuenta suspendida',
+      statusDeleted: 'Cuenta eliminada',
+      reset: 'Descartar cambios',
+      unsavedChanges: 'Cambios sin guardar',
     },
     addresses: {
       empty: 'Sin direcciones guardadas.',
