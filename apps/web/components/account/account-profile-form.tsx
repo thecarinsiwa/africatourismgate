@@ -12,8 +12,12 @@ import {
   getWebSession,
   saveWebSession,
 } from '../../lib/auth/client-session';
+import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
+import {
+  localeFromPreferredLanguage,
+  syncSessionUserPreferredLanguage,
+} from '../../lib/i18n/preferred-language';
 import { LOCALES } from '../../lib/i18n/types';
-import { useTranslations } from '../../lib/i18n/locale-provider';
 
 const statusStyles: Record<UserStatus, string> = {
   active: 'bg-green-100 text-green-800 dark:bg-green-950/50 dark:text-green-300',
@@ -39,6 +43,7 @@ function ProfileStatusBadge({
 
 export function AccountProfileForm() {
   const t = useTranslations();
+  const { setLocale } = useLocale();
   const [user, setUser] = useState<AuthUser | null>(null);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -81,6 +86,11 @@ export function AccountProfileForm() {
         setLastName(me.user.lastName);
         setPhone(me.user.phone ?? '');
         setPreferredLanguage(me.user.preferredLanguage ?? 'fr');
+        syncSessionUserPreferredLanguage(me.user);
+        const loadedLocale = localeFromPreferredLanguage(me.user.preferredLanguage);
+        if (loadedLocale) {
+          setLocale(loadedLocale, { persist: false });
+        }
       } catch {
         if (mounted) setError(t.account.profile.loadError);
       } finally {
@@ -124,6 +134,10 @@ export function AccountProfileForm() {
       const session = getWebSession();
       if (session) {
         saveWebSession({ ...session, user: updated });
+      }
+      const savedLocale = localeFromPreferredLanguage(updated.preferredLanguage);
+      if (savedLocale) {
+        setLocale(savedLocale, { persist: false });
       }
       setMessage(t.account.profile.saved);
     } catch {
