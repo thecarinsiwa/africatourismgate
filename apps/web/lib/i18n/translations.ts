@@ -19,6 +19,7 @@ export type Translations = {
     menu: string;
     myAccount: string;
     signIn: string;
+    signOut: string;
   };
   theme: { lightMode: string; darkMode: string; enableLight: string; enableDark: string };
   language: { label: string; select: string };
@@ -281,6 +282,7 @@ const fr: Translations = {
     menu: 'Menu',
     myAccount: 'Mon compte',
     signIn: 'Connexion',
+    signOut: 'Se déconnecter',
   },
   theme: {
     lightMode: 'Mode clair',
@@ -633,6 +635,7 @@ const en: Translations = {
     menu: 'Menu',
     myAccount: 'My account',
     signIn: 'Sign in',
+    signOut: 'Sign out',
   },
   theme: {
     lightMode: 'Light mode',
@@ -984,6 +987,7 @@ const es: Translations = {
     menu: 'Menú',
     myAccount: 'Mi cuenta',
     signIn: 'Iniciar sesión',
+    signOut: 'Cerrar sesión',
   },
   theme: {
     lightMode: 'Modo claro',

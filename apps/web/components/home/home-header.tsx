@@ -218,12 +218,22 @@ export function HomeHeader() {
             ))}
           </nav>
 
-          <Link
-            href={hasSession ? '/account' : '/booking/login?next=%2Faccount'}
-            className="hidden rounded-lg px-3 py-2 text-sm font-medium text-[#333] transition-colors hover:text-primary dark:text-white/75 dark:hover:text-white lg:inline-flex"
-          >
-            {hasSession ? t.nav.myAccount : t.nav.signIn}
-          </Link>
+          <div className="hidden items-center gap-2 lg:flex">
+            <Link
+              href={hasSession ? '/account' : '/booking/login?next=%2Faccount'}
+              className="inline-flex min-h-[44px] items-center rounded-lg px-4 py-2.5 text-sm font-medium text-[#333] transition-colors hover:text-primary dark:text-white/75 dark:hover:text-white"
+            >
+              {hasSession ? t.nav.myAccount : t.nav.signIn}
+            </Link>
+            {hasSession ? (
+              <Link
+                href="/booking/logout"
+                className="inline-flex min-h-[44px] items-center rounded-lg border border-red-200 bg-red-50 px-5 py-2.5 text-base font-semibold text-red-700 transition-colors hover:border-red-300 hover:bg-red-100 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300 dark:hover:bg-red-950/60"
+              >
+                {t.nav.signOut}
+              </Link>
+            ) : null}
+          </div>
 
           <button
             type="button"
@@ -286,6 +296,17 @@ export function HomeHeader() {
                 {hasSession ? t.nav.myAccount : t.nav.signIn}
               </Link>
             </li>
+            {hasSession ? (
+              <li>
+                <Link
+                  href="/booking/logout"
+                  className="flex min-h-[48px] items-center justify-center rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-base font-semibold text-red-700 transition-colors hover:bg-red-100 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300 dark:hover:bg-red-950/60"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {t.nav.signOut}
+                </Link>
+              </li>
+            ) : null}
             {navLinks.map((link) => (
               <li key={link.href}>
                 <Link
