@@ -1,7 +1,10 @@
 'use client';
 
 import { useEffect } from 'react';
-import { getSessionFromDocumentCookies } from '../lib/auth/cookies';
+import {
+  getRememberFromDocumentCookies,
+  getSessionFromDocumentCookies,
+} from '../lib/auth/cookies';
 import { getSession, saveSession } from '../lib/auth/session';
 
 /**
@@ -18,10 +21,7 @@ export function SessionSync() {
       stored.accessToken !== fromCookies.accessToken ||
       stored.expiresAt !== fromCookies.expiresAt
     ) {
-      const remember =
-        typeof document !== 'undefined' &&
-        document.cookie.includes('atg.admin.remember=1');
-      saveSession(fromCookies, remember);
+      saveSession(fromCookies, getRememberFromDocumentCookies());
     }
   }, []);
 

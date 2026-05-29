@@ -7,7 +7,7 @@ import type { StoredSession } from '../lib/auth/session';
 import { adminDashboardConfig, adminDashboardNav } from '../config/dashboard';
 import { adminLoginPageConfig } from '../config/login';
 import { logout } from '../lib/auth/logout';
-import { getSession } from '../lib/auth/session';
+import { AUTH_CHANGED_EVENT, getSession } from '../lib/auth/session';
 import { useOrganizationThemeOptional } from './organization-theme-provider';
 import { SessionSync } from './session-sync';
 
@@ -22,7 +22,17 @@ export function DashboardShellLayout({ children }: { children: React.ReactNode }
   const [session, setSession] = useState<StoredSession | null>(null);
 
   useEffect(() => {
-    setSession(getSession());
+    function syncSession() {
+      setSession(getSession());
+    }
+
+    syncSession();
+    window.addEventListener(AUTH_CHANGED_EVENT, syncSession);
+    window.addEventListener('storage', syncSession);
+    return () => {
+      window.removeEventListener(AUTH_CHANGED_EVENT, syncSession);
+      window.removeEventListener('storage', syncSession);
+    };
   }, []);
 
   const user = session?.user

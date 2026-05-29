@@ -4,7 +4,7 @@ const USER_ID = 'user-e2e-account';
 
 function mockSession(page: import('@playwright/test').Page) {
   return page.addInitScript(() => {
-    window.localStorage.setItem(
+    window.sessionStorage.setItem(
       'atg.web.session',
       JSON.stringify({
         accessToken: 'e2e-account-token',
@@ -153,4 +153,26 @@ test('reservations table shows scoped booking rows only', async ({ page }) => {
   await page.goto('/account/reservations');
   await expect(page.locator('tbody tr')).toHaveCount(1);
   await expect(page.getByText('aaaa1111')).toBeVisible();
+});
+
+test('logout clears session from both storages and redirects to login', async ({ page }) => {
+  await mockSession(page);
+
+  await page.route('**/api/auth/logout', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ success: true }),
+    });
+  });
+
+  await page.goto('/booking/logout');
+  await expect(page).toHaveURL(/\/booking\/login$/);
+
+  const cleared = await page.evaluate(() => ({
+    local: window.localStorage.getItem('atg.web.session'),
+    session: window.sessionStorage.getItem('atg.web.session'),
+  }));
+  expect(cleared.local).toBeNull();
+  expect(cleared.session).toBeNull();
 });

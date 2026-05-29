@@ -43,7 +43,7 @@ export function AdminRegisterForm() {
               password,
               ...(phone.trim() ? { phone: phone.trim() } : {}),
             });
-            saveSession(authResponseToStoredSession(response), true);
+            saveSession(authResponseToStoredSession(response), false);
             router.refresh();
             router.push('/dashboard');
           } catch (err) {

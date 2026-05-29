@@ -8,7 +8,7 @@ export const EXPIRES_COOKIE = 'atg.admin.expires';
 export const USER_COOKIE = 'atg.admin.user';
 export const REMEMBER_COOKIE = 'atg.admin.remember';
 
-/** Align with JWT refresh TTL (7d) */
+/** Align with JWT refresh TTL (7d) when remember-me is enabled */
 export const REFRESH_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
 
 const COOKIE_NAMES = [
@@ -23,13 +23,16 @@ function isProduction(): boolean {
   return process.env.NODE_ENV === 'production';
 }
 
-function cookieOptions(maxAge: number) {
-  return {
+function cookieOptions(remember: boolean) {
+  const base = {
     path: '/',
     sameSite: 'lax' as const,
     secure: isProduction(),
-    maxAge,
   };
+  if (!remember) {
+    return base;
+  }
+  return { ...base, maxAge: REFRESH_COOKIE_MAX_AGE };
 }
 
 function encodeUser(user: AuthUser): string {
@@ -47,6 +50,14 @@ function decodeUser(raw: string | undefined): AuthUser | null {
 
 export function getRememberFromRequest(request: NextRequest): boolean {
   return request.cookies.get(REMEMBER_COOKIE)?.value === '1';
+}
+
+export function getRememberFromDocumentCookies(): boolean {
+  if (typeof document === 'undefined') return false;
+  const match = document.cookie.match(
+    new RegExp(`(?:^|; )${REMEMBER_COOKIE.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}=([^;]*)`),
+  );
+  return match?.[1] === '1';
 }
 
 export function getSessionFromCookies(request: NextRequest): StoredSession | null {
@@ -72,17 +83,18 @@ export function setSessionCookies(
   session: StoredSession,
   remember: boolean,
 ): void {
-  const maxAge = REFRESH_COOKIE_MAX_AGE;
-  response.cookies.set(ACCESS_COOKIE, session.accessToken, cookieOptions(maxAge));
-  response.cookies.set(REFRESH_COOKIE, session.refreshToken, cookieOptions(maxAge));
-  response.cookies.set(EXPIRES_COOKIE, String(session.expiresAt), cookieOptions(maxAge));
-  response.cookies.set(USER_COOKIE, encodeUser(session.user), cookieOptions(maxAge));
-  response.cookies.set(REMEMBER_COOKIE, remember ? '1' : '0', cookieOptions(maxAge));
+  const options = cookieOptions(remember);
+  response.cookies.set(ACCESS_COOKIE, session.accessToken, options);
+  response.cookies.set(REFRESH_COOKIE, session.refreshToken, options);
+  response.cookies.set(EXPIRES_COOKIE, String(session.expiresAt), options);
+  response.cookies.set(USER_COOKIE, encodeUser(session.user), options);
+  response.cookies.set(REMEMBER_COOKIE, remember ? '1' : '0', options);
 }
 
 export function clearSessionCookies(response: NextResponse): void {
+  const expired = { ...cookieOptions(false), maxAge: 0 };
   for (const name of COOKIE_NAMES) {
-    response.cookies.set(name, '', { ...cookieOptions(0), maxAge: 0 });
+    response.cookies.set(name, '', expired);
   }
 }
 
@@ -90,9 +102,9 @@ export function clearSessionCookies(response: NextResponse): void {
 export function setClientSessionCookies(session: StoredSession, remember: boolean): void {
   if (typeof document === 'undefined') return;
 
-  const maxAge = REFRESH_COOKIE_MAX_AGE;
   const secure = isProduction() ? '; Secure' : '';
-  const base = `; Path=/; Max-Age=${maxAge}; SameSite=Lax${secure}`;
+  const maxAgePart = remember ? `; Max-Age=${REFRESH_COOKIE_MAX_AGE}` : '';
+  const base = `; Path=/; SameSite=Lax${maxAgePart}${secure}`;
 
   document.cookie = `${ACCESS_COOKIE}=${encodeURIComponent(session.accessToken)}${base}`;
   document.cookie = `${REFRESH_COOKIE}=${encodeURIComponent(session.refreshToken)}${base}`;

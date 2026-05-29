@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 test('panier -> recap -> Stripe -> confirmation', async ({ page }) => {
   await page.addInitScript(() => {
-    window.localStorage.setItem(
+    window.sessionStorage.setItem(
       'atg.web.session',
       JSON.stringify({
         accessToken: 'e2e-token',

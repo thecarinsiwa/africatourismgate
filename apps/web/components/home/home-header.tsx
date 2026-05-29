@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { LanguageSwitcher } from '../language-switcher';
-import { getWebSession } from '../../lib/auth/client-session';
+import { AUTH_CHANGED_EVENT, hasWebSession } from '../../lib/auth/client-session';
 import { useTranslations } from '../../lib/i18n/locale-provider';
 
 const SOCIAL_LINKS = [
@@ -80,7 +80,18 @@ export function HomeHeader() {
 
   useEffect(() => {
     setTheme(document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-    setHasSession(Boolean(getWebSession()?.accessToken));
+
+    function syncSession() {
+      setHasSession(hasWebSession());
+    }
+
+    syncSession();
+    window.addEventListener(AUTH_CHANGED_EVENT, syncSession);
+    window.addEventListener('storage', syncSession);
+    return () => {
+      window.removeEventListener(AUTH_CHANGED_EVENT, syncSession);
+      window.removeEventListener('storage', syncSession);
+    };
   }, []);
 
   useEffect(() => {
