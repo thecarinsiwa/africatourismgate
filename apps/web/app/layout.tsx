@@ -32,9 +32,15 @@ const themeInitScript = `
 
 const localeInitScript = `
   try {
-    const storedLocale = localStorage.getItem('atg-locale');
-    if (storedLocale === 'en' || storedLocale === 'es' || storedLocale === 'fr') {
-      document.documentElement.lang = storedLocale;
+    var locale = localStorage.getItem('atg-locale');
+    var sessionRaw = localStorage.getItem('atg.web.session');
+    if (sessionRaw) {
+      var session = JSON.parse(sessionRaw);
+      var pref = session && session.user && session.user.preferredLanguage;
+      if (pref === 'en' || pref === 'es' || pref === 'fr') locale = pref;
+    }
+    if (locale === 'en' || locale === 'es' || locale === 'fr') {
+      document.documentElement.lang = locale;
     }
   } catch {}
 `;

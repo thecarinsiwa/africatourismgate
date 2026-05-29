@@ -9,39 +9,29 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import { persistPreferredLanguage, resolveInitialLocale } from './preferred-language';
 import { translations, type Translations } from './translations';
-import {
-  DEFAULT_LOCALE,
-  isLocale,
-  LOCALE_STORAGE_KEY,
-  type Locale,
-} from './types';
+import { DEFAULT_LOCALE, LOCALE_STORAGE_KEY, type Locale } from './types';
+
+type SetLocaleOptions = {
+  /** When false, only updates UI/storage (e.g. profile form already PATCHed the API). */
+  persist?: boolean;
+};
 
 type LocaleContextValue = {
   locale: Locale;
-  setLocale: (locale: Locale) => void;
+  setLocale: (locale: Locale, options?: SetLocaleOptions) => void;
   t: Translations;
 };
 
 const LocaleContext = createContext<LocaleContextValue | null>(null);
-
-function readStoredLocale(): Locale {
-  if (typeof window === 'undefined') return DEFAULT_LOCALE;
-  try {
-    const stored = localStorage.getItem(LOCALE_STORAGE_KEY);
-    if (stored && isLocale(stored)) return stored;
-  } catch {
-    /* ignore */
-  }
-  return DEFAULT_LOCALE;
-}
 
 export function LocaleProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(DEFAULT_LOCALE);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setLocaleState(readStoredLocale());
+    setLocaleState(resolveInitialLocale());
     setMounted(true);
   }, []);
 
@@ -55,8 +45,11 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     }
   }, [locale, mounted]);
 
-  const setLocale = useCallback((next: Locale) => {
+  const setLocale = useCallback((next: Locale, options?: SetLocaleOptions) => {
     setLocaleState(next);
+    if (options?.persist !== false) {
+      void persistPreferredLanguage(next);
+    }
   }, []);
 
   const value = useMemo(
