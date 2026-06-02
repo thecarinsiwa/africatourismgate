@@ -22,6 +22,7 @@ type StripeCharge = Awaited<ReturnType<StripeClient['charges']['retrieve']>>;
 import { newId } from '../../common/utils/uuid';
 import { Bookings, Payments } from '../../entities/generated';
 import { BookingEngineService } from '../resources/bookings/booking-engine.service';
+import { LoyaltyAccountsService } from '../resources/loyalty-accounts/loyalty-accounts.service';
 import {
   STRIPE_METADATA_BOOKING_ID,
   STRIPE_METADATA_PAYMENT_ID,
@@ -65,6 +66,7 @@ export class StripeService {
     @InjectRepository(Payments)
     private readonly paymentsRepository: Repository<Payments>,
     private readonly bookingEngine: BookingEngineService,
+    private readonly loyaltyAccountsService: LoyaltyAccountsService,
   ) {}
 
   private getStripe(): StripeClient {
@@ -445,6 +447,14 @@ export class StripeService {
         params.bookingId,
         undefined,
         'Paiement Stripe confirmé (webhook)',
+      );
+    }
+
+    try {
+      await this.loyaltyAccountsService.awardPointsForSucceededPayment(booking, payment);
+    } catch (err) {
+      this.logger.error(
+        `OneKey points award failed for payment ${payment.id}: ${err instanceof Error ? err.message : err}`,
       );
     }
   }
