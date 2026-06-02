@@ -4,6 +4,7 @@ import { Button } from '@africatourismgate/ui';
 import { posSalePageConfig } from '../../config/sale';
 import { formatCents } from '../../lib/sale/format';
 import { useSaleCart } from '../../lib/sale/cart-context';
+import { SalePaymentBar } from './sale-payment-bar';
 
 const { cart: cartLabels, backToHomeLabel } = posSalePageConfig;
 
@@ -133,6 +134,8 @@ export function SaleCartPanel() {
                 {cartLabels.clearLabel}
               </Button>
             ) : null}
+
+            <SalePaymentBar />
           </>
         )}
 

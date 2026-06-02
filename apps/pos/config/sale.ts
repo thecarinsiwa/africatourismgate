@@ -51,11 +51,27 @@ export const posSalePageConfig = {
     selectSlot: 'Choisissez un créneau',
     selectSailing: 'Choisissez une croisière',
   },
+  payment: {
+    cashLabel: 'Espèces',
+    cardLabel: 'Carte',
+    cashProcessingLabel: 'Enregistrement…',
+    cardProcessingLabel: 'Préparation du paiement…',
+    cardPayLabel: 'Encaisser la carte',
+    cardSheetTitle: 'Paiement par carte',
+    cardSheetSubtitle: 'Saisissez ou présentez la carte du client.',
+    closeCardLabel: 'Annuler',
+    cardUnavailableLabel: 'Paiement carte indisponible (clé Stripe manquante)',
+    checkoutErrorLabel: 'Impossible de finaliser la vente',
+    cardErrorLabel: 'Le paiement carte a échoué',
+    previewRequiredHint: 'Attendez le calcul du total',
+  },
 } as const;
 
 export const posSaleSuccessPageConfig = {
   title: 'Vente enregistrée',
   subtitle: 'La réservation a été confirmée.',
+  pendingSubtitle: 'Paiement reçu — confirmation en cours…',
+  confirmingLabel: 'Confirmation de la réservation…',
   bookingLabel: 'N° réservation',
   paymentLabel: 'Mode de paiement',
   paymentCash: 'Espèces',
