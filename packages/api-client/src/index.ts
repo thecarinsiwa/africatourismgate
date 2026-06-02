@@ -89,6 +89,7 @@ import type {
   PropertyReviewsListQuery,
   Review,
   CancelBookingRequest,
+  RecordCashPaymentRequest,
   UpdateBookingStatusRequest,
   CreatePackageItemRequest,
   CreatePackageRequest,
@@ -1240,6 +1241,16 @@ export class ApiClient {
 
   cancelBooking(id: string, body?: CancelBookingRequest): Promise<BookingDetail> {
     return this.request<BookingDetail>(`/bookings/${id}/cancel`, {
+      method: 'POST',
+      body: body ?? {},
+    });
+  }
+
+  recordBookingCashPayment(
+    id: string,
+    body?: RecordCashPaymentRequest,
+  ): Promise<BookingDetail> {
+    return this.request<BookingDetail>(`/bookings/${id}/cash-payment`, {
       method: 'POST',
       body: body ?? {},
     });

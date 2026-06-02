@@ -141,6 +141,10 @@ export interface CancelBookingRequest {
   reason?: string;
 }
 
+export interface RecordCashPaymentRequest {
+  note?: string;
+}
+
 export interface BookingPaymentIntentResponse {
   paymentId: string;
   paymentIntentId: string;
