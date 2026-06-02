@@ -58,6 +58,28 @@ async function main() {
 
   const token = await login(SEED_ADMIN_EMAIL, getSeedAdminPassword());
 
+  console.log('0. Ensure room availability');
+  const existing = await request(
+    'GET',
+    `/room-availability?roomId=${SEED_ROOM_ID}&dateFrom=${TEST_DATE}&dateTo=${TEST_DATE}`,
+    { token },
+  );
+  if (existing.status === 200) {
+    const row = existing.data?.data?.find((r) => r.date?.startsWith(TEST_DATE));
+    if (!row) {
+      const create = await request('POST', '/room-availability', {
+        token,
+        body: {
+          roomId: SEED_ROOM_ID,
+          date: TEST_DATE,
+          availableUnits: 2,
+          priceCents: 9000,
+        },
+      });
+      assertStatus('POST room-availability', create.status, 201);
+    }
+  }
+
   const checkoutItem = {
     itemType: 'room',
     referenceId: SEED_ROOM_ID,
@@ -71,7 +93,12 @@ async function main() {
     token,
     body: { items: [checkoutItem], currency: 'USD' },
   });
-  assertStatus('checkout-preview', previewRes.status, 201);
+  if (previewRes.status !== 201) {
+    throw new Error(
+      `checkout-preview: expected HTTP 201, got ${previewRes.status} ${JSON.stringify(previewRes.data)}`,
+    );
+  }
+  console.log(`  OK checkout-preview → ${previewRes.status}`);
   if (!previewRes.data?.totalCents) {
     throw new Error('Preview missing totalCents');
   }
@@ -98,7 +125,10 @@ async function main() {
     throw new Error(`Expected confirmed, got ${paid.data?.booking?.status}`);
   }
 
-  const cashPayment = (paid.data?.payments ?? []).find((p) => p.provider === 'cash');
+  console.log('4. GET /bookings/:id — payment row');
+  const detail = await request('GET', `/bookings/${bookingId}`, { token });
+  assertStatus('GET booking detail', detail.status, 200);
+  const cashPayment = (detail.data?.payments ?? []).find((p) => p.provider === 'cash');
   if (!cashPayment || cashPayment.status !== 'succeeded') {
     throw new Error('Cash payment row missing or not succeeded');
   }

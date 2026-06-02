@@ -11,6 +11,7 @@ NestJS HTTP API for Africa Tourism Gate, mapped to the MySQL schema in `database
 | `pnpm start` | Run compiled `dist/main` |
 | `pnpm generate` | Regenerate TypeORM entities + CRUD modules from SQL |
 | `pnpm db:sync` | Apply database schema migrations and insert-only seeds |
+| `pnpm test:pos-sale-cash` | POS cash flow: checkout preview → booking → cash-payment (needs `SEED_ADMIN_PASSWORD`) |
 
 ## Configuration
 
