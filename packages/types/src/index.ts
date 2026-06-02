@@ -165,6 +165,7 @@ export type {
   BookingPaymentIntentResponse,
   RefundPaymentResponse,
   CancelBookingRequest,
+  RecordCashPaymentRequest,
   UpdateBookingStatusRequest,
   BookingCheckoutItem,
   BookingCheckoutItemType,

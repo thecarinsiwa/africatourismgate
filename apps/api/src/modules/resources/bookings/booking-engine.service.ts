@@ -4,13 +4,14 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, Repository } from 'typeorm';
+import { DeepPartial, EntityManager, IsNull, Repository } from 'typeorm';
 import { newId } from '../../../common/utils/uuid';
 import {
   Activities,
   ActivitySchedules,
   BookingItems,
   Bookings,
+  Payments,
   CabinAvailability,
   Cabins,
   FlightClassAvailability,
@@ -48,6 +49,8 @@ export class BookingEngineService {
   constructor(
     @InjectRepository(Bookings)
     private readonly bookingsRepository: Repository<Bookings>,
+    @InjectRepository(Payments)
+    private readonly paymentsRepository: Repository<Payments>,
     @InjectRepository(BookingItems)
     private readonly bookingItemsRepository: Repository<BookingItems>,
     @InjectRepository(RoomAvailability)
@@ -174,6 +177,52 @@ export class BookingEngineService {
       changedByUserId: actorUserId ?? null,
     });
     return this.getBookingDetail(id);
+  }
+
+  async recordCashPayment(
+    bookingId: string,
+    actorUserId?: string,
+    note?: string,
+  ): Promise<BookingDetailDto> {
+    const booking = await this.findBookingOrThrow(bookingId);
+    if (booking.status !== 'pending_payment') {
+      throw new BadRequestException(
+        `Paiement cash impossible : statut actuel « ${booking.status} ».`,
+      );
+    }
+    if (booking.totalCents < 1) {
+      throw new BadRequestException('Montant de réservation invalide.');
+    }
+
+    const existingSucceeded = await this.paymentsRepository.findOne({
+      where: { bookingId, status: 'succeeded', deletedAt: IsNull() },
+    });
+    if (existingSucceeded) {
+      throw new BadRequestException(
+        'Un paiement a déjà été enregistré pour cette réservation.',
+      );
+    }
+
+    const paymentId = newId();
+    const trimmedNote = note?.trim();
+    const confirmReason = trimmedNote
+      ? `Paiement cash caisse — ${trimmedNote}`
+      : 'Paiement cash caisse';
+
+    await this.paymentsRepository.save(
+      this.paymentsRepository.create({
+        id: paymentId,
+        bookingId,
+        amountCents: booking.totalCents,
+        currency: booking.currency,
+        status: 'succeeded',
+        provider: 'cash',
+        externalId: `cash-${paymentId}`,
+        createdByUserId: actorUserId ?? null,
+      } as DeepPartial<Payments>),
+    );
+
+    return this.confirmBooking(bookingId, actorUserId, confirmReason);
   }
 
   async cancelBooking(

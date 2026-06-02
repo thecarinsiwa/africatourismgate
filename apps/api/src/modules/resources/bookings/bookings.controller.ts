@@ -18,6 +18,7 @@ import { BookingsService } from './bookings.service';
 import { BookingCheckoutDto } from './dto/booking-checkout.dto';
 import { BookingsListQueryDto } from './dto/bookings-list-query.dto';
 import { CancelBookingDto } from './dto/cancel-booking.dto';
+import { RecordCashPaymentDto } from './dto/record-cash-payment.dto';
 import { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
 import { CreateBookingReviewDto } from '../reviews/dto/create-booking-review.dto';
 
@@ -39,7 +40,7 @@ export class BookingsController {
     @Body() dto: BookingCheckoutDto,
     @CurrentUser() user: AuthUserDto,
   ) {
-    return this.bookingEngine.previewCheckout(dto, user.id);
+    return this.bookingsService.previewCheckout(dto, user.id);
   }
 
   @Post()
@@ -49,7 +50,7 @@ export class BookingsController {
     @Body() dto: BookingCheckoutDto,
     @CurrentUser() user: AuthUserDto,
   ) {
-    return this.bookingEngine.createBooking(dto, user.id, user.id);
+    return this.bookingsService.createFromCheckout(dto, user.id);
   }
 
   @Get()
@@ -105,6 +106,18 @@ export class BookingsController {
     @CurrentUser() user: AuthUserDto,
   ) {
     return this.bookingsService.updateStatus(id, dto, user.id);
+  }
+
+  @Post(':id/cash-payment')
+  @RequirePermissions('bookings.write')
+  @ApiOperation({ summary: 'Record cash payment and confirm booking (POS)' })
+  async recordCashPayment(
+    @Param('id') id: string,
+    @Body() dto: RecordCashPaymentDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    await this.bookingsService.assertBookingOwnerOrStaff(id, user.id);
+    return this.bookingEngine.recordCashPayment(id, user.id, dto.note);
   }
 
   @Post(':id/payment-intent')

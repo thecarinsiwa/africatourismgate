@@ -40,6 +40,8 @@ export interface BookingCheckoutRequest {
   currency?: string;
   promoCode?: string;
   promotionId?: string;
+  /** Staff only (e.g. POS): booking is owned by this user instead of the actor. */
+  customerUserId?: string;
 }
 
 export interface AppliedCheckoutDiscount {
@@ -139,6 +141,10 @@ export interface UpdateBookingStatusRequest {
 
 export interface CancelBookingRequest {
   reason?: string;
+}
+
+export interface RecordCashPaymentRequest {
+  note?: string;
 }
 
 export interface BookingPaymentIntentResponse {

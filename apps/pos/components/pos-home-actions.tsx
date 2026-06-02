@@ -56,8 +56,7 @@ export function PosHomeActions() {
       <HomeActionCard
         label={actions.sale.label}
         description={actions.sale.description}
-        badge={actions.sale.comingSoon}
-        disabled
+        onClick={() => router.push('/sale')}
       />
       <HomeActionCard
         label={actions.history.label}
