@@ -79,6 +79,11 @@ import type {
   BookingPaymentIntentResponse,
   BookingListItem,
   BookingsListQuery,
+  CreateBookingReviewRequest,
+  PropertyDetail,
+  PropertyDetailQuery,
+  PropertyReviewsListQuery,
+  Review,
   CancelBookingRequest,
   UpdateBookingStatusRequest,
   CreatePackageItemRequest,
@@ -276,6 +281,11 @@ export type {
   PropertiesListQuery,
   PropertySearchQuery,
   PropertySearchResult,
+  PropertyDetail,
+  PropertyDetailQuery,
+  PropertyReviewsListQuery,
+  Review,
+  CreateBookingReviewRequest,
   PropertyType,
   PublicDestination,
   ReplacePropertyAmenitiesRequest,
@@ -540,6 +550,34 @@ export class ApiClient {
     return fetchPaginated<PropertySearchResult>(
       this,
       '/public/accommodations/search',
+      query,
+      { skipAuth: true },
+    );
+  }
+
+  getAccommodationDetail(
+    id: string,
+    query?: PropertyDetailQuery,
+  ): Promise<PropertyDetail> {
+    const qs = new URLSearchParams();
+    if (query?.checkIn) qs.set('checkIn', query.checkIn);
+    if (query?.checkOut) qs.set('checkOut', query.checkOut);
+    if (query?.guests !== undefined) qs.set('guests', String(query.guests));
+    if (query?.month) qs.set('month', query.month);
+    const suffix = qs.toString() ? `?${qs.toString()}` : '';
+    return this.request<PropertyDetail>(
+      `/public/accommodations/${encodeURIComponent(id)}${suffix}`,
+      { skipAuth: true },
+    );
+  }
+
+  getPropertyReviews(
+    propertyId: string,
+    query?: PropertyReviewsListQuery,
+  ): Promise<PaginatedResponse<Review>> {
+    return fetchPaginated<Review>(
+      this,
+      `/public/accommodations/${encodeURIComponent(propertyId)}/reviews`,
       query,
       { skipAuth: true },
     );
@@ -1137,6 +1175,20 @@ export class ApiClient {
 
   getBooking(id: string): Promise<BookingAdminDetail> {
     return this.request<BookingAdminDetail>(`/bookings/${id}`);
+  }
+
+  getBookingReview(id: string): Promise<Review | null> {
+    return this.request<Review | null>(`/bookings/${id}/reviews`);
+  }
+
+  createBookingReview(
+    id: string,
+    body: CreateBookingReviewRequest,
+  ): Promise<Review> {
+    return this.request<Review>(`/bookings/${id}/reviews`, {
+      method: 'POST',
+      body,
+    });
   }
 
   updateBookingStatus(

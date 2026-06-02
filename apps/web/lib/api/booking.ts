@@ -6,6 +6,8 @@ import type {
   BookingCheckoutRequest,
   BookingCheckoutSessionResponse,
   BookingDetail,
+  CreateBookingReviewRequest,
+  Review,
 } from '@africatourismgate/types';
 
 function getApiBaseUrl(): string {
@@ -46,4 +48,19 @@ export function createBookingCheckoutSession(
 
 export function getBooking(accessToken: string, bookingId: string): Promise<BookingDetail> {
   return createBookingClient(accessToken).getBooking(bookingId);
+}
+
+export function getBookingReview(
+  accessToken: string,
+  bookingId: string,
+): Promise<Review | null> {
+  return createBookingClient(accessToken).getBookingReview(bookingId);
+}
+
+export function createBookingReview(
+  accessToken: string,
+  bookingId: string,
+  payload: CreateBookingReviewRequest,
+): Promise<Review> {
+  return createBookingClient(accessToken).createBookingReview(bookingId, payload);
 }
