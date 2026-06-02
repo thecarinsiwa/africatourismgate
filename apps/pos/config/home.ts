@@ -5,7 +5,6 @@ export const posHomeConfig = {
     sale: {
       label: 'Nouvelle vente',
       description: 'Recherche produit et encaissement',
-      comingSoon: 'Bientôt disponible',
     },
     history: {
       label: 'Historique',

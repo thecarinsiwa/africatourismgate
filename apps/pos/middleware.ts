@@ -16,6 +16,8 @@ import {
 const LOGIN_PATH = '/login';
 const SELECT_ORG_PATH = '/select-org';
 const HOME_PATH = '/';
+const SALE_PATH = '/sale';
+const SALE_SUCCESS_PATH = '/sale/success';
 
 function isLoginPath(pathname: string): boolean {
   return pathname === LOGIN_PATH;
@@ -25,12 +27,17 @@ function isSelectOrgPath(pathname: string): boolean {
   return pathname === SELECT_ORG_PATH;
 }
 
-function isHomePath(pathname: string): boolean {
-  return pathname === HOME_PATH;
+function isProtectedPosPath(pathname: string): boolean {
+  return (
+    pathname === HOME_PATH ||
+    pathname === SALE_PATH ||
+    pathname === SALE_SUCCESS_PATH ||
+    pathname.startsWith(`${SALE_PATH}/`)
+  );
 }
 
 function isMiddlewarePath(pathname: string): boolean {
-  return isLoginPath(pathname) || isSelectOrgPath(pathname) || isHomePath(pathname);
+  return isLoginPath(pathname) || isSelectOrgPath(pathname) || isProtectedPosPath(pathname);
 }
 
 function hasSelectedOrganization(session: PosStoredSession): boolean {
@@ -100,7 +107,7 @@ export async function middleware(request: NextRequest) {
 
   const valid = await ensureValidSession(request);
 
-  if (isHomePath(pathname)) {
+  if (isProtectedPosPath(pathname)) {
     if (!valid) {
       return redirectToLogin(request, pathname);
     }
@@ -135,5 +142,5 @@ export async function middleware(request: NextRequest) {
 
 /** Tableau littéral requis par Next.js pour l’analyse statique du matcher. */
 export const config = {
-  matcher: ['/login', '/select-org', '/'],
+  matcher: ['/login', '/select-org', '/', '/sale', '/sale/success'],
 };
