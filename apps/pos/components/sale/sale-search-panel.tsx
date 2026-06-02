@@ -1,9 +1,9 @@
 'use client';
 
-import type { BookingCheckoutItem } from '@africatourismgate/types';
 import { Button, Input } from '@africatourismgate/ui';
 import { useEffect, useState } from 'react';
 import { posSalePageConfig } from '../../config/sale';
+import { useSaleCart } from '../../lib/sale/cart-context';
 import { searchCatalog } from '../../lib/sale/search-catalog';
 import type { SaleCatalogFilter, SaleCatalogHit } from '../../lib/sale/types';
 import { SaleLineConfigSheet } from './sale-line-config-sheet';
@@ -15,11 +15,8 @@ function kindLabel(kind: SaleCatalogHit['kind']): string {
   return filterLabels[kind];
 }
 
-type SaleSearchPanelProps = {
-  onAddToCart: (item: BookingCheckoutItem, label: string) => void;
-};
-
-export function SaleSearchPanel({ onAddToCart }: SaleSearchPanelProps) {
+export function SaleSearchPanel() {
+  const { addLine } = useSaleCart();
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState<SaleCatalogFilter>('all');
   const [hits, setHits] = useState<SaleCatalogHit[]>([]);
@@ -140,7 +137,7 @@ export function SaleSearchPanel({ onAddToCart }: SaleSearchPanelProps) {
         hit={selectedHit}
         open={sheetOpen}
         onClose={closeConfig}
-        onAdd={onAddToCart}
+        onAdd={addLine}
       />
     </div>
   );
