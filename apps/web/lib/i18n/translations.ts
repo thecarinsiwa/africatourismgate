@@ -290,6 +290,29 @@ export type Translations = {
       lastFour: string;
     };
   };
+  booking: {
+    login: {
+      title: string;
+      subtitle: string;
+      divider: string;
+      google: string;
+      backToHotels: string;
+      form: {
+        emailLabel: string;
+        emailPlaceholder: string;
+        passwordLabel: string;
+        passwordPlaceholder: string;
+        submit: string;
+        submitLoading: string;
+      };
+      errors: {
+        network: string;
+        generic: string;
+        envMissing: string;
+        unauthorized: string;
+      };
+    };
+  };
 };
 
 const fr: Translations = {
@@ -674,6 +697,30 @@ const fr: Translations = {
       typeOther: 'Autre',
       provider: 'Fournisseur (ex. visa)',
       lastFour: '4 derniers chiffres',
+    },
+  },
+  booking: {
+    login: {
+      title: 'Connexion client',
+      subtitle:
+        'Connectez-vous avec votre e-mail et mot de passe, ou utilisez Google pour poursuivre votre réservation.',
+      divider: 'ou',
+      google: 'Se connecter avec Google',
+      backToHotels: 'Retour aux hôtels',
+      form: {
+        emailLabel: 'Adresse e-mail',
+        emailPlaceholder: 'vous@exemple.com',
+        passwordLabel: 'Mot de passe',
+        passwordPlaceholder: '••••••••',
+        submit: 'Se connecter',
+        submitLoading: 'Connexion…',
+      },
+      errors: {
+        network: 'Impossible de joindre le serveur. Vérifiez votre connexion.',
+        generic: 'Une erreur est survenue. Veuillez réessayer.',
+        envMissing: 'Configuration API manquante (NEXT_PUBLIC_API_URL).',
+        unauthorized: 'Adresse e-mail ou mot de passe incorrect.',
+      },
     },
   },
 };
@@ -1061,6 +1108,30 @@ const en: Translations = {
       lastFour: 'Last 4 digits',
     },
   },
+  booking: {
+    login: {
+      title: 'Customer sign in',
+      subtitle:
+        'Sign in with your email and password, or use Google to continue your booking.',
+      divider: 'or',
+      google: 'Sign in with Google',
+      backToHotels: 'Back to hotels',
+      form: {
+        emailLabel: 'Email address',
+        emailPlaceholder: 'you@example.com',
+        passwordLabel: 'Password',
+        passwordPlaceholder: '••••••••',
+        submit: 'Sign in',
+        submitLoading: 'Signing in…',
+      },
+      errors: {
+        network: 'Could not reach the server. Check your connection.',
+        generic: 'Something went wrong. Please try again.',
+        envMissing: 'Missing API configuration (NEXT_PUBLIC_API_URL).',
+        unauthorized: 'Incorrect email or password.',
+      },
+    },
+  },
 };
 
 const es: Translations = {
@@ -1445,6 +1516,30 @@ const es: Translations = {
       typeOther: 'Otro',
       provider: 'Proveedor (ej. visa)',
       lastFour: 'Últimos 4 dígitos',
+    },
+  },
+  booking: {
+    login: {
+      title: 'Inicio de sesión',
+      subtitle:
+        'Inicie sesión con su correo y contraseña, o use Google para continuar su reserva.',
+      divider: 'o',
+      google: 'Iniciar sesión con Google',
+      backToHotels: 'Volver a hoteles',
+      form: {
+        emailLabel: 'Correo electrónico',
+        emailPlaceholder: 'usted@ejemplo.com',
+        passwordLabel: 'Contraseña',
+        passwordPlaceholder: '••••••••',
+        submit: 'Iniciar sesión',
+        submitLoading: 'Conectando…',
+      },
+      errors: {
+        network: 'No se pudo contactar el servidor. Compruebe su conexión.',
+        generic: 'Ha ocurrido un error. Inténtelo de nuevo.',
+        envMissing: 'Falta la configuración de la API (NEXT_PUBLIC_API_URL).',
+        unauthorized: 'Correo o contraseña incorrectos.',
+      },
     },
   },
 };

@@ -1,4 +1,10 @@
-import { createApiClient, type AuthMe, type AuthTokens } from '@africatourismgate/api-client';
+import {
+  createApiClient,
+  type AuthMe,
+  type AuthResponse,
+  type AuthTokens,
+} from '@africatourismgate/api-client';
+import type { LoginRequest } from '@africatourismgate/types';
 
 function getApiBaseUrl(): string {
   const defaultApiUrl =
@@ -6,6 +12,10 @@ function getApiBaseUrl(): string {
       ? 'https://app-africatourismgate.org/api'
       : 'http://localhost:3000/api';
   return (process.env.NEXT_PUBLIC_API_URL ?? defaultApiUrl).replace(/\/$/, '');
+}
+
+export function loginWithPassword(body: LoginRequest): Promise<AuthResponse> {
+  return createApiClient({ baseUrl: getApiBaseUrl() }).login(body);
 }
 
 export function buildGoogleOAuthStartUrl(nextPath: string): string {
