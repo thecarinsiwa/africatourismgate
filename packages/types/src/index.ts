@@ -29,6 +29,9 @@ export type {
 export type {
   CreateUserAddressRequest,
   CreateUserPaymentMethodRequest,
+  LoyaltyAccount,
+  LoyaltyAccountsListQuery,
+  LoyaltyTier,
   UpdateProfileRequest,
   UpdateUserAddressRequest,
   UpdateUserPaymentMethodRequest,

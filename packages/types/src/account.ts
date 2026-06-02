@@ -59,5 +59,18 @@ export interface UpdateProfileRequest {
   preferredLanguage?: string | null;
 }
 
+export type LoyaltyTier = 'member' | 'silver' | 'gold' | 'platinum';
+
+export interface LoyaltyAccount {
+  id: string;
+  userId: string;
+  programCode: string;
+  pointsBalance: number;
+  tier: LoyaltyTier;
+  createdAt: string;
+  updatedAt: string | null;
+}
+
 export type UserAddressesListQuery = PaginationQuery;
 export type UserPaymentMethodsListQuery = PaginationQuery;
+export type LoyaltyAccountsListQuery = PaginationQuery;

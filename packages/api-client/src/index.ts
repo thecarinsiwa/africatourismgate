@@ -109,6 +109,8 @@ import type {
   CreateUserRoleAssignmentRequest,
   CreateUserAddressRequest,
   CreateUserPaymentMethodRequest,
+  LoyaltyAccount,
+  LoyaltyAccountsListQuery,
   Employee,
   EmployeesListQuery,
   Permission,
@@ -501,6 +503,12 @@ export class ApiClient {
 
   deleteUserAddress(id: string): Promise<void> {
     return this.request<void>(`/user-addresses/${id}`, { method: 'DELETE' });
+  }
+
+  listLoyaltyAccounts(
+    query?: LoyaltyAccountsListQuery,
+  ): Promise<PaginatedResponse<LoyaltyAccount>> {
+    return fetchPaginated<LoyaltyAccount>(this, '/loyalty-accounts', query);
   }
 
   listUserPaymentMethods(
