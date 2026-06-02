@@ -1233,7 +1233,7 @@ CREATE TABLE `reviews` (
   `deleted_at` DATETIME DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_reviews_user` (`user_id`),
-  KEY `idx_reviews_entity` (`entity_type`,`entity_id`),
+  UNIQUE KEY `uq_reviews_entity` (`entity_type`,`entity_id`),
   KEY `idx_reviews_deleted_at` (`deleted_at`),
   CONSTRAINT `fk_reviews_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_reviews_created_by` FOREIGN KEY (`created_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
