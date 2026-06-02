@@ -21,8 +21,8 @@ const loginErrorMessages = {
   unauthorized: posLoginErrors.invalidCredentials,
 };
 
-function resolvePostLoginPath(next: string | null, session: PosStoredSession): string {
-  const hasOrg = hasSelectedOrganization(session);
+function resolvePostLoginPath(next: string | null, _session: PosStoredSession): string {
+  const hasOrg = hasSelectedOrganization();
   const safeNext = next === '/' || next === '/select-org' ? next : null;
 
   if (safeNext === '/') {

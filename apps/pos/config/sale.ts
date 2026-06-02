@@ -1,9 +1,48 @@
 export const posSalePageConfig = {
   title: 'Nouvelle vente',
   subtitle: 'Recherchez un produit, ajoutez au panier et encaissez.',
-  placeholder:
-    'Le catalogue, le panier et l’encaissement seront disponibles ici dans la prochaine étape.',
   backToHomeLabel: 'Retour à l’accueil',
+  search: {
+    label: 'Rechercher',
+    placeholder: 'Nom d’activité, chambre, vol, véhicule…',
+    hint: 'Saisissez au moins 2 caractères',
+    loadingLabel: 'Recherche…',
+    emptyLabel: 'Aucun produit trouvé',
+    errorLabel: 'Impossible de charger le catalogue',
+  },
+  filters: {
+    all: 'Tous',
+    activity: 'Activité',
+    room: 'Chambre',
+    flight_class: 'Vol',
+    vehicle: 'Véhicule',
+    cabin: 'Croisière',
+  },
+  cart: {
+    title: 'Panier',
+    empty: 'Le panier est vide',
+    itemCount: (n: number) => (n === 1 ? '1 article' : `${n} articles`),
+  },
+  config: {
+    title: 'Configurer la ligne',
+    closeLabel: 'Fermer',
+    addLabel: 'Ajouter au panier',
+    loadingLabel: 'Chargement…',
+    quantityLabel: 'Quantité',
+    startDateLabel: 'Arrivée',
+    endDateLabel: 'Départ',
+    dateLabel: 'Date',
+    scheduleLabel: 'Créneau',
+    slotLabel: 'Créneau disponible',
+    sailingLabel: 'Départ croisière',
+    seatsLabel: 'places',
+    noSchedules: 'Aucun créneau disponible',
+    noSlots: 'Aucun créneau disponible',
+    noSailings: 'Aucune croisière disponible',
+    selectSchedule: 'Choisissez un créneau',
+    selectSlot: 'Choisissez un créneau',
+    selectSailing: 'Choisissez une croisière',
+  },
 } as const;
 
 export const posSaleSuccessPageConfig = {
