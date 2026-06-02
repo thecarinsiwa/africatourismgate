@@ -9,11 +9,13 @@ import {
   RoomAvailability,
   Rooms,
 } from '../../../entities/generated';
+import { ReviewsModule } from '../../resources/reviews/reviews.module';
 import { PublicAccommodationsController } from './public-accommodations.controller';
 import { PublicAccommodationsService } from './public-accommodations.service';
 
 @Module({
   imports: [
+    ReviewsModule,
     TypeOrmModule.forFeature([
       Properties,
       Destinations,

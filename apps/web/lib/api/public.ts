@@ -2,9 +2,11 @@ import type {
   PaginatedResponse,
   PropertyDetail,
   PropertyDetailQuery,
+  PropertyReviewsListQuery,
   PropertySearchQuery,
   PropertySearchResult,
   PublicDestination,
+  Review,
 } from '@africatourismgate/types';
 
 const defaultApiUrl =
@@ -70,5 +72,22 @@ export async function getAccommodationDetail(
 ): Promise<PropertyDetail> {
   return fetchPublic<PropertyDetail>(
     `/public/accommodations/${encodeURIComponent(id)}${buildDetailQuery(params)}`,
+  );
+}
+
+function buildReviewsQuery(params: PropertyReviewsListQuery): string {
+  const qs = new URLSearchParams();
+  if (params.page !== undefined) qs.set('page', String(params.page));
+  if (params.limit !== undefined) qs.set('limit', String(params.limit));
+  const s = qs.toString();
+  return s ? `?${s}` : '';
+}
+
+export async function getPropertyReviews(
+  propertyId: string,
+  params: PropertyReviewsListQuery = {},
+): Promise<PaginatedResponse<Review>> {
+  return fetchPublic<PaginatedResponse<Review>>(
+    `/public/accommodations/${encodeURIComponent(propertyId)}/reviews${buildReviewsQuery(params)}`,
   );
 }

@@ -19,6 +19,7 @@ import { BookingCheckoutDto } from './dto/booking-checkout.dto';
 import { BookingsListQueryDto } from './dto/bookings-list-query.dto';
 import { CancelBookingDto } from './dto/cancel-booking.dto';
 import { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
+import { CreateBookingReviewDto } from '../reviews/dto/create-booking-review.dto';
 
 @ApiTags('bookings')
 @ApiForbiddenResponse({ description: 'Missing permission' })
@@ -59,6 +60,24 @@ export class BookingsController {
     @CurrentUser() user: AuthUserDto,
   ) {
     return this.bookingsService.list(query, user.id);
+  }
+
+  @Get(':id/reviews')
+  @RequirePermissions('reviews.read')
+  @ApiOperation({ summary: 'Get review for a booking' })
+  getReview(@Param('id') id: string, @CurrentUser() user: AuthUserDto) {
+    return this.bookingsService.getBookingReview(id, user.id);
+  }
+
+  @Post(':id/reviews')
+  @RequirePermissions('reviews.write')
+  @ApiOperation({ summary: 'Submit a post-stay review for a booking' })
+  createReview(
+    @Param('id') id: string,
+    @Body() dto: CreateBookingReviewDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.bookingsService.createBookingReview(id, user.id, dto);
   }
 
   @Get(':id')

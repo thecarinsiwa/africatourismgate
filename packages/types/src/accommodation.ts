@@ -285,4 +285,6 @@ export interface PropertyDetail {
   rooms: PropertyDetailRoom[];
   stay: PropertyDetailStay;
   calendarDays: PropertyCalendarDay[];
+  averageRating: number | null;
+  reviewCount: number;
 }

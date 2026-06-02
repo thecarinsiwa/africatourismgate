@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class PropertyDetailImageDto {
   @ApiProperty({ format: 'uuid' })
@@ -138,4 +138,10 @@ export class PropertyDetailDto {
 
   @ApiProperty({ type: [PropertyCalendarDayDto] })
   calendarDays!: PropertyCalendarDayDto[];
+
+  @ApiProperty({ nullable: true, description: 'Average guest review rating (1–5)' })
+  averageRating!: number | null;
+
+  @ApiProperty({ description: 'Number of guest reviews' })
+  reviewCount!: number;
 }
