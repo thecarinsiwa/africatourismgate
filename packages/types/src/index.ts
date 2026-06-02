@@ -276,8 +276,6 @@ export type {
   UpsertOrganizationSettingItem,
 } from './organization-settings.js';
 
-export { DEFAULT_LOYALTY_ONEKEY_SETTING } from './organization-settings.js';
-
 export type {
   CreateUserRequest,
   UpdateUserRequest,

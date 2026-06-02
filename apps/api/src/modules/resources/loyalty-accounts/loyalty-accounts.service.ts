@@ -4,10 +4,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  DEFAULT_LOYALTY_ONEKEY_SETTING,
-  type LoyaltyOneKeySettingValue,
-} from '@africatourismgate/types';
+import type { LoyaltyOneKeySettingValue } from '@africatourismgate/types';
+import { DEFAULT_LOYALTY_ONEKEY_SETTING } from './loyalty-defaults';
 import { FindOptionsWhere, IsNull, Repository } from 'typeorm';
 import { PaginatedResult, PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import { PLATFORM_ORG_ID } from '../../../common/org-scope/org-scope.service';

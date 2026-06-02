@@ -6,7 +6,8 @@
   "types": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./rbac": "./src/rbac.ts"
+    "./rbac": "./src/rbac.ts",
+    "./organization-settings": "./src/organization-settings.ts"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",

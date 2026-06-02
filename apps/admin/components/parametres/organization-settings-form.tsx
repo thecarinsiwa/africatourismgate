@@ -1,15 +1,15 @@
 'use client';
 
 import { Button, Input } from '@africatourismgate/ui';
-import {
-  DEFAULT_LOYALTY_ONEKEY_SETTING,
-  type BookingDefaultsValue,
-  type BrandingPlatformValue,
-  type LocaleSettingValue,
-  type LoyaltyOneKeySettingValue,
-  type Organization,
-  type OrganizationSetting,
+import type {
+  BookingDefaultsValue,
+  BrandingPlatformValue,
+  LocaleSettingValue,
+  LoyaltyOneKeySettingValue,
+  Organization,
+  OrganizationSetting,
 } from '@africatourismgate/types';
+import { DEFAULT_LOYALTY_ONEKEY_SETTING } from '@africatourismgate/types/organization-settings';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
