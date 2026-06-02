@@ -3,9 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { getAuthMe } from '../../lib/api/auth';
-import { saveWebSession } from '../../lib/auth/client-session';
-import { localeFromPreferredLanguage } from '../../lib/i18n/preferred-language';
-import { LOCALE_STORAGE_KEY } from '../../lib/i18n/types';
+import { completeWebLogin } from '../../lib/auth/complete-web-login';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 
@@ -47,25 +45,16 @@ export function BookingOAuthCallbackPageContent({
 
     void getAuthMe(accessToken)
       .then((me) => {
-        saveWebSession(
+        completeWebLogin(
           {
             accessToken,
             refreshToken,
             expiresAt: Date.now() + ttlSeconds * 1000,
             user: me.user,
           },
-          false,
+          router,
+          safeNext,
         );
-        const locale = localeFromPreferredLanguage(me.user.preferredLanguage);
-        if (locale) {
-          try {
-            localStorage.setItem(LOCALE_STORAGE_KEY, locale);
-            document.documentElement.lang = locale;
-          } catch {
-            /* ignore */
-          }
-        }
-        router.replace(safeNext);
       })
       .catch(() => {
         setError('Impossible de finaliser la connexion Google.');
