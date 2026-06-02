@@ -1,3 +1,5 @@
+import type { Review } from './review.js';
+
 export type BookingStatus =
   | 'draft'
   | 'pending_payment'
@@ -89,6 +91,8 @@ export interface BookingDetail {
   items: BookingItem[];
   totalCents: number;
   currency: string;
+  review?: Review | null;
+  canReview?: boolean;
 }
 
 export interface BookingClient {

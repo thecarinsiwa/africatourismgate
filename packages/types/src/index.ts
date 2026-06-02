@@ -176,6 +176,13 @@ export type {
 } from './booking.js';
 
 export type {
+  CreateBookingReviewRequest,
+  PropertyReviewSummary,
+  PropertyReviewsListQuery,
+  Review,
+} from './review.js';
+
+export type {
   CreatePackageItemRequest,
   CreatePackageRequest,
   Package,

@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
-import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
+import { PaginatedResult, PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import {
   Amenities,
   Destinations,
@@ -11,6 +11,8 @@ import {
   RoomAvailability,
   Rooms,
 } from '../../../entities/generated';
+import { ReviewsService } from '../../resources/reviews/reviews.service';
+import { ReviewDto } from '../../resources/reviews/dto/review.dto';
 import { PropertyDetailQueryDto } from './dto/property-detail-query.dto';
 import { PropertyDetailDto } from './dto/property-detail.dto';
 import { PropertySearchQueryDto } from './dto/property-search-query.dto';
@@ -46,6 +48,7 @@ export class PublicAccommodationsService {
     private readonly propertyAmenitiesRepository: Repository<PropertyAmenities>,
     @InjectRepository(Amenities)
     private readonly amenitiesRepository: Repository<Amenities>,
+    private readonly reviewsService: ReviewsService,
   ) {}
 
   async listDestinations(): Promise<PublicDestinationDto[]> {
@@ -220,11 +223,7 @@ export class PublicAccommodationsService {
 
   async getById(id: string, query: PropertyDetailQueryDto): Promise<PropertyDetailDto> {
     const guests = query.guests ?? 1;
-    const prop = await this.propertiesRepository.findOne({ where: { id } });
-
-    if (!prop || prop.deletedAt) {
-      throw new NotFoundException('Hébergement introuvable.');
-    }
+    const prop = await this.findPropertyOrThrow(id);
 
     const dest = await this.destinationsRepository.findOne({
       where: { id: prop.destinationId },
@@ -336,6 +335,9 @@ export class PublicAccommodationsService {
       availabilityByRoomDate,
     );
 
+    const { averageRating, reviewCount } =
+      await this.reviewsService.aggregateForProperty(prop.id);
+
     return {
       id: prop.id,
       slug: prop.slug,
@@ -358,7 +360,25 @@ export class PublicAccommodationsService {
         currency: stayCurrency || basePricing?.currency || 'USD',
       },
       calendarDays,
+      averageRating,
+      reviewCount,
     };
+  }
+
+  async listPropertyReviews(
+    propertyId: string,
+    query: PaginationQueryDto,
+  ): Promise<PaginatedResult<ReviewDto>> {
+    await this.findPropertyOrThrow(propertyId);
+    return this.reviewsService.listForProperty(propertyId, query);
+  }
+
+  private async findPropertyOrThrow(id: string): Promise<Properties> {
+    const prop = await this.propertiesRepository.findOne({ where: { id } });
+    if (!prop || prop.deletedAt) {
+      throw new NotFoundException('Hébergement introuvable.');
+    }
+    return prop;
   }
 
   private parseStarRating(value: unknown): number | null {

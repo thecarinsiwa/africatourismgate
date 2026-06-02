@@ -64,8 +64,15 @@ async function main() {
   if (!Array.isArray(detail.data?.rooms) || detail.data.rooms.length < 1) {
     throw new Error('Expected at least one room');
   }
+  const ar = detail.data.averageRating;
+  if (ar !== null && typeof ar !== 'number') {
+    throw new Error('Expected averageRating null or number');
+  }
+  if (typeof detail.data.reviewCount !== 'number') {
+    throw new Error('Expected reviewCount number');
+  }
   console.log(
-    `  OK ${detail.data.name}: ${detail.data.images.length} images, ${detail.data.rooms.length} rooms`,
+    `  OK ${detail.data.name}: ${detail.data.images.length} images, ${detail.data.rooms.length} rooms, ${detail.data.reviewCount} reviews`,
   );
 
   console.log('3. GET detail with stay dates');
@@ -103,6 +110,14 @@ async function main() {
     '/public/accommodations/00000000-0000-4000-8000-000000000099',
   );
   assertStatus('detail 404', missing.status, 404);
+
+  console.log('6. GET /public/accommodations/:id/reviews');
+  const reviews = await request(`/public/accommodations/${id}/reviews?limit=5`);
+  assertStatus('reviews', reviews.status, 200);
+  if (!Array.isArray(reviews.data?.data)) {
+    throw new Error('Expected reviews.data array');
+  }
+  console.log(`  OK ${reviews.data.data.length} review(s) on page 1`);
 
   console.log('\nAll public accommodation detail checks passed.');
 }

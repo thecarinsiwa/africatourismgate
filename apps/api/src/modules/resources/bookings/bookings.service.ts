@@ -12,6 +12,9 @@ import { BookingsListQueryDto } from './dto/bookings-list-query.dto';
 import { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
 import { BookingDetailDto } from './dto/booking-detail.dto';
 import { PermissionsService } from '../../rbac/permissions.service';
+import { ReviewsService } from '../reviews/reviews.service';
+import { CreateBookingReviewDto } from '../reviews/dto/create-booking-review.dto';
+import { ReviewDto } from '../reviews/dto/review.dto';
 
 @Injectable()
 export class BookingsService extends CrudService<Bookings> {
@@ -27,6 +30,7 @@ export class BookingsService extends CrudService<Bookings> {
     private readonly bookingEngine: BookingEngineService,
     private readonly statusHistory: BookingStatusHistoryService,
     private readonly permissionsService: PermissionsService,
+    private readonly reviewsService: ReviewsService,
   ) {
     super(bookingsRepository);
   }
@@ -129,7 +133,39 @@ export class BookingsService extends CrudService<Bookings> {
     if (detail.booking.userId !== currentUserId) {
       throw new ForbiddenException('Access denied.');
     }
-    return detail;
+    const review = await this.reviewsService.findByBooking(id);
+    const canReview = review
+      ? false
+      : await this.reviewsService.canReview(id, currentUserId);
+    return { ...detail, review, canReview };
+  }
+
+  async getBookingReview(
+    bookingId: string,
+    currentUserId: string,
+  ): Promise<ReviewDto | null> {
+    await this.assertBookingOwnerOrStaff(bookingId, currentUserId);
+    return this.reviewsService.findByBooking(bookingId);
+  }
+
+  async createBookingReview(
+    bookingId: string,
+    currentUserId: string,
+    dto: CreateBookingReviewDto,
+  ): Promise<ReviewDto> {
+    const booking = await this.assertBookingOwnerOrStaff(bookingId, currentUserId);
+    const staff = await this.permissionsService.hasAnyPermission(currentUserId, [
+      'users.read',
+    ]);
+    if (staff && booking.userId !== currentUserId) {
+      throw new ForbiddenException('Seul le client peut laisser un avis.');
+    }
+    return this.reviewsService.createForBooking(
+      bookingId,
+      booking.userId,
+      dto,
+      currentUserId,
+    );
   }
 
   async assertBookingOwnerOrStaff(
