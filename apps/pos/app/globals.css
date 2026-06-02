@@ -11,3 +11,29 @@
     @apply antialiased;
   }
 }
+
+/** Cibles tactiles pour la caisse (login, sélection org, actions). */
+@layer components {
+  .pos-touch :where(input:not([type='checkbox'])) {
+    min-height: 3rem;
+    font-size: 1.125rem;
+  }
+
+  .pos-touch :where(label) {
+    font-size: 1rem;
+  }
+
+  .pos-touch :where(button[type='submit']) {
+    min-height: 3.5rem;
+    font-size: 1.125rem;
+  }
+
+  .pos-touch :where([type='checkbox']) {
+    min-height: 1.25rem;
+    min-width: 1.25rem;
+  }
+
+  .pos-touch :where(button:not([disabled])) {
+    min-height: 3.25rem;
+  }
+}

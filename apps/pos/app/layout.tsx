@@ -1,18 +1,15 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { AppShell } from '@africatourismgate/ui';
 
 export const metadata: Metadata = {
   title: 'Africa Tourism Gate — POS',
-  description: 'Point of sale',
+  description: 'Point de vente',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body>
-        <AppShell>{children}</AppShell>
-      </body>
+    <html lang="fr">
+      <body>{children}</body>
     </html>
   );
 }
