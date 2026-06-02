@@ -30,6 +30,7 @@
     "test:public-accommodation-search": "node scripts/test-public-accommodation-search.mjs",
     "test:public-accommodation-detail": "node scripts/test-public-accommodation-detail.mjs",
     "test:reviews": "node scripts/test-reviews.mjs",
+    "test:support": "node scripts/test-support-tickets.mjs",
     "test:users": "node scripts/test-users-crud.mjs",
     "test:auth-google-oauth": "node scripts/test-auth-google-oauth.mjs",
     "test:employees": "node scripts/test-employees-crud.mjs",
