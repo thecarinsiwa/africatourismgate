@@ -1,12 +1,14 @@
 'use client';
 
 import { Button, Input } from '@africatourismgate/ui';
-import type {
-  BookingDefaultsValue,
-  BrandingPlatformValue,
-  LocaleSettingValue,
-  Organization,
-  OrganizationSetting,
+import {
+  DEFAULT_LOYALTY_ONEKEY_SETTING,
+  type BookingDefaultsValue,
+  type BrandingPlatformValue,
+  type LocaleSettingValue,
+  type LoyaltyOneKeySettingValue,
+  type Organization,
+  type OrganizationSetting,
 } from '@africatourismgate/types';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
@@ -37,6 +39,9 @@ type SettingsFormValues = {
   secondaryColor: string;
   logoUrl: string;
   faviconUrl: string;
+  loyaltyEnabled: boolean;
+  loyaltyPointsPerMajorUnit: string;
+  loyaltyProgramCode: string;
 };
 
 const defaultValues: SettingsFormValues = {
@@ -51,6 +56,9 @@ const defaultValues: SettingsFormValues = {
   secondaryColor: '#199a45',
   logoUrl: '',
   faviconUrl: '',
+  loyaltyEnabled: DEFAULT_LOYALTY_ONEKEY_SETTING.enabled,
+  loyaltyPointsPerMajorUnit: String(DEFAULT_LOYALTY_ONEKEY_SETTING.pointsPerMajorUnit),
+  loyaltyProgramCode: DEFAULT_LOYALTY_ONEKEY_SETTING.programCode,
 };
 
 function settingByKey(
@@ -67,6 +75,7 @@ function toFormValues(
   const locale = settingByKey(settings, 'locale') as LocaleSettingValue | undefined;
   const defaults = settingByKey(settings, 'defaults') as BookingDefaultsValue | undefined;
   const platform = settingByKey(settings, 'platform') as BrandingPlatformValue | undefined;
+  const onekey = settingByKey(settings, 'onekey') as LoyaltyOneKeySettingValue | undefined;
 
   return {
     contactEmail: org.contactEmail ?? '',
@@ -80,6 +89,12 @@ function toFormValues(
     secondaryColor: platform?.secondaryColor ?? '#199a45',
     logoUrl: platform?.logoUrl ?? '',
     faviconUrl: platform?.faviconUrl ?? '',
+    loyaltyEnabled: onekey?.enabled ?? DEFAULT_LOYALTY_ONEKEY_SETTING.enabled,
+    loyaltyPointsPerMajorUnit: String(
+      onekey?.pointsPerMajorUnit ?? DEFAULT_LOYALTY_ONEKEY_SETTING.pointsPerMajorUnit,
+    ),
+    loyaltyProgramCode:
+      onekey?.programCode ?? DEFAULT_LOYALTY_ONEKEY_SETTING.programCode,
   };
 }
 
@@ -182,6 +197,16 @@ export function OrganizationSettingsForm({
     if (!values.displayName.trim()) {
       errors.displayName = 'Le nom affiché est obligatoire.';
     }
+    const loyaltyRate = Number(values.loyaltyPointsPerMajorUnit);
+    if (!Number.isInteger(loyaltyRate) || loyaltyRate < 0) {
+      errors.loyaltyPointsPerMajorUnit =
+        'Le taux de points doit être un entier positif ou nul.';
+    }
+    const programCode = values.loyaltyProgramCode.trim();
+    if (!programCode || programCode.length > 32) {
+      errors.loyaltyProgramCode =
+        'Le code programme est obligatoire (32 caractères max).';
+    }
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
   }
@@ -231,6 +256,15 @@ export function OrganizationSettingsForm({
               secondaryColor: values.secondaryColor.trim() || undefined,
               logoUrl: values.logoUrl.trim() || undefined,
               faviconUrl: values.faviconUrl.trim() || undefined,
+            },
+          },
+          {
+            settingGroup: 'loyalty',
+            settingKey: 'onekey',
+            settingValue: {
+              enabled: values.loyaltyEnabled,
+              pointsPerMajorUnit: Number(values.loyaltyPointsPerMajorUnit),
+              programCode: values.loyaltyProgramCode.trim().toUpperCase(),
             },
           },
         ],
@@ -391,6 +425,40 @@ export function OrganizationSettingsForm({
           />
           Autoriser la commande invité
         </label>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-lg font-semibold text-atg-fg">Fidélité OneKey</h2>
+        <p className="text-sm text-atg-muted">
+          Points crédités après paiement confirmé : floor(montant en centimes / 100) ×
+          taux ci-dessous.
+        </p>
+        <label className="flex items-center gap-2 text-sm text-atg-fg">
+          <input
+            type="checkbox"
+            checked={values.loyaltyEnabled}
+            onChange={(e) => updateField('loyaltyEnabled', e.target.checked)}
+            className="rounded border-atg-border"
+          />
+          Activer le crédit de points OneKey
+        </label>
+        <Input
+          label="Points par unité majeure de devise"
+          type="number"
+          min={0}
+          value={values.loyaltyPointsPerMajorUnit}
+          onChange={(e) => updateField('loyaltyPointsPerMajorUnit', e.target.value)}
+          error={fieldErrors.loyaltyPointsPerMajorUnit}
+        />
+        <Input
+          label="Code programme"
+          value={values.loyaltyProgramCode}
+          onChange={(e) =>
+            updateField('loyaltyProgramCode', e.target.value.toUpperCase())
+          }
+          error={fieldErrors.loyaltyProgramCode}
+          maxLength={32}
+        />
       </section>
 
       <section className="space-y-4">

@@ -264,6 +264,7 @@ export type {
   BulkUpsertOrganizationSettingsRequest,
   CreateOrganizationBankAccountRequest,
   LocaleSettingValue,
+  LoyaltyOneKeySettingValue,
   OrganizationBankAccount,
   OrganizationBankAccountsListQuery,
   OrganizationSetting,
@@ -271,6 +272,8 @@ export type {
   UpdateOrganizationBankAccountRequest,
   UpsertOrganizationSettingItem,
 } from './organization-settings.js';
+
+export { DEFAULT_LOYALTY_ONEKEY_SETTING } from './organization-settings.js';
 
 export type {
   CreateUserRequest,

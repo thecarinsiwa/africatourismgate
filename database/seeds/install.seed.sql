@@ -167,6 +167,14 @@ INSERT INTO `organization_settings` (
   'platform',
   '{"displayName":"Africa Tourism Gate","primaryColor":"#0B6E4F","secondaryColor":"#199a45"}',
   '00000000-0000-4000-8000-000000000010'
+),
+(
+  '00000000-0000-4000-8000-000000000014',
+  '00000000-0000-4000-8000-000000000001',
+  'loyalty',
+  'onekey',
+  '{"enabled":true,"pointsPerMajorUnit":1,"programCode":"ONEKEY"}',
+  '00000000-0000-4000-8000-000000000010'
 );
 
 -- -----------------------------------------------------------------------------
