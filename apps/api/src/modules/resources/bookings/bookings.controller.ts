@@ -40,7 +40,7 @@ export class BookingsController {
     @Body() dto: BookingCheckoutDto,
     @CurrentUser() user: AuthUserDto,
   ) {
-    return this.bookingEngine.previewCheckout(dto, user.id);
+    return this.bookingsService.previewCheckout(dto, user.id);
   }
 
   @Post()
@@ -50,7 +50,7 @@ export class BookingsController {
     @Body() dto: BookingCheckoutDto,
     @CurrentUser() user: AuthUserDto,
   ) {
-    return this.bookingEngine.createBooking(dto, user.id, user.id);
+    return this.bookingsService.createFromCheckout(dto, user.id);
   }
 
   @Get()

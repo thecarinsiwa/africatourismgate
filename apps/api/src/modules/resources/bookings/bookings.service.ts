@@ -1,4 +1,9 @@
-import { Injectable, ForbiddenException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  ForbiddenException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, IsNull, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
@@ -10,6 +15,8 @@ import { BookingAdminDetailDto } from './dto/booking-admin-detail.dto';
 import { BookingListItemDto } from './dto/booking-list-item.dto';
 import { BookingsListQueryDto } from './dto/bookings-list-query.dto';
 import { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
+import { BookingCheckoutDto } from './dto/booking-checkout.dto';
+import { BookingCheckoutPreviewResponseDto } from './dto/booking-checkout-preview-response.dto';
 import { BookingDetailDto } from './dto/booking-detail.dto';
 import { PermissionsService } from '../../rbac/permissions.service';
 import { ReviewsService } from '../reviews/reviews.service';
@@ -33,6 +40,64 @@ export class BookingsService extends CrudService<Bookings> {
     private readonly reviewsService: ReviewsService,
   ) {
     super(bookingsRepository);
+  }
+
+  async previewCheckout(
+    dto: BookingCheckoutDto,
+    actorUserId: string,
+  ): Promise<BookingCheckoutPreviewResponseDto> {
+    await this.assertStaffOnlyCustomerUserId(dto, actorUserId);
+    return this.bookingEngine.previewCheckout(dto, actorUserId);
+  }
+
+  async createFromCheckout(
+    dto: BookingCheckoutDto,
+    actorUserId: string,
+  ): Promise<BookingDetailDto> {
+    await this.assertStaffOnlyCustomerUserId(dto, actorUserId);
+    const ownerUserId = await this.resolveCheckoutOwnerUserId(dto, actorUserId);
+    return this.bookingEngine.createBooking(dto, ownerUserId, actorUserId);
+  }
+
+  private async isStaffUser(userId: string): Promise<boolean> {
+    return this.permissionsService.hasAnyPermission(userId, ['users.read']);
+  }
+
+  private async assertStaffOnlyCustomerUserId(
+    dto: BookingCheckoutDto,
+    actorUserId: string,
+  ): Promise<void> {
+    if (!dto.customerUserId) {
+      return;
+    }
+    const staff = await this.isStaffUser(actorUserId);
+    if (!staff) {
+      throw new ForbiddenException(
+        'Le champ customerUserId est réservé au personnel autorisé.',
+      );
+    }
+  }
+
+  private async resolveCheckoutOwnerUserId(
+    dto: BookingCheckoutDto,
+    actorUserId: string,
+  ): Promise<string> {
+    const customerUserId = dto.customerUserId?.trim();
+    if (!customerUserId) {
+      return actorUserId;
+    }
+
+    const customer = await this.usersRepository.findOne({
+      where: { id: customerUserId, deletedAt: IsNull() },
+    });
+    if (!customer) {
+      throw new NotFoundException('Client introuvable.');
+    }
+    if (customer.status !== 'active') {
+      throw new BadRequestException('Le compte client n’est pas actif.');
+    }
+
+    return customer.id;
   }
 
   async list(

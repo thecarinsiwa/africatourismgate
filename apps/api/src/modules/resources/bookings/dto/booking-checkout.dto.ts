@@ -85,4 +85,13 @@ export class BookingCheckoutDto {
   @IsOptional()
   @IsUUID('4')
   promotionId?: string;
+
+  @ApiPropertyOptional({
+    format: 'uuid',
+    description:
+      'Client final de la réservation (réservé au personnel avec users.read, ex. caisse POS)',
+  })
+  @IsOptional()
+  @IsUUID('4')
+  customerUserId?: string;
 }
