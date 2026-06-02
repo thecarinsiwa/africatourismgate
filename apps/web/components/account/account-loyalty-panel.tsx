@@ -73,7 +73,10 @@ export function AccountLoyaltyPanel() {
         <p className="text-sm font-medium uppercase tracking-wide text-primary">
           {t.account.loyalty.programLabel} · {primary.programCode}
         </p>
-        <p className="mt-2 text-4xl font-bold tabular-nums text-[#0f1a16] dark:text-white">
+        <p
+          data-testid="loyalty-points-balance"
+          className="mt-2 text-4xl font-bold tabular-nums text-[#0f1a16] dark:text-white"
+        >
           {primary.pointsBalance.toLocaleString()}
         </p>
         <p className="mt-1 text-sm text-gray-600 dark:text-atg-muted">
