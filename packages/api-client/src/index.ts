@@ -80,6 +80,10 @@ import type {
   BookingListItem,
   BookingsListQuery,
   CreateBookingReviewRequest,
+  CreateSupportTicketRequest,
+  SupportTicket,
+  SupportTicketCreated,
+  SupportTicketsListQuery,
   PropertyDetail,
   PropertyDetailQuery,
   PropertyReviewsListQuery,
@@ -1186,6 +1190,25 @@ export class ApiClient {
     body: CreateBookingReviewRequest,
   ): Promise<Review> {
     return this.request<Review>(`/bookings/${id}/reviews`, {
+      method: 'POST',
+      body,
+    });
+  }
+
+  listSupportTickets(
+    query?: SupportTicketsListQuery,
+  ): Promise<PaginatedResponse<SupportTicket>> {
+    return fetchPaginated<SupportTicket>(this, '/support-tickets', query);
+  }
+
+  getSupportTicket(id: string): Promise<SupportTicket> {
+    return this.request<SupportTicket>(`/support-tickets/${id}`);
+  }
+
+  createSupportTicket(
+    body: CreateSupportTicketRequest,
+  ): Promise<SupportTicketCreated> {
+    return this.request<SupportTicketCreated>('/support-tickets', {
       method: 'POST',
       body,
     });
