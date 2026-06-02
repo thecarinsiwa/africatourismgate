@@ -2,39 +2,35 @@
 
 import { Button } from '@africatourismgate/ui';
 import { useRouter } from 'next/navigation';
-import { useSyncExternalStore } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import { posHomeConfig } from '../config/home';
 import { logout } from '../lib/auth/logout';
 import { AUTH_CHANGED_EVENT, getSession, type PosStoredSession } from '../lib/auth/session';
 
 const { shell } = posHomeConfig;
 
-function subscribeToSession(onStoreChange: () => void): () => void {
-  if (typeof window === 'undefined') {
-    return () => undefined;
-  }
-
-  const onAuthChanged = () => onStoreChange();
-  window.addEventListener(AUTH_CHANGED_EVENT, onAuthChanged);
-  window.addEventListener('storage', onAuthChanged);
-
-  return () => {
-    window.removeEventListener(AUTH_CHANGED_EVENT, onAuthChanged);
-    window.removeEventListener('storage', onAuthChanged);
-  };
-}
-
-function getClientSession(): PosStoredSession | null {
-  return getSession();
-}
-
-function getServerSessionSnapshot(): PosStoredSession | null {
-  return null;
-}
-
 function formatEmployeeName(session: PosStoredSession | null): string {
   if (!session) return '—';
   return `${session.user.firstName} ${session.user.lastName}`.trim();
+}
+
+function usePosSession(): PosStoredSession | null {
+  const [session, setSession] = useState<PosStoredSession | null>(null);
+
+  useLayoutEffect(() => {
+    const sync = () => setSession(getSession());
+
+    sync();
+    window.addEventListener(AUTH_CHANGED_EVENT, sync);
+    window.addEventListener('storage', sync);
+
+    return () => {
+      window.removeEventListener(AUTH_CHANGED_EVENT, sync);
+      window.removeEventListener('storage', sync);
+    };
+  }, []);
+
+  return session;
 }
 
 type PosShellProps = {
@@ -43,11 +39,7 @@ type PosShellProps = {
 
 export function PosShell({ children }: PosShellProps) {
   const router = useRouter();
-  const session = useSyncExternalStore(
-    subscribeToSession,
-    getClientSession,
-    getServerSessionSnapshot,
-  );
+  const session = usePosSession();
 
   async function handleLogout() {
     await logout();
