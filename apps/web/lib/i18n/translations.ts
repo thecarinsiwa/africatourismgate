@@ -310,6 +310,36 @@ export type Translations = {
       lastFour: string;
     };
   };
+  support: {
+    metaTitle: string;
+    metaDescription: string;
+    pageTitle: string;
+    pageSubtitle: string;
+    faqTitle: string;
+    formTitle: string;
+    formSubtitle: string;
+    signInPrompt: string;
+    signInCta: string;
+    checkingSession: string;
+    subjectLabel: string;
+    subjectPlaceholder: string;
+    messageLabel: string;
+    messagePlaceholder: string;
+    submit: string;
+    submitting: string;
+    successTitle: string;
+    successMessage: string;
+    subjectRequired: string;
+    messageTooShort: string;
+    submitError: string;
+    faq: {
+      booking: { question: string; answer: string };
+      payment: { question: string; answer: string };
+      cancellation: { question: string; answer: string };
+      account: { question: string; answer: string };
+      contact: { question: string; answer: string };
+    };
+  };
   booking: {
     login: {
       title: string;
@@ -737,6 +767,60 @@ const fr: Translations = {
       typeOther: 'Autre',
       provider: 'Fournisseur (ex. visa)',
       lastFour: '4 derniers chiffres',
+    },
+  },
+  support: {
+    metaTitle: 'Aide et support',
+    metaDescription:
+      'Consultez la FAQ Africa Tourism Gate ou contactez notre équipe pour vos réservations et votre compte.',
+    pageTitle: 'Centre d’aide',
+    pageSubtitle:
+      'Réponses aux questions fréquentes et formulaire pour joindre notre équipe support.',
+    faqTitle: 'Questions fréquentes',
+    formTitle: 'Contacter le support',
+    formSubtitle:
+      'Décrivez votre demande : nous créons un ticket et vous répondons par e-mail.',
+    signInPrompt: 'Connectez-vous pour envoyer une demande au support.',
+    signInCta: 'Se connecter',
+    checkingSession: 'Vérification de la session…',
+    subjectLabel: 'Sujet',
+    subjectPlaceholder: 'Ex. Question sur ma réservation #…',
+    messageLabel: 'Message',
+    messagePlaceholder: 'Décrivez votre situation en quelques phrases…',
+    submit: 'Envoyer la demande',
+    submitting: 'Envoi en cours…',
+    successTitle: 'Demande enregistrée',
+    successMessage:
+      'Merci. Votre ticket a été créé. Conservez cette référence : {ticketId}. Notre équipe vous répondra sous 24 à 48 h ouvrées.',
+    subjectRequired: 'Le sujet est obligatoire.',
+    messageTooShort: 'Le message doit contenir au moins 10 caractères.',
+    submitError: 'Impossible d’envoyer votre demande. Veuillez réessayer.',
+    faq: {
+      booking: {
+        question: 'Comment modifier ou annuler une réservation ?',
+        answer:
+          'Ouvrez Mon compte → Réservations, sélectionnez votre séjour puis suivez les options disponibles (paiement, annulation). Si le bouton n’apparaît pas, contactez-nous avec votre numéro de réservation.',
+      },
+      payment: {
+        question: 'Quels moyens de paiement acceptez-vous ?',
+        answer:
+          'Les paiements en ligne sécurisés (carte bancaire via Stripe) sont proposés au moment de la confirmation. Le débit et la facture dépendent de l’établissement et du type de produit réservé.',
+      },
+      cancellation: {
+        question: 'Quelle est votre politique d’annulation ?',
+        answer:
+          'Les conditions varient selon l’hébergement ou le prestataire. Consultez les détails sur la fiche produit et dans votre confirmation. En cas de doute, ouvrez un ticket avec votre référence de réservation.',
+      },
+      account: {
+        question: 'Comment mettre à jour mon profil ou mes adresses ?',
+        answer:
+          'Depuis Mon compte, rubriques Profil et Adresses. La langue d’affichage peut être modifiée dans vos préférences.',
+      },
+      contact: {
+        question: 'Quel délai de réponse du support ?',
+        answer:
+          'Nous traitons les demandes du lundi au vendredi. La plupart des tickets reçoivent une première réponse sous 24 à 48 h ouvrées.',
+      },
     },
   },
   booking: {
@@ -1168,6 +1252,58 @@ const en: Translations = {
       lastFour: 'Last 4 digits',
     },
   },
+  support: {
+    metaTitle: 'Help & support',
+    metaDescription:
+      'Browse the Africa Tourism Gate FAQ or contact our team about bookings and your account.',
+    pageTitle: 'Help centre',
+    pageSubtitle: 'Frequently asked questions and a form to reach our support team.',
+    faqTitle: 'Frequently asked questions',
+    formTitle: 'Contact support',
+    formSubtitle: 'Describe your request — we open a ticket and reply by email.',
+    signInPrompt: 'Sign in to send a request to support.',
+    signInCta: 'Sign in',
+    checkingSession: 'Checking session…',
+    subjectLabel: 'Subject',
+    subjectPlaceholder: 'e.g. Question about booking #…',
+    messageLabel: 'Message',
+    messagePlaceholder: 'Describe your situation in a few sentences…',
+    submit: 'Send request',
+    submitting: 'Sending…',
+    successTitle: 'Request received',
+    successMessage:
+      'Thank you. Your ticket was created. Keep this reference: {ticketId}. Our team will reply within 1–2 business days.',
+    subjectRequired: 'Subject is required.',
+    messageTooShort: 'Message must be at least 10 characters.',
+    submitError: 'Could not send your request. Please try again.',
+    faq: {
+      booking: {
+        question: 'How do I change or cancel a booking?',
+        answer:
+          'Open My account → Bookings, select your stay and use the available actions (pay, cancel). If an option is missing, contact us with your booking reference.',
+      },
+      payment: {
+        question: 'Which payment methods do you accept?',
+        answer:
+          'Secure online card payments (Stripe) are offered at checkout. Charges and invoices depend on the property and product booked.',
+      },
+      cancellation: {
+        question: 'What is your cancellation policy?',
+        answer:
+          'Terms vary by property or provider. Check the product page and your confirmation email. If unsure, open a ticket with your booking reference.',
+      },
+      account: {
+        question: 'How do I update my profile or addresses?',
+        answer:
+          'From My account, use Profile and Addresses. You can change display language in your preferences.',
+      },
+      contact: {
+        question: 'How fast does support reply?',
+        answer:
+          'We handle requests Monday–Friday. Most tickets get a first reply within 1–2 business days.',
+      },
+    },
+  },
   booking: {
     login: {
       title: 'Customer sign in',
@@ -1596,6 +1732,60 @@ const es: Translations = {
       typeOther: 'Otro',
       provider: 'Proveedor (ej. visa)',
       lastFour: 'Últimos 4 dígitos',
+    },
+  },
+  support: {
+    metaTitle: 'Ayuda y soporte',
+    metaDescription:
+      'Consulte las preguntas frecuentes de Africa Tourism Gate o contacte a nuestro equipo sobre reservas y su cuenta.',
+    pageTitle: 'Centro de ayuda',
+    pageSubtitle:
+      'Preguntas frecuentes y formulario para contactar con nuestro equipo de soporte.',
+    faqTitle: 'Preguntas frecuentes',
+    formTitle: 'Contactar con soporte',
+    formSubtitle:
+      'Describa su solicitud: abriremos un ticket y le responderemos por correo.',
+    signInPrompt: 'Inicie sesión para enviar una solicitud al soporte.',
+    signInCta: 'Iniciar sesión',
+    checkingSession: 'Comprobando sesión…',
+    subjectLabel: 'Asunto',
+    subjectPlaceholder: 'Ej. Pregunta sobre mi reserva #…',
+    messageLabel: 'Mensaje',
+    messagePlaceholder: 'Describa su situación en unas frases…',
+    submit: 'Enviar solicitud',
+    submitting: 'Enviando…',
+    successTitle: 'Solicitud registrada',
+    successMessage:
+      'Gracias. Su ticket ha sido creado. Guarde esta referencia: {ticketId}. Le responderemos en 24–48 h laborables.',
+    subjectRequired: 'El asunto es obligatorio.',
+    messageTooShort: 'El mensaje debe tener al menos 10 caracteres.',
+    submitError: 'No se pudo enviar su solicitud. Inténtelo de nuevo.',
+    faq: {
+      booking: {
+        question: '¿Cómo modificar o cancelar una reserva?',
+        answer:
+          'Abra Mi cuenta → Reservas, seleccione su estancia y use las opciones disponibles (pago, cancelación). Si falta una opción, contáctenos con su número de reserva.',
+      },
+      payment: {
+        question: '¿Qué métodos de pago aceptan?',
+        answer:
+          'Pagos en línea seguros con tarjeta (Stripe) en el checkout. El cargo y la factura dependen del alojamiento y del producto reservado.',
+      },
+      cancellation: {
+        question: '¿Cuál es la política de cancelación?',
+        answer:
+          'Las condiciones varían según el establecimiento o proveedor. Consulte la ficha del producto y su confirmación. En caso de duda, abra un ticket con su referencia.',
+      },
+      account: {
+        question: '¿Cómo actualizar mi perfil o direcciones?',
+        answer:
+          'Desde Mi cuenta, secciones Perfil y Direcciones. Puede cambiar el idioma en sus preferencias.',
+      },
+      contact: {
+        question: '¿En cuánto tiempo responde el soporte?',
+        answer:
+          'Atendemos de lunes a viernes. La mayoría de los tickets reciben primera respuesta en 24–48 h laborables.',
+      },
     },
   },
   booking: {
