@@ -14,6 +14,8 @@ import {
   formatStayRange,
 } from '../../lib/bookings/display';
 import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
+import { BookingReviewCard } from './booking-review-card';
+import { BookingReviewForm } from './booking-review-form';
 
 type Props = {
   bookingId: string;
@@ -110,7 +112,8 @@ export function AccountBookingDetail({ bookingId }: Props) {
     );
   }
 
-  const { booking, items, totalCents, currency } = detail;
+  const { booking, items, totalCents, currency, review, canReview } = detail;
+  const d = t.account.reservations.detail;
   const canPay = booking.status === 'pending_payment';
   const canCancel =
     booking.status === 'pending_payment' || booking.status === 'confirmed';
@@ -195,6 +198,41 @@ export function AccountBookingDetail({ bookingId }: Props) {
         <p className="text-sm text-red-600 dark:text-red-400" role="alert">
           {actionError}
         </p>
+      ) : null}
+
+      {review ? (
+        <BookingReviewCard
+          review={review}
+          localeTag={localeTag}
+          labels={{
+            yourReview: d.yourReview,
+          }}
+        />
+      ) : canReview ? (
+        <BookingReviewForm
+          bookingId={bookingId}
+          labels={{
+            leaveReview: d.leaveReview,
+            leaveReviewHint: d.leaveReviewHint,
+            reviewRating: d.reviewRating,
+            reviewTitle: d.reviewTitle,
+            reviewTitlePlaceholder: d.reviewTitlePlaceholder,
+            reviewBody: d.reviewBody,
+            reviewBodyPlaceholder: d.reviewBodyPlaceholder,
+            submitReview: d.submitReview,
+            submittingReview: d.submittingReview,
+            reviewSubmitError: d.reviewSubmitError,
+            reviewRatingRequired: d.reviewRatingRequired,
+            ratingAria: (n) => d.reviewStarAria.replace('{n}', String(n)),
+          }}
+          onSubmitted={(submitted) => {
+            setDetail((prev) =>
+              prev
+                ? { ...prev, review: submitted, canReview: false }
+                : prev,
+            );
+          }}
+        />
       ) : null}
 
       <section>

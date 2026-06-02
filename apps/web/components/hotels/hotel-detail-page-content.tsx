@@ -18,8 +18,10 @@ import { HomeHeader } from '../home/home-header';
 import { HotelAmenitiesSection } from './hotel-amenities-section';
 import { HotelBookingMobileBar, HotelBookingSidebar } from './hotel-booking-sidebar';
 import { HotelGallery } from './hotel-gallery';
+import { HotelReviewsSection } from './hotel-reviews-section';
 import { HotelRoomsSection } from './hotel-rooms-section';
 import { HotelStayCalendar } from './hotel-stay-calendar';
+import { StarRating } from './star-rating';
 
 export type HotelDetailPageSearch = HotelDetailSearchParams;
 
@@ -28,24 +30,6 @@ type HotelDetailPageContentProps = {
   initialSearch: HotelDetailPageSearch;
 };
 
-function StarRow({ count }: { count: number }) {
-  const rounded = Math.round(count);
-  return (
-    <div className="flex items-center gap-0.5" aria-hidden>
-      {Array.from({ length: 5 }, (_, i) => (
-        <svg
-          key={i}
-          className={`h-4 w-4 ${i < rounded ? 'text-amber-400' : 'text-gray-300 dark:text-white/20'}`}
-          fill="currentColor"
-          viewBox="0 0 20 20"
-        >
-          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-        </svg>
-      ))}
-    </div>
-  );
-}
-
 export function HotelDetailPageContent({
   propertyId,
   initialSearch,
@@ -53,6 +37,8 @@ export function HotelDetailPageContent({
   const t = useTranslations();
   const h = t.hotels;
   const { locale } = useLocale();
+  const localeTag =
+    locale === 'en' ? 'en-US' : locale === 'es' ? 'es-ES' : 'fr-FR';
   const router = useRouter();
 
   const [detail, setDetail] = useState<PropertyDetail | null>(null);
@@ -226,6 +212,7 @@ export function HotelDetailPageContent({
     ? `${detail.addressLine}, ${detail.destinationName}`
     : detail.destinationName;
   const stars = detail.starRating ?? 0;
+  const hasGuestReviews = detail.reviewCount > 0 && detail.averageRating != null;
 
   const sidebarProps = {
     detail,
@@ -279,9 +266,23 @@ export function HotelDetailPageContent({
               </p>
               {stars > 0 && (
                 <div className="mt-3 flex items-center gap-2">
-                  <StarRow count={stars} />
+                  <StarRating value={stars} />
                   <span className="text-sm text-gray-500 dark:text-atg-muted">
                     {stars} {h.stars}
+                  </span>
+                </div>
+              )}
+              {hasGuestReviews && (
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <StarRating value={detail.averageRating!} />
+                  <span className="text-sm font-semibold text-[#0f1a16] dark:text-white">
+                    {detail.averageRating!.toFixed(1)}
+                  </span>
+                  <span className="text-sm text-gray-500 dark:text-atg-muted">
+                    · {detail.reviewCount} {h.reviews}
+                  </span>
+                  <span className="text-xs text-gray-400 dark:text-atg-muted/80">
+                    ({h.guestRating})
                   </span>
                 </div>
               )}
@@ -302,6 +303,23 @@ export function HotelDetailPageContent({
               amenities={detail.amenities}
               title={h.amenitiesTitle}
               amenityLabels={h.amenities}
+            />
+
+            <HotelReviewsSection
+              propertyId={propertyId}
+              averageRating={detail.averageRating}
+              reviewCount={detail.reviewCount}
+              localeTag={localeTag}
+              labels={{
+                reviewsTitle: h.reviewsTitle,
+                guestRating: h.guestRating,
+                reviews: h.reviews,
+                noReviews: h.noReviews,
+                reviewsLoading: h.reviewsLoading,
+                reviewsLoadError: h.reviewsLoadError,
+                loadMoreReviews: h.loadMoreReviews,
+                anonymousGuest: h.anonymousGuest,
+              }}
             />
 
             <HotelStayCalendar

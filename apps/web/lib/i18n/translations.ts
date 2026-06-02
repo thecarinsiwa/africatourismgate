@@ -183,6 +183,13 @@ export type Translations = {
     maxGuests: string;
     bedConfig: string;
     reserveSection: string;
+    guestRating: string;
+    reviewsTitle: string;
+    noReviews: string;
+    reviewsLoading: string;
+    reviewsLoadError: string;
+    loadMoreReviews: string;
+    anonymousGuest: string;
   };
   account: {
     title: string;
@@ -268,6 +275,19 @@ export type Translations = {
         cancelConfirm: string;
         cancelError: string;
         title: string;
+        leaveReview: string;
+        leaveReviewHint: string;
+        yourReview: string;
+        reviewRating: string;
+        reviewTitle: string;
+        reviewTitlePlaceholder: string;
+        reviewBody: string;
+        reviewBodyPlaceholder: string;
+        submitReview: string;
+        submittingReview: string;
+        reviewSubmitError: string;
+        reviewRatingRequired: string;
+        reviewStarAria: string;
       };
     };
     paymentMethods: {
@@ -592,6 +612,13 @@ const fr: Translations = {
     maxGuests: 'jusqu’à {n} voyageurs',
     bedConfig: 'Literie',
     reserveSection: 'Réserver',
+    guestRating: 'Note clients',
+    reviewsTitle: 'Avis des voyageurs',
+    noReviews: 'Aucun avis pour le moment.',
+    reviewsLoading: 'Chargement des avis…',
+    reviewsLoadError: 'Impossible de charger les avis.',
+    loadMoreReviews: 'Afficher plus d’avis',
+    anonymousGuest: 'Voyageur',
   },
   account: {
     title: 'Mon compte',
@@ -677,6 +704,19 @@ const fr: Translations = {
         cancelConfirm: 'Annuler cette réservation ?',
         cancelError: 'Impossible d’annuler la réservation.',
         title: 'Détail de la réservation',
+        leaveReview: 'Laisser un avis',
+        leaveReviewHint: 'Partagez votre expérience après votre séjour.',
+        yourReview: 'Votre avis',
+        reviewRating: 'Note',
+        reviewTitle: 'Titre (optionnel)',
+        reviewTitlePlaceholder: 'Ex. Séjour parfait',
+        reviewBody: 'Commentaire (optionnel)',
+        reviewBodyPlaceholder: 'Qu’avez-vous apprécié ?',
+        submitReview: 'Publier mon avis',
+        submittingReview: 'Publication…',
+        reviewSubmitError: 'Impossible de publier l’avis.',
+        reviewRatingRequired: 'Veuillez choisir une note entre 1 et 5.',
+        reviewStarAria: '{n} sur 5',
       },
     },
     paymentMethods: {
@@ -1001,6 +1041,13 @@ const en: Translations = {
     maxGuests: 'up to {n} guests',
     bedConfig: 'Bedding',
     reserveSection: 'Book',
+    guestRating: 'Guest rating',
+    reviewsTitle: 'Guest reviews',
+    noReviews: 'No reviews yet.',
+    reviewsLoading: 'Loading reviews…',
+    reviewsLoadError: 'Could not load reviews.',
+    loadMoreReviews: 'Show more reviews',
+    anonymousGuest: 'Guest',
   },
   account: {
     title: 'My account',
@@ -1086,6 +1133,19 @@ const en: Translations = {
         cancelConfirm: 'Cancel this booking?',
         cancelError: 'Could not cancel the booking.',
         title: 'Booking details',
+        leaveReview: 'Leave a review',
+        leaveReviewHint: 'Share your experience after your stay.',
+        yourReview: 'Your review',
+        reviewRating: 'Rating',
+        reviewTitle: 'Title (optional)',
+        reviewTitlePlaceholder: 'e.g. Perfect stay',
+        reviewBody: 'Comment (optional)',
+        reviewBodyPlaceholder: 'What did you enjoy?',
+        submitReview: 'Submit review',
+        submittingReview: 'Submitting…',
+        reviewSubmitError: 'Could not submit your review.',
+        reviewRatingRequired: 'Please select a rating from 1 to 5.',
+        reviewStarAria: '{n} out of 5',
       },
     },
     paymentMethods: {
@@ -1411,6 +1471,13 @@ const es: Translations = {
     maxGuests: 'hasta {n} viajeros',
     bedConfig: 'Camas',
     reserveSection: 'Reservar',
+    guestRating: 'Valoración de huéspedes',
+    reviewsTitle: 'Opiniones de viajeros',
+    noReviews: 'Aún no hay opiniones.',
+    reviewsLoading: 'Cargando opiniones…',
+    reviewsLoadError: 'No se pudieron cargar las opiniones.',
+    loadMoreReviews: 'Ver más opiniones',
+    anonymousGuest: 'Viajero',
   },
   account: {
     title: 'Mi cuenta',
@@ -1496,6 +1563,19 @@ const es: Translations = {
         cancelConfirm: '¿Cancelar esta reserva?',
         cancelError: 'No se pudo cancelar la reserva.',
         title: 'Detalle de la reserva',
+        leaveReview: 'Dejar una opinión',
+        leaveReviewHint: 'Comparta su experiencia después de la estancia.',
+        yourReview: 'Su opinión',
+        reviewRating: 'Nota',
+        reviewTitle: 'Título (opcional)',
+        reviewTitlePlaceholder: 'Ej. Estancia perfecta',
+        reviewBody: 'Comentario (opcional)',
+        reviewBodyPlaceholder: '¿Qué le gustó?',
+        submitReview: 'Publicar opinión',
+        submittingReview: 'Publicando…',
+        reviewSubmitError: 'No se pudo publicar la opinión.',
+        reviewRatingRequired: 'Elija una nota del 1 al 5.',
+        reviewStarAria: '{n} de 5',
       },
     },
     paymentMethods: {
