@@ -201,6 +201,7 @@ export type Translations = {
       profile: string;
       addresses: string;
       reservations: string;
+      loyalty: string;
       paymentMethods: string;
     };
     profile: {
@@ -308,6 +309,19 @@ export type Translations = {
       typeOther: string;
       provider: string;
       lastFour: string;
+    };
+    loyalty: {
+      empty: string;
+      loadError: string;
+      programLabel: string;
+      pointsLabel: string;
+      pointsShort: string;
+      earnHint: string;
+      allPrograms: string;
+      tierMember: string;
+      tierSilver: string;
+      tierGold: string;
+      tierPlatinum: string;
     };
   };
   support: {
@@ -660,6 +674,7 @@ const fr: Translations = {
       profile: 'Profil',
       addresses: 'Adresses',
       reservations: 'Réservations',
+      loyalty: 'Fidélité OneKey',
       paymentMethods: 'Moyens de paiement',
     },
     profile: {
@@ -767,6 +782,21 @@ const fr: Translations = {
       typeOther: 'Autre',
       provider: 'Fournisseur (ex. visa)',
       lastFour: '4 derniers chiffres',
+    },
+    loyalty: {
+      empty:
+        'Votre compte OneKey sera créé automatiquement après votre premier paiement confirmé.',
+      loadError: 'Impossible de charger votre fidélité OneKey.',
+      programLabel: 'Programme',
+      pointsLabel: 'points OneKey',
+      pointsShort: 'pts',
+      earnHint:
+        'Les points sont crédités après chaque paiement de réservation confirmé, selon les règles du programme.',
+      allPrograms: 'Tous vos programmes',
+      tierMember: 'Membre',
+      tierSilver: 'Silver',
+      tierGold: 'Gold',
+      tierPlatinum: 'Platinum',
     },
   },
   support: {
@@ -1143,6 +1173,7 @@ const en: Translations = {
       profile: 'Profile',
       addresses: 'Addresses',
       reservations: 'Bookings',
+      loyalty: 'OneKey loyalty',
       paymentMethods: 'Payment methods',
     },
     profile: {
@@ -1250,6 +1281,21 @@ const en: Translations = {
       typeOther: 'Other',
       provider: 'Provider (e.g. visa)',
       lastFour: 'Last 4 digits',
+    },
+    loyalty: {
+      empty:
+        'Your OneKey account will be created automatically after your first confirmed payment.',
+      loadError: 'Could not load your OneKey loyalty.',
+      programLabel: 'Program',
+      pointsLabel: 'OneKey points',
+      pointsShort: 'pts',
+      earnHint:
+        'Points are credited after each confirmed booking payment, according to program rules.',
+      allPrograms: 'All your programs',
+      tierMember: 'Member',
+      tierSilver: 'Silver',
+      tierGold: 'Gold',
+      tierPlatinum: 'Platinum',
     },
   },
   support: {
@@ -1625,6 +1671,7 @@ const es: Translations = {
       profile: 'Perfil',
       addresses: 'Direcciones',
       reservations: 'Reservas',
+      loyalty: 'Fidelidad OneKey',
       paymentMethods: 'Medios de pago',
     },
     profile: {
@@ -1732,6 +1779,21 @@ const es: Translations = {
       typeOther: 'Otro',
       provider: 'Proveedor (ej. visa)',
       lastFour: 'Últimos 4 dígitos',
+    },
+    loyalty: {
+      empty:
+        'Su cuenta OneKey se creará automáticamente tras su primer pago confirmado.',
+      loadError: 'No se pudo cargar su fidelidad OneKey.',
+      programLabel: 'Programa',
+      pointsLabel: 'puntos OneKey',
+      pointsShort: 'pts',
+      earnHint:
+        'Los puntos se acreditan tras cada pago de reserva confirmado, según las reglas del programa.',
+      allPrograms: 'Todos sus programas',
+      tierMember: 'Miembro',
+      tierSilver: 'Silver',
+      tierGold: 'Gold',
+      tierPlatinum: 'Platinum',
     },
   },
   support: {

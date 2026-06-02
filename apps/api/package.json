@@ -23,6 +23,7 @@
     "test:bookings-list": "node scripts/test-bookings-list.mjs",
     "test:bookings-detail": "node scripts/test-bookings-detail.mjs",
     "test:stripe": "node scripts/test-stripe-payment.mjs",
+    "test:loyalty": "node scripts/test-loyalty-payment.mjs",
     "test:stripe-refund": "node scripts/test-stripe-refund.mjs",
     "test:promo": "node scripts/test-promo-checkout.mjs",
     "test:rooms-amenities": "node scripts/test-rooms-amenities.mjs",

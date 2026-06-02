@@ -9,6 +9,7 @@ const NAV = [
   { href: '/account/profile', key: 'profile' as const },
   { href: '/account/addresses', key: 'addresses' as const },
   { href: '/account/reservations', key: 'reservations' as const },
+  { href: '/account/loyalty', key: 'loyalty' as const },
   { href: '/account/payment-methods', key: 'paymentMethods' as const },
 ] as const;
 
@@ -26,6 +27,7 @@ function resolvePageTitle(
     return detailTitle;
   }
   if (pathname.startsWith('/account/reservations')) return labels.reservations;
+  if (pathname.startsWith('/account/loyalty')) return labels.loyalty;
   if (pathname.startsWith('/account/payment-methods')) return labels.paymentMethods;
   return fallback;
 }
