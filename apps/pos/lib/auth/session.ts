@@ -115,6 +115,20 @@ export function setSelectedOrganization(
   );
 }
 
+export function clearSelectedOrganization(remember?: boolean): void {
+  const session = getSession();
+  if (!session) return;
+
+  saveSession(
+    {
+      ...session,
+      selectedOrganizationId: null,
+      selectedOrganizationName: null,
+    },
+    remember ?? getSessionPersistence() === 'local',
+  );
+}
+
 export function clearSession(): void {
   if (typeof window === 'undefined') {
     return;
