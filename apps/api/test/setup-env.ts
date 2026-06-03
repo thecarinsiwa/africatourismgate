@@ -54,3 +54,10 @@ setEnvIfEmpty(
   'http://localhost:3000/api/auth/google/callback',
 );
 setEnvIfEmpty('NEXT_PUBLIC_API_URL', 'http://localhost:3000/api');
+
+// Stripe SDK needs an API key to call webhooks.constructEvent (no network in e2e).
+setEnvIfEmpty('STRIPE_SECRET_KEY', 'sk_test_e2e_placeholder');
+setEnvIfEmpty(
+  'STRIPE_WEBHOOK_SECRET',
+  'whsec_e2e_test_secret_for_signature_only',
+);

@@ -13,6 +13,8 @@ describe('Stripe webhook (e2e)', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
+    process.env.STRIPE_SECRET_KEY =
+      process.env.STRIPE_SECRET_KEY?.trim() || 'sk_test_e2e_placeholder';
     process.env.STRIPE_WEBHOOK_SECRET = DEFAULT_STRIPE_WEBHOOK_E2E_SECRET;
     app = await createE2eApp();
   }, 120_000);
