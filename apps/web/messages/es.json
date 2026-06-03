@@ -1,0 +1,57 @@
+{
+  "language": {
+    "label": "Idioma",
+    "select": "Elegir idioma",
+    "fr": "Français",
+    "en": "English",
+    "es": "Español"
+  },
+  "theme": {
+    "lightMode": "Modo claro",
+    "darkMode": "Modo oscuro",
+    "enableLight": "Activar modo claro",
+    "enableDark": "Activar modo oscuro"
+  },
+  "nav": {
+    "home": "Inicio",
+    "about": "Acerca de",
+    "gallery": "Galería",
+    "pages": "Páginas",
+    "blog": "Blog",
+    "contact": "Contacto",
+    "hotels": "Hoteles",
+    "flights": "Vuelos",
+    "cars": "Alquiler de coches",
+    "cruises": "Cruceros",
+    "tours": "Tours",
+    "mainAria": "Navegación principal",
+    "mobileAria": "Navegación móvil",
+    "menu": "Menú",
+    "myAccount": "Mi cuenta",
+    "signIn": "Iniciar sesión",
+    "signOut": "Cerrar sesión"
+  },
+  "booking": {
+    "login": {
+      "title": "Inicio de sesión del cliente",
+      "subtitle": "Inicie sesión con su correo y contraseña, o use Google para continuar su reserva.",
+      "divider": "o",
+      "google": "Iniciar sesión con Google",
+      "backToHotels": "Volver a hoteles",
+      "form": {
+        "emailLabel": "Correo electrónico",
+        "emailPlaceholder": "usted@ejemplo.com",
+        "passwordLabel": "Contraseña",
+        "passwordPlaceholder": "••••••••",
+        "submit": "Iniciar sesión",
+        "submitLoading": "Iniciando sesión…"
+      },
+      "errors": {
+        "network": "No se pudo conectar con el servidor. Compruebe su conexión.",
+        "generic": "Algo salió mal. Inténtelo de nuevo.",
+        "envMissing": "Falta la configuración de la API (NEXT_PUBLIC_API_URL).",
+        "unauthorized": "Correo o contraseña incorrectos."
+      }
+    }
+  }
+}

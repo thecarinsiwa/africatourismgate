@@ -6,6 +6,7 @@ import './globals.css';
 import { AppShell } from '@africatourismgate/ui';
 import type { CSSProperties } from 'react';
 import { normalizeBrandingAssetUrl } from '@africatourismgate/utils';
+import { BrandingProvider } from '../components/branding-provider';
 import { Providers } from '../components/providers';
 
 const montserrat = Montserrat({
@@ -41,9 +42,9 @@ const localeInitScript = `
     if (sessionRaw) {
       var session = JSON.parse(sessionRaw);
       var pref = session && session.user && session.user.preferredLanguage;
-      if (pref === 'en' || pref === 'fr') locale = pref;
+      if (pref === 'en' || pref === 'fr' || pref === 'es') locale = pref;
     }
-    if (locale === 'en' || locale === 'fr') {
+    if (locale === 'en' || locale === 'fr' || locale === 'es') {
       document.documentElement.lang = locale;
     }
   } catch {}
@@ -179,9 +180,16 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <script dangerouslySetInnerHTML={{ __html: localeInitScript }} />
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <Providers>
-            <AppShell>{children}</AppShell>
-          </Providers>
+          <BrandingProvider
+            branding={{
+              displayName: branding.displayName,
+              logoUrl: branding.logoUrl,
+            }}
+          >
+            <Providers>
+              <AppShell>{children}</AppShell>
+            </Providers>
+          </BrandingProvider>
         </NextIntlClientProvider>
       </body>
     </html>

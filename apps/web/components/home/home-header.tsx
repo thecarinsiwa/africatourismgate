@@ -4,6 +4,7 @@ import { normalizeBrandingAssetUrl } from '@africatourismgate/utils';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
+import { usePublicBranding } from '../branding-provider';
 import { LanguageSwitcher } from '../language-switcher';
 import { AUTH_CHANGED_EVENT, hasWebSession } from '../../lib/auth/client-session';
 import { useTranslations as useIntlTranslations } from 'next-intl';
@@ -50,13 +51,15 @@ export function HomeHeader() {
   const tLanguage = useIntlTranslations('language');
   const pathname = usePathname();
   const onAccountArea = pathname.startsWith('/account');
+  const serverBranding = usePublicBranding();
   const [menuOpen, setMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [theme, setTheme] = useState<ThemeMode>('light');
   const [branding, setBranding] = useState<Required<PublicBranding>>({
-    displayName: 'Africa Tourism Gate',
-    logoUrl: null,
+    displayName: serverBranding?.displayName ?? 'Africa Tourism Gate',
+    logoUrl: serverBranding?.logoUrl ?? null,
   });
+  const [logoBroken, setLogoBroken] = useState(false);
   const [hasSession, setHasSession] = useState(false);
 
   const navLinks = useMemo(
@@ -98,6 +101,15 @@ export function HomeHeader() {
   }, []);
 
   useEffect(() => {
+    if (serverBranding) {
+      setBranding({
+        displayName: serverBranding.displayName,
+        logoUrl: serverBranding.logoUrl,
+      });
+      setLogoBroken(false);
+      return;
+    }
+
     const defaultApiUrl =
       process.env.NODE_ENV === 'production'
         ? 'https://app-africatourismgate.org/api'
@@ -116,13 +128,14 @@ export function HomeHeader() {
           displayName: payload.displayName?.trim() || 'Africa Tourism Gate',
           logoUrl: normalizeBrandingAssetUrl(payload.logoUrl?.trim() || null),
         });
+        setLogoBroken(false);
       } catch {
         // Keep defaults if branding endpoint is unavailable.
       }
     }
 
     void loadBranding();
-  }, []);
+  }, [serverBranding]);
 
   function toggleTheme() {
     const nextTheme: ThemeMode = theme === 'dark' ? 'light' : 'dark';
@@ -174,11 +187,12 @@ export function HomeHeader() {
       <div className="border-b border-gray-100 bg-white shadow-sm transition-colors dark:border-atg-border dark:bg-atg-elevated">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-0 sm:px-6 lg:px-8">
           <Link href="/" className="flex items-center gap-2 py-4">
-            {branding.logoUrl ? (
+            {branding.logoUrl && !logoBroken ? (
               <img
                 src={branding.logoUrl}
                 alt={branding.displayName}
                 className="h-10 w-10 rounded-lg object-cover"
+                onError={() => setLogoBroken(true)}
               />
             ) : (
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">

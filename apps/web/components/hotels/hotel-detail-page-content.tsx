@@ -12,6 +12,7 @@ import {
   type HotelDetailSearchParams,
 } from '../../lib/hotels/listings';
 import { buildReservationQuery } from '../../lib/reservations/flow';
+import { localeToBcp47 } from '../../lib/i18n/locale-tag';
 import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
@@ -37,8 +38,7 @@ export function HotelDetailPageContent({
   const t = useTranslations();
   const h = t.hotels;
   const { locale } = useLocale();
-  const localeTag =
-    locale === 'en' ? 'en-US' : 'fr-FR';
+  const localeTag = localeToBcp47(locale);
   const router = useRouter();
 
   const [detail, setDetail] = useState<PropertyDetail | null>(null);

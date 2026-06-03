@@ -1,6 +1,7 @@
 'use client';
 
 import type { PropertyCalendarDay } from '@africatourismgate/types';
+import type { Locale } from '../../lib/i18n/types';
 import { formatHotelPrice } from '../../lib/hotels/listings';
 import { enumerateMonthDays, formatMonthLabel, shiftYearMonth } from '../../lib/hotels/dates';
 
@@ -15,11 +16,18 @@ type HotelStayCalendarProps = {
   prevMonthLabel: string;
   nextMonthLabel: string;
   unavailableLabel: string;
-  locale: 'fr' | 'en';
+  locale: Locale;
 };
 
 const WEEKDAY_HEADERS = ['L', 'M', 'M', 'J', 'V', 'S', 'D'] as const;
 const WEEKDAY_HEADERS_EN = ['M', 'T', 'W', 'T', 'F', 'S', 'S'] as const;
+const WEEKDAY_HEADERS_ES = ['L', 'M', 'X', 'J', 'V', 'S', 'D'] as const;
+
+function weekdayHeaders(locale: Locale): readonly string[] {
+  if (locale === 'en') return WEEKDAY_HEADERS_EN;
+  if (locale === 'es') return WEEKDAY_HEADERS_ES;
+  return WEEKDAY_HEADERS;
+}
 
 function dayByDate(days: PropertyCalendarDay[]): Map<string, PropertyCalendarDay> {
   return new Map(days.map((d) => [d.date, d]));
@@ -49,7 +57,7 @@ export function HotelStayCalendar({
   const firstDay = monthDays[0];
   const startWeekday = new Date(`${firstDay}T12:00:00`).getUTCDay();
   const offset = startWeekday === 0 ? 6 : startWeekday - 1;
-  const headers = locale === 'en' ? WEEKDAY_HEADERS_EN : WEEKDAY_HEADERS;
+  const headers = weekdayHeaders(locale);
 
   function handleDayClick(date: string) {
     const day = dayMap.get(date);
