@@ -5,8 +5,11 @@
 | https://africatourismgate.org | Site public (`apps/web`) | `atg-web` | 3002 |
 | https://app-africatourismgate.org | Admin (`apps/admin`) | `atg-admin` | 3001 |
 | **https://app-africatourismgate.org/api** | API (`apps/api`) | `atg-api` | 3000 |
+| **https://app-africatourismgate.org/uploads/** | Fichiers branding (`apps/api/uploads`) | `atg-api` | 3000 |
 
 L’API est exposée sur le **même domaine** que l’admin (`/api/…` → nginx → port 3000). **Pas besoin** du sous-domaine `api.africatourismgate.org`.
+
+Les logos et favicons utilisent `/uploads/branding/…` : nginx doit proxyer `/uploads/` vers l’API (pas vers Next.js admin). Après mise à jour du dépôt : `sudo ./scripts/setup-nginx.sh && sudo nginx -t && sudo systemctl reload nginx`.
 
 Les variantes `www` redirigent vers le domaine canonique **sans** `www`.
 
@@ -37,6 +40,7 @@ Vérifications :
 ```bash
 pm2 list
 curl -s https://app-africatourismgate.org/api/health
+curl -I "https://app-africatourismgate.org/uploads/branding/VOTRE-FICHIER.png"
 curl -I https://africatourismgate.org/
 curl -I https://app-africatourismgate.org/login
 ```
