@@ -12,6 +12,28 @@ NestJS HTTP API for Africa Tourism Gate, mapped to the MySQL schema in `database
 | `pnpm generate` | Regenerate TypeORM entities + CRUD modules from SQL |
 | `pnpm db:sync` | Apply database schema migrations and insert-only seeds |
 | `pnpm test:pos-sale-cash` | POS cash flow: checkout preview → booking → cash-payment (needs `SEED_ADMIN_PASSWORD`) |
+| `pnpm test:e2e` | Jest + supertest e2e suite (health, auth, booking, Stripe webhook mock) |
+
+## E2E tests (Jest + supertest)
+
+Prerequisites:
+
+- MySQL reachable with credentials from root `.env` / `.env.local`
+- `DATABASE_NAME` is forced to `africatourismgate_test` during e2e (override via `E2E_DATABASE_NAME`)
+- `SEED_ADMIN_PASSWORD` matching the seeded admin (`database/seeds/README.md`)
+- Optional: `STRIPE_WEBHOOK_SECRET` — if unset, webhook signature tests use a local test secret
+
+On first run against an empty test database, startup imports schema and seeds (`DATABASE_AUTO_SCHEMA` / `DATABASE_AUTO_SEED`, same as dev).
+
+```bash
+# From repo root
+DATABASE_NAME=africatourismgate_test pnpm --filter @africatourismgate/api test:e2e
+
+# Or from apps/api
+pnpm test:e2e
+```
+
+Specs live in `apps/api/test/e2e/` (`health`, `auth`, `booking`, `stripe-webhook`).
 
 ## Configuration
 
