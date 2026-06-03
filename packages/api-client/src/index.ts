@@ -213,6 +213,24 @@ import {
 
 export { ApiHttpError, parseApiErrorMessage } from './http-error';
 
+/** OpenAPI-generated types and typed fetch client (see `pnpm codegen:api`). */
+export {
+  createOpenApiClient,
+  openApiBaseUrl,
+  openApiLogin,
+  type AuthMeResponseBody,
+  type AuthResponseDto,
+  type AuthTokensResponseDto,
+  type AuthUserDto,
+  type LoginRequestBody,
+  type LoginResponseBody,
+  type OpenApiClient,
+  type OpenApiClientOptions,
+  type OpenApiPaths,
+  type paths,
+  type components,
+} from './generated';
+
 export type {
   AuthMe,
   AuthResponse,

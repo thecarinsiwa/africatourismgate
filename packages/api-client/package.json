@@ -6,10 +6,12 @@
   "types": "./src/index.ts",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "lint": "tsc -p tsconfig.json --noEmit"
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "codegen": "pnpm -w codegen:api"
   },
   "dependencies": {
-    "@africatourismgate/types": "workspace:*"
+    "@africatourismgate/types": "workspace:*",
+    "openapi-fetch": "^0.13.5"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
