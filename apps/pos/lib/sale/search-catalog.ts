@@ -7,7 +7,7 @@ import type {
   Room,
   Vehicle,
 } from '@africatourismgate/types';
-import { getApiClient } from '../auth/api';
+import { getValidApiClient } from '../auth/api';
 import { formatCents } from './format';
 import type { SaleCatalogFilter, SaleCatalogHit } from './types';
 
@@ -28,7 +28,7 @@ function sortHits(hits: SaleCatalogHit[]): SaleCatalogHit[] {
 }
 
 async function searchActivities(query: string): Promise<SaleCatalogHit[]> {
-  const client = getApiClient();
+  const client = await getValidApiClient();
   const response = await client.listActivities({
     search: query || undefined,
     limit: SEARCH_LIMIT,
@@ -48,7 +48,7 @@ async function searchActivities(query: string): Promise<SaleCatalogHit[]> {
 }
 
 async function searchRooms(query: string): Promise<SaleCatalogHit[]> {
-  const client = getApiClient();
+  const client = await getValidApiClient();
   const properties = await client.listProperties({
     search: query || undefined,
     limit: ROOM_PROPERTY_LIMIT,
@@ -127,7 +127,7 @@ async function searchRooms(query: string): Promise<SaleCatalogHit[]> {
 }
 
 async function searchFlightClasses(query: string): Promise<SaleCatalogHit[]> {
-  const client = getApiClient();
+  const client = await getValidApiClient();
   const flightsResponse = await client.listFlights({
     search: query || undefined,
     limit: SEARCH_LIMIT,
@@ -199,7 +199,7 @@ async function searchFlightClasses(query: string): Promise<SaleCatalogHit[]> {
 }
 
 async function searchVehicles(query: string): Promise<SaleCatalogHit[]> {
-  const client = getApiClient();
+  const client = await getValidApiClient();
   const response = await client.listVehicles({
     search: query || undefined,
     limit: SEARCH_LIMIT,
@@ -217,7 +217,7 @@ async function searchVehicles(query: string): Promise<SaleCatalogHit[]> {
 }
 
 async function searchCabins(query: string): Promise<SaleCatalogHit[]> {
-  const client = getApiClient();
+  const client = await getValidApiClient();
   const response = await client.listCabins({ limit: 50 });
 
   const filtered = response.data.filter((cabin: Cabin) => {
@@ -252,8 +252,13 @@ export async function searchCatalog(
   filter: SaleCatalogFilter,
 ): Promise<SaleCatalogHit[]> {
   const normalized = normalizeQuery(query);
+
   if (normalized.length < 2) {
-    return [];
+    if (filter !== 'all') {
+      const hits = await SEARCHERS[filter]('');
+      return sortHits(hits);
+    }
+    return fetchInitialCatalog();
   }
 
   if (filter !== 'all') {
@@ -264,6 +269,24 @@ export async function searchCatalog(
   const results = await Promise.allSettled(
     (Object.keys(SEARCHERS) as Exclude<SaleCatalogFilter, 'all'>[]).map((kind) =>
       SEARCHERS[kind](normalized),
+    ),
+  );
+
+  const merged: SaleCatalogHit[] = [];
+  for (const result of results) {
+    if (result.status === 'fulfilled') {
+      merged.push(...result.value);
+    }
+  }
+
+  return sortHits(merged).slice(0, SEARCH_LIMIT * 2);
+}
+
+/** Produits disponibles au chargement de la page (sans recherche). */
+export async function fetchInitialCatalog(): Promise<SaleCatalogHit[]> {
+  const results = await Promise.allSettled(
+    (Object.keys(SEARCHERS) as Exclude<SaleCatalogFilter, 'all'>[]).map((kind) =>
+      SEARCHERS[kind](''),
     ),
   );
 

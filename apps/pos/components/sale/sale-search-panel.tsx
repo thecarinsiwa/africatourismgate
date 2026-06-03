@@ -20,24 +20,20 @@ export function SaleSearchPanel() {
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState<SaleCatalogFilter>('all');
   const [hits, setHits] = useState<SaleCatalogHit[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedHit, setSelectedHit] = useState<SaleCatalogHit | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
 
   useEffect(() => {
-    const trimmed = query.trim();
-    if (trimmed.length < 2) {
-      setHits([]);
-      setError(null);
-      setLoading(false);
-      return;
-    }
-
     let cancelled = false;
+    const trimmed = query.trim();
+    const debounceMs = trimmed.length >= 2 ? 300 : 0;
+
     const timer = window.setTimeout(() => {
       setLoading(true);
       setError(null);
+
       void searchCatalog(trimmed, filter)
         .then((results) => {
           if (!cancelled) setHits(results);
@@ -51,7 +47,7 @@ export function SaleSearchPanel() {
         .finally(() => {
           if (!cancelled) setLoading(false);
         });
-    }, 300);
+    }, debounceMs);
 
     return () => {
       cancelled = true;
@@ -69,6 +65,8 @@ export function SaleSearchPanel() {
     setSelectedHit(null);
   }
 
+  const isBrowsing = query.trim().length < 2;
+
   return (
     <div className="flex flex-col gap-5">
       <div className="pos-touch space-y-4">
@@ -85,7 +83,11 @@ export function SaleSearchPanel() {
       </div>
 
       <div className="min-h-[12rem]">
-        {query.trim().length < 2 ? (
+        {isBrowsing && !loading && !error && hits.length > 0 ? (
+          <p className="mb-3 text-sm text-atg-muted">{searchLabels.browseLabel}</p>
+        ) : null}
+
+        {isBrowsing && !loading && hits.length === 0 && !error ? (
           <p className="text-center text-base text-atg-muted">{searchLabels.hint}</p>
         ) : null}
 
@@ -101,7 +103,7 @@ export function SaleSearchPanel() {
           </p>
         ) : null}
 
-        {!loading && !error && query.trim().length >= 2 && hits.length === 0 ? (
+        {!loading && !error && !isBrowsing && hits.length === 0 ? (
           <p className="text-center text-base text-atg-muted">{searchLabels.emptyLabel}</p>
         ) : null}
 

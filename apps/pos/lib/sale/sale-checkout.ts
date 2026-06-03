@@ -5,7 +5,7 @@ import type {
   BookingDetail,
   BookingPaymentIntentResponse,
 } from '@africatourismgate/types';
-import { getApiClient } from '../auth/api';
+import { getValidApiClient } from '../auth/api';
 
 export function saleApiErrorMessage(error: unknown, fallback: string): string {
   if (error instanceof ApiHttpError) {
@@ -23,7 +23,7 @@ export async function createBookingFromCart(
   items: BookingCheckoutItem[],
   preview: BookingCheckoutPreview,
 ): Promise<BookingDetail> {
-  const client = getApiClient();
+  const client = await getValidApiClient();
   return client.createBooking({
     items,
     currency: preview.currency,
@@ -31,14 +31,14 @@ export async function createBookingFromCart(
 }
 
 export async function payBookingCash(bookingId: string): Promise<BookingDetail> {
-  const client = getApiClient();
+  const client = await getValidApiClient();
   return client.recordBookingCashPayment(bookingId);
 }
 
 export async function createCardPaymentIntent(
   bookingId: string,
 ): Promise<BookingPaymentIntentResponse> {
-  const client = getApiClient();
+  const client = await getValidApiClient();
   return client.createBookingPaymentIntent(bookingId);
 }
 

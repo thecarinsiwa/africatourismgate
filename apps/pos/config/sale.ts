@@ -5,7 +5,8 @@ export const posSalePageConfig = {
   search: {
     label: 'Rechercher',
     placeholder: 'Nom d’activité, chambre, vol, véhicule…',
-    hint: 'Saisissez au moins 2 caractères',
+    hint: 'Saisissez au moins 2 caractères pour affiner la recherche.',
+    browseLabel: 'Catalogue disponible — touchez un produit pour l’ajouter.',
     loadingLabel: 'Recherche…',
     emptyLabel: 'Aucun produit trouvé',
     errorLabel: 'Impossible de charger le catalogue',

@@ -144,6 +144,11 @@ export async function ensureClientSession(): Promise<PosStoredSession | null> {
     selectedOrganizationName: session.selectedOrganizationName,
   });
   saveSession(session, getRememberFromDocumentCookies());
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(
+      new CustomEvent(AUTH_CHANGED_EVENT, { detail: { loggedIn: true } }),
+    );
+  }
   return session;
 }
 

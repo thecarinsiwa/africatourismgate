@@ -16,7 +16,7 @@ import {
   type ReactNode,
 } from 'react';
 import { posSalePageConfig } from '../../config/sale';
-import { getApiClient } from '../auth/api';
+import { getValidApiClient } from '../auth/api';
 import type { SaleCartLine } from './types';
 
 const PREVIEW_DEBOUNCE_MS = 400;
@@ -98,8 +98,8 @@ export function SaleCartProvider({ children }: { children: ReactNode }) {
       setPreviewLoading(true);
       setPreviewError(null);
 
-      void getApiClient()
-        .previewBookingCheckout({ items })
+      void getValidApiClient()
+        .then((client) => client.previewBookingCheckout({ items }))
         .then((result) => {
           if (cancelled) return;
           setPreview(result);
