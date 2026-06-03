@@ -19,8 +19,10 @@ import {
   RoomAvailability,
   Rooms,
   VehicleAvailability,
+  Users,
   Vehicles,
 } from '../../../entities/generated';
+import { EmailService } from '../../email/email.service';
 import { enumerateDates } from '../room-availability/room-availability-date.util';
 import {
   BookingCheckoutDto,
@@ -75,6 +77,9 @@ export class BookingEngineService {
     private readonly activitiesRepository: Repository<Activities>,
     private readonly statusHistory: BookingStatusHistoryService,
     private readonly checkoutPromo: BookingCheckoutPromoService,
+    @InjectRepository(Users)
+    private readonly usersRepository: Repository<Users>,
+    private readonly emailService: EmailService,
   ) {}
 
   async previewCheckout(
@@ -176,7 +181,31 @@ export class BookingEngineService {
       reason: reason?.trim() || 'Confirmation',
       changedByUserId: actorUserId ?? null,
     });
+    void this.notifyBookingConfirmed(id).catch(() => undefined);
     return this.getBookingDetail(id);
+  }
+
+  private async notifyBookingConfirmed(bookingId: string): Promise<void> {
+    const detail = await this.getBookingDetail(bookingId);
+    const user = await this.usersRepository.findOne({
+      where: { id: detail.booking.userId, deletedAt: IsNull() },
+    });
+    if (!user?.email) {
+      return;
+    }
+
+    const itemTitles = detail.items
+      .map((item) => item.titleSnapshot?.trim())
+      .filter((title): title is string => Boolean(title));
+
+    await this.emailService.sendBookingConfirmation({
+      to: user.email,
+      firstName: user.firstName,
+      bookingId: detail.booking.id,
+      totalCents: detail.totalCents,
+      currency: detail.currency,
+      itemTitles,
+    });
   }
 
   async recordCashPayment(
