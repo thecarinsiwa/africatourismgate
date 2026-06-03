@@ -1,4 +1,4 @@
-import { ensureHttpsAssetUrl } from '@africatourismgate/utils';
+import { ensureHttpsAssetUrl } from '../../../common/utils/public-asset-url';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';

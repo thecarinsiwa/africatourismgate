@@ -9,7 +9,7 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { getApiPublicOrigin } from '@africatourismgate/utils';
+import { getApiPublicOrigin } from '../../../common/utils/public-asset-url';
 import type { Request } from 'express';
 import {
   ApiBody,
