@@ -1,0 +1,120 @@
+{
+  "language": {
+    "select": "Choisir la langue",
+    "fr": "Français",
+    "en": "English"
+  },
+  "theme": {
+    "light": "Mode clair",
+    "dark": "Mode sombre"
+  },
+  "auth": {
+    "login": {
+      "metaTitle": "Connexion — Africa Tourism Gate Admin",
+      "metaDescription": "Accédez au back-office Africa Tourism Gate",
+      "title": "Se connecter",
+      "subtitle": "Accédez à votre tableau de bord et gérez votre plateforme touristique en toute simplicité.",
+      "dividerLabel": "Pas encore de compte ?",
+      "secondaryAction": "Créer un compte",
+      "footerPrefix": "Pour assistance, contactez",
+      "form": {
+        "emailLabel": "Adresse email",
+        "emailPlaceholder": "admin@africatourismgate.local",
+        "passwordLabel": "Mot de passe",
+        "passwordPlaceholder": "••••••••",
+        "forgotPassword": "Mot de passe oublié ?",
+        "rememberMe": "Se souvenir de moi",
+        "submit": "Se connecter",
+        "submitLoading": "Connexion…"
+      },
+      "errors": {
+        "invalidCredentials": "Adresse e-mail ou mot de passe incorrect.",
+        "network": "Impossible de joindre l’API. Vérifiez que l’API tourne et que nginx proxy /api/.",
+        "envMissing": "Configuration manquante : définissez NEXT_PUBLIC_API_URL dans .env puis redémarrez pnpm dev.",
+        "generic": "Une erreur est survenue. Veuillez réessayer."
+      }
+    },
+    "register": {
+      "metaTitle": "Inscription — Africa Tourism Gate Admin",
+      "metaDescription": "Créez votre compte Africa Tourism Gate",
+      "title": "Créer un compte",
+      "subtitle": "Rejoignez Africa Tourism Gate pour gérer vos offres touristiques, réservations et activités sur la plateforme.",
+      "dividerLabel": "Déjà un compte ?",
+      "secondaryAction": "Se connecter",
+      "footerPrefix": "Pour assistance, contactez",
+      "form": {
+        "firstNameLabel": "Prénom",
+        "firstNamePlaceholder": "Carin",
+        "lastNameLabel": "Nom",
+        "lastNamePlaceholder": "Siwa",
+        "emailLabel": "Adresse email",
+        "emailPlaceholder": "vous@exemple.com",
+        "phoneLabel": "Téléphone",
+        "phonePlaceholder": "+243 000 000 000",
+        "phoneHint": "Optionnel",
+        "passwordLabel": "Mot de passe",
+        "passwordPlaceholder": "••••••••",
+        "confirmPasswordLabel": "Confirmer le mot de passe",
+        "confirmPasswordPlaceholder": "••••••••",
+        "confirmPasswordMismatch": "Les mots de passe ne correspondent pas",
+        "termsLabel": "J'accepte les",
+        "termsLink": "conditions d'utilisation",
+        "submit": "Créer mon compte",
+        "submitLoading": "Création du compte…"
+      },
+      "errors": {
+        "emailAlreadyRegistered": "Cette adresse e-mail est déjà utilisée. Connectez-vous ou utilisez une autre adresse.",
+        "network": "Impossible de joindre l’API. Vérifiez que l’API tourne et que nginx proxy /api/.",
+        "envMissing": "Configuration manquante : définissez NEXT_PUBLIC_API_URL dans .env puis redémarrez pnpm dev.",
+        "server": "Le serveur n’est pas prêt (base de données). Vérifiez MySQL et exécutez pnpm db:sync.",
+        "generic": "Une erreur est survenue. Veuillez réessayer."
+      }
+    }
+  },
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "groups": {
+      "usersAuth": "Utilisateurs & authentification",
+      "loyalty": "Fidélité (OneKey)",
+      "travelProducts": "Produits touristiques",
+      "bookings": "Réservations",
+      "payments": "Paiements",
+      "contentSupport": "Contenu & support",
+      "system": "Système & analytique"
+    },
+    "links": {
+      "users": "Utilisateurs",
+      "employees": "Employés",
+      "addresses": "Adresses",
+      "paymentMethods": "Moyens de paiement",
+      "sessions": "Sessions",
+      "securityLogs": "Journaux de sécurité",
+      "loyaltyAccounts": "Comptes fidélité",
+      "accommodations": "Hébergements",
+      "amenities": "Équipements",
+      "flights": "Vols",
+      "vehicles": "Locations véhicules",
+      "cruises": "Croisières",
+      "activities": "Activités",
+      "packages": "Forfaits",
+      "destinations": "Destinations",
+      "bookings": "Réservations",
+      "bookingLines": "Lignes de réservation",
+      "payments": "Paiements",
+      "promoCodes": "Codes promo",
+      "promotions": "Promotions",
+      "reviews": "Avis",
+      "supportTickets": "Tickets support",
+      "supportMessages": "Messages support",
+      "organizations": "Organisations",
+      "roles": "Rôles et permissions",
+      "settings": "Paramètres",
+      "rbacAudit": "Audit RBAC"
+    },
+    "userMenu": {
+      "dashboard": "Tableau de bord",
+      "settings": "Paramètres",
+      "defaultUser": "Utilisateur"
+    }
+  }
+}

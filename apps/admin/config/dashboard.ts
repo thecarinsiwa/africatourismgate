@@ -1,7 +1,5 @@
 import { adminDashboardNavConfig, flattenAdminNavHrefs } from './dashboard-nav';
 
-export { adminDashboardNav } from './dashboard-nav';
-
 export const adminDashboardConfig = {
   logo: {
     name: 'ATG Admin',

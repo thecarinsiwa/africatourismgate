@@ -1,0 +1,56 @@
+{
+  "language": {
+    "label": "Langue",
+    "select": "Choisir la langue",
+    "fr": "Français",
+    "en": "English"
+  },
+  "theme": {
+    "lightMode": "Mode clair",
+    "darkMode": "Mode sombre",
+    "enableLight": "Activer le mode clair",
+    "enableDark": "Activer le mode sombre"
+  },
+  "nav": {
+    "home": "Accueil",
+    "about": "À propos",
+    "gallery": "Galerie",
+    "pages": "Pages",
+    "blog": "Blog",
+    "contact": "Contacts",
+    "hotels": "Hôtels",
+    "flights": "Vols",
+    "cars": "Location de Voitures",
+    "cruises": "Croisières",
+    "tours": "Tours",
+    "mainAria": "Navigation principale",
+    "mobileAria": "Navigation mobile",
+    "menu": "Menu",
+    "myAccount": "Mon compte",
+    "signIn": "Connexion",
+    "signOut": "Se déconnecter"
+  },
+  "booking": {
+    "login": {
+      "title": "Connexion client",
+      "subtitle": "Connectez-vous avec votre e-mail et mot de passe, ou utilisez Google pour poursuivre votre réservation.",
+      "divider": "ou",
+      "google": "Se connecter avec Google",
+      "backToHotels": "Retour aux hôtels",
+      "form": {
+        "emailLabel": "Adresse e-mail",
+        "emailPlaceholder": "vous@exemple.com",
+        "passwordLabel": "Mot de passe",
+        "passwordPlaceholder": "••••••••",
+        "submit": "Se connecter",
+        "submitLoading": "Connexion…"
+      },
+      "errors": {
+        "network": "Impossible de joindre le serveur. Vérifiez votre connexion.",
+        "generic": "Une erreur est survenue. Veuillez réessayer.",
+        "envMissing": "Configuration API manquante (NEXT_PUBLIC_API_URL).",
+        "unauthorized": "Adresse e-mail ou mot de passe incorrect."
+      }
+    }
+  }
+}

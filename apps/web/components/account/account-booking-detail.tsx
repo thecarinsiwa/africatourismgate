@@ -36,7 +36,7 @@ function StatusBadge({ status }: { status: BookingStatus }) {
 export function AccountBookingDetail({ bookingId }: Props) {
   const t = useTranslations();
   const { locale } = useLocale();
-  const localeTag = locale === 'en' ? 'en-US' : locale === 'es' ? 'es-ES' : 'fr-FR';
+  const localeTag = locale === 'en' ? 'en-US' : 'fr-FR';
 
   const [detail, setDetail] = useState<BookingDetail | null>(null);
   const [loading, setLoading] = useState(true);

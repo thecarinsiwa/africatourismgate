@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { LanguageSwitcher } from '../language-switcher';
 import { AUTH_CHANGED_EVENT, hasWebSession } from '../../lib/auth/client-session';
-import { useTranslations } from '../../lib/i18n/locale-provider';
+import { useTranslations as useIntlTranslations } from 'next-intl';
 
 const SOCIAL_LINKS = [
   {
@@ -44,7 +44,9 @@ type PublicBranding = {
 };
 
 export function HomeHeader() {
-  const t = useTranslations();
+  const t = useIntlTranslations('nav');
+  const tTheme = useIntlTranslations('theme');
+  const tLanguage = useIntlTranslations('language');
   const pathname = usePathname();
   const onAccountArea = pathname.startsWith('/account');
   const [menuOpen, setMenuOpen] = useState(false);
@@ -58,22 +60,22 @@ export function HomeHeader() {
 
   const navLinks = useMemo(
     () => [
-      { href: '/', label: t.nav.home, children: [] as { href: string; label: string }[] },
-      { href: '#about', label: t.nav.about, children: [] },
-      { href: '#gallery', label: t.nav.gallery, children: [] },
+      { href: '/', label: t('home'), children: [] as { href: string; label: string }[] },
+      { href: '#about', label: t('about'), children: [] },
+      { href: '#gallery', label: t('gallery'), children: [] },
       {
         href: '#pages',
-        label: t.nav.pages,
+        label: t('pages'),
         children: [
-          { href: '/hotels', label: t.nav.hotels },
-          { href: '#vols', label: t.nav.flights },
-          { href: '#voitures', label: t.nav.cars },
-          { href: '#croisieres', label: t.nav.cruises },
-          { href: '#tours', label: t.nav.tours },
+          { href: '/hotels', label: t('hotels') },
+          { href: '#vols', label: t('flights') },
+          { href: '#voitures', label: t('cars') },
+          { href: '#croisieres', label: t('cruises') },
+          { href: '#tours', label: t('tours') },
         ],
       },
-      { href: '#blog', label: t.nav.blog, children: [] },
-      { href: '#contact', label: t.nav.contact, children: [] },
+      { href: '#blog', label: t('blog'), children: [] },
+      { href: '#contact', label: t('contact'), children: [] },
     ],
     [t],
   );
@@ -191,7 +193,7 @@ export function HomeHeader() {
             </div>
           </Link>
 
-          <nav className="hidden items-center gap-0 lg:flex" aria-label={t.nav.mainAria}>
+          <nav className="hidden items-center gap-0 lg:flex" aria-label={t('mainAria')}>
             {navLinks.map((link) => (
               <div
                 key={link.href}
@@ -242,14 +244,14 @@ export function HomeHeader() {
               }`}
               aria-current={onAccountArea && hasSession ? 'page' : undefined}
             >
-              {hasSession ? t.nav.myAccount : t.nav.signIn}
+              {hasSession ? t('myAccount') : t('signIn')}
             </Link>
             {hasSession ? (
               <Link
                 href="/booking/logout"
                 className="inline-flex min-h-[44px] items-center rounded-lg border border-red-200 bg-red-50 px-5 py-2.5 text-base font-semibold text-red-700 transition-colors hover:border-red-300 hover:bg-red-100 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300 dark:hover:bg-red-950/60"
               >
-                {t.nav.signOut}
+                {t('signOut')}
               </Link>
             ) : null}
           </div>
@@ -258,8 +260,8 @@ export function HomeHeader() {
             type="button"
             onClick={toggleTheme}
             className="ml-2 mr-2 inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-gray-200 text-gray-600 transition-colors hover:border-primary hover:text-primary dark:border-atg-border dark:text-white/75 dark:hover:border-primary dark:hover:text-white lg:ml-2 lg:mr-2"
-            aria-label={theme === 'dark' ? t.theme.enableLight : t.theme.enableDark}
-            title={theme === 'dark' ? t.theme.lightMode : t.theme.darkMode}
+            aria-label={theme === 'dark' ? tTheme('enableLight') : tTheme('enableDark')}
+            title={theme === 'dark' ? tTheme('lightMode') : tTheme('darkMode')}
           >
             {theme === 'dark' ? (
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -279,7 +281,7 @@ export function HomeHeader() {
             aria-controls="mobile-nav"
             onClick={() => setMenuOpen((o) => !o)}
           >
-            <span className="sr-only">{t.nav.menu}</span>
+            <span className="sr-only">{t('menu')}</span>
             {menuOpen ? (
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -297,11 +299,11 @@ export function HomeHeader() {
         <nav
           id="mobile-nav"
           className="border-b border-gray-100 bg-white px-4 py-4 shadow-lg dark:border-atg-border dark:bg-atg-elevated lg:hidden"
-          aria-label={t.nav.mobileAria}
+          aria-label={t('mobileAria')}
         >
           <div className="mb-3 flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-atg-muted">
-              {t.language.label}
+              {tLanguage('label')}
             </span>
             <LanguageSwitcher variant="navbar" />
           </div>
@@ -315,7 +317,7 @@ export function HomeHeader() {
                 aria-current={onAccountArea && hasSession ? 'page' : undefined}
                 onClick={() => setMenuOpen(false)}
               >
-                {hasSession ? t.nav.myAccount : t.nav.signIn}
+                {hasSession ? t('myAccount') : t('signIn')}
               </Link>
             </li>
             {hasSession ? (
@@ -325,7 +327,7 @@ export function HomeHeader() {
                   className="flex min-h-[48px] items-center justify-center rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-base font-semibold text-red-700 transition-colors hover:bg-red-100 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300 dark:hover:bg-red-950/60"
                   onClick={() => setMenuOpen(false)}
                 >
-                  {t.nav.signOut}
+                  {t('signOut')}
                 </Link>
               </li>
             ) : null}

@@ -14,6 +14,7 @@ export type DashboardShellProps = {
   children: ReactNode;
   openMenuLabel?: string;
   closeMenuLabel?: string;
+  headerActions?: ReactNode;
 };
 
 export function DashboardShell({
@@ -24,6 +25,7 @@ export function DashboardShell({
   children,
   openMenuLabel,
   closeMenuLabel,
+  headerActions,
 }: DashboardShellProps) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
@@ -44,6 +46,7 @@ export function DashboardShell({
           <AppHeader
             user={user}
             themeLabels={themeLabels}
+            actions={headerActions}
             onMenuClick={openMobileNav}
             openMenuLabel={openMenuLabel}
           />

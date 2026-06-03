@@ -38,7 +38,7 @@ export function HotelDetailPageContent({
   const h = t.hotels;
   const { locale } = useLocale();
   const localeTag =
-    locale === 'en' ? 'en-US' : locale === 'es' ? 'es-ES' : 'fr-FR';
+    locale === 'en' ? 'en-US' : 'fr-FR';
   const router = useRouter();
 
   const [detail, setDetail] = useState<PropertyDetail | null>(null);

@@ -1,22 +1,34 @@
 'use client';
 
-import { LOCALES } from '../lib/i18n/types';
-import { useLocale } from '../lib/i18n/locale-provider';
+import { useLocale, useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { locales, type AppLocale } from '../i18n/routing';
+import { setLocaleCookie } from '../lib/i18n/set-locale-cookie';
+import { persistPreferredLanguage } from '../lib/i18n/preferred-language';
 
 type LanguageSwitcherProps = {
   variant?: 'topbar' | 'navbar';
 };
 
 export function LanguageSwitcher({ variant = 'topbar' }: LanguageSwitcherProps) {
-  const { locale, setLocale, t } = useLocale();
+  const locale = useLocale() as AppLocale;
+  const t = useTranslations('language');
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const current = useMemo(
-    () => LOCALES.find((l) => l.code === locale) ?? LOCALES[0],
-    [locale],
+  const options = useMemo(
+    () =>
+      locales.map((code) => ({
+        code,
+        label: code.toUpperCase(),
+        name: t(code),
+      })),
+    [t],
   );
+
+  const current = options.find((o) => o.code === locale) ?? options[0];
 
   useEffect(() => {
     function onDocMouseDown(e: MouseEvent) {
@@ -30,6 +42,23 @@ export function LanguageSwitcher({ variant = 'topbar' }: LanguageSwitcherProps) 
     return () => document.removeEventListener('mousedown', onDocMouseDown);
   }, []);
 
+  async function selectLocale(next: AppLocale) {
+    if (next === locale) {
+      setOpen(false);
+      return;
+    }
+    setLocaleCookie(next);
+    document.documentElement.lang = next;
+    try {
+      localStorage.setItem('atg-locale', next);
+    } catch {
+      /* ignore */
+    }
+    await persistPreferredLanguage(next);
+    setOpen(false);
+    router.refresh();
+  }
+
   const buttonClass =
     variant === 'topbar'
       ? 'inline-flex items-center gap-1.5 rounded-md border border-white/20 bg-white/5 px-2 py-1 text-xs font-semibold text-white transition-colors hover:bg-white/10 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary'
@@ -42,7 +71,7 @@ export function LanguageSwitcher({ variant = 'topbar' }: LanguageSwitcherProps) 
 
   return (
     <div ref={containerRef} className="relative inline-flex items-center">
-      <span className="sr-only">{t.language.select}</span>
+      <span className="sr-only">{t('select')}</span>
       <svg
         className={`h-3.5 w-3.5 shrink-0 ${
           variant === 'topbar' ? 'text-white/70' : 'text-gray-400 dark:text-atg-muted'
@@ -63,7 +92,7 @@ export function LanguageSwitcher({ variant = 'topbar' }: LanguageSwitcherProps) 
         type="button"
         className={buttonClass}
         onClick={() => setOpen((v) => !v)}
-        aria-label={t.language.select}
+        aria-label={t('select')}
         aria-haspopup="menu"
         aria-expanded={open}
       >
@@ -82,8 +111,8 @@ export function LanguageSwitcher({ variant = 'topbar' }: LanguageSwitcherProps) 
       </button>
 
       {open && (
-        <div className={menuClass} role="menu" aria-label={t.language.select}>
-          {LOCALES.map((l) => {
+        <div className={menuClass} role="menu" aria-label={t('select')}>
+          {options.map((l) => {
             const selected = l.code === locale;
             return (
               <button
@@ -100,16 +129,17 @@ export function LanguageSwitcher({ variant = 'topbar' }: LanguageSwitcherProps) 
                       ? 'bg-gray-50 text-gray-900 dark:bg-white/5 dark:text-white'
                       : 'text-gray-700 hover:bg-gray-50 dark:text-white/75 dark:hover:bg-white/5'
                 }`}
-                onClick={() => {
-                  setLocale(l.code);
-                  setOpen(false);
-                }}
+                onClick={() => void selectLocale(l.code)}
               >
                 <span className="flex items-center gap-2">
                   <span className="inline-flex min-w-7 justify-center rounded bg-black/10 px-1.5 py-0.5 text-[10px] font-bold tracking-wide dark:bg-white/10">
                     {l.label}
                   </span>
-                  <span className={variant === 'topbar' ? 'text-white/80' : 'text-gray-500 dark:text-atg-muted'}>
+                  <span
+                    className={
+                      variant === 'topbar' ? 'text-white/80' : 'text-gray-500 dark:text-atg-muted'
+                    }
+                  >
                     {l.name}
                   </span>
                 </span>

@@ -1,0 +1,56 @@
+{
+  "language": {
+    "label": "Language",
+    "select": "Select language",
+    "fr": "Français",
+    "en": "English"
+  },
+  "theme": {
+    "lightMode": "Light mode",
+    "darkMode": "Dark mode",
+    "enableLight": "Enable light mode",
+    "enableDark": "Enable dark mode"
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "gallery": "Gallery",
+    "pages": "Pages",
+    "blog": "Blog",
+    "contact": "Contact",
+    "hotels": "Hotels",
+    "flights": "Flights",
+    "cars": "Car Rental",
+    "cruises": "Cruises",
+    "tours": "Tours",
+    "mainAria": "Main navigation",
+    "mobileAria": "Mobile navigation",
+    "menu": "Menu",
+    "myAccount": "My account",
+    "signIn": "Sign in",
+    "signOut": "Sign out"
+  },
+  "booking": {
+    "login": {
+      "title": "Customer sign in",
+      "subtitle": "Sign in with your email and password, or use Google to continue your booking.",
+      "divider": "or",
+      "google": "Sign in with Google",
+      "backToHotels": "Back to hotels",
+      "form": {
+        "emailLabel": "Email address",
+        "emailPlaceholder": "you@example.com",
+        "passwordLabel": "Password",
+        "passwordPlaceholder": "••••••••",
+        "submit": "Sign in",
+        "submitLoading": "Signing in…"
+      },
+      "errors": {
+        "network": "Could not reach the server. Check your connection.",
+        "generic": "Something went wrong. Please try again.",
+        "envMissing": "Missing API configuration (NEXT_PUBLIC_API_URL).",
+        "unauthorized": "Incorrect email or password."
+      }
+    }
+  }
+}

@@ -38,7 +38,7 @@ const MONTH_NAMES_EN = [
   'July', 'August', 'September', 'October', 'November', 'December',
 ] as const;
 
-export function formatMonthLabel(isoMonth: string, locale: 'fr' | 'en' | 'es' = 'fr'): string {
+export function formatMonthLabel(isoMonth: string, locale: 'fr' | 'en' = 'fr'): string {
   const { year, month } = parseYearMonth(isoMonth);
   const names = locale === 'en' ? MONTH_NAMES_EN : MONTH_NAMES_FR;
   return `${names[month - 1]} ${year}`;

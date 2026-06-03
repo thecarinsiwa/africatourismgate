@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import { Montserrat } from 'next/font/google';
+import { NextIntlClientProvider } from 'next-intl';
+import { getLocale, getMessages } from 'next-intl/server';
 import './globals.css';
 import { AppShell } from '@africatourismgate/ui';
 import type { CSSProperties } from 'react';
@@ -38,9 +40,9 @@ const localeInitScript = `
     if (sessionRaw) {
       var session = JSON.parse(sessionRaw);
       var pref = session && session.user && session.user.preferredLanguage;
-      if (pref === 'en' || pref === 'es' || pref === 'fr') locale = pref;
+      if (pref === 'en' || pref === 'fr') locale = pref;
     }
-    if (locale === 'en' || locale === 'es' || locale === 'fr') {
+    if (locale === 'en' || locale === 'fr') {
       document.documentElement.lang = locale;
     }
   } catch {}
@@ -152,6 +154,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const locale = await getLocale();
+  const messages = await getMessages();
   const branding = await getPublicBranding();
   const themeStyle = {
     '--atg-primary': branding.primaryColor,
@@ -162,16 +166,18 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   } as CSSProperties;
 
   return (
-    <html lang="fr" className={montserrat.variable} suppressHydrationWarning>
+    <html lang={locale} className={montserrat.variable} suppressHydrationWarning>
       <body
         className="bg-atg-surface font-sans text-atg-fg antialiased transition-colors duration-300"
         style={themeStyle}
       >
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <script dangerouslySetInnerHTML={{ __html: localeInitScript }} />
-        <Providers>
-          <AppShell>{children}</AppShell>
-        </Providers>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <Providers>
+            <AppShell>{children}</AppShell>
+          </Providers>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

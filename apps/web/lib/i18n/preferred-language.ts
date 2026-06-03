@@ -1,6 +1,7 @@
 import type { AuthUser } from '@africatourismgate/types';
 import { getAccountApiClient } from '../api/account';
 import { getWebSession, saveWebSession } from '../auth/client-session';
+import { setLocaleCookie } from './set-locale-cookie';
 import { DEFAULT_LOCALE, isLocale, LOCALE_STORAGE_KEY, type Locale } from './types';
 
 export function localeFromPreferredLanguage(
@@ -47,4 +48,15 @@ export function syncSessionUserPreferredLanguage(user: AuthUser): void {
   const session = getWebSession();
   if (!session) return;
   saveWebSession({ ...session, user });
+}
+
+export function applyLocaleToDocument(locale: Locale): void {
+  if (typeof document === 'undefined') return;
+  document.documentElement.lang = locale;
+  setLocaleCookie(locale);
+  try {
+    localStorage.setItem(LOCALE_STORAGE_KEY, locale);
+  } catch {
+    /* ignore */
+  }
 }
