@@ -3,7 +3,8 @@
     "label": "Language",
     "select": "Select language",
     "fr": "Français",
-    "en": "English"
+    "en": "English",
+    "es": "Español"
   },
   "theme": {
     "lightMode": "Light mode",

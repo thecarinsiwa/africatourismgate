@@ -13,6 +13,7 @@ import {
   formatBookingMoney,
   formatStayRange,
 } from '../../lib/bookings/display';
+import { localeToBcp47 } from '../../lib/i18n/locale-tag';
 import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { BookingReviewCard } from './booking-review-card';
 import { BookingReviewForm } from './booking-review-form';
@@ -36,7 +37,7 @@ function StatusBadge({ status }: { status: BookingStatus }) {
 export function AccountBookingDetail({ bookingId }: Props) {
   const t = useTranslations();
   const { locale } = useLocale();
-  const localeTag = locale === 'en' ? 'en-US' : 'fr-FR';
+  const localeTag = localeToBcp47(locale);
 
   const [detail, setDetail] = useState<BookingDetail | null>(null);
   const [loading, setLoading] = useState(true);

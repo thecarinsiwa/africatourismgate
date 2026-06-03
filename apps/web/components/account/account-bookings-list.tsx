@@ -9,12 +9,13 @@ import {
   formatBookingDateTime,
   formatBookingMoney,
 } from '../../lib/bookings/display';
+import { localeToBcp47 } from '../../lib/i18n/locale-tag';
 import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
 
 export function AccountBookingsList() {
   const t = useTranslations();
   const { locale } = useLocale();
-  const localeTag = locale === 'en' ? 'en-US' : 'fr-FR';
+  const localeTag = localeToBcp47(locale);
   const [bookings, setBookings] = useState<BookingListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

@@ -28,6 +28,16 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'upload.wikimedia.org',
       },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        pathname: '/api/uploads/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'app-africatourismgate.org',
+        pathname: '/api/uploads/**',
+      },
     ],
   },
   async redirects() {

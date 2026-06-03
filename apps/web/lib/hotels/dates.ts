@@ -1,3 +1,5 @@
+import type { Locale } from '../i18n/types';
+
 export function formatDateISO(year: number, month: number, day: number): string {
   const m = String(month).padStart(2, '0');
   const d = String(day).padStart(2, '0');
@@ -38,9 +40,19 @@ const MONTH_NAMES_EN = [
   'July', 'August', 'September', 'October', 'November', 'December',
 ] as const;
 
-export function formatMonthLabel(isoMonth: string, locale: 'fr' | 'en' = 'fr'): string {
+const MONTH_NAMES_ES = [
+  'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+  'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre',
+] as const;
+
+export function formatMonthLabel(isoMonth: string, locale: Locale = 'fr'): string {
   const { year, month } = parseYearMonth(isoMonth);
-  const names = locale === 'en' ? MONTH_NAMES_EN : MONTH_NAMES_FR;
+  const names =
+    locale === 'en'
+      ? MONTH_NAMES_EN
+      : locale === 'es'
+        ? MONTH_NAMES_ES
+        : MONTH_NAMES_FR;
   return `${names[month - 1]} ${year}`;
 }
 

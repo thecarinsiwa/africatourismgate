@@ -32,7 +32,7 @@ Règles :
 - Réutiliser les patterns existants (CrudService, BookingEngineService, composants admin, @africatourismgate/ui, api-client).
 - Ne pas refactorer hors scope.
 - Respecter RBAC (PermissionsGuard + @RequirePermissions) sur les nouveaux endpoints sensibles.
-- Messages utilisateur en français par défaut ; web déjà i18n FR/EN via apps/web/lib/i18n/.
+- Messages utilisateur en français par défaut ; web i18n FR/EN/ES via apps/web/lib/i18n/.
 - Pas de commit sauf si je le demande explicitement.
 
 [PROMPT DÉTAILLÉ]
@@ -58,7 +58,7 @@ Règles :
 | Admin — pages placeholder | ❌ | Paiements, codes promo, promotions, avis, tickets, fidélité, adresses, sessions… → `DashboardSectionPage` « Contenu à venir » |
 | BookingEngine polymorphe | ✅ | Chambres, vols, véhicules, cabines, activités + promo checkout |
 | Stripe (PaymentIntent + webhook) | ✅ | Remboursements API via `POST /payments/:id/refund` |
-| Site web — homepage marketing | ✅ | Hero, onglets recherche, destinations, i18n FR/EN |
+| Site web — homepage marketing | ✅ | Hero, onglets recherche, destinations, i18n FR/EN/ES |
 | Site web — hôtels (recherche, fiche, checkout) | ✅ | API publique `public/accommodations` |
 | Site web — compte client | ✅ | Profil, adresses, réservations, moyens de paiement, fidélité |
 | Site web — avis, support, fidélité | ✅ | Tests Playwright présents |
@@ -100,7 +100,7 @@ Les livrables du document v1 sont **essentiellement réalisés**. Exceptions not
 | 44 | Reçus POS | ❌ → #73 |
 | 45–47 | Tests API + CI | ❌ → #75–77 |
 | 48 | Observabilité | ⚠️ → #78 |
-| 49 | i18n FR/EN | ⚠️ Web OK, admin manquant → #80 |
+| 49 | i18n FR/EN/ES | ⚠️ Web OK (FR/EN/ES), admin FR/EN manquant → #80 |
 | 50 | OpenAPI codegen | ❌ → #81 |
 | 51 | Durcissement prod | ⚠️ → #82 |
 | 52 | Notifications email | ❌ → #79 |

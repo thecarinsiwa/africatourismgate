@@ -76,27 +76,52 @@ export function ensureHttpsAssetUrl(url: string | null | undefined): string | nu
   return trimmed;
 }
 
+function resolveUploadPathname(pathname: string): string {
+  if (pathname.startsWith('/api/uploads/')) return pathname;
+  if (pathname.startsWith('/uploads/')) return `/api${pathname}`;
+  return pathname;
+}
+
+function isDevRuntime(): boolean {
+  if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
+    return true;
+  }
+  return false;
+}
+
 /**
  * Normalizes branding asset URLs: https upgrade + legacy `/uploads/` → `/api/uploads/`
  * (nginx only proxies `/api/` to NestJS on app-africatourismgate.org).
+ * In local dev, rewrites ATG production upload URLs to the configured API origin so
+ * `http://localhost:3000/api/uploads/...` serves files from the local API.
  */
 export function normalizeBrandingAssetUrl(url: string | null | undefined): string | null {
   const upgraded = ensureHttpsAssetUrl(url);
   if (!upgraded) return null;
 
-  try {
-    const parsed = new URL(upgraded);
-    if (
-      parsed.hostname.endsWith('africatourismgate.org') &&
-      parsed.pathname.startsWith('/uploads/') &&
-      !parsed.pathname.startsWith('/api/uploads/')
-    ) {
-      parsed.pathname = `/api${parsed.pathname}`;
-      return parsed.toString();
+  if (upgraded.startsWith('/')) {
+    const pathname = resolveUploadPathname(upgraded);
+    if (pathname.startsWith('/api/uploads/')) {
+      return `${getApiPublicOrigin()}${pathname}`;
     }
-  } catch {
     return upgraded;
   }
 
-  return upgraded;
+  try {
+    const parsed = new URL(upgraded);
+    const pathname = resolveUploadPathname(parsed.pathname);
+    parsed.pathname = pathname;
+
+    if (
+      isDevRuntime() &&
+      parsed.hostname.endsWith('africatourismgate.org') &&
+      pathname.startsWith('/api/uploads/')
+    ) {
+      return `${getApiPublicOrigin()}${pathname}`;
+    }
+
+    return parsed.toString();
+  } catch {
+    return upgraded;
+  }
 }
