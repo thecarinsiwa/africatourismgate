@@ -50,6 +50,23 @@ curl -I https://app-africatourismgate.org/login
 
 Réponse health attendue : `{"status":"ok","service":"africatourismgate-api"}`.
 
+## Erreur « Loading chunk … failed » (admin / web)
+
+Le HTML référence un fichier `_next/static/chunks/…` qui n’existe plus (build incomplet ou cache navigateur après déploiement).
+
+Sur le VPS :
+
+```bash
+cd /var/www/africatourismgate
+node scripts/clean-next.mjs
+pnpm build
+bash scripts/restart-production.sh
+```
+
+Puis dans le navigateur : rechargement forcé (Ctrl+Shift+R) ou navigation privée.
+
+`pnpm deploy` nettoie déjà `.next` avant chaque build.
+
 ## Erreur build admin : `@africatourismgate/config/theme`
 
 Après `git pull`, depuis la racine du monorepo :
