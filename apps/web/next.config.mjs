@@ -1,7 +1,10 @@
+import createNextIntlPlugin from 'next-intl/plugin';
 import { loadRootEnv } from '../../packages/config/load-root-env.mjs';
 import { ADMIN_ONLY_PATHS, ATG_DOMAINS } from '../../packages/config/domains.mjs';
 
 loadRootEnv(import.meta.url);
+
+const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 
 const adminBaseUrl =
   process.env.NEXT_PUBLIC_ADMIN_URL?.replace(/\/$/, '') ??
@@ -50,4 +53,4 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

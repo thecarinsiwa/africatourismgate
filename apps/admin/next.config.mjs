@@ -1,7 +1,10 @@
+import createNextIntlPlugin from 'next-intl/plugin';
 import { loadRootEnv } from '../../packages/config/load-root-env.mjs';
 import { ATG_DOMAINS } from '../../packages/config/domains.mjs';
 
 loadRootEnv(import.meta.url);
+
+const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -29,4 +32,4 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

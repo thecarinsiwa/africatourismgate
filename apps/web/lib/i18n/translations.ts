@@ -1876,4 +1876,4 @@ const es: Translations = {
   },
 };
 
-export const translations: Record<Locale, Translations> = { fr, en, es };
+export const translations: Record<Locale, Translations> = { fr, en };

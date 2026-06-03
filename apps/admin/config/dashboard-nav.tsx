@@ -29,6 +29,7 @@ import {
 import type { ReactNode } from 'react';
 import {
   adminDashboardNavConfig,
+  navGroupMessageKey,
   type AdminNavEntryConfig,
   type AdminNavLinkConfig,
 } from './dashboard-nav.config';
@@ -38,6 +39,7 @@ export {
   buildAdminMiddlewareMatcher,
   flattenAdminNavHrefs,
   getAdminRouteRootSegments,
+  navGroupMessageKey,
 } from './dashboard-nav.config';
 
 const iconMap: Record<string, ReactNode> = {
@@ -72,34 +74,34 @@ function resolveIcon(key: string): ReactNode | undefined {
   return iconMap[key];
 }
 
-function mapLink(link: AdminNavLinkConfig): SidebarNavEntry & { type: 'link' } {
-  return {
-    type: 'link',
-    href: link.href,
-    label: link.label,
-    icon: resolveIcon(link.iconKey),
-  };
+function resolveLinkLabel(link: AdminNavLinkConfig, tNav: (key: string) => string): string {
+  if (link.labelKey === 'dashboard') {
+    return tNav('dashboard');
+  }
+  return tNav(`links.${link.labelKey}`);
 }
 
-function mapConfigToNav(entries: AdminNavEntryConfig[]): SidebarNavEntry[] {
-  return entries.map((entry) => {
+export function buildAdminDashboardNav(tNav: (key: string) => string): SidebarNavEntry[] {
+  return adminDashboardNavConfig.map((entry) => {
     if (entry.type === 'link') {
-      return mapLink(entry);
+      return {
+        type: 'link',
+        href: entry.href,
+        label: resolveLinkLabel(entry, tNav),
+        icon: resolveIcon(entry.iconKey),
+      };
     }
     return {
       type: 'group',
       id: entry.id,
-      label: entry.label,
+      label: tNav(`groups.${navGroupMessageKey(entry.id)}`),
       icon: resolveIcon(entry.iconKey),
       defaultOpen: entry.defaultOpen,
       children: entry.children.map((child) => ({
         href: child.href,
-        label: child.label,
+        label: tNav(`links.${child.labelKey}`),
         icon: resolveIcon(child.iconKey),
       })),
     };
   });
 }
-
-/** Navigation du shell dashboard admin (groupes repliables + icônes). */
-export const adminDashboardNav: SidebarNavEntry[] = mapConfigToNav(adminDashboardNavConfig);

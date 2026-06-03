@@ -1,15 +1,17 @@
 'use client';
 
 import { DashboardShell } from '@africatourismgate/ui';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
-import type { StoredSession } from '../lib/auth/session';
-import { adminDashboardConfig, adminDashboardNav } from '../config/dashboard';
-import { adminLoginPageConfig } from '../config/login';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { buildAdminDashboardNav } from '../config/dashboard-nav';
+import { adminDashboardConfig } from '../config/dashboard';
 import { logout } from '../lib/auth/logout';
 import { AUTH_CHANGED_EVENT, getSession } from '../lib/auth/session';
+import type { StoredSession } from '../lib/auth/session';
 import { useOrganizationThemeOptional } from './organization-theme-provider';
 import { SessionSync } from './session-sync';
+import { LanguageSwitcher } from './language-switcher';
 
 function formatDisplayName(firstName: string, lastName: string, email: string): string {
   const name = `${firstName} ${lastName}`.trim();
@@ -19,7 +21,14 @@ function formatDisplayName(firstName: string, lastName: string, email: string): 
 export function DashboardShellLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const orgTheme = useOrganizationThemeOptional();
+  const tNav = useTranslations('nav');
+  const tTheme = useTranslations('theme');
   const [session, setSession] = useState<StoredSession | null>(null);
+
+  const navItems = useMemo(
+    () => buildAdminDashboardNav((key) => tNav(key as Parameters<typeof tNav>[0])),
+    [tNav],
+  );
 
   useEffect(() => {
     function syncSession() {
@@ -44,7 +53,7 @@ export function DashboardShellLayout({ children }: { children: React.ReactNode }
         ),
         email: session.user.email,
       }
-    : { displayName: 'Utilisateur', email: '' };
+    : { displayName: tNav('userMenu.defaultUser'), email: '' };
 
   const handleLogout = useCallback(async () => {
     await logout();
@@ -56,7 +65,8 @@ export function DashboardShellLayout({ children }: { children: React.ReactNode }
     <>
       <SessionSync />
       <DashboardShell
-        navItems={adminDashboardNav}
+        navItems={navItems}
+        headerActions={<LanguageSwitcher />}
         logo={{
           name: orgTheme?.branding?.displayName ?? adminDashboardConfig.logo.name,
           href: adminDashboardConfig.logo.href,
@@ -66,13 +76,13 @@ export function DashboardShellLayout({ children }: { children: React.ReactNode }
           ...user,
           onLogout: handleLogout,
           menuLinks: [
-            { href: '/dashboard', label: 'Tableau de bord' },
-            { href: '/parametres', label: 'Paramètres' },
+            { href: '/dashboard', label: tNav('userMenu.dashboard') },
+            { href: '/parametres', label: tNav('userMenu.settings') },
           ],
         }}
         themeLabels={{
-          light: adminLoginPageConfig.theme.light,
-          dark: adminLoginPageConfig.theme.dark,
+          light: tTheme('light'),
+          dark: tTheme('dark'),
         }}
       >
         {children}

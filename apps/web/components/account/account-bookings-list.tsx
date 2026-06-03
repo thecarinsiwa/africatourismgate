@@ -14,7 +14,7 @@ import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
 export function AccountBookingsList() {
   const t = useTranslations();
   const { locale } = useLocale();
-  const localeTag = locale === 'en' ? 'en-US' : locale === 'es' ? 'es-ES' : 'fr-FR';
+  const localeTag = locale === 'en' ? 'en-US' : 'fr-FR';
   const [bookings, setBookings] = useState<BookingListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

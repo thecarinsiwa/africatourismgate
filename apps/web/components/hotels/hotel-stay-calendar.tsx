@@ -15,7 +15,7 @@ type HotelStayCalendarProps = {
   prevMonthLabel: string;
   nextMonthLabel: string;
   unavailableLabel: string;
-  locale: 'fr' | 'en' | 'es';
+  locale: 'fr' | 'en';
 };
 
 const WEEKDAY_HEADERS = ['L', 'M', 'M', 'J', 'V', 'S', 'D'] as const;

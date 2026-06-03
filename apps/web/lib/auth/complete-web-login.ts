@@ -1,19 +1,16 @@
 import type { AuthUser } from '@africatourismgate/types';
 
 type RouterLike = { replace: (href: string) => void };
-import { localeFromPreferredLanguage } from '../i18n/preferred-language';
-import { LOCALE_STORAGE_KEY } from '../i18n/types';
+import {
+  applyLocaleToDocument,
+  localeFromPreferredLanguage,
+} from '../i18n/preferred-language';
 import { authResponseToWebSession, saveWebSession, type WebStoredSession } from './client-session';
 
 export function applyUserPreferredLocale(user: AuthUser | null | undefined): void {
   const locale = localeFromPreferredLanguage(user?.preferredLanguage);
   if (!locale) return;
-  try {
-    localStorage.setItem(LOCALE_STORAGE_KEY, locale);
-    document.documentElement.lang = locale;
-  } catch {
-    /* ignore */
-  }
+  applyLocaleToDocument(locale);
 }
 
 export function completeWebLogin(

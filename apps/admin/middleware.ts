@@ -1,6 +1,8 @@
+import createIntlMiddleware from 'next-intl/middleware';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { adminProtectedPaths } from './config/dashboard';
+import { routing } from './i18n/routing';
 import {
   clearSessionCookies,
   getRememberFromRequest,
@@ -13,6 +15,8 @@ import {
   tokensToStoredSession,
   type StoredSession,
 } from './lib/auth/session';
+
+const handleI18nRouting = createIntlMiddleware(routing);
 
 const AUTH_PATHS = new Set(['/login', '/register']);
 
@@ -58,11 +62,11 @@ async function ensureValidSession(
   };
 }
 
-export async function middleware(request: NextRequest) {
+async function handleAuth(request: NextRequest): Promise<NextResponse | null> {
   const { pathname } = request.nextUrl;
 
   if (!isAuthPath(pathname) && !isProtectedPath(pathname)) {
-    return NextResponse.next();
+    return null;
   }
 
   const valid = await ensureValidSession(request);
@@ -87,13 +91,17 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
-  return NextResponse.next();
+  return null;
 }
 
-/**
- * Doit rester un tableau littéral (pas de fonction) pour que Next.js l’analyse au build.
- * Racines alignées sur `adminDashboardNavConfig` dans dashboard-nav.config.ts.
- */
+export async function middleware(request: NextRequest) {
+  const authResponse = await handleAuth(request);
+  if (authResponse) {
+    return authResponse;
+  }
+  return handleI18nRouting(request);
+}
+
 export const config = {
   matcher: [
     '/login',

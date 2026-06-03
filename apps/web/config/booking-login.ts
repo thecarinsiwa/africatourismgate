@@ -1,32 +1,45 @@
 import type { LoginFormConfig } from '@africatourismgate/ui';
-import type { Translations } from '../lib/i18n/translations';
+
+type BookingLoginFormTranslator = {
+  (
+    key:
+      | 'emailLabel'
+      | 'emailPlaceholder'
+      | 'passwordLabel'
+      | 'passwordPlaceholder'
+      | 'submit'
+      | 'submitLoading',
+  ): string;
+};
+
+type BookingLoginErrorsTranslator = {
+  (key: 'network' | 'generic' | 'envMissing' | 'unauthorized'): string;
+};
 
 export function buildBookingLoginFormConfig(
-  t: Translations['booking']['login']['form'],
+  t: BookingLoginFormTranslator,
 ): Partial<LoginFormConfig> {
   return {
     email: {
-      label: t.emailLabel,
-      placeholder: t.emailPlaceholder,
+      label: t('emailLabel'),
+      placeholder: t('emailPlaceholder'),
     },
     password: {
-      label: t.passwordLabel,
-      placeholder: t.passwordPlaceholder,
+      label: t('passwordLabel'),
+      placeholder: t('passwordPlaceholder'),
     },
     submit: {
-      label: t.submit,
-      loadingLabel: t.submitLoading,
+      label: t('submit'),
+      loadingLabel: t('submitLoading'),
     },
   };
 }
 
-export function buildBookingLoginErrorMessages(
-  t: Translations['booking']['login']['errors'],
-) {
+export function buildBookingLoginErrorMessages(t: BookingLoginErrorsTranslator) {
   return {
-    network: t.network,
-    generic: t.generic,
-    envMissing: t.envMissing,
-    unauthorized: t.unauthorized,
+    network: t('network'),
+    generic: t('generic'),
+    envMissing: t('envMissing'),
+    unauthorized: t('unauthorized'),
   };
 }

@@ -1,24 +1,29 @@
 'use client';
 
 import { RegisterForm } from '@africatourismgate/ui';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { adminRegisterErrors, adminRegisterFormConfig } from '../config/register';
+import { useMemo, useState } from 'react';
+import { getAdminRegisterErrors, getAdminRegisterFormConfig } from '../config/register';
 import { getAuthErrorMessage } from '../lib/auth/api-errors';
 import { getApiClient } from '../lib/auth/api';
 import { authResponseToStoredSession, saveSession } from '../lib/auth/session';
-
-const registerErrorMessages = {
-  network: adminRegisterErrors.network,
-  generic: adminRegisterErrors.generic,
-  envMissing: adminRegisterErrors.envMissing,
-  conflict: adminRegisterErrors.emailAlreadyRegistered,
-  server: adminRegisterErrors.server,
-};
+import { applyLocaleFromUser } from '../lib/i18n/preferred-language';
 
 export function AdminRegisterForm() {
   const router = useRouter();
+  const tForm = useTranslations('auth.register.form');
+  const tErrors = useTranslations('auth.register.errors');
   const [error, setError] = useState<string | null>(null);
+
+  const formConfig = useMemo(() => getAdminRegisterFormConfig(tForm), [tForm]);
+  const registerErrorMessages = useMemo(
+    () => ({
+      ...getAdminRegisterErrors(tErrors),
+      conflict: tErrors('emailAlreadyRegistered'),
+    }),
+    [tErrors],
+  );
 
   return (
     <div className="space-y-4">
@@ -32,18 +37,22 @@ export function AdminRegisterForm() {
       ) : null}
 
       <RegisterForm
-        config={adminRegisterFormConfig}
+        config={formConfig}
         onSubmit={async ({ firstName, lastName, email, phone, password }) => {
           setError(null);
           try {
+            const preferredLanguage =
+              document.documentElement.lang === 'en' ? 'en' : 'fr';
             const response = await getApiClient().register({
               firstName,
               lastName,
               email,
               password,
+              preferredLanguage,
               ...(phone.trim() ? { phone: phone.trim() } : {}),
             });
             saveSession(authResponseToStoredSession(response), false);
+            applyLocaleFromUser(response.user);
             router.refresh();
             router.push('/dashboard');
           } catch (err) {
