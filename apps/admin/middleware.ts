@@ -1,8 +1,6 @@
-import createIntlMiddleware from 'next-intl/middleware';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { adminProtectedPaths } from './config/dashboard';
-import { routing } from './i18n/routing';
 import {
   clearSessionCookies,
   getRememberFromRequest,
@@ -15,8 +13,6 @@ import {
   tokensToStoredSession,
   type StoredSession,
 } from './lib/auth/session';
-
-const handleI18nRouting = createIntlMiddleware(routing);
 
 const AUTH_PATHS = new Set(['/login', '/register']);
 
@@ -99,7 +95,7 @@ export async function middleware(request: NextRequest) {
   if (authResponse) {
     return authResponse;
   }
-  return handleI18nRouting(request);
+  return NextResponse.next();
 }
 
 export const config = {
