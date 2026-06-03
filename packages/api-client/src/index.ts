@@ -157,8 +157,12 @@ import type {
   PaymentAdminDetail,
   PaymentListItem,
   PaymentsListQuery,
+  CreatePromoCodeRequest,
+  PromoCode,
+  PromoCodesListQuery,
   RefundPaymentRequest,
   RefundPaymentResponse,
+  UpdatePromoCodeRequest,
   RegisterRequest,
   ResetPasswordRequest,
   ResetPasswordResponse,
@@ -775,6 +779,26 @@ export class ApiClient {
       method: 'POST',
       body: body ?? {},
     });
+  }
+
+  listPromoCodes(query?: PromoCodesListQuery): Promise<PaginatedResponse<PromoCode>> {
+    return fetchPaginated<PromoCode>(this, '/promo-codes', query);
+  }
+
+  getPromoCode(id: string): Promise<PromoCode> {
+    return this.request<PromoCode>(`/promo-codes/${id}`);
+  }
+
+  createPromoCode(body: CreatePromoCodeRequest): Promise<PromoCode> {
+    return this.request<PromoCode>('/promo-codes', { method: 'POST', body });
+  }
+
+  updatePromoCode(id: string, body: UpdatePromoCodeRequest): Promise<PromoCode> {
+    return this.request<PromoCode>(`/promo-codes/${id}`, { method: 'PATCH', body });
+  }
+
+  deletePromoCode(id: string): Promise<void> {
+    return this.request<void>(`/promo-codes/${id}`, { method: 'DELETE' });
   }
 
   countUsers(): Promise<number> {
