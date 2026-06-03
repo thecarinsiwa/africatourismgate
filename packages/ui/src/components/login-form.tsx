@@ -63,6 +63,8 @@ export type LoginFormProps = {
   className?: string;
   submitButtonVariant?: React.ComponentProps<typeof Button>['variant'];
   submitButtonRightIcon?: React.ReactNode;
+  /** Affiche la case « Se souvenir de moi » (défaut : true). */
+  showRememberMe?: boolean;
 };
 
 function mergeConfig(partial?: Partial<LoginFormConfig>): LoginFormConfig {
@@ -81,6 +83,7 @@ export function LoginForm({
   className,
   submitButtonVariant = 'primary',
   submitButtonRightIcon = <span aria-hidden>→</span>,
+  showRememberMe = true,
 }: LoginFormProps) {
   const config = mergeConfig(configPartial);
   const [email, setEmail] = useState('');
@@ -132,13 +135,15 @@ export function LoginForm({
         }
       />
 
-      <Checkbox
-        id="remember"
-        name="remember"
-        label={config.rememberMe.label}
-        checked={remember}
-        onChange={(e) => setRemember(e.target.checked)}
-      />
+      {showRememberMe ? (
+        <Checkbox
+          id="remember"
+          name="remember"
+          label={config.rememberMe.label}
+          checked={remember}
+          onChange={(e) => setRemember(e.target.checked)}
+        />
+      ) : null}
 
       <Button
         type="submit"

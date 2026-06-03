@@ -13,7 +13,23 @@ export interface BrandingPlatformValue {
   displayName: string;
   primaryColor?: string;
   secondaryColor?: string;
+  logoUrl?: string;
+  faviconUrl?: string;
 }
+
+/** Programme OneKey — `organization_settings` (group `loyalty`, key `onekey`). */
+export interface LoyaltyOneKeySettingValue {
+  enabled: boolean;
+  /** Points crédités par unité majeure de devise (ex. 1 USD → 1 point si taux = 1). */
+  pointsPerMajorUnit: number;
+  programCode: string;
+}
+
+export const DEFAULT_LOYALTY_ONEKEY_SETTING: LoyaltyOneKeySettingValue = {
+  enabled: true,
+  pointsPerMajorUnit: 1,
+  programCode: 'ONEKEY',
+};
 
 export interface OrganizationSetting {
   id: string;

@@ -9,9 +9,13 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { DeepPartial } from 'typeorm';
 import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
-import { UserAddresses } from '../../../entities/generated';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { AuthUserDto } from '../../auth/dto/auth-user.dto';
+import {
+  CreateUserAddressDto,
+  UpdateUserAddressDto,
+} from './dto/user-address.dto';
 import { UserAddressesService } from './user-addresses.service';
 
 @ApiTags('user-addresses')
@@ -21,31 +25,38 @@ export class UserAddressesController {
 
   @Get()
   @ApiOperation({ summary: 'List user-addresses' })
-  findAll(@Query() query: PaginationQueryDto) {
-    return this.service.findAll(query);
+  findAll(
+    @Query() query: PaginationQueryDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.service.findAll(query, user.id);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get user-addresses by id' })
-  findOne(@Param('id') id: string) {
-    return this.service.findOne(id);
+  findOne(@Param('id') id: string, @CurrentUser() user: AuthUserDto) {
+    return this.service.findOne(id, user.id);
   }
 
   @Post()
   @ApiOperation({ summary: 'Create user-addresses' })
-  create(@Body() dto: DeepPartial<UserAddresses>) {
-    return this.service.create(dto);
+  create(@Body() dto: CreateUserAddressDto, @CurrentUser() user: AuthUserDto) {
+    return this.service.create(dto, user.id);
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update user-addresses' })
-  update(@Param('id') id: string, @Body() dto: DeepPartial<UserAddresses>) {
-    return this.service.update(id, dto);
+  update(
+    @Param('id') id: string,
+    @Body() dto: UpdateUserAddressDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.service.update(id, dto, user.id);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Soft-delete user-addresses' })
-  remove(@Param('id') id: string) {
-    return this.service.remove(id);
+  remove(@Param('id') id: string, @CurrentUser() user: AuthUserDto) {
+    return this.service.remove(id, user.id);
   }
 }

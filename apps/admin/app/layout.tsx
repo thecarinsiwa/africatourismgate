@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import { Montserrat } from 'next/font/google';
+import { NextIntlClientProvider } from 'next-intl';
+import { getLocale, getMessages } from 'next-intl/server';
 import { ThemeProvider } from '@africatourismgate/ui';
 import './globals.css';
 import { getAdminAppUrl } from '@africatourismgate/utils';
@@ -20,11 +22,16 @@ export const metadata: Metadata = {
   description: 'Back office Africa Tourism Gate',
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    <html lang="fr" className={montserrat.variable} suppressHydrationWarning>
+    <html lang={locale} className={montserrat.variable} suppressHydrationWarning>
       <body className="font-sans">
-        <ThemeProvider defaultTheme="system">{children}</ThemeProvider>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <ThemeProvider defaultTheme="system">{children}</ThemeProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

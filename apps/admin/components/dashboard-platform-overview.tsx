@@ -3,7 +3,6 @@
 import { Card, cn } from '@africatourismgate/ui';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { getDashboardKpiErrorMessage } from '../lib/dashboard-api-errors';
 import { formatCount } from '../lib/format-money';
 import { getApiClient } from '../lib/auth/api';
 

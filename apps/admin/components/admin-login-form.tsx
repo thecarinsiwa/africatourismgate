@@ -1,23 +1,23 @@
 'use client';
 
 import { LoginForm } from '@africatourismgate/ui';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { adminLoginErrors, adminLoginFormConfig } from '../config/login';
+import { useMemo, useState } from 'react';
+import { getAdminLoginErrors, getAdminLoginFormConfig } from '../config/login';
 import { getAuthErrorMessage } from '../lib/auth/api-errors';
 import { getApiClient } from '../lib/auth/api';
 import { authResponseToStoredSession, saveSession } from '../lib/auth/session';
-
-const loginErrorMessages = {
-  network: adminLoginErrors.network,
-  generic: adminLoginErrors.generic,
-  envMissing: adminLoginErrors.envMissing,
-  unauthorized: adminLoginErrors.invalidCredentials,
-};
+import { applyLocaleFromUser } from '../lib/i18n/preferred-language';
 
 export function AdminLoginForm() {
   const router = useRouter();
+  const tForm = useTranslations('auth.login.form');
+  const tErrors = useTranslations('auth.login.errors');
   const [error, setError] = useState<string | null>(null);
+
+  const formConfig = useMemo(() => getAdminLoginFormConfig(tForm), [tForm]);
+  const loginErrorMessages = useMemo(() => getAdminLoginErrors(tErrors), [tErrors]);
 
   return (
     <div className="space-y-4">
@@ -31,12 +31,13 @@ export function AdminLoginForm() {
       ) : null}
 
       <LoginForm
-        config={adminLoginFormConfig}
+        config={formConfig}
         onSubmit={async ({ email, password, remember }) => {
           setError(null);
           try {
             const response = await getApiClient().login({ email, password });
             saveSession(authResponseToStoredSession(response), remember);
+            applyLocaleFromUser(response.user);
             router.refresh();
             router.push('/dashboard');
           } catch (err) {

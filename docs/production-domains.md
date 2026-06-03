@@ -5,8 +5,13 @@
 | https://africatourismgate.org | Site public (`apps/web`) | `atg-web` | 3002 |
 | https://app-africatourismgate.org | Admin (`apps/admin`) | `atg-admin` | 3001 |
 | **https://app-africatourismgate.org/api** | API (`apps/api`) | `atg-api` | 3000 |
+| **https://app-africatourismgate.org/api/uploads/** | Logos / favicons (`apps/api/uploads`) | `atg-api` | 3000 |
 
 L’API est exposée sur le **même domaine** que l’admin (`/api/…` → nginx → port 3000). **Pas besoin** du sous-domaine `api.africatourismgate.org`.
+
+Les fichiers branding sont servis sous **`/api/uploads/branding/…`** (pas `/uploads/` seul — sinon nginx envoie la requête à Next.js et renvoie du HTML). Les anciennes URLs `/uploads/…` sont redirigées vers `/api/uploads/…` par nginx.
+
+Après `git pull` : `pnpm build`, `bash scripts/restart-production.sh`, puis `sudo bash scripts/setup-nginx.sh` (note : `bash scripts/setup-nginx.sh`, pas `./scripts/…` si le fichier n’est pas exécutable).
 
 Les variantes `www` redirigent vers le domaine canonique **sans** `www`.
 
@@ -37,11 +42,30 @@ Vérifications :
 ```bash
 pm2 list
 curl -s https://app-africatourismgate.org/api/health
+curl -I "https://app-africatourismgate.org/api/uploads/branding/VOTRE-FICHIER.png"
+# doit afficher Content-Type: image/png (pas text/html ni X-Powered-By: Next.js)
 curl -I https://africatourismgate.org/
 curl -I https://app-africatourismgate.org/login
 ```
 
 Réponse health attendue : `{"status":"ok","service":"africatourismgate-api"}`.
+
+## Erreur « Loading chunk … failed » (admin / web)
+
+Le HTML référence un fichier `_next/static/chunks/…` qui n’existe plus (build incomplet ou cache navigateur après déploiement).
+
+Sur le VPS :
+
+```bash
+cd /var/www/africatourismgate
+node scripts/clean-next.mjs
+pnpm build
+bash scripts/restart-production.sh
+```
+
+Puis dans le navigateur : rechargement forcé (Ctrl+Shift+R) ou navigation privée.
+
+`pnpm deploy` nettoie déjà `.next` avant chaque build.
 
 ## Erreur build admin : `@africatourismgate/config/theme`
 

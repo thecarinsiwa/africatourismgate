@@ -30,6 +30,7 @@ import {
   PASSWORD_RESET_TTL_SECONDS,
   RESET_PASSWORD_INVALID_MESSAGE,
   SEED_ORG_PLATFORM_ID,
+  SEED_ROLE_CUSTOMER_ID,
   SEED_ROLE_ORG_ADMIN_ID,
 } from './auth.constants';
 import {
@@ -47,7 +48,14 @@ import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { AuthMeDto } from './dto/auth-me.dto';
+import {
+  AuthOrganizationDto,
+  toAuthOrganizationDto,
+} from './dto/auth-organization.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
+import { AuthUserDto } from './dto/auth-user.dto';
 import { PermissionsService } from '../rbac/permissions.service';
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class AuthService {
@@ -71,6 +79,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly config: ConfigService,
     private readonly permissionsService: PermissionsService,
+    private readonly emailService: EmailService,
   ) {
     this.accessSecret = this.requireSecret('JWT_ACCESS_SECRET');
     this.refreshSecret = this.requireSecret('JWT_REFRESH_SECRET');
@@ -125,6 +134,12 @@ export class AuthService {
     await this.roleAssignmentsRepo.save(assignment);
 
     const tokens = await this.issueTokenPair(user);
+    void this.emailService
+      .sendWelcome({
+        to: user.email,
+        firstName: user.firstName,
+      })
+      .catch(() => undefined);
     return { ...tokens, user: toAuthUserDto(user) };
   }
 
@@ -146,6 +161,41 @@ export class AuthService {
       permissions: [...permissions].sort(),
       isSuperAdmin,
     };
+  }
+
+  async listMyOrganizations(userId: string): Promise<AuthOrganizationDto[]> {
+    const user = await this.usersRepo.findOne({
+      where: { id: userId, deletedAt: IsNull() },
+    });
+    if (!user || user.status !== 'active') {
+      throw new UnauthorizedException();
+    }
+
+    const [isSuperAdmin, canListAll] = await Promise.all([
+      this.permissionsService.hasSuperAdminRole(userId),
+      this.permissionsService.hasAnyPermission(userId, ['organizations.read']),
+    ]);
+
+    if (isSuperAdmin || canListAll) {
+      const organizations = await this.organizationsRepo.find({
+        where: { deletedAt: IsNull(), status: 'active' },
+        order: { name: 'ASC' },
+      });
+      return organizations.map(toAuthOrganizationDto);
+    }
+
+    if (user.organizationId) {
+      const organization = await this.organizationsRepo.findOne({
+        where: {
+          id: user.organizationId,
+          deletedAt: IsNull(),
+          status: 'active',
+        },
+      });
+      return organization ? [toAuthOrganizationDto(organization)] : [];
+    }
+
+    return [];
   }
 
   async login(dto: LoginDto): Promise<AuthResponseDto> {
@@ -175,6 +225,112 @@ export class AuthService {
 
     const tokens = await this.issueTokenPair(user);
     return { ...tokens, user: toAuthUserDto(user) };
+  }
+
+  async loginWithGoogleProfile(profile: {
+    emails?: Array<{ value?: string }>;
+    name?: { givenName?: string; familyName?: string };
+  }): Promise<AuthResponseDto> {
+    const email = profile.emails?.[0]?.value?.trim().toLowerCase();
+    if (!email) {
+      throw new UnauthorizedException('Google account has no email');
+    }
+
+    let user = await this.usersRepo.findOne({
+      where: { email, deletedAt: IsNull() },
+    });
+
+    if (!user) {
+      const defaultOrg = await this.organizationsRepo.findOne({
+        where: { id: SEED_ORG_PLATFORM_ID, deletedAt: IsNull() },
+      });
+      if (!defaultOrg) {
+        throw new InternalServerErrorException(
+          'Default organization is not configured. Run database seeds.',
+        );
+      }
+
+      const generatedPassword = randomBytes(24).toString('hex');
+      user = this.usersRepo.create({
+        id: newId(),
+        email,
+        passwordHash: await bcrypt.hash(generatedPassword, BCRYPT_ROUNDS),
+        firstName: profile.name?.givenName?.trim() || 'Google',
+        lastName: profile.name?.familyName?.trim() || 'User',
+        organizationId: SEED_ORG_PLATFORM_ID,
+        status: 'active',
+      } as DeepPartial<Users>);
+      await this.usersRepo.save(user);
+
+      const assignment = this.roleAssignmentsRepo.create({
+        id: newId(),
+        userId: user.id,
+        roleId: SEED_ROLE_CUSTOMER_ID,
+        scopeType: 'global',
+        assignedByUserId: user.id,
+        assignedAt: new Date(),
+      } as DeepPartial<UserRoleAssignments>);
+      await this.roleAssignmentsRepo.save(assignment);
+    }
+
+    if (user.status !== 'active') {
+      throw new UnauthorizedException('Account is not active');
+    }
+
+    user.lastLoginAt = new Date();
+    await this.usersRepo.save(user);
+
+    const tokens = await this.issueTokenPair(user);
+    return { ...tokens, user: toAuthUserDto(user) };
+  }
+
+  async updateProfile(
+    userId: string,
+    dto: UpdateProfileDto,
+  ): Promise<AuthUserDto> {
+    const user = await this.usersRepo.findOne({
+      where: { id: userId, deletedAt: IsNull() },
+    });
+    if (!user || user.status !== 'active') {
+      throw new UnauthorizedException();
+    }
+
+    if (dto.firstName !== undefined) {
+      user.firstName = dto.firstName.trim();
+    }
+    if (dto.lastName !== undefined) {
+      user.lastName = dto.lastName.trim();
+    }
+    if (dto.phone !== undefined) {
+      user.phone = dto.phone?.trim() ?? '';
+    }
+    if (dto.preferredLanguage !== undefined) {
+      user.preferredLanguage = dto.preferredLanguage?.trim() ?? '';
+    }
+
+    await this.usersRepo.save(user);
+    return toAuthUserDto(user);
+  }
+
+  buildWebOAuthCallbackUrl(
+    next: string | undefined,
+    accessToken: string,
+    refreshToken: string,
+    expiresIn: number,
+  ): string {
+    const defaultWebUrl =
+      process.env.NODE_ENV === 'production'
+        ? 'https://africatourismgate.org'
+        : 'http://localhost:3002';
+    const webUrl = (process.env.NEXT_PUBLIC_WEB_URL ?? defaultWebUrl).replace(/\/$/, '');
+    const safeNext = normalizeNextPath(next);
+    const query = new URLSearchParams({
+      accessToken,
+      refreshToken,
+      expiresIn: String(expiresIn),
+      next: safeNext,
+    });
+    return `${webUrl}/booking/oauth/callback?${query.toString()}`;
   }
 
   async refresh(refreshToken: string): Promise<AuthTokensResponseDto> {
@@ -265,11 +421,19 @@ export class AuthService {
       });
       await this.passwordResetRepo.save(resetRow);
 
+      const resetUrl = `${this.getResetPasswordBaseUrl()}?token=${rawToken}`;
+      const mailResult = await this.emailService.sendPasswordReset({
+        to: user.email,
+        firstName: user.firstName,
+        resetUrl,
+      });
+
       if (process.env.NODE_ENV !== 'production') {
-        const baseUrl = this.getResetPasswordBaseUrl();
-        this.logger.log(
-          `Password reset link: ${baseUrl}?token=${rawToken}`,
-        );
+        if (mailResult.previewUrl) {
+          this.logger.log(`Password reset preview: ${mailResult.previewUrl}`);
+        } else if (!mailResult.sent) {
+          this.logger.log(`Password reset link: ${resetUrl}`);
+        }
       }
     }
 
@@ -427,4 +591,11 @@ function expiresInToSeconds(value: string): number {
     d: 86400,
   };
   return amount * (multipliers[unit] ?? 1);
+}
+
+function normalizeNextPath(next: string | undefined): string {
+  if (!next) return '/booking/cart';
+  if (!next.startsWith('/')) return '/booking/cart';
+  if (next.startsWith('//')) return '/booking/cart';
+  return next;
 }

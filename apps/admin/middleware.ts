@@ -58,11 +58,11 @@ async function ensureValidSession(
   };
 }
 
-export async function middleware(request: NextRequest) {
+async function handleAuth(request: NextRequest): Promise<NextResponse | null> {
   const { pathname } = request.nextUrl;
 
   if (!isAuthPath(pathname) && !isProtectedPath(pathname)) {
-    return NextResponse.next();
+    return null;
   }
 
   const valid = await ensureValidSession(request);
@@ -87,13 +87,17 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
+  return null;
+}
+
+export async function middleware(request: NextRequest) {
+  const authResponse = await handleAuth(request);
+  if (authResponse) {
+    return authResponse;
+  }
   return NextResponse.next();
 }
 
-/**
- * Doit rester un tableau littéral (pas de fonction) pour que Next.js l’analyse au build.
- * Racines alignées sur `adminDashboardNavConfig` dans dashboard-nav.config.ts.
- */
 export const config = {
   matcher: [
     '/login',

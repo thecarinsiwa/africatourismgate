@@ -1,3 +1,5 @@
+import type { Review } from './review.js';
+
 export type BookingStatus =
   | 'draft'
   | 'pending_payment'
@@ -38,6 +40,8 @@ export interface BookingCheckoutRequest {
   currency?: string;
   promoCode?: string;
   promotionId?: string;
+  /** Staff only (e.g. POS): booking is owned by this user instead of the actor. */
+  customerUserId?: string;
 }
 
 export interface AppliedCheckoutDiscount {
@@ -89,6 +93,8 @@ export interface BookingDetail {
   items: BookingItem[];
   totalCents: number;
   currency: string;
+  review?: Review | null;
+  canReview?: boolean;
 }
 
 export interface BookingClient {
@@ -135,6 +141,10 @@ export interface UpdateBookingStatusRequest {
 
 export interface CancelBookingRequest {
   reason?: string;
+}
+
+export interface RecordCashPaymentRequest {
+  note?: string;
 }
 
 export interface BookingPaymentIntentResponse {

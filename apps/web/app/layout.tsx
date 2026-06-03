@@ -1,8 +1,12 @@
 import type { Metadata } from 'next';
 import { Montserrat } from 'next/font/google';
+import { NextIntlClientProvider } from 'next-intl';
+import { getLocale, getMessages } from 'next-intl/server';
 import './globals.css';
 import { AppShell } from '@africatourismgate/ui';
 import type { CSSProperties } from 'react';
+import { normalizeBrandingAssetUrl } from '@africatourismgate/utils';
+import { BrandingProvider } from '../components/branding-provider';
 import { Providers } from '../components/providers';
 
 const montserrat = Montserrat({
@@ -11,7 +15,11 @@ const montserrat = Montserrat({
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_WEB_URL ?? 'http://localhost:3002';
-const apiUrl = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000/api').replace(
+const defaultApiUrl =
+  process.env.NODE_ENV === 'production'
+    ? 'https://app-africatourismgate.org/api'
+    : 'http://localhost:3000/api';
+const apiUrl = (process.env.NEXT_PUBLIC_API_URL ?? defaultApiUrl).replace(
   /\/$/,
   '',
 );
@@ -28,9 +36,16 @@ const themeInitScript = `
 
 const localeInitScript = `
   try {
-    const storedLocale = localStorage.getItem('atg-locale');
-    if (storedLocale === 'en' || storedLocale === 'es' || storedLocale === 'fr') {
-      document.documentElement.lang = storedLocale;
+    var locale = localStorage.getItem('atg-locale');
+    var sessionRaw = localStorage.getItem('atg.web.session');
+    if (!sessionRaw) sessionRaw = sessionStorage.getItem('atg.web.session');
+    if (sessionRaw) {
+      var session = JSON.parse(sessionRaw);
+      var pref = session && session.user && session.user.preferredLanguage;
+      if (pref === 'en' || pref === 'fr' || pref === 'es') locale = pref;
+    }
+    if (locale === 'en' || locale === 'fr' || locale === 'es') {
+      document.documentElement.lang = locale;
     }
   } catch {}
 `;
@@ -39,12 +54,16 @@ type PublicBranding = {
   displayName: string;
   primaryColor: string;
   secondaryColor: string;
+  logoUrl: string | null;
+  faviconUrl: string | null;
 };
 
 const defaultBranding: PublicBranding = {
   displayName: 'Africa Tourism Gate',
   primaryColor: '#0B6E4F',
   secondaryColor: '#199a45',
+  logoUrl: null,
+  faviconUrl: null,
 };
 
 function clamp(value: number, min: number, max: number) {
@@ -84,60 +103,73 @@ async function getPublicBranding(): Promise<PublicBranding> {
       displayName: branding.displayName ?? defaultBranding.displayName,
       primaryColor: branding.primaryColor ?? defaultBranding.primaryColor,
       secondaryColor: branding.secondaryColor ?? defaultBranding.secondaryColor,
+      logoUrl:
+        normalizeBrandingAssetUrl(branding.logoUrl ?? defaultBranding.logoUrl) ??
+        defaultBranding.logoUrl,
+      faviconUrl:
+        normalizeBrandingAssetUrl(branding.faviconUrl ?? defaultBranding.faviconUrl) ??
+        defaultBranding.faviconUrl,
     };
   } catch {
     return defaultBranding;
   }
 }
 
-export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
-  title: {
-    default: 'Africa Tourism Gate — Réservez votre voyage en Afrique',
-    template: '%s | Africa Tourism Gate',
-  },
-  description:
-    'Hôtels, vols, activités et forfaits en Afrique. Comparez et réservez avec Africa Tourism Gate.',
-  keywords: [
-    'Afrique',
-    'tourisme',
-    'hôtels',
-    'voyage',
-    'réservation',
-    'safari',
-    'hébergement',
-  ],
-  authors: [{ name: 'Africa Tourism Gate' }],
-  openGraph: {
-    type: 'website',
-    locale: 'fr_FR',
-    url: siteUrl,
-    siteName: 'Africa Tourism Gate',
-    title: 'Africa Tourism Gate — Réservez votre voyage en Afrique',
-    description:
-      'Hôtels, vols, activités et forfaits en Afrique. Comparez et réservez avec Africa Tourism Gate.',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Africa Tourism Gate',
-    description:
-      'Hôtels, vols, activités et forfaits en Afrique. Comparez et réservez avec Africa Tourism Gate.',
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
-  alternates: {
-    canonical: '/',
-    languages: {
-      fr: '/?lang=fr',
-      en: '/?lang=en',
-      es: '/?lang=es',
+export async function generateMetadata(): Promise<Metadata> {
+  const branding = await getPublicBranding();
+  const siteName = branding.displayName;
+  const icon = branding.faviconUrl || undefined;
+  return {
+    metadataBase: new URL(siteUrl),
+    title: {
+      default: `${siteName} — Réservez votre voyage en Afrique`,
+      template: `%s | ${siteName}`,
     },
-  },
-};
+    description: `Hôtels, vols, activités et forfaits en Afrique. Comparez et réservez avec ${siteName}.`,
+    keywords: [
+      'Afrique',
+      'tourisme',
+      'hôtels',
+      'voyage',
+      'réservation',
+      'safari',
+      'hébergement',
+    ],
+    authors: [{ name: siteName }],
+    openGraph: {
+      type: 'website',
+      locale: 'fr_FR',
+      url: siteUrl,
+      siteName,
+      title: `${siteName} — Réservez votre voyage en Afrique`,
+      description: `Hôtels, vols, activités et forfaits en Afrique. Comparez et réservez avec ${siteName}.`,
+      ...(icon ? { images: [icon] } : {}),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: siteName,
+      description: `Hôtels, vols, activités et forfaits en Afrique. Comparez et réservez avec ${siteName}.`,
+      ...(icon ? { images: [icon] } : {}),
+    },
+    ...(icon ? { icons: { icon, shortcut: icon, apple: icon } } : {}),
+    robots: {
+      index: true,
+      follow: true,
+    },
+    alternates: {
+      canonical: '/',
+      languages: {
+        fr: '/?lang=fr',
+        en: '/?lang=en',
+        es: '/?lang=es',
+      },
+    },
+  };
+}
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const locale = await getLocale();
+  const messages = await getMessages();
   const branding = await getPublicBranding();
   const themeStyle = {
     '--atg-primary': branding.primaryColor,
@@ -148,16 +180,25 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   } as CSSProperties;
 
   return (
-    <html lang="fr" className={montserrat.variable} suppressHydrationWarning>
+    <html lang={locale} className={montserrat.variable} suppressHydrationWarning>
       <body
         className="bg-atg-surface font-sans text-atg-fg antialiased transition-colors duration-300"
         style={themeStyle}
       >
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <script dangerouslySetInnerHTML={{ __html: localeInitScript }} />
-        <Providers>
-          <AppShell>{children}</AppShell>
-        </Providers>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <BrandingProvider
+            branding={{
+              displayName: branding.displayName,
+              logoUrl: branding.logoUrl,
+            }}
+          >
+            <Providers>
+              <AppShell>{children}</AppShell>
+            </Providers>
+          </BrandingProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

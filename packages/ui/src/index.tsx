@@ -1,5 +1,3 @@
-import type { ReactNode } from 'react';
-
 export { cn } from './lib/cn';
 
 export { AppShell } from './app-shell';

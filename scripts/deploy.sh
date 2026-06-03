@@ -16,6 +16,10 @@ if [[ -d .git ]]; then
 fi
 
 pnpm install --frozen-lockfile 2>/dev/null || pnpm install
+
+echo "==> Clearing Next.js build caches (avoids stale chunk errors)…"
+node scripts/clean-next.mjs
+
 pnpm build
 
 if [[ "${ATG_SKIP_DB_SYNC:-0}" == "1" ]]; then

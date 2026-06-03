@@ -9,9 +9,17 @@ import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from './modules/rbac/guards/permissions.guard';
 import { OrgScopeModule } from './common/org-scope/org-scope.module';
 import { RbacModule } from './modules/rbac/rbac.module';
+import { EmailModule } from './modules/email/email.module';
 
 @Module({
-  imports: [DatabaseModule, AuthModule, RbacModule, OrgScopeModule, ApiResourcesModule],
+  imports: [
+    DatabaseModule,
+    EmailModule,
+    AuthModule,
+    RbacModule,
+    OrgScopeModule,
+    ApiResourcesModule,
+  ],
   controllers: [AppController],
   providers: [
     AppService,

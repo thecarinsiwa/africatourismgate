@@ -1,4 +1,5 @@
 import type {
+  PropertySearchQuery,
   AirlinesListQuery,
   AirportsListQuery,
   AmenitiesListQuery,
@@ -52,6 +53,11 @@ const RESOURCE_QUERY_KEYS = [
   'flightId',
   'agencyId',
   'categoryId',
+  'destination',
+  'checkIn',
+  'checkOut',
+  'guests',
+  'propertyType',
 ] as const;
 
 export type PaginatedListQuery =
@@ -75,7 +81,8 @@ export type PaginatedListQuery =
   | RentalAgenciesListQuery
   | VehicleCategoriesListQuery
   | VehiclesListQuery
-  | VehicleAvailabilityListQuery;
+  | VehicleAvailabilityListQuery
+  | PropertySearchQuery;
 
 function buildQueryString(query?: PaginatedListQuery): string {
   const params = new URLSearchParams();
@@ -102,8 +109,12 @@ export async function fetchPaginated<T>(
   client: PaginatedRequestClient,
   path: string,
   query?: PaginatedListQuery,
+  requestOptions?: RequestOptions,
 ): Promise<PaginatedResponse<T>> {
-  return client.request<PaginatedResponse<T>>(`${path}${buildQueryString(query)}`);
+  return client.request<PaginatedResponse<T>>(
+    `${path}${buildQueryString(query)}`,
+    requestOptions,
+  );
 }
 
 export async function fetchTotal(client: PaginatedRequestClient, path: string): Promise<number> {

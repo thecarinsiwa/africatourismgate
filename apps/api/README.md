@@ -11,6 +11,100 @@ NestJS HTTP API for Africa Tourism Gate, mapped to the MySQL schema in `database
 | `pnpm start` | Run compiled `dist/main` |
 | `pnpm generate` | Regenerate TypeORM entities + CRUD modules from SQL |
 | `pnpm db:sync` | Apply database schema migrations and insert-only seeds |
+| `pnpm test:pos-sale-cash` | POS cash flow: checkout preview → booking → cash-payment (needs `SEED_ADMIN_PASSWORD`) |
+| `pnpm test:e2e` | Jest + supertest e2e suite (health, auth, booking, Stripe webhook mock) |
+| `pnpm openapi:export` | Write `apps/api/openapi.json` from Nest Swagger (needs MySQL) |
+| `pnpm test:email` | Send reset, welcome, and booking confirmation emails (needs Mailpit or Ethereal) |
+
+## Email (SMTP / Mailpit / Ethereal)
+
+Transactional HTML emails via `src/modules/email/` (nodemailer):
+
+| Événement | Déclencheur |
+| --------- | ----------- |
+| Réinitialisation mot de passe | `POST /auth/forgot-password` |
+| Bienvenue | `POST /auth/register` |
+| Confirmation réservation | `confirmBooking` (cash POS, admin confirm, Stripe webhook) |
+
+Variables (voir root `.env.example`) : `EMAIL_ENABLED`, `EMAIL_TRANSPORT`, `EMAIL_FROM`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_SECURE`.
+
+**Dev (Mailpit)** — capture SMTP sans envoi réel :
+
+```bash
+# Install: https://github.com/axllent/mailpit
+mailpit
+# UI http://localhost:8025 — SMTP localhost:1025
+pnpm dev:api
+pnpm --filter @africatourismgate/api test:email
+```
+
+**Dev (Ethereal)** — compte de test jetable :
+
+```bash
+EMAIL_TRANSPORT=ethereal pnpm dev:api
+```
+
+Si l’envoi échoue (SMTP arrêté), l’API logue un avertissement et continue (pas de crash). En dev, le lien de reset reste aussi dans les logs si l’e-mail n’a pas pu partir.
+
+## OpenAPI → typed client (`pnpm codegen:api`)
+
+From the **repo root**, regenerate `packages/api-client/src/generated/` from this API’s Swagger document:
+
+```bash
+pnpm install
+pnpm codegen:api
+```
+
+The codegen script resolves the spec in this order:
+
+1. `OPENAPI_SPEC` — path to a local `openapi.json`
+2. **Running API** — `GET` `OPENAPI_URL` (default `http://127.0.0.1:3000/api-json`) and saves `apps/api/openapi.json`
+3. Existing `apps/api/openapi.json` (committed snapshot)
+4. `pnpm --filter @africatourismgate/api openapi:export` (Nest bootstrap; requires MySQL + `.env`)
+
+Use `--refresh-spec` to force re-download or re-export before codegen.
+
+**Typage login :** après codegen, `LoginRequestBody` / `LoginResponseBody` et `openApiLogin()` sont dérivés de `POST /auth/login` dans le schéma OpenAPI. Le client manuel `ApiClient.login()` reste inchangé pour l’admin/POS.
+
+```ts
+import {
+  createOpenApiClient,
+  openApiBaseUrl,
+  openApiLogin,
+} from '@africatourismgate/api-client';
+
+// OpenAPI paths include `/api`; use the server origin (not NEXT_PUBLIC_API_URL’s `/api` suffix).
+const client = createOpenApiClient({
+  baseUrl: openApiBaseUrl(process.env.NEXT_PUBLIC_API_URL!),
+});
+const { data, error } = await openApiLogin(client, {
+  email: 'admin@africatourismgate.local',
+  password: 'ChangeMe123!',
+});
+```
+
+Commit `apps/api/openapi.json` when API routes or DTOs change so CI can codegen without a running server.
+
+## E2E tests (Jest + supertest)
+
+Prerequisites:
+
+- MySQL reachable with credentials from root `.env` / `.env.local`
+- `DATABASE_NAME` is forced to `africatourismgate_test` during e2e (override via `E2E_DATABASE_NAME`)
+- `SEED_ADMIN_PASSWORD` matching the seeded admin (`database/seeds/README.md`)
+- Optional: `STRIPE_WEBHOOK_SECRET` — if unset, webhook signature tests use a local test secret
+
+On first run against an empty test database, startup imports schema and seeds (`DATABASE_AUTO_SCHEMA` / `DATABASE_AUTO_SEED`, same as dev).
+
+```bash
+# From repo root
+DATABASE_NAME=africatourismgate_test pnpm --filter @africatourismgate/api test:e2e
+
+# Or from apps/api
+pnpm test:e2e
+```
+
+Specs live in `apps/api/test/e2e/` (`health`, `auth`, `booking`, `stripe-webhook`).
 
 ## Configuration
 
@@ -42,7 +136,8 @@ pnpm db:sync
 ## Endpoints
 
 - **Health**: `GET /api/health`
-- **Swagger**: `http://localhost:3000/api`
+- **Swagger UI**: `http://localhost:3000/api`
+- **OpenAPI JSON**: `http://localhost:3000/api-json` (source for `pnpm codegen:api`)
 - **Resources**: one REST controller per table (e.g. `GET /api/destinations`, `GET /api/properties/:id`)
 
 All list queries exclude soft-deleted rows (`deleted_at IS NULL` via TypeORM).  

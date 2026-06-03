@@ -4,10 +4,15 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Query,
+  Patch,
   Post,
+  Req,
+  Res,
   SetMetadata,
   UseGuards,
 } from '@nestjs/common';
+import type { Request, Response } from 'express';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import {
   ApiBadRequestResponse,
@@ -20,6 +25,7 @@ import {
 import { IS_PUBLIC_KEY, Public } from './decorators/public.decorator';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
+import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { AuthService } from './auth.service';
 import {
   AuthResponseDto,
@@ -35,12 +41,46 @@ import { ResetPasswordDto } from './dto/reset-password.dto';
 import { ResetPasswordResponseDto } from './dto/reset-password-response.dto';
 import { AuthMeDto } from './dto/auth-me.dto';
 import { AuthUserDto } from './dto/auth-user.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @Public()
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @Get('google')
+  @UseGuards(GoogleAuthGuard)
+  @ApiOperation({ summary: 'Start Google OAuth login flow' })
+  googleAuth(@Query('next') _next?: string): void {
+    // handled by passport redirect
+  }
+
+  @Get('google/callback')
+  @UseGuards(GoogleAuthGuard)
+  @ApiOperation({ summary: 'Google OAuth callback for web login' })
+  async googleAuthCallback(
+    @Req()
+    req: Request & {
+      user: {
+        profile: {
+          name?: { givenName?: string; familyName?: string };
+          emails?: Array<{ value?: string }>;
+        };
+        state?: string;
+      };
+    },
+    @Res() res: Response,
+  ): Promise<void> {
+    const auth = await this.authService.loginWithGoogleProfile(req.user.profile);
+    const redirectUrl = this.authService.buildWebOAuthCallbackUrl(
+      req.user.state,
+      auth.accessToken,
+      auth.refreshToken,
+      auth.expiresIn,
+    );
+    res.redirect(redirectUrl);
+  }
 
   @Get('me')
   @SetMetadata(IS_PUBLIC_KEY, false)
@@ -50,6 +90,30 @@ export class AuthController {
   @ApiUnauthorizedResponse()
   me(@CurrentUser() user: AuthUserDto): Promise<AuthMeDto> {
     return this.authService.getAuthMe(user.id);
+  }
+
+  @Get('me/organizations')
+  @SetMetadata(IS_PUBLIC_KEY, false)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Organizations available to the current user (POS org picker)',
+  })
+  @ApiUnauthorizedResponse()
+  myOrganizations(@CurrentUser() user: AuthUserDto) {
+    return this.authService.listMyOrganizations(user.id);
+  }
+
+  @Patch('me')
+  @SetMetadata(IS_PUBLIC_KEY, false)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Update current user profile' })
+  @ApiOkResponse({ type: AuthUserDto })
+  @ApiUnauthorizedResponse()
+  updateMe(
+    @CurrentUser() user: AuthUserDto,
+    @Body() dto: UpdateProfileDto,
+  ): Promise<AuthUserDto> {
+    return this.authService.updateProfile(user.id, dto);
   }
 
   @Post('login')

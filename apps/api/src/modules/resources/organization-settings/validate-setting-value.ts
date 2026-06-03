@@ -76,10 +76,39 @@ export function validateSettingValue(
         'secondaryColor',
         32,
       );
+      const logoUrl = optionalString(value.logoUrl, 'logoUrl', 2048);
+      const faviconUrl = optionalString(value.faviconUrl, 'faviconUrl', 2048);
       return {
         displayName,
         ...(primaryColor ? { primaryColor } : {}),
         ...(secondaryColor ? { secondaryColor } : {}),
+        ...(logoUrl ? { logoUrl } : {}),
+        ...(faviconUrl ? { faviconUrl } : {}),
+      };
+    }
+    case 'onekey': {
+      const enabled = value.enabled;
+      if (enabled !== undefined && typeof enabled !== 'boolean') {
+        throw new BadRequestException('enabled doit être un booléen.');
+      }
+      const pointsPerMajorUnit = value.pointsPerMajorUnit;
+      if (
+        pointsPerMajorUnit !== undefined &&
+        (typeof pointsPerMajorUnit !== 'number' ||
+          pointsPerMajorUnit < 0 ||
+          !Number.isInteger(pointsPerMajorUnit))
+      ) {
+        throw new BadRequestException(
+          'pointsPerMajorUnit doit être un entier positif ou nul.',
+        );
+      }
+      const programCode =
+        optionalString(value.programCode, 'programCode', 32) ?? 'ONEKEY';
+      return {
+        enabled: typeof enabled === 'boolean' ? enabled : true,
+        pointsPerMajorUnit:
+          typeof pointsPerMajorUnit === 'number' ? pointsPerMajorUnit : 1,
+        programCode: programCode.toUpperCase(),
       };
     }
     default:

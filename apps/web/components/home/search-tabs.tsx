@@ -1,7 +1,8 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { listPublicDestinations } from '../../lib/api/public';
 import { useTranslations } from '../../lib/i18n/locale-provider';
 import { buildSearchRoute, type SearchVertical } from '../../lib/search/route';
 
@@ -67,6 +68,27 @@ export function SearchTabs() {
   const [to, setTo] = useState('');
   const [destination, setDestination] = useState('');
   const [adults, setAdults] = useState('');
+  const [hotelGuests, setHotelGuests] = useState('2');
+  const [destinationOptions, setDestinationOptions] = useState<string[]>(AFRICAN_CITIES);
+
+  useEffect(() => {
+    let cancelled = false;
+    void listPublicDestinations()
+      .then((dests) => {
+        if (cancelled || !dests.length) return;
+        const names = dests.map((d) => d.name);
+        const merged = Array.from(new Set([...names, ...AFRICAN_CITIES])).sort((a, b) =>
+          a.localeCompare(b),
+        );
+        setDestinationOptions(merged);
+      })
+      .catch(() => {
+        /* keep static fallback */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -76,14 +98,15 @@ export function SearchTabs() {
     if (to) params.set('to', to);
     if (departDate) params.set('checkIn', departDate);
     if (returnDate) params.set('checkOut', returnDate);
-    if (adults) params.set('guests', adults);
+    const guestsValue = activeTab === 'hotels' ? hotelGuests : adults;
+    if (guestsValue) params.set('guests', guestsValue);
     router.push(buildSearchRoute(activeTab, params));
   }
 
   const submitBtn = <button type="submit" className="min-h-[44px] w-full rounded-lg bg-primary px-5 py-2.5 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover">{t.search.search}</button>;
 
   return (
-    <section className="relative -mt-12 z-20">
+    <section id="search" className="relative -mt-12 z-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-2xl transition-colors dark:border-atg-border dark:bg-atg-elevated">
           <div className="flex" role="tablist" aria-label={t.search.tablistAria}>
@@ -96,11 +119,147 @@ export function SearchTabs() {
           </div>
 
           <form onSubmit={handleSubmit} className="p-5 sm:p-6">
-            {activeTab === 'flights' && (<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6"><div><FormLabel>{t.search.departDate}</FormLabel><FormInput type="date" name="departDate" value={departDate} onChange={setDepartDate} /></div><div><FormLabel>{t.search.returnDate}</FormLabel><FormInput type="date" name="returnDate" value={returnDate} onChange={setReturnDate} /></div><div><FormLabel>{t.search.from}</FormLabel><FormSelect name="from" placeholder={t.search.cityPh} options={AFRICAN_CITIES} value={from} onChange={setFrom} /></div><div><FormLabel>{t.search.to}</FormLabel><FormSelect name="to" placeholder={t.search.cityPh} options={AFRICAN_CITIES} value={to} onChange={setTo} /></div><div><FormLabel>{t.search.adults}</FormLabel><FormInput name="adults" placeholder="1" value={adults} onChange={setAdults} /></div><div className="flex items-end">{submitBtn}</div></div>)}
-            {activeTab === 'hotels' && (<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5"><div><FormLabel>{t.search.checkIn}</FormLabel><FormInput type="date" name="checkIn" value={departDate} onChange={setDepartDate} /></div><div><FormLabel>{t.search.checkOut}</FormLabel><FormInput type="date" name="checkOut" value={returnDate} onChange={setReturnDate} /></div><div><FormLabel>{t.search.destination}</FormLabel><FormSelect name="destination" placeholder={t.search.destinationPh} options={AFRICAN_CITIES} value={destination} onChange={setDestination} /></div><div><FormLabel>{t.search.roomType}</FormLabel><FormSelect name="roomType" placeholder={t.search.selectPh} options={t.search.roomTypes} value="" onChange={() => {}} /></div><div className="flex items-end">{submitBtn}</div></div>)}
-            {activeTab === 'cars' && (<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6"><div><FormLabel>{t.search.pickUp}</FormLabel><FormInput type="date" name="pickUp" value={departDate} onChange={setDepartDate} /></div><div><FormLabel>{t.search.dropOff}</FormLabel><FormInput type="date" name="dropOff" value={returnDate} onChange={setReturnDate} /></div><div><FormLabel>{t.search.country}</FormLabel><FormSelect name="country" placeholder={t.search.countryPh} options={t.search.countries} value="" onChange={() => {}} /></div><div><FormLabel>{t.search.city}</FormLabel><FormSelect name="city" placeholder={t.search.cityPh} options={AFRICAN_CITIES} value={destination} onChange={setDestination} /></div><div><FormLabel>{t.search.location}</FormLabel><FormSelect name="location" placeholder={t.search.locationPh} options={t.search.locations} value="" onChange={() => {}} /></div><div className="flex items-end">{submitBtn}</div></div>)}
-            {activeTab === 'cruises' && (<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6"><div><FormLabel>{t.search.startDate}</FormLabel><FormInput type="date" name="startDate" value={departDate} onChange={setDepartDate} /></div><div><FormLabel>{t.search.endDate}</FormLabel><FormInput type="date" name="endDate" value={returnDate} onChange={setReturnDate} /></div><div><FormLabel>{t.search.sailTo}</FormLabel><FormSelect name="sailTo" placeholder={t.search.allDestinations} options={CRUISE_DESTINATIONS} value={to} onChange={setTo} /></div><div><FormLabel>{t.search.sailFrom}</FormLabel><FormSelect name="sailFrom" placeholder={t.search.allPorts} options={CRUISE_PORTS} value={from} onChange={setFrom} /></div><div><FormLabel>{t.search.ship}</FormLabel><FormSelect name="ship" placeholder={t.search.shipPh} options={CRUISE_SHIPS} value="" onChange={() => {}} /></div><div className="flex items-end">{submitBtn}</div></div>)}
-            {activeTab === 'tours' && (<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6"><div><FormLabel>{t.search.startDate}</FormLabel><FormInput type="date" name="startDate" value={departDate} onChange={setDepartDate} /></div><div><FormLabel>{t.search.from}</FormLabel><FormSelect name="from" placeholder={t.search.departCityPh} options={AFRICAN_CITIES} value={from} onChange={setFrom} /></div><div><FormLabel>{t.search.to}</FormLabel><FormSelect name="to" placeholder={t.search.destinationPh2} options={AFRICAN_CITIES} value={to} onChange={setTo} /></div><div><FormLabel>{t.search.adults}</FormLabel><FormInput name="adults" placeholder="2" value={adults} onChange={setAdults} /></div><div><FormLabel>{t.search.days}</FormLabel><FormInput name="days" placeholder="7" value="" onChange={() => {}} /></div><div className="flex items-end">{submitBtn}</div></div>)}
+            {activeTab === 'flights' && (
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
+                <div>
+                  <FormLabel>{t.search.departDate}</FormLabel>
+                  <FormInput type="date" name="departDate" value={departDate} onChange={setDepartDate} />
+                </div>
+                <div>
+                  <FormLabel>{t.search.returnDate}</FormLabel>
+                  <FormInput type="date" name="returnDate" value={returnDate} onChange={setReturnDate} />
+                </div>
+                <div>
+                  <FormLabel>{t.search.from}</FormLabel>
+                  <FormSelect name="from" placeholder={t.search.cityPh} options={AFRICAN_CITIES} value={from} onChange={setFrom} />
+                </div>
+                <div>
+                  <FormLabel>{t.search.to}</FormLabel>
+                  <FormSelect name="to" placeholder={t.search.cityPh} options={AFRICAN_CITIES} value={to} onChange={setTo} />
+                </div>
+                <div>
+                  <FormLabel>{t.search.adults}</FormLabel>
+                  <FormInput name="adults" placeholder="1" value={adults} onChange={setAdults} />
+                </div>
+                <div className="flex items-end">{submitBtn}</div>
+              </div>
+            )}
+
+            {activeTab === 'hotels' && (
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
+                <div>
+                  <FormLabel>{t.search.checkIn}</FormLabel>
+                  <FormInput type="date" name="checkIn" value={departDate} onChange={setDepartDate} />
+                </div>
+                <div>
+                  <FormLabel>{t.search.checkOut}</FormLabel>
+                  <FormInput type="date" name="checkOut" value={returnDate} onChange={setReturnDate} />
+                </div>
+                <div>
+                  <FormLabel>{t.search.destination}</FormLabel>
+                  <FormSelect
+                    name="destination"
+                    placeholder={t.search.destinationPh}
+                    options={destinationOptions}
+                    value={destination}
+                    onChange={setDestination}
+                  />
+                </div>
+                <div>
+                  <FormLabel>{t.hotels.guests}</FormLabel>
+                  <FormInput
+                    name="guests"
+                    type="number"
+                    placeholder="2"
+                    value={hotelGuests}
+                    onChange={setHotelGuests}
+                  />
+                </div>
+                <div>
+                  <FormLabel>{t.search.roomType}</FormLabel>
+                  <FormSelect name="roomType" placeholder={t.search.selectPh} options={t.search.roomTypes} value="" onChange={() => {}} />
+                </div>
+                <div className="flex items-end">{submitBtn}</div>
+              </div>
+            )}
+
+            {activeTab === 'cars' && (
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
+                <div>
+                  <FormLabel>{t.search.pickUp}</FormLabel>
+                  <FormInput type="date" name="pickUp" value={departDate} onChange={setDepartDate} />
+                </div>
+                <div>
+                  <FormLabel>{t.search.dropOff}</FormLabel>
+                  <FormInput type="date" name="dropOff" value={returnDate} onChange={setReturnDate} />
+                </div>
+                <div>
+                  <FormLabel>{t.search.country}</FormLabel>
+                  <FormSelect name="country" placeholder={t.search.countryPh} options={t.search.countries} value="" onChange={() => {}} />
+                </div>
+                <div>
+                  <FormLabel>{t.search.city}</FormLabel>
+                  <FormSelect name="city" placeholder={t.search.cityPh} options={AFRICAN_CITIES} value={destination} onChange={setDestination} />
+                </div>
+                <div>
+                  <FormLabel>{t.search.location}</FormLabel>
+                  <FormSelect name="location" placeholder={t.search.locationPh} options={t.search.locations} value="" onChange={() => {}} />
+                </div>
+                <div className="flex items-end">{submitBtn}</div>
+              </div>
+            )}
+
+            {activeTab === 'cruises' && (
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
+                <div>
+                  <FormLabel>{t.search.startDate}</FormLabel>
+                  <FormInput type="date" name="startDate" value={departDate} onChange={setDepartDate} />
+                </div>
+                <div>
+                  <FormLabel>{t.search.endDate}</FormLabel>
+                  <FormInput type="date" name="endDate" value={returnDate} onChange={setReturnDate} />
+                </div>
+                <div>
+                  <FormLabel>{t.search.sailTo}</FormLabel>
+                  <FormSelect name="sailTo" placeholder={t.search.allDestinations} options={CRUISE_DESTINATIONS} value={to} onChange={setTo} />
+                </div>
+                <div>
+                  <FormLabel>{t.search.sailFrom}</FormLabel>
+                  <FormSelect name="sailFrom" placeholder={t.search.allPorts} options={CRUISE_PORTS} value={from} onChange={setFrom} />
+                </div>
+                <div>
+                  <FormLabel>{t.search.ship}</FormLabel>
+                  <FormSelect name="ship" placeholder={t.search.shipPh} options={CRUISE_SHIPS} value="" onChange={() => {}} />
+                </div>
+                <div className="flex items-end">{submitBtn}</div>
+              </div>
+            )}
+
+            {activeTab === 'tours' && (
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
+                <div>
+                  <FormLabel>{t.search.startDate}</FormLabel>
+                  <FormInput type="date" name="startDate" value={departDate} onChange={setDepartDate} />
+                </div>
+                <div>
+                  <FormLabel>{t.search.from}</FormLabel>
+                  <FormSelect name="from" placeholder={t.search.departCityPh} options={AFRICAN_CITIES} value={from} onChange={setFrom} />
+                </div>
+                <div>
+                  <FormLabel>{t.search.to}</FormLabel>
+                  <FormSelect name="to" placeholder={t.search.destinationPh2} options={AFRICAN_CITIES} value={to} onChange={setTo} />
+                </div>
+                <div>
+                  <FormLabel>{t.search.adults}</FormLabel>
+                  <FormInput name="adults" placeholder="2" value={adults} onChange={setAdults} />
+                </div>
+                <div>
+                  <FormLabel>{t.search.days}</FormLabel>
+                  <FormInput name="days" placeholder="7" value="" onChange={() => {}} />
+                </div>
+                <div className="flex items-end">{submitBtn}</div>
+              </div>
+            )}
           </form>
         </div>
       </div>

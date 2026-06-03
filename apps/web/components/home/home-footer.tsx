@@ -186,9 +186,9 @@ export function HomeFooter() {
               {t.footer.about}
             </a>
             <span className="mx-2">|</span>
-            <a href="#" className="hover:text-white transition-colors">
+            <Link href="/support" className="hover:text-white transition-colors">
               {t.footer.faq}
-            </a>
+            </Link>
             <span className="mx-2">|</span>
             <a href="#contact" className="hover:text-white transition-colors">
               {t.footer.contact}

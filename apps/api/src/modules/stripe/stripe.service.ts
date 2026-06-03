@@ -22,6 +22,7 @@ type StripeCharge = Awaited<ReturnType<StripeClient['charges']['retrieve']>>;
 import { newId } from '../../common/utils/uuid';
 import { Bookings, Payments } from '../../entities/generated';
 import { BookingEngineService } from '../resources/bookings/booking-engine.service';
+import { LoyaltyAccountsService } from '../resources/loyalty-accounts/loyalty-accounts.service';
 import {
   STRIPE_METADATA_BOOKING_ID,
   STRIPE_METADATA_PAYMENT_ID,
@@ -65,6 +66,7 @@ export class StripeService {
     @InjectRepository(Payments)
     private readonly paymentsRepository: Repository<Payments>,
     private readonly bookingEngine: BookingEngineService,
+    private readonly loyaltyAccountsService: LoyaltyAccountsService,
   ) {}
 
   private getStripe(): StripeClient {
@@ -170,10 +172,11 @@ export class StripeService {
     const paymentId = newId();
     const stripe = this.getStripe();
 
-    const webUrl = (process.env.NEXT_PUBLIC_WEB_URL ?? 'http://localhost:3002').replace(
-      /\/$/,
-      '',
-    );
+    const defaultWebUrl =
+      process.env.NODE_ENV === 'production'
+        ? 'https://africatourismgate.org'
+        : 'http://localhost:3002';
+    const webUrl = (process.env.NEXT_PUBLIC_WEB_URL ?? defaultWebUrl).replace(/\/$/, '');
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
@@ -189,8 +192,8 @@ export class StripeService {
           },
         },
       ],
-      success_url: `${webUrl}/reservations/success?booking_id=${bookingId}`,
-      cancel_url: `${webUrl}/reservations/cancel?booking_id=${bookingId}`,
+      success_url: `${webUrl}/booking/success?booking_id=${bookingId}`,
+      cancel_url: `${webUrl}/booking/cancel?booking_id=${bookingId}`,
       metadata: {
         [STRIPE_METADATA_BOOKING_ID]: bookingId,
         [STRIPE_METADATA_PAYMENT_ID]: paymentId,
@@ -444,6 +447,14 @@ export class StripeService {
         params.bookingId,
         undefined,
         'Paiement Stripe confirmé (webhook)',
+      );
+    }
+
+    try {
+      await this.loyaltyAccountsService.awardPointsForSucceededPayment(booking, payment);
+    } catch (err) {
+      this.logger.error(
+        `OneKey points award failed for payment ${payment.id}: ${err instanceof Error ? err.message : err}`,
       );
     }
   }

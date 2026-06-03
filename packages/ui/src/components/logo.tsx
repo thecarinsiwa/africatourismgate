@@ -4,6 +4,8 @@ export type LogoProps = {
   name: string;
   href?: string;
   icon?: React.ReactNode;
+  /** Image de marque (remplace l’icône par défaut si fournie). */
+  logoUrl?: string | null;
   /** Centre le logo horizontalement dans son conteneur. */
   centered?: boolean;
   className?: string;
@@ -20,20 +22,29 @@ export function Logo({
   name,
   href,
   icon = defaultIcon,
+  logoUrl,
   centered = false,
   className,
   iconClassName,
 }: LogoProps) {
   const content = (
     <div className={cn('flex items-center gap-2.5', className)}>
-      <div
-        className={cn(
-          'flex h-9 w-9 items-center justify-center rounded-md bg-primary',
-          iconClassName,
-        )}
-      >
-        {icon}
-      </div>
+      {logoUrl ? (
+        <img
+          src={logoUrl}
+          alt=""
+          className={cn('h-9 w-9 rounded-md object-contain', iconClassName)}
+        />
+      ) : (
+        <div
+          className={cn(
+            'flex h-9 w-9 items-center justify-center rounded-md bg-primary',
+            iconClassName,
+          )}
+        >
+          {icon}
+        </div>
+      )}
       <span className="text-base font-bold leading-tight tracking-tight text-atg-fg">{name}</span>
     </div>
   );

@@ -8,6 +8,7 @@ import type {
   AuthMe,
   AuthResponse,
   AuthTokens,
+  AuthUser,
   CreateAmenityRequest,
   CreateDestinationRequest,
   CreateEmployeeRequest,
@@ -69,7 +70,6 @@ import type {
   UpdateActivityProviderRequest,
   UpdateActivityRequest,
   UpdateActivityScheduleRequest,
-  Booking,
   BookingAdminDetail,
   BookingCheckoutPreview,
   BookingCheckoutRequest,
@@ -78,7 +78,17 @@ import type {
   BookingPaymentIntentResponse,
   BookingListItem,
   BookingsListQuery,
+  CreateBookingReviewRequest,
+  CreateSupportTicketRequest,
+  SupportTicket,
+  SupportTicketCreated,
+  SupportTicketsListQuery,
+  PropertyDetail,
+  PropertyDetailQuery,
+  PropertyReviewsListQuery,
+  Review,
   CancelBookingRequest,
+  RecordCashPaymentRequest,
   UpdateBookingStatusRequest,
   CreatePackageItemRequest,
   CreatePackageRequest,
@@ -97,6 +107,10 @@ import type {
   CreateRoleRequest,
   CreateUserRequest,
   CreateUserRoleAssignmentRequest,
+  CreateUserAddressRequest,
+  CreateUserPaymentMethodRequest,
+  LoyaltyAccount,
+  LoyaltyAccountsListQuery,
   Employee,
   EmployeesListQuery,
   Permission,
@@ -114,6 +128,7 @@ import type {
   RoomsListQuery,
   Destination,
   DestinationsListQuery,
+  PublicDestination,
   Flight,
   FlightClass,
   FlightClassAvailability,
@@ -128,6 +143,8 @@ import type {
   LogoutResponse,
   Organization,
   Property,
+  PropertySearchQuery,
+  PropertySearchResult,
   PropertyAmenitiesListQuery,
   PropertyAmenitiesPayload,
   PropertyImage,
@@ -173,8 +190,15 @@ import type {
   OrganizationSettingsListQuery,
   UpdateOrganizationBankAccountRequest,
   UpdateOrganizationRequest,
+  UpdateProfileRequest,
   UpdateRoleRequest,
   UpdateUserRequest,
+  UpdateUserAddressRequest,
+  UpdateUserPaymentMethodRequest,
+  UserAddress,
+  UserAddressesListQuery,
+  UserPaymentMethod,
+  UserPaymentMethodsListQuery,
   UserRoleAssignment,
   UserRoleAssignmentsListQuery,
   User,
@@ -188,6 +212,24 @@ import {
 } from './pagination';
 
 export { ApiHttpError, parseApiErrorMessage } from './http-error';
+
+/** OpenAPI-generated types and typed fetch client (see `pnpm codegen:api`). */
+export {
+  createOpenApiClient,
+  openApiBaseUrl,
+  openApiLogin,
+  type AuthMeResponseBody,
+  type AuthResponseDto,
+  type AuthTokensResponseDto,
+  type AuthUserDto,
+  type LoginRequestBody,
+  type LoginResponseBody,
+  type OpenApiClient,
+  type OpenApiClientOptions,
+  type OpenApiPaths,
+  type paths,
+  type components,
+} from './generated';
 
 export type {
   AuthMe,
@@ -261,7 +303,15 @@ export type {
   PropertyImage,
   PropertyImagesListQuery,
   PropertiesListQuery,
+  PropertySearchQuery,
+  PropertySearchResult,
+  PropertyDetail,
+  PropertyDetailQuery,
+  PropertyReviewsListQuery,
+  Review,
+  CreateBookingReviewRequest,
   PropertyType,
+  PublicDestination,
   ReplacePropertyAmenitiesRequest,
   Room,
   RoomsListQuery,
@@ -377,6 +427,17 @@ export class ApiClient {
     return this.request<AuthMe>('/auth/me');
   }
 
+  listAuthOrganizations(): Promise<Organization[]> {
+    return this.request<Organization[]>('/auth/me/organizations');
+  }
+
+  updateAuthProfile(body: UpdateProfileRequest): Promise<AuthUser> {
+    return this.request<AuthUser>('/auth/me', {
+      method: 'PATCH',
+      body,
+    });
+  }
+
   refresh(refreshToken: string): Promise<AuthTokens> {
     return this.request<AuthTokens>('/auth/refresh', {
       method: 'POST',
@@ -435,10 +496,125 @@ export class ApiClient {
     return this.request<void>(`/users/${id}`, { method: 'DELETE' });
   }
 
+  listUserAddresses(
+    query?: UserAddressesListQuery,
+  ): Promise<PaginatedResponse<UserAddress>> {
+    return fetchPaginated<UserAddress>(this, '/user-addresses', query);
+  }
+
+  getUserAddress(id: string): Promise<UserAddress> {
+    return this.request<UserAddress>(`/user-addresses/${id}`);
+  }
+
+  createUserAddress(body: CreateUserAddressRequest): Promise<UserAddress> {
+    return this.request<UserAddress>('/user-addresses', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateUserAddress(
+    id: string,
+    body: UpdateUserAddressRequest,
+  ): Promise<UserAddress> {
+    return this.request<UserAddress>(`/user-addresses/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteUserAddress(id: string): Promise<void> {
+    return this.request<void>(`/user-addresses/${id}`, { method: 'DELETE' });
+  }
+
+  listLoyaltyAccounts(
+    query?: LoyaltyAccountsListQuery,
+  ): Promise<PaginatedResponse<LoyaltyAccount>> {
+    return fetchPaginated<LoyaltyAccount>(this, '/loyalty-accounts', query);
+  }
+
+  listUserPaymentMethods(
+    query?: UserPaymentMethodsListQuery,
+  ): Promise<PaginatedResponse<UserPaymentMethod>> {
+    return fetchPaginated<UserPaymentMethod>(this, '/user-payment-methods', query);
+  }
+
+  getUserPaymentMethod(id: string): Promise<UserPaymentMethod> {
+    return this.request<UserPaymentMethod>(`/user-payment-methods/${id}`);
+  }
+
+  createUserPaymentMethod(
+    body: CreateUserPaymentMethodRequest,
+  ): Promise<UserPaymentMethod> {
+    return this.request<UserPaymentMethod>('/user-payment-methods', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateUserPaymentMethod(
+    id: string,
+    body: UpdateUserPaymentMethodRequest,
+  ): Promise<UserPaymentMethod> {
+    return this.request<UserPaymentMethod>(`/user-payment-methods/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteUserPaymentMethod(id: string): Promise<void> {
+    return this.request<void>(`/user-payment-methods/${id}`, { method: 'DELETE' });
+  }
+
   listProperties(
     query?: PropertiesListQuery,
   ): Promise<PaginatedResponse<Property>> {
     return fetchPaginated<Property>(this, '/properties', query);
+  }
+
+  listPublicDestinations(): Promise<PublicDestination[]> {
+    return this.request<PublicDestination[]>('/public/destinations', {
+      skipAuth: true,
+    });
+  }
+
+  searchAccommodations(
+    query?: PropertySearchQuery,
+  ): Promise<PaginatedResponse<PropertySearchResult>> {
+    return fetchPaginated<PropertySearchResult>(
+      this,
+      '/public/accommodations/search',
+      query,
+      { skipAuth: true },
+    );
+  }
+
+  getAccommodationDetail(
+    id: string,
+    query?: PropertyDetailQuery,
+  ): Promise<PropertyDetail> {
+    const qs = new URLSearchParams();
+    if (query?.checkIn) qs.set('checkIn', query.checkIn);
+    if (query?.checkOut) qs.set('checkOut', query.checkOut);
+    if (query?.guests !== undefined) qs.set('guests', String(query.guests));
+    if (query?.month) qs.set('month', query.month);
+    const suffix = qs.toString() ? `?${qs.toString()}` : '';
+    return this.request<PropertyDetail>(
+      `/public/accommodations/${encodeURIComponent(id)}${suffix}`,
+      { skipAuth: true },
+    );
+  }
+
+  getPropertyReviews(
+    propertyId: string,
+    query?: PropertyReviewsListQuery,
+  ): Promise<PaginatedResponse<Review>> {
+    return fetchPaginated<Review>(
+      this,
+      `/public/accommodations/${encodeURIComponent(propertyId)}/reviews`,
+      query,
+      { skipAuth: true },
+    );
   }
 
   getProperty(id: string): Promise<Property> {
@@ -1035,6 +1211,39 @@ export class ApiClient {
     return this.request<BookingAdminDetail>(`/bookings/${id}`);
   }
 
+  getBookingReview(id: string): Promise<Review | null> {
+    return this.request<Review | null>(`/bookings/${id}/reviews`);
+  }
+
+  createBookingReview(
+    id: string,
+    body: CreateBookingReviewRequest,
+  ): Promise<Review> {
+    return this.request<Review>(`/bookings/${id}/reviews`, {
+      method: 'POST',
+      body,
+    });
+  }
+
+  listSupportTickets(
+    query?: SupportTicketsListQuery,
+  ): Promise<PaginatedResponse<SupportTicket>> {
+    return fetchPaginated<SupportTicket>(this, '/support-tickets', query);
+  }
+
+  getSupportTicket(id: string): Promise<SupportTicket> {
+    return this.request<SupportTicket>(`/support-tickets/${id}`);
+  }
+
+  createSupportTicket(
+    body: CreateSupportTicketRequest,
+  ): Promise<SupportTicketCreated> {
+    return this.request<SupportTicketCreated>('/support-tickets', {
+      method: 'POST',
+      body,
+    });
+  }
+
   updateBookingStatus(
     id: string,
     body: UpdateBookingStatusRequest,
@@ -1053,6 +1262,16 @@ export class ApiClient {
 
   cancelBooking(id: string, body?: CancelBookingRequest): Promise<BookingDetail> {
     return this.request<BookingDetail>(`/bookings/${id}/cancel`, {
+      method: 'POST',
+      body: body ?? {},
+    });
+  }
+
+  recordBookingCashPayment(
+    id: string,
+    body?: RecordCashPaymentRequest,
+  ): Promise<BookingDetail> {
+    return this.request<BookingDetail>(`/bookings/${id}/cash-payment`, {
       method: 'POST',
       body: body ?? {},
     });

@@ -1,9 +1,13 @@
 'use client';
 
+import { normalizeBrandingAssetUrl } from '@africatourismgate/utils';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
+import { usePublicBranding } from '../branding-provider';
 import { LanguageSwitcher } from '../language-switcher';
-import { useTranslations } from '../../lib/i18n/locale-provider';
+import { AUTH_CHANGED_EVENT, hasWebSession } from '../../lib/auth/client-session';
+import { useTranslations as useIntlTranslations } from 'next-intl';
 
 const SOCIAL_LINKS = [
   {
@@ -36,38 +40,102 @@ const SOCIAL_LINKS = [
 ];
 
 type ThemeMode = 'light' | 'dark';
+type PublicBranding = {
+  displayName?: string;
+  logoUrl?: string | null;
+};
 
 export function HomeHeader() {
-  const t = useTranslations();
+  const t = useIntlTranslations('nav');
+  const tTheme = useIntlTranslations('theme');
+  const tLanguage = useIntlTranslations('language');
+  const pathname = usePathname();
+  const onAccountArea = pathname.startsWith('/account');
+  const serverBranding = usePublicBranding();
   const [menuOpen, setMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [theme, setTheme] = useState<ThemeMode>('light');
+  const [branding, setBranding] = useState<Required<PublicBranding>>({
+    displayName: serverBranding?.displayName ?? 'Africa Tourism Gate',
+    logoUrl: serverBranding?.logoUrl ?? null,
+  });
+  const [logoBroken, setLogoBroken] = useState(false);
+  const [hasSession, setHasSession] = useState(false);
 
   const navLinks = useMemo(
     () => [
-      { href: '/', label: t.nav.home, children: [] as { href: string; label: string }[] },
-      { href: '#about', label: t.nav.about, children: [] },
-      { href: '#gallery', label: t.nav.gallery, children: [] },
+      { href: '/', label: t('home'), children: [] as { href: string; label: string }[] },
+      { href: '#about', label: t('about'), children: [] },
+      { href: '#gallery', label: t('gallery'), children: [] },
       {
         href: '#pages',
-        label: t.nav.pages,
+        label: t('pages'),
         children: [
-          { href: '/hotels', label: t.nav.hotels },
-          { href: '#vols', label: t.nav.flights },
-          { href: '#voitures', label: t.nav.cars },
-          { href: '#croisieres', label: t.nav.cruises },
-          { href: '#tours', label: t.nav.tours },
+          { href: '/hotels', label: t('hotels') },
+          { href: '#vols', label: t('flights') },
+          { href: '#voitures', label: t('cars') },
+          { href: '#croisieres', label: t('cruises') },
+          { href: '#tours', label: t('tours') },
         ],
       },
-      { href: '#blog', label: t.nav.blog, children: [] },
-      { href: '#contact', label: t.nav.contact, children: [] },
+      { href: '#blog', label: t('blog'), children: [] },
+      { href: '#contact', label: t('contact'), children: [] },
     ],
     [t],
   );
 
   useEffect(() => {
     setTheme(document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+
+    function syncSession() {
+      setHasSession(hasWebSession());
+    }
+
+    syncSession();
+    window.addEventListener(AUTH_CHANGED_EVENT, syncSession);
+    window.addEventListener('storage', syncSession);
+    return () => {
+      window.removeEventListener(AUTH_CHANGED_EVENT, syncSession);
+      window.removeEventListener('storage', syncSession);
+    };
   }, []);
+
+  useEffect(() => {
+    if (serverBranding) {
+      setBranding({
+        displayName: serverBranding.displayName,
+        logoUrl: serverBranding.logoUrl,
+      });
+      setLogoBroken(false);
+      return;
+    }
+
+    const defaultApiUrl =
+      process.env.NODE_ENV === 'production'
+        ? 'https://app-africatourismgate.org/api'
+        : 'http://localhost:3000/api';
+    const apiUrl = (process.env.NEXT_PUBLIC_API_URL ?? defaultApiUrl).replace(/\/$/, '');
+
+    async function loadBranding() {
+      try {
+        const response = await fetch(`${apiUrl}/organization-settings/public/branding`, {
+          headers: { Accept: 'application/json' },
+          cache: 'no-store',
+        });
+        if (!response.ok) return;
+        const payload = (await response.json()) as PublicBranding;
+        setBranding({
+          displayName: payload.displayName?.trim() || 'Africa Tourism Gate',
+          logoUrl: normalizeBrandingAssetUrl(payload.logoUrl?.trim() || null),
+        });
+        setLogoBroken(false);
+      } catch {
+        // Keep defaults if branding endpoint is unavailable.
+      }
+    }
+
+    void loadBranding();
+  }, [serverBranding]);
 
   function toggleTheme() {
     const nextTheme: ThemeMode = theme === 'dark' ? 'light' : 'dark';
@@ -119,18 +187,28 @@ export function HomeHeader() {
       <div className="border-b border-gray-100 bg-white shadow-sm transition-colors dark:border-atg-border dark:bg-atg-elevated">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-0 sm:px-6 lg:px-8">
           <Link href="/" className="flex items-center gap-2 py-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-              <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
+            {branding.logoUrl && !logoBroken ? (
+              <img
+                src={branding.logoUrl}
+                alt={branding.displayName}
+                className="h-10 w-10 rounded-lg object-cover"
+                onError={() => setLogoBroken(true)}
+              />
+            ) : (
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
+                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+            )}
             <div>
-              <span className="text-lg font-bold text-[#0f1a16] dark:text-white">Africa Tourism</span>
-              <span className="text-lg font-bold text-primary"> Gate</span>
+              <span className="text-lg font-bold text-[#0f1a16] dark:text-white">
+                {branding.displayName}
+              </span>
             </div>
           </Link>
 
-          <nav className="hidden items-center gap-0 lg:flex" aria-label={t.nav.mainAria}>
+          <nav className="hidden items-center gap-0 lg:flex" aria-label={t('mainAria')}>
             {navLinks.map((link) => (
               <div
                 key={link.href}
@@ -171,12 +249,34 @@ export function HomeHeader() {
             ))}
           </nav>
 
+          <div className="hidden items-center gap-2 lg:flex">
+            <Link
+              href={hasSession ? '/account' : '/booking/login?next=%2Faccount'}
+              className={`inline-flex min-h-[44px] items-center rounded-lg px-4 py-2.5 text-sm font-medium transition-colors ${
+                onAccountArea && hasSession
+                  ? 'bg-primary/10 text-primary'
+                  : 'text-[#333] hover:text-primary dark:text-white/75 dark:hover:text-white'
+              }`}
+              aria-current={onAccountArea && hasSession ? 'page' : undefined}
+            >
+              {hasSession ? t('myAccount') : t('signIn')}
+            </Link>
+            {hasSession ? (
+              <Link
+                href="/booking/logout"
+                className="inline-flex min-h-[44px] items-center rounded-lg border border-red-200 bg-red-50 px-5 py-2.5 text-base font-semibold text-red-700 transition-colors hover:border-red-300 hover:bg-red-100 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300 dark:hover:bg-red-950/60"
+              >
+                {t('signOut')}
+              </Link>
+            ) : null}
+          </div>
+
           <button
             type="button"
             onClick={toggleTheme}
-            className="ml-auto mr-2 inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-gray-200 text-gray-600 transition-colors hover:border-primary hover:text-primary dark:border-atg-border dark:text-white/75 dark:hover:border-primary dark:hover:text-white lg:ml-4"
-            aria-label={theme === 'dark' ? t.theme.enableLight : t.theme.enableDark}
-            title={theme === 'dark' ? t.theme.lightMode : t.theme.darkMode}
+            className="ml-2 mr-2 inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-gray-200 text-gray-600 transition-colors hover:border-primary hover:text-primary dark:border-atg-border dark:text-white/75 dark:hover:border-primary dark:hover:text-white lg:ml-2 lg:mr-2"
+            aria-label={theme === 'dark' ? tTheme('enableLight') : tTheme('enableDark')}
+            title={theme === 'dark' ? tTheme('lightMode') : tTheme('darkMode')}
           >
             {theme === 'dark' ? (
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -196,7 +296,7 @@ export function HomeHeader() {
             aria-controls="mobile-nav"
             onClick={() => setMenuOpen((o) => !o)}
           >
-            <span className="sr-only">{t.nav.menu}</span>
+            <span className="sr-only">{t('menu')}</span>
             {menuOpen ? (
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -214,15 +314,38 @@ export function HomeHeader() {
         <nav
           id="mobile-nav"
           className="border-b border-gray-100 bg-white px-4 py-4 shadow-lg dark:border-atg-border dark:bg-atg-elevated lg:hidden"
-          aria-label={t.nav.mobileAria}
+          aria-label={t('mobileAria')}
         >
           <div className="mb-3 flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-atg-muted">
-              {t.language.label}
+              {tLanguage('label')}
             </span>
             <LanguageSwitcher variant="navbar" />
           </div>
           <ul className="flex flex-col gap-0.5">
+            <li>
+              <Link
+                href={hasSession ? '/account' : '/booking/login?next=%2Faccount'}
+                className={`flex min-h-[44px] items-center rounded-lg px-3 py-3 text-sm font-medium hover:bg-gray-50 dark:hover:bg-white/5 ${
+                  onAccountArea && hasSession ? 'bg-primary/10 text-primary' : 'text-primary'
+                }`}
+                aria-current={onAccountArea && hasSession ? 'page' : undefined}
+                onClick={() => setMenuOpen(false)}
+              >
+                {hasSession ? t('myAccount') : t('signIn')}
+              </Link>
+            </li>
+            {hasSession ? (
+              <li>
+                <Link
+                  href="/booking/logout"
+                  className="flex min-h-[48px] items-center justify-center rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-base font-semibold text-red-700 transition-colors hover:bg-red-100 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300 dark:hover:bg-red-950/60"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {t('signOut')}
+                </Link>
+              </li>
+            ) : null}
             {navLinks.map((link) => (
               <li key={link.href}>
                 <Link

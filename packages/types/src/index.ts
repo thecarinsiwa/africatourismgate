@@ -27,6 +27,22 @@ export type {
 } from './auth.js';
 
 export type {
+  CreateUserAddressRequest,
+  CreateUserPaymentMethodRequest,
+  LoyaltyAccount,
+  LoyaltyAccountsListQuery,
+  LoyaltyTier,
+  UpdateProfileRequest,
+  UpdateUserAddressRequest,
+  UpdateUserPaymentMethodRequest,
+  UserAddress,
+  UserAddressesListQuery,
+  UserPaymentMethod,
+  UserPaymentMethodsListQuery,
+  UserPaymentMethodType,
+} from './account.js';
+
+export type {
   PaginatedResponse,
   PaginationMeta,
   PaginationQuery,
@@ -149,6 +165,7 @@ export type {
   BookingPaymentIntentResponse,
   RefundPaymentResponse,
   CancelBookingRequest,
+  RecordCashPaymentRequest,
   UpdateBookingStatusRequest,
   BookingCheckoutItem,
   BookingCheckoutItemType,
@@ -161,6 +178,22 @@ export type {
   BookingsListQuery,
   BookingStatus,
 } from './booking.js';
+
+export type {
+  CreateBookingReviewRequest,
+  PropertyReviewSummary,
+  PropertyReviewsListQuery,
+  Review,
+} from './review.js';
+
+export type {
+  CreateSupportTicketRequest,
+  SupportTicket,
+  SupportTicketCreated,
+  SupportTicketMessage,
+  SupportTicketStatus,
+  SupportTicketsListQuery,
+} from './support.js';
 
 export type {
   CreatePackageItemRequest,
@@ -216,6 +249,17 @@ export type {
   UpdatePropertyImageRequest,
   UpdatePropertyRequest,
   UpdateRoomRequest,
+  PropertySearchQuery,
+  PropertySearchResult,
+  PropertyDetail,
+  PropertyDetailQuery,
+  PropertyDetailImage,
+  PropertyDetailAmenity,
+  PropertyDetailRoom,
+  PropertyDetailNightlyPrice,
+  PropertyDetailStay,
+  PropertyCalendarDay,
+  PublicDestination,
 } from './accommodation.js';
 
 export type {
@@ -224,6 +268,7 @@ export type {
   BulkUpsertOrganizationSettingsRequest,
   CreateOrganizationBankAccountRequest,
   LocaleSettingValue,
+  LoyaltyOneKeySettingValue,
   OrganizationBankAccount,
   OrganizationBankAccountsListQuery,
   OrganizationSetting,

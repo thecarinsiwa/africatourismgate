@@ -13,6 +13,7 @@ import {
 import { usePathname, useSearchParams } from 'next/navigation';
 import { getApiClient } from '../lib/auth/api';
 import {
+  applyFaviconToDocument,
   applyOrganizationBrandingToDocument,
   brandingFromPlatformSetting,
   clearOrganizationBrandingFromDocument,
@@ -78,8 +79,10 @@ export function OrganizationThemeProvider({ children }: { children: ReactNode })
       const nextBranding = findPlatformSetting(settingsPage.data);
       setBranding(nextBranding);
       applyOrganizationBrandingToDocument(nextBranding);
+      applyFaviconToDocument(nextBranding.faviconUrl);
     } catch {
       clearOrganizationBrandingFromDocument();
+      applyFaviconToDocument(null);
       setBranding(null);
     } finally {
       setLoading(false);
@@ -93,6 +96,7 @@ export function OrganizationThemeProvider({ children }: { children: ReactNode })
   const applyBranding = useCallback((next: OrganizationBranding) => {
     setBranding(next);
     applyOrganizationBrandingToDocument(next);
+    applyFaviconToDocument(next.faviconUrl);
   }, []);
 
   const value = useMemo(

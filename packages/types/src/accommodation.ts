@@ -184,3 +184,107 @@ export interface BulkUpsertRoomAvailabilityResponse {
   upsertedCount: number;
   items: RoomAvailability[];
 }
+
+export interface PropertySearchQuery {
+  destination?: string;
+  destinationId?: string;
+  checkIn?: string;
+  checkOut?: string;
+  guests?: number;
+  propertyType?: PropertyType;
+  page?: number;
+  limit?: number;
+}
+
+export interface PropertySearchResult {
+  id: string;
+  slug: string;
+  name: string;
+  propertyType: PropertyType;
+  starRating: number | null;
+  destinationName: string;
+  countryCode: string;
+  addressLine: string | null;
+  imageUrl: string | null;
+  minPriceCents: number;
+  currency: string;
+  amenityCodes: string[];
+}
+
+export interface PublicDestination {
+  id: string;
+  name: string;
+  countryCode: string;
+}
+
+export interface PropertyDetailQuery {
+  checkIn?: string;
+  checkOut?: string;
+  guests?: number;
+  month?: string;
+}
+
+export interface PropertyDetailImage {
+  id: string;
+  url: string;
+  caption: string | null;
+  sortOrder: number;
+}
+
+export interface PropertyDetailAmenity {
+  code: string;
+  name: string;
+}
+
+export interface PropertyDetailNightlyPrice {
+  date: string;
+  priceCents: number;
+}
+
+export interface PropertyDetailRoom {
+  id: string;
+  name: string;
+  roomType: string | null;
+  maxGuests: number;
+  bedConfig: string | null;
+  basePriceCents: number;
+  currency: string;
+  totalPriceCents: number | null;
+  available: boolean;
+  nightlyBreakdown: PropertyDetailNightlyPrice[];
+}
+
+export interface PropertyDetailStay {
+  checkIn: string | null;
+  checkOut: string | null;
+  nights: number;
+  guests: number;
+  minTotalCents: number | null;
+  currency: string;
+}
+
+export interface PropertyCalendarDay {
+  date: string;
+  minPriceCents: number;
+  available: boolean;
+  currency: string;
+}
+
+export interface PropertyDetail {
+  id: string;
+  slug: string;
+  name: string;
+  description: string | null;
+  propertyType: PropertyType;
+  starRating: number | null;
+  destinationName: string;
+  countryCode: string;
+  addressLine: string | null;
+  images: PropertyDetailImage[];
+  amenities: PropertyDetailAmenity[];
+  rooms: PropertyDetailRoom[];
+  stay: PropertyDetailStay;
+  calendarDays: PropertyCalendarDay[];
+  averageRating: number | null;
+  reviewCount: number;
+}

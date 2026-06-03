@@ -2,4 +2,11 @@ export function isNonEmptyString(value: unknown): value is string {
   return typeof value === 'string' && value.trim().length > 0;
 }
 
-export { getAdminAppUrl, getAdminLoginUrl, getPublicWebUrl } from './urls';
+export {
+  ensureHttpsAssetUrl,
+  getAdminAppUrl,
+  getAdminLoginUrl,
+  getApiPublicOrigin,
+  getPublicWebUrl,
+  normalizeBrandingAssetUrl,
+} from './urls';

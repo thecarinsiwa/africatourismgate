@@ -8,6 +8,62 @@
   body {
     background-color: var(--atg-surface);
     color: var(--atg-fg);
-    @apply antialiased;
+    @apply antialiased transition-colors duration-200;
+  }
+}
+
+/** Cibles tactiles pour la caisse (login, sélection org, actions). */
+@layer components {
+  .pos-touch :where(input:not([type='checkbox'])) {
+    min-height: 3rem;
+    font-size: 1.125rem;
+  }
+
+  .pos-touch :where(label) {
+    font-size: 1rem;
+  }
+
+  .pos-touch :where(button[type='submit']) {
+    min-height: 3.5rem;
+    font-size: 1.125rem;
+  }
+
+  .pos-touch :where([type='checkbox']) {
+    min-height: 1.25rem;
+    min-width: 1.25rem;
+  }
+
+  .pos-touch :where(button:not([disabled])) {
+    min-height: 3.25rem;
+  }
+}
+
+/** Impression reçu caisse — masquer chrome POS, imprimer le reçu seul. */
+@media print {
+  @page {
+    margin: 12mm;
+    size: auto;
+  }
+
+  body {
+    background: #fff !important;
+    color: #111 !important;
+  }
+
+  aside,
+  header,
+  .pos-no-print {
+    display: none !important;
+  }
+
+  main {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+
+  #pos-receipt {
+    margin: 0 auto;
+    max-width: 80mm;
+    box-shadow: none !important;
   }
 }

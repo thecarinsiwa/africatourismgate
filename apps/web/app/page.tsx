@@ -9,11 +9,36 @@ import { DestinationsCarousel } from '../components/home/destinations-carousel';
 import { HappyCustomers } from '../components/home/happy-customers';
 import { PartnersSection } from '../components/home/partners-section';
 
-export const metadata: Metadata = {
-  title: 'Réservez votre voyage en Afrique',
-  description:
-    'Comparez hôtels, vols et expériences en Afrique. Recherchez des hébergements et planifiez votre prochain séjour avec Africa Tourism Gate.',
+type PublicBranding = {
+  displayName?: string;
 };
+
+async function getPublicDisplayName(): Promise<string> {
+  const defaultApiUrl =
+    process.env.NODE_ENV === 'production'
+      ? 'https://app-africatourismgate.org/api'
+      : 'http://localhost:3000/api';
+  const apiUrl = (process.env.NEXT_PUBLIC_API_URL ?? defaultApiUrl).replace(/\/$/, '');
+
+  try {
+    const response = await fetch(`${apiUrl}/organization-settings/public/branding`, {
+      cache: 'no-store',
+    });
+    if (!response.ok) return 'Africa Tourism Gate';
+    const branding = (await response.json()) as PublicBranding;
+    return branding.displayName?.trim() || 'Africa Tourism Gate';
+  } catch {
+    return 'Africa Tourism Gate';
+  }
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const siteName = await getPublicDisplayName();
+  return {
+    title: 'Réservez votre voyage en Afrique',
+    description: `Comparez hôtels, vols et expériences en Afrique. Recherchez des hébergements et planifiez votre prochain séjour avec ${siteName}.`,
+  };
+}
 
 export default function HomePage() {
   return (
