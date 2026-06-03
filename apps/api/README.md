@@ -13,6 +13,46 @@ NestJS HTTP API for Africa Tourism Gate, mapped to the MySQL schema in `database
 | `pnpm db:sync` | Apply database schema migrations and insert-only seeds |
 | `pnpm test:pos-sale-cash` | POS cash flow: checkout preview → booking → cash-payment (needs `SEED_ADMIN_PASSWORD`) |
 | `pnpm test:e2e` | Jest + supertest e2e suite (health, auth, booking, Stripe webhook mock) |
+| `pnpm openapi:export` | Write `apps/api/openapi.json` from Nest Swagger (needs MySQL) |
+
+## OpenAPI → typed client (`pnpm codegen:api`)
+
+From the **repo root**, regenerate `packages/api-client/src/generated/` from this API’s Swagger document:
+
+```bash
+pnpm install
+pnpm codegen:api
+```
+
+The codegen script resolves the spec in this order:
+
+1. `OPENAPI_SPEC` — path to a local `openapi.json`
+2. **Running API** — `GET` `OPENAPI_URL` (default `http://127.0.0.1:3000/api-json`) and saves `apps/api/openapi.json`
+3. Existing `apps/api/openapi.json` (committed snapshot)
+4. `pnpm --filter @africatourismgate/api openapi:export` (Nest bootstrap; requires MySQL + `.env`)
+
+Use `--refresh-spec` to force re-download or re-export before codegen.
+
+**Typage login :** après codegen, `LoginRequestBody` / `LoginResponseBody` et `openApiLogin()` sont dérivés de `POST /auth/login` dans le schéma OpenAPI. Le client manuel `ApiClient.login()` reste inchangé pour l’admin/POS.
+
+```ts
+import {
+  createOpenApiClient,
+  openApiBaseUrl,
+  openApiLogin,
+} from '@africatourismgate/api-client';
+
+// OpenAPI paths include `/api`; use the server origin (not NEXT_PUBLIC_API_URL’s `/api` suffix).
+const client = createOpenApiClient({
+  baseUrl: openApiBaseUrl(process.env.NEXT_PUBLIC_API_URL!),
+});
+const { data, error } = await openApiLogin(client, {
+  email: 'admin@africatourismgate.local',
+  password: 'ChangeMe123!',
+});
+```
+
+Commit `apps/api/openapi.json` when API routes or DTOs change so CI can codegen without a running server.
 
 ## E2E tests (Jest + supertest)
 
@@ -65,7 +105,8 @@ pnpm db:sync
 ## Endpoints
 
 - **Health**: `GET /api/health`
-- **Swagger**: `http://localhost:3000/api`
+- **Swagger UI**: `http://localhost:3000/api`
+- **OpenAPI JSON**: `http://localhost:3000/api-json` (source for `pnpm codegen:api`)
 - **Resources**: one REST controller per table (e.g. `GET /api/destinations`, `GET /api/properties/:id`)
 
 All list queries exclude soft-deleted rows (`deleted_at IS NULL` via TypeORM).  
