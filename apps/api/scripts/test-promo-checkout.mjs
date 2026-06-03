@@ -101,11 +101,10 @@ async function main() {
     body: {
       code: promoCode,
       discountType: 'percent',
-      discountValue: '20',
+      discountValue: 20,
       validFrom: '2020-01-01',
       validUntil: '2099-12-31',
       maxRedemptions: 100,
-      redemptionCount: 0,
       active: 1,
     },
   });
@@ -145,11 +144,10 @@ async function main() {
       name: `Promo Test ${suffix}`,
       description: 'Integration promotion',
       discountType: 'fixed_amount',
-      discountValue: '15',
+      discountValue: 15,
       validFrom: '2020-01-01',
       validUntil: '2099-12-31',
       maxRedemptions: 50,
-      redemptionCount: 0,
       active: 1,
     },
   });
@@ -189,11 +187,10 @@ async function main() {
     body: {
       code: expiredCode,
       discountType: 'percent',
-      discountValue: '10',
+      discountValue: 10,
       validFrom: '2020-01-01',
       validUntil: '2020-12-31',
       active: 1,
-      redemptionCount: 0,
     },
   });
   const previewExpired = await request('POST', '/bookings/checkout-preview', {

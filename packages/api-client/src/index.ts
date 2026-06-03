@@ -157,8 +157,16 @@ import type {
   PaymentAdminDetail,
   PaymentListItem,
   PaymentsListQuery,
+  CreatePromoCodeRequest,
+  CreatePromotionRequest,
+  PromoCode,
+  PromoCodesListQuery,
+  Promotion,
+  PromotionsListQuery,
+  UpdatePromotionRequest,
   RefundPaymentRequest,
   RefundPaymentResponse,
+  UpdatePromoCodeRequest,
   RegisterRequest,
   ResetPasswordRequest,
   ResetPasswordResponse,
@@ -775,6 +783,46 @@ export class ApiClient {
       method: 'POST',
       body: body ?? {},
     });
+  }
+
+  listPromoCodes(query?: PromoCodesListQuery): Promise<PaginatedResponse<PromoCode>> {
+    return fetchPaginated<PromoCode>(this, '/promo-codes', query);
+  }
+
+  getPromoCode(id: string): Promise<PromoCode> {
+    return this.request<PromoCode>(`/promo-codes/${id}`);
+  }
+
+  createPromoCode(body: CreatePromoCodeRequest): Promise<PromoCode> {
+    return this.request<PromoCode>('/promo-codes', { method: 'POST', body });
+  }
+
+  updatePromoCode(id: string, body: UpdatePromoCodeRequest): Promise<PromoCode> {
+    return this.request<PromoCode>(`/promo-codes/${id}`, { method: 'PATCH', body });
+  }
+
+  deletePromoCode(id: string): Promise<void> {
+    return this.request<void>(`/promo-codes/${id}`, { method: 'DELETE' });
+  }
+
+  listPromotions(query?: PromotionsListQuery): Promise<PaginatedResponse<Promotion>> {
+    return fetchPaginated<Promotion>(this, '/promotions', query);
+  }
+
+  getPromotion(id: string): Promise<Promotion> {
+    return this.request<Promotion>(`/promotions/${id}`);
+  }
+
+  createPromotion(body: CreatePromotionRequest): Promise<Promotion> {
+    return this.request<Promotion>('/promotions', { method: 'POST', body });
+  }
+
+  updatePromotion(id: string, body: UpdatePromotionRequest): Promise<Promotion> {
+    return this.request<Promotion>(`/promotions/${id}`, { method: 'PATCH', body });
+  }
+
+  deletePromotion(id: string): Promise<void> {
+    return this.request<void>(`/promotions/${id}`, { method: 'DELETE' });
   }
 
   countUsers(): Promise<number> {

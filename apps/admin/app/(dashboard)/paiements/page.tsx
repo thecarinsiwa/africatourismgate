@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { PaymentsPromoSubnav } from '../../../components/payments/payments-promo-subnav';
 import { PaymentsList } from '../../../components/payments/payments-list';
 
 export const metadata: Metadata = {
@@ -8,6 +9,7 @@ export const metadata: Metadata = {
 export default function PaiementsPage() {
   return (
     <div>
+      <PaymentsPromoSubnav />
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-atg-fg">Paiements</h1>
         <p className="mt-2 text-sm text-atg-muted">
