@@ -7,8 +7,8 @@ import { SaleSearchPanel } from './sale-search-panel';
 export function PosSaleScreen() {
   return (
     <SaleCartProvider>
-      <div className="flex flex-1 flex-col gap-6 lg:flex-row lg:gap-8">
-        <section className="min-w-0 flex-1">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem] xl:grid-cols-[minmax(0,1fr)_24rem] xl:gap-8">
+        <section className="min-w-0">
           <SaleSearchPanel />
         </section>
         <SaleCartPanel />
