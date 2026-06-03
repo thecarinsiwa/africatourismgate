@@ -6,10 +6,10 @@ import {
   Param,
   Put,
   Query,
-  Req,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
+import { getApiPublicOrigin } from '@africatourismgate/utils';
 import type { Request } from 'express';
 import {
   ApiBody,
@@ -107,24 +107,13 @@ export class OrganizationSettingsController {
   @ApiOperation({ summary: 'Upload branding asset (logo/favicon)' })
   uploadBrandingAsset(
     @UploadedFile() file: Express.Multer.File | undefined,
-    @Req() req: { protocol?: string; get?: (name: string) => string | undefined },
   ): { url: string } {
     if (!file) {
       throw new BadRequestException(
         'Fichier image requis (PNG, JPG, SVG ou WebP, max 2 Mo).',
       );
     }
-    const configuredApiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '');
-    const fallbackApiUrl =
-      process.env.NODE_ENV === 'production'
-        ? 'https://app-africatourismgate.org/api'
-        : 'http://localhost:3000/api';
-    const apiBaseUrl = configuredApiUrl || fallbackApiUrl;
-    const apiOrigin = apiBaseUrl.replace(/\/api$/, '');
-    const host = req.get?.('host');
-    const protocol = req.protocol ?? 'http';
-    const requestOrigin = host ? `${protocol}://${host}` : undefined;
-    const origin = requestOrigin || apiOrigin;
+    const origin = getApiPublicOrigin();
     return { url: `${origin}/uploads/branding/${file.filename}` };
   }
 

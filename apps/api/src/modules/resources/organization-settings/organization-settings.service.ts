@@ -1,3 +1,4 @@
+import { ensureHttpsAssetUrl } from '@africatourismgate/utils';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
@@ -89,14 +90,16 @@ export class OrganizationSettingsService {
       branding.secondaryColor.trim()
         ? branding.secondaryColor.trim()
         : DEFAULT_PUBLIC_BRANDING.secondaryColor;
-    const logoUrl =
+    const logoUrl = ensureHttpsAssetUrl(
       typeof branding.logoUrl === 'string' && branding.logoUrl.trim()
         ? branding.logoUrl.trim()
-        : DEFAULT_PUBLIC_BRANDING.logoUrl;
-    const faviconUrl =
+        : DEFAULT_PUBLIC_BRANDING.logoUrl,
+    );
+    const faviconUrl = ensureHttpsAssetUrl(
       typeof branding.faviconUrl === 'string' && branding.faviconUrl.trim()
         ? branding.faviconUrl.trim()
-        : DEFAULT_PUBLIC_BRANDING.faviconUrl;
+        : DEFAULT_PUBLIC_BRANDING.faviconUrl,
+    );
 
     return {
       organizationId: organization.id,

@@ -11,6 +11,8 @@ import { ensureJwtSecrets } from './config/ensure-jwt-secrets';
 async function bootstrap() {
   ensureJwtSecrets();
   const app = await NestFactory.create(AppModule, { rawBody: true });
+  // Behind nginx: honor X-Forwarded-Proto so req.protocol is https in production.
+  app.getHttpAdapter().getInstance().set('trust proxy', 1);
   const uploadsDir = join(process.cwd(), 'uploads');
   if (!existsSync(uploadsDir)) {
     mkdirSync(uploadsDir, { recursive: true });
