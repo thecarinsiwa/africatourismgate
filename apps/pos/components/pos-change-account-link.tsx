@@ -1,5 +1,6 @@
 'use client';
 
+import { cn } from '@africatourismgate/ui';
 import { useRouter } from 'next/navigation';
 import { logout } from '../lib/auth/logout';
 
@@ -13,7 +14,7 @@ export function PosChangeAccountLink({ label }: PosChangeAccountLinkProps) {
   return (
     <button
       type="button"
-      className="text-sm font-medium text-primary transition-colors hover:text-primary-hover"
+      className={cn('text-sm font-medium text-primary transition-colors hover:text-primary-hover')}
       onClick={() => {
         void (async () => {
           await logout();

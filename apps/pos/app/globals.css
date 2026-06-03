@@ -8,7 +8,7 @@
   body {
     background-color: var(--atg-surface);
     color: var(--atg-fg);
-    @apply antialiased;
+    @apply antialiased transition-colors duration-200;
   }
 }
 
@@ -50,6 +50,7 @@
     color: #111 !important;
   }
 
+  aside,
   header,
   .pos-no-print {
     display: none !important;
