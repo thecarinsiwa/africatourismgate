@@ -158,8 +158,12 @@ import type {
   PaymentListItem,
   PaymentsListQuery,
   CreatePromoCodeRequest,
+  CreatePromotionRequest,
   PromoCode,
   PromoCodesListQuery,
+  Promotion,
+  PromotionsListQuery,
+  UpdatePromotionRequest,
   RefundPaymentRequest,
   RefundPaymentResponse,
   UpdatePromoCodeRequest,
@@ -799,6 +803,26 @@ export class ApiClient {
 
   deletePromoCode(id: string): Promise<void> {
     return this.request<void>(`/promo-codes/${id}`, { method: 'DELETE' });
+  }
+
+  listPromotions(query?: PromotionsListQuery): Promise<PaginatedResponse<Promotion>> {
+    return fetchPaginated<Promotion>(this, '/promotions', query);
+  }
+
+  getPromotion(id: string): Promise<Promotion> {
+    return this.request<Promotion>(`/promotions/${id}`);
+  }
+
+  createPromotion(body: CreatePromotionRequest): Promise<Promotion> {
+    return this.request<Promotion>('/promotions', { method: 'POST', body });
+  }
+
+  updatePromotion(id: string, body: UpdatePromotionRequest): Promise<Promotion> {
+    return this.request<Promotion>(`/promotions/${id}`, { method: 'PATCH', body });
+  }
+
+  deletePromotion(id: string): Promise<void> {
+    return this.request<void>(`/promotions/${id}`, { method: 'DELETE' });
   }
 
   countUsers(): Promise<number> {

@@ -8,44 +8,57 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
-import { Promotions } from '../../../entities/generated';
+import { ApiForbiddenResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { AuthUserDto } from '../../auth/dto/auth-user.dto';
+import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
+import { CreatePromotionDto } from './dto/create-promotion.dto';
+import { PromotionsListQueryDto } from './dto/promotions-list-query.dto';
+import { UpdatePromotionDto } from './dto/update-promotion.dto';
 import { PromotionsService } from './promotions.service';
 
 @ApiTags('promotions')
+@ApiForbiddenResponse({ description: 'Missing permission' })
 @Controller('promotions')
 export class PromotionsController {
   constructor(private readonly service: PromotionsService) {}
 
   @Get()
-  @ApiOperation({ summary: 'List promotions' })
-  findAll(@Query() query: PaginationQueryDto) {
+  @RequirePermissions('promo_codes.read')
+  @ApiOperation({ summary: 'List promotions (search by name/description)' })
+  findAll(@Query() query: PromotionsListQueryDto) {
     return this.service.findAll(query);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get promotions by id' })
+  @RequirePermissions('promo_codes.read')
+  @ApiOperation({ summary: 'Get promotion by id' })
   findOne(@Param('id') id: string) {
     return this.service.findOne(id);
   }
 
   @Post()
-  @ApiOperation({ summary: 'Create promotions' })
-  create(@Body() dto: DeepPartial<Promotions>) {
-    return this.service.create(dto);
+  @RequirePermissions('promo_codes.write')
+  @ApiOperation({ summary: 'Create promotion campaign' })
+  create(@Body() dto: CreatePromotionDto, @CurrentUser() user: AuthUserDto) {
+    return this.service.createPromotion(dto, user.id);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update promotions' })
-  update(@Param('id') id: string, @Body() dto: DeepPartial<Promotions>) {
-    return this.service.update(id, dto);
+  @RequirePermissions('promo_codes.write')
+  @ApiOperation({ summary: 'Update promotion' })
+  update(
+    @Param('id') id: string,
+    @Body() dto: UpdatePromotionDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.service.updatePromotion(id, dto, user.id);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Soft-delete promotions' })
-  remove(@Param('id') id: string) {
-    return this.service.remove(id);
+  @RequirePermissions('promo_codes.write')
+  @ApiOperation({ summary: 'Soft-delete promotion' })
+  remove(@Param('id') id: string, @CurrentUser() user: AuthUserDto) {
+    return this.service.remove(id, user.id);
   }
 }

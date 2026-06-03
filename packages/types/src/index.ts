@@ -66,6 +66,13 @@ export type {
 } from './promo-code.js';
 
 export type {
+  CreatePromotionRequest,
+  Promotion,
+  PromotionsListQuery,
+  UpdatePromotionRequest,
+} from './promotion.js';
+
+export type {
   CreateOrganizationRequest,
   Organization,
   OrganizationStatus,

@@ -3,6 +3,7 @@
 import type { PromoCode } from '@africatourismgate/types';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { PaymentsPromoSubnav } from '../payments/payments-promo-subnav';
 import { getApiClient } from '../../lib/auth/api';
 import { getPromoCodesErrorMessage } from '../../lib/promo-codes-errors';
 import { PromoCodeForm } from './promo-code-form';
@@ -37,12 +38,19 @@ export function PromoCodeEditPage({ promoCodeId }: PromoCodeEditPageProps) {
   }, [promoCodeId]);
 
   if (state.status === 'loading') {
-    return <p className="text-sm text-atg-muted">Chargement…</p>;
+    return (
+      <div>
+        <PaymentsPromoSubnav />
+        <p className="text-sm text-atg-muted">Chargement…</p>
+      </div>
+    );
   }
 
   if (state.status === 'error') {
     return (
-      <div className="space-y-4">
+      <div>
+        <PaymentsPromoSubnav />
+        <div className="space-y-4">
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {state.message}
         </p>
@@ -52,6 +60,7 @@ export function PromoCodeEditPage({ promoCodeId }: PromoCodeEditPageProps) {
         >
           ← Retour à la liste
         </Link>
+        </div>
       </div>
     );
   }
@@ -60,6 +69,7 @@ export function PromoCodeEditPage({ promoCodeId }: PromoCodeEditPageProps) {
 
   return (
     <div>
+      <PaymentsPromoSubnav />
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-atg-fg">Modifier le code promo</h1>
         <p className="mt-2 text-sm text-atg-muted">

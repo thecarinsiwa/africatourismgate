@@ -17,6 +17,7 @@ import type {
   BookingsListQuery,
   PaymentsListQuery,
   PromoCodesListQuery,
+  PromotionsListQuery,
   RbacAuditLogsListQuery,
   RentalAgenciesListQuery,
   RoomAvailabilityListQuery,
@@ -68,6 +69,7 @@ export type PaginatedListQuery =
   | BookingsListQuery
   | PaymentsListQuery
   | PromoCodesListQuery
+  | PromotionsListQuery
   | RbacAuditLogsListQuery
   | DestinationsListQuery
   | PointsOfInterestListQuery

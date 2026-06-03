@@ -144,11 +144,10 @@ async function main() {
       name: `Promo Test ${suffix}`,
       description: 'Integration promotion',
       discountType: 'fixed_amount',
-      discountValue: '15',
+      discountValue: 15,
       validFrom: '2020-01-01',
       validUntil: '2099-12-31',
       maxRedemptions: 50,
-      redemptionCount: 0,
       active: 1,
     },
   });
