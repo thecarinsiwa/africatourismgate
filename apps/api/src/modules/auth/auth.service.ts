@@ -55,6 +55,7 @@ import {
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { AuthUserDto } from './dto/auth-user.dto';
 import { PermissionsService } from '../rbac/permissions.service';
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class AuthService {
@@ -78,6 +79,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly config: ConfigService,
     private readonly permissionsService: PermissionsService,
+    private readonly emailService: EmailService,
   ) {
     this.accessSecret = this.requireSecret('JWT_ACCESS_SECRET');
     this.refreshSecret = this.requireSecret('JWT_REFRESH_SECRET');
@@ -132,6 +134,12 @@ export class AuthService {
     await this.roleAssignmentsRepo.save(assignment);
 
     const tokens = await this.issueTokenPair(user);
+    void this.emailService
+      .sendWelcome({
+        to: user.email,
+        firstName: user.firstName,
+      })
+      .catch(() => undefined);
     return { ...tokens, user: toAuthUserDto(user) };
   }
 
@@ -413,11 +421,19 @@ export class AuthService {
       });
       await this.passwordResetRepo.save(resetRow);
 
+      const resetUrl = `${this.getResetPasswordBaseUrl()}?token=${rawToken}`;
+      const mailResult = await this.emailService.sendPasswordReset({
+        to: user.email,
+        firstName: user.firstName,
+        resetUrl,
+      });
+
       if (process.env.NODE_ENV !== 'production') {
-        const baseUrl = this.getResetPasswordBaseUrl();
-        this.logger.log(
-          `Password reset link: ${baseUrl}?token=${rawToken}`,
-        );
+        if (mailResult.previewUrl) {
+          this.logger.log(`Password reset preview: ${mailResult.previewUrl}`);
+        } else if (!mailResult.sent) {
+          this.logger.log(`Password reset link: ${resetUrl}`);
+        }
       }
     }
 

@@ -41,6 +41,7 @@
     "sync:rbac": "node scripts/sync-rbac-permissions.mjs",
     "test:rbac-audit": "node scripts/test-rbac-audit-logs.mjs",
     "test:org-settings": "node scripts/test-org-settings.mjs",
+    "test:email": "node scripts/test-email.mjs",
     "test:e2e": "jest --config ./test/jest-e2e.json --runInBand"
   },
   "dependencies": {
@@ -59,6 +60,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "multer": "^2.1.1",
+    "nodemailer": "^6.10.0",
     "mysql2": "^3.12.0",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
@@ -75,6 +77,7 @@
     "@nestjs/testing": "^10.4.15",
     "@types/express": "^4.17.21",
     "@types/jest": "^29.5.14",
+    "@types/nodemailer": "^6.4.17",
     "@types/node": "^22.10.2",
     "@types/passport-google-oauth20": "^2.0.17",
     "@types/passport-jwt": "^4.0.1",

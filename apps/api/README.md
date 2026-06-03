@@ -14,6 +14,37 @@ NestJS HTTP API for Africa Tourism Gate, mapped to the MySQL schema in `database
 | `pnpm test:pos-sale-cash` | POS cash flow: checkout preview → booking → cash-payment (needs `SEED_ADMIN_PASSWORD`) |
 | `pnpm test:e2e` | Jest + supertest e2e suite (health, auth, booking, Stripe webhook mock) |
 | `pnpm openapi:export` | Write `apps/api/openapi.json` from Nest Swagger (needs MySQL) |
+| `pnpm test:email` | Send reset, welcome, and booking confirmation emails (needs Mailpit or Ethereal) |
+
+## Email (SMTP / Mailpit / Ethereal)
+
+Transactional HTML emails via `src/modules/email/` (nodemailer):
+
+| Événement | Déclencheur |
+| --------- | ----------- |
+| Réinitialisation mot de passe | `POST /auth/forgot-password` |
+| Bienvenue | `POST /auth/register` |
+| Confirmation réservation | `confirmBooking` (cash POS, admin confirm, Stripe webhook) |
+
+Variables (voir root `.env.example`) : `EMAIL_ENABLED`, `EMAIL_TRANSPORT`, `EMAIL_FROM`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_SECURE`.
+
+**Dev (Mailpit)** — capture SMTP sans envoi réel :
+
+```bash
+# Install: https://github.com/axllent/mailpit
+mailpit
+# UI http://localhost:8025 — SMTP localhost:1025
+pnpm dev:api
+pnpm --filter @africatourismgate/api test:email
+```
+
+**Dev (Ethereal)** — compte de test jetable :
+
+```bash
+EMAIL_TRANSPORT=ethereal pnpm dev:api
+```
+
+Si l’envoi échoue (SMTP arrêté), l’API logue un avertissement et continue (pas de crash). En dev, le lien de reset reste aussi dans les logs si l’e-mail n’a pas pu partir.
 
 ## OpenAPI → typed client (`pnpm codegen:api`)
 
