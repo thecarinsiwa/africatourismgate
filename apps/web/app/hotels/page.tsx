@@ -15,6 +15,14 @@ export const metadata: Metadata = {
   title: 'Hébergements en Afrique',
   description:
     'Comparez hôtels, lodges et resorts en Afrique. Trouvez le séjour idéal avec Africa Tourism Gate.',
+  alternates: {
+    canonical: '/hotels',
+    languages: {
+      fr: '/hotels?lang=fr',
+      en: '/hotels?lang=en',
+      es: '/hotels?lang=es',
+    },
+  },
 };
 
 export default function HotelsPage({ searchParams }: PageProps) {

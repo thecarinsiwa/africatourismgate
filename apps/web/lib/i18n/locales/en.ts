@@ -1,0 +1,243 @@
+import type { Translations } from '../schema';
+
+export const en: Translations = {
+  meta: {
+    homeTitle: 'Book your trip to Africa',
+    homeDescription:
+      'Compare hotels, flights and experiences across Africa. Search accommodations and plan your next stay with Africa Tourism Gate.',
+  },
+  nav: {
+    home: 'Home',
+    about: 'About',
+    gallery: 'Gallery',
+    pages: 'Pages',
+    blog: 'Blog',
+    contact: 'Contact',
+    hotels: 'Hotels',
+    flights: 'Flights',
+    cars: 'Car Rental',
+    cruises: 'Cruises',
+    tours: 'Tours',
+    mainAria: 'Main navigation',
+    mobileAria: 'Mobile navigation',
+    menu: 'Menu',
+  },
+  theme: {
+    lightMode: 'Light mode',
+    darkMode: 'Dark mode',
+    enableLight: 'Enable light mode',
+    enableDark: 'Enable dark mode',
+  },
+  language: { label: 'Language', select: 'Select language' },
+  hero: {
+    slides: [
+      {
+        subtitle: 'Welcome to',
+        title: 'AFRICA TOURISM GATE',
+        description:
+          'Your gateway to the finest African destinations. Explore, book and enjoy unforgettable experiences.',
+      },
+      {
+        subtitle: '7-day safari',
+        title: 'MAGICAL MASAI MARA',
+        description:
+          'Witness the wildebeest migration and the Big Five in Africa’s most famous reserve.',
+      },
+      {
+        subtitle: '5 days in',
+        title: 'MARRAKECH (Pearl of the South)',
+        description:
+          'Immerse yourself in souks, riads and the spiced flavors of Morocco’s ochre city.',
+      },
+      {
+        subtitle: '12-day cruise',
+        title: 'ZANZIBAR TO MADAGASCAR',
+        description:
+          'Coastal sailing along the Indian Ocean — dream beaches and unique wildlife.',
+      },
+    ],
+    prev: 'Previous slide',
+    next: 'Next slide',
+  },
+  search: {
+    tablistAria: 'Search type',
+    tabs: { flights: 'Flights', hotels: 'Hotels', cars: 'Cars', cruises: 'Cruises', tours: 'Tours' },
+    search: 'Search',
+    departDate: 'Departure date',
+    returnDate: 'Return date',
+    checkIn: 'Check-in',
+    checkOut: 'Check-out',
+    from: 'From:',
+    to: 'To:',
+    adults: 'Adults:',
+    destination: 'Destination:',
+    roomType: 'Room type:',
+    pickUp: 'Pick-up',
+    dropOff: 'Drop-off',
+    country: 'Country:',
+    city: 'City:',
+    location: 'Location:',
+    startDate: 'Start date',
+    endDate: 'End date',
+    sailTo: 'Sail to:',
+    sailFrom: 'Sail from:',
+    ship: 'Ship:',
+    days: 'Days:',
+    cityPh: 'City',
+    destinationPh: 'Destination or hotel',
+    selectPh: 'Select',
+    countryPh: 'Country',
+    locationPh: 'Location',
+    allDestinations: 'All destinations',
+    allPorts: 'All ports',
+    shipPh: 'Ship',
+    departCityPh: 'Departure city',
+    destinationPh2: 'Destination',
+    roomTypes: ['Double Room', 'Single Room', 'Suite'],
+    countries: ['Kenya', 'Tanzania', 'Morocco', 'South Africa', 'Rwanda', 'DRC'],
+    locations: ['Airport', 'City center', 'Train station'],
+  },
+  whyUs: {
+    title: 'Why choose us',
+    subtitle:
+      'Africa Tourism Gate offers a unique travel experience with top services and personalized support to discover Africa.',
+    learnMore: 'Learn more',
+    items: [
+      {
+        title: 'Amazing Trips',
+        description:
+          'Hand-picked unique destinations across the African continent for unforgettable experiences.',
+      },
+      {
+        title: 'Discoveries',
+        description:
+          'Explore rich cultures, breathtaking landscapes and Africa’s incredible wildlife.',
+      },
+      {
+        title: 'Easy Booking',
+        description:
+          'Book accommodations, flights and activities in a few clicks with our intuitive platform.',
+      },
+      {
+        title: '24/7 Support',
+        description: 'Our travel specialists are available day and night to assist you.',
+      },
+    ],
+  },
+  promo: {
+    title: 'Kenya Safari — Holiday Package',
+    description:
+      'Discover the endless plains of the Masai Mara, spot the Big Five in their natural habitat and enjoy luxury lodges in the heart of the savanna. An experience that will change how you see Africa.',
+    priceFrom: 'From:',
+    perPerson: '/person',
+    details: 'Details',
+  },
+  destinations: {
+    title: 'Popular Destinations',
+    subtitle:
+      'Discover our most sought-after African destinations. From safaris to paradise beaches, every trip is a unique adventure.',
+    reviews: 'Reviews',
+    details: 'Details',
+    items: [
+      {
+        title: 'Masai Mara Safari',
+        subtitle: 'From Nairobi, Kenya',
+        description: '7-day safari from Nairobi. Big Five and wildebeest migration.',
+      },
+      {
+        title: 'Cape Town Getaway',
+        subtitle: 'Cape Town, South Africa',
+        description: 'Explore Table Mountain, Cape of Good Hope and vineyards.',
+      },
+      {
+        title: 'Marrakech Medina',
+        subtitle: '5 days, Morocco',
+        description: 'Get lost in the souks, savor spices and sleep in a riad.',
+      },
+      {
+        title: 'Zanzibar Beaches',
+        subtitle: 'Tanzania, 6 days',
+        description: 'White sand, turquoise waters and spices — Indian Ocean paradise.',
+      },
+    ],
+  },
+  customers: {
+    title: 'Happy Customers',
+    subtitle: 'Our travelers’ satisfaction is our top priority.',
+    p1: 'Since launch, we have helped thousands of travelers discover Africa. Our commitment to excellence and authentic experiences has earned the trust of our growing community.',
+    p2: 'Every positive review motivates us to keep improving and offering ever more memorable journeys across the continent.',
+    clients: 'Clients',
+    imageAlt: 'Happy travelers in Africa',
+    bars: { flights: 'Flights', hotels: 'Hotels', cars: 'Cars', cruises: 'Cruises' },
+  },
+  footer: {
+    tagline:
+      'Your gateway to the best travel experiences in Africa. Discover unique destinations and book with confidence.',
+    learnMore: 'Learn more',
+    specialists: 'Travel Specialists',
+    specialistLinks: {
+      premium: 'Premium Stays',
+      flights: 'First Class Flights',
+      safaris: 'Safaris & Tours',
+      cruises: 'Coastal Cruises',
+    },
+    newsletter: 'Newsletter',
+    newsletterDesc: 'Inspiration, travel ideas, deals and news.',
+    emailPlaceholder: 'Email address',
+    contact: 'Contact',
+    location: 'Kinshasa, DR Congo',
+    privacy: 'Privacy Policy',
+    about: 'About',
+    faq: 'FAQ',
+    designedBy: 'Designed by',
+  },
+  hotels: {
+    metaTitle: 'Stays in Africa',
+    metaDescription:
+      'Compare hotels, lodges and resorts across Africa. Find your perfect stay with Africa Tourism Gate.',
+    breadcrumbHome: 'Home',
+    breadcrumbHotels: 'Stays',
+    heroTitle: 'Exceptional stays across Africa',
+    heroSubtitle:
+      'Safari lodges, authentic riads and beach resorts — curated by our travel experts.',
+    resultsFor: 'Results for',
+    allAfrica: 'All Africa',
+    propertiesFound: 'properties',
+    sortBy: 'Sort by',
+    sortRecommended: 'Recommended',
+    sortPriceLow: 'Price: low to high',
+    sortPriceHigh: 'Price: high to low',
+    sortRating: 'Top rated',
+    filters: 'Filters',
+    filterStars: 'Stars',
+    filterType: 'Type',
+    types: { hotel: 'Hotel', resort: 'Resort', lodge: 'Lodge', riad: 'Riad' },
+    perNight: '/ night',
+    viewDetails: 'View details',
+    bookNow: 'Book now',
+    freeCancel: 'Free cancellation',
+    amenities: {
+      wifi: 'Wi-Fi',
+      pool: 'Pool',
+      breakfast: 'Breakfast',
+      spa: 'Spa',
+      parking: 'Parking',
+    },
+    excellent: 'Exceptional',
+    veryGood: 'Very good',
+    modifySearch: 'Modify search',
+    checkIn: 'Check-in',
+    checkOut: 'Check-out',
+    guests: 'Guests',
+    noResults: 'No properties match your criteria',
+    noResultsHint: 'Broaden your search or browse all destinations.',
+    backHome: 'Back to home',
+    previewNotice:
+      'Demo catalogue — online booking coming soon. Contact us for a personalized quote.',
+    stars: 'stars',
+    allTypes: 'All types',
+    allStars: 'All',
+    reviews: 'reviews',
+    featuredBadge: 'Top pick',
+  },
+};

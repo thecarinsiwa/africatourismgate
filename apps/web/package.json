@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start -p 3002",
     "lint": "next lint",
+    "test": "tsx --test \"lib/**/*.test.ts\"",
     "test:e2e": "playwright test",
     "test:e2e:loyalty": "pnpm build && playwright test -c playwright.loyalty.config.ts"
   },

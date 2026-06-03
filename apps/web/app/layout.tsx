@@ -156,6 +156,14 @@ export async function generateMetadata(): Promise<Metadata> {
       index: true,
       follow: true,
     },
+    alternates: {
+      canonical: '/',
+      languages: {
+        fr: '/?lang=fr',
+        en: '/?lang=en',
+        es: '/?lang=es',
+      },
+    },
   };
 }
 
