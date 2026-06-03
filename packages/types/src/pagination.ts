@@ -19,13 +19,6 @@ export interface PaginationQuery {
 
 export type PaymentStatus = 'pending' | 'succeeded' | 'failed' | 'refunded';
 
-export interface PaymentListItem {
-  id: string;
-  amountCents: number;
-  currency: string;
-  status: PaymentStatus;
-}
-
 export interface SucceededPaymentsRevenue {
   totalCents: number;
   currency: string;
