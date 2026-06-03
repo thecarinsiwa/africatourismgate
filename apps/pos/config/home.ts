@@ -1,6 +1,14 @@
 export const posHomeConfig = {
   title: 'Caisse',
-  subtitle: 'Choisissez une action pour démarrer.',
+  subtitle: 'Choisissez une action pour démarrer votre session de vente.',
+  orgBadgeLabel: 'Établissement',
+  greeting: {
+    morning: 'Bonjour',
+    afternoon: 'Bon après-midi',
+    evening: 'Bonsoir',
+  },
+  brandName: 'Africa Tourism Gate',
+  brandTagline: 'Point de vente',
   actions: {
     sale: {
       label: 'Nouvelle vente',
@@ -20,5 +28,9 @@ export const posHomeConfig = {
     logoutLabel: 'Déconnexion',
     employeeLabel: 'Employé',
     organizationLabel: 'Établissement',
+  },
+  theme: {
+    light: 'Mode clair',
+    dark: 'Mode sombre',
   },
 } as const;

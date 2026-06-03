@@ -11,7 +11,7 @@ import type {
 import { Button, Input } from '@africatourismgate/ui';
 import { useEffect, useState } from 'react';
 import { posSalePageConfig } from '../../config/sale';
-import { getApiClient } from '../../lib/auth/api';
+import { getValidApiClient } from '../../lib/auth/api';
 import { defaultFlightDate, defaultRoomStayDates, formatDisplayDate, formatDisplayDateTime } from '../../lib/sale/dates';
 import { formatCents } from '../../lib/sale/format';
 import type { SaleCatalogHit } from '../../lib/sale/types';
@@ -63,7 +63,7 @@ export function SaleLineConfigSheet({ hit, open, onClose, onAdd }: SaleLineConfi
 
     async function load() {
       setLoading(true);
-      const client = getApiClient();
+      const client = await getValidApiClient();
 
       try {
         if (currentHit.kind === 'activity') {
@@ -144,23 +144,27 @@ export function SaleLineConfigSheet({ hit, open, onClose, onAdd }: SaleLineConfi
     }
 
     let cancelled = false;
-    const client = getApiClient();
 
-    void client
-      .listCabinAvailability({
-        sailingId: selectedSailingId,
-        cabinId: hit.cabin.id,
-        limit: 20,
-      })
-      .then((res) => {
-        if (cancelled) return;
-        const available = res.data.filter((s) => s.availableCount > 0);
-        setCabinSlots(available);
-        setSelectedCabinSlotId(available.length === 1 ? available[0]!.id : null);
-      })
-      .catch(() => {
-        if (!cancelled) setCabinSlots([]);
-      });
+    void (async () => {
+      const client = await getValidApiClient();
+      if (cancelled) return;
+
+      void client
+        .listCabinAvailability({
+          sailingId: selectedSailingId,
+          cabinId: hit.cabin.id,
+          limit: 20,
+        })
+        .then((res) => {
+          if (cancelled) return;
+          const available = res.data.filter((s) => s.availableCount > 0);
+          setCabinSlots(available);
+          setSelectedCabinSlotId(available.length === 1 ? available[0]!.id : null);
+        })
+        .catch(() => {
+          if (!cancelled) setCabinSlots([]);
+        });
+    })();
 
     return () => {
       cancelled = true;

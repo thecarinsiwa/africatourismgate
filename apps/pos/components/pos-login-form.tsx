@@ -37,19 +37,24 @@ function resolvePostLoginPath(next: string | null, _session: PosStoredSession): 
 async function enrichSessionWithOrganization(
   session: PosStoredSession,
 ): Promise<PosStoredSession> {
-  const orgId = session.user.organizationId;
-  if (!orgId || session.selectedOrganizationName) {
+  if (session.selectedOrganizationName) {
     return session;
   }
 
   try {
-    const org = await new ApiClient(resolveApiBaseUrl(), session.accessToken).getOrganization(
-      orgId,
-    );
+    const client = new ApiClient(resolveApiBaseUrl(), session.accessToken);
+    const organizations = await client.listAuthOrganizations();
+    const preferredId =
+      session.selectedOrganizationId ?? session.user.organizationId ?? null;
+    const organization =
+      organizations.find((org) => org.id === preferredId) ?? organizations[0];
+    if (!organization) {
+      return session;
+    }
     return {
       ...session,
-      selectedOrganizationId: org.id,
-      selectedOrganizationName: org.name,
+      selectedOrganizationId: organization.id,
+      selectedOrganizationName: organization.name,
     };
   } catch {
     return session;

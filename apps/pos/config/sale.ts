@@ -5,10 +5,17 @@ export const posSalePageConfig = {
   search: {
     label: 'Rechercher',
     placeholder: 'Nom d’activité, chambre, vol, véhicule…',
-    hint: 'Saisissez au moins 2 caractères',
+    catalogTitle: 'Catalogue',
+    resultsTitle: 'Résultats',
+    hint: 'Aucun produit disponible pour le moment.',
+    browseLabel: 'Touchez un produit pour l’ajouter au panier.',
+    resultsFor: (q: string) => `Résultats pour « ${q} »`,
+    resultCount: (n: number) => (n === 1 ? '1 produit' : `${n} produits`),
     loadingLabel: 'Recherche…',
     emptyLabel: 'Aucun produit trouvé',
+    emptyHint: 'Essayez un autre mot-clé ou changez le filtre.',
     errorLabel: 'Impossible de charger le catalogue',
+    errorHint: 'Vérifiez votre connexion ou reconnectez-vous.',
   },
   filters: {
     all: 'Tous',
@@ -21,6 +28,7 @@ export const posSalePageConfig = {
   cart: {
     title: 'Panier',
     empty: 'Le panier est vide',
+    emptyHint: 'Sélectionnez un produit dans le catalogue pour commencer.',
     itemCount: (n: number) => (n === 1 ? '1 article' : `${n} articles`),
     quantityLabel: (n: number) => (n === 1 ? 'Qté 1' : `Qté ${n}`),
     removeLabel: 'Retirer',
@@ -78,4 +86,11 @@ export const posSaleSuccessPageConfig = {
   paymentCard: 'Carte bancaire',
   newSaleLabel: 'Nouvelle vente',
   backToHomeLabel: 'Retour à l’accueil',
+  receiptTitle: 'Reçu',
+  printReceiptLabel: 'Imprimer le reçu',
+  downloadPdfHint: 'Choisissez « Enregistrer au format PDF » dans la boîte de dialogue d’impression.',
+  emailReceiptLabel: 'Envoyer par e-mail',
+  emailPlaceholder: 'client@exemple.com',
+  emailInvalid: 'Saisissez une adresse e-mail valide.',
+  emailSentHint: 'Votre client de messagerie va s’ouvrir avec le reçu.',
 } as const;

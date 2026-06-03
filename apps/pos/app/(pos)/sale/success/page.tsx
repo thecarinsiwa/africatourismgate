@@ -4,7 +4,7 @@ import { PosSaleSuccessContent } from '../../../../components/pos-sale-success-c
 import { posSaleSuccessPageConfig } from '../../../../config/sale';
 
 export const metadata: Metadata = {
-  title: 'Vente confirmée — Caisse ATG',
+  title: 'Vente confirmée',
   description: 'Confirmation de vente sur place',
 };
 

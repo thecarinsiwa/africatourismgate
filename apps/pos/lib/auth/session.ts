@@ -1,8 +1,11 @@
 import type { AuthResponse, AuthTokens, AuthUser } from '@africatourismgate/types';
 import {
   clearClientSessionCookies,
+  getRememberFromDocumentCookies,
+  getSessionFromDocumentCookies,
   setClientSessionCookies,
 } from './cookies';
+import { refreshAccessToken } from './refresh';
 
 export const STORAGE_KEY = 'atg.pos.session';
 export const AUTH_CHANGED_EVENT = 'atg:pos:auth-changed';
@@ -55,7 +58,7 @@ export function saveSession(session: PosStoredSession, remember?: boolean): void
   setClientSessionCookies(session, persist);
 }
 
-export function getSession(): PosStoredSession | null {
+function readStoredSession(): PosStoredSession | null {
   if (typeof window === 'undefined') {
     return null;
   }
@@ -77,6 +80,76 @@ export function getSession(): PosStoredSession | null {
   }
 
   return null;
+}
+
+function mergeSessionWithCookies(stored: PosStoredSession | null): PosStoredSession | null {
+  const fromCookies = getSessionFromDocumentCookies();
+  if (!fromCookies) {
+    return stored;
+  }
+
+  if (!stored) {
+    saveSession(fromCookies, getRememberFromDocumentCookies());
+    return fromCookies;
+  }
+
+  const cookieIsNewer =
+    fromCookies.expiresAt > stored.expiresAt ||
+    fromCookies.accessToken !== stored.accessToken;
+  const storedExpired = isAccessTokenExpired(stored);
+  const cookieValid = !isAccessTokenExpired(fromCookies);
+
+  if (!cookieIsNewer && !(storedExpired && cookieValid)) {
+    return stored;
+  }
+
+  const merged: PosStoredSession = {
+    ...stored,
+    accessToken: fromCookies.accessToken,
+    refreshToken: fromCookies.refreshToken,
+    expiresAt: fromCookies.expiresAt,
+    user: fromCookies.user,
+    selectedOrganizationId:
+      stored.selectedOrganizationId ?? fromCookies.selectedOrganizationId,
+    selectedOrganizationName:
+      stored.selectedOrganizationName ?? fromCookies.selectedOrganizationName ?? null,
+  };
+  saveSession(merged, getRememberFromDocumentCookies());
+  return merged;
+}
+
+export function getSession(): PosStoredSession | null {
+  return mergeSessionWithCookies(readStoredSession());
+}
+
+/** Refresh the access token when expired; realign storage with middleware cookies. */
+export async function ensureClientSession(): Promise<PosStoredSession | null> {
+  let session = getSession();
+  if (!session) {
+    return null;
+  }
+
+  if (!isAccessTokenExpired(session)) {
+    return session;
+  }
+
+  const tokens = await refreshAccessToken(session.refreshToken);
+  if (!tokens) {
+    return null;
+  }
+
+  session = tokensToStoredSession(tokens, {
+    user: session.user,
+    selectedOrganizationId: session.selectedOrganizationId,
+    selectedOrganizationName: session.selectedOrganizationName,
+  });
+  saveSession(session, getRememberFromDocumentCookies());
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(
+      new CustomEvent(AUTH_CHANGED_EVENT, { detail: { loggedIn: true } }),
+    );
+  }
+  return session;
 }
 
 function normalizePosSession(partial: Partial<PosStoredSession>): PosStoredSession {

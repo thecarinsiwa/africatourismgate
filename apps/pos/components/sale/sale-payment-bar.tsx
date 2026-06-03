@@ -103,7 +103,7 @@ export function SalePaymentBar() {
 
   return (
     <>
-      <div className="pos-touch mt-5 space-y-3 border-t border-atg-border pt-4">
+      <div className="mt-5 space-y-3 border-t border-atg-border pt-5">
         {!canPay && !previewError && (previewLoading || !preview) ? (
           <p className="text-center text-sm text-atg-muted">{labels.previewRequiredHint}</p>
         ) : null}

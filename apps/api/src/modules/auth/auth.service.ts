@@ -48,6 +48,10 @@ import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { AuthMeDto } from './dto/auth-me.dto';
+import {
+  AuthOrganizationDto,
+  toAuthOrganizationDto,
+} from './dto/auth-organization.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { AuthUserDto } from './dto/auth-user.dto';
 import { PermissionsService } from '../rbac/permissions.service';
@@ -149,6 +153,41 @@ export class AuthService {
       permissions: [...permissions].sort(),
       isSuperAdmin,
     };
+  }
+
+  async listMyOrganizations(userId: string): Promise<AuthOrganizationDto[]> {
+    const user = await this.usersRepo.findOne({
+      where: { id: userId, deletedAt: IsNull() },
+    });
+    if (!user || user.status !== 'active') {
+      throw new UnauthorizedException();
+    }
+
+    const [isSuperAdmin, canListAll] = await Promise.all([
+      this.permissionsService.hasSuperAdminRole(userId),
+      this.permissionsService.hasAnyPermission(userId, ['organizations.read']),
+    ]);
+
+    if (isSuperAdmin || canListAll) {
+      const organizations = await this.organizationsRepo.find({
+        where: { deletedAt: IsNull(), status: 'active' },
+        order: { name: 'ASC' },
+      });
+      return organizations.map(toAuthOrganizationDto);
+    }
+
+    if (user.organizationId) {
+      const organization = await this.organizationsRepo.findOne({
+        where: {
+          id: user.organizationId,
+          deletedAt: IsNull(),
+          status: 'active',
+        },
+      });
+      return organization ? [toAuthOrganizationDto(organization)] : [];
+    }
+
+    return [];
   }
 
   async login(dto: LoginDto): Promise<AuthResponseDto> {

@@ -410,6 +410,10 @@ export class ApiClient {
     return this.request<AuthMe>('/auth/me');
   }
 
+  listAuthOrganizations(): Promise<Organization[]> {
+    return this.request<Organization[]>('/auth/me/organizations');
+  }
+
   updateAuthProfile(body: UpdateProfileRequest): Promise<AuthUser> {
     return this.request<AuthUser>('/auth/me', {
       method: 'PATCH',
