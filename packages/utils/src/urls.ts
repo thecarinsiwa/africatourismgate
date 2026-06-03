@@ -75,3 +75,28 @@ export function ensureHttpsAssetUrl(url: string | null | undefined): string | nu
   }
   return trimmed;
 }
+
+/**
+ * Normalizes branding asset URLs: https upgrade + legacy `/uploads/` → `/api/uploads/`
+ * (nginx only proxies `/api/` to NestJS on app-africatourismgate.org).
+ */
+export function normalizeBrandingAssetUrl(url: string | null | undefined): string | null {
+  const upgraded = ensureHttpsAssetUrl(url);
+  if (!upgraded) return null;
+
+  try {
+    const parsed = new URL(upgraded);
+    if (
+      parsed.hostname.endsWith('africatourismgate.org') &&
+      parsed.pathname.startsWith('/uploads/') &&
+      !parsed.pathname.startsWith('/api/uploads/')
+    ) {
+      parsed.pathname = `/api${parsed.pathname}`;
+      return parsed.toString();
+    }
+  } catch {
+    return upgraded;
+  }
+
+  return upgraded;
+}

@@ -9,7 +9,7 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { getApiPublicOrigin } from '../../../common/utils/public-asset-url';
+import { brandingUploadUrl } from '../../../common/utils/public-asset-url';
 import type { Request } from 'express';
 import {
   ApiBody,
@@ -113,8 +113,7 @@ export class OrganizationSettingsController {
         'Fichier image requis (PNG, JPG, SVG ou WebP, max 2 Mo).',
       );
     }
-    const origin = getApiPublicOrigin();
-    return { url: `${origin}/uploads/branding/${file.filename}` };
+    return { url: brandingUploadUrl(file.filename) };
   }
 
   @Get(':id')
