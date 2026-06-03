@@ -8,12 +8,27 @@ export default tseslint.config(
   ...tseslint.configs.recommended,
   eslintConfigPrettier,
   {
-    ignores: ['**/dist/**', '**/.next/**', '**/node_modules/**', '**/build/**', '**/coverage/**', 'apps/api/**', '**/*.cjs'],
+    ignores: [
+      '**/dist/**',
+      '**/.next/**',
+      '**/node_modules/**',
+      '**/build/**',
+      '**/coverage/**',
+      'apps/api/**',
+      'apps/pos/**',
+      '**/*.cjs',
+    ],
   },
   {
     files: ['**/*.{ts,tsx}'],
     languageOptions: {
       globals: { ...globals.node, ...globals.browser },
+    },
+  },
+  {
+    files: ['**/*.mjs'],
+    languageOptions: {
+      globals: globals.node,
     },
   },
 );

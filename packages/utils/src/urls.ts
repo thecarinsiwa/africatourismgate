@@ -1,6 +1,4 @@
-const DEFAULT_ADMIN_URL = 'http://localhost:3001';
 const PRODUCTION_ADMIN_URL = 'https://app-africatourismgate.org';
-const DEFAULT_WEB_URL = 'http://localhost:3002';
 const PRODUCTION_WEB_URL = 'https://africatourismgate.org';
 
 /**

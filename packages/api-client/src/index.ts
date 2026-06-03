@@ -70,7 +70,6 @@ import type {
   UpdateActivityProviderRequest,
   UpdateActivityRequest,
   UpdateActivityScheduleRequest,
-  Booking,
   BookingAdminDetail,
   BookingCheckoutPreview,
   BookingCheckoutRequest,
