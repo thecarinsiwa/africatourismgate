@@ -39,3 +39,18 @@ if (process.env.STRIPE_WEBHOOK_SECRET?.trim() === 'whsec_') {
 if (process.env.STRIPE_SECRET_KEY?.trim() === 'sk_test_') {
   delete process.env.STRIPE_SECRET_KEY;
 }
+
+/** Stub OAuth/URL vars so AppModule boots without .env.local (e2e does not call Google). */
+function setEnvIfEmpty(key: string, value: string): void {
+  if (!process.env[key]?.trim()) {
+    process.env[key] = value;
+  }
+}
+
+setEnvIfEmpty('GOOGLE_CLIENT_ID', 'e2e-google-client-id');
+setEnvIfEmpty('GOOGLE_CLIENT_SECRET', 'e2e-google-client-secret');
+setEnvIfEmpty(
+  'GOOGLE_CALLBACK_URL',
+  'http://localhost:3000/api/auth/google/callback',
+);
+setEnvIfEmpty('NEXT_PUBLIC_API_URL', 'http://localhost:3000/api');
