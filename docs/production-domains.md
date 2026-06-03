@@ -5,11 +5,13 @@
 | https://africatourismgate.org | Site public (`apps/web`) | `atg-web` | 3002 |
 | https://app-africatourismgate.org | Admin (`apps/admin`) | `atg-admin` | 3001 |
 | **https://app-africatourismgate.org/api** | API (`apps/api`) | `atg-api` | 3000 |
-| **https://app-africatourismgate.org/uploads/** | Fichiers branding (`apps/api/uploads`) | `atg-api` | 3000 |
+| **https://app-africatourismgate.org/api/uploads/** | Logos / favicons (`apps/api/uploads`) | `atg-api` | 3000 |
 
 L’API est exposée sur le **même domaine** que l’admin (`/api/…` → nginx → port 3000). **Pas besoin** du sous-domaine `api.africatourismgate.org`.
 
-Les logos et favicons utilisent `/uploads/branding/…` : nginx doit proxyer `/uploads/` vers l’API (pas vers Next.js admin). Après mise à jour du dépôt : `sudo ./scripts/setup-nginx.sh && sudo nginx -t && sudo systemctl reload nginx`.
+Les fichiers branding sont servis sous **`/api/uploads/branding/…`** (pas `/uploads/` seul — sinon nginx envoie la requête à Next.js et renvoie du HTML). Les anciennes URLs `/uploads/…` sont redirigées vers `/api/uploads/…` par nginx.
+
+Après `git pull` : `pnpm build`, `bash scripts/restart-production.sh`, puis `sudo bash scripts/setup-nginx.sh` (note : `bash scripts/setup-nginx.sh`, pas `./scripts/…` si le fichier n’est pas exécutable).
 
 Les variantes `www` redirigent vers le domaine canonique **sans** `www`.
 
@@ -40,7 +42,8 @@ Vérifications :
 ```bash
 pm2 list
 curl -s https://app-africatourismgate.org/api/health
-curl -I "https://app-africatourismgate.org/uploads/branding/VOTRE-FICHIER.png"
+curl -I "https://app-africatourismgate.org/api/uploads/branding/VOTRE-FICHIER.png"
+# doit afficher Content-Type: image/png (pas text/html ni X-Powered-By: Next.js)
 curl -I https://africatourismgate.org/
 curl -I https://app-africatourismgate.org/login
 ```

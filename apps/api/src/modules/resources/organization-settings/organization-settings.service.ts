@@ -1,4 +1,4 @@
-import { ensureHttpsAssetUrl } from '../../../common/utils/public-asset-url';
+import { normalizeBrandingAssetUrl } from '../../../common/utils/public-asset-url';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
@@ -90,12 +90,12 @@ export class OrganizationSettingsService {
       branding.secondaryColor.trim()
         ? branding.secondaryColor.trim()
         : DEFAULT_PUBLIC_BRANDING.secondaryColor;
-    const logoUrl = ensureHttpsAssetUrl(
+    const logoUrl = normalizeBrandingAssetUrl(
       typeof branding.logoUrl === 'string' && branding.logoUrl.trim()
         ? branding.logoUrl.trim()
         : DEFAULT_PUBLIC_BRANDING.logoUrl,
     );
-    const faviconUrl = ensureHttpsAssetUrl(
+    const faviconUrl = normalizeBrandingAssetUrl(
       typeof branding.faviconUrl === 'string' && branding.faviconUrl.trim()
         ? branding.faviconUrl.trim()
         : DEFAULT_PUBLIC_BRANDING.faviconUrl,

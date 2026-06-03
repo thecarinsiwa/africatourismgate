@@ -1,5 +1,5 @@
 import type { BrandingPlatformValue } from '@africatourismgate/types';
-import { ensureHttpsAssetUrl } from '@africatourismgate/utils';
+import { normalizeBrandingAssetUrl } from '@africatourismgate/utils';
 import { PLATFORM_ORG_ID } from './org-settings-constants';
 
 export type OrganizationBranding = {
@@ -74,12 +74,12 @@ export function brandingFromPlatformSetting(
     normalizeHex(String(platform.primaryColor ?? '')) ?? DEFAULT_BRANDING.primaryColor;
   const secondary =
     normalizeHex(String(platform.secondaryColor ?? '')) ?? DEFAULT_BRANDING.secondaryColor;
-  const logoUrl = ensureHttpsAssetUrl(
+  const logoUrl = normalizeBrandingAssetUrl(
     typeof platform.logoUrl === 'string' && platform.logoUrl.trim()
       ? platform.logoUrl.trim()
       : null,
   );
-  const faviconUrl = ensureHttpsAssetUrl(
+  const faviconUrl = normalizeBrandingAssetUrl(
     typeof platform.faviconUrl === 'string' && platform.faviconUrl.trim()
       ? platform.faviconUrl.trim()
       : null,

@@ -1,3 +1,4 @@
+import { normalizeBrandingAssetUrl } from '@africatourismgate/utils';
 import { resolveApiBaseUrl } from './auth/api';
 
 export type PublicBranding = {
@@ -23,8 +24,8 @@ export async function fetchPublicBranding(): Promise<PublicBranding> {
     const payload = (await response.json()) as Partial<PublicBranding>;
     return {
       displayName: payload.displayName?.trim() || defaultBranding.displayName,
-      logoUrl: payload.logoUrl?.trim() || null,
-      faviconUrl: payload.faviconUrl?.trim() || null,
+      logoUrl: normalizeBrandingAssetUrl(payload.logoUrl?.trim() || null),
+      faviconUrl: normalizeBrandingAssetUrl(payload.faviconUrl?.trim() || null),
     };
   } catch {
     return defaultBranding;

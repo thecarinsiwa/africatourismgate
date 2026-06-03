@@ -13,14 +13,15 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, { rawBody: true });
   // Behind nginx: honor X-Forwarded-Proto so req.protocol is https in production.
   app.getHttpAdapter().getInstance().set('trust proxy', 1);
+  const globalPrefix = process.env.API_GLOBAL_PREFIX ?? 'api';
   const uploadsDir = join(process.cwd(), 'uploads');
   if (!existsSync(uploadsDir)) {
     mkdirSync(uploadsDir, { recursive: true });
   }
-  app.use('/uploads', serveStatic(uploadsDir));
+  // Exposed as /api/uploads/… so nginx `location /api/` can serve branding files.
+  app.use(`/${globalPrefix}/uploads`, serveStatic(uploadsDir));
   app.use(json({ limit: '5mb' }));
   app.use(urlencoded({ extended: true, limit: '5mb' }));
-  const globalPrefix = process.env.API_GLOBAL_PREFIX ?? 'api';
   app.setGlobalPrefix(globalPrefix);
 
   app.useGlobalPipes(

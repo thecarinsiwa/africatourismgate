@@ -8,4 +8,5 @@ export {
   getAdminLoginUrl,
   getApiPublicOrigin,
   getPublicWebUrl,
+  normalizeBrandingAssetUrl,
 } from './urls';
