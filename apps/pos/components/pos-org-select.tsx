@@ -6,10 +6,9 @@ import { Button } from '@africatourismgate/ui';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { posSelectOrgPageConfig } from '../config/select-org';
-import { getApiClient } from '../lib/auth/api';
+import { getValidApiClient } from '../lib/auth/api';
 import { logout } from '../lib/auth/logout';
 import {
-  getSession,
   getSessionPersistence,
   setSelectedOrganization,
 } from '../lib/auth/session';
@@ -29,27 +28,9 @@ function isActiveOrganization(org: Organization): boolean {
 }
 
 async function fetchOrganizations(): Promise<Organization[]> {
-  const session = getSession();
-  if (!session) {
-    return [];
-  }
-
-  const client = getApiClient();
-  const orgId = session.user.organizationId;
-
-  if (orgId) {
-    try {
-      const org = await client.getOrganization(orgId);
-      if (isActiveOrganization(org)) {
-        return [org];
-      }
-    } catch {
-      // Continue with list fallback for multi-org accounts.
-    }
-  }
-
-  const response = await client.listOrganizations({ page: 1, limit: 50 });
-  return response.data.filter(isActiveOrganization);
+  const client = await getValidApiClient();
+  const organizations = await client.listAuthOrganizations();
+  return organizations.filter(isActiveOrganization);
 }
 
 function organizationSubtitle(org: Organization): string | null {

@@ -92,6 +92,17 @@ export class AuthController {
     return this.authService.getAuthMe(user.id);
   }
 
+  @Get('me/organizations')
+  @SetMetadata(IS_PUBLIC_KEY, false)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Organizations available to the current user (POS org picker)',
+  })
+  @ApiUnauthorizedResponse()
+  myOrganizations(@CurrentUser() user: AuthUserDto) {
+    return this.authService.listMyOrganizations(user.id);
+  }
+
   @Patch('me')
   @SetMetadata(IS_PUBLIC_KEY, false)
   @HttpCode(HttpStatus.OK)

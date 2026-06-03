@@ -78,4 +78,11 @@ export const posSaleSuccessPageConfig = {
   paymentCard: 'Carte bancaire',
   newSaleLabel: 'Nouvelle vente',
   backToHomeLabel: 'Retour à l’accueil',
+  receiptTitle: 'Reçu',
+  printReceiptLabel: 'Imprimer le reçu',
+  downloadPdfHint: 'Choisissez « Enregistrer au format PDF » dans la boîte de dialogue d’impression.',
+  emailReceiptLabel: 'Envoyer par e-mail',
+  emailPlaceholder: 'client@exemple.com',
+  emailInvalid: 'Saisissez une adresse e-mail valide.',
+  emailSentHint: 'Votre client de messagerie va s’ouvrir avec le reçu.',
 } as const;

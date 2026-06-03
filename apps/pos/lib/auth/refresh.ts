@@ -1,9 +1,17 @@
 import type { AuthTokens } from '@africatourismgate/types';
-import { getApiBaseUrl } from './api';
+
+function resolveRefreshApiUrl(): string {
+  const fromEnv = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '');
+  if (fromEnv) return fromEnv;
+  if (process.env.NODE_ENV === 'production') {
+    return 'https://app-africatourismgate.org/api';
+  }
+  return 'http://localhost:3000/api';
+}
 
 export async function refreshAccessToken(
   refreshToken: string,
-  apiUrl = getApiBaseUrl(),
+  apiUrl = resolveRefreshApiUrl(),
 ): Promise<AuthTokens | null> {
   if (!apiUrl) {
     return null;

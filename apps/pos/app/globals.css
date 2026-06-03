@@ -37,3 +37,32 @@
     min-height: 3.25rem;
   }
 }
+
+/** Impression reçu caisse — masquer chrome POS, imprimer le reçu seul. */
+@media print {
+  @page {
+    margin: 12mm;
+    size: auto;
+  }
+
+  body {
+    background: #fff !important;
+    color: #111 !important;
+  }
+
+  header,
+  .pos-no-print {
+    display: none !important;
+  }
+
+  main {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+
+  #pos-receipt {
+    margin: 0 auto;
+    max-width: 80mm;
+    box-shadow: none !important;
+  }
+}
