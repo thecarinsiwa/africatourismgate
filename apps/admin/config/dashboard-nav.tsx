@@ -30,7 +30,6 @@ import type { ReactNode } from 'react';
 import {
   adminDashboardNavConfig,
   navGroupMessageKey,
-  type AdminNavEntryConfig,
   type AdminNavLinkConfig,
 } from './dashboard-nav.config';
 
