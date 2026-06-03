@@ -39,7 +39,8 @@
     "test:rbac-crud": "node scripts/test-rbac-crud.mjs",
     "sync:rbac": "node scripts/sync-rbac-permissions.mjs",
     "test:rbac-audit": "node scripts/test-rbac-audit-logs.mjs",
-    "test:org-settings": "node scripts/test-org-settings.mjs"
+    "test:org-settings": "node scripts/test-org-settings.mjs",
+    "test:e2e": "jest --config ./test/jest-e2e.json --runInBand"
   },
   "dependencies": {
     "@africatourismgate/types": "workspace:*",
@@ -70,10 +71,16 @@
   "devDependencies": {
     "@nestjs/cli": "^10.4.9",
     "@nestjs/schematics": "^10.2.3",
+    "@nestjs/testing": "^10.4.15",
     "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.14",
     "@types/node": "^22.10.2",
     "@types/passport-google-oauth20": "^2.0.17",
     "@types/passport-jwt": "^4.0.1",
+    "@types/supertest": "^6.0.2",
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0",
+    "ts-jest": "^29.2.5",
     "typescript": "^5.7.2"
   }
 }
