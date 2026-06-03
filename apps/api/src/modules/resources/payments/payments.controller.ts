@@ -10,13 +10,13 @@ import {
 } from '@nestjs/common';
 import { ApiForbiddenResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import { Payments } from '../../../entities/generated';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { AuthUserDto } from '../../auth/dto/auth-user.dto';
 import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
 import { StripeService } from '../../stripe/stripe.service';
 import { RefundPaymentDto } from './dto/refund-payment.dto';
+import { PaymentsListQueryDto } from './dto/payments-list-query.dto';
 import { PaymentsService } from './payments.service';
 
 @ApiTags('payments')
@@ -30,16 +30,19 @@ export class PaymentsController {
 
   @Get()
   @RequirePermissions('payments.read')
-  @ApiOperation({ summary: 'List payments' })
-  findAll(@Query() query: PaginationQueryDto) {
-    return this.service.findAll(query);
+  @ApiOperation({ summary: 'List payments (admin: filters + client/booking context)' })
+  findAll(
+    @Query() query: PaymentsListQueryDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.service.list(query, user.id);
   }
 
   @Get(':id')
   @RequirePermissions('payments.read')
-  @ApiOperation({ summary: 'Get payments by id' })
+  @ApiOperation({ summary: 'Get payment detail with booking and client' })
   findOne(@Param('id') id: string) {
-    return this.service.findOne(id);
+    return this.service.getAdminDetail(id);
   }
 
   @Post()

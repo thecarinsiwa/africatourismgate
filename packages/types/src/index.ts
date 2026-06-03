@@ -46,10 +46,16 @@ export type {
   PaginatedResponse,
   PaginationMeta,
   PaginationQuery,
-  PaymentListItem,
   PaymentStatus,
   SucceededPaymentsRevenue,
 } from './pagination.js';
+
+export type {
+  PaymentAdminDetail,
+  PaymentListItem,
+  PaymentsListQuery,
+  RefundPaymentRequest,
+} from './payment.js';
 
 export type {
   CreateOrganizationRequest,

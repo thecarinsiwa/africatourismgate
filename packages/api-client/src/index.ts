@@ -154,7 +154,11 @@ import type {
   PointsOfInterestListQuery,
   PaginatedResponse,
   PaginationQuery,
+  PaymentAdminDetail,
   PaymentListItem,
+  PaymentsListQuery,
+  RefundPaymentRequest,
+  RefundPaymentResponse,
   RegisterRequest,
   ResetPasswordRequest,
   ResetPasswordResponse,
@@ -758,8 +762,19 @@ export class ApiClient {
     });
   }
 
-  listPayments(query?: PaginationQuery): Promise<PaginatedResponse<PaymentListItem>> {
+  listPayments(query?: PaymentsListQuery): Promise<PaginatedResponse<PaymentListItem>> {
     return fetchPaginated<PaymentListItem>(this, '/payments', query);
+  }
+
+  getPayment(id: string): Promise<PaymentAdminDetail> {
+    return this.request<PaymentAdminDetail>(`/payments/${id}`);
+  }
+
+  refundPayment(id: string, body?: RefundPaymentRequest): Promise<RefundPaymentResponse> {
+    return this.request<RefundPaymentResponse>(`/payments/${id}/refund`, {
+      method: 'POST',
+      body: body ?? {},
+    });
   }
 
   countUsers(): Promise<number> {
