@@ -1,5 +1,6 @@
 'use client';
 
+import { ensureHttpsAssetUrl } from '@africatourismgate/utils';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
@@ -113,7 +114,7 @@ export function HomeHeader() {
         const payload = (await response.json()) as PublicBranding;
         setBranding({
           displayName: payload.displayName?.trim() || 'Africa Tourism Gate',
-          logoUrl: payload.logoUrl?.trim() || null,
+          logoUrl: ensureHttpsAssetUrl(payload.logoUrl?.trim() || null),
         });
       } catch {
         // Keep defaults if branding endpoint is unavailable.

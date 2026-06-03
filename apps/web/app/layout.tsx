@@ -5,6 +5,7 @@ import { getLocale, getMessages } from 'next-intl/server';
 import './globals.css';
 import { AppShell } from '@africatourismgate/ui';
 import type { CSSProperties } from 'react';
+import { ensureHttpsAssetUrl } from '@africatourismgate/utils';
 import { Providers } from '../components/providers';
 
 const montserrat = Montserrat({
@@ -101,8 +102,12 @@ async function getPublicBranding(): Promise<PublicBranding> {
       displayName: branding.displayName ?? defaultBranding.displayName,
       primaryColor: branding.primaryColor ?? defaultBranding.primaryColor,
       secondaryColor: branding.secondaryColor ?? defaultBranding.secondaryColor,
-      logoUrl: branding.logoUrl ?? defaultBranding.logoUrl,
-      faviconUrl: branding.faviconUrl ?? defaultBranding.faviconUrl,
+      logoUrl:
+        ensureHttpsAssetUrl(branding.logoUrl ?? defaultBranding.logoUrl) ??
+        defaultBranding.logoUrl,
+      faviconUrl:
+        ensureHttpsAssetUrl(branding.faviconUrl ?? defaultBranding.faviconUrl) ??
+        defaultBranding.faviconUrl,
     };
   } catch {
     return defaultBranding;
