@@ -3,6 +3,11 @@ import { expect, test } from '@playwright/test';
 const USER_ID = 'user-e2e-support';
 const TICKET_ID = 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee';
 
+type SupportTicketPostBody = {
+  subject: string;
+  body: string;
+};
+
 function mockSession(page: import('@playwright/test').Page) {
   return page.addInitScript(() => {
     window.sessionStorage.setItem(
@@ -49,14 +54,14 @@ test('shows public FAQ and sign-in prompt without session', async ({ page }) => 
 test('submits support ticket when signed in', async ({ page }) => {
   await mockSession(page);
 
-  let postBody: { subject?: string; body?: string } | null = null;
+  let postBody: SupportTicketPostBody | undefined;
 
   await page.route('**/api/support-tickets', async (route) => {
     if (route.request().method() !== 'POST') {
       await route.continue();
       return;
     }
-    postBody = route.request().postDataJSON() as { subject?: string; body?: string };
+    postBody = route.request().postDataJSON() as SupportTicketPostBody;
     await route.fulfill({
       status: 201,
       contentType: 'application/json',
@@ -102,6 +107,7 @@ test('submits support ticket when signed in', async ({ page }) => {
 
   await expect(page.getByText(TICKET_ID)).toBeVisible();
 
-  expect(postBody?.subject).toBe('Question réservation test');
-  expect(postBody?.body).toContain('modifier les dates');
+  expect(postBody).toBeDefined();
+  expect(postBody!.subject).toBe('Question réservation test');
+  expect(postBody!.body).toContain('modifier les dates');
 });
