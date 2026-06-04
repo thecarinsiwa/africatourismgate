@@ -47,7 +47,7 @@ export class Organizations extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'currency', length: 3 })
   currency!: string;
 
-  @Column({ type: 'enum', name: 'status', enum: ["active","suspended","deleted"] })
+  @Column({ name: 'status', enum: ["active","suspended","deleted"] })
   status!: 'active' | 'suspended' | 'deleted';
 
 }

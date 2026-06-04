@@ -78,7 +78,11 @@ import type {
   BookingPaymentIntentResponse,
   BookingListItem,
   BookingsListQuery,
+  AdminReviewDetail,
+  AdminReviewListItem,
   CreateBookingReviewRequest,
+  ReviewsListQuery,
+  UpdateReviewStatusRequest,
   CreateSupportTicketRequest,
   SupportTicket,
   SupportTicketCreated,
@@ -321,7 +325,11 @@ export type {
   PropertyDetailQuery,
   PropertyReviewsListQuery,
   Review,
+  AdminReviewDetail,
+  AdminReviewListItem,
   CreateBookingReviewRequest,
+  ReviewsListQuery,
+  UpdateReviewStatusRequest,
   PropertyType,
   PublicDestination,
   ReplacePropertyAmenitiesRequest,
@@ -1286,6 +1294,30 @@ export class ApiClient {
       method: 'POST',
       body,
     });
+  }
+
+  listReviews(
+    query?: ReviewsListQuery,
+  ): Promise<PaginatedResponse<AdminReviewListItem>> {
+    return fetchPaginated<AdminReviewListItem>(this, '/reviews', query);
+  }
+
+  getReview(id: string): Promise<AdminReviewDetail> {
+    return this.request<AdminReviewDetail>(`/reviews/${id}`);
+  }
+
+  updateReviewStatus(
+    id: string,
+    body: UpdateReviewStatusRequest,
+  ): Promise<AdminReviewDetail> {
+    return this.request<AdminReviewDetail>(`/reviews/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteReview(id: string): Promise<void> {
+    return this.request<void>(`/reviews/${id}`, { method: 'DELETE' });
   }
 
   listSupportTickets(

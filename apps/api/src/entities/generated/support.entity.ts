@@ -11,7 +11,7 @@ export class SupportTickets extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'subject', length: 255 })
   subject!: string;
 
-  @Column({ type: 'enum', name: 'status', enum: ["open","pending","resolved","closed"] })
+  @Column({ name: 'status', enum: ["open","pending","resolved","closed"] })
   status!: 'open' | 'pending' | 'resolved' | 'closed';
 
 }

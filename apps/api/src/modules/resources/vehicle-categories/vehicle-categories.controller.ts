@@ -9,9 +9,9 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { CreateVehicleCategoryDto } from './dto/create-vehicle-category.dto';
-import { VehicleCategoriesListQueryDto } from './dto/vehicle-categories-list-query.dto';
-import { UpdateVehicleCategoryDto } from './dto/update-vehicle-category.dto';
+import { DeepPartial } from 'typeorm';
+import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
+import { VehicleCategories } from '../../../entities/generated';
 import { VehicleCategoriesService } from './vehicle-categories.service';
 
 @ApiTags('vehicle-categories')
@@ -20,31 +20,31 @@ export class VehicleCategoriesController {
   constructor(private readonly service: VehicleCategoriesService) {}
 
   @Get()
-  @ApiOperation({ summary: 'List vehicle categories' })
-  findAll(@Query() query: VehicleCategoriesListQueryDto) {
+  @ApiOperation({ summary: 'List vehicle-categories' })
+  findAll(@Query() query: PaginationQueryDto) {
     return this.service.findAll(query);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get vehicle category by id' })
+  @ApiOperation({ summary: 'Get vehicle-categories by id' })
   findOne(@Param('id') id: string) {
     return this.service.findOne(id);
   }
 
   @Post()
-  @ApiOperation({ summary: 'Create vehicle category' })
-  create(@Body() dto: CreateVehicleCategoryDto) {
-    return this.service.createCategory(dto);
+  @ApiOperation({ summary: 'Create vehicle-categories' })
+  create(@Body() dto: DeepPartial<VehicleCategories>) {
+    return this.service.create(dto);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update vehicle category' })
-  update(@Param('id') id: string, @Body() dto: UpdateVehicleCategoryDto) {
-    return this.service.updateCategory(id, dto);
+  @ApiOperation({ summary: 'Update vehicle-categories' })
+  update(@Param('id') id: string, @Body() dto: DeepPartial<VehicleCategories>) {
+    return this.service.update(id, dto);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Soft-delete vehicle category' })
+  @ApiOperation({ summary: 'Soft-delete vehicle-categories' })
   remove(@Param('id') id: string) {
     return this.service.remove(id);
   }

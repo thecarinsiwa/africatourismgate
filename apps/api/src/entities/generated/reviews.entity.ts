@@ -8,7 +8,7 @@ export class Reviews extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'user_id', length: 36 })
   userId!: string;
 
-  @Column({ type: 'enum', name: 'entity_type', enum: ["property","flight","vehicle","cruise","activity","booking"] })
+  @Column({ name: 'entity_type', enum: ["property","flight","vehicle","cruise","activity","booking"] })
   entityType!: 'property' | 'flight' | 'vehicle' | 'cruise' | 'activity' | 'booking';
 
   @Column({ type: 'varchar', name: 'entity_id', length: 36 })
@@ -22,5 +22,8 @@ export class Reviews extends BaseAuditEntity {
 
   @Column({ type: 'text', name: 'body', nullable: true })
   body!: string;
+
+  @Column({ name: 'status', enum: ["pending","approved","hidden"] })
+  status!: 'pending' | 'approved' | 'hidden';
 
 }

@@ -9,9 +9,9 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { CreatePropertyDto } from './dto/create-property.dto';
-import { PropertiesListQueryDto } from './dto/properties-list-query.dto';
-import { UpdatePropertyDto } from './dto/update-property.dto';
+import { DeepPartial } from 'typeorm';
+import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
+import { Properties } from '../../../entities/generated';
 import { PropertiesService } from './properties.service';
 
 @ApiTags('properties')
@@ -21,30 +21,30 @@ export class PropertiesController {
 
   @Get()
   @ApiOperation({ summary: 'List properties' })
-  findAll(@Query() query: PropertiesListQueryDto) {
+  findAll(@Query() query: PaginationQueryDto) {
     return this.service.findAll(query);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get property by id' })
+  @ApiOperation({ summary: 'Get properties by id' })
   findOne(@Param('id') id: string) {
     return this.service.findOne(id);
   }
 
   @Post()
-  @ApiOperation({ summary: 'Create property' })
-  create(@Body() dto: CreatePropertyDto) {
-    return this.service.createProperty(dto);
+  @ApiOperation({ summary: 'Create properties' })
+  create(@Body() dto: DeepPartial<Properties>) {
+    return this.service.create(dto);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update property' })
-  update(@Param('id') id: string, @Body() dto: UpdatePropertyDto) {
-    return this.service.updateProperty(id, dto);
+  @ApiOperation({ summary: 'Update properties' })
+  update(@Param('id') id: string, @Body() dto: DeepPartial<Properties>) {
+    return this.service.update(id, dto);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Soft-delete property' })
+  @ApiOperation({ summary: 'Soft-delete properties' })
   remove(@Param('id') id: string) {
     return this.service.remove(id);
   }

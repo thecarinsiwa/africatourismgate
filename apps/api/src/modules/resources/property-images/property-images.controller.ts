@@ -9,9 +9,9 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { CreatePropertyImageDto } from './dto/create-property-image.dto';
-import { PropertyImagesListQueryDto } from './dto/property-images-list-query.dto';
-import { UpdatePropertyImageDto } from './dto/update-property-image.dto';
+import { DeepPartial } from 'typeorm';
+import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
+import { PropertyImages } from '../../../entities/generated';
 import { PropertyImagesService } from './property-images.service';
 
 @ApiTags('property-images')
@@ -20,31 +20,31 @@ export class PropertyImagesController {
   constructor(private readonly service: PropertyImagesService) {}
 
   @Get()
-  @ApiOperation({ summary: 'List property images' })
-  findAll(@Query() query: PropertyImagesListQueryDto) {
+  @ApiOperation({ summary: 'List property-images' })
+  findAll(@Query() query: PaginationQueryDto) {
     return this.service.findAll(query);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get property image by id' })
+  @ApiOperation({ summary: 'Get property-images by id' })
   findOne(@Param('id') id: string) {
     return this.service.findOne(id);
   }
 
   @Post()
-  @ApiOperation({ summary: 'Create property image' })
-  create(@Body() dto: CreatePropertyImageDto) {
-    return this.service.createImage(dto);
+  @ApiOperation({ summary: 'Create property-images' })
+  create(@Body() dto: DeepPartial<PropertyImages>) {
+    return this.service.create(dto);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update property image' })
-  update(@Param('id') id: string, @Body() dto: UpdatePropertyImageDto) {
-    return this.service.updateImage(id, dto);
+  @ApiOperation({ summary: 'Update property-images' })
+  update(@Param('id') id: string, @Body() dto: DeepPartial<PropertyImages>) {
+    return this.service.update(id, dto);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Soft-delete property image' })
+  @ApiOperation({ summary: 'Soft-delete property-images' })
   remove(@Param('id') id: string) {
     return this.service.remove(id);
   }

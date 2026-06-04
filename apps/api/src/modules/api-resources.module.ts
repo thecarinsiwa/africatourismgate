@@ -1,6 +1,7 @@
 import { UsersModule } from './resources/users/users.module';
 import { EmployeesModule } from './resources/employees/employees.module';
 import { UserSessionsModule } from './resources/user-sessions/user-sessions.module';
+import { PasswordResetTokensModule } from './resources/password-reset-tokens/password-reset-tokens.module';
 import { UserAddressesModule } from './resources/user-addresses/user-addresses.module';
 import { UserPaymentMethodsModule } from './resources/user-payment-methods/user-payment-methods.module';
 import { LoyaltyAccountsModule } from './resources/loyalty-accounts/loyalty-accounts.module';
@@ -42,16 +43,15 @@ import { ActivitiesModule } from './resources/activities/activities.module';
 import { ActivitySchedulesModule } from './resources/activity-schedules/activity-schedules.module';
 import { PackagesModule } from './resources/packages/packages.module';
 import { PackageItemsModule } from './resources/package-items/package-items.module';
-import { StripeModule } from './stripe/stripe.module';
 import { BookingsModule } from './resources/bookings/bookings.module';
 import { BookingItemsModule } from './resources/booking-items/booking-items.module';
+import { BookingStatusHistoryModule } from './resources/booking-status-history/booking-status-history.module';
 import { PaymentsModule } from './resources/payments/payments.module';
 import { PromoCodesModule } from './resources/promo-codes/promo-codes.module';
 import { PromotionsModule } from './resources/promotions/promotions.module';
 import { ReviewsModule } from './resources/reviews/reviews.module';
 import { SupportTicketsModule } from './resources/support-tickets/support-tickets.module';
 import { SupportMessagesModule } from './resources/support-messages/support-messages.module';
-import { PublicAccommodationsModule } from './public/accommodations/public-accommodations.module';
 
 import { Module } from '@nestjs/common';
 
@@ -60,6 +60,7 @@ import { Module } from '@nestjs/common';
     UsersModule,
     EmployeesModule,
     UserSessionsModule,
+    PasswordResetTokensModule,
     UserAddressesModule,
     UserPaymentMethodsModule,
     LoyaltyAccountsModule,
@@ -102,15 +103,14 @@ import { Module } from '@nestjs/common';
     PackagesModule,
     PackageItemsModule,
     BookingsModule,
-    StripeModule,
     BookingItemsModule,
+    BookingStatusHistoryModule,
     PaymentsModule,
     PromoCodesModule,
     PromotionsModule,
     ReviewsModule,
     SupportTicketsModule,
     SupportMessagesModule,
-    PublicAccommodationsModule,
   ],
 })
 export class ApiResourcesModule {}

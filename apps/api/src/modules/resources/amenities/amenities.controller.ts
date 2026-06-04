@@ -9,9 +9,9 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { CreateAmenityDto } from './dto/create-amenity.dto';
-import { AmenitiesListQueryDto } from './dto/amenities-list-query.dto';
-import { UpdateAmenityDto } from './dto/update-amenity.dto';
+import { DeepPartial } from 'typeorm';
+import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
+import { Amenities } from '../../../entities/generated';
 import { AmenitiesService } from './amenities.service';
 
 @ApiTags('amenities')
@@ -21,30 +21,30 @@ export class AmenitiesController {
 
   @Get()
   @ApiOperation({ summary: 'List amenities' })
-  findAll(@Query() query: AmenitiesListQueryDto) {
+  findAll(@Query() query: PaginationQueryDto) {
     return this.service.findAll(query);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get amenity by id' })
+  @ApiOperation({ summary: 'Get amenities by id' })
   findOne(@Param('id') id: string) {
     return this.service.findOne(id);
   }
 
   @Post()
-  @ApiOperation({ summary: 'Create amenity' })
-  create(@Body() dto: CreateAmenityDto) {
-    return this.service.createAmenity(dto);
+  @ApiOperation({ summary: 'Create amenities' })
+  create(@Body() dto: DeepPartial<Amenities>) {
+    return this.service.create(dto);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update amenity' })
-  update(@Param('id') id: string, @Body() dto: UpdateAmenityDto) {
-    return this.service.updateAmenity(id, dto);
+  @ApiOperation({ summary: 'Update amenities' })
+  update(@Param('id') id: string, @Body() dto: DeepPartial<Amenities>) {
+    return this.service.update(id, dto);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Soft-delete amenity' })
+  @ApiOperation({ summary: 'Soft-delete amenities' })
   remove(@Param('id') id: string) {
     return this.service.remove(id);
   }

@@ -27,7 +27,7 @@ export class Properties extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'slug', length: 255 })
   slug!: string;
 
-  @Column({ type: 'enum', name: 'property_type', enum: ["hotel","resort","apartment","villa","hostel","other"] })
+  @Column({ name: 'property_type', enum: ["hotel","resort","apartment","villa","hostel","other"] })
   propertyType!: 'hotel' | 'resort' | 'apartment' | 'villa' | 'hostel' | 'other';
 
   @Column({ type: 'decimal', name: 'star_rating', precision: 2, scale: 1, nullable: true })

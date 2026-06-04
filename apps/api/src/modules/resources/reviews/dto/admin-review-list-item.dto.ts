@@ -1,0 +1,35 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+
+export class AdminReviewListItemDto {
+  @ApiProperty({ format: 'uuid' })
+  id!: string;
+
+  @ApiProperty({ minimum: 1, maximum: 5 })
+  rating!: number;
+
+  @ApiProperty({ enum: ['pending', 'approved', 'hidden'] })
+  status!: 'pending' | 'approved' | 'hidden';
+
+  @ApiProperty()
+  createdAt!: string;
+
+  @ApiPropertyOptional({ nullable: true })
+  authorFirstName!: string | null;
+
+  @ApiPropertyOptional({ nullable: true })
+  authorEmail!: string | null;
+
+  @ApiProperty({
+    enum: ['property', 'flight', 'vehicle', 'cruise', 'activity', 'booking'],
+  })
+  entityType!: string;
+
+  @ApiProperty({ format: 'uuid' })
+  entityId!: string;
+
+  @ApiPropertyOptional({ format: 'uuid', nullable: true })
+  propertyId!: string | null;
+
+  @ApiPropertyOptional({ nullable: true })
+  propertyName!: string | null;
+}

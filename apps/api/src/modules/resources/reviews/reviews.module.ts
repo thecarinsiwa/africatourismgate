@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   BookingItems,
   Bookings,
+  Properties,
   Reviews,
   Rooms,
   Users,
@@ -18,6 +19,7 @@ import { ReviewsService } from './reviews.service';
       BookingItems,
       Rooms,
       Users,
+      Properties,
     ]),
   ],
   controllers: [ReviewsController],

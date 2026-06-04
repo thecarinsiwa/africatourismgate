@@ -15,6 +15,7 @@ import type {
   PropertyAmenitiesListQuery,
   PropertyImagesListQuery,
   BookingsListQuery,
+  ReviewsListQuery,
   PaymentsListQuery,
   PromoCodesListQuery,
   PromotionsListQuery,
@@ -48,6 +49,7 @@ const RESOURCE_QUERY_KEYS = [
   'dateTo',
   'destinationId',
   'propertyId',
+  'rating',
   'roomId',
   'vehicleId',
   'startFrom',
@@ -67,6 +69,7 @@ export type PaginatedListQuery =
   | PaginationQuery
   | UsersListQuery
   | BookingsListQuery
+  | ReviewsListQuery
   | PaymentsListQuery
   | PromoCodesListQuery
   | PromotionsListQuery

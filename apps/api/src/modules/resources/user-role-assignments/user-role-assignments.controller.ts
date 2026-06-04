@@ -1,54 +1,51 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
   Post,
   Query,
 } from '@nestjs/common';
-import { ApiForbiddenResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { CurrentUser } from '../../auth/decorators/current-user.decorator';
-import { AuthUserDto } from '../../auth/dto/auth-user.dto';
-import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
-import { CreateUserRoleAssignmentDto } from './dto/create-user-role-assignment.dto';
-import { UserRoleAssignmentsListQueryDto } from './dto/user-role-assignments-list-query.dto';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { DeepPartial } from 'typeorm';
+import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
+import { UserRoleAssignments } from '../../../entities/generated';
 import { UserRoleAssignmentsService } from './user-role-assignments.service';
 
 @ApiTags('user-role-assignments')
-@ApiForbiddenResponse({ description: 'Missing permission' })
 @Controller('user-role-assignments')
 export class UserRoleAssignmentsController {
   constructor(private readonly service: UserRoleAssignmentsService) {}
 
   @Get()
-  @RequirePermissions('roles.read')
-  @ApiOperation({ summary: 'List user role assignments' })
-  findAll(@Query() query: UserRoleAssignmentsListQueryDto) {
+  @ApiOperation({ summary: 'List user-role-assignments' })
+  findAll(@Query() query: PaginationQueryDto) {
     return this.service.findAll(query);
   }
 
   @Get(':id')
-  @RequirePermissions('roles.read')
-  @ApiOperation({ summary: 'Get assignment by id' })
+  @ApiOperation({ summary: 'Get user-role-assignments by id' })
   findOne(@Param('id') id: string) {
     return this.service.findOne(id);
   }
 
   @Post()
-  @RequirePermissions('roles.write')
-  @ApiOperation({ summary: 'Assign role to user' })
-  create(
-    @Body() dto: CreateUserRoleAssignmentDto,
-    @CurrentUser() user: AuthUserDto,
-  ) {
-    return this.service.create(dto, user.id);
+  @ApiOperation({ summary: 'Create user-role-assignments' })
+  create(@Body() dto: DeepPartial<UserRoleAssignments>) {
+    return this.service.create(dto);
   }
 
-  @Patch(':id/revoke')
-  @RequirePermissions('roles.write')
-  @ApiOperation({ summary: 'Revoke role assignment' })
-  revoke(@Param('id') id: string, @CurrentUser() user: AuthUserDto) {
-    return this.service.revoke(id, user.id);
+  @Patch(':id')
+  @ApiOperation({ summary: 'Update user-role-assignments' })
+  update(@Param('id') id: string, @Body() dto: DeepPartial<UserRoleAssignments>) {
+    return this.service.update(id, dto);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Soft-delete user-role-assignments' })
+  remove(@Param('id') id: string) {
+    return this.service.remove(id);
   }
 }

@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn, CreateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn } from 'typeorm';
 import { BaseAuditEntity } from '../../common/entities/base-audit.entity';
 @Entity('bookings')
 export class Bookings extends BaseAuditEntity {
@@ -8,7 +8,7 @@ export class Bookings extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'user_id', length: 36 })
   userId!: string;
 
-  @Column({ type: 'enum', name: 'status', enum: ["draft","pending_payment","confirmed","cancelled","refunded"] })
+  @Column({ name: 'status', enum: ["draft","pending_payment","confirmed","cancelled","refunded"] })
   status!: 'draft' | 'pending_payment' | 'confirmed' | 'cancelled' | 'refunded';
 
   @Column({ type: 'int', name: 'total_cents' })
@@ -33,7 +33,7 @@ export class BookingItems extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'booking_id', length: 36 })
   bookingId!: string;
 
-  @Column({ type: 'enum', name: 'item_type', enum: ["room","flight_class","vehicle","cabin","activity_schedule","package"] })
+  @Column({ name: 'item_type', enum: ["room","flight_class","vehicle","cabin","activity_schedule","package"] })
   itemType!: 'room' | 'flight_class' | 'vehicle' | 'cabin' | 'activity_schedule' | 'package';
 
   @Column({ type: 'varchar', name: 'reference_id', length: 36 })
@@ -57,36 +57,25 @@ export class BookingItems extends BaseAuditEntity {
 }
 
 @Entity('booking_status_history')
-export class BookingStatusHistory {
+export class BookingStatusHistory extends BaseAuditEntity {
   @PrimaryColumn('uuid', { name: 'id', length: 36 })
   id!: string;
 
   @Column({ type: 'varchar', name: 'booking_id', length: 36 })
   bookingId!: string;
 
-  @Column({
-    type: 'enum',
-    name: 'from_status',
-    enum: ['draft', 'pending_payment', 'confirmed', 'cancelled', 'refunded'],
-    nullable: true,
-  })
-  fromStatus!: Bookings['status'] | null;
+  @Column({ name: 'from_status', enum: ["draft","pending_payment","confirmed","cancelled","refunded"], nullable: true })
+  fromStatus!: 'draft' | 'pending_payment' | 'confirmed' | 'cancelled' | 'refunded';
 
-  @Column({
-    type: 'enum',
-    name: 'to_status',
-    enum: ['draft', 'pending_payment', 'confirmed', 'cancelled', 'refunded'],
-  })
-  toStatus!: Bookings['status'];
+  @Column({ name: 'to_status', enum: ["draft","pending_payment","confirmed","cancelled","refunded"] })
+  toStatus!: 'draft' | 'pending_payment' | 'confirmed' | 'cancelled' | 'refunded';
 
   @Column({ type: 'text', name: 'reason', nullable: true })
-  reason!: string | null;
+  reason!: string;
 
   @Column({ type: 'varchar', name: 'changed_by_user_id', length: 36, nullable: true })
-  changedByUserId!: string | null;
+  changedByUserId!: string;
 
-  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
-  createdAt!: Date;
 }
 
 @Entity('payments')
@@ -103,7 +92,7 @@ export class Payments extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'currency', length: 3 })
   currency!: string;
 
-  @Column({ type: 'enum', name: 'status', enum: ["pending","succeeded","failed","refunded"] })
+  @Column({ name: 'status', enum: ["pending","succeeded","failed","refunded"] })
   status!: 'pending' | 'succeeded' | 'failed' | 'refunded';
 
   @Column({ type: 'varchar', name: 'provider', length: 64, nullable: true })
@@ -122,7 +111,7 @@ export class PromoCodes extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'code', length: 64 })
   code!: string;
 
-  @Column({ type: 'enum', name: 'discount_type', enum: ["percent","fixed_amount"] })
+  @Column({ name: 'discount_type', enum: ["percent","fixed_amount"] })
   discountType!: 'percent' | 'fixed_amount';
 
   @Column({ type: 'decimal', name: 'discount_value', precision: 12, scale: 2 })
@@ -156,20 +145,20 @@ export class Promotions extends BaseAuditEntity {
   @Column({ type: 'text', name: 'description', nullable: true })
   description!: string;
 
-  @Column({ type: 'enum', name: 'discount_type', enum: ['percent', 'fixed_amount'], nullable: true })
-  discountType!: 'percent' | 'fixed_amount' | null;
+  @Column({ name: 'discount_type', enum: ["percent","fixed_amount"], nullable: true })
+  discountType!: 'percent' | 'fixed_amount';
 
   @Column({ type: 'decimal', name: 'discount_value', precision: 12, scale: 2, nullable: true })
-  discountValue!: string | null;
+  discountValue!: string;
 
   @Column({ type: 'date', name: 'valid_from', nullable: true })
-  validFrom!: string | null;
+  validFrom!: string;
 
   @Column({ type: 'date', name: 'valid_until', nullable: true })
-  validUntil!: string | null;
+  validUntil!: string;
 
   @Column({ type: 'int', name: 'max_redemptions', nullable: true })
-  maxRedemptions!: number | null;
+  maxRedemptions!: number;
 
   @Column({ type: 'int', name: 'redemption_count' })
   redemptionCount!: number;
