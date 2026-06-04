@@ -1,8 +1,6 @@
 import type {
   BookingConfirmationEmailPayload,
   PasswordResetEmailPayload,
-  SupportNewAccountEmailPayload,
-  SupportNewBookingEmailPayload,
   WelcomeEmailPayload,
 } from './email.types';
 
@@ -117,55 +115,5 @@ ${items}
 <p style="margin:16px 0 0;line-height:1.6;">Conservez cet e-mail pour vos archives.</p>`,
   );
   const text = `Bonjour ${payload.firstName},\n\nRéservation ${payload.bookingId} confirmée.\nTotal : ${formatMoney(payload.totalCents, payload.currency)}\n`;
-  return { subject, html, text };
-}
-
-export function renderSupportNewAccountEmail(
-  payload: SupportNewAccountEmailPayload,
-): { subject: string; html: string; text: string } {
-  const subject = `[Support] Nouveau compte — ${payload.email}`;
-  const phone = payload.phone?.trim()
-    ? escapeHtml(payload.phone.trim())
-    : '—';
-  const lang = payload.preferredLanguage?.trim()
-    ? escapeHtml(payload.preferredLanguage.trim())
-    : '—';
-  const html = layout(
-    subject,
-    `<h1 style="margin:0 0 16px;font-size:22px;">Nouveau compte client</h1>
-<p style="margin:0 0 8px;line-height:1.6;"><strong>Nom :</strong> ${escapeHtml(payload.firstName)} ${escapeHtml(payload.lastName)}</p>
-<p style="margin:0 0 8px;line-height:1.6;"><strong>E-mail :</strong> ${escapeHtml(payload.email)}</p>
-<p style="margin:0 0 8px;line-height:1.6;"><strong>ID utilisateur :</strong> ${escapeHtml(payload.userId)}</p>
-<p style="margin:0 0 8px;line-height:1.6;"><strong>Téléphone :</strong> ${phone}</p>
-<p style="margin:0 0 8px;line-height:1.6;"><strong>Langue :</strong> ${lang}</p>`,
-  );
-  const text = `Nouveau compte\n${payload.firstName} ${payload.lastName}\n${payload.email}\nID: ${payload.userId}`;
-  return { subject, html, text };
-}
-
-export function renderSupportNewBookingEmail(
-  payload: SupportNewBookingEmailPayload,
-): { subject: string; html: string; text: string } {
-  const total = escapeHtml(formatMoney(payload.totalCents, payload.currency));
-  const ref = escapeHtml(payload.bookingId);
-  const client = escapeHtml(payload.clientName.trim() || 'Client');
-  const email = escapeHtml(payload.clientEmail);
-  const items =
-    payload.itemTitles.length > 0
-      ? `<ul style="margin:8px 0 16px;padding-left:20px;line-height:1.6;">${payload.itemTitles
-          .map((t) => `<li>${escapeHtml(t)}</li>`)
-          .join('')}</ul>`
-      : '';
-  const subject = `[Support] Réservation confirmée — ${payload.bookingId.slice(0, 8)}`;
-  const html = layout(
-    subject,
-    `<h1 style="margin:0 0 16px;font-size:22px;">Réservation confirmée</h1>
-<p style="margin:0 0 8px;line-height:1.6;"><strong>Référence :</strong> ${ref}</p>
-<p style="margin:0 0 8px;line-height:1.6;"><strong>Client :</strong> ${client} (${email})</p>
-<p style="margin:0 0 8px;line-height:1.6;"><strong>ID utilisateur :</strong> ${escapeHtml(payload.userId)}</p>
-<p style="margin:0 0 8px;line-height:1.6;"><strong>Total :</strong> ${total}</p>
-${items}`,
-  );
-  const text = `Réservation ${payload.bookingId}\nClient: ${payload.clientName} <${payload.clientEmail}>\nTotal: ${formatMoney(payload.totalCents, payload.currency)}`;
   return { subject, html, text };
 }

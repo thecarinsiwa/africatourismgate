@@ -4,16 +4,12 @@ import nodemailer, { type Transporter } from 'nodemailer';
 import {
   renderBookingConfirmationEmail,
   renderPasswordResetEmail,
-  renderSupportNewAccountEmail,
-  renderSupportNewBookingEmail,
   renderWelcomeEmail,
 } from './email.templates';
 import type {
   BookingConfirmationEmailPayload,
   PasswordResetEmailPayload,
   SendMailResult,
-  SupportNewAccountEmailPayload,
-  SupportNewBookingEmailPayload,
   WelcomeEmailPayload,
 } from './email.types';
 
@@ -44,34 +40,6 @@ export class EmailService {
   ): Promise<SendMailResult> {
     const { subject, html, text } = renderBookingConfirmationEmail(payload);
     return this.send({ to: payload.to, subject, html, text });
-  }
-
-  async sendSupportNewAccount(
-    payload: SupportNewAccountEmailPayload,
-  ): Promise<SendMailResult> {
-    const supportTo = this.getSupportToAddress();
-    if (!supportTo) {
-      this.logger.warn(
-        'Support email skipped: set EMAIL_SUPPORT_TO (new account notification)',
-      );
-      return { sent: false };
-    }
-    const { subject, html, text } = renderSupportNewAccountEmail(payload);
-    return this.send({ to: supportTo, subject, html, text });
-  }
-
-  async sendSupportNewBooking(
-    payload: SupportNewBookingEmailPayload,
-  ): Promise<SendMailResult> {
-    const supportTo = this.getSupportToAddress();
-    if (!supportTo) {
-      this.logger.warn(
-        'Support email skipped: set EMAIL_SUPPORT_TO (booking notification)',
-      );
-      return { sent: false };
-    }
-    const { subject, html, text } = renderSupportNewBookingEmail(payload);
-    return this.send({ to: supportTo, subject, html, text });
   }
 
   private async send(options: {
@@ -143,11 +111,6 @@ export class EmailService {
       this.config.get<string>('EMAIL_FROM')?.trim() ||
       'Africa Tourism Gate <noreply@africatourismgate.local>'
     );
-  }
-
-  private getSupportToAddress(): string | null {
-    const value = this.config.get<string>('EMAIL_SUPPORT_TO')?.trim();
-    return value || null;
   }
 
   private getTransportMode(): EmailTransportMode {
