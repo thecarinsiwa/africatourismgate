@@ -20,13 +20,15 @@ NestJS HTTP API for Africa Tourism Gate, mapped to the MySQL schema in `database
 
 Transactional HTML emails via `src/modules/email/` (nodemailer):
 
-| Événement | Déclencheur |
-| --------- | ----------- |
-| Réinitialisation mot de passe | `POST /auth/forgot-password` |
-| Bienvenue | `POST /auth/register` |
-| Confirmation réservation | `confirmBooking` (cash POS, admin confirm, Stripe webhook) |
+| Événement | Destinataire | Déclencheur |
+| --------- | ------------ | ----------- |
+| Réinitialisation mot de passe | Client | `POST /auth/forgot-password` |
+| Bienvenue | Client | `POST /auth/register` |
+| Nouveau compte | Support (`EMAIL_SUPPORT_TO`) | `POST /auth/register` |
+| Confirmation réservation | Client | `confirmBooking` (cash POS, admin confirm, Stripe webhook) |
+| Réservation confirmée | Support (`EMAIL_SUPPORT_TO`) | `confirmBooking` |
 
-Variables (voir root `.env.example`) : `EMAIL_ENABLED`, `EMAIL_TRANSPORT`, `EMAIL_FROM`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_SECURE`.
+Variables (voir root `.env.example`) : `EMAIL_ENABLED`, `EMAIL_TRANSPORT`, `EMAIL_FROM`, `EMAIL_SUPPORT_TO`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_SECURE`.
 
 **Dev (Mailpit)** — capture SMTP sans envoi réel :
 
