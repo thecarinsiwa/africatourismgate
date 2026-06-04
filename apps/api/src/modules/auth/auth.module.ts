@@ -10,6 +10,7 @@ import {
   Users,
   UserSessions,
 } from '../../entities/generated/users.entity';
+import { EmailModule } from '../email/email.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -21,6 +22,7 @@ import { GoogleStrategy } from './strategies/google.strategy';
 
 @Module({
   imports: [
+    EmailModule,
     TypeOrmModule.forFeature([
       Users,
       UserSessions,
