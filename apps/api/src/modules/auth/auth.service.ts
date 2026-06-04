@@ -134,12 +134,7 @@ export class AuthService {
     await this.roleAssignmentsRepo.save(assignment);
 
     const tokens = await this.issueTokenPair(user);
-    void this.emailService
-      .sendWelcome({
-        to: user.email,
-        firstName: user.firstName,
-      })
-      .catch(() => undefined);
+    void this.notifyAccountCreated(user).catch(() => undefined);
     return { ...tokens, user: toAuthUserDto(user) };
   }
 
@@ -561,6 +556,21 @@ export class AuthService {
     } catch {
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
+  }
+
+  private async notifyAccountCreated(user: Users): Promise<void> {
+    await this.emailService.sendWelcome({
+      to: user.email,
+      firstName: user.firstName,
+    });
+    await this.emailService.sendSupportNewAccount({
+      userId: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      phone: user.phone ?? null,
+      preferredLanguage: user.preferredLanguage ?? null,
+    });
   }
 
   private requireSecret(key: string): string {
