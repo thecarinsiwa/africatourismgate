@@ -18,11 +18,13 @@ import type {
 } from './email.types';
 
 type EmailTransportMode = 'smtp' | 'mailpit' | 'ethereal' | 'disabled';
+type EmailChannel = 'service' | 'support';
 
 @Injectable()
 export class EmailService {
   private readonly logger = new Logger(EmailService.name);
-  private transporter: Transporter | null | undefined;
+  private serviceTransporter: Transporter | null | undefined;
+  private supportTransporter: Transporter | null | undefined;
   private etherealAccountLogged = false;
 
   constructor(private readonly config: ConfigService) {}
@@ -31,19 +33,26 @@ export class EmailService {
     payload: PasswordResetEmailPayload,
   ): Promise<SendMailResult> {
     const { subject, html, text } = renderPasswordResetEmail(payload);
-    return this.send({ to: payload.to, subject, html, text });
+    return this.send('service', { to: payload.to, subject, html, text });
   }
 
   async sendWelcome(payload: WelcomeEmailPayload): Promise<SendMailResult> {
-    const { subject, html, text } = renderWelcomeEmail(payload);
-    return this.send({ to: payload.to, subject, html, text });
+    const { subject, html, text } = renderWelcomeEmail({
+      ...payload,
+      webUrl: payload.webUrl ?? this.getWebUrl(),
+    });
+    return this.send('service', { to: payload.to, subject, html, text });
   }
 
   async sendBookingConfirmation(
     payload: BookingConfirmationEmailPayload,
   ): Promise<SendMailResult> {
-    const { subject, html, text } = renderBookingConfirmationEmail(payload);
-    return this.send({ to: payload.to, subject, html, text });
+    const { subject, html, text } = renderBookingConfirmationEmail({
+      ...payload,
+      webUrl: payload.webUrl ?? this.getWebUrl(),
+      confirmedAt: payload.confirmedAt ?? new Date().toISOString(),
+    });
+    return this.send('service', { to: payload.to, subject, html, text });
   }
 
   async sendSupportNewAccount(
@@ -57,7 +66,7 @@ export class EmailService {
       return { sent: false };
     }
     const { subject, html, text } = renderSupportNewAccountEmail(payload);
-    return this.send({ to: supportTo, subject, html, text });
+    return this.send('support', { to: supportTo, subject, html, text });
   }
 
   async sendSupportNewBooking(
@@ -71,15 +80,18 @@ export class EmailService {
       return { sent: false };
     }
     const { subject, html, text } = renderSupportNewBookingEmail(payload);
-    return this.send({ to: supportTo, subject, html, text });
+    return this.send('support', { to: supportTo, subject, html, text });
   }
 
-  private async send(options: {
-    to: string;
-    subject: string;
-    html: string;
-    text: string;
-  }): Promise<SendMailResult> {
+  private async send(
+    channel: EmailChannel,
+    options: {
+      to: string;
+      subject: string;
+      html: string;
+      text: string;
+    },
+  ): Promise<SendMailResult> {
     const to = options.to.trim();
     if (!to) {
       this.logger.warn('Email skipped: empty recipient');
@@ -94,16 +106,16 @@ export class EmailService {
     }
 
     try {
-      const transporter = await this.getTransporter();
+      const transporter = await this.getTransporter(channel);
       if (!transporter) {
         this.logger.warn(
-          `No SMTP transport configured. Would send "${options.subject}" to ${to}`,
+          `No SMTP transport configured (${channel}). Would send "${options.subject}" to ${to}`,
         );
         return { sent: false };
       }
 
       const info = await transporter.sendMail({
-        from: this.getFromAddress(),
+        from: this.getFromAddress(channel),
         to,
         subject: options.subject,
         html: options.html,
@@ -113,10 +125,10 @@ export class EmailService {
       const previewUrl = nodemailer.getTestMessageUrl(info) || undefined;
       if (previewUrl) {
         this.logger.log(
-          `Email sent "${options.subject}" → ${to} (preview: ${previewUrl})`,
+          `Email [${channel}] "${options.subject}" → ${to} (preview: ${previewUrl})`,
         );
       } else {
-        this.logger.log(`Email sent "${options.subject}" → ${to}`);
+        this.logger.log(`Email [${channel}] "${options.subject}" → ${to}`);
       }
 
       return {
@@ -127,7 +139,7 @@ export class EmailService {
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       this.logger.warn(
-        `Failed to send "${options.subject}" to ${to}: ${message}`,
+        `Failed [${channel}] "${options.subject}" to ${to}: ${message}`,
       );
       return { sent: false };
     }
@@ -138,16 +150,29 @@ export class EmailService {
     return flag.trim().toLowerCase() !== 'false';
   }
 
-  private getFromAddress(): string {
+  private getFromAddress(channel: EmailChannel): string {
+    if (channel === 'support') {
+      return (
+        this.config.get<string>('EMAIL_SUPPORT_FROM')?.trim() ||
+        'Africa Tourism Gate Support <support@africatourismgate.org>'
+      );
+    }
     return (
       this.config.get<string>('EMAIL_FROM')?.trim() ||
-      'Africa Tourism Gate <noreply@africatourismgate.local>'
+      'Africa Tourism Gate <service@africatourismgate.org>'
     );
   }
 
   private getSupportToAddress(): string | null {
     const value = this.config.get<string>('EMAIL_SUPPORT_TO')?.trim();
     return value || null;
+  }
+
+  private getWebUrl(): string {
+    return (
+      this.config.get<string>('NEXT_PUBLIC_WEB_URL')?.trim() ||
+      'https://africatourismgate.org'
+    );
   }
 
   private getTransportMode(): EmailTransportMode {
@@ -184,47 +209,98 @@ export class EmailService {
     return 'mailpit';
   }
 
-  private async getTransporter(): Promise<Transporter | null> {
-    if (this.transporter !== undefined) {
-      return this.transporter;
+  private async getTransporter(channel: EmailChannel): Promise<Transporter | null> {
+    const cache =
+      channel === 'service' ? this.serviceTransporter : this.supportTransporter;
+    if (cache !== undefined) {
+      return cache;
     }
 
     const mode = this.getTransportMode();
     if (mode === 'disabled') {
-      this.transporter = null;
+      this.setTransporterCache(channel, null);
       return null;
     }
 
     if (mode === 'ethereal') {
-      this.transporter = await this.createEtherealTransporter();
-      return this.transporter;
+      const t = await this.createEtherealTransporter();
+      this.setTransporterCache('service', t);
+      this.setTransporterCache('support', t);
+      return t;
     }
 
     if (mode === 'mailpit') {
-      this.transporter = nodemailer.createTransport({
+      const t = nodemailer.createTransport({
         host: this.config.get<string>('SMTP_HOST', 'localhost'),
         port: Number(this.config.get<string>('SMTP_PORT', '1025')),
         secure: this.config.get<string>('SMTP_SECURE', 'false') === 'true',
         ignoreTLS: true,
       });
-      return this.transporter;
+      this.setTransporterCache('service', t);
+      this.setTransporterCache('support', t);
+      return t;
     }
 
     const host = this.config.get<string>('SMTP_HOST')?.trim();
     if (!host) {
-      this.transporter = null;
+      this.setTransporterCache(channel, null);
       return null;
     }
 
-    const user = this.config.get<string>('SMTP_USER')?.trim();
-    const pass = this.config.get<string>('SMTP_PASS')?.trim();
-    this.transporter = nodemailer.createTransport({
+    const port = Number(this.config.get<string>('SMTP_PORT', '465'));
+    const secure = this.config.get<string>('SMTP_SECURE', 'true') === 'true';
+    const auth = this.getSmtpAuth(channel);
+
+    const t = nodemailer.createTransport({
       host,
-      port: Number(this.config.get<string>('SMTP_PORT', '587')),
-      secure: this.config.get<string>('SMTP_SECURE', 'false') === 'true',
-      auth: user && pass ? { user, pass } : undefined,
+      port,
+      secure,
+      auth,
+      ...(port === 587 && !secure ? { requireTLS: true } : {}),
     });
-    return this.transporter;
+
+    this.setTransporterCache(channel, t);
+    return t;
+  }
+
+  private getSmtpAuth(
+    channel: EmailChannel,
+  ): { user: string; pass: string } | undefined {
+    const serviceUser =
+      this.config.get<string>('SMTP_SERVICE_USER')?.trim() ||
+      this.config.get<string>('SMTP_USER')?.trim();
+    const servicePass =
+      this.config.get<string>('SMTP_SERVICE_PASS')?.trim() ||
+      this.config.get<string>('SMTP_PASS')?.trim();
+
+    const supportUser = this.config.get<string>('SMTP_SUPPORT_USER')?.trim();
+    const supportPass = this.config.get<string>('SMTP_SUPPORT_PASS')?.trim();
+
+    if (channel === 'support') {
+      if (supportUser && supportPass) {
+        return { user: supportUser, pass: supportPass };
+      }
+      if (serviceUser && servicePass) {
+        return { user: serviceUser, pass: servicePass };
+      }
+      return undefined;
+    }
+
+    if (serviceUser && servicePass) {
+      return { user: serviceUser, pass: servicePass };
+    }
+    return undefined;
+  }
+
+  private setTransporterCache(
+    channel: EmailChannel,
+    transporter: Transporter | null,
+  ): void {
+    if (channel === 'service') {
+      this.serviceTransporter = transporter;
+    } else {
+      this.supportTransporter = transporter;
+    }
   }
 
   private async createEtherealTransporter(): Promise<Transporter> {

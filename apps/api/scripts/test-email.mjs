@@ -17,10 +17,11 @@ import {
 
 loadEnv();
 
-const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000/api').replace(
-  /\/$/,
-  '',
-);
+const API_PORT = process.env.API_PORT ?? '3010';
+const API_PREFIX = process.env.API_GLOBAL_PREFIX ?? 'api';
+const API_URL = (
+  process.env.NEXT_PUBLIC_API_URL ?? `http://localhost:${API_PORT}/${API_PREFIX}`
+).replace(/\/$/, '');
 const SEED_ROOM_ID = '00000000-0000-4000-8000-000000002011';
 const TEST_DATE = '2099-12-02';
 
