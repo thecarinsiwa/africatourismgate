@@ -2,7 +2,6 @@ import { emailLogoImgHtml } from './email-attachments';
 import type {
   BookingConfirmationEmailPayload,
   PasswordResetEmailPayload,
-  PersonalVacationNotePayload,
   SupportNewAccountEmailPayload,
   SupportNewBookingEmailPayload,
   WelcomeEmailPayload,
@@ -406,116 +405,5 @@ ${items}
 `)}`,
   );
   const text = `Réservation ${payload.bookingId}\nClient: ${payload.clientName} <${payload.clientEmail}>\nTotal: ${formatMoney(payload.totalCents, payload.currency)}`;
-  return { subject, html, text };
-}
-
-function vacationLayout(title: string, bodyHtml: string, webUrl?: string): string {
-  const year = new Date().getFullYear();
-  const base = webBase(webUrl);
-  const sunset = '#f59e0b';
-  const sky = '#fff7ed';
-  const ocean = '#0e7490';
-  return `<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>${escapeHtml(title)}</title>
-</head>
-<body style="margin:0;padding:0;background:linear-gradient(180deg,${sky} 0%,${BRAND.surface} 100%);font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:${BRAND.text};">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="padding:36px 14px;">
-    <tr>
-      <td align="center">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:${BRAND.white};border-radius:24px;overflow:hidden;box-shadow:0 12px 40px rgba(14,116,144,0.15);border:1px solid ${BRAND.border};">
-          <tr>
-            <td style="padding:36px 32px 28px;text-align:center;background:linear-gradient(135deg,${ocean} 0%,${BRAND.primary} 45%,${sunset} 100%);">
-              <p style="margin:0 0 8px;font-size:36px;line-height:1;">🌴☀️🌊</p>
-              <p style="margin:0;font-size:13px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.9);">Bonnes vacances</p>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding:18px 32px 8px;">
-              <table role="presentation" cellpadding="0" cellspacing="0" align="center">
-                <tr>
-                  <td style="vertical-align:middle;padding-right:10px;">${emailLogoImgHtml('Africa Tourism Gate', 40)}</td>
-                  <td style="vertical-align:middle;">
-                    <p style="margin:0;font-size:14px;font-weight:800;color:${BRAND.text};">Africa Tourism Gate</p>
-                    <p style="margin:2px 0 0;font-size:11px;color:${BRAND.muted};">Connect People to Adventures</p>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding:8px 36px 32px;">
-              ${bodyHtml}
-            </td>
-          </tr>
-          <tr>
-            <td style="padding:0 36px 32px;text-align:center;">
-              <p style="margin:0;font-size:12px;color:${BRAND.muted};">© ${year} <a href="${escapeHtml(base)}" style="color:${BRAND.primary};text-decoration:none;font-weight:600;">Africa Tourism Gate</a></p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>`;
-}
-
-function noteBlock(icon: string, title: string, content: string): string {
-  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:16px 0;background:${BRAND.surface};border-left:4px solid ${BRAND.primary};border-radius:0 14px 14px 0;">
-  <tr>
-    <td style="padding:18px 22px;">
-      <p style="margin:0 0 8px;font-size:14px;font-weight:800;color:${BRAND.primary};">${icon} ${escapeHtml(title)}</p>
-      <p style="margin:0;font-size:15px;line-height:1.75;color:${BRAND.text};">${content}</p>
-    </td>
-  </tr>
-</table>`;
-}
-
-export function renderPersonalVacationNoteEmail(
-  payload: PersonalVacationNotePayload,
-): { subject: string; html: string; text: string } {
-  const name = escapeHtml(payload.recipientName.trim());
-  const subject = 'Bonnes vacances — Africa Tourism Gate';
-  const html = vacationLayout(
-    subject,
-    `<p style="margin:0 0 6px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:${BRAND.muted};">Message personnel</p>
-<h1 style="margin:0 0 24px;font-size:26px;font-weight:800;color:${BRAND.text};line-height:1.3;letter-spacing:-0.02em;">Très cher ${name},</h1>
-<p style="margin:0 0 18px;font-size:16px;line-height:1.8;color:${BRAND.text};">J'espère que ce message vous trouve en toute <strong>quiétude</strong>, et que vous passez de <strong>belles vacances</strong>.</p>
-<p style="margin:0 0 18px;font-size:16px;line-height:1.8;color:${BRAND.text};">Je vous ai envoyé deux e-mails de démonstration&nbsp;: l'un pour la <strong>création de compte</strong>, l'autre pour une <strong>confirmation de réservation</strong>.</p>
-${noteBlock('🎨', 'Retour design', 'Fort de votre expertise professionnelle en design, pourriez-vous, à votre retour de vacances, nous proposer des pistes d\'amélioration pour ces templates&nbsp;?')}
-${noteBlock('🔀', 'Avant le merge de la PR', `<strong>E-mails de relance</strong> — Serait-il pertinent d'envoyer un rappel lorsqu'un utilisateur démarre la création de compte ou une réservation sans terminer le processus&nbsp;? Cette pratique est courante sur de nombreuses plateformes.<br/><br/><strong>Personnalisation admin</strong> — Serait-il possible d'ajouter, dans l'espace admin, une fonctionnalité permettant de personnaliser le design des e-mails&nbsp;?`)}
-<p style="margin:28px 0 18px;font-size:16px;line-height:1.8;color:${BRAND.text};">Merci pour votre compréhension.</p>
-<p style="margin:0 0 6px;font-size:17px;font-weight:700;color:${BRAND.primary};">Passez d'excellentes vacances&nbsp;! 🌞</p>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:32px;padding-top:24px;border-top:1px solid ${BRAND.border};">
-  <tr>
-    <td>
-      <p style="margin:0 0 4px;font-size:15px;font-weight:700;color:${BRAND.text};">Best regards,</p>
-      <p style="margin:0;font-size:15px;font-weight:800;color:${BRAND.primary};">Africa Tourism Gate</p>
-    </td>
-  </tr>
-</table>`,
-    payload.webUrl,
-  );
-  const plainName = payload.recipientName.trim();
-  const text = `Très cher ${plainName},
-
-J'espère que ce message vous trouve en toute quiétude, et que vous passez de belles vacances.
-
-Je vous ai envoyé deux e-mails de démonstration : l'un pour la création de compte, l'autre pour une confirmation de réservation.
-
-Fort de votre expertise en design, pourriez-vous, à votre retour, nous proposer des pistes d'amélioration ?
-
-Avant le merge de la PR :
-- E-mails de relance pour processus abandonnés (création compte / réservation) ?
-- Personnalisation du design des e-mails dans l'admin ?
-
-Merci pour votre compréhension. Passez d'excellentes vacances !
-
-Best regards,
-Africa Tourism Gate`;
   return { subject, html, text };
 }
