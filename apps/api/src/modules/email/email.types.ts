@@ -13,6 +13,8 @@ export type PasswordResetEmailPayload = {
 export type WelcomeEmailPayload = {
   to: string;
   firstName: string;
+  /** Public site URL for CTAs (defaults to https://africatourismgate.org). */
+  webUrl?: string;
 };
 
 export type BookingConfirmationEmailPayload = {
@@ -22,6 +24,8 @@ export type BookingConfirmationEmailPayload = {
   totalCents: number;
   currency: string;
   itemTitles: string[];
+  webUrl?: string;
+  confirmedAt?: string;
 };
 
 /** Internal notification to the support team (new customer account). */
@@ -32,6 +36,13 @@ export type SupportNewAccountEmailPayload = {
   lastName: string;
   phone?: string | null;
   preferredLanguage?: string | null;
+};
+
+/** Message personnel (ex. note vacances, communication interne). */
+export type PersonalVacationNotePayload = {
+  to: string;
+  recipientName: string;
+  webUrl?: string;
 };
 
 /** Internal notification to the support team (booking confirmed). */
