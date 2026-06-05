@@ -114,7 +114,7 @@ export class PasswordResetTokens extends BaseAuditEntity {
   expiresAt!: Date;
 
   @Column({ type: 'datetime', name: 'used_at', nullable: true })
-  usedAt!: Date;
+  usedAt!: Date | null;
 
 }
 

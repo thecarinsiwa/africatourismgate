@@ -196,7 +196,8 @@ function buildEntityBody(table) {
       const typeOpt = columnType === 'enum' ? '' : `type: '${columnType}', `;
       lines.push(`  @Column({ ${typeOpt}${opts.join(', ')} })`);
     }
-    lines.push(`  ${prop}!: ${tsType};`, '');
+    const propType = col.nullable && !tsType.includes('|') ? `${tsType} | null` : tsType;
+    lines.push(`  ${prop}!: ${propType};`, '');
   }
 
   lines.push('}');

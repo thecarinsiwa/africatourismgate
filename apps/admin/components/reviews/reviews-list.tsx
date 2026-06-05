@@ -392,9 +392,10 @@ export function ReviewsList() {
       {state.status === 'ready' && state.totalPages > 1 ? (
         <DataTablePagination
           page={page}
-          totalPages={state.totalPages}
-          total={state.total}
           pageSize={PAGE_SIZE}
+          totalPages={state.totalPages}
+          totalItems={state.total}
+          itemLabel="avis"
           onPageChange={setPage}
         />
       ) : null}
