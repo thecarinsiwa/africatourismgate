@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn, CreateDateColumn } from 'typeorm';
 import { BaseAuditEntity } from '../../common/entities/base-audit.entity';
 @Entity('bookings')
 export class Bookings extends BaseAuditEntity {
@@ -18,10 +18,10 @@ export class Bookings extends BaseAuditEntity {
   currency!: string;
 
   @Column({ type: 'varchar', name: 'promo_code_id', length: 36, nullable: true })
-  promoCodeId!: string;
+  promoCodeId!: string | null;
 
   @Column({ type: 'varchar', name: 'promotion_id', length: 36, nullable: true })
-  promotionId!: string;
+  promotionId!: string | null;
 
 }
 
@@ -49,15 +49,15 @@ export class BookingItems extends BaseAuditEntity {
   unitPriceCents!: number;
 
   @Column({ type: 'date', name: 'start_date', nullable: true })
-  startDate!: string;
+  startDate!: string | null;
 
   @Column({ type: 'date', name: 'end_date', nullable: true })
-  endDate!: string;
+  endDate!: string | null;
 
 }
 
 @Entity('booking_status_history')
-export class BookingStatusHistory extends BaseAuditEntity {
+export class BookingStatusHistory {
   @PrimaryColumn('uuid', { name: 'id', length: 36 })
   id!: string;
 
@@ -71,10 +71,13 @@ export class BookingStatusHistory extends BaseAuditEntity {
   toStatus!: 'draft' | 'pending_payment' | 'confirmed' | 'cancelled' | 'refunded';
 
   @Column({ type: 'text', name: 'reason', nullable: true })
-  reason!: string;
+  reason!: string | null;
 
   @Column({ type: 'varchar', name: 'changed_by_user_id', length: 36, nullable: true })
-  changedByUserId!: string;
+  changedByUserId!: string | null;
+
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
+  createdAt!: Date;
 
 }
 
@@ -96,10 +99,10 @@ export class Payments extends BaseAuditEntity {
   status!: 'pending' | 'succeeded' | 'failed' | 'refunded';
 
   @Column({ type: 'varchar', name: 'provider', length: 64, nullable: true })
-  provider!: string;
+  provider!: string | null;
 
   @Column({ type: 'varchar', name: 'external_id', length: 255, nullable: true })
-  externalId!: string;
+  externalId!: string | null;
 
 }
 
@@ -124,7 +127,7 @@ export class PromoCodes extends BaseAuditEntity {
   validUntil!: string;
 
   @Column({ type: 'int', name: 'max_redemptions', nullable: true })
-  maxRedemptions!: number;
+  maxRedemptions!: number | null;
 
   @Column({ type: 'int', name: 'redemption_count' })
   redemptionCount!: number;
@@ -143,22 +146,22 @@ export class Promotions extends BaseAuditEntity {
   name!: string;
 
   @Column({ type: 'text', name: 'description', nullable: true })
-  description!: string;
+  description!: string | null;
 
   @Column({ name: 'discount_type', enum: ["percent","fixed_amount"], nullable: true })
   discountType!: 'percent' | 'fixed_amount';
 
   @Column({ type: 'decimal', name: 'discount_value', precision: 12, scale: 2, nullable: true })
-  discountValue!: string;
+  discountValue!: string | null;
 
   @Column({ type: 'date', name: 'valid_from', nullable: true })
-  validFrom!: string;
+  validFrom!: string | null;
 
   @Column({ type: 'date', name: 'valid_until', nullable: true })
-  validUntil!: string;
+  validUntil!: string | null;
 
   @Column({ type: 'int', name: 'max_redemptions', nullable: true })
-  maxRedemptions!: number;
+  maxRedemptions!: number | null;
 
   @Column({ type: 'int', name: 'redemption_count' })
   redemptionCount!: number;

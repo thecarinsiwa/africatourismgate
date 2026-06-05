@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn, CreateDateColumn } from 'typeorm';
 import { BaseAuditEntity } from '../../common/entities/base-audit.entity';
 @Entity('support_tickets')
 export class SupportTickets extends BaseAuditEntity {
@@ -25,7 +25,7 @@ export class SupportMessages extends BaseAuditEntity {
   ticketId!: string;
 
   @Column({ type: 'varchar', name: 'user_id', length: 36, nullable: true })
-  userId!: string;
+  userId!: string | null;
 
   @Column({ type: 'text', name: 'body' })
   body!: string;

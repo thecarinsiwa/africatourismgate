@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn, CreateDateColumn } from 'typeorm';
 import { BaseAuditEntity } from '../../common/entities/base-audit.entity';
 @Entity('organizations')
 export class Organizations extends BaseAuditEntity {
@@ -12,37 +12,37 @@ export class Organizations extends BaseAuditEntity {
   slug!: string;
 
   @Column({ type: 'text', name: 'description', nullable: true })
-  description!: string;
+  description!: string | null;
 
   @Column({ type: 'varchar', name: 'website', length: 255, nullable: true })
-  website!: string;
+  website!: string | null;
 
   @Column({ type: 'varchar', name: 'contact_email', length: 255, nullable: true })
-  contactEmail!: string;
+  contactEmail!: string | null;
 
   @Column({ type: 'varchar', name: 'contact_phone', length: 32, nullable: true })
-  contactPhone!: string;
+  contactPhone!: string | null;
 
   @Column({ type: 'varchar', name: 'logo_url', length: 512, nullable: true })
-  logoUrl!: string;
+  logoUrl!: string | null;
 
   @Column({ type: 'varchar', name: 'favicon_url', length: 512, nullable: true })
-  faviconUrl!: string;
+  faviconUrl!: string | null;
 
   @Column({ type: 'varchar', name: 'legal_form', length: 50, nullable: true })
-  legalForm!: string;
+  legalForm!: string | null;
 
   @Column({ type: 'varchar', name: 'rccm', length: 100, nullable: true })
-  rccm!: string;
+  rccm!: string | null;
 
   @Column({ type: 'varchar', name: 'id_nat', length: 100, nullable: true })
-  idNat!: string;
+  idNat!: string | null;
 
   @Column({ type: 'varchar', name: 'nif', length: 100, nullable: true })
-  nif!: string;
+  nif!: string | null;
 
   @Column({ type: 'varchar', name: 'cnss', length: 100, nullable: true })
-  cnss!: string;
+  cnss!: string | null;
 
   @Column({ type: 'varchar', name: 'currency', length: 3 })
   currency!: string;
@@ -89,7 +89,7 @@ export class OrganizationBankAccounts extends BaseAuditEntity {
   accountNumber!: string;
 
   @Column({ type: 'varchar', name: 'swift_bic', length: 32, nullable: true })
-  swiftBic!: string;
+  swiftBic!: string | null;
 
   @Column({ type: 'varchar', name: 'currency', length: 3 })
   currency!: string;

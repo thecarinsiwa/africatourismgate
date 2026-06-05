@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn, CreateDateColumn } from 'typeorm';
 import { BaseAuditEntity } from '../../common/entities/base-audit.entity';
 @Entity('packages')
 export class Packages extends BaseAuditEntity {
@@ -9,7 +9,7 @@ export class Packages extends BaseAuditEntity {
   name!: string;
 
   @Column({ type: 'text', name: 'description', nullable: true })
-  description!: string;
+  description!: string | null;
 
   @Column({ type: 'decimal', name: 'discount_percent', precision: 5, scale: 2 })
   discountPercent!: string;
