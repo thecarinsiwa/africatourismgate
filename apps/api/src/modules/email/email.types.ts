@@ -38,13 +38,6 @@ export type SupportNewAccountEmailPayload = {
   preferredLanguage?: string | null;
 };
 
-/** Message personnel (ex. note vacances, communication interne). */
-export type PersonalVacationNotePayload = {
-  to: string;
-  recipientName: string;
-  webUrl?: string;
-};
-
 /** Internal notification to the support team (booking confirmed). */
 export type SupportNewBookingEmailPayload = {
   bookingId: string;
