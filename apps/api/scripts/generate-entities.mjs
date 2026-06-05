@@ -163,15 +163,15 @@ function parseTables(sql) {
 
 function buildEntityBody(table) {
   const className = toPascal(table.name);
-  const hasAudit = table.columns.some((c) => c.name === 'created_at');
-  const extendsAudit = hasAudit ? ' extends BaseAuditEntity' : '';
+  const hasFullAudit = table.columns.some((c) => c.name === 'created_by_user_id');
+  const extendsAudit = hasFullAudit ? ' extends BaseAuditEntity' : '';
 
   const lines = [`@Entity('${table.name}')`, `export class ${className}${extendsAudit} {`];
 
   const isCompositePk = table.primaryKeys.length > 1;
 
   for (const col of table.columns) {
-    if (AUDIT_COLS.has(col.name) && hasAudit) continue;
+    if (AUDIT_COLS.has(col.name) && hasFullAudit) continue;
     const prop = toCamel(col.name);
     const { tsType, columnType, enumValues } = sqlTypeToTs(col);
     const opts = [`name: '${col.name}'`];
@@ -188,6 +188,11 @@ function buildEntityBody(table) {
     if (col.name === 'password_hash') opts.push("select: false");
 
     const isPk = table.primaryKeys.includes(col.name);
+    if (col.name === 'created_at' && !hasFullAudit) {
+      lines.push(`  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })`);
+      lines.push(`  ${prop}!: Date;`, '');
+      continue;
+    }
     if (isPk && isCompositePk) {
       lines.push(`  @PrimaryColumn({ ${opts.join(', ')} })`);
     } else if (isPk && col.name === 'id') {
@@ -196,7 +201,8 @@ function buildEntityBody(table) {
       const typeOpt = columnType === 'enum' ? '' : `type: '${columnType}', `;
       lines.push(`  @Column({ ${typeOpt}${opts.join(', ')} })`);
     }
-    lines.push(`  ${prop}!: ${tsType};`, '');
+    const propType = col.nullable && !tsType.includes('|') ? `${tsType} | null` : tsType;
+    lines.push(`  ${prop}!: ${propType};`, '');
   }
 
   lines.push('}');
@@ -218,7 +224,7 @@ const allExports = [];
 for (const [domain, domainTables] of Object.entries(byDomain)) {
   const parts = domainTables.map((t) => buildEntityBody(t));
   const header = [
-    "import { Entity, Column, PrimaryColumn } from 'typeorm';",
+    "import { Entity, Column, PrimaryColumn, CreateDateColumn } from 'typeorm';",
     "import { BaseAuditEntity } from '../../common/entities/base-audit.entity';",
     '',
   ].join('\n');

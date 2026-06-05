@@ -189,7 +189,46 @@ async function main() {
     throw new Error('Expected review on booking detail');
   }
 
-  console.log('6. GET /public/accommodations/:id — averageRating + reviewCount');
+  console.log('6. GET /reviews/:id (admin) — status pending');
+  const adminReview = await request('GET', `/reviews/${reviewId}`, {
+    token: adminToken,
+  });
+  assertStatus('GET admin review', adminReview.status, 200);
+  if (adminReview.data?.status !== 'pending') {
+    throw new Error(`Expected status pending, got ${adminReview.data?.status}`);
+  }
+  console.log('  OK status=pending');
+
+  console.log('7. Pending review hidden from public listing');
+  const propertyBeforeApprove = await request(
+    'GET',
+    `/public/accommodations/${SEED_PROPERTY_ID}?guests=2`,
+  );
+  assertStatus('GET public property (pending)', propertyBeforeApprove.status, 200);
+  const publicReviewsPending = await request(
+    'GET',
+    `/public/accommodations/${SEED_PROPERTY_ID}/reviews?limit=50`,
+  );
+  assertStatus('GET public reviews (pending)', publicReviewsPending.status, 200);
+  const listedWhilePending = (publicReviewsPending.data?.data ?? []).some(
+    (r) => r.id === reviewId,
+  );
+  if (listedWhilePending) {
+    throw new Error('Pending review must not appear on public property page');
+  }
+  console.log('  OK pending review excluded from public list');
+
+  console.log('8. PATCH /reviews/:id — approve');
+  const approve = await request('PATCH', `/reviews/${reviewId}`, {
+    token: adminToken,
+    body: { status: 'approved' },
+  });
+  assertStatus('PATCH approve review', approve.status, 200);
+  if (approve.data?.status !== 'approved') {
+    throw new Error(`Expected approved, got ${approve.data?.status}`);
+  }
+
+  console.log('9. GET /public/accommodations/:id — visible after approval');
   const propertyDetail = await request(
     'GET',
     `/public/accommodations/${SEED_PROPERTY_ID}?guests=2`,
@@ -205,7 +244,6 @@ async function main() {
     `  OK averageRating=${propertyDetail.data.averageRating}, reviewCount=${propertyDetail.data.reviewCount}`,
   );
 
-  console.log('7. GET /public/accommodations/:id/reviews');
   const publicReviews = await request(
     'GET',
     `/public/accommodations/${SEED_PROPERTY_ID}/reviews?limit=10`,
@@ -213,11 +251,38 @@ async function main() {
   assertStatus('GET public reviews', publicReviews.status, 200);
   const found = (publicReviews.data?.data ?? []).some((r) => r.id === reviewId);
   if (!found) {
-    throw new Error('Submitted review not in public list');
+    throw new Error('Approved review not in public list');
   }
   console.log(`  OK ${publicReviews.data.data.length} review(s) listed`);
 
-  console.log('8. Future stay — POST review → 400');
+  console.log('10. PATCH /reviews/:id — hide');
+  const hide = await request('PATCH', `/reviews/${reviewId}`, {
+    token: adminToken,
+    body: { status: 'hidden' },
+  });
+  assertStatus('PATCH hide review', hide.status, 200);
+
+  const publicAfterHide = await request(
+    'GET',
+    `/public/accommodations/${SEED_PROPERTY_ID}/reviews?limit=50`,
+  );
+  assertStatus('GET public reviews (hidden)', publicAfterHide.status, 200);
+  if ((publicAfterHide.data?.data ?? []).some((r) => r.id === reviewId)) {
+    throw new Error('Hidden review must not appear on public property page');
+  }
+  console.log('  OK hidden review excluded from public list');
+
+  console.log('11. DELETE /reviews/:id — soft delete');
+  const del = await request('DELETE', `/reviews/${reviewId}`, { token: adminToken });
+  assertStatus('DELETE review', del.status, 200);
+  const adminList = await request('GET', '/reviews?limit=100', { token: adminToken });
+  assertStatus('GET admin reviews list', adminList.status, 200);
+  if ((adminList.data?.data ?? []).some((r) => r.id === reviewId)) {
+    throw new Error('Deleted review should not appear in admin list');
+  }
+  console.log('  OK soft-deleted review absent from admin list');
+
+  console.log('12. Future stay — POST review → 400');
   const futureBookingId = await createConfirmedBooking(customerToken, FUTURE_DATE, FUTURE_DATE);
   const tooEarly = await request('POST', `/bookings/${futureBookingId}/reviews`, {
     token: customerToken,

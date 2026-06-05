@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn, CreateDateColumn } from 'typeorm';
 import { BaseAuditEntity } from '../../common/entities/base-audit.entity';
 @Entity('users')
 export class Users extends BaseAuditEntity {
@@ -18,27 +18,27 @@ export class Users extends BaseAuditEntity {
   lastName!: string;
 
   @Column({ type: 'varchar', name: 'phone', length: 32, nullable: true })
-  phone!: string;
+  phone!: string | null;
 
-  @Column({ type: 'enum', name: 'gender', enum: ["M","F","other"], nullable: true })
+  @Column({ name: 'gender', enum: ["M","F","other"], nullable: true })
   gender!: 'M' | 'F' | 'other';
 
   @Column({ type: 'date', name: 'date_of_birth', nullable: true })
-  dateOfBirth!: string;
+  dateOfBirth!: string | null;
 
   @Column({ type: 'varchar', name: 'avatar_url', length: 512, nullable: true })
-  avatarUrl!: string;
+  avatarUrl!: string | null;
 
   @Column({ type: 'varchar', name: 'preferred_language', length: 2, nullable: true })
-  preferredLanguage!: string;
+  preferredLanguage!: string | null;
 
   @Column({ type: 'datetime', name: 'last_login_at', nullable: true })
-  lastLoginAt!: Date;
+  lastLoginAt!: Date | null;
 
   @Column({ type: 'varchar', name: 'organization_id', length: 36, nullable: true })
-  organizationId!: string;
+  organizationId!: string | null;
 
-  @Column({ type: 'enum', name: 'status', enum: ["active","suspended","deleted"] })
+  @Column({ name: 'status', enum: ["active","suspended","deleted"] })
   status!: 'active' | 'suspended' | 'deleted';
 
 }
@@ -52,33 +52,33 @@ export class Employees extends BaseAuditEntity {
   userId!: string;
 
   @Column({ type: 'varchar', name: 'organization_id', length: 36, nullable: true })
-  organizationId!: string;
+  organizationId!: string | null;
 
   @Column({ type: 'varchar', name: 'employee_code', length: 50, nullable: true })
-  employeeCode!: string;
+  employeeCode!: string | null;
 
   @Column({ type: 'varchar', name: 'job_title', length: 100, nullable: true })
-  jobTitle!: string;
+  jobTitle!: string | null;
 
   @Column({ type: 'varchar', name: 'department', length: 100, nullable: true })
-  department!: string;
+  department!: string | null;
 
   @Column({ type: 'date', name: 'hire_date', nullable: true })
-  hireDate!: string;
+  hireDate!: string | null;
 
   @Column({ type: 'date', name: 'termination_date', nullable: true })
-  terminationDate!: string;
+  terminationDate!: string | null;
 
   @Column({ type: 'decimal', name: 'salary', precision: 15, scale: 2, nullable: true })
-  salary!: string;
+  salary!: string | null;
 
   @Column({ type: 'varchar', name: 'currency', length: 3, nullable: true })
-  currency!: string;
+  currency!: string | null;
 
   @Column({ type: 'varchar', name: 'manager_id', length: 36, nullable: true })
-  managerId!: string;
+  managerId!: string | null;
 
-  @Column({ type: 'enum', name: 'status', enum: ["active","on_leave","terminated"] })
+  @Column({ name: 'status', enum: ["active","on_leave","terminated"] })
   status!: 'active' | 'on_leave' | 'terminated';
 
 }
@@ -116,8 +116,9 @@ export class PasswordResetTokens {
   @Column({ type: 'datetime', name: 'used_at', nullable: true })
   usedAt!: Date | null;
 
-  @Column({ type: 'timestamp', name: 'created_at' })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt!: Date;
+
 }
 
 @Entity('user_addresses')
@@ -129,22 +130,22 @@ export class UserAddresses extends BaseAuditEntity {
   userId!: string;
 
   @Column({ type: 'varchar', name: 'label', length: 80, nullable: true })
-  label!: string;
+  label!: string | null;
 
   @Column({ type: 'varchar', name: 'line1', length: 255 })
   line1!: string;
 
   @Column({ type: 'varchar', name: 'line2', length: 255, nullable: true })
-  line2!: string;
+  line2!: string | null;
 
   @Column({ type: 'varchar', name: 'city', length: 120 })
   city!: string;
 
   @Column({ type: 'varchar', name: 'region', length: 120, nullable: true })
-  region!: string;
+  region!: string | null;
 
   @Column({ type: 'varchar', name: 'postal_code', length: 32, nullable: true })
-  postalCode!: string;
+  postalCode!: string | null;
 
   @Column({ type: 'varchar', name: 'country_code', length: 2 })
   countryCode!: string;
@@ -162,17 +163,17 @@ export class UserPaymentMethods extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'user_id', length: 36 })
   userId!: string;
 
-  @Column({ type: 'enum', name: 'type', enum: ["card","paypal","other"] })
+  @Column({ name: 'type', enum: ["card","paypal","other"] })
   type!: 'card' | 'paypal' | 'other';
 
   @Column({ type: 'varchar', name: 'provider', length: 64, nullable: true })
-  provider!: string;
+  provider!: string | null;
 
   @Column({ type: 'varchar', name: 'last_four', length: 4, nullable: true })
-  lastFour!: string;
+  lastFour!: string | null;
 
   @Column({ type: 'varchar', name: 'external_token', length: 255, nullable: true })
-  externalToken!: string;
+  externalToken!: string | null;
 
   @Column({ type: 'int', name: 'is_default' })
   isDefault!: number;
@@ -193,7 +194,7 @@ export class LoyaltyAccounts extends BaseAuditEntity {
   @Column({ type: 'int', name: 'points_balance' })
   pointsBalance!: number;
 
-  @Column({ type: 'enum', name: 'tier', enum: ["member","silver","gold","platinum"] })
+  @Column({ name: 'tier', enum: ["member","silver","gold","platinum"] })
   tier!: 'member' | 'silver' | 'gold' | 'platinum';
 
 }

@@ -15,12 +15,16 @@ import { CrudService } from '../../../common/crud/crud.service';
 import {
   BookingItems,
   Bookings,
+  Properties,
   Reviews,
   Rooms,
   Users,
 } from '../../../entities/generated';
+import { AdminReviewDetailDto } from './dto/admin-review-detail.dto';
+import { AdminReviewListItemDto } from './dto/admin-review-list-item.dto';
 import { CreateBookingReviewDto } from './dto/create-booking-review.dto';
 import { PropertyReviewSummaryDto, ReviewDto } from './dto/review.dto';
+import { ReviewsListQueryDto } from './dto/reviews-list-query.dto';
 import { isStayEnded } from './review-stay.util';
 
 type ReviewRow = {
@@ -30,6 +34,19 @@ type ReviewRow = {
   body: string | null;
   createdAt: Date;
   authorFirstName: string | null;
+};
+
+type AdminReviewRow = {
+  id: string;
+  rating: string | number;
+  status: Reviews['status'];
+  createdAt: Date;
+  authorFirstName: string | null;
+  authorEmail: string | null;
+  entityType: Reviews['entityType'];
+  entityId: string;
+  propertyId: string | null;
+  propertyName: string | null;
 };
 
 @Injectable()
@@ -45,6 +62,8 @@ export class ReviewsService extends CrudService<Reviews> {
     private readonly roomsRepository: Repository<Rooms>,
     @InjectRepository(Users)
     private readonly usersRepository: Repository<Users>,
+    @InjectRepository(Properties)
+    private readonly propertiesRepository: Repository<Properties>,
   ) {
     super(reviewsRepository);
   }
@@ -129,6 +148,7 @@ export class ReviewsService extends CrudService<Reviews> {
           rating: dto.rating,
           title: dto.title?.trim() || undefined,
           body: dto.body?.trim() || undefined,
+          status: 'pending',
         },
         actorUserId ?? userId,
       );
@@ -222,6 +242,130 @@ export class ReviewsService extends CrudService<Reviews> {
     };
   }
 
+  async listForAdmin(
+    query: ReviewsListQueryDto,
+  ): Promise<PaginatedResult<AdminReviewListItemDto>> {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 20;
+
+    const qb = this.adminListQueryBuilder();
+    if (query.rating != null) {
+      qb.andWhere('r.rating = :rating', { rating: query.rating });
+    }
+    if (query.status) {
+      qb.andWhere('r.status = :status', { status: query.status });
+    }
+    if (query.propertyId) {
+      qb.andWhere('rm.propertyId = :propertyId', { propertyId: query.propertyId });
+    }
+
+    const total = Number(
+      (
+        await qb
+          .clone()
+          .select('COUNT(DISTINCT r.id)', 'count')
+          .getRawOne<{ count: string }>()
+      )?.count ?? 0,
+    );
+
+    const rows = await qb
+      .select('r.id', 'id')
+      .addSelect('r.rating', 'rating')
+      .addSelect('r.status', 'status')
+      .addSelect('r.createdAt', 'createdAt')
+      .addSelect('u.firstName', 'authorFirstName')
+      .addSelect('u.email', 'authorEmail')
+      .addSelect('r.entityType', 'entityType')
+      .addSelect('r.entityId', 'entityId')
+      .addSelect('rm.propertyId', 'propertyId')
+      .addSelect('p.name', 'propertyName')
+      .groupBy('r.id')
+      .addGroupBy('r.rating')
+      .addGroupBy('r.status')
+      .addGroupBy('r.createdAt')
+      .addGroupBy('u.firstName')
+      .addGroupBy('u.email')
+      .addGroupBy('r.entityType')
+      .addGroupBy('r.entityId')
+      .addGroupBy('rm.propertyId')
+      .addGroupBy('p.name')
+      .orderBy('r.createdAt', 'DESC')
+      .offset((page - 1) * limit)
+      .limit(limit)
+      .getRawMany<AdminReviewRow>();
+
+    return {
+      data: rows.map((row) => this.toAdminListItem(row)),
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit) || 1,
+      },
+    };
+  }
+
+  async findOneForAdmin(id: string): Promise<AdminReviewDetailDto> {
+    const review = await this.reviewsRepository.findOne({
+      where: { id, deletedAt: IsNull() },
+    });
+    if (!review) {
+      throw new NotFoundException(`Resource ${id} not found`);
+    }
+
+    const author = await this.usersRepository.findOne({
+      where: { id: review.userId, deletedAt: IsNull() },
+    });
+    const propertyId = await this.resolvePropertyIdForReview(review);
+    let propertyName: string | null = null;
+    if (propertyId) {
+      const property = await this.propertiesRepository.findOne({
+        where: { id: propertyId, deletedAt: IsNull() },
+      });
+      propertyName = property?.name ?? null;
+    }
+
+    return {
+      id: review.id,
+      rating: review.rating,
+      status: review.status,
+      createdAt: review.createdAt.toISOString(),
+      updatedAt: review.updatedAt?.toISOString() ?? null,
+      authorFirstName: author?.firstName ?? null,
+      authorEmail: author?.email ?? null,
+      entityType: review.entityType,
+      entityId: review.entityId,
+      propertyId,
+      propertyName,
+      userId: review.userId,
+      title: review.title || null,
+      body: review.body || null,
+    };
+  }
+
+  async updateStatus(
+    id: string,
+    status: 'approved' | 'hidden',
+    actorUserId: string,
+  ): Promise<AdminReviewDetailDto> {
+    await this.update(id, { status }, actorUserId);
+    return this.findOneForAdmin(id);
+  }
+
+  async removeReview(id: string, actorUserId: string): Promise<void> {
+    await this.remove(id, actorUserId);
+  }
+
+  private async resolvePropertyIdForReview(review: Reviews): Promise<string | null> {
+    if (review.entityType === 'booking') {
+      return this.resolvePropertyIdForBooking(review.entityId);
+    }
+    if (review.entityType === 'property') {
+      return review.entityId;
+    }
+    return null;
+  }
+
   async resolvePropertyIdForBooking(bookingId: string): Promise<string | null> {
     const roomItem = await this.bookingItemsRepository.findOne({
       where: {
@@ -259,7 +403,49 @@ export class ReviewsService extends CrudService<Reviews> {
       )
       .innerJoin(Users, 'u', 'u.id = r.userId AND u.deletedAt IS NULL')
       .where('r.deletedAt IS NULL')
+      .andWhere("r.status = 'approved'")
       .andWhere('rm.propertyId = :propertyId', { propertyId });
+  }
+
+  private adminListQueryBuilder() {
+    return this.reviewsRepository
+      .createQueryBuilder('r')
+      .innerJoin(Users, 'u', 'u.id = r.userId AND u.deletedAt IS NULL')
+      .leftJoin(
+        Bookings,
+        'b',
+        "b.id = r.entityId AND r.entityType = 'booking' AND b.deletedAt IS NULL",
+      )
+      .leftJoin(
+        BookingItems,
+        'bi',
+        "bi.bookingId = b.id AND bi.itemType = 'room' AND bi.deletedAt IS NULL",
+      )
+      .leftJoin(
+        Rooms,
+        'rm',
+        'rm.id = bi.referenceId AND rm.deletedAt IS NULL',
+      )
+      .leftJoin(Properties, 'p', 'p.id = rm.propertyId AND p.deletedAt IS NULL')
+      .where('r.deletedAt IS NULL');
+  }
+
+  private toAdminListItem(row: AdminReviewRow): AdminReviewListItemDto {
+    return {
+      id: row.id,
+      rating: Number(row.rating),
+      status: row.status,
+      createdAt:
+        row.createdAt instanceof Date
+          ? row.createdAt.toISOString()
+          : String(row.createdAt),
+      authorFirstName: row.authorFirstName,
+      authorEmail: row.authorEmail,
+      entityType: row.entityType,
+      entityId: row.entityId,
+      propertyId: row.propertyId,
+      propertyName: row.propertyName,
+    };
   }
 
   private toReviewDto(review: Reviews, authorFirstName: string | null): ReviewDto {

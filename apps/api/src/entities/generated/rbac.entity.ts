@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn, CreateDateColumn } from 'typeorm';
 import { BaseAuditEntity } from '../../common/entities/base-audit.entity';
 @Entity('permissions')
 export class Permissions extends BaseAuditEntity {
@@ -15,7 +15,7 @@ export class Permissions extends BaseAuditEntity {
   action!: string;
 
   @Column({ type: 'varchar', name: 'description', length: 255, nullable: true })
-  description!: string;
+  description!: string | null;
 
 }
 
@@ -31,7 +31,7 @@ export class Roles extends BaseAuditEntity {
   name!: string;
 
   @Column({ type: 'text', name: 'description', nullable: true })
-  description!: string;
+  description!: string | null;
 
   @Column({ type: 'int', name: 'is_system' })
   isSystem!: number;
@@ -50,7 +50,7 @@ export class RolePermissions extends BaseAuditEntity {
   grantedAt!: Date;
 
   @Column({ type: 'varchar', name: 'granted_by_user_id', length: 36, nullable: true })
-  grantedByUserId!: string;
+  grantedByUserId!: string | null;
 
 }
 
@@ -65,29 +65,29 @@ export class UserRoleAssignments extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'role_id', length: 36 })
   roleId!: string;
 
-  @Column({ type: 'enum', name: 'scope_type', enum: ["global","property","agency","support_queue"] })
+  @Column({ name: 'scope_type', enum: ["global","property","agency","support_queue"] })
   scopeType!: 'global' | 'property' | 'agency' | 'support_queue';
 
   @Column({ type: 'varchar', name: 'scope_id', length: 36, nullable: true })
-  scopeId!: string;
+  scopeId!: string | null;
 
   @Column({ type: 'varchar', name: 'assigned_by_user_id', length: 36, nullable: true })
-  assignedByUserId!: string;
+  assignedByUserId!: string | null;
 
   @Column({ type: 'datetime', name: 'assigned_at' })
   assignedAt!: Date;
 
   @Column({ type: 'datetime', name: 'expires_at', nullable: true })
-  expiresAt!: Date;
+  expiresAt!: Date | null;
 
   @Column({ type: 'datetime', name: 'revoked_at', nullable: true })
-  revokedAt!: Date;
+  revokedAt!: Date | null;
 
   @Column({ type: 'varchar', name: 'revoked_by_user_id', length: 36, nullable: true })
-  revokedByUserId!: string;
+  revokedByUserId!: string | null;
 
   @Column({ type: 'varchar', name: 'revoke_reason', length: 255, nullable: true })
-  revokeReason!: string;
+  revokeReason!: string | null;
 
 }
 
@@ -97,33 +97,33 @@ export class RbacAuditLogs extends BaseAuditEntity {
   id!: string;
 
   @Column({ type: 'varchar', name: 'event_type', nullable: true })
-  eventType!: unknown;
+  eventType!: unknown | null;
 
   @Column({ type: 'varchar', name: 'actor_user_id', length: 36, nullable: true })
-  actorUserId!: string;
+  actorUserId!: string | null;
 
   @Column({ type: 'varchar', name: 'target_user_id', length: 36, nullable: true })
-  targetUserId!: string;
+  targetUserId!: string | null;
 
   @Column({ type: 'varchar', name: 'role_id', length: 36, nullable: true })
-  roleId!: string;
+  roleId!: string | null;
 
   @Column({ type: 'varchar', name: 'permission_id', length: 36, nullable: true })
-  permissionId!: string;
+  permissionId!: string | null;
 
   @Column({ type: 'varchar', name: 'assignment_id', length: 36, nullable: true })
-  assignmentId!: string;
+  assignmentId!: string | null;
 
   @Column({ type: 'varchar', name: 'correlation_id', length: 36, nullable: true })
-  correlationId!: string;
+  correlationId!: string | null;
 
   @Column({ type: 'varchar', name: 'ip_address', length: 45, nullable: true })
-  ipAddress!: string;
+  ipAddress!: string | null;
 
   @Column({ type: 'varchar', name: 'user_agent', length: 512, nullable: true })
-  userAgent!: string;
+  userAgent!: string | null;
 
   @Column({ type: 'json', name: 'payload', nullable: true })
-  payload!: Record<string, unknown>;
+  payload!: Record<string, unknown> | null;
 
 }

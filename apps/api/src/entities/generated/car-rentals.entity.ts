@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn, CreateDateColumn } from 'typeorm';
 import { BaseAuditEntity } from '../../common/entities/base-audit.entity';
 @Entity('rental_agencies')
 export class RentalAgencies extends BaseAuditEntity {
@@ -9,10 +9,10 @@ export class RentalAgencies extends BaseAuditEntity {
   name!: string;
 
   @Column({ type: 'varchar', name: 'destination_id', length: 36, nullable: true })
-  destinationId!: string;
+  destinationId!: string | null;
 
   @Column({ type: 'varchar', name: 'address', length: 255, nullable: true })
-  address!: string;
+  address!: string | null;
 
 }
 
@@ -25,7 +25,7 @@ export class VehicleCategories extends BaseAuditEntity {
   name!: string;
 
   @Column({ type: 'varchar', name: 'example_model', length: 120, nullable: true })
-  exampleModel!: string;
+  exampleModel!: string | null;
 
 }
 
@@ -41,7 +41,7 @@ export class Vehicles extends BaseAuditEntity {
   categoryId!: string;
 
   @Column({ type: 'varchar', name: 'license_plate', length: 32, nullable: true })
-  licensePlate!: string;
+  licensePlate!: string | null;
 
   @Column({ type: 'int', name: 'daily_price_cents' })
   dailyPriceCents!: number;
@@ -65,7 +65,7 @@ export class VehicleAvailability extends BaseAuditEntity {
   @Column({ type: 'datetime', name: 'end_datetime' })
   endDatetime!: Date;
 
-  @Column({ type: 'enum', name: 'status', enum: ["available","maintenance","rented"] })
+  @Column({ name: 'status', enum: ["available","maintenance","rented"] })
   status!: 'available' | 'maintenance' | 'rented';
 
 }

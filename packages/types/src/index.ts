@@ -201,10 +201,15 @@ export type {
 } from './booking.js';
 
 export type {
+  AdminReviewDetail,
+  AdminReviewListItem,
   CreateBookingReviewRequest,
   PropertyReviewSummary,
   PropertyReviewsListQuery,
   Review,
+  ReviewStatus,
+  ReviewsListQuery,
+  UpdateReviewStatusRequest,
 } from './review.js';
 
 export type {

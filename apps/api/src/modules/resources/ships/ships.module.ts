@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CruiseLines, Ships } from '../../../entities/generated';
+import { Ships } from '../../../entities/generated';
 import { ShipsController } from './ships.controller';
 import { ShipsService } from './ships.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Ships, CruiseLines])],
+  imports: [TypeOrmModule.forFeature([Ships])],
   controllers: [ShipsController],
   providers: [ShipsService],
 })

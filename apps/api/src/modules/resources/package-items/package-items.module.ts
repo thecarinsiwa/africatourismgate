@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PackageItems, Packages } from '../../../entities/generated';
-import { PackagesModule } from '../packages/packages.module';
+import { PackageItems } from '../../../entities/generated';
 import { PackageItemsController } from './package-items.controller';
 import { PackageItemsService } from './package-items.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([PackageItems, Packages]), PackagesModule],
+  imports: [TypeOrmModule.forFeature([PackageItems])],
   controllers: [PackageItemsController],
   providers: [PackageItemsService],
 })

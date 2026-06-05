@@ -9,9 +9,9 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { CreateCabinAvailabilityDto } from './dto/create-cabin-availability.dto';
-import { CabinAvailabilityListQueryDto } from './dto/cabin-availability-list-query.dto';
-import { UpdateCabinAvailabilityDto } from './dto/update-cabin-availability.dto';
+import { DeepPartial } from 'typeorm';
+import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
+import { CabinAvailability } from '../../../entities/generated';
 import { CabinAvailabilityService } from './cabin-availability.service';
 
 @ApiTags('cabin-availability')
@@ -20,31 +20,31 @@ export class CabinAvailabilityController {
   constructor(private readonly service: CabinAvailabilityService) {}
 
   @Get()
-  @ApiOperation({ summary: 'List cabin availability for a sailing' })
-  findAll(@Query() query: CabinAvailabilityListQueryDto) {
+  @ApiOperation({ summary: 'List cabin-availability' })
+  findAll(@Query() query: PaginationQueryDto) {
     return this.service.findAll(query);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get cabin availability by id' })
+  @ApiOperation({ summary: 'Get cabin-availability by id' })
   findOne(@Param('id') id: string) {
     return this.service.findOne(id);
   }
 
   @Post()
-  @ApiOperation({ summary: 'Create cabin availability' })
-  create(@Body() dto: CreateCabinAvailabilityDto) {
-    return this.service.createAvailability(dto);
+  @ApiOperation({ summary: 'Create cabin-availability' })
+  create(@Body() dto: DeepPartial<CabinAvailability>) {
+    return this.service.create(dto);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update cabin availability' })
-  update(@Param('id') id: string, @Body() dto: UpdateCabinAvailabilityDto) {
-    return this.service.updateAvailability(id, dto);
+  @ApiOperation({ summary: 'Update cabin-availability' })
+  update(@Param('id') id: string, @Body() dto: DeepPartial<CabinAvailability>) {
+    return this.service.update(id, dto);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Soft-delete cabin availability' })
+  @ApiOperation({ summary: 'Soft-delete cabin-availability' })
   remove(@Param('id') id: string) {
     return this.service.remove(id);
   }

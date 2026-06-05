@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn, CreateDateColumn } from 'typeorm';
 import { BaseAuditEntity } from '../../common/entities/base-audit.entity';
 @Entity('packages')
 export class Packages extends BaseAuditEntity {
@@ -9,7 +9,7 @@ export class Packages extends BaseAuditEntity {
   name!: string;
 
   @Column({ type: 'text', name: 'description', nullable: true })
-  description!: string;
+  description!: string | null;
 
   @Column({ type: 'decimal', name: 'discount_percent', precision: 5, scale: 2 })
   discountPercent!: string;
@@ -27,7 +27,7 @@ export class PackageItems extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'package_id', length: 36 })
   packageId!: string;
 
-  @Column({ type: 'enum', name: 'item_type', enum: ["property","flight","vehicle","cruise","activity"] })
+  @Column({ name: 'item_type', enum: ["property","flight","vehicle","cruise","activity"] })
   itemType!: 'property' | 'flight' | 'vehicle' | 'cruise' | 'activity';
 
   @Column({ type: 'varchar', name: 'item_id', length: 36 })

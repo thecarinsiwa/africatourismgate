@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn, CreateDateColumn } from 'typeorm';
 import { BaseAuditEntity } from '../../common/entities/base-audit.entity';
 @Entity('reviews')
 export class Reviews extends BaseAuditEntity {
@@ -8,7 +8,7 @@ export class Reviews extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'user_id', length: 36 })
   userId!: string;
 
-  @Column({ type: 'enum', name: 'entity_type', enum: ["property","flight","vehicle","cruise","activity","booking"] })
+  @Column({ name: 'entity_type', enum: ["property","flight","vehicle","cruise","activity","booking"] })
   entityType!: 'property' | 'flight' | 'vehicle' | 'cruise' | 'activity' | 'booking';
 
   @Column({ type: 'varchar', name: 'entity_id', length: 36 })
@@ -18,9 +18,12 @@ export class Reviews extends BaseAuditEntity {
   rating!: number;
 
   @Column({ type: 'varchar', name: 'title', length: 180, nullable: true })
-  title!: string;
+  title!: string | null;
 
   @Column({ type: 'text', name: 'body', nullable: true })
-  body!: string;
+  body!: string | null;
+
+  @Column({ name: 'status', enum: ["pending","approved","hidden"] })
+  status!: 'pending' | 'approved' | 'hidden';
 
 }

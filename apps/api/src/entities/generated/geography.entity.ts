@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn, CreateDateColumn } from 'typeorm';
 import { BaseAuditEntity } from '../../common/entities/base-audit.entity';
 @Entity('destinations')
 export class Destinations extends BaseAuditEntity {
@@ -15,7 +15,7 @@ export class Destinations extends BaseAuditEntity {
   countryCode!: string;
 
   @Column({ type: 'text', name: 'description', nullable: true })
-  description!: string;
+  description!: string | null;
 
 }
 
@@ -31,9 +31,9 @@ export class PointsOfInterest extends BaseAuditEntity {
   name!: string;
 
   @Column({ type: 'decimal', name: 'latitude', precision: 10, scale: 7, nullable: true })
-  latitude!: string;
+  latitude!: string | null;
 
   @Column({ type: 'decimal', name: 'longitude', precision: 10, scale: 7, nullable: true })
-  longitude!: string;
+  longitude!: string | null;
 
 }

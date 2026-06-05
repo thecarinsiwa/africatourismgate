@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn, CreateDateColumn } from 'typeorm';
 import { BaseAuditEntity } from '../../common/entities/base-audit.entity';
 @Entity('amenities')
 export class Amenities extends BaseAuditEntity {
@@ -27,17 +27,17 @@ export class Properties extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'slug', length: 255 })
   slug!: string;
 
-  @Column({ type: 'enum', name: 'property_type', enum: ["hotel","resort","apartment","villa","hostel","other"] })
+  @Column({ name: 'property_type', enum: ["hotel","resort","apartment","villa","hostel","other"] })
   propertyType!: 'hotel' | 'resort' | 'apartment' | 'villa' | 'hostel' | 'other';
 
   @Column({ type: 'decimal', name: 'star_rating', precision: 2, scale: 1, nullable: true })
-  starRating!: string;
+  starRating!: string | null;
 
   @Column({ type: 'text', name: 'description', nullable: true })
-  description!: string;
+  description!: string | null;
 
   @Column({ type: 'varchar', name: 'address_line', length: 255, nullable: true })
-  addressLine!: string;
+  addressLine!: string | null;
 
 }
 
@@ -53,7 +53,7 @@ export class PropertyImages extends BaseAuditEntity {
   url!: string;
 
   @Column({ type: 'varchar', name: 'caption', length: 255, nullable: true })
-  caption!: string;
+  caption!: string | null;
 
   @Column({ type: 'int', name: 'sort_order' })
   sortOrder!: number;
@@ -82,13 +82,13 @@ export class Rooms extends BaseAuditEntity {
   name!: string;
 
   @Column({ type: 'varchar', name: 'room_type', length: 80, nullable: true })
-  roomType!: string;
+  roomType!: string | null;
 
   @Column({ type: 'int', name: 'max_guests' })
   maxGuests!: number;
 
   @Column({ type: 'varchar', name: 'bed_config', length: 120, nullable: true })
-  bedConfig!: string;
+  bedConfig!: string | null;
 
   @Column({ type: 'int', name: 'base_price_cents' })
   basePriceCents!: number;

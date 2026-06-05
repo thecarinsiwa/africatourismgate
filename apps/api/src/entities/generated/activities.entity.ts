@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn, CreateDateColumn } from 'typeorm';
 import { BaseAuditEntity } from '../../common/entities/base-audit.entity';
 @Entity('activity_providers')
 export class ActivityProviders extends BaseAuditEntity {
@@ -25,10 +25,10 @@ export class Activities extends BaseAuditEntity {
   title!: string;
 
   @Column({ type: 'text', name: 'description', nullable: true })
-  description!: string;
+  description!: string | null;
 
   @Column({ type: 'int', name: 'duration_minutes', nullable: true })
-  durationMinutes!: number;
+  durationMinutes!: number | null;
 
   @Column({ type: 'int', name: 'price_cents' })
   priceCents!: number;

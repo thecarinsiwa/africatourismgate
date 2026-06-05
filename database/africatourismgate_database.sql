@@ -1225,6 +1225,7 @@ CREATE TABLE `reviews` (
   `rating` TINYINT UNSIGNED NOT NULL,
   `title` VARCHAR(180) DEFAULT NULL,
   `body` TEXT,
+  `status` ENUM('pending','approved','hidden') NOT NULL DEFAULT 'approved',
   `created_by_user_id` CHAR(36) DEFAULT NULL,
   `updated_by_user_id` CHAR(36) DEFAULT NULL,
   `deleted_by_user_id` CHAR(36) DEFAULT NULL,
