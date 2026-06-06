@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { DEFAULT_EMAIL_BRANDING } from '@africatourismgate/types';
 import nodemailer, { type Transporter } from 'nodemailer';
 import {
   renderBookingConfirmationEmail,
@@ -26,19 +27,28 @@ export class EmailService {
   async sendPasswordReset(
     payload: PasswordResetEmailPayload,
   ): Promise<SendMailResult> {
-    const { subject, html, text } = renderPasswordResetEmail(payload);
+    const { subject, html, text } = renderPasswordResetEmail(
+      payload,
+      DEFAULT_EMAIL_BRANDING,
+    );
     return this.send({ to: payload.to, subject, html, text });
   }
 
   async sendWelcome(payload: WelcomeEmailPayload): Promise<SendMailResult> {
-    const { subject, html, text } = renderWelcomeEmail(payload);
+    const { subject, html, text } = renderWelcomeEmail(
+      payload,
+      DEFAULT_EMAIL_BRANDING,
+    );
     return this.send({ to: payload.to, subject, html, text });
   }
 
   async sendBookingConfirmation(
     payload: BookingConfirmationEmailPayload,
   ): Promise<SendMailResult> {
-    const { subject, html, text } = renderBookingConfirmationEmail(payload);
+    const { subject, html, text } = renderBookingConfirmationEmail(
+      payload,
+      DEFAULT_EMAIL_BRANDING,
+    );
     return this.send({ to: payload.to, subject, html, text });
   }
 
