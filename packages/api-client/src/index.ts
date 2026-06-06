@@ -202,6 +202,8 @@ import type {
   UpdatePointOfInterestRequest,
   BulkUpsertOrganizationSettingsRequest,
   CreateOrganizationBankAccountRequest,
+  EmailPreviewRequest,
+  EmailPreviewResponse,
   OrganizationBankAccount,
   OrganizationBankAccountsListQuery,
   OrganizationSetting,
@@ -286,6 +288,10 @@ export type {
   UpdateEmployeeRequest,
   BulkUpsertOrganizationSettingsRequest,
   CreateOrganizationBankAccountRequest,
+  EmailBrandingValue,
+  EmailPreviewRequest,
+  EmailPreviewResponse,
+  EmailPreviewTemplate,
   OrganizationBankAccount,
   OrganizationBankAccountsListQuery,
   OrganizationSetting,
@@ -889,6 +895,13 @@ export class ApiClient {
   ): Promise<OrganizationSetting[]> {
     return this.request<OrganizationSetting[]>('/organization-settings/bulk', {
       method: 'PUT',
+      body,
+    });
+  }
+
+  previewEmail(body: EmailPreviewRequest): Promise<EmailPreviewResponse> {
+    return this.request<EmailPreviewResponse>('/email/preview', {
+      method: 'POST',
       body,
     });
   }
