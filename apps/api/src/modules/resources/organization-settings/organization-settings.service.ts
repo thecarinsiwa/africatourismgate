@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { OrgScopeService, PLATFORM_ORG_ID } from '../../../common/org-scope/org-scope.service';
 import { CrudService } from '../../../common/crud/crud.service';
+import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import { newId } from '../../../common/utils/uuid';
 import {
   OrganizationSettings,
@@ -15,6 +16,7 @@ import {
   toOrganizationSettingDto,
 } from './dto/organization-setting.dto';
 import { PublicBrandingDto } from './dto/public-branding.dto';
+import { OrganizationSettingsListQueryDto } from './dto/organization-settings-list-query.dto';
 import { validateSettingValue } from './validate-setting-value';
 
 const DEFAULT_PUBLIC_BRANDING: PublicBrandingDto = {
@@ -115,6 +117,35 @@ export class OrganizationSettingsService extends CrudService<OrganizationSetting
     );
 
     return saved.map(toOrganizationSettingDto);
+  }
+
+  async findAllScoped(
+    query: OrganizationSettingsListQueryDto,
+    user: AuthUserDto,
+  ): Promise<PaginatedResult<OrganizationSettings>> {
+    const organizationId = await this.orgScopeService.resolveOrganizationId(
+      user,
+      query.organizationId,
+    );
+
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 20;
+    const [data, total] = await this.settingsRepository.findAndCount({
+      where: { organizationId, deletedAt: IsNull() },
+      skip: (page - 1) * limit,
+      take: limit,
+      order: { createdAt: 'DESC' },
+    });
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit) || 1,
+      },
+    };
   }
 
   async findPublicBranding(organizationSlug?: string): Promise<PublicBrandingDto> {
