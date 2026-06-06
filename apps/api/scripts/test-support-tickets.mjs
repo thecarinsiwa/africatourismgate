@@ -1,9 +1,14 @@
 /**
- * Support tickets: customer opens ticket + initial message in DB.
+ * Support tickets: customer opens ticket + initial message in DB;
+ * admin lists, views detail with messages, updates status.
  * Run: pnpm --filter @africatourismgate/api test:support
  */
 import { loadEnv } from './lib/load-env.mjs';
-import { ephemeralTestPassword } from './lib/test-credentials.mjs';
+import {
+  SEED_ADMIN_EMAIL,
+  ephemeralTestPassword,
+  getSeedAdminPassword,
+} from './lib/test-credentials.mjs';
 
 loadEnv();
 
@@ -34,6 +39,16 @@ async function request(method, path, { token, body } = {}) {
     }
   }
   return { status: res.status, data };
+}
+
+async function login(email, password) {
+  const res = await request('POST', '/auth/login', {
+    body: { email, password },
+  });
+  if (res.status !== 201 || !res.data?.accessToken) {
+    throw new Error(`Login failed for ${email}: ${res.status} ${JSON.stringify(res.data)}`);
+  }
+  return res.data.accessToken;
 }
 
 async function registerCustomer() {
@@ -88,6 +103,9 @@ async function main() {
   if (created.data.ticket.status !== 'open') {
     throw new Error(`Expected status open, got ${created.data.ticket.status}`);
   }
+  if (created.data.ticket.priority !== 'normal') {
+    throw new Error(`Expected priority normal, got ${created.data.ticket.priority}`);
+  }
   if (created.data.initialMessage.ticketId !== ticketId) {
     throw new Error('initialMessage.ticketId mismatch');
   }
@@ -99,21 +117,21 @@ async function main() {
   }
   console.log(`  OK ticketId=${ticketId}, messageId=${messageId}`);
 
-  console.log('2. GET /support-tickets/:id');
+  console.log('2. GET /support-tickets/:id (customer)');
   const one = await request('GET', `/support-tickets/${ticketId}`, { token });
   assertStatus('GET support-ticket', one.status, 200);
   if (one.data?.id !== ticketId || one.data?.userId !== userId) {
     throw new Error('GET ticket detail mismatch');
   }
 
-  console.log('3. GET /support-tickets (scoped list)');
+  console.log('3. GET /support-tickets (customer list)');
   const list = await request('GET', '/support-tickets?limit=50', { token });
   assertStatus('GET support-tickets list', list.status, 200);
   const inList = (list.data?.data ?? []).some((t) => t.id === ticketId);
   if (!inList) {
     throw new Error('Created ticket not in customer list');
   }
-  console.log(`  OK ${list.data.data.length} ticket(s) in list`);
+  console.log(`  OK ${list.data.data.length} ticket(s) in customer list`);
 
   console.log('4. GET /support-messages — message persisted');
   const messages = await request('GET', '/support-messages?limit=100', { token });
@@ -129,7 +147,64 @@ async function main() {
   }
   console.log('  OK message row in DB list');
 
-  console.log('\nAll support ticket checks passed.');
+  console.log('\n5. Admin flow (web → admin)');
+  const adminToken = await login(SEED_ADMIN_EMAIL, getSeedAdminPassword());
+  console.log(`  Admin: ${SEED_ADMIN_EMAIL}`);
+
+  console.log('5a. GET /support-tickets (admin list)');
+  const adminList = await request('GET', '/support-tickets?limit=50', {
+    token: adminToken,
+  });
+  assertStatus('GET admin support-tickets', adminList.status, 200);
+  const adminRow = (adminList.data?.data ?? []).find((t) => t.id === ticketId);
+  if (!adminRow) {
+    throw new Error('Created ticket not visible in admin list');
+  }
+  if (!adminRow.customerEmail) {
+    throw new Error('Admin list missing customerEmail');
+  }
+  if (adminRow.subject !== TICKET_SUBJECT) {
+    throw new Error('Admin list subject mismatch');
+  }
+  console.log(`  OK ticket visible for admin (${adminRow.customerEmail})`);
+
+  console.log('5b. GET /support-tickets/:id (admin detail + messages)');
+  const adminDetail = await request('GET', `/support-tickets/${ticketId}`, {
+    token: adminToken,
+  });
+  assertStatus('GET admin ticket detail', adminDetail.status, 200);
+  if (!Array.isArray(adminDetail.data?.messages) || adminDetail.data.messages.length < 1) {
+    throw new Error('Admin detail missing messages thread');
+  }
+  const threadMsg = adminDetail.data.messages.find((m) => m.id === messageId);
+  if (!threadMsg || threadMsg.body !== TICKET_BODY) {
+    throw new Error('Initial message missing from admin thread');
+  }
+  console.log(`  OK ${adminDetail.data.messages.length} message(s) in thread`);
+
+  console.log('5c. PATCH /support-tickets/:id (open → pending)');
+  const inProgress = await request('PATCH', `/support-tickets/${ticketId}`, {
+    token: adminToken,
+    body: { status: 'pending' },
+  });
+  assertStatus('PATCH support-ticket status', inProgress.status, 200);
+  if (inProgress.data?.status !== 'pending') {
+    throw new Error(`Expected status pending, got ${inProgress.data?.status}`);
+  }
+  console.log('  OK status pending (en cours)');
+
+  console.log('5d. PATCH /support-tickets/:id (priority high)');
+  const priority = await request('PATCH', `/support-tickets/${ticketId}`, {
+    token: adminToken,
+    body: { priority: 'high' },
+  });
+  assertStatus('PATCH support-ticket priority', priority.status, 200);
+  if (priority.data?.priority !== 'high') {
+    throw new Error(`Expected priority high, got ${priority.data?.priority}`);
+  }
+  console.log('  OK priority high');
+
+  console.log('\nAll support ticket checks passed (customer + admin).');
 }
 
 main().catch((err) => {

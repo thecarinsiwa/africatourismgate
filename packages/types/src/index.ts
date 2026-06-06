@@ -213,12 +213,16 @@ export type {
 } from './review.js';
 
 export type {
+  AdminSupportTicketDetail,
+  AdminSupportTicketListItem,
   CreateSupportTicketRequest,
   SupportTicket,
   SupportTicketCreated,
   SupportTicketMessage,
+  SupportTicketPriority,
   SupportTicketStatus,
   SupportTicketsListQuery,
+  UpdateSupportTicketRequest,
 } from './support.js';
 
 export type {
