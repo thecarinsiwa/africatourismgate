@@ -16,7 +16,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import { Public } from '../../auth/decorators/public.decorator';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { AuthUserDto } from '../../auth/dto/auth-user.dto';
@@ -24,6 +23,7 @@ import { RequirePermissions } from '../../rbac/decorators/require-permissions.de
 import { OrganizationSettings } from '../../../entities/generated';
 import { BulkUpsertOrganizationSettingsDto } from './dto/bulk-upsert-organization-settings.dto';
 import { OrganizationSettingDto } from './dto/organization-setting.dto';
+import { OrganizationSettingsListQueryDto } from './dto/organization-settings-list-query.dto';
 import { PublicBrandingDto } from './dto/public-branding.dto';
 import { PublicBrandingQueryDto } from './dto/public-branding-query.dto';
 import { OrganizationSettingsService } from './organization-settings.service';
@@ -53,9 +53,13 @@ export class OrganizationSettingsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'List organization-settings' })
-  findAll(@Query() query: PaginationQueryDto) {
-    return this.service.findAll(query);
+  @RequirePermissions('organization_settings.read')
+  @ApiOperation({ summary: 'List organization settings (scoped)' })
+  findAll(
+    @Query() query: OrganizationSettingsListQueryDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.service.findAllScoped(query, user);
   }
 
   @Get(':id')
