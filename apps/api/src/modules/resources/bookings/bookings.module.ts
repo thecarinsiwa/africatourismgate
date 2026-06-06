@@ -20,7 +20,6 @@ import {
   VehicleAvailability,
   Vehicles,
 } from '../../../entities/generated';
-import { EmailModule } from '../../email/email.module';
 import { ReviewsModule } from '../reviews/reviews.module';
 import { BookingCheckoutPromoService } from './booking-checkout-promo.service';
 import { BookingEngineService } from './booking-engine.service';
@@ -31,7 +30,6 @@ import { BookingsService } from './bookings.service';
 
 @Module({
   imports: [
-    EmailModule,
     forwardRef(() => StripeModule),
     ReviewsModule,
     TypeOrmModule.forFeature([
