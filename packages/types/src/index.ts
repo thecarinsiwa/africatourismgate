@@ -297,6 +297,10 @@ export type {
   BrandingPlatformValue,
   BulkUpsertOrganizationSettingsRequest,
   CreateOrganizationBankAccountRequest,
+  EmailBrandingValue,
+  EmailPreviewRequest,
+  EmailPreviewResponse,
+  EmailPreviewTemplate,
   LocaleSettingValue,
   LoyaltyOneKeySettingValue,
   OrganizationBankAccount,
@@ -306,6 +310,8 @@ export type {
   UpdateOrganizationBankAccountRequest,
   UpsertOrganizationSettingItem,
 } from './organization-settings.js';
+
+export { DEFAULT_EMAIL_BRANDING } from './organization-settings.js';
 
 export type {
   CreateUserRequest,
