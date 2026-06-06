@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -10,12 +11,33 @@ import { FindOptionsWhere, IsNull, Repository } from 'typeorm';
 import { PaginatedResult, PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import { PLATFORM_ORG_ID } from '../../../common/org-scope/org-scope.service';
 import { newId } from '../../../common/utils/uuid';
-import { Bookings, LoyaltyAccounts, OrganizationSettings, Payments } from '../../../entities/generated';
+import {
+  Bookings,
+  LoyaltyAccounts,
+  OrganizationSettings,
+  Payments,
+  Users,
+} from '../../../entities/generated';
 import { PermissionsService } from '../../rbac/permissions.service';
+import { AdjustLoyaltyPointsDto } from './dto/adjust-loyalty-points.dto';
+import { AdminLoyaltyAccountListItemDto } from './dto/admin-loyalty-account-list-item.dto';
 import {
   CreateLoyaltyAccountDto,
   UpdateLoyaltyAccountDto,
 } from './dto/loyalty-account.dto';
+
+type AdminLoyaltyRow = {
+  id: string;
+  userId: string;
+  userEmail: string;
+  userFirstName: string;
+  userLastName: string;
+  programCode: string;
+  pointsBalance: number;
+  tier: LoyaltyAccounts['tier'];
+  createdAt: Date;
+  updatedAt: Date | null;
+};
 
 @Injectable()
 export class LoyaltyAccountsService {
@@ -28,6 +50,9 @@ export class LoyaltyAccountsService {
   ) {}
 
   private async isStaffUser(userId: string): Promise<boolean> {
+    if (await this.permissionsService.hasSuperAdminRole(userId)) {
+      return true;
+    }
     return this.permissionsService.hasAnyPermission(userId, ['users.read']);
   }
 
@@ -64,32 +89,12 @@ export class LoyaltyAccountsService {
   async findAll(
     query: PaginationQueryDto,
     currentUserId: string,
-  ): Promise<PaginatedResult<LoyaltyAccounts>> {
-    const page = query.page ?? 1;
-    const limit = query.limit ?? 20;
+  ): Promise<PaginatedResult<LoyaltyAccounts | AdminLoyaltyAccountListItemDto>> {
     const staff = await this.isStaffUser(currentUserId);
-
-    const where: FindOptionsWhere<LoyaltyAccounts> = { deletedAt: IsNull() };
-    if (!staff) {
-      where.userId = currentUserId;
+    if (staff) {
+      return this.listForAdmin(query);
     }
-
-    const [data, total] = await this.repository.findAndCount({
-      where,
-      skip: (page - 1) * limit,
-      take: limit,
-      order: { createdAt: 'DESC' },
-    });
-
-    return {
-      data,
-      meta: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit) || 1,
-      },
-    };
+    return this.listForCustomer(query, currentUserId);
   }
 
   async findOne(id: string, currentUserId: string): Promise<LoyaltyAccounts> {
@@ -104,6 +109,35 @@ export class LoyaltyAccountsService {
       this.assertOwnership(row, currentUserId);
     }
     return row;
+  }
+
+  async adjustPoints(
+    id: string,
+    dto: AdjustLoyaltyPointsDto,
+    actorUserId: string,
+  ): Promise<AdminLoyaltyAccountListItemDto> {
+    const isSuperAdmin = await this.permissionsService.hasSuperAdminRole(actorUserId);
+    if (!isSuperAdmin) {
+      throw new ForbiddenException('Réservé au super administrateur');
+    }
+
+    const account = await this.repository.findOne({
+      where: { id, deletedAt: IsNull() },
+    });
+    if (!account) {
+      throw new NotFoundException('Compte fidélité introuvable.');
+    }
+
+    const newBalance = account.pointsBalance + dto.delta;
+    if (newBalance < 0) {
+      throw new BadRequestException('Le solde ne peut pas être négatif.');
+    }
+
+    account.pointsBalance = newBalance;
+    account.updatedByUserId = actorUserId;
+    await this.repository.save(account);
+
+    return this.findOneForAdmin(id);
   }
 
   async getOrCreateForUser(
@@ -213,5 +247,126 @@ export class LoyaltyAccountsService {
     await this.findOne(id, currentUserId);
     await this.repository.softDelete(id);
     await this.repository.update(id, { deletedByUserId: currentUserId });
+  }
+
+  private async listForCustomer(
+    query: PaginationQueryDto,
+    userId: string,
+  ): Promise<PaginatedResult<LoyaltyAccounts>> {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 20;
+
+    const [data, total] = await this.repository.findAndCount({
+      where: { userId, deletedAt: IsNull() },
+      skip: (page - 1) * limit,
+      take: limit,
+      order: { createdAt: 'DESC' },
+    });
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit) || 1,
+      },
+    };
+  }
+
+  private async listForAdmin(
+    query: PaginationQueryDto,
+  ): Promise<PaginatedResult<AdminLoyaltyAccountListItemDto>> {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 20;
+
+    const qb = this.repository
+      .createQueryBuilder('la')
+      .innerJoin(Users, 'u', 'u.id = la.userId AND u.deletedAt IS NULL')
+      .select('la.id', 'id')
+      .addSelect('la.userId', 'userId')
+      .addSelect('u.email', 'userEmail')
+      .addSelect('u.firstName', 'userFirstName')
+      .addSelect('u.lastName', 'userLastName')
+      .addSelect('la.programCode', 'programCode')
+      .addSelect('la.pointsBalance', 'pointsBalance')
+      .addSelect('la.tier', 'tier')
+      .addSelect('la.createdAt', 'createdAt')
+      .addSelect('la.updatedAt', 'updatedAt')
+      .where('la.deletedAt IS NULL')
+      .orderBy('COALESCE(la.updatedAt, la.createdAt)', 'DESC')
+      .offset((page - 1) * limit)
+      .limit(limit);
+
+    const countQb = this.repository
+      .createQueryBuilder('la')
+      .where('la.deletedAt IS NULL');
+
+    const [rows, total] = await Promise.all([
+      qb.getRawMany<AdminLoyaltyRow>(),
+      countQb.getCount(),
+    ]);
+
+    return {
+      data: rows.map((row) => this.toAdminListItemDto(row)),
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit) || 1,
+      },
+    };
+  }
+
+  private async findOneForAdmin(id: string): Promise<AdminLoyaltyAccountListItemDto> {
+    const row = await this.repository
+      .createQueryBuilder('la')
+      .innerJoin(Users, 'u', 'u.id = la.userId AND u.deletedAt IS NULL')
+      .select('la.id', 'id')
+      .addSelect('la.userId', 'userId')
+      .addSelect('u.email', 'userEmail')
+      .addSelect('u.firstName', 'userFirstName')
+      .addSelect('u.lastName', 'userLastName')
+      .addSelect('la.programCode', 'programCode')
+      .addSelect('la.pointsBalance', 'pointsBalance')
+      .addSelect('la.tier', 'tier')
+      .addSelect('la.createdAt', 'createdAt')
+      .addSelect('la.updatedAt', 'updatedAt')
+      .where('la.id = :id', { id })
+      .andWhere('la.deletedAt IS NULL')
+      .getRawOne<AdminLoyaltyRow>();
+
+    if (!row) {
+      throw new NotFoundException('Compte fidélité introuvable.');
+    }
+
+    return this.toAdminListItemDto(row);
+  }
+
+  private toAdminListItemDto(row: AdminLoyaltyRow): AdminLoyaltyAccountListItemDto {
+    const createdAt =
+      row.createdAt instanceof Date
+        ? row.createdAt.toISOString()
+        : new Date(row.createdAt).toISOString();
+    const updatedAt =
+      row.updatedAt == null
+        ? null
+        : row.updatedAt instanceof Date
+          ? row.updatedAt.toISOString()
+          : new Date(row.updatedAt).toISOString();
+
+    return {
+      id: row.id,
+      userId: row.userId,
+      userEmail: row.userEmail,
+      userFirstName: row.userFirstName,
+      userLastName: row.userLastName,
+      programCode: row.programCode,
+      pointsBalance: Number(row.pointsBalance),
+      tier: row.tier,
+      lastActivityAt: updatedAt ?? createdAt,
+      createdAt,
+      updatedAt,
+    };
   }
 }

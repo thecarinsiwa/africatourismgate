@@ -118,6 +118,9 @@ import type {
   CreateUserAddressRequest,
   CreateUserPaymentMethodRequest,
   LoyaltyAccount,
+  AdminLoyaltyAccountListItem,
+  AdjustLoyaltyPointsRequest,
+  AdjustLoyaltyPointsResponse,
   LoyaltyAccountsListQuery,
   Employee,
   EmployeesListQuery,
@@ -559,8 +562,25 @@ export class ApiClient {
 
   listLoyaltyAccounts(
     query?: LoyaltyAccountsListQuery,
-  ): Promise<PaginatedResponse<LoyaltyAccount>> {
-    return fetchPaginated<LoyaltyAccount>(this, '/loyalty-accounts', query);
+  ): Promise<PaginatedResponse<LoyaltyAccount | AdminLoyaltyAccountListItem>> {
+    return fetchPaginated<LoyaltyAccount | AdminLoyaltyAccountListItem>(
+      this,
+      '/loyalty-accounts',
+      query,
+    );
+  }
+
+  adjustLoyaltyPoints(
+    id: string,
+    body: AdjustLoyaltyPointsRequest,
+  ): Promise<AdjustLoyaltyPointsResponse> {
+    return this.request<AdjustLoyaltyPointsResponse>(
+      `/loyalty-accounts/${id}/adjust-points`,
+      {
+        method: 'POST',
+        body,
+      },
+    );
   }
 
   listUserPaymentMethods(

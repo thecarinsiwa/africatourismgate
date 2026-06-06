@@ -74,3 +74,17 @@ export interface LoyaltyAccount {
 export type UserAddressesListQuery = PaginationQuery;
 export type UserPaymentMethodsListQuery = PaginationQuery;
 export type LoyaltyAccountsListQuery = PaginationQuery;
+
+export interface AdminLoyaltyAccountListItem extends LoyaltyAccount {
+  userEmail: string;
+  userFirstName: string;
+  userLastName: string;
+  lastActivityAt: string;
+}
+
+export interface AdjustLoyaltyPointsRequest {
+  delta: number;
+  reason?: string;
+}
+
+export interface AdjustLoyaltyPointsResponse extends AdminLoyaltyAccountListItem {}
