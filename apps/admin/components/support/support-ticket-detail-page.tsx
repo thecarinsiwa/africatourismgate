@@ -59,9 +59,13 @@ type SupportTicketDetailPageProps = {
 export function SupportTicketDetailPage({ ticketId }: SupportTicketDetailPageProps) {
   const statusSelectId = useId();
   const prioritySelectId = useId();
+  const replyBodyId = useId();
 
   const [canWrite, setCanWrite] = useState(false);
   const [acting, setActing] = useState(false);
+  const [replyBody, setReplyBody] = useState('');
+  const [replyError, setReplyError] = useState<string | null>(null);
+  const [replyValidationError, setReplyValidationError] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [state, setState] = useState<
     | { status: 'loading' }
@@ -117,6 +121,31 @@ export function SupportTicketDetailPage({ ticketId }: SupportTicketDetailPagePro
     },
     [load, ticketId],
   );
+
+  const submitReply = useCallback(async () => {
+    setReplyValidationError(null);
+    setReplyError(null);
+
+    const trimmed = replyBody.trim();
+    if (trimmed.length < 10) {
+      setReplyValidationError('Le message doit contenir au moins 10 caractères.');
+      return;
+    }
+
+    setActing(true);
+    try {
+      await getApiClient().createSupportMessage({
+        ticketId,
+        body: trimmed,
+      });
+      setReplyBody('');
+      await load();
+    } catch (error) {
+      setReplyError(getSupportTicketsErrorMessage(error));
+    } finally {
+      setActing(false);
+    }
+  }, [load, replyBody, ticketId]);
 
   if (state.status === 'loading') {
     return <p className="text-sm text-atg-muted">Chargement…</p>;
@@ -276,6 +305,51 @@ export function SupportTicketDetailPage({ ticketId }: SupportTicketDetailPagePro
           </ul>
         )}
       </Card>
+
+      {canWrite && ticket.status !== 'closed' ? (
+        <Card className="p-4">
+          <h3 className="text-sm font-semibold text-atg-fg">Répondre au client</h3>
+          <div className="mt-4">
+            <label
+              htmlFor={replyBodyId}
+              className="mb-1 block text-xs font-medium text-atg-muted"
+            >
+              Message agent
+            </label>
+            <textarea
+              id={replyBodyId}
+              value={replyBody}
+              onChange={(e) => setReplyBody(e.target.value)}
+              rows={4}
+              disabled={acting}
+              minLength={10}
+              placeholder="Votre réponse au client…"
+              className="w-full rounded-lg border border-atg-border bg-atg-surface px-3 py-2 text-sm text-atg-fg placeholder:text-atg-muted disabled:opacity-60"
+            />
+          </div>
+          {replyValidationError ? (
+            <p className="mt-3 text-sm text-red-600 dark:text-red-400" role="alert">
+              {replyValidationError}
+            </p>
+          ) : null}
+          {replyError ? (
+            <p className="mt-3 text-sm text-red-600 dark:text-red-400" role="alert">
+              {replyError}
+            </p>
+          ) : null}
+          <div className="mt-4">
+            <Button
+              type="button"
+              disabled={acting || replyBody.trim().length < 10}
+              loading={acting}
+              loadingText="Envoi…"
+              onClick={() => void submitReply()}
+            >
+              Envoyer la réponse
+            </Button>
+          </div>
+        </Card>
+      ) : null}
     </div>
   );
 }

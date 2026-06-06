@@ -20,6 +20,8 @@ const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000/api')
 const TICKET_SUBJECT = 'Test support E2E';
 const TICKET_BODY =
   'Message de test automatique pour le livrable support (10+ caractères).';
+const STAFF_REPLY_BODY =
+  'Réponse agent de test automatique pour le livrable #58 (10+ caractères).';
 
 async function request(method, path, { token, body } = {}) {
   const headers = { 'Content-Type': 'application/json' };
@@ -45,7 +47,7 @@ async function login(email, password) {
   const res = await request('POST', '/auth/login', {
     body: { email, password },
   });
-  if (res.status !== 201 || !res.data?.accessToken) {
+  if (res.status !== 200 || !res.data?.accessToken) {
     throw new Error(`Login failed for ${email}: ${res.status} ${JSON.stringify(res.data)}`);
   }
   return res.data.accessToken;
@@ -182,18 +184,64 @@ async function main() {
   }
   console.log(`  OK ${adminDetail.data.messages.length} message(s) in thread`);
 
-  console.log('5c. PATCH /support-tickets/:id (open → pending)');
-  const inProgress = await request('PATCH', `/support-tickets/${ticketId}`, {
+  console.log('5c. POST /support-messages (admin reply, open → pending)');
+  const reply = await request('POST', '/support-messages', {
     token: adminToken,
-    body: { status: 'pending' },
+    body: { ticketId, body: STAFF_REPLY_BODY },
   });
-  assertStatus('PATCH support-ticket status', inProgress.status, 200);
-  if (inProgress.data?.status !== 'pending') {
-    throw new Error(`Expected status pending, got ${inProgress.data?.status}`);
+  assertStatus('POST support-messages staff reply', reply.status, 201);
+  const staffMessageId = reply.data?.message?.id;
+  if (!staffMessageId) throw new Error('Missing message.id in reply response');
+  if (reply.data.message.ticketId !== ticketId) {
+    throw new Error('Reply message ticketId mismatch');
   }
-  console.log('  OK status pending (en cours)');
+  if (reply.data.message.body !== STAFF_REPLY_BODY) {
+    throw new Error('Reply message body mismatch');
+  }
+  if (reply.data.message.isStaff !== true) {
+    throw new Error('Expected isStaff true on staff reply');
+  }
+  if (reply.data.ticketStatus !== 'pending') {
+    throw new Error(`Expected ticketStatus pending, got ${reply.data.ticketStatus}`);
+  }
+  console.log(`  OK staffMessageId=${staffMessageId}, ticket pending`);
 
-  console.log('5d. PATCH /support-tickets/:id (priority high)');
+  console.log('5d. GET /support-messages — staff reply persisted');
+  const messagesAfterReply = await request('GET', '/support-messages?limit=100', {
+    token: adminToken,
+  });
+  assertStatus('GET support-messages after reply', messagesAfterReply.status, 200);
+  const staffRow = (messagesAfterReply.data?.data ?? []).find(
+    (m) => m.id === staffMessageId && m.ticketId === ticketId,
+  );
+  if (!staffRow) {
+    throw new Error('Staff reply not found in support_messages list');
+  }
+  if (staffRow.body !== STAFF_REPLY_BODY) {
+    throw new Error('Listed staff reply body mismatch');
+  }
+  console.log('  OK staff reply row in DB list');
+
+  console.log('5e. GET /support-tickets/:id — thread includes staff reply');
+  const detailAfterReply = await request('GET', `/support-tickets/${ticketId}`, {
+    token: adminToken,
+  });
+  assertStatus('GET admin ticket detail after reply', detailAfterReply.status, 200);
+  if (detailAfterReply.data?.status !== 'pending') {
+    throw new Error(`Expected ticket status pending, got ${detailAfterReply.data?.status}`);
+  }
+  const staffThreadMsg = (detailAfterReply.data?.messages ?? []).find(
+    (m) => m.id === staffMessageId,
+  );
+  if (!staffThreadMsg || staffThreadMsg.body !== STAFF_REPLY_BODY) {
+    throw new Error('Staff reply missing from admin thread');
+  }
+  if (!staffThreadMsg.isStaff) {
+    throw new Error('Staff reply missing isStaff flag in thread');
+  }
+  console.log(`  OK ${detailAfterReply.data.messages.length} message(s) in thread`);
+
+  console.log('5f. PATCH /support-tickets/:id (priority high)');
   const priority = await request('PATCH', `/support-tickets/${ticketId}`, {
     token: adminToken,
     body: { priority: 'high' },
@@ -204,7 +252,7 @@ async function main() {
   }
   console.log('  OK priority high');
 
-  console.log('\nAll support ticket checks passed (customer + admin).');
+  console.log('\nAll support ticket checks passed (customer + admin + staff reply).');
 }
 
 main().catch((err) => {

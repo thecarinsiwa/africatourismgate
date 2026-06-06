@@ -40,7 +40,7 @@ function payloadPreview(payload: Record<string, unknown> | null): string {
   return text.length > 80 ? `${text.slice(0, 80)}…` : text;
 }
 
-export function RbacAuditLogsList() {
+export function RbacAuditLogsList({ showSubnav = true }: { showSubnav?: boolean }) {
   const [page, setPage] = useState(1);
   const [filterTick, setFilterTick] = useState(0);
   const [dateFrom, setDateFrom] = useState('');
@@ -203,7 +203,7 @@ export function RbacAuditLogsList() {
   if (access.status === 'checking') {
     return (
       <>
-        <RbacSubnav />
+        {showSubnav ? <RbacSubnav /> : null}
         <p className="text-sm text-atg-muted">Vérification des droits…</p>
       </>
     );
@@ -212,7 +212,7 @@ export function RbacAuditLogsList() {
   if (access.status === 'denied') {
     return (
       <>
-        <RbacSubnav />
+        {showSubnav ? <RbacSubnav /> : null}
         <Card className="p-6">
           <p role="alert" className="text-sm text-red-600">
             Cette page est réservée au super administrateur. Connectez-vous avec{' '}
@@ -226,7 +226,7 @@ export function RbacAuditLogsList() {
 
   return (
     <>
-      <RbacSubnav />
+      {showSubnav ? <RbacSubnav /> : null}
 
       <Card className="mb-6 p-4">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
