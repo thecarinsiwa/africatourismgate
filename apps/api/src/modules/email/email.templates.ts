@@ -1,7 +1,5 @@
-import {
-  DEFAULT_EMAIL_BRANDING,
-  type EmailBrandingValue,
-} from '@africatourismgate/types';
+import type { EmailBrandingValue } from '@africatourismgate/types';
+import { DEFAULT_EMAIL_BRANDING } from './email-branding.constants';
 import type {
   BookingConfirmationEmailPayload,
   PasswordResetEmailPayload,

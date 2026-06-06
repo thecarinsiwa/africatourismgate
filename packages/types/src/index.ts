@@ -311,8 +311,6 @@ export type {
   UpsertOrganizationSettingItem,
 } from './organization-settings.js';
 
-export { DEFAULT_EMAIL_BRANDING } from './organization-settings.js';
-
 export type {
   CreateUserRequest,
   UpdateUserRequest,

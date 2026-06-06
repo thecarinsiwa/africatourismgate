@@ -350,7 +350,6 @@ export type {
 } from '@africatourismgate/types';
 
 export { fetchPaginated, fetchTotal, sumSucceededPaymentsRevenue } from './pagination';
-export { DEFAULT_EMAIL_BRANDING } from '@africatourismgate/types';
 
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 

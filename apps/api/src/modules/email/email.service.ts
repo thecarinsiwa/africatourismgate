@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { DEFAULT_EMAIL_BRANDING } from '@africatourismgate/types';
+import { DEFAULT_EMAIL_BRANDING } from './email-branding.constants';
 import nodemailer, { type Transporter } from 'nodemailer';
 import { PLATFORM_ORG_ID } from '../../common/org-scope/org-scope.service';
 import { EmailBrandingService } from './email-branding.service';

@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  DEFAULT_EMAIL_BRANDING,
-  type EmailBrandingValue,
-} from '@africatourismgate/types';
+import type { EmailBrandingValue } from '@africatourismgate/types';
+import { DEFAULT_EMAIL_BRANDING } from './email-branding.constants';
 import { IsNull, Repository } from 'typeorm';
 import { OrganizationSettings } from '../../entities/generated';
 
