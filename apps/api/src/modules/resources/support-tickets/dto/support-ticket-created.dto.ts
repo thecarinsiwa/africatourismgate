@@ -30,6 +30,9 @@ export class SupportTicketDto {
   @ApiProperty({ enum: ['open', 'pending', 'resolved', 'closed'] })
   status!: 'open' | 'pending' | 'resolved' | 'closed';
 
+  @ApiProperty({ enum: ['low', 'normal', 'high', 'urgent'] })
+  priority!: 'low' | 'normal' | 'high' | 'urgent';
+
   @ApiProperty()
   createdAt!: string;
 }

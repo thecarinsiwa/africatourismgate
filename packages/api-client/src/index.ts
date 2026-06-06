@@ -84,9 +84,11 @@ import type {
   ReviewsListQuery,
   UpdateReviewStatusRequest,
   CreateSupportTicketRequest,
-  SupportTicket,
+  AdminSupportTicketDetail,
+  AdminSupportTicketListItem,
   SupportTicketCreated,
   SupportTicketsListQuery,
+  UpdateSupportTicketRequest,
   PropertyDetail,
   PropertyDetailQuery,
   PropertyReviewsListQuery,
@@ -1322,12 +1324,12 @@ export class ApiClient {
 
   listSupportTickets(
     query?: SupportTicketsListQuery,
-  ): Promise<PaginatedResponse<SupportTicket>> {
-    return fetchPaginated<SupportTicket>(this, '/support-tickets', query);
+  ): Promise<PaginatedResponse<AdminSupportTicketListItem>> {
+    return fetchPaginated<AdminSupportTicketListItem>(this, '/support-tickets', query);
   }
 
-  getSupportTicket(id: string): Promise<SupportTicket> {
-    return this.request<SupportTicket>(`/support-tickets/${id}`);
+  getSupportTicket(id: string): Promise<AdminSupportTicketDetail> {
+    return this.request<AdminSupportTicketDetail>(`/support-tickets/${id}`);
   }
 
   createSupportTicket(
@@ -1335,6 +1337,16 @@ export class ApiClient {
   ): Promise<SupportTicketCreated> {
     return this.request<SupportTicketCreated>('/support-tickets', {
       method: 'POST',
+      body,
+    });
+  }
+
+  updateSupportTicket(
+    id: string,
+    body: UpdateSupportTicketRequest,
+  ): Promise<AdminSupportTicketDetail> {
+    return this.request<AdminSupportTicketDetail>(`/support-tickets/${id}`, {
+      method: 'PATCH',
       body,
     });
   }
