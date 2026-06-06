@@ -215,6 +215,8 @@ export type {
 export type {
   AdminSupportTicketDetail,
   AdminSupportTicketListItem,
+  CreateSupportMessageRequest,
+  CreateSupportMessageResponse,
   CreateSupportTicketRequest,
   SupportTicket,
   SupportTicketCreated,

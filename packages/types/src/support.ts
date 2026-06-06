@@ -51,3 +51,13 @@ export interface UpdateSupportTicketRequest {
   status?: SupportTicketStatus;
   priority?: SupportTicketPriority;
 }
+
+export interface CreateSupportMessageRequest {
+  ticketId: string;
+  body: string;
+}
+
+export interface CreateSupportMessageResponse {
+  message: SupportTicketMessage;
+  ticketStatus: SupportTicketStatus;
+}

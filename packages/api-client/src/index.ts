@@ -83,6 +83,8 @@ import type {
   CreateBookingReviewRequest,
   ReviewsListQuery,
   UpdateReviewStatusRequest,
+  CreateSupportMessageRequest,
+  CreateSupportMessageResponse,
   CreateSupportTicketRequest,
   AdminSupportTicketDetail,
   AdminSupportTicketListItem,
@@ -1360,6 +1362,15 @@ export class ApiClient {
   ): Promise<AdminSupportTicketDetail> {
     return this.request<AdminSupportTicketDetail>(`/support-tickets/${id}`, {
       method: 'PATCH',
+      body,
+    });
+  }
+
+  createSupportMessage(
+    body: CreateSupportMessageRequest,
+  ): Promise<CreateSupportMessageResponse> {
+    return this.request<CreateSupportMessageResponse>('/support-messages', {
+      method: 'POST',
       body,
     });
   }
