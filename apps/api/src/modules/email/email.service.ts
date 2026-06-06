@@ -1,6 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { DEFAULT_EMAIL_BRANDING } from './email-branding.constants';
 import nodemailer, { type Transporter } from 'nodemailer';
+import { PLATFORM_ORG_ID } from '../../common/org-scope/org-scope.service';
+import { EmailBrandingService } from './email-branding.service';
 import {
   renderBookingConfirmationEmail,
   renderPasswordResetEmail,
@@ -21,25 +24,47 @@ export class EmailService {
   private transporter: Transporter | null | undefined;
   private etherealAccountLogged = false;
 
-  constructor(private readonly config: ConfigService) {}
+  constructor(
+    private readonly config: ConfigService,
+    private readonly brandingService: EmailBrandingService,
+  ) {}
 
   async sendPasswordReset(
     payload: PasswordResetEmailPayload,
   ): Promise<SendMailResult> {
-    const { subject, html, text } = renderPasswordResetEmail(payload);
+    const branding = await this.resolveBranding();
+    const { subject, html, text } = renderPasswordResetEmail(payload, branding);
     return this.send({ to: payload.to, subject, html, text });
   }
 
   async sendWelcome(payload: WelcomeEmailPayload): Promise<SendMailResult> {
-    const { subject, html, text } = renderWelcomeEmail(payload);
+    const branding = await this.resolveBranding();
+    const { subject, html, text } = renderWelcomeEmail(payload, branding);
     return this.send({ to: payload.to, subject, html, text });
   }
 
   async sendBookingConfirmation(
     payload: BookingConfirmationEmailPayload,
   ): Promise<SendMailResult> {
-    const { subject, html, text } = renderBookingConfirmationEmail(payload);
+    const branding = await this.resolveBranding();
+    const { subject, html, text } = renderBookingConfirmationEmail(
+      payload,
+      branding,
+    );
     return this.send({ to: payload.to, subject, html, text });
+  }
+
+  /** MVP : org plateforme seed ; fallback gracieux si résolution impossible. */
+  private async resolveBranding() {
+    try {
+      return await this.brandingService.resolveForOrganization(PLATFORM_ORG_ID);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      this.logger.warn(
+        `Impossible de résoudre le branding e-mail, fallback par défaut : ${message}`,
+      );
+      return DEFAULT_EMAIL_BRANDING;
+    }
   }
 
   private async send(options: {
