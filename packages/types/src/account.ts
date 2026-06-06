@@ -87,4 +87,4 @@ export interface AdjustLoyaltyPointsRequest {
   reason?: string;
 }
 
-export interface AdjustLoyaltyPointsResponse extends AdminLoyaltyAccountListItem {}
+export type AdjustLoyaltyPointsResponse = AdminLoyaltyAccountListItem;
