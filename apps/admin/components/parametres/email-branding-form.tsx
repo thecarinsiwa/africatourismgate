@@ -173,7 +173,7 @@ export function EmailBrandingForm({ canWrite }: EmailBrandingFormProps) {
           {
             settingGroup: 'email',
             settingKey: 'email_branding',
-            settingValue: toBrandingPayload(values),
+            settingValue: { ...toBrandingPayload(values) },
           },
         ],
       });
