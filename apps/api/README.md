@@ -20,13 +20,29 @@ NestJS HTTP API for Africa Tourism Gate, mapped to the MySQL schema in `database
 
 Transactional HTML emails via `src/modules/email/` (nodemailer):
 
-| Événement | Déclencheur |
-| --------- | ----------- |
-| Réinitialisation mot de passe | `POST /auth/forgot-password` |
-| Bienvenue | `POST /auth/register` |
-| Confirmation réservation | `confirmBooking` (cash POS, admin confirm, Stripe webhook) |
+| Événement | Destinataire | Déclencheur |
+| --------- | ------------ | ----------- |
+| Réinitialisation mot de passe | Client | `POST /auth/forgot-password` |
+| Bienvenue | Client | `POST /auth/register` |
+| Nouveau compte | Support (`EMAIL_SUPPORT_TO`) | `POST /auth/register` |
+| Confirmation réservation | Client | `confirmBooking` (cash POS, admin confirm, Stripe webhook) |
+| Réservation confirmée | Support (`EMAIL_SUPPORT_TO`) | `confirmBooking` |
 
-Variables (voir root `.env.example`) : `EMAIL_ENABLED`, `EMAIL_TRANSPORT`, `EMAIL_FROM`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_SECURE`.
+Variables (voir root `.env.example`) :
+
+| Variable | Rôle |
+| -------- | ---- |
+| `EMAIL_ENABLED` | `true` / `false` |
+| `EMAIL_TRANSPORT` | `mailpit` (dev), `smtp` (prod LWS) |
+| `EMAIL_FROM` | Expéditeur compte **service@** (clients) |
+| `SMTP_SERVICE_USER` / `SMTP_SERVICE_PASS` | Auth SMTP `service@africatourismgate.org` |
+| `EMAIL_SUPPORT_FROM` | Expéditeur alertes internes |
+| `EMAIL_SUPPORT_TO` | Destinataire alertes (`support@africatourismgate.org`) |
+| `SMTP_SUPPORT_USER` / `SMTP_SUPPORT_PASS` | Auth SMTP `support@africatourismgate.org` |
+| `SMTP_HOST` | `mail.africatourismgate.org` (ou `mail93.lwspanel.com`) |
+| `SMTP_PORT` / `SMTP_SECURE` | `465` + `true` (SSL) ou `587` + `false` (TLS) |
+
+Les mots de passe des boîtes mail vont dans `.env.local` (dev) ou `.env` VPS — **jamais** commités.
 
 **Dev (Mailpit)** — capture SMTP sans envoi réel :
 

@@ -1,4 +1,19 @@
 import { execSync } from 'node:child_process';
+import { existsSync, readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+
+function loadRootEnv() {
+  const path = resolve(process.cwd(), '.env');
+  if (!existsSync(path)) return;
+  for (const line of readFileSync(path, 'utf8').split(/\r?\n/)) {
+    const match = /^\s*([A-Z_][A-Z0-9_]*)\s*=\s*(.*)$/.exec(line);
+    if (match && process.env[match[1]] === undefined) {
+      process.env[match[1]] = match[2].trim();
+    }
+  }
+}
+
+loadRootEnv();
 
 const ports = [
   process.env.API_PORT ?? '3000',
@@ -41,5 +56,5 @@ for (const port of ports) {
 }
 
 if (freed === 0) {
-  console.log('Dev ports 3000–3003 are free');
+  console.log(`Dev ports ${ports.join(', ')} are free`);
 }
