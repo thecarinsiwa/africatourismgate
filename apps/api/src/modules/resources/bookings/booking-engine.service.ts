@@ -198,22 +198,10 @@ export class BookingEngineService {
       .map((item) => item.titleSnapshot?.trim())
       .filter((title): title is string => Boolean(title));
 
-    const clientName = [user.firstName, user.lastName].filter(Boolean).join(' ').trim();
-
     await this.emailService.sendBookingConfirmation({
       to: user.email,
       firstName: user.firstName,
       bookingId: detail.booking.id,
-      totalCents: detail.totalCents,
-      currency: detail.currency,
-      itemTitles,
-    });
-
-    await this.emailService.sendSupportNewBooking({
-      bookingId: detail.booking.id,
-      userId: user.id,
-      clientEmail: user.email,
-      clientName: clientName || user.email,
       totalCents: detail.totalCents,
       currency: detail.currency,
       itemTitles,

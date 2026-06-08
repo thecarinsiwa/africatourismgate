@@ -30,6 +30,9 @@ export type {
   CreateUserAddressRequest,
   CreateUserPaymentMethodRequest,
   LoyaltyAccount,
+  AdminLoyaltyAccountListItem,
+  AdjustLoyaltyPointsRequest,
+  AdjustLoyaltyPointsResponse,
   LoyaltyAccountsListQuery,
   LoyaltyTier,
   UpdateProfileRequest,
@@ -213,12 +216,18 @@ export type {
 } from './review.js';
 
 export type {
+  AdminSupportTicketDetail,
+  AdminSupportTicketListItem,
+  CreateSupportMessageRequest,
+  CreateSupportMessageResponse,
   CreateSupportTicketRequest,
   SupportTicket,
   SupportTicketCreated,
   SupportTicketMessage,
+  SupportTicketPriority,
   SupportTicketStatus,
   SupportTicketsListQuery,
+  UpdateSupportTicketRequest,
 } from './support.js';
 
 export type {
@@ -293,6 +302,10 @@ export type {
   BrandingPlatformValue,
   BulkUpsertOrganizationSettingsRequest,
   CreateOrganizationBankAccountRequest,
+  EmailBrandingValue,
+  EmailPreviewRequest,
+  EmailPreviewResponse,
+  EmailPreviewTemplate,
   LocaleSettingValue,
   LoyaltyOneKeySettingValue,
   OrganizationBankAccount,

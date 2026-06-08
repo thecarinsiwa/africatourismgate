@@ -8,21 +8,33 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiForbiddenResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { AuthUserDto } from '../../auth/dto/auth-user.dto';
+import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
 import { Users } from '../../../entities/generated';
+import { UsersListQueryDto } from './dto/users-list-query.dto';
 import { UsersService } from './users.service';
 
 @ApiTags('users')
+@ApiForbiddenResponse({ description: 'Missing permission' })
 @Controller('users')
 export class UsersController {
   constructor(private readonly service: UsersService) {}
 
   @Get()
+  @RequirePermissions('users.read')
   @ApiOperation({ summary: 'List users' })
-  findAll(@Query() query: PaginationQueryDto) {
-    return this.service.findAll(query);
+  findAll(
+    @Query() query: UsersListQueryDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.service.list(query, user);
   }
 
   @Get(':id')

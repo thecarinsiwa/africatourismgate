@@ -1,9 +1,8 @@
-import { emailLogoImgHtml } from './email-attachments';
+import type { EmailBrandingValue } from '@africatourismgate/types';
+import { DEFAULT_EMAIL_BRANDING } from './email-branding.constants';
 import type {
   BookingConfirmationEmailPayload,
   PasswordResetEmailPayload,
-  SupportNewAccountEmailPayload,
-  SupportNewBookingEmailPayload,
   WelcomeEmailPayload,
 } from './email.types';
 
@@ -32,20 +31,43 @@ function escapeHtml(value: string): string {
     .replace(/"/g, '&quot;');
 }
 
-function webBase(url?: string): string {
-  return (url?.trim() || DEFAULT_WEB_URL).replace(/\/$/, '');
+function primaryColor(branding: EmailBrandingValue): string {
+  return branding.primaryColor ?? DEFAULT_EMAIL_BRANDING.primaryColor ?? '#0d9488';
+}
+
+function footerText(branding: EmailBrandingValue): string {
+  return branding.footerText ?? DEFAULT_EMAIL_BRANDING.footerText ?? '';
+}
+
+function applySubjectTemplate(
+  template: string,
+  vars: { displayName: string; ref?: string },
+): string {
+  return template
+    .replace(/\{displayName\}/g, vars.displayName)
+    .replace(/\{ref\}/g, vars.ref ?? '');
+}
+
+function renderHeader(branding: EmailBrandingValue): string {
+  const color = escapeHtml(primaryColor(branding));
+  const name = escapeHtml(branding.displayName);
+
+  if (branding.logoUrl?.trim()) {
+    const logoUrl = escapeHtml(branding.logoUrl.trim());
+    return `<p style="margin:0 0 24px;">
+  <img src="${logoUrl}" alt="${name}" style="max-height:40px;max-width:200px;display:block;" />
+</p>`;
+  }
+
+  return `<p style="margin:0 0 24px;font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:${color};">${name}</p>`;
 }
 
 function layout(
   title: string,
   bodyHtml: string,
-  options?: { footerNote?: string; webUrl?: string },
+  branding: EmailBrandingValue,
 ): string {
-  const year = new Date().getFullYear();
-  const base = webBase(options?.webUrl);
-  const footerNote = options?.footerNote
-    ? `<p style="margin:0 0 12px;font-size:13px;line-height:1.55;color:${BRAND.muted};">${options.footerNote}</p>`
-    : '';
+  const footer = escapeHtml(footerText(branding));
   return `<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -67,28 +89,8 @@ function layout(
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:620px;background:${BRAND.white};border-radius:20px;overflow:hidden;box-shadow:0 8px 32px rgba(11,110,79,0.14);border:1px solid ${BRAND.border};">
           <!-- En-tête minimal : logo + nom -->
           <tr>
-            <td style="padding:18px 32px 14px;background:${BRAND.white};">
-              <table role="presentation" cellpadding="0" cellspacing="0" align="center">
-                <tr>
-                  <td style="vertical-align:middle;padding-right:12px;">
-                    <a href="${escapeHtml(base)}" style="text-decoration:none;line-height:0;">${emailLogoImgHtml('Africa Tourism Gate', LOGO_SIZE)}</a>
-                  </td>
-                  <td style="vertical-align:middle;text-align:left;">
-                    <a href="${escapeHtml(base)}" style="text-decoration:none;">
-                      <p style="margin:0;font-size:15px;font-weight:800;color:${BRAND.text};letter-spacing:-0.01em;line-height:1.2;">Africa Tourism Gate</p>
-                      <p style="margin:2px 0 0;font-size:11px;font-weight:500;color:${BRAND.muted};letter-spacing:0.02em;">Connect People to Adventures</p>
-                    </a>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-          <tr>
-            <td style="height:2px;background:linear-gradient(90deg,${BRAND.primary} 0%,${BRAND.secondary} 70%,${BRAND.accent} 100%);font-size:0;line-height:0;">&nbsp;</td>
-          </tr>
-          <!-- Body -->
-          <tr>
-            <td style="padding:32px 36px 24px;">
+            <td>
+              ${renderHeader(branding)}
               ${bodyHtml}
             </td>
           </tr>
@@ -125,6 +127,7 @@ function layout(
             </td>
           </tr>
         </table>
+        <p style="margin:16px 0 0;font-size:12px;color:#71717a;">${footer}</p>
       </td>
     </tr>
   </table>
@@ -132,52 +135,13 @@ function layout(
 </html>`;
 }
 
-function button(
-  href: string,
-  label: string,
-  variant: 'primary' | 'secondary' = 'primary',
-): string {
+function button(href: string, label: string, branding: EmailBrandingValue): string {
   const safeHref = escapeHtml(href);
-  if (variant === 'primary') {
-    return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:24px 0 6px;">
-  <tr>
-    <td style="border-radius:12px;background:linear-gradient(135deg,${BRAND.primary} 0%,${BRAND.secondary} 100%);box-shadow:0 4px 14px rgba(11,110,79,0.35);">
-      <a href="${safeHref}" style="display:inline-block;padding:15px 32px;font-size:15px;font-weight:700;color:${BRAND.white};text-decoration:none;border-radius:12px;letter-spacing:0.02em;">${escapeHtml(label)}</a>
-    </td>
-  </tr>
-</table>`;
-  }
-  return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:8px 0 6px;">
-  <tr>
-    <td style="border-radius:12px;border:2px solid ${BRAND.primary};">
-      <a href="${safeHref}" style="display:inline-block;padding:13px 28px;font-size:15px;font-weight:700;color:${BRAND.primary};text-decoration:none;border-radius:10px;">${escapeHtml(label)}</a>
-    </td>
-  </tr>
-</table>`;
-}
-
-function featureCard(icon: string, title: string, desc: string): string {
-  return `<td style="padding:6px;vertical-align:top;width:33%;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${BRAND.white};border:1px solid ${BRAND.border};border-radius:14px;height:100%;">
-    <tr>
-      <td style="padding:18px 14px;text-align:center;">
-        <p style="margin:0 0 10px;font-size:28px;line-height:1;">${icon}</p>
-        <p style="margin:0 0 6px;font-size:14px;font-weight:800;color:${BRAND.text};">${escapeHtml(title)}</p>
-        <p style="margin:0;font-size:12px;line-height:1.5;color:${BRAND.muted};">${escapeHtml(desc)}</p>
-      </td>
-    </tr>
-  </table>
-</td>`;
-}
-
-function infoCard(content: string): string {
-  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:20px 0;background:${BRAND.surface};border:1px solid ${BRAND.border};border-radius:16px;">
-  <tr><td style="padding:22px 24px;">${content}</td></tr>
-</table>`;
-}
-
-function statusBadge(label: string, color: string): string {
-  return `<span style="display:inline-block;padding:6px 14px;border-radius:999px;background:${color};font-size:11px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:${BRAND.white};">${escapeHtml(label)}</span>`;
+  const bg = escapeHtml(primaryColor(branding));
+  return `<p style="margin:24px 0;">
+  <a href="${safeHref}" style="display:inline-block;padding:12px 24px;background:${bg};color:#ffffff;text-decoration:none;border-radius:6px;font-weight:600;">${escapeHtml(label)}</a>
+</p>
+<p style="margin:0;font-size:13px;color:#71717a;word-break:break-all;">${safeHref}</p>`;
 }
 
 export function formatMoney(cents: number, currency: string): string {
@@ -205,16 +169,18 @@ function formatDateFr(iso?: string): string {
 
 export function renderPasswordResetEmail(
   payload: PasswordResetEmailPayload,
+  branding: EmailBrandingValue,
 ): { subject: string; html: string; text: string } {
   const name = escapeHtml(payload.firstName.trim() || 'Client');
   const subject = 'Réinitialisation de votre mot de passe';
   const html = layout(
     subject,
-    `<h1 style="margin:0 0 12px;font-size:28px;font-weight:800;color:${BRAND.text};line-height:1.2;letter-spacing:-0.02em;">Réinitialisation du mot de passe</h1>
-<p style="margin:0 0 20px;font-size:16px;line-height:1.6;color:${BRAND.muted};">Bonjour ${name},</p>
-<p style="margin:0 0 8px;font-size:15px;line-height:1.7;color:${BRAND.text};">Vous avez demandé à réinitialiser votre mot de passe. Cliquez sur le bouton ci-dessous — le lien est valide <strong style="color:${BRAND.primary};">1 heure</strong>.</p>
-${button(payload.resetUrl, 'Réinitialiser mon mot de passe')}
-<p style="margin:16px 0 0;font-size:13px;color:${BRAND.muted};line-height:1.55;">Si vous n'êtes pas à l'origine de cette demande, ignorez cet e-mail. Votre mot de passe restera inchangé.</p>`,
+    `<h1 style="margin:0 0 16px;font-size:22px;">Réinitialisation du mot de passe</h1>
+<p style="margin:0 0 16px;line-height:1.6;">Bonjour ${name},</p>
+<p style="margin:0 0 16px;line-height:1.6;">Vous avez demandé à réinitialiser votre mot de passe. Cliquez sur le bouton ci-dessous (lien valide 1 heure) :</p>
+${button(payload.resetUrl, 'Réinitialiser mon mot de passe', branding)}
+<p style="margin:16px 0 0;font-size:13px;color:#71717a;line-height:1.5;">Si vous n'êtes pas à l'origine de cette demande, ignorez cet e-mail.</p>`,
+    branding,
   );
   const text = `Bonjour ${payload.firstName},\n\nRéinitialisez votre mot de passe : ${payload.resetUrl}\n\nSi vous n'êtes pas à l'origine de cette demande, ignorez cet e-mail.`;
   return { subject, html, text };
@@ -222,188 +188,57 @@ ${button(payload.resetUrl, 'Réinitialiser mon mot de passe')}
 
 export function renderWelcomeEmail(
   payload: WelcomeEmailPayload,
+  branding: EmailBrandingValue,
 ): { subject: string; html: string; text: string } {
-  const name = escapeHtml(payload.firstName.trim() || 'Voyageur');
-  const base = webBase(payload.webUrl);
-  const accountUrl = `${base}/account`;
-  const subject = 'Bienvenue chez Africa Tourism Gate';
+  const name = escapeHtml(payload.firstName.trim() || 'Client');
+  const subject = applySubjectTemplate(
+    branding.welcomeSubject ?? 'Bienvenue sur {displayName}',
+    { displayName: branding.displayName },
+  );
   const html = layout(
     subject,
-    `${statusBadge('Compte activé', BRAND.secondary)}
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:20px 0 28px;background:linear-gradient(145deg,${BRAND.surfaceAlt} 0%,${BRAND.white} 60%,${BRAND.accentLight} 100%);border-radius:18px;border:1px solid ${BRAND.border};">
-  <tr>
-    <td style="padding:32px 28px;text-align:center;">
-      <h1 style="margin:0 0 10px;font-size:30px;font-weight:800;color:${BRAND.text};line-height:1.2;letter-spacing:-0.03em;">Bienvenue, ${name}</h1>
-      <p style="margin:0 auto;max-width:420px;font-size:16px;line-height:1.65;color:${BRAND.muted};">Votre compte est prêt. Explorez des hébergements d'exception, des vols et des expériences authentiques à travers tout le continent africain.</p>
-    </td>
-  </tr>
-</table>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 12px;">
-  <tr>
-    ${featureCard('🏨', 'Hébergements', 'Hôtels & lodges sélectionnés')}
-    ${featureCard('✈️', 'Vols', 'Réservation simple & rapide')}
-    ${featureCard('🎯', 'Expériences', 'Safaris, tours & activités')}
-  </tr>
-</table>
-${button(base, 'Découvrir nos offres')}
-${button(accountUrl, 'Accéder à mon compte', 'secondary')}
-<p style="margin:28px 0 0;font-size:14px;line-height:1.65;color:${BRAND.muted};text-align:center;">Merci de nous faire confiance. Notre équipe vous accompagne à chaque étape de votre voyage.</p>`,
-    {
-      footerNote:
-        'Vous recevez cet e-mail car un compte a été créé sur Africa Tourism Gate.',
-      webUrl: base,
-    },
+    `<h1 style="margin:0 0 16px;font-size:22px;">Bienvenue !</h1>
+<p style="margin:0 0 16px;line-height:1.6;">Bonjour ${name},</p>
+<p style="margin:0 0 16px;line-height:1.6;">Votre compte a été créé avec succès. Vous pouvez dès maintenant vous connecter et réserver vos expériences de voyage en Afrique.</p>
+<p style="margin:0;line-height:1.6;">Merci de nous faire confiance.</p>`,
+    branding,
   );
-  const text = `Bonjour ${payload.firstName},\n\nBienvenue sur Africa Tourism Gate ! Votre compte a été créé avec succès.\n\nExplorer : ${base}\nMon compte : ${accountUrl}`;
+  const text = `Bonjour ${payload.firstName},\n\nBienvenue sur ${branding.displayName}. Votre compte a été créé avec succès.`;
   return { subject, html, text };
 }
 
 export function renderBookingConfirmationEmail(
   payload: BookingConfirmationEmailPayload,
+  branding: EmailBrandingValue,
 ): { subject: string; html: string; text: string } {
   const name = escapeHtml(payload.firstName.trim() || 'Client');
   const total = escapeHtml(formatMoney(payload.totalCents, payload.currency));
   const ref = escapeHtml(payload.bookingId);
-  const shortRef = escapeHtml(payload.bookingId.slice(0, 8).toUpperCase());
-  const confirmedAt = escapeHtml(formatDateFr(payload.confirmedAt));
-  const base = webBase(payload.webUrl);
-  const reservationsUrl = `${base}/account/reservations`;
-
-  const itemsRows =
+  const refShort = payload.bookingId.slice(0, 8);
+  const items =
     payload.itemTitles.length > 0
-      ? payload.itemTitles
-          .map(
-            (t, i) => `<tr>
-  <td style="padding:14px 0;border-top:1px solid ${BRAND.border};font-size:13px;font-weight:700;color:${BRAND.muted};width:32px;vertical-align:top;">${String(i + 1).padStart(2, '0')}</td>
-  <td style="padding:14px 0;border-top:1px solid ${BRAND.border};font-size:15px;font-weight:600;color:${BRAND.text};line-height:1.45;vertical-align:top;">${escapeHtml(t)}</td>
-</tr>`,
-          )
-          .join('')
-      : `<tr><td colspan="2" style="padding:14px 0;font-size:14px;color:${BRAND.muted};">Détails disponibles dans votre espace client.</td></tr>`;
-
-  const subject = `Confirmation de réservation — ${shortRef}`;
+      ? `<ul style="margin:8px 0 16px;padding-left:20px;line-height:1.6;">${payload.itemTitles
+          .map((t) => `<li>${escapeHtml(t)}</li>`)
+          .join('')}</ul>`
+      : '';
+  const subject = applySubjectTemplate(
+    branding.bookingSubject ?? 'Confirmation de réservation — {ref}',
+    { displayName: branding.displayName, ref: refShort },
+  );
   const html = layout(
     subject,
-    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 8px;">
-  <tr>
-    <td>
-      ${statusBadge('Confirmée', BRAND.primary)}
-    </td>
-  </tr>
-</table>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:16px 0 24px;">
-  <tr>
-    <td style="width:56px;vertical-align:top;">
-      <table role="presentation" cellpadding="0" cellspacing="0">
-        <tr>
-          <td style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,${BRAND.primary},${BRAND.secondary});text-align:center;font-size:24px;color:#fff;line-height:48px;">✓</td>
-        </tr>
-      </table>
-    </td>
-    <td style="vertical-align:top;padding-left:14px;">
-      <h1 style="margin:0 0 8px;font-size:28px;font-weight:800;color:${BRAND.text};line-height:1.2;letter-spacing:-0.02em;">Réservation confirmée</h1>
-      <p style="margin:0;font-size:16px;line-height:1.65;color:${BRAND.muted};">Bonjour ${name}, votre paiement a été enregistré avec succès. Voici le récapitulatif de votre commande.</p>
-    </td>
-  </tr>
-</table>
-${infoCard(`
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-  <tr>
-    <td style="padding-bottom:16px;">
-      <p style="margin:0 0 6px;font-size:11px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:${BRAND.muted};">Référence de réservation</p>
-      <p style="margin:0;font-size:26px;font-weight:800;font-family:Consolas,'Courier New',monospace;color:${BRAND.primary};letter-spacing:0.08em;">${shortRef}</p>
-      <p style="margin:6px 0 0;font-size:12px;color:${BRAND.muted};">${ref}</p>
-    </td>
-  </tr>
-  <tr>
-    <td style="padding:14px 0;border-top:1px solid ${BRAND.border};">
-      <p style="margin:0 0 6px;font-size:11px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:${BRAND.muted};">Date de confirmation</p>
-      <p style="margin:0;font-size:15px;font-weight:700;color:${BRAND.text};">${confirmedAt}</p>
-    </td>
-  </tr>
-</table>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:18px;padding-top:18px;border-top:1px solid ${BRAND.border};">
-  <tr>
-    <td colspan="2" style="padding-bottom:10px;font-size:11px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:${BRAND.muted};">Vos prestations</td>
-  </tr>
-  ${itemsRows}
-  <tr>
-    <td colspan="2" style="padding-top:18px;border-top:2px solid ${BRAND.primary};">
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-        <tr>
-          <td style="font-size:16px;font-weight:800;color:${BRAND.text};">Total payé</td>
-          <td align="right" style="font-size:26px;font-weight:800;color:${BRAND.primary};letter-spacing:-0.02em;">${total}</td>
-        </tr>
-      </table>
-    </td>
-  </tr>
-</table>
-`)}
-${button(reservationsUrl, 'Voir ma réservation')}
-<p style="margin:22px 0 0;font-size:14px;line-height:1.7;color:${BRAND.muted};">Conservez cet e-mail pour vos archives. Pour toute question, notre équipe est joignable à <a href="mailto:support@africatourismgate.org" style="color:${BRAND.primary};font-weight:700;text-decoration:none;">support@africatourismgate.org</a>.</p>`,
-    {
-      footerNote: 'Merci pour votre confiance — Africa Tourism Gate',
-      webUrl: base,
-    },
+    `<h1 style="margin:0 0 16px;font-size:22px;">Réservation confirmée</h1>
+<p style="margin:0 0 16px;line-height:1.6;">Bonjour ${name},</p>
+<p style="margin:0 0 8px;line-height:1.6;">Votre réservation <strong>${ref}</strong> est confirmée.</p>
+<p style="margin:0 0 8px;line-height:1.6;"><strong>Total :</strong> ${total}</p>
+${items}
+<p style="margin:16px 0 0;line-height:1.6;">Conservez cet e-mail pour vos archives.</p>`,
+    branding,
   );
   const itemsText =
     payload.itemTitles.length > 0
       ? payload.itemTitles.map((t, i) => `  ${i + 1}. ${t}`).join('\n')
       : '';
   const text = `Bonjour ${payload.firstName},\n\nRéservation ${payload.bookingId} confirmée le ${formatDateFr(payload.confirmedAt)}.\n\n${itemsText}\n\nTotal : ${formatMoney(payload.totalCents, payload.currency)}\n\nVoir : ${reservationsUrl}`;
-  return { subject, html, text };
-}
-
-export function renderSupportNewAccountEmail(
-  payload: SupportNewAccountEmailPayload,
-): { subject: string; html: string; text: string } {
-  const subject = `[Support] Nouveau compte — ${payload.email}`;
-  const phone = payload.phone?.trim()
-    ? escapeHtml(payload.phone.trim())
-    : '—';
-  const lang = payload.preferredLanguage?.trim()
-    ? escapeHtml(payload.preferredLanguage.trim())
-    : '—';
-  const html = layout(
-    subject,
-    `<h1 style="margin:0 0 16px;font-size:22px;font-weight:800;">Nouveau compte client</h1>
-${infoCard(`
-<p style="margin:0 0 10px;font-size:15px;line-height:1.6;"><strong>Nom :</strong> ${escapeHtml(payload.firstName)} ${escapeHtml(payload.lastName)}</p>
-<p style="margin:0 0 10px;font-size:15px;line-height:1.6;"><strong>E-mail :</strong> ${escapeHtml(payload.email)}</p>
-<p style="margin:0 0 10px;font-size:15px;line-height:1.6;"><strong>ID utilisateur :</strong> <code style="font-size:13px;">${escapeHtml(payload.userId)}</code></p>
-<p style="margin:0 0 10px;font-size:15px;line-height:1.6;"><strong>Téléphone :</strong> ${phone}</p>
-<p style="margin:0;font-size:15px;line-height:1.6;"><strong>Langue :</strong> ${lang}</p>
-`)}`,
-  );
-  const text = `Nouveau compte\n${payload.firstName} ${payload.lastName}\n${payload.email}\nID: ${payload.userId}`;
-  return { subject, html, text };
-}
-
-export function renderSupportNewBookingEmail(
-  payload: SupportNewBookingEmailPayload,
-): { subject: string; html: string; text: string } {
-  const total = escapeHtml(formatMoney(payload.totalCents, payload.currency));
-  const ref = escapeHtml(payload.bookingId);
-  const client = escapeHtml(payload.clientName.trim() || 'Client');
-  const email = escapeHtml(payload.clientEmail);
-  const items =
-    payload.itemTitles.length > 0
-      ? `<ul style="margin:8px 0 0;padding-left:20px;line-height:1.7;">${payload.itemTitles
-          .map((t) => `<li style="margin-bottom:4px;">${escapeHtml(t)}</li>`)
-          .join('')}</ul>`
-      : '';
-  const subject = `[Support] Réservation confirmée — ${payload.bookingId.slice(0, 8)}`;
-  const html = layout(
-    subject,
-    `<h1 style="margin:0 0 16px;font-size:22px;font-weight:800;">Réservation confirmée</h1>
-${infoCard(`
-<p style="margin:0 0 10px;font-size:15px;line-height:1.6;"><strong>Référence :</strong> ${ref}</p>
-<p style="margin:0 0 10px;font-size:15px;line-height:1.6;"><strong>Client :</strong> ${client} (${email})</p>
-<p style="margin:0 0 10px;font-size:15px;line-height:1.6;"><strong>ID utilisateur :</strong> ${escapeHtml(payload.userId)}</p>
-<p style="margin:0;font-size:15px;line-height:1.6;"><strong>Total :</strong> ${total}</p>
-${items}
-`)}`,
-  );
-  const text = `Réservation ${payload.bookingId}\nClient: ${payload.clientName} <${payload.clientEmail}>\nTotal: ${formatMoney(payload.totalCents, payload.currency)}`;
   return { subject, html, text };
 }

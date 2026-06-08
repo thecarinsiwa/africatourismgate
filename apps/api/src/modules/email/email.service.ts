@@ -1,19 +1,18 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { DEFAULT_EMAIL_BRANDING } from './email-branding.constants';
 import nodemailer, { type Transporter } from 'nodemailer';
+import { PLATFORM_ORG_ID } from '../../common/org-scope/org-scope.service';
+import { EmailBrandingService } from './email-branding.service';
 import {
   renderBookingConfirmationEmail,
   renderPasswordResetEmail,
-  renderSupportNewAccountEmail,
-  renderSupportNewBookingEmail,
   renderWelcomeEmail,
 } from './email.templates';
 import type {
   BookingConfirmationEmailPayload,
   PasswordResetEmailPayload,
   SendMailResult,
-  SupportNewAccountEmailPayload,
-  SupportNewBookingEmailPayload,
   WelcomeEmailPayload,
 } from './email.types';
 
@@ -27,60 +26,47 @@ export class EmailService {
   private supportTransporter: Transporter | null | undefined;
   private etherealAccountLogged = false;
 
-  constructor(private readonly config: ConfigService) {}
+  constructor(
+    private readonly config: ConfigService,
+    private readonly brandingService: EmailBrandingService,
+  ) {}
 
   async sendPasswordReset(
     payload: PasswordResetEmailPayload,
   ): Promise<SendMailResult> {
-    const { subject, html, text } = renderPasswordResetEmail(payload);
-    return this.send('service', { to: payload.to, subject, html, text });
+    const branding = await this.resolveBranding();
+    const { subject, html, text } = renderPasswordResetEmail(payload, branding);
+    return this.send({ to: payload.to, subject, html, text });
   }
 
   async sendWelcome(payload: WelcomeEmailPayload): Promise<SendMailResult> {
-    const { subject, html, text } = renderWelcomeEmail({
-      ...payload,
-      webUrl: payload.webUrl ?? this.getWebUrl(),
-    });
-    return this.send('service', { to: payload.to, subject, html, text });
+    const branding = await this.resolveBranding();
+    const { subject, html, text } = renderWelcomeEmail(payload, branding);
+    return this.send({ to: payload.to, subject, html, text });
   }
 
   async sendBookingConfirmation(
     payload: BookingConfirmationEmailPayload,
   ): Promise<SendMailResult> {
-    const { subject, html, text } = renderBookingConfirmationEmail({
-      ...payload,
-      webUrl: payload.webUrl ?? this.getWebUrl(),
-      confirmedAt: payload.confirmedAt ?? new Date().toISOString(),
-    });
-    return this.send('service', { to: payload.to, subject, html, text });
+    const branding = await this.resolveBranding();
+    const { subject, html, text } = renderBookingConfirmationEmail(
+      payload,
+      branding,
+    );
+    return this.send({ to: payload.to, subject, html, text });
   }
 
-  async sendSupportNewAccount(
-    payload: SupportNewAccountEmailPayload,
-  ): Promise<SendMailResult> {
-    const supportTo = this.getSupportToAddress();
-    if (!supportTo) {
+  /** MVP : org plateforme seed ; fallback gracieux si résolution impossible. */
+  private async resolveBranding() {
+    try {
+      return await this.brandingService.resolveForOrganization(PLATFORM_ORG_ID);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
       this.logger.warn(
-        'Support email skipped: set EMAIL_SUPPORT_TO (new account notification)',
+        `Impossible de résoudre le branding e-mail, fallback par défaut : ${message}`,
       );
-      return { sent: false };
+      return DEFAULT_EMAIL_BRANDING;
     }
-    const { subject, html, text } = renderSupportNewAccountEmail(payload);
-    return this.send('support', { to: supportTo, subject, html, text });
-  }
-
-  async sendSupportNewBooking(
-    payload: SupportNewBookingEmailPayload,
-  ): Promise<SendMailResult> {
-    const supportTo = this.getSupportToAddress();
-    if (!supportTo) {
-      this.logger.warn(
-        'Support email skipped: set EMAIL_SUPPORT_TO (booking notification)',
-      );
-      return { sent: false };
-    }
-    const { subject, html, text } = renderSupportNewBookingEmail(payload);
-    return this.send('support', { to: supportTo, subject, html, text });
   }
 
   private async send(
@@ -160,18 +146,6 @@ export class EmailService {
     return (
       this.config.get<string>('EMAIL_FROM')?.trim() ||
       'Africa Tourism Gate <service@africatourismgate.org>'
-    );
-  }
-
-  private getSupportToAddress(): string | null {
-    const value = this.config.get<string>('EMAIL_SUPPORT_TO')?.trim();
-    return value || null;
-  }
-
-  private getWebUrl(): string {
-    return (
-      this.config.get<string>('NEXT_PUBLIC_WEB_URL')?.trim() ||
-      'https://africatourismgate.org'
     );
   }
 
