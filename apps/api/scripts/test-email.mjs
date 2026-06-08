@@ -1,5 +1,5 @@
 /**
- * Email notifications: forgot-password, welcome + support (register), booking + support (confirm).
+ * Email notifications: forgot-password, welcome (register), booking confirmation.
  *
  * Prérequis:
  * - API sur :3000 (pnpm dev:api)
@@ -64,7 +64,7 @@ async function main() {
   });
   assertStatus('POST /auth/forgot-password', forgot.status, 200);
 
-  console.log('2. Register → welcome + support emails (check Mailpit for EMAIL_SUPPORT_TO)');
+  console.log('2. Register → welcome email');
   const email = `welcome.${Date.now()}@africatourismgate.local`;
   const password = ephemeralTestPassword();
   const reg = await request('POST', '/auth/register', {
@@ -77,7 +77,7 @@ async function main() {
   });
   assertStatus('POST /auth/register', reg.status, 201);
 
-  console.log('3. Booking cash payment → client confirmation + support emails');
+  console.log('3. Booking cash payment → confirmation email');
   const token = (
     await request('POST', '/auth/login', {
       body: { email: SEED_ADMIN_EMAIL, password: getSeedAdminPassword() },

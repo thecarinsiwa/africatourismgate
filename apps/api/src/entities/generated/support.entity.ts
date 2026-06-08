@@ -14,6 +14,9 @@ export class SupportTickets extends BaseAuditEntity {
   @Column({ name: 'status', enum: ["open","pending","resolved","closed"] })
   status!: 'open' | 'pending' | 'resolved' | 'closed';
 
+  @Column({ name: 'priority', enum: ["low","normal","high","urgent"], default: 'normal' })
+  priority!: 'low' | 'normal' | 'high' | 'urgent';
+
 }
 
 @Entity('support_messages')

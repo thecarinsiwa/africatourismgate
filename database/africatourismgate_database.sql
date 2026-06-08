@@ -1251,6 +1251,7 @@ CREATE TABLE `support_tickets` (
   `user_id` CHAR(36) NOT NULL,
   `subject` VARCHAR(255) NOT NULL,
   `status` ENUM('open','pending','resolved','closed') NOT NULL DEFAULT 'open',
+  `priority` ENUM('low','normal','high','urgent') NOT NULL DEFAULT 'normal',
   `created_by_user_id` CHAR(36) DEFAULT NULL,
   `updated_by_user_id` CHAR(36) DEFAULT NULL,
   `deleted_by_user_id` CHAR(36) DEFAULT NULL,

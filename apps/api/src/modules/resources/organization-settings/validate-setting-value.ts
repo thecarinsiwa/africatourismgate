@@ -24,6 +24,20 @@ function optionalString(value: unknown, field: string, maxLength?: number): stri
   return requireString(value, field, maxLength);
 }
 
+function optionalHexColor(value: unknown, field: string): string | undefined {
+  if (value === undefined || value === null || value === '') {
+    return undefined;
+  }
+  if (typeof value !== 'string' || !value.trim()) {
+    throw new BadRequestException(`${field} doit être une couleur hex (#RRGGBB).`);
+  }
+  const trimmed = value.trim();
+  if (!/^#[0-9a-fA-F]{6}$/.test(trimmed)) {
+    throw new BadRequestException(`${field} doit être une couleur hex (#RRGGBB).`);
+  }
+  return trimmed.toUpperCase();
+}
+
 export function validateSettingValue(
   settingKey: string,
   value: Record<string, unknown>,
@@ -84,6 +98,35 @@ export function validateSettingValue(
         ...(secondaryColor ? { secondaryColor } : {}),
         ...(logoUrl ? { logoUrl } : {}),
         ...(faviconUrl ? { faviconUrl } : {}),
+      };
+    }
+    case 'email_branding': {
+      const displayName = requireString(value.displayName, 'displayName', 255);
+      const logoUrl = optionalString(value.logoUrl, 'logoUrl', 2048);
+      const primaryColor = optionalHexColor(value.primaryColor, 'primaryColor');
+      const secondaryColor = optionalHexColor(
+        value.secondaryColor,
+        'secondaryColor',
+      );
+      const footerText = optionalString(value.footerText, 'footerText', 500);
+      const welcomeSubject = optionalString(
+        value.welcomeSubject,
+        'welcomeSubject',
+        255,
+      );
+      const bookingSubject = optionalString(
+        value.bookingSubject,
+        'bookingSubject',
+        255,
+      );
+      return {
+        displayName,
+        ...(logoUrl ? { logoUrl } : {}),
+        ...(primaryColor ? { primaryColor } : {}),
+        ...(secondaryColor ? { secondaryColor } : {}),
+        ...(footerText ? { footerText } : {}),
+        ...(welcomeSubject ? { welcomeSubject } : {}),
+        ...(bookingSubject ? { bookingSubject } : {}),
       };
     }
     case 'onekey': {

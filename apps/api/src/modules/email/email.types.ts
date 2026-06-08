@@ -27,24 +27,3 @@ export type BookingConfirmationEmailPayload = {
   webUrl?: string;
   confirmedAt?: string;
 };
-
-/** Internal notification to the support team (new customer account). */
-export type SupportNewAccountEmailPayload = {
-  userId: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  phone?: string | null;
-  preferredLanguage?: string | null;
-};
-
-/** Internal notification to the support team (booking confirmed). */
-export type SupportNewBookingEmailPayload = {
-  bookingId: string;
-  userId: string;
-  clientEmail: string;
-  clientName: string;
-  totalCents: number;
-  currency: string;
-  itemTitles: string[];
-};

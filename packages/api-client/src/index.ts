@@ -83,10 +83,14 @@ import type {
   CreateBookingReviewRequest,
   ReviewsListQuery,
   UpdateReviewStatusRequest,
+  CreateSupportMessageRequest,
+  CreateSupportMessageResponse,
   CreateSupportTicketRequest,
-  SupportTicket,
+  AdminSupportTicketDetail,
+  AdminSupportTicketListItem,
   SupportTicketCreated,
   SupportTicketsListQuery,
+  UpdateSupportTicketRequest,
   PropertyDetail,
   PropertyDetailQuery,
   PropertyReviewsListQuery,
@@ -114,6 +118,9 @@ import type {
   CreateUserAddressRequest,
   CreateUserPaymentMethodRequest,
   LoyaltyAccount,
+  AdminLoyaltyAccountListItem,
+  AdjustLoyaltyPointsRequest,
+  AdjustLoyaltyPointsResponse,
   LoyaltyAccountsListQuery,
   Employee,
   EmployeesListQuery,
@@ -200,6 +207,8 @@ import type {
   UpdatePointOfInterestRequest,
   BulkUpsertOrganizationSettingsRequest,
   CreateOrganizationBankAccountRequest,
+  EmailPreviewRequest,
+  EmailPreviewResponse,
   OrganizationBankAccount,
   OrganizationBankAccountsListQuery,
   OrganizationSetting,
@@ -284,6 +293,10 @@ export type {
   UpdateEmployeeRequest,
   BulkUpsertOrganizationSettingsRequest,
   CreateOrganizationBankAccountRequest,
+  EmailBrandingValue,
+  EmailPreviewRequest,
+  EmailPreviewResponse,
+  EmailPreviewTemplate,
   OrganizationBankAccount,
   OrganizationBankAccountsListQuery,
   OrganizationSetting,
@@ -549,8 +562,25 @@ export class ApiClient {
 
   listLoyaltyAccounts(
     query?: LoyaltyAccountsListQuery,
-  ): Promise<PaginatedResponse<LoyaltyAccount>> {
-    return fetchPaginated<LoyaltyAccount>(this, '/loyalty-accounts', query);
+  ): Promise<PaginatedResponse<LoyaltyAccount | AdminLoyaltyAccountListItem>> {
+    return fetchPaginated<LoyaltyAccount | AdminLoyaltyAccountListItem>(
+      this,
+      '/loyalty-accounts',
+      query,
+    );
+  }
+
+  adjustLoyaltyPoints(
+    id: string,
+    body: AdjustLoyaltyPointsRequest,
+  ): Promise<AdjustLoyaltyPointsResponse> {
+    return this.request<AdjustLoyaltyPointsResponse>(
+      `/loyalty-accounts/${id}/adjust-points`,
+      {
+        method: 'POST',
+        body,
+      },
+    );
   }
 
   listUserPaymentMethods(
@@ -887,6 +917,13 @@ export class ApiClient {
   ): Promise<OrganizationSetting[]> {
     return this.request<OrganizationSetting[]>('/organization-settings/bulk', {
       method: 'PUT',
+      body,
+    });
+  }
+
+  previewEmail(body: EmailPreviewRequest): Promise<EmailPreviewResponse> {
+    return this.request<EmailPreviewResponse>('/email/preview', {
+      method: 'POST',
       body,
     });
   }
@@ -1322,18 +1359,37 @@ export class ApiClient {
 
   listSupportTickets(
     query?: SupportTicketsListQuery,
-  ): Promise<PaginatedResponse<SupportTicket>> {
-    return fetchPaginated<SupportTicket>(this, '/support-tickets', query);
+  ): Promise<PaginatedResponse<AdminSupportTicketListItem>> {
+    return fetchPaginated<AdminSupportTicketListItem>(this, '/support-tickets', query);
   }
 
-  getSupportTicket(id: string): Promise<SupportTicket> {
-    return this.request<SupportTicket>(`/support-tickets/${id}`);
+  getSupportTicket(id: string): Promise<AdminSupportTicketDetail> {
+    return this.request<AdminSupportTicketDetail>(`/support-tickets/${id}`);
   }
 
   createSupportTicket(
     body: CreateSupportTicketRequest,
   ): Promise<SupportTicketCreated> {
     return this.request<SupportTicketCreated>('/support-tickets', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateSupportTicket(
+    id: string,
+    body: UpdateSupportTicketRequest,
+  ): Promise<AdminSupportTicketDetail> {
+    return this.request<AdminSupportTicketDetail>(`/support-tickets/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  createSupportMessage(
+    body: CreateSupportMessageRequest,
+  ): Promise<CreateSupportMessageResponse> {
+    return this.request<CreateSupportMessageResponse>('/support-messages', {
       method: 'POST',
       body,
     });

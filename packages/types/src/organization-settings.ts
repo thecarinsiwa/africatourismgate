@@ -17,6 +17,37 @@ export interface BrandingPlatformValue {
   faviconUrl?: string;
 }
 
+/** Branding e-mails transactionnels — `organization_settings` (group `email`, key `email_branding`). */
+export interface EmailBrandingValue {
+  displayName: string;
+  logoUrl?: string;
+  primaryColor?: string;
+  secondaryColor?: string;
+  footerText?: string;
+  welcomeSubject?: string;
+  bookingSubject?: string;
+}
+
+export const DEFAULT_EMAIL_BRANDING: EmailBrandingValue = {
+  displayName: 'Africa Tourism Gate',
+  primaryColor: '#0d9488',
+  footerText: '© Africa Tourism Gate',
+};
+
+export type EmailPreviewTemplate = 'welcome' | 'booking' | 'password_reset';
+
+export interface EmailPreviewRequest {
+  template: EmailPreviewTemplate;
+  organizationId?: string;
+  branding?: Partial<EmailBrandingValue>;
+}
+
+export interface EmailPreviewResponse {
+  subject: string;
+  html: string;
+  text: string;
+}
+
 /** Programme OneKey — `organization_settings` (group `loyalty`, key `onekey`). */
 export interface LoyaltyOneKeySettingValue {
   enabled: boolean;

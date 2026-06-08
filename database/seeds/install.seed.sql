@@ -175,6 +175,14 @@ INSERT INTO `organization_settings` (
   'onekey',
   '{"enabled":true,"pointsPerMajorUnit":1,"programCode":"ONEKEY"}',
   '00000000-0000-4000-8000-000000000010'
+),
+(
+  '00000000-0000-4000-8000-000000000015',
+  '00000000-0000-4000-8000-000000000001',
+  'email',
+  'email_branding',
+  '{"displayName":"Africa Tourism Gate","primaryColor":"#0d9488","footerText":"© Africa Tourism Gate"}',
+  '00000000-0000-4000-8000-000000000010'
 );
 
 -- -----------------------------------------------------------------------------
