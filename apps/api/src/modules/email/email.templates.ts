@@ -62,12 +62,22 @@ function renderHeader(branding: EmailBrandingValue): string {
   return `<p style="margin:0 0 24px;font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:${color};">${name}</p>`;
 }
 
+function webBase(url?: string): string {
+  return (url?.trim() || DEFAULT_WEB_URL).replace(/\/$/, '');
+}
+
 function layout(
   title: string,
   bodyHtml: string,
   branding: EmailBrandingValue,
+  options?: { footerNote?: string; webUrl?: string },
 ): string {
   const footer = escapeHtml(footerText(branding));
+  const year = new Date().getFullYear();
+  const base = webBase(options?.webUrl);
+  const footerNoteBlock = options?.footerNote
+    ? `<p style="margin:0 0 12px;font-size:13px;line-height:1.55;color:${BRAND.muted};">${escapeHtml(options.footerNote)}</p>`
+    : '';
   return `<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -112,7 +122,7 @@ function layout(
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid ${BRAND.border};padding-top:24px;">
                 <tr>
                   <td style="text-align:center;">
-                    ${footerNote}
+                    ${footerNoteBlock}
                     <p style="margin:0 0 10px;font-size:13px;color:${BRAND.muted};">
                       <a href="${escapeHtml(base)}" style="color:${BRAND.primary};text-decoration:none;font-weight:600;">Site web</a>
                       &nbsp;·&nbsp;
@@ -239,6 +249,7 @@ ${items}
     payload.itemTitles.length > 0
       ? payload.itemTitles.map((t, i) => `  ${i + 1}. ${t}`).join('\n')
       : '';
+  const reservationsUrl = `${webBase(payload.webUrl)}/account/reservations`;
   const text = `Bonjour ${payload.firstName},\n\nRéservation ${payload.bookingId} confirmée le ${formatDateFr(payload.confirmedAt)}.\n\n${itemsText}\n\nTotal : ${formatMoney(payload.totalCents, payload.currency)}\n\nVoir : ${reservationsUrl}`;
   return { subject, html, text };
 }
