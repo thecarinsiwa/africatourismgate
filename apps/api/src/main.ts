@@ -7,7 +7,6 @@ import { join } from 'node:path';
 import { AppModule } from './app.module';
 import { formatValidationErrors } from './common/utils/format-validation-errors';
 import { ensureJwtSecrets } from './config/ensure-jwt-secrets';
-import { getEmailAssetsDir } from './modules/email/email-attachments';
 
 async function bootstrap() {
   ensureJwtSecrets();
@@ -21,10 +20,6 @@ async function bootstrap() {
   }
   // Exposed as /api/uploads/… so nginx `location /api/` can serve branding files.
   app.use(`/${globalPrefix}/uploads`, serveStatic(uploadsDir));
-  const emailAssetsDir = getEmailAssetsDir();
-  if (emailAssetsDir) {
-    app.use(`/${globalPrefix}/email-assets`, serveStatic(emailAssetsDir));
-  }
   app.use(json({ limit: '5mb' }));
   app.use(urlencoded({ extended: true, limit: '5mb' }));
   app.setGlobalPrefix(globalPrefix);
