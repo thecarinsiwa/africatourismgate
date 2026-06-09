@@ -1,4 +1,5 @@
 import createNextIntlPlugin from 'next-intl/plugin';
+import { getDevApiUrl } from '../../packages/config/dev-api-url.mjs';
 import { loadRootEnv } from '../../packages/config/load-root-env.mjs';
 import { ATG_DOMAINS } from '../../packages/config/domains.mjs';
 
@@ -16,7 +17,7 @@ const adminUrl =
 
 const apiUrl =
   process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') ??
-  (isProduction ? ATG_DOMAINS.api.url : 'http://localhost:3000/api');
+  (isProduction ? ATG_DOMAINS.api.url : getDevApiUrl());
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
