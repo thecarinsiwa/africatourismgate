@@ -67,6 +67,8 @@ export class EmailController {
             totalCents: 125_000,
             currency: 'USD',
             itemTitles: ['Safari 3 jours', 'Transfert aéroport'],
+            confirmedAt: new Date().toISOString(),
+            webUrl: process.env.NEXT_PUBLIC_WEB_URL,
           },
           branding,
         );
