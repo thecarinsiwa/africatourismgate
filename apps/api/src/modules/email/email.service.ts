@@ -34,13 +34,13 @@ export class EmailService {
   ): Promise<SendMailResult> {
     const branding = await this.resolveBranding();
     const { subject, html, text } = renderPasswordResetEmail(payload, branding);
-    return this.send({ to: payload.to, subject, html, text });
+    return this.send('service', { to: payload.to, subject, html, text });
   }
 
   async sendWelcome(payload: WelcomeEmailPayload): Promise<SendMailResult> {
     const branding = await this.resolveBranding();
     const { subject, html, text } = renderWelcomeEmail(payload, branding);
-    return this.send({ to: payload.to, subject, html, text });
+    return this.send('service', { to: payload.to, subject, html, text });
   }
 
   async sendBookingConfirmation(
@@ -51,7 +51,7 @@ export class EmailService {
       payload,
       branding,
     );
-    return this.send({ to: payload.to, subject, html, text });
+    return this.send('service', { to: payload.to, subject, html, text });
   }
 
   /** MVP : org plateforme seed ; fallback gracieux si résolution impossible. */
