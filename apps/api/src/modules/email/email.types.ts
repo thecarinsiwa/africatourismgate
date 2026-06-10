@@ -24,6 +24,7 @@ export type BookingConfirmationEmailPayload = {
   totalCents: number;
   currency: string;
   itemTitles: string[];
+  /** ISO 8601 date of confirmation (e.g. booking.updatedAt). */
+  confirmedAt: string;
   webUrl?: string;
-  confirmedAt?: string;
 };

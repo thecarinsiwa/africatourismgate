@@ -109,6 +109,7 @@
       "organizations": "Organizations",
       "roles": "Roles & permissions",
       "settings": "Settings",
+      "emails": "Emails",
       "rbacAudit": "RBAC audit"
     },
     "userMenu": {

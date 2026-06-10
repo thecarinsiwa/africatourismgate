@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 
 const links = [
   { href: '/parametres', label: 'Paramètres' },
+  { href: '/parametres/emails', label: 'E-mails' },
   { href: '/parametres/comptes', label: 'Comptes bancaires' },
 ];
 

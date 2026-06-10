@@ -198,6 +198,7 @@ export class BookingEngineService {
       .map((item) => item.titleSnapshot?.trim())
       .filter((title): title is string => Boolean(title));
 
+    const confirmedAt = detail.booking.updatedAt ?? detail.booking.createdAt;
     await this.emailService.sendBookingConfirmation({
       to: user.email,
       firstName: user.firstName,
@@ -205,6 +206,8 @@ export class BookingEngineService {
       totalCents: detail.totalCents,
       currency: detail.currency,
       itemTitles,
+      confirmedAt: confirmedAt.toISOString(),
+      webUrl: process.env.NEXT_PUBLIC_WEB_URL,
     });
   }
 
