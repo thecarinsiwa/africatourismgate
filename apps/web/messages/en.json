@@ -50,7 +50,9 @@
         "network": "Could not reach the server. Check your connection.",
         "generic": "Something went wrong. Please try again.",
         "envMissing": "Missing API configuration (NEXT_PUBLIC_API_URL).",
-        "unauthorized": "Incorrect email or password."
+        "unauthorized": "Incorrect email or password.",
+        "googleAuthFailed": "Google sign-in failed. Try again or use your email.",
+        "googleAuthError": "Google sign-in error. Please try again later."
       }
     }
   }
