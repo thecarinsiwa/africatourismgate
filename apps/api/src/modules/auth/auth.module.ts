@@ -15,6 +15,7 @@ import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { GoogleAuthGuard } from './guards/google-auth.guard';
+import { GoogleOAuthExceptionFilter } from './filters/google-oauth-exception.filter';
 import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { GoogleStrategy } from './strategies/google.strategy';
@@ -52,6 +53,7 @@ import { GoogleStrategy } from './strategies/google.strategy';
     JwtAuthGuard,
     JwtRefreshGuard,
     GoogleAuthGuard,
+    GoogleOAuthExceptionFilter,
   ],
   exports: [AuthService, JwtAuthGuard, JwtRefreshGuard, GoogleAuthGuard],
 })
