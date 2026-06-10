@@ -10,6 +10,7 @@ import {
   Req,
   Res,
   SetMetadata,
+  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
@@ -26,6 +27,7 @@ import { IS_PUBLIC_KEY, Public } from './decorators/public.decorator';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { GoogleAuthGuard } from './guards/google-auth.guard';
+import { GoogleOAuthExceptionFilter } from './filters/google-oauth-exception.filter';
 import { AuthService } from './auth.service';
 import {
   AuthResponseDto,
@@ -51,6 +53,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Get('google')
+  @UseFilters(GoogleOAuthExceptionFilter)
   @UseGuards(GoogleAuthGuard)
   @ApiOperation({ summary: 'Start Google OAuth login flow' })
   googleAuth(@Query('next') _next?: string): void {
@@ -58,12 +61,13 @@ export class AuthController {
   }
 
   @Get('google/callback')
+  @UseFilters(GoogleOAuthExceptionFilter)
   @UseGuards(GoogleAuthGuard)
   @ApiOperation({ summary: 'Google OAuth callback for web login' })
   async googleAuthCallback(
     @Req()
     req: Request & {
-      user: {
+      user?: {
         profile: {
           name?: { givenName?: string; familyName?: string };
           emails?: Array<{ value?: string }>;
@@ -73,23 +77,34 @@ export class AuthController {
     },
     @Res() res: Response,
   ): Promise<void> {
-    const auth = await this.authService.loginWithGoogleProfile(req.user.profile);
-    if (auth.requiresVerification && auth.verificationId) {
-      res.redirect(
-        this.authService.buildWebVerificationUrl(
-          auth.verificationId,
-          req.user.state,
-        ),
-      );
+    if (!req.user?.profile) {
+      res.redirect(this.authService.buildWebOAuthErrorUrl(undefined));
       return;
     }
-    const redirectUrl = this.authService.buildWebOAuthCallbackUrl(
-      req.user.state,
-      auth.accessToken,
-      auth.refreshToken,
-      auth.expiresIn,
-    );
-    res.redirect(redirectUrl);
+
+    try {
+      const auth = await this.authService.loginWithGoogleProfile(req.user.profile);
+      if (auth.requiresVerification && auth.verificationId) {
+        res.redirect(
+          this.authService.buildWebVerificationUrl(
+            auth.verificationId,
+            req.user.state,
+          ),
+        );
+        return;
+      }
+      const redirectUrl = this.authService.buildWebOAuthCallbackUrl(
+        req.user.state,
+        auth.accessToken,
+        auth.refreshToken,
+        auth.expiresIn,
+      );
+      res.redirect(redirectUrl);
+    } catch {
+      res.redirect(
+        this.authService.buildWebOAuthErrorUrl(req.user.state, 'google_auth_failed'),
+      );
+    }
   }
 
   @Get('me')

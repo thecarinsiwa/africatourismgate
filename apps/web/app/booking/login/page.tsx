@@ -12,5 +12,6 @@ function pickParam(value: string | string[] | undefined): string | undefined {
 
 export default function BookingLoginPage({ searchParams }: PageProps) {
   const next = pickParam(searchParams.next);
-  return <BookingLoginPageContent nextPath={next} />;
+  const oauthError = pickParam(searchParams.error);
+  return <BookingLoginPageContent nextPath={next} oauthError={oauthError} />;
 }

@@ -17,6 +17,7 @@ import { HomeHeader } from '../home/home-header';
 
 type Props = {
   nextPath?: string;
+  oauthError?: string;
 };
 
 function normalizeNextPath(nextPath?: string): string {
@@ -31,12 +32,24 @@ function buildRegisterHref(nextPath: string): string {
   return `/booking/register?${params.toString()}`;
 }
 
-export function BookingLoginPageContent({ nextPath }: Props) {
+function resolveOAuthErrorMessage(
+  code: string | undefined,
+  tErrors: (key: string) => string,
+): string | null {
+  if (!code) return null;
+  if (code === 'google_auth_failed') return tErrors('googleAuthFailed');
+  if (code === 'google_auth_error') return tErrors('googleAuthError');
+  return tErrors('googleAuthFailed');
+}
+
+export function BookingLoginPageContent({ nextPath, oauthError }: Props) {
   const t = useTranslations('booking.login');
   const tForm = useTranslations('booking.login.form');
   const tErrors = useTranslations('booking.login.errors');
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(() =>
+    resolveOAuthErrorMessage(oauthError, tErrors),
+  );
   const safeNext = useMemo(() => normalizeNextPath(nextPath), [nextPath]);
   const registerHref = useMemo(() => buildRegisterHref(safeNext), [safeNext]);
   const oauthUrl = useMemo(() => buildGoogleOAuthStartUrl(safeNext), [safeNext]);
