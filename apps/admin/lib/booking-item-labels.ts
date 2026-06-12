@@ -10,3 +10,7 @@ export const itemTypeLabels: Record<BookingItemType, string> = {
 };
 
 export const itemTypeOptions = Object.entries(itemTypeLabels) as [BookingItemType, string][];
+
+export function getItemTypeLabel(itemType: string): string {
+  return itemTypeLabels[itemType as BookingItemType] ?? itemType;
+}
