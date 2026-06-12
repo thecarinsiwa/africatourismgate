@@ -4,7 +4,7 @@ import { Button, Card, DataTable, Input, type ColumnDef } from '@africatourismga
 import type { Itinerary } from '@africatourismgate/types';
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { getApiClient } from '../../lib/auth/api';
+import { withApiClient } from '../../lib/auth/api';
 import { getCroisieresErrorMessage } from '../../lib/croisieres-errors';
 
 type FormValues = { name: string; durationNights: string };
@@ -28,11 +28,13 @@ export function ItinerariesSection({ shipId }: ItinerariesSectionProps) {
   const load = useCallback(async () => {
     setState({ status: 'loading' });
     try {
-      const result = await getApiClient().listItineraries({
-        shipId,
-        page: 1,
-        limit: 100,
-      });
+      const result = await withApiClient((client) =>
+        client.listItineraries({
+          shipId,
+          page: 1,
+          limit: 100,
+        }),
+      );
       setState({ status: 'ready', itineraries: result.data });
     } catch (error) {
       setState({ status: 'error', message: getCroisieresErrorMessage(error) });
@@ -61,11 +63,11 @@ export function ItinerariesSection({ shipId }: ItinerariesSectionProps) {
     setSubmitting(true);
     try {
       const body = { name: formValues.name.trim(), durationNights: nights };
-      if (editing) {
-        await getApiClient().updateItinerary(editing.id, body);
-      } else {
-        await getApiClient().createItinerary({ shipId, ...body });
-      }
+      await withApiClient((client) =>
+        editing
+          ? client.updateItinerary(editing.id, body)
+          : client.createItinerary({ shipId, ...body }),
+      );
       resetForm();
       await load();
     } catch (error) {
@@ -119,7 +121,7 @@ export function ItinerariesSection({ shipId }: ItinerariesSectionProps) {
                 if (!window.confirm('Supprimer cet itinéraire ?')) return;
                 setDeletingId(row.original.id);
                 try {
-                  await getApiClient().deleteItinerary(row.original.id);
+                  await withApiClient((client) => client.deleteItinerary(row.original.id));
                   await load();
                 } catch (error) {
                   setFormError(getCroisieresErrorMessage(error));
