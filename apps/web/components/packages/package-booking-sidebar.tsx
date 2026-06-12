@@ -1,7 +1,7 @@
 'use client';
 
 import { formatDisplayDate } from '../../lib/hotels/dates';
-import type { PackageDetail, PackageItemEnriched } from '../../lib/packages/types';
+import type { PackageDetail } from '../../lib/packages/types';
 import type { Translations } from '../../lib/i18n/translations';
 import { PackagePriceDisplay } from './package-price-display';
 
