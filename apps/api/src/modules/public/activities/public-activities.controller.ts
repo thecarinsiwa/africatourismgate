@@ -1,6 +1,7 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Public } from '../../auth/decorators/public.decorator';
+import { ActivityBrowseQueryDto } from './dto/activity-browse-query.dto';
 import { ActivityDetailQueryDto } from './dto/activity-detail-query.dto';
 import { ActivitySearchQueryDto } from './dto/activity-search-query.dto';
 import { PublicActivitiesService } from './public-activities.service';
@@ -9,6 +10,15 @@ import { PublicActivitiesService } from './public-activities.service';
 @Controller('public')
 export class PublicActivitiesController {
   constructor(private readonly service: PublicActivitiesService) {}
+
+  @Public()
+  @Get('activities/browse')
+  @ApiOperation({
+    summary: 'Browse all activities with upcoming schedule availability',
+  })
+  browse(@Query() query: ActivityBrowseQueryDto) {
+    return this.service.browse(query);
+  }
 
   @Public()
   @Get('activities/search')

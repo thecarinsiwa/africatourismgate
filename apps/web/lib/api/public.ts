@@ -15,6 +15,7 @@ import type {
   VehicleSearchResult,
 } from '../cars/types';
 import type {
+  ActivityBrowseQuery,
   ActivityDetail,
   ActivityDetailQuery,
   ActivitySearchQuery,
@@ -55,6 +56,7 @@ export type {
 } from '../flights/types';
 
 export type {
+  ActivityBrowseQuery,
   ActivityDetail,
   ActivityDetailQuery,
   ActivityScheduleOffer,
@@ -287,6 +289,20 @@ function buildActivitySearchQuery(params: ActivitySearchQuery): string {
   if (params.limit !== undefined) qs.set('limit', String(params.limit));
   const s = qs.toString();
   return s ? `?${s}` : '';
+}
+
+export async function browseActivities(
+  params: ActivityBrowseQuery,
+): Promise<PaginatedResponse<ActivitySearchResult>> {
+  const qs = new URLSearchParams();
+  if (params.destination) qs.set('destination', params.destination);
+  if (params.participants !== undefined) qs.set('participants', String(params.participants));
+  if (params.page !== undefined) qs.set('page', String(params.page));
+  if (params.limit !== undefined) qs.set('limit', String(params.limit));
+  const query = qs.toString();
+  return fetchPublic<PaginatedResponse<ActivitySearchResult>>(
+    `/public/activities/browse${query ? `?${query}` : ''}`,
+  );
 }
 
 export async function searchActivities(

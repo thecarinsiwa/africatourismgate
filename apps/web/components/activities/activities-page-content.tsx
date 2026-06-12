@@ -2,9 +2,10 @@
 
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
-import { searchActivities } from '../../lib/api/public';
+import { browseActivities, searchActivities } from '../../lib/api/public';
 import {
   hasRequiredActivitySearchParams,
+  toActivityBrowseQuery,
   toActivitySearchQuery,
   type ActivitiesSearchParams,
 } from '../../lib/activities/listings';
@@ -31,36 +32,38 @@ export function ActivitiesPageContent({ initialSearch }: ActivitiesPageContentPr
 
   const [sort, setSort] = useState<SortKey>('recommended');
   const [results, setResults] = useState<ActivitySearchResult[]>([]);
-  const [loading, setLoading] = useState(hasRequiredActivitySearchParams(initialSearch));
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [fetchId, setFetchId] = useState(0);
 
-  const canSearch = hasRequiredActivitySearchParams(initialSearch);
-  const apiQuery = useMemo(() => {
-    if (!canSearch) return null;
+  const hasDateSearch = hasRequiredActivitySearchParams(initialSearch);
+  const browseQuery = useMemo(
+    () => toActivityBrowseQuery(initialSearch),
+    [initialSearch],
+  );
+  const searchQuery = useMemo(() => {
+    if (!hasDateSearch) return null;
     try {
       return toActivitySearchQuery(initialSearch);
     } catch {
       return null;
     }
-  }, [initialSearch, canSearch]);
+  }, [initialSearch, hasDateSearch]);
 
-  const displayDestination = initialSearch.destination?.trim() || a.anyDestination;
+  const displayDestination =
+    initialSearch.destination?.trim() || a.anyDestination;
 
   useEffect(() => {
     let cancelled = false;
 
-    if (!apiQuery) {
-      setResults([]);
-      setLoading(false);
-      setError(false);
-      return;
-    }
-
     setLoading(true);
     setError(false);
 
-    void searchActivities(apiQuery)
+    const request = hasDateSearch && searchQuery
+      ? searchActivities(searchQuery)
+      : browseActivities(browseQuery);
+
+    void request
       .then((response) => {
         if (!cancelled) setResults(response.data);
       })
@@ -77,7 +80,7 @@ export function ActivitiesPageContent({ initialSearch }: ActivitiesPageContentPr
     return () => {
       cancelled = true;
     };
-  }, [apiQuery, fetchId]);
+  }, [browseQuery, searchQuery, hasDateSearch, fetchId]);
 
   const listings = useMemo(() => {
     const items = [...results];
@@ -130,15 +133,9 @@ export function ActivitiesPageContent({ initialSearch }: ActivitiesPageContentPr
             {a.heroSubtitle}
           </p>
 
-          {searchSummary ? (
-            <p className="mt-6 rounded-lg bg-white/10 px-4 py-2 text-sm text-white/90 backdrop-blur-sm">
-              {searchSummary}
-            </p>
-          ) : (
-            <p className="mt-6 rounded-lg bg-white/10 px-4 py-2 text-sm text-white/90 backdrop-blur-sm">
-              {a.noSearchParamsHint}
-            </p>
-          )}
+          <p className="mt-6 rounded-lg bg-white/10 px-4 py-2 text-sm text-white/90 backdrop-blur-sm">
+            {searchSummary || a.browseHint}
+          </p>
 
           <ActivitiesSearchForm initialValues={initialSearch} />
         </div>
@@ -160,7 +157,7 @@ export function ActivitiesPageContent({ initialSearch }: ActivitiesPageContentPr
             <select
               value={sort}
               onChange={(event) => setSort(event.target.value as SortKey)}
-              disabled={loading || !canSearch}
+              disabled={loading}
               className="min-h-[44px] rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-800 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-60 dark:border-atg-border dark:bg-atg-surface dark:text-white"
             >
               <option value="recommended">{a.sortRecommended}</option>
@@ -172,20 +169,7 @@ export function ActivitiesPageContent({ initialSearch }: ActivitiesPageContentPr
       </div>
 
       <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
-        {!canSearch && (
-          <div className="rounded-2xl border border-dashed border-gray-200 bg-white px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
-            <h3 className="text-lg font-bold text-[#0f1a16] dark:text-white">{a.noSearchParams}</h3>
-            <p className="mt-2 text-sm text-gray-500 dark:text-atg-muted">{a.noSearchParamsHint}</p>
-            <a
-              href="#activities-search"
-              className="mt-6 inline-flex min-h-[44px] items-center rounded-lg bg-primary px-6 py-2 text-sm font-bold text-white hover:bg-primary-hover"
-            >
-              {a.modifySearch}
-            </a>
-          </div>
-        )}
-
-        {canSearch && error && (
+        {error && (
           <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-4 text-sm text-red-800 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-200">
             <p>{a.loadError}</p>
             <button
@@ -198,13 +182,13 @@ export function ActivitiesPageContent({ initialSearch }: ActivitiesPageContentPr
           </div>
         )}
 
-        {canSearch && loading && (
+        {loading && (
           <div className="rounded-2xl border border-gray-100 bg-white px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
             <p className="text-sm font-medium text-gray-600 dark:text-atg-muted">{a.loading}</p>
           </div>
         )}
 
-        {canSearch && !loading && !error && listings.length === 0 && (
+        {!loading && !error && listings.length === 0 && (
           <div className="rounded-2xl border border-dashed border-gray-200 bg-white px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
             <h3 className="text-lg font-bold text-[#0f1a16] dark:text-white">{a.noResults}</h3>
             <p className="mt-2 text-sm text-gray-500 dark:text-atg-muted">{a.noResultsHint}</p>
@@ -223,7 +207,7 @@ export function ActivitiesPageContent({ initialSearch }: ActivitiesPageContentPr
           </div>
         )}
 
-        {canSearch && !loading && !error && listings.length > 0 && (
+        {!loading && !error && listings.length > 0 && (
           <div className="space-y-6">
             {listings.map((activity) => (
               <ActivityCard

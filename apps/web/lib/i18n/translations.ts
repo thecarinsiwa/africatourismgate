@@ -406,6 +406,8 @@ export type Translations = {
     noResultsHint: string;
     noSearchParams: string;
     noSearchParamsHint: string;
+    browseHint: string;
+    noUpcomingSlot: string;
     backHome: string;
     viewDetails: string;
     bookNow: string;
@@ -1129,6 +1131,8 @@ const fr: Translations = {
     noResultsHint: 'Essayez une autre date ou destination (ex. Kinshasa).',
     noSearchParams: 'Lancez une recherche d\'activités',
     noSearchParamsHint: 'Indiquez une destination, une date et le nombre de participants.',
+    browseHint: 'Parcourez les activités disponibles ou affinez avec destination, date et participants.',
+    noUpcomingSlot: 'Aucun créneau à venir',
     backHome: 'Retour à l\'accueil',
     viewDetails: 'Voir détails',
     bookNow: 'Réserver',
@@ -1877,6 +1881,8 @@ const en: Translations = {
     noResultsHint: 'Try another date or destination (e.g. Kinshasa).',
     noSearchParams: 'Start an activity search',
     noSearchParamsHint: 'Enter a destination, date and participant count.',
+    browseHint: 'Browse available activities or refine by destination, date and participants.',
+    noUpcomingSlot: 'No upcoming slots',
     backHome: 'Back to home',
     viewDetails: 'View details',
     bookNow: 'Book now',

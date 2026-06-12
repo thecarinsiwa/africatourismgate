@@ -1,4 +1,4 @@
-import type { ActivityDetailQuery, ActivitySearchQuery } from './types';
+import type { ActivityBrowseQuery, ActivityDetailQuery, ActivitySearchQuery } from './types';
 
 export type ActivitiesSearchParams = {
   destination?: string;
@@ -115,6 +115,15 @@ export function buildActivityDetailHref(
   const query = qs.toString();
   const base = `/activities/${encodeURIComponent(activityId)}${query ? `?${query}` : ''}`;
   return hash ? `${base}${hash}` : base;
+}
+
+export function toActivityBrowseQuery(params: ActivitiesSearchParams): ActivityBrowseQuery {
+  const destination = params.destination?.trim();
+  return {
+    destination: destination || undefined,
+    participants: parseParticipantsParam(params.participants),
+    limit: 50,
+  };
 }
 
 export function toActivitySearchQuery(params: ActivitiesSearchParams): ActivitySearchQuery {

@@ -20,13 +20,19 @@ type ActivityCardProps = {
 };
 
 export function ActivityCard({ activity, t, searchParams = {}, locale }: ActivityCardProps) {
+  const effectiveDate =
+    searchParams.date ??
+    (activity.nextStartDatetime ? activity.nextStartDatetime.slice(0, 10) : undefined);
+
   const detailParams: ActivityDetailSearchParams = {
     destination: searchParams.destination ?? activity.destination,
-    date: searchParams.date,
+    date: effectiveDate,
     participants: searchParams.participants,
   };
   const detailHref = buildActivityDetailHref(activity.id, detailParams);
-  const reserveHref = buildActivityDetailHref(activity.id, detailParams, '#schedules');
+  const reserveHref = effectiveDate
+    ? buildActivityDetailHref(activity.id, detailParams, '#schedules')
+    : detailHref;
 
   const durationLabel = formatDurationMinutes(activity.durationMinutes, {
     hourSingular: t.hourSingular,
@@ -60,12 +66,17 @@ export function ActivityCard({ activity, t, searchParams = {}, locale }: Activit
                 </p>
               )}
               <p className="mt-2 text-sm text-gray-600 dark:text-atg-muted">
-                {searchParams.date && formatDisplayDate(searchParams.date, locale)} ·{' '}
-                {schedulesLabel}
+                {searchParams.date
+                  ? `${formatDisplayDate(searchParams.date, locale)} · ${schedulesLabel}`
+                  : schedulesLabel}
               </p>
-              <p className="mt-1 text-sm text-gray-500 dark:text-atg-muted">
-                {t.nextSlot}: {formatScheduleTime(activity.nextStartDatetime, locale)}
-              </p>
+              {activity.nextStartDatetime ? (
+                <p className="mt-1 text-sm text-gray-500 dark:text-atg-muted">
+                  {t.nextSlot}: {formatScheduleTime(activity.nextStartDatetime, locale)}
+                </p>
+              ) : (
+                <p className="mt-1 text-sm text-gray-500 dark:text-atg-muted">{t.noUpcomingSlot}</p>
+              )}
             </div>
             <div className="text-right">
               <p className="text-xs uppercase tracking-wide text-gray-400 dark:text-atg-muted">
@@ -87,7 +98,13 @@ export function ActivityCard({ activity, t, searchParams = {}, locale }: Activit
             </Link>
             <Link
               href={reserveHref}
-              className="inline-flex min-h-[44px] items-center rounded-lg bg-primary px-5 py-2 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover"
+              className={`inline-flex min-h-[44px] items-center rounded-lg px-5 py-2 text-sm font-bold uppercase tracking-wide transition-colors ${
+                effectiveDate && activity.availableSchedulesCount > 0
+                  ? 'bg-primary text-white hover:bg-primary-hover'
+                  : 'cursor-not-allowed bg-gray-200 text-gray-500 dark:bg-atg-surface dark:text-atg-muted'
+              }`}
+              aria-disabled={!effectiveDate || activity.availableSchedulesCount === 0}
+              tabIndex={!effectiveDate || activity.availableSchedulesCount === 0 ? -1 : undefined}
             >
               {t.bookNow}
             </Link>

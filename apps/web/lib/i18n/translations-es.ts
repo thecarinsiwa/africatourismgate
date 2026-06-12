@@ -506,6 +506,8 @@ export const es: Translations = {
     noResultsHint: 'Pruebe otra fecha o destino (ej. Kinshasa).',
     noSearchParams: 'Inicie una búsqueda de actividades',
     noSearchParamsHint: 'Indique destino, fecha y número de participantes.',
+    browseHint: 'Explore las actividades disponibles o refine por destino, fecha y participantes.',
+    noUpcomingSlot: 'Sin horarios próximos',
     backHome: 'Volver al inicio',
     viewDetails: 'Ver detalles',
     bookNow: 'Reservar',

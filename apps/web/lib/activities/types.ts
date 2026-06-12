@@ -6,6 +6,13 @@ export interface ActivitySearchQuery {
   limit?: number;
 }
 
+export interface ActivityBrowseQuery {
+  destination?: string;
+  participants?: number;
+  page?: number;
+  limit?: number;
+}
+
 export interface ActivitySearchResult {
   id: string;
   title: string;
@@ -15,7 +22,7 @@ export interface ActivitySearchResult {
   destination: string;
   providerName: string;
   availableSchedulesCount: number;
-  nextStartDatetime: string;
+  nextStartDatetime?: string;
 }
 
 export interface ActivityDetailQuery {
