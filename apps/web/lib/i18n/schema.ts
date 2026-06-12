@@ -73,6 +73,10 @@ export type Translations = {
     carsDurationHint: string;
     pickupLocationPh: string;
     viewAllCars: string;
+    cruisesRequired: string;
+    cruisesEndAfterStart: string;
+    cruisesSamePort: string;
+    viewAllCruises: string;
     roomTypes: string[];
     countries: string[];
     locations: string[];

@@ -79,6 +79,10 @@ export type Translations = {
     carsDurationHint: string;
     pickupLocationPh: string;
     viewAllCars: string;
+    cruisesRequired: string;
+    cruisesEndAfterStart: string;
+    cruisesSamePort: string;
+    viewAllCruises: string;
     roomTypes: string[];
     countries: string[];
     locations: string[];
@@ -669,6 +673,10 @@ const fr: Translations = {
     carsDurationHint: 'Sélectionnez les dates pour voir la durée',
     pickupLocationPh: 'Ville ou aéroport',
     viewAllCars: 'Voir toutes les locations',
+    cruisesRequired: 'Indiquez les ports de départ et d\'arrivée ainsi que la plage de dates.',
+    cruisesEndAfterStart: 'La date de fin doit être après la date de début.',
+    cruisesSamePort: 'Les ports de départ et d\'arrivée doivent être différents.',
+    viewAllCruises: 'Voir toutes les croisières',
     roomTypes: ['Chambre Double', 'Chambre Simple', 'Suite'],
     countries: ['Kenya', 'Tanzanie', 'Maroc', 'Afrique du Sud', 'Rwanda', 'RDC'],
     locations: ['Aéroport', 'Centre-ville', 'Gare'],
@@ -1353,6 +1361,10 @@ const en: Translations = {
     carsDurationHint: 'Select dates to see rental duration',
     pickupLocationPh: 'City or airport',
     viewAllCars: 'View all car rentals',
+    cruisesRequired: 'Enter departure and arrival ports plus a date range.',
+    cruisesEndAfterStart: 'End date must be after start date.',
+    cruisesSamePort: 'Departure and arrival ports must be different.',
+    viewAllCruises: 'View all cruises',
     roomTypes: ['Double Room', 'Single Room', 'Suite'],
     countries: ['Kenya', 'Tanzania', 'Morocco', 'South Africa', 'Rwanda', 'DRC'],
     locations: ['Airport', 'City center', 'Train station'],

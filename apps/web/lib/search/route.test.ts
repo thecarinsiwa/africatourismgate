@@ -26,3 +26,17 @@ test('buildSearchRoute routes cars to /cars', () => {
     '/cars?pickupLocation=Kinshasa&pickupDate=2026-08-01&returnDate=2026-08-08',
   );
 });
+
+test('buildSearchRoute routes cruises to /cruises', () => {
+  const params = new URLSearchParams({
+    sailFrom: 'CDKIN',
+    sailTo: 'CDBNW',
+    startDate: '2026-09-01',
+    endDate: '2026-09-30',
+    guests: '2',
+  });
+  assert.equal(
+    buildSearchRoute('cruises', params),
+    '/cruises?sailFrom=CDKIN&sailTo=CDBNW&startDate=2026-09-01&endDate=2026-09-30&guests=2',
+  );
+});
