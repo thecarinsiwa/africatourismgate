@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { searchVehicles } from '../../lib/api/public';
 import {
-  buildCarsSearchQuery,
   toVehicleSearchQuery,
   type CarsSearchParams,
 } from '../../lib/cars/listings';
