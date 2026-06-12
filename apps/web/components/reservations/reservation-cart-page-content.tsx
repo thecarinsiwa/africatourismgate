@@ -29,10 +29,13 @@ import {
   isFlightReservationDraft,
   isCabinOfferBookable,
   isPackageReservationDraft,
+  isPackageReservationDraftReady,
   isRoomReservationDraft,
   isVehicleReservationDraft,
   type ReservationDraft,
 } from '../../lib/reservations/flow';
+import { PackagePriceDisplay } from '../packages/package-price-display';
+import { PackageReservationSummary } from '../packages/package-reservation-summary';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 
@@ -46,6 +49,8 @@ export function ReservationCartPageContent({ draft }: Props) {
   const f = t.flights;
   const c = t.cars;
   const cr = t.cruises;
+  const p = t.packages;
+  const act = t.activities;
 
   const [hotelDetail, setHotelDetail] = useState<PropertyDetail | null>(null);
   const [flightDetail, setFlightDetail] = useState<FlightDetail | null>(null);
@@ -115,12 +120,7 @@ export function ReservationCartPageContent({ draft }: Props) {
 
   const packageReady = useMemo(() => {
     if (!draft || !isPackageReservationDraft(draft) || !packageDetail) return false;
-    if (packageActivities.length !== draft.lines.length) return false;
-    return draft.lines.every((line) => {
-      const activity = packageActivities.find((item) => item.id === line.activityId);
-      const schedule = activity?.schedules.find((item) => item.scheduleId === line.scheduleId);
-      return isActivityScheduleOfferBookable(schedule, draft.participants);
-    });
+    return isPackageReservationDraftReady(draft, packageActivities);
   }, [draft, packageDetail, packageActivities]);
 
   useEffect(() => {
@@ -413,36 +413,15 @@ export function ReservationCartPageContent({ draft }: Props) {
                 isPackageReservationDraft(draft) &&
                 packageDetail &&
                 packageReady && (
-                  <div className="space-y-4">
-                    <div>
-                      <p className="text-sm text-primary">Forfait combiné</p>
-                      <h2 className="text-xl font-bold text-[#0f1a16] dark:text-white">
-                        {packageDetail.package.name}
-                      </h2>
-                      <p className="mt-2 text-sm text-gray-600 dark:text-atg-muted">
-                        {formatDisplayDate(draft.date, locale)} · {draft.participants}{' '}
-                        participant{draft.participants > 1 ? 's' : ''}
-                      </p>
-                    </div>
-                    <ul className="space-y-3 border-t border-gray-100 pt-4 dark:border-atg-border">
-                      {draft.lines.map((line) => {
-                        const activity = packageActivities.find((item) => item.id === line.activityId);
-                        const schedule = activity?.schedules.find(
-                          (item) => item.scheduleId === line.scheduleId,
-                        );
-                        if (!activity || !schedule) return null;
-                        return (
-                          <li key={line.activityId} className="text-sm text-gray-600 dark:text-atg-muted">
-                            <span className="font-medium text-[#0f1a16] dark:text-white">
-                              {activity.title}
-                            </span>
-                            {' · '}
-                            {formatScheduleTime(schedule.startDatetime, locale)}
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
+                  <PackageReservationSummary
+                    draft={draft}
+                    packageDetail={packageDetail}
+                    packageActivities={packageActivities}
+                    t={p}
+                    participantSingular={act.participantSingular}
+                    participantPlural={act.participantPlural}
+                    locale={locale}
+                  />
                 )}
 
               {!loading &&
@@ -451,9 +430,9 @@ export function ReservationCartPageContent({ draft }: Props) {
                 packageDetail &&
                 !packageReady && (
                   <p className="text-sm text-red-700 dark:text-red-300">
-                    Créneaux du forfait indisponibles ou incomplets.{' '}
+                    {p.packageCartInvalid}{' '}
                     <Link href={detailHref} className="font-semibold underline">
-                      Modifier la sélection
+                      {p.modifySelection}
                     </Link>
                   </p>
                 )}
@@ -507,9 +486,18 @@ export function ReservationCartPageContent({ draft }: Props) {
 
             <aside className="h-fit min-w-[240px] rounded-xl border border-gray-200 bg-white p-5 dark:border-atg-border dark:bg-atg-elevated">
               <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-atg-muted">
-                Total estimé
+                {draft && isPackageReservationDraft(draft) ? p.packagePrice : 'Total estimé'}
               </p>
-              <p className="mt-1 text-2xl font-bold text-[#0f1a16] dark:text-white">{totalLabel}</p>
+              {draft && isPackageReservationDraft(draft) && packageDetail && packageReady ? (
+                <div className="mt-2">
+                  <PackagePriceDisplay
+                    pricing={packageDetail.pricing}
+                    discountBadgeTemplate={p.discountBadge}
+                  />
+                </div>
+              ) : (
+                <p className="mt-1 text-2xl font-bold text-[#0f1a16] dark:text-white">{totalLabel}</p>
+              )}
               {!accessToken && (
                 <p className="mt-3 text-xs text-amber-700 dark:text-amber-300">
                   Connexion client requise au prochain écran.

@@ -1,5 +1,5 @@
 import type { BookingCheckoutItem, BookingCheckoutRequest } from '@africatourismgate/types';
-import { buildPackageDetailHref } from '../packages/listings';
+import { buildPackageDetailHrefWithSelections } from '../packages/listings';
 
 export type RoomReservationDraft = {
   kind: 'room';
@@ -123,6 +123,22 @@ export function isActivityScheduleOfferBookable(
   participants: number,
 ): schedule is { remainingPlaces: number } {
   return Boolean(schedule && schedule.remainingPlaces >= participants);
+}
+
+export function isPackageReservationDraftReady(
+  draft: PackageReservationDraft,
+  packageActivities: Array<{
+    id: string;
+    schedules: Array<{ scheduleId: string; remainingPlaces: number }>;
+  }>,
+): boolean {
+  if (packageActivities.length !== draft.lines.length) return false;
+
+  return draft.lines.every((line) => {
+    const activity = packageActivities.find((item) => item.id === line.activityId);
+    const schedule = activity?.schedules.find((item) => item.scheduleId === line.scheduleId);
+    return isActivityScheduleOfferBookable(schedule, draft.participants);
+  });
 }
 
 export function parseReservationDraft(
@@ -434,10 +450,20 @@ export function buildPackageReservationDraft(
 
 export function buildDraftDetailHref(draft: ReservationDraft): string {
   if (draft.kind === 'package') {
-    return buildPackageDetailHref(draft.packageId, {
-      date: draft.date,
-      participants: String(draft.participants),
-    });
+    const activityIds = draft.lines.map((line) => line.activityId);
+    const selections = Object.fromEntries(
+      draft.lines.map((line) => [line.activityId, line.scheduleId]),
+    );
+    return buildPackageDetailHrefWithSelections(
+      draft.packageId,
+      {
+        date: draft.date,
+        participants: String(draft.participants),
+      },
+      activityIds,
+      selections,
+      '#configure',
+    );
   }
 
   if (draft.kind === 'activity_schedule') {

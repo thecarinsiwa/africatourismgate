@@ -7,6 +7,7 @@ import {
   buildDraftDetailHref,
   buildReservationQuery,
   isCabinOfferBookable,
+  isPackageReservationDraftReady,
   parseReservationDraft,
 } from './flow';
 
@@ -335,7 +336,7 @@ test('buildCheckoutRequest includes packageId for package draft', () => {
   );
 });
 
-test('buildDraftDetailHref routes package draft to package page', () => {
+test('buildDraftDetailHref routes package draft to package page with selections', () => {
   assert.equal(
     buildDraftDetailHref({
       kind: 'package',
@@ -344,8 +345,34 @@ test('buildDraftDetailHref routes package draft to package page', () => {
       participants: 2,
       lines: [{ activityId: ACTIVITY_A, scheduleId: SCHEDULE_A }],
     }),
-    '/packages/00000000-0000-4000-8000-000000005001?date=2026-07-20&participants=2',
+    `/packages/${PACKAGE_ID}?date=2026-07-20&participants=2&lineCount=1&line0_activityId=${ACTIVITY_A}&line0_scheduleId=${SCHEDULE_A}#configure`,
   );
+});
+
+test('isPackageReservationDraftReady validates all activity schedules', () => {
+  const draft = {
+    kind: 'package' as const,
+    packageId: PACKAGE_ID,
+    date: '2026-07-20',
+    participants: 2,
+    lines: [
+      { activityId: ACTIVITY_A, scheduleId: SCHEDULE_A },
+      { activityId: ACTIVITY_B, scheduleId: SCHEDULE_B },
+    ],
+  };
+  const activities = [
+    {
+      id: ACTIVITY_A,
+      schedules: [{ scheduleId: SCHEDULE_A, remainingPlaces: 10 }],
+    },
+    {
+      id: ACTIVITY_B,
+      schedules: [{ scheduleId: SCHEDULE_B, remainingPlaces: 1 }],
+    },
+  ];
+  assert.equal(isPackageReservationDraftReady(draft, activities), false);
+  activities[1].schedules[0].remainingPlaces = 5;
+  assert.equal(isPackageReservationDraftReady(draft, activities), true);
 });
 
 test('buildDraftBrowseHref routes package draft to packages listing', () => {

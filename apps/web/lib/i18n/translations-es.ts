@@ -591,6 +591,8 @@ export const es: Translations = {
     schedulesProgress: '{selected} / {total} actividad(es) configurada(s)',
     allSchedulesRequired: 'Seleccione un horario para cada actividad del paquete.',
     addToCart: 'Añadir al carrito',
+    packageCartInvalid: 'Los horarios del paquete no están disponibles o están incompletos.',
+    modifySelection: 'Modificar selección',
     notFound: 'Paquete no encontrado',
     notFoundHint: 'Este paquete no existe o ya no está disponible.',
     backToList: 'Volver a paquetes',

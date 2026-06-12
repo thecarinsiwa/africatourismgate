@@ -8,7 +8,9 @@ import { formatCarPrice } from '../../lib/cars/listings';
 import type { VehicleDetail } from '../../lib/cars/types';
 import { formatActivityPrice, formatScheduleTime } from '../../lib/activities/listings';
 import type { ActivityDetail } from '../../lib/activities/types';
-import { getAccommodationDetail, getActivityDetail, getCruiseSailingDetail, getFlightDetail, getVehicleDetail } from '../../lib/api/public';
+import { getAccommodationDetail, getActivityDetail, getCruiseSailingDetail, getFlightDetail, getPackageDetail, getVehicleDetail } from '../../lib/api/public';
+import { formatPackagePrice } from '../../lib/packages/listings';
+import type { PackageDetail } from '../../lib/packages/types';
 import { formatAirportLabel } from '../../lib/flights/airports';
 import { formatFlightPrice } from '../../lib/flights/listings';
 import type { FlightDetail } from '../../lib/flights/types';
@@ -29,12 +31,15 @@ import {
   isCabinReservationDraft,
   isFlightReservationDraft,
   isPackageReservationDraft,
+  isPackageReservationDraftReady,
   isRoomReservationDraft,
   isVehicleReservationDraft,
   type ReservationDraft,
 } from '../../lib/reservations/flow';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
+import { PackagePriceDisplay } from '../packages/package-price-display';
+import { PackageReservationSummary } from '../packages/package-reservation-summary';
 
 type Props = {
   draft: ReservationDraft | null;
@@ -46,12 +51,16 @@ export function ReservationRecapPageContent({ draft }: Props) {
   const f = t.flights;
   const c = t.cars;
   const cr = t.cruises;
+  const p = t.packages;
+  const act = t.activities;
 
   const [hotelDetail, setHotelDetail] = useState<PropertyDetail | null>(null);
   const [flightDetail, setFlightDetail] = useState<FlightDetail | null>(null);
   const [vehicleDetail, setVehicleDetail] = useState<VehicleDetail | null>(null);
   const [cruiseDetail, setCruiseDetail] = useState<CruiseSailingDetail | null>(null);
   const [activityDetail, setActivityDetail] = useState<ActivityDetail | null>(null);
+  const [packageDetail, setPackageDetail] = useState<PackageDetail | null>(null);
+  const [packageActivities, setPackageActivities] = useState<ActivityDetail[]>([]);
   const [loading, setLoading] = useState(Boolean(draft));
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -109,7 +118,32 @@ export function ReservationRecapPageContent({ draft }: Props) {
             setFlightDetail(null);
             setVehicleDetail(null);
             setCruiseDetail(null);
+            setPackageDetail(null);
+            setPackageActivities([]);
           }
+        })
+        .finally(() => {
+          if (!cancelled) setLoading(false);
+        });
+    } else if (isPackageReservationDraft(draft)) {
+      void getPackageDetail(draft.packageId)
+        .then(async (pkg) => {
+          if (cancelled) return;
+          setPackageDetail(pkg);
+          setHotelDetail(null);
+          setFlightDetail(null);
+          setVehicleDetail(null);
+          setCruiseDetail(null);
+          setActivityDetail(null);
+          const activities = await Promise.all(
+            draft.lines.map((line) =>
+              getActivityDetail(line.activityId, {
+                date: draft.date,
+                participants: draft.participants,
+              }),
+            ),
+          );
+          if (!cancelled) setPackageActivities(activities);
         })
         .finally(() => {
           if (!cancelled) setLoading(false);
@@ -209,6 +243,11 @@ export function ReservationRecapPageContent({ draft }: Props) {
     [draft, activitySchedule],
   );
 
+  const packageReady = useMemo(() => {
+    if (!draft || !isPackageReservationDraft(draft) || !packageDetail) return false;
+    return isPackageReservationDraftReady(draft, packageActivities);
+  }, [draft, packageDetail, packageActivities]);
+
   async function handleCheckout() {
     if (!draft) return;
     const accessToken = await ensureClientAccessToken();
@@ -249,6 +288,8 @@ export function ReservationRecapPageContent({ draft }: Props) {
                 activityReady.priceCents * draft.participants,
                 activityDetail.currency,
               )
+            : draft && isPackageReservationDraft(draft) && packageDetail && packageReady
+              ? formatPackagePrice(packageDetail.pricing.totalCents, packageDetail.pricing.currency)
             : vehicleReady
             ? formatCarPrice(vehicleReady.totalPriceCents, vehicleReady.currency)
             : null;
@@ -260,6 +301,7 @@ export function ReservationRecapPageContent({ draft }: Props) {
       (isFlightReservationDraft(draft!) && flightClass) ||
       (isCabinReservationDraft(draft!) && cruiseReady) ||
       (isActivityScheduleReservationDraft(draft!) && activityReady) ||
+      (isPackageReservationDraft(draft!) && packageReady) ||
       Boolean(vehicleReady));
 
   return (
@@ -386,6 +428,49 @@ export function ReservationRecapPageContent({ draft }: Props) {
                 </div>
               )}
 
+            {!loading &&
+              draft &&
+              isPackageReservationDraft(draft) &&
+              packageDetail &&
+              packageReady && (
+                <div className="space-y-4">
+                  <PackageReservationSummary
+                    draft={draft}
+                    packageDetail={packageDetail}
+                    packageActivities={packageActivities}
+                    t={p}
+                    participantSingular={act.participantSingular}
+                    participantPlural={act.participantPlural}
+                    locale={locale}
+                    showPricing
+                  />
+                  <div className="border-t border-gray-100 pt-4 dark:border-atg-border">
+                    <PackagePriceDisplay
+                      pricing={packageDetail.pricing}
+                      priceLabel={p.packagePrice}
+                      discountBadgeTemplate={p.discountBadge}
+                      className="text-left [&_div]:justify-start"
+                    />
+                  </div>
+                  {totalLabel && (
+                    <p className="sr-only">Total: {totalLabel}</p>
+                  )}
+                </div>
+              )}
+
+            {!loading &&
+              draft &&
+              isPackageReservationDraft(draft) &&
+              packageDetail &&
+              !packageReady && (
+                <p className="text-sm text-red-700 dark:text-red-300">
+                  {p.packageCartInvalid}{' '}
+                  <Link href={detailHref} className="font-semibold underline">
+                    {p.modifySelection}
+                  </Link>
+                </p>
+              )}
+
             {!loading && vehicleReady && isVehicleReservationDraft(draft) && (
               <div className="space-y-2">
                 <p className="text-sm text-primary">{vehicleReady.agency.name}</p>
@@ -433,7 +518,7 @@ export function ReservationRecapPageContent({ draft }: Props) {
                 </p>
               )}
 
-            {!loading && !canPay && (
+            {!loading && !canPay && draft && !isPackageReservationDraft(draft) && (
               <p className="text-sm text-red-700 dark:text-red-300">
                 Selection indisponible.{' '}
                 <Link href={browseHref} className="font-semibold underline">

@@ -486,6 +486,8 @@ export type Translations = {
     schedulesProgress: string;
     allSchedulesRequired: string;
     addToCart: string;
+    packageCartInvalid: string;
+    modifySelection: string;
     notFound: string;
     notFoundHint: string;
     backToList: string;
@@ -1278,6 +1280,8 @@ const fr: Translations = {
     schedulesProgress: '{selected} / {total} activité(s) configurée(s)',
     allSchedulesRequired: 'Sélectionnez un créneau pour chaque activité du forfait.',
     addToCart: 'Ajouter au panier',
+    packageCartInvalid: 'Créneaux du forfait indisponibles ou incomplets.',
+    modifySelection: 'Modifier la sélection',
     notFound: 'Forfait introuvable',
     notFoundHint: 'Ce forfait n\'existe pas ou n\'est plus disponible.',
     backToList: 'Retour aux forfaits',
@@ -2095,6 +2099,8 @@ const en: Translations = {
     schedulesProgress: '{selected} / {total} activity(ies) configured',
     allSchedulesRequired: 'Select a time slot for every activity in the package.',
     addToCart: 'Add to cart',
+    packageCartInvalid: 'Package time slots are unavailable or incomplete.',
+    modifySelection: 'Modify selection',
     notFound: 'Package not found',
     notFoundHint: 'This package does not exist or is no longer available.',
     backToList: 'Back to packages',
