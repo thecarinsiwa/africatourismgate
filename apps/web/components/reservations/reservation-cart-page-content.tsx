@@ -3,7 +3,9 @@
 import type { PropertyDetail } from '@africatourismgate/types';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
-import { getAccommodationDetail, getFlightDetail } from '../../lib/api/public';
+import { formatCarPrice } from '../../lib/cars/listings';
+import type { VehicleDetail } from '../../lib/cars/types';
+import { getAccommodationDetail, getFlightDetail, getVehicleDetail } from '../../lib/api/public';
 import { formatAirportLabel } from '../../lib/flights/airports';
 import { formatFlightPrice } from '../../lib/flights/listings';
 import type { FlightDetail } from '../../lib/flights/types';
@@ -17,6 +19,7 @@ import {
   buildReservationQuery,
   isFlightReservationDraft,
   isRoomReservationDraft,
+  isVehicleReservationDraft,
   type ReservationDraft,
 } from '../../lib/reservations/flow';
 import { HomeFooter } from '../home/home-footer';
@@ -30,9 +33,11 @@ export function ReservationCartPageContent({ draft }: Props) {
   const { locale } = useLocale();
   const t = useTranslations();
   const f = t.flights;
+  const c = t.cars;
 
   const [hotelDetail, setHotelDetail] = useState<PropertyDetail | null>(null);
   const [flightDetail, setFlightDetail] = useState<FlightDetail | null>(null);
+  const [vehicleDetail, setVehicleDetail] = useState<VehicleDetail | null>(null);
   const [loading, setLoading] = useState(Boolean(draft));
 
   const room = useMemo(
@@ -67,12 +72,13 @@ export function ReservationCartPageContent({ draft }: Props) {
           if (!cancelled) {
             setHotelDetail(data);
             setFlightDetail(null);
+            setVehicleDetail(null);
           }
         })
         .finally(() => {
           if (!cancelled) setLoading(false);
         });
-    } else {
+    } else if (isFlightReservationDraft(draft)) {
       void getFlightDetail(draft.flightId, {
         departureDate: draft.departureDate,
         passengers: draft.passengers,
@@ -81,6 +87,22 @@ export function ReservationCartPageContent({ draft }: Props) {
           if (!cancelled) {
             setFlightDetail(data);
             setHotelDetail(null);
+            setVehicleDetail(null);
+          }
+        })
+        .finally(() => {
+          if (!cancelled) setLoading(false);
+        });
+    } else {
+      void getVehicleDetail(draft.vehicleId, {
+        pickupDate: draft.pickupDate,
+        returnDate: draft.returnDate,
+      })
+        .then((data) => {
+          if (!cancelled) {
+            setVehicleDetail(data);
+            setHotelDetail(null);
+            setFlightDetail(null);
           }
         })
         .finally(() => {
@@ -103,7 +125,9 @@ export function ReservationCartPageContent({ draft }: Props) {
       ? formatHotelPrice(room.totalPriceCents ?? room.basePriceCents, room.currency)
       : draft && isFlightReservationDraft(draft) && flightClass && flightDetail
         ? formatFlightPrice(flightClass.totalPriceCents, flightDetail.currency)
-        : '--';
+        : draft && isVehicleReservationDraft(draft) && vehicleDetail
+          ? formatCarPrice(vehicleDetail.totalPriceCents, vehicleDetail.currency)
+          : '--';
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
@@ -170,7 +194,28 @@ export function ReservationCartPageContent({ draft }: Props) {
                 </div>
               )}
 
-              {!loading && draft && !room && !flightClass && (
+              {!loading && isVehicleReservationDraft(draft) && vehicleDetail && (
+                <div className="space-y-3">
+                  <p className="text-sm text-primary">{vehicleDetail.agency.name}</p>
+                  <h2 className="text-xl font-bold text-[#0f1a16] dark:text-white">
+                    {vehicleDetail.category.exampleModel ?? vehicleDetail.category.name}
+                  </h2>
+                  <p className="text-sm text-gray-600 dark:text-atg-muted">
+                    {vehicleDetail.agency.city || c.pickupLocation}
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-atg-muted">
+                    {formatDisplayDate(draft.pickupDate, locale)} {'->'}{' '}
+                    {formatDisplayDate(draft.returnDate, locale)}
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-atg-muted">
+                    {vehicleDetail.rentalDays === 1
+                      ? `1 ${c.daySingular}`
+                      : `${vehicleDetail.rentalDays} ${c.dayPlural}`}
+                  </p>
+                </div>
+              )}
+
+              {!loading && draft && !room && !flightClass && !vehicleDetail && (
                 <p className="text-sm text-red-700 dark:text-red-300">
                   Impossible d&apos;afficher cette réservation.{' '}
                   <Link href={detailHref} className="font-semibold underline">

@@ -17,7 +17,18 @@ export type FlightReservationDraft = {
   passengers: number;
 };
 
-export type ReservationDraft = RoomReservationDraft | FlightReservationDraft;
+export type VehicleReservationDraft = {
+  kind: 'vehicle';
+  vehicleId: string;
+  availabilitySlotId: string;
+  pickupDate: string;
+  returnDate: string;
+};
+
+export type ReservationDraft =
+  | RoomReservationDraft
+  | FlightReservationDraft
+  | VehicleReservationDraft;
 
 function readString(value: string | string[] | undefined): string {
   if (typeof value === 'string') return value;
@@ -42,11 +53,36 @@ export function isFlightReservationDraft(
   return draft.kind === 'flight_class';
 }
 
+export function isVehicleReservationDraft(
+  draft: ReservationDraft,
+): draft is VehicleReservationDraft {
+  return draft.kind === 'vehicle';
+}
+
 export function parseReservationDraft(
   searchParams: Record<string, string | string[] | undefined>,
 ): ReservationDraft | null {
   const kind = readString(searchParams.kind);
   const flightClassId = readString(searchParams.flightClassId);
+  const availabilitySlotId = readString(searchParams.availabilitySlotId);
+
+  if (kind === 'vehicle' || availabilitySlotId) {
+    const vehicleId = readString(searchParams.vehicleId);
+    const pickupDate = readString(searchParams.pickupDate);
+    const returnDate = readString(searchParams.returnDate);
+
+    if (!vehicleId || !availabilitySlotId || !pickupDate || !returnDate) {
+      return null;
+    }
+
+    return {
+      kind: 'vehicle',
+      vehicleId,
+      availabilitySlotId,
+      pickupDate,
+      returnDate,
+    };
+  }
 
   if (kind === 'flight_class' || flightClassId) {
     const flightId = readString(searchParams.flightId);
@@ -87,6 +123,17 @@ export function parseReservationDraft(
 }
 
 export function buildReservationQuery(draft: ReservationDraft): string {
+  if (draft.kind === 'vehicle') {
+    const params = new URLSearchParams({
+      kind: 'vehicle',
+      vehicleId: draft.vehicleId,
+      availabilitySlotId: draft.availabilitySlotId,
+      pickupDate: draft.pickupDate,
+      returnDate: draft.returnDate,
+    });
+    return params.toString();
+  }
+
   if (draft.kind === 'flight_class') {
     const params = new URLSearchParams({
       kind: 'flight_class',
@@ -116,6 +163,18 @@ export function buildFlightReservationQuery(
 }
 
 export function buildCheckoutItems(draft: ReservationDraft): BookingCheckoutItem[] {
+  if (draft.kind === 'vehicle') {
+    return [
+      {
+        itemType: 'vehicle',
+        referenceId: draft.availabilitySlotId,
+        quantity: 1,
+        startDate: draft.pickupDate,
+        endDate: draft.returnDate,
+      },
+    ];
+  }
+
   if (draft.kind === 'flight_class') {
     return [
       {
@@ -139,6 +198,14 @@ export function buildCheckoutItems(draft: ReservationDraft): BookingCheckoutItem
 }
 
 export function buildDraftDetailHref(draft: ReservationDraft): string {
+  if (draft.kind === 'vehicle') {
+    const params = new URLSearchParams({
+      pickupDate: draft.pickupDate,
+      returnDate: draft.returnDate,
+    });
+    return `/cars/${encodeURIComponent(draft.vehicleId)}?${params.toString()}`;
+  }
+
   if (draft.kind === 'flight_class') {
     const params = new URLSearchParams({
       departureDate: draft.departureDate,
@@ -160,6 +227,9 @@ export function buildDraftDetailHref(draft: ReservationDraft): string {
 export function buildDraftBrowseHref(draft: ReservationDraft): string {
   if (draft.kind === 'flight_class') {
     return '/flights';
+  }
+  if (draft.kind === 'vehicle') {
+    return '/cars';
   }
   return '/hotels';
 }
