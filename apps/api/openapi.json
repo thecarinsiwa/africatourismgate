@@ -8485,6 +8485,127 @@
           "public"
         ]
       }
+    },
+    "/api/public/cruises/search": {
+      "get": {
+        "operationId": "PublicCruisesController_search",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "sailFrom",
+            "required": true,
+            "in": "query",
+            "description": "Departure cruise port code",
+            "schema": {
+              "example": "CDKIN",
+              "type": "string"
+            }
+          },
+          {
+            "name": "sailTo",
+            "required": true,
+            "in": "query",
+            "description": "Arrival cruise port code",
+            "schema": {
+              "example": "CDBNW",
+              "type": "string"
+            }
+          },
+          {
+            "name": "startDate",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "format": "date",
+              "example": "2026-09-01",
+              "type": "string"
+            }
+          },
+          {
+            "name": "endDate",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "format": "date",
+              "example": "2026-09-30",
+              "type": "string"
+            }
+          },
+          {
+            "name": "guests",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Search cruise sailings by port codes and departure date range",
+        "tags": [
+          "public"
+        ]
+      }
+    },
+    "/api/public/cruises/sailings/{id}": {
+      "get": {
+        "operationId": "PublicCruisesController_getSailingById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "guests",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Sailing detail with itinerary and available cabins",
+        "tags": [
+          "public"
+        ]
+      }
     }
   },
   "info": {
