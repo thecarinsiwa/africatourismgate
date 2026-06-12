@@ -198,8 +198,6 @@ export function SearchTabs() {
 
   const [departDate, setDepartDate] = useState('');
   const [returnDate, setReturnDate] = useState('');
-  const [from, setFrom] = useState('');
-  const [to, setTo] = useState('');
   const [flightFrom, setFlightFrom] = useState('');
   const [flightTo, setFlightTo] = useState('');
   const [flightPassengers, setFlightPassengers] = useState('1');
@@ -213,7 +211,6 @@ export function SearchTabs() {
   const [cruiseGuests, setCruiseGuests] = useState('2');
   const [destination, setDestination] = useState('');
   const [tourParticipants, setTourParticipants] = useState('2');
-  const [adults, setAdults] = useState('');
   const [hotelGuests, setHotelGuests] = useState('2');
   const [destinationOptions, setDestinationOptions] = useState<string[]>(AFRICAN_CITIES);
 
@@ -338,12 +335,9 @@ export function SearchTabs() {
     }
 
     if (destination) params.set('destination', destination);
-    if (from) params.set('from', from);
-    if (to) params.set('to', to);
     if (departDate) params.set('checkIn', departDate);
     if (returnDate) params.set('checkOut', returnDate);
-    const guestsValue = activeTab === 'hotels' ? hotelGuests : adults;
-    if (guestsValue) params.set('guests', guestsValue);
+    if (hotelGuests) params.set('guests', hotelGuests);
     router.push(buildSearchRoute(activeTab, params));
   }
 
