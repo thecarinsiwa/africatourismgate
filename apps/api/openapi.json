@@ -2424,6 +2424,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "List destinations",
@@ -2437,6 +2440,9 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Create destinations",
@@ -2461,6 +2467,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Get destinations by id",
@@ -2483,6 +2492,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Update destinations",
@@ -2505,6 +2517,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete destinations",
@@ -2542,6 +2557,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "List points-of-interest",
@@ -2555,6 +2573,9 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Create points-of-interest",
@@ -2579,6 +2600,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Get points-of-interest by id",
@@ -2601,6 +2625,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Update points-of-interest",
@@ -2623,6 +2650,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete points-of-interest",
@@ -2660,6 +2690,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "List amenities",
@@ -2673,6 +2706,9 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Create amenities",
@@ -2697,6 +2733,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Get amenities by id",
@@ -2719,6 +2758,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Update amenities",
@@ -2741,6 +2783,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete amenities",
@@ -2778,6 +2823,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "List properties",
@@ -2791,6 +2839,9 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Create properties",
@@ -2815,6 +2866,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Get properties by id",
@@ -2837,6 +2891,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Update properties",
@@ -2859,6 +2916,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete properties",
@@ -2896,6 +2956,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "List property-images",
@@ -2909,6 +2972,9 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Create property-images",
@@ -2933,6 +2999,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Get property-images by id",
@@ -2955,6 +3024,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Update property-images",
@@ -2977,6 +3049,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete property-images",
@@ -3014,6 +3089,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "List property-amenities",
@@ -3027,6 +3105,9 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Create property-amenities",
@@ -3059,6 +3140,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete property-amenities",
@@ -3096,6 +3180,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "List rooms",
@@ -3109,6 +3196,9 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Create rooms",
@@ -3133,6 +3223,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Get rooms by id",
@@ -3155,6 +3248,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Update rooms",
@@ -3177,6 +3273,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete rooms",
@@ -3241,6 +3340,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "List room availability",
@@ -3264,6 +3366,9 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Create room availability",
@@ -3289,6 +3394,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Bulk upsert availability for a date range",
@@ -3313,6 +3421,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Get room availability by id",
@@ -3345,6 +3456,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Update room availability",
@@ -3367,6 +3481,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete room availability",
@@ -3404,6 +3521,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "List airlines",
@@ -3417,6 +3537,9 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Create airlines",
@@ -3441,6 +3564,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Get airlines by id",
@@ -3463,6 +3589,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Update airlines",
@@ -3485,6 +3614,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete airlines",
@@ -3522,6 +3654,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "List airports",
@@ -3535,6 +3670,9 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Create airports",
@@ -3559,6 +3697,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Get airports by id",
@@ -3581,6 +3722,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Update airports",
@@ -3603,6 +3747,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete airports",
@@ -3640,6 +3787,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "List flights",
@@ -3653,6 +3803,9 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Create flights",
@@ -3677,6 +3830,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Get flights by id",
@@ -3699,6 +3855,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Update flights",
@@ -3721,6 +3880,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete flights",
@@ -3758,6 +3920,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "List flight-classes",
@@ -3771,6 +3936,9 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Create flight-classes",
@@ -3795,6 +3963,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Get flight-classes by id",
@@ -3817,6 +3988,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Update flight-classes",
@@ -3839,6 +4013,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete flight-classes",
@@ -3876,6 +4053,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "List flight-class-availability",
@@ -3889,6 +4069,9 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Create flight-class-availability",
@@ -3913,6 +4096,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Get flight-class-availability by id",
@@ -3935,6 +4121,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Update flight-class-availability",
@@ -3957,6 +4146,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete flight-class-availability",
@@ -3994,6 +4186,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "List rental-agencies",
@@ -4007,6 +4202,9 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Create rental-agencies",
@@ -4031,6 +4229,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Get rental-agencies by id",
@@ -4053,6 +4254,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Update rental-agencies",
@@ -4075,6 +4279,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete rental-agencies",
@@ -4112,6 +4319,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "List vehicle-categories",
@@ -4125,6 +4335,9 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Create vehicle-categories",
@@ -4149,6 +4362,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Get vehicle-categories by id",
@@ -4171,6 +4387,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Update vehicle-categories",
@@ -4193,6 +4412,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete vehicle-categories",
@@ -4230,6 +4452,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "List vehicles",
@@ -4243,6 +4468,9 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Create vehicles",
@@ -4267,6 +4495,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Get vehicles by id",
@@ -4289,6 +4520,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Update vehicles",
@@ -4311,6 +4545,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete vehicles",
@@ -4348,6 +4585,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "List vehicle-availability",
@@ -4361,6 +4601,9 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Create vehicle-availability",
@@ -4385,6 +4628,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Get vehicle-availability by id",
@@ -4407,6 +4653,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Update vehicle-availability",
@@ -4429,6 +4678,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete vehicle-availability",
@@ -4466,6 +4718,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "List cruise-lines",
@@ -4479,6 +4734,9 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Create cruise-lines",
@@ -4503,6 +4761,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Get cruise-lines by id",
@@ -4525,6 +4786,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Update cruise-lines",
@@ -4547,6 +4811,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete cruise-lines",
@@ -4584,6 +4851,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "List cruise-ports",
@@ -4597,6 +4867,9 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Create cruise-ports",
@@ -4621,6 +4894,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Get cruise-ports by id",
@@ -4643,6 +4919,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Update cruise-ports",
@@ -4665,6 +4944,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete cruise-ports",
@@ -4702,6 +4984,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "List ships",
@@ -4715,6 +5000,9 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Create ships",
@@ -4739,6 +5027,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Get ships by id",
@@ -4761,6 +5052,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Update ships",
@@ -4783,6 +5077,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete ships",
@@ -4820,6 +5117,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "List itineraries",
@@ -4833,6 +5133,9 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Create itineraries",
@@ -4857,6 +5160,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Get itineraries by id",
@@ -4879,6 +5185,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Update itineraries",
@@ -4901,6 +5210,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete itineraries",
@@ -4938,6 +5250,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "List itinerary-ports",
@@ -4951,6 +5266,9 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Create itinerary-ports",
@@ -4975,6 +5293,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Get itinerary-ports by id",
@@ -4997,6 +5318,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Update itinerary-ports",
@@ -5019,6 +5343,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete itinerary-ports",
@@ -5056,6 +5383,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "List cabins",
@@ -5069,6 +5399,9 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Create cabins",
@@ -5093,6 +5426,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Get cabins by id",
@@ -5115,6 +5451,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Update cabins",
@@ -5137,6 +5476,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete cabins",
@@ -5174,6 +5516,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "List cruise-sailings",
@@ -5187,6 +5532,9 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Create cruise-sailings",
@@ -5211,6 +5559,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Get cruise-sailings by id",
@@ -5233,6 +5584,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Update cruise-sailings",
@@ -5255,6 +5609,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete cruise-sailings",
@@ -5292,6 +5649,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "List cabin-availability",
@@ -5305,6 +5665,9 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Create cabin-availability",
@@ -5329,6 +5692,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Get cabin-availability by id",
@@ -5351,6 +5717,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Update cabin-availability",
@@ -5373,6 +5742,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete cabin-availability",
@@ -5410,6 +5782,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "List activity-providers",
@@ -5423,6 +5798,9 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Create activity-providers",
@@ -5447,6 +5825,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Get activity-providers by id",
@@ -5469,6 +5850,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Update activity-providers",
@@ -5491,6 +5875,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete activity-providers",
@@ -5528,6 +5915,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "List activities",
@@ -5541,6 +5931,9 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Create activities",
@@ -5565,6 +5958,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Get activities by id",
@@ -5587,6 +5983,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Update activities",
@@ -5609,6 +6008,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete activities",
@@ -5646,6 +6048,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "List activity-schedules",
@@ -5659,6 +6064,9 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Create activity-schedules",
@@ -5683,6 +6091,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Get activity-schedules by id",
@@ -5705,6 +6116,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Update activity-schedules",
@@ -5727,6 +6141,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete activity-schedules",
@@ -5764,6 +6181,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "List packages",
@@ -5777,6 +6197,9 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Create packages",
@@ -5801,6 +6224,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Get packages by id",
@@ -5823,6 +6249,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Update packages",
@@ -5845,6 +6274,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete packages",
@@ -5882,6 +6314,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "List package-items",
@@ -5895,6 +6330,9 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Create package-items",
@@ -5919,6 +6357,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Get package-items by id",
@@ -5941,6 +6382,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Update package-items",
@@ -5963,6 +6407,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete package-items",
@@ -6585,14 +7032,59 @@
               "default": 20,
               "type": "number"
             }
+          },
+          {
+            "name": "itemType",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "room",
+                "flight_class",
+                "vehicle",
+                "cabin",
+                "activity_schedule",
+                "package"
+              ]
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filter by parent booking status",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "draft",
+                "pending_payment",
+                "confirmed",
+                "cancelled",
+                "refunded"
+              ]
+            }
+          },
+          {
+            "name": "bookingId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by booking",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
-        "summary": "List booking-items",
+        "summary": "List booking items (enriched, filterable)",
         "tags": [
           "booking-items"
         ]
@@ -6603,6 +7095,9 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Create booking-items",
@@ -6627,6 +7122,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Get booking-items by id",
@@ -6649,6 +7147,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Update booking-items",
@@ -6671,6 +7172,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete booking-items",
@@ -6944,6 +7448,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "List promo-codes",
@@ -6957,6 +7464,9 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Create promo-codes",
@@ -6981,6 +7491,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Get promo-codes by id",
@@ -7003,6 +7516,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Update promo-codes",
@@ -7025,6 +7541,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete promo-codes",
@@ -7062,6 +7581,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "List promotions",
@@ -7075,6 +7597,9 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Create promotions",
@@ -7099,6 +7624,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Get promotions by id",
@@ -7121,6 +7649,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Update promotions",
@@ -7143,6 +7674,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete promotions",
