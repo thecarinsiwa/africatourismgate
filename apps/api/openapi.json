@@ -8606,6 +8606,117 @@
           "public"
         ]
       }
+    },
+    "/api/public/activities/search": {
+      "get": {
+        "operationId": "PublicActivitiesController_search",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "destination",
+            "required": true,
+            "in": "query",
+            "description": "Destination city name (partial match)",
+            "schema": {
+              "example": "Kinshasa",
+              "type": "string"
+            }
+          },
+          {
+            "name": "date",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "format": "date",
+              "example": "2026-07-20",
+              "type": "string"
+            }
+          },
+          {
+            "name": "participants",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Search activities by destination, date, and participants",
+        "tags": [
+          "public"
+        ]
+      }
+    },
+    "/api/public/activities/{id}": {
+      "get": {
+        "operationId": "PublicActivitiesController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "date",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "format": "date",
+              "example": "2026-07-20",
+              "type": "string"
+            }
+          },
+          {
+            "name": "participants",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Activity detail with available schedule slots",
+        "tags": [
+          "public"
+        ]
+      }
     }
   },
   "info": {

@@ -38,6 +38,7 @@
     "test:public-flight-search": "node scripts/test-public-flight-search.mjs",
     "test:public-vehicle-search": "node scripts/test-public-vehicle-search.mjs",
     "test:public-cruise-search": "node scripts/test-public-cruise-search.mjs",
+    "test:public-activity-search": "node scripts/test-public-activity-search.mjs",
     "test:reviews": "node scripts/test-reviews.mjs",
     "test:support": "node scripts/test-support-tickets.mjs",
     "test:users": "node scripts/test-users-crud.mjs",
