@@ -73,6 +73,14 @@ export function isCabinReservationDraft(
   return draft.kind === 'cabin';
 }
 
+/** Cabin can be booked when it exists, has stock, and fits the guest count. */
+export function isCabinOfferBookable(
+  cabin: { availableCount: number; maxGuests: number } | null | undefined,
+  guests: number,
+): cabin is { availableCount: number; maxGuests: number } {
+  return Boolean(cabin && cabin.availableCount > 0 && cabin.maxGuests >= guests);
+}
+
 export function parseReservationDraft(
   searchParams: Record<string, string | string[] | undefined>,
 ): ReservationDraft | null {

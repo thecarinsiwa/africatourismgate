@@ -19,7 +19,9 @@ import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import {
   buildCheckoutItems,
   buildDraftBrowseHref,
+  buildDraftDetailHref,
   buildReservationQuery,
+  isCabinOfferBookable,
   isCabinReservationDraft,
   isFlightReservationDraft,
   isRoomReservationDraft,
@@ -154,6 +156,14 @@ export function ReservationRecapPageContent({ draft }: Props) {
     [draft, cruiseDetail],
   );
 
+  const cruiseReady = useMemo(
+    () =>
+      draft && isCabinReservationDraft(draft) && isCabinOfferBookable(cruiseCabin, draft.guests)
+        ? cruiseCabin
+        : null,
+    [draft, cruiseCabin],
+  );
+
   async function handleCheckout() {
     if (!draft) return;
     const accessToken = await ensureClientAccessToken();
@@ -178,6 +188,7 @@ export function ReservationRecapPageContent({ draft }: Props) {
 
   const cartHref = draft ? `/booking/cart?${buildReservationQuery(draft)}` : '/booking/cart';
   const browseHref = draft ? buildDraftBrowseHref(draft) : '/hotels';
+  const detailHref = draft ? buildDraftDetailHref(draft) : browseHref;
   const hasToken = Boolean(getClientAccessToken());
 
   const totalLabel =
@@ -185,8 +196,8 @@ export function ReservationRecapPageContent({ draft }: Props) {
       ? formatHotelPrice(room.totalPriceCents ?? room.basePriceCents, room.currency)
       : draft && isFlightReservationDraft(draft) && flightClass && flightDetail
         ? formatFlightPrice(flightClass.totalPriceCents, flightDetail.currency)
-        : draft && isCabinReservationDraft(draft) && cruiseCabin && cruiseDetail
-          ? formatCruisePrice(cruiseCabin.priceCents, cruiseDetail.currency)
+        : draft && isCabinReservationDraft(draft) && cruiseReady && cruiseDetail
+          ? formatCruisePrice(cruiseReady.priceCents, cruiseDetail.currency)
           : vehicleReady
             ? formatCarPrice(vehicleReady.totalPriceCents, vehicleReady.currency)
             : null;
@@ -196,7 +207,7 @@ export function ReservationRecapPageContent({ draft }: Props) {
     !loading &&
     ((isRoomReservationDraft(draft!) && room) ||
       (isFlightReservationDraft(draft!) && flightClass) ||
-      (isCabinReservationDraft(draft!) && cruiseCabin) ||
+      (isCabinReservationDraft(draft!) && cruiseReady) ||
       Boolean(vehicleReady));
 
   return (
@@ -271,14 +282,14 @@ export function ReservationRecapPageContent({ draft }: Props) {
               </div>
             )}
 
-            {!loading && cruiseCabin && cruiseDetail && isCabinReservationDraft(draft) && (
+            {!loading && cruiseReady && cruiseDetail && isCabinReservationDraft(draft) && (
               <div className="space-y-2">
                 <p className="text-sm text-primary">{cruiseDetail.cruiseLineName}</p>
                 <h2 className="text-xl font-bold text-[#0f1a16] dark:text-white">
                   {cruiseDetail.itineraryName}
                 </h2>
                 <p className="text-sm text-gray-600 dark:text-atg-muted">
-                  {cr.shipLabel}: {cruiseDetail.shipName} · {cruiseCabin.categoryName}
+                  {cr.shipLabel}: {cruiseDetail.shipName} · {cruiseReady.categoryName}
                 </p>
                 <p className="text-sm text-gray-600 dark:text-atg-muted">
                   {formatDisplayDate(cruiseDetail.departureDate, locale)} {'->'}{' '}
@@ -321,6 +332,15 @@ export function ReservationRecapPageContent({ draft }: Props) {
                   </p>
                 )}
               </div>
+            )}
+
+            {!loading && isCabinReservationDraft(draft) && cruiseDetail && !cruiseReady && (
+              <p className="text-sm text-red-700 dark:text-red-300">
+                {cr.unavailable}.{' '}
+                <Link href={detailHref} className="font-semibold underline">
+                  {cr.modifySearch}
+                </Link>
+              </p>
             )}
 
             {!loading && !canPay && (

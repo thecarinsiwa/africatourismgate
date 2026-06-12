@@ -21,6 +21,7 @@ import {
   buildReservationQuery,
   isCabinReservationDraft,
   isFlightReservationDraft,
+  isCabinOfferBookable,
   isRoomReservationDraft,
   isVehicleReservationDraft,
   type ReservationDraft,
@@ -74,6 +75,14 @@ export function ReservationCartPageContent({ draft }: Props) {
           null)
         : null,
     [draft, cruiseDetail],
+  );
+
+  const cruiseReady = useMemo(
+    () =>
+      draft && isCabinReservationDraft(draft) && isCabinOfferBookable(cruiseCabin, draft.guests)
+        ? cruiseCabin
+        : null,
+    [draft, cruiseCabin],
   );
 
   useEffect(() => {
@@ -161,8 +170,8 @@ export function ReservationCartPageContent({ draft }: Props) {
       ? formatHotelPrice(room.totalPriceCents ?? room.basePriceCents, room.currency)
       : draft && isFlightReservationDraft(draft) && flightClass && flightDetail
         ? formatFlightPrice(flightClass.totalPriceCents, flightDetail.currency)
-        : draft && isCabinReservationDraft(draft) && cruiseCabin && cruiseDetail
-          ? formatCruisePrice(cruiseCabin.priceCents, cruiseDetail.currency)
+        : draft && isCabinReservationDraft(draft) && cruiseReady && cruiseDetail
+          ? formatCruisePrice(cruiseReady.priceCents, cruiseDetail.currency)
           : vehicleReady
             ? formatCarPrice(vehicleReady.totalPriceCents, vehicleReady.currency)
             : '--';
@@ -172,7 +181,7 @@ export function ReservationCartPageContent({ draft }: Props) {
     !loading &&
     ((isRoomReservationDraft(draft!) && room) ||
       (isFlightReservationDraft(draft!) && flightClass) ||
-      (isCabinReservationDraft(draft!) && cruiseCabin) ||
+      (isCabinReservationDraft(draft!) && cruiseReady) ||
       Boolean(vehicleReady));
 
   return (
@@ -261,14 +270,14 @@ export function ReservationCartPageContent({ draft }: Props) {
                 </div>
               )}
 
-              {!loading && cruiseCabin && cruiseDetail && isCabinReservationDraft(draft) && (
+              {!loading && cruiseReady && cruiseDetail && isCabinReservationDraft(draft) && (
                 <div className="space-y-3">
                   <p className="text-sm text-primary">{cruiseDetail.cruiseLineName}</p>
                   <h2 className="text-xl font-bold text-[#0f1a16] dark:text-white">
                     {cruiseDetail.itineraryName}
                   </h2>
                   <p className="text-sm text-gray-600 dark:text-atg-muted">
-                    {cr.shipLabel}: {cruiseDetail.shipName} · {cruiseCabin.categoryName}
+                    {cr.shipLabel}: {cruiseDetail.shipName} · {cruiseReady.categoryName}
                   </p>
                   <p className="text-sm text-gray-600 dark:text-atg-muted">
                     {formatDisplayDate(cruiseDetail.departureDate, locale)} {'->'}{' '}
@@ -282,6 +291,15 @@ export function ReservationCartPageContent({ draft }: Props) {
                 </div>
               )}
 
+              {!loading && isCabinReservationDraft(draft) && cruiseDetail && !cruiseReady && (
+                <p className="text-sm text-red-700 dark:text-red-300">
+                  {cr.unavailable}.{' '}
+                  <Link href={detailHref} className="font-semibold underline">
+                    {cr.modifySearch}
+                  </Link>
+                </p>
+              )}
+
               {!loading && isVehicleReservationDraft(draft) && vehicleDetail && !vehicleReady && (
                 <p className="text-sm text-red-700 dark:text-red-300">
                   Créneau indisponible ou modifié.{' '}
@@ -291,7 +309,7 @@ export function ReservationCartPageContent({ draft }: Props) {
                 </p>
               )}
 
-              {!loading && draft && !room && !flightClass && !cruiseCabin && !vehicleReady && (
+              {!loading && draft && !room && !flightClass && !cruiseReady && !vehicleReady && (
                 <p className="text-sm text-red-700 dark:text-red-300">
                   Impossible d&apos;afficher cette réservation.{' '}
                   <Link href={detailHref} className="font-semibold underline">
