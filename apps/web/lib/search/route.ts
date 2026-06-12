@@ -14,6 +14,9 @@ export function buildSearchRoute(vertical: SearchVertical, params: URLSearchPara
   if (vertical === 'cruises') {
     return qs ? `/cruises?${qs}` : '/cruises';
   }
+  if (vertical === 'tours') {
+    return qs ? `/activities?${qs}` : '/activities';
+  }
   const base = `/search/${vertical}`;
   return qs ? `${base}?${qs}` : base;
 }

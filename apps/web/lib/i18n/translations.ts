@@ -83,6 +83,9 @@ export type Translations = {
     cruisesEndAfterStart: string;
     cruisesSamePort: string;
     viewAllCruises: string;
+    viewAllActivities: string;
+    toursRequired: string;
+    participants: string;
     roomTypes: string[];
     countries: string[];
     locations: string[];
@@ -732,6 +735,9 @@ const fr: Translations = {
     cruisesEndAfterStart: 'La date de fin doit être après la date de début.',
     cruisesSamePort: 'Les ports de départ et d\'arrivée doivent être différents.',
     viewAllCruises: 'Voir toutes les croisières',
+    viewAllActivities: 'Voir toutes les activités',
+    toursRequired: 'Indiquez une destination et une date.',
+    participants: 'Participants',
     roomTypes: ['Chambre Double', 'Chambre Simple', 'Suite'],
     countries: ['Kenya', 'Tanzanie', 'Maroc', 'Afrique du Sud', 'Rwanda', 'RDC'],
     locations: ['Aéroport', 'Centre-ville', 'Gare'],
@@ -1477,6 +1483,9 @@ const en: Translations = {
     cruisesEndAfterStart: 'End date must be after start date.',
     cruisesSamePort: 'Departure and arrival ports must be different.',
     viewAllCruises: 'View all cruises',
+    viewAllActivities: 'View all activities',
+    toursRequired: 'Enter a destination and date.',
+    participants: 'Participants',
     roomTypes: ['Double Room', 'Single Room', 'Suite'],
     countries: ['Kenya', 'Tanzania', 'Morocco', 'South Africa', 'Rwanda', 'DRC'],
     locations: ['Airport', 'City center', 'Train station'],

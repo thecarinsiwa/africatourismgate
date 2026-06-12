@@ -197,10 +197,12 @@ export function SearchTabs() {
   const [flightError, setFlightError] = useState<string | null>(null);
   const [carError, setCarError] = useState<string | null>(null);
   const [cruiseError, setCruiseError] = useState<string | null>(null);
+  const [toursError, setToursError] = useState<string | null>(null);
   const [sailFrom, setSailFrom] = useState('');
   const [sailTo, setSailTo] = useState('');
   const [cruiseGuests, setCruiseGuests] = useState('2');
   const [destination, setDestination] = useState('');
+  const [tourParticipants, setTourParticipants] = useState('2');
   const [adults, setAdults] = useState('');
   const [hotelGuests, setHotelGuests] = useState('2');
   const [destinationOptions, setDestinationOptions] = useState<string[]>(AFRICAN_CITIES);
@@ -309,6 +311,22 @@ export function SearchTabs() {
       return;
     }
 
+    if (activeTab === 'tours') {
+      setToursError(null);
+
+      if (!destination || !departDate) {
+        setToursError(t.search.toursRequired);
+        return;
+      }
+
+      const participants = Math.max(1, Number.parseInt(tourParticipants, 10) || 1);
+      params.set('destination', destination);
+      params.set('date', departDate);
+      params.set('participants', String(participants));
+      router.push(buildSearchRoute('tours', params));
+      return;
+    }
+
     if (destination) params.set('destination', destination);
     if (from) params.set('from', from);
     if (to) params.set('to', to);
@@ -355,7 +373,7 @@ export function SearchTabs() {
         <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-2xl transition-colors dark:border-atg-border dark:bg-atg-elevated">
           <div className="flex" role="tablist" aria-label={t.search.tablistAria}>
             {tabs.map((tab) => (
-              <button key={tab.id} type="button" role="tab" aria-selected={activeTab === tab.id} onClick={() => { setActiveTab(tab.id); setFlightError(null); setCarError(null); setCruiseError(null); }} className={`flex flex-1 items-center justify-center gap-2 py-4 text-xs sm:text-sm font-semibold uppercase tracking-wide transition-all border-b-[3px] ${activeTab === tab.id ? 'bg-primary text-white border-primary-hover' : 'bg-gray-50 text-gray-500 border-transparent hover:bg-gray-100 hover:text-gray-700 dark:bg-atg-surface dark:text-atg-muted dark:hover:bg-white/5 dark:hover:text-white'}`}>
+              <button key={tab.id} type="button" role="tab" aria-selected={activeTab === tab.id} onClick={() => { setActiveTab(tab.id); setFlightError(null); setCarError(null); setCruiseError(null); setToursError(null); }} className={`flex flex-1 items-center justify-center gap-2 py-4 text-xs sm:text-sm font-semibold uppercase tracking-wide transition-all border-b-[3px] ${activeTab === tab.id ? 'bg-primary text-white border-primary-hover' : 'bg-gray-50 text-gray-500 border-transparent hover:bg-gray-100 hover:text-gray-700 dark:bg-atg-surface dark:text-atg-muted dark:hover:bg-white/5 dark:hover:text-white'}`}>
                 <TabIcon tab={tab.id} />
                 <span className="hidden sm:inline">{tab.label}</span>
               </button>
@@ -683,28 +701,64 @@ export function SearchTabs() {
             )}
 
             {activeTab === 'tours' && (
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
-                <div>
-                  <FormLabel>{t.search.startDate}</FormLabel>
-                  <FormInput type="date" name="startDate" value={departDate} onChange={setDepartDate} />
+              <div className="space-y-4">
+                <div className="flex flex-wrap items-center justify-end gap-3">
+                  <Link
+                    href="/activities"
+                    className="inline-flex min-h-[44px] items-center rounded-lg border border-primary px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/5 dark:hover:bg-primary/10"
+                  >
+                    {t.search.viewAllActivities}
+                  </Link>
                 </div>
-                <div>
-                  <FormLabel>{t.search.from}</FormLabel>
-                  <FormSelect name="from" placeholder={t.search.departCityPh} options={AFRICAN_CITIES} value={from} onChange={setFrom} />
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.25fr_1fr_0.75fr_auto] lg:items-end">
+                  <div>
+                    <FormLabel>{t.search.destination}</FormLabel>
+                    <FormSelect
+                      name="destination"
+                      placeholder={t.search.destinationPh}
+                      options={destinationOptions}
+                      value={destination}
+                      onChange={(value) => {
+                        setDestination(value);
+                        setToursError(null);
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <FormLabel>{t.activities.date}</FormLabel>
+                    <FormInput
+                      type="date"
+                      name="date"
+                      value={departDate}
+                      min={today}
+                      onChange={(value) => {
+                        setDepartDate(value);
+                        setToursError(null);
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <FormLabel>{t.search.participants}</FormLabel>
+                    <FormInput
+                      type="number"
+                      name="participants"
+                      placeholder="2"
+                      value={tourParticipants}
+                      min="1"
+                      max="50"
+                      onChange={(value) => {
+                        setTourParticipants(value);
+                        setToursError(null);
+                      }}
+                    />
+                  </div>
+                  <div className="flex items-end">{submitBtn}</div>
                 </div>
-                <div>
-                  <FormLabel>{t.search.to}</FormLabel>
-                  <FormSelect name="to" placeholder={t.search.destinationPh2} options={AFRICAN_CITIES} value={to} onChange={setTo} />
-                </div>
-                <div>
-                  <FormLabel>{t.search.adults}</FormLabel>
-                  <FormInput name="adults" placeholder="2" value={adults} onChange={setAdults} />
-                </div>
-                <div>
-                  <FormLabel>{t.search.days}</FormLabel>
-                  <FormInput name="days" placeholder="7" value="" onChange={() => {}} />
-                </div>
-                <div className="flex items-end">{submitBtn}</div>
+                {toursError && (
+                  <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+                    {toursError}
+                  </p>
+                )}
               </div>
             )}
           </form>
