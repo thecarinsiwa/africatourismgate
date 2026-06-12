@@ -20,6 +20,15 @@ export class PublicActivitiesController {
   }
 
   @Public()
+  @Get('activities/destinations')
+  @ApiOperation({
+    summary: 'List destinations with bookable activities',
+  })
+  listDestinations() {
+    return this.service.listDestinations();
+  }
+
+  @Public()
   @Get('activities/:id')
   @ApiOperation({
     summary: 'Activity detail with available schedule slots',

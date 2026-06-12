@@ -493,6 +493,8 @@ export const es: Translations = {
     sortPriceHigh: 'Precio: mayor a menor',
     loading: 'Buscando actividades…',
     loadError: 'No se pudieron cargar las actividades. Compruebe que la API esté en marcha.',
+    destinationsLoading: 'Cargando…',
+    destinationsLoadError: 'No se pudieron cargar los destinos.',
     retry: 'Reintentar',
     modifySearch: 'Modificar búsqueda',
     destination: 'Destino',

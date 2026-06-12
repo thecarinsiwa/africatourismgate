@@ -1,11 +1,12 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   buildActivitiesSearchQuery,
   type ActivitiesSearchParams,
 } from '../../lib/activities/listings';
+import { useActivityDestinations } from '../../lib/activities/use-activity-destinations';
 import { todayISODate } from '../../lib/hotels/dates';
 import { useTranslations } from '../../lib/i18n/locale-provider';
 
@@ -18,6 +19,15 @@ export function ActivitiesSearchForm({ initialValues }: ActivitiesSearchFormProp
   const t = useTranslations();
   const a = t.activities;
   const s = t.search;
+  const {
+    destinations,
+    loading: destinationsLoading,
+    error: destinationsError,
+  } = useActivityDestinations();
+  const destinationOptions = useMemo(
+    () => destinations.map((row) => row.name),
+    [destinations],
+  );
 
   const [destination, setDestination] = useState(initialValues.destination ?? '');
   const [date, setDate] = useState(initialValues.date ?? '');
@@ -67,18 +77,26 @@ export function ActivitiesSearchForm({ initialValues }: ActivitiesSearchFormProp
           <label htmlFor="activities-destination" className={labelClass}>
             {a.destination}
           </label>
-          <input
+          <select
             id="activities-destination"
-            type="text"
             name="destination"
             value={destination}
-            placeholder={s.allDestinations}
+            disabled={destinationsLoading || destinationOptions.length === 0}
             onChange={(event) => {
               setDestination(event.target.value);
               setError(null);
             }}
             className={fieldClass}
-          />
+          >
+            <option value="">
+              {destinationsLoading ? a.destinationsLoading : s.allDestinations}
+            </option>
+            {destinationOptions.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div>
@@ -125,6 +143,11 @@ export function ActivitiesSearchForm({ initialValues }: ActivitiesSearchFormProp
         </div>
       </div>
 
+      {destinationsError && (
+        <p className="mt-3 text-sm text-amber-700 dark:text-amber-300" role="status">
+          {a.destinationsLoadError}
+        </p>
+      )}
       {error && (
         <p className="mt-3 text-sm text-red-600 dark:text-red-400" role="alert">
           {error}

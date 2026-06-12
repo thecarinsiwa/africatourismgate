@@ -114,6 +114,10 @@ export async function listVehiclePickupLocations(): Promise<PublicDestination[]>
   return fetchPublic<PublicDestination[]>('/public/vehicles/pickup-locations');
 }
 
+export async function listActivityDestinations(): Promise<PublicDestination[]> {
+  return fetchPublic<PublicDestination[]>('/public/activities/destinations');
+}
+
 export async function listPublicAirports(): Promise<PublicAirport[]> {
   return fetchPublic<PublicAirport[]>('/public/airports');
 }

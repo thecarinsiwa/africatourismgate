@@ -393,6 +393,8 @@ export type Translations = {
     sortPriceHigh: string;
     loading: string;
     loadError: string;
+    destinationsLoading: string;
+    destinationsLoadError: string;
     retry: string;
     modifySearch: string;
     destination: string;
@@ -1114,6 +1116,8 @@ const fr: Translations = {
     sortPriceHigh: 'Prix décroissant',
     loading: 'Recherche des activités…',
     loadError: "Impossible de charger les activités. Vérifiez que l'API est démarrée.",
+    destinationsLoading: 'Chargement…',
+    destinationsLoadError: 'Impossible de charger les destinations.',
     retry: 'Réessayer',
     modifySearch: 'Modifier la recherche',
     destination: 'Destination',
@@ -1860,6 +1864,8 @@ const en: Translations = {
     sortPriceHigh: 'Price: high to low',
     loading: 'Searching activities…',
     loadError: 'Could not load activities. Check that the API is running.',
+    destinationsLoading: 'Loading…',
+    destinationsLoadError: 'Could not load destinations.',
     retry: 'Retry',
     modifySearch: 'Modify search',
     destination: 'Destination',

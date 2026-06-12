@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
+import { useActivityDestinations } from '../../lib/activities/use-activity-destinations';
 import { listPublicDestinations } from '../../lib/api/public';
 import { countRentalDays } from '../../lib/cars/listings';
 import { useVehiclePickupLocations } from '../../lib/cars/use-vehicle-pickup-locations';
@@ -172,10 +173,19 @@ export function SearchTabs() {
     loading: carPickupLoading,
     error: carPickupError,
   } = useVehiclePickupLocations();
+  const {
+    destinations: activityDestinations,
+    loading: activityDestinationsLoading,
+    error: activityDestinationsError,
+  } = useActivityDestinations();
   const airportOptions = useMemo(() => toFlightAirportOptions(airports), [airports]);
   const carPickupOptions = useMemo(
     () => carPickupLocations.map((location) => location.name),
     [carPickupLocations],
+  );
+  const activityDestinationOptions = useMemo(
+    () => activityDestinations.map((destination) => destination.name),
+    [activityDestinations],
   );
   const [activeTab, setActiveTab] = useState<SearchTab>('hotels');
   const tabs = useMemo(() => ([
@@ -715,9 +725,16 @@ export function SearchTabs() {
                     <FormLabel>{t.search.destination}</FormLabel>
                     <FormSelect
                       name="destination"
-                      placeholder={t.search.destinationPh}
-                      options={destinationOptions}
+                      placeholder={
+                        activityDestinationsLoading
+                          ? t.activities.destinationsLoading
+                          : t.search.destinationPh
+                      }
+                      options={activityDestinationOptions}
                       value={destination}
+                      disabled={
+                        activityDestinationsLoading || activityDestinationOptions.length === 0
+                      }
                       onChange={(value) => {
                         setDestination(value);
                         setToursError(null);
@@ -754,6 +771,11 @@ export function SearchTabs() {
                   </div>
                   <div className="flex items-end">{submitBtn}</div>
                 </div>
+                {activityDestinationsError && (
+                  <p className="text-sm text-amber-700 dark:text-amber-300" role="status">
+                    {t.activities.destinationsLoadError}
+                  </p>
+                )}
                 {toursError && (
                   <p className="text-sm text-red-600 dark:text-red-400" role="alert">
                     {toursError}

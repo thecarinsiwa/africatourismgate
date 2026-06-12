@@ -8,6 +8,7 @@ import {
   ActivitySchedules,
   Destinations,
 } from '../../../entities/generated';
+import { PublicDestinationDto } from '../accommodations/dto/public-destination.dto';
 import { ActivityDetailQueryDto } from './dto/activity-detail-query.dto';
 import { ActivityDetailDto } from './dto/activity-detail.dto';
 import { ActivitySearchQueryDto } from './dto/activity-search-query.dto';
@@ -28,6 +29,32 @@ export class PublicActivitiesService {
     @InjectRepository(Destinations)
     private readonly destinationsRepository: Repository<Destinations>,
   ) {}
+
+  async listDestinations(): Promise<PublicDestinationDto[]> {
+    const rows = await this.destinationsRepository
+      .createQueryBuilder('d')
+      .select(['d.id', 'd.name', 'd.countryCode'])
+      .innerJoin(
+        ActivityProviders,
+        'ap',
+        'ap.destinationId = d.id AND ap.deletedAt IS NULL',
+      )
+      .innerJoin(
+        Activities,
+        'a',
+        'a.providerId = ap.id AND a.deletedAt IS NULL',
+      )
+      .where('d.deletedAt IS NULL')
+      .distinct(true)
+      .orderBy('d.name', 'ASC')
+      .getMany();
+
+    return rows.map((d) => ({
+      id: d.id,
+      name: d.name,
+      countryCode: d.countryCode,
+    }));
+  }
 
   async search(
     query: ActivitySearchQueryDto,
