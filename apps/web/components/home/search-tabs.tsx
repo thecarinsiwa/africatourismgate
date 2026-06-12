@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { listPublicDestinations } from '../../lib/api/public';
+import { resolveAirportCode } from '../../lib/flights/airports';
 import { useTranslations } from '../../lib/i18n/locale-provider';
 import { buildSearchRoute, type SearchVertical } from '../../lib/search/route';
 
@@ -93,6 +94,19 @@ export function SearchTabs() {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const params = new URLSearchParams();
+
+    if (activeTab === 'flights') {
+      const fromCode = from ? resolveAirportCode(from) ?? from : '';
+      const toCode = to ? resolveAirportCode(to) ?? to : '';
+      if (fromCode) params.set('from', fromCode);
+      if (toCode) params.set('to', toCode);
+      if (departDate) params.set('departureDate', departDate);
+      if (returnDate) params.set('returnDate', returnDate);
+      if (adults) params.set('passengers', adults);
+      router.push(buildSearchRoute('flights', params));
+      return;
+    }
+
     if (destination) params.set('destination', destination);
     if (from) params.set('from', from);
     if (to) params.set('to', to);
