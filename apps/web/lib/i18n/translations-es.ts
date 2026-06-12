@@ -324,6 +324,7 @@ export const es: Translations = {
     noResultsHint: 'Pruebe otras fechas o aeropuertos (ej. Kinshasa → Nairobi).',
     noSearchParams: 'Inicie una búsqueda de vuelos',
     noSearchParamsHint: 'Indique salida, destino y fecha de salida.',
+    browseAllHint: 'Todos los vuelos disponibles — tarifas en la próxima fecha con plazas.',
     startSearch: 'Iniciar búsqueda',
     backHome: 'Volver al inicio',
     viewDetails: 'Ver detalles',

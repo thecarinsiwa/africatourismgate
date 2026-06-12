@@ -33,27 +33,26 @@ export function FlightsPageContent({ initialSearch }: FlightsPageContentProps) {
 
   const [sort, setSort] = useState<SortKey>('recommended');
   const [results, setResults] = useState<FlightSearchResult[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [fetchId, setFetchId] = useState(0);
 
   const apiQuery = useMemo(() => toFlightSearchQuery(initialSearch), [initialSearch]);
   const passengers = parsePassengersParam(initialSearch.passengers);
+  const hasRouteFilter = Boolean(initialSearch.from || initialSearch.to);
+  const hasDateFilter = Boolean(initialSearch.departureDate || initialSearch.returnDate);
 
   const displayRoute =
     initialSearch.from && initialSearch.to
       ? `${formatAirportLabel(initialSearch.from, airports)} → ${formatAirportLabel(initialSearch.to, airports)}`
-      : f.anyRoute;
+      : initialSearch.from
+        ? `${formatAirportLabel(initialSearch.from, airports)} → ${f.anyRoute}`
+        : initialSearch.to
+          ? `${f.anyRoute} → ${formatAirportLabel(initialSearch.to, airports)}`
+          : f.anyRoute;
 
   useEffect(() => {
     let cancelled = false;
-    if (!apiQuery) {
-      setResults([]);
-      setLoading(false);
-      setError(false);
-      return;
-    }
-
     setLoading(true);
     setError(false);
 
@@ -91,7 +90,7 @@ export function FlightsPageContent({ initialSearch }: FlightsPageContentProps) {
   }, [results, sort]);
 
   const searchSummary = [
-    initialSearch.returnDate ? t.search.roundTrip : t.search.oneWay,
+    hasRouteFilter || hasDateFilter ? (initialSearch.returnDate ? t.search.roundTrip : t.search.oneWay) : null,
     initialSearch.departureDate &&
       `${f.departureDate}: ${formatDisplayDate(initialSearch.departureDate, locale)}`,
     initialSearch.returnDate &&
@@ -101,7 +100,7 @@ export function FlightsPageContent({ initialSearch }: FlightsPageContentProps) {
     .filter(Boolean)
     .join(' · ');
 
-  const detailSearchParams = {
+  const defaultDetailSearchParams = {
     from: initialSearch.from,
     to: initialSearch.to,
     departureDate: initialSearch.departureDate,
@@ -148,78 +147,51 @@ export function FlightsPageContent({ initialSearch }: FlightsPageContentProps) {
             >
               {f.modifySearch}
             </Link>
-            {searchSummary && (
+            {searchSummary ? (
               <p className="rounded-lg bg-white/10 px-4 py-2 text-sm text-white/90 backdrop-blur-sm">
                 {searchSummary}
+              </p>
+            ) : (
+              <p className="rounded-lg bg-white/10 px-4 py-2 text-sm text-white/90 backdrop-blur-sm">
+                {f.browseAllHint}
               </p>
             )}
           </div>
         </div>
       </section>
 
-      {apiQuery && (
-        <div className="sticky top-0 z-30 border-b border-gray-200 bg-white/95 shadow-sm backdrop-blur-md dark:border-atg-border dark:bg-atg-elevated/95">
-          <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-            <div>
-              <p className="text-sm text-gray-500 dark:text-atg-muted">
-                {f.resultsFor}{' '}
-                <strong className="text-[#0f1a16] dark:text-white">{displayRoute}</strong>
-              </p>
-              <p className="text-lg font-bold text-[#0f1a16] dark:text-white">
-                {loading ? '…' : listings.length} {f.flightsFound}
-              </p>
-            </div>
-            <label className="flex items-center gap-2">
-              <span className="text-sm font-medium text-gray-600 dark:text-atg-muted">
-                {f.sortBy}
-              </span>
-              <select
-                value={sort}
-                onChange={(e) => setSort(e.target.value as SortKey)}
-                disabled={loading}
-                className="min-h-[44px] rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-800 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-60 dark:border-atg-border dark:bg-atg-surface dark:text-white"
-              >
-                <option value="recommended">{f.sortRecommended}</option>
-                <option value="price-asc">{f.sortPriceLow}</option>
-                <option value="price-desc">{f.sortPriceHigh}</option>
-                <option value="duration">{f.sortDuration}</option>
-              </select>
-            </label>
+      <div className="sticky top-0 z-30 border-b border-gray-200 bg-white/95 shadow-sm backdrop-blur-md dark:border-atg-border dark:bg-atg-elevated/95">
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+          <div>
+            <p className="text-sm text-gray-500 dark:text-atg-muted">
+              {f.resultsFor}{' '}
+              <strong className="text-[#0f1a16] dark:text-white">{displayRoute}</strong>
+            </p>
+            <p className="text-lg font-bold text-[#0f1a16] dark:text-white">
+              {loading ? '…' : listings.length} {f.flightsFound}
+            </p>
           </div>
+          <label className="flex items-center gap-2">
+            <span className="text-sm font-medium text-gray-600 dark:text-atg-muted">
+              {f.sortBy}
+            </span>
+            <select
+              value={sort}
+              onChange={(e) => setSort(e.target.value as SortKey)}
+              disabled={loading}
+              className="min-h-[44px] rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-800 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-60 dark:border-atg-border dark:bg-atg-surface dark:text-white"
+            >
+              <option value="recommended">{f.sortRecommended}</option>
+              <option value="price-asc">{f.sortPriceLow}</option>
+              <option value="price-desc">{f.sortPriceHigh}</option>
+              <option value="duration">{f.sortDuration}</option>
+            </select>
+          </label>
         </div>
-      )}
+      </div>
 
       <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
-        {!apiQuery && (
-          <div className="rounded-2xl border border-dashed border-gray-200 bg-white px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
-            <svg
-              className="mx-auto h-12 w-12 text-gray-300 dark:text-atg-muted"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              aria-hidden
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-              />
-            </svg>
-            <h3 className="mt-4 text-lg font-bold text-[#0f1a16] dark:text-white">
-              {f.noSearchParams}
-            </h3>
-            <p className="mt-2 text-sm text-gray-500 dark:text-atg-muted">{f.noSearchParamsHint}</p>
-            <Link
-              href="/#search"
-              className="mt-6 inline-flex min-h-[44px] items-center rounded-lg bg-primary px-6 py-2 text-sm font-bold text-white hover:bg-primary-hover"
-            >
-              {f.startSearch}
-            </Link>
-          </div>
-        )}
-
-        {apiQuery && error && (
+        {error && (
           <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-4 text-sm text-red-800 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-200">
             <p>{f.loadError}</p>
             <button
@@ -232,13 +204,13 @@ export function FlightsPageContent({ initialSearch }: FlightsPageContentProps) {
           </div>
         )}
 
-        {apiQuery && loading && (
+        {loading && (
           <div className="rounded-2xl border border-gray-100 bg-white px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
             <p className="text-sm font-medium text-gray-600 dark:text-atg-muted">{f.loading}</p>
           </div>
         )}
 
-        {apiQuery && !loading && !error && listings.length === 0 && (
+        {!loading && !error && listings.length === 0 && (
           <div className="rounded-2xl border border-dashed border-gray-200 bg-white px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
             <svg
               className="mx-auto h-12 w-12 text-gray-300 dark:text-atg-muted"
@@ -265,14 +237,14 @@ export function FlightsPageContent({ initialSearch }: FlightsPageContentProps) {
           </div>
         )}
 
-        {apiQuery && !loading && !error && listings.length > 0 && (
+        {!loading && !error && listings.length > 0 && (
           <div className="space-y-6">
             {listings.map((flight) => (
               <FlightCard
                 key={flight.id}
                 flight={flight}
                 t={f}
-                searchParams={detailSearchParams}
+                searchParams={defaultDetailSearchParams}
                 locale={locale}
               />
             ))}

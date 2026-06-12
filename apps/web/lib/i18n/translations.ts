@@ -230,6 +230,7 @@ export type Translations = {
     noResultsHint: string;
     noSearchParams: string;
     noSearchParamsHint: string;
+    browseAllHint: string;
     startSearch: string;
     backHome: string;
     viewDetails: string;
@@ -773,6 +774,7 @@ const fr: Translations = {
     noResultsHint: 'Essayez d\'autres dates ou aéroports (ex. Kinshasa → Nairobi).',
     noSearchParams: 'Lancez une recherche de vols',
     noSearchParamsHint: 'Indiquez un départ, une destination et une date de départ.',
+    browseAllHint: 'Tous les vols disponibles — tarifs à la prochaine date avec places libres.',
     startSearch: 'Lancer une recherche',
     backHome: 'Retour à l\'accueil',
     viewDetails: 'Voir détails',
@@ -1342,6 +1344,7 @@ const en: Translations = {
     noResultsHint: 'Try different dates or airports (e.g. Kinshasa → Nairobi).',
     noSearchParams: 'Start a flight search',
     noSearchParamsHint: 'Enter departure, destination and a departure date.',
+    browseAllHint: 'All available flights — fares shown for the next date with seats.',
     startSearch: 'Start search',
     backHome: 'Back to home',
     viewDetails: 'View details',

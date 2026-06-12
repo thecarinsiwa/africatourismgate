@@ -9,6 +9,7 @@ import {
   type FlightDetailSearchParams,
 } from '../../lib/flights/listings';
 import type { FlightSearchResult } from '../../lib/flights/types';
+import { formatDisplayDate } from '../../lib/hotels/dates';
 import type { Translations } from '../../lib/i18n/translations';
 
 type FlightCardProps = {
@@ -19,8 +20,16 @@ type FlightCardProps = {
 };
 
 export function FlightCard({ flight, t, searchParams = {}, locale }: FlightCardProps) {
-  const detailHref = buildFlightDetailHref(flight.id, searchParams);
-  const reserveHref = buildFlightDetailHref(flight.id, searchParams, '#reserve');
+  const detailParams = {
+    from: searchParams.from ?? flight.departureAirportIata,
+    to: searchParams.to ?? flight.arrivalAirportIata,
+    departureDate: searchParams.departureDate ?? flight.departureDate,
+    returnDate: searchParams.returnDate,
+    passengers: searchParams.passengers,
+    classId: searchParams.classId,
+  };
+  const detailHref = buildFlightDetailHref(flight.id, detailParams);
+  const reserveHref = buildFlightDetailHref(flight.id, detailParams, '#reserve');
   const priceLabel = formatFlightPrice(flight.minPriceCents, flight.currency);
 
   return (
@@ -85,6 +94,11 @@ export function FlightCard({ flight, t, searchParams = {}, locale }: FlightCardP
 
           <div className="mt-auto flex flex-wrap items-end justify-between gap-4 border-t border-gray-100 pt-4 dark:border-atg-border">
             <div>
+              {!searchParams.departureDate && flight.departureDate && (
+                <p className="text-xs text-gray-500 dark:text-atg-muted">
+                  {t.departureDate}: {formatDisplayDate(flight.departureDate, locale)}
+                </p>
+              )}
               <p className="text-xs uppercase tracking-wide text-gray-400 dark:text-atg-muted">
                 {flight.roundTrip ? t.roundTripFrom : t.fromPrice}
               </p>

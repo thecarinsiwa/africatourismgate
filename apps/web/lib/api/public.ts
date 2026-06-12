@@ -115,9 +115,9 @@ export async function getPropertyReviews(
 
 function buildFlightSearchQuery(params: FlightSearchQuery): string {
   const qs = new URLSearchParams();
-  qs.set('from', params.from);
-  qs.set('to', params.to);
-  qs.set('departureDate', params.departureDate);
+  if (params.from) qs.set('from', params.from);
+  if (params.to) qs.set('to', params.to);
+  if (params.departureDate) qs.set('departureDate', params.departureDate);
   if (params.returnDate) qs.set('returnDate', params.returnDate);
   if (params.passengers !== undefined) qs.set('passengers', String(params.passengers));
   if (params.page !== undefined) qs.set('page', String(params.page));

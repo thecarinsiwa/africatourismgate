@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   IsDateString,
@@ -10,17 +10,24 @@ import {
 import { PaginationQueryDto } from '../../../../common/dto/pagination-query.dto';
 
 export class FlightSearchQueryDto extends PaginationQueryDto {
-  @ApiProperty({ example: 'FIH', description: 'Departure airport IATA code' })
+  @ApiPropertyOptional({ example: 'FIH', description: 'Departure airport IATA code' })
+  @IsOptional()
   @Matches(/^[A-Za-z]{3}$/, { message: 'from must be a 3-letter IATA code' })
-  from!: string;
+  from?: string;
 
-  @ApiProperty({ example: 'NBO', description: 'Arrival airport IATA code' })
+  @ApiPropertyOptional({ example: 'NBO', description: 'Arrival airport IATA code' })
+  @IsOptional()
   @Matches(/^[A-Za-z]{3}$/, { message: 'to must be a 3-letter IATA code' })
-  to!: string;
+  to?: string;
 
-  @ApiProperty({ format: 'date', example: '2026-08-01' })
+  @ApiPropertyOptional({
+    format: 'date',
+    example: '2026-08-01',
+    description: 'When omitted, uses the earliest date with seat availability per flight',
+  })
+  @IsOptional()
   @IsDateString()
-  departureDate!: string;
+  departureDate?: string;
 
   @ApiPropertyOptional({ format: 'date', example: '2026-08-08' })
   @IsOptional()

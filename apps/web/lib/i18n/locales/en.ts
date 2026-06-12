@@ -280,6 +280,7 @@ export const en: Translations = {
     noResultsHint: 'Try different dates or airports (e.g. Kinshasa → Nairobi).',
     noSearchParams: 'Start a flight search',
     noSearchParamsHint: 'Enter departure, destination and a departure date.',
+    browseAllHint: 'All available flights — fares shown for the next date with seats.',
     startSearch: 'Start search',
     backHome: 'Back to home',
     viewDetails: 'View details',

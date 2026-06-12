@@ -11,10 +11,26 @@ export function parseDateOnly(iso: string): Date {
   return new Date(Date.UTC(year, month - 1, day));
 }
 
+export function formatDateOnly(date: Date): string {
+  return date.toISOString().slice(0, 10);
+}
+
+export function todayDateOnly(): string {
+  return formatDateOnly(new Date());
+}
+
 export function assertValidFlightDates(
-  departureDate: string,
+  departureDate?: string,
   returnDate?: string,
 ): void {
+  if (!departureDate && returnDate) {
+    throw new BadRequestException(
+      'departureDate est requis lorsque returnDate est fourni.',
+    );
+  }
+  if (!departureDate) {
+    return;
+  }
   parseDateOnly(departureDate);
   if (!returnDate) {
     return;

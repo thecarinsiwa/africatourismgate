@@ -8,9 +8,9 @@ export interface PublicAirport {
 }
 
 export interface FlightSearchQuery {
-  from: string;
-  to: string;
-  departureDate: string;
+  from?: string;
+  to?: string;
+  departureDate?: string;
   returnDate?: string;
   passengers?: number;
   page?: number;
@@ -32,6 +32,7 @@ export interface FlightSearchResult {
   minPriceCents: number;
   currency: string;
   roundTrip: boolean;
+  departureDate?: string;
 }
 
 export interface FlightDetailQuery {

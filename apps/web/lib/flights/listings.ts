@@ -118,20 +118,18 @@ export function buildFlightDetailHref(
   return hash ? `${base}${hash}` : base;
 }
 
-export function toFlightSearchQuery(
-  params: FlightsSearchParams,
-): FlightSearchQuery | null {
-  if (!params.from || !params.to || !params.departureDate) {
-    return null;
-  }
-  return {
-    from: params.from,
-    to: params.to,
-    departureDate: params.departureDate,
-    returnDate: params.returnDate,
+export function toFlightSearchQuery(params: FlightsSearchParams): FlightSearchQuery {
+  const query: FlightSearchQuery = {
     passengers: parsePassengersParam(params.passengers),
     limit: 50,
   };
+
+  if (params.from) query.from = params.from;
+  if (params.to) query.to = params.to;
+  if (params.departureDate) query.departureDate = params.departureDate;
+  if (params.returnDate) query.returnDate = params.returnDate;
+
+  return query;
 }
 
 export function toFlightDetailQuery(
