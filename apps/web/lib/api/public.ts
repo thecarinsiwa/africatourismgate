@@ -28,6 +28,11 @@ import type {
   CruiseSearchResult,
 } from '../cruises/types';
 import type {
+  PackageDetail,
+  PackageListItem,
+  PackagesBrowseQuery,
+} from '../packages/types';
+import type {
   FlightDetail,
   FlightDetailQuery,
   FlightSearchQuery,
@@ -72,6 +77,14 @@ export type {
   CruiseSearchQuery,
   CruiseSearchResult,
 } from '../cruises/types';
+
+export type {
+  PackageDetail,
+  PackageItemEnriched,
+  PackageListItem,
+  PackagePricing,
+  PackagesBrowseQuery,
+} from '../packages/types';
 
 const defaultApiUrl =
   process.env.NODE_ENV === 'production'
@@ -328,4 +341,25 @@ export async function getActivityDetail(
   return fetchPublic<ActivityDetail>(
     `/public/activities/${encodeURIComponent(id)}${buildActivityDetailQuery(params)}`,
   );
+}
+
+function buildPackagesBrowseQuery(params: PackagesBrowseQuery): string {
+  const qs = new URLSearchParams();
+  if (params.search) qs.set('search', params.search);
+  if (params.page !== undefined) qs.set('page', String(params.page));
+  if (params.limit !== undefined) qs.set('limit', String(params.limit));
+  const s = qs.toString();
+  return s ? `?${s}` : '';
+}
+
+export async function browsePackages(
+  params: PackagesBrowseQuery = {},
+): Promise<PaginatedResponse<PackageListItem>> {
+  return fetchPublic<PaginatedResponse<PackageListItem>>(
+    `/public/packages${buildPackagesBrowseQuery(params)}`,
+  );
+}
+
+export async function getPackageDetail(id: string): Promise<PackageDetail> {
+  return fetchPublic<PackageDetail>(`/public/packages/${encodeURIComponent(id)}`);
 }

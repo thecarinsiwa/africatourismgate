@@ -435,6 +435,57 @@ export type Translations = {
     nextSlot: string;
     schedulesAvailable: string;
   };
+  packages: {
+    metaTitle: string;
+    metaDescription: string;
+    breadcrumbHome: string;
+    breadcrumbPackages: string;
+    heroTitle: string;
+    heroSubtitle: string;
+    cardBadge: string;
+    resultsFor: string;
+    packagesFound: string;
+    sortBy: string;
+    sortRecommended: string;
+    sortPriceLow: string;
+    sortPriceHigh: string;
+    loading: string;
+    loadingDetail: string;
+    loadError: string;
+    retry: string;
+    modifySearch: string;
+    searchLabel: string;
+    searchPlaceholder: string;
+    searchSubmit: string;
+    browseHint: string;
+    noResults: string;
+    noResultsHint: string;
+    backHome: string;
+    viewDetails: string;
+    bookNow: string;
+    packagePrice: string;
+    discountBadge: string;
+    discountSummary: string;
+    itemsIncluded: string;
+    itemsTitle: string;
+    noItems: string;
+    viewProduct: string;
+    pricingTitle: string;
+    youSave: string;
+    configurePackage: string;
+    activityConfigureHint: string;
+    mixedConfigureHint: string;
+    notFound: string;
+    notFoundHint: string;
+    backToList: string;
+    itemTypes: {
+      property: string;
+      flight: string;
+      vehicle: string;
+      cruise: string;
+      activity: string;
+    };
+  };
   account: {
     title: string;
     subtitle: string;
@@ -1159,6 +1210,61 @@ const fr: Translations = {
     descriptionTitle: 'Description',
     nextSlot: 'Prochain créneau',
     schedulesAvailable: '{n} créneau(x) disponible(s)',
+  },
+  packages: {
+    metaTitle: 'Forfaits combinés en Afrique',
+    metaDescription:
+      'Économisez avec nos forfaits combinés : activités, hébergements et plus sur Africa Tourism Gate.',
+    breadcrumbHome: 'Accueil',
+    breadcrumbPackages: 'Forfaits',
+    heroTitle: 'Forfaits combinés en Afrique',
+    heroSubtitle:
+      'Regroupez plusieurs prestations à prix réduit — comparez le prix catalogue et le prix forfait.',
+    cardBadge: 'Forfait combiné',
+    resultsFor: 'Forfaits disponibles',
+    packagesFound: 'forfaits',
+    sortBy: 'Trier par',
+    sortRecommended: 'Recommandés',
+    sortPriceLow: 'Prix croissant',
+    sortPriceHigh: 'Prix décroissant',
+    loading: 'Chargement des forfaits…',
+    loadingDetail: 'Chargement du forfait…',
+    loadError: "Impossible de charger les forfaits. Vérifiez que l'API est démarrée.",
+    retry: 'Réessayer',
+    modifySearch: 'Modifier la recherche',
+    searchLabel: 'Recherche',
+    searchPlaceholder: 'Nom du forfait…',
+    searchSubmit: 'Rechercher',
+    browseHint: 'Parcourez tous les forfaits actifs ou recherchez par nom.',
+    noResults: 'Aucun forfait trouvé',
+    noResultsHint: 'Essayez un autre mot-clé ou revenez plus tard.',
+    backHome: 'Retour à l\'accueil',
+    viewDetails: 'Voir détails',
+    bookNow: 'Réserver',
+    packagePrice: 'Prix forfait',
+    discountBadge: '-{n} %',
+    discountSummary: 'Remise forfait : {n} %',
+    itemsIncluded: '{n} prestation(s) incluse(s)',
+    itemsTitle: 'Prestations incluses',
+    noItems: 'Ce forfait ne contient pas encore de prestations.',
+    viewProduct: 'Voir la fiche',
+    pricingTitle: 'Tarif du forfait',
+    youSave: 'Vous économisez {amount}',
+    configurePackage: 'Configurer le forfait',
+    activityConfigureHint:
+      'Sélectionnez les créneaux pour chaque activité incluse, puis ajoutez le forfait au panier.',
+    mixedConfigureHint:
+      'Ce forfait inclut plusieurs types de produits. Configurez chaque prestation via sa fiche produit.',
+    notFound: 'Forfait introuvable',
+    notFoundHint: 'Ce forfait n\'existe pas ou n\'est plus disponible.',
+    backToList: 'Retour aux forfaits',
+    itemTypes: {
+      property: 'Hébergement',
+      flight: 'Vol',
+      vehicle: 'Véhicule',
+      cruise: 'Cabine croisière',
+      activity: 'Activité',
+    },
   },
   account: {
     title: 'Mon compte',
@@ -1909,6 +2015,61 @@ const en: Translations = {
     descriptionTitle: 'Description',
     nextSlot: 'Next slot',
     schedulesAvailable: '{n} slot(s) available',
+  },
+  packages: {
+    metaTitle: 'Combined packages in Africa',
+    metaDescription:
+      'Save with bundled travel packages — activities, stays and more on Africa Tourism Gate.',
+    breadcrumbHome: 'Home',
+    breadcrumbPackages: 'Packages',
+    heroTitle: 'Combined packages in Africa',
+    heroSubtitle:
+      'Bundle multiple services at a discount — compare catalog price and package price.',
+    cardBadge: 'Combined package',
+    resultsFor: 'Available packages',
+    packagesFound: 'packages',
+    sortBy: 'Sort by',
+    sortRecommended: 'Recommended',
+    sortPriceLow: 'Price: low to high',
+    sortPriceHigh: 'Price: high to low',
+    loading: 'Loading packages…',
+    loadingDetail: 'Loading package…',
+    loadError: 'Could not load packages. Check that the API is running.',
+    retry: 'Retry',
+    modifySearch: 'Modify search',
+    searchLabel: 'Search',
+    searchPlaceholder: 'Package name…',
+    searchSubmit: 'Search',
+    browseHint: 'Browse all active packages or search by name.',
+    noResults: 'No packages found',
+    noResultsHint: 'Try another keyword or check back later.',
+    backHome: 'Back to home',
+    viewDetails: 'View details',
+    bookNow: 'Book now',
+    packagePrice: 'Package price',
+    discountBadge: '-{n}%',
+    discountSummary: 'Package discount: {n}%',
+    itemsIncluded: '{n} included service(s)',
+    itemsTitle: 'Included services',
+    noItems: 'This package has no services yet.',
+    viewProduct: 'View product',
+    pricingTitle: 'Package pricing',
+    youSave: 'You save {amount}',
+    configurePackage: 'Configure package',
+    activityConfigureHint:
+      'Pick a time slot for each included activity, then add the package to your cart.',
+    mixedConfigureHint:
+      'This package mixes product types. Configure each service from its product page.',
+    notFound: 'Package not found',
+    notFoundHint: 'This package does not exist or is no longer available.',
+    backToList: 'Back to packages',
+    itemTypes: {
+      property: 'Stay',
+      flight: 'Flight',
+      vehicle: 'Vehicle',
+      cruise: 'Cruise cabin',
+      activity: 'Activity',
+    },
   },
   account: {
     title: 'My account',
