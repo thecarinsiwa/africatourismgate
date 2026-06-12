@@ -10,6 +10,7 @@ import { PermissionsGuard } from './modules/rbac/guards/permissions.guard';
 import { OrgScopeModule } from './common/org-scope/org-scope.module';
 import { RbacModule } from './modules/rbac/rbac.module';
 import { EmailModule } from './modules/email/email.module';
+import { PublicModule } from './modules/public/public.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { EmailModule } from './modules/email/email.module';
     RbacModule,
     OrgScopeModule,
     ApiResourcesModule,
+    PublicModule,
   ],
   controllers: [AppController],
   providers: [
