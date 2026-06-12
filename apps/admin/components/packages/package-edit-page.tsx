@@ -1,6 +1,6 @@
 'use client';
 
-import type { Package } from '@africatourismgate/types';
+import type { Package, PackageDetail } from '@africatourismgate/types';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
@@ -11,6 +11,16 @@ import { PackageItemsSection } from './package-items-section';
 type PackageEditPageProps = {
   packageId: string;
 };
+
+function resolvePackageFromDetail(detail: PackageDetail | Package): Package | null {
+  if ('package' in detail && detail.package) {
+    return detail.package;
+  }
+  if ('name' in detail && typeof detail.name === 'string') {
+    return detail;
+  }
+  return null;
+}
 
 export function PackageEditPage({ packageId }: PackageEditPageProps) {
   const [state, setState] = useState<
@@ -23,7 +33,14 @@ export function PackageEditPage({ packageId }: PackageEditPageProps) {
     void getApiClient()
       .getPackage(packageId)
       .then((detail) => {
-        if (!cancelled) setState({ status: 'ready', pkg: detail.package });
+        const pkg = resolvePackageFromDetail(detail);
+        if (!cancelled) {
+          if (!pkg) {
+            setState({ status: 'error', message: 'Réponse forfait invalide.' });
+            return;
+          }
+          setState({ status: 'ready', pkg });
+        }
       })
       .catch((error) => {
         if (!cancelled) {

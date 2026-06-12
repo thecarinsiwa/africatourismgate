@@ -32,7 +32,7 @@ export class PackagesController {
   @Get(':id')
   @ApiOperation({ summary: 'Get packages by id' })
   findOne(@Param('id') id: string) {
-    return this.service.findOne(id);
+    return this.service.findOneDetail(id);
   }
 
   @RequirePermissions('packages.write')
