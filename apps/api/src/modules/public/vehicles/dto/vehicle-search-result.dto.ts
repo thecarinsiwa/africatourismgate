@@ -26,8 +26,8 @@ export class VehicleSearchResultDto {
   dailyPriceCents!: number;
 
   @ApiProperty({
-    example: 5500,
-    description: 'Flat rate per reservable slot (equals dailyPriceCents)',
+    example: 38500,
+    description: 'Total rental price (rentalDays × dailyPriceCents)',
   })
   totalPriceCents!: number;
 

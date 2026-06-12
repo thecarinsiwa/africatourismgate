@@ -50,9 +50,10 @@ async function main() {
   if (!eco) {
     throw new Error('Seed economy vehicle CD-KIN-001 not found');
   }
-  if (eco.dailyPriceCents !== 5500 || eco.totalPriceCents !== 5500) {
+  const expectedTotal = 5500 * 7;
+  if (eco.dailyPriceCents !== 5500 || eco.totalPriceCents !== expectedTotal) {
     throw new Error(
-      `Expected daily/total 5500 cents, got ${eco.dailyPriceCents}/${eco.totalPriceCents}`,
+      `Expected daily 5500 and total ${expectedTotal} cents, got ${eco.dailyPriceCents}/${eco.totalPriceCents}`,
     );
   }
   if (eco.rentalDays !== 7) {
@@ -104,8 +105,10 @@ async function main() {
       `Expected availability slot ${VEHICLE_AVAIL_DEMO_ECO}, got ${detail.data?.availabilitySlot?.id}`,
     );
   }
-  if (detail.data?.totalPriceCents !== 5500) {
-    throw new Error(`Expected totalPriceCents 5500, got ${detail.data?.totalPriceCents}`);
+  if (detail.data?.totalPriceCents !== expectedTotal) {
+    throw new Error(
+      `Expected totalPriceCents ${expectedTotal}, got ${detail.data?.totalPriceCents}`,
+    );
   }
   console.log(`  OK detail: ${detail.data.category.name} via ${detail.data.agency.name}`);
 

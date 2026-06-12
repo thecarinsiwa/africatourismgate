@@ -134,14 +134,14 @@ export class PublicVehiclesService {
         agencyAddress: agency.address,
         pickupCity,
         dailyPriceCents: vehicle.dailyPriceCents,
-        totalPriceCents: vehicle.dailyPriceCents,
+        totalPriceCents: vehicle.dailyPriceCents * rentalDays,
         currency: vehicle.currency,
         rentalDays,
         availabilitySlotId: slot.id,
       });
     }
 
-    results.sort((a, b) => a.dailyPriceCents - b.dailyPriceCents);
+    results.sort((a, b) => a.totalPriceCents - b.totalPriceCents);
 
     const total = results.length;
     const offset = (page - 1) * limit;
@@ -232,7 +232,7 @@ export class PublicVehiclesService {
       returnDate: query.returnDate,
       rentalDays,
       dailyPriceCents: vehicle.dailyPriceCents,
-      totalPriceCents: vehicle.dailyPriceCents,
+      totalPriceCents: vehicle.dailyPriceCents * rentalDays,
       currency: vehicle.currency,
       availabilitySlot: {
         id: slot.id,
