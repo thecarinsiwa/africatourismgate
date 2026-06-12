@@ -224,6 +224,8 @@ import type {
   UserAddressesListQuery,
   UserPaymentMethod,
   UserPaymentMethodsListQuery,
+  UserSession,
+  UserSessionsListQuery,
   UserRoleAssignment,
   UserRoleAssignmentsListQuery,
   User,
@@ -614,6 +616,20 @@ export class ApiClient {
 
   deleteUserPaymentMethod(id: string): Promise<void> {
     return this.request<void>(`/user-payment-methods/${id}`, { method: 'DELETE' });
+  }
+
+  listUserSessions(
+    query?: UserSessionsListQuery,
+  ): Promise<PaginatedResponse<UserSession>> {
+    return fetchPaginated<UserSession>(this, '/user-sessions', query);
+  }
+
+  getUserSession(id: string): Promise<UserSession> {
+    return this.request<UserSession>(`/user-sessions/${id}`);
+  }
+
+  revokeUserSession(id: string): Promise<void> {
+    return this.request<void>(`/user-sessions/${id}`, { method: 'DELETE' });
   }
 
   listProperties(

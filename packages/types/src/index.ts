@@ -43,6 +43,8 @@ export type {
   UserPaymentMethod,
   UserPaymentMethodsListQuery,
   UserPaymentMethodType,
+  UserSession,
+  UserSessionsListQuery,
 } from './account.js';
 
 export type {

@@ -79,6 +79,19 @@ export interface UserAddressesListQuery extends PaginationQuery {
 export interface UserPaymentMethodsListQuery extends PaginationQuery {
   userId?: string;
 }
+
+export interface UserSession {
+  id: string;
+  userId: string;
+  expiresAt: string;
+  createdAt: string;
+  updatedAt: string | null;
+}
+
+export interface UserSessionsListQuery extends PaginationQuery {
+  userId?: string;
+}
+
 export type LoyaltyAccountsListQuery = PaginationQuery;
 
 export interface AdminLoyaltyAccountListItem extends LoyaltyAccount {
