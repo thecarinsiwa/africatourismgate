@@ -32,11 +32,20 @@ export type CabinReservationDraft = {
   guests: number;
 };
 
+export type ActivityScheduleReservationDraft = {
+  kind: 'activity_schedule';
+  activityId: string;
+  scheduleId: string;
+  date: string;
+  participants: number;
+};
+
 export type ReservationDraft =
   | RoomReservationDraft
   | FlightReservationDraft
   | VehicleReservationDraft
-  | CabinReservationDraft;
+  | CabinReservationDraft
+  | ActivityScheduleReservationDraft;
 
 function readString(value: string | string[] | undefined): string {
   if (typeof value === 'string') return value;
@@ -73,12 +82,26 @@ export function isCabinReservationDraft(
   return draft.kind === 'cabin';
 }
 
+export function isActivityScheduleReservationDraft(
+  draft: ReservationDraft,
+): draft is ActivityScheduleReservationDraft {
+  return draft.kind === 'activity_schedule';
+}
+
 /** Cabin can be booked when it exists, has stock, and fits the guest count. */
 export function isCabinOfferBookable(
   cabin: { availableCount: number; maxGuests: number } | null | undefined,
   guests: number,
 ): cabin is { availableCount: number; maxGuests: number } {
   return Boolean(cabin && cabin.availableCount > 0 && cabin.maxGuests >= guests);
+}
+
+/** Activity schedule can be booked when it has enough remaining places. */
+export function isActivityScheduleOfferBookable(
+  schedule: { remainingPlaces: number } | null | undefined,
+  participants: number,
+): schedule is { remainingPlaces: number } {
+  return Boolean(schedule && schedule.remainingPlaces >= participants);
 }
 
 export function parseReservationDraft(
@@ -88,6 +111,25 @@ export function parseReservationDraft(
   const flightClassId = readString(searchParams.flightClassId);
   const availabilitySlotId = readString(searchParams.availabilitySlotId);
   const cabinAvailabilityId = readString(searchParams.cabinAvailabilityId);
+  const scheduleId = readString(searchParams.scheduleId);
+
+  if (kind === 'activity_schedule' || scheduleId) {
+    const activityId = readString(searchParams.activityId);
+    const date = readString(searchParams.date);
+    const participants = readPositiveInt(searchParams.participants);
+
+    if (!activityId || !scheduleId || !date || participants == null) {
+      return null;
+    }
+
+    return {
+      kind: 'activity_schedule',
+      activityId,
+      scheduleId,
+      date,
+      participants,
+    };
+  }
 
   if (kind === 'cabin' || cabinAvailabilityId) {
     const sailingId = readString(searchParams.sailingId);
@@ -165,6 +207,17 @@ export function parseReservationDraft(
 }
 
 export function buildReservationQuery(draft: ReservationDraft): string {
+  if (draft.kind === 'activity_schedule') {
+    const params = new URLSearchParams({
+      kind: 'activity_schedule',
+      activityId: draft.activityId,
+      scheduleId: draft.scheduleId,
+      date: draft.date,
+      participants: String(draft.participants),
+    });
+    return params.toString();
+  }
+
   if (draft.kind === 'cabin') {
     const params = new URLSearchParams({
       kind: 'cabin',
@@ -215,6 +268,16 @@ export function buildFlightReservationQuery(
 }
 
 export function buildCheckoutItems(draft: ReservationDraft): BookingCheckoutItem[] {
+  if (draft.kind === 'activity_schedule') {
+    return [
+      {
+        itemType: 'activity_schedule',
+        referenceId: draft.scheduleId,
+        quantity: draft.participants,
+      },
+    ];
+  }
+
   if (draft.kind === 'cabin') {
     return [
       {
@@ -260,6 +323,15 @@ export function buildCheckoutItems(draft: ReservationDraft): BookingCheckoutItem
 }
 
 export function buildDraftDetailHref(draft: ReservationDraft): string {
+  if (draft.kind === 'activity_schedule') {
+    const params = new URLSearchParams({
+      date: draft.date,
+      participants: String(draft.participants),
+      scheduleId: draft.scheduleId,
+    });
+    return `/activities/${encodeURIComponent(draft.activityId)}?${params.toString()}`;
+  }
+
   if (draft.kind === 'cabin') {
     const params = new URLSearchParams({
       guests: String(draft.guests),
@@ -295,6 +367,14 @@ export function buildDraftDetailHref(draft: ReservationDraft): string {
 }
 
 export function buildDraftBrowseHref(draft: ReservationDraft): string {
+  if (draft.kind === 'activity_schedule') {
+    const params = new URLSearchParams({
+      date: draft.date,
+      participants: String(draft.participants),
+    });
+    const query = params.toString();
+    return query ? `/activities?${query}` : '/activities';
+  }
   if (draft.kind === 'cabin') {
     return '/cruises';
   }
