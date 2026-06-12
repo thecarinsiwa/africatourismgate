@@ -38,7 +38,31 @@ function assertStatus(label, actual, expected) {
 async function main() {
   console.log(`API: ${API_URL}\n`);
 
-  console.log('1. GET /public/activities/search Kinshasa');
+  console.log('1. GET /public/activities/destinations');
+  const destinations = await request('/public/activities/destinations');
+  assertStatus('activity destinations', destinations.status, 200);
+  if (!destinations.data?.length) {
+    throw new Error('Expected at least one activity destination');
+  }
+  const kinshasa = destinations.data.find((d) => d.name === 'Kinshasa');
+  if (!kinshasa) {
+    throw new Error('Expected Kinshasa in activity destinations');
+  }
+  console.log(`  OK ${destinations.data.length} destination(s), including Kinshasa`);
+
+  console.log('2. GET /public/activities/browse');
+  const browse = await request('/public/activities/browse');
+  assertStatus('activity browse', browse.status, 200);
+  if (!browse.data?.data?.length) {
+    throw new Error('Expected at least one activity in browse');
+  }
+  const browseTour = browse.data.data.find((a) => a.id === ACTIVITY_DEMO_GOMBE_TOUR);
+  if (!browseTour) {
+    throw new Error('Seed activity Gombe City Tour not found in browse');
+  }
+  console.log(`  OK browse: ${browse.data.data.length} activity(ies)`);
+
+  console.log('3. GET /public/activities/search Kinshasa');
   const search = await request(
     '/public/activities/search?destination=Kinshasa&date=2026-07-20&participants=2',
   );
@@ -61,7 +85,21 @@ async function main() {
   }
   console.log(`  OK ${tour.title} @ ${tour.priceCents} cents (${tour.availableSchedulesCount} slot)`);
 
-  console.log('2. GET search participants=11 (empty)');
+  console.log('4. GET search all destinations on date');
+  const allDest = await request(
+    '/public/activities/search?date=2026-07-20&participants=2',
+  );
+  assertStatus('all destinations search', allDest.status, 200);
+  if (!allDest.data?.data?.length) {
+    throw new Error('Expected at least one activity when searching all destinations');
+  }
+  const allDestTour = allDest.data.data.find((a) => a.id === ACTIVITY_DEMO_GOMBE_TOUR);
+  if (!allDestTour) {
+    throw new Error('Seed activity Gombe City Tour not found in all-destinations search');
+  }
+  console.log(`  OK all destinations: ${allDest.data.data.length} activity(ies)`);
+
+  console.log('5. GET search participants=11 (empty)');
   const tooMany = await request(
     '/public/activities/search?destination=Kinshasa&date=2026-07-20&participants=11',
   );
@@ -70,7 +108,7 @@ async function main() {
     throw new Error('Expected empty results for participants=11');
   }
 
-  console.log('3. GET search unknown destination (empty)');
+  console.log('6. GET search unknown destination (empty)');
   const emptyDest = await request(
     '/public/activities/search?destination=Nairobi&date=2026-07-20&participants=2',
   );
@@ -79,13 +117,13 @@ async function main() {
     throw new Error('Expected empty results for Nairobi');
   }
 
-  console.log('4. GET search invalid date (400)');
+  console.log('7. GET search invalid date (400)');
   const invalid = await request(
     '/public/activities/search?destination=Kinshasa&date=not-a-date&participants=2',
   );
   assertStatus('invalid date', invalid.status, 400);
 
-  console.log('5. GET /public/activities/:id detail');
+  console.log('8. GET /public/activities/:id detail');
   const detail = await request(
     `/public/activities/${ACTIVITY_DEMO_GOMBE_TOUR}?date=2026-07-20&participants=2`,
   );

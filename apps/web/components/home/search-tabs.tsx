@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
+import { useActivityDestinations } from '../../lib/activities/use-activity-destinations';
 import { listPublicDestinations } from '../../lib/api/public';
 import { countRentalDays } from '../../lib/cars/listings';
 import { useVehiclePickupLocations } from '../../lib/cars/use-vehicle-pickup-locations';
@@ -40,8 +41,8 @@ function FormLabel({ children }: { children: React.ReactNode }) {
   return <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-atg-muted">{children}</label>;
 }
 
-function FormInput({ type = 'text', name, placeholder, value, min, onChange }: { type?: string; name: string; placeholder?: string; value: string; min?: string; onChange: (v: string) => void; }) {
-  return <input type={type} name={name} placeholder={placeholder} value={value} min={min} onChange={(e) => onChange(e.target.value)} className="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg dark:placeholder:text-atg-muted" />;
+function FormInput({ type = 'text', name, placeholder, value, min, max, onChange }: { type?: string; name: string; placeholder?: string; value: string; min?: string; max?: string; onChange: (v: string) => void; }) {
+  return <input type={type} name={name} placeholder={placeholder} value={value} min={min} max={max} onChange={(e) => onChange(e.target.value)} className="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg dark:placeholder:text-atg-muted" />;
 }
 
 function FormSelect({ name, placeholder, options, value, disabled, onChange }: { name: string; placeholder: string; options: string[]; value: string; disabled?: boolean; onChange: (v: string) => void; }) {
@@ -172,10 +173,19 @@ export function SearchTabs() {
     loading: carPickupLoading,
     error: carPickupError,
   } = useVehiclePickupLocations();
+  const {
+    destinations: activityDestinations,
+    loading: activityDestinationsLoading,
+    error: activityDestinationsError,
+  } = useActivityDestinations();
   const airportOptions = useMemo(() => toFlightAirportOptions(airports), [airports]);
   const carPickupOptions = useMemo(
     () => carPickupLocations.map((location) => location.name),
     [carPickupLocations],
+  );
+  const activityDestinationOptions = useMemo(
+    () => activityDestinations.map((destination) => destination.name),
+    [activityDestinations],
   );
   const [activeTab, setActiveTab] = useState<SearchTab>('hotels');
   const tabs = useMemo(() => ([
@@ -188,8 +198,6 @@ export function SearchTabs() {
 
   const [departDate, setDepartDate] = useState('');
   const [returnDate, setReturnDate] = useState('');
-  const [from, setFrom] = useState('');
-  const [to, setTo] = useState('');
   const [flightFrom, setFlightFrom] = useState('');
   const [flightTo, setFlightTo] = useState('');
   const [flightPassengers, setFlightPassengers] = useState('1');
@@ -197,11 +205,12 @@ export function SearchTabs() {
   const [flightError, setFlightError] = useState<string | null>(null);
   const [carError, setCarError] = useState<string | null>(null);
   const [cruiseError, setCruiseError] = useState<string | null>(null);
+  const [toursError, setToursError] = useState<string | null>(null);
   const [sailFrom, setSailFrom] = useState('');
   const [sailTo, setSailTo] = useState('');
   const [cruiseGuests, setCruiseGuests] = useState('2');
   const [destination, setDestination] = useState('');
-  const [adults, setAdults] = useState('');
+  const [tourParticipants, setTourParticipants] = useState('2');
   const [hotelGuests, setHotelGuests] = useState('2');
   const [destinationOptions, setDestinationOptions] = useState<string[]>(AFRICAN_CITIES);
 
@@ -309,13 +318,26 @@ export function SearchTabs() {
       return;
     }
 
+    if (activeTab === 'tours') {
+      setToursError(null);
+
+      if (!departDate) {
+        setToursError(t.search.toursRequired);
+        return;
+      }
+
+      const participants = Math.max(1, Number.parseInt(tourParticipants, 10) || 1);
+      if (destination) params.set('destination', destination);
+      params.set('date', departDate);
+      params.set('participants', String(participants));
+      router.push(buildSearchRoute('tours', params));
+      return;
+    }
+
     if (destination) params.set('destination', destination);
-    if (from) params.set('from', from);
-    if (to) params.set('to', to);
     if (departDate) params.set('checkIn', departDate);
     if (returnDate) params.set('checkOut', returnDate);
-    const guestsValue = activeTab === 'hotels' ? hotelGuests : adults;
-    if (guestsValue) params.set('guests', guestsValue);
+    if (hotelGuests) params.set('guests', hotelGuests);
     router.push(buildSearchRoute(activeTab, params));
   }
 
@@ -355,7 +377,7 @@ export function SearchTabs() {
         <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-2xl transition-colors dark:border-atg-border dark:bg-atg-elevated">
           <div className="flex" role="tablist" aria-label={t.search.tablistAria}>
             {tabs.map((tab) => (
-              <button key={tab.id} type="button" role="tab" aria-selected={activeTab === tab.id} onClick={() => { setActiveTab(tab.id); setFlightError(null); setCarError(null); setCruiseError(null); }} className={`flex flex-1 items-center justify-center gap-2 py-4 text-xs sm:text-sm font-semibold uppercase tracking-wide transition-all border-b-[3px] ${activeTab === tab.id ? 'bg-primary text-white border-primary-hover' : 'bg-gray-50 text-gray-500 border-transparent hover:bg-gray-100 hover:text-gray-700 dark:bg-atg-surface dark:text-atg-muted dark:hover:bg-white/5 dark:hover:text-white'}`}>
+              <button key={tab.id} type="button" role="tab" aria-selected={activeTab === tab.id} onClick={() => { setActiveTab(tab.id); setFlightError(null); setCarError(null); setCruiseError(null); setToursError(null); }} className={`flex flex-1 items-center justify-center gap-2 py-4 text-xs sm:text-sm font-semibold uppercase tracking-wide transition-all border-b-[3px] ${activeTab === tab.id ? 'bg-primary text-white border-primary-hover' : 'bg-gray-50 text-gray-500 border-transparent hover:bg-gray-100 hover:text-gray-700 dark:bg-atg-surface dark:text-atg-muted dark:hover:bg-white/5 dark:hover:text-white'}`}>
                 <TabIcon tab={tab.id} />
                 <span className="hidden sm:inline">{tab.label}</span>
               </button>
@@ -683,28 +705,76 @@ export function SearchTabs() {
             )}
 
             {activeTab === 'tours' && (
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
-                <div>
-                  <FormLabel>{t.search.startDate}</FormLabel>
-                  <FormInput type="date" name="startDate" value={departDate} onChange={setDepartDate} />
+              <div className="space-y-4">
+                <div className="flex flex-wrap items-center justify-end gap-3">
+                  <Link
+                    href="/activities"
+                    className="inline-flex min-h-[44px] items-center rounded-lg border border-primary px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/5 dark:hover:bg-primary/10"
+                  >
+                    {t.search.viewAllActivities}
+                  </Link>
                 </div>
-                <div>
-                  <FormLabel>{t.search.from}</FormLabel>
-                  <FormSelect name="from" placeholder={t.search.departCityPh} options={AFRICAN_CITIES} value={from} onChange={setFrom} />
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.25fr_1fr_0.75fr_auto] lg:items-end">
+                  <div>
+                    <FormLabel>{t.search.destination}</FormLabel>
+                    <FormSelect
+                      name="destination"
+                      placeholder={
+                        activityDestinationsLoading
+                          ? t.activities.destinationsLoading
+                          : t.search.allDestinations
+                      }
+                      options={activityDestinationOptions}
+                      value={destination}
+                      disabled={
+                        activityDestinationsLoading || activityDestinationOptions.length === 0
+                      }
+                      onChange={(value) => {
+                        setDestination(value);
+                        setToursError(null);
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <FormLabel>{t.activities.date}</FormLabel>
+                    <FormInput
+                      type="date"
+                      name="date"
+                      value={departDate}
+                      min={today}
+                      onChange={(value) => {
+                        setDepartDate(value);
+                        setToursError(null);
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <FormLabel>{t.search.participants}</FormLabel>
+                    <FormInput
+                      type="number"
+                      name="participants"
+                      placeholder="2"
+                      value={tourParticipants}
+                      min="1"
+                      max="50"
+                      onChange={(value) => {
+                        setTourParticipants(value);
+                        setToursError(null);
+                      }}
+                    />
+                  </div>
+                  <div className="flex items-end">{submitBtn}</div>
                 </div>
-                <div>
-                  <FormLabel>{t.search.to}</FormLabel>
-                  <FormSelect name="to" placeholder={t.search.destinationPh2} options={AFRICAN_CITIES} value={to} onChange={setTo} />
-                </div>
-                <div>
-                  <FormLabel>{t.search.adults}</FormLabel>
-                  <FormInput name="adults" placeholder="2" value={adults} onChange={setAdults} />
-                </div>
-                <div>
-                  <FormLabel>{t.search.days}</FormLabel>
-                  <FormInput name="days" placeholder="7" value="" onChange={() => {}} />
-                </div>
-                <div className="flex items-end">{submitBtn}</div>
+                {activityDestinationsError && (
+                  <p className="text-sm text-amber-700 dark:text-amber-300" role="status">
+                    {t.activities.destinationsLoadError}
+                  </p>
+                )}
+                {toursError && (
+                  <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+                    {toursError}
+                  </p>
+                )}
               </div>
             )}
           </form>

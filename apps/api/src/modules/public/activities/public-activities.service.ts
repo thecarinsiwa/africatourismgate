@@ -8,6 +8,8 @@ import {
   ActivitySchedules,
   Destinations,
 } from '../../../entities/generated';
+import { PublicDestinationDto } from '../accommodations/dto/public-destination.dto';
+import { ActivityBrowseQueryDto } from './dto/activity-browse-query.dto';
 import { ActivityDetailQueryDto } from './dto/activity-detail-query.dto';
 import { ActivityDetailDto } from './dto/activity-detail.dto';
 import { ActivitySearchQueryDto } from './dto/activity-search-query.dto';
@@ -29,6 +31,145 @@ export class PublicActivitiesService {
     private readonly destinationsRepository: Repository<Destinations>,
   ) {}
 
+  async listDestinations(): Promise<PublicDestinationDto[]> {
+    const rows = await this.destinationsRepository
+      .createQueryBuilder('d')
+      .select(['d.id', 'd.name', 'd.countryCode'])
+      .innerJoin(
+        ActivityProviders,
+        'ap',
+        'ap.destinationId = d.id AND ap.deletedAt IS NULL',
+      )
+      .innerJoin(
+        Activities,
+        'a',
+        'a.providerId = ap.id AND a.deletedAt IS NULL',
+      )
+      .where('d.deletedAt IS NULL')
+      .distinct(true)
+      .orderBy('d.name', 'ASC')
+      .getMany();
+
+    return rows.map((d) => ({
+      id: d.id,
+      name: d.name,
+      countryCode: d.countryCode,
+    }));
+  }
+
+  async browse(
+    query: ActivityBrowseQueryDto,
+  ): Promise<PaginatedResult<ActivitySearchResultDto>> {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 50;
+    const participants = query.participants ?? 1;
+
+    let activeProviders: ActivityProviders[];
+
+    if (query.destination?.trim()) {
+      const destinationIds = await this.resolveDestinationIds(query.destination);
+      if (!destinationIds.length) {
+        return this.emptyPage(page, limit);
+      }
+
+      const providers = await this.providersRepository.find({
+        where: { destinationId: In(destinationIds) },
+      });
+      activeProviders = providers.filter((p) => !p.deletedAt);
+    } else {
+      const providers = await this.providersRepository.find();
+      activeProviders = providers.filter((p) => !p.deletedAt);
+    }
+
+    if (!activeProviders.length) {
+      return this.emptyPage(page, limit);
+    }
+
+    const providerById = new Map(activeProviders.map((p) => [p.id, p]));
+    const providerIds = activeProviders.map((p) => p.id);
+
+    const activities = await this.activitiesRepository.find({
+      where: { providerId: In(providerIds) },
+    });
+    const activeActivities = activities.filter((a) => !a.deletedAt);
+    if (!activeActivities.length) {
+      return this.emptyPage(page, limit);
+    }
+
+    const destIds = [...new Set(activeProviders.map((p) => p.destinationId))];
+    const destinations = await this.destinationsRepository.find({
+      where: { id: In(destIds) },
+    });
+    const destinationById = new Map(
+      destinations.filter((d) => !d.deletedAt).map((d) => [d.id, d.name]),
+    );
+
+    const activityIds = activeActivities.map((a) => a.id);
+    const schedules = await this.schedulesRepository
+      .createQueryBuilder('schedule')
+      .where('schedule.activityId IN (:...activityIds)', { activityIds })
+      .andWhere('schedule.deletedAt IS NULL')
+      .andWhere('schedule.startDatetime >= NOW()')
+      .orderBy('schedule.startDatetime', 'ASC')
+      .getMany();
+
+    const schedulesByActivityId = new Map<string, ActivitySchedules[]>();
+    for (const schedule of schedules) {
+      const list = schedulesByActivityId.get(schedule.activityId) ?? [];
+      list.push(schedule);
+      schedulesByActivityId.set(schedule.activityId, list);
+    }
+
+    const results: ActivitySearchResultDto[] = [];
+
+    for (const activity of activeActivities) {
+      const provider = providerById.get(activity.providerId);
+      if (!provider) {
+        continue;
+      }
+
+      const activitySchedules = schedulesByActivityId.get(activity.id) ?? [];
+      const availableSchedules = activitySchedules.filter(
+        (schedule) => this.remainingPlaces(schedule) >= participants,
+      );
+
+      const result: ActivitySearchResultDto = {
+        id: activity.id,
+        title: activity.title,
+        durationMinutes: activity.durationMinutes,
+        priceCents: activity.priceCents,
+        currency: activity.currency,
+        destination: destinationById.get(provider.destinationId) ?? '',
+        providerName: provider.name,
+        availableSchedulesCount: availableSchedules.length,
+      };
+
+      if (availableSchedules[0]) {
+        result.nextStartDatetime = this.toIsoDatetime(
+          availableSchedules[0].startDatetime,
+        );
+      }
+
+      results.push(result);
+    }
+
+    results.sort((a, b) => a.priceCents - b.priceCents);
+
+    const total = results.length;
+    const offset = (page - 1) * limit;
+    const data = results.slice(offset, offset + limit);
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit) || 1,
+      },
+    };
+  }
+
   async search(
     query: ActivitySearchQueryDto,
   ): Promise<PaginatedResult<ActivitySearchResultDto>> {
@@ -38,15 +179,23 @@ export class PublicActivitiesService {
 
     parseDateOnly(query.date);
 
-    const destinationIds = await this.resolveDestinationIds(query.destination);
-    if (!destinationIds.length) {
-      return this.emptyPage(page, limit);
+    let activeProviders: ActivityProviders[];
+
+    if (query.destination?.trim()) {
+      const destinationIds = await this.resolveDestinationIds(query.destination);
+      if (!destinationIds.length) {
+        return this.emptyPage(page, limit);
+      }
+
+      const providers = await this.providersRepository.find({
+        where: { destinationId: In(destinationIds) },
+      });
+      activeProviders = providers.filter((p) => !p.deletedAt);
+    } else {
+      const providers = await this.providersRepository.find();
+      activeProviders = providers.filter((p) => !p.deletedAt);
     }
 
-    const providers = await this.providersRepository.find({
-      where: { destinationId: In(destinationIds) },
-    });
-    const activeProviders = providers.filter((p) => !p.deletedAt);
     if (!activeProviders.length) {
       return this.emptyPage(page, limit);
     }
@@ -103,7 +252,7 @@ export class PublicActivitiesService {
       }
 
       const destinationName =
-        destinationById.get(provider.destinationId) ?? query.destination.trim();
+        destinationById.get(provider.destinationId) ?? query.destination?.trim() ?? '';
 
       results.push({
         id: activity.id,

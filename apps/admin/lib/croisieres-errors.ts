@@ -6,6 +6,9 @@ export function getCroisieresErrorMessage(error: unknown): string {
   }
 
   if (error instanceof ApiHttpError) {
+    if (error.status === 401) {
+      return 'Session expirée. Reconnectez-vous pour continuer.';
+    }
     if (error.status === 403) {
       return 'Vous n’avez pas la permission d’effectuer cette action.';
     }

@@ -25,6 +25,6 @@ export class ActivitySearchResultDto {
   @ApiProperty({ example: 1 })
   availableSchedulesCount!: number;
 
-  @ApiProperty({ example: '2026-07-20T09:00:00.000Z' })
-  nextStartDatetime!: string;
+  @ApiPropertyOptional({ example: '2026-07-20T09:00:00.000Z' })
+  nextStartDatetime?: string;
 }

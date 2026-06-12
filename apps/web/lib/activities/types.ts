@@ -1,0 +1,55 @@
+export interface ActivitySearchQuery {
+  destination?: string;
+  date: string;
+  participants?: number;
+  page?: number;
+  limit?: number;
+}
+
+export interface ActivityBrowseQuery {
+  destination?: string;
+  participants?: number;
+  page?: number;
+  limit?: number;
+}
+
+export interface ActivitySearchResult {
+  id: string;
+  title: string;
+  durationMinutes: number | null;
+  priceCents: number;
+  currency: string;
+  destination: string;
+  providerName: string;
+  availableSchedulesCount: number;
+  nextStartDatetime?: string;
+}
+
+export interface ActivityDetailQuery {
+  date: string;
+  participants?: number;
+}
+
+export interface ActivityScheduleOffer {
+  scheduleId: string;
+  startDatetime: string;
+  capacity: number;
+  bookedCount: number;
+  remainingPlaces: number;
+  priceCents: number;
+  currency: string;
+}
+
+export interface ActivityDetail {
+  id: string;
+  title: string;
+  description: string | null;
+  durationMinutes: number | null;
+  priceCents: number;
+  currency: string;
+  destination: string;
+  providerName: string;
+  date: string;
+  participants: number;
+  schedules: ActivityScheduleOffer[];
+}

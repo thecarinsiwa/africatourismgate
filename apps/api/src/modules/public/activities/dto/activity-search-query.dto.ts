@@ -12,14 +12,15 @@ import {
 import { PaginationQueryDto } from '../../../../common/dto/pagination-query.dto';
 
 export class ActivitySearchQueryDto extends PaginationQueryDto {
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: 'Kinshasa',
-    description: 'Destination city name (partial match)',
+    description: 'Optional destination city name (partial match). Omit to search all destinations.',
   })
+  @IsOptional()
   @IsString()
   @MinLength(1)
   @MaxLength(180)
-  destination!: string;
+  destination?: string;
 
   @ApiProperty({ format: 'date', example: '2026-07-20' })
   @IsDateString()

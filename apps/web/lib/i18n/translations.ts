@@ -83,6 +83,9 @@ export type Translations = {
     cruisesEndAfterStart: string;
     cruisesSamePort: string;
     viewAllCruises: string;
+    viewAllActivities: string;
+    toursRequired: string;
+    participants: string;
     roomTypes: string[];
     countries: string[];
     locations: string[];
@@ -373,6 +376,64 @@ export type Translations = {
     nightPlural: string;
     searchRequired: string;
     endAfterStart: string;
+  };
+  activities: {
+    metaTitle: string;
+    metaDescription: string;
+    breadcrumbHome: string;
+    breadcrumbActivities: string;
+    heroTitle: string;
+    heroSubtitle: string;
+    resultsFor: string;
+    anyDestination: string;
+    activitiesFound: string;
+    sortBy: string;
+    sortRecommended: string;
+    sortPriceLow: string;
+    sortPriceHigh: string;
+    loading: string;
+    loadError: string;
+    destinationsLoading: string;
+    destinationsLoadError: string;
+    retry: string;
+    modifySearch: string;
+    destination: string;
+    date: string;
+    participants: string;
+    participantSingular: string;
+    participantPlural: string;
+    noResults: string;
+    noResultsHint: string;
+    noSearchParams: string;
+    noSearchParamsHint: string;
+    browseHint: string;
+    noUpcomingSlot: string;
+    backHome: string;
+    viewDetails: string;
+    bookNow: string;
+    fromPrice: string;
+    perParticipant: string;
+    schedulesTitle: string;
+    selectSchedule: string;
+    selectScheduleHint: string;
+    placesLeft: string;
+    unavailable: string;
+    insufficientPlaces: string;
+    totalActivity: string;
+    reserveSection: string;
+    notFound: string;
+    notFoundHint: string;
+    backToList: string;
+    providerLabel: string;
+    durationLabel: string;
+    hourSingular: string;
+    hourPlural: string;
+    minuteSingular: string;
+    minutePlural: string;
+    searchRequired: string;
+    descriptionTitle: string;
+    nextSlot: string;
+    schedulesAvailable: string;
   };
   account: {
     title: string;
@@ -678,6 +739,9 @@ const fr: Translations = {
     cruisesEndAfterStart: 'La date de fin doit être après la date de début.',
     cruisesSamePort: 'Les ports de départ et d\'arrivée doivent être différents.',
     viewAllCruises: 'Voir toutes les croisières',
+    viewAllActivities: 'Voir toutes les activités',
+    toursRequired: 'Indiquez une date.',
+    participants: 'Participants',
     roomTypes: ['Chambre Double', 'Chambre Simple', 'Suite'],
     countries: ['Kenya', 'Tanzanie', 'Maroc', 'Afrique du Sud', 'Rwanda', 'RDC'],
     locations: ['Aéroport', 'Centre-ville', 'Gare'],
@@ -1036,6 +1100,66 @@ const fr: Translations = {
     searchRequired: 'Indiquez les ports et les dates de départ.',
     endAfterStart: 'La date de fin doit être après la date de début.',
   },
+  activities: {
+    metaTitle: 'Activités et tours en Afrique',
+    metaDescription:
+      'Réservez des activités et tours guidés en Afrique avec Africa Tourism Gate.',
+    breadcrumbHome: 'Accueil',
+    breadcrumbActivities: 'Activités',
+    heroTitle: 'Activités & tours en Afrique',
+    heroSubtitle:
+      'Excursions guidées et expériences locales — choisissez votre créneau et réservez en ligne.',
+    resultsFor: 'Résultats pour',
+    anyDestination: 'Toutes les destinations',
+    activitiesFound: 'activités',
+    sortBy: 'Trier par',
+    sortRecommended: 'Recommandés',
+    sortPriceLow: 'Prix croissant',
+    sortPriceHigh: 'Prix décroissant',
+    loading: 'Recherche des activités…',
+    loadError: "Impossible de charger les activités. Vérifiez que l'API est démarrée.",
+    destinationsLoading: 'Chargement…',
+    destinationsLoadError: 'Impossible de charger les destinations.',
+    retry: 'Réessayer',
+    modifySearch: 'Modifier la recherche',
+    destination: 'Destination',
+    date: 'Date',
+    participants: 'Participants',
+    participantSingular: 'participant',
+    participantPlural: '{n} participants',
+    noResults: 'Aucune activité pour ces critères',
+    noResultsHint: 'Essayez une autre date ou destination (ex. Kinshasa).',
+    noSearchParams: 'Lancez une recherche d\'activités',
+    noSearchParamsHint: 'Indiquez une destination, une date et le nombre de participants.',
+    browseHint: 'Parcourez les activités disponibles ou affinez avec destination, date et participants.',
+    noUpcomingSlot: 'Aucun créneau à venir',
+    backHome: 'Retour à l\'accueil',
+    viewDetails: 'Voir détails',
+    bookNow: 'Réserver',
+    fromPrice: 'À partir de',
+    perParticipant: '/ participant',
+    schedulesTitle: 'Créneaux disponibles',
+    selectSchedule: 'Choisir ce créneau',
+    selectScheduleHint: 'Sélectionnez un créneau pour réserver.',
+    placesLeft: '{n} place(s) restante(s)',
+    unavailable: 'Complet',
+    insufficientPlaces: 'Pas assez de places pour ce nombre de participants.',
+    totalActivity: 'Total activité',
+    reserveSection: 'Réserver',
+    notFound: 'Activité introuvable',
+    notFoundHint: 'Cette activité n\'existe pas ou aucun créneau n\'est disponible.',
+    backToList: 'Retour aux résultats',
+    providerLabel: 'Prestataire',
+    durationLabel: 'Durée',
+    hourSingular: '1 h',
+    hourPlural: '{n} h',
+    minuteSingular: '1 min',
+    minutePlural: '{n} min',
+    searchRequired: 'Indiquez une date.',
+    descriptionTitle: 'Description',
+    nextSlot: 'Prochain créneau',
+    schedulesAvailable: '{n} créneau(x) disponible(s)',
+  },
   account: {
     title: 'Mon compte',
     subtitle: 'Gérez votre profil, vos adresses et vos réservations.',
@@ -1367,6 +1491,9 @@ const en: Translations = {
     cruisesEndAfterStart: 'End date must be after start date.',
     cruisesSamePort: 'Departure and arrival ports must be different.',
     viewAllCruises: 'View all cruises',
+    viewAllActivities: 'View all activities',
+    toursRequired: 'Enter a date.',
+    participants: 'Participants',
     roomTypes: ['Double Room', 'Single Room', 'Suite'],
     countries: ['Kenya', 'Tanzania', 'Morocco', 'South Africa', 'Rwanda', 'DRC'],
     locations: ['Airport', 'City center', 'Train station'],
@@ -1723,6 +1850,65 @@ const en: Translations = {
     nightPlural: 'nights',
     searchRequired: 'Enter ports and departure dates.',
     endAfterStart: 'End date must be after start date.',
+  },
+  activities: {
+    metaTitle: 'Activities & tours in Africa',
+    metaDescription: 'Book guided activities and tours in Africa with Africa Tourism Gate.',
+    breadcrumbHome: 'Home',
+    breadcrumbActivities: 'Activities',
+    heroTitle: 'Activities & tours in Africa',
+    heroSubtitle:
+      'Guided excursions and local experiences — pick your time slot and book online.',
+    resultsFor: 'Results for',
+    anyDestination: 'All destinations',
+    activitiesFound: 'activities',
+    sortBy: 'Sort by',
+    sortRecommended: 'Recommended',
+    sortPriceLow: 'Price: low to high',
+    sortPriceHigh: 'Price: high to low',
+    loading: 'Searching activities…',
+    loadError: 'Could not load activities. Check that the API is running.',
+    destinationsLoading: 'Loading…',
+    destinationsLoadError: 'Could not load destinations.',
+    retry: 'Retry',
+    modifySearch: 'Modify search',
+    destination: 'Destination',
+    date: 'Date',
+    participants: 'Participants',
+    participantSingular: 'participant',
+    participantPlural: '{n} participants',
+    noResults: 'No activities for these criteria',
+    noResultsHint: 'Try another date or destination (e.g. Kinshasa).',
+    noSearchParams: 'Start an activity search',
+    noSearchParamsHint: 'Enter a destination, date and participant count.',
+    browseHint: 'Browse available activities or refine by destination, date and participants.',
+    noUpcomingSlot: 'No upcoming slots',
+    backHome: 'Back to home',
+    viewDetails: 'View details',
+    bookNow: 'Book now',
+    fromPrice: 'From',
+    perParticipant: '/ participant',
+    schedulesTitle: 'Available time slots',
+    selectSchedule: 'Select this slot',
+    selectScheduleHint: 'Select a time slot to book.',
+    placesLeft: '{n} place(s) left',
+    unavailable: 'Sold out',
+    insufficientPlaces: 'Not enough places for this participant count.',
+    totalActivity: 'Activity total',
+    reserveSection: 'Book',
+    notFound: 'Activity not found',
+    notFoundHint: 'This activity does not exist or has no available time slots.',
+    backToList: 'Back to results',
+    providerLabel: 'Provider',
+    durationLabel: 'Duration',
+    hourSingular: '1 hr',
+    hourPlural: '{n} hr',
+    minuteSingular: '1 min',
+    minutePlural: '{n} min',
+    searchRequired: 'Enter a date.',
+    descriptionTitle: 'Description',
+    nextSlot: 'Next slot',
+    schedulesAvailable: '{n} slot(s) available',
   },
   account: {
     title: 'My account',

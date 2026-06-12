@@ -15,6 +15,13 @@ import type {
   VehicleSearchResult,
 } from '../cars/types';
 import type {
+  ActivityBrowseQuery,
+  ActivityDetail,
+  ActivityDetailQuery,
+  ActivitySearchQuery,
+  ActivitySearchResult,
+} from '../activities/types';
+import type {
   CruiseSailingDetail,
   CruiseSailingDetailQuery,
   CruiseSearchQuery,
@@ -47,6 +54,15 @@ export type {
   FlightSearchResult,
   PublicAirport,
 } from '../flights/types';
+
+export type {
+  ActivityBrowseQuery,
+  ActivityDetail,
+  ActivityDetailQuery,
+  ActivityScheduleOffer,
+  ActivitySearchQuery,
+  ActivitySearchResult,
+} from '../activities/types';
 
 export type {
   CruiseCabinOffer,
@@ -98,6 +114,10 @@ export async function listPublicDestinations(): Promise<PublicDestination[]> {
 
 export async function listVehiclePickupLocations(): Promise<PublicDestination[]> {
   return fetchPublic<PublicDestination[]>('/public/vehicles/pickup-locations');
+}
+
+export async function listActivityDestinations(): Promise<PublicDestination[]> {
+  return fetchPublic<PublicDestination[]>('/public/activities/destinations');
 }
 
 export async function listPublicAirports(): Promise<PublicAirport[]> {
@@ -257,5 +277,55 @@ export async function getCruiseSailingDetail(
 ): Promise<CruiseSailingDetail> {
   return fetchPublic<CruiseSailingDetail>(
     `/public/cruises/sailings/${encodeURIComponent(id)}${buildCruiseSailingDetailQuery(params)}`,
+  );
+}
+
+function buildActivitySearchQuery(params: ActivitySearchQuery): string {
+  const qs = new URLSearchParams();
+  if (params.destination) qs.set('destination', params.destination);
+  qs.set('date', params.date);
+  if (params.participants !== undefined) qs.set('participants', String(params.participants));
+  if (params.page !== undefined) qs.set('page', String(params.page));
+  if (params.limit !== undefined) qs.set('limit', String(params.limit));
+  const s = qs.toString();
+  return s ? `?${s}` : '';
+}
+
+export async function browseActivities(
+  params: ActivityBrowseQuery,
+): Promise<PaginatedResponse<ActivitySearchResult>> {
+  const qs = new URLSearchParams();
+  if (params.destination) qs.set('destination', params.destination);
+  if (params.participants !== undefined) qs.set('participants', String(params.participants));
+  if (params.page !== undefined) qs.set('page', String(params.page));
+  if (params.limit !== undefined) qs.set('limit', String(params.limit));
+  const query = qs.toString();
+  return fetchPublic<PaginatedResponse<ActivitySearchResult>>(
+    `/public/activities/browse${query ? `?${query}` : ''}`,
+  );
+}
+
+export async function searchActivities(
+  params: ActivitySearchQuery,
+): Promise<PaginatedResponse<ActivitySearchResult>> {
+  return fetchPublic<PaginatedResponse<ActivitySearchResult>>(
+    `/public/activities/search${buildActivitySearchQuery(params)}`,
+  );
+}
+
+function buildActivityDetailQuery(params: ActivityDetailQuery): string {
+  const qs = new URLSearchParams();
+  qs.set('date', params.date);
+  if (params.participants !== undefined) qs.set('participants', String(params.participants));
+  const s = qs.toString();
+  return s ? `?${s}` : '';
+}
+
+export async function getActivityDetail(
+  id: string,
+  params: ActivityDetailQuery,
+): Promise<ActivityDetail> {
+  return fetchPublic<ActivityDetail>(
+    `/public/activities/${encodeURIComponent(id)}${buildActivityDetailQuery(params)}`,
   );
 }
