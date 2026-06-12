@@ -148,6 +148,7 @@ export function HotelDetailPageContent({
       return;
     }
     const query = buildReservationQuery({
+      kind: 'room',
       propertyId,
       roomId: selectedRoomId,
       checkIn,

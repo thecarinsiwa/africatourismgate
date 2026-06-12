@@ -15,7 +15,7 @@ import {
 import type { FlightDetail } from '../../lib/flights/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
-import { buildFlightReservationQuery } from '../../lib/reservations/flow';
+import { buildReservationQuery } from '../../lib/reservations/flow';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { FlightBookingMobileBar, FlightBookingSidebar } from './flight-booking-sidebar';
@@ -142,7 +142,8 @@ export function FlightDetailPageContent({
       document.getElementById('reserve')?.scrollIntoView({ behavior: 'smooth' });
       return;
     }
-    const query = buildFlightReservationQuery({
+    const query = buildReservationQuery({
+      kind: 'flight_class',
       flightId,
       flightClassId: selectedClassId,
       departureDate: initialSearch.departureDate,
