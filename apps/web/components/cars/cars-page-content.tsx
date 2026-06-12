@@ -14,6 +14,7 @@ import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { CarCard } from './car-card';
+import { CarsSearchForm } from './cars-search-form';
 
 export type { CarsSearchParams };
 
@@ -121,23 +122,13 @@ export function CarsPageContent({ initialSearch }: CarsPageContentProps) {
             {c.heroSubtitle}
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center gap-3">
-            <Link
-              href="/#search"
-              className="inline-flex min-h-[44px] items-center rounded-lg bg-primary px-6 py-2.5 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover"
-            >
-              {c.modifySearch}
-            </Link>
-            {searchSummary ? (
-              <p className="rounded-lg bg-white/10 px-4 py-2 text-sm text-white/90 backdrop-blur-sm">
-                {searchSummary}
-              </p>
-            ) : (
-              <p className="rounded-lg bg-white/10 px-4 py-2 text-sm text-white/90 backdrop-blur-sm">
-                {c.browseAllHint}
-              </p>
-            )}
-          </div>
+          {searchSummary && (
+            <p className="mt-6 rounded-lg bg-white/10 px-4 py-2 text-sm text-white/90 backdrop-blur-sm">
+              {searchSummary}
+            </p>
+          )}
+
+          <CarsSearchForm initialValues={initialSearch} />
         </div>
       </section>
 
@@ -194,12 +185,12 @@ export function CarsPageContent({ initialSearch }: CarsPageContentProps) {
           <div className="rounded-2xl border border-dashed border-gray-200 bg-white px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
             <h3 className="text-lg font-bold text-[#0f1a16] dark:text-white">{c.noResults}</h3>
             <p className="mt-2 text-sm text-gray-500 dark:text-atg-muted">{c.noResultsHint}</p>
-            <Link
-              href={`/cars${buildCarsSearchQuery(initialSearch)}`}
+            <a
+              href="#cars-search"
               className="mt-6 mr-3 inline-flex min-h-[44px] items-center rounded-lg border border-gray-200 px-6 py-2 text-sm font-semibold text-gray-700 hover:border-primary dark:border-atg-border dark:text-white"
             >
               {c.modifySearch}
-            </Link>
+            </a>
             <Link
               href="/"
               className="mt-6 inline-flex min-h-[44px] items-center rounded-lg bg-primary px-6 py-2 text-sm font-bold text-white hover:bg-primary-hover"
