@@ -56,6 +56,12 @@ export function ReservationCartPageContent({ draft }: Props) {
     [draft, flightDetail],
   );
 
+  const vehicleReady = useMemo((): VehicleDetail | null => {
+    if (!draft || !isVehicleReservationDraft(draft) || !vehicleDetail) return null;
+    if (vehicleDetail.availabilitySlot.id !== draft.availabilitySlotId) return null;
+    return vehicleDetail;
+  }, [draft, vehicleDetail]);
+
   useEffect(() => {
     let cancelled = false;
     if (!draft) return;
@@ -125,9 +131,16 @@ export function ReservationCartPageContent({ draft }: Props) {
       ? formatHotelPrice(room.totalPriceCents ?? room.basePriceCents, room.currency)
       : draft && isFlightReservationDraft(draft) && flightClass && flightDetail
         ? formatFlightPrice(flightClass.totalPriceCents, flightDetail.currency)
-        : draft && isVehicleReservationDraft(draft) && vehicleDetail
-          ? formatCarPrice(vehicleDetail.totalPriceCents, vehicleDetail.currency)
+        : vehicleReady
+          ? formatCarPrice(vehicleReady.totalPriceCents, vehicleReady.currency)
           : '--';
+
+  const canContinue =
+    Boolean(draft) &&
+    !loading &&
+    ((isRoomReservationDraft(draft!) && room) ||
+      (isFlightReservationDraft(draft!) && flightClass) ||
+      Boolean(vehicleReady));
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
@@ -194,28 +207,37 @@ export function ReservationCartPageContent({ draft }: Props) {
                 </div>
               )}
 
-              {!loading && isVehicleReservationDraft(draft) && vehicleDetail && (
+              {!loading && vehicleReady && isVehicleReservationDraft(draft) && (
                 <div className="space-y-3">
-                  <p className="text-sm text-primary">{vehicleDetail.agency.name}</p>
+                  <p className="text-sm text-primary">{vehicleReady.agency.name}</p>
                   <h2 className="text-xl font-bold text-[#0f1a16] dark:text-white">
-                    {vehicleDetail.category.exampleModel ?? vehicleDetail.category.name}
+                    {vehicleReady.category.exampleModel ?? vehicleReady.category.name}
                   </h2>
                   <p className="text-sm text-gray-600 dark:text-atg-muted">
-                    {vehicleDetail.agency.city || c.pickupLocation}
+                    {vehicleReady.agency.city || c.pickupLocation}
                   </p>
                   <p className="text-sm text-gray-600 dark:text-atg-muted">
                     {formatDisplayDate(draft.pickupDate, locale)} {'->'}{' '}
                     {formatDisplayDate(draft.returnDate, locale)}
                   </p>
                   <p className="text-sm text-gray-600 dark:text-atg-muted">
-                    {vehicleDetail.rentalDays === 1
+                    {vehicleReady.rentalDays === 1
                       ? `1 ${c.daySingular}`
-                      : `${vehicleDetail.rentalDays} ${c.dayPlural}`}
+                      : `${vehicleReady.rentalDays} ${c.dayPlural}`}
                   </p>
                 </div>
               )}
 
-              {!loading && draft && !room && !flightClass && !vehicleDetail && (
+              {!loading && isVehicleReservationDraft(draft) && vehicleDetail && !vehicleReady && (
+                <p className="text-sm text-red-700 dark:text-red-300">
+                  Créneau indisponible ou modifié.{' '}
+                  <Link href={detailHref} className="font-semibold underline">
+                    Modifier la sélection
+                  </Link>
+                </p>
+              )}
+
+              {!loading && draft && !room && !flightClass && !vehicleReady && (
                 <p className="text-sm text-red-700 dark:text-red-300">
                   Impossible d&apos;afficher cette réservation.{' '}
                   <Link href={detailHref} className="font-semibold underline">
@@ -237,7 +259,12 @@ export function ReservationCartPageContent({ draft }: Props) {
               )}
               <Link
                 href={nextHref}
-                className="mt-4 inline-flex min-h-[44px] w-full items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-hover"
+                aria-disabled={!canContinue}
+                className={`mt-4 inline-flex min-h-[44px] w-full items-center justify-center rounded-lg px-4 py-2 text-sm font-semibold text-white ${
+                  canContinue
+                    ? 'bg-primary hover:bg-primary-hover'
+                    : 'pointer-events-none cursor-not-allowed bg-primary/50'
+                }`}
               >
                 Continuer vers récap
               </Link>

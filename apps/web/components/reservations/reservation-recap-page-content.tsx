@@ -118,6 +118,12 @@ export function ReservationRecapPageContent({ draft }: Props) {
     [draft, flightDetail],
   );
 
+  const vehicleReady = useMemo((): VehicleDetail | null => {
+    if (!draft || !isVehicleReservationDraft(draft) || !vehicleDetail) return null;
+    if (vehicleDetail.availabilitySlot.id !== draft.availabilitySlotId) return null;
+    return vehicleDetail;
+  }, [draft, vehicleDetail]);
+
   async function handleCheckout() {
     if (!draft) return;
     const accessToken = await ensureClientAccessToken();
@@ -149,8 +155,8 @@ export function ReservationRecapPageContent({ draft }: Props) {
       ? formatHotelPrice(room.totalPriceCents ?? room.basePriceCents, room.currency)
       : draft && isFlightReservationDraft(draft) && flightClass && flightDetail
         ? formatFlightPrice(flightClass.totalPriceCents, flightDetail.currency)
-        : draft && isVehicleReservationDraft(draft) && vehicleDetail
-          ? formatCarPrice(vehicleDetail.totalPriceCents, vehicleDetail.currency)
+        : vehicleReady
+          ? formatCarPrice(vehicleReady.totalPriceCents, vehicleReady.currency)
           : null;
 
   const canPay =
@@ -158,7 +164,7 @@ export function ReservationRecapPageContent({ draft }: Props) {
     !loading &&
     ((isRoomReservationDraft(draft!) && room) ||
       (isFlightReservationDraft(draft!) && flightClass) ||
-      (isVehicleReservationDraft(draft!) && vehicleDetail));
+      Boolean(vehicleReady));
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
@@ -232,23 +238,23 @@ export function ReservationRecapPageContent({ draft }: Props) {
               </div>
             )}
 
-            {!loading && isVehicleReservationDraft(draft) && vehicleDetail && (
+            {!loading && vehicleReady && isVehicleReservationDraft(draft) && (
               <div className="space-y-2">
-                <p className="text-sm text-primary">{vehicleDetail.agency.name}</p>
+                <p className="text-sm text-primary">{vehicleReady.agency.name}</p>
                 <h2 className="text-xl font-bold text-[#0f1a16] dark:text-white">
-                  {vehicleDetail.category.exampleModel ?? vehicleDetail.category.name}
+                  {vehicleReady.category.exampleModel ?? vehicleReady.category.name}
                 </h2>
                 <p className="text-sm text-gray-600 dark:text-atg-muted">
-                  {vehicleDetail.agency.city || c.pickupLocation}
+                  {vehicleReady.agency.city || c.pickupLocation}
                 </p>
                 <p className="text-sm text-gray-600 dark:text-atg-muted">
                   {formatDisplayDate(draft.pickupDate, locale)} {'->'}{' '}
                   {formatDisplayDate(draft.returnDate, locale)}
                 </p>
                 <p className="text-sm text-gray-600 dark:text-atg-muted">
-                  {vehicleDetail.rentalDays === 1
+                  {vehicleReady.rentalDays === 1
                     ? `1 ${c.daySingular}`
-                    : `${vehicleDetail.rentalDays} ${c.dayPlural}`}
+                    : `${vehicleReady.rentalDays} ${c.dayPlural}`}
                 </p>
                 {totalLabel && (
                   <p className="pt-1 text-2xl font-bold text-[#0f1a16] dark:text-white">

@@ -74,6 +74,9 @@ export function parseReservationDraft(
     if (!vehicleId || !availabilitySlotId || !pickupDate || !returnDate) {
       return null;
     }
+    if (returnDate <= pickupDate) {
+      return null;
+    }
 
     return {
       kind: 'vehicle',
