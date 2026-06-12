@@ -2,12 +2,58 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsBoolean,
   IsIn,
-  IsNotEmpty,
   IsOptional,
   IsString,
   IsUUID,
   MaxLength,
 } from 'class-validator';
+import { UserPaymentMethods } from '../../../../entities/generated';
+
+function formatTimestamp(value: string | Date | null | undefined): string | null {
+  if (value == null) return null;
+  if (value instanceof Date) return value.toISOString();
+  return String(value);
+}
+
+/** API response — external token is never exposed. */
+export class UserPaymentMethodDto {
+  @ApiProperty({ format: 'uuid' })
+  id!: string;
+
+  @ApiProperty({ format: 'uuid' })
+  userId!: string;
+
+  @ApiProperty({ enum: ['card', 'paypal', 'other'] })
+  type!: 'card' | 'paypal' | 'other';
+
+  @ApiPropertyOptional({ nullable: true })
+  provider!: string | null;
+
+  @ApiPropertyOptional({ nullable: true })
+  lastFour!: string | null;
+
+  @ApiProperty()
+  isDefault!: number;
+
+  @ApiProperty()
+  createdAt!: string;
+
+  @ApiPropertyOptional({ nullable: true })
+  updatedAt!: string | null;
+}
+
+export function toUserPaymentMethodDto(row: UserPaymentMethods): UserPaymentMethodDto {
+  return {
+    id: row.id,
+    userId: row.userId,
+    type: row.type,
+    provider: row.provider ?? null,
+    lastFour: row.lastFour ?? null,
+    isDefault: row.isDefault,
+    createdAt: formatTimestamp(row.createdAt) ?? '',
+    updatedAt: formatTimestamp(row.updatedAt),
+  };
+}
 
 export class CreateUserPaymentMethodDto {
   @ApiProperty({ enum: ['card', 'paypal', 'other'] })

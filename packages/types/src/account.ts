@@ -36,7 +36,8 @@ export interface UserPaymentMethod {
   type: UserPaymentMethodType;
   provider: string | null;
   lastFour: string | null;
-  externalToken: string | null;
+  /** Never returned by the API (write-only). */
+  externalToken?: string | null;
   isDefault: number;
   createdAt: string;
   updatedAt: string | null;
@@ -71,8 +72,13 @@ export interface LoyaltyAccount {
   updatedAt: string | null;
 }
 
-export type UserAddressesListQuery = PaginationQuery;
-export type UserPaymentMethodsListQuery = PaginationQuery;
+export interface UserAddressesListQuery extends PaginationQuery {
+  userId?: string;
+}
+
+export interface UserPaymentMethodsListQuery extends PaginationQuery {
+  userId?: string;
+}
 export type LoyaltyAccountsListQuery = PaginationQuery;
 
 export interface AdminLoyaltyAccountListItem extends LoyaltyAccount {
