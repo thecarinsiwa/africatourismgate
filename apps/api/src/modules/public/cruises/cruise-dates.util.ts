@@ -18,9 +18,21 @@ function formatDateOnly(date: Date): string {
 }
 
 export function assertValidCruiseSearchDates(
-  startDate: string,
-  endDate: string,
+  startDate?: string,
+  endDate?: string,
 ): void {
+  if (!startDate && endDate) {
+    throw new BadRequestException(
+      'startDate est requis lorsque endDate est fourni.',
+    );
+  }
+  if (!startDate) {
+    return;
+  }
+  parseDateOnly(startDate);
+  if (!endDate) {
+    return;
+  }
   const start = parseDateOnly(startDate);
   const end = parseDateOnly(endDate);
   if (end < start) {

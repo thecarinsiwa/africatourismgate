@@ -225,10 +225,10 @@ export async function getVehicleDetail(
 
 function buildCruiseSearchQuery(params: CruiseSearchQuery): string {
   const qs = new URLSearchParams();
-  qs.set('sailFrom', params.sailFrom);
-  qs.set('sailTo', params.sailTo);
-  qs.set('startDate', params.startDate);
-  qs.set('endDate', params.endDate);
+  if (params.sailFrom) qs.set('sailFrom', params.sailFrom);
+  if (params.sailTo) qs.set('sailTo', params.sailTo);
+  if (params.startDate) qs.set('startDate', params.startDate);
+  if (params.endDate) qs.set('endDate', params.endDate);
   if (params.guests !== undefined) qs.set('guests', String(params.guests));
   if (params.page !== undefined) qs.set('page', String(params.page));
   if (params.limit !== undefined) qs.set('limit', String(params.limit));

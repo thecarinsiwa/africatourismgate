@@ -1,8 +1,8 @@
 export interface CruiseSearchQuery {
-  sailFrom: string;
-  sailTo: string;
-  startDate: string;
-  endDate: string;
+  sailFrom?: string;
+  sailTo?: string;
+  startDate?: string;
+  endDate?: string;
   guests?: number;
   page?: number;
   limit?: number;

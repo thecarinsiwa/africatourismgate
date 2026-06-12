@@ -442,6 +442,7 @@ export const es: Translations = {
     noResultsHint: 'Pruebe otras fechas o puertos (p. ej. CDKIN → CDBNW).',
     noSearchParams: 'Inicie una búsqueda de cruceros',
     noSearchParamsHint: 'Indique puertos, rango de fechas de salida y número de viajeros.',
+    browseAllHint: 'Todos los cruceros disponibles — tarifas para camarotes en stock.',
     startSearch: 'Iniciar búsqueda',
     backHome: 'Volver al inicio',
     viewDetails: 'Ver detalles',

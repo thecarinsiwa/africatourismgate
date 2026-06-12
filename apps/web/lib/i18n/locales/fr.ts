@@ -399,6 +399,7 @@ export const fr: Translations = {
     noResultsHint: 'Essayez d\'autres dates ou ports (ex. CDKIN → CDBNW).',
     noSearchParams: 'Lancez une recherche de croisières',
     noSearchParamsHint: 'Indiquez les ports, une plage de dates de départ et le nombre de voyageurs.',
+    browseAllHint: 'Toutes les croisières disponibles — tarifs pour les cabines en stock.',
     startSearch: 'Lancer une recherche',
     backHome: 'Retour à l\'accueil',
     viewDetails: 'Voir détails',

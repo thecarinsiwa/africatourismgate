@@ -120,17 +120,22 @@ export function buildCruiseDetailHref(
   return hash ? `${base}${hash}` : base;
 }
 
-export function toCruiseSearchQuery(params: CruisesSearchParams): CruiseSearchQuery | null {
-  if (!hasRequiredCruiseSearchParams(params)) return null;
-
-  return {
-    sailFrom: params.sailFrom!.trim().toUpperCase(),
-    sailTo: params.sailTo!.trim().toUpperCase(),
-    startDate: params.startDate!,
-    endDate: params.endDate!,
+export function toCruiseSearchQuery(params: CruisesSearchParams): CruiseSearchQuery {
+  const query: CruiseSearchQuery = {
     guests: parseGuestsParam(params.guests),
     limit: 50,
   };
+
+  if (params.sailFrom?.trim()) {
+    query.sailFrom = params.sailFrom.trim().toUpperCase();
+  }
+  if (params.sailTo?.trim()) {
+    query.sailTo = params.sailTo.trim().toUpperCase();
+  }
+  if (params.startDate) query.startDate = params.startDate;
+  if (params.endDate) query.endDate = params.endDate;
+
+  return query;
 }
 
 export function toCruiseSailingDetailQuery(

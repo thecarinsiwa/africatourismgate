@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, In, Repository } from 'typeorm';
+import { Between, FindOptionsWhere, In, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import {
   CabinAvailability,
@@ -63,25 +63,45 @@ export class PublicCruisesService {
 
     assertValidCruiseSearchDates(query.startDate, query.endDate);
 
-    const fromPort = await this.findPortByCode(query.sailFrom);
-    const toPort = await this.findPortByCode(query.sailTo);
-    if (!fromPort || !toPort) {
+    const sailFromCode = query.sailFrom?.trim().toUpperCase();
+    const sailToCode = query.sailTo?.trim().toUpperCase();
+    const hasFrom = Boolean(sailFromCode);
+    const hasTo = Boolean(sailToCode);
+    const hasDates = Boolean(query.startDate && query.endDate);
+
+    const fromPort = hasFrom
+      ? await this.findPortByCode(sailFromCode!)
+      : null;
+    const toPort = hasTo ? await this.findPortByCode(sailToCode!) : null;
+
+    if (hasFrom && !fromPort) {
+      return this.emptyPage(page, limit);
+    }
+    if (hasTo && !toPort) {
       return this.emptyPage(page, limit);
     }
 
-    const itineraryIds = await this.resolveItineraryIdsForRoute(
-      fromPort.id,
-      toPort.id,
-    );
-    if (!itineraryIds.length) {
-      return this.emptyPage(page, limit);
+    let itineraryIds: string[] | undefined;
+    if (hasFrom && hasTo) {
+      itineraryIds = await this.resolveItineraryIdsForRoute(
+        fromPort!.id,
+        toPort!.id,
+      );
+      if (!itineraryIds.length) {
+        return this.emptyPage(page, limit);
+      }
+    }
+
+    const sailingWhere: FindOptionsWhere<CruiseSailings> = {};
+    if (itineraryIds?.length) {
+      sailingWhere.itineraryId = In(itineraryIds);
+    }
+    if (hasDates) {
+      sailingWhere.departureDate = Between(query.startDate!, query.endDate!);
     }
 
     const sailings = await this.sailingsRepository.find({
-      where: {
-        itineraryId: In(itineraryIds),
-        departureDate: Between(query.startDate, query.endDate),
-      },
+      where: Object.keys(sailingWhere).length ? sailingWhere : undefined,
       order: { departureDate: 'ASC' },
     });
     const activeSailings = sailings.filter((s) => !s.deletedAt);
@@ -95,6 +115,10 @@ export class PublicCruisesService {
     const itineraryById = new Map(
       itineraries.filter((i) => !i.deletedAt).map((i) => [i.id, i]),
     );
+
+    const portsByItineraryId = await this.loadItineraryPortsByItineraryIds([
+      ...itineraryById.keys(),
+    ]);
 
     const shipIds = [...new Set(itineraries.map((i) => i.shipId))];
     const ships =
@@ -120,6 +144,17 @@ export class PublicCruisesService {
       const itinerary = itineraryById.get(sailing.itineraryId);
       if (!itinerary) continue;
 
+      const itineraryPorts = portsByItineraryId.get(itinerary.id) ?? [];
+      if (!itineraryPorts.length) continue;
+
+      const endpoints = this.resolveItineraryEndpoints(itineraryPorts);
+      if (hasFrom && !hasTo && endpoints.from.portCode !== fromPort!.code) {
+        continue;
+      }
+      if (hasTo && !hasFrom && endpoints.to.portCode !== toPort!.code) {
+        continue;
+      }
+
       const ship = shipById.get(itinerary.shipId);
       if (!ship) continue;
 
@@ -142,10 +177,10 @@ export class PublicCruisesService {
         itineraryName: itinerary.name,
         shipName: ship.name,
         cruiseLineName: line.name,
-        sailFromPortCode: fromPort.code,
-        sailFromPortName: fromPort.name,
-        sailToPortCode: toPort.code,
-        sailToPortName: toPort.name,
+        sailFromPortCode: endpoints.from.portCode,
+        sailFromPortName: endpoints.from.portName,
+        sailToPortCode: endpoints.to.portCode,
+        sailToPortName: endpoints.to.portName,
         durationNights: itinerary.durationNights,
         minPriceCents,
         currency,
@@ -337,6 +372,20 @@ export class PublicCruisesService {
 
     offers.sort((a, b) => a.priceCents - b.priceCents);
     return offers;
+  }
+
+  private async loadItineraryPortsByItineraryIds(
+    itineraryIds: string[],
+  ): Promise<Map<string, CruiseSailingDetailPortDto[]>> {
+    const result = new Map<string, CruiseSailingDetailPortDto[]>();
+    if (!itineraryIds.length) {
+      return result;
+    }
+
+    for (const itineraryId of itineraryIds) {
+      result.set(itineraryId, await this.loadItineraryPorts(itineraryId));
+    }
+    return result;
   }
 
   private async loadItineraryPorts(

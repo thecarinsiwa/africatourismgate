@@ -343,6 +343,7 @@ export type Translations = {
     noResultsHint: string;
     noSearchParams: string;
     noSearchParamsHint: string;
+    browseAllHint: string;
     startSearch: string;
     backHome: string;
     viewDetails: string;
@@ -1004,6 +1005,7 @@ const fr: Translations = {
     noResultsHint: 'Essayez d\'autres dates ou ports (ex. CDKIN → CDBNW).',
     noSearchParams: 'Lancez une recherche de croisières',
     noSearchParamsHint: 'Indiquez les ports, une plage de dates de départ et le nombre de voyageurs.',
+    browseAllHint: 'Toutes les croisières disponibles — tarifs pour les cabines en stock.',
     startSearch: 'Lancer une recherche',
     backHome: 'Retour à l\'accueil',
     viewDetails: 'Voir détails',
@@ -1691,6 +1693,7 @@ const en: Translations = {
     noResultsHint: 'Try other dates or ports (e.g. CDKIN → CDBNW).',
     noSearchParams: 'Start a cruise search',
     noSearchParamsHint: 'Enter ports, a departure date range, and guest count.',
+    browseAllHint: 'All available cruises — fares for cabins in stock.',
     startSearch: 'Start search',
     backHome: 'Back to home',
     viewDetails: 'View details',

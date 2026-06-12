@@ -87,15 +87,28 @@ test('hasRequiredCruiseSearchParams requires ports and valid date range', () => 
   );
 });
 
-test('toCruiseSearchQuery returns null when params incomplete', () => {
-  assert.equal(
+test('toCruiseSearchQuery returns browse query when params incomplete', () => {
+  assert.deepEqual(
     toCruiseSearchQuery({
       sailFrom: 'CDKIN',
       startDate: '2026-09-01',
       endDate: '2026-09-30',
     }),
-    null,
+    {
+      sailFrom: 'CDKIN',
+      startDate: '2026-09-01',
+      endDate: '2026-09-30',
+      guests: 1,
+      limit: 50,
+    },
   );
+});
+
+test('toCruiseSearchQuery returns browse-all query with defaults when empty', () => {
+  assert.deepEqual(toCruiseSearchQuery({}), {
+    guests: 1,
+    limit: 50,
+  });
 });
 
 test('toCruiseSearchQuery maps to API query', () => {

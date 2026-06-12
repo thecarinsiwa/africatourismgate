@@ -296,6 +296,7 @@ export type Translations = {
     noResultsHint: string;
     noSearchParams: string;
     noSearchParamsHint: string;
+    browseAllHint: string;
     startSearch: string;
     backHome: string;
     viewDetails: string;

@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { searchCruises } from '../../lib/api/public';
 import {
-  hasRequiredCruiseSearchParams,
   toCruiseSearchQuery,
   type CruisesSearchParams,
 } from '../../lib/cruises/listings';
@@ -37,22 +36,19 @@ export function CruisesPageContent({ initialSearch }: CruisesPageContentProps) {
   const [fetchId, setFetchId] = useState(0);
 
   const apiQuery = useMemo(() => toCruiseSearchQuery(initialSearch), [initialSearch]);
-  const hasSearchParams = hasRequiredCruiseSearchParams(initialSearch);
+  const hasRouteFilter = Boolean(initialSearch.sailFrom || initialSearch.sailTo);
+  const hasDateFilter = Boolean(initialSearch.startDate || initialSearch.endDate);
   const displayRoute =
     initialSearch.sailFrom && initialSearch.sailTo
       ? `${formatCruisePortLabel(initialSearch.sailFrom)} → ${formatCruisePortLabel(initialSearch.sailTo)}`
-      : c.anyRoute;
+      : initialSearch.sailFrom
+        ? `${formatCruisePortLabel(initialSearch.sailFrom)} → ${c.anyRoute}`
+        : initialSearch.sailTo
+          ? `${c.anyRoute} → ${formatCruisePortLabel(initialSearch.sailTo)}`
+          : c.anyRoute;
 
   useEffect(() => {
     let cancelled = false;
-
-    if (!apiQuery) {
-      setResults([]);
-      setLoading(false);
-      setError(false);
-      return;
-    }
-
     setLoading(true);
     setError(false);
 
@@ -128,9 +124,13 @@ export function CruisesPageContent({ initialSearch }: CruisesPageContentProps) {
             {c.heroSubtitle}
           </p>
 
-          {searchSummary && (
+          {searchSummary ? (
             <p className="mt-6 rounded-lg bg-white/10 px-4 py-2 text-sm text-white/90 backdrop-blur-sm">
               {searchSummary}
+            </p>
+          ) : (
+            <p className="mt-6 rounded-lg bg-white/10 px-4 py-2 text-sm text-white/90 backdrop-blur-sm">
+              {c.browseAllHint}
             </p>
           )}
 
@@ -154,7 +154,7 @@ export function CruisesPageContent({ initialSearch }: CruisesPageContentProps) {
             <select
               value={sort}
               onChange={(event) => setSort(event.target.value as SortKey)}
-              disabled={loading || !hasSearchParams}
+              disabled={loading}
               className="min-h-[44px] rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-800 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-60 dark:border-atg-border dark:bg-atg-surface dark:text-white"
             >
               <option value="recommended">{c.sortRecommended}</option>
@@ -166,20 +166,7 @@ export function CruisesPageContent({ initialSearch }: CruisesPageContentProps) {
       </div>
 
       <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
-        {!hasSearchParams && (
-          <div className="rounded-2xl border border-dashed border-gray-200 bg-white px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
-            <h3 className="text-lg font-bold text-[#0f1a16] dark:text-white">{c.noSearchParams}</h3>
-            <p className="mt-2 text-sm text-gray-500 dark:text-atg-muted">{c.noSearchParamsHint}</p>
-            <a
-              href="#cruises-search"
-              className="mt-6 inline-flex min-h-[44px] items-center rounded-lg bg-primary px-6 py-2 text-sm font-bold text-white hover:bg-primary-hover"
-            >
-              {c.startSearch}
-            </a>
-          </div>
-        )}
-
-        {hasSearchParams && error && (
+        {error && (
           <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-4 text-sm text-red-800 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-200">
             <p>{c.loadError}</p>
             <button
@@ -192,16 +179,18 @@ export function CruisesPageContent({ initialSearch }: CruisesPageContentProps) {
           </div>
         )}
 
-        {hasSearchParams && loading && (
+        {loading && (
           <div className="rounded-2xl border border-gray-100 bg-white px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
             <p className="text-sm font-medium text-gray-600 dark:text-atg-muted">{c.loading}</p>
           </div>
         )}
 
-        {hasSearchParams && !loading && !error && listings.length === 0 && (
+        {!loading && !error && listings.length === 0 && (
           <div className="rounded-2xl border border-dashed border-gray-200 bg-white px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
             <h3 className="text-lg font-bold text-[#0f1a16] dark:text-white">{c.noResults}</h3>
-            <p className="mt-2 text-sm text-gray-500 dark:text-atg-muted">{c.noResultsHint}</p>
+            <p className="mt-2 text-sm text-gray-500 dark:text-atg-muted">
+              {hasRouteFilter || hasDateFilter ? c.noResultsHint : c.browseAllHint}
+            </p>
             <a
               href="#cruises-search"
               className="mt-6 mr-3 inline-flex min-h-[44px] items-center rounded-lg border border-gray-200 px-6 py-2 text-sm font-semibold text-gray-700 hover:border-primary dark:border-atg-border dark:text-white"
@@ -217,7 +206,7 @@ export function CruisesPageContent({ initialSearch }: CruisesPageContentProps) {
           </div>
         )}
 
-        {hasSearchParams && !loading && !error && listings.length > 0 && (
+        {!loading && !error && listings.length > 0 && (
           <div className="space-y-6">
             {listings.map((sailing) => (
               <CruiseCard

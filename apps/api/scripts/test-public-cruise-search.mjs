@@ -39,6 +39,20 @@ function assertStatus(label, actual, expected) {
 async function main() {
   console.log(`API: ${API_URL}\n`);
 
+  console.log('0. GET /public/cruises/search (browse all, no filters)');
+  const browseAll = await request('/public/cruises/search?limit=50');
+  assertStatus('browse all', browseAll.status, 200);
+  if (!browseAll.data?.data?.length) {
+    throw new Error('Expected at least one sailing when browsing without filters');
+  }
+  const browseSailing = browseAll.data.data.find((s) => s.id === SAILING_DEMO_KIN_BNW);
+  if (!browseSailing) {
+    throw new Error('Seed sailing Kinshasa — Banana not found in browse-all results');
+  }
+  console.log(
+    `  OK browse-all: ${browseAll.data.data.length} sailing(s), incl. ${browseSailing.itineraryName}`,
+  );
+
   console.log('1. GET /public/cruises/search CDKIN→CDBNW');
   const search = await request(
     '/public/cruises/search?sailFrom=CDKIN&sailTo=CDBNW&startDate=2026-09-01&endDate=2026-09-30',

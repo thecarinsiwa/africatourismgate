@@ -398,6 +398,7 @@ export const en: Translations = {
     noResultsHint: 'Try other dates or ports (e.g. CDKIN → CDBNW).',
     noSearchParams: 'Start a cruise search',
     noSearchParamsHint: 'Enter ports, a departure date range, and guest count.',
+    browseAllHint: 'All available cruises — fares for cabins in stock.',
     startSearch: 'Start search',
     backHome: 'Back to home',
     viewDetails: 'View details',
