@@ -6,10 +6,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { createBooking, createBookingCheckoutSession } from '../../lib/api/booking';
 import { formatCarPrice } from '../../lib/cars/listings';
 import type { VehicleDetail } from '../../lib/cars/types';
-import { getAccommodationDetail, getFlightDetail, getVehicleDetail } from '../../lib/api/public';
+import { getAccommodationDetail, getCruiseSailingDetail, getFlightDetail, getVehicleDetail } from '../../lib/api/public';
 import { formatAirportLabel } from '../../lib/flights/airports';
 import { formatFlightPrice } from '../../lib/flights/listings';
 import type { FlightDetail } from '../../lib/flights/types';
+import { formatCruisePrice } from '../../lib/cruises/listings';
+import type { CruiseSailingDetail } from '../../lib/cruises/types';
 import { ensureClientAccessToken, getClientAccessToken } from '../../lib/auth/client-session';
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import { formatHotelPrice } from '../../lib/hotels/listings';
@@ -18,6 +20,7 @@ import {
   buildCheckoutItems,
   buildDraftBrowseHref,
   buildReservationQuery,
+  isCabinReservationDraft,
   isFlightReservationDraft,
   isRoomReservationDraft,
   isVehicleReservationDraft,
@@ -35,10 +38,12 @@ export function ReservationRecapPageContent({ draft }: Props) {
   const t = useTranslations();
   const f = t.flights;
   const c = t.cars;
+  const cr = t.cruises;
 
   const [hotelDetail, setHotelDetail] = useState<PropertyDetail | null>(null);
   const [flightDetail, setFlightDetail] = useState<FlightDetail | null>(null);
   const [vehicleDetail, setVehicleDetail] = useState<VehicleDetail | null>(null);
+  const [cruiseDetail, setCruiseDetail] = useState<CruiseSailingDetail | null>(null);
   const [loading, setLoading] = useState(Boolean(draft));
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -60,6 +65,7 @@ export function ReservationRecapPageContent({ draft }: Props) {
             setHotelDetail(data);
             setFlightDetail(null);
             setVehicleDetail(null);
+            setCruiseDetail(null);
           }
         })
         .finally(() => {
@@ -75,12 +81,26 @@ export function ReservationRecapPageContent({ draft }: Props) {
             setFlightDetail(data);
             setHotelDetail(null);
             setVehicleDetail(null);
+            setCruiseDetail(null);
           }
         })
         .finally(() => {
           if (!cancelled) setLoading(false);
         });
-    } else {
+    } else if (isCabinReservationDraft(draft)) {
+      void getCruiseSailingDetail(draft.sailingId, { guests: draft.guests })
+        .then((data) => {
+          if (!cancelled) {
+            setCruiseDetail(data);
+            setHotelDetail(null);
+            setFlightDetail(null);
+            setVehicleDetail(null);
+          }
+        })
+        .finally(() => {
+          if (!cancelled) setLoading(false);
+        });
+    } else if (isVehicleReservationDraft(draft)) {
       void getVehicleDetail(draft.vehicleId, {
         pickupDate: draft.pickupDate,
         returnDate: draft.returnDate,
@@ -90,6 +110,7 @@ export function ReservationRecapPageContent({ draft }: Props) {
             setVehicleDetail(data);
             setHotelDetail(null);
             setFlightDetail(null);
+            setCruiseDetail(null);
           }
         })
         .finally(() => {
@@ -124,6 +145,15 @@ export function ReservationRecapPageContent({ draft }: Props) {
     return vehicleDetail;
   }, [draft, vehicleDetail]);
 
+  const cruiseCabin = useMemo(
+    () =>
+      draft && isCabinReservationDraft(draft)
+        ? (cruiseDetail?.cabins.find((item) => item.availabilityId === draft.cabinAvailabilityId) ??
+          null)
+        : null,
+    [draft, cruiseDetail],
+  );
+
   async function handleCheckout() {
     if (!draft) return;
     const accessToken = await ensureClientAccessToken();
@@ -155,15 +185,18 @@ export function ReservationRecapPageContent({ draft }: Props) {
       ? formatHotelPrice(room.totalPriceCents ?? room.basePriceCents, room.currency)
       : draft && isFlightReservationDraft(draft) && flightClass && flightDetail
         ? formatFlightPrice(flightClass.totalPriceCents, flightDetail.currency)
-        : vehicleReady
-          ? formatCarPrice(vehicleReady.totalPriceCents, vehicleReady.currency)
-          : null;
+        : draft && isCabinReservationDraft(draft) && cruiseCabin && cruiseDetail
+          ? formatCruisePrice(cruiseCabin.priceCents, cruiseDetail.currency)
+          : vehicleReady
+            ? formatCarPrice(vehicleReady.totalPriceCents, vehicleReady.currency)
+            : null;
 
   const canPay =
     Boolean(draft) &&
     !loading &&
     ((isRoomReservationDraft(draft!) && room) ||
       (isFlightReservationDraft(draft!) && flightClass) ||
+      (isCabinReservationDraft(draft!) && cruiseCabin) ||
       Boolean(vehicleReady));
 
   return (
@@ -229,6 +262,32 @@ export function ReservationRecapPageContent({ draft }: Props) {
                   {draft.passengers === 1
                     ? `1 ${f.passengerSingular}`
                     : f.passengerPlural.replace('{n}', String(draft.passengers))}
+                </p>
+                {totalLabel && (
+                  <p className="pt-1 text-2xl font-bold text-[#0f1a16] dark:text-white">
+                    {totalLabel}
+                  </p>
+                )}
+              </div>
+            )}
+
+            {!loading && cruiseCabin && cruiseDetail && isCabinReservationDraft(draft) && (
+              <div className="space-y-2">
+                <p className="text-sm text-primary">{cruiseDetail.cruiseLineName}</p>
+                <h2 className="text-xl font-bold text-[#0f1a16] dark:text-white">
+                  {cruiseDetail.itineraryName}
+                </h2>
+                <p className="text-sm text-gray-600 dark:text-atg-muted">
+                  {cr.shipLabel}: {cruiseDetail.shipName} · {cruiseCabin.categoryName}
+                </p>
+                <p className="text-sm text-gray-600 dark:text-atg-muted">
+                  {formatDisplayDate(cruiseDetail.departureDate, locale)} {'->'}{' '}
+                  {formatDisplayDate(cruiseDetail.returnDate, locale)}
+                </p>
+                <p className="text-sm text-gray-600 dark:text-atg-muted">
+                  {draft.guests === 1
+                    ? `1 ${cr.guestSingular}`
+                    : cr.guestPlural.replace('{n}', String(draft.guests))}
                 </p>
                 {totalLabel && (
                   <p className="pt-1 text-2xl font-bold text-[#0f1a16] dark:text-white">

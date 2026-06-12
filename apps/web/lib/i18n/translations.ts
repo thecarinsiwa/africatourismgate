@@ -310,6 +310,65 @@ export type Translations = {
     categoryTitle: string;
     licensePlate: string;
   };
+  cruises: {
+    metaTitle: string;
+    metaDescription: string;
+    breadcrumbHome: string;
+    breadcrumbCruises: string;
+    heroTitle: string;
+    heroSubtitle: string;
+    resultsFor: string;
+    anyRoute: string;
+    sailingsFound: string;
+    sortBy: string;
+    sortRecommended: string;
+    sortPriceLow: string;
+    sortPriceHigh: string;
+    loading: string;
+    loadError: string;
+    retry: string;
+    modifySearch: string;
+    startDate: string;
+    endDate: string;
+    sailFrom: string;
+    sailTo: string;
+    guests: string;
+    guestSingular: string;
+    guestPlural: string;
+    noResults: string;
+    noResultsHint: string;
+    noSearchParams: string;
+    noSearchParamsHint: string;
+    startSearch: string;
+    backHome: string;
+    viewDetails: string;
+    bookNow: string;
+    fromPrice: string;
+    perGuest: string;
+    departure: string;
+    arrival: string;
+    itineraryTitle: string;
+    dayLabel: string;
+    portArrival: string;
+    portDeparture: string;
+    cabinsTitle: string;
+    selectCabin: string;
+    selectCabinHint: string;
+    cabinsLeft: string;
+    unavailable: string;
+    insufficientCabins: string;
+    totalCruise: string;
+    reserveSection: string;
+    notFound: string;
+    notFoundHint: string;
+    backToList: string;
+    shipLabel: string;
+    cruiseLineLabel: string;
+    nightSingular: string;
+    nightPlural: string;
+    searchRequired: string;
+    endAfterStart: string;
+  };
   account: {
     title: string;
     subtitle: string;
@@ -905,6 +964,67 @@ const fr: Translations = {
     agencyTitle: 'Agence de location',
     categoryTitle: 'Catégorie',
     licensePlate: 'Immatriculation',
+  },
+  cruises: {
+    metaTitle: 'Croisières fluviales en Afrique',
+    metaDescription:
+      'Comparez et réservez des croisières sur le fleuve Congo et les côtes africaines avec Africa Tourism Gate.',
+    breadcrumbHome: 'Accueil',
+    breadcrumbCruises: 'Croisières',
+    heroTitle: 'Croisières en Afrique',
+    heroSubtitle:
+      'Itinéraires fluviaux et côtiers — choisissez votre cabine et embarquez en toute sérénité.',
+    resultsFor: 'Résultats pour',
+    anyRoute: 'Toutes les routes',
+    sailingsFound: 'départs',
+    sortBy: 'Trier par',
+    sortRecommended: 'Recommandés',
+    sortPriceLow: 'Prix croissant',
+    sortPriceHigh: 'Prix décroissant',
+    loading: 'Recherche des croisières…',
+    loadError: "Impossible de charger les croisières. Vérifiez que l'API est démarrée.",
+    retry: 'Réessayer',
+    modifySearch: 'Modifier la recherche',
+    startDate: 'Date de début',
+    endDate: 'Date de fin',
+    sailFrom: 'Port de départ',
+    sailTo: 'Port d\'arrivée',
+    guests: 'Voyageurs',
+    guestSingular: 'voyageur',
+    guestPlural: '{n} voyageurs',
+    noResults: 'Aucune croisière pour ces critères',
+    noResultsHint: 'Essayez d\'autres dates ou ports (ex. CDKIN → CDBNW).',
+    noSearchParams: 'Lancez une recherche de croisières',
+    noSearchParamsHint: 'Indiquez les ports, une plage de dates de départ et le nombre de voyageurs.',
+    startSearch: 'Lancer une recherche',
+    backHome: 'Retour à l\'accueil',
+    viewDetails: 'Voir détails',
+    bookNow: 'Réserver',
+    fromPrice: 'À partir de',
+    perGuest: '/ voyageur',
+    departure: 'Départ',
+    arrival: 'Arrivée',
+    itineraryTitle: 'Itinéraire',
+    dayLabel: 'Jour {n}',
+    portArrival: 'Arrivée',
+    portDeparture: 'Départ',
+    cabinsTitle: 'Cabines disponibles',
+    selectCabin: 'Choisir cette cabine',
+    selectCabinHint: 'Sélectionnez une cabine pour réserver.',
+    cabinsLeft: '{n} cabine(s) disponible(s)',
+    unavailable: 'Complet',
+    insufficientCabins: 'Pas assez de cabines pour ce nombre de voyageurs.',
+    totalCruise: 'Total croisière',
+    reserveSection: 'Réserver',
+    notFound: 'Croisière introuvable',
+    notFoundHint: 'Ce départ n\'existe pas ou n\'est plus disponible.',
+    backToList: 'Retour aux résultats',
+    shipLabel: 'Navire',
+    cruiseLineLabel: 'Compagnie',
+    nightSingular: 'nuit',
+    nightPlural: 'nuits',
+    searchRequired: 'Indiquez les ports et les dates de départ.',
+    endAfterStart: 'La date de fin doit être après la date de début.',
   },
   account: {
     title: 'Mon compte',
@@ -1527,6 +1647,67 @@ const en: Translations = {
     agencyTitle: 'Rental agency',
     categoryTitle: 'Category',
     licensePlate: 'License plate',
+  },
+  cruises: {
+    metaTitle: 'River & coastal cruises in Africa',
+    metaDescription:
+      'Compare and book Congo River and African coastal cruises with Africa Tourism Gate.',
+    breadcrumbHome: 'Home',
+    breadcrumbCruises: 'Cruises',
+    heroTitle: 'Cruises in Africa',
+    heroSubtitle:
+      'River and coastal itineraries — pick your cabin and sail with confidence.',
+    resultsFor: 'Results for',
+    anyRoute: 'All routes',
+    sailingsFound: 'sailings',
+    sortBy: 'Sort by',
+    sortRecommended: 'Recommended',
+    sortPriceLow: 'Price: low to high',
+    sortPriceHigh: 'Price: high to low',
+    loading: 'Searching cruises…',
+    loadError: 'Could not load cruises. Check that the API is running.',
+    retry: 'Retry',
+    modifySearch: 'Modify search',
+    startDate: 'Start date',
+    endDate: 'End date',
+    sailFrom: 'Departure port',
+    sailTo: 'Arrival port',
+    guests: 'Guests',
+    guestSingular: 'guest',
+    guestPlural: '{n} guests',
+    noResults: 'No cruises for these criteria',
+    noResultsHint: 'Try other dates or ports (e.g. CDKIN → CDBNW).',
+    noSearchParams: 'Start a cruise search',
+    noSearchParamsHint: 'Enter ports, a departure date range, and guest count.',
+    startSearch: 'Start search',
+    backHome: 'Back to home',
+    viewDetails: 'View details',
+    bookNow: 'Book now',
+    fromPrice: 'From',
+    perGuest: '/ guest',
+    departure: 'Departure',
+    arrival: 'Arrival',
+    itineraryTitle: 'Itinerary',
+    dayLabel: 'Day {n}',
+    portArrival: 'Arrival',
+    portDeparture: 'Departure',
+    cabinsTitle: 'Available cabins',
+    selectCabin: 'Select this cabin',
+    selectCabinHint: 'Select a cabin to book.',
+    cabinsLeft: '{n} cabin(s) available',
+    unavailable: 'Sold out',
+    insufficientCabins: 'Not enough cabins for this guest count.',
+    totalCruise: 'Cruise total',
+    reserveSection: 'Book',
+    notFound: 'Cruise not found',
+    notFoundHint: 'This sailing does not exist or is no longer available.',
+    backToList: 'Back to results',
+    shipLabel: 'Ship',
+    cruiseLineLabel: 'Cruise line',
+    nightSingular: 'night',
+    nightPlural: 'nights',
+    searchRequired: 'Enter ports and departure dates.',
+    endAfterStart: 'End date must be after start date.',
   },
   account: {
     title: 'My account',
