@@ -41,8 +41,8 @@ function FormLabel({ children }: { children: React.ReactNode }) {
   return <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-atg-muted">{children}</label>;
 }
 
-function FormInput({ type = 'text', name, placeholder, value, min, onChange }: { type?: string; name: string; placeholder?: string; value: string; min?: string; onChange: (v: string) => void; }) {
-  return <input type={type} name={name} placeholder={placeholder} value={value} min={min} onChange={(e) => onChange(e.target.value)} className="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg dark:placeholder:text-atg-muted" />;
+function FormInput({ type = 'text', name, placeholder, value, min, max, onChange }: { type?: string; name: string; placeholder?: string; value: string; min?: string; max?: string; onChange: (v: string) => void; }) {
+  return <input type={type} name={name} placeholder={placeholder} value={value} min={min} max={max} onChange={(e) => onChange(e.target.value)} className="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg dark:placeholder:text-atg-muted" />;
 }
 
 function FormSelect({ name, placeholder, options, value, disabled, onChange }: { name: string; placeholder: string; options: string[]; value: string; disabled?: boolean; onChange: (v: string) => void; }) {
