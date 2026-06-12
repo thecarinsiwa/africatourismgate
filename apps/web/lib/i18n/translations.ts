@@ -74,6 +74,9 @@ export type Translations = {
     oneWay: string;
     roundTrip: string;
     viewAllFlights: string;
+    carsRequired: string;
+    carsReturnAfterPickup: string;
+    viewAllCars: string;
     roomTypes: string[];
     countries: string[];
     locations: string[];
@@ -600,6 +603,9 @@ const fr: Translations = {
     oneWay: 'Aller simple',
     roundTrip: 'Aller-retour',
     viewAllFlights: 'Voir tous les vols disponibles',
+    carsRequired: 'Indiquez la ville, la date de prise en charge et la date de retour.',
+    carsReturnAfterPickup: 'La date de retour doit être après la date de prise en charge.',
+    viewAllCars: 'Voir toutes les locations',
     roomTypes: ['Chambre Double', 'Chambre Simple', 'Suite'],
     countries: ['Kenya', 'Tanzanie', 'Maroc', 'Afrique du Sud', 'Rwanda', 'RDC'],
     locations: ['Aéroport', 'Centre-ville', 'Gare'],
@@ -1217,6 +1223,9 @@ const en: Translations = {
     oneWay: 'One way',
     roundTrip: 'Round trip',
     viewAllFlights: 'View all available flights',
+    carsRequired: 'Enter city, pick-up date and return date.',
+    carsReturnAfterPickup: 'Return date must be after pick-up date.',
+    viewAllCars: 'View all car rentals',
     roomTypes: ['Double Room', 'Single Room', 'Suite'],
     countries: ['Kenya', 'Tanzania', 'Morocco', 'South Africa', 'Rwanda', 'DRC'],
     locations: ['Airport', 'City center', 'Train station'],

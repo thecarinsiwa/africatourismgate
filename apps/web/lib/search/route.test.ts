@@ -14,3 +14,15 @@ test('buildSearchRoute routes flights to /flights', () => {
     '/flights?from=FIH&to=NBO&departureDate=2026-08-01',
   );
 });
+
+test('buildSearchRoute routes cars to /cars', () => {
+  const params = new URLSearchParams({
+    pickupLocation: 'Kinshasa',
+    pickupDate: '2026-08-01',
+    returnDate: '2026-08-08',
+  });
+  assert.equal(
+    buildSearchRoute('cars', params),
+    '/cars?pickupLocation=Kinshasa&pickupDate=2026-08-01&returnDate=2026-08-08',
+  );
+});
