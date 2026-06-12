@@ -77,6 +77,13 @@ export function formatDuration(minutes: number): string {
   return `${hours}h ${mins}min`;
 }
 
+export function formatFlightTime(iso: string, locale?: string): string {
+  return new Date(iso).toLocaleTimeString(locale, {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
 export function buildFlightsSearchQuery(params: FlightsSearchParams): string {
   const qs = new URLSearchParams();
   if (params.from) qs.set('from', params.from);

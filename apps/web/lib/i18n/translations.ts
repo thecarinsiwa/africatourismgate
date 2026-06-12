@@ -192,6 +192,64 @@ export type Translations = {
     loadMoreReviews: string;
     anonymousGuest: string;
   };
+  flights: {
+    metaTitle: string;
+    metaDescription: string;
+    breadcrumbHome: string;
+    breadcrumbFlights: string;
+    heroTitle: string;
+    heroSubtitle: string;
+    resultsFor: string;
+    anyRoute: string;
+    flightsFound: string;
+    sortBy: string;
+    sortRecommended: string;
+    sortPriceLow: string;
+    sortPriceHigh: string;
+    sortDuration: string;
+    loading: string;
+    loadError: string;
+    retry: string;
+    modifySearch: string;
+    departureDate: string;
+    returnDate: string;
+    passengers: string;
+    passengerSingular: string;
+    passengerPlural: string;
+    noResults: string;
+    noResultsHint: string;
+    noSearchParams: string;
+    noSearchParamsHint: string;
+    startSearch: string;
+    backHome: string;
+    viewDetails: string;
+    bookNow: string;
+    roundTripBadge: string;
+    roundTripFrom: string;
+    fromPrice: string;
+    perPassenger: string;
+    direct: string;
+    departure: string;
+    arrival: string;
+    itineraryTitle: string;
+    classesTitle: string;
+    selectClass: string;
+    selectClassHint: string;
+    seatsLeft: string;
+    unavailable: string;
+    insufficientSeats: string;
+    totalFlight: string;
+    reserveSection: string;
+    notFound: string;
+    notFoundHint: string;
+    backToList: string;
+    classNames: {
+      economy: string;
+      premium_economy: string;
+      business: string;
+      first: string;
+    };
+  };
   account: {
     title: string;
     subtitle: string;
@@ -664,6 +722,66 @@ const fr: Translations = {
     reviewsLoadError: 'Impossible de charger les avis.',
     loadMoreReviews: "Afficher plus d'avis",
     anonymousGuest: 'Voyageur',
+  },
+  flights: {
+    metaTitle: 'Vols en Afrique',
+    metaDescription:
+      'Comparez et réservez des vols vers les principales destinations africaines avec Africa Tourism Gate.',
+    breadcrumbHome: 'Accueil',
+    breadcrumbFlights: 'Vols',
+    heroTitle: 'Vols vers l\'Afrique',
+    heroSubtitle:
+      'Comparez les compagnies, horaires et tarifs pour votre prochain voyage continental.',
+    resultsFor: 'Résultats pour',
+    anyRoute: 'Toutes les routes',
+    flightsFound: 'vols',
+    sortBy: 'Trier par',
+    sortRecommended: 'Recommandés',
+    sortPriceLow: 'Prix croissant',
+    sortPriceHigh: 'Prix décroissant',
+    sortDuration: 'Durée la plus courte',
+    loading: 'Recherche des vols…',
+    loadError: "Impossible de charger les vols. Vérifiez que l'API est démarrée.",
+    retry: 'Réessayer',
+    modifySearch: 'Modifier la recherche',
+    departureDate: 'Date de départ',
+    returnDate: 'Date de retour',
+    passengers: 'Passagers',
+    passengerSingular: 'passager',
+    passengerPlural: '{n} passagers',
+    noResults: 'Aucun vol pour ces critères',
+    noResultsHint: 'Essayez d\'autres dates ou aéroports (ex. Kinshasa → Nairobi).',
+    noSearchParams: 'Lancez une recherche de vols',
+    noSearchParamsHint: 'Indiquez un départ, une destination et une date de départ.',
+    startSearch: 'Lancer une recherche',
+    backHome: 'Retour à l\'accueil',
+    viewDetails: 'Voir détails',
+    bookNow: 'Réserver',
+    roundTripBadge: 'Aller-retour',
+    roundTripFrom: 'À partir de (A/R)',
+    fromPrice: 'À partir de',
+    perPassenger: '/ passager',
+    direct: 'Direct',
+    departure: 'Départ',
+    arrival: 'Arrivée',
+    itineraryTitle: 'Itinéraire',
+    classesTitle: 'Classes disponibles',
+    selectClass: 'Choisir cette classe',
+    selectClassHint: 'Sélectionnez une classe pour réserver.',
+    seatsLeft: '{n} siège(s) disponible(s)',
+    unavailable: 'Complet',
+    insufficientSeats: 'Pas assez de places pour ce nombre de passagers.',
+    totalFlight: 'Total vol',
+    reserveSection: 'Réserver',
+    notFound: 'Vol introuvable',
+    notFoundHint: "Ce vol n'existe pas ou n'est plus disponible pour cette date.",
+    backToList: 'Retour aux résultats',
+    classNames: {
+      economy: 'Économique',
+      premium_economy: 'Économique premium',
+      business: 'Affaires',
+      first: 'Première',
+    },
   },
   account: {
     title: 'Mon compte',
@@ -1163,6 +1281,66 @@ const en: Translations = {
     reviewsLoadError: 'Could not load reviews.',
     loadMoreReviews: 'Show more reviews',
     anonymousGuest: 'Guest',
+  },
+  flights: {
+    metaTitle: 'Flights in Africa',
+    metaDescription:
+      'Compare and book flights to major African destinations with Africa Tourism Gate.',
+    breadcrumbHome: 'Home',
+    breadcrumbFlights: 'Flights',
+    heroTitle: 'Flights to Africa',
+    heroSubtitle:
+      'Compare airlines, schedules and fares for your next continental trip.',
+    resultsFor: 'Results for',
+    anyRoute: 'All routes',
+    flightsFound: 'flights',
+    sortBy: 'Sort by',
+    sortRecommended: 'Recommended',
+    sortPriceLow: 'Price: low to high',
+    sortPriceHigh: 'Price: high to low',
+    sortDuration: 'Shortest duration',
+    loading: 'Searching flights…',
+    loadError: 'Could not load flights. Make sure the API is running.',
+    retry: 'Retry',
+    modifySearch: 'Modify search',
+    departureDate: 'Departure date',
+    returnDate: 'Return date',
+    passengers: 'Passengers',
+    passengerSingular: 'passenger',
+    passengerPlural: '{n} passengers',
+    noResults: 'No flights match your criteria',
+    noResultsHint: 'Try different dates or airports (e.g. Kinshasa → Nairobi).',
+    noSearchParams: 'Start a flight search',
+    noSearchParamsHint: 'Enter departure, destination and a departure date.',
+    startSearch: 'Start search',
+    backHome: 'Back to home',
+    viewDetails: 'View details',
+    bookNow: 'Book now',
+    roundTripBadge: 'Round trip',
+    roundTripFrom: 'From (round trip)',
+    fromPrice: 'From',
+    perPassenger: '/ passenger',
+    direct: 'Direct',
+    departure: 'Departure',
+    arrival: 'Arrival',
+    itineraryTitle: 'Itinerary',
+    classesTitle: 'Available classes',
+    selectClass: 'Select this class',
+    selectClassHint: 'Select a class to book.',
+    seatsLeft: '{n} seat(s) available',
+    unavailable: 'Sold out',
+    insufficientSeats: 'Not enough seats for this number of passengers.',
+    totalFlight: 'Flight total',
+    reserveSection: 'Book',
+    notFound: 'Flight not found',
+    notFoundHint: 'This flight does not exist or is no longer available for this date.',
+    backToList: 'Back to results',
+    classNames: {
+      economy: 'Economy',
+      premium_economy: 'Premium economy',
+      business: 'Business',
+      first: 'First',
+    },
   },
   account: {
     title: 'My account',

@@ -45,3 +45,21 @@ export function buildReservationQuery(draft: ReservationDraft): string {
   });
   return params.toString();
 }
+
+export type FlightReservationDraft = {
+  flightId: string;
+  flightClassId: string;
+  departureDate: string;
+  passengers: number;
+};
+
+export function buildFlightReservationQuery(draft: FlightReservationDraft): string {
+  const params = new URLSearchParams({
+    kind: 'flight_class',
+    flightId: draft.flightId,
+    flightClassId: draft.flightClassId,
+    departureDate: draft.departureDate,
+    passengers: String(draft.passengers),
+  });
+  return params.toString();
+}
