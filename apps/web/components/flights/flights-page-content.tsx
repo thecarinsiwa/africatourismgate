@@ -91,6 +91,7 @@ export function FlightsPageContent({ initialSearch }: FlightsPageContentProps) {
   }, [results, sort]);
 
   const searchSummary = [
+    initialSearch.returnDate ? t.search.roundTrip : t.search.oneWay,
     initialSearch.departureDate &&
       `${f.departureDate}: ${formatDisplayDate(initialSearch.departureDate, locale)}`,
     initialSearch.returnDate &&

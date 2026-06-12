@@ -67,8 +67,12 @@ export type Translations = {
     airportPh: string;
     flightRequired: string;
     flightReturnAfterDeparture: string;
+    flightReturnRequired: string;
     flightSameAirport: string;
     swapAirports: string;
+    tripTypeAria: string;
+    oneWay: string;
+    roundTrip: string;
     roomTypes: string[];
     countries: string[];
     locations: string[];
@@ -544,8 +548,12 @@ const fr: Translations = {
     airportPh: 'Aéroport',
     flightRequired: 'Indiquez le départ, la destination et la date de départ.',
     flightReturnAfterDeparture: 'La date de retour doit être après la date de départ.',
+    flightReturnRequired: 'Indiquez la date de retour pour un aller-retour.',
     flightSameAirport: 'Le départ et la destination doivent être différents.',
     swapAirports: 'Inverser départ et arrivée',
+    tripTypeAria: 'Type de vol',
+    oneWay: 'Aller simple',
+    roundTrip: 'Aller-retour',
     roomTypes: ['Chambre Double', 'Chambre Simple', 'Suite'],
     countries: ['Kenya', 'Tanzanie', 'Maroc', 'Afrique du Sud', 'Rwanda', 'RDC'],
     locations: ['Aéroport', 'Centre-ville', 'Gare'],
@@ -1110,8 +1118,12 @@ const en: Translations = {
     airportPh: 'Airport',
     flightRequired: 'Enter departure, destination and departure date.',
     flightReturnAfterDeparture: 'Return date must be after departure date.',
+    flightReturnRequired: 'Enter a return date for a round trip.',
     flightSameAirport: 'Departure and destination must be different.',
     swapAirports: 'Swap departure and arrival',
+    tripTypeAria: 'Trip type',
+    oneWay: 'One way',
+    roundTrip: 'Round trip',
     roomTypes: ['Double Room', 'Single Room', 'Suite'],
     countries: ['Kenya', 'Tanzania', 'Morocco', 'South Africa', 'Rwanda', 'DRC'],
     locations: ['Airport', 'City center', 'Train station'],

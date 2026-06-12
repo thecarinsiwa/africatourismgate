@@ -52,6 +52,55 @@ function FormSelect({ name, placeholder, options, value, onChange }: { name: str
   );
 }
 
+type FlightTripType = 'oneWay' | 'roundTrip';
+
+function FlightTripTypeToggle({
+  value,
+  oneWayLabel,
+  roundTripLabel,
+  ariaLabel,
+  onChange,
+}: {
+  value: FlightTripType;
+  oneWayLabel: string;
+  roundTripLabel: string;
+  ariaLabel: string;
+  onChange: (tripType: FlightTripType) => void;
+}) {
+  const options: { id: FlightTripType; label: string }[] = [
+    { id: 'oneWay', label: oneWayLabel },
+    { id: 'roundTrip', label: roundTripLabel },
+  ];
+
+  return (
+    <div
+      role="radiogroup"
+      aria-label={ariaLabel}
+      className="inline-flex rounded-lg border border-gray-200 bg-gray-50 p-1 dark:border-atg-border dark:bg-atg-surface"
+    >
+      {options.map((option) => {
+        const selected = value === option.id;
+        return (
+          <button
+            key={option.id}
+            type="button"
+            role="radio"
+            aria-checked={selected}
+            onClick={() => onChange(option.id)}
+            className={`rounded-md px-4 py-2 text-sm font-semibold transition-colors ${
+              selected
+                ? 'bg-primary text-white shadow-sm'
+                : 'text-gray-600 hover:text-gray-900 dark:text-atg-muted dark:hover:text-white'
+            }`}
+          >
+            {option.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 function FormAirportSelect({
   name,
   placeholder,
@@ -106,6 +155,7 @@ export function SearchTabs() {
   const [flightFrom, setFlightFrom] = useState('');
   const [flightTo, setFlightTo] = useState('');
   const [flightPassengers, setFlightPassengers] = useState('1');
+  const [flightTripType, setFlightTripType] = useState<FlightTripType>('oneWay');
   const [flightError, setFlightError] = useState<string | null>(null);
   const [destination, setDestination] = useState('');
   const [adults, setAdults] = useState('');
@@ -148,6 +198,11 @@ export function SearchTabs() {
         return;
       }
 
+      if (flightTripType === 'roundTrip' && !returnDate) {
+        setFlightError(t.search.flightReturnRequired);
+        return;
+      }
+
       if (returnDate && returnDate <= departDate) {
         setFlightError(t.search.flightReturnAfterDeparture);
         return;
@@ -158,7 +213,7 @@ export function SearchTabs() {
       params.set('from', flightFrom);
       params.set('to', flightTo);
       params.set('departureDate', departDate);
-      if (returnDate) params.set('returnDate', returnDate);
+      if (flightTripType === 'roundTrip' && returnDate) params.set('returnDate', returnDate);
       params.set('passengers', String(passengers));
       router.push(buildSearchRoute('flights', params));
       return;
@@ -180,6 +235,14 @@ export function SearchTabs() {
     setFlightError(null);
   }
 
+  function handleFlightTripTypeChange(tripType: FlightTripType) {
+    setFlightTripType(tripType);
+    if (tripType === 'oneWay') {
+      setReturnDate('');
+    }
+    setFlightError(null);
+  }
+
   const submitBtn = <button type="submit" className="min-h-[44px] w-full rounded-lg bg-primary px-5 py-2.5 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover">{t.search.search}</button>;
 
   return (
@@ -198,7 +261,14 @@ export function SearchTabs() {
           <form onSubmit={handleSubmit} className="p-5 sm:p-6">
             {activeTab === 'flights' && (
               <div className="space-y-4">
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_auto_1fr_1fr_0.75fr_auto] lg:items-end">
+                <FlightTripTypeToggle
+                  value={flightTripType}
+                  oneWayLabel={t.search.oneWay}
+                  roundTripLabel={t.search.roundTrip}
+                  ariaLabel={t.search.tripTypeAria}
+                  onChange={handleFlightTripTypeChange}
+                />
+                <div className={`grid gap-4 sm:grid-cols-2 ${flightTripType === 'roundTrip' ? 'lg:grid-cols-[1fr_1fr_auto_1fr_1fr_0.75fr_auto]' : 'lg:grid-cols-[1fr_1fr_auto_1fr_0.75fr_auto]'} lg:items-end`}>
                   <div>
                     <FormLabel>{t.search.from}</FormLabel>
                     <FormAirportSelect
@@ -255,19 +325,21 @@ export function SearchTabs() {
                       }}
                     />
                   </div>
-                  <div>
-                    <FormLabel>{t.search.returnDate}</FormLabel>
-                    <FormInput
-                      type="date"
-                      name="returnDate"
-                      value={returnDate}
-                      min={departDate || undefined}
-                      onChange={(value) => {
-                        setReturnDate(value);
-                        setFlightError(null);
-                      }}
-                    />
-                  </div>
+                  {flightTripType === 'roundTrip' && (
+                    <div>
+                      <FormLabel>{t.search.returnDate}</FormLabel>
+                      <FormInput
+                        type="date"
+                        name="returnDate"
+                        value={returnDate}
+                        min={departDate || undefined}
+                        onChange={(value) => {
+                          setReturnDate(value);
+                          setFlightError(null);
+                        }}
+                      />
+                    </div>
+                  )}
                   <div>
                     <FormLabel>{t.search.passengers}</FormLabel>
                     <FormInput

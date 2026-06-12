@@ -57,6 +57,16 @@ export type Translations = {
     shipPh: string;
     departCityPh: string;
     destinationPh2: string;
+    passengers: string;
+    airportPh: string;
+    flightRequired: string;
+    flightReturnAfterDeparture: string;
+    flightReturnRequired: string;
+    flightSameAirport: string;
+    swapAirports: string;
+    tripTypeAria: string;
+    oneWay: string;
+    roundTrip: string;
     roomTypes: string[];
     countries: string[];
     locations: string[];
