@@ -73,6 +73,7 @@ export type Translations = {
     tripTypeAria: string;
     oneWay: string;
     roundTrip: string;
+    viewAllFlights: string;
     roomTypes: string[];
     countries: string[];
     locations: string[];
@@ -555,6 +556,7 @@ const fr: Translations = {
     tripTypeAria: 'Type de vol',
     oneWay: 'Aller simple',
     roundTrip: 'Aller-retour',
+    viewAllFlights: 'Voir tous les vols disponibles',
     roomTypes: ['Chambre Double', 'Chambre Simple', 'Suite'],
     countries: ['Kenya', 'Tanzanie', 'Maroc', 'Afrique du Sud', 'Rwanda', 'RDC'],
     locations: ['Aéroport', 'Centre-ville', 'Gare'],
@@ -1126,6 +1128,7 @@ const en: Translations = {
     tripTypeAria: 'Trip type',
     oneWay: 'One way',
     roundTrip: 'Round trip',
+    viewAllFlights: 'View all available flights',
     roomTypes: ['Double Room', 'Single Room', 'Suite'],
     countries: ['Kenya', 'Tanzania', 'Morocco', 'South Africa', 'Rwanda', 'DRC'],
     locations: ['Airport', 'City center', 'Train station'],

@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { listPublicDestinations } from '../../lib/api/public';
@@ -261,13 +262,21 @@ export function SearchTabs() {
           <form onSubmit={handleSubmit} className="p-5 sm:p-6">
             {activeTab === 'flights' && (
               <div className="space-y-4">
-                <FlightTripTypeToggle
-                  value={flightTripType}
-                  oneWayLabel={t.search.oneWay}
-                  roundTripLabel={t.search.roundTrip}
-                  ariaLabel={t.search.tripTypeAria}
-                  onChange={handleFlightTripTypeChange}
-                />
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <FlightTripTypeToggle
+                    value={flightTripType}
+                    oneWayLabel={t.search.oneWay}
+                    roundTripLabel={t.search.roundTrip}
+                    ariaLabel={t.search.tripTypeAria}
+                    onChange={handleFlightTripTypeChange}
+                  />
+                  <Link
+                    href="/flights"
+                    className="inline-flex min-h-[44px] items-center rounded-lg border border-primary px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/5 dark:hover:bg-primary/10"
+                  >
+                    {t.search.viewAllFlights}
+                  </Link>
+                </div>
                 <div className={`grid gap-4 sm:grid-cols-2 ${flightTripType === 'roundTrip' ? 'lg:grid-cols-[1fr_1fr_auto_1fr_1fr_0.75fr_auto]' : 'lg:grid-cols-[1fr_1fr_auto_1fr_0.75fr_auto]'} lg:items-end`}>
                   <div>
                     <FormLabel>{t.search.from}</FormLabel>

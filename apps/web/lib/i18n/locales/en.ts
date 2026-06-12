@@ -103,6 +103,7 @@ export const en: Translations = {
     tripTypeAria: 'Trip type',
     oneWay: 'One way',
     roundTrip: 'Round trip',
+    viewAllFlights: 'View all available flights',
     roomTypes: ['Double Room', 'Single Room', 'Suite'],
     countries: ['Kenya', 'Tanzania', 'Morocco', 'South Africa', 'Rwanda', 'DRC'],
     locations: ['Airport', 'City center', 'Train station'],

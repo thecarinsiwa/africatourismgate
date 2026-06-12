@@ -67,6 +67,7 @@ export type Translations = {
     tripTypeAria: string;
     oneWay: string;
     roundTrip: string;
+    viewAllFlights: string;
     roomTypes: string[];
     countries: string[];
     locations: string[];

@@ -106,6 +106,7 @@ export const es: Translations = {
     tripTypeAria: 'Tipo de viaje',
     oneWay: 'Solo ida',
     roundTrip: 'Ida y vuelta',
+    viewAllFlights: 'Ver todos los vuelos disponibles',
     roomTypes: ['Habitación doble', 'Habitación individual', 'Suite'],
     countries: ['Kenya', 'Tanzania', 'Morocco', 'South Africa', 'Rwanda', 'DRC'],
     locations: ['Aeropuerto', 'Centro de la ciudad', 'Estación de tren'],
