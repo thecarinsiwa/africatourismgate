@@ -7,6 +7,7 @@ import type {
   OrganizationSetting,
 } from '@africatourismgate/types';
 import { normalizeBrandingAssetUrl } from '@africatourismgate/utils';
+import Image from 'next/image';
 import { useCallback, useEffect, useState } from 'react';
 import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
 import { getSession } from '../../lib/auth/session';
@@ -311,9 +312,12 @@ export function EmailBrandingForm({ canWrite }: EmailBrandingFormProps) {
           ) : null}
           {logoPreviewUrl ? (
             <div className="flex items-center gap-3 rounded-lg border border-atg-border bg-atg-elevated p-3">
-              <img
+              <Image
                 src={logoPreviewUrl}
                 alt=""
+                width={48}
+                height={48}
+                unoptimized
                 className="h-12 w-12 rounded-full object-cover"
               />
               <span className="text-xs text-atg-muted">Aperçu du logo</span>

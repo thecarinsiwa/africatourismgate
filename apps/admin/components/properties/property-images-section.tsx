@@ -8,6 +8,7 @@ import {
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { PropertyImage } from '@africatourismgate/types';
+import Image from 'next/image';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getHebergementsErrorMessage } from '../../lib/hebergements-errors';
@@ -130,9 +131,12 @@ export function PropertyImagesSection({ propertyId }: PropertyImagesSectionProps
         id: 'preview',
         header: 'Aperçu',
         cell: ({ row }) => (
-          <img
+          <Image
             src={row.original.url}
             alt=""
+            width={64}
+            height={40}
+            unoptimized
             className="h-10 w-16 rounded object-cover"
             onError={(e) => {
               (e.target as HTMLImageElement).style.display = 'none';
