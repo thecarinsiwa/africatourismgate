@@ -579,6 +579,18 @@ export const es: Translations = {
       'Elija un horario para cada actividad incluida y añada el paquete al carrito.',
     mixedConfigureHint:
       'Este paquete mezcla tipos de productos. Configure cada servicio desde su ficha.',
+    configureTitle: 'Elegir horarios',
+    selectDateHint: 'Indique una fecha para ver los horarios disponibles.',
+    configureOnProduct: 'Configurar en la ficha',
+    configureOnProductHint: 'Complete la reserva en la ficha del producto.',
+    mixedCheckoutDisabled:
+      'La reserva agrupada en línea está disponible solo para paquetes de actividades.',
+    loadingActivitySchedules: 'Cargando horarios…',
+    activitySchedulesError: 'No se pudieron cargar los horarios de esta actividad.',
+    noActivitySchedules: 'No hay horarios disponibles para esta fecha.',
+    schedulesProgress: '{selected} / {total} actividad(es) configurada(s)',
+    allSchedulesRequired: 'Seleccione un horario para cada actividad del paquete.',
+    addToCart: 'Añadir al carrito',
     notFound: 'Paquete no encontrado',
     notFoundHint: 'Este paquete no existe o ya no está disponible.',
     backToList: 'Volver a paquetes',

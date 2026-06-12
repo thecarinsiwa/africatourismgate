@@ -67,6 +67,55 @@ export function buildPackageDetailHref(
   return hash ? `${base}${hash}` : base;
 }
 
+export function parsePackageScheduleSelections(
+  raw: Record<string, string | string[] | undefined>,
+): Record<string, string> {
+  const lineCountRaw = readSearchParam(raw.lineCount);
+  const lineCount = lineCountRaw ? Number.parseInt(lineCountRaw, 10) : 0;
+  if (!Number.isFinite(lineCount) || lineCount < 1) {
+    return {};
+  }
+
+  const selections: Record<string, string> = {};
+  for (let index = 0; index < lineCount; index += 1) {
+    const activityId = readSearchParam(raw[`line${index}_activityId`]);
+    const scheduleId = readSearchParam(raw[`line${index}_scheduleId`]);
+    if (activityId && scheduleId) {
+      selections[activityId] = scheduleId;
+    }
+  }
+  return selections;
+}
+
+export function buildPackageDetailHrefWithSelections(
+  packageId: string,
+  params: PackagesSearchParams,
+  activityIds: string[],
+  selections: Record<string, string | undefined>,
+  hash?: string,
+): string {
+  const qs = new URLSearchParams();
+  if (params.search) qs.set('search', params.search);
+  if (params.page) qs.set('page', params.page);
+  if (params.date) qs.set('date', params.date);
+  if (params.participants) qs.set('participants', params.participants);
+
+  if (activityIds.length > 0) {
+    qs.set('lineCount', String(activityIds.length));
+    activityIds.forEach((activityId, index) => {
+      qs.set(`line${index}_activityId`, activityId);
+      const scheduleId = selections[activityId];
+      if (scheduleId) {
+        qs.set(`line${index}_scheduleId`, scheduleId);
+      }
+    });
+  }
+
+  const query = qs.toString();
+  const base = `/packages/${encodeURIComponent(packageId)}${query ? `?${query}` : ''}`;
+  return hash ? `${base}${hash}` : base;
+}
+
 export function toPackagesBrowseQuery(params: PackagesSearchParams): PackagesBrowseQuery {
   const page = Number.parseInt(params.page ?? '1', 10);
   return {

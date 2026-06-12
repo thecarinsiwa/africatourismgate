@@ -19,7 +19,7 @@ import { formatDisplayDate } from '../../lib/hotels/dates';
 import { formatHotelPrice } from '../../lib/hotels/listings';
 import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import {
-  buildCheckoutItems,
+  buildCheckoutRequest,
   buildDraftBrowseHref,
   buildDraftDetailHref,
   buildReservationQuery,
@@ -28,6 +28,7 @@ import {
   isCabinOfferBookable,
   isCabinReservationDraft,
   isFlightReservationDraft,
+  isPackageReservationDraft,
   isRoomReservationDraft,
   isVehicleReservationDraft,
   type ReservationDraft,
@@ -219,9 +220,7 @@ export function ReservationRecapPageContent({ draft }: Props) {
     setSubmitting(true);
     setError(null);
     try {
-      const booking = await createBooking(accessToken, {
-        items: buildCheckoutItems(draft),
-      });
+      const booking = await createBooking(accessToken, buildCheckoutRequest(draft));
       const checkout = await createBookingCheckoutSession(accessToken, booking.booking.id);
       window.location.assign(checkout.url);
     } catch (err: unknown) {

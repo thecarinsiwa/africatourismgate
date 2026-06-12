@@ -475,6 +475,17 @@ export type Translations = {
     configurePackage: string;
     activityConfigureHint: string;
     mixedConfigureHint: string;
+    configureTitle: string;
+    selectDateHint: string;
+    configureOnProduct: string;
+    configureOnProductHint: string;
+    mixedCheckoutDisabled: string;
+    loadingActivitySchedules: string;
+    activitySchedulesError: string;
+    noActivitySchedules: string;
+    schedulesProgress: string;
+    allSchedulesRequired: string;
+    addToCart: string;
     notFound: string;
     notFoundHint: string;
     backToList: string;
@@ -1255,6 +1266,18 @@ const fr: Translations = {
       'Sélectionnez les créneaux pour chaque activité incluse, puis ajoutez le forfait au panier.',
     mixedConfigureHint:
       'Ce forfait inclut plusieurs types de produits. Configurez chaque prestation via sa fiche produit.',
+    configureTitle: 'Choisir les créneaux',
+    selectDateHint: 'Indiquez une date pour afficher les créneaux disponibles.',
+    configureOnProduct: 'Configurer sur la fiche',
+    configureOnProductHint: 'Réservation à finaliser sur la fiche produit dédiée.',
+    mixedCheckoutDisabled:
+      'La réservation groupée en ligne est disponible pour les forfaits activités uniquement.',
+    loadingActivitySchedules: 'Chargement des créneaux…',
+    activitySchedulesError: 'Impossible de charger les créneaux pour cette activité.',
+    noActivitySchedules: 'Aucun créneau disponible pour cette date.',
+    schedulesProgress: '{selected} / {total} activité(s) configurée(s)',
+    allSchedulesRequired: 'Sélectionnez un créneau pour chaque activité du forfait.',
+    addToCart: 'Ajouter au panier',
     notFound: 'Forfait introuvable',
     notFoundHint: 'Ce forfait n\'existe pas ou n\'est plus disponible.',
     backToList: 'Retour aux forfaits',
@@ -2060,6 +2083,18 @@ const en: Translations = {
       'Pick a time slot for each included activity, then add the package to your cart.',
     mixedConfigureHint:
       'This package mixes product types. Configure each service from its product page.',
+    configureTitle: 'Choose time slots',
+    selectDateHint: 'Enter a date to show available time slots.',
+    configureOnProduct: 'Configure on product page',
+    configureOnProductHint: 'Complete booking on the dedicated product page.',
+    mixedCheckoutDisabled:
+      'Bundled online checkout is available for activity-only packages.',
+    loadingActivitySchedules: 'Loading time slots…',
+    activitySchedulesError: 'Could not load time slots for this activity.',
+    noActivitySchedules: 'No time slots available for this date.',
+    schedulesProgress: '{selected} / {total} activity(ies) configured',
+    allSchedulesRequired: 'Select a time slot for every activity in the package.',
+    addToCart: 'Add to cart',
     notFound: 'Package not found',
     notFoundHint: 'This package does not exist or is no longer available.',
     backToList: 'Back to packages',

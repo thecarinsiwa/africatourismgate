@@ -1,4 +1,5 @@
-import type { BookingCheckoutItem } from '@africatourismgate/types';
+import type { BookingCheckoutItem, BookingCheckoutRequest } from '@africatourismgate/types';
+import { buildPackageDetailHref } from '../packages/listings';
 
 export type RoomReservationDraft = {
   kind: 'room';
@@ -40,12 +41,26 @@ export type ActivityScheduleReservationDraft = {
   participants: number;
 };
 
+export type PackageActivitySelection = {
+  activityId: string;
+  scheduleId: string;
+};
+
+export type PackageReservationDraft = {
+  kind: 'package';
+  packageId: string;
+  date: string;
+  participants: number;
+  lines: PackageActivitySelection[];
+};
+
 export type ReservationDraft =
   | RoomReservationDraft
   | FlightReservationDraft
   | VehicleReservationDraft
   | CabinReservationDraft
-  | ActivityScheduleReservationDraft;
+  | ActivityScheduleReservationDraft
+  | PackageReservationDraft;
 
 function readString(value: string | string[] | undefined): string {
   if (typeof value === 'string') return value;
@@ -88,6 +103,12 @@ export function isActivityScheduleReservationDraft(
   return draft.kind === 'activity_schedule';
 }
 
+export function isPackageReservationDraft(
+  draft: ReservationDraft,
+): draft is PackageReservationDraft {
+  return draft.kind === 'package';
+}
+
 /** Cabin can be booked when it exists, has stock, and fits the guest count. */
 export function isCabinOfferBookable(
   cabin: { availableCount: number; maxGuests: number } | null | undefined,
@@ -112,6 +133,35 @@ export function parseReservationDraft(
   const availabilitySlotId = readString(searchParams.availabilitySlotId);
   const cabinAvailabilityId = readString(searchParams.cabinAvailabilityId);
   const scheduleId = readString(searchParams.scheduleId);
+
+  if (kind === 'package') {
+    const packageId = readString(searchParams.packageId);
+    const date = readString(searchParams.date);
+    const participants = readPositiveInt(searchParams.participants);
+    const lineCount = readPositiveInt(searchParams.lineCount);
+
+    if (!packageId || !date || participants == null || lineCount == null || lineCount < 1) {
+      return null;
+    }
+
+    const lines: PackageActivitySelection[] = [];
+    for (let index = 0; index < lineCount; index += 1) {
+      const activityId = readString(searchParams[`line${index}_activityId`]);
+      const lineScheduleId = readString(searchParams[`line${index}_scheduleId`]);
+      if (!activityId || !lineScheduleId) {
+        return null;
+      }
+      lines.push({ activityId, scheduleId: lineScheduleId });
+    }
+
+    return {
+      kind: 'package',
+      packageId,
+      date,
+      participants,
+      lines,
+    };
+  }
 
   if (kind === 'activity_schedule' || scheduleId) {
     const activityId = readString(searchParams.activityId);
@@ -207,6 +257,21 @@ export function parseReservationDraft(
 }
 
 export function buildReservationQuery(draft: ReservationDraft): string {
+  if (draft.kind === 'package') {
+    const params = new URLSearchParams({
+      kind: 'package',
+      packageId: draft.packageId,
+      date: draft.date,
+      participants: String(draft.participants),
+      lineCount: String(draft.lines.length),
+    });
+    draft.lines.forEach((line, index) => {
+      params.set(`line${index}_activityId`, line.activityId);
+      params.set(`line${index}_scheduleId`, line.scheduleId);
+    });
+    return params.toString();
+  }
+
   if (draft.kind === 'activity_schedule') {
     const params = new URLSearchParams({
       kind: 'activity_schedule',
@@ -268,6 +333,14 @@ export function buildFlightReservationQuery(
 }
 
 export function buildCheckoutItems(draft: ReservationDraft): BookingCheckoutItem[] {
+  if (draft.kind === 'package') {
+    return draft.lines.map((line) => ({
+      itemType: 'activity_schedule',
+      referenceId: line.scheduleId,
+      quantity: draft.participants,
+    }));
+  }
+
   if (draft.kind === 'activity_schedule') {
     return [
       {
@@ -322,7 +395,51 @@ export function buildCheckoutItems(draft: ReservationDraft): BookingCheckoutItem
   ];
 }
 
+export function buildCheckoutRequest(draft: ReservationDraft): BookingCheckoutRequest {
+  if (draft.kind === 'package') {
+    return {
+      items: buildCheckoutItems(draft),
+      packageId: draft.packageId,
+    };
+  }
+
+  return {
+    items: buildCheckoutItems(draft),
+  };
+}
+
+export function buildPackageReservationDraft(
+  packageId: string,
+  date: string,
+  participants: number,
+  activityIds: string[],
+  selections: Record<string, string | undefined>,
+): PackageReservationDraft | null {
+  const lines: PackageActivitySelection[] = [];
+
+  for (const activityId of activityIds) {
+    const scheduleId = selections[activityId];
+    if (!scheduleId) return null;
+    lines.push({ activityId, scheduleId });
+  }
+
+  return {
+    kind: 'package',
+    packageId,
+    date,
+    participants,
+    lines,
+  };
+}
+
 export function buildDraftDetailHref(draft: ReservationDraft): string {
+  if (draft.kind === 'package') {
+    return buildPackageDetailHref(draft.packageId, {
+      date: draft.date,
+      participants: String(draft.participants),
+    });
+  }
+
   if (draft.kind === 'activity_schedule') {
     const params = new URLSearchParams({
       date: draft.date,
@@ -367,6 +484,9 @@ export function buildDraftDetailHref(draft: ReservationDraft): string {
 }
 
 export function buildDraftBrowseHref(draft: ReservationDraft): string {
+  if (draft.kind === 'package') {
+    return '/packages';
+  }
   if (draft.kind === 'activity_schedule') {
     const params = new URLSearchParams({
       date: draft.date,

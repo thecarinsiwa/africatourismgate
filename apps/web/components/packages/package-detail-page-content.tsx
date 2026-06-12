@@ -1,31 +1,44 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getPackageDetail } from '../../lib/api/public';
 import {
-  buildPackagesSearchQuery,
+  buildPackageDetailHrefWithSelections,
   isActivityOnlyPackage,
+  parsePackageScheduleSelections,
+  parseParticipantsParam,
   type PackagesSearchParams,
 } from '../../lib/packages/listings';
 import type { PackageDetail } from '../../lib/packages/types';
-import { useTranslations } from '../../lib/i18n/locale-provider';
+import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
+import {
+  buildPackageReservationDraft,
+  buildReservationQuery,
+} from '../../lib/reservations/flow';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
+import { PackageActivityConfigItem } from './package-activity-config-section';
+import { PackageBookingMobileBar, PackageBookingSidebar } from './package-booking-sidebar';
 import { PackageItemsSection } from './package-items-section';
-import { PackagePriceDisplay } from './package-price-display';
 
 type PackageDetailPageContentProps = {
   packageId: string;
   initialSearch: PackagesSearchParams;
+  rawSearchParams: Record<string, string | string[] | undefined>;
 };
 
 export function PackageDetailPageContent({
   packageId,
   initialSearch,
+  rawSearchParams,
 }: PackageDetailPageContentProps) {
   const t = useTranslations();
   const p = t.packages;
+  const a = t.activities;
+  const { locale } = useLocale();
+  const router = useRouter();
 
   const [detail, setDetail] = useState<PackageDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -33,7 +46,64 @@ export function PackageDetailPageContent({
   const [error, setError] = useState(false);
   const [fetchId, setFetchId] = useState(0);
 
-  const listHref = `/packages${buildPackagesSearchQuery(initialSearch)}`;
+  const [date, setDate] = useState(initialSearch.date ?? '');
+  const [participants, setParticipants] = useState(
+    parseParticipantsParam(initialSearch.participants),
+  );
+  const [selections, setSelections] = useState<Record<string, string | undefined>>(() =>
+    parsePackageScheduleSelections(rawSearchParams),
+  );
+
+  const listHref = `/packages${initialSearch.search ? `?search=${encodeURIComponent(initialSearch.search)}` : ''}`;
+
+  const activityItems = useMemo(
+    () => detail?.items.filter((item) => item.itemType === 'activity') ?? [],
+    [detail],
+  );
+
+  const activityIds = useMemo(
+    () => activityItems.map((item) => item.itemId),
+    [activityItems],
+  );
+
+  const activityOnly = useMemo(
+    () => (detail ? isActivityOnlyPackage(detail.items) : false),
+    [detail],
+  );
+
+  const searchContext = useMemo(
+    (): PackagesSearchParams => ({
+      ...initialSearch,
+      date: date || undefined,
+      participants: String(participants),
+    }),
+    [initialSearch, date, participants],
+  );
+
+  const syncUrl = useCallback(
+    (overrides: {
+      date?: string;
+      participants?: number;
+      selections?: Record<string, string | undefined>;
+    } = {}) => {
+      const nextDate = overrides.date ?? date;
+      const nextParticipants = overrides.participants ?? participants;
+      const nextSelections = overrides.selections ?? selections;
+
+      const href = buildPackageDetailHrefWithSelections(
+        packageId,
+        {
+          ...initialSearch,
+          date: nextDate || undefined,
+          participants: String(nextParticipants),
+        },
+        activityIds,
+        nextSelections,
+      );
+      router.replace(href, { scroll: false });
+    },
+    [packageId, initialSearch, date, participants, selections, activityIds, router],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -62,12 +132,45 @@ export function PackageDetailPageContent({
     };
   }, [packageId, fetchId]);
 
-  const activityOnly = useMemo(
-    () => (detail ? isActivityOnlyPackage(detail.items) : false),
-    [detail],
+  useEffect(() => {
+    setSelections(parsePackageScheduleSelections(rawSearchParams));
+  }, [rawSearchParams]);
+
+  function handleDateChange(value: string) {
+    setDate(value);
+    setSelections({});
+    syncUrl({ date: value, selections: {} });
+  }
+
+  function handleParticipantsChange(value: number) {
+    setParticipants(value);
+    syncUrl({ participants: value });
+  }
+
+  function handleSelectSchedule(activityId: string, scheduleId: string) {
+    const nextSelections = { ...selections, [activityId]: scheduleId };
+    setSelections(nextSelections);
+    syncUrl({ selections: nextSelections });
+  }
+
+  const canAddToCart = Boolean(
+    activityOnly &&
+      date &&
+      buildPackageReservationDraft(packageId, date, participants, activityIds, selections),
   );
 
-  const configureHint = activityOnly ? p.activityConfigureHint : p.mixedConfigureHint;
+  function handleAddToCart() {
+    if (!date) return;
+    const draft = buildPackageReservationDraft(
+      packageId,
+      date,
+      participants,
+      activityIds,
+      selections,
+    );
+    if (!draft) return;
+    router.push(`/booking/cart?${buildReservationQuery(draft)}`);
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
@@ -94,7 +197,7 @@ export function PackageDetailPageContent({
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 pb-28 sm:px-6 lg:px-8 lg:pb-8">
         {loading && (
           <div className="rounded-2xl border border-gray-100 bg-white px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
             <p className="text-sm font-medium text-gray-600 dark:text-atg-muted">{p.loadingDetail}</p>
@@ -144,45 +247,107 @@ export function PackageDetailPageContent({
                 ) : null}
               </header>
 
-              <PackageItemsSection items={detail.items} t={p} />
+              <PackageItemsSection
+                items={detail.items}
+                t={p}
+                activityOnly={activityOnly}
+                searchParams={searchContext}
+              />
 
-              <section className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-100">
-                {configureHint}
-              </section>
+              {activityOnly ? (
+                <section
+                  id="configure"
+                  className="space-y-4 rounded-2xl border border-gray-100 bg-white p-6 dark:border-atg-border dark:bg-atg-elevated"
+                >
+                  <div>
+                    <h2 className="text-lg font-bold text-[#0f1a16] dark:text-white">
+                      {p.configureTitle}
+                    </h2>
+                    <p className="mt-2 text-sm text-gray-600 dark:text-atg-muted">
+                      {p.activityConfigureHint}
+                    </p>
+                  </div>
+
+                  <label className="block max-w-sm text-sm">
+                    <span className="mb-1 block font-medium text-gray-600 dark:text-atg-muted">
+                      {a.date}
+                    </span>
+                    <input
+                      type="date"
+                      value={date}
+                      onChange={(event) => handleDateChange(event.target.value)}
+                      className="min-h-[44px] w-full rounded-lg border border-gray-200 px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-surface dark:text-white"
+                    />
+                  </label>
+
+                  {date ? (
+                    <div className="space-y-4">
+                      {activityItems.map((item) => (
+                        <PackageActivityConfigItem
+                          key={item.id}
+                          activityId={item.itemId}
+                          label={item.label}
+                          date={date}
+                          participants={participants}
+                          selectedScheduleId={selections[item.itemId] ?? null}
+                          onSelectSchedule={(scheduleId) =>
+                            handleSelectSchedule(item.itemId, scheduleId)
+                          }
+                          t={p}
+                          a={a}
+                          locale={locale}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-amber-700 dark:text-amber-300">{p.selectDateHint}</p>
+                  )}
+                </section>
+              ) : (
+                <section className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-100">
+                  {p.mixedConfigureHint}
+                </section>
+              )}
             </div>
 
-            <aside className="lg:sticky lg:top-24 lg:self-start">
-              <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-md dark:border-atg-border dark:bg-atg-elevated">
-                <h2 className="text-lg font-bold text-[#0f1a16] dark:text-white">
-                  {p.pricingTitle}
-                </h2>
-                <div className="mt-4">
-                  <PackagePriceDisplay
-                    pricing={detail.pricing}
-                    priceLabel={p.packagePrice}
-                    discountBadgeTemplate={p.discountBadge}
-                    className="text-left [&_div]:justify-start"
-                  />
-                </div>
-                {detail.pricing.discountAmountCents > 0 ? (
-                  <p className="mt-3 text-sm text-emerald-700 dark:text-emerald-300">
-                    {p.youSave.replace(
-                      '{amount}',
-                      `${(detail.pricing.discountAmountCents / 100).toFixed(0)} ${detail.pricing.currency}`,
-                    )}
+            {activityOnly ? (
+              <PackageBookingSidebar
+                detail={detail}
+                date={date || null}
+                participants={participants}
+                activityIds={activityIds}
+                selections={selections}
+                canAddToCart={canAddToCart}
+                onParticipantsChange={handleParticipantsChange}
+                onAddToCart={handleAddToCart}
+                t={p}
+                a={a}
+                locale={locale}
+              />
+            ) : (
+              <aside className="lg:sticky lg:top-24 lg:self-start">
+                <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-md dark:border-atg-border dark:bg-atg-elevated">
+                  <h2 className="text-lg font-bold text-[#0f1a16] dark:text-white">
+                    {p.pricingTitle}
+                  </h2>
+                  <p className="mt-4 text-sm text-gray-600 dark:text-atg-muted">
+                    {p.mixedCheckoutDisabled}
                   </p>
-                ) : null}
-                <a
-                  href="#items"
-                  className="mt-6 flex min-h-[44px] w-full items-center justify-center rounded-lg bg-primary px-5 py-2 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover"
-                >
-                  {p.configurePackage}
-                </a>
-              </div>
-            </aside>
+                </div>
+              </aside>
+            )}
           </div>
         )}
       </div>
+
+      {detail && activityOnly && !loading && !notFound && (
+        <PackageBookingMobileBar
+          detail={detail}
+          canAddToCart={canAddToCart}
+          onAddToCart={handleAddToCart}
+          t={p}
+        />
+      )}
 
       <HomeFooter />
     </div>

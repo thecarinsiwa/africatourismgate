@@ -7,7 +7,9 @@ import { formatCarPrice } from '../../lib/cars/listings';
 import type { VehicleDetail } from '../../lib/cars/types';
 import { formatActivityPrice, formatScheduleTime } from '../../lib/activities/listings';
 import type { ActivityDetail } from '../../lib/activities/types';
-import { getAccommodationDetail, getActivityDetail, getCruiseSailingDetail, getFlightDetail, getVehicleDetail } from '../../lib/api/public';
+import { getAccommodationDetail, getActivityDetail, getCruiseSailingDetail, getFlightDetail, getPackageDetail, getVehicleDetail } from '../../lib/api/public';
+import { formatPackagePrice } from '../../lib/packages/listings';
+import type { PackageDetail } from '../../lib/packages/types';
 import { formatAirportLabel } from '../../lib/flights/airports';
 import { formatFlightPrice } from '../../lib/flights/listings';
 import type { FlightDetail } from '../../lib/flights/types';
@@ -26,6 +28,7 @@ import {
   isCabinReservationDraft,
   isFlightReservationDraft,
   isCabinOfferBookable,
+  isPackageReservationDraft,
   isRoomReservationDraft,
   isVehicleReservationDraft,
   type ReservationDraft,
@@ -49,6 +52,8 @@ export function ReservationCartPageContent({ draft }: Props) {
   const [vehicleDetail, setVehicleDetail] = useState<VehicleDetail | null>(null);
   const [cruiseDetail, setCruiseDetail] = useState<CruiseSailingDetail | null>(null);
   const [activityDetail, setActivityDetail] = useState<ActivityDetail | null>(null);
+  const [packageDetail, setPackageDetail] = useState<PackageDetail | null>(null);
+  const [packageActivities, setPackageActivities] = useState<ActivityDetail[]>([]);
   const [loading, setLoading] = useState(Boolean(draft));
 
   const room = useMemo(
@@ -108,6 +113,16 @@ export function ReservationCartPageContent({ draft }: Props) {
     [draft, activitySchedule],
   );
 
+  const packageReady = useMemo(() => {
+    if (!draft || !isPackageReservationDraft(draft) || !packageDetail) return false;
+    if (packageActivities.length !== draft.lines.length) return false;
+    return draft.lines.every((line) => {
+      const activity = packageActivities.find((item) => item.id === line.activityId);
+      const schedule = activity?.schedules.find((item) => item.scheduleId === line.scheduleId);
+      return isActivityScheduleOfferBookable(schedule, draft.participants);
+    });
+  }, [draft, packageDetail, packageActivities]);
+
   useEffect(() => {
     let cancelled = false;
     if (!draft) return;
@@ -161,7 +176,32 @@ export function ReservationCartPageContent({ draft }: Props) {
             setFlightDetail(null);
             setVehicleDetail(null);
             setCruiseDetail(null);
+            setPackageDetail(null);
+            setPackageActivities([]);
           }
+        })
+        .finally(() => {
+          if (!cancelled) setLoading(false);
+        });
+    } else if (isPackageReservationDraft(draft)) {
+      void getPackageDetail(draft.packageId)
+        .then(async (pkg) => {
+          if (cancelled) return;
+          setPackageDetail(pkg);
+          setHotelDetail(null);
+          setFlightDetail(null);
+          setVehicleDetail(null);
+          setCruiseDetail(null);
+          setActivityDetail(null);
+          const activities = await Promise.all(
+            draft.lines.map((line) =>
+              getActivityDetail(line.activityId, {
+                date: draft.date,
+                participants: draft.participants,
+              }),
+            ),
+          );
+          if (!cancelled) setPackageActivities(activities);
         })
         .finally(() => {
           if (!cancelled) setLoading(false);
@@ -224,6 +264,8 @@ export function ReservationCartPageContent({ draft }: Props) {
                 activityReady.priceCents * draft.participants,
                 activityDetail.currency,
               )
+            : draft && isPackageReservationDraft(draft) && packageDetail && packageReady
+              ? formatPackagePrice(packageDetail.pricing.totalCents, packageDetail.pricing.currency)
             : vehicleReady
             ? formatCarPrice(vehicleReady.totalPriceCents, vehicleReady.currency)
             : '--';
@@ -235,6 +277,7 @@ export function ReservationCartPageContent({ draft }: Props) {
       (isFlightReservationDraft(draft!) && flightClass) ||
       (isCabinReservationDraft(draft!) && cruiseReady) ||
       (isActivityScheduleReservationDraft(draft!) && activityReady) ||
+      (isPackageReservationDraft(draft!) && packageReady) ||
       Boolean(vehicleReady));
 
   return (
@@ -365,6 +408,56 @@ export function ReservationCartPageContent({ draft }: Props) {
                   </div>
                 )}
 
+              {!loading &&
+                draft &&
+                isPackageReservationDraft(draft) &&
+                packageDetail &&
+                packageReady && (
+                  <div className="space-y-4">
+                    <div>
+                      <p className="text-sm text-primary">Forfait combiné</p>
+                      <h2 className="text-xl font-bold text-[#0f1a16] dark:text-white">
+                        {packageDetail.package.name}
+                      </h2>
+                      <p className="mt-2 text-sm text-gray-600 dark:text-atg-muted">
+                        {formatDisplayDate(draft.date, locale)} · {draft.participants}{' '}
+                        participant{draft.participants > 1 ? 's' : ''}
+                      </p>
+                    </div>
+                    <ul className="space-y-3 border-t border-gray-100 pt-4 dark:border-atg-border">
+                      {draft.lines.map((line) => {
+                        const activity = packageActivities.find((item) => item.id === line.activityId);
+                        const schedule = activity?.schedules.find(
+                          (item) => item.scheduleId === line.scheduleId,
+                        );
+                        if (!activity || !schedule) return null;
+                        return (
+                          <li key={line.activityId} className="text-sm text-gray-600 dark:text-atg-muted">
+                            <span className="font-medium text-[#0f1a16] dark:text-white">
+                              {activity.title}
+                            </span>
+                            {' · '}
+                            {formatScheduleTime(schedule.startDatetime, locale)}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                )}
+
+              {!loading &&
+                draft &&
+                isPackageReservationDraft(draft) &&
+                packageDetail &&
+                !packageReady && (
+                  <p className="text-sm text-red-700 dark:text-red-300">
+                    Créneaux du forfait indisponibles ou incomplets.{' '}
+                    <Link href={detailHref} className="font-semibold underline">
+                      Modifier la sélection
+                    </Link>
+                  </p>
+                )}
+
               {!loading && isCabinReservationDraft(draft) && cruiseDetail && !cruiseReady && (
                 <p className="text-sm text-red-700 dark:text-red-300">
                   {cr.unavailable}.{' '}
@@ -401,6 +494,7 @@ export function ReservationCartPageContent({ draft }: Props) {
                 !flightClass &&
                 !cruiseReady &&
                 !activityReady &&
+                !(draft && isPackageReservationDraft(draft) && packageReady) &&
                 !vehicleReady && (
                 <p className="text-sm text-red-700 dark:text-red-300">
                   Impossible d&apos;afficher cette réservation.{' '}
