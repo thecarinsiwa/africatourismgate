@@ -15,6 +15,12 @@ import type {
   VehicleSearchResult,
 } from '../cars/types';
 import type {
+  CruiseSailingDetail,
+  CruiseSailingDetailQuery,
+  CruiseSearchQuery,
+  CruiseSearchResult,
+} from '../cruises/types';
+import type {
   FlightDetail,
   FlightDetailQuery,
   FlightSearchQuery,
@@ -41,6 +47,15 @@ export type {
   FlightSearchResult,
   PublicAirport,
 } from '../flights/types';
+
+export type {
+  CruiseCabinOffer,
+  CruiseItineraryPort,
+  CruiseSailingDetail,
+  CruiseSailingDetailQuery,
+  CruiseSearchQuery,
+  CruiseSearchResult,
+} from '../cruises/types';
 
 const defaultApiUrl =
   process.env.NODE_ENV === 'production'
@@ -205,5 +220,42 @@ export async function getVehicleDetail(
 ): Promise<VehicleDetail> {
   return fetchPublic<VehicleDetail>(
     `/public/vehicles/${encodeURIComponent(id)}${buildVehicleDetailQuery(params)}`,
+  );
+}
+
+function buildCruiseSearchQuery(params: CruiseSearchQuery): string {
+  const qs = new URLSearchParams();
+  qs.set('sailFrom', params.sailFrom);
+  qs.set('sailTo', params.sailTo);
+  qs.set('startDate', params.startDate);
+  qs.set('endDate', params.endDate);
+  if (params.guests !== undefined) qs.set('guests', String(params.guests));
+  if (params.page !== undefined) qs.set('page', String(params.page));
+  if (params.limit !== undefined) qs.set('limit', String(params.limit));
+  const s = qs.toString();
+  return s ? `?${s}` : '';
+}
+
+export async function searchCruises(
+  params: CruiseSearchQuery,
+): Promise<PaginatedResponse<CruiseSearchResult>> {
+  return fetchPublic<PaginatedResponse<CruiseSearchResult>>(
+    `/public/cruises/search${buildCruiseSearchQuery(params)}`,
+  );
+}
+
+function buildCruiseSailingDetailQuery(params: CruiseSailingDetailQuery): string {
+  const qs = new URLSearchParams();
+  if (params.guests !== undefined) qs.set('guests', String(params.guests));
+  const s = qs.toString();
+  return s ? `?${s}` : '';
+}
+
+export async function getCruiseSailingDetail(
+  id: string,
+  params: CruiseSailingDetailQuery = {},
+): Promise<CruiseSailingDetail> {
+  return fetchPublic<CruiseSailingDetail>(
+    `/public/cruises/sailings/${encodeURIComponent(id)}${buildCruiseSailingDetailQuery(params)}`,
   );
 }
