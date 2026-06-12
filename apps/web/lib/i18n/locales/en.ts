@@ -106,6 +106,8 @@ export const en: Translations = {
     viewAllFlights: 'View all available flights',
     carsRequired: 'Enter city, pick-up date and return date.',
     carsReturnAfterPickup: 'Return date must be after pick-up date.',
+    carsDurationHint: 'Select dates to see rental duration',
+    pickupLocationPh: 'City or airport',
     viewAllCars: 'View all car rentals',
     roomTypes: ['Double Room', 'Single Room', 'Suite'],
     countries: ['Kenya', 'Tanzania', 'Morocco', 'South Africa', 'Rwanda', 'DRC'],

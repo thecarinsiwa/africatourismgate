@@ -4,7 +4,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { listPublicDestinations } from '../../lib/api/public';
+import { countRentalDays } from '../../lib/cars/listings';
 import { toFlightAirportOptions, type FlightAirportOption } from '../../lib/flights/airports';
+import { addDays, todayISODate } from '../../lib/hotels/dates';
 import { usePublicAirports } from '../../lib/flights/use-public-airports';
 import { useTranslations } from '../../lib/i18n/locale-provider';
 import { buildSearchRoute, type SearchVertical } from '../../lib/search/route';
@@ -265,6 +267,19 @@ export function SearchTabs() {
     setFlightError(null);
   }
 
+  const today = todayISODate();
+  const carReturnMinDate = departDate ? addDays(departDate, 1) : today;
+  const carRentalDays = useMemo(() => {
+    if (!departDate || !returnDate || returnDate <= departDate) return 0;
+    return countRentalDays(departDate, returnDate);
+  }, [departDate, returnDate]);
+  const carRentalDaysLabel =
+    carRentalDays === 1
+      ? `1 ${t.cars.daySingular}`
+      : carRentalDays > 1
+        ? `${carRentalDays} ${t.cars.dayPlural}`
+        : null;
+
   const submitBtn = <button type="submit" className="min-h-[44px] w-full rounded-lg bg-primary px-5 py-2.5 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover">{t.search.search}</button>;
 
   return (
@@ -436,7 +451,19 @@ export function SearchTabs() {
 
             {activeTab === 'cars' && (
               <div className="space-y-4">
-                <div className="flex flex-wrap items-center justify-end gap-3">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  {carRentalDaysLabel ? (
+                    <span
+                      className="inline-flex min-h-[44px] items-center rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-semibold text-gray-700 dark:border-atg-border dark:bg-atg-surface dark:text-white"
+                      role="status"
+                    >
+                      {carRentalDaysLabel}
+                    </span>
+                  ) : (
+                    <span className="text-sm text-gray-500 dark:text-atg-muted">
+                      {t.search.carsDurationHint}
+                    </span>
+                  )}
                   <Link
                     href="/cars"
                     className="inline-flex min-h-[44px] items-center rounded-lg border border-primary px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/5 dark:hover:bg-primary/10"
@@ -444,12 +471,12 @@ export function SearchTabs() {
                     {t.search.viewAllCars}
                   </Link>
                 </div>
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.25fr_1fr_1fr_auto] lg:items-end">
                   <div>
                     <FormLabel>{t.cars.pickupLocation}</FormLabel>
                     <FormSelect
                       name="pickupLocation"
-                      placeholder={t.search.destinationPh}
+                      placeholder={t.search.pickupLocationPh}
                       options={destinationOptions}
                       value={destination}
                       onChange={(value) => {
@@ -464,8 +491,12 @@ export function SearchTabs() {
                       type="date"
                       name="pickUp"
                       value={departDate}
+                      min={today}
                       onChange={(value) => {
                         setDepartDate(value);
+                        if (returnDate && value && returnDate <= value) {
+                          setReturnDate('');
+                        }
                         setCarError(null);
                       }}
                     />
@@ -476,7 +507,7 @@ export function SearchTabs() {
                       type="date"
                       name="dropOff"
                       value={returnDate}
-                      min={departDate || undefined}
+                      min={carReturnMinDate}
                       onChange={(value) => {
                         setReturnDate(value);
                         setCarError(null);

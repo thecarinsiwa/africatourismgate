@@ -70,6 +70,8 @@ export type Translations = {
     viewAllFlights: string;
     carsRequired: string;
     carsReturnAfterPickup: string;
+    carsDurationHint: string;
+    pickupLocationPh: string;
     viewAllCars: string;
     roomTypes: string[];
     countries: string[];
