@@ -5,6 +5,7 @@ import {
   buildDraftBrowseHref,
   buildDraftDetailHref,
   buildReservationQuery,
+  isCabinOfferBookable,
   parseReservationDraft,
 } from './flow';
 
@@ -12,6 +13,8 @@ const FLIGHT_ID = '00000000-0000-4000-8000-000000003020';
 const FLIGHT_CLASS_ECO = '00000000-0000-4000-8000-000000003022';
 const VEHICLE_ID = '00000000-0000-4000-8000-000000004021';
 const VEHICLE_SLOT_ID = '00000000-0000-4000-8000-000000004023';
+const SAILING_ID = '00000000-0000-4000-8000-000000003036';
+const CABIN_AVAIL_STD = '00000000-0000-4000-8000-000000003037';
 
 test('parseReservationDraft parses flight_class from query params', () => {
   const draft = parseReservationDraft({
@@ -159,4 +162,94 @@ test('buildDraftBrowseHref routes vehicle draft to cars listing', () => {
     }),
     '/cars',
   );
+});
+
+test('parseReservationDraft parses cabin from query params', () => {
+  const draft = parseReservationDraft({
+    kind: 'cabin',
+    sailingId: SAILING_ID,
+    cabinAvailabilityId: CABIN_AVAIL_STD,
+    guests: '2',
+  });
+
+  assert.deepEqual(draft, {
+    kind: 'cabin',
+    sailingId: SAILING_ID,
+    cabinAvailabilityId: CABIN_AVAIL_STD,
+    guests: 2,
+  });
+});
+
+test('parseReservationDraft rejects cabin when params incomplete', () => {
+  assert.equal(
+    parseReservationDraft({
+      kind: 'cabin',
+      sailingId: SAILING_ID,
+      guests: '2',
+    }),
+    null,
+  );
+});
+
+test('buildReservationQuery serializes cabin draft', () => {
+  const query = buildReservationQuery({
+    kind: 'cabin',
+    sailingId: SAILING_ID,
+    cabinAvailabilityId: CABIN_AVAIL_STD,
+    guests: 2,
+  });
+
+  const params = new URLSearchParams(query);
+  assert.equal(params.get('kind'), 'cabin');
+  assert.equal(params.get('sailingId'), SAILING_ID);
+  assert.equal(params.get('cabinAvailabilityId'), CABIN_AVAIL_STD);
+  assert.equal(params.get('guests'), '2');
+});
+
+test('buildCheckoutItems maps cabin to booking payload with availability reference', () => {
+  const items = buildCheckoutItems({
+    kind: 'cabin',
+    sailingId: SAILING_ID,
+    cabinAvailabilityId: CABIN_AVAIL_STD,
+    guests: 2,
+  });
+
+  assert.deepEqual(items, [
+    {
+      itemType: 'cabin',
+      referenceId: CABIN_AVAIL_STD,
+      quantity: 1,
+    },
+  ]);
+});
+
+test('buildDraftDetailHref links cabin draft back to cruise sailing detail', () => {
+  assert.equal(
+    buildDraftDetailHref({
+      kind: 'cabin',
+      sailingId: SAILING_ID,
+      cabinAvailabilityId: CABIN_AVAIL_STD,
+      guests: 2,
+    }),
+    `/cruises/${SAILING_ID}?guests=2&cabinId=${CABIN_AVAIL_STD}`,
+  );
+});
+
+test('buildDraftBrowseHref routes cabin draft to cruises listing', () => {
+  assert.equal(
+    buildDraftBrowseHref({
+      kind: 'cabin',
+      sailingId: SAILING_ID,
+      cabinAvailabilityId: CABIN_AVAIL_STD,
+      guests: 2,
+    }),
+    '/cruises',
+  );
+});
+
+test('isCabinOfferBookable requires stock and guest capacity', () => {
+  assert.equal(isCabinOfferBookable({ availableCount: 8, maxGuests: 2 }, 2), true);
+  assert.equal(isCabinOfferBookable({ availableCount: 0, maxGuests: 4 }, 2), false);
+  assert.equal(isCabinOfferBookable({ availableCount: 5, maxGuests: 1 }, 2), false);
+  assert.equal(isCabinOfferBookable(null, 2), false);
 });

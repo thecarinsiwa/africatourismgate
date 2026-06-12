@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { listPublicDestinations } from '../../lib/api/public';
 import { countRentalDays } from '../../lib/cars/listings';
 import { useVehiclePickupLocations } from '../../lib/cars/use-vehicle-pickup-locations';
+import { CRUISE_PORT_OPTIONS } from '../../lib/cruises/ports';
 import { toFlightAirportOptions, type FlightAirportOption } from '../../lib/flights/airports';
 import { addDays, todayISODate } from '../../lib/hotels/dates';
 import { usePublicAirports } from '../../lib/flights/use-public-airports';
@@ -19,10 +20,6 @@ const AFRICAN_CITIES = [
   'Lagos', 'Accra', 'Le Caire', 'Dakar', 'Casablanca',
   'Addis-Abeba', 'Dar es Salaam', 'Kampala', 'Kinshasa',
 ];
-
-const CRUISE_DESTINATIONS = ['Zanzibar', 'Madagascar', 'Île Maurice', 'Seychelles', 'Mombasa', 'Le Cap'];
-const CRUISE_PORTS = ['Dar es Salaam', 'Mombasa', 'Le Cap', 'Durban', 'Maputo'];
-const CRUISE_SHIPS = ['African Queen', 'Safari Voyager', 'Indian Ocean Star'];
 
 function TabIcon({ tab }: { tab: SearchTab }) {
   switch (tab) {
@@ -138,6 +135,34 @@ function FormAirportSelect({
   );
 }
 
+function FormCruisePortSelect({
+  name,
+  placeholder,
+  value,
+  onChange,
+}: {
+  name: string;
+  placeholder: string;
+  value: string;
+  onChange: (code: string) => void;
+}) {
+  return (
+    <select
+      name={name}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg"
+    >
+      <option value="">{placeholder}</option>
+      {CRUISE_PORT_OPTIONS.map((port) => (
+        <option key={port.code} value={port.code}>
+          {port.code} — {port.name}
+        </option>
+      ))}
+    </select>
+  );
+}
+
 export function SearchTabs() {
   const t = useTranslations();
   const router = useRouter();
@@ -171,6 +196,10 @@ export function SearchTabs() {
   const [flightTripType, setFlightTripType] = useState<FlightTripType>('oneWay');
   const [flightError, setFlightError] = useState<string | null>(null);
   const [carError, setCarError] = useState<string | null>(null);
+  const [cruiseError, setCruiseError] = useState<string | null>(null);
+  const [sailFrom, setSailFrom] = useState('');
+  const [sailTo, setSailTo] = useState('');
+  const [cruiseGuests, setCruiseGuests] = useState('2');
   const [destination, setDestination] = useState('');
   const [adults, setAdults] = useState('');
   const [hotelGuests, setHotelGuests] = useState('2');
@@ -253,6 +282,33 @@ export function SearchTabs() {
       return;
     }
 
+    if (activeTab === 'cruises') {
+      setCruiseError(null);
+
+      if (!sailFrom || !sailTo || !departDate || !returnDate) {
+        setCruiseError(t.search.cruisesRequired);
+        return;
+      }
+
+      if (sailFrom === sailTo) {
+        setCruiseError(t.search.cruisesSamePort);
+        return;
+      }
+
+      if (returnDate <= departDate) {
+        setCruiseError(t.search.cruisesEndAfterStart);
+        return;
+      }
+
+      params.set('sailFrom', sailFrom);
+      params.set('sailTo', sailTo);
+      params.set('startDate', departDate);
+      params.set('endDate', returnDate);
+      params.set('guests', String(Math.max(1, Number.parseInt(cruiseGuests, 10) || 1)));
+      router.push(buildSearchRoute('cruises', params));
+      return;
+    }
+
     if (destination) params.set('destination', destination);
     if (from) params.set('from', from);
     if (to) params.set('to', to);
@@ -279,6 +335,7 @@ export function SearchTabs() {
 
   const today = todayISODate();
   const carReturnMinDate = departDate ? addDays(departDate, 1) : today;
+  const cruiseEndMinDate = departDate ? addDays(departDate, 1) : today;
   const carRentalDays = useMemo(() => {
     if (!departDate || !returnDate || returnDate <= departDate) return 0;
     return countRentalDays(departDate, returnDate);
@@ -298,7 +355,7 @@ export function SearchTabs() {
         <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-2xl transition-colors dark:border-atg-border dark:bg-atg-elevated">
           <div className="flex" role="tablist" aria-label={t.search.tablistAria}>
             {tabs.map((tab) => (
-              <button key={tab.id} type="button" role="tab" aria-selected={activeTab === tab.id} onClick={() => { setActiveTab(tab.id); setFlightError(null); setCarError(null); }} className={`flex flex-1 items-center justify-center gap-2 py-4 text-xs sm:text-sm font-semibold uppercase tracking-wide transition-all border-b-[3px] ${activeTab === tab.id ? 'bg-primary text-white border-primary-hover' : 'bg-gray-50 text-gray-500 border-transparent hover:bg-gray-100 hover:text-gray-700 dark:bg-atg-surface dark:text-atg-muted dark:hover:bg-white/5 dark:hover:text-white'}`}>
+              <button key={tab.id} type="button" role="tab" aria-selected={activeTab === tab.id} onClick={() => { setActiveTab(tab.id); setFlightError(null); setCarError(null); setCruiseError(null); }} className={`flex flex-1 items-center justify-center gap-2 py-4 text-xs sm:text-sm font-semibold uppercase tracking-wide transition-all border-b-[3px] ${activeTab === tab.id ? 'bg-primary text-white border-primary-hover' : 'bg-gray-50 text-gray-500 border-transparent hover:bg-gray-100 hover:text-gray-700 dark:bg-atg-surface dark:text-atg-muted dark:hover:bg-white/5 dark:hover:text-white'}`}>
                 <TabIcon tab={tab.id} />
                 <span className="hidden sm:inline">{tab.label}</span>
               </button>
@@ -543,28 +600,85 @@ export function SearchTabs() {
             )}
 
             {activeTab === 'cruises' && (
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
-                <div>
-                  <FormLabel>{t.search.startDate}</FormLabel>
-                  <FormInput type="date" name="startDate" value={departDate} onChange={setDepartDate} />
+              <div className="space-y-4">
+                <div className="flex flex-wrap items-center justify-end gap-3">
+                  <Link
+                    href="/cruises"
+                    className="inline-flex min-h-[44px] items-center rounded-lg border border-primary px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/5 dark:hover:bg-primary/10"
+                  >
+                    {t.search.viewAllCruises}
+                  </Link>
                 </div>
-                <div>
-                  <FormLabel>{t.search.endDate}</FormLabel>
-                  <FormInput type="date" name="endDate" value={returnDate} onChange={setReturnDate} />
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1fr_0.75fr_auto] lg:items-end">
+                  <div>
+                    <FormLabel>{t.search.sailFrom}</FormLabel>
+                    <FormCruisePortSelect
+                      name="sailFrom"
+                      placeholder={t.search.allPorts}
+                      value={sailFrom}
+                      onChange={(value) => {
+                        setSailFrom(value);
+                        setCruiseError(null);
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <FormLabel>{t.search.sailTo}</FormLabel>
+                    <FormCruisePortSelect
+                      name="sailTo"
+                      placeholder={t.search.allDestinations}
+                      value={sailTo}
+                      onChange={(value) => {
+                        setSailTo(value);
+                        setCruiseError(null);
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <FormLabel>{t.search.startDate}</FormLabel>
+                    <FormInput
+                      type="date"
+                      name="startDate"
+                      value={departDate}
+                      min={today}
+                      onChange={(value) => {
+                        setDepartDate(value);
+                        if (returnDate && value && returnDate <= value) {
+                          setReturnDate('');
+                        }
+                        setCruiseError(null);
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <FormLabel>{t.search.endDate}</FormLabel>
+                    <FormInput
+                      type="date"
+                      name="endDate"
+                      value={returnDate}
+                      min={cruiseEndMinDate}
+                      onChange={(value) => {
+                        setReturnDate(value);
+                        setCruiseError(null);
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <FormLabel>{t.cruises.guests}</FormLabel>
+                    <FormInput
+                      type="number"
+                      name="guests"
+                      value={cruiseGuests}
+                      onChange={setCruiseGuests}
+                    />
+                  </div>
+                  <div className="flex items-end">{submitBtn}</div>
                 </div>
-                <div>
-                  <FormLabel>{t.search.sailTo}</FormLabel>
-                  <FormSelect name="sailTo" placeholder={t.search.allDestinations} options={CRUISE_DESTINATIONS} value={to} onChange={setTo} />
-                </div>
-                <div>
-                  <FormLabel>{t.search.sailFrom}</FormLabel>
-                  <FormSelect name="sailFrom" placeholder={t.search.allPorts} options={CRUISE_PORTS} value={from} onChange={setFrom} />
-                </div>
-                <div>
-                  <FormLabel>{t.search.ship}</FormLabel>
-                  <FormSelect name="ship" placeholder={t.search.shipPh} options={CRUISE_SHIPS} value="" onChange={() => {}} />
-                </div>
-                <div className="flex items-end">{submitBtn}</div>
+                {cruiseError && (
+                  <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+                    {cruiseError}
+                  </p>
+                )}
               </div>
             )}
 

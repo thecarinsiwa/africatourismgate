@@ -13,6 +13,7 @@ const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000/api')
 
 const SAILING_DEMO_KIN_BNW = '00000000-0000-4000-8000-000000003036';
 const CABIN_AVAIL_DEMO_STD = '00000000-0000-4000-8000-000000003037';
+const CABIN_AVAIL_DEMO_SUITE = '00000000-0000-4000-8000-000000003038';
 
 async function request(path) {
   const res = await fetch(`${API_URL}${path}`);
@@ -37,6 +38,20 @@ function assertStatus(label, actual, expected) {
 
 async function main() {
   console.log(`API: ${API_URL}\n`);
+
+  console.log('0. GET /public/cruises/search (browse all, no filters)');
+  const browseAll = await request('/public/cruises/search?limit=50');
+  assertStatus('browse all', browseAll.status, 200);
+  if (!browseAll.data?.data?.length) {
+    throw new Error('Expected at least one sailing when browsing without filters');
+  }
+  const browseSailing = browseAll.data.data.find((s) => s.id === SAILING_DEMO_KIN_BNW);
+  if (!browseSailing) {
+    throw new Error('Seed sailing Kinshasa — Banana not found in browse-all results');
+  }
+  console.log(
+    `  OK browse-all: ${browseAll.data.data.length} sailing(s), incl. ${browseSailing.itineraryName}`,
+  );
 
   console.log('1. GET /public/cruises/search CDKIN→CDBNW');
   const search = await request(
@@ -92,20 +107,29 @@ async function main() {
   if (detail.data?.itineraryPorts?.length !== 2) {
     throw new Error('Expected 2 itinerary ports in detail');
   }
-  if (detail.data?.cabins?.length !== 1) {
-    throw new Error('Expected only Standard cabin with stock in detail');
+  if (detail.data?.cabins?.length !== 2) {
+    throw new Error('Expected Standard + Suite cabins in detail (including zero stock)');
   }
-  const std = detail.data.cabins[0];
-  if (std.categoryName !== 'Standard' || std.availabilityId !== CABIN_AVAIL_DEMO_STD) {
+  const std = detail.data.cabins.find((c) => c.availabilityId === CABIN_AVAIL_DEMO_STD);
+  const suite = detail.data.cabins.find((c) => c.availabilityId === CABIN_AVAIL_DEMO_SUITE);
+  if (!std || std.categoryName !== 'Standard') {
     throw new Error('Expected Standard cabin availability in detail');
+  }
+  if (!suite || suite.categoryName !== 'Suite') {
+    throw new Error('Expected Suite cabin availability in detail');
   }
   if (std.availableCount !== 8 || std.priceCents !== 245000) {
     throw new Error(`Unexpected Standard cabin: count=${std.availableCount} price=${std.priceCents}`);
   }
+  if (suite.availableCount !== 0 || suite.priceCents !== 440000) {
+    throw new Error(`Unexpected Suite cabin: count=${suite.availableCount} price=${suite.priceCents}`);
+  }
   if (detail.data.minPriceCents !== 245000) {
     throw new Error(`Expected minPriceCents 245000, got ${detail.data.minPriceCents}`);
   }
-  console.log(`  OK detail: ${detail.data.cabins.length} cabin(s), ${detail.data.itineraryPorts.length} ports`);
+  console.log(
+    `  OK detail: ${detail.data.cabins.length} cabin(s) (incl. zero stock), ${detail.data.itineraryPorts.length} ports`,
+  );
 
   console.log('\nAll public cruise search checks passed.');
 }

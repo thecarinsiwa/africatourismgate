@@ -10,25 +10,29 @@ import {
 import { PaginationQueryDto } from '../../../../common/dto/pagination-query.dto';
 
 export class CruiseSearchQueryDto extends PaginationQueryDto {
-  @ApiProperty({ example: 'CDKIN', description: 'Departure cruise port code' })
+  @ApiPropertyOptional({ example: 'CDKIN', description: 'Departure cruise port code' })
+  @IsOptional()
   @Matches(/^[A-Za-z0-9]{2,16}$/, {
     message: 'sailFrom must be a valid port code (2–16 alphanumeric characters)',
   })
-  sailFrom!: string;
+  sailFrom?: string;
 
-  @ApiProperty({ example: 'CDBNW', description: 'Arrival cruise port code' })
+  @ApiPropertyOptional({ example: 'CDBNW', description: 'Arrival cruise port code' })
+  @IsOptional()
   @Matches(/^[A-Za-z0-9]{2,16}$/, {
     message: 'sailTo must be a valid port code (2–16 alphanumeric characters)',
   })
-  sailTo!: string;
+  sailTo?: string;
 
-  @ApiProperty({ format: 'date', example: '2026-09-01' })
+  @ApiPropertyOptional({ format: 'date', example: '2026-09-01' })
+  @IsOptional()
   @IsDateString()
-  startDate!: string;
+  startDate?: string;
 
-  @ApiProperty({ format: 'date', example: '2026-09-30' })
+  @ApiPropertyOptional({ format: 'date', example: '2026-09-30' })
+  @IsOptional()
   @IsDateString()
-  endDate!: string;
+  endDate?: string;
 
   @ApiPropertyOptional({ default: 1, minimum: 1 })
   @IsOptional()

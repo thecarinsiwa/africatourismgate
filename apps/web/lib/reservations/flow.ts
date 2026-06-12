@@ -25,10 +25,18 @@ export type VehicleReservationDraft = {
   returnDate: string;
 };
 
+export type CabinReservationDraft = {
+  kind: 'cabin';
+  sailingId: string;
+  cabinAvailabilityId: string;
+  guests: number;
+};
+
 export type ReservationDraft =
   | RoomReservationDraft
   | FlightReservationDraft
-  | VehicleReservationDraft;
+  | VehicleReservationDraft
+  | CabinReservationDraft;
 
 function readString(value: string | string[] | undefined): string {
   if (typeof value === 'string') return value;
@@ -59,12 +67,43 @@ export function isVehicleReservationDraft(
   return draft.kind === 'vehicle';
 }
 
+export function isCabinReservationDraft(
+  draft: ReservationDraft,
+): draft is CabinReservationDraft {
+  return draft.kind === 'cabin';
+}
+
+/** Cabin can be booked when it exists, has stock, and fits the guest count. */
+export function isCabinOfferBookable(
+  cabin: { availableCount: number; maxGuests: number } | null | undefined,
+  guests: number,
+): cabin is { availableCount: number; maxGuests: number } {
+  return Boolean(cabin && cabin.availableCount > 0 && cabin.maxGuests >= guests);
+}
+
 export function parseReservationDraft(
   searchParams: Record<string, string | string[] | undefined>,
 ): ReservationDraft | null {
   const kind = readString(searchParams.kind);
   const flightClassId = readString(searchParams.flightClassId);
   const availabilitySlotId = readString(searchParams.availabilitySlotId);
+  const cabinAvailabilityId = readString(searchParams.cabinAvailabilityId);
+
+  if (kind === 'cabin' || cabinAvailabilityId) {
+    const sailingId = readString(searchParams.sailingId);
+    const guests = readPositiveInt(searchParams.guests);
+
+    if (!sailingId || !cabinAvailabilityId || guests == null) {
+      return null;
+    }
+
+    return {
+      kind: 'cabin',
+      sailingId,
+      cabinAvailabilityId,
+      guests,
+    };
+  }
 
   if (kind === 'vehicle' || availabilitySlotId) {
     const vehicleId = readString(searchParams.vehicleId);
@@ -126,6 +165,16 @@ export function parseReservationDraft(
 }
 
 export function buildReservationQuery(draft: ReservationDraft): string {
+  if (draft.kind === 'cabin') {
+    const params = new URLSearchParams({
+      kind: 'cabin',
+      sailingId: draft.sailingId,
+      cabinAvailabilityId: draft.cabinAvailabilityId,
+      guests: String(draft.guests),
+    });
+    return params.toString();
+  }
+
   if (draft.kind === 'vehicle') {
     const params = new URLSearchParams({
       kind: 'vehicle',
@@ -166,6 +215,16 @@ export function buildFlightReservationQuery(
 }
 
 export function buildCheckoutItems(draft: ReservationDraft): BookingCheckoutItem[] {
+  if (draft.kind === 'cabin') {
+    return [
+      {
+        itemType: 'cabin',
+        referenceId: draft.cabinAvailabilityId,
+        quantity: 1,
+      },
+    ];
+  }
+
   if (draft.kind === 'vehicle') {
     return [
       {
@@ -201,6 +260,14 @@ export function buildCheckoutItems(draft: ReservationDraft): BookingCheckoutItem
 }
 
 export function buildDraftDetailHref(draft: ReservationDraft): string {
+  if (draft.kind === 'cabin') {
+    const params = new URLSearchParams({
+      guests: String(draft.guests),
+      cabinId: draft.cabinAvailabilityId,
+    });
+    return `/cruises/${encodeURIComponent(draft.sailingId)}?${params.toString()}`;
+  }
+
   if (draft.kind === 'vehicle') {
     const params = new URLSearchParams({
       pickupDate: draft.pickupDate,
@@ -228,6 +295,9 @@ export function buildDraftDetailHref(draft: ReservationDraft): string {
 }
 
 export function buildDraftBrowseHref(draft: ReservationDraft): string {
+  if (draft.kind === 'cabin') {
+    return '/cruises';
+  }
   if (draft.kind === 'flight_class') {
     return '/flights';
   }
