@@ -63,6 +63,12 @@ export type Translations = {
     shipPh: string;
     departCityPh: string;
     destinationPh2: string;
+    passengers: string;
+    airportPh: string;
+    flightRequired: string;
+    flightReturnAfterDeparture: string;
+    flightSameAirport: string;
+    swapAirports: string;
     roomTypes: string[];
     countries: string[];
     locations: string[];
@@ -534,6 +540,12 @@ const fr: Translations = {
     shipPh: 'Navire',
     departCityPh: 'Ville de départ',
     destinationPh2: 'Destination',
+    passengers: 'Passagers',
+    airportPh: 'Aéroport',
+    flightRequired: 'Indiquez le départ, la destination et la date de départ.',
+    flightReturnAfterDeparture: 'La date de retour doit être après la date de départ.',
+    flightSameAirport: 'Le départ et la destination doivent être différents.',
+    swapAirports: 'Inverser départ et arrivée',
     roomTypes: ['Chambre Double', 'Chambre Simple', 'Suite'],
     countries: ['Kenya', 'Tanzanie', 'Maroc', 'Afrique du Sud', 'Rwanda', 'RDC'],
     locations: ['Aéroport', 'Centre-ville', 'Gare'],
@@ -1094,6 +1106,12 @@ const en: Translations = {
     shipPh: 'Ship',
     departCityPh: 'Departure city',
     destinationPh2: 'Destination',
+    passengers: 'Passengers',
+    airportPh: 'Airport',
+    flightRequired: 'Enter departure, destination and departure date.',
+    flightReturnAfterDeparture: 'Return date must be after departure date.',
+    flightSameAirport: 'Departure and destination must be different.',
+    swapAirports: 'Swap departure and arrival',
     roomTypes: ['Double Room', 'Single Room', 'Suite'],
     countries: ['Kenya', 'Tanzania', 'Morocco', 'South Africa', 'Rwanda', 'DRC'],
     locations: ['Airport', 'City center', 'Train station'],

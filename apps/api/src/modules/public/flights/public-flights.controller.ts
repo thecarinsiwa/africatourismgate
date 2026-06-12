@@ -11,6 +11,13 @@ export class PublicFlightsController {
   constructor(private readonly service: PublicFlightsService) {}
 
   @Public()
+  @Get('airports')
+  @ApiOperation({ summary: 'List airports for public flight search' })
+  listAirports() {
+    return this.service.listAirports();
+  }
+
+  @Public()
   @Get('flights/search')
   @ApiOperation({ summary: 'Search flights with min class price and seat availability' })
   search(@Query() query: FlightSearchQueryDto) {

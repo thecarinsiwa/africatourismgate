@@ -258,8 +258,8 @@ export function FlightDetailPageContent({
                 {detail.flightNumber}
               </h1>
               <p className="mt-2 text-sm text-gray-600 dark:text-atg-muted">
-                {formatAirportLabel(detail.departureAirport.iataCode)} →{' '}
-                {formatAirportLabel(detail.arrivalAirport.iataCode)} ·{' '}
+                {formatAirportLabel(detail.departureAirport.iataCode, detail.departureAirport)} →{' '}
+                {formatAirportLabel(detail.arrivalAirport.iataCode, detail.arrivalAirport)} ·{' '}
                 {formatDisplayDate(detail.departureDate, locale)} ·{' '}
                 {passengers === 1
                   ? `1 ${f.passengerSingular}`

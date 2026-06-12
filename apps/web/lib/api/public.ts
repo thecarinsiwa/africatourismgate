@@ -13,6 +13,7 @@ import type {
   FlightDetailQuery,
   FlightSearchQuery,
   FlightSearchResult,
+  PublicAirport,
 } from '../flights/types';
 
 export type {
@@ -22,6 +23,7 @@ export type {
   FlightDetailQuery,
   FlightSearchQuery,
   FlightSearchResult,
+  PublicAirport,
 } from '../flights/types';
 
 const defaultApiUrl =
@@ -61,6 +63,10 @@ function buildSearchQuery(params: PropertySearchQuery): string {
 
 export async function listPublicDestinations(): Promise<PublicDestination[]> {
   return fetchPublic<PublicDestination[]>('/public/destinations');
+}
+
+export async function listPublicAirports(): Promise<PublicAirport[]> {
+  return fetchPublic<PublicAirport[]>('/public/airports');
 }
 
 export async function searchAccommodations(

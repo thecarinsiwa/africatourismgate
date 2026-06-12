@@ -1,5 +1,16 @@
 import { resolveAirportCode } from './airports';
-import type { FlightSearchQuery } from './types';
+import type { FlightSearchQuery, PublicAirport } from './types';
+
+let cachedAirports: PublicAirport[] = [];
+
+export function setAirportsCatalog(airports: PublicAirport[]): void {
+  cachedAirports = airports;
+}
+
+function normalizeAirportParam(value: string | undefined): string | undefined {
+  if (!value) return undefined;
+  return resolveAirportCode(value, cachedAirports) ?? value.trim().toUpperCase();
+}
 
 export type FlightsSearchParams = {
   from?: string;
@@ -19,11 +30,6 @@ export function readSearchParam(
   if (typeof value === 'string') return value;
   if (Array.isArray(value)) return value[0];
   return undefined;
-}
-
-function normalizeAirportParam(value: string | undefined): string | undefined {
-  if (!value) return undefined;
-  return resolveAirportCode(value) ?? value.trim().toUpperCase();
 }
 
 /** Maps canonical and legacy home-search query params to flight search params. */

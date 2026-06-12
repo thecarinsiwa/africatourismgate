@@ -1,5 +1,12 @@
 import type { FlightClassName } from '@africatourismgate/types';
 
+export interface PublicAirport {
+  iataCode: string;
+  name: string;
+  city: string;
+  countryCode: string;
+}
+
 export interface FlightSearchQuery {
   from: string;
   to: string;

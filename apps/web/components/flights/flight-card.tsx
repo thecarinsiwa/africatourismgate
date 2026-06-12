@@ -1,6 +1,5 @@
 'use client';
 
-import type { FlightClassName } from '@africatourismgate/types';
 import Link from 'next/link';
 import {
   buildFlightDetailHref,

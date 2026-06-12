@@ -13,6 +13,7 @@ import { FlightDetailQueryDto } from './dto/flight-detail-query.dto';
 import { FlightDetailDto } from './dto/flight-detail.dto';
 import { FlightSearchQueryDto } from './dto/flight-search-query.dto';
 import { FlightSearchResultDto } from './dto/flight-search-result.dto';
+import { PublicAirportDto } from './dto/public-airport.dto';
 import { assertValidFlightDates } from './flight-dates.util';
 
 const DEFAULT_CURRENCY = 'USD';
@@ -39,6 +40,23 @@ export class PublicFlightsService {
     @InjectRepository(Airlines)
     private readonly airlinesRepository: Repository<Airlines>,
   ) {}
+
+  async listAirports(): Promise<PublicAirportDto[]> {
+    const rows = await this.airportsRepository
+      .createQueryBuilder('a')
+      .select(['a.iataCode', 'a.name', 'a.city', 'a.countryCode'])
+      .where('a.deletedAt IS NULL')
+      .orderBy('a.city', 'ASC')
+      .addOrderBy('a.iataCode', 'ASC')
+      .getMany();
+
+    return rows.map((airport) => ({
+      iataCode: airport.iataCode,
+      name: airport.name,
+      city: airport.city,
+      countryCode: airport.countryCode,
+    }));
+  }
 
   async search(
     query: FlightSearchQueryDto,

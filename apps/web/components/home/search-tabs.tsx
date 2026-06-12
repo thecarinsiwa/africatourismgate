@@ -3,7 +3,8 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { listPublicDestinations } from '../../lib/api/public';
-import { resolveAirportCode } from '../../lib/flights/airports';
+import { toFlightAirportOptions, type FlightAirportOption } from '../../lib/flights/airports';
+import { usePublicAirports } from '../../lib/flights/use-public-airports';
 import { useTranslations } from '../../lib/i18n/locale-provider';
 import { buildSearchRoute, type SearchVertical } from '../../lib/search/route';
 
@@ -38,8 +39,8 @@ function FormLabel({ children }: { children: React.ReactNode }) {
   return <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-atg-muted">{children}</label>;
 }
 
-function FormInput({ type = 'text', name, placeholder, value, onChange }: { type?: string; name: string; placeholder?: string; value: string; onChange: (v: string) => void; }) {
-  return <input type={type} name={name} placeholder={placeholder} value={value} onChange={(e) => onChange(e.target.value)} className="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg dark:placeholder:text-atg-muted" />;
+function FormInput({ type = 'text', name, placeholder, value, min, onChange }: { type?: string; name: string; placeholder?: string; value: string; min?: string; onChange: (v: string) => void; }) {
+  return <input type={type} name={name} placeholder={placeholder} value={value} min={min} onChange={(e) => onChange(e.target.value)} className="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg dark:placeholder:text-atg-muted" />;
 }
 
 function FormSelect({ name, placeholder, options, value, onChange }: { name: string; placeholder: string; options: string[]; value: string; onChange: (v: string) => void; }) {
@@ -51,9 +52,44 @@ function FormSelect({ name, placeholder, options, value, onChange }: { name: str
   );
 }
 
+function FormAirportSelect({
+  name,
+  placeholder,
+  value,
+  options,
+  disabled,
+  onChange,
+}: {
+  name: string;
+  placeholder: string;
+  value: string;
+  options: FlightAirportOption[];
+  disabled?: boolean;
+  onChange: (iata: string) => void;
+}) {
+  return (
+    <select
+      name={name}
+      value={value}
+      disabled={disabled}
+      onChange={(e) => onChange(e.target.value)}
+      className="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-60 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg"
+    >
+      <option value="">{placeholder}</option>
+      {options.map((airport) => (
+        <option key={airport.iataCode} value={airport.iataCode}>
+          {airport.label}
+        </option>
+      ))}
+    </select>
+  );
+}
+
 export function SearchTabs() {
   const t = useTranslations();
   const router = useRouter();
+  const { airports, loading: airportsLoading, error: airportsError } = usePublicAirports();
+  const airportOptions = useMemo(() => toFlightAirportOptions(airports), [airports]);
   const [activeTab, setActiveTab] = useState<SearchTab>('hotels');
   const tabs = useMemo(() => ([
     { id: 'flights' as const, label: t.search.tabs.flights },
@@ -67,6 +103,10 @@ export function SearchTabs() {
   const [returnDate, setReturnDate] = useState('');
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
+  const [flightFrom, setFlightFrom] = useState('');
+  const [flightTo, setFlightTo] = useState('');
+  const [flightPassengers, setFlightPassengers] = useState('1');
+  const [flightError, setFlightError] = useState<string | null>(null);
   const [destination, setDestination] = useState('');
   const [adults, setAdults] = useState('');
   const [hotelGuests, setHotelGuests] = useState('2');
@@ -96,13 +136,30 @@ export function SearchTabs() {
     const params = new URLSearchParams();
 
     if (activeTab === 'flights') {
-      const fromCode = from ? resolveAirportCode(from) ?? from : '';
-      const toCode = to ? resolveAirportCode(to) ?? to : '';
-      if (fromCode) params.set('from', fromCode);
-      if (toCode) params.set('to', toCode);
-      if (departDate) params.set('departureDate', departDate);
+      setFlightError(null);
+
+      if (!flightFrom || !flightTo || !departDate) {
+        setFlightError(t.search.flightRequired);
+        return;
+      }
+
+      if (flightFrom === flightTo) {
+        setFlightError(t.search.flightSameAirport);
+        return;
+      }
+
+      if (returnDate && returnDate <= departDate) {
+        setFlightError(t.search.flightReturnAfterDeparture);
+        return;
+      }
+
+      const passengers = Math.max(1, Number.parseInt(flightPassengers, 10) || 1);
+
+      params.set('from', flightFrom);
+      params.set('to', flightTo);
+      params.set('departureDate', departDate);
       if (returnDate) params.set('returnDate', returnDate);
-      if (adults) params.set('passengers', adults);
+      params.set('passengers', String(passengers));
       router.push(buildSearchRoute('flights', params));
       return;
     }
@@ -115,6 +172,12 @@ export function SearchTabs() {
     const guestsValue = activeTab === 'hotels' ? hotelGuests : adults;
     if (guestsValue) params.set('guests', guestsValue);
     router.push(buildSearchRoute(activeTab, params));
+  }
+
+  function swapFlightAirports() {
+    setFlightFrom(flightTo);
+    setFlightTo(flightFrom);
+    setFlightError(null);
   }
 
   const submitBtn = <button type="submit" className="min-h-[44px] w-full rounded-lg bg-primary px-5 py-2.5 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover">{t.search.search}</button>;
@@ -134,28 +197,100 @@ export function SearchTabs() {
 
           <form onSubmit={handleSubmit} className="p-5 sm:p-6">
             {activeTab === 'flights' && (
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
-                <div>
-                  <FormLabel>{t.search.departDate}</FormLabel>
-                  <FormInput type="date" name="departDate" value={departDate} onChange={setDepartDate} />
+              <div className="space-y-4">
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_auto_1fr_1fr_0.75fr_auto] lg:items-end">
+                  <div>
+                    <FormLabel>{t.search.from}</FormLabel>
+                    <FormAirportSelect
+                      name="from"
+                      placeholder={
+                        airportsLoading ? t.flights.loading : t.search.airportPh
+                      }
+                      value={flightFrom}
+                      options={airportOptions}
+                      disabled={airportsLoading || airportOptions.length === 0}
+                      onChange={(value) => {
+                        setFlightFrom(value);
+                        setFlightError(null);
+                      }}
+                    />
+                  </div>
+                  <div className="relative">
+                    <FormLabel>{t.search.to}</FormLabel>
+                    <FormAirportSelect
+                      name="to"
+                      placeholder={
+                        airportsLoading ? t.flights.loading : t.search.airportPh
+                      }
+                      value={flightTo}
+                      options={airportOptions}
+                      disabled={airportsLoading || airportOptions.length === 0}
+                      onChange={(value) => {
+                        setFlightTo(value);
+                        setFlightError(null);
+                      }}
+                    />
+                  </div>
+                  <div className="flex items-end pb-0.5 lg:justify-center">
+                    <button
+                      type="button"
+                      onClick={swapFlightAirports}
+                      aria-label={t.search.swapAirports}
+                      className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-gray-300 text-gray-600 transition-colors hover:border-primary hover:text-primary dark:border-atg-border dark:text-atg-muted dark:hover:text-white"
+                    >
+                      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                      </svg>
+                    </button>
+                  </div>
+                  <div>
+                    <FormLabel>{t.search.departDate}</FormLabel>
+                    <FormInput
+                      type="date"
+                      name="departureDate"
+                      value={departDate}
+                      onChange={(value) => {
+                        setDepartDate(value);
+                        setFlightError(null);
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <FormLabel>{t.search.returnDate}</FormLabel>
+                    <FormInput
+                      type="date"
+                      name="returnDate"
+                      value={returnDate}
+                      min={departDate || undefined}
+                      onChange={(value) => {
+                        setReturnDate(value);
+                        setFlightError(null);
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <FormLabel>{t.search.passengers}</FormLabel>
+                    <FormInput
+                      type="number"
+                      name="passengers"
+                      placeholder="1"
+                      value={flightPassengers}
+                      min="1"
+                      onChange={(value) => setFlightPassengers(value)}
+                    />
+                  </div>
+                  <div className="flex items-end">{submitBtn}</div>
                 </div>
-                <div>
-                  <FormLabel>{t.search.returnDate}</FormLabel>
-                  <FormInput type="date" name="returnDate" value={returnDate} onChange={setReturnDate} />
-                </div>
-                <div>
-                  <FormLabel>{t.search.from}</FormLabel>
-                  <FormSelect name="from" placeholder={t.search.cityPh} options={AFRICAN_CITIES} value={from} onChange={setFrom} />
-                </div>
-                <div>
-                  <FormLabel>{t.search.to}</FormLabel>
-                  <FormSelect name="to" placeholder={t.search.cityPh} options={AFRICAN_CITIES} value={to} onChange={setTo} />
-                </div>
-                <div>
-                  <FormLabel>{t.search.adults}</FormLabel>
-                  <FormInput name="adults" placeholder="1" value={adults} onChange={setAdults} />
-                </div>
-                <div className="flex items-end">{submitBtn}</div>
+                {airportsError && (
+                  <p className="text-sm text-amber-700 dark:text-amber-300" role="status">
+                    {t.flights.loadError}
+                  </p>
+                )}
+                {flightError && (
+                  <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+                    {flightError}
+                  </p>
+                )}
               </div>
             )}
 

@@ -9,6 +9,7 @@ import {
   toFlightSearchQuery,
   type FlightsSearchParams,
 } from '../../lib/flights/listings';
+import { usePublicAirports } from '../../lib/flights/use-public-airports';
 import type { FlightSearchResult } from '../../lib/flights/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
@@ -28,6 +29,7 @@ export function FlightsPageContent({ initialSearch }: FlightsPageContentProps) {
   const t = useTranslations();
   const f = t.flights;
   const { locale } = useLocale();
+  const { airports } = usePublicAirports();
 
   const [sort, setSort] = useState<SortKey>('recommended');
   const [results, setResults] = useState<FlightSearchResult[]>([]);
@@ -40,7 +42,7 @@ export function FlightsPageContent({ initialSearch }: FlightsPageContentProps) {
 
   const displayRoute =
     initialSearch.from && initialSearch.to
-      ? `${formatAirportLabel(initialSearch.from)} → ${formatAirportLabel(initialSearch.to)}`
+      ? `${formatAirportLabel(initialSearch.from, airports)} → ${formatAirportLabel(initialSearch.to, airports)}`
       : f.anyRoute;
 
   useEffect(() => {

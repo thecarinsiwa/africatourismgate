@@ -185,8 +185,8 @@ export function ReservationRecapPageContent({ draft }: Props) {
                   {flightDetail.airlineName} · {flightDetail.flightNumber}
                 </p>
                 <h2 className="text-xl font-bold text-[#0f1a16] dark:text-white">
-                  {formatAirportLabel(flightDetail.departureAirport.iataCode)} →{' '}
-                  {formatAirportLabel(flightDetail.arrivalAirport.iataCode)}
+                  {formatAirportLabel(flightDetail.departureAirport.iataCode, flightDetail.departureAirport)} →{' '}
+                  {formatAirportLabel(flightDetail.arrivalAirport.iataCode, flightDetail.arrivalAirport)}
                 </h2>
                 <p className="text-sm text-gray-600 dark:text-atg-muted">
                   {f.classNames[flightClass.className] ?? flightClass.className}
