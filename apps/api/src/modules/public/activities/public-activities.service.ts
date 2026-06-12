@@ -179,15 +179,23 @@ export class PublicActivitiesService {
 
     parseDateOnly(query.date);
 
-    const destinationIds = await this.resolveDestinationIds(query.destination);
-    if (!destinationIds.length) {
-      return this.emptyPage(page, limit);
+    let activeProviders: ActivityProviders[];
+
+    if (query.destination?.trim()) {
+      const destinationIds = await this.resolveDestinationIds(query.destination);
+      if (!destinationIds.length) {
+        return this.emptyPage(page, limit);
+      }
+
+      const providers = await this.providersRepository.find({
+        where: { destinationId: In(destinationIds) },
+      });
+      activeProviders = providers.filter((p) => !p.deletedAt);
+    } else {
+      const providers = await this.providersRepository.find();
+      activeProviders = providers.filter((p) => !p.deletedAt);
     }
 
-    const providers = await this.providersRepository.find({
-      where: { destinationId: In(destinationIds) },
-    });
-    const activeProviders = providers.filter((p) => !p.deletedAt);
     if (!activeProviders.length) {
       return this.emptyPage(page, limit);
     }
@@ -244,7 +252,7 @@ export class PublicActivitiesService {
       }
 
       const destinationName =
-        destinationById.get(provider.destinationId) ?? query.destination.trim();
+        destinationById.get(provider.destinationId) ?? query.destination?.trim() ?? '';
 
       results.push({
         id: activity.id,

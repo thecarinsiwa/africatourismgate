@@ -282,7 +282,7 @@ export async function getCruiseSailingDetail(
 
 function buildActivitySearchQuery(params: ActivitySearchQuery): string {
   const qs = new URLSearchParams();
-  qs.set('destination', params.destination);
+  if (params.destination) qs.set('destination', params.destination);
   qs.set('date', params.date);
   if (params.participants !== undefined) qs.set('participants', String(params.participants));
   if (params.page !== undefined) qs.set('page', String(params.page));

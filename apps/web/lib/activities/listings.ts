@@ -48,7 +48,7 @@ export function parseParticipantsParam(participants?: string): number {
 }
 
 export function hasRequiredActivitySearchParams(params: ActivitiesSearchParams): boolean {
-  return Boolean(params.destination?.trim() && params.date);
+  return Boolean(params.date);
 }
 
 export function formatActivityPrice(cents: number, currency: string): string {
@@ -127,13 +127,14 @@ export function toActivityBrowseQuery(params: ActivitiesSearchParams): ActivityB
 }
 
 export function toActivitySearchQuery(params: ActivitiesSearchParams): ActivitySearchQuery {
-  const destination = params.destination?.trim();
-  if (!destination || !params.date) {
-    throw new Error('Activity search requires destination and date');
+  if (!params.date) {
+    throw new Error('Activity search requires date');
   }
 
+  const destination = params.destination?.trim();
+
   return {
-    destination,
+    destination: destination || undefined,
     date: params.date,
     participants: parseParticipantsParam(params.participants),
     limit: 50,

@@ -1,5 +1,5 @@
 export interface ActivitySearchQuery {
-  destination: string;
+  destination?: string;
   date: string;
   participants?: number;
   page?: number;

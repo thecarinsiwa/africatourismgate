@@ -324,13 +324,13 @@ export function SearchTabs() {
     if (activeTab === 'tours') {
       setToursError(null);
 
-      if (!destination || !departDate) {
+      if (!departDate) {
         setToursError(t.search.toursRequired);
         return;
       }
 
       const participants = Math.max(1, Number.parseInt(tourParticipants, 10) || 1);
-      params.set('destination', destination);
+      if (destination) params.set('destination', destination);
       params.set('date', departDate);
       params.set('participants', String(participants));
       router.push(buildSearchRoute('tours', params));
@@ -728,7 +728,7 @@ export function SearchTabs() {
                       placeholder={
                         activityDestinationsLoading
                           ? t.activities.destinationsLoading
-                          : t.search.destinationPh
+                          : t.search.allDestinations
                       }
                       options={activityDestinationOptions}
                       value={destination}

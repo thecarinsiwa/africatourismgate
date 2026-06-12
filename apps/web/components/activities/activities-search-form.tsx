@@ -47,16 +47,16 @@ export function ActivitiesSearchForm({ initialValues }: ActivitiesSearchFormProp
     event.preventDefault();
     setError(null);
 
-    if (!destination.trim() || !date) {
-      setError(a.searchRequired);
-      return;
-    }
-
     const params: ActivitiesSearchParams = {
-      destination: destination.trim(),
-      date,
+      destination: destination.trim() || undefined,
+      date: date || undefined,
       participants: String(Math.max(1, Number.parseInt(participants, 10) || 1)),
     };
+
+    if (!params.date && !params.destination) {
+      router.push('/activities');
+      return;
+    }
 
     router.push(`/activities${buildActivitiesSearchQuery(params)}`);
   }
