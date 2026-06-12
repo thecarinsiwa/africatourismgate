@@ -39,3 +39,55 @@ export const RBAC_AUDIT_EVENT_LABELS: Record<RbacAuditEventType, string> = {
 };
 
 export const PERMISSIONS_KEY = 'permissions';
+
+/**
+ * Catalog API RBAC — permission resource → controller path segments.
+ *
+ * Convention: `GET` (list + findOne) requires `{resource}.read`;
+ * `POST` / `PATCH` / `DELETE` require `{resource}.write`.
+ * `super_admin` bypasses all checks; denials are logged as `permission_denied`.
+ *
+ * Public routes stay `@Public()` (`public/*`, auth, health, Stripe webhooks).
+ * Customer flows (own bookings, profile) keep existing service-level checks.
+ */
+export const CATALOG_PERMISSION_MAP = {
+  destinations: ['destinations', 'points-of-interest'],
+  properties: [
+    'properties',
+    'rooms',
+    'room-availability',
+    'property-images',
+    'property-amenities',
+  ],
+  amenities: ['amenities'],
+  flights: [
+    'flights',
+    'airlines',
+    'airports',
+    'flight-classes',
+    'flight-class-availability',
+  ],
+  vehicles: [
+    'vehicles',
+    'rental-agencies',
+    'vehicle-categories',
+    'vehicle-availability',
+  ],
+  cruises: [
+    'cruise-lines',
+    'cruise-ports',
+    'ships',
+    'itineraries',
+    'itinerary-ports',
+    'cabins',
+    'cruise-sailings',
+    'cabin-availability',
+  ],
+  activities: ['activities', 'activity-providers', 'activity-schedules'],
+  packages: ['packages', 'package-items'],
+  promo_codes: ['promo-codes'],
+  promotions: ['promotions'],
+  reviews: ['reviews'],
+} as const;
+
+export type CatalogPermissionResource = keyof typeof CATALOG_PERMISSION_MAP;
