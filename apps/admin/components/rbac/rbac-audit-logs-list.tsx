@@ -19,6 +19,7 @@ import type {
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getRbacErrorMessage } from '../../lib/rbac-errors';
+import { UserIdFilterBar } from '../users/user-id-filter-bar';
 import { RbacSubnav } from './rbac-subnav';
 
 const PAGE_SIZE = 20;
@@ -40,13 +41,21 @@ function payloadPreview(payload: Record<string, unknown> | null): string {
   return text.length > 80 ? `${text.slice(0, 80)}…` : text;
 }
 
-export function RbacAuditLogsList({ showSubnav = true }: { showSubnav?: boolean }) {
+export function RbacAuditLogsList({
+  showSubnav = true,
+  userFilterMode = showSubnav ? 'actor' : 'involved',
+}: {
+  showSubnav?: boolean;
+  /** `involved` filters actor or target via ?userId=; `actor` uses the acteur dropdown. */
+  userFilterMode?: 'actor' | 'involved';
+}) {
   const [page, setPage] = useState(1);
   const [filterTick, setFilterTick] = useState(0);
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [eventType, setEventType] = useState<RbacAuditEventType | ''>('');
   const [actorUserId, setActorUserId] = useState('');
+  const [userIdFilter, setUserIdFilter] = useState('');
   const [users, setUsers] = useState<User[]>([]);
   const [access, setAccess] = useState<
     | { status: 'checking' }
@@ -78,7 +87,7 @@ export function RbacAuditLogsList({ showSubnav = true }: { showSubnav?: boolean 
   }, []);
 
   useEffect(() => {
-    if (access.status !== 'allowed') return;
+    if (access.status !== 'allowed' || userFilterMode === 'involved') return;
     let cancelled = false;
     async function loadUsers() {
       try {
@@ -96,7 +105,13 @@ export function RbacAuditLogsList({ showSubnav = true }: { showSubnav?: boolean 
     return () => {
       cancelled = true;
     };
-  }, [access.status]);
+  }, [access.status, userFilterMode]);
+
+  const handleUserIdChange = useCallback((userId: string) => {
+    setUserIdFilter(userId);
+    setPage(1);
+    setFilterTick((t) => t + 1);
+  }, []);
 
   const load = useCallback(async () => {
     void filterTick;
@@ -109,7 +124,8 @@ export function RbacAuditLogsList({ showSubnav = true }: { showSubnav?: boolean 
         dateFrom: dateFrom || undefined,
         dateTo: dateTo || undefined,
         eventType: eventType || undefined,
-        actorUserId: actorUserId || undefined,
+        actorUserId: userFilterMode === 'actor' ? actorUserId || undefined : undefined,
+        userId: userFilterMode === 'involved' ? userIdFilter || undefined : undefined,
       });
       setState({
         status: 'ready',
@@ -120,7 +136,17 @@ export function RbacAuditLogsList({ showSubnav = true }: { showSubnav?: boolean 
     } catch (error) {
       setState({ status: 'error', message: getRbacErrorMessage(error) });
     }
-  }, [access.status, page, dateFrom, dateTo, eventType, actorUserId, filterTick]);
+  }, [
+    access.status,
+    page,
+    dateFrom,
+    dateTo,
+    eventType,
+    actorUserId,
+    userIdFilter,
+    userFilterMode,
+    filterTick,
+  ]);
 
   useEffect(() => {
     void load();
@@ -228,8 +254,14 @@ export function RbacAuditLogsList({ showSubnav = true }: { showSubnav?: boolean 
     <>
       {showSubnav ? <RbacSubnav /> : null}
 
+      {userFilterMode === 'involved' ? (
+        <UserIdFilterBar onUserIdChange={handleUserIdChange} onUsersLoaded={setUsers} />
+      ) : null}
+
       <Card className="mb-6 p-4">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div
+          className={`grid gap-4 sm:grid-cols-2 ${userFilterMode === 'actor' ? 'lg:grid-cols-4' : 'lg:grid-cols-3'}`}
+        >
           <div>
             <label className="mb-1 block text-xs font-medium text-atg-muted">
               Date début
@@ -267,23 +299,25 @@ export function RbacAuditLogsList({ showSubnav = true }: { showSubnav?: boolean 
               ))}
             </select>
           </div>
-          <div>
-            <label className="mb-1 block text-xs font-medium text-atg-muted">
-              Utilisateur (acteur)
-            </label>
-            <select
-              value={actorUserId}
-              onChange={(e) => setActorUserId(e.target.value)}
-              className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm"
-            >
-              <option value="">Tous</option>
-              {users.map((u) => (
-                <option key={u.id} value={u.id}>
-                  {u.firstName} {u.lastName} — {u.email}
-                </option>
-              ))}
-            </select>
-          </div>
+          {userFilterMode === 'actor' ? (
+            <div>
+              <label className="mb-1 block text-xs font-medium text-atg-muted">
+                Utilisateur (acteur)
+              </label>
+              <select
+                value={actorUserId}
+                onChange={(e) => setActorUserId(e.target.value)}
+                className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm"
+              >
+                <option value="">Tous</option>
+                {users.map((u) => (
+                  <option key={u.id} value={u.id}>
+                    {u.firstName} {u.lastName} — {u.email}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : null}
         </div>
         <div className="mt-4 flex justify-end">
           <button

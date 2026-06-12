@@ -7,10 +7,12 @@ import {
   DataTablePagination,
   type ColumnDef,
 } from '@africatourismgate/ui';
-import type { UserAddress } from '@africatourismgate/types';
+import type { User, UserAddress } from '@africatourismgate/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getUsersErrorMessage } from '../../lib/users-errors';
+import { UserIdFilterBar } from './user-id-filter-bar';
+import { UserListCell } from './user-list-cell';
 
 const PAGE_SIZE = 20;
 
@@ -21,11 +23,20 @@ function formatAddress(row: UserAddress): string {
 
 export function UserAddressesList() {
   const [page, setPage] = useState(1);
+  const [userIdFilter, setUserIdFilter] = useState('');
+  const [users, setUsers] = useState<User[]>([]);
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
     | { status: 'ready'; rows: UserAddress[]; total: number; totalPages: number }
   >({ status: 'loading' });
+
+  const usersById = useMemo(() => new Map(users.map((user) => [user.id, user])), [users]);
+
+  const handleUserIdChange = useCallback((userId: string) => {
+    setUserIdFilter(userId);
+    setPage(1);
+  }, []);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -33,6 +44,7 @@ export function UserAddressesList() {
       const result = await getApiClient().listUserAddresses({
         page,
         limit: PAGE_SIZE,
+        userId: userIdFilter || undefined,
       });
       setState({
         status: 'ready',
@@ -43,7 +55,7 @@ export function UserAddressesList() {
     } catch (error) {
       setState({ status: 'error', message: getUsersErrorMessage(error) });
     }
-  }, [page]);
+  }, [page, userIdFilter]);
 
   useEffect(() => {
     void load();
@@ -70,7 +82,7 @@ export function UserAddressesList() {
         id: 'userId',
         header: 'Utilisateur',
         cell: ({ row }) => (
-          <span className="font-mono text-xs">{row.original.userId.slice(0, 8)}…</span>
+          <UserListCell userId={row.original.userId} usersById={usersById} />
         ),
       },
       {
@@ -84,37 +96,44 @@ export function UserAddressesList() {
           ),
       },
     ],
-    [],
+    [usersById],
   );
 
-  if (state.status === 'loading') {
-    return <p className="text-sm text-atg-muted">Chargement…</p>;
-  }
-
-  if (state.status === 'error') {
-    return (
-      <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-        {state.message}
-      </p>
-    );
-  }
+  const rows = state.status === 'ready' ? state.rows : [];
+  const emptyMessage = userIdFilter
+    ? 'Aucune adresse pour cet utilisateur.'
+    : 'Aucune adresse enregistrée.';
 
   return (
-    <Card variant="dashboard" padding="none" className="overflow-hidden">
-      <DataTable
-        columns={columns}
-        data={state.rows}
-        getRowId={(row) => row.id}
-        aria-label="Liste des adresses utilisateur"
-      />
-      <DataTablePagination
-        page={page}
-        pageSize={PAGE_SIZE}
-        totalPages={state.totalPages}
-        totalItems={state.total}
-        itemLabel="adresse"
-        onPageChange={setPage}
-      />
-    </Card>
+    <>
+      <UserIdFilterBar onUserIdChange={handleUserIdChange} onUsersLoaded={setUsers} />
+
+      {state.status === 'error' ? (
+        <p role="alert" className="mb-4 text-sm text-red-600 dark:text-red-400">
+          {state.message}
+        </p>
+      ) : null}
+
+      <Card variant="dashboard" padding="none" className="overflow-hidden">
+        <DataTable
+          columns={columns}
+          data={rows}
+          getRowId={(row) => row.id}
+          isLoading={state.status === 'loading'}
+          emptyMessage={emptyMessage}
+          aria-label="Liste des adresses utilisateur"
+        />
+        {state.status === 'ready' && state.totalPages > 0 ? (
+          <DataTablePagination
+            page={page}
+            pageSize={PAGE_SIZE}
+            totalPages={state.totalPages}
+            totalItems={state.total}
+            itemLabel="adresse"
+            onPageChange={setPage}
+          />
+        ) : null}
+      </Card>
+    </>
   );
 }
