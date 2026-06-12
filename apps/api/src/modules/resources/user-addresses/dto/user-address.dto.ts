@@ -7,6 +7,68 @@ import {
   IsUUID,
   MaxLength,
 } from 'class-validator';
+import { UserAddresses } from '../../../../entities/generated';
+
+function formatTimestamp(value: string | Date | null | undefined): string | null {
+  if (value == null) return null;
+  if (value instanceof Date) return value.toISOString();
+  return String(value);
+}
+
+export class UserAddressDto {
+  @ApiProperty({ format: 'uuid' })
+  id!: string;
+
+  @ApiProperty({ format: 'uuid' })
+  userId!: string;
+
+  @ApiPropertyOptional({ nullable: true })
+  label!: string | null;
+
+  @ApiProperty()
+  line1!: string;
+
+  @ApiPropertyOptional({ nullable: true })
+  line2!: string | null;
+
+  @ApiProperty()
+  city!: string;
+
+  @ApiPropertyOptional({ nullable: true })
+  region!: string | null;
+
+  @ApiPropertyOptional({ nullable: true })
+  postalCode!: string | null;
+
+  @ApiProperty()
+  countryCode!: string;
+
+  @ApiProperty()
+  isDefault!: number;
+
+  @ApiProperty()
+  createdAt!: string;
+
+  @ApiPropertyOptional({ nullable: true })
+  updatedAt!: string | null;
+}
+
+export function toUserAddressDto(row: UserAddresses): UserAddressDto {
+  return {
+    id: row.id,
+    userId: row.userId,
+    label: row.label ?? null,
+    line1: row.line1,
+    line2: row.line2 ?? null,
+    city: row.city,
+    region: row.region ?? null,
+    postalCode: row.postalCode ?? null,
+    countryCode: row.countryCode,
+    isDefault: row.isDefault,
+    createdAt: formatTimestamp(row.createdAt) ?? '',
+    updatedAt: formatTimestamp(row.updatedAt),
+  };
+}
 
 export class CreateUserAddressDto {
   @ApiPropertyOptional({ example: 'Domicile' })

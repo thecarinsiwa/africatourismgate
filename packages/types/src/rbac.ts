@@ -126,6 +126,8 @@ export interface RbacAuditLog {
 export interface RbacAuditLogsListQuery extends PaginationQuery {
   eventType?: RbacAuditEventType;
   actorUserId?: string;
+  /** Match actor or target user id. */
+  userId?: string;
   dateFrom?: string;
   dateTo?: string;
 }

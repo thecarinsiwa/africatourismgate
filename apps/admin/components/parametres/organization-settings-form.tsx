@@ -11,7 +11,7 @@ import type {
 } from '@africatourismgate/types';
 import { DEFAULT_LOYALTY_ONEKEY_SETTING } from '@africatourismgate/types/organization-settings';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
 import { getSession } from '../../lib/auth/session';
 import {
@@ -137,15 +137,29 @@ export function OrganizationSettingsForm({
     [],
   );
 
+  const {
+    displayName,
+    primaryColor,
+    secondaryColor,
+    logoUrl,
+    faviconUrl,
+  } = values;
+
+  const brandingPreview = useMemo(
+    () =>
+      brandingFromSettingsForm({
+        displayName,
+        primaryColor,
+        secondaryColor,
+        logoUrl,
+        faviconUrl,
+      }),
+    [displayName, primaryColor, secondaryColor, logoUrl, faviconUrl],
+  );
+
   useEffect(() => {
-    applyOrganizationBrandingToDocument(brandingFromSettingsForm(values));
-  }, [
-    values.displayName,
-    values.primaryColor,
-    values.secondaryColor,
-    values.logoUrl,
-    values.faviconUrl,
-  ]);
+    applyOrganizationBrandingToDocument(brandingPreview);
+  }, [brandingPreview]);
 
   useEffect(() => {
     let cancelled = false;

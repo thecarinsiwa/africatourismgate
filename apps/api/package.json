@@ -41,6 +41,7 @@
     "test:rbac-crud": "node scripts/test-rbac-crud.mjs",
     "sync:rbac": "node scripts/sync-rbac-permissions.mjs",
     "test:rbac-audit": "node scripts/test-rbac-audit-logs.mjs",
+    "test:admin-user-subpages": "node scripts/test-admin-user-subpages.mjs",
     "test:org-settings": "node scripts/test-org-settings.mjs",
     "test:email": "node scripts/test-email.mjs",
     "verify:smtp": "node scripts/verify-smtp.mjs",

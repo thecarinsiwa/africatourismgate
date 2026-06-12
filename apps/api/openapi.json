@@ -15,6 +15,41 @@
         ]
       }
     },
+    "/api/email/preview": {
+      "post": {
+        "operationId": "EmailController_preview",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailPreviewDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmailPreviewResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Preview transactional email HTML (no SMTP send)",
+        "tags": [
+          "email"
+        ]
+      }
+    },
     "/api/auth/google": {
       "get": {
         "operationId": "AuthController_googleAuth",
@@ -403,16 +438,6 @@
       "post": {
         "operationId": "UsersController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateUserDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": ""
@@ -421,7 +446,7 @@
             "description": "Missing permission"
           }
         },
-        "summary": "Create user (admin)",
+        "summary": "Create users",
         "tags": [
           "users"
         ]
@@ -448,7 +473,7 @@
             "description": "Missing permission"
           }
         },
-        "summary": "Get user by id",
+        "summary": "Get users by id",
         "tags": [
           "users"
         ]
@@ -465,16 +490,6 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateUserDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
@@ -483,7 +498,7 @@
             "description": "Missing permission"
           }
         },
-        "summary": "Update user",
+        "summary": "Update users",
         "tags": [
           "users"
         ]
@@ -508,7 +523,7 @@
             "description": "Missing permission"
           }
         },
-        "summary": "Soft-delete user",
+        "summary": "Soft-delete users",
         "tags": [
           "users"
         ]
@@ -538,45 +553,11 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "organizationId",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
-          },
-          {
-            "name": "status",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "active",
-                "on_leave",
-                "terminated"
-              ]
-            }
-          },
-          {
-            "name": "search",
-            "required": false,
-            "in": "query",
-            "description": "Search by code, job title, or linked user email/name",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
           "200": {
             "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
           }
         },
         "summary": "List employees",
@@ -587,25 +568,12 @@
       "post": {
         "operationId": "EmployeesController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateEmployeeDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
           }
         },
-        "summary": "Create employee",
+        "summary": "Create employees",
         "tags": [
           "employees"
         ]
@@ -627,12 +595,9 @@
         "responses": {
           "200": {
             "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
           }
         },
-        "summary": "Get employee by id",
+        "summary": "Get employees by id",
         "tags": [
           "employees"
         ]
@@ -649,25 +614,12 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateEmployeeDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
           }
         },
-        "summary": "Update employee",
+        "summary": "Update employees",
         "tags": [
           "employees"
         ]
@@ -687,12 +639,9 @@
         "responses": {
           "200": {
             "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
           }
         },
-        "summary": "Soft-delete employee",
+        "summary": "Soft-delete employees",
         "tags": [
           "employees"
         ]
@@ -722,27 +671,27 @@
               "default": 20,
               "type": "number"
             }
+          },
+          {
+            "name": "userId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by owner user id (staff only)",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission or access denied"
           }
         },
-        "summary": "List user-sessions",
-        "tags": [
-          "user-sessions"
-        ]
-      },
-      "post": {
-        "operationId": "UserSessionsController_create",
-        "parameters": [],
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "summary": "Create user-sessions",
+        "summary": "List active user sessions (scoped to current user unless staff)",
         "tags": [
           "user-sessions"
         ]
@@ -764,37 +713,18 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission or access denied"
           }
         },
-        "summary": "Get user-sessions by id",
-        "tags": [
-          "user-sessions"
-        ]
-      },
-      "patch": {
-        "operationId": "UserSessionsController_update",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "summary": "Update user-sessions",
+        "summary": "Get user session by id",
         "tags": [
           "user-sessions"
         ]
       },
       "delete": {
-        "operationId": "UserSessionsController_remove",
+        "operationId": "UserSessionsController_revoke",
         "parameters": [
           {
             "name": "id",
@@ -806,19 +736,22 @@
           }
         ],
         "responses": {
-          "200": {
+          "204": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission or access denied"
           }
         },
-        "summary": "Soft-delete user-sessions",
+        "summary": "Revoke user session (soft-delete)",
         "tags": [
           "user-sessions"
         ]
       }
     },
-    "/api/user-addresses": {
+    "/api/password-reset-tokens": {
       "get": {
-        "operationId": "UserAddressesController_findAll",
+        "operationId": "PasswordResetTokensController_findAll",
         "parameters": [
           {
             "name": "page",
@@ -847,7 +780,138 @@
             "description": ""
           }
         },
-        "summary": "List user-addresses",
+        "summary": "List password-reset-tokens",
+        "tags": [
+          "password-reset-tokens"
+        ]
+      },
+      "post": {
+        "operationId": "PasswordResetTokensController_create",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Create password-reset-tokens",
+        "tags": [
+          "password-reset-tokens"
+        ]
+      }
+    },
+    "/api/password-reset-tokens/{id}": {
+      "get": {
+        "operationId": "PasswordResetTokensController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get password-reset-tokens by id",
+        "tags": [
+          "password-reset-tokens"
+        ]
+      },
+      "patch": {
+        "operationId": "PasswordResetTokensController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Update password-reset-tokens",
+        "tags": [
+          "password-reset-tokens"
+        ]
+      },
+      "delete": {
+        "operationId": "PasswordResetTokensController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Soft-delete password-reset-tokens",
+        "tags": [
+          "password-reset-tokens"
+        ]
+      }
+    },
+    "/api/user-addresses": {
+      "get": {
+        "operationId": "UserAddressesController_findAll",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "userId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by owner user id (staff only)",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission or access denied"
+          }
+        },
+        "summary": "List user addresses (scoped to current user unless staff)",
         "tags": [
           "user-addresses"
         ]
@@ -868,9 +932,12 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission or access denied"
           }
         },
-        "summary": "Create user-addresses",
+        "summary": "Create user address",
         "tags": [
           "user-addresses"
         ]
@@ -892,9 +959,12 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission or access denied"
           }
         },
-        "summary": "Get user-addresses by id",
+        "summary": "Get user address by id",
         "tags": [
           "user-addresses"
         ]
@@ -924,9 +994,12 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission or access denied"
           }
         },
-        "summary": "Update user-addresses",
+        "summary": "Update user address",
         "tags": [
           "user-addresses"
         ]
@@ -946,9 +1019,12 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission or access denied"
           }
         },
-        "summary": "Soft-delete user-addresses",
+        "summary": "Soft-delete user address",
         "tags": [
           "user-addresses"
         ]
@@ -978,14 +1054,27 @@
               "default": 20,
               "type": "number"
             }
+          },
+          {
+            "name": "userId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by owner user id (staff only)",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission or access denied"
           }
         },
-        "summary": "List user-payment-methods",
+        "summary": "List user payment methods (scoped to current user unless staff)",
         "tags": [
           "user-payment-methods"
         ]
@@ -1006,9 +1095,12 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission or access denied"
           }
         },
-        "summary": "Create user-payment-methods",
+        "summary": "Create user payment method",
         "tags": [
           "user-payment-methods"
         ]
@@ -1030,9 +1122,12 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission or access denied"
           }
         },
-        "summary": "Get user-payment-methods by id",
+        "summary": "Get user payment method by id",
         "tags": [
           "user-payment-methods"
         ]
@@ -1062,9 +1157,12 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission or access denied"
           }
         },
-        "summary": "Update user-payment-methods",
+        "summary": "Update user payment method",
         "tags": [
           "user-payment-methods"
         ]
@@ -1084,9 +1182,12 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission or access denied"
           }
         },
-        "summary": "Soft-delete user-payment-methods",
+        "summary": "Soft-delete user payment method",
         "tags": [
           "user-payment-methods"
         ]
@@ -1121,6 +1222,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "List loyalty accounts (scoped to current user unless staff)",
@@ -1144,6 +1248,9 @@
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Create loyalty account (staff only)",
@@ -1168,6 +1275,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Get loyalty account by id",
@@ -1200,6 +1310,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Update loyalty account (staff only)",
@@ -1222,9 +1335,49 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete loyalty account (staff only)",
+        "tags": [
+          "loyalty-accounts"
+        ]
+      }
+    },
+    "/api/loyalty-accounts/{id}/adjust-points": {
+      "post": {
+        "operationId": "LoyaltyAccountsController_adjustPoints",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdjustLoyaltyPointsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Adjust loyalty points balance (super admin only)",
         "tags": [
           "loyalty-accounts"
         ]
@@ -1254,23 +1407,11 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "search",
-            "required": false,
-            "in": "query",
-            "description": "Search by name or slug (partial match)",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
           "200": {
             "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
           }
         },
         "summary": "List organizations",
@@ -1281,25 +1422,12 @@
       "post": {
         "operationId": "OrganizationsController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateOrganizationDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
           }
         },
-        "summary": "Create organization",
+        "summary": "Create organizations",
         "tags": [
           "organizations"
         ]
@@ -1321,12 +1449,9 @@
         "responses": {
           "200": {
             "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
           }
         },
-        "summary": "Get organization by id",
+        "summary": "Get organizations by id",
         "tags": [
           "organizations"
         ]
@@ -1343,25 +1468,12 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateOrganizationDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
           }
         },
-        "summary": "Update organization",
+        "summary": "Update organizations",
         "tags": [
           "organizations"
         ]
@@ -1381,12 +1493,9 @@
         "responses": {
           "200": {
             "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
           }
         },
-        "summary": "Soft-delete organization",
+        "summary": "Soft-delete organizations",
         "tags": [
           "organizations"
         ]
@@ -1398,9 +1507,11 @@
         "parameters": [
           {
             "name": "organizationSlug",
-            "required": true,
+            "required": false,
             "in": "query",
+            "description": "Organization slug (defaults to the platform organization)",
             "schema": {
+              "example": "africa-tourism-gate",
               "type": "string"
             }
           }
@@ -1414,6 +1525,44 @@
           }
         },
         "summary": "Get public branding for the active/default organization",
+        "tags": [
+          "organization-settings"
+        ]
+      }
+    },
+    "/api/organization-settings/bulk": {
+      "put": {
+        "operationId": "OrganizationSettingsController_bulkUpsert",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkUpsertOrganizationSettingsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrganizationSettingDto"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Bulk upsert organization settings (scoped)",
         "tags": [
           "organization-settings"
         ]
@@ -1466,68 +1615,19 @@
         "tags": [
           "organization-settings"
         ]
-      }
-    },
-    "/api/organization-settings/bulk": {
-      "put": {
-        "operationId": "OrganizationSettingsController_bulkUpsert",
+      },
+      "post": {
+        "operationId": "OrganizationSettingsController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/BulkUpsertOrganizationSettingsDto"
-              }
-            }
-          }
-        },
         "responses": {
-          "200": {
+          "201": {
             "description": ""
           },
           "403": {
             "description": "Missing permission"
           }
         },
-        "summary": "Bulk upsert organization settings (scoped)",
-        "tags": [
-          "organization-settings"
-        ]
-      }
-    },
-    "/api/organization-settings/upload-branding": {
-      "put": {
-        "operationId": "OrganizationSettingsController_uploadBrandingAsset",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "file": {
-                    "type": "string",
-                    "format": "binary"
-                  }
-                },
-                "required": [
-                  "file"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
-          }
-        },
-        "summary": "Upload branding asset (logo/favicon)",
+        "summary": "Create organization-settings",
         "tags": [
           "organization-settings"
         ]
@@ -1544,11 +1644,28 @@
             "schema": {
               "type": "string"
             }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
           },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Get organization-settings by id",
+        "tags": [
+          "organization-settings"
+        ]
+      },
+      "patch": {
+        "operationId": "OrganizationSettingsController_update",
+        "parameters": [
           {
-            "name": "organizationId",
+            "name": "id",
             "required": true,
-            "in": "query",
+            "in": "path",
             "schema": {
               "type": "string"
             }
@@ -1562,7 +1679,32 @@
             "description": "Missing permission"
           }
         },
-        "summary": "Get organization setting by id (scoped)",
+        "summary": "Update organization-settings",
+        "tags": [
+          "organization-settings"
+        ]
+      },
+      "delete": {
+        "operationId": "OrganizationSettingsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Soft-delete organization-settings",
         "tags": [
           "organization-settings"
         ]
@@ -1592,26 +1734,14 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "organizationId",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
           }
         ],
         "responses": {
           "200": {
             "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
           }
         },
-        "summary": "List organization bank accounts (scoped)",
+        "summary": "List organization-bank-accounts",
         "tags": [
           "organization-bank-accounts"
         ]
@@ -1619,25 +1749,12 @@
       "post": {
         "operationId": "OrganizationBankAccountsController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateOrganizationBankAccountDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
           }
         },
-        "summary": "Create bank account (scoped)",
+        "summary": "Create organization-bank-accounts",
         "tags": [
           "organization-bank-accounts"
         ]
@@ -1654,25 +1771,14 @@
             "schema": {
               "type": "string"
             }
-          },
-          {
-            "name": "organizationId",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
           "200": {
             "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
           }
         },
-        "summary": "Get bank account by id (scoped)",
+        "summary": "Get organization-bank-accounts by id",
         "tags": [
           "organization-bank-accounts"
         ]
@@ -1687,35 +1793,14 @@
             "schema": {
               "type": "string"
             }
-          },
-          {
-            "name": "organizationId",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateOrganizationBankAccountDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
           }
         },
-        "summary": "Update bank account (scoped)",
+        "summary": "Update organization-bank-accounts",
         "tags": [
           "organization-bank-accounts"
         ]
@@ -1730,25 +1815,14 @@
             "schema": {
               "type": "string"
             }
-          },
-          {
-            "name": "organizationId",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
           "200": {
             "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
           }
         },
-        "summary": "Soft-delete bank account (scoped)",
+        "summary": "Soft-delete organization-bank-accounts",
         "tags": [
           "organization-bank-accounts"
         ]
@@ -1778,33 +1852,27 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "resource",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "search",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
           "200": {
             "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
           }
         },
         "summary": "List permissions",
+        "tags": [
+          "permissions"
+        ]
+      },
+      "post": {
+        "operationId": "PermissionsController_create",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Create permissions",
         "tags": [
           "permissions"
         ]
@@ -1826,12 +1894,53 @@
         "responses": {
           "200": {
             "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
           }
         },
-        "summary": "Get permission by id",
+        "summary": "Get permissions by id",
+        "tags": [
+          "permissions"
+        ]
+      },
+      "patch": {
+        "operationId": "PermissionsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Update permissions",
+        "tags": [
+          "permissions"
+        ]
+      },
+      "delete": {
+        "operationId": "PermissionsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Soft-delete permissions",
         "tags": [
           "permissions"
         ]
@@ -1861,31 +1970,11 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "search",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "includeSystem",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "default": true,
-              "type": "boolean"
-            }
           }
         ],
         "responses": {
           "200": {
             "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
           }
         },
         "summary": "List roles",
@@ -1896,87 +1985,12 @@
       "post": {
         "operationId": "RolesController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateRoleDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
           }
         },
-        "summary": "Create custom role",
-        "tags": [
-          "roles"
-        ]
-      }
-    },
-    "/api/roles/{id}/permissions": {
-      "get": {
-        "operationId": "RolesController_getRolePermissions",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
-          }
-        },
-        "summary": "Get permission ids for role",
-        "tags": [
-          "roles"
-        ]
-      },
-      "put": {
-        "operationId": "RolesController_replaceRolePermissions",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ReplaceRolePermissionsDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
-          }
-        },
-        "summary": "Replace role permissions (matrix)",
+        "summary": "Create roles",
         "tags": [
           "roles"
         ]
@@ -1998,12 +2012,9 @@
         "responses": {
           "200": {
             "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
           }
         },
-        "summary": "Get role by id",
+        "summary": "Get roles by id",
         "tags": [
           "roles"
         ]
@@ -2020,25 +2031,12 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateRoleDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
           }
         },
-        "summary": "Update custom role",
+        "summary": "Update roles",
         "tags": [
           "roles"
         ]
@@ -2058,12 +2056,9 @@
         "responses": {
           "200": {
             "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
           }
         },
-        "summary": "Soft-delete custom role",
+        "summary": "Soft-delete roles",
         "tags": [
           "roles"
         ]
@@ -2098,9 +2093,6 @@
         "responses": {
           "200": {
             "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
           }
         },
         "summary": "List role-permissions",
@@ -2114,9 +2106,6 @@
         "responses": {
           "201": {
             "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
           }
         },
         "summary": "Create role-permissions",
@@ -2149,9 +2138,6 @@
         "responses": {
           "200": {
             "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete role-permissions",
@@ -2184,44 +2170,14 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "userId",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
-          },
-          {
-            "name": "roleId",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
-          },
-          {
-            "name": "includeRevoked",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "default": false,
-              "type": "boolean"
-            }
           }
         ],
         "responses": {
           "200": {
             "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
           }
         },
-        "summary": "List user role assignments",
+        "summary": "List user-role-assignments",
         "tags": [
           "user-role-assignments"
         ]
@@ -2229,25 +2185,12 @@
       "post": {
         "operationId": "UserRoleAssignmentsController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateUserRoleAssignmentDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
           }
         },
-        "summary": "Assign role to user",
+        "summary": "Create user-role-assignments",
         "tags": [
           "user-role-assignments"
         ]
@@ -2269,20 +2212,15 @@
         "responses": {
           "200": {
             "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
           }
         },
-        "summary": "Get assignment by id",
+        "summary": "Get user-role-assignments by id",
         "tags": [
           "user-role-assignments"
         ]
-      }
-    },
-    "/api/user-role-assignments/{id}/revoke": {
+      },
       "patch": {
-        "operationId": "UserRoleAssignmentsController_revoke",
+        "operationId": "UserRoleAssignmentsController_update",
         "parameters": [
           {
             "name": "id",
@@ -2296,12 +2234,31 @@
         "responses": {
           "200": {
             "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
           }
         },
-        "summary": "Revoke role assignment",
+        "summary": "Update user-role-assignments",
+        "tags": [
+          "user-role-assignments"
+        ]
+      },
+      "delete": {
+        "operationId": "UserRoleAssignmentsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Soft-delete user-role-assignments",
         "tags": [
           "user-role-assignments"
         ]
@@ -2367,6 +2324,16 @@
             }
           },
           {
+            "name": "userId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by user involved as actor or target",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
             "name": "dateFrom",
             "required": false,
             "in": "query",
@@ -2389,9 +2356,6 @@
         ],
         "responses": {
           "200": {
-            "description": ""
-          },
-          "401": {
             "description": ""
           },
           "403": {
@@ -2419,9 +2383,6 @@
         ],
         "responses": {
           "200": {
-            "description": ""
-          },
-          "401": {
             "description": ""
           },
           "403": {
@@ -2458,15 +2419,6 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "search",
-            "required": false,
-            "in": "query",
-            "description": "Search by name, slug or country code",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -2482,16 +2434,6 @@
       "post": {
         "operationId": "DestinationsController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateDestinationDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": ""
@@ -2538,16 +2480,6 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateDestinationDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
@@ -2605,15 +2537,6 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "destinationId",
-            "required": false,
-            "in": "query",
-            "description": "Filter by destination id",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -2629,16 +2552,6 @@
       "post": {
         "operationId": "PointsOfInterestController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreatePointOfInterestDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": ""
@@ -2685,16 +2598,6 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdatePointOfInterestDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
@@ -2752,15 +2655,6 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "search",
-            "required": false,
-            "in": "query",
-            "description": "Search by code or name",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -2776,22 +2670,12 @@
       "post": {
         "operationId": "AmenitiesController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateAmenityDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": ""
           }
         },
-        "summary": "Create amenity",
+        "summary": "Create amenities",
         "tags": [
           "amenities"
         ]
@@ -2815,7 +2699,7 @@
             "description": ""
           }
         },
-        "summary": "Get amenity by id",
+        "summary": "Get amenities by id",
         "tags": [
           "amenities"
         ]
@@ -2832,22 +2716,12 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateAmenityDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
           }
         },
-        "summary": "Update amenity",
+        "summary": "Update amenities",
         "tags": [
           "amenities"
         ]
@@ -2869,7 +2743,7 @@
             "description": ""
           }
         },
-        "summary": "Soft-delete amenity",
+        "summary": "Soft-delete amenities",
         "tags": [
           "amenities"
         ]
@@ -2899,24 +2773,6 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "search",
-            "required": false,
-            "in": "query",
-            "description": "Search by name or slug",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "destinationId",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -2932,22 +2788,12 @@
       "post": {
         "operationId": "PropertiesController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreatePropertyDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": ""
           }
         },
-        "summary": "Create property",
+        "summary": "Create properties",
         "tags": [
           "properties"
         ]
@@ -2971,7 +2817,7 @@
             "description": ""
           }
         },
-        "summary": "Get property by id",
+        "summary": "Get properties by id",
         "tags": [
           "properties"
         ]
@@ -2988,22 +2834,12 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdatePropertyDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
           }
         },
-        "summary": "Update property",
+        "summary": "Update properties",
         "tags": [
           "properties"
         ]
@@ -3025,7 +2861,7 @@
             "description": ""
           }
         },
-        "summary": "Soft-delete property",
+        "summary": "Soft-delete properties",
         "tags": [
           "properties"
         ]
@@ -3055,15 +2891,6 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "propertyId",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -3071,7 +2898,7 @@
             "description": ""
           }
         },
-        "summary": "List property images",
+        "summary": "List property-images",
         "tags": [
           "property-images"
         ]
@@ -3079,22 +2906,12 @@
       "post": {
         "operationId": "PropertyImagesController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreatePropertyImageDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": ""
           }
         },
-        "summary": "Create property image",
+        "summary": "Create property-images",
         "tags": [
           "property-images"
         ]
@@ -3118,7 +2935,7 @@
             "description": ""
           }
         },
-        "summary": "Get property image by id",
+        "summary": "Get property-images by id",
         "tags": [
           "property-images"
         ]
@@ -3135,22 +2952,12 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdatePropertyImageDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
           }
         },
-        "summary": "Update property image",
+        "summary": "Update property-images",
         "tags": [
           "property-images"
         ]
@@ -3172,7 +2979,7 @@
             "description": ""
           }
         },
-        "summary": "Soft-delete property image",
+        "summary": "Soft-delete property-images",
         "tags": [
           "property-images"
         ]
@@ -3202,15 +3009,6 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "propertyId",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -3218,7 +3016,7 @@
             "description": ""
           }
         },
-        "summary": "List property amenities",
+        "summary": "List property-amenities",
         "tags": [
           "property-amenities"
         ]
@@ -3231,32 +3029,7 @@
             "description": ""
           }
         },
-        "summary": "Link amenity to property",
-        "tags": [
-          "property-amenities"
-        ]
-      }
-    },
-    "/api/property-amenities/sync": {
-      "put": {
-        "operationId": "PropertyAmenitiesController_sync",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ReplacePropertyAmenitiesDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "summary": "Replace property amenities (multi-select sync)",
+        "summary": "Create property-amenities",
         "tags": [
           "property-amenities"
         ]
@@ -3288,7 +3061,7 @@
             "description": ""
           }
         },
-        "summary": "Soft-delete property amenity link",
+        "summary": "Soft-delete property-amenities",
         "tags": [
           "property-amenities"
         ]
@@ -3318,15 +3091,6 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "propertyId",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -3342,22 +3106,12 @@
       "post": {
         "operationId": "RoomsController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateRoomDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": ""
           }
         },
-        "summary": "Create room",
+        "summary": "Create rooms",
         "tags": [
           "rooms"
         ]
@@ -3381,7 +3135,7 @@
             "description": ""
           }
         },
-        "summary": "Get room by id",
+        "summary": "Get rooms by id",
         "tags": [
           "rooms"
         ]
@@ -3398,22 +3152,12 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateRoomDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
           }
         },
-        "summary": "Update room",
+        "summary": "Update rooms",
         "tags": [
           "rooms"
         ]
@@ -3435,7 +3179,7 @@
             "description": ""
           }
         },
-        "summary": "Soft-delete room",
+        "summary": "Soft-delete rooms",
         "tags": [
           "rooms"
         ]
@@ -3655,15 +3399,6 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "search",
-            "required": false,
-            "in": "query",
-            "description": "Search by IATA code or name",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -3679,22 +3414,12 @@
       "post": {
         "operationId": "AirlinesController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateAirlineDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": ""
           }
         },
-        "summary": "Create airline",
+        "summary": "Create airlines",
         "tags": [
           "airlines"
         ]
@@ -3718,7 +3443,7 @@
             "description": ""
           }
         },
-        "summary": "Get airline by id",
+        "summary": "Get airlines by id",
         "tags": [
           "airlines"
         ]
@@ -3735,22 +3460,12 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateAirlineDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
           }
         },
-        "summary": "Update airline",
+        "summary": "Update airlines",
         "tags": [
           "airlines"
         ]
@@ -3772,7 +3487,7 @@
             "description": ""
           }
         },
-        "summary": "Soft-delete airline",
+        "summary": "Soft-delete airlines",
         "tags": [
           "airlines"
         ]
@@ -3802,15 +3517,6 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "search",
-            "required": false,
-            "in": "query",
-            "description": "Search by IATA code, name or city",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -3826,22 +3532,12 @@
       "post": {
         "operationId": "AirportsController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateAirportDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": ""
           }
         },
-        "summary": "Create airport",
+        "summary": "Create airports",
         "tags": [
           "airports"
         ]
@@ -3865,7 +3561,7 @@
             "description": ""
           }
         },
-        "summary": "Get airport by id",
+        "summary": "Get airports by id",
         "tags": [
           "airports"
         ]
@@ -3882,22 +3578,12 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateAirportDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
           }
         },
-        "summary": "Update airport",
+        "summary": "Update airports",
         "tags": [
           "airports"
         ]
@@ -3919,7 +3605,7 @@
             "description": ""
           }
         },
-        "summary": "Soft-delete airport",
+        "summary": "Soft-delete airports",
         "tags": [
           "airports"
         ]
@@ -3949,15 +3635,6 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "search",
-            "required": false,
-            "in": "query",
-            "description": "Search by flight number (code vol)",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -3973,22 +3650,12 @@
       "post": {
         "operationId": "FlightsController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateFlightDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": ""
           }
         },
-        "summary": "Create flight",
+        "summary": "Create flights",
         "tags": [
           "flights"
         ]
@@ -4012,7 +3679,7 @@
             "description": ""
           }
         },
-        "summary": "Get flight by id",
+        "summary": "Get flights by id",
         "tags": [
           "flights"
         ]
@@ -4029,22 +3696,12 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateFlightDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
           }
         },
-        "summary": "Update flight",
+        "summary": "Update flights",
         "tags": [
           "flights"
         ]
@@ -4066,7 +3723,7 @@
             "description": ""
           }
         },
-        "summary": "Soft-delete flight",
+        "summary": "Soft-delete flights",
         "tags": [
           "flights"
         ]
@@ -4096,15 +3753,6 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "flightId",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -4112,7 +3760,7 @@
             "description": ""
           }
         },
-        "summary": "List flight classes",
+        "summary": "List flight-classes",
         "tags": [
           "flight-classes"
         ]
@@ -4120,22 +3768,12 @@
       "post": {
         "operationId": "FlightClassesController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateFlightClassDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": ""
           }
         },
-        "summary": "Create flight class",
+        "summary": "Create flight-classes",
         "tags": [
           "flight-classes"
         ]
@@ -4159,7 +3797,7 @@
             "description": ""
           }
         },
-        "summary": "Get flight class by id",
+        "summary": "Get flight-classes by id",
         "tags": [
           "flight-classes"
         ]
@@ -4176,22 +3814,12 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateFlightClassDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
           }
         },
-        "summary": "Update flight class",
+        "summary": "Update flight-classes",
         "tags": [
           "flight-classes"
         ]
@@ -4213,7 +3841,7 @@
             "description": ""
           }
         },
-        "summary": "Soft-delete flight class",
+        "summary": "Soft-delete flight-classes",
         "tags": [
           "flight-classes"
         ]
@@ -4243,33 +3871,6 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "flightClassId",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
-          },
-          {
-            "name": "dateFrom",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "example": "2026-05-01",
-              "type": "string"
-            }
-          },
-          {
-            "name": "dateTo",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "example": "2026-05-31",
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -4277,7 +3878,7 @@
             "description": ""
           }
         },
-        "summary": "List flight class availability",
+        "summary": "List flight-class-availability",
         "tags": [
           "flight-class-availability"
         ]
@@ -4285,47 +3886,12 @@
       "post": {
         "operationId": "FlightClassAvailabilityController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateFlightClassAvailabilityDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": ""
           }
         },
-        "summary": "Create flight class availability",
-        "tags": [
-          "flight-class-availability"
-        ]
-      }
-    },
-    "/api/flight-class-availability/bulk": {
-      "put": {
-        "operationId": "FlightClassAvailabilityController_bulkUpsert",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/BulkUpsertFlightClassAvailabilityDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "summary": "Bulk upsert availability for a date range",
+        "summary": "Create flight-class-availability",
         "tags": [
           "flight-class-availability"
         ]
@@ -4349,7 +3915,7 @@
             "description": ""
           }
         },
-        "summary": "Get flight class availability by id",
+        "summary": "Get flight-class-availability by id",
         "tags": [
           "flight-class-availability"
         ]
@@ -4366,22 +3932,12 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateFlightClassAvailabilityDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
           }
         },
-        "summary": "Update flight class availability",
+        "summary": "Update flight-class-availability",
         "tags": [
           "flight-class-availability"
         ]
@@ -4403,7 +3959,7 @@
             "description": ""
           }
         },
-        "summary": "Soft-delete flight class availability",
+        "summary": "Soft-delete flight-class-availability",
         "tags": [
           "flight-class-availability"
         ]
@@ -4433,24 +3989,6 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "search",
-            "required": false,
-            "in": "query",
-            "description": "Search by name or address",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "destinationId",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -4458,7 +3996,7 @@
             "description": ""
           }
         },
-        "summary": "List rental agencies",
+        "summary": "List rental-agencies",
         "tags": [
           "rental-agencies"
         ]
@@ -4466,22 +4004,12 @@
       "post": {
         "operationId": "RentalAgenciesController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateRentalAgencyDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": ""
           }
         },
-        "summary": "Create rental agency",
+        "summary": "Create rental-agencies",
         "tags": [
           "rental-agencies"
         ]
@@ -4505,7 +4033,7 @@
             "description": ""
           }
         },
-        "summary": "Get rental agency by id",
+        "summary": "Get rental-agencies by id",
         "tags": [
           "rental-agencies"
         ]
@@ -4522,22 +4050,12 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateRentalAgencyDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
           }
         },
-        "summary": "Update rental agency",
+        "summary": "Update rental-agencies",
         "tags": [
           "rental-agencies"
         ]
@@ -4559,7 +4077,7 @@
             "description": ""
           }
         },
-        "summary": "Soft-delete rental agency",
+        "summary": "Soft-delete rental-agencies",
         "tags": [
           "rental-agencies"
         ]
@@ -4589,15 +4107,6 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "search",
-            "required": false,
-            "in": "query",
-            "description": "Search by name or example model",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -4605,7 +4114,7 @@
             "description": ""
           }
         },
-        "summary": "List vehicle categories",
+        "summary": "List vehicle-categories",
         "tags": [
           "vehicle-categories"
         ]
@@ -4613,22 +4122,12 @@
       "post": {
         "operationId": "VehicleCategoriesController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateVehicleCategoryDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": ""
           }
         },
-        "summary": "Create vehicle category",
+        "summary": "Create vehicle-categories",
         "tags": [
           "vehicle-categories"
         ]
@@ -4652,7 +4151,7 @@
             "description": ""
           }
         },
-        "summary": "Get vehicle category by id",
+        "summary": "Get vehicle-categories by id",
         "tags": [
           "vehicle-categories"
         ]
@@ -4669,22 +4168,12 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateVehicleCategoryDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
           }
         },
-        "summary": "Update vehicle category",
+        "summary": "Update vehicle-categories",
         "tags": [
           "vehicle-categories"
         ]
@@ -4706,7 +4195,7 @@
             "description": ""
           }
         },
-        "summary": "Soft-delete vehicle category",
+        "summary": "Soft-delete vehicle-categories",
         "tags": [
           "vehicle-categories"
         ]
@@ -4736,33 +4225,6 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "search",
-            "required": false,
-            "in": "query",
-            "description": "Search by license plate",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "agencyId",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
-          },
-          {
-            "name": "categoryId",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -4778,22 +4240,12 @@
       "post": {
         "operationId": "VehiclesController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateVehicleDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": ""
           }
         },
-        "summary": "Create vehicle",
+        "summary": "Create vehicles",
         "tags": [
           "vehicles"
         ]
@@ -4817,7 +4269,7 @@
             "description": ""
           }
         },
-        "summary": "Get vehicle by id",
+        "summary": "Get vehicles by id",
         "tags": [
           "vehicles"
         ]
@@ -4834,22 +4286,12 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateVehicleDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
           }
         },
-        "summary": "Update vehicle",
+        "summary": "Update vehicles",
         "tags": [
           "vehicles"
         ]
@@ -4871,7 +4313,7 @@
             "description": ""
           }
         },
-        "summary": "Soft-delete vehicle",
+        "summary": "Soft-delete vehicles",
         "tags": [
           "vehicles"
         ]
@@ -4901,33 +4343,6 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "vehicleId",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
-          },
-          {
-            "name": "startFrom",
-            "required": false,
-            "in": "query",
-            "description": "Filter slots overlapping from this datetime (ISO)",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "endTo",
-            "required": false,
-            "in": "query",
-            "description": "Filter slots overlapping until this datetime (ISO)",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -4935,7 +4350,7 @@
             "description": ""
           }
         },
-        "summary": "List vehicle availability slots",
+        "summary": "List vehicle-availability",
         "tags": [
           "vehicle-availability"
         ]
@@ -4943,22 +4358,12 @@
       "post": {
         "operationId": "VehicleAvailabilityController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateVehicleAvailabilityDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": ""
           }
         },
-        "summary": "Create vehicle availability slot",
+        "summary": "Create vehicle-availability",
         "tags": [
           "vehicle-availability"
         ]
@@ -4982,7 +4387,7 @@
             "description": ""
           }
         },
-        "summary": "Get vehicle availability by id",
+        "summary": "Get vehicle-availability by id",
         "tags": [
           "vehicle-availability"
         ]
@@ -4999,22 +4404,12 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateVehicleAvailabilityDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
           }
         },
-        "summary": "Update vehicle availability slot",
+        "summary": "Update vehicle-availability",
         "tags": [
           "vehicle-availability"
         ]
@@ -5036,7 +4431,7 @@
             "description": ""
           }
         },
-        "summary": "Soft-delete vehicle availability",
+        "summary": "Soft-delete vehicle-availability",
         "tags": [
           "vehicle-availability"
         ]
@@ -5066,15 +4461,6 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "search",
-            "required": false,
-            "in": "query",
-            "description": "Search by name",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -5082,7 +4468,7 @@
             "description": ""
           }
         },
-        "summary": "List cruise lines",
+        "summary": "List cruise-lines",
         "tags": [
           "cruise-lines"
         ]
@@ -5090,22 +4476,12 @@
       "post": {
         "operationId": "CruiseLinesController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateCruiseLineDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": ""
           }
         },
-        "summary": "Create cruise line",
+        "summary": "Create cruise-lines",
         "tags": [
           "cruise-lines"
         ]
@@ -5129,7 +4505,7 @@
             "description": ""
           }
         },
-        "summary": "Get cruise line by id",
+        "summary": "Get cruise-lines by id",
         "tags": [
           "cruise-lines"
         ]
@@ -5146,22 +4522,12 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateCruiseLineDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
           }
         },
-        "summary": "Update cruise line",
+        "summary": "Update cruise-lines",
         "tags": [
           "cruise-lines"
         ]
@@ -5183,7 +4549,7 @@
             "description": ""
           }
         },
-        "summary": "Soft-delete cruise line",
+        "summary": "Soft-delete cruise-lines",
         "tags": [
           "cruise-lines"
         ]
@@ -5213,15 +4579,6 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "search",
-            "required": false,
-            "in": "query",
-            "description": "Search by code or name",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -5229,7 +4586,7 @@
             "description": ""
           }
         },
-        "summary": "List cruise ports",
+        "summary": "List cruise-ports",
         "tags": [
           "cruise-ports"
         ]
@@ -5237,22 +4594,12 @@
       "post": {
         "operationId": "CruisePortsController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateCruisePortDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": ""
           }
         },
-        "summary": "Create cruise port",
+        "summary": "Create cruise-ports",
         "tags": [
           "cruise-ports"
         ]
@@ -5276,7 +4623,7 @@
             "description": ""
           }
         },
-        "summary": "Get cruise port by id",
+        "summary": "Get cruise-ports by id",
         "tags": [
           "cruise-ports"
         ]
@@ -5293,22 +4640,12 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateCruisePortDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
           }
         },
-        "summary": "Update cruise port",
+        "summary": "Update cruise-ports",
         "tags": [
           "cruise-ports"
         ]
@@ -5330,7 +4667,7 @@
             "description": ""
           }
         },
-        "summary": "Soft-delete cruise port",
+        "summary": "Soft-delete cruise-ports",
         "tags": [
           "cruise-ports"
         ]
@@ -5360,24 +4697,6 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "cruiseLineId",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
-          },
-          {
-            "name": "search",
-            "required": false,
-            "in": "query",
-            "description": "Search by ship name",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -5393,22 +4712,12 @@
       "post": {
         "operationId": "ShipsController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateShipDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": ""
           }
         },
-        "summary": "Create ship",
+        "summary": "Create ships",
         "tags": [
           "ships"
         ]
@@ -5432,7 +4741,7 @@
             "description": ""
           }
         },
-        "summary": "Get ship by id",
+        "summary": "Get ships by id",
         "tags": [
           "ships"
         ]
@@ -5449,22 +4758,12 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateShipDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
           }
         },
-        "summary": "Update ship",
+        "summary": "Update ships",
         "tags": [
           "ships"
         ]
@@ -5486,7 +4785,7 @@
             "description": ""
           }
         },
-        "summary": "Soft-delete ship",
+        "summary": "Soft-delete ships",
         "tags": [
           "ships"
         ]
@@ -5516,15 +4815,6 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "shipId",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -5540,22 +4830,12 @@
       "post": {
         "operationId": "ItinerariesController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateItineraryDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": ""
           }
         },
-        "summary": "Create itinerary",
+        "summary": "Create itineraries",
         "tags": [
           "itineraries"
         ]
@@ -5579,7 +4859,7 @@
             "description": ""
           }
         },
-        "summary": "Get itinerary by id",
+        "summary": "Get itineraries by id",
         "tags": [
           "itineraries"
         ]
@@ -5596,22 +4876,12 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateItineraryDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
           }
         },
-        "summary": "Update itinerary",
+        "summary": "Update itineraries",
         "tags": [
           "itineraries"
         ]
@@ -5633,7 +4903,7 @@
             "description": ""
           }
         },
-        "summary": "Soft-delete itinerary",
+        "summary": "Soft-delete itineraries",
         "tags": [
           "itineraries"
         ]
@@ -5663,15 +4933,6 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "itineraryId",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -5679,7 +4940,7 @@
             "description": ""
           }
         },
-        "summary": "List itinerary ports",
+        "summary": "List itinerary-ports",
         "tags": [
           "itinerary-ports"
         ]
@@ -5687,22 +4948,12 @@
       "post": {
         "operationId": "ItineraryPortsController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateItineraryPortDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": ""
           }
         },
-        "summary": "Create itinerary port",
+        "summary": "Create itinerary-ports",
         "tags": [
           "itinerary-ports"
         ]
@@ -5726,7 +4977,7 @@
             "description": ""
           }
         },
-        "summary": "Get itinerary port by id",
+        "summary": "Get itinerary-ports by id",
         "tags": [
           "itinerary-ports"
         ]
@@ -5743,22 +4994,12 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateItineraryPortDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
           }
         },
-        "summary": "Update itinerary port",
+        "summary": "Update itinerary-ports",
         "tags": [
           "itinerary-ports"
         ]
@@ -5780,7 +5021,7 @@
             "description": ""
           }
         },
-        "summary": "Soft-delete itinerary port",
+        "summary": "Soft-delete itinerary-ports",
         "tags": [
           "itinerary-ports"
         ]
@@ -5810,15 +5051,6 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "shipId",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -5834,22 +5066,12 @@
       "post": {
         "operationId": "CabinsController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateCabinDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": ""
           }
         },
-        "summary": "Create cabin",
+        "summary": "Create cabins",
         "tags": [
           "cabins"
         ]
@@ -5873,7 +5095,7 @@
             "description": ""
           }
         },
-        "summary": "Get cabin by id",
+        "summary": "Get cabins by id",
         "tags": [
           "cabins"
         ]
@@ -5890,22 +5112,12 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateCabinDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
           }
         },
-        "summary": "Update cabin",
+        "summary": "Update cabins",
         "tags": [
           "cabins"
         ]
@@ -5927,7 +5139,7 @@
             "description": ""
           }
         },
-        "summary": "Soft-delete cabin",
+        "summary": "Soft-delete cabins",
         "tags": [
           "cabins"
         ]
@@ -5957,15 +5169,6 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "itineraryId",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -5973,7 +5176,7 @@
             "description": ""
           }
         },
-        "summary": "List cruise sailings",
+        "summary": "List cruise-sailings",
         "tags": [
           "cruise-sailings"
         ]
@@ -5981,22 +5184,12 @@
       "post": {
         "operationId": "CruiseSailingsController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateCruiseSailingDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": ""
           }
         },
-        "summary": "Create cruise sailing",
+        "summary": "Create cruise-sailings",
         "tags": [
           "cruise-sailings"
         ]
@@ -6020,7 +5213,7 @@
             "description": ""
           }
         },
-        "summary": "Get cruise sailing by id",
+        "summary": "Get cruise-sailings by id",
         "tags": [
           "cruise-sailings"
         ]
@@ -6037,22 +5230,12 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateCruiseSailingDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
           }
         },
-        "summary": "Update cruise sailing",
+        "summary": "Update cruise-sailings",
         "tags": [
           "cruise-sailings"
         ]
@@ -6074,7 +5257,7 @@
             "description": ""
           }
         },
-        "summary": "Soft-delete cruise sailing",
+        "summary": "Soft-delete cruise-sailings",
         "tags": [
           "cruise-sailings"
         ]
@@ -6104,24 +5287,6 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "sailingId",
-            "required": true,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
-          },
-          {
-            "name": "cabinId",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -6129,7 +5294,7 @@
             "description": ""
           }
         },
-        "summary": "List cabin availability for a sailing",
+        "summary": "List cabin-availability",
         "tags": [
           "cabin-availability"
         ]
@@ -6137,22 +5302,12 @@
       "post": {
         "operationId": "CabinAvailabilityController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateCabinAvailabilityDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": ""
           }
         },
-        "summary": "Create cabin availability",
+        "summary": "Create cabin-availability",
         "tags": [
           "cabin-availability"
         ]
@@ -6176,7 +5331,7 @@
             "description": ""
           }
         },
-        "summary": "Get cabin availability by id",
+        "summary": "Get cabin-availability by id",
         "tags": [
           "cabin-availability"
         ]
@@ -6193,22 +5348,12 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateCabinAvailabilityDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
           }
         },
-        "summary": "Update cabin availability",
+        "summary": "Update cabin-availability",
         "tags": [
           "cabin-availability"
         ]
@@ -6230,7 +5375,7 @@
             "description": ""
           }
         },
-        "summary": "Soft-delete cabin availability",
+        "summary": "Soft-delete cabin-availability",
         "tags": [
           "cabin-availability"
         ]
@@ -6260,24 +5405,6 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "destinationId",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
-          },
-          {
-            "name": "search",
-            "required": false,
-            "in": "query",
-            "description": "Search by provider name",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -6285,7 +5412,7 @@
             "description": ""
           }
         },
-        "summary": "List activity providers",
+        "summary": "List activity-providers",
         "tags": [
           "activity-providers"
         ]
@@ -6293,22 +5420,12 @@
       "post": {
         "operationId": "ActivityProvidersController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateActivityProviderDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": ""
           }
         },
-        "summary": "Create activity provider",
+        "summary": "Create activity-providers",
         "tags": [
           "activity-providers"
         ]
@@ -6332,7 +5449,7 @@
             "description": ""
           }
         },
-        "summary": "Get activity provider by id",
+        "summary": "Get activity-providers by id",
         "tags": [
           "activity-providers"
         ]
@@ -6349,22 +5466,12 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateActivityProviderDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
           }
         },
-        "summary": "Update activity provider",
+        "summary": "Update activity-providers",
         "tags": [
           "activity-providers"
         ]
@@ -6386,7 +5493,7 @@
             "description": ""
           }
         },
-        "summary": "Soft-delete activity provider",
+        "summary": "Soft-delete activity-providers",
         "tags": [
           "activity-providers"
         ]
@@ -6416,33 +5523,6 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "providerId",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
-          },
-          {
-            "name": "destinationId",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
-          },
-          {
-            "name": "search",
-            "required": false,
-            "in": "query",
-            "description": "Search by activity title",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -6458,22 +5538,12 @@
       "post": {
         "operationId": "ActivitiesController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateActivityDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": ""
           }
         },
-        "summary": "Create activity",
+        "summary": "Create activities",
         "tags": [
           "activities"
         ]
@@ -6497,7 +5567,7 @@
             "description": ""
           }
         },
-        "summary": "Get activity by id",
+        "summary": "Get activities by id",
         "tags": [
           "activities"
         ]
@@ -6514,22 +5584,12 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateActivityDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
           }
         },
-        "summary": "Update activity",
+        "summary": "Update activities",
         "tags": [
           "activities"
         ]
@@ -6551,7 +5611,7 @@
             "description": ""
           }
         },
-        "summary": "Soft-delete activity",
+        "summary": "Soft-delete activities",
         "tags": [
           "activities"
         ]
@@ -6581,24 +5641,6 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "activityId",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
-          },
-          {
-            "name": "destinationId",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -6606,7 +5648,7 @@
             "description": ""
           }
         },
-        "summary": "List activity schedules",
+        "summary": "List activity-schedules",
         "tags": [
           "activity-schedules"
         ]
@@ -6614,22 +5656,12 @@
       "post": {
         "operationId": "ActivitySchedulesController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateActivityScheduleDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": ""
           }
         },
-        "summary": "Create activity schedule",
+        "summary": "Create activity-schedules",
         "tags": [
           "activity-schedules"
         ]
@@ -6653,7 +5685,7 @@
             "description": ""
           }
         },
-        "summary": "Get activity schedule by id",
+        "summary": "Get activity-schedules by id",
         "tags": [
           "activity-schedules"
         ]
@@ -6670,22 +5702,12 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateActivityScheduleDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
           }
         },
-        "summary": "Update activity schedule",
+        "summary": "Update activity-schedules",
         "tags": [
           "activity-schedules"
         ]
@@ -6707,7 +5729,7 @@
             "description": ""
           }
         },
-        "summary": "Soft-delete activity schedule",
+        "summary": "Soft-delete activity-schedules",
         "tags": [
           "activity-schedules"
         ]
@@ -6737,23 +5759,6 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "search",
-            "required": false,
-            "in": "query",
-            "description": "Search by package name",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "active",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "boolean"
-            }
           }
         ],
         "responses": {
@@ -6769,22 +5774,12 @@
       "post": {
         "operationId": "PackagesController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreatePackageDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": ""
           }
         },
-        "summary": "Create package",
+        "summary": "Create packages",
         "tags": [
           "packages"
         ]
@@ -6808,7 +5803,7 @@
             "description": ""
           }
         },
-        "summary": "Get package detail with items and pricing",
+        "summary": "Get packages by id",
         "tags": [
           "packages"
         ]
@@ -6825,22 +5820,12 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdatePackageDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
           }
         },
-        "summary": "Update package",
+        "summary": "Update packages",
         "tags": [
           "packages"
         ]
@@ -6862,7 +5847,7 @@
             "description": ""
           }
         },
-        "summary": "Soft-delete package",
+        "summary": "Soft-delete packages",
         "tags": [
           "packages"
         ]
@@ -6892,15 +5877,6 @@
               "default": 20,
               "type": "number"
             }
-          },
-          {
-            "name": "packageId",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -6908,7 +5884,7 @@
             "description": ""
           }
         },
-        "summary": "List package items",
+        "summary": "List package-items",
         "tags": [
           "package-items"
         ]
@@ -6916,22 +5892,12 @@
       "post": {
         "operationId": "PackageItemsController_create",
         "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreatePackageItemDto"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": ""
           }
         },
-        "summary": "Create package item",
+        "summary": "Create package-items",
         "tags": [
           "package-items"
         ]
@@ -6955,7 +5921,7 @@
             "description": ""
           }
         },
-        "summary": "Get package item by id",
+        "summary": "Get package-items by id",
         "tags": [
           "package-items"
         ]
@@ -6972,22 +5938,12 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdatePackageItemDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": ""
           }
         },
-        "summary": "Update package item",
+        "summary": "Update package-items",
         "tags": [
           "package-items"
         ]
@@ -7009,7 +5965,7 @@
             "description": ""
           }
         },
-        "summary": "Soft-delete package item",
+        "summary": "Soft-delete package-items",
         "tags": [
           "package-items"
         ]
@@ -7469,27 +6425,50 @@
               "default": 20,
               "type": "number"
             }
+          },
+          {
+            "name": "rating",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 5,
+              "type": "number"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "approved",
+                "hidden"
+              ]
+            }
+          },
+          {
+            "name": "propertyId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by accommodation property",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
-        "summary": "List reviews",
-        "tags": [
-          "reviews"
-        ]
-      },
-      "post": {
-        "operationId": "ReviewsController_create",
-        "parameters": [],
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "summary": "Create reviews",
+        "summary": "List reviews for moderation (admin)",
         "tags": [
           "reviews"
         ]
@@ -7511,15 +6490,18 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
-        "summary": "Get reviews by id",
+        "summary": "Get review detail for moderation (admin)",
         "tags": [
           "reviews"
         ]
       },
       "patch": {
-        "operationId": "ReviewsController_update",
+        "operationId": "ReviewsController_updateStatus",
         "parameters": [
           {
             "name": "id",
@@ -7530,12 +6512,25 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateReviewStatusDto"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
-        "summary": "Update reviews",
+        "summary": "Approve or hide a review",
         "tags": [
           "reviews"
         ]
@@ -7555,9 +6550,12 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
-        "summary": "Soft-delete reviews",
+        "summary": "Soft-delete a review",
         "tags": [
           "reviews"
         ]
@@ -7681,6 +6679,124 @@
         ]
       }
     },
+    "/api/booking-status-history": {
+      "get": {
+        "operationId": "BookingStatusHistoryController_findAll",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "List booking-status-history",
+        "tags": [
+          "booking-status-history"
+        ]
+      },
+      "post": {
+        "operationId": "BookingStatusHistoryController_create",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Create booking-status-history",
+        "tags": [
+          "booking-status-history"
+        ]
+      }
+    },
+    "/api/booking-status-history/{id}": {
+      "get": {
+        "operationId": "BookingStatusHistoryController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get booking-status-history by id",
+        "tags": [
+          "booking-status-history"
+        ]
+      },
+      "patch": {
+        "operationId": "BookingStatusHistoryController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Update booking-status-history",
+        "tags": [
+          "booking-status-history"
+        ]
+      },
+      "delete": {
+        "operationId": "BookingStatusHistoryController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Soft-delete booking-status-history",
+        "tags": [
+          "booking-status-history"
+        ]
+      }
+    },
     "/api/payments": {
       "get": {
         "operationId": "PaymentsController_findAll",
@@ -7710,9 +6826,6 @@
         "responses": {
           "200": {
             "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
           }
         },
         "summary": "List payments",
@@ -7726,9 +6839,6 @@
         "responses": {
           "201": {
             "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
           }
         },
         "summary": "Create payments",
@@ -7753,9 +6863,6 @@
         "responses": {
           "200": {
             "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
           }
         },
         "summary": "Get payments by id",
@@ -7778,9 +6885,6 @@
         "responses": {
           "200": {
             "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
           }
         },
         "summary": "Update payments",
@@ -7803,49 +6907,9 @@
         "responses": {
           "200": {
             "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete payments",
-        "tags": [
-          "payments"
-        ]
-      }
-    },
-    "/api/payments/{id}/refund": {
-      "post": {
-        "operationId": "PaymentsController_refund",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RefundPaymentDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          },
-          "403": {
-            "description": "Missing permission"
-          }
-        },
-        "summary": "Refund payment via Stripe (partial or full; booking must be cancelled)",
         "tags": [
           "payments"
         ]
@@ -8111,6 +7175,34 @@
               "default": 20,
               "type": "number"
             }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "open",
+                "pending",
+                "resolved",
+                "closed"
+              ]
+            }
+          },
+          {
+            "name": "priority",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "low",
+                "normal",
+                "high",
+                "urgent"
+              ]
+            }
           }
         ],
         "responses": {
@@ -8191,6 +7283,16 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSupportTicketStatusDto"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": ""
@@ -8199,7 +7301,7 @@
             "description": "Missing permission"
           }
         },
-        "summary": "Update support ticket (owner or staff)",
+        "summary": "Update support ticket status or priority (staff)",
         "tags": [
           "support-tickets"
         ]
@@ -8217,14 +7319,14 @@
           }
         ],
         "responses": {
-          "200": {
+          "204": {
             "description": ""
           },
           "403": {
             "description": "Missing permission"
           }
         },
-        "summary": "Soft-delete support ticket (owner or staff)",
+        "summary": "Soft-delete support ticket (staff)",
         "tags": [
           "support-tickets"
         ]
@@ -8259,6 +7361,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "List support-messages",
@@ -8269,12 +7374,25 @@
       "post": {
         "operationId": "SupportMessagesController_create",
         "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSupportMessageDto"
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
-        "summary": "Create support-messages",
+        "summary": "Post a staff reply on a support ticket",
         "tags": [
           "support-messages"
         ]
@@ -8296,6 +7414,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Get support-messages by id",
@@ -8318,6 +7439,9 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Update support-messages",
@@ -8340,236 +7464,14 @@
         "responses": {
           "200": {
             "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
           }
         },
         "summary": "Soft-delete support-messages",
         "tags": [
           "support-messages"
-        ]
-      }
-    },
-    "/api/public/destinations": {
-      "get": {
-        "operationId": "PublicAccommodationsController_listDestinations",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "summary": "List destinations for public search",
-        "tags": [
-          "public"
-        ]
-      }
-    },
-    "/api/public/accommodations/search": {
-      "get": {
-        "operationId": "PublicAccommodationsController_search",
-        "parameters": [
-          {
-            "name": "page",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "minimum": 1,
-              "default": 1,
-              "type": "number"
-            }
-          },
-          {
-            "name": "limit",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "minimum": 1,
-              "maximum": 100,
-              "default": 20,
-              "type": "number"
-            }
-          },
-          {
-            "name": "destination",
-            "required": false,
-            "in": "query",
-            "description": "Destination city name (partial match)",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "destinationId",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "format": "uuid",
-              "type": "string"
-            }
-          },
-          {
-            "name": "checkIn",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "format": "date",
-              "example": "2026-06-01",
-              "type": "string"
-            }
-          },
-          {
-            "name": "checkOut",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "format": "date",
-              "example": "2026-06-05",
-              "type": "string"
-            }
-          },
-          {
-            "name": "guests",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "minimum": 1,
-              "default": 1,
-              "type": "number"
-            }
-          },
-          {
-            "name": "propertyType",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "hotel",
-                "resort",
-                "apartment",
-                "villa",
-                "hostel",
-                "other"
-              ]
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "summary": "Search accommodations with min nightly price",
-        "tags": [
-          "public"
-        ]
-      }
-    },
-    "/api/public/accommodations/{id}/reviews": {
-      "get": {
-        "operationId": "PublicAccommodationsController_listReviews",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "page",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "minimum": 1,
-              "default": 1,
-              "type": "number"
-            }
-          },
-          {
-            "name": "limit",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "minimum": 1,
-              "maximum": 100,
-              "default": 20,
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "summary": "List guest reviews for an accommodation",
-        "tags": [
-          "public"
-        ]
-      }
-    },
-    "/api/public/accommodations/{id}": {
-      "get": {
-        "operationId": "PublicAccommodationsController_getById",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "checkIn",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "format": "date",
-              "example": "2026-06-01",
-              "type": "string"
-            }
-          },
-          {
-            "name": "checkOut",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "format": "date",
-              "example": "2026-06-05",
-              "type": "string"
-            }
-          },
-          {
-            "name": "guests",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "minimum": 1,
-              "default": 1,
-              "type": "number"
-            }
-          },
-          {
-            "name": "month",
-            "required": false,
-            "in": "query",
-            "description": "YYYY-MM for calendar",
-            "schema": {
-              "example": "2026-06",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "summary": "Accommodation detail with rooms and date pricing",
-        "tags": [
-          "public"
         ]
       }
     }
@@ -8591,6 +7493,85 @@
       }
     },
     "schemas": {
+      "EmailPreviewBrandingOverrideDto": {
+        "type": "object",
+        "properties": {
+          "displayName": {
+            "type": "string",
+            "example": "Mon Agence"
+          },
+          "logoUrl": {
+            "type": "string",
+            "example": "/uploads/logo.png"
+          },
+          "primaryColor": {
+            "type": "string",
+            "example": "#0d9488"
+          },
+          "secondaryColor": {
+            "type": "string",
+            "example": "#199a45"
+          },
+          "footerText": {
+            "type": "string",
+            "example": "© Mon Agence"
+          },
+          "welcomeSubject": {
+            "type": "string",
+            "example": "Bienvenue sur {displayName}"
+          },
+          "bookingSubject": {
+            "type": "string",
+            "example": "Confirmation — {ref}"
+          }
+        }
+      },
+      "EmailPreviewDto": {
+        "type": "object",
+        "properties": {
+          "template": {
+            "type": "string",
+            "enum": [
+              "welcome",
+              "booking",
+              "password_reset"
+            ],
+            "example": "welcome"
+          },
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "branding": {
+            "$ref": "#/components/schemas/EmailPreviewBrandingOverrideDto"
+          }
+        },
+        "required": [
+          "template"
+        ]
+      },
+      "EmailPreviewResponseDto": {
+        "type": "object",
+        "properties": {
+          "subject": {
+            "type": "string",
+            "example": "Bienvenue sur Africa Tourism Gate"
+          },
+          "html": {
+            "type": "string",
+            "description": "HTML complet du message"
+          },
+          "text": {
+            "type": "string",
+            "description": "Version texte brut"
+          }
+        },
+        "required": [
+          "subject",
+          "html",
+          "text"
+        ]
+      },
       "AuthUserDto": {
         "type": "object",
         "properties": {
@@ -8870,214 +7851,6 @@
           "success"
         ]
       },
-      "CreateUserDto": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string",
-            "example": "jane.doe@example.com"
-          },
-          "password": {
-            "type": "string",
-            "example": "SecurePass123!",
-            "minLength": 8
-          },
-          "firstName": {
-            "type": "string",
-            "example": "Jane"
-          },
-          "lastName": {
-            "type": "string",
-            "example": "Doe"
-          },
-          "phone": {
-            "type": "string",
-            "example": "+33612345678"
-          },
-          "preferredLanguage": {
-            "type": "string",
-            "example": "fr",
-            "maxLength": 2
-          },
-          "organizationId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "active",
-              "suspended"
-            ],
-            "default": "active"
-          }
-        },
-        "required": [
-          "email",
-          "password",
-          "firstName",
-          "lastName"
-        ]
-      },
-      "UpdateUserDto": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string",
-            "example": "jane.doe@example.com"
-          },
-          "firstName": {
-            "type": "string",
-            "example": "Jane"
-          },
-          "lastName": {
-            "type": "string",
-            "example": "Doe"
-          },
-          "phone": {
-            "type": "string",
-            "example": "+33612345678"
-          },
-          "preferredLanguage": {
-            "type": "string",
-            "example": "fr",
-            "maxLength": 2
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "active",
-              "suspended"
-            ],
-            "default": "active"
-          },
-          "password": {
-            "type": "string",
-            "minLength": 8
-          },
-          "organizationId": {
-            "type": "object",
-            "format": "uuid",
-            "nullable": true
-          }
-        }
-      },
-      "CreateEmployeeDto": {
-        "type": "object",
-        "properties": {
-          "userId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "organizationId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "employeeCode": {
-            "type": "string",
-            "example": "EMP-001",
-            "maxLength": 50
-          },
-          "jobTitle": {
-            "type": "string",
-            "example": "Responsable ventes",
-            "maxLength": 100
-          },
-          "department": {
-            "type": "string",
-            "example": "Commercial",
-            "maxLength": 100
-          },
-          "hireDate": {
-            "type": "string",
-            "example": "2024-01-15"
-          },
-          "terminationDate": {
-            "type": "string",
-            "example": "2025-06-30"
-          },
-          "salary": {
-            "type": "number",
-            "example": 45000
-          },
-          "currency": {
-            "type": "string",
-            "example": "USD",
-            "maxLength": 3
-          },
-          "managerId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "active",
-              "on_leave",
-              "terminated"
-            ],
-            "default": "active"
-          }
-        },
-        "required": [
-          "userId"
-        ]
-      },
-      "UpdateEmployeeDto": {
-        "type": "object",
-        "properties": {
-          "userId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "organizationId": {
-            "type": "object",
-            "format": "uuid",
-            "nullable": true
-          },
-          "employeeCode": {
-            "type": "object",
-            "nullable": true
-          },
-          "jobTitle": {
-            "type": "object",
-            "nullable": true
-          },
-          "department": {
-            "type": "object",
-            "nullable": true
-          },
-          "hireDate": {
-            "type": "object",
-            "nullable": true
-          },
-          "terminationDate": {
-            "type": "object",
-            "nullable": true
-          },
-          "salary": {
-            "type": "object",
-            "nullable": true
-          },
-          "currency": {
-            "type": "object",
-            "nullable": true
-          },
-          "managerId": {
-            "type": "object",
-            "format": "uuid",
-            "nullable": true
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "active",
-              "on_leave",
-              "terminated"
-            ]
-          }
-        }
-      },
       "CreateUserAddressDto": {
         "type": "object",
         "properties": {
@@ -9238,6 +8011,23 @@
           }
         }
       },
+      "AdjustLoyaltyPointsDto": {
+        "type": "object",
+        "properties": {
+          "delta": {
+            "type": "number",
+            "description": "Variation de points (positive ou négative)",
+            "example": 100
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "delta"
+        ]
+      },
       "UpdateLoyaltyAccountDto": {
         "type": "object",
         "properties": {
@@ -9257,93 +8047,6 @@
           "pointsBalance": {
             "type": "number",
             "example": 100
-          }
-        }
-      },
-      "CreateOrganizationDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "Safari DRC"
-          },
-          "slug": {
-            "type": "string",
-            "example": "safari-drc"
-          },
-          "description": {
-            "type": "string"
-          },
-          "website": {
-            "type": "string",
-            "example": "https://example.com"
-          },
-          "contactEmail": {
-            "type": "string",
-            "example": "contact@example.com"
-          },
-          "contactPhone": {
-            "type": "string",
-            "example": "+243900000000"
-          },
-          "currency": {
-            "type": "string",
-            "example": "USD",
-            "default": "USD"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "active",
-              "suspended"
-            ],
-            "default": "active"
-          }
-        },
-        "required": [
-          "name",
-          "slug",
-          "currency"
-        ]
-      },
-      "UpdateOrganizationDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "Safari DRC"
-          },
-          "slug": {
-            "type": "string",
-            "example": "safari-drc"
-          },
-          "description": {
-            "type": "string"
-          },
-          "website": {
-            "type": "string",
-            "example": "https://example.com"
-          },
-          "contactEmail": {
-            "type": "string",
-            "example": "contact@example.com"
-          },
-          "contactPhone": {
-            "type": "string",
-            "example": "+243900000000"
-          },
-          "currency": {
-            "type": "string",
-            "example": "USD",
-            "default": "USD"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "active",
-              "suspended"
-            ],
-            "default": "active"
           }
         }
       },
@@ -9387,484 +8090,45 @@
           "settings"
         ]
       },
-      "CreateOrganizationBankAccountDto": {
+      "OrganizationSettingDto": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
           "organizationId": {
             "type": "string",
             "format": "uuid"
           },
-          "bankName": {
+          "settingGroup": {
             "type": "string",
-            "example": "Rawbank"
+            "example": "general"
           },
-          "accountName": {
+          "settingKey": {
             "type": "string",
-            "example": "Africa Tourism Gate SARL"
+            "example": "locale"
           },
-          "accountNumber": {
-            "type": "string",
-            "example": "0001234567890"
+          "settingValue": {
+            "type": "object",
+            "additionalProperties": true
           },
-          "swiftBic": {
-            "type": "string",
-            "example": "RAWBCDKI"
-          },
-          "currency": {
-            "type": "string",
-            "example": "USD",
-            "default": "USD"
-          },
-          "isDefault": {
-            "type": "boolean",
-            "default": false
-          }
-        },
-        "required": [
-          "bankName",
-          "accountName",
-          "accountNumber",
-          "currency"
-        ]
-      },
-      "UpdateOrganizationBankAccountDto": {
-        "type": "object",
-        "properties": {
-          "bankName": {
+          "createdAt": {
             "type": "string"
           },
-          "accountName": {
-            "type": "string"
-          },
-          "accountNumber": {
-            "type": "string"
-          },
-          "swiftBic": {
-            "type": "string"
-          },
-          "currency": {
-            "type": "string",
-            "example": "USD"
-          },
-          "isDefault": {
-            "type": "boolean"
-          }
-        }
-      },
-      "CreateRoleDto": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "string",
-            "example": "sales_manager"
-          },
-          "name": {
-            "type": "string",
-            "example": "Responsable commercial"
-          },
-          "description": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "code",
-          "name"
-        ]
-      },
-      "UpdateRoleDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "description": {
+          "updatedAt": {
             "type": "object",
             "nullable": true
           }
-        }
-      },
-      "ReplaceRolePermissionsDto": {
-        "type": "object",
-        "properties": {
-          "permissionIds": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
         },
         "required": [
-          "permissionIds"
+          "id",
+          "organizationId",
+          "settingGroup",
+          "settingKey",
+          "settingValue",
+          "createdAt"
         ]
-      },
-      "CreateUserRoleAssignmentDto": {
-        "type": "object",
-        "properties": {
-          "userId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "roleId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "scopeType": {
-            "type": "string",
-            "enum": [
-              "global",
-              "property",
-              "agency",
-              "support_queue"
-            ]
-          },
-          "scopeId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "expiresAt": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "userId",
-          "roleId",
-          "scopeType"
-        ]
-      },
-      "CreateDestinationDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "Kinshasa"
-          },
-          "slug": {
-            "type": "string",
-            "example": "kinshasa"
-          },
-          "countryCode": {
-            "type": "string",
-            "example": "CD",
-            "description": "ISO 3166-1 alpha-2"
-          },
-          "description": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "name",
-          "slug",
-          "countryCode"
-        ]
-      },
-      "UpdateDestinationDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "Kinshasa"
-          },
-          "slug": {
-            "type": "string",
-            "example": "kinshasa"
-          },
-          "countryCode": {
-            "type": "string",
-            "example": "CD",
-            "description": "ISO 3166-1 alpha-2"
-          },
-          "description": {
-            "type": "string"
-          }
-        }
-      },
-      "CreatePointOfInterestDto": {
-        "type": "object",
-        "properties": {
-          "destinationId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string",
-            "example": "Gombe (city centre)"
-          },
-          "latitude": {
-            "type": "number",
-            "example": -4.3058
-          },
-          "longitude": {
-            "type": "number",
-            "example": 15.3
-          }
-        },
-        "required": [
-          "destinationId",
-          "name"
-        ]
-      },
-      "UpdatePointOfInterestDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "Gombe (city centre)"
-          },
-          "latitude": {
-            "type": "number",
-            "example": -4.3058
-          },
-          "longitude": {
-            "type": "number",
-            "example": 15.3
-          }
-        }
-      },
-      "CreateAmenityDto": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "string",
-            "example": "wifi"
-          },
-          "name": {
-            "type": "string",
-            "example": "Wi-Fi"
-          }
-        },
-        "required": [
-          "code",
-          "name"
-        ]
-      },
-      "UpdateAmenityDto": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "string",
-            "example": "wifi"
-          },
-          "name": {
-            "type": "string",
-            "example": "Wi-Fi"
-          }
-        }
-      },
-      "CreatePropertyDto": {
-        "type": "object",
-        "properties": {
-          "destinationId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string",
-            "example": "Tourism Gate Demo Hotel"
-          },
-          "slug": {
-            "type": "string",
-            "example": "tourism-gate-demo-hotel"
-          },
-          "propertyType": {
-            "type": "string",
-            "enum": [
-              "hotel",
-              "resort",
-              "apartment",
-              "villa",
-              "hostel",
-              "other"
-            ],
-            "default": "hotel"
-          },
-          "starRating": {
-            "type": "number",
-            "example": 4
-          },
-          "description": {
-            "type": "string"
-          },
-          "addressLine": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "destinationId",
-          "name",
-          "slug",
-          "propertyType"
-        ]
-      },
-      "UpdatePropertyDto": {
-        "type": "object",
-        "properties": {
-          "destinationId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string",
-            "example": "Tourism Gate Demo Hotel"
-          },
-          "slug": {
-            "type": "string",
-            "example": "tourism-gate-demo-hotel"
-          },
-          "propertyType": {
-            "type": "string",
-            "enum": [
-              "hotel",
-              "resort",
-              "apartment",
-              "villa",
-              "hostel",
-              "other"
-            ],
-            "default": "hotel"
-          },
-          "starRating": {
-            "type": "number",
-            "example": 4
-          },
-          "description": {
-            "type": "string"
-          },
-          "addressLine": {
-            "type": "string"
-          }
-        }
-      },
-      "CreatePropertyImageDto": {
-        "type": "object",
-        "properties": {
-          "propertyId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "url": {
-            "type": "string",
-            "example": "https://example.com/hotel.jpg"
-          },
-          "caption": {
-            "type": "string"
-          },
-          "sortOrder": {
-            "type": "number",
-            "default": 0
-          }
-        },
-        "required": [
-          "propertyId",
-          "url"
-        ]
-      },
-      "UpdatePropertyImageDto": {
-        "type": "object",
-        "properties": {
-          "url": {
-            "type": "string",
-            "example": "https://example.com/hotel.jpg"
-          },
-          "caption": {
-            "type": "string"
-          },
-          "sortOrder": {
-            "type": "number",
-            "default": 0
-          }
-        }
-      },
-      "ReplacePropertyAmenitiesDto": {
-        "type": "object",
-        "properties": {
-          "propertyId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "amenityIds": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        },
-        "required": [
-          "propertyId",
-          "amenityIds"
-        ]
-      },
-      "CreateRoomDto": {
-        "type": "object",
-        "properties": {
-          "propertyId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string",
-            "example": "Standard Double"
-          },
-          "roomType": {
-            "type": "string",
-            "example": "standard"
-          },
-          "maxGuests": {
-            "type": "number",
-            "default": 2
-          },
-          "bedConfig": {
-            "type": "string",
-            "example": "1 double bed"
-          },
-          "basePriceCents": {
-            "type": "number",
-            "example": 8500
-          },
-          "currency": {
-            "type": "string",
-            "example": "USD",
-            "default": "USD"
-          }
-        },
-        "required": [
-          "propertyId",
-          "name",
-          "maxGuests",
-          "basePriceCents",
-          "currency"
-        ]
-      },
-      "UpdateRoomDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "Standard Double"
-          },
-          "roomType": {
-            "type": "string",
-            "example": "standard"
-          },
-          "maxGuests": {
-            "type": "number",
-            "default": 2
-          },
-          "bedConfig": {
-            "type": "string",
-            "example": "1 double bed"
-          },
-          "basePriceCents": {
-            "type": "number",
-            "example": 8500
-          },
-          "currency": {
-            "type": "string",
-            "example": "USD",
-            "default": "USD"
-          }
-        }
       },
       "BulkUpsertRoomAvailabilityDto": {
         "type": "object",
@@ -9935,1008 +8199,6 @@
           "priceCents": {
             "type": "number",
             "example": 9200
-          }
-        }
-      },
-      "CreateAirlineDto": {
-        "type": "object",
-        "properties": {
-          "iataCode": {
-            "type": "string",
-            "example": "ET"
-          },
-          "name": {
-            "type": "string",
-            "example": "Ethiopian Airlines"
-          }
-        },
-        "required": [
-          "iataCode",
-          "name"
-        ]
-      },
-      "UpdateAirlineDto": {
-        "type": "object",
-        "properties": {
-          "iataCode": {
-            "type": "string",
-            "example": "ET"
-          },
-          "name": {
-            "type": "string",
-            "example": "Ethiopian Airlines"
-          }
-        }
-      },
-      "CreateAirportDto": {
-        "type": "object",
-        "properties": {
-          "iataCode": {
-            "type": "string",
-            "example": "FIH"
-          },
-          "name": {
-            "type": "string",
-            "example": "N'djili International Airport"
-          },
-          "city": {
-            "type": "string",
-            "example": "Kinshasa"
-          },
-          "countryCode": {
-            "type": "string",
-            "example": "CD"
-          },
-          "latitude": {
-            "type": "number",
-            "example": -4.3858
-          },
-          "longitude": {
-            "type": "number",
-            "example": 15.4446
-          }
-        },
-        "required": [
-          "iataCode",
-          "name",
-          "city",
-          "countryCode"
-        ]
-      },
-      "UpdateAirportDto": {
-        "type": "object",
-        "properties": {
-          "iataCode": {
-            "type": "string",
-            "example": "FIH"
-          },
-          "name": {
-            "type": "string",
-            "example": "N'djili International Airport"
-          },
-          "city": {
-            "type": "string",
-            "example": "Kinshasa"
-          },
-          "countryCode": {
-            "type": "string",
-            "example": "CD"
-          },
-          "latitude": {
-            "type": "number",
-            "example": -4.3858
-          },
-          "longitude": {
-            "type": "number",
-            "example": 15.4446
-          }
-        }
-      },
-      "CreateFlightDto": {
-        "type": "object",
-        "properties": {
-          "airlineId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "flightNumber": {
-            "type": "string",
-            "example": "ET302"
-          },
-          "departureAirportId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "arrivalAirportId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "departureTime": {
-            "type": "string",
-            "example": "2026-06-01T08:00:00.000Z"
-          },
-          "arrivalTime": {
-            "type": "string",
-            "example": "2026-06-01T14:30:00.000Z"
-          },
-          "durationMinutes": {
-            "type": "number",
-            "example": 390
-          }
-        },
-        "required": [
-          "airlineId",
-          "flightNumber",
-          "departureAirportId",
-          "arrivalAirportId",
-          "departureTime",
-          "arrivalTime",
-          "durationMinutes"
-        ]
-      },
-      "UpdateFlightDto": {
-        "type": "object",
-        "properties": {
-          "airlineId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "flightNumber": {
-            "type": "string",
-            "example": "ET302"
-          },
-          "departureAirportId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "arrivalAirportId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "departureTime": {
-            "type": "string",
-            "example": "2026-06-01T08:00:00.000Z"
-          },
-          "arrivalTime": {
-            "type": "string",
-            "example": "2026-06-01T14:30:00.000Z"
-          },
-          "durationMinutes": {
-            "type": "number",
-            "example": 390
-          }
-        }
-      },
-      "CreateFlightClassDto": {
-        "type": "object",
-        "properties": {
-          "flightId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "className": {
-            "type": "string",
-            "enum": [
-              "economy",
-              "premium_economy",
-              "business",
-              "first"
-            ]
-          },
-          "basePriceCents": {
-            "type": "number",
-            "example": 15000
-          },
-          "seatsTotal": {
-            "type": "number",
-            "example": 120
-          }
-        },
-        "required": [
-          "flightId",
-          "className",
-          "basePriceCents",
-          "seatsTotal"
-        ]
-      },
-      "UpdateFlightClassDto": {
-        "type": "object",
-        "properties": {
-          "className": {
-            "type": "string",
-            "enum": [
-              "economy",
-              "premium_economy",
-              "business",
-              "first"
-            ]
-          },
-          "basePriceCents": {
-            "type": "number",
-            "example": 15000
-          },
-          "seatsTotal": {
-            "type": "number",
-            "example": 120
-          }
-        }
-      },
-      "BulkUpsertFlightClassAvailabilityDto": {
-        "type": "object",
-        "properties": {
-          "flightClassId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "dateFrom": {
-            "type": "string",
-            "example": "2026-05-01"
-          },
-          "dateTo": {
-            "type": "string",
-            "example": "2026-05-07"
-          },
-          "availableSeats": {
-            "type": "number",
-            "example": 12
-          },
-          "priceCents": {
-            "type": "number",
-            "example": 15000
-          }
-        },
-        "required": [
-          "flightClassId",
-          "dateFrom",
-          "dateTo",
-          "availableSeats",
-          "priceCents"
-        ]
-      },
-      "CreateFlightClassAvailabilityDto": {
-        "type": "object",
-        "properties": {
-          "flightClassId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "date": {
-            "type": "string",
-            "example": "2026-05-15"
-          },
-          "availableSeats": {
-            "type": "number",
-            "example": 12
-          },
-          "priceCents": {
-            "type": "number",
-            "example": 15000
-          }
-        },
-        "required": [
-          "flightClassId",
-          "date",
-          "availableSeats",
-          "priceCents"
-        ]
-      },
-      "UpdateFlightClassAvailabilityDto": {
-        "type": "object",
-        "properties": {
-          "availableSeats": {
-            "type": "number",
-            "example": 12
-          },
-          "priceCents": {
-            "type": "number",
-            "example": 15000
-          }
-        }
-      },
-      "CreateRentalAgencyDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "ATG Rent Kinshasa"
-          },
-          "destinationId": {
-            "type": "object",
-            "format": "uuid"
-          },
-          "address": {
-            "type": "string",
-            "example": "12 Avenue de la Paix"
-          }
-        },
-        "required": [
-          "name"
-        ]
-      },
-      "UpdateRentalAgencyDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "ATG Rent Kinshasa"
-          },
-          "destinationId": {
-            "type": "object",
-            "format": "uuid"
-          },
-          "address": {
-            "type": "string",
-            "example": "12 Avenue de la Paix"
-          }
-        }
-      },
-      "CreateVehicleCategoryDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "SUV"
-          },
-          "exampleModel": {
-            "type": "string",
-            "example": "Toyota RAV4"
-          }
-        },
-        "required": [
-          "name"
-        ]
-      },
-      "UpdateVehicleCategoryDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "SUV"
-          },
-          "exampleModel": {
-            "type": "string",
-            "example": "Toyota RAV4"
-          }
-        }
-      },
-      "CreateVehicleDto": {
-        "type": "object",
-        "properties": {
-          "agencyId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "categoryId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "licensePlate": {
-            "type": "string",
-            "example": "CD-1234-AB"
-          },
-          "dailyPriceCents": {
-            "type": "number",
-            "example": 4500
-          },
-          "currency": {
-            "type": "string",
-            "example": "USD",
-            "default": "USD"
-          }
-        },
-        "required": [
-          "agencyId",
-          "categoryId",
-          "dailyPriceCents",
-          "currency"
-        ]
-      },
-      "UpdateVehicleDto": {
-        "type": "object",
-        "properties": {
-          "agencyId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "categoryId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "licensePlate": {
-            "type": "string",
-            "example": "CD-1234-AB"
-          },
-          "dailyPriceCents": {
-            "type": "number",
-            "example": 4500
-          },
-          "currency": {
-            "type": "string",
-            "example": "USD",
-            "default": "USD"
-          }
-        }
-      },
-      "CreateVehicleAvailabilityDto": {
-        "type": "object",
-        "properties": {
-          "vehicleId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "startDatetime": {
-            "type": "string",
-            "example": "2026-06-01T08:00:00.000Z"
-          },
-          "endDatetime": {
-            "type": "string",
-            "example": "2026-06-07T18:00:00.000Z"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "available",
-              "maintenance",
-              "rented"
-            ],
-            "default": "available"
-          }
-        },
-        "required": [
-          "vehicleId",
-          "startDatetime",
-          "endDatetime"
-        ]
-      },
-      "UpdateVehicleAvailabilityDto": {
-        "type": "object",
-        "properties": {
-          "startDatetime": {
-            "type": "string",
-            "example": "2026-06-01T08:00:00.000Z"
-          },
-          "endDatetime": {
-            "type": "string",
-            "example": "2026-06-07T18:00:00.000Z"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "available",
-              "maintenance",
-              "rented"
-            ],
-            "default": "available"
-          }
-        }
-      },
-      "CreateCruiseLineDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "Africa River Cruises"
-          }
-        },
-        "required": [
-          "name"
-        ]
-      },
-      "UpdateCruiseLineDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "Africa River Cruises"
-          }
-        }
-      },
-      "CreateCruisePortDto": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "string",
-            "example": "CDKIN"
-          },
-          "name": {
-            "type": "string",
-            "example": "Kinshasa Port"
-          },
-          "countryCode": {
-            "type": "string",
-            "example": "CD"
-          }
-        },
-        "required": [
-          "code",
-          "name",
-          "countryCode"
-        ]
-      },
-      "UpdateCruisePortDto": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "string",
-            "example": "CDKIN"
-          },
-          "name": {
-            "type": "string",
-            "example": "Kinshasa Port"
-          },
-          "countryCode": {
-            "type": "string",
-            "example": "CD"
-          }
-        }
-      },
-      "CreateShipDto": {
-        "type": "object",
-        "properties": {
-          "cruiseLineId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string",
-            "example": "Congo Explorer"
-          },
-          "builtYear": {
-            "type": "object",
-            "example": 2018
-          }
-        },
-        "required": [
-          "cruiseLineId",
-          "name"
-        ]
-      },
-      "UpdateShipDto": {
-        "type": "object",
-        "properties": {
-          "cruiseLineId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string",
-            "example": "Congo Explorer"
-          },
-          "builtYear": {
-            "type": "object",
-            "example": 2018
-          }
-        }
-      },
-      "CreateItineraryDto": {
-        "type": "object",
-        "properties": {
-          "shipId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string",
-            "example": "Congo River Discovery"
-          },
-          "durationNights": {
-            "type": "number",
-            "example": 7
-          }
-        },
-        "required": [
-          "shipId",
-          "name",
-          "durationNights"
-        ]
-      },
-      "UpdateItineraryDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "Congo River Discovery"
-          },
-          "durationNights": {
-            "type": "number",
-            "example": 7
-          }
-        }
-      },
-      "CreateItineraryPortDto": {
-        "type": "object",
-        "properties": {
-          "itineraryId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "portId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "dayNumber": {
-            "type": "number",
-            "example": 1
-          },
-          "arrivalTime": {
-            "type": "object",
-            "example": "08:00:00"
-          },
-          "departureTime": {
-            "type": "object",
-            "example": "18:00:00"
-          }
-        },
-        "required": [
-          "itineraryId",
-          "portId",
-          "dayNumber"
-        ]
-      },
-      "UpdateItineraryPortDto": {
-        "type": "object",
-        "properties": {
-          "portId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "dayNumber": {
-            "type": "number",
-            "example": 1
-          },
-          "arrivalTime": {
-            "type": "object",
-            "example": "08:00:00"
-          },
-          "departureTime": {
-            "type": "object",
-            "example": "18:00:00"
-          }
-        }
-      },
-      "CreateCabinDto": {
-        "type": "object",
-        "properties": {
-          "shipId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "categoryName": {
-            "type": "string",
-            "example": "Suite"
-          },
-          "maxGuests": {
-            "type": "number",
-            "example": 2
-          },
-          "basePriceCents": {
-            "type": "number",
-            "example": 250000
-          },
-          "currency": {
-            "type": "string",
-            "example": "USD"
-          }
-        },
-        "required": [
-          "shipId",
-          "categoryName",
-          "maxGuests",
-          "basePriceCents",
-          "currency"
-        ]
-      },
-      "UpdateCabinDto": {
-        "type": "object",
-        "properties": {
-          "categoryName": {
-            "type": "string",
-            "example": "Suite"
-          },
-          "maxGuests": {
-            "type": "number",
-            "example": 2
-          },
-          "basePriceCents": {
-            "type": "number",
-            "example": 250000
-          },
-          "currency": {
-            "type": "string",
-            "example": "USD"
-          }
-        }
-      },
-      "CreateCruiseSailingDto": {
-        "type": "object",
-        "properties": {
-          "itineraryId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "departureDate": {
-            "type": "string",
-            "example": "2026-09-01"
-          }
-        },
-        "required": [
-          "itineraryId",
-          "departureDate"
-        ]
-      },
-      "UpdateCruiseSailingDto": {
-        "type": "object",
-        "properties": {
-          "itineraryId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "departureDate": {
-            "type": "string",
-            "example": "2026-09-01"
-          }
-        }
-      },
-      "CreateCabinAvailabilityDto": {
-        "type": "object",
-        "properties": {
-          "cabinId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "sailingId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "availableCount": {
-            "type": "number",
-            "example": 8
-          },
-          "priceCents": {
-            "type": "number",
-            "example": 250000
-          }
-        },
-        "required": [
-          "cabinId",
-          "sailingId",
-          "availableCount",
-          "priceCents"
-        ]
-      },
-      "UpdateCabinAvailabilityDto": {
-        "type": "object",
-        "properties": {
-          "availableCount": {
-            "type": "number",
-            "example": 6
-          },
-          "priceCents": {
-            "type": "number",
-            "example": 240000
-          }
-        }
-      },
-      "CreateActivityProviderDto": {
-        "type": "object",
-        "properties": {
-          "destinationId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string",
-            "example": "Safari Kinshasa Tours"
-          }
-        },
-        "required": [
-          "destinationId",
-          "name"
-        ]
-      },
-      "UpdateActivityProviderDto": {
-        "type": "object",
-        "properties": {
-          "destinationId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string",
-            "example": "Safari Kinshasa Tours"
-          }
-        }
-      },
-      "CreateActivityDto": {
-        "type": "object",
-        "properties": {
-          "providerId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "title": {
-            "type": "string",
-            "example": "Visite du parc national"
-          },
-          "description": {
-            "type": "string"
-          },
-          "durationMinutes": {
-            "type": "number",
-            "example": 120
-          },
-          "priceCents": {
-            "type": "number",
-            "example": 7500
-          },
-          "currency": {
-            "type": "string",
-            "example": "USD",
-            "default": "USD"
-          }
-        },
-        "required": [
-          "providerId",
-          "title",
-          "priceCents",
-          "currency"
-        ]
-      },
-      "UpdateActivityDto": {
-        "type": "object",
-        "properties": {
-          "providerId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "title": {
-            "type": "string",
-            "example": "Visite du parc national"
-          },
-          "description": {
-            "type": "string"
-          },
-          "durationMinutes": {
-            "type": "number",
-            "example": 120
-          },
-          "priceCents": {
-            "type": "number",
-            "example": 7500
-          },
-          "currency": {
-            "type": "string",
-            "example": "USD",
-            "default": "USD"
-          }
-        }
-      },
-      "CreateActivityScheduleDto": {
-        "type": "object",
-        "properties": {
-          "activityId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "startDatetime": {
-            "type": "string",
-            "example": "2026-06-15T09:00:00.000Z"
-          },
-          "capacity": {
-            "type": "number",
-            "example": 12
-          }
-        },
-        "required": [
-          "activityId",
-          "startDatetime",
-          "capacity"
-        ]
-      },
-      "UpdateActivityScheduleDto": {
-        "type": "object",
-        "properties": {
-          "startDatetime": {
-            "type": "string",
-            "example": "2026-06-15T09:00:00.000Z"
-          },
-          "capacity": {
-            "type": "number",
-            "example": 12
-          }
-        }
-      },
-      "CreatePackageDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "Kinshasa City Break"
-          },
-          "description": {
-            "type": "string"
-          },
-          "discountPercent": {
-            "type": "number",
-            "example": 10,
-            "default": 0
-          },
-          "active": {
-            "type": "boolean",
-            "default": true
-          }
-        },
-        "required": [
-          "name",
-          "discountPercent",
-          "active"
-        ]
-      },
-      "UpdatePackageDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "Kinshasa City Break"
-          },
-          "description": {
-            "type": "string"
-          },
-          "discountPercent": {
-            "type": "number",
-            "example": 10,
-            "default": 0
-          },
-          "active": {
-            "type": "boolean",
-            "default": true
-          }
-        }
-      },
-      "CreatePackageItemDto": {
-        "type": "object",
-        "properties": {
-          "packageId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "itemType": {
-            "type": "string",
-            "enum": [
-              "property",
-              "flight",
-              "vehicle",
-              "cruise",
-              "activity"
-            ]
-          },
-          "itemId": {
-            "type": "string",
-            "format": "uuid"
-          }
-        },
-        "required": [
-          "packageId",
-          "itemType",
-          "itemId"
-        ]
-      },
-      "UpdatePackageItemDto": {
-        "type": "object",
-        "properties": {
-          "itemType": {
-            "type": "string",
-            "enum": [
-              "property",
-              "flight",
-              "vehicle",
-              "cruise",
-              "activity"
-            ]
-          },
-          "itemId": {
-            "type": "string",
-            "format": "uuid"
           }
         }
       },
@@ -11078,9 +8340,20 @@
           }
         }
       },
-      "RefundPaymentDto": {
+      "UpdateReviewStatusDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "approved",
+              "hidden"
+            ]
+          }
+        },
+        "required": [
+          "status"
+        ]
       },
       "CreateSupportTicketDto": {
         "type": "object",
@@ -11102,6 +8375,47 @@
         },
         "required": [
           "subject",
+          "body"
+        ]
+      },
+      "UpdateSupportTicketStatusDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "pending",
+              "resolved",
+              "closed"
+            ]
+          },
+          "priority": {
+            "type": "string",
+            "enum": [
+              "low",
+              "normal",
+              "high",
+              "urgent"
+            ]
+          }
+        }
+      },
+      "CreateSupportMessageDto": {
+        "type": "object",
+        "properties": {
+          "ticketId": {
+            "type": "string",
+            "description": "Target support ticket id"
+          },
+          "body": {
+            "type": "string",
+            "minLength": 10,
+            "description": "Staff reply body"
+          }
+        },
+        "required": [
+          "ticketId",
           "body"
         ]
       }
