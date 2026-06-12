@@ -9,12 +9,28 @@ import type {
   Review,
 } from '@africatourismgate/types';
 import type {
+  VehicleDetail,
+  VehicleDetailQuery,
+  VehicleSearchQuery,
+  VehicleSearchResult,
+} from '../cars/types';
+import type {
   FlightDetail,
   FlightDetailQuery,
   FlightSearchQuery,
   FlightSearchResult,
   PublicAirport,
 } from '../flights/types';
+
+export type {
+  VehicleDetail,
+  VehicleDetailAgency,
+  VehicleDetailAvailabilitySlot,
+  VehicleDetailCategory,
+  VehicleDetailQuery,
+  VehicleSearchQuery,
+  VehicleSearchResult,
+} from '../cars/types';
 
 export type {
   FlightDetail,
@@ -149,5 +165,41 @@ export async function getFlightDetail(
 ): Promise<FlightDetail> {
   return fetchPublic<FlightDetail>(
     `/public/flights/${encodeURIComponent(id)}${buildFlightDetailQuery(params)}`,
+  );
+}
+
+function buildVehicleSearchQuery(params: VehicleSearchQuery): string {
+  const qs = new URLSearchParams();
+  qs.set('pickupLocation', params.pickupLocation);
+  qs.set('pickupDate', params.pickupDate);
+  qs.set('returnDate', params.returnDate);
+  if (params.page !== undefined) qs.set('page', String(params.page));
+  if (params.limit !== undefined) qs.set('limit', String(params.limit));
+  const s = qs.toString();
+  return s ? `?${s}` : '';
+}
+
+export async function searchVehicles(
+  params: VehicleSearchQuery,
+): Promise<PaginatedResponse<VehicleSearchResult>> {
+  return fetchPublic<PaginatedResponse<VehicleSearchResult>>(
+    `/public/vehicles/search${buildVehicleSearchQuery(params)}`,
+  );
+}
+
+function buildVehicleDetailQuery(params: VehicleDetailQuery): string {
+  const qs = new URLSearchParams();
+  qs.set('pickupDate', params.pickupDate);
+  qs.set('returnDate', params.returnDate);
+  const s = qs.toString();
+  return s ? `?${s}` : '';
+}
+
+export async function getVehicleDetail(
+  id: string,
+  params: VehicleDetailQuery,
+): Promise<VehicleDetail> {
+  return fetchPublic<VehicleDetail>(
+    `/public/vehicles/${encodeURIComponent(id)}${buildVehicleDetailQuery(params)}`,
   );
 }
