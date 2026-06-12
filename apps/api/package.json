@@ -22,6 +22,7 @@
     "test:packages": "node scripts/test-packages-crud.mjs",
     "test:bookings": "node scripts/test-bookings-engine.mjs",
     "test:bookings-polymorphic": "node scripts/test-bookings-polymorphic.mjs",
+    "test:booking-package-checkout": "node scripts/test-booking-package-checkout.mjs",
     "test:bookings-list": "node scripts/test-bookings-list.mjs",
     "test:bookings-detail": "node scripts/test-bookings-detail.mjs",
     "test:booking-items-list": "node scripts/test-booking-items-list.mjs",
