@@ -50,3 +50,25 @@ export function pickupPeriodBounds(
   returnEnd.setUTCHours(23, 59, 59, 999);
   return { pickupStart, returnEnd };
 }
+
+function toDate(value: Date | string): Date {
+  return value instanceof Date ? value : new Date(value);
+}
+
+function startOfUtcDay(date: Date): number {
+  return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+}
+
+/** Slot calendar range must cover pickup through return (inclusive days). */
+export function slotCoversRentalPeriod(
+  slotStart: Date | string,
+  slotEnd: Date | string,
+  pickupDate: string,
+  returnDate: string,
+): boolean {
+  const pickupDay = parseDateOnly(pickupDate).getTime();
+  const returnDay = parseDateOnly(returnDate).getTime();
+  const slotStartDay = startOfUtcDay(toDate(slotStart));
+  const slotEndDay = startOfUtcDay(toDate(slotEnd));
+  return slotStartDay <= pickupDay && slotEndDay >= returnDay;
+}

@@ -16,7 +16,6 @@ import { VehicleSearchResultDto } from './dto/vehicle-search-result.dto';
 import {
   assertValidVehicleDates,
   countRentalDays,
-  pickupPeriodBounds,
 } from './vehicle-dates.util';
 
 @Injectable()
@@ -41,10 +40,6 @@ export class PublicVehiclesService {
     const limit = query.limit ?? 20;
 
     assertValidVehicleDates(query.pickupDate, query.returnDate);
-    const { pickupStart, returnEnd } = pickupPeriodBounds(
-      query.pickupDate,
-      query.returnDate,
-    );
     const rentalDays = countRentalDays(query.pickupDate, query.returnDate);
 
     const destinationIds = await this.resolveDestinationIds(query.pickupLocation);
@@ -77,8 +72,12 @@ export class PublicVehiclesService {
       .where('slot.vehicleId IN (:...vehicleIds)', { vehicleIds })
       .andWhere('slot.status = :status', { status: 'available' })
       .andWhere('slot.deletedAt IS NULL')
-      .andWhere('slot.startDatetime <= :pickupStart', { pickupStart })
-      .andWhere('slot.endDatetime >= :returnEnd', { returnEnd })
+      .andWhere('DATE(slot.startDatetime) <= :pickupDate', {
+        pickupDate: query.pickupDate,
+      })
+      .andWhere('DATE(slot.endDatetime) >= :returnDate', {
+        returnDate: query.returnDate,
+      })
       .orderBy('slot.startDatetime', 'ASC')
       .getMany();
 
@@ -164,10 +163,6 @@ export class PublicVehiclesService {
     query: VehicleDetailQueryDto,
   ): Promise<VehicleDetailDto> {
     assertValidVehicleDates(query.pickupDate, query.returnDate);
-    const { pickupStart, returnEnd } = pickupPeriodBounds(
-      query.pickupDate,
-      query.returnDate,
-    );
     const rentalDays = countRentalDays(query.pickupDate, query.returnDate);
 
     const vehicle = await this.vehiclesRepository.findOne({ where: { id } });
@@ -204,8 +199,12 @@ export class PublicVehiclesService {
       .where('slot.vehicleId = :vehicleId', { vehicleId: vehicle.id })
       .andWhere('slot.status = :status', { status: 'available' })
       .andWhere('slot.deletedAt IS NULL')
-      .andWhere('slot.startDatetime <= :pickupStart', { pickupStart })
-      .andWhere('slot.endDatetime >= :returnEnd', { returnEnd })
+      .andWhere('DATE(slot.startDatetime) <= :pickupDate', {
+        pickupDate: query.pickupDate,
+      })
+      .andWhere('DATE(slot.endDatetime) >= :returnDate', {
+        returnDate: query.returnDate,
+      })
       .orderBy('slot.startDatetime', 'ASC')
       .getOne();
 

@@ -8374,6 +8374,117 @@
           "public"
         ]
       }
+    },
+    "/api/public/vehicles/search": {
+      "get": {
+        "operationId": "PublicVehiclesController_search",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "pickupLocation",
+            "required": true,
+            "in": "query",
+            "description": "Pickup city or destination name (partial match)",
+            "schema": {
+              "example": "Kinshasa",
+              "type": "string"
+            }
+          },
+          {
+            "name": "pickupDate",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "format": "date",
+              "example": "2026-08-01",
+              "type": "string"
+            }
+          },
+          {
+            "name": "returnDate",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "format": "date",
+              "example": "2026-08-08",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Search vehicles by pickup location and rental dates",
+        "tags": [
+          "public"
+        ]
+      }
+    },
+    "/api/public/vehicles/{id}": {
+      "get": {
+        "operationId": "PublicVehiclesController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pickupDate",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "format": "date",
+              "example": "2026-08-01",
+              "type": "string"
+            }
+          },
+          {
+            "name": "returnDate",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "format": "date",
+              "example": "2026-08-08",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Vehicle detail with agency, category, and availability slot",
+        "tags": [
+          "public"
+        ]
+      }
     }
   },
   "info": {
