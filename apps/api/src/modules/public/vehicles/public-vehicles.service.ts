@@ -9,6 +9,7 @@ import {
   VehicleCategories,
   Vehicles,
 } from '../../../entities/generated';
+import { PublicDestinationDto } from '../accommodations/dto/public-destination.dto';
 import { VehicleDetailQueryDto } from './dto/vehicle-detail-query.dto';
 import { VehicleDetailDto } from './dto/vehicle-detail.dto';
 import { VehicleSearchQueryDto } from './dto/vehicle-search-query.dto';
@@ -32,6 +33,32 @@ export class PublicVehiclesService {
     @InjectRepository(Destinations)
     private readonly destinationsRepository: Repository<Destinations>,
   ) {}
+
+  async listPickupLocations(): Promise<PublicDestinationDto[]> {
+    const rows = await this.destinationsRepository
+      .createQueryBuilder('d')
+      .select(['d.id', 'd.name', 'd.countryCode'])
+      .innerJoin(
+        RentalAgencies,
+        'ra',
+        'ra.destinationId = d.id AND ra.deletedAt IS NULL',
+      )
+      .innerJoin(
+        Vehicles,
+        'v',
+        'v.agencyId = ra.id AND v.deletedAt IS NULL',
+      )
+      .where('d.deletedAt IS NULL')
+      .distinct(true)
+      .orderBy('d.name', 'ASC')
+      .getMany();
+
+    return rows.map((d) => ({
+      id: d.id,
+      name: d.name,
+      countryCode: d.countryCode,
+    }));
+  }
 
   async search(
     query: VehicleSearchQueryDto,

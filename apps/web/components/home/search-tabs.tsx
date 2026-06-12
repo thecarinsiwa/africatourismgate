@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { listPublicDestinations } from '../../lib/api/public';
 import { countRentalDays } from '../../lib/cars/listings';
+import { useVehiclePickupLocations } from '../../lib/cars/use-vehicle-pickup-locations';
 import { toFlightAirportOptions, type FlightAirportOption } from '../../lib/flights/airports';
 import { addDays, todayISODate } from '../../lib/hotels/dates';
 import { usePublicAirports } from '../../lib/flights/use-public-airports';
@@ -46,9 +47,9 @@ function FormInput({ type = 'text', name, placeholder, value, min, onChange }: {
   return <input type={type} name={name} placeholder={placeholder} value={value} min={min} onChange={(e) => onChange(e.target.value)} className="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg dark:placeholder:text-atg-muted" />;
 }
 
-function FormSelect({ name, placeholder, options, value, onChange }: { name: string; placeholder: string; options: string[]; value: string; onChange: (v: string) => void; }) {
+function FormSelect({ name, placeholder, options, value, disabled, onChange }: { name: string; placeholder: string; options: string[]; value: string; disabled?: boolean; onChange: (v: string) => void; }) {
   return (
-    <select name={name} value={value} onChange={(e) => onChange(e.target.value)} className="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg">
+    <select name={name} value={value} disabled={disabled} onChange={(e) => onChange(e.target.value)} className="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-60 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg">
       <option value="">{placeholder}</option>
       {options.map((opt) => <option key={opt} value={opt}>{opt}</option>)}
     </select>
@@ -141,7 +142,16 @@ export function SearchTabs() {
   const t = useTranslations();
   const router = useRouter();
   const { airports, loading: airportsLoading, error: airportsError } = usePublicAirports();
+  const {
+    locations: carPickupLocations,
+    loading: carPickupLoading,
+    error: carPickupError,
+  } = useVehiclePickupLocations();
   const airportOptions = useMemo(() => toFlightAirportOptions(airports), [airports]);
+  const carPickupOptions = useMemo(
+    () => carPickupLocations.map((location) => location.name),
+    [carPickupLocations],
+  );
   const [activeTab, setActiveTab] = useState<SearchTab>('hotels');
   const tabs = useMemo(() => ([
     { id: 'flights' as const, label: t.search.tabs.flights },
@@ -476,9 +486,12 @@ export function SearchTabs() {
                     <FormLabel>{t.cars.pickupLocation}</FormLabel>
                     <FormSelect
                       name="pickupLocation"
-                      placeholder={t.search.pickupLocationPh}
-                      options={destinationOptions}
+                      placeholder={
+                        carPickupLoading ? t.cars.loading : t.search.pickupLocationPh
+                      }
+                      options={carPickupOptions}
                       value={destination}
+                      disabled={carPickupLoading || carPickupOptions.length === 0}
                       onChange={(value) => {
                         setDestination(value);
                         setCarError(null);
@@ -516,6 +529,11 @@ export function SearchTabs() {
                   </div>
                   <div className="flex items-end">{submitBtn}</div>
                 </div>
+                {carPickupError && (
+                  <p className="text-sm text-amber-700 dark:text-amber-300" role="status">
+                    {t.cars.loadError}
+                  </p>
+                )}
                 {carError && (
                   <p className="text-sm text-red-600 dark:text-red-400" role="alert">
                     {carError}
