@@ -14,6 +14,14 @@ export class RbacAuditLogsListQueryDto extends PaginationQueryDto {
   @IsUUID('4')
   actorUserId?: string;
 
+  @ApiPropertyOptional({
+    format: 'uuid',
+    description: 'Filter by user involved as actor or target',
+  })
+  @IsOptional()
+  @IsUUID('4')
+  userId?: string;
+
   @ApiPropertyOptional({ example: '2026-01-01', description: 'Inclusive start date (created_at)' })
   @IsOptional()
   @IsDateString()
