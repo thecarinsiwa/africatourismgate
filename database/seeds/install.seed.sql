@@ -599,4 +599,60 @@ INSERT INTO `cabin_availability` (
   '00000000-0000-4000-8000-000000000010'
 );
 
+-- -----------------------------------------------------------------------------
+-- 16. Demo activities (Kinshasa, public search #66)
+-- -----------------------------------------------------------------------------
+INSERT INTO `activity_providers` (
+  `id`, `destination_id`, `name`, `created_by_user_id`
+) VALUES (
+  '00000000-0000-4000-8000-000000004030',
+  '00000000-0000-4000-8000-000000002001',
+  'Tourism Gate Experiences Kinshasa',
+  '00000000-0000-4000-8000-000000000010'
+);
+
+INSERT INTO `activities` (
+  `id`, `provider_id`, `title`, `description`, `duration_minutes`, `price_cents`, `currency`, `created_by_user_id`
+) VALUES
+(
+  '00000000-0000-4000-8000-000000004031',
+  '00000000-0000-4000-8000-000000004030',
+  'Gombe City Tour',
+  'Guided walking tour of Kinshasa Gombe district.',
+  180,
+  4500,
+  'USD',
+  '00000000-0000-4000-8000-000000000010'
+),
+(
+  '00000000-0000-4000-8000-000000004032',
+  '00000000-0000-4000-8000-000000004030',
+  'Congo River Walk',
+  'Scenic walk along the Congo River (no demo schedules).',
+  120,
+  3500,
+  'USD',
+  '00000000-0000-4000-8000-000000000010'
+);
+
+INSERT INTO `activity_schedules` (
+  `id`, `activity_id`, `start_datetime`, `capacity`, `booked_count`, `created_by_user_id`
+) VALUES
+(
+  '00000000-0000-4000-8000-000000004033',
+  '00000000-0000-4000-8000-000000004031',
+  '2026-07-20 09:00:00',
+  12,
+  2,
+  '00000000-0000-4000-8000-000000000010'
+),
+(
+  '00000000-0000-4000-8000-000000004034',
+  '00000000-0000-4000-8000-000000004031',
+  '2026-07-20 14:00:00',
+  8,
+  8,
+  '00000000-0000-4000-8000-000000000010'
+);
+
 SET FOREIGN_KEY_CHECKS = 1;
