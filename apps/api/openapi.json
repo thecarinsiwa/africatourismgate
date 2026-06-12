@@ -8008,6 +8008,372 @@
           "support-messages"
         ]
       }
+    },
+    "/api/public/destinations": {
+      "get": {
+        "operationId": "PublicAccommodationsController_listDestinations",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "List destinations for public search",
+        "tags": [
+          "public"
+        ]
+      }
+    },
+    "/api/public/accommodations/search": {
+      "get": {
+        "operationId": "PublicAccommodationsController_search",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "destination",
+            "required": false,
+            "in": "query",
+            "description": "Destination city name (partial match)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "destinationId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "checkIn",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "date",
+              "example": "2026-06-01",
+              "type": "string"
+            }
+          },
+          {
+            "name": "checkOut",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "date",
+              "example": "2026-06-05",
+              "type": "string"
+            }
+          },
+          {
+            "name": "guests",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "propertyType",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "hotel",
+                "resort",
+                "apartment",
+                "villa",
+                "hostel",
+                "other"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Search accommodations with min nightly price",
+        "tags": [
+          "public"
+        ]
+      }
+    },
+    "/api/public/accommodations/{id}/reviews": {
+      "get": {
+        "operationId": "PublicAccommodationsController_listReviews",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "List guest reviews for an accommodation",
+        "tags": [
+          "public"
+        ]
+      }
+    },
+    "/api/public/accommodations/{id}": {
+      "get": {
+        "operationId": "PublicAccommodationsController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "checkIn",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "date",
+              "example": "2026-06-01",
+              "type": "string"
+            }
+          },
+          {
+            "name": "checkOut",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "date",
+              "example": "2026-06-05",
+              "type": "string"
+            }
+          },
+          {
+            "name": "guests",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "month",
+            "required": false,
+            "in": "query",
+            "description": "YYYY-MM for calendar",
+            "schema": {
+              "example": "2026-06",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Accommodation detail with rooms and date pricing",
+        "tags": [
+          "public"
+        ]
+      }
+    },
+    "/api/public/flights/search": {
+      "get": {
+        "operationId": "PublicFlightsController_search",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "description": "Departure airport IATA code",
+            "schema": {
+              "example": "FIH",
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "description": "Arrival airport IATA code",
+            "schema": {
+              "example": "NBO",
+              "type": "string"
+            }
+          },
+          {
+            "name": "departureDate",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "format": "date",
+              "example": "2026-08-01",
+              "type": "string"
+            }
+          },
+          {
+            "name": "returnDate",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "date",
+              "example": "2026-08-08",
+              "type": "string"
+            }
+          },
+          {
+            "name": "passengers",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Search flights with min class price and seat availability",
+        "tags": [
+          "public"
+        ]
+      }
+    },
+    "/api/public/flights/{id}": {
+      "get": {
+        "operationId": "PublicFlightsController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "departureDate",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "format": "date",
+              "example": "2026-08-01",
+              "type": "string"
+            }
+          },
+          {
+            "name": "returnDate",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "date",
+              "example": "2026-08-08",
+              "type": "string"
+            }
+          },
+          {
+            "name": "passengers",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Flight detail with class pricing for a travel date",
+        "tags": [
+          "public"
+        ]
+      }
     }
   },
   "info": {

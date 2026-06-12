@@ -35,6 +35,7 @@
     "test:room-availability": "node scripts/test-room-availability.mjs",
     "test:public-accommodation-search": "node scripts/test-public-accommodation-search.mjs",
     "test:public-accommodation-detail": "node scripts/test-public-accommodation-detail.mjs",
+    "test:public-flight-search": "node scripts/test-public-flight-search.mjs",
     "test:reviews": "node scripts/test-reviews.mjs",
     "test:support": "node scripts/test-support-tickets.mjs",
     "test:users": "node scripts/test-users-crud.mjs",
