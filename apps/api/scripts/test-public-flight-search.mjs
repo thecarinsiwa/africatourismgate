@@ -94,7 +94,24 @@ async function main() {
     throw new Error('Expected empty results for passengers=99');
   }
 
-  console.log('5. GET search invalid returnDate (400)');
+  console.log('6. GET /public/flights/search (all available flights)');
+  const browseAll = await request('/public/flights/search?limit=50');
+  assertStatus('browse all', browseAll.status, 200);
+  if (browseAll.data?.data?.length < 2) {
+    throw new Error('Expected at least two flights in browse-all mode');
+  }
+  const browseNumbers = browseAll.data.data.map((f) => f.flightNumber).sort();
+  if (!browseNumbers.includes('KQ550') || !browseNumbers.includes('KQ551')) {
+    throw new Error(`Expected KQ550 and KQ551 in browse-all, got ${browseNumbers.join(', ')}`);
+  }
+  for (const flight of browseAll.data.data) {
+    if (!flight.departureDate) {
+      throw new Error(`Expected departureDate on browse result ${flight.flightNumber}`);
+    }
+  }
+  console.log(`  OK ${browseAll.data.data.length} flights with next available dates`);
+
+  console.log('7. GET search invalid returnDate (400)');
   const invalid = await request(
     '/public/flights/search?from=FIH&to=NBO&departureDate=2026-08-08&returnDate=2026-08-01',
   );

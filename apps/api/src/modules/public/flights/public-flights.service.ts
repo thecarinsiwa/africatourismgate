@@ -13,7 +13,8 @@ import { FlightDetailQueryDto } from './dto/flight-detail-query.dto';
 import { FlightDetailDto } from './dto/flight-detail.dto';
 import { FlightSearchQueryDto } from './dto/flight-search-query.dto';
 import { FlightSearchResultDto } from './dto/flight-search-result.dto';
-import { assertValidFlightDates } from './flight-dates.util';
+import { PublicAirportDto } from './dto/public-airport.dto';
+import { assertValidFlightDates, todayDateOnly } from './flight-dates.util';
 
 const DEFAULT_CURRENCY = 'USD';
 
@@ -40,6 +41,23 @@ export class PublicFlightsService {
     private readonly airlinesRepository: Repository<Airlines>,
   ) {}
 
+  async listAirports(): Promise<PublicAirportDto[]> {
+    const rows = await this.airportsRepository
+      .createQueryBuilder('a')
+      .select(['a.iataCode', 'a.name', 'a.city', 'a.countryCode'])
+      .where('a.deletedAt IS NULL')
+      .orderBy('a.city', 'ASC')
+      .addOrderBy('a.iataCode', 'ASC')
+      .getMany();
+
+    return rows.map((airport) => ({
+      iataCode: airport.iataCode,
+      name: airport.name,
+      city: airport.city,
+      countryCode: airport.countryCode,
+    }));
+  }
+
   async search(
     query: FlightSearchQueryDto,
   ): Promise<PaginatedResult<FlightSearchResultDto>> {
@@ -49,39 +67,55 @@ export class PublicFlightsService {
 
     assertValidFlightDates(query.departureDate, query.returnDate);
 
-    const fromAirport = await this.findAirportByIata(query.from);
-    const toAirport = await this.findAirportByIata(query.to);
-    if (!fromAirport || !toAirport) {
-      return {
-        data: [],
-        meta: { total: 0, page, limit, totalPages: 1 },
-      };
+    const fromAirport = query.from
+      ? await this.findAirportByIata(query.from)
+      : null;
+    const toAirport = query.to ? await this.findAirportByIata(query.to) : null;
+
+    if (query.from && !fromAirport) {
+      return this.emptyPage(page, limit);
+    }
+    if (query.to && !toAirport) {
+      return this.emptyPage(page, limit);
     }
 
+    const flightWhere = {
+      ...(fromAirport ? { departureAirportId: fromAirport.id } : {}),
+      ...(toAirport ? { arrivalAirportId: toAirport.id } : {}),
+      deletedAt: null as never,
+    };
+
     const outboundFlights = await this.flightsRepository.find({
-      where: {
-        departureAirportId: fromAirport.id,
-        arrivalAirportId: toAirport.id,
-        deletedAt: null as never,
-      },
+      where: flightWhere,
       order: { departureTime: 'ASC' },
     });
 
-    const returnMinPrice = query.returnDate
-      ? await this.computeRouteMinPrice(
-          toAirport.id,
-          fromAirport.id,
-          query.returnDate,
-          passengers,
-        )
-      : null;
+    const returnMinPrice =
+      query.departureDate && query.returnDate && toAirport && fromAirport
+        ? await this.computeRouteMinPrice(
+            toAirport.id,
+            fromAirport.id,
+            query.returnDate,
+            passengers,
+          )
+        : null;
 
     if (query.returnDate && returnMinPrice === null) {
-      return {
-        data: [],
-        meta: { total: 0, page, limit, totalPages: 1 },
-      };
+      return this.emptyPage(page, limit);
     }
+
+    const airportIds = [
+      ...new Set(
+        outboundFlights.flatMap((f) => [f.departureAirportId, f.arrivalAirportId]),
+      ),
+    ];
+    const airports =
+      airportIds.length > 0
+        ? await this.airportsRepository.find({ where: { id: In(airportIds) } })
+        : [];
+    const airportById = new Map(
+      airports.filter((a) => !a.deletedAt).map((a) => [a.id, a]),
+    );
 
     const airlineIds = [...new Set(outboundFlights.map((f) => f.airlineId))];
     const airlines =
@@ -97,9 +131,22 @@ export class PublicFlightsService {
     for (const flight of outboundFlights) {
       if (flight.deletedAt) continue;
 
+      const departureAirport = airportById.get(flight.departureAirportId);
+      const arrivalAirport = airportById.get(flight.arrivalAirportId);
+      if (!departureAirport || !arrivalAirport) continue;
+
+      const travelDate =
+        query.departureDate ??
+        (await this.findEarliestAvailabilityForFlight(
+          flight.id,
+          passengers,
+          todayDateOnly(),
+        ));
+      if (!travelDate) continue;
+
       const outboundMin = await this.computeFlightMinPrice(
         flight.id,
-        query.departureDate,
+        travelDate,
         passengers,
       );
       if (outboundMin === null) continue;
@@ -114,16 +161,17 @@ export class PublicFlightsService {
         flightNumber: flight.flightNumber,
         airlineName: airline.name,
         airlineIataCode: airline.iataCode,
-        departureAirportIata: fromAirport.iataCode,
-        departureAirportCity: fromAirport.city,
-        arrivalAirportIata: toAirport.iataCode,
-        arrivalAirportCity: toAirport.city,
+        departureAirportIata: departureAirport.iataCode,
+        departureAirportCity: departureAirport.city,
+        arrivalAirportIata: arrivalAirport.iataCode,
+        arrivalAirportCity: arrivalAirport.city,
         departureTime: flight.departureTime.toISOString(),
         arrivalTime: flight.arrivalTime.toISOString(),
         durationMinutes: flight.durationMinutes,
         minPriceCents,
         currency: DEFAULT_CURRENCY,
         roundTrip: Boolean(query.returnDate),
+        departureDate: travelDate,
       });
     }
 
@@ -142,6 +190,48 @@ export class PublicFlightsService {
         totalPages: Math.ceil(total / limit) || 1,
       },
     };
+  }
+
+  private emptyPage(
+    page: number,
+    limit: number,
+  ): PaginatedResult<FlightSearchResultDto> {
+    return {
+      data: [],
+      meta: { total: 0, page, limit, totalPages: 1 },
+    };
+  }
+
+  private async findEarliestAvailabilityForFlight(
+    flightId: string,
+    passengers: number,
+    minDate: string,
+  ): Promise<string | null> {
+    const classes = await this.flightClassesRepository.find({
+      where: { flightId },
+    });
+    const activeClassIds = classes.filter((c) => !c.deletedAt).map((c) => c.id);
+    if (!activeClassIds.length) {
+      return null;
+    }
+
+    const availabilityRows = await this.availabilityRepository.find({
+      where: { flightClassId: In(activeClassIds) },
+      order: { date: 'ASC' },
+    });
+
+    const eligibleDates = availabilityRows
+      .filter(
+        (row) =>
+          !row.deletedAt &&
+          row.availableSeats >= passengers &&
+          row.availableSeats > 0,
+      )
+      .map((row) => String(row.date).slice(0, 10))
+      .filter((date) => date >= minDate)
+      .sort();
+
+    return eligibleDates[0] ?? null;
   }
 
   async getById(id: string, query: FlightDetailQueryDto): Promise<FlightDetailDto> {

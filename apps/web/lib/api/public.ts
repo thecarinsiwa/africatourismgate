@@ -8,6 +8,23 @@ import type {
   PublicDestination,
   Review,
 } from '@africatourismgate/types';
+import type {
+  FlightDetail,
+  FlightDetailQuery,
+  FlightSearchQuery,
+  FlightSearchResult,
+  PublicAirport,
+} from '../flights/types';
+
+export type {
+  FlightDetail,
+  FlightDetailAirport,
+  FlightDetailClass,
+  FlightDetailQuery,
+  FlightSearchQuery,
+  FlightSearchResult,
+  PublicAirport,
+} from '../flights/types';
 
 const defaultApiUrl =
   process.env.NODE_ENV === 'production'
@@ -46,6 +63,10 @@ function buildSearchQuery(params: PropertySearchQuery): string {
 
 export async function listPublicDestinations(): Promise<PublicDestination[]> {
   return fetchPublic<PublicDestination[]>('/public/destinations');
+}
+
+export async function listPublicAirports(): Promise<PublicAirport[]> {
+  return fetchPublic<PublicAirport[]>('/public/airports');
 }
 
 export async function searchAccommodations(
@@ -89,5 +110,44 @@ export async function getPropertyReviews(
 ): Promise<PaginatedResponse<Review>> {
   return fetchPublic<PaginatedResponse<Review>>(
     `/public/accommodations/${encodeURIComponent(propertyId)}/reviews${buildReviewsQuery(params)}`,
+  );
+}
+
+function buildFlightSearchQuery(params: FlightSearchQuery): string {
+  const qs = new URLSearchParams();
+  if (params.from) qs.set('from', params.from);
+  if (params.to) qs.set('to', params.to);
+  if (params.departureDate) qs.set('departureDate', params.departureDate);
+  if (params.returnDate) qs.set('returnDate', params.returnDate);
+  if (params.passengers !== undefined) qs.set('passengers', String(params.passengers));
+  if (params.page !== undefined) qs.set('page', String(params.page));
+  if (params.limit !== undefined) qs.set('limit', String(params.limit));
+  const s = qs.toString();
+  return s ? `?${s}` : '';
+}
+
+export async function searchFlights(
+  params: FlightSearchQuery,
+): Promise<PaginatedResponse<FlightSearchResult>> {
+  return fetchPublic<PaginatedResponse<FlightSearchResult>>(
+    `/public/flights/search${buildFlightSearchQuery(params)}`,
+  );
+}
+
+function buildFlightDetailQuery(params: FlightDetailQuery): string {
+  const qs = new URLSearchParams();
+  qs.set('departureDate', params.departureDate);
+  if (params.returnDate) qs.set('returnDate', params.returnDate);
+  if (params.passengers !== undefined) qs.set('passengers', String(params.passengers));
+  const s = qs.toString();
+  return s ? `?${s}` : '';
+}
+
+export async function getFlightDetail(
+  id: string,
+  params: FlightDetailQuery,
+): Promise<FlightDetail> {
+  return fetchPublic<FlightDetail>(
+    `/public/flights/${encodeURIComponent(id)}${buildFlightDetailQuery(params)}`,
   );
 }

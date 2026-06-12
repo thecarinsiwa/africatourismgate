@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class FlightSearchResultDto {
   @ApiProperty({ format: 'uuid' })
@@ -42,4 +42,10 @@ export class FlightSearchResultDto {
 
   @ApiProperty()
   roundTrip!: boolean;
+
+  @ApiPropertyOptional({
+    format: 'date',
+    description: 'Travel date used for pricing (especially when departureDate was not in the search query)',
+  })
+  departureDate?: string;
 }
