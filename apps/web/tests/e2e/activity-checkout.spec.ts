@@ -1,0 +1,201 @@
+import { expect, test } from '@playwright/test';
+
+const ACTIVITY_ID = '00000000-0000-4000-8000-000000004031';
+const SCHEDULE_MORNING = '00000000-0000-4000-8000-000000004033';
+const SCHEDULE_AFTERNOON = '00000000-0000-4000-8000-000000004034';
+const BOOKING_ID = 'booking-e2e-activity';
+const DATE = '2026-07-20';
+const PARTICIPANTS = 2;
+const UNIT_PRICE_CENTS = 4500;
+const TOTAL_CENTS = UNIT_PRICE_CENTS * PARTICIPANTS;
+
+const activityDetailMock = {
+  id: ACTIVITY_ID,
+  title: 'Gombe City Tour',
+  description: 'Guided walking tour of Kinshasa Gombe district.',
+  durationMinutes: 180,
+  priceCents: UNIT_PRICE_CENTS,
+  currency: 'USD',
+  destination: 'Kinshasa',
+  providerName: 'Tourism Gate Experiences Kinshasa',
+  date: DATE,
+  participants: PARTICIPANTS,
+  schedules: [
+    {
+      scheduleId: SCHEDULE_MORNING,
+      startDatetime: '2026-07-20T09:00:00.000Z',
+      capacity: 12,
+      bookedCount: 2,
+      remainingPlaces: 10,
+      priceCents: UNIT_PRICE_CENTS,
+      currency: 'USD',
+    },
+    {
+      scheduleId: SCHEDULE_AFTERNOON,
+      startDatetime: '2026-07-20T14:00:00.000Z',
+      capacity: 8,
+      bookedCount: 8,
+      remainingPlaces: 0,
+      priceCents: UNIT_PRICE_CENTS,
+      currency: 'USD',
+    },
+  ],
+};
+
+test('activité Gombe City Tour: créneau complet grisé, panier -> recap -> Stripe', async ({
+  page,
+}) => {
+  test.setTimeout(60_000);
+
+  await page.addInitScript(() => {
+    window.sessionStorage.setItem(
+      'atg.web.session',
+      JSON.stringify({
+        accessToken: 'e2e-token',
+        refreshToken: 'e2e-refresh-token',
+        expiresAt: Date.now() + 60 * 60 * 1000,
+        user: {
+          id: 'user-e2e',
+          email: 'client.e2e@example.com',
+          firstName: 'Client',
+          lastName: 'E2E',
+          organizationId: null,
+          status: 'active',
+        },
+      }),
+    );
+  });
+
+  await page.route(`**/api/public/activities/${ACTIVITY_ID}**`, async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(activityDetailMock),
+    });
+  });
+
+  let postedItems: unknown = null;
+
+  await page.route('**/api/bookings', async (route) => {
+    if (route.request().method() !== 'POST') {
+      await route.continue();
+      return;
+    }
+
+    postedItems = route.request().postDataJSON();
+
+    await route.fulfill({
+      status: 201,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        booking: {
+          id: BOOKING_ID,
+          userId: 'user-e2e',
+          status: 'pending_payment',
+          totalCents: TOTAL_CENTS,
+          currency: 'USD',
+          promoCodeId: null,
+          createdAt: new Date().toISOString(),
+          updatedAt: null,
+        },
+        items: [],
+        totalCents: TOTAL_CENTS,
+        currency: 'USD',
+      }),
+    });
+  });
+
+  await page.route(`**/api/bookings/${BOOKING_ID}/checkout-session`, async (route) => {
+    await route.fulfill({
+      status: 201,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        paymentId: 'payment-e2e-activity',
+        sessionId: 'cs_test_e2e_activity',
+        url: `http://127.0.0.1:3002/booking/success?booking_id=${BOOKING_ID}`,
+        amountCents: TOTAL_CENTS,
+        currency: 'USD',
+      }),
+    });
+  });
+
+  await page.route(`**/api/bookings/${BOOKING_ID}`, async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        booking: {
+          id: BOOKING_ID,
+          userId: 'user-e2e',
+          status: 'confirmed',
+          totalCents: TOTAL_CENTS,
+          currency: 'USD',
+          promoCodeId: null,
+          createdAt: new Date().toISOString(),
+          updatedAt: null,
+        },
+        items: [],
+        totalCents: TOTAL_CENTS,
+        currency: 'USD',
+      }),
+    });
+  });
+
+  await page.goto(`/activities/${ACTIVITY_ID}?date=${DATE}&participants=${PARTICIPANTS}`);
+
+  await expect(page.getByRole('heading', { name: 'Gombe City Tour' })).toBeVisible();
+  await expect(page.getByText('Tourism Gate Experiences Kinshasa')).toBeVisible();
+
+  const schedules = page.locator('#schedules');
+  await expect(schedules.getByRole('heading', { name: /cr[ée]neaux|time slots|horarios/i })).toBeVisible();
+
+  const soldOutCard = schedules.locator('article').filter({
+    hasText: /complet|sold out|agotado/i,
+  });
+  await expect(soldOutCard).toBeVisible();
+  await expect(
+    soldOutCard.getByRole('button', {
+      name: /choisir ce cr[ée]neau|select this slot|elegir este horario/i,
+    }),
+  ).toBeDisabled();
+
+  const availableCard = schedules.locator('article').filter({
+    hasNotText: /complet|sold out|agotado/i,
+  });
+  await availableCard
+    .getByRole('button', {
+      name: /choisir ce cr[ée]neau|select this slot|elegir este horario/i,
+    })
+    .click();
+
+  await page.locator('button:visible', { hasText: /r[ée]server|book now|reservar/i }).first().click();
+  await expect(page).toHaveURL(/\/booking\/cart\?.*kind=activity_schedule/);
+  await expect(page.getByText('Gombe City Tour')).toBeVisible();
+  await expect(page.getByText('Tourism Gate Experiences Kinshasa')).toBeVisible();
+
+  await page.goto(
+    `/booking/recap?kind=activity_schedule&activityId=${ACTIVITY_ID}&scheduleId=${SCHEDULE_MORNING}&date=${DATE}&participants=${PARTICIPANTS}`,
+  );
+  await expect(page.getByRole('heading', { name: /recapitulatif/i })).toBeVisible();
+  await expect(page.getByText('Gombe City Tour')).toBeVisible();
+  await expect(page.getByText('Tourism Gate Experiences Kinshasa')).toBeVisible();
+
+  await expect(page.getByRole('button', { name: /payer avec stripe/i })).toBeEnabled();
+  await page.getByRole('button', { name: /payer avec stripe/i }).click();
+  await expect(page).toHaveURL(new RegExp(`/booking/success\\?booking_id=${BOOKING_ID}`), {
+    timeout: 15_000,
+  });
+
+  expect(postedItems).toEqual({
+    items: [
+      {
+        itemType: 'activity_schedule',
+        referenceId: SCHEDULE_MORNING,
+        quantity: PARTICIPANTS,
+      },
+    ],
+  });
+
+  await expect(page.getByText(/reservation confirmee/i)).toBeVisible();
+  await expect(page.getByText(/booking id:/i)).toBeVisible();
+});
