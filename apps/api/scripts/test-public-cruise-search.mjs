@@ -13,6 +13,7 @@ const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000/api')
 
 const SAILING_DEMO_KIN_BNW = '00000000-0000-4000-8000-000000003036';
 const CABIN_AVAIL_DEMO_STD = '00000000-0000-4000-8000-000000003037';
+const CABIN_AVAIL_DEMO_SUITE = '00000000-0000-4000-8000-000000003038';
 
 async function request(path) {
   const res = await fetch(`${API_URL}${path}`);
@@ -92,20 +93,29 @@ async function main() {
   if (detail.data?.itineraryPorts?.length !== 2) {
     throw new Error('Expected 2 itinerary ports in detail');
   }
-  if (detail.data?.cabins?.length !== 1) {
-    throw new Error('Expected only Standard cabin with stock in detail');
+  if (detail.data?.cabins?.length !== 2) {
+    throw new Error('Expected Standard + Suite cabins in detail (including zero stock)');
   }
-  const std = detail.data.cabins[0];
-  if (std.categoryName !== 'Standard' || std.availabilityId !== CABIN_AVAIL_DEMO_STD) {
+  const std = detail.data.cabins.find((c) => c.availabilityId === CABIN_AVAIL_DEMO_STD);
+  const suite = detail.data.cabins.find((c) => c.availabilityId === CABIN_AVAIL_DEMO_SUITE);
+  if (!std || std.categoryName !== 'Standard') {
     throw new Error('Expected Standard cabin availability in detail');
+  }
+  if (!suite || suite.categoryName !== 'Suite') {
+    throw new Error('Expected Suite cabin availability in detail');
   }
   if (std.availableCount !== 8 || std.priceCents !== 245000) {
     throw new Error(`Unexpected Standard cabin: count=${std.availableCount} price=${std.priceCents}`);
   }
+  if (suite.availableCount !== 0 || suite.priceCents !== 440000) {
+    throw new Error(`Unexpected Suite cabin: count=${suite.availableCount} price=${suite.priceCents}`);
+  }
   if (detail.data.minPriceCents !== 245000) {
     throw new Error(`Expected minPriceCents 245000, got ${detail.data.minPriceCents}`);
   }
-  console.log(`  OK detail: ${detail.data.cabins.length} cabin(s), ${detail.data.itineraryPorts.length} ports`);
+  console.log(
+    `  OK detail: ${detail.data.cabins.length} cabin(s) (incl. zero stock), ${detail.data.itineraryPorts.length} ports`,
+  );
 
   console.log('\nAll public cruise search checks passed.');
 }

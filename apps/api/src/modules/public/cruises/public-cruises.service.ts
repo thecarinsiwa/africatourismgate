@@ -126,7 +126,9 @@ export class PublicCruisesService {
       const line = lineById.get(ship.cruiseLineId);
       if (!line) continue;
 
-      const cabinOffers = await this.buildCabinOffers(sailing.id, guests);
+      const cabinOffers = await this.buildCabinOffers(sailing.id, guests, {
+        includeUnavailable: false,
+      });
       if (!cabinOffers.length) continue;
 
       const minPriceCents = Math.min(...cabinOffers.map((o) => o.priceCents));
@@ -204,14 +206,19 @@ export class PublicCruisesService {
       throw new NotFoundException('Croisière introuvable.');
     }
 
-    const cabins = await this.buildCabinOffers(sailing.id, guests);
+    const cabins = await this.buildCabinOffers(sailing.id, guests, {
+      includeUnavailable: true,
+    });
     if (!cabins.length) {
       throw new NotFoundException(
         'Aucune cabine disponible pour cette croisière.',
       );
     }
 
-    const minPriceCents = Math.min(...cabins.map((c) => c.priceCents));
+    const inStockCabins = cabins.filter((c) => c.availableCount > 0);
+    const minPriceCents = inStockCabins.length
+      ? Math.min(...inStockCabins.map((c) => c.priceCents))
+      : Math.min(...cabins.map((c) => c.priceCents));
     const departureDate = this.normalizeDate(sailing.departureDate);
     const endpoints = this.resolveItineraryEndpoints(itineraryPorts);
 
@@ -286,13 +293,18 @@ export class PublicCruisesService {
   private async buildCabinOffers(
     sailingId: string,
     guests: number,
+    options: { includeUnavailable?: boolean } = {},
   ): Promise<CabinOffer[]> {
+    const includeUnavailable = options.includeUnavailable ?? false;
+
     const availabilityRows = await this.cabinAvailabilityRepository.find({
       where: { sailingId },
     });
-    const activeAvailability = availabilityRows.filter(
-      (row) => !row.deletedAt && row.availableCount > 0,
-    );
+    const activeAvailability = availabilityRows.filter((row) => {
+      if (row.deletedAt) return false;
+      if (includeUnavailable) return true;
+      return row.availableCount > 0;
+    });
     if (!activeAvailability.length) {
       return [];
     }
