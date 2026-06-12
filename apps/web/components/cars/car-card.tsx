@@ -20,8 +20,8 @@ type CarCardProps = {
 export function CarCard({ vehicle, t, searchParams = {}, locale }: CarCardProps) {
   const detailParams: CarDetailSearchParams = {
     pickupLocation: searchParams.pickupLocation ?? vehicle.pickupCity,
-    pickupDate: searchParams.pickupDate,
-    returnDate: searchParams.returnDate,
+    pickupDate: searchParams.pickupDate ?? vehicle.pickupDate,
+    returnDate: searchParams.returnDate ?? vehicle.returnDate,
   };
   const detailHref = buildCarDetailHref(vehicle.id, detailParams);
   const reserveHref = buildCarDetailHref(vehicle.id, detailParams, '#reserve');
@@ -54,10 +54,10 @@ export function CarCard({ vehicle, t, searchParams = {}, locale }: CarCardProps)
                   {t.licensePlate}: {vehicle.licensePlate}
                 </p>
               )}
-              {searchParams.pickupDate && searchParams.returnDate && (
+              {detailParams.pickupDate && detailParams.returnDate && (
                 <p className="mt-2 text-sm text-gray-600 dark:text-atg-muted">
-                  {formatDisplayDate(searchParams.pickupDate, locale)} →{' '}
-                  {formatDisplayDate(searchParams.returnDate, locale)} · {daysLabel}
+                  {formatDisplayDate(detailParams.pickupDate, locale)} →{' '}
+                  {formatDisplayDate(detailParams.returnDate, locale)} · {daysLabel}
                 </p>
               )}
             </div>

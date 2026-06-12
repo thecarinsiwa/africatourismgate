@@ -52,7 +52,21 @@ async function main() {
   }
   console.log(`  → ${pickupLocations.data.length} location(s), including Kinshasa`);
 
-  console.log('\n2. GET /public/vehicles/search Kinshasa');
+  console.log('\n2. GET /public/vehicles/search (browse all, no params)');
+  const browseAll = await request('/public/vehicles/search?page=1&limit=50');
+  assertStatus('browse all search', browseAll.status, 200);
+  const browseEco = browseAll.data?.data?.find((v) => v.licensePlate === 'CD-KIN-001');
+  if (!browseEco) {
+    throw new Error('Expected CD-KIN-001 when browsing all vehicles');
+  }
+  if (!browseEco.pickupDate || !browseEco.returnDate) {
+    throw new Error('Browse result should include resolved pickupDate and returnDate');
+  }
+  console.log(
+    `  → ${browseAll.data.data.length} vehicle(s), ${browseEco.licensePlate} @ ${browseEco.pickupDate} → ${browseEco.returnDate}`,
+  );
+
+  console.log('\n3. GET /public/vehicles/search Kinshasa');
   const search = await request(
     '/public/vehicles/search?pickupLocation=Kinshasa&pickupDate=2026-08-01&returnDate=2026-08-08',
   );
@@ -79,7 +93,7 @@ async function main() {
   }
   console.log(`  OK ${eco.categoryName} @ ${eco.totalPriceCents} cents (${eco.rentalDays} days)`);
 
-  console.log('3. GET search period outside availability (empty)');
+  console.log('4. GET search period outside availability (empty)');
   const emptyPeriod = await request(
     '/public/vehicles/search?pickupLocation=Kinshasa&pickupDate=2026-09-01&returnDate=2026-09-08',
   );
@@ -88,7 +102,7 @@ async function main() {
     throw new Error('Expected empty results for September dates');
   }
 
-  console.log('4. GET search unknown location (empty)');
+  console.log('5. GET search unknown location (empty)');
   const emptyLocation = await request(
     '/public/vehicles/search?pickupLocation=Nairobi&pickupDate=2026-08-01&returnDate=2026-08-08',
   );
@@ -97,13 +111,13 @@ async function main() {
     throw new Error('Expected empty results for Nairobi');
   }
 
-  console.log('5. GET search invalid returnDate (400)');
+  console.log('6. GET search invalid returnDate (400)');
   const invalid = await request(
     '/public/vehicles/search?pickupLocation=Kinshasa&pickupDate=2026-08-08&returnDate=2026-08-01',
   );
   assertStatus('invalid dates', invalid.status, 400);
 
-  console.log('6. GET /public/vehicles/:id detail');
+  console.log('7. GET /public/vehicles/:id detail');
   const detail = await request(
     `/public/vehicles/${VEHICLE_DEMO_ECO}?pickupDate=2026-08-01&returnDate=2026-08-08`,
   );

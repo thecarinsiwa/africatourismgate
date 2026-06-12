@@ -17,6 +17,8 @@ import { VehicleSearchResultDto } from './dto/vehicle-search-result.dto';
 import {
   assertValidVehicleDates,
   countRentalDays,
+  resolveDefaultRentalWindow,
+  todayDateOnly,
 } from './vehicle-dates.util';
 
 @Injectable()
@@ -65,53 +67,39 @@ export class PublicVehiclesService {
   ): Promise<PaginatedResult<VehicleSearchResultDto>> {
     const page = query.page ?? 1;
     const limit = query.limit ?? 20;
+    const hasDates = Boolean(query.pickupDate && query.returnDate);
 
     assertValidVehicleDates(query.pickupDate, query.returnDate);
-    const rentalDays = countRentalDays(query.pickupDate, query.returnDate);
 
-    const destinationIds = await this.resolveDestinationIds(query.pickupLocation);
-    if (!destinationIds.length) {
+    const fleet = await this.resolveActiveFleet(query.pickupLocation);
+    if (!fleet) {
       return this.emptyPage(page, limit);
     }
 
-    const agencies = await this.agenciesRepository.find({
-      where: { destinationId: In(destinationIds) },
-    });
-    const activeAgencies = agencies.filter((a) => !a.deletedAt);
-    if (!activeAgencies.length) {
-      return this.emptyPage(page, limit);
-    }
-
-    const agencyById = new Map(activeAgencies.map((a) => [a.id, a]));
-    const agencyIds = activeAgencies.map((a) => a.id);
-
-    const vehicles = await this.vehiclesRepository.find({
-      where: { agencyId: In(agencyIds) },
-    });
-    const activeVehicles = vehicles.filter((v) => !v.deletedAt);
-    if (!activeVehicles.length) {
-      return this.emptyPage(page, limit);
-    }
-
+    const { activeVehicles, agencyById, cityByDestId } = fleet;
     const vehicleIds = activeVehicles.map((v) => v.id);
-    const slots = await this.availabilityRepository
+
+    const slotsQuery = this.availabilityRepository
       .createQueryBuilder('slot')
       .where('slot.vehicleId IN (:...vehicleIds)', { vehicleIds })
       .andWhere('slot.status = :status', { status: 'available' })
-      .andWhere('slot.deletedAt IS NULL')
-      .andWhere('DATE(slot.startDatetime) <= :pickupDate', {
-        pickupDate: query.pickupDate,
-      })
-      .andWhere('DATE(slot.endDatetime) >= :returnDate', {
-        returnDate: query.returnDate,
-      })
-      .orderBy('slot.startDatetime', 'ASC')
-      .getMany();
+      .andWhere('slot.deletedAt IS NULL');
 
-    const slotByVehicleId = this.pickBestSlotPerVehicle(slots);
-    if (!slotByVehicleId.size) {
-      return this.emptyPage(page, limit);
+    if (hasDates) {
+      slotsQuery
+        .andWhere('DATE(slot.startDatetime) <= :pickupDate', {
+          pickupDate: query.pickupDate,
+        })
+        .andWhere('DATE(slot.endDatetime) >= :returnDate', {
+          returnDate: query.returnDate,
+        });
+    } else {
+      slotsQuery.andWhere('DATE(slot.endDatetime) >= :today', {
+        today: todayDateOnly(),
+      });
     }
+
+    const slots = await slotsQuery.orderBy('slot.startDatetime', 'ASC').getMany();
 
     const categoryIds = [...new Set(activeVehicles.map((v) => v.categoryId))];
     const categories = await this.categoriesRepository.find({
@@ -121,26 +109,11 @@ export class PublicVehiclesService {
       categories.filter((c) => !c.deletedAt).map((c) => [c.id, c]),
     );
 
-    const destIds = [
-      ...new Set(
-        activeAgencies
-          .map((a) => a.destinationId)
-          .filter((id): id is string => Boolean(id)),
-      ),
-    ];
-    const destinations =
-      destIds.length > 0
-        ? await this.destinationsRepository.find({ where: { id: In(destIds) } })
-        : [];
-    const cityByDestId = new Map(
-      destinations.filter((d) => !d.deletedAt).map((d) => [d.id, d.name]),
-    );
-
     const results: VehicleSearchResultDto[] = [];
 
     for (const vehicle of activeVehicles) {
-      const slot = slotByVehicleId.get(vehicle.id);
-      if (!slot) continue;
+      const vehicleSlots = slots.filter((slot) => slot.vehicleId === vehicle.id);
+      if (!vehicleSlots.length) continue;
 
       const agency = agencyById.get(vehicle.agencyId);
       if (!agency) continue;
@@ -148,9 +121,32 @@ export class PublicVehiclesService {
       const category = categoryById.get(vehicle.categoryId);
       if (!category) continue;
 
+      let slot: VehicleAvailability;
+      let pickupDate: string;
+      let returnDate: string;
+
+      if (hasDates) {
+        const bestSlot = this.pickBestSlotPerVehicle(vehicleSlots).get(vehicle.id);
+        if (!bestSlot) continue;
+        slot = bestSlot;
+        pickupDate = query.pickupDate!;
+        returnDate = query.returnDate!;
+      } else {
+        slot = vehicleSlots[0];
+        const window = resolveDefaultRentalWindow(
+          slot.startDatetime,
+          slot.endDatetime,
+        );
+        if (!window) continue;
+        pickupDate = window.pickupDate;
+        returnDate = window.returnDate;
+      }
+
+      const rentalDays = countRentalDays(pickupDate, returnDate);
       const pickupCity =
         (agency.destinationId && cityByDestId.get(agency.destinationId)) ||
-        query.pickupLocation.trim();
+        query.pickupLocation?.trim() ||
+        '';
 
       results.push({
         id: vehicle.id,
@@ -164,6 +160,8 @@ export class PublicVehiclesService {
         totalPriceCents: vehicle.dailyPriceCents * rentalDays,
         currency: vehicle.currency,
         rentalDays,
+        pickupDate,
+        returnDate,
         availabilitySlotId: slot.id,
       });
     }
@@ -183,6 +181,62 @@ export class PublicVehiclesService {
         totalPages: Math.ceil(total / limit) || 1,
       },
     };
+  }
+
+  private async resolveActiveFleet(pickupLocation?: string): Promise<{
+    activeVehicles: Vehicles[];
+    agencyById: Map<string, RentalAgencies>;
+    cityByDestId: Map<string, string>;
+  } | null> {
+    let activeAgencies: RentalAgencies[];
+
+    const locationTerm = pickupLocation?.trim();
+    if (locationTerm) {
+      const destinationIds = await this.resolveDestinationIds(locationTerm);
+      if (!destinationIds.length) {
+        return null;
+      }
+
+      const agencies = await this.agenciesRepository.find({
+        where: { destinationId: In(destinationIds) },
+      });
+      activeAgencies = agencies.filter((a) => !a.deletedAt);
+    } else {
+      const agencies = await this.agenciesRepository.find();
+      activeAgencies = agencies.filter((a) => !a.deletedAt);
+    }
+
+    if (!activeAgencies.length) {
+      return null;
+    }
+
+    const agencyById = new Map(activeAgencies.map((a) => [a.id, a]));
+    const agencyIds = activeAgencies.map((a) => a.id);
+
+    const vehicles = await this.vehiclesRepository.find({
+      where: { agencyId: In(agencyIds) },
+    });
+    const activeVehicles = vehicles.filter((v) => !v.deletedAt);
+    if (!activeVehicles.length) {
+      return null;
+    }
+
+    const destIds = [
+      ...new Set(
+        activeAgencies
+          .map((a) => a.destinationId)
+          .filter((id): id is string => Boolean(id)),
+      ),
+    ];
+    const destinations =
+      destIds.length > 0
+        ? await this.destinationsRepository.find({ where: { id: In(destIds) } })
+        : [];
+    const cityByDestId = new Map(
+      destinations.filter((d) => !d.deletedAt).map((d) => [d.id, d.name]),
+    );
+
+    return { activeVehicles, agencyById, cityByDestId };
   }
 
   async getById(

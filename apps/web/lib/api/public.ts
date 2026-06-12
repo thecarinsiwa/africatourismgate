@@ -174,9 +174,9 @@ export async function getFlightDetail(
 
 function buildVehicleSearchQuery(params: VehicleSearchQuery): string {
   const qs = new URLSearchParams();
-  qs.set('pickupLocation', params.pickupLocation);
-  qs.set('pickupDate', params.pickupDate);
-  qs.set('returnDate', params.returnDate);
+  if (params.pickupLocation) qs.set('pickupLocation', params.pickupLocation);
+  if (params.pickupDate) qs.set('pickupDate', params.pickupDate);
+  if (params.returnDate) qs.set('returnDate', params.returnDate);
   if (params.page !== undefined) qs.set('page', String(params.page));
   if (params.limit !== undefined) qs.set('limit', String(params.limit));
   const s = qs.toString();

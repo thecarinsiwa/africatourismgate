@@ -99,17 +99,16 @@ export function buildCarDetailHref(
   return hash ? `${base}${hash}` : base;
 }
 
-export function toVehicleSearchQuery(
-  params: CarsSearchParams,
-): VehicleSearchQuery | null {
-  if (!hasRequiredCarDates(params)) return null;
+export function toVehicleSearchQuery(params: CarsSearchParams): VehicleSearchQuery {
+  const query: VehicleSearchQuery = { limit: 50 };
 
-  return {
-    pickupLocation: params.pickupLocation!.trim(),
-    pickupDate: params.pickupDate!,
-    returnDate: params.returnDate!,
-    limit: 50,
-  };
+  if (params.pickupLocation?.trim()) {
+    query.pickupLocation = params.pickupLocation.trim();
+  }
+  if (params.pickupDate) query.pickupDate = params.pickupDate;
+  if (params.returnDate) query.returnDate = params.returnDate;
+
+  return query;
 }
 
 export function toVehicleDetailQuery(

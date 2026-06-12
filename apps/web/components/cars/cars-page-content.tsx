@@ -5,7 +5,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { searchVehicles } from '../../lib/api/public';
 import {
   buildCarsSearchQuery,
-  hasRequiredCarDates,
   toVehicleSearchQuery,
   type CarsSearchParams,
 } from '../../lib/cars/listings';
@@ -31,23 +30,16 @@ export function CarsPageContent({ initialSearch }: CarsPageContentProps) {
 
   const [sort, setSort] = useState<SortKey>('recommended');
   const [results, setResults] = useState<VehicleSearchResult[]>([]);
-  const [loading, setLoading] = useState(hasRequiredCarDates(initialSearch));
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [fetchId, setFetchId] = useState(0);
 
   const apiQuery = useMemo(() => toVehicleSearchQuery(initialSearch), [initialSearch]);
-  const canSearch = apiQuery != null;
+  const hasDateFilter = Boolean(initialSearch.pickupDate || initialSearch.returnDate);
   const displayLocation = initialSearch.pickupLocation?.trim() || c.anyLocation;
 
   useEffect(() => {
     let cancelled = false;
-    if (!apiQuery) {
-      setResults([]);
-      setLoading(false);
-      setError(false);
-      return;
-    }
-
     setLoading(true);
     setError(false);
 
@@ -167,7 +159,7 @@ export function CarsPageContent({ initialSearch }: CarsPageContentProps) {
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value as SortKey)}
-              disabled={loading || !canSearch}
+              disabled={loading}
               className="min-h-[44px] rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-800 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-60 dark:border-atg-border dark:bg-atg-surface dark:text-white"
             >
               <option value="recommended">{c.sortRecommended}</option>
@@ -192,42 +184,13 @@ export function CarsPageContent({ initialSearch }: CarsPageContentProps) {
           </div>
         )}
 
-        {!canSearch && (
-          <div className="rounded-2xl border border-dashed border-gray-200 bg-white px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
-            <svg
-              className="mx-auto h-12 w-12 text-gray-300 dark:text-atg-muted"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              aria-hidden
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M8 17h8M6 11l2-4h8l2 4M5 17a2 2 0 104 0 2 2 0 00-4 0zm10 0a2 2 0 104 0 2 2 0 00-4 0z"
-              />
-            </svg>
-            <h3 className="mt-4 text-lg font-bold text-[#0f1a16] dark:text-white">
-              {c.noSearchParams}
-            </h3>
-            <p className="mt-2 text-sm text-gray-500 dark:text-atg-muted">{c.noSearchParamsHint}</p>
-            <Link
-              href="/#search"
-              className="mt-6 inline-flex min-h-[44px] items-center rounded-lg bg-primary px-6 py-2 text-sm font-bold text-white hover:bg-primary-hover"
-            >
-              {c.startSearch}
-            </Link>
-          </div>
-        )}
-
-        {canSearch && loading && (
+        {loading && (
           <div className="rounded-2xl border border-gray-100 bg-white px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
             <p className="text-sm font-medium text-gray-600 dark:text-atg-muted">{c.loading}</p>
           </div>
         )}
 
-        {canSearch && !loading && !error && listings.length === 0 && (
+        {!loading && !error && listings.length === 0 && (
           <div className="rounded-2xl border border-dashed border-gray-200 bg-white px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
             <h3 className="text-lg font-bold text-[#0f1a16] dark:text-white">{c.noResults}</h3>
             <p className="mt-2 text-sm text-gray-500 dark:text-atg-muted">{c.noResultsHint}</p>
@@ -246,14 +209,24 @@ export function CarsPageContent({ initialSearch }: CarsPageContentProps) {
           </div>
         )}
 
-        {canSearch && !loading && !error && listings.length > 0 && (
+        {!loading && !error && listings.length > 0 && (
           <div className="space-y-6">
+            {!hasDateFilter && (
+              <p className="text-sm text-gray-500 dark:text-atg-muted">{c.browseAllHint}</p>
+            )}
             {listings.map((vehicle) => (
               <CarCard
                 key={vehicle.id}
                 vehicle={vehicle}
                 t={c}
-                searchParams={defaultDetailSearchParams}
+                searchParams={{
+                  pickupLocation:
+                    defaultDetailSearchParams.pickupLocation ?? vehicle.pickupCity,
+                  pickupDate:
+                    defaultDetailSearchParams.pickupDate ?? vehicle.pickupDate,
+                  returnDate:
+                    defaultDetailSearchParams.returnDate ?? vehicle.returnDate,
+                }}
                 locale={locale}
               />
             ))}

@@ -344,7 +344,8 @@ export const en: Translations = {
     noResultsHint: 'Try different dates or another city (e.g. Kinshasa).',
     noSearchParams: 'Start a car rental search',
     noSearchParamsHint: 'Enter a location, pick-up date and return date.',
-    browseAllHint: 'Enter your dates and city to see available vehicles.',
+    browseAllHint:
+      'All available vehicles — prices shown for the next available rental window.',
     startSearch: 'Start search',
     backHome: 'Back to home',
     viewDetails: 'View details',

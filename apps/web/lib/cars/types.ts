@@ -1,7 +1,7 @@
 export interface VehicleSearchQuery {
-  pickupLocation: string;
-  pickupDate: string;
-  returnDate: string;
+  pickupLocation?: string;
+  pickupDate?: string;
+  returnDate?: string;
   page?: number;
   limit?: number;
 }
@@ -18,6 +18,8 @@ export interface VehicleSearchResult {
   totalPriceCents: number;
   currency: string;
   rentalDays: number;
+  pickupDate: string;
+  returnDate: string;
   availabilitySlotId: string;
 }
 

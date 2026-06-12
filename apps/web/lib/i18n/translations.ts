@@ -887,7 +887,8 @@ const fr: Translations = {
     noResultsHint: 'Essayez d\'autres dates ou une autre ville (ex. Kinshasa).',
     noSearchParams: 'Lancez une recherche de location',
     noSearchParamsHint: 'Indiquez un lieu, une date de prise en charge et une date de retour.',
-    browseAllHint: 'Saisissez vos dates et votre ville pour voir les véhicules disponibles.',
+    browseAllHint:
+      'Tous les véhicules disponibles — tarifs sur la prochaine plage de location.',
     startSearch: 'Lancer une recherche',
     backHome: 'Retour à l\'accueil',
     viewDetails: 'Voir détails',
@@ -1508,7 +1509,8 @@ const en: Translations = {
     noResultsHint: 'Try different dates or another city (e.g. Kinshasa).',
     noSearchParams: 'Start a car rental search',
     noSearchParamsHint: 'Enter a location, pick-up date and return date.',
-    browseAllHint: 'Enter your dates and city to see available vehicles.',
+    browseAllHint:
+      'All available vehicles — prices shown for the next available rental window.',
     startSearch: 'Start search',
     backHome: 'Back to home',
     viewDetails: 'View details',

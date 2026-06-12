@@ -13,10 +13,38 @@ export function parseDateOnly(iso: string): Date {
   return new Date(Date.UTC(year, month - 1, day));
 }
 
+export function formatDateOnly(date: Date): string {
+  return date.toISOString().slice(0, 10);
+}
+
+export function todayDateOnly(): string {
+  return formatDateOnly(new Date());
+}
+
+export function addDaysToDateOnly(iso: string, days: number): string {
+  const date = parseDateOnly(iso);
+  date.setUTCDate(date.getUTCDate() + days);
+  return formatDateOnly(date);
+}
+
+export const DEFAULT_BROWSE_RENTAL_DAYS = 7;
+
 export function assertValidVehicleDates(
-  pickupDate: string,
-  returnDate: string,
+  pickupDate?: string,
+  returnDate?: string,
 ): void {
+  if (!pickupDate && returnDate) {
+    throw new BadRequestException(
+      'pickupDate est requis lorsque returnDate est fourni.',
+    );
+  }
+  if (!pickupDate) {
+    return;
+  }
+  parseDateOnly(pickupDate);
+  if (!returnDate) {
+    return;
+  }
   const pickup = parseDateOnly(pickupDate);
   const returnDay = parseDateOnly(returnDate);
   if (returnDay <= pickup) {
@@ -57,6 +85,32 @@ function toDate(value: Date | string): Date {
 
 function startOfUtcDay(date: Date): number {
   return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+}
+
+export function dateOnlyFromDatetime(value: Date | string): string {
+  return toDate(value).toISOString().slice(0, 10);
+}
+
+export function resolveDefaultRentalWindow(
+  slotStart: Date | string,
+  slotEnd: Date | string,
+  today: string = todayDateOnly(),
+  defaultRentalDays: number = DEFAULT_BROWSE_RENTAL_DAYS,
+): { pickupDate: string; returnDate: string } | null {
+  const slotStartDate = dateOnlyFromDatetime(slotStart);
+  const pickupDate = slotStartDate > today ? slotStartDate : today;
+  const idealReturn = addDaysToDateOnly(pickupDate, defaultRentalDays);
+
+  if (slotCoversRentalPeriod(slotStart, slotEnd, pickupDate, idealReturn)) {
+    return { pickupDate, returnDate: idealReturn };
+  }
+
+  const minReturn = addDaysToDateOnly(pickupDate, 1);
+  if (slotCoversRentalPeriod(slotStart, slotEnd, pickupDate, minReturn)) {
+    return { pickupDate, returnDate: minReturn };
+  }
+
+  return null;
 }
 
 /** Slot calendar range must cover pickup through return (inclusive days). */

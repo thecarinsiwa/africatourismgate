@@ -345,7 +345,8 @@ export const fr: Translations = {
     noResultsHint: 'Essayez d\'autres dates ou une autre ville (ex. Kinshasa).',
     noSearchParams: 'Lancez une recherche de location',
     noSearchParamsHint: 'Indiquez un lieu, une date de prise en charge et une date de retour.',
-    browseAllHint: 'Saisissez vos dates et votre ville pour voir les véhicules disponibles.',
+    browseAllHint:
+      'Tous les véhicules disponibles — tarifs sur la prochaine plage de location.',
     startSearch: 'Lancer une recherche',
     backHome: 'Retour à l\'accueil',
     viewDetails: 'Voir détails',

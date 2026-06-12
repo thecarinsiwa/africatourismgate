@@ -72,8 +72,12 @@ test('computeVehicleTotal multiplies daily rate by rental days', () => {
   assert.equal(computeVehicleTotal(5500, 7), 38500);
 });
 
-test('toVehicleSearchQuery returns null when params incomplete', () => {
-  assert.equal(toVehicleSearchQuery({ pickupLocation: 'Kinshasa' }), null);
+test('toVehicleSearchQuery returns browse query when params incomplete', () => {
+  assert.deepEqual(toVehicleSearchQuery({ pickupLocation: 'Kinshasa' }), {
+    pickupLocation: 'Kinshasa',
+    limit: 50,
+  });
+  assert.deepEqual(toVehicleSearchQuery({}), { limit: 50 });
 });
 
 test('toVehicleSearchQuery maps to API query', () => {

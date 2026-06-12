@@ -37,6 +37,12 @@ export class VehicleSearchResultDto {
   @ApiProperty({ example: 7 })
   rentalDays!: number;
 
+  @ApiProperty({ format: 'date', example: '2026-08-01' })
+  pickupDate!: string;
+
+  @ApiProperty({ format: 'date', example: '2026-08-08' })
+  returnDate!: string;
+
   @ApiProperty({
     format: 'uuid',
     description: 'Availability slot id for checkout referenceId',
