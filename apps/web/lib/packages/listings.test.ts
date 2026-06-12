@@ -2,11 +2,14 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   buildPackageDetailHref,
+  buildPackageDetailHrefWithSelections,
   buildPackagesSearchQuery,
   formatPackagePrice,
   hasPackageDiscount,
   isActivityOnlyPackage,
   normalizePackagesSearchParams,
+  parsePackageScheduleSelections,
+  parseParticipantsParam,
   toPackagesBrowseQuery,
 } from './listings';
 
@@ -73,4 +76,41 @@ test('isActivityOnlyPackage detects activity-only bundles', () => {
 test('hasPackageDiscount detects positive discount', () => {
   assert.equal(hasPackageDiscount({ discountAmountCents: 900 }), true);
   assert.equal(hasPackageDiscount({ discountAmountCents: 0 }), false);
+});
+
+test('parsePackageScheduleSelections reads line params from URL search', () => {
+  assert.deepEqual(
+    parsePackageScheduleSelections({
+      lineCount: '2',
+      line0_activityId: 'act-a',
+      line0_scheduleId: 'sched-a',
+      line1_activityId: 'act-b',
+      line1_scheduleId: 'sched-b',
+    }),
+    {
+      'act-a': 'sched-a',
+      'act-b': 'sched-b',
+    },
+  );
+  assert.deepEqual(parsePackageScheduleSelections({ lineCount: '0' }), {});
+  assert.deepEqual(parsePackageScheduleSelections({}), {});
+});
+
+test('buildPackageDetailHrefWithSelections encodes multi-line activity selections', () => {
+  assert.equal(
+    buildPackageDetailHrefWithSelections(
+      'pkg-1',
+      { date: '2026-07-20', participants: '2' },
+      ['act-a', 'act-b'],
+      { 'act-a': 'sched-a', 'act-b': 'sched-b' },
+      '#configure',
+    ),
+    '/packages/pkg-1?date=2026-07-20&participants=2&lineCount=2&line0_activityId=act-a&line0_scheduleId=sched-a&line1_activityId=act-b&line1_scheduleId=sched-b#configure',
+  );
+});
+
+test('parseParticipantsParam defaults invalid values to 1', () => {
+  assert.equal(parseParticipantsParam(undefined), 1);
+  assert.equal(parseParticipantsParam('0'), 1);
+  assert.equal(parseParticipantsParam('3'), 3);
 });
