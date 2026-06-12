@@ -16,6 +16,11 @@ export function currentYearMonth(): string {
   return formatDateISO(now.getFullYear(), now.getMonth() + 1, 1).slice(0, 7);
 }
 
+export function todayISODate(): string {
+  const now = new Date();
+  return formatDateISO(now.getFullYear(), now.getMonth() + 1, now.getDate());
+}
+
 export function shiftYearMonth(isoMonth: string, delta: number): string {
   const { year, month } = parseYearMonth(isoMonth);
   const date = new Date(Date.UTC(year, month - 1 + delta, 1));

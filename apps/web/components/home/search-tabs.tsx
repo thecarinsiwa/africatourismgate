@@ -4,7 +4,10 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { listPublicDestinations } from '../../lib/api/public';
+import { countRentalDays } from '../../lib/cars/listings';
+import { useVehiclePickupLocations } from '../../lib/cars/use-vehicle-pickup-locations';
 import { toFlightAirportOptions, type FlightAirportOption } from '../../lib/flights/airports';
+import { addDays, todayISODate } from '../../lib/hotels/dates';
 import { usePublicAirports } from '../../lib/flights/use-public-airports';
 import { useTranslations } from '../../lib/i18n/locale-provider';
 import { buildSearchRoute, type SearchVertical } from '../../lib/search/route';
@@ -44,9 +47,9 @@ function FormInput({ type = 'text', name, placeholder, value, min, onChange }: {
   return <input type={type} name={name} placeholder={placeholder} value={value} min={min} onChange={(e) => onChange(e.target.value)} className="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg dark:placeholder:text-atg-muted" />;
 }
 
-function FormSelect({ name, placeholder, options, value, onChange }: { name: string; placeholder: string; options: string[]; value: string; onChange: (v: string) => void; }) {
+function FormSelect({ name, placeholder, options, value, disabled, onChange }: { name: string; placeholder: string; options: string[]; value: string; disabled?: boolean; onChange: (v: string) => void; }) {
   return (
-    <select name={name} value={value} onChange={(e) => onChange(e.target.value)} className="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg">
+    <select name={name} value={value} disabled={disabled} onChange={(e) => onChange(e.target.value)} className="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-60 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg">
       <option value="">{placeholder}</option>
       {options.map((opt) => <option key={opt} value={opt}>{opt}</option>)}
     </select>
@@ -139,7 +142,16 @@ export function SearchTabs() {
   const t = useTranslations();
   const router = useRouter();
   const { airports, loading: airportsLoading, error: airportsError } = usePublicAirports();
+  const {
+    locations: carPickupLocations,
+    loading: carPickupLoading,
+    error: carPickupError,
+  } = useVehiclePickupLocations();
   const airportOptions = useMemo(() => toFlightAirportOptions(airports), [airports]);
+  const carPickupOptions = useMemo(
+    () => carPickupLocations.map((location) => location.name),
+    [carPickupLocations],
+  );
   const [activeTab, setActiveTab] = useState<SearchTab>('hotels');
   const tabs = useMemo(() => ([
     { id: 'flights' as const, label: t.search.tabs.flights },
@@ -158,6 +170,7 @@ export function SearchTabs() {
   const [flightPassengers, setFlightPassengers] = useState('1');
   const [flightTripType, setFlightTripType] = useState<FlightTripType>('oneWay');
   const [flightError, setFlightError] = useState<string | null>(null);
+  const [carError, setCarError] = useState<string | null>(null);
   const [destination, setDestination] = useState('');
   const [adults, setAdults] = useState('');
   const [hotelGuests, setHotelGuests] = useState('2');
@@ -220,6 +233,26 @@ export function SearchTabs() {
       return;
     }
 
+    if (activeTab === 'cars') {
+      setCarError(null);
+
+      if (!destination || !departDate || !returnDate) {
+        setCarError(t.search.carsRequired);
+        return;
+      }
+
+      if (returnDate <= departDate) {
+        setCarError(t.search.carsReturnAfterPickup);
+        return;
+      }
+
+      params.set('pickupLocation', destination);
+      params.set('pickupDate', departDate);
+      params.set('returnDate', returnDate);
+      router.push(buildSearchRoute('cars', params));
+      return;
+    }
+
     if (destination) params.set('destination', destination);
     if (from) params.set('from', from);
     if (to) params.set('to', to);
@@ -244,6 +277,19 @@ export function SearchTabs() {
     setFlightError(null);
   }
 
+  const today = todayISODate();
+  const carReturnMinDate = departDate ? addDays(departDate, 1) : today;
+  const carRentalDays = useMemo(() => {
+    if (!departDate || !returnDate || returnDate <= departDate) return 0;
+    return countRentalDays(departDate, returnDate);
+  }, [departDate, returnDate]);
+  const carRentalDaysLabel =
+    carRentalDays === 1
+      ? `1 ${t.cars.daySingular}`
+      : carRentalDays > 1
+        ? `${carRentalDays} ${t.cars.dayPlural}`
+        : null;
+
   const submitBtn = <button type="submit" className="min-h-[44px] w-full rounded-lg bg-primary px-5 py-2.5 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover">{t.search.search}</button>;
 
   return (
@@ -252,7 +298,7 @@ export function SearchTabs() {
         <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-2xl transition-colors dark:border-atg-border dark:bg-atg-elevated">
           <div className="flex" role="tablist" aria-label={t.search.tablistAria}>
             {tabs.map((tab) => (
-              <button key={tab.id} type="button" role="tab" aria-selected={activeTab === tab.id} onClick={() => setActiveTab(tab.id)} className={`flex flex-1 items-center justify-center gap-2 py-4 text-xs sm:text-sm font-semibold uppercase tracking-wide transition-all border-b-[3px] ${activeTab === tab.id ? 'bg-primary text-white border-primary-hover' : 'bg-gray-50 text-gray-500 border-transparent hover:bg-gray-100 hover:text-gray-700 dark:bg-atg-surface dark:text-atg-muted dark:hover:bg-white/5 dark:hover:text-white'}`}>
+              <button key={tab.id} type="button" role="tab" aria-selected={activeTab === tab.id} onClick={() => { setActiveTab(tab.id); setFlightError(null); setCarError(null); }} className={`flex flex-1 items-center justify-center gap-2 py-4 text-xs sm:text-sm font-semibold uppercase tracking-wide transition-all border-b-[3px] ${activeTab === tab.id ? 'bg-primary text-white border-primary-hover' : 'bg-gray-50 text-gray-500 border-transparent hover:bg-gray-100 hover:text-gray-700 dark:bg-atg-surface dark:text-atg-muted dark:hover:bg-white/5 dark:hover:text-white'}`}>
                 <TabIcon tab={tab.id} />
                 <span className="hidden sm:inline">{tab.label}</span>
               </button>
@@ -414,28 +460,85 @@ export function SearchTabs() {
             )}
 
             {activeTab === 'cars' && (
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
-                <div>
-                  <FormLabel>{t.search.pickUp}</FormLabel>
-                  <FormInput type="date" name="pickUp" value={departDate} onChange={setDepartDate} />
+              <div className="space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  {carRentalDaysLabel ? (
+                    <span
+                      className="inline-flex min-h-[44px] items-center rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-semibold text-gray-700 dark:border-atg-border dark:bg-atg-surface dark:text-white"
+                      role="status"
+                    >
+                      {carRentalDaysLabel}
+                    </span>
+                  ) : (
+                    <span className="text-sm text-gray-500 dark:text-atg-muted">
+                      {t.search.carsDurationHint}
+                    </span>
+                  )}
+                  <Link
+                    href="/cars"
+                    className="inline-flex min-h-[44px] items-center rounded-lg border border-primary px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/5 dark:hover:bg-primary/10"
+                  >
+                    {t.search.viewAllCars}
+                  </Link>
                 </div>
-                <div>
-                  <FormLabel>{t.search.dropOff}</FormLabel>
-                  <FormInput type="date" name="dropOff" value={returnDate} onChange={setReturnDate} />
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.25fr_1fr_1fr_auto] lg:items-end">
+                  <div>
+                    <FormLabel>{t.cars.pickupLocation}</FormLabel>
+                    <FormSelect
+                      name="pickupLocation"
+                      placeholder={
+                        carPickupLoading ? t.cars.loading : t.search.pickupLocationPh
+                      }
+                      options={carPickupOptions}
+                      value={destination}
+                      disabled={carPickupLoading || carPickupOptions.length === 0}
+                      onChange={(value) => {
+                        setDestination(value);
+                        setCarError(null);
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <FormLabel>{t.search.pickUp}</FormLabel>
+                    <FormInput
+                      type="date"
+                      name="pickUp"
+                      value={departDate}
+                      min={today}
+                      onChange={(value) => {
+                        setDepartDate(value);
+                        if (returnDate && value && returnDate <= value) {
+                          setReturnDate('');
+                        }
+                        setCarError(null);
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <FormLabel>{t.search.dropOff}</FormLabel>
+                    <FormInput
+                      type="date"
+                      name="dropOff"
+                      value={returnDate}
+                      min={carReturnMinDate}
+                      onChange={(value) => {
+                        setReturnDate(value);
+                        setCarError(null);
+                      }}
+                    />
+                  </div>
+                  <div className="flex items-end">{submitBtn}</div>
                 </div>
-                <div>
-                  <FormLabel>{t.search.country}</FormLabel>
-                  <FormSelect name="country" placeholder={t.search.countryPh} options={t.search.countries} value="" onChange={() => {}} />
-                </div>
-                <div>
-                  <FormLabel>{t.search.city}</FormLabel>
-                  <FormSelect name="city" placeholder={t.search.cityPh} options={AFRICAN_CITIES} value={destination} onChange={setDestination} />
-                </div>
-                <div>
-                  <FormLabel>{t.search.location}</FormLabel>
-                  <FormSelect name="location" placeholder={t.search.locationPh} options={t.search.locations} value="" onChange={() => {}} />
-                </div>
-                <div className="flex items-end">{submitBtn}</div>
+                {carPickupError && (
+                  <p className="text-sm text-amber-700 dark:text-amber-300" role="status">
+                    {t.cars.loadError}
+                  </p>
+                )}
+                {carError && (
+                  <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+                    {carError}
+                  </p>
+                )}
               </div>
             )}
 

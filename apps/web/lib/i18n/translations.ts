@@ -74,6 +74,11 @@ export type Translations = {
     oneWay: string;
     roundTrip: string;
     viewAllFlights: string;
+    carsRequired: string;
+    carsReturnAfterPickup: string;
+    carsDurationHint: string;
+    pickupLocationPh: string;
+    viewAllCars: string;
     roomTypes: string[];
     countries: string[];
     locations: string[];
@@ -261,6 +266,49 @@ export type Translations = {
       business: string;
       first: string;
     };
+  };
+  cars: {
+    metaTitle: string;
+    metaDescription: string;
+    breadcrumbHome: string;
+    breadcrumbCars: string;
+    heroTitle: string;
+    heroSubtitle: string;
+    resultsFor: string;
+    anyLocation: string;
+    vehiclesFound: string;
+    sortBy: string;
+    sortRecommended: string;
+    sortPriceLow: string;
+    sortPriceHigh: string;
+    loading: string;
+    loadError: string;
+    retry: string;
+    modifySearch: string;
+    pickupDate: string;
+    returnDate: string;
+    pickupLocation: string;
+    noResults: string;
+    noResultsHint: string;
+    noSearchParams: string;
+    noSearchParamsHint: string;
+    browseAllHint: string;
+    startSearch: string;
+    backHome: string;
+    viewDetails: string;
+    bookNow: string;
+    perDay: string;
+    totalRental: string;
+    daySingular: string;
+    dayPlural: string;
+    selectDatesHint: string;
+    reserveSection: string;
+    notFound: string;
+    notFoundHint: string;
+    backToList: string;
+    agencyTitle: string;
+    categoryTitle: string;
+    licensePlate: string;
   };
   account: {
     title: string;
@@ -557,6 +605,11 @@ const fr: Translations = {
     oneWay: 'Aller simple',
     roundTrip: 'Aller-retour',
     viewAllFlights: 'Voir tous les vols disponibles',
+    carsRequired: 'Indiquez la ville, la date de prise en charge et la date de retour.',
+    carsReturnAfterPickup: 'La date de retour doit être après la date de prise en charge.',
+    carsDurationHint: 'Sélectionnez les dates pour voir la durée',
+    pickupLocationPh: 'Ville ou aéroport',
+    viewAllCars: 'Voir toutes les locations',
     roomTypes: ['Chambre Double', 'Chambre Simple', 'Suite'],
     countries: ['Kenya', 'Tanzanie', 'Maroc', 'Afrique du Sud', 'Rwanda', 'RDC'],
     locations: ['Aéroport', 'Centre-ville', 'Gare'],
@@ -806,6 +859,52 @@ const fr: Translations = {
       business: 'Affaires',
       first: 'Première',
     },
+  },
+  cars: {
+    metaTitle: 'Location de voitures en Afrique',
+    metaDescription:
+      'Comparez et réservez des véhicules de location aux principales destinations africaines avec Africa Tourism Gate.',
+    breadcrumbHome: 'Accueil',
+    breadcrumbCars: 'Voitures',
+    heroTitle: 'Location de voitures en Afrique',
+    heroSubtitle:
+      'SUV, berlines et 4×4 auprès d\'agences locales de confiance — tarif journalier transparent.',
+    resultsFor: 'Résultats pour',
+    anyLocation: 'Toutes les villes',
+    vehiclesFound: 'véhicules',
+    sortBy: 'Trier par',
+    sortRecommended: 'Recommandés',
+    sortPriceLow: 'Prix croissant',
+    sortPriceHigh: 'Prix décroissant',
+    loading: 'Recherche des véhicules…',
+    loadError: "Impossible de charger les véhicules. Vérifiez que l'API est démarrée.",
+    retry: 'Réessayer',
+    modifySearch: 'Modifier la recherche',
+    pickupDate: 'Date de prise en charge',
+    returnDate: 'Date de retour',
+    pickupLocation: 'Lieu de prise en charge',
+    noResults: 'Aucun véhicule pour ces critères',
+    noResultsHint: 'Essayez d\'autres dates ou une autre ville (ex. Kinshasa).',
+    noSearchParams: 'Lancez une recherche de location',
+    noSearchParamsHint: 'Indiquez un lieu, une date de prise en charge et une date de retour.',
+    browseAllHint:
+      'Tous les véhicules disponibles — tarifs sur la prochaine plage de location.',
+    startSearch: 'Lancer une recherche',
+    backHome: 'Retour à l\'accueil',
+    viewDetails: 'Voir détails',
+    bookNow: 'Réserver',
+    perDay: '/ jour',
+    totalRental: 'Total location',
+    daySingular: 'jour',
+    dayPlural: 'jours',
+    selectDatesHint: 'Choisissez vos dates de prise en charge et de retour.',
+    reserveSection: 'Réserver',
+    notFound: 'Véhicule introuvable',
+    notFoundHint: "Ce véhicule n'existe pas ou n'est pas disponible pour cette période.",
+    backToList: 'Retour aux résultats',
+    agencyTitle: 'Agence de location',
+    categoryTitle: 'Catégorie',
+    licensePlate: 'Immatriculation',
   },
   account: {
     title: 'Mon compte',
@@ -1129,6 +1228,11 @@ const en: Translations = {
     oneWay: 'One way',
     roundTrip: 'Round trip',
     viewAllFlights: 'View all available flights',
+    carsRequired: 'Enter city, pick-up date and return date.',
+    carsReturnAfterPickup: 'Return date must be after pick-up date.',
+    carsDurationHint: 'Select dates to see rental duration',
+    pickupLocationPh: 'City or airport',
+    viewAllCars: 'View all car rentals',
     roomTypes: ['Double Room', 'Single Room', 'Suite'],
     countries: ['Kenya', 'Tanzania', 'Morocco', 'South Africa', 'Rwanda', 'DRC'],
     locations: ['Airport', 'City center', 'Train station'],
@@ -1377,6 +1481,52 @@ const en: Translations = {
       business: 'Business',
       first: 'First',
     },
+  },
+  cars: {
+    metaTitle: 'Car rental in Africa',
+    metaDescription:
+      'Compare and book rental cars at major African destinations with Africa Tourism Gate.',
+    breadcrumbHome: 'Home',
+    breadcrumbCars: 'Cars',
+    heroTitle: 'Car rental in Africa',
+    heroSubtitle:
+      'SUVs, sedans and 4×4 from trusted local agencies — transparent daily rates.',
+    resultsFor: 'Results for',
+    anyLocation: 'All cities',
+    vehiclesFound: 'vehicles',
+    sortBy: 'Sort by',
+    sortRecommended: 'Recommended',
+    sortPriceLow: 'Price: low to high',
+    sortPriceHigh: 'Price: high to low',
+    loading: 'Searching vehicles…',
+    loadError: 'Could not load vehicles. Make sure the API is running.',
+    retry: 'Retry',
+    modifySearch: 'Modify search',
+    pickupDate: 'Pick-up date',
+    returnDate: 'Return date',
+    pickupLocation: 'Pick-up location',
+    noResults: 'No vehicles match your criteria',
+    noResultsHint: 'Try different dates or another city (e.g. Kinshasa).',
+    noSearchParams: 'Start a car rental search',
+    noSearchParamsHint: 'Enter a location, pick-up date and return date.',
+    browseAllHint:
+      'All available vehicles — prices shown for the next available rental window.',
+    startSearch: 'Start search',
+    backHome: 'Back to home',
+    viewDetails: 'View details',
+    bookNow: 'Book now',
+    perDay: '/ day',
+    totalRental: 'Rental total',
+    daySingular: 'day',
+    dayPlural: 'days',
+    selectDatesHint: 'Choose your pick-up and return dates.',
+    reserveSection: 'Book',
+    notFound: 'Vehicle not found',
+    notFoundHint: 'This vehicle does not exist or is not available for this period.',
+    backToList: 'Back to results',
+    agencyTitle: 'Rental agency',
+    categoryTitle: 'Category',
+    licensePlate: 'License plate',
   },
   account: {
     title: 'My account',

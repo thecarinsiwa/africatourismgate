@@ -4,7 +4,9 @@ import type { PropertyDetail } from '@africatourismgate/types';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { createBooking, createBookingCheckoutSession } from '../../lib/api/booking';
-import { getAccommodationDetail, getFlightDetail } from '../../lib/api/public';
+import { formatCarPrice } from '../../lib/cars/listings';
+import type { VehicleDetail } from '../../lib/cars/types';
+import { getAccommodationDetail, getFlightDetail, getVehicleDetail } from '../../lib/api/public';
 import { formatAirportLabel } from '../../lib/flights/airports';
 import { formatFlightPrice } from '../../lib/flights/listings';
 import type { FlightDetail } from '../../lib/flights/types';
@@ -18,6 +20,7 @@ import {
   buildReservationQuery,
   isFlightReservationDraft,
   isRoomReservationDraft,
+  isVehicleReservationDraft,
   type ReservationDraft,
 } from '../../lib/reservations/flow';
 import { HomeFooter } from '../home/home-footer';
@@ -31,9 +34,11 @@ export function ReservationRecapPageContent({ draft }: Props) {
   const { locale } = useLocale();
   const t = useTranslations();
   const f = t.flights;
+  const c = t.cars;
 
   const [hotelDetail, setHotelDetail] = useState<PropertyDetail | null>(null);
   const [flightDetail, setFlightDetail] = useState<FlightDetail | null>(null);
+  const [vehicleDetail, setVehicleDetail] = useState<VehicleDetail | null>(null);
   const [loading, setLoading] = useState(Boolean(draft));
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -54,12 +59,13 @@ export function ReservationRecapPageContent({ draft }: Props) {
           if (!cancelled) {
             setHotelDetail(data);
             setFlightDetail(null);
+            setVehicleDetail(null);
           }
         })
         .finally(() => {
           if (!cancelled) setLoading(false);
         });
-    } else {
+    } else if (isFlightReservationDraft(draft)) {
       void getFlightDetail(draft.flightId, {
         departureDate: draft.departureDate,
         passengers: draft.passengers,
@@ -68,6 +74,22 @@ export function ReservationRecapPageContent({ draft }: Props) {
           if (!cancelled) {
             setFlightDetail(data);
             setHotelDetail(null);
+            setVehicleDetail(null);
+          }
+        })
+        .finally(() => {
+          if (!cancelled) setLoading(false);
+        });
+    } else {
+      void getVehicleDetail(draft.vehicleId, {
+        pickupDate: draft.pickupDate,
+        returnDate: draft.returnDate,
+      })
+        .then((data) => {
+          if (!cancelled) {
+            setVehicleDetail(data);
+            setHotelDetail(null);
+            setFlightDetail(null);
           }
         })
         .finally(() => {
@@ -95,6 +117,12 @@ export function ReservationRecapPageContent({ draft }: Props) {
         : null,
     [draft, flightDetail],
   );
+
+  const vehicleReady = useMemo((): VehicleDetail | null => {
+    if (!draft || !isVehicleReservationDraft(draft) || !vehicleDetail) return null;
+    if (vehicleDetail.availabilitySlot.id !== draft.availabilitySlotId) return null;
+    return vehicleDetail;
+  }, [draft, vehicleDetail]);
 
   async function handleCheckout() {
     if (!draft) return;
@@ -127,13 +155,16 @@ export function ReservationRecapPageContent({ draft }: Props) {
       ? formatHotelPrice(room.totalPriceCents ?? room.basePriceCents, room.currency)
       : draft && isFlightReservationDraft(draft) && flightClass && flightDetail
         ? formatFlightPrice(flightClass.totalPriceCents, flightDetail.currency)
-        : null;
+        : vehicleReady
+          ? formatCarPrice(vehicleReady.totalPriceCents, vehicleReady.currency)
+          : null;
 
   const canPay =
     Boolean(draft) &&
     !loading &&
     ((isRoomReservationDraft(draft!) && room) ||
-      (isFlightReservationDraft(draft!) && flightClass));
+      (isFlightReservationDraft(draft!) && flightClass) ||
+      Boolean(vehicleReady));
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
@@ -198,6 +229,32 @@ export function ReservationRecapPageContent({ draft }: Props) {
                   {draft.passengers === 1
                     ? `1 ${f.passengerSingular}`
                     : f.passengerPlural.replace('{n}', String(draft.passengers))}
+                </p>
+                {totalLabel && (
+                  <p className="pt-1 text-2xl font-bold text-[#0f1a16] dark:text-white">
+                    {totalLabel}
+                  </p>
+                )}
+              </div>
+            )}
+
+            {!loading && vehicleReady && isVehicleReservationDraft(draft) && (
+              <div className="space-y-2">
+                <p className="text-sm text-primary">{vehicleReady.agency.name}</p>
+                <h2 className="text-xl font-bold text-[#0f1a16] dark:text-white">
+                  {vehicleReady.category.exampleModel ?? vehicleReady.category.name}
+                </h2>
+                <p className="text-sm text-gray-600 dark:text-atg-muted">
+                  {vehicleReady.agency.city || c.pickupLocation}
+                </p>
+                <p className="text-sm text-gray-600 dark:text-atg-muted">
+                  {formatDisplayDate(draft.pickupDate, locale)} {'->'}{' '}
+                  {formatDisplayDate(draft.returnDate, locale)}
+                </p>
+                <p className="text-sm text-gray-600 dark:text-atg-muted">
+                  {vehicleReady.rentalDays === 1
+                    ? `1 ${c.daySingular}`
+                    : `${vehicleReady.rentalDays} ${c.dayPlural}`}
                 </p>
                 {totalLabel && (
                   <p className="pt-1 text-2xl font-bold text-[#0f1a16] dark:text-white">

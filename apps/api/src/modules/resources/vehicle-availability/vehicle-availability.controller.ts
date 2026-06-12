@@ -10,9 +10,9 @@ import {
 } from '@nestjs/common';
 import { ApiForbiddenResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
-import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
-import { VehicleAvailability } from '../../../entities/generated';
+import { CreateVehicleAvailabilityDto } from './dto/create-vehicle-availability.dto';
+import { UpdateVehicleAvailabilityDto } from './dto/update-vehicle-availability.dto';
+import { VehicleAvailabilityListQueryDto } from './dto/vehicle-availability-list-query.dto';
 import { VehicleAvailabilityService } from './vehicle-availability.service';
 
 @ApiTags('vehicle-availability')
@@ -24,7 +24,7 @@ export class VehicleAvailabilityController {
   @RequirePermissions('vehicles.read')
   @Get()
   @ApiOperation({ summary: 'List vehicle-availability' })
-  findAll(@Query() query: PaginationQueryDto) {
+  findAll(@Query() query: VehicleAvailabilityListQueryDto) {
     return this.service.findAll(query);
   }
 
@@ -38,15 +38,15 @@ export class VehicleAvailabilityController {
   @RequirePermissions('vehicles.write')
   @Post()
   @ApiOperation({ summary: 'Create vehicle-availability' })
-  create(@Body() dto: DeepPartial<VehicleAvailability>) {
-    return this.service.create(dto);
+  create(@Body() dto: CreateVehicleAvailabilityDto) {
+    return this.service.createAvailability(dto);
   }
 
   @RequirePermissions('vehicles.write')
   @Patch(':id')
   @ApiOperation({ summary: 'Update vehicle-availability' })
-  update(@Param('id') id: string, @Body() dto: DeepPartial<VehicleAvailability>) {
-    return this.service.update(id, dto);
+  update(@Param('id') id: string, @Body() dto: UpdateVehicleAvailabilityDto) {
+    return this.service.updateAvailability(id, dto);
   }
 
   @RequirePermissions('vehicles.write')

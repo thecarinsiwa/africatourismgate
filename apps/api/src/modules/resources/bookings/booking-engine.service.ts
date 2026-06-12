@@ -23,6 +23,11 @@ import {
   Vehicles,
 } from '../../../entities/generated';
 import { EmailService } from '../../email/email.service';
+import {
+  assertValidVehicleDates,
+  countRentalDays,
+  slotCoversRentalPeriod,
+} from '../../public/vehicles/vehicle-dates.util';
 import { enumerateDates } from '../room-availability/room-availability-date.util';
 import {
   BookingCheckoutDto,
@@ -593,6 +598,25 @@ export class BookingEngineService {
     if (slot.status !== 'available') {
       throw new BadRequestException('Le véhicule n’est pas disponible sur ce créneau.');
     }
+    if (!item.startDate || !item.endDate) {
+      throw new BadRequestException(
+        'startDate et endDate sont requis pour une location véhicule.',
+      );
+    }
+
+    assertValidVehicleDates(item.startDate, item.endDate);
+    if (
+      !slotCoversRentalPeriod(
+        slot.startDatetime,
+        slot.endDatetime,
+        item.startDate,
+        item.endDate,
+      )
+    ) {
+      throw new BadRequestException(
+        'Le créneau véhicule ne couvre pas la période demandée.',
+      );
+    }
 
     const vehicle = await this.vehiclesRepository.findOne({
       where: { id: slot.vehicleId },
@@ -601,13 +625,8 @@ export class BookingEngineService {
       throw new NotFoundException('Véhicule introuvable.');
     }
 
+    const rentalDays = countRentalDays(item.startDate, item.endDate);
     const unitPriceCents = vehicle.dailyPriceCents;
-    const startIso = slot.startDatetime instanceof Date
-      ? slot.startDatetime.toISOString().slice(0, 10)
-      : String(slot.startDatetime).slice(0, 10);
-    const endIso = slot.endDatetime instanceof Date
-      ? slot.endDatetime.toISOString().slice(0, 10)
-      : String(slot.endDatetime).slice(0, 10);
 
     return [
       {
@@ -615,11 +634,11 @@ export class BookingEngineService {
         referenceId: item.referenceId,
         quantity: item.quantity,
         unitPriceCents,
-        lineTotalCents: item.quantity * unitPriceCents,
+        lineTotalCents: item.quantity * unitPriceCents * rentalDays,
         titleSnapshot: vehicle.licensePlate?.trim() || `Véhicule ${vehicle.id.slice(0, 8)}`,
         currency: vehicle.currency,
-        startDate: startIso,
-        endDate: endIso,
+        startDate: item.startDate,
+        endDate: item.endDate,
         stock: { kind: 'vehicle', availabilityId: item.referenceId },
       },
     ];

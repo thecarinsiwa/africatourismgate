@@ -11,6 +11,15 @@ export class PublicVehiclesController {
   constructor(private readonly service: PublicVehiclesService) {}
 
   @Public()
+  @Get('vehicles/pickup-locations')
+  @ApiOperation({
+    summary: 'List destinations with available rental vehicles',
+  })
+  listPickupLocations() {
+    return this.service.listPickupLocations();
+  }
+
+  @Public()
   @Get('vehicles/search')
   @ApiOperation({
     summary: 'Search vehicles by pickup location and rental dates',

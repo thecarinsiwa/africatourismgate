@@ -26,8 +26,8 @@ export class VehicleSearchResultDto {
   dailyPriceCents!: number;
 
   @ApiProperty({
-    example: 5500,
-    description: 'Flat rate per reservable slot (equals dailyPriceCents)',
+    example: 38500,
+    description: 'Total rental price (rentalDays × dailyPriceCents)',
   })
   totalPriceCents!: number;
 
@@ -36,6 +36,12 @@ export class VehicleSearchResultDto {
 
   @ApiProperty({ example: 7 })
   rentalDays!: number;
+
+  @ApiProperty({ format: 'date', example: '2026-08-01' })
+  pickupDate!: string;
+
+  @ApiProperty({ format: 'date', example: '2026-08-08' })
+  returnDate!: string;
 
   @ApiProperty({
     format: 'uuid',

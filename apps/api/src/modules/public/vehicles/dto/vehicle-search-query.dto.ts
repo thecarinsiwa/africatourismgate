@@ -1,22 +1,29 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsDateString, IsString, MaxLength, MinLength } from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsDateString, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 import { PaginationQueryDto } from '../../../../common/dto/pagination-query.dto';
 
 export class VehicleSearchQueryDto extends PaginationQueryDto {
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: 'Kinshasa',
-    description: 'Pickup city or destination name (partial match)',
+    description: 'Pickup city or destination name (partial match). Omit to search all cities.',
   })
+  @IsOptional()
   @IsString()
   @MinLength(1)
   @MaxLength(180)
-  pickupLocation!: string;
+  pickupLocation?: string;
 
-  @ApiProperty({ format: 'date', example: '2026-08-01' })
+  @ApiPropertyOptional({
+    format: 'date',
+    example: '2026-08-01',
+    description: 'When omitted, uses the earliest availability window per vehicle',
+  })
+  @IsOptional()
   @IsDateString()
-  pickupDate!: string;
+  pickupDate?: string;
 
-  @ApiProperty({ format: 'date', example: '2026-08-08' })
+  @ApiPropertyOptional({ format: 'date', example: '2026-08-08' })
+  @IsOptional()
   @IsDateString()
-  returnDate!: string;
+  returnDate?: string;
 }
