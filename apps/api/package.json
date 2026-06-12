@@ -23,6 +23,7 @@
     "test:bookings-polymorphic": "node scripts/test-bookings-polymorphic.mjs",
     "test:bookings-list": "node scripts/test-bookings-list.mjs",
     "test:bookings-detail": "node scripts/test-bookings-detail.mjs",
+    "test:booking-items-list": "node scripts/test-booking-items-list.mjs",
     "test:stripe": "node scripts/test-stripe-payment.mjs",
     "test:pos-sale-cash": "node scripts/test-pos-sale-cash.mjs",
     "test:loyalty": "node scripts/test-loyalty-payment.mjs",

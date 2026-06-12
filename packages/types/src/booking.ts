@@ -14,6 +14,10 @@ export type BookingCheckoutItemType =
   | 'cabin'
   | 'activity_schedule';
 
+export type BookingItemType =
+  | BookingCheckoutItemType
+  | 'package';
+
 export interface Booking {
   id: string;
   userId: string;
@@ -188,4 +192,28 @@ export interface BookingsListQuery {
   organizationId?: string;
   dateFrom?: string;
   dateTo?: string;
+}
+
+export interface BookingItemListItem {
+  id: string;
+  bookingId: string;
+  itemType: BookingItemType;
+  referenceId: string;
+  titleSnapshot: string;
+  quantity: number;
+  unitPriceCents: number;
+  lineTotalCents: number;
+  startDate: string | null;
+  endDate: string | null;
+  bookingStatus: BookingStatus;
+  currency: string;
+  createdAt: string;
+}
+
+export interface BookingItemsListQuery {
+  page?: number;
+  limit?: number;
+  itemType?: BookingItemType;
+  status?: BookingStatus;
+  bookingId?: string;
 }

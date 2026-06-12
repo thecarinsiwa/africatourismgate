@@ -76,6 +76,8 @@ import type {
   BookingCheckoutSessionResponse,
   BookingDetail,
   BookingPaymentIntentResponse,
+  BookingItemListItem,
+  BookingItemsListQuery,
   BookingListItem,
   BookingsListQuery,
   AdminReviewDetail,
@@ -1336,6 +1338,12 @@ export class ApiClient {
 
   listBookings(query?: BookingsListQuery): Promise<PaginatedResponse<BookingListItem>> {
     return fetchPaginated<BookingListItem>(this, '/bookings', query);
+  }
+
+  listBookingItems(
+    query?: BookingItemsListQuery,
+  ): Promise<PaginatedResponse<BookingItemListItem>> {
+    return fetchPaginated<BookingItemListItem>(this, '/booking-items', query);
   }
 
   getBooking(id: string): Promise<BookingAdminDetail> {

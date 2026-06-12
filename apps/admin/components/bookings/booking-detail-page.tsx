@@ -17,6 +17,7 @@ import type {
 import Link from 'next/link';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import { getItemTypeLabel } from '../../lib/booking-item-labels';
 import { getBookingsErrorMessage } from '../../lib/bookings-errors';
 
 const statusLabels: Record<BookingStatus, string> = {
@@ -36,15 +37,6 @@ const statusVariants: Record<
   confirmed: 'success',
   cancelled: 'danger',
   refunded: 'default',
-};
-
-const itemTypeLabels: Record<string, string> = {
-  room: 'Chambre',
-  flight_class: 'Vol',
-  vehicle: 'Véhicule',
-  cabin: 'Cabine',
-  activity_schedule: 'Activité',
-  package: 'Forfait',
 };
 
 const paymentStatusLabels: Record<BookingPayment['status'], string> = {
@@ -173,7 +165,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
       {
         accessorKey: 'itemType',
         header: 'Type',
-        cell: ({ row }) => itemTypeLabels[row.original.itemType] ?? row.original.itemType,
+        cell: ({ row }) => getItemTypeLabel(row.original.itemType),
       },
       { accessorKey: 'titleSnapshot', header: 'Libellé' },
       {

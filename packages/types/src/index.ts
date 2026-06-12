@@ -201,6 +201,9 @@ export type {
   BookingCheckoutRequest,
   BookingDetail,
   BookingItem,
+  BookingItemListItem,
+  BookingItemType,
+  BookingItemsListQuery,
   BookingsListQuery,
   BookingStatus,
 } from './booking.js';
