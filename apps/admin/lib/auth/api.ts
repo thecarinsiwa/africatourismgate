@@ -1,8 +1,8 @@
 import { ApiClient } from '@africatourismgate/api-client';
 import { getSession } from './session';
 
-/** Aligné sur API_PORT (défaut 3010) — voir packages/config/dev-api-url.mjs */
-const DEFAULT_DEV_API_URL = 'http://localhost:3010/api';
+/** Aligné sur API_PORT (défaut 3000) — voir packages/config/dev-api-url.mjs */
+const DEFAULT_DEV_API_URL = 'http://localhost:3000/api';
 const PRODUCTION_API_URL = 'https://app-africatourismgate.org/api';
 
 function isLocalApiUrl(url: string): boolean {
