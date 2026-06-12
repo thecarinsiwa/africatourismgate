@@ -14,6 +14,7 @@ import type {
   PropertiesListQuery,
   PropertyAmenitiesListQuery,
   PropertyImagesListQuery,
+  BookingItemsListQuery,
   BookingsListQuery,
   ReviewsListQuery,
   PaymentsListQuery,
@@ -63,12 +64,15 @@ const RESOURCE_QUERY_KEYS = [
   'checkOut',
   'guests',
   'propertyType',
+  'itemType',
+  'bookingId',
 ] as const;
 
 export type PaginatedListQuery =
   | PaginationQuery
   | UsersListQuery
   | BookingsListQuery
+  | BookingItemsListQuery
   | ReviewsListQuery
   | PaymentsListQuery
   | PromoCodesListQuery
