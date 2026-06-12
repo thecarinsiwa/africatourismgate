@@ -11,6 +11,7 @@
     "openapi:export": "nest build && node -r reflect-metadata dist/cli/export-openapi.js",
     "db:sync": "node scripts/db-sync.mjs",
     "test:rbac": "node scripts/test-rbac-permissions.mjs",
+    "test:rbac-catalog": "node scripts/test-rbac-catalog.mjs",
     "test:organizations": "node scripts/test-organizations-crud.mjs",
     "test:destinations": "node scripts/test-destinations-crud.mjs",
     "test:flights": "node scripts/test-flights-crud.mjs",
