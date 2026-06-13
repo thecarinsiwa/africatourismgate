@@ -344,7 +344,6 @@ export function PackageDetailPageContent({
                     <PackageResolvedSummary
                       items={detail.items}
                       lines={lineSelections}
-                      errors={resolveErrors}
                       resolving={resolving}
                       t={p}
                     />

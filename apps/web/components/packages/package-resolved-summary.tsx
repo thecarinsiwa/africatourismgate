@@ -3,12 +3,10 @@
 import type { PackageLineSelection } from '../../lib/packages/package-lines';
 import type { PackageItemEnriched } from '../../lib/packages/types';
 import type { Translations } from '../../lib/i18n/translations';
-import type { PackageLineResolveError } from '../../lib/packages/auto-resolve-lines';
 
 type PackageResolvedSummaryProps = {
   items: PackageItemEnriched[];
   lines: Array<PackageLineSelection | null>;
-  errors: PackageLineResolveError[];
   resolving: boolean;
   t: Translations['packages'];
 };
@@ -16,17 +14,13 @@ type PackageResolvedSummaryProps = {
 export function PackageResolvedSummary({
   items,
   lines,
-  errors,
   resolving,
   t,
 }: PackageResolvedSummaryProps) {
-  const errorByItemId = new Map(errors.map((entry) => [entry.itemId, entry]));
-
   return (
     <ul className="space-y-3">
       {items.map((item, index) => {
         const line = lines[index] ?? null;
-        const error = errorByItemId.get(item.itemId);
         const resolved = Boolean(line);
 
         return (
