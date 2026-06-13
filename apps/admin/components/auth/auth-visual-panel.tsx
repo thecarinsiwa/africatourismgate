@@ -3,6 +3,9 @@
 import { cn } from '@africatourismgate/ui';
 import { useTranslations } from 'next-intl';
 import { useId } from 'react';
+import { AuthVisualCarousel } from './auth-visual-carousel';
+import { AuthVisualDecorIcon } from './auth-visual-decor-icon';
+import { useAuthVisualConfig } from './use-auth-visual-config';
 
 type Props = {
   variant?: 'compact' | 'full';
@@ -29,24 +32,12 @@ function AfricaPattern({ patternId, className }: { patternId: string; className?
   );
 }
 
-function AfricaMark({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className={cn('pointer-events-none text-white/25', className)}
-      aria-hidden
-      xmlns="http://www.w3.org/2000/svg"
-      fill="currentColor"
-    >
-      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z" />
-    </svg>
-  );
-}
-
 export function AuthVisualPanel({ variant = 'full', className }: Props) {
   const t = useTranslations('auth.shell');
   const patternId = useId();
   const isCompact = variant === 'compact';
+  const decorIcons = useAuthVisualConfig();
+  const visibleIcons = isCompact ? decorIcons.slice(0, 1) : decorIcons;
 
   return (
     <aside
@@ -61,18 +52,26 @@ export function AuthVisualPanel({ variant = 'full', className }: Props) {
       <AfricaPattern patternId={patternId} className="text-white" />
       <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/10" />
 
-      <AfricaMark
-        className={cn(
-          'absolute',
-          isCompact ? 'right-6 top-1/2 h-24 w-24 -translate-y-1/2' : 'bottom-10 right-10 h-40 w-40 lg:h-52 lg:w-52',
-        )}
-      />
-      <AfricaMark className="absolute right-32 top-16 hidden h-16 w-16 opacity-60 lg:block" />
+      {visibleIcons.map((icon, index) => (
+        <AuthVisualDecorIcon
+          key={`${icon.preset}-${icon.position}-${index}`}
+          icon={icon}
+          variant={isCompact ? 'compact' : 'full'}
+        />
+      ))}
+
+      {!isCompact ? (
+        <div className="absolute inset-0 z-[1] flex items-center justify-center px-6 lg:px-10">
+          <AuthVisualCarousel />
+        </div>
+      ) : null}
 
       <div
         className={cn(
-          'relative flex h-full flex-col justify-end',
-          isCompact ? 'px-6 py-6' : 'px-10 py-12 lg:px-14 lg:py-16',
+          'relative',
+          isCompact
+            ? 'flex h-full flex-col justify-end px-6 py-6'
+            : 'absolute inset-x-0 bottom-0 z-10 px-10 py-12 lg:px-14 lg:py-16',
         )}
       >
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/70">

@@ -2,6 +2,8 @@
 
 import { Button, Input } from '@africatourismgate/ui';
 import type {
+  AuthVisualDecorIcon,
+  AuthVisualSettingValue,
   BookingDefaultsValue,
   BrandingPlatformValue,
   ContactWebSettingValue,
@@ -27,6 +29,8 @@ import {
 } from '../../lib/organization-theme';
 import { useOrganizationThemeOptional } from '../organization-theme-provider';
 import { BrandColorPaletteField } from './brand-color-palette-field';
+import { AuthVisualIconsField } from './auth-visual-icons-field';
+import { authVisualFromSetting } from '../../lib/auth-visual';
 
 type SettingsFormValues = {
   contactEmail: string;
@@ -48,6 +52,7 @@ type SettingsFormValues = {
   loyaltyEnabled: boolean;
   loyaltyPointsPerMajorUnit: string;
   loyaltyProgramCode: string;
+  authVisualIcons: AuthVisualDecorIcon[];
 };
 
 const defaultValues: SettingsFormValues = {
@@ -70,6 +75,7 @@ const defaultValues: SettingsFormValues = {
   loyaltyEnabled: DEFAULT_LOYALTY_ONEKEY_SETTING.enabled,
   loyaltyPointsPerMajorUnit: String(DEFAULT_LOYALTY_ONEKEY_SETTING.pointsPerMajorUnit),
   loyaltyProgramCode: DEFAULT_LOYALTY_ONEKEY_SETTING.programCode,
+  authVisualIcons: [],
 };
 
 function settingByKey(
@@ -90,6 +96,7 @@ function toFormValues(
     (s) => s.settingGroup === 'contact' && s.settingKey === 'web',
   )?.settingValue as ContactWebSettingValue | undefined;
   const onekey = settingByKey(settings, 'onekey') as LoyaltyOneKeySettingValue | undefined;
+  const authVisual = settingByKey(settings, 'auth_visual') as AuthVisualSettingValue | undefined;
 
   return {
     contactEmail: org.contactEmail ?? '',
@@ -114,6 +121,7 @@ function toFormValues(
     ),
     loyaltyProgramCode:
       onekey?.programCode ?? DEFAULT_LOYALTY_ONEKEY_SETTING.programCode,
+    authVisualIcons: authVisualFromSetting(authVisual).map((icon) => ({ ...icon })),
   };
 }
 
@@ -141,6 +149,7 @@ export function OrganizationSettingsForm({
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [uploadingField, setUploadingField] = useState<'logoUrl' | 'faviconUrl' | null>(null);
+  const [uploadingAuthIconIndex, setUploadingAuthIconIndex] = useState<number | null>(null);
 
   const updateField = useCallback(
     <K extends keyof SettingsFormValues>(key: K, value: SettingsFormValues[K]) => {
@@ -304,6 +313,13 @@ export function OrganizationSettingsForm({
             },
           },
           {
+            settingGroup: 'branding',
+            settingKey: 'auth_visual',
+            settingValue: {
+              icons: values.authVisualIcons,
+            },
+          },
+          {
             settingGroup: 'loyalty',
             settingKey: 'onekey',
             settingValue: {
@@ -324,6 +340,36 @@ export function OrganizationSettingsForm({
     } finally {
       setSubmitting(false);
     }
+  }
+
+  async function uploadBrandingImage(file: File): Promise<string> {
+    if (!file.type.startsWith('image/')) {
+      throw new Error('Invalid image type');
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      throw new Error('Image too large');
+    }
+    const session = getSession();
+    if (!session?.accessToken) {
+      throw new Error('Missing session');
+    }
+    const body = new FormData();
+    body.append('file', file);
+    const response = await fetch(`${resolveApiBaseUrl()}/organization-settings/upload-branding`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${session.accessToken}`,
+      },
+      body,
+    });
+    if (!response.ok) {
+      throw new Error('Upload branding failed');
+    }
+    const payload = (await response.json()) as { url?: string };
+    if (!payload.url) {
+      throw new Error('Invalid upload response');
+    }
+    return payload.url;
   }
 
   async function handleLocalImagePick(
@@ -347,29 +393,28 @@ export function OrganizationSettingsForm({
         return;
       }
       setUploadingField(field);
-      const body = new FormData();
-      body.append('file', file);
-      const response = await fetch(`${resolveApiBaseUrl()}/organization-settings/upload-branding`, {
-        method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${session.accessToken}`,
-        },
-        body,
-      });
-      if (!response.ok) {
-        throw new Error('Upload branding failed');
-      }
-      const payload = (await response.json()) as { url?: string };
-      if (!payload.url) {
-        throw new Error('Invalid upload response');
-      }
-      updateField(field, payload.url);
+      const url = await uploadBrandingImage(file);
+      updateField(field, url);
       setFormError(null);
     } catch {
       setFormError("Impossible d'uploader l'image locale.");
     } finally {
       setUploadingField(null);
       event.target.value = '';
+    }
+  }
+
+  async function handleAuthVisualImageUpload(index: number, file: File): Promise<string> {
+    try {
+      setUploadingAuthIconIndex(index);
+      const url = await uploadBrandingImage(file);
+      setFormError(null);
+      return url;
+    } catch {
+      setFormError("Impossible d'uploader l'image locale.");
+      throw new Error('Upload failed');
+    } finally {
+      setUploadingAuthIconIndex(null);
     }
   }
 
@@ -601,6 +646,16 @@ export function OrganizationSettingsForm({
           </label>
           <span className="text-xs text-atg-muted">PNG/ICO/SVG, max 2 MB</span>
         </div>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-lg font-semibold text-atg-fg">Panneau connexion</h2>
+        <AuthVisualIconsField
+          icons={values.authVisualIcons}
+          onChange={(authVisualIcons) => updateField('authVisualIcons', authVisualIcons)}
+          onUploadImage={handleAuthVisualImageUpload}
+          uploadingIndex={uploadingAuthIconIndex}
+        />
       </section>
 
       <div className="flex gap-3">

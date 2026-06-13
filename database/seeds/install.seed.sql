@@ -197,6 +197,14 @@ INSERT INTO `organization_settings` (
   '00000000-0000-4000-8000-000000000010'
 ),
 (
+  '00000000-0000-4000-8000-000000000017',
+  '00000000-0000-4000-8000-000000000001',
+  'branding',
+  'auth_visual',
+  '{"icons":[{"preset":"pin","opacity":25,"size":"lg","position":"bottom-right","enabled":true},{"preset":"pin","opacity":60,"size":"sm","position":"top-right","enabled":true}]}',
+  '00000000-0000-4000-8000-000000000010'
+),
+(
   '00000000-0000-4000-8000-000000000014',
   '00000000-0000-4000-8000-000000000001',
   'loyalty',

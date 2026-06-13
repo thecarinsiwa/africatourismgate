@@ -12,7 +12,29 @@
     "shell": {
       "visualEyebrow": "Africa Tourism Gate",
       "visualTitle": "African tourism, managed from one back office",
-      "visualSubtitle": "Hotels, activities, bookings and payments — one unified platform for your teams."
+      "visualSubtitle": "Hotels, activities, bookings and payments — one unified platform for your teams.",
+      "carousel": {
+        "ariaLabel": "African destinations",
+        "goToSlide": "Go to slide",
+        "slides": [
+          {
+            "caption": "Safari & nature",
+            "title": "Book and manage wildlife experiences with ease"
+          },
+          {
+            "caption": "Beaches & islands",
+            "title": "Hotels, lodges and coastal stays across Africa"
+          },
+          {
+            "caption": "Culture & heritage",
+            "title": "Activities, tours and authentic experiences for your travelers"
+          },
+          {
+            "caption": "Destinations",
+            "title": "One unified showcase to promote Africa from your back office"
+          }
+        ]
+      }
     },
     "login": {
       "metaTitle": "Sign in — Africa Tourism Gate Admin",
