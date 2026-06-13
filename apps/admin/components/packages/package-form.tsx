@@ -11,6 +11,7 @@ export type PackageFormValues = {
   name: string;
   description: string;
   discountPercent: string;
+  durationDays: string;
   active: boolean;
 };
 
@@ -18,6 +19,7 @@ const defaultValues: PackageFormValues = {
   name: '',
   description: '',
   discountPercent: '0',
+  durationDays: '3',
   active: true,
 };
 
@@ -26,6 +28,7 @@ function packageToFormValues(pkg: Package): PackageFormValues {
     name: pkg.name,
     description: pkg.description ?? '',
     discountPercent: String(pkg.discountPercent),
+    durationDays: String(pkg.durationDays ?? 3),
     active: pkg.active === 1,
   };
 }
@@ -34,6 +37,7 @@ function toPayload(values: PackageFormValues): CreatePackageRequest {
   return {
     name: values.name.trim(),
     discountPercent: Number(values.discountPercent),
+    durationDays: Number(values.durationDays),
     active: values.active,
     ...(values.description.trim() ? { description: values.description.trim() } : {}),
   };
@@ -68,6 +72,11 @@ export function PackageForm({ mode, packageId, initialPackage }: PackageFormProp
     const discount = Number(values.discountPercent);
     if (!Number.isFinite(discount) || discount < 0 || discount > 100) {
       setFormError('La remise doit être entre 0 et 100.');
+      return false;
+    }
+    const durationDays = Number(values.durationDays);
+    if (!Number.isFinite(durationDays) || durationDays < 1 || durationDays > 365) {
+      setFormError('La durée doit être entre 1 et 365 jours.');
       return false;
     }
     return true;
@@ -126,6 +135,14 @@ export function PackageForm({ mode, packageId, initialPackage }: PackageFormProp
         step={0.01}
         value={values.discountPercent}
         onChange={(e) => updateField('discountPercent', e.target.value)}
+      />
+      <Input
+        label="Durée (jours)"
+        type="number"
+        min={1}
+        max={365}
+        value={values.durationDays}
+        onChange={(e) => updateField('durationDays', e.target.value)}
       />
       <label className="flex items-center gap-2 text-sm text-atg-fg">
         <input

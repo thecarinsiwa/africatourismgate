@@ -8,14 +8,25 @@ import {
 export type PackagesSearchParams = {
   search?: string;
   page?: string;
+  startDate?: string;
+  travelers?: string;
+  /** @deprecated Use startDate */
   date?: string;
+  /** @deprecated Use travelers */
   participants?: string;
+  /** @deprecated Use startDate */
   checkIn?: string;
+  /** @deprecated Computed from startDate + duration */
   checkOut?: string;
+  /** @deprecated Use travelers */
   guests?: string;
+  /** @deprecated Use startDate */
   departureDate?: string;
+  /** @deprecated Use travelers */
   passengers?: string;
+  /** @deprecated Use startDate */
   pickupDate?: string;
+  /** @deprecated Computed from startDate + duration */
   returnDate?: string;
   sailingId?: string;
 };
@@ -31,14 +42,25 @@ export function readSearchParam(
 export function normalizePackagesSearchParams(
   raw: Record<string, string | string[] | undefined>,
 ): PackagesSearchParams {
+  const travelers =
+    readSearchParam(raw.travelers) ??
+    readSearchParam(raw.guests) ??
+    readSearchParam(raw.participants) ??
+    readSearchParam(raw.adults);
+  const startDate =
+    readSearchParam(raw.startDate) ??
+    readSearchParam(raw.checkIn) ??
+    readSearchParam(raw.date) ??
+    readSearchParam(raw.departureDate) ??
+    readSearchParam(raw.pickupDate);
+
   return {
     search: readSearchParam(raw.search)?.trim() || undefined,
     page: readSearchParam(raw.page),
+    startDate,
+    travelers,
     date: readSearchParam(raw.date),
-    participants:
-      readSearchParam(raw.participants) ??
-      readSearchParam(raw.guests) ??
-      readSearchParam(raw.adults),
+    participants: readSearchParam(raw.participants),
     checkIn: readSearchParam(raw.checkIn),
     checkOut: readSearchParam(raw.checkOut),
     guests: readSearchParam(raw.guests),
@@ -98,8 +120,11 @@ export function parsePackageLineSelections(
     return Array.from({ length: itemCount }, () => null);
   }
 
-  const fallbackDate = readSearchParam(raw.date);
-  const fallbackParticipants = readSearchParam(raw.participants);
+  const fallbackDate =
+    readSearchParam(raw.startDate) ??
+    readSearchParam(raw.date) ??
+    readSearchParam(raw.checkIn);
+  const fallbackParticipants = readSearchParam(raw.travelers) ?? readSearchParam(raw.participants);
   const fallback = {
     date: fallbackDate,
     participants: fallbackParticipants
@@ -143,16 +168,8 @@ export function buildPackageDetailHrefWithLines(
   const qs = new URLSearchParams();
   if (params.search) qs.set('search', params.search);
   if (params.page) qs.set('page', params.page);
-  if (params.date) qs.set('date', params.date);
-  if (params.participants) qs.set('participants', params.participants);
-  if (params.checkIn) qs.set('checkIn', params.checkIn);
-  if (params.checkOut) qs.set('checkOut', params.checkOut);
-  if (params.guests) qs.set('guests', params.guests);
-  if (params.departureDate) qs.set('departureDate', params.departureDate);
-  if (params.passengers) qs.set('passengers', params.passengers);
-  if (params.pickupDate) qs.set('pickupDate', params.pickupDate);
-  if (params.returnDate) qs.set('returnDate', params.returnDate);
-  if (params.sailingId) qs.set('sailingId', params.sailingId);
+  if (params.startDate) qs.set('startDate', params.startDate);
+  if (params.travelers) qs.set('travelers', params.travelers);
 
   const configuredLines = lines.filter((line): line is PackageLineSelection => Boolean(line));
   if (lines.length > 0) {

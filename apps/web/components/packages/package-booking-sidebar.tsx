@@ -2,24 +2,31 @@
 
 import type { PackageDetail } from '../../lib/packages/types';
 import type { Translations } from '../../lib/i18n/translations';
+import { formatDisplayDate } from '../../lib/hotels/dates';
 import { PackagePriceDisplay } from './package-price-display';
 
 type PackageBookingSidebarProps = {
   detail: PackageDetail;
-  configuredCount: number;
-  totalItems: number;
+  startDate: string;
+  endDate: string;
+  durationDays: number;
+  resolving: boolean;
   canAddToCart: boolean;
   onAddToCart: () => void;
   t: Translations['packages'];
+  locale?: string;
 };
 
 export function PackageBookingSidebar({
   detail,
-  configuredCount,
-  totalItems,
+  startDate,
+  endDate,
+  durationDays,
+  resolving,
   canAddToCart,
   onAddToCart,
   t,
+  locale,
 }: PackageBookingSidebarProps) {
   return (
     <aside
@@ -47,14 +54,34 @@ export function PackageBookingSidebar({
       ) : null}
 
       <div className="mt-6 space-y-4 border-t border-gray-100 pt-4 dark:border-atg-border">
-        <p className="text-sm text-gray-600 dark:text-atg-muted">
-          {t.itemsProgress
-            .replace('{selected}', String(configuredCount))
-            .replace('{total}', String(totalItems))}
-        </p>
+        {startDate ? (
+          <div className="space-y-1 text-sm text-gray-600 dark:text-atg-muted">
+            <p>
+              <span className="font-medium text-[#0f1a16] dark:text-white">
+                {t.departureDateLabel}:
+              </span>{' '}
+              {formatDisplayDate(startDate, locale)}
+            </p>
+            <p>
+              <span className="font-medium text-[#0f1a16] dark:text-white">
+                {t.returnDateLabel}:
+              </span>{' '}
+              {formatDisplayDate(endDate, locale)}
+            </p>
+            <p>{t.durationDaysLabel.replace('{days}', String(durationDays))}</p>
+          </div>
+        ) : null}
 
-        {!canAddToCart && configuredCount < totalItems && (
-          <p className="text-sm text-amber-700 dark:text-amber-300">{t.allItemsRequired}</p>
+        {resolving ? (
+          <p className="text-sm text-gray-600 dark:text-atg-muted">{t.resolvingPackage}</p>
+        ) : null}
+
+        {!canAddToCart && startDate && !resolving && (
+          <p className="text-sm text-amber-700 dark:text-amber-300">{t.someItemsUnavailable}</p>
+        )}
+
+        {!startDate && (
+          <p className="text-sm text-amber-700 dark:text-amber-300">{t.selectDepartureHint}</p>
         )}
 
         <button
@@ -72,11 +99,14 @@ export function PackageBookingSidebar({
 
 export function PackageBookingMobileBar({
   detail,
-  configuredCount,
-  totalItems,
+  startDate,
+  endDate,
+  durationDays,
+  resolving,
   canAddToCart,
   onAddToCart,
   t,
+  locale,
 }: PackageBookingSidebarProps) {
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 border-t border-gray-200 bg-white/95 p-4 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] backdrop-blur-md dark:border-atg-border dark:bg-atg-elevated/95 lg:hidden pb-safe">
@@ -86,11 +116,15 @@ export function PackageBookingMobileBar({
           <p className="text-lg font-bold text-[#0f1a16] dark:text-white">
             {(detail.pricing.totalCents / 100).toFixed(0)} {detail.pricing.currency}
           </p>
-          <p className="text-xs text-gray-500 dark:text-atg-muted">
-            {t.itemsProgress
-              .replace('{selected}', String(configuredCount))
-              .replace('{total}', String(totalItems))}
-          </p>
+          {startDate ? (
+            <p className="text-xs text-gray-500 dark:text-atg-muted">
+              {formatDisplayDate(startDate, locale)} → {formatDisplayDate(endDate, locale)} ·{' '}
+              {t.durationDaysLabel.replace('{days}', String(durationDays))}
+            </p>
+          ) : null}
+          {resolving ? (
+            <p className="text-xs text-gray-500 dark:text-atg-muted">{t.resolvingPackage}</p>
+          ) : null}
         </div>
         <button
           type="button"

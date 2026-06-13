@@ -505,6 +505,19 @@ export type Translations = {
     addToCart: string;
     packageCartInvalid: string;
     modifySelection: string;
+    departureDateLabel: string;
+    returnDateLabel: string;
+    travelersLabel: string;
+    durationDaysLabel: string;
+    packageBookingHint: string;
+    selectDepartureHint: string;
+    includedServicesTitle: string;
+    resolvingPackage: string;
+    resolvingItem: string;
+    itemAutoResolved: string;
+    itemUnavailable: string;
+    itemResolveError: string;
+    someItemsUnavailable: string;
     notFound: string;
     notFoundHint: string;
     backToList: string;
@@ -1285,7 +1298,7 @@ const fr: Translations = {
       'Sélectionnez les créneaux pour chaque activité incluse, puis ajoutez le forfait au panier.',
     mixedConfigureHint:
       'Configurez chaque prestation incluse dans le forfait, puis ajoutez le tout au panier.',
-    configureTitle: 'Choisir les créneaux',
+    configureTitle: 'Réserver le forfait',
     selectDateHint: 'Indiquez une date pour afficher les créneaux disponibles.',
     configureOnProduct: 'Configurer sur la fiche',
     configureOnProductHint: 'Réservation à finaliser sur la fiche produit dédiée.',
@@ -1316,6 +1329,21 @@ const fr: Translations = {
     addToCart: 'Ajouter au panier',
     packageCartInvalid: 'Configuration du forfait invalide ou incomplète.',
     modifySelection: 'Modifier la sélection',
+    departureDateLabel: 'Date de départ',
+    returnDateLabel: 'Date de retour',
+    travelersLabel: 'Voyageurs',
+    durationDaysLabel: '{days} jour(s)',
+    packageBookingHint:
+      'Choisissez la date de départ : la date de retour est calculée automatiquement ({days} jour(s)). Les prestations incluses sont résolues pour vous.',
+    selectDepartureHint: 'Indiquez une date de départ pour préparer la réservation.',
+    includedServicesTitle: 'Prestations résolues automatiquement',
+    resolvingPackage: 'Vérification des disponibilités…',
+    resolvingItem: 'En cours…',
+    itemAutoResolved: 'Disponible',
+    itemUnavailable: 'Indisponible',
+    itemResolveError: 'Erreur',
+    someItemsUnavailable:
+      'Certaines prestations ne sont pas disponibles pour ces dates. Essayez une autre date de départ.',
     notFound: 'Forfait introuvable',
     notFoundHint: 'Ce forfait n\'existe pas ou n\'est plus disponible.',
     backToList: 'Retour aux forfaits',
@@ -2121,7 +2149,7 @@ const en: Translations = {
       'Pick a time slot for each included activity, then add the package to your cart.',
     mixedConfigureHint:
       'Configure each included service, then add the full package to your cart.',
-    configureTitle: 'Choose time slots',
+    configureTitle: 'Book this package',
     selectDateHint: 'Enter a date to show available time slots.',
     configureOnProduct: 'Configure on product page',
     configureOnProductHint: 'Complete booking on the dedicated product page.',
@@ -2152,6 +2180,21 @@ const en: Translations = {
     addToCart: 'Add to cart',
     packageCartInvalid: 'Package configuration is unavailable or incomplete.',
     modifySelection: 'Modify selection',
+    departureDateLabel: 'Departure date',
+    returnDateLabel: 'Return date',
+    travelersLabel: 'Travelers',
+    durationDaysLabel: '{days} day(s)',
+    packageBookingHint:
+      'Pick a departure date — the return date is calculated automatically ({days} day(s)). Included services are resolved for you.',
+    selectDepartureHint: 'Enter a departure date to prepare your booking.',
+    includedServicesTitle: 'Services resolved automatically',
+    resolvingPackage: 'Checking availability…',
+    resolvingItem: 'Pending…',
+    itemAutoResolved: 'Available',
+    itemUnavailable: 'Unavailable',
+    itemResolveError: 'Error',
+    someItemsUnavailable:
+      'Some included services are unavailable for these dates. Try another departure date.',
     notFound: 'Package not found',
     notFoundHint: 'This package does not exist or is no longer available.',
     backToList: 'Back to packages',

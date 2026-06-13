@@ -4,14 +4,20 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getPackageDetail } from '../../lib/api/public';
+import { autoResolvePackageLines } from '../../lib/packages/auto-resolve-lines';
+import {
+  buildPackageTravelDates,
+  computePackageEndDate,
+  parsePackageDurationDays,
+} from '../../lib/packages/package-dates';
 import {
   buildPackageDetailHrefWithLines,
-  parsePackageLineSelections,
   parseParticipantsParam,
   type PackagesSearchParams,
 } from '../../lib/packages/listings';
 import type { PackageLineSelection } from '../../lib/packages/package-lines';
 import type { PackageDetail } from '../../lib/packages/types';
+import { formatDisplayDate } from '../../lib/hotels/dates';
 import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import {
   buildPackageReservationDraft,
@@ -20,8 +26,8 @@ import {
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { PackageBookingMobileBar, PackageBookingSidebar } from './package-booking-sidebar';
-import { PackageItemConfigItem } from './package-item-config-section';
 import { PackageItemsSection } from './package-items-section';
+import { PackageResolvedSummary } from './package-resolved-summary';
 
 type PackageDetailPageContentProps = {
   packageId: string;
@@ -32,15 +38,9 @@ type PackageDetailPageContentProps = {
 export function PackageDetailPageContent({
   packageId,
   initialSearch,
-  rawSearchParams,
 }: PackageDetailPageContentProps) {
   const t = useTranslations();
   const p = t.packages;
-  const a = t.activities;
-  const h = t.hotels;
-  const f = t.flights;
-  const c = t.cars;
-  const cr = t.cruises;
   const { locale } = useLocale();
   const router = useRouter();
 
@@ -50,81 +50,28 @@ export function PackageDetailPageContent({
   const [error, setError] = useState(false);
   const [fetchId, setFetchId] = useState(0);
 
-  const [date, setDate] = useState(initialSearch.date ?? '');
-  const [participants, setParticipants] = useState(
-    parseParticipantsParam(initialSearch.participants),
+  const [startDate, setStartDate] = useState(initialSearch.startDate ?? '');
+  const [travelers, setTravelers] = useState(
+    parseParticipantsParam(initialSearch.travelers),
   );
-  const [checkIn, setCheckIn] = useState(initialSearch.checkIn ?? '');
-  const [checkOut, setCheckOut] = useState(initialSearch.checkOut ?? '');
-  const [guests, setGuests] = useState(parseParticipantsParam(initialSearch.guests));
-  const [departureDate, setDepartureDate] = useState(initialSearch.departureDate ?? '');
-  const [passengers, setPassengers] = useState(parseParticipantsParam(initialSearch.passengers));
-  const [pickupDate, setPickupDate] = useState(initialSearch.pickupDate ?? '');
-  const [returnDate, setReturnDate] = useState(initialSearch.returnDate ?? '');
-  const [sailingId, setSailingId] = useState(initialSearch.sailingId ?? '');
   const [lineSelections, setLineSelections] = useState<Array<PackageLineSelection | null>>([]);
+  const [resolveErrors, setResolveErrors] = useState<
+    Awaited<ReturnType<typeof autoResolvePackageLines>>['errors']
+  >([]);
+  const [resolving, setResolving] = useState(false);
 
   const listHref = `/packages${initialSearch.search ? `?search=${encodeURIComponent(initialSearch.search)}` : ''}`;
 
-  const itemTypes = useMemo(
-    () => new Set(detail?.items.map((item) => item.itemType) ?? []),
-    [detail],
-  );
-
-  const configContext = useMemo(
-    () => ({
-      date,
-      participants,
-      checkIn,
-      checkOut,
-      guests,
-      departureDate,
-      passengers,
-      pickupDate,
-      returnDate,
-      sailingId,
-    }),
-    [
-      date,
-      participants,
-      checkIn,
-      checkOut,
-      guests,
-      departureDate,
-      passengers,
-      pickupDate,
-      returnDate,
-      sailingId,
-    ],
-  );
+  const durationDays = parsePackageDurationDays(detail?.package);
+  const endDate = startDate ? computePackageEndDate(startDate, durationDays) : '';
 
   const searchContext = useMemo(
     (): PackagesSearchParams => ({
       ...initialSearch,
-      date: date || undefined,
-      participants: String(participants),
-      checkIn: checkIn || undefined,
-      checkOut: checkOut || undefined,
-      guests: String(guests),
-      departureDate: departureDate || undefined,
-      passengers: String(passengers),
-      pickupDate: pickupDate || undefined,
-      returnDate: returnDate || undefined,
-      sailingId: sailingId || undefined,
+      startDate: startDate || undefined,
+      travelers: String(travelers),
     }),
-    [
-      initialSearch,
-      date,
-      participants,
-      checkIn,
-      checkOut,
-      guests,
-      departureDate,
-      passengers,
-      pickupDate,
-      returnDate,
-      sailingId,
-    ],
+    [initialSearch, startDate, travelers],
   );
 
   const syncUrl = useCallback(
@@ -136,7 +83,6 @@ export function PackageDetailPageContent({
     ) => {
       const nextLines = overrides.lineSelections ?? lineSelections;
       const nextSearch = overrides.search ?? searchContext;
-
       const href = buildPackageDetailHrefWithLines(
         packageId,
         nextSearch,
@@ -176,38 +122,66 @@ export function PackageDetailPageContent({
   }, [packageId, fetchId]);
 
   useEffect(() => {
-    if (!detail) return;
-    setLineSelections(parsePackageLineSelections(rawSearchParams, detail.items.length));
-  }, [rawSearchParams, detail]);
+    if (!detail || !startDate) {
+      setLineSelections([]);
+      setResolveErrors([]);
+      return;
+    }
 
-  function handleLineChange(index: number, line: PackageLineSelection | null) {
-    const next = [...lineSelections];
-    while (next.length < (detail?.items.length ?? 0)) next.push(null);
-    next[index] = line;
-    setLineSelections(next);
-    syncUrl({ lineSelections: next });
+    const dates = buildPackageTravelDates(startDate, durationDays, travelers);
+    if (!dates) {
+      setLineSelections([]);
+      setResolveErrors([]);
+      return;
+    }
+
+    let cancelled = false;
+    setResolving(true);
+    setResolveErrors([]);
+
+    void autoResolvePackageLines(detail.items, dates)
+      .then((result) => {
+        if (cancelled) return;
+        setLineSelections(result.lines);
+        setResolveErrors(result.errors);
+        syncUrl({ lineSelections: result.lines, search: searchContext });
+      })
+      .finally(() => {
+        if (!cancelled) setResolving(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [detail, startDate, durationDays, travelers]);
+
+  function handleStartDateChange(value: string) {
+    setStartDate(value);
+    setLineSelections([]);
+    setResolveErrors([]);
+    syncUrl({
+      search: { ...searchContext, startDate: value || undefined },
+      lineSelections: [],
+    });
   }
 
-  function updateSearchContext(next: PackagesSearchParams) {
-    if (next.date !== undefined) setDate(next.date ?? '');
-    if (next.participants !== undefined) setParticipants(parseParticipantsParam(next.participants));
-    if (next.checkIn !== undefined) setCheckIn(next.checkIn ?? '');
-    if (next.checkOut !== undefined) setCheckOut(next.checkOut ?? '');
-    if (next.guests !== undefined) setGuests(parseParticipantsParam(next.guests));
-    if (next.departureDate !== undefined) setDepartureDate(next.departureDate ?? '');
-    if (next.passengers !== undefined) setPassengers(parseParticipantsParam(next.passengers));
-    if (next.pickupDate !== undefined) setPickupDate(next.pickupDate ?? '');
-    if (next.returnDate !== undefined) setReturnDate(next.returnDate ?? '');
-    if (next.sailingId !== undefined) setSailingId(next.sailingId ?? '');
-    setLineSelections(Array.from({ length: detail?.items.length ?? 0 }, () => null));
-    syncUrl({ search: next, lineSelections: [] });
+  function handleTravelersChange(value: number) {
+    const next = Math.max(1, value);
+    setTravelers(next);
+    setLineSelections([]);
+    setResolveErrors([]);
+    syncUrl({
+      search: { ...searchContext, travelers: String(next) },
+      lineSelections: [],
+    });
   }
-
-  const configuredCount = lineSelections.filter(Boolean).length;
-  const totalItems = detail?.items.length ?? 0;
 
   const canAddToCart = Boolean(
-    detail && buildPackageReservationDraft(packageId, detail.items, lineSelections),
+    detail &&
+      startDate &&
+      !resolving &&
+      resolveErrors.length === 0 &&
+      buildPackageReservationDraft(packageId, detail.items, lineSelections),
   );
 
   function handleAddToCart() {
@@ -292,12 +266,7 @@ export function PackageDetailPageContent({
                 ) : null}
               </header>
 
-              <PackageItemsSection
-                items={detail.items}
-                t={p}
-                configureInline
-                searchParams={searchContext}
-              />
+              <PackageItemsSection items={detail.items} t={p} />
 
               <section
                 id="configure"
@@ -308,250 +277,91 @@ export function PackageDetailPageContent({
                     {p.configureTitle}
                   </h2>
                   <p className="mt-2 text-sm text-gray-600 dark:text-atg-muted">
-                    {p.mixedConfigureHint}
+                    {p.packageBookingHint.replace('{days}', String(durationDays))}
                   </p>
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
-                  {itemTypes.has('activity') && (
-                    <>
-                      <label className="block text-sm">
-                        <span className="mb-1 block font-medium text-gray-600 dark:text-atg-muted">
-                          {a.date}
-                        </span>
-                        <input
-                          type="date"
-                          value={date}
-                          onChange={(event) =>
-                            updateSearchContext({ ...searchContext, date: event.target.value })
-                          }
-                          className="min-h-[44px] w-full rounded-lg border border-gray-200 px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-surface dark:text-white"
-                        />
-                      </label>
-                      <label className="block text-sm">
-                        <span className="mb-1 block font-medium text-gray-600 dark:text-atg-muted">
-                          {a.participants}
-                        </span>
-                        <input
-                          type="number"
-                          min={1}
-                          max={50}
-                          value={participants}
-                          onChange={(event) =>
-                            updateSearchContext({
-                              ...searchContext,
-                              participants: String(
-                                Math.max(1, Number.parseInt(event.target.value, 10) || 1),
-                              ),
-                            })
-                          }
-                          className="min-h-[44px] w-full rounded-lg border border-gray-200 px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-surface dark:text-white"
-                        />
-                      </label>
-                    </>
-                  )}
-
-                  {itemTypes.has('property') && (
-                    <>
-                      <label className="block text-sm">
-                        <span className="mb-1 block font-medium text-gray-600 dark:text-atg-muted">
-                          {h.checkIn}
-                        </span>
-                        <input
-                          type="date"
-                          value={checkIn}
-                          onChange={(event) =>
-                            updateSearchContext({ ...searchContext, checkIn: event.target.value })
-                          }
-                          className="min-h-[44px] w-full rounded-lg border border-gray-200 px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-surface dark:text-white"
-                        />
-                      </label>
-                      <label className="block text-sm">
-                        <span className="mb-1 block font-medium text-gray-600 dark:text-atg-muted">
-                          {h.checkOut}
-                        </span>
-                        <input
-                          type="date"
-                          value={checkOut}
-                          onChange={(event) =>
-                            updateSearchContext({ ...searchContext, checkOut: event.target.value })
-                          }
-                          className="min-h-[44px] w-full rounded-lg border border-gray-200 px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-surface dark:text-white"
-                        />
-                      </label>
-                      <label className="block text-sm">
-                        <span className="mb-1 block font-medium text-gray-600 dark:text-atg-muted">
-                          {h.guests}
-                        </span>
-                        <input
-                          type="number"
-                          min={1}
-                          max={20}
-                          value={guests}
-                          onChange={(event) =>
-                            updateSearchContext({
-                              ...searchContext,
-                              guests: String(
-                                Math.max(1, Number.parseInt(event.target.value, 10) || 1),
-                              ),
-                            })
-                          }
-                          className="min-h-[44px] w-full rounded-lg border border-gray-200 px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-surface dark:text-white"
-                        />
-                      </label>
-                    </>
-                  )}
-
-                  {itemTypes.has('flight') && (
-                    <>
-                      <label className="block text-sm">
-                        <span className="mb-1 block font-medium text-gray-600 dark:text-atg-muted">
-                          {f.departureDate}
-                        </span>
-                        <input
-                          type="date"
-                          value={departureDate}
-                          onChange={(event) =>
-                            updateSearchContext({
-                              ...searchContext,
-                              departureDate: event.target.value,
-                            })
-                          }
-                          className="min-h-[44px] w-full rounded-lg border border-gray-200 px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-surface dark:text-white"
-                        />
-                      </label>
-                      <label className="block text-sm">
-                        <span className="mb-1 block font-medium text-gray-600 dark:text-atg-muted">
-                          {f.passengers}
-                        </span>
-                        <input
-                          type="number"
-                          min={1}
-                          max={9}
-                          value={passengers}
-                          onChange={(event) =>
-                            updateSearchContext({
-                              ...searchContext,
-                              passengers: String(
-                                Math.max(1, Number.parseInt(event.target.value, 10) || 1),
-                              ),
-                            })
-                          }
-                          className="min-h-[44px] w-full rounded-lg border border-gray-200 px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-surface dark:text-white"
-                        />
-                      </label>
-                    </>
-                  )}
-
-                  {itemTypes.has('vehicle') && (
-                    <>
-                      <label className="block text-sm">
-                        <span className="mb-1 block font-medium text-gray-600 dark:text-atg-muted">
-                          {c.pickupDate}
-                        </span>
-                        <input
-                          type="date"
-                          value={pickupDate}
-                          onChange={(event) =>
-                            updateSearchContext({
-                              ...searchContext,
-                              pickupDate: event.target.value,
-                            })
-                          }
-                          className="min-h-[44px] w-full rounded-lg border border-gray-200 px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-surface dark:text-white"
-                        />
-                      </label>
-                      <label className="block text-sm">
-                        <span className="mb-1 block font-medium text-gray-600 dark:text-atg-muted">
-                          {c.returnDate}
-                        </span>
-                        <input
-                          type="date"
-                          value={returnDate}
-                          onChange={(event) =>
-                            updateSearchContext({
-                              ...searchContext,
-                              returnDate: event.target.value,
-                            })
-                          }
-                          className="min-h-[44px] w-full rounded-lg border border-gray-200 px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-surface dark:text-white"
-                        />
-                      </label>
-                    </>
-                  )}
-
-                  {itemTypes.has('cruise') && (
-                    <>
-                      <label className="block text-sm sm:col-span-2">
-                        <span className="mb-1 block font-medium text-gray-600 dark:text-atg-muted">
-                          {p.sailingIdLabel}
-                        </span>
-                        <input
-                          type="text"
-                          value={sailingId}
-                          onChange={(event) =>
-                            updateSearchContext({
-                              ...searchContext,
-                              sailingId: event.target.value.trim(),
-                            })
-                          }
-                          placeholder={p.sailingIdPlaceholder}
-                          className="min-h-[44px] w-full rounded-lg border border-gray-200 px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-surface dark:text-white"
-                        />
-                      </label>
-                      <label className="block text-sm">
-                        <span className="mb-1 block font-medium text-gray-600 dark:text-atg-muted">
-                          {cr.guests}
-                        </span>
-                        <input
-                          type="number"
-                          min={1}
-                          max={8}
-                          value={guests}
-                          onChange={(event) =>
-                            updateSearchContext({
-                              ...searchContext,
-                              guests: String(
-                                Math.max(1, Number.parseInt(event.target.value, 10) || 1),
-                              ),
-                            })
-                          }
-                          className="min-h-[44px] w-full rounded-lg border border-gray-200 px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-surface dark:text-white"
-                        />
-                      </label>
-                    </>
-                  )}
-                </div>
-
-                <div className="space-y-4">
-                  {detail.items.map((item, index) => (
-                    <PackageItemConfigItem
-                      key={item.id}
-                      item={item}
-                      index={index}
-                      selectedLine={lineSelections[index] ?? null}
-                      onChange={(line) => handleLineChange(index, line)}
-                      context={configContext}
-                      t={p}
-                      a={a}
-                      h={h}
-                      f={f}
-                      c={c}
-                      cr={cr}
-                      locale={locale}
+                  <label className="block text-sm">
+                    <span className="mb-1 block font-medium text-gray-600 dark:text-atg-muted">
+                      {p.departureDateLabel}
+                    </span>
+                    <input
+                      type="date"
+                      value={startDate}
+                      onChange={(event) => handleStartDateChange(event.target.value)}
+                      className="min-h-[44px] w-full rounded-lg border border-gray-200 px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-surface dark:text-white"
                     />
-                  ))}
+                  </label>
+
+                  <label className="block text-sm">
+                    <span className="mb-1 block font-medium text-gray-600 dark:text-atg-muted">
+                      {p.travelersLabel}
+                    </span>
+                    <input
+                      type="number"
+                      min={1}
+                      max={50}
+                      value={travelers}
+                      onChange={(event) =>
+                        handleTravelersChange(
+                          Number.parseInt(event.target.value, 10) || 1,
+                        )
+                      }
+                      className="min-h-[44px] w-full rounded-lg border border-gray-200 px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-surface dark:text-white"
+                    />
+                  </label>
+
+                  {startDate ? (
+                    <div className="sm:col-span-2 rounded-xl bg-gray-50 px-4 py-3 text-sm dark:bg-atg-surface/60">
+                      <p className="font-medium text-[#0f1a16] dark:text-white">
+                        {p.returnDateLabel}
+                      </p>
+                      <p className="mt-1 text-gray-600 dark:text-atg-muted">
+                        {formatDisplayDate(endDate, locale)} ·{' '}
+                        {p.durationDaysLabel.replace('{days}', String(durationDays))}
+                      </p>
+                    </div>
+                  ) : null}
                 </div>
+
+                {startDate ? (
+                  <div className="space-y-3">
+                    <h3 className="text-sm font-semibold text-[#0f1a16] dark:text-white">
+                      {p.includedServicesTitle}
+                    </h3>
+                    {resolving ? (
+                      <p className="text-sm text-gray-600 dark:text-atg-muted">{p.resolvingPackage}</p>
+                    ) : null}
+                    <PackageResolvedSummary
+                      items={detail.items}
+                      lines={lineSelections}
+                      errors={resolveErrors}
+                      resolving={resolving}
+                      t={p}
+                    />
+                    {!resolving && resolveErrors.length > 0 ? (
+                      <p className="text-sm text-amber-700 dark:text-amber-300">
+                        {p.someItemsUnavailable}
+                      </p>
+                    ) : null}
+                  </div>
+                ) : (
+                  <p className="text-sm text-amber-700 dark:text-amber-300">{p.selectDepartureHint}</p>
+                )}
               </section>
             </div>
 
             <PackageBookingSidebar
               detail={detail}
-              configuredCount={configuredCount}
-              totalItems={totalItems}
+              startDate={startDate}
+              endDate={endDate}
+              durationDays={durationDays}
+              resolving={resolving}
               canAddToCart={canAddToCart}
               onAddToCart={handleAddToCart}
               t={p}
+              locale={locale}
             />
           </div>
         )}
@@ -560,11 +370,14 @@ export function PackageDetailPageContent({
       {detail && !loading && !notFound && (
         <PackageBookingMobileBar
           detail={detail}
-          configuredCount={configuredCount}
-          totalItems={totalItems}
+          startDate={startDate}
+          endDate={endDate}
+          durationDays={durationDays}
+          resolving={resolving}
           canAddToCart={canAddToCart}
           onAddToCart={handleAddToCart}
           t={p}
+          locale={locale}
         />
       )}
 

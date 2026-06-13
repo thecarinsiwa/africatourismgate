@@ -170,8 +170,13 @@ export function parsePackageLinesFromSearchParams(
   const lineCount = readPositiveInt(raw.lineCount);
   if (lineCount == null || lineCount < 1) return null;
 
-  const fallbackDate = readString(raw.date) || undefined;
-  const fallbackParticipants = readPositiveInt(raw.participants) ?? undefined;
+  const fallbackDate =
+    readString(raw.startDate) ||
+    readString(raw.date) ||
+    readString(raw.checkIn) ||
+    undefined;
+  const fallbackParticipants =
+    readPositiveInt(raw.travelers) ?? readPositiveInt(raw.participants) ?? undefined;
   const lines: PackageLineSelection[] = [];
 
   for (let index = 0; index < lineCount; index += 1) {

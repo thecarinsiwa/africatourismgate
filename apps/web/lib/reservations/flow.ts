@@ -488,11 +488,34 @@ function packageLineToCheckoutItem(line: PackageLineSelection): BookingCheckoutI
   }
 }
 
+function packageDraftSearchParams(lines: PackageLineSelection[]): {
+  startDate?: string;
+  travelers?: string;
+} {
+  const first = lines[0];
+  if (!first) return {};
+
+  switch (first.lineType) {
+    case 'activity':
+      return { startDate: first.date, travelers: String(first.participants) };
+    case 'property':
+      return { startDate: first.checkIn, travelers: String(first.guests) };
+    case 'flight':
+      return { startDate: first.departureDate, travelers: String(first.passengers) };
+    case 'vehicle':
+      return { startDate: first.pickupDate, travelers: '1' };
+    case 'cruise':
+      return { travelers: String(first.guests) };
+    default:
+      return {};
+  }
+}
+
 export function buildDraftDetailHref(draft: ReservationDraft): string {
   if (draft.kind === 'package') {
     return buildPackageDetailHrefWithLines(
       draft.packageId,
-      {},
+      packageDraftSearchParams(draft.lines),
       draft.lines,
       '#configure',
     );

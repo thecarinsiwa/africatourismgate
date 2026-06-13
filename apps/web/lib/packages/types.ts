@@ -33,6 +33,7 @@ export type PackageDetail = {
     name: string;
     description: string | null;
     discountPercent: string;
+    durationDays: number;
   };
   items: PackageItemEnriched[];
   pricing: PackagePricing;

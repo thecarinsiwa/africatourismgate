@@ -23,8 +23,10 @@ test('normalizePackagesSearchParams maps search and legacy guest params', () => 
     {
       search: 'safari',
       page: undefined,
+      startDate: '2026-08-01',
+      travelers: '2',
       date: undefined,
-      participants: '2',
+      participants: undefined,
       checkIn: '2026-08-01',
       checkOut: undefined,
       guests: '2',

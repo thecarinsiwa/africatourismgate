@@ -1031,6 +1031,7 @@ CREATE TABLE `packages` (
   `name` VARCHAR(180) NOT NULL,
   `description` TEXT,
   `discount_percent` DECIMAL(5,2) NOT NULL DEFAULT 0.00,
+  `duration_days` SMALLINT UNSIGNED NOT NULL DEFAULT 3,
   `active` TINYINT(1) NOT NULL DEFAULT 1,
   `created_by_user_id` CHAR(36) DEFAULT NULL,
   `updated_by_user_id` CHAR(36) DEFAULT NULL,

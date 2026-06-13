@@ -14,6 +14,9 @@ export class Packages extends BaseAuditEntity {
   @Column({ type: 'decimal', name: 'discount_percent', precision: 5, scale: 2 })
   discountPercent!: string;
 
+  @Column({ type: 'int', name: 'duration_days', default: 3 })
+  durationDays!: number;
+
   @Column({ type: 'int', name: 'active' })
   active!: number;
 

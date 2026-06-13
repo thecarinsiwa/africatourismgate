@@ -667,12 +667,13 @@ INSERT INTO `activity_schedules` (
 -- 17. Demo activity-only package (public catalog #71)
 -- -----------------------------------------------------------------------------
 INSERT INTO `packages` (
-  `id`, `name`, `description`, `discount_percent`, `active`, `created_by_user_id`
+  `id`, `name`, `description`, `discount_percent`, `duration_days`, `active`, `created_by_user_id`
 ) VALUES (
   '00000000-0000-4000-8000-000000005001',
   'Kinshasa Activities Duo',
   'Two guided experiences in Kinshasa at a bundled discount.',
   15.00,
+  1,
   1,
   '00000000-0000-4000-8000-000000000010'
 );
