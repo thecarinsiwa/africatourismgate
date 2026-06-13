@@ -46,6 +46,8 @@ export { Input, type InputProps } from './components/input';
 export { PasswordInput, type PasswordInputProps } from './components/password-input';
 export { Checkbox, type CheckboxProps } from './components/checkbox';
 export { Card, type CardProps } from './components/card';
+export { Skeleton, type SkeletonProps } from './components/skeleton';
+export { StatCard, type StatCardProps, type StatCardStatus } from './components/stat-card';
 export { PageHeader, type PageHeaderProps } from './components/page-header';
 export { Breadcrumb, type BreadcrumbProps, type BreadcrumbItem } from './components/breadcrumb';
 export { Select, type SelectProps, type SelectOption } from './components/select';
