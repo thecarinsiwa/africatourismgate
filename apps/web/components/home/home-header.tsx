@@ -79,7 +79,7 @@ export function HomeHeader() {
         ],
       },
       { href: '#blog', label: t('blog'), children: [] },
-      { href: '#contact', label: t('contact'), children: [] },
+      { href: '/packages', label: t('packages'), children: [] },
     ],
     [t],
   );
@@ -219,7 +219,8 @@ export function HomeHeader() {
                 <Link
                   href={link.href}
                   className={`relative flex items-center gap-1 px-4 py-5 text-sm font-medium transition-colors ${
-                    link.href === '/'
+                    link.href === '/' ||
+                    (link.href === '/packages' && pathname.startsWith('/packages'))
                       ? 'text-primary'
                       : 'text-[#333] hover:text-primary dark:text-white/75 dark:hover:text-white'
                   }`}
@@ -350,7 +351,11 @@ export function HomeHeader() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="flex min-h-[44px] items-center rounded-lg px-3 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-primary dark:text-white/75 dark:hover:bg-white/5 dark:hover:text-white"
+                  className={`flex min-h-[44px] items-center rounded-lg px-3 py-3 text-sm font-medium hover:bg-gray-50 hover:text-primary dark:text-white/75 dark:hover:bg-white/5 dark:hover:text-white ${
+                    link.href === '/packages' && pathname.startsWith('/packages')
+                      ? 'text-primary'
+                      : 'text-gray-700'
+                  }`}
                   onClick={() => setMenuOpen(false)}
                 >
                   {link.label}
