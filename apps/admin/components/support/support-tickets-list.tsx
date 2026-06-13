@@ -4,6 +4,8 @@ import {
   Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   DataTableBadge,
   DataTablePagination,
   type ColumnDef,
@@ -170,9 +172,9 @@ export function SupportTicketsList() {
         header: 'Actions',
         meta: { align: 'right' },
         cell: ({ row }) => (
-          <Button href={`/contenu/tickets/${row.original.id}`} variant="ghost" size="sm">
-            Voir
-          </Button>
+          <DataTableActions>
+            <DataTableActionButton action="view" href={`/contenu/tickets/${row.original.id}`} />
+          </DataTableActions>
         ),
       },
     ],

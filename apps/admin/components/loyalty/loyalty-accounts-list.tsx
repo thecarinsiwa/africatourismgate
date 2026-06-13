@@ -4,6 +4,8 @@ import {
   Button,
   Card,
   DataTable,
+  DataTableActions,
+  DataTableAdjustButton,
   DataTableBadge,
   DataTablePagination,
   type ColumnDef,
@@ -197,19 +199,16 @@ export function LoyaltyAccountsList() {
               header: 'Actions',
               meta: { align: 'right' as const },
               cell: ({ row }: { row: { original: AdminLoyaltyAccountListItem } }) => (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    setAdjustingAccount(row.original);
-                    setAdjustDelta('');
-                    setAdjustReason('');
-                    setAdjustError(null);
-                  }}
-                >
-                  Ajuster
-                </Button>
+                <DataTableActions>
+                  <DataTableAdjustButton
+                    onClick={() => {
+                      setAdjustingAccount(row.original);
+                      setAdjustDelta('');
+                      setAdjustReason('');
+                      setAdjustError(null);
+                    }}
+                  />
+                </DataTableActions>
               ),
             },
           ]

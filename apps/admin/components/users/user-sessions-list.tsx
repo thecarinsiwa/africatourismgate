@@ -1,9 +1,10 @@
 'use client';
 
 import {
-  Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   DataTableBadge,
   DataTablePagination,
   type ColumnDef,
@@ -134,17 +135,14 @@ export function UserSessionsList() {
         header: 'Actions',
         meta: { align: 'right' },
         cell: ({ row }) => (
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => void handleRevoke(row.original)}
-            disabled={revokingId === row.original.id}
-            loading={revokingId === row.original.id}
-            className="!text-red-600"
-          >
-            Révoquer
-          </Button>
+          <DataTableActions>
+            <DataTableActionButton
+              action="revoke"
+              onClick={() => void handleRevoke(row.original)}
+              disabled={revokingId === row.original.id}
+              loading={revokingId === row.original.id}
+            />
+          </DataTableActions>
         ),
       },
     ],

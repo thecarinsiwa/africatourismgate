@@ -4,11 +4,12 @@ import {
   Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   Input,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { Room } from '@africatourismgate/types';
-import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getHebergementsErrorMessage } from '../../lib/hebergements-errors';
@@ -189,28 +190,19 @@ export function PropertyRoomsSection({ propertyId }: PropertyRoomsSectionProps) 
         header: 'Actions',
         meta: { align: 'right' },
         cell: ({ row }) => (
-          <div className="flex justify-end gap-1.5">
-            <Link
+          <DataTableActions>
+            <DataTableActionButton
+              action="calendar"
               href={`/hebergements/${propertyId}/chambres/${row.original.id}/disponibilites`}
-              className="inline-flex items-center rounded-md px-2 py-1 text-sm font-medium text-primary hover:underline"
-            >
-              Disponibilités
-            </Link>
-            <Button type="button" variant="ghost" size="sm" onClick={() => openEdit(row.original)}>
-              Modifier
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
+            />
+            <DataTableActionButton action="edit" onClick={() => openEdit(row.original)} />
+            <DataTableActionButton
+              action="delete"
               onClick={() => void handleDelete(row.original)}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
-              className="!text-red-600"
-            >
-              Supprimer
-            </Button>
-          </div>
+            />
+          </DataTableActions>
         ),
       },
     ],

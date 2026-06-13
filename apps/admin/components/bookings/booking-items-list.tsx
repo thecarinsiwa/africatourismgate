@@ -1,9 +1,10 @@
 'use client';
 
 import {
-  Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   DataTableBadge,
   DataTablePagination,
   Input,
@@ -170,13 +171,12 @@ export function BookingItemsList() {
         header: 'Actions',
         meta: { align: 'right' },
         cell: ({ row }) => (
-          <Button
-            href={`/dashboard/bookings/${row.original.bookingId}`}
-            variant="ghost"
-            size="sm"
-          >
-            Voir
-          </Button>
+          <DataTableActions>
+            <DataTableActionButton
+              action="view"
+              href={`/dashboard/bookings/${row.original.bookingId}`}
+            />
+          </DataTableActions>
         ),
       },
     ],

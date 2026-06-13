@@ -4,11 +4,12 @@ import {
   Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   Input,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { FlightClass, FlightClassName } from '@africatourismgate/types';
-import Link from 'next/link';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { flightClassLabels, flightClassOptions } from '../../lib/flight-class-labels';
@@ -134,17 +135,13 @@ export function FlightClassesSection({ flightId }: FlightClassesSectionProps) {
         header: 'Actions',
         meta: { align: 'right' },
         cell: ({ row }) => (
-          <div className="flex justify-end gap-1.5">
-            <Link
+          <DataTableActions>
+            <DataTableActionButton
+              action="calendar"
               href={`/produits/vols/${flightId}/classes/${row.original.id}/disponibilites`}
-              className="inline-flex items-center rounded-md px-2 py-1 text-sm font-medium text-primary hover:underline"
-            >
-              Disponibilités
-            </Link>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
+            />
+            <DataTableActionButton
+              action="edit"
               onClick={() => {
                 setEditing(row.original);
                 setFormValues({
@@ -154,14 +151,9 @@ export function FlightClassesSection({ flightId }: FlightClassesSectionProps) {
                 });
                 setShowForm(true);
               }}
-            >
-              Modifier
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="!text-red-600"
+            />
+            <DataTableActionButton
+              action="delete"
               onClick={async () => {
                 if (!window.confirm('Supprimer cette classe ?')) return;
                 setDeletingId(row.original.id);
@@ -176,10 +168,8 @@ export function FlightClassesSection({ flightId }: FlightClassesSectionProps) {
               }}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
-            >
-              Supprimer
-            </Button>
-          </div>
+            />
+          </DataTableActions>
         ),
       },
     ],

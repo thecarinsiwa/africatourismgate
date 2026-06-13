@@ -3,6 +3,8 @@
 import {
   Button,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   DataTableBadge,
   type ColumnDef,
 } from '@africatourismgate/ui';
@@ -167,26 +169,20 @@ export function OrganizationBankAccountsList() {
         id: 'actions',
         header: '',
         cell: ({ row }) => (
-          <div className="flex justify-end gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
+          <DataTableActions>
+            <DataTableActionButton
+              action="edit"
               onClick={() => {
                 setCreating(false);
                 setEditing(row.original);
               }}
-            >
-              Modifier
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
+            />
+            <DataTableActionButton
+              action="delete"
               loading={deletingId === row.original.id}
               onClick={() => void handleDelete(row.original)}
-            >
-              Supprimer
-            </Button>
-          </div>
+            />
+          </DataTableActions>
         ),
       },
     ],

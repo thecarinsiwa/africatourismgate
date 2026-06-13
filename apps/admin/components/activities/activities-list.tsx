@@ -4,6 +4,8 @@ import {
   Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   DataTablePagination,
   Input,
   type ColumnDef,
@@ -144,22 +146,15 @@ export function ActivitiesList() {
         cell: ({ row }) => {
           const activity = row.original;
           return (
-            <div className="flex justify-end gap-1.5">
-              <Button href={`/produits/activites/${activity.id}`} variant="ghost" size="sm">
-                Modifier
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
+            <DataTableActions>
+              <DataTableActionButton action="edit" href={`/produits/activites/${activity.id}`} />
+              <DataTableActionButton
+                action="delete"
                 onClick={() => void handleDelete(activity)}
                 disabled={deletingId === activity.id}
                 loading={deletingId === activity.id}
-                className="!text-red-600 hover:!bg-red-50 dark:!text-red-400"
-              >
-                Supprimer
-              </Button>
-            </div>
+              />
+            </DataTableActions>
           );
         },
       },

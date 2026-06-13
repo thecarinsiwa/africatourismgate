@@ -4,6 +4,8 @@ import {
   Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   Input,
   type ColumnDef,
 } from '@africatourismgate/ui';
@@ -208,23 +210,15 @@ export function DestinationPoisSection({ destinationId }: DestinationPoisSection
         cell: ({ row }) => {
           const poi = row.original;
           return (
-            <div className="flex justify-end gap-1.5">
-              <Button type="button" variant="ghost" size="sm" onClick={() => openEditForm(poi)}>
-                Modifier
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
+            <DataTableActions>
+              <DataTableActionButton action="edit" onClick={() => openEditForm(poi)} />
+              <DataTableActionButton
+                action="delete"
                 onClick={() => void handleDelete(poi)}
                 disabled={deletingId === poi.id}
                 loading={deletingId === poi.id}
-                loadingText="…"
-                className="!text-red-600 hover:!bg-red-50 hover:!text-red-700 dark:!text-red-400 dark:hover:!bg-red-950/30"
-              >
-                Supprimer
-              </Button>
-            </div>
+              />
+            </DataTableActions>
           );
         },
       },
