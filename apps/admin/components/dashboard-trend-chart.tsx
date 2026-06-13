@@ -2,7 +2,18 @@
 
 import { Card, Skeleton } from '@africatourismgate/ui';
 import { useTranslations } from 'next-intl';
+import { useTheme } from 'next-themes';
 import { useEffect, useMemo, useState } from 'react';
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Legend,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 import { fetchDashboardTrend, type TrendPoint } from '../lib/dashboard-trend-data';
 import { formatMoney } from '../lib/format-money';
 import { useDashboardPeriod } from './dashboard-period-context';
@@ -12,59 +23,104 @@ type ChartState =
   | { status: 'error' }
   | { status: 'ready'; points: TrendPoint[]; currency: string };
 
-const CHART_WIDTH = 640;
-const CHART_HEIGHT = 220;
-const PADDING = { top: 16, right: 48, bottom: 28, left: 40 };
+/** Palette alignée sur la référence dashboard (teal + blue). */
+const COLOR_BOOKINGS = '#26C6DA';
+const COLOR_REVENUE = '#2196F3';
 
-function buildPath(values: number[], max: number, plotWidth: number, plotHeight: number): string {
-  if (values.length === 0) return '';
-  const safeMax = max > 0 ? max : 1;
-  const step = values.length > 1 ? plotWidth / (values.length - 1) : 0;
-
-  return values
-    .map((value, index) => {
-      const x = PADDING.left + index * step;
-      const y = PADDING.top + plotHeight - (value / safeMax) * plotHeight;
-      return `${index === 0 ? 'M' : 'L'} ${x.toFixed(1)} ${y.toFixed(1)}`;
-    })
-    .join(' ');
-}
-
-function buildAreaPath(
-  values: number[],
-  max: number,
-  plotWidth: number,
-  plotHeight: number,
-): string {
-  const line = buildPath(values, max, plotWidth, plotHeight);
-  if (!line) return '';
-  const step = values.length > 1 ? plotWidth / (values.length - 1) : 0;
-  const lastX = PADDING.left + (values.length - 1) * step;
-  const baseY = PADDING.top + plotHeight;
-  return `${line} L ${lastX.toFixed(1)} ${baseY} L ${PADDING.left} ${baseY} Z`;
-}
+type ChartRow = {
+  date: string;
+  label: string;
+  bookings: number;
+  revenue: number;
+  revenueCents: number;
+};
 
 function formatAxisDate(isoDate: string): string {
   const date = new Date(`${isoDate}T12:00:00.000Z`);
   return date.toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
 }
 
-function formatCompactCount(value: number): string {
-  if (value >= 1000) return `${(value / 1000).toFixed(1)}k`;
+function formatYAxisTick(value: number): string {
+  if (value >= 1000) return `${(value / 1000).toFixed(0)}k`;
   return String(value);
 }
 
-function formatCompactMoney(cents: number, currency: string): string {
-  const amount = cents / 100;
-  if (amount >= 1_000_000) return `${(amount / 1_000_000).toFixed(1)}M`;
-  if (amount >= 1000) return `${(amount / 1000).toFixed(0)}k`;
-  return formatMoney(cents, currency).replace(/\s/g, '');
+type TooltipPayload = {
+  payload?: ChartRow;
+};
+
+function ChartTooltip({
+  active,
+  payload,
+  bookingsLabel,
+  revenueLabel,
+  currency,
+}: {
+  active?: boolean;
+  payload?: TooltipPayload[];
+  bookingsLabel: string;
+  revenueLabel: string;
+  currency: string;
+}) {
+  if (!active || !payload?.[0]?.payload) return null;
+  const row = payload[0].payload;
+
+  return (
+    <div className="rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-xs shadow-md">
+      <p className="font-medium text-atg-fg">{row.label}</p>
+      <p className="mt-1 text-atg-muted">
+        <span className="inline-block h-2 w-2 rounded-sm" style={{ backgroundColor: COLOR_BOOKINGS }} />{' '}
+        {bookingsLabel} : <span className="font-semibold text-atg-fg">{row.bookings}</span>
+      </p>
+      <p className="mt-0.5 text-atg-muted">
+        <span className="inline-block h-2 w-2 rounded-sm" style={{ backgroundColor: COLOR_REVENUE }} />{' '}
+        {revenueLabel} :{' '}
+        <span className="font-semibold text-atg-fg">
+          {formatMoney(row.revenueCents, currency)}
+        </span>
+      </p>
+    </div>
+  );
+}
+
+function ChartLegend({
+  bookingsLabel,
+  revenueLabel,
+}: {
+  bookingsLabel: string;
+  revenueLabel: string;
+}) {
+  return (
+    <ul className="mt-2 flex items-center justify-center gap-6 text-xs text-atg-muted">
+      <li className="inline-flex items-center gap-2">
+        <span
+          className="h-2.5 w-2.5 rounded-sm"
+          style={{ backgroundColor: COLOR_BOOKINGS }}
+          aria-hidden
+        />
+        {bookingsLabel}
+      </li>
+      <li className="inline-flex items-center gap-2">
+        <span
+          className="h-2.5 w-2.5 rounded-sm"
+          style={{ backgroundColor: COLOR_REVENUE }}
+          aria-hidden
+        />
+        {revenueLabel}
+      </li>
+    </ul>
+  );
 }
 
 export function DashboardTrendChart({ className }: { className?: string }) {
   const t = useTranslations('dashboard.chart');
   const { period } = useDashboardPeriod();
+  const { resolvedTheme } = useTheme();
   const [state, setState] = useState<ChartState>({ status: 'loading' });
+
+  const isDark = resolvedTheme === 'dark';
+  const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
+  const tickColor = isDark ? '#94a3b8' : '#64748b';
 
   useEffect(() => {
     let cancelled = false;
@@ -74,7 +130,6 @@ export function DashboardTrendChart({ className }: { className?: string }) {
       try {
         const { points, currency } = await fetchDashboardTrend(period);
         if (cancelled) return;
-
         setState({ status: 'ready', points, currency });
       } catch {
         if (!cancelled) setState({ status: 'error' });
@@ -87,170 +142,97 @@ export function DashboardTrendChart({ className }: { className?: string }) {
     };
   }, [period]);
 
-  const chartData = useMemo(() => {
+  const rows = useMemo<ChartRow[] | null>(() => {
     if (state.status !== 'ready') return null;
-
-    const bookings = state.points.map((p) => p.bookings);
-    const revenue = state.points.map((p) => p.revenueCents);
-    const maxBookings = Math.max(...bookings, 1);
-    const maxRevenue = Math.max(...revenue, 1);
-    const plotWidth = CHART_WIDTH - PADDING.left - PADDING.right;
-    const plotHeight = CHART_HEIGHT - PADDING.top - PADDING.bottom;
-    const hasData = bookings.some((v) => v > 0) || revenue.some((v) => v > 0);
-
-    const labelStep = Math.max(1, Math.ceil(state.points.length / 6));
-
-    return {
-      bookings,
-      revenue,
-      maxBookings,
-      maxRevenue,
-      plotWidth,
-      plotHeight,
-      hasData,
-      labelStep,
-      bookingsPath: buildPath(bookings, maxBookings, plotWidth, plotHeight),
-      revenuePath: buildPath(revenue, maxRevenue, plotWidth, plotHeight),
-      bookingsArea: buildAreaPath(bookings, maxBookings, plotWidth, plotHeight),
-      revenueArea: buildAreaPath(revenue, maxRevenue, plotWidth, plotHeight),
-    };
+    return state.points.map((point) => ({
+      date: point.date,
+      label: formatAxisDate(point.date),
+      bookings: point.bookings,
+      revenue: point.revenueCents / 100,
+      revenueCents: point.revenueCents,
+    }));
   }, [state]);
+
+  const hasData = useMemo(
+    () => rows?.some((row) => row.bookings > 0 || row.revenue > 0) ?? false,
+    [rows],
+  );
+
+  const xInterval = useMemo(() => {
+    if (!rows) return 0;
+    return Math.max(0, Math.ceil(rows.length / 8) - 1);
+  }, [rows]);
 
   return (
     <Card variant="dashboard" padding="sm" className={className}>
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h2 className="text-base font-semibold text-atg-fg">{t('title')}</h2>
-          <p className="mt-1 text-sm text-atg-muted">{t('subtitle')}</p>
-        </div>
-        {state.status === 'ready' && chartData?.hasData ? (
-          <div className="flex flex-wrap items-center gap-4 text-xs">
-            <span className="inline-flex items-center gap-2 text-atg-muted">
-              <span className="h-2.5 w-2.5 rounded-full bg-primary" aria-hidden />
-              {t('bookings')}
-            </span>
-            <span className="inline-flex items-center gap-2 text-atg-muted">
-              <span className="h-2.5 w-2.5 rounded-full bg-atg-success" aria-hidden />
-              {t('revenue')}
-            </span>
-          </div>
-        ) : null}
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="text-base font-semibold text-atg-fg">{t('title')}</h2>
       </div>
 
-      <div className="mt-5">
+      <div className="mt-4">
         {state.status === 'loading' ? (
           <div className="space-y-3" aria-busy="true">
-            <Skeleton className="h-[220px] w-full rounded-lg" />
+            <Skeleton className="h-[280px] w-full rounded-lg" />
             <p className="text-sm text-atg-muted">{t('loading')}</p>
           </div>
         ) : state.status === 'error' ? (
-          <p className="py-12 text-center text-sm text-red-600 dark:text-red-400" role="alert">
+          <p className="py-16 text-center text-sm text-red-600 dark:text-red-400" role="alert">
             {t('error')}
           </p>
-        ) : !chartData?.hasData ? (
-          <p className="py-12 text-center text-sm text-atg-muted">{t('empty')}</p>
+        ) : !hasData || !rows ? (
+          <p className="py-16 text-center text-sm text-atg-muted">{t('empty')}</p>
         ) : (
-          <div className="w-full overflow-x-auto">
-            <svg
-              viewBox={`0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`}
-              className="h-auto w-full min-w-[320px] text-atg-muted"
-              role="img"
-              aria-label={t('ariaLabel')}
-              preserveAspectRatio="xMidYMid meet"
-            >
-              {/* Grille horizontale */}
-              {[0, 0.25, 0.5, 0.75, 1].map((ratio) => {
-                const y = PADDING.top + chartData.plotHeight * (1 - ratio);
-                return (
-                  <line
-                    key={ratio}
-                    x1={PADDING.left}
-                    y1={y}
-                    x2={CHART_WIDTH - PADDING.right}
-                    y2={y}
-                    className="stroke-atg-border"
-                    strokeWidth={1}
-                  />
-                );
-              })}
-
-              {/* Aire réservations */}
-              <path
-                d={chartData.bookingsArea}
-                className="fill-primary/15"
-              />
-              {/* Aire revenus */}
-              <path
-                d={chartData.revenueArea}
-                className="fill-atg-success/10"
-              />
-
-              {/* Courbe réservations */}
-              <path
-                d={chartData.bookingsPath}
-                fill="none"
-                className="stroke-primary"
-                strokeWidth={2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              {/* Courbe revenus */}
-              <path
-                d={chartData.revenuePath}
-                fill="none"
-                className="stroke-atg-success"
-                strokeWidth={2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-
-              {/* Axe Y gauche — réservations */}
-              <text x={4} y={PADDING.top + 4} className="fill-atg-muted text-[9px]">
-                {formatCompactCount(chartData.maxBookings)}
-              </text>
-              <text x={4} y={PADDING.top + chartData.plotHeight} className="fill-atg-muted text-[9px]">
-                0
-              </text>
-
-              {/* Axe Y droit — revenus */}
-              <text
-                x={CHART_WIDTH - 4}
-                y={PADDING.top + 4}
-                textAnchor="end"
-                className="fill-atg-muted text-[9px]"
+          <div className="w-full" role="img" aria-label={t('ariaLabel')}>
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart
+                data={rows}
+                margin={{ top: 8, right: 8, left: 0, bottom: 4 }}
+                barCategoryGap="28%"
               >
-                {formatCompactMoney(chartData.maxRevenue, state.currency)}
-              </text>
-              <text
-                x={CHART_WIDTH - 4}
-                y={PADDING.top + chartData.plotHeight}
-                textAnchor="end"
-                className="fill-atg-muted text-[9px]"
-              >
-                0
-              </text>
-
-              {/* Labels axe X */}
-              {state.points.map((point, index) => {
-                if (index % chartData.labelStep !== 0 && index !== state.points.length - 1) {
-                  return null;
-                }
-                const step =
-                  state.points.length > 1 ? chartData.plotWidth / (state.points.length - 1) : 0;
-                const x = PADDING.left + index * step;
-                return (
-                  <text
-                    key={point.date}
-                    x={x}
-                    y={CHART_HEIGHT - 6}
-                    textAnchor="middle"
-                    className="fill-atg-muted text-[9px]"
-                  >
-                    {formatAxisDate(point.date)}
-                  </text>
-                );
-              })}
-            </svg>
+                <CartesianGrid stroke={gridColor} vertical={false} />
+                <XAxis
+                  dataKey="label"
+                  tick={{ fill: tickColor, fontSize: 11 }}
+                  axisLine={false}
+                  tickLine={false}
+                  interval={xInterval}
+                />
+                <YAxis
+                  tick={{ fill: tickColor, fontSize: 11 }}
+                  axisLine={false}
+                  tickLine={false}
+                  tickFormatter={formatYAxisTick}
+                  width={36}
+                />
+                <Tooltip
+                  cursor={{ fill: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)' }}
+                  content={
+                    <ChartTooltip
+                      bookingsLabel={t('bookings')}
+                      revenueLabel={t('revenue')}
+                      currency={state.currency}
+                    />
+                  }
+                />
+                <Bar
+                  dataKey="bookings"
+                  name={t('bookings')}
+                  stackId="activity"
+                  fill={COLOR_BOOKINGS}
+                  radius={[0, 0, 0, 0]}
+                  maxBarSize={48}
+                />
+                <Bar
+                  dataKey="revenue"
+                  name={t('revenue')}
+                  stackId="activity"
+                  fill={COLOR_REVENUE}
+                  radius={[4, 4, 0, 0]}
+                  maxBarSize={48}
+                />
+                <Legend content={<ChartLegend bookingsLabel={t('bookings')} revenueLabel={t('revenue')} />} />
+              </BarChart>
+            </ResponsiveContainer>
 
             <table className="sr-only">
               <caption>{t('ariaLabel')}</caption>
@@ -262,11 +244,11 @@ export function DashboardTrendChart({ className }: { className?: string }) {
                 </tr>
               </thead>
               <tbody>
-                {state.points.map((point) => (
-                  <tr key={point.date}>
-                    <td>{point.date}</td>
-                    <td>{point.bookings}</td>
-                    <td>{formatMoney(point.revenueCents, state.currency)}</td>
+                {rows.map((row) => (
+                  <tr key={row.date}>
+                    <td>{row.date}</td>
+                    <td>{row.bookings}</td>
+                    <td>{formatMoney(row.revenueCents, state.currency)}</td>
                   </tr>
                 ))}
               </tbody>
