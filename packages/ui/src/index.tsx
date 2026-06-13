@@ -53,6 +53,22 @@ export {
   DataTablePagination,
   type DataTablePaginationProps,
 } from './components/data-table-pagination';
+export {
+  DataTableActionButton,
+  DataTableActions,
+  DataTableAdjustButton,
+  type DataTableActionButtonProps,
+  type DataTableActionKind,
+  type DataTableActionsProps,
+  type DataTableAdjustButtonProps,
+} from './components/data-table-actions';
+export {
+  DataTableAdjustIcon,
+  DataTableCalendarIcon,
+  DataTableDeleteIcon,
+  DataTableEditIcon,
+  DataTableViewIcon,
+} from './components/data-table-icons';
 export { Divider, type DividerProps } from './components/divider';
 export { TextLink, type TextLinkProps } from './components/text-link';
 export { Logo, type LogoProps } from './components/logo';

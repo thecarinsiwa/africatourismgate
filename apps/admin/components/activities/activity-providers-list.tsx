@@ -4,6 +4,8 @@ import {
   Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   DataTablePagination,
   Input,
   type ColumnDef,
@@ -137,11 +139,9 @@ export function ActivityProvidersList() {
         header: 'Actions',
         meta: { align: 'right' },
         cell: ({ row }) => (
-          <div className="flex justify-end gap-1.5">
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
+          <DataTableActions>
+            <DataTableActionButton
+              action="edit"
               onClick={() => {
                 setEditing(row.original);
                 setFormValues({
@@ -150,14 +150,9 @@ export function ActivityProvidersList() {
                 });
                 setShowForm(true);
               }}
-            >
-              Modifier
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="!text-red-600"
+            />
+            <DataTableActionButton
+              action="delete"
               onClick={async () => {
                 if (!window.confirm(`Supprimer « ${row.original.name} » ?`)) return;
                 setDeletingId(row.original.id);
@@ -172,10 +167,8 @@ export function ActivityProvidersList() {
               }}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
-            >
-              Supprimer
-            </Button>
-          </div>
+            />
+          </DataTableActions>
         ),
       },
     ],

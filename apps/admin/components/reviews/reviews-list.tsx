@@ -4,6 +4,8 @@ import {
   Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   DataTableBadge,
   DataTablePagination,
   type ColumnDef,
@@ -239,14 +241,8 @@ export function ReviewsList() {
           const review = row.original;
           const busy = actingId === review.id;
           return (
-            <div className="flex flex-wrap justify-end gap-1.5">
-              <Button
-                href={`/contenu/avis/${review.id}`}
-                variant="ghost"
-                size="sm"
-              >
-                Voir
-              </Button>
+            <DataTableActions className="flex-wrap">
+              <DataTableActionButton action="view" href={`/contenu/avis/${review.id}`} />
               {canWrite && review.status !== 'approved' ? (
                 <Button
                   type="button"
@@ -272,18 +268,13 @@ export function ReviewsList() {
                 </Button>
               ) : null}
               {canWrite ? (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  disabled={busy}
+                <DataTableActionButton
+                  action="delete"
                   onClick={() => void runAction(review, 'delete')}
-                  className="!text-red-600 hover:!bg-red-50 hover:!text-red-700 dark:!text-red-400 dark:hover:!bg-red-950/30"
-                >
-                  Supprimer
-                </Button>
+                  disabled={busy}
+                />
               ) : null}
-            </div>
+            </DataTableActions>
           );
         },
       },

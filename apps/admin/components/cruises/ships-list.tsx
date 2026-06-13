@@ -4,6 +4,8 @@ import {
   Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   DataTablePagination,
   Input,
   type ColumnDef,
@@ -110,26 +112,18 @@ export function ShipsList() {
         header: 'Actions',
         meta: { align: 'right' },
         cell: ({ row }) => (
-          <div className="flex justify-end gap-1.5">
-            <Button
+          <DataTableActions>
+            <DataTableActionButton
+              action="edit"
               href={`/produits/croisieres/navires/${row.original.id}`}
-              variant="ghost"
-              size="sm"
-            >
-              Modifier
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="!text-red-600"
+            />
+            <DataTableActionButton
+              action="delete"
               onClick={() => void handleDelete(row.original)}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
-            >
-              Supprimer
-            </Button>
-          </div>
+            />
+          </DataTableActions>
         ),
       },
     ],

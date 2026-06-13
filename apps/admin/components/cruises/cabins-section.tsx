@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Card, DataTable, Input, type ColumnDef } from '@africatourismgate/ui';
+import { Button, Card, DataTable, DataTableActionButton, DataTableActions, Input, type ColumnDef } from '@africatourismgate/ui';
 import type { Cabin } from '@africatourismgate/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
@@ -113,11 +113,9 @@ export function CabinsSection({ shipId }: CabinsSectionProps) {
         header: 'Actions',
         meta: { align: 'right' },
         cell: ({ row }) => (
-          <div className="flex justify-end gap-1.5">
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
+          <DataTableActions>
+            <DataTableActionButton
+              action="edit"
               onClick={() => {
                 setEditing(row.original);
                 setFormValues({
@@ -128,14 +126,9 @@ export function CabinsSection({ shipId }: CabinsSectionProps) {
                 });
                 setShowForm(true);
               }}
-            >
-              Modifier
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="!text-red-600"
+            />
+            <DataTableActionButton
+              action="delete"
               onClick={async () => {
                 if (!window.confirm('Supprimer cette cabine ?')) return;
                 setDeletingId(row.original.id);
@@ -150,10 +143,8 @@ export function CabinsSection({ shipId }: CabinsSectionProps) {
               }}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
-            >
-              Supprimer
-            </Button>
-          </div>
+            />
+          </DataTableActions>
         ),
       },
     ],

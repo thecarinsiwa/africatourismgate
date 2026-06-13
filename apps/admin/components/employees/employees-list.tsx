@@ -4,6 +4,8 @@ import {
   Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   DataTableBadge,
   DataTablePagination,
   Input,
@@ -214,23 +216,15 @@ export function EmployeesList() {
         cell: ({ row }) => {
           const employee = row.original;
           return (
-            <div className="flex justify-end gap-1.5 opacity-90 transition-opacity group-hover:opacity-100">
-              <Button href={`/utilisateurs/employes/${employee.id}`} variant="ghost" size="sm">
-                Modifier
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
+            <DataTableActions className="opacity-90 transition-opacity group-hover:opacity-100">
+              <DataTableActionButton action="edit" href={`/utilisateurs/employes/${employee.id}`} />
+              <DataTableActionButton
+                action="delete"
                 onClick={() => void handleDelete(employee)}
                 disabled={deletingId === employee.id}
                 loading={deletingId === employee.id}
-                loadingText="…"
-                className="!text-red-600 hover:!bg-red-50 hover:!text-red-700 dark:!text-red-400 dark:hover:!bg-red-950/30"
-              >
-                Supprimer
-              </Button>
-            </div>
+              />
+            </DataTableActions>
           );
         },
       },

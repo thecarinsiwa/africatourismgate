@@ -4,6 +4,8 @@ import {
   Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type {
@@ -190,17 +192,14 @@ export function PackageItemsSection({ packageId }: PackageItemsSectionProps) {
         header: 'Actions',
         meta: { align: 'right' },
         cell: ({ row }) => (
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => void handleDelete(row.original)}
-            disabled={deletingId === row.original.id}
-            loading={deletingId === row.original.id}
-            className="!text-red-600"
-          >
-            Retirer
-          </Button>
+          <DataTableActions>
+            <DataTableActionButton
+              action="remove"
+              onClick={() => void handleDelete(row.original)}
+              disabled={deletingId === row.original.id}
+              loading={deletingId === row.original.id}
+            />
+          </DataTableActions>
         ),
       },
     ],
