@@ -57,12 +57,28 @@ test('buildSearchRoute routes tours to /activities', () => {
   );
 });
 
+test('buildSearchRoute routes tours to /activities without query params', () => {
+  assert.equal(buildSearchRoute('tours', new URLSearchParams()), '/activities');
+});
+
 test('buildComingSoonRoute preserves query params', () => {
   const params = new URLSearchParams({ from: 'FIH', to: 'NBO', departureDate: '2026-08-01' });
   assert.equal(
     buildComingSoonRoute('flights', params),
     '/coming-soon/flights?from=FIH&to=NBO&departureDate=2026-08-01',
   );
+});
+
+test('buildComingSoonRoute works for tours vertical', () => {
+  const params = new URLSearchParams({ date: '2026-08-15', participants: '2' });
+  assert.equal(
+    buildComingSoonRoute('tours', params),
+    '/coming-soon/tours?date=2026-08-15&participants=2',
+  );
+});
+
+test('buildComingSoonRoute omits query string when params are empty', () => {
+  assert.equal(buildComingSoonRoute('cruises', new URLSearchParams()), '/coming-soon/cruises');
 });
 
 test('buildSearchRoute routes unimplemented vertical to coming-soon', () => {
@@ -73,5 +89,23 @@ test('buildSearchRoute routes unimplemented vertical to coming-soon', () => {
     assert.equal(buildSearchRoute('flights', params), '/coming-soon/flights?from=FIH&to=NBO');
   } finally {
     IMPLEMENTED_SEARCH_VERTICALS.flights = original;
+  }
+});
+
+test('buildSearchRoute routes unimplemented tours to coming-soon with activity params', () => {
+  const original = IMPLEMENTED_SEARCH_VERTICALS.tours;
+  IMPLEMENTED_SEARCH_VERTICALS.tours = false;
+  try {
+    const params = new URLSearchParams({
+      destination: 'Marrakech',
+      date: '2026-09-01',
+      participants: '4',
+    });
+    assert.equal(
+      buildSearchRoute('tours', params),
+      '/coming-soon/tours?destination=Marrakech&date=2026-09-01&participants=4',
+    );
+  } finally {
+    IMPLEMENTED_SEARCH_VERTICALS.tours = original;
   }
 });
