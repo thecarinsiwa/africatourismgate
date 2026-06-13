@@ -77,7 +77,7 @@ export function ActivityForm({ mode, activityId, initialActivity }: ActivityForm
 
   useEffect(() => {
     void getApiClient()
-      .listActivityProviders({ page: 1, limit: 200 })
+      .listActivityProviders({ page: 1, limit: 100 })
       .then((r) => setProviders(r.data))
       .catch(() => setProviders([]));
   }, []);
