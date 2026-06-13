@@ -826,6 +826,11 @@ export const es: Translations = {
       },
     },
   },
+  comingSoon: {
+    badge: 'Próximamente',
+    body: 'La reserva en línea para esta categoría llegará pronto. Sus criterios de búsqueda se han conservado en la URL.',
+    backToSearch: 'Modificar mi búsqueda',
+  },
   booking: {
     login: {
       title: 'Inicio de sesión del cliente',

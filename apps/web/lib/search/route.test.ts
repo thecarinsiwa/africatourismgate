@@ -1,6 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { buildSearchRoute } from './route';
+import {
+  buildComingSoonRoute,
+  buildSearchRoute,
+  IMPLEMENTED_SEARCH_VERTICALS,
+} from './route';
 
 test('buildSearchRoute routes hotels to /hotels', () => {
   const params = new URLSearchParams({ destination: 'Nairobi' });
@@ -39,4 +43,35 @@ test('buildSearchRoute routes cruises to /cruises', () => {
     buildSearchRoute('cruises', params),
     '/cruises?sailFrom=CDKIN&sailTo=CDBNW&startDate=2026-09-01&endDate=2026-09-30&guests=2',
   );
+});
+
+test('buildSearchRoute routes tours to /activities', () => {
+  const params = new URLSearchParams({
+    destination: 'Nairobi',
+    date: '2026-08-15',
+    participants: '2',
+  });
+  assert.equal(
+    buildSearchRoute('tours', params),
+    '/activities?destination=Nairobi&date=2026-08-15&participants=2',
+  );
+});
+
+test('buildComingSoonRoute preserves query params', () => {
+  const params = new URLSearchParams({ from: 'FIH', to: 'NBO', departureDate: '2026-08-01' });
+  assert.equal(
+    buildComingSoonRoute('flights', params),
+    '/coming-soon/flights?from=FIH&to=NBO&departureDate=2026-08-01',
+  );
+});
+
+test('buildSearchRoute routes unimplemented vertical to coming-soon', () => {
+  const original = IMPLEMENTED_SEARCH_VERTICALS.flights;
+  IMPLEMENTED_SEARCH_VERTICALS.flights = false;
+  try {
+    const params = new URLSearchParams({ from: 'FIH', to: 'NBO' });
+    assert.equal(buildSearchRoute('flights', params), '/coming-soon/flights?from=FIH&to=NBO');
+  } finally {
+    IMPLEMENTED_SEARCH_VERTICALS.flights = original;
+  }
 });

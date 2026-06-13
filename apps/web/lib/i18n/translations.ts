@@ -694,6 +694,11 @@ export type Translations = {
       contact: { question: string; answer: string };
     };
   };
+  comingSoon: {
+    badge: string;
+    body: string;
+    backToSearch: string;
+  };
   booking: {
     login: {
       title: string;
@@ -1549,6 +1554,11 @@ const fr: Translations = {
       },
     },
   },
+  comingSoon: {
+    badge: 'Bientôt disponible',
+    body: 'La réservation en ligne pour cette catégorie arrive prochainement. Vos critères de recherche ont été conservés dans l’URL.',
+    backToSearch: 'Modifier ma recherche',
+  },
   booking: {
     login: {
       title: 'Connexion client',
@@ -2400,6 +2410,11 @@ const en: Translations = {
           'We handle requests Monday�Friday. Most tickets get a first reply within 1�2 business days.',
       },
     },
+  },
+  comingSoon: {
+    badge: 'Coming soon',
+    body: 'Online booking for this category is launching soon. Your search criteria have been kept in the URL.',
+    backToSearch: 'Change my search',
   },
   booking: {
     login: {
