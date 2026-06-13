@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   buildComingSoonRoute,
   buildSearchRoute,
+  buildVerticalListRoute,
   IMPLEMENTED_SEARCH_VERTICALS,
 } from './route';
 
@@ -89,6 +90,24 @@ test('buildSearchRoute routes unimplemented vertical to coming-soon', () => {
     assert.equal(buildSearchRoute('flights', params), '/coming-soon/flights?from=FIH&to=NBO');
   } finally {
     IMPLEMENTED_SEARCH_VERTICALS.flights = original;
+  }
+});
+
+test('buildVerticalListRoute routes each vertical to its list page', () => {
+  assert.equal(buildVerticalListRoute('hotels'), '/hotels');
+  assert.equal(buildVerticalListRoute('flights'), '/flights');
+  assert.equal(buildVerticalListRoute('cars'), '/cars');
+  assert.equal(buildVerticalListRoute('cruises'), '/cruises');
+  assert.equal(buildVerticalListRoute('tours'), '/activities');
+});
+
+test('buildVerticalListRoute routes unimplemented vertical to coming-soon', () => {
+  const original = IMPLEMENTED_SEARCH_VERTICALS.cars;
+  IMPLEMENTED_SEARCH_VERTICALS.cars = false;
+  try {
+    assert.equal(buildVerticalListRoute('cars'), '/coming-soon/cars');
+  } finally {
+    IMPLEMENTED_SEARCH_VERTICALS.cars = original;
   }
 });
 

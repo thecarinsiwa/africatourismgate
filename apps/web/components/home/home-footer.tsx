@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { useTranslations } from '../../lib/i18n/locale-provider';
+import { buildVerticalListRoute } from '../../lib/search/route';
 
 const SOCIAL_FOOTER = [
   {
@@ -40,10 +41,10 @@ export function HomeFooter() {
 
   const specialistLinks = useMemo(
     () => [
-      { href: '/hotels', label: t.footer.specialistLinks.premium },
-      { href: '#vols', label: t.footer.specialistLinks.flights },
-      { href: '#tours', label: t.footer.specialistLinks.safaris },
-      { href: '#croisieres', label: t.footer.specialistLinks.cruises },
+      { href: buildVerticalListRoute('hotels'), label: t.footer.specialistLinks.premium },
+      { href: buildVerticalListRoute('flights'), label: t.footer.specialistLinks.flights },
+      { href: buildVerticalListRoute('tours'), label: t.footer.specialistLinks.safaris },
+      { href: buildVerticalListRoute('cruises'), label: t.footer.specialistLinks.cruises },
     ],
     [t],
   );

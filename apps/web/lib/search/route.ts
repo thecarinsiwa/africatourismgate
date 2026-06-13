@@ -61,3 +61,8 @@ export function buildSearchRoute(vertical: SearchVertical, params: URLSearchPara
   }
   return buildLiveSearchRoute(vertical, params);
 }
+
+/** Navbar / footer list link for a vertical (no search params). */
+export function buildVerticalListRoute(vertical: SearchVertical): string {
+  return buildSearchRoute(vertical, new URLSearchParams());
+}

@@ -7,7 +7,26 @@ import { useEffect, useMemo, useState } from 'react';
 import { usePublicBranding } from '../branding-provider';
 import { LanguageSwitcher } from '../language-switcher';
 import { AUTH_CHANGED_EVENT, hasWebSession } from '../../lib/auth/client-session';
+import { buildVerticalListRoute } from '../../lib/search/route';
 import { useTranslations as useIntlTranslations } from 'next-intl';
+
+function isPathActive(href: string, pathname: string): boolean {
+  if (href === '/') return pathname === '/';
+  if (href.startsWith('/#') || href.startsWith('#')) return false;
+  const pathOnly = href.split('?')[0].split('#')[0];
+  return pathname === pathOnly || pathname.startsWith(`${pathOnly}/`);
+}
+
+function isNavItemActive(
+  href: string,
+  pathname: string,
+  children: { href: string }[] = [],
+): boolean {
+  if (children.length > 0) {
+    return children.some((child) => isPathActive(child.href, pathname));
+  }
+  return isPathActive(href, pathname);
+}
 
 const SOCIAL_LINKS = [
   {
@@ -65,20 +84,20 @@ export function HomeHeader() {
   const navLinks = useMemo(
     () => [
       { href: '/', label: t('home'), children: [] as { href: string; label: string }[] },
-      { href: '#about', label: t('about'), children: [] },
-      { href: '#gallery', label: t('gallery'), children: [] },
+      { href: '/#about', label: t('about'), children: [] },
+      { href: '/#gallery', label: t('gallery'), children: [] },
       {
-        href: '#pages',
+        href: '/#search',
         label: t('pages'),
         children: [
-          { href: '/hotels', label: t('hotels') },
-          { href: '#vols', label: t('flights') },
-          { href: '#voitures', label: t('cars') },
-          { href: '#croisieres', label: t('cruises') },
-          { href: '#tours', label: t('tours') },
+          { href: buildVerticalListRoute('hotels'), label: t('hotels') },
+          { href: buildVerticalListRoute('flights'), label: t('flights') },
+          { href: buildVerticalListRoute('cars'), label: t('cars') },
+          { href: buildVerticalListRoute('cruises'), label: t('cruises') },
+          { href: buildVerticalListRoute('tours'), label: t('tours') },
         ],
       },
-      { href: '#blog', label: t('blog'), children: [] },
+      { href: '/coming-soon', label: t('blog'), children: [] },
       { href: '/packages', label: t('packages'), children: [] },
     ],
     [t],
@@ -219,8 +238,7 @@ export function HomeHeader() {
                 <Link
                   href={link.href}
                   className={`relative flex items-center gap-1 px-4 py-5 text-sm font-medium transition-colors ${
-                    link.href === '/' ||
-                    (link.href === '/packages' && pathname.startsWith('/packages'))
+                    isNavItemActive(link.href, pathname, link.children)
                       ? 'text-primary'
                       : 'text-[#333] hover:text-primary dark:text-white/75 dark:hover:text-white'
                   }`}
@@ -352,7 +370,7 @@ export function HomeHeader() {
                 <Link
                   href={link.href}
                   className={`flex min-h-[44px] items-center rounded-lg px-3 py-3 text-sm font-medium hover:bg-gray-50 hover:text-primary dark:text-white/75 dark:hover:bg-white/5 dark:hover:text-white ${
-                    link.href === '/packages' && pathname.startsWith('/packages')
+                    isNavItemActive(link.href, pathname, link.children)
                       ? 'text-primary'
                       : 'text-gray-700'
                   }`}
