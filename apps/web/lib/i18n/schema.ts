@@ -327,4 +327,9 @@ export type Translations = {
     searchRequired: string;
     endAfterStart: string;
   };
+  comingSoon: {
+    badge: string;
+    body: string;
+    backToSearch: string;
+  };
 };

@@ -96,7 +96,9 @@ INSERT INTO `users` (
 
 UPDATE `organizations`
 SET `created_by_user_id` = '00000000-0000-4000-8000-000000000010',
-    `updated_by_user_id` = '00000000-0000-4000-8000-000000000010'
+    `updated_by_user_id` = '00000000-0000-4000-8000-000000000010',
+    `contact_email` = 'support@africatourismgate.com',
+    `contact_phone` = '+243 815 000 000'
 WHERE `id` = '00000000-0000-4000-8000-000000000001';
 
 -- -----------------------------------------------------------------------------
@@ -208,6 +210,14 @@ INSERT INTO `organization_settings` (
   'email',
   'email_branding',
   '{"displayName":"Africa Tourism Gate","primaryColor":"#0d9488","footerText":"© Africa Tourism Gate"}',
+  '00000000-0000-4000-8000-000000000010'
+),
+(
+  '00000000-0000-4000-8000-000000000016',
+  '00000000-0000-4000-8000-000000000001',
+  'contact',
+  'web',
+  '{"location":"Kinshasa, RD Congo","facebookUrl":"https://www.facebook.com/africatourismgate/","twitterUrl":"https://x.com/Congotourismga1","instagramUrl":"https://www.instagram.com/africatourismgate/"}',
   '00000000-0000-4000-8000-000000000010'
 );
 

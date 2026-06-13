@@ -38,6 +38,25 @@ function optionalHexColor(value: unknown, field: string): string | undefined {
   return trimmed.toUpperCase();
 }
 
+function optionalHttpUrl(value: unknown, field: string): string | undefined {
+  if (value === undefined || value === null || value === '') {
+    return undefined;
+  }
+  if (typeof value !== 'string' || !value.trim()) {
+    throw new BadRequestException(`${field} doit être une URL valide.`);
+  }
+  const trimmed = value.trim();
+  try {
+    const parsed = new URL(trimmed);
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+      throw new Error('invalid protocol');
+    }
+  } catch {
+    throw new BadRequestException(`${field} doit être une URL valide (http ou https).`);
+  }
+  return trimmed;
+}
+
 export function validateSettingValue(
   settingKey: string,
   value: Record<string, unknown>,
@@ -127,6 +146,18 @@ export function validateSettingValue(
         ...(footerText ? { footerText } : {}),
         ...(welcomeSubject ? { welcomeSubject } : {}),
         ...(bookingSubject ? { bookingSubject } : {}),
+      };
+    }
+    case 'web': {
+      const location = optionalString(value.location, 'location', 255);
+      const facebookUrl = optionalHttpUrl(value.facebookUrl, 'facebookUrl');
+      const twitterUrl = optionalHttpUrl(value.twitterUrl, 'twitterUrl');
+      const instagramUrl = optionalHttpUrl(value.instagramUrl, 'instagramUrl');
+      return {
+        ...(location ? { location } : {}),
+        ...(facebookUrl ? { facebookUrl } : {}),
+        ...(twitterUrl ? { twitterUrl } : {}),
+        ...(instagramUrl ? { instagramUrl } : {}),
       };
     }
     case 'onekey': {

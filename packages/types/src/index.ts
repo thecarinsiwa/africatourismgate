@@ -306,6 +306,7 @@ export type {
   BookingDefaultsValue,
   BrandingPlatformValue,
   BulkUpsertOrganizationSettingsRequest,
+  ContactWebSettingValue,
   CreateOrganizationBankAccountRequest,
   EmailBrandingValue,
   EmailPreviewRequest,
@@ -317,6 +318,7 @@ export type {
   OrganizationBankAccountsListQuery,
   OrganizationSetting,
   OrganizationSettingsListQuery,
+  PublicContact,
   UpdateOrganizationBankAccountRequest,
   UpsertOrganizationSettingItem,
 } from './organization-settings.js';

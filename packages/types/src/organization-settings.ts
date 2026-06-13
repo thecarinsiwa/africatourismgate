@@ -17,6 +17,32 @@ export interface BrandingPlatformValue {
   faviconUrl?: string;
 }
 
+/** Contact web — `organization_settings` (group `contact`, key `web`). */
+export interface ContactWebSettingValue {
+  location?: string;
+  facebookUrl?: string;
+  twitterUrl?: string;
+  instagramUrl?: string;
+}
+
+export interface PublicContact {
+  phone: string | null;
+  email: string | null;
+  location: string | null;
+  facebookUrl: string | null;
+  twitterUrl: string | null;
+  instagramUrl: string | null;
+}
+
+export const DEFAULT_PUBLIC_CONTACT: PublicContact = {
+  phone: '+243 815 000 000',
+  email: 'support@africatourismgate.com',
+  location: 'Kinshasa, RD Congo',
+  facebookUrl: 'https://www.facebook.com/africatourismgate/',
+  twitterUrl: 'https://x.com/Congotourismga1',
+  instagramUrl: 'https://www.instagram.com/africatourismgate/',
+};
+
 /** Branding e-mails transactionnels — `organization_settings` (group `email`, key `email_branding`). */
 export interface EmailBrandingValue {
   displayName: string;

@@ -10,7 +10,7 @@ export const en: Translations = {
     home: 'Home',
     about: 'About',
     gallery: 'Gallery',
-    pages: 'Pages',
+    pages: 'Our Products',
     blog: 'Blog',
     contact: 'Contact',
     hotels: 'Hotels',
@@ -428,5 +428,10 @@ export const en: Translations = {
     nightPlural: 'nights',
     searchRequired: 'Enter ports and departure dates.',
     endAfterStart: 'End date must be after start date.',
+  },
+  comingSoon: {
+    badge: 'Coming soon',
+    body: 'Online booking for this category is launching soon. Your search criteria have been kept in the URL.',
+    backToSearch: 'Change my search',
   },
 };

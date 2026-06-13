@@ -10,7 +10,7 @@ export const es: Translations = {
     home: 'Inicio',
     about: 'Acerca de',
     gallery: 'Galería',
-    pages: 'Páginas',
+    pages: 'Nuestros productos',
     blog: 'Blog',
     contact: 'Contacto',
     hotels: 'Hoteles',
@@ -825,6 +825,11 @@ export const es: Translations = {
           'Atendemos las solicitudes de lunes a viernes. La mayoría de los tickets reciben una primera respuesta en 1–2 días hábiles.',
       },
     },
+  },
+  comingSoon: {
+    badge: 'Próximamente',
+    body: 'La reserva en línea para esta categoría llegará pronto. Sus criterios de búsqueda se han conservado en la URL.',
+    backToSearch: 'Modificar mi búsqueda',
   },
   booking: {
     login: {
