@@ -24,7 +24,6 @@ export type AdminNavGroupEntryConfig = {
 
 export type AdminNavEntryConfig = AdminNavLinkEntryConfig | AdminNavGroupEntryConfig;
 
-/** Menu admin (structure + clés i18n). */
 export const adminDashboardNavConfig: AdminNavEntryConfig[] = [
   {
     type: 'link',
@@ -108,6 +107,19 @@ export const adminDashboardNavConfig: AdminNavEntryConfig[] = [
       { href: '/systeme/audit', labelKey: 'rbacAudit', iconKey: 'document' },
     ],
   },
+];
+
+/** Routes imbriquées hors menu latéral — clés i18n `nav.links.*` ou `nav.breadcrumb.*`. */
+export type AdminBreadcrumbRouteConfig = {
+  href: string;
+  labelKey: string;
+};
+
+export const adminBreadcrumbExtraRoutes: AdminBreadcrumbRouteConfig[] = [
+  { href: '/produits/croisieres/navires', labelKey: 'ships' },
+  { href: '/produits/croisieres/navires/nouveau', labelKey: 'newShip' },
+  { href: '/produits/croisieres/lignes', labelKey: 'cruiseLines' },
+  { href: '/hebergements/nouveau', labelKey: 'newAccommodation' },
 ];
 
 export function navGroupMessageKey(groupId: string): string {

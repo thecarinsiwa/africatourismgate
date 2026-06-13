@@ -2,7 +2,8 @@
 
 import type { Ship } from '@africatourismgate/types';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useSetAdminPageMeta } from '../admin-page-meta-context';
 import { getApiClient } from '../../lib/auth/api';
 import { getCroisieresErrorMessage } from '../../lib/croisieres-errors';
 import { CabinsSection } from './cabins-section';
@@ -17,6 +18,19 @@ export function ShipEditPage({ shipId }: ShipEditPageProps) {
     | { status: 'error'; message: string }
     | { status: 'ready'; ship: Ship; lineName: string }
   >({ status: 'loading' });
+
+  const pageMeta = useMemo(
+    () =>
+      state.status === 'ready'
+        ? {
+            title: 'Modifier le navire',
+            breadcrumbTail: [{ label: state.ship.name }],
+          }
+        : {},
+    [state],
+  );
+
+  useSetAdminPageMeta(pageMeta);
 
   useEffect(() => {
     let cancelled = false;
@@ -60,12 +74,9 @@ export function ShipEditPage({ shipId }: ShipEditPageProps) {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Modifier le navire</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          {ship.name} · {lineName}
-        </p>
-      </div>
+      <p className="mb-8 text-sm text-atg-muted">
+        {ship.name} · {lineName}
+      </p>
       <ShipForm mode="edit" shipId={shipId} initialShip={ship} />
       <ItinerariesSection shipId={shipId} />
       <CabinsSection shipId={shipId} />

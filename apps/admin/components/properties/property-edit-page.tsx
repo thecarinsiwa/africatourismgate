@@ -2,7 +2,8 @@
 
 import type { Property } from '@africatourismgate/types';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useSetAdminPageMeta } from '../admin-page-meta-context';
 import { getApiClient } from '../../lib/auth/api';
 import { getHebergementsErrorMessage } from '../../lib/hebergements-errors';
 import { PropertyAmenitiesSection } from './property-amenities-section';
@@ -20,6 +21,19 @@ export function PropertyEditPage({ propertyId }: PropertyEditPageProps) {
     | { status: 'error'; message: string }
     | { status: 'ready'; property: Property }
   >({ status: 'loading' });
+
+  const pageMeta = useMemo(
+    () =>
+      state.status === 'ready'
+        ? {
+            title: "Modifier l'hébergement",
+            breadcrumbTail: [{ label: state.property.name }],
+          }
+        : {},
+    [state],
+  );
+
+  useSetAdminPageMeta(pageMeta);
 
   useEffect(() => {
     let cancelled = false;
@@ -59,13 +73,10 @@ export function PropertyEditPage({ propertyId }: PropertyEditPageProps) {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Modifier l’hébergement</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          {property.name}{' '}
-          <span className="font-mono text-xs">({property.slug})</span>
-        </p>
-      </div>
+      <p className="mb-8 text-sm text-atg-muted">
+        {property.name}{' '}
+        <span className="font-mono text-xs">({property.slug})</span>
+      </p>
       <PropertyForm mode="edit" propertyId={propertyId} initialProperty={property} />
       <PropertyImagesSection propertyId={propertyId} />
       <PropertyAmenitiesSection propertyId={propertyId} />
