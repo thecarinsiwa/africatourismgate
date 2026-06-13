@@ -133,13 +133,16 @@ export function PosSaleSuccessContent() {
     let cancelled = false;
 
     async function loadReceipt() {
-      const branding = await fetchPublicBranding();
+      const session = getSession();
+      const branding = await fetchPublicBranding({
+        organizationSlug: session?.selectedOrganizationSlug ?? null,
+      });
       if (cancelled) return;
 
       setReceiptData(
         buildReceiptData(
           bookingDetail!,
-          getSession(),
+          session,
           branding,
           parsePaymentMethod(paymentMethod),
         ),
