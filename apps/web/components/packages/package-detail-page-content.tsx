@@ -181,13 +181,11 @@ export function PackageDetailPageContent({
   }, [rawSearchParams, detail]);
 
   function handleLineChange(index: number, line: PackageLineSelection | null) {
-    setLineSelections((prev) => {
-      const next = [...prev];
-      while (next.length < (detail?.items.length ?? 0)) next.push(null);
-      next[index] = line;
-      syncUrl({ lineSelections: next });
-      return next;
-    });
+    const next = [...lineSelections];
+    while (next.length < (detail?.items.length ?? 0)) next.push(null);
+    next[index] = line;
+    setLineSelections(next);
+    syncUrl({ lineSelections: next });
   }
 
   function updateSearchContext(next: PackagesSearchParams) {

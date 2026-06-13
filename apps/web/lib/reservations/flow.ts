@@ -169,7 +169,7 @@ function isPackageLineSelectionReady(
     case 'vehicle': {
       const vehicle = validation.vehicleDetails[line.itemId];
       return Boolean(
-        vehicle && vehicle.availabilitySlot.id === line.availabilitySlotId,
+        vehicle && vehicle.availabilitySlot?.id === line.availabilitySlotId,
       );
     }
     case 'cruise': {

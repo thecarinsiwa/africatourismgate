@@ -34,7 +34,7 @@ export function normalizePackagesSearchParams(
   return {
     search: readSearchParam(raw.search)?.trim() || undefined,
     page: readSearchParam(raw.page),
-    date: readSearchParam(raw.date) ?? readSearchParam(raw.checkIn),
+    date: readSearchParam(raw.date),
     participants:
       readSearchParam(raw.participants) ??
       readSearchParam(raw.guests) ??

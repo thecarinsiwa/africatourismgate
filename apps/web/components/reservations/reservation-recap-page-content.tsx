@@ -201,7 +201,7 @@ export function ReservationRecapPageContent({ draft }: Props) {
 
   const vehicleReady = useMemo((): VehicleDetail | null => {
     if (!draft || !isVehicleReservationDraft(draft) || !vehicleDetail) return null;
-    if (vehicleDetail.availabilitySlot.id !== draft.availabilitySlotId) return null;
+    if (vehicleDetail.availabilitySlot?.id !== draft.availabilitySlotId) return null;
     return vehicleDetail;
   }, [draft, vehicleDetail]);
 

@@ -58,5 +58,5 @@ export interface VehicleDetail {
   dailyPriceCents: number;
   totalPriceCents: number;
   currency: string;
-  availabilitySlot: VehicleDetailAvailabilitySlot;
+  availabilitySlot: VehicleDetailAvailabilitySlot | null;
 }

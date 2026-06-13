@@ -317,11 +317,6 @@ export class PublicActivitiesService {
       activity.priceCents,
       activity.currency,
     );
-    if (!schedules.length) {
-      throw new NotFoundException(
-        'Aucun créneau disponible pour cette date et ce nombre de participants.',
-      );
-    }
 
     return {
       id: activity.id,

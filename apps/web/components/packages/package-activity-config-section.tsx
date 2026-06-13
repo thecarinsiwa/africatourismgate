@@ -51,10 +51,11 @@ export function PackageActivityConfigItem({
       .then((data) => {
         if (!cancelled) setDetail(data);
       })
-      .catch(() => {
+      .catch((err: unknown) => {
         if (!cancelled) {
           setDetail(null);
-          setError(true);
+          const msg = err instanceof Error ? err.message : String(err);
+          setError(!msg.includes('404'));
         }
       })
       .finally(() => {
@@ -87,7 +88,7 @@ export function PackageActivityConfigItem({
         <p className="text-sm text-red-700 dark:text-red-300">{t.activitySchedulesError}</p>
       )}
 
-      {date && !loading && !error && detail && (
+      {date && !loading && !error && detail && detail.schedules.length > 0 && (
         <ActivitySchedulesSection
           schedules={detail.schedules}
           currency={detail.currency}

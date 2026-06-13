@@ -39,6 +39,7 @@ export function PackageVehicleConfigItem({
     if (!pickupDate || !returnDate || returnDate <= pickupDate) {
       setDetail(null);
       setLoading(false);
+      setError(false);
       return;
     }
 
@@ -82,6 +83,8 @@ export function PackageVehicleConfigItem({
     selectedLine.pickupDate === pickupDate &&
     selectedLine.returnDate === returnDate;
 
+  const unavailable = Boolean(detail && !detail.availabilitySlot);
+
   return (
     <article className="rounded-2xl border border-gray-100 bg-white p-5 dark:border-atg-border dark:bg-atg-elevated">
       <header className="mb-4 border-b border-gray-100 pb-4 dark:border-atg-border">
@@ -95,15 +98,19 @@ export function PackageVehicleConfigItem({
         <p className="text-sm text-amber-700 dark:text-amber-300">{t.selectRentalDatesHint}</p>
       ) : null}
 
-      {loading && (
+      {pickupDate && returnDate && returnDate > pickupDate && loading && (
         <p className="text-sm text-gray-600 dark:text-atg-muted">{t.loadingVehicleAvailability}</p>
       )}
 
-      {error && (
+      {pickupDate && returnDate && returnDate > pickupDate && error && (
         <p className="text-sm text-red-700 dark:text-red-300">{t.vehicleAvailabilityError}</p>
       )}
 
-      {!loading && !error && detail && configured && (
+      {pickupDate && returnDate && returnDate > pickupDate && !loading && !error && unavailable && (
+        <p className="text-sm text-amber-700 dark:text-amber-300">{t.vehicleAvailabilityError}</p>
+      )}
+
+      {!loading && !error && detail && detail.availabilitySlot && configured && (
         <p className="text-sm text-emerald-700 dark:text-emerald-300">
           {t.vehicleDatesConfirmed} · {detail.rentalDays}{' '}
           {detail.rentalDays === 1 ? c.daySingular : c.dayPlural}
