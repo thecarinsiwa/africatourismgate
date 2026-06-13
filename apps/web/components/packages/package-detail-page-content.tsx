@@ -20,7 +20,12 @@ import {
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { PackageActivityConfigItem } from './package-activity-config-section';
-import { PackageBookingMobileBar, PackageBookingSidebar } from './package-booking-sidebar';
+import {
+  PackageBookingMobileBar,
+  PackageBookingSidebar,
+  PackageMixedBookingMobileBar,
+  PackageMixedBookingSidebar,
+} from './package-booking-sidebar';
 import { PackageItemsSection } from './package-items-section';
 
 type PackageDetailPageContentProps = {
@@ -325,16 +330,7 @@ export function PackageDetailPageContent({
                 locale={locale}
               />
             ) : (
-              <aside className="lg:sticky lg:top-24 lg:self-start">
-                <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-md dark:border-atg-border dark:bg-atg-elevated">
-                  <h2 className="text-lg font-bold text-[#0f1a16] dark:text-white">
-                    {p.pricingTitle}
-                  </h2>
-                  <p className="mt-4 text-sm text-gray-600 dark:text-atg-muted">
-                    {p.mixedCheckoutDisabled}
-                  </p>
-                </div>
-              </aside>
+              <PackageMixedBookingSidebar detail={detail} t={p} />
             )}
           </div>
         )}
@@ -347,6 +343,10 @@ export function PackageDetailPageContent({
           onAddToCart={handleAddToCart}
           t={p}
         />
+      )}
+
+      {detail && !activityOnly && !loading && !notFound && (
+        <PackageMixedBookingMobileBar detail={detail} t={p} />
       )}
 
       <HomeFooter />

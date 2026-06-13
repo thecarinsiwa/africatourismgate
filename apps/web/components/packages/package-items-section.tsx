@@ -45,7 +45,7 @@ export function PackageItemsSection({
     return (
       <section
         id="items"
-        className="rounded-2xl border border-dashed border-gray-200 bg-white p-6 dark:border-atg-border dark:bg-atg-elevated"
+        className="scroll-mt-28 rounded-2xl border border-dashed border-gray-200 bg-white p-6 dark:border-atg-border dark:bg-atg-elevated"
       >
         <p className="text-sm text-gray-500 dark:text-atg-muted">{t.noItems}</p>
       </section>
@@ -55,7 +55,7 @@ export function PackageItemsSection({
   return (
     <section
       id="items"
-      className="rounded-2xl border border-gray-100 bg-white p-6 dark:border-atg-border dark:bg-atg-elevated"
+      className="scroll-mt-28 rounded-2xl border border-gray-100 bg-white p-6 dark:border-atg-border dark:bg-atg-elevated"
     >
       <h2 className="text-lg font-bold text-[#0f1a16] dark:text-white">{t.itemsTitle}</h2>
       <ul className="mt-4 space-y-3">
