@@ -5,6 +5,7 @@ export interface Package {
   name: string;
   description: string | null;
   discountPercent: string;
+  durationDays: number;
   active: number;
   createdAt: string;
   updatedAt: string | null;
@@ -14,6 +15,7 @@ export interface CreatePackageRequest {
   name: string;
   description?: string;
   discountPercent: number;
+  durationDays?: number;
   active: boolean;
 }
 

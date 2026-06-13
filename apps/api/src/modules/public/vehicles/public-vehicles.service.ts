@@ -289,12 +289,6 @@ export class PublicVehiclesService {
       .orderBy('slot.startDatetime', 'ASC')
       .getOne();
 
-    if (!slot) {
-      throw new NotFoundException(
-        'Aucun créneau disponible pour cette période.',
-      );
-    }
-
     return {
       id: vehicle.id,
       licensePlate: vehicle.licensePlate,
@@ -315,11 +309,13 @@ export class PublicVehiclesService {
       dailyPriceCents: vehicle.dailyPriceCents,
       totalPriceCents: vehicle.dailyPriceCents * rentalDays,
       currency: vehicle.currency,
-      availabilitySlot: {
-        id: slot.id,
-        startDatetime: this.toIsoDatetime(slot.startDatetime),
-        endDatetime: this.toIsoDatetime(slot.endDatetime),
-      },
+      availabilitySlot: slot
+        ? {
+            id: slot.id,
+            startDatetime: this.toIsoDatetime(slot.startDatetime),
+            endDatetime: this.toIsoDatetime(slot.endDatetime),
+          }
+        : null,
     };
   }
 

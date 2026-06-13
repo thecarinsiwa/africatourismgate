@@ -70,6 +70,6 @@ export class VehicleDetailDto {
   @ApiProperty({ example: 'USD' })
   currency!: string;
 
-  @ApiProperty({ type: VehicleDetailAvailabilitySlotDto })
-  availabilitySlot!: VehicleDetailAvailabilitySlotDto;
+  @ApiPropertyOptional({ type: VehicleDetailAvailabilitySlotDto, nullable: true })
+  availabilitySlot!: VehicleDetailAvailabilitySlotDto | null;
 }

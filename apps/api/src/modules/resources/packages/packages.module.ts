@@ -31,5 +31,6 @@ import { PackagesService } from './packages.service';
   ],
   controllers: [PackagesController],
   providers: [PackagesService, PackageItemPricingService],
+  exports: [PackagesService],
 })
 export class PackagesModule {}

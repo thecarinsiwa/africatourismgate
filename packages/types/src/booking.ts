@@ -44,8 +44,17 @@ export interface BookingCheckoutRequest {
   currency?: string;
   promoCode?: string;
   promotionId?: string;
+  /** Active package bundle — server validates items and applies package discount. */
+  packageId?: string;
   /** Staff only (e.g. POS): booking is owned by this user instead of the actor. */
   customerUserId?: string;
+}
+
+export interface AppliedPackageCheckoutDiscount {
+  packageId: string;
+  name: string;
+  discountPercent: number;
+  discountCents: number;
 }
 
 export interface AppliedCheckoutDiscount {
@@ -72,9 +81,11 @@ export interface BookingCheckoutLine {
 export interface BookingCheckoutPreview {
   lines: BookingCheckoutLine[];
   subtotalCents: number;
+  packageDiscountCents: number;
   discountCents: number;
   totalCents: number;
   currency: string;
+  appliedPackageDiscount: AppliedPackageCheckoutDiscount | null;
   appliedDiscount: AppliedCheckoutDiscount | null;
 }
 

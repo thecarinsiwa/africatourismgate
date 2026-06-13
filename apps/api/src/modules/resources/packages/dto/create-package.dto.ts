@@ -33,4 +33,12 @@ export class CreatePackageDto {
   @ApiProperty({ default: true })
   @IsBoolean()
   active!: boolean;
+
+  @ApiPropertyOptional({ example: 5, default: 3, description: 'Package length in calendar days (departure to return).' })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(1)
+  @Max(365)
+  durationDays?: number;
 }

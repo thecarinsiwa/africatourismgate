@@ -2,10 +2,12 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   buildCheckoutItems,
+  buildCheckoutRequest,
   buildDraftBrowseHref,
   buildDraftDetailHref,
   buildReservationQuery,
   isCabinOfferBookable,
+  isPackageReservationDraftReady,
   parseReservationDraft,
 } from './flow';
 
@@ -15,6 +17,11 @@ const VEHICLE_ID = '00000000-0000-4000-8000-000000004021';
 const VEHICLE_SLOT_ID = '00000000-0000-4000-8000-000000004023';
 const SAILING_ID = '00000000-0000-4000-8000-000000003036';
 const CABIN_AVAIL_STD = '00000000-0000-4000-8000-000000003037';
+const PACKAGE_ID = '00000000-0000-4000-8000-000000005001';
+const ACTIVITY_A = '00000000-0000-4000-8000-000000004031';
+const ACTIVITY_B = '00000000-0000-4000-8000-000000004032';
+const SCHEDULE_A = '00000000-0000-4000-8000-000000004033';
+const SCHEDULE_B = '00000000-0000-4000-8000-000000004035';
 
 test('parseReservationDraft parses flight_class from query params', () => {
   const draft = parseReservationDraft({
@@ -252,4 +259,128 @@ test('isCabinOfferBookable requires stock and guest capacity', () => {
   assert.equal(isCabinOfferBookable({ availableCount: 0, maxGuests: 4 }, 2), false);
   assert.equal(isCabinOfferBookable({ availableCount: 5, maxGuests: 1 }, 2), false);
   assert.equal(isCabinOfferBookable(null, 2), false);
+});
+
+const activityLine = (
+  itemId: string,
+  scheduleId: string,
+  date = '2026-07-20',
+  participants = 2,
+) => ({
+  lineType: 'activity' as const,
+  itemId,
+  scheduleId,
+  date,
+  participants,
+});
+
+test('parseReservationDraft parses package draft with multiple activity lines', () => {
+  const draft = parseReservationDraft({
+    kind: 'package',
+    packageId: PACKAGE_ID,
+    date: '2026-07-20',
+    participants: '2',
+    lineCount: '2',
+    line0_activityId: ACTIVITY_A,
+    line0_scheduleId: SCHEDULE_A,
+    line1_activityId: ACTIVITY_B,
+    line1_scheduleId: SCHEDULE_B,
+  });
+
+  assert.deepEqual(draft, {
+    kind: 'package',
+    packageId: PACKAGE_ID,
+    lines: [
+      activityLine(ACTIVITY_A, SCHEDULE_A),
+      activityLine(ACTIVITY_B, SCHEDULE_B),
+    ],
+  });
+});
+
+test('buildReservationQuery round-trips package draft', () => {
+  const draft = {
+    kind: 'package' as const,
+    packageId: PACKAGE_ID,
+    lines: [activityLine(ACTIVITY_A, SCHEDULE_A), activityLine(ACTIVITY_B, SCHEDULE_B)],
+  };
+
+  const query = buildReservationQuery(draft);
+  assert.deepEqual(parseReservationDraft(Object.fromEntries(new URLSearchParams(query))), draft);
+});
+
+test('buildCheckoutItems returns one line per package activity schedule', () => {
+  const items = buildCheckoutItems({
+    kind: 'package',
+    packageId: PACKAGE_ID,
+    lines: [activityLine(ACTIVITY_A, SCHEDULE_A), activityLine(ACTIVITY_B, SCHEDULE_B)],
+  });
+
+  assert.deepEqual(items, [
+    { itemType: 'activity_schedule', referenceId: SCHEDULE_A, quantity: 2 },
+    { itemType: 'activity_schedule', referenceId: SCHEDULE_B, quantity: 2 },
+  ]);
+});
+
+test('buildCheckoutRequest includes packageId for package draft', () => {
+  assert.deepEqual(
+    buildCheckoutRequest({
+      kind: 'package',
+      packageId: PACKAGE_ID,
+      lines: [activityLine(ACTIVITY_A, SCHEDULE_A)],
+    }),
+    {
+      packageId: PACKAGE_ID,
+      items: [{ itemType: 'activity_schedule', referenceId: SCHEDULE_A, quantity: 2 }],
+    },
+  );
+});
+
+test('buildDraftDetailHref routes package draft to package page with selections', () => {
+  const href = buildDraftDetailHref({
+    kind: 'package',
+    packageId: PACKAGE_ID,
+    lines: [activityLine(ACTIVITY_A, SCHEDULE_A)],
+  });
+  assert.match(href, new RegExp(`/packages/${PACKAGE_ID}\\?`));
+  assert.match(href, /line0_type=activity/);
+  assert.match(href, new RegExp(`line0_scheduleId=${SCHEDULE_A}`));
+  assert.match(href, /#configure$/);
+});
+
+test('isPackageReservationDraftReady validates all activity schedules', () => {
+  const draft = {
+    kind: 'package' as const,
+    packageId: PACKAGE_ID,
+    lines: [activityLine(ACTIVITY_A, SCHEDULE_A), activityLine(ACTIVITY_B, SCHEDULE_B)],
+  };
+  const validation = {
+    activityDetails: {
+      [ACTIVITY_A]: {
+        id: ACTIVITY_A,
+        schedules: [{ scheduleId: SCHEDULE_A, remainingPlaces: 10 }],
+      },
+      [ACTIVITY_B]: {
+        id: ACTIVITY_B,
+        schedules: [{ scheduleId: SCHEDULE_B, remainingPlaces: 1 }],
+      },
+    },
+    propertyDetails: {},
+    flightDetails: {},
+    vehicleDetails: {},
+    cruiseDetails: {},
+  };
+  assert.equal(isPackageReservationDraftReady(draft, validation), false);
+  validation.activityDetails[ACTIVITY_B]!.schedules[0]!.remainingPlaces = 5;
+  assert.equal(isPackageReservationDraftReady(draft, validation), true);
+});
+
+test('buildDraftBrowseHref routes package draft to packages listing', () => {
+  assert.equal(
+    buildDraftBrowseHref({
+      kind: 'package',
+      packageId: PACKAGE_ID,
+      lines: [activityLine(ACTIVITY_A, SCHEDULE_A)],
+    }),
+    '/packages',
+  );
 });
