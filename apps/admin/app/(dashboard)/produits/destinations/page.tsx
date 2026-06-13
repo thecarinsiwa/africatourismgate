@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { AdminPageIntro } from '../../../../components/admin-page-intro';
 import { DestinationsList } from '../../../../components/destinations/destinations-list';
 
 export const metadata: Metadata = {
@@ -8,12 +9,7 @@ export const metadata: Metadata = {
 export default function DestinationsPage() {
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Destinations</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Géographie et points d’intérêt. Recherche par nom, slug ou code pays.
-        </p>
-      </div>
+      <AdminPageIntro description={"Géographie et points d’intérêt. Recherche par nom, slug ou code pays."} />
       <DestinationsList />
     </div>
   );

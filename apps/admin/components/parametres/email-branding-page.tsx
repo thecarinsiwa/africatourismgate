@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useSetAdminPageMeta } from '../admin-page-meta-context';
 import { getApiClient } from '../../lib/auth/api';
 import { getOrganizationSettingsErrorMessage } from '../../lib/organization-settings-errors';
 import { EmailBrandingForm } from './email-branding-form';
@@ -10,6 +11,8 @@ export function EmailBrandingPage() {
   const [accessError, setAccessError] = useState<string | null>(null);
   const [canWrite, setCanWrite] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  useSetAdminPageMeta({ title: 'E-mails' });
 
   useEffect(() => {
     let cancelled = false;
@@ -73,13 +76,10 @@ export function EmailBrandingPage() {
   return (
     <div>
       <ParametresSubnav />
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">E-mails</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Personnalisez l’apparence des e-mails transactionnels (bienvenue, confirmation de
-          réservation).
-        </p>
-      </div>
+      <p className="mb-8 text-sm text-atg-muted">
+        Personnalisez l’apparence des e-mails transactionnels (bienvenue, confirmation de
+        réservation).
+      </p>
       <EmailBrandingForm canWrite={canWrite} />
     </div>
   );

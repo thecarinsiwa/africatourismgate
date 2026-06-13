@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { AdminPageIntro } from '../../../../../components/admin-page-intro';
 import { ActivityForm } from '../../../../../components/activities/activity-form';
 
 export const metadata: Metadata = {
@@ -8,12 +9,7 @@ export const metadata: Metadata = {
 export default function NouvelleActivitePage() {
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Nouvelle activité</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Créez une expérience puis ajoutez des créneaux sur la page d’édition.
-        </p>
-      </div>
+      <AdminPageIntro description={"Créez une expérience puis ajoutez des créneaux sur la page d’édition."} />
       <ActivityForm mode="create" />
     </div>
   );

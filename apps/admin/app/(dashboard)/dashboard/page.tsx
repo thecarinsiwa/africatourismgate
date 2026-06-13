@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { AdminPageIntro } from '../../../components/admin-page-intro';
 import { DashboardKpiCards } from '../../../components/dashboard-kpi-cards';
 import { DashboardPlatformOverview } from '../../../components/dashboard-platform-overview';
 import { DashboardQuickActions } from '../../../components/dashboard-quick-actions';
@@ -12,14 +13,10 @@ export const metadata: Metadata = {
 export default function DashboardPage() {
   return (
     <div className="space-y-8">
-      <header>
-        <h1 className="text-2xl font-bold tracking-tight text-atg-fg md:text-3xl">
-          Tableau de bord
-        </h1>
-        <p className="mt-2 text-sm text-atg-muted md:text-base">
-          Vue d&apos;ensemble de votre plateforme Africa Tourism Gate
-        </p>
-      </header>
+      <AdminPageIntro
+        description="Vue d'ensemble de votre plateforme Africa Tourism Gate"
+        className="md:text-base"
+      />
 
       <DashboardKpiCards />
 

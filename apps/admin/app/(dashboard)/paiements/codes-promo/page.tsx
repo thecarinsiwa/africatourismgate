@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import { TextLink } from '@africatourismgate/ui';
+import { AdminPageIntro } from '../../../../components/admin-page-intro';
 import { PaymentsPromoSubnav } from '../../../../components/payments/payments-promo-subnav';
 import { PromoCodesList } from '../../../../components/promo-codes/promo-codes-list';
 
@@ -10,17 +12,16 @@ export default function PromoCodesPage() {
   return (
     <div>
       <PaymentsPromoSubnav />
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Codes promo</h1>
-        <p className="mt-2 text-sm text-atg-muted">
+      <AdminPageIntro>
+        <p>
           Créez et gérez les codes utilisables dans le checkout (preview web). Validation des
           dates, unicité du code et plafond d’utilisations. Voir aussi les{' '}
-          <a href="/paiements/promotions" className="font-medium text-primary hover:underline">
+          <TextLink href="/paiements/promotions" variant="primary" className="font-medium">
             promotions
-          </a>
+          </TextLink>
           . Accès : promo_codes.read / write.
         </p>
-      </div>
+      </AdminPageIntro>
       <PromoCodesList />
     </div>
   );

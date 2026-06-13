@@ -3,6 +3,7 @@
 import type { CruiseSailing, Itinerary, Ship } from '@africatourismgate/types';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
 import { getCroisieresErrorMessage } from '../../lib/croisieres-errors';
 import { CabinAvailabilitySection } from './cabin-availability-section';
@@ -21,6 +22,13 @@ export function SailingEditPage({ sailingId }: SailingEditPageProps) {
         ship: Ship;
       }
   >({ status: 'loading' });
+
+  useAdminEditPageMeta({
+    ready: state.status === 'ready',
+    title: 'Modifier le départ',
+    entityLabel:
+      state.status === 'ready' ? state.sailing.departureDate.slice(0, 10) : undefined,
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -66,13 +74,10 @@ export function SailingEditPage({ sailingId }: SailingEditPageProps) {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Modifier le départ</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          {departureLabel} · {itinerary.name} · {ship.name} ({itinerary.durationNights}{' '}
-          nuits)
-        </p>
-      </div>
+      <p className="mb-8 text-sm text-atg-muted">
+        {departureLabel} · {itinerary.name} · {ship.name} ({itinerary.durationNights}{' '}
+        nuits)
+      </p>
       <SailingForm mode="edit" sailingId={sailingId} initialSailing={sailing} />
       <CabinAvailabilitySection
         sailingId={sailingId}

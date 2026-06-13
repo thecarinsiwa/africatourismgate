@@ -3,6 +3,7 @@
 import type { Employee } from '@africatourismgate/types';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
 import { getEmployeesErrorMessage } from '../../lib/employees-errors';
 import { EmployeeForm } from './employee-form';
@@ -17,6 +18,19 @@ export function EmployeeEditPage({ employeeId }: EmployeeEditPageProps) {
     | { status: 'error'; message: string }
     | { status: 'ready'; employee: Employee }
   >({ status: 'loading' });
+
+  const employeeLabel =
+    state.status === 'ready'
+      ? state.employee.user != null
+        ? `${state.employee.user.firstName} ${state.employee.user.lastName}`
+        : (state.employee.employeeCode ?? 'Employé')
+      : undefined;
+
+  useAdminEditPageMeta({
+    ready: state.status === 'ready',
+    title: "Modifier l'employé",
+    entityLabel: employeeLabel,
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -61,17 +75,9 @@ export function EmployeeEditPage({ employeeId }: EmployeeEditPageProps) {
   }
 
   const { employee } = state;
-  const title =
-    employee.user != null
-      ? `${employee.user.firstName} ${employee.user.lastName}`
-      : employee.employeeCode ?? 'Employé';
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Modifier l’employé</h1>
-        <p className="mt-2 text-sm text-atg-muted">{title}</p>
-      </div>
       <EmployeeForm mode="edit" employeeId={employeeId} initialEmployee={employee} />
     </div>
   );

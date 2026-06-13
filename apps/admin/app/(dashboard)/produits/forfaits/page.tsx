@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { AdminPageIntro } from '../../../../components/admin-page-intro';
 import { PackagesList } from '../../../../components/packages/packages-list';
 
 export const metadata: Metadata = {
@@ -8,12 +9,7 @@ export const metadata: Metadata = {
 export default function ForfaitsPage() {
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Forfaits</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Packages combinés avec remise et prix calculé à partir des produits inclus.
-        </p>
-      </div>
+      <AdminPageIntro description={"Packages combinés avec remise et prix calculé à partir des produits inclus."} />
       <PackagesList />
     </div>
   );

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { AdminPageIntro } from '../../../../../components/admin-page-intro';
 import { AirportsList } from '../../../../../components/flights/airports-list';
 
 export const metadata: Metadata = {
@@ -8,12 +9,7 @@ export const metadata: Metadata = {
 export default function AeroportsPage() {
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Aéroports</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Référentiel des aéroports (code IATA 3 lettres).
-        </p>
-      </div>
+      <AdminPageIntro description={"Référentiel des aéroports (code IATA 3 lettres)."} />
       <AirportsList />
     </div>
   );

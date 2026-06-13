@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { AdminPageIntro } from '../../../../components/admin-page-intro';
 import { ReviewsList } from '../../../../components/reviews/reviews-list';
 
 export const metadata: Metadata = {
@@ -8,13 +9,7 @@ export const metadata: Metadata = {
 export default function ReviewsPage() {
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Avis</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Modération des notes et commentaires clients. Filtres par note, propriété et statut.
-          Actions : approuver, masquer ou supprimer. Accès : reviews.read / reviews.write.
-        </p>
-      </div>
+      <AdminPageIntro description="Modération des notes et commentaires clients. Filtres par note, propriété et statut. Actions : approuver, masquer ou supprimer. Accès : reviews.read / reviews.write." />
       <ReviewsList />
     </div>
   );

@@ -3,6 +3,7 @@
 import type { Organization } from '@africatourismgate/types';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
+import { useSetAdminPageMeta } from '../admin-page-meta-context';
 import { getApiClient } from '../../lib/auth/api';
 import { getOrganizationSettingsErrorMessage } from '../../lib/organization-settings-errors';
 import { ParametresSubnav } from './parametres-subnav';
@@ -18,6 +19,8 @@ export function OrganizationSettingsPage() {
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [organizationId, setOrganizationId] = useState<string | null>(null);
   const [organizations, setOrganizations] = useState<Organization[]>([]);
+
+  useSetAdminPageMeta({ title: 'Paramètres' });
 
   useEffect(() => {
     let cancelled = false;
@@ -99,12 +102,9 @@ export function OrganizationSettingsPage() {
   return (
     <div>
       <ParametresSubnav />
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Paramètres</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Configuration de l’organisation : coordonnées, locale, réservation et branding.
-        </p>
-      </div>
+      <p className="mb-8 text-sm text-atg-muted">
+        Configuration de l’organisation : coordonnées, locale, réservation et branding.
+      </p>
       <OrganizationSettingsForm
         organizationId={organizationId}
         isSuperAdmin={isSuperAdmin}

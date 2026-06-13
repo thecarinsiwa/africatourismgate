@@ -2,8 +2,8 @@
 
 import { Button, Card, DataTable, DataTableActionButton, DataTableActions, Input, type ColumnDef } from '@africatourismgate/ui';
 import type { CruisePort, ItineraryPort } from '@africatourismgate/types';
-import Link from 'next/link';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
 import { getCroisieresErrorMessage } from '../../lib/croisieres-errors';
 
@@ -27,12 +27,14 @@ function formatTime(t: string | null): string {
 
 type ItineraryPortsSectionProps = {
   shipId: string;
+  shipName?: string;
   itineraryId: string;
   itineraryName: string;
 };
 
 export function ItineraryPortsSection({
   shipId,
+  shipName,
   itineraryId,
   itineraryName,
 }: ItineraryPortsSectionProps) {
@@ -49,6 +51,19 @@ export function ItineraryPortsSection({
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  useAdminEditPageMeta({
+    ready: true,
+    title: 'Escales',
+    breadcrumbTail: [
+      { label: 'Navires', href: '/produits/croisieres/navires' },
+      {
+        label: shipName ?? 'Navire',
+        href: `/produits/croisieres/navires/${shipId}`,
+      },
+      { label: itineraryName },
+    ],
+  });
 
   useEffect(() => {
     void getApiClient()
@@ -194,25 +209,7 @@ export function ItineraryPortsSection({
 
   return (
     <div>
-      <nav className="mb-6 text-sm text-atg-muted">
-        <Link href="/produits/croisieres/navires" className="text-primary hover:underline">
-          Navires
-        </Link>
-        <span className="mx-2">/</span>
-        <Link
-          href={`/produits/croisieres/navires/${shipId}`}
-          className="text-primary hover:underline"
-        >
-          Navire
-        </Link>
-        <span className="mx-2">/</span>
-        <span className="text-atg-fg">{itineraryName}</span>
-      </nav>
-
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Escales</h1>
-        <p className="mt-2 text-sm text-atg-muted">Itinéraire : {itineraryName}</p>
-      </div>
+      <p className="mb-8 text-sm text-atg-muted">Itinéraire : {itineraryName}</p>
 
       <div className="space-y-6">
         <div className="flex justify-end">

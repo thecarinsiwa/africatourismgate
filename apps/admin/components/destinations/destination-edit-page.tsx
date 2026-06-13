@@ -3,6 +3,7 @@
 import type { Destination } from '@africatourismgate/types';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
 import { getDestinationsErrorMessage } from '../../lib/destinations-errors';
 import { DestinationForm } from './destination-form';
@@ -18,6 +19,12 @@ export function DestinationEditPage({ destinationId }: DestinationEditPageProps)
     | { status: 'error'; message: string }
     | { status: 'ready'; destination: Destination }
   >({ status: 'loading' });
+
+  useAdminEditPageMeta({
+    ready: state.status === 'ready',
+    title: 'Modifier la destination',
+    entityLabel: state.status === 'ready' ? state.destination.name : undefined,
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -65,15 +72,12 @@ export function DestinationEditPage({ destinationId }: DestinationEditPageProps)
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Modifier la destination</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          {destination.name}{' '}
-          <span className="font-mono text-xs text-atg-muted">
-            ({destination.slug} · {destination.countryCode})
-          </span>
-        </p>
-      </div>
+      <p className="mb-8 text-sm text-atg-muted">
+        {destination.name}{' '}
+        <span className="font-mono text-xs text-atg-muted">
+          ({destination.slug} · {destination.countryCode})
+        </span>
+      </p>
       <DestinationForm
         mode="edit"
         destinationId={destinationId}

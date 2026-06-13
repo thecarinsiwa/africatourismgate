@@ -3,6 +3,7 @@
 import type { Flight } from '@africatourismgate/types';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
 import { getVolsErrorMessage } from '../../lib/vols-errors';
 import { FlightClassesSection } from './flight-classes-section';
@@ -18,6 +19,12 @@ export function FlightEditPage({ flightId }: FlightEditPageProps) {
     | { status: 'error'; message: string }
     | { status: 'ready'; flight: Flight }
   >({ status: 'loading' });
+
+  useAdminEditPageMeta({
+    ready: state.status === 'ready',
+    title: 'Modifier le vol',
+    entityLabel: state.status === 'ready' ? state.flight.flightNumber : undefined,
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -57,12 +64,6 @@ export function FlightEditPage({ flightId }: FlightEditPageProps) {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Modifier le vol</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          <code className="font-mono text-xs">{flight.flightNumber}</code>
-        </p>
-      </div>
       <FlightForm mode="edit" flightId={flightId} initialFlight={flight} />
       <FlightClassesSection flightId={flightId} />
     </div>

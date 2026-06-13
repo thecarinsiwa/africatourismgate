@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { AdminPageIntro } from '../../../../../components/admin-page-intro';
 import { RentalAgenciesList } from '../../../../../components/locations/rental-agencies-list';
 
 export const metadata: Metadata = {
@@ -8,12 +9,7 @@ export const metadata: Metadata = {
 export default function AgencesLocationPage() {
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Agences de location</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Référentiel des agences liées aux destinations.
-        </p>
-      </div>
+      <AdminPageIntro description={"Référentiel des agences liées aux destinations."} />
       <RentalAgenciesList />
     </div>
   );

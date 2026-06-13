@@ -3,6 +3,7 @@
 import type { Package, PackageDetail } from '@africatourismgate/types';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
 import { getPackagesErrorMessage } from '../../lib/packages-errors';
 import { PackageForm } from './package-form';
@@ -28,6 +29,13 @@ export function PackageEditPage({ packageId }: PackageEditPageProps) {
     | { status: 'error'; message: string }
     | { status: 'ready'; pkg: Package }
   >({ status: 'loading' });
+
+  useAdminEditPageMeta({
+    ready: state.status === 'ready',
+    title: 'Modifier le forfait',
+    entityLabel: state.status === 'ready' ? state.pkg.name : undefined,
+  });
+
   useEffect(() => {
     let cancelled = false;
     void getApiClient()
@@ -73,13 +81,10 @@ export function PackageEditPage({ packageId }: PackageEditPageProps) {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Modifier le forfait</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          {pkg.name}{' '}
-          <span className="tabular-nums">(remise {pkg.discountPercent}%)</span>
-        </p>
-      </div>
+      <p className="mb-8 text-sm text-atg-muted">
+        {pkg.name}{' '}
+        <span className="tabular-nums">(remise {pkg.discountPercent}%)</span>
+      </p>
       <PackageForm mode="edit" packageId={packageId} initialPackage={pkg} />
       <PackageItemsSection packageId={packageId} />
     </div>

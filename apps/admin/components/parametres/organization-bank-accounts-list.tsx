@@ -11,6 +11,7 @@ import {
 import type { Organization, OrganizationBankAccount } from '@africatourismgate/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useSetAdminPageMeta } from '../admin-page-meta-context';
 import { getApiClient } from '../../lib/auth/api';
 import { getOrganizationSettingsErrorMessage } from '../../lib/organization-settings-errors';
 import { ParametresSubnav } from './parametres-subnav';
@@ -32,6 +33,8 @@ export function OrganizationBankAccountsList() {
   const [editing, setEditing] = useState<OrganizationBankAccount | null>(null);
   const [creating, setCreating] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  useSetAdminPageMeta({ title: 'Comptes bancaires' });
 
   const loadAccounts = useCallback(async (orgId: string) => {
     setLoading(true);
@@ -216,13 +219,10 @@ export function OrganizationBankAccountsList() {
     <div>
       <ParametresSubnav />
       <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-atg-fg">Comptes bancaires</h1>
-          <p className="mt-2 text-sm text-atg-muted">
-            Comptes B2B de l’organisation. Le numéro de compte est partiellement masqué pour les
-            administrateurs d’organisation.
-          </p>
-        </div>
+        <p className="text-sm text-atg-muted">
+          Comptes B2B de l’organisation. Le numéro de compte est partiellement masqué pour les
+          administrateurs d’organisation.
+        </p>
         {!creating && !editing ? (
           <Button onClick={() => setCreating(true)}>Nouveau compte</Button>
         ) : null}

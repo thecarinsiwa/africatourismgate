@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { AdminPageIntro } from '../../../../components/admin-page-intro';
 import { UserSessionsList } from '../../../../components/users/user-sessions-list';
 
 export const metadata: Metadata = {
@@ -8,12 +9,7 @@ export const metadata: Metadata = {
 export default function UtilisateurSessionsPage() {
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Sessions</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Sessions actives. Révoquez une session pour déconnecter l&apos;utilisateur.
-        </p>
-      </div>
+      <AdminPageIntro description={"Sessions actives. Révoquez une session pour déconnecter l'utilisateur."} />
       <UserSessionsList />
     </div>
   );

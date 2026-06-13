@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { PageHeader } from '@africatourismgate/ui';
+import { AdminPageIntro } from '../../../components/admin-page-intro';
 import { PropertiesList } from '../../../components/properties/properties-list';
 
 export const metadata: Metadata = {
@@ -9,10 +9,7 @@ export const metadata: Metadata = {
 export default function HebergementsPage() {
   return (
     <div>
-      <PageHeader
-        title="Hébergements"
-        description="Propriétés, chambres et équipements. Filtre par destination."
-      />
+      <AdminPageIntro description="Propriétés, chambres et équipements. Filtre par destination." />
       <PropertiesList />
     </div>
   );

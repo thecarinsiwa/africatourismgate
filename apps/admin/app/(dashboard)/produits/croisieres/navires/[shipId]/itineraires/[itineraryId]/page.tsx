@@ -10,14 +10,24 @@ type PageProps = { params: { shipId: string; itineraryId: string } };
 export default function ItineraryPortsPage({ params }: PageProps) {
   const { shipId, itineraryId } = params;
   const [name, setName] = useState<string | null>(null);
+  const [shipName, setShipName] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    void getApiClient()
-      .getItinerary(itineraryId)
-      .then((it) => setName(it.name))
-      .catch((e) => setError(getCroisieresErrorMessage(e)));
-  }, [itineraryId]);
+    void (async () => {
+      try {
+        const client = getApiClient();
+        const [itinerary, ship] = await Promise.all([
+          client.getItinerary(itineraryId),
+          client.getShip(shipId),
+        ]);
+        setName(itinerary.name);
+        setShipName(ship.name);
+      } catch (e) {
+        setError(getCroisieresErrorMessage(e));
+      }
+    })();
+  }, [itineraryId, shipId]);
 
   if (error) {
     return (
@@ -34,6 +44,7 @@ export default function ItineraryPortsPage({ params }: PageProps) {
   return (
     <ItineraryPortsSection
       shipId={shipId}
+      shipName={shipName ?? undefined}
       itineraryId={itineraryId}
       itineraryName={name}
     />

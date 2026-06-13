@@ -3,6 +3,7 @@
 import type { Role } from '@africatourismgate/types';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
 import { getRbacErrorMessage } from '../../lib/rbac-errors';
 import { RoleForm } from './role-form';
@@ -17,6 +18,13 @@ export function RoleEditPage({ roleId }: RoleEditPageProps) {
     | { status: 'error'; message: string }
     | { status: 'ready'; role: Role }
   >({ status: 'loading' });
+
+  useAdminEditPageMeta({
+    ready: state.status === 'ready',
+    title:
+      state.status === 'ready' && state.role.isSystem ? 'Rôle système' : 'Modifier le rôle',
+    entityLabel: state.status === 'ready' ? state.role.name : undefined,
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -53,12 +61,6 @@ export function RoleEditPage({ roleId }: RoleEditPageProps) {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">
-          {state.role.isSystem ? 'Rôle système' : 'Modifier le rôle'}
-        </h1>
-        <p className="mt-2 text-sm text-atg-muted">{state.role.name}</p>
-      </div>
       <RoleForm mode="edit" roleId={roleId} initialRole={state.role} />
     </div>
   );
