@@ -484,7 +484,24 @@ export type Translations = {
     activitySchedulesError: string;
     noActivitySchedules: string;
     schedulesProgress: string;
+    itemsProgress: string;
     allSchedulesRequired: string;
+    allItemsRequired: string;
+    selectStayDatesHint: string;
+    loadingPropertyRooms: string;
+    propertyRoomsError: string;
+    selectDepartureDateHint: string;
+    loadingFlightClasses: string;
+    flightClassesError: string;
+    selectRentalDatesHint: string;
+    loadingVehicleAvailability: string;
+    vehicleAvailabilityError: string;
+    vehicleDatesConfirmed: string;
+    selectSailingHint: string;
+    sailingIdLabel: string;
+    sailingIdPlaceholder: string;
+    loadingCruiseCabins: string;
+    cruiseCabinsError: string;
     addToCart: string;
     packageCartInvalid: string;
     modifySelection: string;
@@ -1267,20 +1284,37 @@ const fr: Translations = {
     activityConfigureHint:
       'Sélectionnez les créneaux pour chaque activité incluse, puis ajoutez le forfait au panier.',
     mixedConfigureHint:
-      'Ce forfait inclut plusieurs types de produits. Configurez chaque prestation via sa fiche produit.',
+      'Configurez chaque prestation incluse dans le forfait, puis ajoutez le tout au panier.',
     configureTitle: 'Choisir les créneaux',
     selectDateHint: 'Indiquez une date pour afficher les créneaux disponibles.',
     configureOnProduct: 'Configurer sur la fiche',
     configureOnProductHint: 'Réservation à finaliser sur la fiche produit dédiée.',
     mixedCheckoutDisabled:
-      'La réservation groupée en ligne est disponible pour les forfaits activités uniquement.',
+      'La remise forfait s\'applique au checkout groupé une fois toutes les prestations configurées.',
     loadingActivitySchedules: 'Chargement des créneaux…',
     activitySchedulesError: 'Impossible de charger les créneaux pour cette activité.',
     noActivitySchedules: 'Aucun créneau disponible pour cette date.',
     schedulesProgress: '{selected} / {total} activité(s) configurée(s)',
+    itemsProgress: '{selected} / {total} prestation(s) configurée(s)',
     allSchedulesRequired: 'Sélectionnez un créneau pour chaque activité du forfait.',
+    allItemsRequired: 'Configurez chaque prestation du forfait avant d\'ajouter au panier.',
+    selectStayDatesHint: 'Indiquez les dates d\'arrivée et de départ pour choisir une chambre.',
+    loadingPropertyRooms: 'Chargement des chambres…',
+    propertyRoomsError: 'Impossible de charger les chambres pour cet hébergement.',
+    selectDepartureDateHint: 'Indiquez la date de départ du vol.',
+    loadingFlightClasses: 'Chargement des classes…',
+    flightClassesError: 'Impossible de charger les classes pour ce vol.',
+    selectRentalDatesHint: 'Indiquez les dates de prise en charge et de retour.',
+    loadingVehicleAvailability: 'Vérification de la disponibilité…',
+    vehicleAvailabilityError: 'Véhicule indisponible pour ces dates.',
+    vehicleDatesConfirmed: 'Véhicule disponible pour ces dates',
+    selectSailingHint: 'Indiquez l\'identifiant du départ croisière (sailingId).',
+    sailingIdLabel: 'Identifiant du départ',
+    sailingIdPlaceholder: '00000000-0000-4000-8000-000000003036',
+    loadingCruiseCabins: 'Chargement des cabines…',
+    cruiseCabinsError: 'Impossible de charger les cabines pour ce départ.',
     addToCart: 'Ajouter au panier',
-    packageCartInvalid: 'Créneaux du forfait indisponibles ou incomplets.',
+    packageCartInvalid: 'Configuration du forfait invalide ou incomplète.',
     modifySelection: 'Modifier la sélection',
     notFound: 'Forfait introuvable',
     notFoundHint: 'Ce forfait n\'existe pas ou n\'est plus disponible.',
@@ -2086,20 +2120,37 @@ const en: Translations = {
     activityConfigureHint:
       'Pick a time slot for each included activity, then add the package to your cart.',
     mixedConfigureHint:
-      'This package mixes product types. Configure each service from its product page.',
+      'Configure each included service, then add the full package to your cart.',
     configureTitle: 'Choose time slots',
     selectDateHint: 'Enter a date to show available time slots.',
     configureOnProduct: 'Configure on product page',
     configureOnProductHint: 'Complete booking on the dedicated product page.',
     mixedCheckoutDisabled:
-      'Bundled online checkout is available for activity-only packages.',
+      'The package discount applies to grouped checkout once every service is configured.',
     loadingActivitySchedules: 'Loading time slots…',
     activitySchedulesError: 'Could not load time slots for this activity.',
     noActivitySchedules: 'No time slots available for this date.',
     schedulesProgress: '{selected} / {total} activity(ies) configured',
+    itemsProgress: '{selected} / {total} service(s) configured',
     allSchedulesRequired: 'Select a time slot for every activity in the package.',
+    allItemsRequired: 'Configure every service in the package before adding to cart.',
+    selectStayDatesHint: 'Enter check-in and check-out dates to choose a room.',
+    loadingPropertyRooms: 'Loading rooms…',
+    propertyRoomsError: 'Could not load rooms for this property.',
+    selectDepartureDateHint: 'Enter the flight departure date.',
+    loadingFlightClasses: 'Loading fare classes…',
+    flightClassesError: 'Could not load classes for this flight.',
+    selectRentalDatesHint: 'Enter pickup and return dates.',
+    loadingVehicleAvailability: 'Checking availability…',
+    vehicleAvailabilityError: 'Vehicle unavailable for these dates.',
+    vehicleDatesConfirmed: 'Vehicle available for these dates',
+    selectSailingHint: 'Enter the cruise sailing ID (sailingId).',
+    sailingIdLabel: 'Sailing ID',
+    sailingIdPlaceholder: '00000000-0000-4000-8000-000000003036',
+    loadingCruiseCabins: 'Loading cabins…',
+    cruiseCabinsError: 'Could not load cabins for this sailing.',
     addToCart: 'Add to cart',
-    packageCartInvalid: 'Package time slots are unavailable or incomplete.',
+    packageCartInvalid: 'Package configuration is unavailable or incomplete.',
     modifySelection: 'Modify selection',
     notFound: 'Package not found',
     notFoundHint: 'This package does not exist or is no longer available.',

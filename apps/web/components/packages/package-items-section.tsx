@@ -31,6 +31,7 @@ const ITEM_PRODUCT_PATHS: Partial<Record<PackageItemType, string>> = {
 type PackageItemsSectionProps = {
   items: PackageItemEnriched[];
   t: Translations['packages'];
+  configureInline?: boolean;
   activityOnly?: boolean;
   searchParams?: PackagesSearchParams;
 };
@@ -38,6 +39,7 @@ type PackageItemsSectionProps = {
 export function PackageItemsSection({
   items,
   t,
+  configureInline = false,
   activityOnly = false,
   searchParams = {},
 }: PackageItemsSectionProps) {
@@ -63,8 +65,8 @@ export function PackageItemsSection({
           const typeLabel = t.itemTypes[ITEM_TYPE_LABEL_KEYS[item.itemType]];
           const productBase = ITEM_PRODUCT_PATHS[item.itemType];
           const isActivity = item.itemType === 'activity';
-          const showInlineConfigLink = isActivity && !activityOnly;
-          const showExternalConfigureLink = !isActivity;
+          const showInlineConfigLink = isActivity && !activityOnly && !configureInline;
+          const showExternalConfigureLink = !configureInline && !isActivity;
 
           let productHref: string | null = null;
           if (productBase && showExternalConfigureLink) {

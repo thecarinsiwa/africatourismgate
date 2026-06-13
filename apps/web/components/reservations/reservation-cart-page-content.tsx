@@ -10,6 +10,8 @@ import type { ActivityDetail } from '../../lib/activities/types';
 import { getAccommodationDetail, getActivityDetail, getCruiseSailingDetail, getFlightDetail, getPackageDetail, getVehicleDetail } from '../../lib/api/public';
 import { formatPackagePrice } from '../../lib/packages/listings';
 import type { PackageDetail } from '../../lib/packages/types';
+import { fetchPackageDraftValidationData } from '../../lib/packages/package-validation';
+import type { PackageDraftValidationData } from '../../lib/reservations/flow';
 import { formatAirportLabel } from '../../lib/flights/airports';
 import { formatFlightPrice } from '../../lib/flights/listings';
 import type { FlightDetail } from '../../lib/flights/types';
@@ -58,7 +60,9 @@ export function ReservationCartPageContent({ draft }: Props) {
   const [cruiseDetail, setCruiseDetail] = useState<CruiseSailingDetail | null>(null);
   const [activityDetail, setActivityDetail] = useState<ActivityDetail | null>(null);
   const [packageDetail, setPackageDetail] = useState<PackageDetail | null>(null);
-  const [packageActivities, setPackageActivities] = useState<ActivityDetail[]>([]);
+  const [packageValidation, setPackageValidation] = useState<PackageDraftValidationData | null>(
+    null,
+  );
   const [loading, setLoading] = useState(Boolean(draft));
 
   const room = useMemo(
@@ -119,9 +123,11 @@ export function ReservationCartPageContent({ draft }: Props) {
   );
 
   const packageReady = useMemo(() => {
-    if (!draft || !isPackageReservationDraft(draft) || !packageDetail) return false;
-    return isPackageReservationDraftReady(draft, packageActivities);
-  }, [draft, packageDetail, packageActivities]);
+    if (!draft || !isPackageReservationDraft(draft) || !packageDetail || !packageValidation) {
+      return false;
+    }
+    return isPackageReservationDraftReady(draft, packageValidation);
+  }, [draft, packageDetail, packageValidation]);
 
   useEffect(() => {
     let cancelled = false;
@@ -177,7 +183,7 @@ export function ReservationCartPageContent({ draft }: Props) {
             setVehicleDetail(null);
             setCruiseDetail(null);
             setPackageDetail(null);
-            setPackageActivities([]);
+            setPackageValidation(null);
           }
         })
         .finally(() => {
@@ -193,15 +199,8 @@ export function ReservationCartPageContent({ draft }: Props) {
           setVehicleDetail(null);
           setCruiseDetail(null);
           setActivityDetail(null);
-          const activities = await Promise.all(
-            draft.lines.map((line) =>
-              getActivityDetail(line.activityId, {
-                date: draft.date,
-                participants: draft.participants,
-              }),
-            ),
-          );
-          if (!cancelled) setPackageActivities(activities);
+          const validation = await fetchPackageDraftValidationData(draft);
+          if (!cancelled) setPackageValidation(validation);
         })
         .finally(() => {
           if (!cancelled) setLoading(false);
@@ -412,11 +411,12 @@ export function ReservationCartPageContent({ draft }: Props) {
                 draft &&
                 isPackageReservationDraft(draft) &&
                 packageDetail &&
-                packageReady && (
+                packageReady &&
+                packageValidation && (
                   <PackageReservationSummary
                     draft={draft}
                     packageDetail={packageDetail}
-                    packageActivities={packageActivities}
+                    validation={packageValidation}
                     t={p}
                     participantSingular={act.participantSingular}
                     participantPlural={act.participantPlural}

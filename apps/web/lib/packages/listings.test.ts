@@ -25,6 +25,14 @@ test('normalizePackagesSearchParams maps search and legacy guest params', () => 
       page: undefined,
       date: '2026-08-01',
       participants: '2',
+      checkIn: '2026-08-01',
+      checkOut: undefined,
+      guests: '2',
+      departureDate: undefined,
+      passengers: undefined,
+      pickupDate: undefined,
+      returnDate: undefined,
+      sailingId: undefined,
     },
   );
 });
