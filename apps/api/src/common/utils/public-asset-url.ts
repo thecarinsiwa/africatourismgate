@@ -17,6 +17,10 @@ export function brandingUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/branding/${filename}`;
 }
 
+export function propertyUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/properties/${filename}`;
+}
+
 function getApiPublicOrigin(): string {
   return getApiBaseUrl().replace(/\/api$/, '');
 }
