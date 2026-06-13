@@ -625,7 +625,6 @@ export const es: Translations = {
     itemResolveError: 'Error',
     someItemsUnavailable:
       'Algunos servicios no están disponibles para estas fechas. Pruebe otra fecha de salida.',
-    configureTitle: 'Reservar este paquete',
     notFound: 'Paquete no encontrado',
     notFoundHint: 'Este paquete no existe o ya no está disponible.',
     backToList: 'Volver a paquetes',

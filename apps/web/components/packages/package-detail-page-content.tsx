@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getPackageDetail } from '../../lib/api/public';
 import { autoResolvePackageLines } from '../../lib/packages/auto-resolve-lines';
 import {
@@ -94,6 +94,11 @@ export function PackageDetailPageContent({
     [packageId, lineSelections, searchContext, router],
   );
 
+  const syncUrlRef = useRef(syncUrl);
+  const searchContextRef = useRef(searchContext);
+  syncUrlRef.current = syncUrl;
+  searchContextRef.current = searchContext;
+
   useEffect(() => {
     let cancelled = false;
 
@@ -144,7 +149,10 @@ export function PackageDetailPageContent({
         if (cancelled) return;
         setLineSelections(result.lines);
         setResolveErrors(result.errors);
-        syncUrl({ lineSelections: result.lines, search: searchContext });
+        syncUrlRef.current({
+          lineSelections: result.lines,
+          search: searchContextRef.current,
+        });
       })
       .finally(() => {
         if (!cancelled) setResolving(false);
