@@ -29,6 +29,7 @@ const {
   backToHomeLabel,
   receiptTitle,
   printReceiptLabel,
+  downloadPdfLabel,
   downloadPdfHint,
   emailReceiptLabel,
   emailPlaceholder,
@@ -232,6 +233,16 @@ export function PosSaleSuccessContent() {
               onClick={() => printPosReceipt()}
             >
               {printReceiptLabel}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              fullWidth
+              className="min-h-[3.5rem] text-lg"
+              onClick={() => printPosReceipt()}
+            >
+              {downloadPdfLabel}
             </Button>
             <p className="text-center text-xs text-atg-muted">{downloadPdfHint}</p>
 
