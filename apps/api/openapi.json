@@ -1530,6 +1530,35 @@
         ]
       }
     },
+    "/api/organization-settings/public/contact": {
+      "get": {
+        "operationId": "OrganizationSettingsController_findPublicContact",
+        "parameters": [
+          {
+            "name": "organizationSlug",
+            "required": false,
+            "in": "query",
+            "description": "Organization slug (defaults to the platform organization)",
+            "schema": {
+              "example": "africa-tourism-gate",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Get public contact details for the active/default organization",
+        "tags": [
+          "organization-settings"
+        ]
+      }
+    },
     "/api/organization-settings/bulk": {
       "put": {
         "operationId": "OrganizationSettingsController_bulkUpsert",
@@ -2927,6 +2956,52 @@
         ]
       }
     },
+    "/api/properties/{id}/upload-image": {
+      "post": {
+        "operationId": "PropertiesController_uploadImage",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "403": {
+            "description": "Missing permission"
+          }
+        },
+        "summary": "Upload property image (JPEG, PNG or WebP, max 5 MB)",
+        "tags": [
+          "properties"
+        ]
+      }
+    },
     "/api/property-images": {
       "get": {
         "operationId": "PropertyImagesController_findAll",
@@ -2950,6 +3025,15 @@
               "maximum": 100,
               "default": 20,
               "type": "number"
+            }
+          },
+          {
+            "name": "propertyId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
             }
           }
         ],
@@ -4580,6 +4664,33 @@
               "default": 20,
               "type": "number"
             }
+          },
+          {
+            "name": "vehicleId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "startFrom",
+            "required": false,
+            "in": "query",
+            "description": "Filter slots overlapping from this datetime (ISO)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "endTo",
+            "required": false,
+            "in": "query",
+            "description": "Filter slots overlapping until this datetime (ISO)",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -4598,6 +4709,16 @@
       "post": {
         "operationId": "VehicleAvailabilityController_create",
         "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateVehicleAvailabilityDto"
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
             "description": ""
@@ -4650,6 +4771,16 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateVehicleAvailabilityDto"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": ""
@@ -8234,6 +8365,21 @@
         ]
       }
     },
+    "/api/public/airports": {
+      "get": {
+        "operationId": "PublicFlightsController_listAirports",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "List airports for public flight search",
+        "tags": [
+          "public"
+        ]
+      }
+    },
     "/api/public/flights/search": {
       "get": {
         "operationId": "PublicFlightsController_search",
@@ -8261,7 +8407,7 @@
           },
           {
             "name": "from",
-            "required": true,
+            "required": false,
             "in": "query",
             "description": "Departure airport IATA code",
             "schema": {
@@ -8271,7 +8417,7 @@
           },
           {
             "name": "to",
-            "required": true,
+            "required": false,
             "in": "query",
             "description": "Arrival airport IATA code",
             "schema": {
@@ -8281,8 +8427,9 @@
           },
           {
             "name": "departureDate",
-            "required": true,
+            "required": false,
             "in": "query",
+            "description": "When omitted, uses the earliest date with seat availability per flight",
             "schema": {
               "format": "date",
               "example": "2026-08-01",
@@ -8375,6 +8522,21 @@
         ]
       }
     },
+    "/api/public/vehicles/pickup-locations": {
+      "get": {
+        "operationId": "PublicVehiclesController_listPickupLocations",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "List destinations with available rental vehicles",
+        "tags": [
+          "public"
+        ]
+      }
+    },
     "/api/public/vehicles/search": {
       "get": {
         "operationId": "PublicVehiclesController_search",
@@ -8402,9 +8564,9 @@
           },
           {
             "name": "pickupLocation",
-            "required": true,
+            "required": false,
             "in": "query",
-            "description": "Pickup city or destination name (partial match)",
+            "description": "Pickup city or destination name (partial match). Omit to search all cities.",
             "schema": {
               "example": "Kinshasa",
               "type": "string"
@@ -8412,8 +8574,9 @@
           },
           {
             "name": "pickupDate",
-            "required": true,
+            "required": false,
             "in": "query",
+            "description": "When omitted, uses the earliest availability window per vehicle",
             "schema": {
               "format": "date",
               "example": "2026-08-01",
@@ -8422,7 +8585,7 @@
           },
           {
             "name": "returnDate",
-            "required": true,
+            "required": false,
             "in": "query",
             "schema": {
               "format": "date",
@@ -8513,7 +8676,7 @@
           },
           {
             "name": "sailFrom",
-            "required": true,
+            "required": false,
             "in": "query",
             "description": "Departure cruise port code",
             "schema": {
@@ -8523,7 +8686,7 @@
           },
           {
             "name": "sailTo",
-            "required": true,
+            "required": false,
             "in": "query",
             "description": "Arrival cruise port code",
             "schema": {
@@ -8533,7 +8696,7 @@
           },
           {
             "name": "startDate",
-            "required": true,
+            "required": false,
             "in": "query",
             "schema": {
               "format": "date",
@@ -8543,7 +8706,7 @@
           },
           {
             "name": "endDate",
-            "required": true,
+            "required": false,
             "in": "query",
             "schema": {
               "format": "date",
@@ -8607,6 +8770,63 @@
         ]
       }
     },
+    "/api/public/activities/browse": {
+      "get": {
+        "operationId": "PublicActivitiesController_browse",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "destination",
+            "required": false,
+            "in": "query",
+            "description": "Optional destination city name (partial match)",
+            "schema": {
+              "example": "Kinshasa",
+              "type": "string"
+            }
+          },
+          {
+            "name": "participants",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Browse all activities with upcoming schedule availability",
+        "tags": [
+          "public"
+        ]
+      }
+    },
     "/api/public/activities/search": {
       "get": {
         "operationId": "PublicActivitiesController_search",
@@ -8634,9 +8854,9 @@
           },
           {
             "name": "destination",
-            "required": true,
+            "required": false,
             "in": "query",
-            "description": "Destination city name (partial match)",
+            "description": "Optional destination city name (partial match). Omit to search all destinations.",
             "schema": {
               "example": "Kinshasa",
               "type": "string"
@@ -8669,6 +8889,21 @@
           }
         },
         "summary": "Search activities by destination, date, and participants",
+        "tags": [
+          "public"
+        ]
+      }
+    },
+    "/api/public/activities/destinations": {
+      "get": {
+        "operationId": "PublicActivitiesController_listDestinations",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "List destinations with bookable activities",
         "tags": [
           "public"
         ]
@@ -8713,6 +8948,130 @@
           }
         },
         "summary": "Activity detail with available schedule slots",
+        "tags": [
+          "public"
+        ]
+      }
+    },
+    "/api/public/packages": {
+      "get": {
+        "operationId": "PublicPackagesController_list",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search by package name",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "List active packages with catalog pricing",
+        "tags": [
+          "public"
+        ]
+      }
+    },
+    "/api/public/packages/{id}/resolve-lines": {
+      "get": {
+        "operationId": "PublicPackagesController_resolveLines",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "startDate",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "format": "date",
+              "example": "2026-08-01",
+              "type": "string"
+            }
+          },
+          {
+            "name": "endDate",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "format": "date",
+              "example": "2026-08-04",
+              "type": "string"
+            }
+          },
+          {
+            "name": "travelers",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "example": 2,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Resolve package checkout lines from catalog (ignores availability)",
+        "tags": [
+          "public"
+        ]
+      }
+    },
+    "/api/public/packages/{id}": {
+      "get": {
+        "operationId": "PublicPackagesController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Package detail with included items and discount pricing",
         "tags": [
           "public"
         ]
@@ -9445,6 +9804,59 @@
           }
         }
       },
+      "CreateVehicleAvailabilityDto": {
+        "type": "object",
+        "properties": {
+          "vehicleId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "startDatetime": {
+            "type": "string",
+            "example": "2026-06-01T08:00:00.000Z"
+          },
+          "endDatetime": {
+            "type": "string",
+            "example": "2026-06-07T18:00:00.000Z"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "available",
+              "maintenance",
+              "rented"
+            ],
+            "default": "available"
+          }
+        },
+        "required": [
+          "vehicleId",
+          "startDatetime",
+          "endDatetime"
+        ]
+      },
+      "UpdateVehicleAvailabilityDto": {
+        "type": "object",
+        "properties": {
+          "startDatetime": {
+            "type": "string",
+            "example": "2026-06-01T08:00:00.000Z"
+          },
+          "endDatetime": {
+            "type": "string",
+            "example": "2026-06-07T18:00:00.000Z"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "available",
+              "maintenance",
+              "rented"
+            ],
+            "default": "available"
+          }
+        }
+      },
       "BookingCheckoutItemDto": {
         "type": "object",
         "properties": {
@@ -9517,6 +9929,11 @@
             "type": "string",
             "format": "uuid",
             "description": "Client final de la réservation (réservé au personnel avec users.read, ex. caisse POS)"
+          },
+          "packageId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Forfait combiné : applique la remise du forfait après validation des items du panier"
           }
         },
         "required": [
