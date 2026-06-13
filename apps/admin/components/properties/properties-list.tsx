@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -8,6 +9,8 @@ import {
   DataTableActions,
   DataTablePagination,
   Input,
+  Select,
+  useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { Destination, Property } from '@africatourismgate/types';
@@ -28,6 +31,7 @@ const propertyTypeLabels: Record<Property['propertyType'], string> = {
 };
 
 export function PropertiesList() {
+  const { toast } = useToast();
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [destinationFilter, setDestinationFilter] = useState('');
@@ -44,7 +48,7 @@ export function PropertiesList() {
       }
   >({ status: 'loading' });
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<Property | null>(null);
 
   useEffect(() => {
     void getApiClient()
@@ -96,22 +100,35 @@ export function PropertiesList() {
     return map;
   }, [destinations]);
 
-  const handleDelete = useCallback(
-    async (property: Property) => {
-      if (!window.confirm(`Supprimer l’hébergement « ${property.name} » ?`)) return;
-      setDeleteError(null);
-      setDeletingId(property.id);
-      try {
-        await getApiClient().deleteProperty(property.id);
-        await load();
-      } catch (error) {
-        setDeleteError(getHebergementsErrorMessage(error));
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [load],
+  const destinationOptions = useMemo(
+    () => [
+      { value: '', label: 'Toutes' },
+      ...destinations.map((d) => ({ value: d.id, label: d.name })),
+    ],
+    [destinations],
   );
+
+  const confirmDelete = useCallback(async () => {
+    if (!pendingDelete) return;
+    const property = pendingDelete;
+    setDeletingId(property.id);
+    try {
+      await getApiClient().deleteProperty(property.id);
+      setPendingDelete(null);
+      await load();
+      toast({
+        variant: 'success',
+        message: `L'hébergement « ${property.name} » a été supprimé.`,
+      });
+    } catch (error) {
+      toast({
+        variant: 'error',
+        message: getHebergementsErrorMessage(error),
+      });
+    } finally {
+      setDeletingId(null);
+    }
+  }, [pendingDelete, load, toast]);
 
   const columns = useMemo<ColumnDef<Property, unknown>[]>(
     () => [
@@ -161,7 +178,7 @@ export function PropertiesList() {
               <DataTableActionButton action="edit" href={`/hebergements/${property.id}`} />
               <DataTableActionButton
                 action="delete"
-                onClick={() => void handleDelete(property)}
+                onClick={() => setPendingDelete(property)}
                 disabled={deletingId === property.id}
                 loading={deletingId === property.id}
               />
@@ -170,7 +187,7 @@ export function PropertiesList() {
         },
       },
     ],
-    [deletingId, destinationNameById, handleDelete],
+    [deletingId, destinationNameById],
   );
 
   const properties = state.status === 'ready' ? state.properties : [];
@@ -189,22 +206,15 @@ export function PropertiesList() {
             />
           </div>
           <div className="sm:w-56">
-            <label className="mb-2 block text-sm font-medium text-atg-fg">Destination</label>
-            <select
+            <Select
+              label="Destination"
               value={destinationFilter}
+              options={destinationOptions}
               onChange={(e) => {
                 setDestinationFilter(e.target.value);
                 setPage(1);
               }}
-              className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg"
-            >
-              <option value="">Toutes</option>
-              {destinations.map((d) => (
-                <option key={d.id} value={d.id}>
-                  {d.name}
-                </option>
-              ))}
-            </select>
+            />
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -215,14 +225,8 @@ export function PropertiesList() {
         </div>
       </div>
 
-      {deleteError ? (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {deleteError}
-        </p>
-      ) : null}
-
       {state.status === 'error' ? (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {state.message}
         </p>
       ) : (
@@ -249,6 +253,25 @@ export function PropertiesList() {
           ) : null}
         </>
       )}
+
+      <AlertDialog
+        open={pendingDelete !== null}
+        onOpenChange={(open) => {
+          if (!open && !deletingId) setPendingDelete(null);
+        }}
+        title="Supprimer l'hébergement"
+        description={
+          pendingDelete
+            ? `Supprimer l'hébergement « ${pendingDelete.name} » ? Cette action est irréversible.`
+            : undefined
+        }
+        confirmLabel="Supprimer"
+        cancelLabel="Annuler"
+        variant="danger"
+        loading={deletingId !== null}
+        onConfirm={() => void confirmDelete()}
+        onCancel={() => setPendingDelete(null)}
+      />
     </div>
   );
 }
