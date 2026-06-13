@@ -16,6 +16,7 @@ import {
   toOrganizationSettingDto,
 } from './dto/organization-setting.dto';
 import { PublicBrandingDto } from './dto/public-branding.dto';
+import { PublicContactDto } from './dto/public-contact.dto';
 import { OrganizationSettingsListQueryDto } from './dto/organization-settings-list-query.dto';
 import { validateSettingValue } from './validate-setting-value';
 
@@ -27,6 +28,15 @@ const DEFAULT_PUBLIC_BRANDING: PublicBrandingDto = {
   faviconUrl: null,
 };
 
+const DEFAULT_PUBLIC_CONTACT: PublicContactDto = {
+  phone: '+243 815 000 000',
+  email: 'support@africatourismgate.com',
+  location: 'Kinshasa, RD Congo',
+  facebookUrl: 'https://www.facebook.com/africatourismgate/',
+  twitterUrl: 'https://x.com/Congotourismga1',
+  instagramUrl: 'https://www.instagram.com/africatourismgate/',
+};
+
 function normalizeHex(hex: unknown, fallback: string): string {
   if (typeof hex !== 'string') return fallback;
   const trimmed = hex.trim();
@@ -36,6 +46,12 @@ function normalizeHex(hex: unknown, fallback: string): string {
 }
 
 function optionalAssetUrl(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim();
+  return trimmed || null;
+}
+
+function optionalPublicString(value: unknown): string | null {
   if (typeof value !== 'string') return null;
   const trimmed = value.trim();
   return trimmed || null;
@@ -188,6 +204,39 @@ export class OrganizationSettingsService extends CrudService<OrganizationSetting
         optionalAssetUrl(value.faviconUrl) ??
         optionalAssetUrl(organization.faviconUrl) ??
         null,
+    };
+  }
+
+  async findPublicContact(organizationSlug?: string): Promise<PublicContactDto> {
+    const organization = await this.resolvePublicOrganization(organizationSlug);
+
+    const contactSetting = await this.settingsRepository.findOne({
+      where: {
+        organizationId: organization.id,
+        settingGroup: 'contact',
+        settingKey: 'web',
+        deletedAt: IsNull(),
+      },
+    });
+
+    const value =
+      contactSetting?.settingValue && typeof contactSetting.settingValue === 'object'
+        ? contactSetting.settingValue
+        : {};
+
+    return {
+      phone:
+        optionalPublicString(organization.contactPhone) ?? DEFAULT_PUBLIC_CONTACT.phone,
+      email:
+        optionalPublicString(organization.contactEmail) ?? DEFAULT_PUBLIC_CONTACT.email,
+      location:
+        optionalPublicString(value.location) ?? DEFAULT_PUBLIC_CONTACT.location,
+      facebookUrl:
+        optionalPublicString(value.facebookUrl) ?? DEFAULT_PUBLIC_CONTACT.facebookUrl,
+      twitterUrl:
+        optionalPublicString(value.twitterUrl) ?? DEFAULT_PUBLIC_CONTACT.twitterUrl,
+      instagramUrl:
+        optionalPublicString(value.instagramUrl) ?? DEFAULT_PUBLIC_CONTACT.instagramUrl,
     };
   }
 

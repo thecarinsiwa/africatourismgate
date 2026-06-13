@@ -430,4 +430,9 @@ export const fr: Translations = {
     searchRequired: 'Indiquez les ports et les dates de départ.',
     endAfterStart: 'La date de fin doit être après la date de début.',
   },
+  comingSoon: {
+    badge: 'Bientôt disponible',
+    body: 'La réservation en ligne pour cette catégorie arrive prochainement. Vos critères de recherche ont été conservés dans l’URL.',
+    backToSearch: 'Modifier ma recherche',
+  },
 };

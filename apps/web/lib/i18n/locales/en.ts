@@ -429,4 +429,9 @@ export const en: Translations = {
     searchRequired: 'Enter ports and departure dates.',
     endAfterStart: 'End date must be after start date.',
   },
+  comingSoon: {
+    badge: 'Coming soon',
+    body: 'Online booking for this category is launching soon. Your search criteria have been kept in the URL.',
+    backToSearch: 'Change my search',
+  },
 };

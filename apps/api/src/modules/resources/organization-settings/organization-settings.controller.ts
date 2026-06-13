@@ -26,6 +26,7 @@ import { OrganizationSettingDto } from './dto/organization-setting.dto';
 import { OrganizationSettingsListQueryDto } from './dto/organization-settings-list-query.dto';
 import { PublicBrandingDto } from './dto/public-branding.dto';
 import { PublicBrandingQueryDto } from './dto/public-branding-query.dto';
+import { PublicContactDto } from './dto/public-contact.dto';
 import { OrganizationSettingsService } from './organization-settings.service';
 
 @ApiTags('organization-settings')
@@ -39,6 +40,13 @@ export class OrganizationSettingsController {
   @ApiOperation({ summary: 'Get public branding for the active/default organization' })
   findPublicBranding(@Query() query: PublicBrandingQueryDto): Promise<PublicBrandingDto> {
     return this.service.findPublicBranding(query.organizationSlug);
+  }
+
+  @Public()
+  @Get('public/contact')
+  @ApiOperation({ summary: 'Get public contact details for the active/default organization' })
+  findPublicContact(@Query() query: PublicBrandingQueryDto): Promise<PublicContactDto> {
+    return this.service.findPublicContact(query.organizationSlug);
   }
 
   @Put('bulk')

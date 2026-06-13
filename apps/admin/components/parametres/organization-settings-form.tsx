@@ -4,6 +4,7 @@ import { Button, Input } from '@africatourismgate/ui';
 import type {
   BookingDefaultsValue,
   BrandingPlatformValue,
+  ContactWebSettingValue,
   LocaleSettingValue,
   LoyaltyOneKeySettingValue,
   Organization,
@@ -29,6 +30,11 @@ import { BrandColorPaletteField } from './brand-color-palette-field';
 
 type SettingsFormValues = {
   contactEmail: string;
+  contactPhone: string;
+  location: string;
+  facebookUrl: string;
+  twitterUrl: string;
+  instagramUrl: string;
   currency: string;
   language: string;
   timezone: string;
@@ -46,6 +52,11 @@ type SettingsFormValues = {
 
 const defaultValues: SettingsFormValues = {
   contactEmail: '',
+  contactPhone: '',
+  location: 'Kinshasa, RD Congo',
+  facebookUrl: 'https://www.facebook.com/africatourismgate/',
+  twitterUrl: 'https://x.com/Congotourismga1',
+  instagramUrl: 'https://www.instagram.com/africatourismgate/',
   currency: 'USD',
   language: 'fr',
   timezone: 'Africa/Kinshasa',
@@ -75,10 +86,18 @@ function toFormValues(
   const locale = settingByKey(settings, 'locale') as LocaleSettingValue | undefined;
   const defaults = settingByKey(settings, 'defaults') as BookingDefaultsValue | undefined;
   const platform = settingByKey(settings, 'platform') as BrandingPlatformValue | undefined;
+  const contactWeb = settings.find(
+    (s) => s.settingGroup === 'contact' && s.settingKey === 'web',
+  )?.settingValue as ContactWebSettingValue | undefined;
   const onekey = settingByKey(settings, 'onekey') as LoyaltyOneKeySettingValue | undefined;
 
   return {
     contactEmail: org.contactEmail ?? '',
+    contactPhone: org.contactPhone ?? '',
+    location: contactWeb?.location ?? 'Kinshasa, RD Congo',
+    facebookUrl: contactWeb?.facebookUrl ?? '',
+    twitterUrl: contactWeb?.twitterUrl ?? '',
+    instagramUrl: contactWeb?.instagramUrl ?? '',
     currency: org.currency ?? locale?.currency ?? 'USD',
     language: locale?.language ?? 'fr',
     timezone: locale?.timezone ?? 'Africa/Kinshasa',
@@ -235,15 +254,27 @@ export function OrganizationSettingsForm({
       const client = getApiClient();
       const currency = values.currency.trim().toUpperCase();
       const contactEmail = values.contactEmail.trim();
+      const contactPhone = values.contactPhone.trim();
 
       await client.updateOrganization(organizationId, {
         ...(contactEmail ? { contactEmail } : { contactEmail: undefined }),
+        ...(contactPhone ? { contactPhone } : { contactPhone: undefined }),
         currency,
       });
 
       await client.bulkUpsertOrganizationSettings({
         ...(isSuperAdmin ? { organizationId } : {}),
         settings: [
+          {
+            settingGroup: 'contact',
+            settingKey: 'web',
+            settingValue: {
+              location: values.location.trim() || undefined,
+              facebookUrl: values.facebookUrl.trim() || undefined,
+              twitterUrl: values.twitterUrl.trim() || undefined,
+              instagramUrl: values.instagramUrl.trim() || undefined,
+            },
+          },
           {
             settingGroup: 'general',
             settingKey: 'locale',
@@ -390,12 +421,49 @@ export function OrganizationSettingsForm({
 
       <section className="space-y-4">
         <h2 className="text-lg font-semibold text-atg-fg">Coordonnées</h2>
+        <p className="text-sm text-atg-muted">
+          Affichées dans le bandeau et le pied de page du site public.
+        </p>
+        <Input
+          label="Téléphone"
+          type="tel"
+          value={values.contactPhone}
+          onChange={(e) => updateField('contactPhone', e.target.value)}
+          placeholder="+243 815 000 000"
+        />
         <Input
           label="E-mail de contact"
           type="email"
           value={values.contactEmail}
           onChange={(e) => updateField('contactEmail', e.target.value)}
           error={fieldErrors.contactEmail}
+        />
+        <Input
+          label="Adresse / localisation"
+          value={values.location}
+          onChange={(e) => updateField('location', e.target.value)}
+          placeholder="Kinshasa, RD Congo"
+        />
+        <Input
+          label="URL Facebook"
+          type="url"
+          value={values.facebookUrl}
+          onChange={(e) => updateField('facebookUrl', e.target.value)}
+          placeholder="https://www.facebook.com/..."
+        />
+        <Input
+          label="URL X / Twitter"
+          type="url"
+          value={values.twitterUrl}
+          onChange={(e) => updateField('twitterUrl', e.target.value)}
+          placeholder="https://x.com/..."
+        />
+        <Input
+          label="URL Instagram"
+          type="url"
+          value={values.instagramUrl}
+          onChange={(e) => updateField('instagramUrl', e.target.value)}
+          placeholder="https://www.instagram.com/..."
         />
         <Input
           label="Devise"
