@@ -1,6 +1,6 @@
 'use client';
 
-import type { PosReceiptData } from '../../lib/sale/receipt';
+import { posReceiptLabels, type PosReceiptData } from '../../lib/sale/receipt';
 
 type PosReceiptProps = {
   data: PosReceiptData;
@@ -113,21 +113,22 @@ export function PosReceipt({ data }: PosReceiptProps) {
 
       <dl className="space-y-1.5 text-sm">
         <div className="flex justify-between gap-4">
-          <dt className="text-gray-600">Sous-total</dt>
+          <dt className="text-gray-600">{posReceiptLabels.subtotal}</dt>
           <dd className="tabular-nums">{data.subtotalLabel}</dd>
         </div>
         {data.discountLabel ? (
           <div className="flex justify-between gap-4 text-emerald-700">
-            <dt>Remise</dt>
+            <dt>{posReceiptLabels.discount}</dt>
             <dd className="tabular-nums">−{data.discountLabel}</dd>
           </div>
         ) : null}
         <div className="flex justify-between gap-4 text-base font-bold">
-          <dt>Total</dt>
+          <dt>{posReceiptLabels.totalTtc}</dt>
           <dd className="tabular-nums">{data.totalLabel}</dd>
         </div>
+        <p className="text-right text-xs text-gray-500">{posReceiptLabels.taxIncludedNote}</p>
         <div className="flex justify-between gap-4">
-          <dt className="text-gray-600">Paiement</dt>
+          <dt className="text-gray-600">{posReceiptLabels.payment}</dt>
           <dd className="font-semibold">{data.paymentMethodLabel}</dd>
         </div>
       </dl>
