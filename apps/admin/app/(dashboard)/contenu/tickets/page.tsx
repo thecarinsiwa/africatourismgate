@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function SupportTicketsPage() {
   return (
     <div>
-      <AdminPageIntro description={"Demandes d’assistance clients. Filtres par statut et priorité. Accès :\r\n          support_tickets.read / support_tickets.write."} />
+      <AdminPageIntro description="Demandes d'assistance clients. Filtres par statut et priorité. Accès : support_tickets.read / support_tickets.write." />
       <SupportTicketsList />
     </div>
   );

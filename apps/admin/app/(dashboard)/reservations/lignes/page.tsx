@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function BookingLinesPage() {
   return (
     <div>
-      <AdminPageIntro description={"Tableau global des articles par réservation (données API live). Filtres par type, statut de\r\n          la réservation et identifiant booking. Accès requis : bookings.read."} />
+      <AdminPageIntro description="Tableau global des articles par réservation (données API live). Filtres par type, statut de la réservation et identifiant booking. Accès requis : bookings.read." />
       <BookingItemsList />
     </div>
   );

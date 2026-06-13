@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function LoyaltyAccountsPage() {
   return (
     <div>
-      <AdminPageIntro description={"Programme OneKey — solde de points, paliers et dernière activité. Ajustement manuel\r\n          réservé au super administrateur."} />
+      <AdminPageIntro description="Programme OneKey — solde de points, paliers et dernière activité. Ajustement manuel réservé au super administrateur." />
       <LoyaltyAccountsList />
     </div>
   );

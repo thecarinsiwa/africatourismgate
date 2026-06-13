@@ -9,7 +9,10 @@ export const metadata: Metadata = {
 export default function ActivitesFournisseursPage() {
   return (
     <div>
-      <AdminPageIntro description={"Opérateurs liés aux destinations.{' '}\r\n          <Link href=\"/produits/activites\" className=\"font-medium text-primary hover:underline\">\r\n            ← Activités\r\n          </Link>"} />
+      <AdminPageIntro
+        description="Opérateurs liés aux destinations."
+        links={[{ href: '/produits/activites', label: '← Activités' }]}
+      />
       <ActivityProvidersList />
     </div>
   );

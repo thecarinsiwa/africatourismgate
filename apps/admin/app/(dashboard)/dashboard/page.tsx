@@ -13,7 +13,10 @@ export const metadata: Metadata = {
 export default function DashboardPage() {
   return (
     <div className="space-y-8">
-      <AdminPageIntro description={"Vue d&apos;ensemble de votre plateforme Africa Tourism Gate"} className="md:text-base" />
+      <AdminPageIntro
+        description="Vue d'ensemble de votre plateforme Africa Tourism Gate"
+        className="md:text-base"
+      />
 
       <DashboardKpiCards />
 

@@ -9,7 +9,10 @@ export const metadata: Metadata = {
 export default function CroisieresPortsPage() {
   return (
     <div>
-      <AdminPageIntro description={"Référentiel des escales.</p>\r\n        <p className=\"mt-3 text-sm\">\r\n          <Link href=\"/produits/croisieres\" className=\"font-medium text-primary hover:underline\">\r\n            ← Départs\r\n          </Link>"} />
+      <AdminPageIntro
+        description="Référentiel des escales."
+        links={[{ href: '/produits/croisieres', label: '← Départs' }]}
+      />
       <CruisePortsList />
     </div>
   );

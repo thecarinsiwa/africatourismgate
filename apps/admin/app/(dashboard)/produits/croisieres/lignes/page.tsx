@@ -6,10 +6,13 @@ export const metadata: Metadata = {
   title: 'Lignes de croisière — Africa Tourism Gate Admin',
 };
 
-export default function CroisieresLignesPage() {
+export default function LignesCroisierePage() {
   return (
     <div>
-      <AdminPageIntro description={"Référentiel des compagnies / lignes.</p>\r\n        <p className=\"mt-3 text-sm\">\r\n          <Link href=\"/produits/croisieres\" className=\"font-medium text-primary hover:underline\">\r\n            ← Départs\r\n          </Link>"} />
+      <AdminPageIntro
+        description="Référentiel des compagnies / lignes."
+        links={[{ href: '/produits/croisieres', label: '← Départs' }]}
+      />
       <CruiseLinesList />
     </div>
   );

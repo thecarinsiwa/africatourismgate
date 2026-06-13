@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function ReservationsPage() {
   return (
     <div>
-      <AdminPageIntro description={"Liste paginée des réservations (données API live). Filtres par statut, date, client et\r\n          organisation. Accès requis : bookings.read."} />
+      <AdminPageIntro description="Liste paginée des réservations (données API live). Filtres par statut, date, client et organisation. Accès requis : bookings.read." />
       <BookingsList />
     </div>
   );

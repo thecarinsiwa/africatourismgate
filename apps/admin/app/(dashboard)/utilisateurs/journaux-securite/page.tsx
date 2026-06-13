@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function UtilisateurJournauxSecuritePage() {
   return (
     <div>
-      <AdminPageIntro description={"Événements de sécurité et audit d&apos;accès."} />
+      <AdminPageIntro description={"Événements de sécurité et audit d'accès."} />
       <RbacAuditLogsList showSubnav={false} />
     </div>
   );

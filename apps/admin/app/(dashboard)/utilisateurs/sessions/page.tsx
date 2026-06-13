@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function UtilisateurSessionsPage() {
   return (
     <div>
-      <AdminPageIntro description={"Sessions actives. Révoquez une session pour déconnecter l&apos;utilisateur."} />
+      <AdminPageIntro description={"Sessions actives. Révoquez une session pour déconnecter l'utilisateur."} />
       <UserSessionsList />
     </div>
   );

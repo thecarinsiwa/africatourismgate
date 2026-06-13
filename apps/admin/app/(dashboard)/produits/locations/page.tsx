@@ -9,7 +9,13 @@ export const metadata: Metadata = {
 export default function LocationsPage() {
   return (
     <div>
-      <AdminPageIntro description={"Véhicules par agence, catégories et créneaux de disponibilité.\r\n        </p>\r\n        <p className=\"mt-3 text-sm\">\r\n          <Link\r\n            href=\"/produits/locations/agences\"\r\n            className=\"font-medium text-primary hover:underline\"\r\n          >\r\n            Agences de location\r\n          </Link>\r\n          <span className=\"mx-2 text-atg-muted\">·</span>\r\n          <Link\r\n            href=\"/produits/locations/categories\"\r\n            className=\"font-medium text-primary hover:underline\"\r\n          >\r\n            Catégories\r\n          </Link>"} />
+      <AdminPageIntro
+        description="Véhicules par agence, catégories et créneaux de disponibilité."
+        links={[
+          { href: '/produits/locations/agences', label: 'Agences de location' },
+          { href: '/produits/locations/categories', label: 'Catégories' },
+        ]}
+      />
       <VehiclesList />
     </div>
   );

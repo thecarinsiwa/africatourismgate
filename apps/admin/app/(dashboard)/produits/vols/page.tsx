@@ -9,7 +9,13 @@ export const metadata: Metadata = {
 export default function VolsPage() {
   return (
     <div>
-      <AdminPageIntro description={"Catalogue des vols, classes cabine et disponibilités. Recherche par code vol.\r\n        </p>\r\n        <p className=\"mt-3 text-sm\">\r\n          <Link href=\"/produits/vols/compagnies\" className=\"font-medium text-primary hover:underline\">\r\n            Compagnies aériennes\r\n          </Link>\r\n          <span className=\"mx-2 text-atg-muted\">·</span>\r\n          <Link href=\"/produits/vols/aeroports\" className=\"font-medium text-primary hover:underline\">\r\n            Aéroports\r\n          </Link>"} />
+      <AdminPageIntro
+        description="Catalogue des vols, classes cabine et disponibilités. Recherche par code vol."
+        links={[
+          { href: '/produits/vols/compagnies', label: 'Compagnies aériennes' },
+          { href: '/produits/vols/aeroports', label: 'Aéroports' },
+        ]}
+      />
       <FlightsList />
     </div>
   );

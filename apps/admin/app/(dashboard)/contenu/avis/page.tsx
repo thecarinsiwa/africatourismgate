@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function ReviewsPage() {
   return (
     <div>
-      <AdminPageIntro description={"Modération des notes et commentaires clients. Filtres par note, propriété et statut.\r\n          Actions : approuver, masquer ou supprimer. Accès : reviews.read / reviews.write."} />
+      <AdminPageIntro description="Modération des notes et commentaires clients. Filtres par note, propriété et statut. Actions : approuver, masquer ou supprimer. Accès : reviews.read / reviews.write." />
       <ReviewsList />
     </div>
   );

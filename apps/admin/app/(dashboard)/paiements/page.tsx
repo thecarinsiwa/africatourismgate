@@ -11,7 +11,7 @@ export default function PaiementsPage() {
   return (
     <div>
       <PaymentsPromoSubnav />
-      <AdminPageIntro description={"Transactions et remboursements Stripe (mode test). Filtres par statut, dates et\r\n          organisation (super admin). Accès : payments.read ; remboursement : payments.write."} />
+      <AdminPageIntro description="Transactions et remboursements Stripe (mode test). Filtres par statut, dates et organisation (super admin). Accès : payments.read ; remboursement : payments.write." />
       <PaymentsList />
     </div>
   );
