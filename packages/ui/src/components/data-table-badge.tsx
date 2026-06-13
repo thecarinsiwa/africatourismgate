@@ -5,9 +5,9 @@ export type DataTableBadgeVariant = 'default' | 'success' | 'warning' | 'danger'
 
 const variantClasses: Record<DataTableBadgeVariant, string> = {
   default: 'bg-atg-surface text-atg-fg ring-atg-border/80',
-  success: 'bg-primary/12 text-primary ring-primary/20',
-  warning: 'bg-amber-100 text-amber-800 ring-amber-200/80 dark:bg-amber-950/40 dark:text-amber-300 dark:ring-amber-800/50',
-  danger: 'bg-red-100 text-red-700 ring-red-200/80 dark:bg-red-950/40 dark:text-red-400 dark:ring-red-900/50',
+  success: 'bg-atg-success-light text-atg-success-fg ring-atg-success/25',
+  warning: 'bg-atg-warning-light text-atg-warning-fg ring-atg-warning/25',
+  danger: 'bg-atg-danger-light text-atg-danger-fg ring-atg-danger/25',
   muted: 'bg-atg-border/50 text-atg-muted ring-atg-border/60',
 };
 

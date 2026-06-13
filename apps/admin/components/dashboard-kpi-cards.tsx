@@ -22,7 +22,7 @@ const kpiMeta: Record<
 > = {
   users: {
     subtitle: 'Comptes enregistrés',
-    iconClass: 'bg-primary/10 text-primary',
+    iconClass: 'bg-atg-info-light text-atg-info',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
         <path
@@ -36,7 +36,7 @@ const kpiMeta: Record<
   },
   bookings: {
     subtitle: 'Réservations totales',
-    iconClass: 'bg-primary/10 text-primary',
+    iconClass: 'bg-violet-100 text-violet-700 dark:bg-violet-950/50 dark:text-violet-300',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
         <path
@@ -50,7 +50,7 @@ const kpiMeta: Record<
   },
   revenue: {
     subtitle: 'Paiements réussis',
-    iconClass: 'bg-primary/10 text-primary',
+    iconClass: 'bg-atg-success-light text-atg-success',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
         <path
@@ -64,7 +64,7 @@ const kpiMeta: Record<
   },
   properties: {
     subtitle: 'Hébergements publiés',
-    iconClass: 'bg-primary/10 text-primary',
+    iconClass: 'bg-atg-warning-light text-atg-warning',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
         <path

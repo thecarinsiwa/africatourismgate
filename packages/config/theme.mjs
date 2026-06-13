@@ -29,6 +29,34 @@ export const darkSurfaces = {
   fg: '#ffffff',
 };
 
+/** Couleurs sémantiques (badges, alertes, KPI) — paires light/fg pour contraste WCAG AA */
+const semanticColors = {
+  success: {
+    DEFAULT: 'var(--atg-success)',
+    hover: 'var(--atg-success-hover)',
+    light: 'var(--atg-success-light)',
+    fg: 'var(--atg-success-fg)',
+  },
+  warning: {
+    DEFAULT: 'var(--atg-warning)',
+    hover: 'var(--atg-warning-hover)',
+    light: 'var(--atg-warning-light)',
+    fg: 'var(--atg-warning-fg)',
+  },
+  danger: {
+    DEFAULT: 'var(--atg-danger)',
+    hover: 'var(--atg-danger-hover)',
+    light: 'var(--atg-danger-light)',
+    fg: 'var(--atg-danger-fg)',
+  },
+  info: {
+    DEFAULT: 'var(--atg-info)',
+    hover: 'var(--atg-info-hover)',
+    light: 'var(--atg-info-light)',
+    fg: 'var(--atg-info-fg)',
+  },
+};
+
 /** Couleurs Tailwind (référencent les variables CSS --atg-* définies dans theme.css) */
 export const tailwindColors = {
   primary: {
@@ -46,6 +74,7 @@ export const tailwindColors = {
     border: 'var(--atg-border)',
     muted: 'var(--atg-muted)',
     fg: 'var(--atg-fg)',
+    ...semanticColors,
   },
 };
 

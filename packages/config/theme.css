@@ -1,6 +1,17 @@
 /**
  * Variables CSS mode clair / sombre — import dans globals.css de chaque app.
  * Bascule via class="dark" sur <html> (next-themes).
+ *
+ * Échelle typographique admin (Tailwind) :
+ * - Titre page (h1) : text-2xl font-bold text-atg-fg
+ * - Titre section (h2) : text-lg font-semibold text-atg-fg
+ * - Description / sous-titre : text-sm text-atg-muted
+ * - Label formulaire : text-sm font-medium text-atg-fg
+ * - Texte aide / hint : text-xs text-atg-muted
+ *
+ * Couleurs sémantiques — paires light/fg calibrées pour contraste WCAG AA (≥ 4.5:1)
+ * sur fond de badge (DataTableBadge). Classes Tailwind : bg-atg-success-light,
+ * text-atg-success-fg, text-atg-success, ring-atg-success/25, etc.
  */
 
 :root {
@@ -16,6 +27,30 @@
   --atg-border: #d4e5de;
   --atg-muted: #5c6d66;
   --atg-fg: #0f1a16;
+
+  /* Sémantique — succès */
+  --atg-success: #15803d;
+  --atg-success-hover: #166534;
+  --atg-success-light: #dcfce7;
+  --atg-success-fg: #14532d;
+
+  /* Sémantique — avertissement */
+  --atg-warning: #b45309;
+  --atg-warning-hover: #92400e;
+  --atg-warning-light: #fef3c7;
+  --atg-warning-fg: #78350f;
+
+  /* Sémantique — danger */
+  --atg-danger: #b91c1c;
+  --atg-danger-hover: #991b1b;
+  --atg-danger-light: #fee2e2;
+  --atg-danger-fg: #7f1d1d;
+
+  /* Sémantique — info */
+  --atg-info: #0369a1;
+  --atg-info-hover: #0284c7;
+  --atg-info-light: #e0f2fe;
+  --atg-info-fg: #0c4a6e;
 }
 
 .dark {
@@ -24,4 +59,24 @@
   --atg-border: #1e3329;
   --atg-muted: #8b9a94;
   --atg-fg: #ffffff;
+
+  --atg-success: #4ade80;
+  --atg-success-hover: #86efac;
+  --atg-success-light: #14532d;
+  --atg-success-fg: #bbf7d0;
+
+  --atg-warning: #fbbf24;
+  --atg-warning-hover: #fcd34d;
+  --atg-warning-light: #78350f;
+  --atg-warning-fg: #fde68a;
+
+  --atg-danger: #f87171;
+  --atg-danger-hover: #fca5a5;
+  --atg-danger-light: #7f1d1d;
+  --atg-danger-fg: #fecaca;
+
+  --atg-info: #38bdf8;
+  --atg-info-hover: #7dd3fc;
+  --atg-info-light: #0c4a6e;
+  --atg-info-fg: #bae6fd;
 }
