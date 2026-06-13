@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
+import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
 import { currentYearMonth } from '../../lib/availability-dates';
 import { getHebergementsErrorMessage } from '../../lib/hebergements-errors';
@@ -27,6 +28,18 @@ export function RoomAvailabilityPage({ propertyId, roomId }: RoomAvailabilityPag
       }
   >({ status: 'loading' });
   const [gridKey, setGridKey] = useState(0);
+
+  useAdminEditPageMeta({
+    ready: state.status === 'ready',
+    title: 'Disponibilités',
+    breadcrumbTail:
+      state.status === 'ready'
+        ? [
+            { label: state.propertyName, href: `/hebergements/${propertyId}` },
+            { label: state.roomName },
+          ]
+        : undefined,
+  });
 
   const handleBulkApplied = useCallback(() => {
     setGridKey((k) => k + 1);
@@ -88,33 +101,13 @@ export function RoomAvailabilityPage({ propertyId, roomId }: RoomAvailabilityPag
     );
   }
 
-  const { propertyName, roomName, currency, basePriceCents } = state;
+  const { roomName, currency, basePriceCents } = state;
 
   return (
     <div>
-      <nav className="mb-6 text-sm text-atg-muted">
-        <Link href="/hebergements" className="text-primary hover:underline">
-          Hébergements
-        </Link>
-        <span className="mx-2">/</span>
-        <Link
-          href={`/hebergements/${propertyId}`}
-          className="text-primary hover:underline"
-        >
-          {propertyName}
-        </Link>
-        <span className="mx-2">/</span>
-        <span>{roomName}</span>
-        <span className="mx-2">/</span>
-        <span className="text-atg-fg">Disponibilités</span>
-      </nav>
-
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Disponibilités</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Chambre {roomName} — stock et prix par nuit ({currency}).
-        </p>
-      </div>
+      <p className="mb-8 text-sm text-atg-muted">
+        Chambre {roomName} — stock et prix par nuit ({currency}).
+      </p>
 
       <div className="space-y-10">
         <RoomAvailabilityBulkForm

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { AdminPageIntro } from '../../../../components/admin-page-intro';
 import { UserPaymentMethodsList } from '../../../../components/users/user-payment-methods-list';
 
 export const metadata: Metadata = {
@@ -8,12 +9,7 @@ export const metadata: Metadata = {
 export default function UtilisateurMoyensPaiementPage() {
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Moyens de paiement</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Cartes et moyens de paiement enregistrés par les utilisateurs.
-        </p>
-      </div>
+      <AdminPageIntro description={"Cartes et moyens de paiement enregistrés par les utilisateurs."} />
       <UserPaymentMethodsList />
     </div>
   );

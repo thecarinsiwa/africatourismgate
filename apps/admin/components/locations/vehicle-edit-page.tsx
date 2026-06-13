@@ -3,6 +3,7 @@
 import type { Vehicle } from '@africatourismgate/types';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
 import { getLocationsErrorMessage } from '../../lib/locations-errors';
 import { VehicleAvailabilitySection } from './vehicle-availability-section';
@@ -23,6 +24,15 @@ export function VehicleEditPage({ vehicleId }: VehicleEditPageProps) {
         categoryName: string;
       }
   >({ status: 'loading' });
+
+  useAdminEditPageMeta({
+    ready: state.status === 'ready',
+    title: 'Modifier le véhicule',
+    entityLabel:
+      state.status === 'ready'
+        ? (state.vehicle.licensePlate ?? state.categoryName)
+        : undefined,
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -77,18 +87,15 @@ export function VehicleEditPage({ vehicleId }: VehicleEditPageProps) {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Modifier le véhicule</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          {vehicle.licensePlate ? (
-            <code className="font-mono text-xs">{vehicle.licensePlate}</code>
-          ) : (
-            'Sans plaque'
-          )}
-          {' · '}
-          {agencyName} · {categoryName}
-        </p>
-      </div>
+      <p className="mb-8 text-sm text-atg-muted">
+        {vehicle.licensePlate ? (
+          <code className="font-mono text-xs">{vehicle.licensePlate}</code>
+        ) : (
+          'Sans plaque'
+        )}
+        {' · '}
+        {agencyName} · {categoryName}
+      </p>
       <VehicleForm mode="edit" vehicleId={vehicleId} initialVehicle={vehicle} />
       <VehicleAvailabilitySection vehicleId={vehicleId} />
     </div>

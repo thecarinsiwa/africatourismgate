@@ -3,6 +3,7 @@
 import type { Activity } from '@africatourismgate/types';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
 import { getActivitiesErrorMessage } from '../../lib/activities-errors';
 import { ActivityForm } from './activity-form';
@@ -18,6 +19,12 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
     | { status: 'error'; message: string }
     | { status: 'ready'; activity: Activity }
   >({ status: 'loading' });
+
+  useAdminEditPageMeta({
+    ready: state.status === 'ready',
+    title: "Modifier l'activité",
+    entityLabel: state.status === 'ready' ? state.activity.title : undefined,
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -57,10 +64,6 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Modifier l’activité</h1>
-        <p className="mt-2 text-sm text-atg-muted">{activity.title}</p>
-      </div>
       <ActivityForm mode="edit" activityId={activityId} initialActivity={activity} />
       <ActivitySchedulesSection activityId={activityId} />
     </div>

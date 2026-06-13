@@ -2,8 +2,8 @@
 
 import type { Ship } from '@africatourismgate/types';
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
-import { useSetAdminPageMeta } from '../admin-page-meta-context';
+import { useEffect, useState } from 'react';
+import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
 import { getCroisieresErrorMessage } from '../../lib/croisieres-errors';
 import { CabinsSection } from './cabins-section';
@@ -19,18 +19,11 @@ export function ShipEditPage({ shipId }: ShipEditPageProps) {
     | { status: 'ready'; ship: Ship; lineName: string }
   >({ status: 'loading' });
 
-  const pageMeta = useMemo(
-    () =>
-      state.status === 'ready'
-        ? {
-            title: 'Modifier le navire',
-            breadcrumbTail: [{ label: state.ship.name }],
-          }
-        : {},
-    [state],
-  );
-
-  useSetAdminPageMeta(pageMeta);
+  useAdminEditPageMeta({
+    ready: state.status === 'ready',
+    title: 'Modifier le navire',
+    entityLabel: state.status === 'ready' ? state.ship.name : undefined,
+  });
 
   useEffect(() => {
     let cancelled = false;

@@ -8,9 +8,7 @@ export const metadata: Metadata = {
 export default function PermissionsPage() {
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Permissions</h1>
-      </div>
+      
       <PermissionsList />
     </div>
   );

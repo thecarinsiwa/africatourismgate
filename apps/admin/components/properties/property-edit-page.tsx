@@ -2,8 +2,8 @@
 
 import type { Property } from '@africatourismgate/types';
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
-import { useSetAdminPageMeta } from '../admin-page-meta-context';
+import { useEffect, useState } from 'react';
+import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
 import { getHebergementsErrorMessage } from '../../lib/hebergements-errors';
 import { PropertyAmenitiesSection } from './property-amenities-section';
@@ -22,18 +22,11 @@ export function PropertyEditPage({ propertyId }: PropertyEditPageProps) {
     | { status: 'ready'; property: Property }
   >({ status: 'loading' });
 
-  const pageMeta = useMemo(
-    () =>
-      state.status === 'ready'
-        ? {
-            title: "Modifier l'hébergement",
-            breadcrumbTail: [{ label: state.property.name }],
-          }
-        : {},
-    [state],
-  );
-
-  useSetAdminPageMeta(pageMeta);
+  useAdminEditPageMeta({
+    ready: state.status === 'ready',
+    title: "Modifier l'hébergement",
+    entityLabel: state.status === 'ready' ? state.property.name : undefined,
+  });
 
   useEffect(() => {
     let cancelled = false;

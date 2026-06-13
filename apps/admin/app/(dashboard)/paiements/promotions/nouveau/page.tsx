@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { AdminPageIntro } from '../../../../../components/admin-page-intro';
 import { PaymentsPromoSubnav } from '../../../../../components/payments/payments-promo-subnav';
 import { PromotionForm } from '../../../../../components/promotions/promotion-form';
 
@@ -10,12 +11,7 @@ export default function NouvellePromotionPage() {
   return (
     <div>
       <PaymentsPromoSubnav />
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Nouvelle promotion</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Définissez la campagne, la réduction éventuelle et les dates de validité.
-        </p>
-      </div>
+      <AdminPageIntro description={"Définissez la campagne, la réduction éventuelle et les dates de validité."} />
       <PromotionForm mode="create" />
     </div>
   );

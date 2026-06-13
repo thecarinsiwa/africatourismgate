@@ -4,6 +4,7 @@ import { Button, Card, DataTableBadge } from '@africatourismgate/ui';
 import type { AdminReviewDetail, ReviewStatus } from '@africatourismgate/types';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
+import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
 import { getReviewsErrorMessage } from '../../lib/reviews-errors';
 
@@ -43,6 +44,15 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
     | { status: 'error'; message: string }
     | { status: 'ready'; review: AdminReviewDetail }
   >({ status: 'loading' });
+
+  useAdminEditPageMeta({
+    ready: state.status === 'ready',
+    title: 'Avis',
+    entityLabel:
+      state.status === 'ready'
+        ? `${state.review.rating}/5 — ${state.review.authorFirstName ?? state.review.authorEmail ?? state.review.id.slice(0, 8)}`
+        : undefined,
+  });
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -128,9 +138,6 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center gap-3">
-        <Button href="/contenu/avis" variant="ghost" size="sm">
-          ← Liste des avis
-        </Button>
         <DataTableBadge variant={statusVariants[review.status]}>
           {statusLabels[review.status]}
         </DataTableBadge>

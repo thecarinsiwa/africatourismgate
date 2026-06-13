@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import { AdminPageIntro } from '../../../../components/admin-page-intro';
 import { VehiclesList } from '../../../../components/locations/vehicles-list';
 
 export const metadata: Metadata = {
@@ -9,27 +9,7 @@ export const metadata: Metadata = {
 export default function LocationsPage() {
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Locations véhicules</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Véhicules par agence, catégories et créneaux de disponibilité.
-        </p>
-        <p className="mt-3 text-sm">
-          <Link
-            href="/produits/locations/agences"
-            className="font-medium text-primary hover:underline"
-          >
-            Agences de location
-          </Link>
-          <span className="mx-2 text-atg-muted">·</span>
-          <Link
-            href="/produits/locations/categories"
-            className="font-medium text-primary hover:underline"
-          >
-            Catégories
-          </Link>
-        </p>
-      </div>
+      <AdminPageIntro description={"Véhicules par agence, catégories et créneaux de disponibilité.\r\n        </p>\r\n        <p className=\"mt-3 text-sm\">\r\n          <Link\r\n            href=\"/produits/locations/agences\"\r\n            className=\"font-medium text-primary hover:underline\"\r\n          >\r\n            Agences de location\r\n          </Link>\r\n          <span className=\"mx-2 text-atg-muted\">·</span>\r\n          <Link\r\n            href=\"/produits/locations/categories\"\r\n            className=\"font-medium text-primary hover:underline\"\r\n          >\r\n            Catégories\r\n          </Link>"} />
       <VehiclesList />
     </div>
   );

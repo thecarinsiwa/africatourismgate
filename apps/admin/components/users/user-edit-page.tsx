@@ -3,6 +3,7 @@
 import type { User } from '@africatourismgate/types';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
 import { getUsersErrorMessage } from '../../lib/users-errors';
 import { UserRoleAssignmentsPanel } from '../rbac/user-role-assignments-panel';
@@ -18,6 +19,12 @@ export function UserEditPage({ userId }: UserEditPageProps) {
     | { status: 'error'; message: string }
     | { status: 'ready'; user: User }
   >({ status: 'loading' });
+
+  useAdminEditPageMeta({
+    ready: state.status === 'ready',
+    title: "Modifier l'utilisateur",
+    entityLabel: state.status === 'ready' ? state.user.email : undefined,
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -65,10 +72,6 @@ export function UserEditPage({ userId }: UserEditPageProps) {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Modifier l’utilisateur</h1>
-        <p className="mt-2 text-sm text-atg-muted">{user.email}</p>
-      </div>
       <UserForm mode="edit" userId={userId} initialUser={user} />
       <UserRoleAssignmentsPanel userId={userId} />
     </div>

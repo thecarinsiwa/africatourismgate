@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { AdminPageIntro } from '../../../../components/admin-page-intro';
 import { RolesList } from '../../../../components/rbac/roles-list';
 
 export const metadata: Metadata = {
@@ -8,12 +9,7 @@ export const metadata: Metadata = {
 export default function RolesPage() {
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Rôles et permissions</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Gérez les rôles, la matrice des permissions et les assignations utilisateurs.
-        </p>
-      </div>
+      <AdminPageIntro description={"Gérez les rôles, la matrice des permissions et les assignations utilisateurs."} />
       <RolesList />
     </div>
   );

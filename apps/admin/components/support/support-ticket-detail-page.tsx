@@ -6,8 +6,8 @@ import type {
   SupportTicketPriority,
   SupportTicketStatus,
 } from '@africatourismgate/types';
-import Link from 'next/link';
 import { useCallback, useEffect, useId, useState } from 'react';
+import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
 import { getSupportTicketsErrorMessage } from '../../lib/support-tickets-errors';
 
@@ -72,6 +72,12 @@ export function SupportTicketDetailPage({ ticketId }: SupportTicketDetailPagePro
     | { status: 'error'; message: string }
     | { status: 'ready'; ticket: AdminSupportTicketDetail }
   >({ status: 'loading' });
+
+  useAdminEditPageMeta({
+    ready: state.status === 'ready',
+    title: 'Ticket support',
+    entityLabel: state.status === 'ready' ? state.ticket.subject : undefined,
+  });
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -171,14 +177,7 @@ export function SupportTicketDetailPage({ ticketId }: SupportTicketDetailPagePro
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <Link
-            href="/contenu/tickets"
-            className="text-sm text-atg-muted hover:text-atg-fg"
-          >
-            ← Tickets support
-          </Link>
-          <h2 className="mt-2 text-xl font-bold text-atg-fg">{ticket.subject}</h2>
-          <p className="mt-1 text-sm text-atg-muted">
+          <p className="text-sm text-atg-muted">
             Ouvert le {formatDateTime(ticket.createdAt)}
           </p>
         </div>

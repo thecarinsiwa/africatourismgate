@@ -16,6 +16,7 @@ import type { StoredSession } from '../lib/auth/session';
 import {
   breadcrumbFromPath,
   buildAdminBreadcrumbHrefLabels,
+  resolveAdminPageTitle,
 } from '../lib/breadcrumb-from-path';
 import { useOrganizationThemeOptional } from './organization-theme-provider';
 import { SessionSync } from './session-sync';
@@ -55,8 +56,14 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
     [pathname, hrefLabels, meta.breadcrumbTail],
   );
 
-  const showShellBreadcrumb =
-    breadcrumbItems.length >= 2 || Boolean(meta.title) || Boolean(meta.breadcrumbTail?.length);
+  const autoTitle = useMemo(
+    () => resolveAdminPageTitle(pathname, hrefLabels),
+    [pathname, hrefLabels],
+  );
+
+  const headerTitle = meta.title ?? autoTitle;
+
+  const showShellBreadcrumb = breadcrumbItems.length >= 2;
 
   useEffect(() => {
     function syncSession() {
@@ -92,7 +99,7 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
   return (
     <DashboardShell
       navItems={navItems}
-      title={meta.title}
+      title={headerTitle}
       breadcrumb={
         showShellBreadcrumb ? <Breadcrumb items={breadcrumbItems} /> : undefined
       }

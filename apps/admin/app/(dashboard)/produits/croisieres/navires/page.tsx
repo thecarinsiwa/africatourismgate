@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import { AdminPageIntro } from '../../../../../components/admin-page-intro';
 import { ShipsList } from '../../../../../components/cruises/ships-list';
 
 export const metadata: Metadata = {
@@ -9,17 +9,7 @@ export const metadata: Metadata = {
 export default function CroisieresNaviresPage() {
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Navires</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Navires, itinéraires, escales et cabines.
-        </p>
-        <p className="mt-3 text-sm">
-          <Link href="/produits/croisieres" className="font-medium text-primary hover:underline">
-            ← Départs
-          </Link>
-        </p>
-      </div>
+      <AdminPageIntro description={"Navires, itinéraires, escales et cabines.\r\n        </p>\r\n        <p className=\"mt-3 text-sm\">\r\n          <Link href=\"/produits/croisieres\" className=\"font-medium text-primary hover:underline\">\r\n            ← Départs\r\n          </Link>"} />
       <ShipsList />
     </div>
   );

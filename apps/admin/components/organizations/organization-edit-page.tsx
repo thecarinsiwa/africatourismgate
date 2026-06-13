@@ -3,6 +3,7 @@
 import type { Organization } from '@africatourismgate/types';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
 import { getOrganizationsErrorMessage } from '../../lib/organizations-errors';
 import { OrganizationForm } from './organization-form';
@@ -17,6 +18,12 @@ export function OrganizationEditPage({ organizationId }: OrganizationEditPagePro
     | { status: 'error'; message: string }
     | { status: 'ready'; organization: Organization }
   >({ status: 'loading' });
+
+  useAdminEditPageMeta({
+    ready: state.status === 'ready',
+    title: "Modifier l'organisation",
+    entityLabel: state.status === 'ready' ? state.organization.name : undefined,
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -61,13 +68,10 @@ export function OrganizationEditPage({ organizationId }: OrganizationEditPagePro
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Modifier l’organisation</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          {organization.name}{' '}
-          <span className="font-mono text-xs text-atg-muted">({organization.slug})</span>
-        </p>
-      </div>
+      <p className="mb-8 text-sm text-atg-muted">
+        {organization.name}{' '}
+        <span className="font-mono text-xs text-atg-muted">({organization.slug})</span>
+      </p>
       <OrganizationForm
         mode="edit"
         organizationId={organizationId}

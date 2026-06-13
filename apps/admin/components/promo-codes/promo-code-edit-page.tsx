@@ -3,6 +3,7 @@
 import type { PromoCode } from '@africatourismgate/types';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { PaymentsPromoSubnav } from '../payments/payments-promo-subnav';
 import { getApiClient } from '../../lib/auth/api';
 import { getPromoCodesErrorMessage } from '../../lib/promo-codes-errors';
@@ -18,6 +19,12 @@ export function PromoCodeEditPage({ promoCodeId }: PromoCodeEditPageProps) {
     | { status: 'error'; message: string }
     | { status: 'ready'; promoCode: PromoCode }
   >({ status: 'loading' });
+
+  useAdminEditPageMeta({
+    ready: state.status === 'ready',
+    title: 'Modifier le code promo',
+    entityLabel: state.status === 'ready' ? state.promoCode.code : undefined,
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -70,14 +77,6 @@ export function PromoCodeEditPage({ promoCodeId }: PromoCodeEditPageProps) {
   return (
     <div>
       <PaymentsPromoSubnav />
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Modifier le code promo</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          <code className="rounded bg-atg-elevated px-1.5 py-0.5 font-mono text-xs">
-            {promoCode.code}
-          </code>
-        </p>
-      </div>
       <PromoCodeForm mode="edit" promoCodeId={promoCodeId} initialPromoCode={promoCode} />
     </div>
   );

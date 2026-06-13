@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { AdminPageIntro } from '../../../../components/admin-page-intro';
 import { OrganizationForm } from '../../../../components/organizations/organization-form';
 
 export const metadata: Metadata = {
@@ -8,10 +9,7 @@ export const metadata: Metadata = {
 export default function NouvelleOrganisationPage() {
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Nouvelle organisation</h1>
-        <p className="mt-2 text-sm text-atg-muted">Créer une organisation partenaire.</p>
-      </div>
+      <AdminPageIntro description={"Créer une organisation partenaire."} />
       <OrganizationForm mode="create" />
     </div>
   );

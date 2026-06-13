@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { AdminPageIntro } from '../../../../components/admin-page-intro';
 import { ActivitiesList } from '../../../../components/activities/activities-list';
 
 export const metadata: Metadata = {
@@ -8,12 +9,7 @@ export const metadata: Metadata = {
 export default function ActivitesPage() {
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Activités</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Expériences, fournisseurs et créneaux par destination.
-        </p>
-      </div>
+      <AdminPageIntro description={"Expériences, fournisseurs et créneaux par destination."} />
       <ActivitiesList />
     </div>
   );
