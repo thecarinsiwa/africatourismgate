@@ -76,10 +76,6 @@ export function PackageBookingSidebar({
           <p className="text-sm text-gray-600 dark:text-atg-muted">{t.resolvingPackage}</p>
         ) : null}
 
-        {!canAddToCart && startDate && !resolving && (
-          <p className="text-sm text-amber-700 dark:text-amber-300">{t.someItemsUnavailable}</p>
-        )}
-
         {!startDate && (
           <p className="text-sm text-amber-700 dark:text-amber-300">{t.selectDepartureHint}</p>
         )}

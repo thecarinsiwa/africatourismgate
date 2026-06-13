@@ -144,7 +144,7 @@ export function PackageDetailPageContent({
     setResolving(true);
     setResolveErrors([]);
 
-    void autoResolvePackageLines(detail.items, dates)
+    void autoResolvePackageLines(packageId, detail.items, dates)
       .then((result) => {
         if (cancelled) return;
         setLineSelections(result.lines);
@@ -161,7 +161,7 @@ export function PackageDetailPageContent({
     return () => {
       cancelled = true;
     };
-  }, [detail, startDate, durationDays, travelers]);
+  }, [detail, startDate, durationDays, travelers, packageId]);
 
   function handleStartDateChange(value: string) {
     setStartDate(value);
@@ -350,7 +350,7 @@ export function PackageDetailPageContent({
                     />
                     {!resolving && resolveErrors.length > 0 ? (
                       <p className="text-sm text-amber-700 dark:text-amber-300">
-                        {p.someItemsUnavailable}
+                        {p.someItemsMissing}
                       </p>
                     ) : null}
                   </div>

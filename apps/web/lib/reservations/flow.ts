@@ -446,6 +446,13 @@ export function buildPackageReservationDraft(
   return buildPackageLinesDraft(packageId, items, selections);
 }
 
+export function isPackageReservationDraftStructurallyComplete(
+  draft: PackageReservationDraft,
+  items: PackageItemEnriched[],
+): boolean {
+  return buildPackageReservationDraft(draft.packageId, items, draft.lines) !== null;
+}
+
 function packageLineToCheckoutItem(line: PackageLineSelection): BookingCheckoutItem {
   switch (line.lineType) {
     case 'activity':

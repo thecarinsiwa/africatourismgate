@@ -31,7 +31,7 @@ import {
   isFlightReservationDraft,
   isCabinOfferBookable,
   isPackageReservationDraft,
-  isPackageReservationDraftReady,
+  isPackageReservationDraftStructurallyComplete,
   isRoomReservationDraft,
   isVehicleReservationDraft,
   type ReservationDraft,
@@ -123,11 +123,11 @@ export function ReservationCartPageContent({ draft }: Props) {
   );
 
   const packageReady = useMemo(() => {
-    if (!draft || !isPackageReservationDraft(draft) || !packageDetail || !packageValidation) {
+    if (!draft || !isPackageReservationDraft(draft) || !packageDetail) {
       return false;
     }
-    return isPackageReservationDraftReady(draft, packageValidation);
-  }, [draft, packageDetail, packageValidation]);
+    return isPackageReservationDraftStructurallyComplete(draft, packageDetail.items);
+  }, [draft, packageDetail]);
 
   useEffect(() => {
     let cancelled = false;

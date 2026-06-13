@@ -516,8 +516,10 @@ export type Translations = {
     resolvingItem: string;
     itemAutoResolved: string;
     itemUnavailable: string;
+    itemMissing: string;
     itemResolveError: string;
     someItemsUnavailable: string;
+    someItemsMissing: string;
     notFound: string;
     notFoundHint: string;
     backToList: string;
@@ -1334,16 +1336,19 @@ const fr: Translations = {
     travelersLabel: 'Voyageurs',
     durationDaysLabel: '{days} jour(s)',
     packageBookingHint:
-      'Choisissez la date de départ : la date de retour est calculée automatiquement ({days} jour(s)). Les prestations incluses sont résolues pour vous.',
+      'Choisissez la date de départ : la date de retour est calculée automatiquement ({days} jour(s)). Les prestations incluses sont préparées sans contrôle de disponibilité.',
     selectDepartureHint: 'Indiquez une date de départ pour préparer la réservation.',
-    includedServicesTitle: 'Prestations résolues automatiquement',
+    includedServicesTitle: 'Prestations incluses',
     resolvingPackage: 'Vérification des disponibilités…',
     resolvingItem: 'En cours…',
-    itemAutoResolved: 'Disponible',
+    itemAutoResolved: 'Inclus',
     itemUnavailable: 'Indisponible',
+    itemMissing: 'Non configuré',
     itemResolveError: 'Erreur',
     someItemsUnavailable:
       'Certaines prestations ne sont pas disponibles pour ces dates. Essayez une autre date de départ.',
+    someItemsMissing:
+      'Certaines prestations du forfait n’ont pas pu être associées au catalogue.',
     notFound: 'Forfait introuvable',
     notFoundHint: 'Ce forfait n\'existe pas ou n\'est plus disponible.',
     backToList: 'Retour aux forfaits',
@@ -2185,16 +2190,19 @@ const en: Translations = {
     travelersLabel: 'Travelers',
     durationDaysLabel: '{days} day(s)',
     packageBookingHint:
-      'Pick a departure date — the return date is calculated automatically ({days} day(s)). Included services are resolved for you.',
+      'Pick a departure date — the return date is calculated automatically ({days} day(s)). Included services are prepared without availability checks.',
     selectDepartureHint: 'Enter a departure date to prepare your booking.',
-    includedServicesTitle: 'Services resolved automatically',
+    includedServicesTitle: 'Included services',
     resolvingPackage: 'Checking availability…',
     resolvingItem: 'Pending…',
-    itemAutoResolved: 'Available',
+    itemAutoResolved: 'Included',
     itemUnavailable: 'Unavailable',
+    itemMissing: 'Not configured',
     itemResolveError: 'Error',
     someItemsUnavailable:
       'Some included services are unavailable for these dates. Try another departure date.',
+    someItemsMissing:
+      'Some package services could not be matched to catalog entries.',
     notFound: 'Package not found',
     notFoundHint: 'This package does not exist or is no longer available.',
     backToList: 'Back to packages',

@@ -622,9 +622,12 @@ export const es: Translations = {
     resolvingItem: 'En curso…',
     itemAutoResolved: 'Disponible',
     itemUnavailable: 'No disponible',
+    itemMissing: 'No configurado',
     itemResolveError: 'Error',
     someItemsUnavailable:
       'Algunos servicios no están disponibles para estas fechas. Pruebe otra fecha de salida.',
+    someItemsMissing:
+      'Algunos servicios del paquete no pudieron asociarse al catálogo.',
     notFound: 'Paquete no encontrado',
     notFoundHint: 'Este paquete no existe o ya no está disponible.',
     backToList: 'Volver a paquetes',

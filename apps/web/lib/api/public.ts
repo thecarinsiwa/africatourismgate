@@ -363,3 +363,46 @@ export async function browsePackages(
 export async function getPackageDetail(id: string): Promise<PackageDetail> {
   return fetchPublic<PackageDetail>(`/public/packages/${encodeURIComponent(id)}`);
 }
+
+export type PackageResolvedLineQuery = {
+  startDate: string;
+  endDate: string;
+  travelers: number;
+};
+
+export type PackageResolvedLine = {
+  lineType: 'property' | 'flight' | 'vehicle' | 'cruise' | 'activity';
+  itemId: string;
+  scheduleId?: string;
+  date?: string;
+  participants?: number;
+  roomId?: string;
+  checkIn?: string;
+  checkOut?: string;
+  guests?: number;
+  flightClassId?: string;
+  departureDate?: string;
+  passengers?: number;
+  availabilitySlotId?: string;
+  pickupDate?: string;
+  returnDate?: string;
+  sailingId?: string;
+  cabinAvailabilityId?: string;
+};
+
+function buildPackageResolveLinesQuery(params: PackageResolvedLineQuery): string {
+  const qs = new URLSearchParams();
+  qs.set('startDate', params.startDate);
+  qs.set('endDate', params.endDate);
+  qs.set('travelers', String(params.travelers));
+  return `?${qs.toString()}`;
+}
+
+export async function getPackageResolvedLines(
+  packageId: string,
+  params: PackageResolvedLineQuery,
+): Promise<PackageResolvedLine[]> {
+  return fetchPublic<PackageResolvedLine[]>(
+    `/public/packages/${encodeURIComponent(packageId)}/resolve-lines${buildPackageResolveLinesQuery(params)}`,
+  );
+}

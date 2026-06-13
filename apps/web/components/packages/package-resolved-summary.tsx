@@ -51,7 +51,7 @@ export function PackageResolvedSummary({
                 </span>
               ) : (
                 <span className="text-xs font-medium text-amber-700 dark:text-amber-300">
-                  {error?.message === 'error' ? t.itemResolveError : t.itemUnavailable}
+                  {t.itemMissing}
                 </span>
               )}
             </div>
