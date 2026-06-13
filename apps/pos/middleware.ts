@@ -74,6 +74,7 @@ async function ensureValidSession(
       user: session.user,
       selectedOrganizationId: session.selectedOrganizationId,
       selectedOrganizationName: session.selectedOrganizationName,
+      selectedOrganizationSlug: session.selectedOrganizationSlug,
     }),
     remember,
     refreshed: true,

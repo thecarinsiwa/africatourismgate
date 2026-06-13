@@ -37,7 +37,7 @@ function resolvePostLoginPath(next: string | null, _session: PosStoredSession): 
 async function enrichSessionWithOrganization(
   session: PosStoredSession,
 ): Promise<PosStoredSession> {
-  if (session.selectedOrganizationName) {
+  if (session.selectedOrganizationName && session.selectedOrganizationSlug) {
     return session;
   }
 
@@ -55,6 +55,7 @@ async function enrichSessionWithOrganization(
       ...session,
       selectedOrganizationId: organization.id,
       selectedOrganizationName: organization.name,
+      selectedOrganizationSlug: organization.slug,
     };
   } catch {
     return session;
