@@ -10,7 +10,7 @@ export const es: Translations = {
     home: 'Inicio',
     about: 'Acerca de',
     gallery: 'Galería',
-    pages: 'Páginas',
+    pages: 'Nuestros productos',
     blog: 'Blog',
     contact: 'Contacto',
     hotels: 'Hoteles',
