@@ -2,7 +2,6 @@
 
 import { Card, Skeleton } from '@africatourismgate/ui';
 import { useTranslations } from 'next-intl';
-import { useTheme } from 'next-themes';
 import { useEffect, useMemo, useState } from 'react';
 import {
   Bar,
@@ -16,16 +15,13 @@ import {
 } from 'recharts';
 import { fetchDashboardTrend, type TrendPoint } from '../lib/dashboard-trend-data';
 import { formatMoney } from '../lib/format-money';
+import { useChartTheme } from '../lib/use-chart-theme';
 import { useDashboardPeriod } from './dashboard-period-context';
 
 type ChartState =
   | { status: 'loading' }
   | { status: 'error' }
   | { status: 'ready'; points: TrendPoint[]; currency: string };
-
-/** Palette alignée sur la référence dashboard (teal + blue). */
-const COLOR_BOOKINGS = '#26C6DA';
-const COLOR_REVENUE = '#2196F3';
 
 type ChartRow = {
   date: string;
@@ -55,12 +51,16 @@ function ChartTooltip({
   bookingsLabel,
   revenueLabel,
   currency,
+  bookingsColor,
+  revenueColor,
 }: {
   active?: boolean;
   payload?: TooltipPayload[];
   bookingsLabel: string;
   revenueLabel: string;
   currency: string;
+  bookingsColor: string;
+  revenueColor: string;
 }) {
   if (!active || !payload?.[0]?.payload) return null;
   const row = payload[0].payload;
@@ -69,11 +69,19 @@ function ChartTooltip({
     <div className="rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-xs shadow-md">
       <p className="font-medium text-atg-fg">{row.label}</p>
       <p className="mt-1 text-atg-muted">
-        <span className="inline-block h-2 w-2 rounded-sm" style={{ backgroundColor: COLOR_BOOKINGS }} />{' '}
+        <span
+          className="inline-block h-2 w-2 rounded-sm"
+          style={{ backgroundColor: bookingsColor }}
+          aria-hidden
+        />{' '}
         {bookingsLabel} : <span className="font-semibold text-atg-fg">{row.bookings}</span>
       </p>
       <p className="mt-0.5 text-atg-muted">
-        <span className="inline-block h-2 w-2 rounded-sm" style={{ backgroundColor: COLOR_REVENUE }} />{' '}
+        <span
+          className="inline-block h-2 w-2 rounded-sm"
+          style={{ backgroundColor: revenueColor }}
+          aria-hidden
+        />{' '}
         {revenueLabel} :{' '}
         <span className="font-semibold text-atg-fg">
           {formatMoney(row.revenueCents, currency)}
@@ -86,16 +94,20 @@ function ChartTooltip({
 function ChartLegend({
   bookingsLabel,
   revenueLabel,
+  bookingsColor,
+  revenueColor,
 }: {
   bookingsLabel: string;
   revenueLabel: string;
+  bookingsColor: string;
+  revenueColor: string;
 }) {
   return (
     <ul className="mt-2 flex items-center justify-center gap-6 text-xs text-atg-muted">
       <li className="inline-flex items-center gap-2">
         <span
           className="h-2.5 w-2.5 rounded-sm"
-          style={{ backgroundColor: COLOR_BOOKINGS }}
+          style={{ backgroundColor: bookingsColor }}
           aria-hidden
         />
         {bookingsLabel}
@@ -103,7 +115,7 @@ function ChartLegend({
       <li className="inline-flex items-center gap-2">
         <span
           className="h-2.5 w-2.5 rounded-sm"
-          style={{ backgroundColor: COLOR_REVENUE }}
+          style={{ backgroundColor: revenueColor }}
           aria-hidden
         />
         {revenueLabel}
@@ -115,12 +127,8 @@ function ChartLegend({
 export function DashboardTrendChart({ className }: { className?: string }) {
   const t = useTranslations('dashboard.chart');
   const { period } = useDashboardPeriod();
-  const { resolvedTheme } = useTheme();
+  const chartTheme = useChartTheme();
   const [state, setState] = useState<ChartState>({ status: 'loading' });
-
-  const isDark = resolvedTheme === 'dark';
-  const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
-  const tickColor = isDark ? '#94a3b8' : '#64748b';
 
   useEffect(() => {
     let cancelled = false;
@@ -163,6 +171,8 @@ export function DashboardTrendChart({ className }: { className?: string }) {
     return Math.max(0, Math.ceil(rows.length / 8) - 1);
   }, [rows]);
 
+  const chartKey = `${chartTheme.bookings}-${chartTheme.revenue}-${chartTheme.tick}`;
+
   return (
     <Card variant="dashboard" padding="sm" className={className}>
       <div className="flex items-center justify-between gap-3">
@@ -176,7 +186,7 @@ export function DashboardTrendChart({ className }: { className?: string }) {
             <p className="text-sm text-atg-muted">{t('loading')}</p>
           </div>
         ) : state.status === 'error' ? (
-          <p className="py-16 text-center text-sm text-red-600 dark:text-red-400" role="alert">
+          <p className="py-16 text-center text-sm text-atg-danger" role="alert">
             {t('error')}
           </p>
         ) : !hasData || !rows ? (
@@ -185,32 +195,35 @@ export function DashboardTrendChart({ className }: { className?: string }) {
           <div className="w-full" role="img" aria-label={t('ariaLabel')}>
             <ResponsiveContainer width="100%" height={280}>
               <BarChart
+                key={chartKey}
                 data={rows}
                 margin={{ top: 8, right: 8, left: 0, bottom: 4 }}
                 barCategoryGap="28%"
               >
-                <CartesianGrid stroke={gridColor} vertical={false} />
+                <CartesianGrid stroke={chartTheme.grid} vertical={false} />
                 <XAxis
                   dataKey="label"
-                  tick={{ fill: tickColor, fontSize: 11 }}
+                  tick={{ fill: chartTheme.tick, fontSize: 11 }}
                   axisLine={false}
                   tickLine={false}
                   interval={xInterval}
                 />
                 <YAxis
-                  tick={{ fill: tickColor, fontSize: 11 }}
+                  tick={{ fill: chartTheme.tick, fontSize: 11 }}
                   axisLine={false}
                   tickLine={false}
                   tickFormatter={formatYAxisTick}
                   width={36}
                 />
                 <Tooltip
-                  cursor={{ fill: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)' }}
+                  cursor={{ fill: chartTheme.cursor }}
                   content={
                     <ChartTooltip
                       bookingsLabel={t('bookings')}
                       revenueLabel={t('revenue')}
                       currency={state.currency}
+                      bookingsColor={chartTheme.bookings}
+                      revenueColor={chartTheme.revenue}
                     />
                   }
                 />
@@ -218,7 +231,7 @@ export function DashboardTrendChart({ className }: { className?: string }) {
                   dataKey="bookings"
                   name={t('bookings')}
                   stackId="activity"
-                  fill={COLOR_BOOKINGS}
+                  fill={chartTheme.bookings}
                   radius={[0, 0, 0, 0]}
                   maxBarSize={48}
                 />
@@ -226,11 +239,20 @@ export function DashboardTrendChart({ className }: { className?: string }) {
                   dataKey="revenue"
                   name={t('revenue')}
                   stackId="activity"
-                  fill={COLOR_REVENUE}
+                  fill={chartTheme.revenue}
                   radius={[4, 4, 0, 0]}
                   maxBarSize={48}
                 />
-                <Legend content={<ChartLegend bookingsLabel={t('bookings')} revenueLabel={t('revenue')} />} />
+                <Legend
+                  content={
+                    <ChartLegend
+                      bookingsLabel={t('bookings')}
+                      revenueLabel={t('revenue')}
+                      bookingsColor={chartTheme.bookings}
+                      revenueColor={chartTheme.revenue}
+                    />
+                  }
+                />
               </BarChart>
             </ResponsiveContainer>
 
