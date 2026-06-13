@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { PageHeader } from '@africatourismgate/ui';
 import { PropertiesList } from '../../../components/properties/properties-list';
 
 export const metadata: Metadata = {
@@ -8,12 +9,10 @@ export const metadata: Metadata = {
 export default function HebergementsPage() {
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Hébergements</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Propriétés, chambres et équipements. Filtre par destination.
-        </p>
-      </div>
+      <PageHeader
+        title="Hébergements"
+        description="Propriétés, chambres et équipements. Filtre par destination."
+      />
       <PropertiesList />
     </div>
   );

@@ -46,6 +46,21 @@ export { Input, type InputProps } from './components/input';
 export { PasswordInput, type PasswordInputProps } from './components/password-input';
 export { Checkbox, type CheckboxProps } from './components/checkbox';
 export { Card, type CardProps } from './components/card';
+export { PageHeader, type PageHeaderProps } from './components/page-header';
+export { Breadcrumb, type BreadcrumbProps, type BreadcrumbItem } from './components/breadcrumb';
+export { Select, type SelectProps, type SelectOption } from './components/select';
+export { Modal, type ModalProps } from './components/modal';
+export {
+  AlertDialog,
+  type AlertDialogProps,
+  type AlertDialogVariant,
+} from './components/alert-dialog';
+export {
+  ToastProvider,
+  useToast,
+  type ToastOptions,
+  type ToastVariant,
+} from './components/toast';
 export { DataTable, type DataTableProps, type DataTableAlign } from './components/data-table';
 export type { ColumnDef } from './components/data-table';
 export { DataTableBadge, type DataTableBadgeProps, type DataTableBadgeVariant } from './components/data-table-badge';

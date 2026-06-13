@@ -5,7 +5,6 @@ import {
   DataTable,
   DataTableActionButton,
   DataTableActions,
-  DataTableBadge,
   DataTablePagination,
   type ColumnDef,
 } from '@africatourismgate/ui';
