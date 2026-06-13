@@ -319,6 +319,13 @@ export type {
   OrganizationSetting,
   OrganizationSettingsListQuery,
   PublicContact,
+  PublicAuthVisual,
+  PublicAuthVisualIcon,
+  AuthVisualDecorIcon,
+  AuthVisualIconPosition,
+  AuthVisualIconPreset,
+  AuthVisualIconSize,
+  AuthVisualSettingValue,
   UpdateOrganizationBankAccountRequest,
   UpsertOrganizationSettingItem,
 } from './organization-settings.js';

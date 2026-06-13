@@ -9,6 +9,33 @@
     "dark": "Mode sombre"
   },
   "auth": {
+    "shell": {
+      "visualEyebrow": "Africa Tourism Gate",
+      "visualTitle": "Le tourisme africain, piloté depuis un seul back-office",
+      "visualSubtitle": "Hôtels, activités, réservations et paiements — une plateforme unifiée pour vos équipes.",
+      "carousel": {
+        "ariaLabel": "Destinations africaines",
+        "goToSlide": "Aller à la diapositive",
+        "slides": [
+          {
+            "caption": "Safari & nature",
+            "title": "Réservez et gérez vos expériences wildlife en toute simplicité"
+          },
+          {
+            "caption": "Plages & îles",
+            "title": "Hôtels, lodges et séjours balnéaires sur toute la côte africaine"
+          },
+          {
+            "caption": "Culture & patrimoine",
+            "title": "Activités, circuits et expériences authentiques pour vos voyageurs"
+          },
+          {
+            "caption": "Destinations",
+            "title": "Une vitrine unifiée pour promouvoir l'Afrique depuis votre back-office"
+          }
+        ]
+      }
+    },
     "login": {
       "metaTitle": "Connexion — Africa Tourism Gate Admin",
       "metaDescription": "Accédez au back-office Africa Tourism Gate",

@@ -17,6 +17,69 @@ export interface BrandingPlatformValue {
   faviconUrl?: string;
 }
 
+export const AUTH_VISUAL_ICON_PRESETS = [
+  'pin',
+  'compass',
+  'globe',
+  'star',
+  'custom',
+] as const;
+export type AuthVisualIconPreset = (typeof AUTH_VISUAL_ICON_PRESETS)[number];
+
+export const AUTH_VISUAL_ICON_POSITIONS = [
+  'bottom-right',
+  'top-right',
+  'bottom-left',
+  'top-left',
+] as const;
+export type AuthVisualIconPosition = (typeof AUTH_VISUAL_ICON_POSITIONS)[number];
+
+export const AUTH_VISUAL_ICON_SIZES = ['sm', 'md', 'lg'] as const;
+export type AuthVisualIconSize = (typeof AUTH_VISUAL_ICON_SIZES)[number];
+
+export interface AuthVisualDecorIcon {
+  preset: AuthVisualIconPreset;
+  imageUrl?: string;
+  opacity: number;
+  size: AuthVisualIconSize;
+  position: AuthVisualIconPosition;
+  enabled: boolean;
+}
+
+export interface AuthVisualSettingValue {
+  icons: AuthVisualDecorIcon[];
+}
+
+export const DEFAULT_AUTH_VISUAL_ICONS: AuthVisualDecorIcon[] = [
+  {
+    preset: 'pin',
+    opacity: 25,
+    size: 'lg',
+    position: 'bottom-right',
+    enabled: true,
+  },
+  {
+    preset: 'pin',
+    opacity: 60,
+    size: 'sm',
+    position: 'top-right',
+    enabled: true,
+  },
+];
+
+export interface PublicAuthVisualIcon {
+  preset: AuthVisualIconPreset;
+  imageUrl: string | null;
+  opacity: number;
+  size: AuthVisualIconSize;
+  position: AuthVisualIconPosition;
+  enabled: boolean;
+}
+
+export interface PublicAuthVisual {
+  icons: PublicAuthVisualIcon[];
+}
+
 /** Contact web — `organization_settings` (group `contact`, key `web`). */
 export interface ContactWebSettingValue {
   location?: string;

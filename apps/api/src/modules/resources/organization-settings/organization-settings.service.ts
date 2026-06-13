@@ -1,6 +1,17 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
+import {
+  AUTH_VISUAL_ICON_POSITIONS,
+  AUTH_VISUAL_ICON_PRESETS,
+  AUTH_VISUAL_ICON_SIZES,
+  DEFAULT_AUTH_VISUAL_ICONS,
+} from './auth-visual.constants';
+import type {
+  AuthVisualDecorIcon,
+  PublicAuthVisual,
+  PublicAuthVisualIcon,
+} from '@africatourismgate/types';
 import { OrgScopeService, PLATFORM_ORG_ID } from '../../../common/org-scope/org-scope.service';
 import { CrudService } from '../../../common/crud/crud.service';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
@@ -55,6 +66,77 @@ function optionalPublicString(value: unknown): string | null {
   if (typeof value !== 'string') return null;
   const trimmed = value.trim();
   return trimmed || null;
+}
+
+function normalizeAuthVisualIcon(raw: unknown): PublicAuthVisualIcon | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const icon = raw as Record<string, unknown>;
+  const preset = icon.preset;
+  if (
+    typeof preset !== 'string' ||
+    !AUTH_VISUAL_ICON_PRESETS.includes(preset as AuthVisualDecorIcon['preset'])
+  ) {
+    return null;
+  }
+  const position = icon.position;
+  if (
+    typeof position !== 'string' ||
+    !AUTH_VISUAL_ICON_POSITIONS.includes(position as AuthVisualDecorIcon['position'])
+  ) {
+    return null;
+  }
+  const size = icon.size;
+  if (
+    typeof size !== 'string' ||
+    !AUTH_VISUAL_ICON_SIZES.includes(size as AuthVisualDecorIcon['size'])
+  ) {
+    return null;
+  }
+  const opacity = icon.opacity;
+  if (typeof opacity !== 'number' || opacity < 0 || opacity > 100) {
+    return null;
+  }
+  const enabled = icon.enabled;
+  if (typeof enabled !== 'boolean') return null;
+
+  const imageUrl = optionalAssetUrl(icon.imageUrl);
+  if (preset === 'custom' && !imageUrl) return null;
+
+  return {
+    preset: preset as AuthVisualDecorIcon['preset'],
+    position: position as AuthVisualDecorIcon['position'],
+    size: size as AuthVisualDecorIcon['size'],
+    opacity: Math.round(opacity),
+    enabled,
+    imageUrl,
+  };
+}
+
+function resolvePublicAuthVisual(
+  settingValue: unknown,
+  hasSetting: boolean,
+): PublicAuthVisual {
+  if (!hasSetting) {
+    return {
+      icons: DEFAULT_AUTH_VISUAL_ICONS.map((icon) => ({
+        ...icon,
+        imageUrl: icon.imageUrl ?? null,
+      })),
+    };
+  }
+
+  const iconsRaw =
+    settingValue &&
+    typeof settingValue === 'object' &&
+    Array.isArray((settingValue as { icons?: unknown }).icons)
+      ? ((settingValue as { icons: unknown[] }).icons ?? [])
+      : [];
+
+  const icons = iconsRaw
+    .map((icon) => normalizeAuthVisualIcon(icon))
+    .filter((icon): icon is PublicAuthVisualIcon => icon !== null);
+
+  return { icons };
 }
 
 @Injectable()
@@ -176,6 +258,15 @@ export class OrganizationSettingsService extends CrudService<OrganizationSetting
       },
     });
 
+    const authVisualSetting = await this.settingsRepository.findOne({
+      where: {
+        organizationId: organization.id,
+        settingGroup: 'branding',
+        settingKey: 'auth_visual',
+        deletedAt: IsNull(),
+      },
+    });
+
     const value =
       platformSetting?.settingValue && typeof platformSetting.settingValue === 'object'
         ? platformSetting.settingValue
@@ -204,6 +295,10 @@ export class OrganizationSettingsService extends CrudService<OrganizationSetting
         optionalAssetUrl(value.faviconUrl) ??
         optionalAssetUrl(organization.faviconUrl) ??
         null,
+      authVisual: resolvePublicAuthVisual(
+        authVisualSetting?.settingValue,
+        Boolean(authVisualSetting),
+      ),
     };
   }
 
