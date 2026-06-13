@@ -98,6 +98,45 @@
       }
     }
   },
+  "dashboard": {
+    "greeting": "Bonjour, {firstName}",
+    "greetingFallback": "Bonjour",
+    "description": "Vue d'ensemble de votre plateforme Africa Tourism Gate",
+    "period": {
+      "label": "Période",
+      "7d": "7 jours",
+      "30d": "30 jours",
+      "90d": "90 jours"
+    },
+    "chart": {
+      "title": "Activité",
+      "subtitle": "Réservations et revenus sur la période sélectionnée",
+      "bookings": "Réservations",
+      "revenue": "Revenus",
+      "loading": "Chargement du graphique…",
+      "empty": "Aucune donnée sur cette période",
+      "error": "Impossible de charger les tendances",
+      "ariaLabel": "Graphique des réservations et revenus par jour"
+    },
+    "kpi": {
+      "users": {
+        "label": "Utilisateurs",
+        "subtitle": "Comptes enregistrés"
+      },
+      "bookings": {
+        "label": "Réservations",
+        "subtitle": "Réservations totales"
+      },
+      "revenue": {
+        "label": "Revenus",
+        "subtitle": "Paiements réussis"
+      },
+      "properties": {
+        "label": "Hébergements",
+        "subtitle": "Hébergements publiés"
+      }
+    }
+  },
   "nav": {
     "dashboard": "Tableau de bord",
     "groups": {
