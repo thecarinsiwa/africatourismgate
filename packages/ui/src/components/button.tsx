@@ -74,7 +74,14 @@ export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPr
     const classes = buttonClassName({ variant, size, fullWidth, className });
     const content = (
       <>
-        {!loading && leftIcon}
+        {loading ? (
+          <span
+            className="h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-current border-t-transparent"
+            aria-hidden
+          />
+        ) : (
+          leftIcon
+        )}
         <span>{loading && loadingText ? loadingText : children}</span>
         {!loading && rightIcon}
       </>

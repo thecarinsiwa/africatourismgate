@@ -9,6 +9,11 @@
     "dark": "Mode sombre"
   },
   "auth": {
+    "shell": {
+      "visualEyebrow": "Africa Tourism Gate",
+      "visualTitle": "Le tourisme africain, piloté depuis un seul back-office",
+      "visualSubtitle": "Hôtels, activités, réservations et paiements — une plateforme unifiée pour vos équipes."
+    },
     "login": {
       "metaTitle": "Connexion — Africa Tourism Gate Admin",
       "metaDescription": "Accédez au back-office Africa Tourism Gate",

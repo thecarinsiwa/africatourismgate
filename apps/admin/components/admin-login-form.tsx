@@ -21,15 +21,6 @@ export function AdminLoginForm() {
 
   return (
     <div className="space-y-4">
-      {error ? (
-        <p
-          role="alert"
-          className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-400"
-        >
-          {error}
-        </p>
-      ) : null}
-
       <LoginForm
         config={formConfig}
         onSubmit={async ({ email, password, remember }) => {
@@ -45,6 +36,15 @@ export function AdminLoginForm() {
           }
         }}
       />
+
+      {error ? (
+        <p
+          role="alert"
+          className="rounded-lg border border-red-500 bg-red-500/5 px-3 py-2 text-sm text-red-600 dark:border-red-500/50 dark:bg-red-500/10 dark:text-red-400"
+        >
+          {error}
+        </p>
+      ) : null}
     </div>
   );
 }

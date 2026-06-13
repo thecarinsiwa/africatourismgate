@@ -9,6 +9,11 @@
     "dark": "Dark mode"
   },
   "auth": {
+    "shell": {
+      "visualEyebrow": "Africa Tourism Gate",
+      "visualTitle": "African tourism, managed from one back office",
+      "visualSubtitle": "Hotels, activities, bookings and payments — one unified platform for your teams."
+    },
     "login": {
       "metaTitle": "Sign in — Africa Tourism Gate Admin",
       "metaDescription": "Access the Africa Tourism Gate back office",
