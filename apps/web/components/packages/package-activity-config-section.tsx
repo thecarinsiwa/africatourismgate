@@ -37,6 +37,13 @@ export function PackageActivityConfigItem({
   useEffect(() => {
     let cancelled = false;
 
+    if (!date) {
+      setDetail(null);
+      setLoading(false);
+      setError(false);
+      return;
+    }
+
     setLoading(true);
     setError(false);
 
@@ -68,15 +75,19 @@ export function PackageActivityConfigItem({
         <h3 className="mt-1 text-lg font-bold text-[#0f1a16] dark:text-white">{label}</h3>
       </header>
 
-      {loading && (
+      {!date && (
+        <p className="text-sm text-amber-700 dark:text-amber-300">{t.selectDateHint}</p>
+      )}
+
+      {date && loading && (
         <p className="text-sm text-gray-600 dark:text-atg-muted">{t.loadingActivitySchedules}</p>
       )}
 
-      {error && (
+      {date && error && (
         <p className="text-sm text-red-700 dark:text-red-300">{t.activitySchedulesError}</p>
       )}
 
-      {!loading && !error && detail && (
+      {date && !loading && !error && detail && (
         <ActivitySchedulesSection
           schedules={detail.schedules}
           currency={detail.currency}
@@ -88,7 +99,7 @@ export function PackageActivityConfigItem({
         />
       )}
 
-      {!loading && !error && detail && detail.schedules.length === 0 && (
+      {date && !loading && !error && detail && detail.schedules.length === 0 && (
         <p className="text-sm text-amber-700 dark:text-amber-300">{t.noActivitySchedules}</p>
       )}
     </article>
