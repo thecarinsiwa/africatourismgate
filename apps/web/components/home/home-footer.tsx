@@ -2,7 +2,9 @@
 
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
+import { BrandingLogo } from '../branding-mark';
 import { useTranslations } from '../../lib/i18n/locale-provider';
+import { useResolvedPublicBranding } from '../../lib/branding/use-resolved-public-branding';
 import { buildVerticalListRoute } from '../../lib/search/route';
 
 const SOCIAL_FOOTER = [
@@ -38,6 +40,7 @@ const SOCIAL_FOOTER = [
 export function HomeFooter() {
   const t = useTranslations();
   const [email, setEmail] = useState('');
+  const { branding, logoBroken, setLogoBroken } = useResolvedPublicBranding();
 
   const specialistLinks = useMemo(
     () => [
@@ -56,12 +59,12 @@ export function HomeFooter() {
           <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
             <div>
               <Link href="/" className="flex items-center gap-2 mb-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-                  <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <span className="text-lg font-bold">Africa Tourism Gate</span>
+                <BrandingLogo
+                  branding={branding}
+                  logoBroken={logoBroken}
+                  setLogoBroken={setLogoBroken}
+                />
+                <span className="text-lg font-bold">{branding.displayName}</span>
               </Link>
               <p className="text-sm text-white/60 leading-relaxed mb-5">{t.footer.tagline}</p>
               <a
@@ -177,7 +180,7 @@ export function HomeFooter() {
       <div className="bg-[#14142a] text-white/50">
         <div className="mx-auto max-w-7xl flex flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <p className="text-xs">
-            © {new Date().getFullYear()} Africa Tourism Gate
+            © {new Date().getFullYear()} {branding.displayName}
             <span className="mx-2">|</span>
             <a href="#" className="hover:text-white transition-colors">
               {t.footer.privacy}
@@ -196,7 +199,7 @@ export function HomeFooter() {
             </a>
           </p>
           <p className="text-xs">
-            {t.footer.designedBy} <strong className="text-white/70">Africa Tourism Gate</strong>
+            {t.footer.designedBy} <strong className="text-white/70">{branding.displayName}</strong>
           </p>
         </div>
       </div>

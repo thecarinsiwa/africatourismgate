@@ -1,10 +1,9 @@
 'use client';
 
-import { normalizeBrandingAssetUrl } from '@africatourismgate/utils';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { usePublicBranding } from '../branding-provider';
+import { BrandingMark } from '../branding-mark';
 import { LanguageSwitcher } from '../language-switcher';
 import { AUTH_CHANGED_EVENT, hasWebSession } from '../../lib/auth/client-session';
 import { buildVerticalListRoute } from '../../lib/search/route';
@@ -59,10 +58,6 @@ const SOCIAL_LINKS = [
 ];
 
 type ThemeMode = 'light' | 'dark';
-type PublicBranding = {
-  displayName?: string;
-  logoUrl?: string | null;
-};
 
 export function HomeHeader() {
   const t = useIntlTranslations('nav');
@@ -70,15 +65,9 @@ export function HomeHeader() {
   const tLanguage = useIntlTranslations('language');
   const pathname = usePathname();
   const onAccountArea = pathname.startsWith('/account');
-  const serverBranding = usePublicBranding();
   const [menuOpen, setMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [theme, setTheme] = useState<ThemeMode>('light');
-  const [branding, setBranding] = useState<Required<PublicBranding>>({
-    displayName: serverBranding?.displayName ?? 'Africa Tourism Gate',
-    logoUrl: serverBranding?.logoUrl ?? null,
-  });
-  const [logoBroken, setLogoBroken] = useState(false);
   const [hasSession, setHasSession] = useState(false);
 
   const navLinks = useMemo(
@@ -118,43 +107,6 @@ export function HomeHeader() {
       window.removeEventListener('storage', syncSession);
     };
   }, []);
-
-  useEffect(() => {
-    if (serverBranding) {
-      setBranding({
-        displayName: serverBranding.displayName,
-        logoUrl: serverBranding.logoUrl,
-      });
-      setLogoBroken(false);
-      return;
-    }
-
-    const defaultApiUrl =
-      process.env.NODE_ENV === 'production'
-        ? 'https://app-africatourismgate.org/api'
-        : 'http://localhost:3000/api';
-    const apiUrl = (process.env.NEXT_PUBLIC_API_URL ?? defaultApiUrl).replace(/\/$/, '');
-
-    async function loadBranding() {
-      try {
-        const response = await fetch(`${apiUrl}/organization-settings/public/branding`, {
-          headers: { Accept: 'application/json' },
-          cache: 'no-store',
-        });
-        if (!response.ok) return;
-        const payload = (await response.json()) as PublicBranding;
-        setBranding({
-          displayName: payload.displayName?.trim() || 'Africa Tourism Gate',
-          logoUrl: normalizeBrandingAssetUrl(payload.logoUrl?.trim() || null),
-        });
-        setLogoBroken(false);
-      } catch {
-        // Keep defaults if branding endpoint is unavailable.
-      }
-    }
-
-    void loadBranding();
-  }, [serverBranding]);
 
   function toggleTheme() {
     const nextTheme: ThemeMode = theme === 'dark' ? 'light' : 'dark';
@@ -206,25 +158,10 @@ export function HomeHeader() {
       <div className="border-b border-gray-100 bg-white shadow-sm transition-colors dark:border-atg-border dark:bg-atg-elevated">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-0 sm:px-6 lg:px-8">
           <Link href="/" className="flex items-center gap-2 py-4">
-            {branding.logoUrl && !logoBroken ? (
-              <img
-                src={branding.logoUrl}
-                alt={branding.displayName}
-                className="h-10 w-10 rounded-lg object-cover"
-                onError={() => setLogoBroken(true)}
-              />
-            ) : (
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-            )}
-            <div>
-              <span className="text-lg font-bold text-[#0f1a16] dark:text-white">
-                {branding.displayName}
-              </span>
-            </div>
+            <BrandingMark
+              showName
+              nameClassName="text-lg font-bold text-[#0f1a16] dark:text-white"
+            />
           </Link>
 
           <nav className="hidden items-center gap-0 lg:flex" aria-label={t('mainAria')}>
