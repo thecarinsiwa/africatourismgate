@@ -6,8 +6,9 @@ function countryCodeToFlag(countryCode: string): string | null {
   const code = countryCode.trim().toUpperCase();
   if (code.length !== 2 || !/^[A-Z]{2}$/.test(code)) return null;
   const offset = 0x1f1e6;
-  const chars = [...code].map((c) => String.fromCodePoint(offset + c.charCodeAt(0) - 65));
-  return chars.join('');
+  const first = String.fromCodePoint(offset + code.charCodeAt(0) - 65);
+  const second = String.fromCodePoint(offset + code.charCodeAt(1) - 65);
+  return first + second;
 }
 
 type CountryFlagPlaceholderProps = {
