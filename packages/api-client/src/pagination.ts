@@ -3,6 +3,7 @@ import type {
   AirlinesListQuery,
   AirportsListQuery,
   AmenitiesListQuery,
+  ActivityImagesListQuery,
   DestinationsListQuery,
   FlightClassAvailabilityListQuery,
   FlightClassesListQuery,
@@ -59,6 +60,7 @@ const RESOURCE_QUERY_KEYS = [
   'endTo',
   'flightClassId',
   'flightId',
+  'activityId',
   'agencyId',
   'categoryId',
   'destination',
@@ -98,6 +100,7 @@ export type PaginatedListQuery =
   | VehicleCategoriesListQuery
   | VehiclesListQuery
   | VehicleImagesListQuery
+  | ActivityImagesListQuery
   | VehicleAvailabilityListQuery
   | PropertySearchQuery;
 

@@ -13,6 +13,7 @@ import type { ActivitySchedule } from '@africatourismgate/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getActivitiesErrorMessage } from '../../lib/activities-errors';
+import { ActivitySchedulesTimeline } from './activity-schedules-timeline';
 
 type ScheduleFormValues = {
   startDatetime: string;
@@ -20,6 +21,8 @@ type ScheduleFormValues = {
 };
 
 const emptyForm: ScheduleFormValues = { startDatetime: '', capacity: '10' };
+
+type ViewMode = 'list' | 'timeline';
 
 function toLocalDatetimeInput(iso: string): string {
   const d = new Date(iso);
@@ -35,9 +38,14 @@ function formatDatetime(iso: string): string {
 
 type ActivitySchedulesSectionProps = {
   activityId: string;
+  embedded?: boolean;
 };
 
-export function ActivitySchedulesSection({ activityId }: ActivitySchedulesSectionProps) {
+export function ActivitySchedulesSection({
+  activityId,
+  embedded,
+}: ActivitySchedulesSectionProps) {
+  const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -183,7 +191,11 @@ export function ActivitySchedulesSection({ activityId }: ActivitySchedulesSectio
   const schedules = state.status === 'ready' ? state.schedules : [];
 
   return (
-    <section className="mt-12 space-y-6 border-t border-atg-border pt-10">
+    <section
+      className={
+        embedded ? 'space-y-6' : 'mt-12 space-y-6 border-t border-atg-border pt-10'
+      }
+    >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-lg font-semibold text-atg-fg">Créneaux</h2>
@@ -191,11 +203,31 @@ export function ActivitySchedulesSection({ activityId }: ActivitySchedulesSectio
             Horaires et capacité pour cette activité.
           </p>
         </div>
-        {!showForm ? (
-          <Button type="button" onClick={openCreate}>
-            Ajouter un créneau
-          </Button>
-        ) : null}
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              variant={viewMode === 'list' ? 'primary' : 'outline'}
+              size="sm"
+              onClick={() => setViewMode('list')}
+            >
+              Liste
+            </Button>
+            <Button
+              type="button"
+              variant={viewMode === 'timeline' ? 'primary' : 'outline'}
+              size="sm"
+              onClick={() => setViewMode('timeline')}
+            >
+              Timeline
+            </Button>
+          </div>
+          {!showForm ? (
+            <Button type="button" onClick={openCreate}>
+              Ajouter un créneau
+            </Button>
+          ) : null}
+        </div>
       </div>
 
       {showForm ? (
@@ -240,6 +272,17 @@ export function ActivitySchedulesSection({ activityId }: ActivitySchedulesSectio
         <p role="alert" className="text-sm text-red-600">
           {state.message}
         </p>
+      ) : viewMode === 'timeline' ? (
+        state.status === 'loading' ? (
+          <p className="text-sm text-atg-muted">Chargement…</p>
+        ) : (
+          <ActivitySchedulesTimeline
+            schedules={schedules}
+            onEdit={openEdit}
+            onDelete={handleDelete}
+            deletingId={deletingId}
+          />
+        )
       ) : (
         <Card variant="dashboard" padding="none">
           <DataTable

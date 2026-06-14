@@ -14,6 +14,8 @@ import type { ActivityProvider, Destination } from '@africatourismgate/types';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getActivitiesErrorMessage } from '../../lib/activities-errors';
+import { ActivityProviderAvatar } from './activity-provider-avatar';
+import { ActivityProviderRating } from './activity-provider-rating';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -128,11 +130,30 @@ export function ActivityProvidersList() {
 
   const columns = useMemo<ColumnDef<ActivityProvider, unknown>[]>(
     () => [
-      { accessorKey: 'name', header: 'Fournisseur' },
+      {
+        id: 'provider',
+        header: 'Fournisseur',
+        cell: ({ row }) => (
+          <div className="flex items-center gap-3">
+            <ActivityProviderAvatar name={row.original.name} size="sm" />
+            <span className="font-medium text-atg-fg">{row.original.name}</span>
+          </div>
+        ),
+      },
       {
         id: 'destination',
         header: 'Destination',
-        cell: ({ row }) => destById.get(row.original.destinationId) ?? '—',
+        cell: ({ row }) => (
+          <span className="text-sm text-atg-muted">
+            {destById.get(row.original.destinationId) ?? '—'}
+          </span>
+        ),
+      },
+      {
+        id: 'rating',
+        header: 'Note',
+        meta: { align: 'center' },
+        cell: () => <ActivityProviderRating />,
       },
       {
         id: 'actions',

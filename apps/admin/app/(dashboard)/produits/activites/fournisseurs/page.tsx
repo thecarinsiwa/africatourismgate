@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import { AdminPageIntro } from '../../../../../components/admin-page-intro';
+import { PageHeader } from '@africatourismgate/ui';
+import { AdminPageBackLink } from '../../../../../components/admin-page-back-link';
 import { ActivityProvidersList } from '../../../../../components/activities/activity-providers-list';
 
 export const metadata: Metadata = {
@@ -9,9 +10,12 @@ export const metadata: Metadata = {
 export default function ActivitesFournisseursPage() {
   return (
     <div>
-      <AdminPageIntro
+      <PageHeader
+        title="Fournisseurs d'activités"
         description="Opérateurs liés aux destinations."
-        links={[{ href: '/produits/activites', label: '← Activités' }]}
+        breadcrumb={
+          <AdminPageBackLink href="/produits/activites" label="Retour aux activités" />
+        }
       />
       <ActivityProvidersList />
     </div>

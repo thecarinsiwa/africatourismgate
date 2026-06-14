@@ -66,14 +66,18 @@ import type {
   UpdateShipImageRequest,
   Activity,
   ActivitiesListQuery,
+  ActivityImage,
+  ActivityImagesListQuery,
   ActivityProvider,
   ActivityProvidersListQuery,
   ActivitySchedule,
   ActivitySchedulesListQuery,
   CreateActivityProviderRequest,
+  CreateActivityImageRequest,
   CreateActivityRequest,
   CreateActivityScheduleRequest,
   UpdateActivityProviderRequest,
+  UpdateActivityImageRequest,
   UpdateActivityRequest,
   UpdateActivityScheduleRequest,
   BookingAdminDetail,
@@ -1316,6 +1320,31 @@ export class ApiClient {
 
   deleteActivitySchedule(id: string): Promise<void> {
     return this.request<void>(`/activity-schedules/${id}`, { method: 'DELETE' });
+  }
+
+  listActivityImages(
+    query?: ActivityImagesListQuery,
+  ): Promise<PaginatedResponse<ActivityImage>> {
+    return fetchPaginated<ActivityImage>(this, '/activity-images', query);
+  }
+
+  getActivityImage(id: string): Promise<ActivityImage> {
+    return this.request<ActivityImage>(`/activity-images/${id}`);
+  }
+
+  createActivityImage(body: CreateActivityImageRequest): Promise<ActivityImage> {
+    return this.request<ActivityImage>('/activity-images', { method: 'POST', body });
+  }
+
+  updateActivityImage(id: string, body: UpdateActivityImageRequest): Promise<ActivityImage> {
+    return this.request<ActivityImage>(`/activity-images/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteActivityImage(id: string): Promise<void> {
+    return this.request<void>(`/activity-images/${id}`, { method: 'DELETE' });
   }
 
   listPackages(query?: PackagesListQuery): Promise<PaginatedResponse<Package>> {

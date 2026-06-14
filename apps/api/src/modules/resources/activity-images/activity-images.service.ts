@@ -2,33 +2,33 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
-import { ActivitySchedules } from '../../../entities/generated';
+import { ActivityImages } from '../../../entities/generated';
 import { CrudService } from '../../../common/crud/crud.service';
-import { ActivitySchedulesListQueryDto } from './dto/activity-schedules-list-query.dto';
+import { ActivityImagesListQueryDto } from './dto/activity-images-list-query.dto';
 
 @Injectable()
-export class ActivitySchedulesService extends CrudService<ActivitySchedules> {
+export class ActivityImagesService extends CrudService<ActivityImages> {
   constructor(
-    @InjectRepository(ActivitySchedules)
-    private readonly activitySchedulesRepository: Repository<ActivitySchedules>,
+    @InjectRepository(ActivityImages)
+    private readonly activityImagesRepository: Repository<ActivityImages>,
   ) {
-    super(activitySchedulesRepository);
+    super(activityImagesRepository);
   }
 
   override async findAll(
-    query: ActivitySchedulesListQueryDto,
-  ): Promise<PaginatedResult<ActivitySchedules>> {
+    query: ActivityImagesListQueryDto,
+  ): Promise<PaginatedResult<ActivityImages>> {
     const page = query.page ?? 1;
     const limit = query.limit ?? 20;
-    const where: FindOptionsWhere<ActivitySchedules> = {};
+    const where: FindOptionsWhere<ActivityImages> = {};
     if (query.activityId) {
       where.activityId = query.activityId;
     }
-    const [data, total] = await this.activitySchedulesRepository.findAndCount({
+    const [data, total] = await this.activityImagesRepository.findAndCount({
       where,
       skip: (page - 1) * limit,
       take: limit,
-      order: { startDatetime: 'ASC', createdAt: 'DESC' },
+      order: { sortOrder: 'ASC', createdAt: 'DESC' },
     });
     return {
       data,

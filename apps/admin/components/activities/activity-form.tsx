@@ -3,6 +3,7 @@
 import { Button, Input } from '@africatourismgate/ui';
 import type {
   Activity,
+  ActivityDifficultyLevel,
   ActivityProvider,
   CreateActivityRequest,
 } from '@africatourismgate/types';
@@ -10,12 +11,17 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useId, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getActivitiesErrorMessage } from '../../lib/activities-errors';
+import {
+  ACTIVITY_DIFFICULTY_LABELS,
+  ACTIVITY_DIFFICULTY_LEVELS,
+} from '../../lib/activity-difficulty';
 
 export type ActivityFormValues = {
   providerId: string;
   title: string;
   description: string;
   durationMinutes: string;
+  difficultyLevel: string;
   priceCents: string;
   currency: string;
 };
@@ -25,6 +31,7 @@ const defaultValues: ActivityFormValues = {
   title: '',
   description: '',
   durationMinutes: '',
+  difficultyLevel: '',
   priceCents: '',
   currency: 'USD',
 };
@@ -36,6 +43,7 @@ function activityToFormValues(activity: Activity): ActivityFormValues {
     description: activity.description ?? '',
     durationMinutes:
       activity.durationMinutes != null ? String(activity.durationMinutes) : '',
+    difficultyLevel: activity.difficultyLevel ?? '',
     priceCents: String(activity.priceCents),
     currency: activity.currency,
   };
@@ -46,6 +54,10 @@ function toPayload(values: ActivityFormValues): CreateActivityRequest {
     values.durationMinutes.trim() !== ''
       ? Number(values.durationMinutes)
       : undefined;
+  const difficultyLevel: ActivityDifficultyLevel | null | undefined =
+    values.difficultyLevel === ''
+      ? null
+      : (values.difficultyLevel as ActivityDifficultyLevel);
   return {
     providerId: values.providerId,
     title: values.title.trim(),
@@ -53,6 +65,7 @@ function toPayload(values: ActivityFormValues): CreateActivityRequest {
     currency: values.currency.trim().toUpperCase(),
     ...(values.description.trim() ? { description: values.description.trim() } : {}),
     ...(duration !== undefined && Number.isFinite(duration) ? { durationMinutes: duration } : {}),
+    difficultyLevel,
   };
 }
 
@@ -60,11 +73,13 @@ type ActivityFormProps = {
   mode: 'create' | 'edit';
   activityId?: string;
   initialActivity?: Activity;
+  onUpdated?: (activity: Activity) => void;
 };
 
-export function ActivityForm({ mode, activityId, initialActivity }: ActivityFormProps) {
+export function ActivityForm({ mode, activityId, initialActivity, onUpdated }: ActivityFormProps) {
   const router = useRouter();
   const providerId = useId();
+  const difficultyId = useId();
   const [providers, setProviders] = useState<ActivityProvider[]>([]);
   const [values, setValues] = useState<ActivityFormValues>(() =>
     initialActivity ? activityToFormValues(initialActivity) : defaultValues,
@@ -116,7 +131,8 @@ export function ActivityForm({ mode, activityId, initialActivity }: ActivityForm
         const created = await getApiClient().createActivity(body);
         router.push(`/produits/activites/${created.id}`);
       } else if (activityId) {
-        await getApiClient().updateActivity(activityId, body);
+        const updated = await getApiClient().updateActivity(activityId, body);
+        onUpdated?.(updated);
         router.refresh();
       }
     } catch (error) {
@@ -180,6 +196,24 @@ export function ActivityForm({ mode, activityId, initialActivity }: ActivityForm
         onChange={(e) => updateField('durationMinutes', e.target.value)}
         error={fieldErrors.durationMinutes}
       />
+      <div>
+        <label htmlFor={difficultyId} className="mb-2 block text-sm font-medium text-atg-fg">
+          Difficulté
+        </label>
+        <select
+          id={difficultyId}
+          className={selectClass}
+          value={values.difficultyLevel}
+          onChange={(e) => updateField('difficultyLevel', e.target.value)}
+        >
+          <option value="">— Non renseignée —</option>
+          {ACTIVITY_DIFFICULTY_LEVELS.map((level) => (
+            <option key={level} value={level}>
+              {ACTIVITY_DIFFICULTY_LABELS[level]}
+            </option>
+          ))}
+        </select>
+      </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <Input
           label="Prix (centimes)"
