@@ -19,7 +19,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getUsersErrorMessage } from '../../lib/users-errors';
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_MS = 300;
 
 type StatusFilter = '' | 'active' | 'suspended';
@@ -238,6 +238,7 @@ export function UsersList() {
           const user = row.original;
           return (
             <DataTableActions className="opacity-90 transition-opacity group-hover:opacity-100">
+              <DataTableActionButton action="view" href={`/utilisateurs/${user.id}`} />
               <DataTableActionButton action="edit" href={`/utilisateurs/${user.id}`} />
               <DataTableActionButton
                 action="delete"
