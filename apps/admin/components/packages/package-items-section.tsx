@@ -3,6 +3,7 @@
 import {
   Button,
   Card,
+  cn,
   DataTable,
   DataTableActionButton,
   DataTableActions,
@@ -16,16 +17,14 @@ import type {
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { formatMoney } from '../../lib/format-money';
+import {
+  getPackageItemTypeLabel,
+  PACKAGE_ITEM_TYPES,
+} from '../../lib/package-item-type';
 import { getPackagesErrorMessage } from '../../lib/packages-errors';
+import { PackageCompositionBanner } from './package-composition-banner';
+import { PackageItemTypeIcon } from './package-item-type-icon';
 import { PackagePricingRecap } from './package-pricing-recap';
-
-const ITEM_TYPE_LABELS: Record<PackageItemType, string> = {
-  property: 'Hébergement',
-  flight: 'Vol',
-  vehicle: 'Véhicule',
-  cruise: 'Cabine (croisière)',
-  activity: 'Activité',
-};
 
 type CatalogOption = { id: string; label: string };
 
@@ -172,7 +171,9 @@ export function PackageItemsSection({ packageId }: PackageItemsSectionProps) {
       {
         id: 'type',
         header: 'Type',
-        cell: ({ row }) => ITEM_TYPE_LABELS[row.original.itemType],
+        cell: ({ row }) => (
+          <PackageItemTypeIcon itemType={row.original.itemType} showLabel size="sm" />
+        ),
       },
       { accessorKey: 'label', header: 'Produit' },
       {
@@ -229,6 +230,8 @@ export function PackageItemsSection({ packageId }: PackageItemsSectionProps) {
         <PackagePricingRecap pricing={pricing} itemCount={items.length} />
       ) : null}
 
+      <PackageCompositionBanner items={items} />
+
       {showForm ? (
         <Card variant="dashboard" className="max-w-2xl">
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -242,18 +245,21 @@ export function PackageItemsSection({ packageId }: PackageItemsSectionProps) {
               <label htmlFor={typeId} className="mb-2 block text-sm font-medium">
                 Type
               </label>
-              <select
-                id={typeId}
-                className={selectClass}
-                value={itemType}
-                onChange={(e) => setItemType(e.target.value as PackageItemType)}
-              >
-                {(Object.keys(ITEM_TYPE_LABELS) as PackageItemType[]).map((t) => (
-                  <option key={t} value={t}>
-                    {ITEM_TYPE_LABELS[t]}
-                  </option>
-                ))}
-              </select>
+              <div className="flex items-center gap-3">
+                <PackageItemTypeIcon itemType={itemType} size="md" />
+                <select
+                  id={typeId}
+                  className={cn(selectClass, 'min-w-0 flex-1')}
+                  value={itemType}
+                  onChange={(e) => setItemType(e.target.value as PackageItemType)}
+                >
+                  {PACKAGE_ITEM_TYPES.map((t) => (
+                    <option key={t} value={t}>
+                      {getPackageItemTypeLabel(t)}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
             <div>
               <label htmlFor={itemId} className="mb-2 block text-sm font-medium">
