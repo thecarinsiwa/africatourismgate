@@ -2,33 +2,33 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
-import { FlightClasses } from '../../../entities/generated';
+import { FlightImages } from '../../../entities/generated';
 import { CrudService } from '../../../common/crud/crud.service';
-import { FlightClassesListQueryDto } from './dto/flight-classes-list-query.dto';
+import { FlightImagesListQueryDto } from './dto/flight-images-list-query.dto';
 
 @Injectable()
-export class FlightClassesService extends CrudService<FlightClasses> {
+export class FlightImagesService extends CrudService<FlightImages> {
   constructor(
-    @InjectRepository(FlightClasses)
-    private readonly flightClassesRepository: Repository<FlightClasses>,
+    @InjectRepository(FlightImages)
+    private readonly flightImagesRepository: Repository<FlightImages>,
   ) {
-    super(flightClassesRepository);
+    super(flightImagesRepository);
   }
 
   override async findAll(
-    query: FlightClassesListQueryDto,
-  ): Promise<PaginatedResult<FlightClasses>> {
+    query: FlightImagesListQueryDto,
+  ): Promise<PaginatedResult<FlightImages>> {
     const page = query.page ?? 1;
     const limit = query.limit ?? 20;
-    const where: FindOptionsWhere<FlightClasses> = {};
+    const where: FindOptionsWhere<FlightImages> = {};
     if (query.flightId) {
       where.flightId = query.flightId;
     }
-    const [data, total] = await this.flightClassesRepository.findAndCount({
+    const [data, total] = await this.flightImagesRepository.findAndCount({
       where,
       skip: (page - 1) * limit,
       take: limit,
-      order: { className: 'ASC', createdAt: 'DESC' },
+      order: { sortOrder: 'ASC', createdAt: 'DESC' },
     });
     return {
       data,

@@ -14,6 +14,8 @@ import type { RentalAgency, Vehicle, VehicleCategory } from '@africatourismgate/
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getLocationsErrorMessage } from '../../lib/locations-errors';
+import { getVehicleCategoryIcon } from '../../lib/vehicle-category-icon-map';
+import { VehicleThumbnail } from './vehicle-thumbnail';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -119,6 +121,22 @@ export function VehiclesList() {
   const columns = useMemo<ColumnDef<Vehicle, unknown>[]>(
     () => [
       {
+        id: 'thumbnail',
+        header: '',
+        meta: { align: 'center' },
+        cell: ({ row }) => {
+          const categoryName = categoryById.get(row.original.categoryId);
+          return (
+            <VehicleThumbnail
+              vehicleId={row.original.id}
+              label={row.original.licensePlate ?? categoryName ?? 'Véhicule'}
+              categoryName={categoryName}
+              size="md"
+            />
+          );
+        },
+      },
+      {
         accessorKey: 'licensePlate',
         header: 'Immatriculation',
         cell: ({ row }) => (
@@ -135,7 +153,18 @@ export function VehiclesList() {
       {
         id: 'category',
         header: 'Catégorie',
-        cell: ({ row }) => categoryById.get(row.original.categoryId) ?? '—',
+        cell: ({ row }) => {
+          const categoryName = categoryById.get(row.original.categoryId);
+          if (!categoryName) return '—';
+          return (
+            <span className="inline-flex items-center gap-2 text-sm">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-atg-surface text-primary ring-1 ring-atg-border/60">
+                {getVehicleCategoryIcon(categoryName, 'h-4 w-4')}
+              </span>
+              {categoryName}
+            </span>
+          );
+        },
       },
       {
         id: 'price',

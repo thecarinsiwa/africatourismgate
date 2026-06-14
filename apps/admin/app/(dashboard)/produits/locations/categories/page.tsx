@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
-import { AdminPageIntro } from '../../../../../components/admin-page-intro';
+import { PageHeader } from '@africatourismgate/ui';
+import { AdminPageBackLink } from '../../../../../components/admin-page-back-link';
+import { LocationsStatCards } from '../../../../../components/locations/locations-stat-cards';
 import { VehicleCategoriesList } from '../../../../../components/locations/vehicle-categories-list';
 
 export const metadata: Metadata = {
@@ -9,7 +11,14 @@ export const metadata: Metadata = {
 export default function CategoriesVehiculesPage() {
   return (
     <div>
-      <AdminPageIntro description={"Types de véhicules (économique, SUV, premium, etc.)."} />
+      <PageHeader
+        title="Catégories véhicules"
+        description="Types de véhicules (compact, SUV, premium, etc.)."
+        breadcrumb={
+          <AdminPageBackLink href="/produits/locations" label="Retour aux véhicules" />
+        }
+      />
+      <LocationsStatCards className="mb-6" />
       <VehicleCategoriesList />
     </div>
   );

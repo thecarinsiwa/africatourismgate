@@ -14,6 +14,7 @@ import type { VehicleCategory } from '@africatourismgate/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getLocationsErrorMessage } from '../../lib/locations-errors';
+import { getVehicleCategoryIcon } from '../../lib/vehicle-category-icon-map';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -109,6 +110,16 @@ export function VehicleCategoriesList() {
 
   const columns = useMemo<ColumnDef<VehicleCategory, unknown>[]>(
     () => [
+      {
+        id: 'icon',
+        header: '',
+        meta: { align: 'center' },
+        cell: ({ row }) => (
+          <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-atg-surface text-primary ring-1 ring-atg-border/60">
+            {getVehicleCategoryIcon(row.original.name, 'h-5 w-5')}
+          </span>
+        ),
+      },
       { accessorKey: 'name', header: 'Catégorie' },
       {
         accessorKey: 'exampleModel',

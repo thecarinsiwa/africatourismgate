@@ -25,6 +25,14 @@ export function roomUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/rooms/${filename}`;
 }
 
+export function flightUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/flights/${filename}`;
+}
+
+export function vehicleUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/vehicles/${filename}`;
+}
+
 function getApiPublicOrigin(): string {
   return getApiBaseUrl().replace(/\/api$/, '');
 }

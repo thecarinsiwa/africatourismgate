@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import { AdminPageIntro } from '../../../../components/admin-page-intro';
+import { PageHeader, TextLink } from '@africatourismgate/ui';
+import { LocationsStatCards } from '../../../../components/locations/locations-stat-cards';
 import { VehiclesList } from '../../../../components/locations/vehicles-list';
 
 export const metadata: Metadata = {
@@ -9,13 +10,20 @@ export const metadata: Metadata = {
 export default function LocationsPage() {
   return (
     <div>
-      <AdminPageIntro
+      <PageHeader
+        title="Locations véhicules"
         description="Véhicules par agence, catégories et créneaux de disponibilité."
-        links={[
-          { href: '/produits/locations/agences', label: 'Agences de location' },
-          { href: '/produits/locations/categories', label: 'Catégories' },
-        ]}
       />
+      <p className="-mt-4 mb-6 text-sm text-atg-muted">
+        <TextLink href="/produits/locations/agences" variant="primary" className="font-medium">
+          Agences de location
+        </TextLink>
+        <span className="mx-2">·</span>
+        <TextLink href="/produits/locations/categories" variant="primary" className="font-medium">
+          Catégories
+        </TextLink>
+      </p>
+      <LocationsStatCards className="mb-6" />
       <VehiclesList />
     </div>
   );

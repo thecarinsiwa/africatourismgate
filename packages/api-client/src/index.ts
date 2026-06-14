@@ -26,6 +26,7 @@ import type {
   CreateRentalAgencyRequest,
   CreateVehicleAvailabilityRequest,
   CreateVehicleCategoryRequest,
+  CreateVehicleImageRequest,
   CreateVehicleRequest,
   Cabin,
   CabinAvailability,
@@ -114,6 +115,7 @@ import type {
   CreateAirportRequest,
   CreateFlightClassAvailabilityRequest,
   CreateFlightClassRequest,
+  CreateFlightImageRequest,
   CreateFlightRequest,
   CreateRoleRequest,
   CreateUserRequest,
@@ -150,6 +152,8 @@ import type {
   FlightClassAvailability,
   FlightClassAvailabilityListQuery,
   FlightClassesListQuery,
+  FlightImage,
+  FlightImagesListQuery,
   FlightsListQuery,
   RentalAgenciesListQuery,
   RentalAgency,
@@ -194,16 +198,20 @@ import type {
   UpdateEmployeeRequest,
   UpdateFlightClassAvailabilityRequest,
   UpdateFlightClassRequest,
+  UpdateFlightImageRequest,
   UpdateFlightRequest,
   UpdateRentalAgencyRequest,
   UpdateVehicleAvailabilityRequest,
   UpdateVehicleCategoryRequest,
+  UpdateVehicleImageRequest,
   UpdateVehicleRequest,
   Vehicle,
   VehicleAvailability,
   VehicleAvailabilityListQuery,
   VehicleCategoriesListQuery,
   VehicleCategory,
+  VehicleImage,
+  VehicleImagesListQuery,
   VehiclesListQuery,
   UpdatePropertyImageRequest,
   UpdatePropertyRequest,
@@ -1562,6 +1570,31 @@ export class ApiClient {
     return this.request<void>(`/flights/${id}`, { method: 'DELETE' });
   }
 
+  listFlightImages(
+    query?: FlightImagesListQuery,
+  ): Promise<PaginatedResponse<FlightImage>> {
+    return fetchPaginated<FlightImage>(this, '/flight-images', query);
+  }
+
+  getFlightImage(id: string): Promise<FlightImage> {
+    return this.request<FlightImage>(`/flight-images/${id}`);
+  }
+
+  createFlightImage(body: CreateFlightImageRequest): Promise<FlightImage> {
+    return this.request<FlightImage>('/flight-images', { method: 'POST', body });
+  }
+
+  updateFlightImage(id: string, body: UpdateFlightImageRequest): Promise<FlightImage> {
+    return this.request<FlightImage>(`/flight-images/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteFlightImage(id: string): Promise<void> {
+    return this.request<void>(`/flight-images/${id}`, { method: 'DELETE' });
+  }
+
   listFlightClasses(
     query?: FlightClassesListQuery,
   ): Promise<PaginatedResponse<FlightClass>> {
@@ -1710,6 +1743,31 @@ export class ApiClient {
 
   deleteVehicle(id: string): Promise<void> {
     return this.request<void>(`/vehicles/${id}`, { method: 'DELETE' });
+  }
+
+  listVehicleImages(
+    query?: VehicleImagesListQuery,
+  ): Promise<PaginatedResponse<VehicleImage>> {
+    return fetchPaginated<VehicleImage>(this, '/vehicle-images', query);
+  }
+
+  getVehicleImage(id: string): Promise<VehicleImage> {
+    return this.request<VehicleImage>(`/vehicle-images/${id}`);
+  }
+
+  createVehicleImage(body: CreateVehicleImageRequest): Promise<VehicleImage> {
+    return this.request<VehicleImage>('/vehicle-images', { method: 'POST', body });
+  }
+
+  updateVehicleImage(id: string, body: UpdateVehicleImageRequest): Promise<VehicleImage> {
+    return this.request<VehicleImage>(`/vehicle-images/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteVehicleImage(id: string): Promise<void> {
+    return this.request<void>(`/vehicle-images/${id}`, { method: 'DELETE' });
   }
 
   listVehicleAvailability(
