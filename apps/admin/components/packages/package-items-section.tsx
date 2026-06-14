@@ -15,7 +15,9 @@ import type {
 } from '@africatourismgate/types';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import { formatMoney } from '../../lib/format-money';
 import { getPackagesErrorMessage } from '../../lib/packages-errors';
+import { PackagePricingRecap } from './package-pricing-recap';
 
 const ITEM_TYPE_LABELS: Record<PackageItemType, string> = {
   property: 'Hébergement',
@@ -26,10 +28,6 @@ const ITEM_TYPE_LABELS: Record<PackageItemType, string> = {
 };
 
 type CatalogOption = { id: string; label: string };
-
-function formatMoney(cents: number, currency: string): string {
-  return `${(cents / 100).toFixed(2)} ${currency}`;
-}
 
 type PackageItemsSectionProps = {
   packageId: string;
@@ -228,22 +226,7 @@ export function PackageItemsSection({ packageId }: PackageItemsSectionProps) {
       </div>
 
       {pricing ? (
-        <Card variant="dashboard" className="max-w-md">
-          <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-            <dt className="text-atg-muted">Sous-total</dt>
-            <dd className="text-right tabular-nums font-medium text-atg-fg">
-              {formatMoney(pricing.subtotalCents, pricing.currency)}
-            </dd>
-            <dt className="text-atg-muted">Remise ({pricing.discountPercent}%)</dt>
-            <dd className="text-right tabular-nums text-atg-fg">
-              −{formatMoney(pricing.discountAmountCents, pricing.currency)}
-            </dd>
-            <dt className="font-semibold text-atg-fg">Total forfait</dt>
-            <dd className="text-right tabular-nums font-semibold text-atg-fg">
-              {formatMoney(pricing.totalCents, pricing.currency)}
-            </dd>
-          </dl>
-        </Card>
+        <PackagePricingRecap pricing={pricing} itemCount={items.length} />
       ) : null}
 
       {showForm ? (
