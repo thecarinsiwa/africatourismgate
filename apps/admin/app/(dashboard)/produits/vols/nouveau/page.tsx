@@ -9,7 +9,11 @@ export const metadata: Metadata = {
 export default function NouveauVolPage() {
   return (
     <div>
-      <AdminPageIntro description={"Définissez le trajet, puis ajoutez les classes cabine sur la fiche vol."} />
+      <AdminPageIntro
+        backHref="/produits/vols"
+        backLabel="Retour aux vols"
+        description="Définissez le trajet, puis ajoutez les classes cabine sur la fiche vol."
+      />
       <FlightForm mode="create" />
     </div>
   );

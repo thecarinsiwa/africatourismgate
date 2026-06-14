@@ -64,9 +64,17 @@ type FlightFormProps = {
   mode: 'create' | 'edit';
   flightId?: string;
   initialFlight?: Flight;
+  airlines?: Airline[];
+  airports?: Airport[];
 };
 
-export function FlightForm({ mode, flightId, initialFlight }: FlightFormProps) {
+export function FlightForm({
+  mode,
+  flightId,
+  initialFlight,
+  airlines: airlinesProp,
+  airports: airportsProp,
+}: FlightFormProps) {
   const router = useRouter();
   const airlineId = useId();
   const depId = useId();
@@ -83,6 +91,11 @@ export function FlightForm({ mode, flightId, initialFlight }: FlightFormProps) {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
+    if (airlinesProp && airportsProp) {
+      setAirlines(airlinesProp);
+      setAirports(airportsProp);
+      return;
+    }
     void Promise.all([
       getApiClient().listAirlines({ page: 1, limit: 100 }),
       getApiClient().listAirports({ page: 1, limit: 100 }),
@@ -95,7 +108,7 @@ export function FlightForm({ mode, flightId, initialFlight }: FlightFormProps) {
         setAirlines([]);
         setAirports([]);
       });
-  }, []);
+  }, [airlinesProp, airportsProp]);
 
   const updateField = useCallback(
     <K extends keyof FlightFormValues>(key: K, value: FlightFormValues[K]) => {

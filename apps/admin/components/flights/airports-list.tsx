@@ -12,8 +12,10 @@ import {
 } from '@africatourismgate/ui';
 import type { Airport } from '@africatourismgate/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ReferentialListToolbar } from '../referential-list-toolbar';
 import { getApiClient } from '../../lib/auth/api';
 import { getVolsErrorMessage } from '../../lib/vols-errors';
+import { CountryFlagPlaceholder } from './country-flag-placeholder';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -126,6 +128,14 @@ export function AirportsList() {
   const columns = useMemo<ColumnDef<Airport, unknown>[]>(
     () => [
       {
+        id: 'flag',
+        header: '',
+        meta: { align: 'center' },
+        cell: ({ row }) => (
+          <CountryFlagPlaceholder countryCode={row.original.countryCode} />
+        ),
+      },
+      {
         accessorKey: 'iataCode',
         header: 'IATA',
         cell: ({ row }) => (
@@ -183,30 +193,32 @@ export function AirportsList() {
   );
 
   const airports = state.status === 'ready' ? state.airports : [];
+  const emptyMessage =
+    search.trim().length > 0
+      ? 'Aucun aéroport ne correspond à cette recherche.'
+      : 'Aucun aéroport.';
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex-1 sm:max-w-md">
-          <Input
-            type="search"
-            placeholder="Rechercher par IATA, nom ou ville…"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-          />
-        </div>
-        {!showForm ? (
-          <Button
-            type="button"
-            onClick={() => {
-              resetForm();
-              setShowForm(true);
-            }}
-          >
-            Nouvel aéroport
-          </Button>
-        ) : null}
-      </div>
+      <ReferentialListToolbar
+        searchValue={searchInput}
+        onSearchChange={setSearchInput}
+        placeholder="Rechercher par IATA, nom ou ville…"
+        ariaLabel="Rechercher un aéroport"
+        action={
+          !showForm ? (
+            <Button
+              type="button"
+              onClick={() => {
+                resetForm();
+                setShowForm(true);
+              }}
+            >
+              Nouvel aéroport
+            </Button>
+          ) : undefined
+        }
+      />
 
       {showForm ? (
         <Card variant="dashboard" className="max-w-2xl">
@@ -273,7 +285,8 @@ export function AirportsList() {
               columns={columns}
               data={airports}
               isLoading={state.status === 'loading'}
-              emptyMessage="Aucun aéroport."
+              emptyMessage={emptyMessage}
+              emptyVariant={search.trim().length > 0 ? 'search' : 'default'}
               getRowId={(r) => r.id}
             />
           </Card>

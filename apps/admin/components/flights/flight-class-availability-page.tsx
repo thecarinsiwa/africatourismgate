@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
+import { AdminPageBackLink } from '../admin-page-back-link';
 import { getApiClient } from '../../lib/auth/api';
 import { currentYearMonth } from '../../lib/availability-dates';
 import { flightClassLabels } from '../../lib/flight-class-labels';
@@ -107,6 +108,11 @@ export function FlightClassAvailabilityPage({
 
   return (
     <div>
+      <AdminPageBackLink
+        href={`/produits/vols/${flightId}?tab=classes`}
+        label="Retour au vol"
+        className="mb-6 block"
+      />
       <p className="mb-8 text-sm text-atg-muted">
         Vol {flightNumber} — {classLabel} : sièges et prix par date.
       </p>

@@ -14,6 +14,7 @@ import type { Airline, Airport, Flight } from '@africatourismgate/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getVolsErrorMessage } from '../../lib/vols-errors';
+import { FlightTimeline } from './flight-timeline';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -139,12 +140,18 @@ export function FlightsList() {
         id: 'route',
         header: 'Trajet',
         cell: ({ row }) => {
-          const dep = airportById.get(row.original.departureAirportId);
-          const arr = airportById.get(row.original.arrivalAirportId);
+          const dep = airportById.get(row.original.departureAirportId) ?? null;
+          const arr = airportById.get(row.original.arrivalAirportId) ?? null;
           return (
-            <span className="text-sm">
-              {dep?.iataCode ?? '?'} → {arr?.iataCode ?? '?'}
-            </span>
+            <FlightTimeline
+              compact
+              departureAirport={dep}
+              arrivalAirport={arr}
+              departureTime={row.original.departureTime}
+              arrivalTime={row.original.arrivalTime}
+              durationMinutes={row.original.durationMinutes}
+              className="min-w-[12rem]"
+            />
           );
         },
       },
