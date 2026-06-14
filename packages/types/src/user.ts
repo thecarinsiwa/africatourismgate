@@ -35,5 +35,6 @@ export type UpdateUserRequest = Partial<
 export interface UsersListQuery extends PaginationQuery {
   status?: 'active' | 'suspended';
   organizationId?: string;
+  roleId?: string;
   search?: string;
 }

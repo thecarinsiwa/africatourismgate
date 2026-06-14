@@ -58,7 +58,7 @@ export function UserRoleAssignmentsPanel({ userId }: UserRoleAssignmentsPanelPro
   }
 
   return (
-    <Card variant="dashboard" padding="lg" className="mt-8 space-y-4">
+    <Card variant="dashboard" padding="lg" className="space-y-4">
       <h2 className="text-lg font-semibold text-atg-fg">Rôles assignés</h2>
       {error ? (
         <p role="alert" className="text-sm text-red-600">

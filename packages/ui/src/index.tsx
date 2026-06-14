@@ -48,6 +48,24 @@ export { Checkbox, type CheckboxProps } from './components/checkbox';
 export { Card, type CardProps } from './components/card';
 export { Skeleton, type SkeletonProps } from './components/skeleton';
 export { StatCard, type StatCardProps, type StatCardStatus } from './components/stat-card';
+export { Avatar, type AvatarProps, type AvatarSize } from './components/avatar';
+export {
+  getUserDisplayName,
+  getUserInitials,
+  hashEmailToColor,
+  hashEmailToHue,
+} from './lib/avatar-utils';
+export { FilterBar, type FilterBarProps } from './components/filter-bar';
+export {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  type TabsContentProps,
+  type TabsListProps,
+  type TabsProps,
+  type TabsTriggerProps,
+} from './components/tabs';
 export { PageHeader, type PageHeaderProps } from './components/page-header';
 export { Breadcrumb, type BreadcrumbProps, type BreadcrumbItem } from './components/breadcrumb';
 export { Select, type SelectProps, type SelectOption } from './components/select';
