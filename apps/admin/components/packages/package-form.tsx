@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Input } from '@africatourismgate/ui';
+import { Button, Card, Input } from '@africatourismgate/ui';
 import type { CreatePackageRequest, Package } from '@africatourismgate/types';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
@@ -107,53 +107,70 @@ export function PackageForm({ mode, packageId, initialPackage }: PackageFormProp
     'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg';
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-2xl space-y-4">
+    <form onSubmit={handleSubmit} className="max-w-2xl space-y-6">
       {formError ? (
-        <p role="alert" className="text-sm text-red-600">
+        <p
+          role="alert"
+          className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-400"
+        >
           {formError}
         </p>
       ) : null}
-      <Input
-        label="Nom du forfait"
-        value={values.name}
-        onChange={(e) => updateField('name', e.target.value)}
-      />
-      <div>
-        <label className="mb-2 block text-sm font-medium text-atg-fg">Description</label>
-        <textarea
-          value={values.description}
-          onChange={(e) => updateField('description', e.target.value)}
-          rows={3}
-          className={selectClass}
+
+      <Card variant="dashboard" className="space-y-4">
+        <h3 className="text-sm font-semibold text-atg-fg">Identité</h3>
+        <Input
+          label="Nom du forfait"
+          value={values.name}
+          onChange={(e) => updateField('name', e.target.value)}
+          required
         />
-      </div>
-      <Input
-        label="Remise (%)"
-        type="number"
-        min={0}
-        max={100}
-        step={0.01}
-        value={values.discountPercent}
-        onChange={(e) => updateField('discountPercent', e.target.value)}
-      />
-      <Input
-        label="Durée (jours)"
-        type="number"
-        min={1}
-        max={365}
-        value={values.durationDays}
-        onChange={(e) => updateField('durationDays', e.target.value)}
-      />
-      <label className="flex items-center gap-2 text-sm text-atg-fg">
-        <input
-          type="checkbox"
-          checked={values.active}
-          onChange={(e) => updateField('active', e.target.checked)}
-          className="rounded border-atg-border"
+        <div>
+          <label className="mb-2 block text-sm font-medium text-atg-fg">Description</label>
+          <textarea
+            value={values.description}
+            onChange={(e) => updateField('description', e.target.value)}
+            rows={3}
+            className={selectClass}
+          />
+        </div>
+      </Card>
+
+      <Card variant="dashboard" className="space-y-4">
+        <h3 className="text-sm font-semibold text-atg-fg">Tarification</h3>
+        <Input
+          label="Remise (%)"
+          type="number"
+          min={0}
+          max={100}
+          step={0.01}
+          value={values.discountPercent}
+          onChange={(e) => updateField('discountPercent', e.target.value)}
         />
-        Forfait actif
-      </label>
-      <div className="flex gap-3 pt-2">
+        <Input
+          label="Durée (jours)"
+          type="number"
+          min={1}
+          max={365}
+          value={values.durationDays}
+          onChange={(e) => updateField('durationDays', e.target.value)}
+        />
+      </Card>
+
+      <Card variant="dashboard" className="space-y-4">
+        <h3 className="text-sm font-semibold text-atg-fg">Publication</h3>
+        <label className="flex items-center gap-2 text-sm text-atg-fg">
+          <input
+            type="checkbox"
+            checked={values.active}
+            onChange={(e) => updateField('active', e.target.checked)}
+            className="rounded border-atg-border"
+          />
+          Forfait actif
+        </label>
+      </Card>
+
+      <div className="flex gap-3">
         <Button type="submit" loading={submitting}>
           {mode === 'create' ? 'Créer' : 'Enregistrer'}
         </Button>
