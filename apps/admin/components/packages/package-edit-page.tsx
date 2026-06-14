@@ -1,8 +1,9 @@
 'use client';
 
 import type { Package, PackageDetail } from '@africatourismgate/types';
-import Link from 'next/link';
+import { DataTableBadge, Skeleton } from '@africatourismgate/ui';
 import { useEffect, useState } from 'react';
+import { AdminPageBackLink } from '../admin-page-back-link';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
 import { getPackagesErrorMessage } from '../../lib/packages-errors';
@@ -61,30 +62,52 @@ export function PackageEditPage({ packageId }: PackageEditPageProps) {
   }, [packageId]);
 
   if (state.status === 'loading') {
-    return <p className="text-sm text-atg-muted">Chargement…</p>;
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-5 w-40" />
+        <div className="space-y-2">
+          <Skeleton className="h-6 w-64" />
+          <Skeleton className="h-6 w-32" />
+        </div>
+        <Skeleton className="h-64 w-full max-w-2xl" />
+        <Skeleton className="h-48 w-full" />
+      </div>
+    );
   }
 
   if (state.status === 'error') {
     return (
       <div className="space-y-4">
-        <p role="alert" className="text-sm text-red-600">
+        <AdminPageBackLink href="/produits/forfaits" label="Retour aux forfaits" />
+        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {state.message}
         </p>
-        <Link href="/produits/forfaits" className="text-sm font-medium text-primary">
-          ← Retour à la liste
-        </Link>
       </div>
     );
   }
 
   const { pkg } = state;
+  const discount = Number(pkg.discountPercent);
 
   return (
-    <div>
-      <p className="mb-8 text-sm text-atg-muted">
-        {pkg.name}{' '}
-        <span className="tabular-nums">(remise {pkg.discountPercent}%)</span>
-      </p>
+    <div className="space-y-6">
+      <AdminPageBackLink href="/produits/forfaits" label="Retour aux forfaits" />
+
+      <div className="space-y-2">
+        <h2 className="text-lg font-semibold text-atg-fg">{pkg.name}</h2>
+        <div className="flex flex-wrap items-center gap-2">
+          <DataTableBadge variant={discount > 0 ? 'success' : 'muted'}>
+            Remise {pkg.discountPercent}%
+          </DataTableBadge>
+          <DataTableBadge variant={pkg.active === 1 ? 'success' : 'muted'}>
+            {pkg.active === 1 ? 'Actif' : 'Inactif'}
+          </DataTableBadge>
+          <DataTableBadge variant="muted">
+            {pkg.durationDays} jour{pkg.durationDays > 1 ? 's' : ''}
+          </DataTableBadge>
+        </div>
+      </div>
+
       <PackageForm mode="edit" packageId={packageId} initialPackage={pkg} />
       <PackageItemsSection packageId={packageId} />
     </div>
