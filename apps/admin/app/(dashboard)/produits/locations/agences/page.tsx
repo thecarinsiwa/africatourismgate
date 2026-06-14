@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import { AdminPageIntro } from '../../../../../components/admin-page-intro';
+import { PageHeader } from '@africatourismgate/ui';
+import { AdminPageBackLink } from '../../../../../components/admin-page-back-link';
 import { RentalAgenciesList } from '../../../../../components/locations/rental-agencies-list';
 
 export const metadata: Metadata = {
@@ -9,7 +10,13 @@ export const metadata: Metadata = {
 export default function AgencesLocationPage() {
   return (
     <div>
-      <AdminPageIntro description={"Référentiel des agences liées aux destinations."} />
+      <PageHeader
+        title="Agences de location"
+        description="Référentiel des agences liées aux destinations."
+        breadcrumb={
+          <AdminPageBackLink href="/produits/locations" label="Retour aux véhicules" />
+        }
+      />
       <RentalAgenciesList />
     </div>
   );
