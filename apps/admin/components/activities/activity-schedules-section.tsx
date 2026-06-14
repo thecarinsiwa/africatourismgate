@@ -35,9 +35,13 @@ function formatDatetime(iso: string): string {
 
 type ActivitySchedulesSectionProps = {
   activityId: string;
+  embedded?: boolean;
 };
 
-export function ActivitySchedulesSection({ activityId }: ActivitySchedulesSectionProps) {
+export function ActivitySchedulesSection({
+  activityId,
+  embedded,
+}: ActivitySchedulesSectionProps) {
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -183,7 +187,11 @@ export function ActivitySchedulesSection({ activityId }: ActivitySchedulesSectio
   const schedules = state.status === 'ready' ? state.schedules : [];
 
   return (
-    <section className="mt-12 space-y-6 border-t border-atg-border pt-10">
+    <section
+      className={
+        embedded ? 'space-y-6' : 'mt-12 space-y-6 border-t border-atg-border pt-10'
+      }
+    >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-lg font-semibold text-atg-fg">Créneaux</h2>
