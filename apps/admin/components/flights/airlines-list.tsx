@@ -12,8 +12,10 @@ import {
 } from '@africatourismgate/ui';
 import type { Airline } from '@africatourismgate/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ReferentialListToolbar } from '../referential-list-toolbar';
 import { getApiClient } from '../../lib/auth/api';
 import { getVolsErrorMessage } from '../../lib/vols-errors';
+import { AirlineLogoPlaceholder } from './airline-logo-placeholder';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -108,6 +110,12 @@ export function AirlinesList() {
   const columns = useMemo<ColumnDef<Airline, unknown>[]>(
     () => [
       {
+        id: 'logo',
+        header: '',
+        meta: { align: 'center' },
+        cell: ({ row }) => <AirlineLogoPlaceholder iataCode={row.original.iataCode} />,
+      },
+      {
         accessorKey: 'iataCode',
         header: 'IATA',
         cell: ({ row }) => (
@@ -157,30 +165,32 @@ export function AirlinesList() {
   );
 
   const airlines = state.status === 'ready' ? state.airlines : [];
+  const emptyMessage =
+    search.trim().length > 0
+      ? 'Aucune compagnie ne correspond à cette recherche.'
+      : 'Aucune compagnie.';
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex-1 sm:max-w-md">
-          <Input
-            type="search"
-            placeholder="Rechercher par code IATA ou nom…"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-          />
-        </div>
-        {!showForm ? (
-          <Button
-            type="button"
-            onClick={() => {
-              resetForm();
-              setShowForm(true);
-            }}
-          >
-            Nouvelle compagnie
-          </Button>
-        ) : null}
-      </div>
+      <ReferentialListToolbar
+        searchValue={searchInput}
+        onSearchChange={setSearchInput}
+        placeholder="Rechercher par code IATA ou nom…"
+        ariaLabel="Rechercher une compagnie"
+        action={
+          !showForm ? (
+            <Button
+              type="button"
+              onClick={() => {
+                resetForm();
+                setShowForm(true);
+              }}
+            >
+              Nouvelle compagnie
+            </Button>
+          ) : undefined
+        }
+      />
 
       {showForm ? (
         <Card variant="dashboard" className="max-w-lg">
@@ -229,7 +239,8 @@ export function AirlinesList() {
               columns={columns}
               data={airlines}
               isLoading={state.status === 'loading'}
-              emptyMessage="Aucune compagnie."
+              emptyMessage={emptyMessage}
+              emptyVariant={search.trim().length > 0 ? 'search' : 'default'}
               getRowId={(r) => r.id}
             />
           </Card>
