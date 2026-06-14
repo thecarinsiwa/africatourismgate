@@ -1,19 +1,10 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-  Query,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { ApiForbiddenResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
-import { DeepPartial } from 'typeorm';
 import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
-import { Activities } from '../../../entities/generated';
 import { ActivitiesService } from './activities.service';
+import { CreateActivityDto } from './dto/create-activity.dto';
+import { UpdateActivityDto } from './dto/update-activity.dto';
 
 @ApiTags('activities')
 @ApiForbiddenResponse({ description: 'Missing permission' })
@@ -38,14 +29,14 @@ export class ActivitiesController {
   @RequirePermissions('activities.write')
   @Post()
   @ApiOperation({ summary: 'Create activities' })
-  create(@Body() dto: DeepPartial<Activities>) {
+  create(@Body() dto: CreateActivityDto) {
     return this.service.create(dto);
   }
 
   @RequirePermissions('activities.write')
   @Patch(':id')
   @ApiOperation({ summary: 'Update activities' })
-  update(@Param('id') id: string, @Body() dto: DeepPartial<Activities>) {
+  update(@Param('id') id: string, @Body() dto: UpdateActivityDto) {
     return this.service.update(id, dto);
   }
 

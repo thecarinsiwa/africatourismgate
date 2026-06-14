@@ -630,7 +630,7 @@ INSERT INTO `activity_providers` (
 );
 
 INSERT INTO `activities` (
-  `id`, `provider_id`, `title`, `description`, `duration_minutes`, `price_cents`, `currency`, `created_by_user_id`
+  `id`, `provider_id`, `title`, `description`, `duration_minutes`, `difficulty_level`, `price_cents`, `currency`, `created_by_user_id`
 ) VALUES
 (
   '00000000-0000-4000-8000-000000004031',
@@ -638,6 +638,7 @@ INSERT INTO `activities` (
   'Gombe City Tour',
   'Guided walking tour of Kinshasa Gombe district.',
   180,
+  'moderate',
   4500,
   'USD',
   '00000000-0000-4000-8000-000000000010'
@@ -648,6 +649,7 @@ INSERT INTO `activities` (
   'Congo River Walk',
   'Scenic walk along the Congo River embankment.',
   120,
+  'easy',
   3500,
   'USD',
   '00000000-0000-4000-8000-000000000010'

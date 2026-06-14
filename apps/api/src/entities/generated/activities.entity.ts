@@ -30,6 +30,14 @@ export class Activities extends BaseAuditEntity {
   @Column({ type: 'int', name: 'duration_minutes', nullable: true })
   durationMinutes!: number | null;
 
+  @Column({
+    type: 'enum',
+    enum: ['easy', 'moderate', 'hard', 'expert'],
+    name: 'difficulty_level',
+    nullable: true,
+  })
+  difficultyLevel!: 'easy' | 'moderate' | 'hard' | 'expert' | null;
+
   @Column({ type: 'int', name: 'price_cents' })
   priceCents!: number;
 

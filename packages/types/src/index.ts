@@ -180,6 +180,7 @@ export type {
 export type {
   Activity,
   ActivitiesListQuery,
+  ActivityDifficultyLevel,
   ActivityProvider,
   ActivityProvidersListQuery,
   ActivitySchedule,
@@ -191,6 +192,8 @@ export type {
   UpdateActivityRequest,
   UpdateActivityScheduleRequest,
 } from './activity.js';
+
+export { ACTIVITY_DIFFICULTY_LEVELS } from './activity.js';
 
 export type {
   Booking,

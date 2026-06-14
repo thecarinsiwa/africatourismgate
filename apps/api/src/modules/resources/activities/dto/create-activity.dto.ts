@@ -1,6 +1,8 @@
+import { ACTIVITY_DIFFICULTY_LEVELS } from '@africatourismgate/types';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
+  IsIn,
   IsInt,
   IsNotEmpty,
   IsOptional,
@@ -9,6 +11,7 @@ import {
   Length,
   MaxLength,
   Min,
+  ValidateIf,
 } from 'class-validator';
 
 export class CreateActivityDto {
@@ -33,6 +36,16 @@ export class CreateActivityDto {
   @IsInt()
   @Min(1)
   durationMinutes?: number;
+
+  @ApiPropertyOptional({
+    enum: ACTIVITY_DIFFICULTY_LEVELS,
+    example: 'moderate',
+    nullable: true,
+  })
+  @IsOptional()
+  @ValidateIf((_obj, value) => value !== null)
+  @IsIn([...ACTIVITY_DIFFICULTY_LEVELS])
+  difficultyLevel?: (typeof ACTIVITY_DIFFICULTY_LEVELS)[number] | null;
 
   @ApiProperty({ example: 7500 })
   @Type(() => Number)

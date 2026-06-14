@@ -1069,6 +1069,7 @@ CREATE TABLE `activities` (
   `title` VARCHAR(255) NOT NULL,
   `description` TEXT,
   `duration_minutes` SMALLINT UNSIGNED DEFAULT NULL,
+  `difficulty_level` ENUM('easy', 'moderate', 'hard', 'expert') DEFAULT NULL,
   `price_cents` INT UNSIGNED NOT NULL,
   `currency` CHAR(3) NOT NULL DEFAULT 'USD',
   `created_by_user_id` CHAR(36) DEFAULT NULL,
