@@ -14,6 +14,10 @@ import type { Activity, ActivityProvider, Destination } from '@africatourismgate
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getActivitiesErrorMessage } from '../../lib/activities-errors';
+import {
+  ActivityDifficultyBadge,
+  ActivityDurationBadge,
+} from './activity-meta-badges';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -134,10 +138,20 @@ export function ActivitiesList() {
         ),
       },
       {
-        accessorKey: 'durationMinutes',
-        header: 'Durée (min)',
+        id: 'duration',
+        header: 'Durée',
         meta: { align: 'center' },
-        cell: ({ row }) => row.original.durationMinutes ?? '—',
+        cell: ({ row }) => (
+          <ActivityDurationBadge durationMinutes={row.original.durationMinutes} />
+        ),
+      },
+      {
+        id: 'difficulty',
+        header: 'Difficulté',
+        meta: { align: 'center' },
+        cell: ({ row }) => (
+          <ActivityDifficultyBadge difficultyLevel={row.original.difficultyLevel} />
+        ),
       },
       {
         id: 'actions',

@@ -11,6 +11,7 @@ import { getApiClient } from '../../lib/auth/api';
 import { getActivitiesErrorMessage } from '../../lib/activities-errors';
 import { ActivityForm } from './activity-form';
 import { ActivityGallerySection } from './activity-gallery-section';
+import { ActivityMetaBadges } from './activity-meta-badges';
 import { ActivitySchedulesSection } from './activity-schedules-section';
 
 type ActivityEditPageProps = {
@@ -103,6 +104,14 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
     <div className="space-y-6">
       <AdminPageBackLink href="/produits/activites" label="Retour aux activités" />
 
+      <div className="space-y-2">
+        <h2 className="text-lg font-semibold text-atg-fg">{activity.title}</h2>
+        <ActivityMetaBadges
+          durationMinutes={activity.durationMinutes}
+          difficultyLevel={activity.difficultyLevel}
+        />
+      </div>
+
       <Tabs value={activeTab} onValueChange={handleTabChange}>
         <TabsList aria-label="Sections de l'activité">
           <TabsTrigger value="activite">Activité</TabsTrigger>
@@ -110,7 +119,12 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
         </TabsList>
 
         <TabsContent value="activite">
-          <ActivityForm mode="edit" activityId={activityId} initialActivity={activity} />
+          <ActivityForm
+            mode="edit"
+            activityId={activityId}
+            initialActivity={activity}
+            onUpdated={(updated) => setState({ status: 'ready', activity: updated })}
+          />
           <ActivityGallerySection embedded />
         </TabsContent>
 
