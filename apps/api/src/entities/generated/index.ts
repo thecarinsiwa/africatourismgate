@@ -21,6 +21,7 @@ export { PropertyImages } from './accommodations.entity';
 export { PropertyAmenities } from './accommodations.entity';
 export { Rooms } from './accommodations.entity';
 export { RoomAvailability } from './accommodations.entity';
+export { RoomImages } from './accommodations.entity';
 export { Airlines } from './flights.entity';
 export { Airports } from './flights.entity';
 export { Flights } from './flights.entity';

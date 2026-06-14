@@ -13,6 +13,7 @@ import type { Room } from '@africatourismgate/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getHebergementsErrorMessage } from '../../lib/hebergements-errors';
+import { RoomImagesSection } from './room-images-section';
 
 type RoomFormValues = {
   name: string;
@@ -53,6 +54,7 @@ export function PropertyRoomsSection({ propertyId, embedded }: PropertyRoomsSect
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [photosRoom, setPhotosRoom] = useState<Room | null>(null);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -80,11 +82,13 @@ export function PropertyRoomsSection({ propertyId, embedded }: PropertyRoomsSect
   }
 
   function openCreate() {
+    setPhotosRoom(null);
     resetForm();
     setShowForm(true);
   }
 
   function openEdit(room: Room) {
+    setPhotosRoom(null);
     setEditing(room);
     setFormValues({
       name: room.name,
@@ -192,6 +196,14 @@ export function PropertyRoomsSection({ propertyId, embedded }: PropertyRoomsSect
         meta: { align: 'right' },
         cell: ({ row }) => (
           <DataTableActions>
+            <DataTableActionButton
+              action="view"
+              label="Photos"
+              onClick={() => {
+                setShowForm(false);
+                setPhotosRoom(row.original);
+              }}
+            />
             <DataTableActionButton
               action="calendar"
               href={`/hebergements/${propertyId}/chambres/${row.original.id}/disponibilites`}
@@ -314,6 +326,14 @@ export function PropertyRoomsSection({ propertyId, embedded }: PropertyRoomsSect
           />
         </Card>
       )}
+
+      {photosRoom ? (
+        <RoomImagesSection
+          roomId={photosRoom.id}
+          roomName={photosRoom.name}
+          onClose={() => setPhotosRoom(null)}
+        />
+      ) : null}
     </section>
   );
 }

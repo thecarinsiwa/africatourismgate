@@ -37,6 +37,7 @@ properties
 property_images
 property_amenities
 rooms
+room_images
 room_availability
 
 Flights
