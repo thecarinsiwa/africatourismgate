@@ -8,6 +8,7 @@ import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
 import { getPackagesErrorMessage } from '../../lib/packages-errors';
 import { PackageForm } from './package-form';
+import { PackageImagesSection } from './package-images-section';
 import { PackageItemsSection } from './package-items-section';
 
 type PackageEditPageProps = {
@@ -110,6 +111,7 @@ export function PackageEditPage({ packageId }: PackageEditPageProps) {
 
       <PackageForm mode="edit" packageId={packageId} initialPackage={pkg} />
       <PackageItemsSection packageId={packageId} />
+      <PackageImagesSection packageId={packageId} />
     </div>
   );
 }
