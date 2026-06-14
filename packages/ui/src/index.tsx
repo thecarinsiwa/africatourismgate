@@ -104,6 +104,7 @@ export {
   DataTableEditIcon,
   DataTableViewIcon,
 } from './components/data-table-icons';
+export { EmptyState, type EmptyStateProps } from './components/empty-state';
 export { Divider, type DividerProps } from './components/divider';
 export { TextLink, type TextLinkProps } from './components/text-link';
 export { Logo, type LogoProps } from './components/logo';

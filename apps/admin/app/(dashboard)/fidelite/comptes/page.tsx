@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { AdminPageIntro } from '../../../../components/admin-page-intro';
+import { PageHeader } from '@africatourismgate/ui';
 import { LoyaltyAccountsList } from '../../../../components/loyalty/loyalty-accounts-list';
 
 export const metadata: Metadata = {
@@ -9,7 +9,10 @@ export const metadata: Metadata = {
 export default function LoyaltyAccountsPage() {
   return (
     <div>
-      <AdminPageIntro description="Programme OneKey — solde de points, paliers et dernière activité. Ajustement manuel réservé au super administrateur." />
+      <PageHeader
+        title="Comptes fidélité"
+        description="Programme OneKey — solde de points, paliers et dernière activité. Ajustement manuel réservé au super administrateur."
+      />
       <LoyaltyAccountsList />
     </div>
   );
