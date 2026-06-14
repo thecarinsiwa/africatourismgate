@@ -18,6 +18,8 @@ import { getApiClient } from '../../lib/auth/api';
 import { getVolsErrorMessage } from '../../lib/vols-errors';
 import { FlightClassesSection } from './flight-classes-section';
 import { FlightForm } from './flight-form';
+import { FlightImagesSection } from './flight-images-section';
+import { FlightThumbnail } from './flight-thumbnail';
 import { FlightTimeline } from './flight-timeline';
 
 type FlightEditPageProps = {
@@ -145,24 +147,27 @@ export function FlightEditPage({ flightId }: FlightEditPageProps) {
   return (
     <div className="space-y-6">
       <AdminPageBackLink href="/produits/vols" label="Retour aux vols" />
-      <div className="space-y-4">
-        <div className="flex flex-wrap items-center gap-2">
-          <code className="rounded-md bg-atg-surface px-2.5 py-1 font-mono text-sm font-semibold text-atg-fg ring-1 ring-atg-border/60">
-            {flight.flightNumber}
-          </code>
-          {airline ? (
-            <DataTableBadge variant="muted">
-              {airline.iataCode} — {airline.name}
-            </DataTableBadge>
-          ) : null}
+      <div className="flex flex-wrap items-start gap-4">
+        <FlightThumbnail flightId={flightId} label={flight.flightNumber} size="md" />
+        <div className="min-w-0 flex-1 space-y-4">
+          <div className="flex flex-wrap items-center gap-2">
+            <code className="rounded-md bg-atg-surface px-2.5 py-1 font-mono text-sm font-semibold text-atg-fg ring-1 ring-atg-border/60">
+              {flight.flightNumber}
+            </code>
+            {airline ? (
+              <DataTableBadge variant="muted">
+                {airline.iataCode} — {airline.name}
+              </DataTableBadge>
+            ) : null}
+          </div>
+          <FlightTimeline
+            departureAirport={departureAirport}
+            arrivalAirport={arrivalAirport}
+            departureTime={flight.departureTime}
+            arrivalTime={flight.arrivalTime}
+            durationMinutes={flight.durationMinutes}
+          />
         </div>
-        <FlightTimeline
-          departureAirport={departureAirport}
-          arrivalAirport={arrivalAirport}
-          departureTime={flight.departureTime}
-          arrivalTime={flight.arrivalTime}
-          durationMinutes={flight.durationMinutes}
-        />
       </div>
 
       <Tabs value={activeTab} onValueChange={handleTabChange}>
@@ -179,6 +184,7 @@ export function FlightEditPage({ flightId }: FlightEditPageProps) {
             airlines={airlines}
             airports={airports}
           />
+          <FlightImagesSection flightId={flightId} embedded />
         </TabsContent>
 
         <TabsContent value="classes">

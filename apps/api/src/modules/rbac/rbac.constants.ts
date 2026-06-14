@@ -66,12 +66,14 @@ export const CATALOG_PERMISSION_MAP = {
     'airports',
     'flight-classes',
     'flight-class-availability',
+    'flight-images',
   ],
   vehicles: [
     'vehicles',
     'rental-agencies',
     'vehicle-categories',
     'vehicle-availability',
+    'vehicle-images',
   ],
   cruises: [
     'cruise-lines',

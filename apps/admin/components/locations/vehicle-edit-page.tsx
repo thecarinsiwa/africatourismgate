@@ -10,6 +10,7 @@ import { getApiClient } from '../../lib/auth/api';
 import { getLocationsErrorMessage } from '../../lib/locations-errors';
 import { VehicleAvailabilitySection } from './vehicle-availability-section';
 import { VehicleForm } from './vehicle-form';
+import { VehicleImagesSection } from './vehicle-images-section';
 import { VehicleSpecsGrid } from './vehicle-specs-grid';
 import { VehicleThumbnail } from './vehicle-thumbnail';
 
@@ -115,7 +116,12 @@ export function VehicleEditPage({ vehicleId }: VehicleEditPageProps) {
       <AdminPageBackLink href="/produits/locations" label="Retour aux véhicules" />
 
       <div className="flex flex-wrap items-center gap-4">
-        <VehicleThumbnail label={thumbnailLabel} categoryName={categoryName} size="md" />
+        <VehicleThumbnail
+          vehicleId={vehicleId}
+          label={thumbnailLabel}
+          categoryName={categoryName}
+          size="md"
+        />
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             {vehicle.licensePlate ? (
@@ -134,6 +140,7 @@ export function VehicleEditPage({ vehicleId }: VehicleEditPageProps) {
       <VehicleSpecsGrid categoryName={categoryName} />
 
       <VehicleForm mode="edit" vehicleId={vehicleId} initialVehicle={vehicle} />
+      <VehicleImagesSection vehicleId={vehicleId} embedded />
       <VehicleAvailabilitySection vehicleId={vehicleId} />
     </div>
   );

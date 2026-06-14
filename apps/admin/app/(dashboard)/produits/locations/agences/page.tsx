@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { PageHeader } from '@africatourismgate/ui';
 import { AdminPageBackLink } from '../../../../../components/admin-page-back-link';
+import { LocationsStatCards } from '../../../../../components/locations/locations-stat-cards';
 import { RentalAgenciesList } from '../../../../../components/locations/rental-agencies-list';
 
 export const metadata: Metadata = {
@@ -17,6 +18,7 @@ export default function AgencesLocationPage() {
           <AdminPageBackLink href="/produits/locations" label="Retour aux véhicules" />
         }
       />
+      <LocationsStatCards className="mb-6" />
       <RentalAgenciesList />
     </div>
   );

@@ -128,6 +128,7 @@ export function VehiclesList() {
           const categoryName = categoryById.get(row.original.categoryId);
           return (
             <VehicleThumbnail
+              vehicleId={row.original.id}
               label={row.original.licensePlate ?? categoryName ?? 'Véhicule'}
               categoryName={categoryName}
               size="md"

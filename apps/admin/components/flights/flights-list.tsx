@@ -14,6 +14,7 @@ import type { Airline, Airport, Flight } from '@africatourismgate/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getVolsErrorMessage } from '../../lib/vols-errors';
+import { FlightThumbnail } from './flight-thumbnail';
 import { FlightTimeline } from './flight-timeline';
 
 const PAGE_SIZE = 20;
@@ -122,6 +123,18 @@ export function FlightsList() {
 
   const columns = useMemo<ColumnDef<Flight, unknown>[]>(
     () => [
+      {
+        id: 'thumbnail',
+        header: '',
+        meta: { align: 'center' },
+        cell: ({ row }) => (
+          <FlightThumbnail
+            flightId={row.original.id}
+            label={row.original.flightNumber}
+            size="md"
+          />
+        ),
+      },
       {
         accessorKey: 'flightNumber',
         header: 'Code vol',

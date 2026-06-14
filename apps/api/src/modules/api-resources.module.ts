@@ -27,10 +27,12 @@ import { AirportsModule } from './resources/airports/airports.module';
 import { FlightsModule } from './resources/flights/flights.module';
 import { FlightClassesModule } from './resources/flight-classes/flight-classes.module';
 import { FlightClassAvailabilityModule } from './resources/flight-class-availability/flight-class-availability.module';
+import { FlightImagesModule } from './resources/flight-images/flight-images.module';
 import { RentalAgenciesModule } from './resources/rental-agencies/rental-agencies.module';
 import { VehicleCategoriesModule } from './resources/vehicle-categories/vehicle-categories.module';
 import { VehiclesModule } from './resources/vehicles/vehicles.module';
 import { VehicleAvailabilityModule } from './resources/vehicle-availability/vehicle-availability.module';
+import { VehicleImagesModule } from './resources/vehicle-images/vehicle-images.module';
 import { CruiseLinesModule } from './resources/cruise-lines/cruise-lines.module';
 import { CruisePortsModule } from './resources/cruise-ports/cruise-ports.module';
 import { ShipsModule } from './resources/ships/ships.module';
@@ -87,10 +89,12 @@ import { Module } from '@nestjs/common';
     FlightsModule,
     FlightClassesModule,
     FlightClassAvailabilityModule,
+    FlightImagesModule,
     RentalAgenciesModule,
     VehicleCategoriesModule,
     VehiclesModule,
     VehicleAvailabilityModule,
+    VehicleImagesModule,
     CruiseLinesModule,
     CruisePortsModule,
     ShipsModule,

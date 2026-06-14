@@ -1,16 +1,14 @@
 'use client';
 
-import { cn, SidebarCarIcon } from '@africatourismgate/ui';
+import { cn, SidebarPlaneIcon } from '@africatourismgate/ui';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
 import { getSession } from '../../lib/auth/session';
-import { getVehicleCategoryIcon } from '../../lib/vehicle-category-icon-map';
 
-type VehicleThumbnailProps = {
-  vehicleId?: string;
+type FlightThumbnailProps = {
+  flightId: string;
   label: string;
-  categoryName?: string | null;
   size?: 'sm' | 'md';
   className?: string;
 };
@@ -28,30 +26,22 @@ function resolveImageUrl(url: string): string {
   return `${base}${url.startsWith('/') ? '' : '/'}${url}`;
 }
 
-export function VehicleThumbnail({
-  vehicleId,
+export function FlightThumbnail({
+  flightId,
   label,
-  categoryName,
   size = 'md',
   className,
-}: VehicleThumbnailProps) {
+}: FlightThumbnailProps) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [loading, setLoading] = useState(Boolean(vehicleId));
-  const iconClassName = size === 'sm' ? 'h-4 w-4' : 'h-5 w-5';
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!vehicleId) {
-      setLoading(false);
-      setImageUrl(null);
-      return;
-    }
-
     let cancelled = false;
 
     async function load() {
       try {
-        const result = await getApiClient().listVehicleImages({
-          vehicleId,
+        const result = await getApiClient().listFlightImages({
+          flightId,
           page: 1,
           limit: 1,
         });
@@ -69,7 +59,7 @@ export function VehicleThumbnail({
     return () => {
       cancelled = true;
     };
-  }, [vehicleId]);
+  }, [flightId]);
 
   const session = getSession();
   const imgSrc = imageUrl ? resolveImageUrl(imageUrl) : null;
@@ -77,16 +67,14 @@ export function VehicleThumbnail({
   return (
     <div
       className={cn(
-        'relative flex shrink-0 items-center justify-center overflow-hidden rounded-lg ring-1 ring-atg-border/60',
+        'relative shrink-0 overflow-hidden rounded-lg ring-1 ring-atg-border/60',
         sizeClasses[size],
         !imgSrc && 'bg-gradient-to-br from-primary/25 to-atg-surface',
         className,
       )}
-      title={label}
-      aria-hidden
     >
       {loading ? (
-        <span className="absolute inset-0 animate-pulse bg-atg-border/40" />
+        <span className="absolute inset-0 animate-pulse bg-atg-border/40" aria-hidden />
       ) : imgSrc ? (
         <Image
           src={imgSrc}
@@ -101,12 +89,10 @@ export function VehicleThumbnail({
               }
             : {})}
         />
-      ) : categoryName ? (
-        <span className="text-primary/70">
-          {getVehicleCategoryIcon(categoryName, iconClassName)}
-        </span>
       ) : (
-        <SidebarCarIcon className={cn(iconClassName, 'text-primary/70')} />
+        <span className="flex h-full w-full items-center justify-center text-primary/70">
+          <SidebarPlaneIcon className="h-5 w-5" />
+        </span>
       )}
     </div>
   );

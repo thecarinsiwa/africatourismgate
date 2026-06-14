@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { PageHeader, TextLink } from '@africatourismgate/ui';
+import { LocationsStatCards } from '../../../../components/locations/locations-stat-cards';
 import { VehiclesList } from '../../../../components/locations/vehicles-list';
 
 export const metadata: Metadata = {
@@ -22,6 +23,7 @@ export default function LocationsPage() {
           Catégories
         </TextLink>
       </p>
+      <LocationsStatCards className="mb-6" />
       <VehiclesList />
     </div>
   );

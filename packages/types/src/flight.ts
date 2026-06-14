@@ -85,6 +85,33 @@ export interface FlightsListQuery {
   search?: string;
 }
 
+export interface FlightImage {
+  id: string;
+  flightId: string;
+  url: string;
+  caption: string | null;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string | null;
+}
+
+export interface CreateFlightImageRequest {
+  flightId: string;
+  url: string;
+  caption?: string;
+  sortOrder?: number;
+}
+
+export type UpdateFlightImageRequest = Partial<
+  Omit<CreateFlightImageRequest, 'flightId'>
+>;
+
+export interface FlightImagesListQuery {
+  page?: number;
+  limit?: number;
+  flightId?: string;
+}
+
 export interface FlightClass {
   id: string;
   flightId: string;
