@@ -36,6 +36,7 @@ export { VehicleAvailability } from './car-rentals.entity';
 export { CruiseLines } from './cruises.entity';
 export { CruisePorts } from './cruises.entity';
 export { Ships } from './cruises.entity';
+export { ShipImages } from './cruises.entity';
 export { Itineraries } from './cruises.entity';
 export { ItineraryPorts } from './cruises.entity';
 export { Cabins } from './cruises.entity';

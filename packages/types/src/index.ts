@@ -127,6 +127,7 @@ export type {
   CreateItineraryPortRequest,
   CreateItineraryRequest,
   CreateShipRequest,
+  CreateShipImageRequest,
   CruiseLine,
   CruiseLinesListQuery,
   CruisePort,
@@ -138,6 +139,8 @@ export type {
   ItineraryPort,
   ItineraryPortsListQuery,
   Ship,
+  ShipImage,
+  ShipImagesListQuery,
   ShipsListQuery,
   UpdateCabinAvailabilityRequest,
   UpdateCabinRequest,
@@ -147,6 +150,7 @@ export type {
   UpdateItineraryPortRequest,
   UpdateItineraryRequest,
   UpdateShipRequest,
+  UpdateShipImageRequest,
 } from './cruise.js';
 
 export type {

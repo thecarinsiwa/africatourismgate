@@ -33,6 +33,7 @@ import { VehicleCategoriesModule } from './resources/vehicle-categories/vehicle-
 import { VehiclesModule } from './resources/vehicles/vehicles.module';
 import { VehicleAvailabilityModule } from './resources/vehicle-availability/vehicle-availability.module';
 import { VehicleImagesModule } from './resources/vehicle-images/vehicle-images.module';
+import { ShipImagesModule } from './resources/ship-images/ship-images.module';
 import { CruiseLinesModule } from './resources/cruise-lines/cruise-lines.module';
 import { CruisePortsModule } from './resources/cruise-ports/cruise-ports.module';
 import { ShipsModule } from './resources/ships/ships.module';
@@ -98,6 +99,7 @@ import { Module } from '@nestjs/common';
     CruiseLinesModule,
     CruisePortsModule,
     ShipsModule,
+    ShipImagesModule,
     ItinerariesModule,
     ItineraryPortsModule,
     CabinsModule,

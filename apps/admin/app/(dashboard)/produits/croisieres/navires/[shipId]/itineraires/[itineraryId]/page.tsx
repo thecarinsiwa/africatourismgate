@@ -11,6 +11,7 @@ export default function ItineraryPortsPage({ params }: PageProps) {
   const { shipId, itineraryId } = params;
   const [name, setName] = useState<string | null>(null);
   const [shipName, setShipName] = useState<string | null>(null);
+  const [lineName, setLineName] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -21,8 +22,10 @@ export default function ItineraryPortsPage({ params }: PageProps) {
           client.getItinerary(itineraryId),
           client.getShip(shipId),
         ]);
+        const line = await client.getCruiseLine(ship.cruiseLineId);
         setName(itinerary.name);
         setShipName(ship.name);
+        setLineName(line.name);
       } catch (e) {
         setError(getCroisieresErrorMessage(e));
       }
@@ -37,7 +40,7 @@ export default function ItineraryPortsPage({ params }: PageProps) {
     );
   }
 
-  if (!name) {
+  if (!name || !lineName) {
     return <p className="text-sm text-atg-muted">Chargement…</p>;
   }
 
@@ -45,6 +48,7 @@ export default function ItineraryPortsPage({ params }: PageProps) {
     <ItineraryPortsSection
       shipId={shipId}
       shipName={shipName ?? undefined}
+      lineName={lineName}
       itineraryId={itineraryId}
       itineraryName={name}
     />

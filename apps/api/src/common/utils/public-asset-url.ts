@@ -33,6 +33,10 @@ export function vehicleUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/vehicles/${filename}`;
 }
 
+export function shipUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/ships/${filename}`;
+}
+
 function getApiPublicOrigin(): string {
   return getApiBaseUrl().replace(/\/api$/, '');
 }

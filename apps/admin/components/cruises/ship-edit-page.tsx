@@ -5,10 +5,12 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
+import { buildCruiseBreadcrumbTail } from '../../lib/cruise-breadcrumbs';
 import { getCroisieresErrorMessage } from '../../lib/croisieres-errors';
 import { CabinsSection } from './cabins-section';
 import { ItinerariesSection } from './itineraries-section';
 import { ShipForm } from './ship-form';
+import { ShipImagesSection } from './ship-images-section';
 
 type ShipEditPageProps = { shipId: string };
 
@@ -22,7 +24,13 @@ export function ShipEditPage({ shipId }: ShipEditPageProps) {
   useAdminEditPageMeta({
     ready: state.status === 'ready',
     title: 'Modifier le navire',
-    entityLabel: state.status === 'ready' ? state.ship.name : undefined,
+    breadcrumbTail:
+      state.status === 'ready'
+        ? buildCruiseBreadcrumbTail({
+            lineName: state.lineName,
+            shipName: state.ship.name,
+          })
+        : undefined,
   });
 
   useEffect(() => {
@@ -71,6 +79,7 @@ export function ShipEditPage({ shipId }: ShipEditPageProps) {
         {ship.name} · {lineName}
       </p>
       <ShipForm mode="edit" shipId={shipId} initialShip={ship} />
+      <ShipImagesSection shipId={shipId} embedded />
       <ItinerariesSection shipId={shipId} />
       <CabinsSection shipId={shipId} />
     </div>

@@ -4,8 +4,11 @@ import { Button, Card, DataTable, DataTableActionButton, DataTableActions, Input
 import type { CruisePort, ItineraryPort } from '@africatourismgate/types';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
+import { AdminPageBackLink } from '../admin-page-back-link';
 import { getApiClient } from '../../lib/auth/api';
+import { buildCruiseBreadcrumbTail } from '../../lib/cruise-breadcrumbs';
 import { getCroisieresErrorMessage } from '../../lib/croisieres-errors';
+import { ItineraryPortsTimeline } from './itinerary-ports-timeline';
 
 type FormValues = {
   portId: string;
@@ -28,6 +31,7 @@ function formatTime(t: string | null): string {
 type ItineraryPortsSectionProps = {
   shipId: string;
   shipName?: string;
+  lineName: string;
   itineraryId: string;
   itineraryName: string;
 };
@@ -35,6 +39,7 @@ type ItineraryPortsSectionProps = {
 export function ItineraryPortsSection({
   shipId,
   shipName,
+  lineName,
   itineraryId,
   itineraryName,
 }: ItineraryPortsSectionProps) {
@@ -55,14 +60,12 @@ export function ItineraryPortsSection({
   useAdminEditPageMeta({
     ready: true,
     title: 'Escales',
-    breadcrumbTail: [
-      { label: 'Navires', href: '/produits/croisieres/navires' },
-      {
-        label: shipName ?? 'Navire',
-        href: `/produits/croisieres/navires/${shipId}`,
-      },
-      { label: itineraryName },
-    ],
+    breadcrumbTail: buildCruiseBreadcrumbTail({
+      lineName,
+      shipName: shipName ?? 'Navire',
+      shipId,
+      itineraryName,
+    }),
   });
 
   useEffect(() => {
@@ -203,15 +206,35 @@ export function ItineraryPortsSection({
     [deletingId, load, portById],
   );
 
-  const rows = state.status === 'ready' ? state.rows : [];
+  const rows = useMemo(
+    () => (state.status === 'ready' ? state.rows : []),
+    [state],
+  );
+  const timelineStops = useMemo(
+    () =>
+      rows.map((row) => ({
+        ...row,
+        port: portById.get(row.portId) ?? null,
+      })),
+    [rows, portById],
+  );
   const selectClass =
     'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg';
 
   return (
     <div>
-      <p className="mb-8 text-sm text-atg-muted">Itinéraire : {itineraryName}</p>
+      <AdminPageBackLink
+        href={`/produits/croisieres/navires/${shipId}`}
+        label="Retour au navire"
+      />
+
+      <p className="mb-8 mt-4 text-sm text-atg-muted">Itinéraire : {itineraryName}</p>
 
       <div className="space-y-6">
+        {state.status === 'ready' && timelineStops.length > 0 ? (
+          <ItineraryPortsTimeline stops={timelineStops} />
+        ) : null}
+
         <div className="flex justify-end">
           {!showForm ? (
             <Button type="button" onClick={() => setShowForm(true)}>
@@ -295,12 +318,18 @@ export function ItineraryPortsSection({
           <p role="alert" className="text-sm text-red-600">
             {state.message}
           </p>
+        ) : state.status === 'loading' ? (
+          <p className="text-sm text-atg-muted">Chargement…</p>
+        ) : rows.length === 0 ? (
+          <Card variant="dashboard" className="py-12 text-center">
+            <p className="text-sm text-atg-muted">Aucune escale.</p>
+          </Card>
         ) : (
           <Card variant="dashboard" padding="none">
             <DataTable
               columns={columns}
               data={rows}
-              isLoading={state.status === 'loading'}
+              isLoading={false}
               emptyMessage="Aucune escale."
               getRowId={(r) => r.id}
             />

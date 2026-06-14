@@ -40,6 +40,7 @@ import type {
   CreateItineraryPortRequest,
   CreateItineraryRequest,
   CreateShipRequest,
+  CreateShipImageRequest,
   CruiseLine,
   CruiseLinesListQuery,
   CruisePort,
@@ -51,6 +52,8 @@ import type {
   ItineraryPort,
   ItineraryPortsListQuery,
   Ship,
+  ShipImage,
+  ShipImagesListQuery,
   ShipsListQuery,
   UpdateCabinAvailabilityRequest,
   UpdateCabinRequest,
@@ -60,6 +63,7 @@ import type {
   UpdateItineraryPortRequest,
   UpdateItineraryRequest,
   UpdateShipRequest,
+  UpdateShipImageRequest,
   Activity,
   ActivitiesListQuery,
   ActivityProvider,
@@ -1861,6 +1865,31 @@ export class ApiClient {
 
   deleteShip(id: string): Promise<void> {
     return this.request<void>(`/ships/${id}`, { method: 'DELETE' });
+  }
+
+  listShipImages(
+    query?: ShipImagesListQuery,
+  ): Promise<PaginatedResponse<ShipImage>> {
+    return fetchPaginated<ShipImage>(this, '/ship-images', query);
+  }
+
+  getShipImage(id: string): Promise<ShipImage> {
+    return this.request<ShipImage>(`/ship-images/${id}`);
+  }
+
+  createShipImage(body: CreateShipImageRequest): Promise<ShipImage> {
+    return this.request<ShipImage>('/ship-images', { method: 'POST', body });
+  }
+
+  updateShipImage(id: string, body: UpdateShipImageRequest): Promise<ShipImage> {
+    return this.request<ShipImage>(`/ship-images/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteShipImage(id: string): Promise<void> {
+    return this.request<void>(`/ship-images/${id}`, { method: 'DELETE' });
   }
 
   listItineraries(

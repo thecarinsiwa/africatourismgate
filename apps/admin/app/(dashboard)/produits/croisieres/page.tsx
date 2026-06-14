@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { AdminPageIntro } from '../../../../components/admin-page-intro';
+import { CruisesStatCards } from '../../../../components/cruises/cruises-stat-cards';
 import { SailingsList } from '../../../../components/cruises/sailings-list';
 
 export const metadata: Metadata = {
@@ -17,6 +18,7 @@ export default function CroisieresPage() {
           { href: '/produits/croisieres/navires', label: 'Navires' },
         ]}
       />
+      <CruisesStatCards className="mb-6" />
       <SailingsList />
     </div>
   );
