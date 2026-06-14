@@ -24,6 +24,7 @@ import {
 import { getPackagesErrorMessage } from '../../lib/packages-errors';
 import { PackageCompositionBanner } from './package-composition-banner';
 import { PackageItemTypeIcon } from './package-item-type-icon';
+import { PackagePreviewCard } from './package-preview-card';
 import { PackagePricingRecap } from './package-pricing-recap';
 
 type CatalogOption = { id: string; label: string };
@@ -207,6 +208,7 @@ export function PackageItemsSection({ packageId }: PackageItemsSectionProps) {
 
   const items = detail?.items ?? [];
   const pricing = detail?.pricing;
+  const pkg = detail?.package;
   const selectClass =
     'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg';
 
@@ -226,8 +228,20 @@ export function PackageItemsSection({ packageId }: PackageItemsSectionProps) {
         ) : null}
       </div>
 
-      {pricing ? (
-        <PackagePricingRecap pricing={pricing} itemCount={items.length} />
+      {detail && pricing && pkg ? (
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
+          <PackagePricingRecap
+            pricing={pricing}
+            itemCount={items.length}
+            className="max-w-none"
+          />
+          <PackagePreviewCard
+            pkg={pkg}
+            itemCount={items.length}
+            pricing={pricing}
+            className="lg:sticky lg:top-6"
+          />
+        </div>
       ) : null}
 
       <PackageCompositionBanner items={items} />
