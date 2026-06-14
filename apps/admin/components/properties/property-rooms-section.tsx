@@ -38,9 +38,10 @@ function formatPrice(cents: number, currency: string): string {
 
 type PropertyRoomsSectionProps = {
   propertyId: string;
+  embedded?: boolean;
 };
 
-export function PropertyRoomsSection({ propertyId }: PropertyRoomsSectionProps) {
+export function PropertyRoomsSection({ propertyId, embedded }: PropertyRoomsSectionProps) {
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -212,7 +213,11 @@ export function PropertyRoomsSection({ propertyId }: PropertyRoomsSectionProps) 
   const rooms = state.status === 'ready' ? state.rooms : [];
 
   return (
-    <section className="mt-12 space-y-6 border-t border-atg-border pt-10">
+    <section
+      className={
+        embedded ? 'space-y-6' : 'mt-12 space-y-6 border-t border-atg-border pt-10'
+      }
+    >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-lg font-semibold text-atg-fg">Chambres</h2>

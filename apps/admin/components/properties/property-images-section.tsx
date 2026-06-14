@@ -29,9 +29,10 @@ const emptyForm: ImageFormValues = { url: '', caption: '', sortOrder: '0' };
 
 type PropertyImagesSectionProps = {
   propertyId: string;
+  embedded?: boolean;
 };
 
-export function PropertyImagesSection({ propertyId }: PropertyImagesSectionProps) {
+export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSectionProps) {
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -248,7 +249,11 @@ export function PropertyImagesSection({ propertyId }: PropertyImagesSectionProps
   const images = state.status === 'ready' ? state.images : [];
 
   return (
-    <section className="mt-12 space-y-6 border-t border-atg-border pt-10">
+    <section
+      className={
+        embedded ? 'space-y-6' : 'mt-12 space-y-6 border-t border-atg-border pt-10'
+      }
+    >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-lg font-semibold text-atg-fg">Images</h2>

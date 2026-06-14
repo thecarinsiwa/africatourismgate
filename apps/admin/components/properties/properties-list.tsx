@@ -17,6 +17,7 @@ import type { Destination, Property } from '@africatourismgate/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getHebergementsErrorMessage } from '../../lib/hebergements-errors';
+import { PropertyThumbnail } from './property-thumbnail';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -133,6 +134,14 @@ export function PropertiesList() {
   const columns = useMemo<ColumnDef<Property, unknown>[]>(
     () => [
       {
+        id: 'thumbnail',
+        header: '',
+        meta: { align: 'center' },
+        cell: ({ row }) => (
+          <PropertyThumbnail propertyId={row.original.id} name={row.original.name} size="md" />
+        ),
+      },
+      {
         accessorKey: 'name',
         header: 'Hébergement',
         cell: ({ row }) => (
@@ -175,6 +184,7 @@ export function PropertiesList() {
           const property = row.original;
           return (
             <DataTableActions>
+              <DataTableActionButton action="view" href={`/hebergements/${property.id}`} />
               <DataTableActionButton action="edit" href={`/hebergements/${property.id}`} />
               <DataTableActionButton
                 action="delete"
