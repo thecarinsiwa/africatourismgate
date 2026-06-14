@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
+import { buildCruiseBreadcrumbTail } from '../../lib/cruise-breadcrumbs';
 import { getCroisieresErrorMessage } from '../../lib/croisieres-errors';
 import { CabinsSection } from './cabins-section';
 import { ItinerariesSection } from './itineraries-section';
@@ -22,7 +23,13 @@ export function ShipEditPage({ shipId }: ShipEditPageProps) {
   useAdminEditPageMeta({
     ready: state.status === 'ready',
     title: 'Modifier le navire',
-    entityLabel: state.status === 'ready' ? state.ship.name : undefined,
+    breadcrumbTail:
+      state.status === 'ready'
+        ? buildCruiseBreadcrumbTail({
+            lineName: state.lineName,
+            shipName: state.ship.name,
+          })
+        : undefined,
   });
 
   useEffect(() => {

@@ -1,8 +1,14 @@
 'use client';
 
-import { Button, Card, DataTable, DataTableActionButton, DataTableActions, Input, type ColumnDef } from '@africatourismgate/ui';
+import {
+  Button,
+  Card,
+  DataTableActionButton,
+  DataTableActions,
+  Input,
+} from '@africatourismgate/ui';
 import type { Cabin } from '@africatourismgate/types';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getCroisieresErrorMessage } from '../../lib/croisieres-errors';
 
@@ -59,6 +65,17 @@ export function CabinsSection({ shipId }: CabinsSectionProps) {
     setFormError(null);
   }
 
+  function openEdit(cabin: Cabin) {
+    setEditing(cabin);
+    setFormValues({
+      categoryName: cabin.categoryName,
+      maxGuests: String(cabin.maxGuests),
+      basePriceCents: String(cabin.basePriceCents),
+      currency: cabin.currency,
+    });
+    setShowForm(true);
+  }
+
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     setFormError(null);
@@ -93,63 +110,6 @@ export function CabinsSection({ shipId }: CabinsSectionProps) {
       setSubmitting(false);
     }
   }
-
-  const columns = useMemo<ColumnDef<Cabin, unknown>[]>(
-    () => [
-      { accessorKey: 'categoryName', header: 'Catégorie' },
-      { accessorKey: 'maxGuests', header: 'Voyageurs max', meta: { align: 'center' } },
-      {
-        id: 'price',
-        header: 'Prix de base',
-        meta: { align: 'right' },
-        cell: ({ row }) => (
-          <span className="tabular-nums text-sm">
-            {formatPrice(row.original.basePriceCents, row.original.currency)}
-          </span>
-        ),
-      },
-      {
-        id: 'actions',
-        header: 'Actions',
-        meta: { align: 'right' },
-        cell: ({ row }) => (
-          <DataTableActions>
-            <DataTableActionButton
-              action="edit"
-              onClick={() => {
-                setEditing(row.original);
-                setFormValues({
-                  categoryName: row.original.categoryName,
-                  maxGuests: String(row.original.maxGuests),
-                  basePriceCents: String(row.original.basePriceCents),
-                  currency: row.original.currency,
-                });
-                setShowForm(true);
-              }}
-            />
-            <DataTableActionButton
-              action="delete"
-              onClick={async () => {
-                if (!window.confirm('Supprimer cette cabine ?')) return;
-                setDeletingId(row.original.id);
-                try {
-                  await getApiClient().deleteCabin(row.original.id);
-                  await load();
-                } catch (error) {
-                  setFormError(getCroisieresErrorMessage(error));
-                } finally {
-                  setDeletingId(null);
-                }
-              }}
-              disabled={deletingId === row.original.id}
-              loading={deletingId === row.original.id}
-            />
-          </DataTableActions>
-        ),
-      },
-    ],
-    [deletingId, load],
-  );
 
   const cabins = state.status === 'ready' ? state.cabins : [];
 
@@ -229,16 +189,53 @@ export function CabinsSection({ shipId }: CabinsSectionProps) {
         <p role="alert" className="text-sm text-red-600">
           {state.message}
         </p>
-      ) : (
-        <Card variant="dashboard" padding="none">
-          <DataTable
-            columns={columns}
-            data={cabins}
-            isLoading={state.status === 'loading'}
-            emptyMessage="Aucune cabine."
-            getRowId={(r) => r.id}
-          />
+      ) : state.status === 'loading' ? (
+        <p className="text-sm text-atg-muted">Chargement…</p>
+      ) : cabins.length === 0 ? (
+        <Card variant="dashboard" className="py-12 text-center">
+          <p className="text-sm text-atg-muted">Aucune cabine.</p>
         </Card>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {cabins.map((cabin) => (
+            <Card key={cabin.id} variant="dashboard" className="flex flex-col gap-4">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <h3 className="font-semibold text-atg-fg">{cabin.categoryName}</h3>
+                  <p className="mt-1 text-lg tabular-nums text-atg-fg">
+                    {formatPrice(cabin.basePriceCents, cabin.currency)}
+                  </p>
+                </div>
+                <DataTableActions>
+                  <DataTableActionButton action="edit" onClick={() => openEdit(cabin)} />
+                  <DataTableActionButton
+                    action="delete"
+                    onClick={async () => {
+                      if (!window.confirm('Supprimer cette cabine ?')) return;
+                      setDeletingId(cabin.id);
+                      try {
+                        await getApiClient().deleteCabin(cabin.id);
+                        await load();
+                      } catch (error) {
+                        setFormError(getCroisieresErrorMessage(error));
+                      } finally {
+                        setDeletingId(null);
+                      }
+                    }}
+                    disabled={deletingId === cabin.id}
+                    loading={deletingId === cabin.id}
+                  />
+                </DataTableActions>
+              </div>
+              <div className="mt-auto border-t border-atg-border pt-3">
+                <p className="text-sm text-atg-muted">
+                  <span className="font-medium text-atg-fg">{cabin.maxGuests}</span>{' '}
+                  voyageurs max
+                </p>
+              </div>
+            </Card>
+          ))}
+        </div>
       )}
     </section>
   );
