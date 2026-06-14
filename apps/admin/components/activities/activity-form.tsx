@@ -7,12 +7,14 @@ import type {
   ActivityProvider,
   CreateActivityRequest,
 } from '@africatourismgate/types';
-import { ACTIVITY_DIFFICULTY_LEVELS } from '@africatourismgate/types';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useId, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getActivitiesErrorMessage } from '../../lib/activities-errors';
-import { ACTIVITY_DIFFICULTY_LABELS } from '../../lib/activity-difficulty';
+import {
+  ACTIVITY_DIFFICULTY_LABELS,
+  ACTIVITY_DIFFICULTY_LEVELS,
+} from '../../lib/activity-difficulty';
 
 export type ActivityFormValues = {
   providerId: string;

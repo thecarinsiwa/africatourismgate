@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  Button,
   Card,
   DataTable,
   DataTableActionButton,
@@ -182,40 +181,32 @@ export function ActivitiesList() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:items-end">
-          <div className="flex-1 sm:max-w-md">
-            <Input
-              type="search"
-              placeholder="Rechercher par titre…"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-            />
-          </div>
-          <div className="sm:w-56">
-            <label className="mb-2 block text-sm font-medium text-atg-fg">Destination</label>
-            <select
-              value={destinationFilter}
-              onChange={(e) => {
-                setDestinationFilter(e.target.value);
-                setPage(1);
-              }}
-              className={selectClass}
-            >
-              <option value="">Toutes</option>
-              {destinations.map((d) => (
-                <option key={d.id} value={d.id}>
-                  {d.name}
-                </option>
-              ))}
-            </select>
-          </div>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
+        <div className="flex-1 sm:max-w-md">
+          <Input
+            type="search"
+            placeholder="Rechercher par titre…"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+          />
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Button href="/produits/activites/fournisseurs" variant="outline">
-            Fournisseurs
-          </Button>
-          <Button href="/produits/activites/nouveau">Nouvelle activité</Button>
+        <div className="sm:w-56">
+          <label className="mb-2 block text-sm font-medium text-atg-fg">Destination</label>
+          <select
+            value={destinationFilter}
+            onChange={(e) => {
+              setDestinationFilter(e.target.value);
+              setPage(1);
+            }}
+            className={selectClass}
+          >
+            <option value="">Toutes</option>
+            {destinations.map((d) => (
+              <option key={d.id} value={d.id}>
+                {d.name}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 

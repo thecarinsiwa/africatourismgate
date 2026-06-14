@@ -44,22 +44,19 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
     entityLabel: state.status === 'ready' ? state.activity.title : undefined,
   });
 
-  useEffect(() => {
-    let cancelled = false;
-    void getApiClient()
-      .getActivity(activityId)
-      .then((activity) => {
-        if (!cancelled) setState({ status: 'ready', activity });
-      })
-      .catch((error) => {
-        if (!cancelled) {
-          setState({ status: 'error', message: getActivitiesErrorMessage(error) });
-        }
-      });
-    return () => {
-      cancelled = true;
-    };
+  const loadActivity = useCallback(async () => {
+    setState({ status: 'loading' });
+    try {
+      const activity = await getApiClient().getActivity(activityId);
+      setState({ status: 'ready', activity });
+    } catch (error) {
+      setState({ status: 'error', message: getActivitiesErrorMessage(error) });
+    }
   }, [activityId]);
+
+  useEffect(() => {
+    void loadActivity();
+  }, [loadActivity]);
 
   const handleTabChange = useCallback(
     (tab: string) => {
@@ -78,8 +75,12 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
   if (state.status === 'loading') {
     return (
       <div className="space-y-6">
-        <Skeleton className="h-5 w-32" />
-        <Skeleton className="h-10 w-full max-w-md" />
+        <Skeleton className="h-5 w-40" />
+        <div className="space-y-2">
+          <Skeleton className="h-6 w-64" />
+          <Skeleton className="h-6 w-48" />
+        </div>
+        <Skeleton className="h-10 w-full max-w-xs" />
         <Skeleton className="h-64 w-full max-w-2xl" />
       </div>
     );
@@ -88,10 +89,14 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
   if (state.status === 'error') {
     return (
       <div className="space-y-4">
-        <p role="alert" className="text-sm text-red-600">
+        <AdminPageBackLink href="/produits/activites" label="Retour aux activités" />
+        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {state.message}
         </p>
-        <Link href="/produits/activites" className="text-sm font-medium text-primary">
+        <Link
+          href="/produits/activites"
+          className="text-sm font-medium text-primary hover:text-primary-hover"
+        >
           ← Retour à la liste
         </Link>
       </div>

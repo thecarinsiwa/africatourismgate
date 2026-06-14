@@ -1,6 +1,13 @@
 import type { ActivityDifficultyLevel } from '@africatourismgate/types';
 import type { DataTableBadgeVariant } from '@africatourismgate/ui';
 
+export const ACTIVITY_DIFFICULTY_LEVELS = [
+  'easy',
+  'moderate',
+  'hard',
+  'expert',
+] as const satisfies readonly ActivityDifficultyLevel[];
+
 export const ACTIVITY_DIFFICULTY_LABELS: Record<ActivityDifficultyLevel, string> = {
   easy: 'Facile',
   moderate: 'Modérée',

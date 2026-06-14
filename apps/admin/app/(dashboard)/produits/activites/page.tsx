@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
-import { AdminPageIntro } from '../../../../components/admin-page-intro';
+import { Button, PageHeader } from '@africatourismgate/ui';
 import { ActivitiesList } from '../../../../components/activities/activities-list';
+import { ActivitiesStatCards } from '../../../../components/activities/activities-stat-cards';
 
 export const metadata: Metadata = {
   title: 'Activités — Africa Tourism Gate Admin',
@@ -9,7 +10,19 @@ export const metadata: Metadata = {
 export default function ActivitesPage() {
   return (
     <div>
-      <AdminPageIntro description={"Expériences, fournisseurs et créneaux par destination."} />
+      <PageHeader
+        title="Activités & tours"
+        description="Expériences, fournisseurs et créneaux par destination."
+        actions={
+          <>
+            <Button href="/produits/activites/fournisseurs" variant="outline">
+              Fournisseurs
+            </Button>
+            <Button href="/produits/activites/nouveau">Nouvelle activité</Button>
+          </>
+        }
+      />
+      <ActivitiesStatCards className="mb-6" />
       <ActivitiesList />
     </div>
   );
