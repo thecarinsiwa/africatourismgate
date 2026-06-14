@@ -143,6 +143,10 @@ export function PackagesList() {
           const pkg = row.original;
           return (
             <DataTableActions>
+              <DataTableActionButton
+                action="view"
+                href={`/produits/forfaits/${pkg.id}/voir`}
+              />
               <DataTableActionButton action="edit" href={`/produits/forfaits/${pkg.id}`} />
               <DataTableActionButton
                 action="delete"

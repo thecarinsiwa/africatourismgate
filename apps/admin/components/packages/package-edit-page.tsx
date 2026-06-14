@@ -1,7 +1,7 @@
 'use client';
 
 import type { Package, PackageDetail } from '@africatourismgate/types';
-import { DataTableBadge, Skeleton } from '@africatourismgate/ui';
+import { Button, DataTableBadge, Skeleton } from '@africatourismgate/ui';
 import { useEffect, useState } from 'react';
 import { AdminPageBackLink } from '../admin-page-back-link';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
@@ -94,19 +94,24 @@ export function PackageEditPage({ packageId }: PackageEditPageProps) {
     <div className="space-y-6">
       <AdminPageBackLink href="/produits/forfaits" label="Retour aux forfaits" />
 
-      <div className="space-y-2">
-        <h2 className="text-lg font-semibold text-atg-fg">{pkg.name}</h2>
-        <div className="flex flex-wrap items-center gap-2">
-          <DataTableBadge variant={discount > 0 ? 'success' : 'muted'}>
-            Remise {pkg.discountPercent}%
-          </DataTableBadge>
-          <DataTableBadge variant={pkg.active === 1 ? 'success' : 'muted'}>
-            {pkg.active === 1 ? 'Actif' : 'Inactif'}
-          </DataTableBadge>
-          <DataTableBadge variant="muted">
-            {pkg.durationDays} jour{pkg.durationDays > 1 ? 's' : ''}
-          </DataTableBadge>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="space-y-2">
+          <h2 className="text-lg font-semibold text-atg-fg">{pkg.name}</h2>
+          <div className="flex flex-wrap items-center gap-2">
+            <DataTableBadge variant={discount > 0 ? 'success' : 'muted'}>
+              Remise {pkg.discountPercent}%
+            </DataTableBadge>
+            <DataTableBadge variant={pkg.active === 1 ? 'success' : 'muted'}>
+              {pkg.active === 1 ? 'Actif' : 'Inactif'}
+            </DataTableBadge>
+            <DataTableBadge variant="muted">
+              {pkg.durationDays} jour{pkg.durationDays > 1 ? 's' : ''}
+            </DataTableBadge>
+          </div>
         </div>
+        <Button href={`/produits/forfaits/${packageId}/voir`} variant="outline">
+          Voir le forfait
+        </Button>
       </div>
 
       <PackageForm mode="edit" packageId={packageId} initialPackage={pkg} />
