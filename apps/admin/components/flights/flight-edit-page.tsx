@@ -13,6 +13,7 @@ import Link from 'next/link';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
+import { AdminPageBackLink } from '../admin-page-back-link';
 import { getApiClient } from '../../lib/auth/api';
 import { getVolsErrorMessage } from '../../lib/vols-errors';
 import { FlightClassesSection } from './flight-classes-section';
@@ -143,6 +144,7 @@ export function FlightEditPage({ flightId }: FlightEditPageProps) {
 
   return (
     <div className="space-y-6">
+      <AdminPageBackLink href="/produits/vols" label="Retour aux vols" />
       <div className="space-y-4">
         <div className="flex flex-wrap items-center gap-2">
           <code className="rounded-md bg-atg-surface px-2.5 py-1 font-mono text-sm font-semibold text-atg-fg ring-1 ring-atg-border/60">
