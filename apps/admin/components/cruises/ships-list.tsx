@@ -14,6 +14,7 @@ import type { CruiseLine, Ship } from '@africatourismgate/types';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getCroisieresErrorMessage } from '../../lib/croisieres-errors';
+import { ShipThumbnail } from './ship-thumbnail';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -96,6 +97,14 @@ export function ShipsList() {
 
   const columns = useMemo<ColumnDef<Ship, unknown>[]>(
     () => [
+      {
+        id: 'thumbnail',
+        header: '',
+        meta: { align: 'center' },
+        cell: ({ row }) => (
+          <ShipThumbnail shipId={row.original.id} label={row.original.name} size="sm" />
+        ),
+      },
       { accessorKey: 'name', header: 'Navire' },
       {
         id: 'line',

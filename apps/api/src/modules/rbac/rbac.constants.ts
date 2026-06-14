@@ -84,6 +84,7 @@ export const CATALOG_PERMISSION_MAP = {
     'cabins',
     'cruise-sailings',
     'cabin-availability',
+    'ship-images',
   ],
   activities: ['activities', 'activity-providers', 'activity-schedules'],
   packages: ['packages', 'package-items'],

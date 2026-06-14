@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { AdminPageIntro } from '../../../../../components/admin-page-intro';
+import { CruisesStatCards } from '../../../../../components/cruises/cruises-stat-cards';
 import { CruiseLinesList } from '../../../../../components/cruises/cruise-lines-list';
 
 export const metadata: Metadata = {
@@ -13,6 +14,7 @@ export default function LignesCroisierePage() {
         description="Référentiel des compagnies / lignes."
         links={[{ href: '/produits/croisieres', label: '← Départs' }]}
       />
+      <CruisesStatCards className="mb-6" />
       <CruiseLinesList />
     </div>
   );

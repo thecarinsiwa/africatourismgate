@@ -10,6 +10,7 @@ import { getCroisieresErrorMessage } from '../../lib/croisieres-errors';
 import { CabinsSection } from './cabins-section';
 import { ItinerariesSection } from './itineraries-section';
 import { ShipForm } from './ship-form';
+import { ShipImagesSection } from './ship-images-section';
 
 type ShipEditPageProps = { shipId: string };
 
@@ -78,6 +79,7 @@ export function ShipEditPage({ shipId }: ShipEditPageProps) {
         {ship.name} · {lineName}
       </p>
       <ShipForm mode="edit" shipId={shipId} initialShip={ship} />
+      <ShipImagesSection shipId={shipId} embedded />
       <ItinerariesSection shipId={shipId} />
       <CabinsSection shipId={shipId} />
     </div>
