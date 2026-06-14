@@ -11,8 +11,8 @@ import {
 import { ApiForbiddenResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
 import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import { Rooms } from '../../../entities/generated';
+import { RoomsListQueryDto } from './dto/rooms-list-query.dto';
 import { RoomsService } from './rooms.service';
 
 @ApiTags('rooms')
@@ -24,7 +24,7 @@ export class RoomsController {
   @RequirePermissions('properties.read')
   @Get()
   @ApiOperation({ summary: 'List rooms' })
-  findAll(@Query() query: PaginationQueryDto) {
+  findAll(@Query() query: RoomsListQueryDto) {
     return this.service.findAll(query);
   }
 
