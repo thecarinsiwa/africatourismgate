@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import { PropertyEditPage } from '../../../../components/properties/property-edit-page';
 
 type PageProps = {
@@ -10,5 +11,9 @@ export const metadata: Metadata = {
 };
 
 export default function EditHebergementPage({ params }: PageProps) {
-  return <PropertyEditPage propertyId={params.id} />;
+  return (
+    <Suspense fallback={<p className="text-sm text-atg-muted">Chargement…</p>}>
+      <PropertyEditPage propertyId={params.id} />
+    </Suspense>
+  );
 }

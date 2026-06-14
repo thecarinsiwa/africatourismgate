@@ -9,15 +9,15 @@ import {
   Input,
   type ColumnDef,
 } from '@africatourismgate/ui';
-import type { PropertyImage } from '@africatourismgate/types';
+import type { RoomImage } from '@africatourismgate/types';
 import Image from 'next/image';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
 import { getSession } from '../../lib/auth/session';
 import { getHebergementsErrorMessage } from '../../lib/hebergements-errors';
 
-const PROPERTY_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
-const ALLOWED_PROPERTY_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
+const ROOM_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
+const ALLOWED_ROOM_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
 type ImageFormValues = {
   url: string;
@@ -27,19 +27,20 @@ type ImageFormValues = {
 
 const emptyForm: ImageFormValues = { url: '', caption: '', sortOrder: '0' };
 
-type PropertyImagesSectionProps = {
-  propertyId: string;
-  embedded?: boolean;
+type RoomImagesSectionProps = {
+  roomId: string;
+  roomName: string;
+  onClose?: () => void;
 };
 
-export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSectionProps) {
+export function RoomImagesSection({ roomId, roomName, onClose }: RoomImagesSectionProps) {
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
-    | { status: 'ready'; images: PropertyImage[] }
+    | { status: 'ready'; images: RoomImage[] }
   >({ status: 'loading' });
   const [showForm, setShowForm] = useState(false);
-  const [editing, setEditing] = useState<PropertyImage | null>(null);
+  const [editing, setEditing] = useState<RoomImage | null>(null);
   const [formValues, setFormValues] = useState<ImageFormValues>(emptyForm);
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -49,8 +50,8 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
   const load = useCallback(async () => {
     setState({ status: 'loading' });
     try {
-      const result = await getApiClient().listPropertyImages({
-        propertyId,
+      const result = await getApiClient().listRoomImages({
+        roomId,
         page: 1,
         limit: 100,
       });
@@ -58,7 +59,7 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
     } catch (error) {
       setState({ status: 'error', message: getHebergementsErrorMessage(error) });
     }
-  }, [propertyId]);
+  }, [roomId]);
 
   useEffect(() => {
     void load();
@@ -77,7 +78,7 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
     setShowForm(true);
   }
 
-  function openEdit(img: PropertyImage) {
+  function openEdit(img: RoomImage) {
     setEditing(img);
     setFormValues({
       url: img.url,
@@ -92,11 +93,11 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
     const file = event.target.files?.[0];
     if (!file) return;
     try {
-      if (!ALLOWED_PROPERTY_IMAGE_TYPES.has(file.type)) {
+      if (!ALLOWED_ROOM_IMAGE_TYPES.has(file.type)) {
         setFormError('Format accepté : JPEG, PNG ou WebP.');
         return;
       }
-      if (file.size > PROPERTY_IMAGE_MAX_BYTES) {
+      if (file.size > ROOM_IMAGE_MAX_BYTES) {
         setFormError('Image trop lourde (max 5 Mo).');
         return;
       }
@@ -109,18 +110,15 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
       setFormError(null);
       const body = new FormData();
       body.append('file', file);
-      const response = await fetch(
-        `${resolveApiBaseUrl()}/properties/${propertyId}/upload-image`,
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${session.accessToken}`,
-          },
-          body,
+      const response = await fetch(`${resolveApiBaseUrl()}/rooms/${roomId}/upload-image`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${session.accessToken}`,
         },
-      );
+        body,
+      });
       if (!response.ok) {
-        throw new Error('Upload property image failed');
+        throw new Error('Upload room image failed');
       }
       const payload = (await response.json()) as { url?: string };
       if (!payload.url) {
@@ -152,9 +150,9 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
         ...(formValues.caption.trim() ? { caption: formValues.caption.trim() } : {}),
       };
       if (editing) {
-        await client.updatePropertyImage(editing.id, body);
+        await client.updateRoomImage(editing.id, body);
       } else {
-        await client.createPropertyImage({ propertyId, ...body });
+        await client.createRoomImage({ roomId, ...body });
       }
       resetForm();
       await load();
@@ -166,11 +164,11 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
   }
 
   const handleDelete = useCallback(
-    async (img: PropertyImage) => {
+    async (img: RoomImage) => {
       if (!window.confirm('Supprimer cette image ?')) return;
       setDeletingId(img.id);
       try {
-        await getApiClient().deletePropertyImage(img.id);
+        await getApiClient().deleteRoomImage(img.id);
         await load();
       } catch (error) {
         setFormError(getHebergementsErrorMessage(error));
@@ -181,7 +179,7 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
     [load],
   );
 
-  const columns = useMemo<ColumnDef<PropertyImage, unknown>[]>(
+  const columns = useMemo<ColumnDef<RoomImage, unknown>[]>(
     () => [
       {
         id: 'preview',
@@ -249,31 +247,34 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
   const images = state.status === 'ready' ? state.images : [];
 
   return (
-    <section
-      className={
-        embedded ? 'space-y-6' : 'mt-12 space-y-6 border-t border-atg-border pt-10'
-      }
-    >
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="space-y-4 rounded-lg border border-atg-border bg-atg-surface/40 p-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-atg-fg">Images</h2>
+          <h3 className="text-sm font-semibold text-atg-fg">Photos — {roomName}</h3>
           <p className="mt-1 text-sm text-atg-muted">
             Uploadez une photo ou saisissez une URL externe.
           </p>
         </div>
-        {!showForm ? (
-          <Button type="button" onClick={openCreate}>
-            Ajouter une image
-          </Button>
-        ) : null}
+        <div className="flex gap-2">
+          {!showForm ? (
+            <Button type="button" size="sm" onClick={openCreate}>
+              Ajouter une photo
+            </Button>
+          ) : null}
+          {onClose ? (
+            <Button type="button" size="sm" variant="outline" onClick={onClose}>
+              Fermer
+            </Button>
+          ) : null}
+        </div>
       </div>
 
       {showForm ? (
         <Card variant="dashboard" className="max-w-2xl">
           <form onSubmit={handleSubmit} className="space-y-4">
-            <h3 className="text-sm font-medium">
-              {editing ? 'Modifier l’image' : 'Nouvelle image'}
-            </h3>
+            <h4 className="text-sm font-medium">
+              {editing ? 'Modifier la photo' : 'Nouvelle photo'}
+            </h4>
             {formError ? (
               <p role="alert" className="text-sm text-red-600">
                 {formError}
@@ -349,11 +350,11 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
             columns={columns}
             data={images}
             isLoading={state.status === 'loading'}
-            emptyMessage="Aucune image."
+            emptyMessage="Aucune photo pour cette chambre."
             getRowId={(row) => row.id}
           />
         </Card>
       )}
-    </section>
+    </div>
   );
 }

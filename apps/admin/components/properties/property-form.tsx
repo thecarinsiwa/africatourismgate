@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Input } from '@africatourismgate/ui';
+import { Button, Card, Input, Select, StarRatingInput, useToast } from '@africatourismgate/ui';
 import type {
   CreatePropertyRequest,
   Destination,
@@ -48,7 +48,7 @@ function propertyToFormValues(property: Property): PropertyFormValues {
     name: property.name,
     slug: property.slug,
     propertyType: property.propertyType,
-    starRating: property.starRating ?? '',
+    starRating: property.starRating != null ? String(property.starRating) : '',
     description: property.description ?? '',
     addressLine: property.addressLine ?? '',
   };
@@ -76,8 +76,9 @@ type PropertyFormProps = {
 
 export function PropertyForm({ mode, propertyId, initialProperty }: PropertyFormProps) {
   const router = useRouter();
-  const destId = useId();
+  const { toast } = useToast();
   const typeId = useId();
+  const descId = useId();
   const [destinations, setDestinations] = useState<Destination[]>([]);
   const [values, setValues] = useState<PropertyFormValues>(() =>
     initialProperty ? propertyToFormValues(initialProperty) : defaultValues,
@@ -142,111 +143,118 @@ export function PropertyForm({ mode, propertyId, initialProperty }: PropertyForm
         router.refresh();
       } else if (propertyId) {
         await client.updateProperty(propertyId, payload);
-        router.push('/hebergements');
-        router.refresh();
+        toast({
+          title: 'Hébergement enregistré',
+          message: values.name.trim(),
+          variant: 'success',
+        });
       }
     } catch (error) {
-      setFormError(getHebergementsErrorMessage(error));
+      const message = getHebergementsErrorMessage(error);
+      setFormError(message);
+      if (mode === 'edit') {
+        toast({
+          title: 'Erreur d’enregistrement',
+          message,
+          variant: 'error',
+        });
+      }
     } finally {
       setSubmitting(false);
     }
   }
 
+  const destinationOptions = [
+    { value: '', label: 'Choisir…' },
+    ...destinations.map((d) => ({ value: d.id, label: d.name })),
+  ];
+
+  const propertyTypeOptions = PROPERTY_TYPES.map((t) => ({
+    value: t.value,
+    label: t.label,
+  }));
+
+  const starValue = values.starRating.trim() !== '' ? Number(values.starRating) : 0;
+
   return (
     <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
       {formError ? (
-        <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
+        <p
+          role="alert"
+          className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-400"
+        >
           {formError}
         </p>
       ) : null}
 
-      <div>
-        <label htmlFor={destId} className="mb-2 block text-sm font-medium text-atg-fg">
-          Destination
-        </label>
-        <select
-          id={destId}
-          value={values.destinationId}
-          onChange={(e) => updateField('destinationId', e.target.value)}
-          className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm"
+      <Card variant="dashboard" className="space-y-4">
+        <h3 className="text-sm font-semibold text-atg-fg">Identité</h3>
+        <Input
+          label="Nom"
+          value={values.name}
+          onChange={(e) => updateField('name', e.target.value)}
+          error={fieldErrors.name}
           required
-        >
-          <option value="">Choisir…</option>
-          {destinations.map((d) => (
-            <option key={d.id} value={d.id}>
-              {d.name}
-            </option>
-          ))}
-        </select>
-        {fieldErrors.destinationId ? (
-          <p className="mt-1 text-sm text-red-600">{fieldErrors.destinationId}</p>
-        ) : null}
-      </div>
-
-      <Input
-        label="Nom"
-        value={values.name}
-        onChange={(e) => updateField('name', e.target.value)}
-        error={fieldErrors.name}
-        required
-      />
-
-      <Input
-        label="Slug"
-        value={values.slug}
-        onChange={(e) => {
-          setSlugTouched(true);
-          updateField('slug', e.target.value.toLowerCase());
-        }}
-        error={fieldErrors.slug}
-        required
-      />
-
-      <div>
-        <label htmlFor={typeId} className="mb-2 block text-sm font-medium text-atg-fg">
-          Type
-        </label>
-        <select
+        />
+        <Input
+          label="Slug"
+          value={values.slug}
+          onChange={(e) => {
+            setSlugTouched(true);
+            updateField('slug', e.target.value.toLowerCase());
+          }}
+          error={fieldErrors.slug}
+          required
+        />
+        <Select
           id={typeId}
+          label="Type"
           value={values.propertyType}
           onChange={(e) => updateField('propertyType', e.target.value as PropertyType)}
-          className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm"
-        >
-          {PROPERTY_TYPES.map((t) => (
-            <option key={t.value} value={t.value}>
-              {t.label}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <Input
-        label="Classement (étoiles)"
-        type="number"
-        step="0.5"
-        min={0}
-        max={5}
-        value={values.starRating}
-        onChange={(e) => updateField('starRating', e.target.value)}
-        error={fieldErrors.starRating}
-        hint="Optionnel, 0 à 5"
-      />
-
-      <Input
-        label="Adresse"
-        value={values.addressLine}
-        onChange={(e) => updateField('addressLine', e.target.value)}
-      />
-
-      <div>
-        <label className="mb-2 block text-sm font-medium text-atg-fg">Description</label>
-        <textarea
-          rows={3}
-          value={values.description}
-          onChange={(e) => updateField('description', e.target.value)}
-          className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm"
+          options={propertyTypeOptions}
         />
-      </div>
+      </Card>
+
+      <Card variant="dashboard" className="space-y-4">
+        <h3 className="text-sm font-semibold text-atg-fg">Localisation</h3>
+        <Select
+          label="Destination"
+          value={values.destinationId}
+          onChange={(e) => updateField('destinationId', e.target.value)}
+          options={destinationOptions}
+          error={fieldErrors.destinationId}
+          required
+        />
+        <Input
+          label="Adresse"
+          value={values.addressLine}
+          onChange={(e) => updateField('addressLine', e.target.value)}
+        />
+      </Card>
+
+      <Card variant="dashboard" className="space-y-4">
+        <h3 className="text-sm font-semibold text-atg-fg">Classification</h3>
+        <StarRatingInput
+          label="Classement (étoiles)"
+          value={Number.isFinite(starValue) ? starValue : 0}
+          onChange={(v) => updateField('starRating', v > 0 ? String(v) : '')}
+          step={0.5}
+          hint="Optionnel, 0 à 5"
+          error={fieldErrors.starRating}
+        />
+        <div>
+          <label htmlFor={descId} className="mb-2 block text-sm font-medium text-atg-fg">
+            Description
+          </label>
+          <textarea
+            id={descId}
+            rows={3}
+            value={values.description}
+            onChange={(e) => updateField('description', e.target.value)}
+            className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm"
+          />
+        </div>
+      </Card>
 
       <div className="flex flex-wrap gap-3">
         <Button type="submit" loading={submitting} loadingText="Enregistrement…">

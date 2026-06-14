@@ -17,6 +17,7 @@ import type {
   CreatePropertyImageRequest,
   CreatePropertyRequest,
   CreateRoomAvailabilityRequest,
+  CreateRoomImageRequest,
   CreateRoomRequest,
   BulkUpsertRoomAvailabilityRequest,
   BulkUpsertRoomAvailabilityResponse,
@@ -138,6 +139,8 @@ import type {
   Room,
   RoomAvailability,
   RoomAvailabilityListQuery,
+  RoomImage,
+  RoomImagesListQuery,
   RoomsListQuery,
   Destination,
   DestinationsListQuery,
@@ -205,6 +208,7 @@ import type {
   UpdatePropertyImageRequest,
   UpdatePropertyRequest,
   UpdateRoomAvailabilityRequest,
+  UpdateRoomImageRequest,
   UpdateRoomRequest,
   UpdatePointOfInterestRequest,
   BulkUpsertOrganizationSettingsRequest,
@@ -336,6 +340,7 @@ export type {
   CreateAmenityRequest,
   CreatePropertyImageRequest,
   CreatePropertyRequest,
+  CreateRoomImageRequest,
   CreateRoomRequest,
   Property,
   PropertyAmenitiesListQuery,
@@ -358,10 +363,13 @@ export type {
   PublicDestination,
   ReplacePropertyAmenitiesRequest,
   Room,
+  RoomImage,
+  RoomImagesListQuery,
   RoomsListQuery,
   UpdateAmenityRequest,
   UpdatePropertyImageRequest,
   UpdatePropertyRequest,
+  UpdateRoomImageRequest,
   UpdateRoomRequest,
 } from '@africatourismgate/types';
 
@@ -734,6 +742,29 @@ export class ApiClient {
 
   deletePropertyImage(id: string): Promise<void> {
     return this.request<void>(`/property-images/${id}`, { method: 'DELETE' });
+  }
+
+  listRoomImages(query?: RoomImagesListQuery): Promise<PaginatedResponse<RoomImage>> {
+    return fetchPaginated<RoomImage>(this, '/room-images', query);
+  }
+
+  getRoomImage(id: string): Promise<RoomImage> {
+    return this.request<RoomImage>(`/room-images/${id}`);
+  }
+
+  createRoomImage(body: CreateRoomImageRequest): Promise<RoomImage> {
+    return this.request<RoomImage>('/room-images', { method: 'POST', body });
+  }
+
+  updateRoomImage(id: string, body: UpdateRoomImageRequest): Promise<RoomImage> {
+    return this.request<RoomImage>(`/room-images/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteRoomImage(id: string): Promise<void> {
+    return this.request<void>(`/room-images/${id}`, { method: 'DELETE' });
   }
 
   listRooms(query?: RoomsListQuery): Promise<PaginatedResponse<Room>> {

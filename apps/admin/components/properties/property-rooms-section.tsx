@@ -13,6 +13,7 @@ import type { Room } from '@africatourismgate/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getHebergementsErrorMessage } from '../../lib/hebergements-errors';
+import { RoomImagesSection } from './room-images-section';
 
 type RoomFormValues = {
   name: string;
@@ -38,9 +39,10 @@ function formatPrice(cents: number, currency: string): string {
 
 type PropertyRoomsSectionProps = {
   propertyId: string;
+  embedded?: boolean;
 };
 
-export function PropertyRoomsSection({ propertyId }: PropertyRoomsSectionProps) {
+export function PropertyRoomsSection({ propertyId, embedded }: PropertyRoomsSectionProps) {
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -52,6 +54,7 @@ export function PropertyRoomsSection({ propertyId }: PropertyRoomsSectionProps) 
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [photosRoom, setPhotosRoom] = useState<Room | null>(null);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -79,11 +82,13 @@ export function PropertyRoomsSection({ propertyId }: PropertyRoomsSectionProps) 
   }
 
   function openCreate() {
+    setPhotosRoom(null);
     resetForm();
     setShowForm(true);
   }
 
   function openEdit(room: Room) {
+    setPhotosRoom(null);
     setEditing(room);
     setFormValues({
       name: room.name,
@@ -192,6 +197,14 @@ export function PropertyRoomsSection({ propertyId }: PropertyRoomsSectionProps) 
         cell: ({ row }) => (
           <DataTableActions>
             <DataTableActionButton
+              action="view"
+              label="Photos"
+              onClick={() => {
+                setShowForm(false);
+                setPhotosRoom(row.original);
+              }}
+            />
+            <DataTableActionButton
               action="calendar"
               href={`/hebergements/${propertyId}/chambres/${row.original.id}/disponibilites`}
             />
@@ -212,7 +225,11 @@ export function PropertyRoomsSection({ propertyId }: PropertyRoomsSectionProps) 
   const rooms = state.status === 'ready' ? state.rooms : [];
 
   return (
-    <section className="mt-12 space-y-6 border-t border-atg-border pt-10">
+    <section
+      className={
+        embedded ? 'space-y-6' : 'mt-12 space-y-6 border-t border-atg-border pt-10'
+      }
+    >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-lg font-semibold text-atg-fg">Chambres</h2>
@@ -309,6 +326,14 @@ export function PropertyRoomsSection({ propertyId }: PropertyRoomsSectionProps) 
           />
         </Card>
       )}
+
+      {photosRoom ? (
+        <RoomImagesSection
+          roomId={photosRoom.id}
+          roomName={photosRoom.name}
+          onClose={() => setPhotosRoom(null)}
+        />
+      ) : null}
     </section>
   );
 }

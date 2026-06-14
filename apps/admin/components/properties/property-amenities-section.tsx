@@ -1,22 +1,27 @@
 'use client';
 
-import { Button, Card } from '@africatourismgate/ui';
+import { Button, Card, useToast } from '@africatourismgate/ui';
 import type { Amenity } from '@africatourismgate/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { getAmenityIcon } from '../../lib/amenity-icon-map';
 import { getApiClient } from '../../lib/auth/api';
 import { getHebergementsErrorMessage } from '../../lib/hebergements-errors';
 
 type PropertyAmenitiesSectionProps = {
   propertyId: string;
+  embedded?: boolean;
 };
 
-export function PropertyAmenitiesSection({ propertyId }: PropertyAmenitiesSectionProps) {
+export function PropertyAmenitiesSection({
+  propertyId,
+  embedded,
+}: PropertyAmenitiesSectionProps) {
+  const { toast } = useToast();
   const [amenities, setAmenities] = useState<Amenity[]>([]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -52,29 +57,41 @@ export function PropertyAmenitiesSection({ propertyId }: PropertyAmenitiesSectio
       else next.add(amenityId);
       return next;
     });
-    setSuccess(null);
   }
 
   async function handleSave() {
     setSaving(true);
     setError(null);
-    setSuccess(null);
     try {
       await getApiClient().replacePropertyAmenities({
         propertyId,
         amenityIds: Array.from(selected),
       });
-      setSuccess('Équipements enregistrés.');
+      toast({
+        title: 'Équipements enregistrés',
+        message: 'La sélection a été mise à jour.',
+        variant: 'success',
+      });
       await load();
     } catch (err) {
-      setError(getHebergementsErrorMessage(err));
+      const message = getHebergementsErrorMessage(err);
+      setError(message);
+      toast({
+        title: 'Erreur d’enregistrement',
+        message,
+        variant: 'error',
+      });
     } finally {
       setSaving(false);
     }
   }
 
   return (
-    <section className="mt-12 space-y-6 border-t border-atg-border pt-10">
+    <section
+      className={
+        embedded ? 'space-y-6' : 'mt-12 space-y-6 border-t border-atg-border pt-10'
+      }
+    >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-lg font-semibold text-atg-fg">Équipements</h2>
@@ -88,12 +105,9 @@ export function PropertyAmenitiesSection({ propertyId }: PropertyAmenitiesSectio
       </div>
 
       {error ? (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {error}
         </p>
-      ) : null}
-      {success ? (
-        <p className="text-sm text-primary">{success}</p>
       ) : null}
 
       <Card variant="dashboard">
@@ -117,6 +131,9 @@ export function PropertyAmenitiesSection({ propertyId }: PropertyAmenitiesSectio
                     onChange={() => toggle(a.id)}
                     className="h-4 w-4 rounded border-atg-border text-primary"
                   />
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-atg-surface text-primary">
+                    {getAmenityIcon(a.code, 'h-4 w-4')}
+                  </span>
                   <span className="min-w-0 flex-1">
                     <span className="block text-sm font-medium text-atg-fg">{a.name}</span>
                     <span className="font-mono text-xs text-atg-muted">{a.code}</span>

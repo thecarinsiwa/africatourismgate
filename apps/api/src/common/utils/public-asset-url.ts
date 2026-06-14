@@ -21,6 +21,10 @@ export function propertyUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/properties/${filename}`;
 }
 
+export function roomUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/rooms/${filename}`;
+}
+
 function getApiPublicOrigin(): string {
   return getApiBaseUrl().replace(/\/api$/, '');
 }

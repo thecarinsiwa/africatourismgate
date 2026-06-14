@@ -21,6 +21,7 @@ import { PropertyImagesModule } from './resources/property-images/property-image
 import { PropertyAmenitiesModule } from './resources/property-amenities/property-amenities.module';
 import { RoomsModule } from './resources/rooms/rooms.module';
 import { RoomAvailabilityModule } from './resources/room-availability/room-availability.module';
+import { RoomImagesModule } from './resources/room-images/room-images.module';
 import { AirlinesModule } from './resources/airlines/airlines.module';
 import { AirportsModule } from './resources/airports/airports.module';
 import { FlightsModule } from './resources/flights/flights.module';
@@ -79,6 +80,7 @@ import { Module } from '@nestjs/common';
     PropertyImagesModule,
     PropertyAmenitiesModule,
     RoomsModule,
+    RoomImagesModule,
     RoomAvailabilityModule,
     AirlinesModule,
     AirportsModule,
