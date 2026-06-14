@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  Avatar,
   Button,
   Card,
   DataTable,
@@ -159,12 +160,26 @@ export function EmployeesList() {
         header: 'Utilisateur',
         cell: ({ row }) => {
           const emp = row.original;
+          const email = emp.user?.email ?? '';
+          const firstName = emp.user?.firstName;
+          const lastName = emp.user?.lastName;
+          const fullName = userDisplayName(emp);
           return (
-            <div>
-              <span className="font-medium text-atg-fg">{userDisplayName(emp)}</span>
-              {emp.user?.email ? (
-                <p className="text-xs text-atg-muted">{emp.user.email}</p>
+            <div className="flex items-center gap-3">
+              {email ? (
+                <Avatar
+                  email={email}
+                  firstName={firstName}
+                  lastName={lastName}
+                  size="md"
+                />
               ) : null}
+              <div className="min-w-0">
+                <span className="block truncate font-medium text-atg-fg">{fullName}</span>
+                {email ? (
+                  <span className="block truncate text-xs text-atg-muted">{email}</span>
+                ) : null}
+              </div>
             </div>
           );
         },
