@@ -193,8 +193,6 @@ export type {
   UpdateActivityScheduleRequest,
 } from './activity.js';
 
-export { ACTIVITY_DIFFICULTY_LEVELS } from './activity.js';
-
 export type {
   Booking,
   BookingAdminDetail,

@@ -1,4 +1,4 @@
-import { ACTIVITY_DIFFICULTY_LEVELS } from '@africatourismgate/types';
+import { ACTIVITY_DIFFICULTY_LEVELS } from '../activities.constants';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
