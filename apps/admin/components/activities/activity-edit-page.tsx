@@ -10,7 +10,7 @@ import { AdminPageBackLink } from '../admin-page-back-link';
 import { getApiClient } from '../../lib/auth/api';
 import { getActivitiesErrorMessage } from '../../lib/activities-errors';
 import { ActivityForm } from './activity-form';
-import { ActivityGallerySection } from './activity-gallery-section';
+import { ActivityImagesSection } from './activity-images-section';
 import { ActivityMetaBadges } from './activity-meta-badges';
 import { ActivitySchedulesSection } from './activity-schedules-section';
 
@@ -130,7 +130,7 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
             initialActivity={activity}
             onUpdated={(updated) => setState({ status: 'ready', activity: updated })}
           />
-          <ActivityGallerySection embedded />
+          <ActivityImagesSection activityId={activityId} embedded />
         </TabsContent>
 
         <TabsContent value="creneaux">

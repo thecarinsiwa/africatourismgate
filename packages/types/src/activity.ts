@@ -88,3 +88,30 @@ export interface ActivitySchedulesListQuery {
   activityId?: string;
   destinationId?: string;
 }
+
+export interface ActivityImage {
+  id: string;
+  activityId: string;
+  url: string;
+  caption: string | null;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string | null;
+}
+
+export interface CreateActivityImageRequest {
+  activityId: string;
+  url: string;
+  caption?: string;
+  sortOrder?: number;
+}
+
+export type UpdateActivityImageRequest = Partial<
+  Omit<CreateActivityImageRequest, 'activityId'>
+>;
+
+export interface ActivityImagesListQuery {
+  page?: number;
+  limit?: number;
+  activityId?: string;
+}

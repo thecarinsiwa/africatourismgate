@@ -46,6 +46,25 @@ export class Activities extends BaseAuditEntity {
 
 }
 
+@Entity('activity_images')
+export class ActivityImages extends BaseAuditEntity {
+  @PrimaryColumn('uuid', { name: 'id', length: 36 })
+  id!: string;
+
+  @Column({ type: 'varchar', name: 'activity_id', length: 36 })
+  activityId!: string;
+
+  @Column({ type: 'varchar', name: 'url', length: 512 })
+  url!: string;
+
+  @Column({ type: 'varchar', name: 'caption', length: 255, nullable: true })
+  caption!: string | null;
+
+  @Column({ type: 'int', name: 'sort_order' })
+  sortOrder!: number;
+
+}
+
 @Entity('activity_schedules')
 export class ActivitySchedules extends BaseAuditEntity {
   @PrimaryColumn('uuid', { name: 'id', length: 36 })

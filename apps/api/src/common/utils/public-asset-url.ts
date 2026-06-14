@@ -37,6 +37,10 @@ export function shipUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/ships/${filename}`;
 }
 
+export function activityUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/activities/${filename}`;
+}
+
 function getApiPublicOrigin(): string {
   return getApiBaseUrl().replace(/\/api$/, '');
 }
