@@ -11,7 +11,7 @@ import {
 import { ApiForbiddenResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
 import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
+import { FlightClassAvailabilityListQueryDto } from './dto/flight-class-availability-list-query.dto';
 import { FlightClassAvailability } from '../../../entities/generated';
 import { FlightClassAvailabilityService } from './flight-class-availability.service';
 
@@ -24,7 +24,7 @@ export class FlightClassAvailabilityController {
   @RequirePermissions('flights.read')
   @Get()
   @ApiOperation({ summary: 'List flight-class-availability' })
-  findAll(@Query() query: PaginationQueryDto) {
+  findAll(@Query() query: FlightClassAvailabilityListQueryDto) {
     return this.service.findAll(query);
   }
 

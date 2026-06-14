@@ -10,9 +10,9 @@ import {
 } from '@nestjs/common';
 import { ApiForbiddenResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
-import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
-import { FlightClasses } from '../../../entities/generated';
+import { CreateFlightClassDto } from './dto/create-flight-class.dto';
+import { FlightClassesListQueryDto } from './dto/flight-classes-list-query.dto';
+import { UpdateFlightClassDto } from './dto/update-flight-class.dto';
 import { FlightClassesService } from './flight-classes.service';
 
 @ApiTags('flight-classes')
@@ -24,7 +24,7 @@ export class FlightClassesController {
   @RequirePermissions('flights.read')
   @Get()
   @ApiOperation({ summary: 'List flight-classes' })
-  findAll(@Query() query: PaginationQueryDto) {
+  findAll(@Query() query: FlightClassesListQueryDto) {
     return this.service.findAll(query);
   }
 
@@ -38,14 +38,14 @@ export class FlightClassesController {
   @RequirePermissions('flights.write')
   @Post()
   @ApiOperation({ summary: 'Create flight-classes' })
-  create(@Body() dto: DeepPartial<FlightClasses>) {
+  create(@Body() dto: CreateFlightClassDto) {
     return this.service.create(dto);
   }
 
   @RequirePermissions('flights.write')
   @Patch(':id')
   @ApiOperation({ summary: 'Update flight-classes' })
-  update(@Param('id') id: string, @Body() dto: DeepPartial<FlightClasses>) {
+  update(@Param('id') id: string, @Body() dto: UpdateFlightClassDto) {
     return this.service.update(id, dto);
   }
 
