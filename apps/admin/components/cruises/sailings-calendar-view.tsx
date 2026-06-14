@@ -35,8 +35,20 @@ export function SailingsCalendarView({
   const load = useCallback(async () => {
     setState({ status: 'loading' });
     try {
-      const result = await getApiClient().listCruiseSailings({ page: 1, limit: 300 });
-      setState({ status: 'ready', sailings: result.data });
+      const client = getApiClient();
+      const pageSize = 100;
+      const sailings: CruiseSailing[] = [];
+      let page = 1;
+      let totalPages = 1;
+
+      do {
+        const result = await client.listCruiseSailings({ page, limit: pageSize });
+        sailings.push(...result.data);
+        totalPages = result.meta.totalPages;
+        page += 1;
+      } while (page <= totalPages);
+
+      setState({ status: 'ready', sailings });
     } catch (error) {
       setState({ status: 'error', message: getCroisieresErrorMessage(error) });
     }
