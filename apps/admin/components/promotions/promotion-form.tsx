@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useId, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getPromotionsErrorMessage } from '../../lib/promotions-errors';
+import { PromotionPreviewBanner } from './promotion-preview-banner';
 
 export type PromotionFormValues = {
   name: string;
@@ -180,6 +181,25 @@ export function PromotionForm({ mode, promotionId, initialPromotion }: Promotion
           {formError}
         </p>
       ) : null}
+
+      <PromotionPreviewBanner
+        name={values.name}
+        description={values.description}
+        hasDiscount={values.hasDiscount}
+        discountType={values.hasDiscount ? values.discountType : null}
+        discountValue={values.hasDiscount ? values.discountValue : null}
+        validFrom={values.validFrom || null}
+        validUntil={values.validUntil || null}
+        active={values.active}
+        redemptionCount={mode === 'edit' ? initialPromotion?.redemptionCount : undefined}
+        maxRedemptions={
+          mode === 'edit' && initialPromotion?.maxRedemptions != null
+            ? initialPromotion.maxRedemptions
+            : values.maxRedemptions.trim()
+              ? Number(values.maxRedemptions)
+              : null
+        }
+      />
 
       <Input
         label="Titre de la campagne"

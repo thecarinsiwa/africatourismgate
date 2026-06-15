@@ -11,43 +11,22 @@ import {
   Input,
   type ColumnDef,
 } from '@africatourismgate/ui';
-import type { PromoCodeDiscountType, Promotion } from '@africatourismgate/types';
+import type { Promotion } from '@africatourismgate/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import {
+  formatPromoUsageLabel,
+  formatPromotionValidityDisplay,
+  getPromoUsageBadgeVariant,
+} from '../../lib/promo-validity';
 import { getPromotionsErrorMessage } from '../../lib/promotions-errors';
+import {
+  PromotionPreviewBanner,
+  promotionToPreviewProps,
+} from './promotion-preview-banner';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
-
-const discountTypeLabels: Record<PromoCodeDiscountType, string> = {
-  percent: '%',
-  fixed_amount: 'Montant fixe',
-};
-
-function formatDiscount(promo: Promotion): string {
-  if (!promo.discountType || promo.discountValue == null) {
-    return '—';
-  }
-  const value = Number(promo.discountValue);
-  if (promo.discountType === 'percent') {
-    return `${value} %`;
-  }
-  return `${value.toFixed(2)}`;
-}
-
-function formatValidity(promo: Promotion): string {
-  const from = promo.validFrom?.slice(0, 10);
-  const until = promo.validUntil?.slice(0, 10);
-  if (!from && !until) return 'Sans limite';
-  if (from && until) return `${from} → ${until}`;
-  if (from) return `À partir du ${from}`;
-  return `Jusqu’au ${until}`;
-}
-
-function formatUsage(promo: Promotion): string {
-  const max = promo.maxRedemptions != null ? String(promo.maxRedemptions) : '∞';
-  return `${promo.redemptionCount} / ${max}`;
-}
 
 export function PromotionsList() {
   const [searchInput, setSearchInput] = useState('');
@@ -136,42 +115,20 @@ export function PromotionsList() {
         accessorKey: 'name',
         header: 'Campagne',
         cell: ({ row }) => (
-          <div>
-            <span className="font-medium text-atg-fg">{row.original.name}</span>
-            {row.original.description ? (
-              <p className="mt-0.5 line-clamp-1 text-xs text-atg-muted">
-                {row.original.description}
-              </p>
-            ) : null}
+          <div className="max-w-md space-y-2">
+            <PromotionPreviewBanner
+              {...promotionToPreviewProps(row.original)}
+              compact
+            />
           </div>
         ),
-      },
-      {
-        id: 'discount',
-        header: 'Réduction',
-        cell: ({ row }) => {
-          const label = formatDiscount(row.original);
-          if (label === '—') {
-            return <span className="text-sm text-atg-muted">Informative</span>;
-          }
-          return (
-            <span className="text-sm text-atg-fg">
-              {label}{' '}
-              {row.original.discountType ? (
-                <span className="text-atg-muted">
-                  ({discountTypeLabels[row.original.discountType]})
-                </span>
-              ) : null}
-            </span>
-          );
-        },
       },
       {
         id: 'validity',
         header: 'Validité',
         cell: ({ row }) => (
-          <span className="whitespace-nowrap text-sm text-atg-muted">
-            {formatValidity(row.original)}
+          <span className="whitespace-nowrap text-sm tabular-nums text-atg-muted">
+            {formatPromotionValidityDisplay(row.original.validFrom, row.original.validUntil)}
           </span>
         ),
       },
@@ -179,9 +136,17 @@ export function PromotionsList() {
         id: 'usage',
         header: 'Utilisations',
         meta: { align: 'center' },
-        cell: ({ row }) => (
-          <span className="tabular-nums text-sm">{formatUsage(row.original)}</span>
-        ),
+        cell: ({ row }) => {
+          const promo = row.original;
+          return (
+            <DataTableBadge
+              variant={getPromoUsageBadgeVariant(promo.redemptionCount, promo.maxRedemptions)}
+              className="tabular-nums"
+            >
+              {formatPromoUsageLabel(promo.redemptionCount, promo.maxRedemptions)}
+            </DataTableBadge>
+          );
+        },
       },
       {
         id: 'active',

@@ -57,6 +57,30 @@ export function formatPromoValidityRange(validFrom: string, validUntil: string):
   return `${toDateKey(validFrom)} → ${toDateKey(validUntil)}`;
 }
 
+export function formatPromotionValidityDisplay(
+  validFrom: string | null | undefined,
+  validUntil: string | null | undefined,
+): string {
+  const from = validFrom?.slice(0, 10);
+  const until = validUntil?.slice(0, 10);
+  if (!from && !until) return 'Sans limite de dates';
+  if (from && until) return `${from} → ${until}`;
+  if (from) return `À partir du ${from}`;
+  return `Jusqu’au ${until}`;
+}
+
+export function getPromotionValidityState(
+  validFrom: string | null | undefined,
+  validUntil: string | null | undefined,
+  now = new Date(),
+): PromoValidityState | null {
+  const today = todayDateKey(now);
+  if (validUntil && today > toDateKey(validUntil)) return 'expired';
+  if (validFrom && today < toDateKey(validFrom)) return 'upcoming';
+  if (validFrom || validUntil) return 'active';
+  return null;
+}
+
 export function formatPromoDiscountLabel(promo: Pick<PromoCode, 'discountType' | 'discountValue'>): string {
   const value = Number(promo.discountValue);
   if (promo.discountType === 'percent') {
@@ -67,6 +91,19 @@ export function formatPromoDiscountLabel(promo: Pick<PromoCode, 'discountType' |
 
 export function getPromoDiscountTypeLabel(type: PromoCodeDiscountType): string {
   return discountTypeLabels[type];
+}
+
+export function formatPromotionDiscountBadge(params: {
+  hasDiscount: boolean;
+  discountType?: PromoCodeDiscountType | null;
+  discountValue?: string | number | null;
+}): string {
+  if (!params.hasDiscount) return 'Campagne informative';
+  const value = Number(params.discountValue);
+  if (!Number.isFinite(value) || value <= 0) return 'Réduction…';
+  if (params.discountType === 'percent') return `−${value} %`;
+  if (params.discountType === 'fixed_amount') return `−${value.toFixed(2)}`;
+  return 'Réduction…';
 }
 
 export function formatPromoUsageLabel(
