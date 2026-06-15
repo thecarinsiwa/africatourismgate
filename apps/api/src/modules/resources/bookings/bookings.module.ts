@@ -22,6 +22,7 @@ import {
 } from '../../../entities/generated';
 import { ReviewsModule } from '../reviews/reviews.module';
 import { PackagesModule } from '../packages/packages.module';
+import { EmailVerificationModule } from '../../email-verification/email-verification.module';
 import { BookingCheckoutPromoService } from './booking-checkout-promo.service';
 import { BookingEngineService } from './booking-engine.service';
 import { BookingPackageCheckoutService } from './booking-package-checkout.service';
@@ -33,6 +34,7 @@ import { BookingsService } from './bookings.service';
 @Module({
   imports: [
     forwardRef(() => StripeModule),
+    EmailVerificationModule,
     ReviewsModule,
     PackagesModule,
     TypeOrmModule.forFeature([

@@ -23,6 +23,7 @@ import {
   Vehicles,
 } from '../../../entities/generated';
 import { EmailService } from '../../email/email.service';
+import { EmailVerificationService } from '../../email-verification/email-verification.service';
 import {
   assertValidVehicleDates,
   countRentalDays,
@@ -37,6 +38,7 @@ import {
   BookingCheckoutLineDto,
   BookingCheckoutPreviewResponseDto,
 } from './dto/booking-checkout-preview-response.dto';
+import type { CreateBookingResponseDto } from './dto/create-booking-response.dto';
 import { BookingDetailDto } from './dto/booking-detail.dto';
 import { BookingCheckoutPromoService } from './booking-checkout-promo.service';
 import { BookingPackageCheckoutService } from './booking-package-checkout.service';
@@ -88,6 +90,7 @@ export class BookingEngineService {
     @InjectRepository(Users)
     private readonly usersRepository: Repository<Users>,
     private readonly emailService: EmailService,
+    private readonly emailVerification: EmailVerificationService,
   ) {}
 
   async previewCheckout(
@@ -111,7 +114,7 @@ export class BookingEngineService {
     dto: BookingCheckoutDto,
     userId: string,
     actorUserId?: string,
-  ): Promise<BookingDetailDto> {
+  ): Promise<CreateBookingResponseDto> {
     const pricing = await this.resolveCheckoutPricing(dto);
 
     const bookingId = await this.bookingsRepository.manager.transaction(
@@ -125,7 +128,7 @@ export class BookingEngineService {
         const booking = bookingsRepo.create({
           id,
           userId,
-          status: 'pending_payment',
+          status: 'draft',
           totalCents: pricing.totalCents,
           currency: pricing.currency,
           promoCodeId: pricing.discount?.promoCodeId ?? null,
@@ -161,11 +164,51 @@ export class BookingEngineService {
     await this.statusHistory.record({
       bookingId,
       fromStatus: null,
-      toStatus: 'pending_payment',
-      reason: 'Création de la réservation',
+      toStatus: 'draft',
+      reason: 'Création de la réservation (en attente de vérification)',
       changedByUserId: actorUserId ?? null,
     });
 
+    const user = await this.usersRepository.findOne({
+      where: { id: userId },
+    });
+    const detail = await this.getBookingDetail(bookingId);
+    const { verificationId } = await this.emailVerification.createAndSend({
+      email: user?.email ?? '',
+      purpose: 'booking',
+      referenceId: bookingId,
+      firstName: user?.firstName ?? 'Client',
+      metadata: {
+        totalCents: pricing.totalCents,
+        currency: pricing.currency,
+      },
+    });
+
+    return {
+      ...detail,
+      requiresVerification: true,
+      verificationId,
+    };
+  }
+
+  async activateDraftBooking(bookingId: string): Promise<BookingDetailDto> {
+    const booking = await this.findBookingOrThrow(bookingId);
+    if (booking.status !== 'draft') {
+      throw new BadRequestException(
+        `La réservation n'est pas en attente de vérification (statut « ${booking.status} »).`,
+      );
+    }
+    const fromStatus = booking.status;
+    booking.status = 'pending_payment';
+    booking.updatedByUserId = null;
+    await this.bookingsRepository.save(booking);
+    await this.statusHistory.record({
+      bookingId,
+      fromStatus,
+      toStatus: 'pending_payment',
+      reason: 'Vérification e-mail confirmée',
+      changedByUserId: null,
+    });
     return this.getBookingDetail(bookingId);
   }
 

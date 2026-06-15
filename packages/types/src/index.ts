@@ -24,6 +24,7 @@ export type {
   ResetPasswordRequest,
   ResetPasswordResponse,
   UserStatus,
+  VerifyOperationRequest,
 } from './auth.js';
 
 export type {
@@ -219,6 +220,7 @@ export type {
   BookingCheckoutPreview,
   BookingCheckoutRequest,
   BookingDetail,
+  CreateBookingResponse,
   BookingItem,
   BookingItemListItem,
   BookingItemType,
