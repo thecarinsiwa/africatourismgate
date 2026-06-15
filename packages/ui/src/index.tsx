@@ -88,7 +88,7 @@ export {
   type ToastVariant,
 } from './components/toast';
 export { DataTable, type DataTableProps, type DataTableAlign } from './components/data-table';
-export type { ColumnDef } from './components/data-table';
+export type { ColumnDef, OnChangeFn, SortingState } from './components/data-table';
 export { DataTableBadge, type DataTableBadgeProps, type DataTableBadgeVariant } from './components/data-table-badge';
 export {
   DataTablePagination,

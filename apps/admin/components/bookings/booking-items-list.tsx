@@ -29,7 +29,7 @@ import { formatMoney } from '../../lib/format-money';
 import { BookingItemCatalogLink } from './booking-item-catalog-link';
 import { BookingItemTypeIcon } from './booking-item-type-icon';
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 10;
 
 type StatusFilter = '' | BookingStatus;
 type ItemTypeFilter = '' | BookingItemType;

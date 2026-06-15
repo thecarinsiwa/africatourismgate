@@ -5,11 +5,13 @@ import {
   getCoreRowModel,
   useReactTable,
   type ColumnDef,
+  type OnChangeFn,
+  type SortingState,
 } from '@tanstack/react-table';
 import { cn } from '../lib/cn';
 import { DataTableEmptyIcon, DataTableSearchEmptyIcon } from './data-table-icons';
 
-export type { ColumnDef } from '@tanstack/react-table';
+export type { ColumnDef, OnChangeFn, SortingState } from '@tanstack/react-table';
 
 export type DataTableAlign = 'left' | 'center' | 'right';
 
@@ -40,6 +42,10 @@ export type DataTableProps<TData> = {
   className?: string;
   tableClassName?: string;
   getRowId?: (row: TData) => string;
+  /** Tri contrôlé (TanStack Table). Utiliser avec `manualSorting` pour le tri serveur. */
+  sorting?: SortingState;
+  onSortingChange?: OnChangeFn<SortingState>;
+  manualSorting?: boolean;
   'aria-label'?: string;
 };
 
@@ -89,6 +95,62 @@ function DataTableEmpty({
   );
 }
 
+function SortIndicator({ direction }: { direction: false | 'asc' | 'desc' }) {
+  return (
+    <span className="ml-1 inline-flex flex-col text-[10px] leading-none text-atg-muted" aria-hidden>
+      <span className={cn(direction === 'asc' && 'text-primary')}>▲</span>
+      <span className={cn(direction === 'desc' && 'text-primary')}>▼</span>
+    </span>
+  );
+}
+
+function DataTableHeaderCell<TData>({
+  header,
+}: {
+  header: ReturnType<
+    ReturnType<typeof useReactTable<TData>>['getHeaderGroups']
+  >[number]['headers'][number];
+}) {
+  const align = getAlign(header.column.columnDef.meta);
+  const canSort = header.column.getCanSort();
+  const sorted = header.column.getIsSorted();
+
+  const content = header.isPlaceholder
+    ? null
+    : flexRender(header.column.columnDef.header, header.getContext());
+
+  return (
+    <th
+      scope="col"
+      aria-sort={
+        sorted === 'asc' ? 'ascending' : sorted === 'desc' ? 'descending' : canSort ? 'none' : undefined
+      }
+      className={cn(
+        'border-b border-atg-border px-5 py-3.5 text-xs font-semibold uppercase tracking-wider text-atg-muted',
+        alignClasses[align],
+        header.column.columnDef.meta?.headerClassName,
+      )}
+    >
+      {canSort ? (
+        <button
+          type="button"
+          onClick={header.column.getToggleSortingHandler()}
+          className={cn(
+            'inline-flex items-center gap-0.5 transition-colors hover:text-atg-fg',
+            align === 'center' && 'mx-auto',
+            align === 'right' && 'ml-auto',
+          )}
+        >
+          {content}
+          <SortIndicator direction={sorted} />
+        </button>
+      ) : (
+        content
+      )}
+    </th>
+  );
+}
+
 export function DataTable<TData>({
   columns,
   data,
@@ -100,6 +162,9 @@ export function DataTable<TData>({
   className,
   tableClassName,
   getRowId,
+  sorting,
+  onSortingChange,
+  manualSorting = false,
   'aria-label': ariaLabel,
 }: DataTableProps<TData>) {
   const table = useReactTable({
@@ -107,6 +172,10 @@ export function DataTable<TData>({
     columns,
     getCoreRowModel: getCoreRowModel(),
     getRowId,
+    state: sorting !== undefined ? { sorting } : undefined,
+    onSortingChange,
+    manualSorting,
+    enableSortingRemoval: false,
   });
 
   const columnCount = columns.length;
@@ -137,24 +206,9 @@ export function DataTable<TData>({
         <thead className="sticky top-0 z-10 bg-atg-surface/95 backdrop-blur-sm">
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                const align = getAlign(header.column.columnDef.meta);
-                return (
-                  <th
-                    key={header.id}
-                    scope="col"
-                    className={cn(
-                      'border-b border-atg-border px-5 py-3.5 text-xs font-semibold uppercase tracking-wider text-atg-muted',
-                      alignClasses[align],
-                      header.column.columnDef.meta?.headerClassName,
-                    )}
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(header.column.columnDef.header, header.getContext())}
-                  </th>
-                );
-              })}
+              {headerGroup.headers.map((header) => (
+                <DataTableHeaderCell key={header.id} header={header} />
+              ))}
             </tr>
           ))}
         </thead>

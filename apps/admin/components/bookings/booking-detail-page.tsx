@@ -16,9 +16,9 @@ import type {
   BookingPayment,
   BookingStatus,
 } from '@africatourismgate/types';
-import Link from 'next/link';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
+import { AdminPageBackLink } from '../admin-page-back-link';
 import { getApiClient } from '../../lib/auth/api';
 import {
   BOOKING_STATUSES,
@@ -273,18 +273,21 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   );
 
   if (state.status === 'loading' && !detail) {
-    return <BookingDetailSkeleton />;
+    return (
+      <div className="space-y-6">
+        <AdminPageBackLink href="/reservations" label="Retour aux réservations" />
+        <BookingDetailSkeleton />
+      </div>
+    );
   }
 
   if (state.status === 'error') {
     return (
       <div className="space-y-4">
+        <AdminPageBackLink href="/reservations" label="Retour aux réservations" />
         <p role="alert" className="text-sm text-red-600">
           {state.message}
         </p>
-        <Link href="/reservations" className="text-sm font-medium text-primary">
-          ← Retour à la liste
-        </Link>
       </div>
     );
   }
@@ -300,6 +303,8 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
 
   return (
     <div className="space-y-6">
+      <AdminPageBackLink href="/reservations" label="Retour aux réservations" />
+
       {actionError ? (
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {actionError}

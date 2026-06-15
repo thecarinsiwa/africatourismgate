@@ -36,4 +36,9 @@ export class BookingsListQueryDto extends PaginationQueryDto {
   @IsOptional()
   @IsDateString()
   dateTo?: string;
+
+  @ApiPropertyOptional({ enum: ['asc', 'desc'], description: 'Sort by created_at (default desc)' })
+  @IsOptional()
+  @IsIn(['asc', 'desc'])
+  sortOrder?: 'asc' | 'desc';
 }

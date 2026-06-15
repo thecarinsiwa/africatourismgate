@@ -51,6 +51,7 @@ const RESOURCE_QUERY_KEYS = [
   'userId',
   'dateFrom',
   'dateTo',
+  'sortOrder',
   'destinationId',
   'propertyId',
   'rating',
