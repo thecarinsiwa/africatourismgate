@@ -48,6 +48,8 @@ export { Checkbox, type CheckboxProps } from './components/checkbox';
 export { Card, type CardProps } from './components/card';
 export { Skeleton, type SkeletonProps } from './components/skeleton';
 export { StarRatingInput, type StarRatingInputProps } from './components/star-rating-input';
+export { StarRatingDisplay, type StarRatingDisplayProps } from './components/star-rating-display';
+export { StarIcon, type StarIconSize } from './components/star-rating-icons';
 export { StatCard, type StatCardProps, type StatCardStatus } from './components/stat-card';
 export { Avatar, type AvatarProps, type AvatarSize } from './components/avatar';
 export {
