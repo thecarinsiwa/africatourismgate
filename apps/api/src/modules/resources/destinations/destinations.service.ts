@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import {
   Activities,
@@ -11,8 +11,10 @@ import {
   Properties,
 } from '../../../entities/generated';
 import { CrudService } from '../../../common/crud/crud.service';
+import { CreateDestinationDto } from './dto/create-destination.dto';
 import { DestinationRelatedCountsDto } from './dto/destination-related-counts.dto';
 import { DestinationsListQueryDto } from './dto/destinations-list-query.dto';
+import { UpdateDestinationDto } from './dto/update-destination.dto';
 
 @Injectable()
 export class DestinationsService extends CrudService<Destinations> {
@@ -27,6 +29,34 @@ export class DestinationsService extends CrudService<Destinations> {
     private readonly packagesRepository: Repository<Packages>,
   ) {
     super(destinationsRepository);
+  }
+
+  createFromDto(dto: CreateDestinationDto, actorUserId?: string): Promise<Destinations> {
+    return super.create(this.toEntityPayload(dto), actorUserId);
+  }
+
+  updateFromDto(
+    id: string,
+    dto: UpdateDestinationDto,
+    actorUserId?: string,
+  ): Promise<Destinations> {
+    return super.update(id, this.toEntityPayload(dto), actorUserId);
+  }
+
+  private toEntityPayload(
+    dto: CreateDestinationDto | UpdateDestinationDto,
+  ): DeepPartial<Destinations> {
+    const { latitude, longitude, ...rest } = dto;
+    const payload: DeepPartial<Destinations> = { ...rest };
+
+    if (latitude !== undefined) {
+      payload.latitude = latitude === null ? null : String(latitude);
+    }
+    if (longitude !== undefined) {
+      payload.longitude = longitude === null ? null : String(longitude);
+    }
+
+    return payload;
   }
 
   override async findAll(

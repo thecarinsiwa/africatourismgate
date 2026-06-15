@@ -39,14 +39,14 @@ export class PointsOfInterestController {
   @Post()
   @ApiOperation({ summary: 'Create points-of-interest' })
   create(@Body() dto: CreatePointOfInterestDto) {
-    return this.service.create(dto);
+    return this.service.createFromDto(dto);
   }
 
   @RequirePermissions('destinations.write')
   @Patch(':id')
   @ApiOperation({ summary: 'Update points-of-interest' })
   update(@Param('id') id: string, @Body() dto: UpdatePointOfInterestDto) {
-    return this.service.update(id, dto);
+    return this.service.updateFromDto(id, dto);
   }
 
   @RequirePermissions('destinations.write')

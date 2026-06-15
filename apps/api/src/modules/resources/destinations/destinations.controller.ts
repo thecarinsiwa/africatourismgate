@@ -47,14 +47,14 @@ export class DestinationsController {
   @Post()
   @ApiOperation({ summary: 'Create destinations' })
   create(@Body() dto: CreateDestinationDto) {
-    return this.service.create(dto);
+    return this.service.createFromDto(dto);
   }
 
   @RequirePermissions('destinations.write')
   @Patch(':id')
   @ApiOperation({ summary: 'Update destinations' })
   update(@Param('id') id: string, @Body() dto: UpdateDestinationDto) {
-    return this.service.update(id, dto);
+    return this.service.updateFromDto(id, dto);
   }
 
   @RequirePermissions('destinations.write')
