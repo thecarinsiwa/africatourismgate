@@ -32,4 +32,10 @@ export class AdminReviewListItemDto {
 
   @ApiPropertyOptional({ nullable: true })
   propertyName!: string | null;
+
+  @ApiPropertyOptional({ nullable: true })
+  title!: string | null;
+
+  @ApiPropertyOptional({ nullable: true })
+  body!: string | null;
 }

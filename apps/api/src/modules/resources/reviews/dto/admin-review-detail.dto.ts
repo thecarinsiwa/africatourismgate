@@ -6,11 +6,5 @@ export class AdminReviewDetailDto extends AdminReviewListItemDto {
   userId!: string;
 
   @ApiPropertyOptional({ nullable: true })
-  title!: string | null;
-
-  @ApiPropertyOptional({ nullable: true })
-  body!: string | null;
-
-  @ApiPropertyOptional({ nullable: true })
   updatedAt!: string | null;
 }

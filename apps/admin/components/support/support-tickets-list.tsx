@@ -3,67 +3,99 @@
 import {
   Button,
   Card,
-  DataTable,
-  DataTableActionButton,
-  DataTableActions,
   DataTableBadge,
   DataTablePagination,
-  type ColumnDef,
+  EmptyState,
+  Skeleton,
 } from '@africatourismgate/ui';
 import type {
   AdminSupportTicketListItem,
   SupportTicketPriority,
   SupportTicketStatus,
 } from '@africatourismgate/types';
-import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import Link from 'next/link';
+import { useCallback, useEffect, useId, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import {
+  formatSupportTicketAssignee,
+  formatSupportTicketDateTime,
+  supportTicketPriorityLabels,
+  supportTicketPriorityVariants,
+  supportTicketStatusLabels,
+  supportTicketStatusVariants,
+  UNASSIGNED_TICKET_LABEL,
+} from '../../lib/support-ticket-display';
 import { getSupportTicketsErrorMessage } from '../../lib/support-tickets-errors';
 
 const PAGE_SIZE = 20;
 
-const statusLabels: Record<SupportTicketStatus, string> = {
-  open: 'Ouvert',
-  pending: 'En cours',
-  resolved: 'Résolu',
-  closed: 'Fermé',
+type SupportTicketInboxItemProps = {
+  ticket: AdminSupportTicketListItem;
 };
 
-const statusVariants: Record<
-  SupportTicketStatus,
-  'success' | 'warning' | 'muted' | 'default'
-> = {
-  open: 'default',
-  pending: 'warning',
-  resolved: 'success',
-  closed: 'muted',
-};
+function SupportTicketInboxItem({ ticket }: SupportTicketInboxItemProps) {
+  const assignee = formatSupportTicketAssignee(null);
+  const isUnassigned = assignee === UNASSIGNED_TICKET_LABEL;
 
-const priorityLabels: Record<SupportTicketPriority, string> = {
-  low: 'Basse',
-  normal: 'Normale',
-  high: 'Haute',
-  urgent: 'Urgente',
-};
+  return (
+    <Link
+      href={`/contenu/tickets/${ticket.id}`}
+      className="block border-b border-atg-border px-4 py-3 transition-colors last:border-b-0 hover:bg-atg-elevated/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary sm:px-5"
+    >
+      <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-1">
+        <p className="min-w-0 flex-1 font-medium text-atg-fg">{ticket.subject}</p>
+        <time
+          className="shrink-0 text-xs tabular-nums text-atg-muted"
+          dateTime={ticket.createdAt}
+        >
+          {formatSupportTicketDateTime(ticket.createdAt)}
+        </time>
+      </div>
 
-const priorityVariants: Record<
-  SupportTicketPriority,
-  'success' | 'warning' | 'muted' | 'default'
-> = {
-  low: 'muted',
-  normal: 'default',
-  high: 'warning',
-  urgent: 'warning',
-};
+      <p className="mt-1 truncate text-sm text-atg-muted">
+        {ticket.customerFirstName?.trim() || '—'}
+        {ticket.customerEmail ? (
+          <span className="text-atg-muted"> · {ticket.customerEmail}</span>
+        ) : null}
+      </p>
 
-function formatDateTime(iso: string): string {
-  try {
-    return new Date(iso).toLocaleString('fr-FR', {
-      dateStyle: 'short',
-      timeStyle: 'short',
-    });
-  } catch {
-    return iso;
-  }
+      <div className="mt-2 flex flex-wrap items-center gap-2">
+        <DataTableBadge variant={supportTicketStatusVariants[ticket.status]}>
+          {supportTicketStatusLabels[ticket.status]}
+        </DataTableBadge>
+        <DataTableBadge variant={supportTicketPriorityVariants[ticket.priority]}>
+          {supportTicketPriorityLabels[ticket.priority]}
+        </DataTableBadge>
+        <span className="text-xs text-atg-muted">
+          Assigné :{' '}
+          <span className={isUnassigned ? 'italic text-atg-muted' : 'text-atg-fg'}>
+            {assignee}
+          </span>
+        </span>
+      </div>
+    </Link>
+  );
+}
+
+function SupportTicketInboxSkeleton() {
+  return (
+    <div className="divide-y divide-atg-border">
+      {Array.from({ length: 5 }, (_, index) => (
+        <div key={index} className="space-y-2 px-4 py-3 sm:px-5">
+          <div className="flex justify-between gap-4">
+            <Skeleton className="h-5 w-2/3 max-w-sm" />
+            <Skeleton className="h-4 w-24" />
+          </div>
+          <Skeleton className="h-4 w-48" />
+          <div className="flex gap-2">
+            <Skeleton className="h-6 w-16 rounded-full" />
+            <Skeleton className="h-6 w-20 rounded-full" />
+            <Skeleton className="h-4 w-28" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 export function SupportTicketsList() {
@@ -115,76 +147,11 @@ export function SupportTicketsList() {
     setFilterTick((t) => t + 1);
   }, []);
 
-  const columns = useMemo<ColumnDef<AdminSupportTicketListItem, unknown>[]>(
-    () => [
-      {
-        accessorKey: 'subject',
-        header: 'Sujet',
-        cell: ({ row }) => (
-          <span className="font-medium text-atg-fg">{row.original.subject}</span>
-        ),
-      },
-      {
-        id: 'customer',
-        header: 'Client',
-        cell: ({ row }) => (
-          <div>
-            <span className="font-medium text-atg-fg">
-              {row.original.customerFirstName?.trim() || '—'}
-            </span>
-            {row.original.customerEmail ? (
-              <p className="text-xs text-atg-muted">{row.original.customerEmail}</p>
-            ) : null}
-          </div>
-        ),
-      },
-      {
-        accessorKey: 'status',
-        header: 'Statut',
-        meta: { align: 'center' },
-        cell: ({ row }) => (
-          <DataTableBadge variant={statusVariants[row.original.status]}>
-            {statusLabels[row.original.status]}
-          </DataTableBadge>
-        ),
-      },
-      {
-        accessorKey: 'priority',
-        header: 'Priorité',
-        meta: { align: 'center' },
-        cell: ({ row }) => (
-          <DataTableBadge variant={priorityVariants[row.original.priority]}>
-            {priorityLabels[row.original.priority]}
-          </DataTableBadge>
-        ),
-      },
-      {
-        accessorKey: 'createdAt',
-        header: 'Date',
-        cell: ({ row }) => (
-          <span className="whitespace-nowrap text-sm text-atg-muted">
-            {formatDateTime(row.original.createdAt)}
-          </span>
-        ),
-      },
-      {
-        id: 'actions',
-        header: 'Actions',
-        meta: { align: 'right' },
-        cell: ({ row }) => (
-          <DataTableActions>
-            <DataTableActionButton action="view" href={`/contenu/tickets/${row.original.id}`} />
-          </DataTableActions>
-        ),
-      },
-    ],
-    [],
-  );
-
   const isLoading = state.status === 'loading';
   const isError = state.status === 'error';
   const tickets = state.status === 'ready' ? state.tickets : [];
   const hasFilters = statusFilter !== '' || priorityFilter !== '';
+  const isEmpty = state.status === 'ready' && state.total === 0;
 
   return (
     <div className="space-y-6">
@@ -206,9 +173,9 @@ export function SupportTicketsList() {
               className="w-full rounded-lg border border-atg-border bg-atg-surface px-3 py-2 text-sm text-atg-fg"
             >
               <option value="">Tous</option>
-              {(Object.keys(statusLabels) as SupportTicketStatus[]).map((s) => (
+              {(Object.keys(supportTicketStatusLabels) as SupportTicketStatus[]).map((s) => (
                 <option key={s} value={s}>
-                  {statusLabels[s]}
+                  {supportTicketStatusLabels[s]}
                 </option>
               ))}
             </select>
@@ -229,11 +196,13 @@ export function SupportTicketsList() {
               className="w-full rounded-lg border border-atg-border bg-atg-surface px-3 py-2 text-sm text-atg-fg"
             >
               <option value="">Toutes</option>
-              {(Object.keys(priorityLabels) as SupportTicketPriority[]).map((p) => (
-                <option key={p} value={p}>
-                  {priorityLabels[p]}
-                </option>
-              ))}
+              {(Object.keys(supportTicketPriorityLabels) as SupportTicketPriority[]).map(
+                (p) => (
+                  <option key={p} value={p}>
+                    {supportTicketPriorityLabels[p]}
+                  </option>
+                ),
+              )}
             </select>
           </div>
           <div className="flex items-end">
@@ -250,16 +219,34 @@ export function SupportTicketsList() {
         </p>
       ) : null}
 
-      <DataTable
-        columns={columns}
-        data={tickets}
-        isLoading={isLoading}
-        emptyMessage={
-          hasFilters
-            ? 'Aucun ticket ne correspond aux filtres.'
-            : 'Aucun ticket pour le moment.'
-        }
-      />
+      {isLoading ? (
+        <Card variant="dashboard" padding="none" className="overflow-hidden">
+          <SupportTicketInboxSkeleton />
+        </Card>
+      ) : isEmpty ? (
+        <EmptyState
+          title={
+            hasFilters
+              ? 'Aucun ticket ne correspond aux filtres'
+              : 'Aucun ticket pour le moment'
+          }
+          description={
+            hasFilters
+              ? 'Élargissez les critères de statut ou de priorité pour afficher plus de demandes.'
+              : 'Les demandes d’assistance clients apparaîtront ici dès qu’elles seront créées.'
+          }
+        />
+      ) : (
+        <Card variant="dashboard" padding="none" className="overflow-hidden">
+          <div role="list" aria-label="Boîte de réception des tickets support">
+            {tickets.map((ticket) => (
+              <div key={ticket.id} role="listitem">
+                <SupportTicketInboxItem ticket={ticket} />
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
 
       {state.status === 'ready' && state.totalPages > 1 ? (
         <DataTablePagination
