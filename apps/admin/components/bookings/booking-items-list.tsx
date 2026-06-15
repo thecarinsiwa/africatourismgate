@@ -15,35 +15,26 @@ import type {
   BookingItemType,
   BookingStatus,
 } from '@africatourismgate/types';
+import Link from 'next/link';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { itemTypeLabels, itemTypeOptions } from '../../lib/booking-item-labels';
+import { itemTypeOptions } from '../../lib/booking-item-labels';
+import {
+  BOOKING_STATUS_VARIANTS,
+  getBookingStatusFilterOptions,
+  getBookingStatusLabel,
+} from '../../lib/booking-status';
 import { getBookingsErrorMessage } from '../../lib/bookings-errors';
 import { formatMoney } from '../../lib/format-money';
+import { BookingItemCatalogLink } from './booking-item-catalog-link';
+import { BookingItemTypeIcon } from './booking-item-type-icon';
 
 const PAGE_SIZE = 20;
 
 type StatusFilter = '' | BookingStatus;
 type ItemTypeFilter = '' | BookingItemType;
 
-const statusLabels: Record<BookingStatus, string> = {
-  draft: 'Brouillon',
-  pending_payment: 'En attente de paiement',
-  confirmed: 'Confirmée',
-  cancelled: 'Annulée',
-  refunded: 'Remboursée',
-};
-
-const statusVariants: Record<
-  BookingStatus,
-  'success' | 'warning' | 'muted' | 'danger' | 'default'
-> = {
-  draft: 'muted',
-  pending_payment: 'warning',
-  confirmed: 'success',
-  cancelled: 'danger',
-  refunded: 'default',
-};
+const statusFilterOptions = getBookingStatusFilterOptions();
 
 function formatDates(startDate: string | null, endDate: string | null): string {
   if (!startDate) return '—';
@@ -108,21 +99,19 @@ export function BookingItemsList() {
         accessorKey: 'itemType',
         header: 'Type',
         cell: ({ row }) => (
-          <DataTableBadge variant="default">
-            {itemTypeLabels[row.original.itemType] ?? row.original.itemType}
-          </DataTableBadge>
+          <BookingItemTypeIcon itemType={row.original.itemType} size="sm" showLabel />
         ),
       },
       {
         accessorKey: 'titleSnapshot',
         header: 'Libellé',
         cell: ({ row }) => (
-          <div>
-            <span className="font-medium text-atg-fg">{row.original.titleSnapshot}</span>
-            <p className="text-xs text-atg-muted">
-              Réf. {row.original.referenceId.slice(0, 8)}
-            </p>
-          </div>
+          <BookingItemCatalogLink
+            itemType={row.original.itemType}
+            referenceId={row.original.referenceId}
+            title={row.original.titleSnapshot}
+            showReference
+          />
         ),
       },
       {
@@ -148,9 +137,12 @@ export function BookingItemsList() {
         id: 'bookingRef',
         header: 'Réservation',
         cell: ({ row }) => (
-          <span className="font-mono text-xs text-atg-muted">
+          <Link
+            href={`/dashboard/bookings/${row.original.bookingId}`}
+            className="font-mono text-xs text-primary hover:underline"
+          >
             {formatBookingRef(row.original.bookingId)}
-          </span>
+          </Link>
         ),
       },
       {
@@ -160,8 +152,8 @@ export function BookingItemsList() {
         cell: ({ row }) => {
           const status = row.original.bookingStatus;
           return (
-            <DataTableBadge variant={statusVariants[status]}>
-              {statusLabels[status]}
+            <DataTableBadge variant={BOOKING_STATUS_VARIANTS[status]}>
+              {getBookingStatusLabel(status)}
             </DataTableBadge>
           );
         },
@@ -228,11 +220,13 @@ export function BookingItemsList() {
               className="w-full min-w-[200px] rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
             >
               <option value="">Tous</option>
-              {(Object.keys(statusLabels) as BookingStatus[]).map((status) => (
-                <option key={status} value={status}>
-                  {statusLabels[status]}
-                </option>
-              ))}
+              {statusFilterOptions
+                .filter((option) => option.value !== '')
+                .map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
             </select>
           </div>
           <div>

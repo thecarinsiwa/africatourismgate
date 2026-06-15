@@ -56,7 +56,12 @@ export {
   hashEmailToColor,
   hashEmailToHue,
 } from './lib/avatar-utils';
-export { FilterBar, type FilterBarProps } from './components/filter-bar';
+export {
+  FilterBar,
+  type FilterBarMobileVariant,
+  type FilterBarProps,
+} from './components/filter-bar';
+export { Drawer, type DrawerProps, type DrawerSide } from './components/drawer';
 export {
   Tabs,
   TabsContent,

@@ -7,11 +7,13 @@ import {
   DataTableActions,
   DataTableBadge,
   DataTablePagination,
+  FilterBar,
   Input,
+  Select,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { BookingListItem, BookingStatus, Organization, User } from '@africatourismgate/types';
-import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getBookingsErrorMessage } from '../../lib/bookings-errors';
 
@@ -54,14 +56,7 @@ function formatMoney(cents: number, currency: string): string {
 }
 
 export function BookingsList() {
-  const statusFilterId = useId();
-  const clientFilterId = useId();
-  const orgFilterId = useId();
-  const dateFromId = useId();
-  const dateToId = useId();
-
   const [page, setPage] = useState(1);
-  const [filterTick, setFilterTick] = useState(0);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('');
   const [userFilter, setUserFilter] = useState('');
   const [organizationFilter, setOrganizationFilter] = useState('');
@@ -109,8 +104,34 @@ export function BookingsList() {
     return map;
   }, [organizations]);
 
+  const statusOptions = useMemo(
+    () => [
+      { value: '', label: 'Tous' },
+      ...(Object.keys(statusLabels) as BookingStatus[]).map((status) => ({
+        value: status,
+        label: statusLabels[status],
+      })),
+    ],
+    [],
+  );
+
+  const clientOptions = useMemo(
+    () => [
+      { value: '', label: 'Tous' },
+      ...users.map((user) => ({ value: user.id, label: user.email })),
+    ],
+    [users],
+  );
+
+  const organizationOptions = useMemo(
+    () => [
+      { value: '', label: 'Toutes' },
+      ...organizations.map((org) => ({ value: org.id, label: org.name })),
+    ],
+    [organizations],
+  );
+
   const load = useCallback(async () => {
-    void filterTick;
     setState({ status: 'loading' });
     try {
       const result = await getApiClient().listBookings({
@@ -131,23 +152,28 @@ export function BookingsList() {
     } catch (error) {
       setState({ status: 'error', message: getBookingsErrorMessage(error) });
     }
-  }, [
-    page,
-    statusFilter,
-    userFilter,
-    organizationFilter,
-    dateFrom,
-    dateTo,
-    filterTick,
-  ]);
+  }, [page, statusFilter, userFilter, organizationFilter, dateFrom, dateTo]);
 
   useEffect(() => {
     void load();
   }, [load]);
 
-  const applyFilters = useCallback(() => {
+  const activeFilterCount = [
+    statusFilter !== '',
+    userFilter !== '',
+    organizationFilter !== '',
+    dateFrom !== '',
+    dateTo !== '',
+  ].filter(Boolean).length;
+  const hasFilters = activeFilterCount > 0;
+
+  const handleClearFilters = useCallback(() => {
+    setStatusFilter('');
+    setUserFilter('');
+    setOrganizationFilter('');
+    setDateFrom('');
+    setDateTo('');
     setPage(1);
-    setFilterTick((t) => t + 1);
   }, []);
 
   const columns = useMemo<ColumnDef<BookingListItem, unknown>[]>(
@@ -231,105 +257,76 @@ export function BookingsList() {
   const isLoading = state.status === 'loading';
   const isError = state.status === 'error';
   const bookings = state.status === 'ready' ? state.bookings : [];
-  const hasFilters =
-    statusFilter !== '' ||
-    userFilter !== '' ||
-    organizationFilter !== '' ||
-    dateFrom !== '' ||
-    dateTo !== '';
   const emptyMessage = hasFilters
     ? 'Aucune réservation ne correspond à vos critères.'
     : 'Aucune réservation pour le moment.';
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:flex-wrap lg:items-end">
-        <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end">
-          <div>
-            <label htmlFor={statusFilterId} className="mb-2 block text-sm font-medium text-atg-fg">
-              Statut
-            </label>
-            <select
-              id={statusFilterId}
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
-              className="w-full min-w-[180px] rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
-            >
-              <option value="">Tous</option>
-              {(Object.keys(statusLabels) as BookingStatus[]).map((status) => (
-                <option key={status} value={status}>
-                  {statusLabels[status]}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label htmlFor={clientFilterId} className="mb-2 block text-sm font-medium text-atg-fg">
-              Client
-            </label>
-            <select
-              id={clientFilterId}
-              value={userFilter}
-              onChange={(e) => setUserFilter(e.target.value)}
-              className="w-full min-w-[200px] rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
-            >
-              <option value="">Tous</option>
-              {users.map((user) => (
-                <option key={user.id} value={user.id}>
-                  {user.email}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label htmlFor={orgFilterId} className="mb-2 block text-sm font-medium text-atg-fg">
-              Organisation
-            </label>
-            <select
-              id={orgFilterId}
-              value={organizationFilter}
-              onChange={(e) => setOrganizationFilter(e.target.value)}
-              className="w-full min-w-[180px] rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
-            >
-              <option value="">Toutes</option>
-              {organizations.map((org) => (
-                <option key={org.id} value={org.id}>
-                  {org.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label htmlFor={dateFromId} className="mb-2 block text-sm font-medium text-atg-fg">
-              Du
-            </label>
-            <Input
-              id={dateFromId}
-              type="date"
-              value={dateFrom}
-              onChange={(e) => setDateFrom(e.target.value)}
-            />
-          </div>
-          <div>
-            <label htmlFor={dateToId} className="mb-2 block text-sm font-medium text-atg-fg">
-              Au
-            </label>
-            <Input
-              id={dateToId}
-              type="date"
-              value={dateTo}
-              onChange={(e) => setDateTo(e.target.value)}
-            />
-          </div>
-          <button
-            type="button"
-            onClick={applyFilters}
-            className="rounded-lg bg-primary px-4 py-3 text-sm font-medium text-white transition-opacity hover:opacity-90"
-          >
-            Appliquer
-          </button>
-        </div>
-      </div>
+      <FilterBar
+        mobileVariant="drawer"
+        activeCount={activeFilterCount}
+        onClear={handleClearFilters}
+        filters={
+          <>
+            <div className="w-full sm:w-48">
+              <Select
+                label="Statut"
+                value={statusFilter}
+                options={statusOptions}
+                onChange={(e) => {
+                  setStatusFilter(e.target.value as StatusFilter);
+                  setPage(1);
+                }}
+              />
+            </div>
+            <div className="w-full sm:w-56">
+              <Select
+                label="Client"
+                value={userFilter}
+                options={clientOptions}
+                onChange={(e) => {
+                  setUserFilter(e.target.value);
+                  setPage(1);
+                }}
+              />
+            </div>
+            <div className="w-full sm:w-48">
+              <Select
+                label="Organisation"
+                value={organizationFilter}
+                options={organizationOptions}
+                onChange={(e) => {
+                  setOrganizationFilter(e.target.value);
+                  setPage(1);
+                }}
+              />
+            </div>
+            <div className="w-full sm:w-40">
+              <Input
+                label="Du"
+                type="date"
+                value={dateFrom}
+                onChange={(e) => {
+                  setDateFrom(e.target.value);
+                  setPage(1);
+                }}
+              />
+            </div>
+            <div className="w-full sm:w-40">
+              <Input
+                label="Au"
+                type="date"
+                value={dateTo}
+                onChange={(e) => {
+                  setDateTo(e.target.value);
+                  setPage(1);
+                }}
+              />
+            </div>
+          </>
+        }
+      />
 
       {isError ? (
         <p className="text-sm text-red-600 dark:text-red-400" role="alert">
