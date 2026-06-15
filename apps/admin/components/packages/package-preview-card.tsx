@@ -3,6 +3,7 @@
 import { cn, DataTableBadge } from '@africatourismgate/ui';
 import type { Package, PackagePricing } from '@africatourismgate/types';
 import { formatMoney } from '../../lib/format-money';
+import { stripHtml } from '../../lib/rich-text';
 
 type PackagePreviewCardProps = {
   pkg: Package;
@@ -23,6 +24,7 @@ export function PackagePreviewCard({
 }: PackagePreviewCardProps) {
   const showDiscount = hasPackageDiscount(pricing);
   const discountPercent = Math.round(Number(pkg.discountPercent));
+  const descriptionPreview = pkg.description ? stripHtml(pkg.description) : '';
 
   return (
     <article
@@ -40,8 +42,8 @@ export function PackagePreviewCard({
         <div className="bg-gradient-to-br from-[#0f2744] to-primary/80 px-5 py-6 text-white">
           <p className="text-xs font-semibold uppercase tracking-wide text-white/70">Forfait</p>
           <p className="mt-1 text-lg font-bold leading-tight">{pkg.name}</p>
-          {pkg.description ? (
-            <p className="mt-2 line-clamp-3 text-sm text-white/80">{pkg.description}</p>
+          {descriptionPreview ? (
+            <p className="mt-2 line-clamp-3 text-sm text-white/80">{descriptionPreview}</p>
           ) : null}
         </div>
 

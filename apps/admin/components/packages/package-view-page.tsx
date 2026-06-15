@@ -16,6 +16,7 @@ import type {
 import Image from 'next/image';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AdminPageBackLink } from '../admin-page-back-link';
+import { RichTextContent } from '../rich-text-content';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
 import { formatMoney } from '../../lib/format-money';
@@ -155,9 +156,7 @@ export function PackageViewPage({ packageId }: PackageViewPageProps) {
       {pkg.description ? (
         <Card variant="dashboard" className="max-w-3xl">
           <h3 className="text-sm font-semibold text-atg-fg">Description</h3>
-          <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-atg-muted">
-            {pkg.description}
-          </p>
+          <RichTextContent html={pkg.description} className="mt-2" />
         </Card>
       ) : null}
 

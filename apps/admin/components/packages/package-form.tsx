@@ -4,8 +4,10 @@ import { Button, Card, Input } from '@africatourismgate/ui';
 import type { CreatePackageRequest, Package } from '@africatourismgate/types';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
+import { RichTextEditor } from '../rich-text-editor';
 import { getApiClient } from '../../lib/auth/api';
 import { getPackagesErrorMessage } from '../../lib/packages-errors';
+import { isRichTextEmpty } from '../../lib/rich-text';
 
 export type PackageFormValues = {
   name: string;
@@ -39,7 +41,9 @@ function toPayload(values: PackageFormValues): CreatePackageRequest {
     discountPercent: Number(values.discountPercent),
     durationDays: Number(values.durationDays),
     active: values.active,
-    ...(values.description.trim() ? { description: values.description.trim() } : {}),
+    ...(values.description.trim() && !isRichTextEmpty(values.description)
+      ? { description: values.description.trim() }
+      : {}),
   };
 }
 
@@ -103,9 +107,6 @@ export function PackageForm({ mode, packageId, initialPackage }: PackageFormProp
     }
   }
 
-  const selectClass =
-    'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg';
-
   return (
     <form onSubmit={handleSubmit} className="max-w-2xl space-y-6">
       {formError ? (
@@ -125,15 +126,12 @@ export function PackageForm({ mode, packageId, initialPackage }: PackageFormProp
           onChange={(e) => updateField('name', e.target.value)}
           required
         />
-        <div>
-          <label className="mb-2 block text-sm font-medium text-atg-fg">Description</label>
-          <textarea
-            value={values.description}
-            onChange={(e) => updateField('description', e.target.value)}
-            rows={3}
-            className={selectClass}
-          />
-        </div>
+        <RichTextEditor
+          label="Description"
+          value={values.description}
+          onChange={(html) => updateField('description', html)}
+          placeholder="Décrivez le forfait, les inclusions, les conditions…"
+        />
       </Card>
 
       <Card variant="dashboard" className="space-y-4">
