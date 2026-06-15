@@ -16,7 +16,7 @@ export interface CreateDestinationRequest {
   slug: string;
   countryCode: string;
   description?: string;
-  imageUrl?: string;
+  imageUrl?: string | null;
   latitude?: number | string | null;
   longitude?: number | string | null;
 }
