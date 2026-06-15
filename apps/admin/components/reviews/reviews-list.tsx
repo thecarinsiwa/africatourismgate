@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -8,48 +9,26 @@ import {
   DataTableActions,
   DataTableBadge,
   DataTablePagination,
+  EmptyState,
+  StarRatingDisplay,
+  useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
-import type {
-  AdminReviewListItem,
-  Property,
-  ReviewStatus,
-} from '@africatourismgate/types';
+import type { AdminReviewListItem, Property, ReviewStatus } from '@africatourismgate/types';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import {
+  formatReviewDateTime,
+  formatReviewPreview,
+  reviewStatusLabels,
+  reviewStatusVariants,
+} from '../../lib/review-display';
 import { getReviewsErrorMessage } from '../../lib/reviews-errors';
 
 const PAGE_SIZE = 20;
 
-const statusLabels: Record<ReviewStatus, string> = {
-  pending: 'En attente',
-  approved: 'Approuvé',
-  hidden: 'Masqué',
-};
-
-const statusVariants: Record<ReviewStatus, 'success' | 'warning' | 'muted'> = {
-  pending: 'warning',
-  approved: 'success',
-  hidden: 'muted',
-};
-
-function formatDateTime(iso: string): string {
-  try {
-    return new Date(iso).toLocaleString('fr-FR', {
-      dateStyle: 'short',
-      timeStyle: 'short',
-    });
-  } catch {
-    return iso;
-  }
-}
-
-function formatEntity(row: AdminReviewListItem): string {
-  const shortId = row.entityId.slice(0, 8);
-  return `${row.entityType} · ${shortId}…`;
-}
-
 export function ReviewsList() {
+  const { toast } = useToast();
   const ratingFilterId = useId();
   const propertyFilterId = useId();
   const statusFilterId = useId();
@@ -58,11 +37,12 @@ export function ReviewsList() {
   const [filterTick, setFilterTick] = useState(0);
   const [ratingFilter, setRatingFilter] = useState('');
   const [propertyFilter, setPropertyFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'' | ReviewStatus>('');
+  const [statusFilter, setStatusFilter] = useState<'' | ReviewStatus>('pending');
   const [properties, setProperties] = useState<Property[]>([]);
   const [canWrite, setCanWrite] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
   const [actingId, setActingId] = useState<string | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<AdminReviewListItem | null>(null);
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -140,19 +120,32 @@ export function ReviewsList() {
       review: AdminReviewListItem,
       action: 'approve' | 'hide' | 'delete',
     ) => {
-      if (action === 'delete') {
-        if (!window.confirm('Supprimer cet avis (suppression logique) ?')) return;
-      }
       setActionError(null);
       setActingId(review.id);
       try {
         const client = getApiClient();
         if (action === 'approve') {
           await client.updateReviewStatus(review.id, { status: 'approved' });
+          toast({
+            variant: 'success',
+            title: 'Avis approuvé',
+            message: 'L’avis est visible côté client.',
+          });
         } else if (action === 'hide') {
           await client.updateReviewStatus(review.id, { status: 'hidden' });
+          toast({
+            variant: 'success',
+            title: 'Avis masqué',
+            message: 'L’avis n’est plus affiché publiquement.',
+          });
         } else {
           await client.deleteReview(review.id);
+          toast({
+            variant: 'success',
+            title: 'Avis supprimé',
+            message: 'L’avis a été retiré de la modération.',
+          });
+          setPendingDelete(null);
         }
         await load();
       } catch (error) {
@@ -161,8 +154,13 @@ export function ReviewsList() {
         setActingId(null);
       }
     },
-    [load],
+    [load, toast],
   );
+
+  const confirmDelete = useCallback(async () => {
+    if (!pendingDelete) return;
+    await runAction(pendingDelete, 'delete');
+  }, [pendingDelete, runAction]);
 
   const columns = useMemo<ColumnDef<AdminReviewListItem, unknown>[]>(
     () => [
@@ -171,9 +169,7 @@ export function ReviewsList() {
         header: 'Note',
         meta: { align: 'center' },
         cell: ({ row }) => (
-          <span className="tabular-nums text-sm font-semibold text-atg-fg">
-            {row.original.rating}/5
-          </span>
+          <StarRatingDisplay value={row.original.rating} size="sm" showValue />
         ),
       },
       {
@@ -191,13 +187,19 @@ export function ReviewsList() {
         ),
       },
       {
-        id: 'entity',
-        header: 'Entité',
-        cell: ({ row }) => (
-          <span className="font-mono text-xs text-atg-muted">
-            {formatEntity(row.original)}
-          </span>
-        ),
+        id: 'preview',
+        header: 'Aperçu',
+        cell: ({ row }) => {
+          const preview = formatReviewPreview(row.original);
+          if (!preview) {
+            return <span className="text-sm italic text-atg-muted">—</span>;
+          }
+          return (
+            <p className="line-clamp-2 max-w-md text-sm text-atg-muted" title={preview}>
+              {preview}
+            </p>
+          );
+        },
       },
       {
         id: 'property',
@@ -216,7 +218,7 @@ export function ReviewsList() {
         header: 'Date',
         cell: ({ row }) => (
           <span className="whitespace-nowrap text-sm text-atg-muted">
-            {formatDateTime(row.original.createdAt)}
+            {formatReviewDateTime(row.original.createdAt)}
           </span>
         ),
       },
@@ -227,8 +229,8 @@ export function ReviewsList() {
         cell: ({ row }) => {
           const status = row.original.status;
           return (
-            <DataTableBadge variant={statusVariants[status]}>
-              {statusLabels[status]}
+            <DataTableBadge variant={reviewStatusVariants[status]}>
+              {reviewStatusLabels[status]}
             </DataTableBadge>
           );
         },
@@ -241,12 +243,12 @@ export function ReviewsList() {
           const review = row.original;
           const busy = actingId === review.id;
           return (
-            <DataTableActions className="flex-wrap">
+            <DataTableActions className="flex-nowrap gap-1">
               <DataTableActionButton action="view" href={`/contenu/avis/${review.id}`} />
               {canWrite && review.status !== 'approved' ? (
                 <Button
                   type="button"
-                  variant="ghost"
+                  variant="secondary"
                   size="sm"
                   disabled={busy}
                   loading={busy}
@@ -270,7 +272,7 @@ export function ReviewsList() {
               {canWrite ? (
                 <DataTableActionButton
                   action="delete"
-                  onClick={() => void runAction(review, 'delete')}
+                  onClick={() => setPendingDelete(review)}
                   disabled={busy}
                 />
               ) : null}
@@ -286,7 +288,10 @@ export function ReviewsList() {
   const isError = state.status === 'error';
   const reviews = state.status === 'ready' ? state.reviews : [];
   const hasFilters =
-    ratingFilter !== '' || propertyFilter !== '' || statusFilter !== '';
+    ratingFilter !== '' ||
+    propertyFilter !== '' ||
+    statusFilter !== 'pending';
+  const isEmpty = state.status === 'ready' && state.total === 0;
 
   return (
     <div className="space-y-6">
@@ -342,9 +347,9 @@ export function ReviewsList() {
               className="w-full rounded-lg border border-atg-border bg-atg-surface px-3 py-2 text-sm text-atg-fg"
             >
               <option value="">Tous</option>
-              {(Object.keys(statusLabels) as ReviewStatus[]).map((s) => (
+              {(Object.keys(reviewStatusLabels) as ReviewStatus[]).map((s) => (
                 <option key={s} value={s}>
-                  {statusLabels[s]}
+                  {reviewStatusLabels[s]}
                 </option>
               ))}
             </select>
@@ -369,16 +374,34 @@ export function ReviewsList() {
         </p>
       ) : null}
 
-      <DataTable
-        columns={columns}
-        data={reviews}
-        isLoading={isLoading}
-        emptyMessage={
-          hasFilters
-            ? 'Aucun avis ne correspond aux filtres.'
-            : 'Aucun avis pour le moment.'
-        }
-      />
+      {isEmpty && !isLoading ? (
+        <EmptyState
+          title={
+            hasFilters
+              ? 'Aucun avis ne correspond aux filtres'
+              : 'Aucun avis en attente'
+          }
+          description={
+            hasFilters
+              ? 'Modifiez les filtres ou affichez tous les statuts pour élargir la recherche.'
+              : 'La file de modération est vide. Les nouveaux avis clients apparaîtront ici.'
+          }
+        />
+      ) : (
+        <Card variant="dashboard" padding="none" className="overflow-hidden">
+          <DataTable
+            columns={columns}
+            data={reviews}
+            isLoading={isLoading}
+            emptyMessage={
+              hasFilters
+                ? 'Aucun avis ne correspond aux filtres.'
+                : 'Aucun avis pour le moment.'
+            }
+            aria-label="Liste des avis à modérer"
+          />
+        </Card>
+      )}
 
       {state.status === 'ready' && state.totalPages > 1 ? (
         <DataTablePagination
@@ -390,6 +413,25 @@ export function ReviewsList() {
           onPageChange={setPage}
         />
       ) : null}
+
+      <AlertDialog
+        open={pendingDelete !== null}
+        onOpenChange={(open) => {
+          if (!open && !actingId) setPendingDelete(null);
+        }}
+        title="Supprimer cet avis"
+        description={
+          pendingDelete
+            ? 'Suppression logique : l’avis ne sera plus visible dans la modération.'
+            : undefined
+        }
+        confirmLabel="Supprimer"
+        cancelLabel="Annuler"
+        variant="danger"
+        loading={actingId === pendingDelete?.id}
+        onConfirm={() => void confirmDelete()}
+        onCancel={() => setPendingDelete(null)}
+      />
     </div>
   );
 }
