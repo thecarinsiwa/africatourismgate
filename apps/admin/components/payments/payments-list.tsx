@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  Button,
   Card,
   DataTable,
   DataTableActionButton,
@@ -9,6 +8,7 @@ import {
   DataTableBadge,
   DataTablePagination,
   Input,
+  useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type {
@@ -29,17 +29,21 @@ import {
 } from '../../lib/payment-display';
 import { getPaymentsErrorMessage } from '../../lib/payments-errors';
 import { PaymentDetailDrawer } from './payment-detail-drawer';
+import {
+  PaymentRefundModal,
+  type PaymentRefundConfirmParams,
+} from './payment-refund-modal';
 
 const PAGE_SIZE = 20;
 
 type StatusFilter = '' | PaymentStatus;
 
 export function PaymentsList() {
+  const { toast } = useToast();
   const statusFilterId = useId();
   const orgFilterId = useId();
   const dateFromId = useId();
   const dateToId = useId();
-  const partialAmountId = useId();
 
   const [page, setPage] = useState(1);
   const [filterTick, setFilterTick] = useState(0);
@@ -56,9 +60,6 @@ export function PaymentsList() {
   const [detailLoading, setDetailLoading] = useState(false);
   const [detailError, setDetailError] = useState<string | null>(null);
   const [refundOpen, setRefundOpen] = useState(false);
-  const [partialAmount, setPartialAmount] = useState('');
-  const [refundLoading, setRefundLoading] = useState(false);
-  const [refundError, setRefundError] = useState<string | null>(null);
   const [refundHistory, setRefundHistory] = useState<RefundPaymentResponse[]>([]);
   const [state, setState] = useState<
     | { status: 'loading' }
@@ -177,8 +178,6 @@ export function PaymentsList() {
     (id: string) => {
       setSelectedId(id);
       setRefundOpen(false);
-      setRefundError(null);
-      setPartialAmount('');
       setRefundHistory([]);
       void loadDetail(id);
     },
@@ -190,34 +189,28 @@ export function PaymentsList() {
     setDetail(null);
     setDetailError(null);
     setRefundOpen(false);
-    setRefundError(null);
-    setPartialAmount('');
     setRefundHistory([]);
   }, []);
 
-  const handleRefund = useCallback(async () => {
-    if (!selectedId || !detail) return;
-    setRefundError(null);
-    setRefundLoading(true);
-    try {
-      const trimmed = partialAmount.trim();
-      const amountCents = trimmed ? Math.round(parseFloat(trimmed) * 100) : undefined;
-      if (amountCents !== undefined && (Number.isNaN(amountCents) || amountCents < 1)) {
-        setRefundError('Montant partiel invalide.');
-        return;
+  const handleRefundConfirm = useCallback(
+    async ({ amountCents }: PaymentRefundConfirmParams) => {
+      if (!selectedId || !detail) {
+        throw new Error('Paiement introuvable.');
       }
+
       const response = await getApiClient().refundPayment(selectedId, { amountCents });
       setRefundHistory((prev) => [...prev, response]);
-      setRefundOpen(false);
-      setPartialAmount('');
       await loadDetail(selectedId);
       await load();
-    } catch (error) {
-      setRefundError(getPaymentsErrorMessage(error));
-    } finally {
-      setRefundLoading(false);
-    }
-  }, [selectedId, detail, partialAmount, loadDetail, load]);
+
+      toast({
+        variant: 'success',
+        title: 'Remboursement effectué',
+        message: `${formatMoney(response.amountCents, detail.currency)} remboursé avec succès.`,
+      });
+    },
+    [selectedId, detail, loadDetail, load, toast],
+  );
 
   const columns = useMemo<ColumnDef<PaymentListItem, unknown>[]>(
     () => [
@@ -444,78 +437,18 @@ export function PaymentsList() {
         error={detailError}
         refundHistory={refundHistory}
         canRefund={showRefundAction}
-        onRefundClick={() => {
-          setRefundOpen(true);
-          setRefundError(null);
-        }}
+        onRefundClick={() => setRefundOpen(true)}
       />
 
-      {refundOpen && detail ? (
-            <>
-              <button
-                type="button"
-                className="fixed inset-0 z-[60] bg-black/50"
-                aria-label="Fermer"
-                onClick={() => setRefundOpen(false)}
-              />
-              <div
-                className="fixed left-1/2 top-1/2 z-[70] w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-xl border border-atg-border bg-atg-surface p-6 shadow-xl"
-                role="alertdialog"
-                aria-labelledby="refund-dialog-title"
-              >
-                <h3 id="refund-dialog-title" className="text-lg font-semibold text-atg-fg">
-                  Confirmer le remboursement
-                </h3>
-                <p className="mt-2 text-sm text-atg-muted">
-                  Remboursement Stripe pour{' '}
-                  <strong className="tabular-nums text-atg-fg">
-                    {formatMoney(detail.amountCents, detail.currency)}
-                  </strong>
-                  . Laissez le montant vide pour un remboursement total.
-                </p>
-                <div className="mt-4">
-                  <label
-                    htmlFor={partialAmountId}
-                    className="mb-2 block text-sm font-medium text-atg-fg"
-                  >
-                    Montant partiel ({detail.currency}, optionnel)
-                  </label>
-                  <Input
-                    id={partialAmountId}
-                    type="number"
-                    min="0.01"
-                    step="0.01"
-                    placeholder="Ex. 10.00"
-                    value={partialAmount}
-                    onChange={(e) => setPartialAmount(e.target.value)}
-                  />
-                </div>
-                {refundError ? (
-                  <p className="mt-3 text-sm text-red-600 dark:text-red-400" role="alert">
-                    {refundError}
-                  </p>
-                ) : null}
-                <div className="mt-6 flex justify-end gap-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setRefundOpen(false)}
-                    disabled={refundLoading}
-                  >
-                    Annuler
-                  </Button>
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    onClick={() => void handleRefund()}
-                    disabled={refundLoading}
-                  >
-                    {refundLoading ? 'Remboursement…' : 'Confirmer'}
-                  </Button>
-                </div>
-              </div>
-            </>
-          ) : null}
+      {detail ? (
+        <PaymentRefundModal
+          open={refundOpen}
+          onOpenChange={setRefundOpen}
+          detail={detail}
+          refundHistory={refundHistory}
+          onConfirm={handleRefundConfirm}
+        />
+      ) : null}
     </div>
   );
 }

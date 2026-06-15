@@ -52,6 +52,14 @@ export function canRefundPayment(detail: PaymentAdminDetail): boolean {
   );
 }
 
+export function getMaxRefundableCents(
+  detail: PaymentAdminDetail,
+  sessionRefunds: RefundPaymentResponse[],
+): number {
+  const refundedSoFar = sessionRefunds.reduce((sum, refund) => sum + refund.amountCents, 0);
+  return Math.max(0, detail.amountCents - refundedSoFar);
+}
+
 export type PaymentRefundHistoryEntry = {
   id: string;
   amountCents: number;
