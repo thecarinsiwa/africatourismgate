@@ -1,10 +1,13 @@
 'use client';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
   DataTableBadge,
+  Select,
+  Skeleton,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type {
@@ -12,33 +15,24 @@ import type {
   BookingItem,
   BookingPayment,
   BookingStatus,
-  BookingStatusHistoryEntry,
 } from '@africatourismgate/types';
 import Link from 'next/link';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
-import { getItemTypeLabel } from '../../lib/booking-item-labels';
+import {
+  getBookingItemCatalogHref,
+  getBookingItemCatalogLinkLabel,
+} from '../../lib/booking-item-catalog';
+import {
+  BOOKING_STATUSES,
+  BOOKING_STATUS_VARIANTS,
+  getBookingStatusLabel,
+} from '../../lib/booking-status';
 import { getBookingsErrorMessage } from '../../lib/bookings-errors';
-
-const statusLabels: Record<BookingStatus, string> = {
-  draft: 'Brouillon',
-  pending_payment: 'En attente de paiement',
-  confirmed: 'Confirmée',
-  cancelled: 'Annulée',
-  refunded: 'Remboursée',
-};
-
-const statusVariants: Record<
-  BookingStatus,
-  'success' | 'warning' | 'muted' | 'danger' | 'default'
-> = {
-  draft: 'muted',
-  pending_payment: 'warning',
-  confirmed: 'success',
-  cancelled: 'danger',
-  refunded: 'default',
-};
+import { formatMoney } from '../../lib/format-money';
+import { BookingItemTypeIcon } from './booking-item-type-icon';
+import { BookingStatusTimeline } from './booking-status-timeline';
 
 const paymentStatusLabels: Record<BookingPayment['status'], string> = {
   pending: 'En attente',
@@ -58,16 +52,31 @@ function formatDateTime(iso: string): string {
   }
 }
 
-function formatMoney(cents: number, currency: string): string {
-  return `${(cents / 100).toFixed(2)} ${currency}`;
+function formatBookingRef(id: string): string {
+  return id.slice(0, 8);
 }
 
 type BookingDetailPageProps = {
   bookingId: string;
 };
 
+function BookingDetailSkeleton() {
+  return (
+    <div className="grid gap-6 lg:grid-cols-[minmax(280px,1fr)_minmax(0,1.6fr)]">
+      <div className="space-y-6">
+        <Skeleton className="h-48 w-full rounded-xl" />
+        <Skeleton className="h-56 w-full rounded-xl" />
+        <Skeleton className="h-40 w-full rounded-xl" />
+      </div>
+      <div className="space-y-6">
+        <Skeleton className="h-64 w-full rounded-xl" />
+        <Skeleton className="h-48 w-full rounded-xl" />
+      </div>
+    </div>
+  );
+}
+
 export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
-  const statusSelectId = useId();
   const statusReasonId = useId();
   const cancelReasonId = useId();
 
@@ -83,6 +92,8 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   const [newStatus, setNewStatus] = useState<BookingStatus>('confirmed');
   const [statusReason, setStatusReason] = useState('');
   const [cancelReason, setCancelReason] = useState('');
+  const [statusDialogOpen, setStatusDialogOpen] = useState(false);
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
 
   useAdminEditPageMeta({
     ready: state.status === 'ready' && detail != null,
@@ -126,7 +137,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   }, []);
 
   const handleUpdateStatus = useCallback(async () => {
-    if (!detail) return;
+    if (!detail) return false;
     setActionError(null);
     setActionLoading(true);
     try {
@@ -136,22 +147,17 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
       });
       setStatusReason('');
       await load();
+      return true;
     } catch (error) {
       setActionError(getBookingsErrorMessage(error));
+      return false;
     } finally {
       setActionLoading(false);
     }
   }, [bookingId, detail, load, newStatus, statusReason]);
 
   const handleCancel = useCallback(async () => {
-    if (!detail) return;
-    if (
-      !window.confirm(
-        'Annuler cette réservation ? Le stock des produits sera libéré (moteur de réservation).',
-      )
-    ) {
-      return;
-    }
+    if (!detail) return false;
     setActionError(null);
     setActionLoading(true);
     try {
@@ -160,34 +166,73 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
       });
       setCancelReason('');
       await load();
+      return true;
     } catch (error) {
       setActionError(getBookingsErrorMessage(error));
+      return false;
     } finally {
       setActionLoading(false);
     }
   }, [bookingId, cancelReason, detail, load]);
+
+  const statusOptions = useMemo(
+    () =>
+      BOOKING_STATUSES.map((status) => ({
+        value: status,
+        label: getBookingStatusLabel(status),
+      })),
+    [],
+  );
 
   const itemColumns = useMemo<ColumnDef<BookingItem, unknown>[]>(
     () => [
       {
         accessorKey: 'itemType',
         header: 'Type',
-        cell: ({ row }) => getItemTypeLabel(row.original.itemType),
+        cell: ({ row }) => (
+          <BookingItemTypeIcon itemType={row.original.itemType} size="sm" showLabel />
+        ),
       },
-      { accessorKey: 'titleSnapshot', header: 'Libellé' },
+      {
+        accessorKey: 'titleSnapshot',
+        header: 'Libellé',
+        cell: ({ row }) => {
+          const { itemType, referenceId, titleSnapshot } = row.original;
+          const href = getBookingItemCatalogHref(itemType, referenceId);
+          if (!href) {
+            return <span className="font-medium text-atg-fg">{titleSnapshot}</span>;
+          }
+          return (
+            <Link
+              href={href}
+              className="font-medium text-primary hover:underline"
+              aria-label={getBookingItemCatalogLinkLabel(itemType, titleSnapshot)}
+            >
+              {titleSnapshot}
+            </Link>
+          );
+        },
+      },
       {
         accessorKey: 'quantity',
         header: 'Qté',
         meta: { align: 'center' },
+        cell: ({ row }) => (
+          <span className="tabular-nums">{row.original.quantity}</span>
+        ),
       },
       {
         id: 'unitPrice',
         header: 'Prix unit.',
         meta: { align: 'right' },
         cell: ({ row }) =>
-          detail
-            ? formatMoney(row.original.unitPriceCents, detail.currency)
-            : row.original.unitPriceCents,
+          detail ? (
+            <span className="tabular-nums text-sm font-medium">
+              {formatMoney(row.original.unitPriceCents, detail.currency)}
+            </span>
+          ) : (
+            row.original.unitPriceCents
+          ),
       },
       {
         id: 'dates',
@@ -208,13 +253,21 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
       {
         accessorKey: 'createdAt',
         header: 'Date',
-        cell: ({ row }) => formatDateTime(row.original.createdAt),
+        cell: ({ row }) => (
+          <span className="whitespace-nowrap text-sm tabular-nums">
+            {formatDateTime(row.original.createdAt)}
+          </span>
+        ),
       },
       {
         id: 'amount',
         header: 'Montant',
         meta: { align: 'right' },
-        cell: ({ row }) => formatMoney(row.original.amountCents, row.original.currency),
+        cell: ({ row }) => (
+          <span className="tabular-nums text-sm font-medium">
+            {formatMoney(row.original.amountCents, row.original.currency)}
+          </span>
+        ),
       },
       {
         accessorKey: 'status',
@@ -231,39 +284,8 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
     [],
   );
 
-  const historyColumns = useMemo<ColumnDef<BookingStatusHistoryEntry, unknown>[]>(
-    () => [
-      {
-        accessorKey: 'createdAt',
-        header: 'Date',
-        cell: ({ row }) => formatDateTime(row.original.createdAt),
-      },
-      {
-        id: 'transition',
-        header: 'Transition',
-        cell: ({ row }) => {
-          const from = row.original.fromStatus
-            ? statusLabels[row.original.fromStatus]
-            : '—';
-          const to = statusLabels[row.original.toStatus];
-          return (
-            <span className="text-sm">
-              {from} → <span className="font-medium">{to}</span>
-            </span>
-          );
-        },
-      },
-      {
-        accessorKey: 'reason',
-        header: 'Motif',
-        cell: ({ row }) => row.original.reason ?? '—',
-      },
-    ],
-    [],
-  );
-
   if (state.status === 'loading' && !detail) {
-    return <p className="text-sm text-atg-muted">Chargement…</p>;
+    return <BookingDetailSkeleton />;
   }
 
   if (state.status === 'error') {
@@ -286,166 +308,197 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   const { booking, client } = detail;
   const canCancel =
     booking.status === 'pending_payment' || booking.status === 'confirmed';
+  const statusUnchanged = newStatus === booking.status;
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-wrap items-start justify-end gap-4">
-        <DataTableBadge variant={statusVariants[booking.status]}>
-          {statusLabels[booking.status]}
-        </DataTableBadge>
-      </div>
-
+    <div className="space-y-6">
       {actionError ? (
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {actionError}
         </p>
       ) : null}
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card variant="dashboard" padding="md">
-          <h2 className="text-lg font-semibold text-atg-fg">Client</h2>
-          <dl className="mt-4 space-y-2 text-sm">
-            <div>
-              <dt className="text-atg-muted">E-mail</dt>
-              <dd className="font-medium text-atg-fg">{client.email}</dd>
+      <div className="grid gap-6 lg:grid-cols-[minmax(280px,1fr)_minmax(0,1.6fr)] lg:items-start">
+        <div className="space-y-6 lg:sticky lg:top-4">
+          <Card variant="dashboard" padding="md">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+              <h2 className="text-lg font-semibold text-atg-fg">Client</h2>
+              <DataTableBadge variant={BOOKING_STATUS_VARIANTS[booking.status]}>
+                {getBookingStatusLabel(booking.status)}
+              </DataTableBadge>
             </div>
-            <div>
-              <dt className="text-atg-muted">Nom</dt>
-              <dd>
-                {client.firstName} {client.lastName}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-atg-muted">Organisation</dt>
-              <dd>{client.organizationName ?? '—'}</dd>
-            </div>
-            <div>
-              <dt className="text-atg-muted">Total</dt>
-              <dd className="tabular-nums font-medium">
-                {formatMoney(detail.totalCents, detail.currency)}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-atg-muted">Créée le</dt>
-              <dd>{formatDateTime(booking.createdAt)}</dd>
-            </div>
-          </dl>
-        </Card>
+            <p className="mb-4 font-mono text-xs text-atg-muted">
+              Réf. {formatBookingRef(booking.id)}
+            </p>
+            <dl className="space-y-3 text-sm">
+              <div>
+                <dt className="text-atg-muted">E-mail</dt>
+                <dd className="font-medium text-atg-fg">{client.email}</dd>
+              </div>
+              <div>
+                <dt className="text-atg-muted">Nom</dt>
+                <dd>
+                  {client.firstName} {client.lastName}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-atg-muted">Organisation</dt>
+                <dd>{client.organizationName ?? '—'}</dd>
+              </div>
+              <div>
+                <dt className="text-atg-muted">Total</dt>
+                <dd className="tabular-nums text-base font-semibold text-atg-fg">
+                  {formatMoney(detail.totalCents, detail.currency)}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-atg-muted">Créée le</dt>
+                <dd className="tabular-nums">{formatDateTime(booking.createdAt)}</dd>
+              </div>
+            </dl>
+          </Card>
 
-        {canWrite ? (
-          <Card variant="dashboard" padding="md" className="space-y-6">
-            <h2 className="text-lg font-semibold text-atg-fg">Actions</h2>
-            <div className="space-y-3">
-              <label htmlFor={statusSelectId} className="block text-sm font-medium text-atg-fg">
-                Changer le statut
-              </label>
-              <select
-                id={statusSelectId}
-                value={newStatus}
-                onChange={(e) => setNewStatus(e.target.value as BookingStatus)}
-                className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg"
-              >
-                {(Object.keys(statusLabels) as BookingStatus[]).map((s) => (
-                  <option key={s} value={s}>
-                    {statusLabels[s]}
-                  </option>
-                ))}
-              </select>
-              <label htmlFor={statusReasonId} className="block text-sm font-medium text-atg-fg">
-                Motif (historique)
-              </label>
-              <textarea
-                id={statusReasonId}
-                rows={2}
-                value={statusReason}
-                onChange={(e) => setStatusReason(e.target.value)}
-                className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg"
-                placeholder="Ex. confirmation manuelle, remboursement…"
-              />
-              <Button
-                type="button"
-                onClick={() => void handleUpdateStatus()}
-                disabled={actionLoading}
-                loading={actionLoading}
-              >
-                Appliquer le statut
-              </Button>
-            </div>
+          <Card variant="dashboard" padding="md">
+            <h2 className="mb-4 text-lg font-semibold text-atg-fg">Statut</h2>
+            <BookingStatusTimeline
+              currentStatus={booking.status}
+              history={detail.statusHistory}
+            />
+          </Card>
 
-            {canCancel ? (
-              <div className="space-y-3 border-t border-atg-border pt-6">
-                <h3 className="text-sm font-semibold text-atg-fg">Annulation (moteur #27)</h3>
-                <label htmlFor={cancelReasonId} className="block text-sm font-medium text-atg-fg">
-                  Motif d&apos;annulation
+          {canWrite ? (
+            <Card variant="dashboard" padding="md" className="space-y-6">
+              <h2 className="text-lg font-semibold text-atg-fg">Actions</h2>
+              <div className="space-y-3">
+                <Select
+                  label="Changer le statut"
+                  value={newStatus}
+                  options={statusOptions}
+                  onChange={(e) => setNewStatus(e.target.value as BookingStatus)}
+                />
+                <label htmlFor={statusReasonId} className="block text-sm font-medium text-atg-fg">
+                  Motif (historique)
                 </label>
                 <textarea
-                  id={cancelReasonId}
-                  rows={3}
-                  value={cancelReason}
-                  onChange={(e) => setCancelReason(e.target.value)}
+                  id={statusReasonId}
+                  rows={2}
+                  value={statusReason}
+                  onChange={(e) => setStatusReason(e.target.value)}
                   className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg"
-                  placeholder="Ex. demande client, indisponibilité…"
+                  placeholder="Ex. confirmation manuelle, remboursement…"
                 />
                 <Button
                   type="button"
-                  variant="ghost"
-                  className="!text-red-600 hover:!bg-red-50 dark:!text-red-400"
-                  onClick={() => void handleCancel()}
-                  disabled={actionLoading}
-                  loading={actionLoading}
+                  onClick={() => setStatusDialogOpen(true)}
+                  disabled={actionLoading || statusUnchanged}
+                  loading={actionLoading && statusDialogOpen}
                 >
-                  Annuler la réservation
+                  Appliquer le statut
                 </Button>
               </div>
-            ) : null}
-          </Card>
-        ) : (
-          <Card variant="dashboard" padding="md">
-            <p className="text-sm text-atg-muted">
-              Modification réservée aux comptes avec la permission bookings.write.
-            </p>
-          </Card>
-        )}
+
+              {canCancel ? (
+                <div className="space-y-3 border-t border-atg-border pt-6">
+                  <h3 className="text-sm font-semibold text-atg-fg">Annulation</h3>
+                  <label htmlFor={cancelReasonId} className="block text-sm font-medium text-atg-fg">
+                    Motif d&apos;annulation
+                  </label>
+                  <textarea
+                    id={cancelReasonId}
+                    rows={3}
+                    value={cancelReason}
+                    onChange={(e) => setCancelReason(e.target.value)}
+                    className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg"
+                    placeholder="Ex. demande client, indisponibilité…"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="!text-red-600 hover:!bg-red-50 dark:!text-red-400"
+                    onClick={() => setCancelDialogOpen(true)}
+                    disabled={actionLoading}
+                  >
+                    Annuler la réservation
+                  </Button>
+                </div>
+              ) : null}
+            </Card>
+          ) : (
+            <Card variant="dashboard" padding="md">
+              <p className="text-sm text-atg-muted">
+                Modification réservée aux comptes avec la permission bookings.write.
+              </p>
+            </Card>
+          )}
+        </div>
+
+        <div className="space-y-6">
+          <section className="space-y-3">
+            <h2 className="text-lg font-semibold text-atg-fg">Lignes de réservation</h2>
+            <Card variant="dashboard" padding="none" className="overflow-hidden">
+              <DataTable
+                columns={itemColumns}
+                data={detail.items}
+                emptyMessage="Aucune ligne."
+                getRowId={(row) => row.id}
+                aria-label="Lignes de réservation"
+              />
+            </Card>
+          </section>
+
+          <section className="space-y-3">
+            <h2 className="text-lg font-semibold text-atg-fg">Paiements</h2>
+            <Card variant="dashboard" padding="none" className="overflow-hidden">
+              <DataTable
+                columns={paymentColumns}
+                data={detail.payments}
+                emptyMessage="Aucun paiement enregistré pour cette réservation."
+                getRowId={(row) => row.id}
+                aria-label="Paiements"
+              />
+            </Card>
+          </section>
+        </div>
       </div>
 
-      <section className="space-y-3">
-        <h2 className="text-lg font-semibold text-atg-fg">Lignes de réservation</h2>
-        <Card variant="dashboard" padding="none" className="overflow-hidden">
-          <DataTable
-            columns={itemColumns}
-            data={detail.items}
-            emptyMessage="Aucune ligne."
-            getRowId={(row) => row.id}
-            aria-label="Lignes de réservation"
-          />
-        </Card>
-      </section>
+      <AlertDialog
+        open={statusDialogOpen}
+        onOpenChange={(open) => {
+          if (!actionLoading) setStatusDialogOpen(open);
+        }}
+        title="Confirmer le changement de statut"
+        description={`Passer la réservation de « ${getBookingStatusLabel(booking.status)} » à « ${getBookingStatusLabel(newStatus)} » ?${
+          statusReason.trim() ? ` Motif : ${statusReason.trim()}` : ''
+        }`}
+        confirmLabel="Confirmer"
+        cancelLabel="Annuler"
+        loading={actionLoading}
+        onConfirm={() => {
+          void handleUpdateStatus().then((ok) => {
+            if (ok) setStatusDialogOpen(false);
+          });
+        }}
+        onCancel={() => setStatusDialogOpen(false)}
+      />
 
-      <section className="space-y-3">
-        <h2 className="text-lg font-semibold text-atg-fg">Paiements</h2>
-        <Card variant="dashboard" padding="none" className="overflow-hidden">
-          <DataTable
-            columns={paymentColumns}
-            data={detail.payments}
-            emptyMessage="Aucun paiement enregistré pour cette réservation."
-            getRowId={(row) => row.id}
-            aria-label="Paiements"
-          />
-        </Card>
-      </section>
-
-      <section className="space-y-3">
-        <h2 className="text-lg font-semibold text-atg-fg">Historique des statuts</h2>
-        <Card variant="dashboard" padding="none" className="overflow-hidden">
-          <DataTable
-            columns={historyColumns}
-            data={detail.statusHistory}
-            emptyMessage="Aucun historique."
-            getRowId={(row) => row.id}
-            aria-label="Historique des statuts"
-          />
-        </Card>
-      </section>
+      <AlertDialog
+        open={cancelDialogOpen}
+        onOpenChange={(open) => {
+          if (!actionLoading) setCancelDialogOpen(open);
+        }}
+        title="Annuler la réservation"
+        description="Annuler cette réservation ? Le stock des produits sera libéré (moteur de réservation)."
+        confirmLabel="Annuler la réservation"
+        cancelLabel="Retour"
+        variant="danger"
+        loading={actionLoading}
+        onConfirm={() => {
+          void handleCancel().then((ok) => {
+            if (ok) setCancelDialogOpen(false);
+          });
+        }}
+        onCancel={() => setCancelDialogOpen(false)}
+      />
     </div>
   );
 }
