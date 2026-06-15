@@ -28,6 +28,7 @@ process.env.DATABASE_NAME =
 process.env.DATABASE_AUTO_SCHEMA =
   process.env.DATABASE_AUTO_SCHEMA ?? 'true';
 process.env.DATABASE_AUTO_SEED = process.env.DATABASE_AUTO_SEED ?? 'true';
+process.env.EMAIL_TRANSPORT = process.env.EMAIL_TRANSPORT ?? 'disabled';
 
 // Ignore placeholder values from .env.example so e2e can use test defaults.
 if (process.env.SEED_ADMIN_PASSWORD === '') {
