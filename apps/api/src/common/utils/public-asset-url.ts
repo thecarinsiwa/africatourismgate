@@ -17,6 +17,34 @@ export function brandingUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/branding/${filename}`;
 }
 
+export function propertyUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/properties/${filename}`;
+}
+
+export function roomUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/rooms/${filename}`;
+}
+
+export function flightUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/flights/${filename}`;
+}
+
+export function vehicleUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/vehicles/${filename}`;
+}
+
+export function shipUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/ships/${filename}`;
+}
+
+export function activityUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/activities/${filename}`;
+}
+
+export function packageUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/packages/${filename}`;
+}
+
 function getApiPublicOrigin(): string {
   return getApiBaseUrl().replace(/\/api$/, '');
 }

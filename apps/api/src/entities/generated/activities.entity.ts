@@ -30,11 +30,38 @@ export class Activities extends BaseAuditEntity {
   @Column({ type: 'int', name: 'duration_minutes', nullable: true })
   durationMinutes!: number | null;
 
+  @Column({
+    type: 'enum',
+    enum: ['easy', 'moderate', 'hard', 'expert'],
+    name: 'difficulty_level',
+    nullable: true,
+  })
+  difficultyLevel!: 'easy' | 'moderate' | 'hard' | 'expert' | null;
+
   @Column({ type: 'int', name: 'price_cents' })
   priceCents!: number;
 
   @Column({ type: 'varchar', name: 'currency', length: 3 })
   currency!: string;
+
+}
+
+@Entity('activity_images')
+export class ActivityImages extends BaseAuditEntity {
+  @PrimaryColumn('uuid', { name: 'id', length: 36 })
+  id!: string;
+
+  @Column({ type: 'varchar', name: 'activity_id', length: 36 })
+  activityId!: string;
+
+  @Column({ type: 'varchar', name: 'url', length: 512 })
+  url!: string;
+
+  @Column({ type: 'varchar', name: 'caption', length: 255, nullable: true })
+  caption!: string | null;
+
+  @Column({ type: 'int', name: 'sort_order' })
+  sortOrder!: number;
 
 }
 

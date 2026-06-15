@@ -7,7 +7,11 @@ import { formatCarPrice } from '../../lib/cars/listings';
 import type { VehicleDetail } from '../../lib/cars/types';
 import { formatActivityPrice, formatScheduleTime } from '../../lib/activities/listings';
 import type { ActivityDetail } from '../../lib/activities/types';
-import { getAccommodationDetail, getActivityDetail, getCruiseSailingDetail, getFlightDetail, getVehicleDetail } from '../../lib/api/public';
+import { getAccommodationDetail, getActivityDetail, getCruiseSailingDetail, getFlightDetail, getPackageDetail, getVehicleDetail } from '../../lib/api/public';
+import { formatPackagePrice } from '../../lib/packages/listings';
+import type { PackageDetail } from '../../lib/packages/types';
+import { fetchPackageDraftValidationData } from '../../lib/packages/package-validation';
+import type { PackageDraftValidationData } from '../../lib/reservations/flow';
 import { formatAirportLabel } from '../../lib/flights/airports';
 import { formatFlightPrice } from '../../lib/flights/listings';
 import type { FlightDetail } from '../../lib/flights/types';
@@ -26,10 +30,14 @@ import {
   isCabinReservationDraft,
   isFlightReservationDraft,
   isCabinOfferBookable,
+  isPackageReservationDraft,
+  isPackageReservationDraftStructurallyComplete,
   isRoomReservationDraft,
   isVehicleReservationDraft,
   type ReservationDraft,
 } from '../../lib/reservations/flow';
+import { PackagePriceDisplay } from '../packages/package-price-display';
+import { PackageReservationSummary } from '../packages/package-reservation-summary';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 
@@ -43,12 +51,18 @@ export function ReservationCartPageContent({ draft }: Props) {
   const f = t.flights;
   const c = t.cars;
   const cr = t.cruises;
+  const p = t.packages;
+  const act = t.activities;
 
   const [hotelDetail, setHotelDetail] = useState<PropertyDetail | null>(null);
   const [flightDetail, setFlightDetail] = useState<FlightDetail | null>(null);
   const [vehicleDetail, setVehicleDetail] = useState<VehicleDetail | null>(null);
   const [cruiseDetail, setCruiseDetail] = useState<CruiseSailingDetail | null>(null);
   const [activityDetail, setActivityDetail] = useState<ActivityDetail | null>(null);
+  const [packageDetail, setPackageDetail] = useState<PackageDetail | null>(null);
+  const [packageValidation, setPackageValidation] = useState<PackageDraftValidationData | null>(
+    null,
+  );
   const [loading, setLoading] = useState(Boolean(draft));
 
   const room = useMemo(
@@ -69,7 +83,7 @@ export function ReservationCartPageContent({ draft }: Props) {
 
   const vehicleReady = useMemo((): VehicleDetail | null => {
     if (!draft || !isVehicleReservationDraft(draft) || !vehicleDetail) return null;
-    if (vehicleDetail.availabilitySlot.id !== draft.availabilitySlotId) return null;
+    if (vehicleDetail.availabilitySlot?.id !== draft.availabilitySlotId) return null;
     return vehicleDetail;
   }, [draft, vehicleDetail]);
 
@@ -107,6 +121,13 @@ export function ReservationCartPageContent({ draft }: Props) {
         : null,
     [draft, activitySchedule],
   );
+
+  const packageReady = useMemo(() => {
+    if (!draft || !isPackageReservationDraft(draft) || !packageDetail) {
+      return false;
+    }
+    return isPackageReservationDraftStructurallyComplete(draft, packageDetail.items);
+  }, [draft, packageDetail]);
 
   useEffect(() => {
     let cancelled = false;
@@ -161,7 +182,25 @@ export function ReservationCartPageContent({ draft }: Props) {
             setFlightDetail(null);
             setVehicleDetail(null);
             setCruiseDetail(null);
+            setPackageDetail(null);
+            setPackageValidation(null);
           }
+        })
+        .finally(() => {
+          if (!cancelled) setLoading(false);
+        });
+    } else if (isPackageReservationDraft(draft)) {
+      void getPackageDetail(draft.packageId)
+        .then(async (pkg) => {
+          if (cancelled) return;
+          setPackageDetail(pkg);
+          setHotelDetail(null);
+          setFlightDetail(null);
+          setVehicleDetail(null);
+          setCruiseDetail(null);
+          setActivityDetail(null);
+          const validation = await fetchPackageDraftValidationData(draft);
+          if (!cancelled) setPackageValidation(validation);
         })
         .finally(() => {
           if (!cancelled) setLoading(false);
@@ -224,6 +263,8 @@ export function ReservationCartPageContent({ draft }: Props) {
                 activityReady.priceCents * draft.participants,
                 activityDetail.currency,
               )
+            : draft && isPackageReservationDraft(draft) && packageDetail && packageReady
+              ? formatPackagePrice(packageDetail.pricing.totalCents, packageDetail.pricing.currency)
             : vehicleReady
             ? formatCarPrice(vehicleReady.totalPriceCents, vehicleReady.currency)
             : '--';
@@ -235,6 +276,7 @@ export function ReservationCartPageContent({ draft }: Props) {
       (isFlightReservationDraft(draft!) && flightClass) ||
       (isCabinReservationDraft(draft!) && cruiseReady) ||
       (isActivityScheduleReservationDraft(draft!) && activityReady) ||
+      (isPackageReservationDraft(draft!) && packageReady) ||
       Boolean(vehicleReady));
 
   return (
@@ -365,6 +407,36 @@ export function ReservationCartPageContent({ draft }: Props) {
                   </div>
                 )}
 
+              {!loading &&
+                draft &&
+                isPackageReservationDraft(draft) &&
+                packageDetail &&
+                packageReady &&
+                packageValidation && (
+                  <PackageReservationSummary
+                    draft={draft}
+                    packageDetail={packageDetail}
+                    validation={packageValidation}
+                    t={p}
+                    participantSingular={act.participantSingular}
+                    participantPlural={act.participantPlural}
+                    locale={locale}
+                  />
+                )}
+
+              {!loading &&
+                draft &&
+                isPackageReservationDraft(draft) &&
+                packageDetail &&
+                !packageReady && (
+                  <p className="text-sm text-red-700 dark:text-red-300">
+                    {p.packageCartInvalid}{' '}
+                    <Link href={detailHref} className="font-semibold underline">
+                      {p.modifySelection}
+                    </Link>
+                  </p>
+                )}
+
               {!loading && isCabinReservationDraft(draft) && cruiseDetail && !cruiseReady && (
                 <p className="text-sm text-red-700 dark:text-red-300">
                   {cr.unavailable}.{' '}
@@ -401,6 +473,7 @@ export function ReservationCartPageContent({ draft }: Props) {
                 !flightClass &&
                 !cruiseReady &&
                 !activityReady &&
+                !(draft && isPackageReservationDraft(draft) && packageReady) &&
                 !vehicleReady && (
                 <p className="text-sm text-red-700 dark:text-red-300">
                   Impossible d&apos;afficher cette réservation.{' '}
@@ -413,9 +486,18 @@ export function ReservationCartPageContent({ draft }: Props) {
 
             <aside className="h-fit min-w-[240px] rounded-xl border border-gray-200 bg-white p-5 dark:border-atg-border dark:bg-atg-elevated">
               <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-atg-muted">
-                Total estimé
+                {draft && isPackageReservationDraft(draft) ? p.packagePrice : 'Total estimé'}
               </p>
-              <p className="mt-1 text-2xl font-bold text-[#0f1a16] dark:text-white">{totalLabel}</p>
+              {draft && isPackageReservationDraft(draft) && packageDetail && packageReady ? (
+                <div className="mt-2">
+                  <PackagePriceDisplay
+                    pricing={packageDetail.pricing}
+                    discountBadgeTemplate={p.discountBadge}
+                  />
+                </div>
+              ) : (
+                <p className="mt-1 text-2xl font-bold text-[#0f1a16] dark:text-white">{totalLabel}</p>
+              )}
               {!accessToken && (
                 <p className="mt-3 text-xs text-amber-700 dark:text-amber-300">
                   Connexion client requise au prochain écran.

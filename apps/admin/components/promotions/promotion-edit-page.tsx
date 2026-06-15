@@ -3,6 +3,7 @@
 import type { Promotion } from '@africatourismgate/types';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { PaymentsPromoSubnav } from '../payments/payments-promo-subnav';
 import { getApiClient } from '../../lib/auth/api';
 import { getPromotionsErrorMessage } from '../../lib/promotions-errors';
@@ -18,6 +19,12 @@ export function PromotionEditPage({ promotionId }: PromotionEditPageProps) {
     | { status: 'error'; message: string }
     | { status: 'ready'; promotion: Promotion }
   >({ status: 'loading' });
+
+  useAdminEditPageMeta({
+    ready: state.status === 'ready',
+    title: 'Modifier la promotion',
+    entityLabel: state.status === 'ready' ? state.promotion.name : undefined,
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -70,10 +77,6 @@ export function PromotionEditPage({ promotionId }: PromotionEditPageProps) {
   return (
     <div>
       <PaymentsPromoSubnav />
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Modifier la promotion</h1>
-        <p className="mt-2 text-sm text-atg-muted">{promotion.name}</p>
-      </div>
       <PromotionForm mode="edit" promotionId={promotionId} initialPromotion={promotion} />
     </div>
   );

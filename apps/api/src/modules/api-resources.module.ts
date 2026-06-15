@@ -21,15 +21,19 @@ import { PropertyImagesModule } from './resources/property-images/property-image
 import { PropertyAmenitiesModule } from './resources/property-amenities/property-amenities.module';
 import { RoomsModule } from './resources/rooms/rooms.module';
 import { RoomAvailabilityModule } from './resources/room-availability/room-availability.module';
+import { RoomImagesModule } from './resources/room-images/room-images.module';
 import { AirlinesModule } from './resources/airlines/airlines.module';
 import { AirportsModule } from './resources/airports/airports.module';
 import { FlightsModule } from './resources/flights/flights.module';
 import { FlightClassesModule } from './resources/flight-classes/flight-classes.module';
 import { FlightClassAvailabilityModule } from './resources/flight-class-availability/flight-class-availability.module';
+import { FlightImagesModule } from './resources/flight-images/flight-images.module';
 import { RentalAgenciesModule } from './resources/rental-agencies/rental-agencies.module';
 import { VehicleCategoriesModule } from './resources/vehicle-categories/vehicle-categories.module';
 import { VehiclesModule } from './resources/vehicles/vehicles.module';
 import { VehicleAvailabilityModule } from './resources/vehicle-availability/vehicle-availability.module';
+import { VehicleImagesModule } from './resources/vehicle-images/vehicle-images.module';
+import { ShipImagesModule } from './resources/ship-images/ship-images.module';
 import { CruiseLinesModule } from './resources/cruise-lines/cruise-lines.module';
 import { CruisePortsModule } from './resources/cruise-ports/cruise-ports.module';
 import { ShipsModule } from './resources/ships/ships.module';
@@ -40,8 +44,10 @@ import { CruiseSailingsModule } from './resources/cruise-sailings/cruise-sailing
 import { CabinAvailabilityModule } from './resources/cabin-availability/cabin-availability.module';
 import { ActivityProvidersModule } from './resources/activity-providers/activity-providers.module';
 import { ActivitiesModule } from './resources/activities/activities.module';
+import { ActivityImagesModule } from './resources/activity-images/activity-images.module';
 import { ActivitySchedulesModule } from './resources/activity-schedules/activity-schedules.module';
 import { PackagesModule } from './resources/packages/packages.module';
+import { PackageImagesModule } from './resources/package-images/package-images.module';
 import { PackageItemsModule } from './resources/package-items/package-items.module';
 import { BookingsModule } from './resources/bookings/bookings.module';
 import { BookingItemsModule } from './resources/booking-items/booking-items.module';
@@ -79,19 +85,23 @@ import { Module } from '@nestjs/common';
     PropertyImagesModule,
     PropertyAmenitiesModule,
     RoomsModule,
+    RoomImagesModule,
     RoomAvailabilityModule,
     AirlinesModule,
     AirportsModule,
     FlightsModule,
     FlightClassesModule,
     FlightClassAvailabilityModule,
+    FlightImagesModule,
     RentalAgenciesModule,
     VehicleCategoriesModule,
     VehiclesModule,
     VehicleAvailabilityModule,
+    VehicleImagesModule,
     CruiseLinesModule,
     CruisePortsModule,
     ShipsModule,
+    ShipImagesModule,
     ItinerariesModule,
     ItineraryPortsModule,
     CabinsModule,
@@ -99,8 +109,10 @@ import { Module } from '@nestjs/common';
     CabinAvailabilityModule,
     ActivityProvidersModule,
     ActivitiesModule,
+    ActivityImagesModule,
     ActivitySchedulesModule,
     PackagesModule,
+    PackageImagesModule,
     PackageItemsModule,
     BookingsModule,
     BookingItemsModule,

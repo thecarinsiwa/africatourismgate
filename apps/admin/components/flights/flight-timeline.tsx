@@ -1,0 +1,140 @@
+'use client';
+
+import { cn, DataTableBadge } from '@africatourismgate/ui';
+import {
+  formatDurationMinutes,
+  formatFlightSchedule,
+} from '../../lib/flight-datetime';
+
+export type FlightTimelineAirport = {
+  iataCode: string;
+  city: string;
+  name?: string;
+};
+
+type FlightTimelineProps = {
+  departureAirport: FlightTimelineAirport | null;
+  arrivalAirport: FlightTimelineAirport | null;
+  departureTime: string;
+  arrivalTime: string;
+  durationMinutes: number;
+  compact?: boolean;
+  className?: string;
+};
+
+function AirportBlock({
+  airport,
+  time,
+  align,
+  compact,
+}: {
+  airport: FlightTimelineAirport | null;
+  time: string;
+  align: 'start' | 'end';
+  compact?: boolean;
+}) {
+  return (
+    <div
+      className={cn(
+        'flex min-w-0 flex-col gap-1',
+        align === 'end' && 'items-start md:items-end md:text-right',
+      )}
+    >
+      <div
+        className={cn(
+          'flex flex-wrap items-center gap-2',
+          align === 'end' && 'md:flex-row-reverse',
+        )}
+      >
+        <DataTableBadge variant="default">
+          {airport?.iataCode ?? '?'}
+        </DataTableBadge>
+        {!compact ? (
+          <span className="truncate text-sm font-medium text-atg-fg">
+            {airport?.city ?? '—'}
+          </span>
+        ) : null}
+      </div>
+      {!compact && airport?.name ? (
+        <span className="truncate text-xs text-atg-muted">{airport.name}</span>
+      ) : null}
+      <span className="text-sm tabular-nums text-atg-muted">{time}</span>
+    </div>
+  );
+}
+
+function DurationConnector({ durationMinutes, compact }: { durationMinutes: number; compact?: boolean }) {
+  const label = formatDurationMinutes(durationMinutes);
+
+  if (compact) {
+    return (
+      <div className="flex items-center gap-2 text-xs text-atg-muted" aria-hidden>
+        <span className="hidden h-px flex-1 bg-atg-border sm:block" />
+        <span className="shrink-0 tabular-nums">{label}</span>
+        <span className="hidden h-px flex-1 bg-atg-border sm:block" />
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="flex flex-col items-center gap-1 py-2 md:flex-1 md:flex-row md:px-4 md:py-0"
+      aria-label={`Durée du vol : ${label}`}
+    >
+      <div className="hidden h-px flex-1 bg-atg-border md:block" />
+      <div className="flex flex-col items-center gap-0.5">
+        <svg
+          className="h-4 w-4 rotate-90 text-atg-muted md:rotate-0"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          aria-hidden
+        >
+          <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        <span className="text-xs font-medium tabular-nums text-atg-muted">{label}</span>
+      </div>
+      <div className="h-8 w-px bg-atg-border md:hidden" />
+      <div className="hidden h-px flex-1 bg-atg-border md:block" />
+    </div>
+  );
+}
+
+export function FlightTimeline({
+  departureAirport,
+  arrivalAirport,
+  departureTime,
+  arrivalTime,
+  durationMinutes,
+  compact = false,
+  className,
+}: FlightTimelineProps) {
+  const schedule = formatFlightSchedule(departureTime, arrivalTime);
+
+  return (
+    <div
+      className={cn(
+        'flex flex-col gap-4 md:flex-row md:items-center md:justify-between',
+        compact && 'gap-2 md:gap-3',
+        className,
+      )}
+      role="group"
+      aria-label="Trajet du vol"
+    >
+      <AirportBlock
+        airport={departureAirport}
+        time={schedule.departure}
+        align="start"
+        compact={compact}
+      />
+      <DurationConnector durationMinutes={durationMinutes} compact={compact} />
+      <AirportBlock
+        airport={arrivalAirport}
+        time={schedule.arrival}
+        align="end"
+        compact={compact}
+      />
+    </div>
+  );
+}

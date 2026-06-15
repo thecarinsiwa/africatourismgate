@@ -20,6 +20,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/email/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Preview transactional email HTML (no SMTP send) */
+        post: operations["EmailController_preview"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/auth/google": {
         parameters: {
             query?: never;
@@ -201,7 +218,7 @@ export interface paths {
         /** List users */
         get: operations["UsersController_findAll"];
         put?: never;
-        /** Create user (admin) */
+        /** Create users */
         post: operations["UsersController_create"];
         delete?: never;
         options?: never;
@@ -216,15 +233,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get user by id */
+        /** Get users by id */
         get: operations["UsersController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete user */
+        /** Soft-delete users */
         delete: operations["UsersController_remove"];
         options?: never;
         head?: never;
-        /** Update user */
+        /** Update users */
         patch: operations["UsersController_update"];
         trace?: never;
     };
@@ -238,7 +255,7 @@ export interface paths {
         /** List employees */
         get: operations["EmployeesController_findAll"];
         put?: never;
-        /** Create employee */
+        /** Create employees */
         post: operations["EmployeesController_create"];
         delete?: never;
         options?: never;
@@ -253,15 +270,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get employee by id */
+        /** Get employees by id */
         get: operations["EmployeesController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete employee */
+        /** Soft-delete employees */
         delete: operations["EmployeesController_remove"];
         options?: never;
         head?: never;
-        /** Update employee */
+        /** Update employees */
         patch: operations["EmployeesController_update"];
         trace?: never;
     };
@@ -272,11 +289,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List user-sessions */
+        /** List active user sessions (scoped to current user unless staff) */
         get: operations["UserSessionsController_findAll"];
         put?: never;
-        /** Create user-sessions */
-        post: operations["UserSessionsController_create"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -290,16 +306,52 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get user-sessions by id */
+        /** Get user session by id */
         get: operations["UserSessionsController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete user-sessions */
-        delete: operations["UserSessionsController_remove"];
+        /** Revoke user session (soft-delete) */
+        delete: operations["UserSessionsController_revoke"];
         options?: never;
         head?: never;
-        /** Update user-sessions */
-        patch: operations["UserSessionsController_update"];
+        patch?: never;
+        trace?: never;
+    };
+    "/api/password-reset-tokens": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List password-reset-tokens */
+        get: operations["PasswordResetTokensController_findAll"];
+        put?: never;
+        /** Create password-reset-tokens */
+        post: operations["PasswordResetTokensController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/password-reset-tokens/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get password-reset-tokens by id */
+        get: operations["PasswordResetTokensController_findOne"];
+        put?: never;
+        post?: never;
+        /** Soft-delete password-reset-tokens */
+        delete: operations["PasswordResetTokensController_remove"];
+        options?: never;
+        head?: never;
+        /** Update password-reset-tokens */
+        patch: operations["PasswordResetTokensController_update"];
         trace?: never;
     };
     "/api/user-addresses": {
@@ -309,10 +361,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List user-addresses */
+        /** List user addresses (scoped to current user unless staff) */
         get: operations["UserAddressesController_findAll"];
         put?: never;
-        /** Create user-addresses */
+        /** Create user address */
         post: operations["UserAddressesController_create"];
         delete?: never;
         options?: never;
@@ -327,15 +379,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get user-addresses by id */
+        /** Get user address by id */
         get: operations["UserAddressesController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete user-addresses */
+        /** Soft-delete user address */
         delete: operations["UserAddressesController_remove"];
         options?: never;
         head?: never;
-        /** Update user-addresses */
+        /** Update user address */
         patch: operations["UserAddressesController_update"];
         trace?: never;
     };
@@ -346,10 +398,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List user-payment-methods */
+        /** List user payment methods (scoped to current user unless staff) */
         get: operations["UserPaymentMethodsController_findAll"];
         put?: never;
-        /** Create user-payment-methods */
+        /** Create user payment method */
         post: operations["UserPaymentMethodsController_create"];
         delete?: never;
         options?: never;
@@ -364,15 +416,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get user-payment-methods by id */
+        /** Get user payment method by id */
         get: operations["UserPaymentMethodsController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete user-payment-methods */
+        /** Soft-delete user payment method */
         delete: operations["UserPaymentMethodsController_remove"];
         options?: never;
         head?: never;
-        /** Update user-payment-methods */
+        /** Update user payment method */
         patch: operations["UserPaymentMethodsController_update"];
         trace?: never;
     };
@@ -413,6 +465,23 @@ export interface paths {
         patch: operations["LoyaltyAccountsController_update"];
         trace?: never;
     };
+    "/api/loyalty-accounts/{id}/adjust-points": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Adjust loyalty points balance (super admin only) */
+        post: operations["LoyaltyAccountsController_adjustPoints"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/organizations": {
         parameters: {
             query?: never;
@@ -423,7 +492,7 @@ export interface paths {
         /** List organizations */
         get: operations["OrganizationsController_findAll"];
         put?: never;
-        /** Create organization */
+        /** Create organizations */
         post: operations["OrganizationsController_create"];
         delete?: never;
         options?: never;
@@ -438,15 +507,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get organization by id */
+        /** Get organizations by id */
         get: operations["OrganizationsController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete organization */
+        /** Soft-delete organizations */
         delete: operations["OrganizationsController_remove"];
         options?: never;
         head?: never;
-        /** Update organization */
+        /** Update organizations */
         patch: operations["OrganizationsController_update"];
         trace?: never;
     };
@@ -467,15 +536,15 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/organization-settings": {
+    "/api/organization-settings/public/contact": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** List organization settings (scoped) */
-        get: operations["OrganizationSettingsController_findAll"];
+        /** Get public contact details for the active/default organization */
+        get: operations["OrganizationSettingsController_findPublicContact"];
         put?: never;
         post?: never;
         delete?: never;
@@ -501,17 +570,18 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/organization-settings/upload-branding": {
+    "/api/organization-settings": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get?: never;
-        /** Upload branding asset (logo/favicon) */
-        put: operations["OrganizationSettingsController_uploadBrandingAsset"];
-        post?: never;
+        /** List organization settings (scoped) */
+        get: operations["OrganizationSettingsController_findAll"];
+        put?: never;
+        /** Create organization-settings */
+        post: operations["OrganizationSettingsController_create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -525,14 +595,16 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get organization setting by id (scoped) */
+        /** Get organization-settings by id */
         get: operations["OrganizationSettingsController_findOne"];
         put?: never;
         post?: never;
-        delete?: never;
+        /** Soft-delete organization-settings */
+        delete: operations["OrganizationSettingsController_remove"];
         options?: never;
         head?: never;
-        patch?: never;
+        /** Update organization-settings */
+        patch: operations["OrganizationSettingsController_update"];
         trace?: never;
     };
     "/api/organization-bank-accounts": {
@@ -542,10 +614,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List organization bank accounts (scoped) */
+        /** List organization-bank-accounts */
         get: operations["OrganizationBankAccountsController_findAll"];
         put?: never;
-        /** Create bank account (scoped) */
+        /** Create organization-bank-accounts */
         post: operations["OrganizationBankAccountsController_create"];
         delete?: never;
         options?: never;
@@ -560,15 +632,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get bank account by id (scoped) */
+        /** Get organization-bank-accounts by id */
         get: operations["OrganizationBankAccountsController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete bank account (scoped) */
+        /** Soft-delete organization-bank-accounts */
         delete: operations["OrganizationBankAccountsController_remove"];
         options?: never;
         head?: never;
-        /** Update bank account (scoped) */
+        /** Update organization-bank-accounts */
         patch: operations["OrganizationBankAccountsController_update"];
         trace?: never;
     };
@@ -582,7 +654,8 @@ export interface paths {
         /** List permissions */
         get: operations["PermissionsController_findAll"];
         put?: never;
-        post?: never;
+        /** Create permissions */
+        post: operations["PermissionsController_create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -596,14 +669,16 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get permission by id */
+        /** Get permissions by id */
         get: operations["PermissionsController_findOne"];
         put?: never;
         post?: never;
-        delete?: never;
+        /** Soft-delete permissions */
+        delete: operations["PermissionsController_remove"];
         options?: never;
         head?: never;
-        patch?: never;
+        /** Update permissions */
+        patch: operations["PermissionsController_update"];
         trace?: never;
     };
     "/api/roles": {
@@ -616,26 +691,8 @@ export interface paths {
         /** List roles */
         get: operations["RolesController_findAll"];
         put?: never;
-        /** Create custom role */
+        /** Create roles */
         post: operations["RolesController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/roles/{id}/permissions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get permission ids for role */
-        get: operations["RolesController_getRolePermissions"];
-        /** Replace role permissions (matrix) */
-        put: operations["RolesController_replaceRolePermissions"];
-        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -649,15 +706,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get role by id */
+        /** Get roles by id */
         get: operations["RolesController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete custom role */
+        /** Soft-delete roles */
         delete: operations["RolesController_remove"];
         options?: never;
         head?: never;
-        /** Update custom role */
+        /** Update roles */
         patch: operations["RolesController_update"];
         trace?: never;
     };
@@ -703,10 +760,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List user role assignments */
+        /** List user-role-assignments */
         get: operations["UserRoleAssignmentsController_findAll"];
         put?: never;
-        /** Assign role to user */
+        /** Create user-role-assignments */
         post: operations["UserRoleAssignmentsController_create"];
         delete?: never;
         options?: never;
@@ -721,31 +778,16 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get assignment by id */
+        /** Get user-role-assignments by id */
         get: operations["UserRoleAssignmentsController_findOne"];
         put?: never;
         post?: never;
-        delete?: never;
+        /** Soft-delete user-role-assignments */
+        delete: operations["UserRoleAssignmentsController_remove"];
         options?: never;
         head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/user-role-assignments/{id}/revoke": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Revoke role assignment */
-        patch: operations["UserRoleAssignmentsController_revoke"];
+        /** Update user-role-assignments */
+        patch: operations["UserRoleAssignmentsController_update"];
         trace?: never;
     };
     "/api/rbac-audit-logs": {
@@ -866,7 +908,7 @@ export interface paths {
         /** List amenities */
         get: operations["AmenitiesController_findAll"];
         put?: never;
-        /** Create amenity */
+        /** Create amenities */
         post: operations["AmenitiesController_create"];
         delete?: never;
         options?: never;
@@ -881,15 +923,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get amenity by id */
+        /** Get amenities by id */
         get: operations["AmenitiesController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete amenity */
+        /** Soft-delete amenities */
         delete: operations["AmenitiesController_remove"];
         options?: never;
         head?: never;
-        /** Update amenity */
+        /** Update amenities */
         patch: operations["AmenitiesController_update"];
         trace?: never;
     };
@@ -903,7 +945,7 @@ export interface paths {
         /** List properties */
         get: operations["PropertiesController_findAll"];
         put?: never;
-        /** Create property */
+        /** Create properties */
         post: operations["PropertiesController_create"];
         delete?: never;
         options?: never;
@@ -918,16 +960,33 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get property by id */
+        /** Get properties by id */
         get: operations["PropertiesController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete property */
+        /** Soft-delete properties */
         delete: operations["PropertiesController_remove"];
         options?: never;
         head?: never;
-        /** Update property */
+        /** Update properties */
         patch: operations["PropertiesController_update"];
+        trace?: never;
+    };
+    "/api/properties/{id}/upload-image": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Upload property image (JPEG, PNG or WebP, max 5 MB) */
+        post: operations["PropertiesController_uploadImage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/property-images": {
@@ -937,10 +996,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List property images */
+        /** List property-images */
         get: operations["PropertyImagesController_findAll"];
         put?: never;
-        /** Create property image */
+        /** Create property-images */
         post: operations["PropertyImagesController_create"];
         delete?: never;
         options?: never;
@@ -955,15 +1014,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get property image by id */
+        /** Get property-images by id */
         get: operations["PropertyImagesController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete property image */
+        /** Soft-delete property-images */
         delete: operations["PropertyImagesController_remove"];
         options?: never;
         head?: never;
-        /** Update property image */
+        /** Update property-images */
         patch: operations["PropertyImagesController_update"];
         trace?: never;
     };
@@ -974,28 +1033,11 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List property amenities */
+        /** List property-amenities */
         get: operations["PropertyAmenitiesController_findAll"];
         put?: never;
-        /** Link amenity to property */
+        /** Create property-amenities */
         post: operations["PropertyAmenitiesController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/property-amenities/sync": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Replace property amenities (multi-select sync) */
-        put: operations["PropertyAmenitiesController_sync"];
-        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1012,7 +1054,7 @@ export interface paths {
         get?: never;
         put?: never;
         post?: never;
-        /** Soft-delete property amenity link */
+        /** Soft-delete property-amenities */
         delete: operations["PropertyAmenitiesController_remove"];
         options?: never;
         head?: never;
@@ -1029,7 +1071,7 @@ export interface paths {
         /** List rooms */
         get: operations["RoomsController_findAll"];
         put?: never;
-        /** Create room */
+        /** Create rooms */
         post: operations["RoomsController_create"];
         delete?: never;
         options?: never;
@@ -1044,15 +1086,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get room by id */
+        /** Get rooms by id */
         get: operations["RoomsController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete room */
+        /** Soft-delete rooms */
         delete: operations["RoomsController_remove"];
         options?: never;
         head?: never;
-        /** Update room */
+        /** Update rooms */
         patch: operations["RoomsController_update"];
         trace?: never;
     };
@@ -1120,7 +1162,7 @@ export interface paths {
         /** List airlines */
         get: operations["AirlinesController_findAll"];
         put?: never;
-        /** Create airline */
+        /** Create airlines */
         post: operations["AirlinesController_create"];
         delete?: never;
         options?: never;
@@ -1135,15 +1177,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get airline by id */
+        /** Get airlines by id */
         get: operations["AirlinesController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete airline */
+        /** Soft-delete airlines */
         delete: operations["AirlinesController_remove"];
         options?: never;
         head?: never;
-        /** Update airline */
+        /** Update airlines */
         patch: operations["AirlinesController_update"];
         trace?: never;
     };
@@ -1157,7 +1199,7 @@ export interface paths {
         /** List airports */
         get: operations["AirportsController_findAll"];
         put?: never;
-        /** Create airport */
+        /** Create airports */
         post: operations["AirportsController_create"];
         delete?: never;
         options?: never;
@@ -1172,15 +1214,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get airport by id */
+        /** Get airports by id */
         get: operations["AirportsController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete airport */
+        /** Soft-delete airports */
         delete: operations["AirportsController_remove"];
         options?: never;
         head?: never;
-        /** Update airport */
+        /** Update airports */
         patch: operations["AirportsController_update"];
         trace?: never;
     };
@@ -1194,7 +1236,7 @@ export interface paths {
         /** List flights */
         get: operations["FlightsController_findAll"];
         put?: never;
-        /** Create flight */
+        /** Create flights */
         post: operations["FlightsController_create"];
         delete?: never;
         options?: never;
@@ -1209,15 +1251,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get flight by id */
+        /** Get flights by id */
         get: operations["FlightsController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete flight */
+        /** Soft-delete flights */
         delete: operations["FlightsController_remove"];
         options?: never;
         head?: never;
-        /** Update flight */
+        /** Update flights */
         patch: operations["FlightsController_update"];
         trace?: never;
     };
@@ -1228,10 +1270,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List flight classes */
+        /** List flight-classes */
         get: operations["FlightClassesController_findAll"];
         put?: never;
-        /** Create flight class */
+        /** Create flight-classes */
         post: operations["FlightClassesController_create"];
         delete?: never;
         options?: never;
@@ -1246,15 +1288,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get flight class by id */
+        /** Get flight-classes by id */
         get: operations["FlightClassesController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete flight class */
+        /** Soft-delete flight-classes */
         delete: operations["FlightClassesController_remove"];
         options?: never;
         head?: never;
-        /** Update flight class */
+        /** Update flight-classes */
         patch: operations["FlightClassesController_update"];
         trace?: never;
     };
@@ -1265,28 +1307,11 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List flight class availability */
+        /** List flight-class-availability */
         get: operations["FlightClassAvailabilityController_findAll"];
         put?: never;
-        /** Create flight class availability */
+        /** Create flight-class-availability */
         post: operations["FlightClassAvailabilityController_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/flight-class-availability/bulk": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Bulk upsert availability for a date range */
-        put: operations["FlightClassAvailabilityController_bulkUpsert"];
-        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1300,15 +1325,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get flight class availability by id */
+        /** Get flight-class-availability by id */
         get: operations["FlightClassAvailabilityController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete flight class availability */
+        /** Soft-delete flight-class-availability */
         delete: operations["FlightClassAvailabilityController_remove"];
         options?: never;
         head?: never;
-        /** Update flight class availability */
+        /** Update flight-class-availability */
         patch: operations["FlightClassAvailabilityController_update"];
         trace?: never;
     };
@@ -1319,10 +1344,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List rental agencies */
+        /** List rental-agencies */
         get: operations["RentalAgenciesController_findAll"];
         put?: never;
-        /** Create rental agency */
+        /** Create rental-agencies */
         post: operations["RentalAgenciesController_create"];
         delete?: never;
         options?: never;
@@ -1337,15 +1362,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get rental agency by id */
+        /** Get rental-agencies by id */
         get: operations["RentalAgenciesController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete rental agency */
+        /** Soft-delete rental-agencies */
         delete: operations["RentalAgenciesController_remove"];
         options?: never;
         head?: never;
-        /** Update rental agency */
+        /** Update rental-agencies */
         patch: operations["RentalAgenciesController_update"];
         trace?: never;
     };
@@ -1356,10 +1381,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List vehicle categories */
+        /** List vehicle-categories */
         get: operations["VehicleCategoriesController_findAll"];
         put?: never;
-        /** Create vehicle category */
+        /** Create vehicle-categories */
         post: operations["VehicleCategoriesController_create"];
         delete?: never;
         options?: never;
@@ -1374,15 +1399,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get vehicle category by id */
+        /** Get vehicle-categories by id */
         get: operations["VehicleCategoriesController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete vehicle category */
+        /** Soft-delete vehicle-categories */
         delete: operations["VehicleCategoriesController_remove"];
         options?: never;
         head?: never;
-        /** Update vehicle category */
+        /** Update vehicle-categories */
         patch: operations["VehicleCategoriesController_update"];
         trace?: never;
     };
@@ -1396,7 +1421,7 @@ export interface paths {
         /** List vehicles */
         get: operations["VehiclesController_findAll"];
         put?: never;
-        /** Create vehicle */
+        /** Create vehicles */
         post: operations["VehiclesController_create"];
         delete?: never;
         options?: never;
@@ -1411,15 +1436,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get vehicle by id */
+        /** Get vehicles by id */
         get: operations["VehiclesController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete vehicle */
+        /** Soft-delete vehicles */
         delete: operations["VehiclesController_remove"];
         options?: never;
         head?: never;
-        /** Update vehicle */
+        /** Update vehicles */
         patch: operations["VehiclesController_update"];
         trace?: never;
     };
@@ -1430,10 +1455,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List vehicle availability slots */
+        /** List vehicle-availability */
         get: operations["VehicleAvailabilityController_findAll"];
         put?: never;
-        /** Create vehicle availability slot */
+        /** Create vehicle-availability */
         post: operations["VehicleAvailabilityController_create"];
         delete?: never;
         options?: never;
@@ -1448,15 +1473,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get vehicle availability by id */
+        /** Get vehicle-availability by id */
         get: operations["VehicleAvailabilityController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete vehicle availability */
+        /** Soft-delete vehicle-availability */
         delete: operations["VehicleAvailabilityController_remove"];
         options?: never;
         head?: never;
-        /** Update vehicle availability slot */
+        /** Update vehicle-availability */
         patch: operations["VehicleAvailabilityController_update"];
         trace?: never;
     };
@@ -1467,10 +1492,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List cruise lines */
+        /** List cruise-lines */
         get: operations["CruiseLinesController_findAll"];
         put?: never;
-        /** Create cruise line */
+        /** Create cruise-lines */
         post: operations["CruiseLinesController_create"];
         delete?: never;
         options?: never;
@@ -1485,15 +1510,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get cruise line by id */
+        /** Get cruise-lines by id */
         get: operations["CruiseLinesController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete cruise line */
+        /** Soft-delete cruise-lines */
         delete: operations["CruiseLinesController_remove"];
         options?: never;
         head?: never;
-        /** Update cruise line */
+        /** Update cruise-lines */
         patch: operations["CruiseLinesController_update"];
         trace?: never;
     };
@@ -1504,10 +1529,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List cruise ports */
+        /** List cruise-ports */
         get: operations["CruisePortsController_findAll"];
         put?: never;
-        /** Create cruise port */
+        /** Create cruise-ports */
         post: operations["CruisePortsController_create"];
         delete?: never;
         options?: never;
@@ -1522,15 +1547,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get cruise port by id */
+        /** Get cruise-ports by id */
         get: operations["CruisePortsController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete cruise port */
+        /** Soft-delete cruise-ports */
         delete: operations["CruisePortsController_remove"];
         options?: never;
         head?: never;
-        /** Update cruise port */
+        /** Update cruise-ports */
         patch: operations["CruisePortsController_update"];
         trace?: never;
     };
@@ -1544,7 +1569,7 @@ export interface paths {
         /** List ships */
         get: operations["ShipsController_findAll"];
         put?: never;
-        /** Create ship */
+        /** Create ships */
         post: operations["ShipsController_create"];
         delete?: never;
         options?: never;
@@ -1559,15 +1584,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get ship by id */
+        /** Get ships by id */
         get: operations["ShipsController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete ship */
+        /** Soft-delete ships */
         delete: operations["ShipsController_remove"];
         options?: never;
         head?: never;
-        /** Update ship */
+        /** Update ships */
         patch: operations["ShipsController_update"];
         trace?: never;
     };
@@ -1581,7 +1606,7 @@ export interface paths {
         /** List itineraries */
         get: operations["ItinerariesController_findAll"];
         put?: never;
-        /** Create itinerary */
+        /** Create itineraries */
         post: operations["ItinerariesController_create"];
         delete?: never;
         options?: never;
@@ -1596,15 +1621,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get itinerary by id */
+        /** Get itineraries by id */
         get: operations["ItinerariesController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete itinerary */
+        /** Soft-delete itineraries */
         delete: operations["ItinerariesController_remove"];
         options?: never;
         head?: never;
-        /** Update itinerary */
+        /** Update itineraries */
         patch: operations["ItinerariesController_update"];
         trace?: never;
     };
@@ -1615,10 +1640,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List itinerary ports */
+        /** List itinerary-ports */
         get: operations["ItineraryPortsController_findAll"];
         put?: never;
-        /** Create itinerary port */
+        /** Create itinerary-ports */
         post: operations["ItineraryPortsController_create"];
         delete?: never;
         options?: never;
@@ -1633,15 +1658,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get itinerary port by id */
+        /** Get itinerary-ports by id */
         get: operations["ItineraryPortsController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete itinerary port */
+        /** Soft-delete itinerary-ports */
         delete: operations["ItineraryPortsController_remove"];
         options?: never;
         head?: never;
-        /** Update itinerary port */
+        /** Update itinerary-ports */
         patch: operations["ItineraryPortsController_update"];
         trace?: never;
     };
@@ -1655,7 +1680,7 @@ export interface paths {
         /** List cabins */
         get: operations["CabinsController_findAll"];
         put?: never;
-        /** Create cabin */
+        /** Create cabins */
         post: operations["CabinsController_create"];
         delete?: never;
         options?: never;
@@ -1670,15 +1695,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get cabin by id */
+        /** Get cabins by id */
         get: operations["CabinsController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete cabin */
+        /** Soft-delete cabins */
         delete: operations["CabinsController_remove"];
         options?: never;
         head?: never;
-        /** Update cabin */
+        /** Update cabins */
         patch: operations["CabinsController_update"];
         trace?: never;
     };
@@ -1689,10 +1714,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List cruise sailings */
+        /** List cruise-sailings */
         get: operations["CruiseSailingsController_findAll"];
         put?: never;
-        /** Create cruise sailing */
+        /** Create cruise-sailings */
         post: operations["CruiseSailingsController_create"];
         delete?: never;
         options?: never;
@@ -1707,15 +1732,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get cruise sailing by id */
+        /** Get cruise-sailings by id */
         get: operations["CruiseSailingsController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete cruise sailing */
+        /** Soft-delete cruise-sailings */
         delete: operations["CruiseSailingsController_remove"];
         options?: never;
         head?: never;
-        /** Update cruise sailing */
+        /** Update cruise-sailings */
         patch: operations["CruiseSailingsController_update"];
         trace?: never;
     };
@@ -1726,10 +1751,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List cabin availability for a sailing */
+        /** List cabin-availability */
         get: operations["CabinAvailabilityController_findAll"];
         put?: never;
-        /** Create cabin availability */
+        /** Create cabin-availability */
         post: operations["CabinAvailabilityController_create"];
         delete?: never;
         options?: never;
@@ -1744,15 +1769,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get cabin availability by id */
+        /** Get cabin-availability by id */
         get: operations["CabinAvailabilityController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete cabin availability */
+        /** Soft-delete cabin-availability */
         delete: operations["CabinAvailabilityController_remove"];
         options?: never;
         head?: never;
-        /** Update cabin availability */
+        /** Update cabin-availability */
         patch: operations["CabinAvailabilityController_update"];
         trace?: never;
     };
@@ -1763,10 +1788,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List activity providers */
+        /** List activity-providers */
         get: operations["ActivityProvidersController_findAll"];
         put?: never;
-        /** Create activity provider */
+        /** Create activity-providers */
         post: operations["ActivityProvidersController_create"];
         delete?: never;
         options?: never;
@@ -1781,15 +1806,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get activity provider by id */
+        /** Get activity-providers by id */
         get: operations["ActivityProvidersController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete activity provider */
+        /** Soft-delete activity-providers */
         delete: operations["ActivityProvidersController_remove"];
         options?: never;
         head?: never;
-        /** Update activity provider */
+        /** Update activity-providers */
         patch: operations["ActivityProvidersController_update"];
         trace?: never;
     };
@@ -1803,7 +1828,7 @@ export interface paths {
         /** List activities */
         get: operations["ActivitiesController_findAll"];
         put?: never;
-        /** Create activity */
+        /** Create activities */
         post: operations["ActivitiesController_create"];
         delete?: never;
         options?: never;
@@ -1818,15 +1843,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get activity by id */
+        /** Get activities by id */
         get: operations["ActivitiesController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete activity */
+        /** Soft-delete activities */
         delete: operations["ActivitiesController_remove"];
         options?: never;
         head?: never;
-        /** Update activity */
+        /** Update activities */
         patch: operations["ActivitiesController_update"];
         trace?: never;
     };
@@ -1837,10 +1862,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List activity schedules */
+        /** List activity-schedules */
         get: operations["ActivitySchedulesController_findAll"];
         put?: never;
-        /** Create activity schedule */
+        /** Create activity-schedules */
         post: operations["ActivitySchedulesController_create"];
         delete?: never;
         options?: never;
@@ -1855,15 +1880,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get activity schedule by id */
+        /** Get activity-schedules by id */
         get: operations["ActivitySchedulesController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete activity schedule */
+        /** Soft-delete activity-schedules */
         delete: operations["ActivitySchedulesController_remove"];
         options?: never;
         head?: never;
-        /** Update activity schedule */
+        /** Update activity-schedules */
         patch: operations["ActivitySchedulesController_update"];
         trace?: never;
     };
@@ -1877,7 +1902,7 @@ export interface paths {
         /** List packages */
         get: operations["PackagesController_findAll"];
         put?: never;
-        /** Create package */
+        /** Create packages */
         post: operations["PackagesController_create"];
         delete?: never;
         options?: never;
@@ -1892,15 +1917,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get package detail with items and pricing */
+        /** Get packages by id */
         get: operations["PackagesController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete package */
+        /** Soft-delete packages */
         delete: operations["PackagesController_remove"];
         options?: never;
         head?: never;
-        /** Update package */
+        /** Update packages */
         patch: operations["PackagesController_update"];
         trace?: never;
     };
@@ -1911,10 +1936,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List package items */
+        /** List package-items */
         get: operations["PackageItemsController_findAll"];
         put?: never;
-        /** Create package item */
+        /** Create package-items */
         post: operations["PackageItemsController_create"];
         delete?: never;
         options?: never;
@@ -1929,15 +1954,15 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get package item by id */
+        /** Get package-items by id */
         get: operations["PackageItemsController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete package item */
+        /** Soft-delete package-items */
         delete: operations["PackageItemsController_remove"];
         options?: never;
         head?: never;
-        /** Update package item */
+        /** Update package-items */
         patch: operations["PackageItemsController_update"];
         trace?: never;
     };
@@ -2120,11 +2145,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List reviews */
+        /** List reviews for moderation (admin) */
         get: operations["ReviewsController_findAll"];
         put?: never;
-        /** Create reviews */
-        post: operations["ReviewsController_create"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -2138,16 +2162,16 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get reviews by id */
+        /** Get review detail for moderation (admin) */
         get: operations["ReviewsController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete reviews */
+        /** Soft-delete a review */
         delete: operations["ReviewsController_remove"];
         options?: never;
         head?: never;
-        /** Update reviews */
-        patch: operations["ReviewsController_update"];
+        /** Approve or hide a review */
+        patch: operations["ReviewsController_updateStatus"];
         trace?: never;
     };
     "/api/booking-items": {
@@ -2157,7 +2181,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List booking-items */
+        /** List booking items (enriched, filterable) */
         get: operations["BookingItemsController_findAll"];
         put?: never;
         /** Create booking-items */
@@ -2185,6 +2209,43 @@ export interface paths {
         head?: never;
         /** Update booking-items */
         patch: operations["BookingItemsController_update"];
+        trace?: never;
+    };
+    "/api/booking-status-history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List booking-status-history */
+        get: operations["BookingStatusHistoryController_findAll"];
+        put?: never;
+        /** Create booking-status-history */
+        post: operations["BookingStatusHistoryController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/booking-status-history/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get booking-status-history by id */
+        get: operations["BookingStatusHistoryController_findOne"];
+        put?: never;
+        post?: never;
+        /** Soft-delete booking-status-history */
+        delete: operations["BookingStatusHistoryController_remove"];
+        options?: never;
+        head?: never;
+        /** Update booking-status-history */
+        patch: operations["BookingStatusHistoryController_update"];
         trace?: never;
     };
     "/api/payments": {
@@ -2222,23 +2283,6 @@ export interface paths {
         head?: never;
         /** Update payments */
         patch: operations["PaymentsController_update"];
-        trace?: never;
-    };
-    "/api/payments/{id}/refund": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Refund payment via Stripe (partial or full; booking must be cancelled) */
-        post: operations["PaymentsController_refund"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
         trace?: never;
     };
     "/api/promo-codes": {
@@ -2344,11 +2388,11 @@ export interface paths {
         get: operations["SupportTicketsController_findOne"];
         put?: never;
         post?: never;
-        /** Soft-delete support ticket (owner or staff) */
+        /** Soft-delete support ticket (staff) */
         delete: operations["SupportTicketsController_remove"];
         options?: never;
         head?: never;
-        /** Update support ticket (owner or staff) */
+        /** Update support ticket status or priority (staff) */
         patch: operations["SupportTicketsController_update"];
         trace?: never;
     };
@@ -2362,7 +2406,7 @@ export interface paths {
         /** List support-messages */
         get: operations["SupportMessagesController_findAll"];
         put?: never;
-        /** Create support-messages */
+        /** Post a staff reply on a support ticket */
         post: operations["SupportMessagesController_create"];
         delete?: never;
         options?: never;
@@ -2457,10 +2501,299 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/public/airports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List airports for public flight search */
+        get: operations["PublicFlightsController_listAirports"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/public/flights/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Search flights with min class price and seat availability */
+        get: operations["PublicFlightsController_search"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/public/flights/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Flight detail with class pricing for a travel date */
+        get: operations["PublicFlightsController_getById"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/public/vehicles/pickup-locations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List destinations with available rental vehicles */
+        get: operations["PublicVehiclesController_listPickupLocations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/public/vehicles/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Search vehicles by pickup location and rental dates */
+        get: operations["PublicVehiclesController_search"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/public/vehicles/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Vehicle detail with agency, category, and availability slot */
+        get: operations["PublicVehiclesController_getById"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/public/cruises/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Search cruise sailings by port codes and departure date range */
+        get: operations["PublicCruisesController_search"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/public/cruises/sailings/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sailing detail with itinerary and available cabins */
+        get: operations["PublicCruisesController_getSailingById"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/public/activities/browse": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Browse all activities with upcoming schedule availability */
+        get: operations["PublicActivitiesController_browse"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/public/activities/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Search activities by destination, date, and participants */
+        get: operations["PublicActivitiesController_search"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/public/activities/destinations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List destinations with bookable activities */
+        get: operations["PublicActivitiesController_listDestinations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/public/activities/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Activity detail with available schedule slots */
+        get: operations["PublicActivitiesController_getById"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/public/packages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List active packages with catalog pricing */
+        get: operations["PublicPackagesController_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/public/packages/{id}/resolve-lines": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Resolve package checkout lines from catalog (ignores availability) */
+        get: operations["PublicPackagesController_resolveLines"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/public/packages/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Package detail with included items and discount pricing */
+        get: operations["PublicPackagesController_getById"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        EmailPreviewBrandingOverrideDto: {
+            /** @example Mon Agence */
+            displayName?: string;
+            /** @example /uploads/logo.png */
+            logoUrl?: string;
+            /** @example #0d9488 */
+            primaryColor?: string;
+            /** @example #199a45 */
+            secondaryColor?: string;
+            /** @example © Mon Agence */
+            footerText?: string;
+            /** @example Bienvenue sur {displayName} */
+            welcomeSubject?: string;
+            /** @example Confirmation — {ref} */
+            bookingSubject?: string;
+        };
+        EmailPreviewDto: {
+            /**
+             * @example welcome
+             * @enum {string}
+             */
+            template: "welcome" | "booking" | "password_reset";
+            /** Format: uuid */
+            organizationId?: string;
+            branding?: components["schemas"]["EmailPreviewBrandingOverrideDto"];
+        };
+        EmailPreviewResponseDto: {
+            /** @example Bienvenue sur Africa Tourism Gate */
+            subject: string;
+            /** @description HTML complet du message */
+            html: string;
+            /** @description Version texte brut */
+            text: string;
+        };
         AuthUserDto: {
             /** Format: uuid */
             id: string;
@@ -2569,91 +2902,6 @@ export interface components {
             /** @example true */
             success: boolean;
         };
-        CreateUserDto: {
-            /** @example jane.doe@example.com */
-            email: string;
-            /** @example SecurePass123! */
-            password: string;
-            /** @example Jane */
-            firstName: string;
-            /** @example Doe */
-            lastName: string;
-            /** @example +33612345678 */
-            phone?: string;
-            /** @example fr */
-            preferredLanguage?: string;
-            /** Format: uuid */
-            organizationId?: string;
-            /**
-             * @default active
-             * @enum {string}
-             */
-            status: "active" | "suspended";
-        };
-        UpdateUserDto: {
-            /** @example jane.doe@example.com */
-            email?: string;
-            /** @example Jane */
-            firstName?: string;
-            /** @example Doe */
-            lastName?: string;
-            /** @example +33612345678 */
-            phone?: string;
-            /** @example fr */
-            preferredLanguage?: string;
-            /**
-             * @default active
-             * @enum {string}
-             */
-            status: "active" | "suspended";
-            password?: string;
-            /** Format: uuid */
-            organizationId?: Record<string, never> | null;
-        };
-        CreateEmployeeDto: {
-            /** Format: uuid */
-            userId: string;
-            /** Format: uuid */
-            organizationId?: string;
-            /** @example EMP-001 */
-            employeeCode?: string;
-            /** @example Responsable ventes */
-            jobTitle?: string;
-            /** @example Commercial */
-            department?: string;
-            /** @example 2024-01-15 */
-            hireDate?: string;
-            /** @example 2025-06-30 */
-            terminationDate?: string;
-            /** @example 45000 */
-            salary?: number;
-            /** @example USD */
-            currency?: string;
-            /** Format: uuid */
-            managerId?: string;
-            /**
-             * @default active
-             * @enum {string}
-             */
-            status: "active" | "on_leave" | "terminated";
-        };
-        UpdateEmployeeDto: {
-            /** Format: uuid */
-            userId?: string;
-            /** Format: uuid */
-            organizationId?: Record<string, never> | null;
-            employeeCode?: Record<string, never> | null;
-            jobTitle?: Record<string, never> | null;
-            department?: Record<string, never> | null;
-            hireDate?: Record<string, never> | null;
-            terminationDate?: Record<string, never> | null;
-            salary?: Record<string, never> | null;
-            currency?: Record<string, never> | null;
-            /** Format: uuid */
-            managerId?: Record<string, never> | null;
-            /** @enum {string} */
-            status?: "active" | "on_leave" | "terminated";
-        };
         CreateUserAddressDto: {
             /** @example Domicile */
             label?: string;
@@ -2718,6 +2966,14 @@ export interface components {
             /** @example 0 */
             pointsBalance?: number;
         };
+        AdjustLoyaltyPointsDto: {
+            /**
+             * @description Variation de points (positive ou négative)
+             * @example 100
+             */
+            delta: number;
+            reason?: string;
+        };
         UpdateLoyaltyAccountDto: {
             /** @example ONEKEY */
             programCode?: string;
@@ -2725,52 +2981,6 @@ export interface components {
             tier?: "member" | "silver" | "gold" | "platinum";
             /** @example 100 */
             pointsBalance?: number;
-        };
-        CreateOrganizationDto: {
-            /** @example Safari DRC */
-            name: string;
-            /** @example safari-drc */
-            slug: string;
-            description?: string;
-            /** @example https://example.com */
-            website?: string;
-            /** @example contact@example.com */
-            contactEmail?: string;
-            /** @example +243900000000 */
-            contactPhone?: string;
-            /**
-             * @default USD
-             * @example USD
-             */
-            currency: string;
-            /**
-             * @default active
-             * @enum {string}
-             */
-            status: "active" | "suspended";
-        };
-        UpdateOrganizationDto: {
-            /** @example Safari DRC */
-            name?: string;
-            /** @example safari-drc */
-            slug?: string;
-            description?: string;
-            /** @example https://example.com */
-            website?: string;
-            /** @example contact@example.com */
-            contactEmail?: string;
-            /** @example +243900000000 */
-            contactPhone?: string;
-            /**
-             * @default USD
-             * @example USD
-             */
-            currency: string;
-            /**
-             * @default active
-             * @enum {string}
-             */
-            status: "active" | "suspended";
         };
         UpsertOrganizationSettingItemDto: {
             /** @example general */
@@ -2786,203 +2996,20 @@ export interface components {
             organizationId?: string;
             settings: components["schemas"]["UpsertOrganizationSettingItemDto"][];
         };
-        CreateOrganizationBankAccountDto: {
+        OrganizationSettingDto: {
             /** Format: uuid */
-            organizationId?: string;
-            /** @example Rawbank */
-            bankName: string;
-            /** @example Africa Tourism Gate SARL */
-            accountName: string;
-            /** @example 0001234567890 */
-            accountNumber: string;
-            /** @example RAWBCDKI */
-            swiftBic?: string;
-            /**
-             * @default USD
-             * @example USD
-             */
-            currency: string;
-            /** @default false */
-            isDefault: boolean;
-        };
-        UpdateOrganizationBankAccountDto: {
-            bankName?: string;
-            accountName?: string;
-            accountNumber?: string;
-            swiftBic?: string;
-            /** @example USD */
-            currency?: string;
-            isDefault?: boolean;
-        };
-        CreateRoleDto: {
-            /** @example sales_manager */
-            code: string;
-            /** @example Responsable commercial */
-            name: string;
-            description?: string;
-        };
-        UpdateRoleDto: {
-            name?: string;
-            description?: Record<string, never> | null;
-        };
-        ReplaceRolePermissionsDto: {
-            permissionIds: string[];
-        };
-        CreateUserRoleAssignmentDto: {
+            id: string;
             /** Format: uuid */
-            userId: string;
-            /** Format: uuid */
-            roleId: string;
-            /** @enum {string} */
-            scopeType: "global" | "property" | "agency" | "support_queue";
-            /** Format: uuid */
-            scopeId?: string;
-            expiresAt?: string;
-        };
-        CreateDestinationDto: {
-            /** @example Kinshasa */
-            name: string;
-            /** @example kinshasa */
-            slug: string;
-            /**
-             * @description ISO 3166-1 alpha-2
-             * @example CD
-             */
-            countryCode: string;
-            description?: string;
-        };
-        UpdateDestinationDto: {
-            /** @example Kinshasa */
-            name?: string;
-            /** @example kinshasa */
-            slug?: string;
-            /**
-             * @description ISO 3166-1 alpha-2
-             * @example CD
-             */
-            countryCode?: string;
-            description?: string;
-        };
-        CreatePointOfInterestDto: {
-            /** Format: uuid */
-            destinationId: string;
-            /** @example Gombe (city centre) */
-            name: string;
-            /** @example -4.3058 */
-            latitude?: number;
-            /** @example 15.3 */
-            longitude?: number;
-        };
-        UpdatePointOfInterestDto: {
-            /** @example Gombe (city centre) */
-            name?: string;
-            /** @example -4.3058 */
-            latitude?: number;
-            /** @example 15.3 */
-            longitude?: number;
-        };
-        CreateAmenityDto: {
-            /** @example wifi */
-            code: string;
-            /** @example Wi-Fi */
-            name: string;
-        };
-        UpdateAmenityDto: {
-            /** @example wifi */
-            code?: string;
-            /** @example Wi-Fi */
-            name?: string;
-        };
-        CreatePropertyDto: {
-            /** Format: uuid */
-            destinationId: string;
-            /** @example Tourism Gate Demo Hotel */
-            name: string;
-            /** @example tourism-gate-demo-hotel */
-            slug: string;
-            /**
-             * @default hotel
-             * @enum {string}
-             */
-            propertyType: "hotel" | "resort" | "apartment" | "villa" | "hostel" | "other";
-            /** @example 4 */
-            starRating?: number;
-            description?: string;
-            addressLine?: string;
-        };
-        UpdatePropertyDto: {
-            /** Format: uuid */
-            destinationId?: string;
-            /** @example Tourism Gate Demo Hotel */
-            name?: string;
-            /** @example tourism-gate-demo-hotel */
-            slug?: string;
-            /**
-             * @default hotel
-             * @enum {string}
-             */
-            propertyType: "hotel" | "resort" | "apartment" | "villa" | "hostel" | "other";
-            /** @example 4 */
-            starRating?: number;
-            description?: string;
-            addressLine?: string;
-        };
-        CreatePropertyImageDto: {
-            /** Format: uuid */
-            propertyId: string;
-            /** @example https://example.com/hotel.jpg */
-            url: string;
-            caption?: string;
-            /** @default 0 */
-            sortOrder: number;
-        };
-        UpdatePropertyImageDto: {
-            /** @example https://example.com/hotel.jpg */
-            url?: string;
-            caption?: string;
-            /** @default 0 */
-            sortOrder: number;
-        };
-        ReplacePropertyAmenitiesDto: {
-            /** Format: uuid */
-            propertyId: string;
-            amenityIds: string[];
-        };
-        CreateRoomDto: {
-            /** Format: uuid */
-            propertyId: string;
-            /** @example Standard Double */
-            name: string;
-            /** @example standard */
-            roomType?: string;
-            /** @default 2 */
-            maxGuests: number;
-            /** @example 1 double bed */
-            bedConfig?: string;
-            /** @example 8500 */
-            basePriceCents: number;
-            /**
-             * @default USD
-             * @example USD
-             */
-            currency: string;
-        };
-        UpdateRoomDto: {
-            /** @example Standard Double */
-            name?: string;
-            /** @example standard */
-            roomType?: string;
-            /** @default 2 */
-            maxGuests: number;
-            /** @example 1 double bed */
-            bedConfig?: string;
-            /** @example 8500 */
-            basePriceCents?: number;
-            /**
-             * @default USD
-             * @example USD
-             */
-            currency: string;
+            organizationId: string;
+            /** @example general */
+            settingGroup: string;
+            /** @example locale */
+            settingKey: string;
+            settingValue: {
+                [key: string]: unknown;
+            };
+            createdAt: string;
+            updatedAt?: Record<string, never> | null;
         };
         BulkUpsertRoomAvailabilityDto: {
             /** Format: uuid */
@@ -3012,182 +3039,6 @@ export interface components {
             /** @example 9200 */
             priceCents?: number;
         };
-        CreateAirlineDto: {
-            /** @example ET */
-            iataCode: string;
-            /** @example Ethiopian Airlines */
-            name: string;
-        };
-        UpdateAirlineDto: {
-            /** @example ET */
-            iataCode?: string;
-            /** @example Ethiopian Airlines */
-            name?: string;
-        };
-        CreateAirportDto: {
-            /** @example FIH */
-            iataCode: string;
-            /** @example N'djili International Airport */
-            name: string;
-            /** @example Kinshasa */
-            city: string;
-            /** @example CD */
-            countryCode: string;
-            /** @example -4.3858 */
-            latitude?: number;
-            /** @example 15.4446 */
-            longitude?: number;
-        };
-        UpdateAirportDto: {
-            /** @example FIH */
-            iataCode?: string;
-            /** @example N'djili International Airport */
-            name?: string;
-            /** @example Kinshasa */
-            city?: string;
-            /** @example CD */
-            countryCode?: string;
-            /** @example -4.3858 */
-            latitude?: number;
-            /** @example 15.4446 */
-            longitude?: number;
-        };
-        CreateFlightDto: {
-            /** Format: uuid */
-            airlineId: string;
-            /** @example ET302 */
-            flightNumber: string;
-            /** Format: uuid */
-            departureAirportId: string;
-            /** Format: uuid */
-            arrivalAirportId: string;
-            /** @example 2026-06-01T08:00:00.000Z */
-            departureTime: string;
-            /** @example 2026-06-01T14:30:00.000Z */
-            arrivalTime: string;
-            /** @example 390 */
-            durationMinutes: number;
-        };
-        UpdateFlightDto: {
-            /** Format: uuid */
-            airlineId?: string;
-            /** @example ET302 */
-            flightNumber?: string;
-            /** Format: uuid */
-            departureAirportId?: string;
-            /** Format: uuid */
-            arrivalAirportId?: string;
-            /** @example 2026-06-01T08:00:00.000Z */
-            departureTime?: string;
-            /** @example 2026-06-01T14:30:00.000Z */
-            arrivalTime?: string;
-            /** @example 390 */
-            durationMinutes?: number;
-        };
-        CreateFlightClassDto: {
-            /** Format: uuid */
-            flightId: string;
-            /** @enum {string} */
-            className: "economy" | "premium_economy" | "business" | "first";
-            /** @example 15000 */
-            basePriceCents: number;
-            /** @example 120 */
-            seatsTotal: number;
-        };
-        UpdateFlightClassDto: {
-            /** @enum {string} */
-            className?: "economy" | "premium_economy" | "business" | "first";
-            /** @example 15000 */
-            basePriceCents?: number;
-            /** @example 120 */
-            seatsTotal?: number;
-        };
-        BulkUpsertFlightClassAvailabilityDto: {
-            /** Format: uuid */
-            flightClassId: string;
-            /** @example 2026-05-01 */
-            dateFrom: string;
-            /** @example 2026-05-07 */
-            dateTo: string;
-            /** @example 12 */
-            availableSeats: number;
-            /** @example 15000 */
-            priceCents: number;
-        };
-        CreateFlightClassAvailabilityDto: {
-            /** Format: uuid */
-            flightClassId: string;
-            /** @example 2026-05-15 */
-            date: string;
-            /** @example 12 */
-            availableSeats: number;
-            /** @example 15000 */
-            priceCents: number;
-        };
-        UpdateFlightClassAvailabilityDto: {
-            /** @example 12 */
-            availableSeats?: number;
-            /** @example 15000 */
-            priceCents?: number;
-        };
-        CreateRentalAgencyDto: {
-            /** @example ATG Rent Kinshasa */
-            name: string;
-            /** Format: uuid */
-            destinationId?: Record<string, never>;
-            /** @example 12 Avenue de la Paix */
-            address?: string;
-        };
-        UpdateRentalAgencyDto: {
-            /** @example ATG Rent Kinshasa */
-            name?: string;
-            /** Format: uuid */
-            destinationId?: Record<string, never>;
-            /** @example 12 Avenue de la Paix */
-            address?: string;
-        };
-        CreateVehicleCategoryDto: {
-            /** @example SUV */
-            name: string;
-            /** @example Toyota RAV4 */
-            exampleModel?: string;
-        };
-        UpdateVehicleCategoryDto: {
-            /** @example SUV */
-            name?: string;
-            /** @example Toyota RAV4 */
-            exampleModel?: string;
-        };
-        CreateVehicleDto: {
-            /** Format: uuid */
-            agencyId: string;
-            /** Format: uuid */
-            categoryId: string;
-            /** @example CD-1234-AB */
-            licensePlate?: string;
-            /** @example 4500 */
-            dailyPriceCents: number;
-            /**
-             * @default USD
-             * @example USD
-             */
-            currency: string;
-        };
-        UpdateVehicleDto: {
-            /** Format: uuid */
-            agencyId?: string;
-            /** Format: uuid */
-            categoryId?: string;
-            /** @example CD-1234-AB */
-            licensePlate?: string;
-            /** @example 4500 */
-            dailyPriceCents?: number;
-            /**
-             * @default USD
-             * @example USD
-             */
-            currency: string;
-        };
         CreateVehicleAvailabilityDto: {
             /** Format: uuid */
             vehicleId: string;
@@ -3211,228 +3062,6 @@ export interface components {
              * @enum {string}
              */
             status: "available" | "maintenance" | "rented";
-        };
-        CreateCruiseLineDto: {
-            /** @example Africa River Cruises */
-            name: string;
-        };
-        UpdateCruiseLineDto: {
-            /** @example Africa River Cruises */
-            name?: string;
-        };
-        CreateCruisePortDto: {
-            /** @example CDKIN */
-            code: string;
-            /** @example Kinshasa Port */
-            name: string;
-            /** @example CD */
-            countryCode: string;
-        };
-        UpdateCruisePortDto: {
-            /** @example CDKIN */
-            code?: string;
-            /** @example Kinshasa Port */
-            name?: string;
-            /** @example CD */
-            countryCode?: string;
-        };
-        CreateShipDto: {
-            /** Format: uuid */
-            cruiseLineId: string;
-            /** @example Congo Explorer */
-            name: string;
-            /** @example 2018 */
-            builtYear?: Record<string, never>;
-        };
-        UpdateShipDto: {
-            /** Format: uuid */
-            cruiseLineId?: string;
-            /** @example Congo Explorer */
-            name?: string;
-            /** @example 2018 */
-            builtYear?: Record<string, never>;
-        };
-        CreateItineraryDto: {
-            /** Format: uuid */
-            shipId: string;
-            /** @example Congo River Discovery */
-            name: string;
-            /** @example 7 */
-            durationNights: number;
-        };
-        UpdateItineraryDto: {
-            /** @example Congo River Discovery */
-            name?: string;
-            /** @example 7 */
-            durationNights?: number;
-        };
-        CreateItineraryPortDto: {
-            /** Format: uuid */
-            itineraryId: string;
-            /** Format: uuid */
-            portId: string;
-            /** @example 1 */
-            dayNumber: number;
-            /** @example 08:00:00 */
-            arrivalTime?: Record<string, never>;
-            /** @example 18:00:00 */
-            departureTime?: Record<string, never>;
-        };
-        UpdateItineraryPortDto: {
-            /** Format: uuid */
-            portId?: string;
-            /** @example 1 */
-            dayNumber?: number;
-            /** @example 08:00:00 */
-            arrivalTime?: Record<string, never>;
-            /** @example 18:00:00 */
-            departureTime?: Record<string, never>;
-        };
-        CreateCabinDto: {
-            /** Format: uuid */
-            shipId: string;
-            /** @example Suite */
-            categoryName: string;
-            /** @example 2 */
-            maxGuests: number;
-            /** @example 250000 */
-            basePriceCents: number;
-            /** @example USD */
-            currency: string;
-        };
-        UpdateCabinDto: {
-            /** @example Suite */
-            categoryName?: string;
-            /** @example 2 */
-            maxGuests?: number;
-            /** @example 250000 */
-            basePriceCents?: number;
-            /** @example USD */
-            currency?: string;
-        };
-        CreateCruiseSailingDto: {
-            /** Format: uuid */
-            itineraryId: string;
-            /** @example 2026-09-01 */
-            departureDate: string;
-        };
-        UpdateCruiseSailingDto: {
-            /** Format: uuid */
-            itineraryId?: string;
-            /** @example 2026-09-01 */
-            departureDate?: string;
-        };
-        CreateCabinAvailabilityDto: {
-            /** Format: uuid */
-            cabinId: string;
-            /** Format: uuid */
-            sailingId: string;
-            /** @example 8 */
-            availableCount: number;
-            /** @example 250000 */
-            priceCents: number;
-        };
-        UpdateCabinAvailabilityDto: {
-            /** @example 6 */
-            availableCount?: number;
-            /** @example 240000 */
-            priceCents?: number;
-        };
-        CreateActivityProviderDto: {
-            /** Format: uuid */
-            destinationId: string;
-            /** @example Safari Kinshasa Tours */
-            name: string;
-        };
-        UpdateActivityProviderDto: {
-            /** Format: uuid */
-            destinationId?: string;
-            /** @example Safari Kinshasa Tours */
-            name?: string;
-        };
-        CreateActivityDto: {
-            /** Format: uuid */
-            providerId: string;
-            /** @example Visite du parc national */
-            title: string;
-            description?: string;
-            /** @example 120 */
-            durationMinutes?: number;
-            /** @example 7500 */
-            priceCents: number;
-            /**
-             * @default USD
-             * @example USD
-             */
-            currency: string;
-        };
-        UpdateActivityDto: {
-            /** Format: uuid */
-            providerId?: string;
-            /** @example Visite du parc national */
-            title?: string;
-            description?: string;
-            /** @example 120 */
-            durationMinutes?: number;
-            /** @example 7500 */
-            priceCents?: number;
-            /**
-             * @default USD
-             * @example USD
-             */
-            currency: string;
-        };
-        CreateActivityScheduleDto: {
-            /** Format: uuid */
-            activityId: string;
-            /** @example 2026-06-15T09:00:00.000Z */
-            startDatetime: string;
-            /** @example 12 */
-            capacity: number;
-        };
-        UpdateActivityScheduleDto: {
-            /** @example 2026-06-15T09:00:00.000Z */
-            startDatetime?: string;
-            /** @example 12 */
-            capacity?: number;
-        };
-        CreatePackageDto: {
-            /** @example Kinshasa City Break */
-            name: string;
-            description?: string;
-            /**
-             * @default 0
-             * @example 10
-             */
-            discountPercent: number;
-            /** @default true */
-            active: boolean;
-        };
-        UpdatePackageDto: {
-            /** @example Kinshasa City Break */
-            name?: string;
-            description?: string;
-            /**
-             * @default 0
-             * @example 10
-             */
-            discountPercent: number;
-            /** @default true */
-            active: boolean;
-        };
-        CreatePackageItemDto: {
-            /** Format: uuid */
-            packageId: string;
-            /** @enum {string} */
-            itemType: "property" | "flight" | "vehicle" | "cruise" | "activity";
-            /** Format: uuid */
-            itemId: string;
-        };
-        UpdatePackageItemDto: {
-            /** @enum {string} */
-            itemType?: "property" | "flight" | "vehicle" | "cruise" | "activity";
-            /** Format: uuid */
-            itemId?: string;
         };
         BookingCheckoutItemDto: {
             /** @enum {string} */
@@ -3482,6 +3111,11 @@ export interface components {
              * @description Client final de la réservation (réservé au personnel avec users.read, ex. caisse POS)
              */
             customerUserId?: string;
+            /**
+             * Format: uuid
+             * @description Forfait combiné : applique la remise du forfait après validation des items du panier
+             */
+            packageId?: string;
         };
         CreateBookingReviewDto: {
             rating: number;
@@ -3502,7 +3136,10 @@ export interface components {
             /** @description Motif d’annulation (affiché dans l’historique) */
             reason?: string;
         };
-        RefundPaymentDto: Record<string, never>;
+        UpdateReviewStatusDto: {
+            /** @enum {string} */
+            status: "approved" | "hidden";
+        };
         CreateSupportTicketDto: {
             /** @example Question sur ma réservation */
             subject: string;
@@ -3510,6 +3147,18 @@ export interface components {
             body: string;
             /** @description Target user (staff only). Defaults to the authenticated user. */
             userId?: string;
+        };
+        UpdateSupportTicketStatusDto: {
+            /** @enum {string} */
+            status?: "open" | "pending" | "resolved" | "closed";
+            /** @enum {string} */
+            priority?: "low" | "normal" | "high" | "urgent";
+        };
+        CreateSupportMessageDto: {
+            /** @description Target support ticket id */
+            ticketId: string;
+            /** @description Staff reply body */
+            body: string;
         };
     };
     responses: never;
@@ -3530,6 +3179,36 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EmailController_preview: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EmailPreviewDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EmailPreviewResponseDto"];
+                };
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -3848,11 +3527,7 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateUserDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
                 headers: {
@@ -3930,11 +3605,7 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateUserDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
                 headers: {
@@ -3956,10 +3627,6 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
-                organizationId?: string;
-                status?: "active" | "on_leave" | "terminated";
-                /** @description Search by code, job title, or linked user email/name */
-                search?: string;
             };
             header?: never;
             path?: never;
@@ -3968,13 +3635,6 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Missing permission */
-            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -3989,20 +3649,9 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateEmployeeDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Missing permission */
-            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4027,13 +3676,6 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Missing permission */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
         };
     };
     EmployeesController_remove: {
@@ -4053,13 +3695,6 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Missing permission */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
         };
     };
     EmployeesController_update: {
@@ -4071,20 +3706,9 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateEmployeeDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Missing permission */
-            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4097,6 +3721,8 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
+                /** @description Filter by owner user id (staff only) */
+                userId?: string;
             };
             header?: never;
             path?: never;
@@ -4110,18 +3736,8 @@ export interface operations {
                 };
                 content?: never;
             };
-        };
-    };
-    UserSessionsController_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            201: {
+            /** @description Missing permission or access denied */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4146,9 +3762,79 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission or access denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
-    UserSessionsController_remove: {
+    UserSessionsController_revoke: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission or access denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PasswordResetTokensController_findAll: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PasswordResetTokensController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PasswordResetTokensController_findOne: {
         parameters: {
             query?: never;
             header?: never;
@@ -4167,7 +3853,26 @@ export interface operations {
             };
         };
     };
-    UserSessionsController_update: {
+    PasswordResetTokensController_remove: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PasswordResetTokensController_update: {
         parameters: {
             query?: never;
             header?: never;
@@ -4191,6 +3896,8 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
+                /** @description Filter by owner user id (staff only) */
+                userId?: string;
             };
             header?: never;
             path?: never;
@@ -4199,6 +3906,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission or access denied */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4225,6 +3939,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission or access denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     UserAddressesController_findOne: {
@@ -4244,6 +3965,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission or access denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     UserAddressesController_remove: {
@@ -4258,6 +3986,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission or access denied */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4286,6 +4021,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission or access denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     UserPaymentMethodsController_findAll: {
@@ -4293,6 +4035,8 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
+                /** @description Filter by owner user id (staff only) */
+                userId?: string;
             };
             header?: never;
             path?: never;
@@ -4301,6 +4045,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission or access denied */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4327,6 +4078,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission or access denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     UserPaymentMethodsController_findOne: {
@@ -4346,6 +4104,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission or access denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     UserPaymentMethodsController_remove: {
@@ -4360,6 +4125,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission or access denied */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4388,6 +4160,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission or access denied */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     LoyaltyAccountsController_findAll: {
@@ -4403,6 +4182,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4429,6 +4215,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     LoyaltyAccountsController_findOne: {
@@ -4448,6 +4241,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     LoyaltyAccountsController_remove: {
@@ -4462,6 +4262,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4490,21 +4297,29 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
-    OrganizationsController_findAll: {
+    LoyaltyAccountsController_adjustPoints: {
         parameters: {
-            query?: {
-                page?: number;
-                limit?: number;
-                /** @description Search by name or slug (partial match) */
-                search?: string;
-            };
+            query?: never;
             header?: never;
-            path?: never;
+            path: {
+                id: string;
+            };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdjustLoyaltyPointsDto"];
+            };
+        };
         responses: {
             200: {
                 headers: {
@@ -4521,6 +4336,26 @@ export interface operations {
             };
         };
     };
+    OrganizationsController_findAll: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     OrganizationsController_create: {
         parameters: {
             query?: never;
@@ -4528,20 +4363,9 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateOrganizationDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Missing permission */
-            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4566,13 +4390,6 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Missing permission */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
         };
     };
     OrganizationsController_remove: {
@@ -4592,13 +4409,6 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Missing permission */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
         };
     };
     OrganizationsController_update: {
@@ -4610,20 +4420,9 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateOrganizationDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Missing permission */
-            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4633,8 +4432,9 @@ export interface operations {
     };
     OrganizationSettingsController_findPublicBranding: {
         parameters: {
-            query: {
-                organizationSlug: string;
+            query?: {
+                /** @description Organization slug (defaults to the platform organization) */
+                organizationSlug?: string;
             };
             header?: never;
             path?: never;
@@ -4657,12 +4457,11 @@ export interface operations {
             };
         };
     };
-    OrganizationSettingsController_findAll: {
+    OrganizationSettingsController_findPublicContact: {
         parameters: {
             query?: {
-                page?: number;
-                limit?: number;
-                organizationId?: string;
+                /** @description Organization slug (defaults to the platform organization) */
+                organizationSlug?: string;
             };
             header?: never;
             path?: never;
@@ -4702,7 +4501,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["OrganizationSettingDto"][];
+                };
             };
             /** @description Missing permission */
             403: {
@@ -4713,21 +4514,18 @@ export interface operations {
             };
         };
     };
-    OrganizationSettingsController_uploadBrandingAsset: {
+    OrganizationSettingsController_findAll: {
         parameters: {
-            query?: never;
+            query?: {
+                page?: number;
+                limit?: number;
+                organizationId?: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "multipart/form-data": {
-                    /** Format: binary */
-                    file: string;
-                };
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
                 headers: {
@@ -4744,11 +4542,85 @@ export interface operations {
             };
         };
     };
+    OrganizationSettingsController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     OrganizationSettingsController_findOne: {
         parameters: {
-            query: {
-                organizationId: string;
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
             };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrganizationSettingsController_remove: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OrganizationSettingsController_update: {
+        parameters: {
+            query?: never;
             header?: never;
             path: {
                 id: string;
@@ -4777,7 +4649,6 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
-                organizationId?: string;
             };
             header?: never;
             path?: never;
@@ -4786,13 +4657,6 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Missing permission */
-            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4807,20 +4671,9 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateOrganizationBankAccountDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Missing permission */
-            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4830,9 +4683,7 @@ export interface operations {
     };
     OrganizationBankAccountsController_findOne: {
         parameters: {
-            query: {
-                organizationId: string;
-            };
+            query?: never;
             header?: never;
             path: {
                 id: string;
@@ -4842,13 +4693,6 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Missing permission */
-            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4858,9 +4702,7 @@ export interface operations {
     };
     OrganizationBankAccountsController_remove: {
         parameters: {
-            query: {
-                organizationId: string;
-            };
+            query?: never;
             header?: never;
             path: {
                 id: string;
@@ -4875,40 +4717,20 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Missing permission */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
         };
     };
     OrganizationBankAccountsController_update: {
         parameters: {
-            query: {
-                organizationId: string;
-            };
+            query?: never;
             header?: never;
             path: {
                 id: string;
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateOrganizationBankAccountDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Missing permission */
-            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4921,8 +4743,6 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
-                resource?: string;
-                search?: string;
             };
             header?: never;
             path?: never;
@@ -4936,8 +4756,18 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Missing permission */
-            403: {
+        };
+    };
+    PermissionsController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4962,8 +4792,39 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Missing permission */
-            403: {
+        };
+    };
+    PermissionsController_remove: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PermissionsController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4976,8 +4837,6 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
-                search?: string;
-                includeSystem?: boolean;
             };
             header?: never;
             path?: never;
@@ -4986,13 +4845,6 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Missing permission */
-            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5007,76 +4859,9 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateRoleDto"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Missing permission */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    RolesController_getRolePermissions: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
         requestBody?: never;
         responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Missing permission */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    RolesController_replaceRolePermissions: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ReplaceRolePermissionsDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Missing permission */
-            403: {
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5101,13 +4886,6 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Missing permission */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
         };
     };
     RolesController_remove: {
@@ -5127,13 +4905,6 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Missing permission */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
         };
     };
     RolesController_update: {
@@ -5145,20 +4916,9 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateRoleDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Missing permission */
-            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5184,13 +4944,6 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Missing permission */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
         };
     };
     RolePermissionsController_create: {
@@ -5203,13 +4956,6 @@ export interface operations {
         requestBody?: never;
         responses: {
             201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Missing permission */
-            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5235,13 +4981,6 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Missing permission */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
         };
     };
     UserRoleAssignmentsController_findAll: {
@@ -5249,9 +4988,6 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
-                userId?: string;
-                roleId?: string;
-                includeRevoked?: boolean;
             };
             header?: never;
             path?: never;
@@ -5260,13 +4996,6 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Missing permission */
-            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5281,20 +5010,9 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateUserRoleAssignmentDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Missing permission */
-            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5319,16 +5037,9 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Missing permission */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
         };
     };
-    UserRoleAssignmentsController_revoke: {
+    UserRoleAssignmentsController_remove: {
         parameters: {
             query?: never;
             header?: never;
@@ -5345,8 +5056,20 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Missing permission */
-            403: {
+        };
+    };
+    UserRoleAssignmentsController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5362,6 +5085,8 @@ export interface operations {
                 eventType?: "role_created" | "role_updated" | "role_deleted" | "permission_created" | "permission_updated" | "permission_deleted" | "role_permission_granted" | "role_permission_revoked" | "user_role_granted" | "user_role_revoked" | "user_role_extended" | "impersonation_started" | "impersonation_ended" | "permission_denied";
                 /** @description Filter by actor user id */
                 actorUserId?: string;
+                /** @description Filter by user involved as actor or target */
+                userId?: string;
                 /** @description Inclusive start date (created_at) */
                 dateFrom?: string;
                 /** @description Inclusive end date (created_at) */
@@ -5374,12 +5099,6 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            401: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5411,12 +5130,6 @@ export interface operations {
                 };
                 content?: never;
             };
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
             /** @description Super administrator only */
             403: {
                 headers: {
@@ -5431,8 +5144,6 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
-                /** @description Search by name, slug or country code */
-                search?: string;
             };
             header?: never;
             path?: never;
@@ -5441,6 +5152,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5455,13 +5173,16 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateDestinationDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5486,6 +5207,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     DestinationsController_remove: {
@@ -5505,6 +5233,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     DestinationsController_update: {
@@ -5516,13 +5251,16 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateDestinationDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5535,8 +5273,6 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
-                /** @description Filter by destination id */
-                destinationId?: string;
             };
             header?: never;
             path?: never;
@@ -5545,6 +5281,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5559,13 +5302,16 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreatePointOfInterestDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5590,6 +5336,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     PointsOfInterestController_remove: {
@@ -5609,6 +5362,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     PointsOfInterestController_update: {
@@ -5620,13 +5380,16 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdatePointOfInterestDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5639,8 +5402,6 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
-                /** @description Search by code or name */
-                search?: string;
             };
             header?: never;
             path?: never;
@@ -5649,6 +5410,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5663,13 +5431,16 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateAmenityDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5694,6 +5465,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     AmenitiesController_remove: {
@@ -5713,6 +5491,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     AmenitiesController_update: {
@@ -5724,13 +5509,16 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateAmenityDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5743,9 +5531,6 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
-                /** @description Search by name or slug */
-                search?: string;
-                destinationId?: string;
             };
             header?: never;
             path?: never;
@@ -5754,6 +5539,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5768,13 +5560,16 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreatePropertyDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5799,6 +5594,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     PropertiesController_remove: {
@@ -5818,6 +5620,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     PropertiesController_update: {
@@ -5829,13 +5638,49 @@ export interface operations {
             };
             cookie?: never;
         };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PropertiesController_uploadImage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UpdatePropertyDto"];
+                "multipart/form-data": {
+                    /** Format: binary */
+                    file: string;
+                };
             };
         };
         responses: {
-            200: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5862,6 +5707,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     PropertyImagesController_create: {
@@ -5871,13 +5723,16 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreatePropertyImageDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5902,6 +5757,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     PropertyImagesController_remove: {
@@ -5921,6 +5783,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     PropertyImagesController_update: {
@@ -5932,13 +5801,16 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdatePropertyImageDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5951,7 +5823,6 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
-                propertyId?: string;
             };
             header?: never;
             path?: never;
@@ -5960,6 +5831,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5982,22 +5860,8 @@ export interface operations {
                 };
                 content?: never;
             };
-        };
-    };
-    PropertyAmenitiesController_sync: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ReplacePropertyAmenitiesDto"];
-            };
-        };
-        responses: {
-            200: {
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6023,6 +5887,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     RoomsController_findAll: {
@@ -6030,7 +5901,6 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
-                propertyId?: string;
             };
             header?: never;
             path?: never;
@@ -6039,6 +5909,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6053,13 +5930,16 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateRoomDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6084,6 +5964,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     RoomsController_remove: {
@@ -6103,6 +5990,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     RoomsController_update: {
@@ -6114,13 +6008,16 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateRoomDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6149,6 +6046,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     RoomAvailabilityController_create: {
@@ -6165,6 +6069,13 @@ export interface operations {
         };
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6191,6 +6102,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     RoomAvailabilityController_findOne: {
@@ -6210,6 +6128,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     RoomAvailabilityController_remove: {
@@ -6224,6 +6149,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6252,6 +6184,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     AirlinesController_findAll: {
@@ -6259,8 +6198,6 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
-                /** @description Search by IATA code or name */
-                search?: string;
             };
             header?: never;
             path?: never;
@@ -6269,6 +6206,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6283,13 +6227,16 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateAirlineDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6314,6 +6261,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     AirlinesController_remove: {
@@ -6333,6 +6287,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     AirlinesController_update: {
@@ -6344,13 +6305,16 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateAirlineDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6363,8 +6327,6 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
-                /** @description Search by IATA code, name or city */
-                search?: string;
             };
             header?: never;
             path?: never;
@@ -6373,6 +6335,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6387,13 +6356,16 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateAirportDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6418,6 +6390,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     AirportsController_remove: {
@@ -6437,6 +6416,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     AirportsController_update: {
@@ -6448,13 +6434,16 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateAirportDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6467,8 +6456,6 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
-                /** @description Search by flight number (code vol) */
-                search?: string;
             };
             header?: never;
             path?: never;
@@ -6477,6 +6464,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6491,13 +6485,16 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateFlightDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6522,6 +6519,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     FlightsController_remove: {
@@ -6541,6 +6545,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     FlightsController_update: {
@@ -6552,13 +6563,16 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateFlightDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6571,7 +6585,6 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
-                flightId?: string;
             };
             header?: never;
             path?: never;
@@ -6580,6 +6593,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6594,13 +6614,16 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateFlightClassDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6625,6 +6648,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     FlightClassesController_remove: {
@@ -6644,6 +6674,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     FlightClassesController_update: {
@@ -6655,13 +6692,16 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateFlightClassDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6671,12 +6711,9 @@ export interface operations {
     };
     FlightClassAvailabilityController_findAll: {
         parameters: {
-            query: {
+            query?: {
                 page?: number;
                 limit?: number;
-                flightClassId: string;
-                dateFrom?: string;
-                dateTo?: string;
             };
             header?: never;
             path?: never;
@@ -6685,6 +6722,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6699,11 +6743,7 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateFlightClassAvailabilityDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
                 headers: {
@@ -6711,22 +6751,8 @@ export interface operations {
                 };
                 content?: never;
             };
-        };
-    };
-    FlightClassAvailabilityController_bulkUpsert: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["BulkUpsertFlightClassAvailabilityDto"];
-            };
-        };
-        responses: {
-            200: {
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6751,6 +6777,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     FlightClassAvailabilityController_remove: {
@@ -6770,6 +6803,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     FlightClassAvailabilityController_update: {
@@ -6781,13 +6821,16 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateFlightClassAvailabilityDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6800,9 +6843,6 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
-                /** @description Search by name or address */
-                search?: string;
-                destinationId?: string;
             };
             header?: never;
             path?: never;
@@ -6811,6 +6851,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6825,13 +6872,16 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateRentalAgencyDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6856,6 +6906,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     RentalAgenciesController_remove: {
@@ -6875,6 +6932,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     RentalAgenciesController_update: {
@@ -6886,13 +6950,16 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateRentalAgencyDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6905,8 +6972,6 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
-                /** @description Search by name or example model */
-                search?: string;
             };
             header?: never;
             path?: never;
@@ -6915,6 +6980,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6929,13 +7001,16 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateVehicleCategoryDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6960,6 +7035,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     VehicleCategoriesController_remove: {
@@ -6979,6 +7061,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     VehicleCategoriesController_update: {
@@ -6990,13 +7079,16 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateVehicleCategoryDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7009,10 +7101,6 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
-                /** @description Search by license plate */
-                search?: string;
-                agencyId?: string;
-                categoryId?: string;
             };
             header?: never;
             path?: never;
@@ -7021,6 +7109,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7035,13 +7130,16 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateVehicleDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7066,6 +7164,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     VehiclesController_remove: {
@@ -7085,6 +7190,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     VehiclesController_update: {
@@ -7096,13 +7208,16 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateVehicleDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7133,6 +7248,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     VehicleAvailabilityController_create: {
@@ -7149,6 +7271,13 @@ export interface operations {
         };
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7173,6 +7302,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     VehicleAvailabilityController_remove: {
@@ -7187,6 +7323,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7215,6 +7358,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     CruiseLinesController_findAll: {
@@ -7222,8 +7372,6 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
-                /** @description Search by name */
-                search?: string;
             };
             header?: never;
             path?: never;
@@ -7232,6 +7380,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7246,13 +7401,16 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateCruiseLineDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7277,6 +7435,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     CruiseLinesController_remove: {
@@ -7296,6 +7461,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     CruiseLinesController_update: {
@@ -7307,13 +7479,16 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateCruiseLineDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7326,8 +7501,6 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
-                /** @description Search by code or name */
-                search?: string;
             };
             header?: never;
             path?: never;
@@ -7336,6 +7509,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7350,13 +7530,16 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateCruisePortDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7381,6 +7564,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     CruisePortsController_remove: {
@@ -7400,6 +7590,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     CruisePortsController_update: {
@@ -7411,13 +7608,16 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateCruisePortDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7430,9 +7630,6 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
-                cruiseLineId?: string;
-                /** @description Search by ship name */
-                search?: string;
             };
             header?: never;
             path?: never;
@@ -7441,6 +7638,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7455,13 +7659,16 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateShipDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7486,6 +7693,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     ShipsController_remove: {
@@ -7505,6 +7719,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     ShipsController_update: {
@@ -7516,13 +7737,16 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateShipDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7535,7 +7759,6 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
-                shipId?: string;
             };
             header?: never;
             path?: never;
@@ -7544,6 +7767,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7558,13 +7788,16 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateItineraryDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7589,6 +7822,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     ItinerariesController_remove: {
@@ -7608,6 +7848,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     ItinerariesController_update: {
@@ -7619,13 +7866,16 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateItineraryDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7638,7 +7888,6 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
-                itineraryId?: string;
             };
             header?: never;
             path?: never;
@@ -7647,6 +7896,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7661,13 +7917,16 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateItineraryPortDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7692,6 +7951,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     ItineraryPortsController_remove: {
@@ -7711,6 +7977,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     ItineraryPortsController_update: {
@@ -7722,13 +7995,16 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateItineraryPortDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7741,7 +8017,6 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
-                shipId?: string;
             };
             header?: never;
             path?: never;
@@ -7750,6 +8025,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7764,13 +8046,16 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateCabinDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7795,6 +8080,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     CabinsController_remove: {
@@ -7814,6 +8106,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     CabinsController_update: {
@@ -7825,13 +8124,16 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateCabinDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7844,7 +8146,6 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
-                itineraryId?: string;
             };
             header?: never;
             path?: never;
@@ -7853,6 +8154,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7867,13 +8175,16 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateCruiseSailingDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7898,6 +8209,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     CruiseSailingsController_remove: {
@@ -7917,6 +8235,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     CruiseSailingsController_update: {
@@ -7928,13 +8253,16 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateCruiseSailingDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7944,11 +8272,9 @@ export interface operations {
     };
     CabinAvailabilityController_findAll: {
         parameters: {
-            query: {
+            query?: {
                 page?: number;
                 limit?: number;
-                sailingId: string;
-                cabinId?: string;
             };
             header?: never;
             path?: never;
@@ -7957,6 +8283,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7971,13 +8304,16 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateCabinAvailabilityDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -8002,6 +8338,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     CabinAvailabilityController_remove: {
@@ -8021,6 +8364,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     CabinAvailabilityController_update: {
@@ -8032,13 +8382,16 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateCabinAvailabilityDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -8051,9 +8404,6 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
-                destinationId?: string;
-                /** @description Search by provider name */
-                search?: string;
             };
             header?: never;
             path?: never;
@@ -8062,6 +8412,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -8076,13 +8433,16 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateActivityProviderDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -8107,6 +8467,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     ActivityProvidersController_remove: {
@@ -8126,6 +8493,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     ActivityProvidersController_update: {
@@ -8137,13 +8511,16 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateActivityProviderDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -8156,10 +8533,6 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
-                providerId?: string;
-                destinationId?: string;
-                /** @description Search by activity title */
-                search?: string;
             };
             header?: never;
             path?: never;
@@ -8168,6 +8541,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -8182,13 +8562,16 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateActivityDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -8213,6 +8596,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     ActivitiesController_remove: {
@@ -8232,6 +8622,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     ActivitiesController_update: {
@@ -8243,13 +8640,16 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateActivityDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -8262,8 +8662,6 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
-                activityId?: string;
-                destinationId?: string;
             };
             header?: never;
             path?: never;
@@ -8272,6 +8670,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -8286,13 +8691,16 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateActivityScheduleDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -8317,6 +8725,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     ActivitySchedulesController_remove: {
@@ -8336,6 +8751,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     ActivitySchedulesController_update: {
@@ -8347,13 +8769,16 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateActivityScheduleDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -8366,9 +8791,6 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
-                /** @description Search by package name */
-                search?: string;
-                active?: boolean;
             };
             header?: never;
             path?: never;
@@ -8377,6 +8799,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -8391,13 +8820,16 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreatePackageDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -8422,6 +8854,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     PackagesController_remove: {
@@ -8441,6 +8880,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     PackagesController_update: {
@@ -8452,13 +8898,16 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdatePackageDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -8471,7 +8920,6 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
-                packageId?: string;
             };
             header?: never;
             path?: never;
@@ -8480,6 +8928,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -8494,13 +8949,16 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreatePackageItemDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -8525,6 +8983,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     PackageItemsController_remove: {
@@ -8544,6 +9009,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     PackageItemsController_update: {
@@ -8555,13 +9027,16 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdatePackageItemDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -8916,6 +9391,10 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
+                rating?: number;
+                status?: "pending" | "approved" | "hidden";
+                /** @description Filter by accommodation property */
+                propertyId?: string;
             };
             header?: never;
             path?: never;
@@ -8929,18 +9408,8 @@ export interface operations {
                 };
                 content?: never;
             };
-        };
-    };
-    ReviewsController_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            201: {
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -8965,6 +9434,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     ReviewsController_remove: {
@@ -8984,9 +9460,16 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
-    ReviewsController_update: {
+    ReviewsController_updateStatus: {
         parameters: {
             query?: never;
             header?: never;
@@ -8995,9 +9478,20 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateReviewStatusDto"];
+            };
+        };
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -9010,6 +9504,11 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
+                itemType?: "room" | "flight_class" | "vehicle" | "cabin" | "activity_schedule" | "package";
+                /** @description Filter by parent booking status */
+                status?: "draft" | "pending_payment" | "confirmed" | "cancelled" | "refunded";
+                /** @description Filter by booking */
+                bookingId?: string;
             };
             header?: never;
             path?: never;
@@ -9018,6 +9517,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -9035,6 +9541,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -9059,6 +9572,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     BookingItemsController_remove: {
@@ -9078,9 +9598,117 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     BookingItemsController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    BookingStatusHistoryController_findAll: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    BookingStatusHistoryController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    BookingStatusHistoryController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    BookingStatusHistoryController_remove: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    BookingStatusHistoryController_update: {
         parameters: {
             query?: never;
             header?: never;
@@ -9117,13 +9745,6 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Missing permission */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
         };
     };
     PaymentsController_create: {
@@ -9136,13 +9757,6 @@ export interface operations {
         requestBody?: never;
         responses: {
             201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Missing permission */
-            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -9167,13 +9781,6 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Missing permission */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
         };
     };
     PaymentsController_remove: {
@@ -9193,13 +9800,6 @@ export interface operations {
                 };
                 content?: never;
             };
-            /** @description Missing permission */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
         };
     };
     PaymentsController_update: {
@@ -9214,43 +9814,6 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Missing permission */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    PaymentsController_refund: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RefundPaymentDto"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Missing permission */
-            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -9276,6 +9839,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     PromoCodesController_create: {
@@ -9288,6 +9858,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -9312,6 +9889,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     PromoCodesController_remove: {
@@ -9331,6 +9915,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     PromoCodesController_update: {
@@ -9345,6 +9936,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -9370,6 +9968,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     PromotionsController_create: {
@@ -9382,6 +9987,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -9406,6 +10018,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     PromotionsController_remove: {
@@ -9420,6 +10039,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -9444,6 +10070,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     SupportTicketsController_findAll: {
@@ -9451,6 +10084,8 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
+                status?: "open" | "pending" | "resolved" | "closed";
+                priority?: "low" | "normal" | "high" | "urgent";
             };
             header?: never;
             path?: never;
@@ -9538,7 +10173,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            200: {
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -9562,7 +10197,11 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateSupportTicketStatusDto"];
+            };
+        };
         responses: {
             200: {
                 headers: {
@@ -9597,6 +10236,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     SupportMessagesController_create: {
@@ -9606,9 +10252,20 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateSupportMessageDto"];
+            };
+        };
         responses: {
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -9633,6 +10290,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     SupportMessagesController_remove: {
@@ -9652,6 +10316,13 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
         };
     };
     SupportMessagesController_update: {
@@ -9666,6 +10337,13 @@ export interface operations {
         requestBody?: never;
         responses: {
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -9748,6 +10426,336 @@ export interface operations {
                 /** @description YYYY-MM for calendar */
                 month?: string;
             };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PublicFlightsController_listAirports: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PublicFlightsController_search: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                /** @description Departure airport IATA code */
+                from?: string;
+                /** @description Arrival airport IATA code */
+                to?: string;
+                /** @description When omitted, uses the earliest date with seat availability per flight */
+                departureDate?: string;
+                returnDate?: string;
+                passengers?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PublicFlightsController_getById: {
+        parameters: {
+            query: {
+                departureDate: string;
+                returnDate?: string;
+                passengers?: number;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PublicVehiclesController_listPickupLocations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PublicVehiclesController_search: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                /** @description Pickup city or destination name (partial match). Omit to search all cities. */
+                pickupLocation?: string;
+                /** @description When omitted, uses the earliest availability window per vehicle */
+                pickupDate?: string;
+                returnDate?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PublicVehiclesController_getById: {
+        parameters: {
+            query: {
+                pickupDate: string;
+                returnDate: string;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PublicCruisesController_search: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                /** @description Departure cruise port code */
+                sailFrom?: string;
+                /** @description Arrival cruise port code */
+                sailTo?: string;
+                startDate?: string;
+                endDate?: string;
+                guests?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PublicCruisesController_getSailingById: {
+        parameters: {
+            query?: {
+                guests?: number;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PublicActivitiesController_browse: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                /** @description Optional destination city name (partial match) */
+                destination?: string;
+                participants?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PublicActivitiesController_search: {
+        parameters: {
+            query: {
+                page?: number;
+                limit?: number;
+                /** @description Optional destination city name (partial match). Omit to search all destinations. */
+                destination?: string;
+                date: string;
+                participants?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PublicActivitiesController_listDestinations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PublicActivitiesController_getById: {
+        parameters: {
+            query: {
+                date: string;
+                participants?: number;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PublicPackagesController_list: {
+        parameters: {
+            query?: {
+                page?: number;
+                limit?: number;
+                /** @description Search by package name */
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PublicPackagesController_resolveLines: {
+        parameters: {
+            query: {
+                startDate: string;
+                endDate: string;
+                travelers: number;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PublicPackagesController_getById: {
+        parameters: {
+            query?: never;
             header?: never;
             path: {
                 id: string;

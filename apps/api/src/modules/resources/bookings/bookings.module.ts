@@ -22,8 +22,10 @@ import {
 } from '../../../entities/generated';
 import { ReviewsModule } from '../reviews/reviews.module';
 import { EmailVerificationModule } from '../../email-verification/email-verification.module';
+import { PackagesModule } from '../packages/packages.module';
 import { BookingCheckoutPromoService } from './booking-checkout-promo.service';
 import { BookingEngineService } from './booking-engine.service';
+import { BookingPackageCheckoutService } from './booking-package-checkout.service';
 import { BookingStatusHistoryService } from './booking-status-history.service';
 import { StripeModule } from '../../stripe/stripe.module';
 import { BookingsController } from './bookings.controller';
@@ -34,6 +36,7 @@ import { BookingsService } from './bookings.service';
     forwardRef(() => StripeModule),
     EmailVerificationModule,
     ReviewsModule,
+    PackagesModule,
     TypeOrmModule.forFeature([
       Bookings,
       BookingItems,
@@ -61,6 +64,7 @@ import { BookingsService } from './bookings.service';
     BookingEngineService,
     BookingStatusHistoryService,
     BookingCheckoutPromoService,
+    BookingPackageCheckoutService,
   ],
   exports: [BookingEngineService, BookingStatusHistoryService],
 })

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { AdminPageIntro } from '../../../../../components/admin-page-intro';
 import { FlightForm } from '../../../../../components/flights/flight-form';
 
 export const metadata: Metadata = {
@@ -8,12 +9,11 @@ export const metadata: Metadata = {
 export default function NouveauVolPage() {
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Nouveau vol</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Définissez le trajet, puis ajoutez les classes cabine sur la fiche vol.
-        </p>
-      </div>
+      <AdminPageIntro
+        backHref="/produits/vols"
+        backLabel="Retour aux vols"
+        description="Définissez le trajet, puis ajoutez les classes cabine sur la fiche vol."
+      />
       <FlightForm mode="create" />
     </div>
   );

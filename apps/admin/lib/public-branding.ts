@@ -1,10 +1,12 @@
 import { normalizeBrandingAssetUrl } from '@africatourismgate/utils';
+import type { PublicAuthVisual } from '@africatourismgate/types';
 import { resolveApiBaseUrl } from './auth/api';
 
 export type PublicBranding = {
   displayName: string;
   logoUrl: string | null;
   faviconUrl: string | null;
+  authVisual?: PublicAuthVisual;
 };
 
 const defaultBranding: PublicBranding = {
@@ -26,6 +28,7 @@ export async function fetchPublicBranding(): Promise<PublicBranding> {
       displayName: payload.displayName?.trim() || defaultBranding.displayName,
       logoUrl: normalizeBrandingAssetUrl(payload.logoUrl?.trim() || null),
       faviconUrl: normalizeBrandingAssetUrl(payload.faviconUrl?.trim() || null),
+      authVisual: payload.authVisual,
     };
   } catch {
     return defaultBranding;

@@ -140,6 +140,15 @@ async function main() {
   }
   console.log(`  OK detail: ${slot.remainingPlaces} places @ ${slot.priceCents} cents`);
 
+  console.log('9. GET /public/activities/:id no schedules for date (200, empty schedules)');
+  const noSchedules = await request(
+    `/public/activities/${ACTIVITY_DEMO_GOMBE_TOUR}?date=2026-06-13&participants=1`,
+  );
+  assertStatus('activity detail no schedules', noSchedules.status, 200);
+  if (!Array.isArray(noSchedules.data?.schedules) || noSchedules.data.schedules.length !== 0) {
+    throw new Error('Expected empty schedules array for June 13');
+  }
+
   console.log('\nAll public activity search checks passed.');
 }
 

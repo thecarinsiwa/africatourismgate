@@ -15,6 +15,10 @@ export type DashboardShellProps = {
   openMenuLabel?: string;
   closeMenuLabel?: string;
   headerActions?: ReactNode;
+  /** Titre contextuel dans l'en-tête (optionnel). */
+  title?: string;
+  /** Fil d'Ariane dans l'en-tête (optionnel). */
+  breadcrumb?: ReactNode;
 };
 
 export function DashboardShell({
@@ -26,6 +30,8 @@ export function DashboardShell({
   openMenuLabel,
   closeMenuLabel,
   headerActions,
+  title,
+  breadcrumb,
 }: DashboardShellProps) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
@@ -44,6 +50,8 @@ export function DashboardShell({
         />
         <div className="flex min-h-0 min-w-0 flex-1 flex-col">
           <AppHeader
+            title={title}
+            breadcrumb={breadcrumb}
             user={user}
             themeLabels={themeLabels}
             actions={headerActions}

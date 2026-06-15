@@ -4,6 +4,8 @@ import {
   Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   DataTablePagination,
   Input,
   type ColumnDef,
@@ -12,6 +14,8 @@ import type { Airline, Airport, Flight } from '@africatourismgate/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getVolsErrorMessage } from '../../lib/vols-errors';
+import { FlightThumbnail } from './flight-thumbnail';
+import { FlightTimeline } from './flight-timeline';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -120,6 +124,18 @@ export function FlightsList() {
   const columns = useMemo<ColumnDef<Flight, unknown>[]>(
     () => [
       {
+        id: 'thumbnail',
+        header: '',
+        meta: { align: 'center' },
+        cell: ({ row }) => (
+          <FlightThumbnail
+            flightId={row.original.id}
+            label={row.original.flightNumber}
+            size="md"
+          />
+        ),
+      },
+      {
         accessorKey: 'flightNumber',
         header: 'Code vol',
         cell: ({ row }) => (
@@ -137,12 +153,18 @@ export function FlightsList() {
         id: 'route',
         header: 'Trajet',
         cell: ({ row }) => {
-          const dep = airportById.get(row.original.departureAirportId);
-          const arr = airportById.get(row.original.arrivalAirportId);
+          const dep = airportById.get(row.original.departureAirportId) ?? null;
+          const arr = airportById.get(row.original.arrivalAirportId) ?? null;
           return (
-            <span className="text-sm">
-              {dep?.iataCode ?? '?'} → {arr?.iataCode ?? '?'}
-            </span>
+            <FlightTimeline
+              compact
+              departureAirport={dep}
+              arrivalAirport={arr}
+              departureTime={row.original.departureTime}
+              arrivalTime={row.original.arrivalTime}
+              durationMinutes={row.original.durationMinutes}
+              className="min-w-[12rem]"
+            />
           );
         },
       },
@@ -160,22 +182,15 @@ export function FlightsList() {
         header: 'Actions',
         meta: { align: 'right' },
         cell: ({ row }) => (
-          <div className="flex justify-end gap-1.5">
-            <Button href={`/produits/vols/${row.original.id}`} variant="ghost" size="sm">
-              Modifier
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
+          <DataTableActions>
+            <DataTableActionButton action="edit" href={`/produits/vols/${row.original.id}`} />
+            <DataTableActionButton
+              action="delete"
               onClick={() => void handleDelete(row.original)}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
-              className="!text-red-600"
-            >
-              Supprimer
-            </Button>
-          </div>
+            />
+          </DataTableActions>
         ),
       },
     ],

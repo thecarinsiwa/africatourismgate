@@ -1,17 +1,20 @@
 'use client';
 
 import {
-  Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   DataTablePagination,
   Input,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { Destination } from '@africatourismgate/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { CountryFlagPlaceholder } from '../flights/country-flag-placeholder';
 import { getApiClient } from '../../lib/auth/api';
 import { getDestinationsErrorMessage } from '../../lib/destinations-errors';
+import { DestinationThumbnail } from './destination-thumbnail';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -97,21 +100,17 @@ export function DestinationsList() {
       {
         accessorKey: 'name',
         header: 'Destination',
-        cell: ({ row }) => {
-          const name = row.original.name;
-          const initial = name.trim().charAt(0).toUpperCase() || '?';
-          return (
-            <div className="flex items-center gap-3">
-              <span
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-sm font-semibold text-primary ring-1 ring-primary/15"
-                aria-hidden
-              >
-                {initial}
-              </span>
-              <span className="font-medium text-atg-fg">{name}</span>
-            </div>
-          );
-        },
+        cell: ({ row }) => (
+          <div className="flex items-center gap-3">
+            <DestinationThumbnail
+              name={row.original.name}
+              countryCode={row.original.countryCode}
+              imageUrl={row.original.imageUrl}
+              size="sm"
+            />
+            <span className="font-medium text-atg-fg">{row.original.name}</span>
+          </div>
+        ),
       },
       {
         accessorKey: 'slug',
@@ -127,9 +126,12 @@ export function DestinationsList() {
         header: 'Pays',
         meta: { align: 'center' },
         cell: ({ row }) => (
-          <span className="font-mono text-sm tabular-nums text-atg-muted">
-            {row.original.countryCode}
-          </span>
+          <div className="flex items-center justify-center gap-2">
+            <CountryFlagPlaceholder countryCode={row.original.countryCode} className="h-8 w-8" />
+            <span className="font-mono text-xs tabular-nums text-atg-muted">
+              {row.original.countryCode}
+            </span>
+          </div>
         ),
       },
       {
@@ -139,23 +141,15 @@ export function DestinationsList() {
         cell: ({ row }) => {
           const destination = row.original;
           return (
-            <div className="flex justify-end gap-1.5 opacity-90 transition-opacity group-hover:opacity-100">
-              <Button href={`/produits/destinations/${destination.id}`} variant="ghost" size="sm">
-                Modifier
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
+            <DataTableActions className="opacity-90 transition-opacity group-hover:opacity-100">
+              <DataTableActionButton action="edit" href={`/produits/destinations/${destination.id}`} />
+              <DataTableActionButton
+                action="delete"
                 onClick={() => void handleDelete(destination)}
                 disabled={deletingId === destination.id}
                 loading={deletingId === destination.id}
-                loadingText="…"
-                className="!text-red-600 hover:!bg-red-50 hover:!text-red-700 dark:!text-red-400 dark:hover:!bg-red-950/30"
-              >
-                Supprimer
-              </Button>
-            </div>
+              />
+            </DataTableActions>
           );
         },
       },
@@ -173,18 +167,15 @@ export function DestinationsList() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex-1 sm:max-w-md">
-          <Input
-            name="search"
-            type="search"
-            placeholder="Rechercher par nom, slug ou pays…"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            aria-label="Rechercher une destination"
-          />
-        </div>
-        <Button href="/produits/destinations/nouveau">Nouvelle destination</Button>
+      <div className="flex-1 sm:max-w-md">
+        <Input
+          name="search"
+          type="search"
+          placeholder="Rechercher par nom, slug ou pays…"
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          aria-label="Rechercher une destination"
+        />
       </div>
 
       {deleteError ? (

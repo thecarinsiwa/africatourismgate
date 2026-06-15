@@ -1,4 +1,7 @@
 import type { Metadata } from 'next';
+import { PageHeader } from '@africatourismgate/ui';
+import { AdminPageBackLink } from '../../../../../components/admin-page-back-link';
+import { LocationsStatCards } from '../../../../../components/locations/locations-stat-cards';
 import { VehicleCategoriesList } from '../../../../../components/locations/vehicle-categories-list';
 
 export const metadata: Metadata = {
@@ -8,12 +11,14 @@ export const metadata: Metadata = {
 export default function CategoriesVehiculesPage() {
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Catégories de véhicules</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Types de véhicules (économique, SUV, premium, etc.).
-        </p>
-      </div>
+      <PageHeader
+        title="Catégories véhicules"
+        description="Types de véhicules (compact, SUV, premium, etc.)."
+        breadcrumb={
+          <AdminPageBackLink href="/produits/locations" label="Retour aux véhicules" />
+        }
+      />
+      <LocationsStatCards className="mb-6" />
       <VehicleCategoriesList />
     </div>
   );

@@ -4,6 +4,8 @@ import {
   Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   DataTableBadge,
   DataTablePagination,
   Input,
@@ -113,24 +115,20 @@ export function RolesList() {
         cell: ({ row }) => {
           const role = row.original;
           return (
-            <div className="flex justify-end gap-1.5">
-              <Button href={`/systeme/roles/${role.id}`} variant="ghost" size="sm">
-                {role.isSystem ? 'Voir' : 'Modifier'}
-              </Button>
+            <DataTableActions>
+              <DataTableActionButton
+                action={role.isSystem ? 'view' : 'edit'}
+                href={`/systeme/roles/${role.id}`}
+              />
               {!role.isSystem ? (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
+                <DataTableActionButton
+                  action="delete"
                   onClick={() => void handleDelete(role)}
                   disabled={deletingId === role.id}
                   loading={deletingId === role.id}
-                  className="!text-red-600 hover:!bg-red-50 dark:!text-red-400"
-                >
-                  Supprimer
-                </Button>
+                />
               ) : null}
-            </div>
+            </DataTableActions>
           );
         },
       },

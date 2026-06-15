@@ -1,9 +1,10 @@
 'use client';
 
 import {
-  Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   DataTablePagination,
   Input,
   type ColumnDef,
@@ -12,6 +13,10 @@ import type { Activity, ActivityProvider, Destination } from '@africatourismgate
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getActivitiesErrorMessage } from '../../lib/activities-errors';
+import {
+  ActivityDifficultyBadge,
+  ActivityDurationBadge,
+} from './activity-meta-badges';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -41,7 +46,7 @@ export function ActivitiesList() {
       .then((r) => setDestinations(r.data))
       .catch(() => setDestinations([]));
     void getApiClient()
-      .listActivityProviders({ page: 1, limit: 200 })
+      .listActivityProviders({ page: 1, limit: 100 })
       .then((r) => setProviders(r.data))
       .catch(() => setProviders([]));
   }, []);
@@ -132,10 +137,20 @@ export function ActivitiesList() {
         ),
       },
       {
-        accessorKey: 'durationMinutes',
-        header: 'Durée (min)',
+        id: 'duration',
+        header: 'Durée',
         meta: { align: 'center' },
-        cell: ({ row }) => row.original.durationMinutes ?? '—',
+        cell: ({ row }) => (
+          <ActivityDurationBadge durationMinutes={row.original.durationMinutes} />
+        ),
+      },
+      {
+        id: 'difficulty',
+        header: 'Difficulté',
+        meta: { align: 'center' },
+        cell: ({ row }) => (
+          <ActivityDifficultyBadge difficultyLevel={row.original.difficultyLevel} />
+        ),
       },
       {
         id: 'actions',
@@ -144,22 +159,15 @@ export function ActivitiesList() {
         cell: ({ row }) => {
           const activity = row.original;
           return (
-            <div className="flex justify-end gap-1.5">
-              <Button href={`/produits/activites/${activity.id}`} variant="ghost" size="sm">
-                Modifier
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
+            <DataTableActions>
+              <DataTableActionButton action="edit" href={`/produits/activites/${activity.id}`} />
+              <DataTableActionButton
+                action="delete"
                 onClick={() => void handleDelete(activity)}
                 disabled={deletingId === activity.id}
                 loading={deletingId === activity.id}
-                className="!text-red-600 hover:!bg-red-50 dark:!text-red-400"
-              >
-                Supprimer
-              </Button>
-            </div>
+              />
+            </DataTableActions>
           );
         },
       },
@@ -173,40 +181,32 @@ export function ActivitiesList() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:items-end">
-          <div className="flex-1 sm:max-w-md">
-            <Input
-              type="search"
-              placeholder="Rechercher par titre…"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-            />
-          </div>
-          <div className="sm:w-56">
-            <label className="mb-2 block text-sm font-medium text-atg-fg">Destination</label>
-            <select
-              value={destinationFilter}
-              onChange={(e) => {
-                setDestinationFilter(e.target.value);
-                setPage(1);
-              }}
-              className={selectClass}
-            >
-              <option value="">Toutes</option>
-              {destinations.map((d) => (
-                <option key={d.id} value={d.id}>
-                  {d.name}
-                </option>
-              ))}
-            </select>
-          </div>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
+        <div className="flex-1 sm:max-w-md">
+          <Input
+            type="search"
+            placeholder="Rechercher par titre…"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+          />
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Button href="/produits/activites/fournisseurs" variant="outline">
-            Fournisseurs
-          </Button>
-          <Button href="/produits/activites/nouveau">Nouvelle activité</Button>
+        <div className="sm:w-56">
+          <label className="mb-2 block text-sm font-medium text-atg-fg">Destination</label>
+          <select
+            value={destinationFilter}
+            onChange={(e) => {
+              setDestinationFilter(e.target.value);
+              setPage(1);
+            }}
+            className={selectClass}
+          >
+            <option value="">Toutes</option>
+            {destinations.map((d) => (
+              <option key={d.id} value={d.id}>
+                {d.name}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 

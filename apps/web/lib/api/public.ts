@@ -28,6 +28,11 @@ import type {
   CruiseSearchResult,
 } from '../cruises/types';
 import type {
+  PackageDetail,
+  PackageListItem,
+  PackagesBrowseQuery,
+} from '../packages/types';
+import type {
   FlightDetail,
   FlightDetailQuery,
   FlightSearchQuery,
@@ -72,6 +77,14 @@ export type {
   CruiseSearchQuery,
   CruiseSearchResult,
 } from '../cruises/types';
+
+export type {
+  PackageDetail,
+  PackageItemEnriched,
+  PackageListItem,
+  PackagePricing,
+  PackagesBrowseQuery,
+} from '../packages/types';
 
 const defaultApiUrl =
   process.env.NODE_ENV === 'production'
@@ -327,5 +340,69 @@ export async function getActivityDetail(
 ): Promise<ActivityDetail> {
   return fetchPublic<ActivityDetail>(
     `/public/activities/${encodeURIComponent(id)}${buildActivityDetailQuery(params)}`,
+  );
+}
+
+function buildPackagesBrowseQuery(params: PackagesBrowseQuery): string {
+  const qs = new URLSearchParams();
+  if (params.search) qs.set('search', params.search);
+  if (params.page !== undefined) qs.set('page', String(params.page));
+  if (params.limit !== undefined) qs.set('limit', String(params.limit));
+  const s = qs.toString();
+  return s ? `?${s}` : '';
+}
+
+export async function browsePackages(
+  params: PackagesBrowseQuery = {},
+): Promise<PaginatedResponse<PackageListItem>> {
+  return fetchPublic<PaginatedResponse<PackageListItem>>(
+    `/public/packages${buildPackagesBrowseQuery(params)}`,
+  );
+}
+
+export async function getPackageDetail(id: string): Promise<PackageDetail> {
+  return fetchPublic<PackageDetail>(`/public/packages/${encodeURIComponent(id)}`);
+}
+
+export type PackageResolvedLineQuery = {
+  startDate: string;
+  endDate: string;
+  travelers: number;
+};
+
+export type PackageResolvedLine = {
+  lineType: 'property' | 'flight' | 'vehicle' | 'cruise' | 'activity';
+  itemId: string;
+  scheduleId?: string;
+  date?: string;
+  participants?: number;
+  roomId?: string;
+  checkIn?: string;
+  checkOut?: string;
+  guests?: number;
+  flightClassId?: string;
+  departureDate?: string;
+  passengers?: number;
+  availabilitySlotId?: string;
+  pickupDate?: string;
+  returnDate?: string;
+  sailingId?: string;
+  cabinAvailabilityId?: string;
+};
+
+function buildPackageResolveLinesQuery(params: PackageResolvedLineQuery): string {
+  const qs = new URLSearchParams();
+  qs.set('startDate', params.startDate);
+  qs.set('endDate', params.endDate);
+  qs.set('travelers', String(params.travelers));
+  return `?${qs.toString()}`;
+}
+
+export async function getPackageResolvedLines(
+  packageId: string,
+  params: PackageResolvedLineQuery,
+): Promise<PackageResolvedLine[]> {
+  return fetchPublic<PackageResolvedLine[]>(
+    `/public/packages/${encodeURIComponent(packageId)}/resolve-lines${buildPackageResolveLinesQuery(params)}`,
   );
 }

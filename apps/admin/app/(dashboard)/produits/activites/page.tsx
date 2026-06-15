@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
+import { Button, PageHeader } from '@africatourismgate/ui';
 import { ActivitiesList } from '../../../../components/activities/activities-list';
+import { ActivitiesStatCards } from '../../../../components/activities/activities-stat-cards';
 
 export const metadata: Metadata = {
   title: 'Activités — Africa Tourism Gate Admin',
@@ -8,12 +10,19 @@ export const metadata: Metadata = {
 export default function ActivitesPage() {
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Activités</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Expériences, fournisseurs et créneaux par destination.
-        </p>
-      </div>
+      <PageHeader
+        title="Activités & tours"
+        description="Expériences, fournisseurs et créneaux par destination."
+        actions={
+          <>
+            <Button href="/produits/activites/fournisseurs" variant="outline">
+              Fournisseurs
+            </Button>
+            <Button href="/produits/activites/nouveau">Nouvelle activité</Button>
+          </>
+        }
+      />
+      <ActivitiesStatCards className="mb-6" />
       <ActivitiesList />
     </div>
   );

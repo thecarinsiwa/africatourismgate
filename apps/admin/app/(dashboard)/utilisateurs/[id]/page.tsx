@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import { UserEditPage } from '../../../../components/users/user-edit-page';
 
@@ -18,5 +19,9 @@ export default function EditUtilisateurPage({ params }: PageProps) {
     notFound();
   }
 
-  return <UserEditPage userId={params.id} />;
+  return (
+    <Suspense fallback={<p className="text-sm text-atg-muted">Chargement…</p>}>
+      <UserEditPage userId={params.id} />
+    </Suspense>
+  );
 }

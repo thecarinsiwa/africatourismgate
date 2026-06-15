@@ -18,6 +18,10 @@ export declare const tailwindColors: {
     border: string;
     muted: string;
     fg: string;
+    success: { DEFAULT: string; hover: string; light: string; fg: string };
+    warning: { DEFAULT: string; hover: string; light: string; fg: string };
+    danger: { DEFAULT: string; hover: string; light: string; fg: string };
+    info: { DEFAULT: string; hover: string; light: string; fg: string };
   };
 };
 export declare const brandingJson: Record<string, string>;

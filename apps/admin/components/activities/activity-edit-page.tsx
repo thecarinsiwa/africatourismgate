@@ -1,52 +1,102 @@
 'use client';
 
 import type { Activity } from '@africatourismgate/types';
+import { Skeleton, Tabs, TabsContent, TabsList, TabsTrigger } from '@africatourismgate/ui';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
+import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
+import { AdminPageBackLink } from '../admin-page-back-link';
 import { getApiClient } from '../../lib/auth/api';
 import { getActivitiesErrorMessage } from '../../lib/activities-errors';
 import { ActivityForm } from './activity-form';
+import { ActivityImagesSection } from './activity-images-section';
+import { ActivityMetaBadges } from './activity-meta-badges';
 import { ActivitySchedulesSection } from './activity-schedules-section';
 
 type ActivityEditPageProps = {
   activityId: string;
 };
 
+const TAB_VALUES = ['activite', 'creneaux'] as const;
+type TabValue = (typeof TAB_VALUES)[number];
+
+function isTabValue(value: string | null): value is TabValue {
+  return value !== null && (TAB_VALUES as readonly string[]).includes(value);
+}
+
 export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get('tab');
+  const activeTab: TabValue = isTabValue(tabParam) ? tabParam : 'activite';
+
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
     | { status: 'ready'; activity: Activity }
   >({ status: 'loading' });
 
-  useEffect(() => {
-    let cancelled = false;
-    void getApiClient()
-      .getActivity(activityId)
-      .then((activity) => {
-        if (!cancelled) setState({ status: 'ready', activity });
-      })
-      .catch((error) => {
-        if (!cancelled) {
-          setState({ status: 'error', message: getActivitiesErrorMessage(error) });
-        }
-      });
-    return () => {
-      cancelled = true;
-    };
+  useAdminEditPageMeta({
+    ready: state.status === 'ready',
+    title: "Modifier l'activité",
+    entityLabel: state.status === 'ready' ? state.activity.title : undefined,
+  });
+
+  const loadActivity = useCallback(async () => {
+    setState({ status: 'loading' });
+    try {
+      const activity = await getApiClient().getActivity(activityId);
+      setState({ status: 'ready', activity });
+    } catch (error) {
+      setState({ status: 'error', message: getActivitiesErrorMessage(error) });
+    }
   }, [activityId]);
 
+  useEffect(() => {
+    void loadActivity();
+  }, [loadActivity]);
+
+  const handleTabChange = useCallback(
+    (tab: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (tab === 'activite') {
+        params.delete('tab');
+      } else {
+        params.set('tab', tab);
+      }
+      const qs = params.toString();
+      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+    },
+    [pathname, router, searchParams],
+  );
+
   if (state.status === 'loading') {
-    return <p className="text-sm text-atg-muted">Chargement…</p>;
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-5 w-40" />
+        <div className="space-y-2">
+          <Skeleton className="h-6 w-64" />
+          <Skeleton className="h-6 w-48" />
+        </div>
+        <Skeleton className="h-10 w-full max-w-xs" />
+        <Skeleton className="h-64 w-full max-w-2xl" />
+      </div>
+    );
   }
 
   if (state.status === 'error') {
     return (
       <div className="space-y-4">
-        <p role="alert" className="text-sm text-red-600">
+        <AdminPageBackLink href="/produits/activites" label="Retour aux activités" />
+        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {state.message}
         </p>
-        <Link href="/produits/activites" className="text-sm font-medium text-primary">
+        <Link
+          href="/produits/activites"
+          className="text-sm font-medium text-primary hover:text-primary-hover"
+        >
           ← Retour à la liste
         </Link>
       </div>
@@ -56,13 +106,37 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
   const { activity } = state;
 
   return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Modifier l’activité</h1>
-        <p className="mt-2 text-sm text-atg-muted">{activity.title}</p>
+    <div className="space-y-6">
+      <AdminPageBackLink href="/produits/activites" label="Retour aux activités" />
+
+      <div className="space-y-2">
+        <h2 className="text-lg font-semibold text-atg-fg">{activity.title}</h2>
+        <ActivityMetaBadges
+          durationMinutes={activity.durationMinutes}
+          difficultyLevel={activity.difficultyLevel}
+        />
       </div>
-      <ActivityForm mode="edit" activityId={activityId} initialActivity={activity} />
-      <ActivitySchedulesSection activityId={activityId} />
+
+      <Tabs value={activeTab} onValueChange={handleTabChange}>
+        <TabsList aria-label="Sections de l'activité">
+          <TabsTrigger value="activite">Activité</TabsTrigger>
+          <TabsTrigger value="creneaux">Créneaux</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="activite">
+          <ActivityForm
+            mode="edit"
+            activityId={activityId}
+            initialActivity={activity}
+            onUpdated={(updated) => setState({ status: 'ready', activity: updated })}
+          />
+          <ActivityImagesSection activityId={activityId} embedded />
+        </TabsContent>
+
+        <TabsContent value="creneaux">
+          <ActivitySchedulesSection activityId={activityId} embedded />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

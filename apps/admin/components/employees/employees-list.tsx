@@ -1,9 +1,12 @@
 'use client';
 
 import {
+  Avatar,
   Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   DataTableBadge,
   DataTablePagination,
   Input,
@@ -157,12 +160,26 @@ export function EmployeesList() {
         header: 'Utilisateur',
         cell: ({ row }) => {
           const emp = row.original;
+          const email = emp.user?.email ?? '';
+          const firstName = emp.user?.firstName;
+          const lastName = emp.user?.lastName;
+          const fullName = userDisplayName(emp);
           return (
-            <div>
-              <span className="font-medium text-atg-fg">{userDisplayName(emp)}</span>
-              {emp.user?.email ? (
-                <p className="text-xs text-atg-muted">{emp.user.email}</p>
+            <div className="flex items-center gap-3">
+              {email ? (
+                <Avatar
+                  email={email}
+                  firstName={firstName}
+                  lastName={lastName}
+                  size="md"
+                />
               ) : null}
+              <div className="min-w-0">
+                <span className="block truncate font-medium text-atg-fg">{fullName}</span>
+                {email ? (
+                  <span className="block truncate text-xs text-atg-muted">{email}</span>
+                ) : null}
+              </div>
             </div>
           );
         },
@@ -214,23 +231,15 @@ export function EmployeesList() {
         cell: ({ row }) => {
           const employee = row.original;
           return (
-            <div className="flex justify-end gap-1.5 opacity-90 transition-opacity group-hover:opacity-100">
-              <Button href={`/utilisateurs/employes/${employee.id}`} variant="ghost" size="sm">
-                Modifier
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
+            <DataTableActions className="opacity-90 transition-opacity group-hover:opacity-100">
+              <DataTableActionButton action="edit" href={`/utilisateurs/employes/${employee.id}`} />
+              <DataTableActionButton
+                action="delete"
                 onClick={() => void handleDelete(employee)}
                 disabled={deletingId === employee.id}
                 loading={deletingId === employee.id}
-                loadingText="…"
-                className="!text-red-600 hover:!bg-red-50 hover:!text-red-700 dark:!text-red-400 dark:hover:!bg-red-950/30"
-              >
-                Supprimer
-              </Button>
-            </div>
+              />
+            </DataTableActions>
           );
         },
       },

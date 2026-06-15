@@ -1,4 +1,7 @@
 import type { Metadata } from 'next';
+import { PageHeader } from '@africatourismgate/ui';
+import { AdminPageBackLink } from '../../../../../components/admin-page-back-link';
+import { LocationsStatCards } from '../../../../../components/locations/locations-stat-cards';
 import { RentalAgenciesList } from '../../../../../components/locations/rental-agencies-list';
 
 export const metadata: Metadata = {
@@ -8,12 +11,14 @@ export const metadata: Metadata = {
 export default function AgencesLocationPage() {
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Agences de location</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Référentiel des agences liées aux destinations.
-        </p>
-      </div>
+      <PageHeader
+        title="Agences de location"
+        description="Référentiel des agences liées aux destinations."
+        breadcrumb={
+          <AdminPageBackLink href="/produits/locations" label="Retour aux véhicules" />
+        }
+      />
+      <LocationsStatCards className="mb-6" />
       <RentalAgenciesList />
     </div>
   );

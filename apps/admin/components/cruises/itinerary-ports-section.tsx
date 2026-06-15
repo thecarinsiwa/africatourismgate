@@ -1,11 +1,14 @@
 'use client';
 
-import { Button, Card, DataTable, Input, type ColumnDef } from '@africatourismgate/ui';
+import { Button, Card, DataTable, DataTableActionButton, DataTableActions, Input, type ColumnDef } from '@africatourismgate/ui';
 import type { CruisePort, ItineraryPort } from '@africatourismgate/types';
-import Link from 'next/link';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
+import { AdminPageBackLink } from '../admin-page-back-link';
 import { getApiClient } from '../../lib/auth/api';
+import { buildCruiseBreadcrumbTail } from '../../lib/cruise-breadcrumbs';
 import { getCroisieresErrorMessage } from '../../lib/croisieres-errors';
+import { ItineraryPortsTimeline } from './itinerary-ports-timeline';
 
 type FormValues = {
   portId: string;
@@ -27,12 +30,16 @@ function formatTime(t: string | null): string {
 
 type ItineraryPortsSectionProps = {
   shipId: string;
+  shipName?: string;
+  lineName: string;
   itineraryId: string;
   itineraryName: string;
 };
 
 export function ItineraryPortsSection({
   shipId,
+  shipName,
+  lineName,
   itineraryId,
   itineraryName,
 }: ItineraryPortsSectionProps) {
@@ -49,6 +56,17 @@ export function ItineraryPortsSection({
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  useAdminEditPageMeta({
+    ready: true,
+    title: 'Escales',
+    breadcrumbTail: buildCruiseBreadcrumbTail({
+      lineName,
+      shipName: shipName ?? 'Navire',
+      shipId,
+      itineraryName,
+    }),
+  });
 
   useEffect(() => {
     void getApiClient()
@@ -150,11 +168,9 @@ export function ItineraryPortsSection({
         header: 'Actions',
         meta: { align: 'right' },
         cell: ({ row }) => (
-          <div className="flex justify-end gap-1.5">
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
+          <DataTableActions>
+            <DataTableActionButton
+              action="edit"
               onClick={() => {
                 setEditing(row.original);
                 setFormValues({
@@ -165,14 +181,9 @@ export function ItineraryPortsSection({
                 });
                 setShowForm(true);
               }}
-            >
-              Modifier
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="!text-red-600"
+            />
+            <DataTableActionButton
+              action="delete"
               onClick={async () => {
                 if (!window.confirm('Supprimer cette escale ?')) return;
                 setDeletingId(row.original.id);
@@ -187,43 +198,43 @@ export function ItineraryPortsSection({
               }}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
-            >
-              Supprimer
-            </Button>
-          </div>
+            />
+          </DataTableActions>
         ),
       },
     ],
     [deletingId, load, portById],
   );
 
-  const rows = state.status === 'ready' ? state.rows : [];
+  const rows = useMemo(
+    () => (state.status === 'ready' ? state.rows : []),
+    [state],
+  );
+  const timelineStops = useMemo(
+    () =>
+      rows.map((row) => ({
+        ...row,
+        port: portById.get(row.portId) ?? null,
+      })),
+    [rows, portById],
+  );
   const selectClass =
     'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg';
 
   return (
     <div>
-      <nav className="mb-6 text-sm text-atg-muted">
-        <Link href="/produits/croisieres/navires" className="text-primary hover:underline">
-          Navires
-        </Link>
-        <span className="mx-2">/</span>
-        <Link
-          href={`/produits/croisieres/navires/${shipId}`}
-          className="text-primary hover:underline"
-        >
-          Navire
-        </Link>
-        <span className="mx-2">/</span>
-        <span className="text-atg-fg">{itineraryName}</span>
-      </nav>
+      <AdminPageBackLink
+        href={`/produits/croisieres/navires/${shipId}`}
+        label="Retour au navire"
+      />
 
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Escales</h1>
-        <p className="mt-2 text-sm text-atg-muted">Itinéraire : {itineraryName}</p>
-      </div>
+      <p className="mb-8 mt-4 text-sm text-atg-muted">Itinéraire : {itineraryName}</p>
 
       <div className="space-y-6">
+        {state.status === 'ready' && timelineStops.length > 0 ? (
+          <ItineraryPortsTimeline stops={timelineStops} />
+        ) : null}
+
         <div className="flex justify-end">
           {!showForm ? (
             <Button type="button" onClick={() => setShowForm(true)}>
@@ -307,12 +318,18 @@ export function ItineraryPortsSection({
           <p role="alert" className="text-sm text-red-600">
             {state.message}
           </p>
+        ) : state.status === 'loading' ? (
+          <p className="text-sm text-atg-muted">Chargement…</p>
+        ) : rows.length === 0 ? (
+          <Card variant="dashboard" className="py-12 text-center">
+            <p className="text-sm text-atg-muted">Aucune escale.</p>
+          </Card>
         ) : (
           <Card variant="dashboard" padding="none">
             <DataTable
               columns={columns}
               data={rows}
-              isLoading={state.status === 'loading'}
+              isLoading={false}
               emptyMessage="Aucune escale."
               getRowId={(r) => r.id}
             />

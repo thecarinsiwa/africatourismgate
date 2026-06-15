@@ -13,6 +13,7 @@ import { getApiClient } from '../../lib/auth/api';
 import { getUsersErrorMessage } from '../../lib/users-errors';
 import { UserIdFilterBar } from './user-id-filter-bar';
 import { UserListCell } from './user-list-cell';
+import type { UserScopedListProps } from './user-addresses-list';
 
 const PAGE_SIZE = 20;
 
@@ -27,9 +28,12 @@ function formatDateTime(iso: string): string {
   }
 }
 
-export function UserPaymentMethodsList() {
+export function UserPaymentMethodsList({
+  fixedUserId,
+  showUserColumn = true,
+}: UserScopedListProps = {}) {
   const [page, setPage] = useState(1);
-  const [userIdFilter, setUserIdFilter] = useState('');
+  const [userIdFilter, setUserIdFilter] = useState(fixedUserId ?? '');
   const [users, setUsers] = useState<User[]>([]);
   const [state, setState] = useState<
     | { status: 'loading' }
@@ -44,10 +48,20 @@ export function UserPaymentMethodsList() {
 
   const usersById = useMemo(() => new Map(users.map((user) => [user.id, user])), [users]);
 
-  const handleUserIdChange = useCallback((userId: string) => {
-    setUserIdFilter(userId);
-    setPage(1);
-  }, []);
+  useEffect(() => {
+    if (fixedUserId) {
+      setUserIdFilter(fixedUserId);
+    }
+  }, [fixedUserId]);
+
+  const handleUserIdChange = useCallback(
+    (userId: string) => {
+      if (fixedUserId) return;
+      setUserIdFilter(userId);
+      setPage(1);
+    },
+    [fixedUserId],
+  );
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -72,8 +86,8 @@ export function UserPaymentMethodsList() {
     void load();
   }, [load]);
 
-  const columns = useMemo<ColumnDef<UserPaymentMethod, unknown>[]>(
-    () => [
+  const columns = useMemo<ColumnDef<UserPaymentMethod, unknown>[]>(() => {
+    const cols: ColumnDef<UserPaymentMethod, unknown>[] = [
       {
         id: 'type',
         header: 'Type',
@@ -89,13 +103,19 @@ export function UserPaymentMethodsList() {
         header: 'Fin',
         cell: ({ row }) => (row.original.lastFour ? `•••• ${row.original.lastFour}` : '—'),
       },
-      {
+    ];
+
+    if (showUserColumn) {
+      cols.push({
         id: 'userId',
         header: 'Utilisateur',
         cell: ({ row }) => (
           <UserListCell userId={row.original.userId} usersById={usersById} />
         ),
-      },
+      });
+    }
+
+    cols.push(
       {
         id: 'createdAt',
         header: 'Ajouté le',
@@ -115,9 +135,10 @@ export function UserPaymentMethodsList() {
             <DataTableBadge variant="muted">Non</DataTableBadge>
           ),
       },
-    ],
-    [usersById],
-  );
+    );
+
+    return cols;
+  }, [showUserColumn, usersById]);
 
   const rows = state.status === 'ready' ? state.rows : [];
   const emptyMessage = userIdFilter
@@ -126,7 +147,9 @@ export function UserPaymentMethodsList() {
 
   return (
     <>
-      <UserIdFilterBar onUserIdChange={handleUserIdChange} onUsersLoaded={setUsers} />
+      {!fixedUserId ? (
+        <UserIdFilterBar onUserIdChange={handleUserIdChange} onUsersLoaded={setUsers} />
+      ) : null}
 
       {state.status === 'error' ? (
         <p role="alert" className="mb-4 text-sm text-red-600 dark:text-red-400">

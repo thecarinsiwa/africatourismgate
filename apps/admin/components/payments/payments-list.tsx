@@ -4,6 +4,8 @@ import {
   Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   DataTableBadge,
   DataTablePagination,
   Input,
@@ -338,9 +340,9 @@ export function PaymentsList() {
         header: 'Actions',
         meta: { align: 'right' },
         cell: ({ row }) => (
-          <Button variant="ghost" size="sm" onClick={() => openDetail(row.original.id)}>
-            Voir
-          </Button>
+          <DataTableActions>
+            <DataTableActionButton action="view" onClick={() => openDetail(row.original.id)} />
+          </DataTableActions>
         ),
       },
     ],

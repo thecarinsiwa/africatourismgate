@@ -1,3 +1,8 @@
+'use client';
+
+import { AdminPageIntro } from './admin-page-intro';
+import { SetAdminPageMeta } from './set-admin-page-meta';
+
 type DashboardSectionPageProps = {
   title: string;
   description?: string;
@@ -8,9 +13,9 @@ export function DashboardSectionPage({
   description = 'Contenu à venir.',
 }: DashboardSectionPageProps) {
   return (
-    <div>
-      <h1 className="text-2xl font-bold text-atg-fg">{title}</h1>
-      <p className="mt-2 text-sm text-atg-muted">{description}</p>
-    </div>
+    <>
+      <SetAdminPageMeta title={title} />
+      <AdminPageIntro description={description} />
+    </>
   );
 }

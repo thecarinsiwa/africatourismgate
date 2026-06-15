@@ -4,6 +4,8 @@ import {
   Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   Input,
   type ColumnDef,
 } from '@africatourismgate/ui';
@@ -139,11 +141,9 @@ export function VehicleAvailabilitySection({ vehicleId }: VehicleAvailabilitySec
         header: 'Actions',
         meta: { align: 'right' },
         cell: ({ row }) => (
-          <div className="flex justify-end gap-1.5">
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
+          <DataTableActions>
+            <DataTableActionButton
+              action="edit"
               onClick={() => {
                 setEditing(row.original);
                 setFormValues({
@@ -153,14 +153,9 @@ export function VehicleAvailabilitySection({ vehicleId }: VehicleAvailabilitySec
                 });
                 setShowForm(true);
               }}
-            >
-              Modifier
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="!text-red-600"
+            />
+            <DataTableActionButton
+              action="delete"
               onClick={async () => {
                 if (!window.confirm('Supprimer ce créneau ?')) return;
                 setDeletingId(row.original.id);
@@ -175,10 +170,8 @@ export function VehicleAvailabilitySection({ vehicleId }: VehicleAvailabilitySec
               }}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
-            >
-              Supprimer
-            </Button>
-          </div>
+            />
+          </DataTableActions>
         ),
       },
     ],

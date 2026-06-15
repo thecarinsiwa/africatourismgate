@@ -147,13 +147,20 @@ export class AuthService {
       referenceId: user.id,
       firstName: user.firstName,
     });
+
+    const tokens = await this.issueTokenPair(user);
+    void this.emailService
+      .sendWelcome({
+        to: user.email,
+        firstName: user.firstName,
+        webUrl: this.config.get<string>('NEXT_PUBLIC_WEB_URL'),
+      })
+      .catch(() => undefined);
+
     return {
-      requiresVerification: true,
-      verificationId,
+      ...tokens,
       user: toAuthUserDto(user),
-      accessToken: '',
-      refreshToken: '',
-      expiresIn: 0,
+      verificationId,
     };
   }
 

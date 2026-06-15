@@ -33,11 +33,27 @@ export class AppliedCheckoutDiscountDto {
   discountCents!: number;
 }
 
+export class AppliedPackageCheckoutDiscountDto {
+  @ApiProperty({ format: 'uuid' })
+  packageId!: string;
+
+  @ApiProperty({ example: 'Kinshasa Duo' })
+  name!: string;
+
+  @ApiProperty({ example: 10 })
+  discountPercent!: number;
+
+  @ApiProperty({ example: 900 })
+  discountCents!: number;
+}
+
 export type BookingCheckoutPreviewResponseDto = {
   lines: BookingCheckoutLineDto[];
   subtotalCents: number;
+  packageDiscountCents: number;
   discountCents: number;
   totalCents: number;
   currency: string;
+  appliedPackageDiscount: AppliedPackageCheckoutDiscountDto | null;
   appliedDiscount: AppliedCheckoutDiscountDto | null;
 };

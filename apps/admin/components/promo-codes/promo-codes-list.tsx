@@ -4,6 +4,8 @@ import {
   Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   DataTableBadge,
   DataTablePagination,
   Input,
@@ -174,25 +176,17 @@ export function PromoCodesList() {
         cell: ({ row }) => {
           const promo = row.original;
           return (
-            <div className="flex justify-end gap-1.5">
-              <Button href={`/paiements/codes-promo/${promo.id}`} variant="ghost" size="sm">
-                Modifier
-              </Button>
+            <DataTableActions>
+              <DataTableActionButton action="edit" href={`/paiements/codes-promo/${promo.id}`} />
               {canWrite ? (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
+                <DataTableActionButton
+                  action="delete"
                   onClick={() => void handleDelete(promo)}
                   disabled={deletingId === promo.id}
                   loading={deletingId === promo.id}
-                  loadingText="…"
-                  className="!text-red-600 hover:!bg-red-50 hover:!text-red-700 dark:!text-red-400 dark:hover:!bg-red-950/30"
-                >
-                  Supprimer
-                </Button>
+                />
               ) : null}
-            </div>
+            </DataTableActions>
           );
         },
       },

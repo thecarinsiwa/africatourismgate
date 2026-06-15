@@ -430,6 +430,9 @@ CREATE TABLE `destinations` (
   `slug` VARCHAR(180) NOT NULL,
   `country_code` CHAR(2) NOT NULL,
   `description` TEXT,
+  `image_url` VARCHAR(512) DEFAULT NULL,
+  `latitude` DECIMAL(10, 7) DEFAULT NULL,
+  `longitude` DECIMAL(10, 7) DEFAULT NULL,
   `created_by_user_id` CHAR(36) DEFAULT NULL,
   `updated_by_user_id` CHAR(36) DEFAULT NULL,
   `deleted_by_user_id` CHAR(36) DEFAULT NULL,
@@ -574,6 +577,27 @@ CREATE TABLE `rooms` (
   CONSTRAINT `fk_rooms_deleted_by` FOREIGN KEY (`deleted_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE `room_images` (
+  `id` CHAR(36) NOT NULL,
+  `room_id` CHAR(36) NOT NULL,
+  `url` VARCHAR(512) NOT NULL,
+  `caption` VARCHAR(255) DEFAULT NULL,
+  `sort_order` INT NOT NULL DEFAULT 0,
+  `created_by_user_id` CHAR(36) DEFAULT NULL,
+  `updated_by_user_id` CHAR(36) DEFAULT NULL,
+  `deleted_by_user_id` CHAR(36) DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` DATETIME DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_room_images_room` (`room_id`),
+  KEY `idx_room_images_deleted_at` (`deleted_at`),
+  CONSTRAINT `fk_room_images_room` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_room_images_created_by` FOREIGN KEY (`created_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_room_images_updated_by` FOREIGN KEY (`updated_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_room_images_deleted_by` FOREIGN KEY (`deleted_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE `room_availability` (
   `id` CHAR(36) NOT NULL,
   `room_id` CHAR(36) NOT NULL,
@@ -708,6 +732,27 @@ CREATE TABLE `flight_class_availability` (
   CONSTRAINT `fk_fca_deleted_by` FOREIGN KEY (`deleted_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE `flight_images` (
+  `id` CHAR(36) NOT NULL,
+  `flight_id` CHAR(36) NOT NULL,
+  `url` VARCHAR(512) NOT NULL,
+  `caption` VARCHAR(255) DEFAULT NULL,
+  `sort_order` INT NOT NULL DEFAULT 0,
+  `created_by_user_id` CHAR(36) DEFAULT NULL,
+  `updated_by_user_id` CHAR(36) DEFAULT NULL,
+  `deleted_by_user_id` CHAR(36) DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` DATETIME DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_flight_images_flight` (`flight_id`),
+  KEY `idx_flight_images_deleted_at` (`deleted_at`),
+  CONSTRAINT `fk_flight_images_flight` FOREIGN KEY (`flight_id`) REFERENCES `flights` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_flight_images_created_by` FOREIGN KEY (`created_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_flight_images_updated_by` FOREIGN KEY (`updated_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_flight_images_deleted_by` FOREIGN KEY (`deleted_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- -----------------------------------------------------------------------------
 -- Car rentals
 -- -----------------------------------------------------------------------------
@@ -770,6 +815,27 @@ CREATE TABLE `vehicles` (
   CONSTRAINT `fk_vehicles_created_by` FOREIGN KEY (`created_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   CONSTRAINT `fk_vehicles_updated_by` FOREIGN KEY (`updated_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   CONSTRAINT `fk_vehicles_deleted_by` FOREIGN KEY (`deleted_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `vehicle_images` (
+  `id` CHAR(36) NOT NULL,
+  `vehicle_id` CHAR(36) NOT NULL,
+  `url` VARCHAR(512) NOT NULL,
+  `caption` VARCHAR(255) DEFAULT NULL,
+  `sort_order` INT NOT NULL DEFAULT 0,
+  `created_by_user_id` CHAR(36) DEFAULT NULL,
+  `updated_by_user_id` CHAR(36) DEFAULT NULL,
+  `deleted_by_user_id` CHAR(36) DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` DATETIME DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_vehicle_images_vehicle` (`vehicle_id`),
+  KEY `idx_vehicle_images_deleted_at` (`deleted_at`),
+  CONSTRAINT `fk_vehicle_images_vehicle` FOREIGN KEY (`vehicle_id`) REFERENCES `vehicles` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_vehicle_images_created_by` FOREIGN KEY (`created_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_vehicle_images_updated_by` FOREIGN KEY (`updated_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_vehicle_images_deleted_by` FOREIGN KEY (`deleted_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `vehicle_availability` (
@@ -849,6 +915,27 @@ CREATE TABLE `ships` (
   CONSTRAINT `fk_ships_created_by` FOREIGN KEY (`created_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   CONSTRAINT `fk_ships_updated_by` FOREIGN KEY (`updated_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   CONSTRAINT `fk_ships_deleted_by` FOREIGN KEY (`deleted_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `ship_images` (
+  `id` CHAR(36) NOT NULL,
+  `ship_id` CHAR(36) NOT NULL,
+  `url` VARCHAR(512) NOT NULL,
+  `caption` VARCHAR(255) DEFAULT NULL,
+  `sort_order` INT NOT NULL DEFAULT 0,
+  `created_by_user_id` CHAR(36) DEFAULT NULL,
+  `updated_by_user_id` CHAR(36) DEFAULT NULL,
+  `deleted_by_user_id` CHAR(36) DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` DATETIME DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_ship_images_ship` (`ship_id`),
+  KEY `idx_ship_images_deleted_at` (`deleted_at`),
+  CONSTRAINT `fk_ship_images_ship` FOREIGN KEY (`ship_id`) REFERENCES `ships` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_ship_images_created_by` FOREIGN KEY (`created_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_ship_images_updated_by` FOREIGN KEY (`updated_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_ship_images_deleted_by` FOREIGN KEY (`deleted_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `itineraries` (
@@ -985,6 +1072,7 @@ CREATE TABLE `activities` (
   `title` VARCHAR(255) NOT NULL,
   `description` TEXT,
   `duration_minutes` SMALLINT UNSIGNED DEFAULT NULL,
+  `difficulty_level` ENUM('easy', 'moderate', 'hard', 'expert') DEFAULT NULL,
   `price_cents` INT UNSIGNED NOT NULL,
   `currency` CHAR(3) NOT NULL DEFAULT 'USD',
   `created_by_user_id` CHAR(36) DEFAULT NULL,
@@ -1000,6 +1088,27 @@ CREATE TABLE `activities` (
   CONSTRAINT `fk_activities_created_by` FOREIGN KEY (`created_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   CONSTRAINT `fk_activities_updated_by` FOREIGN KEY (`updated_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   CONSTRAINT `fk_activities_deleted_by` FOREIGN KEY (`deleted_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `activity_images` (
+  `id` CHAR(36) NOT NULL,
+  `activity_id` CHAR(36) NOT NULL,
+  `url` VARCHAR(512) NOT NULL,
+  `caption` VARCHAR(255) DEFAULT NULL,
+  `sort_order` INT NOT NULL DEFAULT 0,
+  `created_by_user_id` CHAR(36) DEFAULT NULL,
+  `updated_by_user_id` CHAR(36) DEFAULT NULL,
+  `deleted_by_user_id` CHAR(36) DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` DATETIME DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_activity_images_activity` (`activity_id`),
+  KEY `idx_activity_images_deleted_at` (`deleted_at`),
+  CONSTRAINT `fk_activity_images_activity` FOREIGN KEY (`activity_id`) REFERENCES `activities` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_activity_images_created_by` FOREIGN KEY (`created_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_activity_images_updated_by` FOREIGN KEY (`updated_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_activity_images_deleted_by` FOREIGN KEY (`deleted_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `activity_schedules` (
@@ -1031,6 +1140,7 @@ CREATE TABLE `packages` (
   `name` VARCHAR(180) NOT NULL,
   `description` TEXT,
   `discount_percent` DECIMAL(5,2) NOT NULL DEFAULT 0.00,
+  `duration_days` SMALLINT UNSIGNED NOT NULL DEFAULT 3,
   `active` TINYINT(1) NOT NULL DEFAULT 1,
   `created_by_user_id` CHAR(36) DEFAULT NULL,
   `updated_by_user_id` CHAR(36) DEFAULT NULL,
@@ -1063,6 +1173,30 @@ CREATE TABLE `package_items` (
   CONSTRAINT `fk_package_items_created_by` FOREIGN KEY (`created_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   CONSTRAINT `fk_package_items_updated_by` FOREIGN KEY (`updated_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   CONSTRAINT `fk_package_items_deleted_by` FOREIGN KEY (`deleted_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `package_images` (
+  `id` CHAR(36) NOT NULL,
+  `package_id` CHAR(36) NOT NULL,
+  `url` VARCHAR(512) NOT NULL,
+  `caption` VARCHAR(255) DEFAULT NULL,
+  `sort_order` INT NOT NULL DEFAULT 0,
+  `source_package_item_id` CHAR(36) DEFAULT NULL,
+  `created_by_user_id` CHAR(36) DEFAULT NULL,
+  `updated_by_user_id` CHAR(36) DEFAULT NULL,
+  `deleted_by_user_id` CHAR(36) DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` DATETIME DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_package_images_package` (`package_id`),
+  KEY `idx_package_images_source_item` (`source_package_item_id`),
+  KEY `idx_package_images_deleted_at` (`deleted_at`),
+  CONSTRAINT `fk_package_images_package` FOREIGN KEY (`package_id`) REFERENCES `packages` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_package_images_source_item` FOREIGN KEY (`source_package_item_id`) REFERENCES `package_items` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_package_images_created_by` FOREIGN KEY (`created_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_package_images_updated_by` FOREIGN KEY (`updated_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_package_images_deleted_by` FOREIGN KEY (`deleted_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- -----------------------------------------------------------------------------

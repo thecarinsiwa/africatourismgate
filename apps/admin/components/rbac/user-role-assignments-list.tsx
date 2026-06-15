@@ -1,9 +1,10 @@
 'use client';
 
 import {
-  Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   DataTablePagination,
   type ColumnDef,
 } from '@africatourismgate/ui';
@@ -109,17 +110,14 @@ export function UserRoleAssignmentsList() {
         header: 'Actions',
         meta: { align: 'right' },
         cell: ({ row }) => (
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => void handleRevoke(row.original)}
-            disabled={revokingId === row.original.id}
-            loading={revokingId === row.original.id}
-            className="!text-red-600"
-          >
-            Révoquer
-          </Button>
+          <DataTableActions>
+            <DataTableActionButton
+              action="revoke"
+              onClick={() => void handleRevoke(row.original)}
+              disabled={revokingId === row.original.id}
+              loading={revokingId === row.original.id}
+            />
+          </DataTableActions>
         ),
       },
     ],

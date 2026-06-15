@@ -66,12 +66,14 @@ export const CATALOG_PERMISSION_MAP = {
     'airports',
     'flight-classes',
     'flight-class-availability',
+    'flight-images',
   ],
   vehicles: [
     'vehicles',
     'rental-agencies',
     'vehicle-categories',
     'vehicle-availability',
+    'vehicle-images',
   ],
   cruises: [
     'cruise-lines',
@@ -82,6 +84,7 @@ export const CATALOG_PERMISSION_MAP = {
     'cabins',
     'cruise-sailings',
     'cabin-availability',
+    'ship-images',
   ],
   activities: ['activities', 'activity-providers', 'activity-schedules'],
   packages: ['packages', 'package-items'],

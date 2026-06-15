@@ -9,6 +9,15 @@ export type PosReceiptLine = {
   lineTotalLabel: string;
 };
 
+/** Libellés fiscaux du reçu (montants TTC, pas de détail TVA côté API). */
+export const posReceiptLabels = {
+  subtotal: 'Sous-total',
+  discount: 'Remise',
+  totalTtc: 'Total TTC',
+  taxIncludedNote: 'Montants TTC — TVA incluse',
+  payment: 'Paiement',
+} as const;
+
 export type PosReceiptData = {
   displayName: string;
   logoUrl: string | null;
@@ -107,16 +116,17 @@ export function buildReceiptPlainText(data: PosReceiptData): string {
       `  ${item.quantity} × ${item.unitPriceLabel} = ${item.lineTotalLabel}`,
     ]),
     '—'.repeat(32),
-    `Sous-total : ${data.subtotalLabel}`,
+    `${posReceiptLabels.subtotal} : ${data.subtotalLabel}`,
   ];
 
   if (data.discountLabel) {
-    lines.push(`Remise : -${data.discountLabel}`);
+    lines.push(`${posReceiptLabels.discount} : -${data.discountLabel}`);
   }
 
   lines.push(
-    `TOTAL : ${data.totalLabel}`,
-    `Paiement : ${data.paymentMethodLabel}`,
+    `${posReceiptLabels.totalTtc} : ${data.totalLabel}`,
+    posReceiptLabels.taxIncludedNote,
+    `${posReceiptLabels.payment} : ${data.paymentMethodLabel}`,
     '—'.repeat(32),
     'Merci pour votre achat !',
   );

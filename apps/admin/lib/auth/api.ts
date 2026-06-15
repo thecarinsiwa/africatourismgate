@@ -14,8 +14,8 @@ import {
   type StoredSession,
 } from './session';
 
-/** Aligné sur API_PORT (défaut 3000) — voir packages/config/dev-api-url.mjs */
-const DEFAULT_DEV_API_URL = 'http://localhost:3000/api';
+/** Aligné sur API_PORT (défaut 3010) — voir packages/config/dev-api-url.mjs */
+const DEFAULT_DEV_API_URL = 'http://localhost:3010/api';
 const PRODUCTION_API_URL = 'https://app-africatourismgate.org/api';
 
 let refreshInFlight: Promise<StoredSession | null> | null = null;

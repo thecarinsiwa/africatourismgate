@@ -4,6 +4,8 @@ import {
   Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   DataTablePagination,
   Input,
   type ColumnDef,
@@ -12,6 +14,7 @@ import type { VehicleCategory } from '@africatourismgate/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getLocationsErrorMessage } from '../../lib/locations-errors';
+import { getVehicleCategoryIcon } from '../../lib/vehicle-category-icon-map';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -107,6 +110,16 @@ export function VehicleCategoriesList() {
 
   const columns = useMemo<ColumnDef<VehicleCategory, unknown>[]>(
     () => [
+      {
+        id: 'icon',
+        header: '',
+        meta: { align: 'center' },
+        cell: ({ row }) => (
+          <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-atg-surface text-primary ring-1 ring-atg-border/60">
+            {getVehicleCategoryIcon(row.original.name, 'h-5 w-5')}
+          </span>
+        ),
+      },
       { accessorKey: 'name', header: 'Catégorie' },
       {
         accessorKey: 'exampleModel',
@@ -118,11 +131,9 @@ export function VehicleCategoriesList() {
         header: 'Actions',
         meta: { align: 'right' },
         cell: ({ row }) => (
-          <div className="flex justify-end gap-1.5">
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
+          <DataTableActions>
+            <DataTableActionButton
+              action="edit"
               onClick={() => {
                 setEditing(row.original);
                 setFormValues({
@@ -131,14 +142,9 @@ export function VehicleCategoriesList() {
                 });
                 setShowForm(true);
               }}
-            >
-              Modifier
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="!text-red-600"
+            />
+            <DataTableActionButton
+              action="delete"
               onClick={async () => {
                 if (!window.confirm(`Supprimer « ${row.original.name} » ?`)) return;
                 setDeletingId(row.original.id);
@@ -153,10 +159,8 @@ export function VehicleCategoriesList() {
               }}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
-            >
-              Supprimer
-            </Button>
-          </div>
+            />
+          </DataTableActions>
         ),
       },
     ],

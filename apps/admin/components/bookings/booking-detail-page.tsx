@@ -16,6 +16,7 @@ import type {
 } from '@africatourismgate/types';
 import Link from 'next/link';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
 import { getItemTypeLabel } from '../../lib/booking-item-labels';
 import { getBookingsErrorMessage } from '../../lib/bookings-errors';
@@ -82,6 +83,12 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   const [newStatus, setNewStatus] = useState<BookingStatus>('confirmed');
   const [statusReason, setStatusReason] = useState('');
   const [cancelReason, setCancelReason] = useState('');
+
+  useAdminEditPageMeta({
+    ready: state.status === 'ready' && detail != null,
+    title: 'Réservation',
+    entityLabel: detail?.booking.id,
+  });
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -282,14 +289,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <Link href="/reservations" className="text-sm font-medium text-primary">
-            ← Réservations
-          </Link>
-          <h1 className="mt-2 text-2xl font-bold text-atg-fg">Réservation</h1>
-          <p className="mt-1 font-mono text-sm text-atg-muted">{booking.id}</p>
-        </div>
+      <div className="flex flex-wrap items-start justify-end gap-4">
         <DataTableBadge variant={statusVariants[booking.status]}>
           {statusLabels[booking.status]}
         </DataTableBadge>

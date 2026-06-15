@@ -4,6 +4,8 @@ import {
   Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   DataTablePagination,
   Input,
   type ColumnDef,
@@ -12,6 +14,7 @@ import type { CruiseLine, Ship } from '@africatourismgate/types';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getCroisieresErrorMessage } from '../../lib/croisieres-errors';
+import { ShipThumbnail } from './ship-thumbnail';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -94,6 +97,14 @@ export function ShipsList() {
 
   const columns = useMemo<ColumnDef<Ship, unknown>[]>(
     () => [
+      {
+        id: 'thumbnail',
+        header: '',
+        meta: { align: 'center' },
+        cell: ({ row }) => (
+          <ShipThumbnail shipId={row.original.id} label={row.original.name} size="sm" />
+        ),
+      },
       { accessorKey: 'name', header: 'Navire' },
       {
         id: 'line',
@@ -110,26 +121,18 @@ export function ShipsList() {
         header: 'Actions',
         meta: { align: 'right' },
         cell: ({ row }) => (
-          <div className="flex justify-end gap-1.5">
-            <Button
+          <DataTableActions>
+            <DataTableActionButton
+              action="edit"
               href={`/produits/croisieres/navires/${row.original.id}`}
-              variant="ghost"
-              size="sm"
-            >
-              Modifier
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="!text-red-600"
+            />
+            <DataTableActionButton
+              action="delete"
               onClick={() => void handleDelete(row.original)}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
-            >
-              Supprimer
-            </Button>
-          </div>
+            />
+          </DataTableActions>
         ),
       },
     ],

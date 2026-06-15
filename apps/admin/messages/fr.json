@@ -9,6 +9,33 @@
     "dark": "Mode sombre"
   },
   "auth": {
+    "shell": {
+      "visualEyebrow": "Africa Tourism Gate",
+      "visualTitle": "Le tourisme africain, piloté depuis un seul back-office",
+      "visualSubtitle": "Hôtels, activités, réservations et paiements — une plateforme unifiée pour vos équipes.",
+      "carousel": {
+        "ariaLabel": "Destinations africaines",
+        "goToSlide": "Aller à la diapositive",
+        "slides": [
+          {
+            "caption": "Safari & nature",
+            "title": "Réservez et gérez vos expériences wildlife en toute simplicité"
+          },
+          {
+            "caption": "Plages & îles",
+            "title": "Hôtels, lodges et séjours balnéaires sur toute la côte africaine"
+          },
+          {
+            "caption": "Culture & patrimoine",
+            "title": "Activités, circuits et expériences authentiques pour vos voyageurs"
+          },
+          {
+            "caption": "Destinations",
+            "title": "Une vitrine unifiée pour promouvoir l'Afrique depuis votre back-office"
+          }
+        ]
+      }
+    },
     "login": {
       "metaTitle": "Connexion — Africa Tourism Gate Admin",
       "metaDescription": "Accédez au back-office Africa Tourism Gate",
@@ -71,6 +98,45 @@
       }
     }
   },
+  "dashboard": {
+    "greeting": "Bonjour, {firstName}",
+    "greetingFallback": "Bonjour",
+    "description": "Vue d'ensemble de votre plateforme Africa Tourism Gate",
+    "period": {
+      "label": "Période",
+      "7d": "7 jours",
+      "30d": "30 jours",
+      "90d": "90 jours"
+    },
+    "chart": {
+      "title": "Activité",
+      "subtitle": "Réservations et revenus sur la période sélectionnée",
+      "bookings": "Réservations",
+      "revenue": "Revenus",
+      "loading": "Chargement du graphique…",
+      "empty": "Aucune donnée sur cette période",
+      "error": "Impossible de charger les tendances",
+      "ariaLabel": "Graphique des réservations et revenus par jour"
+    },
+    "kpi": {
+      "users": {
+        "label": "Utilisateurs",
+        "subtitle": "Comptes enregistrés"
+      },
+      "bookings": {
+        "label": "Réservations",
+        "subtitle": "Réservations totales"
+      },
+      "revenue": {
+        "label": "Revenus",
+        "subtitle": "Paiements réussis"
+      },
+      "properties": {
+        "label": "Hébergements",
+        "subtitle": "Hébergements publiés"
+      }
+    }
+  },
   "nav": {
     "dashboard": "Tableau de bord",
     "groups": {
@@ -95,6 +161,33 @@
       "flights": "Vols",
       "vehicles": "Locations véhicules",
       "cruises": "Croisières",
+      "ships": "Navires",
+      "newShip": "Nouveau navire",
+      "cruiseLines": "Lignes de croisière",
+      "cruisePorts": "Ports de croisière",
+      "newSailing": "Nouveau départ",
+      "newAccommodation": "Nouvel hébergement",
+      "airports": "Aéroports",
+      "airlines": "Compagnies aériennes",
+      "newFlight": "Nouveau vol",
+      "rentalAgencies": "Agences de location",
+      "vehicleCategories": "Catégories de véhicules",
+      "newVehicle": "Nouveau véhicule",
+      "activityProviders": "Fournisseurs d'activités",
+      "newActivity": "Nouvelle activité",
+      "newDestination": "Nouvelle destination",
+      "newPackage": "Nouveau forfait",
+      "newUser": "Nouvel utilisateur",
+      "newEmployee": "Nouvel employé",
+      "newOrganization": "Nouvelle organisation",
+      "newRole": "Nouveau rôle",
+      "roleAssignments": "Assignations de rôles",
+      "permissions": "Permissions",
+      "newPromotion": "Nouvelle promotion",
+      "newPromoCode": "Nouveau code promo",
+      "bankAccounts": "Comptes bancaires",
+      "availability": "Disponibilités",
+      "itineraryStops": "Escales",
       "activities": "Activités",
       "packages": "Forfaits",
       "destinations": "Destinations",

@@ -3,7 +3,10 @@
 import {
   Button,
   Card,
+  cn,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type {
@@ -13,21 +16,18 @@ import type {
 } from '@africatourismgate/types';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import { formatMoney } from '../../lib/format-money';
+import {
+  getPackageItemTypeLabel,
+  PACKAGE_ITEM_TYPES,
+} from '../../lib/package-item-type';
 import { getPackagesErrorMessage } from '../../lib/packages-errors';
-
-const ITEM_TYPE_LABELS: Record<PackageItemType, string> = {
-  property: 'Hébergement',
-  flight: 'Vol',
-  vehicle: 'Véhicule',
-  cruise: 'Cabine (croisière)',
-  activity: 'Activité',
-};
+import { PackageCompositionBanner } from './package-composition-banner';
+import { PackageItemTypeIcon } from './package-item-type-icon';
+import { PackagePreviewCard } from './package-preview-card';
+import { PackagePricingRecap } from './package-pricing-recap';
 
 type CatalogOption = { id: string; label: string };
-
-function formatMoney(cents: number, currency: string): string {
-  return `${(cents / 100).toFixed(2)} ${currency}`;
-}
 
 type PackageItemsSectionProps = {
   packageId: string;
@@ -172,7 +172,9 @@ export function PackageItemsSection({ packageId }: PackageItemsSectionProps) {
       {
         id: 'type',
         header: 'Type',
-        cell: ({ row }) => ITEM_TYPE_LABELS[row.original.itemType],
+        cell: ({ row }) => (
+          <PackageItemTypeIcon itemType={row.original.itemType} showLabel size="sm" />
+        ),
       },
       { accessorKey: 'label', header: 'Produit' },
       {
@@ -190,17 +192,14 @@ export function PackageItemsSection({ packageId }: PackageItemsSectionProps) {
         header: 'Actions',
         meta: { align: 'right' },
         cell: ({ row }) => (
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => void handleDelete(row.original)}
-            disabled={deletingId === row.original.id}
-            loading={deletingId === row.original.id}
-            className="!text-red-600"
-          >
-            Retirer
-          </Button>
+          <DataTableActions>
+            <DataTableActionButton
+              action="remove"
+              onClick={() => void handleDelete(row.original)}
+              disabled={deletingId === row.original.id}
+              loading={deletingId === row.original.id}
+            />
+          </DataTableActions>
         ),
       },
     ],
@@ -209,6 +208,7 @@ export function PackageItemsSection({ packageId }: PackageItemsSectionProps) {
 
   const items = detail?.items ?? [];
   const pricing = detail?.pricing;
+  const pkg = detail?.package;
   const selectClass =
     'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg';
 
@@ -228,24 +228,23 @@ export function PackageItemsSection({ packageId }: PackageItemsSectionProps) {
         ) : null}
       </div>
 
-      {pricing ? (
-        <Card variant="dashboard" className="max-w-md">
-          <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-            <dt className="text-atg-muted">Sous-total</dt>
-            <dd className="text-right tabular-nums font-medium text-atg-fg">
-              {formatMoney(pricing.subtotalCents, pricing.currency)}
-            </dd>
-            <dt className="text-atg-muted">Remise ({pricing.discountPercent}%)</dt>
-            <dd className="text-right tabular-nums text-atg-fg">
-              −{formatMoney(pricing.discountAmountCents, pricing.currency)}
-            </dd>
-            <dt className="font-semibold text-atg-fg">Total forfait</dt>
-            <dd className="text-right tabular-nums font-semibold text-atg-fg">
-              {formatMoney(pricing.totalCents, pricing.currency)}
-            </dd>
-          </dl>
-        </Card>
+      {detail && pricing && pkg ? (
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
+          <PackagePricingRecap
+            pricing={pricing}
+            itemCount={items.length}
+            className="max-w-none"
+          />
+          <PackagePreviewCard
+            pkg={pkg}
+            itemCount={items.length}
+            pricing={pricing}
+            className="lg:sticky lg:top-6"
+          />
+        </div>
       ) : null}
+
+      <PackageCompositionBanner items={items} />
 
       {showForm ? (
         <Card variant="dashboard" className="max-w-2xl">
@@ -260,18 +259,21 @@ export function PackageItemsSection({ packageId }: PackageItemsSectionProps) {
               <label htmlFor={typeId} className="mb-2 block text-sm font-medium">
                 Type
               </label>
-              <select
-                id={typeId}
-                className={selectClass}
-                value={itemType}
-                onChange={(e) => setItemType(e.target.value as PackageItemType)}
-              >
-                {(Object.keys(ITEM_TYPE_LABELS) as PackageItemType[]).map((t) => (
-                  <option key={t} value={t}>
-                    {ITEM_TYPE_LABELS[t]}
-                  </option>
-                ))}
-              </select>
+              <div className="flex items-center gap-3">
+                <PackageItemTypeIcon itemType={itemType} size="md" />
+                <select
+                  id={typeId}
+                  className={cn(selectClass, 'min-w-0 flex-1')}
+                  value={itemType}
+                  onChange={(e) => setItemType(e.target.value as PackageItemType)}
+                >
+                  {PACKAGE_ITEM_TYPES.map((t) => (
+                    <option key={t} value={t}>
+                      {getPackageItemTypeLabel(t)}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
             <div>
               <label htmlFor={itemId} className="mb-2 block text-sm font-medium">

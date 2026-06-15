@@ -29,6 +29,7 @@ const {
   backToHomeLabel,
   receiptTitle,
   printReceiptLabel,
+  downloadPdfLabel,
   downloadPdfHint,
   emailReceiptLabel,
   emailPlaceholder,
@@ -133,13 +134,16 @@ export function PosSaleSuccessContent() {
     let cancelled = false;
 
     async function loadReceipt() {
-      const branding = await fetchPublicBranding();
+      const session = getSession();
+      const branding = await fetchPublicBranding({
+        organizationSlug: session?.selectedOrganizationSlug ?? null,
+      });
       if (cancelled) return;
 
       setReceiptData(
         buildReceiptData(
           bookingDetail!,
-          getSession(),
+          session,
           branding,
           parsePaymentMethod(paymentMethod),
         ),
@@ -229,6 +233,16 @@ export function PosSaleSuccessContent() {
               onClick={() => printPosReceipt()}
             >
               {printReceiptLabel}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              fullWidth
+              className="min-h-[3.5rem] text-lg"
+              onClick={() => printPosReceipt()}
+            >
+              {downloadPdfLabel}
             </Button>
             <p className="text-center text-xs text-atg-muted">{downloadPdfHint}</p>
 

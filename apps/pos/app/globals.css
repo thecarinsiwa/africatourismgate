@@ -45,6 +45,13 @@
     size: auto;
   }
 
+  *,
+  *::before,
+  *::after {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
   body {
     background: #fff !important;
     color: #111 !important;
@@ -64,6 +71,18 @@
   #pos-receipt {
     margin: 0 auto;
     max-width: 80mm;
+    background: #fff !important;
+    color: #111 !important;
     box-shadow: none !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  #pos-receipt img {
+    display: block;
+    max-height: 48px;
+    max-width: 160px;
+    margin-inline: auto;
+    object-fit: contain;
   }
 }

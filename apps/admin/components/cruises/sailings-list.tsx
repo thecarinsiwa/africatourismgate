@@ -4,6 +4,8 @@ import {
   Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   DataTablePagination,
   type ColumnDef,
 } from '@africatourismgate/ui';
@@ -11,8 +13,11 @@ import type { CruiseSailing, Itinerary, Ship } from '@africatourismgate/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getCroisieresErrorMessage } from '../../lib/croisieres-errors';
+import { SailingsCalendarView } from './sailings-calendar-view';
 
 const PAGE_SIZE = 20;
+
+type ViewMode = 'list' | 'calendar';
 
 function formatDate(iso: string): string {
   try {
@@ -23,6 +28,7 @@ function formatDate(iso: string): string {
 }
 
 export function SailingsList() {
+  const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [page, setPage] = useState(1);
   const [itineraries, setItineraries] = useState<Itinerary[]>([]);
   const [ships, setShips] = useState<Ship[]>([]);
@@ -80,8 +86,10 @@ export function SailingsList() {
   }, [page]);
 
   useEffect(() => {
-    void load();
-  }, [load]);
+    if (viewMode === 'list') {
+      void load();
+    }
+  }, [load, viewMode]);
 
   const handleDelete = useCallback(
     async (sailing: CruiseSailing) => {
@@ -146,26 +154,18 @@ export function SailingsList() {
         header: 'Actions',
         meta: { align: 'right' },
         cell: ({ row }) => (
-          <div className="flex justify-end gap-1.5">
-            <Button
+          <DataTableActions>
+            <DataTableActionButton
+              action="edit"
               href={`/produits/croisieres/${row.original.id}`}
-              variant="ghost"
-              size="sm"
-            >
-              Modifier
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="!text-red-600"
+            />
+            <DataTableActionButton
+              action="delete"
               onClick={() => void handleDelete(row.original)}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
-            >
-              Supprimer
-            </Button>
-          </div>
+            />
+          </DataTableActions>
         ),
       },
     ],
@@ -176,7 +176,25 @@ export function SailingsList() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-end">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex gap-2">
+          <Button
+            type="button"
+            variant={viewMode === 'list' ? 'primary' : 'outline'}
+            size="sm"
+            onClick={() => setViewMode('list')}
+          >
+            Liste
+          </Button>
+          <Button
+            type="button"
+            variant={viewMode === 'calendar' ? 'primary' : 'outline'}
+            size="sm"
+            onClick={() => setViewMode('calendar')}
+          >
+            Calendrier
+          </Button>
+        </div>
         <Button href="/produits/croisieres/nouveau">Nouveau départ</Button>
       </div>
 
@@ -186,7 +204,9 @@ export function SailingsList() {
         </p>
       ) : null}
 
-      {state.status === 'error' ? (
+      {viewMode === 'calendar' ? (
+        <SailingsCalendarView itineraryById={itineraryById} shipById={shipById} />
+      ) : state.status === 'error' ? (
         <p role="alert" className="text-sm text-red-600">
           {state.message}
         </p>

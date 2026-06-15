@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import { PageHeader } from '@africatourismgate/ui';
+import { AdminPageBackLink } from '../../../../../components/admin-page-back-link';
 import { VehicleForm } from '../../../../../components/locations/vehicle-form';
 
 export const metadata: Metadata = {
@@ -8,12 +10,13 @@ export const metadata: Metadata = {
 export default function NouveauVehiculePage() {
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Nouveau véhicule</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Associez une agence et une catégorie, puis définissez les créneaux de disponibilité.
-        </p>
-      </div>
+      <PageHeader
+        title="Nouveau véhicule"
+        description="Associez une agence et une catégorie, puis définissez les créneaux de disponibilité."
+        breadcrumb={
+          <AdminPageBackLink href="/produits/locations" label="Retour aux véhicules" />
+        }
+      />
       <VehicleForm mode="create" />
     </div>
   );

@@ -140,6 +140,15 @@ async function main() {
   }
   console.log(`  OK detail: ${detail.data.category.name} via ${detail.data.agency.name}`);
 
+  console.log('8. GET /public/vehicles/:id unavailable period (200, null slot)');
+  const unavailable = await request(
+    `/public/vehicles/${VEHICLE_DEMO_ECO}?pickupDate=2026-06-27&returnDate=2026-06-30`,
+  );
+  assertStatus('vehicle detail unavailable period', unavailable.status, 200);
+  if (unavailable.data?.availabilitySlot != null) {
+    throw new Error('Expected null availabilitySlot for June dates');
+  }
+
   console.log('\nAll public vehicle search checks passed.');
 }
 

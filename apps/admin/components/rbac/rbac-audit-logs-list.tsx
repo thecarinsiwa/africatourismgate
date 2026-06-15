@@ -1,11 +1,10 @@
 'use client';
 
 import {
+  Avatar,
   Card,
-  DataTable,
-  DataTableBadge,
   DataTablePagination,
-  type ColumnDef,
+  Skeleton,
 } from '@africatourismgate/ui';
 import {
   RBAC_AUDIT_EVENT_LABELS,
@@ -16,7 +15,7 @@ import type {
   RbacAuditLog,
   User,
 } from '@africatourismgate/types';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getRbacErrorMessage } from '../../lib/rbac-errors';
 import { UserIdFilterBar } from '../users/user-id-filter-bar';
@@ -41,12 +40,96 @@ function payloadPreview(payload: Record<string, unknown> | null): string {
   return text.length > 80 ? `${text.slice(0, 80)}…` : text;
 }
 
+function eventIcon(eventType: RbacAuditEventType): string {
+  if (eventType.startsWith('role_') && !eventType.includes('permission')) return '🛡';
+  if (eventType.startsWith('permission_') || eventType.includes('permission')) return '🔑';
+  if (eventType.startsWith('user_role_')) return '👤';
+  if (eventType.startsWith('impersonation_')) return '🎭';
+  if (eventType === 'permission_denied') return '🔒';
+  return '📋';
+}
+
+function eventAccentClass(eventType: RbacAuditEventType): string {
+  if (eventType === 'permission_denied') {
+    return 'bg-atg-danger-light text-atg-danger-fg ring-atg-danger/25';
+  }
+  if (eventType.startsWith('user_role_granted') || eventType.includes('granted')) {
+    return 'bg-atg-success-light text-atg-success-fg ring-atg-success/25';
+  }
+  if (eventType.includes('revoked') || eventType.includes('deleted')) {
+    return 'bg-atg-warning-light text-atg-warning-fg ring-atg-warning/25';
+  }
+  return 'bg-atg-surface text-atg-fg ring-atg-border/80';
+}
+
+function AuditTimelineItem({ log }: { log: RbacAuditLog }) {
+  const label = RBAC_AUDIT_EVENT_LABELS[log.eventType] ?? log.eventType;
+
+  return (
+    <li className="relative pl-10">
+      <span
+        className={`absolute left-0 top-1 flex h-8 w-8 items-center justify-center rounded-full text-sm ring-1 ring-inset ${eventAccentClass(log.eventType)}`}
+        aria-hidden
+      >
+        {eventIcon(log.eventType)}
+      </span>
+      <Card variant="dashboard" padding="md" className="space-y-3">
+        <div className="flex flex-wrap items-start justify-between gap-2">
+          <div>
+            <p className="font-medium text-atg-fg">{label}</p>
+            <p className="mt-0.5 text-xs text-atg-muted">{formatDateTime(log.createdAt)}</p>
+          </div>
+        </div>
+
+        {log.actor ? (
+          <div className="flex items-center gap-3">
+            <Avatar
+              email={log.actor.email}
+              firstName={log.actor.firstName}
+              lastName={log.actor.lastName}
+              size="sm"
+            />
+            <div className="min-w-0 text-sm">
+              <p className="font-medium text-atg-fg">
+                {log.actor.firstName} {log.actor.lastName}
+              </p>
+              <p className="truncate text-xs text-atg-muted">{log.actor.email}</p>
+            </div>
+          </div>
+        ) : log.actorUserId ? (
+          <p className="text-sm text-atg-muted">Acteur : {log.actorUserId.slice(0, 8)}…</p>
+        ) : null}
+
+        <dl className="grid gap-1 text-xs text-atg-muted sm:grid-cols-2">
+          {log.targetUserId ? (
+            <div>
+              <dt className="inline font-medium">Cible </dt>
+              <dd className="inline font-mono">{log.targetUserId.slice(0, 8)}…</dd>
+            </div>
+          ) : null}
+          {log.ipAddress ? (
+            <div>
+              <dt className="inline font-medium">IP </dt>
+              <dd className="inline">{log.ipAddress}</dd>
+            </div>
+          ) : null}
+        </dl>
+
+        {log.payload ? (
+          <p className="truncate text-xs text-atg-muted" title={payloadPreview(log.payload)}>
+            {payloadPreview(log.payload)}
+          </p>
+        ) : null}
+      </Card>
+    </li>
+  );
+}
+
 export function RbacAuditLogsList({
   showSubnav = true,
   userFilterMode = showSubnav ? 'actor' : 'involved',
 }: {
   showSubnav?: boolean;
-  /** `involved` filters actor or target via ?userId=; `actor` uses the acteur dropdown. */
   userFilterMode?: 'actor' | 'involved';
 }) {
   const [page, setPage] = useState(1);
@@ -157,75 +240,6 @@ export function RbacAuditLogsList({
     setFilterTick((t) => t + 1);
   }, []);
 
-  const columns = useMemo<ColumnDef<RbacAuditLog, unknown>[]>(
-    () => [
-      {
-        accessorKey: 'createdAt',
-        header: 'Date',
-        cell: ({ row }) => (
-          <span className="whitespace-nowrap text-sm">
-            {formatDateTime(row.original.createdAt)}
-          </span>
-        ),
-      },
-      {
-        accessorKey: 'eventType',
-        header: 'Action',
-        cell: ({ row }) => (
-          <DataTableBadge variant="muted">
-            {RBAC_AUDIT_EVENT_LABELS[row.original.eventType] ?? row.original.eventType}
-          </DataTableBadge>
-        ),
-      },
-      {
-        id: 'actor',
-        header: 'Acteur',
-        cell: ({ row }) => {
-          const log = row.original;
-          return log.actor ? (
-            <span className="text-sm">
-              {log.actor.firstName} {log.actor.lastName}
-              <span className="block text-xs text-atg-muted">{log.actor.email}</span>
-            </span>
-          ) : (
-            <span className="text-sm text-atg-muted">{log.actorUserId ?? '—'}</span>
-          );
-        },
-      },
-      {
-        id: 'target',
-        header: 'Cible',
-        cell: ({ row }) => (
-          <span className="font-mono text-xs text-atg-muted">
-            {row.original.targetUserId
-              ? `${row.original.targetUserId.slice(0, 8)}…`
-              : '—'}
-          </span>
-        ),
-      },
-      {
-        accessorKey: 'ipAddress',
-        header: 'IP',
-        cell: ({ row }) => (
-          <span className="text-sm text-atg-muted">{row.original.ipAddress ?? '—'}</span>
-        ),
-      },
-      {
-        id: 'payload',
-        header: 'Détail',
-        cell: ({ row }) => (
-          <span
-            className="max-w-xs truncate text-xs text-atg-muted"
-            title={payloadPreview(row.original.payload)}
-          >
-            {payloadPreview(row.original.payload)}
-          </span>
-        ),
-      },
-    ],
-    [],
-  );
-
   if (access.status === 'checking') {
     return (
       <>
@@ -249,6 +263,8 @@ export function RbacAuditLogsList({
       </>
     );
   }
+
+  const logs = state.status === 'ready' ? state.logs : [];
 
   return (
     <>
@@ -336,12 +352,23 @@ export function RbacAuditLogsList({
         </p>
       ) : null}
 
-      <DataTable
-        columns={columns}
-        data={state.status === 'ready' ? state.logs : []}
-        isLoading={state.status === 'loading'}
-        emptyMessage="Aucun événement pour ces critères."
-      />
+      {state.status === 'loading' ? (
+        <div className="space-y-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-28 rounded-xl" />
+          ))}
+        </div>
+      ) : logs.length === 0 ? (
+        <Card variant="dashboard" padding="lg">
+          <p className="text-sm text-atg-muted">Aucun événement pour ces critères.</p>
+        </Card>
+      ) : (
+        <ol className="relative space-y-6 border-l border-atg-border pl-4">
+          {logs.map((log) => (
+            <AuditTimelineItem key={log.id} log={log} />
+          ))}
+        </ol>
+      )}
 
       {state.status === 'ready' && state.totalPages > 1 ? (
         <DataTablePagination
@@ -351,6 +378,7 @@ export function RbacAuditLogsList({
           totalItems={state.total}
           itemLabel="événement"
           onPageChange={setPage}
+          className="mt-6"
         />
       ) : null}
     </>

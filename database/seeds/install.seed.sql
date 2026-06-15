@@ -96,7 +96,9 @@ INSERT INTO `users` (
 
 UPDATE `organizations`
 SET `created_by_user_id` = '00000000-0000-4000-8000-000000000010',
-    `updated_by_user_id` = '00000000-0000-4000-8000-000000000010'
+    `updated_by_user_id` = '00000000-0000-4000-8000-000000000010',
+    `contact_email` = 'support@africatourismgate.com',
+    `contact_phone` = '+243 815 000 000'
 WHERE `id` = '00000000-0000-4000-8000-000000000001';
 
 -- -----------------------------------------------------------------------------
@@ -195,6 +197,14 @@ INSERT INTO `organization_settings` (
   '00000000-0000-4000-8000-000000000010'
 ),
 (
+  '00000000-0000-4000-8000-000000000017',
+  '00000000-0000-4000-8000-000000000001',
+  'branding',
+  'auth_visual',
+  '{"icons":[{"preset":"pin","opacity":25,"size":"lg","position":"bottom-right","enabled":true},{"preset":"pin","opacity":60,"size":"sm","position":"top-right","enabled":true}]}',
+  '00000000-0000-4000-8000-000000000010'
+),
+(
   '00000000-0000-4000-8000-000000000014',
   '00000000-0000-4000-8000-000000000001',
   'loyalty',
@@ -208,6 +218,14 @@ INSERT INTO `organization_settings` (
   'email',
   'email_branding',
   '{"displayName":"Africa Tourism Gate","primaryColor":"#0d9488","footerText":"© Africa Tourism Gate"}',
+  '00000000-0000-4000-8000-000000000010'
+),
+(
+  '00000000-0000-4000-8000-000000000016',
+  '00000000-0000-4000-8000-000000000001',
+  'contact',
+  'web',
+  '{"location":"Kinshasa, RD Congo","facebookUrl":"https://www.facebook.com/africatourismgate/","twitterUrl":"https://x.com/Congotourismga1","instagramUrl":"https://www.instagram.com/africatourismgate/"}',
   '00000000-0000-4000-8000-000000000010'
 );
 
@@ -612,7 +630,7 @@ INSERT INTO `activity_providers` (
 );
 
 INSERT INTO `activities` (
-  `id`, `provider_id`, `title`, `description`, `duration_minutes`, `price_cents`, `currency`, `created_by_user_id`
+  `id`, `provider_id`, `title`, `description`, `duration_minutes`, `difficulty_level`, `price_cents`, `currency`, `created_by_user_id`
 ) VALUES
 (
   '00000000-0000-4000-8000-000000004031',
@@ -620,6 +638,7 @@ INSERT INTO `activities` (
   'Gombe City Tour',
   'Guided walking tour of Kinshasa Gombe district.',
   180,
+  'moderate',
   4500,
   'USD',
   '00000000-0000-4000-8000-000000000010'
@@ -628,8 +647,9 @@ INSERT INTO `activities` (
   '00000000-0000-4000-8000-000000004032',
   '00000000-0000-4000-8000-000000004030',
   'Congo River Walk',
-  'Scenic walk along the Congo River (no demo schedules).',
+  'Scenic walk along the Congo River embankment.',
   120,
+  'easy',
   3500,
   'USD',
   '00000000-0000-4000-8000-000000000010'
@@ -652,6 +672,47 @@ INSERT INTO `activity_schedules` (
   '2026-07-20 14:00:00',
   8,
   8,
+  '00000000-0000-4000-8000-000000000010'
+),
+(
+  '00000000-0000-4000-8000-000000004035',
+  '00000000-0000-4000-8000-000000004032',
+  '2026-07-20 16:00:00',
+  10,
+  0,
+  '00000000-0000-4000-8000-000000000010'
+);
+
+-- -----------------------------------------------------------------------------
+-- 17. Demo activity-only package (public catalog #71)
+-- -----------------------------------------------------------------------------
+INSERT INTO `packages` (
+  `id`, `name`, `description`, `discount_percent`, `duration_days`, `active`, `created_by_user_id`
+) VALUES (
+  '00000000-0000-4000-8000-000000005001',
+  'Kinshasa Activities Duo',
+  'Two guided experiences in Kinshasa at a bundled discount.',
+  15.00,
+  1,
+  1,
+  '00000000-0000-4000-8000-000000000010'
+);
+
+INSERT INTO `package_items` (
+  `id`, `package_id`, `item_type`, `item_id`, `created_by_user_id`
+) VALUES
+(
+  '00000000-0000-4000-8000-000000005002',
+  '00000000-0000-4000-8000-000000005001',
+  'activity',
+  '00000000-0000-4000-8000-000000004031',
+  '00000000-0000-4000-8000-000000000010'
+),
+(
+  '00000000-0000-4000-8000-000000005003',
+  '00000000-0000-4000-8000-000000005001',
+  'activity',
+  '00000000-0000-4000-8000-000000004032',
   '00000000-0000-4000-8000-000000000010'
 );
 

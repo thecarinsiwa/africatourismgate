@@ -2,8 +2,11 @@
 
 import { Button, Input } from '@africatourismgate/ui';
 import type {
+  AuthVisualDecorIcon,
+  AuthVisualSettingValue,
   BookingDefaultsValue,
   BrandingPlatformValue,
+  ContactWebSettingValue,
   LocaleSettingValue,
   LoyaltyOneKeySettingValue,
   Organization,
@@ -26,9 +29,16 @@ import {
 } from '../../lib/organization-theme';
 import { useOrganizationThemeOptional } from '../organization-theme-provider';
 import { BrandColorPaletteField } from './brand-color-palette-field';
+import { AuthVisualIconsField } from './auth-visual-icons-field';
+import { authVisualFromSetting } from '../../lib/auth-visual';
 
 type SettingsFormValues = {
   contactEmail: string;
+  contactPhone: string;
+  location: string;
+  facebookUrl: string;
+  twitterUrl: string;
+  instagramUrl: string;
   currency: string;
   language: string;
   timezone: string;
@@ -42,10 +52,16 @@ type SettingsFormValues = {
   loyaltyEnabled: boolean;
   loyaltyPointsPerMajorUnit: string;
   loyaltyProgramCode: string;
+  authVisualIcons: AuthVisualDecorIcon[];
 };
 
 const defaultValues: SettingsFormValues = {
   contactEmail: '',
+  contactPhone: '',
+  location: 'Kinshasa, RD Congo',
+  facebookUrl: 'https://www.facebook.com/africatourismgate/',
+  twitterUrl: 'https://x.com/Congotourismga1',
+  instagramUrl: 'https://www.instagram.com/africatourismgate/',
   currency: 'USD',
   language: 'fr',
   timezone: 'Africa/Kinshasa',
@@ -59,6 +75,7 @@ const defaultValues: SettingsFormValues = {
   loyaltyEnabled: DEFAULT_LOYALTY_ONEKEY_SETTING.enabled,
   loyaltyPointsPerMajorUnit: String(DEFAULT_LOYALTY_ONEKEY_SETTING.pointsPerMajorUnit),
   loyaltyProgramCode: DEFAULT_LOYALTY_ONEKEY_SETTING.programCode,
+  authVisualIcons: [],
 };
 
 function settingByKey(
@@ -75,10 +92,19 @@ function toFormValues(
   const locale = settingByKey(settings, 'locale') as LocaleSettingValue | undefined;
   const defaults = settingByKey(settings, 'defaults') as BookingDefaultsValue | undefined;
   const platform = settingByKey(settings, 'platform') as BrandingPlatformValue | undefined;
+  const contactWeb = settings.find(
+    (s) => s.settingGroup === 'contact' && s.settingKey === 'web',
+  )?.settingValue as ContactWebSettingValue | undefined;
   const onekey = settingByKey(settings, 'onekey') as LoyaltyOneKeySettingValue | undefined;
+  const authVisual = settingByKey(settings, 'auth_visual') as AuthVisualSettingValue | undefined;
 
   return {
     contactEmail: org.contactEmail ?? '',
+    contactPhone: org.contactPhone ?? '',
+    location: contactWeb?.location ?? 'Kinshasa, RD Congo',
+    facebookUrl: contactWeb?.facebookUrl ?? '',
+    twitterUrl: contactWeb?.twitterUrl ?? '',
+    instagramUrl: contactWeb?.instagramUrl ?? '',
     currency: org.currency ?? locale?.currency ?? 'USD',
     language: locale?.language ?? 'fr',
     timezone: locale?.timezone ?? 'Africa/Kinshasa',
@@ -95,6 +121,7 @@ function toFormValues(
     ),
     loyaltyProgramCode:
       onekey?.programCode ?? DEFAULT_LOYALTY_ONEKEY_SETTING.programCode,
+    authVisualIcons: authVisualFromSetting(authVisual).map((icon) => ({ ...icon })),
   };
 }
 
@@ -122,6 +149,7 @@ export function OrganizationSettingsForm({
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [uploadingField, setUploadingField] = useState<'logoUrl' | 'faviconUrl' | null>(null);
+  const [uploadingAuthIconIndex, setUploadingAuthIconIndex] = useState<number | null>(null);
 
   const updateField = useCallback(
     <K extends keyof SettingsFormValues>(key: K, value: SettingsFormValues[K]) => {
@@ -235,15 +263,27 @@ export function OrganizationSettingsForm({
       const client = getApiClient();
       const currency = values.currency.trim().toUpperCase();
       const contactEmail = values.contactEmail.trim();
+      const contactPhone = values.contactPhone.trim();
 
       await client.updateOrganization(organizationId, {
         ...(contactEmail ? { contactEmail } : { contactEmail: undefined }),
+        ...(contactPhone ? { contactPhone } : { contactPhone: undefined }),
         currency,
       });
 
       await client.bulkUpsertOrganizationSettings({
         ...(isSuperAdmin ? { organizationId } : {}),
         settings: [
+          {
+            settingGroup: 'contact',
+            settingKey: 'web',
+            settingValue: {
+              location: values.location.trim() || undefined,
+              facebookUrl: values.facebookUrl.trim() || undefined,
+              twitterUrl: values.twitterUrl.trim() || undefined,
+              instagramUrl: values.instagramUrl.trim() || undefined,
+            },
+          },
           {
             settingGroup: 'general',
             settingKey: 'locale',
@@ -273,6 +313,13 @@ export function OrganizationSettingsForm({
             },
           },
           {
+            settingGroup: 'branding',
+            settingKey: 'auth_visual',
+            settingValue: {
+              icons: values.authVisualIcons,
+            },
+          },
+          {
             settingGroup: 'loyalty',
             settingKey: 'onekey',
             settingValue: {
@@ -293,6 +340,36 @@ export function OrganizationSettingsForm({
     } finally {
       setSubmitting(false);
     }
+  }
+
+  async function uploadBrandingImage(file: File): Promise<string> {
+    if (!file.type.startsWith('image/')) {
+      throw new Error('Invalid image type');
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      throw new Error('Image too large');
+    }
+    const session = getSession();
+    if (!session?.accessToken) {
+      throw new Error('Missing session');
+    }
+    const body = new FormData();
+    body.append('file', file);
+    const response = await fetch(`${resolveApiBaseUrl()}/organization-settings/upload-branding`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${session.accessToken}`,
+      },
+      body,
+    });
+    if (!response.ok) {
+      throw new Error('Upload branding failed');
+    }
+    const payload = (await response.json()) as { url?: string };
+    if (!payload.url) {
+      throw new Error('Invalid upload response');
+    }
+    return payload.url;
   }
 
   async function handleLocalImagePick(
@@ -316,29 +393,28 @@ export function OrganizationSettingsForm({
         return;
       }
       setUploadingField(field);
-      const body = new FormData();
-      body.append('file', file);
-      const response = await fetch(`${resolveApiBaseUrl()}/organization-settings/upload-branding`, {
-        method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${session.accessToken}`,
-        },
-        body,
-      });
-      if (!response.ok) {
-        throw new Error('Upload branding failed');
-      }
-      const payload = (await response.json()) as { url?: string };
-      if (!payload.url) {
-        throw new Error('Invalid upload response');
-      }
-      updateField(field, payload.url);
+      const url = await uploadBrandingImage(file);
+      updateField(field, url);
       setFormError(null);
     } catch {
       setFormError("Impossible d'uploader l'image locale.");
     } finally {
       setUploadingField(null);
       event.target.value = '';
+    }
+  }
+
+  async function handleAuthVisualImageUpload(index: number, file: File): Promise<string> {
+    try {
+      setUploadingAuthIconIndex(index);
+      const url = await uploadBrandingImage(file);
+      setFormError(null);
+      return url;
+    } catch {
+      setFormError("Impossible d'uploader l'image locale.");
+      throw new Error('Upload failed');
+    } finally {
+      setUploadingAuthIconIndex(null);
     }
   }
 
@@ -390,12 +466,49 @@ export function OrganizationSettingsForm({
 
       <section className="space-y-4">
         <h2 className="text-lg font-semibold text-atg-fg">Coordonnées</h2>
+        <p className="text-sm text-atg-muted">
+          Affichées dans le bandeau et le pied de page du site public.
+        </p>
+        <Input
+          label="Téléphone"
+          type="tel"
+          value={values.contactPhone}
+          onChange={(e) => updateField('contactPhone', e.target.value)}
+          placeholder="+243 815 000 000"
+        />
         <Input
           label="E-mail de contact"
           type="email"
           value={values.contactEmail}
           onChange={(e) => updateField('contactEmail', e.target.value)}
           error={fieldErrors.contactEmail}
+        />
+        <Input
+          label="Adresse / localisation"
+          value={values.location}
+          onChange={(e) => updateField('location', e.target.value)}
+          placeholder="Kinshasa, RD Congo"
+        />
+        <Input
+          label="URL Facebook"
+          type="url"
+          value={values.facebookUrl}
+          onChange={(e) => updateField('facebookUrl', e.target.value)}
+          placeholder="https://www.facebook.com/..."
+        />
+        <Input
+          label="URL X / Twitter"
+          type="url"
+          value={values.twitterUrl}
+          onChange={(e) => updateField('twitterUrl', e.target.value)}
+          placeholder="https://x.com/..."
+        />
+        <Input
+          label="URL Instagram"
+          type="url"
+          value={values.instagramUrl}
+          onChange={(e) => updateField('instagramUrl', e.target.value)}
+          placeholder="https://www.instagram.com/..."
         />
         <Input
           label="Devise"
@@ -533,6 +646,16 @@ export function OrganizationSettingsForm({
           </label>
           <span className="text-xs text-atg-muted">PNG/ICO/SVG, max 2 MB</span>
         </div>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-lg font-semibold text-atg-fg">Panneau connexion</h2>
+        <AuthVisualIconsField
+          icons={values.authVisualIcons}
+          onChange={(authVisualIcons) => updateField('authVisualIcons', authVisualIcons)}
+          onUploadImage={handleAuthVisualImageUpload}
+          uploadingIndex={uploadingAuthIconIndex}
+        />
       </section>
 
       <div className="flex gap-3">

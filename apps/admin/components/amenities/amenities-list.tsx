@@ -3,13 +3,14 @@
 import {
   Button,
   Card,
-  DataTable,
+  DataTableActionButton,
+  DataTableActions,
   DataTablePagination,
   Input,
-  type ColumnDef,
 } from '@africatourismgate/ui';
 import type { Amenity } from '@africatourismgate/types';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { getAmenityIcon } from '../../lib/amenity-icon-map';
 import { getApiClient } from '../../lib/auth/api';
 import { getHebergementsErrorMessage } from '../../lib/hebergements-errors';
 
@@ -131,43 +132,6 @@ export function AmenitiesList() {
     [load],
   );
 
-  const columns = useMemo<ColumnDef<Amenity, unknown>[]>(
-    () => [
-      {
-        accessorKey: 'code',
-        header: 'Code',
-        cell: ({ row }) => (
-          <code className="font-mono text-xs text-atg-muted">{row.original.code}</code>
-        ),
-      },
-      { accessorKey: 'name', header: 'Nom' },
-      {
-        id: 'actions',
-        header: 'Actions',
-        meta: { align: 'right' },
-        cell: ({ row }) => (
-          <div className="flex justify-end gap-1.5">
-            <Button type="button" variant="ghost" size="sm" onClick={() => openEdit(row.original)}>
-              Modifier
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => void handleDelete(row.original)}
-              disabled={deletingId === row.original.id}
-              loading={deletingId === row.original.id}
-              className="!text-red-600"
-            >
-              Supprimer
-            </Button>
-          </div>
-        ),
-      },
-    ],
-    [deletingId, handleDelete],
-  );
-
   const amenities = state.status === 'ready' ? state.amenities : [];
 
   return (
@@ -238,15 +202,40 @@ export function AmenitiesList() {
         </p>
       ) : (
         <>
-          <Card variant="dashboard" padding="none" className="overflow-hidden">
-            <DataTable
-              columns={columns}
-              data={amenities}
-              isLoading={state.status === 'loading'}
-              emptyMessage="Aucun équipement."
-              getRowId={(row) => row.id}
-            />
-          </Card>
+          {state.status === 'loading' ? (
+            <p className="text-sm text-atg-muted">Chargement…</p>
+          ) : amenities.length === 0 ? (
+            <p className="text-sm text-atg-muted">Aucun équipement.</p>
+          ) : (
+            <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {amenities.map((a) => (
+                <li key={a.id}>
+                  <Card variant="dashboard" className="flex h-full flex-col gap-3">
+                    <div className="flex items-start gap-3">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-atg-surface text-primary">
+                        {getAmenityIcon(a.code, 'h-5 w-5')}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium text-atg-fg">{a.name}</p>
+                        <code className="font-mono text-xs text-atg-muted">{a.code}</code>
+                      </div>
+                    </div>
+                    <div className="mt-auto flex justify-end border-t border-atg-border pt-3">
+                      <DataTableActions>
+                        <DataTableActionButton action="edit" onClick={() => openEdit(a)} />
+                        <DataTableActionButton
+                          action="delete"
+                          onClick={() => void handleDelete(a)}
+                          disabled={deletingId === a.id}
+                          loading={deletingId === a.id}
+                        />
+                      </DataTableActions>
+                    </div>
+                  </Card>
+                </li>
+              ))}
+            </ul>
+          )}
           {state.status === 'ready' ? (
             <DataTablePagination
               page={page}

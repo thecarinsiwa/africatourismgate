@@ -15,6 +15,17 @@ const MONTH_NAMES = [
 
 const WEEKDAY_NAMES = ['dim.', 'lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.'] as const;
 
+/** En-têtes calendrier lun–dim (lundi en premier). */
+export const CALENDAR_WEEKDAY_HEADERS = [
+  'lun.',
+  'mar.',
+  'mer.',
+  'jeu.',
+  'ven.',
+  'sam.',
+  'dim.',
+] as const;
+
 export function formatDateISO(year: number, month: number, day: number): string {
   const m = String(month).padStart(2, '0');
   const d = String(day).padStart(2, '0');
@@ -74,4 +85,20 @@ export function formatDateLabel(isoDate: string): string {
 
 export function formatPrice(cents: number, currency: string): string {
   return `${(cents / 100).toFixed(2)} ${currency}`;
+}
+
+/** Nombre de cellules vides avant le 1er jour (grille lun–dim). */
+export function weekdayOffset(isoMonth: string): number {
+  const first = startOfMonth(isoMonth);
+  const [y, m, d] = first.split('-').map(Number);
+  const day = new Date(Date.UTC(y, m - 1, d)).getUTCDay();
+  return (day + 6) % 7;
+}
+
+/** Libellé court pour une cellule calendrier (ex. « lun. 3 »). */
+export function formatShortDay(isoDate: string): string {
+  const [, , dayStr] = isoDate.split('-');
+  const day = Number(dayStr);
+  const weekday = formatDateLabel(isoDate).split(' ')[0];
+  return `${weekday} ${day}`;
 }

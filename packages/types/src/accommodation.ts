@@ -96,6 +96,33 @@ export interface RoomsListQuery {
   propertyId?: string;
 }
 
+export interface RoomImage {
+  id: string;
+  roomId: string;
+  url: string;
+  caption: string | null;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string | null;
+}
+
+export interface CreateRoomImageRequest {
+  roomId: string;
+  url: string;
+  caption?: string;
+  sortOrder?: number;
+}
+
+export type UpdateRoomImageRequest = Partial<
+  Omit<CreateRoomImageRequest, 'roomId'>
+>;
+
+export interface RoomImagesListQuery {
+  page?: number;
+  limit?: number;
+  roomId?: string;
+}
+
 export interface Amenity {
   id: string;
   code: string;

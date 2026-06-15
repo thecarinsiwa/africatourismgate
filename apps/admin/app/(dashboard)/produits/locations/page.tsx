@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import { PageHeader, TextLink } from '@africatourismgate/ui';
+import { LocationsStatCards } from '../../../../components/locations/locations-stat-cards';
 import { VehiclesList } from '../../../../components/locations/vehicles-list';
 
 export const metadata: Metadata = {
@@ -9,27 +10,20 @@ export const metadata: Metadata = {
 export default function LocationsPage() {
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Locations véhicules</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Véhicules par agence, catégories et créneaux de disponibilité.
-        </p>
-        <p className="mt-3 text-sm">
-          <Link
-            href="/produits/locations/agences"
-            className="font-medium text-primary hover:underline"
-          >
-            Agences de location
-          </Link>
-          <span className="mx-2 text-atg-muted">·</span>
-          <Link
-            href="/produits/locations/categories"
-            className="font-medium text-primary hover:underline"
-          >
-            Catégories
-          </Link>
-        </p>
-      </div>
+      <PageHeader
+        title="Locations véhicules"
+        description="Véhicules par agence, catégories et créneaux de disponibilité."
+      />
+      <p className="-mt-4 mb-6 text-sm text-atg-muted">
+        <TextLink href="/produits/locations/agences" variant="primary" className="font-medium">
+          Agences de location
+        </TextLink>
+        <span className="mx-2">·</span>
+        <TextLink href="/produits/locations/categories" variant="primary" className="font-medium">
+          Catégories
+        </TextLink>
+      </p>
+      <LocationsStatCards className="mb-6" />
       <VehiclesList />
     </div>
   );

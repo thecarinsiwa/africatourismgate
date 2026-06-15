@@ -3,6 +3,7 @@ import { PublicAccommodationsModule } from './accommodations/public-accommodatio
 import { PublicActivitiesModule } from './activities/public-activities.module';
 import { PublicCruisesModule } from './cruises/public-cruises.module';
 import { PublicFlightsModule } from './flights/public-flights.module';
+import { PublicPackagesModule } from './packages/public-packages.module';
 import { PublicVehiclesModule } from './vehicles/public-vehicles.module';
 
 @Module({
@@ -12,6 +13,7 @@ import { PublicVehiclesModule } from './vehicles/public-vehicles.module';
     PublicVehiclesModule,
     PublicCruisesModule,
     PublicActivitiesModule,
+    PublicPackagesModule,
   ],
 })
 export class PublicModule {}

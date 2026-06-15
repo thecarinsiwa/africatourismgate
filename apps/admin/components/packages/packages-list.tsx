@@ -4,6 +4,8 @@ import {
   Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   DataTablePagination,
   Input,
   type ColumnDef,
@@ -140,22 +142,19 @@ export function PackagesList() {
         cell: ({ row }) => {
           const pkg = row.original;
           return (
-            <div className="flex justify-end gap-1.5">
-              <Button href={`/produits/forfaits/${pkg.id}`} variant="ghost" size="sm">
-                Modifier
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
+            <DataTableActions>
+              <DataTableActionButton
+                action="view"
+                href={`/produits/forfaits/${pkg.id}/voir`}
+              />
+              <DataTableActionButton action="edit" href={`/produits/forfaits/${pkg.id}`} />
+              <DataTableActionButton
+                action="delete"
                 onClick={() => void handleDelete(pkg)}
                 disabled={deletingId === pkg.id}
                 loading={deletingId === pkg.id}
-                className="!text-red-600 hover:!bg-red-50 dark:!text-red-400"
-              >
-                Supprimer
-              </Button>
-            </div>
+              />
+            </DataTableActions>
           );
         },
       },

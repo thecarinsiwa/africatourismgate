@@ -1,15 +1,19 @@
 'use client';
 
-import { Button, Card, Input } from '@africatourismgate/ui';
+import { Button, Card, Input, useToast } from '@africatourismgate/ui';
 import type { FlightClassAvailability } from '@africatourismgate/types';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import {
+  CALENDAR_WEEKDAY_HEADERS,
+  currentYearMonth,
   enumerateMonthDays,
   formatDateLabel,
   formatMonthLabel,
   formatPrice,
+  formatShortDay,
   shiftYearMonth,
+  weekdayOffset,
 } from '../../lib/availability-dates';
 import { getVolsErrorMessage } from '../../lib/vols-errors';
 
@@ -25,20 +29,41 @@ type FlightClassAvailabilityGridProps = {
   onYearMonthChange: (yearMonth: string) => void;
 };
 
+type OccupancyTone = 'danger' | 'warning' | 'success' | 'neutral';
+
+function occupancyTone(seats: number): OccupancyTone {
+  if (seats === 0) return 'danger';
+  if (seats <= 2) return 'warning';
+  if (seats > 2) return 'success';
+  return 'neutral';
+}
+
+const toneClasses: Record<OccupancyTone, string> = {
+  danger: 'bg-atg-danger-light text-atg-danger-fg ring-atg-danger/30',
+  warning: 'bg-atg-warning-light text-atg-warning-fg ring-atg-warning/30',
+  success: 'bg-atg-success-light text-atg-success-fg ring-atg-success/30',
+  neutral: 'bg-atg-surface text-atg-muted ring-atg-border/60',
+};
+
 export function FlightClassAvailabilityGrid({
   flightClassId,
   defaultPriceCents,
   yearMonth,
   onYearMonthChange,
 }: FlightClassAvailabilityGridProps) {
+  const { toast } = useToast();
+  const gridRef = useRef<HTMLDivElement>(null);
   const [rows, setRows] = useState<Map<string, FlightClassAvailability>>(new Map());
   const [drafts, setDrafts] = useState<Map<string, DayDraft>>(new Map());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [savingDate, setSavingDate] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [editingDate, setEditingDate] = useState<string | null>(null);
+  const [focusedDate, setFocusedDate] = useState<string | null>(null);
 
   const monthDays = useMemo(() => enumerateMonthDays(yearMonth), [yearMonth]);
+  const leadingBlanks = useMemo(() => weekdayOffset(yearMonth), [yearMonth]);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -67,6 +92,9 @@ export function FlightClassAvailabilityGrid({
         });
       }
       setDrafts(nextDrafts);
+      setFocusedDate((prev) =>
+        prev && monthDays.includes(prev) ? prev : monthDays[0] ?? null,
+      );
     } catch (err) {
       setError(getVolsErrorMessage(err));
     } finally {
@@ -77,6 +105,10 @@ export function FlightClassAvailabilityGrid({
   useEffect(() => {
     void load();
   }, [load]);
+
+  useEffect(() => {
+    setEditingDate(null);
+  }, [yearMonth, flightClassId]);
 
   function updateDraft(date: string, field: keyof DayDraft, value: string) {
     setDrafts((prev) => {
@@ -123,9 +155,21 @@ export function FlightClassAvailabilityGrid({
           priceCents: cents,
         });
       }
+      toast({
+        title: 'Disponibilité enregistrée',
+        message: formatDateLabel(date),
+        variant: 'success',
+      });
+      setEditingDate(null);
       await load();
     } catch (err) {
-      setError(getVolsErrorMessage(err));
+      const message = getVolsErrorMessage(err);
+      setError(message);
+      toast({
+        title: 'Erreur d’enregistrement',
+        message,
+        variant: 'error',
+      });
     } finally {
       setSavingDate(null);
     }
@@ -139,128 +183,261 @@ export function FlightClassAvailabilityGrid({
     setError(null);
     try {
       await getApiClient().deleteFlightClassAvailability(existing.id);
+      toast({
+        title: 'Disponibilité supprimée',
+        message: formatDateLabel(date),
+        variant: 'success',
+      });
+      setEditingDate(null);
       await load();
     } catch (err) {
-      setError(getVolsErrorMessage(err));
+      const message = getVolsErrorMessage(err);
+      setError(message);
+      toast({
+        title: 'Erreur de suppression',
+        message,
+        variant: 'error',
+      });
     } finally {
       setDeletingId(null);
     }
   }
 
+  function openEdit(date: string) {
+    setEditingDate(date);
+    setFocusedDate(date);
+  }
+
+  function closeEdit() {
+    setEditingDate(null);
+  }
+
+  function moveFocus(delta: number) {
+    if (!focusedDate) return;
+    const index = monthDays.indexOf(focusedDate);
+    if (index < 0) return;
+    const next = monthDays[index + delta];
+    if (next) setFocusedDate(next);
+  }
+
+  function handleGridKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+    if (!focusedDate) return;
+
+    if (editingDate) {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closeEdit();
+      }
+      return;
+    }
+
+    switch (event.key) {
+      case 'ArrowLeft':
+        event.preventDefault();
+        moveFocus(-1);
+        break;
+      case 'ArrowRight':
+        event.preventDefault();
+        moveFocus(1);
+        break;
+      case 'ArrowUp':
+        event.preventDefault();
+        moveFocus(-7);
+        break;
+      case 'ArrowDown':
+        event.preventDefault();
+        moveFocus(7);
+        break;
+      case 'Enter':
+      case ' ':
+        event.preventDefault();
+        openEdit(focusedDate);
+        break;
+      default:
+        break;
+    }
+  }
+
+  const calendarCells = useMemo(() => {
+    const cells: Array<{ type: 'blank' } | { type: 'day'; date: string }> = [];
+    for (let i = 0; i < leadingBlanks; i += 1) {
+      cells.push({ type: 'blank' });
+    }
+    for (const date of monthDays) {
+      cells.push({ type: 'day', date });
+    }
+    return cells;
+  }, [leadingBlanks, monthDays]);
+
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h3 className="text-sm font-medium text-atg-fg">{formatMonthLabel(yearMonth)}</h3>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
           <Button
             type="button"
             variant="outline"
             size="sm"
+            aria-label="Mois précédent"
             onClick={() => onYearMonthChange(shiftYearMonth(yearMonth, -1))}
           >
-            Mois précédent
+            ‹
           </Button>
+          <h3
+            className="min-w-[10rem] text-center text-sm font-semibold text-atg-fg"
+            aria-live="polite"
+          >
+            {formatMonthLabel(yearMonth)}
+          </h3>
           <Button
             type="button"
             variant="outline"
             size="sm"
+            aria-label="Mois suivant"
             onClick={() => onYearMonthChange(shiftYearMonth(yearMonth, 1))}
           >
-            Mois suivant
+            ›
           </Button>
         </div>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => onYearMonthChange(currentYearMonth())}
+        >
+          Aujourd’hui
+        </Button>
       </div>
 
       {error ? (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {error}
         </p>
       ) : null}
 
-      <Card variant="dashboard" padding="none" className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-atg-border text-sm">
-          <thead className="bg-atg-muted/30">
-            <tr>
-              <th className="px-4 py-3 text-left font-medium text-atg-fg">Date</th>
-              <th className="px-4 py-3 text-left font-medium text-atg-fg">Sièges</th>
-              <th className="px-4 py-3 text-left font-medium text-atg-fg">Prix</th>
-              <th className="px-4 py-3 text-right font-medium text-atg-fg">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-atg-border">
-            {loading ? (
-              <tr>
-                <td colSpan={4} className="px-4 py-6 text-atg-muted">
-                  Chargement…
-                </td>
-              </tr>
-            ) : (
-              monthDays.map((date) => {
-                const existing = rows.get(date);
-                const draft = drafts.get(date);
-                const hasRow = Boolean(existing);
+      <Card variant="dashboard" padding="md">
+        {loading ? (
+          <p className="text-sm text-atg-muted">Chargement…</p>
+        ) : (
+          <div
+            ref={gridRef}
+            role="grid"
+            aria-label={`Calendrier ${formatMonthLabel(yearMonth)}`}
+            className="grid grid-cols-7 gap-1 sm:gap-2"
+            onKeyDown={handleGridKeyDown}
+          >
+            {CALENDAR_WEEKDAY_HEADERS.map((label) => (
+              <div
+                key={label}
+                role="columnheader"
+                className="py-1 text-center text-xs font-medium uppercase tracking-wide text-atg-muted"
+              >
+                {label}
+              </div>
+            ))}
+
+            {calendarCells.map((cell, index) => {
+              if (cell.type === 'blank') {
                 return (
-                  <tr key={date} className={hasRow ? '' : 'bg-atg-muted/10'}>
-                    <td className="px-4 py-3 whitespace-nowrap text-atg-fg">
-                      {formatDateLabel(date)}
-                    </td>
-                    <td className="px-4 py-2">
+                  <div
+                    key={`blank-${index}`}
+                    role="gridcell"
+                    aria-hidden
+                    className="min-h-[4.5rem] rounded-lg sm:min-h-[5.5rem]"
+                  />
+                );
+              }
+
+              const { date } = cell;
+              const existing = rows.get(date);
+              const draft = drafts.get(date);
+              const seats = Number(draft?.availableSeats ?? 0);
+              const cents = Number(draft?.priceCents ?? defaultPriceCents);
+              const tone = occupancyTone(Number.isFinite(seats) ? seats : 0);
+              const isEditing = editingDate === date;
+              const isFocused = focusedDate === date;
+              const dayNum = Number(date.split('-')[2]);
+
+              return (
+                <div
+                  key={date}
+                  role="gridcell"
+                  tabIndex={isFocused ? 0 : -1}
+                  aria-label={formatShortDay(date)}
+                  aria-selected={isFocused}
+                  className="min-h-[4.5rem] rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-primary sm:min-h-[5.5rem]"
+                  onFocus={() => setFocusedDate(date)}
+                  onClick={() => {
+                    setFocusedDate(date);
+                    if (!isEditing) openEdit(date);
+                  }}
+                >
+                  {isEditing ? (
+                    <div className="flex h-full flex-col gap-1 rounded-lg border border-primary/40 bg-atg-elevated p-2">
+                      <span className="text-xs font-medium text-atg-fg">{dayNum}</span>
                       <Input
                         type="number"
                         min={0}
                         value={draft?.availableSeats ?? '0'}
-                        onChange={(e) =>
-                          updateDraft(date, 'availableSeats', e.target.value)
-                        }
-                        className="max-w-[120px]"
+                        onChange={(e) => updateDraft(date, 'availableSeats', e.target.value)}
+                        className="!px-2 !py-1 text-xs"
+                        aria-label={`Sièges ${date}`}
                       />
-                    </td>
-                    <td className="px-4 py-2">
-                      <div className="flex flex-col gap-1">
-                        <Input
-                          type="number"
-                          min={0}
-                          value={draft?.priceCents ?? String(defaultPriceCents)}
-                          onChange={(e) => updateDraft(date, 'priceCents', e.target.value)}
-                          className="max-w-[140px]"
-                        />
-                        {existing ? (
-                          <span className="text-xs text-atg-muted">
-                            {formatPrice(existing.priceCents, 'USD')}
-                          </span>
-                        ) : null}
-                      </div>
-                    </td>
-                    <td className="px-4 py-2 text-right">
-                      <div className="flex justify-end gap-2">
+                      <Input
+                        type="number"
+                        min={0}
+                        value={draft?.priceCents ?? String(defaultPriceCents)}
+                        onChange={(e) => updateDraft(date, 'priceCents', e.target.value)}
+                        className="!px-2 !py-1 text-xs"
+                        aria-label={`Prix ${date}`}
+                      />
+                      <div className="mt-auto flex flex-wrap gap-1">
                         <Button
                           type="button"
                           size="sm"
+                          className="!px-2 !py-0.5 text-xs"
                           loading={savingDate === date}
-                          onClick={() => void handleSaveDay(date)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            void handleSaveDay(date);
+                          }}
                         >
-                          {hasRow ? 'Enregistrer' : 'Ajouter'}
+                          OK
                         </Button>
-                        {hasRow ? (
+                        {existing ? (
                           <Button
                             type="button"
                             variant="outline"
                             size="sm"
-                            loading={deletingId === existing?.id}
-                            className="!text-red-600"
-                            onClick={() => void handleDelete(date)}
+                            className="!px-2 !py-0.5 text-xs !text-red-600"
+                            loading={deletingId === existing.id}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              void handleDelete(date);
+                            }}
                           >
-                            Supprimer
+                            ×
                           </Button>
                         ) : null}
                       </div>
-                    </td>
-                  </tr>
-                );
-              })
-            )}
-          </tbody>
-        </table>
+                    </div>
+                  ) : (
+                    <div
+                      className={`flex h-full flex-col rounded-lg p-2 ring-1 ring-inset ${toneClasses[tone]} cursor-pointer transition-opacity hover:opacity-90`}
+                    >
+                      <span className="text-xs font-semibold">{dayNum}</span>
+                      <span className="mt-1 text-xs tabular-nums">
+                        {Number.isFinite(seats) ? `${seats} pl.` : '—'}
+                      </span>
+                      <span className="text-[10px] tabular-nums opacity-90 sm:text-xs">
+                        {Number.isFinite(cents) ? formatPrice(cents, 'USD') : '—'}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
       </Card>
     </div>
   );

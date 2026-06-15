@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { AdminPageIntro } from '../../../../../components/admin-page-intro';
 import { RoleForm } from '../../../../../components/rbac/role-form';
 
 export const metadata: Metadata = {
@@ -8,10 +9,7 @@ export const metadata: Metadata = {
 export default function NouveauRolePage() {
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Nouveau rôle</h1>
-        <p className="mt-2 text-sm text-atg-muted">Créer un rôle personnalisé.</p>
-      </div>
+      <AdminPageIntro description={"Créer un rôle personnalisé."} />
       <RoleForm mode="create" />
     </div>
   );

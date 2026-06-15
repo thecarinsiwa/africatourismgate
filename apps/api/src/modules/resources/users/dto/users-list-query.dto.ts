@@ -13,6 +13,11 @@ export class UsersListQueryDto extends PaginationQueryDto {
   @IsUUID('4')
   organizationId?: string;
 
+  @ApiPropertyOptional({ format: 'uuid', description: 'Filter users with an active role assignment' })
+  @IsOptional()
+  @IsUUID('4')
+  roleId?: string;
+
   @ApiPropertyOptional({ description: 'Search by email, first or last name' })
   @IsOptional()
   @IsString()

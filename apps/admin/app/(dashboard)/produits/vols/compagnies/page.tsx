@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
+import { AdminPageIntro } from '../../../../../components/admin-page-intro';
 import { AirlinesList } from '../../../../../components/flights/airlines-list';
+import { FlightsStatCards } from '../../../../../components/flights/flights-stat-cards';
 
 export const metadata: Metadata = {
   title: 'Compagnies aériennes — Africa Tourism Gate Admin',
@@ -8,12 +10,12 @@ export const metadata: Metadata = {
 export default function CompagniesPage() {
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Compagnies aériennes</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Référentiel des compagnies (code IATA 2 lettres).
-        </p>
-      </div>
+      <AdminPageIntro
+        backHref="/produits/vols"
+        backLabel="Retour aux vols"
+        description="Référentiel des compagnies (code IATA 2 lettres)."
+      />
+      <FlightsStatCards className="mb-6" />
       <AirlinesList />
     </div>
   );

@@ -4,6 +4,8 @@ import {
   Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   DataTablePagination,
   Input,
   type ColumnDef,
@@ -12,6 +14,8 @@ import type { ActivityProvider, Destination } from '@africatourismgate/types';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getActivitiesErrorMessage } from '../../lib/activities-errors';
+import { ActivityProviderAvatar } from './activity-provider-avatar';
+import { ActivityProviderRating } from './activity-provider-rating';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -126,22 +130,39 @@ export function ActivityProvidersList() {
 
   const columns = useMemo<ColumnDef<ActivityProvider, unknown>[]>(
     () => [
-      { accessorKey: 'name', header: 'Fournisseur' },
+      {
+        id: 'provider',
+        header: 'Fournisseur',
+        cell: ({ row }) => (
+          <div className="flex items-center gap-3">
+            <ActivityProviderAvatar name={row.original.name} size="sm" />
+            <span className="font-medium text-atg-fg">{row.original.name}</span>
+          </div>
+        ),
+      },
       {
         id: 'destination',
         header: 'Destination',
-        cell: ({ row }) => destById.get(row.original.destinationId) ?? '—',
+        cell: ({ row }) => (
+          <span className="text-sm text-atg-muted">
+            {destById.get(row.original.destinationId) ?? '—'}
+          </span>
+        ),
+      },
+      {
+        id: 'rating',
+        header: 'Note',
+        meta: { align: 'center' },
+        cell: () => <ActivityProviderRating />,
       },
       {
         id: 'actions',
         header: 'Actions',
         meta: { align: 'right' },
         cell: ({ row }) => (
-          <div className="flex justify-end gap-1.5">
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
+          <DataTableActions>
+            <DataTableActionButton
+              action="edit"
               onClick={() => {
                 setEditing(row.original);
                 setFormValues({
@@ -150,14 +171,9 @@ export function ActivityProvidersList() {
                 });
                 setShowForm(true);
               }}
-            >
-              Modifier
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="!text-red-600"
+            />
+            <DataTableActionButton
+              action="delete"
               onClick={async () => {
                 if (!window.confirm(`Supprimer « ${row.original.name} » ?`)) return;
                 setDeletingId(row.original.id);
@@ -172,10 +188,8 @@ export function ActivityProvidersList() {
               }}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
-            >
-              Supprimer
-            </Button>
-          </div>
+            />
+          </DataTableActions>
         ),
       },
     ],

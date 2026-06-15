@@ -41,8 +41,10 @@ import {
 import type { CreateBookingResponseDto } from './dto/create-booking-response.dto';
 import { BookingDetailDto } from './dto/booking-detail.dto';
 import { BookingCheckoutPromoService } from './booking-checkout-promo.service';
+import { BookingPackageCheckoutService } from './booking-package-checkout.service';
 import { BookingStatusHistoryService } from './booking-status-history.service';
 import type { AppliedCheckoutDiscountDto } from './dto/booking-checkout-preview-response.dto';
+import type { AppliedPackageCheckoutDiscountDto } from './dto/booking-checkout-preview-response.dto';
 
 type StockTarget =
   | { kind: 'room'; roomId: string; date: string }
@@ -84,6 +86,7 @@ export class BookingEngineService {
     private readonly activitiesRepository: Repository<Activities>,
     private readonly statusHistory: BookingStatusHistoryService,
     private readonly checkoutPromo: BookingCheckoutPromoService,
+    private readonly packageCheckout: BookingPackageCheckoutService,
     @InjectRepository(Users)
     private readonly usersRepository: Repository<Users>,
     private readonly emailService: EmailService,
@@ -98,9 +101,11 @@ export class BookingEngineService {
     return {
       lines: pricing.lines.map(({ stock: _s, ...rest }) => rest),
       subtotalCents: pricing.subtotalCents,
+      packageDiscountCents: pricing.packageDiscountCents,
       discountCents: pricing.discountCents,
       totalCents: pricing.totalCents,
       currency: pricing.currency,
+      appliedPackageDiscount: pricing.appliedPackageDiscount,
       appliedDiscount: pricing.appliedDiscount,
     };
   }
@@ -449,23 +454,48 @@ export class BookingEngineService {
     lines: ResolvedBookingLine[];
     currency: string;
     subtotalCents: number;
+    packageDiscountCents: number;
     discountCents: number;
     totalCents: number;
+    appliedPackageDiscount: AppliedPackageCheckoutDiscountDto | null;
     appliedDiscount: AppliedCheckoutDiscountDto | null;
     discount: import('./booking-checkout-promo.service').AppliedCheckoutDiscount | null;
   }> {
     const { lines, currency } = await this.resolveCheckoutLines(dto);
     const subtotalCents = lines.reduce((sum, l) => sum + l.lineTotalCents, 0);
-    const discount = await this.checkoutPromo.resolveDiscount(dto, subtotalCents);
-    const discountCents = discount?.discountCents ?? 0;
-    const totalCents = Math.max(0, subtotalCents - discountCents);
+
+    let packageDiscountCents = 0;
+    let appliedPackageDiscount: AppliedPackageCheckoutDiscountDto | null = null;
+
+    if (dto.packageId) {
+      const packageDiscount = await this.packageCheckout.resolvePackageDiscount(
+        dto.packageId,
+        dto.items,
+        subtotalCents,
+      );
+      packageDiscountCents = packageDiscount.discountCents;
+      appliedPackageDiscount = {
+        packageId: packageDiscount.packageId,
+        name: packageDiscount.name,
+        discountPercent: packageDiscount.discountPercent,
+        discountCents: packageDiscount.discountCents,
+      };
+    }
+
+    const subtotalAfterPackage = Math.max(0, subtotalCents - packageDiscountCents);
+    const discount = await this.checkoutPromo.resolveDiscount(dto, subtotalAfterPackage);
+    const promoDiscountCents = discount?.discountCents ?? 0;
+    const totalDiscountCents = packageDiscountCents + promoDiscountCents;
+    const totalCents = Math.max(0, subtotalCents - totalDiscountCents);
 
     return {
       lines,
       currency,
       subtotalCents,
-      discountCents,
+      packageDiscountCents,
+      discountCents: totalDiscountCents,
       totalCents,
+      appliedPackageDiscount,
       appliedDiscount: discount
         ? {
             kind: discount.kind,

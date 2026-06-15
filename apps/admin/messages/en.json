@@ -9,6 +9,33 @@
     "dark": "Dark mode"
   },
   "auth": {
+    "shell": {
+      "visualEyebrow": "Africa Tourism Gate",
+      "visualTitle": "African tourism, managed from one back office",
+      "visualSubtitle": "Hotels, activities, bookings and payments — one unified platform for your teams.",
+      "carousel": {
+        "ariaLabel": "African destinations",
+        "goToSlide": "Go to slide",
+        "slides": [
+          {
+            "caption": "Safari & nature",
+            "title": "Book and manage wildlife experiences with ease"
+          },
+          {
+            "caption": "Beaches & islands",
+            "title": "Hotels, lodges and coastal stays across Africa"
+          },
+          {
+            "caption": "Culture & heritage",
+            "title": "Activities, tours and authentic experiences for your travelers"
+          },
+          {
+            "caption": "Destinations",
+            "title": "One unified showcase to promote Africa from your back office"
+          }
+        ]
+      }
+    },
     "login": {
       "metaTitle": "Sign in — Africa Tourism Gate Admin",
       "metaDescription": "Access the Africa Tourism Gate back office",
@@ -71,6 +98,45 @@
       }
     }
   },
+  "dashboard": {
+    "greeting": "Hello, {firstName}",
+    "greetingFallback": "Hello",
+    "description": "Overview of your Africa Tourism Gate platform",
+    "period": {
+      "label": "Period",
+      "7d": "7 days",
+      "30d": "30 days",
+      "90d": "90 days"
+    },
+    "chart": {
+      "title": "Activity",
+      "subtitle": "Bookings and revenue for the selected period",
+      "bookings": "Bookings",
+      "revenue": "Revenue",
+      "loading": "Loading chart…",
+      "empty": "No data for this period",
+      "error": "Unable to load trends",
+      "ariaLabel": "Daily bookings and revenue chart"
+    },
+    "kpi": {
+      "users": {
+        "label": "Users",
+        "subtitle": "Registered accounts"
+      },
+      "bookings": {
+        "label": "Bookings",
+        "subtitle": "Total bookings"
+      },
+      "revenue": {
+        "label": "Revenue",
+        "subtitle": "Successful payments"
+      },
+      "properties": {
+        "label": "Accommodations",
+        "subtitle": "Published properties"
+      }
+    }
+  },
   "nav": {
     "dashboard": "Dashboard",
     "groups": {
@@ -95,6 +161,33 @@
       "flights": "Flights",
       "vehicles": "Vehicle rentals",
       "cruises": "Cruises",
+      "ships": "Ships",
+      "newShip": "New ship",
+      "cruiseLines": "Cruise lines",
+      "cruisePorts": "Cruise ports",
+      "newSailing": "New sailing",
+      "newAccommodation": "New accommodation",
+      "airports": "Airports",
+      "airlines": "Airlines",
+      "newFlight": "New flight",
+      "rentalAgencies": "Rental agencies",
+      "vehicleCategories": "Vehicle categories",
+      "newVehicle": "New vehicle",
+      "activityProviders": "Activity providers",
+      "newActivity": "New activity",
+      "newDestination": "New destination",
+      "newPackage": "New package",
+      "newUser": "New user",
+      "newEmployee": "New employee",
+      "newOrganization": "New organization",
+      "newRole": "New role",
+      "roleAssignments": "Role assignments",
+      "permissions": "Permissions",
+      "newPromotion": "New promotion",
+      "newPromoCode": "New promo code",
+      "bankAccounts": "Bank accounts",
+      "availability": "Availability",
+      "itineraryStops": "Port stops",
       "activities": "Activities",
       "packages": "Packages",
       "destinations": "Destinations",
