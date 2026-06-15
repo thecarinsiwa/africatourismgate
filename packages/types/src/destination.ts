@@ -4,6 +4,9 @@ export interface Destination {
   slug: string;
   countryCode: string;
   description: string | null;
+  imageUrl: string | null;
+  latitude: string | null;
+  longitude: string | null;
   createdAt: string;
   updatedAt: string | null;
 }
@@ -13,6 +16,9 @@ export interface CreateDestinationRequest {
   slug: string;
   countryCode: string;
   description?: string;
+  imageUrl?: string;
+  latitude?: number | string | null;
+  longitude?: number | string | null;
 }
 
 export type UpdateDestinationRequest = Partial<CreateDestinationRequest>;
