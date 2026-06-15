@@ -16,63 +16,23 @@ import type {
   PaymentAdminDetail,
   PaymentListItem,
   PaymentStatus,
+  RefundPaymentResponse,
 } from '@africatourismgate/types';
-import Link from 'next/link';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { formatMoney } from '../../lib/format-money';
+import {
+  formatPaymentDateTime,
+  formatPaymentProvider,
+  paymentStatusLabels,
+  paymentStatusVariants,
+} from '../../lib/payment-display';
 import { getPaymentsErrorMessage } from '../../lib/payments-errors';
+import { PaymentDetailDrawer } from './payment-detail-drawer';
 
 const PAGE_SIZE = 20;
-const STRIPE_PROVIDER = 'stripe';
 
 type StatusFilter = '' | PaymentStatus;
-
-const statusLabels: Record<PaymentStatus, string> = {
-  pending: 'En attente',
-  succeeded: 'Réussi',
-  failed: 'Échoué',
-  refunded: 'Remboursé',
-};
-
-const statusVariants: Record<
-  PaymentStatus,
-  'success' | 'warning' | 'muted' | 'danger' | 'default'
-> = {
-  pending: 'warning',
-  succeeded: 'success',
-  failed: 'danger',
-  refunded: 'default',
-};
-
-const providerLabels: Record<string, string> = {
-  stripe: 'Stripe',
-  cash: 'Espèces',
-};
-
-function formatProvider(provider: string | null): string {
-  if (!provider) return '—';
-  return providerLabels[provider] ?? provider;
-}
-
-function formatDateTime(iso: string): string {
-  try {
-    return new Date(iso).toLocaleString('fr-FR', {
-      dateStyle: 'short',
-      timeStyle: 'short',
-    });
-  } catch {
-    return iso;
-  }
-}
-
-function canRefundPayment(detail: PaymentAdminDetail): boolean {
-  return (
-    detail.status === 'succeeded' &&
-    detail.provider === STRIPE_PROVIDER &&
-    detail.bookingStatus === 'cancelled'
-  );
-}
 
 export function PaymentsList() {
   const statusFilterId = useId();
@@ -99,6 +59,7 @@ export function PaymentsList() {
   const [partialAmount, setPartialAmount] = useState('');
   const [refundLoading, setRefundLoading] = useState(false);
   const [refundError, setRefundError] = useState<string | null>(null);
+  const [refundHistory, setRefundHistory] = useState<RefundPaymentResponse[]>([]);
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -218,6 +179,7 @@ export function PaymentsList() {
       setRefundOpen(false);
       setRefundError(null);
       setPartialAmount('');
+      setRefundHistory([]);
       void loadDetail(id);
     },
     [loadDetail],
@@ -230,6 +192,7 @@ export function PaymentsList() {
     setRefundOpen(false);
     setRefundError(null);
     setPartialAmount('');
+    setRefundHistory([]);
   }, []);
 
   const handleRefund = useCallback(async () => {
@@ -243,7 +206,8 @@ export function PaymentsList() {
         setRefundError('Montant partiel invalide.');
         return;
       }
-      await getApiClient().refundPayment(selectedId, { amountCents });
+      const response = await getApiClient().refundPayment(selectedId, { amountCents });
+      setRefundHistory((prev) => [...prev, response]);
       setRefundOpen(false);
       setPartialAmount('');
       await loadDetail(selectedId);
@@ -262,7 +226,7 @@ export function PaymentsList() {
         header: 'Date',
         cell: ({ row }) => (
           <span className="whitespace-nowrap text-sm">
-            {formatDateTime(row.original.createdAt)}
+            {formatPaymentDateTime(row.original.createdAt)}
           </span>
         ),
       },
@@ -294,8 +258,8 @@ export function PaymentsList() {
         cell: ({ row }) => {
           const status = row.original.status;
           return (
-            <DataTableBadge variant={statusVariants[status]}>
-              {statusLabels[status]}
+            <DataTableBadge variant={paymentStatusVariants[status]}>
+              {paymentStatusLabels[status]}
             </DataTableBadge>
           );
         },
@@ -315,7 +279,7 @@ export function PaymentsList() {
         header: 'Méthode',
         cell: ({ row }) => (
           <span className="text-sm text-atg-muted">
-            {formatProvider(row.original.provider)}
+            {formatPaymentProvider(row.original.provider)}
           </span>
         ),
       },
@@ -363,8 +327,7 @@ export function PaymentsList() {
     ? 'Aucun paiement ne correspond à vos critères.'
     : 'Aucun paiement pour le moment.';
 
-  const showRefundAction =
-    canRefund && detail !== null && canRefundPayment(detail);
+  const showRefundAction = canRefund && detail !== null;
 
   return (
     <div className="space-y-6">
@@ -381,9 +344,9 @@ export function PaymentsList() {
               className="w-full min-w-[180px] rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
             >
               <option value="">Tous</option>
-              {(Object.keys(statusLabels) as PaymentStatus[]).map((status) => (
+              {(Object.keys(paymentStatusLabels) as PaymentStatus[]).map((status) => (
                 <option key={status} value={status}>
-                  {statusLabels[status]}
+                  {paymentStatusLabels[status]}
                 </option>
               ))}
             </select>
@@ -471,123 +434,23 @@ export function PaymentsList() {
         </>
       )}
 
-      {selectedId ? (
-        <>
-          <button
-            type="button"
-            className="fixed inset-0 z-40 bg-black/40"
-            aria-label="Fermer le détail"
-            onClick={closeDetail}
-          />
-          <aside
-            className="fixed inset-y-0 right-0 z-50 flex w-full max-w-md flex-col border-l border-atg-border bg-atg-surface shadow-xl"
-            role="dialog"
-            aria-labelledby="payment-detail-title"
-          >
-            <div className="flex items-center justify-between border-b border-atg-border px-6 py-4">
-              <h2 id="payment-detail-title" className="text-lg font-semibold text-atg-fg">
-                Détail du paiement
-              </h2>
-              <button
-                type="button"
-                onClick={closeDetail}
-                className="rounded-lg px-3 py-1 text-sm text-atg-muted hover:bg-atg-elevated"
-              >
-                Fermer
-              </button>
-            </div>
-            <div className="flex-1 overflow-y-auto px-6 py-4">
-              {detailLoading ? (
-                <p className="text-sm text-atg-muted">Chargement…</p>
-              ) : detailError ? (
-                <p className="text-sm text-red-600 dark:text-red-400" role="alert">
-                  {detailError}
-                </p>
-              ) : detail ? (
-                <dl className="space-y-4 text-sm">
-                  <div>
-                    <dt className="text-atg-muted">Montant</dt>
-                    <dd className="tabular-nums text-base font-semibold text-atg-fg">
-                      {formatMoney(detail.amountCents, detail.currency)}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-atg-muted">Statut</dt>
-                    <dd>
-                      <DataTableBadge variant={statusVariants[detail.status]}>
-                        {statusLabels[detail.status]}
-                      </DataTableBadge>
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-atg-muted">Méthode</dt>
-                    <dd className="text-atg-fg">{formatProvider(detail.provider)}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-atg-muted">Date</dt>
-                    <dd className="text-atg-fg">{formatDateTime(detail.createdAt)}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-atg-muted">Client</dt>
-                    <dd className="text-atg-fg">
-                      {detail.clientEmail}
-                      <br />
-                      <span className="text-atg-muted">
-                        {detail.clientFirstName} {detail.clientLastName}
-                      </span>
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-atg-muted">Réservation</dt>
-                    <dd>
-                      <Link
-                        href={`/dashboard/bookings/${detail.bookingId}`}
-                        className="font-medium text-primary hover:underline"
-                      >
-                        Voir la réservation
-                      </Link>
-                      <p className="mt-1 text-xs text-atg-muted font-mono">
-                        {detail.bookingId}
-                      </p>
-                    </dd>
-                  </div>
-                  {detail.externalId ? (
-                    <div>
-                      <dt className="text-atg-muted">Réf. externe</dt>
-                      <dd className="break-all font-mono text-xs text-atg-fg">
-                        {detail.externalId}
-                      </dd>
-                    </div>
-                  ) : null}
-                  {detail.status === 'succeeded' &&
-                  detail.provider === STRIPE_PROVIDER &&
-                  detail.bookingStatus !== 'cancelled' ? (
-                    <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-100">
-                      Remboursement Stripe : annulez d’abord la réservation.
-                    </p>
-                  ) : null}
-                </dl>
-              ) : null}
-            </div>
-            {detail && !detailLoading && !detailError ? (
-              <div className="flex flex-wrap gap-2 border-t border-atg-border px-6 py-4">
-                {showRefundAction ? (
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => {
-                      setRefundOpen(true);
-                      setRefundError(null);
-                    }}
-                  >
-                    Rembourser
-                  </Button>
-                ) : null}
-              </div>
-            ) : null}
-          </aside>
+      <PaymentDetailDrawer
+        open={selectedId !== null}
+        onOpenChange={(open) => {
+          if (!open) closeDetail();
+        }}
+        detail={detail}
+        loading={detailLoading}
+        error={detailError}
+        refundHistory={refundHistory}
+        canRefund={showRefundAction}
+        onRefundClick={() => {
+          setRefundOpen(true);
+          setRefundError(null);
+        }}
+      />
 
-          {refundOpen && detail ? (
+      {refundOpen && detail ? (
             <>
               <button
                 type="button"
@@ -653,8 +516,6 @@ export function PaymentsList() {
               </div>
             </>
           ) : null}
-        </>
-      ) : null}
     </div>
   );
 }
