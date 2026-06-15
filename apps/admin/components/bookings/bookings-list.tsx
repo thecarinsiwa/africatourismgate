@@ -18,7 +18,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getBookingsErrorMessage } from '../../lib/bookings-errors';
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 10;
 
 type StatusFilter = '' | BookingStatus;
 
