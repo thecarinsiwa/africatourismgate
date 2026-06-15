@@ -158,6 +158,7 @@ import type {
   RoomImagesListQuery,
   RoomsListQuery,
   Destination,
+  DestinationRelatedCounts,
   DestinationsListQuery,
   PublicDestination,
   Flight,
@@ -308,6 +309,7 @@ export type {
   Organization,
   OrganizationStatus,
   Destination,
+  DestinationRelatedCounts,
   DestinationsListQuery,
   CreateDestinationRequest,
   CreateEmployeeRequest,
@@ -1185,6 +1187,10 @@ export class ApiClient {
 
   getDestination(id: string): Promise<Destination> {
     return this.request<Destination>(`/destinations/${id}`);
+  }
+
+  getDestinationRelatedCounts(id: string): Promise<DestinationRelatedCounts> {
+    return this.request<DestinationRelatedCounts>(`/destinations/${id}/related-counts`);
   }
 
   createDestination(body: CreateDestinationRequest): Promise<Destination> {

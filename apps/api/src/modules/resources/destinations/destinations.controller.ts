@@ -10,9 +10,10 @@ import {
 } from '@nestjs/common';
 import { ApiForbiddenResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
-import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
-import { Destinations } from '../../../entities/generated';
+import { CreateDestinationDto } from './dto/create-destination.dto';
+import { DestinationRelatedCountsDto } from './dto/destination-related-counts.dto';
+import { DestinationsListQueryDto } from './dto/destinations-list-query.dto';
+import { UpdateDestinationDto } from './dto/update-destination.dto';
 import { DestinationsService } from './destinations.service';
 
 @ApiTags('destinations')
@@ -24,8 +25,15 @@ export class DestinationsController {
   @RequirePermissions('destinations.read')
   @Get()
   @ApiOperation({ summary: 'List destinations' })
-  findAll(@Query() query: PaginationQueryDto) {
+  findAll(@Query() query: DestinationsListQueryDto) {
     return this.service.findAll(query);
+  }
+
+  @RequirePermissions('destinations.read')
+  @Get(':id/related-counts')
+  @ApiOperation({ summary: 'Count properties, activities and packages linked to a destination' })
+  getRelatedCounts(@Param('id') id: string): Promise<DestinationRelatedCountsDto> {
+    return this.service.getRelatedCounts(id);
   }
 
   @RequirePermissions('destinations.read')
@@ -38,15 +46,15 @@ export class DestinationsController {
   @RequirePermissions('destinations.write')
   @Post()
   @ApiOperation({ summary: 'Create destinations' })
-  create(@Body() dto: DeepPartial<Destinations>) {
-    return this.service.create(dto);
+  create(@Body() dto: CreateDestinationDto) {
+    return this.service.createFromDto(dto);
   }
 
   @RequirePermissions('destinations.write')
   @Patch(':id')
   @ApiOperation({ summary: 'Update destinations' })
-  update(@Param('id') id: string, @Body() dto: DeepPartial<Destinations>) {
-    return this.service.update(id, dto);
+  update(@Param('id') id: string, @Body() dto: UpdateDestinationDto) {
+    return this.service.updateFromDto(id, dto);
   }
 
   @RequirePermissions('destinations.write')

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { AdminPageIntro } from '../../../../../components/admin-page-intro';
+import { PageHeader } from '@africatourismgate/ui';
 import { DestinationForm } from '../../../../../components/destinations/destination-form';
 
 export const metadata: Metadata = {
@@ -9,8 +9,11 @@ export const metadata: Metadata = {
 export default function NouvelleDestinationPage() {
   return (
     <div>
-      <AdminPageIntro description={"Créez la destination puis ajoutez des points d’intérêt sur la page de modification."} />
-      <DestinationForm mode="create" />
+      <PageHeader
+        title="Nouvelle destination"
+        description="Créez la destination puis ajoutez des points d'intérêt sur la page de modification."
+      />
+      <DestinationForm mode="create" showHeroPreview />
     </div>
   );
 }
