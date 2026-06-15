@@ -176,6 +176,8 @@ import type {
   LoginRequest,
   LogoutResponse,
   Organization,
+  OrganizationListItem,
+  OrganizationsListQuery,
   Property,
   PropertySearchQuery,
   PropertySearchResult,
@@ -307,6 +309,8 @@ export type {
   SucceededPaymentsRevenue,
   UserStatus,
   Organization,
+  OrganizationListItem,
+  OrganizationsListQuery,
   OrganizationStatus,
   Destination,
   DestinationRelatedCounts,
@@ -955,9 +959,9 @@ export class ApiClient {
   }
 
   listOrganizations(
-    query?: PaginationQuery,
-  ): Promise<PaginatedResponse<Organization>> {
-    return fetchPaginated<Organization>(this, '/organizations', query);
+    query?: OrganizationsListQuery,
+  ): Promise<PaginatedResponse<OrganizationListItem>> {
+    return fetchPaginated<OrganizationListItem>(this, '/organizations', query);
   }
 
   getOrganization(id: string): Promise<Organization> {

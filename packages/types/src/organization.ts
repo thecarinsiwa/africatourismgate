@@ -33,3 +33,22 @@ export interface CreateOrganizationRequest {
 }
 
 export type UpdateOrganizationRequest = Partial<CreateOrganizationRequest>;
+
+export interface OrganizationsListQuery {
+  page?: number;
+  limit?: number;
+  search?: string;
+}
+
+export interface OrganizationListItem {
+  id: string;
+  name: string;
+  slug: string;
+  logoUrl: string | null;
+  legalForm: string | null;
+  currency: string;
+  status: OrganizationStatus;
+  createdAt: string;
+  userCount: number;
+  employeeCount: number;
+}
