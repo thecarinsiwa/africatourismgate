@@ -21,16 +21,13 @@ import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
 import {
-  getBookingItemCatalogHref,
-  getBookingItemCatalogLinkLabel,
-} from '../../lib/booking-item-catalog';
-import {
   BOOKING_STATUSES,
   BOOKING_STATUS_VARIANTS,
   getBookingStatusLabel,
 } from '../../lib/booking-status';
 import { getBookingsErrorMessage } from '../../lib/bookings-errors';
 import { formatMoney } from '../../lib/format-money';
+import { BookingItemCatalogLink } from './booking-item-catalog-link';
 import { BookingItemTypeIcon } from './booking-item-type-icon';
 import { BookingStatusTimeline } from './booking-status-timeline';
 
@@ -196,22 +193,13 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
       {
         accessorKey: 'titleSnapshot',
         header: 'Libellé',
-        cell: ({ row }) => {
-          const { itemType, referenceId, titleSnapshot } = row.original;
-          const href = getBookingItemCatalogHref(itemType, referenceId);
-          if (!href) {
-            return <span className="font-medium text-atg-fg">{titleSnapshot}</span>;
-          }
-          return (
-            <Link
-              href={href}
-              className="font-medium text-primary hover:underline"
-              aria-label={getBookingItemCatalogLinkLabel(itemType, titleSnapshot)}
-            >
-              {titleSnapshot}
-            </Link>
-          );
-        },
+        cell: ({ row }) => (
+          <BookingItemCatalogLink
+            itemType={row.original.itemType}
+            referenceId={row.original.referenceId}
+            title={row.original.titleSnapshot}
+          />
+        ),
       },
       {
         accessorKey: 'quantity',
