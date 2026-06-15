@@ -10,10 +10,10 @@ import {
 } from '@nestjs/common';
 import { ApiForbiddenResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
-import { DeepPartial } from 'typeorm';
-import { Destinations } from '../../../entities/generated';
+import { CreateDestinationDto } from './dto/create-destination.dto';
 import { DestinationRelatedCountsDto } from './dto/destination-related-counts.dto';
 import { DestinationsListQueryDto } from './dto/destinations-list-query.dto';
+import { UpdateDestinationDto } from './dto/update-destination.dto';
 import { DestinationsService } from './destinations.service';
 
 @ApiTags('destinations')
@@ -46,14 +46,14 @@ export class DestinationsController {
   @RequirePermissions('destinations.write')
   @Post()
   @ApiOperation({ summary: 'Create destinations' })
-  create(@Body() dto: DeepPartial<Destinations>) {
+  create(@Body() dto: CreateDestinationDto) {
     return this.service.create(dto);
   }
 
   @RequirePermissions('destinations.write')
   @Patch(':id')
   @ApiOperation({ summary: 'Update destinations' })
-  update(@Param('id') id: string, @Body() dto: DeepPartial<Destinations>) {
+  update(@Param('id') id: string, @Body() dto: UpdateDestinationDto) {
     return this.service.update(id, dto);
   }
 
