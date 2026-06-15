@@ -20,6 +20,7 @@ import type {
 import Link from 'next/link';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import { formatMoney } from '../../lib/format-money';
 import { getPaymentsErrorMessage } from '../../lib/payments-errors';
 
 const PAGE_SIZE = 20;
@@ -63,10 +64,6 @@ function formatDateTime(iso: string): string {
   } catch {
     return iso;
   }
-}
-
-function formatMoney(cents: number, currency: string): string {
-  return `${(cents / 100).toFixed(2)} ${currency}`;
 }
 
 function canRefundPayment(detail: PaymentAdminDetail): boolean {
@@ -510,7 +507,7 @@ export function PaymentsList() {
                 <dl className="space-y-4 text-sm">
                   <div>
                     <dt className="text-atg-muted">Montant</dt>
-                    <dd className="font-medium text-atg-fg">
+                    <dd className="tabular-nums text-base font-semibold text-atg-fg">
                       {formatMoney(detail.amountCents, detail.currency)}
                     </dd>
                   </div>
@@ -608,8 +605,10 @@ export function PaymentsList() {
                 </h3>
                 <p className="mt-2 text-sm text-atg-muted">
                   Remboursement Stripe pour{' '}
-                  <strong>{formatMoney(detail.amountCents, detail.currency)}</strong>. Laissez le
-                  montant vide pour un remboursement total.
+                  <strong className="tabular-nums text-atg-fg">
+                    {formatMoney(detail.amountCents, detail.currency)}
+                  </strong>
+                  . Laissez le montant vide pour un remboursement total.
                 </p>
                 <div className="mt-4">
                   <label
