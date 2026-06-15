@@ -189,7 +189,6 @@ import type {
   PointOfInterest,
   PointsOfInterestListQuery,
   PaginatedResponse,
-  PaginationQuery,
   PaymentAdminDetail,
   PaymentListItem,
   PaymentsListQuery,
@@ -261,6 +260,7 @@ import type {
   User,
   UsersListQuery,
 } from '@africatourismgate/types';
+export type { PaginationQuery } from '@africatourismgate/types';
 import { ApiHttpError, parseApiErrorMessage } from './http-error';
 import {
   fetchPaginated,
@@ -299,7 +299,6 @@ export type {
   LogoutResponse,
   PaginatedResponse,
   PaginationMeta,
-  PaginationQuery,
   PaymentListItem,
   PaymentStatus,
   RefreshTokenRequest,
