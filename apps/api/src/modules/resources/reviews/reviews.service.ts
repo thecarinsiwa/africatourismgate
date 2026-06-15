@@ -47,6 +47,8 @@ type AdminReviewRow = {
   entityId: string;
   propertyId: string | null;
   propertyName: string | null;
+  title: string | null;
+  body: string | null;
 };
 
 @Injectable()
@@ -279,6 +281,8 @@ export class ReviewsService extends CrudService<Reviews> {
       .addSelect('r.entityId', 'entityId')
       .addSelect('rm.propertyId', 'propertyId')
       .addSelect('p.name', 'propertyName')
+      .addSelect('r.title', 'title')
+      .addSelect('r.body', 'body')
       .groupBy('r.id')
       .addGroupBy('r.rating')
       .addGroupBy('r.status')
@@ -289,6 +293,8 @@ export class ReviewsService extends CrudService<Reviews> {
       .addGroupBy('r.entityId')
       .addGroupBy('rm.propertyId')
       .addGroupBy('p.name')
+      .addGroupBy('r.title')
+      .addGroupBy('r.body')
       .orderBy('r.createdAt', 'DESC')
       .offset((page - 1) * limit)
       .limit(limit)
@@ -445,6 +451,8 @@ export class ReviewsService extends CrudService<Reviews> {
       entityId: row.entityId,
       propertyId: row.propertyId,
       propertyName: row.propertyName,
+      title: row.title || null,
+      body: row.body || null,
     };
   }
 
