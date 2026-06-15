@@ -29,6 +29,12 @@ export interface DestinationsListQuery {
   search?: string;
 }
 
+export interface DestinationRelatedCounts {
+  properties: number;
+  activities: number;
+  packages: number;
+}
+
 export interface PointOfInterest {
   id: string;
   destinationId: string;

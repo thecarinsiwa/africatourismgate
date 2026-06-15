@@ -277,6 +277,7 @@ export type {
   CreateDestinationRequest,
   CreatePointOfInterestRequest,
   Destination,
+  DestinationRelatedCounts,
   DestinationsListQuery,
   PointOfInterest,
   PointsOfInterestListQuery,
