@@ -253,16 +253,22 @@ export type {
 } from './support.js';
 
 export type {
+  CreatePackageImageRequest,
   CreatePackageItemRequest,
   CreatePackageRequest,
   Package,
   PackageDetail,
+  PackageImage,
+  PackageImagesListQuery,
   PackageItem,
   PackageItemEnriched,
   PackageItemType,
   PackageItemsListQuery,
   PackagePricing,
+  PackageSuggestedImage,
+  PackageSuggestedImageGroup,
   PackagesListQuery,
+  UpdatePackageImageRequest,
   UpdatePackageItemRequest,
   UpdatePackageRequest,
 } from './package.js';

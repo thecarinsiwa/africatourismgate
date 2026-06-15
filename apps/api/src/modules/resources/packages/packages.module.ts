@@ -2,15 +2,21 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   Activities,
+  ActivityImages,
   Cabins,
   FlightClasses,
+  FlightImages,
   Flights,
   PackageItems,
   Packages,
   Properties,
+  PropertyImages,
   Rooms,
+  ShipImages,
   Vehicles,
+  VehicleImages,
 } from '../../../entities/generated';
+import { PackageImageSuggestionsService } from './package-image-suggestions.service';
 import { PackageItemPricingService } from './package-item-pricing.service';
 import { PackagesController } from './packages.controller';
 import { PackagesService } from './packages.service';
@@ -27,10 +33,15 @@ import { PackagesService } from './packages.service';
       Vehicles,
       Cabins,
       Activities,
+      PropertyImages,
+      ActivityImages,
+      FlightImages,
+      VehicleImages,
+      ShipImages,
     ]),
   ],
   controllers: [PackagesController],
-  providers: [PackagesService, PackageItemPricingService],
+  providers: [PackagesService, PackageItemPricingService, PackageImageSuggestionsService],
   exports: [PackagesService],
 })
 export class PackagesModule {}

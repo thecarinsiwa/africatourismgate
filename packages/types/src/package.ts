@@ -78,3 +78,46 @@ export interface PackageDetail {
   items: PackageItemEnriched[];
   pricing: PackagePricing;
 }
+
+export interface PackageImage {
+  id: string;
+  packageId: string;
+  url: string;
+  caption: string | null;
+  sortOrder: number;
+  sourcePackageItemId: string | null;
+  createdAt: string;
+  updatedAt: string | null;
+}
+
+export interface CreatePackageImageRequest {
+  packageId: string;
+  url: string;
+  caption?: string;
+  sortOrder?: number;
+  sourcePackageItemId?: string;
+}
+
+export type UpdatePackageImageRequest = Partial<
+  Omit<CreatePackageImageRequest, 'packageId'>
+>;
+
+export interface PackageImagesListQuery {
+  page?: number;
+  limit?: number;
+  packageId?: string;
+}
+
+export interface PackageSuggestedImage {
+  url: string;
+  caption: string | null;
+  sortOrder: number;
+}
+
+export interface PackageSuggestedImageGroup {
+  packageItemId: string;
+  itemType: PackageItemType;
+  itemId: string;
+  label: string;
+  images: PackageSuggestedImage[];
+}

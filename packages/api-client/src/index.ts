@@ -110,13 +110,18 @@ import type {
   CancelBookingRequest,
   RecordCashPaymentRequest,
   UpdateBookingStatusRequest,
+  CreatePackageImageRequest,
   CreatePackageItemRequest,
   CreatePackageRequest,
   Package,
   PackageDetail,
+  PackageImage,
+  PackageImagesListQuery,
   PackageItem,
   PackageItemsListQuery,
+  PackageSuggestedImageGroup,
   PackagesListQuery,
+  UpdatePackageImageRequest,
   UpdatePackageItemRequest,
   UpdatePackageRequest,
   CreateAirlineRequest,
@@ -1393,6 +1398,37 @@ export class ApiClient {
 
   deletePackageItem(id: string): Promise<void> {
     return this.request<void>(`/package-items/${id}`, { method: 'DELETE' });
+  }
+
+  listPackageImages(
+    query?: PackageImagesListQuery,
+  ): Promise<PaginatedResponse<PackageImage>> {
+    return fetchPaginated<PackageImage>(this, '/package-images', query);
+  }
+
+  getPackageImage(id: string): Promise<PackageImage> {
+    return this.request<PackageImage>(`/package-images/${id}`);
+  }
+
+  createPackageImage(body: CreatePackageImageRequest): Promise<PackageImage> {
+    return this.request<PackageImage>('/package-images', { method: 'POST', body });
+  }
+
+  updatePackageImage(id: string, body: UpdatePackageImageRequest): Promise<PackageImage> {
+    return this.request<PackageImage>(`/package-images/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deletePackageImage(id: string): Promise<void> {
+    return this.request<void>(`/package-images/${id}`, { method: 'DELETE' });
+  }
+
+  listPackageSuggestedImages(packageId: string): Promise<PackageSuggestedImageGroup[]> {
+    return this.request<PackageSuggestedImageGroup[]>(
+      `/packages/${packageId}/suggested-images`,
+    );
   }
 
   previewBookingCheckout(

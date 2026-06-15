@@ -1,0 +1,23 @@
+CREATE TABLE IF NOT EXISTS `package_images` (
+  `id` CHAR(36) NOT NULL,
+  `package_id` CHAR(36) NOT NULL,
+  `url` VARCHAR(512) NOT NULL,
+  `caption` VARCHAR(255) DEFAULT NULL,
+  `sort_order` INT NOT NULL DEFAULT 0,
+  `source_package_item_id` CHAR(36) DEFAULT NULL,
+  `created_by_user_id` CHAR(36) DEFAULT NULL,
+  `updated_by_user_id` CHAR(36) DEFAULT NULL,
+  `deleted_by_user_id` CHAR(36) DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` DATETIME DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_package_images_package` (`package_id`),
+  KEY `idx_package_images_source_item` (`source_package_item_id`),
+  KEY `idx_package_images_deleted_at` (`deleted_at`),
+  CONSTRAINT `fk_package_images_package` FOREIGN KEY (`package_id`) REFERENCES `packages` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_package_images_source_item` FOREIGN KEY (`source_package_item_id`) REFERENCES `package_items` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_package_images_created_by` FOREIGN KEY (`created_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_package_images_updated_by` FOREIGN KEY (`updated_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_package_images_deleted_by` FOREIGN KEY (`deleted_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
