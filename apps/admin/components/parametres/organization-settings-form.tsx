@@ -31,6 +31,7 @@ import { useOrganizationThemeOptional } from '../organization-theme-provider';
 import { BrandColorPaletteField } from './brand-color-palette-field';
 import { AuthVisualIconsField } from './auth-visual-icons-field';
 import { authVisualFromSetting } from '../../lib/auth-visual';
+import { OrganizationOrgSelector } from '../organizations/organization-org-selector';
 
 type SettingsFormValues = {
   contactEmail: string;
@@ -436,23 +437,12 @@ export function OrganizationSettingsForm({
   return (
     <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-8">
       {isSuperAdmin && organizations.length > 0 && onOrganizationIdChange ? (
-        <div>
-          <label htmlFor="org-select" className="mb-1 block text-sm font-medium text-atg-fg">
-            Organisation
-          </label>
-          <select
-            id="org-select"
-            className={selectClass}
-            value={organizationId}
-            onChange={(e) => onOrganizationIdChange(e.target.value)}
-          >
-            {organizations.map((org) => (
-              <option key={org.id} value={org.id}>
-                {org.name}
-              </option>
-            ))}
-          </select>
-        </div>
+        <OrganizationOrgSelector
+          id="org-select"
+          organizations={organizations}
+          value={organizationId}
+          onChange={onOrganizationIdChange}
+        />
       ) : null}
 
       {formError ? (
