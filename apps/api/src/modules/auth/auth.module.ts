@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ThrottlerModule } from '@nestjs/throttler';
@@ -10,6 +10,8 @@ import {
   Users,
   UserSessions,
 } from '../../entities/generated/users.entity';
+import { EmailVerificationModule } from '../email-verification/email-verification.module';
+import { BookingsModule } from '../resources/bookings/bookings.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -21,6 +23,8 @@ import { GoogleStrategy } from './strategies/google.strategy';
 
 @Module({
   imports: [
+    EmailVerificationModule,
+    forwardRef(() => BookingsModule),
     TypeOrmModule.forFeature([
       Users,
       UserSessions,

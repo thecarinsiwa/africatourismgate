@@ -2,10 +2,12 @@ import { createHash, randomBytes } from 'node:crypto';
 import {
   BadRequestException,
   ConflictException,
+  Inject,
   Injectable,
   InternalServerErrorException,
   Logger,
   UnauthorizedException,
+  forwardRef,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -56,6 +58,9 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 import { AuthUserDto } from './dto/auth-user.dto';
 import { PermissionsService } from '../rbac/permissions.service';
 import { EmailService } from '../email/email.service';
+import { EmailVerificationService } from '../email-verification/email-verification.service';
+import { BookingEngineService } from '../resources/bookings/booking-engine.service';
+import { VerifyOperationDto } from './dto/verify-operation.dto';
 
 @Injectable()
 export class AuthService {
@@ -80,6 +85,9 @@ export class AuthService {
     private readonly config: ConfigService,
     private readonly permissionsService: PermissionsService,
     private readonly emailService: EmailService,
+    private readonly emailVerification: EmailVerificationService,
+    @Inject(forwardRef(() => BookingEngineService))
+    private readonly bookingEngine: BookingEngineService,
   ) {
     this.accessSecret = this.requireSecret('JWT_ACCESS_SECRET');
     this.refreshSecret = this.requireSecret('JWT_REFRESH_SECRET');
@@ -133,14 +141,20 @@ export class AuthService {
     } as DeepPartial<UserRoleAssignments>);
     await this.roleAssignmentsRepo.save(assignment);
 
-    const tokens = await this.issueTokenPair(user);
-    void this.emailService
-      .sendWelcome({
-        to: user.email,
-        firstName: user.firstName,
-      })
-      .catch(() => undefined);
-    return { ...tokens, user: toAuthUserDto(user) };
+    const { verificationId } = await this.emailVerification.createAndSend({
+      email: user.email,
+      purpose: 'register',
+      referenceId: user.id,
+      firstName: user.firstName,
+    });
+    return {
+      requiresVerification: true,
+      verificationId,
+      user: toAuthUserDto(user),
+      accessToken: '',
+      refreshToken: '',
+      expiresIn: 0,
+    };
   }
 
   async getAuthMe(userId: string): Promise<AuthMeDto> {
@@ -224,6 +238,13 @@ export class AuthService {
     await this.usersRepo.save(user);
 
     const tokens = await this.issueTokenPair(user);
+    void this.emailService
+      .sendLoginNotification({
+        to: user.email,
+        firstName: user.firstName,
+        webUrl: this.config.get<string>('NEXT_PUBLIC_WEB_URL'),
+      })
+      .catch(() => undefined);
     return { ...tokens, user: toAuthUserDto(user) };
   }
 
@@ -240,7 +261,10 @@ export class AuthService {
       where: { email, deletedAt: IsNull() },
     });
 
+    let isNewUser = false;
+
     if (!user) {
+      isNewUser = true;
       const defaultOrg = await this.organizationsRepo.findOne({
         where: { id: SEED_ORG_PLATFORM_ID, deletedAt: IsNull() },
       });
@@ -277,11 +301,99 @@ export class AuthService {
       throw new UnauthorizedException('Account is not active');
     }
 
+    if (isNewUser) {
+      const { verificationId } = await this.emailVerification.createAndSend({
+        email: user.email,
+        purpose: 'google_signup',
+        referenceId: user.id,
+        firstName: user.firstName,
+      });
+      return {
+        requiresVerification: true,
+        verificationId,
+        user: toAuthUserDto(user),
+        accessToken: '',
+        refreshToken: '',
+        expiresIn: 0,
+      };
+    }
+
     user.lastLoginAt = new Date();
     await this.usersRepo.save(user);
 
     const tokens = await this.issueTokenPair(user);
+    void this.emailService
+      .sendLoginNotification({
+        to: user.email,
+        firstName: user.firstName,
+        webUrl: this.config.get<string>('NEXT_PUBLIC_WEB_URL'),
+      })
+      .catch(() => undefined);
     return { ...tokens, user: toAuthUserDto(user) };
+  }
+
+  async verifyOperation(dto: VerifyOperationDto): Promise<AuthResponseDto> {
+    const row = await this.emailVerification.verifyCode(
+      dto.verificationId,
+      dto.code,
+    );
+
+    if (row.purpose === 'booking') {
+      await this.bookingEngine.activateDraftBooking(row.referenceId);
+      const booking = await this.bookingEngine.getBookingDetail(row.referenceId);
+      const user = await this.usersRepo.findOne({
+        where: { id: booking.booking.userId, deletedAt: IsNull() },
+      });
+      if (!user) {
+        throw new BadRequestException('Compte introuvable pour cette réservation.');
+      }
+      const tokens = await this.issueTokenPair(user);
+      return {
+        ...tokens,
+        user: toAuthUserDto(user),
+        bookingId: row.referenceId,
+      };
+    }
+
+    const user = await this.usersRepo.findOne({
+      where: { id: row.referenceId, deletedAt: IsNull() },
+    });
+    if (!user || user.status !== 'active') {
+      throw new BadRequestException('Compte introuvable ou inactif.');
+    }
+
+    user.lastLoginAt = new Date();
+    await this.usersRepo.save(user);
+
+    if (row.purpose === 'register' || row.purpose === 'google_signup') {
+      void this.emailService
+        .sendWelcome({
+          to: user.email,
+          firstName: user.firstName,
+          webUrl: this.config.get<string>('NEXT_PUBLIC_WEB_URL'),
+        })
+        .catch(() => undefined);
+    }
+
+    const tokens = await this.issueTokenPair(user);
+    return { ...tokens, user: toAuthUserDto(user) };
+  }
+
+  buildWebVerificationUrl(verificationId: string, next?: string): string {
+    const defaultWebUrl =
+      process.env.NODE_ENV === 'production'
+        ? 'https://africatourismgate.org'
+        : 'http://localhost:3002';
+    const webUrl = (process.env.NEXT_PUBLIC_WEB_URL ?? defaultWebUrl).replace(
+      /\/$/,
+      '',
+    );
+    const safeNext = normalizeNextPath(next);
+    const query = new URLSearchParams({
+      verificationId,
+      next: safeNext,
+    });
+    return `${webUrl}/booking/verify?${query.toString()}`;
   }
 
   async updateProfile(

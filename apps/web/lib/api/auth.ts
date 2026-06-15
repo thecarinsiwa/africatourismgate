@@ -18,6 +18,12 @@ export function loginWithPassword(body: LoginRequest): Promise<AuthResponse> {
   return createApiClient({ baseUrl: getApiBaseUrl() }).login(body);
 }
 
+export function verifyOperation(
+  body: import('@africatourismgate/types').VerifyOperationRequest,
+): Promise<AuthResponse> {
+  return createApiClient({ baseUrl: getApiBaseUrl() }).verifyOperation(body);
+}
+
 export function buildGoogleOAuthStartUrl(nextPath: string): string {
   const params = new URLSearchParams({ next: nextPath });
   return `${getApiBaseUrl()}/auth/google?${params.toString()}`;

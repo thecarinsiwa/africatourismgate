@@ -75,6 +75,7 @@ import type {
   BookingCheckoutRequest,
   BookingCheckoutSessionResponse,
   BookingDetail,
+  CreateBookingResponse,
   BookingPaymentIntentResponse,
   BookingItemListItem,
   BookingItemsListQuery,
@@ -181,6 +182,7 @@ import type {
   RefundPaymentResponse,
   UpdatePromoCodeRequest,
   RegisterRequest,
+  VerifyOperationRequest,
   ResetPasswordRequest,
   ResetPasswordResponse,
   SucceededPaymentsRevenue,
@@ -276,6 +278,7 @@ export type {
   PaymentStatus,
   RefreshTokenRequest,
   RegisterRequest,
+  VerifyOperationRequest,
   ResetPasswordRequest,
   ResetPasswordResponse,
   SucceededPaymentsRevenue,
@@ -461,6 +464,14 @@ export class ApiClient {
 
   register(body: RegisterRequest): Promise<AuthResponse> {
     return this.request<AuthResponse>('/auth/register', {
+      method: 'POST',
+      body,
+      skipAuth: true,
+    });
+  }
+
+  verifyOperation(body: VerifyOperationRequest): Promise<AuthResponse> {
+    return this.request<AuthResponse>('/auth/verify-operation', {
       method: 'POST',
       body,
       skipAuth: true,
@@ -1332,7 +1343,7 @@ export class ApiClient {
     });
   }
 
-  createBooking(body: BookingCheckoutRequest): Promise<BookingDetail> {
+  createBooking(body: BookingCheckoutRequest): Promise<CreateBookingResponse> {
     return this.request<BookingDetail>('/bookings', { method: 'POST', body });
   }
 

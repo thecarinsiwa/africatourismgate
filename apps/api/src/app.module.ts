@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ScheduleModule } from '@nestjs/schedule';
 import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -10,12 +11,15 @@ import { PermissionsGuard } from './modules/rbac/guards/permissions.guard';
 import { OrgScopeModule } from './common/org-scope/org-scope.module';
 import { RbacModule } from './modules/rbac/rbac.module';
 import { EmailModule } from './modules/email/email.module';
+import { EmailVerificationModule } from './modules/email-verification/email-verification.module';
 import { PublicModule } from './modules/public/public.module';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     DatabaseModule,
     EmailModule,
+    EmailVerificationModule,
     AuthModule,
     RbacModule,
     OrgScopeModule,

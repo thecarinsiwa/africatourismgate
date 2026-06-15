@@ -2,6 +2,7 @@
 
 import type { PropertyDetail } from '@africatourismgate/types';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { createBooking, createBookingCheckoutSession } from '../../lib/api/booking';
 import { formatCarPrice } from '../../lib/cars/listings';
@@ -40,6 +41,7 @@ type Props = {
 };
 
 export function ReservationRecapPageContent({ draft }: Props) {
+  const router = useRouter();
   const { locale } = useLocale();
   const t = useTranslations();
   const f = t.flights;
@@ -222,6 +224,15 @@ export function ReservationRecapPageContent({ draft }: Props) {
       const booking = await createBooking(accessToken, {
         items: buildCheckoutItems(draft),
       });
+      if (booking.requiresVerification && booking.verificationId) {
+        const params = new URLSearchParams({
+          verificationId: booking.verificationId,
+          bookingId: booking.booking.id,
+          next: '/reservations/recap',
+        });
+        router.push(`/booking/verify?${params.toString()}`);
+        return;
+      }
       const checkout = await createBookingCheckoutSession(accessToken, booking.booking.id);
       window.location.assign(checkout.url);
     } catch (err: unknown) {

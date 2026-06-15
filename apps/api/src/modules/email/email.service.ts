@@ -5,12 +5,18 @@ import nodemailer, { type Transporter } from 'nodemailer';
 import { PLATFORM_ORG_ID } from '../../common/org-scope/org-scope.service';
 import { EmailBrandingService } from './email-branding.service';
 import {
+  renderAbandonmentReminderEmail,
   renderBookingConfirmationEmail,
+  renderLoginNotificationEmail,
+  renderOperationAlertEmail,
   renderPasswordResetEmail,
   renderWelcomeEmail,
 } from './email.templates';
 import type {
+  AbandonmentReminderEmailPayload,
   BookingConfirmationEmailPayload,
+  LoginNotificationEmailPayload,
+  OperationAlertEmailPayload,
   PasswordResetEmailPayload,
   SendMailResult,
   WelcomeEmailPayload,
@@ -51,6 +57,45 @@ export class EmailService {
     const branding = await this.resolveBranding();
     const { subject, html, text } = renderBookingConfirmationEmail(
       payload,
+      branding,
+    );
+    return this.send('service', { to: payload.to, subject, html, text });
+  }
+
+  async sendOperationAlert(
+    payload: OperationAlertEmailPayload,
+  ): Promise<SendMailResult> {
+    const branding = await this.resolveBranding();
+    const webUrl =
+      payload.webUrl ?? this.config.get<string>('NEXT_PUBLIC_WEB_URL');
+    const { subject, html, text } = renderOperationAlertEmail(
+      { ...payload, webUrl },
+      branding,
+    );
+    return this.send('service', { to: payload.to, subject, html, text });
+  }
+
+  async sendLoginNotification(
+    payload: LoginNotificationEmailPayload,
+  ): Promise<SendMailResult> {
+    const branding = await this.resolveBranding();
+    const webUrl =
+      payload.webUrl ?? this.config.get<string>('NEXT_PUBLIC_WEB_URL');
+    const { subject, html, text } = renderLoginNotificationEmail(
+      { ...payload, webUrl },
+      branding,
+    );
+    return this.send('service', { to: payload.to, subject, html, text });
+  }
+
+  async sendAbandonmentReminder(
+    payload: AbandonmentReminderEmailPayload,
+  ): Promise<SendMailResult> {
+    const branding = await this.resolveBranding();
+    const webUrl =
+      payload.webUrl ?? this.config.get<string>('NEXT_PUBLIC_WEB_URL');
+    const { subject, html, text } = renderAbandonmentReminderEmail(
+      { ...payload, webUrl },
       branding,
     );
     return this.send('service', { to: payload.to, subject, html, text });

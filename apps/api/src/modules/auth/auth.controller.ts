@@ -42,6 +42,7 @@ import { ResetPasswordResponseDto } from './dto/reset-password-response.dto';
 import { AuthMeDto } from './dto/auth-me.dto';
 import { AuthUserDto } from './dto/auth-user.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { VerifyOperationDto } from './dto/verify-operation.dto';
 
 @Public()
 @ApiTags('auth')
@@ -73,6 +74,15 @@ export class AuthController {
     @Res() res: Response,
   ): Promise<void> {
     const auth = await this.authService.loginWithGoogleProfile(req.user.profile);
+    if (auth.requiresVerification && auth.verificationId) {
+      res.redirect(
+        this.authService.buildWebVerificationUrl(
+          auth.verificationId,
+          req.user.state,
+        ),
+      );
+      return;
+    }
     const redirectUrl = this.authService.buildWebOAuthCallbackUrl(
       req.user.state,
       auth.accessToken,
@@ -173,5 +183,18 @@ export class AuthController {
   @ApiBadRequestResponse({ description: 'Invalid or expired reset token' })
   resetPassword(@Body() dto: ResetPasswordDto): Promise<ResetPasswordResponseDto> {
     return this.authService.resetPassword(dto);
+  }
+
+  @Post('verify-operation')
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ login: { limit: 10, ttl: 60_000 } })
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Verify email operation code (register, Google signup, booking)',
+  })
+  @ApiOkResponse({ type: AuthResponseDto })
+  @ApiBadRequestResponse({ description: 'Invalid or expired verification code' })
+  verifyOperation(@Body() dto: VerifyOperationDto): Promise<AuthResponseDto> {
+    return this.authService.verifyOperation(dto);
   }
 }

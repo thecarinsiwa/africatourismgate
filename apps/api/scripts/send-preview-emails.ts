@@ -6,6 +6,7 @@
  */
 import nodemailer from 'nodemailer';
 import { loadEnv } from './lib/load-env.mjs';
+import { DEFAULT_EMAIL_BRANDING } from '../src/modules/email/email-branding.constants';
 import {
   renderBookingConfirmationEmail,
   renderWelcomeEmail,
@@ -51,24 +52,30 @@ async function main(): Promise<void> {
   await transporter.verify();
   console.log('Connexion SMTP OK\n');
 
-  const welcome = renderWelcomeEmail({
-    to,
-    firstName: 'Ruth',
-    webUrl,
-  });
-  const booking = renderBookingConfirmationEmail({
-    to,
-    firstName: 'Ruth',
-    bookingId: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-    totalCents: 18900,
-    currency: 'USD',
-    itemTitles: [
-      'Chambre Deluxe — Hôtel Démonstration Kinshasa',
-      'Petit-déjeuner inclus',
-    ],
-    webUrl,
-    confirmedAt: new Date().toISOString(),
-  });
+  const welcome = renderWelcomeEmail(
+    {
+      to,
+      firstName: 'Ruth',
+      webUrl,
+    },
+    DEFAULT_EMAIL_BRANDING,
+  );
+  const booking = renderBookingConfirmationEmail(
+    {
+      to,
+      firstName: 'Ruth',
+      bookingId: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+      totalCents: 18900,
+      currency: 'USD',
+      itemTitles: [
+        'Chambre Deluxe — Hôtel Démonstration Kinshasa',
+        'Petit-déjeuner inclus',
+      ],
+      webUrl,
+      confirmedAt: new Date().toISOString(),
+    },
+    DEFAULT_EMAIL_BRANDING,
+  );
 
   const w = await transporter.sendMail({
     from,

@@ -28,3 +28,28 @@ export type BookingConfirmationEmailPayload = {
   confirmedAt: string;
   webUrl?: string;
 };
+
+export type OperationAlertEmailPayload = {
+  to: string;
+  firstName: string;
+  purpose: 'register' | 'google_signup' | 'login' | 'booking';
+  code: string;
+  expiresInMinutes: number;
+  verificationId: string;
+  metadata?: Record<string, unknown>;
+  webUrl?: string;
+};
+
+export type AbandonmentReminderEmailPayload = {
+  to: string;
+  firstName: string;
+  purpose: 'register' | 'google_signup' | 'login' | 'booking';
+  verificationId: string;
+  webUrl?: string;
+};
+
+export type LoginNotificationEmailPayload = {
+  to: string;
+  firstName: string;
+  webUrl?: string;
+};

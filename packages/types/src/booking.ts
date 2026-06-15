@@ -101,6 +101,11 @@ export interface BookingDetail {
   canReview?: boolean;
 }
 
+export interface CreateBookingResponse extends BookingDetail {
+  requiresVerification?: boolean;
+  verificationId?: string;
+}
+
 export interface BookingClient {
   id: string;
   email: string;
