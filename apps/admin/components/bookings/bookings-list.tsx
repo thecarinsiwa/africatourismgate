@@ -11,6 +11,7 @@ import {
   Input,
   Select,
   type ColumnDef,
+  type SortingState,
 } from '@africatourismgate/ui';
 import type { BookingListItem, BookingStatus, Organization, User } from '@africatourismgate/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -57,6 +58,7 @@ function formatMoney(cents: number, currency: string): string {
 
 export function BookingsList() {
   const [page, setPage] = useState(1);
+  const [sorting, setSorting] = useState<SortingState>([{ id: 'createdAt', desc: true }]);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('');
   const [userFilter, setUserFilter] = useState('');
   const [organizationFilter, setOrganizationFilter] = useState('');
@@ -131,6 +133,12 @@ export function BookingsList() {
     [organizations],
   );
 
+  const sortOrder = useMemo(() => {
+    const createdAtSort = sorting.find((entry) => entry.id === 'createdAt');
+    if (!createdAtSort) return 'desc' as const;
+    return createdAtSort.desc ? ('desc' as const) : ('asc' as const);
+  }, [sorting]);
+
   const load = useCallback(async () => {
     setState({ status: 'loading' });
     try {
@@ -142,6 +150,7 @@ export function BookingsList() {
         organizationId: organizationFilter || undefined,
         dateFrom: dateFrom || undefined,
         dateTo: dateTo || undefined,
+        sortOrder,
       });
       setState({
         status: 'ready',
@@ -152,7 +161,7 @@ export function BookingsList() {
     } catch (error) {
       setState({ status: 'error', message: getBookingsErrorMessage(error) });
     }
-  }, [page, statusFilter, userFilter, organizationFilter, dateFrom, dateTo]);
+  }, [page, statusFilter, userFilter, organizationFilter, dateFrom, dateTo, sortOrder]);
 
   useEffect(() => {
     void load();
@@ -181,8 +190,9 @@ export function BookingsList() {
       {
         accessorKey: 'createdAt',
         header: 'Date',
+        enableSorting: true,
         cell: ({ row }) => (
-          <span className="whitespace-nowrap text-sm">
+          <span className="whitespace-nowrap text-sm tabular-nums">
             {formatDateTime(row.original.createdAt)}
           </span>
         ),
@@ -342,6 +352,15 @@ export function BookingsList() {
               emptyMessage={emptyMessage}
               emptyVariant={hasFilters ? 'search' : 'default'}
               getRowId={(row) => row.id}
+              sorting={sorting}
+              onSortingChange={(updater) => {
+                setSorting((current) => {
+                  const next = typeof updater === 'function' ? updater(current) : updater;
+                  return next.length > 0 ? next : [{ id: 'createdAt', desc: true }];
+                });
+                setPage(1);
+              }}
+              manualSorting
               aria-label="Liste des réservations"
             />
           </Card>

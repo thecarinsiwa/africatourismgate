@@ -147,7 +147,7 @@ export class BookingsService extends CrudService<Bookings> {
       });
     }
 
-    qb.orderBy('booking.createdAt', 'DESC')
+    qb.orderBy('booking.createdAt', scopedQuery.sortOrder === 'asc' ? 'ASC' : 'DESC')
       .skip((page - 1) * limit)
       .take(limit);
 
