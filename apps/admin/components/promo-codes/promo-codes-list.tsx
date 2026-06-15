@@ -11,32 +11,23 @@ import {
   Input,
   type ColumnDef,
 } from '@africatourismgate/ui';
-import type { PromoCode, PromoCodeDiscountType } from '@africatourismgate/types';
+import type { PromoCode } from '@africatourismgate/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import {
+  formatPromoDiscountLabel,
+  formatPromoUsageLabel,
+  formatPromoValidityRange,
+  getPromoDiscountTypeLabel,
+  getPromoUsageBadgeVariant,
+  getPromoValidityBadgeVariant,
+  getPromoValidityLabel,
+  getPromoValidityState,
+} from '../../lib/promo-validity';
 import { getPromoCodesErrorMessage } from '../../lib/promo-codes-errors';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
-
-const discountTypeLabels: Record<PromoCodeDiscountType, string> = {
-  percent: '%',
-  fixed_amount: 'Montant fixe',
-};
-
-function formatDiscount(promo: PromoCode): string {
-  const value = Number(promo.discountValue);
-  if (promo.discountType === 'percent') {
-    return `${value} %`;
-  }
-  return `${value.toFixed(2)}`;
-}
-
-function formatUsage(promo: PromoCode): string {
-  const max =
-    promo.maxRedemptions != null ? String(promo.maxRedemptions) : '∞';
-  return `${promo.redemptionCount} / ${max}`;
-}
 
 export function PromoCodesList() {
   const [searchInput, setSearchInput] = useState('');
@@ -133,31 +124,53 @@ export function PromoCodesList() {
       {
         id: 'discount',
         header: 'Réduction',
-        cell: ({ row }) => (
-          <span className="text-sm text-atg-fg">
-            {formatDiscount(row.original)}{' '}
-            <span className="text-atg-muted">
-              ({discountTypeLabels[row.original.discountType]})
-            </span>
-          </span>
-        ),
+        cell: ({ row }) => {
+          const promo = row.original;
+          return (
+            <div className="flex flex-wrap items-center gap-1.5">
+              <DataTableBadge variant="default" className="tabular-nums">
+                {formatPromoDiscountLabel(promo)}
+              </DataTableBadge>
+              <DataTableBadge variant="muted">
+                {getPromoDiscountTypeLabel(promo.discountType)}
+              </DataTableBadge>
+            </div>
+          );
+        },
       },
       {
         id: 'validity',
         header: 'Validité',
-        cell: ({ row }) => (
-          <span className="whitespace-nowrap text-sm text-atg-muted">
-            {row.original.validFrom.slice(0, 10)} → {row.original.validUntil.slice(0, 10)}
-          </span>
-        ),
+        cell: ({ row }) => {
+          const promo = row.original;
+          const validityState = getPromoValidityState(promo.validFrom, promo.validUntil);
+          return (
+            <div className="flex flex-col gap-1.5">
+              <span className="whitespace-nowrap text-sm tabular-nums text-atg-muted">
+                {formatPromoValidityRange(promo.validFrom, promo.validUntil)}
+              </span>
+              <DataTableBadge variant={getPromoValidityBadgeVariant(validityState)}>
+                {getPromoValidityLabel(validityState)}
+              </DataTableBadge>
+            </div>
+          );
+        },
       },
       {
         id: 'usage',
         header: 'Utilisations',
         meta: { align: 'center' },
-        cell: ({ row }) => (
-          <span className="tabular-nums text-sm">{formatUsage(row.original)}</span>
-        ),
+        cell: ({ row }) => {
+          const promo = row.original;
+          return (
+            <DataTableBadge
+              variant={getPromoUsageBadgeVariant(promo.redemptionCount, promo.maxRedemptions)}
+              className="tabular-nums"
+            >
+              {formatPromoUsageLabel(promo.redemptionCount, promo.maxRedemptions)}
+            </DataTableBadge>
+          );
+        },
       },
       {
         id: 'active',
