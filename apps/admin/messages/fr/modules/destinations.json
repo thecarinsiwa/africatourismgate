@@ -31,8 +31,22 @@
   },
   "detail": {
     "title": "Modifier la destination",
+    "viewTitle": "Voir la destination",
+    "editButton": "Modifier la destination",
     "backLink": "Retour aux destinations",
-    "mapTitle": "Carte de la destination"
+    "mapTitle": "Carte de la destination",
+    "description": "Description",
+    "noDescription": "Aucune description renseignée.",
+    "notFound": "Destination introuvable."
+  },
+  "view": {
+    "poisTitle": "Points d'intérêt",
+    "poisIntro": "{count} point(s) d'intérêt enregistré(s)",
+    "poisEmpty": "Aucun point d'intérêt pour cette destination.",
+    "poisAriaLabel": "Points d'intérêt de la destination"
+  },
+  "hero": {
+    "ariaLabel": "Destination {name}"
   },
   "sections": {
     "pois": {

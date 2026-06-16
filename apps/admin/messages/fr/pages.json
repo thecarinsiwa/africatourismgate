@@ -123,7 +123,10 @@
         "description": "Créez la destination puis ajoutez des points d'intérêt sur la page de modification."
       },
       "id": {
-        "metaTitle": "Modifier la destination"
+        "metaTitle": "Modifier la destination",
+        "voir": {
+          "metaTitle": "Voir la destination"
+        }
       }
     },
     "locations": {

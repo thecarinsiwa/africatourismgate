@@ -14,7 +14,8 @@
     "search": "Search",
     "filter": "Filter",
     "close": "Close",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "view": "View"
   },
   "loading": {
     "page": "Loading…",
@@ -36,5 +37,11 @@
     "accessDenied": "Access denied.",
     "conflict": "Conflict: this resource already exists.",
     "kpiLoadFailed": "Unable to load metrics."
+  },
+  "commandPalette": {
+    "title": "Quick navigation",
+    "placeholder": "Search for a page…",
+    "empty": "No pages found",
+    "shortcutHint": "Ctrl+K"
   }
 }

@@ -70,5 +70,11 @@
     "dashboard": "Panel de control",
     "settings": "Configuración",
     "defaultUser": "Usuario"
+  },
+  "shell": {
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú",
+    "logout": "Cerrar sesión",
+    "loggingOut": "Cerrando sesión…"
   }
 }

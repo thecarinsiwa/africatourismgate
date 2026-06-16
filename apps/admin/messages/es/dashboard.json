@@ -16,7 +16,8 @@
     "loading": "Cargando gráfico…",
     "empty": "Sin datos en este período",
     "error": "No se pudieron cargar las tendencias",
-    "ariaLabel": "Gráfico diario de reservas e ingresos"
+    "ariaLabel": "Gráfico diario de reservas e ingresos",
+    "dateColumn": "Fecha"
   },
   "kpi": {
     "users": {

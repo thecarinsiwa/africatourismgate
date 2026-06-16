@@ -10,7 +10,7 @@ export type AppHeaderProps = {
   title?: string;
   /** Fil d'Ariane ou slot personnalisé sous le titre. */
   breadcrumb?: ReactNode;
-  user: Pick<UserMenuProps, 'displayName' | 'email' | 'onLogout' | 'logoutLabel' | 'menuLinks'>;
+  user: Pick<UserMenuProps, 'displayName' | 'email' | 'onLogout' | 'logoutLabel' | 'loggingOutLabel' | 'menuLinks'>;
   themeLabels?: ThemeToggleProps['labels'];
   actions?: ReactNode;
   className?: string;
@@ -34,7 +34,7 @@ export function AppHeader({
   actions,
   className,
   onMenuClick,
-  openMenuLabel = 'Ouvrir le menu',
+  openMenuLabel = 'Open menu',
 }: AppHeaderProps) {
   const hasHeading = Boolean(title || breadcrumb);
 

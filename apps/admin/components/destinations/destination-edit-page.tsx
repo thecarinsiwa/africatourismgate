@@ -3,7 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import type { Destination } from '@africatourismgate/types';
-import { Skeleton } from '@africatourismgate/ui';
+import { Skeleton, Button } from '@africatourismgate/ui';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
 import { AdminPageBackLink } from '../admin-page-back-link';
@@ -78,7 +78,12 @@ export function DestinationEditPage({ destinationId }: DestinationEditPageProps)
 
   return (
     <div className="space-y-6">
-      <AdminPageBackLink href="/produits/destinations" label={t('backLink')} />
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <AdminPageBackLink href="/produits/destinations" label={t('backLink')} />
+        <Button href={`/produits/destinations/${destinationId}/voir`} variant="outline">
+          {t('viewTitle')}
+        </Button>
+      </div>
 
       <DestinationHeroBanner
         name={destination.name}

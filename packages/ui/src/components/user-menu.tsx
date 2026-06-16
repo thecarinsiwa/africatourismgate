@@ -15,6 +15,7 @@ export type UserMenuProps = {
   email: string;
   onLogout: () => void | Promise<void>;
   logoutLabel?: string;
+  loggingOutLabel?: string;
   menuLinks?: UserMenuLink[];
   className?: string;
 };
@@ -23,7 +24,8 @@ export function UserMenu({
   displayName,
   email,
   onLogout,
-  logoutLabel = 'Se déconnecter',
+  logoutLabel = 'Sign out',
+  loggingOutLabel = 'Signing out…',
   menuLinks = [],
   className,
 }: UserMenuProps) {
@@ -144,7 +146,7 @@ export function UserMenu({
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
               )}
             >
-              {loggingOut ? 'Déconnexion…' : logoutLabel}
+              {loggingOut ? loggingOutLabel : logoutLabel}
             </button>
           </div>
         </div>

@@ -123,7 +123,10 @@
         "description": "Create the destination then add points of interest on the edit page."
       },
       "id": {
-        "metaTitle": "Edit destination"
+        "metaTitle": "Edit destination",
+        "voir": {
+          "metaTitle": "View destination"
+        }
       }
     },
     "locations": {

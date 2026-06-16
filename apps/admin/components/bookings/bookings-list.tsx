@@ -12,6 +12,8 @@ import {
   FilterBar,
   Input,
   Select,
+  Button,
+  useToast,
   type ColumnDef,
   type SortingState,
 } from '@africatourismgate/ui';
@@ -27,6 +29,8 @@ import {
   useBookingStatusFilterOptions,
   useBookingStatusLabels,
 } from '../../lib/i18n/use-module-labels';
+import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
+import { exportCsv } from '../../lib/export-csv';
 
 const PAGE_SIZE = 10;
 
@@ -51,9 +55,14 @@ export function BookingsList() {
   const { bookings: getBookingsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.bookings.list');
   const tCommon = useTranslations('modules.common');
+  const tDataTable = useTranslations('modules.common.dataTable');
+  const tActions = useTranslations('common.actions');
+  const tExport = useTranslations('modules.common.exportCsv');
   const tUsers = useTranslations('modules.users.filters');
   const statusLabels = useBookingStatusLabels();
   const statusOptions = useBookingStatusFilterOptions();
+  const paginationLabels = useDataTablePaginationLabels();
+  const { toast } = useToast();
 
   const [page, setPage] = useState(1);
   const [sorting, setSorting] = useState<SortingState>([{ id: 'createdAt', desc: true }]);
@@ -180,6 +189,7 @@ export function BookingsList() {
         accessorKey: 'createdAt',
         header: tCommon('columns.date'),
         enableSorting: true,
+        meta: { hideOnMobile: true },
         cell: ({ row }) => (
           <span className="whitespace-nowrap text-sm tabular-nums">
             {formatDateTime(row.original.createdAt)}
@@ -201,6 +211,7 @@ export function BookingsList() {
       {
         id: 'organization',
         header: tCommon('columns.organization'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => {
           const orgId = row.original.organizationId;
           if (!orgId) {
@@ -244,13 +255,14 @@ export function BookingsList() {
           <DataTableActions>
             <DataTableActionButton
               action="view"
+              label={tActions('view')}
               href={`/dashboard/bookings/${row.original.id}`}
             />
           </DataTableActions>
         ),
       },
     ],
-    [emptyDash, orgNameById, statusLabels, tCommon],
+    [emptyDash, orgNameById, statusLabels, tActions, tCommon],
   );
 
   const isLoading = state.status === 'loading';
@@ -258,12 +270,55 @@ export function BookingsList() {
   const bookings = state.status === 'ready' ? state.bookings : [];
   const emptyMessage = hasFilters ? t('emptyFiltered') : t('emptyDefault');
 
+  const handleExportCsv = useCallback(() => {
+    if (bookings.length === 0) return;
+    const date = new Date().toISOString().slice(0, 10);
+    exportCsv({
+      filename: `reservations-${date}.csv`,
+      columns: [
+        { header: tCommon('columns.date'), value: (row) => formatDateTime(row.createdAt) },
+        { header: tCommon('columns.client'), value: (row) => row.clientEmail },
+        {
+          header: tCommon('columns.organization'),
+          value: (row) =>
+            row.organizationId
+              ? (orgNameById.get(row.organizationId) ?? row.organizationId)
+              : emptyDash,
+        },
+        {
+          header: tCommon('columns.status'),
+          value: (row) => getBookingStatusLabel(row.status, statusLabels),
+        },
+        {
+          header: tCommon('columns.amount'),
+          value: (row) => formatMoney(row.totalCents, row.currency),
+        },
+      ],
+      rows: bookings,
+    });
+    toast({ variant: 'success', message: tExport('success') });
+  }, [bookings, emptyDash, orgNameById, statusLabels, tCommon, tExport, toast]);
+
   return (
     <div className="space-y-6">
       <FilterBar
         mobileVariant="drawer"
         activeCount={activeFilterCount}
         onClear={handleClearFilters}
+        clearLabel={tCommon('filters.clearAll')}
+        applyLabel={tCommon('filters.apply')}
+        toggleLabel={tCommon('filters.toggle')}
+        actions={
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={isLoading || bookings.length === 0}
+            onClick={handleExportCsv}
+          >
+            {tExport('button')}
+          </Button>
+        }
         filters={
           <>
             <div className="w-full sm:w-48">
@@ -336,8 +391,12 @@ export function BookingsList() {
               columns={columns}
               data={bookings}
               isLoading={isLoading}
+              loadingMessage={tDataTable('loading')}
               emptyMessage={emptyMessage}
               emptyVariant={hasFilters ? 'search' : 'default'}
+              expandRowLabel={tDataTable('expandRow')}
+              collapseRowLabel={tDataTable('collapseRow')}
+              expandRowAriaLabel={tDataTable('expandRowAria')}
               getRowId={(row) => row.id}
               sorting={sorting}
               onSortingChange={(updater) => {
@@ -359,6 +418,7 @@ export function BookingsList() {
               totalPages={state.totalPages}
               totalItems={state.total}
               itemLabel={tCommon('pagination.booking')}
+              labels={paginationLabels}
               onPageChange={setPage}
             />
           ) : null}
