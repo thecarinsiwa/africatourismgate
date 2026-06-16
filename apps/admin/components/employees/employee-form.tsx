@@ -179,6 +179,11 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
     );
   }, [mode, values.organizationId, organizations, existingEmployees]);
 
+  const linkedUserIds = useMemo(
+    () => new Set(existingEmployees.map((employee) => employee.userId)),
+    [existingEmployees],
+  );
+
   const userOptions = useMemo(() => {
     if (mode === 'edit' && initialEmployee?.user) {
       const hasCurrent = users.some((u) => u.id === initialEmployee.userId);
@@ -194,8 +199,13 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
         ];
       }
     }
+
+    if (mode === 'create') {
+      return users.filter((user) => !linkedUserIds.has(user.id));
+    }
+
     return users;
-  }, [mode, initialEmployee, users]);
+  }, [mode, initialEmployee, linkedUserIds, users]);
 
   const updateField = useCallback(
     <K extends keyof EmployeeFormValues>(key: K, value: EmployeeFormValues[K]) => {
@@ -209,6 +219,8 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
     const errors: Partial<Record<keyof EmployeeFormValues, string>> = {};
     if (!values.userId) {
       errors.userId = 'L’utilisateur lié est obligatoire.';
+    } else if (mode === 'create' && linkedUserIds.has(values.userId)) {
+      errors.userId = 'Cet utilisateur possède déjà un profil employé.';
     }
     if (values.salary.trim()) {
       const n = Number.parseFloat(values.salary);
@@ -277,6 +289,12 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
         </select>
         {fieldErrors.userId ? (
           <p className="mt-1 text-sm text-red-600 dark:text-red-400">{fieldErrors.userId}</p>
+        ) : null}
+        {mode === 'create' ? (
+          <p className="mt-1 text-xs text-atg-muted">
+            Un utilisateur ne peut être lié qu’à un seul profil employé.
+            {userOptions.length === 0 ? ' Aucun utilisateur disponible.' : null}
+          </p>
         ) : null}
         {mode === 'edit' ? (
           <p className="mt-1 text-xs text-atg-muted">
