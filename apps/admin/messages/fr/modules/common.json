@@ -16,6 +16,8 @@
     "allFeminine": "Toutes",
     "none": "Aucune",
     "clear": "Effacer le filtre",
+    "clearAll": "Effacer les filtres",
+    "toggle": "Filtres",
     "apply": "Appliquer",
     "dateFrom": "Du",
     "dateTo": "Au",
@@ -112,6 +114,26 @@
     "review": "avis",
     "ticket": "tickets",
     "loyaltyAccount": "comptes"
+  },
+  "dataTable": {
+    "loading": "Chargement…",
+    "emptyDefault": "Aucune donnée.",
+    "expandRow": "Afficher les détails",
+    "collapseRow": "Masquer les détails",
+    "expandRowAria": "Afficher les détails de la ligne"
+  },
+  "paginationUi": {
+    "range": "{start}–{end} sur {total} {itemLabel}{pluralSuffix}",
+    "pageOf": "page {page} / {totalPages}",
+    "previousPage": "Page précédente",
+    "nextPage": "Page suivante",
+    "navAriaLabel": "Pagination",
+    "pageAria": "Page {page}",
+    "pluralSuffix": "s"
+  },
+  "exportCsv": {
+    "button": "Exporter CSV",
+    "success": "Export CSV téléchargé."
   },
   "loading": "Chargement…",
   "sessionStatus": {

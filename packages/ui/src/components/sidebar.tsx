@@ -264,7 +264,7 @@ function SidebarContent({
   navItems,
   logo,
   onMobileClose,
-  closeMenuLabel = 'Fermer le menu',
+  closeMenuLabel = 'Close menu',
   openGroupId,
   onGroupToggle,
 }: SidebarContentProps) {

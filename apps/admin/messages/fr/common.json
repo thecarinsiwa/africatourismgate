@@ -14,7 +14,8 @@
     "search": "Rechercher",
     "filter": "Filtrer",
     "close": "Fermer",
-    "confirm": "Confirmer"
+    "confirm": "Confirmer",
+    "view": "Voir"
   },
   "loading": {
     "page": "Chargement…",
@@ -36,5 +37,11 @@
     "accessDenied": "Accès refusé.",
     "conflict": "Conflit : cette ressource existe déjà.",
     "kpiLoadFailed": "Impossible de charger les indicateurs."
+  },
+  "commandPalette": {
+    "title": "Navigation rapide",
+    "placeholder": "Rechercher une page…",
+    "empty": "Aucune page trouvée",
+    "shortcutHint": "Ctrl+K"
   }
 }

@@ -257,7 +257,7 @@ export function DashboardTrendChart({ className }: { className?: string }) {
               <caption>{t('ariaLabel')}</caption>
               <thead>
                 <tr>
-                  <th scope="col">Date</th>
+                  <th scope="col">{t('dateColumn')}</th>
                   <th scope="col">{t('bookings')}</th>
                   <th scope="col">{t('revenue')}</th>
                 </tr>

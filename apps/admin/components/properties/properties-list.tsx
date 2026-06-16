@@ -20,6 +20,7 @@ import type { Destination, Property } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
 import { PropertyThumbnail } from './property-thumbnail';
 
 const PAGE_SIZE = 20;
@@ -33,10 +34,12 @@ export function PropertiesList() {
   const tCommonColumns = useTranslations('modules.common.columns');
   const tCommonFilters = useTranslations('modules.common.filters');
   const tPagination = useTranslations('modules.common.pagination');
+  const tDataTable = useTranslations('modules.common.dataTable');
   const tDialogs = useTranslations('modules.properties.dialogs');
   const tToast = useTranslations('modules.common.toast');
   const tActions = useTranslations('common.actions');
   const propertyTypeLabels = usePropertyTypeLabels();
+  const paginationLabels = useDataTablePaginationLabels();
   const { toast } = useToast();
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
@@ -156,6 +159,7 @@ export function PropertiesList() {
       {
         accessorKey: 'slug',
         header: tCommonColumns('slug'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => (
           <code className="rounded-md bg-atg-surface px-2 py-0.5 font-mono text-xs text-atg-muted">
             {row.original.slug}
@@ -165,6 +169,7 @@ export function PropertiesList() {
       {
         id: 'destination',
         header: tColumns('destination'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => (
           <span className="text-sm text-atg-muted">
             {destinationNameById.get(row.original.destinationId) ?? row.original.destinationId}
@@ -174,7 +179,7 @@ export function PropertiesList() {
       {
         accessorKey: 'propertyType',
         header: tColumns('propertyType'),
-        meta: { align: 'center' },
+        meta: { align: 'center', hideOnMobile: true },
         cell: ({ row }) => (
           <span className="text-sm text-atg-muted">
             {propertyTypeLabels[row.original.propertyType]}
@@ -189,10 +194,11 @@ export function PropertiesList() {
           const property = row.original;
           return (
             <DataTableActions>
-              <DataTableActionButton action="view" href={`/hebergements/${property.id}`} />
-              <DataTableActionButton action="edit" href={`/hebergements/${property.id}`} />
+              <DataTableActionButton action="view" label={tActions('view')} href={`/hebergements/${property.id}`} />
+              <DataTableActionButton action="edit" label={tActions('edit')} href={`/hebergements/${property.id}`} />
               <DataTableActionButton
                 action="delete"
+                label={tActions('delete')}
                 onClick={() => setPendingDelete(property)}
                 disabled={deletingId === property.id}
                 loading={deletingId === property.id}
@@ -202,16 +208,16 @@ export function PropertiesList() {
         },
       },
     ],
-    [deletingId, destinationNameById, propertyTypeLabels, tColumns, tCommonColumns],
+    [deletingId, destinationNameById, propertyTypeLabels, tActions, tColumns, tCommonColumns],
   );
 
   const properties = state.status === 'ready' ? state.properties : [];
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:items-end">
-          <div className="flex-1 sm:max-w-md">
+    <div className="min-w-0 space-y-6">
+      <div className="flex min-w-0 flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div className="flex min-w-0 flex-1 flex-col gap-4 sm:flex-row sm:items-end">
+          <div className="min-w-0 flex-1 sm:max-w-md">
             <Input
               type="search"
               placeholder={tList('searchPlaceholder')}
@@ -251,7 +257,11 @@ export function PropertiesList() {
               columns={columns}
               data={properties}
               isLoading={state.status === 'loading'}
+              loadingMessage={tDataTable('loading')}
               emptyMessage={tList('emptyDefault')}
+              expandRowLabel={tDataTable('expandRow')}
+              collapseRowLabel={tDataTable('collapseRow')}
+              expandRowAriaLabel={tDataTable('expandRowAria')}
               getRowId={(row) => row.id}
               aria-label={tList('ariaLabel')}
             />
@@ -263,6 +273,7 @@ export function PropertiesList() {
               totalPages={state.totalPages}
               totalItems={state.total}
               itemLabel={tPagination('property')}
+              labels={paginationLabels}
               onPageChange={setPage}
             />
           ) : null}

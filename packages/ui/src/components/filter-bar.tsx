@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useState, type ReactNode } from 'react';
 import { cn } from '../lib/cn';
+import { useMobileViewport } from '../lib/use-mobile-viewport';
 import { Button } from './button';
 import { DataTableBadge } from './data-table-badge';
 import { Drawer } from './drawer';
@@ -35,9 +36,9 @@ export function FilterBar({
   actions,
   onClear,
   onApply,
-  clearLabel = 'Effacer les filtres',
-  applyLabel = 'Appliquer',
-  toggleLabel = 'Filtres',
+  clearLabel = 'Clear filters',
+  applyLabel = 'Apply',
+  toggleLabel = 'Filters',
   defaultOpen = true,
   mobileVariant = 'inline',
   className,
@@ -45,25 +46,15 @@ export function FilterBar({
   const panelId = useId();
   const [inlineOpen, setInlineOpen] = useState(defaultOpen);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [isMobileViewport, setIsMobileViewport] = useState(() =>
-    typeof window !== 'undefined' ? window.matchMedia('(max-width: 767px)').matches : false,
-  );
+  const isMobileViewport = useMobileViewport();
 
   useEffect(() => {
-    const mq = window.matchMedia('(max-width: 767px)');
-    const sync = () => {
-      const mobile = mq.matches;
-      setIsMobileViewport(mobile);
-      if (mobileVariant === 'inline') {
-        setInlineOpen(mobile ? false : defaultOpen);
-      } else if (!mobile) {
-        setDrawerOpen(false);
-      }
-    };
-    sync();
-    mq.addEventListener('change', sync);
-    return () => mq.removeEventListener('change', sync);
-  }, [defaultOpen, mobileVariant]);
+    if (mobileVariant === 'inline') {
+      setInlineOpen(isMobileViewport ? false : defaultOpen);
+    } else if (!isMobileViewport) {
+      setDrawerOpen(false);
+    }
+  }, [defaultOpen, isMobileViewport, mobileVariant]);
 
   const handleDrawerApply = () => {
     onApply?.();

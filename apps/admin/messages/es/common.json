@@ -14,7 +14,8 @@
     "search": "Buscar",
     "filter": "Filtrar",
     "close": "Cerrar",
-    "confirm": "Confirmar"
+    "confirm": "Confirmar",
+    "view": "Ver"
   },
   "loading": {
     "page": "Cargando…",
@@ -36,5 +37,11 @@
     "accessDenied": "Acceso denegado.",
     "conflict": "Conflicto: este recurso ya existe.",
     "kpiLoadFailed": "No se pudieron cargar los indicadores."
+  },
+  "commandPalette": {
+    "title": "Navegación rápida",
+    "placeholder": "Buscar una página…",
+    "empty": "Ninguna página encontrada",
+    "shortcutHint": "Ctrl+K"
   }
 }

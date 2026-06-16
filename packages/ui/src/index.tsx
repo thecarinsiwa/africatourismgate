@@ -94,6 +94,7 @@ export type { ColumnDef, OnChangeFn, SortingState } from './components/data-tabl
 export { DataTableBadge, type DataTableBadgeProps, type DataTableBadgeVariant } from './components/data-table-badge';
 export {
   DataTablePagination,
+  type DataTablePaginationLabels,
   type DataTablePaginationProps,
 } from './components/data-table-pagination';
 export {

@@ -21,6 +21,7 @@ import {
 import { useOrganizationThemeOptional } from './organization-theme-provider';
 import { SessionSync } from './session-sync';
 import { LanguageSwitcher } from './language-switcher';
+import { CommandPalette } from './command-palette';
 
 function formatDisplayName(firstName: string, lastName: string, email: string): string {
   const name = `${firstName} ${lastName}`.trim();
@@ -33,6 +34,7 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
   const orgTheme = useOrganizationThemeOptional();
   const tNav = useTranslations('nav');
   const tTheme = useTranslations('theme');
+  const tShell = useTranslations('nav.shell');
   const { meta } = useAdminPageMeta();
   const [session, setSession] = useState<StoredSession | null>(null);
 
@@ -104,6 +106,8 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
         showShellBreadcrumb ? <Breadcrumb items={breadcrumbItems} /> : undefined
       }
       headerActions={<LanguageSwitcher />}
+      openMenuLabel={tShell('openMenu')}
+      closeMenuLabel={tShell('closeMenu')}
       logo={{
         name: orgTheme?.branding?.displayName ?? adminDashboardConfig.logo.name,
         href: adminDashboardConfig.logo.href,
@@ -112,6 +116,8 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
       user={{
         ...user,
         onLogout: handleLogout,
+        logoutLabel: tShell('logout'),
+        loggingOutLabel: tShell('loggingOut'),
         menuLinks: [
           { href: '/dashboard', label: tNav('userMenu.dashboard') },
           { href: '/parametres', label: tNav('userMenu.settings') },
@@ -122,6 +128,7 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
         dark: tTheme('dark'),
       }}
     >
+      <CommandPalette />
       {children}
     </DashboardShell>
   );

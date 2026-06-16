@@ -70,5 +70,11 @@
     "dashboard": "Tableau de bord",
     "settings": "Paramètres",
     "defaultUser": "Utilisateur"
+  },
+  "shell": {
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu",
+    "logout": "Se déconnecter",
+    "loggingOut": "Déconnexion…"
   }
 }

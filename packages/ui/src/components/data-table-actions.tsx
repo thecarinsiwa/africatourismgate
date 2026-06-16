@@ -13,12 +13,12 @@ import {
 export type DataTableActionKind = 'edit' | 'delete' | 'view' | 'revoke' | 'calendar' | 'remove';
 
 const defaultLabels: Record<DataTableActionKind, string> = {
-  edit: 'Modifier',
-  delete: 'Supprimer',
-  view: 'Voir',
-  revoke: 'Révoquer',
-  calendar: 'Disponibilités',
-  remove: 'Retirer',
+  edit: 'Edit',
+  delete: 'Delete',
+  view: 'View',
+  revoke: 'Revoke',
+  calendar: 'Availability',
+  remove: 'Remove',
 };
 
 const actionIcons: Record<DataTableActionKind, typeof DataTableEditIcon> = {
@@ -129,7 +129,7 @@ export type DataTableAdjustButtonProps = Omit<
 
 /** Bouton « Ajuster » et autres libellés custom avec icône dédiée. */
 export function DataTableAdjustButton({
-  label = 'Ajuster',
+  label = 'Adjust',
   loading = false,
   disabled,
   className,
