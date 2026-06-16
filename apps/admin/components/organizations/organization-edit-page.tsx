@@ -67,16 +67,11 @@ export function OrganizationEditPage({ organizationId }: OrganizationEditPagePro
   const { organization } = state;
 
   return (
-    <div>
-      <p className="mb-8 text-sm text-atg-muted">
-        {organization.name}{' '}
-        <span className="font-mono text-xs text-atg-muted">({organization.slug})</span>
-      </p>
-      <OrganizationForm
-        mode="edit"
-        organizationId={organizationId}
-        initialOrganization={organization}
-      />
-    </div>
+    <OrganizationForm
+      mode="edit"
+      organizationId={organizationId}
+      initialOrganization={organization}
+      onUpdated={(updated) => setState({ status: 'ready', organization: updated })}
+    />
   );
 }

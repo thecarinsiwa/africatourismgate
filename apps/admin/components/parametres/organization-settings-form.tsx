@@ -130,7 +130,7 @@ type OrganizationSettingsFormProps = {
   organizationId: string;
   isSuperAdmin: boolean;
   onOrganizationIdChange?: (id: string) => void;
-  organizations?: Organization[];
+  organizations?: Pick<Organization, 'id' | 'name'>[];
 };
 
 export function OrganizationSettingsForm({

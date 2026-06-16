@@ -12,7 +12,7 @@ import {
   Input,
   type ColumnDef,
 } from '@africatourismgate/ui';
-import type { Employee, EmployeeStatus, Organization } from '@africatourismgate/types';
+import type { Employee, EmployeeStatus, OrganizationListItem } from '@africatourismgate/types';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getEmployeesErrorMessage } from '../../lib/employees-errors';
@@ -49,7 +49,7 @@ export function EmployeesList() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('');
   const [organizationFilter, setOrganizationFilter] = useState('');
   const [page, setPage] = useState(1);
-  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [organizations, setOrganizations] = useState<OrganizationListItem[]>([]);
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }

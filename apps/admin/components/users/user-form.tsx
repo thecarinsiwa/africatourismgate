@@ -3,7 +3,7 @@
 import { Button, Input } from '@africatourismgate/ui';
 import type {
   CreateUserRequest,
-  Organization,
+  OrganizationListItem,
   UpdateUserRequest,
   User,
 } from '@africatourismgate/types';
@@ -93,7 +93,7 @@ export function UserForm({ mode, userId, initialUser }: UserFormProps) {
   const [values, setValues] = useState<UserFormValues>(() =>
     initialUser ? userToFormValues(initialUser) : defaultValues,
   );
-  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [organizations, setOrganizations] = useState<OrganizationListItem[]>([]);
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof UserFormValues, string>>>(
     {},
   );

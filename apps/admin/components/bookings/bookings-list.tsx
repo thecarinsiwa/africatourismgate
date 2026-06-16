@@ -13,7 +13,7 @@ import {
   type ColumnDef,
   type SortingState,
 } from '@africatourismgate/ui';
-import type { BookingListItem, BookingStatus, Organization, User } from '@africatourismgate/types';
+import type { BookingListItem, BookingStatus, OrganizationListItem, User } from '@africatourismgate/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getBookingsErrorMessage } from '../../lib/bookings-errors';
@@ -64,7 +64,7 @@ export function BookingsList() {
   const [organizationFilter, setOrganizationFilter] = useState('');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
-  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [organizations, setOrganizations] = useState<OrganizationListItem[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [state, setState] = useState<
     | { status: 'loading' }

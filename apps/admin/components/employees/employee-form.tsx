@@ -5,7 +5,7 @@ import type {
   CreateEmployeeRequest,
   Employee,
   EmployeeStatus,
-  Organization,
+  OrganizationListItem,
   UpdateEmployeeRequest,
   User,
 } from '@africatourismgate/types';
@@ -120,7 +120,7 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
     initialEmployee ? employeeToFormValues(initialEmployee) : defaultValues,
   );
   const [users, setUsers] = useState<User[]>([]);
-  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [organizations, setOrganizations] = useState<OrganizationListItem[]>([]);
   const [existingEmployees, setExistingEmployees] = useState<Employee[]>([]);
   const [managers, setManagers] = useState<Employee[]>([]);
   const [fieldErrors, setFieldErrors] = useState<
