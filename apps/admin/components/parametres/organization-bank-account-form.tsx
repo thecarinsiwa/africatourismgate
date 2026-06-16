@@ -2,7 +2,7 @@
 
 import { Button, Input } from '@africatourismgate/ui';
 import type { OrganizationBankAccount } from '@africatourismgate/types';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { isValidCurrency } from '../../lib/org-settings-constants';
 import { getOrganizationSettingsErrorMessage } from '../../lib/organization-settings-errors';
@@ -46,6 +46,7 @@ type OrganizationBankAccountFormProps = {
   account?: OrganizationBankAccount;
   onSuccess: () => void;
   onCancel: () => void;
+  onDirtyChange?: (isDirty: boolean) => void;
 };
 
 export function OrganizationBankAccountForm({
@@ -54,9 +55,13 @@ export function OrganizationBankAccountForm({
   account,
   onSuccess,
   onCancel,
+  onDirtyChange,
 }: OrganizationBankAccountFormProps) {
   const isEdit = Boolean(account);
   const [values, setValues] = useState<BankAccountFormValues>(() =>
+    account ? accountToValues(account) : emptyValues,
+  );
+  const [initialValues, setInitialValues] = useState<BankAccountFormValues>(() =>
     account ? accountToValues(account) : emptyValues,
   );
   const [fieldErrors, setFieldErrors] = useState<
@@ -67,9 +72,23 @@ export function OrganizationBankAccountForm({
 
   useEffect(() => {
     if (account) {
-      setValues(accountToValues(account));
+      const nextValues = accountToValues(account);
+      setValues(nextValues);
+      setInitialValues(nextValues);
+    } else {
+      setValues(emptyValues);
+      setInitialValues(emptyValues);
     }
   }, [account]);
+
+  const isDirty = useMemo(
+    () => JSON.stringify(values) !== JSON.stringify(initialValues),
+    [values, initialValues],
+  );
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
 
   const updateField = useCallback(
     <K extends keyof BankAccountFormValues>(key: K, value: BankAccountFormValues[K]) => {
@@ -133,6 +152,8 @@ export function OrganizationBankAccountForm({
           ...(values.swiftBic.trim() ? { swiftBic: values.swiftBic.trim() } : {}),
         });
       }
+      setInitialValues(values);
+      onDirtyChange?.(false);
       onSuccess();
     } catch (error) {
       setFormError(getOrganizationSettingsErrorMessage(error));
@@ -203,12 +224,59 @@ export function OrganizationBankAccountForm({
       </label>
 
       <div className="flex gap-3 pt-2">
-        <Button type="submit" loading={submitting} loadingText="Enregistrement…">
+        <Button
+          type="submit"
+          loading={submitting}
+          loadingText="Enregistrement…"
+          disabled={!isDirty}
+        >
           {isEdit ? 'Mettre à jour' : 'Créer'}
         </Button>
-        <Button type="button" variant="ghost" onClick={onCancel}>
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={() => {
+            if (isDirty) {
+              setValues(initialValues);
+              setFieldErrors({});
+              setFormError(null);
+              return;
+            }
+            onCancel();
+          }}
+        >
           Annuler
         </Button>
+      </div>
+
+      <div className="sticky bottom-0 z-20 border-t border-atg-border bg-atg-bg/95 px-4 py-3 backdrop-blur">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm font-medium text-atg-fg">
+            {isDirty ? 'Modifications non enregistrées' : 'Aucune modification en attente'}
+          </p>
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setValues(initialValues);
+                setFieldErrors({});
+                setFormError(null);
+              }}
+              disabled={!isDirty || submitting}
+            >
+              Annuler
+            </Button>
+            <Button
+              type="submit"
+              loading={submitting}
+              loadingText="Enregistrement…"
+              disabled={!isDirty}
+            >
+              Enregistrer
+            </Button>
+          </div>
+        </div>
       </div>
     </form>
   );

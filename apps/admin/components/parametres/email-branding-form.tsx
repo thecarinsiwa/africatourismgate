@@ -8,7 +8,7 @@ import type {
 } from '@africatourismgate/types';
 import { normalizeBrandingAssetUrl } from '@africatourismgate/utils';
 import Image from 'next/image';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
 import { getSession } from '../../lib/auth/session';
 import { PLATFORM_ORG_ID } from '../../lib/org-settings-constants';
@@ -37,6 +37,7 @@ const defaultValues: EmailBrandingFormValues = {
 
 type EmailBrandingFormProps = {
   canWrite: boolean;
+  onDirtyChange?: (isDirty: boolean) => void;
 };
 
 function settingValue(
@@ -89,8 +90,9 @@ function toBrandingPayload(values: EmailBrandingFormValues): EmailBrandingValue 
   return payload;
 }
 
-export function EmailBrandingForm({ canWrite }: EmailBrandingFormProps) {
+export function EmailBrandingForm({ canWrite, onDirtyChange }: EmailBrandingFormProps) {
   const [values, setValues] = useState<EmailBrandingFormValues>(defaultValues);
+  const [initialValues, setInitialValues] = useState<EmailBrandingFormValues>(defaultValues);
   const [fieldErrors, setFieldErrors] = useState<
     Partial<Record<keyof EmailBrandingFormValues, string>>
   >({});
@@ -133,7 +135,9 @@ export function EmailBrandingForm({ canWrite }: EmailBrandingFormProps) {
           limit: 100,
         });
         if (!cancelled) {
-          setValues(toFormValues(settingsPage.data));
+          const nextValues = toFormValues(settingsPage.data);
+          setValues(nextValues);
+          setInitialValues(nextValues);
         }
       } catch (error) {
         if (!cancelled) {
@@ -178,6 +182,7 @@ export function EmailBrandingForm({ canWrite }: EmailBrandingFormProps) {
           },
         ],
       });
+      setInitialValues(values);
       setSuccessMessage('Paramètres e-mail enregistrés.');
     } catch (error) {
       setFormError(getOrganizationSettingsErrorMessage(error));
@@ -252,6 +257,21 @@ export function EmailBrandingForm({ canWrite }: EmailBrandingFormProps) {
   }
 
   const logoPreviewUrl = normalizeBrandingAssetUrl(values.logoUrl.trim() || null);
+  const isDirty = useMemo(
+    () => JSON.stringify(values) !== JSON.stringify(initialValues),
+    [values, initialValues],
+  );
+
+  useEffect(() => {
+    onDirtyChange?.(canWrite && isDirty);
+  }, [canWrite, isDirty, onDirtyChange]);
+
+  function handleCancelChanges(): void {
+    setValues(initialValues);
+    setFieldErrors({});
+    setFormError(null);
+    setSuccessMessage(null);
+  }
 
   if (loading) {
     return <p className="text-sm text-atg-muted">Chargement…</p>;
@@ -398,11 +418,39 @@ export function EmailBrandingForm({ canWrite }: EmailBrandingFormProps) {
             type="submit"
             loading={submitting}
             loadingText="Enregistrement…"
-            disabled={!canWrite}
+            disabled={!canWrite || !isDirty}
           >
             Enregistrer
           </Button>
         </section>
+
+        {canWrite ? (
+          <div className="sticky bottom-0 z-20 border-t border-atg-border bg-atg-bg/95 px-4 py-3 backdrop-blur">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <p className="text-sm font-medium text-atg-fg">
+                {isDirty ? 'Modifications non enregistrées' : 'Aucune modification en attente'}
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleCancelChanges}
+                  disabled={!isDirty || submitting}
+                >
+                  Annuler
+                </Button>
+                <Button
+                  type="submit"
+                  loading={submitting}
+                  loadingText="Enregistrement…"
+                  disabled={!isDirty}
+                >
+                  Enregistrer
+                </Button>
+              </div>
+            </div>
+          </div>
+        ) : null}
 
         {!canWrite ? (
           <p className="text-xs text-atg-muted">

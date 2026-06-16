@@ -133,6 +133,7 @@ type OrganizationSettingsFormProps = {
   isSuperAdmin: boolean;
   onOrganizationIdChange?: (id: string) => void;
   organizations?: Pick<Organization, 'id' | 'name'>[];
+  onDirtyChange?: (isDirty: boolean) => void;
 };
 
 export function OrganizationSettingsForm({
@@ -140,6 +141,7 @@ export function OrganizationSettingsForm({
   isSuperAdmin,
   onOrganizationIdChange,
   organizations = [],
+  onDirtyChange,
 }: OrganizationSettingsFormProps) {
   const router = useRouter();
   const orgTheme = useOrganizationThemeOptional();
@@ -203,6 +205,10 @@ export function OrganizationSettingsForm({
     () => JSON.stringify(values) !== JSON.stringify(initialValues),
     [values, initialValues],
   );
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
 
   useEffect(() => {
     let cancelled = false;

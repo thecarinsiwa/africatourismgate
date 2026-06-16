@@ -1,8 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import type { ReactNode } from 'react';
+import { useCallback } from 'react';
 
 export const PARAMETRES_LINKS = [
   { href: '/parametres', label: 'Paramètres' },
@@ -36,8 +37,22 @@ function linkClassName(active: boolean, orientation: 'horizontal' | 'vertical'):
   }`;
 }
 
-export function ParametresSubnav() {
+type ParametresSubnavProps = {
+  onNavigate?: (href: string, proceed: () => void) => void;
+};
+
+export function ParametresSubnav({ onNavigate }: ParametresSubnavProps) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleNavigate = useCallback(
+    (event: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+      if (!onNavigate || isParametresLinkActive(pathname, href)) return;
+      event.preventDefault();
+      onNavigate(href, () => router.push(href));
+    },
+    [onNavigate, pathname, router],
+  );
 
   return (
     <aside className="mb-6 lg:sticky lg:top-6 lg:mb-0 lg:self-start">
@@ -52,6 +67,7 @@ export function ParametresSubnav() {
             <Link
               key={link.href}
               href={link.href}
+              onClick={(event) => handleNavigate(event, link.href)}
               aria-current={active ? 'page' : undefined}
               className={linkClassName(active, 'horizontal')}
             >
@@ -72,6 +88,7 @@ export function ParametresSubnav() {
             <Link
               key={link.href}
               href={link.href}
+              onClick={(event) => handleNavigate(event, link.href)}
               aria-current={active ? 'page' : undefined}
               className={linkClassName(active, 'vertical')}
             >
@@ -86,12 +103,16 @@ export function ParametresSubnav() {
 
 type ParametresPageLayoutProps = {
   children: ReactNode;
+  onSubnavNavigate?: (href: string, proceed: () => void) => void;
 };
 
-export function ParametresPageLayout({ children }: ParametresPageLayoutProps) {
+export function ParametresPageLayout({
+  children,
+  onSubnavNavigate,
+}: ParametresPageLayoutProps) {
   return (
     <div className="lg:grid lg:grid-cols-[minmax(0,12rem)_minmax(0,1fr)] lg:items-start lg:gap-8 xl:grid-cols-[minmax(0,14rem)_minmax(0,1fr)]">
-      <ParametresSubnav />
+      <ParametresSubnav onNavigate={onSubnavNavigate} />
       <div className="min-w-0">{children}</div>
     </div>
   );
