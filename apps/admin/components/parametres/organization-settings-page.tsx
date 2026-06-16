@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useSetAdminPageMeta } from '../admin-page-meta-context';
 import { getApiClient } from '../../lib/auth/api';
 import { getOrganizationSettingsErrorMessage } from '../../lib/organization-settings-errors';
-import { ParametresSubnav } from './parametres-subnav';
+import { ParametresPageLayout } from './parametres-subnav';
 import {
   OrganizationSettingsForm,
   resolveInitialOrganizationId,
@@ -81,27 +81,24 @@ export function OrganizationSettingsPage() {
 
   if (accessError) {
     return (
-      <div>
-        <ParametresSubnav />
+      <ParametresPageLayout>
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {accessError}
         </p>
-      </div>
+      </ParametresPageLayout>
     );
   }
 
   if (!organizationId) {
     return (
-      <div>
-        <ParametresSubnav />
+      <ParametresPageLayout>
         <p className="text-sm text-atg-muted">Chargement…</p>
-      </div>
+      </ParametresPageLayout>
     );
   }
 
   return (
-    <div>
-      <ParametresSubnav />
+    <ParametresPageLayout>
       <p className="mb-8 text-sm text-atg-muted">
         Configuration de l’organisation : coordonnées, locale, réservation et branding.
       </p>
@@ -111,6 +108,6 @@ export function OrganizationSettingsPage() {
         organizations={organizations}
         onOrganizationIdChange={isSuperAdmin ? handleOrganizationChange : undefined}
       />
-    </div>
+    </ParametresPageLayout>
   );
 }

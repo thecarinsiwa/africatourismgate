@@ -5,7 +5,7 @@ import { useSetAdminPageMeta } from '../admin-page-meta-context';
 import { getApiClient } from '../../lib/auth/api';
 import { getOrganizationSettingsErrorMessage } from '../../lib/organization-settings-errors';
 import { EmailBrandingForm } from './email-branding-form';
-import { ParametresSubnav } from './parametres-subnav';
+import { ParametresPageLayout } from './parametres-subnav';
 
 export function EmailBrandingPage() {
   const [accessError, setAccessError] = useState<string | null>(null);
@@ -55,32 +55,29 @@ export function EmailBrandingPage() {
 
   if (accessError) {
     return (
-      <div>
-        <ParametresSubnav />
+      <ParametresPageLayout>
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {accessError}
         </p>
-      </div>
+      </ParametresPageLayout>
     );
   }
 
   if (loading) {
     return (
-      <div>
-        <ParametresSubnav />
+      <ParametresPageLayout>
         <p className="text-sm text-atg-muted">Chargement…</p>
-      </div>
+      </ParametresPageLayout>
     );
   }
 
   return (
-    <div>
-      <ParametresSubnav />
+    <ParametresPageLayout>
       <p className="mb-8 text-sm text-atg-muted">
         Personnalisez l’apparence des e-mails transactionnels (bienvenue, confirmation de
         réservation).
       </p>
       <EmailBrandingForm canWrite={canWrite} />
-    </div>
+    </ParametresPageLayout>
   );
 }
