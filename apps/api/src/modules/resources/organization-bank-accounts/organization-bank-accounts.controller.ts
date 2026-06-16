@@ -8,44 +8,79 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
-import { OrganizationBankAccounts } from '../../../entities/generated';
+import {
+  ApiForbiddenResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { AuthUserDto } from '../../auth/dto/auth-user.dto';
+import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
+import { CreateOrganizationBankAccountDto } from './dto/create-organization-bank-account.dto';
+import { OrganizationBankAccountDto } from './dto/organization-bank-account.dto';
+import { OrganizationBankAccountsListQueryDto } from './dto/organization-bank-accounts-list-query.dto';
+import { UpdateOrganizationBankAccountDto } from './dto/update-organization-bank-account.dto';
 import { OrganizationBankAccountsService } from './organization-bank-accounts.service';
 
 @ApiTags('organization-bank-accounts')
+@ApiForbiddenResponse({ description: 'Missing permission' })
 @Controller('organization-bank-accounts')
 export class OrganizationBankAccountsController {
   constructor(private readonly service: OrganizationBankAccountsService) {}
 
   @Get()
-  @ApiOperation({ summary: 'List organization-bank-accounts' })
-  findAll(@Query() query: PaginationQueryDto) {
-    return this.service.findAll(query);
+  @RequirePermissions('organization_bank_accounts.read')
+  @ApiOperation({ summary: 'List organization bank accounts (scoped)' })
+  @ApiOkResponse({ type: [OrganizationBankAccountDto] })
+  findAll(
+    @Query() query: OrganizationBankAccountsListQueryDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.service.list(query, user);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get organization-bank-accounts by id' })
-  findOne(@Param('id') id: string) {
-    return this.service.findOne(id);
+  @RequirePermissions('organization_bank_accounts.read')
+  @ApiOperation({ summary: 'Get organization bank account by id (scoped)' })
+  findOne(
+    @Param('id') id: string,
+    @Query() query: OrganizationBankAccountsListQueryDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.service.findOneDto(id, user, query.organizationId);
   }
 
   @Post()
-  @ApiOperation({ summary: 'Create organization-bank-accounts' })
-  create(@Body() dto: DeepPartial<OrganizationBankAccounts>) {
-    return this.service.create(dto);
+  @RequirePermissions('organization_bank_accounts.write')
+  @ApiOperation({ summary: 'Create organization bank account (scoped)' })
+  create(
+    @Body() dto: CreateOrganizationBankAccountDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.service.createFromDto(dto, user);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update organization-bank-accounts' })
-  update(@Param('id') id: string, @Body() dto: DeepPartial<OrganizationBankAccounts>) {
-    return this.service.update(id, dto);
+  @RequirePermissions('organization_bank_accounts.write')
+  @ApiOperation({ summary: 'Update organization bank account (scoped)' })
+  update(
+    @Param('id') id: string,
+    @Body() dto: UpdateOrganizationBankAccountDto,
+    @Query() query: OrganizationBankAccountsListQueryDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.service.updateFromDto(id, dto, user, query.organizationId);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Soft-delete organization-bank-accounts' })
-  remove(@Param('id') id: string) {
-    return this.service.remove(id);
+  @RequirePermissions('organization_bank_accounts.write')
+  @ApiOperation({ summary: 'Soft-delete organization bank account (scoped)' })
+  remove(
+    @Param('id') id: string,
+    @Query() query: OrganizationBankAccountsListQueryDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.service.removeScoped(id, user, query.organizationId);
   }
 }
