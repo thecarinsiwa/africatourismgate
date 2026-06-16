@@ -6,6 +6,10 @@ import { useCallback, useEffect, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { isValidCurrency } from '../../lib/org-settings-constants';
 import { getOrganizationSettingsErrorMessage } from '../../lib/organization-settings-errors';
+import {
+  containsMaskChars,
+  maskAccountNumberForDisplay,
+} from '../../lib/bank-account-masking';
 
 export type BankAccountFormValues = {
   bankName: string;
@@ -29,12 +33,12 @@ function accountToValues(account: OrganizationBankAccount): BankAccountFormValue
   return {
     bankName: account.bankName,
     accountName: account.accountName,
-    accountNumber: account.accountNumber.includes('*') ? '' : account.accountNumber,
+    accountNumber: containsMaskChars(account.accountNumber) ? '' : account.accountNumber,
     swiftBic: account.swiftBic ?? '',
     currency: account.currency,
     isDefault: account.isDefault,
   };
-};
+}
 
 type OrganizationBankAccountFormProps = {
   organizationId: string;
@@ -82,7 +86,7 @@ export function OrganizationBankAccountForm({
     if (!isEdit && !values.accountNumber.trim()) {
       errors.accountNumber = 'Le numéro de compte est obligatoire.';
     }
-    if (values.accountNumber.includes('*')) {
+    if (containsMaskChars(values.accountNumber)) {
       errors.accountNumber = 'Saisissez le numéro complet (sans masque).';
     }
     if (!isValidCurrency(values.currency)) {
@@ -171,6 +175,11 @@ export function OrganizationBankAccountForm({
         error={fieldErrors.accountNumber}
         autoComplete="off"
       />
+      {isEdit && account ? (
+        <p className="text-xs text-atg-muted">
+          Valeur enregistrée: {maskAccountNumberForDisplay(account.accountNumber)}
+        </p>
+      ) : null}
       <Input
         label="SWIFT / BIC"
         value={values.swiftBic}

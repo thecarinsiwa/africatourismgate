@@ -14,7 +14,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useSetAdminPageMeta } from '../admin-page-meta-context';
 import { getApiClient } from '../../lib/auth/api';
 import { getOrganizationSettingsErrorMessage } from '../../lib/organization-settings-errors';
-import { ParametresSubnav } from './parametres-subnav';
+import { maskAccountNumberForDisplay } from '../../lib/bank-account-masking';
+import { ParametresPageLayout } from './parametres-subnav';
 import { OrganizationBankAccountForm } from './organization-bank-account-form';
 import {
   resolveInitialOrganizationId,
@@ -149,7 +150,9 @@ export function OrganizationBankAccountsList() {
         id: 'accountNumber',
         header: 'N° compte',
         cell: ({ row }) => (
-          <span className="font-mono text-sm">{row.original.accountNumber}</span>
+          <span className="font-mono text-sm">
+            {maskAccountNumberForDisplay(row.original.accountNumber)}
+          </span>
         ),
       },
       {
@@ -194,21 +197,19 @@ export function OrganizationBankAccountsList() {
 
   if (accessError) {
     return (
-      <div>
-        <ParametresSubnav />
+      <ParametresPageLayout>
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {accessError}
         </p>
-      </div>
+      </ParametresPageLayout>
     );
   }
 
   if (!organizationId) {
     return (
-      <div>
-        <ParametresSubnav />
+      <ParametresPageLayout>
         <p className="text-sm text-atg-muted">Chargement…</p>
-      </div>
+      </ParametresPageLayout>
     );
   }
 
@@ -216,8 +217,7 @@ export function OrganizationBankAccountsList() {
     'mb-6 w-full max-w-md rounded-lg border border-atg-border bg-atg-bg px-3 py-2 text-sm text-atg-fg focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary';
 
   return (
-    <div>
-      <ParametresSubnav />
+    <ParametresPageLayout>
       <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
         <p className="text-sm text-atg-muted">
           Comptes B2B de l’organisation. Le numéro de compte est partiellement masqué pour les
@@ -281,6 +281,6 @@ export function OrganizationBankAccountsList() {
       ) : (
         <DataTable columns={columns} data={accounts} emptyMessage="Aucun compte bancaire." />
       )}
-    </div>
+    </ParametresPageLayout>
   );
 }
