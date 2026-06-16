@@ -1,21 +1,23 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import { Button, Card, Input, useToast } from '@africatourismgate/ui';
 import type { RoomAvailability } from '@africatourismgate/types';
+import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import {
-  CALENDAR_WEEKDAY_HEADERS,
   currentYearMonth,
   enumerateMonthDays,
   formatDateLabel,
-  formatMonthLabel,
   formatPrice,
-  formatShortDay,
+  parseYearMonth,
   shiftYearMonth,
   weekdayOffset,
 } from '../../lib/availability-dates';
-import { getHebergementsErrorMessage } from '../../lib/hebergements-errors';
+
+const WEEKDAY_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const;
 
 type DayDraft = {
   availableUnits: string;
@@ -53,6 +55,14 @@ export function RoomAvailabilityGrid({
   yearMonth,
   onYearMonthChange,
 }: RoomAvailabilityGridProps) {
+  const { hebergements: getHebergementsErrorMessage } = useAdminErrorMessages();
+  const locale = useLocale();
+  const tCalendar = useTranslations('modules.common.availabilityCalendar');
+  const tForm = useTranslations('modules.common.form');
+  const tValidation = useTranslations('modules.common.validation');
+  const tToast = useTranslations('modules.common.toast');
+  const tCommon = useTranslations('modules.common');
+  const tActions = useTranslations('common.actions');
   const { toast } = useToast();
   const gridRef = useRef<HTMLDivElement>(null);
   const [rows, setRows] = useState<Map<string, RoomAvailability>>(new Map());
@@ -66,6 +76,33 @@ export function RoomAvailabilityGrid({
 
   const monthDays = useMemo(() => enumerateMonthDays(yearMonth), [yearMonth]);
   const leadingBlanks = useMemo(() => weekdayOffset(yearMonth), [yearMonth]);
+
+  const weekdayHeaders = useMemo(
+    () => WEEKDAY_KEYS.map((key) => tCalendar(`weekdays.${key}`)),
+    [tCalendar],
+  );
+
+  const formatMonthLabel = useCallback(
+    (isoMonth: string): string => {
+      const { year, month } = parseYearMonth(isoMonth);
+      return new Date(Date.UTC(year, month - 1, 1)).toLocaleDateString(locale, {
+        month: 'long',
+        year: 'numeric',
+      });
+    },
+    [locale],
+  );
+
+  const formatShortDay = useCallback(
+    (isoDate: string): string => {
+      const [, , dayStr] = isoDate.split('-');
+      const day = Number(dayStr);
+      const date = new Date(isoDate + 'T12:00:00');
+      const weekday = date.toLocaleDateString(locale, { weekday: 'short' });
+      return `${weekday} ${day}`;
+    },
+    [locale],
+  );
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -102,7 +139,7 @@ export function RoomAvailabilityGrid({
     } finally {
       setLoading(false);
     }
-  }, [roomId, monthDays, defaultPriceCents]);
+  }, [roomId, monthDays, defaultPriceCents, getHebergementsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -131,11 +168,11 @@ export function RoomAvailabilityGrid({
     const units = Number(draft.availableUnits);
     const cents = Number(draft.priceCents);
     if (!Number.isFinite(units) || units < 0) {
-      setError('Stock invalide.');
+      setError(tValidation('invalidStock'));
       return;
     }
     if (!Number.isFinite(cents) || cents < 0) {
-      setError('Prix invalide (centimes).');
+      setError(tValidation('invalidPriceCents'));
       return;
     }
 
@@ -158,7 +195,7 @@ export function RoomAvailabilityGrid({
         });
       }
       toast({
-        title: 'Disponibilité enregistrée',
+        title: tToast('availabilitySaved'),
         message: formatDateLabel(date),
         variant: 'success',
       });
@@ -168,7 +205,7 @@ export function RoomAvailabilityGrid({
       const message = getHebergementsErrorMessage(err);
       setError(message);
       toast({
-        title: 'Erreur d’enregistrement',
+        title: tToast('saveError'),
         message,
         variant: 'error',
       });
@@ -186,7 +223,7 @@ export function RoomAvailabilityGrid({
     try {
       await getApiClient().deleteRoomAvailability(existing.id);
       toast({
-        title: 'Disponibilité supprimée',
+        title: tToast('availabilityDeleted'),
         message: formatDateLabel(date),
         variant: 'success',
       });
@@ -196,7 +233,7 @@ export function RoomAvailabilityGrid({
       const message = getHebergementsErrorMessage(err);
       setError(message);
       toast({
-        title: 'Erreur de suppression',
+        title: tToast('deleteError'),
         message,
         variant: 'error',
       });
@@ -271,6 +308,8 @@ export function RoomAvailabilityGrid({
     return cells;
   }, [leadingBlanks, monthDays]);
 
+  const monthLabel = formatMonthLabel(yearMonth);
+
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -279,7 +318,7 @@ export function RoomAvailabilityGrid({
             type="button"
             variant="outline"
             size="sm"
-            aria-label="Mois précédent"
+            aria-label={tCalendar('previousMonth')}
             onClick={() => onYearMonthChange(shiftYearMonth(yearMonth, -1))}
           >
             ‹
@@ -288,13 +327,13 @@ export function RoomAvailabilityGrid({
             className="min-w-[10rem] text-center text-sm font-semibold text-atg-fg"
             aria-live="polite"
           >
-            {formatMonthLabel(yearMonth)}
+            {monthLabel}
           </h3>
           <Button
             type="button"
             variant="outline"
             size="sm"
-            aria-label="Mois suivant"
+            aria-label={tCalendar('nextMonth')}
             onClick={() => onYearMonthChange(shiftYearMonth(yearMonth, 1))}
           >
             ›
@@ -306,7 +345,7 @@ export function RoomAvailabilityGrid({
           size="sm"
           onClick={() => onYearMonthChange(currentYearMonth())}
         >
-          Aujourd’hui
+          {tCalendar('today')}
         </Button>
       </div>
 
@@ -318,16 +357,16 @@ export function RoomAvailabilityGrid({
 
       <Card variant="dashboard" padding="md">
         {loading ? (
-          <p className="text-sm text-atg-muted">Chargement…</p>
+          <p className="text-sm text-atg-muted">{tCommon('loading')}</p>
         ) : (
           <div
             ref={gridRef}
             role="grid"
-            aria-label={`Calendrier ${formatMonthLabel(yearMonth)}`}
+            aria-label={monthLabel}
             className="grid grid-cols-7 gap-1 sm:gap-2"
             onKeyDown={handleGridKeyDown}
           >
-            {CALENDAR_WEEKDAY_HEADERS.map((label) => (
+            {weekdayHeaders.map((label) => (
               <div
                 key={label}
                 role="columnheader"
@@ -382,7 +421,7 @@ export function RoomAvailabilityGrid({
                         value={draft?.availableUnits ?? '0'}
                         onChange={(e) => updateDraft(date, 'availableUnits', e.target.value)}
                         className="!px-2 !py-1 text-xs"
-                        aria-label={`Stock ${date}`}
+                        aria-label={`${tCalendar('stockUnits')} ${date}`}
                       />
                       <Input
                         type="number"
@@ -390,7 +429,7 @@ export function RoomAvailabilityGrid({
                         value={draft?.priceCents ?? String(defaultPriceCents)}
                         onChange={(e) => updateDraft(date, 'priceCents', e.target.value)}
                         className="!px-2 !py-1 text-xs"
-                        aria-label={`Prix ${date}`}
+                        aria-label={`${tForm('priceCentsShort')} ${date}`}
                       />
                       <div className="mt-auto flex flex-wrap gap-1">
                         <Button
@@ -403,7 +442,7 @@ export function RoomAvailabilityGrid({
                             void handleSaveDay(date);
                           }}
                         >
-                          OK
+                          {tActions('confirm')}
                         </Button>
                         {existing ? (
                           <Button

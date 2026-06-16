@@ -2,6 +2,7 @@
 
 import { cn } from '@africatourismgate/ui';
 import type { Organization } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useId } from 'react';
 
 export const organizationOrgSelectClassName =
@@ -22,12 +23,14 @@ export function OrganizationOrgSelector({
   value,
   onChange,
   id: idProp,
-  label = 'Organisation',
+  label: labelProp,
   className,
   disabled = false,
 }: OrganizationOrgSelectorProps) {
+  const t = useTranslations('modules.organizations.selector');
   const generatedId = useId();
   const selectId = idProp ?? generatedId;
+  const label = labelProp ?? t('defaultLabel');
 
   if (organizations.length === 0) {
     return null;

@@ -1,23 +1,11 @@
 import type { Metadata } from 'next';
-import { PageHeader } from '@africatourismgate/ui';
-import { AdminPageBackLink } from '../../../../../components/admin-page-back-link';
-import { ActivityProvidersList } from '../../../../../components/activities/activity-providers-list';
+import { getAdminPageMetadata } from '../../../../../lib/i18n/admin-page-i18n';
+import { FournisseursActivitesPageContent } from '../../../../../components/pages/produits-activites-fournisseurs-page-content';
 
-export const metadata: Metadata = {
-  title: 'Fournisseurs d’activités — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('produits/activites/fournisseurs');
+}
 
-export default function ActivitesFournisseursPage() {
-  return (
-    <div>
-      <PageHeader
-        title="Fournisseurs d'activités"
-        description="Opérateurs liés aux destinations."
-        breadcrumb={
-          <AdminPageBackLink href="/produits/activites" label="Retour aux activités" />
-        }
-      />
-      <ActivityProvidersList />
-    </div>
-  );
+export default function Page() {
+  return <FournisseursActivitesPageContent />;
 }

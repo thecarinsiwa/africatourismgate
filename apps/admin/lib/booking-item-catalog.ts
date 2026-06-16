@@ -38,8 +38,11 @@ export function isBookingItemType(value: string): value is BookingItemType {
   return value in BOOKING_ITEM_TYPE_ICONS;
 }
 
-export function getBookingItemTypeLabel(itemType: string): string {
-  return getItemTypeLabel(itemType);
+export function getBookingItemTypeLabel(
+  itemType: string,
+  labels: Record<BookingItemType, string>,
+): string {
+  return getItemTypeLabel(itemType, labels);
 }
 
 export function getBookingItemTypeIcon(
@@ -69,7 +72,12 @@ export function getBookingItemCatalogHref(
   return BOOKING_ITEM_CATALOG_LIST_HREFS[itemType];
 }
 
-export function getBookingItemCatalogLinkLabel(itemType: string, title: string): string {
-  const typeLabel = getBookingItemTypeLabel(itemType);
-  return `Voir ${typeLabel.toLowerCase()} : ${title}`;
+export function getBookingItemCatalogLinkLabel(
+  itemType: string,
+  title: string,
+  labels: Record<BookingItemType, string>,
+  formatAriaLabel: (typeLabel: string, title: string) => string,
+): string {
+  const typeLabel = getBookingItemTypeLabel(itemType, labels);
+  return formatAriaLabel(typeLabel, title);
 }

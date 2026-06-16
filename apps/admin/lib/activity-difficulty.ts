@@ -8,18 +8,12 @@ export const ACTIVITY_DIFFICULTY_LEVELS = [
   'expert',
 ] as const satisfies readonly ActivityDifficultyLevel[];
 
-export const ACTIVITY_DIFFICULTY_LABELS: Record<ActivityDifficultyLevel, string> = {
-  easy: 'Facile',
-  moderate: 'Modérée',
-  hard: 'Difficile',
-  expert: 'Expert',
-};
-
 export function getActivityDifficultyLabel(
   level: ActivityDifficultyLevel | null | undefined,
+  labels: Record<ActivityDifficultyLevel, string>,
 ): string | null {
   if (!level) return null;
-  return ACTIVITY_DIFFICULTY_LABELS[level];
+  return labels[level];
 }
 
 export function getActivityDifficultyBadgeVariant(

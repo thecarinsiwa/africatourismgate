@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Button,
   Card,
@@ -11,15 +13,22 @@ import {
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { CruiseLine, Ship } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getCroisieresErrorMessage } from '../../lib/croisieres-errors';
 import { ShipThumbnail } from './ship-thumbnail';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
 
 export function ShipsList() {
+  const { croisieres: getCroisieresErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.cruises');
+  const tNav = useTranslations('dashboard.links');
+  const tCommon = useTranslations('modules.common');
+  const tColumns = useTranslations('modules.common.columns');
+  const tPagination = useTranslations('modules.common.pagination');
+  const emptyDash = tCommon('empty.dash');
   const lineFilterId = useId();
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
@@ -61,7 +70,7 @@ export function ShipsList() {
     } catch (error) {
       setState({ status: 'error', message: getCroisieresErrorMessage(error) });
     }
-  }, [page, search, lineFilter]);
+  }, [page, search, lineFilter, getCroisieresErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -69,18 +78,18 @@ export function ShipsList() {
 
   useEffect(() => {
     const q = searchInput.trim();
-    const t = window.setTimeout(() => {
+    const timer = window.setTimeout(() => {
       setSearch((prev) => {
         if (prev !== q) setPage(1);
         return q;
       });
     }, SEARCH_DEBOUNCE_MS);
-    return () => window.clearTimeout(t);
+    return () => window.clearTimeout(timer);
   }, [searchInput]);
 
   const handleDelete = useCallback(
     async (ship: Ship) => {
-      if (!window.confirm(`Supprimer le navire « ${ship.name} » ?`)) return;
+      if (!window.confirm(t('dialogs.deleteShip', { name: ship.name }))) return;
       setDeleteError(null);
       setDeletingId(ship.id);
       try {
@@ -92,7 +101,7 @@ export function ShipsList() {
         setDeletingId(null);
       }
     },
-    [load],
+    [getCroisieresErrorMessage, load, t],
   );
 
   const columns = useMemo<ColumnDef<Ship, unknown>[]>(
@@ -105,20 +114,20 @@ export function ShipsList() {
           <ShipThumbnail shipId={row.original.id} label={row.original.name} size="sm" />
         ),
       },
-      { accessorKey: 'name', header: 'Navire' },
+      { accessorKey: 'name', header: t('columns.ship') },
       {
         id: 'line',
-        header: 'Ligne',
-        cell: ({ row }) => lineById.get(row.original.cruiseLineId) ?? '—',
+        header: t('columns.line'),
+        cell: ({ row }) => lineById.get(row.original.cruiseLineId) ?? emptyDash,
       },
       {
         accessorKey: 'builtYear',
-        header: 'Année',
-        cell: ({ row }) => row.original.builtYear ?? '—',
+        header: t('columns.year'),
+        cell: ({ row }) => row.original.builtYear ?? emptyDash,
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tColumns('actions'),
         meta: { align: 'right' },
         cell: ({ row }) => (
           <DataTableActions>
@@ -136,7 +145,7 @@ export function ShipsList() {
         ),
       },
     ],
-    [deletingId, handleDelete, lineById],
+    [deletingId, emptyDash, handleDelete, lineById, t, tColumns],
   );
 
   const ships = state.status === 'ready' ? state.ships : [];
@@ -149,7 +158,7 @@ export function ShipsList() {
         <div className="flex flex-1 flex-col gap-3 sm:flex-row sm:max-w-2xl">
           <Input
             type="search"
-            placeholder="Rechercher un navire…"
+            placeholder={t('filters.searchShip')}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
           />
@@ -161,9 +170,9 @@ export function ShipsList() {
               setLineFilter(e.target.value);
               setPage(1);
             }}
-            aria-label="Filtrer par ligne"
+            aria-label={t('filters.line')}
           >
-            <option value="">Toutes les lignes</option>
+            <option value="">{tCommon('filters.allFeminine')}</option>
             {lines.map((l) => (
               <option key={l.id} value={l.id}>
                 {l.name}
@@ -171,7 +180,7 @@ export function ShipsList() {
             ))}
           </select>
         </div>
-        <Button href="/produits/croisieres/navires/nouveau">Nouveau navire</Button>
+        <Button href="/produits/croisieres/navires/nouveau">{tNav('newShip')}</Button>
       </div>
 
       {deleteError ? (
@@ -191,7 +200,7 @@ export function ShipsList() {
               columns={columns}
               data={ships}
               isLoading={state.status === 'loading'}
-              emptyMessage="Aucun navire."
+              emptyMessage={t('list.emptyShips')}
               getRowId={(r) => r.id}
             />
           </Card>
@@ -201,7 +210,7 @@ export function ShipsList() {
               pageSize={PAGE_SIZE}
               totalPages={state.totalPages}
               totalItems={state.total}
-              itemLabel="navire"
+              itemLabel={tPagination('ship')}
               onPageChange={setPage}
             />
           ) : null}

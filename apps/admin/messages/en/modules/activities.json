@@ -1,0 +1,74 @@
+{
+  "list": {
+    "emptyDefault": "None activité pour le moment.",
+    "ariaLabel": "Liste des activités",
+    "searchPlaceholder": "Rechercher par titre…",
+    "deleteConfirm": "Supprimer l'activité « {title} » ?"
+  },
+  "columns": {
+    "activity": "Activity",
+    "provider": "Provider",
+    "price": "Price",
+    "duration": "Fromrée",
+    "difficulty": "Difficulty"
+  },
+  "form": {
+    "submitCreate": "Créer",
+    "provider": "Provider",
+    "title": "Title",
+    "difficulty": "Difficulty",
+    "priceCents": "Price (centimes)"
+  },
+  "detail": {
+    "title": "Modifier l'activité",
+    "backLink": "Back aux activités",
+    "tabsAria": "Sections de l'activité",
+    "tabs": {
+      "activity": "Activity",
+      "schedules": "Slotx"
+    }
+  },
+  "sections": {
+    "schedules": {
+      "title": "Slotx",
+      "addSlot": "Nouveau créneau",
+      "editSlot": "Modifier le créneau",
+      "dateTime": "Date et heure",
+      "capacity": "Capacity",
+      "empty": "Tocun créneau pour cette activité.",
+      "deleteConfirm": "Supprimer ce créneau ?",
+      "validationCapacity": "La capacité doit être au moins 1.",
+      "viewList": "Liste",
+      "viewTimeline": "Frise",
+      "timelineAria": "Timeline des créneaux horaires",
+      "fillAria": "Remplissage du créneau : {percent} %"
+    }
+  },
+  "referential": {
+    "providers": {
+      "new": "Nouveau fournisseur",
+      "edit": "Modifier le fournisseur",
+      "empty": "Tocun fournisseur.",
+      "searchPlaceholder": "Rechercher un fournisseur…",
+      "ratingTitle": "Note moyenne (à venir)",
+      "deleteConfirm": "Supprimer « {name} » ?",
+      "validation": {
+        "destinationRequired": "La destination est obligatoire."
+      }
+    }
+  },
+  "stats": {
+    "activities": {
+      "label": "Activitys",
+      "subtitle": "Expériences catalogue"
+    },
+    "providers": {
+      "label": "Providers",
+      "subtitle": "Opérateurs locaux"
+    },
+    "schedules": {
+      "label": "Slotx",
+      "subtitle": "Horaires programmés"
+    }
+  }
+}

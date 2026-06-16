@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   AlertDialog,
   Card,
@@ -15,21 +17,32 @@ import {
 import { ApiHttpError } from '@africatourismgate/api-client';
 import type { OrganizationListItem } from '@africatourismgate/types';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import {
+  useAccountStatusLabels,
+  useOrganizationLegalFormOptions,
+} from '../../lib/i18n/use-module-labels';
+import {
   formatOrganizationCount,
   formatOrganizationLegalForm,
-  organizationStatusLabels,
   organizationStatusVariants,
 } from '../../lib/organization-display';
-import { getOrganizationsErrorMessage } from '../../lib/organizations-errors';
 import { OrganizationLogo } from './organization-logo';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
 
 export function OrganizationsList() {
+  const { organizations: getOrganizationsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.organizations');
+  const tCommon = useTranslations('modules.common');
+  const tActions = useTranslations('common.actions');
+  const accountStatusLabels = useAccountStatusLabels();
+  const legalFormOptions = useOrganizationLegalFormOptions();
+  const emptyDash = tCommon('empty.dash');
+
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -64,7 +77,7 @@ export function OrganizationsList() {
     } catch (error) {
       setState({ status: 'error', message: getOrganizationsErrorMessage(error) });
     }
-  }, [page, search]);
+  }, [page, search, getOrganizationsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -102,13 +115,13 @@ export function OrganizationsList() {
     } finally {
       setDeletingId(null);
     }
-  }, [load, pendingDelete]);
+  }, [load, pendingDelete, getOrganizationsErrorMessage]);
 
   const columns = useMemo<ColumnDef<OrganizationListItem, unknown>[]>(
     () => [
       {
         accessorKey: 'name',
-        header: 'Organisation',
+        header: tCommon('columns.organization'),
         cell: ({ row }) => {
           const org = row.original;
           return (
@@ -129,29 +142,29 @@ export function OrganizationsList() {
       },
       {
         id: 'type',
-        header: 'Type',
+        header: t('list.columns.type'),
         cell: ({ row }) => (
           <span className="text-sm text-atg-fg">
-            {formatOrganizationLegalForm(row.original.legalForm)}
+            {formatOrganizationLegalForm(row.original.legalForm, legalFormOptions, emptyDash)}
           </span>
         ),
       },
       {
         accessorKey: 'status',
-        header: 'Statut',
+        header: tCommon('columns.status'),
         meta: { align: 'center' },
         cell: ({ row }) => {
           const status = row.original.status;
           return (
             <DataTableBadge variant={organizationStatusVariants[status]}>
-              {organizationStatusLabels[status]}
+              {accountStatusLabels[status]}
             </DataTableBadge>
           );
         },
       },
       {
         id: 'userCount',
-        header: 'Utilisateurs',
+        header: tCommon('columns.user'),
         meta: { align: 'right' },
         cell: ({ row }) => (
           <span className="tabular-nums text-sm text-atg-fg">
@@ -161,7 +174,7 @@ export function OrganizationsList() {
       },
       {
         id: 'employeeCount',
-        header: 'Employés',
+        header: tCommon('columns.employees'),
         meta: { align: 'right' },
         cell: ({ row }) => (
           <span className="tabular-nums text-sm text-atg-fg">
@@ -171,7 +184,7 @@ export function OrganizationsList() {
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tCommon('columns.actions'),
         meta: { align: 'right' },
         cell: ({ row }) => {
           const org = row.original;
@@ -190,7 +203,14 @@ export function OrganizationsList() {
         },
       },
     ],
-    [deletingId],
+    [
+      accountStatusLabels,
+      deletingId,
+      emptyDash,
+      legalFormOptions,
+      t,
+      tCommon,
+    ],
   );
 
   const isLoading = state.status === 'loading';
@@ -205,10 +225,10 @@ export function OrganizationsList() {
         <Input
           name="search"
           type="search"
-          placeholder="Rechercher par nom ou slug…"
+          placeholder={tCommon('filters.searchByNameOrSlug')}
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
-          aria-label="Rechercher par nom ou slug"
+          aria-label={tCommon('filters.searchByNameOrSlugAria')}
         />
       </div>
 
@@ -225,14 +245,10 @@ export function OrganizationsList() {
       ) : isEmpty && !isLoading ? (
         <EmptyState
           title={
-            hasSearch
-              ? 'Aucune organisation ne correspond à votre recherche'
-              : 'Aucune organisation pour le moment'
+            hasSearch ? t('list.emptyTitleSearch') : t('list.emptyTitleDefault')
           }
           description={
-            hasSearch
-              ? 'Essayez un autre nom ou slug.'
-              : 'Créez une organisation partenaire pour commencer.'
+            hasSearch ? t('list.emptyDescriptionSearch') : t('list.emptyDescriptionDefault')
           }
         />
       ) : (
@@ -243,13 +259,11 @@ export function OrganizationsList() {
               data={organizations}
               isLoading={isLoading}
               emptyMessage={
-                hasSearch
-                  ? 'Aucune organisation ne correspond à votre recherche.'
-                  : 'Aucune organisation pour le moment.'
+                hasSearch ? t('list.emptyTableSearch') : t('list.emptyTableDefault')
               }
               emptyVariant={hasSearch ? 'search' : 'default'}
               getRowId={(row) => row.id}
-              aria-label="Liste des organisations"
+              aria-label={t('list.ariaLabel')}
             />
           </Card>
 
@@ -259,7 +273,7 @@ export function OrganizationsList() {
               pageSize={PAGE_SIZE}
               totalPages={state.totalPages}
               totalItems={state.total}
-              itemLabel="organisation"
+              itemLabel={tCommon('pagination.organization')}
               onPageChange={setPage}
             />
           ) : null}
@@ -271,14 +285,14 @@ export function OrganizationsList() {
         onOpenChange={(open) => {
           if (!open && !deletingId) setPendingDelete(null);
         }}
-        title="Supprimer l'organisation"
+        title={t('list.deleteDialog.title')}
         description={
           pendingDelete
-            ? `Supprimer l'organisation « ${pendingDelete.name} » ? Cette action est réversible côté base.`
+            ? t('list.deleteDialog.description', { name: pendingDelete.name })
             : undefined
         }
-        confirmLabel="Supprimer"
-        cancelLabel="Annuler"
+        confirmLabel={tActions('delete')}
+        cancelLabel={tActions('cancel')}
         variant="danger"
         loading={deletingId !== null}
         onConfirm={() => void confirmDelete()}

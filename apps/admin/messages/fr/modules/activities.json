@@ -1,0 +1,74 @@
+{
+  "list": {
+    "emptyDefault": "Aucune activité pour le moment.",
+    "ariaLabel": "Liste des activités",
+    "searchPlaceholder": "Rechercher par titre…",
+    "deleteConfirm": "Supprimer l'activité « {title} » ?"
+  },
+  "columns": {
+    "activity": "Activité",
+    "provider": "Fournisseur",
+    "price": "Prix",
+    "duration": "Durée",
+    "difficulty": "Difficulté"
+  },
+  "form": {
+    "submitCreate": "Créer",
+    "provider": "Fournisseur",
+    "title": "Titre",
+    "difficulty": "Difficulté",
+    "priceCents": "Prix (centimes)"
+  },
+  "detail": {
+    "title": "Modifier l'activité",
+    "backLink": "Retour aux activités",
+    "tabsAria": "Sections de l'activité",
+    "tabs": {
+      "activity": "Activité",
+      "schedules": "Créneaux"
+    }
+  },
+  "sections": {
+    "schedules": {
+      "title": "Créneaux",
+      "addSlot": "Nouveau créneau",
+      "editSlot": "Modifier le créneau",
+      "dateTime": "Date et heure",
+      "capacity": "Capacité",
+      "empty": "Aucun créneau pour cette activité.",
+      "deleteConfirm": "Supprimer ce créneau ?",
+      "validationCapacity": "La capacité doit être au moins 1.",
+      "viewList": "Liste",
+      "viewTimeline": "Frise",
+      "timelineAria": "Timeline des créneaux horaires",
+      "fillAria": "Remplissage du créneau : {percent} %"
+    }
+  },
+  "referential": {
+    "providers": {
+      "new": "Nouveau fournisseur",
+      "edit": "Modifier le fournisseur",
+      "empty": "Aucun fournisseur.",
+      "searchPlaceholder": "Rechercher un fournisseur…",
+      "ratingTitle": "Note moyenne (à venir)",
+      "deleteConfirm": "Supprimer « {name} » ?",
+      "validation": {
+        "destinationRequired": "La destination est obligatoire."
+      }
+    }
+  },
+  "stats": {
+    "activities": {
+      "label": "Activités",
+      "subtitle": "Expériences catalogue"
+    },
+    "providers": {
+      "label": "Fournisseurs",
+      "subtitle": "Opérateurs locaux"
+    },
+    "schedules": {
+      "label": "Créneaux",
+      "subtitle": "Horaires programmés"
+    }
+  }
+}

@@ -1,8 +1,8 @@
 export const usersKpis = [
   {
     key: 'total',
-    label: 'Utilisateurs',
-    subtitle: 'Comptes enregistrés',
+    labelKey: 'stats.total.label',
+    subtitleKey: 'stats.total.subtitle',
     iconClass: 'bg-atg-info-light text-atg-info',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -17,8 +17,8 @@ export const usersKpis = [
   },
   {
     key: 'active',
-    label: 'Actifs',
-    subtitle: 'Comptes actifs',
+    labelKey: 'stats.active.label',
+    subtitleKey: 'stats.active.subtitle',
     iconClass: 'bg-atg-success-light text-atg-success',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -33,8 +33,8 @@ export const usersKpis = [
   },
   {
     key: 'suspended',
-    label: 'Suspendus',
-    subtitle: 'Comptes suspendus',
+    labelKey: 'stats.suspended.label',
+    subtitleKey: 'stats.suspended.subtitle',
     iconClass: 'bg-atg-warning-light text-atg-warning',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -49,8 +49,8 @@ export const usersKpis = [
   },
   {
     key: 'employees',
-    label: 'Employés',
-    subtitle: 'Profils employés',
+    labelKey: 'stats.employees.label',
+    subtitleKey: 'stats.employees.subtitle',
     href: '/utilisateurs/employes',
     iconClass: 'bg-violet-100 text-violet-700 dark:bg-violet-950/50 dark:text-violet-300',
     icon: (

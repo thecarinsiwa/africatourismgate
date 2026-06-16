@@ -1,11 +1,12 @@
 'use client';
 
+import { useAdminErrorMessages } from '../lib/i18n/use-admin-error-messages';
+
 import { StatCard } from '@africatourismgate/ui';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { dashboardKpis, type DashboardKpiKey } from '../config/dashboard-kpi';
-import { getDashboardKpiErrorMessage } from '../lib/dashboard-api-errors';
 import { formatCount, formatMoney } from '../lib/format-money';
 import { getApiClient } from '../lib/auth/api';
 
@@ -18,6 +19,7 @@ type KpiCardState = {
 const initialCardState: KpiCardState = { status: 'loading' };
 
 export function DashboardKpiCards({ className }: { className?: string }) {
+  const { dashboardKpi: getDashboardKpiErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('dashboard');
   const [cards, setCards] = useState<Record<DashboardKpiKey, KpiCardState>>(() => ({
     users: { ...initialCardState },

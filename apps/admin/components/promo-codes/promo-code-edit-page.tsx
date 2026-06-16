@@ -1,12 +1,14 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import type { PromoCode } from '@africatourismgate/types';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { PaymentsPromoSubnav } from '../payments/payments-promo-subnav';
 import { getApiClient } from '../../lib/auth/api';
-import { getPromoCodesErrorMessage } from '../../lib/promo-codes-errors';
 import { PromoCodeForm } from './promo-code-form';
 
 type PromoCodeEditPageProps = {
@@ -14,6 +16,9 @@ type PromoCodeEditPageProps = {
 };
 
 export function PromoCodeEditPage({ promoCodeId }: PromoCodeEditPageProps) {
+  const { promoCodes: getPromoCodesErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.promoCodes.edit');
+  const tCommon = useTranslations('modules.common');
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -22,7 +27,7 @@ export function PromoCodeEditPage({ promoCodeId }: PromoCodeEditPageProps) {
 
   useAdminEditPageMeta({
     ready: state.status === 'ready',
-    title: 'Modifier le code promo',
+    title: t('pageTitle'),
     entityLabel: state.status === 'ready' ? state.promoCode.code : undefined,
   });
 
@@ -42,13 +47,13 @@ export function PromoCodeEditPage({ promoCodeId }: PromoCodeEditPageProps) {
     return () => {
       cancelled = true;
     };
-  }, [promoCodeId]);
+  }, [promoCodeId, getPromoCodesErrorMessage]);
 
   if (state.status === 'loading') {
     return (
       <div>
         <PaymentsPromoSubnav />
-        <p className="text-sm text-atg-muted">Chargement…</p>
+        <p className="text-sm text-atg-muted">{tCommon('loading')}</p>
       </div>
     );
   }
@@ -58,15 +63,15 @@ export function PromoCodeEditPage({ promoCodeId }: PromoCodeEditPageProps) {
       <div>
         <PaymentsPromoSubnav />
         <div className="space-y-4">
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {state.message}
-        </p>
-        <Link
-          href="/paiements/codes-promo"
-          className="text-sm font-medium text-primary hover:text-primary-hover"
-        >
-          ← Retour à la liste
-        </Link>
+          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+            {state.message}
+          </p>
+          <Link
+            href="/paiements/codes-promo"
+            className="text-sm font-medium text-primary hover:text-primary-hover"
+          >
+            {tCommon('back.toList')}
+          </Link>
         </div>
       </div>
     );

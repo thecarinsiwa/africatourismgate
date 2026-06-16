@@ -1,11 +1,13 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import { Button, Card } from '@africatourismgate/ui';
 import type { User } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useId, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { getApiClient } from '../../lib/auth/api';
-import { getUsersErrorMessage } from '../../lib/users-errors';
 
 export type UserIdFilterBarProps = {
   /** Called when the selected user id changes (empty string = all users). */
@@ -23,6 +25,9 @@ export function UserIdFilterBar({
   users: usersProp,
   className,
 }: UserIdFilterBarProps) {
+  const { users: getUsersErrorMessage } = useAdminErrorMessages();
+  const tFilter = useTranslations('modules.users.userIdFilter');
+  const tCommonFilters = useTranslations('modules.common.filters');
   const selectId = useId();
   const router = useRouter();
   const pathname = usePathname();
@@ -82,7 +87,7 @@ export function UserIdFilterBar({
     return () => {
       cancelled = true;
     };
-  }, [usersProp, onUsersLoaded]);
+  }, [usersProp, onUsersLoaded, getUsersErrorMessage]);
 
   const syncUrl = useCallback(
     (nextUserId: string) => {
@@ -116,7 +121,7 @@ export function UserIdFilterBar({
       <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end">
         <div className="min-w-[240px] flex-1">
           <label htmlFor={selectId} className="mb-1 block text-xs font-medium text-atg-muted">
-            Utilisateur
+            {tFilter('label')}
           </label>
           <select
             id={selectId}
@@ -125,7 +130,7 @@ export function UserIdFilterBar({
             disabled={loadingUsers}
             className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary disabled:opacity-60"
           >
-            <option value="">Tous les utilisateurs</option>
+            <option value="">{tFilter('allUsers')}</option>
             {users.map((user) => (
               <option key={user.id} value={user.id}>
                 {user.firstName} {user.lastName} — {user.email}
@@ -135,7 +140,7 @@ export function UserIdFilterBar({
         </div>
         {userId ? (
           <Button type="button" variant="outline" size="sm" onClick={handleClear}>
-            Effacer le filtre
+            {tCommonFilters('clear')}
           </Button>
         ) : null}
       </div>

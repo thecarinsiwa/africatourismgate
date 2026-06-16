@@ -1,0 +1,70 @@
+{
+  "status": {
+    "pending": "Pendiente",
+    "approved": "Approuvé",
+    "hidden": "Masqué"
+  },
+  "actions": {
+    "approve": "Approuver",
+    "hide": "Masquer",
+    "delete": "Supprimer"
+  },
+  "toast": {
+    "approved": {
+      "title": "Avis approuvé",
+      "message": "L'avis est visible côté client."
+    },
+    "hidden": {
+      "title": "Avis masqué",
+      "message": "L'avis n'est plus affiché publiquement."
+    },
+    "deleted": {
+      "title": "Avis supprimé",
+      "message": "L'avis a été retiré de la modération."
+    }
+  },
+  "deleteDialog": {
+    "title": "Supprimer cet avis",
+    "description": "Suppression logique : l'avis ne sera plus visible dans la modération."
+  },
+  "detail": {
+    "title": "Avis",
+    "backLink": "Volver aux avis",
+    "sections": {
+      "context": "Contexte",
+      "comment": "Commentaire"
+    },
+    "fields": {
+      "author": "Hastateur",
+      "property": "Propiedad",
+      "entity": "Entité",
+      "booking": "Reserva",
+      "publishedAt": "Publié le"
+    },
+    "viewBooking": "Voir la réservation",
+    "noComment": "Hastacun commentaire.",
+    "moderationActionsAria": "Acciones de modération"
+  },
+  "list": {
+    "columns": {
+      "author": "Hastateur",
+      "property": "Propiedad"
+    },
+    "filters": {
+      "apply": "Aplicar les filtres"
+    },
+    "empty": {
+      "default": {
+        "title": "Hastacun avis en attente",
+        "description": "La file de modération est vide. Les nouveaux avis clients apparaîtront ici.",
+        "tableMessage": "Hastacun avis pour le moment."
+      },
+      "filtered": {
+        "title": "Hastacun avis ne correspond aux filtres",
+        "description": "Modifiez les filtres ou affichez tous les statuts pour élargir la recherche.",
+        "tableMessage": "Hastacun avis ne correspond aux filtres."
+      }
+    },
+    "ariaLabel": "Liste des avis à modérer"
+  }
+}

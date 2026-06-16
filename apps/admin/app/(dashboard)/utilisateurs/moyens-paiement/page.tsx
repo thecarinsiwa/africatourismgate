@@ -1,16 +1,11 @@
 import type { Metadata } from 'next';
-import { AdminPageIntro } from '../../../../components/admin-page-intro';
-import { UserPaymentMethodsList } from '../../../../components/users/user-payment-methods-list';
+import { getAdminPageMetadata } from '../../../../lib/i18n/admin-page-i18n';
+import { MoyensPaiementPageContent } from '../../../../components/pages/utilisateurs-moyens-paiement-page-content';
 
-export const metadata: Metadata = {
-  title: 'Moyens de paiement — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('utilisateurs/moyens-paiement');
+}
 
-export default function UtilisateurMoyensPaiementPage() {
-  return (
-    <div>
-      <AdminPageIntro description={"Cartes et moyens de paiement enregistrés par les utilisateurs."} />
-      <UserPaymentMethodsList />
-    </div>
-  );
+export default function Page() {
+  return <MoyensPaiementPageContent />;
 }

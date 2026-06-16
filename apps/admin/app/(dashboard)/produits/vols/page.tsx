@@ -1,24 +1,11 @@
 import type { Metadata } from 'next';
-import { AdminPageIntro } from '../../../../components/admin-page-intro';
-import { FlightsList } from '../../../../components/flights/flights-list';
-import { FlightsStatCards } from '../../../../components/flights/flights-stat-cards';
+import { getAdminPageMetadata } from '../../../../lib/i18n/admin-page-i18n';
+import { VolsPageContent } from '../../../../components/pages/produits-vols-page-content';
 
-export const metadata: Metadata = {
-  title: 'Vols — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('produits/vols');
+}
 
-export default function VolsPage() {
-  return (
-    <div>
-      <AdminPageIntro
-        description="Catalogue des vols, classes cabine et disponibilités. Recherche par code vol."
-        links={[
-          { href: '/produits/vols/compagnies', label: 'Compagnies aériennes' },
-          { href: '/produits/vols/aeroports', label: 'Aéroports' },
-        ]}
-      />
-      <FlightsStatCards className="mb-6" />
-      <FlightsList />
-    </div>
-  );
+export default function Page() {
+  return <VolsPageContent />;
 }

@@ -1,6 +1,8 @@
 'use client';
 
 import { Card } from '@africatourismgate/ui';
+import { useMemo } from 'react';
+import { useVehicleSpecLabels } from '../../lib/i18n/use-module-labels';
 import { resolveVehicleSpecs } from '../../lib/vehicle-category-specs';
 
 type VehicleSpecsGridProps = {
@@ -70,26 +72,58 @@ function FuelIcon() {
   );
 }
 
+function localizeTransmission(
+  value: string,
+  labels: ReturnType<typeof useVehicleSpecLabels>,
+): string {
+  const normalized = value.toLowerCase();
+  if (normalized.includes('manual') || normalized.includes('manuelle')) {
+    return labels.transmissionManual;
+  }
+  if (normalized.includes('auto') || normalized.includes('automatique')) {
+    return labels.transmissionAutomatic;
+  }
+  return value;
+}
+
+function localizeFuel(value: string, labels: ReturnType<typeof useVehicleSpecLabels>): string {
+  const normalized = value.toLowerCase();
+  if (normalized.includes('essence') || normalized.includes('petrol')) {
+    return labels.fuelPetrol;
+  }
+  if (normalized.includes('diesel')) {
+    return labels.fuelDiesel;
+  }
+  if (normalized.includes('hybrid') || normalized.includes('hybride')) {
+    return labels.fuelHybrid;
+  }
+  return value;
+}
+
 export function VehicleSpecsGrid({ categoryName }: VehicleSpecsGridProps) {
+  const specLabels = useVehicleSpecLabels();
   const specs = resolveVehicleSpecs(categoryName);
 
-  const items: SpecItem[] = [
-    {
-      label: 'Places',
-      value: String(specs.seats),
-      icon: <SeatsIcon />,
-    },
-    {
-      label: 'Transmission',
-      value: specs.transmission,
-      icon: <TransmissionIcon />,
-    },
-    {
-      label: 'Carburant',
-      value: specs.fuel,
-      icon: <FuelIcon />,
-    },
-  ];
+  const items: SpecItem[] = useMemo(
+    () => [
+      {
+        label: specLabels.seats,
+        value: String(specs.seats),
+        icon: <SeatsIcon />,
+      },
+      {
+        label: specLabels.transmission,
+        value: localizeTransmission(specs.transmission, specLabels),
+        icon: <TransmissionIcon />,
+      },
+      {
+        label: specLabels.fuel,
+        value: localizeFuel(specs.fuel, specLabels),
+        icon: <FuelIcon />,
+      },
+    ],
+    [specLabels, specs.fuel, specs.seats, specs.transmission],
+  );
 
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">

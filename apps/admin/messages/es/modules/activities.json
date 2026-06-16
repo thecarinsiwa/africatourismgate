@@ -1,0 +1,74 @@
+{
+  "list": {
+    "emptyDefault": "Ninguna activité pour le moment.",
+    "ariaLabel": "Liste des activités",
+    "searchPlaceholder": "Rechercher par titre…",
+    "deleteConfirm": "Supprimer l'activité « {title} » ?"
+  },
+  "columns": {
+    "activity": "Actividad",
+    "provider": "Proveedor",
+    "price": "Precio",
+    "duration": "Desderée",
+    "difficulty": "Dificultad"
+  },
+  "form": {
+    "submitCreate": "Créer",
+    "provider": "Proveedor",
+    "title": "Título",
+    "difficulty": "Dificultad",
+    "priceCents": "Precio (centimes)"
+  },
+  "detail": {
+    "title": "Modifier l'activité",
+    "backLink": "Volver aux activités",
+    "tabsAria": "Sections de l'activité",
+    "tabs": {
+      "activity": "Actividad",
+      "schedules": "Franjax"
+    }
+  },
+  "sections": {
+    "schedules": {
+      "title": "Franjax",
+      "addSlot": "Nouveau créneau",
+      "editSlot": "Modifier le créneau",
+      "dateTime": "Fecha et heure",
+      "capacity": "Capacidad",
+      "empty": "Hastacun créneau pour cette activité.",
+      "deleteConfirm": "Supprimer ce créneau ?",
+      "validationCapacity": "La capacité doit être au moins 1.",
+      "viewList": "Liste",
+      "viewTimeline": "Frise",
+      "timelineAria": "Timeline des créneaux horaires",
+      "fillAria": "Remplissage du créneau : {percent} %"
+    }
+  },
+  "referential": {
+    "providers": {
+      "new": "Nouveau fournisseur",
+      "edit": "Modifier le fournisseur",
+      "empty": "Hastacun fournisseur.",
+      "searchPlaceholder": "Rechercher un fournisseur…",
+      "ratingTitle": "Note moyenne (à venir)",
+      "deleteConfirm": "Supprimer « {name} » ?",
+      "validation": {
+        "destinationRequired": "La destination est obligatoire."
+      }
+    }
+  },
+  "stats": {
+    "activities": {
+      "label": "Actividads",
+      "subtitle": "Expériences catalogue"
+    },
+    "providers": {
+      "label": "Proveedors",
+      "subtitle": "Opérateurs locaux"
+    },
+    "schedules": {
+      "label": "Franjax",
+      "subtitle": "Horaires programmés"
+    }
+  }
+}

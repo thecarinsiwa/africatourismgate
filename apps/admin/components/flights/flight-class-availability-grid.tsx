@@ -1,21 +1,21 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import { Button, Card, Input, useToast } from '@africatourismgate/ui';
 import type { FlightClassAvailability } from '@africatourismgate/types';
+import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import {
-  CALENDAR_WEEKDAY_HEADERS,
   currentYearMonth,
   enumerateMonthDays,
   formatDateLabel,
-  formatMonthLabel,
   formatPrice,
-  formatShortDay,
+  parseYearMonth,
   shiftYearMonth,
   weekdayOffset,
 } from '../../lib/availability-dates';
-import { getVolsErrorMessage } from '../../lib/vols-errors';
 
 type DayDraft = {
   availableSeats: string;
@@ -51,6 +51,13 @@ export function FlightClassAvailabilityGrid({
   yearMonth,
   onYearMonthChange,
 }: FlightClassAvailabilityGridProps) {
+  const locale = useLocale();
+  const { vols: getVolsErrorMessage } = useAdminErrorMessages();
+  const tCalendar = useTranslations('modules.common.availabilityCalendar');
+  const tCommon = useTranslations('modules.common');
+  const tToast = useTranslations('modules.common.toast');
+  const tActions = useTranslations('common.actions');
+  const emptyDash = tCommon('empty.dash');
   const { toast } = useToast();
   const gridRef = useRef<HTMLDivElement>(null);
   const [rows, setRows] = useState<Map<string, FlightClassAvailability>>(new Map());
@@ -62,8 +69,43 @@ export function FlightClassAvailabilityGrid({
   const [editingDate, setEditingDate] = useState<string | null>(null);
   const [focusedDate, setFocusedDate] = useState<string | null>(null);
 
+  const weekdayHeaders = useMemo(
+    () => [
+      tCalendar('weekdays.mon'),
+      tCalendar('weekdays.tue'),
+      tCalendar('weekdays.wed'),
+      tCalendar('weekdays.thu'),
+      tCalendar('weekdays.fri'),
+      tCalendar('weekdays.sat'),
+      tCalendar('weekdays.sun'),
+    ],
+    [tCalendar],
+  );
+
   const monthDays = useMemo(() => enumerateMonthDays(yearMonth), [yearMonth]);
   const leadingBlanks = useMemo(() => weekdayOffset(yearMonth), [yearMonth]);
+
+  const formatMonthLabel = useCallback(
+    (isoMonth: string): string => {
+      const { year, month } = parseYearMonth(isoMonth);
+      return new Date(Date.UTC(year, month - 1, 1)).toLocaleDateString(locale, {
+        month: 'long',
+        year: 'numeric',
+      });
+    },
+    [locale],
+  );
+
+  const formatShortDay = useCallback(
+    (isoDate: string): string => {
+      const [, , dayStr] = isoDate.split('-');
+      const day = Number(dayStr);
+      const date = new Date(isoDate + 'T12:00:00');
+      const weekday = date.toLocaleDateString(locale, { weekday: 'short' });
+      return `${weekday} ${day}`;
+    },
+    [locale],
+  );
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -100,7 +142,7 @@ export function FlightClassAvailabilityGrid({
     } finally {
       setLoading(false);
     }
-  }, [flightClassId, monthDays, defaultPriceCents]);
+  }, [flightClassId, monthDays, defaultPriceCents, getVolsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -129,11 +171,11 @@ export function FlightClassAvailabilityGrid({
     const seats = Number(draft.availableSeats);
     const cents = Number(draft.priceCents);
     if (!Number.isFinite(seats) || seats < 0) {
-      setError('Sièges invalides.');
+      setError(tCommon('validation.invalidSeatsShort'));
       return;
     }
     if (!Number.isFinite(cents) || cents < 0) {
-      setError('Prix invalide (centimes).');
+      setError(tCommon('validation.invalidPriceCents'));
       return;
     }
 
@@ -156,7 +198,7 @@ export function FlightClassAvailabilityGrid({
         });
       }
       toast({
-        title: 'Disponibilité enregistrée',
+        title: tToast('availabilitySaved'),
         message: formatDateLabel(date),
         variant: 'success',
       });
@@ -166,7 +208,7 @@ export function FlightClassAvailabilityGrid({
       const message = getVolsErrorMessage(err);
       setError(message);
       toast({
-        title: 'Erreur d’enregistrement',
+        title: tToast('saveError'),
         message,
         variant: 'error',
       });
@@ -184,7 +226,7 @@ export function FlightClassAvailabilityGrid({
     try {
       await getApiClient().deleteFlightClassAvailability(existing.id);
       toast({
-        title: 'Disponibilité supprimée',
+        title: tToast('availabilityDeleted'),
         message: formatDateLabel(date),
         variant: 'success',
       });
@@ -194,7 +236,7 @@ export function FlightClassAvailabilityGrid({
       const message = getVolsErrorMessage(err);
       setError(message);
       toast({
-        title: 'Erreur de suppression',
+        title: tToast('deleteError'),
         message,
         variant: 'error',
       });
@@ -269,6 +311,8 @@ export function FlightClassAvailabilityGrid({
     return cells;
   }, [leadingBlanks, monthDays]);
 
+  const monthLabel = formatMonthLabel(yearMonth);
+
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -277,7 +321,7 @@ export function FlightClassAvailabilityGrid({
             type="button"
             variant="outline"
             size="sm"
-            aria-label="Mois précédent"
+            aria-label={tCalendar('previousMonth')}
             onClick={() => onYearMonthChange(shiftYearMonth(yearMonth, -1))}
           >
             ‹
@@ -286,13 +330,13 @@ export function FlightClassAvailabilityGrid({
             className="min-w-[10rem] text-center text-sm font-semibold text-atg-fg"
             aria-live="polite"
           >
-            {formatMonthLabel(yearMonth)}
+            {monthLabel}
           </h3>
           <Button
             type="button"
             variant="outline"
             size="sm"
-            aria-label="Mois suivant"
+            aria-label={tCalendar('nextMonth')}
             onClick={() => onYearMonthChange(shiftYearMonth(yearMonth, 1))}
           >
             ›
@@ -304,7 +348,7 @@ export function FlightClassAvailabilityGrid({
           size="sm"
           onClick={() => onYearMonthChange(currentYearMonth())}
         >
-          Aujourd’hui
+          {tCalendar('today')}
         </Button>
       </div>
 
@@ -316,16 +360,16 @@ export function FlightClassAvailabilityGrid({
 
       <Card variant="dashboard" padding="md">
         {loading ? (
-          <p className="text-sm text-atg-muted">Chargement…</p>
+          <p className="text-sm text-atg-muted">{tCommon('loading')}</p>
         ) : (
           <div
             ref={gridRef}
             role="grid"
-            aria-label={`Calendrier ${formatMonthLabel(yearMonth)}`}
+            aria-label={monthLabel}
             className="grid grid-cols-7 gap-1 sm:gap-2"
             onKeyDown={handleGridKeyDown}
           >
-            {CALENDAR_WEEKDAY_HEADERS.map((label) => (
+            {weekdayHeaders.map((label) => (
               <div
                 key={label}
                 role="columnheader"
@@ -380,7 +424,7 @@ export function FlightClassAvailabilityGrid({
                         value={draft?.availableSeats ?? '0'}
                         onChange={(e) => updateDraft(date, 'availableSeats', e.target.value)}
                         className="!px-2 !py-1 text-xs"
-                        aria-label={`Sièges ${date}`}
+                        aria-label={tCalendar('seatsAria', { date })}
                       />
                       <Input
                         type="number"
@@ -388,7 +432,7 @@ export function FlightClassAvailabilityGrid({
                         value={draft?.priceCents ?? String(defaultPriceCents)}
                         onChange={(e) => updateDraft(date, 'priceCents', e.target.value)}
                         className="!px-2 !py-1 text-xs"
-                        aria-label={`Prix ${date}`}
+                        aria-label={tCalendar('priceAria', { date })}
                       />
                       <div className="mt-auto flex flex-wrap gap-1">
                         <Button
@@ -401,7 +445,7 @@ export function FlightClassAvailabilityGrid({
                             void handleSaveDay(date);
                           }}
                         >
-                          OK
+                          {tActions('confirm')}
                         </Button>
                         {existing ? (
                           <Button
@@ -426,10 +470,12 @@ export function FlightClassAvailabilityGrid({
                     >
                       <span className="text-xs font-semibold">{dayNum}</span>
                       <span className="mt-1 text-xs tabular-nums">
-                        {Number.isFinite(seats) ? `${seats} pl.` : '—'}
+                        {Number.isFinite(seats)
+                          ? tCalendar('seatsShort', { count: seats })
+                          : emptyDash}
                       </span>
                       <span className="text-[10px] tabular-nums opacity-90 sm:text-xs">
-                        {Number.isFinite(cents) ? formatPrice(cents, 'USD') : '—'}
+                        {Number.isFinite(cents) ? formatPrice(cents, 'USD') : emptyDash}
                       </span>
                     </div>
                   )}

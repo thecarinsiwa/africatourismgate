@@ -1,16 +1,11 @@
 import type { Metadata } from 'next';
-import { AdminPageIntro } from '../../../../components/admin-page-intro';
-import { SupportTicketsList } from '../../../../components/support/support-tickets-list';
+import { getAdminPageMetadata } from '../../../../lib/i18n/admin-page-i18n';
+import { TicketsPageContent } from '../../../../components/pages/contenu-tickets-page-content';
 
-export const metadata: Metadata = {
-  title: 'Tickets support — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('contenu/tickets');
+}
 
-export default function SupportTicketsPage() {
-  return (
-    <div>
-      <AdminPageIntro description="Demandes d'assistance clients. Filtres par statut et priorité. Accès : support_tickets.read / support_tickets.write." />
-      <SupportTicketsList />
-    </div>
-  );
+export default function Page() {
+  return <TicketsPageContent />;
 }

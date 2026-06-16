@@ -1,28 +1,19 @@
 import { ApiHttpError } from '@africatourismgate/api-client';
+import { resolveUnknownApiError } from './common-api-errors';
+import type { RbacErrorMessages } from './i18n/admin-error-messages';
 
-export function getRbacErrorMessage(error: unknown): string {
-  if (error instanceof TypeError) {
-    return 'Impossible de joindre l’API. Vérifiez que le serveur est démarré.';
-  }
+export type { RbacErrorMessages };
 
-  if (error instanceof ApiHttpError) {
-    if (error.status === 403) {
-      if (error.message?.includes('système')) {
-        return error.message;
-      }
-      return (
-        'Accès refusé : votre compte n’a pas les permissions requises (users.read, roles.read). ' +
-        'Reconnectez-vous avec admin@africatourismgate.local ou exécutez pnpm --filter @africatourismgate/api sync:rbac puis redémarrez l’API.'
-      );
-    }
-    if (error.status === 409) {
-      return 'Cette assignation existe déjà pour ce périmètre.';
-    }
-    if (error.message && !error.message.startsWith('HTTP ')) {
+export function getRbacErrorMessage(error: unknown, messages: RbacErrorMessages): string {
+  if (error instanceof ApiHttpError && error.status === 403) {
+    if (error.message?.includes('système') || error.message?.includes('system')) {
       return error.message;
     }
-    return `Erreur API (${error.status}).`;
+    return messages.forbiddenDetail;
   }
 
-  return 'Une erreur est survenue.';
+  return resolveUnknownApiError(error, messages, {
+    forbidden: messages.forbiddenDetail,
+    conflict: () => messages.assignmentConflict,
+  });
 }

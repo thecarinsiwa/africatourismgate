@@ -1,21 +1,11 @@
 import type { Metadata } from 'next';
-import { PageHeader } from '@africatourismgate/ui';
-import { PropertiesList } from '../../../components/properties/properties-list';
-import { PropertiesStatCards } from '../../../components/properties/properties-stat-cards';
+import { getAdminPageMetadata } from '../../../lib/i18n/admin-page-i18n';
+import { HebergementsPageContent } from '../../../components/pages/hebergements-page-content';
 
-export const metadata: Metadata = {
-  title: 'Hébergements — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('hebergements');
+}
 
-export default function HebergementsPage() {
-  return (
-    <div>
-      <PageHeader
-        title="Hébergements"
-        description="Propriétés, chambres et équipements. Filtrez par destination."
-      />
-      <PropertiesStatCards className="mb-6" />
-      <PropertiesList />
-    </div>
-  );
+export default function Page() {
+  return <HebergementsPageContent />;
 }

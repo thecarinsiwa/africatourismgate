@@ -3,12 +3,19 @@ import type {
   SupportTicketStatus,
 } from '@africatourismgate/types';
 
-export const supportTicketStatusLabels: Record<SupportTicketStatus, string> = {
-  open: 'Ouvert',
-  pending: 'En cours',
-  resolved: 'Résolu',
-  closed: 'Fermé',
-};
+export const SUPPORT_TICKET_STATUSES: SupportTicketStatus[] = [
+  'open',
+  'pending',
+  'resolved',
+  'closed',
+];
+
+export const SUPPORT_TICKET_PRIORITIES: SupportTicketPriority[] = [
+  'low',
+  'normal',
+  'high',
+  'urgent',
+];
 
 export const supportTicketStatusVariants: Record<
   SupportTicketStatus,
@@ -18,13 +25,6 @@ export const supportTicketStatusVariants: Record<
   pending: 'warning',
   resolved: 'success',
   closed: 'muted',
-};
-
-export const supportTicketPriorityLabels: Record<SupportTicketPriority, string> = {
-  low: 'Basse',
-  normal: 'Normale',
-  high: 'Haute',
-  urgent: 'Urgente',
 };
 
 export const supportTicketPriorityVariants: Record<
@@ -37,14 +37,13 @@ export const supportTicketPriorityVariants: Record<
   urgent: 'warning',
 };
 
-export const UNASSIGNED_TICKET_LABEL = 'Non assigné';
-
 export function formatSupportTicketDateTime(
   iso: string,
+  locale: string,
   style: 'short' | 'long' = 'short',
 ): string {
   try {
-    return new Date(iso).toLocaleString('fr-FR', {
+    return new Date(iso).toLocaleString(locale, {
       dateStyle: style === 'long' ? 'long' : 'short',
       timeStyle: 'short',
     });
@@ -54,8 +53,9 @@ export function formatSupportTicketDateTime(
 }
 
 export function formatSupportTicketAssignee(
-  assigneeName?: string | null,
+  assigneeName: string | null | undefined,
+  unassignedLabel: string,
 ): string {
   const trimmed = assigneeName?.trim();
-  return trimmed || UNASSIGNED_TICKET_LABEL;
+  return trimmed || unassignedLabel;
 }

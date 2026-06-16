@@ -1,0 +1,79 @@
+{
+  "list": {
+    "emptyTitleSearch": "Aucune organisation ne correspond à votre recherche",
+    "emptyTitleDefault": "Aucune organisation pour le moment",
+    "emptyDescriptionSearch": "Essayez un autre nom ou slug.",
+    "emptyDescriptionDefault": "Créez une organisation partenaire pour commencer.",
+    "emptyTableSearch": "Aucune organisation ne correspond à votre recherche.",
+    "emptyTableDefault": "Aucune organisation pour le moment.",
+    "ariaLabel": "Liste des organisations",
+    "columns": {
+      "type": "Type"
+    },
+    "deleteDialog": {
+      "title": "Supprimer l'organisation",
+      "description": "Supprimer l'organisation « {name} » ? Cette action est réversible côté base."
+    }
+  },
+  "form": {
+    "sections": {
+      "identity": "Identité",
+      "contact": "Contact",
+      "legal": "Juridique",
+      "configuration": "Configuration"
+    },
+    "name": "Nom",
+    "slug": "Slug",
+    "slugHint": "Identifiant unique dans l'URL (ex. africa-tourism-gate).",
+    "description": "Description",
+    "website": "Site web",
+    "websitePlaceholder": "https://",
+    "contactEmail": "E-mail de contact",
+    "contactPhone": "Téléphone",
+    "legalForm": "Forme juridique",
+    "rccm": "RCCM",
+    "rccmHint": "Registre du Commerce et du Crédit Mobilier",
+    "idNat": "ID. Nat.",
+    "idNatHint": "Identification Nationale",
+    "nif": "NIF",
+    "nifHint": "Numéro d'Identification Fiscale",
+    "cnss": "CNSS",
+    "cnssHint": "Caisse Nationale de Sécurité Sociale",
+    "currency": "Devise",
+    "status": "Statut",
+    "submitCreate": "Créer l'organisation",
+    "submitEdit": "Enregistrer",
+    "validation": {
+      "nameRequired": "Le nom est obligatoire.",
+      "slugRequired": "Le slug est obligatoire.",
+      "slugInvalid": "Slug invalide : minuscules, chiffres et tirets uniquement (ex. mon-organisation).",
+      "currencyInvalid": "La devise doit comporter 3 lettres (ex. USD, CDF)."
+    },
+    "toast": {
+      "savedTitle": "Organisation enregistrée",
+      "errorTitle": "Erreur d'enregistrement"
+    }
+  },
+  "legalForm": {
+    "unspecified": "Non renseigné",
+    "SARL": "SARL",
+    "SA": "SA",
+    "SAS": "SAS",
+    "Ets": "Établissement (Ets)",
+    "SNC": "SNC",
+    "ASBL": "ASBL"
+  },
+  "detail": {
+    "title": "Organisation",
+    "tabsAria": "Sections de l'organisation",
+    "tabs": {
+      "infos": "Infos",
+      "users": "Utilisateurs",
+      "settings": "Paramètres"
+    },
+    "settingsIntro": "Configuration de l'organisation : coordonnées, locale, réservation et branding."
+  },
+  "selector": {
+    "defaultLabel": "Organisation"
+  }
+}

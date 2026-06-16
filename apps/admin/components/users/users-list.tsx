@@ -1,5 +1,8 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+import { useAccountStatusLabels } from '../../lib/i18n/use-module-labels';
+
 import {
   Avatar,
   Button,
@@ -15,20 +18,14 @@ import {
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { OrganizationListItem, Role, User, UserStatus } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getUsersErrorMessage } from '../../lib/users-errors';
 
 const PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_MS = 300;
 
 type StatusFilter = '' | 'active' | 'suspended';
-
-const statusLabels: Record<UserStatus, string> = {
-  active: 'Actif',
-  suspended: 'Suspendu',
-  deleted: 'Supprimé',
-};
 
 const statusVariants: Record<UserStatus, 'success' | 'warning' | 'danger'> = {
   active: 'success',
@@ -37,6 +34,13 @@ const statusVariants: Record<UserStatus, 'success' | 'warning' | 'danger'> = {
 };
 
 export function UsersList() {
+  const { users: getUsersErrorMessage } = useAdminErrorMessages();
+  const tList = useTranslations('modules.users.list');
+  const tFilters = useTranslations('modules.users.filters');
+  const tCommonFilters = useTranslations('modules.common.filters');
+  const tColumns = useTranslations('modules.common.columns');
+  const tPagination = useTranslations('modules.common.pagination');
+  const statusLabels = useAccountStatusLabels();
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('');
@@ -93,27 +97,27 @@ export function UsersList() {
 
   const organizationOptions = useMemo(
     () => [
-      { value: '', label: 'Toutes' },
+      { value: '', label: tCommonFilters('allFeminine') },
       ...organizations.map((org) => ({ value: org.id, label: org.name })),
     ],
-    [organizations],
+    [organizations, tCommonFilters],
   );
 
   const roleOptions = useMemo(
     () => [
-      { value: '', label: 'Tous' },
+      { value: '', label: tCommonFilters('all') },
       ...roles.map((role) => ({ value: role.id, label: role.name })),
     ],
-    [roles],
+    [roles, tCommonFilters],
   );
 
   const statusOptions = useMemo(
     () => [
-      { value: '', label: 'Tous' },
-      { value: 'active', label: 'Actif' },
-      { value: 'suspended', label: 'Suspendu' },
+      { value: '', label: tCommonFilters('all') },
+      { value: 'active', label: statusLabels.active },
+      { value: 'suspended', label: statusLabels.suspended },
     ],
-    [],
+    [statusLabels, tCommonFilters],
   );
 
   const load = useCallback(async () => {
@@ -136,7 +140,7 @@ export function UsersList() {
     } catch (error) {
       setState({ status: 'error', message: getUsersErrorMessage(error) });
     }
-  }, [page, search, statusFilter, organizationFilter, roleFilter]);
+  }, [page, search, statusFilter, organizationFilter, roleFilter, getUsersErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -157,11 +161,7 @@ export function UsersList() {
 
   const handleDelete = useCallback(
     async (user: User) => {
-      if (
-        !window.confirm(
-          `Supprimer l'utilisateur « ${user.email} » ? Cette action est réversible côté base.`,
-        )
-      ) {
+      if (!window.confirm(tList('deleteConfirm', { email: user.email }))) {
         return;
       }
       setDeleteError(null);
@@ -175,14 +175,14 @@ export function UsersList() {
         setDeletingId(null);
       }
     },
-    [load],
+    [load, tList, getUsersErrorMessage],
   );
 
   const columns = useMemo<ColumnDef<User, unknown>[]>(
     () => [
       {
         id: 'user',
-        header: 'Utilisateur',
+        header: tColumns('user'),
         cell: ({ row }) => {
           const user = row.original;
           const fullName = [user.firstName, user.lastName].filter(Boolean).join(' ');
@@ -206,7 +206,7 @@ export function UsersList() {
       },
       {
         accessorKey: 'status',
-        header: 'Statut',
+        header: tColumns('status'),
         meta: { align: 'center' },
         cell: ({ row }) => {
           const status = row.original.status;
@@ -219,7 +219,7 @@ export function UsersList() {
       },
       {
         id: 'organization',
-        header: 'Organisation',
+        header: tColumns('organization'),
         cell: ({ row }) => {
           const orgId = row.original.organizationId;
           if (!orgId) {
@@ -232,7 +232,7 @@ export function UsersList() {
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tColumns('actions'),
         meta: { align: 'right' },
         cell: ({ row }) => {
           const user = row.original;
@@ -251,7 +251,7 @@ export function UsersList() {
         },
       },
     ],
-    [deletingId, handleDelete, orgNameById],
+    [deletingId, handleDelete, orgNameById, statusLabels, tColumns],
   );
 
   const isLoading = state.status === 'loading';
@@ -264,9 +264,7 @@ export function UsersList() {
     roleFilter !== '',
   ].filter(Boolean).length;
   const hasFilters = activeFilterCount > 0;
-  const emptyMessage = hasFilters
-    ? 'Aucun utilisateur ne correspond à vos critères.'
-    : 'Aucun utilisateur pour le moment.';
+  const emptyMessage = hasFilters ? tList('emptyFiltered') : tList('emptyDefault');
 
   const handleClearFilters = useCallback(() => {
     setSearchInput('');
@@ -282,22 +280,22 @@ export function UsersList() {
       <FilterBar
         activeCount={activeFilterCount}
         onClear={handleClearFilters}
-        actions={<Button href="/utilisateurs/nouveau">Nouvel utilisateur</Button>}
+        actions={<Button href="/utilisateurs/nouveau">{tList('newUser')}</Button>}
         filters={
           <>
             <div className="min-w-[200px] flex-1 sm:max-w-md">
               <Input
                 name="search"
                 type="search"
-                placeholder="Rechercher par e-mail ou nom…"
+                placeholder={tCommonFilters('searchByEmailOrName')}
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                aria-label="Rechercher par e-mail ou nom"
+                aria-label={tCommonFilters('searchByEmailOrNameAria')}
               />
             </div>
             <div className="w-full sm:w-40">
               <Select
-                label="Statut"
+                label={tFilters('status')}
                 value={statusFilter}
                 options={statusOptions}
                 onChange={(e) => {
@@ -308,7 +306,7 @@ export function UsersList() {
             </div>
             <div className="w-full sm:w-48">
               <Select
-                label="Organisation"
+                label={tFilters('organization')}
                 value={organizationFilter}
                 options={organizationOptions}
                 onChange={(e) => {
@@ -319,7 +317,7 @@ export function UsersList() {
             </div>
             <div className="w-full sm:w-48">
               <Select
-                label="Rôle"
+                label={tFilters('role')}
                 value={roleFilter}
                 options={roleOptions}
                 onChange={(e) => {
@@ -352,7 +350,7 @@ export function UsersList() {
               emptyMessage={emptyMessage}
               emptyVariant={hasFilters ? 'search' : 'default'}
               getRowId={(row) => row.id}
-              aria-label="Liste des utilisateurs"
+              aria-label={tList('ariaLabel')}
             />
           </Card>
 
@@ -362,7 +360,7 @@ export function UsersList() {
               pageSize={PAGE_SIZE}
               totalPages={state.totalPages}
               totalItems={state.total}
-              itemLabel="utilisateur"
+              itemLabel={tPagination('user')}
               onPageChange={setPage}
             />
           ) : null}

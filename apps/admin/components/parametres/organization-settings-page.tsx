@@ -1,12 +1,14 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import type { OrganizationListItem } from '@africatourismgate/types';
 import { AlertDialog } from '@africatourismgate/ui';
+import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { useSetAdminPageMeta } from '../admin-page-meta-context';
 import { getApiClient } from '../../lib/auth/api';
-import { getOrganizationSettingsErrorMessage } from '../../lib/organization-settings-errors';
 import { useUnsavedChangesGuard } from '../rbac/use-unsaved-changes-guard';
 import { ParametresPageLayout } from './parametres-subnav';
 import {
@@ -15,6 +17,8 @@ import {
 } from './organization-settings-form';
 
 export function OrganizationSettingsPage() {
+  const { organizationSettings: getOrganizationSettingsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.settings');
   const router = useRouter();
   const searchParams = useSearchParams();
   const [accessError, setAccessError] = useState<string | null>(null);
@@ -25,7 +29,7 @@ export function OrganizationSettingsPage() {
   const { dialogOpen, setDialogOpen, requestAction, confirmDiscard, cancelDiscard } =
     useUnsavedChangesGuard(formDirty);
 
-  useSetAdminPageMeta({ title: 'Paramètres' });
+  useSetAdminPageMeta({ title: t('page.title') });
 
   useEffect(() => {
     let cancelled = false;
@@ -39,7 +43,7 @@ export function OrganizationSettingsPage() {
           me.permissions.includes('organization_settings.read');
         if (!canRead) {
           if (!cancelled) {
-            setAccessError('Vous n’avez pas la permission de consulter les paramètres.');
+            setAccessError(t('page.denied'));
           }
           return;
         }
@@ -72,7 +76,7 @@ export function OrganizationSettingsPage() {
     return () => {
       cancelled = true;
     };
-  }, [searchParams]);
+  }, [searchParams, t, getOrganizationSettingsErrorMessage]);
 
   const handleOrganizationChange = useCallback(
     (id: string) => {
@@ -97,7 +101,7 @@ export function OrganizationSettingsPage() {
   if (!organizationId) {
     return (
       <ParametresPageLayout>
-        <p className="text-sm text-atg-muted">Chargement…</p>
+        <p className="text-sm text-atg-muted">{t('form.loading')}</p>
       </ParametresPageLayout>
     );
   }
@@ -107,9 +111,7 @@ export function OrganizationSettingsPage() {
       <ParametresPageLayout
         onSubnavNavigate={formDirty ? (_href, proceed) => requestAction(proceed) : undefined}
       >
-        <p className="mb-8 text-sm text-atg-muted">
-          Configuration de l’organisation : coordonnées, locale, réservation et branding.
-        </p>
+        <p className="mb-8 text-sm text-atg-muted">{t('page.intro')}</p>
         <OrganizationSettingsForm
           organizationId={organizationId}
           isSuperAdmin={isSuperAdmin}
@@ -121,10 +123,10 @@ export function OrganizationSettingsPage() {
       <AlertDialog
         open={dialogOpen}
         onOpenChange={setDialogOpen}
-        title="Modifications non enregistrées"
-        description="Des changements n’ont pas été enregistrés. Quitter sans sauvegarder ?"
-        confirmLabel="Quitter sans enregistrer"
-        cancelLabel="Continuer l’édition"
+        title={t('unsaved.title')}
+        description={t('unsaved.description')}
+        confirmLabel={t('unsaved.confirm')}
+        cancelLabel={t('unsaved.cancel')}
         variant="danger"
         onConfirm={confirmDiscard}
         onCancel={cancelDiscard}

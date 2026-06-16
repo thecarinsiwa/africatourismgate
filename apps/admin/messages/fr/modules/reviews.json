@@ -1,0 +1,70 @@
+{
+  "status": {
+    "pending": "En attente",
+    "approved": "Approuvé",
+    "hidden": "Masqué"
+  },
+  "actions": {
+    "approve": "Approuver",
+    "hide": "Masquer",
+    "delete": "Supprimer"
+  },
+  "toast": {
+    "approved": {
+      "title": "Avis approuvé",
+      "message": "L'avis est visible côté client."
+    },
+    "hidden": {
+      "title": "Avis masqué",
+      "message": "L'avis n'est plus affiché publiquement."
+    },
+    "deleted": {
+      "title": "Avis supprimé",
+      "message": "L'avis a été retiré de la modération."
+    }
+  },
+  "deleteDialog": {
+    "title": "Supprimer cet avis",
+    "description": "Suppression logique : l'avis ne sera plus visible dans la modération."
+  },
+  "detail": {
+    "title": "Avis",
+    "backLink": "Retour aux avis",
+    "sections": {
+      "context": "Contexte",
+      "comment": "Commentaire"
+    },
+    "fields": {
+      "author": "Auteur",
+      "property": "Propriété",
+      "entity": "Entité",
+      "booking": "Réservation",
+      "publishedAt": "Publié le"
+    },
+    "viewBooking": "Voir la réservation",
+    "noComment": "Aucun commentaire.",
+    "moderationActionsAria": "Actions de modération"
+  },
+  "list": {
+    "columns": {
+      "author": "Auteur",
+      "property": "Propriété"
+    },
+    "filters": {
+      "apply": "Appliquer les filtres"
+    },
+    "empty": {
+      "default": {
+        "title": "Aucun avis en attente",
+        "description": "La file de modération est vide. Les nouveaux avis clients apparaîtront ici.",
+        "tableMessage": "Aucun avis pour le moment."
+      },
+      "filtered": {
+        "title": "Aucun avis ne correspond aux filtres",
+        "description": "Modifiez les filtres ou affichez tous les statuts pour élargir la recherche.",
+        "tableMessage": "Aucun avis ne correspond aux filtres."
+      }
+    },
+    "ariaLabel": "Liste des avis à modérer"
+  }
+}

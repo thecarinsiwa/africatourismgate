@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Card,
   DataTable,
@@ -8,9 +10,9 @@ import {
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { User, UserPaymentMethod } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getUsersErrorMessage } from '../../lib/users-errors';
 import { UserIdFilterBar } from './user-id-filter-bar';
 import { UserListCell } from './user-list-cell';
 import type { UserScopedListProps } from './user-addresses-list';
@@ -32,6 +34,12 @@ export function UserPaymentMethodsList({
   fixedUserId,
   showUserColumn = true,
 }: UserScopedListProps = {}) {
+  const { users: getUsersErrorMessage } = useAdminErrorMessages();
+  const tPaymentMethods = useTranslations('modules.users.paymentMethods');
+  const tColumns = useTranslations('modules.common.columns');
+  const tBoolean = useTranslations('modules.common.boolean');
+  const tEmpty = useTranslations('modules.common.empty');
+  const tPagination = useTranslations('modules.common.pagination');
   const [page, setPage] = useState(1);
   const [userIdFilter, setUserIdFilter] = useState(fixedUserId ?? '');
   const [users, setUsers] = useState<User[]>([]);
@@ -80,7 +88,7 @@ export function UserPaymentMethodsList({
     } catch (error) {
       setState({ status: 'error', message: getUsersErrorMessage(error) });
     }
-  }, [page, userIdFilter]);
+  }, [page, userIdFilter, getUsersErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -90,25 +98,28 @@ export function UserPaymentMethodsList({
     const cols: ColumnDef<UserPaymentMethod, unknown>[] = [
       {
         id: 'type',
-        header: 'Type',
+        header: tColumns('type'),
         cell: ({ row }) => row.original.type,
       },
       {
         id: 'provider',
-        header: 'Fournisseur',
-        cell: ({ row }) => row.original.provider?.trim() || '—',
+        header: tColumns('provider'),
+        cell: ({ row }) => row.original.provider?.trim() || tEmpty('dash'),
       },
       {
         id: 'lastFour',
-        header: 'Fin',
-        cell: ({ row }) => (row.original.lastFour ? `•••• ${row.original.lastFour}` : '—'),
+        header: tColumns('end'),
+        cell: ({ row }) =>
+          row.original.lastFour
+            ? tPaymentMethods('lastFourMasked', { lastFour: row.original.lastFour })
+            : tEmpty('dash'),
       },
     ];
 
     if (showUserColumn) {
       cols.push({
         id: 'userId',
-        header: 'Utilisateur',
+        header: tColumns('user'),
         cell: ({ row }) => (
           <UserListCell userId={row.original.userId} usersById={usersById} />
         ),
@@ -118,7 +129,7 @@ export function UserPaymentMethodsList({
     cols.push(
       {
         id: 'createdAt',
-        header: 'Ajouté le',
+        header: tColumns('addedAt'),
         cell: ({ row }) => (
           <span className="whitespace-nowrap text-sm text-atg-muted">
             {formatDateTime(row.original.createdAt)}
@@ -127,23 +138,23 @@ export function UserPaymentMethodsList({
       },
       {
         id: 'default',
-        header: 'Par défaut',
+        header: tColumns('default'),
         cell: ({ row }) =>
           row.original.isDefault ? (
-            <DataTableBadge variant="success">Oui</DataTableBadge>
+            <DataTableBadge variant="success">{tBoolean('yes')}</DataTableBadge>
           ) : (
-            <DataTableBadge variant="muted">Non</DataTableBadge>
+            <DataTableBadge variant="muted">{tBoolean('no')}</DataTableBadge>
           ),
       },
     );
 
     return cols;
-  }, [showUserColumn, usersById]);
+  }, [showUserColumn, tBoolean, tColumns, tEmpty, tPaymentMethods, usersById]);
 
   const rows = state.status === 'ready' ? state.rows : [];
   const emptyMessage = userIdFilter
-    ? 'Aucun moyen de paiement pour cet utilisateur.'
-    : 'Aucun moyen de paiement enregistré.';
+    ? tPaymentMethods('emptyFiltered')
+    : tPaymentMethods('emptyDefault');
 
   return (
     <>
@@ -164,7 +175,7 @@ export function UserPaymentMethodsList({
           getRowId={(row) => row.id}
           isLoading={state.status === 'loading'}
           emptyMessage={emptyMessage}
-          aria-label="Liste des moyens de paiement"
+          aria-label={tPaymentMethods('ariaLabel')}
         />
         {state.status === 'ready' && state.totalPages > 0 ? (
           <DataTablePagination
@@ -172,7 +183,7 @@ export function UserPaymentMethodsList({
             pageSize={PAGE_SIZE}
             totalPages={state.totalPages}
             totalItems={state.total}
-            itemLabel="moyen de paiement"
+            itemLabel={tPagination('paymentMethod')}
             onPageChange={setPage}
           />
         ) : null}

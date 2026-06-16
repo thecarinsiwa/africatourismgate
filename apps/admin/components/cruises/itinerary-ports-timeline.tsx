@@ -2,6 +2,7 @@
 
 import { cn, DataTableBadge } from '@africatourismgate/ui';
 import type { CruisePort, ItineraryPort } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 
 export type ItineraryPortStop = ItineraryPort & {
   port: CruisePort | null;
@@ -12,28 +13,46 @@ type ItineraryPortsTimelineProps = {
   className?: string;
 };
 
-function formatTime(t: string | null): string {
-  if (!t) return '—';
+function formatTime(t: string | null, emptyDash: string): string {
+  if (!t) return emptyDash;
   return t.slice(0, 5);
 }
 
-function PortBlock({ stop }: { stop: ItineraryPortStop }) {
+function PortBlock({
+  stop,
+  emptyDash,
+  dayLabel,
+  unknownPort,
+  arrivalShort,
+  departureShort,
+}: {
+  stop: ItineraryPortStop;
+  emptyDash: string;
+  dayLabel: string;
+  unknownPort: string;
+  arrivalShort: string;
+  departureShort: string;
+}) {
   const port = stop.port;
 
   return (
     <div className="flex min-w-0 flex-col gap-1">
       <div className="flex flex-wrap items-center gap-2">
-        <DataTableBadge variant="muted">Jour {stop.dayNumber}</DataTableBadge>
-        {port ? (
-          <DataTableBadge variant="default">{port.code}</DataTableBadge>
-        ) : null}
+        <DataTableBadge variant="muted">
+          {dayLabel} {stop.dayNumber}
+        </DataTableBadge>
+        {port ? <DataTableBadge variant="default">{port.code}</DataTableBadge> : null}
       </div>
       <span className="truncate text-sm font-medium text-atg-fg">
-        {port?.name ?? 'Port inconnu'}
+        {port?.name ?? unknownPort}
       </span>
       <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-xs tabular-nums text-atg-muted">
-        <span>Arr. {formatTime(stop.arrivalTime)}</span>
-        <span>Dép. {formatTime(stop.departureTime)}</span>
+        <span>
+          {arrivalShort} {formatTime(stop.arrivalTime, emptyDash)}
+        </span>
+        <span>
+          {departureShort} {formatTime(stop.departureTime, emptyDash)}
+        </span>
       </div>
     </div>
   );
@@ -67,6 +86,10 @@ function StopConnector({ vertical }: { vertical?: boolean }) {
 }
 
 export function ItineraryPortsTimeline({ stops, className }: ItineraryPortsTimelineProps) {
+  const t = useTranslations('modules.cruises.sections.itineraryPorts');
+  const tDetail = useTranslations('modules.cruises.detail');
+  const tCommon = useTranslations('modules.common');
+  const emptyDash = tCommon('empty.dash');
   const sorted = [...stops].sort((a, b) => a.dayNumber - b.dayNumber);
 
   if (sorted.length === 0) {
@@ -80,23 +103,35 @@ export function ItineraryPortsTimeline({ stops, className }: ItineraryPortsTimel
         className,
       )}
       role="group"
-      aria-label="Schéma des escales"
+      aria-label={tDetail('timelineAria')}
     >
-      {/* Vertical timeline — mobile */}
       <div className="flex flex-col md:hidden">
         {sorted.map((stop, index) => (
           <div key={stop.id}>
-            <PortBlock stop={stop} />
+            <PortBlock
+              stop={stop}
+              emptyDash={emptyDash}
+              dayLabel={t('day')}
+              unknownPort={t('unknownPort')}
+              arrivalShort={t('arrivalShort')}
+              departureShort={t('departureShort')}
+            />
             {index < sorted.length - 1 ? <StopConnector vertical /> : null}
           </div>
         ))}
       </div>
 
-      {/* Horizontal timeline — desktop */}
       <div className="hidden md:flex md:items-start md:justify-between">
         {sorted.map((stop, index) => (
           <div key={stop.id} className="flex min-w-0 flex-1 items-center">
-            <PortBlock stop={stop} />
+            <PortBlock
+              stop={stop}
+              emptyDash={emptyDash}
+              dayLabel={t('day')}
+              unknownPort={t('unknownPort')}
+              arrivalShort={t('arrivalShort')}
+              departureShort={t('departureShort')}
+            />
             {index < sorted.length - 1 ? <StopConnector /> : null}
           </div>
         ))}

@@ -1,8 +1,8 @@
 export const bookingsKpis = [
   {
     key: 'total',
-    label: 'Réservations',
-    subtitle: 'Toutes les réservations',
+    labelKey: 'stats.bookings.total.label',
+    subtitleKey: 'stats.bookings.total.subtitle',
     iconClass: 'bg-violet-100 text-violet-700 dark:bg-violet-950/50 dark:text-violet-300',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -17,8 +17,8 @@ export const bookingsKpis = [
   },
   {
     key: 'confirmed',
-    label: 'Confirmées',
-    subtitle: 'Réservations confirmées',
+    labelKey: 'stats.bookings.confirmed.label',
+    subtitleKey: 'stats.bookings.confirmed.subtitle',
     iconClass: 'bg-atg-success-light text-atg-success',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -33,8 +33,8 @@ export const bookingsKpis = [
   },
   {
     key: 'pending_payment',
-    label: 'En attente',
-    subtitle: 'Paiement en attente',
+    labelKey: 'stats.bookings.pending_payment.label',
+    subtitleKey: 'stats.bookings.pending_payment.subtitle',
     iconClass: 'bg-atg-warning-light text-atg-warning',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -49,8 +49,8 @@ export const bookingsKpis = [
   },
   {
     key: 'lines',
-    label: 'Lignes',
-    subtitle: 'Articles réservés',
+    labelKey: 'stats.bookings.lines.label',
+    subtitleKey: 'stats.bookings.lines.subtitle',
     href: '/reservations/lignes',
     iconClass: 'bg-atg-info-light text-atg-info',
     icon: (
@@ -71,8 +71,8 @@ export type BookingsKpiKey = (typeof bookingsKpis)[number]['key'];
 export const bookingItemsKpis = [
   {
     key: 'total',
-    label: 'Lignes',
-    subtitle: 'Toutes les lignes',
+    labelKey: 'stats.items.total.label',
+    subtitleKey: 'stats.items.total.subtitle',
     iconClass: 'bg-atg-info-light text-atg-info',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -87,8 +87,8 @@ export const bookingItemsKpis = [
   },
   {
     key: 'confirmed',
-    label: 'Confirmées',
-    subtitle: 'Lignes de réservations confirmées',
+    labelKey: 'stats.items.confirmed.label',
+    subtitleKey: 'stats.items.confirmed.subtitle',
     iconClass: 'bg-atg-success-light text-atg-success',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -103,8 +103,8 @@ export const bookingItemsKpis = [
   },
   {
     key: 'pending_payment',
-    label: 'En attente',
-    subtitle: 'Lignes en attente de paiement',
+    labelKey: 'stats.items.pending_payment.label',
+    subtitleKey: 'stats.items.pending_payment.subtitle',
     iconClass: 'bg-atg-warning-light text-atg-warning',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -119,8 +119,8 @@ export const bookingItemsKpis = [
   },
   {
     key: 'bookings',
-    label: 'Réservations',
-    subtitle: 'Voir toutes les réservations',
+    labelKey: 'stats.items.bookings.label',
+    subtitleKey: 'stats.items.bookings.subtitle',
     href: '/reservations',
     iconClass: 'bg-violet-100 text-violet-700 dark:bg-violet-950/50 dark:text-violet-300',
     icon: (

@@ -1,0 +1,78 @@
+{
+  "list": {
+    "newVehicle": "Nouveau véhicule",
+    "emptyDefault": "Hastacun véhicule pour le moment.",
+    "emptyFiltered": "Hastacun véhicule ne correspond aux filtres.",
+    "searchPlaceholder": "Rechercher par plaque…",
+    "deleteConfirm": "Supprimer le véhicule « {label} » ?",
+    "fallbackLabel": "Vehículo"
+  },
+  "filters": {
+    "agency": "Agencia",
+    "allAgencies": "Todas les agences"
+  },
+  "columns": {
+    "agency": "Agencia",
+    "category": "Catégorie",
+    "licensePlate": "Immatriculation",
+    "pricePerDay": "Precio / jour"
+  },
+  "form": {
+    "submitCreate": "Créer le véhicule",
+    "rentalAgency": "Agencia de location",
+    "category": "Catégorie",
+    "licensePlate": "Plaque d'immatriculation",
+    "dailyPriceCents": "Precio journalier (centimes)",
+    "validation": {
+      "agencyRequired": "Agencia obligatoire.",
+      "categoryRequired": "Catégorie obligatoire."
+    }
+  },
+  "detail": {
+    "title": "Modifier le véhicule",
+    "backLink": "Volver aux véhicules"
+  },
+  "sections": {
+    "availability": {
+      "title": "Disponibilidad",
+      "intro": "Franjax de disponibilité par dates (location, maintenance, loué).",
+      "addSlot": "Ajouter un créneau",
+      "newSlot": "Nouveau créneau",
+      "editSlot": "Modifier le créneau",
+      "filterFrom": "Filtrer du",
+      "filterTo": "au",
+      "status": "Estado",
+      "empty": "Hastacun créneau sur cette période.",
+      "deleteConfirm": "Supprimer ce créneau ?"
+    }
+  },
+  "referential": {
+    "categories": {
+      "new": "Nouvelle catégorie",
+      "edit": "Modifier la catégorie",
+      "empty": "Ninguna catégorie.",
+      "searchPlaceholder": "Rechercher par nom ou modèle…",
+      "exampleModel": "Modèle type"
+    },
+    "agencies": {
+      "empty": "Ninguna agence.",
+      "searchPlaceholder": "Rechercher par nom ou adresse…",
+      "agency": "Agencia",
+      "address": "Dirección"
+    }
+  },
+  "stats": {
+    "vehicles": {
+      "label": "Vehículos",
+      "subtitle": "Flotte catalogue"
+    },
+    "categories": {
+      "label": "Catégories",
+      "subtitle": "Tipos de véhicules"
+    },
+    "agencies": {
+      "label": "Agencias",
+      "subtitle": "Points de location"
+    }
+  }
+}

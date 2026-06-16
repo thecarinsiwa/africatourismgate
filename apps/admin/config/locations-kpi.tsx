@@ -1,8 +1,8 @@
 export const locationsKpis = [
   {
     key: 'vehicles',
-    label: 'Véhicules',
-    subtitle: 'Flotte catalogue',
+    labelKey: 'stats.vehicles.label',
+    subtitleKey: 'stats.vehicles.subtitle',
     iconClass: 'bg-atg-info-light text-atg-info',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -17,8 +17,8 @@ export const locationsKpis = [
   },
   {
     key: 'categories',
-    label: 'Catégories',
-    subtitle: 'Types de véhicules',
+    labelKey: 'stats.categories.label',
+    subtitleKey: 'stats.categories.subtitle',
     href: '/produits/locations/categories',
     iconClass: 'bg-violet-100 text-violet-700 dark:bg-violet-950/50 dark:text-violet-300',
     icon: (
@@ -34,8 +34,8 @@ export const locationsKpis = [
   },
   {
     key: 'agencies',
-    label: 'Agences',
-    subtitle: 'Points de location',
+    labelKey: 'stats.agencies.label',
+    subtitleKey: 'stats.agencies.subtitle',
     href: '/produits/locations/agences',
     iconClass: 'bg-atg-warning-light text-atg-warning',
     icon: (

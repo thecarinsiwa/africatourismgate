@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Button,
   Card,
@@ -11,9 +13,9 @@ import {
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { VehicleCategory } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getLocationsErrorMessage } from '../../lib/locations-errors';
 import { getVehicleCategoryIcon } from '../../lib/vehicle-category-icon-map';
 
 const PAGE_SIZE = 20;
@@ -23,6 +25,12 @@ type FormValues = { name: string; exampleModel: string };
 const emptyForm: FormValues = { name: '', exampleModel: '' };
 
 export function VehicleCategoriesList() {
+  const { locations: getLocationsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.locations.referential.categories');
+  const tCommon = useTranslations('modules.common');
+  const tPagination = useTranslations('modules.common.pagination');
+  const tActions = useTranslations('common.actions');
+  const emptyDash = tCommon('empty.dash');
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -55,7 +63,7 @@ export function VehicleCategoriesList() {
     } catch (error) {
       setState({ status: 'error', message: getLocationsErrorMessage(error) });
     }
-  }, [page, search]);
+  }, [page, search, getLocationsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -63,13 +71,13 @@ export function VehicleCategoriesList() {
 
   useEffect(() => {
     const q = searchInput.trim();
-    const t = window.setTimeout(() => {
+    const timer = window.setTimeout(() => {
       setSearch((prev) => {
         if (prev !== q) setPage(1);
         return q;
       });
     }, SEARCH_DEBOUNCE_MS);
-    return () => window.clearTimeout(t);
+    return () => window.clearTimeout(timer);
   }, [searchInput]);
 
   function resetForm() {
@@ -83,7 +91,7 @@ export function VehicleCategoriesList() {
     event.preventDefault();
     setFormError(null);
     if (!formValues.name.trim()) {
-      setFormError('Le nom est obligatoire.');
+      setFormError(tCommon('validation.nameRequired'));
       return;
     }
     setSubmitting(true);
@@ -120,15 +128,15 @@ export function VehicleCategoriesList() {
           </span>
         ),
       },
-      { accessorKey: 'name', header: 'Catégorie' },
+      { accessorKey: 'name', header: tCommon('columns.category') },
       {
         accessorKey: 'exampleModel',
-        header: 'Modèle type',
-        cell: ({ row }) => row.original.exampleModel ?? '—',
+        header: t('exampleModel'),
+        cell: ({ row }) => row.original.exampleModel ?? emptyDash,
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tCommon('columns.actions'),
         meta: { align: 'right' },
         cell: ({ row }) => (
           <DataTableActions>
@@ -146,7 +154,7 @@ export function VehicleCategoriesList() {
             <DataTableActionButton
               action="delete"
               onClick={async () => {
-                if (!window.confirm(`Supprimer « ${row.original.name} » ?`)) return;
+                if (!window.confirm(t('deleteConfirm', { name: row.original.name }))) return;
                 setDeletingId(row.original.id);
                 try {
                   await getApiClient().deleteVehicleCategory(row.original.id);
@@ -164,7 +172,7 @@ export function VehicleCategoriesList() {
         ),
       },
     ],
-    [deletingId, load],
+    [deletingId, emptyDash, load, t, tCommon, getLocationsErrorMessage],
   );
 
   const categories = state.status === 'ready' ? state.categories : [];
@@ -175,7 +183,7 @@ export function VehicleCategoriesList() {
         <div className="flex-1 sm:max-w-md">
           <Input
             type="search"
-            placeholder="Rechercher par nom ou modèle…"
+            placeholder={t('searchPlaceholder')}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
           />
@@ -188,7 +196,7 @@ export function VehicleCategoriesList() {
               setShowForm(true);
             }}
           >
-            Nouvelle catégorie
+            {t('new')}
           </Button>
         ) : null}
       </div>
@@ -196,21 +204,19 @@ export function VehicleCategoriesList() {
       {showForm ? (
         <Card variant="dashboard" className="max-w-lg">
           <form onSubmit={handleSubmit} className="space-y-4">
-            <h3 className="text-sm font-medium">
-              {editing ? 'Modifier la catégorie' : 'Nouvelle catégorie'}
-            </h3>
+            <h3 className="text-sm font-medium">{editing ? t('edit') : t('new')}</h3>
             {formError ? (
               <p role="alert" className="text-sm text-red-600">
                 {formError}
               </p>
             ) : null}
             <Input
-              label="Nom"
+              label={tCommon('columns.name')}
               value={formValues.name}
               onChange={(e) => setFormValues((p) => ({ ...p, name: e.target.value }))}
             />
             <Input
-              label="Modèle type"
+              label={t('exampleModel')}
               value={formValues.exampleModel}
               onChange={(e) =>
                 setFormValues((p) => ({ ...p, exampleModel: e.target.value }))
@@ -218,10 +224,10 @@ export function VehicleCategoriesList() {
             />
             <div className="flex gap-3">
               <Button type="submit" loading={submitting}>
-                {editing ? 'Enregistrer' : 'Ajouter'}
+                {editing ? tActions('save') : tActions('create')}
               </Button>
               <Button type="button" variant="outline" onClick={resetForm}>
-                Annuler
+                {tActions('cancel')}
               </Button>
             </div>
           </form>
@@ -239,7 +245,7 @@ export function VehicleCategoriesList() {
               columns={columns}
               data={categories}
               isLoading={state.status === 'loading'}
-              emptyMessage="Aucune catégorie."
+              emptyMessage={t('empty')}
               getRowId={(r) => r.id}
             />
           </Card>
@@ -249,7 +255,7 @@ export function VehicleCategoriesList() {
               pageSize={PAGE_SIZE}
               totalPages={state.totalPages}
               totalItems={state.total}
-              itemLabel="catégorie"
+              itemLabel={tPagination('category')}
               onPageChange={setPage}
             />
           ) : null}

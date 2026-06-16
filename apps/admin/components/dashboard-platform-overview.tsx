@@ -2,22 +2,23 @@
 
 import { Card, cn } from '@africatourismgate/ui';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
+import { useEffect, useMemo, useState } from 'react';
 import { formatCount } from '../lib/format-money';
 import { getApiClient } from '../lib/auth/api';
 
-type PlatformMetric = {
-  key: string;
-  label: string;
+type PlatformMetricKey = 'organizations' | 'properties' | 'bookings' | 'users';
+
+type PlatformMetricDef = {
+  key: PlatformMetricKey;
   href: string;
   icon: React.ReactNode;
   iconClass: string;
 };
 
-const metrics: PlatformMetric[] = [
+const metricDefs: PlatformMetricDef[] = [
   {
     key: 'organizations',
-    label: 'Organisations',
     href: '/organisations',
     iconClass: 'bg-primary/10 text-primary',
     icon: (
@@ -33,7 +34,6 @@ const metrics: PlatformMetric[] = [
   },
   {
     key: 'properties',
-    label: 'Hébergements',
     href: '/hebergements',
     iconClass: 'bg-primary/10 text-primary',
     icon: (
@@ -49,7 +49,6 @@ const metrics: PlatformMetric[] = [
   },
   {
     key: 'bookings',
-    label: 'Réservations',
     href: '/reservations',
     iconClass: 'bg-primary/10 text-primary',
     icon: (
@@ -65,7 +64,6 @@ const metrics: PlatformMetric[] = [
   },
   {
     key: 'users',
-    label: 'Utilisateurs',
     href: '/utilisateurs',
     iconClass: 'bg-primary/10 text-primary',
     icon: (
@@ -84,8 +82,14 @@ const metrics: PlatformMetric[] = [
 type CountsState = Record<string, { status: 'loading' | 'ready' | 'error'; value?: number }>;
 
 export function DashboardPlatformOverview({ className }: { className?: string }) {
+  const t = useTranslations('dashboard.platformOverview');
   const [counts, setCounts] = useState<CountsState>(() =>
-    Object.fromEntries(metrics.map((m) => [m.key, { status: 'loading' }])),
+    Object.fromEntries(metricDefs.map((m) => [m.key, { status: 'loading' }])),
+  );
+
+  const metrics = useMemo(
+    () => metricDefs.map((metric) => ({ ...metric, label: t(metric.key) })),
+    [t],
   );
 
   useEffect(() => {
@@ -107,7 +111,7 @@ export function DashboardPlatformOverview({ className }: { className?: string })
 
     async function loadAll() {
       const results = await Promise.all(
-        metrics.map(async (m) => [m.key, await loadMetric(m.key)] as const),
+        metricDefs.map(async (m) => [m.key, await loadMetric(m.key)] as const),
       );
       if (!cancelled) {
         setCounts(Object.fromEntries(results));
@@ -122,8 +126,8 @@ export function DashboardPlatformOverview({ className }: { className?: string })
 
   return (
     <Card variant="dashboard" padding="sm" className={className}>
-      <h2 className="text-base font-semibold text-atg-fg">Vue plateforme</h2>
-      <p className="mt-1 text-sm text-atg-muted">Organisations, hébergements et activité</p>
+      <h2 className="text-base font-semibold text-atg-fg">{t('title')}</h2>
+      <p className="mt-1 text-sm text-atg-muted">{t('subtitle')}</p>
 
       <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {metrics.map((metric) => {

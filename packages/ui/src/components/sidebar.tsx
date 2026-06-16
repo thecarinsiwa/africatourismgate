@@ -133,7 +133,8 @@ function resolveInitialOpenGroupId(
   const defaultOpen = navItems.find((e) => e.type === 'group' && e.defaultOpen);
   if (defaultOpen?.type === 'group') return defaultOpen.id;
 
-  return readStoredOpenGroupId(navItems);
+  // localStorage is restored after mount — reading it here causes hydration mismatch.
+  return null;
 }
 
 function CloseIcon() {
@@ -351,6 +352,11 @@ export function Sidebar({
     if (activeId) {
       setOpenGroupId(activeId);
       writeStoredOpenGroupId(activeId);
+      return;
+    }
+    const stored = readStoredOpenGroupId(navItems);
+    if (stored) {
+      setOpenGroupId(stored);
     }
   }, [pathname, navItems]);
 

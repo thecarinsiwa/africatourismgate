@@ -1,11 +1,12 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import type { Employee } from '@africatourismgate/types';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
-import { getEmployeesErrorMessage } from '../../lib/employees-errors';
 import { EmployeeForm } from './employee-form';
 
 type EmployeeEditPageProps = {
@@ -13,6 +14,7 @@ type EmployeeEditPageProps = {
 };
 
 export function EmployeeEditPage({ employeeId }: EmployeeEditPageProps) {
+  const { employees: getEmployeesErrorMessage } = useAdminErrorMessages();
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }

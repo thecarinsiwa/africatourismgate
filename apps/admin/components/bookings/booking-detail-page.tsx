@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   AlertDialog,
   Button,
@@ -16,6 +18,7 @@ import type {
   BookingPayment,
   BookingStatus,
 } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { AdminPageBackLink } from '../admin-page-back-link';
@@ -25,18 +28,16 @@ import {
   BOOKING_STATUS_VARIANTS,
   getBookingStatusLabel,
 } from '../../lib/booking-status';
-import { getBookingsErrorMessage } from '../../lib/bookings-errors';
 import { formatMoney } from '../../lib/format-money';
+import {
+  useBookingStatusLabels,
+  usePaymentProviderLabels,
+  usePaymentStatusLabels,
+} from '../../lib/i18n/use-module-labels';
+import { formatPaymentProvider } from '../../lib/payment-display';
 import { BookingItemCatalogLink } from './booking-item-catalog-link';
 import { BookingItemTypeIcon } from './booking-item-type-icon';
 import { BookingStatusTimeline } from './booking-status-timeline';
-
-const paymentStatusLabels: Record<BookingPayment['status'], string> = {
-  pending: 'En attente',
-  succeeded: 'Réussi',
-  failed: 'Échoué',
-  refunded: 'Remboursé',
-};
 
 function formatDateTime(iso: string): string {
   try {
@@ -74,6 +75,15 @@ function BookingDetailSkeleton() {
 }
 
 export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
+  const { bookings: getBookingsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.bookings.detail');
+  const tCommon = useTranslations('modules.common');
+  const tActions = useTranslations('common.actions');
+  const statusLabels = useBookingStatusLabels();
+  const paymentStatusLabels = usePaymentStatusLabels();
+  const providerLabels = usePaymentProviderLabels();
+  const emptyDash = tCommon('empty.dash');
+
   const statusReasonId = useId();
   const cancelReasonId = useId();
 
@@ -94,7 +104,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
 
   useAdminEditPageMeta({
     ready: state.status === 'ready' && detail != null,
-    title: 'Réservation',
+    title: t('title'),
     entityLabel: detail?.booking.id,
   });
 
@@ -110,7 +120,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
     } catch (error) {
       setState({ status: 'error', message: getBookingsErrorMessage(error) });
     }
-  }, [bookingId]);
+  }, [bookingId, getBookingsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -151,7 +161,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
     } finally {
       setActionLoading(false);
     }
-  }, [bookingId, detail, load, newStatus, statusReason]);
+  }, [bookingId, detail, load, newStatus, statusReason, getBookingsErrorMessage]);
 
   const handleCancel = useCallback(async () => {
     if (!detail) return false;
@@ -170,29 +180,29 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
     } finally {
       setActionLoading(false);
     }
-  }, [bookingId, cancelReason, detail, load]);
+  }, [bookingId, cancelReason, detail, load, getBookingsErrorMessage]);
 
   const statusOptions = useMemo(
     () =>
       BOOKING_STATUSES.map((status) => ({
         value: status,
-        label: getBookingStatusLabel(status),
+        label: getBookingStatusLabel(status, statusLabels),
       })),
-    [],
+    [statusLabels],
   );
 
   const itemColumns = useMemo<ColumnDef<BookingItem, unknown>[]>(
     () => [
       {
         accessorKey: 'itemType',
-        header: 'Type',
+        header: tCommon('columns.type'),
         cell: ({ row }) => (
           <BookingItemTypeIcon itemType={row.original.itemType} size="sm" showLabel />
         ),
       },
       {
         accessorKey: 'titleSnapshot',
-        header: 'Libellé',
+        header: tCommon('columns.label'),
         cell: ({ row }) => (
           <BookingItemCatalogLink
             itemType={row.original.itemType}
@@ -203,7 +213,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
       },
       {
         accessorKey: 'quantity',
-        header: 'Qté',
+        header: tCommon('columns.quantityShort'),
         meta: { align: 'center' },
         cell: ({ row }) => (
           <span className="tabular-nums">{row.original.quantity}</span>
@@ -211,7 +221,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
       },
       {
         id: 'unitPrice',
-        header: 'Prix unit.',
+        header: tCommon('columns.unitPrice'),
         meta: { align: 'right' },
         cell: ({ row }) =>
           detail ? (
@@ -224,23 +234,23 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
       },
       {
         id: 'dates',
-        header: 'Dates',
+        header: tCommon('columns.dates'),
         cell: ({ row }) => {
           const { startDate, endDate } = row.original;
-          if (!startDate) return '—';
+          if (!startDate) return emptyDash;
           if (startDate === endDate || !endDate) return startDate;
           return `${startDate} → ${endDate}`;
         },
       },
     ],
-    [detail],
+    [detail, emptyDash, tCommon],
   );
 
   const paymentColumns = useMemo<ColumnDef<BookingPayment, unknown>[]>(
     () => [
       {
         accessorKey: 'createdAt',
-        header: 'Date',
+        header: tCommon('columns.date'),
         cell: ({ row }) => (
           <span className="whitespace-nowrap text-sm tabular-nums">
             {formatDateTime(row.original.createdAt)}
@@ -249,7 +259,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
       },
       {
         id: 'amount',
-        header: 'Montant',
+        header: tCommon('columns.amount'),
         meta: { align: 'right' },
         cell: ({ row }) => (
           <span className="tabular-nums text-sm font-medium">
@@ -259,23 +269,24 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
       },
       {
         accessorKey: 'status',
-        header: 'Statut',
+        header: tCommon('columns.status'),
         meta: { align: 'center' },
         cell: ({ row }) => paymentStatusLabels[row.original.status],
       },
       {
         accessorKey: 'provider',
-        header: 'Fournisseur',
-        cell: ({ row }) => row.original.provider ?? '—',
+        header: tCommon('columns.provider'),
+        cell: ({ row }) =>
+          formatPaymentProvider(row.original.provider, providerLabels, emptyDash),
       },
     ],
-    [],
+    [emptyDash, paymentStatusLabels, providerLabels, tCommon],
   );
 
   if (state.status === 'loading' && !detail) {
     return (
       <div className="space-y-6">
-        <AdminPageBackLink href="/reservations" label="Retour aux réservations" />
+        <AdminPageBackLink href="/reservations" label={t('backLink')} />
         <BookingDetailSkeleton />
       </div>
     );
@@ -284,7 +295,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   if (state.status === 'error') {
     return (
       <div className="space-y-4">
-        <AdminPageBackLink href="/reservations" label="Retour aux réservations" />
+        <AdminPageBackLink href="/reservations" label={t('backLink')} />
         <p role="alert" className="text-sm text-red-600">
           {state.message}
         </p>
@@ -300,10 +311,11 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   const canCancel =
     booking.status === 'pending_payment' || booking.status === 'confirmed';
   const statusUnchanged = newStatus === booking.status;
+  const trimmedStatusReason = statusReason.trim();
 
   return (
     <div className="space-y-6">
-      <AdminPageBackLink href="/reservations" label="Retour aux réservations" />
+      <AdminPageBackLink href="/reservations" label={t('backLink')} />
 
       {actionError ? (
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">
@@ -315,44 +327,44 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
         <div className="space-y-6 lg:sticky lg:top-4">
           <Card variant="dashboard" padding="md">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-              <h2 className="text-lg font-semibold text-atg-fg">Client</h2>
+              <h2 className="text-lg font-semibold text-atg-fg">{t('sections.client')}</h2>
               <DataTableBadge variant={BOOKING_STATUS_VARIANTS[booking.status]}>
-                {getBookingStatusLabel(booking.status)}
+                {getBookingStatusLabel(booking.status, statusLabels)}
               </DataTableBadge>
             </div>
             <p className="mb-4 font-mono text-xs text-atg-muted">
-              Réf. {formatBookingRef(booking.id)}
+              {t('reference', { idPrefix: formatBookingRef(booking.id) })}
             </p>
             <dl className="space-y-3 text-sm">
               <div>
-                <dt className="text-atg-muted">E-mail</dt>
+                <dt className="text-atg-muted">{t('clientFields.email')}</dt>
                 <dd className="font-medium text-atg-fg">{client.email}</dd>
               </div>
               <div>
-                <dt className="text-atg-muted">Nom</dt>
+                <dt className="text-atg-muted">{t('clientFields.name')}</dt>
                 <dd>
                   {client.firstName} {client.lastName}
                 </dd>
               </div>
               <div>
-                <dt className="text-atg-muted">Organisation</dt>
-                <dd>{client.organizationName ?? '—'}</dd>
+                <dt className="text-atg-muted">{t('clientFields.organization')}</dt>
+                <dd>{client.organizationName ?? emptyDash}</dd>
               </div>
               <div>
-                <dt className="text-atg-muted">Total</dt>
+                <dt className="text-atg-muted">{t('clientFields.total')}</dt>
                 <dd className="tabular-nums text-base font-semibold text-atg-fg">
                   {formatMoney(detail.totalCents, detail.currency)}
                 </dd>
               </div>
               <div>
-                <dt className="text-atg-muted">Créée le</dt>
+                <dt className="text-atg-muted">{t('clientFields.createdAt')}</dt>
                 <dd className="tabular-nums">{formatDateTime(booking.createdAt)}</dd>
               </div>
             </dl>
           </Card>
 
           <Card variant="dashboard" padding="md">
-            <h2 className="mb-4 text-lg font-semibold text-atg-fg">Statut</h2>
+            <h2 className="mb-4 text-lg font-semibold text-atg-fg">{t('sections.status')}</h2>
             <BookingStatusTimeline
               currentStatus={booking.status}
               history={detail.statusHistory}
@@ -361,16 +373,16 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
 
           {canWrite ? (
             <Card variant="dashboard" padding="md" className="space-y-6">
-              <h2 className="text-lg font-semibold text-atg-fg">Actions</h2>
+              <h2 className="text-lg font-semibold text-atg-fg">{t('sections.actions')}</h2>
               <div className="space-y-3">
                 <Select
-                  label="Changer le statut"
+                  label={t('actions.changeStatus')}
                   value={newStatus}
                   options={statusOptions}
                   onChange={(e) => setNewStatus(e.target.value as BookingStatus)}
                 />
                 <label htmlFor={statusReasonId} className="block text-sm font-medium text-atg-fg">
-                  Motif (historique)
+                  {t('actions.statusReason')}
                 </label>
                 <textarea
                   id={statusReasonId}
@@ -378,7 +390,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
                   value={statusReason}
                   onChange={(e) => setStatusReason(e.target.value)}
                   className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg"
-                  placeholder="Ex. confirmation manuelle, remboursement…"
+                  placeholder={t('actions.statusReasonPlaceholder')}
                 />
                 <Button
                   type="button"
@@ -386,15 +398,15 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
                   disabled={actionLoading || statusUnchanged}
                   loading={actionLoading && statusDialogOpen}
                 >
-                  Appliquer le statut
+                  {t('actions.applyStatus')}
                 </Button>
               </div>
 
               {canCancel ? (
                 <div className="space-y-3 border-t border-atg-border pt-6">
-                  <h3 className="text-sm font-semibold text-atg-fg">Annulation</h3>
+                  <h3 className="text-sm font-semibold text-atg-fg">{t('actions.cancellation')}</h3>
                   <label htmlFor={cancelReasonId} className="block text-sm font-medium text-atg-fg">
-                    Motif d&apos;annulation
+                    {t('actions.cancelReason')}
                   </label>
                   <textarea
                     id={cancelReasonId}
@@ -402,7 +414,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
                     value={cancelReason}
                     onChange={(e) => setCancelReason(e.target.value)}
                     className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg"
-                    placeholder="Ex. demande client, indisponibilité…"
+                    placeholder={t('actions.cancelReasonPlaceholder')}
                   />
                   <Button
                     type="button"
@@ -411,43 +423,41 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
                     onClick={() => setCancelDialogOpen(true)}
                     disabled={actionLoading}
                   >
-                    Annuler la réservation
+                    {t('actions.cancelBooking')}
                   </Button>
                 </div>
               ) : null}
             </Card>
           ) : (
             <Card variant="dashboard" padding="md">
-              <p className="text-sm text-atg-muted">
-                Modification réservée aux comptes avec la permission bookings.write.
-              </p>
+              <p className="text-sm text-atg-muted">{t('actions.readOnly')}</p>
             </Card>
           )}
         </div>
 
         <div className="space-y-6">
           <section className="space-y-3">
-            <h2 className="text-lg font-semibold text-atg-fg">Lignes de réservation</h2>
+            <h2 className="text-lg font-semibold text-atg-fg">{t('sections.bookingLines')}</h2>
             <Card variant="dashboard" padding="none" className="overflow-hidden">
               <DataTable
                 columns={itemColumns}
                 data={detail.items}
-                emptyMessage="Aucune ligne."
+                emptyMessage={t('linesEmpty')}
                 getRowId={(row) => row.id}
-                aria-label="Lignes de réservation"
+                aria-label={t('linesAriaLabel')}
               />
             </Card>
           </section>
 
           <section className="space-y-3">
-            <h2 className="text-lg font-semibold text-atg-fg">Paiements</h2>
+            <h2 className="text-lg font-semibold text-atg-fg">{t('sections.payments')}</h2>
             <Card variant="dashboard" padding="none" className="overflow-hidden">
               <DataTable
                 columns={paymentColumns}
                 data={detail.payments}
-                emptyMessage="Aucun paiement enregistré pour cette réservation."
+                emptyMessage={t('paymentsEmpty')}
                 getRowId={(row) => row.id}
-                aria-label="Paiements"
+                aria-label={t('paymentsAriaLabel')}
               />
             </Card>
           </section>
@@ -459,12 +469,16 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
         onOpenChange={(open) => {
           if (!actionLoading) setStatusDialogOpen(open);
         }}
-        title="Confirmer le changement de statut"
-        description={`Passer la réservation de « ${getBookingStatusLabel(booking.status)} » à « ${getBookingStatusLabel(newStatus)} » ?${
-          statusReason.trim() ? ` Motif : ${statusReason.trim()}` : ''
-        }`}
-        confirmLabel="Confirmer"
-        cancelLabel="Annuler"
+        title={t('statusDialog.title')}
+        description={t('statusDialog.description', {
+          fromStatus: getBookingStatusLabel(booking.status, statusLabels),
+          toStatus: getBookingStatusLabel(newStatus, statusLabels),
+          reasonSuffix: trimmedStatusReason
+            ? t('statusDialog.reasonSuffix', { reason: trimmedStatusReason })
+            : '',
+        })}
+        confirmLabel={tActions('confirm')}
+        cancelLabel={tActions('cancel')}
         loading={actionLoading}
         onConfirm={() => {
           void handleUpdateStatus().then((ok) => {
@@ -479,10 +493,10 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
         onOpenChange={(open) => {
           if (!actionLoading) setCancelDialogOpen(open);
         }}
-        title="Annuler la réservation"
-        description="Annuler cette réservation ? Le stock des produits sera libéré (moteur de réservation)."
-        confirmLabel="Annuler la réservation"
-        cancelLabel="Retour"
+        title={t('cancelDialog.title')}
+        description={t('cancelDialog.description')}
+        confirmLabel={t('cancelDialog.confirm')}
+        cancelLabel={t('cancelDialog.cancel')}
         variant="danger"
         loading={actionLoading}
         onConfirm={() => {

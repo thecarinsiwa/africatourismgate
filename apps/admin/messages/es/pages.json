@@ -1,0 +1,328 @@
+{
+  "meta": {
+    "editUser": "Editar usuario",
+    "editEmployee": "Editar empleado",
+    "editOrganization": "Editar organización",
+    "editAccommodation": "Editar alojamiento",
+    "editActivity": "Editar actividad",
+    "editDestination": "Editar destino",
+    "editVehicle": "Editar vehículo",
+    "editFlight": "Editar vuelo",
+    "editPackage": "Editar paquete",
+    "editRole": "Editar rol",
+    "editPromoCode": "Editar código promocional",
+    "editPromotion": "Editar promoción",
+    "viewPackage": "Ver paquete",
+    "detailBooking": "Detalle de reserva",
+    "detailTicket": "Detalle de ticket",
+    "detailReview": "Detalle de reseña",
+    "sailingDetail": "Salida",
+    "shipDetail": "Barco",
+    "classAvailability": "Disponibilidad de clase",
+    "roomAvailability": "Disponibilidad de habitación",
+    "itineraryStops": "Escalas del itinerario"
+  },
+  "utilisateurs": {
+    "description": "Cuentas de la plataforma. Filtre por estado u organización.",
+    "nouveau": {
+      "metaTitle": "Nuevo usuario",
+      "description": "Crear una cuenta de usuario."
+    },
+    "id": {
+      "metaTitle": "Editar usuario"
+    },
+    "employes": {
+      "description": "Perfiles de empleados vinculados a usuarios y organizaciones.",
+      "nouveau": {
+        "metaTitle": "Nuevo empleado",
+        "description": "Vincular un usuario existente a una organización."
+      },
+      "id": {
+        "metaTitle": "Editar empleado"
+      }
+    },
+    "adresses": {
+      "description": "Direcciones guardadas por los usuarios."
+    },
+    "moyens-paiement": {
+      "description": "Tarjetas y métodos de pago guardados por los usuarios."
+    },
+    "sessions": {
+      "description": "Sesiones activas. Revoque una sesión para desconectar al usuario."
+    },
+    "journaux-securite": {
+      "description": "Eventos de seguridad y auditoría de acceso."
+    }
+  },
+  "hebergements": {
+    "title": "Alojamientos",
+    "description": "Propiedades, habitaciones y equipamientos. Filtre por destino.",
+    "nouveau": {
+      "metaTitle": "Nuevo alojamiento",
+      "description": "Cree la propiedad y luego añada imágenes, equipamientos y habitaciones."
+    },
+    "id": {
+      "metaTitle": "Editar alojamiento",
+      "chambres": {
+        "roomId": {
+          "disponibilites": {
+            "metaTitle": "Disponibilidad de habitación"
+          }
+        }
+      }
+    },
+    "equipements": {
+      "description": "Catálogo global reutilizable en alojamientos (Wi-Fi, piscina, etc.)."
+    }
+  },
+  "organisations": {
+    "title": "Organizaciones",
+    "description": "Socios y entidades de la plataforma. Busque por nombre o slug.",
+    "nouveau": {
+      "metaTitle": "Nueva organización",
+      "description": "Crear una organización socia."
+    },
+    "id": {
+      "metaTitle": "Editar organización"
+    }
+  },
+  "fidelite": {
+    "comptes": {
+      "title": "Cuentas de fidelidad",
+      "description": "Programa OneKey — saldo de puntos, niveles y última actividad. Ajuste manual reservado al superadministrador."
+    }
+  },
+  "produits": {
+    "activites": {
+      "title": "Actividades y tours",
+      "description": "Experiencias, proveedores y franjas horarias por destino.",
+      "actions": {
+        "providers": "Proveedores",
+        "new": "Nueva actividad"
+      },
+      "nouveau": {
+        "metaTitle": "Nueva actividad",
+        "description": "Cree una experiencia y luego añada horarios en la página de edición."
+      },
+      "fournisseurs": {
+        "title": "Proveedores de actividades",
+        "description": "Operadores vinculados a destinos."
+      },
+      "id": {
+        "metaTitle": "Editar actividad"
+      }
+    },
+    "destinations": {
+      "title": "Destinos",
+      "description": "Geografía y puntos de interés. Busque por nombre, slug o código de país.",
+      "actions": {
+        "new": "Nuevo destino"
+      },
+      "nouveau": {
+        "metaTitle": "Nuevo destino",
+        "description": "Cree el destino y luego añada puntos de interés en la página de edición."
+      },
+      "id": {
+        "metaTitle": "Editar destino"
+      }
+    },
+    "locations": {
+      "title": "Alquiler de vehículos",
+      "description": "Vehículos por agencia, categorías y franjas de disponibilidad.",
+      "links": {
+        "agencies": "Agencias de alquiler",
+        "categories": "Categorías de vehículos"
+      },
+      "agences": {
+        "title": "Agencias de alquiler",
+        "description": "Directorio de agencias vinculadas a destinos."
+      },
+      "categories": {
+        "title": "Categorías de vehículos",
+        "description": "Tipos de vehículos (compacto, SUV, premium, etc.)."
+      },
+      "nouveau": {
+        "metaTitle": "Nuevo vehículo",
+        "description": "Vincule una agencia y categoría, luego defina las franjas de disponibilidad.",
+        "backLabel": "Volver a vehículos"
+      },
+      "id": {
+        "metaTitle": "Editar vehículo"
+      }
+    },
+    "vols": {
+      "description": "Catálogo de vuelos, clases de cabina y disponibilidad. Busque por código de vuelo.",
+      "links": {
+        "airlines": "Aerolíneas",
+        "airports": "Aeropuertos"
+      },
+      "nouveau": {
+        "metaTitle": "Nuevo vuelo",
+        "backLabel": "Volver a vuelos",
+        "description": "Defina la ruta y luego añada clases de cabina en la ficha del vuelo."
+      },
+      "compagnies": {
+        "description": "Directorio de aerolíneas (código IATA de 2 letras).",
+        "backLabel": "Volver a vuelos"
+      },
+      "aeroports": {
+        "description": "Directorio de aeropuertos (código IATA de 3 letras).",
+        "backLabel": "Volver a vuelos"
+      },
+      "id": {
+        "metaTitle": "Editar vuelo",
+        "classes": {
+          "classId": {
+            "disponibilites": {
+              "metaTitle": "Disponibilidad de clase"
+            }
+          }
+        }
+      }
+    },
+    "croisieres": {
+      "description": "Salidas programadas, itinerarios, cabinas y disponibilidad.",
+      "links": {
+        "ships": "Barcos",
+        "lines": "Líneas de crucero",
+        "ports": "Puertos de crucero",
+        "newSailing": "Nueva salida"
+      },
+      "nouveau": {
+        "metaTitle": "Nueva salida",
+        "description": "Vincule un itinerario existente a una fecha de salida."
+      },
+      "lignes": {
+        "description": "Directorio de líneas de crucero."
+      },
+      "ports": {
+        "description": "Directorio de puertos."
+      },
+      "navires": {
+        "description": "Barcos, itinerarios, puertos y cabinas.",
+        "links": {
+          "backToSailings": "← Salidas"
+        },
+        "nouveau": {
+          "metaTitle": "Nuevo barco",
+          "description": "Cree un barco y luego añada itinerarios y cabinas."
+        },
+        "shipId": {
+          "metaTitle": "Barco",
+          "itineraires": {
+            "itineraryId": {
+              "metaTitle": "Escalas del itinerario"
+            }
+          }
+        }
+      },
+      "id": {
+        "metaTitle": "Salida"
+      }
+    },
+    "forfaits": {
+      "description": "Paquetes combinados con descuento y precio calculado a partir de los productos incluidos.",
+      "nouveau": {
+        "metaTitle": "Nuevo paquete",
+        "description": "Cree el paquete y luego añada elementos en la página de edición."
+      },
+      "id": {
+        "metaTitle": "Editar paquete",
+        "voir": {
+          "metaTitle": "Ver paquete"
+        }
+      }
+    }
+  },
+  "reservations": {
+    "description": "Lista paginada de reservas (datos API en vivo). Filtre por estado, fecha, cliente y organización. Requiere bookings.read.",
+    "lignes": {
+      "description": "Tabla global de artículos por reserva (datos API en vivo). Filtre por tipo, estado de reserva e ID de reserva. Requiere bookings.read."
+    }
+  },
+  "paiements": {
+    "description": "Transacciones y reembolsos Stripe (modo prueba). Filtre por estado, fechas y organización (super admin). Acceso: payments.read; reembolso: payments.write.",
+    "codes-promo": {
+      "intro": "Códigos introducidos en el checkout (ej. BIENVENUE10). Complementa las promociones. Acceso: promo_codes.read / write.",
+      "linkPromotions": "promociones",
+      "nouveau": {
+        "metaTitle": "Nuevo código promocional",
+        "description": "El código se normalizará en mayúsculas y podrá introducirse tal cual en el checkout."
+      },
+      "id": {
+        "metaTitle": "Editar código promocional"
+      }
+    },
+    "promotions": {
+      "intro": "Campañas de marketing con descuento opcional (checkout vía promotionId). Complementa los códigos promocionales. Acceso: promo_codes.read / write.",
+      "linkPromoCodes": "códigos promocionales",
+      "nouveau": {
+        "metaTitle": "Nueva promoción",
+        "description": "Defina la campaña, el descuento opcional y las fechas de validez."
+      },
+      "id": {
+        "metaTitle": "Editar promoción"
+      }
+    }
+  },
+  "contenu": {
+    "tickets": {
+      "description": "Solicitudes de asistencia al cliente. Filtre por estado y prioridad. Acceso: support_tickets.read / support_tickets.write.",
+      "id": {
+        "metaTitle": "Detalle de ticket"
+      }
+    },
+    "avis": {
+      "description": "Modere valoraciones y comentarios de clientes. Filtre por nota, propiedad y estado. Acciones: aprobar, ocultar o eliminar. Acceso: reviews.read / reviews.write.",
+      "id": {
+        "metaTitle": "Detalle de reseña"
+      }
+    }
+  },
+  "systeme": {
+    "roles": {
+      "title": "Roles y permisos",
+      "description": "Gestione roles, matriz de permisos y asignaciones de usuarios.",
+      "actions": {
+        "permissions": "Permisos",
+        "assignments": "Asignaciones",
+        "new": "Nuevo rol"
+      },
+      "nouveau": {
+        "metaTitle": "Nuevo rol",
+        "description": "Cree un rol personalizado y defina sus permisos."
+      },
+      "permissions": {
+        "title": "Catálogo de permisos",
+        "description": "Lista de solo lectura de permisos disponibles en la plataforma."
+      },
+      "assignations": {
+        "title": "Asignaciones de roles",
+        "description": "Asigne o revoque roles para usuarios (todos los ámbitos)."
+      },
+      "id": {
+        "metaTitle": "Editar rol"
+      }
+    },
+    "audit": {
+      "title": "Auditoría RBAC",
+      "description": "Registro de eventos de seguridad y cambios de permisos (solo lectura)."
+    }
+  },
+  "parametres": {
+    "metaTitle": "Configuración",
+    "comptes": {
+      "metaTitle": "Cuentas bancarias"
+    },
+    "emails": {
+      "metaTitle": "Correos electrónicos"
+    }
+  },
+  "dashboard": {
+    "bookings": {
+      "id": {
+        "metaTitle": "Detalle de reserva"
+      }
+    }
+  }
+}

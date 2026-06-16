@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Button,
   Card,
@@ -11,10 +13,10 @@ import {
 } from '@africatourismgate/ui';
 import type { PropertyImage } from '@africatourismgate/types';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
 import { getSession } from '../../lib/auth/session';
-import { getHebergementsErrorMessage } from '../../lib/hebergements-errors';
 
 const PROPERTY_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
 const ALLOWED_PROPERTY_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
@@ -33,6 +35,12 @@ type PropertyImagesSectionProps = {
 };
 
 export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSectionProps) {
+  const { hebergements: getHebergementsErrorMessage } = useAdminErrorMessages();
+  const tGallery = useTranslations('modules.common.imagesGallery');
+  const tColumns = useTranslations('modules.common.columns');
+  const tForm = useTranslations('modules.common.form');
+  const tValidation = useTranslations('modules.common.validation');
+  const tActions = useTranslations('common.actions');
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -58,7 +66,7 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
     } catch (error) {
       setState({ status: 'error', message: getHebergementsErrorMessage(error) });
     }
-  }, [propertyId]);
+  }, [propertyId, getHebergementsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -93,16 +101,16 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
     if (!file) return;
     try {
       if (!ALLOWED_PROPERTY_IMAGE_TYPES.has(file.type)) {
-        setFormError('Format accepté : JPEG, PNG ou WebP.');
+        setFormError(tValidation('imageFormat'));
         return;
       }
       if (file.size > PROPERTY_IMAGE_MAX_BYTES) {
-        setFormError('Image trop lourde (max 5 Mo).');
+        setFormError(tValidation('imageTooLarge'));
         return;
       }
       const session = getSession();
       if (!session?.accessToken) {
-        setFormError('Session expirée. Reconnectez-vous puis réessayez.');
+        setFormError(tValidation('sessionExpiredRetry'));
         return;
       }
       setUploading(true);
@@ -128,7 +136,7 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
       }
       setFormValues((prev) => ({ ...prev, url: payload.url! }));
     } catch {
-      setFormError("Impossible d'uploader l'image locale.");
+      setFormError(tValidation('uploadFailed'));
     } finally {
       setUploading(false);
       event.target.value = '';
@@ -139,7 +147,7 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
     event.preventDefault();
     setFormError(null);
     if (!formValues.url.trim()) {
-      setFormError('L’URL est obligatoire.');
+      setFormError(tValidation('urlRequired'));
       return;
     }
     setSubmitting(true);
@@ -167,7 +175,7 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
 
   const handleDelete = useCallback(
     async (img: PropertyImage) => {
-      if (!window.confirm('Supprimer cette image ?')) return;
+      if (!window.confirm(tGallery('deleteConfirm'))) return;
       setDeletingId(img.id);
       try {
         await getApiClient().deletePropertyImage(img.id);
@@ -178,14 +186,14 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
         setDeletingId(null);
       }
     },
-    [load],
+    [load, tGallery, getHebergementsErrorMessage],
   );
 
   const columns = useMemo<ColumnDef<PropertyImage, unknown>[]>(
     () => [
       {
         id: 'preview',
-        header: 'Aperçu',
+        header: tColumns('preview'),
         cell: ({ row }) => (
           <Image
             src={row.original.url}
@@ -202,7 +210,7 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
       },
       {
         accessorKey: 'url',
-        header: 'URL',
+        header: tColumns('url'),
         cell: ({ row }) => (
           <a
             href={row.original.url}
@@ -216,19 +224,19 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
       },
       {
         accessorKey: 'caption',
-        header: 'Légende',
+        header: tColumns('caption'),
         cell: ({ row }) => (
           <span className="text-sm text-atg-muted">{row.original.caption ?? '—'}</span>
         ),
       },
       {
         accessorKey: 'sortOrder',
-        header: 'Ordre',
+        header: tColumns('sortOrder'),
         meta: { align: 'center' },
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tColumns('actions'),
         meta: { align: 'right' },
         cell: ({ row }) => (
           <DataTableActions>
@@ -243,7 +251,7 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
         ),
       },
     ],
-    [deletingId, handleDelete],
+    [deletingId, handleDelete, tColumns],
   );
 
   const images = state.status === 'ready' ? state.images : [];
@@ -256,14 +264,12 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
     >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-atg-fg">Images</h2>
-          <p className="mt-1 text-sm text-atg-muted">
-            Uploadez une photo ou saisissez une URL externe.
-          </p>
+          <h2 className="text-lg font-semibold text-atg-fg">{tGallery('titleProperty')}</h2>
+          <p className="mt-1 text-sm text-atg-muted">{tGallery('intro')}</p>
         </div>
         {!showForm ? (
           <Button type="button" onClick={openCreate}>
-            Ajouter une image
+            {tGallery('addPhoto')}
           </Button>
         ) : null}
       </div>
@@ -272,7 +278,7 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
         <Card variant="dashboard" className="max-w-2xl">
           <form onSubmit={handleSubmit} className="space-y-4">
             <h3 className="text-sm font-medium">
-              {editing ? 'Modifier l’image' : 'Nouvelle image'}
+              {editing ? tGallery('editPhoto') : tGallery('newPhoto')}
             </h3>
             {formError ? (
               <p role="alert" className="text-sm text-red-600">
@@ -280,10 +286,10 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
               </p>
             ) : null}
             <div className="space-y-3">
-              <p className="text-xs font-medium text-atg-fg">Image</p>
+              <p className="text-xs font-medium text-atg-fg">{tForm('image')}</p>
               <div className="flex flex-wrap items-center gap-3">
                 <label className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10">
-                  {uploading ? 'Upload en cours…' : 'Choisir un fichier'}
+                  {uploading ? tForm('uploading') : tForm('chooseFile')}
                   <input
                     type="file"
                     accept="image/jpeg,image/png,image/webp"
@@ -292,12 +298,12 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
                     disabled={uploading || submitting}
                   />
                 </label>
-                <span className="text-xs text-atg-muted">JPEG, PNG ou WebP, max 5 Mo</span>
+                <span className="text-xs text-atg-muted">{tForm('imageFormatHint')}</span>
               </div>
               {formValues.url.trim() ? (
                 <Image
                   src={formValues.url.trim()}
-                  alt={formValues.caption.trim() || 'Aperçu'}
+                  alt={formValues.caption.trim() || tColumns('preview')}
                   width={320}
                   height={200}
                   unoptimized
@@ -309,19 +315,19 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
               ) : null}
             </div>
             <Input
-              label="URL externe (optionnel si upload)"
+              label={tForm('externalUrlOptional')}
               type="url"
               value={formValues.url}
               onChange={(e) => setFormValues((p) => ({ ...p, url: e.target.value }))}
-              placeholder="https://..."
+              placeholder={tForm('urlPlaceholder')}
             />
             <Input
-              label="Légende"
+              label={tColumns('caption')}
               value={formValues.caption}
               onChange={(e) => setFormValues((p) => ({ ...p, caption: e.target.value }))}
             />
             <Input
-              label="Ordre d’affichage"
+              label={tForm('displayOrder')}
               type="number"
               min={0}
               value={formValues.sortOrder}
@@ -329,10 +335,10 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
             />
             <div className="flex gap-3">
               <Button type="submit" loading={submitting} disabled={uploading}>
-                {editing ? 'Enregistrer' : 'Ajouter'}
+                {editing ? tActions('save') : tActions('create')}
               </Button>
               <Button type="button" variant="outline" onClick={resetForm}>
-                Annuler
+                {tActions('cancel')}
               </Button>
             </div>
           </form>
@@ -349,7 +355,7 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
             columns={columns}
             data={images}
             isLoading={state.status === 'loading'}
-            emptyMessage="Aucune image."
+            emptyMessage={tGallery('emptyProperty')}
             getRowId={(row) => row.id}
           />
         </Card>

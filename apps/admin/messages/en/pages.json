@@ -1,0 +1,328 @@
+{
+  "meta": {
+    "editUser": "Edit user",
+    "editEmployee": "Edit employee",
+    "editOrganization": "Edit organization",
+    "editAccommodation": "Edit accommodation",
+    "editActivity": "Edit activity",
+    "editDestination": "Edit destination",
+    "editVehicle": "Edit vehicle",
+    "editFlight": "Edit flight",
+    "editPackage": "Edit package",
+    "editRole": "Edit role",
+    "editPromoCode": "Edit promo code",
+    "editPromotion": "Edit promotion",
+    "viewPackage": "View package",
+    "detailBooking": "Booking detail",
+    "detailTicket": "Ticket detail",
+    "detailReview": "Review detail",
+    "sailingDetail": "Sailing",
+    "shipDetail": "Ship",
+    "classAvailability": "Class availability",
+    "roomAvailability": "Room availability",
+    "itineraryStops": "Itinerary stops"
+  },
+  "utilisateurs": {
+    "description": "Platform accounts. Filter by status or organization.",
+    "nouveau": {
+      "metaTitle": "New user",
+      "description": "Create a user account."
+    },
+    "id": {
+      "metaTitle": "Edit user"
+    },
+    "employes": {
+      "description": "Employee profiles linked to users and organizations.",
+      "nouveau": {
+        "metaTitle": "New employee",
+        "description": "Link an existing user to an organization."
+      },
+      "id": {
+        "metaTitle": "Edit employee"
+      }
+    },
+    "adresses": {
+      "description": "Addresses saved by users."
+    },
+    "moyens-paiement": {
+      "description": "Cards and payment methods saved by users."
+    },
+    "sessions": {
+      "description": "Active sessions. Revoke a session to sign the user out."
+    },
+    "journaux-securite": {
+      "description": "Security events and access audit."
+    }
+  },
+  "hebergements": {
+    "title": "Accommodations",
+    "description": "Properties, rooms and amenities. Filter by destination.",
+    "nouveau": {
+      "metaTitle": "New accommodation",
+      "description": "Create the property then add images, amenities and rooms."
+    },
+    "id": {
+      "metaTitle": "Edit accommodation",
+      "chambres": {
+        "roomId": {
+          "disponibilites": {
+            "metaTitle": "Room availability"
+          }
+        }
+      }
+    },
+    "equipements": {
+      "description": "Global catalog reused across accommodations (Wi-Fi, pool, etc.)."
+    }
+  },
+  "organisations": {
+    "title": "Organizations",
+    "description": "Platform partners and entities. Search by name or slug.",
+    "nouveau": {
+      "metaTitle": "New organization",
+      "description": "Create a partner organization."
+    },
+    "id": {
+      "metaTitle": "Edit organization"
+    }
+  },
+  "fidelite": {
+    "comptes": {
+      "title": "Loyalty accounts",
+      "description": "OneKey program — point balance, tiers and last activity. Manual adjustment reserved for super admin."
+    }
+  },
+  "produits": {
+    "activites": {
+      "title": "Activities & tours",
+      "description": "Experiences, providers and time slots by destination.",
+      "actions": {
+        "providers": "Providers",
+        "new": "New activity"
+      },
+      "nouveau": {
+        "metaTitle": "New activity",
+        "description": "Create an experience then add schedules on the edit page."
+      },
+      "fournisseurs": {
+        "title": "Activity providers",
+        "description": "Operators linked to destinations."
+      },
+      "id": {
+        "metaTitle": "Edit activity"
+      }
+    },
+    "destinations": {
+      "title": "Destinations",
+      "description": "Geography and points of interest. Search by name, slug or country code.",
+      "actions": {
+        "new": "New destination"
+      },
+      "nouveau": {
+        "metaTitle": "New destination",
+        "description": "Create the destination then add points of interest on the edit page."
+      },
+      "id": {
+        "metaTitle": "Edit destination"
+      }
+    },
+    "locations": {
+      "title": "Vehicle rentals",
+      "description": "Vehicles by agency, categories and availability slots.",
+      "links": {
+        "agencies": "Rental agencies",
+        "categories": "Vehicle categories"
+      },
+      "agences": {
+        "title": "Rental agencies",
+        "description": "Agency directory linked to destinations."
+      },
+      "categories": {
+        "title": "Vehicle categories",
+        "description": "Vehicle types (compact, SUV, premium, etc.)."
+      },
+      "nouveau": {
+        "metaTitle": "New vehicle",
+        "description": "Link an agency and category, then set availability slots.",
+        "backLabel": "Back to vehicles"
+      },
+      "id": {
+        "metaTitle": "Edit vehicle"
+      }
+    },
+    "vols": {
+      "description": "Flight catalog, cabin classes and availability. Search by flight code.",
+      "links": {
+        "airlines": "Airlines",
+        "airports": "Airports"
+      },
+      "nouveau": {
+        "metaTitle": "New flight",
+        "backLabel": "Back to flights",
+        "description": "Define the route, then add cabin classes on the flight page."
+      },
+      "compagnies": {
+        "description": "Airline directory (2-letter IATA code).",
+        "backLabel": "Back to flights"
+      },
+      "aeroports": {
+        "description": "Airport directory (3-letter IATA code).",
+        "backLabel": "Back to flights"
+      },
+      "id": {
+        "metaTitle": "Edit flight",
+        "classes": {
+          "classId": {
+            "disponibilites": {
+              "metaTitle": "Class availability"
+            }
+          }
+        }
+      }
+    },
+    "croisieres": {
+      "description": "Scheduled departures, itineraries, cabins and availability.",
+      "links": {
+        "ships": "Ships",
+        "lines": "Cruise lines",
+        "ports": "Cruise ports",
+        "newSailing": "New sailing"
+      },
+      "nouveau": {
+        "metaTitle": "New sailing",
+        "description": "Link an existing itinerary to a departure date."
+      },
+      "lignes": {
+        "description": "Cruise line directory."
+      },
+      "ports": {
+        "description": "Port directory."
+      },
+      "navires": {
+        "description": "Ships, itineraries, ports and cabins.",
+        "links": {
+          "backToSailings": "← Sailings"
+        },
+        "nouveau": {
+          "metaTitle": "New ship",
+          "description": "Create a ship then add itineraries and cabins."
+        },
+        "shipId": {
+          "metaTitle": "Ship",
+          "itineraires": {
+            "itineraryId": {
+              "metaTitle": "Itinerary stops"
+            }
+          }
+        }
+      },
+      "id": {
+        "metaTitle": "Sailing"
+      }
+    },
+    "forfaits": {
+      "description": "Combined packages with discount and price calculated from included products.",
+      "nouveau": {
+        "metaTitle": "New package",
+        "description": "Create the package then add items on the edit page."
+      },
+      "id": {
+        "metaTitle": "Edit package",
+        "voir": {
+          "metaTitle": "View package"
+        }
+      }
+    }
+  },
+  "reservations": {
+    "description": "Paginated booking list (live API data). Filter by status, date, customer and organization. Requires bookings.read.",
+    "lignes": {
+      "description": "Global line items per booking (live API data). Filter by type, booking status and booking ID. Requires bookings.read."
+    }
+  },
+  "paiements": {
+    "description": "Stripe transactions and refunds (test mode). Filter by status, dates and organization (super admin). Access: payments.read; refund: payments.write.",
+    "codes-promo": {
+      "intro": "Codes entered at checkout (e.g. WELCOME10). Complements promotions. Access: promo_codes.read / write.",
+      "linkPromotions": "promotions",
+      "nouveau": {
+        "metaTitle": "New promo code",
+        "description": "The code will be uppercased and can be entered as-is at checkout."
+      },
+      "id": {
+        "metaTitle": "Edit promo code"
+      }
+    },
+    "promotions": {
+      "intro": "Marketing campaigns with optional discount (checkout via promotionId). Complements promo codes. Access: promo_codes.read / write.",
+      "linkPromoCodes": "promo codes",
+      "nouveau": {
+        "metaTitle": "New promotion",
+        "description": "Define the campaign, optional discount and validity dates."
+      },
+      "id": {
+        "metaTitle": "Edit promotion"
+      }
+    }
+  },
+  "contenu": {
+    "tickets": {
+      "description": "Customer support requests. Filter by status and priority. Access: support_tickets.read / support_tickets.write.",
+      "id": {
+        "metaTitle": "Ticket detail"
+      }
+    },
+    "avis": {
+      "description": "Moderate customer ratings and comments. Filter by score, property and status. Actions: approve, hide or delete. Access: reviews.read / reviews.write.",
+      "id": {
+        "metaTitle": "Review detail"
+      }
+    }
+  },
+  "systeme": {
+    "roles": {
+      "title": "Roles & permissions",
+      "description": "Manage roles, permission matrix and user assignments.",
+      "actions": {
+        "permissions": "Permissions",
+        "assignments": "Assignments",
+        "new": "New role"
+      },
+      "nouveau": {
+        "metaTitle": "New role",
+        "description": "Create a custom role and define its permissions."
+      },
+      "permissions": {
+        "title": "Permission catalog",
+        "description": "Read-only list of permissions available on the platform."
+      },
+      "assignations": {
+        "title": "Role assignments",
+        "description": "Assign or revoke roles for users (all scopes)."
+      },
+      "id": {
+        "metaTitle": "Edit role"
+      }
+    },
+    "audit": {
+      "title": "RBAC audit",
+      "description": "Security event log and permission changes (read-only)."
+    }
+  },
+  "parametres": {
+    "metaTitle": "Settings",
+    "comptes": {
+      "metaTitle": "Bank accounts"
+    },
+    "emails": {
+      "metaTitle": "Emails"
+    }
+  },
+  "dashboard": {
+    "bookings": {
+      "id": {
+        "metaTitle": "Booking detail"
+      }
+    }
+  }
+}

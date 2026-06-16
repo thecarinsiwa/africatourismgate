@@ -1,8 +1,8 @@
 export const paymentsKpis = [
   {
     key: 'total',
-    label: 'Transactions',
-    subtitle: 'Tous les paiements',
+    labelKey: 'stats.total.label',
+    subtitleKey: 'stats.total.subtitle',
     iconClass: 'bg-violet-100 text-violet-700 dark:bg-violet-950/50 dark:text-violet-300',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -17,8 +17,8 @@ export const paymentsKpis = [
   },
   {
     key: 'succeeded',
-    label: 'Réussis',
-    subtitle: 'Paiements encaissés',
+    labelKey: 'stats.succeeded.label',
+    subtitleKey: 'stats.succeeded.subtitle',
     iconClass: 'bg-atg-success-light text-atg-success',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -33,8 +33,8 @@ export const paymentsKpis = [
   },
   {
     key: 'pending',
-    label: 'En attente',
-    subtitle: 'Paiements pending',
+    labelKey: 'stats.pending.label',
+    subtitleKey: 'stats.pending.subtitle',
     iconClass: 'bg-atg-warning-light text-atg-warning',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -49,8 +49,8 @@ export const paymentsKpis = [
   },
   {
     key: 'revenue',
-    label: 'Revenus',
-    subtitle: 'Total paiements réussis',
+    labelKey: 'stats.revenue.label',
+    subtitleKey: 'stats.revenue.subtitle',
     iconClass: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>

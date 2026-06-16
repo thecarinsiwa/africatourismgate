@@ -1,6 +1,7 @@
 'use client';
 
 import { cn, DataTableBadge } from '@africatourismgate/ui';
+import { useTranslations } from 'next-intl';
 import {
   formatDurationMinutes,
   formatFlightSchedule,
@@ -27,11 +28,13 @@ function AirportBlock({
   time,
   align,
   compact,
+  emptyDash,
 }: {
   airport: FlightTimelineAirport | null;
   time: string;
   align: 'start' | 'end';
   compact?: boolean;
+  emptyDash: string;
 }) {
   return (
     <div
@@ -51,7 +54,7 @@ function AirportBlock({
         </DataTableBadge>
         {!compact ? (
           <span className="truncate text-sm font-medium text-atg-fg">
-            {airport?.city ?? '—'}
+            {airport?.city ?? emptyDash}
           </span>
         ) : null}
       </div>
@@ -63,7 +66,15 @@ function AirportBlock({
   );
 }
 
-function DurationConnector({ durationMinutes, compact }: { durationMinutes: number; compact?: boolean }) {
+function DurationConnector({
+  durationMinutes,
+  compact,
+  durationAriaLabel,
+}: {
+  durationMinutes: number;
+  compact?: boolean;
+  durationAriaLabel: string;
+}) {
   const label = formatDurationMinutes(durationMinutes);
 
   if (compact) {
@@ -79,7 +90,7 @@ function DurationConnector({ durationMinutes, compact }: { durationMinutes: numb
   return (
     <div
       className="flex flex-col items-center gap-1 py-2 md:flex-1 md:flex-row md:px-4 md:py-0"
-      aria-label={`Durée du vol : ${label}`}
+      aria-label={durationAriaLabel}
     >
       <div className="hidden h-px flex-1 bg-atg-border md:block" />
       <div className="flex flex-col items-center gap-0.5">
@@ -110,7 +121,10 @@ export function FlightTimeline({
   compact = false,
   className,
 }: FlightTimelineProps) {
+  const tDetail = useTranslations('modules.flights.detail');
+  const tCommon = useTranslations('modules.common');
   const schedule = formatFlightSchedule(departureTime, arrivalTime);
+  const durationLabel = formatDurationMinutes(durationMinutes);
 
   return (
     <div
@@ -120,20 +134,26 @@ export function FlightTimeline({
         className,
       )}
       role="group"
-      aria-label="Trajet du vol"
+      aria-label={tDetail('timelineAria')}
     >
       <AirportBlock
         airport={departureAirport}
         time={schedule.departure}
         align="start"
         compact={compact}
+        emptyDash={tCommon('empty.dash')}
       />
-      <DurationConnector durationMinutes={durationMinutes} compact={compact} />
+      <DurationConnector
+        durationMinutes={durationMinutes}
+        compact={compact}
+        durationAriaLabel={tDetail('durationAria', { label: durationLabel })}
+      />
       <AirportBlock
         airport={arrivalAirport}
         time={schedule.arrival}
         align="end"
         compact={compact}
+        emptyDash={tCommon('empty.dash')}
       />
     </div>
   );

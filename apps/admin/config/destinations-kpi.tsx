@@ -1,8 +1,8 @@
 export const destinationsKpis = [
   {
     key: 'destinations',
-    label: 'Destinations',
-    subtitle: 'Villes et régions catalogue',
+    labelKey: 'stats.destinations.label',
+    subtitleKey: 'stats.destinations.subtitle',
     iconClass: 'bg-atg-info-light text-atg-info',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -17,8 +17,8 @@ export const destinationsKpis = [
   },
   {
     key: 'pois',
-    label: "Points d'intérêt",
-    subtitle: 'Lieux remarquables liés',
+    labelKey: 'stats.pois.label',
+    subtitleKey: 'stats.pois.subtitle',
     iconClass: 'bg-violet-100 text-violet-700 dark:bg-violet-950/50 dark:text-violet-300',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -39,8 +39,8 @@ export const destinationsKpis = [
   },
   {
     key: 'countries',
-    label: 'Pays couverts',
-    subtitle: 'Codes ISO distincts',
+    labelKey: 'stats.countries.label',
+    subtitleKey: 'stats.countries.subtitle',
     iconClass: 'bg-atg-warning-light text-atg-warning',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>

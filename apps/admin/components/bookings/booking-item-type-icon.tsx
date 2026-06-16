@@ -6,6 +6,7 @@ import {
   getBookingItemTypeIcon,
   getBookingItemTypeLabel,
 } from '../../lib/booking-item-catalog';
+import { useBookingItemTypeLabels } from '../../lib/i18n/use-module-labels';
 
 type BookingItemTypeIconProps = {
   itemType: BookingItemType | string;
@@ -25,8 +26,9 @@ export function BookingItemTypeIcon({
   showLabel = false,
   className,
 }: BookingItemTypeIconProps) {
+  const itemTypeLabels = useBookingItemTypeLabels();
   const Icon = getBookingItemTypeIcon(itemType);
-  const label = getBookingItemTypeLabel(itemType);
+  const label = getBookingItemTypeLabel(itemType, itemTypeLabels);
   const sizes = sizeClasses[size];
 
   return (

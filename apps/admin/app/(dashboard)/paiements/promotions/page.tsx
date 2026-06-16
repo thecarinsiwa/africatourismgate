@@ -1,28 +1,11 @@
 import type { Metadata } from 'next';
-import { TextLink } from '@africatourismgate/ui';
-import { AdminPageIntro } from '../../../../components/admin-page-intro';
-import { PaymentsPromoSubnav } from '../../../../components/payments/payments-promo-subnav';
-import { PromotionsList } from '../../../../components/promotions/promotions-list';
+import { getAdminPageMetadata } from '../../../../lib/i18n/admin-page-i18n';
+import { PromotionsPageContent } from '../../../../components/pages/paiements-promotions-page-content';
 
-export const metadata: Metadata = {
-  title: 'Promotions — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('paiements/promotions');
+}
 
-export default function PromotionsPage() {
-  return (
-    <div>
-      <PaymentsPromoSubnav />
-      <AdminPageIntro>
-        <p>
-          Campagnes marketing avec réduction optionnelle (checkout via{' '}
-          <code className="text-xs">promotionId</code>). Complémentaire aux{' '}
-          <TextLink href="/paiements/codes-promo" variant="primary" className="font-medium">
-            codes promo
-          </TextLink>
-          . Accès : promo_codes.read / write.
-        </p>
-      </AdminPageIntro>
-      <PromotionsList />
-    </div>
-  );
+export default function Page() {
+  return <PromotionsPageContent />;
 }

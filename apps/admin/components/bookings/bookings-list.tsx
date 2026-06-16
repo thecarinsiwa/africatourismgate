@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Card,
   DataTable,
@@ -14,32 +16,21 @@ import {
   type SortingState,
 } from '@africatourismgate/ui';
 import type { BookingListItem, BookingStatus, OrganizationListItem, User } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getBookingsErrorMessage } from '../../lib/bookings-errors';
+import {
+  BOOKING_STATUS_VARIANTS,
+  getBookingStatusLabel,
+} from '../../lib/booking-status';
+import {
+  useBookingStatusFilterOptions,
+  useBookingStatusLabels,
+} from '../../lib/i18n/use-module-labels';
 
 const PAGE_SIZE = 10;
 
 type StatusFilter = '' | BookingStatus;
-
-const statusLabels: Record<BookingStatus, string> = {
-  draft: 'Brouillon',
-  pending_payment: 'En attente de paiement',
-  confirmed: 'Confirmée',
-  cancelled: 'Annulée',
-  refunded: 'Remboursée',
-};
-
-const statusVariants: Record<
-  BookingStatus,
-  'success' | 'warning' | 'muted' | 'danger' | 'default'
-> = {
-  draft: 'muted',
-  pending_payment: 'warning',
-  confirmed: 'success',
-  cancelled: 'danger',
-  refunded: 'default',
-};
 
 function formatDateTime(iso: string): string {
   try {
@@ -57,6 +48,13 @@ function formatMoney(cents: number, currency: string): string {
 }
 
 export function BookingsList() {
+  const { bookings: getBookingsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.bookings.list');
+  const tCommon = useTranslations('modules.common');
+  const tUsers = useTranslations('modules.users.filters');
+  const statusLabels = useBookingStatusLabels();
+  const statusOptions = useBookingStatusFilterOptions();
+
   const [page, setPage] = useState(1);
   const [sorting, setSorting] = useState<SortingState>([{ id: 'createdAt', desc: true }]);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('');
@@ -106,31 +104,20 @@ export function BookingsList() {
     return map;
   }, [organizations]);
 
-  const statusOptions = useMemo(
-    () => [
-      { value: '', label: 'Tous' },
-      ...(Object.keys(statusLabels) as BookingStatus[]).map((status) => ({
-        value: status,
-        label: statusLabels[status],
-      })),
-    ],
-    [],
-  );
-
   const clientOptions = useMemo(
     () => [
-      { value: '', label: 'Tous' },
+      { value: '', label: tCommon('filters.all') },
       ...users.map((user) => ({ value: user.id, label: user.email })),
     ],
-    [users],
+    [users, tCommon],
   );
 
   const organizationOptions = useMemo(
     () => [
-      { value: '', label: 'Toutes' },
+      { value: '', label: tCommon('filters.allFeminine') },
       ...organizations.map((org) => ({ value: org.id, label: org.name })),
     ],
-    [organizations],
+    [organizations, tCommon],
   );
 
   const sortOrder = useMemo(() => {
@@ -161,7 +148,7 @@ export function BookingsList() {
     } catch (error) {
       setState({ status: 'error', message: getBookingsErrorMessage(error) });
     }
-  }, [page, statusFilter, userFilter, organizationFilter, dateFrom, dateTo, sortOrder]);
+  }, [page, statusFilter, userFilter, organizationFilter, dateFrom, dateTo, sortOrder, getBookingsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -185,11 +172,13 @@ export function BookingsList() {
     setPage(1);
   }, []);
 
+  const emptyDash = tCommon('empty.dash');
+
   const columns = useMemo<ColumnDef<BookingListItem, unknown>[]>(
     () => [
       {
         accessorKey: 'createdAt',
-        header: 'Date',
+        header: tCommon('columns.date'),
         enableSorting: true,
         cell: ({ row }) => (
           <span className="whitespace-nowrap text-sm tabular-nums">
@@ -199,7 +188,7 @@ export function BookingsList() {
       },
       {
         id: 'client',
-        header: 'Client',
+        header: tCommon('columns.client'),
         cell: ({ row }) => (
           <div>
             <span className="font-medium text-atg-fg">{row.original.clientEmail}</span>
@@ -211,11 +200,11 @@ export function BookingsList() {
       },
       {
         id: 'organization',
-        header: 'Organisation',
+        header: tCommon('columns.organization'),
         cell: ({ row }) => {
           const orgId = row.original.organizationId;
           if (!orgId) {
-            return <span className="text-atg-muted">—</span>;
+            return <span className="text-atg-muted">{emptyDash}</span>;
           }
           return (
             <span className="text-sm text-atg-muted">
@@ -226,20 +215,20 @@ export function BookingsList() {
       },
       {
         accessorKey: 'status',
-        header: 'Statut',
+        header: tCommon('columns.status'),
         meta: { align: 'center' },
         cell: ({ row }) => {
           const status = row.original.status;
           return (
-            <DataTableBadge variant={statusVariants[status]}>
-              {statusLabels[status]}
+            <DataTableBadge variant={BOOKING_STATUS_VARIANTS[status]}>
+              {getBookingStatusLabel(status, statusLabels)}
             </DataTableBadge>
           );
         },
       },
       {
         id: 'total',
-        header: 'Montant',
+        header: tCommon('columns.amount'),
         meta: { align: 'right' },
         cell: ({ row }) => (
           <span className="tabular-nums text-sm font-medium">
@@ -249,7 +238,7 @@ export function BookingsList() {
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tCommon('columns.actions'),
         meta: { align: 'right' },
         cell: ({ row }) => (
           <DataTableActions>
@@ -261,15 +250,13 @@ export function BookingsList() {
         ),
       },
     ],
-    [orgNameById],
+    [emptyDash, orgNameById, statusLabels, tCommon],
   );
 
   const isLoading = state.status === 'loading';
   const isError = state.status === 'error';
   const bookings = state.status === 'ready' ? state.bookings : [];
-  const emptyMessage = hasFilters
-    ? 'Aucune réservation ne correspond à vos critères.'
-    : 'Aucune réservation pour le moment.';
+  const emptyMessage = hasFilters ? t('emptyFiltered') : t('emptyDefault');
 
   return (
     <div className="space-y-6">
@@ -281,7 +268,7 @@ export function BookingsList() {
           <>
             <div className="w-full sm:w-48">
               <Select
-                label="Statut"
+                label={tCommon('columns.status')}
                 value={statusFilter}
                 options={statusOptions}
                 onChange={(e) => {
@@ -292,7 +279,7 @@ export function BookingsList() {
             </div>
             <div className="w-full sm:w-56">
               <Select
-                label="Client"
+                label={t('filters.client')}
                 value={userFilter}
                 options={clientOptions}
                 onChange={(e) => {
@@ -303,7 +290,7 @@ export function BookingsList() {
             </div>
             <div className="w-full sm:w-48">
               <Select
-                label="Organisation"
+                label={tUsers('organization')}
                 value={organizationFilter}
                 options={organizationOptions}
                 onChange={(e) => {
@@ -314,7 +301,7 @@ export function BookingsList() {
             </div>
             <div className="w-full sm:w-40">
               <Input
-                label="Du"
+                label={tCommon('filters.dateFrom')}
                 type="date"
                 value={dateFrom}
                 onChange={(e) => {
@@ -325,7 +312,7 @@ export function BookingsList() {
             </div>
             <div className="w-full sm:w-40">
               <Input
-                label="Au"
+                label={tCommon('filters.dateTo')}
                 type="date"
                 value={dateTo}
                 onChange={(e) => {
@@ -361,7 +348,7 @@ export function BookingsList() {
                 setPage(1);
               }}
               manualSorting
-              aria-label="Liste des réservations"
+              aria-label={t('ariaLabel')}
             />
           </Card>
 
@@ -371,7 +358,7 @@ export function BookingsList() {
               pageSize={PAGE_SIZE}
               totalPages={state.totalPages}
               totalItems={state.total}
-              itemLabel="réservation"
+              itemLabel={tCommon('pagination.booking')}
               onPageChange={setPage}
             />
           ) : null}

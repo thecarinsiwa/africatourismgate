@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import { Button, Input } from '@africatourismgate/ui';
 import type {
   BrandingPlatformValue,
@@ -8,11 +10,11 @@ import type {
 } from '@africatourismgate/types';
 import { normalizeBrandingAssetUrl } from '@africatourismgate/utils';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
 import { getSession } from '../../lib/auth/session';
 import { PLATFORM_ORG_ID } from '../../lib/org-settings-constants';
-import { getOrganizationSettingsErrorMessage } from '../../lib/organization-settings-errors';
 import { BrandColorPaletteField } from './brand-color-palette-field';
 
 export type EmailBrandingFormValues = {
@@ -91,6 +93,11 @@ function toBrandingPayload(values: EmailBrandingFormValues): EmailBrandingValue 
 }
 
 export function EmailBrandingForm({ canWrite, onDirtyChange }: EmailBrandingFormProps) {
+  const { organizationSettings: getOrganizationSettingsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.settings.emails.form');
+  const tForm = useTranslations('modules.settings.form');
+  const tCommon = useTranslations('modules.common.form');
+  const tPreview = useTranslations('modules.settings.emails.preview');
   const [values, setValues] = useState<EmailBrandingFormValues>(defaultValues);
   const [initialValues, setInitialValues] = useState<EmailBrandingFormValues>(defaultValues);
   const [fieldErrors, setFieldErrors] = useState<
@@ -152,12 +159,12 @@ export function EmailBrandingForm({ canWrite, onDirtyChange }: EmailBrandingForm
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [getOrganizationSettingsErrorMessage]);
 
   function validate(): boolean {
     const errors: Partial<Record<keyof EmailBrandingFormValues, string>> = {};
     if (!values.displayName.trim()) {
-      errors.displayName = 'Le nom affiché est obligatoire.';
+      errors.displayName = t('validation.displayNameRequired');
     }
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
@@ -183,7 +190,7 @@ export function EmailBrandingForm({ canWrite, onDirtyChange }: EmailBrandingForm
         ],
       });
       setInitialValues(values);
-      setSuccessMessage('Paramètres e-mail enregistrés.');
+      setSuccessMessage(t('success'));
     } catch (error) {
       setFormError(getOrganizationSettingsErrorMessage(error));
     } finally {
@@ -217,16 +224,16 @@ export function EmailBrandingForm({ canWrite, onDirtyChange }: EmailBrandingForm
     if (!file) return;
     try {
       if (!file.type.startsWith('image/')) {
-        setFormError('Veuillez sélectionner une image valide.');
+        setFormError(t('upload.invalidImage'));
         return;
       }
       if (file.size > 2 * 1024 * 1024) {
-        setFormError('Image trop lourde (max 2 MB).');
+        setFormError(t('upload.tooLarge'));
         return;
       }
       const session = getSession();
       if (!session?.accessToken) {
-        setFormError('Session expirée. Reconnectez-vous puis réessayez.');
+        setFormError(tCommon('sessionExpiredRetry'));
         return;
       }
       setUploadingLogo(true);
@@ -249,7 +256,7 @@ export function EmailBrandingForm({ canWrite, onDirtyChange }: EmailBrandingForm
       }
       updateField('logoUrl', payload.url);
     } catch {
-      setFormError('Échec de l’upload du logo. Réessayez.');
+      setFormError(t('upload.failed'));
     } finally {
       setUploadingLogo(false);
       event.target.value = '';
@@ -274,7 +281,7 @@ export function EmailBrandingForm({ canWrite, onDirtyChange }: EmailBrandingForm
   }
 
   if (loading) {
-    return <p className="text-sm text-atg-muted">Chargement…</p>;
+    return <p className="text-sm text-atg-muted">{tForm('loading')}</p>;
   }
 
   if (loadError) {
@@ -301,7 +308,7 @@ export function EmailBrandingForm({ canWrite, onDirtyChange }: EmailBrandingForm
 
         <section className="space-y-4">
           <Input
-            label="Nom affiché"
+            label={t('displayName')}
             value={values.displayName}
             onChange={(e) => updateField('displayName', e.target.value)}
             error={fieldErrors.displayName}
@@ -309,7 +316,7 @@ export function EmailBrandingForm({ canWrite, onDirtyChange }: EmailBrandingForm
           />
 
           <Input
-            label="URL du logo"
+            label={t('logoUrl')}
             value={values.logoUrl}
             onChange={(e) => updateField('logoUrl', e.target.value)}
             placeholder="https://..."
@@ -318,7 +325,7 @@ export function EmailBrandingForm({ canWrite, onDirtyChange }: EmailBrandingForm
           {canWrite ? (
             <div className="flex flex-wrap items-center gap-3">
               <label className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10">
-                {uploadingLogo ? 'Upload en cours…' : 'Choisir un logo local'}
+                {uploadingLogo ? tCommon('uploading') : t('chooseLogo')}
                 <input
                   type="file"
                   accept="image/*"
@@ -327,7 +334,7 @@ export function EmailBrandingForm({ canWrite, onDirtyChange }: EmailBrandingForm
                   disabled={uploadingLogo}
                 />
               </label>
-              <span className="text-xs text-atg-muted">PNG/JPG/SVG/WebP, max 2 MB</span>
+              <span className="text-xs text-atg-muted">{t('logoFormatHint')}</span>
             </div>
           ) : null}
           {logoPreviewUrl ? (
@@ -340,47 +347,47 @@ export function EmailBrandingForm({ canWrite, onDirtyChange }: EmailBrandingForm
                 unoptimized
                 className="h-12 w-12 rounded-full object-cover"
               />
-              <span className="text-xs text-atg-muted">Aperçu du logo</span>
+              <span className="text-xs text-atg-muted">{t('logoPreview')}</span>
             </div>
           ) : null}
 
           <BrandColorPaletteField
-            label="Couleur primaire"
-            hint="Couleur dominante des e-mails (en-têtes, boutons)."
+            label={t('primaryColor')}
+            hint={t('primaryColorHint')}
             value={values.primaryColor}
             onChange={(hex) => updateField('primaryColor', hex)}
           />
 
           <BrandColorPaletteField
-            label="Couleur secondaire"
-            hint="Couleur d’accompagnement (optionnel)."
+            label={t('secondaryColor')}
+            hint={t('secondaryColorHint')}
             value={values.secondaryColor}
             onChange={(hex) => updateField('secondaryColor', hex)}
           />
 
           <Input
-            label="Texte de pied de page"
+            label={t('footerText')}
             value={values.footerText}
             onChange={(e) => updateField('footerText', e.target.value)}
-            placeholder="© Africa Tourism Gate — Tous droits réservés"
+            placeholder={t('footerPlaceholder')}
             disabled={!canWrite}
           />
 
           <Input
-            label="Sujet — e-mail de bienvenue"
+            label={t('welcomeSubject')}
             value={values.welcomeSubject}
             onChange={(e) => updateField('welcomeSubject', e.target.value)}
-            placeholder="Bienvenue chez {displayName}"
-            hint="Variables : {displayName}"
+            placeholder={t('welcomeSubjectPlaceholder')}
+            hint={t('welcomeSubjectHint')}
             disabled={!canWrite}
           />
 
           <Input
-            label="Sujet — confirmation de réservation"
+            label={t('bookingSubject')}
             value={values.bookingSubject}
             onChange={(e) => updateField('bookingSubject', e.target.value)}
-            placeholder="Confirmation de réservation — {ref}"
-            hint="Variables : {ref}, {displayName}"
+            placeholder={t('bookingSubjectPlaceholder')}
+            hint={t('bookingSubjectHint')}
             disabled={!canWrite}
           />
         </section>
@@ -391,7 +398,7 @@ export function EmailBrandingForm({ canWrite, onDirtyChange }: EmailBrandingForm
               htmlFor="preview-template"
               className="mb-1 block text-sm font-medium text-atg-fg"
             >
-              Modèle à prévisualiser
+              {t('previewTemplate')}
             </label>
             <select
               id="preview-template"
@@ -401,26 +408,26 @@ export function EmailBrandingForm({ canWrite, onDirtyChange }: EmailBrandingForm
               }
               className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg"
             >
-              <option value="welcome">Bienvenue (création de compte)</option>
-              <option value="booking">Confirmation de réservation</option>
+              <option value="welcome">{t('templateWelcome')}</option>
+              <option value="booking">{t('templateBooking')}</option>
             </select>
           </div>
           <Button
             type="button"
             variant="secondary"
             loading={previewing}
-            loadingText="Prévisualisation…"
+            loadingText={t('previewing')}
             onClick={() => void handlePreview()}
           >
-            Prévisualiser
+            {t('previewButton')}
           </Button>
           <Button
             type="submit"
             loading={submitting}
-            loadingText="Enregistrement…"
+            loadingText={t('saving')}
             disabled={!canWrite || !isDirty}
           >
-            Enregistrer
+            {t('save')}
           </Button>
         </section>
 
@@ -428,7 +435,7 @@ export function EmailBrandingForm({ canWrite, onDirtyChange }: EmailBrandingForm
           <div className="sticky bottom-0 z-20 border-t border-atg-border bg-atg-bg/95 px-4 py-3 backdrop-blur">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <p className="text-sm font-medium text-atg-fg">
-                {isDirty ? 'Modifications non enregistrées' : 'Aucune modification en attente'}
+                {isDirty ? t('dirty') : t('clean')}
               </p>
               <div className="flex gap-2">
                 <Button
@@ -437,15 +444,15 @@ export function EmailBrandingForm({ canWrite, onDirtyChange }: EmailBrandingForm
                   onClick={handleCancelChanges}
                   disabled={!isDirty || submitting}
                 >
-                  Annuler
+                  {t('cancel')}
                 </Button>
                 <Button
                   type="submit"
                   loading={submitting}
-                  loadingText="Enregistrement…"
+                  loadingText={t('saving')}
                   disabled={!isDirty}
                 >
-                  Enregistrer
+                  {t('save')}
                 </Button>
               </div>
             </div>
@@ -453,10 +460,7 @@ export function EmailBrandingForm({ canWrite, onDirtyChange }: EmailBrandingForm
         ) : null}
 
         {!canWrite ? (
-          <p className="text-xs text-atg-muted">
-            Vous pouvez consulter ces paramètres mais pas les modifier (permission
-            organization_settings.write requise).
-          </p>
+          <p className="text-xs text-atg-muted">{t('readOnlyHint')}</p>
         ) : null}
       </form>
 
@@ -465,7 +469,7 @@ export function EmailBrandingForm({ canWrite, onDirtyChange }: EmailBrandingForm
           <button
             type="button"
             className="absolute inset-0 bg-black/50"
-            aria-label="Fermer la prévisualisation"
+            aria-label={tPreview('closeAria')}
             onClick={() => setPreviewOpen(false)}
           />
           <div
@@ -477,18 +481,19 @@ export function EmailBrandingForm({ canWrite, onDirtyChange }: EmailBrandingForm
             <div className="flex items-center justify-between border-b border-atg-border px-4 py-3">
               <div>
                 <h2 id="email-preview-title" className="text-lg font-semibold text-atg-fg">
-                  Prévisualisation
+                  {tPreview('title')}
                 </h2>
                 <p className="mt-1 text-sm text-atg-muted">
-                  Sujet : <span className="font-medium text-atg-fg">{previewSubject}</span>
+                  {tPreview('subject')}{' '}
+                  <span className="font-medium text-atg-fg">{previewSubject}</span>
                 </p>
               </div>
               <Button type="button" variant="secondary" onClick={() => setPreviewOpen(false)}>
-                Fermer
+                {tPreview('close')}
               </Button>
             </div>
             <iframe
-              title="Aperçu e-mail"
+              title={tPreview('iframeTitle')}
               srcDoc={previewHtml}
               className="min-h-[480px] w-full flex-1 border-0 bg-white"
               sandbox="allow-same-origin"

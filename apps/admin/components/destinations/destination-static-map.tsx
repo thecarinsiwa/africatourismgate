@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@africatourismgate/ui';
+import { useTranslations } from 'next-intl';
 import {
   buildDestinationMapEmbedUrl,
   hasValidDestinationCoords,
@@ -17,9 +18,12 @@ type DestinationStaticMapProps = {
 export function DestinationStaticMap({
   latitude,
   longitude,
-  title = 'Aperçu carte',
+  title,
   className,
 }: DestinationStaticMapProps) {
+  const t = useTranslations('modules.destinations');
+  const mapTitle = title ?? t('form.mapPreview');
+
   if (!hasValidDestinationCoords(latitude, longitude)) {
     return null;
   }
@@ -30,16 +34,16 @@ export function DestinationStaticMap({
   const externalUrl = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=12/${lat}/${lng}`;
 
   return (
-    <section className={cn('space-y-3', className)} aria-label={title}>
+    <section className={cn('space-y-3', className)} aria-label={mapTitle}>
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h3 className="text-sm font-semibold text-atg-fg">{title}</h3>
+        <h3 className="text-sm font-semibold text-atg-fg">{mapTitle}</h3>
         <p className="font-mono text-xs tabular-nums text-atg-muted">
           {lat.toFixed(5)}, {lng.toFixed(5)}
         </p>
       </div>
       <div className="overflow-hidden rounded-xl border border-atg-border bg-atg-surface">
         <iframe
-          title={title}
+          title={mapTitle}
           src={embedUrl}
           className="h-56 w-full border-0 sm:h-64"
           loading="lazy"
@@ -53,7 +57,7 @@ export function DestinationStaticMap({
           rel="noreferrer"
           className="font-medium text-primary hover:text-primary-hover"
         >
-          Ouvrir dans OpenStreetMap
+          {t('map.openStreetMap')}
         </a>
       </p>
     </section>

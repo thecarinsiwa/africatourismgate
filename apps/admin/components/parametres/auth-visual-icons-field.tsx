@@ -8,11 +8,7 @@ import {
   AUTH_VISUAL_ICON_SIZES,
   DEFAULT_AUTH_VISUAL_ICONS,
 } from '@africatourismgate/types/organization-settings';
-import {
-  AUTH_VISUAL_POSITION_LABELS,
-  AUTH_VISUAL_PRESET_LABELS,
-  AUTH_VISUAL_SIZE_LABELS,
-} from '../../lib/auth-visual';
+import { useTranslations } from 'next-intl';
 import { AuthVisualDecorIcon as AuthVisualDecorIconPreview } from '../auth/auth-visual-decor-icon';
 
 type Props = {
@@ -41,6 +37,8 @@ export function AuthVisualIconsField({
   onUploadImage,
   uploadingIndex,
 }: Props) {
+  const t = useTranslations('modules.settings.authVisual');
+
   function updateIcon(index: number, patch: Partial<AuthVisualDecorIcon>) {
     onChange(
       icons.map((icon, currentIndex) =>
@@ -65,22 +63,20 @@ export function AuthVisualIconsField({
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-atg-muted">
-          Icônes décoratives affichées sur le panneau vert de connexion / inscription.
-        </p>
+        <p className="text-sm text-atg-muted">{t('description')}</p>
         <div className="flex gap-2">
           <Button type="button" variant="outline" size="sm" onClick={resetDefaults}>
-            Réinitialiser
+            {t('reset')}
           </Button>
           <Button type="button" variant="outline" size="sm" onClick={addIcon} disabled={icons.length >= 6}>
-            Ajouter une icône
+            {t('add')}
           </Button>
         </div>
       </div>
 
       {icons.length === 0 ? (
         <p className="rounded-lg border border-dashed border-atg-border px-4 py-6 text-sm text-atg-muted">
-          Aucune icône configurée. Ajoutez-en une ou réinitialisez les valeurs par défaut.
+          {t('empty')}
         </p>
       ) : null}
 
@@ -97,16 +93,16 @@ export function AuthVisualIconsField({
                 onChange={(event) => updateIcon(index, { enabled: event.target.checked })}
                 className="rounded border-atg-border"
               />
-              Icône {index + 1}
+              {t('iconLabel', { n: index + 1 })}
             </label>
             <Button type="button" variant="outline" size="sm" onClick={() => removeIcon(index)}>
-              Supprimer
+              {t('remove')}
             </Button>
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm font-medium text-atg-fg">Type</label>
+              <label className="mb-1 block text-sm font-medium text-atg-fg">{t('type')}</label>
               <select
                 className={selectClass}
                 value={icon.preset}
@@ -119,14 +115,14 @@ export function AuthVisualIconsField({
               >
                 {AUTH_VISUAL_ICON_PRESETS.map((preset) => (
                   <option key={preset} value={preset}>
-                    {AUTH_VISUAL_PRESET_LABELS[preset]}
+                    {t(`presets.${preset}`)}
                   </option>
                 ))}
               </select>
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-atg-fg">Position</label>
+              <label className="mb-1 block text-sm font-medium text-atg-fg">{t('position')}</label>
               <select
                 className={selectClass}
                 value={icon.position}
@@ -138,14 +134,14 @@ export function AuthVisualIconsField({
               >
                 {AUTH_VISUAL_ICON_POSITIONS.map((position) => (
                   <option key={position} value={position}>
-                    {AUTH_VISUAL_POSITION_LABELS[position]}
+                    {t(`positions.${position}`)}
                   </option>
                 ))}
               </select>
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-atg-fg">Taille</label>
+              <label className="mb-1 block text-sm font-medium text-atg-fg">{t('size')}</label>
               <select
                 className={selectClass}
                 value={icon.size}
@@ -157,7 +153,7 @@ export function AuthVisualIconsField({
               >
                 {AUTH_VISUAL_ICON_SIZES.map((size) => (
                   <option key={size} value={size}>
-                    {AUTH_VISUAL_SIZE_LABELS[size]}
+                    {t(`sizes.${size}`)}
                   </option>
                 ))}
               </select>
@@ -165,7 +161,7 @@ export function AuthVisualIconsField({
 
             <div>
               <label className="mb-1 block text-sm font-medium text-atg-fg">
-                Opacité ({icon.opacity}%)
+                {t('opacity', { n: icon.opacity })}
               </label>
               <input
                 type="range"
@@ -184,13 +180,13 @@ export function AuthVisualIconsField({
           {icon.preset === 'custom' ? (
             <div className="mt-4 space-y-3">
               <Input
-                label="URL de l'image"
+                label={t('imageUrl')}
                 value={icon.imageUrl ?? ''}
                 onChange={(event) => updateIcon(index, { imageUrl: event.target.value })}
                 placeholder="https://..."
               />
               <label className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10">
-                {uploadingIndex === index ? 'Upload en cours…' : 'Choisir une image locale'}
+                {uploadingIndex === index ? t('uploading') : t('chooseImage')}
                 <input
                   type="file"
                   accept="image/*"
@@ -213,7 +209,7 @@ export function AuthVisualIconsField({
 
           <div className="mt-4">
             <p className="mb-2 text-xs font-medium uppercase tracking-wide text-atg-muted">
-              Aperçu
+              {t('preview')}
             </p>
             <div className="relative h-28 overflow-hidden rounded-lg bg-gradient-to-br from-primary via-[#0d5c44] to-secondary">
               <AuthVisualDecorIconPreview

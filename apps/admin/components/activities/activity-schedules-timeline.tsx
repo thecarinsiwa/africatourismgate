@@ -7,6 +7,7 @@ import {
   DataTableBadge,
 } from '@africatourismgate/ui';
 import type { ActivitySchedule } from '@africatourismgate/types';
+import { useLocale, useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 
 type ActivitySchedulesTimelineProps = {
@@ -17,47 +18,36 @@ type ActivitySchedulesTimelineProps = {
   className?: string;
 };
 
-function formatDateHeader(isoDate: string): string {
-  try {
-    return new Date(`${isoDate}T12:00:00`).toLocaleDateString('fr-FR', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    });
-  } catch {
-    return isoDate;
-  }
-}
-
-function formatTime(iso: string): string {
-  try {
-    return new Date(iso).toLocaleTimeString('fr-FR', {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  } catch {
-    return iso;
-  }
-}
-
 function ScheduleSlot({
   schedule,
   isLast,
   onEdit,
   onDelete,
   deletingId,
+  locale,
+  placesBadge,
+  bookedSummary,
+  fillAria,
 }: {
   schedule: ActivitySchedule;
   isLast: boolean;
   onEdit: (schedule: ActivitySchedule) => void;
   onDelete: (schedule: ActivitySchedule) => void;
   deletingId: string | null;
+  locale: string;
+  placesBadge: string;
+  bookedSummary: string;
+  fillAria: string;
 }) {
   const fillPercent =
     schedule.capacity > 0
       ? Math.min(100, Math.round((schedule.bookedCount / schedule.capacity) * 100))
       : 0;
+
+  const timeLabel = new Date(schedule.startDatetime).toLocaleTimeString(locale, {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 
   return (
     <div className="relative flex gap-4 pb-6 last:pb-0">
@@ -71,16 +61,13 @@ function ScheduleSlot({
           <div className="space-y-1">
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-sm font-semibold tabular-nums text-atg-fg">
-                {formatTime(schedule.startDatetime)}
+                {timeLabel}
               </span>
               <DataTableBadge variant="muted">
-                {schedule.bookedCount}/{schedule.capacity} places
+                {placesBadge}
               </DataTableBadge>
             </div>
-            <p className="text-xs text-atg-muted">
-              {schedule.bookedCount} réservé{schedule.bookedCount > 1 ? 's' : ''} sur{' '}
-              {schedule.capacity}
-            </p>
+            <p className="text-xs text-atg-muted">{bookedSummary}</p>
           </div>
           <DataTableActions>
             <DataTableActionButton action="edit" onClick={() => onEdit(schedule)} />
@@ -100,7 +87,7 @@ function ScheduleSlot({
             aria-valuenow={fillPercent}
             aria-valuemin={0}
             aria-valuemax={100}
-            aria-label={`Remplissage du créneau : ${fillPercent} %`}
+            aria-label={fillAria}
           >
             <div
               className={cn(
@@ -123,6 +110,9 @@ export function ActivitySchedulesTimeline({
   deletingId,
   className,
 }: ActivitySchedulesTimelineProps) {
+  const locale = useLocale();
+  const t = useTranslations('modules.activities.sections.schedules');
+
   const grouped = useMemo(() => {
     const sorted = [...schedules].sort(
       (a, b) =>
@@ -139,9 +129,7 @@ export function ActivitySchedulesTimeline({
   }, [schedules]);
 
   if (grouped.length === 0) {
-    return (
-      <p className="text-sm text-atg-muted">Aucun créneau pour cette activité.</p>
-    );
+    return <p className="text-sm text-atg-muted">{t('empty')}</p>;
   }
 
   return (
@@ -151,29 +139,54 @@ export function ActivitySchedulesTimeline({
         className,
       )}
       role="group"
-      aria-label="Timeline des créneaux horaires"
+      aria-label={t('timelineAria')}
     >
       <div className="space-y-8">
-        {grouped.map(([dateKey, daySchedules]) => (
-          <section key={dateKey} aria-label={formatDateHeader(dateKey)}>
-            <h3 className="mb-4 text-sm font-semibold capitalize text-atg-fg">
-              {formatDateHeader(dateKey)}
-            </h3>
-            <div>
-              {daySchedules.map((schedule, index) => (
-                <ScheduleSlot
-                  key={schedule.id}
-                  schedule={schedule}
-                  isLast={index === daySchedules.length - 1}
-                  onEdit={onEdit}
-                  onDelete={onDelete}
-                  deletingId={deletingId}
-                />
-              ))}
-            </div>
-          </section>
-        ))}
+        {grouped.map(([dateKey, daySchedules]) => {
+          const dateHeader = new Date(`${dateKey}T12:00:00`).toLocaleDateString(locale, {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+          });
+
+          return (
+            <section key={dateKey} aria-label={dateHeader}>
+              <h3 className="mb-4 text-sm font-semibold capitalize text-atg-fg">
+                {dateHeader}
+              </h3>
+              <div>
+                {daySchedules.map((schedule, index) => (
+                  <ScheduleSlot
+                    key={schedule.id}
+                    schedule={schedule}
+                    isLast={index === daySchedules.length - 1}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                    deletingId={deletingId}
+                    locale={locale}
+                    placesBadge={t('placesBadge', {
+                      booked: schedule.bookedCount,
+                      capacity: schedule.capacity,
+                    })}
+                    bookedSummary={t('bookedSummary', {
+                      booked: schedule.bookedCount,
+                      capacity: schedule.capacity,
+                    })}
+                    fillAria={t('fillAria', { percent: fillPercentFor(schedule) })}
+                  />
+                ))}
+              </div>
+            </section>
+          );
+        })}
       </div>
     </div>
   );
+}
+
+function fillPercentFor(schedule: ActivitySchedule): number {
+  return schedule.capacity > 0
+    ? Math.min(100, Math.round((schedule.bookedCount / schedule.capacity) * 100))
+    : 0;
 }

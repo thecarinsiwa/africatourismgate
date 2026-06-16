@@ -1,32 +1,61 @@
-/** Textes de la page mot de passe oublié */
-export const adminForgotPasswordPageConfig = {
-  title: 'Mot de passe oublié',
-  subtitle:
-    'Saisissez votre adresse e-mail. Si un compte existe, vous recevrez les instructions pour réinitialiser votre mot de passe.',
-  email: {
-    label: 'Adresse email',
-    placeholder: 'votre-email@exemple.com',
-  },
-  submit: {
-    label: 'Envoyer le lien',
-    loadingLabel: 'Envoi…',
-  },
-  successMessage:
-    'Si un compte existe pour cette adresse, un lien de réinitialisation a été envoyé.',
-  backToLogin: {
-    href: '/login',
-    label: 'Retour à la connexion',
-  },
-  logo: {
-    name: 'Africa Tourism Gate',
-  },
-  theme: {
-    light: 'Mode clair',
-    dark: 'Mode sombre',
-  },
-} as const;
+import type { LoginFormConfig } from '@africatourismgate/ui';
 
-export const adminForgotPasswordErrors = {
-  network: 'Impossible de joindre le serveur. Vérifiez votre connexion.',
-  generic: 'Une erreur est survenue. Veuillez réessayer.',
-} as const;
+type ForgotPasswordFormTranslator = {
+  (
+    key:
+      | 'emailLabel'
+      | 'emailPlaceholder'
+      | 'submit'
+      | 'submitLoading',
+  ): string;
+};
+
+type ForgotPasswordPageTranslator = {
+  (
+    key:
+      | 'title'
+      | 'subtitle'
+      | 'successMessage'
+      | 'backToLogin',
+  ): string;
+};
+
+type ForgotPasswordErrorsTranslator = {
+  (key: 'network' | 'generic'): string;
+};
+
+export function getAdminForgotPasswordPageCopy(t: ForgotPasswordPageTranslator) {
+  return {
+    title: t('title'),
+    subtitle: t('subtitle'),
+    successMessage: t('successMessage'),
+    backToLogin: {
+      href: '/login',
+      label: t('backToLogin'),
+    },
+  };
+}
+
+export function getAdminForgotPasswordFormConfig(
+  t: ForgotPasswordFormTranslator,
+): Pick<LoginFormConfig, 'email'> & {
+  submit: { label: string; loadingLabel: string };
+} {
+  return {
+    email: {
+      label: t('emailLabel'),
+      placeholder: t('emailPlaceholder'),
+    },
+    submit: {
+      label: t('submit'),
+      loadingLabel: t('submitLoading'),
+    },
+  };
+}
+
+export function getAdminForgotPasswordErrors(t: ForgotPasswordErrorsTranslator) {
+  return {
+    network: t('network'),
+    generic: t('generic'),
+  };
+}

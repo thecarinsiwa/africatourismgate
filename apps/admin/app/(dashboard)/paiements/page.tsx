@@ -1,20 +1,11 @@
 import type { Metadata } from 'next';
-import { AdminPageIntro } from '../../../components/admin-page-intro';
-import { PaymentsPromoSubnav } from '../../../components/payments/payments-promo-subnav';
-import { PaymentsList } from '../../../components/payments/payments-list';
-import { PaymentsStatCards } from '../../../components/payments/payments-stat-cards';
+import { getAdminPageMetadata } from '../../../lib/i18n/admin-page-i18n';
+import { PaiementsPageContent } from '../../../components/pages/paiements-page-content';
 
-export const metadata: Metadata = {
-  title: 'Paiements — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('paiements');
+}
 
-export default function PaiementsPage() {
-  return (
-    <div>
-      <PaymentsPromoSubnav />
-      <AdminPageIntro description="Transactions et remboursements Stripe (mode test). Filtres par statut, dates et organisation (super admin). Accès : payments.read ; remboursement : payments.write." />
-      <PaymentsStatCards className="mb-6" />
-      <PaymentsList />
-    </div>
-  );
+export default function Page() {
+  return <PaiementsPageContent />;
 }

@@ -1,12 +1,14 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import type { Ship } from '@africatourismgate/types';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
 import { buildCruiseBreadcrumbTail } from '../../lib/cruise-breadcrumbs';
-import { getCroisieresErrorMessage } from '../../lib/croisieres-errors';
 import { CabinsSection } from './cabins-section';
 import { ItinerariesSection } from './itineraries-section';
 import { ShipForm } from './ship-form';
@@ -15,6 +17,9 @@ import { ShipImagesSection } from './ship-images-section';
 type ShipEditPageProps = { shipId: string };
 
 export function ShipEditPage({ shipId }: ShipEditPageProps) {
+  const { croisieres: getCroisieresErrorMessage } = useAdminErrorMessages();
+  const tDetail = useTranslations('modules.cruises.detail');
+  const tCommon = useTranslations('modules.common');
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -23,7 +28,7 @@ export function ShipEditPage({ shipId }: ShipEditPageProps) {
 
   useAdminEditPageMeta({
     ready: state.status === 'ready',
-    title: 'Modifier le navire',
+    title: tDetail('shipTitle'),
     breadcrumbTail:
       state.status === 'ready'
         ? buildCruiseBreadcrumbTail({
@@ -52,10 +57,10 @@ export function ShipEditPage({ shipId }: ShipEditPageProps) {
     return () => {
       cancelled = true;
     };
-  }, [shipId]);
+  }, [shipId, getCroisieresErrorMessage]);
 
   if (state.status === 'loading') {
-    return <p className="text-sm text-atg-muted">Chargement…</p>;
+    return <p className="text-sm text-atg-muted">{tCommon('loading')}</p>;
   }
 
   if (state.status === 'error') {
@@ -65,7 +70,7 @@ export function ShipEditPage({ shipId }: ShipEditPageProps) {
           {state.message}
         </p>
         <Link href="/produits/croisieres/navires" className="text-sm font-medium text-primary">
-          ← Retour aux navires
+          {tDetail('backToShips')}
         </Link>
       </div>
     );

@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   AlertDialog,
   Button,
@@ -15,19 +17,32 @@ import {
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { AdminReviewListItem, Property, ReviewStatus } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import {
-  formatReviewDateTime,
+  useFormatDateTime,
+  useReviewStatusFilterOptions,
+  useReviewStatusLabels,
+} from '../../lib/i18n/use-module-labels';
+import {
   formatReviewPreview,
-  reviewStatusLabels,
   reviewStatusVariants,
 } from '../../lib/review-display';
-import { getReviewsErrorMessage } from '../../lib/reviews-errors';
 
 const PAGE_SIZE = 20;
 
 export function ReviewsList() {
+  const { reviews: getReviewsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.reviews');
+  const tList = useTranslations('modules.reviews.list');
+  const tColumns = useTranslations('modules.common.columns');
+  const tCommon = useTranslations('modules.common');
+  const tActions = useTranslations('common.actions');
+  const tPagination = useTranslations('modules.common.pagination');
+  const formatDateTime = useFormatDateTime();
+  const statusLabels = useReviewStatusLabels();
+  const statusOptions = useReviewStatusFilterOptions();
   const { toast } = useToast();
   const ratingFilterId = useId();
   const propertyFilterId = useId();
@@ -104,7 +119,7 @@ export function ReviewsList() {
     } catch (error) {
       setState({ status: 'error', message: getReviewsErrorMessage(error) });
     }
-  }, [page, ratingFilter, propertyFilter, statusFilter, filterTick]);
+  }, [page, ratingFilter, propertyFilter, statusFilter, filterTick, getReviewsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -128,22 +143,22 @@ export function ReviewsList() {
           await client.updateReviewStatus(review.id, { status: 'approved' });
           toast({
             variant: 'success',
-            title: 'Avis approuvé',
-            message: 'L’avis est visible côté client.',
+            title: t('toast.approved.title'),
+            message: t('toast.approved.message'),
           });
         } else if (action === 'hide') {
           await client.updateReviewStatus(review.id, { status: 'hidden' });
           toast({
             variant: 'success',
-            title: 'Avis masqué',
-            message: 'L’avis n’est plus affiché publiquement.',
+            title: t('toast.hidden.title'),
+            message: t('toast.hidden.message'),
           });
         } else {
           await client.deleteReview(review.id);
           toast({
             variant: 'success',
-            title: 'Avis supprimé',
-            message: 'L’avis a été retiré de la modération.',
+            title: t('toast.deleted.title'),
+            message: t('toast.deleted.message'),
           });
           setPendingDelete(null);
         }
@@ -154,7 +169,7 @@ export function ReviewsList() {
         setActingId(null);
       }
     },
-    [load, toast],
+    [load, toast, t, getReviewsErrorMessage],
   );
 
   const confirmDelete = useCallback(async () => {
@@ -162,11 +177,13 @@ export function ReviewsList() {
     await runAction(pendingDelete, 'delete');
   }, [pendingDelete, runAction]);
 
+  const emptyDash = tCommon('empty.dash');
+
   const columns = useMemo<ColumnDef<AdminReviewListItem, unknown>[]>(
     () => [
       {
         accessorKey: 'rating',
-        header: 'Note',
+        header: tColumns('rating'),
         meta: { align: 'center' },
         cell: ({ row }) => (
           <StarRatingDisplay value={row.original.rating} size="sm" showValue />
@@ -174,11 +191,11 @@ export function ReviewsList() {
       },
       {
         id: 'author',
-        header: 'Auteur',
+        header: tList('columns.author'),
         cell: ({ row }) => (
           <div>
             <span className="font-medium text-atg-fg">
-              {row.original.authorFirstName?.trim() || '—'}
+              {row.original.authorFirstName?.trim() || emptyDash}
             </span>
             {row.original.authorEmail ? (
               <p className="text-xs text-atg-muted">{row.original.authorEmail}</p>
@@ -188,11 +205,11 @@ export function ReviewsList() {
       },
       {
         id: 'preview',
-        header: 'Aperçu',
+        header: tColumns('preview'),
         cell: ({ row }) => {
           const preview = formatReviewPreview(row.original);
           if (!preview) {
-            return <span className="text-sm italic text-atg-muted">—</span>;
+            return <span className="text-sm italic text-atg-muted">{emptyDash}</span>;
           }
           return (
             <p className="line-clamp-2 max-w-md text-sm text-atg-muted" title={preview}>
@@ -203,10 +220,10 @@ export function ReviewsList() {
       },
       {
         id: 'property',
-        header: 'Propriété',
+        header: tList('columns.property'),
         cell: ({ row }) => {
           if (!row.original.propertyName) {
-            return <span className="text-atg-muted">—</span>;
+            return <span className="text-atg-muted">{emptyDash}</span>;
           }
           return (
             <span className="text-sm text-atg-fg">{row.original.propertyName}</span>
@@ -215,29 +232,29 @@ export function ReviewsList() {
       },
       {
         accessorKey: 'createdAt',
-        header: 'Date',
+        header: tColumns('date'),
         cell: ({ row }) => (
           <span className="whitespace-nowrap text-sm text-atg-muted">
-            {formatReviewDateTime(row.original.createdAt)}
+            {formatDateTime(row.original.createdAt)}
           </span>
         ),
       },
       {
         accessorKey: 'status',
-        header: 'Statut',
+        header: tColumns('status'),
         meta: { align: 'center' },
         cell: ({ row }) => {
           const status = row.original.status;
           return (
             <DataTableBadge variant={reviewStatusVariants[status]}>
-              {reviewStatusLabels[status]}
+              {statusLabels[status]}
             </DataTableBadge>
           );
         },
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tColumns('actions'),
         meta: { align: 'right' },
         cell: ({ row }) => {
           const review = row.original;
@@ -255,7 +272,7 @@ export function ReviewsList() {
                   loadingText="…"
                   onClick={() => void runAction(review, 'approve')}
                 >
-                  Approuver
+                  {t('actions.approve')}
                 </Button>
               ) : null}
               {canWrite && review.status !== 'hidden' ? (
@@ -266,7 +283,7 @@ export function ReviewsList() {
                   disabled={busy}
                   onClick={() => void runAction(review, 'hide')}
                 >
-                  Masquer
+                  {t('actions.hide')}
                 </Button>
               ) : null}
               {canWrite ? (
@@ -281,7 +298,17 @@ export function ReviewsList() {
         },
       },
     ],
-    [actingId, canWrite, runAction],
+    [
+      actingId,
+      canWrite,
+      emptyDash,
+      formatDateTime,
+      runAction,
+      statusLabels,
+      t,
+      tColumns,
+      tList,
+    ],
   );
 
   const isLoading = state.status === 'loading';
@@ -299,7 +326,7 @@ export function ReviewsList() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <label htmlFor={ratingFilterId} className="mb-1 block text-xs font-medium text-atg-muted">
-              Note
+              {tColumns('rating')}
             </label>
             <select
               id={ratingFilterId}
@@ -307,7 +334,7 @@ export function ReviewsList() {
               onChange={(e) => setRatingFilter(e.target.value)}
               className="w-full rounded-lg border border-atg-border bg-atg-surface px-3 py-2 text-sm text-atg-fg"
             >
-              <option value="">Toutes</option>
+              <option value="">{tCommon('filters.allFeminine')}</option>
               {[5, 4, 3, 2, 1].map((n) => (
                 <option key={n} value={String(n)}>
                   {n}/5
@@ -320,7 +347,7 @@ export function ReviewsList() {
               htmlFor={propertyFilterId}
               className="mb-1 block text-xs font-medium text-atg-muted"
             >
-              Propriété
+              {tList('columns.property')}
             </label>
             <select
               id={propertyFilterId}
@@ -328,7 +355,7 @@ export function ReviewsList() {
               onChange={(e) => setPropertyFilter(e.target.value)}
               className="w-full rounded-lg border border-atg-border bg-atg-surface px-3 py-2 text-sm text-atg-fg"
             >
-              <option value="">Toutes</option>
+              <option value="">{tCommon('filters.allFeminine')}</option>
               {properties.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.name}
@@ -338,7 +365,7 @@ export function ReviewsList() {
           </div>
           <div>
             <label htmlFor={statusFilterId} className="mb-1 block text-xs font-medium text-atg-muted">
-              Statut
+              {tColumns('status')}
             </label>
             <select
               id={statusFilterId}
@@ -346,17 +373,16 @@ export function ReviewsList() {
               onChange={(e) => setStatusFilter(e.target.value as '' | ReviewStatus)}
               className="w-full rounded-lg border border-atg-border bg-atg-surface px-3 py-2 text-sm text-atg-fg"
             >
-              <option value="">Tous</option>
-              {(Object.keys(reviewStatusLabels) as ReviewStatus[]).map((s) => (
-                <option key={s} value={s}>
-                  {reviewStatusLabels[s]}
+              {statusOptions.map((option) => (
+                <option key={option.value || 'all'} value={option.value}>
+                  {option.label}
                 </option>
               ))}
             </select>
           </div>
           <div className="flex items-end">
             <Button type="button" onClick={applyFilters} className="w-full sm:w-auto">
-              Appliquer les filtres
+              {tCommon('filters.apply')}
             </Button>
           </div>
         </div>
@@ -378,13 +404,13 @@ export function ReviewsList() {
         <EmptyState
           title={
             hasFilters
-              ? 'Aucun avis ne correspond aux filtres'
-              : 'Aucun avis en attente'
+              ? tList('empty.filtered.title')
+              : tList('empty.default.title')
           }
           description={
             hasFilters
-              ? 'Modifiez les filtres ou affichez tous les statuts pour élargir la recherche.'
-              : 'La file de modération est vide. Les nouveaux avis clients apparaîtront ici.'
+              ? tList('empty.filtered.description')
+              : tList('empty.default.description')
           }
         />
       ) : (
@@ -395,10 +421,10 @@ export function ReviewsList() {
             isLoading={isLoading}
             emptyMessage={
               hasFilters
-                ? 'Aucun avis ne correspond aux filtres.'
-                : 'Aucun avis pour le moment.'
+                ? tList('empty.filtered.tableMessage')
+                : tList('empty.default.tableMessage')
             }
-            aria-label="Liste des avis à modérer"
+            aria-label={tList('ariaLabel')}
           />
         </Card>
       )}
@@ -409,7 +435,7 @@ export function ReviewsList() {
           pageSize={PAGE_SIZE}
           totalPages={state.totalPages}
           totalItems={state.total}
-          itemLabel="avis"
+          itemLabel={tPagination('review')}
           onPageChange={setPage}
         />
       ) : null}
@@ -419,14 +445,12 @@ export function ReviewsList() {
         onOpenChange={(open) => {
           if (!open && !actingId) setPendingDelete(null);
         }}
-        title="Supprimer cet avis"
+        title={t('deleteDialog.title')}
         description={
-          pendingDelete
-            ? 'Suppression logique : l’avis ne sera plus visible dans la modération.'
-            : undefined
+          pendingDelete ? t('deleteDialog.description') : undefined
         }
-        confirmLabel="Supprimer"
-        cancelLabel="Annuler"
+        confirmLabel={tActions('delete')}
+        cancelLabel={tActions('cancel')}
         variant="danger"
         loading={actingId === pendingDelete?.id}
         onConfirm={() => void confirmDelete()}

@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   AlertDialog,
   Avatar,
@@ -7,10 +9,11 @@ import {
   useToast,
 } from '@africatourismgate/ui';
 import type { UserRoleAssignment } from '@africatourismgate/types';
+import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useRbacScopeDisplayLabels } from '../../lib/i18n/use-module-labels';
 import { formatAssignmentScope } from '../../lib/rbac-display';
 import { getApiClient } from '../../lib/auth/api';
-import { getRbacErrorMessage } from '../../lib/rbac-errors';
 import { UserIdFilterBar } from '../users/user-id-filter-bar';
 import { RoleBadge } from './role-badge';
 import { RbacSubnav } from './rbac-subnav';
@@ -25,6 +28,10 @@ type UserAssignmentGroup = {
 };
 
 export function UserRoleAssignmentsList() {
+  const { rbac: getRbacErrorMessage } = useAdminErrorMessages();
+  const locale = useLocale();
+  const t = useTranslations('modules.rbac.assignments');
+  const scopeLabels = useRbacScopeDisplayLabels();
   const { toast } = useToast();
   const [userIdFilter, setUserIdFilter] = useState('');
   const [page, setPage] = useState(1);
@@ -64,7 +71,7 @@ export function UserRoleAssignmentsList() {
     } catch (error) {
       setState({ status: 'error', message: getRbacErrorMessage(error) });
     }
-  }, [page, userIdFilter]);
+  }, [page, userIdFilter, getRbacErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -94,9 +101,9 @@ export function UserRoleAssignmentsList() {
       const nameB = b.user
         ? `${b.user.lastName} ${b.user.firstName}`.toLowerCase()
         : b.userId;
-      return nameA.localeCompare(nameB, 'fr');
+      return nameA.localeCompare(nameB, locale);
     });
-  }, [state]);
+  }, [state, locale]);
 
   const confirmRevoke = useCallback(async () => {
     if (!pendingRevoke) return;
@@ -104,22 +111,22 @@ export function UserRoleAssignmentsList() {
     try {
       await getApiClient().revokeUserRoleAssignment(pendingRevoke.id);
       toast({
-        title: 'Assignation révoquée',
-        message: 'Le rôle a été retiré pour cet utilisateur.',
+        title: t('toast.revokedTitle'),
+        message: t('toast.revokedMessage'),
         variant: 'success',
       });
       setPendingRevoke(null);
       await load();
     } catch (error) {
       toast({
-        title: 'Échec de la révocation',
+        title: t('toast.revokeFailedTitle'),
         message: getRbacErrorMessage(error),
         variant: 'error',
       });
     } finally {
       setRevokingId(null);
     }
-  }, [pendingRevoke, load, toast]);
+  }, [pendingRevoke, load, toast, t, getRbacErrorMessage]);
 
   return (
     <div className="space-y-6">
@@ -134,10 +141,10 @@ export function UserRoleAssignmentsList() {
           {state.message}
         </p>
       ) : state.status === 'loading' ? (
-        <p className="text-sm text-atg-muted">Chargement des assignations…</p>
+        <p className="text-sm text-atg-muted">{t('loading')}</p>
       ) : groupedByUser.length === 0 ? (
         <Card variant="dashboard" padding="lg">
-          <p className="text-sm text-atg-muted">Aucune assignation active.</p>
+          <p className="text-sm text-atg-muted">{t('empty')}</p>
         </Card>
       ) : (
         <div className="space-y-4">
@@ -179,7 +186,11 @@ export function UserRoleAssignmentsList() {
                       <RoleBadge code={assignment.roleId.slice(0, 8)} />
                     )}
                     <span className="text-xs text-atg-muted">
-                      {formatAssignmentScope(assignment.scopeType, assignment.scopeId)}
+                      {formatAssignmentScope(
+                        assignment.scopeType,
+                        scopeLabels,
+                        assignment.scopeId,
+                      )}
                     </span>
                     <button
                       type="button"
@@ -187,7 +198,7 @@ export function UserRoleAssignmentsList() {
                       disabled={revokingId === assignment.id}
                       className="text-xs font-medium text-red-600 hover:underline disabled:opacity-50"
                     >
-                      Révoquer
+                      {t('revoke')}
                     </button>
                   </div>
                 ))}
@@ -202,9 +213,9 @@ export function UserRoleAssignmentsList() {
         onOpenChange={(open) => {
           if (!open) setPendingRevoke(null);
         }}
-        title="Révoquer l’assignation"
-        description="Retirer ce rôle pour l’utilisateur sur ce périmètre ?"
-        confirmLabel="Révoquer"
+        title={t('revokeDialog.title')}
+        description={t('revokeDialog.description')}
+        confirmLabel={t('revoke')}
         variant="danger"
         loading={revokingId !== null}
         onConfirm={() => void confirmRevoke()}

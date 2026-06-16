@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Button,
   Card,
@@ -14,6 +16,7 @@ import type {
   PackageItemEnriched,
 } from '@africatourismgate/types';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AdminPageBackLink } from '../admin-page-back-link';
 import { RichTextContent } from '../rich-text-content';
@@ -21,7 +24,10 @@ import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
 import { formatMoney } from '../../lib/format-money';
 import { getPackageItemTypeLabel } from '../../lib/package-item-type';
-import { getPackagesErrorMessage } from '../../lib/packages-errors';
+import {
+  usePackageItemTypeLabels,
+  usePackageStatusLabels,
+} from '../../lib/i18n/use-module-labels';
 import { PackageCompositionBanner } from './package-composition-banner';
 import { PackageItemTypeIcon } from './package-item-type-icon';
 import { PackagePreviewCard } from './package-preview-card';
@@ -32,6 +38,11 @@ type PackageViewPageProps = {
 };
 
 export function PackageViewPage({ packageId }: PackageViewPageProps) {
+  const { packages: getPackagesErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.packages.detail');
+  const tCommon = useTranslations('modules.common');
+  const itemTypeLabels = usePackageItemTypeLabels();
+  const packageStatusLabels = usePackageStatusLabels();
   const [detail, setDetail] = useState<PackageDetail | null>(null);
   const [images, setImages] = useState<PackageImage[]>([]);
   const [state, setState] = useState<
@@ -42,7 +53,7 @@ export function PackageViewPage({ packageId }: PackageViewPageProps) {
 
   useAdminEditPageMeta({
     ready: state.status === 'ready' && detail != null,
-    title: 'Voir le forfait',
+    title: t('viewTitle'),
     entityLabel: detail?.package.name,
   });
 
@@ -60,7 +71,7 @@ export function PackageViewPage({ packageId }: PackageViewPageProps) {
     } catch (error) {
       setState({ status: 'error', message: getPackagesErrorMessage(error) });
     }
-  }, [packageId]);
+  }, [packageId, getPackagesErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -70,28 +81,28 @@ export function PackageViewPage({ packageId }: PackageViewPageProps) {
     () => [
       {
         id: 'type',
-        header: 'Type',
+        header: tCommon('columns.type'),
         cell: ({ row }) => <PackageItemTypeIcon itemType={row.original.itemType} size="sm" />,
       },
       {
         accessorKey: 'label',
-        header: 'Produit',
+        header: tCommon('columns.product'),
         cell: ({ row }) => (
           <span className="font-medium text-atg-fg">{row.original.label}</span>
         ),
       },
       {
         id: 'itemTypeLabel',
-        header: 'Catégorie',
+        header: tCommon('columns.category'),
         cell: ({ row }) => (
           <span className="text-sm text-atg-muted">
-            {getPackageItemTypeLabel(row.original.itemType)}
+            {getPackageItemTypeLabel(row.original.itemType, itemTypeLabels)}
           </span>
         ),
       },
       {
         id: 'price',
-        header: 'Prix unitaire',
+        header: tCommon('columns.unitPrice'),
         meta: { align: 'right' },
         cell: ({ row }) => (
           <span className="tabular-nums text-sm">
@@ -100,7 +111,7 @@ export function PackageViewPage({ packageId }: PackageViewPageProps) {
         ),
       },
     ],
-    [],
+    [itemTypeLabels, tCommon],
   );
 
   if (state.status === 'loading') {
@@ -120,9 +131,9 @@ export function PackageViewPage({ packageId }: PackageViewPageProps) {
   if (state.status === 'error' || !detail) {
     return (
       <div className="space-y-4">
-        <AdminPageBackLink href="/produits/forfaits" label="Retour aux forfaits" />
+        <AdminPageBackLink href="/produits/forfaits" label={t('backLink')} />
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {state.status === 'error' ? state.message : 'Forfait introuvable.'}
+          {state.status === 'error' ? state.message : t('notFound')}
         </p>
       </div>
     );
@@ -130,32 +141,34 @@ export function PackageViewPage({ packageId }: PackageViewPageProps) {
 
   const { package: pkg, items, pricing } = detail;
   const discount = Number(pkg.discountPercent);
+  const durationLabel =
+    pkg.durationDays > 1
+      ? tCommon('daysCountPlural', { count: pkg.durationDays })
+      : tCommon('daysCount', { count: pkg.durationDays });
 
   return (
     <div className="space-y-6">
-      <AdminPageBackLink href="/produits/forfaits" label="Retour aux forfaits" />
+      <AdminPageBackLink href="/produits/forfaits" label={t('backLink')} />
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-2">
           <h2 className="text-lg font-semibold text-atg-fg">{pkg.name}</h2>
           <div className="flex flex-wrap items-center gap-2">
             <DataTableBadge variant={discount > 0 ? 'success' : 'muted'}>
-              Remise {pkg.discountPercent}%
+              {t('discountBadge', { percent: pkg.discountPercent })}
             </DataTableBadge>
             <DataTableBadge variant={pkg.active === 1 ? 'success' : 'muted'}>
-              {pkg.active === 1 ? 'Actif' : 'Inactif'}
+              {pkg.active === 1 ? packageStatusLabels.active : packageStatusLabels.inactive}
             </DataTableBadge>
-            <DataTableBadge variant="muted">
-              {pkg.durationDays} jour{pkg.durationDays > 1 ? 's' : ''}
-            </DataTableBadge>
+            <DataTableBadge variant="muted">{durationLabel}</DataTableBadge>
           </div>
         </div>
-        <Button href={`/produits/forfaits/${packageId}`}>Modifier le forfait</Button>
+        <Button href={`/produits/forfaits/${packageId}`}>{t('editButton')}</Button>
       </div>
 
       {pkg.description ? (
         <Card variant="dashboard" className="max-w-3xl">
-          <h3 className="text-sm font-semibold text-atg-fg">Description</h3>
+          <h3 className="text-sm font-semibold text-atg-fg">{t('description')}</h3>
           <RichTextContent html={pkg.description} className="mt-2" />
         </Card>
       ) : null}
@@ -174,16 +187,16 @@ export function PackageViewPage({ packageId }: PackageViewPageProps) {
 
       <section className="space-y-4">
         <div>
-          <h3 className="text-lg font-semibold text-atg-fg">Produits inclus</h3>
+          <h3 className="text-lg font-semibold text-atg-fg">{t('includedProducts')}</h3>
           <p className="mt-1 text-sm text-atg-muted">
-            {items.length} produit{items.length !== 1 ? 's' : ''} dans ce forfait.
+            {t('includedProductsIntro', { count: items.length })}
           </p>
         </div>
         <Card variant="dashboard" padding="none" className="overflow-hidden">
           <DataTable
             columns={itemColumns}
             data={items}
-            emptyMessage="Aucun produit inclus."
+            emptyMessage={t('noIncludedProducts')}
             getRowId={(row) => row.id}
           />
         </Card>
@@ -191,15 +204,14 @@ export function PackageViewPage({ packageId }: PackageViewPageProps) {
 
       <section className="space-y-4">
         <div>
-          <h3 className="text-lg font-semibold text-atg-fg">Galerie photos</h3>
+          <h3 className="text-lg font-semibold text-atg-fg">{t('photoGallery')}</h3>
           <p className="mt-1 text-sm text-atg-muted">
-            {images.length} photo{images.length !== 1 ? 's' : ''} associée
-            {images.length !== 1 ? 's' : ''} au forfait.
+            {t('photoGalleryIntro', { count: images.length })}
           </p>
         </div>
         {images.length === 0 ? (
           <Card variant="dashboard">
-            <p className="text-sm text-atg-muted">Aucune photo pour ce forfait.</p>
+            <p className="text-sm text-atg-muted">{t('noPhotos')}</p>
           </Card>
         ) : (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">

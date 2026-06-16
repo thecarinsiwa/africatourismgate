@@ -1,14 +1,16 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import type { Activity } from '@africatourismgate/types';
 import { Skeleton, Tabs, TabsContent, TabsList, TabsTrigger } from '@africatourismgate/ui';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { AdminPageBackLink } from '../admin-page-back-link';
 import { getApiClient } from '../../lib/auth/api';
-import { getActivitiesErrorMessage } from '../../lib/activities-errors';
 import { ActivityForm } from './activity-form';
 import { ActivityImagesSection } from './activity-images-section';
 import { ActivityMetaBadges } from './activity-meta-badges';
@@ -26,6 +28,9 @@ function isTabValue(value: string | null): value is TabValue {
 }
 
 export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
+  const { activities: getActivitiesErrorMessage } = useAdminErrorMessages();
+  const tDetail = useTranslations('modules.activities.detail');
+  const tCommon = useTranslations('modules.common');
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -40,7 +45,7 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
 
   useAdminEditPageMeta({
     ready: state.status === 'ready',
-    title: "Modifier l'activité",
+    title: tDetail('title'),
     entityLabel: state.status === 'ready' ? state.activity.title : undefined,
   });
 
@@ -52,7 +57,7 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
     } catch (error) {
       setState({ status: 'error', message: getActivitiesErrorMessage(error) });
     }
-  }, [activityId]);
+  }, [activityId, getActivitiesErrorMessage]);
 
   useEffect(() => {
     void loadActivity();
@@ -89,7 +94,7 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
   if (state.status === 'error') {
     return (
       <div className="space-y-4">
-        <AdminPageBackLink href="/produits/activites" label="Retour aux activités" />
+        <AdminPageBackLink href="/produits/activites" label={tDetail('backLink')} />
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {state.message}
         </p>
@@ -97,7 +102,7 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
           href="/produits/activites"
           className="text-sm font-medium text-primary hover:text-primary-hover"
         >
-          ← Retour à la liste
+          {tCommon('back.toList')}
         </Link>
       </div>
     );
@@ -107,7 +112,7 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
 
   return (
     <div className="space-y-6">
-      <AdminPageBackLink href="/produits/activites" label="Retour aux activités" />
+      <AdminPageBackLink href="/produits/activites" label={tDetail('backLink')} />
 
       <div className="space-y-2">
         <h2 className="text-lg font-semibold text-atg-fg">{activity.title}</h2>
@@ -118,9 +123,9 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
       </div>
 
       <Tabs value={activeTab} onValueChange={handleTabChange}>
-        <TabsList aria-label="Sections de l'activité">
-          <TabsTrigger value="activite">Activité</TabsTrigger>
-          <TabsTrigger value="creneaux">Créneaux</TabsTrigger>
+        <TabsList aria-label={tDetail('tabsAria')}>
+          <TabsTrigger value="activite">{tDetail('tabs.activity')}</TabsTrigger>
+          <TabsTrigger value="creneaux">{tDetail('tabs.schedules')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="activite">

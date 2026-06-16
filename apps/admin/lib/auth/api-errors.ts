@@ -3,7 +3,7 @@ import { ApiHttpError } from '@africatourismgate/api-client';
 export type AuthErrorMessages = {
   network: string;
   generic: string;
-  envMissing: string;
+  envMissing?: string;
   conflict?: string;
   unauthorized?: string;
   server?: string;
@@ -21,7 +21,7 @@ export function getAuthErrorMessage(
     error instanceof Error &&
     error.message.includes('NEXT_PUBLIC_API_URL is not set')
   ) {
-    return messages.envMissing;
+    return messages.envMissing ?? messages.generic;
   }
 
   if (error instanceof ApiHttpError) {

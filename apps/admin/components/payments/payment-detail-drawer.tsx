@@ -3,15 +3,20 @@
 import { Button, DataTableBadge, Drawer } from '@africatourismgate/ui';
 import type { PaymentAdminDetail, RefundPaymentResponse } from '@africatourismgate/types';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 import { formatMoney } from '../../lib/format-money';
+import {
+  usePaymentProviderLabels,
+  usePaymentStatusLabels,
+  useRefundTypeLabels,
+} from '../../lib/i18n/use-module-labels';
 import {
   STRIPE_PROVIDER,
   buildRefundHistoryEntries,
   canRefundPayment,
   formatPaymentDateTime,
   formatPaymentProvider,
-  paymentStatusLabels,
   paymentStatusVariants,
 } from '../../lib/payment-display';
 
@@ -41,12 +46,20 @@ function DetailField({
   );
 }
 
-function StripeIdRow({ label, value }: { label: string; value: string | null | undefined }) {
+function StripeIdRow({
+  label,
+  value,
+  emptyDash,
+}: {
+  label: string;
+  value: string | null | undefined;
+  emptyDash: string;
+}) {
   return (
     <div className="space-y-1">
       <p className="text-xs text-atg-muted">{label}</p>
       <p className="break-all rounded-md bg-atg-surface px-2 py-1.5 font-mono text-xs text-atg-fg ring-1 ring-atg-border/60">
-        {value?.trim() ? value : '—'}
+        {value?.trim() ? value : emptyDash}
       </p>
     </div>
   );
@@ -62,9 +75,20 @@ export function PaymentDetailDrawer({
   canRefund = false,
   onRefundClick,
 }: PaymentDetailDrawerProps) {
+  const t = useTranslations('modules.payments.detail');
+  const tCommon = useTranslations('modules.common');
+  const paymentStatusLabels = usePaymentStatusLabels();
+  const providerLabels = usePaymentProviderLabels();
+  const refundLabels = useRefundTypeLabels();
+  const emptyDash = tCommon('empty.dash');
+
   const historyEntries = useMemo(
-    () => buildRefundHistoryEntries(detail, refundHistory),
-    [detail, refundHistory],
+    () =>
+      buildRefundHistoryEntries(detail, refundHistory, {
+        partial: refundLabels.partial,
+        full: refundLabels.full,
+      }),
+    [detail, refundHistory, refundLabels],
   );
 
   const showRefundAction = canRefund && detail !== null && canRefundPayment(detail);
@@ -73,7 +97,7 @@ export function PaymentDetailDrawer({
     detail && !loading && !error && showRefundAction ? (
       <div className="flex flex-wrap gap-2 px-4 py-4">
         <Button variant="secondary" size="sm" onClick={onRefundClick}>
-          Rembourser
+          {refundLabels.generic}
         </Button>
       </div>
     ) : null;
@@ -82,13 +106,13 @@ export function PaymentDetailDrawer({
     <Drawer
       open={open}
       onOpenChange={onOpenChange}
-      title="Détail du paiement"
+      title={t('title')}
       className="max-w-md"
       footer={footer}
     >
       <div className="space-y-6 px-4 py-4">
         {loading ? (
-          <p className="text-sm text-atg-muted">Chargement…</p>
+          <p className="text-sm text-atg-muted">{tCommon('loading')}</p>
         ) : error ? (
           <p className="text-sm text-red-600 dark:text-red-400" role="alert">
             {error}
@@ -100,26 +124,26 @@ export function PaymentDetailDrawer({
                 id="payment-summary-heading"
                 className="mb-3 text-xs font-semibold uppercase tracking-wide text-atg-muted"
               >
-                Résumé
+                {t('sections.summary')}
               </h3>
               <dl className="space-y-4">
-                <DetailField label="Montant">
+                <DetailField label={t('fields.amount')}>
                   <span className="tabular-nums text-base font-semibold">
                     {formatMoney(detail.amountCents, detail.currency)}
                   </span>
                 </DetailField>
-                <DetailField label="Statut">
+                <DetailField label={t('fields.status')}>
                   <DataTableBadge variant={paymentStatusVariants[detail.status]}>
                     {paymentStatusLabels[detail.status]}
                   </DataTableBadge>
                 </DetailField>
-                <DetailField label="Méthode">
-                  {formatPaymentProvider(detail.provider)}
+                <DetailField label={t('fields.method')}>
+                  {formatPaymentProvider(detail.provider, providerLabels, emptyDash)}
                 </DetailField>
-                <DetailField label="Date">
+                <DetailField label={t('fields.date')}>
                   <span className="tabular-nums">{formatPaymentDateTime(detail.createdAt)}</span>
                 </DetailField>
-                <DetailField label="Client">
+                <DetailField label={t('fields.client')}>
                   <span>{detail.clientEmail}</span>
                   <p className="mt-0.5 text-atg-muted">
                     {detail.clientFirstName} {detail.clientLastName}
@@ -133,11 +157,19 @@ export function PaymentDetailDrawer({
                 id="payment-stripe-heading"
                 className="mb-3 text-xs font-semibold uppercase tracking-wide text-atg-muted"
               >
-                Identifiants Stripe
+                {t('sections.stripeIds')}
               </h3>
               <div className="space-y-3 rounded-lg border border-atg-border bg-atg-surface/50 p-3">
-                <StripeIdRow label="Payment Intent Stripe" value={detail.externalId} />
-                <StripeIdRow label="ID paiement (interne)" value={detail.id} />
+                <StripeIdRow
+                  label={t('fields.stripePaymentIntent')}
+                  value={detail.externalId}
+                  emptyDash={emptyDash}
+                />
+                <StripeIdRow
+                  label={t('fields.internalPaymentId')}
+                  value={detail.id}
+                  emptyDash={emptyDash}
+                />
               </div>
             </section>
 
@@ -146,13 +178,13 @@ export function PaymentDetailDrawer({
                 id="payment-booking-heading"
                 className="mb-3 text-xs font-semibold uppercase tracking-wide text-atg-muted"
               >
-                Réservation
+                {t('sections.booking')}
               </h3>
               <Link
                 href={`/dashboard/bookings/${detail.bookingId}`}
                 className="inline-flex text-sm font-medium text-primary hover:underline"
               >
-                Voir la réservation
+                {t('fields.viewBooking')}
               </Link>
               <p className="mt-2 break-all font-mono text-xs text-atg-muted">{detail.bookingId}</p>
             </section>
@@ -162,11 +194,11 @@ export function PaymentDetailDrawer({
                 id="payment-refunds-heading"
                 className="mb-3 text-xs font-semibold uppercase tracking-wide text-atg-muted"
               >
-                Historique des remboursements
+                {t('sections.refundHistory')}
               </h3>
               {historyEntries.length === 0 ? (
                 <p className="rounded-lg border border-dashed border-atg-border px-3 py-4 text-center text-sm text-atg-muted">
-                  Aucun remboursement enregistré.
+                  {t('refundHistoryEmpty')}
                 </p>
               ) : (
                 <ul className="divide-y divide-atg-border rounded-lg border border-atg-border">
@@ -175,14 +207,14 @@ export function PaymentDetailDrawer({
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
                           <p className="font-medium text-atg-fg">
-                            {entry.label ?? 'Remboursement'}
+                            {entry.label ?? refundLabels.generic}
                           </p>
                           <p className="mt-0.5 tabular-nums text-xs text-atg-muted">
                             {formatPaymentDateTime(entry.createdAt)}
                           </p>
                           {entry.stripeStatus ? (
                             <p className="mt-0.5 text-xs text-atg-muted">
-                              Stripe : {entry.stripeStatus}
+                              {t('fields.stripeStatus', { status: entry.stripeStatus })}
                             </p>
                           ) : null}
                           {entry.id.startsWith('re_') ? (
@@ -205,7 +237,7 @@ export function PaymentDetailDrawer({
             detail.provider === STRIPE_PROVIDER &&
             detail.bookingStatus !== 'cancelled' ? (
               <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-100">
-                Remboursement Stripe : annulez d&apos;abord la réservation.
+                {t('cancelBookingFirst')}
               </p>
             ) : null}
           </>

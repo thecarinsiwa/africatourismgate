@@ -1,23 +1,11 @@
 import type { Metadata } from 'next';
-import { PageHeader } from '@africatourismgate/ui';
-import { AdminPageBackLink } from '../../../../../components/admin-page-back-link';
-import { VehicleForm } from '../../../../../components/locations/vehicle-form';
+import { getAdminPageMetadata } from '../../../../../lib/i18n/admin-page-i18n';
+import { NouveauVehiculePageContent } from '../../../../../components/pages/produits-locations-nouveau-page-content';
 
-export const metadata: Metadata = {
-  title: 'Nouveau véhicule — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('produits/locations/nouveau');
+}
 
-export default function NouveauVehiculePage() {
-  return (
-    <div>
-      <PageHeader
-        title="Nouveau véhicule"
-        description="Associez une agence et une catégorie, puis définissez les créneaux de disponibilité."
-        breadcrumb={
-          <AdminPageBackLink href="/produits/locations" label="Retour aux véhicules" />
-        }
-      />
-      <VehicleForm mode="create" />
-    </div>
-  );
+export default function Page() {
+  return <NouveauVehiculePageContent />;
 }

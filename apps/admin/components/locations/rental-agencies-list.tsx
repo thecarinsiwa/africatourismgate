@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Button,
   Card,
@@ -11,9 +13,9 @@ import {
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { Destination, RentalAgency } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getLocationsErrorMessage } from '../../lib/locations-errors';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -23,6 +25,13 @@ type FormValues = { name: string; destinationId: string; address: string };
 const emptyForm: FormValues = { name: '', destinationId: '', address: '' };
 
 export function RentalAgenciesList() {
+  const { locations: getLocationsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.locations.referential.agencies');
+  const tCommon = useTranslations('modules.common');
+  const tPagination = useTranslations('modules.common.pagination');
+  const tActions = useTranslations('common.actions');
+  const tDestinations = useTranslations('modules.destinations.columns');
+  const emptyDash = tCommon('empty.dash');
   const destId = useId();
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
@@ -69,7 +78,7 @@ export function RentalAgenciesList() {
     } catch (error) {
       setState({ status: 'error', message: getLocationsErrorMessage(error) });
     }
-  }, [page, search]);
+  }, [page, search, getLocationsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -77,13 +86,13 @@ export function RentalAgenciesList() {
 
   useEffect(() => {
     const q = searchInput.trim();
-    const t = window.setTimeout(() => {
+    const timer = window.setTimeout(() => {
       setSearch((prev) => {
         if (prev !== q) setPage(1);
         return q;
       });
     }, SEARCH_DEBOUNCE_MS);
-    return () => window.clearTimeout(t);
+    return () => window.clearTimeout(timer);
   }, [searchInput]);
 
   function resetForm() {
@@ -97,7 +106,7 @@ export function RentalAgenciesList() {
     event.preventDefault();
     setFormError(null);
     if (!formValues.name.trim()) {
-      setFormError('Le nom est obligatoire.');
+      setFormError(tCommon('validation.nameRequired'));
       return;
     }
     setSubmitting(true);
@@ -125,23 +134,23 @@ export function RentalAgenciesList() {
 
   const columns = useMemo<ColumnDef<RentalAgency, unknown>[]>(
     () => [
-      { accessorKey: 'name', header: 'Agence' },
+      { accessorKey: 'name', header: t('agency') },
       {
         id: 'destination',
-        header: 'Destination',
+        header: tDestinations('destination'),
         cell: ({ row }) =>
           row.original.destinationId
-            ? (destById.get(row.original.destinationId) ?? '—')
-            : '—',
+            ? (destById.get(row.original.destinationId) ?? emptyDash)
+            : emptyDash,
       },
       {
         accessorKey: 'address',
-        header: 'Adresse',
-        cell: ({ row }) => row.original.address ?? '—',
+        header: t('address'),
+        cell: ({ row }) => row.original.address ?? emptyDash,
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tCommon('columns.actions'),
         meta: { align: 'right' },
         cell: ({ row }) => (
           <DataTableActions>
@@ -160,7 +169,7 @@ export function RentalAgenciesList() {
             <DataTableActionButton
               action="delete"
               onClick={async () => {
-                if (!window.confirm(`Supprimer « ${row.original.name} » ?`)) return;
+                if (!window.confirm(t('deleteConfirm', { name: row.original.name }))) return;
                 setDeletingId(row.original.id);
                 try {
                   await getApiClient().deleteRentalAgency(row.original.id);
@@ -178,7 +187,7 @@ export function RentalAgenciesList() {
         ),
       },
     ],
-    [deletingId, destById, load],
+    [deletingId, destById, emptyDash, load, t, tCommon, tDestinations, getLocationsErrorMessage],
   );
 
   const agencies = state.status === 'ready' ? state.agencies : [];
@@ -191,7 +200,7 @@ export function RentalAgenciesList() {
         <div className="flex-1 sm:max-w-md">
           <Input
             type="search"
-            placeholder="Rechercher par nom ou adresse…"
+            placeholder={t('searchPlaceholder')}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
           />
@@ -204,7 +213,7 @@ export function RentalAgenciesList() {
               setShowForm(true);
             }}
           >
-            Nouvelle agence
+            {t('new')}
           </Button>
         ) : null}
       </div>
@@ -212,22 +221,20 @@ export function RentalAgenciesList() {
       {showForm ? (
         <Card variant="dashboard" className="max-w-2xl">
           <form onSubmit={handleSubmit} className="space-y-4">
-            <h3 className="text-sm font-medium">
-              {editing ? 'Modifier l’agence' : 'Nouvelle agence'}
-            </h3>
+            <h3 className="text-sm font-medium">{editing ? t('edit') : t('new')}</h3>
             {formError ? (
               <p role="alert" className="text-sm text-red-600">
                 {formError}
               </p>
             ) : null}
             <Input
-              label="Nom"
+              label={tCommon('columns.name')}
               value={formValues.name}
               onChange={(e) => setFormValues((p) => ({ ...p, name: e.target.value }))}
             />
             <div>
               <label htmlFor={destId} className="mb-2 block text-sm font-medium">
-                Destination (optionnel)
+                {t('destinationOptional')}
               </label>
               <select
                 id={destId}
@@ -237,7 +244,7 @@ export function RentalAgenciesList() {
                   setFormValues((p) => ({ ...p, destinationId: e.target.value }))
                 }
               >
-                <option value="">— Aucune —</option>
+                <option value="">{tCommon('filters.none')}</option>
                 {destinations.map((d) => (
                   <option key={d.id} value={d.id}>
                     {d.name}
@@ -246,16 +253,16 @@ export function RentalAgenciesList() {
               </select>
             </div>
             <Input
-              label="Adresse"
+              label={t('address')}
               value={formValues.address}
               onChange={(e) => setFormValues((p) => ({ ...p, address: e.target.value }))}
             />
             <div className="flex gap-3">
               <Button type="submit" loading={submitting}>
-                {editing ? 'Enregistrer' : 'Ajouter'}
+                {editing ? tActions('save') : tActions('create')}
               </Button>
               <Button type="button" variant="outline" onClick={resetForm}>
-                Annuler
+                {tActions('cancel')}
               </Button>
             </div>
           </form>
@@ -273,7 +280,7 @@ export function RentalAgenciesList() {
               columns={columns}
               data={agencies}
               isLoading={state.status === 'loading'}
-              emptyMessage="Aucune agence."
+              emptyMessage={t('empty')}
               getRowId={(r) => r.id}
             />
           </Card>
@@ -283,7 +290,7 @@ export function RentalAgenciesList() {
               pageSize={PAGE_SIZE}
               totalPages={state.totalPages}
               totalItems={state.total}
-              itemLabel="agence"
+              itemLabel={tPagination('agency')}
               onPageChange={setPage}
             />
           ) : null}

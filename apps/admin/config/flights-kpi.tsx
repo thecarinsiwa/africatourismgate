@@ -1,8 +1,8 @@
 export const flightsKpis = [
   {
     key: 'flights',
-    label: 'Vols',
-    subtitle: 'Lignes catalogue',
+    labelKey: 'stats.flights.label',
+    subtitleKey: 'stats.flights.subtitle',
     iconClass: 'bg-atg-info-light text-atg-info',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -17,8 +17,8 @@ export const flightsKpis = [
   },
   {
     key: 'classes',
-    label: 'Classes cabine',
-    subtitle: 'Tarifs par vol',
+    labelKey: 'stats.classes.label',
+    subtitleKey: 'stats.classes.subtitle',
     iconClass: 'bg-violet-100 text-violet-700 dark:bg-violet-950/50 dark:text-violet-300',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -33,8 +33,8 @@ export const flightsKpis = [
   },
   {
     key: 'airlines',
-    label: 'Compagnies',
-    subtitle: 'Référentiel IATA',
+    labelKey: 'stats.airlines.label',
+    subtitleKey: 'stats.airlines.subtitle',
     href: '/produits/vols/compagnies',
     iconClass: 'bg-atg-warning-light text-atg-warning',
     icon: (
@@ -50,8 +50,8 @@ export const flightsKpis = [
   },
   {
     key: 'airports',
-    label: 'Aéroports',
-    subtitle: 'Référentiel mondial',
+    labelKey: 'stats.airports.label',
+    subtitleKey: 'stats.airports.subtitle',
     href: '/produits/vols/aeroports',
     iconClass: 'bg-atg-success-light text-atg-success',
     icon: (

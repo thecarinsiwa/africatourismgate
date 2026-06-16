@@ -1,22 +1,10 @@
-import { ApiHttpError } from '@africatourismgate/api-client';
+import { resolveUnknownApiError } from './common-api-errors';
+import type { VolsErrorMessages } from './i18n/admin-error-messages';
 
-export function getVolsErrorMessage(error: unknown): string {
-  if (error instanceof TypeError) {
-    return 'Impossible de joindre l’API. Vérifiez que le serveur est démarré.';
-  }
+export type { VolsErrorMessages };
 
-  if (error instanceof ApiHttpError) {
-    if (error.status === 403) {
-      return 'Vous n’avez pas la permission d’effectuer cette action.';
-    }
-    if (error.status === 409) {
-      return 'Conflit : cette ressource existe déjà (code IATA ou disponibilité dupliquée).';
-    }
-    if (error.message && !error.message.startsWith('HTTP ')) {
-      return error.message;
-    }
-    return `Erreur API (${error.status}).`;
-  }
-
-  return 'Une erreur est survenue.';
+export function getVolsErrorMessage(error: unknown, messages: VolsErrorMessages): string {
+  return resolveUnknownApiError(error, messages, {
+    conflict: () => messages.resourceConflict,
+  });
 }

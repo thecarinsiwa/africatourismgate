@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Button,
   Card,
@@ -11,11 +13,12 @@ import {
 } from '@africatourismgate/ui';
 import type { PackageImage, PackageSuggestedImageGroup } from '@africatourismgate/types';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
 import { getSession } from '../../lib/auth/session';
+import { usePackageItemTypeLabels } from '../../lib/i18n/use-module-labels';
 import { getPackageItemTypeLabel } from '../../lib/package-item-type';
-import { getPackagesErrorMessage } from '../../lib/packages-errors';
 import { PackageItemTypeIcon } from './package-item-type-icon';
 
 const PACKAGE_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
@@ -34,6 +37,12 @@ type PackageImagesSectionProps = {
 };
 
 export function PackageImagesSection({ packageId }: PackageImagesSectionProps) {
+  const { packages: getPackagesErrorMessage } = useAdminErrorMessages();
+  const tGallery = useTranslations('modules.common.imagesGallery');
+  const tCommon = useTranslations('modules.common');
+  const tActions = useTranslations('common.actions');
+  const itemTypeLabels = usePackageItemTypeLabels();
+  const emptyDash = tCommon('empty.dash');
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -62,7 +71,7 @@ export function PackageImagesSection({ packageId }: PackageImagesSectionProps) {
     } catch (error) {
       setState({ status: 'error', message: getPackagesErrorMessage(error) });
     }
-  }, [packageId]);
+  }, [packageId, getPackagesErrorMessage]);
 
   const loadSuggestions = useCallback(async () => {
     setSuggestionsLoading(true);
@@ -115,16 +124,16 @@ export function PackageImagesSection({ packageId }: PackageImagesSectionProps) {
     if (!file) return;
     try {
       if (!ALLOWED_PACKAGE_IMAGE_TYPES.has(file.type)) {
-        setFormError('Format accepté : JPEG, PNG ou WebP.');
+        setFormError(tCommon('validation.imageFormat'));
         return;
       }
       if (file.size > PACKAGE_IMAGE_MAX_BYTES) {
-        setFormError('Image trop lourde (max 5 Mo).');
+        setFormError(tCommon('validation.imageTooLarge'));
         return;
       }
       const session = getSession();
       if (!session?.accessToken) {
-        setFormError('Session expirée. Reconnectez-vous puis réessayez.');
+        setFormError(tCommon('validation.sessionExpiredRetry'));
         return;
       }
       setUploading(true);
@@ -150,7 +159,7 @@ export function PackageImagesSection({ packageId }: PackageImagesSectionProps) {
       }
       setFormValues((prev) => ({ ...prev, url: payload.url! }));
     } catch {
-      setFormError("Impossible d'uploader l'image locale.");
+      setFormError(tCommon('validation.uploadFailed'));
     } finally {
       setUploading(false);
       event.target.value = '';
@@ -161,7 +170,7 @@ export function PackageImagesSection({ packageId }: PackageImagesSectionProps) {
     event.preventDefault();
     setFormError(null);
     if (!formValues.url.trim()) {
-      setFormError('L’URL est obligatoire.');
+      setFormError(tCommon('validation.urlRequired'));
       return;
     }
     setSubmitting(true);
@@ -216,7 +225,7 @@ export function PackageImagesSection({ packageId }: PackageImagesSectionProps) {
 
   const handleDelete = useCallback(
     async (img: PackageImage) => {
-      if (!window.confirm('Supprimer cette image ?')) return;
+      if (!window.confirm(tGallery('deleteConfirm'))) return;
       setDeletingId(img.id);
       try {
         await getApiClient().deletePackageImage(img.id);
@@ -227,14 +236,14 @@ export function PackageImagesSection({ packageId }: PackageImagesSectionProps) {
         setDeletingId(null);
       }
     },
-    [load],
+    [load, tGallery, getPackagesErrorMessage],
   );
 
   const columns = useMemo<ColumnDef<PackageImage, unknown>[]>(
     () => [
       {
         id: 'preview',
-        header: 'Aperçu',
+        header: tCommon('columns.preview'),
         cell: ({ row }) => (
           <Image
             src={row.original.url}
@@ -251,7 +260,7 @@ export function PackageImagesSection({ packageId }: PackageImagesSectionProps) {
       },
       {
         accessorKey: 'url',
-        header: 'URL',
+        header: tCommon('columns.url'),
         cell: ({ row }) => (
           <a
             href={row.original.url}
@@ -265,28 +274,30 @@ export function PackageImagesSection({ packageId }: PackageImagesSectionProps) {
       },
       {
         accessorKey: 'caption',
-        header: 'Légende',
+        header: tCommon('columns.caption'),
         cell: ({ row }) => (
-          <span className="text-sm text-atg-muted">{row.original.caption ?? '—'}</span>
+          <span className="text-sm text-atg-muted">{row.original.caption ?? emptyDash}</span>
         ),
       },
       {
         id: 'source',
-        header: 'Source',
+        header: tCommon('columns.source'),
         cell: ({ row }) => (
           <span className="text-sm text-atg-muted">
-            {row.original.sourcePackageItemId ? 'Produit inclus' : 'Manuelle'}
+            {row.original.sourcePackageItemId
+              ? tGallery('sourceIncluded')
+              : tGallery('sourceManual')}
           </span>
         ),
       },
       {
         accessorKey: 'sortOrder',
-        header: 'Ordre',
+        header: tCommon('columns.sortOrder'),
         meta: { align: 'center' },
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tCommon('columns.actions'),
         meta: { align: 'right' },
         cell: ({ row }) => (
           <DataTableActions>
@@ -301,7 +312,7 @@ export function PackageImagesSection({ packageId }: PackageImagesSectionProps) {
         ),
       },
     ],
-    [deletingId, handleDelete],
+    [deletingId, emptyDash, handleDelete, tCommon, tGallery],
   );
 
   const images = state.status === 'ready' ? state.images : [];
@@ -311,14 +322,12 @@ export function PackageImagesSection({ packageId }: PackageImagesSectionProps) {
     <section className="space-y-6 border-t border-atg-border pt-10">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-atg-fg">Galerie photos</h2>
-          <p className="mt-1 text-sm text-atg-muted">
-            Ajoutez des photos manuellement ou choisissez parmi les images des produits inclus.
-          </p>
+          <h2 className="text-lg font-semibold text-atg-fg">{tGallery('titlePackage')}</h2>
+          <p className="mt-1 text-sm text-atg-muted">{tGallery('introPackage')}</p>
         </div>
         {!showForm ? (
           <Button type="button" onClick={openCreate}>
-            Ajouter une photo
+            {tGallery('addPhoto')}
           </Button>
         ) : null}
       </div>
@@ -330,14 +339,11 @@ export function PackageImagesSection({ packageId }: PackageImagesSectionProps) {
       ) : null}
 
       <div className="space-y-4">
-        <h3 className="text-sm font-medium text-atg-fg">Suggestions depuis la composition</h3>
+        <h3 className="text-sm font-medium text-atg-fg">{tGallery('suggestionsTitle')}</h3>
         {suggestionsLoading ? (
-          <p className="text-sm text-atg-muted">Chargement des suggestions…</p>
+          <p className="text-sm text-atg-muted">{tGallery('suggestionsLoading')}</p>
         ) : !hasSuggestions ? (
-          <p className="text-sm text-atg-muted">
-            Aucune photo disponible dans les produits inclus. Ajoutez des produits au forfait ou
-            uploadez une photo manuellement.
-          </p>
+          <p className="text-sm text-atg-muted">{tGallery('suggestionsEmpty')}</p>
         ) : (
           <div className="space-y-4">
             {suggestions.map((group) =>
@@ -348,7 +354,7 @@ export function PackageImagesSection({ packageId }: PackageImagesSectionProps) {
                     <div>
                       <p className="text-sm font-medium text-atg-fg">{group.label}</p>
                       <p className="text-xs text-atg-muted">
-                        {getPackageItemTypeLabel(group.itemType)}
+                        {getPackageItemTypeLabel(group.itemType, itemTypeLabels)}
                       </p>
                     </div>
                   </div>
@@ -393,7 +399,9 @@ export function PackageImagesSection({ packageId }: PackageImagesSectionProps) {
                                 )
                               }
                             >
-                              {alreadyAdded ? 'Ajoutée' : 'Ajouter'}
+                              {alreadyAdded
+                                ? tGallery('alreadyAdded')
+                                : tGallery('addFromSuggestion')}
                             </Button>
                           </div>
                         </div>
@@ -411,13 +419,13 @@ export function PackageImagesSection({ packageId }: PackageImagesSectionProps) {
         <Card variant="dashboard" className="max-w-2xl">
           <form onSubmit={handleSubmit} className="space-y-4">
             <h3 className="text-sm font-medium">
-              {editing ? 'Modifier la photo' : 'Nouvelle photo'}
+              {editing ? tGallery('editPhoto') : tGallery('newPhoto')}
             </h3>
             <div className="space-y-3">
-              <p className="text-xs font-medium text-atg-fg">Image</p>
+              <p className="text-xs font-medium text-atg-fg">{tCommon('form.image')}</p>
               <div className="flex flex-wrap items-center gap-3">
                 <label className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10">
-                  {uploading ? 'Upload en cours…' : 'Choisir un fichier'}
+                  {uploading ? tCommon('form.uploading') : tCommon('form.chooseFile')}
                   <input
                     type="file"
                     accept="image/jpeg,image/png,image/webp"
@@ -426,12 +434,12 @@ export function PackageImagesSection({ packageId }: PackageImagesSectionProps) {
                     disabled={uploading || submitting}
                   />
                 </label>
-                <span className="text-xs text-atg-muted">JPEG, PNG ou WebP, max 5 Mo</span>
+                <span className="text-xs text-atg-muted">{tCommon('form.imageFormatHint')}</span>
               </div>
               {formValues.url.trim() ? (
                 <Image
                   src={formValues.url.trim()}
-                  alt={formValues.caption.trim() || 'Aperçu'}
+                  alt={formValues.caption.trim() || tCommon('columns.preview')}
                   width={320}
                   height={200}
                   unoptimized
@@ -443,19 +451,19 @@ export function PackageImagesSection({ packageId }: PackageImagesSectionProps) {
               ) : null}
             </div>
             <Input
-              label="URL externe (optionnel si upload)"
+              label={tCommon('form.externalUrlOptional')}
               type="url"
               value={formValues.url}
               onChange={(e) => setFormValues((p) => ({ ...p, url: e.target.value }))}
-              placeholder="https://..."
+              placeholder={tCommon('form.urlPlaceholder')}
             />
             <Input
-              label="Légende"
+              label={tCommon('columns.caption')}
               value={formValues.caption}
               onChange={(e) => setFormValues((p) => ({ ...p, caption: e.target.value }))}
             />
             <Input
-              label="Ordre d’affichage"
+              label={tCommon('form.displayOrder')}
               type="number"
               min={0}
               value={formValues.sortOrder}
@@ -463,10 +471,10 @@ export function PackageImagesSection({ packageId }: PackageImagesSectionProps) {
             />
             <div className="flex gap-3">
               <Button type="submit" loading={submitting} disabled={uploading}>
-                {editing ? 'Enregistrer' : 'Ajouter'}
+                {editing ? tActions('save') : tActions('create')}
               </Button>
               <Button type="button" variant="outline" onClick={resetForm}>
-                Annuler
+                {tActions('cancel')}
               </Button>
             </div>
           </form>
@@ -483,7 +491,7 @@ export function PackageImagesSection({ packageId }: PackageImagesSectionProps) {
             columns={columns}
             data={images}
             isLoading={state.status === 'loading'}
-            emptyMessage="Aucune photo dans la galerie du forfait."
+            emptyMessage={tGallery('emptyPackage')}
             getRowId={(row) => row.id}
           />
         </Card>

@@ -6,9 +6,10 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { locales, type AppLocale } from '../i18n/routing';
 import { setLocaleCookie } from '../lib/i18n/set-locale-cookie';
 
-const LOCALE_LABELS: Record<AppLocale, 'fr' | 'en'> = {
+const LOCALE_LABELS: Record<AppLocale, 'fr' | 'en' | 'es'> = {
   fr: 'fr',
   en: 'en',
+  es: 'es',
 };
 
 export function LanguageSwitcher() {

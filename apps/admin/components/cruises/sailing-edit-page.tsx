@@ -1,18 +1,24 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import type { CruiseSailing, Itinerary, Ship } from '@africatourismgate/types';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
 import { buildCruiseBreadcrumbTail } from '../../lib/cruise-breadcrumbs';
-import { getCroisieresErrorMessage } from '../../lib/croisieres-errors';
 import { CabinAvailabilitySection } from './cabin-availability-section';
 import { SailingForm } from './sailing-form';
 
 type SailingEditPageProps = { sailingId: string };
 
 export function SailingEditPage({ sailingId }: SailingEditPageProps) {
+  const { croisieres: getCroisieresErrorMessage } = useAdminErrorMessages();
+  const tDetail = useTranslations('modules.cruises.detail');
+  const tColumns = useTranslations('modules.cruises.columns');
+  const tCommon = useTranslations('modules.common');
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -27,7 +33,7 @@ export function SailingEditPage({ sailingId }: SailingEditPageProps) {
 
   useAdminEditPageMeta({
     ready: state.status === 'ready',
-    title: 'Modifier le départ',
+    title: tDetail('sailingTitle'),
     breadcrumbTail:
       state.status === 'ready'
         ? buildCruiseBreadcrumbTail({
@@ -62,10 +68,10 @@ export function SailingEditPage({ sailingId }: SailingEditPageProps) {
     return () => {
       cancelled = true;
     };
-  }, [sailingId]);
+  }, [sailingId, getCroisieresErrorMessage]);
 
   if (state.status === 'loading') {
-    return <p className="text-sm text-atg-muted">Chargement…</p>;
+    return <p className="text-sm text-atg-muted">{tCommon('loading')}</p>;
   }
 
   if (state.status === 'error') {
@@ -75,7 +81,7 @@ export function SailingEditPage({ sailingId }: SailingEditPageProps) {
           {state.message}
         </p>
         <Link href="/produits/croisieres" className="text-sm font-medium text-primary">
-          ← Retour aux croisières
+          {tCommon('back.toList')}
         </Link>
       </div>
     );
@@ -88,7 +94,7 @@ export function SailingEditPage({ sailingId }: SailingEditPageProps) {
     <div>
       <p className="mb-8 text-sm text-atg-muted">
         {departureLabel} · {itinerary.name} · {ship.name} ({itinerary.durationNights}{' '}
-        nuits)
+        {tColumns('nights')})
       </p>
       <SailingForm mode="edit" sailingId={sailingId} initialSailing={sailing} />
       <CabinAvailabilitySection

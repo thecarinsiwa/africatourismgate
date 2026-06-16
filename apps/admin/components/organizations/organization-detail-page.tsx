@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import type { Organization, OrganizationListItem } from '@africatourismgate/types';
 import {
   DataTableBadge,
@@ -10,6 +12,7 @@ import {
   TabsTrigger,
 } from '@africatourismgate/ui';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { EmployeesList } from '../employees/employees-list';
@@ -19,11 +22,13 @@ import {
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
 import {
+  useAccountStatusLabels,
+  useOrganizationLegalFormOptions,
+} from '../../lib/i18n/use-module-labels';
+import {
   formatOrganizationLegalForm,
-  organizationStatusLabels,
   organizationStatusVariants,
 } from '../../lib/organization-display';
-import { getOrganizationsErrorMessage } from '../../lib/organizations-errors';
 import { OrganizationForm } from './organization-form';
 import { OrganizationLogo } from './organization-logo';
 
@@ -39,6 +44,11 @@ function isTabValue(value: string | null): value is TabValue {
 }
 
 export function OrganizationDetailPage({ organizationId }: OrganizationDetailPageProps) {
+  const { organizations: getOrganizationsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.organizations.detail');
+  const tActions = useTranslations('common.actions');
+  const accountStatusLabels = useAccountStatusLabels();
+  const legalFormOptions = useOrganizationLegalFormOptions();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -56,7 +66,7 @@ export function OrganizationDetailPage({ organizationId }: OrganizationDetailPag
 
   useAdminEditPageMeta({
     ready: state.status === 'ready',
-    title: 'Organisation',
+    title: t('title'),
     entityLabel: state.status === 'ready' ? state.organization.name : undefined,
   });
 
@@ -80,7 +90,7 @@ export function OrganizationDetailPage({ organizationId }: OrganizationDetailPag
     return () => {
       cancelled = true;
     };
-  }, [organizationId]);
+  }, [organizationId, getOrganizationsErrorMessage]);
 
   useEffect(() => {
     let cancelled = false;
@@ -166,14 +176,14 @@ export function OrganizationDetailPage({ organizationId }: OrganizationDetailPag
           href="/organisations"
           className="text-sm font-medium text-primary hover:text-primary-hover"
         >
-          ← Retour à la liste
+          ← {tActions('back')}
         </Link>
       </div>
     );
   }
 
   const { organization } = state;
-  const legalFormLabel = formatOrganizationLegalForm(organization.legalForm);
+  const legalFormLabel = formatOrganizationLegalForm(organization.legalForm, legalFormOptions);
 
   return (
     <div className="space-y-6">
@@ -187,7 +197,7 @@ export function OrganizationDetailPage({ organizationId }: OrganizationDetailPag
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="text-xl font-semibold text-atg-fg">{organization.name}</h2>
             <DataTableBadge variant={organizationStatusVariants[organization.status]}>
-              {organizationStatusLabels[organization.status]}
+              {accountStatusLabels[organization.status]}
             </DataTableBadge>
             {organization.legalForm ? (
               <DataTableBadge variant="muted">{legalFormLabel}</DataTableBadge>
@@ -198,10 +208,10 @@ export function OrganizationDetailPage({ organizationId }: OrganizationDetailPag
       </div>
 
       <Tabs value={activeTab} onValueChange={handleTabChange}>
-        <TabsList aria-label="Sections de l'organisation">
-          <TabsTrigger value="infos">Infos</TabsTrigger>
-          <TabsTrigger value="users">Utilisateurs</TabsTrigger>
-          {canReadSettings ? <TabsTrigger value="settings">Paramètres</TabsTrigger> : null}
+        <TabsList aria-label={t('tabsAria')}>
+          <TabsTrigger value="infos">{t('tabs.infos')}</TabsTrigger>
+          <TabsTrigger value="users">{t('tabs.users')}</TabsTrigger>
+          {canReadSettings ? <TabsTrigger value="settings">{t('tabs.settings')}</TabsTrigger> : null}
         </TabsList>
 
         <TabsContent value="infos">
@@ -219,9 +229,7 @@ export function OrganizationDetailPage({ organizationId }: OrganizationDetailPag
 
         {canReadSettings ? (
           <TabsContent value="settings">
-            <p className="mb-6 text-sm text-atg-muted">
-              Configuration de l’organisation : coordonnées, locale, réservation et branding.
-            </p>
+            <p className="mb-6 text-sm text-atg-muted">{t('settingsIntro')}</p>
             <OrganizationSettingsForm
               organizationId={organizationId}
               isSuperAdmin={isSuperAdmin}

@@ -1,0 +1,79 @@
+{
+  "list": {
+    "emptyTitleSearch": "Ninguna organisation ne correspond à votre recherche",
+    "emptyTitleDefault": "Ninguna organisation pour le moment",
+    "emptyDescriptionSearch": "Essayez un autre nom ou slug.",
+    "emptyDescriptionDefault": "Créez une organisation partenaire pour commencer.",
+    "emptyTableSearch": "Ninguna organisation ne correspond à votre recherche.",
+    "emptyTableDefault": "Ninguna organisation pour le moment.",
+    "ariaLabel": "Liste des organisations",
+    "columns": {
+      "type": "Tipo"
+    },
+    "deleteDialog": {
+      "title": "Eliminar organización",
+      "description": "Eliminar organización « {name} » ? Cette action est réversible côté base."
+    }
+  },
+  "form": {
+    "sections": {
+      "identity": "Identidad",
+      "contact": "Contacto",
+      "legal": "Legal",
+      "configuration": "Configuración"
+    },
+    "name": "Apellido",
+    "slug": "Slug",
+    "slugHint": "Identificador único en la URL (ej. africa-tourism-gate).",
+    "description": "Descripción",
+    "website": "Site web",
+    "websitePlaceholder": "https://",
+    "contactEmail": "Correo de contact",
+    "contactPhone": "Teléfono",
+    "legalForm": "Forme juridique",
+    "rccm": "RCCM",
+    "rccmHint": "Registre du Commerce et du Crédit Mobilier",
+    "idNat": "ID. Nat.",
+    "idNatHint": "Identification Nationale",
+    "nif": "NIF",
+    "nifHint": "Número de Identificación Fiscal",
+    "cnss": "CNSS",
+    "cnssHint": "Caisse Nationale de Sécurité Sociale",
+    "currency": "Moneda",
+    "status": "Estado",
+    "submitCreate": "Crear organización",
+    "submitEdit": "Guardar",
+    "validation": {
+      "nameRequired": "El apellido es obligatorio.",
+      "slugRequired": "Le slug est obligatoire.",
+      "slugInvalid": "Slug invalide : minuscules, chiffres et tirets uniquement (ex. mon-organisation).",
+      "currencyInvalid": "La devise doit comporter 3 lettres (ex. USD, CDF)."
+    },
+    "toast": {
+      "savedTitle": "Organización enregistrée",
+      "errorTitle": "Error al guardar"
+    }
+  },
+  "legalForm": {
+    "unspecified": "No renseigné",
+    "SARL": "SARL",
+    "SA": "SA",
+    "SAS": "SAS",
+    "Ets": "Établissement (Ets)",
+    "SNC": "SNC",
+    "ASBL": "ASBL"
+  },
+  "detail": {
+    "title": "Organización",
+    "tabsAria": "Secciones de la organización",
+    "tabs": {
+      "infos": "Info",
+      "users": "Usuarios",
+      "settings": "Ajustes"
+    },
+    "settingsIntro": "Configuración de la organización: datos de contacto, idioma, reservas y marca."
+  },
+  "selector": {
+    "defaultLabel": "Organización"
+  }
+}

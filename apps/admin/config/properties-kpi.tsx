@@ -1,8 +1,8 @@
 export const propertiesKpis = [
   {
     key: 'properties',
-    label: 'Hébergements',
-    subtitle: 'Propriétés publiées',
+    labelKey: 'stats.properties.label',
+    subtitleKey: 'stats.properties.subtitle',
     iconClass: 'bg-atg-warning-light text-atg-warning',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -17,8 +17,8 @@ export const propertiesKpis = [
   },
   {
     key: 'rooms',
-    label: 'Chambres',
-    subtitle: 'Types de chambres',
+    labelKey: 'stats.rooms.label',
+    subtitleKey: 'stats.rooms.subtitle',
     iconClass: 'bg-atg-info-light text-atg-info',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -33,8 +33,8 @@ export const propertiesKpis = [
   },
   {
     key: 'amenities',
-    label: 'Équipements',
-    subtitle: 'Référentiel global',
+    labelKey: 'stats.amenities.label',
+    subtitleKey: 'stats.amenities.subtitle',
     href: '/hebergements/equipements',
     iconClass: 'bg-violet-100 text-violet-700 dark:bg-violet-950/50 dark:text-violet-300',
     icon: (
@@ -50,8 +50,8 @@ export const propertiesKpis = [
   },
   {
     key: 'destinations',
-    label: 'Destinations',
-    subtitle: 'Zones géographiques',
+    labelKey: 'stats.destinations.label',
+    subtitleKey: 'stats.destinations.subtitle',
     href: '/produits/destinations',
     iconClass: 'bg-atg-success-light text-atg-success',
     icon: (

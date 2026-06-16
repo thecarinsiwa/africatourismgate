@@ -7,7 +7,7 @@ export function localeFromPreferredLanguage(
 ): AppLocale | null {
   if (!value) return null;
   const normalized = value.trim().toLowerCase();
-  if (normalized === 'fr' || normalized === 'en') return normalized;
+  if (normalized === 'fr' || normalized === 'en' || normalized === 'es') return normalized;
   return null;
 }
 
