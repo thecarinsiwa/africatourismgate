@@ -12,7 +12,7 @@ import {
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type {
-  Organization,
+  OrganizationListItem,
   PaymentAdminDetail,
   PaymentListItem,
   PaymentStatus,
@@ -51,7 +51,7 @@ export function PaymentsList() {
   const [organizationFilter, setOrganizationFilter] = useState('');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
-  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [organizations, setOrganizations] = useState<OrganizationListItem[]>([]);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [canRead, setCanRead] = useState(true);
   const [canRefund, setCanRefund] = useState(false);

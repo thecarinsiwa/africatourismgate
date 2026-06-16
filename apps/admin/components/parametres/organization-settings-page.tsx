@@ -1,6 +1,6 @@
 'use client';
 
-import type { Organization } from '@africatourismgate/types';
+import type { OrganizationListItem } from '@africatourismgate/types';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { useSetAdminPageMeta } from '../admin-page-meta-context';
@@ -18,7 +18,7 @@ export function OrganizationSettingsPage() {
   const [accessError, setAccessError] = useState<string | null>(null);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [organizationId, setOrganizationId] = useState<string | null>(null);
-  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [organizations, setOrganizations] = useState<OrganizationListItem[]>([]);
 
   useSetAdminPageMeta({ title: 'Paramètres' });
 

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { OrganizationEditPage } from '../../../../components/organizations/organization-edit-page';
+import { OrganizationDetailPage } from '../../../../components/organizations/organization-detail-page';
 
 type PageProps = {
   params: { id: string };
@@ -10,5 +10,5 @@ export const metadata: Metadata = {
 };
 
 export default function EditOrganisationPage({ params }: PageProps) {
-  return <OrganizationEditPage organizationId={params.id} />;
+  return <OrganizationDetailPage organizationId={params.id} />;
 }

@@ -14,7 +14,7 @@ import {
   Select,
   type ColumnDef,
 } from '@africatourismgate/ui';
-import type { Organization, Role, User, UserStatus } from '@africatourismgate/types';
+import type { OrganizationListItem, Role, User, UserStatus } from '@africatourismgate/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getUsersErrorMessage } from '../../lib/users-errors';
@@ -43,7 +43,7 @@ export function UsersList() {
   const [organizationFilter, setOrganizationFilter] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
   const [page, setPage] = useState(1);
-  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [organizations, setOrganizations] = useState<OrganizationListItem[]>([]);
   const [roles, setRoles] = useState<Role[]>([]);
   const [state, setState] = useState<
     | { status: 'loading' }

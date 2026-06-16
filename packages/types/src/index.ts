@@ -80,7 +80,9 @@ export type {
 export type {
   CreateOrganizationRequest,
   Organization,
+  OrganizationListItem,
   OrganizationStatus,
+  OrganizationsListQuery,
   UpdateOrganizationRequest,
 } from './organization.js';
 

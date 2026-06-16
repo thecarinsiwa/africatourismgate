@@ -8,7 +8,7 @@ import {
   DataTableBadge,
   type ColumnDef,
 } from '@africatourismgate/ui';
-import type { Organization, OrganizationBankAccount } from '@africatourismgate/types';
+import type { OrganizationBankAccount, OrganizationListItem } from '@africatourismgate/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSetAdminPageMeta } from '../admin-page-meta-context';
@@ -26,7 +26,7 @@ export function OrganizationBankAccountsList() {
   const [accessError, setAccessError] = useState<string | null>(null);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [organizationId, setOrganizationId] = useState<string | null>(null);
-  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [organizations, setOrganizations] = useState<OrganizationListItem[]>([]);
   const [accounts, setAccounts] = useState<OrganizationBankAccount[]>([]);
   const [loading, setLoading] = useState(true);
   const [listError, setListError] = useState<string | null>(null);
