@@ -10,8 +10,10 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { AuthUserDto } from '../../auth/dto/auth-user.dto';
 import { Employees } from '../../../entities/generated';
+import { EmployeesListQueryDto } from './dto/employees-list-query.dto';
 import { EmployeesService } from './employees.service';
 
 @ApiTags('employees')
@@ -21,8 +23,11 @@ export class EmployeesController {
 
   @Get()
   @ApiOperation({ summary: 'List employees' })
-  findAll(@Query() query: PaginationQueryDto) {
-    return this.service.findAll(query);
+  findAll(
+    @Query() query: EmployeesListQueryDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.service.list(query, user);
   }
 
   @Get(':id')
