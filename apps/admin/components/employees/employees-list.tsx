@@ -41,7 +41,17 @@ function userDisplayName(employee: Employee): string {
   return employee.userId.slice(0, 8);
 }
 
-export function EmployeesList() {
+type EmployeesListProps = {
+  /** Filtre fixe sur une organisation (ex. fiche org). */
+  lockedOrganizationId?: string;
+  /** Mode intégré dans une fiche (sans chrome page). */
+  embedded?: boolean;
+};
+
+export function EmployeesList({
+  lockedOrganizationId,
+  embedded = false,
+}: EmployeesListProps = {}) {
   const statusFilterId = useId();
   const orgFilterId = useId();
   const [searchInput, setSearchInput] = useState('');
@@ -64,6 +74,9 @@ export function EmployeesList() {
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (lockedOrganizationId) {
+      return;
+    }
     let cancelled = false;
     async function loadOrganizations() {
       try {
@@ -81,7 +94,7 @@ export function EmployeesList() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [lockedOrganizationId]);
 
   const orgNameById = useMemo(() => {
     const map = new Map<string, string>();
@@ -99,7 +112,7 @@ export function EmployeesList() {
         limit: PAGE_SIZE,
         search: search || undefined,
         status: statusFilter || undefined,
-        organizationId: organizationFilter || undefined,
+        organizationId: lockedOrganizationId || organizationFilter || undefined,
       });
       setState({
         status: 'ready',
@@ -110,7 +123,7 @@ export function EmployeesList() {
     } catch (error) {
       setState({ status: 'error', message: getEmployeesErrorMessage(error) });
     }
-  }, [page, search, statusFilter, organizationFilter]);
+  }, [page, search, statusFilter, organizationFilter, lockedOrganizationId]);
 
   useEffect(() => {
     void load();
@@ -153,8 +166,8 @@ export function EmployeesList() {
     [load],
   );
 
-  const columns = useMemo<ColumnDef<Employee, unknown>[]>(
-    () => [
+  const columns = useMemo<ColumnDef<Employee, unknown>[]>(() => {
+    const base: ColumnDef<Employee, unknown>[] = [
       {
         id: 'user',
         header: 'Utilisateur',
@@ -211,7 +224,10 @@ export function EmployeesList() {
           );
         },
       },
-      {
+    ];
+
+    if (!lockedOrganizationId) {
+      base.splice(4, 0, {
         id: 'organization',
         header: 'Organisation',
         cell: ({ row }) => {
@@ -223,41 +239,51 @@ export function EmployeesList() {
             <span className="text-atg-muted">{orgNameById.get(orgId) ?? orgId.slice(0, 8)}</span>
           );
         },
+      });
+    }
+
+    base.push({
+      id: 'actions',
+      header: 'Actions',
+      meta: { align: 'right' },
+      cell: ({ row }) => {
+        const employee = row.original;
+        return (
+          <DataTableActions className="opacity-90 transition-opacity group-hover:opacity-100">
+            <DataTableActionButton action="edit" href={`/utilisateurs/employes/${employee.id}`} />
+            <DataTableActionButton
+              action="delete"
+              onClick={() => void handleDelete(employee)}
+              disabled={deletingId === employee.id}
+              loading={deletingId === employee.id}
+            />
+          </DataTableActions>
+        );
       },
-      {
-        id: 'actions',
-        header: 'Actions',
-        meta: { align: 'right' },
-        cell: ({ row }) => {
-          const employee = row.original;
-          return (
-            <DataTableActions className="opacity-90 transition-opacity group-hover:opacity-100">
-              <DataTableActionButton action="edit" href={`/utilisateurs/employes/${employee.id}`} />
-              <DataTableActionButton
-                action="delete"
-                onClick={() => void handleDelete(employee)}
-                disabled={deletingId === employee.id}
-                loading={deletingId === employee.id}
-              />
-            </DataTableActions>
-          );
-        },
-      },
-    ],
-    [deletingId, handleDelete, orgNameById],
-  );
+    });
+
+    return base;
+  }, [deletingId, handleDelete, lockedOrganizationId, orgNameById]);
 
   const isLoading = state.status === 'loading';
   const isError = state.status === 'error';
   const employees = state.status === 'ready' ? state.employees : [];
   const hasFilters =
-    search.trim().length > 0 || statusFilter !== '' || organizationFilter !== '';
+    search.trim().length > 0 ||
+    statusFilter !== '' ||
+    (!lockedOrganizationId && organizationFilter !== '');
   const emptyMessage = hasFilters
     ? 'Aucun employé ne correspond à vos critères.'
-    : 'Aucun employé pour le moment.';
+    : lockedOrganizationId
+      ? 'Aucun employé pour cette organisation.'
+      : 'Aucun employé pour le moment.';
+
+  const newEmployeeHref = lockedOrganizationId
+    ? `/utilisateurs/employes/nouveau?organizationId=${lockedOrganizationId}`
+    : '/utilisateurs/employes/nouveau';
 
   return (
-    <div className="space-y-6">
+    <div className={embedded ? 'space-y-4' : 'space-y-6'}>
       <div className="flex flex-col gap-4 lg:flex-row lg:flex-wrap lg:items-end lg:justify-between">
         <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end">
           <div className="min-w-[200px] flex-1 sm:max-w-md">
@@ -289,29 +315,31 @@ export function EmployeesList() {
               <option value="terminated">Terminé</option>
             </select>
           </div>
-          <div>
-            <label htmlFor={orgFilterId} className="mb-2 block text-sm font-medium text-atg-fg">
-              Organisation
-            </label>
-            <select
-              id={orgFilterId}
-              value={organizationFilter}
-              onChange={(e) => {
-                setOrganizationFilter(e.target.value);
-                setPage(1);
-              }}
-              className="w-full min-w-[180px] rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
-            >
-              <option value="">Toutes</option>
-              {organizations.map((org) => (
-                <option key={org.id} value={org.id}>
-                  {org.name}
-                </option>
-              ))}
-            </select>
-          </div>
+          {!lockedOrganizationId ? (
+            <div>
+              <label htmlFor={orgFilterId} className="mb-2 block text-sm font-medium text-atg-fg">
+                Organisation
+              </label>
+              <select
+                id={orgFilterId}
+                value={organizationFilter}
+                onChange={(e) => {
+                  setOrganizationFilter(e.target.value);
+                  setPage(1);
+                }}
+                className="w-full min-w-[180px] rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
+              >
+                <option value="">Toutes</option>
+                {organizations.map((org) => (
+                  <option key={org.id} value={org.id}>
+                    {org.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : null}
         </div>
-        <Button href="/utilisateurs/employes/nouveau">Nouvel employé</Button>
+        <Button href={newEmployeeHref}>Nouvel employé</Button>
       </div>
 
       {deleteError ? (

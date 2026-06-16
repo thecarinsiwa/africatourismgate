@@ -9,7 +9,7 @@ import type {
   UpdateEmployeeRequest,
   User,
 } from '@africatourismgate/types';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { suggestNextEmployeeCode } from '../../lib/employee-code';
@@ -112,13 +112,21 @@ type EmployeeFormProps = {
 
 export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeFormProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const defaultOrganizationId = searchParams.get('organizationId') ?? '';
   const userId = useId();
   const orgId = useId();
   const managerId = useId();
   const statusId = useId();
-  const [values, setValues] = useState<EmployeeFormValues>(() =>
-    initialEmployee ? employeeToFormValues(initialEmployee) : defaultValues,
-  );
+  const [values, setValues] = useState<EmployeeFormValues>(() => {
+    if (initialEmployee) {
+      return employeeToFormValues(initialEmployee);
+    }
+    return {
+      ...defaultValues,
+      ...(defaultOrganizationId ? { organizationId: defaultOrganizationId } : {}),
+    };
+  });
   const [users, setUsers] = useState<User[]>([]);
   const [organizations, setOrganizations] = useState<OrganizationListItem[]>([]);
   const [existingEmployees, setExistingEmployees] = useState<Employee[]>([]);
