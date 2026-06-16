@@ -101,6 +101,11 @@ export function applyFaviconToDocument(faviconUrl: string | null): void {
   const link = existing ?? document.createElement('link');
   link.rel = 'icon';
   link.href = faviconUrl;
+  if (faviconUrl.endsWith('.svg')) {
+    link.type = 'image/svg+xml';
+  } else {
+    link.removeAttribute('type');
+  }
   link.setAttribute('data-atg-dynamic-favicon', '1');
   if (!existing) {
     document.head.appendChild(link);
