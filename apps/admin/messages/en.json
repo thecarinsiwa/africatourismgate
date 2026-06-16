@@ -212,6 +212,10 @@
     }
   },
   "placeholderSections": {
+    "meta": {
+      "titleSuffix": "Africa Tourism Gate Admin",
+      "notFoundTitle": "Section not found — Africa Tourism Gate Admin"
+    },
     "default": {
       "title": "Section",
       "description": "This module is being rolled out.",

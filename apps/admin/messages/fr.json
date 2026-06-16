@@ -212,6 +212,10 @@
     }
   },
   "placeholderSections": {
+    "meta": {
+      "titleSuffix": "Africa Tourism Gate Admin",
+      "notFoundTitle": "Section introuvable — Africa Tourism Gate Admin"
+    },
     "default": {
       "title": "Section",
       "description": "Module en cours de déploiement.",
