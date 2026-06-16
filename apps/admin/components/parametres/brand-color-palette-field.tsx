@@ -1,6 +1,13 @@
 'use client';
 
+import { useMemo } from 'react';
 import { brandColorPalette } from '../../lib/brand-color-palette';
+import {
+  formatContrastRatio,
+  getContrastRatio,
+  meetsContrastRatio,
+  WCAG_AA_NORMAL_TEXT_RATIO,
+} from '../../lib/color-contrast';
 
 function normalizeHex(hex: string): string {
   return hex.trim().toLowerCase();
@@ -11,6 +18,9 @@ type BrandColorPaletteFieldProps = {
   value: string;
   onChange: (hex: string) => void;
   hint?: string;
+  /** Foreground used on the brand color (buttons, liens actifs). Default: white. */
+  contrastForeground?: string;
+  contrastMinimum?: number;
 };
 
 export function BrandColorPaletteField({
@@ -18,16 +28,36 @@ export function BrandColorPaletteField({
   value,
   onChange,
   hint,
+  contrastForeground = '#FFFFFF',
+  contrastMinimum = WCAG_AA_NORMAL_TEXT_RATIO,
 }: BrandColorPaletteFieldProps) {
   const normalizedValue = normalizeHex(value);
   const inPalette = brandColorPalette.some(
     (c) => normalizeHex(c.hex) === normalizedValue,
   );
 
+  const contrastRatio = useMemo(
+    () => getContrastRatio(contrastForeground, value),
+    [contrastForeground, value],
+  );
+
+  const hasContrastWarning =
+    contrastRatio !== null && !meetsContrastRatio(contrastRatio, contrastMinimum);
+
   return (
     <fieldset className="space-y-3">
       <legend className="text-sm font-medium text-atg-fg">{label}</legend>
       {hint ? <p className="text-xs text-atg-muted">{hint}</p> : null}
+      {hasContrastWarning ? (
+        <p
+          role="status"
+          className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-100"
+        >
+          Contraste insuffisant avec le texte blanc : {formatContrastRatio(contrastRatio)} (minimum{' '}
+          {formatContrastRatio(contrastMinimum)} pour WCAG AA). Les boutons et liens actifs peuvent
+          être difficiles à lire.
+        </p>
+      ) : null}
       <div
         className="grid grid-cols-4 gap-2 sm:grid-cols-6 md:grid-cols-8"
         role="listbox"
