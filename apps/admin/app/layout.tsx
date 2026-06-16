@@ -20,6 +20,10 @@ export const metadata: Metadata = {
     template: '%s | Africa Tourism Gate Admin',
   },
   description: 'Back office Africa Tourism Gate',
+  icons: {
+    icon: [{ url: '/favicon.svg', type: 'image/svg+xml' }],
+    shortcut: [{ url: '/favicon.svg', type: 'image/svg+xml' }],
+  },
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

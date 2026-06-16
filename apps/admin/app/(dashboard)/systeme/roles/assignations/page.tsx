@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { AdminPageIntro } from '../../../../../components/admin-page-intro';
+import { PageHeader } from '@africatourismgate/ui';
 import { UserRoleAssignmentsList } from '../../../../../components/rbac/user-role-assignments-list';
 
 export const metadata: Metadata = {
@@ -9,7 +9,10 @@ export const metadata: Metadata = {
 export default function AssignationsPage() {
   return (
     <div>
-      <AdminPageIntro description={"Attribuer ou révoquer des rôles pour les utilisateurs (tous périmètres)."} />
+      <PageHeader
+        title="Assignations de rôles"
+        description="Attribuer ou révoquer des rôles pour les utilisateurs (tous périmètres)."
+      />
       <UserRoleAssignmentsList />
     </div>
   );

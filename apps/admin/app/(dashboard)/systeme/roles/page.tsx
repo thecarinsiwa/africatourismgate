@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { AdminPageIntro } from '../../../../components/admin-page-intro';
+import { Button, PageHeader } from '@africatourismgate/ui';
 import { RolesList } from '../../../../components/rbac/roles-list';
 
 export const metadata: Metadata = {
@@ -9,7 +9,11 @@ export const metadata: Metadata = {
 export default function RolesPage() {
   return (
     <div>
-      <AdminPageIntro description={"Gérez les rôles, la matrice des permissions et les assignations utilisateurs."} />
+      <PageHeader
+        title="Rôles et permissions"
+        description="Gérez les rôles, la matrice des permissions et les assignations utilisateurs."
+        actions={<Button href="/systeme/roles/nouveau">Nouveau rôle</Button>}
+      />
       <RolesList />
     </div>
   );

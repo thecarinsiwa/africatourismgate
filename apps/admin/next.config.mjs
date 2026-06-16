@@ -31,6 +31,14 @@ const nextConfig = {
     NEXT_PUBLIC_ADMIN_URL: adminUrl,
     NEXT_PUBLIC_API_URL: apiUrl,
   },
+  async rewrites() {
+    return [
+      {
+        source: '/favicon.ico',
+        destination: '/favicon.svg',
+      },
+    ];
+  },
 };
 
 export default withNextIntl(nextConfig);
