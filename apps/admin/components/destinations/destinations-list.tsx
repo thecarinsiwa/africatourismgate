@@ -26,6 +26,7 @@ export function DestinationsList() {
   const t = useTranslations('modules.destinations.list');
   const tColumns = useTranslations('modules.destinations.columns');
   const tCommon = useTranslations('modules.common');
+  const tActions = useTranslations('common.actions');
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -144,9 +145,19 @@ export function DestinationsList() {
           const destination = row.original;
           return (
             <DataTableActions className="opacity-90 transition-opacity group-hover:opacity-100">
-              <DataTableActionButton action="edit" href={`/produits/destinations/${destination.id}`} />
+              <DataTableActionButton
+                action="view"
+                label={tActions('view')}
+                href={`/produits/destinations/${destination.id}/voir`}
+              />
+              <DataTableActionButton
+                action="edit"
+                label={tActions('edit')}
+                href={`/produits/destinations/${destination.id}`}
+              />
               <DataTableActionButton
                 action="delete"
+                label={tActions('delete')}
                 onClick={() => void handleDelete(destination)}
                 disabled={deletingId === destination.id}
                 loading={deletingId === destination.id}
@@ -156,7 +167,7 @@ export function DestinationsList() {
         },
       },
     ],
-    [deletingId, handleDelete, tColumns, tCommon],
+    [deletingId, handleDelete, tActions, tColumns, tCommon],
   );
 
   const isLoading = state.status === 'loading';

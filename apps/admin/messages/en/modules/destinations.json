@@ -30,9 +30,23 @@
     "mapPreview": "Preview carte"
   },
   "detail": {
-    "title": "Modifier la destination",
-    "backLink": "Back aux destinations",
-    "mapTitle": "Carte de la destination"
+    "title": "Edit destination",
+    "viewTitle": "View destination",
+    "editButton": "Edit destination",
+    "backLink": "Back to destinations",
+    "mapTitle": "Destination map",
+    "description": "Description",
+    "noDescription": "No description provided.",
+    "notFound": "Destination not found."
+  },
+  "view": {
+    "poisTitle": "Points of interest",
+    "poisIntro": "{count} point(s) of interest recorded",
+    "poisEmpty": "No points of interest for this destination.",
+    "poisAriaLabel": "Destination points of interest"
+  },
+  "hero": {
+    "ariaLabel": "Destination {name}"
   },
   "sections": {
     "pois": {
