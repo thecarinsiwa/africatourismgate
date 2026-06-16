@@ -1,26 +1,30 @@
 'use client';
 
-import { Button, Card } from '@africatourismgate/ui';
+import {
+  AlertDialog,
+  Button,
+  Card,
+  useToast,
+} from '@africatourismgate/ui';
 import type { UserRoleAssignment } from '@africatourismgate/types';
 import { useCallback, useEffect, useState } from 'react';
+import { formatAssignmentScope } from '../../lib/rbac-display';
 import { getApiClient } from '../../lib/auth/api';
 import { getRbacErrorMessage } from '../../lib/rbac-errors';
+import { RoleBadge } from './role-badge';
 import { UserRoleAssignmentForm } from './user-role-assignment-form';
-
-function scopeLabel(row: UserRoleAssignment): string {
-  if (row.scopeType === 'global') return 'Global';
-  return `${row.scopeType}${row.scopeId ? `: ${row.scopeId}` : ''}`;
-}
 
 type UserRoleAssignmentsPanelProps = {
   userId: string;
 };
 
 export function UserRoleAssignmentsPanel({ userId }: UserRoleAssignmentsPanelProps) {
+  const { toast } = useToast();
   const [assignments, setAssignments] = useState<UserRoleAssignment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [revokingId, setRevokingId] = useState<string | null>(null);
+  const [pendingRevoke, setPendingRevoke] = useState<UserRoleAssignment | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -44,18 +48,28 @@ export function UserRoleAssignmentsPanel({ userId }: UserRoleAssignmentsPanelPro
     void load();
   }, [load]);
 
-  async function handleRevoke(id: string) {
-    if (!window.confirm('Révoquer ce rôle ?')) return;
-    setRevokingId(id);
+  const confirmRevoke = useCallback(async () => {
+    if (!pendingRevoke) return;
+    setRevokingId(pendingRevoke.id);
     try {
-      await getApiClient().revokeUserRoleAssignment(id);
+      await getApiClient().revokeUserRoleAssignment(pendingRevoke.id);
+      toast({
+        title: 'Rôle révoqué',
+        message: 'L’assignation a été retirée.',
+        variant: 'success',
+      });
+      setPendingRevoke(null);
       await load();
     } catch (err) {
-      window.alert(getRbacErrorMessage(err));
+      toast({
+        title: 'Échec de la révocation',
+        message: getRbacErrorMessage(err),
+        variant: 'error',
+      });
     } finally {
       setRevokingId(null);
     }
-  }
+  }, [pendingRevoke, load, toast]);
 
   return (
     <Card variant="dashboard" padding="lg" className="space-y-4">
@@ -70,36 +84,52 @@ export function UserRoleAssignmentsPanel({ userId }: UserRoleAssignmentsPanelPro
       ) : assignments.length === 0 ? (
         <p className="text-sm text-atg-muted">Aucun rôle actif pour cet utilisateur.</p>
       ) : (
-        <ul className="divide-y divide-atg-border">
-          {assignments.map((a) => (
-            <li key={a.id} className="flex flex-wrap items-center justify-between gap-2 py-3">
-              <div>
-                <span className="font-medium text-atg-fg">
-                  {a.role?.name ?? a.roleId.slice(0, 8)}
-                </span>
-                <span className="ml-2 text-xs text-atg-muted">
-                  {a.role?.code} · {scopeLabel(a)}
-                </span>
-              </div>
+        <div className="flex flex-wrap gap-2">
+          {assignments.map((assignment) => (
+            <div
+              key={assignment.id}
+              className="flex flex-wrap items-center gap-2 rounded-lg border border-atg-border bg-atg-elevated px-3 py-2"
+            >
+              {assignment.role ? (
+                <RoleBadge code={assignment.role.code} name={assignment.role.name} />
+              ) : (
+                <RoleBadge code={assignment.roleId.slice(0, 8)} />
+              )}
+              <span className="text-xs text-atg-muted">
+                {formatAssignmentScope(assignment.scopeType, assignment.scopeId)}
+              </span>
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
-                onClick={() => void handleRevoke(a.id)}
-                disabled={revokingId === a.id}
-                loading={revokingId === a.id}
+                onClick={() => setPendingRevoke(assignment)}
+                disabled={revokingId === assignment.id}
+                loading={revokingId === assignment.id}
                 className="!text-red-600"
               >
                 Révoquer
               </Button>
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
       <UserRoleAssignmentForm
         defaultUserId={userId}
         lockUser
         onSuccess={() => void load()}
+      />
+
+      <AlertDialog
+        open={pendingRevoke !== null}
+        onOpenChange={(open) => {
+          if (!open) setPendingRevoke(null);
+        }}
+        title="Révoquer le rôle"
+        description="Retirer ce rôle pour cet utilisateur ?"
+        confirmLabel="Révoquer"
+        variant="danger"
+        loading={revokingId !== null}
+        onConfirm={() => void confirmRevoke()}
       />
     </Card>
   );

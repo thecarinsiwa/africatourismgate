@@ -1,7 +1,7 @@
 'use client';
 
 import {
-  Button,
+  AlertDialog,
   Card,
   DataTable,
   DataTableActionButton,
@@ -9,17 +9,20 @@ import {
   DataTableBadge,
   DataTablePagination,
   Input,
+  useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { Role } from '@africatourismgate/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { getRbacErrorMessage } from '../../lib/rbac-errors';
+import { RoleBadge } from './role-badge';
 import { RbacSubnav } from './rbac-subnav';
 
 const PAGE_SIZE = 20;
 
 export function RolesList() {
+  const { toast } = useToast();
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -29,6 +32,7 @@ export function RolesList() {
     | { status: 'ready'; roles: Role[]; total: number; totalPages: number }
   >({ status: 'loading' });
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<Role | null>(null);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -65,22 +69,28 @@ export function RolesList() {
     return () => window.clearTimeout(timer);
   }, [searchInput]);
 
-  const handleDelete = useCallback(
-    async (role: Role) => {
-      if (role.isSystem) return;
-      if (!window.confirm(`Supprimer le rôle « ${role.name} » ?`)) return;
-      setDeletingId(role.id);
-      try {
-        await getApiClient().deleteRole(role.id);
-        await load();
-      } catch (error) {
-        window.alert(getRbacErrorMessage(error));
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [load],
-  );
+  const confirmDelete = useCallback(async () => {
+    if (!pendingDelete || pendingDelete.isSystem) return;
+    setDeletingId(pendingDelete.id);
+    try {
+      await getApiClient().deleteRole(pendingDelete.id);
+      toast({
+        title: 'Rôle supprimé',
+        message: `Le rôle « ${pendingDelete.name} » a été supprimé.`,
+        variant: 'success',
+      });
+      setPendingDelete(null);
+      await load();
+    } catch (error) {
+      toast({
+        title: 'Échec de la suppression',
+        message: getRbacErrorMessage(error),
+        variant: 'error',
+      });
+    } finally {
+      setDeletingId(null);
+    }
+  }, [pendingDelete, load, toast]);
 
   const columns = useMemo<ColumnDef<Role, unknown>[]>(
     () => [
@@ -95,7 +105,9 @@ export function RolesList() {
         accessorKey: 'name',
         header: 'Nom',
         cell: ({ row }) => (
-          <span className="font-medium text-atg-fg">{row.original.name}</span>
+          <div className="flex flex-wrap items-center gap-2">
+            <RoleBadge code={row.original.code} name={row.original.name} />
+          </div>
         ),
       },
       {
@@ -123,7 +135,7 @@ export function RolesList() {
               {!role.isSystem ? (
                 <DataTableActionButton
                   action="delete"
-                  onClick={() => void handleDelete(role)}
+                  onClick={() => setPendingDelete(role)}
                   disabled={deletingId === role.id}
                   loading={deletingId === role.id}
                 />
@@ -133,7 +145,7 @@ export function RolesList() {
         },
       },
     ],
-    [deletingId, handleDelete],
+    [deletingId],
   );
 
   const roles = state.status === 'ready' ? state.roles : [];
@@ -150,7 +162,6 @@ export function RolesList() {
             onChange={(e) => setSearchInput(e.target.value)}
           />
         </div>
-        <Button href="/systeme/roles/nouveau">Nouveau rôle</Button>
       </div>
 
       {state.status === 'error' ? (
@@ -181,6 +192,23 @@ export function RolesList() {
           ) : null}
         </>
       )}
+
+      <AlertDialog
+        open={pendingDelete !== null}
+        onOpenChange={(open) => {
+          if (!open) setPendingDelete(null);
+        }}
+        title="Supprimer le rôle"
+        description={
+          pendingDelete
+            ? `Supprimer définitivement le rôle « ${pendingDelete.name} » ?`
+            : undefined
+        }
+        confirmLabel="Supprimer"
+        variant="danger"
+        loading={deletingId !== null}
+        onConfirm={() => void confirmDelete()}
+      />
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { AdminPageIntro } from '../../../../../components/admin-page-intro';
+import { PageHeader } from '@africatourismgate/ui';
 import { RoleForm } from '../../../../../components/rbac/role-form';
 
 export const metadata: Metadata = {
@@ -9,7 +9,10 @@ export const metadata: Metadata = {
 export default function NouveauRolePage() {
   return (
     <div>
-      <AdminPageIntro description={"Créer un rôle personnalisé."} />
+      <PageHeader
+        title="Nouveau rôle"
+        description="Créer un rôle personnalisé et définir ses permissions."
+      />
       <RoleForm mode="create" />
     </div>
   );

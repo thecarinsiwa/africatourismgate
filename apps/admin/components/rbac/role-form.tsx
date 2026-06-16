@@ -1,13 +1,15 @@
 'use client';
 
-import { Button, Input } from '@africatourismgate/ui';
+import { Button, Input, AlertDialog } from '@africatourismgate/ui';
 import type { CreateRoleRequest, Role, UpdateRoleRequest } from '@africatourismgate/types';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
+import { RoleBadge } from './role-badge';
 import { getApiClient } from '../../lib/auth/api';
 import { getRbacErrorMessage } from '../../lib/rbac-errors';
 import { PermissionMatrix } from './permission-matrix';
 import { RbacSubnav } from './rbac-subnav';
+import { useUnsavedChangesGuard } from './use-unsaved-changes-guard';
 
 type RoleFormValues = {
   code: string;
@@ -37,6 +39,14 @@ export function RoleForm({ mode, roleId, initialRole }: RoleFormProps) {
   );
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [matrixDirty, setMatrixDirty] = useState(false);
+  const {
+    dialogOpen,
+    setDialogOpen,
+    requestAction,
+    confirmDiscard,
+    cancelDiscard,
+  } = useUnsavedChangesGuard(matrixDirty);
 
   const isSystem = initialRole?.isSystem ?? false;
   const readOnly = mode === 'edit' && isSystem;
@@ -97,7 +107,17 @@ export function RoleForm({ mode, roleId, initialRole }: RoleFormProps) {
 
   return (
     <div className="space-y-8">
-      <RbacSubnav />
+      <RbacSubnav
+        onNavigate={matrixDirty ? (_href, proceed) => requestAction(proceed) : undefined}
+      />
+      {mode === 'edit' && initialRole ? (
+        <div className="mb-6 flex flex-wrap items-center gap-3">
+          <RoleBadge code={initialRole.code} name={initialRole.name} showCode />
+          {initialRole.isSystem ? (
+            <span className="text-sm text-atg-muted">Rôle système (lecture seule)</span>
+          ) : null}
+        </div>
+      ) : null}
       <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
         {formError ? (
           <p role="alert" className="text-sm text-red-600">
@@ -144,7 +164,11 @@ export function RoleForm({ mode, roleId, initialRole }: RoleFormProps) {
             <Button type="submit" loading={submitting}>
               {mode === 'create' ? 'Créer le rôle' : 'Enregistrer'}
             </Button>
-            <Button type="button" variant="outline" href="/systeme/roles">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => requestAction(() => router.push('/systeme/roles'))}
+            >
               Annuler
             </Button>
           </div>
@@ -152,8 +176,24 @@ export function RoleForm({ mode, roleId, initialRole }: RoleFormProps) {
       </form>
 
       {mode === 'edit' && roleId && initialRole ? (
-        <PermissionMatrix roleId={roleId} isSystem={initialRole.isSystem} />
+        <PermissionMatrix
+          roleId={roleId}
+          isSystem={initialRole.isSystem}
+          onDirtyChange={setMatrixDirty}
+        />
       ) : null}
+
+      <AlertDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        title="Modifications non enregistrées"
+        description="Des changements n’ont pas été enregistrés. Quitter sans sauvegarder ?"
+        confirmLabel="Quitter sans enregistrer"
+        cancelLabel="Continuer l’édition"
+        variant="danger"
+        onConfirm={confirmDiscard}
+        onCancel={cancelDiscard}
+      />
     </div>
   );
 }
