@@ -199,9 +199,11 @@ export function AuthVisualIconsField({
                   onChange={(event) => {
                     const file = event.target.files?.[0];
                     if (!file) return;
-                    void onUploadImage(index, file).then((url) => {
-                      updateIcon(index, { imageUrl: url });
-                    });
+                    void onUploadImage(index, file)
+                      .then((url) => {
+                        updateIcon(index, { imageUrl: url });
+                      })
+                      .catch(() => undefined);
                     event.target.value = '';
                   }}
                 />
