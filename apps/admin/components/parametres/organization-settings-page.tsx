@@ -1,11 +1,13 @@
 'use client';
 
 import type { OrganizationListItem } from '@africatourismgate/types';
+import { AlertDialog } from '@africatourismgate/ui';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { useSetAdminPageMeta } from '../admin-page-meta-context';
 import { getApiClient } from '../../lib/auth/api';
 import { getOrganizationSettingsErrorMessage } from '../../lib/organization-settings-errors';
+import { useUnsavedChangesGuard } from '../rbac/use-unsaved-changes-guard';
 import { ParametresPageLayout } from './parametres-subnav';
 import {
   OrganizationSettingsForm,
@@ -19,6 +21,9 @@ export function OrganizationSettingsPage() {
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [organizationId, setOrganizationId] = useState<string | null>(null);
   const [organizations, setOrganizations] = useState<OrganizationListItem[]>([]);
+  const [formDirty, setFormDirty] = useState(false);
+  const { dialogOpen, setDialogOpen, requestAction, confirmDiscard, cancelDiscard } =
+    useUnsavedChangesGuard(formDirty);
 
   useSetAdminPageMeta({ title: 'Paramètres' });
 
@@ -98,16 +103,32 @@ export function OrganizationSettingsPage() {
   }
 
   return (
-    <ParametresPageLayout>
-      <p className="mb-8 text-sm text-atg-muted">
-        Configuration de l’organisation : coordonnées, locale, réservation et branding.
-      </p>
-      <OrganizationSettingsForm
-        organizationId={organizationId}
-        isSuperAdmin={isSuperAdmin}
-        organizations={organizations}
-        onOrganizationIdChange={isSuperAdmin ? handleOrganizationChange : undefined}
+    <>
+      <ParametresPageLayout
+        onSubnavNavigate={formDirty ? (_href, proceed) => requestAction(proceed) : undefined}
+      >
+        <p className="mb-8 text-sm text-atg-muted">
+          Configuration de l’organisation : coordonnées, locale, réservation et branding.
+        </p>
+        <OrganizationSettingsForm
+          organizationId={organizationId}
+          isSuperAdmin={isSuperAdmin}
+          organizations={organizations}
+          onOrganizationIdChange={isSuperAdmin ? handleOrganizationChange : undefined}
+          onDirtyChange={setFormDirty}
+        />
+      </ParametresPageLayout>
+      <AlertDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        title="Modifications non enregistrées"
+        description="Des changements n’ont pas été enregistrés. Quitter sans sauvegarder ?"
+        confirmLabel="Quitter sans enregistrer"
+        cancelLabel="Continuer l’édition"
+        variant="danger"
+        onConfirm={confirmDiscard}
+        onCancel={cancelDiscard}
       />
-    </ParametresPageLayout>
+    </>
   );
 }

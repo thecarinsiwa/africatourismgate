@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  AlertDialog,
   Button,
   DataTable,
   DataTableActionButton,
@@ -15,6 +16,7 @@ import { useSetAdminPageMeta } from '../admin-page-meta-context';
 import { getApiClient } from '../../lib/auth/api';
 import { getOrganizationSettingsErrorMessage } from '../../lib/organization-settings-errors';
 import { maskAccountNumberForDisplay } from '../../lib/bank-account-masking';
+import { useUnsavedChangesGuard } from '../rbac/use-unsaved-changes-guard';
 import { ParametresPageLayout } from './parametres-subnav';
 import { OrganizationBankAccountForm } from './organization-bank-account-form';
 import {
@@ -34,6 +36,9 @@ export function OrganizationBankAccountsList() {
   const [editing, setEditing] = useState<OrganizationBankAccount | null>(null);
   const [creating, setCreating] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [formDirty, setFormDirty] = useState(false);
+  const { dialogOpen, setDialogOpen, requestAction, confirmDiscard, cancelDiscard } =
+    useUnsavedChangesGuard(formDirty);
 
   useSetAdminPageMeta({ title: 'Comptes bancaires' });
 
@@ -217,70 +222,95 @@ export function OrganizationBankAccountsList() {
     'mb-6 w-full max-w-md rounded-lg border border-atg-border bg-atg-bg px-3 py-2 text-sm text-atg-fg focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary';
 
   return (
-    <ParametresPageLayout>
-      <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
-        <p className="text-sm text-atg-muted">
-          Comptes B2B de l’organisation. Le numéro de compte est partiellement masqué pour les
-          administrateurs d’organisation.
-        </p>
-        {!creating && !editing ? (
-          <Button onClick={() => setCreating(true)}>Nouveau compte</Button>
+    <>
+      <ParametresPageLayout
+        onSubnavNavigate={formDirty ? (_href, proceed) => requestAction(proceed) : undefined}
+      >
+        <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
+          <p className="text-sm text-atg-muted">
+            Comptes B2B de l’organisation. Le numéro de compte est partiellement masqué pour les
+            administrateurs d’organisation.
+          </p>
+          {!creating && !editing ? (
+            <Button onClick={() => setCreating(true)}>Nouveau compte</Button>
+          ) : null}
+        </div>
+
+        {isSuperAdmin && organizations.length > 0 ? (
+          <select
+            className={selectClass}
+            value={organizationId}
+            onChange={(e) => handleOrganizationChange(e.target.value)}
+            aria-label="Organisation"
+          >
+            {organizations.map((org) => (
+              <option key={org.id} value={org.id}>
+                {org.name}
+              </option>
+            ))}
+          </select>
         ) : null}
-      </div>
 
-      {isSuperAdmin && organizations.length > 0 ? (
-        <select
-          className={selectClass}
-          value={organizationId}
-          onChange={(e) => handleOrganizationChange(e.target.value)}
-          aria-label="Organisation"
-        >
-          {organizations.map((org) => (
-            <option key={org.id} value={org.id}>
-              {org.name}
-            </option>
-          ))}
-        </select>
-      ) : null}
+        {creating && organizationId ? (
+          <div className="mb-8">
+            <OrganizationBankAccountForm
+              organizationId={organizationId}
+              isSuperAdmin={isSuperAdmin}
+              onSuccess={() => {
+                setCreating(false);
+                setFormDirty(false);
+                void loadAccounts(organizationId);
+              }}
+              onCancel={() => {
+                setCreating(false);
+                setFormDirty(false);
+              }}
+              onDirtyChange={setFormDirty}
+            />
+          </div>
+        ) : null}
 
-      {creating && organizationId ? (
-        <div className="mb-8">
-          <OrganizationBankAccountForm
-            organizationId={organizationId}
-            isSuperAdmin={isSuperAdmin}
-            onSuccess={() => {
-              setCreating(false);
-              void loadAccounts(organizationId);
-            }}
-            onCancel={() => setCreating(false)}
-          />
-        </div>
-      ) : null}
+        {editing && organizationId ? (
+          <div className="mb-8">
+            <OrganizationBankAccountForm
+              organizationId={organizationId}
+              isSuperAdmin={isSuperAdmin}
+              account={editing}
+              onSuccess={() => {
+                setEditing(null);
+                setFormDirty(false);
+                void loadAccounts(organizationId);
+              }}
+              onCancel={() => {
+                setEditing(null);
+                setFormDirty(false);
+              }}
+              onDirtyChange={setFormDirty}
+            />
+          </div>
+        ) : null}
 
-      {editing && organizationId ? (
-        <div className="mb-8">
-          <OrganizationBankAccountForm
-            organizationId={organizationId}
-            isSuperAdmin={isSuperAdmin}
-            account={editing}
-            onSuccess={() => {
-              setEditing(null);
-              void loadAccounts(organizationId);
-            }}
-            onCancel={() => setEditing(null)}
-          />
-        </div>
-      ) : null}
-
-      {listError ? (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {listError}
-        </p>
-      ) : loading ? (
-        <p className="text-sm text-atg-muted">Chargement…</p>
-      ) : (
-        <DataTable columns={columns} data={accounts} emptyMessage="Aucun compte bancaire." />
-      )}
-    </ParametresPageLayout>
+        {listError ? (
+          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+            {listError}
+          </p>
+        ) : loading ? (
+          <p className="text-sm text-atg-muted">Chargement…</p>
+        ) : (
+          <DataTable columns={columns} data={accounts} emptyMessage="Aucun compte bancaire." />
+        )}
+      </ParametresPageLayout>
+      <AlertDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        title="Modifications non enregistrées"
+        description="Des changements n’ont pas été enregistrés. Quitter sans sauvegarder ?"
+        confirmLabel="Quitter sans enregistrer"
+        cancelLabel="Continuer l’édition"
+        variant="danger"
+        onConfirm={confirmDiscard}
+        onCancel={cancelDiscard}
+      />
+    </>
   );
 }

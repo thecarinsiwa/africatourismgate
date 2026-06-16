@@ -210,5 +210,26 @@
       "settings": "Paramètres",
       "defaultUser": "Utilisateur"
     }
+  },
+  "placeholderSections": {
+    "meta": {
+      "titleSuffix": "Africa Tourism Gate Admin",
+      "notFoundTitle": "Section introuvable — Africa Tourism Gate Admin"
+    },
+    "default": {
+      "title": "Section",
+      "description": "Module en cours de déploiement.",
+      "emptyTitle": "Bientôt disponible",
+      "emptyDescription": "Cette section sera accessible depuis le back-office dans une prochaine mise à jour."
+    },
+    "contenu": {
+      "messages": {
+        "title": "Messages support",
+        "description": "Échanges sur les tickets.",
+        "emptyTitle": "Messages dans les tickets",
+        "emptyDescription": "Les échanges avec les clients se font dans le fil de chaque ticket support. Ouvrez un ticket pour lire et répondre aux messages.",
+        "ctaLabel": "Voir les tickets"
+      }
+    }
   }
 }
