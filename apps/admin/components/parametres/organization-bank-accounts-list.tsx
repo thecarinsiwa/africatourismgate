@@ -14,6 +14,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useSetAdminPageMeta } from '../admin-page-meta-context';
 import { getApiClient } from '../../lib/auth/api';
 import { getOrganizationSettingsErrorMessage } from '../../lib/organization-settings-errors';
+import { maskAccountNumberForDisplay } from '../../lib/bank-account-masking';
 import { ParametresPageLayout } from './parametres-subnav';
 import { OrganizationBankAccountForm } from './organization-bank-account-form';
 import {
@@ -149,7 +150,9 @@ export function OrganizationBankAccountsList() {
         id: 'accountNumber',
         header: 'N° compte',
         cell: ({ row }) => (
-          <span className="font-mono text-sm">{row.original.accountNumber}</span>
+          <span className="font-mono text-sm">
+            {maskAccountNumberForDisplay(row.original.accountNumber)}
+          </span>
         ),
       },
       {
