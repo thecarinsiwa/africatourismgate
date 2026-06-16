@@ -40,11 +40,5 @@ export default function AdminSectionPage({ params }: PageProps) {
     notFound();
   }
 
-  return (
-    <DashboardSectionPage
-      title={section.title}
-      description={section.description}
-      segments={params.segments}
-    />
-  );
+  return <DashboardSectionPage segments={params.segments} />;
 }

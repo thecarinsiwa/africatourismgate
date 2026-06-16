@@ -1,40 +1,40 @@
 'use client';
 
-import { Button, EmptyState } from '@africatourismgate/ui';
-import { AdminPageIntro } from './admin-page-intro';
+import { Button, EmptyState, PageHeader } from '@africatourismgate/ui';
+import { useTranslations } from 'next-intl';
 import { getSectionPlaceholderConfig } from './admin-section-placeholder';
-import { SetAdminPageMeta } from './set-admin-page-meta';
+import { getPlaceholderSectionMessages } from '../lib/placeholder-section-i18n';
 
 type DashboardSectionPageProps = {
-  title: string;
-  description?: string;
-  /** Chemin section (ex. `['contenu', 'messages']`) pour illustration et CTA. */
-  segments?: string[];
+  /** Chemin section (ex. `['contenu', 'messages']`) pour illustration, textes i18n et CTA. */
+  segments: string[];
 };
 
-export function DashboardSectionPage({
-  title,
-  description = 'Module en cours de déploiement.',
-  segments = [],
-}: DashboardSectionPageProps) {
+export function DashboardSectionPage({ segments }: DashboardSectionPageProps) {
   const sectionKey = segments.join('/');
   const placeholder = getSectionPlaceholderConfig(sectionKey);
+  const tPlaceholder = useTranslations('placeholderSections');
+  const tNav = useTranslations('nav');
+  const messages = getPlaceholderSectionMessages({
+    sectionPath: sectionKey,
+    tPlaceholder,
+    tNav,
+  });
 
   return (
-    <>
-      <SetAdminPageMeta title={title} />
-      <AdminPageIntro description={description} />
+    <div>
+      <PageHeader title={messages.title} description={messages.description} />
       <EmptyState
         className="mt-6"
-        title={placeholder.emptyTitle ?? title}
-        description={placeholder.emptyDescription ?? description}
+        title={messages.emptyTitle}
+        description={messages.emptyDescription}
         icon={placeholder.icon}
         action={
-          placeholder.cta ? (
-            <Button href={placeholder.cta.href}>{placeholder.cta.label}</Button>
+          placeholder.ctaHref && messages.ctaLabel ? (
+            <Button href={placeholder.ctaHref}>{messages.ctaLabel}</Button>
           ) : undefined
         }
       />
-    </>
+    </div>
   );
 }
