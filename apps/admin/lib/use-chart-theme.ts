@@ -11,6 +11,14 @@ export type ChartThemeColors = {
   cursor: string;
 };
 
+const EMPTY_CHART_THEME: ChartThemeColors = {
+  bookings: '',
+  revenue: '',
+  grid: '',
+  tick: '',
+  cursor: '',
+};
+
 const CSS_VAR_NAMES = {
   bookings: '--atg-primary',
   revenue: '--atg-success',
@@ -56,7 +64,7 @@ function readChartTheme(): ChartThemeColors {
  */
 export function useChartTheme(): ChartThemeColors {
   const { resolvedTheme } = useTheme();
-  const [colors, setColors] = useState<ChartThemeColors>(readChartTheme);
+  const [colors, setColors] = useState<ChartThemeColors>(EMPTY_CHART_THEME);
 
   const sync = useCallback(() => {
     setColors(readChartTheme());

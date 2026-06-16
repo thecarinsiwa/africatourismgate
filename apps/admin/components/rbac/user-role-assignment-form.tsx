@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import { Button, Input } from '@africatourismgate/ui';
 import type {
   CreateUserRoleAssignmentRequest,
@@ -7,16 +9,10 @@ import type {
   ScopeType,
   User,
 } from '@africatourismgate/types';
-import { useCallback, useEffect, useId, useState } from 'react';
+import { useTranslations } from 'next-intl';
+import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { useRbacScopeTypeLabels } from '../../lib/i18n/use-module-labels';
 import { getApiClient } from '../../lib/auth/api';
-import { getRbacErrorMessage } from '../../lib/rbac-errors';
-
-const scopeLabels: Record<ScopeType, string> = {
-  global: 'Global',
-  property: 'Propriété',
-  agency: 'Agence',
-  support_queue: 'File support',
-};
 
 type UserRoleAssignmentFormProps = {
   defaultUserId?: string;
@@ -29,6 +25,9 @@ export function UserRoleAssignmentForm({
   lockUser = false,
   onSuccess,
 }: UserRoleAssignmentFormProps) {
+  const { rbac: getRbacErrorMessage } = useAdminErrorMessages();
+  const tRoles = useTranslations('modules.users.roles');
+  const scopeTypeLabels = useRbacScopeTypeLabels();
   const userFieldId = useId();
   const roleFieldId = useId();
   const scopeTypeId = useId();
@@ -42,6 +41,15 @@ export function UserRoleAssignmentForm({
   const [error, setError] = useState<string | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  const scopeTypeOptions = useMemo(
+    () =>
+      (['global', 'property', 'agency', 'support_queue'] as const).map((value) => ({
+        value,
+        label: scopeTypeLabels[value],
+      })),
+    [scopeTypeLabels],
+  );
 
   const selectedRole = roles.find((r) => r.id === roleId);
   const isSuperAdminRole = selectedRole?.code === 'super_admin';
@@ -81,25 +89,25 @@ export function UserRoleAssignmentForm({
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [getRbacErrorMessage]);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
       setError(null);
       if (!userId || !roleId) {
-        setError('Utilisateur et rôle sont obligatoires.');
+        setError(tRoles('validation.userAndRoleRequired'));
         return;
       }
       if (scopeType !== 'global' && !scopeId.trim()) {
-        setError("L'identifiant de scope est obligatoire pour ce périmètre.");
+        setError(tRoles('validation.scopeIdRequired'));
         return;
       }
 
       if (isSuperAdminRole) {
         const label = selectedRole?.name ?? 'super_admin';
         const confirmed = window.confirm(
-          `Attribuer le rôle « ${label} » ? Cet utilisateur obtiendra un accès complet à la plateforme.`,
+          tRoles('superAdminConfirm', { roleName: label }),
         );
         if (!confirmed) return;
       }
@@ -135,12 +143,14 @@ export function UserRoleAssignmentForm({
       onSuccess,
       isSuperAdminRole,
       selectedRole?.name,
+      tRoles,
+      getRbacErrorMessage,
     ],
   );
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 rounded-lg border border-atg-border p-4">
-      <h3 className="text-sm font-semibold text-atg-fg">Assigner un rôle</h3>
+      <h3 className="text-sm font-semibold text-atg-fg">{tRoles('assignFormTitle')}</h3>
       {loadError ? (
         <p role="alert" className="text-sm text-red-600">
           {loadError}
@@ -154,7 +164,7 @@ export function UserRoleAssignmentForm({
 
       <div>
         <label htmlFor={userFieldId} className="mb-2 block text-sm font-medium text-atg-fg">
-          Utilisateur
+          {tRoles('user')}
         </label>
         <select
           id={userFieldId}
@@ -163,7 +173,7 @@ export function UserRoleAssignmentForm({
           disabled={lockUser}
           className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm disabled:opacity-60"
         >
-          <option value="">Sélectionner…</option>
+          <option value="">{tRoles('selectPlaceholder')}</option>
           {users.map((u) => (
             <option key={u.id} value={u.id}>
               {u.firstName} {u.lastName} — {u.email}
@@ -174,7 +184,7 @@ export function UserRoleAssignmentForm({
 
       <div>
         <label htmlFor={roleFieldId} className="mb-2 block text-sm font-medium text-atg-fg">
-          Rôle
+          {tRoles('role')}
         </label>
         <select
           id={roleFieldId}
@@ -190,7 +200,7 @@ export function UserRoleAssignmentForm({
           }}
           className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm"
         >
-          <option value="">Sélectionner…</option>
+          <option value="">{tRoles('selectPlaceholder')}</option>
           {roles.map((r) => (
             <option key={r.id} value={r.id}>
               {r.name} ({r.code})
@@ -199,7 +209,7 @@ export function UserRoleAssignmentForm({
         </select>
         {isSuperAdminRole ? (
           <p className="mt-1 text-xs text-amber-700 dark:text-amber-400">
-            Réservé aux super administrateurs — périmètre forcé à Global.
+            {tRoles('superAdminWarning')}
           </p>
         ) : null}
       </div>
@@ -207,7 +217,7 @@ export function UserRoleAssignmentForm({
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor={scopeTypeId} className="mb-2 block text-sm font-medium text-atg-fg">
-            Périmètre (scope)
+            {tRoles('scope')}
           </label>
           <select
             id={scopeTypeId}
@@ -219,32 +229,32 @@ export function UserRoleAssignmentForm({
             }}
             className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm disabled:opacity-60"
           >
-            {(Object.keys(scopeLabels) as ScopeType[]).map((s) => (
-              <option key={s} value={s}>
-                {scopeLabels[s]}
+            {scopeTypeOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
               </option>
             ))}
           </select>
         </div>
         {scopeType !== 'global' ? (
           <Input
-            label="ID du scope (UUID)"
+            label={tRoles('scopeId')}
             value={scopeId}
             onChange={(e) => setScopeId(e.target.value)}
-            hint="Ex. ID propriété, agence ou file support."
+            hint={tRoles('scopeIdHint')}
           />
         ) : null}
       </div>
 
       <Input
-        label="Expiration (optionnel)"
+        label={tRoles('expiresAt')}
         type="datetime-local"
         value={expiresAt}
         onChange={(e) => setExpiresAt(e.target.value)}
       />
 
       <Button type="submit" loading={submitting} size="sm">
-        Assigner
+        {tRoles('assignFormTitle')}
       </Button>
     </form>
   );

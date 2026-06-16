@@ -1,5 +1,8 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+import { useAccountStatusLabels } from '../../lib/i18n/use-module-labels';
+
 import type { User, UserStatus } from '@africatourismgate/types';
 import {
   Avatar,
@@ -11,11 +14,11 @@ import {
   TabsTrigger,
 } from '@africatourismgate/ui';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
-import { getUsersErrorMessage } from '../../lib/users-errors';
 import { UserRoleAssignmentsPanel } from '../rbac/user-role-assignments-panel';
 import { UserAddressesList } from './user-addresses-list';
 import { UserForm } from './user-form';
@@ -29,12 +32,6 @@ type UserEditPageProps = {
 const TAB_VALUES = ['profil', 'adresses', 'paiement', 'sessions', 'roles'] as const;
 type TabValue = (typeof TAB_VALUES)[number];
 
-const statusLabels: Record<UserStatus, string> = {
-  active: 'Actif',
-  suspended: 'Suspendu',
-  deleted: 'Supprimé',
-};
-
 const statusVariants: Record<UserStatus, 'success' | 'warning' | 'danger'> = {
   active: 'success',
   suspended: 'warning',
@@ -46,6 +43,10 @@ function isTabValue(value: string | null): value is TabValue {
 }
 
 export function UserEditPage({ userId }: UserEditPageProps) {
+  const { users: getUsersErrorMessage } = useAdminErrorMessages();
+  const tDetail = useTranslations('modules.users.detail');
+  const tActions = useTranslations('common.actions');
+  const statusLabels = useAccountStatusLabels();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -60,7 +61,7 @@ export function UserEditPage({ userId }: UserEditPageProps) {
 
   useAdminEditPageMeta({
     ready: state.status === 'ready',
-    title: "Modifier l'utilisateur",
+    title: tDetail('title'),
     entityLabel: state.status === 'ready' ? state.user.email : undefined,
   });
 
@@ -84,7 +85,7 @@ export function UserEditPage({ userId }: UserEditPageProps) {
     return () => {
       cancelled = true;
     };
-  }, [userId]);
+  }, [userId, getUsersErrorMessage]);
 
   const handleTabChange = useCallback(
     (tab: string) => {
@@ -126,7 +127,7 @@ export function UserEditPage({ userId }: UserEditPageProps) {
           href="/utilisateurs"
           className="text-sm font-medium text-primary hover:text-primary-hover"
         >
-          ← Retour à la liste
+          ← {tActions('back')}
         </Link>
       </div>
     );
@@ -156,12 +157,12 @@ export function UserEditPage({ userId }: UserEditPageProps) {
       </div>
 
       <Tabs value={activeTab} onValueChange={handleTabChange}>
-        <TabsList aria-label="Sections du compte utilisateur">
-          <TabsTrigger value="profil">Profil</TabsTrigger>
-          <TabsTrigger value="adresses">Adresses</TabsTrigger>
-          <TabsTrigger value="paiement">Moyens paiement</TabsTrigger>
-          <TabsTrigger value="sessions">Sessions</TabsTrigger>
-          <TabsTrigger value="roles">Rôles</TabsTrigger>
+        <TabsList aria-label={tDetail('tabsAria')}>
+          <TabsTrigger value="profil">{tDetail('tabs.profile')}</TabsTrigger>
+          <TabsTrigger value="adresses">{tDetail('tabs.addresses')}</TabsTrigger>
+          <TabsTrigger value="paiement">{tDetail('tabs.paymentMethods')}</TabsTrigger>
+          <TabsTrigger value="sessions">{tDetail('tabs.sessions')}</TabsTrigger>
+          <TabsTrigger value="roles">{tDetail('tabs.roles')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="profil">

@@ -1,11 +1,13 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import { Button, Card, useToast } from '@africatourismgate/ui';
 import type { Amenity } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getAmenityIcon } from '../../lib/amenity-icon-map';
 import { getApiClient } from '../../lib/auth/api';
-import { getHebergementsErrorMessage } from '../../lib/hebergements-errors';
 
 type PropertyAmenitiesSectionProps = {
   propertyId: string;
@@ -16,6 +18,10 @@ export function PropertyAmenitiesSection({
   propertyId,
   embedded,
 }: PropertyAmenitiesSectionProps) {
+  const { hebergements: getHebergementsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.properties.sections.amenities');
+  const tCommon = useTranslations('modules.common');
+  const tToast = useTranslations('modules.common.toast');
   const { toast } = useToast();
   const [amenities, setAmenities] = useState<Amenity[]>([]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -39,7 +45,7 @@ export function PropertyAmenitiesSection({
     } finally {
       setLoading(false);
     }
-  }, [propertyId]);
+  }, [propertyId, getHebergementsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -68,8 +74,8 @@ export function PropertyAmenitiesSection({
         amenityIds: Array.from(selected),
       });
       toast({
-        title: 'Équipements enregistrés',
-        message: 'La sélection a été mise à jour.',
+        title: tToast('amenitiesSavedTitle'),
+        message: tToast('amenitiesSavedMessage'),
         variant: 'success',
       });
       await load();
@@ -77,7 +83,7 @@ export function PropertyAmenitiesSection({
       const message = getHebergementsErrorMessage(err);
       setError(message);
       toast({
-        title: 'Erreur d’enregistrement',
+        title: tToast('saveError'),
         message,
         variant: 'error',
       });
@@ -94,13 +100,11 @@ export function PropertyAmenitiesSection({
     >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-atg-fg">Équipements</h2>
-          <p className="mt-1 text-sm text-atg-muted">
-            Sélectionnez les équipements disponibles pour cet hébergement.
-          </p>
+          <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
+          <p className="mt-1 text-sm text-atg-muted">{t('intro')}</p>
         </div>
         <Button type="button" onClick={() => void handleSave()} loading={saving}>
-          Enregistrer la sélection
+          {t('saveSelection')}
         </Button>
       </div>
 
@@ -112,12 +116,12 @@ export function PropertyAmenitiesSection({
 
       <Card variant="dashboard">
         {loading ? (
-          <p className="text-sm text-atg-muted">Chargement…</p>
+          <p className="text-sm text-atg-muted">{tCommon('loading')}</p>
         ) : sorted.length === 0 ? (
           <p className="text-sm text-atg-muted">
-            Aucun équipement global.{' '}
+            {t('emptyGlobal')}{' '}
             <a href="/hebergements/equipements" className="text-primary hover:underline">
-              Créer des équipements
+              {t('createLink')}
             </a>
           </p>
         ) : (

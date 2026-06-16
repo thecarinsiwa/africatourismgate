@@ -1,16 +1,11 @@
 import type { Metadata } from 'next';
-import { AdminPageIntro } from '../../../../components/admin-page-intro';
-import { UserForm } from '../../../../components/users/user-form';
+import { getAdminPageMetadata } from '../../../../lib/i18n/admin-page-i18n';
+import { NouveauUtilisateurPageContent } from '../../../../components/pages/utilisateurs-nouveau-page-content';
 
-export const metadata: Metadata = {
-  title: 'Nouvel utilisateur — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('utilisateurs/nouveau');
+}
 
-export default function NouvelUtilisateurPage() {
-  return (
-    <div>
-      <AdminPageIntro description={"Créer un compte utilisateur."} />
-      <UserForm mode="create" />
-    </div>
-  );
+export default function Page() {
+  return <NouveauUtilisateurPageContent />;
 }

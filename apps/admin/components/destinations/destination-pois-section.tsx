@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Button,
   Card,
@@ -10,9 +12,9 @@ import {
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { PointOfInterest } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getDestinationsErrorMessage } from '../../lib/destinations-errors';
 
 type PoiFormValues = {
   name: string;
@@ -33,17 +35,18 @@ function parseCoord(value: string): number | undefined {
   return Number.isFinite(num) ? num : undefined;
 }
 
-function formatCoord(value: string | null): string {
-  if (value === null || value === '') return '—';
-  const num = Number(value);
-  return Number.isFinite(num) ? num.toFixed(5) : value;
-}
-
 type DestinationPoisSectionProps = {
   destinationId: string;
 };
 
 export function DestinationPoisSection({ destinationId }: DestinationPoisSectionProps) {
+  const { destinations: getDestinationsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.destinations.sections.pois');
+  const tForm = useTranslations('modules.destinations.form');
+  const tCommon = useTranslations('modules.common');
+  const tActions = useTranslations('common.actions');
+  const tLoading = useTranslations('common.loading');
+  const emptyDash = tCommon('empty.dash');
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -59,6 +62,15 @@ export function DestinationPoisSection({ destinationId }: DestinationPoisSection
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
+  const formatCoord = useCallback(
+    (value: string | null): string => {
+      if (value === null || value === '') return emptyDash;
+      const num = Number(value);
+      return Number.isFinite(num) ? num.toFixed(5) : value;
+    },
+    [emptyDash],
+  );
+
   const load = useCallback(async () => {
     setState({ status: 'loading' });
     try {
@@ -71,7 +83,7 @@ export function DestinationPoisSection({ destinationId }: DestinationPoisSection
     } catch (error) {
       setState({ status: 'error', message: getDestinationsErrorMessage(error) });
     }
-  }, [destinationId]);
+  }, [destinationId, getDestinationsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -105,19 +117,19 @@ export function DestinationPoisSection({ destinationId }: DestinationPoisSection
   function validatePoiForm(): boolean {
     const errors: Partial<Record<keyof PoiFormValues, string>> = {};
     if (!formValues.name.trim()) {
-      errors.name = 'Le nom est obligatoire.';
+      errors.name = tCommon('validation.nameRequired');
     }
     const lat = parseCoord(formValues.latitude);
     const lng = parseCoord(formValues.longitude);
     if (formValues.latitude.trim() && lat === undefined) {
-      errors.latitude = 'Latitude invalide (-90 à 90).';
+      errors.latitude = tCommon('validation.latitudeInvalid');
     } else if (lat !== undefined && (lat < -90 || lat > 90)) {
-      errors.latitude = 'Latitude hors plage (-90 à 90).';
+      errors.latitude = tCommon('validation.latitudeOutOfRange');
     }
     if (formValues.longitude.trim() && lng === undefined) {
-      errors.longitude = 'Longitude invalide (-180 à 180).';
+      errors.longitude = tCommon('validation.longitudeInvalid');
     } else if (lng !== undefined && (lng < -180 || lng > 180)) {
-      errors.longitude = 'Longitude hors plage (-180 à 180).';
+      errors.longitude = tCommon('validation.longitudeOutOfRange');
     }
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
@@ -158,7 +170,7 @@ export function DestinationPoisSection({ destinationId }: DestinationPoisSection
 
   const handleDelete = useCallback(
     async (poi: PointOfInterest) => {
-      if (!window.confirm(`Supprimer le point d’intérêt « ${poi.name} » ?`)) {
+      if (!window.confirm(t('deleteConfirm', { name: poi.name }))) {
         return;
       }
       setDeletingId(poi.id);
@@ -171,21 +183,21 @@ export function DestinationPoisSection({ destinationId }: DestinationPoisSection
         setDeletingId(null);
       }
     },
-    [load],
+    [load, t, getDestinationsErrorMessage],
   );
 
   const columns = useMemo<ColumnDef<PointOfInterest, unknown>[]>(
     () => [
       {
         accessorKey: 'name',
-        header: 'Nom',
+        header: tCommon('columns.name'),
         cell: ({ row }) => (
           <span className="font-medium text-atg-fg">{row.original.name}</span>
         ),
       },
       {
         id: 'latitude',
-        header: 'Latitude',
+        header: tCommon('form.latitude'),
         meta: { align: 'right' },
         cell: ({ row }) => (
           <span className="font-mono text-xs tabular-nums text-atg-muted">
@@ -195,7 +207,7 @@ export function DestinationPoisSection({ destinationId }: DestinationPoisSection
       },
       {
         id: 'longitude',
-        header: 'Longitude',
+        header: tCommon('form.longitude'),
         meta: { align: 'right' },
         cell: ({ row }) => (
           <span className="font-mono text-xs tabular-nums text-atg-muted">
@@ -205,7 +217,7 @@ export function DestinationPoisSection({ destinationId }: DestinationPoisSection
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tCommon('columns.actions'),
         meta: { align: 'right' },
         cell: ({ row }) => {
           const poi = row.original;
@@ -223,7 +235,7 @@ export function DestinationPoisSection({ destinationId }: DestinationPoisSection
         },
       },
     ],
-    [deletingId, handleDelete],
+    [deletingId, formatCoord, handleDelete, tCommon],
   );
 
   const pois = state.status === 'ready' ? state.pois : [];
@@ -232,14 +244,12 @@ export function DestinationPoisSection({ destinationId }: DestinationPoisSection
     <section className="mt-12 space-y-6 border-t border-atg-border pt-10">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-atg-fg">Points d’intérêt</h2>
-          <p className="mt-1 text-sm text-atg-muted">
-            Lieux remarquables liés à cette destination (coordonnées optionnelles).
-          </p>
+          <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
+          <p className="mt-1 text-sm text-atg-muted">{t('intro')}</p>
         </div>
         {!showForm ? (
           <Button type="button" onClick={openCreateForm}>
-            Ajouter un POI
+            {t('addPoi')}
           </Button>
         ) : null}
       </div>
@@ -254,7 +264,7 @@ export function DestinationPoisSection({ destinationId }: DestinationPoisSection
         <Card variant="dashboard" className="max-w-2xl">
           <form onSubmit={handleSubmitPoi} className="space-y-4">
             <h3 className="text-sm font-medium text-atg-fg">
-              {editingPoi ? 'Modifier le point d’intérêt' : 'Nouveau point d’intérêt'}
+              {editingPoi ? t('edit') : t('new')}
             </h3>
             {formError ? (
               <p
@@ -265,7 +275,7 @@ export function DestinationPoisSection({ destinationId }: DestinationPoisSection
               </p>
             ) : null}
             <Input
-              label="Nom"
+              label={tCommon('columns.name')}
               name="poiName"
               value={formValues.name}
               onChange={(e) => {
@@ -277,7 +287,7 @@ export function DestinationPoisSection({ destinationId }: DestinationPoisSection
             />
             <div className="grid gap-4 sm:grid-cols-2">
               <Input
-                label="Latitude"
+                label={tCommon('form.latitude')}
                 name="latitude"
                 type="number"
                 step="any"
@@ -287,11 +297,11 @@ export function DestinationPoisSection({ destinationId }: DestinationPoisSection
                   setFieldErrors((prev) => ({ ...prev, latitude: undefined }));
                 }}
                 placeholder="-4.3058"
-                hint="Optionnel, -90 à 90"
+                hint={tForm('latitudeHint')}
                 error={fieldErrors.latitude}
               />
               <Input
-                label="Longitude"
+                label={tCommon('form.longitude')}
                 name="longitude"
                 type="number"
                 step="any"
@@ -301,16 +311,16 @@ export function DestinationPoisSection({ destinationId }: DestinationPoisSection
                   setFieldErrors((prev) => ({ ...prev, longitude: undefined }));
                 }}
                 placeholder="15.3000"
-                hint="Optionnel, -180 à 180"
+                hint={tForm('longitudeHint')}
                 error={fieldErrors.longitude}
               />
             </div>
             <div className="flex flex-wrap gap-3">
-              <Button type="submit" loading={submitting} loadingText="Enregistrement…">
-                {editingPoi ? 'Enregistrer' : 'Ajouter'}
+              <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>
+                {editingPoi ? tActions('save') : tActions('create')}
               </Button>
               <Button type="button" variant="outline" onClick={resetForm}>
-                Annuler
+                {tActions('cancel')}
               </Button>
             </div>
           </form>
@@ -327,9 +337,9 @@ export function DestinationPoisSection({ destinationId }: DestinationPoisSection
             columns={columns}
             data={pois}
             isLoading={state.status === 'loading'}
-            emptyMessage="Aucun point d’intérêt pour cette destination."
+            emptyMessage={t('empty')}
             getRowId={(row) => row.id}
-            aria-label="Points d’intérêt de la destination"
+            aria-label={t('ariaLabel')}
           />
         </Card>
       )}

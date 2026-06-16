@@ -1,18 +1,24 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Button,
   Card,
   useToast,
 } from '@africatourismgate/ui';
 import type { Permission } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  useRbacPermissionActionLabels,
+  useRbacPermissionDomainLabels,
+} from '../../lib/i18n/use-module-labels';
 import {
   formatPermissionAction,
   formatPermissionDomain,
 } from '../../lib/rbac-display';
 import { getApiClient } from '../../lib/auth/api';
-import { getRbacErrorMessage } from '../../lib/rbac-errors';
 
 type PermissionMatrixProps = {
   roleId: string;
@@ -40,6 +46,14 @@ export function PermissionMatrix({
   isSystem,
   onDirtyChange,
 }: PermissionMatrixProps) {
+  const { rbac: getRbacErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.rbac.matrix');
+  const tUnsaved = useTranslations('modules.rbac.unsavedChanges');
+  const tCommon = useTranslations('modules.common');
+  const tActions = useTranslations('common.actions');
+  const domainLabels = useRbacPermissionDomainLabels();
+  const actionLabels = useRbacPermissionActionLabels();
+  const emptyDash = tCommon('empty.dash');
   const { toast } = useToast();
   const readOnly = isSystem;
   const [permissions, setPermissions] = useState<Permission[]>([]);
@@ -83,7 +97,7 @@ export function PermissionMatrix({
     } finally {
       setLoading(false);
     }
-  }, [roleId]);
+  }, [roleId, getRbacErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -104,12 +118,12 @@ export function PermissionMatrix({
         const permissionByAction = new Map(sorted.map((perm) => [perm.action, perm]));
         return {
           resource,
-          label: formatPermissionDomain(resource),
+          label: formatPermissionDomain(resource, domainLabels, emptyDash),
           actions: sorted.map((perm) => perm.action),
           permissionByAction,
         };
       });
-  }, [permissions]);
+  }, [permissions, domainLabels, emptyDash]);
 
   function togglePermission(permissionId: string) {
     if (readOnly) return;
@@ -156,15 +170,15 @@ export function PermissionMatrix({
       setSavedIds(ids);
       setSelectedIds(new Set(ids));
       toast({
-        title: 'Permissions enregistrées',
-        message: 'La matrice du rôle a été mise à jour.',
+        title: t('toast.savedTitle'),
+        message: t('toast.savedMessage'),
         variant: 'success',
       });
     } catch (err) {
       const message = getRbacErrorMessage(err);
       setError(message);
       toast({
-        title: 'Échec de l’enregistrement',
+        title: t('toast.saveFailedTitle'),
         message,
         variant: 'error',
       });
@@ -174,18 +188,16 @@ export function PermissionMatrix({
   }
 
   if (loading) {
-    return <p className="text-sm text-atg-muted">Chargement de la matrice…</p>;
+    return <p className="text-sm text-atg-muted">{t('loading')}</p>;
   }
 
   return (
     <>
       <Card variant="dashboard" padding="lg" className="space-y-6">
         <div>
-          <h2 className="text-lg font-semibold text-atg-fg">Matrice des permissions</h2>
+          <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
           <p className="text-sm text-atg-muted">
-            {readOnly
-              ? 'Rôle système : consultation seule.'
-              : 'Cochez les permissions accordées à ce rôle, regroupées par domaine.'}
+            {readOnly ? t('descriptionReadOnly') : t('descriptionEditable')}
           </p>
         </div>
 
@@ -216,26 +228,26 @@ export function PermissionMatrix({
                   <table className="w-full min-w-[360px] border-collapse text-sm">
                     <thead>
                       <tr className="border-b border-atg-border text-left text-atg-muted">
-                        <th className="py-2 pr-4 font-medium">Périmètre</th>
+                        <th className="py-2 pr-4 font-medium">{t('columns.scope')}</th>
                         {group.actions.map((action) => (
                           <th
                             key={action}
                             className="px-2 py-2 text-center font-medium whitespace-nowrap"
                           >
-                            {formatPermissionAction(action)}
+                            {formatPermissionAction(action, actionLabels)}
                           </th>
                         ))}
                       </tr>
                     </thead>
                     <tbody>
                       <tr className="border-b border-atg-border/60">
-                        <td className="py-2 pr-4 font-medium text-atg-fg">Tout le domaine</td>
+                        <td className="py-2 pr-4 font-medium text-atg-fg">{t('wholeDomain')}</td>
                         {group.actions.map((action) => {
                           const permission = group.permissionByAction.get(action);
                           if (!permission) {
                             return (
                               <td key={action} className="px-2 py-2 text-center text-atg-muted">
-                                —
+                                {emptyDash}
                               </td>
                             );
                           }
@@ -253,7 +265,10 @@ export function PermissionMatrix({
                                 onChange={(event) =>
                                   toggleDomain(group, event.target.checked)
                                 }
-                                aria-label={`Tout ${group.label} — ${formatPermissionAction(action)}`}
+                                aria-label={t('ariaToggleDomain', {
+                                  domain: group.label,
+                                  action: formatPermissionAction(action, actionLabels),
+                                })}
                                 className="h-4 w-4 rounded border-atg-border"
                               />
                             </td>
@@ -261,13 +276,13 @@ export function PermissionMatrix({
                         })}
                       </tr>
                       <tr>
-                        <td className="py-2 pr-4 text-atg-muted">Par action</td>
+                        <td className="py-2 pr-4 text-atg-muted">{t('perAction')}</td>
                         {group.actions.map((action) => {
                           const permission = group.permissionByAction.get(action);
                           if (!permission) {
                             return (
                               <td key={action} className="px-2 py-2 text-center text-atg-muted">
-                                —
+                                {emptyDash}
                               </td>
                             );
                           }
@@ -278,7 +293,7 @@ export function PermissionMatrix({
                                 checked={selectedIds.has(permission.id)}
                                 disabled={readOnly}
                                 onChange={() => togglePermission(permission.id)}
-                                aria-label={`${permission.code}`}
+                                aria-label={permission.code}
                                 className="h-4 w-4 rounded border-atg-border"
                               />
                             </td>
@@ -297,15 +312,13 @@ export function PermissionMatrix({
       {!readOnly && isDirty ? (
         <div className="sticky bottom-0 z-20 mt-4 border-t border-atg-border bg-atg-bg/95 px-4 py-3 backdrop-blur">
           <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3">
-            <p className="text-sm font-medium text-atg-fg">
-              Modifications non enregistrées
-            </p>
+            <p className="text-sm font-medium text-atg-fg">{tUnsaved('title')}</p>
             <div className="flex flex-wrap gap-2">
               <Button type="button" variant="outline" onClick={handleCancel} disabled={saving}>
-                Annuler
+                {tActions('cancel')}
               </Button>
               <Button type="button" onClick={() => void handleSave()} loading={saving}>
-                Enregistrer
+                {tActions('save')}
               </Button>
             </div>
           </div>

@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Avatar,
   Card,
@@ -8,33 +10,20 @@ import {
   Skeleton,
   useToast,
 } from '@africatourismgate/ui';
-import {
-  RBAC_AUDIT_EVENT_LABELS,
-  RBAC_AUDIT_EVENT_TYPES,
-} from '@africatourismgate/types/rbac';
+import { RBAC_AUDIT_EVENT_TYPES } from '@africatourismgate/types/rbac';
 import type {
   RbacAuditEventType,
   RbacAuditLog,
   User,
 } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getRbacErrorMessage } from '../../lib/rbac-errors';
+import { useFormatDateTime } from '../../lib/i18n/use-module-labels';
 import { UserIdFilterBar } from '../users/user-id-filter-bar';
 import { RbacSubnav } from './rbac-subnav';
 
 const PAGE_SIZE = 20;
-
-function formatDateTime(iso: string): string {
-  try {
-    return new Date(iso).toLocaleString('fr-FR', {
-      dateStyle: 'short',
-      timeStyle: 'medium',
-    });
-  } catch {
-    return iso;
-  }
-}
 
 function eventIcon(eventType: RbacAuditEventType): string {
   if (eventType.startsWith('role_') && !eventType.includes('permission')) return '🛡';
@@ -59,9 +48,12 @@ function eventAccentClass(eventType: RbacAuditEventType): string {
 }
 
 function AuditTimelineItem({ log }: { log: RbacAuditLog }) {
-  const label = RBAC_AUDIT_EVENT_LABELS[log.eventType] ?? log.eventType;
+  const formatDateTime = useFormatDateTime('mediumTime');
+  const t = useTranslations('modules.rbac.audit');
   const [expanded, setExpanded] = useState(false);
   const hasPayload = log.payload && Object.keys(log.payload).length > 0;
+
+  const label = t(`eventTypes.${log.eventType}`);
 
   return (
     <li className="relative pl-10">
@@ -84,7 +76,7 @@ function AuditTimelineItem({ log }: { log: RbacAuditLog }) {
               className="text-xs font-medium text-primary hover:underline"
               aria-expanded={expanded}
             >
-              {expanded ? 'Masquer le détail' : 'Voir le détail JSON'}
+              {expanded ? t('hideDetail') : t('showDetailJson')}
             </button>
           ) : null}
         </div>
@@ -105,19 +97,21 @@ function AuditTimelineItem({ log }: { log: RbacAuditLog }) {
             </div>
           </div>
         ) : log.actorUserId ? (
-          <p className="text-sm text-atg-muted">Acteur : {log.actorUserId.slice(0, 8)}…</p>
+          <p className="text-sm text-atg-muted">
+            {t('actorFallback', { actorId: log.actorUserId.slice(0, 8) })}
+          </p>
         ) : null}
 
         <dl className="grid gap-1 text-xs text-atg-muted sm:grid-cols-2">
           {log.targetUserId ? (
             <div>
-              <dt className="inline font-medium">Cible </dt>
+              <dt className="inline font-medium">{t('targetLabel')} </dt>
               <dd className="inline font-mono">{log.targetUserId.slice(0, 8)}…</dd>
             </div>
           ) : null}
           {log.ipAddress ? (
             <div>
-              <dt className="inline font-medium">IP </dt>
+              <dt className="inline font-medium">{t('ipLabel')} </dt>
               <dd className="inline">{log.ipAddress}</dd>
             </div>
           ) : null}
@@ -140,6 +134,9 @@ export function RbacAuditLogsList({
   showSubnav?: boolean;
   userFilterMode?: 'actor' | 'involved';
 }) {
+  const { rbac: getRbacErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.rbac.audit');
+  const tFilters = useTranslations('modules.common.filters');
   const { toast } = useToast();
   const [page, setPage] = useState(1);
   const [filterTick, setFilterTick] = useState(0);
@@ -272,7 +269,7 @@ export function RbacAuditLogsList({
       const message = getRbacErrorMessage(error);
       setState({ status: 'error', message });
       toast({
-        title: 'Erreur de chargement',
+        title: t('toast.loadFailedTitle'),
         message,
         variant: 'error',
       });
@@ -288,6 +285,8 @@ export function RbacAuditLogsList({
     userFilterMode,
     filterTick,
     toast,
+    t,
+    getRbacErrorMessage,
   ]);
 
   useEffect(() => {
@@ -297,7 +296,9 @@ export function RbacAuditLogsList({
   const filterControls = (
     <>
       <div>
-        <label className="mb-1 block text-xs font-medium text-atg-muted">Date début</label>
+        <label className="mb-1 block text-xs font-medium text-atg-muted">
+          {tFilters('dateFrom')}
+        </label>
         <input
           type="date"
           value={draftDateFrom}
@@ -306,7 +307,9 @@ export function RbacAuditLogsList({
         />
       </div>
       <div>
-        <label className="mb-1 block text-xs font-medium text-atg-muted">Date fin</label>
+        <label className="mb-1 block text-xs font-medium text-atg-muted">
+          {tFilters('dateTo')}
+        </label>
         <input
           type="date"
           value={draftDateTo}
@@ -316,7 +319,7 @@ export function RbacAuditLogsList({
       </div>
       <div>
         <label className="mb-1 block text-xs font-medium text-atg-muted">
-          Type d&apos;événement
+          {t('filters.eventType')}
         </label>
         <select
           value={draftEventType}
@@ -325,10 +328,10 @@ export function RbacAuditLogsList({
           }
           className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm"
         >
-          <option value="">Tous</option>
+          <option value="">{tFilters('all')}</option>
           {RBAC_AUDIT_EVENT_TYPES.map((type) => (
             <option key={type} value={type}>
-              {RBAC_AUDIT_EVENT_LABELS[type]}
+              {t(`eventTypes.${type}`)}
             </option>
           ))}
         </select>
@@ -336,14 +339,14 @@ export function RbacAuditLogsList({
       {userFilterMode === 'actor' ? (
         <div>
           <label className="mb-1 block text-xs font-medium text-atg-muted">
-            Utilisateur (acteur)
+            {t('filters.actorUser')}
           </label>
           <select
             value={draftActorUserId}
             onChange={(event) => setDraftActorUserId(event.target.value)}
             className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm"
           >
-            <option value="">Tous</option>
+            <option value="">{tFilters('all')}</option>
             {users.map((user) => (
               <option key={user.id} value={user.id}>
                 {user.firstName} {user.lastName} — {user.email}
@@ -359,7 +362,7 @@ export function RbacAuditLogsList({
     return (
       <>
         {showSubnav ? <RbacSubnav /> : null}
-        <p className="text-sm text-atg-muted">Vérification des droits…</p>
+        <p className="text-sm text-atg-muted">{t('checkingAccess')}</p>
       </>
     );
   }
@@ -370,9 +373,7 @@ export function RbacAuditLogsList({
         {showSubnav ? <RbacSubnav /> : null}
         <Card className="p-6">
           <p role="alert" className="text-sm text-red-600">
-            Cette page est réservée au super administrateur. Connectez-vous avec{' '}
-            <strong>admin@africatourismgate.local</strong> ou un compte disposant du rôle{' '}
-            <code className="rounded bg-atg-elevated px-1">super_admin</code>.
+            {t('accessDenied')}
           </p>
         </Card>
       </>
@@ -412,7 +413,7 @@ export function RbacAuditLogsList({
         </div>
       ) : logs.length === 0 ? (
         <Card variant="dashboard" padding="lg">
-          <p className="text-sm text-atg-muted">Aucun événement pour ces critères.</p>
+          <p className="text-sm text-atg-muted">{t('empty')}</p>
         </Card>
       ) : (
         <ol className="relative space-y-6 border-l border-atg-border pl-4">
@@ -428,7 +429,7 @@ export function RbacAuditLogsList({
           pageSize={PAGE_SIZE}
           totalPages={state.totalPages}
           totalItems={state.total}
-          itemLabel="événement"
+          itemLabel={t('paginationItem')}
           onPageChange={setPage}
           className="mt-6"
         />

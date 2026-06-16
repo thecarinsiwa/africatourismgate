@@ -1,5 +1,8 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+import { usePropertyTypeLabels } from '../../lib/i18n/use-module-labels';
+
 import type { Property } from '@africatourismgate/types';
 import {
   DataTableBadge,
@@ -10,11 +13,11 @@ import {
   TabsTrigger,
 } from '@africatourismgate/ui';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
-import { getHebergementsErrorMessage } from '../../lib/hebergements-errors';
 import { PropertyAmenitiesSection } from './property-amenities-section';
 import { PropertyAvailabilitySection } from './property-availability-section';
 import { PropertyForm } from './property-form';
@@ -29,20 +32,14 @@ type PropertyEditPageProps = {
 const TAB_VALUES = ['infos', 'chambres', 'equipements', 'disponibilites'] as const;
 type TabValue = (typeof TAB_VALUES)[number];
 
-const propertyTypeLabels: Record<Property['propertyType'], string> = {
-  hotel: 'Hôtel',
-  resort: 'Resort',
-  apartment: 'Appartement',
-  villa: 'Villa',
-  hostel: 'Auberge',
-  other: 'Autre',
-};
-
 function isTabValue(value: string | null): value is TabValue {
   return value !== null && (TAB_VALUES as readonly string[]).includes(value);
 }
 
 export function PropertyEditPage({ propertyId }: PropertyEditPageProps) {
+  const { hebergements: getHebergementsErrorMessage } = useAdminErrorMessages();
+  const tDetail = useTranslations('modules.properties.detail');
+  const propertyTypeLabels = usePropertyTypeLabels();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -57,7 +54,7 @@ export function PropertyEditPage({ propertyId }: PropertyEditPageProps) {
 
   useAdminEditPageMeta({
     ready: state.status === 'ready',
-    title: "Modifier l'hébergement",
+    title: tDetail('title'),
     entityLabel: state.status === 'ready' ? state.property.name : undefined,
   });
 
@@ -76,7 +73,7 @@ export function PropertyEditPage({ propertyId }: PropertyEditPageProps) {
     return () => {
       cancelled = true;
     };
-  }, [propertyId]);
+  }, [propertyId, getHebergementsErrorMessage]);
 
   const handleTabChange = useCallback(
     (tab: string) => {
@@ -122,7 +119,7 @@ export function PropertyEditPage({ propertyId }: PropertyEditPageProps) {
           href="/hebergements"
           className="text-sm font-medium text-primary hover:text-primary-hover"
         >
-          ← Retour à la liste
+          {tDetail('backToList')}
         </Link>
       </div>
     );
@@ -149,11 +146,11 @@ export function PropertyEditPage({ propertyId }: PropertyEditPageProps) {
       </div>
 
       <Tabs value={activeTab} onValueChange={handleTabChange}>
-        <TabsList aria-label="Sections de l'hébergement">
-          <TabsTrigger value="infos">Infos</TabsTrigger>
-          <TabsTrigger value="chambres">Chambres</TabsTrigger>
-          <TabsTrigger value="equipements">Équipements</TabsTrigger>
-          <TabsTrigger value="disponibilites">Disponibilités</TabsTrigger>
+        <TabsList aria-label={tDetail('tabsAria')}>
+          <TabsTrigger value="infos">{tDetail('tabs.infos')}</TabsTrigger>
+          <TabsTrigger value="chambres">{tDetail('tabs.rooms')}</TabsTrigger>
+          <TabsTrigger value="equipements">{tDetail('tabs.amenities')}</TabsTrigger>
+          <TabsTrigger value="disponibilites">{tDetail('tabs.availability')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="infos">

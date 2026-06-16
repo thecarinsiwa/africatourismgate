@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Button,
   Card,
@@ -11,9 +13,9 @@ import {
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { RentalAgency, Vehicle, VehicleCategory } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getLocationsErrorMessage } from '../../lib/locations-errors';
 import { getVehicleCategoryIcon } from '../../lib/vehicle-category-icon-map';
 import { VehicleThumbnail } from './vehicle-thumbnail';
 
@@ -25,6 +27,13 @@ function formatPrice(cents: number, currency: string): string {
 }
 
 export function VehiclesList() {
+  const { locations: getLocationsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.locations.list');
+  const tFilters = useTranslations('modules.locations.filters');
+  const tColumns = useTranslations('modules.locations.columns');
+  const tCommonColumns = useTranslations('modules.common.columns');
+  const tPagination = useTranslations('modules.common.pagination');
+  const tCommon = useTranslations('modules.common');
   const agencyFilterId = useId();
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
@@ -39,6 +48,8 @@ export function VehiclesList() {
   >({ status: 'loading' });
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const emptyDash = tCommon('empty.dash');
 
   useEffect(() => {
     const client = getApiClient();
@@ -83,7 +94,7 @@ export function VehiclesList() {
     } catch (error) {
       setState({ status: 'error', message: getLocationsErrorMessage(error) });
     }
-  }, [page, search, agencyFilter]);
+  }, [page, search, agencyFilter, getLocationsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -103,7 +114,7 @@ export function VehiclesList() {
   const handleDelete = useCallback(
     async (vehicle: Vehicle) => {
       const label = vehicle.licensePlate ?? vehicle.id.slice(0, 8);
-      if (!window.confirm(`Supprimer le véhicule « ${label} » ?`)) return;
+      if (!window.confirm(t('deleteConfirm', { label }))) return;
       setDeleteError(null);
       setDeletingId(vehicle.id);
       try {
@@ -115,7 +126,7 @@ export function VehiclesList() {
         setDeletingId(null);
       }
     },
-    [load],
+    [load, t, getLocationsErrorMessage],
   );
 
   const columns = useMemo<ColumnDef<Vehicle, unknown>[]>(
@@ -129,7 +140,7 @@ export function VehiclesList() {
           return (
             <VehicleThumbnail
               vehicleId={row.original.id}
-              label={row.original.licensePlate ?? categoryName ?? 'Véhicule'}
+              label={row.original.licensePlate ?? categoryName ?? t('fallbackLabel')}
               categoryName={categoryName}
               size="md"
             />
@@ -138,24 +149,24 @@ export function VehiclesList() {
       },
       {
         accessorKey: 'licensePlate',
-        header: 'Immatriculation',
+        header: tColumns('licensePlate'),
         cell: ({ row }) => (
           <code className="font-mono text-sm">
-            {row.original.licensePlate ?? '—'}
+            {row.original.licensePlate ?? emptyDash}
           </code>
         ),
       },
       {
         id: 'agency',
-        header: 'Agence',
-        cell: ({ row }) => agencyById.get(row.original.agencyId) ?? '—',
+        header: tColumns('agency'),
+        cell: ({ row }) => agencyById.get(row.original.agencyId) ?? emptyDash,
       },
       {
         id: 'category',
-        header: 'Catégorie',
+        header: tColumns('category'),
         cell: ({ row }) => {
           const categoryName = categoryById.get(row.original.categoryId);
-          if (!categoryName) return '—';
+          if (!categoryName) return emptyDash;
           return (
             <span className="inline-flex items-center gap-2 text-sm">
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-atg-surface text-primary ring-1 ring-atg-border/60">
@@ -168,7 +179,7 @@ export function VehiclesList() {
       },
       {
         id: 'price',
-        header: 'Prix / jour',
+        header: tColumns('pricePerDay'),
         meta: { align: 'right' },
         cell: ({ row }) => (
           <span className="tabular-nums text-sm">
@@ -178,7 +189,7 @@ export function VehiclesList() {
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tCommonColumns('actions'),
         meta: { align: 'right' },
         cell: ({ row }) => (
           <DataTableActions>
@@ -193,7 +204,16 @@ export function VehiclesList() {
         ),
       },
     ],
-    [agencyById, categoryById, deletingId, handleDelete],
+    [
+      agencyById,
+      categoryById,
+      deletingId,
+      emptyDash,
+      handleDelete,
+      t,
+      tColumns,
+      tCommonColumns,
+    ],
   );
 
   const vehicles = state.status === 'ready' ? state.vehicles : [];
@@ -207,14 +227,14 @@ export function VehiclesList() {
           <div className="flex-1 sm:max-w-xs">
             <Input
               type="search"
-              placeholder="Rechercher par plaque…"
+              placeholder={t('searchPlaceholder')}
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
             />
           </div>
           <div className="flex-1 sm:max-w-xs">
             <label htmlFor={agencyFilterId} className="mb-2 block text-sm font-medium">
-              Agence
+              {tFilters('agency')}
             </label>
             <select
               id={agencyFilterId}
@@ -225,7 +245,7 @@ export function VehiclesList() {
                 setPage(1);
               }}
             >
-              <option value="">Toutes les agences</option>
+              <option value="">{tFilters('allAgencies')}</option>
               {agencies.map((a) => (
                 <option key={a.id} value={a.id}>
                   {a.name}
@@ -234,7 +254,7 @@ export function VehiclesList() {
             </select>
           </div>
         </div>
-        <Button href="/produits/locations/nouveau">Nouveau véhicule</Button>
+        <Button href="/produits/locations/nouveau">{t('newVehicle')}</Button>
       </div>
 
       {deleteError ? (
@@ -255,9 +275,7 @@ export function VehiclesList() {
               data={vehicles}
               isLoading={state.status === 'loading'}
               emptyMessage={
-                agencyFilter || search
-                  ? 'Aucun véhicule ne correspond aux filtres.'
-                  : 'Aucun véhicule pour le moment.'
+                agencyFilter || search ? t('emptyFiltered') : t('emptyDefault')
               }
               emptyVariant={search || agencyFilter ? 'search' : 'default'}
               getRowId={(r) => r.id}
@@ -269,7 +287,7 @@ export function VehiclesList() {
               pageSize={PAGE_SIZE}
               totalPages={state.totalPages}
               totalItems={state.total}
-              itemLabel="véhicule"
+              itemLabel={tPagination('vehicle')}
               onPageChange={setPage}
             />
           ) : null}

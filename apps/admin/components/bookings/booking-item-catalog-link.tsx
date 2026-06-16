@@ -1,10 +1,12 @@
 'use client';
 
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import {
   getBookingItemCatalogHref,
-  getBookingItemCatalogLinkLabel,
+  getBookingItemTypeLabel,
 } from '../../lib/booking-item-catalog';
+import { useBookingItemTypeLabels } from '../../lib/i18n/use-module-labels';
 
 type BookingItemCatalogLinkProps = {
   itemType: string;
@@ -19,13 +21,16 @@ export function BookingItemCatalogLink({
   title,
   showReference = false,
 }: BookingItemCatalogLinkProps) {
+  const t = useTranslations('modules.bookings');
+  const itemTypeLabels = useBookingItemTypeLabels();
   const href = getBookingItemCatalogHref(itemType, referenceId);
+  const typeLabel = getBookingItemTypeLabel(itemType, itemTypeLabels);
 
   const titleContent = href ? (
     <Link
       href={href}
       className="font-medium text-primary hover:underline"
-      aria-label={getBookingItemCatalogLinkLabel(itemType, title)}
+      aria-label={t('catalogLink.ariaLabel', { typeLabel, title })}
     >
       {title}
     </Link>
@@ -40,7 +45,9 @@ export function BookingItemCatalogLink({
   return (
     <div>
       {titleContent}
-      <p className="text-xs text-atg-muted">Réf. {referenceId.slice(0, 8)}</p>
+      <p className="text-xs text-atg-muted">
+        {t('catalogLink.referencePrefix', { idPrefix: referenceId.slice(0, 8) })}
+      </p>
     </div>
   );
 }

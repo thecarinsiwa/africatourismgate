@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Button,
   Card,
@@ -14,18 +16,21 @@ import type {
   SupportTicketStatus,
 } from '@africatourismgate/types';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useId, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import {
+  useFormatDateTime,
+  useSupportTicketPriorityFilterOptions,
+  useSupportTicketPriorityLabels,
+  useSupportTicketStatusFilterOptions,
+  useSupportTicketStatusLabels,
+} from '../../lib/i18n/use-module-labels';
+import {
   formatSupportTicketAssignee,
-  formatSupportTicketDateTime,
-  supportTicketPriorityLabels,
   supportTicketPriorityVariants,
-  supportTicketStatusLabels,
   supportTicketStatusVariants,
-  UNASSIGNED_TICKET_LABEL,
 } from '../../lib/support-ticket-display';
-import { getSupportTicketsErrorMessage } from '../../lib/support-tickets-errors';
 
 const PAGE_SIZE = 20;
 
@@ -34,8 +39,15 @@ type SupportTicketInboxItemProps = {
 };
 
 function SupportTicketInboxItem({ ticket }: SupportTicketInboxItemProps) {
-  const assignee = formatSupportTicketAssignee(null);
-  const isUnassigned = assignee === UNASSIGNED_TICKET_LABEL;
+  const t = useTranslations('modules.support');
+  const tCommon = useTranslations('modules.common');
+  const formatDateTime = useFormatDateTime();
+  const statusLabels = useSupportTicketStatusLabels();
+  const priorityLabels = useSupportTicketPriorityLabels();
+  const unassignedLabel = t('assignee.unassigned');
+  const assignee = formatSupportTicketAssignee(null, unassignedLabel);
+  const isUnassigned = assignee === unassignedLabel;
+  const emptyDash = tCommon('empty.dash');
 
   return (
     <Link
@@ -48,12 +60,12 @@ function SupportTicketInboxItem({ ticket }: SupportTicketInboxItemProps) {
           className="shrink-0 text-xs tabular-nums text-atg-muted"
           dateTime={ticket.createdAt}
         >
-          {formatSupportTicketDateTime(ticket.createdAt)}
+          {formatDateTime(ticket.createdAt)}
         </time>
       </div>
 
       <p className="mt-1 truncate text-sm text-atg-muted">
-        {ticket.customerFirstName?.trim() || '—'}
+        {ticket.customerFirstName?.trim() || emptyDash}
         {ticket.customerEmail ? (
           <span className="text-atg-muted"> · {ticket.customerEmail}</span>
         ) : null}
@@ -61,13 +73,13 @@ function SupportTicketInboxItem({ ticket }: SupportTicketInboxItemProps) {
 
       <div className="mt-2 flex flex-wrap items-center gap-2">
         <DataTableBadge variant={supportTicketStatusVariants[ticket.status]}>
-          {supportTicketStatusLabels[ticket.status]}
+          {statusLabels[ticket.status]}
         </DataTableBadge>
         <DataTableBadge variant={supportTicketPriorityVariants[ticket.priority]}>
-          {supportTicketPriorityLabels[ticket.priority]}
+          {priorityLabels[ticket.priority]}
         </DataTableBadge>
         <span className="text-xs text-atg-muted">
-          Assigné :{' '}
+          {t('list.assignedLabel')}{' '}
           <span className={isUnassigned ? 'italic text-atg-muted' : 'text-atg-fg'}>
             {assignee}
           </span>
@@ -99,6 +111,13 @@ function SupportTicketInboxSkeleton() {
 }
 
 export function SupportTicketsList() {
+  const { supportTickets: getSupportTicketsErrorMessage } = useAdminErrorMessages();
+  const tList = useTranslations('modules.support.list');
+  const tColumns = useTranslations('modules.common.columns');
+  const tCommon = useTranslations('modules.common');
+  const tPagination = useTranslations('modules.common.pagination');
+  const statusOptions = useSupportTicketStatusFilterOptions();
+  const priorityOptions = useSupportTicketPriorityFilterOptions();
   const statusFilterId = useId();
   const priorityFilterId = useId();
 
@@ -136,7 +155,7 @@ export function SupportTicketsList() {
     } catch (error) {
       setState({ status: 'error', message: getSupportTicketsErrorMessage(error) });
     }
-  }, [page, statusFilter, priorityFilter, filterTick]);
+  }, [page, statusFilter, priorityFilter, filterTick, getSupportTicketsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -162,7 +181,7 @@ export function SupportTicketsList() {
               htmlFor={statusFilterId}
               className="mb-1 block text-xs font-medium text-atg-muted"
             >
-              Statut
+              {tColumns('status')}
             </label>
             <select
               id={statusFilterId}
@@ -172,10 +191,9 @@ export function SupportTicketsList() {
               }
               className="w-full rounded-lg border border-atg-border bg-atg-surface px-3 py-2 text-sm text-atg-fg"
             >
-              <option value="">Tous</option>
-              {(Object.keys(supportTicketStatusLabels) as SupportTicketStatus[]).map((s) => (
-                <option key={s} value={s}>
-                  {supportTicketStatusLabels[s]}
+              {statusOptions.map((option) => (
+                <option key={option.value || 'all'} value={option.value}>
+                  {option.label}
                 </option>
               ))}
             </select>
@@ -185,7 +203,7 @@ export function SupportTicketsList() {
               htmlFor={priorityFilterId}
               className="mb-1 block text-xs font-medium text-atg-muted"
             >
-              Priorité
+              {tList('filters.priority')}
             </label>
             <select
               id={priorityFilterId}
@@ -195,19 +213,16 @@ export function SupportTicketsList() {
               }
               className="w-full rounded-lg border border-atg-border bg-atg-surface px-3 py-2 text-sm text-atg-fg"
             >
-              <option value="">Toutes</option>
-              {(Object.keys(supportTicketPriorityLabels) as SupportTicketPriority[]).map(
-                (p) => (
-                  <option key={p} value={p}>
-                    {supportTicketPriorityLabels[p]}
-                  </option>
-                ),
-              )}
+              {priorityOptions.map((option) => (
+                <option key={option.value || 'all'} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
             </select>
           </div>
           <div className="flex items-end">
             <Button type="button" onClick={applyFilters} className="w-full sm:w-auto">
-              Appliquer les filtres
+              {tCommon('filters.apply')}
             </Button>
           </div>
         </div>
@@ -227,18 +242,18 @@ export function SupportTicketsList() {
         <EmptyState
           title={
             hasFilters
-              ? 'Aucun ticket ne correspond aux filtres'
-              : 'Aucun ticket pour le moment'
+              ? tList('empty.filtered.title')
+              : tList('empty.default.title')
           }
           description={
             hasFilters
-              ? 'Élargissez les critères de statut ou de priorité pour afficher plus de demandes.'
-              : 'Les demandes d’assistance clients apparaîtront ici dès qu’elles seront créées.'
+              ? tList('empty.filtered.description')
+              : tList('empty.default.description')
           }
         />
       ) : (
         <Card variant="dashboard" padding="none" className="overflow-hidden">
-          <div role="list" aria-label="Boîte de réception des tickets support">
+          <div role="list" aria-label={tList('ariaLabel')}>
             {tickets.map((ticket) => (
               <div key={ticket.id} role="listitem">
                 <SupportTicketInboxItem ticket={ticket} />
@@ -254,7 +269,7 @@ export function SupportTicketsList() {
           pageSize={PAGE_SIZE}
           totalPages={state.totalPages}
           totalItems={state.total}
-          itemLabel="tickets"
+          itemLabel={tPagination('ticket')}
           onPageChange={setPage}
         />
       ) : null}

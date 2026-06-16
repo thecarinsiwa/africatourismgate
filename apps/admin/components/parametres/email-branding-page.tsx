@@ -1,15 +1,20 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import { AlertDialog } from '@africatourismgate/ui';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { useSetAdminPageMeta } from '../admin-page-meta-context';
 import { getApiClient } from '../../lib/auth/api';
-import { getOrganizationSettingsErrorMessage } from '../../lib/organization-settings-errors';
 import { useUnsavedChangesGuard } from '../rbac/use-unsaved-changes-guard';
 import { EmailBrandingForm } from './email-branding-form';
 import { ParametresPageLayout } from './parametres-subnav';
 
 export function EmailBrandingPage() {
+  const { organizationSettings: getOrganizationSettingsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.settings');
+  const tEmails = useTranslations('modules.settings.emails');
   const [accessError, setAccessError] = useState<string | null>(null);
   const [canWrite, setCanWrite] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -17,7 +22,7 @@ export function EmailBrandingPage() {
   const { dialogOpen, setDialogOpen, requestAction, confirmDiscard, cancelDiscard } =
     useUnsavedChangesGuard(formDirty);
 
-  useSetAdminPageMeta({ title: 'E-mails' });
+  useSetAdminPageMeta({ title: tEmails('page.title') });
 
   useEffect(() => {
     let cancelled = false;
@@ -30,9 +35,7 @@ export function EmailBrandingPage() {
           me.permissions.includes('organization_settings.read');
         if (!canRead) {
           if (!cancelled) {
-            setAccessError(
-              'Vous n’avez pas la permission de consulter les paramètres e-mail.',
-            );
+            setAccessError(tEmails('page.denied'));
           }
           return;
         }
@@ -56,7 +59,7 @@ export function EmailBrandingPage() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [tEmails, getOrganizationSettingsErrorMessage]);
 
   if (accessError) {
     return (
@@ -71,7 +74,7 @@ export function EmailBrandingPage() {
   if (loading) {
     return (
       <ParametresPageLayout>
-        <p className="text-sm text-atg-muted">Chargement…</p>
+        <p className="text-sm text-atg-muted">{t('form.loading')}</p>
       </ParametresPageLayout>
     );
   }
@@ -81,19 +84,16 @@ export function EmailBrandingPage() {
       <ParametresPageLayout
         onSubnavNavigate={formDirty ? (_href, proceed) => requestAction(proceed) : undefined}
       >
-        <p className="mb-8 text-sm text-atg-muted">
-          Personnalisez l’apparence des e-mails transactionnels (bienvenue, confirmation de
-          réservation).
-        </p>
+        <p className="mb-8 text-sm text-atg-muted">{tEmails('page.intro')}</p>
         <EmailBrandingForm canWrite={canWrite} onDirtyChange={setFormDirty} />
       </ParametresPageLayout>
       <AlertDialog
         open={dialogOpen}
         onOpenChange={setDialogOpen}
-        title="Modifications non enregistrées"
-        description="Des changements n’ont pas été enregistrés. Quitter sans sauvegarder ?"
-        confirmLabel="Quitter sans enregistrer"
-        cancelLabel="Continuer l’édition"
+        title={t('unsaved.title')}
+        description={t('unsaved.description')}
+        confirmLabel={t('unsaved.confirm')}
+        cancelLabel={t('unsaved.cancel')}
         variant="danger"
         onConfirm={confirmDiscard}
         onCancel={cancelDiscard}

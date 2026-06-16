@@ -2,6 +2,13 @@
 
 import { DataTableBadge, cn } from '@africatourismgate/ui';
 import type { PromoCodeDiscountType } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
+import {
+  usePromoDiscountLabels,
+  usePromoDiscountTypeLabels,
+  usePromoValidityLabels,
+} from '../../lib/i18n/use-module-labels';
+import { useHydrated } from '../../lib/i18n/use-hydrated';
 import {
   formatPromotionDiscountBadge,
   formatPromotionValidityDisplay,
@@ -42,17 +49,34 @@ export function PromotionPreviewBanner({
   compact = false,
   className,
 }: PromotionPreviewBannerProps) {
-  const displayName = name.trim() || 'Nouvelle campagne';
-  const discountLabel = formatPromotionDiscountBadge({
-    hasDiscount,
-    discountType,
-    discountValue,
-  });
-  const validityText = formatPromotionValidityDisplay(validFrom, validUntil);
-  const validityState = getPromotionValidityState(validFrom, validUntil);
+  const t = useTranslations('modules.promotions');
+  const discountLabels = usePromoDiscountLabels();
+  const validityLabels = usePromoValidityLabels();
+  const discountTypeLabels = usePromoDiscountTypeLabels();
+  const tUsage = useTranslations('modules.promoCodes.usage');
+  const hydrated = useHydrated();
+
+  const displayName = name.trim() || t('preview.defaultName');
+  const discountLabel = formatPromotionDiscountBadge(
+    { hasDiscount, discountType, discountValue },
+    discountLabels,
+  );
+  const validityText = formatPromotionValidityDisplay(validFrom, validUntil, discountLabels);
+  const validityState = hydrated
+    ? getPromotionValidityState(validFrom, validUntil)
+    : null;
   const showUsage =
     redemptionCount != null &&
     (maxRedemptions != null || redemptionCount > 0);
+  const usageText =
+    redemptionCount != null
+      ? formatPromoUsageLabel(
+          redemptionCount,
+          maxRedemptions ?? null,
+          tUsage('format'),
+          tUsage('unlimitedMax'),
+        )
+      : '';
 
   return (
     <section
@@ -60,7 +84,7 @@ export function PromotionPreviewBanner({
         'relative overflow-hidden rounded-xl border border-atg-border shadow-sm',
         className,
       )}
-      aria-label={`Aperçu promotion ${displayName}`}
+      aria-label={t('preview.ariaLabel', { name: displayName })}
     >
       <div
         className={cn(
@@ -73,7 +97,7 @@ export function PromotionPreviewBanner({
         <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0 flex-1 space-y-2">
             <p className="text-[10px] font-semibold uppercase tracking-wide text-white/70 sm:text-xs">
-              Promotion
+              {t('preview.badge')}
             </p>
             <h2
               className={cn(
@@ -104,7 +128,7 @@ export function PromotionPreviewBanner({
             </span>
             {hasDiscount && discountType ? (
               <span className="inline-flex items-center rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-medium text-white/90 ring-1 ring-inset ring-white/20">
-                {getPromoDiscountTypeLabel(discountType)}
+                {getPromoDiscountTypeLabel(discountType, discountTypeLabels)}
               </span>
             ) : null}
             <DataTableBadge
@@ -116,14 +140,14 @@ export function PromotionPreviewBanner({
                   : 'bg-white/10 text-white/80',
               )}
             >
-              {active ? 'Active' : 'Inactive'}
+              {active ? t('status.active') : t('status.inactive')}
             </DataTableBadge>
             {validityState ? (
               <DataTableBadge
                 variant={getPromoValidityBadgeVariant(validityState)}
                 className="bg-white/10 text-white ring-white/20"
               >
-                {getPromoValidityLabel(validityState)}
+                {getPromoValidityLabel(validityState, validityLabels)}
               </DataTableBadge>
             ) : null}
           </div>
@@ -131,7 +155,7 @@ export function PromotionPreviewBanner({
 
         {showUsage && !compact ? (
           <p className="relative z-10 mt-3 text-xs tabular-nums text-white/70">
-            Utilisations : {formatPromoUsageLabel(redemptionCount!, maxRedemptions ?? null)}
+            {t('preview.usage', { usage: usageText })}
           </p>
         ) : null}
       </div>

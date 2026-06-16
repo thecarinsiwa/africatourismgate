@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import { Button, Input } from '@africatourismgate/ui';
 import type {
   CreateEmployeeRequest,
@@ -18,7 +20,6 @@ import {
   dayBefore,
   employmentDateFieldErrors,
 } from '../../lib/employee-dates';
-import { getEmployeesErrorMessage } from '../../lib/employees-errors';
 
 export type EmployeeFormValues = {
   userId: string;
@@ -111,6 +112,7 @@ type EmployeeFormProps = {
 };
 
 export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeFormProps) {
+  const { employees: getEmployeesErrorMessage } = useAdminErrorMessages();
   const router = useRouter();
   const searchParams = useSearchParams();
   const defaultOrganizationId = searchParams.get('organizationId') ?? '';

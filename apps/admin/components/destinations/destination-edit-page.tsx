@@ -1,12 +1,14 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import type { Destination } from '@africatourismgate/types';
 import { Skeleton } from '@africatourismgate/ui';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
 import { AdminPageBackLink } from '../admin-page-back-link';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
-import { getDestinationsErrorMessage } from '../../lib/destinations-errors';
 import { DestinationForm } from './destination-form';
 import { DestinationHeroBanner } from './destination-hero-banner';
 import { DestinationPoisSection } from './destination-pois-section';
@@ -18,6 +20,8 @@ type DestinationEditPageProps = {
 };
 
 export function DestinationEditPage({ destinationId }: DestinationEditPageProps) {
+  const { destinations: getDestinationsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.destinations.detail');
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -26,7 +30,7 @@ export function DestinationEditPage({ destinationId }: DestinationEditPageProps)
 
   useAdminEditPageMeta({
     ready: state.status === 'ready',
-    title: 'Modifier la destination',
+    title: t('title'),
     entityLabel: state.status === 'ready' ? state.destination.name : undefined,
   });
 
@@ -38,7 +42,7 @@ export function DestinationEditPage({ destinationId }: DestinationEditPageProps)
     } catch (error) {
       setState({ status: 'error', message: getDestinationsErrorMessage(error) });
     }
-  }, [destinationId]);
+  }, [destinationId, getDestinationsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -62,7 +66,7 @@ export function DestinationEditPage({ destinationId }: DestinationEditPageProps)
   if (state.status === 'error') {
     return (
       <div className="space-y-4">
-        <AdminPageBackLink href="/produits/destinations" label="Retour aux destinations" />
+        <AdminPageBackLink href="/produits/destinations" label={t('backLink')} />
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {state.message}
         </p>
@@ -74,7 +78,7 @@ export function DestinationEditPage({ destinationId }: DestinationEditPageProps)
 
   return (
     <div className="space-y-6">
-      <AdminPageBackLink href="/produits/destinations" label="Retour aux destinations" />
+      <AdminPageBackLink href="/produits/destinations" label={t('backLink')} />
 
       <DestinationHeroBanner
         name={destination.name}
@@ -96,7 +100,7 @@ export function DestinationEditPage({ destinationId }: DestinationEditPageProps)
       <DestinationStaticMap
         latitude={destination.latitude}
         longitude={destination.longitude}
-        title="Carte de la destination"
+        title={t('mapTitle')}
         className="max-w-2xl"
       />
 

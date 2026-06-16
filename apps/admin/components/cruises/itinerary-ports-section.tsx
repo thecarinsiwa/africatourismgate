@@ -1,13 +1,15 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import { Button, Card, DataTable, DataTableActionButton, DataTableActions, Input, type ColumnDef } from '@africatourismgate/ui';
 import type { CruisePort, ItineraryPort } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { AdminPageBackLink } from '../admin-page-back-link';
 import { getApiClient } from '../../lib/auth/api';
 import { buildCruiseBreadcrumbTail } from '../../lib/cruise-breadcrumbs';
-import { getCroisieresErrorMessage } from '../../lib/croisieres-errors';
 import { ItineraryPortsTimeline } from './itinerary-ports-timeline';
 
 type FormValues = {
@@ -22,11 +24,6 @@ const emptyForm: FormValues = {
   arrivalTime: '',
   departureTime: '',
 };
-
-function formatTime(t: string | null): string {
-  if (!t) return '—';
-  return t.slice(0, 5);
-}
 
 type ItineraryPortsSectionProps = {
   shipId: string;
@@ -43,6 +40,15 @@ export function ItineraryPortsSection({
   itineraryId,
   itineraryName,
 }: ItineraryPortsSectionProps) {
+  const { croisieres: getCroisieresErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.cruises.sections.itineraryPorts');
+  const tDetail = useTranslations('modules.cruises.detail');
+  const tCruise = useTranslations('modules.cruises');
+  const tColumns = useTranslations('modules.common.columns');
+  const tCommon = useTranslations('modules.common');
+  const tSelect = useTranslations('modules.common.select');
+  const tActions = useTranslations('common.actions');
+  const emptyDash = tCommon('empty.dash');
   const portSelectId = useId();
   const [ports, setPorts] = useState<CruisePort[]>([]);
   const [state, setState] = useState<
@@ -59,10 +65,10 @@ export function ItineraryPortsSection({
 
   useAdminEditPageMeta({
     ready: true,
-    title: 'Escales',
+    title: tDetail('escalesTitle'),
     breadcrumbTail: buildCruiseBreadcrumbTail({
       lineName,
-      shipName: shipName ?? 'Navire',
+      shipName: shipName ?? tDetail('backToShip'),
       shipId,
       itineraryName,
     }),
@@ -89,7 +95,7 @@ export function ItineraryPortsSection({
     } catch (error) {
       setState({ status: 'error', message: getCroisieresErrorMessage(error) });
     }
-  }, [itineraryId]);
+  }, [itineraryId, getCroisieresErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -107,7 +113,7 @@ export function ItineraryPortsSection({
     setFormError(null);
     const day = Number(formValues.dayNumber);
     if (!formValues.portId || !Number.isFinite(day) || day < 1) {
-      setFormError('Port et jour obligatoires.');
+      setFormError(t('validation'));
       return;
     }
     setSubmitting(true);
@@ -132,16 +138,24 @@ export function ItineraryPortsSection({
     }
   }
 
+  const formatTime = useCallback(
+    (value: string | null) => {
+      if (!value) return emptyDash;
+      return value.slice(0, 5);
+    },
+    [emptyDash],
+  );
+
   const columns = useMemo<ColumnDef<ItineraryPort, unknown>[]>(
     () => [
       {
         accessorKey: 'dayNumber',
-        header: 'Jour',
+        header: t('day'),
         meta: { align: 'center' },
       },
       {
         id: 'port',
-        header: 'Port',
+        header: tCruise('columns.port'),
         cell: ({ row }) => {
           const port = portById.get(row.original.portId);
           return port ? (
@@ -149,23 +163,23 @@ export function ItineraryPortsSection({
               <code className="font-mono text-xs">{port.code}</code> {port.name}
             </span>
           ) : (
-            '—'
+            emptyDash
           );
         },
       },
       {
         id: 'arrival',
-        header: 'Arrivée',
+        header: tColumns('arrival'),
         cell: ({ row }) => formatTime(row.original.arrivalTime),
       },
       {
         id: 'departure',
-        header: 'Départ',
+        header: tColumns('departure'),
         cell: ({ row }) => formatTime(row.original.departureTime),
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tColumns('actions'),
         meta: { align: 'right' },
         cell: ({ row }) => (
           <DataTableActions>
@@ -185,7 +199,7 @@ export function ItineraryPortsSection({
             <DataTableActionButton
               action="delete"
               onClick={async () => {
-                if (!window.confirm('Supprimer cette escale ?')) return;
+                if (!window.confirm(t('deleteConfirm'))) return;
                 setDeletingId(row.original.id);
                 try {
                   await getApiClient().deleteItineraryPort(row.original.id);
@@ -203,7 +217,7 @@ export function ItineraryPortsSection({
         ),
       },
     ],
-    [deletingId, load, portById],
+    [deletingId, emptyDash, formatTime, getCroisieresErrorMessage, load, portById, t, tColumns, tCruise],
   );
 
   const rows = useMemo(
@@ -223,12 +237,11 @@ export function ItineraryPortsSection({
 
   return (
     <div>
-      <AdminPageBackLink
-        href={`/produits/croisieres/navires/${shipId}`}
-        label="Retour au navire"
-      />
+      <AdminPageBackLink href={`/produits/croisieres/navires/${shipId}`} label={tDetail('backToShip')} />
 
-      <p className="mb-8 mt-4 text-sm text-atg-muted">Itinéraire : {itineraryName}</p>
+      <p className="mb-8 mt-4 text-sm text-atg-muted">
+        {t('itineraryLabel', { name: itineraryName })}
+      </p>
 
       <div className="space-y-6">
         {state.status === 'ready' && timelineStops.length > 0 ? (
@@ -238,7 +251,7 @@ export function ItineraryPortsSection({
         <div className="flex justify-end">
           {!showForm ? (
             <Button type="button" onClick={() => setShowForm(true)}>
-              Ajouter une escale
+              {t('add')}
             </Button>
           ) : null}
         </div>
@@ -247,7 +260,7 @@ export function ItineraryPortsSection({
           <Card variant="dashboard" className="max-w-2xl">
             <form onSubmit={handleSubmit} className="space-y-4">
               <h3 className="text-sm font-medium">
-                {editing ? 'Modifier l’escale' : 'Nouvelle escale'}
+                {editing ? t('edit') : t('new')}
               </h3>
               {formError ? (
                 <p role="alert" className="text-sm text-red-600">
@@ -256,7 +269,7 @@ export function ItineraryPortsSection({
               ) : null}
               <div>
                 <label htmlFor={portSelectId} className="mb-2 block text-sm font-medium">
-                  Port
+                  {tCruise('columns.port')}
                 </label>
                 <select
                   id={portSelectId}
@@ -267,7 +280,7 @@ export function ItineraryPortsSection({
                   }
                   required
                 >
-                  <option value="">Choisir un port…</option>
+                  <option value="">{tSelect('choose')}</option>
                   {ports.map((p) => (
                     <option key={p.id} value={p.id}>
                       {p.code} — {p.name}
@@ -276,7 +289,7 @@ export function ItineraryPortsSection({
                 </select>
               </div>
               <Input
-                label="Jour"
+                label={t('day')}
                 type="number"
                 min={1}
                 value={formValues.dayNumber}
@@ -286,28 +299,28 @@ export function ItineraryPortsSection({
               />
               <div className="grid gap-4 sm:grid-cols-2">
                 <Input
-                  label="Heure d’arrivée (HH:MM)"
+                  label={t('arrivalTime')}
                   value={formValues.arrivalTime}
                   onChange={(e) =>
                     setFormValues((p) => ({ ...p, arrivalTime: e.target.value }))
                   }
-                  placeholder="08:00"
+                  placeholder={t('arrivalPlaceholder')}
                 />
                 <Input
-                  label="Heure de départ (HH:MM)"
+                  label={t('departureTime')}
                   value={formValues.departureTime}
                   onChange={(e) =>
                     setFormValues((p) => ({ ...p, departureTime: e.target.value }))
                   }
-                  placeholder="18:00"
+                  placeholder={t('departurePlaceholder')}
                 />
               </div>
               <div className="flex gap-3">
                 <Button type="submit" loading={submitting}>
-                  {editing ? 'Enregistrer' : 'Ajouter'}
+                  {editing ? tActions('save') : tActions('create')}
                 </Button>
                 <Button type="button" variant="outline" onClick={resetForm}>
-                  Annuler
+                  {tActions('cancel')}
                 </Button>
               </div>
             </form>
@@ -319,10 +332,10 @@ export function ItineraryPortsSection({
             {state.message}
           </p>
         ) : state.status === 'loading' ? (
-          <p className="text-sm text-atg-muted">Chargement…</p>
+          <p className="text-sm text-atg-muted">{tCommon('loading')}</p>
         ) : rows.length === 0 ? (
           <Card variant="dashboard" className="py-12 text-center">
-            <p className="text-sm text-atg-muted">Aucune escale.</p>
+            <p className="text-sm text-atg-muted">{t('empty')}</p>
           </Card>
         ) : (
           <Card variant="dashboard" padding="none">
@@ -330,7 +343,7 @@ export function ItineraryPortsSection({
               columns={columns}
               data={rows}
               isLoading={false}
-              emptyMessage="Aucune escale."
+              emptyMessage={t('empty')}
               getRowId={(r) => r.id}
             />
           </Card>

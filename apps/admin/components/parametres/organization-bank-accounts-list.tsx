@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   AlertDialog,
   Button,
@@ -10,11 +12,11 @@ import {
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { OrganizationBankAccount, OrganizationListItem } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSetAdminPageMeta } from '../admin-page-meta-context';
 import { getApiClient } from '../../lib/auth/api';
-import { getOrganizationSettingsErrorMessage } from '../../lib/organization-settings-errors';
 import { maskAccountNumberForDisplay } from '../../lib/bank-account-masking';
 import { useUnsavedChangesGuard } from '../rbac/use-unsaved-changes-guard';
 import { ParametresPageLayout } from './parametres-subnav';
@@ -24,6 +26,10 @@ import {
 } from './organization-settings-form';
 
 export function OrganizationBankAccountsList() {
+  const { organizationSettings: getOrganizationSettingsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.settings');
+  const tBank = useTranslations('modules.settings.bankAccounts');
+  const tCommon = useTranslations('modules.common');
   const router = useRouter();
   const searchParams = useSearchParams();
   const [accessError, setAccessError] = useState<string | null>(null);
@@ -40,7 +46,7 @@ export function OrganizationBankAccountsList() {
   const { dialogOpen, setDialogOpen, requestAction, confirmDiscard, cancelDiscard } =
     useUnsavedChangesGuard(formDirty);
 
-  useSetAdminPageMeta({ title: 'Comptes bancaires' });
+  useSetAdminPageMeta({ title: tBank('page.title') });
 
   const loadAccounts = useCallback(async (orgId: string) => {
     setLoading(true);
@@ -57,7 +63,7 @@ export function OrganizationBankAccountsList() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [getOrganizationSettingsErrorMessage]);
 
   useEffect(() => {
     let cancelled = false;
@@ -71,7 +77,7 @@ export function OrganizationBankAccountsList() {
           me.permissions.includes('organization_bank_accounts.read');
         if (!canRead) {
           if (!cancelled) {
-            setAccessError('Vous n’avez pas la permission de consulter les comptes bancaires.');
+            setAccessError(tBank('page.denied'));
           }
           return;
         }
@@ -104,7 +110,7 @@ export function OrganizationBankAccountsList() {
     return () => {
       cancelled = true;
     };
-  }, [searchParams, loadAccounts]);
+  }, [searchParams, loadAccounts, tBank, getOrganizationSettingsErrorMessage]);
 
   const handleOrganizationChange = useCallback(
     (id: string) => {
@@ -122,7 +128,7 @@ export function OrganizationBankAccountsList() {
   const handleDelete = useCallback(
     async (account: OrganizationBankAccount) => {
       if (!organizationId) return;
-      if (!window.confirm('Supprimer ce compte bancaire ?')) return;
+      if (!window.confirm(tBank('list.deleteConfirm'))) return;
       setDeletingId(account.id);
       try {
         await getApiClient().deleteOrganizationBankAccount(
@@ -136,24 +142,24 @@ export function OrganizationBankAccountsList() {
         setDeletingId(null);
       }
     },
-    [organizationId, isSuperAdmin, loadAccounts],
+    [organizationId, isSuperAdmin, loadAccounts, tBank, getOrganizationSettingsErrorMessage],
   );
 
   const columns = useMemo<ColumnDef<OrganizationBankAccount, unknown>[]>(
     () => [
       {
         accessorKey: 'bankName',
-        header: 'Banque',
+        header: tBank('list.columns.bank'),
         cell: ({ row }) => <span className="text-atg-fg">{row.original.bankName}</span>,
       },
       {
         accessorKey: 'accountName',
-        header: 'Compte',
+        header: tBank('list.columns.account'),
         cell: ({ row }) => <span className="text-atg-fg">{row.original.accountName}</span>,
       },
       {
         id: 'accountNumber',
-        header: 'N° compte',
+        header: tBank('list.columns.accountNumber'),
         cell: ({ row }) => (
           <span className="font-mono text-sm">
             {maskAccountNumberForDisplay(row.original.accountNumber)}
@@ -162,18 +168,18 @@ export function OrganizationBankAccountsList() {
       },
       {
         accessorKey: 'currency',
-        header: 'Devise',
+        header: tBank('list.columns.currency'),
         cell: ({ row }) => row.original.currency,
       },
       {
         id: 'isDefault',
-        header: 'Défaut',
+        header: tBank('list.columns.isDefault'),
         meta: { align: 'center' },
         cell: ({ row }) =>
           row.original.isDefault ? (
-            <DataTableBadge variant="success">Oui</DataTableBadge>
+            <DataTableBadge variant="success">{tCommon('boolean.yes')}</DataTableBadge>
           ) : (
-            <span className="text-atg-muted">—</span>
+            <span className="text-atg-muted">{tCommon('empty.dash')}</span>
           ),
       },
       {
@@ -197,7 +203,7 @@ export function OrganizationBankAccountsList() {
         ),
       },
     ],
-    [deletingId, handleDelete],
+    [deletingId, handleDelete, tBank, tCommon],
   );
 
   if (accessError) {
@@ -213,7 +219,7 @@ export function OrganizationBankAccountsList() {
   if (!organizationId) {
     return (
       <ParametresPageLayout>
-        <p className="text-sm text-atg-muted">Chargement…</p>
+        <p className="text-sm text-atg-muted">{t('form.loading')}</p>
       </ParametresPageLayout>
     );
   }
@@ -227,12 +233,9 @@ export function OrganizationBankAccountsList() {
         onSubnavNavigate={formDirty ? (_href, proceed) => requestAction(proceed) : undefined}
       >
         <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
-          <p className="text-sm text-atg-muted">
-            Comptes B2B de l’organisation. Le numéro de compte est partiellement masqué pour les
-            administrateurs d’organisation.
-          </p>
+          <p className="text-sm text-atg-muted">{tBank('page.intro')}</p>
           {!creating && !editing ? (
-            <Button onClick={() => setCreating(true)}>Nouveau compte</Button>
+            <Button onClick={() => setCreating(true)}>{tBank('list.newButton')}</Button>
           ) : null}
         </div>
 
@@ -241,7 +244,7 @@ export function OrganizationBankAccountsList() {
             className={selectClass}
             value={organizationId}
             onChange={(e) => handleOrganizationChange(e.target.value)}
-            aria-label="Organisation"
+            aria-label={tBank('list.orgSelectAria')}
           >
             {organizations.map((org) => (
               <option key={org.id} value={org.id}>
@@ -295,18 +298,18 @@ export function OrganizationBankAccountsList() {
             {listError}
           </p>
         ) : loading ? (
-          <p className="text-sm text-atg-muted">Chargement…</p>
+          <p className="text-sm text-atg-muted">{t('form.loading')}</p>
         ) : (
-          <DataTable columns={columns} data={accounts} emptyMessage="Aucun compte bancaire." />
+          <DataTable columns={columns} data={accounts} emptyMessage={tBank('list.empty')} />
         )}
       </ParametresPageLayout>
       <AlertDialog
         open={dialogOpen}
         onOpenChange={setDialogOpen}
-        title="Modifications non enregistrées"
-        description="Des changements n’ont pas été enregistrés. Quitter sans sauvegarder ?"
-        confirmLabel="Quitter sans enregistrer"
-        cancelLabel="Continuer l’édition"
+        title={t('unsaved.title')}
+        description={t('unsaved.description')}
+        confirmLabel={t('unsaved.confirm')}
+        cancelLabel={t('unsaved.cancel')}
         variant="danger"
         onConfirm={confirmDiscard}
         onCancel={cancelDiscard}

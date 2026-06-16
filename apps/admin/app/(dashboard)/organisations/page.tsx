@@ -1,20 +1,11 @@
 import type { Metadata } from 'next';
-import { Button, PageHeader } from '@africatourismgate/ui';
-import { OrganizationsList } from '../../../components/organizations/organizations-list';
+import { getAdminPageMetadata } from '../../../lib/i18n/admin-page-i18n';
+import { OrganisationsPageContent } from '../../../components/pages/organisations-page-content';
 
-export const metadata: Metadata = {
-  title: 'Organisations — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('organisations');
+}
 
-export default function OrganisationsPage() {
-  return (
-    <div>
-      <PageHeader
-        title="Organisations"
-        description="Partenaires et entités de la plateforme. Recherche par nom ou slug."
-        actions={<Button href="/organisations/nouveau">Nouvelle organisation</Button>}
-      />
-      <OrganizationsList />
-    </div>
-  );
+export default function Page() {
+  return <OrganisationsPageContent />;
 }

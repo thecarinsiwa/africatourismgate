@@ -6,13 +6,6 @@ import type {
 
 export const STRIPE_PROVIDER = 'stripe';
 
-export const paymentStatusLabels: Record<PaymentStatus, string> = {
-  pending: 'En attente',
-  succeeded: 'Réussi',
-  failed: 'Échoué',
-  refunded: 'Remboursé',
-};
-
 export const paymentStatusVariants: Record<
   PaymentStatus,
   'success' | 'warning' | 'muted' | 'danger' | 'default'
@@ -23,13 +16,12 @@ export const paymentStatusVariants: Record<
   refunded: 'default',
 };
 
-const providerLabels: Record<string, string> = {
-  stripe: 'Stripe',
-  cash: 'Espèces',
-};
-
-export function formatPaymentProvider(provider: string | null): string {
-  if (!provider) return '—';
+export function formatPaymentProvider(
+  provider: string | null,
+  providerLabels: Record<string, string>,
+  emptyLabel = '—',
+): string {
+  if (!provider) return emptyLabel;
   return providerLabels[provider] ?? provider;
 }
 
@@ -71,6 +63,7 @@ export type PaymentRefundHistoryEntry = {
 export function buildRefundHistoryEntries(
   detail: PaymentAdminDetail | null,
   sessionRefunds: RefundPaymentResponse[],
+  refundLabels: { partial: string; full: string },
 ): PaymentRefundHistoryEntry[] {
   if (sessionRefunds.length > 0) {
     return sessionRefunds.map((refund) => ({
@@ -78,9 +71,10 @@ export function buildRefundHistoryEntries(
       amountCents: refund.amountCents,
       createdAt: new Date().toISOString(),
       stripeStatus: refund.stripeStatus,
-      label: refund.amountCents < (detail?.amountCents ?? refund.amountCents)
-        ? 'Remboursement partiel'
-        : 'Remboursement total',
+      label:
+        refund.amountCents < (detail?.amountCents ?? refund.amountCents)
+          ? refundLabels.partial
+          : refundLabels.full,
     }));
   }
 
@@ -90,7 +84,7 @@ export function buildRefundHistoryEntries(
         id: `derived-${detail.id}`,
         amountCents: detail.amountCents,
         createdAt: detail.updatedAt ?? detail.createdAt,
-        label: 'Remboursement total',
+        label: refundLabels.full,
       },
     ];
   }

@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Button,
   Card,
@@ -12,9 +14,9 @@ import {
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { User, UserSession } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getUsersErrorMessage } from '../../lib/users-errors';
 import type { UserScopedListProps } from './user-addresses-list';
 import { UserIdFilterBar } from './user-id-filter-bar';
 import { UserListCell } from './user-list-cell';
@@ -46,12 +48,18 @@ function SessionCard({
   showUser,
   revoking,
   onRevoke,
+  tSessionStatus,
+  tDates,
+  tRoles,
 }: {
   session: UserSession;
   usersById: Map<string, User>;
   showUser: boolean;
   revoking: boolean;
   onRevoke: (session: UserSession) => void;
+  tSessionStatus: ReturnType<typeof useTranslations<'modules.common.sessionStatus'>>;
+  tDates: ReturnType<typeof useTranslations<'modules.common.dates'>>;
+  tRoles: ReturnType<typeof useTranslations<'modules.users.roles'>>;
 }) {
   const expired = isSessionExpired(session.expiresAt);
 
@@ -62,22 +70,22 @@ function SessionCard({
           {showUser ? (
             <UserListCell userId={session.userId} usersById={usersById} />
           ) : (
-            <p className="text-sm font-medium text-atg-fg">Session</p>
+            <p className="text-sm font-medium text-atg-fg">{tSessionStatus('title')}</p>
           )}
         </div>
         <DataTableBadge variant={expired ? 'muted' : 'success'}>
-          {expired ? 'Expirée' : 'Active'}
+          {expired ? tSessionStatus('expired') : tSessionStatus('active')}
         </DataTableBadge>
       </div>
       <dl className="grid gap-2 text-sm">
         <div className="flex justify-between gap-2">
-          <dt className="text-atg-muted">Créée le</dt>
+          <dt className="text-atg-muted">{tDates('createdAt')}</dt>
           <dd className="text-right font-medium text-atg-fg">
             {formatDateTime(session.createdAt)}
           </dd>
         </div>
         <div className="flex justify-between gap-2">
-          <dt className="text-atg-muted">Expire le</dt>
+          <dt className="text-atg-muted">{tDates('expiresAt')}</dt>
           <dd className="text-right text-atg-fg">{formatDateTime(session.expiresAt)}</dd>
         </div>
       </dl>
@@ -91,7 +99,7 @@ function SessionCard({
           disabled={revoking}
           loading={revoking}
         >
-          Révoquer
+          {tRoles('revokeDialog.title')}
         </Button>
       ) : null}
     </Card>
@@ -103,6 +111,13 @@ export function UserSessionsList({
   showUserColumn = true,
   layout = 'cards',
 }: UserSessionsListProps = {}) {
+  const { users: getUsersErrorMessage } = useAdminErrorMessages();
+  const tSessions = useTranslations('modules.users.sessions');
+  const tColumns = useTranslations('modules.common.columns');
+  const tSessionStatus = useTranslations('modules.common.sessionStatus');
+  const tDates = useTranslations('modules.common.dates');
+  const tRoles = useTranslations('modules.users.roles');
+  const tPagination = useTranslations('modules.common.pagination');
   const [page, setPage] = useState(1);
   const [userIdFilter, setUserIdFilter] = useState(fixedUserId ?? '');
   const [users, setUsers] = useState<User[]>([]);
@@ -147,7 +162,7 @@ export function UserSessionsList({
     } catch (error) {
       setState({ status: 'error', message: getUsersErrorMessage(error) });
     }
-  }, [page, userIdFilter]);
+  }, [page, userIdFilter, getUsersErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -155,7 +170,7 @@ export function UserSessionsList({
 
   const handleRevoke = useCallback(
     async (row: UserSession) => {
-      if (!window.confirm("Révoquer cette session ? L'utilisateur devra se reconnecter.")) {
+      if (!window.confirm(tSessions('revokeConfirm'))) {
         return;
       }
       setRevokingId(row.id);
@@ -168,7 +183,7 @@ export function UserSessionsList({
         setRevokingId(null);
       }
     },
-    [load],
+    [load, tSessions, getUsersErrorMessage],
   );
 
   const columns = useMemo<ColumnDef<UserSession, unknown>[]>(() => {
@@ -177,7 +192,7 @@ export function UserSessionsList({
     if (showUserColumn) {
       cols.push({
         id: 'user',
-        header: 'Utilisateur',
+        header: tColumns('user'),
         cell: ({ row }) => (
           <UserListCell userId={row.original.userId} usersById={usersById} />
         ),
@@ -187,7 +202,7 @@ export function UserSessionsList({
     cols.push(
       {
         id: 'createdAt',
-        header: 'Créée le',
+        header: tDates('createdAt'),
         cell: ({ row }) => (
           <span className="whitespace-nowrap text-sm">
             {formatDateTime(row.original.createdAt)}
@@ -196,7 +211,7 @@ export function UserSessionsList({
       },
       {
         id: 'expiresAt',
-        header: 'Expire le',
+        header: tDates('expiresAt'),
         cell: ({ row }) => (
           <span className="whitespace-nowrap text-sm text-atg-muted">
             {formatDateTime(row.original.expiresAt)}
@@ -205,23 +220,24 @@ export function UserSessionsList({
       },
       {
         id: 'status',
-        header: 'Statut',
+        header: tColumns('status'),
         meta: { align: 'center' },
         cell: ({ row }) =>
           isSessionExpired(row.original.expiresAt) ? (
-            <DataTableBadge variant="muted">Expirée</DataTableBadge>
+            <DataTableBadge variant="muted">{tSessionStatus('expired')}</DataTableBadge>
           ) : (
-            <DataTableBadge variant="success">Active</DataTableBadge>
+            <DataTableBadge variant="success">{tSessionStatus('active')}</DataTableBadge>
           ),
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tColumns('actions'),
         meta: { align: 'right' },
         cell: ({ row }) => (
           <DataTableActions>
             <DataTableActionButton
               action="revoke"
+              label={tRoles('revokeDialog.title')}
               onClick={() => void handleRevoke(row.original)}
               disabled={revokingId === row.original.id}
               loading={revokingId === row.original.id}
@@ -232,12 +248,19 @@ export function UserSessionsList({
     );
 
     return cols;
-  }, [handleRevoke, revokingId, showUserColumn, usersById]);
+  }, [
+    handleRevoke,
+    revokingId,
+    showUserColumn,
+    tColumns,
+    tDates,
+    tRoles,
+    tSessionStatus,
+    usersById,
+  ]);
 
   const rows = state.status === 'ready' ? state.rows : [];
-  const emptyMessage = userIdFilter
-    ? 'Aucune session active pour cet utilisateur.'
-    : 'Aucune session active.';
+  const emptyMessage = userIdFilter ? tSessions('emptyFiltered') : tSessions('emptyDefault');
 
   return (
     <>
@@ -273,6 +296,9 @@ export function UserSessionsList({
                   showUser={showUserColumn}
                   revoking={revokingId === session.id}
                   onRevoke={(s) => void handleRevoke(s)}
+                  tSessionStatus={tSessionStatus}
+                  tDates={tDates}
+                  tRoles={tRoles}
                 />
               ))}
             </div>
@@ -283,7 +309,7 @@ export function UserSessionsList({
               pageSize={PAGE_SIZE}
               totalPages={state.totalPages}
               totalItems={state.total}
-              itemLabel="session"
+              itemLabel={tPagination('session')}
               onPageChange={setPage}
             />
           ) : null}
@@ -296,7 +322,7 @@ export function UserSessionsList({
             getRowId={(row) => row.id}
             isLoading={state.status === 'loading'}
             emptyMessage={emptyMessage}
-            aria-label="Liste des sessions utilisateur"
+            aria-label={tSessions('ariaLabel')}
           />
           {state.status === 'ready' && state.totalPages > 0 ? (
             <DataTablePagination
@@ -304,7 +330,7 @@ export function UserSessionsList({
               pageSize={PAGE_SIZE}
               totalPages={state.totalPages}
               totalItems={state.total}
-              itemLabel="session"
+              itemLabel={tPagination('session')}
               onPageChange={setPage}
             />
           ) : null}

@@ -1,12 +1,14 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import { Button, Select } from '@africatourismgate/ui';
 import type { Room } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { currentYearMonth } from '../../lib/availability-dates';
-import { getHebergementsErrorMessage } from '../../lib/hebergements-errors';
 import { RoomAvailabilityBulkForm } from './room-availability-bulk-form';
 import { RoomAvailabilityGrid } from './room-availability-grid';
 
@@ -15,6 +17,8 @@ type PropertyAvailabilitySectionProps = {
 };
 
 export function PropertyAvailabilitySection({ propertyId }: PropertyAvailabilitySectionProps) {
+  const { hebergements: getHebergementsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.properties.sections.availability');
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -48,7 +52,7 @@ export function PropertyAvailabilitySection({ propertyId }: PropertyAvailability
     } finally {
       setLoading(false);
     }
-  }, [propertyId]);
+  }, [propertyId, getHebergementsErrorMessage]);
 
   useEffect(() => {
     void loadRooms();
@@ -74,7 +78,7 @@ export function PropertyAvailabilitySection({ propertyId }: PropertyAvailability
   }, []);
 
   if (loading) {
-    return <p className="text-sm text-atg-muted">Chargement des chambres…</p>;
+    return <p className="text-sm text-atg-muted">{t('loadingRooms')}</p>;
   }
 
   if (error) {
@@ -88,10 +92,7 @@ export function PropertyAvailabilitySection({ propertyId }: PropertyAvailability
   if (rooms.length === 0) {
     return (
       <div className="rounded-lg border border-dashed border-atg-border bg-atg-surface/50 px-6 py-10 text-center">
-        <p className="text-sm text-atg-muted">
-          Aucune chambre pour cet hébergement. Créez une chambre pour gérer les
-          disponibilités.
-        </p>
+        <p className="text-sm text-atg-muted">{t('noRooms')}</p>
         <Button
           type="button"
           variant="outline"
@@ -103,7 +104,7 @@ export function PropertyAvailabilitySection({ propertyId }: PropertyAvailability
             router.replace(`${pathname}?${params.toString()}`, { scroll: false });
           }}
         >
-          Aller à l’onglet Chambres
+          {t('goToRoomsTab')}
         </Button>
       </div>
     );
@@ -113,7 +114,7 @@ export function PropertyAvailabilitySection({ propertyId }: PropertyAvailability
     <div className="space-y-8">
       <div className="max-w-md">
         <Select
-          label="Chambre"
+          label={t('room')}
           value={selectedRoomId ?? ''}
           onChange={(e) => handleRoomChange(e.target.value)}
           options={rooms.map((room) => ({
@@ -123,7 +124,7 @@ export function PropertyAvailabilitySection({ propertyId }: PropertyAvailability
         />
         {selectedRoom ? (
           <p className="mt-2 text-sm text-atg-muted">
-            Stock et prix par nuit ({selectedRoom.currency}).
+            {t('stockHint', { currency: selectedRoom.currency })}
           </p>
         ) : null}
       </div>

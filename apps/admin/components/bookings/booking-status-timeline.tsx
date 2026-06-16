@@ -2,11 +2,13 @@
 
 import { cn, DataTableBadge } from '@africatourismgate/ui';
 import type { BookingStatus, BookingStatusHistoryEntry } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 import {
   BOOKING_STATUS_VARIANTS,
   getBookingStatusLabel,
 } from '../../lib/booking-status';
+import { useBookingStatusLabels } from '../../lib/i18n/use-module-labels';
 
 const CANONICAL_STEPS: BookingStatus[] = ['draft', 'pending_payment', 'confirmed'];
 const TERMINAL_STATUSES = new Set<BookingStatus>(['cancelled', 'refunded']);
@@ -93,14 +95,16 @@ function StepNode({
   reachedAt,
   showConnector,
   connectorCompleted,
+  statusLabels,
 }: {
   step: BookingStatus;
   state: StepState;
   reachedAt: string | null;
   showConnector?: boolean;
   connectorCompleted?: boolean;
+  statusLabels: ReturnType<typeof useBookingStatusLabels>;
 }) {
-  const label = getBookingStatusLabel(step);
+  const label = getBookingStatusLabel(step, statusLabels);
 
   return (
     <div className="flex min-w-0 flex-1 items-start gap-0">
@@ -143,9 +147,20 @@ function StepNode({
   );
 }
 
-function HistoryItem({ entry }: { entry: BookingStatusHistoryEntry }) {
-  const fromLabel = entry.fromStatus ? getBookingStatusLabel(entry.fromStatus) : '—';
-  const toLabel = getBookingStatusLabel(entry.toStatus);
+function HistoryItem({
+  entry,
+  statusLabels,
+  emptyDash,
+}: {
+  entry: BookingStatusHistoryEntry;
+  statusLabels: ReturnType<typeof useBookingStatusLabels>;
+  emptyDash: string;
+}) {
+  const t = useTranslations('modules.bookings.timeline');
+  const fromLabel = entry.fromStatus
+    ? getBookingStatusLabel(entry.fromStatus, statusLabels)
+    : emptyDash;
+  const toLabel = getBookingStatusLabel(entry.toStatus, statusLabels);
 
   return (
     <li className="relative border-l-2 border-atg-border py-3 pl-5 last:pb-0">
@@ -162,7 +177,7 @@ function HistoryItem({ entry }: { entry: BookingStatusHistoryEntry }) {
         </DataTableBadge>
       </div>
       <p className="mt-1 text-sm text-atg-fg">
-        {fromLabel} → <span className="font-medium">{toLabel}</span>
+        {t('transition', { fromStatus: fromLabel, toStatus: toLabel })}
       </p>
       {entry.reason ? (
         <p className="mt-1 text-xs text-atg-muted">{entry.reason}</p>
@@ -176,6 +191,11 @@ export function BookingStatusTimeline({
   history,
   className,
 }: BookingStatusTimelineProps) {
+  const t = useTranslations('modules.bookings.timeline');
+  const tCommon = useTranslations('modules.common');
+  const statusLabels = useBookingStatusLabels();
+  const emptyDash = tCommon('empty.dash');
+
   const reached = useMemo(
     () => collectReachedStatuses(currentStatus, history),
     [currentStatus, history],
@@ -193,7 +213,7 @@ export function BookingStatusTimeline({
 
   return (
     <div className={cn('space-y-6', className)}>
-      <div role="group" aria-label="Progression du statut de réservation">
+      <div role="group" aria-label={t('progressAria')}>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-0">
           {CANONICAL_STEPS.map((step, index) => {
             const state = getStepState(index, currentStatus, reached);
@@ -213,6 +233,7 @@ export function BookingStatusTimeline({
                   reachedAt={reachedAt}
                   showConnector={index < CANONICAL_STEPS.length - 1}
                   connectorCompleted={connectorCompleted}
+                  statusLabels={statusLabels}
                 />
                 {index < CANONICAL_STEPS.length - 1 ? (
                   <div
@@ -231,10 +252,10 @@ export function BookingStatusTimeline({
         {isTerminal ? (
           <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-atg-border pt-4">
             <span className="text-xs font-medium uppercase tracking-wide text-atg-muted">
-              Statut final
+              {t('finalStatus')}
             </span>
             <DataTableBadge variant={BOOKING_STATUS_VARIANTS[currentStatus]}>
-              {getBookingStatusLabel(currentStatus)}
+              {getBookingStatusLabel(currentStatus, statusLabels)}
             </DataTableBadge>
           </div>
         ) : null}
@@ -242,15 +263,20 @@ export function BookingStatusTimeline({
 
       {sortedHistory.length > 0 ? (
         <div>
-          <h3 className="mb-2 text-sm font-semibold text-atg-fg">Historique</h3>
-          <ul className="m-0 list-none p-0" aria-label="Historique des changements de statut">
+          <h3 className="mb-2 text-sm font-semibold text-atg-fg">{t('history')}</h3>
+          <ul className="m-0 list-none p-0" aria-label={t('historyAria')}>
             {sortedHistory.map((entry) => (
-              <HistoryItem key={entry.id} entry={entry} />
+              <HistoryItem
+                key={entry.id}
+                entry={entry}
+                statusLabels={statusLabels}
+                emptyDash={emptyDash}
+              />
             ))}
           </ul>
         </div>
       ) : (
-        <p className="text-sm text-atg-muted">Aucun changement de statut enregistré.</p>
+        <p className="text-sm text-atg-muted">{t('historyEmpty')}</p>
       )}
     </div>
   );

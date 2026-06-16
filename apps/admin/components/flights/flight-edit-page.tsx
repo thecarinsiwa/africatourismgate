@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import type { Airline, Airport, Flight } from '@africatourismgate/types';
 import {
   DataTableBadge,
@@ -10,12 +12,12 @@ import {
   TabsTrigger,
 } from '@africatourismgate/ui';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { AdminPageBackLink } from '../admin-page-back-link';
 import { getApiClient } from '../../lib/auth/api';
-import { getVolsErrorMessage } from '../../lib/vols-errors';
 import { FlightClassesSection } from './flight-classes-section';
 import { FlightForm } from './flight-form';
 import { FlightImagesSection } from './flight-images-section';
@@ -34,6 +36,8 @@ function isTabValue(value: string | null): value is TabValue {
 }
 
 export function FlightEditPage({ flightId }: FlightEditPageProps) {
+  const { vols: getVolsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.flights.detail');
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -53,7 +57,7 @@ export function FlightEditPage({ flightId }: FlightEditPageProps) {
 
   useAdminEditPageMeta({
     ready: state.status === 'ready',
-    title: 'Modifier le vol',
+    title: t('title'),
     entityLabel: state.status === 'ready' ? state.flight.flightNumber : undefined,
   });
 
@@ -84,7 +88,7 @@ export function FlightEditPage({ flightId }: FlightEditPageProps) {
     return () => {
       cancelled = true;
     };
-  }, [flightId]);
+  }, [flightId, getVolsErrorMessage]);
 
   const handleTabChange = useCallback(
     (tab: string) => {
@@ -133,7 +137,7 @@ export function FlightEditPage({ flightId }: FlightEditPageProps) {
           href="/produits/vols"
           className="text-sm font-medium text-primary hover:text-primary-hover"
         >
-          ← Retour aux vols
+          {t('backLink')}
         </Link>
       </div>
     );
@@ -146,7 +150,7 @@ export function FlightEditPage({ flightId }: FlightEditPageProps) {
 
   return (
     <div className="space-y-6">
-      <AdminPageBackLink href="/produits/vols" label="Retour aux vols" />
+      <AdminPageBackLink href="/produits/vols" label={t('backLink')} />
       <div className="flex flex-wrap items-start gap-4">
         <FlightThumbnail flightId={flightId} label={flight.flightNumber} size="md" />
         <div className="min-w-0 flex-1 space-y-4">
@@ -171,9 +175,9 @@ export function FlightEditPage({ flightId }: FlightEditPageProps) {
       </div>
 
       <Tabs value={activeTab} onValueChange={handleTabChange}>
-        <TabsList aria-label="Sections du vol">
-          <TabsTrigger value="vol">Vol</TabsTrigger>
-          <TabsTrigger value="classes">Classes</TabsTrigger>
+        <TabsList aria-label={t('tabsAria')}>
+          <TabsTrigger value="vol">{t('tabs.flight')}</TabsTrigger>
+          <TabsTrigger value="classes">{t('tabs.classes')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="vol">

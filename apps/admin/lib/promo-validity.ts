@@ -3,11 +3,7 @@ import type { PromoCode, PromoCodeDiscountType } from '@africatourismgate/types'
 
 export type PromoValidityState = 'active' | 'upcoming' | 'expired';
 
-const validityLabels: Record<PromoValidityState, string> = {
-  active: 'En cours',
-  upcoming: 'À venir',
-  expired: 'Expiré',
-};
+export const PROMO_VALIDITY_STATES: PromoValidityState[] = ['active', 'upcoming', 'expired'];
 
 const validityVariants: Record<PromoValidityState, DataTableBadgeVariant> = {
   active: 'success',
@@ -15,9 +11,17 @@ const validityVariants: Record<PromoValidityState, DataTableBadgeVariant> = {
   expired: 'danger',
 };
 
-const discountTypeLabels: Record<PromoCodeDiscountType, string> = {
-  percent: '%',
-  fixed_amount: 'Fixe',
+export type PromoValidityLabels = Record<PromoValidityState, string>;
+
+export type PromoDiscountLabels = {
+  informative: string;
+  pending: string;
+  percentFormat: string;
+  fixedFormat: string;
+  noDateLimit: string;
+  fromDate: string;
+  untilDate: string;
+  range: string;
 };
 
 function toDateKey(iso: string): string {
@@ -45,8 +49,11 @@ export function getPromoValidityState(
   return 'active';
 }
 
-export function getPromoValidityLabel(state: PromoValidityState): string {
-  return validityLabels[state];
+export function getPromoValidityLabel(
+  state: PromoValidityState,
+  labels: PromoValidityLabels,
+): string {
+  return labels[state];
 }
 
 export function getPromoValidityBadgeVariant(state: PromoValidityState): DataTableBadgeVariant {
@@ -60,13 +67,14 @@ export function formatPromoValidityRange(validFrom: string, validUntil: string):
 export function formatPromotionValidityDisplay(
   validFrom: string | null | undefined,
   validUntil: string | null | undefined,
+  labels: Pick<PromoDiscountLabels, 'noDateLimit' | 'fromDate' | 'untilDate' | 'range'>,
 ): string {
   const from = validFrom?.slice(0, 10);
   const until = validUntil?.slice(0, 10);
-  if (!from && !until) return 'Sans limite de dates';
-  if (from && until) return `${from} → ${until}`;
-  if (from) return `À partir du ${from}`;
-  return `Jusqu’au ${until}`;
+  if (!from && !until) return labels.noDateLimit;
+  if (from && until) return labels.range.replace('{from}', from).replace('{until}', until);
+  if (from) return labels.fromDate.replace('{from}', from);
+  return labels.untilDate.replace('{until}', until ?? '');
 }
 
 export function getPromotionValidityState(
@@ -81,37 +89,52 @@ export function getPromotionValidityState(
   return null;
 }
 
-export function formatPromoDiscountLabel(promo: Pick<PromoCode, 'discountType' | 'discountValue'>): string {
+export function formatPromoDiscountLabel(
+  promo: Pick<PromoCode, 'discountType' | 'discountValue'>,
+  labels: Pick<PromoDiscountLabels, 'percentFormat' | 'fixedFormat'>,
+): string {
   const value = Number(promo.discountValue);
   if (promo.discountType === 'percent') {
-    return `−${value} %`;
+    return labels.percentFormat.replace('{value}', String(value));
   }
-  return `−${value.toFixed(2)}`;
+  return labels.fixedFormat.replace('{value}', value.toFixed(2));
 }
 
-export function getPromoDiscountTypeLabel(type: PromoCodeDiscountType): string {
-  return discountTypeLabels[type];
+export function getPromoDiscountTypeLabel(
+  type: PromoCodeDiscountType,
+  labels: Record<PromoCodeDiscountType, string>,
+): string {
+  return labels[type];
 }
 
-export function formatPromotionDiscountBadge(params: {
-  hasDiscount: boolean;
-  discountType?: PromoCodeDiscountType | null;
-  discountValue?: string | number | null;
-}): string {
-  if (!params.hasDiscount) return 'Campagne informative';
+export function formatPromotionDiscountBadge(
+  params: {
+    hasDiscount: boolean;
+    discountType?: PromoCodeDiscountType | null;
+    discountValue?: string | number | null;
+  },
+  labels: PromoDiscountLabels,
+): string {
+  if (!params.hasDiscount) return labels.informative;
   const value = Number(params.discountValue);
-  if (!Number.isFinite(value) || value <= 0) return 'Réduction…';
-  if (params.discountType === 'percent') return `−${value} %`;
-  if (params.discountType === 'fixed_amount') return `−${value.toFixed(2)}`;
-  return 'Réduction…';
+  if (!Number.isFinite(value) || value <= 0) return labels.pending;
+  if (params.discountType === 'percent') {
+    return labels.percentFormat.replace('{value}', String(value));
+  }
+  if (params.discountType === 'fixed_amount') {
+    return labels.fixedFormat.replace('{value}', value.toFixed(2));
+  }
+  return labels.pending;
 }
 
 export function formatPromoUsageLabel(
   redemptionCount: number,
   maxRedemptions: number | null,
+  format: string,
+  unlimitedMax: string,
 ): string {
-  const max = maxRedemptions != null ? String(maxRedemptions) : '∞';
-  return `${redemptionCount} / ${max}`;
+  const max = maxRedemptions != null ? String(maxRedemptions) : unlimitedMax;
+  return format.replace('{count}', String(redemptionCount)).replace('{max}', max);
 }
 
 export function getPromoUsageBadgeVariant(

@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Card,
   DataTable,
@@ -16,16 +18,19 @@ import type {
   BookingStatus,
 } from '@africatourismgate/types';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { itemTypeOptions } from '../../lib/booking-item-labels';
 import {
   BOOKING_STATUS_VARIANTS,
-  getBookingStatusFilterOptions,
   getBookingStatusLabel,
 } from '../../lib/booking-status';
-import { getBookingsErrorMessage } from '../../lib/bookings-errors';
 import { formatMoney } from '../../lib/format-money';
+import {
+  useBookingItemTypeOptions,
+  useBookingStatusFilterOptions,
+  useBookingStatusLabels,
+} from '../../lib/i18n/use-module-labels';
 import { BookingItemCatalogLink } from './booking-item-catalog-link';
 import { BookingItemTypeIcon } from './booking-item-type-icon';
 
@@ -34,10 +39,8 @@ const PAGE_SIZE = 10;
 type StatusFilter = '' | BookingStatus;
 type ItemTypeFilter = '' | BookingItemType;
 
-const statusFilterOptions = getBookingStatusFilterOptions();
-
-function formatDates(startDate: string | null, endDate: string | null): string {
-  if (!startDate) return '—';
+function formatDates(startDate: string | null, endDate: string | null, emptyDash: string): string {
+  if (!startDate) return emptyDash;
   if (startDate === endDate || !endDate) return startDate;
   return `${startDate} → ${endDate}`;
 }
@@ -47,6 +50,14 @@ function formatBookingRef(bookingId: string): string {
 }
 
 export function BookingItemsList() {
+  const { bookings: getBookingsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.bookings.itemsList');
+  const tCommon = useTranslations('modules.common');
+  const statusLabels = useBookingStatusLabels();
+  const statusFilterOptions = useBookingStatusFilterOptions();
+  const itemTypeOptions = useBookingItemTypeOptions();
+  const emptyDash = tCommon('empty.dash');
+
   const itemTypeFilterId = useId();
   const statusFilterId = useId();
   const bookingIdFilterId = useId();
@@ -82,7 +93,7 @@ export function BookingItemsList() {
     } catch (error) {
       setState({ status: 'error', message: getBookingsErrorMessage(error) });
     }
-  }, [page, itemTypeFilter, statusFilter, bookingIdFilter, filterTick]);
+  }, [page, itemTypeFilter, statusFilter, bookingIdFilter, filterTick, getBookingsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -90,21 +101,21 @@ export function BookingItemsList() {
 
   const applyFilters = useCallback(() => {
     setPage(1);
-    setFilterTick((t) => t + 1);
+    setFilterTick((tick) => tick + 1);
   }, []);
 
   const columns = useMemo<ColumnDef<BookingItemListItem, unknown>[]>(
     () => [
       {
         accessorKey: 'itemType',
-        header: 'Type',
+        header: tCommon('columns.type'),
         cell: ({ row }) => (
           <BookingItemTypeIcon itemType={row.original.itemType} size="sm" showLabel />
         ),
       },
       {
         accessorKey: 'titleSnapshot',
-        header: 'Libellé',
+        header: tCommon('columns.label'),
         cell: ({ row }) => (
           <BookingItemCatalogLink
             itemType={row.original.itemType}
@@ -116,16 +127,16 @@ export function BookingItemsList() {
       },
       {
         id: 'dates',
-        header: 'Dates',
+        header: tCommon('columns.dates'),
         cell: ({ row }) => (
           <span className="whitespace-nowrap text-sm text-atg-muted">
-            {formatDates(row.original.startDate, row.original.endDate)}
+            {formatDates(row.original.startDate, row.original.endDate, emptyDash)}
           </span>
         ),
       },
       {
         id: 'amount',
-        header: 'Montant',
+        header: tCommon('columns.amount'),
         meta: { align: 'right' },
         cell: ({ row }) => (
           <span className="tabular-nums text-sm font-medium">
@@ -135,7 +146,7 @@ export function BookingItemsList() {
       },
       {
         id: 'bookingRef',
-        header: 'Réservation',
+        header: tCommon('columns.booking'),
         cell: ({ row }) => (
           <Link
             href={`/dashboard/bookings/${row.original.bookingId}`}
@@ -147,20 +158,20 @@ export function BookingItemsList() {
       },
       {
         id: 'bookingStatus',
-        header: 'Statut',
+        header: tCommon('columns.status'),
         meta: { align: 'center' },
         cell: ({ row }) => {
           const status = row.original.bookingStatus;
           return (
             <DataTableBadge variant={BOOKING_STATUS_VARIANTS[status]}>
-              {getBookingStatusLabel(status)}
+              {getBookingStatusLabel(status, statusLabels)}
             </DataTableBadge>
           );
         },
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tCommon('columns.actions'),
         meta: { align: 'right' },
         cell: ({ row }) => (
           <DataTableActions>
@@ -172,7 +183,7 @@ export function BookingItemsList() {
         ),
       },
     ],
-    [],
+    [emptyDash, statusLabels, tCommon],
   );
 
   const isLoading = state.status === 'loading';
@@ -180,9 +191,7 @@ export function BookingItemsList() {
   const items = state.status === 'ready' ? state.items : [];
   const hasFilters =
     itemTypeFilter !== '' || statusFilter !== '' || bookingIdFilter.trim() !== '';
-  const emptyMessage = hasFilters
-    ? 'Aucune ligne ne correspond à vos critères.'
-    : 'Aucune ligne de réservation pour le moment.';
+  const emptyMessage = hasFilters ? t('emptyFiltered') : t('emptyDefault');
 
   return (
     <div className="space-y-6">
@@ -193,7 +202,7 @@ export function BookingItemsList() {
               htmlFor={itemTypeFilterId}
               className="mb-2 block text-sm font-medium text-atg-fg"
             >
-              Type
+              {t('filters.type')}
             </label>
             <select
               id={itemTypeFilterId}
@@ -201,17 +210,17 @@ export function BookingItemsList() {
               onChange={(e) => setItemTypeFilter(e.target.value as ItemTypeFilter)}
               className="w-full min-w-[180px] rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
             >
-              <option value="">Tous</option>
-              {itemTypeOptions.map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
+              <option value="">{tCommon('filters.all')}</option>
+              {itemTypeOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
                 </option>
               ))}
             </select>
           </div>
           <div>
             <label htmlFor={statusFilterId} className="mb-2 block text-sm font-medium text-atg-fg">
-              Statut réservation
+              {t('filters.bookingStatus')}
             </label>
             <select
               id={statusFilterId}
@@ -219,7 +228,7 @@ export function BookingItemsList() {
               onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
               className="w-full min-w-[200px] rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
             >
-              <option value="">Tous</option>
+              <option value="">{tCommon('filters.all')}</option>
               {statusFilterOptions
                 .filter((option) => option.value !== '')
                 .map((option) => (
@@ -234,14 +243,14 @@ export function BookingItemsList() {
               htmlFor={bookingIdFilterId}
               className="mb-2 block text-sm font-medium text-atg-fg"
             >
-              ID réservation
+              {t('filters.bookingId')}
             </label>
             <Input
               id={bookingIdFilterId}
               type="text"
               value={bookingIdFilter}
               onChange={(e) => setBookingIdFilter(e.target.value)}
-              placeholder="UUID complet"
+              placeholder={t('filters.bookingIdPlaceholder')}
               className="min-w-[280px] font-mono text-sm"
             />
           </div>
@@ -250,7 +259,7 @@ export function BookingItemsList() {
             onClick={applyFilters}
             className="rounded-lg bg-primary px-4 py-3 text-sm font-medium text-white transition-opacity hover:opacity-90"
           >
-            Appliquer
+            {tCommon('filters.apply')}
           </button>
         </div>
       </div>
@@ -269,7 +278,7 @@ export function BookingItemsList() {
               emptyMessage={emptyMessage}
               emptyVariant={hasFilters ? 'search' : 'default'}
               getRowId={(row) => row.id}
-              aria-label="Lignes de réservation"
+              aria-label={t('ariaLabel')}
             />
           </Card>
 
@@ -279,7 +288,7 @@ export function BookingItemsList() {
               pageSize={PAGE_SIZE}
               totalPages={state.totalPages}
               totalItems={state.total}
-              itemLabel="ligne"
+              itemLabel={tCommon('pagination.line')}
               onPageChange={setPage}
             />
           ) : null}

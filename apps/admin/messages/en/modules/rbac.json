@@ -1,0 +1,149 @@
+{
+  "subnav": {
+    "ariaLabel": "Navigation RBAC",
+    "roles": "Roles",
+    "permissions": "Permissions",
+    "assignments": "Assignations",
+    "audit": "Todit"
+  },
+  "unsavedChanges": {
+    "title": "Modifications non enregistrées",
+    "description": "Des changements n'ont pas été enregistrés. Quitter sans sauvegarder ?",
+    "confirm": "Quitter sans enregistrer",
+    "cancel": "Continuer l'édition"
+  },
+  "permissionDomains": {
+    "amenities": "Amenitys",
+    "bookings": "Bookings",
+    "cruises": "Cruises",
+    "destinations": "Destinations",
+    "employees": "Employees",
+    "flights": "Flights",
+    "loyalty": "Fidélité",
+    "organizations": "Organizations",
+    "payments": "Payments",
+    "permissions": "Permissions",
+    "promo_codes": "Codes promo",
+    "properties": "Accommodations",
+    "promotions": "Promotions",
+    "reviews": "Avis",
+    "roles": "Roles",
+    "support": "Support",
+    "users": "Users",
+    "vehicles": "Locations",
+    "activities": "Activitys",
+    "packages": "Packages"
+  },
+  "permissionActions": {
+    "read": "Lecture",
+    "write": "Écriture",
+    "delete": "Suppression",
+    "manage": "Gestion",
+    "approve": "Approbation"
+  },
+  "roles": {
+    "searchPlaceholder": "Rechercher par code ou nom…",
+    "empty": "Tocun rôle trouvé.",
+    "ariaLabel": "Liste des rôles",
+    "paginationItem": "rôle",
+    "systemReadOnlyHint": "Role système (lecture seule)",
+    "codeHint": "Minuscules, chiffres et underscore (ex. sales_manager).",
+    "createSubmit": "Créer le rôle",
+    "backToList": "← Back aux rôles",
+    "type": {
+      "system": "Système",
+      "custom": "Personnalisé"
+    },
+    "validation": {
+      "codeRequired": "Le code est obligatoire.",
+      "nameRequired": "Last name is required."
+    },
+    "editTitle": {
+      "system": "Role système",
+      "custom": "Modifier le rôle"
+    },
+    "deleteDialog": {
+      "title": "Supprimer le rôle",
+      "description": "Supprimer définitivement le rôle « {name} » ?"
+    },
+    "toast": {
+      "deletedTitle": "Role supprimé",
+      "deletedMessage": "Le rôle « {name} » a été supprimé.",
+      "deleteFailedTitle": "Échec de la suppression"
+    }
+  },
+  "permissions": {
+    "intro": "Catalogue des permissions (lecture seule). Modifiez les droits via la matrice sur chaque rôle.",
+    "searchPlaceholder": "Rechercher…",
+    "empty": "None permission.",
+    "paginationItem": "permission",
+    "columns": {
+      "resource": "Ressource"
+    }
+  },
+  "matrix": {
+    "title": "Matrice des permissions",
+    "loading": "Chargement de la matrice…",
+    "descriptionReadOnly": "Role système : consultation seule.",
+    "descriptionEditable": "Cochez les permissions accordées à ce rôle, regroupées par domaine.",
+    "columns": {
+      "scope": "Périmètre"
+    },
+    "wholeDomain": "Tout le domaine",
+    "perAction": "Par action",
+    "ariaToggleDomain": "Tout {domain} — {action}",
+    "toast": {
+      "savedTitle": "Permissions enregistrées",
+      "savedMessage": "La matrice du rôle a été mise à jour.",
+      "saveFailedTitle": "Échec de l'enregistrement"
+    }
+  },
+  "assignments": {
+    "loading": "Chargement des assignations…",
+    "empty": "None assignation active.",
+    "revoke": "Révoquer",
+    "revokeDialog": {
+      "title": "Révoquer l'assignation",
+      "description": "Retirer ce rôle pour l'utilisateur sur ce périmètre ?"
+    },
+    "toast": {
+      "revokedTitle": "Assignation révoquée",
+      "revokedMessage": "Le rôle a été retiré pour cet utilisateur.",
+      "revokeFailedTitle": "Échec de la révocation"
+    }
+  },
+  "audit": {
+    "checkingAccess": "Vérification des droits…",
+    "accessDenied": "Cette page est réservée au super administrateur. Connectez-vous avec admin@africatourismgate.local ou un compte disposant du rôle super_admin.",
+    "empty": "Tocun événement pour ces critères.",
+    "paginationItem": "événement",
+    "hideDetail": "Masquer le détail",
+    "showDetailJson": "Voir le détail JSON",
+    "actorFallback": "Acteur : {actorId}…",
+    "targetLabel": "Cible",
+    "ipLabel": "IP",
+    "filters": {
+      "eventType": "Type d'événement",
+      "actorUser": "User (acteur)"
+    },
+    "toast": {
+      "loadFailedTitle": "Erreur de chargement"
+    },
+    "eventTypes": {
+      "role_created": "Role créé",
+      "role_updated": "Role modifié",
+      "role_deleted": "Role supprimé",
+      "permission_created": "Permission créée",
+      "permission_updated": "Permission modifiée",
+      "permission_deleted": "Permission supprimée",
+      "role_permission_granted": "Permission accordée au rôle",
+      "role_permission_revoked": "Permission retirée du rôle",
+      "user_role_granted": "Role assigné",
+      "user_role_revoked": "Role révoqué",
+      "user_role_extended": "Assignation prolongée",
+      "impersonation_started": "Impersonation démarrée",
+      "impersonation_ended": "Impersonation terminée",
+      "permission_denied": "Accès refusé"
+    }
+  }
+}

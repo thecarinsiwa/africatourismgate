@@ -1,10 +1,12 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import { StatCard } from '@africatourismgate/ui';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { packagesKpis, type PackagesKpiKey } from '../../config/packages-kpi';
 import { getApiClient } from '../../lib/auth/api';
-import { getDashboardKpiErrorMessage } from '../../lib/dashboard-api-errors';
 import { formatCount } from '../../lib/format-money';
 
 type KpiCardState = {
@@ -16,6 +18,8 @@ type KpiCardState = {
 const initialCardState: KpiCardState = { status: 'loading' };
 
 export function PackagesStatCards({ className }: { className?: string }) {
+  const { dashboardKpi: getDashboardKpiErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.packages');
   const [cards, setCards] = useState<Record<PackagesKpiKey, KpiCardState>>(() => ({
     packages: { ...initialCardState },
     active: { ...initialCardState },
@@ -66,7 +70,7 @@ export function PackagesStatCards({ className }: { className?: string }) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [getDashboardKpiErrorMessage]);
 
   return (
     <div className={className}>
@@ -76,8 +80,8 @@ export function PackagesStatCards({ className }: { className?: string }) {
           return (
             <div key={kpi.key}>
               <StatCard
-                label={kpi.label}
-                subtitle={kpi.subtitle}
+                label={t(kpi.labelKey)}
+                subtitle={t(kpi.subtitleKey)}
                 status={state.status}
                 value={state.displayValue}
                 errorMessage={state.errorMessage}

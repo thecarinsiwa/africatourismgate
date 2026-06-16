@@ -1,20 +1,11 @@
 import type { Metadata } from 'next';
-import { AdminPageIntro } from '../../../../../components/admin-page-intro';
-import { FlightForm } from '../../../../../components/flights/flight-form';
+import { getAdminPageMetadata } from '../../../../../lib/i18n/admin-page-i18n';
+import { NouveauVolPageContent } from '../../../../../components/pages/produits-vols-nouveau-page-content';
 
-export const metadata: Metadata = {
-  title: 'Nouveau vol — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('produits/vols/nouveau');
+}
 
-export default function NouveauVolPage() {
-  return (
-    <div>
-      <AdminPageIntro
-        backHref="/produits/vols"
-        backLabel="Retour aux vols"
-        description="Définissez le trajet, puis ajoutez les classes cabine sur la fiche vol."
-      />
-      <FlightForm mode="create" />
-    </div>
-  );
+export default function Page() {
+  return <NouveauVolPageContent />;
 }

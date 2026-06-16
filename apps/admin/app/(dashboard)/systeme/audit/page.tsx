@@ -1,19 +1,11 @@
 import type { Metadata } from 'next';
-import { PageHeader } from '@africatourismgate/ui';
-import { RbacAuditLogsList } from '../../../../components/rbac/rbac-audit-logs-list';
+import { getAdminPageMetadata } from '../../../../lib/i18n/admin-page-i18n';
+import { AuditPageContent } from '../../../../components/pages/systeme-audit-page-content';
 
-export const metadata: Metadata = {
-  title: 'Audit RBAC — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('systeme/audit');
+}
 
-export default function RbacAuditPage() {
-  return (
-    <div>
-      <PageHeader
-        title="Audit RBAC"
-        description="Journal des événements de sécurité et des changements de permissions (lecture seule)."
-      />
-      <RbacAuditLogsList />
-    </div>
-  );
+export default function Page() {
+  return <AuditPageContent />;
 }

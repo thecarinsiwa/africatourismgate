@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   AlertDialog,
   Button,
@@ -7,10 +9,11 @@ import {
   useToast,
 } from '@africatourismgate/ui';
 import type { UserRoleAssignment } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
+import { useRbacScopeDisplayLabels } from '../../lib/i18n/use-module-labels';
 import { formatAssignmentScope } from '../../lib/rbac-display';
 import { getApiClient } from '../../lib/auth/api';
-import { getRbacErrorMessage } from '../../lib/rbac-errors';
 import { RoleBadge } from './role-badge';
 import { UserRoleAssignmentForm } from './user-role-assignment-form';
 
@@ -19,6 +22,10 @@ type UserRoleAssignmentsPanelProps = {
 };
 
 export function UserRoleAssignmentsPanel({ userId }: UserRoleAssignmentsPanelProps) {
+  const { rbac: getRbacErrorMessage } = useAdminErrorMessages();
+  const tRoles = useTranslations('modules.users.roles');
+  const tCommon = useTranslations('modules.common');
+  const scopeLabels = useRbacScopeDisplayLabels();
   const { toast } = useToast();
   const [assignments, setAssignments] = useState<UserRoleAssignment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -42,7 +49,7 @@ export function UserRoleAssignmentsPanel({ userId }: UserRoleAssignmentsPanelPro
     } finally {
       setLoading(false);
     }
-  }, [userId]);
+  }, [userId, getRbacErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -54,35 +61,35 @@ export function UserRoleAssignmentsPanel({ userId }: UserRoleAssignmentsPanelPro
     try {
       await getApiClient().revokeUserRoleAssignment(pendingRevoke.id);
       toast({
-        title: 'Rôle révoqué',
-        message: 'L’assignation a été retirée.',
+        title: tRoles('toast.revokedTitle'),
+        message: tRoles('toast.revokedMessage'),
         variant: 'success',
       });
       setPendingRevoke(null);
       await load();
     } catch (err) {
       toast({
-        title: 'Échec de la révocation',
+        title: tRoles('toast.revokeFailedTitle'),
         message: getRbacErrorMessage(err),
         variant: 'error',
       });
     } finally {
       setRevokingId(null);
     }
-  }, [pendingRevoke, load, toast]);
+  }, [pendingRevoke, load, toast, tRoles, getRbacErrorMessage]);
 
   return (
     <Card variant="dashboard" padding="lg" className="space-y-4">
-      <h2 className="text-lg font-semibold text-atg-fg">Rôles assignés</h2>
+      <h2 className="text-lg font-semibold text-atg-fg">{tRoles('assignedTitle')}</h2>
       {error ? (
         <p role="alert" className="text-sm text-red-600">
           {error}
         </p>
       ) : null}
       {loading ? (
-        <p className="text-sm text-atg-muted">Chargement…</p>
+        <p className="text-sm text-atg-muted">{tCommon('loading')}</p>
       ) : assignments.length === 0 ? (
-        <p className="text-sm text-atg-muted">Aucun rôle actif pour cet utilisateur.</p>
+        <p className="text-sm text-atg-muted">{tRoles('empty')}</p>
       ) : (
         <div className="flex flex-wrap gap-2">
           {assignments.map((assignment) => (
@@ -96,7 +103,11 @@ export function UserRoleAssignmentsPanel({ userId }: UserRoleAssignmentsPanelPro
                 <RoleBadge code={assignment.roleId.slice(0, 8)} />
               )}
               <span className="text-xs text-atg-muted">
-                {formatAssignmentScope(assignment.scopeType, assignment.scopeId)}
+                {formatAssignmentScope(
+                  assignment.scopeType,
+                  scopeLabels,
+                  assignment.scopeId,
+                )}
               </span>
               <Button
                 type="button"
@@ -107,7 +118,7 @@ export function UserRoleAssignmentsPanel({ userId }: UserRoleAssignmentsPanelPro
                 loading={revokingId === assignment.id}
                 className="!text-red-600"
               >
-                Révoquer
+                {tRoles('revokeDialog.title')}
               </Button>
             </div>
           ))}
@@ -124,9 +135,9 @@ export function UserRoleAssignmentsPanel({ userId }: UserRoleAssignmentsPanelPro
         onOpenChange={(open) => {
           if (!open) setPendingRevoke(null);
         }}
-        title="Révoquer le rôle"
-        description="Retirer ce rôle pour cet utilisateur ?"
-        confirmLabel="Révoquer"
+        title={tRoles('revokeDialog.title')}
+        description={tRoles('revokeDialog.description')}
+        confirmLabel={tRoles('revokeDialog.title')}
         variant="danger"
         loading={revokingId !== null}
         onConfirm={() => void confirmRevoke()}

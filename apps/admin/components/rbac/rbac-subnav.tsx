@@ -2,13 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useCallback } from 'react';
 
-const links = [
-  { href: '/systeme/roles', label: 'Rôles' },
-  { href: '/systeme/roles/permissions', label: 'Permissions' },
-  { href: '/systeme/roles/assignations', label: 'Assignations' },
-  { href: '/systeme/audit', label: 'Audit' },
+const linkKeys = [
+  { href: '/systeme/roles', labelKey: 'roles' as const },
+  { href: '/systeme/roles/permissions', labelKey: 'permissions' as const },
+  { href: '/systeme/roles/assignations', labelKey: 'assignments' as const },
+  { href: '/systeme/audit', labelKey: 'audit' as const },
 ];
 
 type RbacSubnavProps = {
@@ -18,6 +19,7 @@ type RbacSubnavProps = {
 export function RbacSubnav({ onNavigate }: RbacSubnavProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const t = useTranslations('modules.rbac.subnav');
 
   const isActive = useCallback(
     (href: string) => {
@@ -46,8 +48,11 @@ export function RbacSubnav({ onNavigate }: RbacSubnavProps) {
   );
 
   return (
-    <nav className="mb-8 flex flex-wrap gap-2 border-b border-atg-border pb-4">
-      {links.map((link) => {
+    <nav
+      className="mb-8 flex flex-wrap gap-2 border-b border-atg-border pb-4"
+      aria-label={t('ariaLabel')}
+    >
+      {linkKeys.map((link) => {
         const active = isActive(link.href);
         return (
           <Link
@@ -60,7 +65,7 @@ export function RbacSubnav({ onNavigate }: RbacSubnavProps) {
                 : 'text-atg-muted hover:bg-atg-elevated hover:text-atg-fg'
             }`}
           >
-            {link.label}
+            {t(link.labelKey)}
           </Link>
         );
       })}

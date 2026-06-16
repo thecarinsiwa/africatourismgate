@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Button,
   Card,
@@ -11,9 +13,10 @@ import {
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { CruiseLine } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ReferentialListToolbar } from '../referential-list-toolbar';
 import { getApiClient } from '../../lib/auth/api';
-import { getCroisieresErrorMessage } from '../../lib/croisieres-errors';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -22,6 +25,12 @@ type FormValues = { name: string };
 const emptyForm: FormValues = { name: '' };
 
 export function CruiseLinesList() {
+  const { croisieres: getCroisieresErrorMessage } = useAdminErrorMessages();
+  const tForm = useTranslations('modules.cruises.form.line');
+  const tFilters = useTranslations('modules.cruises.filters');
+  const tColumns = useTranslations('modules.common.columns');
+  const tPagination = useTranslations('modules.common.pagination');
+  const tActions = useTranslations('common.actions');
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -54,7 +63,7 @@ export function CruiseLinesList() {
     } catch (error) {
       setState({ status: 'error', message: getCroisieresErrorMessage(error) });
     }
-  }, [page, search]);
+  }, [page, search, getCroisieresErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -62,13 +71,13 @@ export function CruiseLinesList() {
 
   useEffect(() => {
     const q = searchInput.trim();
-    const t = window.setTimeout(() => {
+    const timer = window.setTimeout(() => {
       setSearch((prev) => {
         if (prev !== q) setPage(1);
         return q;
       });
     }, SEARCH_DEBOUNCE_MS);
-    return () => window.clearTimeout(t);
+    return () => window.clearTimeout(timer);
   }, [searchInput]);
 
   function resetForm() {
@@ -83,7 +92,7 @@ export function CruiseLinesList() {
     setFormError(null);
     const name = formValues.name.trim();
     if (!name) {
-      setFormError('Le nom est obligatoire.');
+      setFormError(tForm('validation'));
       return;
     }
     setSubmitting(true);
@@ -106,14 +115,14 @@ export function CruiseLinesList() {
     () => [
       {
         accessorKey: 'name',
-        header: 'Ligne',
+        header: tColumns('line'),
         cell: ({ row }) => (
           <span className="font-medium text-atg-fg">{row.original.name}</span>
         ),
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tColumns('actions'),
         meta: { align: 'right' },
         cell: ({ row }) => (
           <DataTableActions>
@@ -128,7 +137,7 @@ export function CruiseLinesList() {
             <DataTableActionButton
               action="delete"
               onClick={async () => {
-                if (!window.confirm(`Supprimer « ${row.original.name} » ?`)) return;
+                if (!window.confirm(tForm('deleteConfirm', { name: row.original.name }))) return;
                 setDeletingId(row.original.id);
                 try {
                   await getApiClient().deleteCruiseLine(row.original.id);
@@ -146,35 +155,32 @@ export function CruiseLinesList() {
         ),
       },
     ],
-    [deletingId, load],
+    [deletingId, getCroisieresErrorMessage, load, tColumns, tForm],
   );
 
   const lines = state.status === 'ready' ? state.lines : [];
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex-1 sm:max-w-md">
-          <Input
-            type="search"
-            placeholder="Rechercher une ligne…"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            aria-label="Rechercher"
-          />
-        </div>
-        {!showForm ? (
-          <Button type="button" onClick={() => setShowForm(true)}>
-            Nouvelle ligne
-          </Button>
-        ) : null}
-      </div>
+      <ReferentialListToolbar
+        searchValue={searchInput}
+        onSearchChange={setSearchInput}
+        placeholder={tFilters('searchLine')}
+        ariaLabel={tActions('search')}
+        action={
+          !showForm ? (
+            <Button type="button" onClick={() => setShowForm(true)}>
+              {tForm('newShort')}
+            </Button>
+          ) : undefined
+        }
+      />
 
       {showForm ? (
         <Card variant="dashboard" className="max-w-lg">
           <form onSubmit={handleSubmit} className="space-y-4">
             <h3 className="text-sm font-medium">
-              {editing ? 'Modifier la ligne' : 'Nouvelle ligne de croisière'}
+              {editing ? tForm('edit') : tForm('new')}
             </h3>
             {formError ? (
               <p role="alert" className="text-sm text-red-600">
@@ -182,17 +188,17 @@ export function CruiseLinesList() {
               </p>
             ) : null}
             <Input
-              label="Nom"
+              label={tColumns('name')}
               value={formValues.name}
               onChange={(e) => setFormValues({ name: e.target.value })}
               required
             />
             <div className="flex gap-3">
               <Button type="submit" loading={submitting}>
-                {editing ? 'Enregistrer' : 'Ajouter'}
+                {editing ? tActions('save') : tActions('create')}
               </Button>
               <Button type="button" variant="outline" onClick={resetForm}>
-                Annuler
+                {tActions('cancel')}
               </Button>
             </div>
           </form>
@@ -210,7 +216,7 @@ export function CruiseLinesList() {
               columns={columns}
               data={lines}
               isLoading={state.status === 'loading'}
-              emptyMessage="Aucune ligne de croisière."
+              emptyMessage={tForm('empty')}
               getRowId={(r) => r.id}
             />
           </Card>
@@ -220,7 +226,7 @@ export function CruiseLinesList() {
               pageSize={PAGE_SIZE}
               totalPages={state.totalPages}
               totalItems={state.total}
-              itemLabel="ligne"
+              itemLabel={tPagination('line')}
               onPageChange={setPage}
             />
           ) : null}

@@ -2,13 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
 import { useCallback } from 'react';
 
-export const PARAMETRES_LINKS = [
-  { href: '/parametres', label: 'Paramètres' },
-  { href: '/parametres/emails', label: 'E-mails' },
-  { href: '/parametres/comptes', label: 'Comptes bancaires' },
+const linkKeys = [
+  { href: '/parametres', labelKey: 'settings' as const },
+  { href: '/parametres/emails', labelKey: 'emails' as const },
+  { href: '/parametres/comptes', labelKey: 'bankAccounts' as const },
 ] as const;
 
 export function isParametresLinkActive(pathname: string, href: string): boolean {
@@ -44,6 +45,7 @@ type ParametresSubnavProps = {
 export function ParametresSubnav({ onNavigate }: ParametresSubnavProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const t = useTranslations('modules.settings.nav');
 
   const handleNavigate = useCallback(
     (event: React.MouseEvent<HTMLAnchorElement>, href: string) => {
@@ -56,12 +58,11 @@ export function ParametresSubnav({ onNavigate }: ParametresSubnavProps) {
 
   return (
     <aside className="mb-6 lg:sticky lg:top-6 lg:mb-0 lg:self-start">
-      {/* Mobile: horizontal scrollable tabs */}
       <nav
         className="flex gap-2 overflow-x-auto border-b border-atg-border pb-4 lg:hidden"
-        aria-label="Navigation paramètres"
+        aria-label={t('ariaLabel')}
       >
-        {PARAMETRES_LINKS.map((link) => {
+        {linkKeys.map((link) => {
           const active = isParametresLinkActive(pathname, link.href);
           return (
             <Link
@@ -71,18 +72,17 @@ export function ParametresSubnav({ onNavigate }: ParametresSubnavProps) {
               aria-current={active ? 'page' : undefined}
               className={linkClassName(active, 'horizontal')}
             >
-              {link.label}
+              {t(link.labelKey)}
             </Link>
           );
         })}
       </nav>
 
-      {/* Desktop: vertical sticky tabs */}
       <nav
         className="hidden flex-col gap-1 border-r border-atg-border pr-4 lg:flex"
-        aria-label="Navigation paramètres"
+        aria-label={t('ariaLabel')}
       >
-        {PARAMETRES_LINKS.map((link) => {
+        {linkKeys.map((link) => {
           const active = isParametresLinkActive(pathname, link.href);
           return (
             <Link
@@ -92,7 +92,7 @@ export function ParametresSubnav({ onNavigate }: ParametresSubnavProps) {
               aria-current={active ? 'page' : undefined}
               className={linkClassName(active, 'vertical')}
             >
-              {link.label}
+              {t(link.labelKey)}
             </Link>
           );
         })}

@@ -1,9 +1,11 @@
 'use client';
 
+import { useAdminErrorMessages } from '../lib/i18n/use-admin-error-messages';
+
 import { Avatar, Card, DataTableBadge } from '@africatourismgate/ui';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { getDashboardKpiErrorMessage } from '../lib/dashboard-api-errors';
+import { useTranslations } from 'next-intl';
+import { useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../lib/auth/api';
 import type { UserStatus } from '@africatourismgate/types';
 
@@ -15,12 +17,6 @@ type RecentUser = {
   status: UserStatus;
 };
 
-const statusLabels: Record<UserStatus, string> = {
-  active: 'Actif',
-  suspended: 'Suspendu',
-  deleted: 'Supprimé',
-};
-
 const statusVariants: Record<UserStatus, 'success' | 'warning' | 'danger'> = {
   active: 'success',
   suspended: 'warning',
@@ -28,9 +24,22 @@ const statusVariants: Record<UserStatus, 'success' | 'warning' | 'danger'> = {
 };
 
 export function DashboardRecentUsers({ className }: { className?: string }) {
+  const { dashboardKpi: getDashboardKpiErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('dashboard');
+  const tRecent = useTranslations('dashboard.recentUsers');
+  const tStatus = useTranslations('dashboard.recentUsers.status');
   const [state, setState] = useState<
     { status: 'loading' } | { status: 'error'; message: string } | { status: 'ready'; users: RecentUser[] }
   >({ status: 'loading' });
+
+  const statusLabels = useMemo(
+    (): Record<UserStatus, string> => ({
+      active: tStatus('active'),
+      suspended: tStatus('suspended'),
+      deleted: tStatus('deleted'),
+    }),
+    [tStatus],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -51,12 +60,12 @@ export function DashboardRecentUsers({ className }: { className?: string }) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [getDashboardKpiErrorMessage]);
 
   return (
     <Card variant="dashboard" padding="sm" className={className}>
-      <h2 className="text-base font-semibold text-atg-fg">Utilisateurs récents</h2>
-      <p className="mt-1 text-sm text-atg-muted">Dernières inscriptions sur la plateforme</p>
+      <h2 className="text-base font-semibold text-atg-fg">{tRecent('title')}</h2>
+      <p className="mt-1 text-sm text-atg-muted">{tRecent('subtitle')}</p>
 
       {state.status === 'loading' ? (
         <ul className="mt-5 space-y-3" aria-busy="true">
@@ -72,7 +81,7 @@ export function DashboardRecentUsers({ className }: { className?: string }) {
           {state.message}
         </p>
       ) : state.users.length === 0 ? (
-        <p className="mt-5 text-sm text-atg-muted">Aucun utilisateur pour le moment.</p>
+        <p className="mt-5 text-sm text-atg-muted">{tRecent('empty')}</p>
       ) : (
         <ul className="mt-5 space-y-2">
           {state.users.map((user) => (
@@ -104,7 +113,7 @@ export function DashboardRecentUsers({ className }: { className?: string }) {
         href="/utilisateurs"
         className="mt-5 inline-block text-sm font-medium text-primary hover:text-primary-hover"
       >
-        Voir tous les utilisateurs →
+        {t('viewAllUsers')}
       </Link>
     </Card>
   );

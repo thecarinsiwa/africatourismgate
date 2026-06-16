@@ -1,23 +1,11 @@
 import type { Metadata } from 'next';
-import { PageHeader } from '@africatourismgate/ui';
-import { AdminPageBackLink } from '../../../../../components/admin-page-back-link';
-import { ActivityForm } from '../../../../../components/activities/activity-form';
+import { getAdminPageMetadata } from '../../../../../lib/i18n/admin-page-i18n';
+import { NouvelleActivitePageContent } from '../../../../../components/pages/produits-activites-nouveau-page-content';
 
-export const metadata: Metadata = {
-  title: 'Nouvelle activité — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('produits/activites/nouveau');
+}
 
-export default function NouvelleActivitePage() {
-  return (
-    <div>
-      <PageHeader
-        title="Nouvelle activité"
-        description="Créez une expérience puis ajoutez des créneaux sur la page d'édition."
-        breadcrumb={
-          <AdminPageBackLink href="/produits/activites" label="Retour aux activités" />
-        }
-      />
-      <ActivityForm mode="create" />
-    </div>
-  );
+export default function Page() {
+  return <NouvelleActivitePageContent />;
 }

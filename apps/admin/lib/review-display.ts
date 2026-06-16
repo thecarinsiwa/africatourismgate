@@ -1,10 +1,6 @@
 import type { AdminReviewListItem, ReviewStatus } from '@africatourismgate/types';
 
-export const reviewStatusLabels: Record<ReviewStatus, string> = {
-  pending: 'En attente',
-  approved: 'Approuvé',
-  hidden: 'Masqué',
-};
+export const REVIEW_STATUSES: ReviewStatus[] = ['pending', 'approved', 'hidden'];
 
 export const reviewStatusVariants: Record<
   ReviewStatus,
@@ -17,10 +13,11 @@ export const reviewStatusVariants: Record<
 
 export function formatReviewDateTime(
   iso: string,
+  locale: string,
   style: 'short' | 'long' = 'short',
 ): string {
   try {
-    return new Date(iso).toLocaleString('fr-FR', {
+    return new Date(iso).toLocaleString(locale, {
       dateStyle: style === 'long' ? 'long' : 'short',
       timeStyle: 'short',
     });

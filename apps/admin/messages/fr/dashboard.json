@@ -1,0 +1,87 @@
+{
+  "greeting": "Bonjour, {firstName}",
+  "greetingFallback": "Bonjour",
+  "description": "Vue d'ensemble de votre plateforme Africa Tourism Gate",
+  "period": {
+    "label": "Période",
+    "7d": "7 jours",
+    "30d": "30 jours",
+    "90d": "90 jours"
+  },
+  "chart": {
+    "title": "Activité",
+    "subtitle": "Réservations et revenus sur la période sélectionnée",
+    "bookings": "Réservations",
+    "revenue": "Revenus",
+    "loading": "Chargement du graphique…",
+    "empty": "Aucune donnée sur cette période",
+    "error": "Impossible de charger les tendances",
+    "ariaLabel": "Graphique des réservations et revenus par jour"
+  },
+  "kpi": {
+    "users": {
+      "label": "Utilisateurs",
+      "subtitle": "Comptes enregistrés"
+    },
+    "bookings": {
+      "label": "Réservations",
+      "subtitle": "Réservations totales"
+    },
+    "revenue": {
+      "label": "Revenus",
+      "subtitle": "Paiements réussis"
+    },
+    "properties": {
+      "label": "Hébergements",
+      "subtitle": "Hébergements publiés"
+    }
+  },
+  "metaTitle": "Tableau de bord — Africa Tourism Gate Admin",
+  "errorLabel": "Erreur",
+  "viewAllUsers": "Voir tous les utilisateurs →",
+  "userStats": {
+    "title": "Statistiques utilisateurs",
+    "subtitle": "Répartition des comptes sur la plateforme",
+    "active": "Actifs",
+    "suspended": "Suspendus",
+    "total": "Total"
+  },
+  "platformOverview": {
+    "title": "Vue plateforme",
+    "subtitle": "Organisations, hébergements et activité",
+    "organizations": "Organisations",
+    "properties": "Hébergements",
+    "bookings": "Réservations",
+    "users": "Utilisateurs"
+  },
+  "quickActions": {
+    "title": "Actions rapides",
+    "subtitle": "Accès direct aux sections principales",
+    "users": {
+      "label": "Utilisateurs",
+      "description": "Gérer les comptes"
+    },
+    "organizations": {
+      "label": "Organisations",
+      "description": "Partenaires & entités"
+    },
+    "properties": {
+      "label": "Hébergements",
+      "description": "Catalogue & fiches"
+    },
+    "bookings": {
+      "label": "Réservations",
+      "description": "Suivi des bookings"
+    }
+  },
+  "recentUsers": {
+    "title": "Utilisateurs récents",
+    "subtitle": "Dernières inscriptions sur la plateforme",
+    "empty": "Aucun utilisateur pour le moment.",
+    "status": {
+      "active": "Actif",
+      "suspended": "Suspendu",
+      "deleted": "Supprimé"
+    }
+  }
+}

@@ -1,8 +1,8 @@
 export const packagesKpis = [
   {
     key: 'packages',
-    label: 'Forfaits',
-    subtitle: 'Packages combinés',
+    labelKey: 'stats.packages.label',
+    subtitleKey: 'stats.packages.subtitle',
     iconClass: 'bg-atg-info-light text-atg-info',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -17,8 +17,8 @@ export const packagesKpis = [
   },
   {
     key: 'active',
-    label: 'Forfaits actifs',
-    subtitle: 'Publiés sur le catalogue',
+    labelKey: 'stats.active.label',
+    subtitleKey: 'stats.active.subtitle',
     iconClass: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -33,8 +33,8 @@ export const packagesKpis = [
   },
   {
     key: 'items',
-    label: 'Produits inclus',
-    subtitle: 'Lignes de composition',
+    labelKey: 'stats.items.label',
+    subtitleKey: 'stats.items.subtitle',
     iconClass: 'bg-violet-100 text-violet-700 dark:bg-violet-950/50 dark:text-violet-300',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -49,8 +49,8 @@ export const packagesKpis = [
   },
   {
     key: 'photos',
-    label: 'Photos forfaits',
-    subtitle: 'Galerie admin',
+    labelKey: 'stats.photos.label',
+    subtitleKey: 'stats.photos.subtitle',
     iconClass: 'bg-atg-warning-light text-atg-warning',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>

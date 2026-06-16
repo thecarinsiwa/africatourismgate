@@ -1,37 +1,29 @@
 import { ApiHttpError } from '@africatourismgate/api-client';
+import { resolveUnknownApiError } from './common-api-errors';
+import type { HebergementsErrorMessages } from './i18n/admin-error-messages';
 
-export function getHebergementsErrorMessage(error: unknown): string {
-  if (error instanceof TypeError) {
-    return 'Impossible de joindre l’API. Vérifiez que le serveur est démarré.';
-  }
+export type { HebergementsErrorMessages };
 
-  if (error instanceof ApiHttpError) {
-    if (error.status === 403) {
-      return 'Vous n’avez pas la permission d’effectuer cette action.';
-    }
-    if (error.status === 409) {
-      if (error.message?.includes('slug')) {
-        return 'Ce slug est déjà utilisé par une autre propriété.';
+export function getHebergementsErrorMessage(
+  error: unknown,
+  messages: HebergementsErrorMessages,
+): string {
+  return resolveUnknownApiError(error, messages, {
+    conflict: (apiError: ApiHttpError) => {
+      if (apiError.message?.includes('slug')) {
+        return messages.slugConflict;
       }
-      if (error.message?.includes('code')) {
-        return 'Ce code est déjà utilisé par un autre équipement.';
+      if (apiError.message?.includes('code')) {
+        return messages.codeConflict;
       }
       if (
-        error.message?.includes('disponibilité') ||
-        error.message?.includes('date')
+        apiError.message?.includes('disponibilité') ||
+        apiError.message?.includes('date') ||
+        apiError.message?.includes('availability')
       ) {
-        return (
-          error.message ||
-          'Une disponibilité existe déjà pour cette date.'
-        );
+        return apiError.message || messages.availabilityConflict;
       }
-      return 'Conflit : cette ressource existe déjà.';
-    }
-    if (error.message && !error.message.startsWith('HTTP ')) {
-      return error.message;
-    }
-    return `Erreur API (${error.status}).`;
-  }
-
-  return 'Une erreur est survenue.';
+      return messages.resourceConflict;
+    },
+  });
 }

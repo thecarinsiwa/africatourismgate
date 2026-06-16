@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Button,
   Card,
@@ -11,9 +13,9 @@ import {
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { ActivityProvider, Destination } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getActivitiesErrorMessage } from '../../lib/activities-errors';
 import { ActivityProviderAvatar } from './activity-provider-avatar';
 import { ActivityProviderRating } from './activity-provider-rating';
 
@@ -25,6 +27,15 @@ type FormValues = { name: string; destinationId: string };
 const emptyForm: FormValues = { name: '', destinationId: '' };
 
 export function ActivityProvidersList() {
+  const { activities: getActivitiesErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.activities.referential.providers');
+  const tList = useTranslations('modules.activities.list');
+  const tColumns = useTranslations('modules.common.columns');
+  const tPagination = useTranslations('modules.common.pagination');
+  const tCommon = useTranslations('modules.common');
+  const tSelect = useTranslations('modules.common.select');
+  const tActions = useTranslations('common.actions');
+  const emptyDash = tCommon('empty.dash');
   const destId = useId();
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
@@ -73,7 +84,7 @@ export function ActivityProvidersList() {
     } catch (error) {
       setState({ status: 'error', message: getActivitiesErrorMessage(error) });
     }
-  }, [page, search, destinationFilter]);
+  }, [page, search, destinationFilter, getActivitiesErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -81,13 +92,13 @@ export function ActivityProvidersList() {
 
   useEffect(() => {
     const q = searchInput.trim();
-    const t = window.setTimeout(() => {
+    const timer = window.setTimeout(() => {
       setSearch((prev) => {
         if (prev !== q) setPage(1);
         return q;
       });
     }, SEARCH_DEBOUNCE_MS);
-    return () => window.clearTimeout(t);
+    return () => window.clearTimeout(timer);
   }, [searchInput]);
 
   function resetForm() {
@@ -101,11 +112,11 @@ export function ActivityProvidersList() {
     event.preventDefault();
     setFormError(null);
     if (!formValues.name.trim()) {
-      setFormError('Le nom est obligatoire.');
+      setFormError(tCommon('validation.nameRequired'));
       return;
     }
     if (!formValues.destinationId) {
-      setFormError('La destination est obligatoire.');
+      setFormError(t('validation.destinationRequired'));
       return;
     }
     setSubmitting(true);
@@ -132,7 +143,7 @@ export function ActivityProvidersList() {
     () => [
       {
         id: 'provider',
-        header: 'Fournisseur',
+        header: tColumns('provider'),
         cell: ({ row }) => (
           <div className="flex items-center gap-3">
             <ActivityProviderAvatar name={row.original.name} size="sm" />
@@ -142,22 +153,22 @@ export function ActivityProvidersList() {
       },
       {
         id: 'destination',
-        header: 'Destination',
+        header: tList('destination'),
         cell: ({ row }) => (
           <span className="text-sm text-atg-muted">
-            {destById.get(row.original.destinationId) ?? '—'}
+            {destById.get(row.original.destinationId) ?? emptyDash}
           </span>
         ),
       },
       {
         id: 'rating',
-        header: 'Note',
+        header: tColumns('rating'),
         meta: { align: 'center' },
         cell: () => <ActivityProviderRating />,
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tColumns('actions'),
         meta: { align: 'right' },
         cell: ({ row }) => (
           <DataTableActions>
@@ -175,7 +186,7 @@ export function ActivityProvidersList() {
             <DataTableActionButton
               action="delete"
               onClick={async () => {
-                if (!window.confirm(`Supprimer « ${row.original.name} » ?`)) return;
+                if (!window.confirm(t('deleteConfirm', { name: row.original.name }))) return;
                 setDeletingId(row.original.id);
                 try {
                   await getApiClient().deleteActivityProvider(row.original.id);
@@ -193,7 +204,7 @@ export function ActivityProvidersList() {
         ),
       },
     ],
-    [deletingId, destById, load],
+    [deletingId, destById, emptyDash, getActivitiesErrorMessage, load, t, tColumns, tList],
   );
 
   const providers = state.status === 'ready' ? state.providers : [];
@@ -207,13 +218,16 @@ export function ActivityProvidersList() {
           <div className="flex-1 sm:max-w-md">
             <Input
               type="search"
-              placeholder="Rechercher un fournisseur…"
+              placeholder={t('searchPlaceholder')}
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
+              aria-label={tActions('search')}
             />
           </div>
           <div className="sm:w-56">
-            <label className="mb-2 block text-sm font-medium text-atg-fg">Destination</label>
+            <label className="mb-2 block text-sm font-medium text-atg-fg">
+              {tList('destination')}
+            </label>
             <select
               value={destinationFilter}
               onChange={(e) => {
@@ -222,7 +236,7 @@ export function ActivityProvidersList() {
               }}
               className={selectClass}
             >
-              <option value="">Toutes</option>
+              <option value="">{tCommon('filters.allFeminine')}</option>
               {destinations.map((d) => (
                 <option key={d.id} value={d.id}>
                   {d.name}
@@ -239,7 +253,7 @@ export function ActivityProvidersList() {
               setShowForm(true);
             }}
           >
-            Nouveau fournisseur
+            {t('new')}
           </Button>
         ) : null}
       </div>
@@ -248,7 +262,7 @@ export function ActivityProvidersList() {
         <Card variant="dashboard" className="max-w-2xl">
           <form onSubmit={handleSubmit} className="space-y-4">
             <h3 className="text-sm font-medium">
-              {editing ? 'Modifier le fournisseur' : 'Nouveau fournisseur'}
+              {editing ? t('edit') : t('new')}
             </h3>
             {formError ? (
               <p role="alert" className="text-sm text-red-600">
@@ -256,13 +270,13 @@ export function ActivityProvidersList() {
               </p>
             ) : null}
             <Input
-              label="Nom"
+              label={tColumns('name')}
               value={formValues.name}
               onChange={(e) => setFormValues((p) => ({ ...p, name: e.target.value }))}
             />
             <div>
               <label htmlFor={destId} className="mb-2 block text-sm font-medium">
-                Destination
+                {tList('destination')}
               </label>
               <select
                 id={destId}
@@ -272,7 +286,7 @@ export function ActivityProvidersList() {
                   setFormValues((p) => ({ ...p, destinationId: e.target.value }))
                 }
               >
-                <option value="">— Choisir —</option>
+                <option value="">{tSelect('chooseDash')}</option>
                 {destinations.map((d) => (
                   <option key={d.id} value={d.id}>
                     {d.name}
@@ -282,10 +296,10 @@ export function ActivityProvidersList() {
             </div>
             <div className="flex gap-3">
               <Button type="submit" loading={submitting}>
-                {editing ? 'Enregistrer' : 'Ajouter'}
+                {editing ? tActions('save') : tActions('create')}
               </Button>
               <Button type="button" variant="outline" onClick={resetForm}>
-                Annuler
+                {tActions('cancel')}
               </Button>
             </div>
           </form>
@@ -303,7 +317,7 @@ export function ActivityProvidersList() {
               columns={columns}
               data={providers}
               isLoading={state.status === 'loading'}
-              emptyMessage="Aucun fournisseur."
+              emptyMessage={t('empty')}
               getRowId={(r) => r.id}
             />
           </Card>
@@ -313,7 +327,7 @@ export function ActivityProvidersList() {
               pageSize={PAGE_SIZE}
               totalPages={state.totalPages}
               totalItems={state.total}
-              itemLabel="fournisseur"
+              itemLabel={tPagination('provider')}
               onPageChange={setPage}
             />
           ) : null}

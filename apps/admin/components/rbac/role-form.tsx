@@ -1,12 +1,14 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import { Button, Input, AlertDialog } from '@africatourismgate/ui';
 import type { CreateRoleRequest, Role, UpdateRoleRequest } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { RoleBadge } from './role-badge';
 import { getApiClient } from '../../lib/auth/api';
-import { getRbacErrorMessage } from '../../lib/rbac-errors';
 import { PermissionMatrix } from './permission-matrix';
 import { RbacSubnav } from './rbac-subnav';
 import { useUnsavedChangesGuard } from './use-unsaved-changes-guard';
@@ -24,6 +26,12 @@ type RoleFormProps = {
 };
 
 export function RoleForm({ mode, roleId, initialRole }: RoleFormProps) {
+  const { rbac: getRbacErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.rbac.roles');
+  const tUnsaved = useTranslations('modules.rbac.unsavedChanges');
+  const tCommonColumns = useTranslations('modules.common.columns');
+  const tCommon = useTranslations('modules.common');
+  const tActions = useTranslations('common.actions');
   const router = useRouter();
   const [values, setValues] = useState<RoleFormValues>(() =>
     initialRole
@@ -62,10 +70,10 @@ export function RoleForm({ mode, roleId, initialRole }: RoleFormProps) {
   function validate(): boolean {
     const errors: Partial<Record<keyof RoleFormValues, string>> = {};
     if (mode === 'create' && !values.code.trim()) {
-      errors.code = 'Le code est obligatoire.';
+      errors.code = t('validation.codeRequired');
     }
     if (!values.name.trim()) {
-      errors.name = 'Le nom est obligatoire.';
+      errors.name = t('validation.nameRequired');
     }
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
@@ -114,7 +122,7 @@ export function RoleForm({ mode, roleId, initialRole }: RoleFormProps) {
         <div className="mb-6 flex flex-wrap items-center gap-3">
           <RoleBadge code={initialRole.code} name={initialRole.name} showCode />
           {initialRole.isSystem ? (
-            <span className="text-sm text-atg-muted">Rôle système (lecture seule)</span>
+            <span className="text-sm text-atg-muted">{t('systemReadOnlyHint')}</span>
           ) : null}
         </div>
       ) : null}
@@ -127,20 +135,26 @@ export function RoleForm({ mode, roleId, initialRole }: RoleFormProps) {
 
         {mode === 'create' ? (
           <Input
-            label="Code"
+            label={tCommonColumns('code')}
             name="code"
             value={values.code}
             onChange={(e) => updateField('code', e.target.value.toLowerCase())}
             error={fieldErrors.code}
-            hint="Minuscules, chiffres et underscore (ex. sales_manager)."
+            hint={t('codeHint')}
             required
           />
         ) : (
-          <Input label="Code" name="code" value={values.code} readOnly disabled />
+          <Input
+            label={tCommonColumns('code')}
+            name="code"
+            value={values.code}
+            readOnly
+            disabled
+          />
         )}
 
         <Input
-          label="Nom"
+          label={tCommonColumns('name')}
           name="name"
           value={values.name}
           onChange={(e) => updateField('name', e.target.value)}
@@ -151,7 +165,7 @@ export function RoleForm({ mode, roleId, initialRole }: RoleFormProps) {
         />
 
         <Input
-          label="Description"
+          label={tCommon('form.description')}
           name="description"
           value={values.description}
           onChange={(e) => updateField('description', e.target.value)}
@@ -162,14 +176,14 @@ export function RoleForm({ mode, roleId, initialRole }: RoleFormProps) {
         {!readOnly ? (
           <div className="flex flex-wrap gap-3">
             <Button type="submit" loading={submitting}>
-              {mode === 'create' ? 'Créer le rôle' : 'Enregistrer'}
+              {mode === 'create' ? t('createSubmit') : tActions('save')}
             </Button>
             <Button
               type="button"
               variant="outline"
               onClick={() => requestAction(() => router.push('/systeme/roles'))}
             >
-              Annuler
+              {tActions('cancel')}
             </Button>
           </div>
         ) : null}
@@ -186,10 +200,10 @@ export function RoleForm({ mode, roleId, initialRole }: RoleFormProps) {
       <AlertDialog
         open={dialogOpen}
         onOpenChange={setDialogOpen}
-        title="Modifications non enregistrées"
-        description="Des changements n’ont pas été enregistrés. Quitter sans sauvegarder ?"
-        confirmLabel="Quitter sans enregistrer"
-        cancelLabel="Continuer l’édition"
+        title={tUnsaved('title')}
+        description={tUnsaved('description')}
+        confirmLabel={tUnsaved('confirm')}
+        cancelLabel={tUnsaved('cancel')}
         variant="danger"
         onConfirm={confirmDiscard}
         onCancel={cancelDiscard}

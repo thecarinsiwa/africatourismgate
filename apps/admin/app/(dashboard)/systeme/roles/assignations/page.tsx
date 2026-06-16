@@ -1,19 +1,11 @@
 import type { Metadata } from 'next';
-import { PageHeader } from '@africatourismgate/ui';
-import { UserRoleAssignmentsList } from '../../../../../components/rbac/user-role-assignments-list';
+import { getAdminPageMetadata } from '../../../../../lib/i18n/admin-page-i18n';
+import { AssignationsPageContent } from '../../../../../components/pages/systeme-roles-assignations-page-content';
 
-export const metadata: Metadata = {
-  title: 'Assignations de rôles — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('systeme/roles/assignations');
+}
 
-export default function AssignationsPage() {
-  return (
-    <div>
-      <PageHeader
-        title="Assignations de rôles"
-        description="Attribuer ou révoquer des rôles pour les utilisateurs (tous périmètres)."
-      />
-      <UserRoleAssignmentsList />
-    </div>
-  );
+export default function Page() {
+  return <AssignationsPageContent />;
 }

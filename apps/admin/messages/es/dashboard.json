@@ -1,0 +1,87 @@
+{
+  "greeting": "Hola, {firstName}",
+  "greetingFallback": "Hola",
+  "description": "Vista general de su plataforma Africa Tourism Gate",
+  "period": {
+    "label": "Período",
+    "7d": "7 días",
+    "30d": "30 días",
+    "90d": "90 días"
+  },
+  "chart": {
+    "title": "Actividad",
+    "subtitle": "Reservas e ingresos del período seleccionado",
+    "bookings": "Reservas",
+    "revenue": "Ingresos",
+    "loading": "Cargando gráfico…",
+    "empty": "Sin datos en este período",
+    "error": "No se pudieron cargar las tendencias",
+    "ariaLabel": "Gráfico diario de reservas e ingresos"
+  },
+  "kpi": {
+    "users": {
+      "label": "Usuarios",
+      "subtitle": "Cuentas registradas"
+    },
+    "bookings": {
+      "label": "Reservas",
+      "subtitle": "Reservas totales"
+    },
+    "revenue": {
+      "label": "Ingresos",
+      "subtitle": "Pagos exitosos"
+    },
+    "properties": {
+      "label": "Alojamientos",
+      "subtitle": "Propiedades publicadas"
+    }
+  },
+  "metaTitle": "Panel de control — Africa Tourism Gate Admin",
+  "errorLabel": "Error",
+  "viewAllUsers": "Ver todos los usuarios →",
+  "userStats": {
+    "title": "Estadísticas de usuarios",
+    "subtitle": "Distribución de cuentas en la plataforma",
+    "active": "Activos",
+    "suspended": "Suspendidos",
+    "total": "Total"
+  },
+  "platformOverview": {
+    "title": "Vista de la plataforma",
+    "subtitle": "Organizaciones, alojamientos y actividad",
+    "organizations": "Organizaciones",
+    "properties": "Alojamientos",
+    "bookings": "Reservas",
+    "users": "Usuarios"
+  },
+  "quickActions": {
+    "title": "Acciones rápidas",
+    "subtitle": "Acceso directo a las secciones principales",
+    "users": {
+      "label": "Usuarios",
+      "description": "Gestionar cuentas"
+    },
+    "organizations": {
+      "label": "Organizaciones",
+      "description": "Socios y entidades"
+    },
+    "properties": {
+      "label": "Alojamientos",
+      "description": "Catálogo y fichas"
+    },
+    "bookings": {
+      "label": "Reservas",
+      "description": "Seguimiento de reservas"
+    }
+  },
+  "recentUsers": {
+    "title": "Usuarios recientes",
+    "subtitle": "Últimos registros en la plataforma",
+    "empty": "Ningún usuario por el momento.",
+    "status": {
+      "active": "Activo",
+      "suspended": "Suspendido",
+      "deleted": "Eliminado"
+    }
+  }
+}

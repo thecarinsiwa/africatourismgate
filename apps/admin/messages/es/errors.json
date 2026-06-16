@@ -1,0 +1,55 @@
+{
+  "users": {
+    "emailConflict": "Este correo ya está en uso por otro usuario."
+  },
+  "bookings": {
+    "forbidden": "No tiene permiso bookings.read para consultar las reservas."
+  },
+  "hebergements": {
+    "slugConflict": "Este slug ya está en uso por otra propiedad.",
+    "codeConflict": "Este código ya está en uso por otro equipamiento.",
+    "availabilityConflict": "Ya existe disponibilidad para esta fecha."
+  },
+  "organizations": {
+    "slugConflict": "Este slug ya está en uso por otra organización."
+  },
+  "destinations": {
+    "slugConflict": "Este slug ya está en uso por otro destino."
+  },
+  "employees": {
+    "profileConflict": "Este usuario ya tiene un perfil de empleado."
+  },
+  "rbac": {
+    "forbidden": "Acceso denegado: su cuenta no tiene los permisos requeridos (users.read, roles.read). Inicie sesión con una cuenta administrador o ejecute pnpm --filter @africatourismgate/api sync:rbac y reinicie la API.",
+    "assignmentConflict": "Esta asignación ya existe para este ámbito."
+  },
+  "vols": {
+    "conflict": "Conflicto: este recurso ya existe (código IATA o disponibilidad duplicada)."
+  },
+  "croisieres": {
+    "conflict": "Conflicto: este recurso ya existe (código de puerto o disponibilidad duplicada)."
+  },
+  "reviews": {
+    "forbidden": "No tiene permiso para realizar esta acción (reviews.read / reviews.write).",
+    "notFound": "Reseña no encontrada."
+  },
+  "supportTickets": {
+    "forbidden": "No tiene permiso para realizar esta acción (support_tickets.read / support_tickets.write).",
+    "notFound": "Ticket no encontrado."
+  },
+  "promoCodes": {
+    "forbidden": "No tiene permiso para realizar esta acción (promo_codes.read / promo_codes.write).",
+    "codeConflict": "Este código promocional ya existe."
+  },
+  "promotions": {
+    "forbidden": "No tiene permiso para realizar esta acción (promo_codes.read / write)."
+  },
+  "loyaltyAccounts": {
+    "forbidden": "Acceso denegado. Lectura: users.read — ajuste: solo superadministrador.",
+    "notFound": "Cuenta de fidelidad no encontrada."
+  },
+  "dashboard": {
+    "forbidden": "Acceso denegado.",
+    "loadFailed": "No se pudieron cargar los indicadores."
+  }
+}

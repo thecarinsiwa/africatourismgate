@@ -1,0 +1,127 @@
+{
+  "list": {
+    "newUser": "Nouvel utilisateur",
+    "emptyDefault": "Aucun utilisateur pour le moment.",
+    "emptyFiltered": "Aucun utilisateur ne correspond à vos critères.",
+    "ariaLabel": "Liste des utilisateurs",
+    "deleteConfirm": "Supprimer l'utilisateur « {email} » ? Cette action est réversible côté base."
+  },
+  "filters": {
+    "status": "Statut",
+    "organization": "Organisation",
+    "role": "Rôle"
+  },
+  "form": {
+    "email": "E-mail",
+    "passwordCreate": "Mot de passe",
+    "passwordEdit": "Nouveau mot de passe (optionnel)",
+    "passwordHintCreate": "Minimum 8 caractères.",
+    "passwordHintEdit": "Laissez vide pour conserver le mot de passe actuel.",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "phone": "Téléphone",
+    "preferredLanguage": "Langue préférée",
+    "preferredLanguageHint": "Code ISO à 2 lettres (ex. fr, en).",
+    "organization": "Organisation",
+    "organizationNone": "Aucune",
+    "status": "Statut",
+    "submitCreate": "Créer l'utilisateur",
+    "submitEdit": "Enregistrer",
+    "validation": {
+      "emailRequired": "L'adresse e-mail est obligatoire.",
+      "passwordMinLength": "Le mot de passe doit contenir au moins 8 caractères.",
+      "firstNameRequired": "Le prénom est obligatoire.",
+      "lastNameRequired": "Le nom est obligatoire."
+    }
+  },
+  "detail": {
+    "title": "Modifier l'utilisateur",
+    "tabsAria": "Sections du compte utilisateur",
+    "tabs": {
+      "profile": "Profil",
+      "addresses": "Adresses",
+      "paymentMethods": "Moyens paiement",
+      "sessions": "Sessions",
+      "roles": "Rôles"
+    }
+  },
+  "userIdFilter": {
+    "label": "Utilisateur",
+    "allUsers": "Tous les utilisateurs"
+  },
+  "addresses": {
+    "emptyDefault": "Aucune adresse enregistrée.",
+    "emptyFiltered": "Aucune adresse pour cet utilisateur.",
+    "ariaLabel": "Liste des adresses utilisateur"
+  },
+  "paymentMethods": {
+    "lastFourMasked": "•••• {lastFour}",
+    "emptyDefault": "Aucun moyen de paiement enregistré.",
+    "emptyFiltered": "Aucun moyen de paiement pour cet utilisateur.",
+    "ariaLabel": "Liste des moyens de paiement"
+  },
+  "sessions": {
+    "revokeConfirm": "Révoquer cette session ? L'utilisateur devra se reconnecter.",
+    "emptyDefault": "Aucune session active.",
+    "emptyFiltered": "Aucune session active pour cet utilisateur.",
+    "ariaLabel": "Liste des sessions utilisateur"
+  },
+  "stats": {
+    "total": {
+      "label": "Utilisateurs",
+      "subtitle": "Comptes enregistrés"
+    },
+    "active": {
+      "label": "Actifs",
+      "subtitle": "Comptes actifs"
+    },
+    "suspended": {
+      "label": "Suspendus",
+      "subtitle": "Comptes suspendus"
+    },
+    "employees": {
+      "label": "Employés",
+      "subtitle": "Profils employés"
+    }
+  },
+  "roles": {
+    "assignedTitle": "Rôles assignés",
+    "empty": "Aucun rôle actif pour cet utilisateur.",
+    "assignFormTitle": "Assigner un rôle",
+    "user": "Utilisateur",
+    "role": "Rôle",
+    "selectPlaceholder": "Sélectionner…",
+    "scope": "Périmètre (scope)",
+    "scopeId": "ID du scope (UUID)",
+    "scopeIdHint": "Ex. ID propriété, agence ou file support.",
+    "expiresAt": "Expiration (optionnel)",
+    "superAdminWarning": "Réservé aux super administrateurs — périmètre forcé à Global.",
+    "superAdminConfirm": "Attribuer le rôle « {roleName} » ? Cet utilisateur obtiendra un accès complet à la plateforme.",
+    "validation": {
+      "userAndRoleRequired": "Utilisateur et rôle sont obligatoires.",
+      "scopeIdRequired": "L'identifiant de scope est obligatoire pour ce périmètre."
+    },
+    "scopeTypes": {
+      "global": "Global",
+      "property": "Propriété",
+      "agency": "Agence",
+      "support_queue": "File support"
+    },
+    "scopeDisplay": {
+      "global": "Global",
+      "property": "Établissement",
+      "agency": "Agence",
+      "support_queue": "File support",
+      "withId": "{label} · {idPrefix}…"
+    },
+    "revokeDialog": {
+      "title": "Révoquer le rôle",
+      "description": "Retirer ce rôle pour cet utilisateur ?"
+    },
+    "toast": {
+      "revokedTitle": "Rôle révoqué",
+      "revokedMessage": "L'assignation a été retirée.",
+      "revokeFailedTitle": "Échec de la révocation"
+    }
+  }
+}

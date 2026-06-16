@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Button,
   Card,
@@ -10,9 +12,9 @@ import {
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { ActivitySchedule } from '@africatourismgate/types';
+import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getActivitiesErrorMessage } from '../../lib/activities-errors';
 import { ActivitySchedulesTimeline } from './activity-schedules-timeline';
 
 type ScheduleFormValues = {
@@ -31,11 +33,6 @@ function toLocalDatetimeInput(iso: string): string {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
-function formatDatetime(iso: string): string {
-  const d = new Date(iso);
-  return Number.isNaN(d.getTime()) ? iso : d.toLocaleString();
-}
-
 type ActivitySchedulesSectionProps = {
   activityId: string;
   embedded?: boolean;
@@ -45,6 +42,12 @@ export function ActivitySchedulesSection({
   activityId,
   embedded,
 }: ActivitySchedulesSectionProps) {
+  const { activities: getActivitiesErrorMessage } = useAdminErrorMessages();
+  const locale = useLocale();
+  const t = useTranslations('modules.activities.sections.schedules');
+  const tColumns = useTranslations('modules.common.columns');
+  const tCommon = useTranslations('modules.common');
+  const tActions = useTranslations('common.actions');
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [state, setState] = useState<
     | { status: 'loading' }
@@ -58,6 +61,14 @@ export function ActivitySchedulesSection({
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
+  const formatDatetime = useCallback(
+    (iso: string) => {
+      const d = new Date(iso);
+      return Number.isNaN(d.getTime()) ? iso : d.toLocaleString(locale);
+    },
+    [locale],
+  );
+
   const load = useCallback(async () => {
     setState({ status: 'loading' });
     try {
@@ -70,7 +81,7 @@ export function ActivitySchedulesSection({
     } catch (error) {
       setState({ status: 'error', message: getActivitiesErrorMessage(error) });
     }
-  }, [activityId]);
+  }, [activityId, getActivitiesErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -99,12 +110,12 @@ export function ActivitySchedulesSection({
 
   function validate(): boolean {
     if (!formValues.startDatetime) {
-      setFormError('La date et l’heure sont obligatoires.');
+      setFormError(t('validationDateTime'));
       return false;
     }
     const cap = Number(formValues.capacity);
     if (!Number.isFinite(cap) || cap < 1) {
-      setFormError('La capacité doit être au moins 1.');
+      setFormError(t('validationCapacity'));
       return false;
     }
     return true;
@@ -137,7 +148,7 @@ export function ActivitySchedulesSection({
 
   const handleDelete = useCallback(
     async (schedule: ActivitySchedule) => {
-      if (!window.confirm('Supprimer ce créneau ?')) return;
+      if (!window.confirm(t('deleteConfirm'))) return;
       setDeletingId(schedule.id);
       try {
         await getApiClient().deleteActivitySchedule(schedule.id);
@@ -148,29 +159,29 @@ export function ActivitySchedulesSection({
         setDeletingId(null);
       }
     },
-    [load],
+    [getActivitiesErrorMessage, load, t],
   );
 
   const columns = useMemo<ColumnDef<ActivitySchedule, unknown>[]>(
     () => [
       {
         id: 'start',
-        header: 'Début',
+        header: tColumns('start'),
         cell: ({ row }) => formatDatetime(row.original.startDatetime),
       },
       {
         accessorKey: 'capacity',
-        header: 'Capacité',
+        header: t('capacity'),
         meta: { align: 'center' },
       },
       {
         accessorKey: 'bookedCount',
-        header: 'Réservés',
+        header: tColumns('reserved'),
         meta: { align: 'center' },
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tColumns('actions'),
         meta: { align: 'right' },
         cell: ({ row }) => (
           <DataTableActions>
@@ -185,7 +196,7 @@ export function ActivitySchedulesSection({
         ),
       },
     ],
-    [deletingId, handleDelete],
+    [deletingId, formatDatetime, handleDelete, t, tColumns],
   );
 
   const schedules = state.status === 'ready' ? state.schedules : [];
@@ -198,10 +209,8 @@ export function ActivitySchedulesSection({
     >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-atg-fg">Créneaux</h2>
-          <p className="mt-1 text-sm text-atg-muted">
-            Horaires et capacité pour cette activité.
-          </p>
+          <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
+          <p className="mt-1 text-sm text-atg-muted">{t('intro')}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <div className="flex gap-2">
@@ -211,7 +220,7 @@ export function ActivitySchedulesSection({
               size="sm"
               onClick={() => setViewMode('list')}
             >
-              Liste
+              {t('viewList')}
             </Button>
             <Button
               type="button"
@@ -219,12 +228,12 @@ export function ActivitySchedulesSection({
               size="sm"
               onClick={() => setViewMode('timeline')}
             >
-              Timeline
+              {t('viewTimeline')}
             </Button>
           </div>
           {!showForm ? (
             <Button type="button" onClick={openCreate}>
-              Ajouter un créneau
+              {t('addSchedule')}
             </Button>
           ) : null}
         </div>
@@ -234,7 +243,7 @@ export function ActivitySchedulesSection({
         <Card variant="dashboard" className="max-w-2xl">
           <form onSubmit={handleSubmit} className="space-y-4">
             <h3 className="text-sm font-medium">
-              {editing ? 'Modifier le créneau' : 'Nouveau créneau'}
+              {editing ? t('editSlot') : t('addSlot')}
             </h3>
             {formError ? (
               <p role="alert" className="text-sm text-red-600">
@@ -242,7 +251,7 @@ export function ActivitySchedulesSection({
               </p>
             ) : null}
             <Input
-              label="Date et heure"
+              label={t('dateTime')}
               type="datetime-local"
               value={formValues.startDatetime}
               onChange={(e) =>
@@ -250,7 +259,7 @@ export function ActivitySchedulesSection({
               }
             />
             <Input
-              label="Capacité"
+              label={t('capacity')}
               type="number"
               min={1}
               value={formValues.capacity}
@@ -258,10 +267,10 @@ export function ActivitySchedulesSection({
             />
             <div className="flex gap-3">
               <Button type="submit" loading={submitting}>
-                {editing ? 'Enregistrer' : 'Ajouter'}
+                {editing ? tActions('save') : tActions('create')}
               </Button>
               <Button type="button" variant="outline" onClick={resetForm}>
-                Annuler
+                {tActions('cancel')}
               </Button>
             </div>
           </form>
@@ -274,7 +283,7 @@ export function ActivitySchedulesSection({
         </p>
       ) : viewMode === 'timeline' ? (
         state.status === 'loading' ? (
-          <p className="text-sm text-atg-muted">Chargement…</p>
+          <p className="text-sm text-atg-muted">{tCommon('loading')}</p>
         ) : (
           <ActivitySchedulesTimeline
             schedules={schedules}
@@ -289,7 +298,7 @@ export function ActivitySchedulesSection({
             columns={columns}
             data={schedules}
             isLoading={state.status === 'loading'}
-            emptyMessage="Aucun créneau pour cette activité."
+            emptyMessage={t('empty')}
             getRowId={(r) => r.id}
           />
         </Card>

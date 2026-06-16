@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Button,
   Card,
@@ -12,14 +14,15 @@ import {
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { Promotion } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import { usePromoDiscountLabels } from '../../lib/i18n/use-module-labels';
 import {
   formatPromoUsageLabel,
   formatPromotionValidityDisplay,
   getPromoUsageBadgeVariant,
 } from '../../lib/promo-validity';
-import { getPromotionsErrorMessage } from '../../lib/promotions-errors';
 import {
   PromotionPreviewBanner,
   promotionToPreviewProps,
@@ -29,6 +32,12 @@ const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
 
 export function PromotionsList() {
+  const { promotions: getPromotionsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.promotions.list');
+  const tStatus = useTranslations('modules.promotions.status');
+  const tCommon = useTranslations('modules.common');
+  const tUsage = useTranslations('modules.promoCodes.usage');
+  const discountLabels = usePromoDiscountLabels();
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -75,7 +84,7 @@ export function PromotionsList() {
     } catch (error) {
       setState({ status: 'error', message: getPromotionsErrorMessage(error) });
     }
-  }, [page, search]);
+  }, [page, search, getPromotionsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -94,7 +103,7 @@ export function PromotionsList() {
 
   const handleDelete = useCallback(
     async (promo: Promotion) => {
-      if (!window.confirm(`Supprimer la promotion « ${promo.name} » ?`)) return;
+      if (!window.confirm(t('deleteConfirm', { name: promo.name }))) return;
       setDeleteError(null);
       setDeletingId(promo.id);
       try {
@@ -106,14 +115,14 @@ export function PromotionsList() {
         setDeletingId(null);
       }
     },
-    [load],
+    [load, t, getPromotionsErrorMessage],
   );
 
   const columns = useMemo<ColumnDef<Promotion, unknown>[]>(
     () => [
       {
         accessorKey: 'name',
-        header: 'Campagne',
+        header: t('columns.campaign'),
         cell: ({ row }) => (
           <div className="max-w-md space-y-2">
             <PromotionPreviewBanner
@@ -125,16 +134,20 @@ export function PromotionsList() {
       },
       {
         id: 'validity',
-        header: 'Validité',
+        header: t('columns.validity'),
         cell: ({ row }) => (
           <span className="whitespace-nowrap text-sm tabular-nums text-atg-muted">
-            {formatPromotionValidityDisplay(row.original.validFrom, row.original.validUntil)}
+            {formatPromotionValidityDisplay(
+              row.original.validFrom,
+              row.original.validUntil,
+              discountLabels,
+            )}
           </span>
         ),
       },
       {
         id: 'usage',
-        header: 'Utilisations',
+        header: t('columns.usage'),
         meta: { align: 'center' },
         cell: ({ row }) => {
           const promo = row.original;
@@ -143,24 +156,29 @@ export function PromotionsList() {
               variant={getPromoUsageBadgeVariant(promo.redemptionCount, promo.maxRedemptions)}
               className="tabular-nums"
             >
-              {formatPromoUsageLabel(promo.redemptionCount, promo.maxRedemptions)}
+              {formatPromoUsageLabel(
+                promo.redemptionCount,
+                promo.maxRedemptions,
+                tUsage('format'),
+                tUsage('unlimitedMax'),
+              )}
             </DataTableBadge>
           );
         },
       },
       {
         id: 'active',
-        header: 'Statut',
+        header: t('columns.status'),
         meta: { align: 'center' },
         cell: ({ row }) => (
           <DataTableBadge variant={row.original.active === 1 ? 'success' : 'muted'}>
-            {row.original.active === 1 ? 'Active' : 'Inactive'}
+            {row.original.active === 1 ? tStatus('active') : tStatus('inactive')}
           </DataTableBadge>
         ),
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tCommon('columns.actions'),
         meta: { align: 'right' },
         cell: ({ row }) => {
           const promo = row.original;
@@ -180,15 +198,13 @@ export function PromotionsList() {
         },
       },
     ],
-    [canWrite, deletingId, handleDelete],
+    [canWrite, deletingId, discountLabels, handleDelete, t, tCommon, tStatus, tUsage],
   );
 
   const isLoading = state.status === 'loading';
   const isError = state.status === 'error';
   const promotions = state.status === 'ready' ? state.promotions : [];
-  const emptyMessage = search.trim()
-    ? 'Aucune promotion ne correspond à votre recherche.'
-    : 'Aucune promotion pour le moment.';
+  const emptyMessage = search.trim() ? t('emptySearch') : t('emptyDefault');
 
   return (
     <div className="space-y-6">
@@ -197,14 +213,14 @@ export function PromotionsList() {
           <Input
             name="search"
             type="search"
-            placeholder="Rechercher par titre ou description…"
+            placeholder={t('searchPlaceholder')}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            aria-label="Rechercher une promotion"
+            aria-label={t('searchAria')}
           />
         </div>
         {canWrite ? (
-          <Button href="/paiements/promotions/nouveau">Nouvelle promotion</Button>
+          <Button href="/paiements/promotions/nouveau">{t('newButton')}</Button>
         ) : null}
       </div>
 
@@ -228,7 +244,7 @@ export function PromotionsList() {
               emptyMessage={emptyMessage}
               emptyVariant={search.trim() ? 'search' : 'default'}
               getRowId={(row) => row.id}
-              aria-label="Liste des promotions"
+              aria-label={t('tableAria')}
             />
           </Card>
 
@@ -238,7 +254,7 @@ export function PromotionsList() {
               pageSize={PAGE_SIZE}
               totalPages={state.totalPages}
               totalItems={state.total}
-              itemLabel="promotion"
+              itemLabel={t('paginationItem')}
               onPageChange={setPage}
             />
           ) : null}

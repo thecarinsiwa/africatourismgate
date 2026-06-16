@@ -2,6 +2,7 @@
 
 import { cn } from '@africatourismgate/ui';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import { CountryFlagPlaceholder } from '../flights/country-flag-placeholder';
 import { resolveMediaUrl } from '../../lib/resolve-media-url';
 
@@ -20,6 +21,8 @@ export function DestinationHeroBanner({
   imageUrl,
   className,
 }: DestinationHeroBannerProps) {
+  const tColumns = useTranslations('modules.destinations.columns');
+  const tHero = useTranslations('modules.destinations.hero');
   const trimmedImage = imageUrl?.trim();
   const hasImage = Boolean(trimmedImage);
   const resolvedImage = hasImage ? resolveMediaUrl(trimmedImage!) : null;
@@ -30,7 +33,7 @@ export function DestinationHeroBanner({
         'relative overflow-hidden rounded-xl border border-atg-border shadow-sm',
         className,
       )}
-      aria-label={`Destination ${name}`}
+      aria-label={tHero('ariaLabel', { name })}
     >
       <div
         className={cn(
@@ -58,7 +61,7 @@ export function DestinationHeroBanner({
         <div className="relative z-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div className="space-y-2 text-white">
             <p className="text-xs font-semibold uppercase tracking-wide text-white/70">
-              Destination
+              {tColumns('destination')}
             </p>
             <h2 className="text-2xl font-bold leading-tight sm:text-3xl">{name}</h2>
             {slug ? (

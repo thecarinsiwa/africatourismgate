@@ -1,0 +1,128 @@
+{
+  "list": {
+    "newSailing": "Nouveau départ",
+    "viewList": "Liste",
+    "viewCalendar": "Calendrier",
+    "emptySailings": "Aucun départ programmé.",
+    "deleteSailingConfirm": "Supprimer le départ « {label} » ?",
+    "fallbackDeparture": "Départ"
+  },
+  "columns": {
+    "departure": "Départ",
+    "itinerary": "Itinéraire",
+    "ship": "Navire",
+    "nights": "Nuits",
+    "line": "Ligne",
+    "year": "Année",
+    "port": "Port"
+  },
+  "filters": {
+    "line": "Filtrer par ligne",
+    "searchShip": "Rechercher un navire…",
+    "searchLine": "Rechercher une ligne…",
+    "searchPort": "Rechercher par code ou nom…"
+  },
+  "form": {
+    "ship": {
+      "submitCreate": "Créer le navire",
+      "line": "Ligne",
+      "shipName": "Nom du navire",
+      "builtYear": "Année de construction (optionnel)",
+      "validation": "Ligne et nom du navire sont obligatoires."
+    },
+    "sailing": {
+      "submitCreate": "Créer le départ",
+      "itinerary": "Itinéraire",
+      "departureDate": "Date de départ",
+      "itineraryOption": "{name} ({shipName}) — {nights} nuits",
+      "validation": "Itinéraire et date de départ sont obligatoires."
+    },
+    "itinerary": {
+      "new": "Nouvel itinéraire",
+      "edit": "Modifier l'itinéraire",
+      "durationNights": "Durée (nuits)",
+      "empty": "Aucun itinéraire.",
+      "deleteConfirm": "Supprimer cet itinéraire ?",
+      "validation": "Nom et durée (nuits) invalides."
+    },
+    "port": {
+      "new": "Nouveau port de croisière",
+      "edit": "Modifier le port",
+      "countryIso": "Pays (ISO)",
+      "empty": "Aucun port.",
+      "deleteConfirm": "Supprimer le port « {name} » ?"
+    },
+    "line": {
+      "new": "Nouvelle ligne de croisière",
+      "edit": "Modifier la ligne",
+      "empty": "Aucune ligne de croisière.",
+      "deleteConfirm": "Supprimer la ligne « {name} » ?"
+    },
+    "cabin": {
+      "new": "Nouvelle cabine",
+      "edit": "Modifier la cabine",
+      "category": "Catégorie",
+      "maxGuests": "Voyageurs max",
+      "empty": "Aucune cabine.",
+      "deleteConfirm": "Supprimer cette cabine ?",
+      "validationCategory": "Catégorie et capacité invalides.",
+      "validationPrice": "Prix de base invalide."
+    }
+  },
+  "detail": {
+    "shipTitle": "Modifier le navire",
+    "sailingTitle": "Modifier le départ",
+    "backToShips": "← Retour aux navires",
+    "escalesTitle": "Escales",
+    "backToShip": "Retour au navire",
+    "timelineAria": "Schéma des escales"
+  },
+  "sections": {
+    "itineraryPorts": {
+      "day": "Jour",
+      "arrivalTime": "Heure d'arrivée (HH:MM)",
+      "departureTime": "Heure de départ (HH:MM)",
+      "arrivalPlaceholder": "08:00",
+      "departurePlaceholder": "18:00",
+      "empty": "Aucune escale.",
+      "deleteConfirm": "Supprimer cette escale ?"
+    },
+    "cabinAvailability": {
+      "title": "Cabines réservables",
+      "intro": "Stock et prix par catégorie pour ce départ.",
+      "stopsLabel": "Escales : ",
+      "noStopsWarning": "Aucune escale sur cet itinéraire — ajoutez-en depuis la fiche navire.",
+      "cabinMeta": "max {maxGuests} · base {basePrice}",
+      "cabinsAvailableAria": "Cabines disponibles",
+      "priceCentsAria": "Prix en centimes",
+      "update": "Mettre à jour",
+      "makeBookable": "Rendre réservable",
+      "empty": "Aucune cabine sur ce navire. Ajoutez des cabines sur la fiche navire."
+    }
+  },
+  "dialogs": {
+    "deleteShip": "Supprimer le navire « {name} » ?"
+  },
+  "calendar": {
+    "ariaLabel": "Calendrier des départs — {month}",
+    "today": "Aujourd'hui"
+  },
+  "stats": {
+    "sailings": {
+      "label": "Départs",
+      "subtitle": "Croisières programmées"
+    },
+    "ships": {
+      "label": "Navires",
+      "subtitle": "Flotte catalogue"
+    },
+    "lines": {
+      "label": "Lignes",
+      "subtitle": "Compagnies de croisière"
+    },
+    "ports": {
+      "label": "Ports",
+      "subtitle": "Escales référencées"
+    }
+  }
+}

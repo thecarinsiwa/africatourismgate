@@ -1,18 +1,11 @@
 import type { Metadata } from 'next';
-import { AdminPageIntro } from '../../../../components/admin-page-intro';
-import { PackagesList } from '../../../../components/packages/packages-list';
-import { PackagesStatCards } from '../../../../components/packages/packages-stat-cards';
+import { getAdminPageMetadata } from '../../../../lib/i18n/admin-page-i18n';
+import { ForfaitsPageContent } from '../../../../components/pages/produits-forfaits-page-content';
 
-export const metadata: Metadata = {
-  title: 'Forfaits — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('produits/forfaits');
+}
 
-export default function ForfaitsPage() {
-  return (
-    <div>
-      <AdminPageIntro description={"Packages combinés avec remise et prix calculé à partir des produits inclus."} />
-      <PackagesStatCards className="mb-6" />
-      <PackagesList />
-    </div>
-  );
+export default function Page() {
+  return <ForfaitsPageContent />;
 }

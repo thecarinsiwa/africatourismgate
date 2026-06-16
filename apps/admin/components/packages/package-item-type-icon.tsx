@@ -6,6 +6,7 @@ import {
   getPackageItemTypeIcon,
   getPackageItemTypeLabel,
 } from '../../lib/package-item-type';
+import { usePackageItemTypeLabels } from '../../lib/i18n/use-module-labels';
 
 type PackageItemTypeIconProps = {
   itemType: PackageItemType;
@@ -25,8 +26,9 @@ export function PackageItemTypeIcon({
   showLabel = false,
   className,
 }: PackageItemTypeIconProps) {
+  const itemTypeLabels = usePackageItemTypeLabels();
   const Icon = getPackageItemTypeIcon(itemType);
-  const label = getPackageItemTypeLabel(itemType);
+  const label = getPackageItemTypeLabel(itemType, itemTypeLabels);
   const sizes = sizeClasses[size];
 
   return (

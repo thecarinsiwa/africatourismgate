@@ -1,28 +1,5 @@
 import type { DataTableBadgeVariant } from '@africatourismgate/ui';
 
-const PERMISSION_DOMAIN_LABELS: Record<string, string> = {
-  amenities: 'Équipements',
-  bookings: 'Réservations',
-  cruises: 'Croisières',
-  destinations: 'Destinations',
-  employees: 'Employés',
-  flights: 'Vols',
-  loyalty: 'Fidélité',
-  organizations: 'Organisations',
-  payments: 'Paiements',
-  permissions: 'Permissions',
-  promo_codes: 'Codes promo',
-  properties: 'Hébergements',
-  promotions: 'Promotions',
-  reviews: 'Avis',
-  roles: 'Rôles',
-  support: 'Support',
-  users: 'Utilisateurs',
-  vehicles: 'Locations',
-  activities: 'Activités',
-  packages: 'Forfaits',
-};
-
 const ROLE_CODE_VARIANTS: Record<string, DataTableBadgeVariant> = {
   super_admin: 'danger',
   org_admin: 'warning',
@@ -40,20 +17,28 @@ const CUSTOM_ROLE_VARIANTS: DataTableBadgeVariant[] = [
   'muted',
 ];
 
-export function formatPermissionDomain(resource: string): string {
+export type RbacScopeDisplayLabels = {
+  global: string;
+  property: string;
+  agency: string;
+  support_queue: string;
+  withId: string;
+};
+
+export function formatPermissionDomain(
+  resource: string,
+  labels: Record<string, string>,
+  emptyDash = '—',
+): string {
   const trimmed = resource.trim();
-  if (!trimmed) return '—';
-  return PERMISSION_DOMAIN_LABELS[trimmed] ?? trimmed.replace(/_/g, ' ');
+  if (!trimmed) return emptyDash;
+  return labels[trimmed] ?? trimmed.replace(/_/g, ' ');
 }
 
-export function formatPermissionAction(action: string): string {
-  const labels: Record<string, string> = {
-    read: 'Lecture',
-    write: 'Écriture',
-    delete: 'Suppression',
-    manage: 'Gestion',
-    approve: 'Approbation',
-  };
+export function formatPermissionAction(
+  action: string,
+  labels: Record<string, string>,
+): string {
   return labels[action] ?? action;
 }
 
@@ -70,15 +55,13 @@ export function getRoleBadgeVariant(code: string): DataTableBadgeVariant {
 
 export function formatAssignmentScope(
   scopeType: 'global' | 'property' | 'agency' | 'support_queue',
+  labels: RbacScopeDisplayLabels,
   scopeId?: string | null,
 ): string {
-  if (scopeType === 'global') return 'Global';
-  const labels: Record<string, string> = {
-    property: 'Établissement',
-    agency: 'Agence',
-    support_queue: 'File support',
-  };
+  if (scopeType === 'global') return labels.global;
   const label = labels[scopeType] ?? scopeType;
   if (!scopeId) return label;
-  return `${label} · ${scopeId.slice(0, 8)}…`;
+  return labels.withId
+    .replace('{label}', label)
+    .replace('{idPrefix}', scopeId.slice(0, 8));
 }

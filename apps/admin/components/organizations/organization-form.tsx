@@ -1,16 +1,21 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import { Button, Card, Input, Select, useToast } from '@africatourismgate/ui';
 import type {
   CreateOrganizationRequest,
   Organization,
   UpdateOrganizationRequest,
 } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useCallback, useId, useState } from 'react';
+import { useCallback, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { organizationLegalFormOptions } from '../../lib/organization-display';
-import { getOrganizationsErrorMessage } from '../../lib/organizations-errors';
+import {
+  useAccountStatusLabels,
+  useOrganizationLegalFormOptions,
+} from '../../lib/i18n/use-module-labels';
 import { isValidSlug, slugifyName } from '../../lib/slug';
 
 export type OrganizationFormValues = {
@@ -130,6 +135,12 @@ export function OrganizationForm({
   initialOrganization,
   onUpdated,
 }: OrganizationFormProps) {
+  const { organizations: getOrganizationsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.organizations.form');
+  const tActions = useTranslations('common.actions');
+  const tLoading = useTranslations('common.loading');
+  const accountStatusLabels = useAccountStatusLabels();
+  const legalFormSelectOptions = useOrganizationLegalFormOptions();
   const router = useRouter();
   const { toast } = useToast();
   const statusId = useId();
@@ -144,6 +155,14 @@ export function OrganizationForm({
   );
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  const statusOptions = useMemo(
+    () => [
+      { value: 'active', label: accountStatusLabels.active },
+      { value: 'suspended', label: accountStatusLabels.suspended },
+    ],
+    [accountStatusLabels],
+  );
 
   const updateField = useCallback(
     <K extends keyof OrganizationFormValues>(key: K, value: OrganizationFormValues[K]) => {
@@ -162,16 +181,15 @@ export function OrganizationForm({
   function validate(): boolean {
     const errors: Partial<Record<keyof OrganizationFormValues, string>> = {};
     if (!values.name.trim()) {
-      errors.name = 'Le nom est obligatoire.';
+      errors.name = t('validation.nameRequired');
     }
     if (!values.slug.trim()) {
-      errors.slug = 'Le slug est obligatoire.';
+      errors.slug = t('validation.slugRequired');
     } else if (!isValidSlug(values.slug.trim().toLowerCase())) {
-      errors.slug =
-        'Slug invalide : minuscules, chiffres et tirets uniquement (ex. mon-organisation).';
+      errors.slug = t('validation.slugInvalid');
     }
     if (values.currency.trim().length !== 3) {
-      errors.currency = 'La devise doit comporter 3 lettres (ex. USD, CDF).';
+      errors.currency = t('validation.currencyInvalid');
     }
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
@@ -199,7 +217,7 @@ export function OrganizationForm({
         onUpdated?.(updated);
         router.refresh();
         toast({
-          title: 'Organisation enregistrée',
+          title: t('toast.savedTitle'),
           message: updated.name,
           variant: 'success',
         });
@@ -209,7 +227,7 @@ export function OrganizationForm({
       setFormError(message);
       if (mode === 'edit') {
         toast({
-          title: 'Erreur d’enregistrement',
+          title: t('toast.errorTitle'),
           message,
           variant: 'error',
         });
@@ -218,16 +236,6 @@ export function OrganizationForm({
       setSubmitting(false);
     }
   }
-
-  const statusOptions = [
-    { value: 'active', label: 'Actif' },
-    { value: 'suspended', label: 'Suspendu' },
-  ];
-
-  const legalFormSelectOptions = organizationLegalFormOptions.map((option) => ({
-    value: option.value,
-    label: option.label,
-  }));
 
   return (
     <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
@@ -241,9 +249,9 @@ export function OrganizationForm({
       ) : null}
 
       <Card variant="dashboard" className="space-y-4">
-        <h3 className="text-sm font-semibold text-atg-fg">Identité</h3>
+        <h3 className="text-sm font-semibold text-atg-fg">{t('sections.identity')}</h3>
         <Input
-          label="Nom"
+          label={t('name')}
           name="name"
           value={values.name}
           onChange={(e) => updateField('name', e.target.value)}
@@ -252,20 +260,20 @@ export function OrganizationForm({
           autoComplete="organization"
         />
         <Input
-          label="Slug"
+          label={t('slug')}
           name="slug"
           value={values.slug}
           onChange={(e) => {
             setSlugTouched(true);
             updateField('slug', e.target.value.toLowerCase());
           }}
-          hint="Identifiant unique dans l’URL (ex. africa-tourism-gate)."
+          hint={t('slugHint')}
           error={fieldErrors.slug}
           required
         />
         <div>
           <label htmlFor={descriptionId} className="mb-2 block text-sm font-medium text-atg-fg">
-            Description
+            {t('description')}
           </label>
           <textarea
             id={descriptionId}
@@ -279,25 +287,25 @@ export function OrganizationForm({
       </Card>
 
       <Card variant="dashboard" className="space-y-4">
-        <h3 className="text-sm font-semibold text-atg-fg">Contact</h3>
+        <h3 className="text-sm font-semibold text-atg-fg">{t('sections.contact')}</h3>
         <Input
-          label="Site web"
+          label={t('website')}
           name="website"
           type="url"
           value={values.website}
           onChange={(e) => updateField('website', e.target.value)}
-          placeholder="https://"
+          placeholder={t('websitePlaceholder')}
         />
         <div className="grid gap-4 sm:grid-cols-2">
           <Input
-            label="E-mail de contact"
+            label={t('contactEmail')}
             name="contactEmail"
             type="email"
             value={values.contactEmail}
             onChange={(e) => updateField('contactEmail', e.target.value)}
           />
           <Input
-            label="Téléphone"
+            label={t('contactPhone')}
             name="contactPhone"
             value={values.contactPhone}
             onChange={(e) => updateField('contactPhone', e.target.value)}
@@ -306,51 +314,51 @@ export function OrganizationForm({
       </Card>
 
       <Card variant="dashboard" className="space-y-4">
-        <h3 className="text-sm font-semibold text-atg-fg">Juridique</h3>
+        <h3 className="text-sm font-semibold text-atg-fg">{t('sections.legal')}</h3>
         <Select
           id={legalFormId}
-          label="Forme juridique"
+          label={t('legalForm')}
           value={values.legalForm}
           onChange={(e) => updateField('legalForm', e.target.value)}
           options={legalFormSelectOptions}
         />
         <Input
-          label="RCCM"
+          label={t('rccm')}
           name="rccm"
           value={values.rccm}
           onChange={(e) => updateField('rccm', e.target.value)}
-          hint="Registre du Commerce et du Crédit Mobilier"
+          hint={t('rccmHint')}
         />
         <div className="grid gap-4 sm:grid-cols-2">
           <Input
-            label="ID. Nat."
+            label={t('idNat')}
             name="idNat"
             value={values.idNat}
             onChange={(e) => updateField('idNat', e.target.value)}
-            hint="Identification Nationale"
+            hint={t('idNatHint')}
           />
           <Input
-            label="NIF"
+            label={t('nif')}
             name="nif"
             value={values.nif}
             onChange={(e) => updateField('nif', e.target.value)}
-            hint="Numéro d’Identification Fiscale"
+            hint={t('nifHint')}
           />
         </div>
         <Input
-          label="CNSS"
+          label={t('cnss')}
           name="cnss"
           value={values.cnss}
           onChange={(e) => updateField('cnss', e.target.value)}
-          hint="Caisse Nationale de Sécurité Sociale"
+          hint={t('cnssHint')}
         />
       </Card>
 
       <Card variant="dashboard" className="space-y-4">
-        <h3 className="text-sm font-semibold text-atg-fg">Configuration</h3>
+        <h3 className="text-sm font-semibold text-atg-fg">{t('sections.configuration')}</h3>
         <div className="grid gap-4 sm:grid-cols-2">
           <Input
-            label="Devise"
+            label={t('currency')}
             name="currency"
             value={values.currency}
             onChange={(e) => updateField('currency', e.target.value.toUpperCase())}
@@ -360,7 +368,7 @@ export function OrganizationForm({
           />
           <Select
             id={statusId}
-            label="Statut"
+            label={t('status')}
             value={values.status}
             onChange={(e) =>
               updateField('status', e.target.value as OrganizationFormValues['status'])
@@ -371,11 +379,11 @@ export function OrganizationForm({
       </Card>
 
       <div className="flex flex-wrap gap-3 pt-2">
-        <Button type="submit" loading={submitting} loadingText="Enregistrement…">
-          {mode === 'create' ? 'Créer l’organisation' : 'Enregistrer'}
+        <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>
+          {mode === 'create' ? t('submitCreate') : t('submitEdit')}
         </Button>
         <Button type="button" variant="outline" href="/organisations">
-          Annuler
+          {tActions('cancel')}
         </Button>
       </div>
     </form>

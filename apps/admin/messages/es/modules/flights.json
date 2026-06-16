@@ -1,0 +1,106 @@
+{
+  "list": {
+    "newFlight": "Nouveau vol",
+    "emptyDefault": "Hastacun vol pour le moment.",
+    "emptySearch": "Hastacun vol ne correspond à ce code.",
+    "searchPlaceholder": "Rechercher par code vol (ex. ET302)…",
+    "searchAria": "Rechercher un vol",
+    "deleteConfirm": "Supprimer le vol « {flightNumber} » ?"
+  },
+  "columns": {
+    "flightNumber": "Code vol",
+    "airline": "Aerolínea",
+    "route": "Trajet",
+    "departure": "Salida"
+  },
+  "form": {
+    "submitCreate": "Créer le vol",
+    "airline": "Aerolínea",
+    "flightNumber": "Code vol",
+    "flightNumberHint": "Ex. ET302, 9S101",
+    "departure": "Salida",
+    "arrival": "Arrivée",
+    "departureTime": "Heure de départ",
+    "arrivalTime": "Heure d'arrivée",
+    "durationMinutes": "Desderée (minutes)",
+    "durationHint": "Ex. 390 pour 6 h 30",
+    "validation": {
+      "airlineRequired": "Aerolínea obligatoire.",
+      "flightNumberRequired": "Code vol obligatoire.",
+      "departureAirportRequired": "Aeropuerto de départ obligatoire.",
+      "arrivalAirportRequired": "Aeropuerto d'arrivée obligatoire.",
+      "airportsMustDiffer": "Le départ et l'arrivée doivent être différents.",
+      "departureTimeRequired": "Heure de départ obligatoire.",
+      "arrivalTimeRequired": "Heure d'arrivée obligatoire."
+    }
+  },
+  "detail": {
+    "title": "Modifier le vol",
+    "backLink": "Volver aux vols",
+    "tabsAria": "Sections du vol",
+    "tabs": {
+      "flight": "Vuelo",
+      "classes": "Classes"
+    },
+    "timelineAria": "Trajet du vol",
+    "durationAria": "Desderée du vol : {label}"
+  },
+  "sections": {
+    "classes": {
+      "title": "Classes cabine",
+      "intro": "Camarotes et tarifs de base pour ce vol.",
+      "addClass": "Ajouter une classe",
+      "newClass": "Nouvelle classe",
+      "editClass": "Modifier la classe",
+      "cabinType": "Tipo de cabine",
+      "totalSeats": "Sièges totaux",
+      "empty": "Ninguna classe cabine.",
+      "deleteConfirm": "Supprimer cette classe ?"
+    },
+    "availability": {
+      "title": "Disponibilidad",
+      "backToFlight": "Volver au vol",
+      "classMismatch": "Cette classe n'appartient pas à ce vol."
+    }
+  },
+  "referential": {
+    "airlines": {
+      "new": "Nouvelle compagnie",
+      "edit": "Modifier la compagnie",
+      "emptyDefault": "Ninguna compagnie.",
+      "emptySearch": "Ninguna compagnie ne correspond à cette recherche.",
+      "searchPlaceholder": "Rechercher par code IATA ou nom…",
+      "searchAria": "Rechercher une compagnie",
+      "iataCode": "Code IATA",
+      "deleteConfirm": "Supprimer « {name} » ?"
+    },
+    "airports": {
+      "new": "Nouvel aéroport",
+      "edit": "Modifier l'aéroport",
+      "emptyDefault": "Hastacun aéroport.",
+      "emptySearch": "Hastacun aéroport ne correspond à cette recherche.",
+      "searchPlaceholder": "Rechercher par IATA, nom ou ville…",
+      "searchAria": "Rechercher un aéroport",
+      "airport": "Aeropuerto",
+      "countryCode": "Code pays"
+    }
+  },
+  "stats": {
+    "flights": {
+      "label": "Vuelos",
+      "subtitle": "Líneas catalogue"
+    },
+    "classes": {
+      "label": "Classes cabine",
+      "subtitle": "Tarifs par vol"
+    },
+    "airlines": {
+      "label": "Aerolíneas",
+      "subtitle": "Référentiel IATA"
+    },
+    "airports": {
+      "label": "Aeropuertos",
+      "subtitle": "Référentiel mondial"
+    }
+  }
+}

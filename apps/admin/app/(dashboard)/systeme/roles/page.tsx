@@ -1,20 +1,11 @@
 import type { Metadata } from 'next';
-import { Button, PageHeader } from '@africatourismgate/ui';
-import { RolesList } from '../../../../components/rbac/roles-list';
+import { getAdminPageMetadata } from '../../../../lib/i18n/admin-page-i18n';
+import { RolesPageContent } from '../../../../components/pages/systeme-roles-page-content';
 
-export const metadata: Metadata = {
-  title: 'Rôles et permissions — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('systeme/roles');
+}
 
-export default function RolesPage() {
-  return (
-    <div>
-      <PageHeader
-        title="Rôles et permissions"
-        description="Gérez les rôles, la matrice des permissions et les assignations utilisateurs."
-        actions={<Button href="/systeme/roles/nouveau">Nouveau rôle</Button>}
-      />
-      <RolesList />
-    </div>
-  );
+export default function Page() {
+  return <RolesPageContent />;
 }

@@ -1,34 +1,14 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import { Card, Skeleton, StatCard } from '@africatourismgate/ui';
 import type { AdminLoyaltyAccountListItem } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
-import { getDashboardKpiErrorMessage } from '../../lib/dashboard-api-errors';
-import { formatCount } from '../../lib/format-money';
+import { loyaltyKpis } from '../../config/loyalty-kpi';
 import { getApiClient } from '../../lib/auth/api';
-import { formatPoints, loyaltyTierLabels } from '../../lib/loyalty-tier-utils';
-
-const giftIcon = (
-  <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={1.75}
-      d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"
-    />
-  </svg>
-);
-
-const pointsIcon = (
-  <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={1.75}
-      d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
-    />
-  </svg>
-);
+import { useFormatCount, useFormatPoints, useLoyaltyTierLabels } from '../../lib/i18n/use-module-labels';
 
 type SummaryState =
   | { status: 'loading' }
@@ -41,7 +21,18 @@ type SummaryState =
     };
 
 export function LoyaltySummaryCards({ className }: { className?: string }) {
+  const { dashboardKpi: getDashboardKpiErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.loyalty');
+  const tEmpty = useTranslations('modules.common.empty');
+  const formatCount = useFormatCount();
+  const formatPoints = useFormatPoints();
+  const tierLabels = useLoyaltyTierLabels();
   const [state, setState] = useState<SummaryState>({ status: 'loading' });
+
+  const kpiByKey = Object.fromEntries(loyaltyKpis.map((kpi) => [kpi.key, kpi])) as Record<
+    (typeof loyaltyKpis)[number]['key'],
+    (typeof loyaltyKpis)[number]
+  >;
 
   useEffect(() => {
     let cancelled = false;
@@ -79,7 +70,7 @@ export function LoyaltySummaryCards({ className }: { className?: string }) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [getDashboardKpiErrorMessage]);
 
   if (state.status === 'loading') {
     return (
@@ -102,44 +93,47 @@ export function LoyaltySummaryCards({ className }: { className?: string }) {
   }
 
   const { totalAccounts, totalPoints, topAccount } = state;
+  const accountsKpi = kpiByKey.accounts;
+  const pointsKpi = kpiByKey.points;
+  const topKpi = kpiByKey.topBalance;
 
   return (
     <div className={className}>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
         <StatCard
-          label="Comptes fidélité"
-          subtitle="Comptes OneKey actifs"
+          label={t(accountsKpi.labelKey)}
+          subtitle={t(accountsKpi.subtitleKey)}
           status="ready"
           value={formatCount(totalAccounts)}
-          icon={giftIcon}
-          iconClassName="bg-atg-info-light text-atg-info"
+          icon={accountsKpi.icon}
+          iconClassName={accountsKpi.iconClass}
         />
         <StatCard
-          label="Points cumulés"
-          subtitle="Sur les 100 premiers comptes"
+          label={t(pointsKpi.labelKey)}
+          subtitle={t(pointsKpi.subtitleKey)}
           status="ready"
           value={formatPoints(totalPoints)}
-          icon={pointsIcon}
-          iconClassName="bg-atg-success-light text-atg-success"
+          icon={pointsKpi.icon}
+          iconClassName={pointsKpi.iconClass}
         />
         {topAccount ? (
           <Card variant="dashboard" padding="sm" className="h-full">
-            <p className="text-sm font-medium text-atg-muted">Meilleur solde</p>
+            <p className="text-sm font-medium text-atg-muted">{t(topKpi.labelKey)}</p>
             <p className="mt-2 text-3xl font-bold tabular-nums tracking-tight text-atg-fg">
               {formatPoints(topAccount.pointsBalance)}
             </p>
             <p className="mt-1 truncate text-xs text-atg-muted">
-              {topAccount.userEmail} · {loyaltyTierLabels[topAccount.tier]}
+              {topAccount.userEmail} · {tierLabels[topAccount.tier]}
             </p>
           </Card>
         ) : (
           <StatCard
-            label="Meilleur solde"
-            subtitle="Aucun compte"
+            label={t(topKpi.labelKey)}
+            subtitle={t(topKpi.subtitleKey)}
             status="ready"
-            value="—"
-            icon={pointsIcon}
-            iconClassName="bg-atg-warning-light text-atg-warning"
+            value={tEmpty('dash')}
+            icon={topKpi.icon}
+            iconClassName={topKpi.iconClass}
           />
         )}
       </div>

@@ -1,0 +1,99 @@
+{
+  "status": {
+    "pending": "Pendiente",
+    "succeeded": "Exitoso",
+    "failed": "Fallido",
+    "refunded": "Reembolsado"
+  },
+  "providers": {
+    "stripe": "Stripe",
+    "cash": "Efectivo"
+  },
+  "refundLabels": {
+    "partial": "Remboursement partiel",
+    "full": "Remboursement total",
+    "generic": "Remboursement"
+  },
+  "subnav": {
+    "ariaLabel": "Navigation paiements et promotions",
+    "transactions": "Transacciones",
+    "promoCodes": "Codes promo",
+    "promotions": "Promociones"
+  },
+  "list": {
+    "emptyDefault": "Hastacun paiement pour le moment.",
+    "emptyFiltered": "Hastacun paiement ne correspond à vos critères.",
+    "ariaLabel": "Liste des paiements",
+    "accessDenied": "Acceso denegado: se requiere el permiso payments.read.",
+    "notFoundError": "Paiement introuvable.",
+    "toast": {
+      "refundSuccessTitle": "Remboursement effectué",
+      "refundSuccessMessage": "{amount} remboursé avec succès."
+    }
+  },
+  "detail": {
+    "title": "Détail du paiement",
+    "sections": {
+      "summary": "Resumen",
+      "stripeIds": "Identifiants Stripe",
+      "booking": "Reserva",
+      "refundHistory": "Historial des remboursements"
+    },
+    "fields": {
+      "amount": "Importe",
+      "status": "Estado",
+      "method": "Método",
+      "date": "Fecha",
+      "client": "Cliente",
+      "stripePaymentIntent": "Payment Intent Stripe",
+      "internalPaymentId": "ID paiement (interne)",
+      "viewBooking": "Voir la réservation",
+      "stripeStatus": "Stripe : {status}"
+    },
+    "refundHistoryEmpty": "Hastacun remboursement enregistré.",
+    "cancelBookingFirst": "Reembolso Stripe: cancele primero la reserva."
+  },
+  "refundModal": {
+    "title": "Confirmer le remboursement",
+    "description": "Remboursement Stripe — maximum remboursable : {maxAmount}.",
+    "refundTypeLegend": "Tipo de remboursement",
+    "refundTypeTotal": "Total ({amount})",
+    "refundTypePartial": "Parcial",
+    "partialAmountLabel": "Importe partiel ({currency})",
+    "partialAmountPlaceholder": "Ex. 10,00",
+    "partialAmountHint": "Maximum : {maxAmount}",
+    "reasonLabel": "Raison du remboursement",
+    "reasonPlaceholder": "Ex. Cancelación client, erreur de facturation…",
+    "reasonHint": "Minimum {minLength} caractères (usage interne, non envoyé à Stripe).",
+    "preview": "Vista previa",
+    "previewRefunded": "Importe remboursé",
+    "previewRemaining": "Reste remboursable",
+    "previewReason": "Motivo",
+    "confirm": "Confirmer le remboursement",
+    "validation": {
+      "reasonMinLength": "La raison doit contenir au moins {minLength} caractères.",
+      "noRefundableAmount": "Hastacun montant remboursable restant.",
+      "partialAmountRequired": "Indiquez un montant partiel.",
+      "partialAmountInvalid": "Importe partiel invalide.",
+      "partialAmountExceeds": "Le montant ne peut pas dépasser {maxAmount}."
+    }
+  },
+  "stats": {
+    "total": {
+      "label": "Transacciones",
+      "subtitle": "Todos les paiements"
+    },
+    "succeeded": {
+      "label": "Exitosos",
+      "subtitle": "Pagos encaissés"
+    },
+    "pending": {
+      "label": "Pendiente",
+      "subtitle": "Pagos pending"
+    },
+    "revenue": {
+      "label": "Ingresos",
+      "subtitle": "Total paiements réussis"
+    }
+  }
+}

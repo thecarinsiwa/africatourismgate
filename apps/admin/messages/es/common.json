@@ -1,0 +1,40 @@
+{
+  "meta": {
+    "defaultTitle": "Africa Tourism Gate — Admin",
+    "titleTemplate": "%s | Africa Tourism Gate Admin",
+    "description": "Back office de Africa Tourism Gate"
+  },
+  "actions": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "create": "Crear",
+    "back": "Volver",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "close": "Cerrar",
+    "confirm": "Confirmar"
+  },
+  "loading": {
+    "page": "Cargando…",
+    "submit": "Guardando…"
+  },
+  "empty": {
+    "noResults": "Sin resultados",
+    "noMatch": "Ninguna coincidencia para su búsqueda"
+  },
+  "errors": {
+    "network": "No se pudo conectar con la API. Compruebe que el servidor esté en ejecución.",
+    "networkShort": "No se pudo conectar con el servidor. Compruebe su conexión.",
+    "forbidden": "No tiene permiso para realizar esta acción.",
+    "generic": "Algo salió mal.",
+    "genericRetry": "Algo salió mal. Inténtelo de nuevo.",
+    "apiStatus": "Error de API ({status}).",
+    "sessionExpired": "Sesión expirada. Vuelva a iniciar sesión.",
+    "sessionExpiredContinue": "Sesión expirada. Inicie sesión de nuevo para continuar.",
+    "accessDenied": "Acceso denegado.",
+    "conflict": "Conflicto: este recurso ya existe.",
+    "kpiLoadFailed": "No se pudieron cargar los indicadores."
+  }
+}

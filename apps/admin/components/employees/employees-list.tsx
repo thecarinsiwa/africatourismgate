@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Avatar,
   Button,
@@ -15,7 +17,6 @@ import {
 import type { Employee, EmployeeStatus, OrganizationListItem } from '@africatourismgate/types';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getEmployeesErrorMessage } from '../../lib/employees-errors';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -52,6 +53,7 @@ export function EmployeesList({
   lockedOrganizationId,
   embedded = false,
 }: EmployeesListProps = {}) {
+  const { employees: getEmployeesErrorMessage } = useAdminErrorMessages();
   const statusFilterId = useId();
   const orgFilterId = useId();
   const [searchInput, setSearchInput] = useState('');

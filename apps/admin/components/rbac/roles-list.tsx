@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   AlertDialog,
   Card,
@@ -13,15 +15,19 @@ import {
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { Role } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getRbacErrorMessage } from '../../lib/rbac-errors';
 import { RoleBadge } from './role-badge';
 import { RbacSubnav } from './rbac-subnav';
 
 const PAGE_SIZE = 20;
 
 export function RolesList() {
+  const { rbac: getRbacErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.rbac.roles');
+  const tCommonColumns = useTranslations('modules.common.columns');
+  const tActions = useTranslations('common.actions');
   const { toast } = useToast();
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
@@ -52,7 +58,7 @@ export function RolesList() {
     } catch (error) {
       setState({ status: 'error', message: getRbacErrorMessage(error) });
     }
-  }, [page, search]);
+  }, [page, search, getRbacErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -75,35 +81,35 @@ export function RolesList() {
     try {
       await getApiClient().deleteRole(pendingDelete.id);
       toast({
-        title: 'Rôle supprimé',
-        message: `Le rôle « ${pendingDelete.name} » a été supprimé.`,
+        title: t('toast.deletedTitle'),
+        message: t('toast.deletedMessage', { name: pendingDelete.name }),
         variant: 'success',
       });
       setPendingDelete(null);
       await load();
     } catch (error) {
       toast({
-        title: 'Échec de la suppression',
+        title: t('toast.deleteFailedTitle'),
         message: getRbacErrorMessage(error),
         variant: 'error',
       });
     } finally {
       setDeletingId(null);
     }
-  }, [pendingDelete, load, toast]);
+  }, [pendingDelete, load, toast, t, getRbacErrorMessage]);
 
   const columns = useMemo<ColumnDef<Role, unknown>[]>(
     () => [
       {
         accessorKey: 'code',
-        header: 'Code',
+        header: tCommonColumns('code'),
         cell: ({ row }) => (
           <span className="font-mono text-sm text-atg-fg">{row.original.code}</span>
         ),
       },
       {
         accessorKey: 'name',
-        header: 'Nom',
+        header: tCommonColumns('name'),
         cell: ({ row }) => (
           <div className="flex flex-wrap items-center gap-2">
             <RoleBadge code={row.original.code} name={row.original.name} />
@@ -112,17 +118,17 @@ export function RolesList() {
       },
       {
         id: 'type',
-        header: 'Type',
+        header: tCommonColumns('type'),
         meta: { align: 'center' },
         cell: ({ row }) => (
           <DataTableBadge variant={row.original.isSystem ? 'muted' : 'success'}>
-            {row.original.isSystem ? 'Système' : 'Personnalisé'}
+            {row.original.isSystem ? t('type.system') : t('type.custom')}
           </DataTableBadge>
         ),
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tCommonColumns('actions'),
         meta: { align: 'right' },
         cell: ({ row }) => {
           const role = row.original;
@@ -145,7 +151,7 @@ export function RolesList() {
         },
       },
     ],
-    [deletingId],
+    [deletingId, t, tCommonColumns],
   );
 
   const roles = state.status === 'ready' ? state.roles : [];
@@ -157,7 +163,7 @@ export function RolesList() {
         <div className="min-w-[200px] flex-1 sm:max-w-md">
           <Input
             type="search"
-            placeholder="Rechercher par code ou nom…"
+            placeholder={t('searchPlaceholder')}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
           />
@@ -175,9 +181,9 @@ export function RolesList() {
               columns={columns}
               data={roles}
               isLoading={state.status === 'loading'}
-              emptyMessage="Aucun rôle trouvé."
+              emptyMessage={t('empty')}
               getRowId={(r) => r.id}
-              aria-label="Liste des rôles"
+              aria-label={t('ariaLabel')}
             />
           </Card>
           {state.status === 'ready' ? (
@@ -186,7 +192,7 @@ export function RolesList() {
               pageSize={PAGE_SIZE}
               totalPages={state.totalPages}
               totalItems={state.total}
-              itemLabel="rôle"
+              itemLabel={t('paginationItem')}
               onPageChange={setPage}
             />
           ) : null}
@@ -198,13 +204,13 @@ export function RolesList() {
         onOpenChange={(open) => {
           if (!open) setPendingDelete(null);
         }}
-        title="Supprimer le rôle"
+        title={t('deleteDialog.title')}
         description={
           pendingDelete
-            ? `Supprimer définitivement le rôle « ${pendingDelete.name} » ?`
+            ? t('deleteDialog.description', { name: pendingDelete.name })
             : undefined
         }
-        confirmLabel="Supprimer"
+        confirmLabel={tActions('delete')}
         variant="danger"
         loading={deletingId !== null}
         onConfirm={() => void confirmDelete()}
