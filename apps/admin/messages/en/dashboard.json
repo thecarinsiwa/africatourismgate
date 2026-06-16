@@ -16,8 +16,12 @@
     "loading": "Loading chart…",
     "empty": "No data for this period",
     "error": "Unable to load trends",
+<<<<<<< HEAD
     "ariaLabel": "Daily bookings and revenue chart",
     "dateColumn": "Date"
+=======
+    "ariaLabel": "Daily bookings and revenue chart"
+>>>>>>> 3e3e5b9 (feat(admin): i18n FR/EN/ES complet — messages modulaires, parité, e2e ES)
   },
   "kpi": {
     "users": {

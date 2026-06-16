@@ -26,7 +26,10 @@ export function DestinationsList() {
   const t = useTranslations('modules.destinations.list');
   const tColumns = useTranslations('modules.destinations.columns');
   const tCommon = useTranslations('modules.common');
+<<<<<<< HEAD
   const tActions = useTranslations('common.actions');
+=======
+>>>>>>> 3e3e5b9 (feat(admin): i18n FR/EN/ES complet — messages modulaires, parité, e2e ES)
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -180,7 +183,11 @@ export function DestinationsList() {
         },
       },
     ],
+<<<<<<< HEAD
     [deletingId, handleDelete, tActions, tColumns, tCommon],
+=======
+    [deletingId, handleDelete, tColumns, tCommon],
+>>>>>>> 3e3e5b9 (feat(admin): i18n FR/EN/ES complet — messages modulaires, parité, e2e ES)
   );
 
   const isLoading = state.status === 'loading';

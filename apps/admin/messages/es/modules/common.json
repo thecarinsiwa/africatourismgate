@@ -16,8 +16,11 @@
     "allFeminine": "Todas",
     "none": "Ninguna",
     "clear": "Borrar filtro",
+<<<<<<< HEAD
     "clearAll": "Borrar filtros",
     "toggle": "Filtros",
+=======
+>>>>>>> 3e3e5b9 (feat(admin): i18n FR/EN/ES complet — messages modulaires, parité, e2e ES)
     "apply": "Aplicar",
     "dateFrom": "Desde",
     "dateTo": "Hasta",
@@ -87,6 +90,7 @@
     "category": "Catégorie"
   },
   "pagination": {
+<<<<<<< HEAD
     "session": "sesión",
     "address": "dirección",
     "paymentMethod": "método de pago",
@@ -134,6 +138,35 @@
   "exportCsv": {
     "button": "Exportar CSV",
     "success": "Exportación CSV descargada."
+=======
+    "session": "session",
+    "address": "adresse",
+    "paymentMethod": "moyen de paiement",
+    "user": "utilisateur",
+    "organization": "organisation",
+    "booking": "réservation",
+    "line": "ligne",
+    "payment": "paiement",
+    "property": "hébergement",
+    "room": "chambre",
+    "flight": "vol",
+    "vehicle": "véhicule",
+    "sailing": "départ",
+    "destination": "destination",
+    "package": "forfait",
+    "provider": "fournisseur",
+    "category": "catégorie",
+    "agency": "agence",
+    "airport": "aéroport",
+    "airline": "compagnie",
+    "ship": "navire",
+    "itinerary": "itinéraire",
+    "port": "port",
+    "amenity": "équipement",
+    "review": "avis",
+    "ticket": "tickets",
+    "loyaltyAccount": "comptes"
+>>>>>>> 3e3e5b9 (feat(admin): i18n FR/EN/ES complet — messages modulaires, parité, e2e ES)
   },
   "loading": "Cargando…",
   "sessionStatus": {

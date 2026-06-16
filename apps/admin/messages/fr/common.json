@@ -14,8 +14,12 @@
     "search": "Rechercher",
     "filter": "Filtrer",
     "close": "Fermer",
+<<<<<<< HEAD
     "confirm": "Confirmer",
     "view": "Voir"
+=======
+    "confirm": "Confirmer"
+>>>>>>> 3e3e5b9 (feat(admin): i18n FR/EN/ES complet — messages modulaires, parité, e2e ES)
   },
   "loading": {
     "page": "Chargement…",
@@ -37,11 +41,14 @@
     "accessDenied": "Accès refusé.",
     "conflict": "Conflit : cette ressource existe déjà.",
     "kpiLoadFailed": "Impossible de charger les indicateurs."
+<<<<<<< HEAD
   },
   "commandPalette": {
     "title": "Navigation rapide",
     "placeholder": "Rechercher une page…",
     "empty": "Aucune page trouvée",
     "shortcutHint": "Ctrl+K"
+=======
+>>>>>>> 3e3e5b9 (feat(admin): i18n FR/EN/ES complet — messages modulaires, parité, e2e ES)
   }
 }

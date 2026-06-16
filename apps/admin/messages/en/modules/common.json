@@ -16,8 +16,11 @@
     "allFeminine": "All",
     "none": "None",
     "clear": "Clear filter",
+<<<<<<< HEAD
     "clearAll": "Clear filters",
     "toggle": "Filters",
+=======
+>>>>>>> 3e3e5b9 (feat(admin): i18n FR/EN/ES complet — messages modulaires, parité, e2e ES)
     "apply": "Apply",
     "dateFrom": "From",
     "dateTo": "To",
@@ -88,6 +91,7 @@
   },
   "pagination": {
     "session": "session",
+<<<<<<< HEAD
     "address": "address",
     "paymentMethod": "payment method",
     "user": "user",
@@ -134,6 +138,34 @@
   "exportCsv": {
     "button": "Export CSV",
     "success": "CSV export downloaded."
+=======
+    "address": "adresse",
+    "paymentMethod": "moyen de paiement",
+    "user": "utilisateur",
+    "organization": "organisation",
+    "booking": "réservation",
+    "line": "ligne",
+    "payment": "paiement",
+    "property": "hébergement",
+    "room": "chambre",
+    "flight": "vol",
+    "vehicle": "véhicule",
+    "sailing": "départ",
+    "destination": "destination",
+    "package": "forfait",
+    "provider": "fournisseur",
+    "category": "catégorie",
+    "agency": "agence",
+    "airport": "aéroport",
+    "airline": "compagnie",
+    "ship": "navire",
+    "itinerary": "itinéraire",
+    "port": "port",
+    "amenity": "équipement",
+    "review": "avis",
+    "ticket": "tickets",
+    "loyaltyAccount": "comptes"
+>>>>>>> 3e3e5b9 (feat(admin): i18n FR/EN/ES complet — messages modulaires, parité, e2e ES)
   },
   "loading": "Loading…",
   "sessionStatus": {

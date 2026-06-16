@@ -123,10 +123,14 @@
         "description": "Create the destination then add points of interest on the edit page."
       },
       "id": {
+<<<<<<< HEAD
         "metaTitle": "Edit destination",
         "voir": {
           "metaTitle": "View destination"
         }
+=======
+        "metaTitle": "Edit destination"
+>>>>>>> 3e3e5b9 (feat(admin): i18n FR/EN/ES complet — messages modulaires, parité, e2e ES)
       }
     },
     "locations": {

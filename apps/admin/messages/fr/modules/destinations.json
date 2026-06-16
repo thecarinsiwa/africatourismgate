@@ -9,8 +9,12 @@
   },
   "columns": {
     "destination": "Destination",
+<<<<<<< HEAD
     "country": "Pays",
     "featured": "Homepage"
+=======
+    "country": "Pays"
+>>>>>>> 3e3e5b9 (feat(admin): i18n FR/EN/ES complet — messages modulaires, parité, e2e ES)
   },
   "form": {
     "submitCreate": "Créer la destination",
@@ -25,8 +29,11 @@
     "countryCodeHint": "2 lettres, ex. CD, KE, ZA.",
     "heroImageUrl": "URL image hero",
     "heroImageHint": "Affichée dans le bandeau. Laissez vide pour un dégradé.",
+<<<<<<< HEAD
     "isFeatured": "Afficher sur la homepage",
     "isFeaturedHint": "Section « Destinations populaires » du site public (max. 4).",
+=======
+>>>>>>> 3e3e5b9 (feat(admin): i18n FR/EN/ES complet — messages modulaires, parité, e2e ES)
     "geographyIntro": "Coordonnées du centre de la destination pour la carte statique.",
     "latitudeHint": "Optionnel, -90 à 90",
     "longitudeHint": "Optionnel, -180 à 180",
@@ -34,6 +41,7 @@
   },
   "detail": {
     "title": "Modifier la destination",
+<<<<<<< HEAD
     "viewTitle": "Voir la destination",
     "editButton": "Modifier la destination",
     "backLink": "Retour aux destinations",
@@ -50,6 +58,10 @@
   },
   "hero": {
     "ariaLabel": "Destination {name}"
+=======
+    "backLink": "Retour aux destinations",
+    "mapTitle": "Carte de la destination"
+>>>>>>> 3e3e5b9 (feat(admin): i18n FR/EN/ES complet — messages modulaires, parité, e2e ES)
   },
   "sections": {
     "pois": {

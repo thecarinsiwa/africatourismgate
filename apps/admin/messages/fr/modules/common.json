@@ -16,8 +16,11 @@
     "allFeminine": "Toutes",
     "none": "Aucune",
     "clear": "Effacer le filtre",
+<<<<<<< HEAD
     "clearAll": "Effacer les filtres",
     "toggle": "Filtres",
+=======
+>>>>>>> 3e3e5b9 (feat(admin): i18n FR/EN/ES complet — messages modulaires, parité, e2e ES)
     "apply": "Appliquer",
     "dateFrom": "Du",
     "dateTo": "Au",
@@ -115,6 +118,7 @@
     "ticket": "tickets",
     "loyaltyAccount": "comptes"
   },
+<<<<<<< HEAD
   "dataTable": {
     "loading": "Chargement…",
     "emptyDefault": "Aucune donnée.",
@@ -135,6 +139,8 @@
     "button": "Exporter CSV",
     "success": "Export CSV téléchargé."
   },
+=======
+>>>>>>> 3e3e5b9 (feat(admin): i18n FR/EN/ES complet — messages modulaires, parité, e2e ES)
   "loading": "Chargement…",
   "sessionStatus": {
     "active": "Active",

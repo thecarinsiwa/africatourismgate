@@ -264,6 +264,7 @@ export function BookingsList() {
     ],
     [emptyDash, orgNameById, statusLabels, tActions, tCommon],
   );
+  
 
   const isLoading = state.status === 'loading';
   const isError = state.status === 'error';
@@ -418,7 +419,10 @@ export function BookingsList() {
               totalPages={state.totalPages}
               totalItems={state.total}
               itemLabel={tCommon('pagination.booking')}
+<<<<<<< HEAD
               labels={paginationLabels}
+=======
+>>>>>>> 3e3e5b9 (feat(admin): i18n FR/EN/ES complet — messages modulaires, parité, e2e ES)
               onPageChange={setPage}
             />
           ) : null}
