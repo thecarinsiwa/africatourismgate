@@ -24,7 +24,9 @@ import {
 } from '../../lib/org-settings-constants';
 import { getOrganizationSettingsErrorMessage } from '../../lib/organization-settings-errors';
 import {
+  applyFaviconToDocument,
   applyOrganizationBrandingToDocument,
+  type OrganizationBranding,
   brandingFromSettingsForm,
 } from '../../lib/organization-theme';
 import { useOrganizationThemeOptional } from '../organization-theme-provider';
@@ -151,16 +153,11 @@ export function OrganizationSettingsForm({
   const [submitting, setSubmitting] = useState(false);
   const [uploadingField, setUploadingField] = useState<'logoUrl' | 'faviconUrl' | null>(null);
   const [uploadingAuthIconIndex, setUploadingAuthIconIndex] = useState<number | null>(null);
+  const [initialValues, setInitialValues] = useState<SettingsFormValues>(defaultValues);
 
   const updateField = useCallback(
     <K extends keyof SettingsFormValues>(key: K, value: SettingsFormValues[K]) => {
-      setValues((prev) => {
-        const next = { ...prev, [key]: value };
-        if (key === 'primaryColor' || key === 'secondaryColor') {
-          applyOrganizationBrandingToDocument(brandingFromSettingsForm(next));
-        }
-        return next;
-      });
+      setValues((prev) => ({ ...prev, [key]: value }));
       setFieldErrors((prev) => ({ ...prev, [key]: undefined }));
     },
     [],
@@ -186,9 +183,26 @@ export function OrganizationSettingsForm({
     [displayName, primaryColor, secondaryColor, logoUrl, faviconUrl],
   );
 
+  const applyPreviewBranding = useCallback(
+    (branding: OrganizationBranding) => {
+      if (orgTheme) {
+        orgTheme.applyBranding(branding);
+        return;
+      }
+      applyOrganizationBrandingToDocument(branding);
+      applyFaviconToDocument(branding.faviconUrl);
+    },
+    [orgTheme],
+  );
+
   useEffect(() => {
-    applyOrganizationBrandingToDocument(brandingPreview);
-  }, [brandingPreview]);
+    applyPreviewBranding(brandingPreview);
+  }, [applyPreviewBranding, brandingPreview]);
+
+  const isDirty = useMemo(
+    () => JSON.stringify(values) !== JSON.stringify(initialValues),
+    [values, initialValues],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -207,7 +221,9 @@ export function OrganizationSettingsForm({
           }),
         ]);
         if (!cancelled) {
-          setValues(toFormValues(org, settingsPage.data));
+          const nextValues = toFormValues(org, settingsPage.data);
+          setValues(nextValues);
+          setInitialValues(nextValues);
         }
       } catch (error) {
         if (!cancelled) {
@@ -332,7 +348,8 @@ export function OrganizationSettingsForm({
         ],
       });
 
-      applyOrganizationBrandingToDocument(brandingFromSettingsForm(values));
+      applyPreviewBranding(brandingFromSettingsForm(values));
+      setInitialValues(values);
       await orgTheme?.refreshTheme();
 
       router.refresh();
@@ -419,6 +436,13 @@ export function OrganizationSettingsForm({
     }
   }
 
+  function handleCancel(): void {
+    setValues(initialValues);
+    applyPreviewBranding(brandingFromSettingsForm(initialValues));
+    setFieldErrors({});
+    setFormError(null);
+  }
+
   if (loading) {
     return <p className="text-sm text-atg-muted">Chargement…</p>;
   }
@@ -432,26 +456,28 @@ export function OrganizationSettingsForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-8">
-      {isSuperAdmin && organizations.length > 0 && onOrganizationIdChange ? (
-        <OrganizationOrgSelector
-          id="org-select"
-          organizations={organizations}
-          value={organizationId}
-          onChange={onOrganizationIdChange}
-        />
-      ) : null}
+    <form onSubmit={handleSubmit} className="space-y-8">
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
+        <div className="space-y-8">
+          {isSuperAdmin && organizations.length > 0 && onOrganizationIdChange ? (
+            <OrganizationOrgSelector
+              id="org-select"
+              organizations={organizations}
+              value={organizationId}
+              onChange={onOrganizationIdChange}
+            />
+          ) : null}
 
-      {formError ? (
-        <p
-          role="alert"
-          className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-400"
-        >
-          {formError}
-        </p>
-      ) : null}
+          {formError ? (
+            <p
+              role="alert"
+              className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-400"
+            >
+              {formError}
+            </p>
+          ) : null}
 
-      <section className="space-y-4">
+          <section className="space-y-4">
         <h2 className="text-lg font-semibold text-atg-fg">Coordonnées</h2>
         <p className="text-sm text-atg-muted">
           Affichées dans le bandeau et le pied de page du site public.
@@ -504,9 +530,9 @@ export function OrganizationSettingsForm({
           error={fieldErrors.currency}
           maxLength={3}
         />
-      </section>
+          </section>
 
-      <section className="space-y-4">
+          <section className="space-y-4">
         <h2 className="text-lg font-semibold text-atg-fg">Locale</h2>
         <Input
           label="Langue"
@@ -518,9 +544,9 @@ export function OrganizationSettingsForm({
           value={values.timezone}
           onChange={(e) => updateField('timezone', e.target.value)}
         />
-      </section>
+          </section>
 
-      <section className="space-y-4">
+          <section className="space-y-4">
         <h2 className="text-lg font-semibold text-atg-fg">Réservation</h2>
         <Input
           label="Durée de retenue (minutes)"
@@ -539,9 +565,9 @@ export function OrganizationSettingsForm({
           />
           Autoriser la commande invité
         </label>
-      </section>
+          </section>
 
-      <section className="space-y-4">
+          <section className="space-y-4">
         <h2 className="text-lg font-semibold text-atg-fg">Fidélité OneKey</h2>
         <p className="text-sm text-atg-muted">
           Points crédités après paiement confirmé : floor(montant en centimes / 100) ×
@@ -573,9 +599,9 @@ export function OrganizationSettingsForm({
           error={fieldErrors.loyaltyProgramCode}
           maxLength={32}
         />
-      </section>
+          </section>
 
-      <section className="space-y-4">
+          <section className="space-y-4">
         <h2 className="text-lg font-semibold text-atg-fg">Branding</h2>
         <Input
           label="Nom affiché"
@@ -633,9 +659,9 @@ export function OrganizationSettingsForm({
           </label>
           <span className="text-xs text-atg-muted">PNG/ICO/SVG, max 2 MB</span>
         </div>
-      </section>
+          </section>
 
-      <section className="space-y-4">
+          <section className="space-y-4">
         <h2 className="text-lg font-semibold text-atg-fg">Panneau connexion</h2>
         <AuthVisualIconsField
           icons={values.authVisualIcons}
@@ -643,12 +669,83 @@ export function OrganizationSettingsForm({
           onUploadImage={handleAuthVisualImageUpload}
           uploadingIndex={uploadingAuthIconIndex}
         />
-      </section>
+          </section>
+        </div>
 
-      <div className="flex gap-3">
-        <Button type="submit" loading={submitting} loadingText="Enregistrement…">
-          Enregistrer
-        </Button>
+        <aside className="lg:sticky lg:top-6">
+          <div className="rounded-xl border border-atg-border bg-atg-bg p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-atg-muted">
+              Preview live
+            </p>
+            <p className="mt-1 text-sm text-atg-muted">
+              Le rendu se met a jour instantanement, sans sauvegarde.
+            </p>
+
+            <div className="mt-4 overflow-hidden rounded-lg border border-atg-border bg-atg-surface">
+              <div
+                className="flex items-center justify-between px-3 py-2 text-white"
+                style={{ backgroundColor: brandingPreview.primaryColor }}
+              >
+                <div className="flex items-center gap-2">
+                  {brandingPreview.logoUrl ? (
+                    <img
+                      src={brandingPreview.logoUrl}
+                      alt="Logo organisation"
+                      className="h-6 w-6 rounded object-contain bg-white/15 p-0.5"
+                    />
+                  ) : (
+                    <div className="h-6 w-6 rounded bg-white/25" />
+                  )}
+                  <span className="text-sm font-semibold">{brandingPreview.displayName}</span>
+                </div>
+                <span className="text-xs opacity-90">Admin</span>
+              </div>
+
+              <div className="grid grid-cols-[72px_minmax(0,1fr)]">
+                <div
+                  className="space-y-2 px-2 py-3"
+                  style={{ backgroundColor: brandingPreview.secondaryColor }}
+                >
+                  <div className="h-2 rounded bg-white/60" />
+                  <div className="h-2 rounded bg-white/40" />
+                  <div className="h-2 rounded bg-white/30" />
+                </div>
+                <div className="space-y-3 p-3">
+                  <div className="h-2 w-2/3 rounded bg-atg-border" />
+                  <div className="h-2 w-1/2 rounded bg-atg-border" />
+                  <button
+                    type="button"
+                    className="rounded-md px-3 py-1.5 text-xs font-medium text-white"
+                    style={{ backgroundColor: brandingPreview.primaryColor }}
+                  >
+                    Bouton principal
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <div className="sticky bottom-0 z-20 border-t border-atg-border bg-atg-bg/95 px-4 py-3 backdrop-blur">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm font-medium text-atg-fg">
+            {isDirty ? 'Modifications non enregistrees' : 'Aucune modification en attente'}
+          </p>
+          <div className="flex gap-2">
+            <Button type="button" variant="outline" onClick={handleCancel} disabled={!isDirty}>
+              Annuler
+            </Button>
+            <Button
+              type="submit"
+              loading={submitting}
+              loadingText="Enregistrement…"
+              disabled={!isDirty}
+            >
+              Enregistrer
+            </Button>
+          </div>
+        </div>
       </div>
     </form>
   );
