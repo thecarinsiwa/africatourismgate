@@ -12,7 +12,8 @@
 3. Ouvrez la **branche PR** indiquée, implémentez, testez avec `pnpm dev:admin`.
 4. Commencez par **UX-1** (fondations) — les autres livrables en dépendent en grande partie.
 5. Croisez avec [roadmap-development.md](./roadmap-development.md) : certaines pages placeholder seront remplacées par de vrais CRUD — le design peut être anticipé dès maintenant.
-6. Ne demandez un commit que lorsque vous êtes satisfait du résultat.
+6. Pour le site public, voir le workflow parallèle [web-design-improvements.md](./web-design-improvements.md) — composants `packages/ui` partagés.
+7. Ne demandez un commit que lorsque vous êtes satisfait du résultat.
 
 ### Légende des priorités
 
