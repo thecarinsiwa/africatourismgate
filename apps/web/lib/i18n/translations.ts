@@ -124,10 +124,19 @@ export type Translations = {
     tagline: string;
     learnMore: string;
     specialists: string;
-    specialistLinks: { premium: string; flights: string; safaris: string; cruises: string };
+    products: string;
+    specialistLinks: {
+      premium: string;
+      flights: string;
+      safaris: string;
+      cruises: string;
+      cars: string;
+      packages: string;
+    };
     newsletter: string;
     newsletterDesc: string;
     emailPlaceholder: string;
+    newsletterSubmit: string;
     contact: string;
     location: string;
     privacy: string;
@@ -928,15 +937,19 @@ const fr: Translations = {
       'Votre passerelle vers les meilleures expériences de voyage en Afrique. Découvrez des destinations uniques et réservez en toute confiance.',
     learnMore: 'En savoir plus',
     specialists: 'Spécialistes Voyage',
+    products: 'Nos Produits',
     specialistLinks: {
       premium: 'Hébergements Premium',
       flights: 'Vols Première Classe',
       safaris: 'Safaris & Tours',
       cruises: 'Croisières Côtières',
+      cars: 'Location de Voitures',
+      packages: 'Forfaits',
     },
     newsletter: 'Newsletter',
     newsletterDesc: 'Inspiration, idées de voyages, bons plans et actualités.',
     emailPlaceholder: 'Adresse email',
+    newsletterSubmit: 'OK',
     contact: 'Contact',
     location: 'Kinshasa, RD Congo',
     privacy: 'Politique de Confidentialité',
@@ -1789,15 +1802,19 @@ const en: Translations = {
       'Your gateway to the best travel experiences in Africa. Discover unique destinations and book with confidence.',
     learnMore: 'Learn more',
     specialists: 'Travel Specialists',
+    products: 'Our Products',
     specialistLinks: {
       premium: 'Premium Stays',
       flights: 'First Class Flights',
       safaris: 'Safaris & Tours',
       cruises: 'Coastal Cruises',
+      cars: 'Car Rental',
+      packages: 'Packages',
     },
     newsletter: 'Newsletter',
     newsletterDesc: 'Inspiration, travel ideas, deals and news.',
     emailPlaceholder: 'Email address',
+    newsletterSubmit: 'OK',
     contact: 'Contact',
     location: 'Kinshasa, DR Congo',
     privacy: 'Privacy Policy',
