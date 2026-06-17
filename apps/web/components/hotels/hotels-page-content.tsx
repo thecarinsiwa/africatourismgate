@@ -1,6 +1,7 @@
 'use client';
 
 import type { PropertyType } from '@africatourismgate/types';
+import { EmptyState } from '@africatourismgate/ui';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { searchAccommodations } from '../../lib/api/public';
@@ -271,30 +272,35 @@ export function HotelsPageContent({ initialSearch }: HotelsPageContentProps) {
                 <p className="text-sm font-medium text-gray-600 dark:text-atg-muted">{h.loading}</p>
               </div>
             ) : listings.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-gray-200 bg-white px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
-                <svg
-                  className="mx-auto h-12 w-12 text-gray-300 dark:text-atg-muted"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  aria-hidden
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                  />
-                </svg>
-                <h3 className="mt-4 text-lg font-bold text-[#0f1a16] dark:text-white">{h.noResults}</h3>
-                <p className="mt-2 text-sm text-gray-500 dark:text-atg-muted">{h.noResultsHint}</p>
-                <Link
-                  href="/"
-                  className="mt-6 inline-flex min-h-[44px] items-center rounded-lg bg-primary px-6 py-2 text-sm font-bold text-white hover:bg-primary-hover"
-                >
-                  {h.backHome}
-                </Link>
-              </div>
+              <EmptyState
+                title={h.noResults}
+                description={h.noResultsHint}
+                icon={
+                  <svg
+                    className="h-8 w-8"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    aria-hidden
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                    />
+                  </svg>
+                }
+                action={
+                  <Link
+                    href="/"
+                    className="inline-flex min-h-[44px] items-center rounded-lg bg-primary px-6 py-2 text-sm font-bold text-white hover:bg-primary-hover"
+                  >
+                    {h.backHome}
+                  </Link>
+                }
+                className="rounded-2xl border-gray-200 bg-white dark:bg-atg-elevated"
+              />
             ) : (
               listings.map((hotel) => (
                 <HotelCard
