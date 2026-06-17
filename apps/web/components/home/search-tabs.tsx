@@ -499,36 +499,46 @@ export function SearchTabs() {
             )}
 
             {activeTab === 'hotels' && (
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1.25fr_0.75fr_auto] lg:items-end">
-                <div>
-                  <SearchFormLabel>{t.search.checkIn}</SearchFormLabel>
-                  <SearchFormInput type="date" name="checkIn" value={departDate} onChange={setDepartDate} />
+              <div className="space-y-4">
+                <div className="flex flex-wrap items-center justify-end gap-3">
+                  <Link
+                    href="/hotels"
+                    className="inline-flex min-h-[44px] items-center rounded-lg border border-primary px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/5 dark:hover:bg-primary/10"
+                  >
+                    {t.search.viewAllHotels}
+                  </Link>
                 </div>
-                <div>
-                  <SearchFormLabel>{t.search.checkOut}</SearchFormLabel>
-                  <SearchFormInput type="date" name="checkOut" value={returnDate} onChange={setReturnDate} />
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1.25fr_0.75fr_auto] lg:items-end">
+                  <div>
+                    <SearchFormLabel>{t.search.checkIn}</SearchFormLabel>
+                    <SearchFormInput type="date" name="checkIn" value={departDate} onChange={setDepartDate} />
+                  </div>
+                  <div>
+                    <SearchFormLabel>{t.search.checkOut}</SearchFormLabel>
+                    <SearchFormInput type="date" name="checkOut" value={returnDate} onChange={setReturnDate} />
+                  </div>
+                  <div>
+                    <SearchFormLabel>{t.search.destination}</SearchFormLabel>
+                    <SearchFormSelect
+                      name="destination"
+                      placeholder={t.search.destinationPh}
+                      options={destinationOptions}
+                      value={destination}
+                      onChange={setDestination}
+                    />
+                  </div>
+                  <div>
+                    <SearchFormLabel>{t.hotels.guests}</SearchFormLabel>
+                    <SearchFormInput
+                      name="guests"
+                      type="number"
+                      placeholder="2"
+                      value={hotelGuests}
+                      onChange={setHotelGuests}
+                    />
+                  </div>
+                  <div className="flex items-end">{submitBtn}</div>
                 </div>
-                <div>
-                  <SearchFormLabel>{t.search.destination}</SearchFormLabel>
-                  <SearchFormSelect
-                    name="destination"
-                    placeholder={t.search.destinationPh}
-                    options={destinationOptions}
-                    value={destination}
-                    onChange={setDestination}
-                  />
-                </div>
-                <div>
-                  <SearchFormLabel>{t.hotels.guests}</SearchFormLabel>
-                  <SearchFormInput
-                    name="guests"
-                    type="number"
-                    placeholder="2"
-                    value={hotelGuests}
-                    onChange={setHotelGuests}
-                  />
-                </div>
-                <div className="flex items-end">{submitBtn}</div>
               </div>
             )}
 

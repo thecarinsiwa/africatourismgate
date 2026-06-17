@@ -74,6 +74,7 @@ export type Translations = {
     oneWay: string;
     roundTrip: string;
     viewAllFlights: string;
+    viewAllHotels: string;
     carsRequired: string;
     carsReturnAfterPickup: string;
     carsDurationHint: string;
@@ -831,6 +832,7 @@ const fr: Translations = {
     oneWay: 'Aller simple',
     roundTrip: 'Aller-retour',
     viewAllFlights: 'Voir tous les vols disponibles',
+    viewAllHotels: 'Voir tous les hôtels',
     carsRequired: 'Indiquez la ville, la date de prise en charge et la date de retour.',
     carsReturnAfterPickup: 'La date de retour doit être après la date de prise en charge.',
     carsDurationHint: 'Sélectionnez les dates pour voir la durée',
@@ -1692,6 +1694,7 @@ const en: Translations = {
     oneWay: 'One way',
     roundTrip: 'Round trip',
     viewAllFlights: 'View all available flights',
+    viewAllHotels: 'View all hotels',
     carsRequired: 'Enter city, pick-up date and return date.',
     carsReturnAfterPickup: 'Return date must be after pick-up date.',
     carsDurationHint: 'Select dates to see rental duration',

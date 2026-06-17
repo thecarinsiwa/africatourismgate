@@ -107,6 +107,7 @@ export const es: Translations = {
     oneWay: 'Solo ida',
     roundTrip: 'Ida y vuelta',
     viewAllFlights: 'Ver todos los vuelos disponibles',
+    viewAllHotels: 'Ver todos los hoteles',
     carsRequired: 'Indique ciudad, fecha de recogida y fecha de devolución.',
     carsReturnAfterPickup: 'La fecha de devolución debe ser posterior a la de recogida.',
     carsDurationHint: 'Seleccione las fechas para ver la duración',
