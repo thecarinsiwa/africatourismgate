@@ -188,10 +188,10 @@ export function ActivityDetailPageContent({
 
   if (loading && !detail) {
     return (
-      <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
+      <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
         <HomeHeader />
         <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-24 text-center sm:px-6 lg:px-8">
-          <p className="text-sm font-medium text-gray-600 dark:text-atg-muted">{a.loading}</p>
+          <p className="text-sm font-medium text-atg-muted">{a.loading}</p>
         </div>
         <HomeFooter />
       </div>
@@ -200,11 +200,11 @@ export function ActivityDetailPageContent({
 
   if (notFound) {
     return (
-      <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
+      <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
         <HomeHeader />
         <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-24 text-center sm:px-6 lg:px-8">
-          <h1 className="text-2xl font-bold text-[#0f1a16] dark:text-white">{a.notFound}</h1>
-          <p className="mt-2 text-sm text-gray-500 dark:text-atg-muted">{a.notFoundHint}</p>
+          <h1 className="text-2xl font-bold text-atg-fg">{a.notFound}</h1>
+          <p className="mt-2 text-sm text-atg-muted">{a.notFoundHint}</p>
           <Link
             href={listHref}
             className="mt-6 inline-flex min-h-[44px] items-center rounded-lg bg-primary px-6 py-2 text-sm font-bold text-white hover:bg-primary-hover"
@@ -219,10 +219,10 @@ export function ActivityDetailPageContent({
 
   if (error || !detail || !sidebarProps) {
     return (
-      <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
+      <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
         <HomeHeader />
         <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-16 sm:px-6 lg:px-8">
-          <div className="rounded-xl border border-red-200 bg-white p-5 dark:border-red-900/40 dark:bg-atg-elevated">
+          <div className="rounded-xl border border-red-200 bg-atg-elevated p-5 dark:border-red-900/40 dark:bg-atg-elevated">
             <p className="text-sm text-red-700 dark:text-red-300">{a.loadError}</p>
             <button
               type="button"
@@ -246,13 +246,13 @@ export function ActivityDetailPageContent({
   });
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
+    <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
       <HomeHeader />
 
-      <div className="border-b border-gray-200 bg-white dark:border-atg-border dark:bg-atg-elevated">
+      <div className="border-b border-atg-border bg-atg-elevated dark:border-atg-border dark:bg-atg-elevated">
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
           <nav
-            className="flex flex-wrap items-center gap-2 text-sm text-gray-500 dark:text-atg-muted"
+            className="flex flex-wrap items-center gap-2 text-sm text-atg-muted"
             aria-label="Breadcrumb"
           >
             <Link href="/" className="transition-colors hover:text-primary">
@@ -263,7 +263,7 @@ export function ActivityDetailPageContent({
               {a.breadcrumbActivities}
             </Link>
             <span aria-hidden>/</span>
-            <span className="font-medium text-[#0f1a16] dark:text-white">{detail.title}</span>
+            <span className="font-medium text-atg-fg">{detail.title}</span>
           </nav>
         </div>
       </div>
@@ -275,10 +275,10 @@ export function ActivityDetailPageContent({
               <p className="text-sm font-semibold uppercase tracking-wide text-primary">
                 {detail.providerName}
               </p>
-              <h1 className="mt-1 text-2xl font-bold text-[#0f1a16] dark:text-white sm:text-3xl">
+              <h1 className="mt-1 text-2xl font-bold text-atg-fg sm:text-3xl">
                 {detail.title}
               </h1>
-              <p className="mt-2 text-sm text-gray-600 dark:text-atg-muted">
+              <p className="mt-2 text-sm text-atg-muted">
                 {detail.destination}
                 {initialSearch.date
                   ? ` · ${formatDisplayDate(initialSearch.date, locale)}`
@@ -289,10 +289,10 @@ export function ActivityDetailPageContent({
 
             {detail.description && (
               <section>
-                <h2 className="mb-3 text-lg font-bold text-[#0f1a16] dark:text-white">
+                <h2 className="mb-3 text-lg font-bold text-atg-fg">
                   {a.descriptionTitle}
                 </h2>
-                <p className="text-sm leading-relaxed text-gray-600 dark:text-atg-muted">
+                <p className="text-sm leading-relaxed text-atg-muted">
                   {detail.description}
                 </p>
               </section>

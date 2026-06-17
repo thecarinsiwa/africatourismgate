@@ -280,13 +280,13 @@ export function ReservationCartPageContent({ draft }: Props) {
       Boolean(vehicleReady));
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
+    <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
       <HomeHeader />
       <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-10 sm:px-6 lg:px-8">
-        <h1 className="text-2xl font-bold text-[#0f1a16] dark:text-white">Panier réservation</h1>
+        <h1 className="text-2xl font-bold text-atg-fg">Panier réservation</h1>
 
         {!draft && (
-          <div className="mt-6 rounded-xl border border-red-200 bg-white p-5 dark:border-red-900/40 dark:bg-atg-elevated">
+          <div className="mt-6 rounded-xl border border-red-200 bg-atg-elevated p-5 dark:border-red-900/40 dark:bg-atg-elevated">
             <p className="text-sm text-red-700 dark:text-red-300">
               Données de réservation incomplètes. Reprenez depuis une fiche produit.
             </p>
@@ -301,21 +301,21 @@ export function ReservationCartPageContent({ draft }: Props) {
 
         {draft && (
           <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_auto]">
-            <section className="rounded-xl border border-gray-200 bg-white p-5 dark:border-atg-border dark:bg-atg-elevated">
-              {loading && <p className="text-sm text-gray-600 dark:text-atg-muted">Chargement…</p>}
+            <section className="rounded-xl border border-atg-border bg-atg-elevated p-5 dark:border-atg-border dark:bg-atg-elevated">
+              {loading && <p className="text-sm text-atg-muted">Chargement…</p>}
 
               {!loading && isRoomReservationDraft(draft) && hotelDetail && room && (
                 <div className="space-y-3">
                   <p className="text-sm text-primary">{hotelDetail.destinationName}</p>
-                  <h2 className="text-xl font-bold text-[#0f1a16] dark:text-white">
+                  <h2 className="text-xl font-bold text-atg-fg">
                     {hotelDetail.name}
                   </h2>
-                  <p className="text-sm text-gray-600 dark:text-atg-muted">{room.name}</p>
-                  <p className="text-sm text-gray-600 dark:text-atg-muted">
+                  <p className="text-sm text-atg-muted">{room.name}</p>
+                  <p className="text-sm text-atg-muted">
                     {formatDisplayDate(draft.checkIn, locale)} {'->'}{' '}
                     {formatDisplayDate(draft.checkOut, locale)}
                   </p>
-                  <p className="text-sm text-gray-600 dark:text-atg-muted">
+                  <p className="text-sm text-atg-muted">
                     {draft.guests} voyageur{draft.guests > 1 ? 's' : ''}
                   </p>
                 </div>
@@ -326,17 +326,17 @@ export function ReservationCartPageContent({ draft }: Props) {
                   <p className="text-sm text-primary">
                     {flightDetail.airlineName} · {flightDetail.flightNumber}
                   </p>
-                  <h2 className="text-xl font-bold text-[#0f1a16] dark:text-white">
+                  <h2 className="text-xl font-bold text-atg-fg">
                   {formatAirportLabel(flightDetail.departureAirport.iataCode, flightDetail.departureAirport)} →{' '}
                   {formatAirportLabel(flightDetail.arrivalAirport.iataCode, flightDetail.arrivalAirport)}
                   </h2>
-                  <p className="text-sm text-gray-600 dark:text-atg-muted">
+                  <p className="text-sm text-atg-muted">
                     {f.classNames[flightClass.className] ?? flightClass.className}
                   </p>
-                  <p className="text-sm text-gray-600 dark:text-atg-muted">
+                  <p className="text-sm text-atg-muted">
                     {formatDisplayDate(draft.departureDate, locale)}
                   </p>
-                  <p className="text-sm text-gray-600 dark:text-atg-muted">
+                  <p className="text-sm text-atg-muted">
                     {draft.passengers === 1
                       ? `1 ${f.passengerSingular}`
                       : f.passengerPlural.replace('{n}', String(draft.passengers))}
@@ -347,17 +347,17 @@ export function ReservationCartPageContent({ draft }: Props) {
               {!loading && vehicleReady && isVehicleReservationDraft(draft) && (
                 <div className="space-y-3">
                   <p className="text-sm text-primary">{vehicleReady.agency.name}</p>
-                  <h2 className="text-xl font-bold text-[#0f1a16] dark:text-white">
+                  <h2 className="text-xl font-bold text-atg-fg">
                     {vehicleReady.category.exampleModel ?? vehicleReady.category.name}
                   </h2>
-                  <p className="text-sm text-gray-600 dark:text-atg-muted">
+                  <p className="text-sm text-atg-muted">
                     {vehicleReady.agency.city || c.pickupLocation}
                   </p>
-                  <p className="text-sm text-gray-600 dark:text-atg-muted">
+                  <p className="text-sm text-atg-muted">
                     {formatDisplayDate(draft.pickupDate, locale)} {'->'}{' '}
                     {formatDisplayDate(draft.returnDate, locale)}
                   </p>
-                  <p className="text-sm text-gray-600 dark:text-atg-muted">
+                  <p className="text-sm text-atg-muted">
                     {vehicleReady.rentalDays === 1
                       ? `1 ${c.daySingular}`
                       : `${vehicleReady.rentalDays} ${c.dayPlural}`}
@@ -368,17 +368,17 @@ export function ReservationCartPageContent({ draft }: Props) {
               {!loading && cruiseReady && cruiseDetail && isCabinReservationDraft(draft) && (
                 <div className="space-y-3">
                   <p className="text-sm text-primary">{cruiseDetail.cruiseLineName}</p>
-                  <h2 className="text-xl font-bold text-[#0f1a16] dark:text-white">
+                  <h2 className="text-xl font-bold text-atg-fg">
                     {cruiseDetail.itineraryName}
                   </h2>
-                  <p className="text-sm text-gray-600 dark:text-atg-muted">
+                  <p className="text-sm text-atg-muted">
                     {cr.shipLabel}: {cruiseDetail.shipName} · {cruiseReady.categoryName}
                   </p>
-                  <p className="text-sm text-gray-600 dark:text-atg-muted">
+                  <p className="text-sm text-atg-muted">
                     {formatDisplayDate(cruiseDetail.departureDate, locale)} {'->'}{' '}
                     {formatDisplayDate(cruiseDetail.returnDate, locale)}
                   </p>
-                  <p className="text-sm text-gray-600 dark:text-atg-muted">
+                  <p className="text-sm text-atg-muted">
                     {draft.guests === 1
                       ? `1 ${cr.guestSingular}`
                       : cr.guestPlural.replace('{n}', String(draft.guests))}
@@ -392,14 +392,14 @@ export function ReservationCartPageContent({ draft }: Props) {
                 isActivityScheduleReservationDraft(draft) && (
                   <div className="space-y-3">
                     <p className="text-sm text-primary">{activityDetail.providerName}</p>
-                    <h2 className="text-xl font-bold text-[#0f1a16] dark:text-white">
+                    <h2 className="text-xl font-bold text-atg-fg">
                       {activityDetail.title}
                     </h2>
-                    <p className="text-sm text-gray-600 dark:text-atg-muted">
+                    <p className="text-sm text-atg-muted">
                       {formatDisplayDate(draft.date, locale)} ·{' '}
                       {formatScheduleTime(activityReady.startDatetime, locale)}
                     </p>
-                    <p className="text-sm text-gray-600 dark:text-atg-muted">
+                    <p className="text-sm text-atg-muted">
                       {draft.participants === 1
                         ? `1 ${f.passengerSingular}`
                         : f.passengerPlural.replace('{n}', String(draft.participants))}
@@ -484,8 +484,8 @@ export function ReservationCartPageContent({ draft }: Props) {
               )}
             </section>
 
-            <aside className="h-fit min-w-[240px] rounded-xl border border-gray-200 bg-white p-5 dark:border-atg-border dark:bg-atg-elevated">
-              <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-atg-muted">
+            <aside className="h-fit min-w-[240px] rounded-xl border border-atg-border bg-atg-elevated p-5 dark:border-atg-border dark:bg-atg-elevated">
+              <p className="text-xs uppercase tracking-wide text-atg-muted">
                 {draft && isPackageReservationDraft(draft) ? p.packagePrice : 'Total estimé'}
               </p>
               {draft && isPackageReservationDraft(draft) && packageDetail && packageReady ? (
@@ -496,7 +496,7 @@ export function ReservationCartPageContent({ draft }: Props) {
                   />
                 </div>
               ) : (
-                <p className="mt-1 text-2xl font-bold text-[#0f1a16] dark:text-white">{totalLabel}</p>
+                <p className="mt-1 text-2xl font-bold text-atg-fg">{totalLabel}</p>
               )}
               {!accessToken && (
                 <p className="mt-3 text-xs text-amber-700 dark:text-amber-300">

@@ -133,12 +133,12 @@ export function HomeHeader() {
         </div>
       </div>
 
-      <div className="border-b border-gray-100 bg-white shadow-sm transition-colors dark:border-atg-border dark:bg-atg-elevated">
+      <div className="border-b border-atg-border bg-atg-elevated shadow-sm transition-colors dark:border-atg-border dark:bg-atg-elevated">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-0 sm:px-6 lg:px-8">
           <Link href="/" className="flex items-center gap-2 py-4">
             <BrandingMark
               showName
-              nameClassName="text-lg font-bold text-[#0f1a16] dark:text-white"
+              nameClassName="text-lg font-bold text-atg-fg"
             />
           </Link>
 
@@ -155,24 +155,24 @@ export function HomeHeader() {
                   className={`relative flex items-center gap-1 px-4 py-5 text-sm font-medium transition-colors ${
                     isNavItemActive(link.href, pathname, link.children)
                       ? 'text-primary'
-                      : 'text-[#333] hover:text-primary dark:text-white/75 dark:hover:text-white'
+                      : 'text-atg-fg hover:text-primary dark:text-white/75 dark:hover:text-white'
                   }`}
                 >
                   {link.label}
                   {link.children.length > 0 && (
-                    <svg className="h-3 w-3 ml-0.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                    <svg className="h-3 w-3 ml-0.5 text-atg-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   )}
                 </Link>
 
                 {link.children.length > 0 && openDropdown === link.href && (
-                  <div className="absolute left-0 top-full z-50 min-w-[200px] rounded-lg border border-gray-100 bg-white py-2 shadow-xl dark:border-atg-border dark:bg-atg-elevated">
+                  <div className="absolute left-0 top-full z-50 min-w-[200px] rounded-lg border border-atg-border bg-atg-elevated py-2 shadow-xl dark:border-atg-border dark:bg-atg-elevated">
                     {link.children.map((child) => (
                       <Link
                         key={child.href}
                         href={child.href}
-                        className="block px-4 py-2 text-sm text-gray-600 transition-colors hover:bg-gray-50 hover:text-primary dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white"
+                        className="block px-4 py-2 text-sm text-atg-muted transition-colors hover:bg-atg-surface hover:text-primary dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white"
                       >
                         {child.label}
                       </Link>
@@ -189,7 +189,7 @@ export function HomeHeader() {
               className={`inline-flex min-h-[44px] items-center rounded-lg px-4 py-2.5 text-sm font-medium transition-colors ${
                 onAccountArea && hasSession
                   ? 'bg-primary/10 text-primary'
-                  : 'text-[#333] hover:text-primary dark:text-white/75 dark:hover:text-white'
+                  : 'text-atg-fg hover:text-primary dark:text-white/75 dark:hover:text-white'
               }`}
               aria-current={onAccountArea && hasSession ? 'page' : undefined}
             >
@@ -208,7 +208,7 @@ export function HomeHeader() {
           <button
             type="button"
             onClick={toggleTheme}
-            className="ml-2 mr-2 inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-gray-200 text-gray-600 transition-colors hover:border-primary hover:text-primary dark:border-atg-border dark:text-white/75 dark:hover:border-primary dark:hover:text-white lg:ml-2 lg:mr-2"
+            className="ml-2 mr-2 inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-atg-border text-atg-muted transition-colors hover:border-primary hover:text-primary dark:border-atg-border dark:text-white/75 dark:hover:border-primary dark:hover:text-white lg:ml-2 lg:mr-2"
             aria-label={theme === 'dark' ? tTheme('enableLight') : tTheme('enableDark')}
             title={theme === 'dark' ? tTheme('lightMode') : tTheme('darkMode')}
           >
@@ -225,7 +225,7 @@ export function HomeHeader() {
 
           <button
             type="button"
-            className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-gray-600 transition-colors hover:bg-gray-50 hover:text-primary dark:text-white/75 dark:hover:bg-white/5 dark:hover:text-white lg:hidden"
+            className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-atg-muted transition-colors hover:bg-atg-surface hover:text-primary dark:text-white/75 dark:hover:bg-white/5 dark:hover:text-white lg:hidden"
             aria-expanded={menuOpen}
             aria-controls="mobile-nav"
             onClick={() => setMenuOpen((o) => !o)}
@@ -247,11 +247,11 @@ export function HomeHeader() {
       {menuOpen && (
         <nav
           id="mobile-nav"
-          className="border-b border-gray-100 bg-white px-4 py-4 shadow-lg dark:border-atg-border dark:bg-atg-elevated lg:hidden"
+          className="border-b border-atg-border bg-atg-elevated px-4 py-4 shadow-lg dark:border-atg-border dark:bg-atg-elevated lg:hidden"
           aria-label={t('mobileAria')}
         >
           <div className="mb-3 flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-atg-muted">
+            <span className="text-xs font-semibold uppercase tracking-wide text-atg-muted">
               {tLanguage('label')}
             </span>
             <LanguageSwitcher variant="navbar" />
@@ -260,7 +260,7 @@ export function HomeHeader() {
             <li>
               <Link
                 href={hasSession ? '/account' : '/booking/login?next=%2Faccount'}
-                className={`flex min-h-[44px] items-center rounded-lg px-3 py-3 text-sm font-medium hover:bg-gray-50 dark:hover:bg-white/5 ${
+                className={`flex min-h-[44px] items-center rounded-lg px-3 py-3 text-sm font-medium hover:bg-atg-surface dark:hover:bg-white/5 ${
                   onAccountArea && hasSession ? 'bg-primary/10 text-primary' : 'text-primary'
                 }`}
                 aria-current={onAccountArea && hasSession ? 'page' : undefined}
@@ -284,10 +284,10 @@ export function HomeHeader() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className={`flex min-h-[44px] items-center rounded-lg px-3 py-3 text-sm font-medium hover:bg-gray-50 hover:text-primary dark:text-white/75 dark:hover:bg-white/5 dark:hover:text-white ${
+                  className={`flex min-h-[44px] items-center rounded-lg px-3 py-3 text-sm font-medium hover:bg-atg-surface hover:text-primary dark:text-white/75 dark:hover:bg-white/5 dark:hover:text-white ${
                     isNavItemActive(link.href, pathname, link.children)
                       ? 'text-primary'
-                      : 'text-gray-700'
+                      : 'text-atg-fg'
                   }`}
                   onClick={() => setMenuOpen(false)}
                 >
@@ -299,7 +299,7 @@ export function HomeHeader() {
                       <li key={child.href}>
                         <Link
                           href={child.href}
-                          className="flex min-h-[40px] items-center rounded-lg px-3 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-primary dark:text-white/55 dark:hover:bg-white/5 dark:hover:text-white"
+                          className="flex min-h-[40px] items-center rounded-lg px-3 py-2 text-sm text-atg-muted hover:bg-atg-surface hover:text-primary dark:text-white/55 dark:hover:bg-white/5 dark:hover:text-white"
                           onClick={() => setMenuOpen(false)}
                         >
                           {child.label}

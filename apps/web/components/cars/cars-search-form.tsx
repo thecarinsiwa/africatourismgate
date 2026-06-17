@@ -72,9 +72,9 @@ export function CarsSearchForm({ initialValues }: CarsSearchFormProps) {
   }
 
   const labelClass =
-    'mb-1.5 block text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-atg-muted';
+    'mb-1.5 block text-xs font-semibold uppercase tracking-wide text-atg-muted';
   const fieldClass =
-    'min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-60 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg dark:placeholder:text-atg-muted';
+    'min-h-[44px] w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg transition-colors placeholder:text-atg-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-60 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg dark:placeholder:text-atg-muted';
 
   return (
     <form
@@ -85,13 +85,13 @@ export function CarsSearchForm({ initialValues }: CarsSearchFormProps) {
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         {rentalDaysLabel ? (
           <span
-            className="inline-flex min-h-[36px] items-center rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm font-semibold text-gray-700 dark:border-atg-border dark:bg-atg-surface dark:text-white"
+            className="inline-flex min-h-[36px] items-center rounded-lg border border-atg-border bg-atg-surface px-3 py-1.5 text-sm font-semibold text-atg-fg dark:border-atg-border dark:bg-atg-surface dark:text-white"
             role="status"
           >
             {rentalDaysLabel}
           </span>
         ) : (
-          <span className="text-sm text-gray-500 dark:text-atg-muted">{s.carsDurationHint}</span>
+          <span className="text-sm text-atg-muted">{s.carsDurationHint}</span>
         )}
       </div>
 

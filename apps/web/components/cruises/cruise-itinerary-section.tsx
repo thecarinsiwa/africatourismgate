@@ -18,9 +18,9 @@ export function CruiseItinerarySection({ detail, t, locale }: CruiseItinerarySec
   const sortedPorts = [...detail.itineraryPorts].sort((a, b) => a.dayNumber - b.dayNumber);
 
   return (
-    <section className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm dark:border-atg-border dark:bg-atg-elevated sm:p-6">
-      <h2 className="text-lg font-bold text-[#0f1a16] dark:text-white">{t.itineraryTitle}</h2>
-      <p className="mt-1 text-sm text-gray-600 dark:text-atg-muted">
+    <section className="rounded-2xl border border-atg-border bg-atg-elevated p-5 shadow-sm dark:border-atg-border dark:bg-atg-elevated sm:p-6">
+      <h2 className="text-lg font-bold text-atg-fg">{t.itineraryTitle}</h2>
+      <p className="mt-1 text-sm text-atg-muted">
         {formatCruisePortLabel(detail.sailFromPortCode, detail.sailFromPortName)} →{' '}
         {formatCruisePortLabel(detail.sailToPortCode, detail.sailToPortName)} ·{' '}
         {formatDisplayDate(detail.departureDate, locale)} →{' '}
@@ -31,19 +31,19 @@ export function CruiseItinerarySection({ detail, t, locale }: CruiseItinerarySec
         {sortedPorts.map((stop) => (
           <li
             key={`${stop.dayNumber}-${stop.portCode}`}
-            className="relative rounded-xl border border-gray-100 bg-gray-50/80 p-4 dark:border-atg-border dark:bg-white/5"
+            className="relative rounded-xl border border-atg-border bg-atg-surface/80 p-4 dark:border-atg-border dark:bg-white/5"
           >
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wide text-primary">
                   {t.dayLabel.replace('{n}', String(stop.dayNumber))}
                 </p>
-                <p className="mt-1 text-base font-bold text-[#0f1a16] dark:text-white">
+                <p className="mt-1 text-base font-bold text-atg-fg">
                   {formatCruisePortLabel(stop.portCode, stop.portName)}
                 </p>
-                <p className="text-sm text-gray-500 dark:text-atg-muted">{stop.countryCode}</p>
+                <p className="text-sm text-atg-muted">{stop.countryCode}</p>
               </div>
-              <div className="text-right text-sm text-gray-600 dark:text-atg-muted">
+              <div className="text-right text-sm text-atg-muted">
                 {stop.arrivalTime && (
                   <p>
                     {t.portArrival}: {formatPortTime(stop.arrivalTime, locale)}

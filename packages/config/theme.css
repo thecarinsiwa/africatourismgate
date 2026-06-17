@@ -9,6 +9,18 @@
  * - Label formulaire : text-sm font-medium text-atg-fg
  * - Texte aide / hint : text-xs text-atg-muted
  *
+ * Échelle typographique web marketing (apps/web) :
+ * - Hero homepage (h1) : text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight
+ * - Hero page liste (h1) : text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight
+ * - Section marketing (h2) : text-2xl sm:text-3xl font-bold uppercase tracking-wide text-atg-fg
+ * - Titre carte produit (h3) : text-lg font-bold sm:text-xl text-atg-fg
+ * - Sous-titre section : text-sm sm:text-base leading-relaxed text-atg-muted
+ * - Label formulaire recherche : text-xs font-semibold uppercase tracking-wide text-atg-muted
+ * - Prix listing : text-2xl font-bold text-atg-fg
+ *
+ * Contraste CTA (C1) : --atg-primary défaut #0b6e4f sur texte blanc ≈ 4.6:1 (WCAG AA).
+ * Branding org : primaryColor custom doit conserver ≥ 4.5:1 vs #ffffff sur boutons bg-primary.
+ *
  * Couleurs sémantiques — paires light/fg calibrées pour contraste WCAG AA (≥ 4.5:1)
  * sur fond de badge (DataTableBadge). Classes Tailwind : bg-atg-success-light,
  * text-atg-success-fg, text-atg-success, ring-atg-success/25, etc.

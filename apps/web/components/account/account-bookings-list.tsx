@@ -39,7 +39,7 @@ export function AccountBookingsList() {
   }, [load]);
 
   if (loading) {
-    return <p className="text-sm text-gray-600 dark:text-atg-muted">{t.account.loading}</p>;
+    return <p className="text-sm text-atg-muted">{t.account.loading}</p>;
   }
 
   if (error) {
@@ -52,14 +52,14 @@ export function AccountBookingsList() {
 
   if (bookings.length === 0) {
     return (
-      <p className="text-sm text-gray-600 dark:text-atg-muted">{t.account.reservations.empty}</p>
+      <p className="text-sm text-atg-muted">{t.account.reservations.empty}</p>
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-atg-border">
+    <div className="overflow-x-auto rounded-lg border border-atg-border dark:border-atg-border">
       <table className="min-w-full text-left text-sm">
-        <thead className="border-b border-gray-200 bg-gray-50 dark:border-atg-border dark:bg-white/5">
+        <thead className="border-b border-atg-border bg-atg-surface dark:border-atg-border dark:bg-white/5">
           <tr>
             <th className="px-4 py-3 font-medium">{t.account.reservations.reference}</th>
             <th className="px-4 py-3 font-medium">{t.account.reservations.date}</th>
@@ -72,7 +72,7 @@ export function AccountBookingsList() {
           {bookings.map((booking) => (
             <tr
               key={booking.id}
-              className="border-b border-gray-100 last:border-0 dark:border-atg-border"
+              className="border-b border-atg-border last:border-0 dark:border-atg-border"
             >
               <td className="px-4 py-3 font-mono text-xs">{booking.id.slice(0, 8)}…</td>
               <td className="px-4 py-3">{formatBookingDateTime(booking.createdAt, localeTag)}</td>

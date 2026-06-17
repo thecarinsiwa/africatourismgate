@@ -35,9 +35,9 @@ export function SearchFormShell({
   return (
     <section id={id} className={cn('relative -mt-12 z-20', className)}>
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-2xl transition-colors dark:border-atg-border dark:bg-atg-elevated">
+        <div className="overflow-hidden rounded-2xl border border-atg-border bg-atg-elevated shadow-2xl transition-colors dark:border-atg-border dark:bg-atg-elevated">
           <div
-            className="flex overflow-x-auto border-b border-gray-100 dark:border-atg-border"
+            className="flex overflow-x-auto border-b border-atg-border dark:border-atg-border"
             role="tablist"
             aria-label={tablistAriaLabel}
           >
@@ -56,7 +56,7 @@ export function SearchFormShell({
                     'flex min-w-[3.5rem] flex-1 items-center justify-center border-b-[3px] px-3 py-4 transition-all sm:min-w-0',
                     selected
                       ? 'border-primary bg-primary text-white'
-                      : 'border-transparent bg-gray-50 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:bg-atg-surface dark:text-atg-muted dark:hover:bg-white/5 dark:hover:text-white',
+                      : 'border-transparent bg-atg-surface text-atg-muted hover:bg-atg-surface hover:text-atg-fg dark:hover:bg-white/5 dark:hover:text-white',
                   )}
                 >
                   {tab.icon}

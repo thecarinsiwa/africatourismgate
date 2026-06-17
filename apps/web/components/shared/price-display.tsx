@@ -33,7 +33,7 @@ export function PriceDisplay({
   return (
     <div className={className}>
       {prefixLabel ? (
-        <p className="text-xs uppercase tracking-wide text-gray-400 dark:text-atg-muted">
+        <p className="text-xs uppercase tracking-wide text-atg-muted">
           {prefixLabel}
         </p>
       ) : null}
@@ -41,17 +41,17 @@ export function PriceDisplay({
         {compareAt ? (
           <p
             className={cn(
-              'text-sm text-gray-400 line-through dark:text-atg-muted',
+              'text-sm text-atg-muted line-through',
               size === 'md' && 'text-base',
             )}
           >
             {compareAt}
           </p>
         ) : null}
-        <p className={cn(amountSizeClass[size], 'text-[#0f1a16] dark:text-white')}>
+        <p className={cn(amountSizeClass[size], 'text-atg-fg')}>
           {amount}
           {suffixLabel ? (
-            <span className="text-sm font-normal text-gray-500 dark:text-atg-muted">
+            <span className="text-sm font-normal text-atg-muted">
               {' '}
               {suffixLabel}
             </span>

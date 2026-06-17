@@ -200,13 +200,13 @@ export function PackageDetailPageContent({
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
+    <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
       <HomeHeader />
 
-      <div className="border-b border-gray-200 bg-white dark:border-atg-border dark:bg-atg-elevated">
+      <div className="border-b border-atg-border bg-atg-elevated dark:border-atg-border dark:bg-atg-elevated">
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
           <nav
-            className="flex flex-wrap items-center gap-2 text-sm text-gray-500 dark:text-atg-muted"
+            className="flex flex-wrap items-center gap-2 text-sm text-atg-muted"
             aria-label="Breadcrumb"
           >
             <Link href="/" className="hover:text-primary">
@@ -217,7 +217,7 @@ export function PackageDetailPageContent({
               {p.breadcrumbPackages}
             </Link>
             <span aria-hidden>/</span>
-            <span className="font-medium text-[#0f1a16] dark:text-white">
+            <span className="font-medium text-atg-fg">
               {detail?.package.name ?? '…'}
             </span>
           </nav>
@@ -226,8 +226,8 @@ export function PackageDetailPageContent({
 
       <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 pb-28 sm:px-6 lg:px-8 lg:pb-8">
         {loading && (
-          <div className="rounded-2xl border border-gray-100 bg-white px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
-            <p className="text-sm font-medium text-gray-600 dark:text-atg-muted">{p.loadingDetail}</p>
+          <div className="rounded-2xl border border-atg-border bg-atg-elevated px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
+            <p className="text-sm font-medium text-atg-muted">{p.loadingDetail}</p>
           </div>
         )}
 
@@ -245,9 +245,9 @@ export function PackageDetailPageContent({
         )}
 
         {notFound && !loading && (
-          <div className="rounded-2xl border border-dashed border-gray-200 bg-white px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
-            <h1 className="text-xl font-bold text-[#0f1a16] dark:text-white">{p.notFound}</h1>
-            <p className="mt-2 text-sm text-gray-500 dark:text-atg-muted">{p.notFoundHint}</p>
+          <div className="rounded-2xl border border-dashed border-atg-border bg-atg-elevated px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
+            <h1 className="text-xl font-bold text-atg-fg">{p.notFound}</h1>
+            <p className="mt-2 text-sm text-atg-muted">{p.notFoundHint}</p>
             <Link
               href={listHref}
               className="mt-6 inline-flex min-h-[44px] items-center rounded-lg bg-primary px-6 py-2 text-sm font-bold text-white hover:bg-primary-hover"
@@ -264,11 +264,11 @@ export function PackageDetailPageContent({
                 <p className="text-xs font-semibold uppercase tracking-wide text-primary">
                   {p.cardBadge}
                 </p>
-                <h1 className="mt-2 text-3xl font-bold text-[#0f1a16] dark:text-white">
+                <h1 className="mt-2 text-3xl font-bold text-atg-fg">
                   {detail.package.name}
                 </h1>
                 {detail.package.description ? (
-                  <p className="mt-4 text-base leading-relaxed text-gray-600 dark:text-atg-muted">
+                  <p className="mt-4 text-base leading-relaxed text-atg-muted">
                     {detail.package.description}
                   </p>
                 ) : null}
@@ -278,32 +278,32 @@ export function PackageDetailPageContent({
 
               <section
                 id="configure"
-                className="scroll-mt-28 space-y-4 rounded-2xl border border-gray-100 bg-white p-6 dark:border-atg-border dark:bg-atg-elevated"
+                className="scroll-mt-28 space-y-4 rounded-2xl border border-atg-border bg-atg-elevated p-6 dark:border-atg-border dark:bg-atg-elevated"
               >
                 <div>
-                  <h2 className="text-lg font-bold text-[#0f1a16] dark:text-white">
+                  <h2 className="text-lg font-bold text-atg-fg">
                     {p.configureTitle}
                   </h2>
-                  <p className="mt-2 text-sm text-gray-600 dark:text-atg-muted">
+                  <p className="mt-2 text-sm text-atg-muted">
                     {p.packageBookingHint.replace('{days}', String(durationDays))}
                   </p>
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
                   <label className="block text-sm">
-                    <span className="mb-1 block font-medium text-gray-600 dark:text-atg-muted">
+                    <span className="mb-1 block font-medium text-atg-muted">
                       {p.departureDateLabel}
                     </span>
                     <input
                       type="date"
                       value={startDate}
                       onChange={(event) => handleStartDateChange(event.target.value)}
-                      className="min-h-[44px] w-full rounded-lg border border-gray-200 px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-surface dark:text-white"
+                      className="min-h-[44px] w-full rounded-lg border border-atg-border px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-surface dark:text-white"
                     />
                   </label>
 
                   <label className="block text-sm">
-                    <span className="mb-1 block font-medium text-gray-600 dark:text-atg-muted">
+                    <span className="mb-1 block font-medium text-atg-muted">
                       {p.travelersLabel}
                     </span>
                     <input
@@ -316,16 +316,16 @@ export function PackageDetailPageContent({
                           Number.parseInt(event.target.value, 10) || 1,
                         )
                       }
-                      className="min-h-[44px] w-full rounded-lg border border-gray-200 px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-surface dark:text-white"
+                      className="min-h-[44px] w-full rounded-lg border border-atg-border px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-surface dark:text-white"
                     />
                   </label>
 
                   {startDate ? (
-                    <div className="sm:col-span-2 rounded-xl bg-gray-50 px-4 py-3 text-sm dark:bg-atg-surface/60">
-                      <p className="font-medium text-[#0f1a16] dark:text-white">
+                    <div className="sm:col-span-2 rounded-xl bg-atg-surface px-4 py-3 text-sm dark:bg-atg-surface/60">
+                      <p className="font-medium text-atg-fg">
                         {p.returnDateLabel}
                       </p>
-                      <p className="mt-1 text-gray-600 dark:text-atg-muted">
+                      <p className="mt-1 text-atg-muted">
                         {formatDisplayDate(endDate, locale)} ·{' '}
                         {p.durationDaysLabel.replace('{days}', String(durationDays))}
                       </p>
@@ -335,11 +335,11 @@ export function PackageDetailPageContent({
 
                 {startDate ? (
                   <div className="space-y-3">
-                    <h3 className="text-sm font-semibold text-[#0f1a16] dark:text-white">
+                    <h3 className="text-sm font-semibold text-atg-fg">
                       {p.includedServicesTitle}
                     </h3>
                     {resolving ? (
-                      <p className="text-sm text-gray-600 dark:text-atg-muted">{p.resolvingPackage}</p>
+                      <p className="text-sm text-atg-muted">{p.resolvingPackage}</p>
                     ) : null}
                     <PackageResolvedSummary
                       items={detail.items}

@@ -30,14 +30,14 @@ export function PackagePriceDisplay({
   return (
     <div className={className}>
       {priceLabel ? (
-        <p className="text-xs uppercase tracking-wide text-gray-400 dark:text-atg-muted">
+        <p className="text-xs uppercase tracking-wide text-atg-muted">
           {priceLabel}
         </p>
       ) : null}
       <div className="mt-1 flex flex-wrap items-baseline justify-end gap-2">
         {showStrikethrough ? (
           <p
-            className={`text-sm text-gray-400 line-through dark:text-atg-muted ${
+            className={`text-sm text-atg-muted line-through text-atg-muted ${
               size === 'sm' ? '' : 'text-base'
             }`}
             aria-label="Original price"
@@ -45,7 +45,7 @@ export function PackagePriceDisplay({
             {formatPackagePrice(pricing.subtotalCents, pricing.currency)}
           </p>
         ) : null}
-        <p className={`${priceClass} text-[#0f1a16] dark:text-white`}>
+        <p className={`${priceClass} text-atg-fg`}>
           {formatPackagePrice(pricing.totalCents, pricing.currency)}
         </p>
         {showStrikethrough && badgeText ? (

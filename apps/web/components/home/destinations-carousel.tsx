@@ -38,15 +38,15 @@ export function DestinationsCarousel() {
     <section
       id="gallery"
       ref={ref}
-      className="scroll-mt-24 bg-gray-50 py-16 transition-colors dark:bg-[#0f1915] sm:py-24"
+      className="scroll-mt-24 bg-atg-surface py-16 transition-colors dark:bg-atg-surface sm:py-24"
       aria-labelledby="destinations-heading"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className={`text-center max-w-2xl mx-auto mb-14 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
-          <h2 id="destinations-heading" className="text-2xl font-bold uppercase tracking-wide text-[#0f1a16] dark:text-white sm:text-3xl">
+          <h2 id="destinations-heading" className="text-2xl font-bold uppercase tracking-wide text-atg-fg sm:text-3xl">
             {t.destinations.title}
           </h2>
-          <p className="mt-4 leading-relaxed text-gray-500 dark:text-atg-muted">{t.destinations.subtitle}</p>
+          <p className="mt-4 leading-relaxed text-atg-muted">{t.destinations.subtitle}</p>
         </div>
 
         <div className={`grid gap-6 sm:grid-cols-2 lg:grid-cols-4 ${isVisible ? 'animate-fade-in-up delay-200' : 'opacity-0'}`}>
@@ -54,7 +54,7 @@ export function DestinationsCarousel() {
             <Link
               key={dest.title}
               href={dest.href}
-              className="group overflow-hidden rounded-xl bg-white shadow-md transition-all duration-300 hover:shadow-xl dark:border dark:border-atg-border dark:bg-atg-elevated"
+              className="group overflow-hidden rounded-xl bg-atg-elevated shadow-md transition-all duration-300 hover:shadow-xl dark:border dark:border-atg-border dark:bg-atg-elevated"
             >
               <div className="relative h-52 overflow-hidden">
                 <div
@@ -70,13 +70,13 @@ export function DestinationsCarousel() {
               </div>
 
               <div className="p-4">
-                <h3 className="mb-1 font-bold text-[#0f1a16] dark:text-white">{dest.title}</h3>
-                <p className="mb-3 line-clamp-2 text-sm text-gray-500 dark:text-atg-muted">{dest.description}</p>
+                <h3 className="mb-1 font-bold text-atg-fg">{dest.title}</h3>
+                <p className="mb-3 line-clamp-2 text-sm text-atg-muted">{dest.description}</p>
 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <StarRating value={dest.rating} size="sm" />
-                    <span className="text-xs text-gray-400 dark:text-atg-muted">
+                    <span className="text-xs text-atg-muted">
                       - {dest.reviews} {t.destinations.reviews}
                     </span>
                   </div>

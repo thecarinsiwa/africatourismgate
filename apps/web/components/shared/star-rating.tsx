@@ -40,7 +40,7 @@ export function StarRating({
           key={i}
           className={cn(
             iconClass,
-            i < rounded ? 'text-amber-400' : 'text-gray-300 dark:text-white/20',
+            i < rounded ? 'text-atg-warning' : 'text-atg-border dark:text-white/20',
           )}
           fill="currentColor"
           viewBox="0 0 20 20"

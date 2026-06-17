@@ -44,7 +44,7 @@ export function AccountLoyaltyPanel() {
   }, [load]);
 
   if (loading) {
-    return <p className="text-sm text-gray-600 dark:text-atg-muted">{t.account.loading}</p>;
+    return <p className="text-sm text-atg-muted">{t.account.loading}</p>;
   }
 
   if (error) {
@@ -61,8 +61,8 @@ export function AccountLoyaltyPanel() {
   if (!primary) {
     return (
       <div className="space-y-3">
-        <p className="text-sm text-gray-600 dark:text-atg-muted">{t.account.loyalty.empty}</p>
-        <p className="text-sm text-gray-500 dark:text-atg-muted">{t.account.loyalty.earnHint}</p>
+        <p className="text-sm text-atg-muted">{t.account.loyalty.empty}</p>
+        <p className="text-sm text-atg-muted">{t.account.loyalty.earnHint}</p>
       </div>
     );
   }
@@ -75,11 +75,11 @@ export function AccountLoyaltyPanel() {
         </p>
         <p
           data-testid="loyalty-points-balance"
-          className="mt-2 text-4xl font-bold tabular-nums text-[#0f1a16] dark:text-white"
+          className="mt-2 text-4xl font-bold tabular-nums text-atg-fg"
         >
           {primary.pointsBalance.toLocaleString()}
         </p>
-        <p className="mt-1 text-sm text-gray-600 dark:text-atg-muted">
+        <p className="mt-1 text-sm text-atg-muted">
           {t.account.loyalty.pointsLabel}
         </p>
         <span className="mt-4 inline-flex rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary dark:bg-primary/20">
@@ -87,26 +87,26 @@ export function AccountLoyaltyPanel() {
         </span>
       </div>
 
-      <p className="text-sm text-gray-600 dark:text-atg-muted">{t.account.loyalty.earnHint}</p>
+      <p className="text-sm text-atg-muted">{t.account.loyalty.earnHint}</p>
 
       {accounts.length > 1 ? (
         <div>
-          <h3 className="mb-3 text-sm font-semibold text-[#0f1a16] dark:text-white">
+          <h3 className="mb-3 text-sm font-semibold text-atg-fg">
             {t.account.loyalty.allPrograms}
           </h3>
-          <ul className="divide-y divide-gray-100 rounded-lg border border-gray-200 dark:divide-atg-border dark:border-atg-border">
+          <ul className="divide-y divide-atg-border rounded-lg border border-atg-border dark:divide-atg-border dark:border-atg-border">
             {accounts.map((account) => (
               <li
                 key={account.id}
                 className="flex items-center justify-between gap-4 px-4 py-3 text-sm"
               >
-                <span className="font-medium text-gray-900 dark:text-white">
+                <span className="font-medium text-atg-fg">
                   {account.programCode}
                 </span>
-                <span className="text-gray-600 dark:text-atg-muted">
+                <span className="text-atg-muted">
                   {account.pointsBalance.toLocaleString()} {t.account.loyalty.pointsShort}
                 </span>
-                <span className="text-gray-500 dark:text-atg-muted">
+                <span className="text-atg-muted">
                   {tierLabel(account.tier, tierLabels)}
                 </span>
               </li>

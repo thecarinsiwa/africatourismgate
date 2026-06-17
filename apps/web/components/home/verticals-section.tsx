@@ -34,15 +34,15 @@ export function WhyUsSection() {
     <section
       id="about"
       ref={ref}
-      className="scroll-mt-24 bg-white py-16 transition-colors dark:bg-atg-surface sm:py-24"
+      className="scroll-mt-24 bg-atg-elevated py-16 transition-colors dark:bg-atg-surface sm:py-24"
       aria-labelledby="why-heading"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className={`text-center max-w-2xl mx-auto mb-14 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
-          <h2 id="why-heading" className="text-2xl font-bold uppercase tracking-wide text-[#0f1a16] dark:text-white sm:text-3xl">
+          <h2 id="why-heading" className="text-2xl font-bold uppercase tracking-wide text-atg-fg sm:text-3xl">
             {t.whyUs.title}
           </h2>
-          <p className="mt-4 leading-relaxed text-gray-500 dark:text-atg-muted">{t.whyUs.subtitle}</p>
+          <p className="mt-4 leading-relaxed text-atg-muted">{t.whyUs.subtitle}</p>
         </div>
 
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
@@ -59,8 +59,8 @@ export function WhyUsSection() {
                 {WHY_US_ICONS[i]}
               </div>
 
-              <h3 className="mb-2 text-lg font-bold text-[#0f1a16] dark:text-white">{item.title}</h3>
-              <p className="mb-4 text-sm leading-relaxed text-gray-500 dark:text-atg-muted">{item.description}</p>
+              <h3 className="mb-2 text-lg font-bold text-atg-fg">{item.title}</h3>
+              <p className="mb-4 text-sm leading-relaxed text-atg-muted">{item.description}</p>
 
               <a
                 href="#about"

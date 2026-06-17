@@ -102,7 +102,7 @@ export function ActivitiesPageContent({ initialSearch }: ActivitiesPageContentPr
     .join(' · ');
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
+    <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
       <HomeHeader />
 
       <section className="relative overflow-hidden bg-[#0f2744] text-white">
@@ -141,24 +141,24 @@ export function ActivitiesPageContent({ initialSearch }: ActivitiesPageContentPr
         </div>
       </section>
 
-      <div className="sticky top-0 z-30 border-b border-gray-200 bg-white/95 shadow-sm backdrop-blur-md dark:border-atg-border dark:bg-atg-elevated/95">
+      <div className="sticky top-0 z-30 border-b border-atg-border bg-atg-elevated/95 shadow-sm backdrop-blur-md dark:border-atg-border dark:bg-atg-elevated/95">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <div>
-            <p className="text-sm text-gray-500 dark:text-atg-muted">
+            <p className="text-sm text-atg-muted">
               {a.resultsFor}{' '}
-              <strong className="text-[#0f1a16] dark:text-white">{displayDestination}</strong>
+              <strong className="text-atg-fg">{displayDestination}</strong>
             </p>
-            <p className="text-lg font-bold text-[#0f1a16] dark:text-white">
+            <p className="text-lg font-bold text-atg-fg">
               {loading ? '…' : listings.length} {a.activitiesFound}
             </p>
           </div>
           <label className="flex items-center gap-2">
-            <span className="text-sm font-medium text-gray-600 dark:text-atg-muted">{a.sortBy}</span>
+            <span className="text-sm font-medium text-atg-muted">{a.sortBy}</span>
             <select
               value={sort}
               onChange={(event) => setSort(event.target.value as SortKey)}
               disabled={loading}
-              className="min-h-[44px] rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-800 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-60 dark:border-atg-border dark:bg-atg-surface dark:text-white"
+              className="min-h-[44px] rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm font-medium text-atg-fg focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-60 dark:border-atg-border dark:bg-atg-surface dark:text-white"
             >
               <option value="recommended">{a.sortRecommended}</option>
               <option value="price-asc">{a.sortPriceLow}</option>
@@ -183,18 +183,18 @@ export function ActivitiesPageContent({ initialSearch }: ActivitiesPageContentPr
         )}
 
         {loading && (
-          <div className="rounded-2xl border border-gray-100 bg-white px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
-            <p className="text-sm font-medium text-gray-600 dark:text-atg-muted">{a.loading}</p>
+          <div className="rounded-2xl border border-atg-border bg-atg-elevated px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
+            <p className="text-sm font-medium text-atg-muted">{a.loading}</p>
           </div>
         )}
 
         {!loading && !error && listings.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-gray-200 bg-white px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
-            <h3 className="text-lg font-bold text-[#0f1a16] dark:text-white">{a.noResults}</h3>
-            <p className="mt-2 text-sm text-gray-500 dark:text-atg-muted">{a.noResultsHint}</p>
+          <div className="rounded-2xl border border-dashed border-atg-border bg-atg-elevated px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
+            <h3 className="text-lg font-bold text-atg-fg">{a.noResults}</h3>
+            <p className="mt-2 text-sm text-atg-muted">{a.noResultsHint}</p>
             <a
               href="#activities-search"
-              className="mt-6 mr-3 inline-flex min-h-[44px] items-center rounded-lg border border-gray-200 px-6 py-2 text-sm font-semibold text-gray-700 hover:border-primary dark:border-atg-border dark:text-white"
+              className="mt-6 mr-3 inline-flex min-h-[44px] items-center rounded-lg border border-atg-border px-6 py-2 text-sm font-semibold text-atg-fg hover:border-primary dark:border-atg-border dark:text-white"
             >
               {a.modifySearch}
             </a>

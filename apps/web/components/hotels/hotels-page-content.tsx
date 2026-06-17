@@ -124,7 +124,7 @@ export function HotelsPageContent({ initialSearch }: HotelsPageContentProps) {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
+    <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
       <HomeHeader />
 
       <section className="relative overflow-hidden bg-[#1b1b2f] text-white">
@@ -162,24 +162,24 @@ export function HotelsPageContent({ initialSearch }: HotelsPageContentProps) {
         </div>
       </section>
 
-      <div className="sticky top-0 z-30 border-b border-gray-200 bg-white/95 shadow-sm backdrop-blur-md dark:border-atg-border dark:bg-atg-elevated/95">
+      <div className="sticky top-0 z-30 border-b border-atg-border bg-atg-elevated/95 shadow-sm backdrop-blur-md dark:border-atg-border dark:bg-atg-elevated/95">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <div>
-            <p className="text-sm text-gray-500 dark:text-atg-muted">
+            <p className="text-sm text-atg-muted">
               {h.resultsFor}{' '}
-              <strong className="text-[#0f1a16] dark:text-white">{displayDestination}</strong>
+              <strong className="text-atg-fg">{displayDestination}</strong>
             </p>
-            <p className="text-lg font-bold text-[#0f1a16] dark:text-white">
+            <p className="text-lg font-bold text-atg-fg">
               {loading ? '…' : listings.length} {h.propertiesFound}
             </p>
           </div>
           <label className="flex items-center gap-2">
-            <span className="text-sm font-medium text-gray-600 dark:text-atg-muted">{h.sortBy}</span>
+            <span className="text-sm font-medium text-atg-muted">{h.sortBy}</span>
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value as SortKey)}
               disabled={loading}
-              className="min-h-[44px] rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-800 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-60 dark:border-atg-border dark:bg-atg-surface dark:text-white"
+              className="min-h-[44px] rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm font-medium text-atg-fg focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-60 dark:border-atg-border dark:bg-atg-surface dark:text-white"
             >
               <option value="recommended">{h.sortRecommended}</option>
               <option value="price-asc">{h.sortPriceLow}</option>
@@ -191,7 +191,7 @@ export function HotelsPageContent({ initialSearch }: HotelsPageContentProps) {
 
       <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
         {!error && (
-          <p className="mb-6 rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-gray-600 dark:border-primary/30 dark:bg-primary/10 dark:text-atg-muted">
+          <p className="mb-6 rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-atg-muted dark:border-primary/30 dark:bg-primary/10 text-atg-muted">
             {h.previewNotice}
           </p>
         )}
@@ -211,14 +211,14 @@ export function HotelsPageContent({ initialSearch }: HotelsPageContentProps) {
 
         <div className="flex flex-col gap-8 lg:flex-row">
           <aside className="lg:w-64 lg:shrink-0">
-            <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm dark:border-atg-border dark:bg-atg-elevated">
-              <h2 className="mb-4 text-sm font-bold uppercase tracking-wide text-[#0f1a16] dark:text-white">
+            <div className="rounded-2xl border border-atg-border bg-atg-elevated p-5 shadow-sm dark:border-atg-border dark:bg-atg-elevated">
+              <h2 className="mb-4 text-sm font-bold uppercase tracking-wide text-atg-fg">
                 {h.filters}
               </h2>
 
               <div className="space-y-5">
                 <div>
-                  <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-atg-muted">
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-atg-muted">
                     {h.filterStars}
                   </p>
                   <div className="flex flex-wrap gap-2">
@@ -231,7 +231,7 @@ export function HotelsPageContent({ initialSearch }: HotelsPageContentProps) {
                         className={`min-h-[36px] rounded-lg px-3 text-sm font-medium transition-colors disabled:opacity-60 ${
                           starFilter === stars
                             ? 'bg-primary text-white'
-                            : 'bg-gray-50 text-gray-600 hover:bg-gray-100 dark:bg-white/5 dark:text-atg-muted dark:hover:bg-white/10'
+                            : 'bg-atg-surface text-atg-muted hover:bg-atg-surface dark:bg-white/5 text-atg-muted dark:hover:bg-white/10'
                         }`}
                       >
                         {stars === 'all' ? h.allStars : `${stars}+ ★`}
@@ -241,7 +241,7 @@ export function HotelsPageContent({ initialSearch }: HotelsPageContentProps) {
                 </div>
 
                 <div>
-                  <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-atg-muted">
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-atg-muted">
                     {h.filterType}
                   </p>
                   <div className="flex flex-col gap-1.5">
@@ -254,7 +254,7 @@ export function HotelsPageContent({ initialSearch }: HotelsPageContentProps) {
                         className={`min-h-[40px] rounded-lg px-3 text-left text-sm font-medium transition-colors disabled:opacity-60 ${
                           typeFilter === type
                             ? 'bg-primary text-white'
-                            : 'text-gray-600 hover:bg-gray-50 dark:text-atg-muted dark:hover:bg-white/5'
+                            : 'text-atg-muted hover:bg-atg-surface text-atg-muted dark:hover:bg-white/5'
                         }`}
                       >
                         {typeLabel(type)}
@@ -268,8 +268,8 @@ export function HotelsPageContent({ initialSearch }: HotelsPageContentProps) {
 
           <div className="min-w-0 flex-1 space-y-6">
             {loading ? (
-              <div className="rounded-2xl border border-gray-100 bg-white px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
-                <p className="text-sm font-medium text-gray-600 dark:text-atg-muted">{h.loading}</p>
+              <div className="rounded-2xl border border-atg-border bg-atg-elevated px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
+                <p className="text-sm font-medium text-atg-muted">{h.loading}</p>
               </div>
             ) : listings.length === 0 ? (
               <EmptyState
@@ -299,7 +299,7 @@ export function HotelsPageContent({ initialSearch }: HotelsPageContentProps) {
                     {h.backHome}
                   </Link>
                 }
-                className="rounded-2xl border-gray-200 bg-white dark:bg-atg-elevated"
+                className="rounded-2xl border-atg-border bg-atg-elevated dark:bg-atg-elevated"
               />
             ) : (
               listings.map((hotel) => (

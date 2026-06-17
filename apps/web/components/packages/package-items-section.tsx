@@ -47,9 +47,9 @@ export function PackageItemsSection({
     return (
       <section
         id="items"
-        className="scroll-mt-28 rounded-2xl border border-dashed border-gray-200 bg-white p-6 dark:border-atg-border dark:bg-atg-elevated"
+        className="scroll-mt-28 rounded-2xl border border-dashed border-atg-border bg-atg-elevated p-6 dark:border-atg-border dark:bg-atg-elevated"
       >
-        <p className="text-sm text-gray-500 dark:text-atg-muted">{t.noItems}</p>
+        <p className="text-sm text-atg-muted">{t.noItems}</p>
       </section>
     );
   }
@@ -57,9 +57,9 @@ export function PackageItemsSection({
   return (
     <section
       id="items"
-      className="scroll-mt-28 rounded-2xl border border-gray-100 bg-white p-6 dark:border-atg-border dark:bg-atg-elevated"
+      className="scroll-mt-28 rounded-2xl border border-atg-border bg-atg-elevated p-6 dark:border-atg-border dark:bg-atg-elevated"
     >
-      <h2 className="text-lg font-bold text-[#0f1a16] dark:text-white">{t.itemsTitle}</h2>
+      <h2 className="text-lg font-bold text-atg-fg">{t.itemsTitle}</h2>
       <ul className="mt-4 space-y-3">
         {items.map((item) => {
           const typeLabel = t.itemTypes[ITEM_TYPE_LABEL_KEYS[item.itemType]];
@@ -81,27 +81,27 @@ export function PackageItemsSection({
           return (
             <li
               key={item.id}
-              className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-gray-100 px-4 py-3 dark:border-atg-border"
+              className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-atg-border px-4 py-3 dark:border-atg-border"
             >
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wide text-primary">
                   {typeLabel}
                 </p>
-                <p className="font-medium text-[#0f1a16] dark:text-white">{item.label}</p>
+                <p className="font-medium text-atg-fg">{item.label}</p>
                 {showExternalConfigureLink ? (
-                  <p className="mt-1 text-xs text-gray-500 dark:text-atg-muted">
+                  <p className="mt-1 text-xs text-atg-muted">
                     {t.configureOnProductHint}
                   </p>
                 ) : null}
               </div>
               <div className="flex flex-wrap items-center gap-3">
-                <p className="text-sm font-semibold text-gray-700 dark:text-white/90">
+                <p className="text-sm font-semibold text-atg-fg/90">
                   {formatPackagePrice(item.unitPriceCents, item.currency)}
                 </p>
                 {productHref ? (
                   <Link
                     href={productHref}
-                    className="inline-flex min-h-[44px] items-center rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-primary transition-colors hover:border-primary dark:border-atg-border"
+                    className="inline-flex min-h-[44px] items-center rounded-lg border border-atg-border px-4 py-2 text-sm font-semibold text-primary transition-colors hover:border-primary dark:border-atg-border"
                   >
                     {showExternalConfigureLink ? t.configureOnProduct : t.viewProduct}
                   </Link>
