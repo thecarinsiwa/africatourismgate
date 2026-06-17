@@ -43,31 +43,18 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function HomePage() {
   return (
     <div className="flex min-h-screen flex-col">
-      {/* 1. Header — top bar + navbar */}
       <HomeHeader />
 
-      {/* 2. Hero Slider — full-screen carousel */}
-      <HeroSlider />
+      <main>
+        <HeroSlider />
+        <SearchTabs />
+        <WhyUsSection />
+        <ParallaxPromo />
+        <DestinationsCarousel />
+        <HappyCustomers />
+        <PartnersSection />
+      </main>
 
-      {/* 3. Search Tabs — overlapping the hero */}
-      <SearchTabs />
-
-      {/* 4. Why Us — 4-column feature cards */}
-      <WhyUsSection />
-
-      {/* 5. Parallax Promo — safari package promotion */}
-      <ParallaxPromo />
-
-      {/* 6. Popular Destinations — card grid */}
-      <DestinationsCarousel />
-
-      {/* 7. Happy Customers — satisfaction bars */}
-      <HappyCustomers />
-
-      {/* 8. Partners — airline logos */}
-      <PartnersSection />
-
-      {/* 9. Footer — dark multi-column + copyright */}
       <HomeFooter />
     </div>
   );

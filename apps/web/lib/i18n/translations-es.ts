@@ -61,6 +61,7 @@ export const es: Translations = {
     ],
     prev: 'Diapositiva anterior',
     next: 'Diapositiva siguiente',
+    goToSlide: 'Ir a la diapositiva {n}',
   },
   search: {
     tablistAria: 'Tipo de búsqueda',

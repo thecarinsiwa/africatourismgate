@@ -28,6 +28,7 @@ export type Translations = {
     slides: { subtitle: string; title: string; description: string }[];
     prev: string;
     next: string;
+    goToSlide: string;
   };
   search: {
     tablistAria: string;
@@ -795,6 +796,7 @@ const fr: Translations = {
     ],
     prev: 'Diapositive précédente',
     next: 'Diapositive suivante',
+    goToSlide: 'Aller à la diapositive {n}',
   },
   search: {
     tablistAria: 'Type de recherche',
@@ -1661,6 +1663,7 @@ const en: Translations = {
     ],
     prev: 'Previous slide',
     next: 'Next slide',
+    goToSlide: 'Go to slide {n}',
   },
   search: {
     tablistAria: 'Search type',

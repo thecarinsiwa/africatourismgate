@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useScrollAnimation } from './use-scroll-animation';
 import { useTranslations } from '../../lib/i18n/locale-provider';
@@ -42,14 +43,14 @@ export function DestinationsCarousel() {
       aria-labelledby="destinations-heading"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className={`text-center max-w-2xl mx-auto mb-14 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
+        <div className={`mb-12 max-w-2xl mx-auto text-center ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
           <h2 id="destinations-heading" className="text-2xl font-bold uppercase tracking-wide text-atg-fg sm:text-3xl">
             {t.destinations.title}
           </h2>
-          <p className="mt-4 leading-relaxed text-atg-muted">{t.destinations.subtitle}</p>
+          <p className="mt-4 text-sm sm:text-base leading-relaxed text-atg-muted">{t.destinations.subtitle}</p>
         </div>
 
-        <div className={`grid gap-6 sm:grid-cols-2 lg:grid-cols-4 ${isVisible ? 'animate-fade-in-up delay-200' : 'opacity-0'}`}>
+        <div className={`grid gap-8 sm:grid-cols-2 lg:grid-cols-4 ${isVisible ? 'animate-fade-in-up delay-200' : 'opacity-0'}`}>
           {destinations.map((dest) => (
             <Link
               key={dest.title}
@@ -57,9 +58,13 @@ export function DestinationsCarousel() {
               className="group overflow-hidden rounded-xl bg-atg-elevated shadow-md transition-all duration-300 hover:shadow-xl dark:border dark:border-atg-border dark:bg-atg-elevated"
             >
               <div className="relative h-52 overflow-hidden">
-                <div
-                  className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
-                  style={{ backgroundImage: `url("${dest.image}")` }}
+                <Image
+                  src={dest.image}
+                  alt={dest.title}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                  loading="lazy"
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300 flex items-center justify-center">
                   <div className="text-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-y-2 group-hover:translate-y-0">
@@ -70,7 +75,7 @@ export function DestinationsCarousel() {
               </div>
 
               <div className="p-4">
-                <h3 className="mb-1 font-bold text-atg-fg">{dest.title}</h3>
+                <h3 className="mb-1 text-lg font-bold text-atg-fg">{dest.title}</h3>
                 <p className="mb-3 line-clamp-2 text-sm text-atg-muted">{dest.description}</p>
 
                 <div className="flex items-center justify-between">
