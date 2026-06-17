@@ -69,7 +69,7 @@ function FlightTripTypeToggle({
     <div
       role="radiogroup"
       aria-label={ariaLabel}
-      className="inline-flex rounded-lg border border-gray-200 bg-gray-50 p-1 dark:border-atg-border dark:bg-atg-surface"
+      className="inline-flex rounded-lg border border-atg-border bg-atg-surface p-1 dark:border-atg-border dark:bg-atg-surface"
     >
       {options.map((option) => {
         const selected = value === option.id;
@@ -83,7 +83,7 @@ function FlightTripTypeToggle({
             className={`rounded-md px-4 py-2 text-sm font-semibold transition-colors ${
               selected
                 ? 'bg-primary text-white shadow-sm'
-                : 'text-gray-600 hover:text-gray-900 dark:text-atg-muted dark:hover:text-white'
+                : 'text-atg-muted hover:text-atg-fg text-atg-muted dark:hover:text-white'
             }`}
           >
             {option.label}
@@ -432,7 +432,7 @@ export function SearchTabs() {
                       type="button"
                       onClick={swapFlightAirports}
                       aria-label={t.search.swapAirports}
-                      className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-gray-300 text-gray-600 transition-colors hover:border-primary hover:text-primary dark:border-atg-border dark:text-atg-muted dark:hover:text-white"
+                      className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-atg-border text-atg-muted transition-colors hover:border-primary hover:text-primary dark:border-atg-border text-atg-muted dark:hover:text-white"
                     >
                       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
@@ -543,13 +543,13 @@ export function SearchTabs() {
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   {carRentalDaysLabel ? (
                     <span
-                      className="inline-flex min-h-[44px] items-center rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-semibold text-gray-700 dark:border-atg-border dark:bg-atg-surface dark:text-white"
+                      className="inline-flex min-h-[44px] items-center rounded-lg border border-atg-border bg-atg-surface px-4 py-2 text-sm font-semibold text-atg-fg dark:border-atg-border dark:bg-atg-surface dark:text-white"
                       role="status"
                     >
                       {carRentalDaysLabel}
                     </span>
                   ) : (
-                    <span className="text-sm text-gray-500 dark:text-atg-muted">
+                    <span className="text-sm text-atg-muted">
                       {t.search.carsDurationHint}
                     </span>
                   )}

@@ -84,14 +84,14 @@ export function SupportTicketForm() {
 
   if (!sessionChecked) {
     return (
-      <p className="text-sm text-gray-600 dark:text-atg-muted">{s.checkingSession}</p>
+      <p className="text-sm text-atg-muted">{s.checkingSession}</p>
     );
   }
 
   if (!hasSession) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-gray-50 p-6 dark:border-atg-border dark:bg-atg-elevated">
-        <p className="text-sm text-gray-700 dark:text-atg-muted">{s.signInPrompt}</p>
+      <div className="rounded-lg border border-atg-border bg-atg-surface p-6 dark:border-atg-border dark:bg-atg-elevated">
+        <p className="text-sm text-atg-fg text-atg-muted">{s.signInPrompt}</p>
         <Link
           href="/booking/login?next=%2Fsupport"
           className="mt-4 inline-flex rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-[var(--atg-primary-hover)]"
@@ -108,10 +108,10 @@ export function SupportTicketForm() {
         className="rounded-lg border border-primary/30 bg-primary/5 p-6 dark:border-primary/40 dark:bg-primary/10"
         role="status"
       >
-        <h3 className="text-base font-semibold text-gray-900 dark:text-white">
+        <h3 className="text-base font-semibold text-atg-fg">
           {s.successTitle}
         </h3>
-        <p className="mt-2 text-sm text-gray-700 dark:text-atg-muted">
+        <p className="mt-2 text-sm text-atg-fg text-atg-muted">
           {s.successMessage.replace('{ticketId}', created.ticket.id)}
         </p>
       </div>
@@ -121,12 +121,12 @@ export function SupportTicketForm() {
   return (
     <form
       onSubmit={(e) => void handleSubmit(e)}
-      className="space-y-4 rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-atg-border dark:bg-atg-elevated"
+      className="space-y-4 rounded-lg border border-atg-border bg-atg-elevated p-6 shadow-sm dark:border-atg-border dark:bg-atg-elevated"
     >
       <div>
         <label
           htmlFor="support-subject"
-          className="mb-1 block text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-atg-muted"
+          className="mb-1 block text-xs font-medium uppercase tracking-wide text-atg-muted"
         >
           {s.subjectLabel}
         </label>
@@ -144,7 +144,7 @@ export function SupportTicketForm() {
       <div>
         <label
           htmlFor="support-message"
-          className="mb-1 block text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-atg-muted"
+          className="mb-1 block text-xs font-medium uppercase tracking-wide text-atg-muted"
         >
           {s.messageLabel}
         </label>
@@ -157,7 +157,7 @@ export function SupportTicketForm() {
           disabled={submitting}
           required
           minLength={10}
-          className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-60 dark:border-atg-border dark:bg-atg-surface dark:text-white dark:placeholder:text-atg-muted"
+          className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg shadow-sm placeholder:text-atg-muted focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-60 dark:border-atg-border dark:bg-atg-surface dark:text-white dark:placeholder:text-atg-muted"
         />
       </div>
 

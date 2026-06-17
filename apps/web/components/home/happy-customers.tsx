@@ -18,7 +18,7 @@ export function HappyCustomers() {
   ];
 
   return (
-    <section ref={ref} className="overflow-hidden bg-white py-16 transition-colors dark:bg-atg-surface sm:py-24">
+    <section ref={ref} className="overflow-hidden bg-atg-elevated py-16 transition-colors dark:bg-atg-surface sm:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
           <div className={`${isVisible ? 'animate-fade-in-left' : 'opacity-0'}`}>
@@ -46,12 +46,12 @@ export function HappyCustomers() {
 
           <div>
             <div className={`${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
-              <h2 className="text-2xl font-bold uppercase tracking-wide text-[#0f1a16] dark:text-white sm:text-3xl">
+              <h2 className="text-2xl font-bold uppercase tracking-wide text-atg-fg sm:text-3xl">
                 {t.customers.title}
               </h2>
-              <p className="mt-2 text-lg text-gray-500 dark:text-atg-muted">{t.customers.subtitle}</p>
-              <p className="mt-4 text-sm leading-relaxed text-gray-500 dark:text-atg-muted">{t.customers.p1}</p>
-              <p className="mt-3 text-sm leading-relaxed text-gray-500 dark:text-atg-muted">{t.customers.p2}</p>
+              <p className="mt-2 text-lg text-atg-muted">{t.customers.subtitle}</p>
+              <p className="mt-4 text-sm leading-relaxed text-atg-muted">{t.customers.p1}</p>
+              <p className="mt-3 text-sm leading-relaxed text-atg-muted">{t.customers.p2}</p>
             </div>
 
             <div className="mt-8 space-y-5">
@@ -62,12 +62,12 @@ export function HappyCustomers() {
                   style={{ animationDelay: `${(i + 1) * 100}ms` }}
                 >
                   <div className="mb-1.5 flex items-center justify-between">
-                    <span className="text-sm font-semibold text-[#0f1a16] dark:text-white">{bar.label}</span>
+                    <span className="text-sm font-semibold text-atg-fg">{bar.label}</span>
                     <span className="text-sm font-bold" style={{ color: bar.color }}>
                       {bar.value}%
                     </span>
                   </div>
-                  <div className="h-2.5 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-white/10">
+                  <div className="h-2.5 w-full overflow-hidden rounded-full bg-atg-surface dark:bg-white/10">
                     <div
                       className={`h-full rounded-full ${isVisible ? 'progress-bar-fill' : ''}`}
                       style={{

@@ -97,7 +97,7 @@ export function AccountBookingDetail({ bookingId }: Props) {
   }
 
   if (loading) {
-    return <p className="text-sm text-gray-600 dark:text-atg-muted">{t.account.loading}</p>;
+    return <p className="text-sm text-atg-muted">{t.account.loading}</p>;
   }
 
   if (error || !detail) {
@@ -130,11 +130,11 @@ export function AccountBookingDetail({ bookingId }: Props) {
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-atg-muted">
+          <p className="text-xs font-medium uppercase tracking-wide text-atg-muted">
             {t.account.reservations.reference}
           </p>
-          <p className="mt-1 font-mono text-sm text-gray-900 dark:text-white">{booking.id}</p>
-          <p className="mt-2 text-sm text-gray-600 dark:text-atg-muted">
+          <p className="mt-1 font-mono text-sm text-atg-fg">{booking.id}</p>
+          <p className="mt-2 text-sm text-atg-muted">
             {t.account.reservations.detail.bookedOn}{' '}
             {formatBookingDateTime(booking.createdAt, localeTag)}
           </p>
@@ -143,19 +143,19 @@ export function AccountBookingDetail({ bookingId }: Props) {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <div className="rounded-lg border border-gray-100 bg-gray-50 p-4 dark:border-atg-border dark:bg-white/5">
-          <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-atg-muted">
+        <div className="rounded-lg border border-atg-border bg-atg-surface p-4 dark:border-atg-border dark:bg-white/5">
+          <p className="text-xs font-medium uppercase tracking-wide text-atg-muted">
             {t.account.reservations.status}
           </p>
-          <p className="mt-1 text-sm font-semibold text-gray-900 dark:text-white">
+          <p className="mt-1 text-sm font-semibold text-atg-fg">
             {bookingStatusLabels[booking.status]}
           </p>
         </div>
-        <div className="rounded-lg border border-gray-100 bg-gray-50 p-4 dark:border-atg-border dark:bg-white/5">
-          <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-atg-muted">
+        <div className="rounded-lg border border-atg-border bg-atg-surface p-4 dark:border-atg-border dark:bg-white/5">
+          <p className="text-xs font-medium uppercase tracking-wide text-atg-muted">
             {t.account.reservations.detail.itemsCount}
           </p>
-          <p className="mt-1 text-sm font-semibold text-gray-900 dark:text-white">
+          <p className="mt-1 text-sm font-semibold text-atg-fg">
             {items.length}
           </p>
         </div>
@@ -170,8 +170,8 @@ export function AccountBookingDetail({ bookingId }: Props) {
       </div>
 
       {(canPay || canCancel) && (
-        <div className="flex flex-wrap gap-3 rounded-lg border border-gray-100 bg-gray-50 p-4 dark:border-atg-border dark:bg-white/5">
-          <p className="w-full text-sm font-medium text-gray-900 dark:text-white">
+        <div className="flex flex-wrap gap-3 rounded-lg border border-atg-border bg-atg-surface p-4 dark:border-atg-border dark:bg-white/5">
+          <p className="w-full text-sm font-medium text-atg-fg">
             {t.account.reservations.detail.actions}
           </p>
           {canPay ? (
@@ -237,17 +237,17 @@ export function AccountBookingDetail({ bookingId }: Props) {
       ) : null}
 
       <section>
-        <h3 className="mb-3 text-base font-semibold text-gray-900 dark:text-white">
+        <h3 className="mb-3 text-base font-semibold text-atg-fg">
           {t.account.reservations.detail.itemsTitle}
         </h3>
         {items.length === 0 ? (
-          <p className="text-sm text-gray-600 dark:text-atg-muted">
+          <p className="text-sm text-atg-muted">
             {t.account.reservations.detail.noItems}
           </p>
         ) : (
-          <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-atg-border">
+          <div className="overflow-x-auto rounded-lg border border-atg-border dark:border-atg-border">
             <table className="min-w-full text-left text-sm">
-              <thead className="border-b border-gray-200 bg-gray-50 dark:border-atg-border dark:bg-white/5">
+              <thead className="border-b border-atg-border bg-atg-surface dark:border-atg-border dark:bg-white/5">
                 <tr>
                   <th className="px-4 py-3 font-medium">{t.account.reservations.detail.item}</th>
                   <th className="px-4 py-3 font-medium">{t.account.reservations.detail.dates}</th>
@@ -265,17 +265,17 @@ export function AccountBookingDetail({ bookingId }: Props) {
                   return (
                     <tr
                       key={item.id}
-                      className="border-b border-gray-100 last:border-0 dark:border-atg-border"
+                      className="border-b border-atg-border last:border-0 dark:border-atg-border"
                     >
                       <td className="px-4 py-3">
-                        <p className="font-medium text-gray-900 dark:text-white">
+                        <p className="font-medium text-atg-fg">
                           {item.titleSnapshot || typeLabel}
                         </p>
-                        <p className="mt-0.5 text-xs text-gray-500 dark:text-atg-muted">
+                        <p className="mt-0.5 text-xs text-atg-muted">
                           {typeLabel}
                         </p>
                       </td>
-                      <td className="px-4 py-3 text-gray-700 dark:text-white/80">
+                      <td className="px-4 py-3 text-atg-fg/80">
                         {formatStayRange(item.startDate, item.endDate, localeTag)}
                       </td>
                       <td className="px-4 py-3">{item.quantity}</td>
@@ -286,11 +286,11 @@ export function AccountBookingDetail({ bookingId }: Props) {
                   );
                 })}
               </tbody>
-              <tfoot className="border-t border-gray-200 bg-gray-50 dark:border-atg-border dark:bg-white/5">
+              <tfoot className="border-t border-atg-border bg-atg-surface dark:border-atg-border dark:bg-white/5">
                 <tr>
                   <td
                     colSpan={3}
-                    className="px-4 py-3 text-right font-semibold text-gray-900 dark:text-white"
+                    className="px-4 py-3 text-right font-semibold text-atg-fg"
                   >
                     {t.account.reservations.total}
                   </td>

@@ -183,6 +183,29 @@ Ces améliorations bénéficient à **toutes** les verticales. Privilégier `pac
 
 ### 2. Typographie & espacement (WEB-UX-2)
 
+#### Échelle typographique web (marketing)
+
+| Rôle | Classes Tailwind | Référence |
+| ---- | ---------------- | --------- |
+| Hero homepage h1 | `text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight` | `hero-search.tsx` |
+| Hero page liste h1 | `text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight` | `hotels-page-content.tsx` |
+| Section marketing h2 | `text-2xl sm:text-3xl font-bold uppercase tracking-wide text-atg-fg` | `verticals-section.tsx` |
+| Titre carte produit h3 | `text-lg font-bold sm:text-xl text-atg-fg` | `hotel-card.tsx` |
+| Sous-titre section | `text-sm sm:text-base leading-relaxed text-atg-muted` | sections homepage |
+| Label formulaire recherche | `text-xs font-semibold uppercase tracking-wide text-atg-muted` | `search-form-fields.tsx` |
+| Prix listing | `text-2xl font-bold text-atg-fg` | `price-display.tsx` |
+
+#### Table de remplacement couleurs (T2)
+
+| Ad hoc | Token sémantique |
+| ------ | ---------------- |
+| `text-[#0f1a16]` (+ `dark:text-white`) | `text-atg-fg` |
+| `text-gray-500/600/400` | `text-atg-muted` |
+| `border-gray-100/200/300` | `border-atg-border` |
+| `bg-gray-50` | `bg-atg-surface` |
+| `bg-white` (cartes) | `bg-atg-elevated` |
+| `dark:bg-[#0a1210]` / `#0f1915` | `dark:bg-atg-surface` |
+
 | ID  | Suggestion                         | Priorité  |
 | --- | ---------------------------------- | --------- |
 | T1  | Échelle typo documentée (h1 hero → h3 carte) | **Haute** |

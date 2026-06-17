@@ -102,7 +102,7 @@ export function ComingSoonPage() {
               <span className="text-2xl sm:text-3xl md:text-4xl font-semibold text-primary mb-0 sm:mb-1">
                 {formatNumber(item.value)}
               </span>
-              <span className="text-[9px] sm:text-[10px] md:text-xs font-bold text-gray-800 tracking-wide uppercase">
+              <span className="text-[9px] sm:text-[10px] md:text-xs font-bold text-atg-fg tracking-wide uppercase">
                 {item.label}
               </span>
             </div>

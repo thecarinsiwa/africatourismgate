@@ -26,19 +26,19 @@ export function PackageResolvedSummary({
         return (
           <li
             key={item.id}
-            className="rounded-xl border border-gray-100 bg-gray-50 px-4 py-3 dark:border-atg-border dark:bg-atg-surface/60"
+            className="rounded-xl border border-atg-border bg-atg-surface px-4 py-3 dark:border-atg-border dark:bg-atg-surface/60"
           >
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wide text-primary">
                   {t.itemTypes[item.itemType]}
                 </p>
-                <p className="mt-1 text-sm font-semibold text-[#0f1a16] dark:text-white">
+                <p className="mt-1 text-sm font-semibold text-atg-fg">
                   {item.label}
                 </p>
               </div>
               {resolving ? (
-                <span className="text-xs text-gray-500 dark:text-atg-muted">{t.resolvingItem}</span>
+                <span className="text-xs text-atg-muted">{t.resolvingItem}</span>
               ) : resolved ? (
                 <span className="text-xs font-medium text-emerald-700 dark:text-emerald-300">
                   {t.itemAutoResolved}

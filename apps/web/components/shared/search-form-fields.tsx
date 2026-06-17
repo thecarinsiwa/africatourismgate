@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { cn } from '@africatourismgate/ui';
 
 const fieldInputClass =
-  'min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg dark:placeholder:text-atg-muted';
+  'min-h-[44px] w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg transition-colors placeholder:text-atg-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg dark:placeholder:text-atg-muted';
 
 /** Classes de base des champs — réutilisable pour selects personnalisés. */
 export const searchFormFieldClass = fieldInputClass;
@@ -11,7 +11,7 @@ export const searchFormFieldClass = fieldInputClass;
 /** Libellé champ recherche — texte fourni par le parent (i18n). */
 export function SearchFormLabel({ children }: { children: ReactNode }) {
   return (
-    <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-atg-muted">
+    <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-atg-muted">
       {children}
     </label>
   );
@@ -106,7 +106,7 @@ export function SearchFormSubmit({ label, className }: SearchFormSubmitProps) {
     <button
       type="submit"
       className={cn(
-        'min-h-[44px] w-full rounded-lg bg-primary px-5 py-2.5 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover',
+        'min-h-[44px] w-full rounded-lg bg-primary px-5 py-2.5 text-sm font-bold uppercase tracking-wide text-white shadow-sm transition-colors hover:bg-primary-hover',
         className,
       )}
     >

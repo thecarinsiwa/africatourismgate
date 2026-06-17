@@ -33,7 +33,7 @@ export function ProductCard({
   return (
     <article
       className={cn(
-        'group flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:border-atg-border dark:bg-atg-elevated sm:flex-row',
+        'group flex flex-col overflow-hidden rounded-2xl border border-atg-border bg-atg-elevated shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:border-atg-border dark:bg-atg-elevated sm:flex-row',
         className,
       )}
     >
@@ -52,7 +52,7 @@ export function ProductCard({
 
         {body}
 
-        <div className="mt-auto flex flex-wrap items-end justify-between gap-4 border-t border-gray-100 pt-4 dark:border-atg-border">
+        <div className="mt-auto flex flex-wrap items-end justify-between gap-4 border-t border-atg-border pt-4 dark:border-atg-border">
           {price}
           <div className="flex gap-2">{actions}</div>
         </div>

@@ -40,22 +40,22 @@ function SidebarContent({
 
   return (
     <div className="space-y-4" id="reserve">
-      <h2 className="text-lg font-bold text-[#0f1a16] dark:text-white">{t.reserveSection}</h2>
+      <h2 className="text-lg font-bold text-atg-fg">{t.reserveSection}</h2>
 
-      <div className="rounded-lg bg-gray-50 px-4 py-3 text-sm dark:bg-white/5">
-        <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-atg-muted">
+      <div className="rounded-lg bg-atg-surface px-4 py-3 text-sm dark:bg-white/5">
+        <p className="text-xs uppercase tracking-wide text-atg-muted">
           {t.departure}
         </p>
-        <p className="mt-1 font-medium text-[#0f1a16] dark:text-white">
+        <p className="mt-1 font-medium text-atg-fg">
           {formatDisplayDate(detail.departureDate, locale)}
         </p>
-        <p className="mt-2 text-xs text-gray-500 dark:text-atg-muted">
+        <p className="mt-2 text-xs text-atg-muted">
           {t.arrival}: {formatDisplayDate(detail.returnDate, locale)} · {nightsLabel}
         </p>
       </div>
 
       <label className="block text-sm">
-        <span className="mb-1 block font-medium text-gray-600 dark:text-atg-muted">{t.guests}</span>
+        <span className="mb-1 block font-medium text-atg-muted">{t.guests}</span>
         <input
           type="number"
           min={1}
@@ -64,7 +64,7 @@ function SidebarContent({
           onChange={(event) =>
             onGuestsChange(Math.max(1, Number.parseInt(event.target.value, 10) || 1))
           }
-          className="min-h-[44px] w-full rounded-lg border border-gray-200 px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-surface dark:text-white"
+          className="min-h-[44px] w-full rounded-lg border border-atg-border px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-surface dark:text-white"
         />
       </label>
 
@@ -80,24 +80,24 @@ function SidebarContent({
         <p className="text-sm text-red-600 dark:text-red-400">{t.insufficientCabins}</p>
       )}
 
-      <p className="text-sm text-gray-600 dark:text-atg-muted">
+      <p className="text-sm text-atg-muted">
         {formatCruisePortLabel(detail.sailFromPortCode, detail.sailFromPortName)} →{' '}
         {formatCruisePortLabel(detail.sailToPortCode, detail.sailToPortName)} · {guestsLabel}
       </p>
 
       {selectedCabin && (
-        <div className="rounded-lg bg-gray-50 px-4 py-3 dark:bg-white/5">
-          <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-atg-muted">
+        <div className="rounded-lg bg-atg-surface px-4 py-3 dark:bg-white/5">
+          <p className="text-xs uppercase tracking-wide text-atg-muted">
             {t.totalCruise}
           </p>
-          <p className="text-2xl font-bold text-[#0f1a16] dark:text-white">
+          <p className="text-2xl font-bold text-atg-fg">
             {formatCruisePrice(selectedCabin.priceCents, detail.currency)}
           </p>
         </div>
       )}
 
       {!selectedCabin && detail.minPriceCents > 0 && (
-        <p className="text-sm text-gray-500 dark:text-atg-muted">
+        <p className="text-sm text-atg-muted">
           {t.fromPrice} {formatCruisePrice(detail.minPriceCents, detail.currency)} {t.perGuest}
         </p>
       )}
@@ -116,7 +116,7 @@ function SidebarContent({
 
 export function CruiseBookingSidebar(props: CruiseBookingSidebarProps) {
   return (
-    <aside className="hidden rounded-2xl border border-gray-100 bg-white p-6 shadow-lg dark:border-atg-border dark:bg-atg-elevated lg:block lg:sticky lg:top-24">
+    <aside className="hidden rounded-2xl border border-atg-border bg-atg-elevated p-6 shadow-lg dark:border-atg-border dark:bg-atg-elevated lg:block lg:sticky lg:top-24">
       <SidebarContent {...props} />
     </aside>
   );
@@ -130,18 +130,18 @@ export function CruiseBookingMobileBar(props: CruiseBookingSidebarProps) {
     selectedCabin.maxGuests >= guests;
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-gray-200 bg-white/95 p-4 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] backdrop-blur-md dark:border-atg-border dark:bg-atg-elevated/95 lg:hidden pb-safe">
+    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-atg-border bg-atg-elevated/95 p-4 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] backdrop-blur-md dark:border-atg-border dark:bg-atg-elevated/95 lg:hidden pb-safe">
       <div className="mx-auto flex max-w-lg items-center gap-4">
         <div className="min-w-0 flex-1">
           {selectedCabin ? (
             <>
-              <p className="text-xs text-gray-500 dark:text-atg-muted">{t.totalCruise}</p>
-              <p className="text-lg font-bold text-[#0f1a16] dark:text-white">
+              <p className="text-xs text-atg-muted">{t.totalCruise}</p>
+              <p className="text-lg font-bold text-atg-fg">
                 {formatCruisePrice(selectedCabin.priceCents, detail.currency)}
               </p>
             </>
           ) : (
-            <p className="text-sm text-gray-500 dark:text-atg-muted">{t.selectCabinHint}</p>
+            <p className="text-sm text-atg-muted">{t.selectCabinHint}</p>
           )}
         </div>
         <button

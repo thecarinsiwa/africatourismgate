@@ -16,7 +16,7 @@ export function PartnersSection() {
   const { ref, isVisible } = useScrollAnimation(0.1);
 
   return (
-    <section ref={ref} className="border-y border-gray-100 bg-white py-12 transition-colors dark:border-atg-border dark:bg-atg-elevated sm:py-16">
+    <section ref={ref} className="border-y border-atg-border bg-atg-elevated py-12 transition-colors dark:border-atg-border dark:bg-atg-elevated sm:py-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-3 gap-6 sm:grid-cols-6">
           {PARTNERS.map((partner, i) => (
@@ -39,7 +39,7 @@ export function PartnersSection() {
                 >
                   {partner.initials}
                 </div>
-                <span className="hidden text-center text-xs text-gray-400 transition-colors group-hover:text-gray-600 dark:text-atg-muted dark:group-hover:text-white sm:block">
+                <span className="hidden text-center text-xs text-atg-muted transition-colors group-hover:text-atg-muted dark:group-hover:text-white sm:block">
                   {partner.name}
                 </span>
               </a>

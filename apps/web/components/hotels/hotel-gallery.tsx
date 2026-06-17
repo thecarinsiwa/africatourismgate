@@ -18,7 +18,7 @@ export function HotelGallery({ images, name, ariaLabel }: HotelGalleryProps) {
 
   return (
     <section aria-label={ariaLabel}>
-      <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-gray-100 dark:bg-atg-surface sm:aspect-[21/9]">
+      <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-atg-surface dark:bg-atg-surface sm:aspect-[21/9]">
         <div
           className="absolute inset-0 bg-cover bg-center transition-opacity duration-300"
           style={{ backgroundImage: `url("${active.url}")` }}

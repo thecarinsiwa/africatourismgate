@@ -33,8 +33,8 @@ function renderLineSummary(
       if (!activity) return null;
       return (
         <>
-          <p className="font-medium text-[#0f1a16] dark:text-white">{activity.title}</p>
-          <p className="mt-1 text-sm text-gray-600 dark:text-atg-muted">
+          <p className="font-medium text-atg-fg">{activity.title}</p>
+          <p className="mt-1 text-sm text-atg-muted">
             {formatDisplayDate(line.date, locale)}
             {schedule ? <> · {formatScheduleTime(schedule.startDatetime, locale)}</> : null}
             {' · '}
@@ -51,8 +51,8 @@ function renderLineSummary(
       if (!property || !room) return null;
       return (
         <>
-          <p className="font-medium text-[#0f1a16] dark:text-white">{property.name}</p>
-          <p className="mt-1 text-sm text-gray-600 dark:text-atg-muted">
+          <p className="font-medium text-atg-fg">{property.name}</p>
+          <p className="mt-1 text-sm text-atg-muted">
             {room.name} · {formatDisplayDate(line.checkIn, locale)} →{' '}
             {formatDisplayDate(line.checkOut, locale)} · {line.guests} guest(s)
           </p>
@@ -65,10 +65,10 @@ function renderLineSummary(
       if (!flight || !flightClass) return null;
       return (
         <>
-          <p className="font-medium text-[#0f1a16] dark:text-white">
+          <p className="font-medium text-atg-fg">
             {flight.airlineName} · {flight.flightNumber}
           </p>
-          <p className="mt-1 text-sm text-gray-600 dark:text-atg-muted">
+          <p className="mt-1 text-sm text-atg-muted">
             {formatAirportLabel(flight.departureAirport.iataCode)} →{' '}
             {formatAirportLabel(flight.arrivalAirport.iataCode)} ·{' '}
             {formatDisplayDate(line.departureDate, locale)} · {line.passengers} pax
@@ -81,10 +81,10 @@ function renderLineSummary(
       if (!vehicle) return null;
       return (
         <>
-          <p className="font-medium text-[#0f1a16] dark:text-white">
+          <p className="font-medium text-atg-fg">
             {vehicle.category.exampleModel ?? vehicle.category.name}
           </p>
-          <p className="mt-1 text-sm text-gray-600 dark:text-atg-muted">
+          <p className="mt-1 text-sm text-atg-muted">
             {formatDisplayDate(line.pickupDate, locale)} → {formatDisplayDate(line.returnDate, locale)}
           </p>
         </>
@@ -98,8 +98,8 @@ function renderLineSummary(
       if (!sailing || !cabin) return null;
       return (
         <>
-          <p className="font-medium text-[#0f1a16] dark:text-white">{sailing.shipName}</p>
-          <p className="mt-1 text-sm text-gray-600 dark:text-atg-muted">
+          <p className="font-medium text-atg-fg">{sailing.shipName}</p>
+          <p className="mt-1 text-sm text-atg-muted">
             {cabin.categoryName} · {formatDisplayDate(sailing.departureDate, locale)} · {line.guests}{' '}
             guest(s)
           </p>
@@ -125,17 +125,17 @@ export function PackageReservationSummary({
     <div className="space-y-4">
       <div>
         <p className="text-sm text-primary">{t.cardBadge}</p>
-        <h2 className="text-xl font-bold text-[#0f1a16] dark:text-white">
+        <h2 className="text-xl font-bold text-atg-fg">
           {packageDetail.package.name}
         </h2>
-        <p className="mt-2 text-sm text-gray-600 dark:text-atg-muted">
+        <p className="mt-2 text-sm text-atg-muted">
           {t.itemsProgress
             .replace('{selected}', String(draft.lines.length))
             .replace('{total}', String(draft.lines.length))}
         </p>
       </div>
 
-      <ul className="space-y-3 border-t border-gray-100 pt-4 dark:border-atg-border">
+      <ul className="space-y-3 border-t border-atg-border pt-4 dark:border-atg-border">
         {draft.lines.map((line, index) => {
           const typeLabel =
             line.lineType === 'cruise'
@@ -153,7 +153,7 @@ export function PackageReservationSummary({
           return (
             <li
               key={`${line.lineType}-${line.itemId}-${index}`}
-              className="rounded-xl border border-gray-100 px-4 py-3 dark:border-atg-border"
+              className="rounded-xl border border-atg-border px-4 py-3 dark:border-atg-border"
             >
               <p className="text-xs font-semibold uppercase tracking-wide text-primary">
                 {typeLabel} {index + 1}

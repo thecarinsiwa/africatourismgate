@@ -75,17 +75,17 @@ export function HotelCard({ hotel, t, searchParams = {} }: HotelCardProps) {
         </>
       }
       imageBadge={
-        <span className="absolute bottom-3 left-3 rounded-md bg-white/95 px-2 py-1 text-xs font-semibold text-[#0f1a16] shadow dark:bg-atg-elevated dark:text-white">
+        <span className="absolute bottom-3 left-3 rounded-md bg-atg-elevated/95 px-2 py-1 text-xs font-semibold text-atg-fg shadow dark:bg-atg-elevated">
           {typeLabel}
         </span>
       }
       title={
-        <h3 className="text-lg font-bold text-[#0f1a16] dark:text-white sm:text-xl">
+        <h3 className="text-lg font-bold text-atg-fg sm:text-xl">
           {hotel.name}
         </h3>
       }
       meta={
-        <p className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-atg-muted">
+        <p className="flex items-center gap-1.5 text-sm text-atg-muted">
           <svg
             className="h-4 w-4 shrink-0 text-primary"
             fill="none"
@@ -108,7 +108,7 @@ export function HotelCard({ hotel, t, searchParams = {} }: HotelCardProps) {
           {stars > 0 ? (
             <div className="mb-3 flex flex-wrap items-center gap-3">
               <StarRating value={stars} size="sm" />
-              <span className="text-xs text-gray-400 dark:text-atg-muted">
+              <span className="text-xs text-atg-muted">
                 {stars} {t.stars}
               </span>
               <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
@@ -121,7 +121,7 @@ export function HotelCard({ hotel, t, searchParams = {} }: HotelCardProps) {
               {displayAmenities.map((a) => (
                 <span
                   key={a}
-                  className="inline-flex items-center gap-1 rounded-md bg-gray-50 px-2 py-1 text-xs text-gray-600 dark:bg-white/5 dark:text-atg-muted"
+                  className="inline-flex items-center gap-1 rounded-md bg-atg-surface px-2 py-1 text-xs text-atg-muted dark:bg-white/5"
                   title={t.amenities[a]}
                 >
                   {AMENITY_ICONS[a]}
@@ -143,7 +143,7 @@ export function HotelCard({ hotel, t, searchParams = {} }: HotelCardProps) {
         <>
           <Link
             href={detailHref}
-            className="inline-flex min-h-[44px] items-center rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition-colors hover:border-primary hover:text-primary dark:border-atg-border dark:text-white/80 dark:hover:border-primary dark:hover:text-white"
+            className="inline-flex min-h-[44px] items-center rounded-lg border border-atg-border px-4 py-2 text-sm font-semibold text-atg-fg transition-colors hover:border-primary hover:text-primary dark:border-atg-border dark:text-white/80 dark:hover:border-primary dark:hover:text-white"
           >
             {t.viewDetails}
           </Link>

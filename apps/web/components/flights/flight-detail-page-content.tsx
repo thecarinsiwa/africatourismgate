@@ -174,10 +174,10 @@ export function FlightDetailPageContent({
 
   if (loading && !detail) {
     return (
-      <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
+      <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
         <HomeHeader />
         <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-24 text-center sm:px-6 lg:px-8">
-          <p className="text-sm font-medium text-gray-600 dark:text-atg-muted">{f.loading}</p>
+          <p className="text-sm font-medium text-atg-muted">{f.loading}</p>
         </div>
         <HomeFooter />
       </div>
@@ -186,11 +186,11 @@ export function FlightDetailPageContent({
 
   if (notFound) {
     return (
-      <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
+      <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
         <HomeHeader />
         <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-24 text-center sm:px-6 lg:px-8">
-          <h1 className="text-2xl font-bold text-[#0f1a16] dark:text-white">{f.notFound}</h1>
-          <p className="mt-2 text-sm text-gray-500 dark:text-atg-muted">{f.notFoundHint}</p>
+          <h1 className="text-2xl font-bold text-atg-fg">{f.notFound}</h1>
+          <p className="mt-2 text-sm text-atg-muted">{f.notFoundHint}</p>
           <Link
             href={listHref}
             className="mt-6 inline-flex min-h-[44px] items-center rounded-lg bg-primary px-6 py-2 text-sm font-bold text-white hover:bg-primary-hover"
@@ -205,10 +205,10 @@ export function FlightDetailPageContent({
 
   if (error || !detail || !sidebarProps) {
     return (
-      <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
+      <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
         <HomeHeader />
         <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-16 sm:px-6 lg:px-8">
-          <div className="rounded-xl border border-red-200 bg-white p-5 dark:border-red-900/40 dark:bg-atg-elevated">
+          <div className="rounded-xl border border-red-200 bg-atg-elevated p-5 dark:border-red-900/40 dark:bg-atg-elevated">
             <p className="text-sm text-red-700 dark:text-red-300">{f.loadError}</p>
             <button
               type="button"
@@ -225,13 +225,13 @@ export function FlightDetailPageContent({
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
+    <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
       <HomeHeader />
 
-      <div className="border-b border-gray-200 bg-white dark:border-atg-border dark:bg-atg-elevated">
+      <div className="border-b border-atg-border bg-atg-elevated dark:border-atg-border dark:bg-atg-elevated">
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
           <nav
-            className="flex flex-wrap items-center gap-2 text-sm text-gray-500 dark:text-atg-muted"
+            className="flex flex-wrap items-center gap-2 text-sm text-atg-muted"
             aria-label="Breadcrumb"
           >
             <Link href="/" className="transition-colors hover:text-primary">
@@ -242,7 +242,7 @@ export function FlightDetailPageContent({
               {f.breadcrumbFlights}
             </Link>
             <span aria-hidden>/</span>
-            <span className="font-medium text-[#0f1a16] dark:text-white">{detail.flightNumber}</span>
+            <span className="font-medium text-atg-fg">{detail.flightNumber}</span>
           </nav>
         </div>
       </div>
@@ -254,10 +254,10 @@ export function FlightDetailPageContent({
               <p className="text-sm font-semibold uppercase tracking-wide text-primary">
                 {detail.airlineName}
               </p>
-              <h1 className="mt-1 text-2xl font-bold text-[#0f1a16] dark:text-white sm:text-3xl">
+              <h1 className="mt-1 text-2xl font-bold text-atg-fg sm:text-3xl">
                 {detail.flightNumber}
               </h1>
-              <p className="mt-2 text-sm text-gray-600 dark:text-atg-muted">
+              <p className="mt-2 text-sm text-atg-muted">
                 {formatAirportLabel(detail.departureAirport.iataCode, detail.departureAirport)} →{' '}
                 {formatAirportLabel(detail.arrivalAirport.iataCode, detail.arrivalAirport)} ·{' '}
                 {formatDisplayDate(detail.departureDate, locale)} ·{' '}

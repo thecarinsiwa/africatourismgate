@@ -51,14 +51,14 @@ export function HotelAmenitiesSection({
 
   return (
     <section>
-      <h2 className="mb-4 text-lg font-bold text-[#0f1a16] dark:text-white">{title}</h2>
+      <h2 className="mb-4 text-lg font-bold text-atg-fg">{title}</h2>
       <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
         {amenities.map((a) => {
           const label = isHotelAmenity(a.code) ? amenityLabels[a.code] : a.name;
           return (
             <li
               key={a.code}
-              className="flex items-center gap-2 rounded-lg border border-gray-100 bg-white px-3 py-2.5 text-sm text-gray-700 dark:border-atg-border dark:bg-atg-elevated dark:text-atg-muted"
+              className="flex items-center gap-2 rounded-lg border border-atg-border bg-atg-elevated px-3 py-2.5 text-sm text-atg-fg dark:border-atg-border dark:bg-atg-elevated text-atg-muted"
             >
               <span className="shrink-0 text-primary">
                 {isHotelAmenity(a.code) ? AMENITY_ICONS[a.code] : (

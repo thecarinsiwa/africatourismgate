@@ -160,10 +160,10 @@ export function HotelDetailPageContent({
 
   if (loading && !detail) {
     return (
-      <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
+      <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
         <HomeHeader />
         <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-24 text-center sm:px-6 lg:px-8">
-          <p className="text-sm font-medium text-gray-600 dark:text-atg-muted">{h.loading}</p>
+          <p className="text-sm font-medium text-atg-muted">{h.loading}</p>
         </div>
         <HomeFooter />
       </div>
@@ -172,11 +172,11 @@ export function HotelDetailPageContent({
 
   if (notFound) {
     return (
-      <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
+      <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
         <HomeHeader />
         <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-24 text-center sm:px-6 lg:px-8">
-          <h1 className="text-2xl font-bold text-[#0f1a16] dark:text-white">{h.notFound}</h1>
-          <p className="mt-2 text-sm text-gray-500 dark:text-atg-muted">{h.notFoundHint}</p>
+          <h1 className="text-2xl font-bold text-atg-fg">{h.notFound}</h1>
+          <p className="mt-2 text-sm text-atg-muted">{h.notFoundHint}</p>
           <Link
             href="/hotels"
             className="mt-6 inline-flex min-h-[44px] items-center rounded-lg bg-primary px-6 py-2 text-sm font-bold text-white hover:bg-primary-hover"
@@ -191,7 +191,7 @@ export function HotelDetailPageContent({
 
   if (error || !detail) {
     return (
-      <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
+      <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
         <HomeHeader />
         <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-24 text-center sm:px-6 lg:px-8">
           <p className="text-sm text-red-700 dark:text-red-300">{h.loadError}</p>
@@ -230,12 +230,12 @@ export function HotelDetailPageContent({
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
+    <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
       <HomeHeader />
 
-      <div className="border-b border-gray-200 bg-white dark:border-atg-border dark:bg-atg-elevated">
+      <div className="border-b border-atg-border bg-atg-elevated dark:border-atg-border dark:bg-atg-elevated">
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-          <nav className="flex flex-wrap items-center gap-2 text-sm text-gray-500 dark:text-atg-muted" aria-label="Breadcrumb">
+          <nav className="flex flex-wrap items-center gap-2 text-sm text-atg-muted" aria-label="Breadcrumb">
             <Link href="/" className="hover:text-primary transition-colors">
               {h.breadcrumbHome}
             </Link>
@@ -244,7 +244,7 @@ export function HotelDetailPageContent({
               {h.breadcrumbHotels}
             </Link>
             <span aria-hidden>/</span>
-            <span className="font-medium text-[#0f1a16] dark:text-white">{detail.name}</span>
+            <span className="font-medium text-atg-fg">{detail.name}</span>
           </nav>
         </div>
       </div>
@@ -256,10 +256,10 @@ export function HotelDetailPageContent({
 
             <header>
               <p className="text-sm font-medium text-primary">{typeLabel}</p>
-              <h1 className="mt-1 text-2xl font-bold text-[#0f1a16] dark:text-white sm:text-3xl">
+              <h1 className="mt-1 text-2xl font-bold text-atg-fg sm:text-3xl">
                 {detail.name}
               </h1>
-              <p className="mt-2 flex items-center gap-1.5 text-sm text-gray-500 dark:text-atg-muted">
+              <p className="mt-2 flex items-center gap-1.5 text-sm text-atg-muted">
                 <svg className="h-4 w-4 shrink-0 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 </svg>
@@ -268,7 +268,7 @@ export function HotelDetailPageContent({
               {stars > 0 && (
                 <div className="mt-3 flex items-center gap-2">
                   <StarRating value={stars} />
-                  <span className="text-sm text-gray-500 dark:text-atg-muted">
+                  <span className="text-sm text-atg-muted">
                     {stars} {h.stars}
                   </span>
                 </div>
@@ -276,13 +276,13 @@ export function HotelDetailPageContent({
               {hasGuestReviews && (
                 <div className="mt-2 flex flex-wrap items-center gap-2">
                   <StarRating value={detail.averageRating!} />
-                  <span className="text-sm font-semibold text-[#0f1a16] dark:text-white">
+                  <span className="text-sm font-semibold text-atg-fg">
                     {detail.averageRating!.toFixed(1)}
                   </span>
-                  <span className="text-sm text-gray-500 dark:text-atg-muted">
+                  <span className="text-sm text-atg-muted">
                     · {detail.reviewCount} {h.reviews}
                   </span>
-                  <span className="text-xs text-gray-400 dark:text-atg-muted/80">
+                  <span className="text-xs text-atg-muted/80">
                     ({h.guestRating})
                   </span>
                 </div>
@@ -291,10 +291,10 @@ export function HotelDetailPageContent({
 
             {detail.description && (
               <section>
-                <h2 className="mb-3 text-lg font-bold text-[#0f1a16] dark:text-white">
+                <h2 className="mb-3 text-lg font-bold text-atg-fg">
                   {h.descriptionTitle}
                 </h2>
-                <p className="whitespace-pre-line text-sm leading-relaxed text-gray-600 dark:text-atg-muted">
+                <p className="whitespace-pre-line text-sm leading-relaxed text-atg-muted">
                   {detail.description}
                 </p>
               </section>

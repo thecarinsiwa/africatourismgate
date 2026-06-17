@@ -161,10 +161,10 @@ export function CruiseDetailPageContent({
 
   if (loading && !detail) {
     return (
-      <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
+      <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
         <HomeHeader />
         <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-24 text-center sm:px-6 lg:px-8">
-          <p className="text-sm font-medium text-gray-600 dark:text-atg-muted">{c.loading}</p>
+          <p className="text-sm font-medium text-atg-muted">{c.loading}</p>
         </div>
         <HomeFooter />
       </div>
@@ -173,11 +173,11 @@ export function CruiseDetailPageContent({
 
   if (notFound) {
     return (
-      <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
+      <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
         <HomeHeader />
         <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-24 text-center sm:px-6 lg:px-8">
-          <h1 className="text-2xl font-bold text-[#0f1a16] dark:text-white">{c.notFound}</h1>
-          <p className="mt-2 text-sm text-gray-500 dark:text-atg-muted">{c.notFoundHint}</p>
+          <h1 className="text-2xl font-bold text-atg-fg">{c.notFound}</h1>
+          <p className="mt-2 text-sm text-atg-muted">{c.notFoundHint}</p>
           <Link
             href={listHref}
             className="mt-6 inline-flex min-h-[44px] items-center rounded-lg bg-primary px-6 py-2 text-sm font-bold text-white hover:bg-primary-hover"
@@ -192,10 +192,10 @@ export function CruiseDetailPageContent({
 
   if (error || !detail || !sidebarProps) {
     return (
-      <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
+      <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
         <HomeHeader />
         <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-16 sm:px-6 lg:px-8">
-          <div className="rounded-xl border border-red-200 bg-white p-5 dark:border-red-900/40 dark:bg-atg-elevated">
+          <div className="rounded-xl border border-red-200 bg-atg-elevated p-5 dark:border-red-900/40 dark:bg-atg-elevated">
             <p className="text-sm text-red-700 dark:text-red-300">{c.loadError}</p>
             <button
               type="button"
@@ -217,13 +217,13 @@ export function CruiseDetailPageContent({
       : `${detail.durationNights} ${c.nightPlural}`;
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
+    <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
       <HomeHeader />
 
-      <div className="border-b border-gray-200 bg-white dark:border-atg-border dark:bg-atg-elevated">
+      <div className="border-b border-atg-border bg-atg-elevated dark:border-atg-border dark:bg-atg-elevated">
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
           <nav
-            className="flex flex-wrap items-center gap-2 text-sm text-gray-500 dark:text-atg-muted"
+            className="flex flex-wrap items-center gap-2 text-sm text-atg-muted"
             aria-label="Breadcrumb"
           >
             <Link href="/" className="transition-colors hover:text-primary">
@@ -234,7 +234,7 @@ export function CruiseDetailPageContent({
               {c.breadcrumbCruises}
             </Link>
             <span aria-hidden>/</span>
-            <span className="font-medium text-[#0f1a16] dark:text-white">
+            <span className="font-medium text-atg-fg">
               {detail.itineraryName}
             </span>
           </nav>
@@ -248,10 +248,10 @@ export function CruiseDetailPageContent({
               <p className="text-sm font-semibold uppercase tracking-wide text-primary">
                 {detail.cruiseLineName}
               </p>
-              <h1 className="mt-1 text-2xl font-bold text-[#0f1a16] dark:text-white sm:text-3xl">
+              <h1 className="mt-1 text-2xl font-bold text-atg-fg sm:text-3xl">
                 {detail.itineraryName}
               </h1>
-              <p className="mt-2 text-sm text-gray-600 dark:text-atg-muted">
+              <p className="mt-2 text-sm text-atg-muted">
                 {c.shipLabel}: {detail.shipName} ·{' '}
                 {formatCruisePortLabel(detail.sailFromPortCode, detail.sailFromPortName)} →{' '}
                 {formatCruisePortLabel(detail.sailToPortCode, detail.sailToPortName)} ·{' '}

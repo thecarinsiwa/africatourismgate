@@ -304,13 +304,13 @@ export function ReservationRecapPageContent({ draft }: Props) {
       Boolean(vehicleReady));
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
+    <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
       <HomeHeader />
       <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-10 sm:px-6 lg:px-8">
-        <h1 className="text-2xl font-bold text-[#0f1a16] dark:text-white">Recapitulatif</h1>
+        <h1 className="text-2xl font-bold text-atg-fg">Recapitulatif</h1>
 
         {!draft && (
-          <div className="mt-6 rounded-xl border border-red-200 bg-white p-5 dark:border-red-900/40 dark:bg-atg-elevated">
+          <div className="mt-6 rounded-xl border border-red-200 bg-atg-elevated p-5 dark:border-red-900/40 dark:bg-atg-elevated">
             <p className="text-sm text-red-700 dark:text-red-300">
               Donnees de reservation invalides. Revenez au panier.
             </p>
@@ -324,23 +324,23 @@ export function ReservationRecapPageContent({ draft }: Props) {
         )}
 
         {draft && (
-          <div className="mt-6 rounded-xl border border-gray-200 bg-white p-5 dark:border-atg-border dark:bg-atg-elevated">
-            {loading && <p className="text-sm text-gray-600 dark:text-atg-muted">Chargement…</p>}
+          <div className="mt-6 rounded-xl border border-atg-border bg-atg-elevated p-5 dark:border-atg-border dark:bg-atg-elevated">
+            {loading && <p className="text-sm text-atg-muted">Chargement…</p>}
 
             {!loading && isRoomReservationDraft(draft) && hotelDetail && room && (
               <div className="space-y-2">
                 <p className="text-sm text-primary">{hotelDetail.destinationName}</p>
-                <h2 className="text-xl font-bold text-[#0f1a16] dark:text-white">{hotelDetail.name}</h2>
-                <p className="text-sm text-gray-600 dark:text-atg-muted">{room.name}</p>
-                <p className="text-sm text-gray-600 dark:text-atg-muted">
+                <h2 className="text-xl font-bold text-atg-fg">{hotelDetail.name}</h2>
+                <p className="text-sm text-atg-muted">{room.name}</p>
+                <p className="text-sm text-atg-muted">
                   {formatDisplayDate(draft.checkIn, locale)} {'->'}{' '}
                   {formatDisplayDate(draft.checkOut, locale)}
                 </p>
-                <p className="text-sm text-gray-600 dark:text-atg-muted">
+                <p className="text-sm text-atg-muted">
                   {draft.guests} voyageur{draft.guests > 1 ? 's' : ''}
                 </p>
                 {totalLabel && (
-                  <p className="pt-1 text-2xl font-bold text-[#0f1a16] dark:text-white">
+                  <p className="pt-1 text-2xl font-bold text-atg-fg">
                     {totalLabel}
                   </p>
                 )}
@@ -352,23 +352,23 @@ export function ReservationRecapPageContent({ draft }: Props) {
                 <p className="text-sm text-primary">
                   {flightDetail.airlineName} · {flightDetail.flightNumber}
                 </p>
-                <h2 className="text-xl font-bold text-[#0f1a16] dark:text-white">
+                <h2 className="text-xl font-bold text-atg-fg">
                   {formatAirportLabel(flightDetail.departureAirport.iataCode, flightDetail.departureAirport)} →{' '}
                   {formatAirportLabel(flightDetail.arrivalAirport.iataCode, flightDetail.arrivalAirport)}
                 </h2>
-                <p className="text-sm text-gray-600 dark:text-atg-muted">
+                <p className="text-sm text-atg-muted">
                   {f.classNames[flightClass.className] ?? flightClass.className}
                 </p>
-                <p className="text-sm text-gray-600 dark:text-atg-muted">
+                <p className="text-sm text-atg-muted">
                   {formatDisplayDate(draft.departureDate, locale)}
                 </p>
-                <p className="text-sm text-gray-600 dark:text-atg-muted">
+                <p className="text-sm text-atg-muted">
                   {draft.passengers === 1
                     ? `1 ${f.passengerSingular}`
                     : f.passengerPlural.replace('{n}', String(draft.passengers))}
                 </p>
                 {totalLabel && (
-                  <p className="pt-1 text-2xl font-bold text-[#0f1a16] dark:text-white">
+                  <p className="pt-1 text-2xl font-bold text-atg-fg">
                     {totalLabel}
                   </p>
                 )}
@@ -378,23 +378,23 @@ export function ReservationRecapPageContent({ draft }: Props) {
             {!loading && cruiseReady && cruiseDetail && isCabinReservationDraft(draft) && (
               <div className="space-y-2">
                 <p className="text-sm text-primary">{cruiseDetail.cruiseLineName}</p>
-                <h2 className="text-xl font-bold text-[#0f1a16] dark:text-white">
+                <h2 className="text-xl font-bold text-atg-fg">
                   {cruiseDetail.itineraryName}
                 </h2>
-                <p className="text-sm text-gray-600 dark:text-atg-muted">
+                <p className="text-sm text-atg-muted">
                   {cr.shipLabel}: {cruiseDetail.shipName} · {cruiseReady.categoryName}
                 </p>
-                <p className="text-sm text-gray-600 dark:text-atg-muted">
+                <p className="text-sm text-atg-muted">
                   {formatDisplayDate(cruiseDetail.departureDate, locale)} {'->'}{' '}
                   {formatDisplayDate(cruiseDetail.returnDate, locale)}
                 </p>
-                <p className="text-sm text-gray-600 dark:text-atg-muted">
+                <p className="text-sm text-atg-muted">
                   {draft.guests === 1
                     ? `1 ${cr.guestSingular}`
                     : cr.guestPlural.replace('{n}', String(draft.guests))}
                 </p>
                 {totalLabel && (
-                  <p className="pt-1 text-2xl font-bold text-[#0f1a16] dark:text-white">
+                  <p className="pt-1 text-2xl font-bold text-atg-fg">
                     {totalLabel}
                   </p>
                 )}
@@ -407,20 +407,20 @@ export function ReservationRecapPageContent({ draft }: Props) {
               isActivityScheduleReservationDraft(draft) && (
                 <div className="space-y-2">
                   <p className="text-sm text-primary">{activityDetail.providerName}</p>
-                  <h2 className="text-xl font-bold text-[#0f1a16] dark:text-white">
+                  <h2 className="text-xl font-bold text-atg-fg">
                     {activityDetail.title}
                   </h2>
-                  <p className="text-sm text-gray-600 dark:text-atg-muted">
+                  <p className="text-sm text-atg-muted">
                     {formatDisplayDate(draft.date, locale)} ·{' '}
                     {formatScheduleTime(activityReady.startDatetime, locale)}
                   </p>
-                  <p className="text-sm text-gray-600 dark:text-atg-muted">
+                  <p className="text-sm text-atg-muted">
                     {draft.participants === 1
                       ? `1 ${f.passengerSingular}`
                       : f.passengerPlural.replace('{n}', String(draft.participants))}
                   </p>
                   {totalLabel && (
-                    <p className="pt-1 text-2xl font-bold text-[#0f1a16] dark:text-white">
+                    <p className="pt-1 text-2xl font-bold text-atg-fg">
                       {totalLabel}
                     </p>
                   )}
@@ -444,7 +444,7 @@ export function ReservationRecapPageContent({ draft }: Props) {
                     locale={locale}
                     showPricing
                   />
-                  <div className="border-t border-gray-100 pt-4 dark:border-atg-border">
+                  <div className="border-t border-atg-border pt-4 dark:border-atg-border">
                     <PackagePriceDisplay
                       pricing={packageDetail.pricing}
                       priceLabel={p.packagePrice}
@@ -474,23 +474,23 @@ export function ReservationRecapPageContent({ draft }: Props) {
             {!loading && vehicleReady && isVehicleReservationDraft(draft) && (
               <div className="space-y-2">
                 <p className="text-sm text-primary">{vehicleReady.agency.name}</p>
-                <h2 className="text-xl font-bold text-[#0f1a16] dark:text-white">
+                <h2 className="text-xl font-bold text-atg-fg">
                   {vehicleReady.category.exampleModel ?? vehicleReady.category.name}
                 </h2>
-                <p className="text-sm text-gray-600 dark:text-atg-muted">
+                <p className="text-sm text-atg-muted">
                   {vehicleReady.agency.city || c.pickupLocation}
                 </p>
-                <p className="text-sm text-gray-600 dark:text-atg-muted">
+                <p className="text-sm text-atg-muted">
                   {formatDisplayDate(draft.pickupDate, locale)} {'->'}{' '}
                   {formatDisplayDate(draft.returnDate, locale)}
                 </p>
-                <p className="text-sm text-gray-600 dark:text-atg-muted">
+                <p className="text-sm text-atg-muted">
                   {vehicleReady.rentalDays === 1
                     ? `1 ${c.daySingular}`
                     : `${vehicleReady.rentalDays} ${c.dayPlural}`}
                 </p>
                 {totalLabel && (
-                  <p className="pt-1 text-2xl font-bold text-[#0f1a16] dark:text-white">
+                  <p className="pt-1 text-2xl font-bold text-atg-fg">
                     {totalLabel}
                   </p>
                 )}
@@ -541,7 +541,7 @@ export function ReservationRecapPageContent({ draft }: Props) {
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
                 href={cartHref}
-                className="inline-flex min-h-[44px] items-center rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 dark:border-atg-border dark:text-white/80 dark:hover:bg-white/5"
+                className="inline-flex min-h-[44px] items-center rounded-lg border border-atg-border px-4 py-2 text-sm font-semibold text-atg-fg hover:bg-atg-surface dark:border-atg-border dark:text-white/80 dark:hover:bg-white/5"
               >
                 Retour panier
               </Link>
