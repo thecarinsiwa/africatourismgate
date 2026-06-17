@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import Link from 'next/link';
 import { cn } from '@africatourismgate/ui';
 
 const fieldInputClass =
@@ -111,5 +112,54 @@ export function SearchFormSubmit({ label, className }: SearchFormSubmitProps) {
     >
       {label}
     </button>
+  );
+}
+
+export type SearchViewAllLinkProps = {
+  href: string;
+  /** Libellé accessible et infobulle — fourni par le parent (i18n). */
+  label: string;
+  className?: string;
+};
+
+/** Lien « voir tout » — icône seule, libellé en sr-only pour l'accessibilité. */
+export function SearchViewAllLink({ href, label, className }: SearchViewAllLinkProps) {
+  return (
+    <Link
+      href={href}
+      aria-label={label}
+      title={label}
+      className={cn(
+        'inline-flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-lg border border-primary px-3 py-2 text-primary transition-colors hover:bg-primary/5 dark:hover:bg-primary/10',
+        className,
+      )}
+    >
+      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={1.5}
+          d="M4 6h16M4 12h16M4 18h16"
+        />
+      </svg>
+      <span className="sr-only">{label}</span>
+    </Link>
+  );
+}
+
+export type SearchFormActionsProps = {
+  submit: ReactNode;
+  viewAllHref: string;
+  /** Libellé accessible du lien voir tout (i18n). */
+  viewAllLabel: string;
+};
+
+/** Zone actions : bouton rechercher + lien voir tout côte à côte. */
+export function SearchFormActions({ submit, viewAllHref, viewAllLabel }: SearchFormActionsProps) {
+  return (
+    <div className="flex items-end gap-2">
+      <div className="min-w-0 flex-1">{submit}</div>
+      <SearchViewAllLink href={viewAllHref} label={viewAllLabel} />
+    </div>
   );
 }

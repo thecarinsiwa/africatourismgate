@@ -17,9 +17,13 @@ export {
   SearchFormInput,
   SearchFormLabel,
   SearchFormSelect,
+  SearchFormActions,
   SearchFormSubmit,
+  SearchViewAllLink,
+  type SearchFormActionsProps,
   type SearchFormInputProps,
   type SearchFormSelectProps,
   type SearchFormSubmitProps,
+  type SearchViewAllLinkProps,
 } from './search-form-fields';
 export { searchFormFieldClass } from './search-form-fields';

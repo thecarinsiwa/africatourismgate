@@ -49,18 +49,18 @@ export function SearchFormShell({
                   type="button"
                   role="tab"
                   aria-selected={selected}
+                  aria-label={tab.label}
+                  title={tab.label}
                   onClick={() => onTabChange(tab.id)}
                   className={cn(
-                    'flex min-w-[4.5rem] flex-1 flex-col items-center justify-center gap-1.5 border-b-[3px] px-2 py-3.5 transition-all sm:min-w-0 sm:flex-row sm:gap-2 sm:py-4',
+                    'flex min-w-[3.5rem] flex-1 items-center justify-center border-b-[3px] px-3 py-4 transition-all sm:min-w-0',
                     selected
                       ? 'border-primary bg-primary text-white'
                       : 'border-transparent bg-gray-50 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:bg-atg-surface dark:text-atg-muted dark:hover:bg-white/5 dark:hover:text-white',
                   )}
                 >
                   {tab.icon}
-                  <span className="text-[10px] font-semibold uppercase leading-tight tracking-wide sm:text-xs">
-                    {tab.label}
-                  </span>
+                  <span className="sr-only">{tab.label}</span>
                 </button>
               );
             })}

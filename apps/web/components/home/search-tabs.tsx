@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { useActivityDestinations } from '../../lib/activities/use-activity-destinations';
@@ -18,6 +17,7 @@ import {
   SearchFormLabel,
   SearchFormSelect,
   SearchFormShell,
+  SearchFormActions,
   SearchFormSubmit,
   searchFormFieldClass,
 } from '../shared';
@@ -33,15 +33,15 @@ const AFRICAN_CITIES = [
 function TabIcon({ tab }: { tab: SearchTab }) {
   switch (tab) {
     case 'flights':
-      return <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>;
+      return <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>;
     case 'hotels':
-      return <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4M9 9v.01M9 12v.01M9 15v.01M9 18v.01" /></svg>;
+      return <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4M9 9v.01M9 12v.01M9 15v.01M9 18v.01" /></svg>;
     case 'cars':
-      return <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 17h8M6 11l2-4h8l2 4M5 17a2 2 0 104 0 2 2 0 00-4 0zm10 0a2 2 0 104 0 2 2 0 00-4 0z" /></svg>;
+      return <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 17h8M6 11l2-4h8l2 4M5 17a2 2 0 104 0 2 2 0 00-4 0zm10 0a2 2 0 104 0 2 2 0 00-4 0z" /></svg>;
     case 'cruises':
-      return <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 18h18M5 14l-2-6h18l-2 6M8 10V6a4 4 0 018 0v4" /></svg>;
+      return <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 18h18M5 14l-2-6h18l-2 6M8 10V6a4 4 0 018 0v4" /></svg>;
     case 'tours':
-      return <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
+      return <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
   }
 }
 
@@ -393,12 +393,6 @@ export function SearchTabs() {
                     ariaLabel={t.search.tripTypeAria}
                     onChange={handleFlightTripTypeChange}
                   />
-                  <Link
-                    href="/flights"
-                    className="inline-flex min-h-[44px] items-center rounded-lg border border-primary px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/5 dark:hover:bg-primary/10"
-                  >
-                    {t.search.viewAllFlights}
-                  </Link>
                 </div>
                 <div className={`grid gap-4 sm:grid-cols-2 ${flightTripType === 'roundTrip' ? 'lg:grid-cols-[1fr_1fr_auto_1fr_1fr_0.75fr_auto]' : 'lg:grid-cols-[1fr_1fr_auto_1fr_0.75fr_auto]'} lg:items-end`}>
                   <div>
@@ -483,7 +477,13 @@ export function SearchTabs() {
                       onChange={(value) => setFlightPassengers(value)}
                     />
                   </div>
-                  <div className="flex items-end">{submitBtn}</div>
+                  <div className="flex items-end">
+                    <SearchFormActions
+                      submit={submitBtn}
+                      viewAllHref="/flights"
+                      viewAllLabel={t.search.viewAllFlights}
+                    />
+                  </div>
                 </div>
                 {airportsError && (
                   <p className="text-sm text-amber-700 dark:text-amber-300" role="status">
@@ -499,16 +499,7 @@ export function SearchTabs() {
             )}
 
             {activeTab === 'hotels' && (
-              <div className="space-y-4">
-                <div className="flex flex-wrap items-center justify-end gap-3">
-                  <Link
-                    href="/hotels"
-                    className="inline-flex min-h-[44px] items-center rounded-lg border border-primary px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/5 dark:hover:bg-primary/10"
-                  >
-                    {t.search.viewAllHotels}
-                  </Link>
-                </div>
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1.25fr_0.75fr_auto] lg:items-end">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1.25fr_0.75fr_auto] lg:items-end">
                   <div>
                     <SearchFormLabel>{t.search.checkIn}</SearchFormLabel>
                     <SearchFormInput type="date" name="checkIn" value={departDate} onChange={setDepartDate} />
@@ -537,9 +528,14 @@ export function SearchTabs() {
                       onChange={setHotelGuests}
                     />
                   </div>
-                  <div className="flex items-end">{submitBtn}</div>
+                  <div className="flex items-end">
+                    <SearchFormActions
+                      submit={submitBtn}
+                      viewAllHref="/hotels"
+                      viewAllLabel={t.search.viewAllHotels}
+                    />
+                  </div>
                 </div>
-              </div>
             )}
 
             {activeTab === 'cars' && (
@@ -557,12 +553,6 @@ export function SearchTabs() {
                       {t.search.carsDurationHint}
                     </span>
                   )}
-                  <Link
-                    href="/cars"
-                    className="inline-flex min-h-[44px] items-center rounded-lg border border-primary px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/5 dark:hover:bg-primary/10"
-                  >
-                    {t.search.viewAllCars}
-                  </Link>
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.25fr_1fr_1fr_auto] lg:items-end">
                   <div>
@@ -610,7 +600,13 @@ export function SearchTabs() {
                       }}
                     />
                   </div>
-                  <div className="flex items-end">{submitBtn}</div>
+                  <div className="flex items-end">
+                    <SearchFormActions
+                      submit={submitBtn}
+                      viewAllHref="/cars"
+                      viewAllLabel={t.search.viewAllCars}
+                    />
+                  </div>
                 </div>
                 {carPickupError && (
                   <p className="text-sm text-amber-700 dark:text-amber-300" role="status">
@@ -627,14 +623,6 @@ export function SearchTabs() {
 
             {activeTab === 'cruises' && (
               <div className="space-y-4">
-                <div className="flex flex-wrap items-center justify-end gap-3">
-                  <Link
-                    href="/cruises"
-                    className="inline-flex min-h-[44px] items-center rounded-lg border border-primary px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/5 dark:hover:bg-primary/10"
-                  >
-                    {t.search.viewAllCruises}
-                  </Link>
-                </div>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1fr_0.75fr_auto] lg:items-end">
                   <div>
                     <SearchFormLabel>{t.search.sailFrom}</SearchFormLabel>
@@ -698,7 +686,13 @@ export function SearchTabs() {
                       onChange={setCruiseGuests}
                     />
                   </div>
-                  <div className="flex items-end">{submitBtn}</div>
+                  <div className="flex items-end">
+                    <SearchFormActions
+                      submit={submitBtn}
+                      viewAllHref="/cruises"
+                      viewAllLabel={t.search.viewAllCruises}
+                    />
+                  </div>
                 </div>
                 {cruiseError && (
                   <p className="text-sm text-red-600 dark:text-red-400" role="alert">
@@ -710,14 +704,6 @@ export function SearchTabs() {
 
             {activeTab === 'tours' && (
               <div className="space-y-4">
-                <div className="flex flex-wrap items-center justify-end gap-3">
-                  <Link
-                    href="/activities"
-                    className="inline-flex min-h-[44px] items-center rounded-lg border border-primary px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/5 dark:hover:bg-primary/10"
-                  >
-                    {t.search.viewAllActivities}
-                  </Link>
-                </div>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.25fr_1fr_0.75fr_auto] lg:items-end">
                   <div>
                     <SearchFormLabel>{t.search.destination}</SearchFormLabel>
@@ -767,7 +753,13 @@ export function SearchTabs() {
                       }}
                     />
                   </div>
-                  <div className="flex items-end">{submitBtn}</div>
+                  <div className="flex items-end">
+                    <SearchFormActions
+                      submit={submitBtn}
+                      viewAllHref="/activities"
+                      viewAllLabel={t.search.viewAllActivities}
+                    />
+                  </div>
                 </div>
                 {activityDestinationsError && (
                   <p className="text-sm text-amber-700 dark:text-amber-300" role="status">
