@@ -467,6 +467,34 @@ INSERT INTO `flight_class_availability` (
   '00000000-0000-4000-8000-000000000010'
 );
 
+INSERT INTO `flight_images` (
+  `id`, `flight_id`, `url`, `caption`, `sort_order`, `created_by_user_id`
+) VALUES
+(
+  '00000000-0000-4000-8000-00000000302a',
+  '00000000-0000-4000-8000-000000003020',
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Clouds_from_above_%28Unsplash%29.jpg/1280px-Clouds_from_above_%28Unsplash%29.jpg',
+  'Vue aérienne — Kinshasa → Nairobi',
+  1,
+  '00000000-0000-4000-8000-000000000010'
+),
+(
+  '00000000-0000-4000-8000-00000000302b',
+  '00000000-0000-4000-8000-000000003020',
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/A_giraffe_with_a_beautiful_background_of_Nairobi_City_Skyline_%28cropped%29.jpg/1280px-A_giraffe_with_a_beautiful_background_of_Nairobi_City_Skyline_%28cropped%29.jpg',
+  'Arrivée à Nairobi',
+  2,
+  '00000000-0000-4000-8000-000000000010'
+),
+(
+  '00000000-0000-4000-8000-00000000302c',
+  '00000000-0000-4000-8000-000000003021',
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Clouds_from_above_%28Unsplash%29.jpg/1280px-Clouds_from_above_%28Unsplash%29.jpg',
+  'Retour Nairobi → Kinshasa',
+  1,
+  '00000000-0000-4000-8000-000000000010'
+);
+
 -- -----------------------------------------------------------------------------
 -- 14. Demo vehicles (Kinshasa, public search #64)
 -- -----------------------------------------------------------------------------
@@ -522,6 +550,34 @@ INSERT INTO `vehicle_availability` (
   '00000000-0000-4000-8000-000000000010'
 );
 
+INSERT INTO `vehicle_images` (
+  `id`, `vehicle_id`, `url`, `caption`, `sort_order`, `created_by_user_id`
+) VALUES
+(
+  '00000000-0000-4000-8000-000000004025',
+  '00000000-0000-4000-8000-000000004021',
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Car_keys.jpg/1280px-Car_keys.jpg',
+  'Toyota Yaris — économique',
+  1,
+  '00000000-0000-4000-8000-000000000010'
+),
+(
+  '00000000-0000-4000-8000-000000004026',
+  '00000000-0000-4000-8000-000000004021',
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Kinshasa_Gombe_%28cropped%29.jpg/1280px-Kinshasa_Gombe_%28cropped%29.jpg',
+  'Prise en charge à Kinshasa',
+  2,
+  '00000000-0000-4000-8000-000000000010'
+),
+(
+  '00000000-0000-4000-8000-000000004027',
+  '00000000-0000-4000-8000-000000004022',
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Car_keys.jpg/1280px-Car_keys.jpg',
+  'SUV — catégorie confort',
+  1,
+  '00000000-0000-4000-8000-000000000010'
+);
+
 -- -----------------------------------------------------------------------------
 -- 15. Demo cruises (CDKIN → CDBNW, public search #65)
 -- -----------------------------------------------------------------------------
@@ -532,6 +588,26 @@ INSERT INTO `ships` (
   '00000000-0000-4000-8000-000000003010',
   'Congo River Spirit',
   2018,
+  '00000000-0000-4000-8000-000000000010'
+);
+
+INSERT INTO `ship_images` (
+  `id`, `ship_id`, `url`, `caption`, `sort_order`, `created_by_user_id`
+) VALUES
+(
+  '00000000-0000-4000-8000-000000003035',
+  '00000000-0000-4000-8000-000000003030',
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Congo_River_near_Kisangani.jpg/1280px-Congo_River_near_Kisangani.jpg',
+  'Fleuve Congo',
+  1,
+  '00000000-0000-4000-8000-000000000010'
+),
+(
+  '00000000-0000-4000-8000-000000003036',
+  '00000000-0000-4000-8000-000000003030',
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Kinshasa_Gombe_%28cropped%29.jpg/1280px-Kinshasa_Gombe_%28cropped%29.jpg',
+  'Embarquement à Kinshasa',
+  2,
   '00000000-0000-4000-8000-000000000010'
 );
 
@@ -684,6 +760,42 @@ INSERT INTO `activity_schedules` (
   '00000000-0000-4000-8000-000000000010'
 );
 
+INSERT INTO `activity_images` (
+  `id`, `activity_id`, `url`, `caption`, `sort_order`, `created_by_user_id`
+) VALUES
+(
+  '00000000-0000-4000-8000-000000004036',
+  '00000000-0000-4000-8000-000000004031',
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Kinshasa_Gombe_%28cropped%29.jpg/1280px-Kinshasa_Gombe_%28cropped%29.jpg',
+  'Quartier Gombe, Kinshasa',
+  1,
+  '00000000-0000-4000-8000-000000000010'
+),
+(
+  '00000000-0000-4000-8000-000000004037',
+  '00000000-0000-4000-8000-000000004031',
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Congo_River_near_Kisangani.jpg/1280px-Congo_River_near_Kisangani.jpg',
+  'Vue sur le fleuve Congo',
+  2,
+  '00000000-0000-4000-8000-000000000010'
+),
+(
+  '00000000-0000-4000-8000-000000004038',
+  '00000000-0000-4000-8000-000000004032',
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Congo_River_near_Kisangani.jpg/1280px-Congo_River_near_Kisangani.jpg',
+  'Promenade au bord du fleuve Congo',
+  1,
+  '00000000-0000-4000-8000-000000000010'
+),
+(
+  '00000000-0000-4000-8000-000000004039',
+  '00000000-0000-4000-8000-000000004032',
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Kinshasa_Gombe_%28cropped%29.jpg/1280px-Kinshasa_Gombe_%28cropped%29.jpg',
+  'Kinshasa — point de départ',
+  2,
+  '00000000-0000-4000-8000-000000000010'
+);
+
 -- -----------------------------------------------------------------------------
 -- 17. Demo activity-only package (public catalog #71)
 -- -----------------------------------------------------------------------------
@@ -714,6 +826,26 @@ INSERT INTO `package_items` (
   '00000000-0000-4000-8000-000000005001',
   'activity',
   '00000000-0000-4000-8000-000000004032',
+  '00000000-0000-4000-8000-000000000010'
+);
+
+INSERT INTO `package_images` (
+  `id`, `package_id`, `url`, `caption`, `sort_order`, `created_by_user_id`
+) VALUES
+(
+  '00000000-0000-4000-8000-000000005004',
+  '00000000-0000-4000-8000-000000005001',
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Kinshasa_Gombe_%28cropped%29.jpg/1280px-Kinshasa_Gombe_%28cropped%29.jpg',
+  'Découvertes à Kinshasa',
+  1,
+  '00000000-0000-4000-8000-000000000010'
+),
+(
+  '00000000-0000-4000-8000-000000005005',
+  '00000000-0000-4000-8000-000000005001',
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Congo_River_near_Kisangani.jpg/1280px-Congo_River_near_Kisangani.jpg',
+  'Au bord du fleuve Congo',
+  2,
   '00000000-0000-4000-8000-000000000010'
 );
 

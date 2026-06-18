@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import {
   buildPackageDetailHref,
@@ -21,9 +22,34 @@ export function PackageCard({ pkg, t, searchParams = {} }: PackageCardProps) {
   const reserveHref = buildPackageDetailHref(pkg.id, searchParams, '#items');
   const itemsLabel = t.itemsIncluded.replace('{n}', String(pkg.itemCount));
 
+  const imageOverlay = (
+    <div className="absolute inset-0 flex flex-col justify-center px-6 py-8 text-white">
+      <p className="text-xs font-semibold uppercase tracking-wide text-white/70">
+        {t.cardBadge}
+      </p>
+      <p className="mt-1 text-xl font-bold leading-tight">{pkg.name}</p>
+      {pkg.description ? (
+        <p className="mt-2 line-clamp-3 text-sm text-white/80">{pkg.description}</p>
+      ) : null}
+    </div>
+  );
+
   return (
     <ProductCard
       image={
+        pkg.imageUrl ? (
+          <>
+            <Image
+              src={pkg.imageUrl}
+              alt={pkg.name}
+              fill
+              className="object-cover"
+              sizes="(max-width: 640px) 100vw, 320px"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+            {imageOverlay}
+          </>
+        ) : (
         <div className="absolute inset-0 flex flex-col justify-center bg-gradient-to-br from-[#0f2744] to-primary/80 px-6 py-8 text-white">
           <p className="text-xs font-semibold uppercase tracking-wide text-white/70">
             {t.cardBadge}
@@ -33,6 +59,7 @@ export function PackageCard({ pkg, t, searchParams = {} }: PackageCardProps) {
             <p className="mt-2 line-clamp-3 text-sm text-white/80">{pkg.description}</p>
           ) : null}
         </div>
+        )
       }
       title={
         <h3 className="text-lg font-bold text-atg-fg sm:text-xl">{pkg.name}</h3>

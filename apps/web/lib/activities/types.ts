@@ -1,3 +1,5 @@
+import type { ProductGalleryImage } from '../shared/product-images';
+
 export interface ActivitySearchQuery {
   destination?: string;
   date: string;
@@ -23,6 +25,7 @@ export interface ActivitySearchResult {
   providerName: string;
   availableSchedulesCount: number;
   nextStartDatetime?: string;
+  imageUrl?: string | null;
 }
 
 export interface ActivityDetailQuery {
@@ -52,4 +55,5 @@ export interface ActivityDetail {
   date: string;
   participants: number;
   schedules: ActivityScheduleOffer[];
+  images?: ProductGalleryImage[];
 }

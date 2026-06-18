@@ -4,10 +4,12 @@ import { In, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import {
   Activities,
+  ActivityImages,
   ActivityProviders,
   ActivitySchedules,
   Destinations,
 } from '../../../entities/generated';
+import { PublicGalleryImageDto } from '../dto/public-gallery-image.dto';
 import { PublicDestinationDto } from '../accommodations/dto/public-destination.dto';
 import { ActivityBrowseQueryDto } from './dto/activity-browse-query.dto';
 import { ActivityDetailQueryDto } from './dto/activity-detail-query.dto';
@@ -23,6 +25,8 @@ export class PublicActivitiesService {
   constructor(
     @InjectRepository(Activities)
     private readonly activitiesRepository: Repository<Activities>,
+    @InjectRepository(ActivityImages)
+    private readonly activityImagesRepository: Repository<ActivityImages>,
     @InjectRepository(ActivityProviders)
     private readonly providersRepository: Repository<ActivityProviders>,
     @InjectRepository(ActivitySchedules)
@@ -105,6 +109,8 @@ export class PublicActivitiesService {
     );
 
     const activityIds = activeActivities.map((a) => a.id);
+    const imageUrlByActivityId = await this.loadPrimaryImageUrlByActivityId(activityIds);
+
     const schedules = await this.schedulesRepository
       .createQueryBuilder('schedule')
       .where('schedule.activityId IN (:...activityIds)', { activityIds })
@@ -142,6 +148,7 @@ export class PublicActivitiesService {
         destination: destinationById.get(provider.destinationId) ?? '',
         providerName: provider.name,
         availableSchedulesCount: availableSchedules.length,
+        imageUrl: imageUrlByActivityId.get(activity.id) ?? null,
       };
 
       if (availableSchedules[0]) {
@@ -220,6 +227,8 @@ export class PublicActivitiesService {
     );
 
     const activityIds = activeActivities.map((a) => a.id);
+    const imageUrlByActivityId = await this.loadPrimaryImageUrlByActivityId(activityIds);
+
     const schedules = await this.schedulesRepository
       .createQueryBuilder('schedule')
       .where('schedule.activityId IN (:...activityIds)', { activityIds })
@@ -264,6 +273,7 @@ export class PublicActivitiesService {
         providerName: provider.name,
         availableSchedulesCount: availableSchedules.length,
         nextStartDatetime: this.toIsoDatetime(availableSchedules[0].startDatetime),
+        imageUrl: imageUrlByActivityId.get(activity.id) ?? null,
       });
     }
 
@@ -330,7 +340,43 @@ export class PublicActivitiesService {
       date: query.date,
       participants,
       schedules,
+      images: await this.loadActivityGallery(activity.id),
     };
+  }
+
+  private async loadPrimaryImageUrlByActivityId(
+    activityIds: string[],
+  ): Promise<Map<string, string>> {
+    if (!activityIds.length) {
+      return new Map();
+    }
+
+    const rows = await this.activityImagesRepository.find({
+      where: { activityId: In(activityIds) },
+      order: { sortOrder: 'ASC' },
+    });
+    const imageUrlByActivityId = new Map<string, string>();
+    for (const row of rows) {
+      if (!row.deletedAt && !imageUrlByActivityId.has(row.activityId)) {
+        imageUrlByActivityId.set(row.activityId, row.url);
+      }
+    }
+    return imageUrlByActivityId;
+  }
+
+  private async loadActivityGallery(activityId: string): Promise<PublicGalleryImageDto[]> {
+    const rows = await this.activityImagesRepository.find({
+      where: { activityId },
+      order: { sortOrder: 'ASC' },
+    });
+    return rows
+      .filter((row) => !row.deletedAt)
+      .map((row) => ({
+        id: row.id,
+        url: row.url,
+        caption: row.caption ?? null,
+        sortOrder: row.sortOrder,
+      }));
   }
 
   private async resolveDestinationIds(destination: string): Promise<string[]> {

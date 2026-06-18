@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import {
   buildFlightDetailHref,
@@ -33,9 +34,36 @@ export function FlightCard({ flight, t, searchParams = {}, locale }: FlightCardP
   const reserveHref = buildFlightDetailHref(flight.id, detailParams, '#reserve');
   const priceLabel = formatFlightPrice(flight.minPriceCents, flight.currency);
 
+  const imageOverlay = (
+    <div className="absolute inset-0 flex flex-col justify-center px-6 py-8 text-white">
+      <p className="text-xs font-semibold uppercase tracking-wide text-white/70">
+        {flight.airlineName}
+      </p>
+      <p className="mt-1 text-2xl font-bold">{flight.flightNumber}</p>
+      {flight.roundTrip ? (
+        <span className="mt-3 inline-flex w-fit rounded-md bg-white/15 px-2 py-1 text-xs font-semibold">
+          {t.roundTripBadge}
+        </span>
+      ) : null}
+    </div>
+  );
+
   return (
     <ProductCard
       image={
+        flight.imageUrl ? (
+          <>
+            <Image
+              src={flight.imageUrl}
+              alt={flight.flightNumber}
+              fill
+              className="object-cover"
+              sizes="(max-width: 640px) 100vw, 320px"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+            {imageOverlay}
+          </>
+        ) : (
         <div className="absolute inset-0 flex flex-col justify-center bg-gradient-to-br from-[#1b1b2f] to-primary/80 px-6 py-8 text-white">
           <p className="text-xs font-semibold uppercase tracking-wide text-white/70">
             {flight.airlineName}
@@ -47,6 +75,7 @@ export function FlightCard({ flight, t, searchParams = {}, locale }: FlightCardP
             </span>
           ) : null}
         </div>
+        )
       }
       title={null}
       body={

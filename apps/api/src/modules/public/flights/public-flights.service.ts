@@ -7,8 +7,10 @@ import {
   Airports,
   FlightClassAvailability,
   FlightClasses,
+  FlightImages,
   Flights,
 } from '../../../entities/generated';
+import { PublicGalleryImageDto } from '../dto/public-gallery-image.dto';
 import { FlightDetailQueryDto } from './dto/flight-detail-query.dto';
 import { FlightDetailDto } from './dto/flight-detail.dto';
 import { FlightSearchQueryDto } from './dto/flight-search-query.dto';
@@ -31,6 +33,8 @@ export class PublicFlightsService {
   constructor(
     @InjectRepository(Flights)
     private readonly flightsRepository: Repository<Flights>,
+    @InjectRepository(FlightImages)
+    private readonly flightImagesRepository: Repository<FlightImages>,
     @InjectRepository(FlightClasses)
     private readonly flightClassesRepository: Repository<FlightClasses>,
     @InjectRepository(FlightClassAvailability)
@@ -126,6 +130,9 @@ export class PublicFlightsService {
       airlines.filter((a) => !a.deletedAt).map((a) => [a.id, a]),
     );
 
+    const flightIds = outboundFlights.filter((f) => !f.deletedAt).map((f) => f.id);
+    const imageUrlByFlightId = await this.loadPrimaryImageUrlByFlightId(flightIds);
+
     const results: FlightSearchResultDto[] = [];
 
     for (const flight of outboundFlights) {
@@ -172,6 +179,7 @@ export class PublicFlightsService {
         currency: DEFAULT_CURRENCY,
         roundTrip: Boolean(query.returnDate),
         departureDate: travelDate,
+        imageUrl: imageUrlByFlightId.get(flight.id) ?? null,
       });
     }
 
@@ -275,6 +283,7 @@ export class PublicFlightsService {
     }
 
     const minPriceCents = Math.min(...classes.map((c) => c.totalPriceCents));
+    const images = await this.loadFlightGallery(flight.id);
 
     return {
       id: flight.id,
@@ -292,7 +301,43 @@ export class PublicFlightsService {
       minPriceCents,
       currency: DEFAULT_CURRENCY,
       classes,
+      images,
     };
+  }
+
+  private async loadPrimaryImageUrlByFlightId(
+    flightIds: string[],
+  ): Promise<Map<string, string>> {
+    if (!flightIds.length) {
+      return new Map();
+    }
+
+    const rows = await this.flightImagesRepository.find({
+      where: { flightId: In(flightIds) },
+      order: { sortOrder: 'ASC' },
+    });
+    const imageUrlByFlightId = new Map<string, string>();
+    for (const row of rows) {
+      if (!row.deletedAt && !imageUrlByFlightId.has(row.flightId)) {
+        imageUrlByFlightId.set(row.flightId, row.url);
+      }
+    }
+    return imageUrlByFlightId;
+  }
+
+  private async loadFlightGallery(flightId: string): Promise<PublicGalleryImageDto[]> {
+    const rows = await this.flightImagesRepository.find({
+      where: { flightId },
+      order: { sortOrder: 'ASC' },
+    });
+    return rows
+      .filter((row) => !row.deletedAt)
+      .map((row) => ({
+        id: row.id,
+        url: row.url,
+        caption: row.caption ?? null,
+        sortOrder: row.sortOrder,
+      }));
   }
 
   private async findAirportByIata(iata: string): Promise<AirportSummary | null> {

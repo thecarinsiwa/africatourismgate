@@ -18,6 +18,7 @@ import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { buildReservationQuery } from '../../lib/reservations/flow';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
+import { ProductGallery } from '../shared';
 import { CruiseBookingMobileBar, CruiseBookingSidebar } from './cruise-booking-sidebar';
 import { CruiseCabinsSection } from './cruise-cabins-section';
 import { CruiseItinerarySection } from './cruise-itinerary-section';
@@ -221,29 +222,46 @@ export function CruiseDetailPageContent({
       <HomeHeader />
 
       <div className="border-b border-atg-border bg-atg-elevated dark:border-atg-border dark:bg-atg-elevated">
-        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
           <nav
-            className="flex flex-wrap items-center gap-2 text-sm text-atg-muted"
+            className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-atg-muted"
             aria-label="Breadcrumb"
           >
             <Link href="/" className="transition-colors hover:text-primary">
               {c.breadcrumbHome}
             </Link>
-            <span aria-hidden>/</span>
-            <Link href={listHref} className="transition-colors hover:text-primary">
-              {c.breadcrumbCruises}
-            </Link>
-            <span aria-hidden>/</span>
-            <span className="font-medium text-atg-fg">
-              {detail.itineraryName}
+            <span className="text-atg-muted/60" aria-hidden>
+              ›
             </span>
+            <Link href={listHref} className="transition-colors hover:text-primary">
+              {c.breadcrumbCruisesDetail}
+            </Link>
+            <span className="text-atg-muted/60" aria-hidden>
+              ›
+            </span>
+            <span className="font-medium text-atg-fg">{detail.itineraryName}</span>
           </nav>
         </div>
       </div>
 
       <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 pb-28 sm:px-6 lg:px-8 lg:pb-8">
         <div className="lg:grid lg:grid-cols-3 lg:gap-8">
-          <div className="space-y-8 lg:col-span-2">
+          <div className="min-w-0 space-y-8 lg:col-span-2">
+            {detail.images && detail.images.length > 0 ? (
+              <ProductGallery
+                images={detail.images}
+                name={detail.shipName}
+                labels={{
+                  ariaLabel: c.galleryAria,
+                  openLightbox: c.galleryOpenLightbox,
+                  close: c.galleryClose,
+                  previous: c.galleryPrevious,
+                  next: c.galleryNext,
+                  counter: c.galleryCounter,
+                }}
+              />
+            ) : null}
+
             <header>
               <p className="text-sm font-semibold uppercase tracking-wide text-primary">
                 {detail.cruiseLineName}

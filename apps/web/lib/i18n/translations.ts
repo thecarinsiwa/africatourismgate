@@ -336,6 +336,12 @@ export type Translations = {
       business: string;
       first: string;
     };
+    galleryAria: string;
+    galleryOpenLightbox: string;
+    galleryClose: string;
+    galleryPrevious: string;
+    galleryNext: string;
+    galleryCounter: (current: number, total: number) => string;
   };
   cars: {
     metaTitle: string;
@@ -414,12 +420,19 @@ export type Translations = {
       insurance: string;
       fuelPolicy: string;
     };
+    galleryAria: string;
+    galleryOpenLightbox: string;
+    galleryClose: string;
+    galleryPrevious: string;
+    galleryNext: string;
+    galleryCounter: (current: number, total: number) => string;
   };
   cruises: {
     metaTitle: string;
     metaDescription: string;
     breadcrumbHome: string;
     breadcrumbCruises: string;
+    breadcrumbCruisesDetail: string;
     heroTitle: string;
     heroSubtitle: string;
     resultsFor: string;
@@ -460,6 +473,14 @@ export type Translations = {
     cabinsTitle: string;
     selectCabin: string;
     selectCabinHint: string;
+    selectedCabin: string;
+    capacityLabel: string;
+    deckLabel: string;
+    deck: {
+      main: string;
+      upper: string;
+      promenade: string;
+    };
     cabinsLeft: string;
     unavailable: string;
     insufficientCabins: string;
@@ -474,6 +495,12 @@ export type Translations = {
     nightPlural: string;
     searchRequired: string;
     endAfterStart: string;
+    galleryAria: string;
+    galleryOpenLightbox: string;
+    galleryClose: string;
+    galleryPrevious: string;
+    galleryNext: string;
+    galleryCounter: (current: number, total: number) => string;
   };
   activities: {
     metaTitle: string;
@@ -532,6 +559,12 @@ export type Translations = {
     descriptionTitle: string;
     nextSlot: string;
     schedulesAvailable: string;
+    galleryAria: string;
+    galleryOpenLightbox: string;
+    galleryClose: string;
+    galleryPrevious: string;
+    galleryNext: string;
+    galleryCounter: (current: number, total: number) => string;
   };
   packages: {
     metaTitle: string;
@@ -628,6 +661,12 @@ export type Translations = {
       cruise: string;
       activity: string;
     };
+    galleryAria: string;
+    galleryOpenLightbox: string;
+    galleryClose: string;
+    galleryPrevious: string;
+    galleryNext: string;
+    galleryCounter: (current: number, total: number) => string;
   };
   account: {
     title: string;
@@ -1243,6 +1282,12 @@ const fr: Translations = {
       business: 'Affaires',
       first: 'Première',
     },
+    galleryAria: 'Galerie photos du vol',
+    galleryOpenLightbox: 'Agrandir la photo',
+    galleryClose: 'Fermer la galerie',
+    galleryPrevious: 'Photo précédente',
+    galleryNext: 'Photo suivante',
+    galleryCounter: (current, total) => `Photo ${current} sur ${total}`,
   },
   cars: {
     metaTitle: 'Location de voitures en Afrique',
@@ -1328,6 +1373,12 @@ const fr: Translations = {
       fuelPolicy:
         'Politique plein / plein : restituez le véhicule avec le même niveau de carburant.',
     },
+    galleryAria: 'Galerie photos du véhicule',
+    galleryOpenLightbox: 'Agrandir la photo',
+    galleryClose: 'Fermer la galerie',
+    galleryPrevious: 'Photo précédente',
+    galleryNext: 'Photo suivante',
+    galleryCounter: (current, total) => `Photo ${current} sur ${total}`,
   },
   cruises: {
     metaTitle: 'Croisières fluviales en Afrique',
@@ -1335,6 +1386,7 @@ const fr: Translations = {
       'Comparez et réservez des croisières sur le fleuve Congo et les côtes africaines avec Africa Tourism Gate.',
     breadcrumbHome: 'Accueil',
     breadcrumbCruises: 'Croisières',
+    breadcrumbCruisesDetail: 'Croisières',
     heroTitle: 'Croisières en Afrique',
     heroSubtitle:
       'Itinéraires fluviaux et côtiers — choisissez votre cabine et embarquez en toute sérénité.',
@@ -1376,6 +1428,14 @@ const fr: Translations = {
     cabinsTitle: 'Cabines disponibles',
     selectCabin: 'Choisir cette cabine',
     selectCabinHint: 'Sélectionnez une cabine pour réserver.',
+    selectedCabin: 'Sélectionnée',
+    capacityLabel: '{n} voyageurs max',
+    deckLabel: 'Pont',
+    deck: {
+      main: 'Pont principal',
+      upper: 'Pont supérieur',
+      promenade: 'Pont promenade',
+    },
     cabinsLeft: '{n} cabine(s) disponible(s)',
     unavailable: 'Complet',
     insufficientCabins: 'Pas assez de cabines pour ce nombre de voyageurs.',
@@ -1390,6 +1450,12 @@ const fr: Translations = {
     nightPlural: 'nuits',
     searchRequired: 'Indiquez les ports et les dates de départ.',
     endAfterStart: 'La date de fin doit être après la date de début.',
+    galleryAria: 'Galerie photos du navire',
+    galleryOpenLightbox: 'Agrandir la photo',
+    galleryClose: 'Fermer la galerie',
+    galleryPrevious: 'Photo précédente',
+    galleryNext: 'Photo suivante',
+    galleryCounter: (current, total) => `Photo ${current} sur ${total}`,
   },
   activities: {
     metaTitle: 'Activités et tours en Afrique',
@@ -1450,6 +1516,12 @@ const fr: Translations = {
     descriptionTitle: 'Description',
     nextSlot: 'Prochain créneau',
     schedulesAvailable: '{n} créneau(x) disponible(s)',
+    galleryAria: 'Galerie photos de l\'activité',
+    galleryOpenLightbox: 'Agrandir la photo',
+    galleryClose: 'Fermer la galerie',
+    galleryPrevious: 'Photo précédente',
+    galleryNext: 'Photo suivante',
+    galleryCounter: (current, total) => `Photo ${current} sur ${total}`,
   },
   packages: {
     metaTitle: 'Forfaits combinés en Afrique',
@@ -1554,6 +1626,12 @@ const fr: Translations = {
       cruise: 'Cabine croisière',
       activity: 'Activité',
     },
+    galleryAria: 'Galerie photos du forfait',
+    galleryOpenLightbox: 'Agrandir la photo',
+    galleryClose: 'Fermer la galerie',
+    galleryPrevious: 'Photo précédente',
+    galleryNext: 'Photo suivante',
+    galleryCounter: (current, total) => `Photo ${current} sur ${total}`,
   },
   account: {
     title: 'Mon compte',
@@ -2195,6 +2273,12 @@ const en: Translations = {
       business: 'Business',
       first: 'First',
     },
+    galleryAria: 'Flight photo gallery',
+    galleryOpenLightbox: 'Enlarge photo',
+    galleryClose: 'Close gallery',
+    galleryPrevious: 'Previous photo',
+    galleryNext: 'Next photo',
+    galleryCounter: (current, total) => `Photo ${current} of ${total}`,
   },
   cars: {
     metaTitle: 'Car rental in Africa',
@@ -2280,6 +2364,12 @@ const en: Translations = {
       fuelPolicy:
         'Full-to-full policy: return the vehicle with the same fuel level as at pick-up.',
     },
+    galleryAria: 'Vehicle photo gallery',
+    galleryOpenLightbox: 'Enlarge photo',
+    galleryClose: 'Close gallery',
+    galleryPrevious: 'Previous photo',
+    galleryNext: 'Next photo',
+    galleryCounter: (current, total) => `Photo ${current} of ${total}`,
   },
   cruises: {
     metaTitle: 'River & coastal cruises in Africa',
@@ -2287,6 +2377,7 @@ const en: Translations = {
       'Compare and book Congo River and African coastal cruises with Africa Tourism Gate.',
     breadcrumbHome: 'Home',
     breadcrumbCruises: 'Cruises',
+    breadcrumbCruisesDetail: 'Cruises',
     heroTitle: 'Cruises in Africa',
     heroSubtitle:
       'River and coastal itineraries — pick your cabin and sail with confidence.',
@@ -2328,6 +2419,14 @@ const en: Translations = {
     cabinsTitle: 'Available cabins',
     selectCabin: 'Select this cabin',
     selectCabinHint: 'Select a cabin to book.',
+    selectedCabin: 'Selected',
+    capacityLabel: 'Up to {n} guests',
+    deckLabel: 'Deck',
+    deck: {
+      main: 'Main deck',
+      upper: 'Upper deck',
+      promenade: 'Promenade deck',
+    },
     cabinsLeft: '{n} cabin(s) available',
     unavailable: 'Sold out',
     insufficientCabins: 'Not enough cabins for this guest count.',
@@ -2342,6 +2441,12 @@ const en: Translations = {
     nightPlural: 'nights',
     searchRequired: 'Enter ports and departure dates.',
     endAfterStart: 'End date must be after start date.',
+    galleryAria: 'Ship photo gallery',
+    galleryOpenLightbox: 'Enlarge photo',
+    galleryClose: 'Close gallery',
+    galleryPrevious: 'Previous photo',
+    galleryNext: 'Next photo',
+    galleryCounter: (current, total) => `Photo ${current} of ${total}`,
   },
   activities: {
     metaTitle: 'Activities & tours in Africa',
@@ -2401,6 +2506,12 @@ const en: Translations = {
     descriptionTitle: 'Description',
     nextSlot: 'Next slot',
     schedulesAvailable: '{n} slot(s) available',
+    galleryAria: 'Activity photo gallery',
+    galleryOpenLightbox: 'Enlarge photo',
+    galleryClose: 'Close gallery',
+    galleryPrevious: 'Previous photo',
+    galleryNext: 'Next photo',
+    galleryCounter: (current, total) => `Photo ${current} of ${total}`,
   },
   packages: {
     metaTitle: 'Combined packages in Africa',
@@ -2505,6 +2616,12 @@ const en: Translations = {
       cruise: 'Cruise cabin',
       activity: 'Activity',
     },
+    galleryAria: 'Package photo gallery',
+    galleryOpenLightbox: 'Enlarge photo',
+    galleryClose: 'Close gallery',
+    galleryPrevious: 'Previous photo',
+    galleryNext: 'Next photo',
+    galleryCounter: (current, total) => `Photo ${current} of ${total}`,
   },
   account: {
     title: 'My account',

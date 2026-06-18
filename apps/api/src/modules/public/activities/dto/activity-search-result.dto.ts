@@ -27,4 +27,7 @@ export class ActivitySearchResultDto {
 
   @ApiPropertyOptional({ example: '2026-07-20T09:00:00.000Z' })
   nextStartDatetime?: string;
+
+  @ApiPropertyOptional({ nullable: true, description: 'First activity photo URL' })
+  imageUrl!: string | null;
 }

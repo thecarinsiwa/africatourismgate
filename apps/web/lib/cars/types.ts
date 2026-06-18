@@ -1,3 +1,5 @@
+import type { ProductGalleryImage } from '../shared/product-images';
+
 export interface VehicleSearchQuery {
   pickupLocation?: string;
   pickupDate?: string;
@@ -21,7 +23,6 @@ export interface VehicleSearchResult {
   pickupDate: string;
   returnDate: string;
   availabilitySlotId: string;
-  /** URL photo — optionnel tant que l'API publique ne l'expose pas. */
   imageUrl?: string | null;
 }
 
@@ -61,6 +62,7 @@ export interface VehicleDetail {
   totalPriceCents: number;
   currency: string;
   availabilitySlot: VehicleDetailAvailabilitySlot | null;
-  /** URL photo — optionnel tant que l'API publique ne l'expose pas. */
+  images?: ProductGalleryImage[];
+  /** Première photo — dérivée de `images` côté API. */
   imageUrl?: string | null;
 }

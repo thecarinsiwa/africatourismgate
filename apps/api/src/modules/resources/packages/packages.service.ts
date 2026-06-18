@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
-import { PackageItems, Packages } from '../../../entities/generated';
+import { PackageItems, PackageImages, Packages } from '../../../entities/generated';
 import { CrudService } from '../../../common/crud/crud.service';
-import { PackageDetailDto } from './dto/package-detail.dto';
+import { PackageDetailDto, PackageGalleryImageDto } from './dto/package-detail.dto';
 import { PackagesListQueryDto } from './dto/packages-list-query.dto';
 import { PackageItemPricingService } from './package-item-pricing.service';
 
@@ -15,6 +15,8 @@ export class PackagesService extends CrudService<Packages> {
     private readonly packagesRepository: Repository<Packages>,
     @InjectRepository(PackageItems)
     private readonly packageItemsRepository: Repository<PackageItems>,
+    @InjectRepository(PackageImages)
+    private readonly packageImagesRepository: Repository<PackageImages>,
     private readonly pricingService: PackageItemPricingService,
   ) {
     super(packagesRepository);
@@ -70,7 +72,43 @@ export class PackagesService extends CrudService<Packages> {
 
     const discountPercent = Number(pkg.discountPercent);
     const pricing = this.pricingService.computePricing(items, discountPercent);
+    const images = await this.loadPackageGallery(id);
 
-    return { package: pkg, items, pricing };
+    return { package: pkg, items, pricing, images };
+  }
+
+  async findPrimaryImageUrlsByPackageIds(
+    packageIds: string[],
+  ): Promise<Map<string, string>> {
+    if (!packageIds.length) {
+      return new Map();
+    }
+
+    const rows = await this.packageImagesRepository.find({
+      where: { packageId: In(packageIds) },
+      order: { sortOrder: 'ASC' },
+    });
+    const imageUrlByPackageId = new Map<string, string>();
+    for (const row of rows) {
+      if (!row.deletedAt && !imageUrlByPackageId.has(row.packageId)) {
+        imageUrlByPackageId.set(row.packageId, row.url);
+      }
+    }
+    return imageUrlByPackageId;
+  }
+
+  private async loadPackageGallery(packageId: string): Promise<PackageGalleryImageDto[]> {
+    const rows = await this.packageImagesRepository.find({
+      where: { packageId },
+      order: { sortOrder: 'ASC' },
+    });
+    return rows
+      .filter((row) => !row.deletedAt)
+      .map((row) => ({
+        id: row.id,
+        url: row.url,
+        caption: row.caption ?? null,
+        sortOrder: row.sortOrder,
+      }));
   }
 }

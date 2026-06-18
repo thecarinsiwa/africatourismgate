@@ -5,6 +5,7 @@ import {
   RentalAgencies,
   VehicleAvailability,
   VehicleCategories,
+  VehicleImages,
   Vehicles,
 } from '../../../entities/generated';
 import { PublicVehiclesController } from './public-vehicles.controller';
@@ -15,6 +16,7 @@ import { PublicVehiclesService } from './public-vehicles.service';
     TypeOrmModule.forFeature([
       Vehicles,
       VehicleCategories,
+      VehicleImages,
       RentalAgencies,
       VehicleAvailability,
       Destinations,
