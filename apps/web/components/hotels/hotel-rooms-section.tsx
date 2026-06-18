@@ -101,7 +101,7 @@ export function HotelRoomsSection({
                   className={`ml-auto min-h-[44px] rounded-lg px-5 py-2 text-sm font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
                     selected
                       ? 'bg-primary text-white'
-                      : 'border border-atg-border text-atg-fg hover:border-primary hover:text-primary dark:border-atg-border dark:text-white'
+                      : 'border border-atg-border text-atg-fg hover:border-primary hover:text-primary dark:border-atg-border dark:text-atg-fg'
                   }`}
                 >
                   {selectRoomLabel}

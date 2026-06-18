@@ -187,6 +187,7 @@ export type Translations = {
     metaDescription: string;
     breadcrumbHome: string;
     breadcrumbHotels: string;
+    breadcrumbHotelsDetail: string;
     heroTitle: string;
     heroSubtitle: string;
     resultsFor: string;
@@ -233,10 +234,19 @@ export type Translations = {
     featuredBadge: string;
     detailMetaDescription: string;
     galleryAria: string;
+    galleryOpenLightbox: string;
+    galleryClose: string;
+    galleryPrevious: string;
+    galleryNext: string;
+    galleryCounter: (current: number, total: number) => string;
     amenitiesTitle: string;
     roomsTitle: string;
     descriptionTitle: string;
     calendarTitle: string;
+    calendarLegendTitle: string;
+    calendarLegendAvailable: string;
+    calendarLegendSelected: string;
+    calendarLegendUnavailable: string;
     selectRoom: string;
     selectRoomHint: string;
     totalStay: string;
@@ -1034,6 +1044,7 @@ const fr: Translations = {
       'Comparez hôtels, lodges et resorts en Afrique. Trouvez le séjour idéal avec Africa Tourism Gate.',
     breadcrumbHome: 'Accueil',
     breadcrumbHotels: 'Hébergements',
+    breadcrumbHotelsDetail: 'Hôtels',
     heroTitle: 'Hébergements d\'exception en Afrique',
     heroSubtitle:
       'Lodges de safari, riads authentiques et resorts en bord de mer — sélectionnés par nos experts voyage.',
@@ -1088,10 +1099,19 @@ const fr: Translations = {
     featuredBadge: 'Coup de cœur',
     detailMetaDescription: 'Réservez votre séjour à {name}. Galerie, équipements et chambres.',
     galleryAria: 'Galerie photos',
+    galleryOpenLightbox: 'Agrandir la photo',
+    galleryClose: 'Fermer la galerie',
+    galleryPrevious: 'Photo précédente',
+    galleryNext: 'Photo suivante',
+    galleryCounter: (current, total) => `Photo ${current} sur ${total}`,
     amenitiesTitle: 'Équipements',
     roomsTitle: 'Chambres',
     descriptionTitle: 'Description',
     calendarTitle: 'Disponibilités et tarifs',
+    calendarLegendTitle: 'Légende',
+    calendarLegendAvailable: 'Disponible',
+    calendarLegendSelected: 'Dates sélectionnées',
+    calendarLegendUnavailable: 'Indisponible',
     selectRoom: 'Choisir cette chambre',
     selectRoomHint: 'Sélectionnez une chambre pour réserver.',
     totalStay: 'Total séjour',
@@ -1932,6 +1952,7 @@ const en: Translations = {
       'Compare hotels, lodges and resorts across Africa. Find your perfect stay with Africa Tourism Gate.',
     breadcrumbHome: 'Home',
     breadcrumbHotels: 'Stays',
+    breadcrumbHotelsDetail: 'Hotels',
     heroTitle: 'Exceptional stays across Africa',
     heroSubtitle:
       'Safari lodges, authentic riads and beach resorts � curated by our travel experts.',
@@ -1986,10 +2007,19 @@ const en: Translations = {
     featuredBadge: 'Top pick',
     detailMetaDescription: 'Book your stay at {name}. Gallery, amenities and rooms.',
     galleryAria: 'Photo gallery',
+    galleryOpenLightbox: 'Enlarge photo',
+    galleryClose: 'Close gallery',
+    galleryPrevious: 'Previous photo',
+    galleryNext: 'Next photo',
+    galleryCounter: (current, total) => `Photo ${current} of ${total}`,
     amenitiesTitle: 'Amenities',
     roomsTitle: 'Rooms',
     descriptionTitle: 'Description',
     calendarTitle: 'Availability and rates',
+    calendarLegendTitle: 'Legend',
+    calendarLegendAvailable: 'Available',
+    calendarLegendSelected: 'Selected dates',
+    calendarLegendUnavailable: 'Unavailable',
     selectRoom: 'Select this room',
     selectRoomHint: 'Select a room to book.',
     totalStay: 'Stay total',

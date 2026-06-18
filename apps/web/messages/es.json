@@ -53,5 +53,19 @@
         "unauthorized": "Correo o contraseña incorrectos."
       }
     }
+  },
+  "hotelsDetail": {
+    "breadcrumbHome": "Inicio",
+    "breadcrumbHotels": "Hoteles",
+    "galleryAria": "Galería de fotos",
+    "galleryOpenLightbox": "Ampliar foto",
+    "galleryClose": "Cerrar galería",
+    "galleryPrevious": "Foto anterior",
+    "galleryNext": "Foto siguiente",
+    "galleryCounter": "Foto {current} de {total}",
+    "calendarLegendTitle": "Leyenda",
+    "calendarLegendAvailable": "Disponible",
+    "calendarLegendSelected": "Fechas seleccionadas",
+    "calendarLegendUnavailable": "No disponible"
   }
 }

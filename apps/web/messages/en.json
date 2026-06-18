@@ -53,5 +53,19 @@
         "unauthorized": "Incorrect email or password."
       }
     }
+  },
+  "hotelsDetail": {
+    "breadcrumbHome": "Home",
+    "breadcrumbHotels": "Hotels",
+    "galleryAria": "Photo gallery",
+    "galleryOpenLightbox": "Enlarge photo",
+    "galleryClose": "Close gallery",
+    "galleryPrevious": "Previous photo",
+    "galleryNext": "Next photo",
+    "galleryCounter": "Photo {current} of {total}",
+    "calendarLegendTitle": "Legend",
+    "calendarLegendAvailable": "Available",
+    "calendarLegendSelected": "Selected dates",
+    "calendarLegendUnavailable": "Unavailable"
   }
 }
