@@ -49,7 +49,7 @@ export function HappyCustomers() {
               <h2 className="text-2xl font-bold uppercase tracking-wide text-atg-fg sm:text-3xl">
                 {t.customers.title}
               </h2>
-              <p className="mt-2 text-lg text-atg-muted">{t.customers.subtitle}</p>
+              <p className="mt-2 text-sm sm:text-base text-atg-muted">{t.customers.subtitle}</p>
               <p className="mt-4 text-sm leading-relaxed text-atg-muted">{t.customers.p1}</p>
               <p className="mt-3 text-sm leading-relaxed text-atg-muted">{t.customers.p2}</p>
             </div>

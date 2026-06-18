@@ -7,8 +7,18 @@ export interface Destination {
   imageUrl: string | null;
   latitude: string | null;
   longitude: string | null;
+  isFeatured: boolean;
   createdAt: string;
   updatedAt: string | null;
+}
+
+export interface PublicDestinationHighlight {
+  id: string;
+  name: string;
+  slug: string;
+  countryCode: string;
+  description: string | null;
+  imageUrl: string | null;
 }
 
 export interface CreateDestinationRequest {
@@ -19,6 +29,7 @@ export interface CreateDestinationRequest {
   imageUrl?: string | null;
   latitude?: number | string | null;
   longitude?: number | string | null;
+  isFeatured?: boolean;
 }
 
 export type UpdateDestinationRequest = Partial<CreateDestinationRequest>;

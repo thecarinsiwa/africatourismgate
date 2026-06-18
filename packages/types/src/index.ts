@@ -283,6 +283,7 @@ export type {
   DestinationsListQuery,
   PointOfInterest,
   PointsOfInterestListQuery,
+  PublicDestinationHighlight,
   UpdateDestinationRequest,
   UpdatePointOfInterestRequest,
 } from './destination.js';

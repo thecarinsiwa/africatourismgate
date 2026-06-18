@@ -433,6 +433,7 @@ CREATE TABLE `destinations` (
   `image_url` VARCHAR(512) DEFAULT NULL,
   `latitude` DECIMAL(10, 7) DEFAULT NULL,
   `longitude` DECIMAL(10, 7) DEFAULT NULL,
+  `is_featured` TINYINT(1) NOT NULL DEFAULT 0,
   `created_by_user_id` CHAR(36) DEFAULT NULL,
   `updated_by_user_id` CHAR(36) DEFAULT NULL,
   `deleted_by_user_id` CHAR(36) DEFAULT NULL,

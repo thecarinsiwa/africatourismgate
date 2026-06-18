@@ -6,6 +6,7 @@ import type {
   PropertySearchQuery,
   PropertySearchResult,
   PublicDestination,
+  PublicDestinationHighlight,
   Review,
 } from '@africatourismgate/types';
 import type {
@@ -86,6 +87,8 @@ export type {
   PackagesBrowseQuery,
 } from '../packages/types';
 
+export type { PublicDestinationHighlight } from '@africatourismgate/types';
+
 const defaultApiUrl =
   process.env.NODE_ENV === 'production'
     ? 'https://app-africatourismgate.org/api'
@@ -123,6 +126,13 @@ function buildSearchQuery(params: PropertySearchQuery): string {
 
 export async function listPublicDestinations(): Promise<PublicDestination[]> {
   return fetchPublic<PublicDestination[]>('/public/destinations');
+}
+
+export async function listFeaturedDestinations(
+  limit = 4,
+): Promise<PublicDestinationHighlight[]> {
+  const qs = new URLSearchParams({ limit: String(limit) }).toString();
+  return fetchPublic<PublicDestinationHighlight[]>(`/public/destinations/featured?${qs}`);
 }
 
 export async function listVehiclePickupLocations(): Promise<PublicDestination[]> {

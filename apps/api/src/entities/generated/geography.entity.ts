@@ -26,6 +26,9 @@ export class Destinations extends BaseAuditEntity {
   @Column({ type: 'decimal', name: 'longitude', precision: 10, scale: 7, nullable: true })
   longitude!: string | null;
 
+  @Column({ type: 'boolean', name: 'is_featured', default: false })
+  isFeatured!: boolean;
+
 }
 
 @Entity('points_of_interest')

@@ -2,7 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Card, Input } from '@africatourismgate/ui';
+import { Button, Card, Checkbox, Input } from '@africatourismgate/ui';
 import type { CreateDestinationRequest, Destination } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
@@ -21,6 +21,7 @@ export type DestinationFormValues = {
   imageUrl: string;
   latitude: string;
   longitude: string;
+  isFeatured: boolean;
 };
 
 const defaultValues: DestinationFormValues = {
@@ -31,6 +32,7 @@ const defaultValues: DestinationFormValues = {
   imageUrl: '',
   latitude: '',
   longitude: '',
+  isFeatured: false,
 };
 
 function formatCoordInput(value: string | null | undefined): string {
@@ -50,6 +52,7 @@ function destinationToFormValues(destination: Destination): DestinationFormValue
     imageUrl: destination.imageUrl ?? '',
     latitude: formatCoordInput(destination.latitude),
     longitude: formatCoordInput(destination.longitude),
+    isFeatured: destination.isFeatured ?? false,
   };
 }
 
@@ -61,6 +64,7 @@ function toPayload(
     name: values.name.trim(),
     slug: values.slug.trim().toLowerCase(),
     countryCode: values.countryCode.trim().toUpperCase(),
+    isFeatured: values.isFeatured,
   };
 
   if (values.description.trim()) {
@@ -279,6 +283,14 @@ export function DestinationForm({
             className={textareaClass}
           />
         </div>
+        <Checkbox
+          id="isFeatured"
+          name="isFeatured"
+          checked={values.isFeatured}
+          onChange={(e) => updateField('isFeatured', e.target.checked)}
+          label={t('isFeatured')}
+        />
+        <p className="text-sm text-atg-muted">{t('isFeaturedHint')}</p>
       </Card>
 
       <Card variant="dashboard" className="space-y-4">
