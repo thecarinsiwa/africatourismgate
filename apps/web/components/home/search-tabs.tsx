@@ -13,6 +13,7 @@ import { usePublicAirports } from '../../lib/flights/use-public-airports';
 import { useTranslations } from '../../lib/i18n/locale-provider';
 import { buildSearchRoute, type SearchVertical } from '../../lib/search/route';
 import {
+  SearchFormDatalistInput,
   SearchFormInput,
   SearchFormLabel,
   SearchFormOptionSelect,
@@ -501,10 +502,10 @@ export function SearchTabs() {
                   </div>
                   <div>
                     <SearchFormLabel>{t.search.destination}</SearchFormLabel>
-                    <SearchFormSelect
+                    <SearchFormDatalistInput
                       name="destination"
                       placeholder={t.search.destinationPh}
-                      options={destinationOptions}
+                      suggestions={destinationOptions}
                       value={destination}
                       onChange={setDestination}
                     />

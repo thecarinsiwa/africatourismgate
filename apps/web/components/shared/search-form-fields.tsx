@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { useId } from 'react';
 import Link from 'next/link';
 import { cn } from '@africatourismgate/ui';
 
@@ -50,6 +51,50 @@ export function SearchFormInput({
       onChange={(e) => onChange(e.target.value)}
       className={cn(fieldInputClass, className)}
     />
+  );
+}
+
+export type SearchFormDatalistInputProps = {
+  name: string;
+  placeholder?: string;
+  value: string;
+  /** Suggestions affichées à la saisie — la valeur libre reste acceptée. */
+  suggestions?: string[];
+  onChange: (value: string) => void;
+  className?: string;
+};
+
+/** Champ texte libre avec suggestions (datalist HTML). */
+export function SearchFormDatalistInput({
+  name,
+  placeholder,
+  value,
+  suggestions = [],
+  onChange,
+  className,
+}: SearchFormDatalistInputProps) {
+  const listId = useId();
+
+  return (
+    <>
+      <input
+        type="text"
+        name={name}
+        placeholder={placeholder}
+        value={value}
+        list={suggestions.length > 0 ? listId : undefined}
+        onChange={(e) => onChange(e.target.value)}
+        className={cn(fieldInputClass, className)}
+        autoComplete="off"
+      />
+      {suggestions.length > 0 ? (
+        <datalist id={listId}>
+          {suggestions.map((option) => (
+            <option key={option} value={option} />
+          ))}
+        </datalist>
+      ) : null}
+    </>
   );
 }
 

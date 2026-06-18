@@ -17,6 +17,7 @@ export { SearchFormPanel, type SearchFormPanelProps } from './search-form-panel'
 export {
   SearchFormInput,
   SearchFormLabel,
+  SearchFormDatalistInput,
   SearchFormSelect,
   SearchFormOptionSelect,
   SearchFormActions,
@@ -24,6 +25,7 @@ export {
   SearchViewAllLink,
   type SearchFormActionsProps,
   type SearchFormInputProps,
+  type SearchFormDatalistInputProps,
   type SearchFormOptionSelectProps,
   type SearchFormSelectProps,
   type SearchFormSubmitProps,

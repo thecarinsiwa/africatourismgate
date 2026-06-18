@@ -8,10 +8,10 @@ import type { HotelsSearchParams } from '../../lib/hotels/listings';
 import { useTranslations } from '../../lib/i18n/locale-provider';
 import { buildSearchRoute } from '../../lib/search/route';
 import {
+  SearchFormDatalistInput,
   SearchFormInput,
   SearchFormLabel,
   SearchFormPanel,
-  SearchFormSelect,
   SearchFormSubmit,
 } from '../shared';
 
@@ -142,10 +142,10 @@ export function HotelsSearchForm({ initialValues }: HotelsSearchFormProps) {
 
         <div>
           <SearchFormLabel>{s.destination}</SearchFormLabel>
-          <SearchFormSelect
+          <SearchFormDatalistInput
             name="destination"
             placeholder={s.destinationPh}
-            options={destinationOptions}
+            suggestions={destinationOptions}
             value={destination}
             onChange={(value) => {
               setDestination(value);
