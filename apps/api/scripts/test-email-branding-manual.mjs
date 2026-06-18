@@ -1,6 +1,6 @@
 /**
  * Manual test plan for #128 / PR #133 — email branding admin + transactional emails.
- * Prérequis: API (:3010), MySQL seedée, Mailpit (:1025) ou SMTP configuré.
+ * Prérequis: API (:3000), MySQL seedée, Mailpit (:1025) ou SMTP configuré.
  *
  * Run: node apps/api/scripts/test-email-branding-manual.mjs
  */
@@ -9,7 +9,7 @@ import { SEED_ADMIN_EMAIL, getSeedAdminPassword } from './lib/test-credentials.m
 
 loadEnv();
 
-const API_PORT = process.env.API_PORT ?? '3010';
+const API_PORT = process.env.API_PORT ?? '3000';
 const API_PREFIX = process.env.API_GLOBAL_PREFIX ?? 'api';
 const API_URL = (
   process.env.NEXT_PUBLIC_API_URL ?? `http://localhost:${API_PORT}/${API_PREFIX}`

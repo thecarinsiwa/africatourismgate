@@ -19,7 +19,7 @@ if (!targetBase || !targetBase.includes('@')) {
   process.exit(1);
 }
 
-const API_PORT = process.env.API_PORT ?? '3010';
+const API_PORT = process.env.API_PORT ?? '3000';
 const API_PREFIX = process.env.API_GLOBAL_PREFIX ?? 'api';
 const API_URL = (
   process.env.NEXT_PUBLIC_API_URL ?? `http://localhost:${API_PORT}/${API_PREFIX}`
