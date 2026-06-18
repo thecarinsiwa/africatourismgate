@@ -50,18 +50,23 @@ export function FlightCard({ flight, t, searchParams = {}, locale }: FlightCardP
       }
       title={null}
       body={
-        <div className="mb-4 grid flex-1 grid-cols-[1fr_auto_1fr] items-center gap-3">
-          <div>
-            <p className="text-2xl font-bold text-atg-fg">{flight.departureAirportIata}</p>
-            <p className="text-sm text-atg-muted">{flight.departureAirportCity}</p>
-            <p className="mt-1 text-sm font-medium text-atg-fg">
-              {formatFlightTime(flight.departureTime, locale)}
-            </p>
+        <div className="mb-4 flex flex-col gap-4 sm:grid sm:grid-cols-[1fr_auto_1fr] sm:items-center sm:gap-3">
+          <div className="flex items-center gap-3 sm:block">
+            <span className="inline-flex min-h-[36px] min-w-[3.25rem] shrink-0 items-center justify-center rounded-lg bg-primary/10 px-2.5 text-base font-bold tracking-wide text-primary dark:bg-primary/20 sm:hidden">
+              {flight.departureAirportIata}
+            </span>
+            <div>
+              <p className="hidden text-2xl font-bold text-atg-fg sm:block">{flight.departureAirportIata}</p>
+              <p className="text-sm text-atg-muted">{flight.departureAirportCity}</p>
+              <p className="mt-1 text-sm font-medium text-atg-fg">
+                {formatFlightTime(flight.departureTime, locale)}
+              </p>
+            </div>
           </div>
 
-          <div className="flex flex-col items-center px-2 text-center">
+          <div className="flex flex-col items-center px-2 text-center sm:px-2">
             <p className="text-xs text-atg-muted">{formatDuration(flight.durationMinutes)}</p>
-            <div className="my-1 flex w-full items-center gap-1" aria-hidden>
+            <div className="my-1 flex w-full max-w-[12rem] items-center gap-1 sm:max-w-none" aria-hidden>
               <span className="h-1.5 w-1.5 rounded-full bg-primary" />
               <span className="h-px flex-1 bg-atg-border dark:bg-atg-border" />
               <svg className="h-4 w-4 text-primary" fill="currentColor" viewBox="0 0 24 24">
@@ -73,12 +78,17 @@ export function FlightCard({ flight, t, searchParams = {}, locale }: FlightCardP
             <p className="text-xs text-atg-muted">{t.direct}</p>
           </div>
 
-          <div className="text-right">
-            <p className="text-2xl font-bold text-atg-fg">{flight.arrivalAirportIata}</p>
-            <p className="text-sm text-atg-muted">{flight.arrivalAirportCity}</p>
-            <p className="mt-1 text-sm font-medium text-atg-fg">
-              {formatFlightTime(flight.arrivalTime, locale)}
-            </p>
+          <div className="flex items-center gap-3 sm:block sm:text-right">
+            <span className="inline-flex min-h-[36px] min-w-[3.25rem] shrink-0 items-center justify-center rounded-lg bg-primary/10 px-2.5 text-base font-bold tracking-wide text-primary dark:bg-primary/20 sm:hidden">
+              {flight.arrivalAirportIata}
+            </span>
+            <div className="sm:text-right">
+              <p className="hidden text-2xl font-bold text-atg-fg sm:block">{flight.arrivalAirportIata}</p>
+              <p className="text-sm text-atg-muted">{flight.arrivalAirportCity}</p>
+              <p className="mt-1 text-sm font-medium text-atg-fg">
+                {formatFlightTime(flight.arrivalTime, locale)}
+              </p>
+            </div>
           </div>
         </div>
       }
