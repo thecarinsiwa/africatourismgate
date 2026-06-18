@@ -138,6 +138,12 @@ export const es: Translations = {
     pageOf: ({ page, totalPages }) => `página ${page} / ${totalPages}`,
     resultItem: 'resultado',
   },
+  bookingSidebar: {
+    trustDemoCatalog:
+      'Precios orientativos — la reserva en línea llegará pronto.',
+    trustTransparentPricing: 'Importe mostrado sin cargos ocultos.',
+    trustSupport: '¿Dudas? Nuestro equipo le acompaña.',
+  },
   verticalSearch: {
     backHome: 'Volver al inicio',
     resultsTitle: 'Resultados',
