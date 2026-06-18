@@ -53,5 +53,19 @@
         "unauthorized": "Adresse e-mail ou mot de passe incorrect."
       }
     }
+  },
+  "hotelsDetail": {
+    "breadcrumbHome": "Accueil",
+    "breadcrumbHotels": "Hôtels",
+    "galleryAria": "Galerie photos",
+    "galleryOpenLightbox": "Agrandir la photo",
+    "galleryClose": "Fermer la galerie",
+    "galleryPrevious": "Photo précédente",
+    "galleryNext": "Photo suivante",
+    "galleryCounter": "Photo {current} sur {total}",
+    "calendarLegendTitle": "Légende",
+    "calendarLegendAvailable": "Disponible",
+    "calendarLegendSelected": "Dates sélectionnées",
+    "calendarLegendUnavailable": "Indisponible"
   }
 }

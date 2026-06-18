@@ -234,16 +234,20 @@ export function HotelDetailPageContent({
       <HomeHeader />
 
       <div className="border-b border-atg-border bg-atg-elevated dark:border-atg-border dark:bg-atg-elevated">
-        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-          <nav className="flex flex-wrap items-center gap-2 text-sm text-atg-muted" aria-label="Breadcrumb">
-            <Link href="/" className="hover:text-primary transition-colors">
+        <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
+          <nav className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-atg-muted" aria-label="Breadcrumb">
+            <Link href="/" className="transition-colors hover:text-primary">
               {h.breadcrumbHome}
             </Link>
-            <span aria-hidden>/</span>
-            <Link href="/hotels" className="hover:text-primary transition-colors">
-              {h.breadcrumbHotels}
+            <span className="text-atg-muted/60" aria-hidden>
+              ›
+            </span>
+            <Link href="/hotels" className="transition-colors hover:text-primary">
+              {h.breadcrumbHotelsDetail}
             </Link>
-            <span aria-hidden>/</span>
+            <span className="text-atg-muted/60" aria-hidden>
+              ›
+            </span>
             <span className="font-medium text-atg-fg">{detail.name}</span>
           </nav>
         </div>
@@ -252,7 +256,18 @@ export function HotelDetailPageContent({
       <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 pb-28 sm:px-6 lg:px-8 lg:pb-8">
         <div className="lg:grid lg:grid-cols-3 lg:gap-8">
           <div className="min-w-0 space-y-8 lg:col-span-2">
-            <HotelGallery images={detail.images} name={detail.name} ariaLabel={h.galleryAria} />
+            <HotelGallery
+              images={detail.images}
+              name={detail.name}
+              labels={{
+                ariaLabel: h.galleryAria,
+                openLightbox: h.galleryOpenLightbox,
+                close: h.galleryClose,
+                previous: h.galleryPrevious,
+                next: h.galleryNext,
+                counter: h.galleryCounter,
+              }}
+            />
 
             <header>
               <p className="text-sm font-medium text-primary">{typeLabel}</p>
@@ -334,6 +349,12 @@ export function HotelDetailPageContent({
               prevMonthLabel={h.prevMonth}
               nextMonthLabel={h.nextMonth}
               unavailableLabel={h.unavailable}
+              legendLabels={{
+                title: h.calendarLegendTitle,
+                available: h.calendarLegendAvailable,
+                selected: h.calendarLegendSelected,
+                unavailable: h.calendarLegendUnavailable,
+              }}
               locale={locale}
             />
 
