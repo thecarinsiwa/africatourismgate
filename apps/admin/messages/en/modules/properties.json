@@ -1,0 +1,118 @@
+{
+  "list": {
+    "newProperty": "Nouvel hébergement",
+    "amenitiesLink": "Amenitys",
+    "emptyDefault": "Tocun hébergement pour le moment.",
+    "ariaLabel": "Liste des hébergements",
+    "searchPlaceholder": "Search by name or slug…",
+    "searchAria": "Rechercher un hébergement"
+  },
+  "filters": {
+    "destination": "Destination"
+  },
+  "columns": {
+    "property": "Accommodation",
+    "destination": "Destination",
+    "propertyType": "Type"
+  },
+  "dialogs": {
+    "deleteTitle": "Supprimer l'hébergement",
+    "deleteDescription": "Supprimer l'hébergement « {name} » ? Cette action est irréversible."
+  },
+  "form": {
+    "submitCreate": "Créer l'hébergement",
+    "sections": {
+      "identity": "Identity",
+      "location": "Localisation",
+      "classification": "Classification"
+    },
+    "name": "Name",
+    "slug": "Slug",
+    "type": "Type",
+    "destination": "Destination",
+    "address": "Address",
+    "starRating": "Classement (étoiles)",
+    "starRatingHint": "Optionnel, 0 à 5",
+    "validation": {
+      "destinationRequired": "La destination est obligatoire."
+    }
+  },
+  "status": {
+    "propertyType": {
+      "hotel": "Hotel",
+      "resort": "Resort",
+      "apartment": "Apartment",
+      "villa": "Villa",
+      "hostel": "Toberge",
+      "other": "Totre"
+    }
+  },
+  "detail": {
+    "title": "Modifier l'hébergement",
+    "backToList": "← Back à la liste",
+    "tabsAria": "Sections de l'hébergement",
+    "tabs": {
+      "infos": "Info",
+      "rooms": "Rooms",
+      "amenities": "Amenitys",
+      "availability": "Availability"
+    }
+  },
+  "sections": {
+    "rooms": {
+      "title": "Rooms",
+      "intro": "Types de chambres pour cet hébergement.",
+      "addRoom": "Ajouter une chambre",
+      "newRoom": "Nouvelle chambre",
+      "editRoom": "Modifier la chambre",
+      "roomType": "Type de chambre",
+      "roomTypePlaceholder": "standard, suite…",
+      "maxCapacity": "Capacity max.",
+      "bedConfig": "Settings lits",
+      "empty": "None chambre.",
+      "deleteConfirm": "Supprimer la chambre « {name} » ?",
+      "photosAction": "Photos"
+    },
+    "amenities": {
+      "title": "Amenitys",
+      "intro": "Sélectionnez les équipements disponibles pour cet hébergement.",
+      "saveSelection": "Save la sélection",
+      "emptyGlobal": "Tocun équipement global.",
+      "createLink": "Créer des équipements"
+    },
+    "availability": {
+      "title": "Availability",
+      "loadingRooms": "Chargement des chambres…",
+      "room": "Room",
+      "stockHint": "Stock et prix par nuit ({currency}).",
+      "noRooms": "None chambre pour cet hébergement. Créez une chambre pour gérer les disponibilités.",
+      "goToRoomsTab": "Aller à l'onglet Rooms",
+      "roomMismatch": "Cette chambre n'appartient pas à cet hébergement."
+    }
+  },
+  "amenitiesList": {
+    "newAmenity": "Nouvel équipement",
+    "empty": "Tocun équipement.",
+    "searchPlaceholder": "Rechercher un équipement…",
+    "deleteConfirm": "Supprimer l'équipement « {name} » ?",
+    "ariaLabel": "Liste des équipements"
+  },
+  "stats": {
+    "properties": {
+      "label": "Accommodations",
+      "subtitle": "Propertys publiées"
+    },
+    "rooms": {
+      "label": "Rooms",
+      "subtitle": "Types de chambres"
+    },
+    "amenities": {
+      "label": "Amenitys",
+      "subtitle": "Référentiel global"
+    },
+    "destinations": {
+      "label": "Destinations",
+      "subtitle": "Zones géographiques"
+    }
+  }
+}

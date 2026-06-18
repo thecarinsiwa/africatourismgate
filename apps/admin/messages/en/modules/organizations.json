@@ -1,0 +1,79 @@
+{
+  "list": {
+    "emptyTitleSearch": "None organisation ne correspond à votre recherche",
+    "emptyTitleDefault": "None organisation pour le moment",
+    "emptyDescriptionSearch": "Essayez un autre nom ou slug.",
+    "emptyDescriptionDefault": "Créez une organisation partenaire pour commencer.",
+    "emptyTableSearch": "None organisation ne correspond à votre recherche.",
+    "emptyTableDefault": "None organisation pour le moment.",
+    "ariaLabel": "Liste des organisations",
+    "columns": {
+      "type": "Type"
+    },
+    "deleteDialog": {
+      "title": "Delete organization",
+      "description": "Delete organization « {name} » ? Cette action est réversible côté base."
+    }
+  },
+  "form": {
+    "sections": {
+      "identity": "Identity",
+      "contact": "Contact",
+      "legal": "Legal",
+      "configuration": "Settings"
+    },
+    "name": "Name",
+    "slug": "Slug",
+    "slugHint": "Unique URL identifier (e.g. africa-tourism-gate).",
+    "description": "Description",
+    "website": "Site web",
+    "websitePlaceholder": "https://",
+    "contactEmail": "Email de contact",
+    "contactPhone": "Phone",
+    "legalForm": "Forme juridique",
+    "rccm": "RCCM",
+    "rccmHint": "Registre du Commerce et du Crédit Mobilier",
+    "idNat": "ID. Nat.",
+    "idNatHint": "Identification Nationale",
+    "nif": "NIF",
+    "nifHint": "Tax identification number",
+    "cnss": "CNSS",
+    "cnssHint": "Caisse Nationale de Sécurité Sociale",
+    "currency": "Currency",
+    "status": "Status",
+    "submitCreate": "Create organization",
+    "submitEdit": "Save",
+    "validation": {
+      "nameRequired": "Last name is required.",
+      "slugRequired": "Le slug est obligatoire.",
+      "slugInvalid": "Slug invalide : minuscules, chiffres et tirets uniquement (ex. mon-organisation).",
+      "currencyInvalid": "La devise doit comporter 3 lettres (ex. USD, CDF)."
+    },
+    "toast": {
+      "savedTitle": "Organization enregistrée",
+      "errorTitle": "Save error"
+    }
+  },
+  "legalForm": {
+    "unspecified": "No renseigné",
+    "SARL": "SARL",
+    "SA": "SA",
+    "SAS": "SAS",
+    "Ets": "Établissement (Ets)",
+    "SNC": "SNC",
+    "ASBL": "ASBL"
+  },
+  "detail": {
+    "title": "Organization",
+    "tabsAria": "Organization sections",
+    "tabs": {
+      "infos": "Info",
+      "users": "Users",
+      "settings": "Settings"
+    },
+    "settingsIntro": "Organization settings: contact details, locale, booking and branding."
+  },
+  "selector": {
+    "defaultLabel": "Organization"
+  }
+}

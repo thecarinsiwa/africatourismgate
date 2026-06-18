@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Button,
   Card,
@@ -8,10 +10,14 @@ import {
   Input,
 } from '@africatourismgate/ui';
 import type { FlightClass, FlightClassName } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useId, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { flightClassLabels, flightClassOptions } from '../../lib/flight-class-labels';
-import { getVolsErrorMessage } from '../../lib/vols-errors';
+import { getFlightClassLabel } from '../../lib/flight-class-labels';
+import {
+  useFlightClassLabels,
+  useFlightClassOptions,
+} from '../../lib/i18n/use-module-labels';
 
 type FormValues = {
   className: FlightClassName;
@@ -35,6 +41,12 @@ type FlightClassesSectionProps = {
 };
 
 export function FlightClassesSection({ flightId, embedded }: FlightClassesSectionProps) {
+  const { vols: getVolsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.flights.sections.classes');
+  const tActions = useTranslations('common.actions');
+  const tCommon = useTranslations('modules.common');
+  const classLabels = useFlightClassLabels();
+  const classOptions = useFlightClassOptions();
   const classSelectId = useId();
   const [state, setState] = useState<
     | { status: 'loading' }
@@ -60,7 +72,7 @@ export function FlightClassesSection({ flightId, embedded }: FlightClassesSectio
     } catch (error) {
       setState({ status: 'error', message: getVolsErrorMessage(error) });
     }
-  }, [flightId]);
+  }, [flightId, getVolsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -79,11 +91,11 @@ export function FlightClassesSection({ flightId, embedded }: FlightClassesSectio
     const cents = Number(formValues.basePriceCents);
     const seats = Number(formValues.seatsTotal);
     if (!Number.isFinite(cents) || cents < 0) {
-      setFormError('Prix invalide (centimes).');
+      setFormError(tCommon('validation.invalidPriceCents'));
       return;
     }
     if (!Number.isFinite(seats) || seats < 1) {
-      setFormError('Nombre de sièges invalide.');
+      setFormError(tCommon('validation.invalidSeats'));
       return;
     }
     setSubmitting(true);
@@ -130,19 +142,15 @@ export function FlightClassesSection({ flightId, embedded }: FlightClassesSectio
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         {!embedded ? (
           <div>
-            <h2 className="text-lg font-semibold text-atg-fg">Classes cabine</h2>
-            <p className="mt-1 text-sm text-atg-muted">
-              Cabines et tarifs de base pour ce vol.
-            </p>
+            <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
+            <p className="mt-1 text-sm text-atg-muted">{t('intro')}</p>
           </div>
         ) : (
-          <p className="text-sm text-atg-muted">
-            Cabines et tarifs de base pour ce vol.
-          </p>
+          <p className="text-sm text-atg-muted">{t('intro')}</p>
         )}
         {!showForm ? (
           <Button type="button" onClick={() => setShowForm(true)}>
-            Ajouter une classe
+            {t('addClass')}
           </Button>
         ) : null}
       </div>
@@ -151,7 +159,7 @@ export function FlightClassesSection({ flightId, embedded }: FlightClassesSectio
         <Card variant="dashboard" className="max-w-2xl">
           <form onSubmit={handleSubmit} className="space-y-4">
             <h3 className="text-sm font-medium">
-              {editing ? 'Modifier la classe' : 'Nouvelle classe'}
+              {editing ? t('editClass') : t('newClass')}
             </h3>
             {formError ? (
               <p role="alert" className="text-sm text-red-600">
@@ -160,7 +168,7 @@ export function FlightClassesSection({ flightId, embedded }: FlightClassesSectio
             ) : null}
             <div>
               <label htmlFor={classSelectId} className="mb-2 block text-sm font-medium">
-                Type de cabine
+                {t('cabinType')}
               </label>
               <select
                 id={classSelectId}
@@ -173,7 +181,7 @@ export function FlightClassesSection({ flightId, embedded }: FlightClassesSectio
                   }))
                 }
               >
-                {flightClassOptions.map((o) => (
+                {classOptions.map((o) => (
                   <option key={o.value} value={o.value}>
                     {o.label}
                   </option>
@@ -182,7 +190,7 @@ export function FlightClassesSection({ flightId, embedded }: FlightClassesSectio
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <Input
-                label="Prix de base (centimes)"
+                label={tCommon('form.basePriceCents')}
                 type="number"
                 min={0}
                 value={formValues.basePriceCents}
@@ -191,7 +199,7 @@ export function FlightClassesSection({ flightId, embedded }: FlightClassesSectio
                 }
               />
               <Input
-                label="Sièges totaux"
+                label={t('totalSeats')}
                 type="number"
                 min={1}
                 value={formValues.seatsTotal}
@@ -202,10 +210,10 @@ export function FlightClassesSection({ flightId, embedded }: FlightClassesSectio
             </div>
             <div className="flex gap-3">
               <Button type="submit" loading={submitting}>
-                {editing ? 'Enregistrer' : 'Ajouter'}
+                {editing ? tActions('save') : t('addClass')}
               </Button>
               <Button type="button" variant="outline" onClick={resetForm}>
-                Annuler
+                {tActions('cancel')}
               </Button>
             </div>
           </form>
@@ -217,10 +225,10 @@ export function FlightClassesSection({ flightId, embedded }: FlightClassesSectio
           {state.message}
         </p>
       ) : state.status === 'loading' ? (
-        <p className="text-sm text-atg-muted">Chargement…</p>
+        <p className="text-sm text-atg-muted">{tCommon('loading')}</p>
       ) : classes.length === 0 ? (
         <Card variant="dashboard" className="py-12 text-center">
-          <p className="text-sm text-atg-muted">Aucune classe cabine.</p>
+          <p className="text-sm text-atg-muted">{t('empty')}</p>
         </Card>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -229,7 +237,7 @@ export function FlightClassesSection({ flightId, embedded }: FlightClassesSectio
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <h3 className="font-semibold text-atg-fg">
-                    {flightClassLabels[flightClass.className]}
+                    {getFlightClassLabel(flightClass.className, classLabels)}
                   </h3>
                   <p className="mt-1 text-lg tabular-nums text-atg-fg">
                     {formatPrice(flightClass.basePriceCents)}
@@ -247,7 +255,7 @@ export function FlightClassesSection({ flightId, embedded }: FlightClassesSectio
                   <DataTableActionButton
                     action="delete"
                     onClick={async () => {
-                      if (!window.confirm('Supprimer cette classe ?')) return;
+                      if (!window.confirm(t('deleteConfirm'))) return;
                       setDeletingId(flightClass.id);
                       try {
                         await getApiClient().deleteFlightClass(flightClass.id);
@@ -265,8 +273,7 @@ export function FlightClassesSection({ flightId, embedded }: FlightClassesSectio
               </div>
               <div className="mt-auto border-t border-atg-border pt-3">
                 <p className="text-sm text-atg-muted">
-                  <span className="font-medium text-atg-fg">{flightClass.seatsTotal}</span>{' '}
-                  sièges
+                  {tCommon('seatsCount', { count: flightClass.seatsTotal })}
                 </p>
               </div>
             </Card>

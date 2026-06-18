@@ -1,16 +1,11 @@
 import type { Metadata } from 'next';
-import { AdminPageIntro } from '../../../components/admin-page-intro';
-import { BookingsList } from '../../../components/bookings/bookings-list';
+import { getAdminPageMetadata } from '../../../lib/i18n/admin-page-i18n';
+import { ReservationsPageContent } from '../../../components/pages/reservations-page-content';
 
-export const metadata: Metadata = {
-  title: 'Réservations — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('reservations');
+}
 
-export default function ReservationsPage() {
-  return (
-    <div>
-      <AdminPageIntro description="Liste paginée des réservations (données API live). Filtres par statut, date, client et organisation. Accès requis : bookings.read." />
-      <BookingsList />
-    </div>
-  );
+export default function Page() {
+  return <ReservationsPageContent />;
 }

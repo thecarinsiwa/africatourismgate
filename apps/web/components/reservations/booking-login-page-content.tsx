@@ -38,12 +38,12 @@ export function BookingLoginPageContent({ nextPath }: Props) {
   const loginErrors = useMemo(() => buildBookingLoginErrorMessages(tErrors), [tErrors]);
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
+    <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
       <HomeHeader />
       <main className="mx-auto flex w-full max-w-xl flex-1 items-center px-4 py-10 sm:px-6 lg:px-8">
-        <section className="w-full rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-atg-border dark:bg-atg-elevated">
-          <h1 className="text-2xl font-bold text-[#0f1a16] dark:text-white">{t('title')}</h1>
-          <p className="mt-2 text-sm text-gray-600 dark:text-atg-muted">{t('subtitle')}</p>
+        <section className="w-full rounded-2xl border border-atg-border bg-atg-elevated p-6 shadow-sm dark:border-atg-border dark:bg-atg-elevated">
+          <h1 className="text-2xl font-bold text-atg-fg">{t('title')}</h1>
+          <p className="mt-2 text-sm text-atg-muted">{t('subtitle')}</p>
 
           {error ? (
             <p
@@ -72,10 +72,10 @@ export function BookingLoginPageContent({ nextPath }: Props) {
 
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center" aria-hidden>
-              <div className="w-full border-t border-gray-200 dark:border-atg-border" />
+              <div className="w-full border-t border-atg-border dark:border-atg-border" />
             </div>
             <div className="relative flex justify-center text-xs uppercase tracking-wide">
-              <span className="bg-white px-2 text-gray-500 dark:bg-atg-elevated dark:text-atg-muted">
+              <span className="bg-atg-elevated px-2 text-atg-muted dark:bg-atg-elevated text-atg-muted">
                 {t('divider')}
               </span>
             </div>
@@ -83,7 +83,7 @@ export function BookingLoginPageContent({ nextPath }: Props) {
 
           <a
             href={oauthUrl}
-            className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-800 hover:bg-gray-50 dark:border-atg-border dark:bg-transparent dark:text-white"
+            className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-lg border border-atg-border bg-atg-elevated px-4 py-2 text-sm font-semibold text-atg-fg hover:bg-atg-surface dark:border-atg-border dark:bg-transparent dark:text-white"
           >
             {t('google')}
           </a>

@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import { Button, Input } from '@africatourismgate/ui';
 import type {
   CreateCruiseSailingRequest,
@@ -7,10 +9,10 @@ import type {
   Itinerary,
   Ship,
 } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getCroisieresErrorMessage } from '../../lib/croisieres-errors';
 
 export type SailingFormValues = {
   itineraryId: string;
@@ -43,6 +45,10 @@ type SailingFormProps = {
 };
 
 export function SailingForm({ mode, sailingId, initialSailing }: SailingFormProps) {
+  const { croisieres: getCroisieresErrorMessage } = useAdminErrorMessages();
+  const tForm = useTranslations('modules.cruises.form.sailing');
+  const tActions = useTranslations('common.actions');
+  const tSelect = useTranslations('modules.common.select');
   const router = useRouter();
   const itinerarySelectId = useId();
   const [itineraries, setItineraries] = useState<Itinerary[]>([]);
@@ -77,10 +83,14 @@ export function SailingForm({ mode, sailingId, initialSailing }: SailingFormProp
         const ship = shipById.get(it.shipId);
         return {
           id: it.id,
-          label: `${it.name} (${ship?.name ?? 'navire'}) — ${it.durationNights} nuits`,
+          label: tForm('itineraryOption', {
+            name: it.name,
+            shipName: ship?.name ?? tForm('fallbackShip'),
+            nights: it.durationNights,
+          }),
         };
       }),
-    [itineraries, shipById],
+    [itineraries, shipById, tForm],
   );
 
   const updateField = useCallback((field: keyof SailingFormValues, value: string) => {
@@ -91,7 +101,7 @@ export function SailingForm({ mode, sailingId, initialSailing }: SailingFormProp
     event.preventDefault();
     setFormError(null);
     if (!values.itineraryId || !values.departureDate) {
-      setFormError('Itinéraire et date de départ sont obligatoires.');
+      setFormError(tForm('validation'));
       return;
     }
     setSubmitting(true);
@@ -125,7 +135,7 @@ export function SailingForm({ mode, sailingId, initialSailing }: SailingFormProp
       ) : null}
       <div>
         <label htmlFor={itinerarySelectId} className="mb-2 block text-sm font-medium">
-          Itinéraire
+          {tForm('itinerary')}
         </label>
         <select
           id={itinerarySelectId}
@@ -134,7 +144,7 @@ export function SailingForm({ mode, sailingId, initialSailing }: SailingFormProp
           onChange={(e) => updateField('itineraryId', e.target.value)}
           required
         >
-          <option value="">Choisir un itinéraire…</option>
+          <option value="">{tSelect('choose')}</option>
           {itineraryOptions.map((o) => (
             <option key={o.id} value={o.id}>
               {o.label}
@@ -142,13 +152,11 @@ export function SailingForm({ mode, sailingId, initialSailing }: SailingFormProp
           ))}
         </select>
         {itineraryOptions.length === 0 ? (
-          <p className="mt-2 text-sm text-atg-muted">
-            Créez d’abord un navire, un itinéraire et des escales.
-          </p>
+          <p className="mt-2 text-sm text-atg-muted">{tForm('noItinerariesHint')}</p>
         ) : null}
       </div>
       <Input
-        label="Date de départ"
+        label={tForm('departureDate')}
         type="date"
         value={values.departureDate}
         onChange={(e) => updateField('departureDate', e.target.value)}
@@ -156,10 +164,10 @@ export function SailingForm({ mode, sailingId, initialSailing }: SailingFormProp
       />
       <div className="flex gap-3">
         <Button type="submit" loading={submitting}>
-          {mode === 'create' ? 'Créer le départ' : 'Enregistrer'}
+          {mode === 'create' ? tForm('submitCreate') : tActions('save')}
         </Button>
         <Button href="/produits/croisieres" variant="outline">
-          Annuler
+          {tActions('cancel')}
         </Button>
       </div>
     </form>

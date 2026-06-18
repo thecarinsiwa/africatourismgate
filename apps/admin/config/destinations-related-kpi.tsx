@@ -1,8 +1,8 @@
 export const destinationsRelatedKpis = [
   {
     key: 'properties',
-    label: 'Hébergements',
-    subtitle: 'Propriétés rattachées',
+    labelKey: 'sections.related.properties.label',
+    subtitleKey: 'sections.related.properties.subtitle',
     href: '/hebergements',
     iconClass: 'bg-atg-info-light text-atg-info',
     icon: (
@@ -18,8 +18,8 @@ export const destinationsRelatedKpis = [
   },
   {
     key: 'activities',
-    label: 'Activités',
-    subtitle: 'Expériences locales',
+    labelKey: 'sections.related.activities.label',
+    subtitleKey: 'sections.related.activities.subtitle',
     href: '/produits/activites',
     iconClass: 'bg-violet-100 text-violet-700 dark:bg-violet-950/50 dark:text-violet-300',
     icon: (
@@ -41,8 +41,8 @@ export const destinationsRelatedKpis = [
   },
   {
     key: 'packages',
-    label: 'Forfaits',
-    subtitle: 'Packages incluant des produits locaux',
+    labelKey: 'sections.related.packages.label',
+    subtitleKey: 'sections.related.packages.subtitle',
     href: '/produits/forfaits',
     iconClass: 'bg-atg-warning-light text-atg-warning',
     icon: (

@@ -26,7 +26,8 @@
     "deploy": "bash scripts/deploy.sh",
     "codegen:api": "node scripts/codegen-api-client.mjs",
     "lint": "eslint . --max-warnings 0",
-    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "check:admin-i18n": "node scripts/check-i18n-parity.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

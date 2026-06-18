@@ -1,8 +1,11 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import { Button, Card } from '@africatourismgate/ui';
 import type { CruiseSailing, Itinerary, Ship } from '@africatourismgate/types';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   CALENDAR_WEEKDAY_HEADERS,
@@ -14,7 +17,6 @@ import {
   weekdayOffset,
 } from '../../lib/availability-dates';
 import { getApiClient } from '../../lib/auth/api';
-import { getCroisieresErrorMessage } from '../../lib/croisieres-errors';
 
 type SailingsCalendarViewProps = {
   itineraryById: Map<string, Itinerary>;
@@ -25,12 +27,17 @@ export function SailingsCalendarView({
   itineraryById,
   shipById,
 }: SailingsCalendarViewProps) {
+  const { croisieres: getCroisieresErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.cruises');
+  const tCommon = useTranslations('modules.common');
   const [yearMonth, setYearMonth] = useState(currentYearMonth);
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
     | { status: 'ready'; sailings: CruiseSailing[] }
   >({ status: 'loading' });
+
+  const monthLabel = useMemo(() => formatMonthLabel(yearMonth), [yearMonth]);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -52,7 +59,7 @@ export function SailingsCalendarView({
     } catch (error) {
       setState({ status: 'error', message: getCroisieresErrorMessage(error) });
     }
-  }, []);
+  }, [getCroisieresErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -94,7 +101,7 @@ export function SailingsCalendarView({
             type="button"
             variant="outline"
             size="sm"
-            aria-label="Mois précédent"
+            aria-label={tCommon('availabilityCalendar.previousMonth')}
             onClick={() => setYearMonth(shiftYearMonth(yearMonth, -1))}
           >
             ‹
@@ -103,13 +110,13 @@ export function SailingsCalendarView({
             className="min-w-[10rem] text-center text-sm font-semibold text-atg-fg"
             aria-live="polite"
           >
-            {formatMonthLabel(yearMonth)}
+            {monthLabel}
           </h3>
           <Button
             type="button"
             variant="outline"
             size="sm"
-            aria-label="Mois suivant"
+            aria-label={tCommon('availabilityCalendar.nextMonth')}
             onClick={() => setYearMonth(shiftYearMonth(yearMonth, 1))}
           >
             ›
@@ -121,7 +128,7 @@ export function SailingsCalendarView({
           size="sm"
           onClick={() => setYearMonth(currentYearMonth())}
         >
-          Aujourd’hui
+          {t('calendar.today')}
         </Button>
       </div>
 
@@ -132,11 +139,11 @@ export function SailingsCalendarView({
       ) : (
         <Card variant="dashboard" padding="md">
           {state.status === 'loading' ? (
-            <p className="text-sm text-atg-muted">Chargement…</p>
+            <p className="text-sm text-atg-muted">{tCommon('loading')}</p>
           ) : (
             <div
               role="grid"
-              aria-label={`Calendrier des départs — ${formatMonthLabel(yearMonth)}`}
+              aria-label={t('calendar.ariaLabel', { month: monthLabel })}
               className="grid grid-cols-7 gap-1 sm:gap-2"
             >
               {CALENDAR_WEEKDAY_HEADERS.map((label) => (
@@ -177,7 +184,8 @@ export function SailingsCalendarView({
                       {daySailings.map((sailing) => {
                         const itinerary = itineraryById.get(sailing.itineraryId);
                         const ship = itinerary ? shipById.get(itinerary.shipId) : undefined;
-                        const label = itinerary?.name ?? ship?.name ?? 'Départ';
+                        const label =
+                          itinerary?.name ?? ship?.name ?? t('list.fallbackDeparture');
 
                         return (
                           <Link

@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Button,
   Card,
@@ -11,10 +13,10 @@ import {
 } from '@africatourismgate/ui';
 import type { FlightImage } from '@africatourismgate/types';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
 import { getSession } from '../../lib/auth/session';
-import { getVolsErrorMessage } from '../../lib/vols-errors';
 
 const FLIGHT_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
 const ALLOWED_FLIGHT_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
@@ -33,6 +35,11 @@ type FlightImagesSectionProps = {
 };
 
 export function FlightImagesSection({ flightId, embedded }: FlightImagesSectionProps) {
+  const { vols: getVolsErrorMessage } = useAdminErrorMessages();
+  const tGallery = useTranslations('modules.common.imagesGallery');
+  const tCommon = useTranslations('modules.common');
+  const tActions = useTranslations('common.actions');
+  const emptyDash = tCommon('empty.dash');
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -58,7 +65,7 @@ export function FlightImagesSection({ flightId, embedded }: FlightImagesSectionP
     } catch (error) {
       setState({ status: 'error', message: getVolsErrorMessage(error) });
     }
-  }, [flightId]);
+  }, [flightId, getVolsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -93,16 +100,16 @@ export function FlightImagesSection({ flightId, embedded }: FlightImagesSectionP
     if (!file) return;
     try {
       if (!ALLOWED_FLIGHT_IMAGE_TYPES.has(file.type)) {
-        setFormError('Format accepté : JPEG, PNG ou WebP.');
+        setFormError(tCommon('validation.imageFormat'));
         return;
       }
       if (file.size > FLIGHT_IMAGE_MAX_BYTES) {
-        setFormError('Image trop lourde (max 5 Mo).');
+        setFormError(tCommon('validation.imageTooLarge'));
         return;
       }
       const session = getSession();
       if (!session?.accessToken) {
-        setFormError('Session expirée. Reconnectez-vous puis réessayez.');
+        setFormError(tCommon('validation.sessionExpiredRetry'));
         return;
       }
       setUploading(true);
@@ -125,7 +132,7 @@ export function FlightImagesSection({ flightId, embedded }: FlightImagesSectionP
       }
       setFormValues((prev) => ({ ...prev, url: payload.url! }));
     } catch {
-      setFormError("Impossible d'uploader l'image locale.");
+      setFormError(tCommon('validation.uploadFailed'));
     } finally {
       setUploading(false);
       event.target.value = '';
@@ -136,7 +143,7 @@ export function FlightImagesSection({ flightId, embedded }: FlightImagesSectionP
     event.preventDefault();
     setFormError(null);
     if (!formValues.url.trim()) {
-      setFormError('L’URL est obligatoire.');
+      setFormError(tCommon('validation.urlRequired'));
       return;
     }
     setSubmitting(true);
@@ -164,7 +171,7 @@ export function FlightImagesSection({ flightId, embedded }: FlightImagesSectionP
 
   const handleDelete = useCallback(
     async (img: FlightImage) => {
-      if (!window.confirm('Supprimer cette image ?')) return;
+      if (!window.confirm(tGallery('deleteConfirm'))) return;
       setDeletingId(img.id);
       try {
         await getApiClient().deleteFlightImage(img.id);
@@ -175,14 +182,14 @@ export function FlightImagesSection({ flightId, embedded }: FlightImagesSectionP
         setDeletingId(null);
       }
     },
-    [load],
+    [load, tGallery, getVolsErrorMessage],
   );
 
   const columns = useMemo<ColumnDef<FlightImage, unknown>[]>(
     () => [
       {
         id: 'preview',
-        header: 'Aperçu',
+        header: tCommon('columns.preview'),
         cell: ({ row }) => (
           <Image
             src={row.original.url}
@@ -199,7 +206,7 @@ export function FlightImagesSection({ flightId, embedded }: FlightImagesSectionP
       },
       {
         accessorKey: 'url',
-        header: 'URL',
+        header: tCommon('columns.url'),
         cell: ({ row }) => (
           <a
             href={row.original.url}
@@ -213,19 +220,19 @@ export function FlightImagesSection({ flightId, embedded }: FlightImagesSectionP
       },
       {
         accessorKey: 'caption',
-        header: 'Légende',
+        header: tCommon('columns.caption'),
         cell: ({ row }) => (
-          <span className="text-sm text-atg-muted">{row.original.caption ?? '—'}</span>
+          <span className="text-sm text-atg-muted">{row.original.caption ?? emptyDash}</span>
         ),
       },
       {
         accessorKey: 'sortOrder',
-        header: 'Ordre',
+        header: tCommon('columns.sortOrder'),
         meta: { align: 'center' },
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tCommon('columns.actions'),
         meta: { align: 'right' },
         cell: ({ row }) => (
           <DataTableActions>
@@ -240,7 +247,7 @@ export function FlightImagesSection({ flightId, embedded }: FlightImagesSectionP
         ),
       },
     ],
-    [deletingId, handleDelete],
+    [deletingId, emptyDash, handleDelete, tCommon],
   );
 
   const images = state.status === 'ready' ? state.images : [];
@@ -253,14 +260,12 @@ export function FlightImagesSection({ flightId, embedded }: FlightImagesSectionP
     >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-atg-fg">Photos</h2>
-          <p className="mt-1 text-sm text-atg-muted">
-            Uploadez une photo ou saisissez une URL externe.
-          </p>
+          <h2 className="text-lg font-semibold text-atg-fg">{tGallery('title')}</h2>
+          <p className="mt-1 text-sm text-atg-muted">{tGallery('intro')}</p>
         </div>
         {!showForm ? (
           <Button type="button" onClick={openCreate}>
-            Ajouter une photo
+            {tGallery('addPhoto')}
           </Button>
         ) : null}
       </div>
@@ -269,7 +274,7 @@ export function FlightImagesSection({ flightId, embedded }: FlightImagesSectionP
         <Card variant="dashboard" className="max-w-2xl">
           <form onSubmit={handleSubmit} className="space-y-4">
             <h3 className="text-sm font-medium">
-              {editing ? 'Modifier la photo' : 'Nouvelle photo'}
+              {editing ? tGallery('editPhoto') : tGallery('newPhoto')}
             </h3>
             {formError ? (
               <p role="alert" className="text-sm text-red-600">
@@ -277,10 +282,10 @@ export function FlightImagesSection({ flightId, embedded }: FlightImagesSectionP
               </p>
             ) : null}
             <div className="space-y-3">
-              <p className="text-xs font-medium text-atg-fg">Image</p>
+              <p className="text-xs font-medium text-atg-fg">{tCommon('form.image')}</p>
               <div className="flex flex-wrap items-center gap-3">
                 <label className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10">
-                  {uploading ? 'Upload en cours…' : 'Choisir un fichier'}
+                  {uploading ? tCommon('form.uploading') : tCommon('form.chooseFile')}
                   <input
                     type="file"
                     accept="image/jpeg,image/png,image/webp"
@@ -289,12 +294,12 @@ export function FlightImagesSection({ flightId, embedded }: FlightImagesSectionP
                     disabled={uploading || submitting}
                   />
                 </label>
-                <span className="text-xs text-atg-muted">JPEG, PNG ou WebP, max 5 Mo</span>
+                <span className="text-xs text-atg-muted">{tCommon('form.imageFormatHint')}</span>
               </div>
               {formValues.url.trim() ? (
                 <Image
                   src={formValues.url.trim()}
-                  alt={formValues.caption.trim() || 'Aperçu'}
+                  alt={formValues.caption.trim() || tCommon('columns.preview')}
                   width={320}
                   height={200}
                   unoptimized
@@ -306,19 +311,19 @@ export function FlightImagesSection({ flightId, embedded }: FlightImagesSectionP
               ) : null}
             </div>
             <Input
-              label="URL externe (optionnel si upload)"
+              label={tCommon('form.externalUrlOptional')}
               type="url"
               value={formValues.url}
               onChange={(e) => setFormValues((p) => ({ ...p, url: e.target.value }))}
-              placeholder="https://..."
+              placeholder={tCommon('form.urlPlaceholder')}
             />
             <Input
-              label="Légende"
+              label={tCommon('columns.caption')}
               value={formValues.caption}
               onChange={(e) => setFormValues((p) => ({ ...p, caption: e.target.value }))}
             />
             <Input
-              label="Ordre d’affichage"
+              label={tCommon('form.displayOrder')}
               type="number"
               min={0}
               value={formValues.sortOrder}
@@ -326,10 +331,10 @@ export function FlightImagesSection({ flightId, embedded }: FlightImagesSectionP
             />
             <div className="flex gap-3">
               <Button type="submit" loading={submitting} disabled={uploading}>
-                {editing ? 'Enregistrer' : 'Ajouter'}
+                {editing ? tActions('save') : tActions('create')}
               </Button>
               <Button type="button" variant="outline" onClick={resetForm}>
-                Annuler
+                {tActions('cancel')}
               </Button>
             </div>
           </form>
@@ -346,7 +351,7 @@ export function FlightImagesSection({ flightId, embedded }: FlightImagesSectionP
             columns={columns}
             data={images}
             isLoading={state.status === 'loading'}
-            emptyMessage="Aucune photo."
+            emptyMessage={tGallery('emptyDefault')}
             getRowId={(row) => row.id}
           />
         </Card>

@@ -1,30 +1,11 @@
 import type { Metadata } from 'next';
-import { PageHeader, TextLink } from '@africatourismgate/ui';
-import { LocationsStatCards } from '../../../../components/locations/locations-stat-cards';
-import { VehiclesList } from '../../../../components/locations/vehicles-list';
+import { getAdminPageMetadata } from '../../../../lib/i18n/admin-page-i18n';
+import { LocationsPageContent } from '../../../../components/pages/produits-locations-page-content';
 
-export const metadata: Metadata = {
-  title: 'Locations véhicules — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('produits/locations');
+}
 
-export default function LocationsPage() {
-  return (
-    <div>
-      <PageHeader
-        title="Locations véhicules"
-        description="Véhicules par agence, catégories et créneaux de disponibilité."
-      />
-      <p className="-mt-4 mb-6 text-sm text-atg-muted">
-        <TextLink href="/produits/locations/agences" variant="primary" className="font-medium">
-          Agences de location
-        </TextLink>
-        <span className="mx-2">·</span>
-        <TextLink href="/produits/locations/categories" variant="primary" className="font-medium">
-          Catégories
-        </TextLink>
-      </p>
-      <LocationsStatCards className="mb-6" />
-      <VehiclesList />
-    </div>
-  );
+export default function Page() {
+  return <LocationsPageContent />;
 }

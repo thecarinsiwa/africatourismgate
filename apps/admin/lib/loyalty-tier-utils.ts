@@ -10,13 +10,6 @@ export const LOYALTY_TIER_THRESHOLDS: Record<LoyaltyTier, number> = {
 
 export const LOYALTY_TIER_ORDER: LoyaltyTier[] = ['member', 'silver', 'gold', 'platinum'];
 
-export const loyaltyTierLabels: Record<LoyaltyTier, string> = {
-  member: 'Membre',
-  silver: 'Silver',
-  gold: 'Gold',
-  platinum: 'Platinum',
-};
-
 export type TierProgress = {
   currentTier: LoyaltyTier;
   nextTier: LoyaltyTier | null;
@@ -54,6 +47,6 @@ export function getTierProgress(pointsBalance: number, tier: LoyaltyTier): TierP
   };
 }
 
-export function formatPoints(value: number): string {
-  return value.toLocaleString('fr-FR');
+export function formatPoints(value: number, locale: string): string {
+  return value.toLocaleString(locale);
 }

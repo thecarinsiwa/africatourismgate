@@ -308,13 +308,14 @@ INSERT INTO `cruise_ports` (
 -- 12. Demo catalog (destinations, property, room)
 -- -----------------------------------------------------------------------------
 INSERT INTO `destinations` (
-  `id`, `name`, `slug`, `country_code`, `description`, `created_by_user_id`
+  `id`, `name`, `slug`, `country_code`, `description`, `is_featured`, `created_by_user_id`
 ) VALUES (
   '00000000-0000-4000-8000-000000002001',
   'Kinshasa',
   'kinshasa',
   'CD',
   'Capital of the Democratic Republic of the Congo',
+  1,
   '00000000-0000-4000-8000-000000000010'
 );
 

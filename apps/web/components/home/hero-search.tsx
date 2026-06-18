@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from '../../lib/i18n/locale-provider';
 
@@ -16,6 +17,8 @@ export function HeroSlider() {
   const t = useTranslations();
   const [current, setCurrent] = useState(0);
   const [transitioning, setTransitioning] = useState(false);
+  const [reduceMotion, setReduceMotion] = useState(false);
+  const [paused, setPaused] = useState(false);
 
   const slides = t.hero.slides.map((slide, i) => ({
     ...slide,
@@ -37,25 +40,50 @@ export function HeroSlider() {
   }, [current, goTo, slides.length]);
 
   useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReduceMotion(mq.matches);
+    const onChange = () => setReduceMotion(mq.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+
+  useEffect(() => {
+    if (reduceMotion || paused) return;
     const timer = setInterval(next, AUTO_PLAY_INTERVAL);
     return () => clearInterval(timer);
-  }, [next]);
+  }, [next, reduceMotion, paused]);
 
   const slide = slides[current];
 
   return (
-    <section className="relative h-[520px] sm:h-[600px] lg:h-[680px] overflow-hidden">
+    <section
+      className="relative h-[520px] sm:h-[600px] lg:h-[680px] overflow-hidden"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocusCapture={() => setPaused(true)}
+      onBlurCapture={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+          setPaused(false);
+        }
+      }}
+    >
       {slides.map((s, i) => (
         <div
           key={i}
-          className="absolute inset-0 bg-cover bg-center transition-opacity duration-1000"
-          style={{
-            backgroundImage: `url("${s.image}")`,
-            opacity: i === current ? 1 : 0,
-          }}
-          role={i === current ? 'img' : undefined}
-          aria-label={i === current ? s.title : undefined}
-        />
+          className="absolute inset-0 transition-opacity duration-1000"
+          style={{ opacity: i === current ? 1 : 0 }}
+          aria-hidden={i !== current}
+        >
+          <Image
+            src={s.image}
+            alt=""
+            fill
+            className="object-cover"
+            priority={i === 0}
+            loading={i === 0 ? undefined : 'lazy'}
+            sizes="100vw"
+          />
+        </div>
       ))}
 
       <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/60" />
@@ -68,7 +96,7 @@ export function HeroSlider() {
           <h1 className="hero-title text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight drop-shadow-lg">
             {slide.title}
           </h1>
-          <p className="hero-desc mt-5 text-base sm:text-lg text-white/85 max-w-2xl mx-auto leading-relaxed">
+          <p className="hero-desc mt-5 text-sm sm:text-base text-white/85 max-w-2xl mx-auto leading-relaxed">
             {slide.description}
           </p>
         </div>
@@ -83,7 +111,7 @@ export function HeroSlider() {
             className={`h-3 rounded-full transition-all duration-300 ${
               i === current ? 'w-8 bg-white' : 'w-3 bg-white/40 hover:bg-white/70'
             }`}
-            aria-label={`${t.hero.next} ${i + 1}`}
+            aria-label={t.hero.goToSlide.replace('{n}', String(i + 1))}
             aria-current={i === current ? 'step' : undefined}
           />
         ))}

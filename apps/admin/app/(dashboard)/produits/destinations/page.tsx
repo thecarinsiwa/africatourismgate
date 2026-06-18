@@ -1,22 +1,11 @@
 import type { Metadata } from 'next';
-import { Button, PageHeader } from '@africatourismgate/ui';
-import { DestinationsList } from '../../../../components/destinations/destinations-list';
-import { DestinationsStatCards } from '../../../../components/destinations/destinations-stat-cards';
+import { getAdminPageMetadata } from '../../../../lib/i18n/admin-page-i18n';
+import { DestinationsPageContent } from '../../../../components/pages/produits-destinations-page-content';
 
-export const metadata: Metadata = {
-  title: 'Destinations — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('produits/destinations');
+}
 
-export default function DestinationsPage() {
-  return (
-    <div>
-      <PageHeader
-        title="Destinations"
-        description="Géographie et points d'intérêt. Recherche par nom, slug ou code pays."
-        actions={<Button href="/produits/destinations/nouveau">Nouvelle destination</Button>}
-      />
-      <DestinationsStatCards className="mb-6" />
-      <DestinationsList />
-    </div>
-  );
+export default function Page() {
+  return <DestinationsPageContent />;
 }

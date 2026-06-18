@@ -1,16 +1,11 @@
 import type { Metadata } from 'next';
-import { AdminPageIntro } from '../../../../../components/admin-page-intro';
-import { EmployeeForm } from '../../../../../components/employees/employee-form';
+import { getAdminPageMetadata } from '../../../../../lib/i18n/admin-page-i18n';
+import { NouveauEmployePageContent } from '../../../../../components/pages/utilisateurs-employes-nouveau-page-content';
 
-export const metadata: Metadata = {
-  title: 'Nouvel employé — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('utilisateurs/employes/nouveau');
+}
 
-export default function NouvelEmployePage() {
-  return (
-    <div>
-      <AdminPageIntro description={"Lier un utilisateur existant à une organisation."} />
-      <EmployeeForm mode="create" />
-    </div>
-  );
+export default function Page() {
+  return <NouveauEmployePageContent />;
 }

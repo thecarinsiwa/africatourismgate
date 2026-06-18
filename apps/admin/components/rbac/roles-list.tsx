@@ -1,7 +1,9 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
-  Button,
+  AlertDialog,
   Card,
   DataTable,
   DataTableActionButton,
@@ -9,17 +11,24 @@ import {
   DataTableBadge,
   DataTablePagination,
   Input,
+  useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { Role } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getRbacErrorMessage } from '../../lib/rbac-errors';
+import { RoleBadge } from './role-badge';
 import { RbacSubnav } from './rbac-subnav';
 
 const PAGE_SIZE = 20;
 
 export function RolesList() {
+  const { rbac: getRbacErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.rbac.roles');
+  const tCommonColumns = useTranslations('modules.common.columns');
+  const tActions = useTranslations('common.actions');
+  const { toast } = useToast();
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -29,6 +38,7 @@ export function RolesList() {
     | { status: 'ready'; roles: Role[]; total: number; totalPages: number }
   >({ status: 'loading' });
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<Role | null>(null);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -48,7 +58,7 @@ export function RolesList() {
     } catch (error) {
       setState({ status: 'error', message: getRbacErrorMessage(error) });
     }
-  }, [page, search]);
+  }, [page, search, getRbacErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -65,52 +75,60 @@ export function RolesList() {
     return () => window.clearTimeout(timer);
   }, [searchInput]);
 
-  const handleDelete = useCallback(
-    async (role: Role) => {
-      if (role.isSystem) return;
-      if (!window.confirm(`Supprimer le rôle « ${role.name} » ?`)) return;
-      setDeletingId(role.id);
-      try {
-        await getApiClient().deleteRole(role.id);
-        await load();
-      } catch (error) {
-        window.alert(getRbacErrorMessage(error));
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [load],
-  );
+  const confirmDelete = useCallback(async () => {
+    if (!pendingDelete || pendingDelete.isSystem) return;
+    setDeletingId(pendingDelete.id);
+    try {
+      await getApiClient().deleteRole(pendingDelete.id);
+      toast({
+        title: t('toast.deletedTitle'),
+        message: t('toast.deletedMessage', { name: pendingDelete.name }),
+        variant: 'success',
+      });
+      setPendingDelete(null);
+      await load();
+    } catch (error) {
+      toast({
+        title: t('toast.deleteFailedTitle'),
+        message: getRbacErrorMessage(error),
+        variant: 'error',
+      });
+    } finally {
+      setDeletingId(null);
+    }
+  }, [pendingDelete, load, toast, t, getRbacErrorMessage]);
 
   const columns = useMemo<ColumnDef<Role, unknown>[]>(
     () => [
       {
         accessorKey: 'code',
-        header: 'Code',
+        header: tCommonColumns('code'),
         cell: ({ row }) => (
           <span className="font-mono text-sm text-atg-fg">{row.original.code}</span>
         ),
       },
       {
         accessorKey: 'name',
-        header: 'Nom',
+        header: tCommonColumns('name'),
         cell: ({ row }) => (
-          <span className="font-medium text-atg-fg">{row.original.name}</span>
+          <div className="flex flex-wrap items-center gap-2">
+            <RoleBadge code={row.original.code} name={row.original.name} />
+          </div>
         ),
       },
       {
         id: 'type',
-        header: 'Type',
+        header: tCommonColumns('type'),
         meta: { align: 'center' },
         cell: ({ row }) => (
           <DataTableBadge variant={row.original.isSystem ? 'muted' : 'success'}>
-            {row.original.isSystem ? 'Système' : 'Personnalisé'}
+            {row.original.isSystem ? t('type.system') : t('type.custom')}
           </DataTableBadge>
         ),
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tCommonColumns('actions'),
         meta: { align: 'right' },
         cell: ({ row }) => {
           const role = row.original;
@@ -123,7 +141,7 @@ export function RolesList() {
               {!role.isSystem ? (
                 <DataTableActionButton
                   action="delete"
-                  onClick={() => void handleDelete(role)}
+                  onClick={() => setPendingDelete(role)}
                   disabled={deletingId === role.id}
                   loading={deletingId === role.id}
                 />
@@ -133,7 +151,7 @@ export function RolesList() {
         },
       },
     ],
-    [deletingId, handleDelete],
+    [deletingId, t, tCommonColumns],
   );
 
   const roles = state.status === 'ready' ? state.roles : [];
@@ -145,12 +163,11 @@ export function RolesList() {
         <div className="min-w-[200px] flex-1 sm:max-w-md">
           <Input
             type="search"
-            placeholder="Rechercher par code ou nom…"
+            placeholder={t('searchPlaceholder')}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
           />
         </div>
-        <Button href="/systeme/roles/nouveau">Nouveau rôle</Button>
       </div>
 
       {state.status === 'error' ? (
@@ -164,9 +181,9 @@ export function RolesList() {
               columns={columns}
               data={roles}
               isLoading={state.status === 'loading'}
-              emptyMessage="Aucun rôle trouvé."
+              emptyMessage={t('empty')}
               getRowId={(r) => r.id}
-              aria-label="Liste des rôles"
+              aria-label={t('ariaLabel')}
             />
           </Card>
           {state.status === 'ready' ? (
@@ -175,12 +192,29 @@ export function RolesList() {
               pageSize={PAGE_SIZE}
               totalPages={state.totalPages}
               totalItems={state.total}
-              itemLabel="rôle"
+              itemLabel={t('paginationItem')}
               onPageChange={setPage}
             />
           ) : null}
         </>
       )}
+
+      <AlertDialog
+        open={pendingDelete !== null}
+        onOpenChange={(open) => {
+          if (!open) setPendingDelete(null);
+        }}
+        title={t('deleteDialog.title')}
+        description={
+          pendingDelete
+            ? t('deleteDialog.description', { name: pendingDelete.name })
+            : undefined
+        }
+        confirmLabel={tActions('delete')}
+        variant="danger"
+        loading={deletingId !== null}
+        onConfirm={() => void confirmDelete()}
+      />
     </div>
   );
 }

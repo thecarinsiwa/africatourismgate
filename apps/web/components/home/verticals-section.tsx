@@ -34,15 +34,15 @@ export function WhyUsSection() {
     <section
       id="about"
       ref={ref}
-      className="scroll-mt-24 bg-white py-16 transition-colors dark:bg-atg-surface sm:py-24"
+      className="scroll-mt-24 bg-atg-elevated py-16 transition-colors dark:bg-atg-surface sm:py-24"
       aria-labelledby="why-heading"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className={`text-center max-w-2xl mx-auto mb-14 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
-          <h2 id="why-heading" className="text-2xl font-bold uppercase tracking-wide text-[#0f1a16] dark:text-white sm:text-3xl">
+        <div className={`mb-12 max-w-2xl mx-auto text-center ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
+          <h2 id="why-heading" className="text-2xl font-bold uppercase tracking-wide text-atg-fg sm:text-3xl">
             {t.whyUs.title}
           </h2>
-          <p className="mt-4 leading-relaxed text-gray-500 dark:text-atg-muted">{t.whyUs.subtitle}</p>
+          <p className="mt-4 text-sm sm:text-base leading-relaxed text-atg-muted">{t.whyUs.subtitle}</p>
         </div>
 
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
@@ -52,20 +52,16 @@ export function WhyUsSection() {
               className={`group text-center ${isVisible ? 'animate-flip-in-y' : 'opacity-0'}`}
               style={{ animationDelay: `${(i + 1) * 150}ms` }}
             >
-              <div
-                className="mx-auto mb-5 flex h-24 w-24 items-center justify-center rounded-full border-2 transition-all duration-500 group-hover:scale-110 group-hover:shadow-lg"
-                style={{ borderColor: 'var(--atg-primary)', color: 'var(--atg-primary)' }}
-              >
+              <div className="mx-auto mb-5 flex h-24 w-24 items-center justify-center rounded-full border-2 border-primary text-primary transition-all duration-500 group-hover:scale-110 group-hover:border-primary group-hover:bg-primary/5 group-hover:shadow-lg">
                 {WHY_US_ICONS[i]}
               </div>
 
-              <h3 className="mb-2 text-lg font-bold text-[#0f1a16] dark:text-white">{item.title}</h3>
-              <p className="mb-4 text-sm leading-relaxed text-gray-500 dark:text-atg-muted">{item.description}</p>
+              <h3 className="mb-2 text-lg font-bold text-atg-fg">{item.title}</h3>
+              <p className="mb-4 text-sm leading-relaxed text-atg-muted">{item.description}</p>
 
               <a
                 href="#about"
-                className="inline-flex items-center gap-1 text-sm font-semibold transition-colors hover:underline"
-                style={{ color: 'var(--atg-primary)' }}
+                className="inline-flex items-center gap-1 text-sm font-semibold text-primary transition-colors hover:text-primary-hover hover:underline"
               >
                 {t.whyUs.learnMore}
                 <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>

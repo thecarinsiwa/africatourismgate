@@ -1,0 +1,128 @@
+{
+  "list": {
+    "newSailing": "Nouveau départ",
+    "viewList": "Liste",
+    "viewCalendar": "Calendrier",
+    "emptySailings": "Hastacun départ programmé.",
+    "deleteSailingConfirm": "Supprimer le départ « {label} » ?",
+    "fallbackDeparture": "Salida"
+  },
+  "columns": {
+    "departure": "Salida",
+    "itinerary": "Itinerario",
+    "ship": "Barco",
+    "nights": "Nuits",
+    "line": "Ligne",
+    "year": "Année",
+    "port": "Puerto"
+  },
+  "filters": {
+    "line": "Filtrer par ligne",
+    "searchShip": "Rechercher un navire…",
+    "searchLine": "Rechercher une ligne…",
+    "searchPort": "Rechercher par code ou nom…"
+  },
+  "form": {
+    "ship": {
+      "submitCreate": "Créer le navire",
+      "line": "Ligne",
+      "shipName": "Apellido du navire",
+      "builtYear": "Année de construction (optionnel)",
+      "validation": "Ligne et nom du navire sont obligatoires."
+    },
+    "sailing": {
+      "submitCreate": "Créer le départ",
+      "itinerary": "Itinerario",
+      "departureDate": "Fecha de départ",
+      "itineraryOption": "{name} ({shipName}) — {nights} nuits",
+      "validation": "Itinerario et date de départ sont obligatoires."
+    },
+    "itinerary": {
+      "new": "Nouvel itinéraire",
+      "edit": "Modifier l'itinéraire",
+      "durationNights": "Desderée (nuits)",
+      "empty": "Hastacun itinéraire.",
+      "deleteConfirm": "Supprimer cet itinéraire ?",
+      "validation": "Apellido et durée (nuits) invalides."
+    },
+    "port": {
+      "new": "Nouveau port de croisière",
+      "edit": "Modifier le port",
+      "countryIso": "País (ISO)",
+      "empty": "Hastacun port.",
+      "deleteConfirm": "Supprimer le port « {name} » ?"
+    },
+    "line": {
+      "new": "Nouvelle ligne de croisière",
+      "edit": "Modifier la ligne",
+      "empty": "Ninguna ligne de croisière.",
+      "deleteConfirm": "Supprimer la ligne « {name} » ?"
+    },
+    "cabin": {
+      "new": "Nouvelle cabine",
+      "edit": "Modifier la cabine",
+      "category": "Catégorie",
+      "maxGuests": "Voyageurs max",
+      "empty": "Ninguna cabine.",
+      "deleteConfirm": "Supprimer cette cabine ?",
+      "validationCategory": "Catégorie et capacité invalides.",
+      "validationPrice": "Precio de base invalide."
+    }
+  },
+  "detail": {
+    "shipTitle": "Modifier le navire",
+    "sailingTitle": "Modifier le départ",
+    "backToShips": "← Volver aux navires",
+    "escalesTitle": "Escalas",
+    "backToShip": "Volver au navire",
+    "timelineAria": "Schéma des escales"
+  },
+  "sections": {
+    "itineraryPorts": {
+      "day": "Jour",
+      "arrivalTime": "Heure d'arrivée (HH:MM)",
+      "departureTime": "Heure de départ (HH:MM)",
+      "arrivalPlaceholder": "08:00",
+      "departurePlaceholder": "18:00",
+      "empty": "Ninguna escale.",
+      "deleteConfirm": "Supprimer cette escale ?"
+    },
+    "cabinAvailability": {
+      "title": "Camarotes réservables",
+      "intro": "Stock et prix par catégorie pour ce départ.",
+      "stopsLabel": "Escalas : ",
+      "noStopsWarning": "Ninguna escale sur cet itinéraire — ajoutez-en depuis la fiche navire.",
+      "cabinMeta": "max {maxGuests} · base {basePrice}",
+      "cabinsAvailableAria": "Camarotes disponibles",
+      "priceCentsAria": "Precio en centimes",
+      "update": "Mettre à jour",
+      "makeBookable": "Rendre réservable",
+      "empty": "Ninguna cabine sur ce navire. Ajoutez des cabines sur la fiche navire."
+    }
+  },
+  "dialogs": {
+    "deleteShip": "Supprimer le navire « {name} » ?"
+  },
+  "calendar": {
+    "ariaLabel": "Calendrier des départs — {month}",
+    "today": "Hastajourd'hui"
+  },
+  "stats": {
+    "sailings": {
+      "label": "Salidas",
+      "subtitle": "Cruceros programmées"
+    },
+    "ships": {
+      "label": "Barcos",
+      "subtitle": "Flotte catalogue"
+    },
+    "lines": {
+      "label": "Líneas",
+      "subtitle": "Aerolíneas de croisière"
+    },
+    "ports": {
+      "label": "Puertos",
+      "subtitle": "Escalas référencées"
+    }
+  }
+}

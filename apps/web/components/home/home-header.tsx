@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { BrandingMark } from '../branding-mark';
 import { LanguageSwitcher } from '../language-switcher';
 import { AUTH_CHANGED_EVENT, hasWebSession } from '../../lib/auth/client-session';
@@ -10,6 +10,39 @@ import { useResolvedPublicContact } from '../../lib/contact/use-resolved-public-
 import { buildSocialLinks } from '../../lib/contact/social-links';
 import { buildVerticalListRoute } from '../../lib/search/route';
 import { useTranslations as useIntlTranslations } from 'next-intl';
+
+const FOCUSABLE_SELECTOR =
+  'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+function getFocusableElements(container: HTMLElement): HTMLElement[] {
+  return Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)).filter(
+    (el) => !el.hasAttribute('disabled') && el.offsetParent !== null,
+  );
+}
+
+function trapFocus(container: HTMLElement, event: KeyboardEvent): void {
+  if (event.key !== 'Tab') return;
+
+  const focusable = getFocusableElements(container);
+  if (focusable.length === 0) {
+    event.preventDefault();
+    return;
+  }
+
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  const active = document.activeElement as HTMLElement | null;
+
+  if (event.shiftKey) {
+    if (active === first || !container.contains(active)) {
+      event.preventDefault();
+      last.focus();
+    }
+  } else if (active === last) {
+    event.preventDefault();
+    first.focus();
+  }
+}
 
 function isPathActive(href: string, pathname: string): boolean {
   if (href === '/') return pathname === '/';
@@ -29,6 +62,30 @@ function isNavItemActive(
   return isPathActive(href, pathname);
 }
 
+type NavLinkVariant = 'desktop' | 'desktopChild' | 'mobile' | 'mobileChild';
+
+function navLinkClass(active: boolean, variant: NavLinkVariant): string {
+  const base = 'transition-colors';
+  switch (variant) {
+    case 'desktop':
+      return active
+        ? `${base} text-primary`
+        : `${base} text-atg-fg hover:text-primary dark:text-white/75 dark:hover:text-white`;
+    case 'desktopChild':
+      return active
+        ? `${base} bg-primary/10 font-medium text-primary`
+        : `${base} text-atg-muted hover:bg-atg-surface hover:text-primary dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white`;
+    case 'mobile':
+      return active
+        ? `${base} bg-primary/10 text-primary`
+        : `${base} text-atg-fg hover:bg-atg-surface hover:text-primary dark:text-white/75 dark:hover:bg-white/5 dark:hover:text-white`;
+    case 'mobileChild':
+      return active
+        ? `${base} bg-primary/10 font-medium text-primary`
+        : `${base} text-atg-muted hover:bg-atg-surface hover:text-primary dark:text-white/55 dark:hover:bg-white/5 dark:hover:text-white`;
+  }
+}
+
 type ThemeMode = 'light' | 'dark';
 
 export function HomeHeader() {
@@ -43,6 +100,8 @@ export function HomeHeader() {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [theme, setTheme] = useState<ThemeMode>('light');
   const [hasSession, setHasSession] = useState(false);
+  const mobileNavRef = useRef<HTMLElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   const navLinks = useMemo(
     () => [
@@ -81,6 +140,48 @@ export function HomeHeader() {
       window.removeEventListener('storage', syncSession);
     };
   }, []);
+
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    const menuButton = menuButtonRef.current;
+    document.body.style.overflow = 'hidden';
+
+    const frame = window.requestAnimationFrame(() => {
+      const panel = mobileNavRef.current;
+      if (!panel) return;
+      const focusable = getFocusableElements(panel);
+      if (focusable.length > 0) {
+        focusable[0].focus();
+      } else {
+        panel.focus();
+      }
+    });
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setMenuOpen(false);
+        return;
+      }
+      const panel = mobileNavRef.current;
+      if (panel) trapFocus(panel, event);
+    };
+
+    document.addEventListener('keydown', onKeyDown);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', onKeyDown);
+      menuButton?.focus();
+    };
+  }, [menuOpen]);
 
   function toggleTheme() {
     const nextTheme: ThemeMode = theme === 'dark' ? 'light' : 'dark';
@@ -133,65 +234,69 @@ export function HomeHeader() {
         </div>
       </div>
 
-      <div className="border-b border-gray-100 bg-white shadow-sm transition-colors dark:border-atg-border dark:bg-atg-elevated">
+      <div className="border-b border-atg-border bg-atg-elevated shadow-sm transition-colors dark:border-atg-border dark:bg-atg-elevated">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-0 sm:px-6 lg:px-8">
           <Link href="/" className="flex items-center gap-2 py-4">
             <BrandingMark
               showName
-              nameClassName="text-lg font-bold text-[#0f1a16] dark:text-white"
+              nameClassName="text-lg font-bold text-atg-fg"
             />
           </Link>
 
           <nav className="hidden items-center gap-0 lg:flex" aria-label={t('mainAria')}>
-            {navLinks.map((link) => (
-              <div
-                key={link.href}
-                className="relative"
-                onMouseEnter={() => (link.children.length > 0 ? setOpenDropdown(link.href) : undefined)}
-                onMouseLeave={() => setOpenDropdown(null)}
-              >
-                <Link
-                  href={link.href}
-                  className={`relative flex items-center gap-1 px-4 py-5 text-sm font-medium transition-colors ${
-                    isNavItemActive(link.href, pathname, link.children)
-                      ? 'text-primary'
-                      : 'text-[#333] hover:text-primary dark:text-white/75 dark:hover:text-white'
-                  }`}
+            {navLinks.map((link) => {
+              const linkActive = isNavItemActive(link.href, pathname, link.children);
+              return (
+                <div
+                  key={link.href}
+                  className="relative"
+                  onMouseEnter={() => (link.children.length > 0 ? setOpenDropdown(link.href) : undefined)}
+                  onMouseLeave={() => setOpenDropdown(null)}
                 >
-                  {link.label}
-                  {link.children.length > 0 && (
-                    <svg className="h-3 w-3 ml-0.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  )}
-                </Link>
+                  <Link
+                    href={link.href}
+                    className={`relative flex items-center gap-1 px-4 py-5 text-sm font-medium ${navLinkClass(linkActive, 'desktop')}`}
+                    aria-current={linkActive && link.children.length === 0 ? 'page' : undefined}
+                  >
+                    {link.label}
+                    {link.children.length > 0 && (
+                      <svg className="h-3 w-3 ml-0.5 text-atg-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    )}
+                  </Link>
 
-                {link.children.length > 0 && openDropdown === link.href && (
-                  <div className="absolute left-0 top-full z-50 min-w-[200px] rounded-lg border border-gray-100 bg-white py-2 shadow-xl dark:border-atg-border dark:bg-atg-elevated">
-                    {link.children.map((child) => (
-                      <Link
-                        key={child.href}
-                        href={child.href}
-                        className="block px-4 py-2 text-sm text-gray-600 transition-colors hover:bg-gray-50 hover:text-primary dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white"
-                      >
-                        {child.label}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
+                  {link.children.length > 0 && openDropdown === link.href && (
+                    <div className="absolute left-0 top-full z-50 min-w-[200px] rounded-lg border border-atg-border bg-atg-elevated py-2 shadow-xl dark:border-atg-border dark:bg-atg-elevated">
+                      {link.children.map((child) => {
+                        const childActive = isPathActive(child.href, pathname);
+                        return (
+                          <Link
+                            key={child.href}
+                            href={child.href}
+                            className={`block px-4 py-2 text-sm ${navLinkClass(childActive, 'desktopChild')}`}
+                            aria-current={childActive ? 'page' : undefined}
+                          >
+                            {child.label}
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </nav>
 
           <div className="hidden items-center gap-2 lg:flex">
             <Link
               href={hasSession ? '/account' : '/booking/login?next=%2Faccount'}
               className={`inline-flex min-h-[44px] items-center rounded-lg px-4 py-2.5 text-sm font-medium transition-colors ${
-                onAccountArea && hasSession
+                onAccountArea
                   ? 'bg-primary/10 text-primary'
-                  : 'text-[#333] hover:text-primary dark:text-white/75 dark:hover:text-white'
+                  : 'text-atg-fg hover:text-primary dark:text-white/75 dark:hover:text-white'
               }`}
-              aria-current={onAccountArea && hasSession ? 'page' : undefined}
+              aria-current={onAccountArea ? 'page' : undefined}
             >
               {hasSession ? t('myAccount') : t('signIn')}
             </Link>
@@ -208,7 +313,7 @@ export function HomeHeader() {
           <button
             type="button"
             onClick={toggleTheme}
-            className="ml-2 mr-2 inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-gray-200 text-gray-600 transition-colors hover:border-primary hover:text-primary dark:border-atg-border dark:text-white/75 dark:hover:border-primary dark:hover:text-white lg:ml-2 lg:mr-2"
+            className="ml-2 mr-2 inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-atg-border text-atg-muted transition-colors hover:border-primary hover:text-primary dark:border-atg-border dark:text-white/75 dark:hover:border-primary dark:hover:text-white lg:ml-2 lg:mr-2"
             aria-label={theme === 'dark' ? tTheme('enableLight') : tTheme('enableDark')}
             title={theme === 'dark' ? tTheme('lightMode') : tTheme('darkMode')}
           >
@@ -224,8 +329,9 @@ export function HomeHeader() {
           </button>
 
           <button
+            ref={menuButtonRef}
             type="button"
-            className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-gray-600 transition-colors hover:bg-gray-50 hover:text-primary dark:text-white/75 dark:hover:bg-white/5 dark:hover:text-white lg:hidden"
+            className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-atg-muted transition-colors hover:bg-atg-surface hover:text-primary dark:text-white/75 dark:hover:bg-white/5 dark:hover:text-white lg:hidden"
             aria-expanded={menuOpen}
             aria-controls="mobile-nav"
             onClick={() => setMenuOpen((o) => !o)}
@@ -246,12 +352,14 @@ export function HomeHeader() {
 
       {menuOpen && (
         <nav
+          ref={mobileNavRef}
           id="mobile-nav"
-          className="border-b border-gray-100 bg-white px-4 py-4 shadow-lg dark:border-atg-border dark:bg-atg-elevated lg:hidden"
+          tabIndex={-1}
+          className="border-b border-atg-border bg-atg-elevated px-4 py-4 shadow-lg transition-[opacity,transform] duration-200 ease-out opacity-100 translate-y-0 dark:border-atg-border dark:bg-atg-elevated lg:hidden"
           aria-label={t('mobileAria')}
         >
           <div className="mb-3 flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-atg-muted">
+            <span className="text-xs font-semibold uppercase tracking-wide text-atg-muted">
               {tLanguage('label')}
             </span>
             <LanguageSwitcher variant="navbar" />
@@ -260,10 +368,10 @@ export function HomeHeader() {
             <li>
               <Link
                 href={hasSession ? '/account' : '/booking/login?next=%2Faccount'}
-                className={`flex min-h-[44px] items-center rounded-lg px-3 py-3 text-sm font-medium hover:bg-gray-50 dark:hover:bg-white/5 ${
-                  onAccountArea && hasSession ? 'bg-primary/10 text-primary' : 'text-primary'
+                className={`flex min-h-[44px] items-center rounded-lg px-3 py-3 text-sm font-medium hover:bg-atg-surface dark:hover:bg-white/5 ${
+                  onAccountArea ? 'bg-primary/10 text-primary' : 'text-primary'
                 }`}
-                aria-current={onAccountArea && hasSession ? 'page' : undefined}
+                aria-current={onAccountArea ? 'page' : undefined}
                 onClick={() => setMenuOpen(false)}
               >
                 {hasSession ? t('myAccount') : t('signIn')}
@@ -280,36 +388,40 @@ export function HomeHeader() {
                 </Link>
               </li>
             ) : null}
-            {navLinks.map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  className={`flex min-h-[44px] items-center rounded-lg px-3 py-3 text-sm font-medium hover:bg-gray-50 hover:text-primary dark:text-white/75 dark:hover:bg-white/5 dark:hover:text-white ${
-                    isNavItemActive(link.href, pathname, link.children)
-                      ? 'text-primary'
-                      : 'text-gray-700'
-                  }`}
-                  onClick={() => setMenuOpen(false)}
-                >
-                  {link.label}
-                </Link>
-                {link.children.length > 0 && (
-                  <ul className="ml-4">
-                    {link.children.map((child) => (
-                      <li key={child.href}>
-                        <Link
-                          href={child.href}
-                          className="flex min-h-[40px] items-center rounded-lg px-3 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-primary dark:text-white/55 dark:hover:bg-white/5 dark:hover:text-white"
-                          onClick={() => setMenuOpen(false)}
-                        >
-                          {child.label}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </li>
-            ))}
+            {navLinks.map((link) => {
+              const linkActive = isNavItemActive(link.href, pathname, link.children);
+              return (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className={`flex min-h-[44px] items-center rounded-lg px-3 py-3 text-sm font-medium ${navLinkClass(linkActive, 'mobile')}`}
+                    aria-current={linkActive && link.children.length === 0 ? 'page' : undefined}
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    {link.label}
+                  </Link>
+                  {link.children.length > 0 && (
+                    <ul className="ml-4">
+                      {link.children.map((child) => {
+                        const childActive = isPathActive(child.href, pathname);
+                        return (
+                          <li key={child.href}>
+                            <Link
+                              href={child.href}
+                              className={`flex min-h-[40px] items-center rounded-lg px-3 py-2 text-sm ${navLinkClass(childActive, 'mobileChild')}`}
+                              aria-current={childActive ? 'page' : undefined}
+                              onClick={() => setMenuOpen(false)}
+                            >
+                              {child.label}
+                            </Link>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </nav>
       )}

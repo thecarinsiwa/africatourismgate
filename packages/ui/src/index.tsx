@@ -48,6 +48,8 @@ export { Checkbox, type CheckboxProps } from './components/checkbox';
 export { Card, type CardProps } from './components/card';
 export { Skeleton, type SkeletonProps } from './components/skeleton';
 export { StarRatingInput, type StarRatingInputProps } from './components/star-rating-input';
+export { StarRatingDisplay, type StarRatingDisplayProps } from './components/star-rating-display';
+export { StarIcon, type StarIconSize } from './components/star-rating-icons';
 export { StatCard, type StatCardProps, type StatCardStatus } from './components/stat-card';
 export { Avatar, type AvatarProps, type AvatarSize } from './components/avatar';
 export {
@@ -56,7 +58,12 @@ export {
   hashEmailToColor,
   hashEmailToHue,
 } from './lib/avatar-utils';
-export { FilterBar, type FilterBarProps } from './components/filter-bar';
+export {
+  FilterBar,
+  type FilterBarMobileVariant,
+  type FilterBarProps,
+} from './components/filter-bar';
+export { Drawer, type DrawerProps, type DrawerSide } from './components/drawer';
 export {
   Tabs,
   TabsContent,
@@ -83,10 +90,11 @@ export {
   type ToastVariant,
 } from './components/toast';
 export { DataTable, type DataTableProps, type DataTableAlign } from './components/data-table';
-export type { ColumnDef } from './components/data-table';
+export type { ColumnDef, OnChangeFn, SortingState } from './components/data-table';
 export { DataTableBadge, type DataTableBadgeProps, type DataTableBadgeVariant } from './components/data-table-badge';
 export {
   DataTablePagination,
+  type DataTablePaginationLabels,
   type DataTablePaginationProps,
 } from './components/data-table-pagination';
 export {

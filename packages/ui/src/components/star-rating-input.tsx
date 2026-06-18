@@ -2,6 +2,7 @@
 
 import { useId } from 'react';
 import { cn } from '../lib/cn';
+import { StarIcon } from './star-rating-icons';
 
 export type StarRatingInputProps = {
   value: number;
@@ -15,42 +16,6 @@ export type StarRatingInputProps = {
   className?: string;
 };
 
-function StarIcon({ filled, half }: { filled: boolean; half?: boolean }) {
-  if (half) {
-    return (
-      <svg className="h-7 w-7 text-atg-warning" viewBox="0 0 24 24" aria-hidden>
-        <defs>
-          <linearGradient id="half-star">
-            <stop offset="50%" stopColor="currentColor" />
-            <stop offset="50%" stopColor="transparent" />
-          </linearGradient>
-        </defs>
-        <path
-          fill="url(#half-star)"
-          stroke="currentColor"
-          strokeWidth={1.5}
-          d="M12 2l2.9 6.26L22 9.27l-5 4.87L18.2 22 12 18.27 5.8 22l1.2-7.86-5-4.87 7.1-1.01L12 2z"
-        />
-      </svg>
-    );
-  }
-
-  return (
-    <svg
-      className={cn('h-7 w-7', filled ? 'text-atg-warning' : 'text-atg-border')}
-      viewBox="0 0 24 24"
-      aria-hidden
-    >
-      <path
-        fill={filled ? 'currentColor' : 'none'}
-        stroke="currentColor"
-        strokeWidth={1.5}
-        d="M12 2l2.9 6.26L22 9.27l-5 4.87L18.2 22 12 18.27 5.8 22l1.2-7.86-5-4.87 7.1-1.01L12 2z"
-      />
-    </svg>
-  );
-}
-
 export function StarRatingInput({
   value,
   onChange,
@@ -63,6 +28,7 @@ export function StarRatingInput({
   className,
 }: StarRatingInputProps) {
   const id = useId();
+  const gradientId = useId();
   const stars = Array.from({ length: max }, (_, i) => i + 1);
 
   function handleStarClick(star: number, event: React.MouseEvent<HTMLButtonElement>) {
@@ -104,7 +70,7 @@ export function StarRatingInput({
               aria-checked={filled || half}
               role="radio"
             >
-              <StarIcon filled={filled} half={half} />
+              <StarIcon filled={filled} half={half} size="lg" gradientId={gradientId} />
             </button>
           );
         })}

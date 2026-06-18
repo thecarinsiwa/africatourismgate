@@ -1,9 +1,11 @@
 'use client';
 
+import { useAdminErrorMessages } from '../lib/i18n/use-admin-error-messages';
+
 import { Card, cn } from '@africatourismgate/ui';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { getDashboardKpiErrorMessage } from '../lib/dashboard-api-errors';
+import { useTranslations } from 'next-intl';
+import { useEffect, useMemo, useState } from 'react';
 import { formatCount } from '../lib/format-money';
 import { getApiClient } from '../lib/auth/api';
 import type { UserStatus } from '@africatourismgate/types';
@@ -17,10 +19,10 @@ type StatsState =
   | { status: 'error'; message: string }
   | { status: 'ready'; active: number; suspended: number; total: number };
 
-const statRows = [
+const statRowDefs = [
   {
     key: 'active' as const,
-    label: 'Actifs',
+    labelKey: 'active' as const,
     iconClass: 'bg-primary/10 text-primary',
     icon: (
       <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -30,7 +32,7 @@ const statRows = [
   },
   {
     key: 'suspended' as const,
-    label: 'Suspendus',
+    labelKey: 'suspended' as const,
     iconClass: 'bg-atg-border/60 text-atg-muted',
     icon: (
       <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -45,7 +47,7 @@ const statRows = [
   },
   {
     key: 'total' as const,
-    label: 'Total',
+    labelKey: 'total' as const,
     iconClass: 'bg-primary/10 text-primary',
     icon: (
       <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -61,7 +63,15 @@ const statRows = [
 ];
 
 export function DashboardUserStats({ className }: { className?: string }) {
+  const { dashboardKpi: getDashboardKpiErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('dashboard');
+  const tStats = useTranslations('dashboard.userStats');
   const [stats, setStats] = useState<StatsState>({ status: 'loading' });
+
+  const statRows = useMemo(
+    () => statRowDefs.map((row) => ({ ...row, label: tStats(row.labelKey) })),
+    [tStats],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -93,7 +103,7 @@ export function DashboardUserStats({ className }: { className?: string }) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [getDashboardKpiErrorMessage]);
 
   const values =
     stats.status === 'ready'
@@ -102,8 +112,8 @@ export function DashboardUserStats({ className }: { className?: string }) {
 
   return (
     <Card variant="dashboard" padding="sm" className={className}>
-      <h2 className="text-base font-semibold text-atg-fg">Statistiques utilisateurs</h2>
-      <p className="mt-1 text-sm text-atg-muted">Répartition des comptes sur la plateforme</p>
+      <h2 className="text-base font-semibold text-atg-fg">{tStats('title')}</h2>
+      <p className="mt-1 text-sm text-atg-muted">{tStats('subtitle')}</p>
 
       <ul className="mt-5 space-y-3">
         {statRows.map((row) => (
@@ -123,7 +133,7 @@ export function DashboardUserStats({ className }: { className?: string }) {
             {stats.status === 'loading' ? (
               <span className="text-sm font-semibold text-atg-fg">—</span>
             ) : stats.status === 'error' ? (
-              <span className="text-xs text-red-600 dark:text-red-400">Erreur</span>
+              <span className="text-xs text-red-600 dark:text-red-400">{t('errorLabel')}</span>
             ) : (
               <span className="text-sm font-semibold text-atg-fg">
                 {formatCount(values![row.key])}
@@ -143,7 +153,7 @@ export function DashboardUserStats({ className }: { className?: string }) {
         href="/utilisateurs"
         className="mt-5 inline-block text-sm font-medium text-primary hover:text-primary-hover"
       >
-        Voir tous les utilisateurs →
+        {t('viewAllUsers')}
       </Link>
     </Card>
   );

@@ -1,8 +1,8 @@
 export const cruisesKpis = [
   {
     key: 'sailings',
-    label: 'Départs',
-    subtitle: 'Croisières programmées',
+    labelKey: 'stats.sailings.label',
+    subtitleKey: 'stats.sailings.subtitle',
     iconClass: 'bg-atg-info-light text-atg-info',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -17,8 +17,8 @@ export const cruisesKpis = [
   },
   {
     key: 'ships',
-    label: 'Navires',
-    subtitle: 'Flotte catalogue',
+    labelKey: 'stats.ships.label',
+    subtitleKey: 'stats.ships.subtitle',
     href: '/produits/croisieres/navires',
     iconClass: 'bg-violet-100 text-violet-700 dark:bg-violet-950/50 dark:text-violet-300',
     icon: (
@@ -34,8 +34,8 @@ export const cruisesKpis = [
   },
   {
     key: 'lines',
-    label: 'Lignes',
-    subtitle: 'Compagnies de croisière',
+    labelKey: 'stats.lines.label',
+    subtitleKey: 'stats.lines.subtitle',
     href: '/produits/croisieres/lignes',
     iconClass: 'bg-atg-warning-light text-atg-warning',
     icon: (
@@ -51,8 +51,8 @@ export const cruisesKpis = [
   },
   {
     key: 'ports',
-    label: 'Ports',
-    subtitle: 'Escales référencées',
+    labelKey: 'stats.ports.label',
+    subtitleKey: 'stats.ports.subtitle',
     href: '/produits/croisieres/ports',
     iconClass: 'bg-atg-success-light text-atg-success',
     icon: (

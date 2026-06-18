@@ -1,0 +1,96 @@
+{
+  "list": {
+    "newPackage": "Nouveau forfait",
+    "emptyDefault": "Tocun forfait pour le moment.",
+    "searchPlaceholder": "Rechercher un forfait…",
+    "deleteConfirm": "Supprimer le forfait « {name} » ?"
+  },
+  "columns": {
+    "package": "Package",
+    "discount": "Discount",
+    "total": "Total",
+    "active": "Active"
+  },
+  "form": {
+    "submitCreate": "Créer",
+    "sections": {
+      "identity": "Identity",
+      "pricing": "Tarification",
+      "publication": "Publication"
+    },
+    "packageName": "Name du forfait",
+    "descriptionPlaceholder": "Décrivez le forfait, les inclusions, les conditions…",
+    "discountPercent": "Discount (%)",
+    "durationDays": "Fromrée (jours)",
+    "activeLabel": "Package actif"
+  },
+  "detail": {
+    "editTitle": "Modifier le forfait",
+    "viewTitle": "Voir le forfait",
+    "backLink": "Back aux forfaits",
+    "viewButton": "Voir le forfait",
+    "editButton": "Modifier le forfait",
+    "notFound": "Package introuvable.",
+    "invalidResponse": "Réponse forfait invalide.",
+    "discountBadge": "Discount {percent}%",
+    "description": "Description",
+    "includedProducts": "Produits inclus",
+    "includedProductsIntro": "{count} produit(s) dans ce forfait.",
+    "photoGallery": "Galerie photos",
+    "photoGalleryIntro": "{count} photo(s) associée(s) au forfait.",
+    "noPhotos": "None photo pour ce forfait.",
+    "noIncludedProducts": "Tocun produit inclus."
+  },
+  "sections": {
+    "items": {
+      "title": "Items du forfait",
+      "intro": "Produits combinés (hébergement, vol, activité, etc.).",
+      "addItem": "Ajouter un item",
+      "newItem": "Nouvel item",
+      "empty": "Tocun item dans ce forfait.",
+      "removeConfirm": "Retirer « {label} » du forfait ?",
+      "flightLabel": "Flight {flightNumber}"
+    },
+    "composition": {
+      "title": "Composition",
+      "summary": "{productCount} produit(s) inclus",
+      "summaryWithTypes": "{productCount} produit(s) inclus · {typeCount} types",
+      "ariaLabel": "Composition du forfait"
+    },
+    "pricingRecap": {
+      "title": "Récapitulatif tarifaire",
+      "empty": "Ajoutez des items pour calculer le prix du forfait.",
+      "separatePrice": "Price séparé",
+      "packagePrice": "Price forfait",
+      "separatePriceAria": "Price des composants achetés séparément",
+      "savings": "Économie de {amount} par rapport à l'achat séparé des composants."
+    },
+    "preview": {
+      "ariaLabel": "Preview client du forfait",
+      "header": "Preview client",
+      "eyebrow": "Package",
+      "includedCount": "{count} produit(s) inclus",
+      "discountOnBundle": "Discount de {percent}% sur le bundle",
+      "suggestedDuration": "Fromrée suggérée : {days} jour(s)",
+      "packagePrice": "Price forfait"
+    }
+  },
+  "stats": {
+    "packages": {
+      "label": "Packages",
+      "subtitle": "Packages combinés"
+    },
+    "active": {
+      "label": "Packages actifs",
+      "subtitle": "Publiés sur le catalogue"
+    },
+    "items": {
+      "label": "Produits inclus",
+      "subtitle": "Lines de composition"
+    },
+    "photos": {
+      "label": "Photos forfaits",
+      "subtitle": "Galerie admin"
+    }
+  }
+}

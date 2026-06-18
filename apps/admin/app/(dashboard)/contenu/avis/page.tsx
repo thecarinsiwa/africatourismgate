@@ -1,16 +1,11 @@
 import type { Metadata } from 'next';
-import { AdminPageIntro } from '../../../../components/admin-page-intro';
-import { ReviewsList } from '../../../../components/reviews/reviews-list';
+import { getAdminPageMetadata } from '../../../../lib/i18n/admin-page-i18n';
+import { AvisPageContent } from '../../../../components/pages/contenu-avis-page-content';
 
-export const metadata: Metadata = {
-  title: 'Avis — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('contenu/avis');
+}
 
-export default function ReviewsPage() {
-  return (
-    <div>
-      <AdminPageIntro description="Modération des notes et commentaires clients. Filtres par note, propriété et statut. Actions : approuver, masquer ou supprimer. Accès : reviews.read / reviews.write." />
-      <ReviewsList />
-    </div>
-  );
+export default function Page() {
+  return <AvisPageContent />;
 }

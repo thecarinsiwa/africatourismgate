@@ -28,6 +28,7 @@ export type Translations = {
     slides: { subtitle: string; title: string; description: string }[];
     prev: string;
     next: string;
+    goToSlide: string;
   };
   search: {
     tablistAria: string;
@@ -74,6 +75,7 @@ export type Translations = {
     oneWay: string;
     roundTrip: string;
     viewAllFlights: string;
+    viewAllHotels: string;
     carsRequired: string;
     carsReturnAfterPickup: string;
     carsDurationHint: string;
@@ -108,6 +110,9 @@ export type Translations = {
     subtitle: string;
     reviews: string;
     details: string;
+    loading: string;
+    loadError: string;
+    empty: string;
     items: { title: string; subtitle: string; description: string }[];
   };
   customers: {
@@ -123,10 +128,19 @@ export type Translations = {
     tagline: string;
     learnMore: string;
     specialists: string;
-    specialistLinks: { premium: string; flights: string; safaris: string; cruises: string };
+    products: string;
+    specialistLinks: {
+      premium: string;
+      flights: string;
+      safaris: string;
+      cruises: string;
+      cars: string;
+      packages: string;
+    };
     newsletter: string;
     newsletterDesc: string;
     emailPlaceholder: string;
+    newsletterSubmit: string;
     contact: string;
     location: string;
     privacy: string;
@@ -785,6 +799,7 @@ const fr: Translations = {
     ],
     prev: 'Diapositive précédente',
     next: 'Diapositive suivante',
+    goToSlide: 'Aller à la diapositive {n}',
   },
   search: {
     tablistAria: 'Type de recherche',
@@ -831,6 +846,7 @@ const fr: Translations = {
     oneWay: 'Aller simple',
     roundTrip: 'Aller-retour',
     viewAllFlights: 'Voir tous les vols disponibles',
+    viewAllHotels: 'Voir tous les hôtels',
     carsRequired: 'Indiquez la ville, la date de prise en charge et la date de retour.',
     carsReturnAfterPickup: 'La date de retour doit être après la date de prise en charge.',
     carsDurationHint: 'Sélectionnez les dates pour voir la durée',
@@ -889,6 +905,9 @@ const fr: Translations = {
       'Découvrez nos destinations africaines les plus prisées. Des safaris aux plages paradisiaques, chaque voyage est une aventure unique.',
     reviews: 'Avis',
     details: 'Détails',
+    loading: 'Chargement des destinations…',
+    loadError: 'Impossible de charger les destinations.',
+    empty: 'Aucune destination mise en avant pour le moment.',
     items: [
       {
         title: 'Safari au Masai Mara',
@@ -926,15 +945,19 @@ const fr: Translations = {
       'Votre passerelle vers les meilleures expériences de voyage en Afrique. Découvrez des destinations uniques et réservez en toute confiance.',
     learnMore: 'En savoir plus',
     specialists: 'Spécialistes Voyage',
+    products: 'Nos Produits',
     specialistLinks: {
       premium: 'Hébergements Premium',
       flights: 'Vols Première Classe',
       safaris: 'Safaris & Tours',
       cruises: 'Croisières Côtières',
+      cars: 'Location de Voitures',
+      packages: 'Forfaits',
     },
     newsletter: 'Newsletter',
     newsletterDesc: 'Inspiration, idées de voyages, bons plans et actualités.',
     emailPlaceholder: 'Adresse email',
+    newsletterSubmit: 'OK',
     contact: 'Contact',
     location: 'Kinshasa, RD Congo',
     privacy: 'Politique de Confidentialité',
@@ -1646,6 +1669,7 @@ const en: Translations = {
     ],
     prev: 'Previous slide',
     next: 'Next slide',
+    goToSlide: 'Go to slide {n}',
   },
   search: {
     tablistAria: 'Search type',
@@ -1692,6 +1716,7 @@ const en: Translations = {
     oneWay: 'One way',
     roundTrip: 'Round trip',
     viewAllFlights: 'View all available flights',
+    viewAllHotels: 'View all hotels',
     carsRequired: 'Enter city, pick-up date and return date.',
     carsReturnAfterPickup: 'Return date must be after pick-up date.',
     carsDurationHint: 'Select dates to see rental duration',
@@ -1749,6 +1774,9 @@ const en: Translations = {
       'Discover our most sought-after African destinations. From safaris to paradise beaches, every trip is a unique adventure.',
     reviews: 'Reviews',
     details: 'Details',
+    loading: 'Loading destinations…',
+    loadError: 'Could not load destinations.',
+    empty: 'No featured destinations at the moment.',
     items: [
       {
         title: 'Masai Mara Safari',
@@ -1786,15 +1814,19 @@ const en: Translations = {
       'Your gateway to the best travel experiences in Africa. Discover unique destinations and book with confidence.',
     learnMore: 'Learn more',
     specialists: 'Travel Specialists',
+    products: 'Our Products',
     specialistLinks: {
       premium: 'Premium Stays',
       flights: 'First Class Flights',
       safaris: 'Safaris & Tours',
       cruises: 'Coastal Cruises',
+      cars: 'Car Rental',
+      packages: 'Packages',
     },
     newsletter: 'Newsletter',
     newsletterDesc: 'Inspiration, travel ideas, deals and news.',
     emailPlaceholder: 'Email address',
+    newsletterSubmit: 'OK',
     contact: 'Contact',
     location: 'Kinshasa, DR Congo',
     privacy: 'Privacy Policy',

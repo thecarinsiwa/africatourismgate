@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
+import { getAdminPageMetadata } from '../../../../../lib/i18n/admin-page-i18n';
 import { VehicleEditPage } from '../../../../../components/locations/vehicle-edit-page';
 
-export const metadata: Metadata = {
-  title: 'Modifier le véhicule — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('produits/locations/id');
+}
 
 type PageProps = {
   params: { id: string };

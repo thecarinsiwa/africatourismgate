@@ -12,15 +12,18 @@
 3. Ouvrez la **branche PR** indiquée, implémentez, testez avec `pnpm dev:admin`.
 4. Commencez par **UX-1** (fondations) — les autres livrables en dépendent en grande partie.
 5. Croisez avec [roadmap-development.md](./roadmap-development.md) : certaines pages placeholder seront remplacées par de vrais CRUD — le design peut être anticipé dès maintenant.
-6. Ne demandez un commit que lorsque vous êtes satisfait du résultat.
+6. Pour le site public, voir le workflow parallèle [web-design-improvements.md](./web-design-improvements.md) — composants `packages/ui` partagés.
+7. Ne demandez un commit que lorsque vous êtes satisfait du résultat.
 
 ### Légende des priorités
 
-| Priorité | Signification |
-|----------|---------------|
-| **Haute** | Impact fort sur la cohérence, l’efficacité quotidienne ou la perception produit |
-| **Moyenne** | Amélioration notable, implémentable module par module |
-| **Basse** | Polish, confort ou fonctionnalité avancée |
+
+| Priorité    | Signification                                                                   |
+| ----------- | ------------------------------------------------------------------------------- |
+| **Haute**   | Impact fort sur la cohérence, l’efficacité quotidienne ou la perception produit |
+| **Moyenne** | Amélioration notable, implémentable module par module                           |
+| **Basse**   | Polish, confort ou fonctionnalité avancée                                       |
+
 
 ### Prompt méta (modèle réutilisable)
 
@@ -51,40 +54,44 @@ Règles design :
 
 ## Tableau récapitulatif — livrables design
 
-| # | Phase | Livrable | Priorité | Branche PR | Dépend de |
-|---|-------|----------|----------|------------|-----------|
-| UX-1 | 1 | Design system — composants fondation | Haute | `feature/admin-ui-foundation` | — |
-| UX-2 | 1 | Thème — tokens sémantiques & typographie | Haute | `feature/admin-ui-theme-tokens` | UX-1 |
-| UX-3 | 2 | Shell, navigation & layout | Haute | `feature/admin-ui-shell` | UX-1 |
-| UX-4 | 2 | Authentification (login / register) | Moyenne | `feature/admin-ui-auth` | UX-1 |
-| UX-5 | 2 | Tableau de bord | Haute | `feature/admin-ui-dashboard` | UX-1, UX-2 |
-| UX-6 | 3 | Utilisateurs & auth (nav) | Haute | `feature/admin-ui-users` | UX-1 |
-| UX-7 | 3 | Fidélité | Moyenne | `feature/admin-ui-loyalty` | UX-1 |
-| UX-8 | 4 | Hébergements | Haute | `feature/admin-ui-accommodations` | UX-1, UX-3 |
-| UX-9 | 4 | Vols | Moyenne | `feature/admin-ui-flights` | UX-1, UX-8 |
-| UX-10 | 4 | Locations véhicules | Moyenne | `feature/admin-ui-vehicles` | UX-1 |
-| UX-11 | 4 | Croisières | Moyenne | `feature/admin-ui-cruises` | UX-1, UX-3 |
-| UX-12 | 4 | Activités & tours | Moyenne | `feature/admin-ui-activities` | UX-1 |
-| UX-13 | 4 | Forfaits | Moyenne | `feature/admin-ui-packages` | UX-1 |
-| UX-14 | 4 | Destinations | Moyenne | `feature/admin-ui-destinations` | UX-1 |
-| UX-15 | 3 | Réservations | Haute | `feature/admin-ui-bookings` | UX-1 |
-| UX-16 | 3 | Paiements (codes promo, promotions) | Haute | `feature/admin-ui-payments` | UX-1 |
-| UX-17 | 3 | Contenu & support (avis, tickets) | Haute | `feature/admin-ui-content-support` | UX-1 |
-| UX-18 | 3 | Organisations | Moyenne | `feature/admin-ui-organizations` | UX-1 |
-| UX-19 | 3 | Rôles & RBAC | Moyenne | `feature/admin-ui-rbac` | UX-1 |
-| UX-20 | 3 | Paramètres organisation | Haute | `feature/admin-ui-settings` | UX-1, UX-3 |
-| UX-21 | 5 | Pages placeholder & empty states | Moyenne | `feature/admin-ui-empty-states` | UX-1 |
-| UX-22 | 5 | Mobile, responsive & polish global | Moyenne | `feature/admin-ui-mobile-polish` | UX-1 |
+
+| #     | Phase | Livrable                                 | Priorité | Branche PR                         | Dépend de  |
+| ----- | ----- | ---------------------------------------- | -------- | ---------------------------------- | ---------- |
+| UX-1  | 1     | Design system — composants fondation     | Haute    | `feature/admin-ui-foundation`      | —          |
+| UX-2  | 1     | Thème — tokens sémantiques & typographie | Haute    | `feature/admin-ui-theme-tokens`    | UX-1       |
+| UX-3  | 2     | Shell, navigation & layout               | Haute    | `feature/admin-ui-shell`           | UX-1       |
+| UX-4  | 2     | Authentification (login / register)      | Moyenne  | `feature/admin-ui-auth`            | UX-1       |
+| UX-5  | 2     | Tableau de bord                          | Haute    | `feature/admin-ui-dashboard`       | UX-1, UX-2 |
+| UX-6  | 3     | Utilisateurs & auth (nav)                | Haute    | `feature/admin-ui-users`           | UX-1       |
+| UX-7  | 3     | Fidélité                                 | Moyenne  | `feature/admin-ui-loyalty`         | UX-1       |
+| UX-8  | 4     | Hébergements                             | Haute    | `feature/admin-ui-accommodations`  | UX-1, UX-3 |
+| UX-9  | 4     | Vols                                     | Moyenne  | `feature/admin-ui-flights`         | UX-1, UX-8 |
+| UX-10 | 4     | Locations véhicules                      | Moyenne  | `feature/admin-ui-vehicles`        | UX-1       |
+| UX-11 | 4     | Croisières                               | Moyenne  | `feature/admin-ui-cruises`         | UX-1, UX-3 |
+| UX-12 | 4     | Activités & tours                        | Moyenne  | `feature/admin-ui-activities`      | UX-1       |
+| UX-13 | 4     | Forfaits                                 | Moyenne  | `feature/admin-ui-packages`        | UX-1       |
+| UX-14 | 4     | Destinations                             | Moyenne  | `feature/admin-ui-destinations`    | UX-1       |
+| UX-15 | 3     | Réservations                             | Haute    | `feature/admin-ui-bookings`        | UX-1       |
+| UX-16 | 3     | Paiements (codes promo, promotions)      | Haute    | `feature/admin-ui-payments`        | UX-1       |
+| UX-17 | 3     | Contenu & support (avis, tickets)        | Haute    | `feature/admin-ui-content-support` | UX-1       |
+| UX-18 | 3     | Organisations                            | Moyenne  | `feature/admin-ui-organizations`   | UX-1       |
+| UX-19 | 3     | Rôles & RBAC                             | Moyenne  | `feature/admin-ui-rbac`            | UX-1       |
+| UX-20 | 3     | Paramètres organisation                  | Haute    | `feature/admin-ui-settings`        | UX-1, UX-3 |
+| UX-21 | 5     | Pages placeholder & empty states         | Moyenne  | `feature/admin-ui-empty-states`    | UX-1       |
+| UX-22 | 5     | Mobile, responsive & polish global       | Moyenne  | `feature/admin-ui-mobile-polish`   | UX-1       |
+
 
 ### Phases
 
-| Phase | Objectif |
-|-------|----------|
-| **1** | Design system & tokens |
-| **2** | Shell, auth, dashboard |
+
+| Phase | Objectif                                           |
+| ----- | -------------------------------------------------- |
+| **1** | Design system & tokens                             |
+| **2** | Shell, auth, dashboard                             |
 | **3** | Modules opérationnels (users, bookings, payments…) |
-| **4** | Catalogue voyage (verticals) |
-| **5** | Empty states, mobile, finitions |
+| **4** | Catalogue voyage (verticals)                       |
+| **5** | Empty states, mobile, finitions                    |
+
 
 ### Ordre d'exécution recommandé
 
@@ -108,17 +115,19 @@ UX-20 → UX-21 → UX-22
 
 ## État actuel (synthèse)
 
-| Aspect | État | Observation |
-|--------|------|-------------|
-| Design system | ⚠️ | Tokens CSS (`theme.css`), `Card`, `Button`, `Input`, `DataTable` — pas de `Select`, `Modal`, `Toast`, `Breadcrumb` |
-| Shell & navigation | ✅ | Sidebar groupée, thème clair/sombre, branding org dynamique |
-| Pages liste (CRUD) | ⚠️ | Pattern répétitif mais homogène ; filtres natifs `<select>` |
-| Pages détail / formulaires | ⚠️ | Champs empilés, peu de structure visuelle, chargement texte seul |
-| Tableau de bord | ⚠️ | KPIs fonctionnels, graphiques absents |
-| Auth | ✅ | Carte avec accent, cohérent avec le web |
-| i18n | ⚠️ | Nav + auth traduits ; KPIs, labels métier souvent en dur (FR) |
-| Feedback utilisateur | ❌ | `window.confirm` pour suppressions, pas de toasts |
-| Mobile | ⚠️ | Menu latéral OK ; tableaux larges peu optimisés |
+
+| Aspect                     | État | Observation                                                                                                        |
+| -------------------------- | ---- | ------------------------------------------------------------------------------------------------------------------ |
+| Design system              | ⚠️   | Tokens CSS (`theme.css`), `Card`, `Button`, `Input`, `DataTable` — pas de `Select`, `Modal`, `Toast`, `Breadcrumb` |
+| Shell & navigation         | ✅    | Sidebar groupée, thème clair/sombre, branding org dynamique                                                        |
+| Pages liste (CRUD)         | ⚠️   | Pattern répétitif mais homogène ; filtres natifs `<select>`                                                        |
+| Pages détail / formulaires | ⚠️   | Champs empilés, peu de structure visuelle, chargement texte seul                                                   |
+| Tableau de bord            | ⚠️   | KPIs fonctionnels, graphiques absents                                                                              |
+| Auth                       | ✅    | Carte avec accent, cohérent avec le web                                                                            |
+| i18n                       | ⚠️   | Nav + auth traduits ; KPIs, labels métier souvent en dur (FR)                                                      |
+| Feedback utilisateur       | ❌    | `window.confirm` pour suppressions, pas de toasts                                                                  |
+| Mobile                     | ⚠️   | Menu latéral OK ; tableaux larges peu optimisés                                                                    |
+
 
 ---
 
@@ -133,39 +142,46 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 ### 1. Composants manquants du design system
 
-| Composant | Priorité | Description |
-|-----------|----------|-------------|
-| `PageHeader` | **Haute** | Titre (`h1`), description, slot actions (CTA), slot breadcrumb — remplace le bloc dupliqué dans chaque `page.tsx` |
-| `Breadcrumb` | **Haute** | Fil d’Ariane pour les pages imbriquées (ex. Croisières → Navire → Itinéraire) |
-| `Select` | **Haute** | Remplace les `<select>` natifs des listes (hébergements, réservations, paiements…) |
-| `Modal` / `AlertDialog` | **Haute** | Confirmation de suppression, remboursement, modération avis |
-| `Toast` | **Haute** | Retour succès/erreur après create/update/delete (au lieu de `<p role="alert">` isolés) |
-| `Tabs` | **Moyenne** | Fiches détail multi-sections (vol + classes, hébergement + chambres, utilisateur + rôles) |
-| `Skeleton` | **Moyenne** | États de chargement des pages détail (aujourd’hui : « Chargement… ») |
-| `EmptyState` | **Moyenne** | Illustration + titre + CTA pour listes vides hors table |
-| `FilterBar` | **Moyenne** | Barre de filtres repliable avec compteur de filtres actifs |
-| `StatCard` | **Moyenne** | Extraction des KPI dashboard en composant réutilisable (icône, delta, lien) |
+
+| Composant               | Priorité    | Description                                                                                                       |
+| ----------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------- |
+| `PageHeader`            | **Haute**   | Titre (`h1`), description, slot actions (CTA), slot breadcrumb — remplace le bloc dupliqué dans chaque `page.tsx` |
+| `Breadcrumb`            | **Haute**   | Fil d’Ariane pour les pages imbriquées (ex. Croisières → Navire → Itinéraire)                                     |
+| `Select`                | **Haute**   | Remplace les `<select>` natifs des listes (hébergements, réservations, paiements…)                                |
+| `Modal` / `AlertDialog` | **Haute**   | Confirmation de suppression, remboursement, modération avis                                                       |
+| `Toast`                 | **Haute**   | Retour succès/erreur après create/update/delete (au lieu de `<p role="alert">` isolés)                            |
+| `Tabs`                  | **Moyenne** | Fiches détail multi-sections (vol + classes, hébergement + chambres, utilisateur + rôles)                         |
+| `Skeleton`              | **Moyenne** | États de chargement des pages détail (aujourd’hui : « Chargement… »)                                              |
+| `EmptyState`            | **Moyenne** | Illustration + titre + CTA pour listes vides hors table                                                           |
+| `FilterBar`             | **Moyenne** | Barre de filtres repliable avec compteur de filtres actifs                                                        |
+| `StatCard`              | **Moyenne** | Extraction des KPI dashboard en composant réutilisable (icône, delta, lien)                                       |
+
 
 **Fichiers de référence actuels :**
+
 - En-têtes dupliqués : `apps/admin/app/(dashboard)/hebergements/page.tsx`, `utilisateurs/page.tsx`, etc.
 - Select natif : `apps/admin/components/properties/properties-list.tsx` (l.193–207)
 - Confirm natif : `properties-list.tsx` (l.101)
 
 ### 2. Typographie & espacement (UX-2)
 
-| Suggestion | Priorité | Détail |
-|------------|----------|--------|
-| Échelle typographique unifiée | **Moyenne** | `text-2xl font-bold` pour h1 page, `text-lg font-semibold` pour h2 section, `text-sm text-atg-muted` pour descriptions |
-| Conteneur max-width formulaires | **Moyenne** | Formulaires longs : `max-w-2xl` ou layout 2 colonnes sur `lg:` |
-| Espacement vertical | **Basse** | Standardiser `space-y-6` (listes) et `space-y-8` (dashboard) |
+
+| Suggestion                      | Priorité    | Détail                                                                                                                 |
+| ------------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Échelle typographique unifiée   | **Moyenne** | `text-2xl font-bold` pour h1 page, `text-lg font-semibold` pour h2 section, `text-sm text-atg-muted` pour descriptions |
+| Conteneur max-width formulaires | **Moyenne** | Formulaires longs : `max-w-2xl` ou layout 2 colonnes sur `lg:`                                                         |
+| Espacement vertical             | **Basse**   | Standardiser `space-y-6` (listes) et `space-y-8` (dashboard)                                                           |
+
 
 ### 3. Couleurs & thème (UX-2)
 
-| Suggestion | Priorité | Détail |
-|------------|----------|--------|
-| Palette sémantique | **Haute** | Tokens `--atg-success`, `--atg-warning`, `--atg-danger`, `--atg-info` dans `packages/config/theme.css` |
-| KPIs différenciés | **Moyenne** | Couleurs d’icône distinctes par métrique — `dashboard-kpi-cards.tsx` |
-| Contraste sidebar active | **Basse** | Lien actif `bg-primary text-white` : test WCAG avec couleur org personnalisée |
+
+| Suggestion               | Priorité    | Détail                                                                                                 |
+| ------------------------ | ----------- | ------------------------------------------------------------------------------------------------------ |
+| Palette sémantique       | **Haute**   | Tokens `--atg-success`, `--atg-warning`, `--atg-danger`, `--atg-info` dans `packages/config/theme.css` |
+| KPIs différenciés        | **Moyenne** | Couleurs d’icône distinctes par métrique — `dashboard-kpi-cards.tsx`                                   |
+| Contraste sidebar active | **Basse**   | Lien actif `bg-primary text-white` : test WCAG avec couleur org personnalisée                          |
+
 
 ### 4. Patterns de page recommandés
 
@@ -190,15 +206,17 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 **Fichiers :** `packages/ui/src/components/dashboard-shell.tsx`, `sidebar.tsx`, `app-header.tsx`, `apps/admin/components/dashboard-shell-layout.tsx`
 
-| # | Suggestion | Priorité | Détail |
-|---|------------|----------|--------|
-| S1 | Fil d’Ariane dans le header | **Haute** | Afficher le chemin courant à côté du bouton menu (mobile) ou sous le logo (desktop) |
-| S2 | Titre de page contextuel | **Moyenne** | Propager le titre de la page active dans `AppHeader` |
-| S3 | Indicateur de section active | **Moyenne** | Barre verticale ou pastille sur le groupe sidebar ouvert |
-| S4 | Raccourci recherche globale | **Basse** | `Cmd+K` — recherche cross-modules |
-| S5 | Badge compteur nav | **Basse** | Ex. tickets support en attente, avis à modérer |
-| S6 | Sidebar compacte | **Basse** | Mode icônes seules sur `xl:` |
-| S7 | Pied de sidebar | **Basse** | Version app + lien documentation / support |
+
+| #   | Suggestion                   | Priorité    | Détail                                                                              |
+| --- | ---------------------------- | ----------- | ----------------------------------------------------------------------------------- |
+| S1  | Fil d’Ariane dans le header  | **Haute**   | Afficher le chemin courant à côté du bouton menu (mobile) ou sous le logo (desktop) |
+| S2  | Titre de page contextuel     | **Moyenne** | Propager le titre de la page active dans `AppHeader`                                |
+| S3  | Indicateur de section active | **Moyenne** | Barre verticale ou pastille sur le groupe sidebar ouvert                            |
+| S4  | Raccourci recherche globale  | **Basse**   | `Cmd+K` — recherche cross-modules                                                   |
+| S5  | Badge compteur nav           | **Basse**   | Ex. tickets support en attente, avis à modérer                                      |
+| S6  | Sidebar compacte             | **Basse**   | Mode icônes seules sur `xl:`                                                        |
+| S7  | Pied de sidebar              | **Basse**   | Version app + lien documentation / support                                          |
+
 
 ---
 
@@ -208,12 +226,14 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 **Fichiers :** `apps/admin/components/auth/login-page-content.tsx`, `auth-page-shell.tsx`, `admin-login-form.tsx`
 
-| # | Suggestion | Priorité | Détail |
-|---|------------|----------|--------|
-| A1 | Illustration ou visuel latéral | **Moyenne** | Split layout desktop : formulaire + visuel travel |
-| A2 | Logo org sur login | **Moyenne** | Logo partenaire si org connue |
-| A3 | États de chargement bouton | **Basse** | Spinner dans le bouton submit |
-| A4 | Message d’erreur inline | **Basse** | Encadré rouge discret sous le formulaire |
+
+| #   | Suggestion                     | Priorité    | Détail                                            |
+| --- | ------------------------------ | ----------- | ------------------------------------------------- |
+| A1  | Illustration ou visuel latéral | **Moyenne** | Split layout desktop : formulaire + visuel travel |
+| A2  | Logo org sur login             | **Moyenne** | Logo partenaire si org connue                     |
+| A3  | États de chargement bouton     | **Basse**   | Spinner dans le bouton submit                     |
+| A4  | Message d’erreur inline        | **Basse**   | Encadré rouge discret sous le formulaire          |
+
 
 ---
 
@@ -223,15 +243,17 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 **Fichiers :** `apps/admin/app/(dashboard)/dashboard/page.tsx`, `dashboard-kpi-cards.tsx`, etc.
 
-| # | Suggestion | Priorité | Détail |
-|---|------------|----------|--------|
-| D1 | Graphiques tendance | **Haute** | Courbes ou barres : réservations / revenus 7 ou 30 jours |
-| D2 | KPIs avec variation | **Moyenne** | Badge « +12 % vs mois dernier » |
-| D3 | Skeleton KPI | **Moyenne** | Pulse animé au lieu du tiret « — » |
-| D4 | Actions rapides personnalisables | **Basse** | Basées sur permissions RBAC |
-| D5 | Fil d’activité récente | **Moyenne** | Timeline unifiée |
-| D6 | Sélecteur de période | **Moyenne** | Filtre 7j / 30j / 90j |
-| D7 | Message d’accueil | **Basse** | « Bonjour, {prénom} » |
+
+| #   | Suggestion                       | Priorité    | Détail                                                   |
+| --- | -------------------------------- | ----------- | -------------------------------------------------------- |
+| D1  | Graphiques tendance              | **Haute**   | Courbes ou barres : réservations / revenus 7 ou 30 jours |
+| D2  | KPIs avec variation              | **Moyenne** | Badge « +12 % vs mois dernier »                          |
+| D3  | Skeleton KPI                     | **Moyenne** | Pulse animé au lieu du tiret « — »                       |
+| D4  | Actions rapides personnalisables | **Basse**   | Basées sur permissions RBAC                              |
+| D5  | Fil d’activité récente           | **Moyenne** | Timeline unifiée                                         |
+| D6  | Sélecteur de période             | **Moyenne** | Filtre 7j / 30j / 90j                                    |
+| D7  | Message d’accueil                | **Basse**   | « Bonjour, {prénom} »                                    |
+
 
 ---
 
@@ -241,16 +263,18 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 **Routes :** `/utilisateurs`, `/utilisateurs/employes`, adresses, moyens-paiement, sessions, journaux-securite
 
-| # | Suggestion | Priorité | Détail |
-|---|------------|----------|--------|
-| U1 | Avatar + initiales | **Haute** | Colonne utilisateur avec cercle coloré |
-| U2 | Fiche utilisateur en onglets | **Haute** | Profil \| Adresses \| Moyens de paiement \| Sessions \| Rôles |
-| U3 | Badge statut compte | **Moyenne** | Actif / suspendu / non vérifié |
-| U4 | Filtres chips | **Moyenne** | Organisation, statut, rôle |
-| U5 | Export CSV | **Basse** | Bouton secondaire |
-| U6 | Journaux sécurité | **Moyenne** | Timeline avec icônes par type d’événement |
-| U7 | Sessions actives | **Moyenne** | Carte par session + bouton Révoquer |
-| U8 | Lien croisé employé → org | **Basse** | Chip cliquable |
+
+| #   | Suggestion                   | Priorité    | Détail                                                    |
+| --- | ---------------------------- | ----------- | --------------------------------------------------------- |
+| U1  | Avatar + initiales           | **Haute**   | Colonne utilisateur avec cercle coloré                    |
+| U2  | Fiche utilisateur en onglets | **Haute**   | Profil | Adresses | Moyens de paiement | Sessions | Rôles |
+| U3  | Badge statut compte          | **Moyenne** | Actif / suspendu / non vérifié                            |
+| U4  | Filtres chips                | **Moyenne** | Organisation, statut, rôle                                |
+| U5  | Export CSV                   | **Basse**   | Bouton secondaire                                         |
+| U6  | Journaux sécurité            | **Moyenne** | Timeline avec icônes par type d’événement                 |
+| U7  | Sessions actives             | **Moyenne** | Carte par session + bouton Révoquer                       |
+| U8  | Lien croisé employé → org    | **Basse**   | Chip cliquable                                            |
+
 
 ---
 
@@ -258,11 +282,13 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 > **Livrable : UX-7** — **Branche :** `feature/admin-ui-loyalty`
 
-| # | Suggestion | Priorité | Détail |
-|---|------------|----------|--------|
-| F1 | Carte résumé points | **Moyenne** | Solde + barre progression palier |
-| F2 | Historique transactions | **Moyenne** | Drawer ou section expandable |
-| F3 | Filtre par programme / org | **Basse** | Multi-programmes |
+
+| #   | Suggestion                 | Priorité    | Détail                           |
+| --- | -------------------------- | ----------- | -------------------------------- |
+| F1  | Carte résumé points        | **Moyenne** | Solde + barre progression palier |
+| F2  | Historique transactions    | **Moyenne** | Drawer ou section expandable     |
+| F3  | Filtre par programme / org | **Basse**   | Multi-programmes                 |
+
 
 ---
 
@@ -270,16 +296,18 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 > **Livrable : UX-8** — **Branche :** `feature/admin-ui-accommodations`
 
-| # | Suggestion | Priorité | Détail |
-|---|------------|----------|--------|
-| H1 | Vignette propriété | **Haute** | Colonne image dans la liste |
-| H2 | Fiche en onglets | **Haute** | Informations \| Chambres \| Équipements \| Disponibilités |
-| H3 | Formulaire sectionné | **Moyenne** | Cards Identité / Localisation / Classification |
-| H4 | Grille disponibilités | **Haute** | Calendrier mensuel visuel avec couleurs occupation |
-| H5 | Édition bulk disponibilités | **Moyenne** | Assistant pas-à-pas |
-| H6 | Équipements | **Moyenne** | Grille icônes + labels |
-| H7 | Étoiles visuelles | **Basse** | Rating stars |
-| H8 | Carte destination | **Basse** | Mini-map ou lien fiche |
+
+| #   | Suggestion                  | Priorité    | Détail                                                 |
+| --- | --------------------------- | ----------- | ------------------------------------------------------ |
+| H1  | Vignette propriété          | **Haute**   | Colonne image dans la liste                            |
+| H2  | Fiche en onglets            | **Haute**   | Informations | Chambres | Équipements | Disponibilités |
+| H3  | Formulaire sectionné        | **Moyenne** | Cards Identité / Localisation / Classification         |
+| H4  | Grille disponibilités       | **Haute**   | Calendrier mensuel visuel avec couleurs occupation     |
+| H5  | Édition bulk disponibilités | **Moyenne** | Assistant pas-à-pas                                    |
+| H6  | Équipements                 | **Moyenne** | Grille icônes + labels                                 |
+| H7  | Étoiles visuelles           | **Basse**   | Rating stars                                           |
+| H8  | Carte destination           | **Basse**   | Mini-map ou lien fiche                                 |
+
 
 ---
 
@@ -287,13 +315,15 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 > **Livrable : UX-9** — **Branche :** `feature/admin-ui-flights`
 
-| # | Suggestion | Priorité | Détail |
-|---|------------|----------|--------|
-| V1 | Timeline vol | **Haute** | Départ → durée → arrivée, codes IATA |
-| V2 | Classes en cards | **Moyenne** | Economy, Business… avec capacité et prix |
-| V3 | Grille disponibilités classes | **Moyenne** | Pattern calendrier hébergements |
-| V4 | Pages référentiel | **Moyenne** | Compagnies / aéroports : logos, drapeaux |
-| V5 | Badge statut vol | **Basse** | Actif / suspendu / complet |
+
+| #   | Suggestion                    | Priorité    | Détail                                   |
+| --- | ----------------------------- | ----------- | ---------------------------------------- |
+| V1  | Timeline vol                  | **Haute**   | Départ → durée → arrivée, codes IATA     |
+| V2  | Classes en cards              | **Moyenne** | Economy, Business… avec capacité et prix |
+| V3  | Grille disponibilités classes | **Moyenne** | Pattern calendrier hébergements          |
+| V4  | Pages référentiel             | **Moyenne** | Compagnies / aéroports : logos, drapeaux |
+| V5  | Badge statut vol              | **Basse**   | Actif / suspendu / complet               |
+
 
 ---
 
@@ -301,12 +331,14 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 > **Livrable : UX-10** — **Branche :** `feature/admin-ui-vehicles`
 
-| # | Suggestion | Priorité | Détail |
-|---|------------|----------|--------|
-| L1 | Photo véhicule | **Haute** | Thumbnail liste |
-| L2 | Fiche véhicule | **Moyenne** | Specs en grille avec icônes |
-| L3 | Agences sur carte | **Basse** | Pin map GPS |
-| L4 | Catégories visuelles | **Moyenne** | Icône par catégorie |
+
+| #   | Suggestion           | Priorité    | Détail                      |
+| --- | -------------------- | ----------- | --------------------------- |
+| L1  | Photo véhicule       | **Haute**   | Thumbnail liste             |
+| L2  | Fiche véhicule       | **Moyenne** | Specs en grille avec icônes |
+| L3  | Agences sur carte    | **Basse**   | Pin map GPS                 |
+| L4  | Catégories visuelles | **Moyenne** | Icône par catégorie         |
+
 
 ---
 
@@ -314,13 +346,15 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 > **Livrable : UX-11** — **Branche :** `feature/admin-ui-cruises`
 
-| # | Suggestion | Priorité | Détail |
-|---|------------|----------|--------|
-| C1 | Navigation hiérarchique | **Haute** | Breadcrumb Ligne › Navire › Itinéraire |
-| C2 | Schéma itinéraire | **Haute** | Timeline ports avec escales |
-| C3 | Cabines | **Moyenne** | Cards par type de cabine |
-| C4 | Sailings calendar | **Moyenne** | Vue calendrier départs |
-| C5 | Ports | **Basse** | Drapeau pays + fuseau |
+
+| #   | Suggestion              | Priorité    | Détail                                 |
+| --- | ----------------------- | ----------- | -------------------------------------- |
+| C1  | Navigation hiérarchique | **Haute**   | Breadcrumb Ligne › Navire › Itinéraire |
+| C2  | Schéma itinéraire       | **Haute**   | Timeline ports avec escales            |
+| C3  | Cabines                 | **Moyenne** | Cards par type de cabine               |
+| C4  | Sailings calendar       | **Moyenne** | Vue calendrier départs                 |
+| C5  | Ports                   | **Basse**   | Drapeau pays + fuseau                  |
+
 
 ---
 
@@ -328,12 +362,14 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 > **Livrable : UX-12** — **Branche :** `feature/admin-ui-activities`
 
-| # | Suggestion | Priorité | Détail |
-|---|------------|----------|--------|
-| AC1 | Galerie photos | **Haute** | Carrousel ou grille fiche |
-| AC2 | Durée & difficulté | **Moyenne** | Badges visuels |
-| AC3 | Fournisseurs | **Moyenne** | Logo + note moyenne |
-| AC4 | Créneaux horaires | **Moyenne** | Timeline slots |
+
+| #   | Suggestion         | Priorité    | Détail                    |
+| --- | ------------------ | ----------- | ------------------------- |
+| AC1 | Galerie photos     | **Haute**   | Carrousel ou grille fiche |
+| AC2 | Durée & difficulté | **Moyenne** | Badges visuels            |
+| AC3 | Fournisseurs       | **Moyenne** | Logo + note moyenne       |
+| AC4 | Créneaux horaires  | **Moyenne** | Timeline slots            |
+
 
 ---
 
@@ -341,11 +377,13 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 > **Livrable : UX-13** — **Branche :** `feature/admin-ui-packages`
 
-| # | Suggestion | Priorité | Détail |
-|---|------------|----------|--------|
-| P1 | Composition visuelle | **Haute** | Icônes par type produit inclus |
-| P2 | Prix package | **Moyenne** | Composants vs forfait + économie |
-| P3 | Preview client | **Basse** | Aperçu carte web |
+
+| #   | Suggestion           | Priorité    | Détail                           |
+| --- | -------------------- | ----------- | -------------------------------- |
+| P1  | Composition visuelle | **Haute**   | Icônes par type produit inclus   |
+| P2  | Prix package         | **Moyenne** | Composants vs forfait + économie |
+| P3  | Preview client       | **Basse**   | Aperçu carte web                 |
+
 
 ---
 
@@ -353,11 +391,13 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 > **Livrable : UX-14** — **Branche :** `feature/admin-ui-destinations`
 
-| # | Suggestion | Priorité | Détail |
-|---|------------|----------|--------|
-| DE1 | Hero image | **Haute** | Bandeau image + nom |
-| DE2 | Compteurs liés | **Moyenne** | Hébergements, activités, forfaits rattachés |
-| DE3 | Carte interactive | **Basse** | Pin géographique éditable |
+
+| #   | Suggestion        | Priorité    | Détail                                      |
+| --- | ----------------- | ----------- | ------------------------------------------- |
+| DE1 | Hero image        | **Haute**   | Bandeau image + nom                         |
+| DE2 | Compteurs liés    | **Moyenne** | Hébergements, activités, forfaits rattachés |
+| DE3 | Carte interactive | **Basse**   | Pin géographique éditable                   |
+
 
 ---
 
@@ -365,14 +405,16 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 > **Livrable : UX-15** — **Branche :** `feature/admin-ui-bookings`
 
-| # | Suggestion | Priorité | Détail |
-|---|------------|----------|--------|
-| R1 | Panneau filtres | **Haute** | Drawer ou barre repliable (5+ filtres) |
-| R2 | Fiche réservation | **Haute** | Layout 2 colonnes + timeline statuts |
-| R3 | Timeline statuts | **Moyenne** | draft → pending → confirmed |
-| R4 | Lignes réservation | **Moyenne** | Icône type produit + lien catalogue |
-| R5 | Actions contextuelles | **Moyenne** | Annuler, rembourser — modales |
-| R6 | Export / impression | **Basse** | PDF confirmation |
+
+| #   | Suggestion            | Priorité    | Détail                                 |
+| --- | --------------------- | ----------- | -------------------------------------- |
+| R1  | Panneau filtres       | **Haute**   | Drawer ou barre repliable (5+ filtres) |
+| R2  | Fiche réservation     | **Haute**   | Layout 2 colonnes + timeline statuts   |
+| R3  | Timeline statuts      | **Moyenne** | draft → pending → confirmed            |
+| R4  | Lignes réservation    | **Moyenne** | Icône type produit + lien catalogue    |
+| R5  | Actions contextuelles | **Moyenne** | Annuler, rembourser — modales          |
+| R6  | Export / impression   | **Basse**   | PDF confirmation                       |
+
 
 ---
 
@@ -380,14 +422,16 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 > **Livrable : UX-16** — **Branche :** `feature/admin-ui-payments`
 
-| # | Suggestion | Priorité | Détail |
-|---|------------|----------|--------|
-| PA1 | Montants alignés à droite | **Moyenne** | `tabular-nums` |
-| PA2 | Détail paiement | **Haute** | Drawer Stripe IDs, remboursements, lien booking |
-| PA3 | Remboursement | **Haute** | Modal montant partiel/total + raison |
-| PA4 | Codes promo | **Moyenne** | Badge type, validité, usage count |
-| PA5 | Promotions | **Moyenne** | Bandeau preview |
-| PA6 | Graphique revenus | **Basse** | Mini sparkline en-tête |
+
+| #   | Suggestion                | Priorité    | Détail                                          |
+| --- | ------------------------- | ----------- | ----------------------------------------------- |
+| PA1 | Montants alignés à droite | **Moyenne** | `tabular-nums`                                  |
+| PA2 | Détail paiement           | **Haute**   | Drawer Stripe IDs, remboursements, lien booking |
+| PA3 | Remboursement             | **Haute**   | Modal montant partiel/total + raison            |
+| PA4 | Codes promo               | **Moyenne** | Badge type, validité, usage count               |
+| PA5 | Promotions                | **Moyenne** | Bandeau preview                                 |
+| PA6 | Graphique revenus         | **Basse**   | Mini sparkline en-tête                          |
+
 
 ---
 
@@ -395,13 +439,15 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 > **Livrable : UX-17** — **Branche :** `feature/admin-ui-content-support`
 
-| # | Suggestion | Priorité | Détail |
-|---|------------|----------|--------|
-| CO1 | Modération avis | **Haute** | Layout conversation + actions sticky |
-| CO2 | File d’attente modération | **Moyenne** | Preview + actions rapides |
-| CO3 | Tickets support | **Haute** | Style inbox : statut, priorité, SLA |
-| CO4 | Messages | **Moyenne** | Thread chat bulles |
-| CO5 | Placeholder pages | **Haute** | Empty states illustrés + CTA |
+
+| #   | Suggestion                | Priorité    | Détail                               |
+| --- | ------------------------- | ----------- | ------------------------------------ |
+| CO1 | Modération avis           | **Haute**   | Layout conversation + actions sticky |
+| CO2 | File d’attente modération | **Moyenne** | Preview + actions rapides            |
+| CO3 | Tickets support           | **Haute**   | Style inbox : statut, priorité, SLA  |
+| CO4 | Messages                  | **Moyenne** | Thread chat bulles                   |
+| CO5 | Placeholder pages         | **Haute**   | Empty states illustrés + CTA         |
+
 
 ---
 
@@ -409,11 +455,13 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 > **Livrable : UX-18** — **Branche :** `feature/admin-ui-organizations`
 
-| # | Suggestion | Priorité | Détail |
-|---|------------|----------|--------|
-| O1 | Carte organisation | **Moyenne** | Logo, stats utilisateurs / produits |
-| O2 | Vue détail | **Moyenne** | Onglets Infos \| Utilisateurs \| Paramètres |
-| O3 | Hiérarchie | **Basse** | Arbre parent/enfant |
+
+| #   | Suggestion         | Priorité    | Détail                                    |
+| --- | ------------------ | ----------- | ----------------------------------------- |
+| O1  | Carte organisation | **Moyenne** | Logo, stats utilisateurs / produits       |
+| O2  | Vue détail         | **Moyenne** | Onglets Infos | Utilisateurs | Paramètres |
+| O3  | Hiérarchie         | **Basse**   | Arbre parent/enfant                       |
+
 
 ---
 
@@ -421,12 +469,14 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 > **Livrable : UX-19** — **Branche :** `feature/admin-ui-rbac`
 
-| # | Suggestion | Priorité | Détail |
-|---|------------|----------|--------|
-| RB1 | Matrice permissions | **Haute** | Grille rôles × permissions |
-| RB2 | Assignations | **Moyenne** | Recherche user + chips rôles |
-| RB3 | Audit logs | **Moyenne** | Filtres + lignes expandable JSON |
-| RB4 | Couleurs rôles | **Basse** | Badge couleur par rôle |
+
+| #   | Suggestion          | Priorité    | Détail                           |
+| --- | ------------------- | ----------- | -------------------------------- |
+| RB1 | Matrice permissions | **Haute**   | Grille rôles × permissions       |
+| RB2 | Assignations        | **Moyenne** | Recherche user + chips rôles     |
+| RB3 | Audit logs          | **Moyenne** | Filtres + lignes expandable JSON |
+| RB4 | Couleurs rôles      | **Basse**   | Badge couleur par rôle           |
+
 
 ---
 
@@ -434,14 +484,16 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 > **Livrable : UX-20** — **Branche :** `feature/admin-ui-settings`
 
-| # | Suggestion | Priorité | Détail |
-|---|------------|----------|--------|
-| PM1 | Sous-nav latérale | **Moyenne** | Vertical tabs sticky |
-| PM2 | Preview branding live | **Haute** | Split formulaire + mini-preview |
-| PM3 | Palette couleurs | ✅ partiel | Contrast checker automatique |
-| PM4 | Comptes bancaires | **Moyenne** | Masquage IBAN |
-| PM5 | Templates email | **Moyenne** | Preview HTML iframe |
-| PM6 | Sauvegarde | **Haute** | Barre sticky « non enregistré » |
+
+| #   | Suggestion            | Priorité    | Détail                          |
+| --- | --------------------- | ----------- | ------------------------------- |
+| PM1 | Sous-nav latérale     | **Moyenne** | Vertical tabs sticky            |
+| PM2 | Preview branding live | **Haute**   | Split formulaire + mini-preview |
+| PM3 | Palette couleurs      | ✅ partiel   | Contrast checker automatique    |
+| PM4 | Comptes bancaires     | **Moyenne** | Masquage IBAN                   |
+| PM5 | Templates email       | **Moyenne** | Preview HTML iframe             |
+| PM6 | Sauvegarde            | **Haute**   | Barre sticky « non enregistré » |
+
 
 ---
 
@@ -449,10 +501,12 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 > **Livrable : UX-21** — **Branche :** `feature/admin-ui-empty-states`
 
-| # | Suggestion | Priorité | Détail |
-|---|------------|----------|--------|
-| PL1 | Empty state riche | **Haute** | Illustration SVG + CTA |
-| PL2 | Cohérence | **Moyenne** | Même `PageHeader` que modules actifs |
+
+| #   | Suggestion        | Priorité    | Détail                               |
+| --- | ----------------- | ----------- | ------------------------------------ |
+| PL1 | Empty state riche | **Haute**   | Illustration SVG + CTA               |
+| PL2 | Cohérence         | **Moyenne** | Même `PageHeader` que modules actifs |
+
 
 ---
 
@@ -460,12 +514,14 @@ Ces améliorations bénéficient à **tous** les modules. À traiter en priorit�
 
 > **Livrable : UX-22** — **Branche :** `feature/admin-ui-mobile-polish`
 
-| # | Suggestion | Priorité | Détail |
-|---|------------|----------|--------|
-| M1 | Tables responsives | **Haute** | Colonnes prioritaires + expand row mobile |
-| M2 | i18n chaînes design | **Moyenne** | KPIs, labels métier via next-intl |
-| M3 | Raccourcis clavier | **Basse** | Navigation, recherche |
-| M4 | Export CSV global | **Basse** | Pattern réutilisable listes |
+
+| #   | Suggestion          | Priorité    | Détail                                    |
+| --- | ------------------- | ----------- | ----------------------------------------- |
+| M1  | Tables responsives  | **Haute**   | Colonnes prioritaires + expand row mobile |
+| M2  | i18n chaînes design | **Moyenne** | KPIs, labels métier via next-intl         |
+| M3  | Raccourcis clavier  | **Basse**   | Navigation, recherche                     |
+| M4  | Export CSV global   | **Basse**   | Pattern réutilisable listes               |
+
 
 ---
 
@@ -1110,17 +1166,19 @@ Critères :
 
 ## Références code
 
-| Élément | Chemin |
-|---------|--------|
-| Tokens thème | `packages/config/theme.css` |
-| Shell admin | `packages/ui/src/components/dashboard-shell.tsx` |
-| Navigation config | `apps/admin/config/dashboard-nav.config.ts` |
-| Liste type (CRUD) | `apps/admin/components/properties/properties-list.tsx` |
-| KPI dashboard | `apps/admin/components/dashboard-kpi-cards.tsx` |
-| Branding org | `apps/admin/components/organization-theme-provider.tsx` |
-| Palette couleurs | `apps/admin/components/parametres/brand-color-palette-field.tsx` |
-| Placeholder | `apps/admin/components/dashboard-section-page.tsx` |
-| Roadmap fonctionnelle | `docs/roadmap-development.md` |
+
+| Élément               | Chemin                                                           |
+| --------------------- | ---------------------------------------------------------------- |
+| Tokens thème          | `packages/config/theme.css`                                      |
+| Shell admin           | `packages/ui/src/components/dashboard-shell.tsx`                 |
+| Navigation config     | `apps/admin/config/dashboard-nav.config.ts`                      |
+| Liste type (CRUD)     | `apps/admin/components/properties/properties-list.tsx`           |
+| KPI dashboard         | `apps/admin/components/dashboard-kpi-cards.tsx`                  |
+| Branding org          | `apps/admin/components/organization-theme-provider.tsx`          |
+| Palette couleurs      | `apps/admin/components/parametres/brand-color-palette-field.tsx` |
+| Placeholder           | `apps/admin/components/dashboard-section-page.tsx`               |
+| Roadmap fonctionnelle | `docs/roadmap-development.md`                                    |
+
 
 ---
 

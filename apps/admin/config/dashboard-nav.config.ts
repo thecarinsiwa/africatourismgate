@@ -35,7 +35,6 @@ export const adminDashboardNavConfig: AdminNavEntryConfig[] = [
     type: 'group',
     id: 'users-auth',
     iconKey: 'users',
-    defaultOpen: true,
     children: [
       { href: '/utilisateurs', labelKey: 'users', iconKey: 'users' },
       { href: '/utilisateurs/employes', labelKey: 'employees', iconKey: 'userCircle' },

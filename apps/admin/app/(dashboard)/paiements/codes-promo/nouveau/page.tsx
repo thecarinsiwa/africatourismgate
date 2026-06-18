@@ -1,18 +1,11 @@
 import type { Metadata } from 'next';
-import { AdminPageIntro } from '../../../../../components/admin-page-intro';
-import { PaymentsPromoSubnav } from '../../../../../components/payments/payments-promo-subnav';
-import { PromoCodeForm } from '../../../../../components/promo-codes/promo-code-form';
+import { getAdminPageMetadata } from '../../../../../lib/i18n/admin-page-i18n';
+import { NouveauCodePromoPageContent } from '../../../../../components/pages/paiements-codes-promo-nouveau-page-content';
 
-export const metadata: Metadata = {
-  title: 'Nouveau code promo — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('paiements/codes-promo/nouveau');
+}
 
-export default function NouveauPromoCodePage() {
-  return (
-    <div>
-      <PaymentsPromoSubnav />
-      <AdminPageIntro description={"Le code sera normalisé en majuscules et pourra être saisi tel quel dans le checkout."} />
-      <PromoCodeForm mode="create" />
-    </div>
-  );
+export default function Page() {
+  return <NouveauCodePromoPageContent />;
 }

@@ -1,0 +1,331 @@
+{
+  "meta": {
+    "editUser": "Modifier l'utilisateur",
+    "editEmployee": "Modifier l'employé",
+    "editOrganization": "Modifier l'organisation",
+    "editAccommodation": "Modifier l'hébergement",
+    "editActivity": "Modifier l'activité",
+    "editDestination": "Modifier la destination",
+    "editVehicle": "Modifier le véhicule",
+    "editFlight": "Modifier le vol",
+    "editPackage": "Modifier le forfait",
+    "editRole": "Modifier le rôle",
+    "editPromoCode": "Modifier le code promo",
+    "editPromotion": "Modifier la promotion",
+    "viewPackage": "Voir le forfait",
+    "detailBooking": "Détail réservation",
+    "detailTicket": "Détail ticket",
+    "detailReview": "Détail avis",
+    "sailingDetail": "Départ",
+    "shipDetail": "Navire",
+    "classAvailability": "Disponibilités classe",
+    "roomAvailability": "Disponibilités chambre",
+    "itineraryStops": "Escales itinéraire"
+  },
+  "utilisateurs": {
+    "description": "Comptes plateforme. Filtrez par statut ou organisation.",
+    "nouveau": {
+      "metaTitle": "Nouvel utilisateur",
+      "description": "Créer un compte utilisateur."
+    },
+    "id": {
+      "metaTitle": "Modifier l'utilisateur"
+    },
+    "employes": {
+      "description": "Profils employés liés aux utilisateurs et organisations.",
+      "nouveau": {
+        "metaTitle": "Nouvel employé",
+        "description": "Lier un utilisateur existant à une organisation."
+      },
+      "id": {
+        "metaTitle": "Modifier l'employé"
+      }
+    },
+    "adresses": {
+      "description": "Adresses enregistrées par les utilisateurs."
+    },
+    "moyens-paiement": {
+      "description": "Cartes et moyens de paiement enregistrés par les utilisateurs."
+    },
+    "sessions": {
+      "description": "Sessions actives. Révoquez une session pour déconnecter l'utilisateur."
+    },
+    "journaux-securite": {
+      "description": "Événements de sécurité et audit d'accès."
+    }
+  },
+  "hebergements": {
+    "title": "Hébergements",
+    "description": "Propriétés, chambres et équipements. Filtrez par destination.",
+    "nouveau": {
+      "metaTitle": "Nouvel hébergement",
+      "description": "Créez la propriété puis ajoutez images, équipements et chambres."
+    },
+    "id": {
+      "metaTitle": "Modifier l'hébergement",
+      "chambres": {
+        "roomId": {
+          "disponibilites": {
+            "metaTitle": "Disponibilités chambre"
+          }
+        }
+      }
+    },
+    "equipements": {
+      "description": "Catalogue global réutilisable sur les hébergements (Wi-Fi, piscine, etc.)."
+    }
+  },
+  "organisations": {
+    "title": "Organisations",
+    "description": "Partenaires et entités de la plateforme. Recherche par nom ou slug.",
+    "nouveau": {
+      "metaTitle": "Nouvelle organisation",
+      "description": "Créer une organisation partenaire."
+    },
+    "id": {
+      "metaTitle": "Modifier l'organisation"
+    }
+  },
+  "fidelite": {
+    "comptes": {
+      "title": "Comptes fidélité",
+      "description": "Programme OneKey — solde de points, paliers et dernière activité. Ajustement manuel réservé au super administrateur."
+    }
+  },
+  "produits": {
+    "activites": {
+      "title": "Activités & tours",
+      "description": "Expériences, fournisseurs et créneaux par destination.",
+      "actions": {
+        "providers": "Fournisseurs",
+        "new": "Nouvelle activité"
+      },
+      "nouveau": {
+        "metaTitle": "Nouvelle activité",
+        "description": "Créez une expérience puis ajoutez des créneaux sur la page d'édition."
+      },
+      "fournisseurs": {
+        "title": "Fournisseurs d'activités",
+        "description": "Opérateurs liés aux destinations."
+      },
+      "id": {
+        "metaTitle": "Modifier l'activité"
+      }
+    },
+    "destinations": {
+      "title": "Destinations",
+      "description": "Géographie et points d'intérêt. Recherche par nom, slug ou code pays.",
+      "actions": {
+        "new": "Nouvelle destination"
+      },
+      "nouveau": {
+        "metaTitle": "Nouvelle destination",
+        "description": "Créez la destination puis ajoutez des points d'intérêt sur la page de modification."
+      },
+      "id": {
+        "metaTitle": "Modifier la destination",
+        "voir": {
+          "metaTitle": "Voir la destination"
+        }
+      }
+    },
+    "locations": {
+      "title": "Locations véhicules",
+      "description": "Véhicules par agence, catégories et créneaux de disponibilité.",
+      "links": {
+        "agencies": "Agences de location",
+        "categories": "Catégories véhicules"
+      },
+      "agences": {
+        "title": "Agences de location",
+        "description": "Référentiel des agences liées aux destinations."
+      },
+      "categories": {
+        "title": "Catégories véhicules",
+        "description": "Types de véhicules (compact, SUV, premium, etc.)."
+      },
+      "nouveau": {
+        "metaTitle": "Nouveau véhicule",
+        "description": "Associez une agence et une catégorie, puis définissez les créneaux de disponibilité.",
+        "backLabel": "Retour aux véhicules"
+      },
+      "id": {
+        "metaTitle": "Modifier le véhicule"
+      }
+    },
+    "vols": {
+      "description": "Catalogue des vols, classes cabine et disponibilités. Recherche par code vol.",
+      "links": {
+        "airlines": "Compagnies aériennes",
+        "airports": "Aéroports"
+      },
+      "nouveau": {
+        "metaTitle": "Nouveau vol",
+        "backLabel": "Retour aux vols",
+        "description": "Définissez le trajet, puis ajoutez les classes cabine sur la fiche vol."
+      },
+      "compagnies": {
+        "description": "Référentiel des compagnies (code IATA 2 lettres).",
+        "backLabel": "Retour aux vols"
+      },
+      "aeroports": {
+        "description": "Référentiel des aéroports (code IATA 3 lettres).",
+        "backLabel": "Retour aux vols"
+      },
+      "id": {
+        "metaTitle": "Modifier le vol",
+        "classes": {
+          "classId": {
+            "disponibilites": {
+              "metaTitle": "Disponibilités classe"
+            }
+          }
+        }
+      }
+    },
+    "croisieres": {
+      "description": "Départs programmés, itinéraires, cabines et disponibilités.",
+      "links": {
+        "ships": "Navires",
+        "lines": "Lignes de croisière",
+        "ports": "Ports",
+        "newSailing": "Nouveau départ"
+      },
+      "nouveau": {
+        "metaTitle": "Nouveau départ",
+        "description": "Associez un itinéraire existant à une date de départ."
+      },
+      "lignes": {
+        "description": "Référentiel des compagnies / lignes."
+      },
+      "ports": {
+        "description": "Référentiel des escales."
+      },
+      "navires": {
+        "description": "Navires, itinéraires, escales et cabines.",
+        "links": {
+          "backToSailings": "← Départs"
+        },
+        "nouveau": {
+          "metaTitle": "Nouveau navire",
+          "description": "Créez un navire puis ajoutez itinéraires et cabines."
+        },
+        "shipId": {
+          "metaTitle": "Navire",
+          "itineraires": {
+            "itineraryId": {
+              "metaTitle": "Escales itinéraire"
+            }
+          }
+        }
+      },
+      "id": {
+        "metaTitle": "Départ"
+      }
+    },
+    "forfaits": {
+      "description": "Packages combinés avec remise et prix calculé à partir des produits inclus.",
+      "nouveau": {
+        "metaTitle": "Nouveau forfait",
+        "description": "Créez le forfait puis ajoutez des items sur la page d’édition."
+      },
+      "id": {
+        "metaTitle": "Modifier le forfait",
+        "voir": {
+          "metaTitle": "Voir le forfait"
+        }
+      }
+    }
+  },
+  "reservations": {
+    "description": "Liste paginée des réservations (données API live). Filtres par statut, date, client et organisation. Accès requis : bookings.read.",
+    "lignes": {
+      "description": "Tableau global des articles par réservation (données API live). Filtres par type, statut de la réservation et identifiant booking. Accès requis : bookings.read."
+    }
+  },
+  "paiements": {
+    "description": "Transactions et remboursements Stripe (mode test). Filtres par statut, dates et organisation (super admin). Accès : payments.read ; remboursement : payments.write.",
+    "codes-promo": {
+      "intro": "Créez et gérez les codes utilisables dans le checkout (preview web). Validation des dates, unicité du code et plafond d'utilisations. Voir aussi les promotions. Accès : promo_codes.read / write.",
+      "linkPromotions": "promotions",
+      "nouveau": {
+        "metaTitle": "Nouveau code promo",
+        "description": "Le code sera normalisé en majuscules et pourra être saisi tel quel dans le checkout."
+      },
+      "id": {
+        "metaTitle": "Modifier le code promo"
+      }
+    },
+    "promotions": {
+      "intro": "Campagnes marketing avec réduction optionnelle (checkout via promotionId). Complémentaire aux codes promo. Accès : promo_codes.read / write.",
+      "linkPromoCodes": "codes promo",
+      "nouveau": {
+        "metaTitle": "Nouvelle promotion",
+        "description": "Définissez la campagne, la réduction éventuelle et les dates de validité."
+      },
+      "id": {
+        "metaTitle": "Modifier la promotion"
+      }
+    }
+  },
+  "contenu": {
+    "tickets": {
+      "description": "Demandes d'assistance clients. Filtres par statut et priorité. Accès : support_tickets.read / support_tickets.write.",
+      "id": {
+        "metaTitle": "Détail ticket"
+      }
+    },
+    "avis": {
+      "description": "Modération des notes et commentaires clients. Filtres par note, propriété et statut. Actions : approuver, masquer ou supprimer. Accès : reviews.read / reviews.write.",
+      "id": {
+        "metaTitle": "Détail avis"
+      }
+    }
+  },
+  "systeme": {
+    "roles": {
+      "title": "Rôles et permissions",
+      "description": "Gérez les rôles, la matrice des permissions et les assignations utilisateurs.",
+      "actions": {
+        "permissions": "Permissions",
+        "assignments": "Assignations",
+        "new": "Nouveau rôle"
+      },
+      "nouveau": {
+        "metaTitle": "Nouveau rôle",
+        "description": "Créer un rôle personnalisé et définir ses permissions."
+      },
+      "permissions": {
+        "title": "Catalogue des permissions",
+        "description": "Liste en lecture seule des permissions disponibles sur la plateforme."
+      },
+      "assignations": {
+        "title": "Assignations de rôles",
+        "description": "Attribuer ou révoquer des rôles pour les utilisateurs (tous périmètres)."
+      },
+      "id": {
+        "metaTitle": "Modifier le rôle"
+      }
+    },
+    "audit": {
+      "title": "Audit RBAC",
+      "description": "Journal des événements de sécurité et des changements de permissions (lecture seule)."
+    }
+  },
+  "parametres": {
+    "metaTitle": "Paramètres",
+    "comptes": {
+      "metaTitle": "Comptes bancaires"
+    },
+    "emails": {
+      "metaTitle": "E-mails"
+    }
+  },
+  "dashboard": {
+    "bookings": {
+      "id": {
+        "metaTitle": "Détail réservation"
+      }
+    }
+  }
+}

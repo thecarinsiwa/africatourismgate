@@ -1,4 +1,4 @@
-import type { Employee, Organization } from '@africatourismgate/types';
+import type { Employee, OrganizationListItem } from '@africatourismgate/types';
 
 const DEFAULT_PREFIX = 'ATG';
 const MAX_PREFIX_LENGTH = 6;
@@ -16,7 +16,7 @@ function formatEmployeeCode(prefix: string, sequence: number): string {
 /** Aperçu du prochain code (aligné sur la logique API). */
 export function suggestNextEmployeeCode(
   organizationId: string,
-  organizations: Organization[],
+  organizations: OrganizationListItem[],
   employees: Employee[],
 ): string {
   const org = organizationId

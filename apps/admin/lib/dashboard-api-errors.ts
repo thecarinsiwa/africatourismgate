@@ -1,19 +1,25 @@
 import { ApiHttpError } from '@africatourismgate/api-client';
+import type { DashboardKpiErrorMessages } from './i18n/admin-error-messages';
 
-export function getDashboardKpiErrorMessage(error: unknown): string {
+export type { DashboardKpiErrorMessages };
+
+export function getDashboardKpiErrorMessage(
+  error: unknown,
+  messages: DashboardKpiErrorMessages,
+): string {
   if (error instanceof TypeError) {
-    return 'Impossible de joindre l’API. Vérifiez que le serveur est démarré.';
+    return messages.network;
   }
 
   if (error instanceof ApiHttpError) {
     if (error.status === 403) {
-      return 'Accès refusé.';
+      return messages.forbiddenDetail;
     }
     if (error.message && !error.message.startsWith('HTTP ')) {
       return error.message;
     }
-    return `Erreur API (${error.status}).`;
+    return messages.loadFailed;
   }
 
-  return 'Impossible de charger les indicateurs.';
+  return messages.loadFailed;
 }

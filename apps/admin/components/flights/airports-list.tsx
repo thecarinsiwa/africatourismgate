@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Button,
   Card,
@@ -11,10 +13,10 @@ import {
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { Airport } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ReferentialListToolbar } from '../referential-list-toolbar';
 import { getApiClient } from '../../lib/auth/api';
-import { getVolsErrorMessage } from '../../lib/vols-errors';
 import { CountryFlagPlaceholder } from './country-flag-placeholder';
 
 const PAGE_SIZE = 20;
@@ -35,6 +37,11 @@ const emptyForm: FormValues = {
 };
 
 export function AirportsList() {
+  const { vols: getVolsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.flights.referential.airports');
+  const tCommon = useTranslations('modules.common');
+  const tPagination = useTranslations('modules.common.pagination');
+  const tActions = useTranslations('common.actions');
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -67,7 +74,7 @@ export function AirportsList() {
     } catch (error) {
       setState({ status: 'error', message: getVolsErrorMessage(error) });
     }
-  }, [page, search]);
+  }, [page, search, getVolsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -75,13 +82,13 @@ export function AirportsList() {
 
   useEffect(() => {
     const q = searchInput.trim();
-    const t = window.setTimeout(() => {
+    const timer = window.setTimeout(() => {
       setSearch((prev) => {
         if (prev !== q) setPage(1);
         return q;
       });
     }, SEARCH_DEBOUNCE_MS);
-    return () => window.clearTimeout(t);
+    return () => window.clearTimeout(timer);
   }, [searchInput]);
 
   function resetForm() {
@@ -100,7 +107,7 @@ export function AirportsList() {
       !formValues.city.trim() ||
       formValues.countryCode.trim().length !== 2
     ) {
-      setFormError('IATA (3 lettres), nom, ville et pays (2 lettres) sont obligatoires.');
+      setFormError(t('validation.required'));
       return;
     }
     setSubmitting(true);
@@ -137,21 +144,21 @@ export function AirportsList() {
       },
       {
         accessorKey: 'iataCode',
-        header: 'IATA',
+        header: tCommon('columns.iata'),
         cell: ({ row }) => (
           <code className="font-mono text-sm">{row.original.iataCode}</code>
         ),
       },
-      { accessorKey: 'name', header: 'Aéroport' },
-      { accessorKey: 'city', header: 'Ville' },
+      { accessorKey: 'name', header: t('airport') },
+      { accessorKey: 'city', header: tCommon('columns.city') },
       {
         accessorKey: 'countryCode',
-        header: 'Pays',
+        header: tCommon('columns.country'),
         meta: { align: 'center' },
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tCommon('columns.actions'),
         meta: { align: 'right' },
         cell: ({ row }) => (
           <DataTableActions>
@@ -171,7 +178,7 @@ export function AirportsList() {
             <DataTableActionButton
               action="delete"
               onClick={async () => {
-                if (!window.confirm(`Supprimer « ${row.original.name} » ?`)) return;
+                if (!window.confirm(t('deleteConfirm', { name: row.original.name }))) return;
                 setDeletingId(row.original.id);
                 try {
                   await getApiClient().deleteAirport(row.original.id);
@@ -189,22 +196,19 @@ export function AirportsList() {
         ),
       },
     ],
-    [deletingId, load],
+    [deletingId, load, t, tCommon, getVolsErrorMessage],
   );
 
   const airports = state.status === 'ready' ? state.airports : [];
-  const emptyMessage =
-    search.trim().length > 0
-      ? 'Aucun aéroport ne correspond à cette recherche.'
-      : 'Aucun aéroport.';
+  const emptyMessage = search.trim().length > 0 ? t('emptySearch') : t('emptyDefault');
 
   return (
     <div className="space-y-6">
       <ReferentialListToolbar
         searchValue={searchInput}
         onSearchChange={setSearchInput}
-        placeholder="Rechercher par IATA, nom ou ville…"
-        ariaLabel="Rechercher un aéroport"
+        placeholder={t('searchPlaceholder')}
+        ariaLabel={t('searchAria')}
         action={
           !showForm ? (
             <Button
@@ -214,7 +218,7 @@ export function AirportsList() {
                 setShowForm(true);
               }}
             >
-              Nouvel aéroport
+              {t('new')}
             </Button>
           ) : undefined
         }
@@ -223,9 +227,7 @@ export function AirportsList() {
       {showForm ? (
         <Card variant="dashboard" className="max-w-2xl">
           <form onSubmit={handleSubmit} className="space-y-4">
-            <h3 className="text-sm font-medium">
-              {editing ? 'Modifier l’aéroport' : 'Nouvel aéroport'}
-            </h3>
+            <h3 className="text-sm font-medium">{editing ? t('edit') : t('new')}</h3>
             {formError ? (
               <p role="alert" className="text-sm text-red-600">
                 {formError}
@@ -233,7 +235,7 @@ export function AirportsList() {
             ) : null}
             <div className="grid gap-4 sm:grid-cols-2">
               <Input
-                label="Code IATA"
+                label={tCommon('columns.iata')}
                 maxLength={3}
                 value={formValues.iataCode}
                 onChange={(e) =>
@@ -241,7 +243,7 @@ export function AirportsList() {
                 }
               />
               <Input
-                label="Code pays"
+                label={t('countryCode')}
                 maxLength={2}
                 value={formValues.countryCode}
                 onChange={(e) =>
@@ -253,21 +255,21 @@ export function AirportsList() {
               />
             </div>
             <Input
-              label="Nom"
+              label={tCommon('columns.name')}
               value={formValues.name}
               onChange={(e) => setFormValues((p) => ({ ...p, name: e.target.value }))}
             />
             <Input
-              label="Ville"
+              label={tCommon('columns.city')}
               value={formValues.city}
               onChange={(e) => setFormValues((p) => ({ ...p, city: e.target.value }))}
             />
             <div className="flex gap-3">
               <Button type="submit" loading={submitting}>
-                {editing ? 'Enregistrer' : 'Ajouter'}
+                {editing ? tActions('save') : tActions('create')}
               </Button>
               <Button type="button" variant="outline" onClick={resetForm}>
-                Annuler
+                {tActions('cancel')}
               </Button>
             </div>
           </form>
@@ -296,7 +298,7 @@ export function AirportsList() {
               pageSize={PAGE_SIZE}
               totalPages={state.totalPages}
               totalItems={state.total}
-              itemLabel="aéroport"
+              itemLabel={tPagination('airport')}
               onPageChange={setPage}
             />
           ) : null}

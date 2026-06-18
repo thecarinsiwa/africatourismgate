@@ -208,6 +208,8 @@ export interface BookingsListQuery {
   organizationId?: string;
   dateFrom?: string;
   dateTo?: string;
+  /** Tri par date de création (`createdAt`). */
+  sortOrder?: 'asc' | 'desc';
 }
 
 export interface BookingItemListItem {

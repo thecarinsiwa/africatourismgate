@@ -1,13 +1,15 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import type { Vehicle } from '@africatourismgate/types';
 import { DataTableBadge, Skeleton } from '@africatourismgate/ui';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { AdminPageBackLink } from '../admin-page-back-link';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
-import { getLocationsErrorMessage } from '../../lib/locations-errors';
 import { VehicleAvailabilitySection } from './vehicle-availability-section';
 import { VehicleForm } from './vehicle-form';
 import { VehicleImagesSection } from './vehicle-images-section';
@@ -19,6 +21,8 @@ type VehicleEditPageProps = {
 };
 
 export function VehicleEditPage({ vehicleId }: VehicleEditPageProps) {
+  const { locations: getLocationsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.locations.detail');
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -32,7 +36,7 @@ export function VehicleEditPage({ vehicleId }: VehicleEditPageProps) {
 
   useAdminEditPageMeta({
     ready: state.status === 'ready',
-    title: 'Modifier le véhicule',
+    title: t('title'),
     entityLabel:
       state.status === 'ready'
         ? (state.vehicle.licensePlate ?? state.categoryName)
@@ -69,7 +73,7 @@ export function VehicleEditPage({ vehicleId }: VehicleEditPageProps) {
     return () => {
       cancelled = true;
     };
-  }, [vehicleId]);
+  }, [vehicleId, getLocationsErrorMessage]);
 
   if (state.status === 'loading') {
     return (
@@ -102,7 +106,7 @@ export function VehicleEditPage({ vehicleId }: VehicleEditPageProps) {
           href="/produits/locations"
           className="text-sm font-medium text-primary hover:text-primary-hover"
         >
-          ← Retour aux véhicules
+          {t('backLink')}
         </Link>
       </div>
     );
@@ -113,7 +117,7 @@ export function VehicleEditPage({ vehicleId }: VehicleEditPageProps) {
 
   return (
     <div className="space-y-8">
-      <AdminPageBackLink href="/produits/locations" label="Retour aux véhicules" />
+      <AdminPageBackLink href="/produits/locations" label={t('backLink')} />
 
       <div className="flex flex-wrap items-center gap-4">
         <VehicleThumbnail
@@ -129,7 +133,7 @@ export function VehicleEditPage({ vehicleId }: VehicleEditPageProps) {
                 {vehicle.licensePlate}
               </code>
             ) : (
-              <span className="text-sm font-medium text-atg-fg">Sans plaque</span>
+              <span className="text-sm font-medium text-atg-fg">{t('noLicensePlate')}</span>
             )}
             <DataTableBadge variant="muted">{agencyName}</DataTableBadge>
             <DataTableBadge variant="default">{categoryName}</DataTableBadge>

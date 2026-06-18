@@ -1,11 +1,13 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import { Button, Card, DataTable, DataTableActionButton, DataTableActions, Input, type ColumnDef } from '@africatourismgate/ui';
 import type { Itinerary } from '@africatourismgate/types';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { withApiClient } from '../../lib/auth/api';
-import { getCroisieresErrorMessage } from '../../lib/croisieres-errors';
 
 type FormValues = { name: string; durationNights: string };
 const emptyForm: FormValues = { name: '', durationNights: '' };
@@ -13,6 +15,12 @@ const emptyForm: FormValues = { name: '', durationNights: '' };
 type ItinerariesSectionProps = { shipId: string };
 
 export function ItinerariesSection({ shipId }: ItinerariesSectionProps) {
+  const { croisieres: getCroisieresErrorMessage } = useAdminErrorMessages();
+  const tSection = useTranslations('modules.cruises.sections.itineraries');
+  const tForm = useTranslations('modules.cruises.form.itinerary');
+  const tColumns = useTranslations('modules.cruises.columns');
+  const tCommonColumns = useTranslations('modules.common.columns');
+  const tActions = useTranslations('common.actions');
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -39,7 +47,7 @@ export function ItinerariesSection({ shipId }: ItinerariesSectionProps) {
     } catch (error) {
       setState({ status: 'error', message: getCroisieresErrorMessage(error) });
     }
-  }, [shipId]);
+  }, [shipId, getCroisieresErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -57,7 +65,7 @@ export function ItinerariesSection({ shipId }: ItinerariesSectionProps) {
     setFormError(null);
     const nights = Number(formValues.durationNights);
     if (!formValues.name.trim() || !Number.isFinite(nights) || nights < 1) {
-      setFormError('Nom et durée (nuits) invalides.');
+      setFormError(tForm('validation'));
       return;
     }
     setSubmitting(true);
@@ -79,15 +87,15 @@ export function ItinerariesSection({ shipId }: ItinerariesSectionProps) {
 
   const columns = useMemo<ColumnDef<Itinerary, unknown>[]>(
     () => [
-      { accessorKey: 'name', header: 'Itinéraire' },
+      { accessorKey: 'name', header: tColumns('itinerary') },
       {
         accessorKey: 'durationNights',
-        header: 'Nuits',
+        header: tColumns('nights'),
         meta: { align: 'center' },
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tCommonColumns('actions'),
         meta: { align: 'right' },
         cell: ({ row }) => (
           <DataTableActions>
@@ -95,7 +103,7 @@ export function ItinerariesSection({ shipId }: ItinerariesSectionProps) {
               href={`/produits/croisieres/navires/${shipId}/itineraires/${row.original.id}`}
               className="inline-flex items-center rounded-md px-2 py-1 text-sm font-medium text-primary hover:underline"
             >
-              Escales
+              {tSection('stopsLink')}
             </Link>
             <DataTableActionButton
               action="edit"
@@ -111,7 +119,7 @@ export function ItinerariesSection({ shipId }: ItinerariesSectionProps) {
             <DataTableActionButton
               action="delete"
               onClick={async () => {
-                if (!window.confirm('Supprimer cet itinéraire ?')) return;
+                if (!window.confirm(tForm('deleteConfirm'))) return;
                 setDeletingId(row.original.id);
                 try {
                   await withApiClient((client) => client.deleteItinerary(row.original.id));
@@ -129,7 +137,7 @@ export function ItinerariesSection({ shipId }: ItinerariesSectionProps) {
         ),
       },
     ],
-    [deletingId, load, shipId],
+    [deletingId, getCroisieresErrorMessage, load, shipId, tColumns, tCommonColumns, tForm, tSection],
   );
 
   const itineraries = state.status === 'ready' ? state.itineraries : [];
@@ -138,14 +146,12 @@ export function ItinerariesSection({ shipId }: ItinerariesSectionProps) {
     <section className="mt-12 space-y-6 border-t border-atg-border pt-10">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-atg-fg">Itinéraires</h2>
-          <p className="mt-1 text-sm text-atg-muted">
-            Parcours et escales pour ce navire.
-          </p>
+          <h2 className="text-lg font-semibold text-atg-fg">{tSection('title')}</h2>
+          <p className="mt-1 text-sm text-atg-muted">{tSection('intro')}</p>
         </div>
         {!showForm ? (
           <Button type="button" onClick={() => setShowForm(true)}>
-            Ajouter un itinéraire
+            {tSection('addItinerary')}
           </Button>
         ) : null}
       </div>
@@ -154,7 +160,7 @@ export function ItinerariesSection({ shipId }: ItinerariesSectionProps) {
         <Card variant="dashboard" className="max-w-2xl">
           <form onSubmit={handleSubmit} className="space-y-4">
             <h3 className="text-sm font-medium">
-              {editing ? 'Modifier l’itinéraire' : 'Nouvel itinéraire'}
+              {editing ? tForm('edit') : tForm('new')}
             </h3>
             {formError ? (
               <p role="alert" className="text-sm text-red-600">
@@ -162,12 +168,12 @@ export function ItinerariesSection({ shipId }: ItinerariesSectionProps) {
               </p>
             ) : null}
             <Input
-              label="Nom"
+              label={tCommonColumns('name')}
               value={formValues.name}
               onChange={(e) => setFormValues((p) => ({ ...p, name: e.target.value }))}
             />
             <Input
-              label="Durée (nuits)"
+              label={tForm('durationNights')}
               type="number"
               min={1}
               value={formValues.durationNights}
@@ -177,10 +183,10 @@ export function ItinerariesSection({ shipId }: ItinerariesSectionProps) {
             />
             <div className="flex gap-3">
               <Button type="submit" loading={submitting}>
-                {editing ? 'Enregistrer' : 'Ajouter'}
+                {editing ? tActions('save') : tActions('create')}
               </Button>
               <Button type="button" variant="outline" onClick={resetForm}>
-                Annuler
+                {tActions('cancel')}
               </Button>
             </div>
           </form>
@@ -197,7 +203,7 @@ export function ItinerariesSection({ shipId }: ItinerariesSectionProps) {
             columns={columns}
             data={itineraries}
             isLoading={state.status === 'loading'}
-            emptyMessage="Aucun itinéraire."
+            emptyMessage={tForm('empty')}
             getRowId={(r) => r.id}
           />
         </Card>

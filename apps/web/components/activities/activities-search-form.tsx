@@ -62,9 +62,9 @@ export function ActivitiesSearchForm({ initialValues }: ActivitiesSearchFormProp
   }
 
   const labelClass =
-    'mb-1.5 block text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-atg-muted';
+    'mb-1.5 block text-xs font-semibold uppercase tracking-wide text-atg-muted';
   const fieldClass =
-    'min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg dark:placeholder:text-atg-muted';
+    'min-h-[44px] w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg transition-colors placeholder:text-atg-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg dark:placeholder:text-atg-muted';
 
   return (
     <form

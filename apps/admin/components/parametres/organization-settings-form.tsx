@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import { Button, Input } from '@africatourismgate/ui';
 import type {
   AuthVisualDecorIcon,
@@ -13,6 +15,7 @@ import type {
   OrganizationSetting,
 } from '@africatourismgate/types';
 import { DEFAULT_LOYALTY_ONEKEY_SETTING } from '@africatourismgate/types/organization-settings';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
@@ -22,15 +25,17 @@ import {
   isValidContactEmail,
   isValidCurrency,
 } from '../../lib/org-settings-constants';
-import { getOrganizationSettingsErrorMessage } from '../../lib/organization-settings-errors';
 import {
+  applyFaviconToDocument,
   applyOrganizationBrandingToDocument,
+  type OrganizationBranding,
   brandingFromSettingsForm,
 } from '../../lib/organization-theme';
 import { useOrganizationThemeOptional } from '../organization-theme-provider';
 import { BrandColorPaletteField } from './brand-color-palette-field';
 import { AuthVisualIconsField } from './auth-visual-icons-field';
 import { authVisualFromSetting } from '../../lib/auth-visual';
+import { OrganizationOrgSelector } from '../organizations/organization-org-selector';
 
 type SettingsFormValues = {
   contactEmail: string;
@@ -129,7 +134,8 @@ type OrganizationSettingsFormProps = {
   organizationId: string;
   isSuperAdmin: boolean;
   onOrganizationIdChange?: (id: string) => void;
-  organizations?: Organization[];
+  organizations?: Pick<Organization, 'id' | 'name'>[];
+  onDirtyChange?: (isDirty: boolean) => void;
 };
 
 export function OrganizationSettingsForm({
@@ -137,7 +143,11 @@ export function OrganizationSettingsForm({
   isSuperAdmin,
   onOrganizationIdChange,
   organizations = [],
+  onDirtyChange,
 }: OrganizationSettingsFormProps) {
+  const { organizationSettings: getOrganizationSettingsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.settings.form');
+  const tCommon = useTranslations('modules.common.form');
   const router = useRouter();
   const orgTheme = useOrganizationThemeOptional();
   const [values, setValues] = useState<SettingsFormValues>(defaultValues);
@@ -150,16 +160,11 @@ export function OrganizationSettingsForm({
   const [submitting, setSubmitting] = useState(false);
   const [uploadingField, setUploadingField] = useState<'logoUrl' | 'faviconUrl' | null>(null);
   const [uploadingAuthIconIndex, setUploadingAuthIconIndex] = useState<number | null>(null);
+  const [initialValues, setInitialValues] = useState<SettingsFormValues>(defaultValues);
 
   const updateField = useCallback(
     <K extends keyof SettingsFormValues>(key: K, value: SettingsFormValues[K]) => {
-      setValues((prev) => {
-        const next = { ...prev, [key]: value };
-        if (key === 'primaryColor' || key === 'secondaryColor') {
-          applyOrganizationBrandingToDocument(brandingFromSettingsForm(next));
-        }
-        return next;
-      });
+      setValues((prev) => ({ ...prev, [key]: value }));
       setFieldErrors((prev) => ({ ...prev, [key]: undefined }));
     },
     [],
@@ -185,9 +190,30 @@ export function OrganizationSettingsForm({
     [displayName, primaryColor, secondaryColor, logoUrl, faviconUrl],
   );
 
+  const applyPreviewBranding = useCallback(
+    (branding: OrganizationBranding) => {
+      if (orgTheme) {
+        orgTheme.applyBranding(branding);
+        return;
+      }
+      applyOrganizationBrandingToDocument(branding);
+      applyFaviconToDocument(branding.faviconUrl);
+    },
+    [orgTheme],
+  );
+
   useEffect(() => {
-    applyOrganizationBrandingToDocument(brandingPreview);
-  }, [brandingPreview]);
+    applyPreviewBranding(brandingPreview);
+  }, [applyPreviewBranding, brandingPreview]);
+
+  const isDirty = useMemo(
+    () => JSON.stringify(values) !== JSON.stringify(initialValues),
+    [values, initialValues],
+  );
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
 
   useEffect(() => {
     let cancelled = false;
@@ -206,7 +232,9 @@ export function OrganizationSettingsForm({
           }),
         ]);
         if (!cancelled) {
-          setValues(toFormValues(org, settingsPage.data));
+          const nextValues = toFormValues(org, settingsPage.data);
+          setValues(nextValues);
+          setInitialValues(nextValues);
         }
       } catch (error) {
         if (!cancelled) {
@@ -227,27 +255,25 @@ export function OrganizationSettingsForm({
     const errors: Partial<Record<keyof SettingsFormValues, string>> = {};
     const email = values.contactEmail.trim();
     if (email && !isValidContactEmail(email)) {
-      errors.contactEmail = "L'e-mail de contact doit être valide.";
+      errors.contactEmail = t('validation.contactEmailInvalid');
     }
     if (!isValidCurrency(values.currency)) {
-      errors.currency = 'La devise doit comporter 3 lettres (ex. USD, CDF).';
+      errors.currency = t('validation.currencyInvalid');
     }
     const hold = Number(values.holdMinutes);
     if (!Number.isInteger(hold) || hold < 0) {
-      errors.holdMinutes = 'Durée de retenue invalide (entier positif).';
+      errors.holdMinutes = t('validation.holdMinutesInvalid');
     }
     if (!values.displayName.trim()) {
-      errors.displayName = 'Le nom affiché est obligatoire.';
+      errors.displayName = t('validation.displayNameRequired');
     }
     const loyaltyRate = Number(values.loyaltyPointsPerMajorUnit);
     if (!Number.isInteger(loyaltyRate) || loyaltyRate < 0) {
-      errors.loyaltyPointsPerMajorUnit =
-        'Le taux de points doit être un entier positif ou nul.';
+      errors.loyaltyPointsPerMajorUnit = t('validation.loyaltyRateInvalid');
     }
     const programCode = values.loyaltyProgramCode.trim();
     if (!programCode || programCode.length > 32) {
-      errors.loyaltyProgramCode =
-        'Le code programme est obligatoire (32 caractères max).';
+      errors.loyaltyProgramCode = t('validation.programCodeInvalid');
     }
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
@@ -331,7 +357,8 @@ export function OrganizationSettingsForm({
         ],
       });
 
-      applyOrganizationBrandingToDocument(brandingFromSettingsForm(values));
+      applyPreviewBranding(brandingFromSettingsForm(values));
+      setInitialValues(values);
       await orgTheme?.refreshTheme();
 
       router.refresh();
@@ -380,16 +407,16 @@ export function OrganizationSettingsForm({
     if (!file) return;
     try {
       if (!file.type.startsWith('image/')) {
-        setFormError('Veuillez sélectionner une image valide.');
+        setFormError(t('upload.invalidImage'));
         return;
       }
       if (file.size > 2 * 1024 * 1024) {
-        setFormError('Image trop lourde (max 2 MB).');
+        setFormError(t('upload.tooLarge'));
         return;
       }
       const session = getSession();
       if (!session?.accessToken) {
-        setFormError('Session expirée. Reconnectez-vous puis réessayez.');
+        setFormError(tCommon('sessionExpiredRetry'));
         return;
       }
       setUploadingField(field);
@@ -397,7 +424,7 @@ export function OrganizationSettingsForm({
       updateField(field, url);
       setFormError(null);
     } catch {
-      setFormError("Impossible d'uploader l'image locale.");
+      setFormError(tCommon('uploadFailed'));
     } finally {
       setUploadingField(null);
       event.target.value = '';
@@ -411,15 +438,22 @@ export function OrganizationSettingsForm({
       setFormError(null);
       return url;
     } catch {
-      setFormError("Impossible d'uploader l'image locale.");
+      setFormError(tCommon('uploadFailed'));
       throw new Error('Upload failed');
     } finally {
       setUploadingAuthIconIndex(null);
     }
   }
 
+  function handleCancel(): void {
+    setValues(initialValues);
+    applyPreviewBranding(brandingFromSettingsForm(initialValues));
+    setFieldErrors({});
+    setFormError(null);
+  }
+
   if (loading) {
-    return <p className="text-sm text-atg-muted">Chargement…</p>;
+    return <p className="text-sm text-atg-muted">{t('loading')}</p>;
   }
 
   if (loadError) {
@@ -430,113 +464,99 @@ export function OrganizationSettingsForm({
     );
   }
 
-  const selectClass =
-    'w-full rounded-lg border border-atg-border bg-atg-bg px-3 py-2 text-sm text-atg-fg focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary';
-
   return (
-    <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-8">
-      {isSuperAdmin && organizations.length > 0 && onOrganizationIdChange ? (
-        <div>
-          <label htmlFor="org-select" className="mb-1 block text-sm font-medium text-atg-fg">
-            Organisation
-          </label>
-          <select
-            id="org-select"
-            className={selectClass}
-            value={organizationId}
-            onChange={(e) => onOrganizationIdChange(e.target.value)}
-          >
-            {organizations.map((org) => (
-              <option key={org.id} value={org.id}>
-                {org.name}
-              </option>
-            ))}
-          </select>
-        </div>
-      ) : null}
+    <form onSubmit={handleSubmit} className="space-y-8">
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
+        <div className="space-y-8">
+          {isSuperAdmin && organizations.length > 0 && onOrganizationIdChange ? (
+            <OrganizationOrgSelector
+              id="org-select"
+              organizations={organizations}
+              value={organizationId}
+              onChange={onOrganizationIdChange}
+            />
+          ) : null}
 
-      {formError ? (
-        <p
-          role="alert"
-          className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-400"
-        >
-          {formError}
-        </p>
-      ) : null}
+          {formError ? (
+            <p
+              role="alert"
+              className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-400"
+            >
+              {formError}
+            </p>
+          ) : null}
 
-      <section className="space-y-4">
-        <h2 className="text-lg font-semibold text-atg-fg">Coordonnées</h2>
-        <p className="text-sm text-atg-muted">
-          Affichées dans le bandeau et le pied de page du site public.
-        </p>
+          <section className="space-y-4">
+        <h2 className="text-lg font-semibold text-atg-fg">{t('sections.contact.title')}</h2>
+        <p className="text-sm text-atg-muted">{t('sections.contact.description')}</p>
         <Input
-          label="Téléphone"
+          label={t('sections.contact.phone')}
           type="tel"
           value={values.contactPhone}
           onChange={(e) => updateField('contactPhone', e.target.value)}
           placeholder="+243 815 000 000"
         />
         <Input
-          label="E-mail de contact"
+          label={t('sections.contact.email')}
           type="email"
           value={values.contactEmail}
           onChange={(e) => updateField('contactEmail', e.target.value)}
           error={fieldErrors.contactEmail}
         />
         <Input
-          label="Adresse / localisation"
+          label={t('sections.contact.location')}
           value={values.location}
           onChange={(e) => updateField('location', e.target.value)}
-          placeholder="Kinshasa, RD Congo"
+          placeholder={t('sections.contact.locationPlaceholder')}
         />
         <Input
-          label="URL Facebook"
+          label={t('sections.contact.facebookUrl')}
           type="url"
           value={values.facebookUrl}
           onChange={(e) => updateField('facebookUrl', e.target.value)}
           placeholder="https://www.facebook.com/..."
         />
         <Input
-          label="URL X / Twitter"
+          label={t('sections.contact.twitterUrl')}
           type="url"
           value={values.twitterUrl}
           onChange={(e) => updateField('twitterUrl', e.target.value)}
           placeholder="https://x.com/..."
         />
         <Input
-          label="URL Instagram"
+          label={t('sections.contact.instagramUrl')}
           type="url"
           value={values.instagramUrl}
           onChange={(e) => updateField('instagramUrl', e.target.value)}
           placeholder="https://www.instagram.com/..."
         />
         <Input
-          label="Devise"
+          label={t('sections.contact.currency')}
           value={values.currency}
           onChange={(e) => updateField('currency', e.target.value.toUpperCase())}
           error={fieldErrors.currency}
           maxLength={3}
         />
-      </section>
+          </section>
 
-      <section className="space-y-4">
-        <h2 className="text-lg font-semibold text-atg-fg">Locale</h2>
+          <section className="space-y-4">
+        <h2 className="text-lg font-semibold text-atg-fg">{t('sections.locale.title')}</h2>
         <Input
-          label="Langue"
+          label={t('sections.locale.language')}
           value={values.language}
           onChange={(e) => updateField('language', e.target.value)}
         />
         <Input
-          label="Fuseau horaire"
+          label={t('sections.locale.timezone')}
           value={values.timezone}
           onChange={(e) => updateField('timezone', e.target.value)}
         />
-      </section>
+          </section>
 
-      <section className="space-y-4">
-        <h2 className="text-lg font-semibold text-atg-fg">Réservation</h2>
+          <section className="space-y-4">
+        <h2 className="text-lg font-semibold text-atg-fg">{t('sections.booking.title')}</h2>
         <Input
-          label="Durée de retenue (minutes)"
+          label={t('sections.booking.holdMinutes')}
           type="number"
           min={0}
           value={values.holdMinutes}
@@ -550,16 +570,13 @@ export function OrganizationSettingsForm({
             onChange={(e) => updateField('allowGuestCheckout', e.target.checked)}
             className="rounded border-atg-border"
           />
-          Autoriser la commande invité
+          {t('sections.booking.allowGuestCheckout')}
         </label>
-      </section>
+          </section>
 
-      <section className="space-y-4">
-        <h2 className="text-lg font-semibold text-atg-fg">Fidélité OneKey</h2>
-        <p className="text-sm text-atg-muted">
-          Points crédités après paiement confirmé : floor(montant en centimes / 100) ×
-          taux ci-dessous.
-        </p>
+          <section className="space-y-4">
+        <h2 className="text-lg font-semibold text-atg-fg">{t('sections.loyalty.title')}</h2>
+        <p className="text-sm text-atg-muted">{t('sections.loyalty.description')}</p>
         <label className="flex items-center gap-2 text-sm text-atg-fg">
           <input
             type="checkbox"
@@ -567,10 +584,10 @@ export function OrganizationSettingsForm({
             onChange={(e) => updateField('loyaltyEnabled', e.target.checked)}
             className="rounded border-atg-border"
           />
-          Activer le crédit de points OneKey
+          {t('sections.loyalty.enabled')}
         </label>
         <Input
-          label="Points par unité majeure de devise"
+          label={t('sections.loyalty.pointsPerMajorUnit')}
           type="number"
           min={0}
           value={values.loyaltyPointsPerMajorUnit}
@@ -578,7 +595,7 @@ export function OrganizationSettingsForm({
           error={fieldErrors.loyaltyPointsPerMajorUnit}
         />
         <Input
-          label="Code programme"
+          label={t('sections.loyalty.programCode')}
           value={values.loyaltyProgramCode}
           onChange={(e) =>
             updateField('loyaltyProgramCode', e.target.value.toUpperCase())
@@ -586,37 +603,37 @@ export function OrganizationSettingsForm({
           error={fieldErrors.loyaltyProgramCode}
           maxLength={32}
         />
-      </section>
+          </section>
 
-      <section className="space-y-4">
-        <h2 className="text-lg font-semibold text-atg-fg">Branding</h2>
+          <section className="space-y-4">
+        <h2 className="text-lg font-semibold text-atg-fg">{t('sections.branding.title')}</h2>
         <Input
-          label="Nom affiché"
+          label={t('sections.branding.displayName')}
           value={values.displayName}
           onChange={(e) => updateField('displayName', e.target.value)}
           error={fieldErrors.displayName}
         />
         <BrandColorPaletteField
-          label="Couleur primaire"
-          hint="Couleur dominante de l’interface (boutons, liens, accents)."
+          label={t('sections.branding.primaryColor')}
+          hint={t('sections.branding.primaryColorHint')}
           value={values.primaryColor}
           onChange={(hex) => updateField('primaryColor', hex)}
         />
         <BrandColorPaletteField
-          label="Couleur secondaire"
-          hint="Couleur d’accompagnement (badges, éléments secondaires)."
+          label={t('sections.branding.secondaryColor')}
+          hint={t('sections.branding.secondaryColorHint')}
           value={values.secondaryColor}
           onChange={(hex) => updateField('secondaryColor', hex)}
         />
         <Input
-          label="URL du logo"
+          label={t('sections.branding.logoUrl')}
           value={values.logoUrl}
           onChange={(e) => updateField('logoUrl', e.target.value)}
           placeholder="https://..."
         />
         <div className="flex items-center gap-3">
           <label className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10">
-            {uploadingField === 'logoUrl' ? 'Upload en cours…' : 'Choisir un logo local'}
+            {uploadingField === 'logoUrl' ? t('sections.branding.uploading') : t('sections.branding.chooseLogo')}
             <input
               type="file"
               accept="image/*"
@@ -625,17 +642,17 @@ export function OrganizationSettingsForm({
               disabled={uploadingField !== null}
             />
           </label>
-          <span className="text-xs text-atg-muted">PNG/JPG/SVG/WebP, max 2 MB</span>
+          <span className="text-xs text-atg-muted">{t('sections.branding.logoFormatHint')}</span>
         </div>
         <Input
-          label="URL de l'icône (favicon)"
+          label={t('sections.branding.faviconUrl')}
           value={values.faviconUrl}
           onChange={(e) => updateField('faviconUrl', e.target.value)}
           placeholder="https://..."
         />
         <div className="flex items-center gap-3">
           <label className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10">
-            {uploadingField === 'faviconUrl' ? 'Upload en cours…' : 'Choisir une icône locale'}
+            {uploadingField === 'faviconUrl' ? t('sections.branding.uploading') : t('sections.branding.chooseFavicon')}
             <input
               type="file"
               accept="image/*"
@@ -644,24 +661,93 @@ export function OrganizationSettingsForm({
               disabled={uploadingField !== null}
             />
           </label>
-          <span className="text-xs text-atg-muted">PNG/ICO/SVG, max 2 MB</span>
+          <span className="text-xs text-atg-muted">{t('sections.branding.faviconFormatHint')}</span>
         </div>
-      </section>
+          </section>
 
-      <section className="space-y-4">
-        <h2 className="text-lg font-semibold text-atg-fg">Panneau connexion</h2>
+          <section className="space-y-4">
+        <h2 className="text-lg font-semibold text-atg-fg">{t('sections.authVisual.title')}</h2>
         <AuthVisualIconsField
           icons={values.authVisualIcons}
           onChange={(authVisualIcons) => updateField('authVisualIcons', authVisualIcons)}
           onUploadImage={handleAuthVisualImageUpload}
           uploadingIndex={uploadingAuthIconIndex}
         />
-      </section>
+          </section>
+        </div>
 
-      <div className="flex gap-3">
-        <Button type="submit" loading={submitting} loadingText="Enregistrement…">
-          Enregistrer
-        </Button>
+        <aside className="lg:sticky lg:top-6">
+          <div className="rounded-xl border border-atg-border bg-atg-bg p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-atg-muted">
+              {t('preview.title')}
+            </p>
+            <p className="mt-1 text-sm text-atg-muted">{t('preview.description')}</p>
+
+            <div className="mt-4 overflow-hidden rounded-lg border border-atg-border bg-atg-surface">
+              <div
+                className="flex items-center justify-between px-3 py-2 text-white"
+                style={{ backgroundColor: brandingPreview.primaryColor }}
+              >
+                <div className="flex items-center gap-2">
+                  {brandingPreview.logoUrl ? (
+                    <img
+                      src={brandingPreview.logoUrl}
+                      alt={t('preview.logoAlt')}
+                      className="h-6 w-6 rounded object-contain bg-white/15 p-0.5"
+                    />
+                  ) : (
+                    <div className="h-6 w-6 rounded bg-white/25" />
+                  )}
+                  <span className="text-sm font-semibold">{brandingPreview.displayName}</span>
+                </div>
+                <span className="text-xs opacity-90">{t('preview.adminBadge')}</span>
+              </div>
+
+              <div className="grid grid-cols-[72px_minmax(0,1fr)]">
+                <div
+                  className="space-y-2 px-2 py-3"
+                  style={{ backgroundColor: brandingPreview.secondaryColor }}
+                >
+                  <div className="h-2 rounded bg-white/60" />
+                  <div className="h-2 rounded bg-white/40" />
+                  <div className="h-2 rounded bg-white/30" />
+                </div>
+                <div className="space-y-3 p-3">
+                  <div className="h-2 w-2/3 rounded bg-atg-border" />
+                  <div className="h-2 w-1/2 rounded bg-atg-border" />
+                  <button
+                    type="button"
+                    className="rounded-md px-3 py-1.5 text-xs font-medium text-white"
+                    style={{ backgroundColor: brandingPreview.primaryColor }}
+                  >
+                    {t('preview.primaryButton')}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <div className="sticky bottom-0 z-20 border-t border-atg-border bg-atg-bg/95 px-4 py-3 backdrop-blur">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm font-medium text-atg-fg">
+            {isDirty ? t('dirty') : t('clean')}
+          </p>
+          <div className="flex gap-2">
+            <Button type="button" variant="outline" onClick={handleCancel} disabled={!isDirty}>
+              {t('cancel')}
+            </Button>
+            <Button
+              type="submit"
+              loading={submitting}
+              loadingText={t('saving')}
+              disabled={!isDirty}
+            >
+              {t('save')}
+            </Button>
+          </div>
+        </div>
       </div>
     </form>
   );

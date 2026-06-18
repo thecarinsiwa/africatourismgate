@@ -2,12 +2,22 @@
 
 import { Card, cn } from '@africatourismgate/ui';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { useMemo } from 'react';
 
-const actions = [
+type QuickActionKey = 'users' | 'organizations' | 'properties' | 'bookings';
+
+type QuickActionDef = {
+  key: QuickActionKey;
+  href: string;
+  iconClass: string;
+  icon: React.ReactNode;
+};
+
+const actionDefs: QuickActionDef[] = [
   {
+    key: 'users',
     href: '/utilisateurs',
-    label: 'Utilisateurs',
-    description: 'Gérer les comptes',
     iconClass: 'bg-primary/10 text-primary',
     icon: (
       <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -21,9 +31,8 @@ const actions = [
     ),
   },
   {
+    key: 'organizations',
     href: '/organisations',
-    label: 'Organisations',
-    description: 'Partenaires & entités',
     iconClass: 'bg-primary/10 text-primary',
     icon: (
       <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -37,9 +46,8 @@ const actions = [
     ),
   },
   {
+    key: 'properties',
     href: '/hebergements',
-    label: 'Hébergements',
-    description: 'Catalogue & fiches',
     iconClass: 'bg-primary/10 text-primary',
     icon: (
       <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -53,9 +61,8 @@ const actions = [
     ),
   },
   {
+    key: 'bookings',
     href: '/reservations',
-    label: 'Réservations',
-    description: 'Suivi des bookings',
     iconClass: 'bg-primary/10 text-primary',
     icon: (
       <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -71,10 +78,22 @@ const actions = [
 ];
 
 export function DashboardQuickActions({ className }: { className?: string }) {
+  const t = useTranslations('dashboard.quickActions');
+
+  const actions = useMemo(
+    () =>
+      actionDefs.map((action) => ({
+        ...action,
+        label: t(`${action.key}.label`),
+        description: t(`${action.key}.description`),
+      })),
+    [t],
+  );
+
   return (
     <Card variant="dashboard" padding="sm" className={className}>
-      <h2 className="text-base font-semibold text-atg-fg">Actions rapides</h2>
-      <p className="mt-1 text-sm text-atg-muted">Accès direct aux sections principales</p>
+      <h2 className="text-base font-semibold text-atg-fg">{t('title')}</h2>
+      <p className="mt-1 text-sm text-atg-muted">{t('subtitle')}</p>
 
       <div className="mt-5 grid grid-cols-2 gap-3">
         {actions.map((action) => (

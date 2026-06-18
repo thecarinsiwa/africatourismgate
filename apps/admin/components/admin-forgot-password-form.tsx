@@ -1,23 +1,22 @@
 'use client';
 
 import { Button, Input } from '@africatourismgate/ui';
-import { useState } from 'react';
+import { useTranslations } from 'next-intl';
+import { useMemo, useState } from 'react';
 import {
-  adminForgotPasswordErrors,
-  adminForgotPasswordPageConfig,
+  getAdminForgotPasswordErrors,
+  getAdminForgotPasswordFormConfig,
 } from '../config/forgot-password';
+import { getAuthErrorMessage } from '../lib/auth/api-errors';
 import { getApiClient } from '../lib/auth/api';
 
-const { email: emailConfig, submit } = adminForgotPasswordPageConfig;
-
-function getForgotPasswordErrorMessage(error: unknown): string {
-  if (error instanceof TypeError) {
-    return adminForgotPasswordErrors.network;
-  }
-  return adminForgotPasswordErrors.generic;
-}
-
 export function AdminForgotPasswordForm() {
+  const tForm = useTranslations('auth.forgotPassword.form');
+  const tErrors = useTranslations('auth.forgotPassword.errors');
+  const tPage = useTranslations('auth.forgotPassword');
+  const formConfig = useMemo(() => getAdminForgotPasswordFormConfig(tForm), [tForm]);
+  const errorMessages = useMemo(() => getAdminForgotPasswordErrors(tErrors), [tErrors]);
+
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -31,7 +30,7 @@ export function AdminForgotPasswordForm() {
       await getApiClient().forgotPassword({ email });
       setSuccess(true);
     } catch (err) {
-      setError(getForgotPasswordErrorMessage(err));
+      setError(getAuthErrorMessage(err, errorMessages));
     } finally {
       setLoading(false);
     }
@@ -43,7 +42,7 @@ export function AdminForgotPasswordForm() {
         role="status"
         className="rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-800 dark:border-green-900/50 dark:bg-green-950/40 dark:text-green-300"
       >
-        {adminForgotPasswordPageConfig.successMessage}
+        {tPage('successMessage')}
       </p>
     );
   }
@@ -65,8 +64,8 @@ export function AdminForgotPasswordForm() {
           name="email"
           type="email"
           autoComplete="email"
-          label={emailConfig.label}
-          placeholder={emailConfig.placeholder}
+          label={formConfig.email.label}
+          placeholder={formConfig.email.placeholder}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -78,9 +77,9 @@ export function AdminForgotPasswordForm() {
           size="lg"
           fullWidth
           loading={loading}
-          loadingText={submit.loadingLabel}
+          loadingText={formConfig.submit.loadingLabel}
         >
-          {submit.label}
+          {formConfig.submit.label}
         </Button>
       </form>
     </div>

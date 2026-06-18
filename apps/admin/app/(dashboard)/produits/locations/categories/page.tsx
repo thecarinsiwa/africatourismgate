@@ -1,25 +1,11 @@
 import type { Metadata } from 'next';
-import { PageHeader } from '@africatourismgate/ui';
-import { AdminPageBackLink } from '../../../../../components/admin-page-back-link';
-import { LocationsStatCards } from '../../../../../components/locations/locations-stat-cards';
-import { VehicleCategoriesList } from '../../../../../components/locations/vehicle-categories-list';
+import { getAdminPageMetadata } from '../../../../../lib/i18n/admin-page-i18n';
+import { CategoriesVehiculesPageContent } from '../../../../../components/pages/produits-locations-categories-page-content';
 
-export const metadata: Metadata = {
-  title: 'Catégories véhicules — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('produits/locations/categories');
+}
 
-export default function CategoriesVehiculesPage() {
-  return (
-    <div>
-      <PageHeader
-        title="Catégories véhicules"
-        description="Types de véhicules (compact, SUV, premium, etc.)."
-        breadcrumb={
-          <AdminPageBackLink href="/produits/locations" label="Retour aux véhicules" />
-        }
-      />
-      <LocationsStatCards className="mb-6" />
-      <VehicleCategoriesList />
-    </div>
-  );
+export default function Page() {
+  return <CategoriesVehiculesPageContent />;
 }

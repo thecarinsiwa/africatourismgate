@@ -15,6 +15,7 @@ import {
 } from 'recharts';
 import { fetchDashboardTrend, type TrendPoint } from '../lib/dashboard-trend-data';
 import { formatMoney } from '../lib/format-money';
+import { useFormatChartAxisDate } from '../lib/i18n/use-module-labels';
 import { useChartTheme } from '../lib/use-chart-theme';
 import { useDashboardPeriod } from './dashboard-period-context';
 
@@ -30,11 +31,6 @@ type ChartRow = {
   revenue: number;
   revenueCents: number;
 };
-
-function formatAxisDate(isoDate: string): string {
-  const date = new Date(`${isoDate}T12:00:00.000Z`);
-  return date.toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
-}
 
 function formatYAxisTick(value: number): string {
   if (value >= 1000) return `${(value / 1000).toFixed(0)}k`;
@@ -128,6 +124,7 @@ export function DashboardTrendChart({ className }: { className?: string }) {
   const t = useTranslations('dashboard.chart');
   const { period } = useDashboardPeriod();
   const chartTheme = useChartTheme();
+  const formatAxisDate = useFormatChartAxisDate();
   const [state, setState] = useState<ChartState>({ status: 'loading' });
 
   useEffect(() => {
@@ -159,7 +156,7 @@ export function DashboardTrendChart({ className }: { className?: string }) {
       revenue: point.revenueCents / 100,
       revenueCents: point.revenueCents,
     }));
-  }, [state]);
+  }, [formatAxisDate, state]);
 
   const hasData = useMemo(
     () => rows?.some((row) => row.bookings > 0 || row.revenue > 0) ?? false,
@@ -260,7 +257,7 @@ export function DashboardTrendChart({ className }: { className?: string }) {
               <caption>{t('ariaLabel')}</caption>
               <thead>
                 <tr>
-                  <th scope="col">Date</th>
+                  <th scope="col">{t('dateColumn')}</th>
                   <th scope="col">{t('bookings')}</th>
                   <th scope="col">{t('revenue')}</th>
                 </tr>

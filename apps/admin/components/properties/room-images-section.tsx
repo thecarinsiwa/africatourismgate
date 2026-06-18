@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Button,
   Card,
@@ -11,10 +13,10 @@ import {
 } from '@africatourismgate/ui';
 import type { RoomImage } from '@africatourismgate/types';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
 import { getSession } from '../../lib/auth/session';
-import { getHebergementsErrorMessage } from '../../lib/hebergements-errors';
 
 const ROOM_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
 const ALLOWED_ROOM_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
@@ -34,6 +36,12 @@ type RoomImagesSectionProps = {
 };
 
 export function RoomImagesSection({ roomId, roomName, onClose }: RoomImagesSectionProps) {
+  const { hebergements: getHebergementsErrorMessage } = useAdminErrorMessages();
+  const tGallery = useTranslations('modules.common.imagesGallery');
+  const tColumns = useTranslations('modules.common.columns');
+  const tForm = useTranslations('modules.common.form');
+  const tValidation = useTranslations('modules.common.validation');
+  const tActions = useTranslations('common.actions');
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -59,7 +67,7 @@ export function RoomImagesSection({ roomId, roomName, onClose }: RoomImagesSecti
     } catch (error) {
       setState({ status: 'error', message: getHebergementsErrorMessage(error) });
     }
-  }, [roomId]);
+  }, [roomId, getHebergementsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -94,16 +102,16 @@ export function RoomImagesSection({ roomId, roomName, onClose }: RoomImagesSecti
     if (!file) return;
     try {
       if (!ALLOWED_ROOM_IMAGE_TYPES.has(file.type)) {
-        setFormError('Format accepté : JPEG, PNG ou WebP.');
+        setFormError(tValidation('imageFormat'));
         return;
       }
       if (file.size > ROOM_IMAGE_MAX_BYTES) {
-        setFormError('Image trop lourde (max 5 Mo).');
+        setFormError(tValidation('imageTooLarge'));
         return;
       }
       const session = getSession();
       if (!session?.accessToken) {
-        setFormError('Session expirée. Reconnectez-vous puis réessayez.');
+        setFormError(tValidation('sessionExpiredRetry'));
         return;
       }
       setUploading(true);
@@ -126,7 +134,7 @@ export function RoomImagesSection({ roomId, roomName, onClose }: RoomImagesSecti
       }
       setFormValues((prev) => ({ ...prev, url: payload.url! }));
     } catch {
-      setFormError("Impossible d'uploader l'image locale.");
+      setFormError(tValidation('uploadFailed'));
     } finally {
       setUploading(false);
       event.target.value = '';
@@ -137,7 +145,7 @@ export function RoomImagesSection({ roomId, roomName, onClose }: RoomImagesSecti
     event.preventDefault();
     setFormError(null);
     if (!formValues.url.trim()) {
-      setFormError('L’URL est obligatoire.');
+      setFormError(tValidation('urlRequired'));
       return;
     }
     setSubmitting(true);
@@ -165,7 +173,7 @@ export function RoomImagesSection({ roomId, roomName, onClose }: RoomImagesSecti
 
   const handleDelete = useCallback(
     async (img: RoomImage) => {
-      if (!window.confirm('Supprimer cette image ?')) return;
+      if (!window.confirm(tGallery('deleteConfirm'))) return;
       setDeletingId(img.id);
       try {
         await getApiClient().deleteRoomImage(img.id);
@@ -176,14 +184,14 @@ export function RoomImagesSection({ roomId, roomName, onClose }: RoomImagesSecti
         setDeletingId(null);
       }
     },
-    [load],
+    [load, tGallery, getHebergementsErrorMessage],
   );
 
   const columns = useMemo<ColumnDef<RoomImage, unknown>[]>(
     () => [
       {
         id: 'preview',
-        header: 'Aperçu',
+        header: tColumns('preview'),
         cell: ({ row }) => (
           <Image
             src={row.original.url}
@@ -200,7 +208,7 @@ export function RoomImagesSection({ roomId, roomName, onClose }: RoomImagesSecti
       },
       {
         accessorKey: 'url',
-        header: 'URL',
+        header: tColumns('url'),
         cell: ({ row }) => (
           <a
             href={row.original.url}
@@ -214,19 +222,19 @@ export function RoomImagesSection({ roomId, roomName, onClose }: RoomImagesSecti
       },
       {
         accessorKey: 'caption',
-        header: 'Légende',
+        header: tColumns('caption'),
         cell: ({ row }) => (
           <span className="text-sm text-atg-muted">{row.original.caption ?? '—'}</span>
         ),
       },
       {
         accessorKey: 'sortOrder',
-        header: 'Ordre',
+        header: tColumns('sortOrder'),
         meta: { align: 'center' },
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tColumns('actions'),
         meta: { align: 'right' },
         cell: ({ row }) => (
           <DataTableActions>
@@ -241,7 +249,7 @@ export function RoomImagesSection({ roomId, roomName, onClose }: RoomImagesSecti
         ),
       },
     ],
-    [deletingId, handleDelete],
+    [deletingId, handleDelete, tColumns],
   );
 
   const images = state.status === 'ready' ? state.images : [];
@@ -250,20 +258,20 @@ export function RoomImagesSection({ roomId, roomName, onClose }: RoomImagesSecti
     <div className="space-y-4 rounded-lg border border-atg-border bg-atg-surface/40 p-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h3 className="text-sm font-semibold text-atg-fg">Photos — {roomName}</h3>
-          <p className="mt-1 text-sm text-atg-muted">
-            Uploadez une photo ou saisissez une URL externe.
-          </p>
+          <h3 className="text-sm font-semibold text-atg-fg">
+            {tGallery('title')} — {roomName}
+          </h3>
+          <p className="mt-1 text-sm text-atg-muted">{tGallery('intro')}</p>
         </div>
         <div className="flex gap-2">
           {!showForm ? (
             <Button type="button" size="sm" onClick={openCreate}>
-              Ajouter une photo
+              {tGallery('addPhoto')}
             </Button>
           ) : null}
           {onClose ? (
             <Button type="button" size="sm" variant="outline" onClick={onClose}>
-              Fermer
+              {tActions('close')}
             </Button>
           ) : null}
         </div>
@@ -273,7 +281,7 @@ export function RoomImagesSection({ roomId, roomName, onClose }: RoomImagesSecti
         <Card variant="dashboard" className="max-w-2xl">
           <form onSubmit={handleSubmit} className="space-y-4">
             <h4 className="text-sm font-medium">
-              {editing ? 'Modifier la photo' : 'Nouvelle photo'}
+              {editing ? tGallery('editPhoto') : tGallery('newPhoto')}
             </h4>
             {formError ? (
               <p role="alert" className="text-sm text-red-600">
@@ -281,10 +289,10 @@ export function RoomImagesSection({ roomId, roomName, onClose }: RoomImagesSecti
               </p>
             ) : null}
             <div className="space-y-3">
-              <p className="text-xs font-medium text-atg-fg">Image</p>
+              <p className="text-xs font-medium text-atg-fg">{tForm('image')}</p>
               <div className="flex flex-wrap items-center gap-3">
                 <label className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10">
-                  {uploading ? 'Upload en cours…' : 'Choisir un fichier'}
+                  {uploading ? tForm('uploading') : tForm('chooseFile')}
                   <input
                     type="file"
                     accept="image/jpeg,image/png,image/webp"
@@ -293,12 +301,12 @@ export function RoomImagesSection({ roomId, roomName, onClose }: RoomImagesSecti
                     disabled={uploading || submitting}
                   />
                 </label>
-                <span className="text-xs text-atg-muted">JPEG, PNG ou WebP, max 5 Mo</span>
+                <span className="text-xs text-atg-muted">{tForm('imageFormatHint')}</span>
               </div>
               {formValues.url.trim() ? (
                 <Image
                   src={formValues.url.trim()}
-                  alt={formValues.caption.trim() || 'Aperçu'}
+                  alt={formValues.caption.trim() || tColumns('preview')}
                   width={320}
                   height={200}
                   unoptimized
@@ -310,19 +318,19 @@ export function RoomImagesSection({ roomId, roomName, onClose }: RoomImagesSecti
               ) : null}
             </div>
             <Input
-              label="URL externe (optionnel si upload)"
+              label={tForm('externalUrlOptional')}
               type="url"
               value={formValues.url}
               onChange={(e) => setFormValues((p) => ({ ...p, url: e.target.value }))}
-              placeholder="https://..."
+              placeholder={tForm('urlPlaceholder')}
             />
             <Input
-              label="Légende"
+              label={tColumns('caption')}
               value={formValues.caption}
               onChange={(e) => setFormValues((p) => ({ ...p, caption: e.target.value }))}
             />
             <Input
-              label="Ordre d’affichage"
+              label={tForm('displayOrder')}
               type="number"
               min={0}
               value={formValues.sortOrder}
@@ -330,10 +338,10 @@ export function RoomImagesSection({ roomId, roomName, onClose }: RoomImagesSecti
             />
             <div className="flex gap-3">
               <Button type="submit" loading={submitting} disabled={uploading}>
-                {editing ? 'Enregistrer' : 'Ajouter'}
+                {editing ? tActions('save') : tActions('create')}
               </Button>
               <Button type="button" variant="outline" onClick={resetForm}>
-                Annuler
+                {tActions('cancel')}
               </Button>
             </div>
           </form>
@@ -350,7 +358,7 @@ export function RoomImagesSection({ roomId, roomName, onClose }: RoomImagesSecti
             columns={columns}
             data={images}
             isLoading={state.status === 'loading'}
-            emptyMessage="Aucune photo pour cette chambre."
+            emptyMessage={tGallery('emptyRoom')}
             getRowId={(row) => row.id}
           />
         </Card>

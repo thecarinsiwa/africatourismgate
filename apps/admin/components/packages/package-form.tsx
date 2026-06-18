@@ -1,12 +1,14 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import { Button, Card, Input } from '@africatourismgate/ui';
 import type { CreatePackageRequest, Package } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { RichTextEditor } from '../rich-text-editor';
 import { getApiClient } from '../../lib/auth/api';
-import { getPackagesErrorMessage } from '../../lib/packages-errors';
 import { isRichTextEmpty } from '../../lib/rich-text';
 
 export type PackageFormValues = {
@@ -54,6 +56,10 @@ type PackageFormProps = {
 };
 
 export function PackageForm({ mode, packageId, initialPackage }: PackageFormProps) {
+  const { packages: getPackagesErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.packages.form');
+  const tCommon = useTranslations('modules.common');
+  const tActions = useTranslations('common.actions');
   const router = useRouter();
   const [values, setValues] = useState<PackageFormValues>(() =>
     initialPackage ? packageToFormValues(initialPackage) : defaultValues,
@@ -70,17 +76,17 @@ export function PackageForm({ mode, packageId, initialPackage }: PackageFormProp
 
   function validate(): boolean {
     if (!values.name.trim()) {
-      setFormError('Le nom est obligatoire.');
+      setFormError(tCommon('validation.nameRequired'));
       return false;
     }
     const discount = Number(values.discountPercent);
     if (!Number.isFinite(discount) || discount < 0 || discount > 100) {
-      setFormError('La remise doit être entre 0 et 100.');
+      setFormError(tCommon('validation.discountRange'));
       return false;
     }
     const durationDays = Number(values.durationDays);
     if (!Number.isFinite(durationDays) || durationDays < 1 || durationDays > 365) {
-      setFormError('La durée doit être entre 1 et 365 jours.');
+      setFormError(tCommon('validation.durationDaysRange'));
       return false;
     }
     return true;
@@ -119,25 +125,25 @@ export function PackageForm({ mode, packageId, initialPackage }: PackageFormProp
       ) : null}
 
       <Card variant="dashboard" className="space-y-4">
-        <h3 className="text-sm font-semibold text-atg-fg">Identité</h3>
+        <h3 className="text-sm font-semibold text-atg-fg">{t('sections.identity')}</h3>
         <Input
-          label="Nom du forfait"
+          label={t('packageName')}
           value={values.name}
           onChange={(e) => updateField('name', e.target.value)}
           required
         />
         <RichTextEditor
-          label="Description"
+          label={tCommon('form.description')}
           value={values.description}
           onChange={(html) => updateField('description', html)}
-          placeholder="Décrivez le forfait, les inclusions, les conditions…"
+          placeholder={t('descriptionPlaceholder')}
         />
       </Card>
 
       <Card variant="dashboard" className="space-y-4">
-        <h3 className="text-sm font-semibold text-atg-fg">Tarification</h3>
+        <h3 className="text-sm font-semibold text-atg-fg">{t('sections.pricing')}</h3>
         <Input
-          label="Remise (%)"
+          label={t('discountPercent')}
           type="number"
           min={0}
           max={100}
@@ -146,7 +152,7 @@ export function PackageForm({ mode, packageId, initialPackage }: PackageFormProp
           onChange={(e) => updateField('discountPercent', e.target.value)}
         />
         <Input
-          label="Durée (jours)"
+          label={t('durationDays')}
           type="number"
           min={1}
           max={365}
@@ -156,7 +162,7 @@ export function PackageForm({ mode, packageId, initialPackage }: PackageFormProp
       </Card>
 
       <Card variant="dashboard" className="space-y-4">
-        <h3 className="text-sm font-semibold text-atg-fg">Publication</h3>
+        <h3 className="text-sm font-semibold text-atg-fg">{t('sections.publication')}</h3>
         <label className="flex items-center gap-2 text-sm text-atg-fg">
           <input
             type="checkbox"
@@ -164,16 +170,16 @@ export function PackageForm({ mode, packageId, initialPackage }: PackageFormProp
             onChange={(e) => updateField('active', e.target.checked)}
             className="rounded border-atg-border"
           />
-          Forfait actif
+          {t('activeLabel')}
         </label>
       </Card>
 
       <div className="flex gap-3">
         <Button type="submit" loading={submitting}>
-          {mode === 'create' ? 'Créer' : 'Enregistrer'}
+          {mode === 'create' ? t('submitCreate') : tActions('save')}
         </Button>
         <Button type="button" variant="outline" href="/produits/forfaits">
-          Annuler
+          {tActions('cancel')}
         </Button>
       </div>
     </form>

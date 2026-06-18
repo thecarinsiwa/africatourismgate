@@ -52,7 +52,7 @@ function StarRatingInput({
             className="rounded p-0.5 transition-transform hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
             <svg
-              className={`h-8 w-8 ${filled ? 'text-amber-400' : 'text-gray-300 dark:text-white/25'}`}
+              className={`h-8 w-8 ${filled ? 'text-atg-warning' : 'text-atg-border dark:text-white/25'}`}
               fill="currentColor"
               viewBox="0 0 20 20"
               aria-hidden
@@ -119,14 +119,14 @@ export function BookingReviewForm({ bookingId, labels, onSubmitted }: Props) {
       className="space-y-4 rounded-lg border border-primary/20 bg-primary/5 p-4 dark:border-primary/30 dark:bg-primary/10"
     >
       <div>
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
+        <h3 className="text-sm font-semibold text-atg-fg">
           {labels.leaveReview}
         </h3>
-        <p className="mt-1 text-sm text-gray-600 dark:text-atg-muted">{labels.leaveReviewHint}</p>
+        <p className="mt-1 text-sm text-atg-muted">{labels.leaveReviewHint}</p>
       </div>
 
       <div>
-        <p className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-atg-muted">
+        <p className="mb-2 text-xs font-medium uppercase tracking-wide text-atg-muted">
           {labels.reviewRating}
         </p>
         <StarRatingInput value={rating} onChange={setRating} ratingAria={labels.ratingAria} />
@@ -135,7 +135,7 @@ export function BookingReviewForm({ bookingId, labels, onSubmitted }: Props) {
       <div>
         <label
           htmlFor="review-title"
-          className="mb-1 block text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-atg-muted"
+          className="mb-1 block text-xs font-medium uppercase tracking-wide text-atg-muted"
         >
           {labels.reviewTitle}
         </label>
@@ -152,7 +152,7 @@ export function BookingReviewForm({ bookingId, labels, onSubmitted }: Props) {
       <div>
         <label
           htmlFor="review-body"
-          className="mb-1 block text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-atg-muted"
+          className="mb-1 block text-xs font-medium uppercase tracking-wide text-atg-muted"
         >
           {labels.reviewBody}
         </label>
@@ -163,7 +163,7 @@ export function BookingReviewForm({ bookingId, labels, onSubmitted }: Props) {
           placeholder={labels.reviewBodyPlaceholder}
           rows={4}
           disabled={submitting}
-          className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-60 dark:border-atg-border dark:bg-atg-elevated dark:text-white dark:placeholder:text-atg-muted"
+          className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg shadow-sm placeholder:text-atg-muted focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-60 dark:border-atg-border dark:bg-atg-elevated dark:text-white dark:placeholder:text-atg-muted"
         />
       </div>
 

@@ -1,0 +1,137 @@
+{
+  "status": {
+    "draft": "Borrador",
+    "pending_payment": "Pendiente de paiement",
+    "confirmed": "Confirmada",
+    "cancelled": "Cancelada",
+    "refunded": "Reembolsada"
+  },
+  "itemTypes": {
+    "room": "Habitación",
+    "flight_class": "Vuelo",
+    "vehicle": "Vehículo",
+    "cabin": "Camarote",
+    "activity_schedule": "Actividad",
+    "package": "Paquete"
+  },
+  "catalogLink": {
+    "referencePrefix": "Réf. {idPrefix}",
+    "ariaLabel": "Voir {typeLabel} : {title}"
+  },
+  "list": {
+    "emptyDefault": "Ninguna réservation pour le moment.",
+    "emptyFiltered": "Ninguna réservation ne correspond à vos critères.",
+    "ariaLabel": "Liste des réservations",
+    "filters": {
+      "client": "Cliente"
+    }
+  },
+  "itemsList": {
+    "filters": {
+      "type": "Tipo",
+      "bookingStatus": "Estado réservation",
+      "bookingId": "ID réservation",
+      "bookingIdPlaceholder": "UUID complet"
+    },
+    "emptyDefault": "Ninguna ligne de réservation pour le moment.",
+    "emptyFiltered": "Ninguna ligne ne correspond à vos critères.",
+    "ariaLabel": "Líneas de réservation"
+  },
+  "detail": {
+    "title": "Reserva",
+    "backLink": "Volver aux réservations",
+    "reference": "Réf. {idPrefix}",
+    "sections": {
+      "client": "Cliente",
+      "status": "Estado",
+      "actions": "Acciones",
+      "bookingLines": "Líneas de réservation",
+      "payments": "Pagos"
+    },
+    "clientFields": {
+      "email": "Correo",
+      "name": "Apellido",
+      "organization": "Organización",
+      "total": "Total",
+      "createdAt": "Creada el"
+    },
+    "actions": {
+      "changeStatus": "Changer le statut",
+      "statusReason": "Motivo (historique)",
+      "statusReasonPlaceholder": "Ex. confirmation manuelle, remboursement…",
+      "applyStatus": "Aplicar le statut",
+      "cancellation": "Cancelación",
+      "cancelReason": "Motivo de cancelación",
+      "cancelReasonPlaceholder": "Ex. demande client, indisponibilité…",
+      "cancelBooking": "Annuler la réservation",
+      "readOnly": "Modification réservée aux comptes avec la permission bookings.write."
+    },
+    "linesEmpty": "Ninguna ligne.",
+    "linesAriaLabel": "Líneas de réservation",
+    "paymentsEmpty": "Hastacun paiement enregistré pour cette réservation.",
+    "paymentsAriaLabel": "Pagos",
+    "statusDialog": {
+      "title": "Confirmer le changement de statut",
+      "description": "Passer la réservation de « {fromStatus} » à « {toStatus} » ?{reasonSuffix}",
+      "reasonSuffix": " Motivo : {reason}"
+    },
+    "cancelDialog": {
+      "title": "Annuler la réservation",
+      "description": "Annuler cette réservation ? Le stock des produits sera libéré (moteur de réservation).",
+      "confirm": "Annuler la réservation",
+      "cancel": "Volver"
+    },
+    "paymentStatus": {
+      "pending": "Pendiente",
+      "succeeded": "Exitoso",
+      "failed": "Fallido",
+      "refunded": "Reembolsado"
+    }
+  },
+  "timeline": {
+    "progressAria": "Progression du statut de réservation",
+    "finalStatus": "Estado final",
+    "history": "Historial",
+    "historyAria": "Historial des changements de statut",
+    "historyEmpty": "Hastacun changement de statut enregistré.",
+    "transition": "{fromStatus} → {toStatus}"
+  },
+  "stats": {
+    "bookings": {
+      "total": {
+        "label": "Reservas",
+        "subtitle": "Todas les réservations"
+      },
+      "confirmed": {
+        "label": "Confirmadas",
+        "subtitle": "Reservas confirmées"
+      },
+      "pending_payment": {
+        "label": "Pendiente",
+        "subtitle": "Paiement en attente"
+      },
+      "lines": {
+        "label": "Líneas",
+        "subtitle": "Articles réservés"
+      }
+    },
+    "items": {
+      "total": {
+        "label": "Líneas",
+        "subtitle": "Todas les lignes"
+      },
+      "confirmed": {
+        "label": "Confirmadas",
+        "subtitle": "Líneas de réservations confirmées"
+      },
+      "pending_payment": {
+        "label": "Pendiente",
+        "subtitle": "Líneas en attente de paiement"
+      },
+      "bookings": {
+        "label": "Reservas",
+        "subtitle": "Voir toutes les réservations"
+      }
+    }
+  }
+}

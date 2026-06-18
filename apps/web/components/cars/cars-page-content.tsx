@@ -90,7 +90,7 @@ export function CarsPageContent({ initialSearch }: CarsPageContentProps) {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
+    <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
       <HomeHeader />
 
       <section className="relative overflow-hidden bg-[#1b1b2f] text-white">
@@ -131,26 +131,26 @@ export function CarsPageContent({ initialSearch }: CarsPageContentProps) {
         </div>
       </section>
 
-      <div className="sticky top-0 z-30 border-b border-gray-200 bg-white/95 shadow-sm backdrop-blur-md dark:border-atg-border dark:bg-atg-elevated/95">
+      <div className="sticky top-0 z-30 border-b border-atg-border bg-atg-elevated/95 shadow-sm backdrop-blur-md dark:border-atg-border dark:bg-atg-elevated/95">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <div>
-            <p className="text-sm text-gray-500 dark:text-atg-muted">
+            <p className="text-sm text-atg-muted">
               {c.resultsFor}{' '}
-              <strong className="text-[#0f1a16] dark:text-white">{displayLocation}</strong>
+              <strong className="text-atg-fg">{displayLocation}</strong>
             </p>
-            <p className="text-lg font-bold text-[#0f1a16] dark:text-white">
+            <p className="text-lg font-bold text-atg-fg">
               {loading ? '…' : listings.length} {c.vehiclesFound}
             </p>
           </div>
           <label className="flex items-center gap-2">
-            <span className="text-sm font-medium text-gray-600 dark:text-atg-muted">
+            <span className="text-sm font-medium text-atg-muted">
               {c.sortBy}
             </span>
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value as SortKey)}
               disabled={loading}
-              className="min-h-[44px] rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-800 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-60 dark:border-atg-border dark:bg-atg-surface dark:text-white"
+              className="min-h-[44px] rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm font-medium text-atg-fg focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-60 dark:border-atg-border dark:bg-atg-surface dark:text-white"
             >
               <option value="recommended">{c.sortRecommended}</option>
               <option value="price-asc">{c.sortPriceLow}</option>
@@ -175,18 +175,18 @@ export function CarsPageContent({ initialSearch }: CarsPageContentProps) {
         )}
 
         {loading && (
-          <div className="rounded-2xl border border-gray-100 bg-white px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
-            <p className="text-sm font-medium text-gray-600 dark:text-atg-muted">{c.loading}</p>
+          <div className="rounded-2xl border border-atg-border bg-atg-elevated px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
+            <p className="text-sm font-medium text-atg-muted">{c.loading}</p>
           </div>
         )}
 
         {!loading && !error && listings.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-gray-200 bg-white px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
-            <h3 className="text-lg font-bold text-[#0f1a16] dark:text-white">{c.noResults}</h3>
-            <p className="mt-2 text-sm text-gray-500 dark:text-atg-muted">{c.noResultsHint}</p>
+          <div className="rounded-2xl border border-dashed border-atg-border bg-atg-elevated px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
+            <h3 className="text-lg font-bold text-atg-fg">{c.noResults}</h3>
+            <p className="mt-2 text-sm text-atg-muted">{c.noResultsHint}</p>
             <a
               href="#cars-search"
-              className="mt-6 mr-3 inline-flex min-h-[44px] items-center rounded-lg border border-gray-200 px-6 py-2 text-sm font-semibold text-gray-700 hover:border-primary dark:border-atg-border dark:text-white"
+              className="mt-6 mr-3 inline-flex min-h-[44px] items-center rounded-lg border border-atg-border px-6 py-2 text-sm font-semibold text-atg-fg hover:border-primary dark:border-atg-border dark:text-white"
             >
               {c.modifySearch}
             </a>
@@ -202,7 +202,7 @@ export function CarsPageContent({ initialSearch }: CarsPageContentProps) {
         {!loading && !error && listings.length > 0 && (
           <div className="space-y-6">
             {!hasDateFilter && (
-              <p className="text-sm text-gray-500 dark:text-atg-muted">{c.browseAllHint}</p>
+              <p className="text-sm text-atg-muted">{c.browseAllHint}</p>
             )}
             {listings.map((vehicle) => (
               <CarCard

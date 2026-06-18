@@ -77,23 +77,23 @@ export function HotelStayCalendar({
   return (
     <section>
       <div className="mb-4 flex items-center justify-between gap-2">
-        <h2 className="text-lg font-bold text-[#0f1a16] dark:text-white">{title}</h2>
+        <h2 className="text-lg font-bold text-atg-fg">{title}</h2>
         <div className="flex items-center gap-1">
           <button
             type="button"
             onClick={() => onMonthChange(shiftYearMonth(month, -1))}
-            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-gray-200 text-sm font-medium hover:border-primary dark:border-atg-border"
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-atg-border text-sm font-medium hover:border-primary dark:border-atg-border"
             aria-label={prevMonthLabel}
           >
             ‹
           </button>
-          <span className="min-w-[8rem] text-center text-sm font-semibold text-[#0f1a16] dark:text-white">
+          <span className="min-w-[8rem] text-center text-sm font-semibold text-atg-fg">
             {formatMonthLabel(month, locale)}
           </span>
           <button
             type="button"
             onClick={() => onMonthChange(shiftYearMonth(month, 1))}
-            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-gray-200 text-sm font-medium hover:border-primary dark:border-atg-border"
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-atg-border text-sm font-medium hover:border-primary dark:border-atg-border"
             aria-label={nextMonthLabel}
           >
             ›
@@ -101,8 +101,8 @@ export function HotelStayCalendar({
         </div>
       </div>
 
-      <div className="rounded-2xl border border-gray-100 bg-white p-3 dark:border-atg-border dark:bg-atg-elevated sm:p-4">
-        <div className="mb-2 grid grid-cols-7 gap-1 text-center text-xs font-semibold text-gray-400 dark:text-atg-muted">
+      <div className="rounded-2xl border border-atg-border bg-atg-elevated p-3 dark:border-atg-border dark:bg-atg-elevated sm:p-4">
+        <div className="mb-2 grid grid-cols-7 gap-1 text-center text-xs font-semibold text-atg-muted">
           {headers.map((h, i) => (
             <span key={`${h}-${i}`}>{h}</span>
           ))}
@@ -127,13 +127,13 @@ export function HotelStayCalendar({
                   selected
                     ? 'bg-primary text-white'
                     : disabled
-                      ? 'cursor-not-allowed text-gray-300 dark:text-atg-muted/50'
-                      : 'hover:bg-gray-50 dark:hover:bg-white/5'
+                      ? 'cursor-not-allowed text-atg-border text-atg-muted/50'
+                      : 'hover:bg-atg-surface dark:hover:bg-white/5'
                 }`}
               >
                 <span className="font-semibold">{Number(date.slice(8, 10))}</span>
                 {day && day.minPriceCents > 0 && (
-                  <span className={`mt-0.5 text-[10px] leading-tight ${selected ? 'text-white/90' : 'text-gray-500 dark:text-atg-muted'}`}>
+                  <span className={`mt-0.5 text-[10px] leading-tight ${selected ? 'text-white/90' : 'text-atg-muted'}`}>
                     {formatHotelPrice(day.minPriceCents, day.currency).replace(/\s/g, '\u00a0')}
                   </span>
                 )}

@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Button,
   Card,
@@ -11,9 +13,10 @@ import {
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { CruisePort } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ReferentialListToolbar } from '../referential-list-toolbar';
 import { getApiClient } from '../../lib/auth/api';
-import { getCroisieresErrorMessage } from '../../lib/croisieres-errors';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -22,6 +25,13 @@ type FormValues = { code: string; name: string; countryCode: string };
 const emptyForm: FormValues = { code: '', name: '', countryCode: '' };
 
 export function CruisePortsList() {
+  const { croisieres: getCroisieresErrorMessage } = useAdminErrorMessages();
+  const tForm = useTranslations('modules.cruises.form.port');
+  const tCruise = useTranslations('modules.cruises');
+  const tFilters = useTranslations('modules.cruises.filters');
+  const tColumns = useTranslations('modules.common.columns');
+  const tPagination = useTranslations('modules.common.pagination');
+  const tActions = useTranslations('common.actions');
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -54,7 +64,7 @@ export function CruisePortsList() {
     } catch (error) {
       setState({ status: 'error', message: getCroisieresErrorMessage(error) });
     }
-  }, [page, search]);
+  }, [page, search, getCroisieresErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -62,13 +72,13 @@ export function CruisePortsList() {
 
   useEffect(() => {
     const q = searchInput.trim();
-    const t = window.setTimeout(() => {
+    const timer = window.setTimeout(() => {
       setSearch((prev) => {
         if (prev !== q) setPage(1);
         return q;
       });
     }, SEARCH_DEBOUNCE_MS);
-    return () => window.clearTimeout(t);
+    return () => window.clearTimeout(timer);
   }, [searchInput]);
 
   function resetForm() {
@@ -85,7 +95,7 @@ export function CruisePortsList() {
     const name = formValues.name.trim();
     const countryCode = formValues.countryCode.trim().toUpperCase();
     if (!code || !name || countryCode.length !== 2) {
-      setFormError('Code, nom et pays (2 lettres) sont obligatoires.');
+      setFormError(tForm('validation'));
       return;
     }
     setSubmitting(true);
@@ -109,18 +119,18 @@ export function CruisePortsList() {
     () => [
       {
         accessorKey: 'code',
-        header: 'Code',
+        header: tColumns('code'),
         cell: ({ row }) => (
           <code className="rounded-md bg-atg-surface px-2 py-0.5 font-mono text-sm">
             {row.original.code}
           </code>
         ),
       },
-      { accessorKey: 'name', header: 'Port' },
-      { accessorKey: 'countryCode', header: 'Pays' },
+      { accessorKey: 'name', header: tCruise('columns.port') },
+      { accessorKey: 'countryCode', header: tColumns('country') },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tColumns('actions'),
         meta: { align: 'right' },
         cell: ({ row }) => (
           <DataTableActions>
@@ -139,7 +149,7 @@ export function CruisePortsList() {
             <DataTableActionButton
               action="delete"
               onClick={async () => {
-                if (!window.confirm(`Supprimer « ${row.original.name} » ?`)) return;
+                if (!window.confirm(tForm('deleteConfirm', { name: row.original.name }))) return;
                 setDeletingId(row.original.id);
                 try {
                   await getApiClient().deleteCruisePort(row.original.id);
@@ -157,34 +167,32 @@ export function CruisePortsList() {
         ),
       },
     ],
-    [deletingId, load],
+    [deletingId, getCroisieresErrorMessage, load, tColumns, tCruise, tForm],
   );
 
   const ports = state.status === 'ready' ? state.ports : [];
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex-1 sm:max-w-md">
-          <Input
-            type="search"
-            placeholder="Rechercher par code ou nom…"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-          />
-        </div>
-        {!showForm ? (
-          <Button type="button" onClick={() => setShowForm(true)}>
-            Nouveau port
-          </Button>
-        ) : null}
-      </div>
+      <ReferentialListToolbar
+        searchValue={searchInput}
+        onSearchChange={setSearchInput}
+        placeholder={tFilters('searchPort')}
+        ariaLabel={tActions('search')}
+        action={
+          !showForm ? (
+            <Button type="button" onClick={() => setShowForm(true)}>
+              {tForm('newShort')}
+            </Button>
+          ) : undefined
+        }
+      />
 
       {showForm ? (
         <Card variant="dashboard" className="max-w-lg">
           <form onSubmit={handleSubmit} className="space-y-4">
             <h3 className="text-sm font-medium">
-              {editing ? 'Modifier le port' : 'Nouveau port de croisière'}
+              {editing ? tForm('edit') : tForm('new')}
             </h3>
             {formError ? (
               <p role="alert" className="text-sm text-red-600">
@@ -192,19 +200,19 @@ export function CruisePortsList() {
               </p>
             ) : null}
             <Input
-              label="Code"
+              label={tColumns('code')}
               value={formValues.code}
               onChange={(e) => setFormValues((p) => ({ ...p, code: e.target.value }))}
               required
             />
             <Input
-              label="Nom"
+              label={tColumns('name')}
               value={formValues.name}
               onChange={(e) => setFormValues((p) => ({ ...p, name: e.target.value }))}
               required
             />
             <Input
-              label="Pays (ISO)"
+              label={tForm('countryIso')}
               value={formValues.countryCode}
               onChange={(e) =>
                 setFormValues((p) => ({ ...p, countryCode: e.target.value }))
@@ -214,10 +222,10 @@ export function CruisePortsList() {
             />
             <div className="flex gap-3">
               <Button type="submit" loading={submitting}>
-                {editing ? 'Enregistrer' : 'Ajouter'}
+                {editing ? tActions('save') : tActions('create')}
               </Button>
               <Button type="button" variant="outline" onClick={resetForm}>
-                Annuler
+                {tActions('cancel')}
               </Button>
             </div>
           </form>
@@ -235,7 +243,7 @@ export function CruisePortsList() {
               columns={columns}
               data={ports}
               isLoading={state.status === 'loading'}
-              emptyMessage="Aucun port."
+              emptyMessage={tForm('empty')}
               getRowId={(r) => r.id}
             />
           </Card>
@@ -245,7 +253,7 @@ export function CruisePortsList() {
               pageSize={PAGE_SIZE}
               totalPages={state.totalPages}
               totalItems={state.total}
-              itemLabel="port"
+              itemLabel={tPagination('port')}
               onPageChange={setPage}
             />
           ) : null}

@@ -1,0 +1,47 @@
+{
+  "meta": {
+    "defaultTitle": "Africa Tourism Gate — Admin",
+    "titleTemplate": "%s | Africa Tourism Gate Admin",
+    "description": "Africa Tourism Gate back office"
+  },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "back": "Back",
+    "search": "Search",
+    "filter": "Filter",
+    "close": "Close",
+    "confirm": "Confirm",
+    "view": "View"
+  },
+  "loading": {
+    "page": "Loading…",
+    "submit": "Saving…"
+  },
+  "empty": {
+    "noResults": "No results",
+    "noMatch": "No matches for your search"
+  },
+  "errors": {
+    "network": "Unable to reach the API. Check that the server is running.",
+    "networkShort": "Unable to reach the server. Check your connection.",
+    "forbidden": "You do not have permission to perform this action.",
+    "generic": "Something went wrong.",
+    "genericRetry": "Something went wrong. Please try again.",
+    "apiStatus": "API error ({status}).",
+    "sessionExpired": "Session expired. Please sign in again.",
+    "sessionExpiredContinue": "Session expired. Sign in again to continue.",
+    "accessDenied": "Access denied.",
+    "conflict": "Conflict: this resource already exists.",
+    "kpiLoadFailed": "Unable to load metrics."
+  },
+  "commandPalette": {
+    "title": "Quick navigation",
+    "placeholder": "Search for a page…",
+    "empty": "No pages found",
+    "shortcutHint": "Ctrl+K"
+  }
+}

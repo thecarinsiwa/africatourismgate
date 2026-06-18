@@ -1,11 +1,13 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
 import { currentYearMonth } from '../../lib/availability-dates';
-import { getHebergementsErrorMessage } from '../../lib/hebergements-errors';
 import { RoomAvailabilityBulkForm } from './room-availability-bulk-form';
 import { RoomAvailabilityGrid } from './room-availability-grid';
 
@@ -15,6 +17,10 @@ type RoomAvailabilityPageProps = {
 };
 
 export function RoomAvailabilityPage({ propertyId, roomId }: RoomAvailabilityPageProps) {
+  const { hebergements: getHebergementsErrorMessage } = useAdminErrorMessages();
+  const tAvailability = useTranslations('modules.properties.sections.availability');
+  const tCommon = useTranslations('modules.common');
+  const tBack = useTranslations('modules.common.back');
   const [yearMonth, setYearMonth] = useState(currentYearMonth);
   const [state, setState] = useState<
     | { status: 'loading' }
@@ -31,7 +37,7 @@ export function RoomAvailabilityPage({ propertyId, roomId }: RoomAvailabilityPag
 
   useAdminEditPageMeta({
     ready: state.status === 'ready',
-    title: 'Disponibilités',
+    title: tAvailability('title'),
     breadcrumbTail:
       state.status === 'ready'
         ? [
@@ -59,7 +65,7 @@ export function RoomAvailabilityPage({ propertyId, roomId }: RoomAvailabilityPag
           if (!cancelled) {
             setState({
               status: 'error',
-              message: 'Cette chambre n’appartient pas à cet hébergement.',
+              message: tAvailability('roomMismatch'),
             });
           }
           return;
@@ -82,10 +88,10 @@ export function RoomAvailabilityPage({ propertyId, roomId }: RoomAvailabilityPag
     return () => {
       cancelled = true;
     };
-  }, [propertyId, roomId]);
+  }, [propertyId, roomId, getHebergementsErrorMessage, tAvailability]);
 
   if (state.status === 'loading') {
-    return <p className="text-sm text-atg-muted">Chargement…</p>;
+    return <p className="text-sm text-atg-muted">{tCommon('loading')}</p>;
   }
 
   if (state.status === 'error') {
@@ -95,7 +101,7 @@ export function RoomAvailabilityPage({ propertyId, roomId }: RoomAvailabilityPag
           {state.message}
         </p>
         <Link href="/hebergements" className="text-sm font-medium text-primary">
-          ← Retour aux hébergements
+          {tBack('toList')}
         </Link>
       </div>
     );
@@ -106,7 +112,7 @@ export function RoomAvailabilityPage({ propertyId, roomId }: RoomAvailabilityPag
   return (
     <div>
       <p className="mb-8 text-sm text-atg-muted">
-        Chambre {roomName} — stock et prix par nuit ({currency}).
+        {tAvailability('room')} {roomName} — {tAvailability('stockHint', { currency })}
       </p>
 
       <div className="space-y-10">

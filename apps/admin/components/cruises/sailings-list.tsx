@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Button,
   Card,
@@ -10,24 +12,21 @@ import {
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { CruiseSailing, Itinerary, Ship } from '@africatourismgate/types';
+import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getCroisieresErrorMessage } from '../../lib/croisieres-errors';
 import { SailingsCalendarView } from './sailings-calendar-view';
 
 const PAGE_SIZE = 20;
 
 type ViewMode = 'list' | 'calendar';
 
-function formatDate(iso: string): string {
-  try {
-    return new Date(iso).toLocaleDateString('fr-FR', { dateStyle: 'medium' });
-  } catch {
-    return iso;
-  }
-}
-
 export function SailingsList() {
+  const { croisieres: getCroisieresErrorMessage } = useAdminErrorMessages();
+  const locale = useLocale();
+  const t = useTranslations('modules.cruises.list');
+  const tColumns = useTranslations('modules.cruises.columns');
+  const tCommon = useTranslations('modules.common');
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [page, setPage] = useState(1);
   const [itineraries, setItineraries] = useState<Itinerary[]>([]);
@@ -44,6 +43,17 @@ export function SailingsList() {
   >({ status: 'loading' });
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const formatDate = useCallback(
+    (iso: string): string => {
+      try {
+        return new Date(iso).toLocaleDateString(locale, { dateStyle: 'medium' });
+      } catch {
+        return iso;
+      }
+    },
+    [locale],
+  );
 
   useEffect(() => {
     const client = getApiClient();
@@ -66,6 +76,7 @@ export function SailingsList() {
     [itineraries],
   );
   const shipById = useMemo(() => new Map(ships.map((s) => [s.id, s])), [ships]);
+  const emptyDash = tCommon('empty.dash');
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -83,7 +94,7 @@ export function SailingsList() {
     } catch (error) {
       setState({ status: 'error', message: getCroisieresErrorMessage(error) });
     }
-  }, [page]);
+  }, [page, getCroisieresErrorMessage]);
 
   useEffect(() => {
     if (viewMode === 'list') {
@@ -97,7 +108,7 @@ export function SailingsList() {
       const label = itinerary
         ? `${itinerary.name} — ${formatDate(sailing.departureDate)}`
         : formatDate(sailing.departureDate);
-      if (!window.confirm(`Supprimer le départ « ${label} » ?`)) return;
+      if (!window.confirm(t('deleteSailingConfirm', { label }))) return;
       setDeleteError(null);
       setDeletingId(sailing.id);
       try {
@@ -109,14 +120,14 @@ export function SailingsList() {
         setDeletingId(null);
       }
     },
-    [itineraryById, load],
+    [formatDate, itineraryById, load, t, getCroisieresErrorMessage],
   );
 
   const columns = useMemo<ColumnDef<CruiseSailing, unknown>[]>(
     () => [
       {
         id: 'departure',
-        header: 'Départ',
+        header: tColumns('departure'),
         cell: ({ row }) => (
           <span className="tabular-nums text-sm font-medium">
             {formatDate(row.original.departureDate)}
@@ -125,33 +136,33 @@ export function SailingsList() {
       },
       {
         id: 'itinerary',
-        header: 'Itinéraire',
+        header: tColumns('itinerary'),
         cell: ({ row }) => {
           const it = itineraryById.get(row.original.itineraryId);
-          return it?.name ?? '—';
+          return it?.name ?? emptyDash;
         },
       },
       {
         id: 'ship',
-        header: 'Navire',
+        header: tColumns('ship'),
         cell: ({ row }) => {
           const it = itineraryById.get(row.original.itineraryId);
           const ship = it ? shipById.get(it.shipId) : undefined;
-          return ship?.name ?? '—';
+          return ship?.name ?? emptyDash;
         },
       },
       {
         id: 'nights',
-        header: 'Nuits',
+        header: tColumns('nights'),
         meta: { align: 'center' },
         cell: ({ row }) => {
           const it = itineraryById.get(row.original.itineraryId);
-          return it?.durationNights ?? '—';
+          return it?.durationNights ?? emptyDash;
         },
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tCommon('columns.actions'),
         meta: { align: 'right' },
         cell: ({ row }) => (
           <DataTableActions>
@@ -169,7 +180,16 @@ export function SailingsList() {
         ),
       },
     ],
-    [deletingId, handleDelete, itineraryById, shipById],
+    [
+      deletingId,
+      emptyDash,
+      formatDate,
+      handleDelete,
+      itineraryById,
+      shipById,
+      tColumns,
+      tCommon,
+    ],
   );
 
   const sailings = state.status === 'ready' ? state.sailings : [];
@@ -184,7 +204,7 @@ export function SailingsList() {
             size="sm"
             onClick={() => setViewMode('list')}
           >
-            Liste
+            {t('viewList')}
           </Button>
           <Button
             type="button"
@@ -192,10 +212,10 @@ export function SailingsList() {
             size="sm"
             onClick={() => setViewMode('calendar')}
           >
-            Calendrier
+            {t('viewCalendar')}
           </Button>
         </div>
-        <Button href="/produits/croisieres/nouveau">Nouveau départ</Button>
+        <Button href="/produits/croisieres/nouveau">{t('newSailing')}</Button>
       </div>
 
       {deleteError ? (
@@ -217,7 +237,7 @@ export function SailingsList() {
               columns={columns}
               data={sailings}
               isLoading={state.status === 'loading'}
-              emptyMessage="Aucun départ programmé."
+              emptyMessage={t('emptySailings')}
               getRowId={(r) => r.id}
             />
           </Card>
@@ -227,7 +247,7 @@ export function SailingsList() {
               pageSize={PAGE_SIZE}
               totalPages={state.totalPages}
               totalItems={state.total}
-              itemLabel="départ"
+              itemLabel={tCommon('pagination.sailing')}
               onPageChange={setPage}
             />
           ) : null}

@@ -1,21 +1,11 @@
 import type { Metadata } from 'next';
-import { AdminPageIntro } from '../../../../../components/admin-page-intro';
-import { CruisesStatCards } from '../../../../../components/cruises/cruises-stat-cards';
-import { CruisePortsList } from '../../../../../components/cruises/cruise-ports-list';
+import { getAdminPageMetadata } from '../../../../../lib/i18n/admin-page-i18n';
+import { PortsCroisierePageContent } from '../../../../../components/pages/produits-croisieres-ports-page-content';
 
-export const metadata: Metadata = {
-  title: 'Ports de croisière — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('produits/croisieres/ports');
+}
 
-export default function CroisieresPortsPage() {
-  return (
-    <div>
-      <AdminPageIntro
-        description="Référentiel des escales."
-        links={[{ href: '/produits/croisieres', label: '← Départs' }]}
-      />
-      <CruisesStatCards className="mb-6" />
-      <CruisePortsList />
-    </div>
-  );
+export default function Page() {
+  return <PortsCroisierePageContent />;
 }

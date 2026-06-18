@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
+
 type ActivityProviderRatingProps = {
   className?: string;
 };
@@ -18,10 +20,12 @@ function StarOutline({ className }: { className?: string }) {
 }
 
 export function ActivityProviderRating({ className }: ActivityProviderRatingProps) {
+  const t = useTranslations('modules.activities.referential.providers');
+
   return (
     <div
       className={`inline-flex items-center gap-1.5 ${className ?? ''}`}
-      title="Note moyenne (à venir)"
+      title={t('ratingTitle')}
     >
       <span className="inline-flex gap-0.5 text-atg-border" aria-hidden>
         {Array.from({ length: 5 }, (_, index) => (

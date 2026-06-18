@@ -1,39 +1,28 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import { Button, Card, DataTableBadge } from '@africatourismgate/ui';
 import type {
   AdminSupportTicketDetail,
   SupportTicketPriority,
   SupportTicketStatus,
 } from '@africatourismgate/types';
-import { useCallback, useEffect, useId, useState } from 'react';
+import { useTranslations } from 'next-intl';
+import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
-import { getSupportTicketsErrorMessage } from '../../lib/support-tickets-errors';
-
-const statusLabels: Record<SupportTicketStatus, string> = {
-  open: 'Ouvert',
-  pending: 'En cours',
-  resolved: 'Résolu',
-  closed: 'Fermé',
-};
-
-const statusVariants: Record<
-  SupportTicketStatus,
-  'success' | 'warning' | 'muted' | 'default'
-> = {
-  open: 'default',
-  pending: 'warning',
-  resolved: 'success',
-  closed: 'muted',
-};
-
-const priorityLabels: Record<SupportTicketPriority, string> = {
-  low: 'Basse',
-  normal: 'Normale',
-  high: 'Haute',
-  urgent: 'Urgente',
-};
+import {
+  useFormatDateTime,
+  useSupportTicketPriorityLabels,
+  useSupportTicketStatusLabels,
+} from '../../lib/i18n/use-module-labels';
+import {
+  SUPPORT_TICKET_PRIORITIES,
+  SUPPORT_TICKET_STATUSES,
+  supportTicketPriorityVariants,
+  supportTicketStatusVariants,
+} from '../../lib/support-ticket-display';
 
 const nextStatus: Partial<Record<SupportTicketStatus, SupportTicketStatus>> = {
   open: 'pending',
@@ -41,22 +30,19 @@ const nextStatus: Partial<Record<SupportTicketStatus, SupportTicketStatus>> = {
   resolved: 'closed',
 };
 
-function formatDateTime(iso: string): string {
-  try {
-    return new Date(iso).toLocaleString('fr-FR', {
-      dateStyle: 'long',
-      timeStyle: 'short',
-    });
-  } catch {
-    return iso;
-  }
-}
-
 type SupportTicketDetailPageProps = {
   ticketId: string;
 };
 
 export function SupportTicketDetailPage({ ticketId }: SupportTicketDetailPageProps) {
+  const { supportTickets: getSupportTicketsErrorMessage } = useAdminErrorMessages();
+  const tDetail = useTranslations('modules.support.detail');
+  const tColumns = useTranslations('modules.common.columns');
+  const tCommon = useTranslations('modules.common');
+  const tLoading = useTranslations('common.loading');
+  const formatDateTime = useFormatDateTime('long');
+  const statusLabels = useSupportTicketStatusLabels();
+  const priorityLabels = useSupportTicketPriorityLabels();
   const statusSelectId = useId();
   const prioritySelectId = useId();
   const replyBodyId = useId();
@@ -75,7 +61,7 @@ export function SupportTicketDetailPage({ ticketId }: SupportTicketDetailPagePro
 
   useAdminEditPageMeta({
     ready: state.status === 'ready',
-    title: 'Ticket support',
+    title: tDetail('title'),
     entityLabel: state.status === 'ready' ? state.ticket.subject : undefined,
   });
 
@@ -87,7 +73,7 @@ export function SupportTicketDetailPage({ ticketId }: SupportTicketDetailPagePro
     } catch (error) {
       setState({ status: 'error', message: getSupportTicketsErrorMessage(error) });
     }
-  }, [ticketId]);
+  }, [ticketId, getSupportTicketsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -125,7 +111,7 @@ export function SupportTicketDetailPage({ ticketId }: SupportTicketDetailPagePro
         setActing(false);
       }
     },
-    [load, ticketId],
+    [load, ticketId, getSupportTicketsErrorMessage],
   );
 
   const submitReply = useCallback(async () => {
@@ -134,7 +120,7 @@ export function SupportTicketDetailPage({ ticketId }: SupportTicketDetailPagePro
 
     const trimmed = replyBody.trim();
     if (trimmed.length < 10) {
-      setReplyValidationError('Le message doit contenir au moins 10 caractères.');
+      setReplyValidationError(tDetail('replyMinLength'));
       return;
     }
 
@@ -151,10 +137,19 @@ export function SupportTicketDetailPage({ ticketId }: SupportTicketDetailPagePro
     } finally {
       setActing(false);
     }
-  }, [load, replyBody, ticketId]);
+  }, [load, replyBody, ticketId, tDetail, getSupportTicketsErrorMessage]);
+
+  const emptyDash = tCommon('empty.dash');
+
+  const openedOnLabel = useMemo(() => {
+    if (state.status !== 'ready') return '';
+    return tDetail('openedOn', {
+      date: formatDateTime(state.ticket.createdAt),
+    });
+  }, [formatDateTime, state, tDetail]);
 
   if (state.status === 'loading') {
-    return <p className="text-sm text-atg-muted">Chargement…</p>;
+    return <p className="text-sm text-atg-muted">{tLoading('page')}</p>;
   }
 
   if (state.status === 'error') {
@@ -164,7 +159,7 @@ export function SupportTicketDetailPage({ ticketId }: SupportTicketDetailPagePro
           {state.message}
         </p>
         <Button href="/contenu/tickets" variant="ghost" size="sm">
-          Retour à la liste
+          {tDetail('backToList')}
         </Button>
       </div>
     );
@@ -177,22 +172,22 @@ export function SupportTicketDetailPage({ ticketId }: SupportTicketDetailPagePro
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="text-sm text-atg-muted">
-            Ouvert le {formatDateTime(ticket.createdAt)}
-          </p>
+          <p className="text-sm text-atg-muted">{openedOnLabel}</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <DataTableBadge variant={statusVariants[ticket.status]}>
+          <DataTableBadge variant={supportTicketStatusVariants[ticket.status]}>
             {statusLabels[ticket.status]}
           </DataTableBadge>
-          <DataTableBadge variant="default">{priorityLabels[ticket.priority]}</DataTableBadge>
+          <DataTableBadge variant={supportTicketPriorityVariants[ticket.priority]}>
+            {priorityLabels[ticket.priority]}
+          </DataTableBadge>
         </div>
       </div>
 
       <Card className="p-4">
-        <h3 className="text-sm font-semibold text-atg-fg">Client</h3>
+        <h3 className="text-sm font-semibold text-atg-fg">{tDetail('sections.client')}</h3>
         <p className="mt-2 text-sm text-atg-fg">
-          {ticket.customerFirstName?.trim() || '—'}
+          {ticket.customerFirstName?.trim() || emptyDash}
         </p>
         {ticket.customerEmail ? (
           <p className="text-sm text-atg-muted">{ticket.customerEmail}</p>
@@ -201,14 +196,14 @@ export function SupportTicketDetailPage({ ticketId }: SupportTicketDetailPagePro
 
       {canWrite ? (
         <Card className="p-4">
-          <h3 className="text-sm font-semibold text-atg-fg">Traitement</h3>
+          <h3 className="text-sm font-semibold text-atg-fg">{tDetail('sections.handling')}</h3>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <div>
               <label
                 htmlFor={statusSelectId}
                 className="mb-1 block text-xs font-medium text-atg-muted"
               >
-                Statut
+                {tColumns('status')}
               </label>
               <select
                 id={statusSelectId}
@@ -221,7 +216,7 @@ export function SupportTicketDetailPage({ ticketId }: SupportTicketDetailPagePro
                 }
                 className="w-full rounded-lg border border-atg-border bg-atg-surface px-3 py-2 text-sm text-atg-fg disabled:opacity-60"
               >
-                {(Object.keys(statusLabels) as SupportTicketStatus[]).map((s) => (
+                {SUPPORT_TICKET_STATUSES.map((s) => (
                   <option key={s} value={s}>
                     {statusLabels[s]}
                   </option>
@@ -233,7 +228,7 @@ export function SupportTicketDetailPage({ ticketId }: SupportTicketDetailPagePro
                 htmlFor={prioritySelectId}
                 className="mb-1 block text-xs font-medium text-atg-muted"
               >
-                Priorité
+                {tDetail('fields.priority')}
               </label>
               <select
                 id={prioritySelectId}
@@ -246,7 +241,7 @@ export function SupportTicketDetailPage({ ticketId }: SupportTicketDetailPagePro
                 }
                 className="w-full rounded-lg border border-atg-border bg-atg-surface px-3 py-2 text-sm text-atg-fg disabled:opacity-60"
               >
-                {(Object.keys(priorityLabels) as SupportTicketPriority[]).map((p) => (
+                {SUPPORT_TICKET_PRIORITIES.map((p) => (
                   <option key={p} value={p}>
                     {priorityLabels[p]}
                   </option>
@@ -263,7 +258,7 @@ export function SupportTicketDetailPage({ ticketId }: SupportTicketDetailPagePro
                 loadingText="…"
                 onClick={() => void updateTicket({ status: forwardStatus })}
               >
-                Passer à « {statusLabels[forwardStatus]} »
+                {tDetail('advanceStatus', { status: statusLabels[forwardStatus] })}
               </Button>
             </div>
           ) : null}
@@ -276,9 +271,9 @@ export function SupportTicketDetailPage({ ticketId }: SupportTicketDetailPagePro
       ) : null}
 
       <Card className="p-4">
-        <h3 className="text-sm font-semibold text-atg-fg">Messages</h3>
+        <h3 className="text-sm font-semibold text-atg-fg">{tDetail('sections.messages')}</h3>
         {ticket.messages.length === 0 ? (
-          <p className="mt-3 text-sm text-atg-muted">Aucun message.</p>
+          <p className="mt-3 text-sm text-atg-muted">{tDetail('noMessages')}</p>
         ) : (
           <ul className="mt-4 space-y-4">
             {ticket.messages.map((message) => (
@@ -292,7 +287,9 @@ export function SupportTicketDetailPage({ ticketId }: SupportTicketDetailPagePro
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <span className="text-xs font-medium uppercase tracking-wide text-atg-muted">
-                    {message.isStaff ? 'Agent' : 'Client'}
+                    {message.isStaff
+                      ? tDetail('messageAuthor.staff')
+                      : tDetail('messageAuthor.customer')}
                   </span>
                   <time className="text-xs text-atg-muted">
                     {formatDateTime(message.createdAt)}
@@ -307,13 +304,13 @@ export function SupportTicketDetailPage({ ticketId }: SupportTicketDetailPagePro
 
       {canWrite && ticket.status !== 'closed' ? (
         <Card className="p-4">
-          <h3 className="text-sm font-semibold text-atg-fg">Répondre au client</h3>
+          <h3 className="text-sm font-semibold text-atg-fg">{tDetail('sections.reply')}</h3>
           <div className="mt-4">
             <label
               htmlFor={replyBodyId}
               className="mb-1 block text-xs font-medium text-atg-muted"
             >
-              Message agent
+              {tDetail('fields.agentMessage')}
             </label>
             <textarea
               id={replyBodyId}
@@ -322,7 +319,7 @@ export function SupportTicketDetailPage({ ticketId }: SupportTicketDetailPagePro
               rows={4}
               disabled={acting}
               minLength={10}
-              placeholder="Votre réponse au client…"
+              placeholder={tDetail('replyPlaceholder')}
               className="w-full rounded-lg border border-atg-border bg-atg-surface px-3 py-2 text-sm text-atg-fg placeholder:text-atg-muted disabled:opacity-60"
             />
           </div>
@@ -341,10 +338,10 @@ export function SupportTicketDetailPage({ ticketId }: SupportTicketDetailPagePro
               type="button"
               disabled={acting || replyBody.trim().length < 10}
               loading={acting}
-              loadingText="Envoi…"
+              loadingText={tDetail('sending')}
               onClick={() => void submitReply()}
             >
-              Envoyer la réponse
+              {tDetail('sendReply')}
             </Button>
           </div>
         </Card>

@@ -1,43 +1,47 @@
 'use client';
 
-import { Button, Card, DataTableBadge } from '@africatourismgate/ui';
-import type { AdminReviewDetail, ReviewStatus } from '@africatourismgate/types';
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
+import {
+  AlertDialog,
+  Button,
+  Card,
+  DataTableBadge,
+  StarRatingDisplay,
+  useToast,
+} from '@africatourismgate/ui';
+import type { AdminReviewDetail } from '@africatourismgate/types';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
+import { AdminPageBackLink } from '../admin-page-back-link';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
-import { getReviewsErrorMessage } from '../../lib/reviews-errors';
-
-const statusLabels: Record<ReviewStatus, string> = {
-  pending: 'En attente',
-  approved: 'Approuvé',
-  hidden: 'Masqué',
-};
-
-const statusVariants: Record<ReviewStatus, 'success' | 'warning' | 'muted'> = {
-  pending: 'warning',
-  approved: 'success',
-  hidden: 'muted',
-};
-
-function formatDateTime(iso: string): string {
-  try {
-    return new Date(iso).toLocaleString('fr-FR', {
-      dateStyle: 'long',
-      timeStyle: 'short',
-    });
-  } catch {
-    return iso;
-  }
-}
+import { useFormatDateTime, useReviewStatusLabels } from '../../lib/i18n/use-module-labels';
+import {
+  formatReviewEntity,
+  reviewStatusVariants,
+} from '../../lib/review-display';
 
 type ReviewDetailPageProps = {
   reviewId: string;
 };
 
 export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
+  const { reviews: getReviewsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.reviews');
+  const tDetail = useTranslations('modules.reviews.detail');
+  const tCommon = useTranslations('modules.common');
+  const tActions = useTranslations('common.actions');
+  const tLoading = useTranslations('common.loading');
+  const formatDateTime = useFormatDateTime('long');
+  const statusLabels = useReviewStatusLabels();
+  const router = useRouter();
+  const { toast } = useToast();
   const [canWrite, setCanWrite] = useState(false);
   const [acting, setActing] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
   const [state, setState] = useState<
     | { status: 'loading' }
@@ -47,7 +51,7 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
 
   useAdminEditPageMeta({
     ready: state.status === 'ready',
-    title: 'Avis',
+    title: tDetail('title'),
     entityLabel:
       state.status === 'ready'
         ? `${state.review.rating}/5 — ${state.review.authorFirstName ?? state.review.authorEmail ?? state.review.id.slice(0, 8)}`
@@ -62,7 +66,7 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
     } catch (error) {
       setState({ status: 'error', message: getReviewsErrorMessage(error) });
     }
-  }, [reviewId]);
+  }, [reviewId, getReviewsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -87,168 +91,231 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
     };
   }, []);
 
-  const runAction = useCallback(
-    async (action: 'approve' | 'hide' | 'delete') => {
+  const runModerationAction = useCallback(
+    async (action: 'approve' | 'hide') => {
       if (state.status !== 'ready') return;
-      if (action === 'delete') {
-        if (!window.confirm('Supprimer cet avis (suppression logique) ?')) return;
-      }
+
       setActionError(null);
       setActing(true);
       try {
         const client = getApiClient();
         if (action === 'approve') {
           await client.updateReviewStatus(reviewId, { status: 'approved' });
-        } else if (action === 'hide') {
-          await client.updateReviewStatus(reviewId, { status: 'hidden' });
         } else {
-          await client.deleteReview(reviewId);
-          window.location.href = '/contenu/avis';
-          return;
+          await client.updateReviewStatus(reviewId, { status: 'hidden' });
         }
         await load();
+        toast({
+          variant: 'success',
+          title:
+            action === 'approve'
+              ? t('toast.approved.title')
+              : t('toast.hidden.title'),
+          message:
+            action === 'approve'
+              ? t('toast.approved.message')
+              : t('toast.hidden.message'),
+        });
       } catch (error) {
         setActionError(getReviewsErrorMessage(error));
       } finally {
         setActing(false);
       }
     },
-    [load, reviewId, state.status],
+    [load, reviewId, state.status, toast, t, getReviewsErrorMessage],
   );
 
+  const runDelete = useCallback(async (): Promise<boolean> => {
+    setActionError(null);
+    setActing(true);
+    try {
+      await getApiClient().deleteReview(reviewId);
+      toast({
+        variant: 'success',
+        title: t('toast.deleted.title'),
+        message: t('toast.deleted.message'),
+      });
+      router.push('/contenu/avis');
+      return true;
+    } catch (error) {
+      setActionError(getReviewsErrorMessage(error));
+      setActing(false);
+      return false;
+    }
+  }, [reviewId, router, toast, t, getReviewsErrorMessage]);
+
+  const emptyDash = tCommon('empty.dash');
+
   if (state.status === 'loading') {
-    return <p className="text-sm text-atg-muted">Chargement…</p>;
+    return <p className="text-sm text-atg-muted">{tLoading('page')}</p>;
   }
 
   if (state.status === 'error') {
     return (
       <div className="space-y-4">
+        <AdminPageBackLink href="/contenu/avis" label={tDetail('backLink')} />
         <p className="text-sm text-red-600 dark:text-red-400" role="alert">
           {state.message}
         </p>
-        <Button href="/contenu/avis" variant="ghost" size="sm">
-          Retour à la liste
-        </Button>
       </div>
     );
   }
 
   const { review } = state;
+  const canApprove = review.status !== 'approved';
+  const canHide = review.status !== 'hidden';
+  const showFooter = canWrite;
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center gap-3">
-        <DataTableBadge variant={statusVariants[review.status]}>
-          {statusLabels[review.status]}
-        </DataTableBadge>
+    <div className={showFooter ? 'pb-24' : undefined}>
+      <div className="space-y-6">
+        <AdminPageBackLink href="/contenu/avis" label={tDetail('backLink')} />
+
+        {actionError ? (
+          <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+            {actionError}
+          </p>
+        ) : null}
+
+        <div className="grid gap-6 lg:grid-cols-[minmax(280px,1fr)_minmax(0,1.6fr)] lg:items-start">
+          <div className="space-y-6 lg:sticky lg:top-4">
+            <Card variant="dashboard" padding="md">
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+                <h2 className="text-lg font-semibold text-atg-fg">{tDetail('sections.context')}</h2>
+                <DataTableBadge variant={reviewStatusVariants[review.status]}>
+                  {statusLabels[review.status]}
+                </DataTableBadge>
+              </div>
+
+              <StarRatingDisplay
+                value={review.rating}
+                size="md"
+                showValue
+                className="mb-4"
+              />
+
+              <dl className="space-y-3 text-sm">
+                <div>
+                  <dt className="text-atg-muted">{tDetail('fields.author')}</dt>
+                  <dd className="font-medium text-atg-fg">
+                    {review.authorFirstName?.trim() || emptyDash}
+                    {review.authorEmail ? (
+                      <span className="mt-0.5 block font-normal text-atg-muted">
+                        {review.authorEmail}
+                      </span>
+                    ) : null}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-atg-muted">{tDetail('fields.property')}</dt>
+                  <dd className="text-atg-fg">{review.propertyName ?? emptyDash}</dd>
+                </div>
+                <div>
+                  <dt className="text-atg-muted">{tDetail('fields.entity')}</dt>
+                  <dd className="font-mono text-xs text-atg-fg">
+                    {formatReviewEntity(review)}
+                  </dd>
+                </div>
+                {review.entityType === 'booking' ? (
+                  <div>
+                    <dt className="text-atg-muted">{tDetail('fields.booking')}</dt>
+                    <dd>
+                      <Link
+                        href={`/dashboard/bookings/${review.entityId}`}
+                        className="font-medium text-primary hover:underline"
+                      >
+                        {tDetail('viewBooking')}
+                      </Link>
+                    </dd>
+                  </div>
+                ) : null}
+                <div>
+                  <dt className="text-atg-muted">{tDetail('fields.publishedAt')}</dt>
+                  <dd className="tabular-nums text-atg-fg">
+                    {formatDateTime(review.createdAt)}
+                  </dd>
+                </div>
+              </dl>
+            </Card>
+          </div>
+
+          <Card variant="dashboard" padding="md">
+            <h2 className="mb-4 text-lg font-semibold text-atg-fg">{tDetail('sections.comment')}</h2>
+            {review.title ? (
+              <h3 className="text-base font-semibold text-atg-fg">{review.title}</h3>
+            ) : null}
+            {review.body ? (
+              <p
+                className={`whitespace-pre-line text-sm leading-relaxed text-atg-muted ${review.title ? 'mt-3' : ''}`}
+              >
+                {review.body}
+              </p>
+            ) : (
+              <p className="text-sm italic text-atg-muted">{tDetail('noComment')}</p>
+            )}
+          </Card>
+        </div>
       </div>
 
-      {actionError ? (
-        <p className="text-sm text-red-600 dark:text-red-400" role="alert">
-          {actionError}
-        </p>
-      ) : null}
-
-      <Card className="p-6">
-        <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <p className="text-3xl font-bold text-atg-fg">{review.rating}/5</p>
-            <p className="mt-1 text-sm text-atg-muted">
-              Publié le {formatDateTime(review.createdAt)}
-            </p>
-          </div>
-          {canWrite ? (
-            <div className="flex flex-wrap gap-2">
-              {review.status !== 'approved' ? (
-                <Button
-                  type="button"
-                  disabled={acting}
-                  loading={acting}
-                  loadingText="…"
-                  onClick={() => void runAction('approve')}
-                >
-                  Approuver
-                </Button>
-              ) : null}
-              {review.status !== 'hidden' ? (
-                <Button
-                  type="button"
-                  variant="secondary"
-                  disabled={acting}
-                  onClick={() => void runAction('hide')}
-                >
-                  Masquer
-                </Button>
-              ) : null}
+      {showFooter ? (
+        <div
+          className="fixed inset-x-0 bottom-0 z-20 border-t border-atg-border bg-atg-surface/95 backdrop-blur supports-[backdrop-filter]:bg-atg-surface/80"
+          role="region"
+          aria-label={tDetail('moderationActionsAria')}
+        >
+          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-end gap-2 px-4 py-3 sm:px-6 lg:px-8">
+            {canApprove ? (
               <Button
                 type="button"
-                variant="ghost"
                 disabled={acting}
-                onClick={() => void runAction('delete')}
-                className="!text-red-600 hover:!bg-red-50 dark:!text-red-400"
+                loading={acting}
+                loadingText="…"
+                onClick={() => void runModerationAction('approve')}
               >
-                Supprimer
+                {t('actions.approve')}
               </Button>
-            </div>
-          ) : null}
+            ) : null}
+            {canHide ? (
+              <Button
+                type="button"
+                variant="secondary"
+                disabled={acting}
+                onClick={() => void runModerationAction('hide')}
+              >
+                {t('actions.hide')}
+              </Button>
+            ) : null}
+            <Button
+              type="button"
+              variant="ghost"
+              disabled={acting}
+              onClick={() => setDeleteDialogOpen(true)}
+              className="!text-red-600 hover:!bg-red-50 dark:!text-red-400"
+            >
+              {tActions('delete')}
+            </Button>
+          </div>
         </div>
+      ) : null}
 
-        {review.title ? (
-          <h2 className="text-lg font-semibold text-atg-fg">{review.title}</h2>
-        ) : null}
-        {review.body ? (
-          <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-atg-muted">
-            {review.body}
-          </p>
-        ) : (
-          <p className="mt-3 text-sm italic text-atg-muted">Aucun commentaire.</p>
-        )}
-
-        <dl className="mt-8 grid gap-4 border-t border-atg-border pt-6 sm:grid-cols-2">
-          <div>
-            <dt className="text-xs font-medium uppercase tracking-wide text-atg-muted">
-              Auteur
-            </dt>
-            <dd className="mt-1 text-sm text-atg-fg">
-              {review.authorFirstName?.trim() || '—'}
-              {review.authorEmail ? (
-                <span className="block text-atg-muted">{review.authorEmail}</span>
-              ) : null}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-xs font-medium uppercase tracking-wide text-atg-muted">
-              Entité
-            </dt>
-            <dd className="mt-1 font-mono text-sm text-atg-fg">
-              {review.entityType} · {review.entityId}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-xs font-medium uppercase tracking-wide text-atg-muted">
-              Propriété
-            </dt>
-            <dd className="mt-1 text-sm text-atg-fg">
-              {review.propertyName ?? '—'}
-            </dd>
-          </div>
-          {review.entityType === 'booking' ? (
-            <div>
-              <dt className="text-xs font-medium uppercase tracking-wide text-atg-muted">
-                Réservation
-              </dt>
-              <dd className="mt-1">
-                <Link
-                  href={`/dashboard/bookings/${review.entityId}`}
-                  className="text-sm font-medium text-primary hover:underline"
-                >
-                  Voir la réservation
-                </Link>
-              </dd>
-            </div>
-          ) : null}
-        </dl>
-      </Card>
+      <AlertDialog
+        open={deleteDialogOpen}
+        onOpenChange={(open) => {
+          if (!acting) setDeleteDialogOpen(open);
+        }}
+        title={t('deleteDialog.title')}
+        description={t('deleteDialog.description')}
+        confirmLabel={tActions('delete')}
+        cancelLabel={tActions('cancel')}
+        variant="danger"
+        loading={acting}
+        onConfirm={() => {
+          void runDelete().then((ok) => {
+            if (ok) setDeleteDialogOpen(false);
+          });
+        }}
+        onCancel={() => setDeleteDialogOpen(false)}
+      />
     </div>
   );
 }

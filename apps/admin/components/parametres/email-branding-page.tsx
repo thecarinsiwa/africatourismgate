@@ -1,18 +1,28 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
+import { AlertDialog } from '@africatourismgate/ui';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { useSetAdminPageMeta } from '../admin-page-meta-context';
 import { getApiClient } from '../../lib/auth/api';
-import { getOrganizationSettingsErrorMessage } from '../../lib/organization-settings-errors';
+import { useUnsavedChangesGuard } from '../rbac/use-unsaved-changes-guard';
 import { EmailBrandingForm } from './email-branding-form';
-import { ParametresSubnav } from './parametres-subnav';
+import { ParametresPageLayout } from './parametres-subnav';
 
 export function EmailBrandingPage() {
+  const { organizationSettings: getOrganizationSettingsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.settings');
+  const tEmails = useTranslations('modules.settings.emails');
   const [accessError, setAccessError] = useState<string | null>(null);
   const [canWrite, setCanWrite] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [formDirty, setFormDirty] = useState(false);
+  const { dialogOpen, setDialogOpen, requestAction, confirmDiscard, cancelDiscard } =
+    useUnsavedChangesGuard(formDirty);
 
-  useSetAdminPageMeta({ title: 'E-mails' });
+  useSetAdminPageMeta({ title: tEmails('page.title') });
 
   useEffect(() => {
     let cancelled = false;
@@ -25,9 +35,7 @@ export function EmailBrandingPage() {
           me.permissions.includes('organization_settings.read');
         if (!canRead) {
           if (!cancelled) {
-            setAccessError(
-              'Vous n’avez pas la permission de consulter les paramètres e-mail.',
-            );
+            setAccessError(tEmails('page.denied'));
           }
           return;
         }
@@ -51,36 +59,45 @@ export function EmailBrandingPage() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [tEmails, getOrganizationSettingsErrorMessage]);
 
   if (accessError) {
     return (
-      <div>
-        <ParametresSubnav />
+      <ParametresPageLayout>
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {accessError}
         </p>
-      </div>
+      </ParametresPageLayout>
     );
   }
 
   if (loading) {
     return (
-      <div>
-        <ParametresSubnav />
-        <p className="text-sm text-atg-muted">Chargement…</p>
-      </div>
+      <ParametresPageLayout>
+        <p className="text-sm text-atg-muted">{t('form.loading')}</p>
+      </ParametresPageLayout>
     );
   }
 
   return (
-    <div>
-      <ParametresSubnav />
-      <p className="mb-8 text-sm text-atg-muted">
-        Personnalisez l’apparence des e-mails transactionnels (bienvenue, confirmation de
-        réservation).
-      </p>
-      <EmailBrandingForm canWrite={canWrite} />
-    </div>
+    <>
+      <ParametresPageLayout
+        onSubnavNavigate={formDirty ? (_href, proceed) => requestAction(proceed) : undefined}
+      >
+        <p className="mb-8 text-sm text-atg-muted">{tEmails('page.intro')}</p>
+        <EmailBrandingForm canWrite={canWrite} onDirtyChange={setFormDirty} />
+      </ParametresPageLayout>
+      <AlertDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        title={t('unsaved.title')}
+        description={t('unsaved.description')}
+        confirmLabel={t('unsaved.confirm')}
+        cancelLabel={t('unsaved.cancel')}
+        variant="danger"
+        onConfirm={confirmDiscard}
+        onCancel={cancelDiscard}
+      />
+    </>
   );
 }

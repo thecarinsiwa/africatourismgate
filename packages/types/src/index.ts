@@ -81,7 +81,9 @@ export type {
 export type {
   CreateOrganizationRequest,
   Organization,
+  OrganizationListItem,
   OrganizationStatus,
+  OrganizationsListQuery,
   UpdateOrganizationRequest,
 } from './organization.js';
 
@@ -283,6 +285,7 @@ export type {
   DestinationsListQuery,
   PointOfInterest,
   PointsOfInterestListQuery,
+  PublicDestinationHighlight,
   UpdateDestinationRequest,
   UpdatePointOfInterestRequest,
 } from './destination.js';

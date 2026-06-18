@@ -12,6 +12,14 @@ export class PublicAccommodationsController {
   constructor(private readonly service: PublicAccommodationsService) {}
 
   @Public()
+  @Get('destinations/featured')
+  @ApiOperation({ summary: 'List featured destinations for marketing homepage' })
+  listFeaturedDestinations(@Query('limit') limit?: string) {
+    const parsed = limit ? Number.parseInt(limit, 10) : 4;
+    return this.service.listFeaturedDestinations(Number.isFinite(parsed) ? parsed : 4);
+  }
+
+  @Public()
   @Get('destinations')
   @ApiOperation({ summary: 'List destinations for public search' })
   listDestinations() {

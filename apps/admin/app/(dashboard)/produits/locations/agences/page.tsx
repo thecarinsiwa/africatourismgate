@@ -1,25 +1,11 @@
 import type { Metadata } from 'next';
-import { PageHeader } from '@africatourismgate/ui';
-import { AdminPageBackLink } from '../../../../../components/admin-page-back-link';
-import { LocationsStatCards } from '../../../../../components/locations/locations-stat-cards';
-import { RentalAgenciesList } from '../../../../../components/locations/rental-agencies-list';
+import { getAdminPageMetadata } from '../../../../../lib/i18n/admin-page-i18n';
+import { AgencesLocationPageContent } from '../../../../../components/pages/produits-locations-agences-page-content';
 
-export const metadata: Metadata = {
-  title: 'Agences de location — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('produits/locations/agences');
+}
 
-export default function AgencesLocationPage() {
-  return (
-    <div>
-      <PageHeader
-        title="Agences de location"
-        description="Référentiel des agences liées aux destinations."
-        breadcrumb={
-          <AdminPageBackLink href="/produits/locations" label="Retour aux véhicules" />
-        }
-      />
-      <LocationsStatCards className="mb-6" />
-      <RentalAgenciesList />
-    </div>
-  );
+export default function Page() {
+  return <AgencesLocationPageContent />;
 }

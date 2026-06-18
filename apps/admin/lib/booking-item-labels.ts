@@ -1,16 +1,17 @@
 import type { BookingItemType } from '@africatourismgate/types';
 
-export const itemTypeLabels: Record<BookingItemType, string> = {
-  room: 'Chambre',
-  flight_class: 'Vol',
-  vehicle: 'Véhicule',
-  cabin: 'Cabine',
-  activity_schedule: 'Activité',
-  package: 'Forfait',
-};
+export const BOOKING_ITEM_TYPES: BookingItemType[] = [
+  'room',
+  'flight_class',
+  'vehicle',
+  'cabin',
+  'activity_schedule',
+  'package',
+];
 
-export const itemTypeOptions = Object.entries(itemTypeLabels) as [BookingItemType, string][];
-
-export function getItemTypeLabel(itemType: string): string {
-  return itemTypeLabels[itemType as BookingItemType] ?? itemType;
+export function getItemTypeLabel(
+  itemType: string,
+  labels: Record<BookingItemType, string>,
+): string {
+  return labels[itemType as BookingItemType] ?? itemType;
 }

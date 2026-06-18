@@ -1,12 +1,14 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import type { Promotion } from '@africatourismgate/types';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { PaymentsPromoSubnav } from '../payments/payments-promo-subnav';
 import { getApiClient } from '../../lib/auth/api';
-import { getPromotionsErrorMessage } from '../../lib/promotions-errors';
 import { PromotionForm } from './promotion-form';
 
 type PromotionEditPageProps = {
@@ -14,6 +16,9 @@ type PromotionEditPageProps = {
 };
 
 export function PromotionEditPage({ promotionId }: PromotionEditPageProps) {
+  const { promotions: getPromotionsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.promotions.edit');
+  const tCommon = useTranslations('modules.common');
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -22,7 +27,7 @@ export function PromotionEditPage({ promotionId }: PromotionEditPageProps) {
 
   useAdminEditPageMeta({
     ready: state.status === 'ready',
-    title: 'Modifier la promotion',
+    title: t('pageTitle'),
     entityLabel: state.status === 'ready' ? state.promotion.name : undefined,
   });
 
@@ -42,13 +47,13 @@ export function PromotionEditPage({ promotionId }: PromotionEditPageProps) {
     return () => {
       cancelled = true;
     };
-  }, [promotionId]);
+  }, [promotionId, getPromotionsErrorMessage]);
 
   if (state.status === 'loading') {
     return (
       <div>
         <PaymentsPromoSubnav />
-        <p className="text-sm text-atg-muted">Chargement…</p>
+        <p className="text-sm text-atg-muted">{tCommon('loading')}</p>
       </div>
     );
   }
@@ -65,7 +70,7 @@ export function PromotionEditPage({ promotionId }: PromotionEditPageProps) {
             href="/paiements/promotions"
             className="text-sm font-medium text-primary hover:text-primary-hover"
           >
-            ← Retour à la liste
+            {tCommon('back.toList')}
           </Link>
         </div>
       </div>

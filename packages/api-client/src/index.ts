@@ -162,6 +162,7 @@ import type {
   DestinationRelatedCounts,
   DestinationsListQuery,
   PublicDestination,
+  PublicDestinationHighlight,
   Flight,
   FlightClass,
   FlightClassAvailability,
@@ -177,6 +178,8 @@ import type {
   LoginRequest,
   LogoutResponse,
   Organization,
+  OrganizationListItem,
+  OrganizationsListQuery,
   Property,
   PropertySearchQuery,
   PropertySearchResult,
@@ -188,7 +191,6 @@ import type {
   PointOfInterest,
   PointsOfInterestListQuery,
   PaginatedResponse,
-  PaginationQuery,
   PaymentAdminDetail,
   PaymentListItem,
   PaymentsListQuery,
@@ -261,6 +263,7 @@ import type {
   User,
   UsersListQuery,
 } from '@africatourismgate/types';
+export type { PaginationQuery } from '@africatourismgate/types';
 import { ApiHttpError, parseApiErrorMessage } from './http-error';
 import {
   fetchPaginated,
@@ -299,7 +302,6 @@ export type {
   LogoutResponse,
   PaginatedResponse,
   PaginationMeta,
-  PaginationQuery,
   PaymentListItem,
   PaymentStatus,
   RefreshTokenRequest,
@@ -310,6 +312,8 @@ export type {
   SucceededPaymentsRevenue,
   UserStatus,
   Organization,
+  OrganizationListItem,
+  OrganizationsListQuery,
   OrganizationStatus,
   Destination,
   DestinationRelatedCounts,
@@ -387,6 +391,7 @@ export type {
   UpdateReviewStatusRequest,
   PropertyType,
   PublicDestination,
+  PublicDestinationHighlight,
   ReplacePropertyAmenitiesRequest,
   Room,
   RoomImage,
@@ -695,6 +700,14 @@ export class ApiClient {
     });
   }
 
+  listFeaturedDestinations(limit = 4): Promise<PublicDestinationHighlight[]> {
+    const qs = new URLSearchParams({ limit: String(limit) }).toString();
+    return this.request<PublicDestinationHighlight[]>(
+      `/public/destinations/featured?${qs}`,
+      { skipAuth: true },
+    );
+  }
+
   searchAccommodations(
     query?: PropertySearchQuery,
   ): Promise<PaginatedResponse<PropertySearchResult>> {
@@ -966,9 +979,9 @@ export class ApiClient {
   }
 
   listOrganizations(
-    query?: PaginationQuery,
-  ): Promise<PaginatedResponse<Organization>> {
-    return fetchPaginated<Organization>(this, '/organizations', query);
+    query?: OrganizationsListQuery,
+  ): Promise<PaginatedResponse<OrganizationListItem>> {
+    return fetchPaginated<OrganizationListItem>(this, '/organizations', query);
   }
 
   getOrganization(id: string): Promise<Organization> {

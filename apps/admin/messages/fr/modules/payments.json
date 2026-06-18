@@ -1,0 +1,99 @@
+{
+  "status": {
+    "pending": "En attente",
+    "succeeded": "Réussi",
+    "failed": "Échoué",
+    "refunded": "Remboursé"
+  },
+  "providers": {
+    "stripe": "Stripe",
+    "cash": "Espèces"
+  },
+  "refundLabels": {
+    "partial": "Remboursement partiel",
+    "full": "Remboursement total",
+    "generic": "Remboursement"
+  },
+  "subnav": {
+    "ariaLabel": "Navigation paiements et promotions",
+    "transactions": "Transactions",
+    "promoCodes": "Codes promo",
+    "promotions": "Promotions"
+  },
+  "list": {
+    "emptyDefault": "Aucun paiement pour le moment.",
+    "emptyFiltered": "Aucun paiement ne correspond à vos critères.",
+    "ariaLabel": "Liste des paiements",
+    "accessDenied": "Accès refusé : permission payments.read requise.",
+    "notFoundError": "Paiement introuvable.",
+    "toast": {
+      "refundSuccessTitle": "Remboursement effectué",
+      "refundSuccessMessage": "{amount} remboursé avec succès."
+    }
+  },
+  "detail": {
+    "title": "Détail du paiement",
+    "sections": {
+      "summary": "Résumé",
+      "stripeIds": "Identifiants Stripe",
+      "booking": "Réservation",
+      "refundHistory": "Historique des remboursements"
+    },
+    "fields": {
+      "amount": "Montant",
+      "status": "Statut",
+      "method": "Méthode",
+      "date": "Date",
+      "client": "Client",
+      "stripePaymentIntent": "Payment Intent Stripe",
+      "internalPaymentId": "ID paiement (interne)",
+      "viewBooking": "Voir la réservation",
+      "stripeStatus": "Stripe : {status}"
+    },
+    "refundHistoryEmpty": "Aucun remboursement enregistré.",
+    "cancelBookingFirst": "Remboursement Stripe : annulez d'abord la réservation."
+  },
+  "refundModal": {
+    "title": "Confirmer le remboursement",
+    "description": "Remboursement Stripe — maximum remboursable : {maxAmount}.",
+    "refundTypeLegend": "Type de remboursement",
+    "refundTypeTotal": "Total ({amount})",
+    "refundTypePartial": "Partiel",
+    "partialAmountLabel": "Montant partiel ({currency})",
+    "partialAmountPlaceholder": "Ex. 10,00",
+    "partialAmountHint": "Maximum : {maxAmount}",
+    "reasonLabel": "Raison du remboursement",
+    "reasonPlaceholder": "Ex. Annulation client, erreur de facturation…",
+    "reasonHint": "Minimum {minLength} caractères (usage interne, non envoyé à Stripe).",
+    "preview": "Aperçu",
+    "previewRefunded": "Montant remboursé",
+    "previewRemaining": "Reste remboursable",
+    "previewReason": "Motif",
+    "confirm": "Confirmer le remboursement",
+    "validation": {
+      "reasonMinLength": "La raison doit contenir au moins {minLength} caractères.",
+      "noRefundableAmount": "Aucun montant remboursable restant.",
+      "partialAmountRequired": "Indiquez un montant partiel.",
+      "partialAmountInvalid": "Montant partiel invalide.",
+      "partialAmountExceeds": "Le montant ne peut pas dépasser {maxAmount}."
+    }
+  },
+  "stats": {
+    "total": {
+      "label": "Transactions",
+      "subtitle": "Tous les paiements"
+    },
+    "succeeded": {
+      "label": "Réussis",
+      "subtitle": "Paiements encaissés"
+    },
+    "pending": {
+      "label": "En attente",
+      "subtitle": "Paiements pending"
+    },
+    "revenue": {
+      "label": "Revenus",
+      "subtitle": "Total paiements réussis"
+    }
+  }
+}

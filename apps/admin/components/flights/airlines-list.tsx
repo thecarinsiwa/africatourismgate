@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Button,
   Card,
@@ -11,10 +13,10 @@ import {
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { Airline } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ReferentialListToolbar } from '../referential-list-toolbar';
 import { getApiClient } from '../../lib/auth/api';
-import { getVolsErrorMessage } from '../../lib/vols-errors';
 import { AirlineLogoPlaceholder } from './airline-logo-placeholder';
 
 const PAGE_SIZE = 20;
@@ -24,6 +26,12 @@ type FormValues = { iataCode: string; name: string };
 const emptyForm: FormValues = { iataCode: '', name: '' };
 
 export function AirlinesList() {
+  const { vols: getVolsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.flights.referential.airlines');
+  const tColumns = useTranslations('modules.flights.columns');
+  const tCommon = useTranslations('modules.common');
+  const tPagination = useTranslations('modules.common.pagination');
+  const tActions = useTranslations('common.actions');
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -56,7 +64,7 @@ export function AirlinesList() {
     } catch (error) {
       setState({ status: 'error', message: getVolsErrorMessage(error) });
     }
-  }, [page, search]);
+  }, [page, search, getVolsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -84,7 +92,7 @@ export function AirlinesList() {
     event.preventDefault();
     setFormError(null);
     if (formValues.iataCode.trim().length !== 2 || !formValues.name.trim()) {
-      setFormError('Code IATA (2 lettres) et nom sont obligatoires.');
+      setFormError(tCommon('validation.iataAndNameRequired'));
       return;
     }
     setSubmitting(true);
@@ -117,15 +125,15 @@ export function AirlinesList() {
       },
       {
         accessorKey: 'iataCode',
-        header: 'IATA',
+        header: tCommon('columns.iata'),
         cell: ({ row }) => (
           <code className="font-mono text-sm">{row.original.iataCode}</code>
         ),
       },
-      { accessorKey: 'name', header: 'Compagnie' },
+      { accessorKey: 'name', header: tColumns('airline') },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tCommon('columns.actions'),
         meta: { align: 'right' },
         cell: ({ row }) => (
           <DataTableActions>
@@ -143,7 +151,7 @@ export function AirlinesList() {
             <DataTableActionButton
               action="delete"
               onClick={async () => {
-                if (!window.confirm(`Supprimer « ${row.original.name} » ?`)) return;
+                if (!window.confirm(t('deleteConfirm', { name: row.original.name }))) return;
                 setDeletingId(row.original.id);
                 try {
                   await getApiClient().deleteAirline(row.original.id);
@@ -161,22 +169,19 @@ export function AirlinesList() {
         ),
       },
     ],
-    [deletingId, load],
+    [deletingId, load, t, tColumns, tCommon, getVolsErrorMessage],
   );
 
   const airlines = state.status === 'ready' ? state.airlines : [];
-  const emptyMessage =
-    search.trim().length > 0
-      ? 'Aucune compagnie ne correspond à cette recherche.'
-      : 'Aucune compagnie.';
+  const emptyMessage = search.trim().length > 0 ? t('emptySearch') : t('emptyDefault');
 
   return (
     <div className="space-y-6">
       <ReferentialListToolbar
         searchValue={searchInput}
         onSearchChange={setSearchInput}
-        placeholder="Rechercher par code IATA ou nom…"
-        ariaLabel="Rechercher une compagnie"
+        placeholder={t('searchPlaceholder')}
+        ariaLabel={t('searchAria')}
         action={
           !showForm ? (
             <Button
@@ -186,7 +191,7 @@ export function AirlinesList() {
                 setShowForm(true);
               }}
             >
-              Nouvelle compagnie
+              {t('new')}
             </Button>
           ) : undefined
         }
@@ -195,16 +200,14 @@ export function AirlinesList() {
       {showForm ? (
         <Card variant="dashboard" className="max-w-lg">
           <form onSubmit={handleSubmit} className="space-y-4">
-            <h3 className="text-sm font-medium">
-              {editing ? 'Modifier la compagnie' : 'Nouvelle compagnie'}
-            </h3>
+            <h3 className="text-sm font-medium">{editing ? t('edit') : t('new')}</h3>
             {formError ? (
               <p role="alert" className="text-sm text-red-600">
                 {formError}
               </p>
             ) : null}
             <Input
-              label="Code IATA"
+              label={t('iataCode')}
               maxLength={2}
               value={formValues.iataCode}
               onChange={(e) =>
@@ -212,16 +215,16 @@ export function AirlinesList() {
               }
             />
             <Input
-              label="Nom"
+              label={tCommon('columns.name')}
               value={formValues.name}
               onChange={(e) => setFormValues((p) => ({ ...p, name: e.target.value }))}
             />
             <div className="flex gap-3">
               <Button type="submit" loading={submitting}>
-                {editing ? 'Enregistrer' : 'Ajouter'}
+                {editing ? tActions('save') : tActions('create')}
               </Button>
               <Button type="button" variant="outline" onClick={resetForm}>
-                Annuler
+                {tActions('cancel')}
               </Button>
             </div>
           </form>
@@ -250,7 +253,7 @@ export function AirlinesList() {
               pageSize={PAGE_SIZE}
               totalPages={state.totalPages}
               totalItems={state.total}
-              itemLabel="compagnie"
+              itemLabel={tPagination('airline')}
               onPageChange={setPage}
             />
           ) : null}

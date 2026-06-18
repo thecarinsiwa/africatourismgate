@@ -1,19 +1,11 @@
 import type { Metadata } from 'next';
-import { PageHeader } from '@africatourismgate/ui';
-import { DestinationForm } from '../../../../../components/destinations/destination-form';
+import { getAdminPageMetadata } from '../../../../../lib/i18n/admin-page-i18n';
+import { NouvelleDestinationPageContent } from '../../../../../components/pages/produits-destinations-nouveau-page-content';
 
-export const metadata: Metadata = {
-  title: 'Nouvelle destination — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('produits/destinations/nouveau');
+}
 
-export default function NouvelleDestinationPage() {
-  return (
-    <div>
-      <PageHeader
-        title="Nouvelle destination"
-        description="Créez la destination puis ajoutez des points d'intérêt sur la page de modification."
-      />
-      <DestinationForm mode="create" showHeroPreview />
-    </div>
-  );
+export default function Page() {
+  return <NouvelleDestinationPageContent />;
 }

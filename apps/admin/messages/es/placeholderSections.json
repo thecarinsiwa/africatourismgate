@@ -1,0 +1,21 @@
+{
+  "meta": {
+    "titleSuffix": "Africa Tourism Gate Admin",
+    "notFoundTitle": "Sección no encontrada — Africa Tourism Gate Admin"
+  },
+  "default": {
+    "title": "Sección",
+    "description": "Módulo en despliegue.",
+    "emptyTitle": "Próximamente",
+    "emptyDescription": "Esta sección estará disponible en el back office en una próxima actualización."
+  },
+  "contenu": {
+    "messages": {
+      "title": "Mensajes de soporte",
+      "description": "Conversaciones en los tickets.",
+      "emptyTitle": "Los mensajes están en los tickets",
+      "emptyDescription": "Las conversaciones con los clientes se realizan en el hilo de cada ticket de soporte. Abra un ticket para leer y responder mensajes.",
+      "ctaLabel": "Ver tickets"
+    }
+  }
+}

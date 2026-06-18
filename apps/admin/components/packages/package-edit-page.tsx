@@ -1,12 +1,15 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import type { Package, PackageDetail } from '@africatourismgate/types';
 import { Button, DataTableBadge, Skeleton } from '@africatourismgate/ui';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { AdminPageBackLink } from '../admin-page-back-link';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
-import { getPackagesErrorMessage } from '../../lib/packages-errors';
+import { usePackageStatusLabels } from '../../lib/i18n/use-module-labels';
 import { PackageForm } from './package-form';
 import { PackageImagesSection } from './package-images-section';
 import { PackageItemsSection } from './package-items-section';
@@ -26,6 +29,10 @@ function resolvePackageFromDetail(detail: PackageDetail | Package): Package | nu
 }
 
 export function PackageEditPage({ packageId }: PackageEditPageProps) {
+  const { packages: getPackagesErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.packages.detail');
+  const tCommon = useTranslations('modules.common');
+  const packageStatusLabels = usePackageStatusLabels();
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -34,7 +41,7 @@ export function PackageEditPage({ packageId }: PackageEditPageProps) {
 
   useAdminEditPageMeta({
     ready: state.status === 'ready',
-    title: 'Modifier le forfait',
+    title: t('editTitle'),
     entityLabel: state.status === 'ready' ? state.pkg.name : undefined,
   });
 
@@ -46,7 +53,7 @@ export function PackageEditPage({ packageId }: PackageEditPageProps) {
         const pkg = resolvePackageFromDetail(detail);
         if (!cancelled) {
           if (!pkg) {
-            setState({ status: 'error', message: 'Réponse forfait invalide.' });
+            setState({ status: 'error', message: t('invalidResponse') });
             return;
           }
           setState({ status: 'ready', pkg });
@@ -60,7 +67,7 @@ export function PackageEditPage({ packageId }: PackageEditPageProps) {
     return () => {
       cancelled = true;
     };
-  }, [packageId]);
+  }, [packageId, getPackagesErrorMessage, t]);
 
   if (state.status === 'loading') {
     return (
@@ -79,7 +86,7 @@ export function PackageEditPage({ packageId }: PackageEditPageProps) {
   if (state.status === 'error') {
     return (
       <div className="space-y-4">
-        <AdminPageBackLink href="/produits/forfaits" label="Retour aux forfaits" />
+        <AdminPageBackLink href="/produits/forfaits" label={t('backLink')} />
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {state.message}
         </p>
@@ -89,28 +96,30 @@ export function PackageEditPage({ packageId }: PackageEditPageProps) {
 
   const { pkg } = state;
   const discount = Number(pkg.discountPercent);
+  const durationLabel =
+    pkg.durationDays > 1
+      ? tCommon('daysCountPlural', { count: pkg.durationDays })
+      : tCommon('daysCount', { count: pkg.durationDays });
 
   return (
     <div className="space-y-6">
-      <AdminPageBackLink href="/produits/forfaits" label="Retour aux forfaits" />
+      <AdminPageBackLink href="/produits/forfaits" label={t('backLink')} />
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-2">
           <h2 className="text-lg font-semibold text-atg-fg">{pkg.name}</h2>
           <div className="flex flex-wrap items-center gap-2">
             <DataTableBadge variant={discount > 0 ? 'success' : 'muted'}>
-              Remise {pkg.discountPercent}%
+              {t('discountBadge', { percent: pkg.discountPercent })}
             </DataTableBadge>
             <DataTableBadge variant={pkg.active === 1 ? 'success' : 'muted'}>
-              {pkg.active === 1 ? 'Actif' : 'Inactif'}
+              {pkg.active === 1 ? packageStatusLabels.active : packageStatusLabels.inactive}
             </DataTableBadge>
-            <DataTableBadge variant="muted">
-              {pkg.durationDays} jour{pkg.durationDays > 1 ? 's' : ''}
-            </DataTableBadge>
+            <DataTableBadge variant="muted">{durationLabel}</DataTableBadge>
           </div>
         </div>
         <Button href={`/produits/forfaits/${packageId}/voir`} variant="outline">
-          Voir le forfait
+          {t('viewButton')}
         </Button>
       </div>
 

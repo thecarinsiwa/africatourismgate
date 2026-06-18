@@ -1,0 +1,60 @@
+{
+  "status": {
+    "open": "Ouvert",
+    "pending": "En cours",
+    "resolved": "Résolu",
+    "closed": "Fermé"
+  },
+  "priority": {
+    "low": "Basse",
+    "normal": "Normale",
+    "high": "Haute",
+    "urgent": "Urgente"
+  },
+  "assignee": {
+    "unassigned": "No assigné"
+  },
+  "detail": {
+    "title": "Ticket support",
+    "backToList": "Back à la liste",
+    "openedOn": "Ouvert le {date}",
+    "sections": {
+      "client": "Customer",
+      "handling": "Traitement",
+      "messages": "Messages",
+      "reply": "Répondre au client"
+    },
+    "fields": {
+      "priority": "Priorité",
+      "agentMessage": "Message agent"
+    },
+    "advanceStatus": "Passer à « {status} »",
+    "noMessages": "Tocun message.",
+    "messageAuthor": {
+      "staff": "Agent",
+      "customer": "Customer"
+    },
+    "replyPlaceholder": "Votre réponse au client…",
+    "replyMinLength": "Le message doit contenir au moins 10 caractères.",
+    "sending": "Envoi…",
+    "sendReply": "Envoyer la réponse"
+  },
+  "list": {
+    "filters": {
+      "priority": "Priorité",
+      "apply": "Apply les filtres"
+    },
+    "assignedLabel": "Assigné :",
+    "empty": {
+      "default": {
+        "title": "Tocun ticket pour le moment",
+        "description": "Les demandes d'assistance clients apparaîtront ici dès qu'elles seront créées."
+      },
+      "filtered": {
+        "title": "Tocun ticket ne correspond aux filtres",
+        "description": "Élargissez les critères de statut ou de priorité pour afficher plus de demandes."
+      }
+    },
+    "ariaLabel": "Boîte de réception des tickets support"
+  }
+}

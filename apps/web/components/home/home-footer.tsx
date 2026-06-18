@@ -16,12 +16,14 @@ export function HomeFooter() {
   const contact = useResolvedPublicContact();
   const socialLinks = useMemo(() => buildSocialLinks(contact), [contact]);
 
-  const specialistLinks = useMemo(
+  const productLinks = useMemo(
     () => [
       { href: buildVerticalListRoute('hotels'), label: t.footer.specialistLinks.premium },
       { href: buildVerticalListRoute('flights'), label: t.footer.specialistLinks.flights },
+      { href: buildVerticalListRoute('cars'), label: t.footer.specialistLinks.cars },
       { href: buildVerticalListRoute('tours'), label: t.footer.specialistLinks.safaris },
       { href: buildVerticalListRoute('cruises'), label: t.footer.specialistLinks.cruises },
+      { href: '/packages', label: t.footer.specialistLinks.packages },
     ],
     [t],
   );
@@ -51,10 +53,10 @@ export function HomeFooter() {
 
             <div>
               <h3 className="text-sm font-bold uppercase tracking-wide text-white mb-5">
-                {t.footer.specialists}
+                {t.footer.products}
               </h3>
               <ul className="space-y-2.5">
-                {specialistLinks.map((link) => (
+                {productLinks.map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
@@ -68,21 +70,6 @@ export function HomeFooter() {
                   </li>
                 ))}
               </ul>
-
-              <div className="mt-6 flex items-center gap-2">
-                {socialLinks.map((s) => (
-                  <a
-                    key={s.key}
-                    href={s.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white/70 transition-colors hover:bg-primary hover:text-white"
-                    aria-label={s.label}
-                  >
-                    <span className="h-4 w-4">{s.icon}</span>
-                  </a>
-                ))}
-              </div>
             </div>
 
             <div>
@@ -108,7 +95,7 @@ export function HomeFooter() {
                   type="submit"
                   className="shrink-0 bg-primary px-4 text-xs font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover"
                 >
-                  OK
+                  {t.footer.newsletterSubmit}
                 </button>
               </form>
             </div>
@@ -152,6 +139,23 @@ export function HomeFooter() {
                   </div>
                 ) : null}
               </div>
+
+              {socialLinks.length > 0 ? (
+                <div className="mt-4 flex items-center gap-2">
+                  {socialLinks.map((s) => (
+                    <a
+                      key={s.key}
+                      href={s.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white/70 transition-colors hover:bg-primary hover:text-white"
+                      aria-label={s.label}
+                    >
+                      <span className="h-4 w-4">{s.icon}</span>
+                    </a>
+                  ))}
+                </div>
+              ) : null}
             </div>
           </div>
         </div>

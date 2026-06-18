@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Card,
   DataTable,
@@ -8,9 +10,9 @@ import {
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { User, UserAddress } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getUsersErrorMessage } from '../../lib/users-errors';
 import { UserIdFilterBar } from './user-id-filter-bar';
 import { UserListCell } from './user-list-cell';
 
@@ -30,6 +32,12 @@ export function UserAddressesList({
   fixedUserId,
   showUserColumn = true,
 }: UserScopedListProps = {}) {
+  const { users: getUsersErrorMessage } = useAdminErrorMessages();
+  const tAddresses = useTranslations('modules.users.addresses');
+  const tColumns = useTranslations('modules.common.columns');
+  const tBoolean = useTranslations('modules.common.boolean');
+  const tEmpty = useTranslations('modules.common.empty');
+  const tPagination = useTranslations('modules.common.pagination');
   const [page, setPage] = useState(1);
   const [userIdFilter, setUserIdFilter] = useState(fixedUserId ?? '');
   const [users, setUsers] = useState<User[]>([]);
@@ -73,7 +81,7 @@ export function UserAddressesList({
     } catch (error) {
       setState({ status: 'error', message: getUsersErrorMessage(error) });
     }
-  }, [page, userIdFilter]);
+  }, [page, userIdFilter, getUsersErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -83,17 +91,17 @@ export function UserAddressesList({
     const cols: ColumnDef<UserAddress, unknown>[] = [
       {
         id: 'label',
-        header: 'Libellé',
-        cell: ({ row }) => row.original.label?.trim() || '—',
+        header: tColumns('label'),
+        cell: ({ row }) => row.original.label?.trim() || tEmpty('dash'),
       },
       {
         id: 'address',
-        header: 'Adresse',
+        header: tColumns('address'),
         cell: ({ row }) => formatAddress(row.original),
       },
       {
         id: 'country',
-        header: 'Pays',
+        header: tColumns('country'),
         cell: ({ row }) => row.original.countryCode,
       },
     ];
@@ -101,7 +109,7 @@ export function UserAddressesList({
     if (showUserColumn) {
       cols.push({
         id: 'userId',
-        header: 'Utilisateur',
+        header: tColumns('user'),
         cell: ({ row }) => (
           <UserListCell userId={row.original.userId} usersById={usersById} />
         ),
@@ -110,22 +118,20 @@ export function UserAddressesList({
 
     cols.push({
       id: 'default',
-      header: 'Par défaut',
+      header: tColumns('default'),
       cell: ({ row }) =>
         row.original.isDefault ? (
-          <DataTableBadge variant="success">Oui</DataTableBadge>
+          <DataTableBadge variant="success">{tBoolean('yes')}</DataTableBadge>
         ) : (
-          <DataTableBadge variant="muted">Non</DataTableBadge>
+          <DataTableBadge variant="muted">{tBoolean('no')}</DataTableBadge>
         ),
     });
 
     return cols;
-  }, [showUserColumn, usersById]);
+  }, [showUserColumn, tBoolean, tColumns, tEmpty, usersById]);
 
   const rows = state.status === 'ready' ? state.rows : [];
-  const emptyMessage = userIdFilter
-    ? 'Aucune adresse pour cet utilisateur.'
-    : 'Aucune adresse enregistrée.';
+  const emptyMessage = userIdFilter ? tAddresses('emptyFiltered') : tAddresses('emptyDefault');
 
   return (
     <>
@@ -146,7 +152,7 @@ export function UserAddressesList({
           getRowId={(row) => row.id}
           isLoading={state.status === 'loading'}
           emptyMessage={emptyMessage}
-          aria-label="Liste des adresses utilisateur"
+          aria-label={tAddresses('ariaLabel')}
         />
         {state.status === 'ready' && state.totalPages > 0 ? (
           <DataTablePagination
@@ -154,7 +160,7 @@ export function UserAddressesList({
             pageSize={PAGE_SIZE}
             totalPages={state.totalPages}
             totalItems={state.total}
-            itemLabel="adresse"
+            itemLabel={tPagination('address')}
             onPageChange={setPage}
           />
         ) : null}

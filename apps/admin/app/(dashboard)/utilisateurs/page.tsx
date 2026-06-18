@@ -1,18 +1,11 @@
 import type { Metadata } from 'next';
-import { AdminPageIntro } from '../../../components/admin-page-intro';
-import { UsersList } from '../../../components/users/users-list';
-import { UsersStatCards } from '../../../components/users/users-stat-cards';
+import { getAdminPageMetadata } from '../../../lib/i18n/admin-page-i18n';
+import { UtilisateursPageContent } from '../../../components/pages/utilisateurs-page-content';
 
-export const metadata: Metadata = {
-  title: 'Utilisateurs — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('utilisateurs');
+}
 
-export default function UtilisateursPage() {
-  return (
-    <div>
-      <AdminPageIntro description={"Comptes plateforme. Filtrez par statut ou organisation."} />
-      <UsersStatCards className="mb-6" />
-      <UsersList />
-    </div>
-  );
+export default function Page() {
+  return <UtilisateursPageContent />;
 }

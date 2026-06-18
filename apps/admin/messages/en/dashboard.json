@@ -1,0 +1,88 @@
+{
+  "greeting": "Hello, {firstName}",
+  "greetingFallback": "Hello",
+  "description": "Overview of your Africa Tourism Gate platform",
+  "period": {
+    "label": "Period",
+    "7d": "7 days",
+    "30d": "30 days",
+    "90d": "90 days"
+  },
+  "chart": {
+    "title": "Activity",
+    "subtitle": "Bookings and revenue for the selected period",
+    "bookings": "Bookings",
+    "revenue": "Revenue",
+    "loading": "Loading chart…",
+    "empty": "No data for this period",
+    "error": "Unable to load trends",
+    "ariaLabel": "Daily bookings and revenue chart",
+    "dateColumn": "Date"
+  },
+  "kpi": {
+    "users": {
+      "label": "Users",
+      "subtitle": "Registered accounts"
+    },
+    "bookings": {
+      "label": "Bookings",
+      "subtitle": "Total bookings"
+    },
+    "revenue": {
+      "label": "Revenue",
+      "subtitle": "Successful payments"
+    },
+    "properties": {
+      "label": "Accommodations",
+      "subtitle": "Published properties"
+    }
+  },
+  "metaTitle": "Dashboard — Africa Tourism Gate Admin",
+  "errorLabel": "Error",
+  "viewAllUsers": "See all users →",
+  "userStats": {
+    "title": "User statistics",
+    "subtitle": "Account breakdown across the platform",
+    "active": "Active",
+    "suspended": "Suspended",
+    "total": "Total"
+  },
+  "platformOverview": {
+    "title": "Platform overview",
+    "subtitle": "Organizations, accommodations and activity",
+    "organizations": "Organizations",
+    "properties": "Accommodations",
+    "bookings": "Bookings",
+    "users": "Users"
+  },
+  "quickActions": {
+    "title": "Quick actions",
+    "subtitle": "Direct access to main sections",
+    "users": {
+      "label": "Users",
+      "description": "Manage accounts"
+    },
+    "organizations": {
+      "label": "Organizations",
+      "description": "Partners & entities"
+    },
+    "properties": {
+      "label": "Accommodations",
+      "description": "Catalog & listings"
+    },
+    "bookings": {
+      "label": "Bookings",
+      "description": "Track reservations"
+    }
+  },
+  "recentUsers": {
+    "title": "Recent users",
+    "subtitle": "Latest sign-ups on the platform",
+    "empty": "No users yet.",
+    "status": {
+      "active": "Active",
+      "suspended": "Suspended",
+      "deleted": "Deleted"
+    }
+  }
+}

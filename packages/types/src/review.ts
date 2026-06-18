@@ -20,12 +20,12 @@ export interface AdminReviewListItem {
   entityId: string;
   propertyId: string | null;
   propertyName: string | null;
+  title: string | null;
+  body: string | null;
 }
 
 export interface AdminReviewDetail extends AdminReviewListItem {
   userId: string;
-  title: string | null;
-  body: string | null;
   updatedAt: string | null;
 }
 

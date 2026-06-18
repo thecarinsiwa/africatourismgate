@@ -145,10 +145,10 @@ export function CarDetailPageContent({
 
   if (loading && !detail && apiQuery) {
     return (
-      <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
+      <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
         <HomeHeader />
         <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-24 text-center sm:px-6 lg:px-8">
-          <p className="text-sm font-medium text-gray-600 dark:text-atg-muted">{c.loading}</p>
+          <p className="text-sm font-medium text-atg-muted">{c.loading}</p>
         </div>
         <HomeFooter />
       </div>
@@ -157,11 +157,11 @@ export function CarDetailPageContent({
 
   if (!apiQuery) {
     return (
-      <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
+      <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
         <HomeHeader />
         <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-24 text-center sm:px-6 lg:px-8">
-          <h1 className="text-2xl font-bold text-[#0f1a16] dark:text-white">{c.selectDatesHint}</h1>
-          <p className="mt-2 text-sm text-gray-500 dark:text-atg-muted">{c.noSearchParamsHint}</p>
+          <h1 className="text-2xl font-bold text-atg-fg">{c.selectDatesHint}</h1>
+          <p className="mt-2 text-sm text-atg-muted">{c.noSearchParamsHint}</p>
           <Link
             href={listHref}
             className="mt-6 inline-flex min-h-[44px] items-center rounded-lg bg-primary px-6 py-2 text-sm font-bold text-white hover:bg-primary-hover"
@@ -176,11 +176,11 @@ export function CarDetailPageContent({
 
   if (notFound) {
     return (
-      <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
+      <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
         <HomeHeader />
         <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-24 text-center sm:px-6 lg:px-8">
-          <h1 className="text-2xl font-bold text-[#0f1a16] dark:text-white">{c.notFound}</h1>
-          <p className="mt-2 text-sm text-gray-500 dark:text-atg-muted">{c.notFoundHint}</p>
+          <h1 className="text-2xl font-bold text-atg-fg">{c.notFound}</h1>
+          <p className="mt-2 text-sm text-atg-muted">{c.notFoundHint}</p>
           <Link
             href={listHref}
             className="mt-6 inline-flex min-h-[44px] items-center rounded-lg bg-primary px-6 py-2 text-sm font-bold text-white hover:bg-primary-hover"
@@ -195,10 +195,10 @@ export function CarDetailPageContent({
 
   if (error || !detail || !sidebarProps) {
     return (
-      <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
+      <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
         <HomeHeader />
         <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-16 sm:px-6 lg:px-8">
-          <div className="rounded-xl border border-red-200 bg-white p-5 dark:border-red-900/40 dark:bg-atg-elevated">
+          <div className="rounded-xl border border-red-200 bg-atg-elevated p-5 dark:border-red-900/40 dark:bg-atg-elevated">
             <p className="text-sm text-red-700 dark:text-red-300">{c.loadError}</p>
             <button
               type="button"
@@ -225,13 +225,13 @@ export function CarDetailPageContent({
       : `${detail.rentalDays} ${c.dayPlural}`;
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
+    <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
       <HomeHeader />
 
-      <div className="border-b border-gray-200 bg-white dark:border-atg-border dark:bg-atg-elevated">
+      <div className="border-b border-atg-border bg-atg-elevated dark:border-atg-border dark:bg-atg-elevated">
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
           <nav
-            className="flex flex-wrap items-center gap-2 text-sm text-gray-500 dark:text-atg-muted"
+            className="flex flex-wrap items-center gap-2 text-sm text-atg-muted"
             aria-label="Breadcrumb"
           >
             <Link href="/" className="transition-colors hover:text-primary">
@@ -242,7 +242,7 @@ export function CarDetailPageContent({
               {c.breadcrumbCars}
             </Link>
             <span aria-hidden>/</span>
-            <span className="font-medium text-[#0f1a16] dark:text-white">{title}</span>
+            <span className="font-medium text-atg-fg">{title}</span>
           </nav>
         </div>
       </div>
@@ -263,19 +263,19 @@ export function CarDetailPageContent({
             </div>
 
             <header>
-              <p className="text-sm text-gray-600 dark:text-atg-muted">
+              <p className="text-sm text-atg-muted">
                 {formatDisplayDate(detail.pickupDate, locale)} →{' '}
                 {formatDisplayDate(detail.returnDate, locale)} · {daysLabel}
               </p>
             </header>
 
-            <section className="rounded-2xl border border-gray-100 bg-white p-6 dark:border-atg-border dark:bg-atg-elevated">
-              <h2 className="mb-4 text-lg font-bold text-[#0f1a16] dark:text-white">
+            <section className="rounded-2xl border border-atg-border bg-atg-elevated p-6 dark:border-atg-border dark:bg-atg-elevated">
+              <h2 className="mb-4 text-lg font-bold text-atg-fg">
                 {c.agencyTitle}
               </h2>
-              <p className="font-semibold text-[#0f1a16] dark:text-white">{detail.agency.name}</p>
+              <p className="font-semibold text-atg-fg">{detail.agency.name}</p>
               {detail.agency.city && (
-                <p className="mt-1 flex items-center gap-1.5 text-sm text-gray-500 dark:text-atg-muted">
+                <p className="mt-1 flex items-center gap-1.5 text-sm text-atg-muted">
                   <svg
                     className="h-4 w-4 shrink-0 text-primary"
                     fill="none"
@@ -294,17 +294,17 @@ export function CarDetailPageContent({
                 </p>
               )}
               {detail.agency.address && (
-                <p className="mt-2 text-sm text-gray-600 dark:text-atg-muted">
+                <p className="mt-2 text-sm text-atg-muted">
                   {detail.agency.address}
                 </p>
               )}
             </section>
 
-            <section className="rounded-2xl border border-gray-100 bg-white p-6 dark:border-atg-border dark:bg-atg-elevated">
-              <h2 className="mb-2 text-lg font-bold text-[#0f1a16] dark:text-white">
+            <section className="rounded-2xl border border-atg-border bg-atg-elevated p-6 dark:border-atg-border dark:bg-atg-elevated">
+              <h2 className="mb-2 text-lg font-bold text-atg-fg">
                 {c.categoryTitle}
               </h2>
-              <p className="text-sm text-gray-600 dark:text-atg-muted">
+              <p className="text-sm text-atg-muted">
                 {detail.category.name}
                 {detail.category.exampleModel ? ` · ${detail.category.exampleModel}` : ''}
               </p>

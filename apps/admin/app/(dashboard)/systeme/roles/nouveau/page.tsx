@@ -1,16 +1,11 @@
 import type { Metadata } from 'next';
-import { AdminPageIntro } from '../../../../../components/admin-page-intro';
-import { RoleForm } from '../../../../../components/rbac/role-form';
+import { getAdminPageMetadata } from '../../../../../lib/i18n/admin-page-i18n';
+import { NouveauRolePageContent } from '../../../../../components/pages/systeme-roles-nouveau-page-content';
 
-export const metadata: Metadata = {
-  title: 'Nouveau rôle — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('systeme/roles/nouveau');
+}
 
-export default function NouveauRolePage() {
-  return (
-    <div>
-      <AdminPageIntro description={"Créer un rôle personnalisé."} />
-      <RoleForm mode="create" />
-    </div>
-  );
+export default function Page() {
+  return <NouveauRolePageContent />;
 }

@@ -1,16 +1,11 @@
 import type { Metadata } from 'next';
-import { AdminPageIntro } from '../../../../components/admin-page-intro';
-import { RbacAuditLogsList } from '../../../../components/rbac/rbac-audit-logs-list';
+import { getAdminPageMetadata } from '../../../../lib/i18n/admin-page-i18n';
+import { JournauxSecuritePageContent } from '../../../../components/pages/utilisateurs-journaux-securite-page-content';
 
-export const metadata: Metadata = {
-  title: 'Journaux de sécurité — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('utilisateurs/journaux-securite');
+}
 
-export default function UtilisateurJournauxSecuritePage() {
-  return (
-    <div>
-      <AdminPageIntro description={"Événements de sécurité et audit d'accès."} />
-      <RbacAuditLogsList showSubnav={false} />
-    </div>
-  );
+export default function Page() {
+  return <JournauxSecuritePageContent />;
 }

@@ -1,11 +1,13 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import type { Role } from '@africatourismgate/types';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
-import { getRbacErrorMessage } from '../../lib/rbac-errors';
 import { RoleForm } from './role-form';
 
 type RoleEditPageProps = {
@@ -13,6 +15,9 @@ type RoleEditPageProps = {
 };
 
 export function RoleEditPage({ roleId }: RoleEditPageProps) {
+  const { rbac: getRbacErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.rbac.roles');
+  const tCommon = useTranslations('modules.common');
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -22,7 +27,9 @@ export function RoleEditPage({ roleId }: RoleEditPageProps) {
   useAdminEditPageMeta({
     ready: state.status === 'ready',
     title:
-      state.status === 'ready' && state.role.isSystem ? 'Rôle système' : 'Modifier le rôle',
+      state.status === 'ready' && state.role.isSystem
+        ? t('editTitle.system')
+        : t('editTitle.custom'),
     entityLabel: state.status === 'ready' ? state.role.name : undefined,
   });
 
@@ -40,10 +47,10 @@ export function RoleEditPage({ roleId }: RoleEditPageProps) {
     return () => {
       cancelled = true;
     };
-  }, [roleId]);
+  }, [roleId, getRbacErrorMessage]);
 
   if (state.status === 'loading') {
-    return <p className="text-sm text-atg-muted">Chargement…</p>;
+    return <p className="text-sm text-atg-muted">{tCommon('loading')}</p>;
   }
 
   if (state.status === 'error') {
@@ -53,7 +60,7 @@ export function RoleEditPage({ roleId }: RoleEditPageProps) {
           {state.message}
         </p>
         <Link href="/systeme/roles" className="text-sm text-primary">
-          ← Retour aux rôles
+          {t('backToList')}
         </Link>
       </div>
     );

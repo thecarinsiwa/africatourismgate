@@ -86,12 +86,12 @@ export function PackageVehicleConfigItem({
   const unavailable = Boolean(detail && !detail.availabilitySlot);
 
   return (
-    <article className="rounded-2xl border border-gray-100 bg-white p-5 dark:border-atg-border dark:bg-atg-elevated">
-      <header className="mb-4 border-b border-gray-100 pb-4 dark:border-atg-border">
+    <article className="rounded-2xl border border-atg-border bg-atg-elevated p-5 dark:border-atg-border dark:bg-atg-elevated">
+      <header className="mb-4 border-b border-atg-border pb-4 dark:border-atg-border">
         <p className="text-xs font-semibold uppercase tracking-wide text-primary">
           {t.itemTypes.vehicle}
         </p>
-        <h3 className="mt-1 text-lg font-bold text-[#0f1a16] dark:text-white">{label}</h3>
+        <h3 className="mt-1 text-lg font-bold text-atg-fg">{label}</h3>
       </header>
 
       {!pickupDate || !returnDate || returnDate <= pickupDate ? (
@@ -99,7 +99,7 @@ export function PackageVehicleConfigItem({
       ) : null}
 
       {pickupDate && returnDate && returnDate > pickupDate && loading && (
-        <p className="text-sm text-gray-600 dark:text-atg-muted">{t.loadingVehicleAvailability}</p>
+        <p className="text-sm text-atg-muted">{t.loadingVehicleAvailability}</p>
       )}
 
       {pickupDate && returnDate && returnDate > pickupDate && error && (

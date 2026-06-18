@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Button,
   Card,
@@ -9,10 +11,10 @@ import {
   Input,
 } from '@africatourismgate/ui';
 import type { Amenity } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
 import { getAmenityIcon } from '../../lib/amenity-icon-map';
 import { getApiClient } from '../../lib/auth/api';
-import { getHebergementsErrorMessage } from '../../lib/hebergements-errors';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -22,6 +24,14 @@ type AmenityFormValues = { code: string; name: string };
 const emptyForm: AmenityFormValues = { code: '', name: '' };
 
 export function AmenitiesList() {
+  const { hebergements: getHebergementsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.properties.amenitiesList');
+  const tColumns = useTranslations('modules.common.columns');
+  const tValidation = useTranslations('modules.common.validation');
+  const tPagination = useTranslations('modules.common.pagination');
+  const tCommon = useTranslations('modules.common');
+  const tActions = useTranslations('common.actions');
+  const tNav = useTranslations('nav.links');
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -54,7 +64,7 @@ export function AmenitiesList() {
     } catch (error) {
       setState({ status: 'error', message: getHebergementsErrorMessage(error) });
     }
-  }, [page, search]);
+  }, [page, search, getHebergementsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -93,7 +103,7 @@ export function AmenitiesList() {
     event.preventDefault();
     setFormError(null);
     if (!formValues.code.trim() || !formValues.name.trim()) {
-      setFormError('Code et nom sont obligatoires.');
+      setFormError(tValidation('iataAndNameRequired'));
       return;
     }
     setSubmitting(true);
@@ -118,7 +128,7 @@ export function AmenitiesList() {
 
   const handleDelete = useCallback(
     async (a: Amenity) => {
-      if (!window.confirm(`Supprimer l’équipement « ${a.name} » ?`)) return;
+      if (!window.confirm(t('deleteConfirm', { name: a.name }))) return;
       setDeletingId(a.id);
       try {
         await getApiClient().deleteAmenity(a.id);
@@ -129,7 +139,7 @@ export function AmenitiesList() {
         setDeletingId(null);
       }
     },
-    [load],
+    [load, t, getHebergementsErrorMessage],
   );
 
   const amenities = state.status === 'ready' ? state.amenities : [];
@@ -140,18 +150,18 @@ export function AmenitiesList() {
         <div className="flex-1 sm:max-w-md">
           <Input
             type="search"
-            placeholder="Rechercher par code ou nom…"
+            placeholder={t('searchPlaceholder')}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
           />
         </div>
         <div className="flex gap-2">
           <Button href="/hebergements" variant="outline">
-            Hébergements
+            {tNav('accommodations')}
           </Button>
           {!showForm ? (
             <Button type="button" onClick={openCreate}>
-              Nouvel équipement
+              {t('newAmenity')}
             </Button>
           ) : null}
         </div>
@@ -161,7 +171,7 @@ export function AmenitiesList() {
         <Card variant="dashboard" className="max-w-lg">
           <form onSubmit={handleSubmit} className="space-y-4">
             <h3 className="text-sm font-medium">
-              {editing ? 'Modifier l’équipement' : 'Nouvel équipement'}
+              {editing ? `${tActions('edit')} — ${tNav('amenities')}` : t('newAmenity')}
             </h3>
             {formError ? (
               <p role="alert" className="text-sm text-red-600">
@@ -169,27 +179,26 @@ export function AmenitiesList() {
               </p>
             ) : null}
             <Input
-              label="Code"
+              label={tColumns('code')}
               value={formValues.code}
               onChange={(e) =>
                 setFormValues((p) => ({ ...p, code: e.target.value.toLowerCase() }))
               }
-              hint="Ex. wifi, pool_parking"
               disabled={Boolean(editing)}
               required
             />
             <Input
-              label="Nom"
+              label={tColumns('name')}
               value={formValues.name}
               onChange={(e) => setFormValues((p) => ({ ...p, name: e.target.value }))}
               required
             />
             <div className="flex gap-3">
               <Button type="submit" loading={submitting}>
-                {editing ? 'Enregistrer' : 'Créer'}
+                {editing ? tActions('save') : tActions('create')}
               </Button>
               <Button type="button" variant="outline" onClick={resetForm}>
-                Annuler
+                {tActions('cancel')}
               </Button>
             </div>
           </form>
@@ -203,9 +212,9 @@ export function AmenitiesList() {
       ) : (
         <>
           {state.status === 'loading' ? (
-            <p className="text-sm text-atg-muted">Chargement…</p>
+            <p className="text-sm text-atg-muted">{tCommon('loading')}</p>
           ) : amenities.length === 0 ? (
-            <p className="text-sm text-atg-muted">Aucun équipement.</p>
+            <p className="text-sm text-atg-muted">{t('empty')}</p>
           ) : (
             <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {amenities.map((a) => (
@@ -242,7 +251,7 @@ export function AmenitiesList() {
               pageSize={PAGE_SIZE}
               totalPages={state.totalPages}
               totalItems={state.total}
-              itemLabel="équipement"
+              itemLabel={tPagination('amenity')}
               onPageChange={setPage}
             />
           ) : null}

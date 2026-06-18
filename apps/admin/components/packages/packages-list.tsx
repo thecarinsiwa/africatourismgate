@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Button,
   Card,
@@ -11,9 +13,10 @@ import {
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { Package, PackageDetail } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getPackagesErrorMessage } from '../../lib/packages-errors';
+import { usePackageStatusLabels } from '../../lib/i18n/use-module-labels';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -25,6 +28,13 @@ function formatMoney(cents: number, currency: string): string {
 type PackageRow = Package & { totalCents?: number; currency?: string };
 
 export function PackagesList() {
+  const { packages: getPackagesErrorMessage } = useAdminErrorMessages();
+  const tList = useTranslations('modules.packages.list');
+  const tColumns = useTranslations('modules.packages.columns');
+  const tCommonColumns = useTranslations('modules.common.columns');
+  const tPagination = useTranslations('modules.common.pagination');
+  const packageStatusLabels = usePackageStatusLabels();
+  const tEmpty = useTranslations('modules.common.empty');
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -65,7 +75,7 @@ export function PackagesList() {
     } catch (error) {
       setState({ status: 'error', message: getPackagesErrorMessage(error) });
     }
-  }, [page, search]);
+  }, [page, search, getPackagesErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -84,7 +94,7 @@ export function PackagesList() {
 
   const handleDelete = useCallback(
     async (pkg: Package) => {
-      if (!window.confirm(`Supprimer le forfait « ${pkg.name} » ?`)) return;
+      if (!window.confirm(tList('deleteConfirm', { name: pkg.name }))) return;
       setDeleteError(null);
       setDeletingId(pkg.id);
       try {
@@ -96,21 +106,21 @@ export function PackagesList() {
         setDeletingId(null);
       }
     },
-    [load],
+    [load, tList, getPackagesErrorMessage],
   );
 
   const columns = useMemo<ColumnDef<PackageRow, unknown>[]>(
     () => [
       {
         accessorKey: 'name',
-        header: 'Forfait',
+        header: tColumns('package'),
         cell: ({ row }) => (
           <span className="font-medium text-atg-fg">{row.original.name}</span>
         ),
       },
       {
         id: 'discount',
-        header: 'Remise',
+        header: tColumns('discount'),
         meta: { align: 'center' },
         cell: ({ row }) => (
           <span className="text-sm tabular-nums">{row.original.discountPercent}%</span>
@@ -118,7 +128,7 @@ export function PackagesList() {
       },
       {
         id: 'total',
-        header: 'Total',
+        header: tColumns('total'),
         meta: { align: 'right' },
         cell: ({ row }) =>
           row.original.totalCents != null && row.original.currency ? (
@@ -126,18 +136,21 @@ export function PackagesList() {
               {formatMoney(row.original.totalCents, row.original.currency)}
             </span>
           ) : (
-            <span className="text-sm text-atg-muted">—</span>
+            <span className="text-sm text-atg-muted">{tEmpty('dash')}</span>
           ),
       },
       {
         id: 'active',
-        header: 'Actif',
+        header: tColumns('active'),
         meta: { align: 'center' },
-        cell: ({ row }) => (row.original.active === 1 ? 'Oui' : 'Non'),
+        cell: ({ row }) =>
+          row.original.active === 1
+            ? packageStatusLabels.active
+            : packageStatusLabels.inactive,
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tCommonColumns('actions'),
         meta: { align: 'right' },
         cell: ({ row }) => {
           const pkg = row.original;
@@ -159,7 +172,7 @@ export function PackagesList() {
         },
       },
     ],
-    [deletingId, handleDelete],
+    [deletingId, handleDelete, packageStatusLabels, tColumns, tCommonColumns, tEmpty],
   );
 
   const packages = state.status === 'ready' ? state.packages : [];
@@ -170,12 +183,12 @@ export function PackagesList() {
         <div className="flex-1 sm:max-w-md">
           <Input
             type="search"
-            placeholder="Rechercher un forfait…"
+            placeholder={tList('searchPlaceholder')}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
           />
         </div>
-        <Button href="/produits/forfaits/nouveau">Nouveau forfait</Button>
+        <Button href="/produits/forfaits/nouveau">{tList('newPackage')}</Button>
       </div>
 
       {deleteError ? (
@@ -195,7 +208,7 @@ export function PackagesList() {
               columns={columns}
               data={packages}
               isLoading={state.status === 'loading'}
-              emptyMessage="Aucun forfait pour le moment."
+              emptyMessage={tList('emptyDefault')}
               getRowId={(row) => row.id}
             />
           </Card>
@@ -205,7 +218,7 @@ export function PackagesList() {
               pageSize={PAGE_SIZE}
               totalPages={state.totalPages}
               totalItems={state.total}
-              itemLabel="forfait"
+              itemLabel={tPagination('package')}
               onPageChange={setPage}
             />
           ) : null}

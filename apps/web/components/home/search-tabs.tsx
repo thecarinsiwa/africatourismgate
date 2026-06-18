@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { useActivityDestinations } from '../../lib/activities/use-activity-destinations';
@@ -13,6 +12,15 @@ import { addDays, todayISODate } from '../../lib/hotels/dates';
 import { usePublicAirports } from '../../lib/flights/use-public-airports';
 import { useTranslations } from '../../lib/i18n/locale-provider';
 import { buildSearchRoute, type SearchVertical } from '../../lib/search/route';
+import {
+  SearchFormInput,
+  SearchFormLabel,
+  SearchFormSelect,
+  SearchFormShell,
+  SearchFormActions,
+  SearchFormSubmit,
+  searchFormFieldClass,
+} from '../shared';
 
 type SearchTab = SearchVertical;
 
@@ -25,33 +33,16 @@ const AFRICAN_CITIES = [
 function TabIcon({ tab }: { tab: SearchTab }) {
   switch (tab) {
     case 'flights':
-      return <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>;
+      return <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>;
     case 'hotels':
-      return <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4M9 9v.01M9 12v.01M9 15v.01M9 18v.01" /></svg>;
+      return <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4M9 9v.01M9 12v.01M9 15v.01M9 18v.01" /></svg>;
     case 'cars':
-      return <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 17h8M6 11l2-4h8l2 4M5 17a2 2 0 104 0 2 2 0 00-4 0zm10 0a2 2 0 104 0 2 2 0 00-4 0z" /></svg>;
+      return <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 17h8M6 11l2-4h8l2 4M5 17a2 2 0 104 0 2 2 0 00-4 0zm10 0a2 2 0 104 0 2 2 0 00-4 0z" /></svg>;
     case 'cruises':
-      return <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 18h18M5 14l-2-6h18l-2 6M8 10V6a4 4 0 018 0v4" /></svg>;
+      return <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 18h18M5 14l-2-6h18l-2 6M8 10V6a4 4 0 018 0v4" /></svg>;
     case 'tours':
-      return <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
+      return <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
   }
-}
-
-function FormLabel({ children }: { children: React.ReactNode }) {
-  return <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-atg-muted">{children}</label>;
-}
-
-function FormInput({ type = 'text', name, placeholder, value, min, max, onChange }: { type?: string; name: string; placeholder?: string; value: string; min?: string; max?: string; onChange: (v: string) => void; }) {
-  return <input type={type} name={name} placeholder={placeholder} value={value} min={min} max={max} onChange={(e) => onChange(e.target.value)} className="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg dark:placeholder:text-atg-muted" />;
-}
-
-function FormSelect({ name, placeholder, options, value, disabled, onChange }: { name: string; placeholder: string; options: string[]; value: string; disabled?: boolean; onChange: (v: string) => void; }) {
-  return (
-    <select name={name} value={value} disabled={disabled} onChange={(e) => onChange(e.target.value)} className="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-60 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg">
-      <option value="">{placeholder}</option>
-      {options.map((opt) => <option key={opt} value={opt}>{opt}</option>)}
-    </select>
-  );
 }
 
 type FlightTripType = 'oneWay' | 'roundTrip';
@@ -78,7 +69,7 @@ function FlightTripTypeToggle({
     <div
       role="radiogroup"
       aria-label={ariaLabel}
-      className="inline-flex rounded-lg border border-gray-200 bg-gray-50 p-1 dark:border-atg-border dark:bg-atg-surface"
+      className="inline-flex rounded-lg border border-atg-border bg-atg-surface p-1 dark:border-atg-border dark:bg-atg-surface"
     >
       {options.map((option) => {
         const selected = value === option.id;
@@ -92,7 +83,7 @@ function FlightTripTypeToggle({
             className={`rounded-md px-4 py-2 text-sm font-semibold transition-colors ${
               selected
                 ? 'bg-primary text-white shadow-sm'
-                : 'text-gray-600 hover:text-gray-900 dark:text-atg-muted dark:hover:text-white'
+                : 'text-atg-muted hover:text-atg-fg text-atg-muted dark:hover:text-white'
             }`}
           >
             {option.label}
@@ -124,7 +115,7 @@ function FormAirportSelect({
       value={value}
       disabled={disabled}
       onChange={(e) => onChange(e.target.value)}
-      className="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-60 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg"
+      className={searchFormFieldClass}
     >
       <option value="">{placeholder}</option>
       {options.map((airport) => (
@@ -152,7 +143,7 @@ function FormCruisePortSelect({
       name={name}
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="min-h-[44px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg"
+      className={`${searchFormFieldClass} disabled:cursor-not-allowed disabled:opacity-60`}
     >
       <option value="">{placeholder}</option>
       {CRUISE_PORT_OPTIONS.map((port) => (
@@ -369,22 +360,29 @@ export function SearchTabs() {
         ? `${carRentalDays} ${t.cars.dayPlural}`
         : null;
 
-  const submitBtn = <button type="submit" className="min-h-[44px] w-full rounded-lg bg-primary px-5 py-2.5 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover">{t.search.search}</button>;
+  const handleTabChange = (tabId: string) => {
+    setActiveTab(tabId as SearchTab);
+    setFlightError(null);
+    setCarError(null);
+    setCruiseError(null);
+    setToursError(null);
+  };
+
+  const searchTabs = tabs.map((tab) => ({
+    ...tab,
+    icon: <TabIcon tab={tab.id} />,
+  }));
+
+  const submitBtn = <SearchFormSubmit label={t.search.search} />;
 
   return (
-    <section id="search" className="relative -mt-12 z-20">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-2xl transition-colors dark:border-atg-border dark:bg-atg-elevated">
-          <div className="flex" role="tablist" aria-label={t.search.tablistAria}>
-            {tabs.map((tab) => (
-              <button key={tab.id} type="button" role="tab" aria-selected={activeTab === tab.id} onClick={() => { setActiveTab(tab.id); setFlightError(null); setCarError(null); setCruiseError(null); setToursError(null); }} className={`flex flex-1 items-center justify-center gap-2 py-4 text-xs sm:text-sm font-semibold uppercase tracking-wide transition-all border-b-[3px] ${activeTab === tab.id ? 'bg-primary text-white border-primary-hover' : 'bg-gray-50 text-gray-500 border-transparent hover:bg-gray-100 hover:text-gray-700 dark:bg-atg-surface dark:text-atg-muted dark:hover:bg-white/5 dark:hover:text-white'}`}>
-                <TabIcon tab={tab.id} />
-                <span className="hidden sm:inline">{tab.label}</span>
-              </button>
-            ))}
-          </div>
-
-          <form onSubmit={handleSubmit} className="p-5 sm:p-6">
+    <SearchFormShell
+      tabs={searchTabs}
+      activeTab={activeTab}
+      onTabChange={handleTabChange}
+      tablistAriaLabel={t.search.tablistAria}
+      onSubmit={handleSubmit}
+    >
             {activeTab === 'flights' && (
               <div className="space-y-4">
                 <div className="flex flex-wrap items-center justify-between gap-3">
@@ -395,16 +393,10 @@ export function SearchTabs() {
                     ariaLabel={t.search.tripTypeAria}
                     onChange={handleFlightTripTypeChange}
                   />
-                  <Link
-                    href="/flights"
-                    className="inline-flex min-h-[44px] items-center rounded-lg border border-primary px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/5 dark:hover:bg-primary/10"
-                  >
-                    {t.search.viewAllFlights}
-                  </Link>
                 </div>
                 <div className={`grid gap-4 sm:grid-cols-2 ${flightTripType === 'roundTrip' ? 'lg:grid-cols-[1fr_1fr_auto_1fr_1fr_0.75fr_auto]' : 'lg:grid-cols-[1fr_1fr_auto_1fr_0.75fr_auto]'} lg:items-end`}>
                   <div>
-                    <FormLabel>{t.search.from}</FormLabel>
+                    <SearchFormLabel>{t.search.from}</SearchFormLabel>
                     <FormAirportSelect
                       name="from"
                       placeholder={
@@ -420,7 +412,7 @@ export function SearchTabs() {
                     />
                   </div>
                   <div className="relative">
-                    <FormLabel>{t.search.to}</FormLabel>
+                    <SearchFormLabel>{t.search.to}</SearchFormLabel>
                     <FormAirportSelect
                       name="to"
                       placeholder={
@@ -440,7 +432,7 @@ export function SearchTabs() {
                       type="button"
                       onClick={swapFlightAirports}
                       aria-label={t.search.swapAirports}
-                      className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-gray-300 text-gray-600 transition-colors hover:border-primary hover:text-primary dark:border-atg-border dark:text-atg-muted dark:hover:text-white"
+                      className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-atg-border text-atg-muted transition-colors hover:border-primary hover:text-primary dark:border-atg-border text-atg-muted dark:hover:text-white"
                     >
                       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
@@ -448,8 +440,8 @@ export function SearchTabs() {
                     </button>
                   </div>
                   <div>
-                    <FormLabel>{t.search.departDate}</FormLabel>
-                    <FormInput
+                    <SearchFormLabel>{t.search.departDate}</SearchFormLabel>
+                    <SearchFormInput
                       type="date"
                       name="departureDate"
                       value={departDate}
@@ -461,8 +453,8 @@ export function SearchTabs() {
                   </div>
                   {flightTripType === 'roundTrip' && (
                     <div>
-                      <FormLabel>{t.search.returnDate}</FormLabel>
-                      <FormInput
+                      <SearchFormLabel>{t.search.returnDate}</SearchFormLabel>
+                      <SearchFormInput
                         type="date"
                         name="returnDate"
                         value={returnDate}
@@ -475,8 +467,8 @@ export function SearchTabs() {
                     </div>
                   )}
                   <div>
-                    <FormLabel>{t.search.passengers}</FormLabel>
-                    <FormInput
+                    <SearchFormLabel>{t.search.passengers}</SearchFormLabel>
+                    <SearchFormInput
                       type="number"
                       name="passengers"
                       placeholder="1"
@@ -485,7 +477,13 @@ export function SearchTabs() {
                       onChange={(value) => setFlightPassengers(value)}
                     />
                   </div>
-                  <div className="flex items-end">{submitBtn}</div>
+                  <div className="flex items-end">
+                    <SearchFormActions
+                      submit={submitBtn}
+                      viewAllHref="/flights"
+                      viewAllLabel={t.search.viewAllFlights}
+                    />
+                  </div>
                 </div>
                 {airportsError && (
                   <p className="text-sm text-amber-700 dark:text-amber-300" role="status">
@@ -501,41 +499,43 @@ export function SearchTabs() {
             )}
 
             {activeTab === 'hotels' && (
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
-                <div>
-                  <FormLabel>{t.search.checkIn}</FormLabel>
-                  <FormInput type="date" name="checkIn" value={departDate} onChange={setDepartDate} />
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1.25fr_0.75fr_auto] lg:items-end">
+                  <div>
+                    <SearchFormLabel>{t.search.checkIn}</SearchFormLabel>
+                    <SearchFormInput type="date" name="checkIn" value={departDate} onChange={setDepartDate} />
+                  </div>
+                  <div>
+                    <SearchFormLabel>{t.search.checkOut}</SearchFormLabel>
+                    <SearchFormInput type="date" name="checkOut" value={returnDate} onChange={setReturnDate} />
+                  </div>
+                  <div>
+                    <SearchFormLabel>{t.search.destination}</SearchFormLabel>
+                    <SearchFormSelect
+                      name="destination"
+                      placeholder={t.search.destinationPh}
+                      options={destinationOptions}
+                      value={destination}
+                      onChange={setDestination}
+                    />
+                  </div>
+                  <div>
+                    <SearchFormLabel>{t.hotels.guests}</SearchFormLabel>
+                    <SearchFormInput
+                      name="guests"
+                      type="number"
+                      placeholder="2"
+                      value={hotelGuests}
+                      onChange={setHotelGuests}
+                    />
+                  </div>
+                  <div className="flex items-end">
+                    <SearchFormActions
+                      submit={submitBtn}
+                      viewAllHref="/hotels"
+                      viewAllLabel={t.search.viewAllHotels}
+                    />
+                  </div>
                 </div>
-                <div>
-                  <FormLabel>{t.search.checkOut}</FormLabel>
-                  <FormInput type="date" name="checkOut" value={returnDate} onChange={setReturnDate} />
-                </div>
-                <div>
-                  <FormLabel>{t.search.destination}</FormLabel>
-                  <FormSelect
-                    name="destination"
-                    placeholder={t.search.destinationPh}
-                    options={destinationOptions}
-                    value={destination}
-                    onChange={setDestination}
-                  />
-                </div>
-                <div>
-                  <FormLabel>{t.hotels.guests}</FormLabel>
-                  <FormInput
-                    name="guests"
-                    type="number"
-                    placeholder="2"
-                    value={hotelGuests}
-                    onChange={setHotelGuests}
-                  />
-                </div>
-                <div>
-                  <FormLabel>{t.search.roomType}</FormLabel>
-                  <FormSelect name="roomType" placeholder={t.search.selectPh} options={t.search.roomTypes} value="" onChange={() => {}} />
-                </div>
-                <div className="flex items-end">{submitBtn}</div>
-              </div>
             )}
 
             {activeTab === 'cars' && (
@@ -543,27 +543,21 @@ export function SearchTabs() {
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   {carRentalDaysLabel ? (
                     <span
-                      className="inline-flex min-h-[44px] items-center rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-semibold text-gray-700 dark:border-atg-border dark:bg-atg-surface dark:text-white"
+                      className="inline-flex min-h-[44px] items-center rounded-lg border border-atg-border bg-atg-surface px-4 py-2 text-sm font-semibold text-atg-fg dark:border-atg-border dark:bg-atg-surface dark:text-white"
                       role="status"
                     >
                       {carRentalDaysLabel}
                     </span>
                   ) : (
-                    <span className="text-sm text-gray-500 dark:text-atg-muted">
+                    <span className="text-sm text-atg-muted">
                       {t.search.carsDurationHint}
                     </span>
                   )}
-                  <Link
-                    href="/cars"
-                    className="inline-flex min-h-[44px] items-center rounded-lg border border-primary px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/5 dark:hover:bg-primary/10"
-                  >
-                    {t.search.viewAllCars}
-                  </Link>
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.25fr_1fr_1fr_auto] lg:items-end">
                   <div>
-                    <FormLabel>{t.cars.pickupLocation}</FormLabel>
-                    <FormSelect
+                    <SearchFormLabel>{t.cars.pickupLocation}</SearchFormLabel>
+                    <SearchFormSelect
                       name="pickupLocation"
                       placeholder={
                         carPickupLoading ? t.cars.loading : t.search.pickupLocationPh
@@ -578,8 +572,8 @@ export function SearchTabs() {
                     />
                   </div>
                   <div>
-                    <FormLabel>{t.search.pickUp}</FormLabel>
-                    <FormInput
+                    <SearchFormLabel>{t.search.pickUp}</SearchFormLabel>
+                    <SearchFormInput
                       type="date"
                       name="pickUp"
                       value={departDate}
@@ -594,8 +588,8 @@ export function SearchTabs() {
                     />
                   </div>
                   <div>
-                    <FormLabel>{t.search.dropOff}</FormLabel>
-                    <FormInput
+                    <SearchFormLabel>{t.search.dropOff}</SearchFormLabel>
+                    <SearchFormInput
                       type="date"
                       name="dropOff"
                       value={returnDate}
@@ -606,7 +600,13 @@ export function SearchTabs() {
                       }}
                     />
                   </div>
-                  <div className="flex items-end">{submitBtn}</div>
+                  <div className="flex items-end">
+                    <SearchFormActions
+                      submit={submitBtn}
+                      viewAllHref="/cars"
+                      viewAllLabel={t.search.viewAllCars}
+                    />
+                  </div>
                 </div>
                 {carPickupError && (
                   <p className="text-sm text-amber-700 dark:text-amber-300" role="status">
@@ -623,17 +623,9 @@ export function SearchTabs() {
 
             {activeTab === 'cruises' && (
               <div className="space-y-4">
-                <div className="flex flex-wrap items-center justify-end gap-3">
-                  <Link
-                    href="/cruises"
-                    className="inline-flex min-h-[44px] items-center rounded-lg border border-primary px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/5 dark:hover:bg-primary/10"
-                  >
-                    {t.search.viewAllCruises}
-                  </Link>
-                </div>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1fr_0.75fr_auto] lg:items-end">
                   <div>
-                    <FormLabel>{t.search.sailFrom}</FormLabel>
+                    <SearchFormLabel>{t.search.sailFrom}</SearchFormLabel>
                     <FormCruisePortSelect
                       name="sailFrom"
                       placeholder={t.search.allPorts}
@@ -645,7 +637,7 @@ export function SearchTabs() {
                     />
                   </div>
                   <div>
-                    <FormLabel>{t.search.sailTo}</FormLabel>
+                    <SearchFormLabel>{t.search.sailTo}</SearchFormLabel>
                     <FormCruisePortSelect
                       name="sailTo"
                       placeholder={t.search.allDestinations}
@@ -657,8 +649,8 @@ export function SearchTabs() {
                     />
                   </div>
                   <div>
-                    <FormLabel>{t.search.startDate}</FormLabel>
-                    <FormInput
+                    <SearchFormLabel>{t.search.startDate}</SearchFormLabel>
+                    <SearchFormInput
                       type="date"
                       name="startDate"
                       value={departDate}
@@ -673,8 +665,8 @@ export function SearchTabs() {
                     />
                   </div>
                   <div>
-                    <FormLabel>{t.search.endDate}</FormLabel>
-                    <FormInput
+                    <SearchFormLabel>{t.search.endDate}</SearchFormLabel>
+                    <SearchFormInput
                       type="date"
                       name="endDate"
                       value={returnDate}
@@ -686,15 +678,21 @@ export function SearchTabs() {
                     />
                   </div>
                   <div>
-                    <FormLabel>{t.cruises.guests}</FormLabel>
-                    <FormInput
+                    <SearchFormLabel>{t.cruises.guests}</SearchFormLabel>
+                    <SearchFormInput
                       type="number"
                       name="guests"
                       value={cruiseGuests}
                       onChange={setCruiseGuests}
                     />
                   </div>
-                  <div className="flex items-end">{submitBtn}</div>
+                  <div className="flex items-end">
+                    <SearchFormActions
+                      submit={submitBtn}
+                      viewAllHref="/cruises"
+                      viewAllLabel={t.search.viewAllCruises}
+                    />
+                  </div>
                 </div>
                 {cruiseError && (
                   <p className="text-sm text-red-600 dark:text-red-400" role="alert">
@@ -706,18 +704,10 @@ export function SearchTabs() {
 
             {activeTab === 'tours' && (
               <div className="space-y-4">
-                <div className="flex flex-wrap items-center justify-end gap-3">
-                  <Link
-                    href="/activities"
-                    className="inline-flex min-h-[44px] items-center rounded-lg border border-primary px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/5 dark:hover:bg-primary/10"
-                  >
-                    {t.search.viewAllActivities}
-                  </Link>
-                </div>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.25fr_1fr_0.75fr_auto] lg:items-end">
                   <div>
-                    <FormLabel>{t.search.destination}</FormLabel>
-                    <FormSelect
+                    <SearchFormLabel>{t.search.destination}</SearchFormLabel>
+                    <SearchFormSelect
                       name="destination"
                       placeholder={
                         activityDestinationsLoading
@@ -736,8 +726,8 @@ export function SearchTabs() {
                     />
                   </div>
                   <div>
-                    <FormLabel>{t.activities.date}</FormLabel>
-                    <FormInput
+                    <SearchFormLabel>{t.activities.date}</SearchFormLabel>
+                    <SearchFormInput
                       type="date"
                       name="date"
                       value={departDate}
@@ -749,8 +739,8 @@ export function SearchTabs() {
                     />
                   </div>
                   <div>
-                    <FormLabel>{t.search.participants}</FormLabel>
-                    <FormInput
+                    <SearchFormLabel>{t.search.participants}</SearchFormLabel>
+                    <SearchFormInput
                       type="number"
                       name="participants"
                       placeholder="2"
@@ -763,7 +753,13 @@ export function SearchTabs() {
                       }}
                     />
                   </div>
-                  <div className="flex items-end">{submitBtn}</div>
+                  <div className="flex items-end">
+                    <SearchFormActions
+                      submit={submitBtn}
+                      viewAllHref="/activities"
+                      viewAllLabel={t.search.viewAllActivities}
+                    />
+                  </div>
                 </div>
                 {activityDestinationsError && (
                   <p className="text-sm text-amber-700 dark:text-amber-300" role="status">
@@ -777,9 +773,6 @@ export function SearchTabs() {
                 )}
               </div>
             )}
-          </form>
-        </div>
-      </div>
-    </section>
+    </SearchFormShell>
   );
 }

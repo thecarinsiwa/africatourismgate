@@ -1,8 +1,8 @@
 export const activitiesKpis = [
   {
     key: 'activities',
-    label: 'Activités',
-    subtitle: 'Expériences catalogue',
+    labelKey: 'stats.activities.label',
+    subtitleKey: 'stats.activities.subtitle',
     iconClass: 'bg-atg-info-light text-atg-info',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -23,8 +23,8 @@ export const activitiesKpis = [
   },
   {
     key: 'providers',
-    label: 'Fournisseurs',
-    subtitle: 'Opérateurs locaux',
+    labelKey: 'stats.providers.label',
+    subtitleKey: 'stats.providers.subtitle',
     href: '/produits/activites/fournisseurs',
     iconClass: 'bg-violet-100 text-violet-700 dark:bg-violet-950/50 dark:text-violet-300',
     icon: (
@@ -40,8 +40,8 @@ export const activitiesKpis = [
   },
   {
     key: 'schedules',
-    label: 'Créneaux',
-    subtitle: 'Horaires programmés',
+    labelKey: 'stats.schedules.label',
+    subtitleKey: 'stats.schedules.subtitle',
     iconClass: 'bg-atg-warning-light text-atg-warning',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>

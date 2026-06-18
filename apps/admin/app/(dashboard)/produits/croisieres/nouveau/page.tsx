@@ -1,16 +1,11 @@
 import type { Metadata } from 'next';
-import { AdminPageIntro } from '../../../../../components/admin-page-intro';
-import { SailingForm } from '../../../../../components/cruises/sailing-form';
+import { getAdminPageMetadata } from '../../../../../lib/i18n/admin-page-i18n';
+import { NouveauDepartPageContent } from '../../../../../components/pages/produits-croisieres-nouveau-page-content';
 
-export const metadata: Metadata = {
-  title: 'Nouveau départ — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('produits/croisieres/nouveau');
+}
 
-export default function NouveauDepartPage() {
-  return (
-    <div>
-      <AdminPageIntro description={"Associez un itinéraire existant à une date de départ."} />
-      <SailingForm mode="create" />
-    </div>
-  );
+export default function Page() {
+  return <NouveauDepartPageContent />;
 }
