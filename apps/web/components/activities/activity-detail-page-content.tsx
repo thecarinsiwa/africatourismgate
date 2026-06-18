@@ -18,6 +18,7 @@ import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { buildReservationQuery, isActivityScheduleOfferBookable } from '../../lib/reservations/flow';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
+import { ProductGallery } from '../shared';
 import { ActivityBookingMobileBar, ActivityBookingSidebar } from './activity-booking-sidebar';
 import { ActivitySchedulesSection } from './activity-schedules-section';
 
@@ -271,6 +272,21 @@ export function ActivityDetailPageContent({
       <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 pb-28 sm:px-6 lg:px-8 lg:pb-8">
         <div className="lg:grid lg:grid-cols-3 lg:gap-8">
           <div className="space-y-8 lg:col-span-2">
+            {detail.images && detail.images.length > 0 ? (
+              <ProductGallery
+                images={detail.images}
+                name={detail.title}
+                labels={{
+                  ariaLabel: a.galleryAria,
+                  openLightbox: a.galleryOpenLightbox,
+                  close: a.galleryClose,
+                  previous: a.galleryPrevious,
+                  next: a.galleryNext,
+                  counter: a.galleryCounter,
+                }}
+              />
+            ) : null}
+
             <header>
               <p className="text-sm font-semibold uppercase tracking-wide text-primary">
                 {detail.providerName}

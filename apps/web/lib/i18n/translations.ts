@@ -559,6 +559,12 @@ export type Translations = {
     descriptionTitle: string;
     nextSlot: string;
     schedulesAvailable: string;
+    galleryAria: string;
+    galleryOpenLightbox: string;
+    galleryClose: string;
+    galleryPrevious: string;
+    galleryNext: string;
+    galleryCounter: (current: number, total: number) => string;
   };
   packages: {
     metaTitle: string;
@@ -1504,6 +1510,12 @@ const fr: Translations = {
     descriptionTitle: 'Description',
     nextSlot: 'Prochain créneau',
     schedulesAvailable: '{n} créneau(x) disponible(s)',
+    galleryAria: 'Galerie photos de l\'activité',
+    galleryOpenLightbox: 'Agrandir la photo',
+    galleryClose: 'Fermer la galerie',
+    galleryPrevious: 'Photo précédente',
+    galleryNext: 'Photo suivante',
+    galleryCounter: (current, total) => `Photo ${current} sur ${total}`,
   },
   packages: {
     metaTitle: 'Forfaits combinés en Afrique',
@@ -2482,6 +2494,12 @@ const en: Translations = {
     descriptionTitle: 'Description',
     nextSlot: 'Next slot',
     schedulesAvailable: '{n} slot(s) available',
+    galleryAria: 'Activity photo gallery',
+    galleryOpenLightbox: 'Enlarge photo',
+    galleryClose: 'Close gallery',
+    galleryPrevious: 'Previous photo',
+    galleryNext: 'Next photo',
+    galleryCounter: (current, total) => `Photo ${current} of ${total}`,
   },
   packages: {
     metaTitle: 'Combined packages in Africa',

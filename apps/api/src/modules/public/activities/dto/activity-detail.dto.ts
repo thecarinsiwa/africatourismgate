@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { PublicGalleryImageDto } from '../../dto/public-gallery-image.dto';
 
 export class ActivityDetailScheduleDto {
   @ApiProperty({
@@ -59,4 +60,7 @@ export class ActivityDetailDto {
 
   @ApiProperty({ type: [ActivityDetailScheduleDto] })
   schedules!: ActivityDetailScheduleDto[];
+
+  @ApiProperty({ type: [PublicGalleryImageDto] })
+  images!: PublicGalleryImageDto[];
 }

@@ -653,6 +653,12 @@ export const es: Translations = {
     descriptionTitle: 'Descripción',
     nextSlot: 'Próximo horario',
     schedulesAvailable: '{n} horario(s) disponible(s)',
+    galleryAria: 'Galería de fotos de la actividad',
+    galleryOpenLightbox: 'Ampliar foto',
+    galleryClose: 'Cerrar galería',
+    galleryPrevious: 'Foto anterior',
+    galleryNext: 'Foto siguiente',
+    galleryCounter: (current, total) => `Foto ${current} de ${total}`,
   },
   packages: {
     metaTitle: 'Paquetes combinados en África',

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   Activities,
+  ActivityImages,
   ActivityProviders,
   ActivitySchedules,
   Destinations,
@@ -13,6 +14,7 @@ import { PublicActivitiesService } from './public-activities.service';
   imports: [
     TypeOrmModule.forFeature([
       Activities,
+      ActivityImages,
       ActivityProviders,
       ActivitySchedules,
       Destinations,

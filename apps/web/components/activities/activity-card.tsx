@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import {
   buildActivityDetailHref,
@@ -49,9 +50,32 @@ export function ActivityCard({ activity, t, searchParams = {}, locale }: Activit
 
   const canBook = Boolean(effectiveDate && activity.availableSchedulesCount > 0);
 
+  const imageOverlay = (
+    <div className="absolute inset-0 flex flex-col justify-center px-6 py-8 text-white">
+      <p className="text-xs font-semibold uppercase tracking-wide text-white/70">
+        {activity.destination}
+      </p>
+      <p className="mt-1 text-xl font-bold leading-tight">{activity.title}</p>
+      <p className="mt-2 text-sm text-white/80">{activity.providerName}</p>
+    </div>
+  );
+
   return (
     <ProductCard
       image={
+        activity.imageUrl ? (
+          <>
+            <Image
+              src={activity.imageUrl}
+              alt={activity.title}
+              fill
+              className="object-cover"
+              sizes="(max-width: 640px) 100vw, 320px"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+            {imageOverlay}
+          </>
+        ) : (
         <div className="absolute inset-0 flex flex-col justify-center bg-gradient-to-br from-emerald-900 to-primary/80 px-6 py-8 text-white">
           <p className="text-xs font-semibold uppercase tracking-wide text-white/70">
             {activity.destination}
@@ -59,6 +83,7 @@ export function ActivityCard({ activity, t, searchParams = {}, locale }: Activit
           <p className="mt-1 text-xl font-bold leading-tight">{activity.title}</p>
           <p className="mt-2 text-sm text-white/80">{activity.providerName}</p>
         </div>
+        )
       }
       title={
         <h3 className="text-lg font-bold text-atg-fg sm:text-xl">{activity.title}</h3>

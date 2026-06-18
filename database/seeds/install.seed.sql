@@ -760,6 +760,42 @@ INSERT INTO `activity_schedules` (
   '00000000-0000-4000-8000-000000000010'
 );
 
+INSERT INTO `activity_images` (
+  `id`, `activity_id`, `url`, `caption`, `sort_order`, `created_by_user_id`
+) VALUES
+(
+  '00000000-0000-4000-8000-000000004036',
+  '00000000-0000-4000-8000-000000004031',
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Kinshasa_Gombe_%28cropped%29.jpg/1280px-Kinshasa_Gombe_%28cropped%29.jpg',
+  'Quartier Gombe, Kinshasa',
+  1,
+  '00000000-0000-4000-8000-000000000010'
+),
+(
+  '00000000-0000-4000-8000-000000004037',
+  '00000000-0000-4000-8000-000000004031',
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Congo_River_near_Kisangani.jpg/1280px-Congo_River_near_Kisangani.jpg',
+  'Vue sur le fleuve Congo',
+  2,
+  '00000000-0000-4000-8000-000000000010'
+),
+(
+  '00000000-0000-4000-8000-000000004038',
+  '00000000-0000-4000-8000-000000004032',
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Congo_River_near_Kisangani.jpg/1280px-Congo_River_near_Kisangani.jpg',
+  'Promenade au bord du fleuve Congo',
+  1,
+  '00000000-0000-4000-8000-000000000010'
+),
+(
+  '00000000-0000-4000-8000-000000004039',
+  '00000000-0000-4000-8000-000000004032',
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Kinshasa_Gombe_%28cropped%29.jpg/1280px-Kinshasa_Gombe_%28cropped%29.jpg',
+  'Kinshasa — point de départ',
+  2,
+  '00000000-0000-4000-8000-000000000010'
+);
+
 -- -----------------------------------------------------------------------------
 -- 17. Demo activity-only package (public catalog #71)
 -- -----------------------------------------------------------------------------
