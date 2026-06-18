@@ -420,6 +420,12 @@ export const es: Translations = {
       business: 'Business',
       first: 'Primera',
     },
+    galleryAria: 'Galería de fotos del vuelo',
+    galleryOpenLightbox: 'Ampliar foto',
+    galleryClose: 'Cerrar galería',
+    galleryPrevious: 'Foto anterior',
+    galleryNext: 'Foto siguiente',
+    galleryCounter: (current, total) => `Foto ${current} de ${total}`,
   },
   cars: {
     metaTitle: 'Alquiler de coches en África',

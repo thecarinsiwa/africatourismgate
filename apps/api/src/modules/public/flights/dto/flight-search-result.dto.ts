@@ -48,4 +48,7 @@ export class FlightSearchResultDto {
     description: 'Travel date used for pricing (especially when departureDate was not in the search query)',
   })
   departureDate?: string;
+
+  @ApiPropertyOptional({ nullable: true, description: 'First flight photo URL' })
+  imageUrl!: string | null;
 }

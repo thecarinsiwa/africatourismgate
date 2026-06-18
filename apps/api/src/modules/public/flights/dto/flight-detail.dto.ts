@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { PublicGalleryImageDto } from '../../dto/public-gallery-image.dto';
 
 export class FlightDetailClassDto {
   @ApiProperty({ format: 'uuid' })
@@ -76,4 +77,7 @@ export class FlightDetailDto {
 
   @ApiProperty({ type: [FlightDetailClassDto] })
   classes!: FlightDetailClassDto[];
+
+  @ApiProperty({ type: [PublicGalleryImageDto] })
+  images!: PublicGalleryImageDto[];
 }

@@ -336,6 +336,12 @@ export type Translations = {
       business: string;
       first: string;
     };
+    galleryAria: string;
+    galleryOpenLightbox: string;
+    galleryClose: string;
+    galleryPrevious: string;
+    galleryNext: string;
+    galleryCounter: (current: number, total: number) => string;
   };
   cars: {
     metaTitle: string;
@@ -1264,6 +1270,12 @@ const fr: Translations = {
       business: 'Affaires',
       first: 'Première',
     },
+    galleryAria: 'Galerie photos du vol',
+    galleryOpenLightbox: 'Agrandir la photo',
+    galleryClose: 'Fermer la galerie',
+    galleryPrevious: 'Photo précédente',
+    galleryNext: 'Photo suivante',
+    galleryCounter: (current, total) => `Photo ${current} sur ${total}`,
   },
   cars: {
     metaTitle: 'Location de voitures en Afrique',
@@ -2237,6 +2249,12 @@ const en: Translations = {
       business: 'Business',
       first: 'First',
     },
+    galleryAria: 'Flight photo gallery',
+    galleryOpenLightbox: 'Enlarge photo',
+    galleryClose: 'Close gallery',
+    galleryPrevious: 'Previous photo',
+    galleryNext: 'Next photo',
+    galleryCounter: (current, total) => `Photo ${current} of ${total}`,
   },
   cars: {
     metaTitle: 'Car rental in Africa',
