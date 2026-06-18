@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getPackageDetail } from '../../lib/api/public';
 import {
   buildPackageTravelDates,
@@ -130,7 +130,11 @@ export function PackageDetailPageContent({
     [packageId, lineSelections, searchContext, router],
   );
 
+  const hydratedPackageKeyRef = useRef<string | null>(null);
+  const initialStartDate = initialSearch.startDate ?? initialSearch.date ?? '';
+
   useEffect(() => {
+    hydratedPackageKeyRef.current = null;
     let cancelled = false;
 
     setLoading(true);
@@ -141,15 +145,6 @@ export function PackageDetailPageContent({
       .then((data) => {
         if (cancelled) return;
         setDetail(data);
-        const parsedLines = parsePackageLineSelections(rawSearchParams, data.items.length);
-        setLineSelections(parsedLines);
-        setStep(
-          inferInitialStep(
-            data.items,
-            parsedLines,
-            initialSearch.startDate ?? initialSearch.date ?? '',
-          ),
-        );
       })
       .catch((err: unknown) => {
         if (cancelled) return;
@@ -167,6 +162,18 @@ export function PackageDetailPageContent({
     };
   }, [packageId, fetchId]);
 
+  useEffect(() => {
+    if (!detail) return;
+
+    const hydrationKey = `${packageId}:${fetchId}`;
+    if (hydratedPackageKeyRef.current === hydrationKey) return;
+    hydratedPackageKeyRef.current = hydrationKey;
+
+    const parsedLines = parsePackageLineSelections(rawSearchParams, detail.items.length);
+    setLineSelections(parsedLines);
+    setStep(inferInitialStep(detail.items, parsedLines, initialStartDate));
+  }, [detail, packageId, fetchId, rawSearchParams, initialStartDate]);
+
   const configuredCount = detail ? countConfiguredLines(detail.items, lineSelections) : 0;
   const allConfigured = detail ? configuredCount === detail.items.length : false;
   const activityOnly = detail ? isActivityOnlyPackage(detail.items) : false;
@@ -178,8 +185,8 @@ export function PackageDetailPageContent({
     return {
       date: startDate,
       participants: travelers,
-      checkIn: dates?.checkIn ?? startDate,
-      checkOut: dates?.checkOut ?? endDate,
+      checkIn: dates?.startDate ?? startDate,
+      checkOut: dates?.endDate ?? endDate,
       guests: travelers,
       departureDate: startDate,
       passengers: travelers,
