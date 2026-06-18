@@ -46,7 +46,7 @@ function SidebarContent({
             type="date"
             value={pickupDate}
             onChange={(e) => onPickupDateChange(e.target.value)}
-            className="min-h-[44px] w-full rounded-lg border border-atg-border px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-surface dark:text-white"
+            className="min-h-[44px] w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg"
           />
         </label>
         <label className="block text-sm">
@@ -58,7 +58,7 @@ function SidebarContent({
             value={returnDate}
             min={pickupDate || undefined}
             onChange={(e) => onReturnDateChange(e.target.value)}
-            className="min-h-[44px] w-full rounded-lg border border-atg-border px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-surface dark:text-white"
+            className="min-h-[44px] w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg"
           />
         </label>
       </div>
@@ -75,7 +75,7 @@ function SidebarContent({
       )}
 
       {hasDates && (
-        <div className="rounded-lg bg-atg-surface px-4 py-3 dark:bg-white/5">
+        <div className="rounded-lg bg-atg-surface px-4 py-3 dark:bg-atg-surface">
           <p className="text-xs uppercase tracking-wide text-atg-muted">
             {t.totalRental}
           </p>
