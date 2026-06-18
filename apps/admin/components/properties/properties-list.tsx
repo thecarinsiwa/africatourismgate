@@ -20,10 +20,7 @@ import type { Destination, Property } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-<<<<<<< HEAD
 import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
-=======
->>>>>>> 3e3e5b9 (feat(admin): i18n FR/EN/ES complet — messages modulaires, parité, e2e ES)
 import { PropertyThumbnail } from './property-thumbnail';
 
 const PAGE_SIZE = 20;
@@ -37,18 +34,12 @@ export function PropertiesList() {
   const tCommonColumns = useTranslations('modules.common.columns');
   const tCommonFilters = useTranslations('modules.common.filters');
   const tPagination = useTranslations('modules.common.pagination');
-<<<<<<< HEAD
   const tDataTable = useTranslations('modules.common.dataTable');
-=======
->>>>>>> 3e3e5b9 (feat(admin): i18n FR/EN/ES complet — messages modulaires, parité, e2e ES)
   const tDialogs = useTranslations('modules.properties.dialogs');
   const tToast = useTranslations('modules.common.toast');
   const tActions = useTranslations('common.actions');
   const propertyTypeLabels = usePropertyTypeLabels();
-<<<<<<< HEAD
   const paginationLabels = useDataTablePaginationLabels();
-=======
->>>>>>> 3e3e5b9 (feat(admin): i18n FR/EN/ES complet — messages modulaires, parité, e2e ES)
   const { toast } = useToast();
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
@@ -168,10 +159,7 @@ export function PropertiesList() {
       {
         accessorKey: 'slug',
         header: tCommonColumns('slug'),
-<<<<<<< HEAD
         meta: { hideOnMobile: true },
-=======
->>>>>>> 3e3e5b9 (feat(admin): i18n FR/EN/ES complet — messages modulaires, parité, e2e ES)
         cell: ({ row }) => (
           <code className="rounded-md bg-atg-surface px-2 py-0.5 font-mono text-xs text-atg-muted">
             {row.original.slug}
@@ -181,10 +169,7 @@ export function PropertiesList() {
       {
         id: 'destination',
         header: tColumns('destination'),
-<<<<<<< HEAD
         meta: { hideOnMobile: true },
-=======
->>>>>>> 3e3e5b9 (feat(admin): i18n FR/EN/ES complet — messages modulaires, parité, e2e ES)
         cell: ({ row }) => (
           <span className="text-sm text-atg-muted">
             {destinationNameById.get(row.original.destinationId) ?? row.original.destinationId}
@@ -194,11 +179,7 @@ export function PropertiesList() {
       {
         accessorKey: 'propertyType',
         header: tColumns('propertyType'),
-<<<<<<< HEAD
         meta: { align: 'center', hideOnMobile: true },
-=======
-        meta: { align: 'center' },
->>>>>>> 3e3e5b9 (feat(admin): i18n FR/EN/ES complet — messages modulaires, parité, e2e ES)
         cell: ({ row }) => (
           <span className="text-sm text-atg-muted">
             {propertyTypeLabels[row.original.propertyType]}
@@ -227,11 +208,7 @@ export function PropertiesList() {
         },
       },
     ],
-<<<<<<< HEAD
     [deletingId, destinationNameById, propertyTypeLabels, tActions, tColumns, tCommonColumns],
-=======
-    [deletingId, destinationNameById, propertyTypeLabels, tColumns, tCommonColumns],
->>>>>>> 3e3e5b9 (feat(admin): i18n FR/EN/ES complet — messages modulaires, parité, e2e ES)
   );
 
   const properties = state.status === 'ready' ? state.properties : [];
@@ -280,15 +257,11 @@ export function PropertiesList() {
               columns={columns}
               data={properties}
               isLoading={state.status === 'loading'}
-<<<<<<< HEAD
               loadingMessage={tDataTable('loading')}
               emptyMessage={tList('emptyDefault')}
               expandRowLabel={tDataTable('expandRow')}
               collapseRowLabel={tDataTable('collapseRow')}
               expandRowAriaLabel={tDataTable('expandRowAria')}
-=======
-              emptyMessage={tList('emptyDefault')}
->>>>>>> 3e3e5b9 (feat(admin): i18n FR/EN/ES complet — messages modulaires, parité, e2e ES)
               getRowId={(row) => row.id}
               aria-label={tList('ariaLabel')}
             />
@@ -300,10 +273,7 @@ export function PropertiesList() {
               totalPages={state.totalPages}
               totalItems={state.total}
               itemLabel={tPagination('property')}
-<<<<<<< HEAD
               labels={paginationLabels}
-=======
->>>>>>> 3e3e5b9 (feat(admin): i18n FR/EN/ES complet — messages modulaires, parité, e2e ES)
               onPageChange={setPage}
             />
           ) : null}

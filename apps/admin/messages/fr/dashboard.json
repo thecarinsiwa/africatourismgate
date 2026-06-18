@@ -16,12 +16,8 @@
     "loading": "Chargement du graphique…",
     "empty": "Aucune donnée sur cette période",
     "error": "Impossible de charger les tendances",
-<<<<<<< HEAD
     "ariaLabel": "Graphique des réservations et revenus par jour",
     "dateColumn": "Date"
-=======
-    "ariaLabel": "Graphique des réservations et revenus par jour"
->>>>>>> 3e3e5b9 (feat(admin): i18n FR/EN/ES complet — messages modulaires, parité, e2e ES)
   },
   "kpi": {
     "users": {

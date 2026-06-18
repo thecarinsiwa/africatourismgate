@@ -123,14 +123,10 @@
         "description": "Créez la destination puis ajoutez des points d'intérêt sur la page de modification."
       },
       "id": {
-<<<<<<< HEAD
         "metaTitle": "Modifier la destination",
         "voir": {
           "metaTitle": "Voir la destination"
         }
-=======
-        "metaTitle": "Modifier la destination"
->>>>>>> 3e3e5b9 (feat(admin): i18n FR/EN/ES complet — messages modulaires, parité, e2e ES)
       }
     },
     "locations": {
