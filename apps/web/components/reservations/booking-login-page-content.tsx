@@ -33,6 +33,7 @@ function resolveOAuthErrorMessage(
 ): string | null {
   if (!code) return null;
   if (code === 'google_auth_failed') return tErrors('googleAuthFailed');
+  if (code === 'google_auth_cancelled') return tErrors('googleAuthCancelled');
   if (code === 'google_auth_error') return tErrors('googleAuthError');
   return tErrors('googleAuthFailed');
 }

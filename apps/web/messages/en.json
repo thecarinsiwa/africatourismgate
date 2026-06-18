@@ -52,6 +52,7 @@
         "envMissing": "Missing API configuration (NEXT_PUBLIC_API_URL).",
         "unauthorized": "Incorrect email or password.",
         "googleAuthFailed": "Google sign-in failed. Try again or use your email.",
+        "googleAuthCancelled": "Google sign-in was cancelled.",
         "googleAuthError": "Google sign-in error. Please try again later."
       }
     }

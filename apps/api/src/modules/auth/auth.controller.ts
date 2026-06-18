@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Logger,
   Query,
   Patch,
   Post,
@@ -50,6 +51,8 @@ import { VerifyOperationDto } from './dto/verify-operation.dto';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
+  private readonly logger = new Logger(AuthController.name);
+
   constructor(private readonly authService: AuthService) {}
 
   @Get('google')
@@ -77,24 +80,43 @@ export class AuthController {
     },
     @Res() res: Response,
   ): Promise<void> {
+    const next = req.user?.state;
+
     if (!req.user?.profile) {
-      res.redirect(this.authService.buildWebOAuthErrorUrl(undefined));
+      if (!res.headersSent) {
+        res.redirect(this.authService.buildWebOAuthErrorUrl(next));
+      }
       return;
     }
 
     try {
       const auth = await this.authService.loginWithGoogleProfile(req.user.profile);
-      const redirectUrl = this.authService.buildWebOAuthCallbackUrl(
-        req.user.state,
-        auth.accessToken,
-        auth.refreshToken,
-        auth.expiresIn,
-      );
-      res.redirect(redirectUrl);
-    } catch {
-      res.redirect(
-        this.authService.buildWebOAuthErrorUrl(req.user.state, 'google_auth_failed'),
-      );
+
+      if (auth.requiresVerification && auth.verificationId) {
+        if (!res.headersSent) {
+          res.redirect(
+            this.authService.buildWebVerificationUrl(auth.verificationId, next),
+          );
+        }
+        return;
+      }
+
+      if (!res.headersSent) {
+        res.redirect(
+          this.authService.buildWebOAuthCallbackUrl(
+            next,
+            auth.accessToken,
+            auth.refreshToken,
+            auth.expiresIn,
+          ),
+        );
+      }
+    } catch (err) {
+      const detail = err instanceof Error ? err.message : String(err);
+      this.logger.warn(`Google OAuth callback failed: ${detail}`);
+      if (!res.headersSent) {
+        res.redirect(this.authService.buildWebOAuthErrorUrl(next, 'google_auth_failed'));
+      }
     }
   }
 

@@ -52,6 +52,7 @@
         "envMissing": "Configuration API manquante (NEXT_PUBLIC_API_URL).",
         "unauthorized": "Adresse e-mail ou mot de passe incorrect.",
         "googleAuthFailed": "La connexion Google a échoué. Réessayez ou utilisez votre e-mail.",
+        "googleAuthCancelled": "Connexion Google annulée.",
         "googleAuthError": "Erreur lors de la connexion Google. Réessayez plus tard."
       }
     }

@@ -10,8 +10,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     const clientID = config.get<string>('GOOGLE_CLIENT_ID');
     const clientSecret = config.get<string>('GOOGLE_CLIENT_SECRET');
     const callbackURL =
-      config.get<string>('GOOGLE_CALLBACK_URL') ??
-      `${(process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000/api').replace(/\/$/, '')}/auth/google/callback`;
       config.get<string>('GOOGLE_CALLBACK_URL') ?? resolveGoogleCallbackUrl();
 
     if (!clientID?.trim()) {

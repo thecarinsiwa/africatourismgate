@@ -27,6 +27,7 @@ export function buildBookingLoginFormConfig(
     password: {
       label: t('passwordLabel'),
       placeholder: t('passwordPlaceholder'),
+      forgotPassword: undefined,
     },
     submit: {
       label: t('submit'),

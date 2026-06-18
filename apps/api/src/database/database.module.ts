@@ -5,6 +5,7 @@ import { join } from 'node:path';
 import * as entities from '../entities/generated';
 import { EmailOperationVerifications } from '../entities/email-operation-verification.entity';
 import { ensureRbacPermissions } from './ensure-rbac-permissions';
+import { ensureEmailOperationVerifications } from './ensure-email-operation-verifications';
 import { ensureSchema } from './ensure-schema';
 import { ensureSeeds } from './ensure-seeds';
 
@@ -30,6 +31,7 @@ const entityList = [
         await ensureSchema(config);
         await ensureSeeds(config);
         await ensureRbacPermissions(config);
+        await ensureEmailOperationVerifications(config);
         return {
           type: 'mysql' as const,
           host: config.get<string>('DATABASE_HOST', 'localhost'),
