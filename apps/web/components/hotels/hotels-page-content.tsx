@@ -10,18 +10,14 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 import { searchAccommodations } from '../../lib/api/public';
 import { formatDisplayDate } from '../../lib/hotels/dates';
-import { parseGuestsParam, type HotelSearchResult, type HotelTypeFilter } from '../../lib/hotels/listings';
+import { parseGuestsParam, type HotelSearchResult, type HotelTypeFilter, type HotelsSearchParams } from '../../lib/hotels/listings';
 import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { HotelCard } from './hotel-card';
+import { HotelsSearchForm } from './hotels-search-form';
 
-export type HotelsSearchParams = {
-  destination?: string;
-  checkIn?: string;
-  checkOut?: string;
-  guests?: string;
-};
+export type { HotelsSearchParams };
 
 type SortKey = 'recommended' | 'price-asc' | 'price-desc';
 
@@ -217,17 +213,13 @@ export function HotelsPageContent({ initialSearch }: HotelsPageContentProps) {
           <h1 className="max-w-3xl text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">{h.heroTitle}</h1>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/80 sm:text-lg">{h.heroSubtitle}</p>
 
-          <div className="mt-8 flex flex-wrap items-center gap-3">
-            <Link
-              href="/#search"
-              className="inline-flex min-h-[44px] items-center rounded-lg bg-primary px-6 py-2.5 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover"
-            >
-              {h.modifySearch}
-            </Link>
-            {searchSummary && (
-              <p className="rounded-lg bg-white/10 px-4 py-2 text-sm text-white/90 backdrop-blur-sm">{searchSummary}</p>
-            )}
-          </div>
+          {searchSummary ? (
+            <p className="mt-6 rounded-lg bg-white/10 px-4 py-2 text-sm text-white/90 backdrop-blur-sm">
+              {searchSummary}
+            </p>
+          ) : null}
+
+          <HotelsSearchForm initialValues={initialSearch} />
         </div>
       </section>
 
@@ -274,6 +266,8 @@ export function HotelsPageContent({ initialSearch }: HotelsPageContentProps) {
           title: h.noResults,
           description: h.noResultsHint,
           backHomeLabel: h.backHome,
+          modifySearchLabel: h.modifySearch,
+          modifySearchHref: '#hotels-search',
         }}
         filters={
           <ListingFiltersAside

@@ -17,6 +17,7 @@ import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { ListingPageBody, ListingSortBar } from '../shared/listing-patterns';
 import { FlightCard } from './flight-card';
+import { FlightsSearchForm } from './flights-search-form';
 
 export type { FlightsSearchParams };
 
@@ -141,23 +142,17 @@ export function FlightsPageContent({ initialSearch }: FlightsPageContentProps) {
             {f.heroSubtitle}
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center gap-3">
-            <Link
-              href="/#search"
-              className="inline-flex min-h-[44px] items-center rounded-lg bg-primary px-6 py-2.5 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover"
-            >
-              {f.modifySearch}
-            </Link>
-            {searchSummary ? (
-              <p className="rounded-lg bg-white/10 px-4 py-2 text-sm text-white/90 backdrop-blur-sm">
-                {searchSummary}
-              </p>
-            ) : (
-              <p className="rounded-lg bg-white/10 px-4 py-2 text-sm text-white/90 backdrop-blur-sm">
-                {f.browseAllHint}
-              </p>
-            )}
-          </div>
+          {searchSummary ? (
+            <p className="mt-6 rounded-lg bg-white/10 px-4 py-2 text-sm text-white/90 backdrop-blur-sm">
+              {searchSummary}
+            </p>
+          ) : (
+            <p className="mt-6 rounded-lg bg-white/10 px-4 py-2 text-sm text-white/90 backdrop-blur-sm">
+              {f.browseAllHint}
+            </p>
+          )}
+
+          <FlightsSearchForm initialValues={initialSearch} />
         </div>
       </section>
 
@@ -203,7 +198,7 @@ export function FlightsPageContent({ initialSearch }: FlightsPageContentProps) {
           description: f.noResultsHint,
           backHomeLabel: f.backHome,
           modifySearchLabel: f.modifySearch,
-          modifySearchHref: '/#search',
+          modifySearchHref: '#flights-search',
         }}
       >
         {listings.map((flight) => (

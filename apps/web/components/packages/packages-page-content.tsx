@@ -1,11 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { browsePackages } from '../../lib/api/public';
 import {
-  buildPackagesSearchQuery,
   toPackagesBrowseQuery,
   type PackagesSearchParams,
 } from '../../lib/packages/listings';
@@ -15,6 +13,7 @@ import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { ListingPageBody, ListingSortBar } from '../shared/listing-patterns';
 import { PackageCard } from './package-card';
+import { PackagesSearchForm } from './packages-search-form';
 
 export type { PackagesSearchParams };
 
@@ -27,9 +26,7 @@ type PackagesPageContentProps = {
 export function PackagesPageContent({ initialSearch }: PackagesPageContentProps) {
   const t = useTranslations();
   const p = t.packages;
-  const router = useRouter();
 
-  const [searchInput, setSearchInput] = useState(initialSearch.search ?? '');
   const [sort, setSort] = useState<SortKey>('recommended');
   const [results, setResults] = useState<PackageListItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -40,10 +37,6 @@ export function PackagesPageContent({ initialSearch }: PackagesPageContentProps)
     () => toPackagesBrowseQuery(initialSearch),
     [initialSearch],
   );
-
-  useEffect(() => {
-    setSearchInput(initialSearch.search ?? '');
-  }, [initialSearch.search]);
 
   useEffect(() => {
     let cancelled = false;
@@ -82,17 +75,6 @@ export function PackagesPageContent({ initialSearch }: PackagesPageContentProps)
     }
   }, [results, sort]);
 
-  function handleSearchSubmit(event: FormEvent) {
-    event.preventDefault();
-    router.push(
-      `/packages${buildPackagesSearchQuery({
-        ...initialSearch,
-        search: searchInput.trim() || undefined,
-        page: undefined,
-      })}`,
-    );
-  }
-
   const searchSummary = initialSearch.search
     ? `${p.searchLabel}: ${initialSearch.search}`
     : p.browseHint;
@@ -126,29 +108,7 @@ export function PackagesPageContent({ initialSearch }: PackagesPageContentProps)
             {searchSummary}
           </p>
 
-          <form
-            id="packages-search"
-            onSubmit={handleSearchSubmit}
-            className="mt-8 flex max-w-xl flex-col gap-3 sm:flex-row"
-          >
-            <label className="sr-only" htmlFor="packages-search-input">
-              {p.searchLabel}
-            </label>
-            <input
-              id="packages-search-input"
-              type="search"
-              value={searchInput}
-              onChange={(event) => setSearchInput(event.target.value)}
-              placeholder={p.searchPlaceholder}
-              className="min-h-[44px] flex-1 rounded-lg border border-white/20 bg-white/10 px-4 text-white placeholder:text-white/50 focus:border-white focus:outline-none focus:ring-2 focus:ring-white/30"
-            />
-            <button
-              type="submit"
-              className="min-h-[44px] rounded-lg bg-primary px-6 py-2 text-sm font-bold uppercase tracking-wide text-white hover:bg-primary-hover"
-            >
-              {p.searchSubmit}
-            </button>
-          </form>
+          <PackagesSearchForm initialValues={initialSearch} />
         </div>
       </section>
 

@@ -24,6 +24,13 @@ export function parseGuestsParam(guests?: string): number {
   return Number.isFinite(n) && n >= 1 ? n : 1;
 }
 
+export type HotelsSearchParams = {
+  destination?: string;
+  checkIn?: string;
+  checkOut?: string;
+  guests?: string;
+};
+
 export type HotelDetailSearchParams = {
   checkIn?: string;
   checkOut?: string;
