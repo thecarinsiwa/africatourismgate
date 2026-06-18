@@ -278,6 +278,7 @@ export type Translations = {
     metaDescription: string;
     breadcrumbHome: string;
     breadcrumbFlights: string;
+    breadcrumbFlightsDetail: string;
     heroTitle: string;
     heroSubtitle: string;
     resultsFor: string;
@@ -311,12 +312,16 @@ export type Translations = {
     fromPrice: string;
     perPassenger: string;
     direct: string;
+    layoverSingular: string;
+    layoverPlural: string;
+    layoverDuration: string;
     departure: string;
     arrival: string;
     itineraryTitle: string;
     classesTitle: string;
     selectClass: string;
     selectClassHint: string;
+    selectedClass: string;
     seatsLeft: string;
     unavailable: string;
     insufficientSeats: string;
@@ -1144,6 +1149,7 @@ const fr: Translations = {
       'Comparez et réservez des vols vers les principales destinations africaines avec Africa Tourism Gate.',
     breadcrumbHome: 'Accueil',
     breadcrumbFlights: 'Vols',
+    breadcrumbFlightsDetail: 'Vols',
     heroTitle: 'Vols vers l\'Afrique',
     heroSubtitle:
       'Comparez les compagnies, horaires et tarifs pour votre prochain voyage continental.',
@@ -1178,12 +1184,16 @@ const fr: Translations = {
     fromPrice: 'À partir de',
     perPassenger: '/ passager',
     direct: 'Direct',
+    layoverSingular: '1 escale',
+    layoverPlural: '{n} escales',
+    layoverDuration: 'Escale {duration}',
     departure: 'Départ',
     arrival: 'Arrivée',
     itineraryTitle: 'Itinéraire',
     classesTitle: 'Classes disponibles',
     selectClass: 'Choisir cette classe',
     selectClassHint: 'Sélectionnez une classe pour réserver.',
+    selectedClass: 'Sélectionnée',
     seatsLeft: '{n} siège(s) disponible(s)',
     unavailable: 'Complet',
     insufficientSeats: 'Pas assez de places pour ce nombre de passagers.',
@@ -2052,6 +2062,7 @@ const en: Translations = {
       'Compare and book flights to major African destinations with Africa Tourism Gate.',
     breadcrumbHome: 'Home',
     breadcrumbFlights: 'Flights',
+    breadcrumbFlightsDetail: 'Flights',
     heroTitle: 'Flights to Africa',
     heroSubtitle:
       'Compare airlines, schedules and fares for your next continental trip.',
@@ -2086,12 +2097,16 @@ const en: Translations = {
     fromPrice: 'From',
     perPassenger: '/ passenger',
     direct: 'Direct',
+    layoverSingular: '1 stop',
+    layoverPlural: '{n} stops',
+    layoverDuration: 'Layover {duration}',
     departure: 'Departure',
     arrival: 'Arrival',
     itineraryTitle: 'Itinerary',
     classesTitle: 'Available classes',
     selectClass: 'Select this class',
     selectClassHint: 'Select a class to book.',
+    selectedClass: 'Selected',
     seatsLeft: '{n} seat(s) available',
     unavailable: 'Sold out',
     insufficientSeats: 'Not enough seats for this number of passengers.',

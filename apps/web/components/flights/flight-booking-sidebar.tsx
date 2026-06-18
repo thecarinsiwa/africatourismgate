@@ -35,7 +35,7 @@ function SidebarContent({
       <h2 className="text-lg font-bold text-atg-fg">{t.reserveSection}</h2>
 
       {hasDate && (
-        <div className="rounded-lg bg-atg-surface px-4 py-3 text-sm dark:bg-white/5">
+        <div className="rounded-lg bg-atg-surface px-4 py-3 text-sm dark:bg-atg-surface">
           <p className="text-xs uppercase tracking-wide text-atg-muted">
             {t.departureDate}
           </p>
@@ -62,7 +62,7 @@ function SidebarContent({
           onChange={(e) =>
             onPassengersChange(Math.max(1, Number.parseInt(e.target.value, 10) || 1))
           }
-          className="min-h-[44px] w-full rounded-lg border border-atg-border px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-surface dark:text-white"
+          className="min-h-[44px] w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg"
         />
       </label>
 
@@ -79,7 +79,7 @@ function SidebarContent({
       </p>
 
       {selectedClass && (
-        <div className="rounded-lg bg-atg-surface px-4 py-3 dark:bg-white/5">
+        <div className="rounded-lg bg-atg-surface px-4 py-3 dark:bg-atg-surface">
           <p className="text-xs uppercase tracking-wide text-atg-muted">
             {t.totalFlight}
           </p>
