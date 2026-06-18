@@ -18,6 +18,7 @@ type ActivitySchedulesSectionProps = {
   t: Translations['activities'];
   locale?: string;
   listHref?: string;
+  hideTitle?: boolean;
 };
 
 function ScheduleChip({
@@ -93,6 +94,7 @@ export function ActivitySchedulesSection({
   t,
   locale,
   listHref,
+  hideTitle = false,
 }: ActivitySchedulesSectionProps) {
   const selectedSchedule =
     schedules.find((schedule) => schedule.scheduleId === selectedScheduleId) ?? null;
@@ -100,7 +102,9 @@ export function ActivitySchedulesSection({
   if (!schedules.length) {
     return (
       <section id="schedules">
-        <h2 className="mb-4 text-lg font-bold text-atg-fg">{t.schedulesTitle}</h2>
+        {!hideTitle ? (
+          <h2 className="mb-4 text-lg font-bold text-atg-fg">{t.schedulesTitle}</h2>
+        ) : null}
         <EmptyState
           title={t.noSchedulesTitle}
           description={t.noSchedulesHint}
@@ -123,7 +127,9 @@ export function ActivitySchedulesSection({
 
   return (
     <section id="schedules">
-      <h2 className="mb-4 text-lg font-bold text-atg-fg">{t.schedulesTitle}</h2>
+      {!hideTitle ? (
+        <h2 className="mb-4 text-lg font-bold text-atg-fg">{t.schedulesTitle}</h2>
+      ) : null}
 
       <div
         role="radiogroup"

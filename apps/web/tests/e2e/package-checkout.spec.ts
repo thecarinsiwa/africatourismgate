@@ -20,6 +20,7 @@ const packageDetailMock = {
     name: 'Kinshasa Activities Duo',
     description: 'Two guided experiences in Kinshasa at a bundled discount.',
     discountPercent: String(DISCOUNT_PERCENT),
+    durationDays: 1,
   },
   items: [
     {
@@ -49,6 +50,7 @@ const packageDetailMock = {
       UNIT_PRICE_A + UNIT_PRICE_B - Math.round(((UNIT_PRICE_A + UNIT_PRICE_B) * DISCOUNT_PERCENT) / 100),
     currency: 'USD',
   },
+  images: [],
 };
 
 function activityDetailMock(
@@ -217,27 +219,24 @@ test('forfait activités: configurer créneaux, panier -> recap -> Stripe avec p
   await page.goto(`/packages/${PACKAGE_ID}?date=${DATE}&participants=${PARTICIPANTS}`);
 
   await expect(page.getByRole('heading', { name: 'Kinshasa Activities Duo' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: /choisir les cr|choose time slots|elegir horarios/i })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: /choisir les cr|choose time slots|elegir horarios/i }),
+  ).toBeVisible();
 
   const gombeSection = page.locator('article').filter({ hasText: 'Gombe City Tour' });
-  await gombeSection
-    .getByRole('button', {
-      name: /choisir ce cr[ée]neau|select this slot|elegir este horario/i,
-    })
-    .click();
+  await gombeSection.getByRole('radio').first().click();
 
   const riverSection = page.locator('article').filter({ hasText: 'Congo River Walk' });
-  await riverSection
-    .getByRole('button', {
-      name: /choisir ce cr[ée]neau|select this slot|elegir este horario/i,
-    })
-    .click();
+  await riverSection.getByRole('radio').first().click();
 
-  await page
-    .getByRole('button', {
-      name: /ajouter au panier|add to cart|a[ñn]adir al carrito/i,
-    })
-    .click();
+  await page.getByRole('button', { name: /voir le r[ée]cap|view summary|ver resumen/i }).click();
+  await expect(
+    page.getByRole('heading', { name: /r[ée]capitulatif du forfait|package summary|resumen del paquete/i }),
+  ).toBeVisible();
+
+  await page.locator('#reserve').getByRole('button', {
+    name: /ajouter au panier|add to cart|a[ñn]adir al carrito/i,
+  }).click();
 
   await expect(page).toHaveURL(/\/booking\/cart\?.*kind=package/);
   await expect(page.getByText('Kinshasa Activities Duo')).toBeVisible();

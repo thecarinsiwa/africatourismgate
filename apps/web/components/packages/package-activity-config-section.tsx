@@ -97,6 +97,7 @@ export function PackageActivityConfigItem({
           onSelectSchedule={onSelectSchedule}
           t={a}
           locale={locale}
+          hideTitle
         />
       )}
 

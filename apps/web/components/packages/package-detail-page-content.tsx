@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getPackageDetail } from '../../lib/api/public';
-import { autoResolvePackageLines } from '../../lib/packages/auto-resolve-lines';
 import {
   buildPackageTravelDates,
   computePackageEndDate,
@@ -12,10 +11,12 @@ import {
 } from '../../lib/packages/package-dates';
 import {
   buildPackageDetailHrefWithLines,
+  isActivityOnlyPackage,
+  parsePackageLineSelections,
   parseParticipantsParam,
   type PackagesSearchParams,
 } from '../../lib/packages/listings';
-import type { PackageLineSelection } from '../../lib/packages/package-lines';
+import { lineMatchesPackageItem, type PackageLineSelection } from '../../lib/packages/package-lines';
 import type { PackageDetail } from '../../lib/packages/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
@@ -27,6 +28,11 @@ import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { ProductGallery } from '../shared';
 import { PackageBookingMobileBar, PackageBookingSidebar } from './package-booking-sidebar';
+import {
+  PackageCompositionStepper,
+  type PackageCompositionStep,
+} from './package-composition-stepper';
+import { PackageItemConfigItem } from './package-item-config-section';
 import { PackageItemsSection } from './package-items-section';
 import { PackageResolvedSummary } from './package-resolved-summary';
 
@@ -36,12 +42,42 @@ type PackageDetailPageContentProps = {
   rawSearchParams: Record<string, string | string[] | undefined>;
 };
 
+function countConfiguredLines(
+  items: PackageDetail['items'],
+  lines: Array<PackageLineSelection | null>,
+): number {
+  return items.filter(
+    (item, index) => {
+      const line = lines[index];
+      return line != null && lineMatchesPackageItem(line, item);
+    },
+  ).length;
+}
+
+function inferInitialStep(
+  items: PackageDetail['items'],
+  lines: Array<PackageLineSelection | null>,
+  startDate: string,
+): PackageCompositionStep {
+  if (!startDate) return 'overview';
+  const configured = countConfiguredLines(items, lines);
+  if (configured === items.length && items.length > 0) return 'recap';
+  if (startDate) return 'configure';
+  return 'overview';
+}
+
 export function PackageDetailPageContent({
   packageId,
   initialSearch,
+  rawSearchParams,
 }: PackageDetailPageContentProps) {
   const t = useTranslations();
   const p = t.packages;
+  const a = t.activities;
+  const h = t.hotels;
+  const f = t.flights;
+  const c = t.cars;
+  const cr = t.cruises;
   const { locale } = useLocale();
   const router = useRouter();
 
@@ -51,15 +87,14 @@ export function PackageDetailPageContent({
   const [error, setError] = useState(false);
   const [fetchId, setFetchId] = useState(0);
 
-  const [startDate, setStartDate] = useState(initialSearch.startDate ?? '');
+  const [startDate, setStartDate] = useState(
+    initialSearch.startDate ?? initialSearch.date ?? '',
+  );
   const [travelers, setTravelers] = useState(
-    parseParticipantsParam(initialSearch.travelers),
+    parseParticipantsParam(initialSearch.travelers ?? initialSearch.participants),
   );
   const [lineSelections, setLineSelections] = useState<Array<PackageLineSelection | null>>([]);
-  const [resolveErrors, setResolveErrors] = useState<
-    Awaited<ReturnType<typeof autoResolvePackageLines>>['errors']
-  >([]);
-  const [resolving, setResolving] = useState(false);
+  const [step, setStep] = useState<PackageCompositionStep>('overview');
 
   const listHref = `/packages${initialSearch.search ? `?search=${encodeURIComponent(initialSearch.search)}` : ''}`;
 
@@ -95,12 +130,11 @@ export function PackageDetailPageContent({
     [packageId, lineSelections, searchContext, router],
   );
 
-  const syncUrlRef = useRef(syncUrl);
-  const searchContextRef = useRef(searchContext);
-  syncUrlRef.current = syncUrl;
-  searchContextRef.current = searchContext;
+  const hydratedPackageKeyRef = useRef<string | null>(null);
+  const initialStartDate = initialSearch.startDate ?? initialSearch.date ?? '';
 
   useEffect(() => {
+    hydratedPackageKeyRef.current = null;
     let cancelled = false;
 
     setLoading(true);
@@ -109,7 +143,8 @@ export function PackageDetailPageContent({
 
     void getPackageDetail(packageId)
       .then((data) => {
-        if (!cancelled) setDetail(data);
+        if (cancelled) return;
+        setDetail(data);
       })
       .catch((err: unknown) => {
         if (cancelled) return;
@@ -128,68 +163,85 @@ export function PackageDetailPageContent({
   }, [packageId, fetchId]);
 
   useEffect(() => {
-    if (!detail || !startDate) {
-      setLineSelections([]);
-      setResolveErrors([]);
-      return;
-    }
+    if (!detail) return;
 
-    const dates = buildPackageTravelDates(startDate, durationDays, travelers);
-    if (!dates) {
-      setLineSelections([]);
-      setResolveErrors([]);
-      return;
-    }
+    const hydrationKey = `${packageId}:${fetchId}`;
+    if (hydratedPackageKeyRef.current === hydrationKey) return;
+    hydratedPackageKeyRef.current = hydrationKey;
 
-    let cancelled = false;
-    setResolving(true);
-    setResolveErrors([]);
+    const parsedLines = parsePackageLineSelections(rawSearchParams, detail.items.length);
+    setLineSelections(parsedLines);
+    setStep(inferInitialStep(detail.items, parsedLines, initialStartDate));
+  }, [detail, packageId, fetchId, rawSearchParams, initialStartDate]);
 
-    void autoResolvePackageLines(packageId, detail.items, dates)
-      .then((result) => {
-        if (cancelled) return;
-        setLineSelections(result.lines);
-        setResolveErrors(result.errors);
-        syncUrlRef.current({
-          lineSelections: result.lines,
-          search: searchContextRef.current,
-        });
-      })
-      .finally(() => {
-        if (!cancelled) setResolving(false);
-      });
+  const configuredCount = detail ? countConfiguredLines(detail.items, lineSelections) : 0;
+  const allConfigured = detail ? configuredCount === detail.items.length : false;
+  const activityOnly = detail ? isActivityOnlyPackage(detail.items) : false;
 
-    return () => {
-      cancelled = true;
+  const configContext = useMemo(() => {
+    const dates = startDate
+      ? buildPackageTravelDates(startDate, durationDays, travelers)
+      : null;
+    return {
+      date: startDate,
+      participants: travelers,
+      checkIn: dates?.startDate ?? startDate,
+      checkOut: dates?.endDate ?? endDate,
+      guests: travelers,
+      departureDate: startDate,
+      passengers: travelers,
+      pickupDate: startDate,
+      returnDate: endDate,
+      sailingId: initialSearch.sailingId ?? '',
     };
-  }, [detail, startDate, durationDays, travelers, packageId]);
+  }, [startDate, durationDays, travelers, endDate, initialSearch.sailingId]);
 
   function handleStartDateChange(value: string) {
     setStartDate(value);
-    setLineSelections([]);
-    setResolveErrors([]);
+    const cleared = detail ? Array.from({ length: detail.items.length }, () => null) : [];
+    setLineSelections(cleared);
+    setStep(value ? 'configure' : 'overview');
     syncUrl({
       search: { ...searchContext, startDate: value || undefined },
-      lineSelections: [],
+      lineSelections: cleared,
     });
   }
 
   function handleTravelersChange(value: number) {
     const next = Math.max(1, value);
     setTravelers(next);
-    setLineSelections([]);
-    setResolveErrors([]);
+    const cleared = detail ? Array.from({ length: detail.items.length }, () => null) : [];
+    setLineSelections(cleared);
     syncUrl({
       search: { ...searchContext, travelers: String(next) },
-      lineSelections: [],
+      lineSelections: cleared,
     });
+  }
+
+  function handleLineChange(index: number, line: PackageLineSelection | null) {
+    setLineSelections((current) => {
+      const next = [...current];
+      next[index] = line;
+      syncUrl({ lineSelections: next });
+      return next;
+    });
+  }
+
+  function goToStep(next: PackageCompositionStep) {
+    setStep(next);
+    if (next === 'configure') {
+      document.getElementById('configure')?.scrollIntoView({ behavior: 'smooth' });
+    }
+    if (next === 'recap') {
+      document.getElementById('recap')?.scrollIntoView({ behavior: 'smooth' });
+    }
   }
 
   const canAddToCart = Boolean(
     detail &&
+      step === 'recap' &&
       startDate &&
-      !resolving &&
-      resolveErrors.length === 0 &&
+      allConfigured &&
       buildPackageReservationDraft(packageId, detail.items, lineSelections),
   );
 
@@ -290,89 +342,169 @@ export function PackageDetailPageContent({
                 ) : null}
               </header>
 
-              <PackageItemsSection items={detail.items} t={p} />
+              <PackageCompositionStepper
+                step={step}
+                configuredCount={configuredCount}
+                totalCount={detail.items.length}
+                t={p}
+              />
 
-              <section
-                id="configure"
-                className="scroll-mt-28 space-y-4 rounded-2xl border border-atg-border bg-atg-elevated p-6 dark:border-atg-border dark:bg-atg-elevated"
-              >
-                <div>
-                  <h2 className="text-lg font-bold text-atg-fg">
-                    {p.configureTitle}
-                  </h2>
-                  <p className="mt-2 text-sm text-atg-muted">
-                    {p.packageBookingHint.replace('{days}', String(durationDays))}
-                  </p>
-                </div>
+              {step === 'overview' ? (
+                <>
+                  <PackageItemsSection items={detail.items} t={p} />
+                  <div className="flex justify-end">
+                    <button
+                      type="button"
+                      onClick={() => goToStep('configure')}
+                      className="min-h-[48px] rounded-lg bg-primary px-6 py-3 text-sm font-bold uppercase tracking-wide text-white hover:bg-primary-hover"
+                    >
+                      {p.startConfiguration}
+                    </button>
+                  </div>
+                </>
+              ) : null}
 
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <label className="block text-sm">
-                    <span className="mb-1 block font-medium text-atg-muted">
-                      {p.departureDateLabel}
-                    </span>
-                    <input
-                      type="date"
-                      value={startDate}
-                      onChange={(event) => handleStartDateChange(event.target.value)}
-                      className="min-h-[44px] w-full rounded-lg border border-atg-border px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-surface dark:text-white"
-                    />
-                  </label>
+              {step === 'configure' ? (
+                <section
+                  id="configure"
+                  className="scroll-mt-28 space-y-6 rounded-2xl border border-atg-border bg-atg-elevated p-6 dark:border-atg-border dark:bg-atg-elevated"
+                >
+                  <div>
+                    <h2 className="text-lg font-bold text-atg-fg">{p.configureTitle}</h2>
+                    <p className="mt-2 text-sm text-atg-muted">
+                      {p.packageBookingHint.replace('{days}', String(durationDays))}
+                    </p>
+                  </div>
 
-                  <label className="block text-sm">
-                    <span className="mb-1 block font-medium text-atg-muted">
-                      {p.travelersLabel}
-                    </span>
-                    <input
-                      type="number"
-                      min={1}
-                      max={50}
-                      value={travelers}
-                      onChange={(event) =>
-                        handleTravelersChange(
-                          Number.parseInt(event.target.value, 10) || 1,
-                        )
-                      }
-                      className="min-h-[44px] w-full rounded-lg border border-atg-border px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-surface dark:text-white"
-                    />
-                  </label>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <label className="block text-sm">
+                      <span className="mb-1 block font-medium text-atg-muted">
+                        {p.departureDateLabel}
+                      </span>
+                      <input
+                        type="date"
+                        value={startDate}
+                        onChange={(event) => handleStartDateChange(event.target.value)}
+                        className="min-h-[44px] w-full rounded-lg border border-atg-border px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-surface dark:text-white"
+                      />
+                    </label>
 
-                  {startDate ? (
-                    <div className="sm:col-span-2 rounded-xl bg-atg-surface px-4 py-3 text-sm dark:bg-atg-surface/60">
-                      <p className="font-medium text-atg-fg">
-                        {p.returnDateLabel}
-                      </p>
-                      <p className="mt-1 text-atg-muted">
-                        {formatDisplayDate(endDate, locale)} ·{' '}
-                        {p.durationDaysLabel.replace('{days}', String(durationDays))}
-                      </p>
-                    </div>
-                  ) : null}
-                </div>
+                    <label className="block text-sm">
+                      <span className="mb-1 block font-medium text-atg-muted">
+                        {p.travelersLabel}
+                      </span>
+                      <input
+                        type="number"
+                        min={1}
+                        max={50}
+                        value={travelers}
+                        onChange={(event) =>
+                          handleTravelersChange(Number.parseInt(event.target.value, 10) || 1)
+                        }
+                        className="min-h-[44px] w-full rounded-lg border border-atg-border px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-surface dark:text-white"
+                      />
+                    </label>
 
-                {startDate ? (
-                  <div className="space-y-3">
-                    <h3 className="text-sm font-semibold text-atg-fg">
-                      {p.includedServicesTitle}
-                    </h3>
-                    {resolving ? (
-                      <p className="text-sm text-atg-muted">{p.resolvingPackage}</p>
-                    ) : null}
-                    <PackageResolvedSummary
-                      items={detail.items}
-                      lines={lineSelections}
-                      resolving={resolving}
-                      t={p}
-                    />
-                    {!resolving && resolveErrors.length > 0 ? (
-                      <p className="text-sm text-amber-700 dark:text-amber-300">
-                        {p.someItemsMissing}
-                      </p>
+                    {startDate ? (
+                      <div className="sm:col-span-2 rounded-xl bg-atg-surface px-4 py-3 text-sm dark:bg-atg-surface/60">
+                        <p className="font-medium text-atg-fg">{p.returnDateLabel}</p>
+                        <p className="mt-1 text-atg-muted">
+                          {formatDisplayDate(endDate, locale)} ·{' '}
+                          {p.durationDaysLabel.replace('{days}', String(durationDays))}
+                        </p>
+                      </div>
                     ) : null}
                   </div>
-                ) : (
-                  <p className="text-sm text-amber-700 dark:text-amber-300">{p.selectDepartureHint}</p>
-                )}
-              </section>
+
+                  {!startDate ? (
+                    <p className="text-sm text-amber-700 dark:text-amber-300">
+                      {p.selectDepartureHint}
+                    </p>
+                  ) : (
+                    <div className="space-y-4">
+                      {activityOnly ? (
+                        <h3 className="text-base font-bold text-atg-fg">
+                          {p.configureSchedulesTitle}
+                        </h3>
+                      ) : (
+                        <h3 className="text-base font-bold text-atg-fg">
+                          {p.includedServicesTitle}
+                        </h3>
+                      )}
+
+                      {detail.items.map((item, index) => (
+                        <PackageItemConfigItem
+                          key={item.id}
+                          item={item}
+                          index={index}
+                          selectedLine={lineSelections[index] ?? null}
+                          onChange={(line) => handleLineChange(index, line)}
+                          context={configContext}
+                          t={p}
+                          a={a}
+                          h={h}
+                          f={f}
+                          c={c}
+                          cr={cr}
+                          locale={locale}
+                        />
+                      ))}
+
+                      {!allConfigured ? (
+                        <p className="text-sm text-amber-700 dark:text-amber-300">
+                          {p.allItemsRequired}
+                        </p>
+                      ) : null}
+                    </div>
+                  )}
+
+                  <div className="flex flex-wrap gap-3 border-t border-atg-border pt-4 dark:border-atg-border">
+                    <button
+                      type="button"
+                      onClick={() => goToStep('overview')}
+                      className="min-h-[44px] rounded-lg border border-atg-border px-5 py-2 text-sm font-semibold text-atg-fg hover:border-primary dark:border-atg-border"
+                    >
+                      {p.stepBack}
+                    </button>
+                    <button
+                      type="button"
+                      disabled={!startDate || !allConfigured}
+                      onClick={() => goToStep('recap')}
+                      className="min-h-[44px] rounded-lg bg-primary px-6 py-2 text-sm font-bold uppercase tracking-wide text-white hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      {p.viewRecap}
+                    </button>
+                  </div>
+                </section>
+              ) : null}
+
+              {step === 'recap' ? (
+                <section
+                  id="recap"
+                  className="scroll-mt-28 space-y-4 rounded-2xl border border-atg-border bg-atg-elevated p-6 dark:border-atg-border dark:bg-atg-elevated"
+                >
+                  <div>
+                    <h2 className="text-lg font-bold text-atg-fg">{p.recapTitle}</h2>
+                    <p className="mt-2 text-sm text-atg-muted">{p.recapHint}</p>
+                  </div>
+
+                  <PackageResolvedSummary
+                    items={detail.items}
+                    lines={lineSelections}
+                    t={p}
+                  />
+
+                  <div className="flex flex-wrap gap-3 border-t border-atg-border pt-4 dark:border-atg-border">
+                    <button
+                      type="button"
+                      onClick={() => goToStep('configure')}
+                      className="min-h-[44px] rounded-lg border border-atg-border px-5 py-2 text-sm font-semibold text-atg-fg hover:border-primary dark:border-atg-border"
+                    >
+                      {p.modifySelection}
+                    </button>
+                  </div>
+                </section>
+              ) : null}
             </div>
 
             <PackageBookingSidebar
@@ -380,7 +512,7 @@ export function PackageDetailPageContent({
               startDate={startDate}
               endDate={endDate}
               durationDays={durationDays}
-              resolving={resolving}
+              resolving={false}
               canAddToCart={canAddToCart}
               onAddToCart={handleAddToCart}
               t={p}
@@ -396,7 +528,7 @@ export function PackageDetailPageContent({
           startDate={startDate}
           endDate={endDate}
           durationDays={durationDays}
-          resolving={resolving}
+          resolving={false}
           canAddToCart={canAddToCart}
           onAddToCart={handleAddToCart}
           t={p}
