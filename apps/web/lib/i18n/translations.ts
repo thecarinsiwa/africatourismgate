@@ -677,6 +677,28 @@ export type Translations = {
     galleryPrevious: string;
     galleryNext: string;
     galleryCounter: (current: number, total: number) => string;
+    stepOverview: string;
+    stepConfigure: string;
+    stepRecap: string;
+    stepOverviewShort: string;
+    stepConfigureShort: string;
+    stepRecapShort: string;
+    compositionStepperAria: string;
+    configureProgress: string;
+    startConfiguration: string;
+    stepBack: string;
+    viewRecap: string;
+    recapTitle: string;
+    recapHint: string;
+    configureSchedulesTitle: string;
+    itemConfigured: string;
+    itemPending: string;
+    recapActivityLine: string;
+    recapPropertyLine: string;
+    recapFlightLine: string;
+    recapVehicleLine: string;
+    recapCruiseLine: string;
+    estimatedSavings: string;
   };
   account: {
     title: string;
@@ -1652,6 +1674,28 @@ const fr: Translations = {
     galleryPrevious: 'Photo précédente',
     galleryNext: 'Photo suivante',
     galleryCounter: (current, total) => `Photo ${current} sur ${total}`,
+    stepOverview: 'Aperçu des prestations',
+    stepConfigure: 'Configuration',
+    stepRecap: 'Récapitulatif',
+    stepOverviewShort: 'Aperçu',
+    stepConfigureShort: 'Config.',
+    stepRecapShort: 'Récap',
+    compositionStepperAria: 'Étapes de composition du forfait',
+    configureProgress: '{done} / {total} prestation(s) configurée(s)',
+    startConfiguration: 'Configurer le forfait',
+    stepBack: 'Retour',
+    viewRecap: 'Voir le récapitulatif',
+    recapTitle: 'Récapitulatif du forfait',
+    recapHint: 'Vérifiez chaque prestation avant d’ajouter le forfait au panier.',
+    configureSchedulesTitle: 'Choisir les créneaux horaires',
+    itemConfigured: 'Configuré',
+    itemPending: 'À configurer',
+    recapActivityLine: '{n} participant(s) · créneau sélectionné',
+    recapPropertyLine: 'Séjour du {checkIn} au {checkOut}',
+    recapFlightLine: 'Départ le {date}',
+    recapVehicleLine: 'Du {pickup} au {return}',
+    recapCruiseLine: '{guests} passager(s) · cabine sélectionnée',
+    estimatedSavings: 'Économie estimée : {amount}',
   },
   account: {
     title: 'Mon compte',
@@ -2652,6 +2696,28 @@ const en: Translations = {
     galleryPrevious: 'Previous photo',
     galleryNext: 'Next photo',
     galleryCounter: (current, total) => `Photo ${current} of ${total}`,
+    stepOverview: 'Included services overview',
+    stepConfigure: 'Configure each service',
+    stepRecap: 'Summary',
+    stepOverviewShort: 'Overview',
+    stepConfigureShort: 'Config',
+    stepRecapShort: 'Summary',
+    compositionStepperAria: 'Package composition steps',
+    configureProgress: '{done} / {total} service(s) configured',
+    startConfiguration: 'Configure package',
+    stepBack: 'Back',
+    viewRecap: 'View summary',
+    recapTitle: 'Package summary',
+    recapHint: 'Review each included service before adding the package to your cart.',
+    configureSchedulesTitle: 'Choose time slots',
+    itemConfigured: 'Configured',
+    itemPending: 'Pending',
+    recapActivityLine: '{n} participant(s) · slot selected',
+    recapPropertyLine: 'Stay from {checkIn} to {checkOut}',
+    recapFlightLine: 'Departure on {date}',
+    recapVehicleLine: 'From {pickup} to {return}',
+    recapCruiseLine: '{guests} guest(s) · cabin selected',
+    estimatedSavings: 'Estimated savings: {amount}',
   },
   account: {
     title: 'My account',
