@@ -56,3 +56,18 @@ export {
   type ListingPageBodyProps,
   type ListingPaginationBarProps,
 } from './listing-patterns';
+export {
+  bookingSidebarInputClass,
+  bookingSidebarDateGridClass,
+  BookingSidebarDesktop,
+  BookingSidebarBody,
+  BookingSidebarField,
+  BookingSidebarDateCard,
+  BookingSidebarPriceBlock,
+  BookingSidebarHint,
+  BookingSidebarSummary,
+  BookingSidebarCta,
+  BookingSidebarTrustHints,
+  BookingSidebarMobileBar,
+  useBookingSidebarTrustHints,
+} from './booking-sidebar-shell';

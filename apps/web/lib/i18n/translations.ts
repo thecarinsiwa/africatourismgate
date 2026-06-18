@@ -110,6 +110,11 @@ export type Translations = {
     pageOf: (params: { page: number; totalPages: number }) => string;
     resultItem: string;
   };
+  bookingSidebar: {
+    trustDemoCatalog: string;
+    trustTransparentPricing: string;
+    trustSupport: string;
+  };
   verticalSearch: {
     backHome: string;
     resultsTitle: string;
@@ -1030,6 +1035,12 @@ const fr: Translations = {
       `${start}–${end} sur ${total} ${itemLabel}${pluralSuffix}`,
     pageOf: ({ page, totalPages }) => `page ${page} / ${totalPages}`,
     resultItem: 'résultat',
+  },
+  bookingSidebar: {
+    trustDemoCatalog:
+      'Tarifs indicatifs — la réservation en ligne arrive bientôt.',
+    trustTransparentPricing: 'Montant affiché sans frais cachés.',
+    trustSupport: 'Une question ? Notre équipe vous accompagne.',
   },
   verticalSearch: {
     backHome: 'Retour à l\'accueil',
@@ -2054,6 +2065,11 @@ const en: Translations = {
       `${start}–${end} of ${total} ${itemLabel}${pluralSuffix}`,
     pageOf: ({ page, totalPages }) => `page ${page} / ${totalPages}`,
     resultItem: 'result',
+  },
+  bookingSidebar: {
+    trustDemoCatalog: 'Indicative prices — online booking coming soon.',
+    trustTransparentPricing: 'No hidden fees on the amount shown.',
+    trustSupport: 'Questions? Our team is here to help.',
   },
   verticalSearch: {
     backHome: 'Back to home',
