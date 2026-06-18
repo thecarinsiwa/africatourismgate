@@ -92,6 +92,40 @@ export type Translations = {
     countries: string[];
     locations: string[];
   };
+  listing: {
+    clearFilters: string;
+    applyFilters: string;
+    filtersToggle: string;
+    previousPage: string;
+    nextPage: string;
+    navAriaLabel: string;
+    pageAria: (page: number) => string;
+    range: (params: {
+      start: number;
+      end: number;
+      total: number;
+      itemLabel: string;
+      pluralSuffix: string;
+    }) => string;
+    pageOf: (params: { page: number; totalPages: number }) => string;
+    resultItem: string;
+  };
+  verticalSearch: {
+    backHome: string;
+    resultsTitle: string;
+    exploreHint: string;
+    forDestination: string;
+    noResults: string;
+    noResultsHint: string;
+    continue: string;
+    verticals: {
+      hotels: string;
+      flights: string;
+      cars: string;
+      cruises: string;
+      tours: string;
+    };
+  };
   whyUs: {
     title: string;
     subtitle: string;
@@ -862,6 +896,35 @@ const fr: Translations = {
     roomTypes: ['Chambre Double', 'Chambre Simple', 'Suite'],
     countries: ['Kenya', 'Tanzanie', 'Maroc', 'Afrique du Sud', 'Rwanda', 'RDC'],
     locations: ['Aéroport', 'Centre-ville', 'Gare'],
+  },
+  listing: {
+    clearFilters: 'Effacer les filtres',
+    applyFilters: 'Appliquer',
+    filtersToggle: 'Filtres',
+    previousPage: 'Page précédente',
+    nextPage: 'Page suivante',
+    navAriaLabel: 'Pagination des résultats',
+    pageAria: (page) => `Page ${page}`,
+    range: ({ start, end, total, itemLabel, pluralSuffix }) =>
+      `${start}–${end} sur ${total} ${itemLabel}${pluralSuffix}`,
+    pageOf: ({ page, totalPages }) => `page ${page} / ${totalPages}`,
+    resultItem: 'résultat',
+  },
+  verticalSearch: {
+    backHome: 'Retour à l\'accueil',
+    resultsTitle: 'Résultats',
+    exploreHint: 'Explorez les options disponibles.',
+    forDestination: 'Résultats pour {destination}.',
+    noResults: 'Aucun résultat pour cette recherche.',
+    noResultsHint: 'Modifiez vos critères ou revenez à l\'accueil.',
+    continue: 'Continuer',
+    verticals: {
+      hotels: 'Hébergements',
+      flights: 'Vols',
+      cars: 'Locations de véhicules',
+      cruises: 'Croisières',
+      tours: 'Activités & tours',
+    },
   },
   whyUs: {
     title: 'Pourquoi nous choisir',
@@ -1732,6 +1795,35 @@ const en: Translations = {
     roomTypes: ['Double Room', 'Single Room', 'Suite'],
     countries: ['Kenya', 'Tanzania', 'Morocco', 'South Africa', 'Rwanda', 'DRC'],
     locations: ['Airport', 'City center', 'Train station'],
+  },
+  listing: {
+    clearFilters: 'Clear filters',
+    applyFilters: 'Apply',
+    filtersToggle: 'Filters',
+    previousPage: 'Previous page',
+    nextPage: 'Next page',
+    navAriaLabel: 'Results pagination',
+    pageAria: (page) => `Page ${page}`,
+    range: ({ start, end, total, itemLabel, pluralSuffix }) =>
+      `${start}–${end} of ${total} ${itemLabel}${pluralSuffix}`,
+    pageOf: ({ page, totalPages }) => `page ${page} / ${totalPages}`,
+    resultItem: 'result',
+  },
+  verticalSearch: {
+    backHome: 'Back to home',
+    resultsTitle: 'Results',
+    exploreHint: 'Explore available options.',
+    forDestination: 'Showing results for {destination}.',
+    noResults: 'No results found for this search.',
+    noResultsHint: 'Adjust your criteria or return to the homepage.',
+    continue: 'Continue',
+    verticals: {
+      hotels: 'Hotels',
+      flights: 'Flights',
+      cars: 'Car rentals',
+      cruises: 'Cruises',
+      tours: 'Tours & activities',
+    },
   },
   whyUs: {
     title: 'Why choose us',

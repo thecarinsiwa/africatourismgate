@@ -1,11 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { browsePackages } from '../../lib/api/public';
 import {
-  buildPackagesSearchQuery,
   toPackagesBrowseQuery,
   type PackagesSearchParams,
 } from '../../lib/packages/listings';
@@ -13,7 +11,11 @@ import type { PackageListItem } from '../../lib/packages/types';
 import { useTranslations } from '../../lib/i18n/locale-provider';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
+import { ListingPageBody, ListingPaginationBar, ListingSortBar } from '../shared/listing-patterns';
 import { PackageCard } from './package-card';
+import { PackagesSearchForm } from './packages-search-form';
+import { toListingPaginationLabels, scrollListingToTop } from '../../lib/listing/pagination-labels';
+import { useListingPagination } from '../../lib/listing/pagination';
 
 export type { PackagesSearchParams };
 
@@ -26,9 +28,8 @@ type PackagesPageContentProps = {
 export function PackagesPageContent({ initialSearch }: PackagesPageContentProps) {
   const t = useTranslations();
   const p = t.packages;
-  const router = useRouter();
+  const l = t.listing;
 
-  const [searchInput, setSearchInput] = useState(initialSearch.search ?? '');
   const [sort, setSort] = useState<SortKey>('recommended');
   const [results, setResults] = useState<PackageListItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -39,10 +40,6 @@ export function PackagesPageContent({ initialSearch }: PackagesPageContentProps)
     () => toPackagesBrowseQuery(initialSearch),
     [initialSearch],
   );
-
-  useEffect(() => {
-    setSearchInput(initialSearch.search ?? '');
-  }, [initialSearch.search]);
 
   useEffect(() => {
     let cancelled = false;
@@ -81,16 +78,22 @@ export function PackagesPageContent({ initialSearch }: PackagesPageContentProps)
     }
   }, [results, sort]);
 
-  function handleSearchSubmit(event: FormEvent) {
-    event.preventDefault();
-    router.push(
-      `/packages${buildPackagesSearchQuery({
-        ...initialSearch,
-        search: searchInput.trim() || undefined,
-        page: undefined,
-      })}`,
-    );
-  }
+  const paginationResetKey = useMemo(
+    () => JSON.stringify({ sort, browseQuery, fetchId }),
+    [sort, browseQuery, fetchId],
+  );
+
+  const {
+    pageItems,
+    page,
+    setPage,
+    totalPages,
+    totalItems,
+    pageSize,
+    showPagination,
+  } = useListingPagination(listings, paginationResetKey);
+
+  const paginationLabels = useMemo(() => toListingPaginationLabels(l), [l]);
 
   const searchSummary = initialSearch.search
     ? `${p.searchLabel}: ${initialSearch.search}`
@@ -125,108 +128,69 @@ export function PackagesPageContent({ initialSearch }: PackagesPageContentProps)
             {searchSummary}
           </p>
 
-          <form
-            id="packages-search"
-            onSubmit={handleSearchSubmit}
-            className="mt-8 flex max-w-xl flex-col gap-3 sm:flex-row"
-          >
-            <label className="sr-only" htmlFor="packages-search-input">
-              {p.searchLabel}
-            </label>
-            <input
-              id="packages-search-input"
-              type="search"
-              value={searchInput}
-              onChange={(event) => setSearchInput(event.target.value)}
-              placeholder={p.searchPlaceholder}
-              className="min-h-[44px] flex-1 rounded-lg border border-white/20 bg-white/10 px-4 text-white placeholder:text-white/50 focus:border-white focus:outline-none focus:ring-2 focus:ring-white/30"
-            />
-            <button
-              type="submit"
-              className="min-h-[44px] rounded-lg bg-primary px-6 py-2 text-sm font-bold uppercase tracking-wide text-white hover:bg-primary-hover"
-            >
-              {p.searchSubmit}
-            </button>
-          </form>
+          <PackagesSearchForm initialValues={initialSearch} />
         </div>
       </section>
 
-      <div className="sticky top-0 z-30 border-b border-atg-border bg-atg-elevated/95 shadow-sm backdrop-blur-md dark:border-atg-border dark:bg-atg-elevated/95">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-          <div>
-            <p className="text-sm text-atg-muted">{p.resultsFor}</p>
-            <p className="text-lg font-bold text-atg-fg">
-              {loading ? '…' : listings.length} {p.packagesFound}
-            </p>
-          </div>
-          <label className="flex items-center gap-2">
-            <span className="text-sm font-medium text-atg-muted">{p.sortBy}</span>
-            <select
-              value={sort}
-              onChange={(event) => setSort(event.target.value as SortKey)}
-              disabled={loading}
-              className="min-h-[44px] rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm font-medium text-atg-fg focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-60 dark:border-atg-border dark:bg-atg-surface dark:text-white"
-            >
-              <option value="recommended">{p.sortRecommended}</option>
-              <option value="price-asc">{p.sortPriceLow}</option>
-              <option value="price-desc">{p.sortPriceHigh}</option>
-            </select>
-          </label>
-        </div>
-      </div>
+      <ListingSortBar
+        resultsLine={p.resultsFor}
+        countLine={
+          <>
+            {loading ? '…' : listings.length} {p.packagesFound}
+          </>
+        }
+        sortLabel={p.sortBy}
+        sortValue={sort}
+        sortOptions={[
+          { value: 'recommended', label: p.sortRecommended },
+          { value: 'price-asc', label: p.sortPriceLow },
+          { value: 'price-desc', label: p.sortPriceHigh },
+        ]}
+        onSortChange={(value) => setSort(value as SortKey)}
+        disabled={loading}
+      />
 
-      <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
-        {error && (
-          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-4 text-sm text-red-800 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-200">
-            <p>{p.loadError}</p>
-            <button
-              type="button"
-              onClick={() => setFetchId((value) => value + 1)}
-              className="mt-3 min-h-[44px] rounded-lg bg-primary px-4 py-2 text-sm font-bold text-white hover:bg-primary-hover"
-            >
-              {p.retry}
-            </button>
-          </div>
-        )}
-
-        {loading && (
-          <div className="rounded-2xl border border-atg-border bg-atg-elevated px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
-            <p className="text-sm font-medium text-atg-muted">{p.loading}</p>
-          </div>
-        )}
-
-        {!loading && !error && listings.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-atg-border bg-atg-elevated px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
-            <h3 className="text-lg font-bold text-atg-fg">{p.noResults}</h3>
-            <p className="mt-2 text-sm text-atg-muted">{p.noResultsHint}</p>
-            <a
-              href="#packages-search"
-              className="mt-6 mr-3 inline-flex min-h-[44px] items-center rounded-lg border border-atg-border px-6 py-2 text-sm font-semibold text-atg-fg hover:border-primary dark:border-atg-border dark:text-white"
-            >
-              {p.modifySearch}
-            </a>
-            <Link
-              href="/"
-              className="mt-6 inline-flex min-h-[44px] items-center rounded-lg bg-primary px-6 py-2 text-sm font-bold text-white hover:bg-primary-hover"
-            >
-              {p.backHome}
-            </Link>
-          </div>
-        )}
-
-        {!loading && !error && listings.length > 0 && (
-          <div className="space-y-6">
-            {listings.map((pkg) => (
-              <PackageCard
-                key={pkg.id}
-                pkg={pkg}
-                t={p}
-                searchParams={initialSearch}
-              />
-            ))}
-          </div>
-        )}
-      </div>
+      <ListingPageBody
+        error={
+          error
+            ? {
+                message: p.loadError,
+                retryLabel: p.retry,
+                onRetry: () => setFetchId((value) => value + 1),
+              }
+            : null
+        }
+        loading={loading}
+        loadingMessage={p.loading}
+        isEmpty={!loading && !error && listings.length === 0}
+        empty={{
+          title: p.noResults,
+          description: p.noResultsHint,
+          backHomeLabel: p.backHome,
+          modifySearchLabel: p.modifySearch,
+          modifySearchHref: '#packages-search',
+        }}
+        pagination={
+          showPagination ? (
+            <ListingPaginationBar
+              page={page}
+              totalPages={totalPages}
+              totalItems={totalItems}
+              pageSize={pageSize}
+              itemLabel={l.resultItem}
+              labels={paginationLabels}
+              onPageChange={(next) => {
+                setPage(next);
+                scrollListingToTop();
+              }}
+            />
+          ) : undefined
+        }
+      >
+        {pageItems.map((pkg) => (
+          <PackageCard key={pkg.id} pkg={pkg} t={p} searchParams={initialSearch} />
+        ))}
+      </ListingPageBody>
 
       <HomeFooter />
     </div>

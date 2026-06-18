@@ -10,7 +10,7 @@ import { buildSearchRoute } from '../../lib/search/route';
 import {
   SearchFormInput,
   SearchFormLabel,
-  SearchFormOptionSelect,
+  SearchFormOptionDatalistInput,
   SearchFormPanel,
   SearchFormSubmit,
 } from '../shared';
@@ -90,7 +90,7 @@ export function CruisesSearchForm({ initialValues }: CruisesSearchFormProps) {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1fr_0.75fr_auto] lg:items-end">
         <div>
           <SearchFormLabel>{c.sailFrom}</SearchFormLabel>
-          <SearchFormOptionSelect
+          <SearchFormOptionDatalistInput
             name="sailFrom"
             placeholder={s.allPorts}
             options={portOptions}
@@ -104,7 +104,7 @@ export function CruisesSearchForm({ initialValues }: CruisesSearchFormProps) {
 
         <div>
           <SearchFormLabel>{c.sailTo}</SearchFormLabel>
-          <SearchFormOptionSelect
+          <SearchFormOptionDatalistInput
             name="sailTo"
             placeholder={s.allDestinations}
             options={portOptions}

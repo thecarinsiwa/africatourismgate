@@ -13,10 +13,10 @@ import { usePublicAirports } from '../../lib/flights/use-public-airports';
 import { useTranslations } from '../../lib/i18n/locale-provider';
 import { buildSearchRoute, type SearchVertical } from '../../lib/search/route';
 import {
+  SearchFormDatalistInput,
   SearchFormInput,
   SearchFormLabel,
-  SearchFormOptionSelect,
-  SearchFormSelect,
+  SearchFormOptionDatalistInput,
   SearchFormShell,
   SearchFormActions,
   SearchFormSubmit,
@@ -110,7 +110,7 @@ function FormAirportSelect({
   onChange: (iata: string) => void;
 }) {
   return (
-    <SearchFormOptionSelect
+    <SearchFormOptionDatalistInput
       name={name}
       placeholder={placeholder}
       value={value}
@@ -133,7 +133,7 @@ function FormCruisePortSelect({
   onChange: (code: string) => void;
 }) {
   return (
-    <SearchFormOptionSelect
+    <SearchFormOptionDatalistInput
       name={name}
       placeholder={placeholder}
       value={value}
@@ -395,7 +395,7 @@ export function SearchTabs() {
                       }
                       value={flightFrom}
                       options={airportOptions}
-                      disabled={airportsLoading || airportOptions.length === 0}
+                      disabled={airportsLoading}
                       onChange={(value) => {
                         setFlightFrom(value);
                         setFlightError(null);
@@ -411,7 +411,7 @@ export function SearchTabs() {
                       }
                       value={flightTo}
                       options={airportOptions}
-                      disabled={airportsLoading || airportOptions.length === 0}
+                      disabled={airportsLoading}
                       onChange={(value) => {
                         setFlightTo(value);
                         setFlightError(null);
@@ -501,10 +501,10 @@ export function SearchTabs() {
                   </div>
                   <div>
                     <SearchFormLabel>{t.search.destination}</SearchFormLabel>
-                    <SearchFormSelect
+                    <SearchFormDatalistInput
                       name="destination"
                       placeholder={t.search.destinationPh}
-                      options={destinationOptions}
+                      suggestions={destinationOptions}
                       value={destination}
                       onChange={setDestination}
                     />
@@ -548,14 +548,14 @@ export function SearchTabs() {
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.25fr_1fr_1fr_auto] lg:items-end">
                   <div>
                     <SearchFormLabel>{t.cars.pickupLocation}</SearchFormLabel>
-                    <SearchFormSelect
+                    <SearchFormDatalistInput
                       name="pickupLocation"
                       placeholder={
                         carPickupLoading ? t.cars.loading : t.search.pickupLocationPh
                       }
-                      options={carPickupOptions}
+                      suggestions={carPickupOptions}
                       value={destination}
-                      disabled={carPickupLoading || carPickupOptions.length === 0}
+                      disabled={carPickupLoading}
                       onChange={(value) => {
                         setDestination(value);
                         setCarError(null);
@@ -698,18 +698,16 @@ export function SearchTabs() {
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.25fr_1fr_0.75fr_auto] lg:items-end">
                   <div>
                     <SearchFormLabel>{t.search.destination}</SearchFormLabel>
-                    <SearchFormSelect
+                    <SearchFormDatalistInput
                       name="destination"
                       placeholder={
                         activityDestinationsLoading
                           ? t.activities.destinationsLoading
                           : t.search.allDestinations
                       }
-                      options={activityDestinationOptions}
+                      suggestions={activityDestinationOptions}
                       value={destination}
-                      disabled={
-                        activityDestinationsLoading || activityDestinationOptions.length === 0
-                      }
+                      disabled={activityDestinationsLoading}
                       onChange={(value) => {
                         setDestination(value);
                         setToursError(null);
