@@ -505,6 +505,12 @@ export const es: Translations = {
       fuelPolicy:
         'Política lleno / lleno: devuelva el vehículo con el mismo nivel de combustible.',
     },
+    galleryAria: 'Galería de fotos del vehículo',
+    galleryOpenLightbox: 'Ampliar foto',
+    galleryClose: 'Cerrar galería',
+    galleryPrevious: 'Foto anterior',
+    galleryNext: 'Foto siguiente',
+    galleryCounter: (current, total) => `Foto ${current} de ${total}`,
   },
   cruises: {
     metaTitle: 'Cruceros fluviales y costeros en África',
@@ -576,6 +582,12 @@ export const es: Translations = {
     nightPlural: 'noches',
     searchRequired: 'Indique puertos y fechas de salida.',
     endAfterStart: 'La fecha de fin debe ser posterior a la de inicio.',
+    galleryAria: 'Galería de fotos del barco',
+    galleryOpenLightbox: 'Ampliar foto',
+    galleryClose: 'Cerrar galería',
+    galleryPrevious: 'Foto anterior',
+    galleryNext: 'Foto siguiente',
+    galleryCounter: (current, total) => `Foto ${current} de ${total}`,
   },
   activities: {
     metaTitle: 'Actividades y tours en África',

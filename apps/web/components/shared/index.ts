@@ -9,6 +9,7 @@
  */
 
 export { ProductCard, type ProductCardProps } from './product-card';
+export { ProductGallery, type ProductGalleryLabels } from './product-gallery';
 export { PriceDisplay, type PriceDisplayProps } from './price-display';
 export { StarRating, type StarRatingProps } from './star-rating';
 export { PageHero, type PageHeroProps } from './page-hero';

@@ -8,6 +8,7 @@ import {
   CruiseSailings,
   Itineraries,
   ItineraryPorts,
+  ShipImages,
   Ships,
 } from '../../../entities/generated';
 import { PublicCruisesController } from './public-cruises.controller';
@@ -21,6 +22,7 @@ import { PublicCruisesService } from './public-cruises.service';
       ItineraryPorts,
       CruisePorts,
       Ships,
+      ShipImages,
       CruiseLines,
       Cabins,
       CabinAvailability,

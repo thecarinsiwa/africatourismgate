@@ -7,8 +7,10 @@ import {
   RentalAgencies,
   VehicleAvailability,
   VehicleCategories,
+  VehicleImages,
   Vehicles,
 } from '../../../entities/generated';
+import { PublicGalleryImageDto } from '../dto/public-gallery-image.dto';
 import { PublicDestinationDto } from '../accommodations/dto/public-destination.dto';
 import { VehicleDetailQueryDto } from './dto/vehicle-detail-query.dto';
 import { VehicleDetailDto } from './dto/vehicle-detail.dto';
@@ -28,6 +30,8 @@ export class PublicVehiclesService {
     private readonly vehiclesRepository: Repository<Vehicles>,
     @InjectRepository(VehicleCategories)
     private readonly categoriesRepository: Repository<VehicleCategories>,
+    @InjectRepository(VehicleImages)
+    private readonly vehicleImagesRepository: Repository<VehicleImages>,
     @InjectRepository(RentalAgencies)
     private readonly agenciesRepository: Repository<RentalAgencies>,
     @InjectRepository(VehicleAvailability)
@@ -109,6 +113,8 @@ export class PublicVehiclesService {
       categories.filter((c) => !c.deletedAt).map((c) => [c.id, c]),
     );
 
+    const imageUrlByVehicleId = await this.loadPrimaryImageUrlByVehicleId(vehicleIds);
+
     const results: VehicleSearchResultDto[] = [];
 
     for (const vehicle of activeVehicles) {
@@ -163,6 +169,7 @@ export class PublicVehiclesService {
         pickupDate,
         returnDate,
         availabilitySlotId: slot.id,
+        imageUrl: imageUrlByVehicleId.get(vehicle.id) ?? null,
       });
     }
 
@@ -289,6 +296,8 @@ export class PublicVehiclesService {
       .orderBy('slot.startDatetime', 'ASC')
       .getOne();
 
+    const images = await this.loadVehicleGallery(vehicle.id);
+
     return {
       id: vehicle.id,
       licensePlate: vehicle.licensePlate,
@@ -316,7 +325,43 @@ export class PublicVehiclesService {
             endDatetime: this.toIsoDatetime(slot.endDatetime),
           }
         : null,
+      images,
     };
+  }
+
+  private async loadPrimaryImageUrlByVehicleId(
+    vehicleIds: string[],
+  ): Promise<Map<string, string>> {
+    if (!vehicleIds.length) {
+      return new Map();
+    }
+
+    const rows = await this.vehicleImagesRepository.find({
+      where: { vehicleId: In(vehicleIds) },
+      order: { sortOrder: 'ASC' },
+    });
+    const imageUrlByVehicleId = new Map<string, string>();
+    for (const row of rows) {
+      if (!row.deletedAt && !imageUrlByVehicleId.has(row.vehicleId)) {
+        imageUrlByVehicleId.set(row.vehicleId, row.url);
+      }
+    }
+    return imageUrlByVehicleId;
+  }
+
+  private async loadVehicleGallery(vehicleId: string): Promise<PublicGalleryImageDto[]> {
+    const rows = await this.vehicleImagesRepository.find({
+      where: { vehicleId },
+      order: { sortOrder: 'ASC' },
+    });
+    return rows
+      .filter((row) => !row.deletedAt)
+      .map((row) => ({
+        id: row.id,
+        url: row.url,
+        caption: row.caption ?? null,
+        sortOrder: row.sortOrder,
+      }));
   }
 
   private async resolveDestinationIds(pickupLocation: string): Promise<string[]> {

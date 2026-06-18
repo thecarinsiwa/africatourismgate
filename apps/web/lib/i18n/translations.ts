@@ -414,6 +414,12 @@ export type Translations = {
       insurance: string;
       fuelPolicy: string;
     };
+    galleryAria: string;
+    galleryOpenLightbox: string;
+    galleryClose: string;
+    galleryPrevious: string;
+    galleryNext: string;
+    galleryCounter: (current: number, total: number) => string;
   };
   cruises: {
     metaTitle: string;
@@ -483,6 +489,12 @@ export type Translations = {
     nightPlural: string;
     searchRequired: string;
     endAfterStart: string;
+    galleryAria: string;
+    galleryOpenLightbox: string;
+    galleryClose: string;
+    galleryPrevious: string;
+    galleryNext: string;
+    galleryCounter: (current: number, total: number) => string;
   };
   activities: {
     metaTitle: string;
@@ -1337,6 +1349,12 @@ const fr: Translations = {
       fuelPolicy:
         'Politique plein / plein : restituez le véhicule avec le même niveau de carburant.',
     },
+    galleryAria: 'Galerie photos du véhicule',
+    galleryOpenLightbox: 'Agrandir la photo',
+    galleryClose: 'Fermer la galerie',
+    galleryPrevious: 'Photo précédente',
+    galleryNext: 'Photo suivante',
+    galleryCounter: (current, total) => `Photo ${current} sur ${total}`,
   },
   cruises: {
     metaTitle: 'Croisières fluviales en Afrique',
@@ -1408,6 +1426,12 @@ const fr: Translations = {
     nightPlural: 'nuits',
     searchRequired: 'Indiquez les ports et les dates de départ.',
     endAfterStart: 'La date de fin doit être après la date de début.',
+    galleryAria: 'Galerie photos du navire',
+    galleryOpenLightbox: 'Agrandir la photo',
+    galleryClose: 'Fermer la galerie',
+    galleryPrevious: 'Photo précédente',
+    galleryNext: 'Photo suivante',
+    galleryCounter: (current, total) => `Photo ${current} sur ${total}`,
   },
   activities: {
     metaTitle: 'Activités et tours en Afrique',
@@ -2298,6 +2322,12 @@ const en: Translations = {
       fuelPolicy:
         'Full-to-full policy: return the vehicle with the same fuel level as at pick-up.',
     },
+    galleryAria: 'Vehicle photo gallery',
+    galleryOpenLightbox: 'Enlarge photo',
+    galleryClose: 'Close gallery',
+    galleryPrevious: 'Previous photo',
+    galleryNext: 'Next photo',
+    galleryCounter: (current, total) => `Photo ${current} of ${total}`,
   },
   cruises: {
     metaTitle: 'River & coastal cruises in Africa',
@@ -2369,6 +2399,12 @@ const en: Translations = {
     nightPlural: 'nights',
     searchRequired: 'Enter ports and departure dates.',
     endAfterStart: 'End date must be after start date.',
+    galleryAria: 'Ship photo gallery',
+    galleryOpenLightbox: 'Enlarge photo',
+    galleryClose: 'Close gallery',
+    galleryPrevious: 'Previous photo',
+    galleryNext: 'Next photo',
+    galleryCounter: (current, total) => `Photo ${current} of ${total}`,
   },
   activities: {
     metaTitle: 'Activities & tours in Africa',

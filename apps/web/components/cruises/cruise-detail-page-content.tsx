@@ -18,6 +18,7 @@ import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { buildReservationQuery } from '../../lib/reservations/flow';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
+import { ProductGallery } from '../shared';
 import { CruiseBookingMobileBar, CruiseBookingSidebar } from './cruise-booking-sidebar';
 import { CruiseCabinsSection } from './cruise-cabins-section';
 import { CruiseItinerarySection } from './cruise-itinerary-section';
@@ -246,6 +247,21 @@ export function CruiseDetailPageContent({
       <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 pb-28 sm:px-6 lg:px-8 lg:pb-8">
         <div className="lg:grid lg:grid-cols-3 lg:gap-8">
           <div className="min-w-0 space-y-8 lg:col-span-2">
+            {detail.images && detail.images.length > 0 ? (
+              <ProductGallery
+                images={detail.images}
+                name={detail.shipName}
+                labels={{
+                  ariaLabel: c.galleryAria,
+                  openLightbox: c.galleryOpenLightbox,
+                  close: c.galleryClose,
+                  previous: c.galleryPrevious,
+                  next: c.galleryNext,
+                  counter: c.galleryCounter,
+                }}
+              />
+            ) : null}
+
             <header>
               <p className="text-sm font-semibold uppercase tracking-wide text-primary">
                 {detail.cruiseLineName}
