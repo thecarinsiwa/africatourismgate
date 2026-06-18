@@ -1,14 +1,19 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import {
-  buildCruisesSearchQuery,
-  type CruisesSearchParams,
-} from '../../lib/cruises/listings';
+import { useEffect, useMemo, useState } from 'react';
+import { type CruisesSearchParams } from '../../lib/cruises/listings';
 import { CRUISE_PORT_OPTIONS } from '../../lib/cruises/ports';
 import { addDays, todayISODate } from '../../lib/hotels/dates';
 import { useTranslations } from '../../lib/i18n/locale-provider';
+import { buildSearchRoute } from '../../lib/search/route';
+import {
+  SearchFormInput,
+  SearchFormLabel,
+  SearchFormOptionSelect,
+  SearchFormPanel,
+  SearchFormSubmit,
+} from '../shared';
 
 type CruisesSearchFormProps = {
   initialValues: CruisesSearchParams;
@@ -26,6 +31,11 @@ export function CruisesSearchForm({ initialValues }: CruisesSearchFormProps) {
   const [endDate, setEndDate] = useState(initialValues.endDate ?? '');
   const [guests, setGuests] = useState(initialValues.guests ?? '2');
   const [error, setError] = useState<string | null>(null);
+
+  const portOptions = useMemo(
+    () => CRUISE_PORT_OPTIONS.map((port) => ({ value: port.code, label: `${port.code} — ${port.name}` })),
+    [],
+  );
 
   const today = todayISODate();
   const endMinDate = startDate ? addDays(startDate, 1) : today;
@@ -54,143 +64,103 @@ export function CruisesSearchForm({ initialValues }: CruisesSearchFormProps) {
       return;
     }
 
+    if (sailFrom === sailTo) {
+      setError(s.cruisesSamePort);
+      return;
+    }
+
     if (endDate <= startDate) {
       setError(c.endAfterStart);
       return;
     }
 
-    const params: CruisesSearchParams = {
+    const params = new URLSearchParams({
       sailFrom,
       sailTo,
       startDate,
       endDate,
       guests: String(Math.max(1, Number.parseInt(guests, 10) || 1)),
-    };
+    });
 
-    router.push(`/cruises${buildCruisesSearchQuery(params)}`);
+    router.push(buildSearchRoute('cruises', params));
   }
 
-  const labelClass =
-    'mb-1.5 block text-xs font-semibold uppercase tracking-wide text-atg-muted';
-  const fieldClass =
-    'min-h-[44px] w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg transition-colors placeholder:text-atg-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg dark:placeholder:text-atg-muted';
-
   return (
-    <form
-      id="cruises-search"
-      onSubmit={handleSubmit}
-      className="mt-8 rounded-xl border border-white/10 bg-white p-5 shadow-xl dark:border-atg-border dark:bg-atg-elevated sm:p-6"
-    >
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1fr_auto] lg:items-end">
+    <SearchFormPanel id="cruises-search" onSubmit={handleSubmit}>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1fr_0.75fr_auto] lg:items-end">
         <div>
-          <label htmlFor="cruises-sail-from" className={labelClass}>
-            {c.sailFrom}
-          </label>
-          <select
-            id="cruises-sail-from"
+          <SearchFormLabel>{c.sailFrom}</SearchFormLabel>
+          <SearchFormOptionSelect
             name="sailFrom"
+            placeholder={s.allPorts}
+            options={portOptions}
             value={sailFrom}
-            onChange={(event) => {
-              setSailFrom(event.target.value);
+            onChange={(value) => {
+              setSailFrom(value);
               setError(null);
             }}
-            className={fieldClass}
-          >
-            <option value="">{s.allPorts}</option>
-            {CRUISE_PORT_OPTIONS.map((port) => (
-              <option key={port.code} value={port.code}>
-                {port.code} — {port.name}
-              </option>
-            ))}
-          </select>
+          />
         </div>
 
         <div>
-          <label htmlFor="cruises-sail-to" className={labelClass}>
-            {c.sailTo}
-          </label>
-          <select
-            id="cruises-sail-to"
+          <SearchFormLabel>{c.sailTo}</SearchFormLabel>
+          <SearchFormOptionSelect
             name="sailTo"
+            placeholder={s.allDestinations}
+            options={portOptions}
             value={sailTo}
-            onChange={(event) => {
-              setSailTo(event.target.value);
+            onChange={(value) => {
+              setSailTo(value);
               setError(null);
             }}
-            className={fieldClass}
-          >
-            <option value="">{s.allDestinations}</option>
-            {CRUISE_PORT_OPTIONS.map((port) => (
-              <option key={port.code} value={port.code}>
-                {port.code} — {port.name}
-              </option>
-            ))}
-          </select>
+          />
         </div>
 
         <div>
-          <label htmlFor="cruises-start-date" className={labelClass}>
-            {c.startDate}
-          </label>
-          <input
-            id="cruises-start-date"
+          <SearchFormLabel>{c.startDate}</SearchFormLabel>
+          <SearchFormInput
             type="date"
             name="startDate"
             value={startDate}
             min={today}
-            onChange={(event) => {
-              const value = event.target.value;
+            onChange={(value) => {
               setStartDate(value);
               if (endDate && value && endDate <= value) {
                 setEndDate('');
               }
               setError(null);
             }}
-            className={fieldClass}
           />
         </div>
 
         <div>
-          <label htmlFor="cruises-end-date" className={labelClass}>
-            {c.endDate}
-          </label>
-          <input
-            id="cruises-end-date"
+          <SearchFormLabel>{c.endDate}</SearchFormLabel>
+          <SearchFormInput
             type="date"
             name="endDate"
             value={endDate}
             min={endMinDate}
-            onChange={(event) => {
-              setEndDate(event.target.value);
+            onChange={(value) => {
+              setEndDate(value);
               setError(null);
             }}
-            className={fieldClass}
           />
         </div>
 
         <div>
-          <label htmlFor="cruises-guests" className={labelClass}>
-            {c.guests}
-          </label>
-          <input
-            id="cruises-guests"
+          <SearchFormLabel>{c.guests}</SearchFormLabel>
+          <SearchFormInput
             type="number"
             name="guests"
-            min={1}
-            max={20}
             value={guests}
-            onChange={(event) => setGuests(event.target.value)}
-            className={`${fieldClass} lg:mb-0`}
+            min="1"
+            max="20"
+            onChange={setGuests}
           />
         </div>
 
-        <div className="flex items-end sm:col-span-2 lg:col-span-1">
-          <button
-            type="submit"
-            className="min-h-[44px] w-full rounded-lg bg-primary px-5 py-2.5 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover"
-          >
-            {s.search}
-          </button>
+        <div className="flex items-end">
+          <SearchFormSubmit label={s.search} />
         </div>
       </div>
 
@@ -199,6 +169,6 @@ export function CruisesSearchForm({ initialValues }: CruisesSearchFormProps) {
           {error}
         </p>
       )}
-    </form>
+    </SearchFormPanel>
   );
 }

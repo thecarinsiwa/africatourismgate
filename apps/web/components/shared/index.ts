@@ -13,15 +13,18 @@ export { PriceDisplay, type PriceDisplayProps } from './price-display';
 export { StarRating, type StarRatingProps } from './star-rating';
 export { PageHero, type PageHeroProps } from './page-hero';
 export { SearchFormShell, type SearchFormShellProps, type SearchFormTab } from './search-form-shell';
+export { SearchFormPanel, type SearchFormPanelProps } from './search-form-panel';
 export {
   SearchFormInput,
   SearchFormLabel,
   SearchFormSelect,
+  SearchFormOptionSelect,
   SearchFormActions,
   SearchFormSubmit,
   SearchViewAllLink,
   type SearchFormActionsProps,
   type SearchFormInputProps,
+  type SearchFormOptionSelectProps,
   type SearchFormSelectProps,
   type SearchFormSubmitProps,
   type SearchViewAllLinkProps,

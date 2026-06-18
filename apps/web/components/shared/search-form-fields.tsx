@@ -63,6 +63,48 @@ export type SearchFormSelectProps = {
   className?: string;
 };
 
+export type SearchFormOptionSelectProps = {
+  name: string;
+  placeholder: string;
+  options: { value: string; label: string }[];
+  value: string;
+  disabled?: boolean;
+  onChange: (value: string) => void;
+  className?: string;
+};
+
+/** Liste déroulante avec paires valeur / libellé (aéroports, ports, etc.). */
+export function SearchFormOptionSelect({
+  name,
+  placeholder,
+  options,
+  value,
+  disabled,
+  onChange,
+  className,
+}: SearchFormOptionSelectProps) {
+  return (
+    <select
+      name={name}
+      value={value}
+      disabled={disabled}
+      onChange={(e) => onChange(e.target.value)}
+      className={cn(
+        fieldInputClass,
+        'disabled:cursor-not-allowed disabled:opacity-60',
+        className,
+      )}
+    >
+      <option value="">{placeholder}</option>
+      {options.map((opt) => (
+        <option key={opt.value} value={opt.value}>
+          {opt.label}
+        </option>
+      ))}
+    </select>
+  );
+}
+
 /** Liste déroulante pour formulaires de recherche marketing. */
 export function SearchFormSelect({
   name,

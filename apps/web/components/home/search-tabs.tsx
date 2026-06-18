@@ -15,11 +15,11 @@ import { buildSearchRoute, type SearchVertical } from '../../lib/search/route';
 import {
   SearchFormInput,
   SearchFormLabel,
+  SearchFormOptionSelect,
   SearchFormSelect,
   SearchFormShell,
   SearchFormActions,
   SearchFormSubmit,
-  searchFormFieldClass,
 } from '../shared';
 
 type SearchTab = SearchVertical;
@@ -110,20 +110,14 @@ function FormAirportSelect({
   onChange: (iata: string) => void;
 }) {
   return (
-    <select
+    <SearchFormOptionSelect
       name={name}
+      placeholder={placeholder}
       value={value}
+      options={options.map((airport) => ({ value: airport.iataCode, label: airport.label }))}
       disabled={disabled}
-      onChange={(e) => onChange(e.target.value)}
-      className={searchFormFieldClass}
-    >
-      <option value="">{placeholder}</option>
-      {options.map((airport) => (
-        <option key={airport.iataCode} value={airport.iataCode}>
-          {airport.label}
-        </option>
-      ))}
-    </select>
+      onChange={onChange}
+    />
   );
 }
 
@@ -139,19 +133,16 @@ function FormCruisePortSelect({
   onChange: (code: string) => void;
 }) {
   return (
-    <select
+    <SearchFormOptionSelect
       name={name}
+      placeholder={placeholder}
       value={value}
-      onChange={(e) => onChange(e.target.value)}
-      className={`${searchFormFieldClass} disabled:cursor-not-allowed disabled:opacity-60`}
-    >
-      <option value="">{placeholder}</option>
-      {CRUISE_PORT_OPTIONS.map((port) => (
-        <option key={port.code} value={port.code}>
-          {port.code} — {port.name}
-        </option>
-      ))}
-    </select>
+      options={CRUISE_PORT_OPTIONS.map((port) => ({
+        value: port.code,
+        label: `${port.code} — ${port.name}`,
+      }))}
+      onChange={onChange}
+    />
   );
 }
 
