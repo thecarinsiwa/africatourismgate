@@ -15,9 +15,11 @@ import { formatDisplayDate } from '../../lib/hotels/dates';
 import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
-import { ListingPageBody, ListingSortBar } from '../shared/listing-patterns';
+import { ListingPageBody, ListingPaginationBar, ListingSortBar } from '../shared/listing-patterns';
 import { FlightCard } from './flight-card';
 import { FlightsSearchForm } from './flights-search-form';
+import { toListingPaginationLabels, scrollListingToTop } from '../../lib/listing/pagination-labels';
+import { useListingPagination } from '../../lib/listing/pagination';
 
 export type { FlightsSearchParams };
 
@@ -30,6 +32,7 @@ type FlightsPageContentProps = {
 export function FlightsPageContent({ initialSearch }: FlightsPageContentProps) {
   const t = useTranslations();
   const f = t.flights;
+  const l = t.listing;
   const { locale } = useLocale();
   const { airports } = usePublicAirports();
 
@@ -90,6 +93,23 @@ export function FlightsPageContent({ initialSearch }: FlightsPageContentProps) {
         return items;
     }
   }, [results, sort]);
+
+  const paginationResetKey = useMemo(
+    () => JSON.stringify({ sort, apiQuery, fetchId }),
+    [sort, apiQuery, fetchId],
+  );
+
+  const {
+    pageItems,
+    page,
+    setPage,
+    totalPages,
+    totalItems,
+    pageSize,
+    showPagination,
+  } = useListingPagination(listings, paginationResetKey);
+
+  const paginationLabels = useMemo(() => toListingPaginationLabels(l), [l]);
 
   const searchSummary = [
     hasRouteFilter || hasDateFilter ? (initialSearch.returnDate ? t.search.roundTrip : t.search.oneWay) : null,
@@ -200,8 +220,24 @@ export function FlightsPageContent({ initialSearch }: FlightsPageContentProps) {
           modifySearchLabel: f.modifySearch,
           modifySearchHref: '#flights-search',
         }}
+        pagination={
+          showPagination ? (
+            <ListingPaginationBar
+              page={page}
+              totalPages={totalPages}
+              totalItems={totalItems}
+              pageSize={pageSize}
+              itemLabel={l.resultItem}
+              labels={paginationLabels}
+              onPageChange={(next) => {
+                setPage(next);
+                scrollListingToTop();
+              }}
+            />
+          ) : undefined
+        }
       >
-        {listings.map((flight) => (
+        {pageItems.map((flight) => (
           <FlightCard
             key={flight.id}
             flight={flight}

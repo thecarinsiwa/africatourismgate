@@ -14,9 +14,11 @@ import { formatDisplayDate } from '../../lib/hotels/dates';
 import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
-import { ListingPageBody, ListingSortBar } from '../shared/listing-patterns';
+import { ListingPageBody, ListingPaginationBar, ListingSortBar } from '../shared/listing-patterns';
 import { ActivitiesSearchForm } from './activities-search-form';
 import { ActivityCard } from './activity-card';
+import { toListingPaginationLabels, scrollListingToTop } from '../../lib/listing/pagination-labels';
+import { useListingPagination } from '../../lib/listing/pagination';
 
 export type { ActivitiesSearchParams };
 
@@ -29,6 +31,7 @@ type ActivitiesPageContentProps = {
 export function ActivitiesPageContent({ initialSearch }: ActivitiesPageContentProps) {
   const t = useTranslations();
   const a = t.activities;
+  const l = t.listing;
   const { locale } = useLocale();
 
   const [sort, setSort] = useState<SortKey>('recommended');
@@ -94,6 +97,23 @@ export function ActivitiesPageContent({ initialSearch }: ActivitiesPageContentPr
         return items;
     }
   }, [results, sort]);
+
+  const paginationResetKey = useMemo(
+    () => JSON.stringify({ sort, browseQuery, searchQuery, hasDateSearch, fetchId }),
+    [sort, browseQuery, searchQuery, hasDateSearch, fetchId],
+  );
+
+  const {
+    pageItems,
+    page,
+    setPage,
+    totalPages,
+    totalItems,
+    pageSize,
+    showPagination,
+  } = useListingPagination(listings, paginationResetKey);
+
+  const paginationLabels = useMemo(() => toListingPaginationLabels(l), [l]);
 
   const searchSummary = [
     initialSearch.destination && `${a.destination}: ${initialSearch.destination}`,
@@ -185,8 +205,24 @@ export function ActivitiesPageContent({ initialSearch }: ActivitiesPageContentPr
           modifySearchLabel: a.modifySearch,
           modifySearchHref: '#activities-search',
         }}
+        pagination={
+          showPagination ? (
+            <ListingPaginationBar
+              page={page}
+              totalPages={totalPages}
+              totalItems={totalItems}
+              pageSize={pageSize}
+              itemLabel={l.resultItem}
+              labels={paginationLabels}
+              onPageChange={(next) => {
+                setPage(next);
+                scrollListingToTop();
+              }}
+            />
+          ) : undefined
+        }
       >
-        {listings.map((activity) => (
+        {pageItems.map((activity) => (
           <ActivityCard
             key={activity.id}
             activity={activity}

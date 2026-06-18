@@ -1,9 +1,11 @@
 'use client';
 
-import { EmptyState, FilterBar } from '@africatourismgate/ui';
+import { EmptyState, FilterBar, DataTablePagination } from '@africatourismgate/ui';
+import type { DataTablePaginationLabels } from '@africatourismgate/ui';
 import { cn } from '@africatourismgate/ui';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
+import { LISTING_PAGE_SIZE } from '../../lib/listing/pagination';
 
 const sortSelectClass =
   'min-h-[44px] rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm font-medium text-atg-fg focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-60 dark:border-atg-border dark:bg-atg-surface dark:text-white';
@@ -240,7 +242,46 @@ export type ListingPageBodyProps = {
   filters?: ReactNode;
   children: ReactNode;
   resultsVariant?: 'list' | 'grid';
+  pagination?: ReactNode;
 };
+
+export type ListingPaginationBarProps = {
+  page: number;
+  totalPages: number;
+  totalItems: number;
+  pageSize?: number;
+  itemLabel: string;
+  onPageChange: (page: number) => void;
+  labels: DataTablePaginationLabels;
+};
+
+/** Pagination 10 par 10 sous la grille de résultats. */
+export function ListingPaginationBar({
+  page,
+  totalPages,
+  totalItems,
+  pageSize = LISTING_PAGE_SIZE,
+  itemLabel,
+  onPageChange,
+  labels,
+}: ListingPaginationBarProps) {
+  if (totalItems <= pageSize) {
+    return null;
+  }
+
+  return (
+    <DataTablePagination
+      page={page}
+      totalPages={totalPages}
+      totalItems={totalItems}
+      pageSize={pageSize}
+      itemLabel={itemLabel}
+      onPageChange={onPageChange}
+      labels={labels}
+      className="mt-8"
+    />
+  );
+}
 
 /** Corps de page liste : notice, erreur, filtres, états et grille (pattern hôtels). */
 export function ListingPageBody({
@@ -253,6 +294,7 @@ export function ListingPageBody({
   filters,
   children,
   resultsVariant = 'list',
+  pagination,
 }: ListingPageBodyProps) {
   return (
     <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
@@ -268,7 +310,10 @@ export function ListingPageBody({
           ) : isEmpty && empty ? (
             <ListingEmptyState {...empty} />
           ) : (
-            <ListingResultsGrid variant={resultsVariant}>{children}</ListingResultsGrid>
+            <>
+              <ListingResultsGrid variant={resultsVariant}>{children}</ListingResultsGrid>
+              {pagination}
+            </>
           )}
         </div>
       </div>

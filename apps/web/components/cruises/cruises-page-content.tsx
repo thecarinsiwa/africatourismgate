@@ -13,9 +13,11 @@ import { formatDisplayDate } from '../../lib/hotels/dates';
 import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
-import { ListingPageBody, ListingSortBar } from '../shared/listing-patterns';
+import { ListingPageBody, ListingPaginationBar, ListingSortBar } from '../shared/listing-patterns';
 import { CruiseCard } from './cruise-card';
 import { CruisesSearchForm } from './cruises-search-form';
+import { toListingPaginationLabels, scrollListingToTop } from '../../lib/listing/pagination-labels';
+import { useListingPagination } from '../../lib/listing/pagination';
 
 export type { CruisesSearchParams };
 
@@ -28,6 +30,7 @@ type CruisesPageContentProps = {
 export function CruisesPageContent({ initialSearch }: CruisesPageContentProps) {
   const t = useTranslations();
   const c = t.cruises;
+  const l = t.listing;
   const { locale } = useLocale();
 
   const [sort, setSort] = useState<SortKey>('recommended');
@@ -83,6 +86,23 @@ export function CruisesPageContent({ initialSearch }: CruisesPageContentProps) {
         return items;
     }
   }, [results, sort]);
+
+  const paginationResetKey = useMemo(
+    () => JSON.stringify({ sort, apiQuery, fetchId }),
+    [sort, apiQuery, fetchId],
+  );
+
+  const {
+    pageItems,
+    page,
+    setPage,
+    totalPages,
+    totalItems,
+    pageSize,
+    showPagination,
+  } = useListingPagination(listings, paginationResetKey);
+
+  const paginationLabels = useMemo(() => toListingPaginationLabels(l), [l]);
 
   const searchSummary = [
     initialSearch.startDate &&
@@ -183,8 +203,24 @@ export function CruisesPageContent({ initialSearch }: CruisesPageContentProps) {
           modifySearchLabel: c.modifySearch,
           modifySearchHref: '#cruises-search',
         }}
+        pagination={
+          showPagination ? (
+            <ListingPaginationBar
+              page={page}
+              totalPages={totalPages}
+              totalItems={totalItems}
+              pageSize={pageSize}
+              itemLabel={l.resultItem}
+              labels={paginationLabels}
+              onPageChange={(next) => {
+                setPage(next);
+                scrollListingToTop();
+              }}
+            />
+          ) : undefined
+        }
       >
-        {listings.map((sailing) => (
+        {pageItems.map((sailing) => (
           <CruiseCard
             key={sailing.id}
             sailing={sailing}

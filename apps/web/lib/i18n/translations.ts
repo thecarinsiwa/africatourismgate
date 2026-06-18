@@ -96,6 +96,19 @@ export type Translations = {
     clearFilters: string;
     applyFilters: string;
     filtersToggle: string;
+    previousPage: string;
+    nextPage: string;
+    navAriaLabel: string;
+    pageAria: (page: number) => string;
+    range: (params: {
+      start: number;
+      end: number;
+      total: number;
+      itemLabel: string;
+      pluralSuffix: string;
+    }) => string;
+    pageOf: (params: { page: number; totalPages: number }) => string;
+    resultItem: string;
   };
   verticalSearch: {
     backHome: string;
@@ -888,6 +901,14 @@ const fr: Translations = {
     clearFilters: 'Effacer les filtres',
     applyFilters: 'Appliquer',
     filtersToggle: 'Filtres',
+    previousPage: 'Page précédente',
+    nextPage: 'Page suivante',
+    navAriaLabel: 'Pagination des résultats',
+    pageAria: (page) => `Page ${page}`,
+    range: ({ start, end, total, itemLabel, pluralSuffix }) =>
+      `${start}–${end} sur ${total} ${itemLabel}${pluralSuffix}`,
+    pageOf: ({ page, totalPages }) => `page ${page} / ${totalPages}`,
+    resultItem: 'résultat',
   },
   verticalSearch: {
     backHome: 'Retour à l\'accueil',
@@ -1779,6 +1800,14 @@ const en: Translations = {
     clearFilters: 'Clear filters',
     applyFilters: 'Apply',
     filtersToggle: 'Filters',
+    previousPage: 'Previous page',
+    nextPage: 'Next page',
+    navAriaLabel: 'Results pagination',
+    pageAria: (page) => `Page ${page}`,
+    range: ({ start, end, total, itemLabel, pluralSuffix }) =>
+      `${start}–${end} of ${total} ${itemLabel}${pluralSuffix}`,
+    pageOf: ({ page, totalPages }) => `page ${page} / ${totalPages}`,
+    resultItem: 'result',
   },
   verticalSearch: {
     backHome: 'Back to home',

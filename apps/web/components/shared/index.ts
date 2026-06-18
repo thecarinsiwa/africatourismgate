@@ -43,6 +43,7 @@ export {
   ListingEmptyState,
   ListingFiltersAside,
   ListingPageBody,
+  ListingPaginationBar,
   ListingDefaultEmptyIcon,
   type ListingSortBarProps,
   type ListingSortOption,
@@ -52,4 +53,5 @@ export {
   type ListingEmptyStateProps,
   type ListingFiltersAsideProps,
   type ListingPageBodyProps,
+  type ListingPaginationBarProps,
 } from './listing-patterns';

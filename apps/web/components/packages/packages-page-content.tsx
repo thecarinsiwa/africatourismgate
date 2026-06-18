@@ -11,9 +11,11 @@ import type { PackageListItem } from '../../lib/packages/types';
 import { useTranslations } from '../../lib/i18n/locale-provider';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
-import { ListingPageBody, ListingSortBar } from '../shared/listing-patterns';
+import { ListingPageBody, ListingPaginationBar, ListingSortBar } from '../shared/listing-patterns';
 import { PackageCard } from './package-card';
 import { PackagesSearchForm } from './packages-search-form';
+import { toListingPaginationLabels, scrollListingToTop } from '../../lib/listing/pagination-labels';
+import { useListingPagination } from '../../lib/listing/pagination';
 
 export type { PackagesSearchParams };
 
@@ -26,6 +28,7 @@ type PackagesPageContentProps = {
 export function PackagesPageContent({ initialSearch }: PackagesPageContentProps) {
   const t = useTranslations();
   const p = t.packages;
+  const l = t.listing;
 
   const [sort, setSort] = useState<SortKey>('recommended');
   const [results, setResults] = useState<PackageListItem[]>([]);
@@ -74,6 +77,23 @@ export function PackagesPageContent({ initialSearch }: PackagesPageContentProps)
         return items;
     }
   }, [results, sort]);
+
+  const paginationResetKey = useMemo(
+    () => JSON.stringify({ sort, browseQuery, fetchId }),
+    [sort, browseQuery, fetchId],
+  );
+
+  const {
+    pageItems,
+    page,
+    setPage,
+    totalPages,
+    totalItems,
+    pageSize,
+    showPagination,
+  } = useListingPagination(listings, paginationResetKey);
+
+  const paginationLabels = useMemo(() => toListingPaginationLabels(l), [l]);
 
   const searchSummary = initialSearch.search
     ? `${p.searchLabel}: ${initialSearch.search}`
@@ -150,8 +170,24 @@ export function PackagesPageContent({ initialSearch }: PackagesPageContentProps)
           modifySearchLabel: p.modifySearch,
           modifySearchHref: '#packages-search',
         }}
+        pagination={
+          showPagination ? (
+            <ListingPaginationBar
+              page={page}
+              totalPages={totalPages}
+              totalItems={totalItems}
+              pageSize={pageSize}
+              itemLabel={l.resultItem}
+              labels={paginationLabels}
+              onPageChange={(next) => {
+                setPage(next);
+                scrollListingToTop();
+              }}
+            />
+          ) : undefined
+        }
       >
-        {listings.map((pkg) => (
+        {pageItems.map((pkg) => (
           <PackageCard key={pkg.id} pkg={pkg} t={p} searchParams={initialSearch} />
         ))}
       </ListingPageBody>

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import {
   ListingFiltersAside,
   ListingPageBody,
+  ListingPaginationBar,
   ListingSortBar,
 } from '../shared/listing-patterns';
 import { useEffect, useMemo, useState } from 'react';
@@ -12,6 +13,8 @@ import { searchAccommodations } from '../../lib/api/public';
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import { parseGuestsParam, type HotelSearchResult, type HotelTypeFilter, type HotelsSearchParams } from '../../lib/hotels/listings';
 import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
+import { toListingPaginationLabels, scrollListingToTop } from '../../lib/listing/pagination-labels';
+import { useListingPagination } from '../../lib/listing/pagination';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { HotelCard } from './hotel-card';
@@ -110,6 +113,42 @@ export function HotelsPageContent({ initialSearch }: HotelsPageContentProps) {
         return items;
     }
   }, [results, sort, starFilter, typeFilter]);
+
+  const paginationResetKey = useMemo(
+    () =>
+      JSON.stringify({
+        sort,
+        starFilter,
+        typeFilter,
+        destination,
+        checkIn: initialSearch.checkIn,
+        checkOut: initialSearch.checkOut,
+        guests: initialSearch.guests,
+        fetchId,
+      }),
+    [
+      sort,
+      starFilter,
+      typeFilter,
+      destination,
+      initialSearch.checkIn,
+      initialSearch.checkOut,
+      initialSearch.guests,
+      fetchId,
+    ],
+  );
+
+  const {
+    pageItems,
+    page,
+    setPage,
+    totalPages,
+    totalItems,
+    pageSize,
+    showPagination,
+  } = useListingPagination(listings, paginationResetKey);
+
+  const paginationLabels = useMemo(() => toListingPaginationLabels(l), [l]);
 
   const searchSummary = [
     initialSearch.checkIn && `${h.checkIn}: ${formatDisplayDate(initialSearch.checkIn, locale)}`,
@@ -281,8 +320,24 @@ export function HotelsPageContent({ initialSearch }: HotelsPageContentProps) {
             {filterPanel}
           </ListingFiltersAside>
         }
+        pagination={
+          showPagination ? (
+            <ListingPaginationBar
+              page={page}
+              totalPages={totalPages}
+              totalItems={totalItems}
+              pageSize={pageSize}
+              itemLabel={l.resultItem}
+              labels={paginationLabels}
+              onPageChange={(next) => {
+                setPage(next);
+                scrollListingToTop();
+              }}
+            />
+          ) : undefined
+        }
       >
-        {listings.map((hotel) => (
+        {pageItems.map((hotel) => (
           <HotelCard
             key={hotel.id}
             hotel={hotel}

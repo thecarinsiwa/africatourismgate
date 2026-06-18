@@ -12,9 +12,11 @@ import { formatDisplayDate } from '../../lib/hotels/dates';
 import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
-import { ListingPageBody, ListingSortBar } from '../shared/listing-patterns';
+import { ListingPageBody, ListingPaginationBar, ListingSortBar } from '../shared/listing-patterns';
 import { CarCard } from './car-card';
 import { CarsSearchForm } from './cars-search-form';
+import { toListingPaginationLabels, scrollListingToTop } from '../../lib/listing/pagination-labels';
+import { useListingPagination } from '../../lib/listing/pagination';
 
 export type { CarsSearchParams };
 
@@ -27,6 +29,7 @@ type CarsPageContentProps = {
 export function CarsPageContent({ initialSearch }: CarsPageContentProps) {
   const t = useTranslations();
   const c = t.cars;
+  const l = t.listing;
   const { locale } = useLocale();
 
   const [sort, setSort] = useState<SortKey>('recommended');
@@ -74,6 +77,23 @@ export function CarsPageContent({ initialSearch }: CarsPageContentProps) {
         return items;
     }
   }, [results, sort]);
+
+  const paginationResetKey = useMemo(
+    () => JSON.stringify({ sort, apiQuery, fetchId }),
+    [sort, apiQuery, fetchId],
+  );
+
+  const {
+    pageItems,
+    page,
+    setPage,
+    totalPages,
+    totalItems,
+    pageSize,
+    showPagination,
+  } = useListingPagination(listings, paginationResetKey);
+
+  const paginationLabels = useMemo(() => toListingPaginationLabels(l), [l]);
 
   const searchSummary = [
     initialSearch.pickupDate &&
@@ -175,11 +195,27 @@ export function CarsPageContent({ initialSearch }: CarsPageContentProps) {
           modifySearchLabel: c.modifySearch,
           modifySearchHref: '#cars-search',
         }}
+        pagination={
+          showPagination ? (
+            <ListingPaginationBar
+              page={page}
+              totalPages={totalPages}
+              totalItems={totalItems}
+              pageSize={pageSize}
+              itemLabel={l.resultItem}
+              labels={paginationLabels}
+              onPageChange={(next) => {
+                setPage(next);
+                scrollListingToTop();
+              }}
+            />
+          ) : undefined
+        }
       >
         {!hasDateFilter && listings.length > 0 ? (
           <p className="col-span-full text-sm text-atg-muted">{c.browseAllHint}</p>
         ) : null}
-        {listings.map((vehicle) => (
+        {pageItems.map((vehicle) => (
           <CarCard
             key={vehicle.id}
             vehicle={vehicle}

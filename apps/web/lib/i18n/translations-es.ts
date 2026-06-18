@@ -129,6 +129,14 @@ export const es: Translations = {
     clearFilters: 'Borrar filtros',
     applyFilters: 'Aplicar',
     filtersToggle: 'Filtros',
+    previousPage: 'Página anterior',
+    nextPage: 'Página siguiente',
+    navAriaLabel: 'Paginación de resultados',
+    pageAria: (page) => `Página ${page}`,
+    range: ({ start, end, total, itemLabel, pluralSuffix }) =>
+      `${start}–${end} de ${total} ${itemLabel}${pluralSuffix}`,
+    pageOf: ({ page, totalPages }) => `página ${page} / ${totalPages}`,
+    resultItem: 'resultado',
   },
   verticalSearch: {
     backHome: 'Volver al inicio',
