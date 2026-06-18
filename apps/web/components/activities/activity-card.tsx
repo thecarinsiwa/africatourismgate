@@ -9,10 +9,14 @@ import {
   formatScheduleTime,
   type ActivityDetailSearchParams,
 } from '../../lib/activities/listings';
+import {
+  getActivityDifficultyBadgeClass,
+  getActivityDifficultyLabel,
+} from '../../lib/activities/difficulty';
 import type { ActivitySearchResult } from '../../lib/activities/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import type { Translations } from '../../lib/i18n/translations';
-import { PriceDisplay, ProductCard } from '../shared';
+import { PriceDisplay, ProductCard, StarRating } from '../shared';
 
 type ActivityCardProps = {
   activity: ActivitySearchResult;
@@ -42,6 +46,18 @@ export function ActivityCard({ activity, t, searchParams = {}, locale }: Activit
     minuteSingular: t.minuteSingular,
     minutePlural: t.minutePlural,
   });
+
+  const difficultyLabel = getActivityDifficultyLabel(activity.difficultyLevel, {
+    easy: t.difficultyEasy,
+    moderate: t.difficultyModerate,
+    hard: t.difficultyHard,
+    expert: t.difficultyExpert,
+  });
+
+  const hasRating =
+    activity.reviewCount != null &&
+    activity.reviewCount > 0 &&
+    activity.averageRating != null;
 
   const schedulesLabel = t.schedulesAvailable.replace(
     '{n}',
@@ -76,13 +92,13 @@ export function ActivityCard({ activity, t, searchParams = {}, locale }: Activit
             {imageOverlay}
           </>
         ) : (
-        <div className="absolute inset-0 flex flex-col justify-center bg-gradient-to-br from-emerald-900 to-primary/80 px-6 py-8 text-white">
-          <p className="text-xs font-semibold uppercase tracking-wide text-white/70">
-            {activity.destination}
-          </p>
-          <p className="mt-1 text-xl font-bold leading-tight">{activity.title}</p>
-          <p className="mt-2 text-sm text-white/80">{activity.providerName}</p>
-        </div>
+          <div className="absolute inset-0 flex flex-col justify-center bg-gradient-to-br from-emerald-900 to-primary/80 px-6 py-8 text-white">
+            <p className="text-xs font-semibold uppercase tracking-wide text-white/70">
+              {activity.destination}
+            </p>
+            <p className="mt-1 text-xl font-bold leading-tight">{activity.title}</p>
+            <p className="mt-2 text-sm text-white/80">{activity.providerName}</p>
+          </div>
         )
       }
       title={
@@ -90,12 +106,36 @@ export function ActivityCard({ activity, t, searchParams = {}, locale }: Activit
       }
       meta={
         <>
-          {durationLabel ? (
-            <p className="text-sm font-medium text-primary">
-              {t.durationLabel}: {durationLabel}
-            </p>
-          ) : null}
-          <p className="mt-1 text-sm text-atg-muted">
+          <div className="flex flex-wrap items-center gap-2">
+            {durationLabel ? (
+              <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary">
+                {durationLabel}
+              </span>
+            ) : null}
+            {activity.difficultyLevel && difficultyLabel ? (
+              <span
+                className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${getActivityDifficultyBadgeClass(activity.difficultyLevel)}`}
+              >
+                {difficultyLabel}
+              </span>
+            ) : null}
+            {hasRating ? (
+              <span className="inline-flex items-center gap-1.5">
+                <StarRating
+                  value={activity.averageRating!}
+                  size="sm"
+                  ariaLabel={t.ratingAria.replace('{rating}', activity.averageRating!.toFixed(1))}
+                />
+                <span className="text-xs font-medium text-atg-muted">
+                  {activity.averageRating!.toFixed(1)}
+                  {activity.reviewCount! > 0
+                    ? ` (${t.reviewCount.replace('{n}', String(activity.reviewCount))})`
+                    : ''}
+                </span>
+              </span>
+            ) : null}
+          </div>
+          <p className="mt-2 text-sm text-atg-muted">
             {searchParams.date
               ? `${formatDisplayDate(searchParams.date, locale)} · ${schedulesLabel}`
               : schedulesLabel}

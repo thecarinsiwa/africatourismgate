@@ -63,4 +63,16 @@ export class ActivityDetailDto {
 
   @ApiProperty({ type: [PublicGalleryImageDto] })
   images!: PublicGalleryImageDto[];
+
+  @ApiPropertyOptional({
+    nullable: true,
+    enum: ['easy', 'moderate', 'hard', 'expert'],
+  })
+  difficultyLevel!: 'easy' | 'moderate' | 'hard' | 'expert' | null;
+
+  @ApiPropertyOptional({ nullable: true, description: 'Average guest review rating (1–5)' })
+  averageRating?: number | null;
+
+  @ApiPropertyOptional({ description: 'Number of approved guest reviews' })
+  reviewCount?: number;
 }

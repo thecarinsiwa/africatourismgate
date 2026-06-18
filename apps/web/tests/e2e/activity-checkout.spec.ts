@@ -149,24 +149,19 @@ test('activité Gombe City Tour: créneau complet grisé, panier -> recap -> Str
   const schedules = page.locator('#schedules');
   await expect(schedules.getByRole('heading', { name: /cr[ée]neaux|time slots|horarios/i })).toBeVisible();
 
-  const soldOutCard = schedules.locator('article').filter({
-    hasText: /complet|sold out|agotado/i,
-  });
-  await expect(soldOutCard).toBeVisible();
-  await expect(
-    soldOutCard.getByRole('button', {
-      name: /choisir ce cr[ée]neau|select this slot|elegir este horario/i,
-    }),
-  ).toBeDisabled();
+  const scheduleGroup = schedules.getByRole('radiogroup');
+  await expect(scheduleGroup).toBeVisible();
 
-  const availableCard = schedules.locator('article').filter({
-    hasNotText: /complet|sold out|agotado/i,
-  });
-  await availableCard
-    .getByRole('button', {
-      name: /choisir ce cr[ée]neau|select this slot|elegir este horario/i,
-    })
-    .click();
+  const soldOutChip = scheduleGroup.getByRole('radio', { name: /complet|sold out|agotado/i });
+  await expect(soldOutChip).toBeVisible();
+  await expect(soldOutChip).toBeDisabled();
+
+  const availableChip = scheduleGroup
+    .getByRole('radio')
+    .filter({ hasNotText: /complet|sold out|agotado/i })
+    .first();
+  await availableChip.click();
+  await expect(availableChip).toHaveAttribute('aria-checked', 'true');
 
   await page.locator('button:visible', { hasText: /r[ée]server|book now|reservar/i }).first().click();
   await expect(page).toHaveURL(/\/booking\/cart\?.*kind=activity_schedule/);
