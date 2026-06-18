@@ -8,10 +8,10 @@ import { addDays, todayISODate } from '../../lib/hotels/dates';
 import { useTranslations } from '../../lib/i18n/locale-provider';
 import { buildSearchRoute } from '../../lib/search/route';
 import {
+  SearchFormDatalistInput,
   SearchFormInput,
   SearchFormLabel,
   SearchFormPanel,
-  SearchFormSelect,
   SearchFormSubmit,
 } from '../shared';
 
@@ -98,12 +98,12 @@ export function CarsSearchForm({ initialValues }: CarsSearchFormProps) {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.25fr_1fr_1fr_auto] lg:items-end">
         <div>
           <SearchFormLabel>{c.pickupLocation}</SearchFormLabel>
-          <SearchFormSelect
+          <SearchFormDatalistInput
             name="pickupLocation"
             placeholder={carPickupLoading ? c.loading : c.anyLocation}
-            options={carPickupOptions}
+            suggestions={carPickupOptions}
             value={pickupLocation}
-            disabled={carPickupLoading || carPickupOptions.length === 0}
+            disabled={carPickupLoading}
             onChange={(value) => {
               setPickupLocation(value);
               setError(null);

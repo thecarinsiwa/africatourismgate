@@ -1,5 +1,7 @@
+'use client';
+
 import type { ReactNode } from 'react';
-import { useId } from 'react';
+import { useEffect, useId, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { cn } from '@africatourismgate/ui';
 
@@ -60,6 +62,7 @@ export type SearchFormDatalistInputProps = {
   value: string;
   /** Suggestions affichées à la saisie — la valeur libre reste acceptée. */
   suggestions?: string[];
+  disabled?: boolean;
   onChange: (value: string) => void;
   className?: string;
 };
@@ -70,6 +73,7 @@ export function SearchFormDatalistInput({
   placeholder,
   value,
   suggestions = [],
+  disabled,
   onChange,
   className,
 }: SearchFormDatalistInputProps) {
@@ -82,15 +86,114 @@ export function SearchFormDatalistInput({
         name={name}
         placeholder={placeholder}
         value={value}
+        disabled={disabled}
         list={suggestions.length > 0 ? listId : undefined}
         onChange={(e) => onChange(e.target.value)}
-        className={cn(fieldInputClass, className)}
+        className={cn(
+          fieldInputClass,
+          'disabled:cursor-not-allowed disabled:opacity-60',
+          className,
+        )}
         autoComplete="off"
       />
       {suggestions.length > 0 ? (
         <datalist id={listId}>
           {suggestions.map((option) => (
             <option key={option} value={option} />
+          ))}
+        </datalist>
+      ) : null}
+    </>
+  );
+}
+
+export type SearchOption = { value: string; label: string };
+
+/** Résout une saisie libre vers la valeur d'une option (code IATA, port, etc.). */
+export function resolveSearchOptionInput(input: string, options: SearchOption[]): string {
+  const trimmed = input.trim();
+  if (!trimmed) return '';
+
+  const lower = trimmed.toLowerCase();
+  const upper = trimmed.toUpperCase();
+
+  const exactValue = options.find(
+    (option) => option.value === trimmed || option.value.toUpperCase() === upper,
+  );
+  if (exactValue) return exactValue.value;
+
+  const exactLabel = options.find((option) => option.label.toLowerCase() === lower);
+  if (exactLabel) return exactLabel.value;
+
+  const partialLabel = options.find((option) => option.label.toLowerCase().includes(lower));
+  if (partialLabel) return partialLabel.value;
+
+  return trimmed;
+}
+
+export type SearchFormOptionDatalistInputProps = {
+  name: string;
+  placeholder?: string;
+  options: SearchOption[];
+  value: string;
+  disabled?: boolean;
+  onChange: (value: string) => void;
+  className?: string;
+};
+
+/** Champ texte avec suggestions valeur/libellé — saisie libre ou sélection. */
+export function SearchFormOptionDatalistInput({
+  name,
+  placeholder,
+  options,
+  value,
+  disabled,
+  onChange,
+  className,
+}: SearchFormOptionDatalistInputProps) {
+  const listId = useId();
+  const selected = options.find((option) => option.value === value);
+  const [text, setText] = useState(selected?.label ?? value);
+
+  useEffect(() => {
+    const match = options.find((option) => option.value === value);
+    setText(match?.label ?? value);
+  }, [value, options]);
+
+  const suggestions = useMemo(() => {
+    const unique = new Set<string>();
+    for (const option of options) {
+      unique.add(option.label);
+      unique.add(option.value);
+    }
+    return Array.from(unique);
+  }, [options]);
+
+  return (
+    <>
+      <input
+        type="text"
+        name={name}
+        placeholder={placeholder}
+        value={text}
+        disabled={disabled}
+        list={suggestions.length > 0 ? listId : undefined}
+        onChange={(e) => {
+          const next = e.target.value;
+          setText(next);
+          onChange(resolveSearchOptionInput(next, options));
+        }}
+        className={cn(
+          fieldInputClass,
+          'disabled:cursor-not-allowed disabled:opacity-60',
+          className,
+        )}
+        autoComplete="off"
+      />
+      {suggestions.length > 0 ? (
+        <datalist id={listId}>
+          {suggestions.map((suggestion) => (
+            <option key={suggestion} value={suggestion} />
           ))}
         </datalist>
       ) : null}

@@ -10,7 +10,7 @@ import { buildSearchRoute } from '../../lib/search/route';
 import {
   SearchFormInput,
   SearchFormLabel,
-  SearchFormOptionSelect,
+  SearchFormOptionDatalistInput,
   SearchFormPanel,
   SearchFormSubmit,
 } from '../shared';
@@ -174,7 +174,7 @@ export function FlightsSearchForm({ initialValues }: FlightsSearchFormProps) {
       <div className={`grid gap-4 sm:grid-cols-2 ${gridClass} lg:items-end`}>
         <div>
           <SearchFormLabel>{s.from}</SearchFormLabel>
-          <SearchFormOptionSelect
+          <SearchFormOptionDatalistInput
             name="from"
             placeholder={airportsLoading ? f.loading : s.airportPh}
             options={airportOptions.map((airport) => ({
@@ -182,7 +182,7 @@ export function FlightsSearchForm({ initialValues }: FlightsSearchFormProps) {
               label: airport.label,
             }))}
             value={flightFrom}
-            disabled={airportsLoading || airportOptions.length === 0}
+            disabled={airportsLoading}
             onChange={(value) => {
               setFlightFrom(value);
               setError(null);
@@ -192,7 +192,7 @@ export function FlightsSearchForm({ initialValues }: FlightsSearchFormProps) {
 
         <div>
           <SearchFormLabel>{s.to}</SearchFormLabel>
-          <SearchFormOptionSelect
+          <SearchFormOptionDatalistInput
             name="to"
             placeholder={airportsLoading ? f.loading : s.airportPh}
             options={airportOptions.map((airport) => ({
@@ -200,7 +200,7 @@ export function FlightsSearchForm({ initialValues }: FlightsSearchFormProps) {
               label: airport.label,
             }))}
             value={flightTo}
-            disabled={airportsLoading || airportOptions.length === 0}
+            disabled={airportsLoading}
             onChange={(value) => {
               setFlightTo(value);
               setError(null);

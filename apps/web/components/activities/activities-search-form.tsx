@@ -8,10 +8,10 @@ import { todayISODate } from '../../lib/hotels/dates';
 import { useTranslations } from '../../lib/i18n/locale-provider';
 import { buildSearchRoute } from '../../lib/search/route';
 import {
+  SearchFormDatalistInput,
   SearchFormInput,
   SearchFormLabel,
   SearchFormPanel,
-  SearchFormSelect,
   SearchFormSubmit,
 } from '../shared';
 
@@ -70,14 +70,14 @@ export function ActivitiesSearchForm({ initialValues }: ActivitiesSearchFormProp
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.25fr_1fr_0.75fr_auto] lg:items-end">
         <div>
           <SearchFormLabel>{a.destination}</SearchFormLabel>
-          <SearchFormSelect
+          <SearchFormDatalistInput
             name="destination"
             placeholder={
               destinationsLoading ? a.destinationsLoading : s.allDestinations
             }
-            options={destinationOptions}
+            suggestions={destinationOptions}
             value={destination}
-            disabled={destinationsLoading || destinationOptions.length === 0}
+            disabled={destinationsLoading}
             onChange={(value) => {
               setDestination(value);
               setError(null);
