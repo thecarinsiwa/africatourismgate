@@ -12,6 +12,9 @@ import {
   toActivityDetailQuery,
   type ActivityDetailSearchParams,
 } from '../../lib/activities/listings';
+import {
+  getActivityDifficultyLabel,
+} from '../../lib/activities/difficulty';
 import type { ActivityDetail } from '../../lib/activities/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
@@ -246,6 +249,20 @@ export function ActivityDetailPageContent({
     minutePlural: a.minutePlural,
   });
 
+  const difficultyLabel = getActivityDifficultyLabel(detail.difficultyLevel, {
+    easy: a.difficultyEasy,
+    moderate: a.difficultyModerate,
+    hard: a.difficultyHard,
+    expert: a.difficultyExpert,
+  });
+
+  const metaParts = [
+    detail.destination,
+    initialSearch.date ? formatDisplayDate(initialSearch.date, locale) : null,
+    durationLabel ? `${a.durationLabel}: ${durationLabel}` : null,
+    difficultyLabel ? `${a.difficultyLabel}: ${difficultyLabel}` : null,
+  ].filter(Boolean);
+
   return (
     <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
       <HomeHeader />
@@ -294,13 +311,7 @@ export function ActivityDetailPageContent({
               <h1 className="mt-1 text-2xl font-bold text-atg-fg sm:text-3xl">
                 {detail.title}
               </h1>
-              <p className="mt-2 text-sm text-atg-muted">
-                {detail.destination}
-                {initialSearch.date
-                  ? ` · ${formatDisplayDate(initialSearch.date, locale)}`
-                  : ''}
-                {durationLabel ? ` · ${a.durationLabel}: ${durationLabel}` : ''}
-              </p>
+              <p className="mt-2 text-sm text-atg-muted">{metaParts.join(' · ')}</p>
             </header>
 
             {detail.description && (
@@ -322,6 +333,7 @@ export function ActivityDetailPageContent({
               onSelectSchedule={handleSelectSchedule}
               t={a}
               locale={locale}
+              listHref={listHref}
             />
           </div>
 

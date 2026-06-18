@@ -6,6 +6,7 @@ import {
   ActivityProviders,
   ActivitySchedules,
   Destinations,
+  Reviews,
 } from '../../../entities/generated';
 import { PublicActivitiesController } from './public-activities.controller';
 import { PublicActivitiesService } from './public-activities.service';
@@ -18,6 +19,7 @@ import { PublicActivitiesService } from './public-activities.service';
       ActivityProviders,
       ActivitySchedules,
       Destinations,
+      Reviews,
     ]),
   ],
   controllers: [PublicActivitiesController],

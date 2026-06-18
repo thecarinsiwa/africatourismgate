@@ -551,6 +551,7 @@ export type Translations = {
     backToList: string;
     providerLabel: string;
     durationLabel: string;
+    difficultyLabel: string;
     hourSingular: string;
     hourPlural: string;
     minuteSingular: string;
@@ -559,6 +560,15 @@ export type Translations = {
     descriptionTitle: string;
     nextSlot: string;
     schedulesAvailable: string;
+    noSchedulesTitle: string;
+    noSchedulesHint: string;
+    selectedScheduleLabel: string;
+    difficultyEasy: string;
+    difficultyModerate: string;
+    difficultyHard: string;
+    difficultyExpert: string;
+    ratingAria: string;
+    reviewCount: string;
     galleryAria: string;
     galleryOpenLightbox: string;
     galleryClose: string;
@@ -1508,6 +1518,7 @@ const fr: Translations = {
     backToList: 'Retour aux résultats',
     providerLabel: 'Prestataire',
     durationLabel: 'Durée',
+    difficultyLabel: 'Difficulté',
     hourSingular: '1 h',
     hourPlural: '{n} h',
     minuteSingular: '1 min',
@@ -1516,6 +1527,15 @@ const fr: Translations = {
     descriptionTitle: 'Description',
     nextSlot: 'Prochain créneau',
     schedulesAvailable: '{n} créneau(x) disponible(s)',
+    noSchedulesTitle: 'Aucun créneau pour cette date',
+    noSchedulesHint: 'Essayez une autre date ou modifiez votre recherche.',
+    selectedScheduleLabel: 'Créneau sélectionné',
+    difficultyEasy: 'Facile',
+    difficultyModerate: 'Modéré',
+    difficultyHard: 'Difficile',
+    difficultyExpert: 'Expert',
+    ratingAria: 'Note moyenne {rating} sur 5',
+    reviewCount: '{n} avis',
     galleryAria: 'Galerie photos de l\'activité',
     galleryOpenLightbox: 'Agrandir la photo',
     galleryClose: 'Fermer la galerie',
@@ -2498,6 +2518,7 @@ const en: Translations = {
     backToList: 'Back to results',
     providerLabel: 'Provider',
     durationLabel: 'Duration',
+    difficultyLabel: 'Difficulty',
     hourSingular: '1 hr',
     hourPlural: '{n} hr',
     minuteSingular: '1 min',
@@ -2506,6 +2527,15 @@ const en: Translations = {
     descriptionTitle: 'Description',
     nextSlot: 'Next slot',
     schedulesAvailable: '{n} slot(s) available',
+    noSchedulesTitle: 'No time slots for this date',
+    noSchedulesHint: 'Try another date or modify your search.',
+    selectedScheduleLabel: 'Selected time slot',
+    difficultyEasy: 'Easy',
+    difficultyModerate: 'Moderate',
+    difficultyHard: 'Hard',
+    difficultyExpert: 'Expert',
+    ratingAria: 'Average rating {rating} out of 5',
+    reviewCount: '{n} reviews',
     galleryAria: 'Activity photo gallery',
     galleryOpenLightbox: 'Enlarge photo',
     galleryClose: 'Close gallery',

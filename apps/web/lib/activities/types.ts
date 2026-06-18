@@ -1,3 +1,4 @@
+import type { ActivityDifficultyLevel } from '@africatourismgate/types';
 import type { ProductGalleryImage } from '../shared/product-images';
 
 export interface ActivitySearchQuery {
@@ -26,6 +27,9 @@ export interface ActivitySearchResult {
   availableSchedulesCount: number;
   nextStartDatetime?: string;
   imageUrl?: string | null;
+  difficultyLevel?: ActivityDifficultyLevel | null;
+  averageRating?: number | null;
+  reviewCount?: number;
 }
 
 export interface ActivityDetailQuery {
@@ -56,4 +60,7 @@ export interface ActivityDetail {
   participants: number;
   schedules: ActivityScheduleOffer[];
   images?: ProductGalleryImage[];
+  difficultyLevel?: ActivityDifficultyLevel | null;
+  averageRating?: number | null;
+  reviewCount?: number;
 }
