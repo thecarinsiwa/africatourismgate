@@ -9,7 +9,8 @@
   },
   "columns": {
     "destination": "Destination",
-    "country": "Country"
+    "country": "Country",
+    "featured": "Homepage"
   },
   "form": {
     "submitCreate": "Créer la destination",
@@ -24,6 +25,8 @@
     "countryCodeHint": "2 lettres, ex. CD, KE, ZA.",
     "heroImageUrl": "URL image hero",
     "heroImageHint": "Affichée dans le bandeau. Laissez vide pour un dégradé.",
+    "isFeatured": "Show on homepage",
+    "isFeaturedHint": "Popular Destinations section on the public site (max. 4).",
     "geographyIntro": "Coordonnées du centre de la destination pour la carte statique.",
     "latitudeHint": "Optionnel, -90 à 90",
     "longitudeHint": "Optionnel, -180 à 180",

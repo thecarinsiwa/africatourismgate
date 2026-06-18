@@ -138,6 +138,19 @@ export function DestinationsList() {
         ),
       },
       {
+        accessorKey: 'isFeatured',
+        header: tColumns('featured'),
+        meta: { align: 'center' },
+        cell: ({ row }) =>
+          row.original.isFeatured ? (
+            <span className="inline-flex rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary">
+              {tColumns('featured')}
+            </span>
+          ) : (
+            <span className="text-xs text-atg-muted">—</span>
+          ),
+      },
+      {
         id: 'actions',
         header: tCommon('columns.actions'),
         meta: { align: 'right' },

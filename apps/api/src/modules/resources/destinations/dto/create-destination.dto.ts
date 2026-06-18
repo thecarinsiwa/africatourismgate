@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
+  IsBoolean,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -67,4 +68,9 @@ export class CreateDestinationDto {
   @Min(-180)
   @Max(180)
   longitude?: number;
+
+  @ApiPropertyOptional({ description: 'Show on marketing homepage (Popular Destinations)' })
+  @IsOptional()
+  @IsBoolean()
+  isFeatured?: boolean;
 }

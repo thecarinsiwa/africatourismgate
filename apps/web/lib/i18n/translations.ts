@@ -110,6 +110,9 @@ export type Translations = {
     subtitle: string;
     reviews: string;
     details: string;
+    loading: string;
+    loadError: string;
+    empty: string;
     items: { title: string; subtitle: string; description: string }[];
   };
   customers: {
@@ -902,6 +905,9 @@ const fr: Translations = {
       'Découvrez nos destinations africaines les plus prisées. Des safaris aux plages paradisiaques, chaque voyage est une aventure unique.',
     reviews: 'Avis',
     details: 'Détails',
+    loading: 'Chargement des destinations…',
+    loadError: 'Impossible de charger les destinations.',
+    empty: 'Aucune destination mise en avant pour le moment.',
     items: [
       {
         title: 'Safari au Masai Mara',
@@ -1768,6 +1774,9 @@ const en: Translations = {
       'Discover our most sought-after African destinations. From safaris to paradise beaches, every trip is a unique adventure.',
     reviews: 'Reviews',
     details: 'Details',
+    loading: 'Loading destinations…',
+    loadError: 'Could not load destinations.',
+    empty: 'No featured destinations at the moment.',
     items: [
       {
         title: 'Masai Mara Safari',

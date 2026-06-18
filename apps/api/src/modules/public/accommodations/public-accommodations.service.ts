@@ -18,6 +18,7 @@ import { PropertyDetailDto } from './dto/property-detail.dto';
 import { PropertySearchQueryDto } from './dto/property-search-query.dto';
 import { PropertySearchResultDto } from './dto/property-search-result.dto';
 import { PublicDestinationDto } from './dto/public-destination.dto';
+import { PublicDestinationHighlightDto } from './dto/public-destination-highlight.dto';
 import { enumerateMonthDays, enumerateStayNights } from './stay-dates.util';
 
 const DISPLAY_AMENITY_CODES = new Set([
@@ -63,6 +64,34 @@ export class PublicAccommodationsService {
       id: d.id,
       name: d.name,
       countryCode: d.countryCode,
+    }));
+  }
+
+  async listFeaturedDestinations(limit = 4): Promise<PublicDestinationHighlightDto[]> {
+    const safeLimit = Math.min(Math.max(limit, 1), 12);
+    const rows = await this.destinationsRepository
+      .createQueryBuilder('d')
+      .select([
+        'd.id',
+        'd.name',
+        'd.slug',
+        'd.countryCode',
+        'd.description',
+        'd.imageUrl',
+      ])
+      .where('d.deletedAt IS NULL')
+      .andWhere('d.isFeatured = :featured', { featured: true })
+      .orderBy('d.name', 'ASC')
+      .take(safeLimit)
+      .getMany();
+
+    return rows.map((d) => ({
+      id: d.id,
+      name: d.name,
+      slug: d.slug,
+      countryCode: d.countryCode,
+      description: d.description,
+      imageUrl: d.imageUrl?.trim() || PLACEHOLDER_IMAGE,
     }));
   }
 

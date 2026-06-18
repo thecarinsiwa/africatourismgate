@@ -166,6 +166,9 @@ export const es: Translations = {
       'Descubra nuestros destinos africanos más demandados. De safaris a playas paradisíacas, cada viaje es una aventura única.',
     reviews: 'Reseñas',
     details: 'Detalles',
+    loading: 'Cargando destinos…',
+    loadError: 'No se pudieron cargar los destinos.',
+    empty: 'Ningún destino destacado por el momento.',
     items: [
       {
         title: 'Masai Mara Safari',

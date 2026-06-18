@@ -161,6 +161,7 @@ import type {
   DestinationRelatedCounts,
   DestinationsListQuery,
   PublicDestination,
+  PublicDestinationHighlight,
   Flight,
   FlightClass,
   FlightClassAvailability,
@@ -387,6 +388,7 @@ export type {
   UpdateReviewStatusRequest,
   PropertyType,
   PublicDestination,
+  PublicDestinationHighlight,
   ReplacePropertyAmenitiesRequest,
   Room,
   RoomImage,
@@ -685,6 +687,14 @@ export class ApiClient {
     return this.request<PublicDestination[]>('/public/destinations', {
       skipAuth: true,
     });
+  }
+
+  listFeaturedDestinations(limit = 4): Promise<PublicDestinationHighlight[]> {
+    const qs = new URLSearchParams({ limit: String(limit) }).toString();
+    return this.request<PublicDestinationHighlight[]>(
+      `/public/destinations/featured?${qs}`,
+      { skipAuth: true },
+    );
   }
 
   searchAccommodations(
