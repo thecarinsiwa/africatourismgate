@@ -165,7 +165,6 @@ export function PackageDetailPageContent({
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- lines sync via handleLineChange, not URL refetch
   }, [packageId, fetchId]);
 
   const configuredCount = detail ? countConfiguredLines(detail.items, lineSelections) : 0;
