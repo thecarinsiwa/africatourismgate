@@ -115,6 +115,63 @@ export type Translations = {
     trustTransparentPricing: string;
     trustSupport: string;
   };
+  checkout: {
+    stepperAriaLabel: string;
+    stepCart: string;
+    stepRecap: string;
+    stepPayment: string;
+    stepConfirmation: string;
+    stepCancelled: string;
+    cartTitle: string;
+    recapTitle: string;
+    continueToRecap: string;
+    backToCart: string;
+    payWithStripe: string;
+    stripeRedirecting: string;
+    estimatedTotal: string;
+    loading: string;
+    authRequiredNext: string;
+    authRequiredPayment: string;
+    invalidDraft: string;
+    invalidDraftBack: string;
+    invalidRecap: string;
+    modifySelection: string;
+    resumeSearch: string;
+    stripeError: {
+      authTitle: string;
+      authDescription: string;
+      authHint: string;
+      networkTitle: string;
+      networkHint: string;
+      paymentTitle: string;
+      paymentHint: string;
+      genericTitle: string;
+      genericHint: string;
+      dismiss: string;
+    };
+    success: {
+      title: string;
+      subtitle: string;
+      bookingIdLabel: string;
+      statusLabel: string;
+      totalLabel: string;
+      verifying: string;
+      statusUnavailable: string;
+      backHome: string;
+      browseHotels: string;
+      viewAccount: string;
+      signOut: string;
+      nextStepsTitle: string;
+      nextStepEmail: string;
+      nextStepAccount: string;
+    };
+    cancel: {
+      title: string;
+      subtitle: string;
+      backToCart: string;
+      continueSearch: string;
+    };
+  };
   verticalSearch: {
     backHome: string;
     resultsTitle: string;
@@ -1041,6 +1098,66 @@ const fr: Translations = {
       'Tarifs indicatifs — la réservation en ligne arrive bientôt.',
     trustTransparentPricing: 'Montant affiché sans frais cachés.',
     trustSupport: 'Une question ? Notre équipe vous accompagne.',
+  },
+  checkout: {
+    stepperAriaLabel: 'Étapes de réservation',
+    stepCart: 'Panier',
+    stepRecap: 'Récap',
+    stepPayment: 'Paiement',
+    stepConfirmation: 'Confirmation',
+    stepCancelled: 'Annulé',
+    cartTitle: 'Panier réservation',
+    recapTitle: 'Recapitulatif',
+    continueToRecap: 'Continuer vers récap',
+    backToCart: 'Retour panier',
+    payWithStripe: 'Payer avec Stripe',
+    stripeRedirecting: 'Redirection Stripe…',
+    estimatedTotal: 'Total estimé',
+    loading: 'Chargement…',
+    authRequiredNext: 'Connexion client requise au prochain écran.',
+    authRequiredPayment: 'Connexion client requise pour lancer Stripe Checkout.',
+    invalidDraft: 'Données de réservation incomplètes. Reprenez depuis une fiche produit.',
+    invalidDraftBack: 'Retour aux hébergements',
+    invalidRecap: 'Donnees de reservation invalides. Revenez au panier.',
+    modifySelection: 'Modifier la sélection',
+    resumeSearch: 'Reprendre la recherche',
+    stripeError: {
+      authTitle: 'Connexion requise',
+      authDescription: 'Authentification requise pour continuer vers le paiement.',
+      authHint: 'Connectez-vous puis relancez le paiement depuis le récapitulatif.',
+      networkTitle: 'Connexion interrompue',
+      networkHint: 'Vérifiez votre réseau et réessayez dans quelques instants.',
+      paymentTitle: 'Paiement refusé',
+      paymentHint: 'Vérifiez votre carte ou essayez un autre moyen de paiement.',
+      genericTitle: 'Paiement impossible',
+      genericHint: 'Réessayez ou revenez au panier pour vérifier votre sélection.',
+      dismiss: 'Fermer',
+    },
+    success: {
+      title: 'Reservation confirmee',
+      subtitle:
+        'Votre paiement Stripe est recu. La confirmation definitive peut prendre quelques secondes le temps du webhook.',
+      bookingIdLabel: 'Booking ID:',
+      statusLabel: 'Statut:',
+      totalLabel: 'Total:',
+      verifying: 'Verification du statut en cours…',
+      statusUnavailable:
+        'Statut detaille indisponible pour le moment. Rechargez la page dans quelques instants.',
+      backHome: 'Retour accueil',
+      browseHotels: 'Voir les hotels',
+      viewAccount: 'Mon compte',
+      signOut: 'Se deconnecter',
+      nextStepsTitle: 'Prochaines étapes',
+      nextStepEmail: 'Un e-mail de confirmation vous sera envoyé sous peu.',
+      nextStepAccount: 'Consultez vos réservations depuis votre espace compte.',
+    },
+    cancel: {
+      title: 'Paiement annule',
+      subtitle:
+        "Aucun debit n'a ete confirme. Vous pouvez reprendre votre reservation quand vous voulez.",
+      backToCart: 'Revenir au panier',
+      continueSearch: 'Continuer la recherche',
+    },
   },
   verticalSearch: {
     backHome: 'Retour à l\'accueil',
@@ -2070,6 +2187,64 @@ const en: Translations = {
     trustDemoCatalog: 'Indicative prices — online booking coming soon.',
     trustTransparentPricing: 'No hidden fees on the amount shown.',
     trustSupport: 'Questions? Our team is here to help.',
+  },
+  checkout: {
+    stepperAriaLabel: 'Booking steps',
+    stepCart: 'Cart',
+    stepRecap: 'Summary',
+    stepPayment: 'Payment',
+    stepConfirmation: 'Confirmation',
+    stepCancelled: 'Cancelled',
+    cartTitle: 'Booking cart',
+    recapTitle: 'Summary',
+    continueToRecap: 'Continue to summary',
+    backToCart: 'Back to cart',
+    payWithStripe: 'Pay with Stripe',
+    stripeRedirecting: 'Redirecting to Stripe…',
+    estimatedTotal: 'Estimated total',
+    loading: 'Loading…',
+    authRequiredNext: 'Customer sign-in required on the next step.',
+    authRequiredPayment: 'Customer sign-in required to start Stripe Checkout.',
+    invalidDraft: 'Incomplete booking data. Start again from a product page.',
+    invalidDraftBack: 'Back to hotels',
+    invalidRecap: 'Invalid booking data. Return to the cart.',
+    modifySelection: 'Change selection',
+    resumeSearch: 'Resume search',
+    stripeError: {
+      authTitle: 'Sign-in required',
+      authDescription: 'Authentication is required to continue to payment.',
+      authHint: 'Sign in, then retry payment from the summary page.',
+      networkTitle: 'Connection interrupted',
+      networkHint: 'Check your network and try again in a moment.',
+      paymentTitle: 'Payment declined',
+      paymentHint: 'Check your card or try another payment method.',
+      genericTitle: 'Payment could not start',
+      genericHint: 'Try again or return to the cart to review your selection.',
+      dismiss: 'Dismiss',
+    },
+    success: {
+      title: 'Booking confirmed',
+      subtitle:
+        'Your Stripe payment was received. Final confirmation may take a few seconds while the webhook completes.',
+      bookingIdLabel: 'Booking ID:',
+      statusLabel: 'Status:',
+      totalLabel: 'Total:',
+      verifying: 'Checking status…',
+      statusUnavailable: 'Detailed status is unavailable for now. Refresh in a moment.',
+      backHome: 'Back to home',
+      browseHotels: 'Browse hotels',
+      viewAccount: 'My account',
+      signOut: 'Sign out',
+      nextStepsTitle: 'What happens next',
+      nextStepEmail: 'A confirmation email will be sent shortly.',
+      nextStepAccount: 'View your bookings in your account area.',
+    },
+    cancel: {
+      title: 'Payment cancelled',
+      subtitle: 'No charge was confirmed. You can resume your booking whenever you like.',
+      backToCart: 'Return to cart',
+      continueSearch: 'Continue browsing',
+    },
   },
   verticalSearch: {
     backHome: 'Back to home',
