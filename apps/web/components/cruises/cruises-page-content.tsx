@@ -13,6 +13,7 @@ import { formatDisplayDate } from '../../lib/hotels/dates';
 import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
+import { ListingPageBody, ListingSortBar } from '../shared/listing-patterns';
 import { CruiseCard } from './cruise-card';
 import { CruisesSearchForm } from './cruises-search-form';
 
@@ -138,88 +139,61 @@ export function CruisesPageContent({ initialSearch }: CruisesPageContentProps) {
         </div>
       </section>
 
-      <div className="sticky top-0 z-30 border-b border-atg-border bg-atg-elevated/95 shadow-sm backdrop-blur-md dark:border-atg-border dark:bg-atg-elevated/95">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-          <div>
-            <p className="text-sm text-atg-muted">
-              {c.resultsFor}{' '}
-              <strong className="text-atg-fg">{displayRoute}</strong>
-            </p>
-            <p className="text-lg font-bold text-atg-fg">
-              {loading ? '…' : listings.length} {c.sailingsFound}
-            </p>
-          </div>
-          <label className="flex items-center gap-2">
-            <span className="text-sm font-medium text-atg-muted">{c.sortBy}</span>
-            <select
-              value={sort}
-              onChange={(event) => setSort(event.target.value as SortKey)}
-              disabled={loading}
-              className="min-h-[44px] rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm font-medium text-atg-fg focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-60 dark:border-atg-border dark:bg-atg-surface dark:text-white"
-            >
-              <option value="recommended">{c.sortRecommended}</option>
-              <option value="price-asc">{c.sortPriceLow}</option>
-              <option value="price-desc">{c.sortPriceHigh}</option>
-            </select>
-          </label>
-        </div>
-      </div>
+      <ListingSortBar
+        resultsLine={
+          <>
+            {c.resultsFor}{' '}
+            <strong className="text-atg-fg">{displayRoute}</strong>
+          </>
+        }
+        countLine={
+          <>
+            {loading ? '…' : listings.length} {c.sailingsFound}
+          </>
+        }
+        sortLabel={c.sortBy}
+        sortValue={sort}
+        sortOptions={[
+          { value: 'recommended', label: c.sortRecommended },
+          { value: 'price-asc', label: c.sortPriceLow },
+          { value: 'price-desc', label: c.sortPriceHigh },
+        ]}
+        onSortChange={(value) => setSort(value as SortKey)}
+        disabled={loading}
+      />
 
-      <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
-        {error && (
-          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-4 text-sm text-red-800 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-200">
-            <p>{c.loadError}</p>
-            <button
-              type="button"
-              onClick={() => setFetchId((value) => value + 1)}
-              className="mt-3 min-h-[44px] rounded-lg bg-primary px-4 py-2 text-sm font-bold text-white hover:bg-primary-hover"
-            >
-              {c.retry}
-            </button>
-          </div>
-        )}
-
-        {loading && (
-          <div className="rounded-2xl border border-atg-border bg-atg-elevated px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
-            <p className="text-sm font-medium text-atg-muted">{c.loading}</p>
-          </div>
-        )}
-
-        {!loading && !error && listings.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-atg-border bg-atg-elevated px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
-            <h3 className="text-lg font-bold text-atg-fg">{c.noResults}</h3>
-            <p className="mt-2 text-sm text-atg-muted">
-              {hasRouteFilter || hasDateFilter ? c.noResultsHint : c.browseAllHint}
-            </p>
-            <a
-              href="#cruises-search"
-              className="mt-6 mr-3 inline-flex min-h-[44px] items-center rounded-lg border border-atg-border px-6 py-2 text-sm font-semibold text-atg-fg hover:border-primary dark:border-atg-border dark:text-white"
-            >
-              {c.modifySearch}
-            </a>
-            <Link
-              href="/"
-              className="mt-6 inline-flex min-h-[44px] items-center rounded-lg bg-primary px-6 py-2 text-sm font-bold text-white hover:bg-primary-hover"
-            >
-              {c.backHome}
-            </Link>
-          </div>
-        )}
-
-        {!loading && !error && listings.length > 0 && (
-          <div className="space-y-6">
-            {listings.map((sailing) => (
-              <CruiseCard
-                key={sailing.id}
-                sailing={sailing}
-                t={c}
-                searchParams={initialSearch}
-                locale={locale}
-              />
-            ))}
-          </div>
-        )}
-      </div>
+      <ListingPageBody
+        error={
+          error
+            ? {
+                message: c.loadError,
+                retryLabel: c.retry,
+                onRetry: () => setFetchId((value) => value + 1),
+              }
+            : null
+        }
+        loading={loading}
+        loadingMessage={c.loading}
+        isEmpty={!loading && !error && listings.length === 0}
+        empty={{
+          title: c.noResults,
+          description:
+            hasRouteFilter || hasDateFilter ? c.noResultsHint : c.browseAllHint,
+          backHomeLabel: c.backHome,
+          modifySearchLabel: c.modifySearch,
+          modifySearchHref: '#cruises-search',
+        }}
+      >
+        {listings.map((sailing) => (
+          <CruiseCard
+            key={sailing.id}
+            sailing={sailing}
+            t={c}
+            searchParams={initialSearch}
+            locale={locale}
+          />
+        ))}
+      </ListingPageBody>
 
       <HomeFooter />
     </div>

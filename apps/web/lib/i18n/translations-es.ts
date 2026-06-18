@@ -125,6 +125,27 @@ export const es: Translations = {
     countries: ['Kenya', 'Tanzania', 'Morocco', 'South Africa', 'Rwanda', 'DRC'],
     locations: ['Aeropuerto', 'Centro de la ciudad', 'Estación de tren'],
   },
+  listing: {
+    clearFilters: 'Borrar filtros',
+    applyFilters: 'Aplicar',
+    filtersToggle: 'Filtros',
+  },
+  verticalSearch: {
+    backHome: 'Volver al inicio',
+    resultsTitle: 'Resultados',
+    exploreHint: 'Explore las opciones disponibles.',
+    forDestination: 'Resultados para {destination}.',
+    noResults: 'No hay resultados para esta búsqueda.',
+    noResultsHint: 'Ajuste sus criterios o vuelva al inicio.',
+    continue: 'Continuar',
+    verticals: {
+      hotels: 'Alojamientos',
+      flights: 'Vuelos',
+      cars: 'Alquiler de vehículos',
+      cruises: 'Cruceros',
+      tours: 'Actividades y tours',
+    },
+  },
   whyUs: {
     title: 'Por qué elegirnos',
     subtitle:

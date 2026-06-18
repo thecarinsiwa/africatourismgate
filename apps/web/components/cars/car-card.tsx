@@ -9,6 +9,7 @@ import {
 import type { VehicleSearchResult } from '../../lib/cars/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import type { Translations } from '../../lib/i18n/translations';
+import { PriceDisplay, ProductCard } from '../shared';
 
 type CarCardProps = {
   vehicle: VehicleSearchResult;
@@ -33,9 +34,9 @@ export function CarCard({ vehicle, t, searchParams = {}, locale }: CarCardProps)
       : `${vehicle.rentalDays} ${t.dayPlural}`;
 
   return (
-    <article className="group overflow-hidden rounded-2xl border border-atg-border bg-atg-elevated shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:border-atg-border dark:bg-atg-elevated">
-      <div className="flex flex-col sm:flex-row">
-        <div className="relative flex shrink-0 flex-col justify-center bg-gradient-to-br from-[#1b1b2f] to-primary/80 px-6 py-8 text-white sm:w-56 lg:w-64">
+    <ProductCard
+      image={
+        <div className="absolute inset-0 flex flex-col justify-center bg-gradient-to-br from-[#1b1b2f] to-primary/80 px-6 py-8 text-white">
           <p className="text-xs font-semibold uppercase tracking-wide text-white/70">
             {vehicle.categoryName}
           </p>
@@ -44,48 +45,48 @@ export function CarCard({ vehicle, t, searchParams = {}, locale }: CarCardProps)
           </p>
           <p className="mt-2 text-sm text-white/80">{vehicle.agencyName}</p>
         </div>
-
-        <div className="flex flex-1 flex-col p-5 sm:p-6">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <p className="text-sm font-medium text-primary">{vehicle.pickupCity}</p>
-              {vehicle.licensePlate && (
-                <p className="mt-1 text-xs text-atg-muted">
-                  {t.licensePlate}: {vehicle.licensePlate}
-                </p>
-              )}
-              {detailParams.pickupDate && detailParams.returnDate && (
-                <p className="mt-2 text-sm text-atg-muted">
-                  {formatDisplayDate(detailParams.pickupDate, locale)} →{' '}
-                  {formatDisplayDate(detailParams.returnDate, locale)} · {daysLabel}
-                </p>
-              )}
-            </div>
-            <div className="text-right">
-              <p className="text-xs uppercase tracking-wide text-atg-muted">
-                {dailyLabel} {t.perDay}
-              </p>
-              <p className="text-2xl font-bold text-atg-fg">{totalLabel}</p>
-              <p className="text-xs text-atg-muted">{t.totalRental}</p>
-            </div>
-          </div>
-
-          <div className="mt-auto flex flex-wrap items-end justify-end gap-2 border-t border-atg-border pt-4 dark:border-atg-border">
-            <Link
-              href={detailHref}
-              className="inline-flex min-h-[44px] items-center rounded-lg border border-atg-border px-4 py-2 text-sm font-semibold text-atg-fg transition-colors hover:border-primary hover:text-primary dark:border-atg-border dark:text-white/80 dark:hover:border-primary dark:hover:text-white"
-            >
-              {t.viewDetails}
-            </Link>
-            <Link
-              href={reserveHref}
-              className="inline-flex min-h-[44px] items-center rounded-lg bg-primary px-5 py-2 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover"
-            >
-              {t.bookNow}
-            </Link>
-          </div>
-        </div>
-      </div>
-    </article>
+      }
+      title={
+        <h3 className="text-lg font-bold text-atg-fg sm:text-xl">{vehicle.pickupCity}</h3>
+      }
+      meta={
+        <>
+          {vehicle.licensePlate ? (
+            <p className="text-xs text-atg-muted">
+              {t.licensePlate}: {vehicle.licensePlate}
+            </p>
+          ) : null}
+          {detailParams.pickupDate && detailParams.returnDate ? (
+            <p className="mt-1 text-sm text-atg-muted">
+              {formatDisplayDate(detailParams.pickupDate, locale)} →{' '}
+              {formatDisplayDate(detailParams.returnDate, locale)} · {daysLabel}
+            </p>
+          ) : null}
+        </>
+      }
+      price={
+        <PriceDisplay
+          prefixLabel={`${dailyLabel} ${t.perDay}`}
+          amount={totalLabel}
+          suffixLabel={t.totalRental}
+        />
+      }
+      actions={
+        <>
+          <Link
+            href={detailHref}
+            className="inline-flex min-h-[44px] items-center rounded-lg border border-atg-border px-4 py-2 text-sm font-semibold text-atg-fg transition-colors hover:border-primary hover:text-primary dark:border-atg-border dark:text-white/80 dark:hover:border-primary dark:hover:text-white"
+          >
+            {t.viewDetails}
+          </Link>
+          <Link
+            href={reserveHref}
+            className="inline-flex min-h-[44px] items-center rounded-lg bg-primary px-5 py-2 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover"
+          >
+            {t.bookNow}
+          </Link>
+        </>
+      }
+    />
   );
 }

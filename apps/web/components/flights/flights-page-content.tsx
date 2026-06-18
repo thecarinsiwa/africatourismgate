@@ -15,6 +15,7 @@ import { formatDisplayDate } from '../../lib/hotels/dates';
 import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
+import { ListingPageBody, ListingSortBar } from '../shared/listing-patterns';
 import { FlightCard } from './flight-card';
 
 export type { FlightsSearchParams };
@@ -160,97 +161,61 @@ export function FlightsPageContent({ initialSearch }: FlightsPageContentProps) {
         </div>
       </section>
 
-      <div className="sticky top-0 z-30 border-b border-atg-border bg-atg-elevated/95 shadow-sm backdrop-blur-md dark:border-atg-border dark:bg-atg-elevated/95">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-          <div>
-            <p className="text-sm text-atg-muted">
-              {f.resultsFor}{' '}
-              <strong className="text-atg-fg">{displayRoute}</strong>
-            </p>
-            <p className="text-lg font-bold text-atg-fg">
-              {loading ? '…' : listings.length} {f.flightsFound}
-            </p>
-          </div>
-          <label className="flex items-center gap-2">
-            <span className="text-sm font-medium text-atg-muted">
-              {f.sortBy}
-            </span>
-            <select
-              value={sort}
-              onChange={(e) => setSort(e.target.value as SortKey)}
-              disabled={loading}
-              className="min-h-[44px] rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm font-medium text-atg-fg focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-60 dark:border-atg-border dark:bg-atg-surface dark:text-white"
-            >
-              <option value="recommended">{f.sortRecommended}</option>
-              <option value="price-asc">{f.sortPriceLow}</option>
-              <option value="price-desc">{f.sortPriceHigh}</option>
-              <option value="duration">{f.sortDuration}</option>
-            </select>
-          </label>
-        </div>
-      </div>
+      <ListingSortBar
+        resultsLine={
+          <>
+            {f.resultsFor}{' '}
+            <strong className="text-atg-fg">{displayRoute}</strong>
+          </>
+        }
+        countLine={
+          <>
+            {loading ? '…' : listings.length} {f.flightsFound}
+          </>
+        }
+        sortLabel={f.sortBy}
+        sortValue={sort}
+        sortOptions={[
+          { value: 'recommended', label: f.sortRecommended },
+          { value: 'price-asc', label: f.sortPriceLow },
+          { value: 'price-desc', label: f.sortPriceHigh },
+          { value: 'duration', label: f.sortDuration },
+        ]}
+        onSortChange={(value) => setSort(value as SortKey)}
+        disabled={loading}
+      />
 
-      <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
-        {error && (
-          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-4 text-sm text-red-800 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-200">
-            <p>{f.loadError}</p>
-            <button
-              type="button"
-              onClick={() => setFetchId((value) => value + 1)}
-              className="mt-3 min-h-[44px] rounded-lg bg-primary px-4 py-2 text-sm font-bold text-white hover:bg-primary-hover"
-            >
-              {f.retry}
-            </button>
-          </div>
-        )}
-
-        {loading && (
-          <div className="rounded-2xl border border-atg-border bg-atg-elevated px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
-            <p className="text-sm font-medium text-atg-muted">{f.loading}</p>
-          </div>
-        )}
-
-        {!loading && !error && listings.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-atg-border bg-atg-elevated px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
-            <svg
-              className="mx-auto h-12 w-12 text-atg-border text-atg-muted"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              aria-hidden
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-              />
-            </svg>
-            <h3 className="mt-4 text-lg font-bold text-atg-fg">{f.noResults}</h3>
-            <p className="mt-2 text-sm text-atg-muted">{f.noResultsHint}</p>
-            <Link
-              href="/"
-              className="mt-6 inline-flex min-h-[44px] items-center rounded-lg bg-primary px-6 py-2 text-sm font-bold text-white hover:bg-primary-hover"
-            >
-              {f.backHome}
-            </Link>
-          </div>
-        )}
-
-        {!loading && !error && listings.length > 0 && (
-          <div className="space-y-6">
-            {listings.map((flight) => (
-              <FlightCard
-                key={flight.id}
-                flight={flight}
-                t={f}
-                searchParams={defaultDetailSearchParams}
-                locale={locale}
-              />
-            ))}
-          </div>
-        )}
-      </div>
+      <ListingPageBody
+        error={
+          error
+            ? {
+                message: f.loadError,
+                retryLabel: f.retry,
+                onRetry: () => setFetchId((value) => value + 1),
+              }
+            : null
+        }
+        loading={loading}
+        loadingMessage={f.loading}
+        isEmpty={!loading && !error && listings.length === 0}
+        empty={{
+          title: f.noResults,
+          description: f.noResultsHint,
+          backHomeLabel: f.backHome,
+          modifySearchLabel: f.modifySearch,
+          modifySearchHref: '/#search',
+        }}
+      >
+        {listings.map((flight) => (
+          <FlightCard
+            key={flight.id}
+            flight={flight}
+            t={f}
+            searchParams={defaultDetailSearchParams}
+            locale={locale}
+          />
+        ))}
+      </ListingPageBody>
 
       <HomeFooter />
     </div>
