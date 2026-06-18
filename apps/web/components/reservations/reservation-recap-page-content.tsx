@@ -38,10 +38,11 @@ import {
   isVehicleReservationDraft,
   type ReservationDraft,
 } from '../../lib/reservations/flow';
-import { HomeFooter } from '../home/home-footer';
-import { HomeHeader } from '../home/home-header';
 import { PackagePriceDisplay } from '../packages/package-price-display';
 import { PackageReservationSummary } from '../packages/package-reservation-summary';
+import { CheckoutPageShell } from './checkout-page-shell';
+import { CheckoutRecapLine } from './checkout-recap-line';
+import { StripePaymentError } from './stripe-payment-error';
 
 type Props = {
   draft: ReservationDraft | null;
@@ -50,6 +51,7 @@ type Props = {
 export function ReservationRecapPageContent({ draft }: Props) {
   const { locale } = useLocale();
   const t = useTranslations();
+  const ck = t.checkout;
   const f = t.flights;
   const c = t.cars;
   const cr = t.cruises;
@@ -251,7 +253,7 @@ export function ReservationRecapPageContent({ draft }: Props) {
     if (!draft) return;
     const accessToken = await ensureClientAccessToken();
     if (!accessToken) {
-      setError('Authentification requise pour continuer vers le paiement.');
+      setError(ck.stripeError.authDescription);
       return;
     }
 
@@ -262,7 +264,7 @@ export function ReservationRecapPageContent({ draft }: Props) {
       const checkout = await createBookingCheckoutSession(accessToken, booking.booking.id);
       window.location.assign(checkout.url);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Impossible de demarrer le paiement.');
+      setError(err instanceof Error ? err.message : ck.stripeError.genericHint);
       setSubmitting(false);
     }
   }
@@ -303,128 +305,129 @@ export function ReservationRecapPageContent({ draft }: Props) {
       (isPackageReservationDraft(draft!) && packageReady) ||
       Boolean(vehicleReady));
 
-  return (
-    <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
-      <HomeHeader />
-      <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-10 sm:px-6 lg:px-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Recapitulatif</h1>
+  const stepperLabels = useMemo(
+    () => ({
+      stepperAriaLabel: ck.stepperAriaLabel,
+      cart: ck.stepCart,
+      recap: ck.stepRecap,
+      payment: ck.stepPayment,
+      confirmation: ck.stepConfirmation,
+      cancelled: ck.stepCancelled,
+    }),
+    [ck],
+  );
 
+  return (
+    <CheckoutPageShell
+      title={ck.recapTitle}
+      currentStep="payment"
+      stepperLabels={stepperLabels}
+    >
         {!draft && (
           <div className="mt-6 rounded-xl border border-red-200 bg-atg-elevated p-5 dark:border-red-900/40 dark:bg-atg-elevated">
-            <p className="text-sm text-red-700 dark:text-red-300">
-              Donnees de reservation invalides. Revenez au panier.
-            </p>
+            <p className="text-sm text-red-700 dark:text-red-300">{ck.invalidRecap}</p>
             <Link
               href="/booking/cart"
               className="mt-4 inline-flex min-h-[44px] items-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-hover"
             >
-              Retour panier
+              {ck.backToCart}
             </Link>
           </div>
         )}
 
         {draft && (
-          <div className="mt-6 rounded-xl border border-atg-border bg-atg-elevated p-5 dark:border-atg-border dark:bg-atg-elevated">
-            {loading && <p className="text-sm text-atg-muted">Chargement…</p>}
+          <div className="mt-6 space-y-4 rounded-xl border border-atg-border bg-atg-elevated p-5 dark:border-atg-border dark:bg-atg-elevated">
+            {loading && <p className="text-sm text-atg-muted">{ck.loading}</p>}
 
             {!loading && isRoomReservationDraft(draft) && hotelDetail && room && (
-              <div className="space-y-2">
-                <p className="text-sm text-primary">{hotelDetail.destinationName}</p>
-                <h2 className="text-xl font-bold text-atg-fg">{hotelDetail.name}</h2>
-                <p className="text-sm text-atg-muted">{room.name}</p>
-                <p className="text-sm text-atg-muted">
-                  {formatDisplayDate(draft.checkIn, locale)} {'->'}{' '}
-                  {formatDisplayDate(draft.checkOut, locale)}
-                </p>
-                <p className="text-sm text-atg-muted">
-                  {draft.guests} voyageur{draft.guests > 1 ? 's' : ''}
-                </p>
-                {totalLabel && (
-                  <p className="pt-1 text-2xl font-bold text-atg-fg">
-                    {totalLabel}
-                  </p>
-                )}
-              </div>
+              <CheckoutRecapLine
+                icon="hotel"
+                eyebrow={hotelDetail.destinationName}
+                title={hotelDetail.name}
+                details={
+                  <>
+                    <p>{room.name}</p>
+                    <p>
+                      {formatDisplayDate(draft.checkIn, locale)} {'->'}{' '}
+                      {formatDisplayDate(draft.checkOut, locale)}
+                    </p>
+                    <p>
+                      {draft.guests} voyageur{draft.guests > 1 ? 's' : ''}
+                    </p>
+                  </>
+                }
+                price={totalLabel ?? undefined}
+              />
             )}
 
             {!loading && isFlightReservationDraft(draft) && flightDetail && flightClass && (
-              <div className="space-y-2">
-                <p className="text-sm text-primary">
-                  {flightDetail.airlineName} · {flightDetail.flightNumber}
-                </p>
-                <h2 className="text-xl font-bold text-atg-fg">
-                  {formatAirportLabel(flightDetail.departureAirport.iataCode, flightDetail.departureAirport)} →{' '}
-                  {formatAirportLabel(flightDetail.arrivalAirport.iataCode, flightDetail.arrivalAirport)}
-                </h2>
-                <p className="text-sm text-atg-muted">
-                  {f.classNames[flightClass.className] ?? flightClass.className}
-                </p>
-                <p className="text-sm text-atg-muted">
-                  {formatDisplayDate(draft.departureDate, locale)}
-                </p>
-                <p className="text-sm text-atg-muted">
-                  {draft.passengers === 1
-                    ? `1 ${f.passengerSingular}`
-                    : f.passengerPlural.replace('{n}', String(draft.passengers))}
-                </p>
-                {totalLabel && (
-                  <p className="pt-1 text-2xl font-bold text-atg-fg">
-                    {totalLabel}
-                  </p>
-                )}
-              </div>
+              <CheckoutRecapLine
+                icon="flight"
+                eyebrow={`${flightDetail.airlineName} · ${flightDetail.flightNumber}`}
+                title={`${formatAirportLabel(flightDetail.departureAirport.iataCode, flightDetail.departureAirport)} → ${formatAirportLabel(flightDetail.arrivalAirport.iataCode, flightDetail.arrivalAirport)}`}
+                details={
+                  <>
+                    <p>{f.classNames[flightClass.className] ?? flightClass.className}</p>
+                    <p>{formatDisplayDate(draft.departureDate, locale)}</p>
+                    <p>
+                      {draft.passengers === 1
+                        ? `1 ${f.passengerSingular}`
+                        : f.passengerPlural.replace('{n}', String(draft.passengers))}
+                    </p>
+                  </>
+                }
+                price={totalLabel ?? undefined}
+              />
             )}
 
             {!loading && cruiseReady && cruiseDetail && isCabinReservationDraft(draft) && (
-              <div className="space-y-2">
-                <p className="text-sm text-primary">{cruiseDetail.cruiseLineName}</p>
-                <h2 className="text-xl font-bold text-atg-fg">
-                  {cruiseDetail.itineraryName}
-                </h2>
-                <p className="text-sm text-atg-muted">
-                  {cr.shipLabel}: {cruiseDetail.shipName} · {cruiseReady.categoryName}
-                </p>
-                <p className="text-sm text-atg-muted">
-                  {formatDisplayDate(cruiseDetail.departureDate, locale)} {'->'}{' '}
-                  {formatDisplayDate(cruiseDetail.returnDate, locale)}
-                </p>
-                <p className="text-sm text-atg-muted">
-                  {draft.guests === 1
-                    ? `1 ${cr.guestSingular}`
-                    : cr.guestPlural.replace('{n}', String(draft.guests))}
-                </p>
-                {totalLabel && (
-                  <p className="pt-1 text-2xl font-bold text-atg-fg">
-                    {totalLabel}
-                  </p>
-                )}
-              </div>
+              <CheckoutRecapLine
+                icon="cruise"
+                eyebrow={cruiseDetail.cruiseLineName}
+                title={cruiseDetail.itineraryName}
+                details={
+                  <>
+                    <p>
+                      {cr.shipLabel}: {cruiseDetail.shipName} · {cruiseReady.categoryName}
+                    </p>
+                    <p>
+                      {formatDisplayDate(cruiseDetail.departureDate, locale)} {'->'}{' '}
+                      {formatDisplayDate(cruiseDetail.returnDate, locale)}
+                    </p>
+                    <p>
+                      {draft.guests === 1
+                        ? `1 ${cr.guestSingular}`
+                        : cr.guestPlural.replace('{n}', String(draft.guests))}
+                    </p>
+                  </>
+                }
+                price={totalLabel ?? undefined}
+              />
             )}
 
             {!loading &&
               activityReady &&
               activityDetail &&
               isActivityScheduleReservationDraft(draft) && (
-                <div className="space-y-2">
-                  <p className="text-sm text-primary">{activityDetail.providerName}</p>
-                  <h2 className="text-xl font-bold text-atg-fg">
-                    {activityDetail.title}
-                  </h2>
-                  <p className="text-sm text-atg-muted">
-                    {formatDisplayDate(draft.date, locale)} ·{' '}
-                    {formatScheduleTime(activityReady.startDatetime, locale)}
-                  </p>
-                  <p className="text-sm text-atg-muted">
-                    {draft.participants === 1
-                      ? `1 ${f.passengerSingular}`
-                      : f.passengerPlural.replace('{n}', String(draft.participants))}
-                  </p>
-                  {totalLabel && (
-                    <p className="pt-1 text-2xl font-bold text-atg-fg">
-                      {totalLabel}
-                    </p>
-                  )}
-                </div>
+                <CheckoutRecapLine
+                  icon="activity"
+                  eyebrow={activityDetail.providerName}
+                  title={activityDetail.title}
+                  details={
+                    <>
+                      <p>
+                        {formatDisplayDate(draft.date, locale)} ·{' '}
+                        {formatScheduleTime(activityReady.startDatetime, locale)}
+                      </p>
+                      <p>
+                        {draft.participants === 1
+                          ? `1 ${f.passengerSingular}`
+                          : f.passengerPlural.replace('{n}', String(draft.participants))}
+                      </p>
+                    </>
+                  }
+                  price={totalLabel ?? undefined}
+                />
               )}
 
             {!loading &&
@@ -472,29 +475,26 @@ export function ReservationRecapPageContent({ draft }: Props) {
               )}
 
             {!loading && vehicleReady && isVehicleReservationDraft(draft) && (
-              <div className="space-y-2">
-                <p className="text-sm text-primary">{vehicleReady.agency.name}</p>
-                <h2 className="text-xl font-bold text-atg-fg">
-                  {vehicleReady.category.exampleModel ?? vehicleReady.category.name}
-                </h2>
-                <p className="text-sm text-atg-muted">
-                  {vehicleReady.agency.city || c.pickupLocation}
-                </p>
-                <p className="text-sm text-atg-muted">
-                  {formatDisplayDate(draft.pickupDate, locale)} {'->'}{' '}
-                  {formatDisplayDate(draft.returnDate, locale)}
-                </p>
-                <p className="text-sm text-atg-muted">
-                  {vehicleReady.rentalDays === 1
-                    ? `1 ${c.daySingular}`
-                    : `${vehicleReady.rentalDays} ${c.dayPlural}`}
-                </p>
-                {totalLabel && (
-                  <p className="pt-1 text-2xl font-bold text-atg-fg">
-                    {totalLabel}
-                  </p>
-                )}
-              </div>
+              <CheckoutRecapLine
+                icon="car"
+                eyebrow={vehicleReady.agency.name}
+                title={vehicleReady.category.exampleModel ?? vehicleReady.category.name}
+                details={
+                  <>
+                    <p>{vehicleReady.agency.city || c.pickupLocation}</p>
+                    <p>
+                      {formatDisplayDate(draft.pickupDate, locale)} {'->'}{' '}
+                      {formatDisplayDate(draft.returnDate, locale)}
+                    </p>
+                    <p>
+                      {vehicleReady.rentalDays === 1
+                        ? `1 ${c.daySingular}`
+                        : `${vehicleReady.rentalDays} ${c.dayPlural}`}
+                    </p>
+                  </>
+                }
+                price={totalLabel ?? undefined}
+              />
             )}
 
             {!loading && isCabinReservationDraft(draft) && cruiseDetail && !cruiseReady && (
@@ -522,28 +522,30 @@ export function ReservationRecapPageContent({ draft }: Props) {
               <p className="text-sm text-red-700 dark:text-red-300">
                 Selection indisponible.{' '}
                 <Link href={browseHref} className="font-semibold underline">
-                  Reprendre la recherche
+                  {ck.resumeSearch}
                 </Link>
               </p>
             )}
 
             {!hasToken && (
-              <p className="mt-5 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800 dark:bg-amber-500/10 dark:text-amber-300">
-                Connexion client requise pour lancer Stripe Checkout.
+              <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800 dark:bg-amber-500/10 dark:text-amber-300">
+                {ck.authRequiredPayment}
               </p>
             )}
             {error && (
-              <p className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-500/10 dark:text-red-300">
-                {error}
-              </p>
+              <StripePaymentError
+                message={error}
+                labels={ck.stripeError}
+                onDismiss={() => setError(null)}
+              />
             )}
 
-            <div className="mt-6 flex flex-wrap gap-3">
+            <div className="mt-6 flex flex-wrap gap-3 border-t border-atg-border pt-4 dark:border-atg-border">
               <Link
                 href={cartHref}
                 className="inline-flex min-h-[44px] items-center rounded-lg border border-atg-border px-4 py-2 text-sm font-semibold text-atg-fg hover:bg-atg-surface dark:border-atg-border dark:text-white/80 dark:hover:bg-white/5"
               >
-                Retour panier
+                {ck.backToCart}
               </Link>
               <button
                 type="button"
@@ -551,13 +553,11 @@ export function ReservationRecapPageContent({ draft }: Props) {
                 disabled={submitting || !canPay}
                 className="inline-flex min-h-[44px] items-center rounded-lg bg-primary px-5 py-2 text-sm font-semibold text-white hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {submitting ? 'Redirection Stripe…' : 'Payer avec Stripe'}
+                {submitting ? ck.stripeRedirecting : ck.payWithStripe}
               </button>
             </div>
           </div>
         )}
-      </main>
-      <HomeFooter />
-    </div>
+    </CheckoutPageShell>
   );
 }
