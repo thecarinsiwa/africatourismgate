@@ -2,6 +2,7 @@
 
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import { formatCruisePrice } from '../../lib/cruises/listings';
+import { resolveCabinDeck } from '../../lib/cruises/cabins';
 import { formatCruisePortLabel } from '../../lib/cruises/ports';
 import type { CruiseCabinOffer, CruiseSailingDetail } from '../../lib/cruises/types';
 import type { Translations } from '../../lib/i18n/translations';
@@ -42,7 +43,7 @@ function SidebarContent({
     <div className="space-y-4" id="reserve">
       <h2 className="text-lg font-bold text-atg-fg">{t.reserveSection}</h2>
 
-      <div className="rounded-lg bg-atg-surface px-4 py-3 text-sm dark:bg-white/5">
+      <div className="rounded-lg bg-atg-surface px-4 py-3 text-sm dark:bg-atg-surface">
         <p className="text-xs uppercase tracking-wide text-atg-muted">
           {t.departure}
         </p>
@@ -64,7 +65,7 @@ function SidebarContent({
           onChange={(event) =>
             onGuestsChange(Math.max(1, Number.parseInt(event.target.value, 10) || 1))
           }
-          className="min-h-[44px] w-full rounded-lg border border-atg-border px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-surface dark:text-white"
+          className="min-h-[44px] w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg"
         />
       </label>
 
@@ -86,8 +87,14 @@ function SidebarContent({
       </p>
 
       {selectedCabin && (
-        <div className="rounded-lg bg-atg-surface px-4 py-3 dark:bg-white/5">
+        <div className="rounded-lg bg-atg-surface px-4 py-3 dark:bg-atg-surface">
           <p className="text-xs uppercase tracking-wide text-atg-muted">
+            {selectedCabin.categoryName}
+          </p>
+          <p className="mt-1 text-xs text-atg-muted">
+            {t.deckLabel}: {t.deck[resolveCabinDeck(selectedCabin.categoryName)]}
+          </p>
+          <p className="mt-2 text-xs uppercase tracking-wide text-atg-muted">
             {t.totalCruise}
           </p>
           <p className="text-2xl font-bold text-atg-fg">

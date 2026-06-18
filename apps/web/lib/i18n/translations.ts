@@ -420,6 +420,7 @@ export type Translations = {
     metaDescription: string;
     breadcrumbHome: string;
     breadcrumbCruises: string;
+    breadcrumbCruisesDetail: string;
     heroTitle: string;
     heroSubtitle: string;
     resultsFor: string;
@@ -460,6 +461,14 @@ export type Translations = {
     cabinsTitle: string;
     selectCabin: string;
     selectCabinHint: string;
+    selectedCabin: string;
+    capacityLabel: string;
+    deckLabel: string;
+    deck: {
+      main: string;
+      upper: string;
+      promenade: string;
+    };
     cabinsLeft: string;
     unavailable: string;
     insufficientCabins: string;
@@ -1335,6 +1344,7 @@ const fr: Translations = {
       'Comparez et réservez des croisières sur le fleuve Congo et les côtes africaines avec Africa Tourism Gate.',
     breadcrumbHome: 'Accueil',
     breadcrumbCruises: 'Croisières',
+    breadcrumbCruisesDetail: 'Croisières',
     heroTitle: 'Croisières en Afrique',
     heroSubtitle:
       'Itinéraires fluviaux et côtiers — choisissez votre cabine et embarquez en toute sérénité.',
@@ -1376,6 +1386,14 @@ const fr: Translations = {
     cabinsTitle: 'Cabines disponibles',
     selectCabin: 'Choisir cette cabine',
     selectCabinHint: 'Sélectionnez une cabine pour réserver.',
+    selectedCabin: 'Sélectionnée',
+    capacityLabel: '{n} voyageurs max',
+    deckLabel: 'Pont',
+    deck: {
+      main: 'Pont principal',
+      upper: 'Pont supérieur',
+      promenade: 'Pont promenade',
+    },
     cabinsLeft: '{n} cabine(s) disponible(s)',
     unavailable: 'Complet',
     insufficientCabins: 'Pas assez de cabines pour ce nombre de voyageurs.',
@@ -2287,6 +2305,7 @@ const en: Translations = {
       'Compare and book Congo River and African coastal cruises with Africa Tourism Gate.',
     breadcrumbHome: 'Home',
     breadcrumbCruises: 'Cruises',
+    breadcrumbCruisesDetail: 'Cruises',
     heroTitle: 'Cruises in Africa',
     heroSubtitle:
       'River and coastal itineraries — pick your cabin and sail with confidence.',
@@ -2328,6 +2347,14 @@ const en: Translations = {
     cabinsTitle: 'Available cabins',
     selectCabin: 'Select this cabin',
     selectCabinHint: 'Select a cabin to book.',
+    selectedCabin: 'Selected',
+    capacityLabel: 'Up to {n} guests',
+    deckLabel: 'Deck',
+    deck: {
+      main: 'Main deck',
+      upper: 'Upper deck',
+      promenade: 'Promenade deck',
+    },
     cabinsLeft: '{n} cabin(s) available',
     unavailable: 'Sold out',
     insufficientCabins: 'Not enough cabins for this guest count.',

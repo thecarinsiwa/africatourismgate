@@ -512,6 +512,7 @@ export const es: Translations = {
       'Compare y reserve cruceros en el Congo y la costa africana con Africa Tourism Gate.',
     breadcrumbHome: 'Inicio',
     breadcrumbCruises: 'Cruceros',
+    breadcrumbCruisesDetail: 'Cruceros',
     heroTitle: 'Cruceros en África',
     heroSubtitle:
       'Itinerarios fluviales y costeros — elija su camarote y navegue con tranquilidad.',
@@ -553,6 +554,14 @@ export const es: Translations = {
     cabinsTitle: 'Camarotes disponibles',
     selectCabin: 'Elegir este camarote',
     selectCabinHint: 'Seleccione un camarote para reservar.',
+    selectedCabin: 'Seleccionado',
+    capacityLabel: 'Hasta {n} viajeros',
+    deckLabel: 'Cubierta',
+    deck: {
+      main: 'Cubierta principal',
+      upper: 'Cubierta superior',
+      promenade: 'Cubierta de paseo',
+    },
     cabinsLeft: '{n} camarote(s) disponible(s)',
     unavailable: 'Agotado',
     insufficientCabins: 'No hay suficientes camarotes para este número de viajeros.',
