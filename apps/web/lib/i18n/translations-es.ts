@@ -763,6 +763,12 @@ export const es: Translations = {
       cruise: 'Cabina crucero',
       activity: 'Actividad',
     },
+    galleryAria: 'Galería de fotos del paquete',
+    galleryOpenLightbox: 'Ampliar foto',
+    galleryClose: 'Cerrar galería',
+    galleryPrevious: 'Foto anterior',
+    galleryNext: 'Foto siguiente',
+    galleryCounter: (current, total) => `Foto ${current} de ${total}`,
   },
   account: {
     title: 'Mi cuenta',

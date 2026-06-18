@@ -57,8 +57,12 @@ export class PublicPackagesService {
 
     const [packages, total] = await qb.getManyAndCount();
 
+    const imageUrlByPackageId = await this.packagesService.findPrimaryImageUrlsByPackageIds(
+      packages.map((pkg) => pkg.id),
+    );
+
     const data = await Promise.all(
-      packages.map(async (pkg) => this.toListItem(pkg)),
+      packages.map(async (pkg) => this.toListItem(pkg, imageUrlByPackageId)),
     );
 
     return {
@@ -247,7 +251,10 @@ export class PublicPackagesService {
     };
   }
 
-  private async toListItem(pkg: Packages): Promise<PublicPackageListItemDto> {
+  private async toListItem(
+    pkg: Packages,
+    imageUrlByPackageId: Map<string, string>,
+  ): Promise<PublicPackageListItemDto> {
     const detail = await this.packagesService.findOneDetail(pkg.id);
     return {
       id: pkg.id,
@@ -256,6 +263,7 @@ export class PublicPackagesService {
       discountPercent: Number(pkg.discountPercent),
       itemCount: detail.items.length,
       pricing: detail.pricing,
+      imageUrl: imageUrlByPackageId.get(pkg.id) ?? null,
     };
   }
 }

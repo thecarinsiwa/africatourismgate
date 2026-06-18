@@ -25,6 +25,7 @@ import {
 } from '../../lib/reservations/flow';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
+import { ProductGallery } from '../shared';
 import { PackageBookingMobileBar, PackageBookingSidebar } from './package-booking-sidebar';
 import { PackageItemsSection } from './package-items-section';
 import { PackageResolvedSummary } from './package-resolved-summary';
@@ -260,6 +261,21 @@ export function PackageDetailPageContent({
         {detail && !loading && !notFound && (
           <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
             <div className="space-y-6">
+              {detail.images && detail.images.length > 0 ? (
+                <ProductGallery
+                  images={detail.images}
+                  name={detail.package.name}
+                  labels={{
+                    ariaLabel: p.galleryAria,
+                    openLightbox: p.galleryOpenLightbox,
+                    close: p.galleryClose,
+                    previous: p.galleryPrevious,
+                    next: p.galleryNext,
+                    counter: p.galleryCounter,
+                  }}
+                />
+              ) : null}
+
               <header>
                 <p className="text-xs font-semibold uppercase tracking-wide text-primary">
                   {p.cardBadge}

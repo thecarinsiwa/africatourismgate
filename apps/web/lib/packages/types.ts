@@ -1,3 +1,5 @@
+import type { ProductGalleryImage } from '../shared/product-images';
+
 export type PackageItemType = 'property' | 'flight' | 'vehicle' | 'cruise' | 'activity';
 
 export type PackagePricing = {
@@ -15,6 +17,7 @@ export type PackageListItem = {
   discountPercent: number;
   itemCount: number;
   pricing: PackagePricing;
+  imageUrl?: string | null;
 };
 
 export type PackageItemEnriched = {
@@ -37,6 +40,7 @@ export type PackageDetail = {
   };
   items: PackageItemEnriched[];
   pricing: PackagePricing;
+  images?: ProductGalleryImage[];
 };
 
 export type PackagesBrowseQuery = {

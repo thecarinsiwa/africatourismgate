@@ -829,4 +829,24 @@ INSERT INTO `package_items` (
   '00000000-0000-4000-8000-000000000010'
 );
 
+INSERT INTO `package_images` (
+  `id`, `package_id`, `url`, `caption`, `sort_order`, `created_by_user_id`
+) VALUES
+(
+  '00000000-0000-4000-8000-000000005004',
+  '00000000-0000-4000-8000-000000005001',
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Kinshasa_Gombe_%28cropped%29.jpg/1280px-Kinshasa_Gombe_%28cropped%29.jpg',
+  'Découvertes à Kinshasa',
+  1,
+  '00000000-0000-4000-8000-000000000010'
+),
+(
+  '00000000-0000-4000-8000-000000005005',
+  '00000000-0000-4000-8000-000000005001',
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Congo_River_near_Kisangani.jpg/1280px-Congo_River_near_Kisangani.jpg',
+  'Au bord du fleuve Congo',
+  2,
+  '00000000-0000-4000-8000-000000000010'
+);
+
 SET FOREIGN_KEY_CHECKS = 1;
