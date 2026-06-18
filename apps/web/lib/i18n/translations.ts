@@ -342,6 +342,7 @@ export type Translations = {
     metaDescription: string;
     breadcrumbHome: string;
     breadcrumbCars: string;
+    breadcrumbCarsDetail: string;
     heroTitle: string;
     heroSubtitle: string;
     resultsFor: string;
@@ -379,6 +380,40 @@ export type Translations = {
     agencyTitle: string;
     categoryTitle: string;
     licensePlate: string;
+    infoTitle: string;
+    equipmentTitle: string;
+    conditionsTitle: string;
+    rentalPeriod: string;
+    imagePlaceholderAria: string;
+    specs: {
+      seats: string;
+      airConditioningYes: string;
+      airConditioningNo: string;
+      listAria: string;
+    };
+    transmission: {
+      manual: string;
+      automatic: string;
+    };
+    fuel: {
+      petrol: string;
+      diesel: string;
+      hybrid: string;
+      electric: string;
+    };
+    equipment: {
+      airConditioning: string;
+      bluetooth: string;
+      gps: string;
+      usb: string;
+    };
+    conditionItems: {
+      minAge: string;
+      deposit: string;
+      mileage: string;
+      insurance: string;
+      fuelPolicy: string;
+    };
   };
   cruises: {
     metaTitle: string;
@@ -1215,6 +1250,7 @@ const fr: Translations = {
       'Comparez et réservez des véhicules de location aux principales destinations africaines avec Africa Tourism Gate.',
     breadcrumbHome: 'Accueil',
     breadcrumbCars: 'Voitures',
+    breadcrumbCarsDetail: 'Locations',
     heroTitle: 'Location de voitures en Afrique',
     heroSubtitle:
       'SUV, berlines et 4×4 auprès d\'agences locales de confiance — tarif journalier transparent.',
@@ -1254,6 +1290,44 @@ const fr: Translations = {
     agencyTitle: 'Agence de location',
     categoryTitle: 'Catégorie',
     licensePlate: 'Immatriculation',
+    infoTitle: 'Informations',
+    equipmentTitle: 'Équipements',
+    conditionsTitle: 'Conditions de location',
+    rentalPeriod: 'Période de location',
+    imagePlaceholderAria: 'Illustration du véhicule',
+    specs: {
+      seats: '{n} places',
+      airConditioningYes: 'Climatisation',
+      airConditioningNo: 'Sans climatisation',
+      listAria: 'Caractéristiques du véhicule',
+    },
+    transmission: {
+      manual: 'Manuelle',
+      automatic: 'Automatique',
+    },
+    fuel: {
+      petrol: 'Essence',
+      diesel: 'Diesel',
+      hybrid: 'Hybride',
+      electric: 'Électrique',
+    },
+    equipment: {
+      airConditioning: 'Climatisation',
+      bluetooth: 'Bluetooth',
+      gps: 'GPS',
+      usb: 'Ports USB',
+    },
+    conditionItems: {
+      minAge:
+        'Conducteur âgé d\'au moins 21 ans avec permis valide depuis 1 an minimum.',
+      deposit:
+        'Caution remboursable exigée à la prise en charge (carte bancaire au nom du conducteur).',
+      mileage: 'Kilométrage illimité sur le territoire indiqué par l\'agence.',
+      insurance:
+        'Assurance responsabilité civile incluse ; options sans franchise disponibles sur place.',
+      fuelPolicy:
+        'Politique plein / plein : restituez le véhicule avec le même niveau de carburant.',
+    },
   },
   cruises: {
     metaTitle: 'Croisières fluviales en Afrique',
@@ -2128,6 +2202,7 @@ const en: Translations = {
       'Compare and book rental cars at major African destinations with Africa Tourism Gate.',
     breadcrumbHome: 'Home',
     breadcrumbCars: 'Cars',
+    breadcrumbCarsDetail: 'Car rental',
     heroTitle: 'Car rental in Africa',
     heroSubtitle:
       'SUVs, sedans and 4×4 from trusted local agencies — transparent daily rates.',
@@ -2167,6 +2242,44 @@ const en: Translations = {
     agencyTitle: 'Rental agency',
     categoryTitle: 'Category',
     licensePlate: 'License plate',
+    infoTitle: 'Information',
+    equipmentTitle: 'Equipment',
+    conditionsTitle: 'Rental conditions',
+    rentalPeriod: 'Rental period',
+    imagePlaceholderAria: 'Vehicle illustration',
+    specs: {
+      seats: '{n} seats',
+      airConditioningYes: 'Air conditioning',
+      airConditioningNo: 'No A/C',
+      listAria: 'Vehicle specifications',
+    },
+    transmission: {
+      manual: 'Manual',
+      automatic: 'Automatic',
+    },
+    fuel: {
+      petrol: 'Petrol',
+      diesel: 'Diesel',
+      hybrid: 'Hybrid',
+      electric: 'Electric',
+    },
+    equipment: {
+      airConditioning: 'Air conditioning',
+      bluetooth: 'Bluetooth',
+      gps: 'GPS',
+      usb: 'USB ports',
+    },
+    conditionItems: {
+      minAge:
+        'Driver must be at least 21 years old with a valid licence held for at least 1 year.',
+      deposit:
+        'Refundable security deposit required at pick-up (credit card in the main driver\'s name).',
+      mileage: 'Unlimited mileage within the territory specified by the agency.',
+      insurance:
+        'Third-party liability insurance included; excess waiver options available on site.',
+      fuelPolicy:
+        'Full-to-full policy: return the vehicle with the same fuel level as at pick-up.',
+    },
   },
   cruises: {
     metaTitle: 'River & coastal cruises in Africa',

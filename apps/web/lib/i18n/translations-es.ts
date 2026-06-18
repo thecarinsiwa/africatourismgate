@@ -427,6 +427,7 @@ export const es: Translations = {
       'Compare y reserve coches de alquiler en los principales destinos africanos con Africa Tourism Gate.',
     breadcrumbHome: 'Inicio',
     breadcrumbCars: 'Coches',
+    breadcrumbCarsDetail: 'Alquiler',
     heroTitle: 'Alquiler de coches en África',
     heroSubtitle:
       'SUV, berlinas y 4×4 de agencias locales de confianza — tarifa diaria transparente.',
@@ -466,6 +467,44 @@ export const es: Translations = {
     agencyTitle: 'Agencia de alquiler',
     categoryTitle: 'Categoría',
     licensePlate: 'Matrícula',
+    infoTitle: 'Información',
+    equipmentTitle: 'Equipamiento',
+    conditionsTitle: 'Condiciones de alquiler',
+    rentalPeriod: 'Período de alquiler',
+    imagePlaceholderAria: 'Ilustración del vehículo',
+    specs: {
+      seats: '{n} plazas',
+      airConditioningYes: 'Aire acondicionado',
+      airConditioningNo: 'Sin A/C',
+      listAria: 'Características del vehículo',
+    },
+    transmission: {
+      manual: 'Manual',
+      automatic: 'Automática',
+    },
+    fuel: {
+      petrol: 'Gasolina',
+      diesel: 'Diésel',
+      hybrid: 'Híbrido',
+      electric: 'Eléctrico',
+    },
+    equipment: {
+      airConditioning: 'Aire acondicionado',
+      bluetooth: 'Bluetooth',
+      gps: 'GPS',
+      usb: 'Puertos USB',
+    },
+    conditionItems: {
+      minAge:
+        'Conductor de al menos 21 años con permiso válido desde hace al menos 1 año.',
+      deposit:
+        'Depósito reembolsable en la recogida (tarjeta de crédito a nombre del conductor).',
+      mileage: 'Kilometraje ilimitado en el territorio indicado por la agencia.',
+      insurance:
+        'Seguro de responsabilidad civil incluido; opciones sin franquicia disponibles en el lugar.',
+      fuelPolicy:
+        'Política lleno / lleno: devuelva el vehículo con el mismo nivel de combustible.',
+    },
   },
   cruises: {
     metaTitle: 'Cruceros fluviales y costeros en África',
