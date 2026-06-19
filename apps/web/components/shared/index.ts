@@ -12,6 +12,7 @@ export { ProductCard, type ProductCardProps } from './product-card';
 export { ProductGallery, type ProductGalleryLabels } from './product-gallery';
 export { PriceDisplay, type PriceDisplayProps } from './price-display';
 export { StarRating, type StarRatingProps } from './star-rating';
+export { Accordion, type AccordionItem, type AccordionProps } from './accordion';
 export { PageHero, type PageHeroProps } from './page-hero';
 export { SearchFormShell, type SearchFormShellProps, type SearchFormTab } from './search-form-shell';
 export { SearchFormPanel, type SearchFormPanelProps } from './search-form-panel';
