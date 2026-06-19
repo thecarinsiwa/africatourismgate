@@ -1,15 +1,16 @@
 'use client';
 
-import { LoginForm } from '@africatourismgate/ui';
+import { ApiHttpError } from '@africatourismgate/api-client';
+import { RegisterForm } from '@africatourismgate/ui';
 import Link from 'next/link';
+import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 import {
-  buildBookingLoginErrorMessages,
-  buildBookingLoginFormConfig,
-} from '../../config/booking-login';
-import { buildGoogleOAuthStartUrl, loginWithPassword } from '../../lib/api/auth';
+  buildBookingRegisterErrorMessages,
+  buildBookingRegisterFormConfig,
+} from '../../config/booking-register';
+import { registerCustomer } from '../../lib/api/auth';
 import { getAuthErrorMessage } from '../../lib/auth/api-errors';
 import { completeWebLoginFromAuthResponse } from '../../lib/auth/complete-web-login';
 import { HomeFooter } from '../home/home-footer';
@@ -26,22 +27,29 @@ function normalizeNextPath(nextPath?: string): string {
   return nextPath;
 }
 
-function buildRegisterHref(nextPath: string): string {
+function buildLoginHref(nextPath: string): string {
   const params = new URLSearchParams({ next: nextPath });
-  return `/booking/register?${params.toString()}`;
+  return `/booking/login?${params.toString()}`;
 }
 
-export function BookingLoginPageContent({ nextPath }: Props) {
-  const t = useTranslations('booking.login');
-  const tForm = useTranslations('booking.login.form');
-  const tErrors = useTranslations('booking.login.errors');
+export function BookingRegisterPageContent({ nextPath }: Props) {
+  const t = useTranslations('booking.register');
+  const tForm = useTranslations('booking.register.form');
+  const tErrors = useTranslations('booking.register.errors');
+  const locale = useLocale();
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
+  const [emailConflict, setEmailConflict] = useState(false);
   const safeNext = useMemo(() => normalizeNextPath(nextPath), [nextPath]);
-  const registerHref = useMemo(() => buildRegisterHref(safeNext), [safeNext]);
-  const oauthUrl = useMemo(() => buildGoogleOAuthStartUrl(safeNext), [safeNext]);
-  const loginConfig = useMemo(() => buildBookingLoginFormConfig(tForm), [tForm]);
-  const loginErrors = useMemo(() => buildBookingLoginErrorMessages(tErrors), [tErrors]);
+  const loginHref = useMemo(() => buildLoginHref(safeNext), [safeNext]);
+  const formConfig = useMemo(() => buildBookingRegisterFormConfig(tForm), [tForm]);
+  const registerErrors = useMemo(
+    () => ({
+      ...buildBookingRegisterErrorMessages(tErrors),
+      conflict: tErrors('emailAlreadyRegistered'),
+    }),
+    [tErrors],
+  );
 
   return (
     <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
@@ -52,47 +60,45 @@ export function BookingLoginPageContent({ nextPath }: Props) {
           <p className="mt-2 text-sm text-atg-muted">{t('subtitle')}</p>
 
           {error ? (
-            <p
+            <div
               role="alert"
               className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300"
             >
-              {error}
-            </p>
+              <p>{error}</p>
+              {emailConflict ? (
+                <Link
+                  href={loginHref}
+                  className="mt-2 inline-flex min-h-[44px] items-center font-semibold text-red-800 underline underline-offset-2 hover:text-red-900 dark:text-red-200 dark:hover:text-red-100"
+                >
+                  {t('signIn')}
+                </Link>
+              ) : null}
+            </div>
           ) : null}
 
           <div className="mt-6">
-            <LoginForm
-              config={loginConfig}
-              showRememberMe={false}
-              onSubmit={async ({ email, password }) => {
+            <RegisterForm
+              config={formConfig}
+              onSubmit={async ({ firstName, lastName, email, phone, password }) => {
                 setError(null);
+                setEmailConflict(false);
                 try {
-                  const response = await loginWithPassword({ email, password });
+                  const response = await registerCustomer({
+                    firstName,
+                    lastName,
+                    email,
+                    password,
+                    preferredLanguage: locale,
+                    ...(phone.trim() ? { phone: phone.trim() } : {}),
+                  });
                   completeWebLoginFromAuthResponse(response, router, safeNext);
                 } catch (err) {
-                  setError(getAuthErrorMessage(err, loginErrors));
+                  setEmailConflict(err instanceof ApiHttpError && err.status === 409);
+                  setError(getAuthErrorMessage(err, registerErrors));
                 }
               }}
             />
           </div>
-
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center" aria-hidden>
-              <div className="w-full border-t border-atg-border dark:border-atg-border" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase tracking-wide">
-              <span className="bg-atg-elevated px-2 text-atg-muted dark:bg-atg-elevated text-atg-muted">
-                {t('divider')}
-              </span>
-            </div>
-          </div>
-
-          <a
-            href={oauthUrl}
-            className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-lg border border-atg-border bg-atg-elevated px-4 py-2 text-sm font-semibold text-atg-fg hover:bg-atg-surface dark:border-atg-border dark:bg-transparent dark:text-white"
-          >
-            {t('google')}
-          </a>
 
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center" aria-hidden>
@@ -106,10 +112,10 @@ export function BookingLoginPageContent({ nextPath }: Props) {
           </div>
 
           <Link
-            href={registerHref}
+            href={loginHref}
             className="inline-flex min-h-[44px] w-full items-center justify-center rounded-lg border border-atg-border bg-atg-elevated px-4 py-2 text-sm font-semibold text-atg-fg hover:bg-atg-surface dark:border-atg-border dark:bg-transparent dark:text-white"
           >
-            {t('createAccount')}
+            {t('signIn')}
           </Link>
           <Link
             href="/hotels"

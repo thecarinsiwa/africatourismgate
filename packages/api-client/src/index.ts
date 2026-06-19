@@ -503,6 +503,14 @@ export class ApiClient {
     });
   }
 
+  registerCustomer(body: RegisterRequest): Promise<AuthResponse> {
+    return this.request<AuthResponse>('/auth/register/customer', {
+      method: 'POST',
+      body,
+      skipAuth: true,
+    });
+  }
+
   getAuthMe(): Promise<AuthMe> {
     return this.request<AuthMe>('/auth/me');
   }

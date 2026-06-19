@@ -36,6 +36,8 @@
       "title": "Connexion client",
       "subtitle": "Connectez-vous avec votre e-mail et mot de passe, ou utilisez Google pour poursuivre votre réservation.",
       "divider": "ou",
+      "dividerLabel": "Pas encore de compte ?",
+      "createAccount": "Créer un compte",
       "google": "Se connecter avec Google",
       "backToHotels": "Retour aux hôtels",
       "form": {
@@ -51,6 +53,40 @@
         "generic": "Une erreur est survenue. Veuillez réessayer.",
         "envMissing": "Configuration API manquante (NEXT_PUBLIC_API_URL).",
         "unauthorized": "Adresse e-mail ou mot de passe incorrect."
+      }
+    },
+    "register": {
+      "title": "Créer un compte client",
+      "subtitle": "Inscrivez-vous pour réserver, suivre vos voyages et gérer votre profil.",
+      "dividerLabel": "Déjà un compte ?",
+      "signIn": "Se connecter",
+      "backToHotels": "Retour aux hôtels",
+      "form": {
+        "firstNameLabel": "Prénom",
+        "firstNamePlaceholder": "Jean",
+        "lastNameLabel": "Nom",
+        "lastNamePlaceholder": "Dupont",
+        "emailLabel": "Adresse e-mail",
+        "emailPlaceholder": "vous@exemple.com",
+        "phoneLabel": "Téléphone",
+        "phonePlaceholder": "+243 000 000 000",
+        "phoneHint": "Optionnel",
+        "passwordLabel": "Mot de passe",
+        "passwordPlaceholder": "••••••••",
+        "confirmPasswordLabel": "Confirmer le mot de passe",
+        "confirmPasswordPlaceholder": "••••••••",
+        "confirmPasswordMismatch": "Les mots de passe ne correspondent pas",
+        "termsLabel": "J'accepte les",
+        "termsLink": "conditions d'utilisation",
+        "submit": "Créer mon compte",
+        "submitLoading": "Création du compte…"
+      },
+      "errors": {
+        "emailAlreadyRegistered": "Cette adresse e-mail est déjà utilisée. Connectez-vous ou utilisez une autre adresse.",
+        "network": "Impossible de joindre le serveur. Vérifiez votre connexion.",
+        "generic": "Une erreur est survenue. Veuillez réessayer.",
+        "envMissing": "Configuration API manquante (NEXT_PUBLIC_API_URL).",
+        "server": "Le serveur n'est pas prêt. Vérifiez la base de données."
       }
     }
   },
