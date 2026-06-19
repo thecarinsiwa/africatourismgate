@@ -829,6 +829,11 @@ export type Translations = {
       back: string;
       notFound: string;
       loadError: string;
+      filterAll: string;
+      filterConfirmed: string;
+      filterPending: string;
+      filterCancelled: string;
+      filterAria: string;
       detail: {
         bookedOn: string;
         itemsCount: string;
@@ -860,6 +865,15 @@ export type Translations = {
         reviewSubmitError: string;
         reviewRatingRequired: string;
         reviewStarAria: string;
+        timelineTitle: string;
+        timelinePlaceholder: string;
+        timelineStepCreated: string;
+        timelineStepPending: string;
+        timelineStepConfirmed: string;
+        timelineStepCancelled: string;
+        timelineStepRefunded: string;
+        timelineCurrent: string;
+        timelineUpcoming: string;
       };
     };
     paymentMethods: {
@@ -1892,6 +1906,11 @@ const fr: Translations = {
       back: 'Retour aux réservations',
       notFound: 'Réservation introuvable.',
       loadError: 'Impossible de charger les réservations.',
+      filterAll: 'Toutes',
+      filterConfirmed: 'Validées',
+      filterPending: 'En attente',
+      filterCancelled: 'Annulées',
+      filterAria: 'Filtrer par statut',
       detail: {
         bookedOn: 'Réservée le',
         itemsCount: 'Articles',
@@ -1923,6 +1942,16 @@ const fr: Translations = {
         reviewSubmitError: "Impossible de publier l'avis.",
         reviewRatingRequired: 'Veuillez choisir une note entre 1 et 5.',
         reviewStarAria: '{n} sur 5',
+        timelineTitle: 'Suivi de la réservation',
+        timelinePlaceholder:
+          'Historique détaillé non disponible — étapes estimées selon le statut actuel.',
+        timelineStepCreated: 'Réservation créée',
+        timelineStepPending: 'En attente de paiement',
+        timelineStepConfirmed: 'Confirmée',
+        timelineStepCancelled: 'Annulée',
+        timelineStepRefunded: 'Remboursée',
+        timelineCurrent: 'Étape en cours',
+        timelineUpcoming: 'À venir',
       },
     },
     paymentMethods: {
@@ -2977,6 +3006,11 @@ const en: Translations = {
       back: 'Back to bookings',
       notFound: 'Booking not found.',
       loadError: 'Could not load bookings.',
+      filterAll: 'All',
+      filterConfirmed: 'Completed',
+      filterPending: 'Pending',
+      filterCancelled: 'Cancelled',
+      filterAria: 'Filter by status',
       detail: {
         bookedOn: 'Booked on',
         itemsCount: 'Items',
@@ -3008,6 +3042,16 @@ const en: Translations = {
         reviewSubmitError: 'Could not submit your review.',
         reviewRatingRequired: 'Please select a rating from 1 to 5.',
         reviewStarAria: '{n} out of 5',
+        timelineTitle: 'Booking progress',
+        timelinePlaceholder:
+          'Detailed history unavailable — steps estimated from current status.',
+        timelineStepCreated: 'Booking created',
+        timelineStepPending: 'Awaiting payment',
+        timelineStepConfirmed: 'Confirmed',
+        timelineStepCancelled: 'Cancelled',
+        timelineStepRefunded: 'Refunded',
+        timelineCurrent: 'Current step',
+        timelineUpcoming: 'Upcoming',
       },
     },
     paymentMethods: {

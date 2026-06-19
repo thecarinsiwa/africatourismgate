@@ -933,6 +933,11 @@ export const es: Translations = {
       back: 'Volver a reservas',
       notFound: 'Reserva no encontrada.',
       loadError: 'No se pudieron cargar las reservas.',
+      filterAll: 'Todas',
+      filterConfirmed: 'Finalizada',
+      filterPending: 'Pendientes',
+      filterCancelled: 'Canceladas',
+      filterAria: 'Filtrar por estado',
       detail: {
         bookedOn: 'Reservado el',
         itemsCount: 'Elementos',
@@ -964,6 +969,16 @@ export const es: Translations = {
         reviewSubmitError: 'No se pudo enviar su reseña.',
         reviewRatingRequired: 'Seleccione una valoración del 1 al 5.',
         reviewStarAria: '{n} de 5',
+        timelineTitle: 'Seguimiento de la reserva',
+        timelinePlaceholder:
+          'Historial detallado no disponible — pasos estimados según el estado actual.',
+        timelineStepCreated: 'Reserva creada',
+        timelineStepPending: 'Pendiente de pago',
+        timelineStepConfirmed: 'Confirmada',
+        timelineStepCancelled: 'Cancelada',
+        timelineStepRefunded: 'Reembolsada',
+        timelineCurrent: 'Paso actual',
+        timelineUpcoming: 'Próximo',
       },
     },
     paymentMethods: {
