@@ -924,7 +924,11 @@ export const es: Translations = {
       countryCode: 'Código de país (p. ej. CD)',
     },
     reservations: {
-      empty: 'Aún no hay reservas.',
+      empty: 'Aún no hay reservas',
+      emptyDescription:
+        'Los viajes reservados a través de Africa Tourism Gate aparecerán aquí. Empiece explorando hoteles, vuelos y actividades.',
+      emptyBrowse: 'Explorar ofertas',
+      emptyFilter: 'Ninguna reserva coincide con este filtro.',
       reference: 'Referencia',
       date: 'Fecha',
       status: 'Estado',
@@ -1072,8 +1076,12 @@ export const es: Translations = {
   },
   comingSoon: {
     badge: 'Próximamente',
+    title: 'Próximamente',
+    siteBody:
+      'Esta sección del sitio está en preparación. Vuelva pronto para descubrir nuevas funciones en Africa Tourism Gate.',
     body: 'La reserva en línea para esta categoría llegará pronto. Sus criterios de búsqueda se han conservado en la URL.',
     backToSearch: 'Modificar mi búsqueda',
+    backHome: 'Volver al inicio',
   },
   booking: {
     login: {

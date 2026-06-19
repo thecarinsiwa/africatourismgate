@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import type { BookingListItem, BookingStatus } from '@africatourismgate/types';
+import { EmptyState } from '@africatourismgate/ui';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getAccountApiClient } from '../../lib/api/account';
 import {
@@ -23,6 +24,50 @@ function matchesFilter(status: BookingStatus, filter: StatusFilter): boolean {
   if (filter === 'pending') return PENDING_STATUSES.has(status);
   if (filter === 'cancelled') return CANCELLED_STATUSES.has(status);
   return true;
+}
+
+function BookingsEmptyIcon() {
+  return (
+    <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.5}
+        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+      />
+    </svg>
+  );
+}
+
+function AccountBookingsEmptyState({
+  title,
+  description,
+  browseLabel,
+  showBrowse,
+}: {
+  title: string;
+  description?: string;
+  browseLabel: string;
+  showBrowse: boolean;
+}) {
+  return (
+    <EmptyState
+      title={title}
+      description={description}
+      icon={<BookingsEmptyIcon />}
+      action={
+        showBrowse ? (
+          <Link
+            href="/#search"
+            className="inline-flex min-h-[44px] items-center rounded-lg bg-primary px-6 py-2 text-sm font-bold text-white hover:bg-primary-hover"
+          >
+            {browseLabel}
+          </Link>
+        ) : undefined
+      }
+      className="rounded-2xl border-atg-border bg-atg-elevated dark:bg-atg-elevated"
+    />
+  );
 }
 
 export function AccountBookingsList() {
@@ -78,7 +123,12 @@ export function AccountBookingsList() {
 
   if (bookings.length === 0) {
     return (
-      <p className="text-sm text-atg-muted">{t.account.reservations.empty}</p>
+      <AccountBookingsEmptyState
+        title={t.account.reservations.empty}
+        description={t.account.reservations.emptyDescription}
+        browseLabel={t.account.reservations.emptyBrowse}
+        showBrowse
+      />
     );
   }
 
@@ -110,7 +160,11 @@ export function AccountBookingsList() {
       </div>
 
       {filteredBookings.length === 0 ? (
-        <p className="text-sm text-atg-muted">{t.account.reservations.empty}</p>
+        <AccountBookingsEmptyState
+          title={t.account.reservations.emptyFilter}
+          browseLabel={t.account.reservations.emptyBrowse}
+          showBrowse={false}
+        />
       ) : (
         <div className="overflow-x-auto rounded-lg border border-atg-border dark:border-atg-border">
           <table className="min-w-full text-left text-sm">
