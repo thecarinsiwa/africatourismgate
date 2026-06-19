@@ -968,6 +968,8 @@ export const es: Translations = {
         submittingReview: 'Enviando…',
         reviewSubmitError: 'No se pudo enviar su reseña.',
         reviewRatingRequired: 'Seleccione una valoración del 1 al 5.',
+        reviewCharCount: '{current} / {max}',
+        reviewPublished: 'Gracias, su reseña ha sido publicada.',
         reviewStarAria: '{n} de 5',
         timelineTitle: 'Seguimiento de la reserva',
         timelinePlaceholder:
