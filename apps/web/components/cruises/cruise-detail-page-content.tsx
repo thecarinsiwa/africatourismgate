@@ -18,6 +18,7 @@ import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { buildReservationQuery } from '../../lib/reservations/flow';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
+import { DetailPageSkeletonShell } from '../shared/loading-skeletons';
 import { ProductGallery } from '../shared';
 import { CruiseBookingMobileBar, CruiseBookingSidebar } from './cruise-booking-sidebar';
 import { CruiseCabinsSection } from './cruise-cabins-section';
@@ -161,15 +162,7 @@ export function CruiseDetailPageContent({
     : null;
 
   if (loading && !detail) {
-    return (
-      <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
-        <HomeHeader />
-        <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-24 text-center sm:px-6 lg:px-8">
-          <p className="text-sm font-medium text-atg-muted">{c.loading}</p>
-        </div>
-        <HomeFooter />
-      </div>
-    );
+    return <DetailPageSkeletonShell loadingLabel={c.loading} />;
   }
 
   if (notFound) {

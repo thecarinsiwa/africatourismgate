@@ -6,6 +6,7 @@ import { cn } from '@africatourismgate/ui';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { LISTING_PAGE_SIZE } from '../../lib/listing/pagination';
+import { ListingCardsSkeleton } from './loading-skeletons';
 
 const sortSelectClass =
   'min-h-[44px] rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm font-medium text-atg-fg focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-60 dark:border-atg-border dark:bg-atg-surface dark:text-white';
@@ -237,6 +238,7 @@ export type ListingPageBodyProps = {
   error?: ListingErrorBannerProps | null;
   loading?: boolean;
   loadingMessage?: string;
+  loadingSkeletonCount?: number;
   isEmpty?: boolean;
   empty?: ListingEmptyStateProps;
   filters?: ReactNode;
@@ -289,6 +291,7 @@ export function ListingPageBody({
   error,
   loading,
   loadingMessage,
+  loadingSkeletonCount = 6,
   isEmpty,
   empty,
   filters,
@@ -305,8 +308,12 @@ export function ListingPageBody({
         {filters}
 
         <div className="min-w-0 flex-1">
-          {loading && loadingMessage ? (
-            <ListingLoadingState message={loadingMessage} />
+          {loading ? (
+            <ListingCardsSkeleton
+              count={loadingSkeletonCount}
+              variant={resultsVariant}
+              loadingLabel={loadingMessage ?? 'Loading results'}
+            />
           ) : isEmpty && empty ? (
             <ListingEmptyState {...empty} />
           ) : (

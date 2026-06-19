@@ -155,8 +155,8 @@ export function AccountPaymentMethodsPanel() {
             {t.account.paymentMethods.isDefault}
           </label>
           <div className="flex gap-2">
-            <Button type="submit" disabled={saving}>
-              {saving ? t.account.paymentMethods.saving : t.account.paymentMethods.add}
+            <Button type="submit" loading={saving} loadingText={t.account.paymentMethods.saving}>
+              {t.account.paymentMethods.add}
             </Button>
             <Button type="button" variant="outline" onClick={() => setShowForm(false)}>
               {t.account.paymentMethods.cancel}

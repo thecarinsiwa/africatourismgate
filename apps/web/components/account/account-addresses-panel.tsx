@@ -172,8 +172,8 @@ export function AccountAddressesPanel() {
             {t.account.addresses.isDefault}
           </label>
           <div className="flex gap-2">
-            <Button type="submit" disabled={saving}>
-              {saving ? t.account.addresses.saving : t.account.addresses.add}
+            <Button type="submit" loading={saving} loadingText={t.account.addresses.saving}>
+              {t.account.addresses.add}
             </Button>
             <Button type="button" variant="outline" onClick={() => setShowForm(false)}>
               {t.account.addresses.cancel}
