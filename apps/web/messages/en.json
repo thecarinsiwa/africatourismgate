@@ -36,6 +36,8 @@
       "title": "Customer sign in",
       "subtitle": "Sign in with your email and password, or use Google to continue your booking.",
       "divider": "or",
+      "dividerLabel": "Don't have an account yet?",
+      "createAccount": "Create an account",
       "google": "Sign in with Google",
       "backToHotels": "Back to hotels",
       "form": {
@@ -51,6 +53,40 @@
         "generic": "Something went wrong. Please try again.",
         "envMissing": "Missing API configuration (NEXT_PUBLIC_API_URL).",
         "unauthorized": "Incorrect email or password."
+      }
+    },
+    "register": {
+      "title": "Create a customer account",
+      "subtitle": "Sign up to book trips, track your reservations, and manage your profile.",
+      "dividerLabel": "Already have an account?",
+      "signIn": "Sign in",
+      "backToHotels": "Back to hotels",
+      "form": {
+        "firstNameLabel": "First name",
+        "firstNamePlaceholder": "Jane",
+        "lastNameLabel": "Last name",
+        "lastNamePlaceholder": "Doe",
+        "emailLabel": "Email address",
+        "emailPlaceholder": "you@example.com",
+        "phoneLabel": "Phone",
+        "phonePlaceholder": "+1 555 000 0000",
+        "phoneHint": "Optional",
+        "passwordLabel": "Password",
+        "passwordPlaceholder": "••••••••",
+        "confirmPasswordLabel": "Confirm password",
+        "confirmPasswordPlaceholder": "••••••••",
+        "confirmPasswordMismatch": "Passwords do not match",
+        "termsLabel": "I accept the",
+        "termsLink": "terms of use",
+        "submit": "Create my account",
+        "submitLoading": "Creating account…"
+      },
+      "errors": {
+        "emailAlreadyRegistered": "This email is already in use. Sign in or use a different address.",
+        "network": "Could not reach the server. Check your connection.",
+        "generic": "Something went wrong. Please try again.",
+        "envMissing": "Missing API configuration (NEXT_PUBLIC_API_URL).",
+        "server": "The server is not ready. Check the database."
       }
     }
   },

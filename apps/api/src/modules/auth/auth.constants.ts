@@ -23,3 +23,5 @@ export const FORGOT_PASSWORD_GENERIC_MESSAGE =
 
 export const RESET_PASSWORD_INVALID_MESSAGE =
   'Lien de réinitialisation expiré ou invalide.';
+
+export const EMAIL_ALREADY_REGISTERED_MESSAGE = 'Email already registered';

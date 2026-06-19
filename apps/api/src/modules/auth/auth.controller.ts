@@ -129,11 +129,22 @@ export class AuthController {
 
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Create a new user account' })
+  @ApiOperation({ summary: 'Create a new admin user account' })
   @ApiOkResponse({ type: AuthResponseDto })
   @ApiConflictResponse({ description: 'Email already registered' })
   register(@Body() dto: RegisterDto): Promise<AuthResponseDto> {
     return this.authService.register(dto);
+  }
+
+  @Post('register/customer')
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ login: { limit: 5, ttl: 60_000 } })
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Create a new customer account for the public web app' })
+  @ApiOkResponse({ type: AuthResponseDto })
+  @ApiConflictResponse({ description: 'Email already registered' })
+  registerCustomer(@Body() dto: RegisterDto): Promise<AuthResponseDto> {
+    return this.authService.registerCustomer(dto);
   }
 
   @Post('refresh')
