@@ -38,6 +38,7 @@ export function AccountBookingDetail({ bookingId }: Props) {
   const [actionError, setActionError] = useState<string | null>(null);
   const [paying, setPaying] = useState(false);
   const [cancelling, setCancelling] = useState(false);
+  const [reviewJustPublished, setReviewJustPublished] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -216,8 +217,10 @@ export function AccountBookingDetail({ bookingId }: Props) {
         <BookingReviewCard
           review={review}
           localeTag={localeTag}
+          showPublishedBanner={reviewJustPublished}
           labels={{
             yourReview: d.yourReview,
+            reviewPublished: d.reviewPublished,
           }}
         />
       ) : canReview ? (
@@ -235,9 +238,11 @@ export function AccountBookingDetail({ bookingId }: Props) {
             submittingReview: d.submittingReview,
             reviewSubmitError: d.reviewSubmitError,
             reviewRatingRequired: d.reviewRatingRequired,
+            reviewCharCount: d.reviewCharCount,
             ratingAria: (n) => d.reviewStarAria.replace('{n}', String(n)),
           }}
           onSubmitted={(submitted) => {
+            setReviewJustPublished(true);
             setDetail((prev) =>
               prev
                 ? { ...prev, review: submitted, canReview: false }

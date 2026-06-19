@@ -864,6 +864,8 @@ export type Translations = {
         submittingReview: string;
         reviewSubmitError: string;
         reviewRatingRequired: string;
+        reviewCharCount: string;
+        reviewPublished: string;
         reviewStarAria: string;
         timelineTitle: string;
         timelinePlaceholder: string;
@@ -1941,6 +1943,8 @@ const fr: Translations = {
         submittingReview: 'Publication…',
         reviewSubmitError: "Impossible de publier l'avis.",
         reviewRatingRequired: 'Veuillez choisir une note entre 1 et 5.',
+        reviewCharCount: '{current} / {max}',
+        reviewPublished: 'Merci, votre avis a été publié.',
         reviewStarAria: '{n} sur 5',
         timelineTitle: 'Suivi de la réservation',
         timelinePlaceholder:
@@ -3041,6 +3045,8 @@ const en: Translations = {
         submittingReview: 'Submitting⬦',
         reviewSubmitError: 'Could not submit your review.',
         reviewRatingRequired: 'Please select a rating from 1 to 5.',
+        reviewCharCount: '{current} / {max}',
+        reviewPublished: 'Thank you, your review has been published.',
         reviewStarAria: '{n} out of 5',
         timelineTitle: 'Booking progress',
         timelinePlaceholder:

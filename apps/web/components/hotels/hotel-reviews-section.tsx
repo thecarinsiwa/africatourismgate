@@ -3,7 +3,9 @@
 import type { Review } from '@africatourismgate/types';
 import { useCallback, useEffect, useState } from 'react';
 import { getPropertyReviews } from '../../lib/api/public';
+import { formatRelativeReviewDate } from '../../lib/i18n/format-relative-date';
 import type { Translations } from '../../lib/i18n/translations';
+import { getGuestInitials } from '../../lib/reviews/guest-initials';
 import { StarRating } from './star-rating';
 
 type HotelReviewsLabels = Pick<
@@ -26,14 +28,6 @@ type HotelReviewsSectionProps = {
   localeTag: string;
 };
 
-function formatReviewDate(iso: string, localeTag: string): string {
-  return new Date(iso).toLocaleDateString(localeTag, {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-}
-
 function ReviewCard({
   review,
   labels,
@@ -44,34 +38,47 @@ function ReviewCard({
   localeTag: string;
 }) {
   const author = review.authorFirstName?.trim() || labels.anonymousGuest;
+  const initials = getGuestInitials(
+    review.authorFirstName?.trim() || labels.anonymousGuest,
+  );
 
   return (
     <article className="rounded-xl border border-atg-border bg-atg-elevated p-4 dark:border-atg-border dark:bg-atg-elevated">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <StarRating value={review.rating} size="sm" />
-          <span className="text-sm font-semibold text-atg-fg">
-            {review.rating}/5
-          </span>
-        </div>
-        <time
-          className="text-xs text-atg-muted"
-          dateTime={review.createdAt}
+      <div className="flex gap-3">
+        <div
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-white"
+          aria-hidden
         >
-          {formatReviewDate(review.createdAt, localeTag)}
-        </time>
+          {initials}
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-sm font-semibold text-atg-fg">{author}</span>
+              <StarRating value={review.rating} size="sm" />
+              <span className="text-sm font-semibold text-atg-fg">
+                {review.rating}/5
+              </span>
+            </div>
+            <time
+              className="text-xs text-atg-muted"
+              dateTime={review.createdAt}
+            >
+              {formatRelativeReviewDate(review.createdAt, localeTag)}
+            </time>
+          </div>
+          {review.title ? (
+            <h3 className="mt-3 text-sm font-semibold text-atg-fg">
+              {review.title}
+            </h3>
+          ) : null}
+          {review.body ? (
+            <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-atg-muted">
+              {review.body}
+            </p>
+          ) : null}
+        </div>
       </div>
-      {review.title ? (
-        <h3 className="mt-3 text-sm font-semibold text-atg-fg">
-          {review.title}
-        </h3>
-      ) : null}
-      {review.body ? (
-        <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-atg-muted">
-          {review.body}
-        </p>
-      ) : null}
-      <p className="mt-3 text-xs font-medium text-atg-muted">{author}</p>
     </article>
   );
 }
