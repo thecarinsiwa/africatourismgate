@@ -16,6 +16,7 @@ import { localeToBcp47 } from '../../lib/i18n/locale-tag';
 import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
+import { DetailPageSkeletonShell } from '../shared/loading-skeletons';
 import { scrollToBookingSidebar } from '../shared/booking-sidebar-shell';
 import { HotelAmenitiesSection } from './hotel-amenities-section';
 import { HotelBookingMobileBar, HotelBookingSidebar } from './hotel-booking-sidebar';
@@ -160,15 +161,7 @@ export function HotelDetailPageContent({
   }
 
   if (loading && !detail) {
-    return (
-      <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
-        <HomeHeader />
-        <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-24 text-center sm:px-6 lg:px-8">
-          <p className="text-sm font-medium text-atg-muted">{h.loading}</p>
-        </div>
-        <HomeFooter />
-      </div>
-    );
+    return <DetailPageSkeletonShell loadingLabel={h.loading} />;
   }
 
   if (notFound) {

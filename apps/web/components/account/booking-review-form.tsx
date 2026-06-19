@@ -159,8 +159,8 @@ export function BookingReviewForm({ bookingId, labels, onSubmitted }: Props) {
           </p>
         ) : null}
 
-        <Button type="submit" disabled={submitting}>
-          {submitting ? labels.submittingReview : labels.submitReview}
+        <Button type="submit" loading={submitting} loadingText={labels.submittingReview}>
+          {labels.submitReview}
         </Button>
       </form>
     </Card>

@@ -313,8 +313,13 @@ export function AccountProfileForm() {
           </section>
 
           <div className="flex flex-wrap items-center gap-3">
-            <Button type="submit" disabled={saving || !isDirty}>
-              {saving ? t.account.profile.saving : t.account.profile.save}
+            <Button
+              type="submit"
+              loading={saving}
+              loadingText={t.account.profile.saving}
+              disabled={!isDirty}
+            >
+              {t.account.profile.save}
             </Button>
             {isDirty ? (
               <Button type="button" variant="outline" onClick={handleReset} disabled={saving}>

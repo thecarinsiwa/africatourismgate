@@ -187,8 +187,8 @@ export function SupportTicketForm() {
           </p>
         ) : null}
 
-        <Button type="submit" disabled={submitting}>
-          {submitting ? s.submitting : s.submit}
+        <Button type="submit" loading={submitting} loadingText={s.submitting}>
+          {s.submit}
         </Button>
       </form>
     </Card>

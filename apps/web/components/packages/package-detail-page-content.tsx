@@ -24,6 +24,7 @@ import {
   buildPackageReservationDraft,
   buildReservationQuery,
 } from '../../lib/reservations/flow';
+import { DetailPageSkeleton } from '../shared/loading-skeletons';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { ProductGallery } from '../shared';
@@ -279,9 +280,7 @@ export function PackageDetailPageContent({
 
       <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 pb-28 sm:px-6 lg:px-8 lg:pb-8">
         {loading && (
-          <div className="rounded-2xl border border-atg-border bg-atg-elevated px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
-            <p className="text-sm font-medium text-atg-muted">{p.loadingDetail}</p>
-          </div>
+          <DetailPageSkeleton loadingLabel={p.loadingDetail} layout="package" />
         )}
 
         {error && (
