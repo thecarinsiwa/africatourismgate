@@ -2,13 +2,12 @@
 
 import Link from 'next/link';
 import { Button } from '@africatourismgate/ui';
-import type { BookingDetail, BookingStatus } from '@africatourismgate/types';
+import type { BookingDetail } from '@africatourismgate/types';
 import { useCallback, useEffect, useState } from 'react';
 import { getAccountApiClient } from '../../lib/api/account';
 import {
   bookingItemTypeLabels,
   bookingStatusLabels,
-  bookingStatusStyles,
   formatBookingDateTime,
   formatBookingMoney,
   formatStayRange,
@@ -17,29 +16,23 @@ import { localeToBcp47 } from '../../lib/i18n/locale-tag';
 import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { BookingReviewCard } from './booking-review-card';
 import { BookingReviewForm } from './booking-review-form';
+import { BookingStatusBadge } from './booking-status-badge';
+import { BookingStatusTimeline } from './booking-status-timeline';
 
 type Props = {
   bookingId: string;
 };
 
-function StatusBadge({ status }: { status: BookingStatus }) {
-  const styles = bookingStatusStyles[status];
-  return (
-    <span
-      className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium ${styles.badge}`}
-    >
-      <span className={`h-2 w-2 rounded-full ${styles.dot}`} aria-hidden />
-      {bookingStatusLabels[status] ?? status}
-    </span>
-  );
-}
+type DetailWithHistory = BookingDetail & {
+  statusHistory?: import('@africatourismgate/types').BookingStatusHistoryEntry[];
+};
 
 export function AccountBookingDetail({ bookingId }: Props) {
   const t = useTranslations();
   const { locale } = useLocale();
   const localeTag = localeToBcp47(locale);
 
-  const [detail, setDetail] = useState<BookingDetail | null>(null);
+  const [detail, setDetail] = useState<DetailWithHistory | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
@@ -53,7 +46,7 @@ export function AccountBookingDetail({ bookingId }: Props) {
       const client = await getAccountApiClient();
       const data = await client.getBooking(bookingId);
       if ('booking' in data && 'items' in data) {
-        setDetail(data as BookingDetail);
+        setDetail(data as DetailWithHistory);
       } else {
         setError(t.account.reservations.notFound);
       }
@@ -139,8 +132,26 @@ export function AccountBookingDetail({ bookingId }: Props) {
             {formatBookingDateTime(booking.createdAt, localeTag)}
           </p>
         </div>
-        <StatusBadge status={booking.status} />
+        <BookingStatusBadge status={booking.status} />
       </div>
+
+      <BookingStatusTimeline
+        currentStatus={booking.status}
+        createdAt={booking.createdAt}
+        history={detail.statusHistory}
+        localeTag={localeTag}
+        labels={{
+          title: d.timelineTitle,
+          placeholder: d.timelinePlaceholder,
+          stepCreated: d.timelineStepCreated,
+          stepPending: d.timelineStepPending,
+          stepConfirmed: d.timelineStepConfirmed,
+          stepCancelled: d.timelineStepCancelled,
+          stepRefunded: d.timelineStepRefunded,
+          current: d.timelineCurrent,
+          upcoming: d.timelineUpcoming,
+        }}
+      />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <div className="rounded-lg border border-atg-border bg-atg-surface p-4 dark:border-atg-border dark:bg-white/5">
@@ -245,62 +256,115 @@ export function AccountBookingDetail({ bookingId }: Props) {
             {t.account.reservations.detail.noItems}
           </p>
         ) : (
-          <div className="overflow-x-auto rounded-lg border border-atg-border dark:border-atg-border">
-            <table className="min-w-full text-left text-sm">
-              <thead className="border-b border-atg-border bg-atg-surface dark:border-atg-border dark:bg-white/5">
-                <tr>
-                  <th className="px-4 py-3 font-medium">{t.account.reservations.detail.item}</th>
-                  <th className="px-4 py-3 font-medium">{t.account.reservations.detail.dates}</th>
-                  <th className="px-4 py-3 font-medium">{t.account.reservations.detail.quantity}</th>
-                  <th className="px-4 py-3 font-medium text-right">
-                    {t.account.reservations.detail.lineTotal}
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {items.map((item) => {
-                  const lineTotal = item.unitPriceCents * item.quantity;
-                  const typeLabel =
-                    bookingItemTypeLabels[item.itemType] ?? item.itemType;
-                  return (
-                    <tr
-                      key={item.id}
-                      className="border-b border-atg-border last:border-0 dark:border-atg-border"
-                    >
-                      <td className="px-4 py-3">
-                        <p className="font-medium text-atg-fg">
-                          {item.titleSnapshot || typeLabel}
-                        </p>
-                        <p className="mt-0.5 text-xs text-atg-muted">
-                          {typeLabel}
-                        </p>
-                      </td>
-                      <td className="px-4 py-3 text-atg-fg/80">
-                        {formatStayRange(item.startDate, item.endDate, localeTag)}
-                      </td>
-                      <td className="px-4 py-3">{item.quantity}</td>
-                      <td className="px-4 py-3 text-right font-medium">
-                        {formatBookingMoney(lineTotal, currency)}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-              <tfoot className="border-t border-atg-border bg-atg-surface dark:border-atg-border dark:bg-white/5">
-                <tr>
-                  <td
-                    colSpan={3}
-                    className="px-4 py-3 text-right font-semibold text-atg-fg"
+          <>
+            <div className="space-y-3 md:hidden">
+              {items.map((item) => {
+                const lineTotal = item.unitPriceCents * item.quantity;
+                const typeLabel =
+                  bookingItemTypeLabels[item.itemType] ?? item.itemType;
+                return (
+                  <article
+                    key={item.id}
+                    className="rounded-lg border border-atg-border bg-atg-surface p-4 dark:border-atg-border dark:bg-white/5"
                   >
-                    {t.account.reservations.total}
-                  </td>
-                  <td className="px-4 py-3 text-right text-base font-bold text-primary">
-                    {formatBookingMoney(totalCents, currency)}
-                  </td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
+                    <p className="font-medium text-atg-fg">
+                      {item.titleSnapshot || typeLabel}
+                    </p>
+                    <p className="mt-0.5 text-xs text-atg-muted">{typeLabel}</p>
+                    <dl className="mt-3 grid grid-cols-2 gap-2 text-sm">
+                      <div>
+                        <dt className="text-xs text-atg-muted">
+                          {t.account.reservations.detail.dates}
+                        </dt>
+                        <dd className="text-atg-fg">
+                          {formatStayRange(item.startDate, item.endDate, localeTag)}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt className="text-xs text-atg-muted">
+                          {t.account.reservations.detail.quantity}
+                        </dt>
+                        <dd className="text-atg-fg">{item.quantity}</dd>
+                      </div>
+                      <div className="col-span-2">
+                        <dt className="text-xs text-atg-muted">
+                          {t.account.reservations.detail.lineTotal}
+                        </dt>
+                        <dd className="font-semibold text-primary">
+                          {formatBookingMoney(lineTotal, currency)}
+                        </dd>
+                      </div>
+                    </dl>
+                  </article>
+                );
+              })}
+              <div className="flex items-center justify-between rounded-lg border border-primary/20 bg-primary/5 px-4 py-3">
+                <span className="font-semibold text-atg-fg">
+                  {t.account.reservations.total}
+                </span>
+                <span className="text-base font-bold text-primary">
+                  {formatBookingMoney(totalCents, currency)}
+                </span>
+              </div>
+            </div>
+
+            <div className="hidden overflow-x-auto rounded-lg border border-atg-border md:block dark:border-atg-border">
+              <table className="min-w-full text-left text-sm">
+                <thead className="border-b border-atg-border bg-atg-surface dark:border-atg-border dark:bg-white/5">
+                  <tr>
+                    <th className="px-4 py-3 font-medium">{t.account.reservations.detail.item}</th>
+                    <th className="px-4 py-3 font-medium">{t.account.reservations.detail.dates}</th>
+                    <th className="px-4 py-3 font-medium">{t.account.reservations.detail.quantity}</th>
+                    <th className="px-4 py-3 font-medium text-right">
+                      {t.account.reservations.detail.lineTotal}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {items.map((item) => {
+                    const lineTotal = item.unitPriceCents * item.quantity;
+                    const typeLabel =
+                      bookingItemTypeLabels[item.itemType] ?? item.itemType;
+                    return (
+                      <tr
+                        key={item.id}
+                        className="border-b border-atg-border last:border-0 dark:border-atg-border"
+                      >
+                        <td className="px-4 py-3">
+                          <p className="font-medium text-atg-fg">
+                            {item.titleSnapshot || typeLabel}
+                          </p>
+                          <p className="mt-0.5 text-xs text-atg-muted">
+                            {typeLabel}
+                          </p>
+                        </td>
+                        <td className="px-4 py-3 text-atg-fg/80">
+                          {formatStayRange(item.startDate, item.endDate, localeTag)}
+                        </td>
+                        <td className="px-4 py-3">{item.quantity}</td>
+                        <td className="px-4 py-3 text-right font-medium">
+                          {formatBookingMoney(lineTotal, currency)}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+                <tfoot className="border-t border-atg-border bg-atg-surface dark:border-atg-border dark:bg-white/5">
+                  <tr>
+                    <td
+                      colSpan={3}
+                      className="px-4 py-3 text-right font-semibold text-atg-fg"
+                    >
+                      {t.account.reservations.total}
+                    </td>
+                    <td className="px-4 py-3 text-right text-base font-bold text-primary">
+                      {formatBookingMoney(totalCents, currency)}
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </>
         )}
       </section>
     </div>
