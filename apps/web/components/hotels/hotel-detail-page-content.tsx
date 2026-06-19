@@ -16,6 +16,7 @@ import { localeToBcp47 } from '../../lib/i18n/locale-tag';
 import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
+import { scrollToBookingSidebar } from '../shared/booking-sidebar-shell';
 import { HotelAmenitiesSection } from './hotel-amenities-section';
 import { HotelBookingMobileBar, HotelBookingSidebar } from './hotel-booking-sidebar';
 import { HotelGallery } from './hotel-gallery';
@@ -144,7 +145,7 @@ export function HotelDetailPageContent({
       return;
     }
     if (!checkIn || !checkOut || checkOut <= checkIn) {
-      document.getElementById('reserve')?.scrollIntoView({ behavior: 'smooth' });
+      scrollToBookingSidebar({ openDrawer: true });
       return;
     }
     const query = buildReservationQuery({

@@ -5,7 +5,9 @@ import { formatCruisePrice } from '../../lib/cruises/listings';
 import { resolveCabinDeck } from '../../lib/cruises/cabins';
 import { formatCruisePortLabel } from '../../lib/cruises/ports';
 import type { CruiseCabinOffer, CruiseSailingDetail } from '../../lib/cruises/types';
+import { useTranslations } from '../../lib/i18n/locale-provider';
 import type { Translations } from '../../lib/i18n/translations';
+import { useState } from 'react';
 import {
   BookingSidebarBody,
   BookingSidebarCta,
@@ -14,10 +16,12 @@ import {
   BookingSidebarField,
   BookingSidebarHint,
   BookingSidebarMobileBar,
+  BookingSidebarMobileDrawer,
   BookingSidebarPriceBlock,
   BookingSidebarSummary,
   BookingSidebarTrustHints,
   bookingSidebarInputClass,
+  useBookingDrawerOpenListener,
   useBookingSidebarTrustHints,
 } from '../shared/booking-sidebar-shell';
 
@@ -122,24 +126,39 @@ export function CruiseBookingSidebar(props: CruiseBookingSidebarProps) {
 }
 
 export function CruiseBookingMobileBar(props: CruiseBookingSidebarProps) {
+  const { bookingSidebar } = useTranslations();
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const { detail, selectedCabin, guests, onReserve, t } = props;
   const canReserve =
     selectedCabin != null &&
     selectedCabin.availableCount > 0 &&
     selectedCabin.maxGuests >= guests;
 
+  useBookingDrawerOpenListener(() => setDrawerOpen(true));
+
   return (
-    <BookingSidebarMobileBar
-      priceLabel={selectedCabin ? t.totalCruise : undefined}
-      priceAmount={
-        selectedCabin
-          ? formatCruisePrice(selectedCabin.priceCents, detail.currency)
-          : undefined
-      }
-      hint={selectedCabin ? undefined : t.selectCabinHint}
-      ctaLabel={t.bookNow}
-      ctaDisabled={!canReserve}
-      onCtaClick={onReserve}
-    />
+    <>
+      <BookingSidebarMobileDrawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        title={t.reserveSection}
+      >
+        <CruiseBookingContent {...props} />
+      </BookingSidebarMobileDrawer>
+      <BookingSidebarMobileBar
+        priceLabel={selectedCabin ? t.totalCruise : undefined}
+        priceAmount={
+          selectedCabin
+            ? formatCruisePrice(selectedCabin.priceCents, detail.currency)
+            : undefined
+        }
+        hint={selectedCabin ? undefined : t.selectCabinHint}
+        ctaLabel={t.bookNow}
+        ctaDisabled={!canReserve}
+        onCtaClick={onReserve}
+        configureLabel={bookingSidebar.mobileConfigure}
+        onConfigureClick={() => setDrawerOpen(true)}
+      />
+    </>
   );
 }

@@ -4,6 +4,8 @@ import { formatDisplayDate } from '../../lib/hotels/dates';
 import { formatFlightPrice } from '../../lib/flights/listings';
 import type { FlightDetail, FlightDetailClass } from '../../lib/flights/types';
 import type { Translations } from '../../lib/i18n/translations';
+import { useState } from 'react';
+import { useTranslations } from '../../lib/i18n/locale-provider';
 import {
   BookingSidebarBody,
   BookingSidebarCta,
@@ -12,10 +14,12 @@ import {
   BookingSidebarField,
   BookingSidebarHint,
   BookingSidebarMobileBar,
+  BookingSidebarMobileDrawer,
   BookingSidebarPriceBlock,
   BookingSidebarSummary,
   BookingSidebarTrustHints,
   bookingSidebarInputClass,
+  useBookingDrawerOpenListener,
   useBookingSidebarTrustHints,
 } from '../shared/booking-sidebar-shell';
 
@@ -112,24 +116,39 @@ export function FlightBookingSidebar(props: FlightBookingSidebarProps) {
 }
 
 export function FlightBookingMobileBar(props: FlightBookingSidebarProps) {
+  const { bookingSidebar } = useTranslations();
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const { detail, selectedClass, passengers, onReserve, t } = props;
   const canReserve =
     Boolean(detail.departureDate) &&
     selectedClass != null &&
     selectedClass.availableSeats >= passengers;
 
+  useBookingDrawerOpenListener(() => setDrawerOpen(true));
+
   return (
-    <BookingSidebarMobileBar
-      priceLabel={selectedClass ? t.totalFlight : undefined}
-      priceAmount={
-        selectedClass
-          ? formatFlightPrice(selectedClass.totalPriceCents, detail.currency)
-          : undefined
-      }
-      hint={selectedClass ? undefined : t.selectClassHint}
-      ctaLabel={t.bookNow}
-      ctaDisabled={!canReserve}
-      onCtaClick={onReserve}
-    />
+    <>
+      <BookingSidebarMobileDrawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        title={t.reserveSection}
+      >
+        <FlightBookingContent {...props} />
+      </BookingSidebarMobileDrawer>
+      <BookingSidebarMobileBar
+        priceLabel={selectedClass ? t.totalFlight : undefined}
+        priceAmount={
+          selectedClass
+            ? formatFlightPrice(selectedClass.totalPriceCents, detail.currency)
+            : undefined
+        }
+        hint={selectedClass ? undefined : t.selectClassHint}
+        ctaLabel={t.bookNow}
+        ctaDisabled={!canReserve}
+        onCtaClick={onReserve}
+        configureLabel={bookingSidebar.mobileConfigure}
+        onConfigureClick={() => setDrawerOpen(true)}
+      />
+    </>
   );
 }

@@ -198,7 +198,7 @@ export function HomeHeader() {
             {contact.email ? (
               <a
                 href={`mailto:${contact.email}`}
-                className="flex items-center gap-1.5 text-white/80 hover:text-white transition-colors"
+                className="inline-flex min-h-[44px] items-center gap-1.5 rounded-md px-1 text-white/80 transition-colors hover:text-white"
               >
                 <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -224,7 +224,7 @@ export function HomeHeader() {
                 href={s.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-7 w-7 items-center justify-center rounded-full text-white/70 hover:text-white hover:bg-white/10 transition-colors"
+                className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                 aria-label={s.label}
               >
                 <span className="h-3.5 w-3.5">{s.icon}</span>
@@ -408,7 +408,7 @@ export function HomeHeader() {
                           <li key={child.href}>
                             <Link
                               href={child.href}
-                              className={`flex min-h-[40px] items-center rounded-lg px-3 py-2 text-sm ${navLinkClass(childActive, 'mobileChild')}`}
+                              className={`flex min-h-[44px] items-center rounded-lg px-3 py-3 text-sm ${navLinkClass(childActive, 'mobileChild')}`}
                               aria-current={childActive ? 'page' : undefined}
                               onClick={() => setMenuOpen(false)}
                             >

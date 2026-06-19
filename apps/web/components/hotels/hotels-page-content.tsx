@@ -190,7 +190,7 @@ export function HotelsPageContent({ initialSearch }: HotelsPageContentProps) {
               type="button"
               disabled={loading}
               onClick={() => setStarFilter(stars)}
-              className={`min-h-[36px] rounded-lg px-3 text-sm font-medium transition-colors disabled:opacity-60 ${
+              className={`min-h-[44px] rounded-lg px-3 text-sm font-medium transition-colors disabled:opacity-60 ${
                 starFilter === stars
                   ? 'bg-primary text-white'
                   : 'bg-atg-surface text-atg-muted hover:bg-atg-surface dark:bg-white/5 text-atg-muted dark:hover:bg-white/10'
@@ -213,7 +213,7 @@ export function HotelsPageContent({ initialSearch }: HotelsPageContentProps) {
               type="button"
               disabled={loading}
               onClick={() => setTypeFilter(type)}
-              className={`min-h-[40px] rounded-lg px-3 text-left text-sm font-medium transition-colors disabled:opacity-60 ${
+              className={`min-h-[44px] rounded-lg px-3 text-left text-sm font-medium transition-colors disabled:opacity-60 ${
                 typeFilter === type
                   ? 'bg-primary text-white'
                   : 'text-atg-muted hover:bg-atg-surface text-atg-muted dark:hover:bg-white/5'

@@ -1,7 +1,114 @@
 'use client';
 
 import type { ReactNode } from 'react';
+import { useEffect, useId, useRef } from 'react';
 import { useTranslations } from '../../lib/i18n/locale-provider';
+
+export const BOOKING_DRAWER_OPEN_EVENT = 'atg:open-booking-drawer';
+
+/** Scroll vers la sidebar desktop ou la barre mobile (M1 / parcours mobile). */
+export function scrollToBookingSidebar(options?: { openDrawer?: boolean }): void {
+  if (typeof window === 'undefined') return;
+
+  const isMobile = window.matchMedia('(max-width: 1023px)').matches;
+  if (isMobile) {
+    document.getElementById('mobile-reserve')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    if (options?.openDrawer) {
+      window.dispatchEvent(new CustomEvent(BOOKING_DRAWER_OPEN_EVENT));
+    }
+    return;
+  }
+
+  document.getElementById('reserve')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+export function useBookingDrawerOpenListener(onOpen: () => void): void {
+  useEffect(() => {
+    const handler = () => onOpen();
+    window.addEventListener(BOOKING_DRAWER_OPEN_EVENT, handler);
+    return () => window.removeEventListener(BOOKING_DRAWER_OPEN_EVENT, handler);
+  }, [onOpen]);
+}
+
+type BookingSidebarMobileDrawerProps = {
+  open: boolean;
+  onClose: () => void;
+  title: string;
+  children: ReactNode;
+};
+
+/** Drawer bas mobile pour le formulaire de réservation (WEB-UX-19). */
+export function BookingSidebarMobileDrawer({
+  open,
+  onClose,
+  title,
+  children,
+}: BookingSidebarMobileDrawerProps) {
+  const { bookingSidebar } = useTranslations();
+  const titleId = useId();
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', onKeyDown);
+    const frame = window.requestAnimationFrame(() => panelRef.current?.focus());
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [open, onClose]);
+
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 lg:hidden" role="presentation">
+      <button
+        type="button"
+        className="absolute inset-0 bg-atg-fg/40 backdrop-blur-[2px]"
+        aria-label={bookingSidebar.closeDrawer}
+        onClick={onClose}
+      />
+      <div
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
+        className="absolute inset-x-0 bottom-0 max-h-[min(85vh,640px)] overflow-y-auto rounded-t-2xl border border-atg-border bg-atg-elevated p-5 pb-safe shadow-2xl outline-none dark:border-atg-border dark:bg-atg-elevated"
+      >
+        <p id={titleId} className="sr-only">
+          {title}
+        </p>
+        <div className="mb-2 flex justify-end">
+          <button
+            type="button"
+            onClick={onClose}
+            className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg border border-atg-border text-atg-muted transition-colors hover:border-primary hover:text-primary"
+            aria-label={bookingSidebar.closeDrawer}
+          >
+            <span aria-hidden className="text-xl leading-none">
+              ×
+            </span>
+          </button>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}
 
 /** BK1 — champs formulaire sidebar (M1 : min-h 44px). */
 export const bookingSidebarInputClass =
@@ -174,6 +281,8 @@ type BookingSidebarMobileBarProps = {
   ctaLabel: string;
   ctaDisabled?: boolean;
   onCtaClick: () => void;
+  configureLabel?: string;
+  onConfigureClick?: () => void;
 };
 
 /** M1 — barre basse fixe mobile avec CTA ≥ 48px. */
@@ -185,17 +294,22 @@ export function BookingSidebarMobileBar({
   ctaLabel,
   ctaDisabled = false,
   onCtaClick,
+  configureLabel,
+  onConfigureClick,
 }: BookingSidebarMobileBarProps) {
   const hasPrice = Boolean(priceLabel && priceAmount);
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-atg-border bg-atg-elevated/95 p-4 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] backdrop-blur-md dark:border-atg-border dark:bg-atg-elevated/95 lg:hidden pb-safe">
-      <div className="mx-auto flex max-w-lg items-center gap-4">
+    <div
+      id="mobile-reserve"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-atg-border bg-atg-elevated/95 p-4 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] backdrop-blur-md dark:border-atg-border dark:bg-atg-elevated/95 lg:hidden pb-safe"
+    >
+      <div className="mx-auto flex max-w-lg min-w-0 items-center gap-3">
         <div className="min-w-0 flex-1">
           {hasPrice ? (
             <>
               <p className="text-xs text-atg-muted">{priceLabel}</p>
-              <p className="text-lg font-bold text-atg-fg">{priceAmount}</p>
+              <p className="truncate text-lg font-bold text-atg-fg">{priceAmount}</p>
               {secondaryLine ? (
                 <p className="truncate text-xs text-atg-muted">{secondaryLine}</p>
               ) : null}
@@ -204,11 +318,20 @@ export function BookingSidebarMobileBar({
             <p className="text-sm text-atg-muted">{hint}</p>
           )}
         </div>
+        {configureLabel && onConfigureClick ? (
+          <button
+            type="button"
+            onClick={onConfigureClick}
+            className="inline-flex min-h-[44px] shrink-0 items-center rounded-lg border border-atg-border px-4 py-2 text-sm font-semibold text-atg-fg transition-colors hover:border-primary dark:border-atg-border dark:text-white"
+          >
+            {configureLabel}
+          </button>
+        ) : null}
         <button
           type="button"
           disabled={ctaDisabled}
           onClick={onCtaClick}
-          className="min-h-[48px] shrink-0 rounded-lg bg-primary px-6 py-3 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
+          className="min-h-[48px] shrink-0 rounded-lg bg-primary px-5 py-3 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50 sm:px-6"
         >
           {ctaLabel}
         </button>
