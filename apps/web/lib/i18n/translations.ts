@@ -821,6 +821,9 @@ export type Translations = {
     };
     reservations: {
       empty: string;
+      emptyDescription: string;
+      emptyBrowse: string;
+      emptyFilter: string;
       reference: string;
       date: string;
       status: string;
@@ -943,8 +946,11 @@ export type Translations = {
   };
   comingSoon: {
     badge: string;
+    title: string;
+    siteBody: string;
     body: string;
     backToSearch: string;
+    backHome: string;
   };
   booking: {
     login: {
@@ -1899,7 +1905,11 @@ const fr: Translations = {
       countryCode: 'Code pays (ex. CD)',
     },
     reservations: {
-      empty: 'Aucune réservation pour le moment.',
+      empty: 'Aucune réservation pour le moment',
+      emptyDescription:
+        'Vos voyages réservés via Africa Tourism Gate apparaîtront ici. Commencez par explorer hôtels, vols et activités.',
+      emptyBrowse: 'Explorer les offres',
+      emptyFilter: 'Aucune réservation ne correspond à ce filtre.',
       reference: 'Référence',
       date: 'Date',
       status: 'Statut',
@@ -2049,8 +2059,12 @@ const fr: Translations = {
   },
   comingSoon: {
     badge: 'Bientôt disponible',
+    title: 'Bientôt disponible',
+    siteBody:
+      'Cette section du site est en cours de préparation. Revenez bientôt pour découvrir de nouvelles fonctionnalités sur Africa Tourism Gate.',
     body: 'La réservation en ligne pour cette catégorie arrive prochainement. Vos critères de recherche ont été conservés dans l’URL.',
     backToSearch: 'Modifier ma recherche',
+    backHome: 'Retour à l’accueil',
   },
   booking: {
     login: {
@@ -3001,7 +3015,11 @@ const en: Translations = {
       countryCode: 'Country code (e.g. CD)',
     },
     reservations: {
-      empty: 'No bookings yet.',
+      empty: 'No bookings yet',
+      emptyDescription:
+        'Trips you book through Africa Tourism Gate will appear here. Start by exploring hotels, flights, and activities.',
+      emptyBrowse: 'Browse offers',
+      emptyFilter: 'No bookings match this filter.',
       reference: 'Reference',
       date: 'Date',
       status: 'Status',
@@ -3149,8 +3167,12 @@ const en: Translations = {
   },
   comingSoon: {
     badge: 'Coming soon',
+    title: 'Coming soon',
+    siteBody:
+      'This section of the site is being prepared. Check back soon for new features on Africa Tourism Gate.',
     body: 'Online booking for this category is launching soon. Your search criteria have been kept in the URL.',
     backToSearch: 'Change my search',
+    backHome: 'Back to home',
   },
   booking: {
     login: {

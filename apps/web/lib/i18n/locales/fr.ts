@@ -432,7 +432,11 @@ export const fr: Translations = {
   },
   comingSoon: {
     badge: 'Bientôt disponible',
+    title: 'Bientôt disponible',
+    siteBody:
+      'Cette section du site est en cours de préparation. Revenez bientôt pour découvrir de nouvelles fonctionnalités sur Africa Tourism Gate.',
     body: 'La réservation en ligne pour cette catégorie arrive prochainement. Vos critères de recherche ont été conservés dans l’URL.',
     backToSearch: 'Modifier ma recherche',
+    backHome: 'Retour à l’accueil',
   },
 };

@@ -329,7 +329,10 @@ export type Translations = {
   };
   comingSoon: {
     badge: string;
+    title: string;
+    siteBody: string;
     body: string;
     backToSearch: string;
+    backHome: string;
   };
 };
