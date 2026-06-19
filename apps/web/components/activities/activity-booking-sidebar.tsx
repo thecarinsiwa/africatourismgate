@@ -8,6 +8,8 @@ import {
 import type { ActivityDetail, ActivityScheduleOffer } from '../../lib/activities/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import type { Translations } from '../../lib/i18n/translations';
+import { useState } from 'react';
+import { useTranslations } from '../../lib/i18n/locale-provider';
 import {
   BookingSidebarBody,
   BookingSidebarCta,
@@ -16,10 +18,12 @@ import {
   BookingSidebarField,
   BookingSidebarHint,
   BookingSidebarMobileBar,
+  BookingSidebarMobileDrawer,
   BookingSidebarPriceBlock,
   BookingSidebarSummary,
   BookingSidebarTrustHints,
   bookingSidebarInputClass,
+  useBookingDrawerOpenListener,
   useBookingSidebarTrustHints,
 } from '../shared/booking-sidebar-shell';
 
@@ -128,22 +132,37 @@ export function ActivityBookingSidebar(props: ActivityBookingSidebarProps) {
 }
 
 export function ActivityBookingMobileBar(props: ActivityBookingSidebarProps) {
+  const { bookingSidebar } = useTranslations();
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const { detail, selectedSchedule, participants, onReserve, t } = props;
   const canReserve =
     selectedSchedule != null && selectedSchedule.remainingPlaces >= participants;
 
+  useBookingDrawerOpenListener(() => setDrawerOpen(true));
+
   return (
-    <BookingSidebarMobileBar
-      priceLabel={selectedSchedule ? t.totalActivity : undefined}
-      priceAmount={
-        selectedSchedule
-          ? formatActivityPrice(selectedSchedule.priceCents * participants, detail.currency)
-          : undefined
-      }
-      hint={selectedSchedule ? undefined : t.selectScheduleHint}
-      ctaLabel={t.bookNow}
-      ctaDisabled={!canReserve}
-      onCtaClick={onReserve}
-    />
+    <>
+      <BookingSidebarMobileDrawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        title={t.reserveSection}
+      >
+        <ActivityBookingContent {...props} />
+      </BookingSidebarMobileDrawer>
+      <BookingSidebarMobileBar
+        priceLabel={selectedSchedule ? t.totalActivity : undefined}
+        priceAmount={
+          selectedSchedule
+            ? formatActivityPrice(selectedSchedule.priceCents * participants, detail.currency)
+            : undefined
+        }
+        hint={selectedSchedule ? undefined : t.selectScheduleHint}
+        ctaLabel={t.bookNow}
+        ctaDisabled={!canReserve}
+        onCtaClick={onReserve}
+        configureLabel={bookingSidebar.mobileConfigure}
+        onConfigureClick={() => setDrawerOpen(true)}
+      />
+    </>
   );
 }

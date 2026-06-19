@@ -114,6 +114,8 @@ export type Translations = {
     trustDemoCatalog: string;
     trustTransparentPricing: string;
     trustSupport: string;
+    mobileConfigure: string;
+    closeDrawer: string;
   };
   checkout: {
     stepperAriaLabel: string;
@@ -1120,6 +1122,8 @@ const fr: Translations = {
       'Tarifs indicatifs — la réservation en ligne arrive bientôt.',
     trustTransparentPricing: 'Montant affiché sans frais cachés.',
     trustSupport: 'Une question ? Notre équipe vous accompagne.',
+    mobileConfigure: 'Options',
+    closeDrawer: 'Fermer',
   },
   checkout: {
     stepperAriaLabel: 'Étapes de réservation',
@@ -2234,6 +2238,8 @@ const en: Translations = {
     trustDemoCatalog: 'Indicative prices — online booking coming soon.',
     trustTransparentPricing: 'No hidden fees on the amount shown.',
     trustSupport: 'Questions? Our team is here to help.',
+    mobileConfigure: 'Options',
+    closeDrawer: 'Close',
   },
   checkout: {
     stepperAriaLabel: 'Booking steps',

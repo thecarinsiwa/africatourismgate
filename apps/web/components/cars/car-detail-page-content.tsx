@@ -17,6 +17,7 @@ import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { buildReservationQuery } from '../../lib/reservations/flow';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
+import { scrollToBookingSidebar } from '../shared/booking-sidebar-shell';
 import { ProductGallery } from '../shared';
 import { CarBookingMobileBar, CarBookingSidebar } from './car-booking-sidebar';
 import { CarConditionsSection } from './car-conditions-section';
@@ -116,7 +117,7 @@ export function CarDetailPageContent({
 
   function handleReserve() {
     if (!pickupDate || !returnDate || returnDate <= pickupDate) {
-      document.getElementById('reserve')?.scrollIntoView({ behavior: 'smooth' });
+      scrollToBookingSidebar({ openDrawer: true });
       return;
     }
     if (!detail?.availabilitySlot?.id) return;

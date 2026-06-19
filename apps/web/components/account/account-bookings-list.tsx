@@ -146,7 +146,7 @@ export function AccountBookingsList() {
               key={option.id}
               type="button"
               onClick={() => setStatusFilter(option.id)}
-              className={`min-h-[36px] rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+              className={`min-h-[44px] rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
                 active
                   ? 'bg-primary text-white shadow-sm'
                   : 'border border-atg-border bg-atg-surface text-atg-fg hover:border-primary/40 dark:border-atg-border dark:bg-white/5'
@@ -200,7 +200,7 @@ export function AccountBookingsList() {
                   <td className="px-4 py-3">
                     <Link
                       href={`/account/reservations/${booking.id}`}
-                      className="inline-flex min-h-[36px] items-center font-medium text-primary hover:underline"
+                      className="inline-flex min-h-[44px] items-center font-medium text-primary hover:underline"
                     >
                       {t.account.reservations.view}
                     </Link>

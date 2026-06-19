@@ -1,8 +1,10 @@
 'use client';
 
 import type { PropertyDetail, PropertyDetailRoom } from '@africatourismgate/types';
+import { useState } from 'react';
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import { formatHotelPrice } from '../../lib/hotels/listings';
+import { useTranslations } from '../../lib/i18n/locale-provider';
 import type { Translations } from '../../lib/i18n/translations';
 import {
   BookingSidebarBody,
@@ -11,11 +13,13 @@ import {
   BookingSidebarField,
   BookingSidebarHint,
   BookingSidebarMobileBar,
+  BookingSidebarMobileDrawer,
   BookingSidebarPriceBlock,
   BookingSidebarSummary,
   BookingSidebarTrustHints,
   bookingSidebarDateGridClass,
   bookingSidebarInputClass,
+  useBookingDrawerOpenListener,
   useBookingSidebarTrustHints,
 } from '../shared/booking-sidebar-shell';
 
@@ -155,19 +159,34 @@ export function HotelBookingSidebar(props: HotelBookingSidebarProps) {
 }
 
 export function HotelBookingMobileBar(props: HotelBookingSidebarProps) {
+  const { bookingSidebar } = useTranslations();
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const total = computeTotal(props.detail, props.selectedRoom);
   const hasDates = Boolean(props.checkIn && props.checkOut && props.checkOut > props.checkIn);
   const canReserve =
     hasDates && props.selectedRoom != null && props.selectedRoom.available;
 
+  useBookingDrawerOpenListener(() => setDrawerOpen(true));
+
   return (
-    <BookingSidebarMobileBar
-      priceLabel={total ? props.t.totalStay : undefined}
-      priceAmount={total ? formatHotelPrice(total.cents, total.currency) : undefined}
-      hint={total ? undefined : props.t.selectDatesHint}
-      ctaLabel={props.t.bookNow}
-      ctaDisabled={!canReserve}
-      onCtaClick={props.onReserve}
-    />
+    <>
+      <BookingSidebarMobileDrawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        title={props.t.reserveSection}
+      >
+        <HotelBookingContent {...props} />
+      </BookingSidebarMobileDrawer>
+      <BookingSidebarMobileBar
+        priceLabel={total ? props.t.totalStay : undefined}
+        priceAmount={total ? formatHotelPrice(total.cents, total.currency) : undefined}
+        hint={total ? undefined : props.t.selectDatesHint}
+        ctaLabel={props.t.bookNow}
+        ctaDisabled={!canReserve}
+        onCtaClick={props.onReserve}
+        configureLabel={bookingSidebar.mobileConfigure}
+        onConfigureClick={() => setDrawerOpen(true)}
+      />
+    </>
   );
 }

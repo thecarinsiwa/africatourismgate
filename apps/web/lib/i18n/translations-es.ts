@@ -143,6 +143,8 @@ export const es: Translations = {
       'Precios orientativos — la reserva en línea llegará pronto.',
     trustTransparentPricing: 'Importe mostrado sin cargos ocultos.',
     trustSupport: '¿Dudas? Nuestro equipo le acompaña.',
+    mobileConfigure: 'Opciones',
+    closeDrawer: 'Cerrar',
   },
   checkout: {
     stepperAriaLabel: 'Pasos de reserva',

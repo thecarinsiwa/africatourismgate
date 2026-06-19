@@ -61,8 +61,8 @@ export function LanguageSwitcher({ variant = 'topbar' }: LanguageSwitcherProps) 
 
   const buttonClass =
     variant === 'topbar'
-      ? 'inline-flex items-center gap-1.5 rounded-md border border-white/20 bg-white/5 px-2 py-1 text-xs font-semibold text-white transition-colors hover:bg-white/10 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary'
-      : 'inline-flex items-center gap-1.5 rounded-md border border-atg-border bg-atg-elevated px-2 py-1.5 text-xs font-semibold text-atg-fg transition-colors hover:bg-atg-surface focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-atg-border dark:bg-atg-surface dark:text-white/75 dark:hover:bg-white/5';
+      ? 'inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-1.5 rounded-md border border-white/20 bg-white/5 px-3 text-xs font-semibold text-white transition-colors hover:bg-white/10 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary'
+      : 'inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-1.5 rounded-md border border-atg-border bg-atg-elevated px-3 text-xs font-semibold text-atg-fg transition-colors hover:bg-atg-surface focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-atg-border dark:bg-atg-surface dark:text-white/75 dark:hover:bg-white/5';
 
   const menuClass =
     variant === 'topbar'
@@ -120,7 +120,7 @@ export function LanguageSwitcher({ variant = 'topbar' }: LanguageSwitcherProps) 
                 type="button"
                 role="menuitemradio"
                 aria-checked={selected}
-                className={`flex w-full items-center justify-between px-3 py-2 text-left text-xs font-semibold transition-colors ${
+                className={`flex min-h-[44px] w-full items-center justify-between px-3 py-2.5 text-left text-xs font-semibold transition-colors ${
                   variant === 'topbar'
                     ? selected
                       ? 'bg-white/10 text-white'

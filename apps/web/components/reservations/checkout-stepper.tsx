@@ -38,8 +38,8 @@ const STEP_ORDER: CheckoutStepId[] = ['cart', 'recap', 'payment', 'confirmation'
 
 export function CheckoutStepper({ currentStep, labels, cancelled = false }: CheckoutStepperProps) {
   return (
-    <nav aria-label={labels.stepperAriaLabel} className="mb-8">
-      <ol className="flex flex-wrap items-center gap-2 sm:gap-0">
+    <nav aria-label={labels.stepperAriaLabel} className="mb-8 min-w-0">
+      <ol className="flex items-center gap-2 overflow-x-auto pb-1 [-webkit-overflow-scrolling:touch] sm:flex-wrap sm:overflow-visible sm:pb-0">
         {STEP_ORDER.map((stepId, index) => {
           const state = resolveStepState(stepId, currentStep, cancelled);
           const label =
@@ -54,10 +54,10 @@ export function CheckoutStepper({ currentStep, labels, cancelled = false }: Chec
                     : labels.confirmation;
 
           return (
-            <li key={stepId} className="flex min-w-0 items-center">
+            <li key={stepId} className="flex shrink-0 items-center">
               <div className="flex min-w-0 items-center gap-2">
                 <span
-                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
+                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-bold sm:h-8 sm:w-8 ${
                     state === 'complete'
                       ? 'bg-primary text-white'
                       : state === 'current'
@@ -71,7 +71,7 @@ export function CheckoutStepper({ currentStep, labels, cancelled = false }: Chec
                   {state === 'complete' ? '✓' : index + 1}
                 </span>
                 <span
-                  className={`truncate text-sm font-semibold ${
+                  className={`max-w-[5.5rem] truncate text-sm font-semibold sm:max-w-none ${
                     state === 'current'
                       ? 'text-atg-fg'
                       : state === 'complete'
@@ -86,7 +86,7 @@ export function CheckoutStepper({ currentStep, labels, cancelled = false }: Chec
               </div>
               {index < STEP_ORDER.length - 1 ? (
                 <span
-                  className={`mx-2 hidden h-px w-8 sm:block md:w-12 ${
+                  className={`mx-2 hidden h-px w-6 shrink-0 sm:block md:w-12 ${
                     state === 'complete' ? 'bg-primary' : 'bg-atg-border'
                   }`}
                   aria-hidden
