@@ -101,6 +101,7 @@
     "vehicle": "vehicle",
     "sailing": "sailing",
     "destination": "destination",
+    "guide": "guide",
     "package": "package",
     "provider": "provider",
     "category": "category",

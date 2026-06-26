@@ -3,6 +3,7 @@
 import type {
   ActivityDifficultyLevel,
   BookingItemType,
+  BookingGuideRole,
   BookingStatus,
   FlightClassName,
   LoyaltyTier,
@@ -14,6 +15,8 @@ import type {
   ReviewStatus,
   SupportTicketPriority,
   SupportTicketStatus,
+  TourGuideStatus,
+  TourGuideType,
   UserStatus,
   VehicleAvailabilityStatus,
 } from '@africatourismgate/types';
@@ -72,6 +75,39 @@ export function useBookingStatusFilterOptions() {
       })),
     ],
     [statusLabels, tAll],
+  );
+}
+
+export function useTourGuideTypeLabels() {
+  const t = useTranslations('modules.tourGuides.type');
+  return useMemo(
+    (): Record<TourGuideType, string> => ({
+      internal: t('internal'),
+      external: t('external'),
+    }),
+    [t],
+  );
+}
+
+export function useTourGuideStatusLabels() {
+  const t = useTranslations('modules.tourGuides.status');
+  return useMemo(
+    (): Record<TourGuideStatus, string> => ({
+      active: t('active'),
+      inactive: t('inactive'),
+    }),
+    [t],
+  );
+}
+
+export function useBookingGuideRoleLabels() {
+  const t = useTranslations('modules.tourGuides.role');
+  return useMemo(
+    (): Record<BookingGuideRole, string> => ({
+      primary: t('primary'),
+      secondary: t('secondary'),
+    }),
+    [t],
   );
 }
 

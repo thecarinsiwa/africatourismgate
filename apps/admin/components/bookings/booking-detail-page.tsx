@@ -37,6 +37,7 @@ import {
 import { formatPaymentProvider } from '../../lib/payment-display';
 import { BookingItemCatalogLink } from './booking-item-catalog-link';
 import { BookingItemTypeIcon } from './booking-item-type-icon';
+import { BookingGuidesSection } from './booking-guides-section';
 import { BookingStatusTimeline } from './booking-status-timeline';
 
 function formatDateTime(iso: string): string {
@@ -461,6 +462,8 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
               />
             </Card>
           </section>
+
+          <BookingGuidesSection bookingId={bookingId} canWrite={canWrite} />
         </div>
       </div>
 

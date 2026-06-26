@@ -362,6 +362,25 @@ Critères : CRUD complet ; assignation depuis fiche réservation.
 À la fin : fichiers + captures + test manuel admin.
 ```
 
+**Implémenté (CE-7)**
+
+| Page | Route | Composant |
+| ---- | ----- | --------- |
+| Liste | `/guides` | `TourGuidesList` — nom, type, langues, statut, filtres |
+| Création | `/guides/nouveau` | `TourGuideForm` mode create |
+| Édition | `/guides/[id]` | `TourGuideEditPage` + `TourGuideForm` |
+| Assignation | `/dashboard/bookings/[id]` | `BookingGuidesSection` |
+
+**Permissions** : `guides.read` / `guides.write` (CRUD) ; assignation réservation : `bookings.write`.
+
+**Test manuel admin**
+
+1. Menu **Réservations → Guides touristiques** → liste vide ou seed
+2. **Nouveau guide** (externe) : nom, langues `fr, en`, destinations cochées → création → redirection édition
+3. Modifier statut, bio, enregistrer
+4. Ouvrir une réservation (`/dashboard/bookings/:id`) → section **Guides assignés** → assigner guide + rôle → retirer
+5. Supprimer un guide depuis la liste (confirmation)
+
 ### CE-8 — Admin — File d’attente validation
 
 **Branche :** `feature/ce-admin-booking-approval`

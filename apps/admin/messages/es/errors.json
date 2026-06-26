@@ -16,6 +16,9 @@
   "destinations": {
     "slugConflict": "Este slug ya está en uso por otro destino."
   },
+  "tourGuides": {
+    "userConflict": "Este usuario ya está vinculado a un guía turístico."
+  },
   "employees": {
     "profileConflict": "Este usuario ya tiene un perfil de empleado."
   },

@@ -20,6 +20,7 @@ import { getPromotionsErrorMessage } from '../promotions-errors';
 import { getRbacErrorMessage } from '../rbac-errors';
 import { getReviewsErrorMessage } from '../reviews-errors';
 import { getSupportTicketsErrorMessage } from '../support-tickets-errors';
+import { getTourGuidesErrorMessage } from '../tour-guides-errors';
 import { getUsersErrorMessage } from '../users-errors';
 import { getVolsErrorMessage } from '../vols-errors';
 import { buildModuleErrorMessages } from './admin-error-messages';
@@ -31,6 +32,7 @@ export function useAdminErrorMessages() {
   const tHebergements = useTranslations('errors.hebergements');
   const tOrganizations = useTranslations('errors.organizations');
   const tDestinations = useTranslations('errors.destinations');
+  const tTourGuides = useTranslations('errors.tourGuides');
   const tEmployees = useTranslations('errors.employees');
   const tRbac = useTranslations('errors.rbac');
   const tVols = useTranslations('errors.vols');
@@ -51,6 +53,7 @@ export function useAdminErrorMessages() {
         hebergements: (key) => tHebergements(key),
         organizations: (key) => tOrganizations(key),
         destinations: (key) => tDestinations(key),
+        tourGuides: (key) => tTourGuides(key),
         employees: (key) => tEmployees(key),
         rbac: (key) => tRbac(key),
         vols: (key) => tVols(key),
@@ -69,6 +72,7 @@ export function useAdminErrorMessages() {
       tHebergements,
       tOrganizations,
       tDestinations,
+      tTourGuides,
       tEmployees,
       tRbac,
       tVols,
@@ -92,6 +96,7 @@ export function useAdminErrorMessages() {
       packages: (error: unknown) => getPackagesErrorMessage(error, messages.packages),
       organizations: (error: unknown) => getOrganizationsErrorMessage(error, messages.organizations),
       destinations: (error: unknown) => getDestinationsErrorMessage(error, messages.destinations),
+      tourGuides: (error: unknown) => getTourGuidesErrorMessage(error, messages.tourGuides),
       employees: (error: unknown) => getEmployeesErrorMessage(error, messages.employees),
       rbac: (error: unknown) => getRbacErrorMessage(error, messages.rbac),
       vols: (error: unknown) => getVolsErrorMessage(error, messages.vols),
