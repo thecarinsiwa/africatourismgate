@@ -3,6 +3,7 @@ import { BookingGuideAssignmentsService } from '../tour-guides/booking-guide-ass
 import { AssignBookingGuidesDto } from '../tour-guides/dto/booking-guide-assignment.dto';
 import { PermissionsService } from '../../rbac/permissions.service';
 import { StripeService, BookingCheckoutSessionResult } from '../../stripe/stripe.service';
+import { BookingAssistedEmailService } from './booking-assisted-email.service';
 import { BookingEngineService } from './booking-engine.service';
 import { BookingsService } from './bookings.service';
 import { ApproveBookingDto } from './dto/approve-booking.dto';
@@ -17,6 +18,7 @@ export class BookingApprovalService {
     private readonly permissionsService: PermissionsService,
     private readonly guideAssignmentsService: BookingGuideAssignmentsService,
     private readonly stripeService: StripeService,
+    private readonly assistedEmail: BookingAssistedEmailService,
   ) {}
 
   async approve(
@@ -39,6 +41,8 @@ export class BookingApprovalService {
       );
     }
 
+    this.assistedEmail.notifyApproved(bookingId);
+
     return this.bookingsService.getAdminDetail(bookingId);
   }
 
@@ -49,6 +53,7 @@ export class BookingApprovalService {
   ): Promise<BookingAdminDetailDto> {
     await this.assertApprovalAccess(actorUserId);
     await this.bookingEngine.rejectAssistedBooking(bookingId, actorUserId, dto.reason);
+    this.assistedEmail.notifyRejected(bookingId, dto.reason);
     return this.bookingsService.getAdminDetail(bookingId);
   }
 
@@ -57,7 +62,12 @@ export class BookingApprovalService {
     actorUserId: string,
   ): Promise<BookingCheckoutSessionResult> {
     await this.assertApprovalAccess(actorUserId);
-    return this.stripeService.getOrCreateCheckoutSessionForBooking(bookingId, actorUserId);
+    const session = await this.stripeService.getOrCreateCheckoutSessionForBooking(
+      bookingId,
+      actorUserId,
+    );
+    this.assistedEmail.notifyPaymentInvite(bookingId, session.url);
+    return session;
   }
 
   private async assertApprovalAccess(actorUserId: string): Promise<void> {

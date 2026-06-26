@@ -311,20 +311,32 @@ Projet : Africa Tourism Gate (pnpm monorepo).
 Branche : crée et bascule sur `feature/ce-assisted-booking-emails`.
 
 Livrable CE-6 : E-mails — parcours réservation assistée
-Références :
-- apps/api/src/modules/email/email.templates.ts
-- Livrable #79 (SMTP) si pas encore en prod — fonctionner en dev (log ou Mailhog)
-
-Templates :
-1. booking_request_received — au client après CE-3
-2. booking_approved_chat — lien vers /account/bookings/:id/chat (ou token signé)
-3. booking_rejected — motif
-4. booking_payment_invite — lien checkout Stripe
-
-Déclenchement : hooks dans CE-3, CE-5 ; branding org si disponible.
-
-À la fin : fichiers + aperçu HTML templates en dev.
+...
 ```
+
+**Implémenté (CE-6)**
+
+| Template | Déclencheur | Méthode |
+| -------- | ----------- | ------- |
+| `booking_request_received` | `POST /bookings/request` | `BookingsService.requestFromCheckout` |
+| `booking_approved_chat` | `POST /bookings/:id/approve` | `BookingApprovalService.approve` |
+| `booking_rejected` | `POST /bookings/:id/reject` | `BookingApprovalService.reject` |
+| `booking_payment_invite` | `POST /bookings/:id/invite-payment` | `BookingApprovalService.invitePayment` |
+
+**Fichiers**
+
+- `apps/api/src/modules/email/assisted-booking.email.templates.ts` — rendu HTML/texte des 4 templates
+- `apps/api/src/modules/email/email.types.ts` — payloads
+- `apps/api/src/modules/email/email.service.ts` — `sendBookingRequestReceived`, `sendBookingApprovedChat`, `sendBookingRejected`, `sendBookingPaymentInvite`
+- `apps/api/src/modules/resources/bookings/booking-assisted-email.service.ts` — hooks CE-3 / CE-5
+- `apps/api/src/modules/email/dto/email-preview.dto.ts` + `email.controller.ts` — aperçu API
+
+**Aperçu HTML (dev)**
+
+1. **Fichiers statiques** — `npm run email:preview-assisted` (dans `apps/api`) → `apps/api/src/modules/email/preview/*.html`
+2. **API** — `POST /api/email/preview` avec `template` ∈ `booking_request_received` \| `booking_approved_chat` \| `booking_rejected` \| `booking_payment_invite` (permission `organization_settings.read`)
+
+Transport dev : Mailpit (`localhost:1025`) par défaut si `EMAIL_TRANSPORT` non défini.
 
 ### CE-7 — Admin — Catalogue et assignation des guides
 

@@ -23,7 +23,7 @@ const BRAND = {
 const DEFAULT_WEB_URL = 'https://africatourismgate.org';
 const LOGO_SIZE = 44;
 
-function escapeHtml(value: string): string {
+export function escapeHtml(value: string): string {
   return value
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -62,11 +62,11 @@ function renderHeader(branding: EmailBrandingValue): string {
   return `<p style="margin:0 0 24px;font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:${color};">${name}</p>`;
 }
 
-function webBase(url?: string): string {
+export function webBase(url?: string): string {
   return (url?.trim() || DEFAULT_WEB_URL).replace(/\/$/, '');
 }
 
-function layout(
+export function layout(
   title: string,
   bodyHtml: string,
   branding: EmailBrandingValue,
@@ -145,7 +145,7 @@ function layout(
 </html>`;
 }
 
-function button(href: string, label: string, branding: EmailBrandingValue): string {
+export function button(href: string, label: string, branding: EmailBrandingValue): string {
   const safeHref = escapeHtml(href);
   const bg = escapeHtml(primaryColor(branding));
   return `<p style="margin:24px 0;">

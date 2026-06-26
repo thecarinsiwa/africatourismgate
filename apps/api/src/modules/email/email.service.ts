@@ -9,8 +9,18 @@ import {
   renderPasswordResetEmail,
   renderWelcomeEmail,
 } from './email.templates';
+import {
+  renderBookingApprovedChatEmail,
+  renderBookingPaymentInviteEmail,
+  renderBookingRejectedEmail,
+  renderBookingRequestReceivedEmail,
+} from './assisted-booking.email.templates';
 import type {
+  BookingApprovedChatEmailPayload,
   BookingConfirmationEmailPayload,
+  BookingPaymentInviteEmailPayload,
+  BookingRejectedEmailPayload,
+  BookingRequestReceivedEmailPayload,
   PasswordResetEmailPayload,
   SendMailResult,
   WelcomeEmailPayload,
@@ -53,6 +63,38 @@ export class EmailService {
       payload,
       branding,
     );
+    return this.send('service', { to: payload.to, subject, html, text });
+  }
+
+  async sendBookingRequestReceived(
+    payload: BookingRequestReceivedEmailPayload,
+  ): Promise<SendMailResult> {
+    const branding = await this.resolveBranding();
+    const { subject, html, text } = renderBookingRequestReceivedEmail(payload, branding);
+    return this.send('service', { to: payload.to, subject, html, text });
+  }
+
+  async sendBookingApprovedChat(
+    payload: BookingApprovedChatEmailPayload,
+  ): Promise<SendMailResult> {
+    const branding = await this.resolveBranding();
+    const { subject, html, text } = renderBookingApprovedChatEmail(payload, branding);
+    return this.send('service', { to: payload.to, subject, html, text });
+  }
+
+  async sendBookingRejected(
+    payload: BookingRejectedEmailPayload,
+  ): Promise<SendMailResult> {
+    const branding = await this.resolveBranding();
+    const { subject, html, text } = renderBookingRejectedEmail(payload, branding);
+    return this.send('service', { to: payload.to, subject, html, text });
+  }
+
+  async sendBookingPaymentInvite(
+    payload: BookingPaymentInviteEmailPayload,
+  ): Promise<SendMailResult> {
+    const branding = await this.resolveBranding();
+    const { subject, html, text } = renderBookingPaymentInviteEmail(payload, branding);
     return this.send('service', { to: payload.to, subject, html, text });
   }
 
