@@ -219,6 +219,7 @@ export type {
   BookingCheckoutPreview,
   BookingCheckoutRequest,
   BookingDetail,
+  BookingRequestResponse,
   BookingItem,
   BookingItemListItem,
   BookingItemType,

@@ -38,6 +38,10 @@ import {
   BookingCheckoutPreviewResponseDto,
 } from './dto/booking-checkout-preview-response.dto';
 import { BookingDetailDto } from './dto/booking-detail.dto';
+import {
+  BOOKING_REQUEST_REGISTERED_MESSAGE,
+  BookingRequestResponseDto,
+} from './dto/booking-request-response.dto';
 import { BookingCheckoutPromoService } from './booking-checkout-promo.service';
 import { BookingPackageCheckoutService } from './booking-package-checkout.service';
 import { BookingStatusHistoryService } from './booking-status-history.service';
@@ -169,6 +173,68 @@ export class BookingEngineService {
     return this.getBookingDetail(bookingId);
   }
 
+  async createBookingRequest(
+    dto: BookingCheckoutDto,
+    userId: string,
+    actorUserId?: string,
+  ): Promise<BookingRequestResponseDto> {
+    const pricing = await this.resolveCheckoutPricing(dto);
+
+    const bookingId = await this.bookingsRepository.manager.transaction(
+      async (manager) => {
+        const bookingsRepo = manager.getRepository(Bookings);
+        const itemsRepo = manager.getRepository(BookingItems);
+        const id = newId();
+
+        const booking = bookingsRepo.create({
+          id,
+          userId,
+          status: 'pending_approval',
+          totalCents: pricing.totalCents,
+          currency: pricing.currency,
+          promoCodeId: pricing.discount?.promoCodeId ?? null,
+          promotionId: pricing.discount?.promotionId ?? null,
+          createdByUserId: actorUserId ?? null,
+        } as Bookings);
+        await bookingsRepo.save(booking);
+
+        for (const line of pricing.lines) {
+          const item = itemsRepo.create({
+            id: newId(),
+            bookingId: id,
+            itemType: line.itemType,
+            referenceId: line.referenceId,
+            titleSnapshot: line.titleSnapshot,
+            quantity: line.quantity,
+            unitPriceCents: line.unitPriceCents,
+            startDate: line.startDate,
+            endDate: line.endDate,
+            createdByUserId: actorUserId ?? null,
+          } as BookingItems);
+          await itemsRepo.save(item);
+        }
+
+        return id;
+      },
+    );
+
+    await this.statusHistory.record({
+      bookingId,
+      fromStatus: null,
+      toStatus: 'pending_approval',
+      reason: 'Demande de réservation assistée',
+      changedByUserId: actorUserId ?? null,
+    });
+
+    return {
+      bookingId,
+      status: 'pending_approval',
+      message: BOOKING_REQUEST_REGISTERED_MESSAGE,
+      totalCents: pricing.totalCents,
+      currency: pricing.currency,
+    };
+  }
+
   async confirmBooking(
     id: string,
     actorUserId?: string,
@@ -273,21 +339,29 @@ export class BookingEngineService {
     reason?: string,
   ): Promise<BookingDetailDto> {
     const booking = await this.findBookingOrThrow(id);
-    if (booking.status !== 'pending_payment' && booking.status !== 'confirmed') {
+    if (
+      booking.status !== 'pending_approval' &&
+      booking.status !== 'pending_payment' &&
+      booking.status !== 'confirmed'
+    ) {
       throw new BadRequestException(
         `Impossible d'annuler une réservation au statut « ${booking.status} ».`,
       );
     }
 
     const fromStatus = booking.status;
+    const shouldRestoreStock =
+      fromStatus === 'pending_payment' || fromStatus === 'confirmed';
 
     await this.bookingsRepository.manager.transaction(async (manager) => {
-      const items = await manager.getRepository(BookingItems).find({
-        where: { bookingId: id },
-      });
-      const lines = await this.bookingItemsToResolvedLines(manager, items);
-      if (lines.length > 0) {
-        await this.allocateStock(manager, lines, 'restore', actorUserId);
+      if (shouldRestoreStock) {
+        const items = await manager.getRepository(BookingItems).find({
+          where: { bookingId: id },
+        });
+        const lines = await this.bookingItemsToResolvedLines(manager, items);
+        if (lines.length > 0) {
+          await this.allocateStock(manager, lines, 'restore', actorUserId);
+        }
       }
 
       const bookingsRepo = manager.getRepository(Bookings);

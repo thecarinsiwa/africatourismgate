@@ -85,6 +85,7 @@ import type {
   BookingCheckoutRequest,
   BookingCheckoutSessionResponse,
   BookingDetail,
+  BookingRequestResponse,
   BookingPaymentIntentResponse,
   BookingItemListItem,
   BookingItemsListQuery,
@@ -1503,6 +1504,13 @@ export class ApiClient {
 
   createBooking(body: BookingCheckoutRequest): Promise<BookingDetail> {
     return this.request<BookingDetail>('/bookings', { method: 'POST', body });
+  }
+
+  requestBooking(body: BookingCheckoutRequest): Promise<BookingRequestResponse> {
+    return this.request<BookingRequestResponse>('/bookings/request', {
+      method: 'POST',
+      body,
+    });
   }
 
   listBookings(query?: BookingsListQuery): Promise<PaginatedResponse<BookingListItem>> {

@@ -18,6 +18,7 @@ import { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
 import { BookingCheckoutDto } from './dto/booking-checkout.dto';
 import { BookingCheckoutPreviewResponseDto } from './dto/booking-checkout-preview-response.dto';
 import { BookingDetailDto } from './dto/booking-detail.dto';
+import { BookingRequestResponseDto } from './dto/booking-request-response.dto';
 import { PermissionsService } from '../../rbac/permissions.service';
 import { ReviewsService } from '../reviews/reviews.service';
 import { CreateBookingReviewDto } from '../reviews/dto/create-booking-review.dto';
@@ -57,6 +58,15 @@ export class BookingsService extends CrudService<Bookings> {
     await this.assertStaffOnlyCustomerUserId(dto, actorUserId);
     const ownerUserId = await this.resolveCheckoutOwnerUserId(dto, actorUserId);
     return this.bookingEngine.createBooking(dto, ownerUserId, actorUserId);
+  }
+
+  async requestFromCheckout(
+    dto: BookingCheckoutDto,
+    actorUserId: string,
+  ): Promise<BookingRequestResponseDto> {
+    await this.assertStaffOnlyCustomerUserId(dto, actorUserId);
+    const ownerUserId = await this.resolveCheckoutOwnerUserId(dto, actorUserId);
+    return this.bookingEngine.createBookingRequest(dto, ownerUserId, actorUserId);
   }
 
   private async isStaffUser(userId: string): Promise<boolean> {
