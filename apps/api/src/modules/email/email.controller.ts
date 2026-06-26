@@ -18,7 +18,14 @@ import {
   renderBookingConfirmationEmail,
   renderPasswordResetEmail,
   renderWelcomeEmail,
+  webBase,
 } from './email.templates';
+import {
+  renderBookingApprovedChatEmail,
+  renderBookingPaymentInviteEmail,
+  renderBookingRejectedEmail,
+  renderBookingRequestReceivedEmail,
+} from './assisted-booking.email.templates';
 
 const PREVIEW_BOOKING_ID = '00000000-0000-4000-8000-000000009999';
 
@@ -52,6 +59,17 @@ export class EmailController {
       dto.branding,
     );
 
+    const previewWebUrl = process.env.NEXT_PUBLIC_WEB_URL;
+    const assistedSample = {
+      to: 'marie@example.com',
+      firstName: 'Marie',
+      bookingId: PREVIEW_BOOKING_ID,
+      totalCents: 125_000,
+      currency: 'USD',
+      itemTitles: ['Safari 3 jours — Parc national', 'Transfert aéroport'],
+      webUrl: previewWebUrl,
+    };
+
     switch (dto.template) {
       case 'welcome':
         return renderWelcomeEmail(
@@ -68,7 +86,7 @@ export class EmailController {
             currency: 'USD',
             itemTitles: ['Safari 3 jours', 'Transfert aéroport'],
             confirmedAt: new Date().toISOString(),
-            webUrl: process.env.NEXT_PUBLIC_WEB_URL,
+            webUrl: previewWebUrl,
           },
           branding,
         );
@@ -78,6 +96,32 @@ export class EmailController {
             to: 'marie@example.com',
             firstName: 'Marie',
             resetUrl: 'https://app.example.com/reset?token=preview',
+          },
+          branding,
+        );
+      case 'booking_request_received':
+        return renderBookingRequestReceivedEmail(assistedSample, branding);
+      case 'booking_approved_chat':
+        return renderBookingApprovedChatEmail(
+          {
+            ...assistedSample,
+            chatUrl: `${webBase(previewWebUrl)}/account/reservations/${PREVIEW_BOOKING_ID}/chat`,
+          },
+          branding,
+        );
+      case 'booking_rejected':
+        return renderBookingRejectedEmail(
+          {
+            ...assistedSample,
+            reason: 'Dates indisponibles pour la période demandée.',
+          },
+          branding,
+        );
+      case 'booking_payment_invite':
+        return renderBookingPaymentInviteEmail(
+          {
+            ...assistedSample,
+            paymentUrl: 'https://checkout.stripe.com/c/pay/cs_test_preview',
           },
           branding,
         );

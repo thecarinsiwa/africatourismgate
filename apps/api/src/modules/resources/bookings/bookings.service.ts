@@ -10,6 +10,7 @@ import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import { Bookings, Organizations, Payments, Users } from '../../../entities/generated';
 import { CrudService } from '../../../common/crud/crud.service';
 import { BookingEngineService } from './booking-engine.service';
+import { BookingAssistedEmailService } from './booking-assisted-email.service';
 import { BookingStatusHistoryService } from './booking-status-history.service';
 import { BookingAdminDetailDto } from './dto/booking-admin-detail.dto';
 import { BookingListItemDto } from './dto/booking-list-item.dto';
@@ -39,6 +40,7 @@ export class BookingsService extends CrudService<Bookings> {
     private readonly statusHistory: BookingStatusHistoryService,
     private readonly permissionsService: PermissionsService,
     private readonly reviewsService: ReviewsService,
+    private readonly assistedEmail: BookingAssistedEmailService,
   ) {
     super(bookingsRepository);
   }
@@ -66,7 +68,9 @@ export class BookingsService extends CrudService<Bookings> {
   ): Promise<BookingRequestResponseDto> {
     await this.assertStaffOnlyCustomerUserId(dto, actorUserId);
     const ownerUserId = await this.resolveCheckoutOwnerUserId(dto, actorUserId);
-    return this.bookingEngine.createBookingRequest(dto, ownerUserId, actorUserId);
+    const result = await this.bookingEngine.createBookingRequest(dto, ownerUserId, actorUserId);
+    this.assistedEmail.notifyRequestReceived(result.bookingId);
+    return result;
   }
 
   private async isStaffUser(userId: string): Promise<boolean> {
