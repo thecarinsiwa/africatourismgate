@@ -235,6 +235,80 @@ export class BookingEngineService {
     };
   }
 
+  async approveAssistedBooking(
+    id: string,
+    actorUserId: string,
+    options?: { totalCents?: number; reason?: string },
+  ): Promise<BookingDetailDto> {
+    const booking = await this.findBookingOrThrow(id);
+    if (booking.status !== 'pending_approval') {
+      throw new BadRequestException(
+        `Approbation impossible : statut actuel « ${booking.status} » (attendu : pending_approval).`,
+      );
+    }
+
+    const fromStatus = booking.status;
+    const nextTotalCents =
+      options?.totalCents !== undefined
+        ? Math.max(0, Math.floor(options.totalCents))
+        : booking.totalCents;
+
+    if (nextTotalCents < 1) {
+      throw new BadRequestException('Montant de réservation invalide.');
+    }
+
+    await this.bookingsRepository.manager.transaction(async (manager) => {
+      const items = await manager.getRepository(BookingItems).find({
+        where: { bookingId: id },
+      });
+      const lines = await this.bookingItemsToResolvedLines(manager, items);
+      if (lines.length > 0) {
+        await this.allocateStock(manager, lines, 'decrement', actorUserId);
+      }
+
+      await this.checkoutPromo.recordRedemptionFromBooking(manager, booking);
+
+      const bookingsRepo = manager.getRepository(Bookings);
+      const row = await bookingsRepo.findOne({ where: { id } });
+      if (!row) {
+        throw new NotFoundException('Réservation introuvable.');
+      }
+      row.status = 'pending_payment';
+      row.totalCents = nextTotalCents;
+      row.updatedByUserId = actorUserId;
+      await bookingsRepo.save(row);
+    });
+
+    await this.statusHistory.record({
+      bookingId: id,
+      fromStatus,
+      toStatus: 'pending_payment',
+      reason: options?.reason?.trim() || 'Approbation — en attente de paiement',
+      changedByUserId: actorUserId,
+    });
+
+    return this.getBookingDetail(id);
+  }
+
+  async rejectAssistedBooking(
+    id: string,
+    actorUserId: string,
+    reason?: string,
+  ): Promise<BookingDetailDto> {
+    const booking = await this.findBookingOrThrow(id);
+    if (booking.status !== 'pending_approval') {
+      throw new BadRequestException(
+        `Refus impossible : statut actuel « ${booking.status} » (attendu : pending_approval).`,
+      );
+    }
+
+    const rejectReason = reason?.trim()
+      ? `Refus : ${reason.trim()}`
+      : 'Refus de la demande de réservation';
+
+    return this.cancelBooking(id, actorUserId, rejectReason);
+  }
+
   async confirmBooking(
     id: string,
     actorUserId?: string,

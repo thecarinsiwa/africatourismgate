@@ -292,6 +292,16 @@ Transitions validées ; refus si statut incompatible.
 À la fin : fichiers + matrice des transitions de statuts documentée.
 ```
 
+**Implémenté (CE-5)** — endpoints :
+
+| Endpoint | Transition | Effets |
+| -------- | ---------- | ------ |
+| `POST /bookings/:id/approve` | `pending_approval` → `pending_payment` | Décrément stock, enregistrement promo, `totalCents` optionnel, guides optionnels |
+| `POST /bookings/:id/reject` | `pending_approval` → `cancelled` | Pas de décrément stock ; motif optionnel |
+| `POST /bookings/:id/invite-payment` | (aucune) | Lien Stripe Checkout si `pending_payment` ; réutilise session ouverte |
+
+Permission : `bookings.approve` **ou** `bookings.write` + staff (`users.read`). RBAC : `bookings.approve` (001045).
+
 ### CE-6 — API — E-mails transactionnels assistés
 
 **Branche :** `feature/ce-assisted-booking-emails`
@@ -498,14 +508,31 @@ Téléchargement depuis compte client + pièce jointe e-mail confirmation.
 
 ## Matrice des statuts booking (cible)
 
-| Statut | Signification | Transitions possibles |
-| ------ | ------------- | --------------------- |
-| `draft` | Panier brouillon | → `pending_approval` ou `pending_payment` |
-| `pending_approval` | Demande soumise, attente admin | → `pending_payment`, `cancelled` |
-| `pending_payment` | Validée, attente paiement client | → `confirmed`, `cancelled` |
-| `confirmed` | Payée et confirmée | → `cancelled`, `refunded` |
-| `cancelled` | Annulée / refusée | — |
-| `refunded` | Remboursée | — |
+| Statut | Signification | Transitions possibles | API / déclencheur |
+| ------ | ------------- | --------------------- | ----------------- |
+| `draft` | Panier brouillon | → `pending_approval`, `pending_payment` | `POST /bookings/request`, `POST /bookings` |
+| `pending_approval` | Demande soumise, attente admin | → `pending_payment`, `cancelled` | `POST /bookings/:id/approve`, `POST /bookings/:id/reject` |
+| `pending_payment` | Validée, attente paiement client | → `confirmed`, `cancelled` | Stripe webhook / `POST /bookings/:id/confirm`, `POST /bookings/:id/cancel` |
+| `confirmed` | Payée et confirmée | → `cancelled`, `refunded` | Webhook remboursement, admin |
+| `cancelled` | Annulée / refusée | → `refunded` (optionnel) | `POST /bookings/:id/reject`, annulation |
+| `refunded` | Remboursée | — | Admin / Stripe |
+
+**Parcours assisté (résumé)**
+
+```
+POST /bookings/request     → pending_approval (pas de stock, pas de paiement)
+POST /bookings/:id/approve → pending_payment  (stock alloué, promo consommée)
+POST /bookings/:id/invite-payment → lien Checkout Stripe (statut inchangé)
+[paiement Stripe]          → confirmed
+POST /bookings/:id/reject  → cancelled        (depuis pending_approval uniquement)
+```
+
+**Règles de validation**
+
+- `approve` / `reject` : refus si statut ≠ `pending_approval`
+- `invite-payment` : refus si statut ≠ `pending_payment`
+- Annulation `pending_payment` / `confirmed` : restauration stock
+- Annulation `pending_approval` : pas de restauration stock (jamais alloué)
 
 ---
 

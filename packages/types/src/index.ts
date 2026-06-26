@@ -206,6 +206,8 @@ export type {
   BookingListItem,
   BookingPayment,
   BookingStatusHistoryEntry,
+  ApproveBookingRequest,
+  RejectBookingRequest,
   BookingCheckoutSessionResponse,
   BookingPaymentIntentResponse,
   RefundPaymentResponse,

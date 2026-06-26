@@ -32,6 +32,9 @@ import { BookingMessagesService } from './booking-messages.service';
 import { BookingMessageDto, BookingMessagesListDto } from './dto/booking-message.dto';
 import { BookingMessagesQueryDto } from './dto/booking-messages-query.dto';
 import { CreateBookingMessageDto } from './dto/create-booking-message.dto';
+import { ApproveBookingDto } from './dto/approve-booking.dto';
+import { RejectBookingDto } from './dto/reject-booking.dto';
+import { BookingApprovalService } from './booking-approval.service';
 
 @ApiTags('bookings')
 @ApiForbiddenResponse({ description: 'Missing permission' })
@@ -44,6 +47,7 @@ export class BookingsController {
     private readonly permissionsService: PermissionsService,
     private readonly bookingGuideAssignmentsService: BookingGuideAssignmentsService,
     private readonly bookingMessagesService: BookingMessagesService,
+    private readonly bookingApprovalService: BookingApprovalService,
   ) {}
 
   @Post('checkout-preview')
@@ -239,5 +243,38 @@ export class BookingsController {
     @CurrentUser() user: AuthUserDto,
   ) {
     return this.bookingsService.cancelWithReason(id, dto.reason, user.id);
+  }
+
+  @Post(':id/approve')
+  @RequirePermissions('bookings.approve', 'bookings.write')
+  @ApiOperation({
+    summary: 'Approve assisted booking (pending_approval → pending_payment)',
+  })
+  approve(
+    @Param('id') id: string,
+    @Body() dto: ApproveBookingDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.bookingApprovalService.approve(id, dto, user.id);
+  }
+
+  @Post(':id/reject')
+  @RequirePermissions('bookings.approve', 'bookings.write')
+  @ApiOperation({ summary: 'Reject assisted booking (pending_approval → cancelled)' })
+  reject(
+    @Param('id') id: string,
+    @Body() dto: RejectBookingDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.bookingApprovalService.reject(id, dto, user.id);
+  }
+
+  @Post(':id/invite-payment')
+  @RequirePermissions('bookings.approve', 'bookings.write')
+  @ApiOperation({
+    summary: 'Generate or return Stripe Checkout link for pending_payment booking',
+  })
+  invitePayment(@Param('id') id: string, @CurrentUser() user: AuthUserDto) {
+    return this.bookingApprovalService.invitePayment(id, user.id);
   }
 }

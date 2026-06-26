@@ -80,6 +80,8 @@ import type {
   UpdateActivityImageRequest,
   UpdateActivityRequest,
   UpdateActivityScheduleRequest,
+  ApproveBookingRequest,
+  RejectBookingRequest,
   BookingAdminDetail,
   BookingCheckoutPreview,
   BookingCheckoutRequest,
@@ -1676,6 +1678,26 @@ export class ApiClient {
     return this.request<BookingDetail>(`/bookings/${id}/cancel`, {
       method: 'POST',
       body: body ?? {},
+    });
+  }
+
+  approveBooking(id: string, body?: ApproveBookingRequest): Promise<BookingAdminDetail> {
+    return this.request<BookingAdminDetail>(`/bookings/${id}/approve`, {
+      method: 'POST',
+      body: body ?? {},
+    });
+  }
+
+  rejectBooking(id: string, body?: RejectBookingRequest): Promise<BookingAdminDetail> {
+    return this.request<BookingAdminDetail>(`/bookings/${id}/reject`, {
+      method: 'POST',
+      body: body ?? {},
+    });
+  }
+
+  inviteBookingPayment(id: string): Promise<BookingCheckoutSessionResponse> {
+    return this.request<BookingCheckoutSessionResponse>(`/bookings/${id}/invite-payment`, {
+      method: 'POST',
     });
   }
 

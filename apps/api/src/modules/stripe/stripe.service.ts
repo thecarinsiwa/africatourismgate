@@ -168,7 +168,30 @@ export class StripeService {
     bookingId: string,
     actorUserId?: string,
   ): Promise<BookingCheckoutSessionResult> {
+    return this.getOrCreateCheckoutSessionForBooking(bookingId, actorUserId);
+  }
+
+  async getOrCreateCheckoutSessionForBooking(
+    bookingId: string,
+    actorUserId?: string,
+  ): Promise<BookingCheckoutSessionResult> {
     const booking = await this.findPayableBooking(bookingId);
+
+    const pending = await this.findPendingStripePayment(bookingId);
+    if (pending?.externalId?.startsWith('cs_')) {
+      const stripe = this.getStripe();
+      const existing = await stripe.checkout.sessions.retrieve(pending.externalId);
+      if (existing.status === 'open' && existing.url) {
+        return {
+          paymentId: pending.id,
+          sessionId: existing.id,
+          url: existing.url,
+          amountCents: booking.totalCents,
+          currency: booking.currency,
+        };
+      }
+    }
+
     const paymentId = newId();
     const stripe = this.getStripe();
 

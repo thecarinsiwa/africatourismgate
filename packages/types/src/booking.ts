@@ -188,6 +188,16 @@ export interface RecordCashPaymentRequest {
   note?: string;
 }
 
+export interface RejectBookingRequest {
+  reason?: string;
+}
+
+export interface ApproveBookingRequest {
+  totalCents?: number;
+  reason?: string;
+  guides?: Array<{ guideId: string; role?: 'primary' | 'secondary' }>;
+}
+
 export interface BookingPaymentIntentResponse {
   paymentId: string;
   paymentIntentId: string;
