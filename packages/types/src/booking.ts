@@ -112,6 +112,23 @@ export interface BookingRequestResponse {
   currency: string;
 }
 
+export interface BookingMessage {
+  id: string;
+  bookingId: string;
+  userId: string | null;
+  body: string;
+  isStaff: boolean;
+  createdAt: string;
+}
+
+export interface BookingMessagesList {
+  messages: BookingMessage[];
+}
+
+export interface CreateBookingMessageRequest {
+  body: string;
+}
+
 export interface BookingDetail {
   booking: Booking;
   items: BookingItem[];
