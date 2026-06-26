@@ -1206,7 +1206,7 @@ CREATE TABLE `package_images` (
 CREATE TABLE `bookings` (
   `id` CHAR(36) NOT NULL,
   `user_id` CHAR(36) NOT NULL,
-  `status` ENUM('draft','pending_payment','confirmed','cancelled','refunded') NOT NULL DEFAULT 'draft',
+  `status` ENUM('draft','pending_approval','pending_payment','confirmed','cancelled','refunded') NOT NULL DEFAULT 'draft',
   `total_cents` INT UNSIGNED NOT NULL DEFAULT 0,
   `currency` CHAR(3) NOT NULL DEFAULT 'USD',
   `promo_code_id` CHAR(36) DEFAULT NULL,
@@ -1254,8 +1254,8 @@ CREATE TABLE `booking_items` (
 CREATE TABLE `booking_status_history` (
   `id` CHAR(36) NOT NULL,
   `booking_id` CHAR(36) NOT NULL,
-  `from_status` ENUM('draft','pending_payment','confirmed','cancelled','refunded') DEFAULT NULL,
-  `to_status` ENUM('draft','pending_payment','confirmed','cancelled','refunded') NOT NULL,
+  `from_status` ENUM('draft','pending_approval','pending_payment','confirmed','cancelled','refunded') DEFAULT NULL,
+  `to_status` ENUM('draft','pending_approval','pending_payment','confirmed','cancelled','refunded') NOT NULL,
   `reason` TEXT DEFAULT NULL,
   `changed_by_user_id` CHAR(36) DEFAULT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -1264,6 +1264,73 @@ CREATE TABLE `booking_status_history` (
   KEY `idx_booking_status_history_created` (`created_at`),
   CONSTRAINT `fk_booking_status_history_booking` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_booking_status_history_user` FOREIGN KEY (`changed_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `tour_guides` (
+  `id` CHAR(36) NOT NULL,
+  `type` ENUM('internal','external') NOT NULL,
+  `user_id` CHAR(36) DEFAULT NULL,
+  `organization_id` CHAR(36) DEFAULT NULL,
+  `display_name` VARCHAR(180) NOT NULL,
+  `bio` TEXT DEFAULT NULL,
+  `photo_url` VARCHAR(512) DEFAULT NULL,
+  `languages` JSON NOT NULL,
+  `destinations` JSON NOT NULL,
+  `status` ENUM('active','inactive') NOT NULL DEFAULT 'active',
+  `created_by_user_id` CHAR(36) DEFAULT NULL,
+  `updated_by_user_id` CHAR(36) DEFAULT NULL,
+  `deleted_by_user_id` CHAR(36) DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` DATETIME DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_tour_guides_org` (`organization_id`),
+  KEY `idx_tour_guides_user` (`user_id`),
+  KEY `idx_tour_guides_type_status` (`type`, `status`),
+  KEY `idx_tour_guides_deleted_at` (`deleted_at`),
+  CONSTRAINT `fk_tour_guides_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_tour_guides_org` FOREIGN KEY (`organization_id`) REFERENCES `organizations` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_tour_guides_created_by` FOREIGN KEY (`created_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_tour_guides_updated_by` FOREIGN KEY (`updated_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_tour_guides_deleted_by` FOREIGN KEY (`deleted_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `booking_guide_assignments` (
+  `id` CHAR(36) NOT NULL,
+  `booking_id` CHAR(36) NOT NULL,
+  `guide_id` CHAR(36) NOT NULL,
+  `role` ENUM('primary','secondary') NOT NULL DEFAULT 'primary',
+  `assigned_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `assigned_by_user_id` CHAR(36) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_booking_guide` (`booking_id`, `guide_id`),
+  KEY `idx_booking_guide_assignments_booking` (`booking_id`),
+  KEY `idx_booking_guide_assignments_guide` (`guide_id`),
+  CONSTRAINT `fk_booking_guide_assignments_booking` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_booking_guide_assignments_guide` FOREIGN KEY (`guide_id`) REFERENCES `tour_guides` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_booking_guide_assignments_user` FOREIGN KEY (`assigned_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `booking_messages` (
+  `id` CHAR(36) NOT NULL,
+  `booking_id` CHAR(36) NOT NULL,
+  `user_id` CHAR(36) DEFAULT NULL,
+  `body` TEXT NOT NULL,
+  `is_staff` TINYINT(1) NOT NULL DEFAULT 0,
+  `created_by_user_id` CHAR(36) DEFAULT NULL,
+  `updated_by_user_id` CHAR(36) DEFAULT NULL,
+  `deleted_by_user_id` CHAR(36) DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` DATETIME DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_booking_messages_booking` (`booking_id`),
+  KEY `idx_booking_messages_deleted_at` (`deleted_at`),
+  CONSTRAINT `fk_booking_messages_booking` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_booking_messages_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_booking_messages_created_by` FOREIGN KEY (`created_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_booking_messages_updated_by` FOREIGN KEY (`updated_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_booking_messages_deleted_by` FOREIGN KEY (`deleted_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `payments` (

@@ -15,7 +15,7 @@ import { BookingStatusBadge } from './booking-status-badge';
 
 type StatusFilter = 'all' | 'confirmed' | 'pending' | 'cancelled';
 
-const PENDING_STATUSES = new Set<BookingStatus>(['draft', 'pending_payment']);
+const PENDING_STATUSES = new Set<BookingStatus>(['draft', 'pending_approval', 'pending_payment']);
 const CANCELLED_STATUSES = new Set<BookingStatus>(['cancelled', 'refunded']);
 
 function matchesFilter(status: BookingStatus, filter: StatusFilter): boolean {

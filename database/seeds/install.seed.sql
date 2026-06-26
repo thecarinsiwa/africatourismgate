@@ -227,6 +227,14 @@ INSERT INTO `organization_settings` (
   'web',
   '{"location":"Kinshasa, RD Congo","facebookUrl":"https://www.facebook.com/africatourismgate/","twitterUrl":"https://x.com/Congotourismga1","instagramUrl":"https://www.instagram.com/africatourismgate/"}',
   '00000000-0000-4000-8000-000000000010'
+),
+(
+  '00000000-0000-4000-8000-000000000018',
+  '00000000-0000-4000-8000-000000000001',
+  'booking',
+  'item_type_modes',
+  '{"room":"immediate","flight_class":"immediate","vehicle":"immediate","cabin":"immediate","activity_schedule":"assisted","package":"assisted"}',
+  '00000000-0000-4000-8000-000000000010'
 );
 
 -- -----------------------------------------------------------------------------
@@ -846,6 +854,40 @@ INSERT INTO `package_images` (
   'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Congo_River_near_Kisangani.jpg/1280px-Congo_River_near_Kisangani.jpg',
   'Au bord du fleuve Congo',
   2,
+  '00000000-0000-4000-8000-000000000010'
+);
+
+-- -----------------------------------------------------------------------------
+-- CE-1: tour_guides (demo — 1 internal, 1 external)
+-- -----------------------------------------------------------------------------
+INSERT INTO `tour_guides` (
+  `id`, `type`, `user_id`, `organization_id`, `display_name`, `bio`, `photo_url`,
+  `languages`, `destinations`, `status`, `created_by_user_id`
+) VALUES
+(
+  '00000000-0000-4000-8000-000000000701',
+  'internal',
+  '00000000-0000-4000-8000-000000000010',
+  '00000000-0000-4000-8000-000000000001',
+  'Marie Kabila',
+  'Guide senior spécialisée Kinshasa et région du Kongo Central. 8 ans d''expérience.',
+  NULL,
+  '["fr","en","ln"]',
+  '["00000000-0000-4000-8000-000000002001"]',
+  'active',
+  '00000000-0000-4000-8000-000000000010'
+),
+(
+  '00000000-0000-4000-8000-000000000702',
+  'external',
+  NULL,
+  '00000000-0000-4000-8000-000000000001',
+  'Jean-Pierre Mwamba',
+  'Guide indépendant, circuits culturels et nature en RDC.',
+  NULL,
+  '["fr","sw"]',
+  '["00000000-0000-4000-8000-000000002001"]',
+  'active',
   '00000000-0000-4000-8000-000000000010'
 );
 

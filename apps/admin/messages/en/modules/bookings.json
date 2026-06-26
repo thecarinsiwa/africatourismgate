@@ -1,6 +1,7 @@
 {
   "status": {
     "draft": "Draft",
+    "pending_approval": "Pending approval",
     "pending_payment": "Pending de paiement",
     "confirmed": "Confirmed",
     "cancelled": "Cancelled",

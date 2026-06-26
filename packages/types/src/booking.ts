@@ -2,6 +2,7 @@ import type { Review } from './review.js';
 
 export type BookingStatus =
   | 'draft'
+  | 'pending_approval'
   | 'pending_payment'
   | 'confirmed'
   | 'cancelled'

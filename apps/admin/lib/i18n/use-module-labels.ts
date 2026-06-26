@@ -50,6 +50,7 @@ export function useBookingStatusLabels() {
   return useMemo(
     (): Record<BookingStatus, string> => ({
       draft: t('draft'),
+      pending_approval: t('pending_approval'),
       pending_payment: t('pending_payment'),
       confirmed: t('confirmed'),
       cancelled: t('cancelled'),

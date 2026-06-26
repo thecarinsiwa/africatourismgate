@@ -2,6 +2,7 @@ import type { BookingStatus } from '@africatourismgate/types';
 
 export const bookingStatusLabels: Record<BookingStatus, string> = {
   draft: 'Brouillon',
+  pending_approval: 'En attente de validation',
   pending_payment: 'En attente de paiement',
   confirmed: 'Confirmée',
   cancelled: 'Annulée',
@@ -15,6 +16,10 @@ export const bookingStatusStyles: Record<
   draft: {
     badge: 'bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-white/70',
     dot: 'bg-gray-400',
+  },
+  pending_approval: {
+    badge: 'bg-violet-100 text-violet-800 dark:bg-violet-950/50 dark:text-violet-300',
+    dot: 'bg-violet-500',
   },
   pending_payment: {
     badge: 'bg-amber-100 text-amber-800 dark:bg-amber-950/50 dark:text-amber-300',
