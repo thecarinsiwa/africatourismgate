@@ -73,6 +73,7 @@ export {
   BookingSidebarDesktop,
   BookingSidebarBody,
   BookingSidebarField,
+  BookingGuestStepper,
   BookingSidebarDateCard,
   BookingSidebarPriceBlock,
   BookingSidebarHint,

@@ -879,6 +879,7 @@ Critères : tests automatisés (#75) couvrent 2 orgs seed ; doc comportement mul
 | Fichier | Description |
 |---------|-------------|
 | [roadmap-prompts.md](./roadmap-prompts.md) | Roadmap v1 (historique, livrables 1–52) |
+| [roadmap-development-client-enhance.md](./roadmap-development-client-enhance.md) | Guides touristiques, réservation assistée (livrables CE-1 à CE-14) |
 | [roadmap-prompts.csv](./roadmap-prompts.csv) | Export CSV v1 |
 | [production-domains.md](./production-domains.md) | URLs prod, nginx, dépannage VPS |
 | [../README.md](../README.md) | Quick start monorepo |

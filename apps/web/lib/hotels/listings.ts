@@ -19,9 +19,11 @@ export function formatHotelPrice(cents: number, currency: string): string {
   }
 }
 
+export const HOTEL_MAX_GUESTS = 20;
+
 export function parseGuestsParam(guests?: string): number {
   const n = Number.parseInt(guests ?? '1', 10);
-  return Number.isFinite(n) && n >= 1 ? n : 1;
+  return Number.isFinite(n) && n >= 1 ? Math.min(n, HOTEL_MAX_GUESTS) : 1;
 }
 
 export type HotelsSearchParams = {

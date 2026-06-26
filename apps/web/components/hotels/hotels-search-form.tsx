@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { listPublicDestinations } from '../../lib/api/public';
-import { addDays, todayISODate } from '../../lib/hotels/dates';
+import { addDays, countStayNights, todayISODate } from '../../lib/hotels/dates';
 import type { HotelsSearchParams } from '../../lib/hotels/listings';
 import { useTranslations } from '../../lib/i18n/locale-provider';
 import { buildSearchRoute } from '../../lib/search/route';
@@ -75,9 +75,7 @@ export function HotelsSearchForm({ initialValues }: HotelsSearchFormProps) {
 
   const nightsLabel = useMemo(() => {
     if (!checkIn || !checkOut || checkOut <= checkIn) return null;
-    const start = new Date(`${checkIn}T00:00:00`);
-    const end = new Date(`${checkOut}T00:00:00`);
-    const nights = Math.round((end.getTime() - start.getTime()) / 86_400_000);
+    const nights = countStayNights(checkIn, checkOut);
     if (nights <= 0) return null;
     return nights === 1 ? `1 ${h.nightSingular}` : `${nights} ${h.nightPlural}`;
   }, [checkIn, checkOut, h.nightSingular, h.nightPlural]);

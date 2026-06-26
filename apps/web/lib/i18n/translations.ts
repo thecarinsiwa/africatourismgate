@@ -116,6 +116,8 @@ export type Translations = {
     trustSupport: string;
     mobileConfigure: string;
     closeDrawer: string;
+    decreaseGuests: string;
+    increaseGuests: string;
   };
   checkout: {
     stepperAriaLabel: string;
@@ -326,6 +328,10 @@ export type Translations = {
     nextMonth: string;
     fromPrice: string;
     selectDatesHint: string;
+    guestSingular: string;
+    guestPlural: string;
+    perRoomPriceNote: string;
+    noRoomsForGuests: string;
     maxGuests: string;
     bedConfig: string;
     reserveSection: string;
@@ -1124,6 +1130,8 @@ const fr: Translations = {
     trustSupport: 'Une question ? Notre équipe vous accompagne.',
     mobileConfigure: 'Options',
     closeDrawer: 'Fermer',
+    decreaseGuests: 'Diminuer le nombre de voyageurs',
+    increaseGuests: 'Augmenter le nombre de voyageurs',
   },
   checkout: {
     stepperAriaLabel: 'Étapes de réservation',
@@ -1392,6 +1400,10 @@ const fr: Translations = {
     nextMonth: 'Mois suivant',
     fromPrice: 'À partir de',
     selectDatesHint: "Choisissez vos dates d'arrivée et de départ.",
+    guestSingular: '1 voyageur',
+    guestPlural: '{n} voyageurs',
+    perRoomPriceNote: 'Tarif par chambre (non multiplié par personne)',
+    noRoomsForGuests: 'Aucune chambre disponible pour {n} voyageurs.',
     maxGuests: "jusqu'à {n} voyageurs",
     bedConfig: 'Literie',
     reserveSection: 'Réserver',
@@ -2240,6 +2252,8 @@ const en: Translations = {
     trustSupport: 'Questions? Our team is here to help.',
     mobileConfigure: 'Options',
     closeDrawer: 'Close',
+    decreaseGuests: 'Decrease number of guests',
+    increaseGuests: 'Increase number of guests',
   },
   checkout: {
     stepperAriaLabel: 'Booking steps',
@@ -2505,6 +2519,10 @@ const en: Translations = {
     nextMonth: 'Next month',
     fromPrice: 'From',
     selectDatesHint: 'Choose your check-in and check-out dates.',
+    guestSingular: '1 guest',
+    guestPlural: '{n} guests',
+    perRoomPriceNote: 'Price per room (not multiplied by guests)',
+    noRoomsForGuests: 'No rooms available for {n} guests.',
     maxGuests: 'up to {n} guests',
     bedConfig: 'Bedding',
     reserveSection: 'Book',

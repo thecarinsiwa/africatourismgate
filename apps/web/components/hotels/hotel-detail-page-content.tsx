@@ -8,6 +8,7 @@ import { getAccommodationDetail } from '../../lib/api/public';
 import { currentYearMonth } from '../../lib/hotels/dates';
 import {
   buildHotelDetailHref,
+  HOTEL_MAX_GUESTS,
   parseGuestsParam,
   type HotelDetailSearchParams,
 } from '../../lib/hotels/listings';
@@ -104,6 +105,14 @@ export function HotelDetailPageContent({
     };
   }, [propertyId, checkIn, checkOut, guests, calendarMonth, fetchId]);
 
+  useEffect(() => {
+    if (!detail || !selectedRoomId) return;
+    if (!detail.rooms.some((room) => room.id === selectedRoomId)) {
+      setSelectedRoomId(null);
+      syncUrl({ roomId: undefined });
+    }
+  }, [detail, selectedRoomId, syncUrl]);
+
   const selectedRoom = useMemo(
     () => detail?.rooms.find((r) => r.id === selectedRoomId) ?? null,
     [detail, selectedRoomId],
@@ -131,8 +140,9 @@ export function HotelDetailPageContent({
   }
 
   function handleGuestsChange(value: number) {
-    setGuests(value);
-    syncUrl({ guests: String(value) });
+    const next = Math.max(1, Math.min(HOTEL_MAX_GUESTS, value));
+    setGuests(next);
+    syncUrl({ guests: String(next) });
   }
 
   function handleSelectRoom(roomId: string) {

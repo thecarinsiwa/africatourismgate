@@ -3,7 +3,12 @@
 import type { PropertyCalendarDay } from '@africatourismgate/types';
 import type { Locale } from '../../lib/i18n/types';
 import { formatHotelPrice } from '../../lib/hotels/listings';
-import { enumerateMonthDays, formatMonthLabel, shiftYearMonth } from '../../lib/hotels/dates';
+import {
+  enumerateMonthDays,
+  formatMonthLabel,
+  isStayNight,
+  shiftYearMonth,
+} from '../../lib/hotels/dates';
 
 export type HotelCalendarLegendLabels = {
   title: string;
@@ -39,12 +44,6 @@ function weekdayHeaders(locale: Locale): readonly string[] {
 
 function dayByDate(days: PropertyCalendarDay[]): Map<string, PropertyCalendarDay> {
   return new Map(days.map((d) => [d.date, d]));
-}
-
-function isInRange(date: string, start: string | null, end: string | null): boolean {
-  if (!start) return false;
-  if (!end) return date === start;
-  return date >= start && date <= end;
 }
 
 function CalendarLegend({ labels }: { labels: HotelCalendarLegendLabels }) {
@@ -152,8 +151,12 @@ export function HotelStayCalendar({
           ))}
           {monthDays.map((date) => {
             const day = dayMap.get(date);
-            const selected =
-              date === checkIn || date === checkOut || isInRange(date, checkIn, checkOut);
+            const selected = isStayNight(date, checkIn, checkOut);
+            const isCheckOut =
+              checkOut !== null &&
+              date === checkOut &&
+              checkIn !== null &&
+              checkOut > checkIn;
             const disabled = day ? !day.available : false;
             const dayNumber = Number(date.slice(8, 10));
 
@@ -169,13 +172,17 @@ export function HotelStayCalendar({
                     ? `${dayNumber} — ${unavailableLabel}`
                     : selected
                       ? `${dayNumber} — ${legendLabels.selected}`
-                      : `${dayNumber} — ${legendLabels.available}`
+                      : isCheckOut
+                        ? `${dayNumber} — ${legendLabels.available}`
+                        : `${dayNumber} — ${legendLabels.available}`
                 }
                 aria-selected={selected}
                 className={`flex min-h-[3rem] min-w-0 flex-col items-center justify-center rounded-lg px-0.5 py-1 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 sm:min-h-[3.5rem] sm:text-sm ${
                   selected
                     ? 'bg-primary text-white shadow-sm'
-                    : disabled
+                    : isCheckOut
+                      ? 'border-2 border-primary bg-atg-elevated text-atg-fg dark:bg-atg-elevated'
+                      : disabled
                       ? 'cursor-not-allowed bg-atg-surface text-atg-muted/40 line-through dark:bg-atg-surface'
                       : 'border border-transparent bg-atg-surface/60 text-atg-fg hover:border-primary/30 hover:bg-atg-surface dark:bg-white/5 dark:hover:bg-white/10'
                 }`}
