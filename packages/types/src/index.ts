@@ -236,6 +236,12 @@ export type {
   TourGuide,
   TourGuideStatus,
   TourGuideType,
+  TourGuideUserSummary,
+  TourGuidesListQuery,
+  CreateTourGuideRequest,
+  UpdateTourGuideRequest,
+  AssignBookingGuideItem,
+  AssignBookingGuidesRequest,
 } from './tour-guide.js';
 
 export type {

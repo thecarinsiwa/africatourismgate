@@ -68,6 +68,20 @@ const PERMISSION_UPSERTS: Array<{
     action: 'write',
     description: 'Manage organization bank accounts',
   },
+  {
+    id: '00000000-0000-4000-8000-000000001043',
+    code: 'guides.read',
+    resource: 'guides',
+    action: 'read',
+    description: 'View tour guides',
+  },
+  {
+    id: '00000000-0000-4000-8000-000000001044',
+    code: 'guides.write',
+    resource: 'guides',
+    action: 'write',
+    description: 'Manage tour guides',
+  },
 ];
 
 /** Full org_admin set (install.seed.sql) — repairs partial or missing grants. */
@@ -94,6 +108,8 @@ const ORG_ADMIN_PERMISSION_IDS = [
   '00000000-0000-4000-8000-000000001028',
   '00000000-0000-4000-8000-000000001029',
   '00000000-0000-4000-8000-000000001030',
+  '00000000-0000-4000-8000-000000001043',
+  '00000000-0000-4000-8000-000000001044',
 ];
 
 async function platformOrgExists(config: ConfigService): Promise<boolean> {

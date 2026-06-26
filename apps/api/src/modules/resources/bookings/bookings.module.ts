@@ -27,12 +27,14 @@ import { BookingEngineService } from './booking-engine.service';
 import { BookingPackageCheckoutService } from './booking-package-checkout.service';
 import { BookingStatusHistoryService } from './booking-status-history.service';
 import { StripeModule } from '../../stripe/stripe.module';
+import { TourGuidesModule } from '../tour-guides/tour-guides.module';
 import { BookingsController } from './bookings.controller';
 import { BookingsService } from './bookings.service';
 
 @Module({
   imports: [
     forwardRef(() => StripeModule),
+    TourGuidesModule,
     ReviewsModule,
     PackagesModule,
     TypeOrmModule.forFeature([
