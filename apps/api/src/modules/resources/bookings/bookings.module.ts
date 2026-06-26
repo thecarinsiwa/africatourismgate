@@ -29,6 +29,7 @@ import { BookingPackageCheckoutService } from './booking-package-checkout.servic
 import { BookingStatusHistoryService } from './booking-status-history.service';
 import { StripeModule } from '../../stripe/stripe.module';
 import { TourGuidesModule } from '../tour-guides/tour-guides.module';
+import { BookingApprovalService } from './booking-approval.service';
 import { BookingMessagesService } from './booking-messages.service';
 import { BookingsController } from './bookings.controller';
 import { BookingsService } from './bookings.service';
@@ -69,6 +70,7 @@ import { BookingsService } from './bookings.service';
     BookingCheckoutPromoService,
     BookingPackageCheckoutService,
     BookingMessagesService,
+    BookingApprovalService,
   ],
   exports: [BookingEngineService, BookingStatusHistoryService],
 })
