@@ -237,7 +237,6 @@ export type {
   BookingGuideAssignment,
   BookingGuideRole,
   BookingItemTypeModes,
-  BookingMessage,
   BookingMode,
   TourGuide,
   TourGuideStatus,

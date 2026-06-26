@@ -93,13 +93,3 @@ export interface BookingGuideAssignment {
   assignedAt: string;
   assignedByUserId: string | null;
 }
-
-export interface BookingMessage {
-  id: string;
-  bookingId: string;
-  userId: string | null;
-  body: string;
-  isStaff: boolean;
-  createdAt: string;
-  updatedAt: string | null;
-}
