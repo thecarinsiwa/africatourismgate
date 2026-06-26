@@ -86,6 +86,9 @@ import type {
   BookingCheckoutSessionResponse,
   BookingDetail,
   BookingRequestResponse,
+  BookingMessage,
+  BookingMessagesList,
+  CreateBookingMessageRequest,
   BookingPaymentIntentResponse,
   BookingItemListItem,
   BookingItemsListQuery,
@@ -1511,6 +1514,36 @@ export class ApiClient {
       method: 'POST',
       body,
     });
+  }
+
+  listBookingMessages(
+    bookingId: string,
+    query?: { chatToken?: string },
+  ): Promise<BookingMessagesList> {
+    const params = new URLSearchParams();
+    if (query?.chatToken) {
+      params.set('chatToken', query.chatToken);
+    }
+    const qs = params.toString();
+    return this.request<BookingMessagesList>(
+      `/bookings/${bookingId}/messages${qs ? `?${qs}` : ''}`,
+    );
+  }
+
+  createBookingMessage(
+    bookingId: string,
+    body: CreateBookingMessageRequest,
+    query?: { chatToken?: string },
+  ): Promise<BookingMessage> {
+    const params = new URLSearchParams();
+    if (query?.chatToken) {
+      params.set('chatToken', query.chatToken);
+    }
+    const qs = params.toString();
+    return this.request<BookingMessage>(
+      `/bookings/${bookingId}/messages${qs ? `?${qs}` : ''}`,
+      { method: 'POST', body },
+    );
   }
 
   listBookings(query?: BookingsListQuery): Promise<PaginatedResponse<BookingListItem>> {

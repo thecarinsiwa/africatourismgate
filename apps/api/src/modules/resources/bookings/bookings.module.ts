@@ -4,6 +4,7 @@ import {
   Activities,
   ActivitySchedules,
   BookingItems,
+  BookingMessages,
   Bookings,
   BookingStatusHistory,
   CabinAvailability,
@@ -28,6 +29,7 @@ import { BookingPackageCheckoutService } from './booking-package-checkout.servic
 import { BookingStatusHistoryService } from './booking-status-history.service';
 import { StripeModule } from '../../stripe/stripe.module';
 import { TourGuidesModule } from '../tour-guides/tour-guides.module';
+import { BookingMessagesService } from './booking-messages.service';
 import { BookingsController } from './bookings.controller';
 import { BookingsService } from './bookings.service';
 
@@ -40,6 +42,7 @@ import { BookingsService } from './bookings.service';
     TypeOrmModule.forFeature([
       Bookings,
       BookingItems,
+      BookingMessages,
       BookingStatusHistory,
       Users,
       Organizations,
@@ -65,6 +68,7 @@ import { BookingsService } from './bookings.service';
     BookingStatusHistoryService,
     BookingCheckoutPromoService,
     BookingPackageCheckoutService,
+    BookingMessagesService,
   ],
   exports: [BookingEngineService, BookingStatusHistoryService],
 })

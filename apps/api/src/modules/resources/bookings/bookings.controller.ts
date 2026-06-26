@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Patch,
   Post,
@@ -26,6 +28,10 @@ import { CreateBookingReviewDto } from '../reviews/dto/create-booking-review.dto
 import { TourGuidesModule } from '../tour-guides/tour-guides.module';
 import { BookingGuideAssignmentsService } from '../tour-guides/booking-guide-assignments.service';
 import { AssignBookingGuidesDto } from '../tour-guides/dto/booking-guide-assignment.dto';
+import { BookingMessagesService } from './booking-messages.service';
+import { BookingMessageDto, BookingMessagesListDto } from './dto/booking-message.dto';
+import { BookingMessagesQueryDto } from './dto/booking-messages-query.dto';
+import { CreateBookingMessageDto } from './dto/create-booking-message.dto';
 
 @ApiTags('bookings')
 @ApiForbiddenResponse({ description: 'Missing permission' })
@@ -37,6 +43,7 @@ export class BookingsController {
     private readonly stripeService: StripeService,
     private readonly permissionsService: PermissionsService,
     private readonly bookingGuideAssignmentsService: BookingGuideAssignmentsService,
+    private readonly bookingMessagesService: BookingMessagesService,
   ) {}
 
   @Post('checkout-preview')
@@ -114,6 +121,30 @@ export class BookingsController {
     @Param('guideId') guideId: string,
   ) {
     await this.bookingGuideAssignmentsService.removeGuide(id, guideId);
+  }
+
+  @Get(':id/messages')
+  @RequirePermissions('bookings.read')
+  @ApiOperation({ summary: 'List messages on a booking thread' })
+  listMessages(
+    @Param('id') id: string,
+    @Query() query: BookingMessagesQueryDto,
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<BookingMessagesListDto> {
+    return this.bookingMessagesService.listByBookingId(id, user.id, query.chatToken);
+  }
+
+  @Post(':id/messages')
+  @HttpCode(HttpStatus.CREATED)
+  @RequirePermissions('bookings.write')
+  @ApiOperation({ summary: 'Post a message on a booking thread' })
+  createMessage(
+    @Param('id') id: string,
+    @Body() dto: CreateBookingMessageDto,
+    @Query() query: BookingMessagesQueryDto,
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<BookingMessageDto> {
+    return this.bookingMessagesService.createMessage(id, dto, user.id, query.chatToken);
   }
 
   @Post(':id/reviews')
