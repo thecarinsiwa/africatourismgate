@@ -17,6 +17,7 @@ import { StripeService } from '../../stripe/stripe.service';
 import { BookingEngineService } from './booking-engine.service';
 import { BookingsService } from './bookings.service';
 import { BookingCheckoutDto } from './dto/booking-checkout.dto';
+import { BookingRequestResponseDto } from './dto/booking-request-response.dto';
 import { BookingsListQueryDto } from './dto/bookings-list-query.dto';
 import { CancelBookingDto } from './dto/cancel-booking.dto';
 import { RecordCashPaymentDto } from './dto/record-cash-payment.dto';
@@ -46,6 +47,18 @@ export class BookingsController {
     @CurrentUser() user: AuthUserDto,
   ) {
     return this.bookingsService.previewCheckout(dto, user.id);
+  }
+
+  @Post('request')
+  @RequirePermissions('bookings.write')
+  @ApiOperation({
+    summary: 'Submit assisted booking request (pending approval, no payment)',
+  })
+  requestBooking(
+    @Body() dto: BookingCheckoutDto,
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<BookingRequestResponseDto> {
+    return this.bookingsService.requestFromCheckout(dto, user.id);
   }
 
   @Post()

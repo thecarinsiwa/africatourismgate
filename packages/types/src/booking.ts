@@ -104,6 +104,14 @@ export interface BookingItem {
   updatedAt: string | null;
 }
 
+export interface BookingRequestResponse {
+  bookingId: string;
+  status: 'pending_approval';
+  message: string;
+  totalCents: number;
+  currency: string;
+}
+
 export interface BookingDetail {
   booking: Booking;
   items: BookingItem[];
