@@ -11,6 +11,7 @@ import {
   BookingSidebarCta,
   BookingSidebarDesktop,
   BookingSidebarField,
+  BookingGuestStepper,
   BookingSidebarHint,
   BookingSidebarMobileBar,
   BookingSidebarMobileDrawer,
@@ -22,6 +23,8 @@ import {
   useBookingDrawerOpenListener,
   useBookingSidebarTrustHints,
 } from '../shared/booking-sidebar-shell';
+import { HOTEL_MAX_GUESTS } from '../../lib/hotels/listings';
+import { useTranslations as useAppTranslations } from '../../lib/i18n/locale-provider';
 
 type HotelBookingSidebarProps = {
   detail: PropertyDetail;
@@ -72,13 +75,17 @@ function HotelBookingContent({
   t,
   locale,
 }: HotelBookingSidebarProps) {
+  const { bookingSidebar } = useAppTranslations();
   const trustHints = useBookingSidebarTrustHints();
   const hasDates = Boolean(checkIn && checkOut && checkOut > checkIn);
   const total = computeTotal(detail, selectedRoom);
   const canReserve = hasDates && selectedRoom != null && selectedRoom.available;
+  const noRoomsForGuests = detail.rooms.length === 0;
 
   const nightsLabel =
     detail.stay.nights === 1 ? t.nightSingular : `${detail.stay.nights} ${t.nightPlural}`;
+  const guestsLabel =
+    guests === 1 ? t.guestSingular : t.guestPlural.replace('{n}', String(guests));
 
   return (
     <BookingSidebarBody title={t.reserveSection}>
@@ -103,19 +110,25 @@ function HotelBookingContent({
       </div>
 
       <BookingSidebarField label={t.guests}>
-        <input
-          type="number"
-          min={1}
-          max={20}
+        <BookingGuestStepper
           value={guests}
-          onChange={(e) => onGuestsChange(Math.max(1, Number.parseInt(e.target.value, 10) || 1))}
-          className={bookingSidebarInputClass}
+          min={1}
+          max={HOTEL_MAX_GUESTS}
+          onChange={onGuestsChange}
+          decreaseLabel={bookingSidebar.decreaseGuests}
+          increaseLabel={bookingSidebar.increaseGuests}
         />
       </BookingSidebarField>
 
       {!hasDates && <BookingSidebarHint>{t.selectDatesHint}</BookingSidebarHint>}
 
-      {!selectedRoom && hasDates && (
+      {noRoomsForGuests && (
+        <BookingSidebarHint tone="warning">
+          {t.noRoomsForGuests.replace('{n}', String(guests))}
+        </BookingSidebarHint>
+      )}
+
+      {!selectedRoom && hasDates && !noRoomsForGuests && (
         <BookingSidebarHint tone="warning">{t.selectRoomHint}</BookingSidebarHint>
       )}
 
@@ -123,6 +136,7 @@ function HotelBookingContent({
         <BookingSidebarSummary>
           {formatDisplayDate(checkIn, locale)} → {formatDisplayDate(checkOut, locale)}
           {detail.stay.nights > 0 && ` · ${nightsLabel}`}
+          {` · ${guestsLabel}`}
         </BookingSidebarSummary>
       )}
 
@@ -130,6 +144,7 @@ function HotelBookingContent({
         <BookingSidebarPriceBlock
           label={t.totalStay}
           amount={formatHotelPrice(total.cents, total.currency)}
+          detail={t.perRoomPriceNote}
         />
       ) : null}
 

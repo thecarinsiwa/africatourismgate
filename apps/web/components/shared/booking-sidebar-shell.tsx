@@ -168,6 +168,61 @@ export function BookingSidebarField({ label, children, className = '' }: Booking
   );
 }
 
+const guestStepperButtonClass =
+  'inline-flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-lg border border-atg-border bg-atg-elevated text-lg font-semibold text-atg-fg transition-colors hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-40 dark:border-atg-border dark:bg-atg-surface';
+
+type BookingGuestStepperProps = {
+  value: number;
+  min?: number;
+  max?: number;
+  onChange: (value: number) => void;
+  decreaseLabel: string;
+  increaseLabel: string;
+};
+
+/** Compteur voyageurs +/- (sans spinner natif type=number). */
+export function BookingGuestStepper({
+  value,
+  min = 1,
+  max = 20,
+  onChange,
+  decreaseLabel,
+  increaseLabel,
+}: BookingGuestStepperProps) {
+  return (
+    <div
+      className="flex items-center gap-2 rounded-lg border border-atg-border bg-atg-elevated px-2 dark:border-atg-border dark:bg-atg-surface"
+      role="group"
+    >
+      <button
+        type="button"
+        aria-label={decreaseLabel}
+        disabled={value <= min}
+        onClick={() => onChange(Math.max(min, value - 1))}
+        className={guestStepperButtonClass}
+      >
+        −
+      </button>
+      <span
+        className="min-w-[2ch] flex-1 text-center text-base font-semibold tabular-nums text-atg-fg"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        {value}
+      </span>
+      <button
+        type="button"
+        aria-label={increaseLabel}
+        disabled={value >= max}
+        onClick={() => onChange(Math.min(max, value + 1))}
+        className={guestStepperButtonClass}
+      >
+        +
+      </button>
+    </div>
+  );
+}
+
 type BookingSidebarDateCardProps = {
   label: string;
   value: string;
