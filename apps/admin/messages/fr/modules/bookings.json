@@ -1,6 +1,7 @@
 {
   "status": {
     "draft": "Brouillon",
+    "pending_approval": "En attente de validation",
     "pending_payment": "En attente de paiement",
     "confirmed": "Confirmée",
     "cancelled": "Annulée",

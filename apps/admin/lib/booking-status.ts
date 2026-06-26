@@ -3,6 +3,7 @@ import type { BookingStatus } from '@africatourismgate/types';
 
 export const BOOKING_STATUS_VARIANTS: Record<BookingStatus, DataTableBadgeVariant> = {
   draft: 'muted',
+  pending_approval: 'default',
   pending_payment: 'warning',
   confirmed: 'success',
   cancelled: 'danger',
@@ -11,6 +12,7 @@ export const BOOKING_STATUS_VARIANTS: Record<BookingStatus, DataTableBadgeVarian
 
 export const BOOKING_STATUSES: BookingStatus[] = [
   'draft',
+  'pending_approval',
   'pending_payment',
   'confirmed',
   'cancelled',

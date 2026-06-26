@@ -228,6 +228,17 @@ export type {
 } from './booking.js';
 
 export type {
+  BookingGuideAssignment,
+  BookingGuideRole,
+  BookingItemTypeModes,
+  BookingMessage,
+  BookingMode,
+  TourGuide,
+  TourGuideStatus,
+  TourGuideType,
+} from './tour-guide.js';
+
+export type {
   AdminReviewDetail,
   AdminReviewListItem,
   CreateBookingReviewRequest,
