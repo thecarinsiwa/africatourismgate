@@ -381,6 +381,26 @@ Critères : CRUD complet ; assignation depuis fiche réservation.
 4. Ouvrir une réservation (`/dashboard/bookings/:id`) → section **Guides assignés** → assigner guide + rôle → retirer
 5. Supprimer un guide depuis la liste (confirmation)
 
+**Implémenté (CE-8)** — validation assistée sur fiche réservation :
+
+| Zone | Fichier |
+|------|---------|
+| Onglets liste `pending_approval` | `apps/admin/components/bookings/bookings-list.tsx` |
+| Panneau Approuver / Refuser / Inviter paiement | `apps/admin/components/bookings/booking-assisted-approval-panel.tsx` |
+| Thread messages CE-4 | `apps/admin/components/bookings/booking-messages-section.tsx` |
+| Intégration détail | `apps/admin/components/bookings/booking-detail-page.tsx` |
+| i18n FR/EN/ES | `apps/admin/messages/*/modules/bookings.json` (`list.tabs`, `approval`, `messages`) |
+
+**Scénario test admin → e-mail (mock) → statut**
+
+1. API + Mailpit : `cd apps/api && npm run dev` (e-mails capturés sur http://localhost:8025)
+2. Admin : `/reservations` → onglet **En attente de validation**
+3. Ouvrir une réservation `pending_approval` → lire le **fil de conversation** ; répondre au client si besoin
+4. Section **Guides assignés** : assigner un guide (CE-7)
+5. **Validation assistée** : ajuster le montant si besoin → **Approuver** → confirmer → statut `pending_payment` ; vérifier Mailpit : `booking_approved_chat`
+6. **Inviter au paiement** → toast avec URL Stripe ; Mailpit : `booking_payment_invite`
+7. (Option refus) Sur une autre demande `pending_approval` : saisir motif → **Refuser** → statut `cancelled` ; Mailpit : `booking_rejected`
+
 ### CE-8 — Admin — File d’attente validation
 
 **Branche :** `feature/ce-admin-booking-approval`

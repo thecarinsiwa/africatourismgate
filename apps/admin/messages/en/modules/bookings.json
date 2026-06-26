@@ -25,6 +25,11 @@
     "ariaLabel": "Liste des réservations",
     "filters": {
       "client": "Customer"
+    },
+    "tabs": {
+      "ariaLabel": "Quick status filters",
+      "all": "All",
+      "pendingApproval": "Pending approval"
     }
   },
   "itemsList": {
@@ -97,6 +102,45 @@
     "historyAria": "History des changements de statut",
     "historyEmpty": "Tocun changement de statut enregistré.",
     "transition": "{fromStatus} → {toStatus}"
+  },
+  "approval": {
+    "title": "Assisted booking validation",
+    "intro": "Approve the request, reject it with a reason, or send the payment link once validated.",
+    "approve": "Approve",
+    "reject": "Reject",
+    "invitePayment": "Invite to pay",
+    "totalLabel": "Amount ({currency})",
+    "totalHint": "Adjust the total if needed before approval.",
+    "reasonLabel": "Internal note (history)",
+    "reasonPlaceholder": "E.g. dates and availability confirmed…",
+    "rejectReasonLabel": "Rejection reason (customer)",
+    "rejectReasonPlaceholder": "E.g. dates unavailable…",
+    "approveSuccess": "Booking approved — the customer will be notified by email.",
+    "rejectSuccess": "Request rejected — the customer will be notified by email.",
+    "inviteSuccess": "Payment link sent by email. URL: {url}",
+    "approveDialog": {
+      "title": "Confirm approval",
+      "description": "The booking will move to pending payment and inventory will be reserved."
+    },
+    "rejectDialog": {
+      "title": "Confirm rejection",
+      "description": "The request will be cancelled and the customer will receive an email.",
+      "descriptionWithReason": "Reason shared with the customer: {reason}"
+    }
+  },
+  "messages": {
+    "title": "Conversation",
+    "loading": "Loading messages…",
+    "empty": "No messages yet.",
+    "threadAria": "Booking message thread",
+    "author": {
+      "staff": "Team",
+      "customer": "Customer"
+    },
+    "replyTitle": "Reply to customer",
+    "replyLabel": "Your message",
+    "replyPlaceholder": "Reply to the customer…",
+    "sendReply": "Send"
   },
   "guides": {
     "title": "Assigned guides",

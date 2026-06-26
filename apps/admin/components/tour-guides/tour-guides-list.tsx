@@ -127,7 +127,6 @@ export function TourGuidesList() {
         cell: ({ row }) => (
           <div className="flex items-center gap-3">
             {row.original.photoUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={row.original.photoUrl}
                 alt=""
