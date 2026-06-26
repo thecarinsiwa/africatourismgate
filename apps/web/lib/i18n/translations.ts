@@ -124,6 +124,7 @@ export type Translations = {
     stepCart: string;
     stepRecap: string;
     stepPayment: string;
+    stepRequest: string;
     stepConfirmation: string;
     stepCancelled: string;
     cartTitle: string;
@@ -131,11 +132,14 @@ export type Translations = {
     continueToRecap: string;
     backToCart: string;
     payWithStripe: string;
+    requestBooking: string;
+    requestSubmitting: string;
     stripeRedirecting: string;
     estimatedTotal: string;
     loading: string;
     authRequiredNext: string;
     authRequiredPayment: string;
+    authRequiredRequest: string;
     invalidDraft: string;
     invalidDraftBack: string;
     invalidRecap: string;
@@ -167,6 +171,22 @@ export type Translations = {
       signOut: string;
       nextStepsTitle: string;
       nextStepEmail: string;
+      nextStepAccount: string;
+    };
+    requestSuccess: {
+      title: string;
+      subtitle: string;
+      bookingIdLabel: string;
+      statusLabel: string;
+      totalLabel: string;
+      verifying: string;
+      statusUnavailable: string;
+      backHome: string;
+      browseActivities: string;
+      viewAccount: string;
+      signOut: string;
+      nextStepsTitle: string;
+      nextStepContact: string;
       nextStepAccount: string;
     };
     cancel: {
@@ -1138,6 +1158,7 @@ const fr: Translations = {
     stepCart: 'Panier',
     stepRecap: 'Récap',
     stepPayment: 'Paiement',
+    stepRequest: 'Demande',
     stepConfirmation: 'Confirmation',
     stepCancelled: 'Annulé',
     cartTitle: 'Panier réservation',
@@ -1145,11 +1166,14 @@ const fr: Translations = {
     continueToRecap: 'Continuer vers récap',
     backToCart: 'Retour panier',
     payWithStripe: 'Payer avec Stripe',
+    requestBooking: 'Demander une réservation',
+    requestSubmitting: 'Envoi de la demande…',
     stripeRedirecting: 'Redirection Stripe…',
     estimatedTotal: 'Total estimé',
     loading: 'Chargement…',
     authRequiredNext: 'Connexion client requise au prochain écran.',
     authRequiredPayment: 'Connexion client requise pour lancer Stripe Checkout.',
+    authRequiredRequest: 'Connexion client requise pour envoyer votre demande.',
     invalidDraft: 'Données de réservation incomplètes. Reprenez depuis une fiche produit.',
     invalidDraftBack: 'Retour aux hébergements',
     invalidRecap: 'Donnees de reservation invalides. Revenez au panier.',
@@ -1184,6 +1208,24 @@ const fr: Translations = {
       nextStepsTitle: 'Prochaines étapes',
       nextStepEmail: 'Un e-mail de confirmation vous sera envoyé sous peu.',
       nextStepAccount: 'Consultez vos réservations depuis votre espace compte.',
+    },
+    requestSuccess: {
+      title: 'Demande envoyée',
+      subtitle:
+        'Votre demande de réservation a bien été transmise à notre équipe. Vous serez contacté sous 24 à 48 h.',
+      bookingIdLabel: 'Réf. demande :',
+      statusLabel: 'Statut :',
+      totalLabel: 'Total estimé :',
+      verifying: 'Vérification du statut en cours…',
+      statusUnavailable:
+        'Statut détaillé indisponible pour le moment. Rechargez la page dans quelques instants.',
+      backHome: 'Retour accueil',
+      browseActivities: 'Voir les activités',
+      viewAccount: 'Mon compte',
+      signOut: 'Se déconnecter',
+      nextStepsTitle: 'Prochaines étapes',
+      nextStepContact: 'Notre équipe validera votre demande et vous contactera par e-mail.',
+      nextStepAccount: 'Suivez l’avancement depuis votre espace compte.',
     },
     cancel: {
       title: 'Paiement annule',
@@ -2260,6 +2302,7 @@ const en: Translations = {
     stepCart: 'Cart',
     stepRecap: 'Summary',
     stepPayment: 'Payment',
+    stepRequest: 'Request',
     stepConfirmation: 'Confirmation',
     stepCancelled: 'Cancelled',
     cartTitle: 'Booking cart',
@@ -2267,11 +2310,14 @@ const en: Translations = {
     continueToRecap: 'Continue to summary',
     backToCart: 'Back to cart',
     payWithStripe: 'Pay with Stripe',
+    requestBooking: 'Request a booking',
+    requestSubmitting: 'Submitting request…',
     stripeRedirecting: 'Redirecting to Stripe…',
     estimatedTotal: 'Estimated total',
     loading: 'Loading…',
     authRequiredNext: 'Customer sign-in required on the next step.',
     authRequiredPayment: 'Customer sign-in required to start Stripe Checkout.',
+    authRequiredRequest: 'Customer sign-in required to submit your booking request.',
     invalidDraft: 'Incomplete booking data. Start again from a product page.',
     invalidDraftBack: 'Back to hotels',
     invalidRecap: 'Invalid booking data. Return to the cart.',
@@ -2305,6 +2351,23 @@ const en: Translations = {
       nextStepsTitle: 'What happens next',
       nextStepEmail: 'A confirmation email will be sent shortly.',
       nextStepAccount: 'View your bookings in your account area.',
+    },
+    requestSuccess: {
+      title: 'Request submitted',
+      subtitle:
+        'Your booking request has been sent to our team. You will be contacted within 24–48 hours.',
+      bookingIdLabel: 'Request ref:',
+      statusLabel: 'Status:',
+      totalLabel: 'Estimated total:',
+      verifying: 'Checking status…',
+      statusUnavailable: 'Detailed status is unavailable for now. Refresh in a moment.',
+      backHome: 'Back to home',
+      browseActivities: 'Browse activities',
+      viewAccount: 'My account',
+      signOut: 'Sign out',
+      nextStepsTitle: 'What happens next',
+      nextStepContact: 'Our team will review your request and contact you by email.',
+      nextStepAccount: 'Track progress from your account area.',
     },
     cancel: {
       title: 'Payment cancelled',

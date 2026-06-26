@@ -2,8 +2,9 @@
 
 import type { PropertyDetail } from '@africatourismgate/types';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { createBooking, createBookingCheckoutSession } from '../../lib/api/booking';
+import { createBooking, createBookingCheckoutSession, requestBooking } from '../../lib/api/booking';
 import { formatCarPrice } from '../../lib/cars/listings';
 import type { VehicleDetail } from '../../lib/cars/types';
 import { formatActivityPrice, formatScheduleTime } from '../../lib/activities/listings';
@@ -19,6 +20,7 @@ import type { FlightDetail } from '../../lib/flights/types';
 import { formatCruisePrice } from '../../lib/cruises/listings';
 import type { CruiseSailingDetail } from '../../lib/cruises/types';
 import { ensureClientAccessToken, getClientAccessToken } from '../../lib/auth/client-session';
+import { isAssistedBookingDraft } from '../../lib/bookings/booking-mode';
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import { formatHotelPrice } from '../../lib/hotels/listings';
 import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
@@ -49,6 +51,7 @@ type Props = {
 };
 
 export function ReservationRecapPageContent({ draft }: Props) {
+  const router = useRouter();
   const { locale } = useLocale();
   const t = useTranslations();
   const ck = t.checkout;
@@ -249,6 +252,8 @@ export function ReservationRecapPageContent({ draft }: Props) {
     return isPackageReservationDraftStructurallyComplete(draft, packageDetail.items);
   }, [draft, packageDetail]);
 
+  const isAssisted = draft ? isAssistedBookingDraft(draft) : false;
+
   async function handleCheckout() {
     if (!draft) return;
     const accessToken = await ensureClientAccessToken();
@@ -260,7 +265,14 @@ export function ReservationRecapPageContent({ draft }: Props) {
     setSubmitting(true);
     setError(null);
     try {
-      const booking = await createBooking(accessToken, buildCheckoutRequest(draft));
+      const payload = buildCheckoutRequest(draft);
+      if (isAssisted) {
+        const response = await requestBooking(accessToken, payload);
+        router.push(`/booking/request-success?booking_id=${response.bookingId}`);
+        return;
+      }
+
+      const booking = await createBooking(accessToken, payload);
       const checkout = await createBookingCheckoutSession(accessToken, booking.booking.id);
       window.location.assign(checkout.url);
     } catch (err: unknown) {
@@ -310,11 +322,11 @@ export function ReservationRecapPageContent({ draft }: Props) {
       stepperAriaLabel: ck.stepperAriaLabel,
       cart: ck.stepCart,
       recap: ck.stepRecap,
-      payment: ck.stepPayment,
+      payment: isAssisted ? ck.stepRequest : ck.stepPayment,
       confirmation: ck.stepConfirmation,
       cancelled: ck.stepCancelled,
     }),
-    [ck],
+    [ck, isAssisted],
   );
 
   return (
@@ -529,7 +541,7 @@ export function ReservationRecapPageContent({ draft }: Props) {
 
             {!hasToken && (
               <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800 dark:bg-amber-500/10 dark:text-amber-300">
-                {ck.authRequiredPayment}
+                {isAssisted ? ck.authRequiredRequest : ck.authRequiredPayment}
               </p>
             )}
             {error && (
@@ -549,11 +561,17 @@ export function ReservationRecapPageContent({ draft }: Props) {
               </Link>
               <button
                 type="button"
-                onClick={handleCheckout}
+                onClick={() => void handleCheckout()}
                 disabled={submitting || !canPay}
                 className="inline-flex min-h-[44px] items-center rounded-lg bg-primary px-5 py-2 text-sm font-semibold text-white hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {submitting ? ck.stripeRedirecting : ck.payWithStripe}
+                {submitting
+                  ? isAssisted
+                    ? ck.requestSubmitting
+                    : ck.stripeRedirecting
+                  : isAssisted
+                    ? ck.requestBooking
+                    : ck.payWithStripe}
               </button>
             </div>
           </div>
