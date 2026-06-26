@@ -38,6 +38,8 @@ import { formatPaymentProvider } from '../../lib/payment-display';
 import { BookingItemCatalogLink } from './booking-item-catalog-link';
 import { BookingItemTypeIcon } from './booking-item-type-icon';
 import { BookingGuidesSection } from './booking-guides-section';
+import { BookingAssistedApprovalPanel } from './booking-assisted-approval-panel';
+import { BookingMessagesSection } from './booking-messages-section';
 import { BookingStatusTimeline } from './booking-status-timeline';
 
 function formatDateTime(iso: string): string {
@@ -89,6 +91,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   const cancelReasonId = useId();
 
   const [canWrite, setCanWrite] = useState(false);
+  const [canApprove, setCanApprove] = useState(false);
   const [detail, setDetail] = useState<BookingAdminDetail | null>(null);
   const [state, setState] = useState<
     | { status: 'loading' }
@@ -134,10 +137,18 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
       .then((me) => {
         if (!cancelled) {
           setCanWrite(me.isSuperAdmin || me.permissions.includes('bookings.write'));
+          setCanApprove(
+            me.isSuperAdmin ||
+              me.permissions.includes('bookings.approve') ||
+              me.permissions.includes('bookings.write'),
+          );
         }
       })
       .catch(() => {
-        if (!cancelled) setCanWrite(false);
+        if (!cancelled) {
+          setCanWrite(false);
+          setCanApprove(false);
+        }
       });
     return () => {
       cancelled = true;
@@ -372,6 +383,15 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
             />
           </Card>
 
+          <BookingAssistedApprovalPanel
+            bookingId={bookingId}
+            status={booking.status}
+            totalCents={detail.totalCents}
+            currency={detail.currency}
+            canApprove={canApprove}
+            onUpdated={load}
+          />
+
           {canWrite ? (
             <Card variant="dashboard" padding="md" className="space-y-6">
               <h2 className="text-lg font-semibold text-atg-fg">{t('sections.actions')}</h2>
@@ -464,6 +484,8 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
           </section>
 
           <BookingGuidesSection bookingId={bookingId} canWrite={canWrite} />
+
+          <BookingMessagesSection bookingId={bookingId} canWrite={canWrite} />
         </div>
       </div>
 

@@ -25,6 +25,11 @@
     "ariaLabel": "Liste des réservations",
     "filters": {
       "client": "Cliente"
+    },
+    "tabs": {
+      "ariaLabel": "Filtros rápidos por estado",
+      "all": "Todas",
+      "pendingApproval": "Pendiente de validación"
     }
   },
   "itemsList": {
@@ -97,6 +102,45 @@
     "historyAria": "Historial des changements de statut",
     "historyEmpty": "Hastacun changement de statut enregistré.",
     "transition": "{fromStatus} → {toStatus}"
+  },
+  "approval": {
+    "title": "Validación de reserva asistida",
+    "intro": "Apruebe la solicitud, rechácela con un motivo o envíe el enlace de pago una vez validada.",
+    "approve": "Aprobar",
+    "reject": "Rechazar",
+    "invitePayment": "Invitar al pago",
+    "totalLabel": "Importe ({currency})",
+    "totalHint": "Ajuste el total si es necesario antes de aprobar.",
+    "reasonLabel": "Nota interna (historial)",
+    "reasonPlaceholder": "Ej. fechas y disponibilidad confirmadas…",
+    "rejectReasonLabel": "Motivo del rechazo (cliente)",
+    "rejectReasonPlaceholder": "Ej. fechas no disponibles…",
+    "approveSuccess": "Reserva aprobada — el cliente será notificado por correo.",
+    "rejectSuccess": "Solicitud rechazada — el cliente será notificado por correo.",
+    "inviteSuccess": "Enlace de pago enviado por correo. URL: {url}",
+    "approveDialog": {
+      "title": "Confirmar aprobación",
+      "description": "La reserva pasará a pendiente de pago y se reservará el stock."
+    },
+    "rejectDialog": {
+      "title": "Confirmar rechazo",
+      "description": "La solicitud se cancelará y el cliente recibirá un correo.",
+      "descriptionWithReason": "Motivo comunicado al cliente: {reason}"
+    }
+  },
+  "messages": {
+    "title": "Conversación",
+    "loading": "Cargando mensajes…",
+    "empty": "Ningún mensaje por el momento.",
+    "threadAria": "Hilo de mensajes de la reserva",
+    "author": {
+      "staff": "Equipo",
+      "customer": "Cliente"
+    },
+    "replyTitle": "Responder al cliente",
+    "replyLabel": "Su mensaje",
+    "replyPlaceholder": "Responda al cliente…",
+    "sendReply": "Enviar"
   },
   "guides": {
     "title": "Guías asignados",
