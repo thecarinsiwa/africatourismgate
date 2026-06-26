@@ -450,6 +450,24 @@ Config initiale : activités + forfaits en mode assisted ; hôtels/vols en immed
 À la fin : fichiers + test Playwright parcours demande.
 ```
 
+**Implémenté (CE-9)** — demande assistée côté web :
+
+| Zone | Fichier |
+|------|---------|
+| Modes par vertical (défaut seed) | `apps/web/lib/bookings/booking-mode.ts` |
+| API wrapper `POST /bookings/request` | `apps/web/lib/api/booking.ts` |
+| Branchement recap (CTA + submit) | `apps/web/components/reservations/reservation-recap-page-content.tsx` |
+| Page succès demande | `apps/web/components/reservations/reservation-request-success-page-content.tsx` |
+| Route | `apps/web/app/booking/request-success/page.tsx` |
+| i18n FR/EN/ES | `apps/web/lib/i18n/translations.ts`, `translations-es.ts` |
+| E2E activité + forfait | `apps/web/tests/e2e/activity-checkout.spec.ts`, `package-checkout.spec.ts` |
+
+**Scénario test Playwright**
+
+1. Activité : panier → recap → **Demander une réservation** → `POST /bookings/request` → `/booking/request-success`
+2. Forfait : même parcours avec `packageId` dans le payload
+3. Hôtel/vol : inchangé (Stripe immédiat, tests `reservation-checkout` / `flight-checkout`)
+
 ### CE-10 — Web — Chat réservation + timeline client
 
 **Branche :** `feature/ce-web-booking-conversation`

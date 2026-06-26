@@ -6,6 +6,7 @@ import type {
   BookingCheckoutRequest,
   BookingCheckoutSessionResponse,
   BookingDetail,
+  BookingRequestResponse,
   CreateBookingReviewRequest,
   Review,
 } from '@africatourismgate/types';
@@ -37,6 +38,13 @@ export function createBooking(
   payload: BookingCheckoutRequest,
 ): Promise<BookingDetail> {
   return createBookingClient(accessToken).createBooking(payload);
+}
+
+export function requestBooking(
+  accessToken: string,
+  payload: BookingCheckoutRequest,
+): Promise<BookingRequestResponse> {
+  return createBookingClient(accessToken).requestBooking(payload);
 }
 
 export function createBookingCheckoutSession(

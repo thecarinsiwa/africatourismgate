@@ -101,7 +101,7 @@ const activityBMock = activityDetailMock(
   UNIT_PRICE_B,
 );
 
-test('forfait activités: configurer créneaux, panier -> recap -> Stripe avec packageId', async ({
+test('forfait activités: configurer créneaux, panier -> recap -> demande assistée avec packageId', async ({
   page,
 }) => {
   test.setTimeout(60_000);
@@ -151,7 +151,7 @@ test('forfait activités: configurer créneaux, panier -> recap -> Stripe avec p
 
   let postedCheckout: unknown = null;
 
-  await page.route('**/api/bookings', async (route) => {
+  await page.route('**/api/bookings/request', async (route) => {
     if (route.request().method() !== 'POST') {
       await route.continue();
       return;
@@ -163,32 +163,10 @@ test('forfait activités: configurer créneaux, panier -> recap -> Stripe avec p
       status: 201,
       contentType: 'application/json',
       body: JSON.stringify({
-        booking: {
-          id: BOOKING_ID,
-          userId: 'user-e2e',
-          status: 'pending_payment',
-          totalCents: TOTAL_CENTS,
-          currency: 'USD',
-          promoCodeId: null,
-          createdAt: new Date().toISOString(),
-          updatedAt: null,
-        },
-        items: [],
+        bookingId: BOOKING_ID,
+        status: 'pending_approval',
+        message: 'Booking request submitted',
         totalCents: TOTAL_CENTS,
-        currency: 'USD',
-      }),
-    });
-  });
-
-  await page.route(`**/api/bookings/${BOOKING_ID}/checkout-session`, async (route) => {
-    await route.fulfill({
-      status: 201,
-      contentType: 'application/json',
-      body: JSON.stringify({
-        paymentId: 'payment-e2e-package',
-        sessionId: 'cs_test_e2e_package',
-        url: `http://127.0.0.1:3002/booking/success?booking_id=${BOOKING_ID}`,
-        amountCents: TOTAL_CENTS,
         currency: 'USD',
       }),
     });
@@ -202,7 +180,7 @@ test('forfait activités: configurer créneaux, panier -> recap -> Stripe avec p
         booking: {
           id: BOOKING_ID,
           userId: 'user-e2e',
-          status: 'confirmed',
+          status: 'pending_approval',
           totalCents: TOTAL_CENTS,
           currency: 'USD',
           promoCodeId: null,
@@ -247,9 +225,13 @@ test('forfait activités: configurer créneaux, panier -> recap -> Stripe avec p
   await expect(page).toHaveURL(/\/booking\/recap\?.*kind=package/);
   await expect(page.getByRole('heading', { name: /recapitulatif/i })).toBeVisible();
 
-  await expect(page.getByRole('button', { name: /payer avec stripe/i })).toBeEnabled();
-  await page.getByRole('button', { name: /payer avec stripe/i }).click();
-  await expect(page).toHaveURL(new RegExp(`/booking/success\\?booking_id=${BOOKING_ID}`), {
+  await expect(
+    page.getByRole('button', { name: /demander une r[ée]servation|request a booking|solicitar una reserva/i }),
+  ).toBeEnabled();
+  await page
+    .getByRole('button', { name: /demander une r[ée]servation|request a booking|solicitar una reserva/i })
+    .click();
+  await expect(page).toHaveURL(new RegExp(`/booking/request-success\\?booking_id=${BOOKING_ID}`), {
     timeout: 15_000,
   });
 
@@ -269,6 +251,6 @@ test('forfait activités: configurer créneaux, panier -> recap -> Stripe avec p
     ],
   });
 
-  await expect(page.getByText(/reservation confirmee/i)).toBeVisible();
-  await expect(page.getByText(/booking id:/i)).toBeVisible();
+  await expect(page.getByText(/demande envoy[ée]e|request submitted|solicitud enviada/i)).toBeVisible();
+  await expect(page.getByText(/r[ée]f\. demande|request ref|ref\. solicitud/i)).toBeVisible();
 });
