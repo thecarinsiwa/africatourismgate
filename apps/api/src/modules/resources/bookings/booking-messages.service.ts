@@ -31,7 +31,7 @@ export class BookingMessagesService {
 
     const rows = await this.messagesRepository.find({
       where: { bookingId, deletedAt: IsNull() },
-      order: { createdAt: 'ASC' },
+      order: { createdAt: 'ASC', id: 'ASC' },
     });
 
     return {
@@ -54,6 +54,7 @@ export class BookingMessagesService {
 
     const isStaff = await this.isStaffUser(actorUserId);
     const messageId = newId();
+    const createdAt = await this.nextMessageCreatedAt(bookingId);
 
     await this.messagesRepository.save(
       this.messagesRepository.create({
@@ -62,6 +63,7 @@ export class BookingMessagesService {
         userId: actorUserId,
         body,
         isStaff: isStaff ? 1 : 0,
+        createdAt,
         createdByUserId: actorUserId,
       } as BookingMessages),
     );
@@ -116,6 +118,31 @@ export class BookingMessagesService {
       return true;
     }
     return this.permissionsService.hasAnyPermission(userId, ['users.read']);
+  }
+
+  /**
+   * MySQL TIMESTAMP is second-precision; rapid replies can collide and shuffle thread order.
+   * Ensure each message sorts after the previous one in the same booking.
+   */
+  private async nextMessageCreatedAt(bookingId: string): Promise<Date> {
+    const latest = await this.messagesRepository.findOne({
+      where: { bookingId, deletedAt: IsNull() },
+      order: { createdAt: 'DESC', id: 'DESC' },
+      select: ['createdAt'],
+    });
+
+    const now = new Date();
+    if (!latest?.createdAt) {
+      return now;
+    }
+
+    const nowSec = Math.floor(now.getTime() / 1000);
+    const lastSec = Math.floor(latest.createdAt.getTime() / 1000);
+    if (nowSec > lastSec) {
+      return now;
+    }
+
+    return new Date((lastSec + 1) * 1000);
   }
 
   private toDto(message: BookingMessages): BookingMessageDto {
