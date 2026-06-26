@@ -20,7 +20,8 @@
     "shipDetail": "Barco",
     "classAvailability": "Disponibilidad de clase",
     "roomAvailability": "Disponibilidad de habitación",
-    "itineraryStops": "Escalas del itinerario"
+    "itineraryStops": "Escalas del itinerario",
+    "editTourGuide": "Editar guía"
   },
   "utilisateurs": {
     "description": "Cuentas de la plataforma. Filtre por estado u organización.",
@@ -241,6 +242,20 @@
     "description": "Lista paginada de reservas (datos API en vivo). Filtre por estado, fecha, cliente y organización. Requiere bookings.read.",
     "lignes": {
       "description": "Tabla global de artículos por reserva (datos API en vivo). Filtre por tipo, estado de reserva e ID de reserva. Requiere bookings.read."
+    }
+  },
+  "guides": {
+    "title": "Guías turísticos",
+    "description": "Catálogo de guías internos y externos. Filtre por tipo, estado y búsqueda por nombre.",
+    "actions": {
+      "new": "Nuevo guía"
+    },
+    "nouveau": {
+      "metaTitle": "Nuevo guía turístico",
+      "description": "Cree un perfil de guía y asígnelo desde el detalle de la reserva."
+    },
+    "id": {
+      "metaTitle": "Editar guía"
     }
   },
   "paiements": {

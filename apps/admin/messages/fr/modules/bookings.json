@@ -47,7 +47,8 @@
       "status": "Statut",
       "actions": "Actions",
       "bookingLines": "Lignes de réservation",
-      "payments": "Paiements"
+      "payments": "Paiements",
+      "assignedGuides": "Guides assignés"
     },
     "clientFields": {
       "email": "E-mail",
@@ -96,6 +97,24 @@
     "historyAria": "Historique des changements de statut",
     "historyEmpty": "Aucun changement de statut enregistré.",
     "transition": "{fromStatus} → {toStatus}"
+  },
+  "guides": {
+    "title": "Guides assignés",
+    "empty": "Aucun guide assigné à cette réservation.",
+    "ariaLabel": "Guides assignés à la réservation",
+    "assignTitle": "Assigner un guide",
+    "selectGuide": "Guide",
+    "selectPlaceholder": "Choisir un guide actif…",
+    "selectRole": "Rôle",
+    "assignButton": "Assigner",
+    "noGuidesAvailable": "Tous les guides actifs sont déjà assignés.",
+    "removeConfirm": "Retirer ce guide de la réservation ?",
+    "viewProfile": "Voir le profil",
+    "columns": {
+      "guide": "Guide",
+      "role": "Rôle",
+      "assignedAt": "Assigné le"
+    }
   },
   "stats": {
     "bookings": {

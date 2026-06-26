@@ -93,6 +93,20 @@ export function buildDestinationsErrorMessages(
   };
 }
 
+export type TourGuidesErrorMessages = CommonErrorMessages & {
+  userConflict: string;
+};
+
+export function buildTourGuidesErrorMessages(
+  tCommon: ErrorTranslator,
+  t: ErrorTranslator,
+): TourGuidesErrorMessages {
+  return {
+    ...buildCommonErrorMessages(tCommon),
+    userConflict: t('userConflict'),
+  };
+}
+
 export type EmployeesErrorMessages = CommonErrorMessages & {
   profileConflict: string;
 };
@@ -251,6 +265,7 @@ export type ModuleErrorMessages = {
   hebergements: HebergementsErrorMessages;
   organizations: OrganizationsErrorMessages;
   destinations: DestinationsErrorMessages;
+  tourGuides: TourGuidesErrorMessages;
   employees: EmployeesErrorMessages;
   rbac: RbacErrorMessages;
   vols: VolsErrorMessages;
@@ -275,6 +290,7 @@ export function buildModuleErrorMessages(translators: {
   hebergements: ErrorTranslator;
   organizations: ErrorTranslator;
   destinations: ErrorTranslator;
+  tourGuides: ErrorTranslator;
   employees: ErrorTranslator;
   rbac: ErrorTranslator;
   vols: ErrorTranslator;
@@ -294,6 +310,7 @@ export function buildModuleErrorMessages(translators: {
     hebergements: buildHebergementsErrorMessages(tCommon, translators.hebergements),
     organizations: buildOrganizationsErrorMessages(tCommon, translators.organizations),
     destinations: buildDestinationsErrorMessages(tCommon, translators.destinations),
+    tourGuides: buildTourGuidesErrorMessages(tCommon, translators.tourGuides),
     employees: buildEmployeesErrorMessages(tCommon, translators.employees),
     rbac: buildRbacErrorMessages(tCommon, translators.rbac),
     vols: buildVolsErrorMessages(tCommon, translators.vols),

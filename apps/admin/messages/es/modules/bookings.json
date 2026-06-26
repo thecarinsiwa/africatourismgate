@@ -47,7 +47,8 @@
       "status": "Estado",
       "actions": "Acciones",
       "bookingLines": "Líneas de réservation",
-      "payments": "Pagos"
+      "payments": "Pagos",
+      "assignedGuides": "Guías asignados"
     },
     "clientFields": {
       "email": "Correo",
@@ -96,6 +97,24 @@
     "historyAria": "Historial des changements de statut",
     "historyEmpty": "Hastacun changement de statut enregistré.",
     "transition": "{fromStatus} → {toStatus}"
+  },
+  "guides": {
+    "title": "Guías asignados",
+    "empty": "Ningún guía asignado a esta reserva.",
+    "ariaLabel": "Guías asignados a la reserva",
+    "assignTitle": "Asignar un guía",
+    "selectGuide": "Guía",
+    "selectPlaceholder": "Elegir un guía activo…",
+    "selectRole": "Rol",
+    "assignButton": "Asignar",
+    "noGuidesAvailable": "Todos los guías activos ya están asignados.",
+    "removeConfirm": "¿Quitar este guía de la reserva?",
+    "viewProfile": "Ver perfil",
+    "columns": {
+      "guide": "Guía",
+      "role": "Rol",
+      "assignedAt": "Asignado el"
+    }
   },
   "stats": {
     "bookings": {
