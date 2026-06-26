@@ -58,6 +58,7 @@ import { PromotionsModule } from './resources/promotions/promotions.module';
 import { ReviewsModule } from './resources/reviews/reviews.module';
 import { SupportTicketsModule } from './resources/support-tickets/support-tickets.module';
 import { SupportMessagesModule } from './resources/support-messages/support-messages.module';
+import { TourGuidesModule } from './resources/tour-guides/tour-guides.module';
 
 import { Module } from '@nestjs/common';
 
@@ -123,6 +124,7 @@ import { Module } from '@nestjs/common';
     ReviewsModule,
     SupportTicketsModule,
     SupportMessagesModule,
+    TourGuidesModule,
   ],
 })
 export class ApiResourcesModule {}

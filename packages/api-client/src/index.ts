@@ -88,6 +88,8 @@ import type {
   BookingPaymentIntentResponse,
   BookingItemListItem,
   BookingItemsListQuery,
+  BookingGuideAssignment,
+  AssignBookingGuidesRequest,
   BookingListItem,
   BookingsListQuery,
   AdminReviewDetail,
@@ -142,6 +144,10 @@ import type {
   LoyaltyAccountsListQuery,
   Employee,
   EmployeesListQuery,
+  TourGuide,
+  TourGuidesListQuery,
+  CreateTourGuideRequest,
+  UpdateTourGuideRequest,
   Permission,
   PermissionsListQuery,
   RbacAuditLog,
@@ -1117,6 +1123,34 @@ export class ApiClient {
     return this.request<void>(`/employees/${id}`, { method: 'DELETE' });
   }
 
+  listTourGuides(
+    query?: TourGuidesListQuery,
+  ): Promise<PaginatedResponse<TourGuide>> {
+    return fetchPaginated<TourGuide>(this, '/tour-guides', query);
+  }
+
+  getTourGuide(id: string): Promise<TourGuide> {
+    return this.request<TourGuide>(`/tour-guides/${id}`);
+  }
+
+  createTourGuide(body: CreateTourGuideRequest): Promise<TourGuide> {
+    return this.request<TourGuide>('/tour-guides', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateTourGuide(id: string, body: UpdateTourGuideRequest): Promise<TourGuide> {
+    return this.request<TourGuide>(`/tour-guides/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteTourGuide(id: string): Promise<void> {
+    return this.request<void>(`/tour-guides/${id}`, { method: 'DELETE' });
+  }
+
   getSucceededPaymentsRevenue(): Promise<SucceededPaymentsRevenue> {
     return sumSucceededPaymentsRevenue(this);
   }
@@ -1496,6 +1530,26 @@ export class ApiClient {
     return this.request<Review>(`/bookings/${id}/reviews`, {
       method: 'POST',
       body,
+    });
+  }
+
+  listBookingGuides(bookingId: string): Promise<BookingGuideAssignment[]> {
+    return this.request<BookingGuideAssignment[]>(`/bookings/${bookingId}/guides`);
+  }
+
+  assignBookingGuides(
+    bookingId: string,
+    body: AssignBookingGuidesRequest,
+  ): Promise<BookingGuideAssignment[]> {
+    return this.request<BookingGuideAssignment[]>(`/bookings/${bookingId}/guides`, {
+      method: 'POST',
+      body,
+    });
+  }
+
+  removeBookingGuide(bookingId: string, guideId: string): Promise<void> {
+    return this.request<void>(`/bookings/${bookingId}/guides/${guideId}`, {
+      method: 'DELETE',
     });
   }
 

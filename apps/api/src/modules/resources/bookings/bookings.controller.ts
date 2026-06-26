@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -21,6 +22,9 @@ import { CancelBookingDto } from './dto/cancel-booking.dto';
 import { RecordCashPaymentDto } from './dto/record-cash-payment.dto';
 import { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
 import { CreateBookingReviewDto } from '../reviews/dto/create-booking-review.dto';
+import { TourGuidesModule } from '../tour-guides/tour-guides.module';
+import { BookingGuideAssignmentsService } from '../tour-guides/booking-guide-assignments.service';
+import { AssignBookingGuidesDto } from '../tour-guides/dto/booking-guide-assignment.dto';
 
 @ApiTags('bookings')
 @ApiForbiddenResponse({ description: 'Missing permission' })
@@ -31,6 +35,7 @@ export class BookingsController {
     private readonly bookingEngine: BookingEngineService,
     private readonly stripeService: StripeService,
     private readonly permissionsService: PermissionsService,
+    private readonly bookingGuideAssignmentsService: BookingGuideAssignmentsService,
   ) {}
 
   @Post('checkout-preview')
@@ -68,6 +73,34 @@ export class BookingsController {
   @ApiOperation({ summary: 'Get review for a booking' })
   getReview(@Param('id') id: string, @CurrentUser() user: AuthUserDto) {
     return this.bookingsService.getBookingReview(id, user.id);
+  }
+
+  @Get(':id/guides')
+  @RequirePermissions('bookings.read')
+  @ApiOperation({ summary: 'List guides assigned to a booking' })
+  listGuides(@Param('id') id: string) {
+    return this.bookingGuideAssignmentsService.listByBookingId(id);
+  }
+
+  @Post(':id/guides')
+  @RequirePermissions('bookings.write')
+  @ApiOperation({ summary: 'Assign one or more tour guides to a booking' })
+  assignGuides(
+    @Param('id') id: string,
+    @Body() dto: AssignBookingGuidesDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.bookingGuideAssignmentsService.assignGuides(id, dto, user.id);
+  }
+
+  @Delete(':id/guides/:guideId')
+  @RequirePermissions('bookings.write')
+  @ApiOperation({ summary: 'Remove a tour guide assignment from a booking' })
+  async removeGuide(
+    @Param('id') id: string,
+    @Param('guideId') guideId: string,
+  ) {
+    await this.bookingGuideAssignmentsService.removeGuide(id, guideId);
   }
 
   @Post(':id/reviews')

@@ -30,8 +30,59 @@ export interface TourGuide {
   languages: string[];
   destinations: string[];
   status: TourGuideStatus;
+  user?: TourGuideUserSummary;
   createdAt: string;
   updatedAt: string | null;
+}
+
+export interface TourGuideUserSummary {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+}
+
+export interface TourGuidesListQuery {
+  page?: number;
+  limit?: number;
+  type?: TourGuideType;
+  status?: TourGuideStatus;
+  destinationId?: string;
+  organizationId?: string;
+  search?: string;
+}
+
+export interface CreateTourGuideRequest {
+  type: TourGuideType;
+  userId?: string;
+  organizationId?: string;
+  displayName: string;
+  bio?: string;
+  photoUrl?: string;
+  languages: string[];
+  destinations: string[];
+  status?: TourGuideStatus;
+}
+
+export interface UpdateTourGuideRequest {
+  type?: TourGuideType;
+  userId?: string | null;
+  organizationId?: string | null;
+  displayName?: string;
+  bio?: string | null;
+  photoUrl?: string | null;
+  languages?: string[];
+  destinations?: string[];
+  status?: TourGuideStatus;
+}
+
+export interface AssignBookingGuideItem {
+  guideId: string;
+  role?: BookingGuideRole;
+}
+
+export interface AssignBookingGuidesRequest {
+  guides: AssignBookingGuideItem[];
 }
 
 export interface BookingGuideAssignment {
