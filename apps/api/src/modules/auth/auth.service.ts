@@ -171,7 +171,6 @@ export class AuthService {
       }
       throw error;
     }
-
     const { verificationId } = await this.emailVerification.createAndSend({
       email: user.email,
       purpose: 'register',
