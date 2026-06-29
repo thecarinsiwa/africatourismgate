@@ -14,6 +14,7 @@ import {
 } from '../../lib/bookings/display';
 import { localeToBcp47 } from '../../lib/i18n/locale-tag';
 import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
+import { GuideReviewInvitesSection } from './guide-review-invites-section';
 import { BookingMessagesSection } from './booking-messages-section';
 import { BookingReviewCard } from './booking-review-card';
 import { BookingReviewForm } from './booking-review-form';
@@ -125,7 +126,7 @@ export function AccountBookingDetail({
     );
   }
 
-  const { booking, items, totalCents, currency, review, canReview, statusHistory, paymentInvited } =
+  const { booking, items, totalCents, currency, review, canReview, statusHistory, paymentInvited, guideReviewInvites } =
     detail;
   const d = t.account.reservations.detail;
   const isAssisted = assisted;
@@ -285,6 +286,47 @@ export function AccountBookingDetail({
             setReviewJustPublished(true);
             setDetail((prev) =>
               prev ? { ...prev, review: submitted, canReview: false } : prev,
+            );
+          }}
+        />
+      ) : null}
+
+      {guideReviewInvites && guideReviewInvites.length > 0 ? (
+        <GuideReviewInvitesSection
+          bookingId={bookingId}
+          invites={guideReviewInvites}
+          localeTag={localeTag}
+          labels={{
+            sectionTitle: d.guideReviews.sectionTitle,
+            sectionHint: d.guideReviews.sectionHint,
+            rolePrimary: d.guideReviews.rolePrimary,
+            roleSecondary: d.guideReviews.roleSecondary,
+            leaveReview: d.guideReviews.leaveReview,
+            leaveReviewHint: d.guideReviews.leaveReviewHint,
+            reviewRating: d.reviewRating,
+            reviewTitle: d.reviewTitle,
+            reviewTitlePlaceholder: d.reviewTitlePlaceholder,
+            reviewBody: d.reviewBody,
+            reviewBodyPlaceholder: d.reviewBodyPlaceholder,
+            submitReview: d.guideReviews.submitReview,
+            submittingReview: d.submittingReview,
+            reviewSubmitError: d.reviewSubmitError,
+            reviewRatingRequired: d.reviewRatingRequired,
+            reviewCharCount: d.reviewCharCount,
+            yourReview: d.guideReviews.yourReview,
+            reviewPublished: d.guideReviews.reviewPublished,
+            ratingAria: (n) => d.reviewStarAria.replace('{n}', String(n)),
+          }}
+          onInviteUpdated={(assignmentId, updated) => {
+            setDetail((prev) =>
+              prev
+                ? {
+                    ...prev,
+                    guideReviewInvites: (prev.guideReviewInvites ?? []).map((invite) =>
+                      invite.assignmentId === assignmentId ? updated : invite,
+                    ),
+                  }
+                : prev,
             );
           }}
         />

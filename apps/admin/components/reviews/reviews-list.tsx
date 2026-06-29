@@ -222,12 +222,11 @@ export function ReviewsList() {
         id: 'property',
         header: tList('columns.property'),
         cell: ({ row }) => {
-          if (!row.original.propertyName) {
+          const label = row.original.propertyName ?? row.original.guideName;
+          if (!label) {
             return <span className="text-atg-muted">{emptyDash}</span>;
           }
-          return (
-            <span className="text-sm text-atg-fg">{row.original.propertyName}</span>
-          );
+          return <span className="text-sm text-atg-fg">{label}</span>;
         },
       },
       {

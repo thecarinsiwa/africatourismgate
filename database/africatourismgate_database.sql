@@ -1211,6 +1211,9 @@ CREATE TABLE `bookings` (
   `currency` CHAR(3) NOT NULL DEFAULT 'USD',
   `promo_code_id` CHAR(36) DEFAULT NULL,
   `promotion_id` CHAR(36) DEFAULT NULL,
+  `customer_thread_last_seen_at` DATETIME DEFAULT NULL,
+  `customer_thread_presence_at` DATETIME DEFAULT NULL,
+  `payment_reminder_sent_at` DATETIME DEFAULT NULL,
   `created_by_user_id` CHAR(36) DEFAULT NULL,
   `updated_by_user_id` CHAR(36) DEFAULT NULL,
   `deleted_by_user_id` CHAR(36) DEFAULT NULL,
@@ -1422,7 +1425,7 @@ ALTER TABLE `bookings`
 CREATE TABLE `reviews` (
   `id` CHAR(36) NOT NULL,
   `user_id` CHAR(36) NOT NULL,
-  `entity_type` ENUM('property','flight','vehicle','cruise','activity','booking') NOT NULL,
+  `entity_type` ENUM('property','flight','vehicle','cruise','activity','booking','tour_guide') NOT NULL,
   `entity_id` CHAR(36) NOT NULL,
   `rating` TINYINT UNSIGNED NOT NULL,
   `title` VARCHAR(180) DEFAULT NULL,

@@ -192,7 +192,14 @@ export function AccountBookingsList() {
                     {formatBookingDateTime(booking.createdAt, localeTag)}
                   </td>
                   <td className="px-4 py-3">
-                    <BookingStatusBadge status={booking.status} size="sm" />
+                    <div className="flex flex-wrap items-center gap-2">
+                      <BookingStatusBadge status={booking.status} size="sm" />
+                      {booking.actionRequired ? (
+                        <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-900 dark:bg-amber-900/40 dark:text-amber-100">
+                          {t.account.reservations.actionRequired}
+                        </span>
+                      ) : null}
+                    </div>
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap">
                     {formatBookingMoney(booking.totalCents, booking.currency)}

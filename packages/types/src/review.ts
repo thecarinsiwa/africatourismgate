@@ -20,6 +20,10 @@ export interface AdminReviewListItem {
   entityId: string;
   propertyId: string | null;
   propertyName: string | null;
+  /** Populated for tour_guide reviews. */
+  guideName?: string | null;
+  guideId?: string | null;
+  bookingId?: string | null;
   title: string | null;
   body: string | null;
 }
@@ -50,6 +54,24 @@ export interface CreateBookingReviewRequest {
   rating: number;
   title?: string;
   body?: string;
+}
+
+export type ReviewEntityType =
+  | 'property'
+  | 'flight'
+  | 'vehicle'
+  | 'cruise'
+  | 'activity'
+  | 'booking'
+  | 'tour_guide';
+
+export interface GuideReviewInvite {
+  assignmentId: string;
+  guideId: string;
+  guideName: string;
+  role: 'primary' | 'secondary';
+  canReview: boolean;
+  review: Review | null;
 }
 
 export interface PropertyReviewsListQuery {

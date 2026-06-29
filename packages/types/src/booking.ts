@@ -1,4 +1,4 @@
-import type { Review } from './review.js';
+import type { GuideReviewInvite, Review } from './review.js';
 import type { BookingMode } from './tour-guide.js';
 
 export type BookingStatus =
@@ -141,6 +141,8 @@ export interface BookingDetail {
   statusHistory?: BookingStatusHistoryEntry[];
   /** True when staff sent a Stripe checkout invite (pending stripe payment exists). */
   paymentInvited?: boolean;
+  /** Post-stay guide rating invitations (CE-13). */
+  guideReviewInvites?: GuideReviewInvite[];
 }
 
 export interface BookingClient {
@@ -234,6 +236,8 @@ export interface BookingListItem extends Booking {
   clientFirstName: string;
   clientLastName: string;
   organizationId: string | null;
+  /** Customer account list: payment invite or unread staff message. */
+  actionRequired?: boolean;
 }
 
 export interface BookingsListQuery {

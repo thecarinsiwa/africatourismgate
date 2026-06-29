@@ -20,7 +20,7 @@ export class AdminReviewListItemDto {
   authorEmail!: string | null;
 
   @ApiProperty({
-    enum: ['property', 'flight', 'vehicle', 'cruise', 'activity', 'booking'],
+    enum: ['property', 'flight', 'vehicle', 'cruise', 'activity', 'booking', 'tour_guide'],
   })
   entityType!: string;
 
@@ -32,6 +32,15 @@ export class AdminReviewListItemDto {
 
   @ApiPropertyOptional({ nullable: true })
   propertyName!: string | null;
+
+  @ApiPropertyOptional({ nullable: true })
+  guideName?: string | null;
+
+  @ApiPropertyOptional({ format: 'uuid', nullable: true })
+  guideId?: string | null;
+
+  @ApiPropertyOptional({ format: 'uuid', nullable: true })
+  bookingId?: string | null;
 
   @ApiPropertyOptional({ nullable: true })
   title!: string | null;

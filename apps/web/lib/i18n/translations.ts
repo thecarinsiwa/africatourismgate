@@ -865,6 +865,7 @@ export type Translations = {
       filterPending: string;
       filterCancelled: string;
       filterAria: string;
+      actionRequired: string;
       detail: {
         bookedOn: string;
         itemsCount: string;
@@ -927,6 +928,17 @@ export type Translations = {
           sendReply: string;
           loadError: string;
           sendError: string;
+        };
+        guideReviews: {
+          sectionTitle: string;
+          sectionHint: string;
+          rolePrimary: string;
+          roleSecondary: string;
+          leaveReview: string;
+          leaveReviewHint: string;
+          submitReview: string;
+          yourReview: string;
+          reviewPublished: string;
         };
       };
     };
@@ -2002,6 +2014,7 @@ const fr: Translations = {
       filterPending: 'En attente',
       filterCancelled: 'Annulées',
       filterAria: 'Filtrer par statut',
+      actionRequired: 'Action requise',
       detail: {
         bookedOn: 'Réservée le',
         itemsCount: 'Articles',
@@ -2066,6 +2079,18 @@ const fr: Translations = {
           sendReply: 'Envoyer',
           loadError: 'Impossible de charger la conversation.',
           sendError: 'Impossible d\'envoyer le message.',
+        },
+        guideReviews: {
+          sectionTitle: 'Votre guide',
+          sectionHint:
+            'Partagez votre expérience avec le ou les guides assignés à votre séjour.',
+          rolePrimary: 'Guide principal',
+          roleSecondary: 'Guide secondaire',
+          leaveReview: 'Noter ce guide',
+          leaveReviewHint: 'Votre avis sera publié après modération par notre équipe.',
+          submitReview: 'Envoyer l\'avis',
+          yourReview: 'Votre avis',
+          reviewPublished: 'Merci, votre avis a été envoyé et sera publié après modération.',
         },
       },
     },
@@ -3163,6 +3188,7 @@ const en: Translations = {
       filterPending: 'Pending',
       filterCancelled: 'Cancelled',
       filterAria: 'Filter by status',
+      actionRequired: 'Action required',
       detail: {
         bookedOn: 'Booked on',
         itemsCount: 'Items',
@@ -3227,6 +3253,17 @@ const en: Translations = {
           sendReply: 'Send',
           loadError: 'Could not load the conversation.',
           sendError: 'Could not send your message.',
+        },
+        guideReviews: {
+          sectionTitle: 'Your guide',
+          sectionHint: 'Share your experience with the guide(s) assigned to your stay.',
+          rolePrimary: 'Primary guide',
+          roleSecondary: 'Secondary guide',
+          leaveReview: 'Rate this guide',
+          leaveReviewHint: 'Your review will be published after our team moderates it.',
+          submitReview: 'Submit review',
+          yourReview: 'Your review',
+          reviewPublished: 'Thank you — your review was submitted and will be published after moderation.',
         },
       },
     },

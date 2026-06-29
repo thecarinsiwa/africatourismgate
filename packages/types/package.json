@@ -7,38 +7,33 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./src/index.ts",
       "require": "./dist/index.js",
       "default": "./dist/index.js"
     },
     "./activity": {
       "types": "./dist/activity.d.ts",
-      "import": "./src/activity.ts",
       "require": "./dist/activity.js",
       "default": "./dist/activity.js"
     },
     "./tour-guide": {
       "types": "./dist/tour-guide.d.ts",
-      "import": "./src/tour-guide.ts",
       "require": "./dist/tour-guide.js",
       "default": "./dist/tour-guide.js"
     },
     "./rbac": {
       "types": "./dist/rbac.d.ts",
-      "import": "./src/rbac.ts",
       "require": "./dist/rbac.js",
       "default": "./dist/rbac.js"
     },
     "./organization-settings": {
       "types": "./dist/organization-settings.d.ts",
-      "import": "./src/organization-settings.ts",
       "require": "./dist/organization-settings.js",
       "default": "./dist/organization-settings.js"
     }
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "lint": "tsc -p tsconfig.json --noEmit"
+    "build": "tsc -b --force",
+    "lint": "tsc -b --force"
   },
   "devDependencies": {
     "typescript": "^5.7.2"

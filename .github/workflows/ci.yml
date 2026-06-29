@@ -62,6 +62,9 @@ jobs:
       - name: Lint
         run: pnpm lint
 
+      - name: Build shared packages
+        run: pnpm --filter @africatourismgate/types build
+
       - name: Build API, admin, web
         run: >-
           pnpm --filter @africatourismgate/api

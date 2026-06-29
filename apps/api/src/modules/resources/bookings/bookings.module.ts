@@ -33,6 +33,8 @@ import { TourGuidesModule } from '../tour-guides/tour-guides.module';
 import { BookingAssistedEmailService } from './booking-assisted-email.service';
 import { BookingApprovalService } from './booking-approval.service';
 import { BookingMessagesService } from './booking-messages.service';
+import { BookingNotificationsService } from './booking-notifications.service';
+import { BookingPaymentReminderService } from './booking-payment-reminder.service';
 import { BookingsController } from './bookings.controller';
 import { BookingsService } from './bookings.service';
 
@@ -75,7 +77,13 @@ import { BookingsService } from './bookings.service';
     BookingMessagesService,
     BookingApprovalService,
     BookingAssistedEmailService,
+    BookingNotificationsService,
+    BookingPaymentReminderService,
   ],
-  exports: [BookingEngineService, BookingStatusHistoryService],
+  exports: [
+    BookingEngineService,
+    BookingStatusHistoryService,
+    BookingPaymentReminderService,
+  ],
 })
 export class BookingsModule {}

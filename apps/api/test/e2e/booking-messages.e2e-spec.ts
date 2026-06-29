@@ -1,10 +1,12 @@
 import type { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { apiPath, authHeader, loginAsSeedAdmin } from './auth-client';
-import { BOOKING_E2E_DATE, SEED_ROOM_ID } from './constants';
+import { SEED_ROOM_ID } from './constants';
 import { createE2eApp } from './create-app';
 
 const MESSAGES_E2E_DATE = '2099-08-22';
+/** Isolated from other e2e suites — availability is ensured in-test, not in beforeAll. */
+const OTHER_USER_BOOKING_DATE = '2099-08-25';
 const CUSTOMER_EMAIL = `booking-messages-e2e-${Date.now()}@example.com`;
 const CUSTOMER_PASSWORD = 'ChangeMe123!';
 
@@ -68,6 +70,33 @@ describe('Booking messages (e2e)', () => {
     expect(res.body.body).toContain('examinons votre demande');
   });
 
+  it('admin reply sets actionRequired until customer reads thread', async () => {
+    const listAfterReply = await request(app.getHttpServer())
+      .get(apiPath('/bookings'))
+      .set(authHeader(customerToken))
+      .expect(200);
+
+    const row = (listAfterReply.body.data as Array<{ id: string; actionRequired?: boolean }>).find(
+      (item) => item.id === bookingId,
+    );
+    expect(row?.actionRequired).toBe(true);
+
+    await request(app.getHttpServer())
+      .get(apiPath(`/bookings/${bookingId}/messages`))
+      .set(authHeader(customerToken))
+      .expect(200);
+
+    const listAfterRead = await request(app.getHttpServer())
+      .get(apiPath('/bookings'))
+      .set(authHeader(customerToken))
+      .expect(200);
+
+    const rowAfterRead = (
+      listAfterRead.body.data as Array<{ id: string; actionRequired?: boolean }>
+    ).find((item) => item.id === bookingId);
+    expect(rowAfterRead?.actionRequired).toBe(false);
+  });
+
   it('customer and admin see the full thread', async () => {
     const customerView = await request(app.getHttpServer())
       .get(apiPath(`/bookings/${bookingId}/messages`))
@@ -87,6 +116,8 @@ describe('Booking messages (e2e)', () => {
   });
 
   it('customer cannot read messages on another user booking', async () => {
+    await ensureRoomAvailabilityForDate(app, adminToken, OTHER_USER_BOOKING_DATE, 1);
+
     const other = await request(app.getHttpServer())
       .post(apiPath('/bookings/request'))
       .set(authHeader(adminToken))
@@ -95,8 +126,8 @@ describe('Booking messages (e2e)', () => {
           {
             itemType: 'room',
             referenceId: SEED_ROOM_ID,
-            startDate: BOOKING_E2E_DATE,
-            endDate: BOOKING_E2E_DATE,
+            startDate: OTHER_USER_BOOKING_DATE,
+            endDate: OTHER_USER_BOOKING_DATE,
             quantity: 1,
           },
         ],

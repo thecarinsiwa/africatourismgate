@@ -1548,6 +1548,12 @@ export class ApiClient {
     );
   }
 
+  touchBookingThreadPresence(bookingId: string): Promise<void> {
+    return this.request<void>(`/bookings/${bookingId}/thread-presence`, {
+      method: 'POST',
+    });
+  }
+
   listBookings(query?: BookingsListQuery): Promise<PaginatedResponse<BookingListItem>> {
     return fetchPaginated<BookingListItem>(this, '/bookings', query);
   }
@@ -1571,6 +1577,17 @@ export class ApiClient {
     body: CreateBookingReviewRequest,
   ): Promise<Review> {
     return this.request<Review>(`/bookings/${id}/reviews`, {
+      method: 'POST',
+      body,
+    });
+  }
+
+  createGuideReview(
+    bookingId: string,
+    guideId: string,
+    body: CreateBookingReviewRequest,
+  ): Promise<Review> {
+    return this.request<Review>(`/bookings/${bookingId}/guides/${guideId}/reviews`, {
       method: 'POST',
       body,
     });

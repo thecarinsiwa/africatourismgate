@@ -3,8 +3,10 @@ import { formatMoney, escapeHtml, layout, button, webBase } from './email.templa
 import type {
   BookingApprovedChatEmailPayload,
   BookingPaymentInviteEmailPayload,
+  BookingPaymentReminderEmailPayload,
   BookingRejectedEmailPayload,
   BookingRequestReceivedEmailPayload,
+  BookingStaffMessageEmailPayload,
 } from './email.types';
 
 function bookingRef(bookingId: string): string {
@@ -127,5 +129,48 @@ ${button(payload.paymentUrl, 'Payer maintenant', branding)}
     { webUrl: payload.webUrl },
   );
   const text = `Bonjour ${payload.firstName},\n\nRéglez votre réservation ${payload.bookingId.slice(0, 8)} (${formatMoney(payload.totalCents, payload.currency)}) : ${payload.paymentUrl}`;
+  return { subject, html, text };
+}
+
+export function renderBookingStaffMessageEmail(
+  payload: BookingStaffMessageEmailPayload,
+  branding: EmailBrandingValue,
+): { subject: string; html: string; text: string } {
+  const name = escapeHtml(payload.firstName.trim() || 'Client');
+  const preview = escapeHtml(payload.messagePreview.trim());
+  const subject = `Nouveau message de notre équipe — réservation ${payload.bookingId.slice(0, 8)}`;
+  const html = layout(
+    subject,
+    `<h1 style="margin:0 0 16px;font-size:22px;">Nouveau message</h1>
+<p style="margin:0 0 16px;line-height:1.6;">Bonjour ${name},</p>
+<p style="margin:0 0 16px;line-height:1.6;">Notre équipe vous a répondu au sujet de votre réservation <strong>${bookingRef(payload.bookingId)}</strong>.</p>
+<p style="margin:0 0 16px;padding:12px 16px;background:#f4f6f5;border-radius:8px;border-left:4px solid #0d9488;line-height:1.6;">${preview}</p>
+${button(payload.chatUrl, 'Voir la conversation', branding)}`,
+    branding,
+    { webUrl: payload.webUrl },
+  );
+  const text = `Bonjour ${payload.firstName},\n\nNouveau message sur votre réservation ${payload.bookingId.slice(0, 8)} :\n\n${payload.messagePreview.trim()}\n\nConversation : ${payload.chatUrl}`;
+  return { subject, html, text };
+}
+
+export function renderBookingPaymentReminderEmail(
+  payload: BookingPaymentReminderEmailPayload,
+  branding: EmailBrandingValue,
+): { subject: string; html: string; text: string } {
+  const name = escapeHtml(payload.firstName.trim() || 'Client');
+  const subject = `Rappel — finalisez le paiement de votre réservation`;
+  const total = escapeHtml(formatMoney(payload.totalCents, payload.currency));
+  const html = layout(
+    subject,
+    `<h1 style="margin:0 0 16px;font-size:22px;">Rappel de paiement</h1>
+<p style="margin:0 0 16px;line-height:1.6;">Bonjour ${name},</p>
+<p style="margin:0 0 16px;line-height:1.6;">Votre réservation <strong>${bookingRef(payload.bookingId)}</strong> est toujours en attente de règlement (<strong>${total}</strong>).</p>
+${itemListHtml(payload.itemTitles)}
+${button(payload.paymentUrl, 'Payer maintenant', branding)}
+<p style="margin:16px 0 0;font-size:13px;color:#71717a;line-height:1.5;">Si vous avez déjà payé, ignorez cet e-mail.</p>`,
+    branding,
+    { webUrl: payload.webUrl },
+  );
+  const text = `Bonjour ${payload.firstName},\n\nRappel : votre réservation ${payload.bookingId.slice(0, 8)} (${formatMoney(payload.totalCents, payload.currency)}) attend toujours le paiement.\n\n${payload.paymentUrl}`;
   return { subject, html, text };
 }

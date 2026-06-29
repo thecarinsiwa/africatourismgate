@@ -32,6 +32,14 @@ export class BookingAssistedEmailService {
     void this.sendPaymentInvite(bookingId, paymentUrl).catch(() => undefined);
   }
 
+  notifyStaffMessage(bookingId: string, messageBody: string): void {
+    void this.sendStaffMessage(bookingId, messageBody).catch(() => undefined);
+  }
+
+  notifyPaymentReminder(bookingId: string, paymentUrl: string): void {
+    void this.sendPaymentReminder(bookingId, paymentUrl).catch(() => undefined);
+  }
+
   private async buildBasePayload(
     bookingId: string,
   ): Promise<AssistedBookingEmailBase | null> {
@@ -98,6 +106,37 @@ export class BookingAssistedEmailService {
       return;
     }
     await this.emailService.sendBookingPaymentInvite({
+      ...base,
+      paymentUrl,
+    });
+  }
+
+  private messagePreview(body: string): string {
+    const trimmed = body.trim();
+    if (trimmed.length <= 280) {
+      return trimmed;
+    }
+    return `${trimmed.slice(0, 277)}…`;
+  }
+
+  private async sendStaffMessage(bookingId: string, messageBody: string): Promise<void> {
+    const base = await this.buildBasePayload(bookingId);
+    if (!base) {
+      return;
+    }
+    await this.emailService.sendBookingStaffMessage({
+      ...base,
+      chatUrl: this.chatUrl(bookingId, base.webUrl),
+      messagePreview: this.messagePreview(messageBody),
+    });
+  }
+
+  private async sendPaymentReminder(bookingId: string, paymentUrl: string): Promise<void> {
+    const base = await this.buildBasePayload(bookingId);
+    if (!base) {
+      return;
+    }
+    await this.emailService.sendBookingPaymentReminder({
       ...base,
       paymentUrl,
     });

@@ -12,15 +12,19 @@ import {
 import {
   renderBookingApprovedChatEmail,
   renderBookingPaymentInviteEmail,
+  renderBookingPaymentReminderEmail,
   renderBookingRejectedEmail,
   renderBookingRequestReceivedEmail,
+  renderBookingStaffMessageEmail,
 } from './assisted-booking.email.templates';
 import type {
   BookingApprovedChatEmailPayload,
   BookingConfirmationEmailPayload,
   BookingPaymentInviteEmailPayload,
+  BookingPaymentReminderEmailPayload,
   BookingRejectedEmailPayload,
   BookingRequestReceivedEmailPayload,
+  BookingStaffMessageEmailPayload,
   PasswordResetEmailPayload,
   SendMailResult,
   WelcomeEmailPayload,
@@ -95,6 +99,22 @@ export class EmailService {
   ): Promise<SendMailResult> {
     const branding = await this.resolveBranding();
     const { subject, html, text } = renderBookingPaymentInviteEmail(payload, branding);
+    return this.send('service', { to: payload.to, subject, html, text });
+  }
+
+  async sendBookingStaffMessage(
+    payload: BookingStaffMessageEmailPayload,
+  ): Promise<SendMailResult> {
+    const branding = await this.resolveBranding();
+    const { subject, html, text } = renderBookingStaffMessageEmail(payload, branding);
+    return this.send('service', { to: payload.to, subject, html, text });
+  }
+
+  async sendBookingPaymentReminder(
+    payload: BookingPaymentReminderEmailPayload,
+  ): Promise<SendMailResult> {
+    const branding = await this.resolveBranding();
+    const { subject, html, text } = renderBookingPaymentReminderEmail(payload, branding);
     return this.send('service', { to: payload.to, subject, html, text });
   }
 
