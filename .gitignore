@@ -14,3 +14,9 @@ coverage
 .idea
 .vscode/*.log
 *.tsbuildinfo
+
+# TypeScript emit must not live next to package sources
+packages/types/src/*.js
+packages/types/src/*.d.ts
+packages/types/src/*.js.map
+packages/types/src/*.d.ts.map
