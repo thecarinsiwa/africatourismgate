@@ -17,10 +17,10 @@ const entityList = [
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      // Later files override earlier ones — .env.local must stay last (SMTP, secrets).
       envFilePath: [
         join(__dirname, '../../../../.env'),
         join(__dirname, '../../../../.env.local'),
-        '.env',
       ],
     }),
     TypeOrmModule.forRootAsync({

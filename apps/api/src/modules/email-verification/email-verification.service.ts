@@ -81,20 +81,20 @@ export class EmailVerificationService {
     });
     await this.repository.save(row);
 
-    void this.emailService
-      .sendOperationAlert({
-        to: email,
-        firstName: params.firstName,
-        purpose: params.purpose,
-        code,
-        verificationId: row.id,
-        expiresInMinutes: Math.ceil(OPERATION_CODE_TTL_SECONDS / 60),
-        metadata: params.metadata,
-      })
-      .catch((err) => {
-        const message = err instanceof Error ? err.message : String(err);
-        this.logger.warn(`Operation alert email failed for ${email}: ${message}`);
-      });
+    const result = await this.emailService.sendOperationAlert({
+      to: email,
+      firstName: params.firstName,
+      purpose: params.purpose,
+      code,
+      verificationId: row.id,
+      expiresInMinutes: Math.ceil(OPERATION_CODE_TTL_SECONDS / 60),
+      metadata: params.metadata,
+    });
+    if (!result.sent) {
+      this.logger.warn(
+        `Operation alert email was not sent to ${email} (check EMAIL_TRANSPORT / SMTP)`,
+      );
+    }
 
     return { verificationId: row.id, code };
   }

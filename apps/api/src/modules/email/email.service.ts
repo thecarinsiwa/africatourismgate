@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DEFAULT_EMAIL_BRANDING } from './email-branding.constants';
 import nodemailer, { type Transporter } from 'nodemailer';
@@ -40,7 +40,7 @@ type EmailTransportMode = 'smtp' | 'mailpit' | 'ethereal' | 'disabled';
 type EmailChannel = 'service' | 'support';
 
 @Injectable()
-export class EmailService {
+export class EmailService implements OnModuleInit {
   private readonly logger = new Logger(EmailService.name);
   private serviceTransporter: Transporter | null | undefined;
   private supportTransporter: Transporter | null | undefined;
@@ -50,6 +50,12 @@ export class EmailService {
     private readonly config: ConfigService,
     private readonly brandingService: EmailBrandingService,
   ) {}
+
+  onModuleInit(): void {
+    this.logger.log(
+      `Email transport: ${this.getTransportMode()} (enabled=${this.isEnabled()})`,
+    );
+  }
 
   async sendPasswordReset(
     payload: PasswordResetEmailPayload,

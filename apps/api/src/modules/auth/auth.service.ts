@@ -179,13 +179,7 @@ export class AuthService {
     });
 
     const tokens = await this.issueTokenPair(user);
-    void this.emailService
-      .sendWelcome({
-        to: user.email,
-        firstName: user.firstName,
-        webUrl: this.config.get<string>('NEXT_PUBLIC_WEB_URL'),
-      })
-      .catch(() => undefined);
+    void this.notifyWelcome(user);
 
     return {
       ...tokens,
@@ -275,13 +269,7 @@ export class AuthService {
     await this.usersRepo.save(user);
 
     const tokens = await this.issueTokenPair(user);
-    void this.emailService
-      .sendLoginNotification({
-        to: user.email,
-        firstName: user.firstName,
-        webUrl: this.config.get<string>('NEXT_PUBLIC_WEB_URL'),
-      })
-      .catch(() => undefined);
+    void this.notifyLogin(user);
     return { ...tokens, user: toAuthUserDto(user) };
   }
 
@@ -359,13 +347,7 @@ export class AuthService {
     await this.usersRepo.save(user);
 
     const tokens = await this.issueTokenPair(user);
-    void this.emailService
-      .sendLoginNotification({
-        to: user.email,
-        firstName: user.firstName,
-        webUrl: this.config.get<string>('NEXT_PUBLIC_WEB_URL'),
-      })
-      .catch(() => undefined);
+    void this.notifyLogin(user);
     return { ...tokens, user: toAuthUserDto(user) };
   }
 
@@ -403,13 +385,7 @@ export class AuthService {
     await this.usersRepo.save(user);
 
     if (row.purpose === 'register' || row.purpose === 'google_signup') {
-      void this.emailService
-        .sendWelcome({
-          to: user.email,
-          firstName: user.firstName,
-          webUrl: this.config.get<string>('NEXT_PUBLIC_WEB_URL'),
-        })
-        .catch(() => undefined);
+      void this.notifyWelcome(user);
     }
 
     const tokens = await this.issueTokenPair(user);
@@ -730,6 +706,42 @@ export class AuthService {
       throw new Error(`Missing required environment variable: ${key}`);
     }
     return value;
+  }
+
+  private async notifyLogin(user: Users): Promise<void> {
+    try {
+      const result = await this.emailService.sendLoginNotification({
+        to: user.email,
+        firstName: user.firstName,
+        webUrl: this.config.get<string>('NEXT_PUBLIC_WEB_URL'),
+      });
+      if (!result.sent) {
+        this.logger.warn(
+          `Login notification was not sent to ${user.email} (check EMAIL_TRANSPORT / SMTP)`,
+        );
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      this.logger.warn(`Login notification failed for ${user.email}: ${message}`);
+    }
+  }
+
+  private async notifyWelcome(user: Users): Promise<void> {
+    try {
+      const result = await this.emailService.sendWelcome({
+        to: user.email,
+        firstName: user.firstName,
+        webUrl: this.config.get<string>('NEXT_PUBLIC_WEB_URL'),
+      });
+      if (!result.sent) {
+        this.logger.warn(
+          `Welcome email was not sent to ${user.email} (check EMAIL_TRANSPORT / SMTP)`,
+        );
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      this.logger.warn(`Welcome email failed for ${user.email}: ${message}`);
+    }
   }
 }
 
