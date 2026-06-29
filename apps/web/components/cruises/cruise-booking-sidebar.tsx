@@ -5,6 +5,7 @@ import { formatCruisePrice } from '../../lib/cruises/listings';
 import { resolveCabinDeck } from '../../lib/cruises/cabins';
 import { formatCruisePortLabel } from '../../lib/cruises/ports';
 import type { CruiseCabinOffer, CruiseSailingDetail } from '../../lib/cruises/types';
+import { useBookingCtaLabel } from '../../lib/bookings/use-booking-cta';
 import { useTranslations } from '../../lib/i18n/locale-provider';
 import type { Translations } from '../../lib/i18n/translations';
 import { useState } from 'react';
@@ -45,6 +46,7 @@ function CruiseBookingContent({
   locale,
 }: CruiseBookingSidebarProps) {
   const trustHints = useBookingSidebarTrustHints();
+  const ctaLabel = useBookingCtaLabel('cabin');
   const canReserve =
     selectedCabin != null &&
     selectedCabin.availableCount > 0 &&
@@ -111,7 +113,7 @@ function CruiseBookingContent({
         </BookingSidebarHint>
       )}
 
-      <BookingSidebarCta label={t.bookNow} disabled={!canReserve} onClick={onReserve} />
+      <BookingSidebarCta label={ctaLabel} disabled={!canReserve} onClick={onReserve} />
       <BookingSidebarTrustHints items={trustHints} />
     </BookingSidebarBody>
   );
@@ -129,6 +131,7 @@ export function CruiseBookingMobileBar(props: CruiseBookingSidebarProps) {
   const { bookingSidebar } = useTranslations();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { detail, selectedCabin, guests, onReserve, t } = props;
+  const ctaLabel = useBookingCtaLabel('cabin');
   const canReserve =
     selectedCabin != null &&
     selectedCabin.availableCount > 0 &&
@@ -153,7 +156,7 @@ export function CruiseBookingMobileBar(props: CruiseBookingSidebarProps) {
             : undefined
         }
         hint={selectedCabin ? undefined : t.selectCabinHint}
-        ctaLabel={t.bookNow}
+        ctaLabel={ctaLabel}
         ctaDisabled={!canReserve}
         onCtaClick={onReserve}
         configureLabel={bookingSidebar.mobileConfigure}

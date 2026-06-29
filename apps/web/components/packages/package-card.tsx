@@ -10,6 +10,7 @@ import {
 } from '../../lib/packages/listings';
 import type { PackageListItem } from '../../lib/packages/types';
 import type { Translations } from '../../lib/i18n/translations';
+import { useBookingCtaLabel } from '../../lib/bookings/use-booking-cta';
 import { ProductCard } from '../shared';
 import { PackagePriceDisplay } from './package-price-display';
 
@@ -20,6 +21,7 @@ type PackageCardProps = {
 };
 
 export function PackageCard({ pkg, t, searchParams = {} }: PackageCardProps) {
+  const ctaLabel = useBookingCtaLabel('package');
   const detailHref = buildPackageDetailHref(pkg.id, searchParams);
   const reserveHref = buildPackageDetailHref(pkg.id, searchParams, '#configure');
   const itemsLabel = t.itemsIncluded.replace('{n}', String(pkg.itemCount));
@@ -109,7 +111,7 @@ export function PackageCard({ pkg, t, searchParams = {} }: PackageCardProps) {
             href={reserveHref}
             className="inline-flex min-h-[44px] items-center rounded-lg bg-primary px-5 py-2 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover"
           >
-            {t.bookNow}
+            {ctaLabel}
           </Link>
         </>
       }

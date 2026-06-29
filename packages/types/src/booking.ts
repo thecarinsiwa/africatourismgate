@@ -1,4 +1,5 @@
 import type { Review } from './review.js';
+import type { BookingMode } from './tour-guide.js';
 
 export type BookingStatus =
   | 'draft'
@@ -88,6 +89,7 @@ export interface BookingCheckoutPreview {
   currency: string;
   appliedPackageDiscount: AppliedPackageCheckoutDiscount | null;
   appliedDiscount: AppliedCheckoutDiscount | null;
+  bookingMode: BookingMode;
 }
 
 export interface BookingItem {

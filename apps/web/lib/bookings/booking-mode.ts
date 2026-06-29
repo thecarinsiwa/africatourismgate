@@ -1,20 +1,33 @@
-import type { BookingMode } from '@africatourismgate/types';
+import type { BookingMode, ResolvedBookingItemTypeModes } from '@africatourismgate/types';
+import {
+  DEFAULT_BOOKING_ITEM_TYPE_MODES,
+  normalizeBookingItemTypeModes,
+  resolveBookingModeForItemType,
+} from '@africatourismgate/types/tour-guide';
 import type { ReservationDraft } from '../reservations/flow';
 
-/** Seed defaults until CE-11 exposes organization_settings.item_type_modes. */
-const DEFAULT_ITEM_TYPE_MODES: Record<ReservationDraft['kind'], BookingMode> = {
-  room: 'immediate',
-  flight_class: 'immediate',
-  vehicle: 'immediate',
-  cabin: 'immediate',
-  activity_schedule: 'assisted',
-  package: 'assisted',
-};
+export { DEFAULT_BOOKING_ITEM_TYPE_MODES, normalizeBookingItemTypeModes };
 
-export function resolveBookingMode(draft: ReservationDraft): BookingMode {
-  return DEFAULT_ITEM_TYPE_MODES[draft.kind];
+export function resolveBookingMode(
+  draft: ReservationDraft,
+  modes: ResolvedBookingItemTypeModes = DEFAULT_BOOKING_ITEM_TYPE_MODES,
+): BookingMode {
+  return resolveBookingModeForItemType(draft.kind, modes);
 }
 
-export function isAssistedBookingDraft(draft: ReservationDraft): boolean {
-  return resolveBookingMode(draft) === 'assisted';
+export function isAssistedBookingDraft(
+  draft: ReservationDraft,
+  modes?: ResolvedBookingItemTypeModes,
+): boolean {
+  return resolveBookingMode(draft, modes) === 'assisted';
+}
+
+export function getBookingCtaLabel(
+  kind: ReservationDraft['kind'],
+  labels: { bookNow: string; requestBooking: string },
+  modes: ResolvedBookingItemTypeModes = DEFAULT_BOOKING_ITEM_TYPE_MODES,
+): string {
+  return resolveBookingModeForItemType(kind, modes) === 'assisted'
+    ? labels.requestBooking
+    : labels.bookNow;
 }

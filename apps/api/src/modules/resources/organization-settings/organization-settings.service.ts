@@ -11,6 +11,11 @@ import type {
   AuthVisualDecorIcon,
   PublicAuthVisual,
   PublicAuthVisualIcon,
+  ResolvedBookingItemTypeModes,
+} from '@africatourismgate/types';
+import {
+  DEFAULT_BOOKING_ITEM_TYPE_MODES,
+  normalizeBookingItemTypeModes,
 } from '@africatourismgate/types';
 import { OrgScopeService, PLATFORM_ORG_ID } from '../../../common/org-scope/org-scope.service';
 import { CrudService } from '../../../common/crud/crud.service';
@@ -28,6 +33,7 @@ import {
 } from './dto/organization-setting.dto';
 import { PublicBrandingDto } from './dto/public-branding.dto';
 import { PublicContactDto } from './dto/public-contact.dto';
+import { PublicBookingModesDto } from './dto/public-booking-modes.dto';
 import { OrganizationSettingsListQueryDto } from './dto/organization-settings-list-query.dto';
 import { validateSettingValue } from './validate-setting-value';
 
@@ -333,6 +339,36 @@ export class OrganizationSettingsService extends CrudService<OrganizationSetting
       instagramUrl:
         optionalPublicString(value.instagramUrl) ?? DEFAULT_PUBLIC_CONTACT.instagramUrl,
     };
+  }
+
+  async findPublicBookingModes(organizationSlug?: string): Promise<PublicBookingModesDto> {
+    const organization = await this.resolvePublicOrganization(organizationSlug);
+    return this.getResolvedItemTypeModes(organization.id);
+  }
+
+  async getResolvedItemTypeModes(
+    organizationId: string = PLATFORM_ORG_ID,
+  ): Promise<ResolvedBookingItemTypeModes> {
+    const setting = await this.settingsRepository.findOne({
+      where: {
+        organizationId,
+        settingGroup: 'booking',
+        settingKey: 'item_type_modes',
+        deletedAt: IsNull(),
+      },
+    });
+
+    if (
+      !setting?.settingValue ||
+      typeof setting.settingValue !== 'object' ||
+      Array.isArray(setting.settingValue)
+    ) {
+      return { ...DEFAULT_BOOKING_ITEM_TYPE_MODES };
+    }
+
+    return normalizeBookingItemTypeModes(
+      setting.settingValue as Partial<ResolvedBookingItemTypeModes>,
+    );
   }
 
   private async resolvePublicOrganization(

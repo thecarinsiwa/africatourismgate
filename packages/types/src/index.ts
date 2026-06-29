@@ -233,11 +233,22 @@ export type {
   BookingStatus,
 } from './booking.js';
 
+export {
+  BOOKING_ITEM_TYPE_KEYS,
+  DEFAULT_BOOKING_ITEM_TYPE_MODES,
+  isBookingMode,
+  normalizeBookingItemTypeModes,
+  resolveBookingModeForItemType,
+  resolveCheckoutBookingMode,
+} from './tour-guide.js';
+
 export type {
   BookingGuideAssignment,
   BookingGuideRole,
+  BookingItemTypeKey,
   BookingItemTypeModes,
   BookingMode,
+  ResolvedBookingItemTypeModes,
   TourGuide,
   TourGuideStatus,
   TourGuideType,

@@ -5,6 +5,7 @@ import { formatFlightPrice } from '../../lib/flights/listings';
 import type { FlightDetail, FlightDetailClass } from '../../lib/flights/types';
 import type { Translations } from '../../lib/i18n/translations';
 import { useState } from 'react';
+import { useBookingCtaLabel } from '../../lib/bookings/use-booking-cta';
 import { useTranslations } from '../../lib/i18n/locale-provider';
 import {
   BookingSidebarBody,
@@ -43,6 +44,7 @@ function FlightBookingContent({
   locale,
 }: FlightBookingSidebarProps) {
   const trustHints = useBookingSidebarTrustHints();
+  const ctaLabel = useBookingCtaLabel('flight_class');
   const hasDate = Boolean(detail.departureDate);
   const canReserve = hasDate && selectedClass != null && selectedClass.availableSeats >= passengers;
 
@@ -101,7 +103,7 @@ function FlightBookingContent({
         </BookingSidebarHint>
       )}
 
-      <BookingSidebarCta label={t.bookNow} disabled={!canReserve} onClick={onReserve} />
+      <BookingSidebarCta label={ctaLabel} disabled={!canReserve} onClick={onReserve} />
       <BookingSidebarTrustHints items={trustHints} />
     </BookingSidebarBody>
   );
@@ -119,6 +121,7 @@ export function FlightBookingMobileBar(props: FlightBookingSidebarProps) {
   const { bookingSidebar } = useTranslations();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { detail, selectedClass, passengers, onReserve, t } = props;
+  const ctaLabel = useBookingCtaLabel('flight_class');
   const canReserve =
     Boolean(detail.departureDate) &&
     selectedClass != null &&
@@ -143,7 +146,7 @@ export function FlightBookingMobileBar(props: FlightBookingSidebarProps) {
             : undefined
         }
         hint={selectedClass ? undefined : t.selectClassHint}
-        ctaLabel={t.bookNow}
+        ctaLabel={ctaLabel}
         ctaDisabled={!canReserve}
         onCtaClick={onReserve}
         configureLabel={bookingSidebar.mobileConfigure}

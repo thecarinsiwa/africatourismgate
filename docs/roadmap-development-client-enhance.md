@@ -534,6 +534,30 @@ Défaut suggéré : activity, package → assisted ; room, flight_class, vehicle
 À la fin : fichiers + doc des défauts.
 ```
 
+**Implémenté (CE-11)** — configuration mode réservation par vertical :
+
+| Zone | Fichier |
+|------|---------|
+| Constantes & résolution partagées | `packages/types/src/tour-guide.ts` |
+| Seed / migration CE-1 | `database/migrations/add_assisted_booking_and_tour_guides.sql` (`booking.item_type_modes`) |
+| API publique `GET /organization-settings/public/booking-modes` | `organization-settings.controller.ts`, `organization-settings.service.ts` |
+| `bookingMode` dans checkout-preview | `booking-engine.service.ts`, `packages/types/src/booking.ts` |
+| Admin — réglage par org | `apps/admin/components/parametres/organization-settings-form.tsx` |
+| Web — provider + CTA dynamiques | `booking-modes-provider.tsx`, `lib/bookings/booking-mode.ts`, `use-booking-cta.ts`, sidebars verticales |
+
+**Défauts plateforme (`DEFAULT_BOOKING_ITEM_TYPE_MODES`)**
+
+| `item_type` | Mode par défaut |
+|-------------|-----------------|
+| `room` | `immediate` |
+| `flight_class` | `immediate` |
+| `vehicle` | `immediate` |
+| `cabin` | `immediate` |
+| `activity_schedule` | `assisted` |
+| `package` | `assisted` |
+
+Les valeurs en base (`organization_settings`, groupe `booking`, clé `item_type_modes`) fusionnent avec ces défauts ; champs absents conservent le défaut.
+
 ### CE-12 — Notifications
 
 **Branche :** `feature/ce-booking-notifications`

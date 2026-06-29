@@ -4,7 +4,7 @@ import type { PropertyDetail, PropertyDetailRoom } from '@africatourismgate/type
 import { useState } from 'react';
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import { formatHotelPrice } from '../../lib/hotels/listings';
-import { useTranslations } from '../../lib/i18n/locale-provider';
+import { useBookingCtaLabel } from '../../lib/bookings/use-booking-cta';
 import type { Translations } from '../../lib/i18n/translations';
 import {
   BookingSidebarBody,
@@ -24,7 +24,7 @@ import {
   useBookingSidebarTrustHints,
 } from '../shared/booking-sidebar-shell';
 import { HOTEL_MAX_GUESTS } from '../../lib/hotels/listings';
-import { useTranslations as useAppTranslations } from '../../lib/i18n/locale-provider';
+import { useTranslations, useTranslations as useAppTranslations } from '../../lib/i18n/locale-provider';
 
 type HotelBookingSidebarProps = {
   detail: PropertyDetail;
@@ -77,6 +77,7 @@ function HotelBookingContent({
 }: HotelBookingSidebarProps) {
   const { bookingSidebar } = useAppTranslations();
   const trustHints = useBookingSidebarTrustHints();
+  const ctaLabel = useBookingCtaLabel('room');
   const hasDates = Boolean(checkIn && checkOut && checkOut > checkIn);
   const total = computeTotal(detail, selectedRoom);
   const canReserve = hasDates && selectedRoom != null && selectedRoom.available;
@@ -159,7 +160,7 @@ function HotelBookingContent({
         </BookingSidebarHint>
       )}
 
-      <BookingSidebarCta label={t.bookNow} disabled={!canReserve} onClick={onReserve} />
+      <BookingSidebarCta label={ctaLabel} disabled={!canReserve} onClick={onReserve} />
       <BookingSidebarTrustHints items={trustHints} />
     </BookingSidebarBody>
   );
@@ -176,6 +177,7 @@ export function HotelBookingSidebar(props: HotelBookingSidebarProps) {
 export function HotelBookingMobileBar(props: HotelBookingSidebarProps) {
   const { bookingSidebar } = useTranslations();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const ctaLabel = useBookingCtaLabel('room');
   const total = computeTotal(props.detail, props.selectedRoom);
   const hasDates = Boolean(props.checkIn && props.checkOut && props.checkOut > props.checkIn);
   const canReserve =
@@ -196,7 +198,7 @@ export function HotelBookingMobileBar(props: HotelBookingSidebarProps) {
         priceLabel={total ? props.t.totalStay : undefined}
         priceAmount={total ? formatHotelPrice(total.cents, total.currency) : undefined}
         hint={total ? undefined : props.t.selectDatesHint}
-        ctaLabel={props.t.bookNow}
+        ctaLabel={ctaLabel}
         ctaDisabled={!canReserve}
         onCtaClick={props.onReserve}
         configureLabel={bookingSidebar.mobileConfigure}
