@@ -1037,6 +1037,19 @@ export const es: Translations = {
           loadError: 'No se pudo cargar la conversación.',
           sendError: 'No se pudo enviar el mensaje.',
         },
+        guideReviews: {
+          sectionTitle: 'Su guía',
+          sectionHint:
+            'Comparta su experiencia con el o los guías asignados a su estancia.',
+          rolePrimary: 'Guía principal',
+          roleSecondary: 'Guía secundario',
+          leaveReview: 'Valorar a este guía',
+          leaveReviewHint: 'Su reseña se publicará tras la moderación de nuestro equipo.',
+          submitReview: 'Enviar reseña',
+          yourReview: 'Su reseña',
+          reviewPublished:
+            'Gracias, su reseña fue enviada y se publicará tras la moderación.',
+        },
       },
     },
     paymentMethods: {

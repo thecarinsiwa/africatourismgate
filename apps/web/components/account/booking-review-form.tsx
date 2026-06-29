@@ -31,6 +31,7 @@ type BookingReviewFormLabels = {
 
 type Props = {
   bookingId: string;
+  guideId?: string;
   labels: BookingReviewFormLabels;
   onSubmitted: (review: Review) => void;
 };
@@ -39,7 +40,7 @@ function formatCharCount(template: string, current: number, max: number): string
   return template.replace('{current}', String(current)).replace('{max}', String(max));
 }
 
-export function BookingReviewForm({ bookingId, labels, onSubmitted }: Props) {
+export function BookingReviewForm({ bookingId, guideId, labels, onSubmitted }: Props) {
   const [rating, setRating] = useState(0);
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
@@ -66,7 +67,9 @@ export function BookingReviewForm({ bookingId, labels, onSubmitted }: Props) {
     setSubmitting(true);
     try {
       const client = await getAccountApiClient();
-      const review = await client.createBookingReview(bookingId, payload);
+      const review = guideId
+        ? await client.createGuideReview(bookingId, guideId, payload)
+        : await client.createBookingReview(bookingId, payload);
       onSubmitted(review);
     } catch (err) {
       if (err instanceof ApiHttpError) {
