@@ -578,6 +578,32 @@ Objectif :
 À la fin : fichiers + liste des événements notifiés.
 ```
 
+**Implémenté (CE-12)** — notifications réservation assistée :
+
+| Zone | Fichier |
+|------|---------|
+| Migration état thread / rappel | `database/migrations/add_booking_notification_state.sql` |
+| Présence, badge, candidats rappel | `booking-notifications.service.ts` |
+| E-mail message staff + rappel paiement | `assisted-booking.email.templates.ts`, `booking-assisted-email.service.ts` |
+| Hook message staff (offline) | `booking-messages.service.ts` |
+| `actionRequired` liste client | `bookings.service.ts`, `packages/types/src/booking.ts` |
+| Heartbeat chat | `POST /bookings/:id/thread-presence`, `booking-messages-section.tsx` |
+| Badge compte client | `account-bookings-list.tsx` |
+| Job rappel 7 jours | `booking-payment-reminder.service.ts`, `src/cli/run-payment-reminders.ts` (`pnpm --filter @africatourismgate/api payment-reminders`) |
+
+**Événements notifiés par e-mail**
+
+| Événement | Template | Déclencheur (CE-6 existant + CE-12) |
+|-----------|----------|-------------------------------------|
+| Demande assistée reçue | `booking_request_received` | Soumission `POST /bookings/request` |
+| Demande approuvée | `booking_approved_chat` | `POST /bookings/:id/approve` |
+| Demande refusée | `booking_rejected` | `POST /bookings/:id/reject` |
+| Invitation paiement | `booking_payment_invite` | `POST /bookings/:id/invite-payment` |
+| Nouveau message équipe | `booking_staff_message` | Message staff si client absent du chat (> 90 s) |
+| Rappel paiement 7 jours | `booking_payment_reminder` | Job `payment-reminders` si `pending_payment` + lien Stripe depuis > 7 j |
+
+**Badge « action requise »** (liste `/account/reservations`) : `pending_payment` avec invitation Stripe **ou** message staff non lu depuis la dernière consultation du fil.
+
 ### CE-13 — Évaluations guides (basse priorité)
 
 **Branche :** `feature/ce-guide-reviews`

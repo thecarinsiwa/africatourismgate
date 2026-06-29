@@ -68,6 +68,33 @@ describe('Booking messages (e2e)', () => {
     expect(res.body.body).toContain('examinons votre demande');
   });
 
+  it('admin reply sets actionRequired until customer reads thread', async () => {
+    const listAfterReply = await request(app.getHttpServer())
+      .get(apiPath('/bookings'))
+      .set(authHeader(customerToken))
+      .expect(200);
+
+    const row = (listAfterReply.body.data as Array<{ id: string; actionRequired?: boolean }>).find(
+      (item) => item.id === bookingId,
+    );
+    expect(row?.actionRequired).toBe(true);
+
+    await request(app.getHttpServer())
+      .get(apiPath(`/bookings/${bookingId}/messages`))
+      .set(authHeader(customerToken))
+      .expect(200);
+
+    const listAfterRead = await request(app.getHttpServer())
+      .get(apiPath('/bookings'))
+      .set(authHeader(customerToken))
+      .expect(200);
+
+    const rowAfterRead = (
+      listAfterRead.body.data as Array<{ id: string; actionRequired?: boolean }>
+    ).find((item) => item.id === bookingId);
+    expect(rowAfterRead?.actionRequired).toBe(false);
+  });
+
   it('customer and admin see the full thread', async () => {
     const customerView = await request(app.getHttpServer())
       .get(apiPath(`/bookings/${bookingId}/messages`))

@@ -234,6 +234,8 @@ export interface BookingListItem extends Booking {
   clientFirstName: string;
   clientLastName: string;
   organizationId: string | null;
+  /** Customer account list: payment invite or unread staff message. */
+  actionRequired?: boolean;
 }
 
 export interface BookingsListQuery {

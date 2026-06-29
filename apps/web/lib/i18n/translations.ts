@@ -865,6 +865,7 @@ export type Translations = {
       filterPending: string;
       filterCancelled: string;
       filterAria: string;
+      actionRequired: string;
       detail: {
         bookedOn: string;
         itemsCount: string;
@@ -2002,6 +2003,7 @@ const fr: Translations = {
       filterPending: 'En attente',
       filterCancelled: 'Annulées',
       filterAria: 'Filtrer par statut',
+      actionRequired: 'Action requise',
       detail: {
         bookedOn: 'Réservée le',
         itemsCount: 'Articles',
@@ -3163,6 +3165,7 @@ const en: Translations = {
       filterPending: 'Pending',
       filterCancelled: 'Cancelled',
       filterAria: 'Filter by status',
+      actionRequired: 'Action required',
       detail: {
         bookedOn: 'Booked on',
         itemsCount: 'Items',

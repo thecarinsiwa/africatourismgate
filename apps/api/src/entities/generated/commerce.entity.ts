@@ -23,6 +23,15 @@ export class Bookings extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'promotion_id', length: 36, nullable: true })
   promotionId!: string | null;
 
+  @Column({ type: 'datetime', name: 'customer_thread_last_seen_at', nullable: true })
+  customerThreadLastSeenAt!: Date | null;
+
+  @Column({ type: 'datetime', name: 'customer_thread_presence_at', nullable: true })
+  customerThreadPresenceAt!: Date | null;
+
+  @Column({ type: 'datetime', name: 'payment_reminder_sent_at', nullable: true })
+  paymentReminderSentAt!: Date | null;
+
 }
 
 @Entity('booking_items')

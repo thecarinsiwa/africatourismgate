@@ -971,6 +971,7 @@ export const es: Translations = {
       filterPending: 'Pendientes',
       filterCancelled: 'Canceladas',
       filterAria: 'Filtrar por estado',
+      actionRequired: 'Acción requerida',
       detail: {
         bookedOn: 'Reservado el',
         itemsCount: 'Elementos',

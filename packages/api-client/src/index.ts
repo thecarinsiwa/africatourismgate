@@ -1548,6 +1548,12 @@ export class ApiClient {
     );
   }
 
+  touchBookingThreadPresence(bookingId: string): Promise<void> {
+    return this.request<void>(`/bookings/${bookingId}/thread-presence`, {
+      method: 'POST',
+    });
+  }
+
   listBookings(query?: BookingsListQuery): Promise<PaginatedResponse<BookingListItem>> {
     return fetchPaginated<BookingListItem>(this, '/bookings', query);
   }

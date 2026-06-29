@@ -11,6 +11,7 @@ import { Bookings, Organizations, Payments, Users } from '../../../entities/gene
 import { CrudService } from '../../../common/crud/crud.service';
 import { BookingEngineService } from './booking-engine.service';
 import { BookingAssistedEmailService } from './booking-assisted-email.service';
+import { BookingNotificationsService } from './booking-notifications.service';
 import { BookingStatusHistoryService } from './booking-status-history.service';
 import { BookingAdminDetailDto } from './dto/booking-admin-detail.dto';
 import { BookingListItemDto } from './dto/booking-list-item.dto';
@@ -41,6 +42,7 @@ export class BookingsService extends CrudService<Bookings> {
     private readonly permissionsService: PermissionsService,
     private readonly reviewsService: ReviewsService,
     private readonly assistedEmail: BookingAssistedEmailService,
+    private readonly notifications: BookingNotificationsService,
   ) {
     super(bookingsRepository);
   }
@@ -175,6 +177,14 @@ export class BookingsService extends CrudService<Bookings> {
         : [];
     const userById = new Map(users.map((u) => [u.id, u]));
 
+    const customerView = !staff;
+    const paymentInvitedIds = customerView
+      ? await this.notifications.getPaymentInvitedBookingIds(bookings.map((b) => b.id))
+      : new Set<string>();
+    const unreadStaffIds = customerView
+      ? await this.notifications.getUnreadStaffMessageBookingIds(bookings.map((b) => b.id))
+      : new Set<string>();
+
     const data = bookings.map((booking) => {
       const client = userById.get(booking.userId);
       return {
@@ -190,6 +200,15 @@ export class BookingsService extends CrudService<Bookings> {
         clientFirstName: client?.firstName ?? '',
         clientLastName: client?.lastName ?? '',
         organizationId: client?.organizationId ?? null,
+        ...(customerView
+          ? {
+              actionRequired: this.notifications.computeActionRequired(
+                booking,
+                paymentInvitedIds,
+                unreadStaffIds,
+              ),
+            }
+          : {}),
       } satisfies BookingListItemDto;
     });
 
