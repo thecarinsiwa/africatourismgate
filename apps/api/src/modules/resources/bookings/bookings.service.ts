@@ -236,7 +236,7 @@ export class BookingsService extends CrudService<Bookings> {
       ? false
       : await this.reviewsService.canReview(id, currentUserId);
 
-    const [statusHistory, pendingStripePayments] = await Promise.all([
+    const [statusHistory, pendingStripePayments, guideReviewInvites] = await Promise.all([
       this.statusHistory.listByBookingId(id),
       this.paymentsRepository.find({
         where: {
@@ -247,6 +247,7 @@ export class BookingsService extends CrudService<Bookings> {
         },
         take: 1,
       }),
+      this.reviewsService.listGuideReviewInvitesForBooking(id, currentUserId),
     ]);
 
     return {
@@ -255,6 +256,7 @@ export class BookingsService extends CrudService<Bookings> {
       canReview,
       statusHistory,
       paymentInvited: pendingStripePayments.length > 0,
+      guideReviewInvites,
     };
   }
 
@@ -280,6 +282,28 @@ export class BookingsService extends CrudService<Bookings> {
     }
     return this.reviewsService.createForBooking(
       bookingId,
+      booking.userId,
+      dto,
+      currentUserId,
+    );
+  }
+
+  async createGuideReview(
+    bookingId: string,
+    guideId: string,
+    currentUserId: string,
+    dto: CreateBookingReviewDto,
+  ): Promise<ReviewDto> {
+    const booking = await this.assertBookingOwnerOrStaff(bookingId, currentUserId);
+    const staff = await this.permissionsService.hasAnyPermission(currentUserId, [
+      'users.read',
+    ]);
+    if (staff && booking.userId !== currentUserId) {
+      throw new ForbiddenException('Seul le client peut noter le guide.');
+    }
+    return this.reviewsService.createForGuideAssignment(
+      bookingId,
+      guideId,
       booking.userId,
       dto,
       currentUserId,

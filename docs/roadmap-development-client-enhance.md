@@ -623,6 +623,34 @@ Modération admin (réutiliser #56).
 À la fin : fichiers + flux post-séjour.
 ```
 
+**Implémenté (CE-13)** — avis guides post-séjour :
+
+| Zone | Fichier |
+|------|---------|
+| Migration `entity_type` + `tour_guide` | `database/migrations/add_tour_guide_reviews.sql` |
+| Types partagés | `packages/types/src/review.ts` (`GuideReviewInvite`, `tour_guide`), `packages/types/src/booking.ts` (`guideReviewInvites`) |
+| Invites + création avis guide | `apps/api/src/modules/resources/reviews/reviews.service.ts` |
+| Détail client + endpoint | `apps/api/src/modules/resources/bookings/bookings.service.ts`, `bookings.controller.ts` (`POST /bookings/:id/guides/:guideId/reviews`) |
+| Client API | `packages/api-client/src/index.ts` (`createGuideReview`) |
+| Compte client — invitation post-séjour | `apps/web/components/account/guide-review-invites-section.tsx`, `account-booking-detail.tsx`, `booking-review-form.tsx` |
+| Modération admin (#56) | `apps/admin/components/reviews/review-detail-page.tsx`, `reviews-list.tsx` (nom guide + lien réservation) |
+
+**Flux post-séjour**
+
+```
+Réservation confirmed + séjour terminé (isStayEnded) + guide(s) assigné(s)
+  → GET /bookings/:id (client) renvoie guideReviewInvites[] (canReview: true)
+  → Client soumet POST /bookings/:id/guides/:guideId/reviews
+  → Review créée (entity_type: tour_guide, entity_id: assignment.id, status: pending)
+  → Admin modère via /reviews existant (approuver / masquer / supprimer)
+```
+
+**Règles**
+
+- Un avis par assignation guide (`booking_guide_assignments.id`).
+- Même fenêtre que les avis réservation : statut `confirmed` et date de fin de séjour passée.
+- Les avis guides démarrent en `pending` (modération obligatoire avant publication publique).
+
 ### CE-14 — Documents de voyage / voucher PDF (basse priorité)
 
 **Branche :** `feature/ce-travel-documents`

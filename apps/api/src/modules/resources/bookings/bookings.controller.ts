@@ -173,6 +173,19 @@ export class BookingsController {
     return this.bookingsService.createBookingReview(id, user.id, dto);
   }
 
+  @Post(':id/guides/:guideId/reviews')
+  @HttpCode(HttpStatus.CREATED)
+  @RequirePermissions('reviews.write')
+  @ApiOperation({ summary: 'Submit a post-stay review for an assigned tour guide' })
+  createGuideReview(
+    @Param('id') id: string,
+    @Param('guideId') guideId: string,
+    @Body() dto: CreateBookingReviewDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.bookingsService.createGuideReview(id, guideId, user.id, dto);
+  }
+
   @Get(':id')
   @RequirePermissions('bookings.read')
   @ApiOperation({ summary: 'Get booking detail with client, items, payments, status history' })

@@ -1582,6 +1582,17 @@ export class ApiClient {
     });
   }
 
+  createGuideReview(
+    bookingId: string,
+    guideId: string,
+    body: CreateBookingReviewRequest,
+  ): Promise<Review> {
+    return this.request<Review>(`/bookings/${bookingId}/guides/${guideId}/reviews`, {
+      method: 'POST',
+      body,
+    });
+  }
+
   listBookingGuides(bookingId: string): Promise<BookingGuideAssignment[]> {
     return this.request<BookingGuideAssignment[]>(`/bookings/${bookingId}/guides`);
   }

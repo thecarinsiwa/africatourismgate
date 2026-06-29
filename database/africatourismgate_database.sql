@@ -1425,7 +1425,7 @@ ALTER TABLE `bookings`
 CREATE TABLE `reviews` (
   `id` CHAR(36) NOT NULL,
   `user_id` CHAR(36) NOT NULL,
-  `entity_type` ENUM('property','flight','vehicle','cruise','activity','booking') NOT NULL,
+  `entity_type` ENUM('property','flight','vehicle','cruise','activity','booking','tour_guide') NOT NULL,
   `entity_id` CHAR(36) NOT NULL,
   `rating` TINYINT UNSIGNED NOT NULL,
   `title` VARCHAR(180) DEFAULT NULL,

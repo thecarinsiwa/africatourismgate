@@ -1,10 +1,12 @@
 import type { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { apiPath, authHeader, loginAsSeedAdmin } from './auth-client';
-import { BOOKING_E2E_DATE, SEED_ROOM_ID } from './constants';
+import { SEED_ROOM_ID } from './constants';
 import { createE2eApp } from './create-app';
 
 const MESSAGES_E2E_DATE = '2099-08-22';
+/** Isolated from other e2e suites — availability is ensured in-test, not in beforeAll. */
+const OTHER_USER_BOOKING_DATE = '2099-08-25';
 const CUSTOMER_EMAIL = `booking-messages-e2e-${Date.now()}@example.com`;
 const CUSTOMER_PASSWORD = 'ChangeMe123!';
 
@@ -114,6 +116,8 @@ describe('Booking messages (e2e)', () => {
   });
 
   it('customer cannot read messages on another user booking', async () => {
+    await ensureRoomAvailabilityForDate(app, adminToken, OTHER_USER_BOOKING_DATE, 1);
+
     const other = await request(app.getHttpServer())
       .post(apiPath('/bookings/request'))
       .set(authHeader(adminToken))
@@ -122,8 +126,8 @@ describe('Booking messages (e2e)', () => {
           {
             itemType: 'room',
             referenceId: SEED_ROOM_ID,
-            startDate: BOOKING_E2E_DATE,
-            endDate: BOOKING_E2E_DATE,
+            startDate: OTHER_USER_BOOKING_DATE,
+            endDate: OTHER_USER_BOOKING_DATE,
             quantity: 1,
           },
         ],

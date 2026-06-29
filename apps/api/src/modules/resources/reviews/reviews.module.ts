@@ -1,11 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
+  BookingGuideAssignments,
   BookingItems,
   Bookings,
   Properties,
   Reviews,
   Rooms,
+  TourGuides,
   Users,
 } from '../../../entities/generated';
 import { ReviewsController } from './reviews.controller';
@@ -17,6 +19,8 @@ import { ReviewsService } from './reviews.service';
       Reviews,
       Bookings,
       BookingItems,
+      BookingGuideAssignments,
+      TourGuides,
       Rooms,
       Users,
       Properties,
