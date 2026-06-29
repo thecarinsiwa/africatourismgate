@@ -56,7 +56,19 @@
       "booking": {
         "title": "Réservation",
         "holdMinutes": "Durée de retenue (minutes)",
-        "allowGuestCheckout": "Autoriser la commande invité"
+        "allowGuestCheckout": "Autoriser la commande invité",
+        "modesTitle": "Mode par vertical",
+        "modesDescription": "Immédiat : paiement Stripe au checkout. Assisté : demande en attente de validation (CE-3).",
+        "modeImmediate": "Immédiat (paiement)",
+        "modeAssisted": "Assisté (demande)",
+        "itemTypes": {
+          "room": "Hébergement (chambre)",
+          "flight_class": "Vol",
+          "vehicle": "Location véhicule",
+          "cabin": "Croisière (cabine)",
+          "activity_schedule": "Activité",
+          "package": "Forfait"
+        }
       },
       "loyalty": {
         "title": "Fidélité OneKey",

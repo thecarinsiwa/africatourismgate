@@ -14,6 +14,10 @@ export const EMAIL_PREVIEW_TEMPLATES = [
   'welcome',
   'booking',
   'password_reset',
+  'booking_request_received',
+  'booking_approved_chat',
+  'booking_rejected',
+  'booking_payment_invite',
 ] as const;
 
 export type EmailPreviewTemplateDto =
@@ -66,7 +70,8 @@ export class EmailPreviewBrandingOverrideDto {
 export class EmailPreviewDto {
   @ApiProperty({ enum: EMAIL_PREVIEW_TEMPLATES, example: 'welcome' })
   @IsIn(EMAIL_PREVIEW_TEMPLATES, {
-    message: 'template doit être welcome, booking ou password_reset.',
+    message:
+      'template doit être welcome, booking, password_reset, booking_request_received, booking_approved_chat, booking_rejected ou booking_payment_invite.',
   })
   template!: EmailPreviewTemplateDto;
 

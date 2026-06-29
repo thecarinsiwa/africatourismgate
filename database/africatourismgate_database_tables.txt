@@ -85,6 +85,9 @@ Commerce
 bookings
 booking_status_history
 booking_items
+booking_guide_assignments
+booking_messages
+tour_guides
 payments
 promo_codes
 promotions

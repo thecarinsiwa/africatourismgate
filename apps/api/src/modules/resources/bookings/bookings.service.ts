@@ -10,6 +10,8 @@ import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import { Bookings, Organizations, Payments, Users } from '../../../entities/generated';
 import { CrudService } from '../../../common/crud/crud.service';
 import { BookingEngineService } from './booking-engine.service';
+import { BookingAssistedEmailService } from './booking-assisted-email.service';
+import { BookingNotificationsService } from './booking-notifications.service';
 import { BookingStatusHistoryService } from './booking-status-history.service';
 import { BookingAdminDetailDto } from './dto/booking-admin-detail.dto';
 import { BookingListItemDto } from './dto/booking-list-item.dto';
@@ -18,6 +20,7 @@ import { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
 import { BookingCheckoutDto } from './dto/booking-checkout.dto';
 import { BookingCheckoutPreviewResponseDto } from './dto/booking-checkout-preview-response.dto';
 import { BookingDetailDto } from './dto/booking-detail.dto';
+import { BookingRequestResponseDto } from './dto/booking-request-response.dto';
 import { PermissionsService } from '../../rbac/permissions.service';
 import { ReviewsService } from '../reviews/reviews.service';
 import { CreateBookingReviewDto } from '../reviews/dto/create-booking-review.dto';
@@ -38,6 +41,8 @@ export class BookingsService extends CrudService<Bookings> {
     private readonly statusHistory: BookingStatusHistoryService,
     private readonly permissionsService: PermissionsService,
     private readonly reviewsService: ReviewsService,
+    private readonly assistedEmail: BookingAssistedEmailService,
+    private readonly notifications: BookingNotificationsService,
   ) {
     super(bookingsRepository);
   }
@@ -57,6 +62,17 @@ export class BookingsService extends CrudService<Bookings> {
     await this.assertStaffOnlyCustomerUserId(dto, actorUserId);
     const ownerUserId = await this.resolveCheckoutOwnerUserId(dto, actorUserId);
     return this.bookingEngine.createBooking(dto, ownerUserId, actorUserId);
+  }
+
+  async requestFromCheckout(
+    dto: BookingCheckoutDto,
+    actorUserId: string,
+  ): Promise<BookingRequestResponseDto> {
+    await this.assertStaffOnlyCustomerUserId(dto, actorUserId);
+    const ownerUserId = await this.resolveCheckoutOwnerUserId(dto, actorUserId);
+    const result = await this.bookingEngine.createBookingRequest(dto, ownerUserId, actorUserId);
+    this.assistedEmail.notifyRequestReceived(result.bookingId);
+    return result;
   }
 
   private async isStaffUser(userId: string): Promise<boolean> {
@@ -161,6 +177,14 @@ export class BookingsService extends CrudService<Bookings> {
         : [];
     const userById = new Map(users.map((u) => [u.id, u]));
 
+    const customerView = !staff;
+    const paymentInvitedIds = customerView
+      ? await this.notifications.getPaymentInvitedBookingIds(bookings.map((b) => b.id))
+      : new Set<string>();
+    const unreadStaffIds = customerView
+      ? await this.notifications.getUnreadStaffMessageBookingIds(bookings.map((b) => b.id))
+      : new Set<string>();
+
     const data = bookings.map((booking) => {
       const client = userById.get(booking.userId);
       return {
@@ -176,6 +200,15 @@ export class BookingsService extends CrudService<Bookings> {
         clientFirstName: client?.firstName ?? '',
         clientLastName: client?.lastName ?? '',
         organizationId: client?.organizationId ?? null,
+        ...(customerView
+          ? {
+              actionRequired: this.notifications.computeActionRequired(
+                booking,
+                paymentInvitedIds,
+                unreadStaffIds,
+              ),
+            }
+          : {}),
       } satisfies BookingListItemDto;
     });
 
@@ -202,7 +235,29 @@ export class BookingsService extends CrudService<Bookings> {
     const canReview = review
       ? false
       : await this.reviewsService.canReview(id, currentUserId);
-    return { ...detail, review, canReview };
+
+    const [statusHistory, pendingStripePayments, guideReviewInvites] = await Promise.all([
+      this.statusHistory.listByBookingId(id),
+      this.paymentsRepository.find({
+        where: {
+          bookingId: id,
+          deletedAt: IsNull(),
+          status: 'pending',
+          provider: 'stripe',
+        },
+        take: 1,
+      }),
+      this.reviewsService.listGuideReviewInvitesForBooking(id, currentUserId),
+    ]);
+
+    return {
+      ...detail,
+      review,
+      canReview,
+      statusHistory,
+      paymentInvited: pendingStripePayments.length > 0,
+      guideReviewInvites,
+    };
   }
 
   async getBookingReview(
@@ -227,6 +282,28 @@ export class BookingsService extends CrudService<Bookings> {
     }
     return this.reviewsService.createForBooking(
       bookingId,
+      booking.userId,
+      dto,
+      currentUserId,
+    );
+  }
+
+  async createGuideReview(
+    bookingId: string,
+    guideId: string,
+    currentUserId: string,
+    dto: CreateBookingReviewDto,
+  ): Promise<ReviewDto> {
+    const booking = await this.assertBookingOwnerOrStaff(bookingId, currentUserId);
+    const staff = await this.permissionsService.hasAnyPermission(currentUserId, [
+      'users.read',
+    ]);
+    if (staff && booking.userId !== currentUserId) {
+      throw new ForbiddenException('Seul le client peut noter le guide.');
+    }
+    return this.reviewsService.createForGuideAssignment(
+      bookingId,
+      guideId,
       booking.userId,
       dto,
       currentUserId,

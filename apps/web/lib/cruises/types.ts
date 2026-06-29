@@ -1,3 +1,5 @@
+import type { ProductGalleryImage } from '../shared/product-images';
+
 export interface CruiseSearchQuery {
   sailFrom?: string;
   sailTo?: string;
@@ -22,6 +24,7 @@ export interface CruiseSearchResult {
   durationNights: number;
   minPriceCents: number;
   currency: string;
+  imageUrl?: string | null;
 }
 
 export interface CruiseSailingDetailQuery {
@@ -63,4 +66,5 @@ export interface CruiseSailingDetail {
   currency: string;
   itineraryPorts: CruiseItineraryPort[];
   cabins: CruiseCabinOffer[];
+  images?: ProductGalleryImage[];
 }

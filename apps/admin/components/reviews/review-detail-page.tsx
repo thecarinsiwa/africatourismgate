@@ -208,7 +208,12 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
                 </div>
                 <div>
                   <dt className="text-atg-muted">{tDetail('fields.property')}</dt>
-                  <dd className="text-atg-fg">{review.propertyName ?? emptyDash}</dd>
+                  <dd className="text-atg-fg">
+                    {review.propertyName ??
+                      (review.entityType === 'tour_guide' && review.guideName
+                        ? review.guideName
+                        : emptyDash)}
+                  </dd>
                 </div>
                 <div>
                   <dt className="text-atg-muted">{tDetail('fields.entity')}</dt>
@@ -216,16 +221,33 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
                     {formatReviewEntity(review)}
                   </dd>
                 </div>
-                {review.entityType === 'booking' ? (
+                {review.entityType === 'booking' || review.entityType === 'tour_guide' ? (
                   <div>
                     <dt className="text-atg-muted">{tDetail('fields.booking')}</dt>
                     <dd>
                       <Link
-                        href={`/dashboard/bookings/${review.entityId}`}
+                        href={`/dashboard/bookings/${review.entityType === 'tour_guide' ? review.bookingId : review.entityId}`}
                         className="font-medium text-primary hover:underline"
                       >
                         {tDetail('viewBooking')}
                       </Link>
+                    </dd>
+                  </div>
+                ) : null}
+                {review.entityType === 'tour_guide' && review.guideName ? (
+                  <div>
+                    <dt className="text-atg-muted">{tDetail('fields.guide')}</dt>
+                    <dd>
+                      {review.guideId ? (
+                        <Link
+                          href={`/guides/${review.guideId}`}
+                          className="font-medium text-primary hover:underline"
+                        >
+                          {review.guideName}
+                        </Link>
+                      ) : (
+                        <span className="text-atg-fg">{review.guideName}</span>
+                      )}
                     </dd>
                   </div>
                 ) : null}

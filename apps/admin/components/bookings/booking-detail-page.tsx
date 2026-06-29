@@ -24,9 +24,10 @@ import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { AdminPageBackLink } from '../admin-page-back-link';
 import { getApiClient } from '../../lib/auth/api';
 import {
-  BOOKING_STATUSES,
   BOOKING_STATUS_VARIANTS,
+  defaultManualBookingStatusTarget,
   getBookingStatusLabel,
+  getManualBookingStatusTargets,
 } from '../../lib/booking-status';
 import { formatMoney } from '../../lib/format-money';
 import {
@@ -37,6 +38,9 @@ import {
 import { formatPaymentProvider } from '../../lib/payment-display';
 import { BookingItemCatalogLink } from './booking-item-catalog-link';
 import { BookingItemTypeIcon } from './booking-item-type-icon';
+import { BookingGuidesSection } from './booking-guides-section';
+import { BookingAssistedApprovalPanel } from './booking-assisted-approval-panel';
+import { BookingMessagesSection } from './booking-messages-section';
 import { BookingStatusTimeline } from './booking-status-timeline';
 
 function formatDateTime(iso: string): string {
@@ -88,6 +92,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   const cancelReasonId = useId();
 
   const [canWrite, setCanWrite] = useState(false);
+  const [canApprove, setCanApprove] = useState(false);
   const [detail, setDetail] = useState<BookingAdminDetail | null>(null);
   const [state, setState] = useState<
     | { status: 'loading' }
@@ -113,9 +118,8 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
     try {
       const data = await getApiClient().getBooking(bookingId);
       setDetail(data);
-      setNewStatus(
-        data.booking.status === 'pending_payment' ? 'confirmed' : data.booking.status,
-      );
+      const allowedTargets = getManualBookingStatusTargets(data.booking.status);
+      setNewStatus(defaultManualBookingStatusTarget(data.booking.status, allowedTargets));
       setState({ status: 'ready' });
     } catch (error) {
       setState({ status: 'error', message: getBookingsErrorMessage(error) });
@@ -133,10 +137,18 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
       .then((me) => {
         if (!cancelled) {
           setCanWrite(me.isSuperAdmin || me.permissions.includes('bookings.write'));
+          setCanApprove(
+            me.isSuperAdmin ||
+              me.permissions.includes('bookings.approve') ||
+              me.permissions.includes('bookings.write'),
+          );
         }
       })
       .catch(() => {
-        if (!cancelled) setCanWrite(false);
+        if (!cancelled) {
+          setCanWrite(false);
+          setCanApprove(false);
+        }
       });
     return () => {
       cancelled = true;
@@ -182,14 +194,14 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
     }
   }, [bookingId, cancelReason, detail, load, getBookingsErrorMessage]);
 
-  const statusOptions = useMemo(
-    () =>
-      BOOKING_STATUSES.map((status) => ({
-        value: status,
-        label: getBookingStatusLabel(status, statusLabels),
-      })),
-    [statusLabels],
-  );
+  const statusOptions = useMemo(() => {
+    const current = detail?.booking.status;
+    const allowed = current ? getManualBookingStatusTargets(current) : [];
+    return allowed.map((status) => ({
+      value: status,
+      label: getBookingStatusLabel(status, statusLabels),
+    }));
+  }, [detail?.booking.status, statusLabels]);
 
   const itemColumns = useMemo<ColumnDef<BookingItem, unknown>[]>(
     () => [
@@ -308,6 +320,8 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   }
 
   const { booking, client } = detail;
+  const manualStatusTargets = getManualBookingStatusTargets(booking.status);
+  const showManualStatusChange = canWrite && manualStatusTargets.length > 0;
   const canCancel =
     booking.status === 'pending_payment' || booking.status === 'confirmed';
   const statusUnchanged = newStatus === booking.status;
@@ -371,36 +385,49 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
             />
           </Card>
 
+          <BookingAssistedApprovalPanel
+            bookingId={bookingId}
+            status={booking.status}
+            totalCents={detail.totalCents}
+            currency={detail.currency}
+            canApprove={canApprove}
+            onUpdated={load}
+          />
+
           {canWrite ? (
             <Card variant="dashboard" padding="md" className="space-y-6">
               <h2 className="text-lg font-semibold text-atg-fg">{t('sections.actions')}</h2>
-              <div className="space-y-3">
-                <Select
-                  label={t('actions.changeStatus')}
-                  value={newStatus}
-                  options={statusOptions}
-                  onChange={(e) => setNewStatus(e.target.value as BookingStatus)}
-                />
-                <label htmlFor={statusReasonId} className="block text-sm font-medium text-atg-fg">
-                  {t('actions.statusReason')}
-                </label>
-                <textarea
-                  id={statusReasonId}
-                  rows={2}
-                  value={statusReason}
-                  onChange={(e) => setStatusReason(e.target.value)}
-                  className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg"
-                  placeholder={t('actions.statusReasonPlaceholder')}
-                />
-                <Button
-                  type="button"
-                  onClick={() => setStatusDialogOpen(true)}
-                  disabled={actionLoading || statusUnchanged}
-                  loading={actionLoading && statusDialogOpen}
-                >
-                  {t('actions.applyStatus')}
-                </Button>
-              </div>
+              {showManualStatusChange ? (
+                <div className="space-y-3">
+                  <Select
+                    label={t('actions.changeStatus')}
+                    value={newStatus}
+                    options={statusOptions}
+                    onChange={(e) => setNewStatus(e.target.value as BookingStatus)}
+                  />
+                  <label htmlFor={statusReasonId} className="block text-sm font-medium text-atg-fg">
+                    {t('actions.statusReason')}
+                  </label>
+                  <textarea
+                    id={statusReasonId}
+                    rows={2}
+                    value={statusReason}
+                    onChange={(e) => setStatusReason(e.target.value)}
+                    className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg"
+                    placeholder={t('actions.statusReasonPlaceholder')}
+                  />
+                  <Button
+                    type="button"
+                    onClick={() => setStatusDialogOpen(true)}
+                    disabled={actionLoading || statusUnchanged}
+                    loading={actionLoading && statusDialogOpen}
+                  >
+                    {t('actions.applyStatus')}
+                  </Button>
+                </div>
+              ) : booking.status === 'pending_approval' ? (
+                <p className="text-sm text-atg-muted">{t('actions.assistedStatusHint')}</p>
+              ) : null}
 
               {canCancel ? (
                 <div className="space-y-3 border-t border-atg-border pt-6">
@@ -461,6 +488,10 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
               />
             </Card>
           </section>
+
+          <BookingGuidesSection bookingId={bookingId} canWrite={canWrite} />
+
+          <BookingMessagesSection bookingId={bookingId} canWrite={canWrite} />
         </div>
       </div>
 

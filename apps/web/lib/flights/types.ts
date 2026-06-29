@@ -1,4 +1,5 @@
 import type { FlightClassName } from '@africatourismgate/types';
+import type { ProductGalleryImage } from '../shared/product-images';
 
 export interface PublicAirport {
   iataCode: string;
@@ -33,6 +34,7 @@ export interface FlightSearchResult {
   currency: string;
   roundTrip: boolean;
   departureDate?: string;
+  imageUrl?: string | null;
 }
 
 export interface FlightDetailQuery {
@@ -46,6 +48,12 @@ export interface FlightDetailAirport {
   name: string;
   city: string;
   countryCode: string;
+}
+
+/** Escale intermédiaire — optionnel tant que l'API ne l'expose pas. */
+export interface FlightLayover {
+  airport: FlightDetailAirport;
+  durationMinutes: number;
 }
 
 export interface FlightDetailClass {
@@ -72,4 +80,7 @@ export interface FlightDetail {
   minPriceCents: number;
   currency: string;
   classes: FlightDetailClass[];
+  /** Escales intermédiaires — absent ou vide = vol direct. */
+  layovers?: FlightLayover[];
+  images?: ProductGalleryImage[];
 }

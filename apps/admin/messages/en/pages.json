@@ -20,7 +20,8 @@
     "shipDetail": "Ship",
     "classAvailability": "Class availability",
     "roomAvailability": "Room availability",
-    "itineraryStops": "Itinerary stops"
+    "itineraryStops": "Itinerary stops",
+    "editTourGuide": "Edit guide"
   },
   "utilisateurs": {
     "description": "Platform accounts. Filter by status or organization.",
@@ -241,6 +242,20 @@
     "description": "Paginated booking list (live API data). Filter by status, date, customer and organization. Requires bookings.read.",
     "lignes": {
       "description": "Global line items per booking (live API data). Filter by type, booking status and booking ID. Requires bookings.read."
+    }
+  },
+  "guides": {
+    "title": "Tour guides",
+    "description": "Catalog of internal and external guides. Filter by type, status and search by name.",
+    "actions": {
+      "new": "New guide"
+    },
+    "nouveau": {
+      "metaTitle": "New tour guide",
+      "description": "Create a guide profile, then assign guides from the booking detail page."
+    },
+    "id": {
+      "metaTitle": "Edit guide"
     }
   },
   "paiements": {

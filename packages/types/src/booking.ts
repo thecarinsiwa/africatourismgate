@@ -1,7 +1,9 @@
-import type { Review } from './review.js';
+import type { GuideReviewInvite, Review } from './review.js';
+import type { BookingMode } from './tour-guide.js';
 
 export type BookingStatus =
   | 'draft'
+  | 'pending_approval'
   | 'pending_payment'
   | 'confirmed'
   | 'cancelled'
@@ -87,6 +89,7 @@ export interface BookingCheckoutPreview {
   currency: string;
   appliedPackageDiscount: AppliedPackageCheckoutDiscount | null;
   appliedDiscount: AppliedCheckoutDiscount | null;
+  bookingMode: BookingMode;
 }
 
 export interface BookingItem {
@@ -103,6 +106,31 @@ export interface BookingItem {
   updatedAt: string | null;
 }
 
+export interface BookingRequestResponse {
+  bookingId: string;
+  status: 'pending_approval';
+  message: string;
+  totalCents: number;
+  currency: string;
+}
+
+export interface BookingMessage {
+  id: string;
+  bookingId: string;
+  userId: string | null;
+  body: string;
+  isStaff: boolean;
+  createdAt: string;
+}
+
+export interface BookingMessagesList {
+  messages: BookingMessage[];
+}
+
+export interface CreateBookingMessageRequest {
+  body: string;
+}
+
 export interface BookingDetail {
   booking: Booking;
   items: BookingItem[];
@@ -110,6 +138,11 @@ export interface BookingDetail {
   currency: string;
   review?: Review | null;
   canReview?: boolean;
+  statusHistory?: BookingStatusHistoryEntry[];
+  /** True when staff sent a Stripe checkout invite (pending stripe payment exists). */
+  paymentInvited?: boolean;
+  /** Post-stay guide rating invitations (CE-13). */
+  guideReviewInvites?: GuideReviewInvite[];
 }
 
 export interface CreateBookingResponse extends BookingDetail {
@@ -167,6 +200,16 @@ export interface RecordCashPaymentRequest {
   note?: string;
 }
 
+export interface RejectBookingRequest {
+  reason?: string;
+}
+
+export interface ApproveBookingRequest {
+  totalCents?: number;
+  reason?: string;
+  guides?: Array<{ guideId: string; role?: 'primary' | 'secondary' }>;
+}
+
 export interface BookingPaymentIntentResponse {
   paymentId: string;
   paymentIntentId: string;
@@ -198,6 +241,8 @@ export interface BookingListItem extends Booking {
   clientFirstName: string;
   clientLastName: string;
   organizationId: string | null;
+  /** Customer account list: payment invite or unread staff message. */
+  actionRequired?: boolean;
 }
 
 export interface BookingsListQuery {

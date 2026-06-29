@@ -10,8 +10,10 @@ import {
   CruiseSailings,
   Itineraries,
   ItineraryPorts,
+  ShipImages,
   Ships,
 } from '../../../entities/generated';
+import { PublicGalleryImageDto } from '../dto/public-gallery-image.dto';
 import { CruiseSearchQueryDto } from './dto/cruise-search-query.dto';
 import { CruiseSearchResultDto } from './dto/cruise-search-result.dto';
 import { CruiseSailingDetailQueryDto } from './dto/cruise-sailing-detail-query.dto';
@@ -46,6 +48,8 @@ export class PublicCruisesService {
     private readonly portsRepository: Repository<CruisePorts>,
     @InjectRepository(Ships)
     private readonly shipsRepository: Repository<Ships>,
+    @InjectRepository(ShipImages)
+    private readonly shipImagesRepository: Repository<ShipImages>,
     @InjectRepository(CruiseLines)
     private readonly cruiseLinesRepository: Repository<CruiseLines>,
     @InjectRepository(Cabins)
@@ -138,6 +142,8 @@ export class PublicCruisesService {
       lines.filter((l) => !l.deletedAt).map((l) => [l.id, l]),
     );
 
+    const imageUrlByShipId = await this.loadPrimaryImageUrlByShipId(shipIds);
+
     const results: CruiseSearchResultDto[] = [];
 
     for (const sailing of activeSailings) {
@@ -184,6 +190,7 @@ export class PublicCruisesService {
         durationNights: itinerary.durationNights,
         minPriceCents,
         currency,
+        imageUrl: imageUrlByShipId.get(ship.id) ?? null,
       });
     }
 
@@ -256,6 +263,7 @@ export class PublicCruisesService {
       : Math.min(...cabins.map((c) => c.priceCents));
     const departureDate = this.normalizeDate(sailing.departureDate);
     const endpoints = this.resolveItineraryEndpoints(itineraryPorts);
+    const images = await this.loadShipGallery(ship.id);
 
     return {
       id: sailing.id,
@@ -273,7 +281,43 @@ export class PublicCruisesService {
       currency: cabins[0].currency,
       itineraryPorts,
       cabins,
+      images,
     };
+  }
+
+  private async loadPrimaryImageUrlByShipId(
+    shipIds: string[],
+  ): Promise<Map<string, string>> {
+    if (!shipIds.length) {
+      return new Map();
+    }
+
+    const rows = await this.shipImagesRepository.find({
+      where: { shipId: In(shipIds) },
+      order: { sortOrder: 'ASC' },
+    });
+    const imageUrlByShipId = new Map<string, string>();
+    for (const row of rows) {
+      if (!row.deletedAt && !imageUrlByShipId.has(row.shipId)) {
+        imageUrlByShipId.set(row.shipId, row.url);
+      }
+    }
+    return imageUrlByShipId;
+  }
+
+  private async loadShipGallery(shipId: string): Promise<PublicGalleryImageDto[]> {
+    const rows = await this.shipImagesRepository.find({
+      where: { shipId },
+      order: { sortOrder: 'ASC' },
+    });
+    return rows
+      .filter((row) => !row.deletedAt)
+      .map((row) => ({
+        id: row.id,
+        url: row.url,
+        caption: row.caption ?? null,
+        sortOrder: row.sortOrder,
+      }));
   }
 
   private async findPortByCode(code: string): Promise<PortSummary | null> {

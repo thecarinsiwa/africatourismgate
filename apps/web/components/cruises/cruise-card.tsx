@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import {
   buildCruiseDetailHref,
@@ -10,6 +11,7 @@ import { formatCruisePortLabel } from '../../lib/cruises/ports';
 import type { CruiseSearchResult } from '../../lib/cruises/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import type { Translations } from '../../lib/i18n/translations';
+import { PriceDisplay, ProductCard } from '../shared';
 
 type CruiseCardProps = {
   sailing: CruiseSearchResult;
@@ -33,56 +35,103 @@ export function CruiseCard({ sailing, t, searchParams = {}, locale }: CruiseCard
       ? `1 ${t.nightSingular}`
       : `${sailing.durationNights} ${t.nightPlural}`;
 
+  const imageOverlay = (
+    <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+      <p className="text-xs font-semibold uppercase tracking-wide text-white/70">
+        {sailing.cruiseLineName}
+      </p>
+      <p className="mt-1 text-xl font-bold leading-tight">{sailing.shipName}</p>
+      <p className="mt-2 text-sm text-white/80">{sailing.itineraryName}</p>
+    </div>
+  );
+
   return (
-    <article className="group overflow-hidden rounded-2xl border border-atg-border bg-atg-elevated shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:border-atg-border dark:bg-atg-elevated">
-      <div className="flex flex-col sm:flex-row">
-        <div className="relative flex shrink-0 flex-col justify-center bg-gradient-to-br from-[#0f2744] to-primary/80 px-6 py-8 text-white sm:w-56 lg:w-64">
-          <p className="text-xs font-semibold uppercase tracking-wide text-white/70">
-            {sailing.cruiseLineName}
-          </p>
-          <p className="mt-1 text-xl font-bold leading-tight">{sailing.shipName}</p>
-          <p className="mt-2 text-sm text-white/80">{sailing.itineraryName}</p>
-        </div>
-
-        <div className="flex flex-1 flex-col p-5 sm:p-6">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <p className="text-sm font-medium text-primary">
-                {formatCruisePortLabel(sailing.sailFromPortCode, sailing.sailFromPortName)} →{' '}
-                {formatCruisePortLabel(sailing.sailToPortCode, sailing.sailToPortName)}
-              </p>
-              <p className="mt-2 text-sm text-atg-muted">
-                {formatDisplayDate(sailing.departureDate, locale)} →{' '}
-                {formatDisplayDate(sailing.returnDate, locale)} · {nightsLabel}
-              </p>
-            </div>
-            <div className="text-right">
-              <p className="text-xs uppercase tracking-wide text-atg-muted">
-                {t.fromPrice}
-              </p>
-              <p className="text-2xl font-bold text-atg-fg">
-                {formatCruisePrice(sailing.minPriceCents, sailing.currency)}
-              </p>
-              <p className="text-xs text-atg-muted">{t.perGuest}</p>
-            </div>
-          </div>
-
-          <div className="mt-auto flex flex-wrap items-end justify-end gap-2 border-t border-atg-border pt-4 dark:border-atg-border">
-            <Link
-              href={detailHref}
-              className="inline-flex min-h-[44px] items-center rounded-lg border border-atg-border px-4 py-2 text-sm font-semibold text-atg-fg transition-colors hover:border-primary hover:text-primary dark:border-atg-border dark:text-white/80 dark:hover:border-primary dark:hover:text-white"
-            >
-              {t.viewDetails}
-            </Link>
-            <Link
-              href={reserveHref}
-              className="inline-flex min-h-[44px] items-center rounded-lg bg-primary px-5 py-2 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover"
-            >
-              {t.bookNow}
-            </Link>
+    <ProductCard
+      image={
+        sailing.imageUrl ? (
+          <>
+            <Image
+              src={sailing.imageUrl}
+              alt={sailing.shipName}
+              fill
+              className="object-cover"
+              sizes="(max-width: 640px) 100vw, 320px"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+            {imageOverlay}
+          </>
+        ) : (
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0f2744] to-primary/80">
+          <svg
+            className="absolute right-6 top-1/2 h-20 w-20 -translate-y-1/2 text-white/10"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden
+          >
+            <path d="M20 21c-1.39 0-2.78-.47-4-1.32-2.44 1.71-5.56 1.71-8 0C6.78 20.53 5.39 21 4 21H2v-2h2c1.38 0 2.74-.35 4-.99 2.52 1.29 5.48 1.29 8 0 1.26.65 2.62.99 4 .99h2v2h-2zM12 2c-2.67 0-4.33 1.33-5 4 1-1 2.67-1.5 5-1.5s4 .5 5 1.5c-.67-2.67-2.33-4-5-4z" />
+          </svg>
+          <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+            <p className="text-xs font-semibold uppercase tracking-wide text-white/70">
+              {sailing.cruiseLineName}
+            </p>
+            <p className="mt-1 text-xl font-bold leading-tight">{sailing.shipName}</p>
+            <p className="mt-2 text-sm text-white/80">{sailing.itineraryName}</p>
           </div>
         </div>
-      </div>
-    </article>
+        )
+      }
+      title={
+        <h3 className="text-lg font-bold text-atg-fg sm:text-xl">
+          {formatCruisePortLabel(sailing.sailFromPortCode, sailing.sailFromPortName)} →{' '}
+          {formatCruisePortLabel(sailing.sailToPortCode, sailing.sailToPortName)}
+        </h3>
+      }
+      meta={
+        <p className="text-sm text-atg-muted">
+          {sailing.shipName} · {formatDisplayDate(sailing.departureDate, locale)} →{' '}
+          {formatDisplayDate(sailing.returnDate, locale)} · {nightsLabel}
+        </p>
+      }
+      body={
+        <div className="mb-4 flex items-center gap-2 text-sm">
+          <span className="inline-flex min-h-[32px] items-center rounded-lg bg-primary/10 px-2 text-xs font-bold text-primary dark:bg-primary/20">
+            {sailing.sailFromPortCode}
+          </span>
+          <div className="flex flex-1 items-center gap-1" aria-hidden>
+            <span className="h-px flex-1 bg-atg-border dark:bg-atg-border" />
+            <svg className="h-4 w-4 shrink-0 text-primary" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+            </svg>
+            <span className="h-px flex-1 bg-atg-border dark:bg-atg-border" />
+          </div>
+          <span className="inline-flex min-h-[32px] items-center rounded-lg bg-primary/10 px-2 text-xs font-bold text-primary dark:bg-primary/20">
+            {sailing.sailToPortCode}
+          </span>
+        </div>
+      }
+      price={
+        <PriceDisplay
+          prefixLabel={t.fromPrice}
+          amount={formatCruisePrice(sailing.minPriceCents, sailing.currency)}
+          suffixLabel={t.perGuest}
+        />
+      }
+      actions={
+        <>
+          <Link
+            href={detailHref}
+            className="inline-flex min-h-[44px] items-center rounded-lg border border-atg-border px-4 py-2 text-sm font-semibold text-atg-fg transition-colors hover:border-primary hover:text-primary dark:border-atg-border dark:text-white/80 dark:hover:border-primary dark:hover:text-white"
+          >
+            {t.viewDetails}
+          </Link>
+          <Link
+            href={reserveHref}
+            className="inline-flex min-h-[44px] items-center rounded-lg bg-primary px-5 py-2 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover"
+          >
+            {t.bookNow}
+          </Link>
+        </>
+      }
+    />
   );
 }

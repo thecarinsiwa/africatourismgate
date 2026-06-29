@@ -54,6 +54,8 @@
     "destinations": "Destinations",
     "bookings": "Bookings",
     "bookingLines": "Booking lines",
+    "tourGuides": "Tour guides",
+    "newTourGuide": "New guide",
     "payments": "Payments",
     "promoCodes": "Promo codes",
     "promotions": "Promotions",

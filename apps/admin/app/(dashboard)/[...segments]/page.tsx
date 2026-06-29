@@ -41,6 +41,7 @@ const RESERVED_ROOT_SEGMENTS = new Set([
   'paiements',
   'reservations',
   'fidelite',
+  'guides',
 ]);
 
 export default function AdminSectionPage({ params }: PageProps) {

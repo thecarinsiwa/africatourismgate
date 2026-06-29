@@ -172,6 +172,14 @@ export function BookingsList() {
   ].filter(Boolean).length;
   const hasFilters = activeFilterCount > 0;
 
+  const statusTabs = useMemo(
+    () => [
+      { value: '' as StatusFilter, label: t('tabs.all') },
+      { value: 'pending_approval' as StatusFilter, label: t('tabs.pendingApproval') },
+    ],
+    [t],
+  );
+
   const handleClearFilters = useCallback(() => {
     setStatusFilter('');
     setUserFilter('');
@@ -301,6 +309,29 @@ export function BookingsList() {
 
   return (
     <div className="space-y-6">
+      <div
+        className="flex flex-wrap gap-2"
+        role="tablist"
+        aria-label={t('tabs.ariaLabel')}
+      >
+        {statusTabs.map((tab) => (
+          <Button
+            key={tab.value || 'all'}
+            type="button"
+            size="sm"
+            variant={statusFilter === tab.value ? 'primary' : 'outline'}
+            role="tab"
+            aria-selected={statusFilter === tab.value}
+            onClick={() => {
+              setStatusFilter(tab.value);
+              setPage(1);
+            }}
+          >
+            {tab.label}
+          </Button>
+        ))}
+      </div>
+
       <FilterBar
         mobileVariant="drawer"
         activeCount={activeFilterCount}

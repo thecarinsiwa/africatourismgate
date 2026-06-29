@@ -431,7 +431,11 @@ export const en: Translations = {
   },
   comingSoon: {
     badge: 'Coming soon',
+    title: 'Coming soon',
+    siteBody:
+      'This section of the site is being prepared. Check back soon for new features on Africa Tourism Gate.',
     body: 'Online booking for this category is launching soon. Your search criteria have been kept in the URL.',
     backToSearch: 'Change my search',
+    backHome: 'Back to home',
   },
 };

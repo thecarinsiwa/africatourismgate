@@ -8,6 +8,7 @@ import { getAccommodationDetail } from '../../lib/api/public';
 import { currentYearMonth } from '../../lib/hotels/dates';
 import {
   buildHotelDetailHref,
+  HOTEL_MAX_GUESTS,
   parseGuestsParam,
   type HotelDetailSearchParams,
 } from '../../lib/hotels/listings';
@@ -16,6 +17,8 @@ import { localeToBcp47 } from '../../lib/i18n/locale-tag';
 import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
+import { DetailPageSkeletonShell } from '../shared/loading-skeletons';
+import { scrollToBookingSidebar } from '../shared/booking-sidebar-shell';
 import { HotelAmenitiesSection } from './hotel-amenities-section';
 import { HotelBookingMobileBar, HotelBookingSidebar } from './hotel-booking-sidebar';
 import { HotelGallery } from './hotel-gallery';
@@ -102,6 +105,14 @@ export function HotelDetailPageContent({
     };
   }, [propertyId, checkIn, checkOut, guests, calendarMonth, fetchId]);
 
+  useEffect(() => {
+    if (!detail || !selectedRoomId) return;
+    if (!detail.rooms.some((room) => room.id === selectedRoomId)) {
+      setSelectedRoomId(null);
+      syncUrl({ roomId: undefined });
+    }
+  }, [detail, selectedRoomId, syncUrl]);
+
   const selectedRoom = useMemo(
     () => detail?.rooms.find((r) => r.id === selectedRoomId) ?? null,
     [detail, selectedRoomId],
@@ -129,8 +140,9 @@ export function HotelDetailPageContent({
   }
 
   function handleGuestsChange(value: number) {
-    setGuests(value);
-    syncUrl({ guests: String(value) });
+    const next = Math.max(1, Math.min(HOTEL_MAX_GUESTS, value));
+    setGuests(next);
+    syncUrl({ guests: String(next) });
   }
 
   function handleSelectRoom(roomId: string) {
@@ -144,7 +156,7 @@ export function HotelDetailPageContent({
       return;
     }
     if (!checkIn || !checkOut || checkOut <= checkIn) {
-      document.getElementById('reserve')?.scrollIntoView({ behavior: 'smooth' });
+      scrollToBookingSidebar({ openDrawer: true });
       return;
     }
     const query = buildReservationQuery({
@@ -159,15 +171,7 @@ export function HotelDetailPageContent({
   }
 
   if (loading && !detail) {
-    return (
-      <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
-        <HomeHeader />
-        <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-24 text-center sm:px-6 lg:px-8">
-          <p className="text-sm font-medium text-atg-muted">{h.loading}</p>
-        </div>
-        <HomeFooter />
-      </div>
-    );
+    return <DetailPageSkeletonShell loadingLabel={h.loading} />;
   }
 
   if (notFound) {
@@ -234,16 +238,20 @@ export function HotelDetailPageContent({
       <HomeHeader />
 
       <div className="border-b border-atg-border bg-atg-elevated dark:border-atg-border dark:bg-atg-elevated">
-        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-          <nav className="flex flex-wrap items-center gap-2 text-sm text-atg-muted" aria-label="Breadcrumb">
-            <Link href="/" className="hover:text-primary transition-colors">
+        <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
+          <nav className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-atg-muted" aria-label="Breadcrumb">
+            <Link href="/" className="transition-colors hover:text-primary">
               {h.breadcrumbHome}
             </Link>
-            <span aria-hidden>/</span>
-            <Link href="/hotels" className="hover:text-primary transition-colors">
-              {h.breadcrumbHotels}
+            <span className="text-atg-muted/60" aria-hidden>
+              ›
+            </span>
+            <Link href="/hotels" className="transition-colors hover:text-primary">
+              {h.breadcrumbHotelsDetail}
             </Link>
-            <span aria-hidden>/</span>
+            <span className="text-atg-muted/60" aria-hidden>
+              ›
+            </span>
             <span className="font-medium text-atg-fg">{detail.name}</span>
           </nav>
         </div>
@@ -252,7 +260,18 @@ export function HotelDetailPageContent({
       <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 pb-28 sm:px-6 lg:px-8 lg:pb-8">
         <div className="lg:grid lg:grid-cols-3 lg:gap-8">
           <div className="min-w-0 space-y-8 lg:col-span-2">
-            <HotelGallery images={detail.images} name={detail.name} ariaLabel={h.galleryAria} />
+            <HotelGallery
+              images={detail.images}
+              name={detail.name}
+              labels={{
+                ariaLabel: h.galleryAria,
+                openLightbox: h.galleryOpenLightbox,
+                close: h.galleryClose,
+                previous: h.galleryPrevious,
+                next: h.galleryNext,
+                counter: h.galleryCounter,
+              }}
+            />
 
             <header>
               <p className="text-sm font-medium text-primary">{typeLabel}</p>
@@ -334,6 +353,12 @@ export function HotelDetailPageContent({
               prevMonthLabel={h.prevMonth}
               nextMonthLabel={h.nextMonth}
               unavailableLabel={h.unavailable}
+              legendLabels={{
+                title: h.calendarLegendTitle,
+                available: h.calendarLegendAvailable,
+                selected: h.calendarLegendSelected,
+                unavailable: h.calendarLegendUnavailable,
+              }}
               locale={locale}
             />
 

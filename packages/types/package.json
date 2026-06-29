@@ -2,17 +2,38 @@
   "name": "@africatourismgate/types",
   "version": "0.0.1",
   "private": true,
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./src/index.ts",
-    "./activity": "./src/activity.ts",
-    "./rbac": "./src/rbac.ts",
-    "./organization-settings": "./src/organization-settings.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./activity": {
+      "types": "./dist/activity.d.ts",
+      "require": "./dist/activity.js",
+      "default": "./dist/activity.js"
+    },
+    "./tour-guide": {
+      "types": "./dist/tour-guide.d.ts",
+      "require": "./dist/tour-guide.js",
+      "default": "./dist/tour-guide.js"
+    },
+    "./rbac": {
+      "types": "./dist/rbac.d.ts",
+      "require": "./dist/rbac.js",
+      "default": "./dist/rbac.js"
+    },
+    "./organization-settings": {
+      "types": "./dist/organization-settings.d.ts",
+      "require": "./dist/organization-settings.js",
+      "default": "./dist/organization-settings.js"
+    }
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "lint": "tsc -p tsconfig.json --noEmit"
+    "build": "tsc -b --force",
+    "lint": "tsc -b --force"
   },
   "devDependencies": {
     "typescript": "^5.7.2"

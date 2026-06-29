@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Patch,
   Post,
@@ -16,11 +19,22 @@ import { StripeService } from '../../stripe/stripe.service';
 import { BookingEngineService } from './booking-engine.service';
 import { BookingsService } from './bookings.service';
 import { BookingCheckoutDto } from './dto/booking-checkout.dto';
+import { BookingRequestResponseDto } from './dto/booking-request-response.dto';
 import { BookingsListQueryDto } from './dto/bookings-list-query.dto';
 import { CancelBookingDto } from './dto/cancel-booking.dto';
 import { RecordCashPaymentDto } from './dto/record-cash-payment.dto';
 import { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
 import { CreateBookingReviewDto } from '../reviews/dto/create-booking-review.dto';
+import { TourGuidesModule } from '../tour-guides/tour-guides.module';
+import { BookingGuideAssignmentsService } from '../tour-guides/booking-guide-assignments.service';
+import { AssignBookingGuidesDto } from '../tour-guides/dto/booking-guide-assignment.dto';
+import { BookingMessagesService } from './booking-messages.service';
+import { BookingMessageDto, BookingMessagesListDto } from './dto/booking-message.dto';
+import { BookingMessagesQueryDto } from './dto/booking-messages-query.dto';
+import { CreateBookingMessageDto } from './dto/create-booking-message.dto';
+import { ApproveBookingDto } from './dto/approve-booking.dto';
+import { RejectBookingDto } from './dto/reject-booking.dto';
+import { BookingApprovalService } from './booking-approval.service';
 
 @ApiTags('bookings')
 @ApiForbiddenResponse({ description: 'Missing permission' })
@@ -31,6 +45,9 @@ export class BookingsController {
     private readonly bookingEngine: BookingEngineService,
     private readonly stripeService: StripeService,
     private readonly permissionsService: PermissionsService,
+    private readonly bookingGuideAssignmentsService: BookingGuideAssignmentsService,
+    private readonly bookingMessagesService: BookingMessagesService,
+    private readonly bookingApprovalService: BookingApprovalService,
   ) {}
 
   @Post('checkout-preview')
@@ -41,6 +58,18 @@ export class BookingsController {
     @CurrentUser() user: AuthUserDto,
   ) {
     return this.bookingsService.previewCheckout(dto, user.id);
+  }
+
+  @Post('request')
+  @RequirePermissions('bookings.write')
+  @ApiOperation({
+    summary: 'Submit assisted booking request (pending approval, no payment)',
+  })
+  requestBooking(
+    @Body() dto: BookingCheckoutDto,
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<BookingRequestResponseDto> {
+    return this.bookingsService.requestFromCheckout(dto, user.id);
   }
 
   @Post()
@@ -70,6 +99,69 @@ export class BookingsController {
     return this.bookingsService.getBookingReview(id, user.id);
   }
 
+  @Get(':id/guides')
+  @RequirePermissions('bookings.read')
+  @ApiOperation({ summary: 'List guides assigned to a booking' })
+  listGuides(@Param('id') id: string) {
+    return this.bookingGuideAssignmentsService.listByBookingId(id);
+  }
+
+  @Post(':id/guides')
+  @RequirePermissions('bookings.write')
+  @ApiOperation({ summary: 'Assign one or more tour guides to a booking' })
+  assignGuides(
+    @Param('id') id: string,
+    @Body() dto: AssignBookingGuidesDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.bookingGuideAssignmentsService.assignGuides(id, dto, user.id);
+  }
+
+  @Delete(':id/guides/:guideId')
+  @RequirePermissions('bookings.write')
+  @ApiOperation({ summary: 'Remove a tour guide assignment from a booking' })
+  async removeGuide(
+    @Param('id') id: string,
+    @Param('guideId') guideId: string,
+  ) {
+    await this.bookingGuideAssignmentsService.removeGuide(id, guideId);
+  }
+
+  @Get(':id/messages')
+  @RequirePermissions('bookings.read')
+  @ApiOperation({ summary: 'List messages on a booking thread' })
+  listMessages(
+    @Param('id') id: string,
+    @Query() query: BookingMessagesQueryDto,
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<BookingMessagesListDto> {
+    return this.bookingMessagesService.listByBookingId(id, user.id, query.chatToken);
+  }
+
+  @Post(':id/messages')
+  @HttpCode(HttpStatus.CREATED)
+  @RequirePermissions('bookings.write')
+  @ApiOperation({ summary: 'Post a message on a booking thread' })
+  createMessage(
+    @Param('id') id: string,
+    @Body() dto: CreateBookingMessageDto,
+    @Query() query: BookingMessagesQueryDto,
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<BookingMessageDto> {
+    return this.bookingMessagesService.createMessage(id, dto, user.id, query.chatToken);
+  }
+
+  @Post(':id/thread-presence')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @RequirePermissions('bookings.read')
+  @ApiOperation({ summary: 'Customer heartbeat while viewing booking chat thread' })
+  async touchThreadPresence(
+    @Param('id') id: string,
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<void> {
+    await this.bookingMessagesService.touchThreadPresence(id, user.id);
+  }
+
   @Post(':id/reviews')
   @RequirePermissions('reviews.write')
   @ApiOperation({ summary: 'Submit a post-stay review for a booking' })
@@ -79,6 +171,19 @@ export class BookingsController {
     @CurrentUser() user: AuthUserDto,
   ) {
     return this.bookingsService.createBookingReview(id, user.id, dto);
+  }
+
+  @Post(':id/guides/:guideId/reviews')
+  @HttpCode(HttpStatus.CREATED)
+  @RequirePermissions('reviews.write')
+  @ApiOperation({ summary: 'Submit a post-stay review for an assigned tour guide' })
+  createGuideReview(
+    @Param('id') id: string,
+    @Param('guideId') guideId: string,
+    @Body() dto: CreateBookingReviewDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.bookingsService.createGuideReview(id, guideId, user.id, dto);
   }
 
   @Get(':id')
@@ -162,5 +267,38 @@ export class BookingsController {
     @CurrentUser() user: AuthUserDto,
   ) {
     return this.bookingsService.cancelWithReason(id, dto.reason, user.id);
+  }
+
+  @Post(':id/approve')
+  @RequirePermissions('bookings.approve', 'bookings.write')
+  @ApiOperation({
+    summary: 'Approve assisted booking (pending_approval → pending_payment)',
+  })
+  approve(
+    @Param('id') id: string,
+    @Body() dto: ApproveBookingDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.bookingApprovalService.approve(id, dto, user.id);
+  }
+
+  @Post(':id/reject')
+  @RequirePermissions('bookings.approve', 'bookings.write')
+  @ApiOperation({ summary: 'Reject assisted booking (pending_approval → cancelled)' })
+  reject(
+    @Param('id') id: string,
+    @Body() dto: RejectBookingDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.bookingApprovalService.reject(id, dto, user.id);
+  }
+
+  @Post(':id/invite-payment')
+  @RequirePermissions('bookings.approve', 'bookings.write')
+  @ApiOperation({
+    summary: 'Generate or return Stripe Checkout link for pending_payment booking',
+  })
+  invitePayment(@Param('id') id: string, @CurrentUser() user: AuthUserDto) {
+    return this.bookingApprovalService.invitePayment(id, user.id);
   }
 }

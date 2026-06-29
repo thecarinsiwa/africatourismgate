@@ -5,6 +5,7 @@ import {
   Airports,
   FlightClassAvailability,
   FlightClasses,
+  FlightImages,
   Flights,
 } from '../../../entities/generated';
 import { PublicFlightsController } from './public-flights.controller';
@@ -15,6 +16,7 @@ import { PublicFlightsService } from './public-flights.service';
     TypeOrmModule.forFeature([
       Flights,
       FlightClasses,
+      FlightImages,
       FlightClassAvailability,
       Airports,
       Airlines,

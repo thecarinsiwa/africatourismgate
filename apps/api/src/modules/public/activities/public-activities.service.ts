@@ -4,10 +4,13 @@ import { In, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import {
   Activities,
+  ActivityImages,
   ActivityProviders,
   ActivitySchedules,
   Destinations,
+  Reviews,
 } from '../../../entities/generated';
+import { PublicGalleryImageDto } from '../dto/public-gallery-image.dto';
 import { PublicDestinationDto } from '../accommodations/dto/public-destination.dto';
 import { ActivityBrowseQueryDto } from './dto/activity-browse-query.dto';
 import { ActivityDetailQueryDto } from './dto/activity-detail-query.dto';
@@ -23,12 +26,16 @@ export class PublicActivitiesService {
   constructor(
     @InjectRepository(Activities)
     private readonly activitiesRepository: Repository<Activities>,
+    @InjectRepository(ActivityImages)
+    private readonly activityImagesRepository: Repository<ActivityImages>,
     @InjectRepository(ActivityProviders)
     private readonly providersRepository: Repository<ActivityProviders>,
     @InjectRepository(ActivitySchedules)
     private readonly schedulesRepository: Repository<ActivitySchedules>,
     @InjectRepository(Destinations)
     private readonly destinationsRepository: Repository<Destinations>,
+    @InjectRepository(Reviews)
+    private readonly reviewsRepository: Repository<Reviews>,
   ) {}
 
   async listDestinations(): Promise<PublicDestinationDto[]> {
@@ -105,6 +112,9 @@ export class PublicActivitiesService {
     );
 
     const activityIds = activeActivities.map((a) => a.id);
+    const imageUrlByActivityId = await this.loadPrimaryImageUrlByActivityId(activityIds);
+    const reviewSummaryByActivityId = await this.loadReviewSummariesByActivityIds(activityIds);
+
     const schedules = await this.schedulesRepository
       .createQueryBuilder('schedule')
       .where('schedule.activityId IN (:...activityIds)', { activityIds })
@@ -142,6 +152,9 @@ export class PublicActivitiesService {
         destination: destinationById.get(provider.destinationId) ?? '',
         providerName: provider.name,
         availableSchedulesCount: availableSchedules.length,
+        imageUrl: imageUrlByActivityId.get(activity.id) ?? null,
+        difficultyLevel: activity.difficultyLevel,
+        ...this.toReviewFields(reviewSummaryByActivityId.get(activity.id)),
       };
 
       if (availableSchedules[0]) {
@@ -220,6 +233,9 @@ export class PublicActivitiesService {
     );
 
     const activityIds = activeActivities.map((a) => a.id);
+    const imageUrlByActivityId = await this.loadPrimaryImageUrlByActivityId(activityIds);
+    const reviewSummaryByActivityId = await this.loadReviewSummariesByActivityIds(activityIds);
+
     const schedules = await this.schedulesRepository
       .createQueryBuilder('schedule')
       .where('schedule.activityId IN (:...activityIds)', { activityIds })
@@ -264,6 +280,9 @@ export class PublicActivitiesService {
         providerName: provider.name,
         availableSchedulesCount: availableSchedules.length,
         nextStartDatetime: this.toIsoDatetime(availableSchedules[0].startDatetime),
+        imageUrl: imageUrlByActivityId.get(activity.id) ?? null,
+        difficultyLevel: activity.difficultyLevel,
+        ...this.toReviewFields(reviewSummaryByActivityId.get(activity.id)),
       });
     }
 
@@ -310,13 +329,14 @@ export class PublicActivitiesService {
       throw new NotFoundException('Activité introuvable.');
     }
 
-    const schedules = await this.buildAvailableSchedules(
+    const schedules = await this.buildSchedulesForDate(
       activity.id,
       query.date,
-      participants,
       activity.priceCents,
       activity.currency,
     );
+
+    const reviewSummary = await this.loadReviewSummariesByActivityIds([activity.id]);
 
     return {
       id: activity.id,
@@ -330,7 +350,45 @@ export class PublicActivitiesService {
       date: query.date,
       participants,
       schedules,
+      images: await this.loadActivityGallery(activity.id),
+      difficultyLevel: activity.difficultyLevel,
+      ...this.toReviewFields(reviewSummary.get(activity.id)),
     };
+  }
+
+  private async loadPrimaryImageUrlByActivityId(
+    activityIds: string[],
+  ): Promise<Map<string, string>> {
+    if (!activityIds.length) {
+      return new Map();
+    }
+
+    const rows = await this.activityImagesRepository.find({
+      where: { activityId: In(activityIds) },
+      order: { sortOrder: 'ASC' },
+    });
+    const imageUrlByActivityId = new Map<string, string>();
+    for (const row of rows) {
+      if (!row.deletedAt && !imageUrlByActivityId.has(row.activityId)) {
+        imageUrlByActivityId.set(row.activityId, row.url);
+      }
+    }
+    return imageUrlByActivityId;
+  }
+
+  private async loadActivityGallery(activityId: string): Promise<PublicGalleryImageDto[]> {
+    const rows = await this.activityImagesRepository.find({
+      where: { activityId },
+      order: { sortOrder: 'ASC' },
+    });
+    return rows
+      .filter((row) => !row.deletedAt)
+      .map((row) => ({
+        id: row.id,
+        url: row.url,
+        caption: row.caption ?? null,
+        sortOrder: row.sortOrder,
+      }));
   }
 
   private async resolveDestinationIds(destination: string): Promise<string[]> {
@@ -351,10 +409,9 @@ export class PublicActivitiesService {
     return rows.map((d) => d.id);
   }
 
-  private async buildAvailableSchedules(
+  private async buildSchedulesForDate(
     activityId: string,
     date: string,
-    participants: number,
     priceCents: number,
     currency: string,
   ): Promise<ScheduleOffer[]> {
@@ -366,13 +423,9 @@ export class PublicActivitiesService {
       .orderBy('schedule.startDatetime', 'ASC')
       .getMany();
 
-    const offers: ScheduleOffer[] = [];
-    for (const schedule of rows) {
+    return rows.map((schedule) => {
       const remainingPlaces = this.remainingPlaces(schedule);
-      if (remainingPlaces < participants) {
-        continue;
-      }
-      offers.push({
+      return {
         scheduleId: schedule.id,
         startDatetime: this.toIsoDatetime(schedule.startDatetime),
         capacity: schedule.capacity,
@@ -380,9 +433,53 @@ export class PublicActivitiesService {
         remainingPlaces,
         priceCents,
         currency,
+      };
+    });
+  }
+
+  private async loadReviewSummariesByActivityIds(
+    activityIds: string[],
+  ): Promise<Map<string, { averageRating: number; reviewCount: number }>> {
+    if (!activityIds.length) {
+      return new Map();
+    }
+
+    const rows = await this.reviewsRepository
+      .createQueryBuilder('r')
+      .select('r.entityId', 'activityId')
+      .addSelect('AVG(r.rating)', 'averageRating')
+      .addSelect('COUNT(r.id)', 'reviewCount')
+      .where('r.entityType = :entityType', { entityType: 'activity' })
+      .andWhere('r.status = :status', { status: 'approved' })
+      .andWhere('r.deletedAt IS NULL')
+      .andWhere('r.entityId IN (:...activityIds)', { activityIds })
+      .groupBy('r.entityId')
+      .getRawMany<{ activityId: string; averageRating: string; reviewCount: string }>();
+
+    const summaryByActivityId = new Map<string, { averageRating: number; reviewCount: number }>();
+    for (const row of rows) {
+      const reviewCount = Number(row.reviewCount);
+      if (reviewCount === 0) {
+        continue;
+      }
+      summaryByActivityId.set(row.activityId, {
+        averageRating: Math.round(Number(row.averageRating) * 10) / 10,
+        reviewCount,
       });
     }
-    return offers;
+    return summaryByActivityId;
+  }
+
+  private toReviewFields(
+    summary: { averageRating: number; reviewCount: number } | undefined,
+  ): { averageRating: number | null; reviewCount: number } {
+    if (!summary || summary.reviewCount === 0) {
+      return { averageRating: null, reviewCount: 0 };
+    }
+    return {
+      averageRating: summary.averageRating,
+      reviewCount: summary.reviewCount,
+    };
   }
 
   private remainingPlaces(schedule: ActivitySchedules): number {

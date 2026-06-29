@@ -36,6 +36,8 @@
       "title": "Inicio de sesión del cliente",
       "subtitle": "Inicie sesión con su correo y contraseña, o use Google para continuar su reserva.",
       "divider": "o",
+      "dividerLabel": "¿Aún no tiene cuenta?",
+      "createAccount": "Crear una cuenta",
       "google": "Iniciar sesión con Google",
       "backToHotels": "Volver a hoteles",
       "form": {
@@ -52,6 +54,54 @@
         "envMissing": "Falta la configuración de la API (NEXT_PUBLIC_API_URL).",
         "unauthorized": "Correo o contraseña incorrectos."
       }
+    },
+    "register": {
+      "title": "Crear una cuenta de cliente",
+      "subtitle": "Regístrese para reservar, seguir sus viajes y gestionar su perfil.",
+      "dividerLabel": "¿Ya tiene cuenta?",
+      "signIn": "Iniciar sesión",
+      "backToHotels": "Volver a hoteles",
+      "form": {
+        "firstNameLabel": "Nombre",
+        "firstNamePlaceholder": "Juan",
+        "lastNameLabel": "Apellido",
+        "lastNamePlaceholder": "García",
+        "emailLabel": "Correo electrónico",
+        "emailPlaceholder": "usted@ejemplo.com",
+        "phoneLabel": "Teléfono",
+        "phonePlaceholder": "+34 600 000 000",
+        "phoneHint": "Opcional",
+        "passwordLabel": "Contraseña",
+        "passwordPlaceholder": "••••••••",
+        "confirmPasswordLabel": "Confirmar contraseña",
+        "confirmPasswordPlaceholder": "••••••••",
+        "confirmPasswordMismatch": "Las contraseñas no coinciden",
+        "termsLabel": "Acepto las",
+        "termsLink": "condiciones de uso",
+        "submit": "Crear mi cuenta",
+        "submitLoading": "Creando cuenta…"
+      },
+      "errors": {
+        "emailAlreadyRegistered": "Este correo ya está en uso. Inicie sesión o use otra dirección.",
+        "network": "No se pudo conectar con el servidor. Compruebe su conexión.",
+        "generic": "Algo salió mal. Inténtelo de nuevo.",
+        "envMissing": "Falta la configuración de la API (NEXT_PUBLIC_API_URL).",
+        "server": "El servidor no está listo. Compruebe la base de datos."
+      }
     }
+  },
+  "hotelsDetail": {
+    "breadcrumbHome": "Inicio",
+    "breadcrumbHotels": "Hoteles",
+    "galleryAria": "Galería de fotos",
+    "galleryOpenLightbox": "Ampliar foto",
+    "galleryClose": "Cerrar galería",
+    "galleryPrevious": "Foto anterior",
+    "galleryNext": "Foto siguiente",
+    "galleryCounter": "Foto {current} de {total}",
+    "calendarLegendTitle": "Leyenda",
+    "calendarLegendAvailable": "Disponible",
+    "calendarLegendSelected": "Fechas seleccionadas",
+    "calendarLegendUnavailable": "No disponible"
   }
 }

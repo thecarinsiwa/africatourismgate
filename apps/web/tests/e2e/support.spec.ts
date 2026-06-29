@@ -34,7 +34,7 @@ test('shows public FAQ and sign-in prompt without session', async ({ page }) => 
 
   await expect(
     page.getByRole('heading', {
-      name: /Centre d’aide|Help centre|Centro de ayuda/i,
+      name: /Centre d'aide|Help centre|Centro de ayuda/i,
     }),
   ).toBeVisible();
 

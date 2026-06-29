@@ -1,8 +1,6 @@
 'use client';
 
-import Link from 'next/link';
-import { HomeFooter } from './home/home-footer';
-import { HomeHeader } from './home/home-header';
+import { ComingSoonShell } from './coming-soon/coming-soon-shell';
 import { useTranslations } from '../lib/i18n/locale-provider';
 import type { SearchVertical } from '../lib/search/route';
 
@@ -11,24 +9,12 @@ export function VerticalComingSoonPage({ vertical }: { vertical: SearchVertical 
   const verticalLabel = t.search.tabs[vertical];
 
   return (
-    <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
-      <HomeHeader />
-      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-4 py-16 text-center sm:px-6">
-        <p className="text-sm font-semibold uppercase tracking-wide text-primary">
-          {t.comingSoon.badge}
-        </p>
-        <h1 className="mt-3 text-3xl font-bold text-atg-fg sm:text-4xl">
-          {verticalLabel}
-        </h1>
-        <p className="mt-4 max-w-xl text-atg-muted">{t.comingSoon.body}</p>
-        <Link
-          href="/#search"
-          className="mt-8 inline-flex min-h-[44px] items-center rounded-lg bg-primary px-6 py-2.5 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover"
-        >
-          {t.comingSoon.backToSearch}
-        </Link>
-      </main>
-      <HomeFooter />
-    </div>
+    <ComingSoonShell
+      badge={t.comingSoon.badge}
+      title={verticalLabel}
+      description={t.comingSoon.body}
+      primaryAction={{ label: t.comingSoon.backToSearch, href: '/#search' }}
+      secondaryAction={{ label: t.comingSoon.backHome, href: '/' }}
+    />
   );
 }

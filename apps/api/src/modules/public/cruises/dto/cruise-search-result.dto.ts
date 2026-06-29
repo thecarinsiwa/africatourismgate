@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CruiseSearchResultDto {
   @ApiProperty({ format: 'uuid', description: 'Sailing id' })
@@ -39,4 +39,7 @@ export class CruiseSearchResultDto {
 
   @ApiProperty({ example: 'USD' })
   currency!: string;
+
+  @ApiPropertyOptional({ nullable: true, description: 'First ship photo URL' })
+  imageUrl!: string | null;
 }

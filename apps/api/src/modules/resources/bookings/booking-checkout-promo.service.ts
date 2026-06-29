@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
-import { PromoCodes, Promotions } from '../../../entities/generated';
+import { PromoCodes, Promotions, Bookings } from '../../../entities/generated';
 import { BookingCheckoutDto } from './dto/booking-checkout.dto';
 
 export type AppliedCheckoutDiscount = {
@@ -121,6 +121,38 @@ export class BookingCheckoutPromoService {
       this.assertRedemptionAvailable(row);
       row.redemptionCount += 1;
       await repo.save(row);
+    }
+  }
+
+  /** Records promo/promotion redemption stored on an assisted booking at approval time. */
+  async recordRedemptionFromBooking(
+    manager: EntityManager,
+    booking: Pick<Bookings, 'promoCodeId' | 'promotionId'>,
+  ): Promise<void> {
+    if (booking.promoCodeId) {
+      await this.recordRedemption(manager, {
+        kind: 'promo_code',
+        id: booking.promoCodeId,
+        label: '',
+        discountType: 'fixed_amount',
+        discountValue: 0,
+        discountCents: 0,
+        promoCodeId: booking.promoCodeId,
+        promotionId: null,
+      });
+      return;
+    }
+    if (booking.promotionId) {
+      await this.recordRedemption(manager, {
+        kind: 'promotion',
+        id: booking.promotionId,
+        label: '',
+        discountType: 'fixed_amount',
+        discountValue: 0,
+        discountCents: 0,
+        promoCodeId: null,
+        promotionId: booking.promotionId,
+      });
     }
   }
 

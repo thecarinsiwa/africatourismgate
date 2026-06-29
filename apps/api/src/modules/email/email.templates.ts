@@ -26,7 +26,7 @@ const BRAND = {
 
 const DEFAULT_WEB_URL = 'https://africatourismgate.org';
 
-function escapeHtml(value: string): string {
+export function escapeHtml(value: string): string {
   return value
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -55,7 +55,7 @@ function applySubjectTemplate(
     .replace(/\{ref\}/g, vars.ref ?? '');
 }
 
-function webBase(url?: string): string {
+export function webBase(url?: string): string {
   return (url?.trim() || DEFAULT_WEB_URL).replace(/\/$/, '');
 }
 
@@ -216,7 +216,7 @@ function noticeBox(text: string): string {
 </table>`;
 }
 
-function layout(
+export function layout(
   title: string,
   bodyHtml: string,
   branding: EmailBrandingValue,
@@ -293,6 +293,10 @@ function layout(
   </table>
 </body>
 </html>`;
+}
+
+export function button(href: string, label: string, branding: EmailBrandingValue): string {
+  return ctaButton(href, label, branding);
 }
 
 export function formatMoney(cents: number, currency: string): string {

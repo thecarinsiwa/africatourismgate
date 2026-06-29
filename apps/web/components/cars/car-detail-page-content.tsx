@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getVehicleDetail } from '../../lib/api/public';
 import {
   buildCarDetailHref,
@@ -10,13 +10,22 @@ import {
   toVehicleDetailQuery,
   type CarDetailSearchParams,
 } from '../../lib/cars/listings';
+import { resolveVehicleEquipment, resolveVehicleSpecs } from '../../lib/cars/specs';
 import type { VehicleDetail } from '../../lib/cars/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { buildReservationQuery } from '../../lib/reservations/flow';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
+import { DetailPageSkeletonShell } from '../shared/loading-skeletons';
+import { scrollToBookingSidebar } from '../shared/booking-sidebar-shell';
+import { ProductGallery } from '../shared';
 import { CarBookingMobileBar, CarBookingSidebar } from './car-booking-sidebar';
+import { CarConditionsSection } from './car-conditions-section';
+import { CarEquipmentSection } from './car-equipment-section';
+import { CarHeroMedia } from './car-hero-media';
+import { CarInfoSection } from './car-info-section';
+import { CarSpecBadges } from './car-spec-badges';
 
 export type CarDetailPageSearch = CarDetailSearchParams;
 
@@ -109,7 +118,7 @@ export function CarDetailPageContent({
 
   function handleReserve() {
     if (!pickupDate || !returnDate || returnDate <= pickupDate) {
-      document.getElementById('reserve')?.scrollIntoView({ behavior: 'smooth' });
+      scrollToBookingSidebar({ openDrawer: true });
       return;
     }
     if (!detail?.availabilitySlot?.id) return;
@@ -143,16 +152,18 @@ export function CarDetailPageContent({
       }
     : null;
 
+  const vehicleSpecs = useMemo(
+    () => (detail ? resolveVehicleSpecs(detail.category.name) : null),
+    [detail],
+  );
+
+  const equipmentItems = useMemo(() => {
+    if (!detail || !vehicleSpecs) return [];
+    return resolveVehicleEquipment(detail.category.name, vehicleSpecs);
+  }, [detail, vehicleSpecs]);
+
   if (loading && !detail && apiQuery) {
-    return (
-      <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
-        <HomeHeader />
-        <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-24 text-center sm:px-6 lg:px-8">
-          <p className="text-sm font-medium text-atg-muted">{c.loading}</p>
-        </div>
-        <HomeFooter />
-      </div>
-    );
+    return <DetailPageSkeletonShell loadingLabel={c.loading} />;
   }
 
   if (!apiQuery) {
@@ -193,7 +204,7 @@ export function CarDetailPageContent({
     );
   }
 
-  if (error || !detail || !sidebarProps) {
+  if (error || !detail || !sidebarProps || !vehicleSpecs) {
     return (
       <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
         <HomeHeader />
@@ -229,19 +240,23 @@ export function CarDetailPageContent({
       <HomeHeader />
 
       <div className="border-b border-atg-border bg-atg-elevated dark:border-atg-border dark:bg-atg-elevated">
-        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
           <nav
-            className="flex flex-wrap items-center gap-2 text-sm text-atg-muted"
+            className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-atg-muted"
             aria-label="Breadcrumb"
           >
             <Link href="/" className="transition-colors hover:text-primary">
               {c.breadcrumbHome}
             </Link>
-            <span aria-hidden>/</span>
+            <span className="text-atg-muted/60" aria-hidden>
+              ›
+            </span>
             <Link href={listHref} className="transition-colors hover:text-primary">
-              {c.breadcrumbCars}
+              {c.breadcrumbCarsDetail}
             </Link>
-            <span aria-hidden>/</span>
+            <span className="text-atg-muted/60" aria-hidden>
+              ›
+            </span>
             <span className="font-medium text-atg-fg">{title}</span>
           </nav>
         </div>
@@ -249,66 +264,86 @@ export function CarDetailPageContent({
 
       <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 pb-28 sm:px-6 lg:px-8 lg:pb-8">
         <div className="lg:grid lg:grid-cols-3 lg:gap-8">
-          <div className="space-y-8 lg:col-span-2">
-            <div className="overflow-hidden rounded-2xl bg-gradient-to-br from-[#1b1b2f] to-primary/80 p-8 text-white">
-              <p className="text-sm font-semibold uppercase tracking-wide text-white/70">
-                {detail.category.name}
-              </p>
-              <h1 className="mt-2 text-2xl font-bold sm:text-3xl">{title}</h1>
-              {detail.licensePlate && (
-                <p className="mt-2 text-sm text-white/80">
-                  {c.licensePlate}: {detail.licensePlate}
-                </p>
-              )}
-            </div>
+          <div className="min-w-0 space-y-8 lg:col-span-2">
+            {detail.images && detail.images.length > 0 ? (
+              <ProductGallery
+                images={detail.images}
+                name={title}
+                labels={{
+                  ariaLabel: c.galleryAria,
+                  openLightbox: c.galleryOpenLightbox,
+                  close: c.galleryClose,
+                  previous: c.galleryPrevious,
+                  next: c.galleryNext,
+                  counter: c.galleryCounter,
+                }}
+              />
+            ) : (
+              <CarHeroMedia
+                imageUrl={detail.imageUrl}
+                categoryName={detail.category.name}
+                title={title}
+                agencyName={detail.agency.name}
+                placeholderAria={c.imagePlaceholderAria}
+              />
+            )}
 
             <header>
-              <p className="text-sm text-atg-muted">
+              <p className="text-sm font-medium text-primary">{detail.category.name}</p>
+              <h1 className="mt-1 text-2xl font-bold text-atg-fg sm:text-3xl">{title}</h1>
+              <p className="mt-2 flex items-center gap-1.5 text-sm text-atg-muted">
+                <svg
+                  className="h-4 w-4 shrink-0 text-primary"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                  />
+                </svg>
+                {initialSearch.pickupLocation ?? detail.agency.city}
+              </p>
+              <p className="mt-2 text-sm text-atg-muted">
                 {formatDisplayDate(detail.pickupDate, locale)} →{' '}
                 {formatDisplayDate(detail.returnDate, locale)} · {daysLabel}
               </p>
+              <CarSpecBadges
+                specs={vehicleSpecs}
+                labels={c.specs}
+                transmissionLabels={c.transmission}
+                fuelLabels={c.fuel}
+                className="mt-4"
+              />
             </header>
 
-            <section className="rounded-2xl border border-atg-border bg-atg-elevated p-6 dark:border-atg-border dark:bg-atg-elevated">
-              <h2 className="mb-4 text-lg font-bold text-atg-fg">
-                {c.agencyTitle}
-              </h2>
-              <p className="font-semibold text-atg-fg">{detail.agency.name}</p>
-              {detail.agency.city && (
-                <p className="mt-1 flex items-center gap-1.5 text-sm text-atg-muted">
-                  <svg
-                    className="h-4 w-4 shrink-0 text-primary"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    aria-hidden
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1.5}
-                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                    />
-                  </svg>
-                  {detail.agency.city}
-                </p>
-              )}
-              {detail.agency.address && (
-                <p className="mt-2 text-sm text-atg-muted">
-                  {detail.agency.address}
-                </p>
-              )}
-            </section>
+            <CarInfoSection
+              title={c.infoTitle}
+              categoryName={detail.category.name}
+              exampleModel={detail.category.exampleModel}
+              licensePlate={detail.licensePlate}
+              agencyName={detail.agency.name}
+              agencyCity={detail.agency.city}
+              agencyAddress={detail.agency.address}
+              pickupLocation={initialSearch.pickupLocation}
+              pickupDate={detail.pickupDate}
+              returnDate={detail.returnDate}
+              daysLabel={daysLabel}
+              t={c}
+              locale={locale}
+            />
 
-            <section className="rounded-2xl border border-atg-border bg-atg-elevated p-6 dark:border-atg-border dark:bg-atg-elevated">
-              <h2 className="mb-2 text-lg font-bold text-atg-fg">
-                {c.categoryTitle}
-              </h2>
-              <p className="text-sm text-atg-muted">
-                {detail.category.name}
-                {detail.category.exampleModel ? ` · ${detail.category.exampleModel}` : ''}
-              </p>
-            </section>
+            <CarEquipmentSection
+              items={equipmentItems}
+              title={c.equipmentTitle}
+              labels={c.equipment}
+            />
+
+            <CarConditionsSection title={c.conditionsTitle} items={c.conditionItems} />
           </div>
 
           <CarBookingSidebar {...sidebarProps} />

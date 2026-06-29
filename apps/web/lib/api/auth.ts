@@ -4,7 +4,7 @@ import {
   type AuthResponse,
   type AuthTokens,
 } from '@africatourismgate/api-client';
-import type { LoginRequest } from '@africatourismgate/types';
+import type { LoginRequest, RegisterRequest } from '@africatourismgate/types';
 
 function getApiBaseUrl(): string {
   const defaultApiUrl =
@@ -22,6 +22,10 @@ export function verifyOperation(
   body: import('@africatourismgate/types').VerifyOperationRequest,
 ): Promise<AuthResponse> {
   return createApiClient({ baseUrl: getApiBaseUrl() }).verifyOperation(body);
+}
+
+export function registerCustomer(body: RegisterRequest): Promise<AuthResponse> {
+  return createApiClient({ baseUrl: getApiBaseUrl() }).registerCustomer(body);
 }
 
 export function buildGoogleOAuthStartUrl(nextPath: string): string {

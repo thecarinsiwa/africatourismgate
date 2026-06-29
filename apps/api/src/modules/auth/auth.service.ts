@@ -13,7 +13,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcryptjs';
-import { DeepPartial, IsNull, Repository } from 'typeorm';
+import { DeepPartial, IsNull, QueryFailedError, Repository } from 'typeorm';
 import { Organizations } from '../../entities/generated/organizations.entity';
 import { UserRoleAssignments } from '../../entities/generated/rbac.entity';
 import {
@@ -31,6 +31,7 @@ import {
   FORGOT_PASSWORD_GENERIC_MESSAGE,
   PASSWORD_RESET_TTL_SECONDS,
   RESET_PASSWORD_INVALID_MESSAGE,
+  EMAIL_ALREADY_REGISTERED_MESSAGE,
   SEED_ORG_PLATFORM_ID,
   SEED_ROLE_CUSTOMER_ID,
   SEED_ROLE_ORG_ADMIN_ID,
@@ -96,12 +97,34 @@ export class AuthService {
   }
 
   async register(dto: RegisterDto): Promise<AuthResponseDto> {
+    return this.registerWithRole(dto, {
+      roleId: SEED_ROLE_ORG_ADMIN_ID,
+      scopeType: 'agency',
+      scopeId: SEED_ORG_PLATFORM_ID,
+    });
+  }
+
+  async registerCustomer(dto: RegisterDto): Promise<AuthResponseDto> {
+    return this.registerWithRole(dto, {
+      roleId: SEED_ROLE_CUSTOMER_ID,
+      scopeType: 'global',
+    });
+  }
+
+  private async registerWithRole(
+    dto: RegisterDto,
+    role: {
+      roleId: string;
+      scopeType: 'global' | 'agency';
+      scopeId?: string;
+    },
+  ): Promise<AuthResponseDto> {
     const email = dto.email.trim().toLowerCase();
     const existing = await this.usersRepo.findOne({
-      where: { email, deletedAt: IsNull() },
+      where: { email },
     });
     if (existing) {
-      throw new ConflictException('Email already registered');
+      throw new ConflictException(EMAIL_ALREADY_REGISTERED_MESSAGE);
     }
 
     const defaultOrg = await this.organizationsRepo.findOne({
@@ -128,18 +151,26 @@ export class AuthService {
         : {}),
       status: 'active',
     } as DeepPartial<Users>);
-    await this.usersRepo.save(user);
 
-    const assignment = this.roleAssignmentsRepo.create({
-      id: newId(),
-      userId,
-      roleId: SEED_ROLE_ORG_ADMIN_ID,
-      scopeType: 'agency',
-      scopeId: SEED_ORG_PLATFORM_ID,
-      assignedByUserId: userId,
-      assignedAt: new Date(),
-    } as DeepPartial<UserRoleAssignments>);
-    await this.roleAssignmentsRepo.save(assignment);
+    try {
+      await this.usersRepo.save(user);
+
+      const assignment = this.roleAssignmentsRepo.create({
+        id: newId(),
+        userId,
+        roleId: role.roleId,
+        scopeType: role.scopeType,
+        ...(role.scopeId ? { scopeId: role.scopeId } : {}),
+        assignedByUserId: userId,
+        assignedAt: new Date(),
+      } as DeepPartial<UserRoleAssignments>);
+      await this.roleAssignmentsRepo.save(assignment);
+    } catch (error) {
+      if (this.isDuplicateEmailError(error)) {
+        throw new ConflictException(EMAIL_ALREADY_REGISTERED_MESSAGE);
+      }
+      throw error;
+    }
 
     const { verificationId } = await this.emailVerification.createAndSend({
       email: user.email,
@@ -680,6 +711,18 @@ export class AuthService {
     } catch {
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
+  }
+
+  private isDuplicateEmailError(error: unknown): boolean {
+    if (!(error instanceof QueryFailedError)) {
+      return false;
+    }
+    const driverError = error.driverError as { code?: string; sqlMessage?: string };
+    if (driverError.code === 'ER_DUP_ENTRY') {
+      return true;
+    }
+    const message = driverError.sqlMessage ?? error.message;
+    return message.includes('uk_users_email');
   }
 
   private requireSecret(key: string): string {

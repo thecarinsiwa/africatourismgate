@@ -6,9 +6,15 @@ import './globals.css';
 import { AppShell } from '@africatourismgate/ui';
 import type { CSSProperties } from 'react';
 import type { PublicContact } from '@africatourismgate/types';
+import {
+  DEFAULT_BOOKING_ITEM_TYPE_MODES,
+  normalizeBookingItemTypeModes,
+  type ResolvedBookingItemTypeModes,
+} from '@africatourismgate/types/tour-guide';
 import { DEFAULT_PUBLIC_CONTACT } from '@africatourismgate/types/organization-settings';
 import { normalizeBrandingAssetUrl } from '@africatourismgate/utils';
 import { BrandingProvider } from '../components/branding-provider';
+import { BookingModesProvider } from '../components/booking-modes-provider';
 import { ContactProvider } from '../components/contact-provider';
 import { Providers } from '../components/providers';
 
@@ -190,11 +196,25 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+async function getPublicBookingModes(): Promise<ResolvedBookingItemTypeModes> {
+  try {
+    const response = await fetch(`${apiUrl}/organization-settings/public/booking-modes`, {
+      cache: 'no-store',
+    });
+    if (!response.ok) return DEFAULT_BOOKING_ITEM_TYPE_MODES;
+    const modes = (await response.json()) as Partial<ResolvedBookingItemTypeModes>;
+    return normalizeBookingItemTypeModes(modes);
+  } catch {
+    return DEFAULT_BOOKING_ITEM_TYPE_MODES;
+  }
+}
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const locale = await getLocale();
   const messages = await getMessages();
   const branding = await getPublicBranding();
   const contact = await getPublicContact();
+  const bookingModes = await getPublicBookingModes();
   const themeStyle = {
     '--atg-primary': branding.primaryColor,
     '--atg-primary-hover': shiftHexColor(branding.primaryColor, -28),
@@ -219,9 +239,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             }}
           >
             <ContactProvider contact={contact}>
-              <Providers>
-                <AppShell>{children}</AppShell>
-              </Providers>
+              <BookingModesProvider modes={bookingModes}>
+                <Providers>
+                  <AppShell>{children}</AppShell>
+                </Providers>
+              </BookingModesProvider>
             </ContactProvider>
           </BrandingProvider>
         </NextIntlClientProvider>

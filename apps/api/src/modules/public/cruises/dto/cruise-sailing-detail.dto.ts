@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { PublicGalleryImageDto } from '../../dto/public-gallery-image.dto';
 
 export class CruiseSailingDetailPortDto {
   @ApiProperty({ example: 1 })
@@ -91,4 +92,7 @@ export class CruiseSailingDetailDto {
 
   @ApiProperty({ type: [CruiseSailingDetailCabinDto] })
   cabins!: CruiseSailingDetailCabinDto[];
+
+  @ApiProperty({ type: [PublicGalleryImageDto] })
+  images!: PublicGalleryImageDto[];
 }

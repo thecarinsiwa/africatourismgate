@@ -2,14 +2,18 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import {
-  buildCarsSearchQuery,
-  countRentalDays,
-  type CarsSearchParams,
-} from '../../lib/cars/listings';
+import { countRentalDays, type CarsSearchParams } from '../../lib/cars/listings';
 import { useVehiclePickupLocations } from '../../lib/cars/use-vehicle-pickup-locations';
 import { addDays, todayISODate } from '../../lib/hotels/dates';
 import { useTranslations } from '../../lib/i18n/locale-provider';
+import { buildSearchRoute } from '../../lib/search/route';
+import {
+  SearchFormDatalistInput,
+  SearchFormInput,
+  SearchFormLabel,
+  SearchFormPanel,
+  SearchFormSubmit,
+} from '../shared';
 
 type CarsSearchFormProps = {
   initialValues: CarsSearchParams;
@@ -31,6 +35,11 @@ export function CarsSearchForm({ initialValues }: CarsSearchFormProps) {
     loading: carPickupLoading,
     error: carPickupError,
   } = useVehiclePickupLocations();
+
+  const carPickupOptions = useMemo(
+    () => carPickupLocations.map((location) => location.name),
+    [carPickupLocations],
+  );
 
   const today = todayISODate();
   const returnMinDate = pickupDate ? addDays(pickupDate, 1) : today;
@@ -63,29 +72,20 @@ export function CarsSearchForm({ initialValues }: CarsSearchFormProps) {
       return;
     }
 
-    const params: CarsSearchParams = {};
-    if (pickupLocation.trim()) params.pickupLocation = pickupLocation.trim();
-    if (pickupDate) params.pickupDate = pickupDate;
-    if (returnDate) params.returnDate = returnDate;
+    const params = new URLSearchParams();
+    if (pickupLocation.trim()) params.set('pickupLocation', pickupLocation.trim());
+    if (pickupDate) params.set('pickupDate', pickupDate);
+    if (returnDate) params.set('returnDate', returnDate);
 
-    router.push(`/cars${buildCarsSearchQuery(params)}`);
+    router.push(buildSearchRoute('cars', params));
   }
 
-  const labelClass =
-    'mb-1.5 block text-xs font-semibold uppercase tracking-wide text-atg-muted';
-  const fieldClass =
-    'min-h-[44px] w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg transition-colors placeholder:text-atg-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-60 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg dark:placeholder:text-atg-muted';
-
   return (
-    <form
-      id="cars-search"
-      onSubmit={handleSubmit}
-      className="mt-8 rounded-xl border border-white/10 bg-white p-5 shadow-xl dark:border-atg-border dark:bg-atg-elevated sm:p-6"
-    >
+    <SearchFormPanel id="cars-search" onSubmit={handleSubmit}>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         {rentalDaysLabel ? (
           <span
-            className="inline-flex min-h-[36px] items-center rounded-lg border border-atg-border bg-atg-surface px-3 py-1.5 text-sm font-semibold text-atg-fg dark:border-atg-border dark:bg-atg-surface dark:text-white"
+            className="inline-flex min-h-[44px] items-center rounded-lg border border-atg-border bg-atg-surface px-4 py-2 text-sm font-semibold text-atg-fg dark:border-atg-border dark:bg-atg-surface dark:text-white"
             role="status"
           >
             {rentalDaysLabel}
@@ -97,76 +97,53 @@ export function CarsSearchForm({ initialValues }: CarsSearchFormProps) {
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.25fr_1fr_1fr_auto] lg:items-end">
         <div>
-          <label htmlFor="cars-pickup-location" className={labelClass}>
-            {c.pickupLocation}
-          </label>
-          <select
-            id="cars-pickup-location"
+          <SearchFormLabel>{c.pickupLocation}</SearchFormLabel>
+          <SearchFormDatalistInput
             name="pickupLocation"
+            placeholder={carPickupLoading ? c.loading : c.anyLocation}
+            suggestions={carPickupOptions}
             value={pickupLocation}
             disabled={carPickupLoading}
-            onChange={(event) => {
-              setPickupLocation(event.target.value);
+            onChange={(value) => {
+              setPickupLocation(value);
               setError(null);
             }}
-            className={fieldClass}
-          >
-            <option value="">{c.anyLocation}</option>
-            {carPickupLocations.map((location) => (
-              <option key={location.id} value={location.name}>
-                {location.name}
-              </option>
-            ))}
-          </select>
+          />
         </div>
 
         <div>
-          <label htmlFor="cars-pickup-date" className={labelClass}>
-            {s.pickUp}
-          </label>
-          <input
-            id="cars-pickup-date"
+          <SearchFormLabel>{s.pickUp}</SearchFormLabel>
+          <SearchFormInput
             type="date"
             name="pickupDate"
             value={pickupDate}
             min={today}
-            onChange={(event) => {
-              const value = event.target.value;
+            onChange={(value) => {
               setPickupDate(value);
               if (returnDate && value && returnDate <= value) {
                 setReturnDate('');
               }
               setError(null);
             }}
-            className={fieldClass}
           />
         </div>
 
         <div>
-          <label htmlFor="cars-return-date" className={labelClass}>
-            {s.dropOff}
-          </label>
-          <input
-            id="cars-return-date"
+          <SearchFormLabel>{s.dropOff}</SearchFormLabel>
+          <SearchFormInput
             type="date"
             name="returnDate"
             value={returnDate}
             min={returnMinDate}
-            onChange={(event) => {
-              setReturnDate(event.target.value);
+            onChange={(value) => {
+              setReturnDate(value);
               setError(null);
             }}
-            className={fieldClass}
           />
         </div>
 
         <div className="flex items-end">
-          <button
-            type="submit"
-            className="min-h-[44px] w-full rounded-lg bg-primary px-5 py-2.5 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover"
-          >
-            {s.search}
-          </button>
+          <SearchFormSubmit label={s.search} />
         </div>
       </div>
 
@@ -180,6 +157,6 @@ export function CarsSearchForm({ initialValues }: CarsSearchFormProps) {
           {error}
         </p>
       )}
-    </form>
+    </SearchFormPanel>
   );
 }

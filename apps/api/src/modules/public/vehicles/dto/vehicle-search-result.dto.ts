@@ -48,4 +48,7 @@ export class VehicleSearchResultDto {
     description: 'Availability slot id for checkout referenceId',
   })
   availabilitySlotId!: string;
+
+  @ApiPropertyOptional({ nullable: true, description: 'First vehicle photo URL' })
+  imageUrl!: string | null;
 }

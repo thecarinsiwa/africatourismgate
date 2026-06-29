@@ -207,6 +207,8 @@ export type {
   BookingListItem,
   BookingPayment,
   BookingStatusHistoryEntry,
+  ApproveBookingRequest,
+  RejectBookingRequest,
   BookingCheckoutSessionResponse,
   BookingPaymentIntentResponse,
   RefundPaymentResponse,
@@ -221,6 +223,10 @@ export type {
   BookingCheckoutRequest,
   BookingDetail,
   CreateBookingResponse,
+  BookingMessage,
+  BookingMessagesList,
+  BookingRequestResponse,
+  CreateBookingMessageRequest,
   BookingItem,
   BookingItemListItem,
   BookingItemType,
@@ -229,13 +235,42 @@ export type {
   BookingStatus,
 } from './booking.js';
 
+export {
+  BOOKING_ITEM_TYPE_KEYS,
+  DEFAULT_BOOKING_ITEM_TYPE_MODES,
+  isBookingMode,
+  normalizeBookingItemTypeModes,
+  resolveBookingModeForItemType,
+  resolveCheckoutBookingMode,
+} from './tour-guide.js';
+
+export type {
+  BookingGuideAssignment,
+  BookingGuideRole,
+  BookingItemTypeKey,
+  BookingItemTypeModes,
+  BookingMode,
+  ResolvedBookingItemTypeModes,
+  TourGuide,
+  TourGuideStatus,
+  TourGuideType,
+  TourGuideUserSummary,
+  TourGuidesListQuery,
+  CreateTourGuideRequest,
+  UpdateTourGuideRequest,
+  AssignBookingGuideItem,
+  AssignBookingGuidesRequest,
+} from './tour-guide.js';
+
 export type {
   AdminReviewDetail,
   AdminReviewListItem,
   CreateBookingReviewRequest,
+  GuideReviewInvite,
   PropertyReviewSummary,
   PropertyReviewsListQuery,
   Review,
+  ReviewEntityType,
   ReviewStatus,
   ReviewsListQuery,
   UpdateReviewStatusRequest,

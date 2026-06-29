@@ -4,6 +4,25 @@ import { formatDisplayDate } from '../../lib/hotels/dates';
 import { formatFlightPrice } from '../../lib/flights/listings';
 import type { FlightDetail, FlightDetailClass } from '../../lib/flights/types';
 import type { Translations } from '../../lib/i18n/translations';
+import { useState } from 'react';
+import { useBookingCtaLabel } from '../../lib/bookings/use-booking-cta';
+import { useTranslations } from '../../lib/i18n/locale-provider';
+import {
+  BookingSidebarBody,
+  BookingSidebarCta,
+  BookingSidebarDateCard,
+  BookingSidebarDesktop,
+  BookingSidebarField,
+  BookingSidebarHint,
+  BookingSidebarMobileBar,
+  BookingSidebarMobileDrawer,
+  BookingSidebarPriceBlock,
+  BookingSidebarSummary,
+  BookingSidebarTrustHints,
+  bookingSidebarInputClass,
+  useBookingDrawerOpenListener,
+  useBookingSidebarTrustHints,
+} from '../shared/booking-sidebar-shell';
 
 type FlightBookingSidebarProps = {
   detail: FlightDetail;
@@ -15,7 +34,7 @@ type FlightBookingSidebarProps = {
   locale?: string;
 };
 
-function SidebarContent({
+function FlightBookingContent({
   detail,
   selectedClass,
   passengers,
@@ -24,6 +43,8 @@ function SidebarContent({
   t,
   locale,
 }: FlightBookingSidebarProps) {
+  const trustHints = useBookingSidebarTrustHints();
+  const ctaLabel = useBookingCtaLabel('flight_class');
   const hasDate = Boolean(detail.departureDate);
   const canReserve = hasDate && selectedClass != null && selectedClass.availableSeats >= passengers;
 
@@ -31,29 +52,20 @@ function SidebarContent({
     passengers === 1 ? t.passengerSingular : t.passengerPlural.replace('{n}', String(passengers));
 
   return (
-    <div className="space-y-4" id="reserve">
-      <h2 className="text-lg font-bold text-atg-fg">{t.reserveSection}</h2>
+    <BookingSidebarBody title={t.reserveSection}>
+      {hasDate ? (
+        <BookingSidebarDateCard
+          label={t.departureDate}
+          value={formatDisplayDate(detail.departureDate, locale)}
+          detail={
+            detail.returnDate
+              ? `${t.returnDate}: ${formatDisplayDate(detail.returnDate, locale)}`
+              : undefined
+          }
+        />
+      ) : null}
 
-      {hasDate && (
-        <div className="rounded-lg bg-atg-surface px-4 py-3 text-sm dark:bg-white/5">
-          <p className="text-xs uppercase tracking-wide text-atg-muted">
-            {t.departureDate}
-          </p>
-          <p className="mt-1 font-medium text-atg-fg">
-            {formatDisplayDate(detail.departureDate, locale)}
-          </p>
-          {detail.returnDate && (
-            <p className="mt-2 text-xs text-atg-muted">
-              {t.returnDate}: {formatDisplayDate(detail.returnDate, locale)}
-            </p>
-          )}
-        </div>
-      )}
-
-      <label className="block text-sm">
-        <span className="mb-1 block font-medium text-atg-muted">
-          {t.passengers}
-        </span>
+      <BookingSidebarField label={t.passengers}>
         <input
           type="number"
           min={1}
@@ -62,91 +74,84 @@ function SidebarContent({
           onChange={(e) =>
             onPassengersChange(Math.max(1, Number.parseInt(e.target.value, 10) || 1))
           }
-          className="min-h-[44px] w-full rounded-lg border border-atg-border px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-surface dark:text-white"
+          className={bookingSidebarInputClass}
         />
-      </label>
+      </BookingSidebarField>
 
       {!selectedClass && (
-        <p className="text-sm text-amber-700 dark:text-amber-300">{t.selectClassHint}</p>
+        <BookingSidebarHint tone="warning">{t.selectClassHint}</BookingSidebarHint>
       )}
 
       {selectedClass && selectedClass.availableSeats < passengers && (
-        <p className="text-sm text-red-600 dark:text-red-400">{t.insufficientSeats}</p>
+        <BookingSidebarHint tone="error">{t.insufficientSeats}</BookingSidebarHint>
       )}
 
-      <p className="text-sm text-atg-muted">
+      <BookingSidebarSummary>
         {detail.departureAirport.iataCode} → {detail.arrivalAirport.iataCode} · {passengersLabel}
-      </p>
+      </BookingSidebarSummary>
 
-      {selectedClass && (
-        <div className="rounded-lg bg-atg-surface px-4 py-3 dark:bg-white/5">
-          <p className="text-xs uppercase tracking-wide text-atg-muted">
-            {t.totalFlight}
-          </p>
-          <p className="text-2xl font-bold text-atg-fg">
-            {formatFlightPrice(selectedClass.totalPriceCents, detail.currency)}
-          </p>
-        </div>
-      )}
+      {selectedClass ? (
+        <BookingSidebarPriceBlock
+          label={t.totalFlight}
+          amount={formatFlightPrice(selectedClass.totalPriceCents, detail.currency)}
+        />
+      ) : null}
 
       {!selectedClass && detail.minPriceCents > 0 && (
-        <p className="text-sm text-atg-muted">
-          {t.fromPrice}{' '}
-          {formatFlightPrice(detail.minPriceCents, detail.currency)} {t.perPassenger}
-        </p>
+        <BookingSidebarHint>
+          {t.fromPrice} {formatFlightPrice(detail.minPriceCents, detail.currency)} {t.perPassenger}
+        </BookingSidebarHint>
       )}
 
-      <button
-        type="button"
-        disabled={!canReserve}
-        onClick={onReserve}
-        className="w-full min-h-[48px] rounded-lg bg-primary px-6 py-3 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
-      >
-        {t.bookNow}
-      </button>
-    </div>
+      <BookingSidebarCta label={ctaLabel} disabled={!canReserve} onClick={onReserve} />
+      <BookingSidebarTrustHints items={trustHints} />
+    </BookingSidebarBody>
   );
 }
 
 export function FlightBookingSidebar(props: FlightBookingSidebarProps) {
   return (
-    <aside className="hidden rounded-2xl border border-atg-border bg-atg-elevated p-6 shadow-lg dark:border-atg-border dark:bg-atg-elevated lg:block lg:sticky lg:top-24">
-      <SidebarContent {...props} />
-    </aside>
+    <BookingSidebarDesktop>
+      <FlightBookingContent {...props} />
+    </BookingSidebarDesktop>
   );
 }
 
 export function FlightBookingMobileBar(props: FlightBookingSidebarProps) {
+  const { bookingSidebar } = useTranslations();
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const { detail, selectedClass, passengers, onReserve, t } = props;
+  const ctaLabel = useBookingCtaLabel('flight_class');
   const canReserve =
     Boolean(detail.departureDate) &&
     selectedClass != null &&
     selectedClass.availableSeats >= passengers;
 
+  useBookingDrawerOpenListener(() => setDrawerOpen(true));
+
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-atg-border bg-atg-elevated/95 p-4 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] backdrop-blur-md dark:border-atg-border dark:bg-atg-elevated/95 lg:hidden pb-safe">
-      <div className="mx-auto flex max-w-lg items-center gap-4">
-        <div className="min-w-0 flex-1">
-          {selectedClass ? (
-            <>
-              <p className="text-xs text-atg-muted">{t.totalFlight}</p>
-              <p className="text-lg font-bold text-atg-fg">
-                {formatFlightPrice(selectedClass.totalPriceCents, detail.currency)}
-              </p>
-            </>
-          ) : (
-            <p className="text-sm text-atg-muted">{t.selectClassHint}</p>
-          )}
-        </div>
-        <button
-          type="button"
-          disabled={!canReserve}
-          onClick={onReserve}
-          className="min-h-[48px] shrink-0 rounded-lg bg-primary px-6 py-3 text-sm font-bold uppercase tracking-wide text-white hover:bg-primary-hover disabled:opacity-50"
-        >
-          {t.bookNow}
-        </button>
-      </div>
-    </div>
+    <>
+      <BookingSidebarMobileDrawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        title={t.reserveSection}
+      >
+        <FlightBookingContent {...props} />
+      </BookingSidebarMobileDrawer>
+      <BookingSidebarMobileBar
+        priceLabel={selectedClass ? t.totalFlight : undefined}
+        priceAmount={
+          selectedClass
+            ? formatFlightPrice(selectedClass.totalPriceCents, detail.currency)
+            : undefined
+        }
+        hint={selectedClass ? undefined : t.selectClassHint}
+        ctaLabel={ctaLabel}
+        ctaDisabled={!canReserve}
+        onCtaClick={onReserve}
+        configureLabel={bookingSidebar.mobileConfigure}
+        onConfigureClick={() => setDrawerOpen(true)}
+      />
+    </>
   );
 }

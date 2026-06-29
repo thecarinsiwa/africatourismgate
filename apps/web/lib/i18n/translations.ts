@@ -92,6 +92,126 @@ export type Translations = {
     countries: string[];
     locations: string[];
   };
+  listing: {
+    clearFilters: string;
+    applyFilters: string;
+    filtersToggle: string;
+    previousPage: string;
+    nextPage: string;
+    navAriaLabel: string;
+    pageAria: (page: number) => string;
+    range: (params: {
+      start: number;
+      end: number;
+      total: number;
+      itemLabel: string;
+      pluralSuffix: string;
+    }) => string;
+    pageOf: (params: { page: number; totalPages: number }) => string;
+    resultItem: string;
+  };
+  bookingSidebar: {
+    trustDemoCatalog: string;
+    trustTransparentPricing: string;
+    trustSupport: string;
+    mobileConfigure: string;
+    closeDrawer: string;
+    decreaseGuests: string;
+    increaseGuests: string;
+  };
+  checkout: {
+    stepperAriaLabel: string;
+    stepCart: string;
+    stepRecap: string;
+    stepPayment: string;
+    stepRequest: string;
+    stepConfirmation: string;
+    stepCancelled: string;
+    cartTitle: string;
+    recapTitle: string;
+    continueToRecap: string;
+    backToCart: string;
+    payWithStripe: string;
+    requestBooking: string;
+    requestSubmitting: string;
+    stripeRedirecting: string;
+    estimatedTotal: string;
+    loading: string;
+    authRequiredNext: string;
+    authRequiredPayment: string;
+    authRequiredRequest: string;
+    invalidDraft: string;
+    invalidDraftBack: string;
+    invalidRecap: string;
+    modifySelection: string;
+    resumeSearch: string;
+    stripeError: {
+      authTitle: string;
+      authDescription: string;
+      authHint: string;
+      networkTitle: string;
+      networkHint: string;
+      paymentTitle: string;
+      paymentHint: string;
+      genericTitle: string;
+      genericHint: string;
+      dismiss: string;
+    };
+    success: {
+      title: string;
+      subtitle: string;
+      bookingIdLabel: string;
+      statusLabel: string;
+      totalLabel: string;
+      verifying: string;
+      statusUnavailable: string;
+      backHome: string;
+      browseHotels: string;
+      viewAccount: string;
+      signOut: string;
+      nextStepsTitle: string;
+      nextStepEmail: string;
+      nextStepAccount: string;
+    };
+    requestSuccess: {
+      title: string;
+      subtitle: string;
+      bookingIdLabel: string;
+      statusLabel: string;
+      totalLabel: string;
+      verifying: string;
+      statusUnavailable: string;
+      backHome: string;
+      browseActivities: string;
+      viewAccount: string;
+      signOut: string;
+      nextStepsTitle: string;
+      nextStepContact: string;
+      nextStepAccount: string;
+    };
+    cancel: {
+      title: string;
+      subtitle: string;
+      backToCart: string;
+      continueSearch: string;
+    };
+  };
+  verticalSearch: {
+    backHome: string;
+    resultsTitle: string;
+    exploreHint: string;
+    forDestination: string;
+    noResults: string;
+    noResultsHint: string;
+    continue: string;
+    verticals: {
+      hotels: string;
+      flights: string;
+      cars: string;
+      cruises: string;
+      tours: string;
+    };
+  };
   whyUs: {
     title: string;
     subtitle: string;
@@ -153,6 +273,7 @@ export type Translations = {
     metaDescription: string;
     breadcrumbHome: string;
     breadcrumbHotels: string;
+    breadcrumbHotelsDetail: string;
     heroTitle: string;
     heroSubtitle: string;
     resultsFor: string;
@@ -199,10 +320,19 @@ export type Translations = {
     featuredBadge: string;
     detailMetaDescription: string;
     galleryAria: string;
+    galleryOpenLightbox: string;
+    galleryClose: string;
+    galleryPrevious: string;
+    galleryNext: string;
+    galleryCounter: (current: number, total: number) => string;
     amenitiesTitle: string;
     roomsTitle: string;
     descriptionTitle: string;
     calendarTitle: string;
+    calendarLegendTitle: string;
+    calendarLegendAvailable: string;
+    calendarLegendSelected: string;
+    calendarLegendUnavailable: string;
     selectRoom: string;
     selectRoomHint: string;
     totalStay: string;
@@ -218,6 +348,10 @@ export type Translations = {
     nextMonth: string;
     fromPrice: string;
     selectDatesHint: string;
+    guestSingular: string;
+    guestPlural: string;
+    perRoomPriceNote: string;
+    noRoomsForGuests: string;
     maxGuests: string;
     bedConfig: string;
     reserveSection: string;
@@ -234,6 +368,7 @@ export type Translations = {
     metaDescription: string;
     breadcrumbHome: string;
     breadcrumbFlights: string;
+    breadcrumbFlightsDetail: string;
     heroTitle: string;
     heroSubtitle: string;
     resultsFor: string;
@@ -267,12 +402,16 @@ export type Translations = {
     fromPrice: string;
     perPassenger: string;
     direct: string;
+    layoverSingular: string;
+    layoverPlural: string;
+    layoverDuration: string;
     departure: string;
     arrival: string;
     itineraryTitle: string;
     classesTitle: string;
     selectClass: string;
     selectClassHint: string;
+    selectedClass: string;
     seatsLeft: string;
     unavailable: string;
     insufficientSeats: string;
@@ -287,12 +426,19 @@ export type Translations = {
       business: string;
       first: string;
     };
+    galleryAria: string;
+    galleryOpenLightbox: string;
+    galleryClose: string;
+    galleryPrevious: string;
+    galleryNext: string;
+    galleryCounter: (current: number, total: number) => string;
   };
   cars: {
     metaTitle: string;
     metaDescription: string;
     breadcrumbHome: string;
     breadcrumbCars: string;
+    breadcrumbCarsDetail: string;
     heroTitle: string;
     heroSubtitle: string;
     resultsFor: string;
@@ -330,12 +476,53 @@ export type Translations = {
     agencyTitle: string;
     categoryTitle: string;
     licensePlate: string;
+    infoTitle: string;
+    equipmentTitle: string;
+    conditionsTitle: string;
+    rentalPeriod: string;
+    imagePlaceholderAria: string;
+    specs: {
+      seats: string;
+      airConditioningYes: string;
+      airConditioningNo: string;
+      listAria: string;
+    };
+    transmission: {
+      manual: string;
+      automatic: string;
+    };
+    fuel: {
+      petrol: string;
+      diesel: string;
+      hybrid: string;
+      electric: string;
+    };
+    equipment: {
+      airConditioning: string;
+      bluetooth: string;
+      gps: string;
+      usb: string;
+    };
+    conditionItems: {
+      minAge: string;
+      deposit: string;
+      mileage: string;
+      insurance: string;
+      fuelPolicy: string;
+    };
+    galleryAria: string;
+    galleryOpenLightbox: string;
+    galleryClose: string;
+    galleryPrevious: string;
+    galleryNext: string;
+    galleryCounter: (current: number, total: number) => string;
   };
   cruises: {
     metaTitle: string;
     metaDescription: string;
     breadcrumbHome: string;
     breadcrumbCruises: string;
+    breadcrumbCruisesDetail: string;
     heroTitle: string;
     heroSubtitle: string;
     resultsFor: string;
@@ -376,6 +563,14 @@ export type Translations = {
     cabinsTitle: string;
     selectCabin: string;
     selectCabinHint: string;
+    selectedCabin: string;
+    capacityLabel: string;
+    deckLabel: string;
+    deck: {
+      main: string;
+      upper: string;
+      promenade: string;
+    };
     cabinsLeft: string;
     unavailable: string;
     insufficientCabins: string;
@@ -390,6 +585,12 @@ export type Translations = {
     nightPlural: string;
     searchRequired: string;
     endAfterStart: string;
+    galleryAria: string;
+    galleryOpenLightbox: string;
+    galleryClose: string;
+    galleryPrevious: string;
+    galleryNext: string;
+    galleryCounter: (current: number, total: number) => string;
   };
   activities: {
     metaTitle: string;
@@ -440,6 +641,7 @@ export type Translations = {
     backToList: string;
     providerLabel: string;
     durationLabel: string;
+    difficultyLabel: string;
     hourSingular: string;
     hourPlural: string;
     minuteSingular: string;
@@ -448,6 +650,21 @@ export type Translations = {
     descriptionTitle: string;
     nextSlot: string;
     schedulesAvailable: string;
+    noSchedulesTitle: string;
+    noSchedulesHint: string;
+    selectedScheduleLabel: string;
+    difficultyEasy: string;
+    difficultyModerate: string;
+    difficultyHard: string;
+    difficultyExpert: string;
+    ratingAria: string;
+    reviewCount: string;
+    galleryAria: string;
+    galleryOpenLightbox: string;
+    galleryClose: string;
+    galleryPrevious: string;
+    galleryNext: string;
+    galleryCounter: (current: number, total: number) => string;
   };
   packages: {
     metaTitle: string;
@@ -544,6 +761,34 @@ export type Translations = {
       cruise: string;
       activity: string;
     };
+    galleryAria: string;
+    galleryOpenLightbox: string;
+    galleryClose: string;
+    galleryPrevious: string;
+    galleryNext: string;
+    galleryCounter: (current: number, total: number) => string;
+    stepOverview: string;
+    stepConfigure: string;
+    stepRecap: string;
+    stepOverviewShort: string;
+    stepConfigureShort: string;
+    stepRecapShort: string;
+    compositionStepperAria: string;
+    configureProgress: string;
+    startConfiguration: string;
+    stepBack: string;
+    viewRecap: string;
+    recapTitle: string;
+    recapHint: string;
+    configureSchedulesTitle: string;
+    itemConfigured: string;
+    itemPending: string;
+    recapActivityLine: string;
+    recapPropertyLine: string;
+    recapFlightLine: string;
+    recapVehicleLine: string;
+    recapCruiseLine: string;
+    estimatedSavings: string;
   };
   account: {
     title: string;
@@ -604,6 +849,9 @@ export type Translations = {
     };
     reservations: {
       empty: string;
+      emptyDescription: string;
+      emptyBrowse: string;
+      emptyFilter: string;
       reference: string;
       date: string;
       status: string;
@@ -612,6 +860,12 @@ export type Translations = {
       back: string;
       notFound: string;
       loadError: string;
+      filterAll: string;
+      filterConfirmed: string;
+      filterPending: string;
+      filterCancelled: string;
+      filterAria: string;
+      actionRequired: string;
       detail: {
         bookedOn: string;
         itemsCount: string;
@@ -642,7 +896,50 @@ export type Translations = {
         submittingReview: string;
         reviewSubmitError: string;
         reviewRatingRequired: string;
+        reviewCharCount: string;
+        reviewPublished: string;
         reviewStarAria: string;
+        timelineTitle: string;
+        timelinePlaceholder: string;
+        timelineStepCreated: string;
+        timelineStepPending: string;
+        timelineStepConfirmed: string;
+        timelineStepCancelled: string;
+        timelineStepRefunded: string;
+        timelineStepRequest: string;
+        timelineStepValidation: string;
+        timelineStepDiscussion: string;
+        timelineStepPayment: string;
+        timelineCurrent: string;
+        timelineUpcoming: string;
+        proceedToPayment: string;
+        paymentInvitePending: string;
+        messages: {
+          title: string;
+          subtitle: string;
+          loading: string;
+          empty: string;
+          threadAria: string;
+          authorStaff: string;
+          authorCustomer: string;
+          replyTitle: string;
+          replyLabel: string;
+          replyPlaceholder: string;
+          sendReply: string;
+          loadError: string;
+          sendError: string;
+        };
+        guideReviews: {
+          sectionTitle: string;
+          sectionHint: string;
+          rolePrimary: string;
+          roleSecondary: string;
+          leaveReview: string;
+          leaveReviewHint: string;
+          submitReview: string;
+          yourReview: string;
+          reviewPublished: string;
+        };
       };
     };
     paymentMethods: {
@@ -710,8 +1007,11 @@ export type Translations = {
   };
   comingSoon: {
     badge: string;
+    title: string;
+    siteBody: string;
     body: string;
     backToSearch: string;
+    backHome: string;
   };
   booking: {
     login: {
@@ -863,6 +1163,127 @@ const fr: Translations = {
     countries: ['Kenya', 'Tanzanie', 'Maroc', 'Afrique du Sud', 'Rwanda', 'RDC'],
     locations: ['Aéroport', 'Centre-ville', 'Gare'],
   },
+  listing: {
+    clearFilters: 'Effacer les filtres',
+    applyFilters: 'Appliquer',
+    filtersToggle: 'Filtres',
+    previousPage: 'Page précédente',
+    nextPage: 'Page suivante',
+    navAriaLabel: 'Pagination des résultats',
+    pageAria: (page) => `Page ${page}`,
+    range: ({ start, end, total, itemLabel, pluralSuffix }) =>
+      `${start}–${end} sur ${total} ${itemLabel}${pluralSuffix}`,
+    pageOf: ({ page, totalPages }) => `page ${page} / ${totalPages}`,
+    resultItem: 'résultat',
+  },
+  bookingSidebar: {
+    trustDemoCatalog:
+      'Tarifs indicatifs — la réservation en ligne arrive bientôt.',
+    trustTransparentPricing: 'Montant affiché sans frais cachés.',
+    trustSupport: 'Une question ? Notre équipe vous accompagne.',
+    mobileConfigure: 'Options',
+    closeDrawer: 'Fermer',
+    decreaseGuests: 'Diminuer le nombre de voyageurs',
+    increaseGuests: 'Augmenter le nombre de voyageurs',
+  },
+  checkout: {
+    stepperAriaLabel: 'Étapes de réservation',
+    stepCart: 'Panier',
+    stepRecap: 'Récap',
+    stepPayment: 'Paiement',
+    stepRequest: 'Demande',
+    stepConfirmation: 'Confirmation',
+    stepCancelled: 'Annulé',
+    cartTitle: 'Panier réservation',
+    recapTitle: 'Recapitulatif',
+    continueToRecap: 'Continuer vers récap',
+    backToCart: 'Retour panier',
+    payWithStripe: 'Payer avec Stripe',
+    requestBooking: 'Demander une réservation',
+    requestSubmitting: 'Envoi de la demande…',
+    stripeRedirecting: 'Redirection Stripe…',
+    estimatedTotal: 'Total estimé',
+    loading: 'Chargement…',
+    authRequiredNext: 'Connexion client requise au prochain écran.',
+    authRequiredPayment: 'Connexion client requise pour lancer Stripe Checkout.',
+    authRequiredRequest: 'Connexion client requise pour envoyer votre demande.',
+    invalidDraft: 'Données de réservation incomplètes. Reprenez depuis une fiche produit.',
+    invalidDraftBack: 'Retour aux hébergements',
+    invalidRecap: 'Donnees de reservation invalides. Revenez au panier.',
+    modifySelection: 'Modifier la sélection',
+    resumeSearch: 'Reprendre la recherche',
+    stripeError: {
+      authTitle: 'Connexion requise',
+      authDescription: 'Authentification requise pour continuer vers le paiement.',
+      authHint: 'Connectez-vous puis relancez le paiement depuis le récapitulatif.',
+      networkTitle: 'Connexion interrompue',
+      networkHint: 'Vérifiez votre réseau et réessayez dans quelques instants.',
+      paymentTitle: 'Paiement refusé',
+      paymentHint: 'Vérifiez votre carte ou essayez un autre moyen de paiement.',
+      genericTitle: 'Paiement impossible',
+      genericHint: 'Réessayez ou revenez au panier pour vérifier votre sélection.',
+      dismiss: 'Fermer',
+    },
+    success: {
+      title: 'Reservation confirmee',
+      subtitle:
+        'Votre paiement Stripe est recu. La confirmation definitive peut prendre quelques secondes le temps du webhook.',
+      bookingIdLabel: 'Booking ID:',
+      statusLabel: 'Statut:',
+      totalLabel: 'Total:',
+      verifying: 'Verification du statut en cours…',
+      statusUnavailable:
+        'Statut detaille indisponible pour le moment. Rechargez la page dans quelques instants.',
+      backHome: 'Retour accueil',
+      browseHotels: 'Voir les hotels',
+      viewAccount: 'Mon compte',
+      signOut: 'Se deconnecter',
+      nextStepsTitle: 'Prochaines étapes',
+      nextStepEmail: 'Un e-mail de confirmation vous sera envoyé sous peu.',
+      nextStepAccount: 'Consultez vos réservations depuis votre espace compte.',
+    },
+    requestSuccess: {
+      title: 'Demande envoyée',
+      subtitle:
+        'Votre demande de réservation a bien été transmise à notre équipe. Vous serez contacté sous 24 à 48 h.',
+      bookingIdLabel: 'Réf. demande :',
+      statusLabel: 'Statut :',
+      totalLabel: 'Total estimé :',
+      verifying: 'Vérification du statut en cours…',
+      statusUnavailable:
+        'Statut détaillé indisponible pour le moment. Rechargez la page dans quelques instants.',
+      backHome: 'Retour accueil',
+      browseActivities: 'Voir les activités',
+      viewAccount: 'Mon compte',
+      signOut: 'Se déconnecter',
+      nextStepsTitle: 'Prochaines étapes',
+      nextStepContact: 'Notre équipe validera votre demande et vous contactera par e-mail.',
+      nextStepAccount: 'Suivez l’avancement depuis votre espace compte.',
+    },
+    cancel: {
+      title: 'Paiement annule',
+      subtitle:
+        "Aucun debit n'a ete confirme. Vous pouvez reprendre votre reservation quand vous voulez.",
+      backToCart: 'Revenir au panier',
+      continueSearch: 'Continuer la recherche',
+    },
+  },
+  verticalSearch: {
+    backHome: 'Retour à l\'accueil',
+    resultsTitle: 'Résultats',
+    exploreHint: 'Explorez les options disponibles.',
+    forDestination: 'Résultats pour {destination}.',
+    noResults: 'Aucun résultat pour cette recherche.',
+    noResultsHint: 'Modifiez vos critères ou revenez à l\'accueil.',
+    continue: 'Continuer',
+    verticals: {
+      hotels: 'Hébergements',
+      flights: 'Vols',
+      cars: 'Locations de véhicules',
+      cruises: 'Croisières',
+      tours: 'Activités & tours',
+    },
+  },
   whyUs: {
     title: 'Pourquoi nous choisir',
     subtitle:
@@ -971,6 +1392,7 @@ const fr: Translations = {
       'Comparez hôtels, lodges et resorts en Afrique. Trouvez le séjour idéal avec Africa Tourism Gate.',
     breadcrumbHome: 'Accueil',
     breadcrumbHotels: 'Hébergements',
+    breadcrumbHotelsDetail: 'Hôtels',
     heroTitle: 'Hébergements d\'exception en Afrique',
     heroSubtitle:
       'Lodges de safari, riads authentiques et resorts en bord de mer — sélectionnés par nos experts voyage.',
@@ -1025,10 +1447,19 @@ const fr: Translations = {
     featuredBadge: 'Coup de cœur',
     detailMetaDescription: 'Réservez votre séjour à {name}. Galerie, équipements et chambres.',
     galleryAria: 'Galerie photos',
+    galleryOpenLightbox: 'Agrandir la photo',
+    galleryClose: 'Fermer la galerie',
+    galleryPrevious: 'Photo précédente',
+    galleryNext: 'Photo suivante',
+    galleryCounter: (current, total) => `Photo ${current} sur ${total}`,
     amenitiesTitle: 'Équipements',
     roomsTitle: 'Chambres',
     descriptionTitle: 'Description',
     calendarTitle: 'Disponibilités et tarifs',
+    calendarLegendTitle: 'Légende',
+    calendarLegendAvailable: 'Disponible',
+    calendarLegendSelected: 'Dates sélectionnées',
+    calendarLegendUnavailable: 'Indisponible',
     selectRoom: 'Choisir cette chambre',
     selectRoomHint: 'Sélectionnez une chambre pour réserver.',
     totalStay: 'Total séjour',
@@ -1044,6 +1475,10 @@ const fr: Translations = {
     nextMonth: 'Mois suivant',
     fromPrice: 'À partir de',
     selectDatesHint: "Choisissez vos dates d'arrivée et de départ.",
+    guestSingular: '1 voyageur',
+    guestPlural: '{n} voyageurs',
+    perRoomPriceNote: 'Tarif par chambre (non multiplié par personne)',
+    noRoomsForGuests: 'Aucune chambre disponible pour {n} voyageurs.',
     maxGuests: "jusqu'à {n} voyageurs",
     bedConfig: 'Literie',
     reserveSection: 'Réserver',
@@ -1061,6 +1496,7 @@ const fr: Translations = {
       'Comparez et réservez des vols vers les principales destinations africaines avec Africa Tourism Gate.',
     breadcrumbHome: 'Accueil',
     breadcrumbFlights: 'Vols',
+    breadcrumbFlightsDetail: 'Vols',
     heroTitle: 'Vols vers l\'Afrique',
     heroSubtitle:
       'Comparez les compagnies, horaires et tarifs pour votre prochain voyage continental.',
@@ -1095,12 +1531,16 @@ const fr: Translations = {
     fromPrice: 'À partir de',
     perPassenger: '/ passager',
     direct: 'Direct',
+    layoverSingular: '1 escale',
+    layoverPlural: '{n} escales',
+    layoverDuration: 'Escale {duration}',
     departure: 'Départ',
     arrival: 'Arrivée',
     itineraryTitle: 'Itinéraire',
     classesTitle: 'Classes disponibles',
     selectClass: 'Choisir cette classe',
     selectClassHint: 'Sélectionnez une classe pour réserver.',
+    selectedClass: 'Sélectionnée',
     seatsLeft: '{n} siège(s) disponible(s)',
     unavailable: 'Complet',
     insufficientSeats: 'Pas assez de places pour ce nombre de passagers.',
@@ -1115,6 +1555,12 @@ const fr: Translations = {
       business: 'Affaires',
       first: 'Première',
     },
+    galleryAria: 'Galerie photos du vol',
+    galleryOpenLightbox: 'Agrandir la photo',
+    galleryClose: 'Fermer la galerie',
+    galleryPrevious: 'Photo précédente',
+    galleryNext: 'Photo suivante',
+    galleryCounter: (current, total) => `Photo ${current} sur ${total}`,
   },
   cars: {
     metaTitle: 'Location de voitures en Afrique',
@@ -1122,6 +1568,7 @@ const fr: Translations = {
       'Comparez et réservez des véhicules de location aux principales destinations africaines avec Africa Tourism Gate.',
     breadcrumbHome: 'Accueil',
     breadcrumbCars: 'Voitures',
+    breadcrumbCarsDetail: 'Locations',
     heroTitle: 'Location de voitures en Afrique',
     heroSubtitle:
       'SUV, berlines et 4×4 auprès d\'agences locales de confiance — tarif journalier transparent.',
@@ -1161,6 +1608,50 @@ const fr: Translations = {
     agencyTitle: 'Agence de location',
     categoryTitle: 'Catégorie',
     licensePlate: 'Immatriculation',
+    infoTitle: 'Informations',
+    equipmentTitle: 'Équipements',
+    conditionsTitle: 'Conditions de location',
+    rentalPeriod: 'Période de location',
+    imagePlaceholderAria: 'Illustration du véhicule',
+    specs: {
+      seats: '{n} places',
+      airConditioningYes: 'Climatisation',
+      airConditioningNo: 'Sans climatisation',
+      listAria: 'Caractéristiques du véhicule',
+    },
+    transmission: {
+      manual: 'Manuelle',
+      automatic: 'Automatique',
+    },
+    fuel: {
+      petrol: 'Essence',
+      diesel: 'Diesel',
+      hybrid: 'Hybride',
+      electric: 'Électrique',
+    },
+    equipment: {
+      airConditioning: 'Climatisation',
+      bluetooth: 'Bluetooth',
+      gps: 'GPS',
+      usb: 'Ports USB',
+    },
+    conditionItems: {
+      minAge:
+        'Conducteur âgé d\'au moins 21 ans avec permis valide depuis 1 an minimum.',
+      deposit:
+        'Caution remboursable exigée à la prise en charge (carte bancaire au nom du conducteur).',
+      mileage: 'Kilométrage illimité sur le territoire indiqué par l\'agence.',
+      insurance:
+        'Assurance responsabilité civile incluse ; options sans franchise disponibles sur place.',
+      fuelPolicy:
+        'Politique plein / plein : restituez le véhicule avec le même niveau de carburant.',
+    },
+    galleryAria: 'Galerie photos du véhicule',
+    galleryOpenLightbox: 'Agrandir la photo',
+    galleryClose: 'Fermer la galerie',
+    galleryPrevious: 'Photo précédente',
+    galleryNext: 'Photo suivante',
+    galleryCounter: (current, total) => `Photo ${current} sur ${total}`,
   },
   cruises: {
     metaTitle: 'Croisières fluviales en Afrique',
@@ -1168,6 +1659,7 @@ const fr: Translations = {
       'Comparez et réservez des croisières sur le fleuve Congo et les côtes africaines avec Africa Tourism Gate.',
     breadcrumbHome: 'Accueil',
     breadcrumbCruises: 'Croisières',
+    breadcrumbCruisesDetail: 'Croisières',
     heroTitle: 'Croisières en Afrique',
     heroSubtitle:
       'Itinéraires fluviaux et côtiers — choisissez votre cabine et embarquez en toute sérénité.',
@@ -1209,6 +1701,14 @@ const fr: Translations = {
     cabinsTitle: 'Cabines disponibles',
     selectCabin: 'Choisir cette cabine',
     selectCabinHint: 'Sélectionnez une cabine pour réserver.',
+    selectedCabin: 'Sélectionnée',
+    capacityLabel: '{n} voyageurs max',
+    deckLabel: 'Pont',
+    deck: {
+      main: 'Pont principal',
+      upper: 'Pont supérieur',
+      promenade: 'Pont promenade',
+    },
     cabinsLeft: '{n} cabine(s) disponible(s)',
     unavailable: 'Complet',
     insufficientCabins: 'Pas assez de cabines pour ce nombre de voyageurs.',
@@ -1223,6 +1723,12 @@ const fr: Translations = {
     nightPlural: 'nuits',
     searchRequired: 'Indiquez les ports et les dates de départ.',
     endAfterStart: 'La date de fin doit être après la date de début.',
+    galleryAria: 'Galerie photos du navire',
+    galleryOpenLightbox: 'Agrandir la photo',
+    galleryClose: 'Fermer la galerie',
+    galleryPrevious: 'Photo précédente',
+    galleryNext: 'Photo suivante',
+    galleryCounter: (current, total) => `Photo ${current} sur ${total}`,
   },
   activities: {
     metaTitle: 'Activités et tours en Afrique',
@@ -1275,6 +1781,7 @@ const fr: Translations = {
     backToList: 'Retour aux résultats',
     providerLabel: 'Prestataire',
     durationLabel: 'Durée',
+    difficultyLabel: 'Difficulté',
     hourSingular: '1 h',
     hourPlural: '{n} h',
     minuteSingular: '1 min',
@@ -1283,6 +1790,21 @@ const fr: Translations = {
     descriptionTitle: 'Description',
     nextSlot: 'Prochain créneau',
     schedulesAvailable: '{n} créneau(x) disponible(s)',
+    noSchedulesTitle: 'Aucun créneau pour cette date',
+    noSchedulesHint: 'Essayez une autre date ou modifiez votre recherche.',
+    selectedScheduleLabel: 'Créneau sélectionné',
+    difficultyEasy: 'Facile',
+    difficultyModerate: 'Modéré',
+    difficultyHard: 'Difficile',
+    difficultyExpert: 'Expert',
+    ratingAria: 'Note moyenne {rating} sur 5',
+    reviewCount: '{n} avis',
+    galleryAria: 'Galerie photos de l\'activité',
+    galleryOpenLightbox: 'Agrandir la photo',
+    galleryClose: 'Fermer la galerie',
+    galleryPrevious: 'Photo précédente',
+    galleryNext: 'Photo suivante',
+    galleryCounter: (current, total) => `Photo ${current} sur ${total}`,
   },
   packages: {
     metaTitle: 'Forfaits combinés en Afrique',
@@ -1387,6 +1909,34 @@ const fr: Translations = {
       cruise: 'Cabine croisière',
       activity: 'Activité',
     },
+    galleryAria: 'Galerie photos du forfait',
+    galleryOpenLightbox: 'Agrandir la photo',
+    galleryClose: 'Fermer la galerie',
+    galleryPrevious: 'Photo précédente',
+    galleryNext: 'Photo suivante',
+    galleryCounter: (current, total) => `Photo ${current} sur ${total}`,
+    stepOverview: 'Aperçu des prestations',
+    stepConfigure: 'Configuration',
+    stepRecap: 'Récapitulatif',
+    stepOverviewShort: 'Aperçu',
+    stepConfigureShort: 'Config.',
+    stepRecapShort: 'Récap',
+    compositionStepperAria: 'Étapes de composition du forfait',
+    configureProgress: '{done} / {total} prestation(s) configurée(s)',
+    startConfiguration: 'Configurer le forfait',
+    stepBack: 'Retour',
+    viewRecap: 'Voir le récapitulatif',
+    recapTitle: 'Récapitulatif du forfait',
+    recapHint: 'Vérifiez chaque prestation avant d’ajouter le forfait au panier.',
+    configureSchedulesTitle: 'Choisir les créneaux horaires',
+    itemConfigured: 'Configuré',
+    itemPending: 'À configurer',
+    recapActivityLine: '{n} participant(s) · créneau sélectionné',
+    recapPropertyLine: 'Séjour du {checkIn} au {checkOut}',
+    recapFlightLine: 'Départ le {date}',
+    recapVehicleLine: 'Du {pickup} au {return}',
+    recapCruiseLine: '{guests} passager(s) · cabine sélectionnée',
+    estimatedSavings: 'Économie estimée : {amount}',
   },
   account: {
     title: 'Mon compte',
@@ -1446,7 +1996,11 @@ const fr: Translations = {
       countryCode: 'Code pays (ex. CD)',
     },
     reservations: {
-      empty: 'Aucune réservation pour le moment.',
+      empty: 'Aucune réservation pour le moment',
+      emptyDescription:
+        'Vos voyages réservés via Africa Tourism Gate apparaîtront ici. Commencez par explorer hôtels, vols et activités.',
+      emptyBrowse: 'Explorer les offres',
+      emptyFilter: 'Aucune réservation ne correspond à ce filtre.',
       reference: 'Référence',
       date: 'Date',
       status: 'Statut',
@@ -1455,6 +2009,12 @@ const fr: Translations = {
       back: 'Retour aux réservations',
       notFound: 'Réservation introuvable.',
       loadError: 'Impossible de charger les réservations.',
+      filterAll: 'Toutes',
+      filterConfirmed: 'Validées',
+      filterPending: 'En attente',
+      filterCancelled: 'Annulées',
+      filterAria: 'Filtrer par statut',
+      actionRequired: 'Action requise',
       detail: {
         bookedOn: 'Réservée le',
         itemsCount: 'Articles',
@@ -1485,7 +2045,53 @@ const fr: Translations = {
         submittingReview: 'Publication…',
         reviewSubmitError: "Impossible de publier l'avis.",
         reviewRatingRequired: 'Veuillez choisir une note entre 1 et 5.',
+        reviewCharCount: '{current} / {max}',
+        reviewPublished: 'Merci, votre avis a été publié.',
         reviewStarAria: '{n} sur 5',
+        timelineTitle: 'Suivi de la réservation',
+        timelinePlaceholder:
+          'Historique détaillé non disponible — étapes estimées selon le statut actuel.',
+        timelineStepCreated: 'Réservation créée',
+        timelineStepPending: 'En attente de paiement',
+        timelineStepConfirmed: 'Confirmée',
+        timelineStepCancelled: 'Annulée',
+        timelineStepRefunded: 'Remboursée',
+        timelineStepRequest: 'Demande envoyée',
+        timelineStepValidation: 'Validation par l\'équipe',
+        timelineStepDiscussion: 'Échanges',
+        timelineStepPayment: 'Paiement',
+        timelineCurrent: 'Étape en cours',
+        timelineUpcoming: 'À venir',
+        proceedToPayment: 'Procéder au paiement',
+        paymentInvitePending:
+          'Vous recevrez un e-mail avec le lien de paiement dès que votre demande sera validée.',
+        messages: {
+          title: 'Conversation',
+          subtitle: 'Échangez avec notre équipe au sujet de votre demande.',
+          loading: 'Chargement des messages…',
+          empty: 'Aucun message pour le moment. Notre équipe vous répondra ici.',
+          threadAria: 'Fil de messages de la réservation',
+          authorStaff: 'Équipe',
+          authorCustomer: 'Vous',
+          replyTitle: 'Votre message',
+          replyLabel: 'Message',
+          replyPlaceholder: 'Écrivez votre message…',
+          sendReply: 'Envoyer',
+          loadError: 'Impossible de charger la conversation.',
+          sendError: 'Impossible d\'envoyer le message.',
+        },
+        guideReviews: {
+          sectionTitle: 'Votre guide',
+          sectionHint:
+            'Partagez votre expérience avec le ou les guides assignés à votre séjour.',
+          rolePrimary: 'Guide principal',
+          roleSecondary: 'Guide secondaire',
+          leaveReview: 'Noter ce guide',
+          leaveReviewHint: 'Votre avis sera publié après modération par notre équipe.',
+          submitReview: 'Envoyer l\'avis',
+          yourReview: 'Votre avis',
+          reviewPublished: 'Merci, votre avis a été envoyé et sera publié après modération.',
+        },
       },
     },
     paymentMethods: {
@@ -1579,8 +2185,12 @@ const fr: Translations = {
   },
   comingSoon: {
     badge: 'Bientôt disponible',
+    title: 'Bientôt disponible',
+    siteBody:
+      'Cette section du site est en cours de préparation. Revenez bientôt pour découvrir de nouvelles fonctionnalités sur Africa Tourism Gate.',
     body: 'La réservation en ligne pour cette catégorie arrive prochainement. Vos critères de recherche ont été conservés dans l’URL.',
     backToSearch: 'Modifier ma recherche',
+    backHome: 'Retour à l’accueil',
   },
   booking: {
     login: {
@@ -1733,6 +2343,123 @@ const en: Translations = {
     countries: ['Kenya', 'Tanzania', 'Morocco', 'South Africa', 'Rwanda', 'DRC'],
     locations: ['Airport', 'City center', 'Train station'],
   },
+  listing: {
+    clearFilters: 'Clear filters',
+    applyFilters: 'Apply',
+    filtersToggle: 'Filters',
+    previousPage: 'Previous page',
+    nextPage: 'Next page',
+    navAriaLabel: 'Results pagination',
+    pageAria: (page) => `Page ${page}`,
+    range: ({ start, end, total, itemLabel, pluralSuffix }) =>
+      `${start}–${end} of ${total} ${itemLabel}${pluralSuffix}`,
+    pageOf: ({ page, totalPages }) => `page ${page} / ${totalPages}`,
+    resultItem: 'result',
+  },
+  bookingSidebar: {
+    trustDemoCatalog: 'Indicative prices — online booking coming soon.',
+    trustTransparentPricing: 'No hidden fees on the amount shown.',
+    trustSupport: 'Questions? Our team is here to help.',
+    mobileConfigure: 'Options',
+    closeDrawer: 'Close',
+    decreaseGuests: 'Decrease number of guests',
+    increaseGuests: 'Increase number of guests',
+  },
+  checkout: {
+    stepperAriaLabel: 'Booking steps',
+    stepCart: 'Cart',
+    stepRecap: 'Summary',
+    stepPayment: 'Payment',
+    stepRequest: 'Request',
+    stepConfirmation: 'Confirmation',
+    stepCancelled: 'Cancelled',
+    cartTitle: 'Booking cart',
+    recapTitle: 'Summary',
+    continueToRecap: 'Continue to summary',
+    backToCart: 'Back to cart',
+    payWithStripe: 'Pay with Stripe',
+    requestBooking: 'Request a booking',
+    requestSubmitting: 'Submitting request…',
+    stripeRedirecting: 'Redirecting to Stripe…',
+    estimatedTotal: 'Estimated total',
+    loading: 'Loading…',
+    authRequiredNext: 'Customer sign-in required on the next step.',
+    authRequiredPayment: 'Customer sign-in required to start Stripe Checkout.',
+    authRequiredRequest: 'Customer sign-in required to submit your booking request.',
+    invalidDraft: 'Incomplete booking data. Start again from a product page.',
+    invalidDraftBack: 'Back to hotels',
+    invalidRecap: 'Invalid booking data. Return to the cart.',
+    modifySelection: 'Change selection',
+    resumeSearch: 'Resume search',
+    stripeError: {
+      authTitle: 'Sign-in required',
+      authDescription: 'Authentication is required to continue to payment.',
+      authHint: 'Sign in, then retry payment from the summary page.',
+      networkTitle: 'Connection interrupted',
+      networkHint: 'Check your network and try again in a moment.',
+      paymentTitle: 'Payment declined',
+      paymentHint: 'Check your card or try another payment method.',
+      genericTitle: 'Payment could not start',
+      genericHint: 'Try again or return to the cart to review your selection.',
+      dismiss: 'Dismiss',
+    },
+    success: {
+      title: 'Booking confirmed',
+      subtitle:
+        'Your Stripe payment was received. Final confirmation may take a few seconds while the webhook completes.',
+      bookingIdLabel: 'Booking ID:',
+      statusLabel: 'Status:',
+      totalLabel: 'Total:',
+      verifying: 'Checking status…',
+      statusUnavailable: 'Detailed status is unavailable for now. Refresh in a moment.',
+      backHome: 'Back to home',
+      browseHotels: 'Browse hotels',
+      viewAccount: 'My account',
+      signOut: 'Sign out',
+      nextStepsTitle: 'What happens next',
+      nextStepEmail: 'A confirmation email will be sent shortly.',
+      nextStepAccount: 'View your bookings in your account area.',
+    },
+    requestSuccess: {
+      title: 'Request submitted',
+      subtitle:
+        'Your booking request has been sent to our team. You will be contacted within 24–48 hours.',
+      bookingIdLabel: 'Request ref:',
+      statusLabel: 'Status:',
+      totalLabel: 'Estimated total:',
+      verifying: 'Checking status…',
+      statusUnavailable: 'Detailed status is unavailable for now. Refresh in a moment.',
+      backHome: 'Back to home',
+      browseActivities: 'Browse activities',
+      viewAccount: 'My account',
+      signOut: 'Sign out',
+      nextStepsTitle: 'What happens next',
+      nextStepContact: 'Our team will review your request and contact you by email.',
+      nextStepAccount: 'Track progress from your account area.',
+    },
+    cancel: {
+      title: 'Payment cancelled',
+      subtitle: 'No charge was confirmed. You can resume your booking whenever you like.',
+      backToCart: 'Return to cart',
+      continueSearch: 'Continue browsing',
+    },
+  },
+  verticalSearch: {
+    backHome: 'Back to home',
+    resultsTitle: 'Results',
+    exploreHint: 'Explore available options.',
+    forDestination: 'Showing results for {destination}.',
+    noResults: 'No results found for this search.',
+    noResultsHint: 'Adjust your criteria or return to the homepage.',
+    continue: 'Continue',
+    verticals: {
+      hotels: 'Hotels',
+      flights: 'Flights',
+      cars: 'Car rentals',
+      cruises: 'Cruises',
+      tours: 'Tours & activities',
+    },
+  },
   whyUs: {
     title: 'Why choose us',
     subtitle:
@@ -1840,6 +2567,7 @@ const en: Translations = {
       'Compare hotels, lodges and resorts across Africa. Find your perfect stay with Africa Tourism Gate.',
     breadcrumbHome: 'Home',
     breadcrumbHotels: 'Stays',
+    breadcrumbHotelsDetail: 'Hotels',
     heroTitle: 'Exceptional stays across Africa',
     heroSubtitle:
       'Safari lodges, authentic riads and beach resorts � curated by our travel experts.',
@@ -1894,10 +2622,19 @@ const en: Translations = {
     featuredBadge: 'Top pick',
     detailMetaDescription: 'Book your stay at {name}. Gallery, amenities and rooms.',
     galleryAria: 'Photo gallery',
+    galleryOpenLightbox: 'Enlarge photo',
+    galleryClose: 'Close gallery',
+    galleryPrevious: 'Previous photo',
+    galleryNext: 'Next photo',
+    galleryCounter: (current, total) => `Photo ${current} of ${total}`,
     amenitiesTitle: 'Amenities',
     roomsTitle: 'Rooms',
     descriptionTitle: 'Description',
     calendarTitle: 'Availability and rates',
+    calendarLegendTitle: 'Legend',
+    calendarLegendAvailable: 'Available',
+    calendarLegendSelected: 'Selected dates',
+    calendarLegendUnavailable: 'Unavailable',
     selectRoom: 'Select this room',
     selectRoomHint: 'Select a room to book.',
     totalStay: 'Stay total',
@@ -1913,6 +2650,10 @@ const en: Translations = {
     nextMonth: 'Next month',
     fromPrice: 'From',
     selectDatesHint: 'Choose your check-in and check-out dates.',
+    guestSingular: '1 guest',
+    guestPlural: '{n} guests',
+    perRoomPriceNote: 'Price per room (not multiplied by guests)',
+    noRoomsForGuests: 'No rooms available for {n} guests.',
     maxGuests: 'up to {n} guests',
     bedConfig: 'Bedding',
     reserveSection: 'Book',
@@ -1930,6 +2671,7 @@ const en: Translations = {
       'Compare and book flights to major African destinations with Africa Tourism Gate.',
     breadcrumbHome: 'Home',
     breadcrumbFlights: 'Flights',
+    breadcrumbFlightsDetail: 'Flights',
     heroTitle: 'Flights to Africa',
     heroSubtitle:
       'Compare airlines, schedules and fares for your next continental trip.',
@@ -1964,12 +2706,16 @@ const en: Translations = {
     fromPrice: 'From',
     perPassenger: '/ passenger',
     direct: 'Direct',
+    layoverSingular: '1 stop',
+    layoverPlural: '{n} stops',
+    layoverDuration: 'Layover {duration}',
     departure: 'Departure',
     arrival: 'Arrival',
     itineraryTitle: 'Itinerary',
     classesTitle: 'Available classes',
     selectClass: 'Select this class',
     selectClassHint: 'Select a class to book.',
+    selectedClass: 'Selected',
     seatsLeft: '{n} seat(s) available',
     unavailable: 'Sold out',
     insufficientSeats: 'Not enough seats for this number of passengers.',
@@ -1984,6 +2730,12 @@ const en: Translations = {
       business: 'Business',
       first: 'First',
     },
+    galleryAria: 'Flight photo gallery',
+    galleryOpenLightbox: 'Enlarge photo',
+    galleryClose: 'Close gallery',
+    galleryPrevious: 'Previous photo',
+    galleryNext: 'Next photo',
+    galleryCounter: (current, total) => `Photo ${current} of ${total}`,
   },
   cars: {
     metaTitle: 'Car rental in Africa',
@@ -1991,6 +2743,7 @@ const en: Translations = {
       'Compare and book rental cars at major African destinations with Africa Tourism Gate.',
     breadcrumbHome: 'Home',
     breadcrumbCars: 'Cars',
+    breadcrumbCarsDetail: 'Car rental',
     heroTitle: 'Car rental in Africa',
     heroSubtitle:
       'SUVs, sedans and 4×4 from trusted local agencies — transparent daily rates.',
@@ -2030,6 +2783,50 @@ const en: Translations = {
     agencyTitle: 'Rental agency',
     categoryTitle: 'Category',
     licensePlate: 'License plate',
+    infoTitle: 'Information',
+    equipmentTitle: 'Equipment',
+    conditionsTitle: 'Rental conditions',
+    rentalPeriod: 'Rental period',
+    imagePlaceholderAria: 'Vehicle illustration',
+    specs: {
+      seats: '{n} seats',
+      airConditioningYes: 'Air conditioning',
+      airConditioningNo: 'No A/C',
+      listAria: 'Vehicle specifications',
+    },
+    transmission: {
+      manual: 'Manual',
+      automatic: 'Automatic',
+    },
+    fuel: {
+      petrol: 'Petrol',
+      diesel: 'Diesel',
+      hybrid: 'Hybrid',
+      electric: 'Electric',
+    },
+    equipment: {
+      airConditioning: 'Air conditioning',
+      bluetooth: 'Bluetooth',
+      gps: 'GPS',
+      usb: 'USB ports',
+    },
+    conditionItems: {
+      minAge:
+        'Driver must be at least 21 years old with a valid licence held for at least 1 year.',
+      deposit:
+        'Refundable security deposit required at pick-up (credit card in the main driver\'s name).',
+      mileage: 'Unlimited mileage within the territory specified by the agency.',
+      insurance:
+        'Third-party liability insurance included; excess waiver options available on site.',
+      fuelPolicy:
+        'Full-to-full policy: return the vehicle with the same fuel level as at pick-up.',
+    },
+    galleryAria: 'Vehicle photo gallery',
+    galleryOpenLightbox: 'Enlarge photo',
+    galleryClose: 'Close gallery',
+    galleryPrevious: 'Previous photo',
+    galleryNext: 'Next photo',
+    galleryCounter: (current, total) => `Photo ${current} of ${total}`,
   },
   cruises: {
     metaTitle: 'River & coastal cruises in Africa',
@@ -2037,6 +2834,7 @@ const en: Translations = {
       'Compare and book Congo River and African coastal cruises with Africa Tourism Gate.',
     breadcrumbHome: 'Home',
     breadcrumbCruises: 'Cruises',
+    breadcrumbCruisesDetail: 'Cruises',
     heroTitle: 'Cruises in Africa',
     heroSubtitle:
       'River and coastal itineraries — pick your cabin and sail with confidence.',
@@ -2078,6 +2876,14 @@ const en: Translations = {
     cabinsTitle: 'Available cabins',
     selectCabin: 'Select this cabin',
     selectCabinHint: 'Select a cabin to book.',
+    selectedCabin: 'Selected',
+    capacityLabel: 'Up to {n} guests',
+    deckLabel: 'Deck',
+    deck: {
+      main: 'Main deck',
+      upper: 'Upper deck',
+      promenade: 'Promenade deck',
+    },
     cabinsLeft: '{n} cabin(s) available',
     unavailable: 'Sold out',
     insufficientCabins: 'Not enough cabins for this guest count.',
@@ -2092,6 +2898,12 @@ const en: Translations = {
     nightPlural: 'nights',
     searchRequired: 'Enter ports and departure dates.',
     endAfterStart: 'End date must be after start date.',
+    galleryAria: 'Ship photo gallery',
+    galleryOpenLightbox: 'Enlarge photo',
+    galleryClose: 'Close gallery',
+    galleryPrevious: 'Previous photo',
+    galleryNext: 'Next photo',
+    galleryCounter: (current, total) => `Photo ${current} of ${total}`,
   },
   activities: {
     metaTitle: 'Activities & tours in Africa',
@@ -2143,6 +2955,7 @@ const en: Translations = {
     backToList: 'Back to results',
     providerLabel: 'Provider',
     durationLabel: 'Duration',
+    difficultyLabel: 'Difficulty',
     hourSingular: '1 hr',
     hourPlural: '{n} hr',
     minuteSingular: '1 min',
@@ -2151,6 +2964,21 @@ const en: Translations = {
     descriptionTitle: 'Description',
     nextSlot: 'Next slot',
     schedulesAvailable: '{n} slot(s) available',
+    noSchedulesTitle: 'No time slots for this date',
+    noSchedulesHint: 'Try another date or modify your search.',
+    selectedScheduleLabel: 'Selected time slot',
+    difficultyEasy: 'Easy',
+    difficultyModerate: 'Moderate',
+    difficultyHard: 'Hard',
+    difficultyExpert: 'Expert',
+    ratingAria: 'Average rating {rating} out of 5',
+    reviewCount: '{n} reviews',
+    galleryAria: 'Activity photo gallery',
+    galleryOpenLightbox: 'Enlarge photo',
+    galleryClose: 'Close gallery',
+    galleryPrevious: 'Previous photo',
+    galleryNext: 'Next photo',
+    galleryCounter: (current, total) => `Photo ${current} of ${total}`,
   },
   packages: {
     metaTitle: 'Combined packages in Africa',
@@ -2255,6 +3083,34 @@ const en: Translations = {
       cruise: 'Cruise cabin',
       activity: 'Activity',
     },
+    galleryAria: 'Package photo gallery',
+    galleryOpenLightbox: 'Enlarge photo',
+    galleryClose: 'Close gallery',
+    galleryPrevious: 'Previous photo',
+    galleryNext: 'Next photo',
+    galleryCounter: (current, total) => `Photo ${current} of ${total}`,
+    stepOverview: 'Included services overview',
+    stepConfigure: 'Configure each service',
+    stepRecap: 'Summary',
+    stepOverviewShort: 'Overview',
+    stepConfigureShort: 'Config',
+    stepRecapShort: 'Summary',
+    compositionStepperAria: 'Package composition steps',
+    configureProgress: '{done} / {total} service(s) configured',
+    startConfiguration: 'Configure package',
+    stepBack: 'Back',
+    viewRecap: 'View summary',
+    recapTitle: 'Package summary',
+    recapHint: 'Review each included service before adding the package to your cart.',
+    configureSchedulesTitle: 'Choose time slots',
+    itemConfigured: 'Configured',
+    itemPending: 'Pending',
+    recapActivityLine: '{n} participant(s) · slot selected',
+    recapPropertyLine: 'Stay from {checkIn} to {checkOut}',
+    recapFlightLine: 'Departure on {date}',
+    recapVehicleLine: 'From {pickup} to {return}',
+    recapCruiseLine: '{guests} guest(s) · cabin selected',
+    estimatedSavings: 'Estimated savings: {amount}',
   },
   account: {
     title: 'My account',
@@ -2314,7 +3170,11 @@ const en: Translations = {
       countryCode: 'Country code (e.g. CD)',
     },
     reservations: {
-      empty: 'No bookings yet.',
+      empty: 'No bookings yet',
+      emptyDescription:
+        'Trips you book through Africa Tourism Gate will appear here. Start by exploring hotels, flights, and activities.',
+      emptyBrowse: 'Browse offers',
+      emptyFilter: 'No bookings match this filter.',
       reference: 'Reference',
       date: 'Date',
       status: 'Status',
@@ -2323,6 +3183,12 @@ const en: Translations = {
       back: 'Back to bookings',
       notFound: 'Booking not found.',
       loadError: 'Could not load bookings.',
+      filterAll: 'All',
+      filterConfirmed: 'Completed',
+      filterPending: 'Pending',
+      filterCancelled: 'Cancelled',
+      filterAria: 'Filter by status',
+      actionRequired: 'Action required',
       detail: {
         bookedOn: 'Booked on',
         itemsCount: 'Items',
@@ -2353,7 +3219,52 @@ const en: Translations = {
         submittingReview: 'Submitting⬦',
         reviewSubmitError: 'Could not submit your review.',
         reviewRatingRequired: 'Please select a rating from 1 to 5.',
+        reviewCharCount: '{current} / {max}',
+        reviewPublished: 'Thank you, your review has been published.',
         reviewStarAria: '{n} out of 5',
+        timelineTitle: 'Booking progress',
+        timelinePlaceholder:
+          'Detailed history unavailable — steps estimated from current status.',
+        timelineStepCreated: 'Booking created',
+        timelineStepPending: 'Awaiting payment',
+        timelineStepConfirmed: 'Confirmed',
+        timelineStepCancelled: 'Cancelled',
+        timelineStepRefunded: 'Refunded',
+        timelineStepRequest: 'Request submitted',
+        timelineStepValidation: 'Team validation',
+        timelineStepDiscussion: 'Conversation',
+        timelineStepPayment: 'Payment',
+        timelineCurrent: 'Current step',
+        timelineUpcoming: 'Upcoming',
+        proceedToPayment: 'Proceed to payment',
+        paymentInvitePending:
+          'You will receive an email with the payment link once your request is approved.',
+        messages: {
+          title: 'Conversation',
+          subtitle: 'Chat with our team about your booking request.',
+          loading: 'Loading messages…',
+          empty: 'No messages yet. Our team will reply here.',
+          threadAria: 'Booking message thread',
+          authorStaff: 'Team',
+          authorCustomer: 'You',
+          replyTitle: 'Your message',
+          replyLabel: 'Message',
+          replyPlaceholder: 'Write your message…',
+          sendReply: 'Send',
+          loadError: 'Could not load the conversation.',
+          sendError: 'Could not send your message.',
+        },
+        guideReviews: {
+          sectionTitle: 'Your guide',
+          sectionHint: 'Share your experience with the guide(s) assigned to your stay.',
+          rolePrimary: 'Primary guide',
+          roleSecondary: 'Secondary guide',
+          leaveReview: 'Rate this guide',
+          leaveReviewHint: 'Your review will be published after our team moderates it.',
+          submitReview: 'Submit review',
+          yourReview: 'Your review',
+          reviewPublished: 'Thank you — your review was submitted and will be published after moderation.',
+        },
       },
     },
     paymentMethods: {
@@ -2445,8 +3356,12 @@ const en: Translations = {
   },
   comingSoon: {
     badge: 'Coming soon',
+    title: 'Coming soon',
+    siteBody:
+      'This section of the site is being prepared. Check back soon for new features on Africa Tourism Gate.',
     body: 'Online booking for this category is launching soon. Your search criteria have been kept in the URL.',
     backToSearch: 'Change my search',
+    backHome: 'Back to home',
   },
   booking: {
     login: {

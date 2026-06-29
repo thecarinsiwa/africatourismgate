@@ -56,7 +56,19 @@
       "booking": {
         "title": "Reserva",
         "holdMinutes": "Desderée de retenue (minutes)",
-        "allowGuestCheckout": "Hastatoriser la commande invité"
+        "allowGuestCheckout": "Hastatoriser la commande invité",
+        "modesTitle": "Modo por vertical",
+        "modesDescription": "Inmediato: pago Stripe en el checkout. Asistido: solicitud pendiente de validación.",
+        "modeImmediate": "Inmediato (pago)",
+        "modeAssisted": "Asistido (solicitud)",
+        "itemTypes": {
+          "room": "Alojamiento (habitación)",
+          "flight_class": "Vuelo",
+          "vehicle": "Alquiler de vehículo",
+          "cabin": "Crucero (camarote)",
+          "activity_schedule": "Actividad",
+          "package": "Paquete"
+        }
       },
       "loyalty": {
         "title": "Fidélité OneKey",

@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "prebuild": "pnpm --filter @africatourismgate/types build",
     "build": "nest build",
     "dev": "nest start --watch",
     "start": "node dist/main",
@@ -54,6 +55,8 @@
     "test:email": "node scripts/test-email.mjs",
     "verify:smtp": "node scripts/verify-smtp.mjs",
     "send:preview": "tsx scripts/send-preview-emails.ts",
+    "email:preview-assisted": "npm run build && node scripts/render-assisted-booking-email-previews.mjs",
+    "payment-reminders": "nest build && node dist/cli/run-payment-reminders.js",
     "test:email-flow": "node scripts/test-email-user-flow.mjs",
     "test:e2e": "jest --config ./test/jest-e2e.json --runInBand"
   },

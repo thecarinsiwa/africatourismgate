@@ -58,7 +58,7 @@ export function HotelAmenitiesSection({
           return (
             <li
               key={a.code}
-              className="flex items-center gap-2 rounded-lg border border-atg-border bg-atg-elevated px-3 py-2.5 text-sm text-atg-fg dark:border-atg-border dark:bg-atg-elevated text-atg-muted"
+              className="flex items-center gap-2 rounded-lg border border-atg-border bg-atg-elevated px-3 py-2.5 text-sm text-atg-fg dark:border-atg-border dark:bg-atg-elevated"
             >
               <span className="shrink-0 text-primary">
                 {isHotelAmenity(a.code) ? AMENITY_ICONS[a.code] : (

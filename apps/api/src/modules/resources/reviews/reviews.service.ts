@@ -6,18 +6,20 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, QueryFailedError, Repository } from 'typeorm';
+import { In, IsNull, QueryFailedError, Repository } from 'typeorm';
 import {
   PaginatedResult,
   PaginationQueryDto,
 } from '../../../common/dto/pagination-query.dto';
 import { CrudService } from '../../../common/crud/crud.service';
 import {
+  BookingGuideAssignments,
   BookingItems,
   Bookings,
   Properties,
   Reviews,
   Rooms,
+  TourGuides,
   Users,
 } from '../../../entities/generated';
 import { AdminReviewDetailDto } from './dto/admin-review-detail.dto';
@@ -26,6 +28,7 @@ import { CreateBookingReviewDto } from './dto/create-booking-review.dto';
 import { PropertyReviewSummaryDto, ReviewDto } from './dto/review.dto';
 import { ReviewsListQueryDto } from './dto/reviews-list-query.dto';
 import { isStayEnded } from './review-stay.util';
+import type { GuideReviewInviteDto } from '../bookings/dto/guide-review-invite.dto';
 
 type ReviewRow = {
   id: string;
@@ -47,6 +50,9 @@ type AdminReviewRow = {
   entityId: string;
   propertyId: string | null;
   propertyName: string | null;
+  guideName: string | null;
+  guideId: string | null;
+  bookingId: string | null;
   title: string | null;
   body: string | null;
 };
@@ -66,6 +72,10 @@ export class ReviewsService extends CrudService<Reviews> {
     private readonly usersRepository: Repository<Users>,
     @InjectRepository(Properties)
     private readonly propertiesRepository: Repository<Properties>,
+    @InjectRepository(BookingGuideAssignments)
+    private readonly guideAssignmentsRepository: Repository<BookingGuideAssignments>,
+    @InjectRepository(TourGuides)
+    private readonly tourGuidesRepository: Repository<TourGuides>,
   ) {
     super(reviewsRepository);
   }
@@ -164,6 +174,154 @@ export class ReviewsService extends CrudService<Reviews> {
         (error.driverError as { code?: string })?.code === 'ER_DUP_ENTRY'
       ) {
         throw new ConflictException('Un avis existe déjà pour cette réservation.');
+      }
+      throw error;
+    }
+  }
+
+  async listGuideReviewInvitesForBooking(
+    bookingId: string,
+    userId: string,
+  ): Promise<GuideReviewInviteDto[]> {
+    const booking = await this.bookingsRepository.findOne({
+      where: { id: bookingId, deletedAt: IsNull() },
+    });
+    if (!booking || booking.userId !== userId) {
+      return [];
+    }
+    if (booking.status !== 'confirmed') {
+      return [];
+    }
+
+    const items = await this.bookingItemsRepository.find({
+      where: { bookingId, deletedAt: IsNull() },
+    });
+    if (!isStayEnded(items)) {
+      return [];
+    }
+
+    const assignments = await this.guideAssignmentsRepository.find({
+      where: { bookingId },
+      order: { assignedAt: 'ASC' },
+    });
+    if (assignments.length === 0) {
+      return [];
+    }
+
+    const guideIds = [...new Set(assignments.map((row) => row.guideId))];
+    const guides = await this.tourGuidesRepository.find({
+      where: { id: In(guideIds), deletedAt: IsNull() },
+    });
+    const guideById = new Map(guides.map((guide) => [guide.id, guide]));
+
+    const invites: GuideReviewInviteDto[] = [];
+    for (const assignment of assignments) {
+      const guide = guideById.get(assignment.guideId);
+      const existing = await this.findByGuideAssignment(assignment.id);
+      const canReview = !existing;
+      invites.push({
+        assignmentId: assignment.id,
+        guideId: assignment.guideId,
+        guideName: guide?.displayName ?? assignment.guideId.slice(0, 8),
+        role: assignment.role,
+        canReview,
+        review: existing,
+      });
+    }
+
+    return invites;
+  }
+
+  async findByGuideAssignment(assignmentId: string): Promise<ReviewDto | null> {
+    const review = await this.reviewsRepository.findOne({
+      where: {
+        entityType: 'tour_guide',
+        entityId: assignmentId,
+        deletedAt: IsNull(),
+      },
+    });
+    if (!review) {
+      return null;
+    }
+
+    const author = await this.usersRepository.findOne({
+      where: { id: review.userId },
+    });
+    return this.toReviewDto(review, author?.firstName ?? null);
+  }
+
+  async createForGuideAssignment(
+    bookingId: string,
+    guideId: string,
+    userId: string,
+    dto: CreateBookingReviewDto,
+    actorUserId?: string,
+  ): Promise<ReviewDto> {
+    const booking = await this.bookingsRepository.findOne({
+      where: { id: bookingId, deletedAt: IsNull() },
+    });
+    if (!booking) {
+      throw new NotFoundException('Réservation introuvable.');
+    }
+    if (booking.userId !== userId) {
+      throw new ForbiddenException('Access denied.');
+    }
+    if (booking.status !== 'confirmed') {
+      throw new BadRequestException(
+        'Seules les réservations confirmées peuvent recevoir un avis guide.',
+      );
+    }
+
+    const items = await this.bookingItemsRepository.find({
+      where: { bookingId, deletedAt: IsNull() },
+    });
+    if (!isStayEnded(items)) {
+      throw new BadRequestException(
+        'Vous pourrez noter votre guide une fois votre séjour terminé.',
+      );
+    }
+
+    const assignment = await this.guideAssignmentsRepository.findOne({
+      where: { bookingId, guideId },
+    });
+    if (!assignment) {
+      throw new NotFoundException('Guide non assigné à cette réservation.');
+    }
+
+    const existing = await this.reviewsRepository.findOne({
+      where: {
+        entityType: 'tour_guide',
+        entityId: assignment.id,
+        deletedAt: IsNull(),
+      },
+    });
+    if (existing) {
+      throw new ConflictException('Un avis existe déjà pour ce guide sur cette réservation.');
+    }
+
+    try {
+      const saved = await super.create(
+        {
+          userId,
+          entityType: 'tour_guide',
+          entityId: assignment.id,
+          rating: dto.rating,
+          title: dto.title?.trim() || undefined,
+          body: dto.body?.trim() || undefined,
+          status: 'pending',
+        },
+        actorUserId ?? userId,
+      );
+      const author = await this.usersRepository.findOne({
+        where: { id: userId },
+      });
+      return this.toReviewDto(saved, author?.firstName ?? null);
+    } catch (error) {
+      if (
+        error instanceof QueryFailedError &&
+        (error.driverError as { code?: string })?.code === 'ER_DUP_ENTRY'
+      ) {
+        throw new ConflictException('Un avis existe déjà pour ce guide sur cette réservation.');
       }
       throw error;
     }
@@ -281,6 +439,9 @@ export class ReviewsService extends CrudService<Reviews> {
       .addSelect('r.entityId', 'entityId')
       .addSelect('rm.propertyId', 'propertyId')
       .addSelect('p.name', 'propertyName')
+      .addSelect('bga.bookingId', 'bookingId')
+      .addSelect('bga.guideId', 'guideId')
+      .addSelect('tg.displayName', 'guideName')
       .addSelect('r.title', 'title')
       .addSelect('r.body', 'body')
       .groupBy('r.id')
@@ -293,6 +454,9 @@ export class ReviewsService extends CrudService<Reviews> {
       .addGroupBy('r.entityId')
       .addGroupBy('rm.propertyId')
       .addGroupBy('p.name')
+      .addGroupBy('bga.bookingId')
+      .addGroupBy('bga.guideId')
+      .addGroupBy('tg.displayName')
       .addGroupBy('r.title')
       .addGroupBy('r.body')
       .orderBy('r.createdAt', 'DESC')
@@ -331,6 +495,8 @@ export class ReviewsService extends CrudService<Reviews> {
       propertyName = property?.name ?? null;
     }
 
+    const guideContext = await this.resolveGuideContextForReview(review);
+
     return {
       id: review.id,
       rating: review.rating,
@@ -343,6 +509,9 @@ export class ReviewsService extends CrudService<Reviews> {
       entityId: review.entityId,
       propertyId,
       propertyName,
+      guideName: guideContext.guideName,
+      guideId: guideContext.guideId,
+      bookingId: guideContext.bookingId,
       userId: review.userId,
       title: review.title || null,
       body: review.body || null,
@@ -433,7 +602,42 @@ export class ReviewsService extends CrudService<Reviews> {
         'rm.id = bi.referenceId AND rm.deletedAt IS NULL',
       )
       .leftJoin(Properties, 'p', 'p.id = rm.propertyId AND p.deletedAt IS NULL')
+      .leftJoin(
+        BookingGuideAssignments,
+        'bga',
+        "bga.id = r.entityId AND r.entityType = 'tour_guide'",
+      )
+      .leftJoin(
+        TourGuides,
+        'tg',
+        'tg.id = bga.guideId AND tg.deletedAt IS NULL',
+      )
       .where('r.deletedAt IS NULL');
+  }
+
+  private async resolveGuideContextForReview(
+    review: Reviews,
+  ): Promise<{ guideName: string | null; guideId: string | null; bookingId: string | null }> {
+    if (review.entityType !== 'tour_guide') {
+      return { guideName: null, guideId: null, bookingId: null };
+    }
+
+    const assignment = await this.guideAssignmentsRepository.findOne({
+      where: { id: review.entityId },
+    });
+    if (!assignment) {
+      return { guideName: null, guideId: null, bookingId: null };
+    }
+
+    const guide = await this.tourGuidesRepository.findOne({
+      where: { id: assignment.guideId, deletedAt: IsNull() },
+    });
+
+    return {
+      guideName: guide?.displayName ?? null,
+      guideId: assignment.guideId,
+      bookingId: assignment.bookingId,
+    };
   }
 
   private toAdminListItem(row: AdminReviewRow): AdminReviewListItemDto {
@@ -451,6 +655,9 @@ export class ReviewsService extends CrudService<Reviews> {
       entityId: row.entityId,
       propertyId: row.propertyId,
       propertyName: row.propertyName,
+      guideName: row.guideName,
+      guideId: row.guideId,
+      bookingId: row.bookingId,
       title: row.title || null,
       body: row.body || null,
     };

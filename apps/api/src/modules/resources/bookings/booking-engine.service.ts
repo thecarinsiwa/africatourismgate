@@ -22,6 +22,7 @@ import {
   Users,
   Vehicles,
 } from '../../../entities/generated';
+import { resolveCheckoutBookingMode } from '@africatourismgate/types';
 import { EmailService } from '../../email/email.service';
 import { EmailVerificationService } from '../../email-verification/email-verification.service';
 import {
@@ -30,6 +31,7 @@ import {
   slotCoversRentalPeriod,
 } from '../../public/vehicles/vehicle-dates.util';
 import { enumerateDates } from '../room-availability/room-availability-date.util';
+import { OrganizationSettingsService } from '../organization-settings/organization-settings.service';
 import {
   BookingCheckoutDto,
   BookingCheckoutItemDto,
@@ -40,6 +42,10 @@ import {
 } from './dto/booking-checkout-preview-response.dto';
 import type { CreateBookingResponseDto } from './dto/create-booking-response.dto';
 import { BookingDetailDto } from './dto/booking-detail.dto';
+import {
+  BOOKING_REQUEST_REGISTERED_MESSAGE,
+  BookingRequestResponseDto,
+} from './dto/booking-request-response.dto';
 import { BookingCheckoutPromoService } from './booking-checkout-promo.service';
 import { BookingPackageCheckoutService } from './booking-package-checkout.service';
 import { BookingStatusHistoryService } from './booking-status-history.service';
@@ -91,6 +97,7 @@ export class BookingEngineService {
     private readonly usersRepository: Repository<Users>,
     private readonly emailService: EmailService,
     private readonly emailVerification: EmailVerificationService,
+    private readonly organizationSettingsService: OrganizationSettingsService,
   ) {}
 
   async previewCheckout(
@@ -98,6 +105,12 @@ export class BookingEngineService {
     _userId: string,
   ): Promise<BookingCheckoutPreviewResponseDto> {
     const pricing = await this.resolveCheckoutPricing(dto);
+    const modes = await this.organizationSettingsService.getResolvedItemTypeModes();
+    const bookingMode = resolveCheckoutBookingMode({
+      packageId: dto.packageId,
+      itemTypes: dto.items.map((item) => item.itemType),
+      modes,
+    });
     return {
       lines: pricing.lines.map(({ stock: _s, ...rest }) => rest),
       subtotalCents: pricing.subtotalCents,
@@ -107,6 +120,7 @@ export class BookingEngineService {
       currency: pricing.currency,
       appliedPackageDiscount: pricing.appliedPackageDiscount,
       appliedDiscount: pricing.appliedDiscount,
+      bookingMode,
     };
   }
 
@@ -210,6 +224,142 @@ export class BookingEngineService {
       changedByUserId: null,
     });
     return this.getBookingDetail(bookingId);
+  }
+
+  async createBookingRequest(
+    dto: BookingCheckoutDto,
+    userId: string,
+    actorUserId?: string,
+  ): Promise<BookingRequestResponseDto> {
+    const pricing = await this.resolveCheckoutPricing(dto);
+
+    const bookingId = await this.bookingsRepository.manager.transaction(
+      async (manager) => {
+        const bookingsRepo = manager.getRepository(Bookings);
+        const itemsRepo = manager.getRepository(BookingItems);
+        const id = newId();
+
+        const booking = bookingsRepo.create({
+          id,
+          userId,
+          status: 'pending_approval',
+          totalCents: pricing.totalCents,
+          currency: pricing.currency,
+          promoCodeId: pricing.discount?.promoCodeId ?? null,
+          promotionId: pricing.discount?.promotionId ?? null,
+          createdByUserId: actorUserId ?? null,
+        } as Bookings);
+        await bookingsRepo.save(booking);
+
+        for (const line of pricing.lines) {
+          const item = itemsRepo.create({
+            id: newId(),
+            bookingId: id,
+            itemType: line.itemType,
+            referenceId: line.referenceId,
+            titleSnapshot: line.titleSnapshot,
+            quantity: line.quantity,
+            unitPriceCents: line.unitPriceCents,
+            startDate: line.startDate,
+            endDate: line.endDate,
+            createdByUserId: actorUserId ?? null,
+          } as BookingItems);
+          await itemsRepo.save(item);
+        }
+
+        return id;
+      },
+    );
+
+    await this.statusHistory.record({
+      bookingId,
+      fromStatus: null,
+      toStatus: 'pending_approval',
+      reason: 'Demande de réservation assistée',
+      changedByUserId: actorUserId ?? null,
+    });
+
+    return {
+      bookingId,
+      status: 'pending_approval',
+      message: BOOKING_REQUEST_REGISTERED_MESSAGE,
+      totalCents: pricing.totalCents,
+      currency: pricing.currency,
+    };
+  }
+
+  async approveAssistedBooking(
+    id: string,
+    actorUserId: string,
+    options?: { totalCents?: number; reason?: string },
+  ): Promise<BookingDetailDto> {
+    const booking = await this.findBookingOrThrow(id);
+    if (booking.status !== 'pending_approval') {
+      throw new BadRequestException(
+        `Approbation impossible : statut actuel « ${booking.status} » (attendu : pending_approval).`,
+      );
+    }
+
+    const fromStatus = booking.status;
+    const nextTotalCents =
+      options?.totalCents !== undefined
+        ? Math.max(0, Math.floor(options.totalCents))
+        : booking.totalCents;
+
+    if (nextTotalCents < 1) {
+      throw new BadRequestException('Montant de réservation invalide.');
+    }
+
+    await this.bookingsRepository.manager.transaction(async (manager) => {
+      const items = await manager.getRepository(BookingItems).find({
+        where: { bookingId: id },
+      });
+      const lines = await this.bookingItemsToResolvedLines(manager, items);
+      if (lines.length > 0) {
+        await this.allocateStock(manager, lines, 'decrement', actorUserId);
+      }
+
+      await this.checkoutPromo.recordRedemptionFromBooking(manager, booking);
+
+      const bookingsRepo = manager.getRepository(Bookings);
+      const row = await bookingsRepo.findOne({ where: { id } });
+      if (!row) {
+        throw new NotFoundException('Réservation introuvable.');
+      }
+      row.status = 'pending_payment';
+      row.totalCents = nextTotalCents;
+      row.updatedByUserId = actorUserId;
+      await bookingsRepo.save(row);
+    });
+
+    await this.statusHistory.record({
+      bookingId: id,
+      fromStatus,
+      toStatus: 'pending_payment',
+      reason: options?.reason?.trim() || 'Approbation — en attente de paiement',
+      changedByUserId: actorUserId,
+    });
+
+    return this.getBookingDetail(id);
+  }
+
+  async rejectAssistedBooking(
+    id: string,
+    actorUserId: string,
+    reason?: string,
+  ): Promise<BookingDetailDto> {
+    const booking = await this.findBookingOrThrow(id);
+    if (booking.status !== 'pending_approval') {
+      throw new BadRequestException(
+        `Refus impossible : statut actuel « ${booking.status} » (attendu : pending_approval).`,
+      );
+    }
+
+    const rejectReason = reason?.trim()
+      ? `Refus : ${reason.trim()}`
+      : 'Refus de la demande de réservation';
+
+    return this.cancelBooking(id, actorUserId, rejectReason);
   }
 
   async confirmBooking(
@@ -316,21 +466,29 @@ export class BookingEngineService {
     reason?: string,
   ): Promise<BookingDetailDto> {
     const booking = await this.findBookingOrThrow(id);
-    if (booking.status !== 'pending_payment' && booking.status !== 'confirmed') {
+    if (
+      booking.status !== 'pending_approval' &&
+      booking.status !== 'pending_payment' &&
+      booking.status !== 'confirmed'
+    ) {
       throw new BadRequestException(
         `Impossible d'annuler une réservation au statut « ${booking.status} ».`,
       );
     }
 
     const fromStatus = booking.status;
+    const shouldRestoreStock =
+      fromStatus === 'pending_payment' || fromStatus === 'confirmed';
 
     await this.bookingsRepository.manager.transaction(async (manager) => {
-      const items = await manager.getRepository(BookingItems).find({
-        where: { bookingId: id },
-      });
-      const lines = await this.bookingItemsToResolvedLines(manager, items);
-      if (lines.length > 0) {
-        await this.allocateStock(manager, lines, 'restore', actorUserId);
+      if (shouldRestoreStock) {
+        const items = await manager.getRepository(BookingItems).find({
+          where: { bookingId: id },
+        });
+        const lines = await this.bookingItemsToResolvedLines(manager, items);
+        if (lines.length > 0) {
+          await this.allocateStock(manager, lines, 'restore', actorUserId);
+        }
       }
 
       const bookingsRepo = manager.getRepository(Bookings);

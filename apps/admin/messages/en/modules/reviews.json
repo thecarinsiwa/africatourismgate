@@ -39,6 +39,7 @@
       "property": "Property",
       "entity": "Entité",
       "booking": "Booking",
+      "guide": "Guide",
       "publishedAt": "Publié le"
     },
     "viewBooking": "Voir la réservation",

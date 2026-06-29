@@ -28,7 +28,7 @@ const AUTH_EXACT_PATHS = new Set([
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ['@africatourismgate/ui'],
+  transpilePackages: ['@africatourismgate/ui', '@africatourismgate/types'],
   env: {
     NEXT_PUBLIC_API_URL: apiUrl,
   },

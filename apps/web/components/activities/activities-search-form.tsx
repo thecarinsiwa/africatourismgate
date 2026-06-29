@@ -2,13 +2,18 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import {
-  buildActivitiesSearchQuery,
-  type ActivitiesSearchParams,
-} from '../../lib/activities/listings';
+import { type ActivitiesSearchParams } from '../../lib/activities/listings';
 import { useActivityDestinations } from '../../lib/activities/use-activity-destinations';
 import { todayISODate } from '../../lib/hotels/dates';
 import { useTranslations } from '../../lib/i18n/locale-provider';
+import { buildSearchRoute } from '../../lib/search/route';
+import {
+  SearchFormDatalistInput,
+  SearchFormInput,
+  SearchFormLabel,
+  SearchFormPanel,
+  SearchFormSubmit,
+} from '../shared';
 
 type ActivitiesSearchFormProps = {
   initialValues: ActivitiesSearchParams;
@@ -47,99 +52,71 @@ export function ActivitiesSearchForm({ initialValues }: ActivitiesSearchFormProp
     event.preventDefault();
     setError(null);
 
-    const params: ActivitiesSearchParams = {
-      destination: destination.trim() || undefined,
-      date: date || undefined,
-      participants: String(Math.max(1, Number.parseInt(participants, 10) || 1)),
-    };
-
-    if (!params.date && !params.destination) {
-      router.push('/activities');
+    if (!date) {
+      setError(s.toursRequired);
       return;
     }
 
-    router.push(`/activities${buildActivitiesSearchQuery(params)}`);
+    const params = new URLSearchParams();
+    if (destination.trim()) params.set('destination', destination.trim());
+    params.set('date', date);
+    params.set('participants', String(Math.max(1, Number.parseInt(participants, 10) || 1)));
+
+    router.push(buildSearchRoute('tours', params));
   }
 
-  const labelClass =
-    'mb-1.5 block text-xs font-semibold uppercase tracking-wide text-atg-muted';
-  const fieldClass =
-    'min-h-[44px] w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg transition-colors placeholder:text-atg-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-atg-border dark:bg-atg-surface dark:text-atg-fg dark:placeholder:text-atg-muted';
-
   return (
-    <form
-      id="activities-search"
-      onSubmit={handleSubmit}
-      className="mt-8 rounded-xl border border-white/10 bg-white p-5 shadow-xl dark:border-atg-border dark:bg-atg-elevated sm:p-6"
-    >
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_auto] lg:items-end">
+    <SearchFormPanel id="activities-search" onSubmit={handleSubmit}>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.25fr_1fr_0.75fr_auto] lg:items-end">
         <div>
-          <label htmlFor="activities-destination" className={labelClass}>
-            {a.destination}
-          </label>
-          <select
-            id="activities-destination"
+          <SearchFormLabel>{a.destination}</SearchFormLabel>
+          <SearchFormDatalistInput
             name="destination"
+            placeholder={
+              destinationsLoading ? a.destinationsLoading : s.allDestinations
+            }
+            suggestions={destinationOptions}
             value={destination}
-            disabled={destinationsLoading || destinationOptions.length === 0}
-            onChange={(event) => {
-              setDestination(event.target.value);
+            disabled={destinationsLoading}
+            onChange={(value) => {
+              setDestination(value);
               setError(null);
             }}
-            className={fieldClass}
-          >
-            <option value="">
-              {destinationsLoading ? a.destinationsLoading : s.allDestinations}
-            </option>
-            {destinationOptions.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
+          />
         </div>
 
         <div>
-          <label htmlFor="activities-date" className={labelClass}>
-            {a.date}
-          </label>
-          <input
-            id="activities-date"
+          <SearchFormLabel>{a.date}</SearchFormLabel>
+          <SearchFormInput
             type="date"
             name="date"
             value={date}
             min={today}
-            onChange={(event) => {
-              setDate(event.target.value);
+            onChange={(value) => {
+              setDate(value);
               setError(null);
             }}
-            className={fieldClass}
           />
         </div>
 
         <div>
-          <label htmlFor="activities-participants" className={labelClass}>
-            {a.participants}
-          </label>
-          <input
-            id="activities-participants"
+          <SearchFormLabel>{a.participants}</SearchFormLabel>
+          <SearchFormInput
             type="number"
             name="participants"
-            min={1}
-            max={50}
+            placeholder="2"
             value={participants}
-            onChange={(event) => setParticipants(event.target.value)}
-            className={fieldClass}
+            min="1"
+            max="50"
+            onChange={(value) => {
+              setParticipants(value);
+              setError(null);
+            }}
           />
         </div>
 
-        <div className="flex items-end sm:col-span-2 lg:col-span-1">
-          <button
-            type="submit"
-            className="min-h-[44px] w-full rounded-lg bg-primary px-5 py-2.5 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover"
-          >
-            {s.search}
-          </button>
+        <div className="flex items-end">
+          <SearchFormSubmit label={s.search} />
         </div>
       </div>
 
@@ -153,6 +130,6 @@ export function ActivitiesSearchForm({ initialValues }: ActivitiesSearchFormProp
           {error}
         </p>
       )}
-    </form>
+    </SearchFormPanel>
   );
 }

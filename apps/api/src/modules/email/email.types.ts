@@ -53,3 +53,36 @@ export type LoginNotificationEmailPayload = {
   firstName: string;
   webUrl?: string;
 };
+
+export type AssistedBookingEmailBase = {
+  to: string;
+  firstName: string;
+  bookingId: string;
+  totalCents: number;
+  currency: string;
+  itemTitles: string[];
+  webUrl?: string;
+};
+
+export type BookingRequestReceivedEmailPayload = AssistedBookingEmailBase;
+
+export type BookingApprovedChatEmailPayload = AssistedBookingEmailBase & {
+  chatUrl: string;
+};
+
+export type BookingRejectedEmailPayload = AssistedBookingEmailBase & {
+  reason?: string | null;
+};
+
+export type BookingPaymentInviteEmailPayload = AssistedBookingEmailBase & {
+  paymentUrl: string;
+};
+
+export type BookingStaffMessageEmailPayload = AssistedBookingEmailBase & {
+  chatUrl: string;
+  messagePreview: string;
+};
+
+export type BookingPaymentReminderEmailPayload = AssistedBookingEmailBase & {
+  paymentUrl: string;
+};

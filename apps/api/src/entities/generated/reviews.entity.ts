@@ -8,8 +8,8 @@ export class Reviews extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'user_id', length: 36 })
   userId!: string;
 
-  @Column({ name: 'entity_type', enum: ["property","flight","vehicle","cruise","activity","booking"] })
-  entityType!: 'property' | 'flight' | 'vehicle' | 'cruise' | 'activity' | 'booking';
+  @Column({ name: 'entity_type', enum: ["property","flight","vehicle","cruise","activity","booking","tour_guide"] })
+  entityType!: 'property' | 'flight' | 'vehicle' | 'cruise' | 'activity' | 'booking' | 'tour_guide';
 
   @Column({ type: 'varchar', name: 'entity_id', length: 36 })
   entityId!: string;

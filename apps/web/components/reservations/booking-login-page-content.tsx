@@ -26,6 +26,11 @@ function normalizeNextPath(nextPath?: string): string {
   return nextPath;
 }
 
+function buildRegisterHref(nextPath: string): string {
+  const params = new URLSearchParams({ next: nextPath });
+  return `/booking/register?${params.toString()}`;
+}
+
 export function BookingLoginPageContent({ nextPath }: Props) {
   const t = useTranslations('booking.login');
   const tForm = useTranslations('booking.login.form');
@@ -33,6 +38,7 @@ export function BookingLoginPageContent({ nextPath }: Props) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const safeNext = useMemo(() => normalizeNextPath(nextPath), [nextPath]);
+  const registerHref = useMemo(() => buildRegisterHref(safeNext), [safeNext]);
   const oauthUrl = useMemo(() => buildGoogleOAuthStartUrl(safeNext), [safeNext]);
   const loginConfig = useMemo(() => buildBookingLoginFormConfig(tForm), [tForm]);
   const loginErrors = useMemo(() => buildBookingLoginErrorMessages(tErrors), [tErrors]);
@@ -87,6 +93,24 @@ export function BookingLoginPageContent({ nextPath }: Props) {
           >
             {t('google')}
           </a>
+
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center" aria-hidden>
+              <div className="w-full border-t border-atg-border dark:border-atg-border" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase tracking-wide">
+              <span className="bg-atg-elevated px-2 text-atg-muted dark:bg-atg-elevated">
+                {t('dividerLabel')}
+              </span>
+            </div>
+          </div>
+
+          <Link
+            href={registerHref}
+            className="inline-flex min-h-[44px] w-full items-center justify-center rounded-lg border border-atg-border bg-atg-elevated px-4 py-2 text-sm font-semibold text-atg-fg hover:bg-atg-surface dark:border-atg-border dark:bg-transparent dark:text-white"
+          >
+            {t('createAccount')}
+          </Link>
           <Link
             href="/hotels"
             className="mt-3 inline-flex min-h-[44px] w-full items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-hover"

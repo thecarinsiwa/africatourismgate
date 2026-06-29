@@ -39,6 +39,7 @@
       "property": "Propiedad",
       "entity": "Entité",
       "booking": "Reserva",
+      "guide": "Guía",
       "publishedAt": "Publié le"
     },
     "viewBooking": "Voir la réservation",

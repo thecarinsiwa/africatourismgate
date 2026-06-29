@@ -80,15 +80,23 @@ import type {
   UpdateActivityImageRequest,
   UpdateActivityRequest,
   UpdateActivityScheduleRequest,
+  ApproveBookingRequest,
+  RejectBookingRequest,
   BookingAdminDetail,
   BookingCheckoutPreview,
   BookingCheckoutRequest,
   BookingCheckoutSessionResponse,
   BookingDetail,
   CreateBookingResponse,
+  BookingRequestResponse,
+  BookingMessage,
+  BookingMessagesList,
+  CreateBookingMessageRequest,
   BookingPaymentIntentResponse,
   BookingItemListItem,
   BookingItemsListQuery,
+  BookingGuideAssignment,
+  AssignBookingGuidesRequest,
   BookingListItem,
   BookingsListQuery,
   AdminReviewDetail,
@@ -143,6 +151,10 @@ import type {
   LoyaltyAccountsListQuery,
   Employee,
   EmployeesListQuery,
+  TourGuide,
+  TourGuidesListQuery,
+  CreateTourGuideRequest,
+  UpdateTourGuideRequest,
   Permission,
   PermissionsListQuery,
   RbacAuditLog,
@@ -508,6 +520,14 @@ export class ApiClient {
 
   verifyOperation(body: VerifyOperationRequest): Promise<AuthResponse> {
     return this.request<AuthResponse>('/auth/verify-operation', {
+      method: 'POST',
+      body,
+      skipAuth: true,
+    });
+  }
+
+  registerCustomer(body: RegisterRequest): Promise<AuthResponse> {
+    return this.request<AuthResponse>('/auth/register/customer', {
       method: 'POST',
       body,
       skipAuth: true,
@@ -1120,6 +1140,34 @@ export class ApiClient {
     return this.request<void>(`/employees/${id}`, { method: 'DELETE' });
   }
 
+  listTourGuides(
+    query?: TourGuidesListQuery,
+  ): Promise<PaginatedResponse<TourGuide>> {
+    return fetchPaginated<TourGuide>(this, '/tour-guides', query);
+  }
+
+  getTourGuide(id: string): Promise<TourGuide> {
+    return this.request<TourGuide>(`/tour-guides/${id}`);
+  }
+
+  createTourGuide(body: CreateTourGuideRequest): Promise<TourGuide> {
+    return this.request<TourGuide>('/tour-guides', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateTourGuide(id: string, body: UpdateTourGuideRequest): Promise<TourGuide> {
+    return this.request<TourGuide>(`/tour-guides/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteTourGuide(id: string): Promise<void> {
+    return this.request<void>(`/tour-guides/${id}`, { method: 'DELETE' });
+  }
+
   getSucceededPaymentsRevenue(): Promise<SucceededPaymentsRevenue> {
     return sumSucceededPaymentsRevenue(this);
   }
@@ -1474,6 +1522,49 @@ export class ApiClient {
     return this.request<BookingDetail>('/bookings', { method: 'POST', body });
   }
 
+  requestBooking(body: BookingCheckoutRequest): Promise<BookingRequestResponse> {
+    return this.request<BookingRequestResponse>('/bookings/request', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  listBookingMessages(
+    bookingId: string,
+    query?: { chatToken?: string },
+  ): Promise<BookingMessagesList> {
+    const params = new URLSearchParams();
+    if (query?.chatToken) {
+      params.set('chatToken', query.chatToken);
+    }
+    const qs = params.toString();
+    return this.request<BookingMessagesList>(
+      `/bookings/${bookingId}/messages${qs ? `?${qs}` : ''}`,
+    );
+  }
+
+  createBookingMessage(
+    bookingId: string,
+    body: CreateBookingMessageRequest,
+    query?: { chatToken?: string },
+  ): Promise<BookingMessage> {
+    const params = new URLSearchParams();
+    if (query?.chatToken) {
+      params.set('chatToken', query.chatToken);
+    }
+    const qs = params.toString();
+    return this.request<BookingMessage>(
+      `/bookings/${bookingId}/messages${qs ? `?${qs}` : ''}`,
+      { method: 'POST', body },
+    );
+  }
+
+  touchBookingThreadPresence(bookingId: string): Promise<void> {
+    return this.request<void>(`/bookings/${bookingId}/thread-presence`, {
+      method: 'POST',
+    });
+  }
+
   listBookings(query?: BookingsListQuery): Promise<PaginatedResponse<BookingListItem>> {
     return fetchPaginated<BookingListItem>(this, '/bookings', query);
   }
@@ -1499,6 +1590,37 @@ export class ApiClient {
     return this.request<Review>(`/bookings/${id}/reviews`, {
       method: 'POST',
       body,
+    });
+  }
+
+  createGuideReview(
+    bookingId: string,
+    guideId: string,
+    body: CreateBookingReviewRequest,
+  ): Promise<Review> {
+    return this.request<Review>(`/bookings/${bookingId}/guides/${guideId}/reviews`, {
+      method: 'POST',
+      body,
+    });
+  }
+
+  listBookingGuides(bookingId: string): Promise<BookingGuideAssignment[]> {
+    return this.request<BookingGuideAssignment[]>(`/bookings/${bookingId}/guides`);
+  }
+
+  assignBookingGuides(
+    bookingId: string,
+    body: AssignBookingGuidesRequest,
+  ): Promise<BookingGuideAssignment[]> {
+    return this.request<BookingGuideAssignment[]>(`/bookings/${bookingId}/guides`, {
+      method: 'POST',
+      body,
+    });
+  }
+
+  removeBookingGuide(bookingId: string, guideId: string): Promise<void> {
+    return this.request<void>(`/bookings/${bookingId}/guides/${guideId}`, {
+      method: 'DELETE',
     });
   }
 
@@ -1584,6 +1706,26 @@ export class ApiClient {
     return this.request<BookingDetail>(`/bookings/${id}/cancel`, {
       method: 'POST',
       body: body ?? {},
+    });
+  }
+
+  approveBooking(id: string, body?: ApproveBookingRequest): Promise<BookingAdminDetail> {
+    return this.request<BookingAdminDetail>(`/bookings/${id}/approve`, {
+      method: 'POST',
+      body: body ?? {},
+    });
+  }
+
+  rejectBooking(id: string, body?: RejectBookingRequest): Promise<BookingAdminDetail> {
+    return this.request<BookingAdminDetail>(`/bookings/${id}/reject`, {
+      method: 'POST',
+      body: body ?? {},
+    });
+  }
+
+  inviteBookingPayment(id: string): Promise<BookingCheckoutSessionResponse> {
+    return this.request<BookingCheckoutSessionResponse>(`/bookings/${id}/invite-payment`, {
+      method: 'POST',
     });
   }
 

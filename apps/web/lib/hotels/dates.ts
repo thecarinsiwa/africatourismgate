@@ -77,6 +77,25 @@ export function isDateBefore(a: string, b: string): boolean {
   return a < b;
 }
 
+/** Nights for a stay: checkIn inclusive, checkOut exclusive (matches API). */
+export function countStayNights(checkIn: string, checkOut: string): number {
+  const [y1, m1, d1] = checkIn.split('-').map(Number);
+  const [y2, m2, d2] = checkOut.split('-').map(Number);
+  const start = Date.UTC(y1, m1 - 1, d1);
+  const end = Date.UTC(y2, m2 - 1, d2);
+  return Math.max(0, Math.round((end - start) / 86_400_000));
+}
+
+export function isStayNight(
+  date: string,
+  checkIn: string | null,
+  checkOut: string | null,
+): boolean {
+  if (!checkIn) return false;
+  if (!checkOut) return date === checkIn;
+  return date >= checkIn && date < checkOut;
+}
+
 export function addDays(iso: string, days: number): string {
   const [y, m, d] = iso.split('-').map(Number);
   const date = new Date(Date.UTC(y, m - 1, d + days));

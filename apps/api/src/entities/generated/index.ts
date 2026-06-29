@@ -58,3 +58,6 @@ export { Promotions } from './commerce.entity';
 export { Reviews } from './reviews.entity';
 export { SupportTickets } from './support.entity';
 export { SupportMessages } from './support.entity';
+export { TourGuides } from './tour-guides.entity';
+export { BookingGuideAssignments } from './tour-guides.entity';
+export { BookingMessages } from './tour-guides.entity';

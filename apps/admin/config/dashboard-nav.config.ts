@@ -72,6 +72,7 @@ export const adminDashboardNavConfig: AdminNavEntryConfig[] = [
     children: [
       { href: '/reservations', labelKey: 'bookings', iconKey: 'bookings' },
       { href: '/reservations/lignes', labelKey: 'bookingLines', iconKey: 'list' },
+      { href: '/guides', labelKey: 'tourGuides', iconKey: 'userCircle' },
     ],
   },
   {
@@ -139,6 +140,7 @@ export const adminBreadcrumbExtraRoutes: AdminBreadcrumbRouteConfig[] = [
   { href: '/systeme/roles/permissions', labelKey: 'permissions' },
   { href: '/paiements/promotions/nouveau', labelKey: 'newPromotion' },
   { href: '/paiements/codes-promo/nouveau', labelKey: 'newPromoCode' },
+  { href: '/guides/nouveau', labelKey: 'newTourGuide' },
   { href: '/parametres/comptes', labelKey: 'bankAccounts' },
 ];
 

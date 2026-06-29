@@ -14,8 +14,11 @@ import { formatDisplayDate } from '../../lib/hotels/dates';
 import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
+import { ListingPageBody, ListingPaginationBar, ListingSortBar } from '../shared/listing-patterns';
 import { ActivitiesSearchForm } from './activities-search-form';
 import { ActivityCard } from './activity-card';
+import { toListingPaginationLabels, scrollListingToTop } from '../../lib/listing/pagination-labels';
+import { useListingPagination } from '../../lib/listing/pagination';
 
 export type { ActivitiesSearchParams };
 
@@ -28,6 +31,7 @@ type ActivitiesPageContentProps = {
 export function ActivitiesPageContent({ initialSearch }: ActivitiesPageContentProps) {
   const t = useTranslations();
   const a = t.activities;
+  const l = t.listing;
   const { locale } = useLocale();
 
   const [sort, setSort] = useState<SortKey>('recommended');
@@ -94,6 +98,23 @@ export function ActivitiesPageContent({ initialSearch }: ActivitiesPageContentPr
     }
   }, [results, sort]);
 
+  const paginationResetKey = useMemo(
+    () => JSON.stringify({ sort, browseQuery, searchQuery, hasDateSearch, fetchId }),
+    [sort, browseQuery, searchQuery, hasDateSearch, fetchId],
+  );
+
+  const {
+    pageItems,
+    page,
+    setPage,
+    totalPages,
+    totalItems,
+    pageSize,
+    showPagination,
+  } = useListingPagination(listings, paginationResetKey);
+
+  const paginationLabels = useMemo(() => toListingPaginationLabels(l), [l]);
+
   const searchSummary = [
     initialSearch.destination && `${a.destination}: ${initialSearch.destination}`,
     initialSearch.date && `${a.date}: ${formatDisplayDate(initialSearch.date, locale)}`,
@@ -141,86 +162,76 @@ export function ActivitiesPageContent({ initialSearch }: ActivitiesPageContentPr
         </div>
       </section>
 
-      <div className="sticky top-0 z-30 border-b border-atg-border bg-atg-elevated/95 shadow-sm backdrop-blur-md dark:border-atg-border dark:bg-atg-elevated/95">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-          <div>
-            <p className="text-sm text-atg-muted">
-              {a.resultsFor}{' '}
-              <strong className="text-atg-fg">{displayDestination}</strong>
-            </p>
-            <p className="text-lg font-bold text-atg-fg">
-              {loading ? '…' : listings.length} {a.activitiesFound}
-            </p>
-          </div>
-          <label className="flex items-center gap-2">
-            <span className="text-sm font-medium text-atg-muted">{a.sortBy}</span>
-            <select
-              value={sort}
-              onChange={(event) => setSort(event.target.value as SortKey)}
-              disabled={loading}
-              className="min-h-[44px] rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm font-medium text-atg-fg focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-60 dark:border-atg-border dark:bg-atg-surface dark:text-white"
-            >
-              <option value="recommended">{a.sortRecommended}</option>
-              <option value="price-asc">{a.sortPriceLow}</option>
-              <option value="price-desc">{a.sortPriceHigh}</option>
-            </select>
-          </label>
-        </div>
-      </div>
+      <ListingSortBar
+        resultsLine={
+          <>
+            {a.resultsFor}{' '}
+            <strong className="text-atg-fg">{displayDestination}</strong>
+          </>
+        }
+        countLine={
+          <>
+            {loading ? '…' : listings.length} {a.activitiesFound}
+          </>
+        }
+        sortLabel={a.sortBy}
+        sortValue={sort}
+        sortOptions={[
+          { value: 'recommended', label: a.sortRecommended },
+          { value: 'price-asc', label: a.sortPriceLow },
+          { value: 'price-desc', label: a.sortPriceHigh },
+        ]}
+        onSortChange={(value) => setSort(value as SortKey)}
+        disabled={loading}
+      />
 
-      <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
-        {error && (
-          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-4 text-sm text-red-800 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-200">
-            <p>{a.loadError}</p>
-            <button
-              type="button"
-              onClick={() => setFetchId((value) => value + 1)}
-              className="mt-3 min-h-[44px] rounded-lg bg-primary px-4 py-2 text-sm font-bold text-white hover:bg-primary-hover"
-            >
-              {a.retry}
-            </button>
-          </div>
-        )}
-
-        {loading && (
-          <div className="rounded-2xl border border-atg-border bg-atg-elevated px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
-            <p className="text-sm font-medium text-atg-muted">{a.loading}</p>
-          </div>
-        )}
-
-        {!loading && !error && listings.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-atg-border bg-atg-elevated px-6 py-16 text-center dark:border-atg-border dark:bg-atg-elevated">
-            <h3 className="text-lg font-bold text-atg-fg">{a.noResults}</h3>
-            <p className="mt-2 text-sm text-atg-muted">{a.noResultsHint}</p>
-            <a
-              href="#activities-search"
-              className="mt-6 mr-3 inline-flex min-h-[44px] items-center rounded-lg border border-atg-border px-6 py-2 text-sm font-semibold text-atg-fg hover:border-primary dark:border-atg-border dark:text-white"
-            >
-              {a.modifySearch}
-            </a>
-            <Link
-              href="/"
-              className="mt-6 inline-flex min-h-[44px] items-center rounded-lg bg-primary px-6 py-2 text-sm font-bold text-white hover:bg-primary-hover"
-            >
-              {a.backHome}
-            </Link>
-          </div>
-        )}
-
-        {!loading && !error && listings.length > 0 && (
-          <div className="space-y-6">
-            {listings.map((activity) => (
-              <ActivityCard
-                key={activity.id}
-                activity={activity}
-                t={a}
-                searchParams={initialSearch}
-                locale={locale}
-              />
-            ))}
-          </div>
-        )}
-      </div>
+      <ListingPageBody
+        error={
+          error
+            ? {
+                message: a.loadError,
+                retryLabel: a.retry,
+                onRetry: () => setFetchId((value) => value + 1),
+              }
+            : null
+        }
+        loading={loading}
+        loadingMessage={a.loading}
+        isEmpty={!loading && !error && listings.length === 0}
+        empty={{
+          title: a.noResults,
+          description: a.noResultsHint,
+          backHomeLabel: a.backHome,
+          modifySearchLabel: a.modifySearch,
+          modifySearchHref: '#activities-search',
+        }}
+        pagination={
+          showPagination ? (
+            <ListingPaginationBar
+              page={page}
+              totalPages={totalPages}
+              totalItems={totalItems}
+              pageSize={pageSize}
+              itemLabel={l.resultItem}
+              labels={paginationLabels}
+              onPageChange={(next) => {
+                setPage(next);
+                scrollListingToTop();
+              }}
+            />
+          ) : undefined
+        }
+      >
+        {pageItems.map((activity) => (
+          <ActivityCard
+            key={activity.id}
+            activity={activity}
+            t={a}
+            searchParams={initialSearch}
+            locale={locale}
+          />
+        ))}
+      </ListingPageBody>
 
       <HomeFooter />
     </div>

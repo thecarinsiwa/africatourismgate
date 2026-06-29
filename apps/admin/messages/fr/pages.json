@@ -20,7 +20,8 @@
     "shipDetail": "Navire",
     "classAvailability": "Disponibilités classe",
     "roomAvailability": "Disponibilités chambre",
-    "itineraryStops": "Escales itinéraire"
+    "itineraryStops": "Escales itinéraire",
+    "editTourGuide": "Modifier le guide"
   },
   "utilisateurs": {
     "description": "Comptes plateforme. Filtrez par statut ou organisation.",
@@ -241,6 +242,20 @@
     "description": "Liste paginée des réservations (données API live). Filtres par statut, date, client et organisation. Accès requis : bookings.read.",
     "lignes": {
       "description": "Tableau global des articles par réservation (données API live). Filtres par type, statut de la réservation et identifiant booking. Accès requis : bookings.read."
+    }
+  },
+  "guides": {
+    "title": "Guides touristiques",
+    "description": "Catalogue des guides internes et externes. Filtres par type, statut et recherche par nom.",
+    "actions": {
+      "new": "Nouveau guide"
+    },
+    "nouveau": {
+      "metaTitle": "Nouveau guide touristique",
+      "description": "Créez un profil guide puis assignez-le aux réservations depuis la fiche réservation."
+    },
+    "id": {
+      "metaTitle": "Modifier le guide"
     }
   },
   "paiements": {

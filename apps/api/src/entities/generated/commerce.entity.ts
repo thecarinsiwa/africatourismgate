@@ -8,8 +8,8 @@ export class Bookings extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'user_id', length: 36 })
   userId!: string;
 
-  @Column({ name: 'status', enum: ["draft","pending_payment","confirmed","cancelled","refunded"] })
-  status!: 'draft' | 'pending_payment' | 'confirmed' | 'cancelled' | 'refunded';
+  @Column({ name: 'status', enum: ["draft","pending_approval","pending_payment","confirmed","cancelled","refunded"] })
+  status!: 'draft' | 'pending_approval' | 'pending_payment' | 'confirmed' | 'cancelled' | 'refunded';
 
   @Column({ type: 'int', name: 'total_cents' })
   totalCents!: number;
@@ -22,6 +22,15 @@ export class Bookings extends BaseAuditEntity {
 
   @Column({ type: 'varchar', name: 'promotion_id', length: 36, nullable: true })
   promotionId!: string | null;
+
+  @Column({ type: 'datetime', name: 'customer_thread_last_seen_at', nullable: true })
+  customerThreadLastSeenAt!: Date | null;
+
+  @Column({ type: 'datetime', name: 'customer_thread_presence_at', nullable: true })
+  customerThreadPresenceAt!: Date | null;
+
+  @Column({ type: 'datetime', name: 'payment_reminder_sent_at', nullable: true })
+  paymentReminderSentAt!: Date | null;
 
 }
 
@@ -64,11 +73,11 @@ export class BookingStatusHistory {
   @Column({ type: 'varchar', name: 'booking_id', length: 36 })
   bookingId!: string;
 
-  @Column({ name: 'from_status', enum: ["draft","pending_payment","confirmed","cancelled","refunded"], nullable: true })
-  fromStatus!: 'draft' | 'pending_payment' | 'confirmed' | 'cancelled' | 'refunded';
+  @Column({ name: 'from_status', enum: ["draft","pending_approval","pending_payment","confirmed","cancelled","refunded"], nullable: true })
+  fromStatus!: 'draft' | 'pending_approval' | 'pending_payment' | 'confirmed' | 'cancelled' | 'refunded';
 
-  @Column({ name: 'to_status', enum: ["draft","pending_payment","confirmed","cancelled","refunded"] })
-  toStatus!: 'draft' | 'pending_payment' | 'confirmed' | 'cancelled' | 'refunded';
+  @Column({ name: 'to_status', enum: ["draft","pending_approval","pending_payment","confirmed","cancelled","refunded"] })
+  toStatus!: 'draft' | 'pending_approval' | 'pending_payment' | 'confirmed' | 'cancelled' | 'refunded';
 
   @Column({ type: 'text', name: 'reason', nullable: true })
   reason!: string | null;

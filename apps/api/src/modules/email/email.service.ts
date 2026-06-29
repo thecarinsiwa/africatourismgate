@@ -12,11 +12,25 @@ import {
   renderPasswordResetEmail,
   renderWelcomeEmail,
 } from './email.templates';
+import {
+  renderBookingApprovedChatEmail,
+  renderBookingPaymentInviteEmail,
+  renderBookingPaymentReminderEmail,
+  renderBookingRejectedEmail,
+  renderBookingRequestReceivedEmail,
+  renderBookingStaffMessageEmail,
+} from './assisted-booking.email.templates';
 import type {
   AbandonmentReminderEmailPayload,
   BookingConfirmationEmailPayload,
   LoginNotificationEmailPayload,
   OperationAlertEmailPayload,
+  BookingApprovedChatEmailPayload,
+  BookingPaymentInviteEmailPayload,
+  BookingPaymentReminderEmailPayload,
+  BookingRejectedEmailPayload,
+  BookingRequestReceivedEmailPayload,
+  BookingStaffMessageEmailPayload,
   PasswordResetEmailPayload,
   SendMailResult,
   WelcomeEmailPayload,
@@ -98,6 +112,54 @@ export class EmailService {
       { ...payload, webUrl },
       branding,
     );
+    return this.send('service', { to: payload.to, subject, html, text });
+  }
+
+  async sendBookingRequestReceived(
+    payload: BookingRequestReceivedEmailPayload,
+  ): Promise<SendMailResult> {
+    const branding = await this.resolveBranding();
+    const { subject, html, text } = renderBookingRequestReceivedEmail(payload, branding);
+    return this.send('service', { to: payload.to, subject, html, text });
+  }
+
+  async sendBookingApprovedChat(
+    payload: BookingApprovedChatEmailPayload,
+  ): Promise<SendMailResult> {
+    const branding = await this.resolveBranding();
+    const { subject, html, text } = renderBookingApprovedChatEmail(payload, branding);
+    return this.send('service', { to: payload.to, subject, html, text });
+  }
+
+  async sendBookingRejected(
+    payload: BookingRejectedEmailPayload,
+  ): Promise<SendMailResult> {
+    const branding = await this.resolveBranding();
+    const { subject, html, text } = renderBookingRejectedEmail(payload, branding);
+    return this.send('service', { to: payload.to, subject, html, text });
+  }
+
+  async sendBookingPaymentInvite(
+    payload: BookingPaymentInviteEmailPayload,
+  ): Promise<SendMailResult> {
+    const branding = await this.resolveBranding();
+    const { subject, html, text } = renderBookingPaymentInviteEmail(payload, branding);
+    return this.send('service', { to: payload.to, subject, html, text });
+  }
+
+  async sendBookingStaffMessage(
+    payload: BookingStaffMessageEmailPayload,
+  ): Promise<SendMailResult> {
+    const branding = await this.resolveBranding();
+    const { subject, html, text } = renderBookingStaffMessageEmail(payload, branding);
+    return this.send('service', { to: payload.to, subject, html, text });
+  }
+
+  async sendBookingPaymentReminder(
+    payload: BookingPaymentReminderEmailPayload,
+  ): Promise<SendMailResult> {
+    const branding = await this.resolveBranding();
+    const { subject, html, text } = renderBookingPaymentReminderEmail(payload, branding);
     return this.send('service', { to: payload.to, subject, html, text });
   }
 
