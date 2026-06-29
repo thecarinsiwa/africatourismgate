@@ -29,3 +29,44 @@ export function getBookingStatusLabel(
 ): string {
   return labels[status];
 }
+
+/** Mirrors booking-engine updateBookingStatus transitions (excludes cancel → use cancel action). */
+export function getManualBookingStatusTargets(current: BookingStatus): BookingStatus[] {
+  if (current === 'pending_approval') {
+    return [];
+  }
+
+  const targets: BookingStatus[] = [];
+
+  if (current === 'pending_payment') {
+    targets.push('confirmed');
+  }
+
+  const allowed: Partial<Record<BookingStatus, BookingStatus[]>> = {
+    draft: ['pending_payment'],
+    pending_payment: ['draft', 'refunded'],
+    confirmed: ['refunded'],
+    cancelled: ['refunded'],
+  };
+
+  for (const status of allowed[current] ?? []) {
+    if (!targets.includes(status)) {
+      targets.push(status);
+    }
+  }
+
+  return targets;
+}
+
+export function defaultManualBookingStatusTarget(
+  current: BookingStatus,
+  allowed: BookingStatus[],
+): BookingStatus {
+  if (allowed.length === 0) {
+    return current;
+  }
+  if (current === 'pending_payment' && allowed.includes('confirmed')) {
+    return 'confirmed';
+  }
+  return allowed[0];
+}

@@ -136,6 +136,9 @@ export interface BookingDetail {
   currency: string;
   review?: Review | null;
   canReview?: boolean;
+  statusHistory?: BookingStatusHistoryEntry[];
+  /** True when staff sent a Stripe checkout invite (pending stripe payment exists). */
+  paymentInvited?: boolean;
 }
 
 export interface BookingClient {

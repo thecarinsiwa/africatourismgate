@@ -216,7 +216,27 @@ export class BookingsService extends CrudService<Bookings> {
     const canReview = review
       ? false
       : await this.reviewsService.canReview(id, currentUserId);
-    return { ...detail, review, canReview };
+
+    const [statusHistory, pendingStripePayments] = await Promise.all([
+      this.statusHistory.listByBookingId(id),
+      this.paymentsRepository.find({
+        where: {
+          bookingId: id,
+          deletedAt: IsNull(),
+          status: 'pending',
+          provider: 'stripe',
+        },
+        take: 1,
+      }),
+    ]);
+
+    return {
+      ...detail,
+      review,
+      canReview,
+      statusHistory,
+      paymentInvited: pendingStripePayments.length > 0,
+    };
   }
 
   async getBookingReview(

@@ -71,7 +71,8 @@
       "cancelReason": "Motivo de cancelación",
       "cancelReasonPlaceholder": "Ex. demande client, indisponibilité…",
       "cancelBooking": "Annuler la réservation",
-      "readOnly": "Modification réservée aux comptes avec la permission bookings.write."
+      "readOnly": "La edición requiere el permiso bookings.write.",
+      "assistedStatusHint": "Use el panel de validación asistida para aprobar o rechazar esta solicitud."
     },
     "linesEmpty": "Ninguna ligne.",
     "linesAriaLabel": "Líneas de réservation",

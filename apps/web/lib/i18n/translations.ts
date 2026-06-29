@@ -905,8 +905,29 @@ export type Translations = {
         timelineStepConfirmed: string;
         timelineStepCancelled: string;
         timelineStepRefunded: string;
+        timelineStepRequest: string;
+        timelineStepValidation: string;
+        timelineStepDiscussion: string;
+        timelineStepPayment: string;
         timelineCurrent: string;
         timelineUpcoming: string;
+        proceedToPayment: string;
+        paymentInvitePending: string;
+        messages: {
+          title: string;
+          subtitle: string;
+          loading: string;
+          empty: string;
+          threadAria: string;
+          authorStaff: string;
+          authorCustomer: string;
+          replyTitle: string;
+          replyLabel: string;
+          replyPlaceholder: string;
+          sendReply: string;
+          loadError: string;
+          sendError: string;
+        };
       };
     };
     paymentMethods: {
@@ -2022,8 +2043,30 @@ const fr: Translations = {
         timelineStepConfirmed: 'Confirmée',
         timelineStepCancelled: 'Annulée',
         timelineStepRefunded: 'Remboursée',
+        timelineStepRequest: 'Demande envoyée',
+        timelineStepValidation: 'Validation par l\'équipe',
+        timelineStepDiscussion: 'Échanges',
+        timelineStepPayment: 'Paiement',
         timelineCurrent: 'Étape en cours',
         timelineUpcoming: 'À venir',
+        proceedToPayment: 'Procéder au paiement',
+        paymentInvitePending:
+          'Vous recevrez un e-mail avec le lien de paiement dès que votre demande sera validée.',
+        messages: {
+          title: 'Conversation',
+          subtitle: 'Échangez avec notre équipe au sujet de votre demande.',
+          loading: 'Chargement des messages…',
+          empty: 'Aucun message pour le moment. Notre équipe vous répondra ici.',
+          threadAria: 'Fil de messages de la réservation',
+          authorStaff: 'Équipe',
+          authorCustomer: 'Vous',
+          replyTitle: 'Votre message',
+          replyLabel: 'Message',
+          replyPlaceholder: 'Écrivez votre message…',
+          sendReply: 'Envoyer',
+          loadError: 'Impossible de charger la conversation.',
+          sendError: 'Impossible d\'envoyer le message.',
+        },
       },
     },
     paymentMethods: {
@@ -3161,8 +3204,30 @@ const en: Translations = {
         timelineStepConfirmed: 'Confirmed',
         timelineStepCancelled: 'Cancelled',
         timelineStepRefunded: 'Refunded',
+        timelineStepRequest: 'Request submitted',
+        timelineStepValidation: 'Team validation',
+        timelineStepDiscussion: 'Conversation',
+        timelineStepPayment: 'Payment',
         timelineCurrent: 'Current step',
         timelineUpcoming: 'Upcoming',
+        proceedToPayment: 'Proceed to payment',
+        paymentInvitePending:
+          'You will receive an email with the payment link once your request is approved.',
+        messages: {
+          title: 'Conversation',
+          subtitle: 'Chat with our team about your booking request.',
+          loading: 'Loading messages…',
+          empty: 'No messages yet. Our team will reply here.',
+          threadAria: 'Booking message thread',
+          authorStaff: 'Team',
+          authorCustomer: 'You',
+          replyTitle: 'Your message',
+          replyLabel: 'Message',
+          replyPlaceholder: 'Write your message…',
+          sendReply: 'Send',
+          loadError: 'Could not load the conversation.',
+          sendError: 'Could not send your message.',
+        },
       },
     },
     paymentMethods: {
