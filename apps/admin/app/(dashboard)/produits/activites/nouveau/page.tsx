@@ -1,20 +1,11 @@
 import type { Metadata } from 'next';
-import { ActivityForm } from '../../../../../components/activities/activity-form';
+import { getAdminPageMetadata } from '../../../../../lib/i18n/admin-page-i18n';
+import { NouvelleActivitePageContent } from '../../../../../components/pages/produits-activites-nouveau-page-content';
 
-export const metadata: Metadata = {
-  title: 'Nouvelle activité — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('produits/activites/nouveau');
+}
 
-export default function NouvelleActivitePage() {
-  return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Nouvelle activité</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Créez une expérience puis ajoutez des créneaux sur la page d’édition.
-        </p>
-      </div>
-      <ActivityForm mode="create" />
-    </div>
-  );
+export default function Page() {
+  return <NouvelleActivitePageContent />;
 }

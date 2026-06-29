@@ -9,6 +9,7 @@ export const USER_COOKIE = 'atg.pos.user';
 export const REMEMBER_COOKIE = 'atg.pos.remember';
 export const ORG_ID_COOKIE = 'atg.pos.org.id';
 export const ORG_NAME_COOKIE = 'atg.pos.org.name';
+export const ORG_SLUG_COOKIE = 'atg.pos.org.slug';
 
 /** Align with JWT refresh TTL (7d) when remember-me is enabled */
 export const REFRESH_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -21,6 +22,7 @@ const COOKIE_NAMES = [
   REMEMBER_COOKIE,
   ORG_ID_COOKIE,
   ORG_NAME_COOKIE,
+  ORG_SLUG_COOKIE,
 ] as const;
 
 function isProduction(): boolean {
@@ -80,6 +82,7 @@ export function getSessionFromCookies(request: NextRequest): PosStoredSession | 
   const user = decodeUser(request.cookies.get(USER_COOKIE)?.value);
   const orgId = request.cookies.get(ORG_ID_COOKIE)?.value ?? null;
   const orgName = decodeOrgName(request.cookies.get(ORG_NAME_COOKIE)?.value);
+  const orgSlug = decodeOrgName(request.cookies.get(ORG_SLUG_COOKIE)?.value);
 
   if (!accessToken || !refreshToken || !expiresRaw || !user) {
     return null;
@@ -97,6 +100,7 @@ export function getSessionFromCookies(request: NextRequest): PosStoredSession | 
     user,
     selectedOrganizationId: orgId || null,
     selectedOrganizationName: orgName,
+    selectedOrganizationSlug: orgSlug,
   };
 }
 
@@ -112,10 +116,16 @@ function setOrgCookies(
       encodeURIComponent(session.selectedOrganizationName ?? ''),
       options,
     );
+    response.cookies.set(
+      ORG_SLUG_COOKIE,
+      encodeURIComponent(session.selectedOrganizationSlug ?? ''),
+      options,
+    );
   } else {
     const expired = { ...options, maxAge: 0 };
     response.cookies.set(ORG_ID_COOKIE, '', expired);
     response.cookies.set(ORG_NAME_COOKIE, '', expired);
+    response.cookies.set(ORG_SLUG_COOKIE, '', expired);
   }
 }
 
@@ -157,10 +167,12 @@ export function setClientSessionCookies(session: PosStoredSession, remember: boo
   if (session.selectedOrganizationId) {
     document.cookie = `${ORG_ID_COOKIE}=${encodeURIComponent(session.selectedOrganizationId)}${base}`;
     document.cookie = `${ORG_NAME_COOKIE}=${encodeURIComponent(session.selectedOrganizationName ?? '')}${base}`;
+    document.cookie = `${ORG_SLUG_COOKIE}=${encodeURIComponent(session.selectedOrganizationSlug ?? '')}${base}`;
   } else {
     const expired = `; Path=/; Max-Age=0; SameSite=Lax${secure}`;
     document.cookie = `${ORG_ID_COOKIE}=${expired}`;
     document.cookie = `${ORG_NAME_COOKIE}=${expired}`;
+    document.cookie = `${ORG_SLUG_COOKIE}=${expired}`;
   }
 }
 
@@ -191,6 +203,7 @@ export function getSessionFromDocumentCookies(): PosStoredSession | null {
   const user = decodeUser(readDocumentCookie(USER_COOKIE));
   const orgId = readDocumentCookie(ORG_ID_COOKIE) ?? null;
   const orgName = decodeOrgName(readDocumentCookie(ORG_NAME_COOKIE));
+  const orgSlug = decodeOrgName(readDocumentCookie(ORG_SLUG_COOKIE));
 
   if (!accessToken || !refreshToken || !expiresRaw || !user) {
     return null;
@@ -208,5 +221,6 @@ export function getSessionFromDocumentCookies(): PosStoredSession | null {
     user,
     selectedOrganizationId: orgId || null,
     selectedOrganizationName: orgName,
+    selectedOrganizationSlug: orgSlug,
   };
 }

@@ -1,26 +1,32 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Button,
   Card,
   DataTable,
+  DataTableActions,
+  DataTableAdjustButton,
   DataTableBadge,
   DataTablePagination,
+  EmptyState,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { AdminLoyaltyAccountListItem, LoyaltyAccount, LoyaltyTier } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getLoyaltyAccountsErrorMessage } from '../../lib/loyalty-accounts-errors';
+import {
+  useFormatDateTime,
+  useFormatPoints,
+  useLoyaltyTierLabels,
+} from '../../lib/i18n/use-module-labels';
+import { LoyaltySummaryCards } from './loyalty-summary-cards';
+import { LoyaltyTierProgress } from './loyalty-tier-progress';
+import { LoyaltyTransactionHistoryPanel } from './loyalty-transaction-history-panel';
 
 const PAGE_SIZE = 20;
-
-const tierLabels: Record<LoyaltyTier, string> = {
-  member: 'Membre',
-  silver: 'Silver',
-  gold: 'Gold',
-  platinum: 'Platinum',
-};
 
 const tierVariants: Record<LoyaltyTier, 'success' | 'warning' | 'muted' | 'default'> = {
   member: 'muted',
@@ -29,29 +35,40 @@ const tierVariants: Record<LoyaltyTier, 'success' | 'warning' | 'muted' | 'defau
   platinum: 'success',
 };
 
-function formatDateTime(iso: string): string {
-  try {
-    return new Date(iso).toLocaleString('fr-FR', {
-      dateStyle: 'short',
-      timeStyle: 'short',
-    });
-  } catch {
-    return iso;
-  }
-}
-
 function isAdminListItem(
   account: LoyaltyAccount | AdminLoyaltyAccountListItem,
 ): account is AdminLoyaltyAccountListItem {
   return 'userEmail' in account;
 }
 
+const loyaltyEmptyIcon = (
+  <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={1.5}
+      d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"
+    />
+  </svg>
+);
+
 export function LoyaltyAccountsList() {
+  const { loyaltyAccounts: getLoyaltyAccountsErrorMessage } = useAdminErrorMessages();
+  const tList = useTranslations('modules.loyalty.list');
+  const tAdjust = useTranslations('modules.loyalty.adjust');
+  const tColumns = useTranslations('modules.common.columns');
+  const tCommon = useTranslations('modules.common');
+  const tActions = useTranslations('common.actions');
+  const tPagination = useTranslations('modules.common.pagination');
+  const formatPoints = useFormatPoints();
+  const formatDateTime = useFormatDateTime('short');
+  const tierLabels = useLoyaltyTierLabels();
   const deltaInputId = useId();
   const reasonInputId = useId();
 
   const [page, setPage] = useState(1);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+  const [historyAccount, setHistoryAccount] = useState<AdminLoyaltyAccountListItem | null>(null);
   const [adjustingAccount, setAdjustingAccount] = useState<AdminLoyaltyAccountListItem | null>(
     null,
   );
@@ -87,7 +104,7 @@ export function LoyaltyAccountsList() {
     } catch (error) {
       setState({ status: 'error', message: getLoyaltyAccountsErrorMessage(error) });
     }
-  }, [page]);
+  }, [page, getLoyaltyAccountsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -115,7 +132,7 @@ export function LoyaltyAccountsList() {
 
     const delta = Number.parseInt(adjustDelta, 10);
     if (!Number.isInteger(delta) || delta === 0) {
-      setAdjustError('Indiquez une variation entière non nulle (+ ou −).');
+      setAdjustError(tAdjust('deltaRequired'));
       return;
     }
 
@@ -129,26 +146,29 @@ export function LoyaltyAccountsList() {
       setAdjustingAccount(null);
       setAdjustDelta('');
       setAdjustReason('');
+      setHistoryAccount(null);
       await load();
     } catch (error) {
       setAdjustError(getLoyaltyAccountsErrorMessage(error));
     } finally {
       setActing(false);
     }
-  }, [adjustDelta, adjustReason, adjustingAccount, load]);
+  }, [adjustDelta, adjustReason, adjustingAccount, load, tAdjust, getLoyaltyAccountsErrorMessage]);
+
+  const emptyDash = tCommon('empty.dash');
 
   const columns = useMemo<ColumnDef<AdminLoyaltyAccountListItem, unknown>[]>(
     () => [
       {
         id: 'user',
-        header: 'Utilisateur',
+        header: tColumns('user'),
         cell: ({ row }) => (
           <div>
             <span className="font-medium text-atg-fg">
               {[row.original.userFirstName, row.original.userLastName]
                 .filter(Boolean)
                 .join(' ')
-                .trim() || '—'}
+                .trim() || emptyDash}
             </span>
             <p className="text-xs text-atg-muted">{row.original.userEmail}</p>
           </div>
@@ -156,24 +176,34 @@ export function LoyaltyAccountsList() {
       },
       {
         accessorKey: 'programCode',
-        header: 'Programme',
+        header: tList('columns.program'),
         cell: ({ row }) => (
           <span className="font-mono text-sm text-atg-fg">{row.original.programCode}</span>
         ),
       },
       {
-        accessorKey: 'pointsBalance',
-        header: 'Solde',
+        id: 'points',
+        header: tList('columns.balanceProgress'),
         meta: { align: 'right' },
-        cell: ({ row }) => (
-          <span className="tabular-nums font-medium text-atg-fg">
-            {row.original.pointsBalance.toLocaleString('fr-FR')}
-          </span>
-        ),
+        cell: ({ row }) => {
+          const account = row.original;
+          return (
+            <div className="ml-auto max-w-[12rem] space-y-2 text-right">
+              <p className="tabular-nums text-lg font-bold text-atg-fg">
+                {formatPoints(account.pointsBalance)}
+              </p>
+              <LoyaltyTierProgress
+                pointsBalance={account.pointsBalance}
+                tier={account.tier}
+                compact
+              />
+            </div>
+          );
+        },
       },
       {
         accessorKey: 'tier',
-        header: 'Palier',
+        header: tList('columns.tier'),
         meta: { align: 'center' },
         cell: ({ row }) => (
           <DataTableBadge variant={tierVariants[row.original.tier]}>
@@ -183,59 +213,100 @@ export function LoyaltyAccountsList() {
       },
       {
         accessorKey: 'lastActivityAt',
-        header: 'Dernière activité',
+        header: tList('columns.lastActivity'),
         cell: ({ row }) => (
-          <span className="whitespace-nowrap text-sm text-atg-muted">
+          <span className="whitespace-nowrap text-sm tabular-nums text-atg-muted">
             {formatDateTime(row.original.lastActivityAt)}
           </span>
         ),
       },
-      ...(isSuperAdmin
-        ? [
-            {
-              id: 'actions',
-              header: 'Actions',
-              meta: { align: 'right' as const },
-              cell: ({ row }: { row: { original: AdminLoyaltyAccountListItem } }) => (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
+      {
+        id: 'actions',
+        header: tColumns('actions'),
+        meta: { align: 'right' },
+        cell: ({ row }) => {
+          const account = row.original;
+          const historyOpen = historyAccount?.id === account.id;
+          return (
+            <DataTableActions>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="!px-2"
+                aria-expanded={historyOpen}
+                onClick={() =>
+                  setHistoryAccount((prev) => (prev?.id === account.id ? null : account))
+                }
+              >
+                {tList('actions.history')}
+              </Button>
+              {isSuperAdmin ? (
+                <DataTableAdjustButton
                   onClick={() => {
-                    setAdjustingAccount(row.original);
+                    setAdjustingAccount(account);
                     setAdjustDelta('');
                     setAdjustReason('');
                     setAdjustError(null);
                   }}
-                >
-                  Ajuster
-                </Button>
-              ),
-            },
-          ]
-        : []),
+                />
+              ) : null}
+            </DataTableActions>
+          );
+        },
+      },
     ],
-    [isSuperAdmin],
+    [
+      emptyDash,
+      formatDateTime,
+      formatPoints,
+      historyAccount?.id,
+      isSuperAdmin,
+      tierLabels,
+      tColumns,
+      tList,
+    ],
   );
 
   const isLoading = state.status === 'loading';
   const isError = state.status === 'error';
   const accounts = state.status === 'ready' ? state.accounts : [];
+  const isEmpty = !isLoading && !isError && accounts.length === 0;
 
   return (
     <div className="space-y-6">
+      <LoyaltySummaryCards />
+
       {isError ? (
         <p className="text-sm text-red-600 dark:text-red-400" role="alert">
           {state.message}
         </p>
       ) : null}
 
-      <DataTable
-        columns={columns}
-        data={accounts}
-        isLoading={isLoading}
-        emptyMessage="Aucun compte fidélité pour le moment."
-      />
+      {isEmpty ? (
+        <EmptyState
+          title={tList('empty.title')}
+          description={tList('empty.description')}
+          icon={loyaltyEmptyIcon}
+        />
+      ) : (
+        <Card variant="dashboard" padding="none" className="overflow-hidden">
+          <DataTable
+            columns={columns}
+            data={accounts}
+            isLoading={isLoading}
+            emptyMessage={tList('empty.tableMessage')}
+            aria-label={tList('ariaLabel')}
+          />
+        </Card>
+      )}
+
+      {historyAccount ? (
+        <LoyaltyTransactionHistoryPanel
+          account={historyAccount}
+          onClose={() => setHistoryAccount(null)}
+        />
+      ) : null}
 
       {state.status === 'ready' && state.totalPages > 1 ? (
         <DataTablePagination
@@ -243,18 +314,19 @@ export function LoyaltyAccountsList() {
           pageSize={PAGE_SIZE}
           totalPages={state.totalPages}
           totalItems={state.total}
-          itemLabel="comptes"
+          itemLabel={tPagination('loyaltyAccount')}
           onPageChange={setPage}
         />
       ) : null}
 
       {adjustingAccount ? (
-        <Card className="p-4">
-          <h3 className="text-sm font-semibold text-atg-fg">Ajustement manuel des points</h3>
+        <Card variant="dashboard" padding="md">
+          <h3 className="text-sm font-semibold text-atg-fg">{tAdjust('title')}</h3>
           <p className="mt-1 text-sm text-atg-muted">
-            {adjustingAccount.userEmail} · {adjustingAccount.programCode} · solde actuel{' '}
+            {adjustingAccount.userEmail} · {adjustingAccount.programCode} ·{' '}
+            {tAdjust('currentBalance')}{' '}
             <span className="font-medium tabular-nums text-atg-fg">
-              {adjustingAccount.pointsBalance.toLocaleString('fr-FR')}
+              {formatPoints(adjustingAccount.pointsBalance)}
             </span>
           </p>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
@@ -263,7 +335,7 @@ export function LoyaltyAccountsList() {
                 htmlFor={deltaInputId}
                 className="mb-1 block text-xs font-medium text-atg-muted"
               >
-                Variation (+ ou −)
+                {tAdjust('fields.delta')}
               </label>
               <input
                 id={deltaInputId}
@@ -272,8 +344,8 @@ export function LoyaltyAccountsList() {
                 value={adjustDelta}
                 disabled={acting}
                 onChange={(e) => setAdjustDelta(e.target.value)}
-                placeholder="Ex. 100 ou -50"
-                className="w-full rounded-lg border border-atg-border bg-atg-surface px-3 py-2 text-sm text-atg-fg disabled:opacity-60"
+                placeholder={tAdjust('deltaPlaceholder')}
+                className="w-full rounded-lg border border-atg-border bg-atg-surface px-3 py-2 text-sm tabular-nums text-atg-fg disabled:opacity-60"
               />
             </div>
             <div>
@@ -281,7 +353,7 @@ export function LoyaltyAccountsList() {
                 htmlFor={reasonInputId}
                 className="mb-1 block text-xs font-medium text-atg-muted"
               >
-                Motif (optionnel)
+                {tAdjust('fields.reason')}
               </label>
               <input
                 id={reasonInputId}
@@ -289,7 +361,7 @@ export function LoyaltyAccountsList() {
                 value={adjustReason}
                 disabled={acting}
                 onChange={(e) => setAdjustReason(e.target.value)}
-                placeholder="Ex. geste commercial"
+                placeholder={tAdjust('reasonPlaceholder')}
                 maxLength={500}
                 className="w-full rounded-lg border border-atg-border bg-atg-surface px-3 py-2 text-sm text-atg-fg disabled:opacity-60"
               />
@@ -308,7 +380,7 @@ export function LoyaltyAccountsList() {
               loadingText="…"
               onClick={() => void submitAdjust()}
             >
-              Appliquer
+              {tAdjust('apply')}
             </Button>
             <Button
               type="button"
@@ -319,7 +391,7 @@ export function LoyaltyAccountsList() {
                 setAdjustError(null);
               }}
             >
-              Annuler
+              {tActions('cancel')}
             </Button>
           </div>
         </Card>

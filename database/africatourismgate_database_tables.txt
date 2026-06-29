@@ -37,6 +37,7 @@ properties
 property_images
 property_amenities
 rooms
+room_images
 room_availability
 
 Flights
@@ -69,18 +70,23 @@ Activities
 ----------
 activity_providers
 activities
+activity_images
 activity_schedules
 
 Packages
 --------
 packages
 package_items
+package_images
 
 Commerce
 --------
 bookings
 booking_status_history
 booking_items
+booking_guide_assignments
+booking_messages
+tour_guides
 payments
 promo_codes
 promotions

@@ -1,17 +1,14 @@
-import { ApiHttpError, parseApiErrorMessage } from '@africatourismgate/api-client';
+import { resolveUnknownApiError } from './common-api-errors';
+import type { PromotionsErrorMessages } from './i18n/admin-error-messages';
 
-export function getPromotionsErrorMessage(error: unknown): string {
-  if (error instanceof ApiHttpError) {
-    if (error.status === 401) {
-      return 'Session expirée. Reconnectez-vous.';
-    }
-    if (error.status === 403) {
-      return 'Vous n’avez pas la permission d’effectuer cette action (promo_codes.read / write).';
-    }
-    return parseApiErrorMessage(error) ?? 'Une erreur est survenue.';
-  }
-  if (error instanceof Error) {
-    return error.message;
-  }
-  return 'Une erreur est survenue.';
+export type { PromotionsErrorMessages };
+
+export function getPromotionsErrorMessage(
+  error: unknown,
+  messages: PromotionsErrorMessages,
+): string {
+  return resolveUnknownApiError(error, messages, {
+    forbidden: messages.forbiddenDetail,
+    useParseApiMessage: true,
+  });
 }

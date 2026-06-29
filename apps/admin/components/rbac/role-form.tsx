@@ -1,13 +1,17 @@
 'use client';
 
-import { Button, Input } from '@africatourismgate/ui';
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
+import { Button, Input, AlertDialog } from '@africatourismgate/ui';
 import type { CreateRoleRequest, Role, UpdateRoleRequest } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
+import { RoleBadge } from './role-badge';
 import { getApiClient } from '../../lib/auth/api';
-import { getRbacErrorMessage } from '../../lib/rbac-errors';
 import { PermissionMatrix } from './permission-matrix';
 import { RbacSubnav } from './rbac-subnav';
+import { useUnsavedChangesGuard } from './use-unsaved-changes-guard';
 
 type RoleFormValues = {
   code: string;
@@ -22,6 +26,12 @@ type RoleFormProps = {
 };
 
 export function RoleForm({ mode, roleId, initialRole }: RoleFormProps) {
+  const { rbac: getRbacErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.rbac.roles');
+  const tUnsaved = useTranslations('modules.rbac.unsavedChanges');
+  const tCommonColumns = useTranslations('modules.common.columns');
+  const tCommon = useTranslations('modules.common');
+  const tActions = useTranslations('common.actions');
   const router = useRouter();
   const [values, setValues] = useState<RoleFormValues>(() =>
     initialRole
@@ -37,6 +47,14 @@ export function RoleForm({ mode, roleId, initialRole }: RoleFormProps) {
   );
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [matrixDirty, setMatrixDirty] = useState(false);
+  const {
+    dialogOpen,
+    setDialogOpen,
+    requestAction,
+    confirmDiscard,
+    cancelDiscard,
+  } = useUnsavedChangesGuard(matrixDirty);
 
   const isSystem = initialRole?.isSystem ?? false;
   const readOnly = mode === 'edit' && isSystem;
@@ -52,10 +70,10 @@ export function RoleForm({ mode, roleId, initialRole }: RoleFormProps) {
   function validate(): boolean {
     const errors: Partial<Record<keyof RoleFormValues, string>> = {};
     if (mode === 'create' && !values.code.trim()) {
-      errors.code = 'Le code est obligatoire.';
+      errors.code = t('validation.codeRequired');
     }
     if (!values.name.trim()) {
-      errors.name = 'Le nom est obligatoire.';
+      errors.name = t('validation.nameRequired');
     }
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
@@ -97,7 +115,17 @@ export function RoleForm({ mode, roleId, initialRole }: RoleFormProps) {
 
   return (
     <div className="space-y-8">
-      <RbacSubnav />
+      <RbacSubnav
+        onNavigate={matrixDirty ? (_href, proceed) => requestAction(proceed) : undefined}
+      />
+      {mode === 'edit' && initialRole ? (
+        <div className="mb-6 flex flex-wrap items-center gap-3">
+          <RoleBadge code={initialRole.code} name={initialRole.name} showCode />
+          {initialRole.isSystem ? (
+            <span className="text-sm text-atg-muted">{t('systemReadOnlyHint')}</span>
+          ) : null}
+        </div>
+      ) : null}
       <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
         {formError ? (
           <p role="alert" className="text-sm text-red-600">
@@ -107,20 +135,26 @@ export function RoleForm({ mode, roleId, initialRole }: RoleFormProps) {
 
         {mode === 'create' ? (
           <Input
-            label="Code"
+            label={tCommonColumns('code')}
             name="code"
             value={values.code}
             onChange={(e) => updateField('code', e.target.value.toLowerCase())}
             error={fieldErrors.code}
-            hint="Minuscules, chiffres et underscore (ex. sales_manager)."
+            hint={t('codeHint')}
             required
           />
         ) : (
-          <Input label="Code" name="code" value={values.code} readOnly disabled />
+          <Input
+            label={tCommonColumns('code')}
+            name="code"
+            value={values.code}
+            readOnly
+            disabled
+          />
         )}
 
         <Input
-          label="Nom"
+          label={tCommonColumns('name')}
           name="name"
           value={values.name}
           onChange={(e) => updateField('name', e.target.value)}
@@ -131,7 +165,7 @@ export function RoleForm({ mode, roleId, initialRole }: RoleFormProps) {
         />
 
         <Input
-          label="Description"
+          label={tCommon('form.description')}
           name="description"
           value={values.description}
           onChange={(e) => updateField('description', e.target.value)}
@@ -142,18 +176,38 @@ export function RoleForm({ mode, roleId, initialRole }: RoleFormProps) {
         {!readOnly ? (
           <div className="flex flex-wrap gap-3">
             <Button type="submit" loading={submitting}>
-              {mode === 'create' ? 'Créer le rôle' : 'Enregistrer'}
+              {mode === 'create' ? t('createSubmit') : tActions('save')}
             </Button>
-            <Button type="button" variant="outline" href="/systeme/roles">
-              Annuler
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => requestAction(() => router.push('/systeme/roles'))}
+            >
+              {tActions('cancel')}
             </Button>
           </div>
         ) : null}
       </form>
 
       {mode === 'edit' && roleId && initialRole ? (
-        <PermissionMatrix roleId={roleId} isSystem={initialRole.isSystem} />
+        <PermissionMatrix
+          roleId={roleId}
+          isSystem={initialRole.isSystem}
+          onDirtyChange={setMatrixDirty}
+        />
       ) : null}
+
+      <AlertDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        title={tUnsaved('title')}
+        description={tUnsaved('description')}
+        confirmLabel={tUnsaved('confirm')}
+        cancelLabel={tUnsaved('cancel')}
+        variant="danger"
+        onConfirm={confirmDiscard}
+        onCancel={cancelDiscard}
+      />
     </div>
   );
 }

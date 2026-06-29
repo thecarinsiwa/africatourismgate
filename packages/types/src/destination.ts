@@ -4,8 +4,21 @@ export interface Destination {
   slug: string;
   countryCode: string;
   description: string | null;
+  imageUrl: string | null;
+  latitude: string | null;
+  longitude: string | null;
+  isFeatured: boolean;
   createdAt: string;
   updatedAt: string | null;
+}
+
+export interface PublicDestinationHighlight {
+  id: string;
+  name: string;
+  slug: string;
+  countryCode: string;
+  description: string | null;
+  imageUrl: string | null;
 }
 
 export interface CreateDestinationRequest {
@@ -13,6 +26,10 @@ export interface CreateDestinationRequest {
   slug: string;
   countryCode: string;
   description?: string;
+  imageUrl?: string | null;
+  latitude?: number | string | null;
+  longitude?: number | string | null;
+  isFeatured?: boolean;
 }
 
 export type UpdateDestinationRequest = Partial<CreateDestinationRequest>;
@@ -21,6 +38,12 @@ export interface DestinationsListQuery {
   page?: number;
   limit?: number;
   search?: string;
+}
+
+export interface DestinationRelatedCounts {
+  properties: number;
+  activities: number;
+  packages: number;
 }
 
 export interface PointOfInterest {

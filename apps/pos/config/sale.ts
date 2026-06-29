@@ -88,7 +88,9 @@ export const posSaleSuccessPageConfig = {
   backToHomeLabel: 'Retour à l’accueil',
   receiptTitle: 'Reçu',
   printReceiptLabel: 'Imprimer le reçu',
-  downloadPdfHint: 'Choisissez « Enregistrer au format PDF » dans la boîte de dialogue d’impression.',
+  downloadPdfLabel: 'Télécharger PDF',
+  downloadPdfHint:
+    'Dans la fenêtre d’impression, choisissez « Enregistrer au format PDF » comme destination.',
   emailReceiptLabel: 'Envoyer par e-mail',
   emailPlaceholder: 'client@exemple.com',
   emailInvalid: 'Saisissez une adresse e-mail valide.',

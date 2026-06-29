@@ -17,6 +17,95 @@ export interface BrandingPlatformValue {
   faviconUrl?: string;
 }
 
+export const AUTH_VISUAL_ICON_PRESETS = [
+  'pin',
+  'compass',
+  'globe',
+  'star',
+  'custom',
+] as const;
+export type AuthVisualIconPreset = (typeof AUTH_VISUAL_ICON_PRESETS)[number];
+
+export const AUTH_VISUAL_ICON_POSITIONS = [
+  'bottom-right',
+  'top-right',
+  'bottom-left',
+  'top-left',
+] as const;
+export type AuthVisualIconPosition = (typeof AUTH_VISUAL_ICON_POSITIONS)[number];
+
+export const AUTH_VISUAL_ICON_SIZES = ['sm', 'md', 'lg'] as const;
+export type AuthVisualIconSize = (typeof AUTH_VISUAL_ICON_SIZES)[number];
+
+export interface AuthVisualDecorIcon {
+  preset: AuthVisualIconPreset;
+  imageUrl?: string;
+  opacity: number;
+  size: AuthVisualIconSize;
+  position: AuthVisualIconPosition;
+  enabled: boolean;
+}
+
+export interface AuthVisualSettingValue {
+  icons: AuthVisualDecorIcon[];
+}
+
+export const DEFAULT_AUTH_VISUAL_ICONS: AuthVisualDecorIcon[] = [
+  {
+    preset: 'pin',
+    opacity: 25,
+    size: 'lg',
+    position: 'bottom-right',
+    enabled: true,
+  },
+  {
+    preset: 'pin',
+    opacity: 60,
+    size: 'sm',
+    position: 'top-right',
+    enabled: true,
+  },
+];
+
+export interface PublicAuthVisualIcon {
+  preset: AuthVisualIconPreset;
+  imageUrl: string | null;
+  opacity: number;
+  size: AuthVisualIconSize;
+  position: AuthVisualIconPosition;
+  enabled: boolean;
+}
+
+export interface PublicAuthVisual {
+  icons: PublicAuthVisualIcon[];
+}
+
+/** Contact web — `organization_settings` (group `contact`, key `web`). */
+export interface ContactWebSettingValue {
+  location?: string;
+  facebookUrl?: string;
+  twitterUrl?: string;
+  instagramUrl?: string;
+}
+
+export interface PublicContact {
+  phone: string | null;
+  email: string | null;
+  location: string | null;
+  facebookUrl: string | null;
+  twitterUrl: string | null;
+  instagramUrl: string | null;
+}
+
+export const DEFAULT_PUBLIC_CONTACT: PublicContact = {
+  phone: '+243 815 000 000',
+  email: 'support@africatourismgate.com',
+  location: 'Kinshasa, RD Congo',
+  facebookUrl: 'https://www.facebook.com/africatourismgate/',
+  twitterUrl: 'https://x.com/Congotourismga1',
+  instagramUrl: 'https://www.instagram.com/africatourismgate/',
+};
+
 /** Branding e-mails transactionnels — `organization_settings` (group `email`, key `email_branding`). */
 export interface EmailBrandingValue {
   displayName: string;

@@ -17,6 +17,7 @@ import type {
   CreatePropertyImageRequest,
   CreatePropertyRequest,
   CreateRoomAvailabilityRequest,
+  CreateRoomImageRequest,
   CreateRoomRequest,
   BulkUpsertRoomAvailabilityRequest,
   BulkUpsertRoomAvailabilityResponse,
@@ -25,6 +26,7 @@ import type {
   CreateRentalAgencyRequest,
   CreateVehicleAvailabilityRequest,
   CreateVehicleCategoryRequest,
+  CreateVehicleImageRequest,
   CreateVehicleRequest,
   Cabin,
   CabinAvailability,
@@ -38,6 +40,7 @@ import type {
   CreateItineraryPortRequest,
   CreateItineraryRequest,
   CreateShipRequest,
+  CreateShipImageRequest,
   CruiseLine,
   CruiseLinesListQuery,
   CruisePort,
@@ -49,6 +52,8 @@ import type {
   ItineraryPort,
   ItineraryPortsListQuery,
   Ship,
+  ShipImage,
+  ShipImagesListQuery,
   ShipsListQuery,
   UpdateCabinAvailabilityRequest,
   UpdateCabinRequest,
@@ -58,24 +63,39 @@ import type {
   UpdateItineraryPortRequest,
   UpdateItineraryRequest,
   UpdateShipRequest,
+  UpdateShipImageRequest,
   Activity,
   ActivitiesListQuery,
+  ActivityImage,
+  ActivityImagesListQuery,
   ActivityProvider,
   ActivityProvidersListQuery,
   ActivitySchedule,
   ActivitySchedulesListQuery,
   CreateActivityProviderRequest,
+  CreateActivityImageRequest,
   CreateActivityRequest,
   CreateActivityScheduleRequest,
   UpdateActivityProviderRequest,
+  UpdateActivityImageRequest,
   UpdateActivityRequest,
   UpdateActivityScheduleRequest,
+  ApproveBookingRequest,
+  RejectBookingRequest,
   BookingAdminDetail,
   BookingCheckoutPreview,
   BookingCheckoutRequest,
   BookingCheckoutSessionResponse,
   BookingDetail,
+  BookingRequestResponse,
+  BookingMessage,
+  BookingMessagesList,
+  CreateBookingMessageRequest,
   BookingPaymentIntentResponse,
+  BookingItemListItem,
+  BookingItemsListQuery,
+  BookingGuideAssignment,
+  AssignBookingGuidesRequest,
   BookingListItem,
   BookingsListQuery,
   AdminReviewDetail,
@@ -98,19 +118,25 @@ import type {
   CancelBookingRequest,
   RecordCashPaymentRequest,
   UpdateBookingStatusRequest,
+  CreatePackageImageRequest,
   CreatePackageItemRequest,
   CreatePackageRequest,
   Package,
   PackageDetail,
+  PackageImage,
+  PackageImagesListQuery,
   PackageItem,
   PackageItemsListQuery,
+  PackageSuggestedImageGroup,
   PackagesListQuery,
+  UpdatePackageImageRequest,
   UpdatePackageItemRequest,
   UpdatePackageRequest,
   CreateAirlineRequest,
   CreateAirportRequest,
   CreateFlightClassAvailabilityRequest,
   CreateFlightClassRequest,
+  CreateFlightImageRequest,
   CreateFlightRequest,
   CreateRoleRequest,
   CreateUserRequest,
@@ -124,6 +150,10 @@ import type {
   LoyaltyAccountsListQuery,
   Employee,
   EmployeesListQuery,
+  TourGuide,
+  TourGuidesListQuery,
+  CreateTourGuideRequest,
+  UpdateTourGuideRequest,
   Permission,
   PermissionsListQuery,
   RbacAuditLog,
@@ -136,15 +166,21 @@ import type {
   Room,
   RoomAvailability,
   RoomAvailabilityListQuery,
+  RoomImage,
+  RoomImagesListQuery,
   RoomsListQuery,
   Destination,
+  DestinationRelatedCounts,
   DestinationsListQuery,
   PublicDestination,
+  PublicDestinationHighlight,
   Flight,
   FlightClass,
   FlightClassAvailability,
   FlightClassAvailabilityListQuery,
   FlightClassesListQuery,
+  FlightImage,
+  FlightImagesListQuery,
   FlightsListQuery,
   RentalAgenciesListQuery,
   RentalAgency,
@@ -153,6 +189,8 @@ import type {
   LoginRequest,
   LogoutResponse,
   Organization,
+  OrganizationListItem,
+  OrganizationsListQuery,
   Property,
   PropertySearchQuery,
   PropertySearchResult,
@@ -164,7 +202,6 @@ import type {
   PointOfInterest,
   PointsOfInterestListQuery,
   PaginatedResponse,
-  PaginationQuery,
   PaymentAdminDetail,
   PaymentListItem,
   PaymentsListQuery,
@@ -189,20 +226,25 @@ import type {
   UpdateEmployeeRequest,
   UpdateFlightClassAvailabilityRequest,
   UpdateFlightClassRequest,
+  UpdateFlightImageRequest,
   UpdateFlightRequest,
   UpdateRentalAgencyRequest,
   UpdateVehicleAvailabilityRequest,
   UpdateVehicleCategoryRequest,
+  UpdateVehicleImageRequest,
   UpdateVehicleRequest,
   Vehicle,
   VehicleAvailability,
   VehicleAvailabilityListQuery,
   VehicleCategoriesListQuery,
   VehicleCategory,
+  VehicleImage,
+  VehicleImagesListQuery,
   VehiclesListQuery,
   UpdatePropertyImageRequest,
   UpdatePropertyRequest,
   UpdateRoomAvailabilityRequest,
+  UpdateRoomImageRequest,
   UpdateRoomRequest,
   UpdatePointOfInterestRequest,
   BulkUpsertOrganizationSettingsRequest,
@@ -224,11 +266,14 @@ import type {
   UserAddressesListQuery,
   UserPaymentMethod,
   UserPaymentMethodsListQuery,
+  UserSession,
+  UserSessionsListQuery,
   UserRoleAssignment,
   UserRoleAssignmentsListQuery,
   User,
   UsersListQuery,
 } from '@africatourismgate/types';
+export type { PaginationQuery } from '@africatourismgate/types';
 import { ApiHttpError, parseApiErrorMessage } from './http-error';
 import {
   fetchPaginated,
@@ -267,7 +312,6 @@ export type {
   LogoutResponse,
   PaginatedResponse,
   PaginationMeta,
-  PaginationQuery,
   PaymentListItem,
   PaymentStatus,
   RefreshTokenRequest,
@@ -277,8 +321,11 @@ export type {
   SucceededPaymentsRevenue,
   UserStatus,
   Organization,
+  OrganizationListItem,
+  OrganizationsListQuery,
   OrganizationStatus,
   Destination,
+  DestinationRelatedCounts,
   DestinationsListQuery,
   CreateDestinationRequest,
   CreateEmployeeRequest,
@@ -318,6 +365,13 @@ export type {
   RolesListQuery,
   User,
   UsersListQuery,
+  UserAddress,
+  UserAddressesListQuery,
+  UserPaymentMethod,
+  UserPaymentMethodsListQuery,
+  UserPaymentMethodType,
+  UserSession,
+  UserSessionsListQuery,
   UserRoleAssignment,
   UserRoleAssignmentsListQuery,
   Amenity,
@@ -325,6 +379,7 @@ export type {
   CreateAmenityRequest,
   CreatePropertyImageRequest,
   CreatePropertyRequest,
+  CreateRoomImageRequest,
   CreateRoomRequest,
   Property,
   PropertyAmenitiesListQuery,
@@ -345,12 +400,16 @@ export type {
   UpdateReviewStatusRequest,
   PropertyType,
   PublicDestination,
+  PublicDestinationHighlight,
   ReplacePropertyAmenitiesRequest,
   Room,
+  RoomImage,
+  RoomImagesListQuery,
   RoomsListQuery,
   UpdateAmenityRequest,
   UpdatePropertyImageRequest,
   UpdatePropertyRequest,
+  UpdateRoomImageRequest,
   UpdateRoomRequest,
 } from '@africatourismgate/types';
 
@@ -450,6 +509,14 @@ export class ApiClient {
 
   register(body: RegisterRequest): Promise<AuthResponse> {
     return this.request<AuthResponse>('/auth/register', {
+      method: 'POST',
+      body,
+      skipAuth: true,
+    });
+  }
+
+  registerCustomer(body: RegisterRequest): Promise<AuthResponse> {
+    return this.request<AuthResponse>('/auth/register/customer', {
       method: 'POST',
       body,
       skipAuth: true,
@@ -616,6 +683,20 @@ export class ApiClient {
     return this.request<void>(`/user-payment-methods/${id}`, { method: 'DELETE' });
   }
 
+  listUserSessions(
+    query?: UserSessionsListQuery,
+  ): Promise<PaginatedResponse<UserSession>> {
+    return fetchPaginated<UserSession>(this, '/user-sessions', query);
+  }
+
+  getUserSession(id: string): Promise<UserSession> {
+    return this.request<UserSession>(`/user-sessions/${id}`);
+  }
+
+  revokeUserSession(id: string): Promise<void> {
+    return this.request<void>(`/user-sessions/${id}`, { method: 'DELETE' });
+  }
+
   listProperties(
     query?: PropertiesListQuery,
   ): Promise<PaginatedResponse<Property>> {
@@ -626,6 +707,14 @@ export class ApiClient {
     return this.request<PublicDestination[]>('/public/destinations', {
       skipAuth: true,
     });
+  }
+
+  listFeaturedDestinations(limit = 4): Promise<PublicDestinationHighlight[]> {
+    const qs = new URLSearchParams({ limit: String(limit) }).toString();
+    return this.request<PublicDestinationHighlight[]>(
+      `/public/destinations/featured?${qs}`,
+      { skipAuth: true },
+    );
   }
 
   searchAccommodations(
@@ -709,6 +798,29 @@ export class ApiClient {
 
   deletePropertyImage(id: string): Promise<void> {
     return this.request<void>(`/property-images/${id}`, { method: 'DELETE' });
+  }
+
+  listRoomImages(query?: RoomImagesListQuery): Promise<PaginatedResponse<RoomImage>> {
+    return fetchPaginated<RoomImage>(this, '/room-images', query);
+  }
+
+  getRoomImage(id: string): Promise<RoomImage> {
+    return this.request<RoomImage>(`/room-images/${id}`);
+  }
+
+  createRoomImage(body: CreateRoomImageRequest): Promise<RoomImage> {
+    return this.request<RoomImage>('/room-images', { method: 'POST', body });
+  }
+
+  updateRoomImage(id: string, body: UpdateRoomImageRequest): Promise<RoomImage> {
+    return this.request<RoomImage>(`/room-images/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteRoomImage(id: string): Promise<void> {
+    return this.request<void>(`/room-images/${id}`, { method: 'DELETE' });
   }
 
   listRooms(query?: RoomsListQuery): Promise<PaginatedResponse<Room>> {
@@ -876,9 +988,9 @@ export class ApiClient {
   }
 
   listOrganizations(
-    query?: PaginationQuery,
-  ): Promise<PaginatedResponse<Organization>> {
-    return fetchPaginated<Organization>(this, '/organizations', query);
+    query?: OrganizationsListQuery,
+  ): Promise<PaginatedResponse<OrganizationListItem>> {
+    return fetchPaginated<OrganizationListItem>(this, '/organizations', query);
   }
 
   getOrganization(id: string): Promise<Organization> {
@@ -1017,6 +1129,34 @@ export class ApiClient {
     return this.request<void>(`/employees/${id}`, { method: 'DELETE' });
   }
 
+  listTourGuides(
+    query?: TourGuidesListQuery,
+  ): Promise<PaginatedResponse<TourGuide>> {
+    return fetchPaginated<TourGuide>(this, '/tour-guides', query);
+  }
+
+  getTourGuide(id: string): Promise<TourGuide> {
+    return this.request<TourGuide>(`/tour-guides/${id}`);
+  }
+
+  createTourGuide(body: CreateTourGuideRequest): Promise<TourGuide> {
+    return this.request<TourGuide>('/tour-guides', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateTourGuide(id: string, body: UpdateTourGuideRequest): Promise<TourGuide> {
+    return this.request<TourGuide>(`/tour-guides/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteTourGuide(id: string): Promise<void> {
+    return this.request<void>(`/tour-guides/${id}`, { method: 'DELETE' });
+  }
+
   getSucceededPaymentsRevenue(): Promise<SucceededPaymentsRevenue> {
     return sumSucceededPaymentsRevenue(this);
   }
@@ -1108,6 +1248,10 @@ export class ApiClient {
 
   getDestination(id: string): Promise<Destination> {
     return this.request<Destination>(`/destinations/${id}`);
+  }
+
+  getDestinationRelatedCounts(id: string): Promise<DestinationRelatedCounts> {
+    return this.request<DestinationRelatedCounts>(`/destinations/${id}/related-counts`);
   }
 
   createDestination(body: CreateDestinationRequest): Promise<Destination> {
@@ -1250,6 +1394,31 @@ export class ApiClient {
     return this.request<void>(`/activity-schedules/${id}`, { method: 'DELETE' });
   }
 
+  listActivityImages(
+    query?: ActivityImagesListQuery,
+  ): Promise<PaginatedResponse<ActivityImage>> {
+    return fetchPaginated<ActivityImage>(this, '/activity-images', query);
+  }
+
+  getActivityImage(id: string): Promise<ActivityImage> {
+    return this.request<ActivityImage>(`/activity-images/${id}`);
+  }
+
+  createActivityImage(body: CreateActivityImageRequest): Promise<ActivityImage> {
+    return this.request<ActivityImage>('/activity-images', { method: 'POST', body });
+  }
+
+  updateActivityImage(id: string, body: UpdateActivityImageRequest): Promise<ActivityImage> {
+    return this.request<ActivityImage>(`/activity-images/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteActivityImage(id: string): Promise<void> {
+    return this.request<void>(`/activity-images/${id}`, { method: 'DELETE' });
+  }
+
   listPackages(query?: PackagesListQuery): Promise<PaginatedResponse<Package>> {
     return fetchPaginated<Package>(this, '/packages', query);
   }
@@ -1298,6 +1467,37 @@ export class ApiClient {
     return this.request<void>(`/package-items/${id}`, { method: 'DELETE' });
   }
 
+  listPackageImages(
+    query?: PackageImagesListQuery,
+  ): Promise<PaginatedResponse<PackageImage>> {
+    return fetchPaginated<PackageImage>(this, '/package-images', query);
+  }
+
+  getPackageImage(id: string): Promise<PackageImage> {
+    return this.request<PackageImage>(`/package-images/${id}`);
+  }
+
+  createPackageImage(body: CreatePackageImageRequest): Promise<PackageImage> {
+    return this.request<PackageImage>('/package-images', { method: 'POST', body });
+  }
+
+  updatePackageImage(id: string, body: UpdatePackageImageRequest): Promise<PackageImage> {
+    return this.request<PackageImage>(`/package-images/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deletePackageImage(id: string): Promise<void> {
+    return this.request<void>(`/package-images/${id}`, { method: 'DELETE' });
+  }
+
+  listPackageSuggestedImages(packageId: string): Promise<PackageSuggestedImageGroup[]> {
+    return this.request<PackageSuggestedImageGroup[]>(
+      `/packages/${packageId}/suggested-images`,
+    );
+  }
+
   previewBookingCheckout(
     body: BookingCheckoutRequest,
   ): Promise<BookingCheckoutPreview> {
@@ -1311,8 +1511,51 @@ export class ApiClient {
     return this.request<BookingDetail>('/bookings', { method: 'POST', body });
   }
 
+  requestBooking(body: BookingCheckoutRequest): Promise<BookingRequestResponse> {
+    return this.request<BookingRequestResponse>('/bookings/request', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  listBookingMessages(
+    bookingId: string,
+    query?: { chatToken?: string },
+  ): Promise<BookingMessagesList> {
+    const params = new URLSearchParams();
+    if (query?.chatToken) {
+      params.set('chatToken', query.chatToken);
+    }
+    const qs = params.toString();
+    return this.request<BookingMessagesList>(
+      `/bookings/${bookingId}/messages${qs ? `?${qs}` : ''}`,
+    );
+  }
+
+  createBookingMessage(
+    bookingId: string,
+    body: CreateBookingMessageRequest,
+    query?: { chatToken?: string },
+  ): Promise<BookingMessage> {
+    const params = new URLSearchParams();
+    if (query?.chatToken) {
+      params.set('chatToken', query.chatToken);
+    }
+    const qs = params.toString();
+    return this.request<BookingMessage>(
+      `/bookings/${bookingId}/messages${qs ? `?${qs}` : ''}`,
+      { method: 'POST', body },
+    );
+  }
+
   listBookings(query?: BookingsListQuery): Promise<PaginatedResponse<BookingListItem>> {
     return fetchPaginated<BookingListItem>(this, '/bookings', query);
+  }
+
+  listBookingItems(
+    query?: BookingItemsListQuery,
+  ): Promise<PaginatedResponse<BookingItemListItem>> {
+    return fetchPaginated<BookingItemListItem>(this, '/booking-items', query);
   }
 
   getBooking(id: string): Promise<BookingAdminDetail> {
@@ -1330,6 +1573,26 @@ export class ApiClient {
     return this.request<Review>(`/bookings/${id}/reviews`, {
       method: 'POST',
       body,
+    });
+  }
+
+  listBookingGuides(bookingId: string): Promise<BookingGuideAssignment[]> {
+    return this.request<BookingGuideAssignment[]>(`/bookings/${bookingId}/guides`);
+  }
+
+  assignBookingGuides(
+    bookingId: string,
+    body: AssignBookingGuidesRequest,
+  ): Promise<BookingGuideAssignment[]> {
+    return this.request<BookingGuideAssignment[]>(`/bookings/${bookingId}/guides`, {
+      method: 'POST',
+      body,
+    });
+  }
+
+  removeBookingGuide(bookingId: string, guideId: string): Promise<void> {
+    return this.request<void>(`/bookings/${bookingId}/guides/${guideId}`, {
+      method: 'DELETE',
     });
   }
 
@@ -1418,6 +1681,26 @@ export class ApiClient {
     });
   }
 
+  approveBooking(id: string, body?: ApproveBookingRequest): Promise<BookingAdminDetail> {
+    return this.request<BookingAdminDetail>(`/bookings/${id}/approve`, {
+      method: 'POST',
+      body: body ?? {},
+    });
+  }
+
+  rejectBooking(id: string, body?: RejectBookingRequest): Promise<BookingAdminDetail> {
+    return this.request<BookingAdminDetail>(`/bookings/${id}/reject`, {
+      method: 'POST',
+      body: body ?? {},
+    });
+  }
+
+  inviteBookingPayment(id: string): Promise<BookingCheckoutSessionResponse> {
+    return this.request<BookingCheckoutSessionResponse>(`/bookings/${id}/invite-payment`, {
+      method: 'POST',
+    });
+  }
+
   recordBookingCashPayment(
     id: string,
     body?: RecordCashPaymentRequest,
@@ -1498,6 +1781,31 @@ export class ApiClient {
 
   deleteFlight(id: string): Promise<void> {
     return this.request<void>(`/flights/${id}`, { method: 'DELETE' });
+  }
+
+  listFlightImages(
+    query?: FlightImagesListQuery,
+  ): Promise<PaginatedResponse<FlightImage>> {
+    return fetchPaginated<FlightImage>(this, '/flight-images', query);
+  }
+
+  getFlightImage(id: string): Promise<FlightImage> {
+    return this.request<FlightImage>(`/flight-images/${id}`);
+  }
+
+  createFlightImage(body: CreateFlightImageRequest): Promise<FlightImage> {
+    return this.request<FlightImage>('/flight-images', { method: 'POST', body });
+  }
+
+  updateFlightImage(id: string, body: UpdateFlightImageRequest): Promise<FlightImage> {
+    return this.request<FlightImage>(`/flight-images/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteFlightImage(id: string): Promise<void> {
+    return this.request<void>(`/flight-images/${id}`, { method: 'DELETE' });
   }
 
   listFlightClasses(
@@ -1650,6 +1958,31 @@ export class ApiClient {
     return this.request<void>(`/vehicles/${id}`, { method: 'DELETE' });
   }
 
+  listVehicleImages(
+    query?: VehicleImagesListQuery,
+  ): Promise<PaginatedResponse<VehicleImage>> {
+    return fetchPaginated<VehicleImage>(this, '/vehicle-images', query);
+  }
+
+  getVehicleImage(id: string): Promise<VehicleImage> {
+    return this.request<VehicleImage>(`/vehicle-images/${id}`);
+  }
+
+  createVehicleImage(body: CreateVehicleImageRequest): Promise<VehicleImage> {
+    return this.request<VehicleImage>('/vehicle-images', { method: 'POST', body });
+  }
+
+  updateVehicleImage(id: string, body: UpdateVehicleImageRequest): Promise<VehicleImage> {
+    return this.request<VehicleImage>(`/vehicle-images/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteVehicleImage(id: string): Promise<void> {
+    return this.request<void>(`/vehicle-images/${id}`, { method: 'DELETE' });
+  }
+
   listVehicleAvailability(
     query: VehicleAvailabilityListQuery,
   ): Promise<PaginatedResponse<VehicleAvailability>> {
@@ -1741,6 +2074,31 @@ export class ApiClient {
 
   deleteShip(id: string): Promise<void> {
     return this.request<void>(`/ships/${id}`, { method: 'DELETE' });
+  }
+
+  listShipImages(
+    query?: ShipImagesListQuery,
+  ): Promise<PaginatedResponse<ShipImage>> {
+    return fetchPaginated<ShipImage>(this, '/ship-images', query);
+  }
+
+  getShipImage(id: string): Promise<ShipImage> {
+    return this.request<ShipImage>(`/ship-images/${id}`);
+  }
+
+  createShipImage(body: CreateShipImageRequest): Promise<ShipImage> {
+    return this.request<ShipImage>('/ship-images', { method: 'POST', body });
+  }
+
+  updateShipImage(id: string, body: UpdateShipImageRequest): Promise<ShipImage> {
+    return this.request<ShipImage>(`/ship-images/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteShipImage(id: string): Promise<void> {
+    return this.request<void>(`/ship-images/${id}`, { method: 'DELETE' });
   }
 
   listItineraries(

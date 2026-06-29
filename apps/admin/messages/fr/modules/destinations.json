@@ -1,0 +1,91 @@
+{
+  "list": {
+    "emptyDefault": "Aucune destination pour le moment.",
+    "emptySearch": "Aucune destination ne correspond à votre recherche.",
+    "searchPlaceholder": "Rechercher par nom, slug ou pays…",
+    "searchAria": "Rechercher une destination",
+    "ariaLabel": "Liste des destinations",
+    "deleteConfirm": "Supprimer la destination « {name} » ? Les points d'intérêt associés seront également supprimés."
+  },
+  "columns": {
+    "destination": "Destination",
+    "country": "Pays",
+    "featured": "Homepage"
+  },
+  "form": {
+    "submitCreate": "Créer la destination",
+    "previewName": "Nouvelle destination",
+    "sections": {
+      "identity": "Identité",
+      "presentation": "Présentation",
+      "geography": "Géographie"
+    },
+    "slugHint": "Identifiant unique (ex. kinshasa).",
+    "countryCode": "Code pays (ISO)",
+    "countryCodeHint": "2 lettres, ex. CD, KE, ZA.",
+    "heroImageUrl": "URL image hero",
+    "heroImageHint": "Affichée dans le bandeau. Laissez vide pour un dégradé.",
+    "isFeatured": "Afficher sur la homepage",
+    "isFeaturedHint": "Section « Destinations populaires » du site public (max. 4).",
+    "geographyIntro": "Coordonnées du centre de la destination pour la carte statique.",
+    "latitudeHint": "Optionnel, -90 à 90",
+    "longitudeHint": "Optionnel, -180 à 180",
+    "mapPreview": "Aperçu carte"
+  },
+  "detail": {
+    "title": "Modifier la destination",
+    "viewTitle": "Voir la destination",
+    "editButton": "Modifier la destination",
+    "backLink": "Retour aux destinations",
+    "mapTitle": "Carte de la destination",
+    "description": "Description",
+    "noDescription": "Aucune description renseignée.",
+    "notFound": "Destination introuvable."
+  },
+  "view": {
+    "poisTitle": "Points d'intérêt",
+    "poisIntro": "{count} point(s) d'intérêt enregistré(s)",
+    "poisEmpty": "Aucun point d'intérêt pour cette destination.",
+    "poisAriaLabel": "Points d'intérêt de la destination"
+  },
+  "hero": {
+    "ariaLabel": "Destination {name}"
+  },
+  "sections": {
+    "pois": {
+      "new": "Nouveau point d'intérêt",
+      "edit": "Modifier le point d'intérêt",
+      "empty": "Aucun point d'intérêt pour cette destination.",
+      "ariaLabel": "Points d'intérêt de la destination",
+      "deleteConfirm": "Supprimer le point d'intérêt « {name} » ?"
+    },
+    "related": {
+      "properties": {
+        "label": "Hébergements",
+        "subtitle": "Propriétés rattachées"
+      },
+      "activities": {
+        "label": "Activités",
+        "subtitle": "Expériences locales"
+      },
+      "packages": {
+        "label": "Forfaits",
+        "subtitle": "Packages incluant des produits locaux"
+      }
+    }
+  },
+  "stats": {
+    "destinations": {
+      "label": "Destinations",
+      "subtitle": "Villes et régions catalogue"
+    },
+    "pois": {
+      "label": "Points d'intérêt",
+      "subtitle": "Lieux remarquables liés"
+    },
+    "countries": {
+      "label": "Pays couverts",
+      "subtitle": "Codes ISO distincts"
+    }
+  }
+}

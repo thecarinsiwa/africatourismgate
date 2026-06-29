@@ -154,7 +154,7 @@ export function AccountProfileForm() {
   }
 
   if (loading) {
-    return <p className="text-sm text-gray-600 dark:text-atg-muted">{t.account.loading}</p>;
+    return <p className="text-sm text-atg-muted">{t.account.loading}</p>;
   }
 
   if (error && !user) {
@@ -167,7 +167,7 @@ export function AccountProfileForm() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 rounded-xl border border-gray-100 bg-gradient-to-br from-primary/5 via-white to-white p-5 sm:flex-row sm:items-center sm:justify-between dark:border-atg-border dark:from-primary/10 dark:via-atg-elevated dark:to-atg-elevated">
+      <div className="flex flex-col gap-4 rounded-xl border border-atg-border bg-gradient-to-br from-primary/5 via-white to-white p-5 sm:flex-row sm:items-center sm:justify-between dark:border-atg-border dark:from-primary/10 dark:via-atg-elevated dark:to-atg-elevated">
         <div className="flex items-center gap-4">
           <div
             className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-primary text-xl font-bold text-white shadow-sm"
@@ -176,10 +176,10 @@ export function AccountProfileForm() {
             {initials}
           </div>
           <div className="min-w-0">
-            <p className="truncate text-lg font-semibold text-gray-900 dark:text-white">
+            <p className="truncate text-lg font-semibold text-atg-fg">
               {displayName}
             </p>
-            <p className="truncate text-sm text-gray-600 dark:text-atg-muted">{user?.email}</p>
+            <p className="truncate text-sm text-atg-muted">{user?.email}</p>
             {user ? (
               <div className="mt-2">
                 <ProfileStatusBadge status={user.status} label={statusLabel(user.status)} />
@@ -188,10 +188,10 @@ export function AccountProfileForm() {
           </div>
         </div>
         <div className="text-left sm:text-right">
-          <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-atg-muted">
+          <p className="text-xs font-medium uppercase tracking-wide text-atg-muted">
             {t.account.profile.memberId}
           </p>
-          <p className="mt-1 font-mono text-xs text-gray-700 dark:text-white/80">{user?.id}</p>
+          <p className="mt-1 font-mono text-xs text-atg-fg/80">{user?.id}</p>
         </div>
       </div>
 
@@ -214,30 +214,30 @@ export function AccountProfileForm() {
       ) : null}
 
       <form onSubmit={handleSubmit} className="max-w-2xl space-y-6">
-          <section className="rounded-lg border border-gray-100 p-4 dark:border-atg-border">
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
+          <section className="rounded-lg border border-atg-border p-4 dark:border-atg-border">
+            <h3 className="text-sm font-semibold text-atg-fg">
               {t.account.profile.personalInfo}
             </h3>
-            <p className="mt-1 text-xs text-gray-500 dark:text-atg-muted">
+            <p className="mt-1 text-xs text-atg-muted">
               {t.account.profile.personalInfoHint}
             </p>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               <div className="sm:col-span-2">
                 <label
                   htmlFor="profile-email"
-                  className="mb-1 block text-sm font-medium text-gray-700 dark:text-white/80"
+                  className="mb-1 block text-sm font-medium text-atg-fg/80"
                 >
                   {t.account.profile.email}
                 </label>
                 <Input id="profile-email" value={user?.email ?? ''} disabled readOnly />
-                <p className="mt-1 text-xs text-gray-500 dark:text-atg-muted">
+                <p className="mt-1 text-xs text-atg-muted">
                   {t.account.profile.emailHint}
                 </p>
               </div>
               <div>
                 <label
                   htmlFor="profile-first-name"
-                  className="mb-1 block text-sm font-medium text-gray-700 dark:text-white/80"
+                  className="mb-1 block text-sm font-medium text-atg-fg/80"
                 >
                   {t.account.profile.firstName}
                 </label>
@@ -252,7 +252,7 @@ export function AccountProfileForm() {
               <div>
                 <label
                   htmlFor="profile-last-name"
-                  className="mb-1 block text-sm font-medium text-gray-700 dark:text-white/80"
+                  className="mb-1 block text-sm font-medium text-atg-fg/80"
                 >
                   {t.account.profile.lastName}
                 </label>
@@ -267,7 +267,7 @@ export function AccountProfileForm() {
               <div className="sm:col-span-2">
                 <label
                   htmlFor="profile-phone"
-                  className="mb-1 block text-sm font-medium text-gray-700 dark:text-white/80"
+                  className="mb-1 block text-sm font-medium text-atg-fg/80"
                 >
                   {t.account.profile.phone}
                 </label>
@@ -283,17 +283,17 @@ export function AccountProfileForm() {
             </div>
           </section>
 
-          <section className="rounded-lg border border-gray-100 p-4 dark:border-atg-border">
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
+          <section className="rounded-lg border border-atg-border p-4 dark:border-atg-border">
+            <h3 className="text-sm font-semibold text-atg-fg">
               {t.account.profile.preferences}
             </h3>
-            <p className="mt-1 text-xs text-gray-500 dark:text-atg-muted">
+            <p className="mt-1 text-xs text-atg-muted">
               {t.account.profile.preferencesHint}
             </p>
             <div className="mt-4">
               <label
                 htmlFor="profile-language"
-                className="mb-1 block text-sm font-medium text-gray-700 dark:text-white/80"
+                className="mb-1 block text-sm font-medium text-atg-fg/80"
               >
                 {t.account.profile.language}
               </label>
@@ -301,7 +301,7 @@ export function AccountProfileForm() {
                 id="profile-language"
                 value={preferredLanguage}
                 onChange={(e) => setPreferredLanguage(e.target.value)}
-                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm dark:border-atg-border dark:bg-atg-elevated dark:text-white"
+                className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2.5 text-sm dark:border-atg-border dark:bg-atg-elevated dark:text-white"
               >
                 {LOCALES.map((entry) => (
                   <option key={entry.code} value={entry.code}>
@@ -313,8 +313,13 @@ export function AccountProfileForm() {
           </section>
 
           <div className="flex flex-wrap items-center gap-3">
-            <Button type="submit" disabled={saving || !isDirty}>
-              {saving ? t.account.profile.saving : t.account.profile.save}
+            <Button
+              type="submit"
+              loading={saving}
+              loadingText={t.account.profile.saving}
+              disabled={!isDirty}
+            >
+              {t.account.profile.save}
             </Button>
             {isDirty ? (
               <Button type="button" variant="outline" onClick={handleReset} disabled={saving}>
@@ -322,7 +327,7 @@ export function AccountProfileForm() {
               </Button>
             ) : null}
             {isDirty ? (
-              <span className="text-xs text-gray-500 dark:text-atg-muted">
+              <span className="text-xs text-atg-muted">
                 {t.account.profile.unsavedChanges}
               </span>
             ) : null}

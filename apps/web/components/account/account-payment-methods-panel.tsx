@@ -74,13 +74,13 @@ export function AccountPaymentMethodsPanel() {
   }
 
   if (loading) {
-    return <p className="text-sm text-gray-600 dark:text-atg-muted">{t.account.loading}</p>;
+    return <p className="text-sm text-atg-muted">{t.account.loading}</p>;
   }
 
   return (
     <div className="space-y-6">
       {methods.length === 0 && !showForm && (
-        <p className="text-sm text-gray-600 dark:text-atg-muted">
+        <p className="text-sm text-atg-muted">
           {t.account.paymentMethods.empty}
         </p>
       )}
@@ -89,15 +89,15 @@ export function AccountPaymentMethodsPanel() {
         {methods.map((method) => (
           <li
             key={method.id}
-            className="flex items-center justify-between rounded-lg border border-gray-200 p-4 dark:border-atg-border"
+            className="flex items-center justify-between rounded-lg border border-atg-border p-4 dark:border-atg-border"
           >
             <div>
-              <p className="font-medium capitalize text-gray-900 dark:text-white">
+              <p className="font-medium capitalize text-atg-fg">
                 {method.type}
                 {method.provider ? ` — ${method.provider}` : ''}
               </p>
               {method.lastFour && (
-                <p className="text-sm text-gray-600 dark:text-atg-muted">
+                <p className="text-sm text-atg-muted">
                   •••• {method.lastFour}
                 </p>
               )}
@@ -122,14 +122,14 @@ export function AccountPaymentMethodsPanel() {
       {showForm ? (
         <form
           onSubmit={handleCreate}
-          className="max-w-lg space-y-3 rounded-lg border border-gray-200 p-4 dark:border-atg-border"
+          className="max-w-lg space-y-3 rounded-lg border border-atg-border p-4 dark:border-atg-border"
         >
           <select
             value={form.type}
             onChange={(e) =>
               setForm((f) => ({ ...f, type: e.target.value as UserPaymentMethodType }))
             }
-            className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-elevated dark:text-white"
+            className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-elevated dark:text-white"
           >
             <option value="card">{t.account.paymentMethods.typeCard}</option>
             <option value="paypal">{t.account.paymentMethods.typePaypal}</option>
@@ -155,8 +155,8 @@ export function AccountPaymentMethodsPanel() {
             {t.account.paymentMethods.isDefault}
           </label>
           <div className="flex gap-2">
-            <Button type="submit" disabled={saving}>
-              {saving ? t.account.paymentMethods.saving : t.account.paymentMethods.add}
+            <Button type="submit" loading={saving} loadingText={t.account.paymentMethods.saving}>
+              {t.account.paymentMethods.add}
             </Button>
             <Button type="button" variant="outline" onClick={() => setShowForm(false)}>
               {t.account.paymentMethods.cancel}

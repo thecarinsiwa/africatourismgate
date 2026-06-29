@@ -1,24 +1,11 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
-import { CruisePortsList } from '../../../../../components/cruises/cruise-ports-list';
+import { getAdminPageMetadata } from '../../../../../lib/i18n/admin-page-i18n';
+import { PortsCroisierePageContent } from '../../../../../components/pages/produits-croisieres-ports-page-content';
 
-export const metadata: Metadata = {
-  title: 'Ports de croisière — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('produits/croisieres/ports');
+}
 
-export default function CroisieresPortsPage() {
-  return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Ports de croisière</h1>
-        <p className="mt-2 text-sm text-atg-muted">Référentiel des escales.</p>
-        <p className="mt-3 text-sm">
-          <Link href="/produits/croisieres" className="font-medium text-primary hover:underline">
-            ← Départs
-          </Link>
-        </p>
-      </div>
-      <CruisePortsList />
-    </div>
-  );
+export default function Page() {
+  return <PortsCroisierePageContent />;
 }

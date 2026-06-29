@@ -1,19 +1,32 @@
 import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { DashboardSectionPage } from '../../../components/dashboard-section-page';
 import { getAdminSectionByPath } from '../../../config/admin-sections.registry';
+import { getPlaceholderSectionMessages } from '../../../lib/placeholder-section-i18n';
 
 type PageProps = {
   params: { segments: string[] };
 };
 
-export function generateMetadata({ params }: PageProps): Metadata {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const tPlaceholder = await getTranslations('placeholderSections');
   const section = getAdminSectionByPath(params.segments);
+
   if (!section) {
-    return { title: 'Section introuvable — Africa Tourism Gate Admin' };
+    return { title: tPlaceholder('meta.notFoundTitle') };
   }
+
+  const tNav = await getTranslations('nav');
+  const messages = getPlaceholderSectionMessages({
+    sectionPath: params.segments.join('/'),
+    tPlaceholder,
+    tNav,
+  });
+
   return {
-    title: `${section.title} — Africa Tourism Gate Admin`,
+    title: `${messages.title} — ${tPlaceholder('meta.titleSuffix')}`,
+    description: messages.description,
   };
 }
 
@@ -28,6 +41,7 @@ const RESERVED_ROOT_SEGMENTS = new Set([
   'paiements',
   'reservations',
   'fidelite',
+  'guides',
 ]);
 
 export default function AdminSectionPage({ params }: PageProps) {
@@ -40,7 +54,5 @@ export default function AdminSectionPage({ params }: PageProps) {
     notFound();
   }
 
-  return (
-    <DashboardSectionPage title={section.title} description={section.description} />
-  );
+  return <DashboardSectionPage segments={params.segments} />;
 }

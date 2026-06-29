@@ -51,6 +51,25 @@ export class Vehicles extends BaseAuditEntity {
 
 }
 
+@Entity('vehicle_images')
+export class VehicleImages extends BaseAuditEntity {
+  @PrimaryColumn('uuid', { name: 'id', length: 36 })
+  id!: string;
+
+  @Column({ type: 'varchar', name: 'vehicle_id', length: 36 })
+  vehicleId!: string;
+
+  @Column({ type: 'varchar', name: 'url', length: 512 })
+  url!: string;
+
+  @Column({ type: 'varchar', name: 'caption', length: 255, nullable: true })
+  caption!: string | null;
+
+  @Column({ type: 'int', name: 'sort_order' })
+  sortOrder!: number;
+
+}
+
 @Entity('vehicle_availability')
 export class VehicleAvailability extends BaseAuditEntity {
   @PrimaryColumn('uuid', { name: 'id', length: 36 })

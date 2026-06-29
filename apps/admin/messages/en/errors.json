@@ -1,0 +1,58 @@
+{
+  "users": {
+    "emailConflict": "This email is already used by another user."
+  },
+  "bookings": {
+    "forbidden": "You do not have bookings.read permission to view bookings."
+  },
+  "hebergements": {
+    "slugConflict": "This slug is already used by another property.",
+    "codeConflict": "This code is already used by another amenity.",
+    "availabilityConflict": "Availability already exists for this date."
+  },
+  "organizations": {
+    "slugConflict": "This slug is already used by another organization."
+  },
+  "destinations": {
+    "slugConflict": "This slug is already used by another destination."
+  },
+  "tourGuides": {
+    "userConflict": "This user is already linked to a tour guide profile."
+  },
+  "employees": {
+    "profileConflict": "This user already has an employee profile."
+  },
+  "rbac": {
+    "forbidden": "Access denied: your account lacks the required permissions (users.read, roles.read). Sign in with an administrator account or run pnpm --filter @africatourismgate/api sync:rbac then restart the API.",
+    "assignmentConflict": "This assignment already exists for this scope."
+  },
+  "vols": {
+    "conflict": "Conflict: this resource already exists (duplicate IATA code or availability)."
+  },
+  "croisieres": {
+    "conflict": "Conflict: this resource already exists (duplicate port code or availability)."
+  },
+  "reviews": {
+    "forbidden": "You do not have permission to perform this action (reviews.read / reviews.write).",
+    "notFound": "Review not found."
+  },
+  "supportTickets": {
+    "forbidden": "You do not have permission to perform this action (support_tickets.read / support_tickets.write).",
+    "notFound": "Ticket not found."
+  },
+  "promoCodes": {
+    "forbidden": "You do not have permission to perform this action (promo_codes.read / promo_codes.write).",
+    "codeConflict": "This promo code already exists."
+  },
+  "promotions": {
+    "forbidden": "You do not have permission to perform this action (promo_codes.read / write)."
+  },
+  "loyaltyAccounts": {
+    "forbidden": "Access denied. Read: users.read — adjustment: super admin only.",
+    "notFound": "Loyalty account not found."
+  },
+  "dashboard": {
+    "forbidden": "Access denied.",
+    "loadFailed": "Unable to load metrics."
+  }
+}

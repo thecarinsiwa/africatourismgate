@@ -1,17 +1,21 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   Input,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { Room } from '@africatourismgate/types';
-import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getHebergementsErrorMessage } from '../../lib/hebergements-errors';
+import { RoomImagesSection } from './room-images-section';
 
 type RoomFormValues = {
   name: string;
@@ -37,9 +41,17 @@ function formatPrice(cents: number, currency: string): string {
 
 type PropertyRoomsSectionProps = {
   propertyId: string;
+  embedded?: boolean;
 };
 
-export function PropertyRoomsSection({ propertyId }: PropertyRoomsSectionProps) {
+export function PropertyRoomsSection({ propertyId, embedded }: PropertyRoomsSectionProps) {
+  const { hebergements: getHebergementsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.properties.sections.rooms');
+  const tColumns = useTranslations('modules.common.columns');
+  const tForm = useTranslations('modules.common.form');
+  const tValidation = useTranslations('modules.common.validation');
+  const tActions = useTranslations('common.actions');
+  const tLoading = useTranslations('common.loading');
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -51,6 +63,7 @@ export function PropertyRoomsSection({ propertyId }: PropertyRoomsSectionProps) 
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [photosRoom, setPhotosRoom] = useState<Room | null>(null);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -64,7 +77,7 @@ export function PropertyRoomsSection({ propertyId }: PropertyRoomsSectionProps) 
     } catch (error) {
       setState({ status: 'error', message: getHebergementsErrorMessage(error) });
     }
-  }, [propertyId]);
+  }, [propertyId, getHebergementsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -78,11 +91,13 @@ export function PropertyRoomsSection({ propertyId }: PropertyRoomsSectionProps) 
   }
 
   function openCreate() {
+    setPhotosRoom(null);
     resetForm();
     setShowForm(true);
   }
 
   function openEdit(room: Room) {
+    setPhotosRoom(null);
     setEditing(room);
     setFormValues({
       name: room.name,
@@ -97,21 +112,21 @@ export function PropertyRoomsSection({ propertyId }: PropertyRoomsSectionProps) 
 
   function validate(): boolean {
     if (!formValues.name.trim()) {
-      setFormError('Le nom est obligatoire.');
+      setFormError(tValidation('nameRequired'));
       return false;
     }
     const guests = Number(formValues.maxGuests);
     if (!Number.isFinite(guests) || guests < 1) {
-      setFormError('Capacité invalide.');
+      setFormError(tValidation('invalidCapacity'));
       return false;
     }
     const cents = Number(formValues.basePriceCents);
     if (!Number.isFinite(cents) || cents < 0) {
-      setFormError('Prix invalide (centimes).');
+      setFormError(tValidation('invalidPriceCents'));
       return false;
     }
     if (formValues.currency.trim().length !== 3) {
-      setFormError('Devise à 3 lettres (ex. USD).');
+      setFormError(tValidation('currencyThreeLettersExample'));
       return false;
     }
     return true;
@@ -147,7 +162,7 @@ export function PropertyRoomsSection({ propertyId }: PropertyRoomsSectionProps) 
 
   const handleDelete = useCallback(
     async (room: Room) => {
-      if (!window.confirm(`Supprimer la chambre « ${room.name} » ?`)) return;
+      if (!window.confirm(t('deleteConfirm', { name: room.name }))) return;
       setDeletingId(room.id);
       try {
         await getApiClient().deleteRoom(room.id);
@@ -158,25 +173,25 @@ export function PropertyRoomsSection({ propertyId }: PropertyRoomsSectionProps) 
         setDeletingId(null);
       }
     },
-    [load],
+    [load, t, getHebergementsErrorMessage],
   );
 
   const columns = useMemo<ColumnDef<Room, unknown>[]>(
     () => [
-      { accessorKey: 'name', header: 'Chambre' },
+      { accessorKey: 'name', header: tColumns('name') },
       {
         accessorKey: 'roomType',
-        header: 'Type',
+        header: tColumns('type'),
         cell: ({ row }) => row.original.roomType ?? '—',
       },
       {
         accessorKey: 'maxGuests',
-        header: 'Capacité',
+        header: tColumns('capacity'),
         meta: { align: 'center' },
       },
       {
         id: 'price',
-        header: 'Prix de base',
+        header: tColumns('basePrice'),
         meta: { align: 'right' },
         cell: ({ row }) => (
           <span className="tabular-nums text-sm">
@@ -186,49 +201,52 @@ export function PropertyRoomsSection({ propertyId }: PropertyRoomsSectionProps) 
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tColumns('actions'),
         meta: { align: 'right' },
         cell: ({ row }) => (
-          <div className="flex justify-end gap-1.5">
-            <Link
+          <DataTableActions>
+            <DataTableActionButton
+              action="view"
+              label={t('photosAction')}
+              onClick={() => {
+                setShowForm(false);
+                setPhotosRoom(row.original);
+              }}
+            />
+            <DataTableActionButton
+              action="calendar"
               href={`/hebergements/${propertyId}/chambres/${row.original.id}/disponibilites`}
-              className="inline-flex items-center rounded-md px-2 py-1 text-sm font-medium text-primary hover:underline"
-            >
-              Disponibilités
-            </Link>
-            <Button type="button" variant="ghost" size="sm" onClick={() => openEdit(row.original)}>
-              Modifier
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
+            />
+            <DataTableActionButton action="edit" onClick={() => openEdit(row.original)} />
+            <DataTableActionButton
+              action="delete"
               onClick={() => void handleDelete(row.original)}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
-              className="!text-red-600"
-            >
-              Supprimer
-            </Button>
-          </div>
+            />
+          </DataTableActions>
         ),
       },
     ],
-    [deletingId, handleDelete, propertyId],
+    [deletingId, handleDelete, propertyId, t, tColumns],
   );
 
   const rooms = state.status === 'ready' ? state.rooms : [];
 
   return (
-    <section className="mt-12 space-y-6 border-t border-atg-border pt-10">
+    <section
+      className={
+        embedded ? 'space-y-6' : 'mt-12 space-y-6 border-t border-atg-border pt-10'
+      }
+    >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-atg-fg">Chambres</h2>
-          <p className="mt-1 text-sm text-atg-muted">Types de chambres pour cet hébergement.</p>
+          <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
+          <p className="mt-1 text-sm text-atg-muted">{t('intro')}</p>
         </div>
         {!showForm ? (
           <Button type="button" onClick={openCreate}>
-            Ajouter une chambre
+            {t('addRoom')}
           </Button>
         ) : null}
       </div>
@@ -237,7 +255,7 @@ export function PropertyRoomsSection({ propertyId }: PropertyRoomsSectionProps) 
         <Card variant="dashboard" className="max-w-2xl">
           <form onSubmit={handleSubmit} className="space-y-4">
             <h3 className="text-sm font-medium">
-              {editing ? 'Modifier la chambre' : 'Nouvelle chambre'}
+              {editing ? t('editRoom') : t('newRoom')}
             </h3>
             {formError ? (
               <p role="alert" className="text-sm text-red-600">
@@ -245,44 +263,44 @@ export function PropertyRoomsSection({ propertyId }: PropertyRoomsSectionProps) 
               </p>
             ) : null}
             <Input
-              label="Nom"
+              label={tColumns('name')}
               value={formValues.name}
               onChange={(e) => setFormValues((p) => ({ ...p, name: e.target.value }))}
               required
             />
             <Input
-              label="Type de chambre"
+              label={t('roomType')}
               value={formValues.roomType}
               onChange={(e) => setFormValues((p) => ({ ...p, roomType: e.target.value }))}
-              placeholder="standard, suite…"
+              placeholder={t('roomTypePlaceholder')}
             />
             <div className="grid gap-4 sm:grid-cols-2">
               <Input
-                label="Capacité max."
+                label={t('maxCapacity')}
                 type="number"
                 min={1}
                 value={formValues.maxGuests}
                 onChange={(e) => setFormValues((p) => ({ ...p, maxGuests: e.target.value }))}
               />
               <Input
-                label="Configuration lits"
+                label={t('bedConfig')}
                 value={formValues.bedConfig}
                 onChange={(e) => setFormValues((p) => ({ ...p, bedConfig: e.target.value }))}
               />
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <Input
-                label="Prix de base (centimes)"
+                label={tForm('basePriceCents')}
                 type="number"
                 min={0}
                 value={formValues.basePriceCents}
                 onChange={(e) =>
                   setFormValues((p) => ({ ...p, basePriceCents: e.target.value }))
                 }
-                hint="Ex. 8500 = 85,00"
+                hint={tForm('centsHint')}
               />
               <Input
-                label="Devise"
+                label={tForm('currency')}
                 maxLength={3}
                 value={formValues.currency}
                 onChange={(e) =>
@@ -291,11 +309,11 @@ export function PropertyRoomsSection({ propertyId }: PropertyRoomsSectionProps) 
               />
             </div>
             <div className="flex gap-3">
-              <Button type="submit" loading={submitting}>
-                {editing ? 'Enregistrer' : 'Ajouter'}
+              <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>
+                {editing ? tActions('save') : tActions('create')}
               </Button>
               <Button type="button" variant="outline" onClick={resetForm}>
-                Annuler
+                {tActions('cancel')}
               </Button>
             </div>
           </form>
@@ -312,11 +330,19 @@ export function PropertyRoomsSection({ propertyId }: PropertyRoomsSectionProps) 
             columns={columns}
             data={rooms}
             isLoading={state.status === 'loading'}
-            emptyMessage="Aucune chambre."
+            emptyMessage={t('empty')}
             getRowId={(row) => row.id}
           />
         </Card>
       )}
+
+      {photosRoom ? (
+        <RoomImagesSection
+          roomId={photosRoom.id}
+          roomName={photosRoom.name}
+          onClose={() => setPhotosRoom(null)}
+        />
+      ) : null}
     </section>
   );
 }

@@ -2,12 +2,15 @@
 
 import { ApiHttpError } from '@africatourismgate/api-client';
 import type { SupportTicketCreated } from '@africatourismgate/types';
-import { Button, Input } from '@africatourismgate/ui';
+import { Button, Card, cn, Input } from '@africatourismgate/ui';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { getAccountApiClient } from '../../lib/api/account';
 import { ensureClientAccessToken } from '../../lib/auth/client-session';
 import { useTranslations } from '../../lib/i18n/locale-provider';
+
+const messageTextareaClass =
+  'w-full rounded-lg border bg-atg-elevated px-4 py-3 text-sm text-atg-fg placeholder:text-atg-muted/70 outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary disabled:opacity-60 dark:bg-atg-surface dark:text-white';
 
 export function SupportTicketForm() {
   const t = useTranslations();
@@ -18,7 +21,8 @@ export function SupportTicketForm() {
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [validationError, setValidationError] = useState<string | null>(null);
+  const [subjectError, setSubjectError] = useState<string | null>(null);
+  const [bodyError, setBodyError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [created, setCreated] = useState<SupportTicketCreated | null>(null);
 
@@ -36,18 +40,23 @@ export function SupportTicketForm() {
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    setValidationError(null);
+    setSubjectError(null);
+    setBodyError(null);
     setError(null);
 
     const trimmedSubject = subject.trim();
     const trimmedBody = body.trim();
 
+    let hasValidationError = false;
     if (!trimmedSubject) {
-      setValidationError(s.subjectRequired);
-      return;
+      setSubjectError(s.subjectRequired);
+      hasValidationError = true;
     }
     if (trimmedBody.length < 10) {
-      setValidationError(s.messageTooShort);
+      setBodyError(s.messageTooShort);
+      hasValidationError = true;
+    }
+    if (hasValidationError) {
       return;
     }
 
@@ -84,97 +93,104 @@ export function SupportTicketForm() {
 
   if (!sessionChecked) {
     return (
-      <p className="text-sm text-gray-600 dark:text-atg-muted">{s.checkingSession}</p>
+      <p className="text-sm text-atg-muted">{s.checkingSession}</p>
     );
   }
 
   if (!hasSession) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-gray-50 p-6 dark:border-atg-border dark:bg-atg-elevated">
-        <p className="text-sm text-gray-700 dark:text-atg-muted">{s.signInPrompt}</p>
+      <Card variant="dashboard" padding="sm">
+        <p className="text-sm text-atg-muted">{s.signInPrompt}</p>
         <Link
           href="/booking/login?next=%2Fsupport"
           className="mt-4 inline-flex rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-[var(--atg-primary-hover)]"
         >
           {s.signInCta}
         </Link>
-      </div>
+      </Card>
     );
   }
 
   if (created) {
     return (
-      <div
-        className="rounded-lg border border-primary/30 bg-primary/5 p-6 dark:border-primary/40 dark:bg-primary/10"
-        role="status"
-      >
-        <h3 className="text-base font-semibold text-gray-900 dark:text-white">
+      <Card variant="dashboard" padding="sm" role="status">
+        <h3 className="text-base font-semibold text-atg-fg">
           {s.successTitle}
         </h3>
-        <p className="mt-2 text-sm text-gray-700 dark:text-atg-muted">
+        <p className="mt-2 text-sm text-atg-muted">
           {s.successMessage.replace('{ticketId}', created.ticket.id)}
         </p>
-      </div>
+      </Card>
     );
   }
 
   return (
-    <form
-      onSubmit={(e) => void handleSubmit(e)}
-      className="space-y-4 rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-atg-border dark:bg-atg-elevated"
-    >
-      <div>
-        <label
-          htmlFor="support-subject"
-          className="mb-1 block text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-atg-muted"
-        >
-          {s.subjectLabel}
-        </label>
+    <Card variant="dashboard" padding="sm">
+      <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4">
         <Input
           id="support-subject"
+          label={s.subjectLabel}
           value={subject}
-          onChange={(e) => setSubject(e.target.value)}
+          onChange={(e) => {
+            setSubject(e.target.value);
+            if (subjectError) setSubjectError(null);
+          }}
           placeholder={s.subjectPlaceholder}
           maxLength={255}
           disabled={submitting}
           required
+          error={subjectError ?? undefined}
         />
-      </div>
 
-      <div>
-        <label
-          htmlFor="support-message"
-          className="mb-1 block text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-atg-muted"
-        >
-          {s.messageLabel}
-        </label>
-        <textarea
-          id="support-message"
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
-          placeholder={s.messagePlaceholder}
-          rows={5}
-          disabled={submitting}
-          required
-          minLength={10}
-          className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-60 dark:border-atg-border dark:bg-atg-surface dark:text-white dark:placeholder:text-atg-muted"
-        />
-      </div>
+        <div className="w-full">
+          <label
+            htmlFor="support-message"
+            className="mb-2 block text-sm font-medium text-atg-fg"
+          >
+            {s.messageLabel}
+          </label>
+          <textarea
+            id="support-message"
+            value={body}
+            onChange={(e) => {
+              setBody(e.target.value);
+              if (bodyError) setBodyError(null);
+            }}
+            placeholder={s.messagePlaceholder}
+            rows={5}
+            disabled={submitting}
+            required
+            minLength={10}
+            aria-invalid={bodyError ? true : undefined}
+            aria-describedby={bodyError ? 'support-message-error' : undefined}
+            className={cn(
+              messageTextareaClass,
+              bodyError
+                ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                : 'border-atg-border',
+            )}
+          />
+          {bodyError ? (
+            <p
+              id="support-message-error"
+              className="mt-1.5 text-xs text-red-500 dark:text-red-400"
+              role="alert"
+            >
+              {bodyError}
+            </p>
+          ) : null}
+        </div>
 
-      {validationError ? (
-        <p className="text-sm text-red-600 dark:text-red-400" role="alert">
-          {validationError}
-        </p>
-      ) : null}
-      {error ? (
-        <p className="text-sm text-red-600 dark:text-red-400" role="alert">
-          {error}
-        </p>
-      ) : null}
+        {error ? (
+          <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+            {error}
+          </p>
+        ) : null}
 
-      <Button type="submit" disabled={submitting}>
-        {submitting ? s.submitting : s.submit}
-      </Button>
-    </form>
+        <Button type="submit" loading={submitting} loadingText={s.submitting}>
+          {s.submit}
+        </Button>
+      </form>
+    </Card>
   );
 }

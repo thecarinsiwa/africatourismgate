@@ -1,20 +1,11 @@
 import type { Metadata } from 'next';
-import { VehicleCategoriesList } from '../../../../../components/locations/vehicle-categories-list';
+import { getAdminPageMetadata } from '../../../../../lib/i18n/admin-page-i18n';
+import { CategoriesVehiculesPageContent } from '../../../../../components/pages/produits-locations-categories-page-content';
 
-export const metadata: Metadata = {
-  title: 'Catégories véhicules — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('produits/locations/categories');
+}
 
-export default function CategoriesVehiculesPage() {
-  return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Catégories de véhicules</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Types de véhicules (économique, SUV, premium, etc.).
-        </p>
-      </div>
-      <VehicleCategoriesList />
-    </div>
-  );
+export default function Page() {
+  return <CategoriesVehiculesPageContent />;
 }

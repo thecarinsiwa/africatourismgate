@@ -17,6 +17,18 @@ export class Destinations extends BaseAuditEntity {
   @Column({ type: 'text', name: 'description', nullable: true })
   description!: string | null;
 
+  @Column({ type: 'varchar', name: 'image_url', length: 512, nullable: true })
+  imageUrl!: string | null;
+
+  @Column({ type: 'decimal', name: 'latitude', precision: 10, scale: 7, nullable: true })
+  latitude!: string | null;
+
+  @Column({ type: 'decimal', name: 'longitude', precision: 10, scale: 7, nullable: true })
+  longitude!: string | null;
+
+  @Column({ type: 'boolean', name: 'is_featured', default: false })
+  isFeatured!: boolean;
+
 }
 
 @Entity('points_of_interest')

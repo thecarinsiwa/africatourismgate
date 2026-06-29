@@ -56,7 +56,7 @@ export function PosOrgSelect() {
   const confirmOrganization = useCallback(
     (org: Organization) => {
       const remember = getSessionPersistence() === 'local';
-      setSelectedOrganization({ id: org.id, name: org.name }, remember);
+      setSelectedOrganization({ id: org.id, name: org.name, slug: org.slug }, remember);
       router.refresh();
       router.push('/');
     },

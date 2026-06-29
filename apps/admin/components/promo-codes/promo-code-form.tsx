@@ -1,15 +1,18 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import { Button, Input } from '@africatourismgate/ui';
 import type {
   CreatePromoCodeRequest,
   PromoCode,
   PromoCodeDiscountType,
 } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useId, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getPromoCodesErrorMessage } from '../../lib/promo-codes-errors';
+import { usePromoDiscountTypeLabels } from '../../lib/i18n/use-module-labels';
 
 export type PromoCodeFormValues = {
   code: string;
@@ -66,6 +69,9 @@ type PromoCodeFormProps = {
 };
 
 export function PromoCodeForm({ mode, promoCodeId, initialPromoCode }: PromoCodeFormProps) {
+  const { promoCodes: getPromoCodesErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.promoCodes.form');
+  const discountTypeLabels = usePromoDiscountTypeLabels();
   const router = useRouter();
   const discountTypeId = useId();
   const activeId = useId();
@@ -90,34 +96,33 @@ export function PromoCodeForm({ mode, promoCodeId, initialPromoCode }: PromoCode
     const errors: Partial<Record<keyof PromoCodeFormValues, string>> = {};
     const code = values.code.trim().toUpperCase();
     if (!code) {
-      errors.code = 'Le code est obligatoire.';
+      errors.code = t('validation.codeRequired');
     } else if (!/^[A-Z0-9_-]+$/.test(code)) {
-      errors.code =
-        'Lettres majuscules, chiffres, tirets et underscores uniquement.';
+      errors.code = t('validation.codeFormat');
     }
 
     const discountValue = Number(values.discountValue);
     if (!Number.isFinite(discountValue) || discountValue <= 0) {
-      errors.discountValue = 'La valeur doit être positive.';
+      errors.discountValue = t('validation.discountPositive');
     } else if (values.discountType === 'percent' && discountValue > 100) {
-      errors.discountValue = 'Le pourcentage ne peut pas dépasser 100.';
+      errors.discountValue = t('validation.percentMax');
     }
 
     if (!values.validFrom) {
-      errors.validFrom = 'Date de début obligatoire.';
+      errors.validFrom = t('validation.validFromRequired');
     }
     if (!values.validUntil) {
-      errors.validUntil = 'Date de fin obligatoire.';
+      errors.validUntil = t('validation.validUntilRequired');
     }
     if (values.validFrom && values.validUntil && values.validFrom > values.validUntil) {
-      errors.validUntil = 'La date de fin doit être après la date de début.';
+      errors.validUntil = t('validation.endAfterStart');
     }
 
     const maxRaw = values.maxRedemptions.trim();
     if (maxRaw) {
       const max = Number(maxRaw);
       if (!Number.isInteger(max) || max < 1) {
-        errors.maxRedemptions = 'Nombre d’utilisations max. invalide (entier ≥ 1).';
+        errors.maxRedemptions = t('validation.maxRedemptionsInvalid');
       }
     }
 
@@ -152,8 +157,8 @@ export function PromoCodeForm({ mode, promoCodeId, initialPromoCode }: PromoCode
 
   const discountHint =
     values.discountType === 'percent'
-      ? 'Pourcentage de réduction (ex. 20 pour −20 %).'
-      : 'Montant fixe en unités monétaires (ex. 15 pour −15,00).';
+      ? t('hints.discountPercent')
+      : t('hints.discountFixed');
 
   return (
     <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
@@ -167,18 +172,18 @@ export function PromoCodeForm({ mode, promoCodeId, initialPromoCode }: PromoCode
       ) : null}
 
       <Input
-        label="Code"
+        label={t('fields.code')}
         name="code"
         value={values.code}
         onChange={(e) => updateField('code', e.target.value.toUpperCase())}
-        hint="Saisi en majuscules ; comparé sans distinction de casse au checkout."
+        hint={t('hints.code')}
         error={fieldErrors.code}
         required
       />
 
       <div>
         <label htmlFor={discountTypeId} className="mb-2 block text-sm font-medium text-atg-fg">
-          Type de réduction
+          {t('fields.discountType')}
         </label>
         <select
           id={discountTypeId}
@@ -188,13 +193,17 @@ export function PromoCodeForm({ mode, promoCodeId, initialPromoCode }: PromoCode
           }
           className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
         >
-          <option value="percent">Pourcentage (%)</option>
-          <option value="fixed_amount">Montant fixe</option>
+          <option value="percent">{discountTypeLabels.percent}</option>
+          <option value="fixed_amount">{discountTypeLabels.fixed_amount}</option>
         </select>
       </div>
 
       <Input
-        label={values.discountType === 'percent' ? 'Pourcentage' : 'Montant fixe'}
+        label={
+          values.discountType === 'percent'
+            ? t('fields.discountValuePercent')
+            : t('fields.discountValueFixed')
+        }
         name="discountValue"
         type="number"
         min="0.01"
@@ -209,7 +218,7 @@ export function PromoCodeForm({ mode, promoCodeId, initialPromoCode }: PromoCode
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Input
-          label="Valide du"
+          label={t('fields.validFrom')}
           name="validFrom"
           type="date"
           value={values.validFrom}
@@ -218,7 +227,7 @@ export function PromoCodeForm({ mode, promoCodeId, initialPromoCode }: PromoCode
           required
         />
         <Input
-          label="Valide au"
+          label={t('fields.validUntil')}
           name="validUntil"
           type="date"
           value={values.validUntil}
@@ -229,24 +238,24 @@ export function PromoCodeForm({ mode, promoCodeId, initialPromoCode }: PromoCode
       </div>
 
       <Input
-        label="Utilisations max."
+        label={t('fields.maxRedemptions')}
         name="maxRedemptions"
         type="number"
         min="1"
         step="1"
         value={values.maxRedemptions}
         onChange={(e) => updateField('maxRedemptions', e.target.value)}
-        hint="Laisser vide pour un nombre illimité."
+        hint={t('hints.maxRedemptions')}
         error={fieldErrors.maxRedemptions}
       />
 
       {mode === 'edit' && initialPromoCode ? (
         <p className="text-sm text-atg-muted">
-          Utilisations enregistrées :{' '}
+          {t('usage.recorded')}{' '}
           <strong className="text-atg-fg">{initialPromoCode.redemptionCount}</strong>
           {initialPromoCode.maxRedemptions != null
             ? ` / ${initialPromoCode.maxRedemptions}`
-            : ' (illimité)'}
+            : ` ${t('usage.unlimited')}`}
         </p>
       ) : null}
 
@@ -259,16 +268,16 @@ export function PromoCodeForm({ mode, promoCodeId, initialPromoCode }: PromoCode
           className="h-4 w-4 rounded border-atg-border text-primary focus:ring-primary"
         />
         <label htmlFor={activeId} className="text-sm font-medium text-atg-fg">
-          Code actif (utilisable au checkout)
+          {t('fields.active')}
         </label>
       </div>
 
       <div className="flex flex-wrap gap-3 pt-2">
-        <Button type="submit" loading={submitting} loadingText="Enregistrement…">
-          {mode === 'create' ? 'Créer le code promo' : 'Enregistrer'}
+        <Button type="submit" loading={submitting} loadingText={t('saving')}>
+          {mode === 'create' ? t('createButton') : t('saveButton')}
         </Button>
         <Button type="button" variant="outline" href="/paiements/codes-promo">
-          Annuler
+          {t('cancelButton')}
         </Button>
       </div>
     </form>

@@ -1,21 +1,26 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import { Button, Input } from '@africatourismgate/ui';
 import type {
   Activity,
+  ActivityDifficultyLevel,
   ActivityProvider,
   CreateActivityRequest,
 } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useId, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getActivitiesErrorMessage } from '../../lib/activities-errors';
+import { useActivityDifficultyOptions } from '../../lib/i18n/use-module-labels';
 
 export type ActivityFormValues = {
   providerId: string;
   title: string;
   description: string;
   durationMinutes: string;
+  difficultyLevel: string;
   priceCents: string;
   currency: string;
 };
@@ -25,6 +30,7 @@ const defaultValues: ActivityFormValues = {
   title: '',
   description: '',
   durationMinutes: '',
+  difficultyLevel: '',
   priceCents: '',
   currency: 'USD',
 };
@@ -36,6 +42,7 @@ function activityToFormValues(activity: Activity): ActivityFormValues {
     description: activity.description ?? '',
     durationMinutes:
       activity.durationMinutes != null ? String(activity.durationMinutes) : '',
+    difficultyLevel: activity.difficultyLevel ?? '',
     priceCents: String(activity.priceCents),
     currency: activity.currency,
   };
@@ -46,6 +53,10 @@ function toPayload(values: ActivityFormValues): CreateActivityRequest {
     values.durationMinutes.trim() !== ''
       ? Number(values.durationMinutes)
       : undefined;
+  const difficultyLevel: ActivityDifficultyLevel | null | undefined =
+    values.difficultyLevel === ''
+      ? null
+      : (values.difficultyLevel as ActivityDifficultyLevel);
   return {
     providerId: values.providerId,
     title: values.title.trim(),
@@ -53,6 +64,7 @@ function toPayload(values: ActivityFormValues): CreateActivityRequest {
     currency: values.currency.trim().toUpperCase(),
     ...(values.description.trim() ? { description: values.description.trim() } : {}),
     ...(duration !== undefined && Number.isFinite(duration) ? { durationMinutes: duration } : {}),
+    difficultyLevel,
   };
 }
 
@@ -60,11 +72,20 @@ type ActivityFormProps = {
   mode: 'create' | 'edit';
   activityId?: string;
   initialActivity?: Activity;
+  onUpdated?: (activity: Activity) => void;
 };
 
-export function ActivityForm({ mode, activityId, initialActivity }: ActivityFormProps) {
+export function ActivityForm({ mode, activityId, initialActivity, onUpdated }: ActivityFormProps) {
+  const { activities: getActivitiesErrorMessage } = useAdminErrorMessages();
+  const tForm = useTranslations('modules.activities.form');
+  const tValidation = useTranslations('modules.activities.form.validation');
+  const tCommonForm = useTranslations('modules.common.form');
+  const tActions = useTranslations('common.actions');
+  const tSelect = useTranslations('modules.common.select');
+  const difficultyOptions = useActivityDifficultyOptions();
   const router = useRouter();
   const providerId = useId();
+  const difficultyId = useId();
   const [providers, setProviders] = useState<ActivityProvider[]>([]);
   const [values, setValues] = useState<ActivityFormValues>(() =>
     initialActivity ? activityToFormValues(initialActivity) : defaultValues,
@@ -77,7 +98,7 @@ export function ActivityForm({ mode, activityId, initialActivity }: ActivityForm
 
   useEffect(() => {
     void getApiClient()
-      .listActivityProviders({ page: 1, limit: 200 })
+      .listActivityProviders({ page: 1, limit: 100 })
       .then((r) => setProviders(r.data))
       .catch(() => setProviders([]));
   }, []);
@@ -92,14 +113,14 @@ export function ActivityForm({ mode, activityId, initialActivity }: ActivityForm
 
   function validate(): boolean {
     const errors: Partial<Record<keyof ActivityFormValues, string>> = {};
-    if (!values.providerId) errors.providerId = 'Le fournisseur est obligatoire.';
-    if (!values.title.trim()) errors.title = 'Le titre est obligatoire.';
+    if (!values.providerId) errors.providerId = tValidation('providerRequired');
+    if (!values.title.trim()) errors.title = tValidation('titleRequired');
     const cents = Number(values.priceCents);
-    if (!Number.isFinite(cents) || cents < 0) errors.priceCents = 'Prix invalide.';
-    if (values.currency.trim().length !== 3) errors.currency = 'Devise à 3 lettres.';
+    if (!Number.isFinite(cents) || cents < 0) errors.priceCents = tValidation('invalidPrice');
+    if (values.currency.trim().length !== 3) errors.currency = tValidation('currencyThreeLetters');
     if (values.durationMinutes.trim()) {
       const d = Number(values.durationMinutes);
-      if (!Number.isFinite(d) || d < 1) errors.durationMinutes = 'Durée invalide.';
+      if (!Number.isFinite(d) || d < 1) errors.durationMinutes = tValidation('invalidDuration');
     }
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
@@ -116,7 +137,8 @@ export function ActivityForm({ mode, activityId, initialActivity }: ActivityForm
         const created = await getApiClient().createActivity(body);
         router.push(`/produits/activites/${created.id}`);
       } else if (activityId) {
-        await getApiClient().updateActivity(activityId, body);
+        const updated = await getApiClient().updateActivity(activityId, body);
+        onUpdated?.(updated);
         router.refresh();
       }
     } catch (error) {
@@ -138,7 +160,7 @@ export function ActivityForm({ mode, activityId, initialActivity }: ActivityForm
       ) : null}
       <div>
         <label htmlFor={providerId} className="mb-2 block text-sm font-medium text-atg-fg">
-          Fournisseur
+          {tForm('provider')}
         </label>
         <select
           id={providerId}
@@ -146,7 +168,7 @@ export function ActivityForm({ mode, activityId, initialActivity }: ActivityForm
           value={values.providerId}
           onChange={(e) => updateField('providerId', e.target.value)}
         >
-          <option value="">— Choisir —</option>
+          <option value="">{tSelect('chooseDash')}</option>
           {providers.map((p) => (
             <option key={p.id} value={p.id}>
               {p.name}
@@ -158,13 +180,15 @@ export function ActivityForm({ mode, activityId, initialActivity }: ActivityForm
         ) : null}
       </div>
       <Input
-        label="Titre"
+        label={tForm('title')}
         value={values.title}
         onChange={(e) => updateField('title', e.target.value)}
         error={fieldErrors.title}
       />
       <div>
-        <label className="mb-2 block text-sm font-medium text-atg-fg">Description</label>
+        <label className="mb-2 block text-sm font-medium text-atg-fg">
+          {tCommonForm('description')}
+        </label>
         <textarea
           value={values.description}
           onChange={(e) => updateField('description', e.target.value)}
@@ -173,16 +197,33 @@ export function ActivityForm({ mode, activityId, initialActivity }: ActivityForm
         />
       </div>
       <Input
-        label="Durée (minutes, optionnel)"
+        label={tCommonForm('durationMinutesOptional')}
         type="number"
         min={1}
         value={values.durationMinutes}
         onChange={(e) => updateField('durationMinutes', e.target.value)}
         error={fieldErrors.durationMinutes}
       />
+      <div>
+        <label htmlFor={difficultyId} className="mb-2 block text-sm font-medium text-atg-fg">
+          {tForm('difficulty')}
+        </label>
+        <select
+          id={difficultyId}
+          className={selectClass}
+          value={values.difficultyLevel}
+          onChange={(e) => updateField('difficultyLevel', e.target.value)}
+        >
+          {difficultyOptions.map((option) => (
+            <option key={option.value || 'unspecified'} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <Input
-          label="Prix (centimes)"
+          label={tForm('priceCents')}
           type="number"
           min={0}
           value={values.priceCents}
@@ -190,7 +231,7 @@ export function ActivityForm({ mode, activityId, initialActivity }: ActivityForm
           error={fieldErrors.priceCents}
         />
         <Input
-          label="Devise"
+          label={tCommonForm('currency')}
           value={values.currency}
           onChange={(e) => updateField('currency', e.target.value)}
           error={fieldErrors.currency}
@@ -199,10 +240,10 @@ export function ActivityForm({ mode, activityId, initialActivity }: ActivityForm
       </div>
       <div className="flex gap-3 pt-2">
         <Button type="submit" loading={submitting}>
-          {mode === 'create' ? 'Créer' : 'Enregistrer'}
+          {mode === 'create' ? tForm('submitCreate') : tActions('save')}
         </Button>
         <Button type="button" variant="outline" href="/produits/activites">
-          Annuler
+          {tActions('cancel')}
         </Button>
       </div>
     </form>

@@ -1,36 +1,48 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
-  Button,
+  AlertDialog,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   DataTableBadge,
   DataTablePagination,
+  EmptyState,
   Input,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import { ApiHttpError } from '@africatourismgate/api-client';
-import type { Organization, OrganizationStatus } from '@africatourismgate/types';
+import type { OrganizationListItem } from '@africatourismgate/types';
+import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getOrganizationsErrorMessage } from '../../lib/organizations-errors';
+import {
+  useAccountStatusLabels,
+  useOrganizationLegalFormOptions,
+} from '../../lib/i18n/use-module-labels';
+import {
+  formatOrganizationCount,
+  formatOrganizationLegalForm,
+  organizationStatusVariants,
+} from '../../lib/organization-display';
+import { OrganizationLogo } from './organization-logo';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
 
-const statusLabels: Record<OrganizationStatus, string> = {
-  active: 'Actif',
-  suspended: 'Suspendu',
-  deleted: 'Supprimé',
-};
-
-const statusVariants: Record<OrganizationStatus, 'success' | 'muted' | 'danger'> = {
-  active: 'success',
-  suspended: 'muted',
-  deleted: 'danger',
-};
-
 export function OrganizationsList() {
+  const { organizations: getOrganizationsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.organizations');
+  const tCommon = useTranslations('modules.common');
+  const tActions = useTranslations('common.actions');
+  const accountStatusLabels = useAccountStatusLabels();
+  const legalFormOptions = useOrganizationLegalFormOptions();
+  const emptyDash = tCommon('empty.dash');
+
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -39,12 +51,13 @@ export function OrganizationsList() {
     | { status: 'error'; message: string }
     | {
         status: 'ready';
-        organizations: Organization[];
+        organizations: OrganizationListItem[];
         total: number;
         totalPages: number;
       }
   >({ status: 'loading' });
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<OrganizationListItem | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
@@ -64,7 +77,7 @@ export function OrganizationsList() {
     } catch (error) {
       setState({ status: 'error', message: getOrganizationsErrorMessage(error) });
     }
-  }, [page, search]);
+  }, [page, search, getOrganizationsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -83,137 +96,140 @@ export function OrganizationsList() {
     return () => window.clearTimeout(timer);
   }, [searchInput]);
 
-  const handleDelete = useCallback(
-    async (org: Organization) => {
-      if (
-        !window.confirm(
-          `Supprimer l’organisation « ${org.name} » ? Cette action est réversible côté base.`,
-        )
-      ) {
+  const confirmDelete = useCallback(async () => {
+    if (!pendingDelete) return;
+
+    setDeleteError(null);
+    setDeletingId(pendingDelete.id);
+    try {
+      await getApiClient().deleteOrganization(pendingDelete.id);
+      setPendingDelete(null);
+      await load();
+    } catch (error) {
+      if (error instanceof ApiHttpError && error.status === 404) {
+        setPendingDelete(null);
+        await load();
         return;
       }
-      setDeleteError(null);
-      setDeletingId(org.id);
-      try {
-        await getApiClient().deleteOrganization(org.id);
-        await load();
-      } catch (error) {
-        if (error instanceof ApiHttpError && error.status === 404) {
-          await load();
-          return;
-        }
-        setDeleteError(getOrganizationsErrorMessage(error));
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [load],
-  );
+      setDeleteError(getOrganizationsErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [load, pendingDelete, getOrganizationsErrorMessage]);
 
-  const columns = useMemo<ColumnDef<Organization, unknown>[]>(
+  const columns = useMemo<ColumnDef<OrganizationListItem, unknown>[]>(
     () => [
       {
         accessorKey: 'name',
-        header: 'Organisation',
+        header: tCommon('columns.organization'),
         cell: ({ row }) => {
-          const name = row.original.name;
-          const initial = name.trim().charAt(0).toUpperCase() || '?';
+          const org = row.original;
           return (
             <div className="flex items-center gap-3">
-              <span
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-sm font-semibold text-primary ring-1 ring-primary/15"
-                aria-hidden
-              >
-                {initial}
-              </span>
-              <span className="font-medium text-atg-fg">{name}</span>
+              <OrganizationLogo name={org.name} logoUrl={org.logoUrl} size="sm" />
+              <div className="min-w-0">
+                <Link
+                  href={`/organisations/${org.id}`}
+                  className="font-medium text-atg-fg hover:text-primary hover:underline"
+                >
+                  {org.name}
+                </Link>
+                <p className="truncate font-mono text-xs text-atg-muted">{org.slug}</p>
+              </div>
             </div>
           );
         },
       },
       {
-        accessorKey: 'slug',
-        header: 'Slug',
+        id: 'type',
+        header: t('list.columns.type'),
         cell: ({ row }) => (
-          <code className="rounded-md bg-atg-surface px-2 py-0.5 font-mono text-xs text-atg-muted ring-1 ring-atg-border/60">
-            {row.original.slug}
-          </code>
-        ),
-      },
-      {
-        accessorKey: 'currency',
-        header: 'Devise',
-        meta: { align: 'center' },
-        cell: ({ row }) => (
-          <span className="tabular-nums text-atg-muted">{row.original.currency}</span>
+          <span className="text-sm text-atg-fg">
+            {formatOrganizationLegalForm(row.original.legalForm, legalFormOptions, emptyDash)}
+          </span>
         ),
       },
       {
         accessorKey: 'status',
-        header: 'Statut',
+        header: tCommon('columns.status'),
         meta: { align: 'center' },
         cell: ({ row }) => {
           const status = row.original.status;
           return (
-            <DataTableBadge variant={statusVariants[status]}>
-              {statusLabels[status]}
+            <DataTableBadge variant={organizationStatusVariants[status]}>
+              {accountStatusLabels[status]}
             </DataTableBadge>
           );
         },
       },
       {
+        id: 'userCount',
+        header: tCommon('columns.user'),
+        meta: { align: 'right' },
+        cell: ({ row }) => (
+          <span className="tabular-nums text-sm text-atg-fg">
+            {formatOrganizationCount(row.original.userCount)}
+          </span>
+        ),
+      },
+      {
+        id: 'employeeCount',
+        header: tCommon('columns.employees'),
+        meta: { align: 'right' },
+        cell: ({ row }) => (
+          <span className="tabular-nums text-sm text-atg-fg">
+            {formatOrganizationCount(row.original.employeeCount)}
+          </span>
+        ),
+      },
+      {
         id: 'actions',
-        header: 'Actions',
+        header: tCommon('columns.actions'),
         meta: { align: 'right' },
         cell: ({ row }) => {
           const org = row.original;
+          const busy = deletingId === org.id;
           return (
-            <div className="flex justify-end gap-1.5 opacity-90 transition-opacity group-hover:opacity-100">
-              <Button href={`/organisations/${org.id}`} variant="ghost" size="sm">
-                Modifier
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => void handleDelete(org)}
-                disabled={deletingId === org.id}
-                loading={deletingId === org.id}
-                loadingText="…"
-                className="!text-red-600 hover:!bg-red-50 hover:!text-red-700 dark:!text-red-400 dark:hover:!bg-red-950/30"
-              >
-                Supprimer
-              </Button>
-            </div>
+            <DataTableActions className="opacity-90 transition-opacity group-hover:opacity-100">
+              <DataTableActionButton action="edit" href={`/organisations/${org.id}`} />
+              <DataTableActionButton
+                action="delete"
+                onClick={() => setPendingDelete(org)}
+                disabled={busy}
+                loading={busy}
+              />
+            </DataTableActions>
           );
         },
       },
     ],
-    [deletingId, handleDelete],
+    [
+      accountStatusLabels,
+      deletingId,
+      emptyDash,
+      legalFormOptions,
+      t,
+      tCommon,
+    ],
   );
 
   const isLoading = state.status === 'loading';
   const isError = state.status === 'error';
   const organizations = state.status === 'ready' ? state.organizations : [];
-  const emptyMessage =
-    search.trim().length > 0
-      ? 'Aucune organisation ne correspond à votre recherche.'
-      : 'Aucune organisation pour le moment.';
+  const hasSearch = search.trim().length > 0;
+  const isEmpty = state.status === 'ready' && state.total === 0;
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex-1 sm:max-w-md">
-          <Input
-            name="search"
-            type="search"
-            placeholder="Rechercher par nom ou slug…"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            aria-label="Rechercher par nom ou slug"
-          />
-        </div>
-        <Button href="/organisations/nouveau">Nouvelle organisation</Button>
+      <div className="sm:max-w-md">
+        <Input
+          name="search"
+          type="search"
+          placeholder={tCommon('filters.searchByNameOrSlug')}
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          aria-label={tCommon('filters.searchByNameOrSlugAria')}
+        />
       </div>
 
       {deleteError ? (
@@ -226,6 +242,15 @@ export function OrganizationsList() {
         <p className="text-sm text-red-600 dark:text-red-400" role="alert">
           {state.message}
         </p>
+      ) : isEmpty && !isLoading ? (
+        <EmptyState
+          title={
+            hasSearch ? t('list.emptyTitleSearch') : t('list.emptyTitleDefault')
+          }
+          description={
+            hasSearch ? t('list.emptyDescriptionSearch') : t('list.emptyDescriptionDefault')
+          }
+        />
       ) : (
         <>
           <Card variant="dashboard" padding="none" className="overflow-hidden">
@@ -233,25 +258,46 @@ export function OrganizationsList() {
               columns={columns}
               data={organizations}
               isLoading={isLoading}
-              emptyMessage={emptyMessage}
-              emptyVariant={search.trim().length > 0 ? 'search' : 'default'}
+              emptyMessage={
+                hasSearch ? t('list.emptyTableSearch') : t('list.emptyTableDefault')
+              }
+              emptyVariant={hasSearch ? 'search' : 'default'}
               getRowId={(row) => row.id}
-              aria-label="Liste des organisations"
+              aria-label={t('list.ariaLabel')}
             />
           </Card>
 
-          {state.status === 'ready' ? (
+          {state.status === 'ready' && state.totalPages > 1 ? (
             <DataTablePagination
               page={page}
               pageSize={PAGE_SIZE}
               totalPages={state.totalPages}
               totalItems={state.total}
-              itemLabel="organisation"
+              itemLabel={tCommon('pagination.organization')}
               onPageChange={setPage}
             />
           ) : null}
         </>
       )}
+
+      <AlertDialog
+        open={pendingDelete !== null}
+        onOpenChange={(open) => {
+          if (!open && !deletingId) setPendingDelete(null);
+        }}
+        title={t('list.deleteDialog.title')}
+        description={
+          pendingDelete
+            ? t('list.deleteDialog.description', { name: pendingDelete.name })
+            : undefined
+        }
+        confirmLabel={tActions('delete')}
+        cancelLabel={tActions('cancel')}
+        variant="danger"
+        loading={deletingId !== null}
+        onConfirm={() => void confirmDelete()}
+        onCancel={() => setPendingDelete(null)}
+      />
     </div>
   );
 }

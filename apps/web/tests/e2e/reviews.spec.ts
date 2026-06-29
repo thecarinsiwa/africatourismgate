@@ -244,9 +244,11 @@ test('booking detail submits review via POST /bookings/:id/reviews', async ({ pa
   await page.getByRole('radio', { name: /5 sur 5|5 out of 5|5 de 5/i }).click();
   await page.locator('#review-title').fill('E2E stay');
   await page.locator('#review-body').fill('E2E comment');
-  await page.getByRole('button', { name: /Publier mon avis|Submit review|Publicar opinión/i }).click();
+  await page.getByRole('button', { name: /Publier mon avis|Submit review|Enviar reseña/i }).click();
 
-  await expect(page.getByText(/Votre avis|Your review|Su opinión/i)).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: /Votre avis|Your review|Su reseña/i }),
+  ).toBeVisible();
   await expect(page.getByText('E2E stay')).toBeVisible();
   expect(postReviewCalled).toBe(true);
 });

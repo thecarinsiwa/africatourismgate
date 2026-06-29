@@ -1,11 +1,14 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import type { Promotion } from '@africatourismgate/types';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
+import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { PaymentsPromoSubnav } from '../payments/payments-promo-subnav';
 import { getApiClient } from '../../lib/auth/api';
-import { getPromotionsErrorMessage } from '../../lib/promotions-errors';
 import { PromotionForm } from './promotion-form';
 
 type PromotionEditPageProps = {
@@ -13,11 +16,20 @@ type PromotionEditPageProps = {
 };
 
 export function PromotionEditPage({ promotionId }: PromotionEditPageProps) {
+  const { promotions: getPromotionsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.promotions.edit');
+  const tCommon = useTranslations('modules.common');
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
     | { status: 'ready'; promotion: Promotion }
   >({ status: 'loading' });
+
+  useAdminEditPageMeta({
+    ready: state.status === 'ready',
+    title: t('pageTitle'),
+    entityLabel: state.status === 'ready' ? state.promotion.name : undefined,
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -35,13 +47,13 @@ export function PromotionEditPage({ promotionId }: PromotionEditPageProps) {
     return () => {
       cancelled = true;
     };
-  }, [promotionId]);
+  }, [promotionId, getPromotionsErrorMessage]);
 
   if (state.status === 'loading') {
     return (
       <div>
         <PaymentsPromoSubnav />
-        <p className="text-sm text-atg-muted">Chargement…</p>
+        <p className="text-sm text-atg-muted">{tCommon('loading')}</p>
       </div>
     );
   }
@@ -58,7 +70,7 @@ export function PromotionEditPage({ promotionId }: PromotionEditPageProps) {
             href="/paiements/promotions"
             className="text-sm font-medium text-primary hover:text-primary-hover"
           >
-            ← Retour à la liste
+            {tCommon('back.toList')}
           </Link>
         </div>
       </div>
@@ -70,10 +82,6 @@ export function PromotionEditPage({ promotionId }: PromotionEditPageProps) {
   return (
     <div>
       <PaymentsPromoSubnav />
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Modifier la promotion</h1>
-        <p className="mt-2 text-sm text-atg-muted">{promotion.name}</p>
-      </div>
       <PromotionForm mode="edit" promotionId={promotionId} initialPromotion={promotion} />
     </div>
   );

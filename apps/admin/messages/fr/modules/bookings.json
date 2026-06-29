@@ -1,0 +1,202 @@
+{
+  "status": {
+    "draft": "Brouillon",
+    "pending_approval": "En attente de validation",
+    "pending_payment": "En attente de paiement",
+    "confirmed": "Confirmée",
+    "cancelled": "Annulée",
+    "refunded": "Remboursée"
+  },
+  "itemTypes": {
+    "room": "Chambre",
+    "flight_class": "Vol",
+    "vehicle": "Véhicule",
+    "cabin": "Cabine",
+    "activity_schedule": "Activité",
+    "package": "Forfait"
+  },
+  "catalogLink": {
+    "referencePrefix": "Réf. {idPrefix}",
+    "ariaLabel": "Voir {typeLabel} : {title}"
+  },
+  "list": {
+    "emptyDefault": "Aucune réservation pour le moment.",
+    "emptyFiltered": "Aucune réservation ne correspond à vos critères.",
+    "ariaLabel": "Liste des réservations",
+    "filters": {
+      "client": "Client"
+    },
+    "tabs": {
+      "ariaLabel": "Filtres rapides par statut",
+      "all": "Toutes",
+      "pendingApproval": "En attente de validation"
+    }
+  },
+  "itemsList": {
+    "filters": {
+      "type": "Type",
+      "bookingStatus": "Statut réservation",
+      "bookingId": "ID réservation",
+      "bookingIdPlaceholder": "UUID complet"
+    },
+    "emptyDefault": "Aucune ligne de réservation pour le moment.",
+    "emptyFiltered": "Aucune ligne ne correspond à vos critères.",
+    "ariaLabel": "Lignes de réservation"
+  },
+  "detail": {
+    "title": "Réservation",
+    "backLink": "Retour aux réservations",
+    "reference": "Réf. {idPrefix}",
+    "sections": {
+      "client": "Client",
+      "status": "Statut",
+      "actions": "Actions",
+      "bookingLines": "Lignes de réservation",
+      "payments": "Paiements",
+      "assignedGuides": "Guides assignés"
+    },
+    "clientFields": {
+      "email": "E-mail",
+      "name": "Nom",
+      "organization": "Organisation",
+      "total": "Total",
+      "createdAt": "Créée le"
+    },
+    "actions": {
+      "changeStatus": "Changer le statut",
+      "statusReason": "Motif (historique)",
+      "statusReasonPlaceholder": "Ex. confirmation manuelle, remboursement…",
+      "applyStatus": "Appliquer le statut",
+      "cancellation": "Annulation",
+      "cancelReason": "Motif d'annulation",
+      "cancelReasonPlaceholder": "Ex. demande client, indisponibilité…",
+      "cancelBooking": "Annuler la réservation",
+      "readOnly": "Modification réservée aux comptes avec la permission bookings.write.",
+      "assistedStatusHint": "Utilisez le panneau « Validation assistée » pour approuver ou refuser cette demande."
+    },
+    "linesEmpty": "Aucune ligne.",
+    "linesAriaLabel": "Lignes de réservation",
+    "paymentsEmpty": "Aucun paiement enregistré pour cette réservation.",
+    "paymentsAriaLabel": "Paiements",
+    "statusDialog": {
+      "title": "Confirmer le changement de statut",
+      "description": "Passer la réservation de « {fromStatus} » à « {toStatus} » ?{reasonSuffix}",
+      "reasonSuffix": " Motif : {reason}"
+    },
+    "cancelDialog": {
+      "title": "Annuler la réservation",
+      "description": "Annuler cette réservation ? Le stock des produits sera libéré (moteur de réservation).",
+      "confirm": "Annuler la réservation",
+      "cancel": "Retour"
+    },
+    "paymentStatus": {
+      "pending": "En attente",
+      "succeeded": "Réussi",
+      "failed": "Échoué",
+      "refunded": "Remboursé"
+    }
+  },
+  "timeline": {
+    "progressAria": "Progression du statut de réservation",
+    "finalStatus": "Statut final",
+    "history": "Historique",
+    "historyAria": "Historique des changements de statut",
+    "historyEmpty": "Aucun changement de statut enregistré.",
+    "transition": "{fromStatus} → {toStatus}"
+  },
+  "approval": {
+    "title": "Validation assistée",
+    "intro": "Approuvez la demande, refusez-la avec un motif, ou envoyez le lien de paiement une fois validée.",
+    "approve": "Approuver",
+    "reject": "Refuser",
+    "invitePayment": "Inviter au paiement",
+    "totalLabel": "Montant ({currency})",
+    "totalHint": "Ajustez le total si nécessaire avant approbation.",
+    "reasonLabel": "Note interne (historique)",
+    "reasonPlaceholder": "Ex. validation des dates et disponibilités…",
+    "rejectReasonLabel": "Motif du refus (client)",
+    "rejectReasonPlaceholder": "Ex. dates indisponibles…",
+    "approveSuccess": "Réservation approuvée — le client sera notifié par e-mail.",
+    "rejectSuccess": "Demande refusée — le client sera notifié par e-mail.",
+    "inviteSuccess": "Lien de paiement envoyé par e-mail. URL : {url}",
+    "approveDialog": {
+      "title": "Confirmer l'approbation",
+      "description": "La réservation passera en attente de paiement et le stock sera réservé."
+    },
+    "rejectDialog": {
+      "title": "Confirmer le refus",
+      "description": "La demande sera annulée et le client recevra un e-mail.",
+      "descriptionWithReason": "Motif communiqué au client : {reason}"
+    }
+  },
+  "messages": {
+    "title": "Conversation",
+    "loading": "Chargement des messages…",
+    "empty": "Aucun message pour le moment.",
+    "threadAria": "Fil de messages de la réservation",
+    "author": {
+      "staff": "Équipe",
+      "customer": "Client"
+    },
+    "replyTitle": "Répondre au client",
+    "replyLabel": "Votre message",
+    "replyPlaceholder": "Répondez au client…",
+    "sendReply": "Envoyer"
+  },
+  "guides": {
+    "title": "Guides assignés",
+    "empty": "Aucun guide assigné à cette réservation.",
+    "ariaLabel": "Guides assignés à la réservation",
+    "assignTitle": "Assigner un guide",
+    "selectGuide": "Guide",
+    "selectPlaceholder": "Choisir un guide actif…",
+    "selectRole": "Rôle",
+    "assignButton": "Assigner",
+    "noGuidesAvailable": "Tous les guides actifs sont déjà assignés.",
+    "removeConfirm": "Retirer ce guide de la réservation ?",
+    "viewProfile": "Voir le profil",
+    "columns": {
+      "guide": "Guide",
+      "role": "Rôle",
+      "assignedAt": "Assigné le"
+    }
+  },
+  "stats": {
+    "bookings": {
+      "total": {
+        "label": "Réservations",
+        "subtitle": "Toutes les réservations"
+      },
+      "confirmed": {
+        "label": "Confirmées",
+        "subtitle": "Réservations confirmées"
+      },
+      "pending_payment": {
+        "label": "En attente",
+        "subtitle": "Paiement en attente"
+      },
+      "lines": {
+        "label": "Lignes",
+        "subtitle": "Articles réservés"
+      }
+    },
+    "items": {
+      "total": {
+        "label": "Lignes",
+        "subtitle": "Toutes les lignes"
+      },
+      "confirmed": {
+        "label": "Confirmées",
+        "subtitle": "Lignes de réservations confirmées"
+      },
+      "pending_payment": {
+        "label": "En attente",
+        "subtitle": "Lignes en attente de paiement"
+      },
+      "bookings": {
+        "label": "Réservations",
+        "subtitle": "Voir toutes les réservations"
+      }
+    }
+  }
+}

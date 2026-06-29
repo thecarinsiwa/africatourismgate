@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useId, useRef, useState } from 'react';
 import { cn } from '../lib/cn';
+import { Avatar } from './avatar';
 
 export type UserMenuLink = {
   href: string;
@@ -14,26 +15,17 @@ export type UserMenuProps = {
   email: string;
   onLogout: () => void | Promise<void>;
   logoutLabel?: string;
+  loggingOutLabel?: string;
   menuLinks?: UserMenuLink[];
   className?: string;
 };
-
-function getInitials(displayName: string, email: string): string {
-  const parts = displayName.trim().split(/\s+/).filter(Boolean);
-  if (parts.length >= 2) {
-    return `${parts[0]![0]}${parts[parts.length - 1]![0]}`.toUpperCase();
-  }
-  if (parts.length === 1 && parts[0]!.length > 0) {
-    return parts[0]!.slice(0, 2).toUpperCase();
-  }
-  return email.slice(0, 2).toUpperCase();
-}
 
 export function UserMenu({
   displayName,
   email,
   onLogout,
-  logoutLabel = 'Se déconnecter',
+  logoutLabel = 'Sign out',
+  loggingOutLabel = 'Signing out…',
   menuLinks = [],
   className,
 }: UserMenuProps) {
@@ -76,7 +68,7 @@ export function UserMenu({
     }
   }
 
-  const initials = getInitials(displayName, email);
+  const nameParts = displayName.trim().split(/\s+/).filter(Boolean);
 
   return (
     <div ref={containerRef} className={cn('relative', className)}>
@@ -92,12 +84,12 @@ export function UserMenu({
         aria-haspopup="menu"
         aria-controls={menuId}
       >
-        <span
-          className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-xs font-semibold text-white"
-          aria-hidden
-        >
-          {initials}
-        </span>
+        <Avatar
+          email={email}
+          firstName={nameParts[0]}
+          lastName={nameParts.length > 1 ? nameParts[nameParts.length - 1] : undefined}
+          size="sm"
+        />
         <span className="hidden max-w-[10rem] truncate text-left sm:inline">
           <span className="block truncate font-medium">{displayName}</span>
           <span className="block truncate text-xs text-atg-muted">{email}</span>
@@ -154,7 +146,7 @@ export function UserMenu({
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
               )}
             >
-              {loggingOut ? 'Déconnexion…' : logoutLabel}
+              {loggingOut ? loggingOutLabel : logoutLabel}
             </button>
           </div>
         </div>

@@ -46,13 +46,74 @@ export { Input, type InputProps } from './components/input';
 export { PasswordInput, type PasswordInputProps } from './components/password-input';
 export { Checkbox, type CheckboxProps } from './components/checkbox';
 export { Card, type CardProps } from './components/card';
+export { Skeleton, type SkeletonProps } from './components/skeleton';
+export { StarRatingInput, type StarRatingInputProps } from './components/star-rating-input';
+export { StarRatingDisplay, type StarRatingDisplayProps } from './components/star-rating-display';
+export { StarIcon, type StarIconSize } from './components/star-rating-icons';
+export { StatCard, type StatCardProps, type StatCardStatus } from './components/stat-card';
+export { Avatar, type AvatarProps, type AvatarSize } from './components/avatar';
+export {
+  getUserDisplayName,
+  getUserInitials,
+  hashEmailToColor,
+  hashEmailToHue,
+} from './lib/avatar-utils';
+export {
+  FilterBar,
+  type FilterBarMobileVariant,
+  type FilterBarProps,
+} from './components/filter-bar';
+export { Drawer, type DrawerProps, type DrawerSide } from './components/drawer';
+export {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  type TabsContentProps,
+  type TabsListProps,
+  type TabsProps,
+  type TabsTriggerProps,
+} from './components/tabs';
+export { PageHeader, type PageHeaderProps } from './components/page-header';
+export { Breadcrumb, type BreadcrumbProps, type BreadcrumbItem } from './components/breadcrumb';
+export { Select, type SelectProps, type SelectOption } from './components/select';
+export { Modal, type ModalProps } from './components/modal';
+export {
+  AlertDialog,
+  type AlertDialogProps,
+  type AlertDialogVariant,
+} from './components/alert-dialog';
+export {
+  ToastProvider,
+  useToast,
+  type ToastOptions,
+  type ToastVariant,
+} from './components/toast';
 export { DataTable, type DataTableProps, type DataTableAlign } from './components/data-table';
-export type { ColumnDef } from './components/data-table';
+export type { ColumnDef, OnChangeFn, SortingState } from './components/data-table';
 export { DataTableBadge, type DataTableBadgeProps, type DataTableBadgeVariant } from './components/data-table-badge';
 export {
   DataTablePagination,
+  type DataTablePaginationLabels,
   type DataTablePaginationProps,
 } from './components/data-table-pagination';
+export {
+  DataTableActionButton,
+  DataTableActions,
+  DataTableAdjustButton,
+  type DataTableActionButtonProps,
+  type DataTableActionKind,
+  type DataTableActionsProps,
+  type DataTableAdjustButtonProps,
+} from './components/data-table-actions';
+export {
+  DataTableAdjustIcon,
+  DataTableCalendarIcon,
+  DataTableDeleteIcon,
+  DataTableEditIcon,
+  DataTableViewIcon,
+} from './components/data-table-icons';
+export { EmptyState, type EmptyStateProps } from './components/empty-state';
 export { Divider, type DividerProps } from './components/divider';
 export { TextLink, type TextLinkProps } from './components/text-link';
 export { Logo, type LogoProps } from './components/logo';

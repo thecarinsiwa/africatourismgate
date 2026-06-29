@@ -16,9 +16,9 @@
     "home": "Home",
     "about": "About",
     "gallery": "Gallery",
-    "pages": "Pages",
+    "pages": "Our Products",
     "blog": "Blog",
-    "contact": "Contact",
+    "packages": "Packages",
     "hotels": "Hotels",
     "flights": "Flights",
     "cars": "Car Rental",
@@ -36,6 +36,8 @@
       "title": "Customer sign in",
       "subtitle": "Sign in with your email and password, or use Google to continue your booking.",
       "divider": "or",
+      "dividerLabel": "Don't have an account yet?",
+      "createAccount": "Create an account",
       "google": "Sign in with Google",
       "backToHotels": "Back to hotels",
       "form": {
@@ -54,6 +56,54 @@
         "googleAuthFailed": "Google sign-in failed. Try again or use your email.",
         "googleAuthError": "Google sign-in error. Please try again later."
       }
+    },
+    "register": {
+      "title": "Create a customer account",
+      "subtitle": "Sign up to book trips, track your reservations, and manage your profile.",
+      "dividerLabel": "Already have an account?",
+      "signIn": "Sign in",
+      "backToHotels": "Back to hotels",
+      "form": {
+        "firstNameLabel": "First name",
+        "firstNamePlaceholder": "Jane",
+        "lastNameLabel": "Last name",
+        "lastNamePlaceholder": "Doe",
+        "emailLabel": "Email address",
+        "emailPlaceholder": "you@example.com",
+        "phoneLabel": "Phone",
+        "phonePlaceholder": "+1 555 000 0000",
+        "phoneHint": "Optional",
+        "passwordLabel": "Password",
+        "passwordPlaceholder": "••••••••",
+        "confirmPasswordLabel": "Confirm password",
+        "confirmPasswordPlaceholder": "••••••••",
+        "confirmPasswordMismatch": "Passwords do not match",
+        "termsLabel": "I accept the",
+        "termsLink": "terms of use",
+        "submit": "Create my account",
+        "submitLoading": "Creating account…"
+      },
+      "errors": {
+        "emailAlreadyRegistered": "This email is already in use. Sign in or use a different address.",
+        "network": "Could not reach the server. Check your connection.",
+        "generic": "Something went wrong. Please try again.",
+        "envMissing": "Missing API configuration (NEXT_PUBLIC_API_URL).",
+        "server": "The server is not ready. Check the database."
+      }
     }
+  },
+  "hotelsDetail": {
+    "breadcrumbHome": "Home",
+    "breadcrumbHotels": "Hotels",
+    "galleryAria": "Photo gallery",
+    "galleryOpenLightbox": "Enlarge photo",
+    "galleryClose": "Close gallery",
+    "galleryPrevious": "Previous photo",
+    "galleryNext": "Next photo",
+    "galleryCounter": "Photo {current} of {total}",
+    "calendarLegendTitle": "Legend",
+    "calendarLegendAvailable": "Available",
+    "calendarLegendSelected": "Selected dates",
+    "calendarLegendUnavailable": "Unavailable"
   }
 }

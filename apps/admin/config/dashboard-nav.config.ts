@@ -24,7 +24,6 @@ export type AdminNavGroupEntryConfig = {
 
 export type AdminNavEntryConfig = AdminNavLinkEntryConfig | AdminNavGroupEntryConfig;
 
-/** Menu admin (structure + clés i18n). */
 export const adminDashboardNavConfig: AdminNavEntryConfig[] = [
   {
     type: 'link',
@@ -36,7 +35,6 @@ export const adminDashboardNavConfig: AdminNavEntryConfig[] = [
     type: 'group',
     id: 'users-auth',
     iconKey: 'users',
-    defaultOpen: true,
     children: [
       { href: '/utilisateurs', labelKey: 'users', iconKey: 'users' },
       { href: '/utilisateurs/employes', labelKey: 'employees', iconKey: 'userCircle' },
@@ -74,6 +72,7 @@ export const adminDashboardNavConfig: AdminNavEntryConfig[] = [
     children: [
       { href: '/reservations', labelKey: 'bookings', iconKey: 'bookings' },
       { href: '/reservations/lignes', labelKey: 'bookingLines', iconKey: 'list' },
+      { href: '/guides', labelKey: 'tourGuides', iconKey: 'userCircle' },
     ],
   },
   {
@@ -108,6 +107,41 @@ export const adminDashboardNavConfig: AdminNavEntryConfig[] = [
       { href: '/systeme/audit', labelKey: 'rbacAudit', iconKey: 'document' },
     ],
   },
+];
+
+/** Routes imbriquées hors menu latéral — clés i18n `nav.links.*` ou `nav.breadcrumb.*`. */
+export type AdminBreadcrumbRouteConfig = {
+  href: string;
+  labelKey: string;
+};
+
+export const adminBreadcrumbExtraRoutes: AdminBreadcrumbRouteConfig[] = [
+  { href: '/produits/croisieres/navires', labelKey: 'ships' },
+  { href: '/produits/croisieres/navires/nouveau', labelKey: 'newShip' },
+  { href: '/produits/croisieres/lignes', labelKey: 'cruiseLines' },
+  { href: '/produits/croisieres/ports', labelKey: 'cruisePorts' },
+  { href: '/produits/croisieres/nouveau', labelKey: 'newSailing' },
+  { href: '/hebergements/nouveau', labelKey: 'newAccommodation' },
+  { href: '/produits/vols/aeroports', labelKey: 'airports' },
+  { href: '/produits/vols/compagnies', labelKey: 'airlines' },
+  { href: '/produits/vols/nouveau', labelKey: 'newFlight' },
+  { href: '/produits/locations/agences', labelKey: 'rentalAgencies' },
+  { href: '/produits/locations/categories', labelKey: 'vehicleCategories' },
+  { href: '/produits/locations/nouveau', labelKey: 'newVehicle' },
+  { href: '/produits/activites/fournisseurs', labelKey: 'activityProviders' },
+  { href: '/produits/activites/nouveau', labelKey: 'newActivity' },
+  { href: '/produits/destinations/nouveau', labelKey: 'newDestination' },
+  { href: '/produits/forfaits/nouveau', labelKey: 'newPackage' },
+  { href: '/utilisateurs/nouveau', labelKey: 'newUser' },
+  { href: '/utilisateurs/employes/nouveau', labelKey: 'newEmployee' },
+  { href: '/organisations/nouveau', labelKey: 'newOrganization' },
+  { href: '/systeme/roles/nouveau', labelKey: 'newRole' },
+  { href: '/systeme/roles/assignations', labelKey: 'roleAssignments' },
+  { href: '/systeme/roles/permissions', labelKey: 'permissions' },
+  { href: '/paiements/promotions/nouveau', labelKey: 'newPromotion' },
+  { href: '/paiements/codes-promo/nouveau', labelKey: 'newPromoCode' },
+  { href: '/guides/nouveau', labelKey: 'newTourGuide' },
+  { href: '/parametres/comptes', labelKey: 'bankAccounts' },
 ];
 
 export function navGroupMessageKey(groupId: string): string {

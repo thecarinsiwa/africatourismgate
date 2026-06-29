@@ -1,0 +1,72 @@
+{
+  "tiers": {
+    "member": "Membre",
+    "silver": "Silver",
+    "gold": "Gold",
+    "platinum": "Platinum"
+  },
+  "progress": {
+    "ariaToward": "Progression vers {tier}",
+    "ariaMaxReached": "Palier maximum atteint",
+    "pointsBeforeTier": "{points} pts avant {tier}",
+    "maxTier": "Palier maximum"
+  },
+  "stats": {
+    "accounts": {
+      "label": "Comptes fidélité",
+      "subtitle": "Comptes OneKey actifs"
+    },
+    "points": {
+      "label": "Points cumulés",
+      "subtitle": "Sur les 100 premiers comptes"
+    },
+    "topBalance": {
+      "label": "Meilleur solde",
+      "emptySubtitle": "Hastacun compte"
+    }
+  },
+  "list": {
+    "columns": {
+      "program": "Programme",
+      "balanceProgress": "Solde & progression",
+      "tier": "Palier",
+      "lastActivity": "Dernière activité"
+    },
+    "actions": {
+      "history": "Historial"
+    },
+    "empty": {
+      "title": "Hastacun compte fidélité",
+      "description": "Les comptes OneKey sont créés automatiquement lors des premiers paiements réussis. Ajustements manuels réservés au super administrateur.",
+      "tableMessage": "Hastacun compte fidélité pour le moment."
+    },
+    "ariaLabel": "Liste des comptes fidélité"
+  },
+  "adjust": {
+    "deltaRequired": "Indiquez une variation entière non nulle (+ ou −).",
+    "title": "Ajustement manuel des points",
+    "currentBalance": "solde actuel",
+    "fields": {
+      "delta": "Variation (+ ou −)",
+      "reason": "Motivo (optionnel)"
+    },
+    "deltaPlaceholder": "Ex. 100 ou -50",
+    "reasonPlaceholder": "Ex. geste commercial",
+    "apply": "Aplicar"
+  },
+  "history": {
+    "title": "Historial des transactions",
+    "close": "Fermer",
+    "currentBalance": "Solde actuel",
+    "pointsUnit": "points",
+    "apiUnavailable": "L'API d'historique des transactions n'est pas encore disponible. La structure ci-dessous anticipe le futur journal des mouvements de points.",
+    "columns": {
+      "delta": "Variation",
+      "balanceAfter": "Solde après"
+    },
+    "transactionTypes": {
+      "paymentCredit": "Crédit paiement",
+      "manualAdjust": "Ajustement manuel"
+    }
+  }
+}

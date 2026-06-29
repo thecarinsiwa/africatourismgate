@@ -1,24 +1,11 @@
 import type { Metadata } from 'next';
-import { Card } from '@africatourismgate/ui';
+import { getAdminPageMetadata } from '../../../../lib/i18n/admin-page-i18n';
+import { SessionsPageContent } from '../../../../components/pages/utilisateurs-sessions-page-content';
 
-export const metadata: Metadata = {
-  title: 'Sessions — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('utilisateurs/sessions');
+}
 
-export default function UtilisateurSessionsPage() {
-  return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Sessions</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Sessions actives et historique de connexion.
-        </p>
-      </div>
-      <Card className="p-6">
-        <p className="text-sm text-atg-muted">
-          La liste des sessions utilisateur sera disponible prochainement.
-        </p>
-      </Card>
-    </div>
-  );
+export default function Page() {
+  return <SessionsPageContent />;
 }

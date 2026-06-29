@@ -19,6 +19,7 @@ export type PosStoredSession = {
   user: AuthUser;
   selectedOrganizationId: string | null;
   selectedOrganizationName?: string | null;
+  selectedOrganizationSlug?: string | null;
 };
 
 const ACCESS_EXPIRY_SKEW_MS = 30_000;
@@ -113,6 +114,8 @@ function mergeSessionWithCookies(stored: PosStoredSession | null): PosStoredSess
       stored.selectedOrganizationId ?? fromCookies.selectedOrganizationId,
     selectedOrganizationName:
       stored.selectedOrganizationName ?? fromCookies.selectedOrganizationName ?? null,
+    selectedOrganizationSlug:
+      stored.selectedOrganizationSlug ?? fromCookies.selectedOrganizationSlug ?? null,
   };
   saveSession(merged, getRememberFromDocumentCookies());
   return merged;
@@ -142,6 +145,7 @@ export async function ensureClientSession(): Promise<PosStoredSession | null> {
     user: session.user,
     selectedOrganizationId: session.selectedOrganizationId,
     selectedOrganizationName: session.selectedOrganizationName,
+    selectedOrganizationSlug: session.selectedOrganizationSlug,
   });
   saveSession(session, getRememberFromDocumentCookies());
   if (typeof window !== 'undefined') {
@@ -160,6 +164,7 @@ function normalizePosSession(partial: Partial<PosStoredSession>): PosStoredSessi
     user: partial.user!,
     selectedOrganizationId: partial.selectedOrganizationId ?? null,
     selectedOrganizationName: partial.selectedOrganizationName ?? null,
+    selectedOrganizationSlug: partial.selectedOrganizationSlug ?? null,
   };
 }
 
@@ -172,7 +177,7 @@ export function hasSelectedOrganization(): boolean {
 }
 
 export function setSelectedOrganization(
-  organization: { id: string; name: string },
+  organization: { id: string; name: string; slug: string },
   remember?: boolean,
 ): void {
   const session = getSession();
@@ -183,6 +188,7 @@ export function setSelectedOrganization(
       ...session,
       selectedOrganizationId: organization.id,
       selectedOrganizationName: organization.name,
+      selectedOrganizationSlug: organization.slug,
     },
     remember,
   );
@@ -197,6 +203,7 @@ export function clearSelectedOrganization(remember?: boolean): void {
       ...session,
       selectedOrganizationId: null,
       selectedOrganizationName: null,
+      selectedOrganizationSlug: null,
     },
     remember ?? getSessionPersistence() === 'local',
   );
@@ -227,12 +234,19 @@ export function authResponseToStoredSession(response: AuthResponse): PosStoredSe
     user: response.user,
     selectedOrganizationId: response.user.organizationId ?? null,
     selectedOrganizationName: null,
+    selectedOrganizationSlug: null,
   };
 }
 
 export function tokensToStoredSession(
   tokens: AuthTokens,
-  session: Pick<PosStoredSession, 'user' | 'selectedOrganizationId' | 'selectedOrganizationName'>,
+  session: Pick<
+    PosStoredSession,
+    | 'user'
+    | 'selectedOrganizationId'
+    | 'selectedOrganizationName'
+    | 'selectedOrganizationSlug'
+  >,
 ): PosStoredSession {
   return {
     accessToken: tokens.accessToken,
@@ -241,5 +255,6 @@ export function tokensToStoredSession(
     user: session.user,
     selectedOrganizationId: session.selectedOrganizationId,
     selectedOrganizationName: session.selectedOrganizationName ?? null,
+    selectedOrganizationSlug: session.selectedOrganizationSlug ?? null,
   };
 }

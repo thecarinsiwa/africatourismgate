@@ -1,16 +1,19 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+import { useAccountStatusLabels } from '../../lib/i18n/use-module-labels';
+
 import { Button, Input } from '@africatourismgate/ui';
 import type {
   CreateUserRequest,
-  Organization,
+  OrganizationListItem,
   UpdateUserRequest,
   User,
 } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useId, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getUsersErrorMessage } from '../../lib/users-errors';
 
 export type UserFormValues = {
   email: string;
@@ -87,13 +90,18 @@ type UserFormProps = {
 };
 
 export function UserForm({ mode, userId, initialUser }: UserFormProps) {
+  const { users: getUsersErrorMessage } = useAdminErrorMessages();
+  const tForm = useTranslations('modules.users.form');
+  const tActions = useTranslations('common.actions');
+  const tLoading = useTranslations('common.loading');
+  const statusLabels = useAccountStatusLabels();
   const router = useRouter();
   const statusId = useId();
   const orgId = useId();
   const [values, setValues] = useState<UserFormValues>(() =>
     initialUser ? userToFormValues(initialUser) : defaultValues,
   );
-  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [organizations, setOrganizations] = useState<OrganizationListItem[]>([]);
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof UserFormValues, string>>>(
     {},
   );
@@ -128,26 +136,26 @@ export function UserForm({ mode, userId, initialUser }: UserFormProps) {
     [],
   );
 
-  function validate(): boolean {
+  const validate = useCallback((): boolean => {
     const errors: Partial<Record<keyof UserFormValues, string>> = {};
     if (!values.email.trim()) {
-      errors.email = "L'adresse e-mail est obligatoire.";
+      errors.email = tForm('validation.emailRequired');
     }
     if (mode === 'create' && values.password.length < 8) {
-      errors.password = 'Le mot de passe doit contenir au moins 8 caractères.';
+      errors.password = tForm('validation.passwordMinLength');
     }
     if (mode === 'edit' && values.password.length > 0 && values.password.length < 8) {
-      errors.password = 'Le mot de passe doit contenir au moins 8 caractères.';
+      errors.password = tForm('validation.passwordMinLength');
     }
     if (!values.firstName.trim()) {
-      errors.firstName = 'Le prénom est obligatoire.';
+      errors.firstName = tForm('validation.firstNameRequired');
     }
     if (!values.lastName.trim()) {
-      errors.lastName = 'Le nom est obligatoire.';
+      errors.lastName = tForm('validation.lastNameRequired');
     }
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
-  }
+  }, [mode, tForm, values]);
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -185,7 +193,7 @@ export function UserForm({ mode, userId, initialUser }: UserFormProps) {
       ) : null}
 
       <Input
-        label="E-mail"
+        label={tForm('email')}
         name="email"
         type="email"
         value={values.email}
@@ -196,7 +204,7 @@ export function UserForm({ mode, userId, initialUser }: UserFormProps) {
       />
 
       <Input
-        label={mode === 'create' ? 'Mot de passe' : 'Nouveau mot de passe (optionnel)'}
+        label={mode === 'create' ? tForm('passwordCreate') : tForm('passwordEdit')}
         name="password"
         type="password"
         value={values.password}
@@ -204,16 +212,12 @@ export function UserForm({ mode, userId, initialUser }: UserFormProps) {
         error={fieldErrors.password}
         required={mode === 'create'}
         autoComplete={mode === 'create' ? 'new-password' : 'off'}
-        hint={
-          mode === 'edit'
-            ? 'Laissez vide pour conserver le mot de passe actuel.'
-            : 'Minimum 8 caractères.'
-        }
+        hint={mode === 'edit' ? tForm('passwordHintEdit') : tForm('passwordHintCreate')}
       />
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Input
-          label="Prénom"
+          label={tForm('firstName')}
           name="firstName"
           value={values.firstName}
           onChange={(e) => updateField('firstName', e.target.value)}
@@ -222,7 +226,7 @@ export function UserForm({ mode, userId, initialUser }: UserFormProps) {
           autoComplete="given-name"
         />
         <Input
-          label="Nom"
+          label={tForm('lastName')}
           name="lastName"
           value={values.lastName}
           onChange={(e) => updateField('lastName', e.target.value)}
@@ -234,25 +238,25 @@ export function UserForm({ mode, userId, initialUser }: UserFormProps) {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Input
-          label="Téléphone"
+          label={tForm('phone')}
           name="phone"
           value={values.phone}
           onChange={(e) => updateField('phone', e.target.value)}
         />
         <Input
-          label="Langue préférée"
+          label={tForm('preferredLanguage')}
           name="preferredLanguage"
           value={values.preferredLanguage}
           onChange={(e) => updateField('preferredLanguage', e.target.value)}
           maxLength={2}
-          hint="Code ISO à 2 lettres (ex. fr, en)."
+          hint={tForm('preferredLanguageHint')}
         />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor={orgId} className="mb-2 block text-sm font-medium text-atg-fg">
-            Organisation
+            {tForm('organization')}
           </label>
           <select
             id={orgId}
@@ -261,7 +265,7 @@ export function UserForm({ mode, userId, initialUser }: UserFormProps) {
             onChange={(e) => updateField('organizationId', e.target.value)}
             className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
           >
-            <option value="">Aucune</option>
+            <option value="">{tForm('organizationNone')}</option>
             {organizations.map((org) => (
               <option key={org.id} value={org.id}>
                 {org.name}
@@ -272,7 +276,7 @@ export function UserForm({ mode, userId, initialUser }: UserFormProps) {
 
         <div>
           <label htmlFor={statusId} className="mb-2 block text-sm font-medium text-atg-fg">
-            Statut
+            {tForm('status')}
           </label>
           <select
             id={statusId}
@@ -283,18 +287,18 @@ export function UserForm({ mode, userId, initialUser }: UserFormProps) {
             }
             className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
           >
-            <option value="active">Actif</option>
-            <option value="suspended">Suspendu</option>
+            <option value="active">{statusLabels.active}</option>
+            <option value="suspended">{statusLabels.suspended}</option>
           </select>
         </div>
       </div>
 
       <div className="flex flex-wrap gap-3 pt-2">
-        <Button type="submit" loading={submitting} loadingText="Enregistrement…">
-          {mode === 'create' ? 'Créer l’utilisateur' : 'Enregistrer'}
+        <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>
+          {mode === 'create' ? tForm('submitCreate') : tForm('submitEdit')}
         </Button>
         <Button type="button" variant="outline" href="/utilisateurs">
-          Annuler
+          {tActions('cancel')}
         </Button>
       </div>
     </form>

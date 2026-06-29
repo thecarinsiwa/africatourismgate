@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import { Button, Input } from '@africatourismgate/ui';
 import type {
   CreatePromotionRequest,
@@ -7,10 +9,12 @@ import type {
   Promotion,
 } from '@africatourismgate/types';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useId, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getPromotionsErrorMessage } from '../../lib/promotions-errors';
+import { usePromoDiscountTypeLabels } from '../../lib/i18n/use-module-labels';
+import { PromotionPreviewBanner } from './promotion-preview-banner';
 
 export type PromotionFormValues = {
   name: string;
@@ -73,6 +77,10 @@ type PromotionFormProps = {
 };
 
 export function PromotionForm({ mode, promotionId, initialPromotion }: PromotionFormProps) {
+  const { promotions: getPromotionsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.promotions.form');
+  const tCommon = useTranslations('modules.common.form');
+  const discountTypeLabels = usePromoDiscountTypeLabels();
   const router = useRouter();
   const discountTypeId = useId();
   const hasDiscountId = useId();
@@ -97,27 +105,27 @@ export function PromotionForm({ mode, promotionId, initialPromotion }: Promotion
   function validate(): boolean {
     const errors: Partial<Record<keyof PromotionFormValues, string>> = {};
     if (!values.name.trim()) {
-      errors.name = 'Le titre est obligatoire.';
+      errors.name = t('validation.nameRequired');
     }
 
     if (values.hasDiscount) {
       const discountValue = Number(values.discountValue);
       if (!Number.isFinite(discountValue) || discountValue <= 0) {
-        errors.discountValue = 'La valeur doit être positive.';
+        errors.discountValue = t('validation.discountPositive');
       } else if (values.discountType === 'percent' && discountValue > 100) {
-        errors.discountValue = 'Le pourcentage ne peut pas dépasser 100.';
+        errors.discountValue = t('validation.percentMax');
       }
     }
 
     if (values.validFrom && values.validUntil && values.validFrom > values.validUntil) {
-      errors.validUntil = 'La date de fin doit être après la date de début.';
+      errors.validUntil = t('validation.endAfterStart');
     }
 
     const maxRaw = values.maxRedemptions.trim();
     if (maxRaw) {
       const max = Number(maxRaw);
       if (!Number.isInteger(max) || max < 1) {
-        errors.maxRedemptions = 'Nombre max. invalide (entier ≥ 1).';
+        errors.maxRedemptions = t('validation.maxRedemptionsInvalid');
       }
     }
 
@@ -152,24 +160,19 @@ export function PromotionForm({ mode, promotionId, initialPromotion }: Promotion
 
   const discountHint =
     values.discountType === 'percent'
-      ? 'Pourcentage (ex. 15 pour −15 %).'
-      : 'Montant fixe en unités monétaires (ex. 20 pour −20,00).';
+      ? t('hints.discountPercent')
+      : t('hints.discountFixed');
 
   return (
     <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
       <div className="rounded-lg border border-atg-border bg-atg-elevated/50 px-4 py-3 text-sm text-atg-muted">
         <p>
-          Les <strong className="text-atg-fg">codes promo</strong> sont saisis par le client au
-          checkout ; les <strong className="text-atg-fg">promotions</strong> sont appliquées via
-          l’identifiant campagne (<code className="text-xs">promotionId</code>).{' '}
+          {t('info.codesVsPromotions')}{' '}
           <Link href="/paiements/codes-promo" className="font-medium text-primary hover:underline">
-            Gérer les codes promo
+            {t('info.managePromoCodesLink')}
           </Link>
         </p>
-        <p className="mt-2">
-          Cible produit / destination : précisez-la dans la description (pas encore de champ dédié en
-          base).
-        </p>
+        <p className="mt-2">{t('info.targetHint')}</p>
       </div>
 
       {formError ? (
@@ -181,8 +184,27 @@ export function PromotionForm({ mode, promotionId, initialPromotion }: Promotion
         </p>
       ) : null}
 
+      <PromotionPreviewBanner
+        name={values.name}
+        description={values.description}
+        hasDiscount={values.hasDiscount}
+        discountType={values.hasDiscount ? values.discountType : null}
+        discountValue={values.hasDiscount ? values.discountValue : null}
+        validFrom={values.validFrom || null}
+        validUntil={values.validUntil || null}
+        active={values.active}
+        redemptionCount={mode === 'edit' ? initialPromotion?.redemptionCount : undefined}
+        maxRedemptions={
+          mode === 'edit' && initialPromotion?.maxRedemptions != null
+            ? initialPromotion.maxRedemptions
+            : values.maxRedemptions.trim()
+              ? Number(values.maxRedemptions)
+              : null
+        }
+      />
+
       <Input
-        label="Titre de la campagne"
+        label={t('fields.name')}
         name="name"
         value={values.name}
         onChange={(e) => updateField('name', e.target.value)}
@@ -192,7 +214,7 @@ export function PromotionForm({ mode, promotionId, initialPromotion }: Promotion
 
       <div>
         <label htmlFor="description" className="mb-2 block text-sm font-medium text-atg-fg">
-          Description
+          {tCommon('description')}
         </label>
         <textarea
           id="description"
@@ -200,7 +222,7 @@ export function PromotionForm({ mode, promotionId, initialPromotion }: Promotion
           rows={4}
           value={values.description}
           onChange={(e) => updateField('description', e.target.value)}
-          placeholder="Ex. −20 % sur les hébergements à Nairobi, juin–août 2026…"
+          placeholder={t('fields.descriptionPlaceholder')}
           className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg placeholder:text-atg-muted/70 outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
         />
       </div>
@@ -214,7 +236,7 @@ export function PromotionForm({ mode, promotionId, initialPromotion }: Promotion
           className="h-4 w-4 rounded border-atg-border text-primary focus:ring-primary"
         />
         <label htmlFor={hasDiscountId} className="text-sm font-medium text-atg-fg">
-          Appliquer une réduction au checkout
+          {t('fields.hasDiscount')}
         </label>
       </div>
 
@@ -225,7 +247,7 @@ export function PromotionForm({ mode, promotionId, initialPromotion }: Promotion
               htmlFor={discountTypeId}
               className="mb-2 block text-sm font-medium text-atg-fg"
             >
-              Type de réduction
+              {t('fields.discountType')}
             </label>
             <select
               id={discountTypeId}
@@ -235,12 +257,16 @@ export function PromotionForm({ mode, promotionId, initialPromotion }: Promotion
               }
               className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
             >
-              <option value="percent">Pourcentage (%)</option>
-              <option value="fixed_amount">Montant fixe</option>
+              <option value="percent">{discountTypeLabels.percent}</option>
+              <option value="fixed_amount">{discountTypeLabels.fixed_amount}</option>
             </select>
           </div>
           <Input
-            label={values.discountType === 'percent' ? 'Pourcentage' : 'Montant fixe'}
+            label={
+              values.discountType === 'percent'
+                ? t('fields.discountValuePercent')
+                : t('fields.discountValueFixed')
+            }
             name="discountValue"
             type="number"
             min="0.01"
@@ -257,7 +283,7 @@ export function PromotionForm({ mode, promotionId, initialPromotion }: Promotion
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Input
-          label="Valide du (optionnel)"
+          label={t('fields.validFromOptional')}
           name="validFrom"
           type="date"
           value={values.validFrom}
@@ -265,7 +291,7 @@ export function PromotionForm({ mode, promotionId, initialPromotion }: Promotion
           error={fieldErrors.validFrom}
         />
         <Input
-          label="Valide au (optionnel)"
+          label={t('fields.validUntilOptional')}
           name="validUntil"
           type="date"
           value={values.validUntil}
@@ -275,28 +301,28 @@ export function PromotionForm({ mode, promotionId, initialPromotion }: Promotion
       </div>
 
       <Input
-        label="Utilisations max."
+        label={t('fields.maxRedemptions')}
         name="maxRedemptions"
         type="number"
         min="1"
         step="1"
         value={values.maxRedemptions}
         onChange={(e) => updateField('maxRedemptions', e.target.value)}
-        hint="Laisser vide pour illimité."
+        hint={t('hints.maxRedemptions')}
         error={fieldErrors.maxRedemptions}
       />
 
       {mode === 'edit' && initialPromotion ? (
         <div className="space-y-2 text-sm text-atg-muted">
           <p>
-            Utilisations :{' '}
+            {t('usage.label')}{' '}
             <strong className="text-atg-fg">{initialPromotion.redemptionCount}</strong>
             {initialPromotion.maxRedemptions != null
               ? ` / ${initialPromotion.maxRedemptions}`
-              : ' (illimité)'}
+              : ` ${t('usage.unlimited')}`}
           </p>
           <p>
-            ID checkout :{' '}
+            {t('checkoutId')}{' '}
             <code className="break-all rounded bg-atg-surface px-1.5 py-0.5 font-mono text-xs text-atg-fg">
               {initialPromotion.id}
             </code>
@@ -313,16 +339,16 @@ export function PromotionForm({ mode, promotionId, initialPromotion }: Promotion
           className="h-4 w-4 rounded border-atg-border text-primary focus:ring-primary"
         />
         <label htmlFor={activeId} className="text-sm font-medium text-atg-fg">
-          Campagne active
+          {t('fields.active')}
         </label>
       </div>
 
       <div className="flex flex-wrap gap-3 pt-2">
-        <Button type="submit" loading={submitting} loadingText="Enregistrement…">
-          {mode === 'create' ? 'Créer la promotion' : 'Enregistrer'}
+        <Button type="submit" loading={submitting} loadingText={t('saving')}>
+          {mode === 'create' ? t('createButton') : t('saveButton')}
         </Button>
         <Button type="button" variant="outline" href="/paiements/promotions">
-          Annuler
+          {t('cancelButton')}
         </Button>
       </div>
     </form>

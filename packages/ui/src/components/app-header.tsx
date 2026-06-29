@@ -6,8 +6,11 @@ import { ThemeToggle, type ThemeToggleProps } from './theme-toggle';
 import { UserMenu, type UserMenuProps } from './user-menu';
 
 export type AppHeaderProps = {
+  /** Titre contextuel affiché à côté du menu mobile (optionnel). */
   title?: string;
-  user: Pick<UserMenuProps, 'displayName' | 'email' | 'onLogout' | 'logoutLabel' | 'menuLinks'>;
+  /** Fil d'Ariane ou slot personnalisé sous le titre. */
+  breadcrumb?: ReactNode;
+  user: Pick<UserMenuProps, 'displayName' | 'email' | 'onLogout' | 'logoutLabel' | 'loggingOutLabel' | 'menuLinks'>;
   themeLabels?: ThemeToggleProps['labels'];
   actions?: ReactNode;
   className?: string;
@@ -25,21 +28,24 @@ function MenuIcon() {
 
 export function AppHeader({
   title,
+  breadcrumb,
   user,
   themeLabels,
   actions,
   className,
   onMenuClick,
-  openMenuLabel = 'Ouvrir le menu',
+  openMenuLabel = 'Open menu',
 }: AppHeaderProps) {
+  const hasHeading = Boolean(title || breadcrumb);
+
   return (
     <header
       className={cn(
-        'flex shrink-0 items-center justify-between gap-4 border-b border-atg-border bg-atg-elevated px-4 py-3 md:px-6 md:py-4',
+        'flex shrink-0 items-start justify-between gap-4 border-b border-atg-border bg-atg-elevated px-4 py-3 md:items-center md:px-6 md:py-4',
         className,
       )}
     >
-      <div className="flex min-w-0 flex-1 items-center gap-3">
+      <div className="flex min-w-0 flex-1 items-start gap-3 md:items-center">
         {onMenuClick ? (
           <button
             type="button"
@@ -55,11 +61,14 @@ export function AppHeader({
           </button>
         ) : null}
 
-        {title ? (
-          <h1 className="truncate text-lg font-bold text-atg-fg md:text-xl">{title}</h1>
-        ) : (
-          <span className="sr-only">Africa Tourism Gate Admin</span>
-        )}
+        <div className="min-w-0 flex-1 space-y-1">
+          {title ? (
+            <h1 className="truncate text-lg font-bold text-atg-fg md:text-xl">{title}</h1>
+          ) : hasHeading ? null : (
+            <span className="sr-only">Africa Tourism Gate Admin</span>
+          )}
+          {breadcrumb}
+        </div>
       </div>
 
       <div className="flex shrink-0 items-center gap-2 md:gap-3">

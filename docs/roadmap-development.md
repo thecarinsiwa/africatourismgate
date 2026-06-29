@@ -13,6 +13,9 @@
 3. Copiez le **prompt détaillé** correspondant dans Cursor Agent.
 4. Ouvrez une branche `feature/…`, implémentez, testez avec `pnpm dev`.
 5. Ne demandez un commit que lorsque vous êtes satisfait du résultat.
+6. Pour les **PRs design / UX** (sans nouvelle feature API), utilisez plutôt :
+   - Admin : [admin-design-improvements.md](./admin-design-improvements.md) (livrables UX-1 à UX-22)
+   - Site public : [web-design-improvements.md](./web-design-improvements.md) (livrables WEB-UX-1 à WEB-UX-20)
 
 ### Prompt méta (modèle réutilisable)
 
@@ -27,6 +30,7 @@ Références :
 - packages/ui, packages/api-client, packages/types
 - database/africatourismgate_database.sql, database/seeds/install.seed.sql
 - docs/roadmap-development.md, docs/production-domains.md
+- docs/admin-design-improvements.md, docs/web-design-improvements.md (PRs design uniquement)
 
 Règles :
 - Réutiliser les patterns existants (CrudService, BookingEngineService, composants admin, @africatourismgate/ui, api-client).
@@ -875,10 +879,24 @@ Critères : tests automatisés (#75) couvrent 2 orgs seed ; doc comportement mul
 | Fichier | Description |
 |---------|-------------|
 | [roadmap-prompts.md](./roadmap-prompts.md) | Roadmap v1 (historique, livrables 1–52) |
+| [roadmap-development-client-enhance.md](./roadmap-development-client-enhance.md) | Guides touristiques, réservation assistée (livrables CE-1 à CE-14) |
 | [roadmap-prompts.csv](./roadmap-prompts.csv) | Export CSV v1 |
 | [production-domains.md](./production-domains.md) | URLs prod, nginx, dépannage VPS |
 | [../README.md](../README.md) | Quick start monorepo |
 | [../apps/api/README.md](../apps/api/README.md) | API, db:sync, scripts |
+
+---
+
+## Documents design UX/UI (complémentaires)
+
+Ces roadmaps couvrent le **polish visuel** et la cohérence — à croiser avec les livrables fonctionnels ci-dessus (ex. #67–72 web) sans les mélanger dans une même PR si possible.
+
+| Application | Document | Commande dev | Préfixe branche |
+| ----------- | -------- | -------------- | --------------- |
+| Admin | [admin-design-improvements.md](./admin-design-improvements.md) | `pnpm dev:admin` | `feature/admin-ui-*` |
+| Site public | [web-design-improvements.md](./web-design-improvements.md) | `pnpm dev:web` | `feature/web-ui-*` |
+
+Composants partagés : `packages/ui`, `packages/config/theme.css` — toute extraction UI doit profiter aux deux apps quand c’est pertinent.
 
 ---
 
@@ -889,3 +907,5 @@ Critères : tests automatisés (#75) couvrent 2 orgs seed ; doc comportement mul
 - **Swagger** est la source de vérité pour les contrats API : http://localhost:3000/api
 - En cas de doute sur une page admin : chercher une page dédiée sous `apps/admin/app/(dashboard)/` avant le catch-all `[...segments]`.
 - Les tests Playwright web existants sont une référence pour les nouveaux parcours (#67–70).
+- Pour le design web sans feature : suivre [web-design-improvements.md](./web-design-improvements.md) ; commencer par **WEB-UX-1** (fondations).
+- Pour le design admin sans feature : suivre [admin-design-improvements.md](./admin-design-improvements.md) ; commencer par **UX-1**.

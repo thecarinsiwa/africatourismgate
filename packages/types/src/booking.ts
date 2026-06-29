@@ -1,7 +1,9 @@
 import type { Review } from './review.js';
+import type { BookingMode } from './tour-guide.js';
 
 export type BookingStatus =
   | 'draft'
+  | 'pending_approval'
   | 'pending_payment'
   | 'confirmed'
   | 'cancelled'
@@ -13,6 +15,10 @@ export type BookingCheckoutItemType =
   | 'vehicle'
   | 'cabin'
   | 'activity_schedule';
+
+export type BookingItemType =
+  | BookingCheckoutItemType
+  | 'package';
 
 export interface Booking {
   id: string;
@@ -40,8 +46,17 @@ export interface BookingCheckoutRequest {
   currency?: string;
   promoCode?: string;
   promotionId?: string;
+  /** Active package bundle — server validates items and applies package discount. */
+  packageId?: string;
   /** Staff only (e.g. POS): booking is owned by this user instead of the actor. */
   customerUserId?: string;
+}
+
+export interface AppliedPackageCheckoutDiscount {
+  packageId: string;
+  name: string;
+  discountPercent: number;
+  discountCents: number;
 }
 
 export interface AppliedCheckoutDiscount {
@@ -68,10 +83,13 @@ export interface BookingCheckoutLine {
 export interface BookingCheckoutPreview {
   lines: BookingCheckoutLine[];
   subtotalCents: number;
+  packageDiscountCents: number;
   discountCents: number;
   totalCents: number;
   currency: string;
+  appliedPackageDiscount: AppliedPackageCheckoutDiscount | null;
   appliedDiscount: AppliedCheckoutDiscount | null;
+  bookingMode: BookingMode;
 }
 
 export interface BookingItem {
@@ -88,6 +106,31 @@ export interface BookingItem {
   updatedAt: string | null;
 }
 
+export interface BookingRequestResponse {
+  bookingId: string;
+  status: 'pending_approval';
+  message: string;
+  totalCents: number;
+  currency: string;
+}
+
+export interface BookingMessage {
+  id: string;
+  bookingId: string;
+  userId: string | null;
+  body: string;
+  isStaff: boolean;
+  createdAt: string;
+}
+
+export interface BookingMessagesList {
+  messages: BookingMessage[];
+}
+
+export interface CreateBookingMessageRequest {
+  body: string;
+}
+
 export interface BookingDetail {
   booking: Booking;
   items: BookingItem[];
@@ -95,6 +138,9 @@ export interface BookingDetail {
   currency: string;
   review?: Review | null;
   canReview?: boolean;
+  statusHistory?: BookingStatusHistoryEntry[];
+  /** True when staff sent a Stripe checkout invite (pending stripe payment exists). */
+  paymentInvited?: boolean;
 }
 
 export interface BookingClient {
@@ -147,6 +193,16 @@ export interface RecordCashPaymentRequest {
   note?: string;
 }
 
+export interface RejectBookingRequest {
+  reason?: string;
+}
+
+export interface ApproveBookingRequest {
+  totalCents?: number;
+  reason?: string;
+  guides?: Array<{ guideId: string; role?: 'primary' | 'secondary' }>;
+}
+
 export interface BookingPaymentIntentResponse {
   paymentId: string;
   paymentIntentId: string;
@@ -188,4 +244,30 @@ export interface BookingsListQuery {
   organizationId?: string;
   dateFrom?: string;
   dateTo?: string;
+  /** Tri par date de création (`createdAt`). */
+  sortOrder?: 'asc' | 'desc';
+}
+
+export interface BookingItemListItem {
+  id: string;
+  bookingId: string;
+  itemType: BookingItemType;
+  referenceId: string;
+  titleSnapshot: string;
+  quantity: number;
+  unitPriceCents: number;
+  lineTotalCents: number;
+  startDate: string | null;
+  endDate: string | null;
+  bookingStatus: BookingStatus;
+  currency: string;
+  createdAt: string;
+}
+
+export interface BookingItemsListQuery {
+  page?: number;
+  limit?: number;
+  itemType?: BookingItemType;
+  status?: BookingStatus;
+  bookingId?: string;
 }

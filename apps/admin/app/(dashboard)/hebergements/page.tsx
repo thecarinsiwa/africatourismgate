@@ -1,20 +1,11 @@
 import type { Metadata } from 'next';
-import { PropertiesList } from '../../../components/properties/properties-list';
+import { getAdminPageMetadata } from '../../../lib/i18n/admin-page-i18n';
+import { HebergementsPageContent } from '../../../components/pages/hebergements-page-content';
 
-export const metadata: Metadata = {
-  title: 'Hébergements — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('hebergements');
+}
 
-export default function HebergementsPage() {
-  return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Hébergements</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Propriétés, chambres et équipements. Filtre par destination.
-        </p>
-      </div>
-      <PropertiesList />
-    </div>
-  );
+export default function Page() {
+  return <HebergementsPageContent />;
 }

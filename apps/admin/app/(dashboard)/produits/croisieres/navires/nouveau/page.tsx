@@ -1,20 +1,11 @@
 import type { Metadata } from 'next';
-import { ShipForm } from '../../../../../../components/cruises/ship-form';
+import { getAdminPageMetadata } from '../../../../../../lib/i18n/admin-page-i18n';
+import { NouveauNavirePageContent } from '../../../../../../components/pages/produits-croisieres-navires-nouveau-page-content';
 
-export const metadata: Metadata = {
-  title: 'Nouveau navire — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('produits/croisieres/navires/nouveau');
+}
 
-export default function NouveauNavirePage() {
-  return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Nouveau navire</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Créez un navire puis ajoutez itinéraires et cabines.
-        </p>
-      </div>
-      <ShipForm mode="create" />
-    </div>
-  );
+export default function Page() {
+  return <NouveauNavirePageContent />;
 }

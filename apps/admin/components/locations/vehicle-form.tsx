@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import { Button, Input } from '@africatourismgate/ui';
 import type {
   CreateVehicleRequest,
@@ -7,10 +9,10 @@ import type {
   Vehicle,
   VehicleCategory,
 } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useId, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getLocationsErrorMessage } from '../../lib/locations-errors';
 
 export type VehicleFormValues = {
   agencyId: string;
@@ -57,6 +59,10 @@ type VehicleFormProps = {
 };
 
 export function VehicleForm({ mode, vehicleId, initialVehicle }: VehicleFormProps) {
+  const { locations: getLocationsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.locations.form');
+  const tActions = useTranslations('common.actions');
+  const tCommon = useTranslations('modules.common');
   const router = useRouter();
   const agencyId = useId();
   const categoryId = useId();
@@ -96,14 +102,14 @@ export function VehicleForm({ mode, vehicleId, initialVehicle }: VehicleFormProp
 
   function validate(): boolean {
     const errors: Partial<Record<keyof VehicleFormValues, string>> = {};
-    if (!values.agencyId) errors.agencyId = 'Agence obligatoire.';
-    if (!values.categoryId) errors.categoryId = 'Catégorie obligatoire.';
+    if (!values.agencyId) errors.agencyId = t('validation.agencyRequired');
+    if (!values.categoryId) errors.categoryId = t('validation.categoryRequired');
     const cents = Number(values.dailyPriceCents);
     if (!Number.isFinite(cents) || cents < 0) {
-      errors.dailyPriceCents = 'Prix invalide (centimes).';
+      errors.dailyPriceCents = tCommon('validation.invalidPriceCents');
     }
     if (values.currency.trim().length !== 3) {
-      errors.currency = 'Devise à 3 lettres (ex. USD).';
+      errors.currency = tCommon('validation.currencyThreeLettersExample');
     }
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
@@ -147,7 +153,7 @@ export function VehicleForm({ mode, vehicleId, initialVehicle }: VehicleFormProp
 
       <div>
         <label htmlFor={agencyId} className="mb-2 block text-sm font-medium text-atg-fg">
-          Agence de location
+          {t('rentalAgency')}
         </label>
         <select
           id={agencyId}
@@ -155,7 +161,7 @@ export function VehicleForm({ mode, vehicleId, initialVehicle }: VehicleFormProp
           value={values.agencyId}
           onChange={(e) => updateField('agencyId', e.target.value)}
         >
-          <option value="">— Choisir —</option>
+          <option value="">{tCommon('select.chooseDash')}</option>
           {agencies.map((a) => (
             <option key={a.id} value={a.id}>
               {a.name}
@@ -169,7 +175,7 @@ export function VehicleForm({ mode, vehicleId, initialVehicle }: VehicleFormProp
 
       <div>
         <label htmlFor={categoryId} className="mb-2 block text-sm font-medium text-atg-fg">
-          Catégorie
+          {t('category')}
         </label>
         <select
           id={categoryId}
@@ -177,7 +183,7 @@ export function VehicleForm({ mode, vehicleId, initialVehicle }: VehicleFormProp
           value={values.categoryId}
           onChange={(e) => updateField('categoryId', e.target.value)}
         >
-          <option value="">— Choisir —</option>
+          <option value="">{tCommon('select.chooseDash')}</option>
           {categories.map((c) => (
             <option key={c.id} value={c.id}>
               {c.name}
@@ -191,15 +197,15 @@ export function VehicleForm({ mode, vehicleId, initialVehicle }: VehicleFormProp
       </div>
 
       <Input
-        label="Plaque d’immatriculation"
+        label={t('licensePlate')}
         value={values.licensePlate}
         onChange={(e) => updateField('licensePlate', e.target.value.toUpperCase())}
-        hint="Optionnel"
+        hint={tCommon('form.optional')}
       />
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Input
-          label="Prix journalier (centimes)"
+          label={t('dailyPriceCents')}
           type="number"
           min={0}
           value={values.dailyPriceCents}
@@ -207,7 +213,7 @@ export function VehicleForm({ mode, vehicleId, initialVehicle }: VehicleFormProp
           error={fieldErrors.dailyPriceCents}
         />
         <Input
-          label="Devise"
+          label={tCommon('form.currency')}
           maxLength={3}
           value={values.currency}
           onChange={(e) => updateField('currency', e.target.value.toUpperCase())}
@@ -217,10 +223,10 @@ export function VehicleForm({ mode, vehicleId, initialVehicle }: VehicleFormProp
 
       <div className="flex flex-wrap gap-3 pt-2">
         <Button type="submit" loading={submitting}>
-          {mode === 'create' ? 'Créer le véhicule' : 'Enregistrer'}
+          {mode === 'create' ? t('submitCreate') : tActions('save')}
         </Button>
         <Button type="button" variant="outline" href="/produits/locations">
-          Annuler
+          {tActions('cancel')}
         </Button>
       </div>
     </form>

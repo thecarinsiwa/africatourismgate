@@ -133,7 +133,8 @@ function resolveInitialOpenGroupId(
   const defaultOpen = navItems.find((e) => e.type === 'group' && e.defaultOpen);
   if (defaultOpen?.type === 'group') return defaultOpen.id;
 
-  return readStoredOpenGroupId(navItems);
+  // localStorage is restored after mount — reading it here causes hydration mismatch.
+  return null;
 }
 
 function CloseIcon() {
@@ -212,14 +213,22 @@ function SidebarNavGroupRow({
   const groupActive = isGroupActive(pathname, group.children, allHrefs);
 
   return (
-    <div className="flex flex-col">
+    <div className="relative flex flex-col">
+      {groupActive ? (
+        <span
+          aria-hidden
+          className="absolute bottom-1 left-0 top-1 w-1 rounded-full bg-primary"
+        />
+      ) : null}
       <button
         type="button"
         onClick={onToggle}
         className={cn(
-          'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-colors',
+          'flex w-full items-center gap-3 rounded-lg py-2.5 pl-3 pr-3 text-left text-sm font-medium transition-colors',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
-          groupActive ? 'text-primary' : 'text-atg-muted hover:bg-atg-surface/80 hover:text-atg-fg',
+          groupActive
+            ? 'bg-primary/8 text-primary'
+            : 'text-atg-muted hover:bg-atg-surface/80 hover:text-atg-fg',
         )}
         aria-expanded={open}
         aria-controls={panelId}
@@ -255,7 +264,7 @@ function SidebarContent({
   navItems,
   logo,
   onMobileClose,
-  closeMenuLabel = 'Fermer le menu',
+  closeMenuLabel = 'Close menu',
   openGroupId,
   onGroupToggle,
 }: SidebarContentProps) {
@@ -343,6 +352,11 @@ export function Sidebar({
     if (activeId) {
       setOpenGroupId(activeId);
       writeStoredOpenGroupId(activeId);
+      return;
+    }
+    const stored = readStoredOpenGroupId(navItems);
+    if (stored) {
+      setOpenGroupId(stored);
     }
   }, [pathname, navItems]);
 

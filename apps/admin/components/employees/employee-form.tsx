@@ -1,15 +1,17 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import { Button, Input } from '@africatourismgate/ui';
 import type {
   CreateEmployeeRequest,
   Employee,
   EmployeeStatus,
-  Organization,
+  OrganizationListItem,
   UpdateEmployeeRequest,
   User,
 } from '@africatourismgate/types';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { suggestNextEmployeeCode } from '../../lib/employee-code';
@@ -18,7 +20,6 @@ import {
   dayBefore,
   employmentDateFieldErrors,
 } from '../../lib/employee-dates';
-import { getEmployeesErrorMessage } from '../../lib/employees-errors';
 
 export type EmployeeFormValues = {
   userId: string;
@@ -111,16 +112,25 @@ type EmployeeFormProps = {
 };
 
 export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeFormProps) {
+  const { employees: getEmployeesErrorMessage } = useAdminErrorMessages();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const defaultOrganizationId = searchParams.get('organizationId') ?? '';
   const userId = useId();
   const orgId = useId();
   const managerId = useId();
   const statusId = useId();
-  const [values, setValues] = useState<EmployeeFormValues>(() =>
-    initialEmployee ? employeeToFormValues(initialEmployee) : defaultValues,
-  );
+  const [values, setValues] = useState<EmployeeFormValues>(() => {
+    if (initialEmployee) {
+      return employeeToFormValues(initialEmployee);
+    }
+    return {
+      ...defaultValues,
+      ...(defaultOrganizationId ? { organizationId: defaultOrganizationId } : {}),
+    };
+  });
   const [users, setUsers] = useState<User[]>([]);
-  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [organizations, setOrganizations] = useState<OrganizationListItem[]>([]);
   const [existingEmployees, setExistingEmployees] = useState<Employee[]>([]);
   const [managers, setManagers] = useState<Employee[]>([]);
   const [fieldErrors, setFieldErrors] = useState<
@@ -171,6 +181,11 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
     );
   }, [mode, values.organizationId, organizations, existingEmployees]);
 
+  const linkedUserIds = useMemo(
+    () => new Set(existingEmployees.map((employee) => employee.userId)),
+    [existingEmployees],
+  );
+
   const userOptions = useMemo(() => {
     if (mode === 'edit' && initialEmployee?.user) {
       const hasCurrent = users.some((u) => u.id === initialEmployee.userId);
@@ -186,8 +201,13 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
         ];
       }
     }
+
+    if (mode === 'create') {
+      return users.filter((user) => !linkedUserIds.has(user.id));
+    }
+
     return users;
-  }, [mode, initialEmployee, users]);
+  }, [mode, initialEmployee, linkedUserIds, users]);
 
   const updateField = useCallback(
     <K extends keyof EmployeeFormValues>(key: K, value: EmployeeFormValues[K]) => {
@@ -201,6 +221,8 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
     const errors: Partial<Record<keyof EmployeeFormValues, string>> = {};
     if (!values.userId) {
       errors.userId = 'L’utilisateur lié est obligatoire.';
+    } else if (mode === 'create' && linkedUserIds.has(values.userId)) {
+      errors.userId = 'Cet utilisateur possède déjà un profil employé.';
     }
     if (values.salary.trim()) {
       const n = Number.parseFloat(values.salary);
@@ -269,6 +291,12 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
         </select>
         {fieldErrors.userId ? (
           <p className="mt-1 text-sm text-red-600 dark:text-red-400">{fieldErrors.userId}</p>
+        ) : null}
+        {mode === 'create' ? (
+          <p className="mt-1 text-xs text-atg-muted">
+            Un utilisateur ne peut être lié qu’à un seul profil employé.
+            {userOptions.length === 0 ? ' Aucun utilisateur disponible.' : null}
+          </p>
         ) : null}
         {mode === 'edit' ? (
           <p className="mt-1 text-xs text-atg-muted">

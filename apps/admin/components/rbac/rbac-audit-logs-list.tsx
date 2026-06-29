@@ -1,52 +1,154 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
+  Avatar,
   Card,
-  DataTable,
-  DataTableBadge,
   DataTablePagination,
-  type ColumnDef,
+  FilterBar,
+  Skeleton,
+  useToast,
 } from '@africatourismgate/ui';
-import {
-  RBAC_AUDIT_EVENT_LABELS,
-  RBAC_AUDIT_EVENT_TYPES,
-} from '@africatourismgate/types/rbac';
+import { RBAC_AUDIT_EVENT_TYPES } from '@africatourismgate/types/rbac';
 import type {
   RbacAuditEventType,
   RbacAuditLog,
   User,
 } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getRbacErrorMessage } from '../../lib/rbac-errors';
+import { useFormatDateTime } from '../../lib/i18n/use-module-labels';
+import { UserIdFilterBar } from '../users/user-id-filter-bar';
 import { RbacSubnav } from './rbac-subnav';
 
 const PAGE_SIZE = 20;
 
-function formatDateTime(iso: string): string {
-  try {
-    return new Date(iso).toLocaleString('fr-FR', {
-      dateStyle: 'short',
-      timeStyle: 'medium',
-    });
-  } catch {
-    return iso;
+function eventIcon(eventType: RbacAuditEventType): string {
+  if (eventType.startsWith('role_') && !eventType.includes('permission')) return '🛡';
+  if (eventType.startsWith('permission_') || eventType.includes('permission')) return '🔑';
+  if (eventType.startsWith('user_role_')) return '👤';
+  if (eventType.startsWith('impersonation_')) return '🎭';
+  if (eventType === 'permission_denied') return '🔒';
+  return '📋';
+}
+
+function eventAccentClass(eventType: RbacAuditEventType): string {
+  if (eventType === 'permission_denied') {
+    return 'bg-atg-danger-light text-atg-danger-fg ring-atg-danger/25';
   }
+  if (eventType.startsWith('user_role_granted') || eventType.includes('granted')) {
+    return 'bg-atg-success-light text-atg-success-fg ring-atg-success/25';
+  }
+  if (eventType.includes('revoked') || eventType.includes('deleted')) {
+    return 'bg-atg-warning-light text-atg-warning-fg ring-atg-warning/25';
+  }
+  return 'bg-atg-surface text-atg-fg ring-atg-border/80';
 }
 
-function payloadPreview(payload: Record<string, unknown> | null): string {
-  if (!payload) return '—';
-  const text = JSON.stringify(payload);
-  return text.length > 80 ? `${text.slice(0, 80)}…` : text;
+function AuditTimelineItem({ log }: { log: RbacAuditLog }) {
+  const formatDateTime = useFormatDateTime('mediumTime');
+  const t = useTranslations('modules.rbac.audit');
+  const [expanded, setExpanded] = useState(false);
+  const hasPayload = log.payload && Object.keys(log.payload).length > 0;
+
+  const label = t(`eventTypes.${log.eventType}`);
+
+  return (
+    <li className="relative pl-10">
+      <span
+        className={`absolute left-0 top-1 flex h-8 w-8 items-center justify-center rounded-full text-sm ring-1 ring-inset ${eventAccentClass(log.eventType)}`}
+        aria-hidden
+      >
+        {eventIcon(log.eventType)}
+      </span>
+      <Card variant="dashboard" padding="md" className="space-y-3">
+        <div className="flex flex-wrap items-start justify-between gap-2">
+          <div>
+            <p className="font-medium text-atg-fg">{label}</p>
+            <p className="mt-0.5 text-xs text-atg-muted">{formatDateTime(log.createdAt)}</p>
+          </div>
+          {hasPayload ? (
+            <button
+              type="button"
+              onClick={() => setExpanded((value) => !value)}
+              className="text-xs font-medium text-primary hover:underline"
+              aria-expanded={expanded}
+            >
+              {expanded ? t('hideDetail') : t('showDetailJson')}
+            </button>
+          ) : null}
+        </div>
+
+        {log.actor ? (
+          <div className="flex items-center gap-3">
+            <Avatar
+              email={log.actor.email}
+              firstName={log.actor.firstName}
+              lastName={log.actor.lastName}
+              size="sm"
+            />
+            <div className="min-w-0 text-sm">
+              <p className="font-medium text-atg-fg">
+                {log.actor.firstName} {log.actor.lastName}
+              </p>
+              <p className="truncate text-xs text-atg-muted">{log.actor.email}</p>
+            </div>
+          </div>
+        ) : log.actorUserId ? (
+          <p className="text-sm text-atg-muted">
+            {t('actorFallback', { actorId: log.actorUserId.slice(0, 8) })}
+          </p>
+        ) : null}
+
+        <dl className="grid gap-1 text-xs text-atg-muted sm:grid-cols-2">
+          {log.targetUserId ? (
+            <div>
+              <dt className="inline font-medium">{t('targetLabel')} </dt>
+              <dd className="inline font-mono">{log.targetUserId.slice(0, 8)}…</dd>
+            </div>
+          ) : null}
+          {log.ipAddress ? (
+            <div>
+              <dt className="inline font-medium">{t('ipLabel')} </dt>
+              <dd className="inline">{log.ipAddress}</dd>
+            </div>
+          ) : null}
+        </dl>
+
+        {hasPayload && expanded ? (
+          <pre className="max-h-80 overflow-x-auto rounded-lg bg-atg-elevated p-3 text-xs text-atg-fg">
+            {JSON.stringify(log.payload, null, 2)}
+          </pre>
+        ) : null}
+      </Card>
+    </li>
+  );
 }
 
-export function RbacAuditLogsList({ showSubnav = true }: { showSubnav?: boolean }) {
+export function RbacAuditLogsList({
+  showSubnav = true,
+  userFilterMode = showSubnav ? 'actor' : 'involved',
+}: {
+  showSubnav?: boolean;
+  userFilterMode?: 'actor' | 'involved';
+}) {
+  const { rbac: getRbacErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.rbac.audit');
+  const tFilters = useTranslations('modules.common.filters');
+  const { toast } = useToast();
   const [page, setPage] = useState(1);
   const [filterTick, setFilterTick] = useState(0);
-  const [dateFrom, setDateFrom] = useState('');
-  const [dateTo, setDateTo] = useState('');
-  const [eventType, setEventType] = useState<RbacAuditEventType | ''>('');
-  const [actorUserId, setActorUserId] = useState('');
+  const [draftDateFrom, setDraftDateFrom] = useState('');
+  const [draftDateTo, setDraftDateTo] = useState('');
+  const [draftEventType, setDraftEventType] = useState<RbacAuditEventType | ''>('');
+  const [draftActorUserId, setDraftActorUserId] = useState('');
+  const [appliedDateFrom, setAppliedDateFrom] = useState('');
+  const [appliedDateTo, setAppliedDateTo] = useState('');
+  const [appliedEventType, setAppliedEventType] = useState<RbacAuditEventType | ''>('');
+  const [appliedActorUserId, setAppliedActorUserId] = useState('');
+  const [userIdFilter, setUserIdFilter] = useState('');
   const [users, setUsers] = useState<User[]>([]);
   const [access, setAccess] = useState<
     | { status: 'checking' }
@@ -78,7 +180,7 @@ export function RbacAuditLogsList({ showSubnav = true }: { showSubnav?: boolean 
   }, []);
 
   useEffect(() => {
-    if (access.status !== 'allowed') return;
+    if (access.status !== 'allowed' || userFilterMode === 'involved') return;
     let cancelled = false;
     async function loadUsers() {
       try {
@@ -96,7 +198,52 @@ export function RbacAuditLogsList({ showSubnav = true }: { showSubnav?: boolean 
     return () => {
       cancelled = true;
     };
-  }, [access.status]);
+  }, [access.status, userFilterMode]);
+
+  const handleUserIdChange = useCallback((userId: string) => {
+    setUserIdFilter(userId);
+    setPage(1);
+    setFilterTick((tick) => tick + 1);
+  }, []);
+
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (appliedDateFrom) count += 1;
+    if (appliedDateTo) count += 1;
+    if (appliedEventType) count += 1;
+    if (userFilterMode === 'actor' && appliedActorUserId) count += 1;
+    if (userFilterMode === 'involved' && userIdFilter) count += 1;
+    return count;
+  }, [
+    appliedDateFrom,
+    appliedDateTo,
+    appliedEventType,
+    appliedActorUserId,
+    userFilterMode,
+    userIdFilter,
+  ]);
+
+  const applyFilters = useCallback(() => {
+    setAppliedDateFrom(draftDateFrom);
+    setAppliedDateTo(draftDateTo);
+    setAppliedEventType(draftEventType);
+    setAppliedActorUserId(draftActorUserId);
+    setPage(1);
+    setFilterTick((tick) => tick + 1);
+  }, [draftDateFrom, draftDateTo, draftEventType, draftActorUserId]);
+
+  const clearFilters = useCallback(() => {
+    setDraftDateFrom('');
+    setDraftDateTo('');
+    setDraftEventType('');
+    setDraftActorUserId('');
+    setAppliedDateFrom('');
+    setAppliedDateTo('');
+    setAppliedEventType('');
+    setAppliedActorUserId('');
+    setPage(1);
+    setFilterTick((tick) => tick + 1);
+  }, []);
 
   const load = useCallback(async () => {
     void filterTick;
@@ -106,10 +253,11 @@ export function RbacAuditLogsList({ showSubnav = true }: { showSubnav?: boolean 
       const result = await getApiClient().listRbacAuditLogs({
         page,
         limit: PAGE_SIZE,
-        dateFrom: dateFrom || undefined,
-        dateTo: dateTo || undefined,
-        eventType: eventType || undefined,
-        actorUserId: actorUserId || undefined,
+        dateFrom: appliedDateFrom || undefined,
+        dateTo: appliedDateTo || undefined,
+        eventType: appliedEventType || undefined,
+        actorUserId: userFilterMode === 'actor' ? appliedActorUserId || undefined : undefined,
+        userId: userFilterMode === 'involved' ? userIdFilter || undefined : undefined,
       });
       setState({
         status: 'ready',
@@ -118,93 +266,103 @@ export function RbacAuditLogsList({ showSubnav = true }: { showSubnav?: boolean 
         totalPages: result.meta.totalPages,
       });
     } catch (error) {
-      setState({ status: 'error', message: getRbacErrorMessage(error) });
+      const message = getRbacErrorMessage(error);
+      setState({ status: 'error', message });
+      toast({
+        title: t('toast.loadFailedTitle'),
+        message,
+        variant: 'error',
+      });
     }
-  }, [access.status, page, dateFrom, dateTo, eventType, actorUserId, filterTick]);
+  }, [
+    access.status,
+    page,
+    appliedDateFrom,
+    appliedDateTo,
+    appliedEventType,
+    appliedActorUserId,
+    userIdFilter,
+    userFilterMode,
+    filterTick,
+    toast,
+    t,
+    getRbacErrorMessage,
+  ]);
 
   useEffect(() => {
     void load();
   }, [load]);
 
-  const applyFilters = useCallback(() => {
-    setPage(1);
-    setFilterTick((t) => t + 1);
-  }, []);
-
-  const columns = useMemo<ColumnDef<RbacAuditLog, unknown>[]>(
-    () => [
-      {
-        accessorKey: 'createdAt',
-        header: 'Date',
-        cell: ({ row }) => (
-          <span className="whitespace-nowrap text-sm">
-            {formatDateTime(row.original.createdAt)}
-          </span>
-        ),
-      },
-      {
-        accessorKey: 'eventType',
-        header: 'Action',
-        cell: ({ row }) => (
-          <DataTableBadge variant="muted">
-            {RBAC_AUDIT_EVENT_LABELS[row.original.eventType] ?? row.original.eventType}
-          </DataTableBadge>
-        ),
-      },
-      {
-        id: 'actor',
-        header: 'Acteur',
-        cell: ({ row }) => {
-          const log = row.original;
-          return log.actor ? (
-            <span className="text-sm">
-              {log.actor.firstName} {log.actor.lastName}
-              <span className="block text-xs text-atg-muted">{log.actor.email}</span>
-            </span>
-          ) : (
-            <span className="text-sm text-atg-muted">{log.actorUserId ?? '—'}</span>
-          );
-        },
-      },
-      {
-        id: 'target',
-        header: 'Cible',
-        cell: ({ row }) => (
-          <span className="font-mono text-xs text-atg-muted">
-            {row.original.targetUserId
-              ? `${row.original.targetUserId.slice(0, 8)}…`
-              : '—'}
-          </span>
-        ),
-      },
-      {
-        accessorKey: 'ipAddress',
-        header: 'IP',
-        cell: ({ row }) => (
-          <span className="text-sm text-atg-muted">{row.original.ipAddress ?? '—'}</span>
-        ),
-      },
-      {
-        id: 'payload',
-        header: 'Détail',
-        cell: ({ row }) => (
-          <span
-            className="max-w-xs truncate text-xs text-atg-muted"
-            title={payloadPreview(row.original.payload)}
+  const filterControls = (
+    <>
+      <div>
+        <label className="mb-1 block text-xs font-medium text-atg-muted">
+          {tFilters('dateFrom')}
+        </label>
+        <input
+          type="date"
+          value={draftDateFrom}
+          onChange={(event) => setDraftDateFrom(event.target.value)}
+          className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm"
+        />
+      </div>
+      <div>
+        <label className="mb-1 block text-xs font-medium text-atg-muted">
+          {tFilters('dateTo')}
+        </label>
+        <input
+          type="date"
+          value={draftDateTo}
+          onChange={(event) => setDraftDateTo(event.target.value)}
+          className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm"
+        />
+      </div>
+      <div>
+        <label className="mb-1 block text-xs font-medium text-atg-muted">
+          {t('filters.eventType')}
+        </label>
+        <select
+          value={draftEventType}
+          onChange={(event) =>
+            setDraftEventType(event.target.value as RbacAuditEventType | '')
+          }
+          className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm"
+        >
+          <option value="">{tFilters('all')}</option>
+          {RBAC_AUDIT_EVENT_TYPES.map((type) => (
+            <option key={type} value={type}>
+              {t(`eventTypes.${type}`)}
+            </option>
+          ))}
+        </select>
+      </div>
+      {userFilterMode === 'actor' ? (
+        <div>
+          <label className="mb-1 block text-xs font-medium text-atg-muted">
+            {t('filters.actorUser')}
+          </label>
+          <select
+            value={draftActorUserId}
+            onChange={(event) => setDraftActorUserId(event.target.value)}
+            className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm"
           >
-            {payloadPreview(row.original.payload)}
-          </span>
-        ),
-      },
-    ],
-    [],
+            <option value="">{tFilters('all')}</option>
+            {users.map((user) => (
+              <option key={user.id} value={user.id}>
+                {user.firstName} {user.lastName} — {user.email}
+              </option>
+            ))}
+          </select>
+        </div>
+      ) : null}
+    </>
   );
 
   if (access.status === 'checking') {
     return (
       <>
         {showSubnav ? <RbacSubnav /> : null}
-        <p className="text-sm text-atg-muted">Vérification des droits…</p>
+        <p className="text-sm text-atg-muted">{t('checkingAccess')}</p>
       </>
     );
   }
@@ -215,86 +373,31 @@ export function RbacAuditLogsList({ showSubnav = true }: { showSubnav?: boolean 
         {showSubnav ? <RbacSubnav /> : null}
         <Card className="p-6">
           <p role="alert" className="text-sm text-red-600">
-            Cette page est réservée au super administrateur. Connectez-vous avec{' '}
-            <strong>admin@africatourismgate.local</strong> ou un compte disposant du rôle{' '}
-            <code className="rounded bg-atg-elevated px-1">super_admin</code>.
+            {t('accessDenied')}
           </p>
         </Card>
       </>
     );
   }
 
+  const logs = state.status === 'ready' ? state.logs : [];
+
   return (
     <>
       {showSubnav ? <RbacSubnav /> : null}
 
-      <Card className="mb-6 p-4">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div>
-            <label className="mb-1 block text-xs font-medium text-atg-muted">
-              Date début
-            </label>
-            <input
-              type="date"
-              value={dateFrom}
-              onChange={(e) => setDateFrom(e.target.value)}
-              className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm"
-            />
-          </div>
-          <div>
-            <label className="mb-1 block text-xs font-medium text-atg-muted">Date fin</label>
-            <input
-              type="date"
-              value={dateTo}
-              onChange={(e) => setDateTo(e.target.value)}
-              className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm"
-            />
-          </div>
-          <div>
-            <label className="mb-1 block text-xs font-medium text-atg-muted">
-              Type d&apos;événement
-            </label>
-            <select
-              value={eventType}
-              onChange={(e) => setEventType(e.target.value as RbacAuditEventType | '')}
-              className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm"
-            >
-              <option value="">Tous</option>
-              {RBAC_AUDIT_EVENT_TYPES.map((type) => (
-                <option key={type} value={type}>
-                  {RBAC_AUDIT_EVENT_LABELS[type]}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="mb-1 block text-xs font-medium text-atg-muted">
-              Utilisateur (acteur)
-            </label>
-            <select
-              value={actorUserId}
-              onChange={(e) => setActorUserId(e.target.value)}
-              className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm"
-            >
-              <option value="">Tous</option>
-              {users.map((u) => (
-                <option key={u.id} value={u.id}>
-                  {u.firstName} {u.lastName} — {u.email}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-        <div className="mt-4 flex justify-end">
-          <button
-            type="button"
-            onClick={applyFilters}
-            className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90"
-          >
-            Appliquer les filtres
-          </button>
-        </div>
-      </Card>
+      {userFilterMode === 'involved' ? (
+        <UserIdFilterBar onUserIdChange={handleUserIdChange} onUsersLoaded={setUsers} />
+      ) : null}
+
+      <FilterBar
+        activeCount={activeFilterCount}
+        filters={filterControls}
+        onClear={clearFilters}
+        onApply={applyFilters}
+        className="mb-6"
+        mobileVariant="drawer"
+      />
 
       {state.status === 'error' ? (
         <p role="alert" className="mb-4 text-sm text-red-600">
@@ -302,12 +405,23 @@ export function RbacAuditLogsList({ showSubnav = true }: { showSubnav?: boolean 
         </p>
       ) : null}
 
-      <DataTable
-        columns={columns}
-        data={state.status === 'ready' ? state.logs : []}
-        isLoading={state.status === 'loading'}
-        emptyMessage="Aucun événement pour ces critères."
-      />
+      {state.status === 'loading' ? (
+        <div className="space-y-4">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <Skeleton key={index} className="h-28 rounded-xl" />
+          ))}
+        </div>
+      ) : logs.length === 0 ? (
+        <Card variant="dashboard" padding="lg">
+          <p className="text-sm text-atg-muted">{t('empty')}</p>
+        </Card>
+      ) : (
+        <ol className="relative space-y-6 border-l border-atg-border pl-4">
+          {logs.map((log) => (
+            <AuditTimelineItem key={log.id} log={log} />
+          ))}
+        </ol>
+      )}
 
       {state.status === 'ready' && state.totalPages > 1 ? (
         <DataTablePagination
@@ -315,8 +429,9 @@ export function RbacAuditLogsList({ showSubnav = true }: { showSubnav?: boolean 
           pageSize={PAGE_SIZE}
           totalPages={state.totalPages}
           totalItems={state.total}
-          itemLabel="événement"
+          itemLabel={t('paginationItem')}
           onPageChange={setPage}
+          className="mt-6"
         />
       ) : null}
     </>

@@ -1,53 +1,49 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   DataTableBadge,
   DataTablePagination,
+  EmptyState,
+  StarRatingDisplay,
+  useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
-import type {
-  AdminReviewListItem,
-  Property,
-  ReviewStatus,
-} from '@africatourismgate/types';
+import type { AdminReviewListItem, Property, ReviewStatus } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getReviewsErrorMessage } from '../../lib/reviews-errors';
+import {
+  useFormatDateTime,
+  useReviewStatusFilterOptions,
+  useReviewStatusLabels,
+} from '../../lib/i18n/use-module-labels';
+import {
+  formatReviewPreview,
+  reviewStatusVariants,
+} from '../../lib/review-display';
 
 const PAGE_SIZE = 20;
 
-const statusLabels: Record<ReviewStatus, string> = {
-  pending: 'En attente',
-  approved: 'Approuvé',
-  hidden: 'Masqué',
-};
-
-const statusVariants: Record<ReviewStatus, 'success' | 'warning' | 'muted'> = {
-  pending: 'warning',
-  approved: 'success',
-  hidden: 'muted',
-};
-
-function formatDateTime(iso: string): string {
-  try {
-    return new Date(iso).toLocaleString('fr-FR', {
-      dateStyle: 'short',
-      timeStyle: 'short',
-    });
-  } catch {
-    return iso;
-  }
-}
-
-function formatEntity(row: AdminReviewListItem): string {
-  const shortId = row.entityId.slice(0, 8);
-  return `${row.entityType} · ${shortId}…`;
-}
-
 export function ReviewsList() {
+  const { reviews: getReviewsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.reviews');
+  const tList = useTranslations('modules.reviews.list');
+  const tColumns = useTranslations('modules.common.columns');
+  const tCommon = useTranslations('modules.common');
+  const tActions = useTranslations('common.actions');
+  const tPagination = useTranslations('modules.common.pagination');
+  const formatDateTime = useFormatDateTime();
+  const statusLabels = useReviewStatusLabels();
+  const statusOptions = useReviewStatusFilterOptions();
+  const { toast } = useToast();
   const ratingFilterId = useId();
   const propertyFilterId = useId();
   const statusFilterId = useId();
@@ -56,11 +52,12 @@ export function ReviewsList() {
   const [filterTick, setFilterTick] = useState(0);
   const [ratingFilter, setRatingFilter] = useState('');
   const [propertyFilter, setPropertyFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'' | ReviewStatus>('');
+  const [statusFilter, setStatusFilter] = useState<'' | ReviewStatus>('pending');
   const [properties, setProperties] = useState<Property[]>([]);
   const [canWrite, setCanWrite] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
   const [actingId, setActingId] = useState<string | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<AdminReviewListItem | null>(null);
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -122,7 +119,7 @@ export function ReviewsList() {
     } catch (error) {
       setState({ status: 'error', message: getReviewsErrorMessage(error) });
     }
-  }, [page, ratingFilter, propertyFilter, statusFilter, filterTick]);
+  }, [page, ratingFilter, propertyFilter, statusFilter, filterTick, getReviewsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -138,19 +135,32 @@ export function ReviewsList() {
       review: AdminReviewListItem,
       action: 'approve' | 'hide' | 'delete',
     ) => {
-      if (action === 'delete') {
-        if (!window.confirm('Supprimer cet avis (suppression logique) ?')) return;
-      }
       setActionError(null);
       setActingId(review.id);
       try {
         const client = getApiClient();
         if (action === 'approve') {
           await client.updateReviewStatus(review.id, { status: 'approved' });
+          toast({
+            variant: 'success',
+            title: t('toast.approved.title'),
+            message: t('toast.approved.message'),
+          });
         } else if (action === 'hide') {
           await client.updateReviewStatus(review.id, { status: 'hidden' });
+          toast({
+            variant: 'success',
+            title: t('toast.hidden.title'),
+            message: t('toast.hidden.message'),
+          });
         } else {
           await client.deleteReview(review.id);
+          toast({
+            variant: 'success',
+            title: t('toast.deleted.title'),
+            message: t('toast.deleted.message'),
+          });
+          setPendingDelete(null);
         }
         await load();
       } catch (error) {
@@ -159,28 +169,33 @@ export function ReviewsList() {
         setActingId(null);
       }
     },
-    [load],
+    [load, toast, t, getReviewsErrorMessage],
   );
+
+  const confirmDelete = useCallback(async () => {
+    if (!pendingDelete) return;
+    await runAction(pendingDelete, 'delete');
+  }, [pendingDelete, runAction]);
+
+  const emptyDash = tCommon('empty.dash');
 
   const columns = useMemo<ColumnDef<AdminReviewListItem, unknown>[]>(
     () => [
       {
         accessorKey: 'rating',
-        header: 'Note',
+        header: tColumns('rating'),
         meta: { align: 'center' },
         cell: ({ row }) => (
-          <span className="tabular-nums text-sm font-semibold text-atg-fg">
-            {row.original.rating}/5
-          </span>
+          <StarRatingDisplay value={row.original.rating} size="sm" showValue />
         ),
       },
       {
         id: 'author',
-        header: 'Auteur',
+        header: tList('columns.author'),
         cell: ({ row }) => (
           <div>
             <span className="font-medium text-atg-fg">
-              {row.original.authorFirstName?.trim() || '—'}
+              {row.original.authorFirstName?.trim() || emptyDash}
             </span>
             {row.original.authorEmail ? (
               <p className="text-xs text-atg-muted">{row.original.authorEmail}</p>
@@ -189,20 +204,26 @@ export function ReviewsList() {
         ),
       },
       {
-        id: 'entity',
-        header: 'Entité',
-        cell: ({ row }) => (
-          <span className="font-mono text-xs text-atg-muted">
-            {formatEntity(row.original)}
-          </span>
-        ),
+        id: 'preview',
+        header: tColumns('preview'),
+        cell: ({ row }) => {
+          const preview = formatReviewPreview(row.original);
+          if (!preview) {
+            return <span className="text-sm italic text-atg-muted">{emptyDash}</span>;
+          }
+          return (
+            <p className="line-clamp-2 max-w-md text-sm text-atg-muted" title={preview}>
+              {preview}
+            </p>
+          );
+        },
       },
       {
         id: 'property',
-        header: 'Propriété',
+        header: tList('columns.property'),
         cell: ({ row }) => {
           if (!row.original.propertyName) {
-            return <span className="text-atg-muted">—</span>;
+            return <span className="text-atg-muted">{emptyDash}</span>;
           }
           return (
             <span className="text-sm text-atg-fg">{row.original.propertyName}</span>
@@ -211,7 +232,7 @@ export function ReviewsList() {
       },
       {
         accessorKey: 'createdAt',
-        header: 'Date',
+        header: tColumns('date'),
         cell: ({ row }) => (
           <span className="whitespace-nowrap text-sm text-atg-muted">
             {formatDateTime(row.original.createdAt)}
@@ -220,12 +241,12 @@ export function ReviewsList() {
       },
       {
         accessorKey: 'status',
-        header: 'Statut',
+        header: tColumns('status'),
         meta: { align: 'center' },
         cell: ({ row }) => {
           const status = row.original.status;
           return (
-            <DataTableBadge variant={statusVariants[status]}>
+            <DataTableBadge variant={reviewStatusVariants[status]}>
               {statusLabels[status]}
             </DataTableBadge>
           );
@@ -233,31 +254,25 @@ export function ReviewsList() {
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tColumns('actions'),
         meta: { align: 'right' },
         cell: ({ row }) => {
           const review = row.original;
           const busy = actingId === review.id;
           return (
-            <div className="flex flex-wrap justify-end gap-1.5">
-              <Button
-                href={`/contenu/avis/${review.id}`}
-                variant="ghost"
-                size="sm"
-              >
-                Voir
-              </Button>
+            <DataTableActions className="flex-nowrap gap-1">
+              <DataTableActionButton action="view" href={`/contenu/avis/${review.id}`} />
               {canWrite && review.status !== 'approved' ? (
                 <Button
                   type="button"
-                  variant="ghost"
+                  variant="secondary"
                   size="sm"
                   disabled={busy}
                   loading={busy}
                   loadingText="…"
                   onClick={() => void runAction(review, 'approve')}
                 >
-                  Approuver
+                  {t('actions.approve')}
                 </Button>
               ) : null}
               {canWrite && review.status !== 'hidden' ? (
@@ -268,34 +283,42 @@ export function ReviewsList() {
                   disabled={busy}
                   onClick={() => void runAction(review, 'hide')}
                 >
-                  Masquer
+                  {t('actions.hide')}
                 </Button>
               ) : null}
               {canWrite ? (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
+                <DataTableActionButton
+                  action="delete"
+                  onClick={() => setPendingDelete(review)}
                   disabled={busy}
-                  onClick={() => void runAction(review, 'delete')}
-                  className="!text-red-600 hover:!bg-red-50 hover:!text-red-700 dark:!text-red-400 dark:hover:!bg-red-950/30"
-                >
-                  Supprimer
-                </Button>
+                />
               ) : null}
-            </div>
+            </DataTableActions>
           );
         },
       },
     ],
-    [actingId, canWrite, runAction],
+    [
+      actingId,
+      canWrite,
+      emptyDash,
+      formatDateTime,
+      runAction,
+      statusLabels,
+      t,
+      tColumns,
+      tList,
+    ],
   );
 
   const isLoading = state.status === 'loading';
   const isError = state.status === 'error';
   const reviews = state.status === 'ready' ? state.reviews : [];
   const hasFilters =
-    ratingFilter !== '' || propertyFilter !== '' || statusFilter !== '';
+    ratingFilter !== '' ||
+    propertyFilter !== '' ||
+    statusFilter !== 'pending';
+  const isEmpty = state.status === 'ready' && state.total === 0;
 
   return (
     <div className="space-y-6">
@@ -303,7 +326,7 @@ export function ReviewsList() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <label htmlFor={ratingFilterId} className="mb-1 block text-xs font-medium text-atg-muted">
-              Note
+              {tColumns('rating')}
             </label>
             <select
               id={ratingFilterId}
@@ -311,7 +334,7 @@ export function ReviewsList() {
               onChange={(e) => setRatingFilter(e.target.value)}
               className="w-full rounded-lg border border-atg-border bg-atg-surface px-3 py-2 text-sm text-atg-fg"
             >
-              <option value="">Toutes</option>
+              <option value="">{tCommon('filters.allFeminine')}</option>
               {[5, 4, 3, 2, 1].map((n) => (
                 <option key={n} value={String(n)}>
                   {n}/5
@@ -324,7 +347,7 @@ export function ReviewsList() {
               htmlFor={propertyFilterId}
               className="mb-1 block text-xs font-medium text-atg-muted"
             >
-              Propriété
+              {tList('columns.property')}
             </label>
             <select
               id={propertyFilterId}
@@ -332,7 +355,7 @@ export function ReviewsList() {
               onChange={(e) => setPropertyFilter(e.target.value)}
               className="w-full rounded-lg border border-atg-border bg-atg-surface px-3 py-2 text-sm text-atg-fg"
             >
-              <option value="">Toutes</option>
+              <option value="">{tCommon('filters.allFeminine')}</option>
               {properties.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.name}
@@ -342,7 +365,7 @@ export function ReviewsList() {
           </div>
           <div>
             <label htmlFor={statusFilterId} className="mb-1 block text-xs font-medium text-atg-muted">
-              Statut
+              {tColumns('status')}
             </label>
             <select
               id={statusFilterId}
@@ -350,17 +373,16 @@ export function ReviewsList() {
               onChange={(e) => setStatusFilter(e.target.value as '' | ReviewStatus)}
               className="w-full rounded-lg border border-atg-border bg-atg-surface px-3 py-2 text-sm text-atg-fg"
             >
-              <option value="">Tous</option>
-              {(Object.keys(statusLabels) as ReviewStatus[]).map((s) => (
-                <option key={s} value={s}>
-                  {statusLabels[s]}
+              {statusOptions.map((option) => (
+                <option key={option.value || 'all'} value={option.value}>
+                  {option.label}
                 </option>
               ))}
             </select>
           </div>
           <div className="flex items-end">
             <Button type="button" onClick={applyFilters} className="w-full sm:w-auto">
-              Appliquer les filtres
+              {tCommon('filters.apply')}
             </Button>
           </div>
         </div>
@@ -378,16 +400,34 @@ export function ReviewsList() {
         </p>
       ) : null}
 
-      <DataTable
-        columns={columns}
-        data={reviews}
-        isLoading={isLoading}
-        emptyMessage={
-          hasFilters
-            ? 'Aucun avis ne correspond aux filtres.'
-            : 'Aucun avis pour le moment.'
-        }
-      />
+      {isEmpty && !isLoading ? (
+        <EmptyState
+          title={
+            hasFilters
+              ? tList('empty.filtered.title')
+              : tList('empty.default.title')
+          }
+          description={
+            hasFilters
+              ? tList('empty.filtered.description')
+              : tList('empty.default.description')
+          }
+        />
+      ) : (
+        <Card variant="dashboard" padding="none" className="overflow-hidden">
+          <DataTable
+            columns={columns}
+            data={reviews}
+            isLoading={isLoading}
+            emptyMessage={
+              hasFilters
+                ? tList('empty.filtered.tableMessage')
+                : tList('empty.default.tableMessage')
+            }
+            aria-label={tList('ariaLabel')}
+          />
+        </Card>
+      )}
 
       {state.status === 'ready' && state.totalPages > 1 ? (
         <DataTablePagination
@@ -395,10 +435,27 @@ export function ReviewsList() {
           pageSize={PAGE_SIZE}
           totalPages={state.totalPages}
           totalItems={state.total}
-          itemLabel="avis"
+          itemLabel={tPagination('review')}
           onPageChange={setPage}
         />
       ) : null}
+
+      <AlertDialog
+        open={pendingDelete !== null}
+        onOpenChange={(open) => {
+          if (!open && !actingId) setPendingDelete(null);
+        }}
+        title={t('deleteDialog.title')}
+        description={
+          pendingDelete ? t('deleteDialog.description') : undefined
+        }
+        confirmLabel={tActions('delete')}
+        cancelLabel={tActions('cancel')}
+        variant="danger"
+        loading={actingId === pendingDelete?.id}
+        onConfirm={() => void confirmDelete()}
+        onCancel={() => setPendingDelete(null)}
+      />
     </div>
   );
 }

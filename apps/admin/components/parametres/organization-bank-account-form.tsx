@@ -1,11 +1,17 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import { Button, Input } from '@africatourismgate/ui';
 import type { OrganizationBankAccount } from '@africatourismgate/types';
-import { useCallback, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { isValidCurrency } from '../../lib/org-settings-constants';
-import { getOrganizationSettingsErrorMessage } from '../../lib/organization-settings-errors';
+import {
+  containsMaskChars,
+  maskAccountNumberForDisplay,
+} from '../../lib/bank-account-masking';
 
 export type BankAccountFormValues = {
   bankName: string;
@@ -29,12 +35,12 @@ function accountToValues(account: OrganizationBankAccount): BankAccountFormValue
   return {
     bankName: account.bankName,
     accountName: account.accountName,
-    accountNumber: account.accountNumber.includes('*') ? '' : account.accountNumber,
+    accountNumber: containsMaskChars(account.accountNumber) ? '' : account.accountNumber,
     swiftBic: account.swiftBic ?? '',
     currency: account.currency,
     isDefault: account.isDefault,
   };
-};
+}
 
 type OrganizationBankAccountFormProps = {
   organizationId: string;
@@ -42,6 +48,7 @@ type OrganizationBankAccountFormProps = {
   account?: OrganizationBankAccount;
   onSuccess: () => void;
   onCancel: () => void;
+  onDirtyChange?: (isDirty: boolean) => void;
 };
 
 export function OrganizationBankAccountForm({
@@ -50,9 +57,15 @@ export function OrganizationBankAccountForm({
   account,
   onSuccess,
   onCancel,
+  onDirtyChange,
 }: OrganizationBankAccountFormProps) {
+  const { organizationSettings: getOrganizationSettingsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.settings.bankAccounts.form');
   const isEdit = Boolean(account);
   const [values, setValues] = useState<BankAccountFormValues>(() =>
+    account ? accountToValues(account) : emptyValues,
+  );
+  const [initialValues, setInitialValues] = useState<BankAccountFormValues>(() =>
     account ? accountToValues(account) : emptyValues,
   );
   const [fieldErrors, setFieldErrors] = useState<
@@ -63,9 +76,23 @@ export function OrganizationBankAccountForm({
 
   useEffect(() => {
     if (account) {
-      setValues(accountToValues(account));
+      const nextValues = accountToValues(account);
+      setValues(nextValues);
+      setInitialValues(nextValues);
+    } else {
+      setValues(emptyValues);
+      setInitialValues(emptyValues);
     }
   }, [account]);
+
+  const isDirty = useMemo(
+    () => JSON.stringify(values) !== JSON.stringify(initialValues),
+    [values, initialValues],
+  );
+
+  useEffect(() => {
+    onDirtyChange?.(isDirty);
+  }, [isDirty, onDirtyChange]);
 
   const updateField = useCallback(
     <K extends keyof BankAccountFormValues>(key: K, value: BankAccountFormValues[K]) => {
@@ -77,16 +104,16 @@ export function OrganizationBankAccountForm({
 
   function validate(): boolean {
     const errors: Partial<Record<keyof BankAccountFormValues, string>> = {};
-    if (!values.bankName.trim()) errors.bankName = 'Le nom de la banque est obligatoire.';
-    if (!values.accountName.trim()) errors.accountName = 'Le nom du compte est obligatoire.';
+    if (!values.bankName.trim()) errors.bankName = t('validation.bankNameRequired');
+    if (!values.accountName.trim()) errors.accountName = t('validation.accountNameRequired');
     if (!isEdit && !values.accountNumber.trim()) {
-      errors.accountNumber = 'Le numéro de compte est obligatoire.';
+      errors.accountNumber = t('validation.accountNumberRequired');
     }
-    if (values.accountNumber.includes('*')) {
-      errors.accountNumber = 'Saisissez le numéro complet (sans masque).';
+    if (containsMaskChars(values.accountNumber)) {
+      errors.accountNumber = t('validation.accountNumberNoMask');
     }
     if (!isValidCurrency(values.currency)) {
-      errors.currency = 'La devise doit comporter 3 lettres (ex. USD, CDF).';
+      errors.currency = t('validation.currencyInvalid');
     }
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
@@ -129,6 +156,8 @@ export function OrganizationBankAccountForm({
           ...(values.swiftBic.trim() ? { swiftBic: values.swiftBic.trim() } : {}),
         });
       }
+      setInitialValues(values);
+      onDirtyChange?.(false);
       onSuccess();
     } catch (error) {
       setFormError(getOrganizationSettingsErrorMessage(error));
@@ -140,7 +169,7 @@ export function OrganizationBankAccountForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4 rounded-lg border border-atg-border bg-atg-elevated p-6">
       <h3 className="text-lg font-semibold text-atg-fg">
-        {isEdit ? 'Modifier le compte' : 'Nouveau compte bancaire'}
+        {isEdit ? t('editTitle') : t('createTitle')}
       </h3>
 
       {formError ? (
@@ -153,31 +182,36 @@ export function OrganizationBankAccountForm({
       ) : null}
 
       <Input
-        label="Banque"
+        label={t('bankName')}
         value={values.bankName}
         onChange={(e) => updateField('bankName', e.target.value)}
         error={fieldErrors.bankName}
       />
       <Input
-        label="Nom du compte"
+        label={t('accountName')}
         value={values.accountName}
         onChange={(e) => updateField('accountName', e.target.value)}
         error={fieldErrors.accountName}
       />
       <Input
-        label={isEdit ? 'Numéro de compte (laisser vide pour conserver)' : 'Numéro de compte / IBAN'}
+        label={isEdit ? t('accountNumberEdit') : t('accountNumberCreate')}
         value={values.accountNumber}
         onChange={(e) => updateField('accountNumber', e.target.value)}
         error={fieldErrors.accountNumber}
         autoComplete="off"
       />
+      {isEdit && account ? (
+        <p className="text-xs text-atg-muted">
+          {t('storedValue', { masked: maskAccountNumberForDisplay(account.accountNumber) })}
+        </p>
+      ) : null}
       <Input
-        label="SWIFT / BIC"
+        label={t('swiftBic')}
         value={values.swiftBic}
         onChange={(e) => updateField('swiftBic', e.target.value)}
       />
       <Input
-        label="Devise"
+        label={t('currency')}
         value={values.currency}
         onChange={(e) => updateField('currency', e.target.value.toUpperCase())}
         error={fieldErrors.currency}
@@ -190,16 +224,63 @@ export function OrganizationBankAccountForm({
           onChange={(e) => updateField('isDefault', e.target.checked)}
           className="rounded border-atg-border"
         />
-        Compte par défaut
+        {t('isDefault')}
       </label>
 
       <div className="flex gap-3 pt-2">
-        <Button type="submit" loading={submitting} loadingText="Enregistrement…">
-          {isEdit ? 'Mettre à jour' : 'Créer'}
+        <Button
+          type="submit"
+          loading={submitting}
+          loadingText={t('saving')}
+          disabled={!isDirty}
+        >
+          {isEdit ? t('update') : t('create')}
         </Button>
-        <Button type="button" variant="ghost" onClick={onCancel}>
-          Annuler
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={() => {
+            if (isDirty) {
+              setValues(initialValues);
+              setFieldErrors({});
+              setFormError(null);
+              return;
+            }
+            onCancel();
+          }}
+        >
+          {t('cancel')}
         </Button>
+      </div>
+
+      <div className="sticky bottom-0 z-20 border-t border-atg-border bg-atg-bg/95 px-4 py-3 backdrop-blur">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm font-medium text-atg-fg">
+            {isDirty ? t('dirty') : t('clean')}
+          </p>
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setValues(initialValues);
+                setFieldErrors({});
+                setFormError(null);
+              }}
+              disabled={!isDirty || submitting}
+            >
+              {t('cancel')}
+            </Button>
+            <Button
+              type="submit"
+              loading={submitting}
+              loadingText={t('saving')}
+              disabled={!isDirty}
+            >
+              {t('save')}
+            </Button>
+          </div>
+        </div>
       </div>
     </form>
   );

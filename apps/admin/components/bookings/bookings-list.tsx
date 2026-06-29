@@ -1,41 +1,40 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
-  Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   DataTableBadge,
   DataTablePagination,
+  FilterBar,
   Input,
+  Select,
+  Button,
+  useToast,
   type ColumnDef,
+  type SortingState,
 } from '@africatourismgate/ui';
-import type { BookingListItem, BookingStatus, Organization, User } from '@africatourismgate/types';
-import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import type { BookingListItem, BookingStatus, OrganizationListItem, User } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getBookingsErrorMessage } from '../../lib/bookings-errors';
+import {
+  BOOKING_STATUS_VARIANTS,
+  getBookingStatusLabel,
+} from '../../lib/booking-status';
+import {
+  useBookingStatusFilterOptions,
+  useBookingStatusLabels,
+} from '../../lib/i18n/use-module-labels';
+import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
+import { exportCsv } from '../../lib/export-csv';
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 10;
 
 type StatusFilter = '' | BookingStatus;
-
-const statusLabels: Record<BookingStatus, string> = {
-  draft: 'Brouillon',
-  pending_payment: 'En attente de paiement',
-  confirmed: 'Confirmée',
-  cancelled: 'Annulée',
-  refunded: 'Remboursée',
-};
-
-const statusVariants: Record<
-  BookingStatus,
-  'success' | 'warning' | 'muted' | 'danger' | 'default'
-> = {
-  draft: 'muted',
-  pending_payment: 'warning',
-  confirmed: 'success',
-  cancelled: 'danger',
-  refunded: 'default',
-};
 
 function formatDateTime(iso: string): string {
   try {
@@ -53,20 +52,26 @@ function formatMoney(cents: number, currency: string): string {
 }
 
 export function BookingsList() {
-  const statusFilterId = useId();
-  const clientFilterId = useId();
-  const orgFilterId = useId();
-  const dateFromId = useId();
-  const dateToId = useId();
+  const { bookings: getBookingsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.bookings.list');
+  const tCommon = useTranslations('modules.common');
+  const tDataTable = useTranslations('modules.common.dataTable');
+  const tActions = useTranslations('common.actions');
+  const tExport = useTranslations('modules.common.exportCsv');
+  const tUsers = useTranslations('modules.users.filters');
+  const statusLabels = useBookingStatusLabels();
+  const statusOptions = useBookingStatusFilterOptions();
+  const paginationLabels = useDataTablePaginationLabels();
+  const { toast } = useToast();
 
   const [page, setPage] = useState(1);
-  const [filterTick, setFilterTick] = useState(0);
+  const [sorting, setSorting] = useState<SortingState>([{ id: 'createdAt', desc: true }]);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('');
   const [userFilter, setUserFilter] = useState('');
   const [organizationFilter, setOrganizationFilter] = useState('');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
-  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [organizations, setOrganizations] = useState<OrganizationListItem[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [state, setState] = useState<
     | { status: 'loading' }
@@ -108,8 +113,29 @@ export function BookingsList() {
     return map;
   }, [organizations]);
 
+  const clientOptions = useMemo(
+    () => [
+      { value: '', label: tCommon('filters.all') },
+      ...users.map((user) => ({ value: user.id, label: user.email })),
+    ],
+    [users, tCommon],
+  );
+
+  const organizationOptions = useMemo(
+    () => [
+      { value: '', label: tCommon('filters.allFeminine') },
+      ...organizations.map((org) => ({ value: org.id, label: org.name })),
+    ],
+    [organizations, tCommon],
+  );
+
+  const sortOrder = useMemo(() => {
+    const createdAtSort = sorting.find((entry) => entry.id === 'createdAt');
+    if (!createdAtSort) return 'desc' as const;
+    return createdAtSort.desc ? ('desc' as const) : ('asc' as const);
+  }, [sorting]);
+
   const load = useCallback(async () => {
-    void filterTick;
     setState({ status: 'loading' });
     try {
       const result = await getApiClient().listBookings({
@@ -120,6 +146,7 @@ export function BookingsList() {
         organizationId: organizationFilter || undefined,
         dateFrom: dateFrom || undefined,
         dateTo: dateTo || undefined,
+        sortOrder,
       });
       setState({
         status: 'ready',
@@ -130,39 +157,56 @@ export function BookingsList() {
     } catch (error) {
       setState({ status: 'error', message: getBookingsErrorMessage(error) });
     }
-  }, [
-    page,
-    statusFilter,
-    userFilter,
-    organizationFilter,
-    dateFrom,
-    dateTo,
-    filterTick,
-  ]);
+  }, [page, statusFilter, userFilter, organizationFilter, dateFrom, dateTo, sortOrder, getBookingsErrorMessage]);
 
   useEffect(() => {
     void load();
   }, [load]);
 
-  const applyFilters = useCallback(() => {
+  const activeFilterCount = [
+    statusFilter !== '',
+    userFilter !== '',
+    organizationFilter !== '',
+    dateFrom !== '',
+    dateTo !== '',
+  ].filter(Boolean).length;
+  const hasFilters = activeFilterCount > 0;
+
+  const statusTabs = useMemo(
+    () => [
+      { value: '' as StatusFilter, label: t('tabs.all') },
+      { value: 'pending_approval' as StatusFilter, label: t('tabs.pendingApproval') },
+    ],
+    [t],
+  );
+
+  const handleClearFilters = useCallback(() => {
+    setStatusFilter('');
+    setUserFilter('');
+    setOrganizationFilter('');
+    setDateFrom('');
+    setDateTo('');
     setPage(1);
-    setFilterTick((t) => t + 1);
   }, []);
+
+  const emptyDash = tCommon('empty.dash');
 
   const columns = useMemo<ColumnDef<BookingListItem, unknown>[]>(
     () => [
       {
         accessorKey: 'createdAt',
-        header: 'Date',
+        header: tCommon('columns.date'),
+        enableSorting: true,
+        meta: { hideOnMobile: true },
         cell: ({ row }) => (
-          <span className="whitespace-nowrap text-sm">
+          <span className="whitespace-nowrap text-sm tabular-nums">
             {formatDateTime(row.original.createdAt)}
           </span>
         ),
       },
       {
         id: 'client',
-        header: 'Client',
+        header: tCommon('columns.client'),
         cell: ({ row }) => (
           <div>
             <span className="font-medium text-atg-fg">{row.original.clientEmail}</span>
@@ -174,11 +218,12 @@ export function BookingsList() {
       },
       {
         id: 'organization',
-        header: 'Organisation',
+        header: tCommon('columns.organization'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => {
           const orgId = row.original.organizationId;
           if (!orgId) {
-            return <span className="text-atg-muted">—</span>;
+            return <span className="text-atg-muted">{emptyDash}</span>;
           }
           return (
             <span className="text-sm text-atg-muted">
@@ -189,20 +234,20 @@ export function BookingsList() {
       },
       {
         accessorKey: 'status',
-        header: 'Statut',
+        header: tCommon('columns.status'),
         meta: { align: 'center' },
         cell: ({ row }) => {
           const status = row.original.status;
           return (
-            <DataTableBadge variant={statusVariants[status]}>
-              {statusLabels[status]}
+            <DataTableBadge variant={BOOKING_STATUS_VARIANTS[status]}>
+              {getBookingStatusLabel(status, statusLabels)}
             </DataTableBadge>
           );
         },
       },
       {
         id: 'total',
-        header: 'Montant',
+        header: tCommon('columns.amount'),
         meta: { align: 'right' },
         cell: ({ row }) => (
           <span className="tabular-nums text-sm font-medium">
@@ -212,124 +257,159 @@ export function BookingsList() {
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tCommon('columns.actions'),
         meta: { align: 'right' },
         cell: ({ row }) => (
-          <Button
-            href={`/dashboard/bookings/${row.original.id}`}
-            variant="ghost"
-            size="sm"
-          >
-            Voir
-          </Button>
+          <DataTableActions>
+            <DataTableActionButton
+              action="view"
+              label={tActions('view')}
+              href={`/dashboard/bookings/${row.original.id}`}
+            />
+          </DataTableActions>
         ),
       },
     ],
-    [orgNameById],
+    [emptyDash, orgNameById, statusLabels, tActions, tCommon],
   );
 
   const isLoading = state.status === 'loading';
   const isError = state.status === 'error';
   const bookings = state.status === 'ready' ? state.bookings : [];
-  const hasFilters =
-    statusFilter !== '' ||
-    userFilter !== '' ||
-    organizationFilter !== '' ||
-    dateFrom !== '' ||
-    dateTo !== '';
-  const emptyMessage = hasFilters
-    ? 'Aucune réservation ne correspond à vos critères.'
-    : 'Aucune réservation pour le moment.';
+  const emptyMessage = hasFilters ? t('emptyFiltered') : t('emptyDefault');
+
+  const handleExportCsv = useCallback(() => {
+    if (bookings.length === 0) return;
+    const date = new Date().toISOString().slice(0, 10);
+    exportCsv({
+      filename: `reservations-${date}.csv`,
+      columns: [
+        { header: tCommon('columns.date'), value: (row) => formatDateTime(row.createdAt) },
+        { header: tCommon('columns.client'), value: (row) => row.clientEmail },
+        {
+          header: tCommon('columns.organization'),
+          value: (row) =>
+            row.organizationId
+              ? (orgNameById.get(row.organizationId) ?? row.organizationId)
+              : emptyDash,
+        },
+        {
+          header: tCommon('columns.status'),
+          value: (row) => getBookingStatusLabel(row.status, statusLabels),
+        },
+        {
+          header: tCommon('columns.amount'),
+          value: (row) => formatMoney(row.totalCents, row.currency),
+        },
+      ],
+      rows: bookings,
+    });
+    toast({ variant: 'success', message: tExport('success') });
+  }, [bookings, emptyDash, orgNameById, statusLabels, tCommon, tExport, toast]);
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:flex-wrap lg:items-end">
-        <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end">
-          <div>
-            <label htmlFor={statusFilterId} className="mb-2 block text-sm font-medium text-atg-fg">
-              Statut
-            </label>
-            <select
-              id={statusFilterId}
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
-              className="w-full min-w-[180px] rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
-            >
-              <option value="">Tous</option>
-              {(Object.keys(statusLabels) as BookingStatus[]).map((status) => (
-                <option key={status} value={status}>
-                  {statusLabels[status]}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label htmlFor={clientFilterId} className="mb-2 block text-sm font-medium text-atg-fg">
-              Client
-            </label>
-            <select
-              id={clientFilterId}
-              value={userFilter}
-              onChange={(e) => setUserFilter(e.target.value)}
-              className="w-full min-w-[200px] rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
-            >
-              <option value="">Tous</option>
-              {users.map((user) => (
-                <option key={user.id} value={user.id}>
-                  {user.email}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label htmlFor={orgFilterId} className="mb-2 block text-sm font-medium text-atg-fg">
-              Organisation
-            </label>
-            <select
-              id={orgFilterId}
-              value={organizationFilter}
-              onChange={(e) => setOrganizationFilter(e.target.value)}
-              className="w-full min-w-[180px] rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
-            >
-              <option value="">Toutes</option>
-              {organizations.map((org) => (
-                <option key={org.id} value={org.id}>
-                  {org.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label htmlFor={dateFromId} className="mb-2 block text-sm font-medium text-atg-fg">
-              Du
-            </label>
-            <Input
-              id={dateFromId}
-              type="date"
-              value={dateFrom}
-              onChange={(e) => setDateFrom(e.target.value)}
-            />
-          </div>
-          <div>
-            <label htmlFor={dateToId} className="mb-2 block text-sm font-medium text-atg-fg">
-              Au
-            </label>
-            <Input
-              id={dateToId}
-              type="date"
-              value={dateTo}
-              onChange={(e) => setDateTo(e.target.value)}
-            />
-          </div>
-          <button
+      <div
+        className="flex flex-wrap gap-2"
+        role="tablist"
+        aria-label={t('tabs.ariaLabel')}
+      >
+        {statusTabs.map((tab) => (
+          <Button
+            key={tab.value || 'all'}
             type="button"
-            onClick={applyFilters}
-            className="rounded-lg bg-primary px-4 py-3 text-sm font-medium text-white transition-opacity hover:opacity-90"
+            size="sm"
+            variant={statusFilter === tab.value ? 'primary' : 'outline'}
+            role="tab"
+            aria-selected={statusFilter === tab.value}
+            onClick={() => {
+              setStatusFilter(tab.value);
+              setPage(1);
+            }}
           >
-            Appliquer
-          </button>
-        </div>
+            {tab.label}
+          </Button>
+        ))}
       </div>
+
+      <FilterBar
+        mobileVariant="drawer"
+        activeCount={activeFilterCount}
+        onClear={handleClearFilters}
+        clearLabel={tCommon('filters.clearAll')}
+        applyLabel={tCommon('filters.apply')}
+        toggleLabel={tCommon('filters.toggle')}
+        actions={
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={isLoading || bookings.length === 0}
+            onClick={handleExportCsv}
+          >
+            {tExport('button')}
+          </Button>
+        }
+        filters={
+          <>
+            <div className="w-full sm:w-48">
+              <Select
+                label={tCommon('columns.status')}
+                value={statusFilter}
+                options={statusOptions}
+                onChange={(e) => {
+                  setStatusFilter(e.target.value as StatusFilter);
+                  setPage(1);
+                }}
+              />
+            </div>
+            <div className="w-full sm:w-56">
+              <Select
+                label={t('filters.client')}
+                value={userFilter}
+                options={clientOptions}
+                onChange={(e) => {
+                  setUserFilter(e.target.value);
+                  setPage(1);
+                }}
+              />
+            </div>
+            <div className="w-full sm:w-48">
+              <Select
+                label={tUsers('organization')}
+                value={organizationFilter}
+                options={organizationOptions}
+                onChange={(e) => {
+                  setOrganizationFilter(e.target.value);
+                  setPage(1);
+                }}
+              />
+            </div>
+            <div className="w-full sm:w-40">
+              <Input
+                label={tCommon('filters.dateFrom')}
+                type="date"
+                value={dateFrom}
+                onChange={(e) => {
+                  setDateFrom(e.target.value);
+                  setPage(1);
+                }}
+              />
+            </div>
+            <div className="w-full sm:w-40">
+              <Input
+                label={tCommon('filters.dateTo')}
+                type="date"
+                value={dateTo}
+                onChange={(e) => {
+                  setDateTo(e.target.value);
+                  setPage(1);
+                }}
+              />
+            </div>
+          </>
+        }
+      />
 
       {isError ? (
         <p className="text-sm text-red-600 dark:text-red-400" role="alert">
@@ -342,10 +422,23 @@ export function BookingsList() {
               columns={columns}
               data={bookings}
               isLoading={isLoading}
+              loadingMessage={tDataTable('loading')}
               emptyMessage={emptyMessage}
               emptyVariant={hasFilters ? 'search' : 'default'}
+              expandRowLabel={tDataTable('expandRow')}
+              collapseRowLabel={tDataTable('collapseRow')}
+              expandRowAriaLabel={tDataTable('expandRowAria')}
               getRowId={(row) => row.id}
-              aria-label="Liste des réservations"
+              sorting={sorting}
+              onSortingChange={(updater) => {
+                setSorting((current) => {
+                  const next = typeof updater === 'function' ? updater(current) : updater;
+                  return next.length > 0 ? next : [{ id: 'createdAt', desc: true }];
+                });
+                setPage(1);
+              }}
+              manualSorting
+              aria-label={t('ariaLabel')}
             />
           </Card>
 
@@ -355,7 +448,8 @@ export function BookingsList() {
               pageSize={PAGE_SIZE}
               totalPages={state.totalPages}
               totalItems={state.total}
-              itemLabel="réservation"
+              itemLabel={tCommon('pagination.booking')}
+              labels={paginationLabels}
               onPageChange={setPage}
             />
           ) : null}

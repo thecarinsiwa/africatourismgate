@@ -32,7 +32,7 @@ export function HotelRoomsSection({
 
   return (
     <section id="rooms">
-      <h2 className="mb-4 text-lg font-bold text-[#0f1a16] dark:text-white">{title}</h2>
+      <h2 className="mb-4 text-lg font-bold text-atg-fg">{title}</h2>
       <div className="space-y-4">
         {rooms.map((room) => {
           const selected = selectedRoomId === room.id;
@@ -47,16 +47,16 @@ export function HotelRoomsSection({
               className={`rounded-2xl border p-5 transition-colors ${
                 selected
                   ? 'border-primary bg-primary/5 dark:border-primary dark:bg-primary/10'
-                  : 'border-gray-100 bg-white dark:border-atg-border dark:bg-atg-elevated'
+                  : 'border-atg-border bg-atg-elevated dark:border-atg-border dark:bg-atg-elevated'
               } ${!room.available ? 'opacity-60' : ''}`}
             >
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0 flex-1">
-                  <h3 className="text-base font-bold text-[#0f1a16] dark:text-white">{room.name}</h3>
+                  <h3 className="text-base font-bold text-atg-fg">{room.name}</h3>
                   {room.roomType && (
-                    <p className="mt-0.5 text-sm text-gray-500 dark:text-atg-muted">{room.roomType}</p>
+                    <p className="mt-0.5 text-sm text-atg-muted">{room.roomType}</p>
                   )}
-                  <ul className="mt-2 flex flex-wrap gap-3 text-sm text-gray-600 dark:text-atg-muted">
+                  <ul className="mt-2 flex flex-wrap gap-3 text-sm text-atg-muted">
                     <li>{maxGuestsLabel.replace('{n}', String(room.maxGuests))}</li>
                     {room.bedConfig && (
                       <li>
@@ -69,17 +69,17 @@ export function HotelRoomsSection({
                 <div className="shrink-0 text-right">
                   {room.totalPriceCents != null && nights > 0 ? (
                     <>
-                      <p className="text-xl font-bold text-[#0f1a16] dark:text-white">
+                      <p className="text-xl font-bold text-atg-fg">
                         {formatHotelPrice(room.totalPriceCents, room.currency)}
                       </p>
-                      <p className="text-xs text-gray-500 dark:text-atg-muted">
+                      <p className="text-xs text-atg-muted">
                         {formatHotelPrice(nightly, room.currency)} {perNightLabel}
                       </p>
                     </>
                   ) : (
-                    <p className="text-lg font-bold text-[#0f1a16] dark:text-white">
+                    <p className="text-lg font-bold text-atg-fg">
                       {formatHotelPrice(room.basePriceCents, room.currency)}
-                      <span className="text-sm font-normal text-gray-500 dark:text-atg-muted">
+                      <span className="text-sm font-normal text-atg-muted">
                         {' '}
                         {perNightLabel}
                       </span>
@@ -88,7 +88,7 @@ export function HotelRoomsSection({
                 </div>
               </div>
 
-              <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-gray-100 pt-4 dark:border-atg-border">
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-atg-border pt-4 dark:border-atg-border">
                 {!room.available && (
                   <span className="text-sm font-medium text-red-600 dark:text-red-400">
                     {unavailableLabel}
@@ -101,7 +101,7 @@ export function HotelRoomsSection({
                   className={`ml-auto min-h-[44px] rounded-lg px-5 py-2 text-sm font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
                     selected
                       ? 'bg-primary text-white'
-                      : 'border border-gray-200 text-gray-800 hover:border-primary hover:text-primary dark:border-atg-border dark:text-white'
+                      : 'border border-atg-border text-atg-fg hover:border-primary hover:text-primary dark:border-atg-border dark:text-atg-fg'
                   }`}
                 >
                   {selectRoomLabel}

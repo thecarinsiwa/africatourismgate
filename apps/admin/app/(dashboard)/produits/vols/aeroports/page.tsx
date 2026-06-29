@@ -1,20 +1,11 @@
 import type { Metadata } from 'next';
-import { AirportsList } from '../../../../../components/flights/airports-list';
+import { getAdminPageMetadata } from '../../../../../lib/i18n/admin-page-i18n';
+import { AeroportsPageContent } from '../../../../../components/pages/produits-vols-aeroports-page-content';
 
-export const metadata: Metadata = {
-  title: 'Aéroports — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('produits/vols/aeroports');
+}
 
-export default function AeroportsPage() {
-  return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Aéroports</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Référentiel des aéroports (code IATA 3 lettres).
-        </p>
-      </div>
-      <AirportsList />
-    </div>
-  );
+export default function Page() {
+  return <AeroportsPageContent />;
 }

@@ -1,11 +1,13 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import { Button, Input } from '@africatourismgate/ui';
 import type { CreateShipRequest, CruiseLine, Ship } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useId, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getCroisieresErrorMessage } from '../../lib/croisieres-errors';
 
 export type ShipFormValues = {
   cruiseLineId: string;
@@ -43,6 +45,10 @@ type ShipFormProps = {
 };
 
 export function ShipForm({ mode, shipId, initialShip }: ShipFormProps) {
+  const { croisieres: getCroisieresErrorMessage } = useAdminErrorMessages();
+  const tForm = useTranslations('modules.cruises.form.ship');
+  const tActions = useTranslations('common.actions');
+  const tSelect = useTranslations('modules.common.select');
   const router = useRouter();
   const lineId = useId();
   const [lines, setLines] = useState<CruiseLine[]>([]);
@@ -70,7 +76,7 @@ export function ShipForm({ mode, shipId, initialShip }: ShipFormProps) {
     event.preventDefault();
     setFormError(null);
     if (!values.cruiseLineId || !values.name.trim()) {
-      setFormError('Ligne et nom du navire sont obligatoires.');
+      setFormError(tForm('validation'));
       return;
     }
     setSubmitting(true);
@@ -104,7 +110,7 @@ export function ShipForm({ mode, shipId, initialShip }: ShipFormProps) {
       ) : null}
       <div>
         <label htmlFor={lineId} className="mb-2 block text-sm font-medium">
-          Ligne de croisière
+          {tForm('lineLabel')}
         </label>
         <select
           id={lineId}
@@ -113,7 +119,7 @@ export function ShipForm({ mode, shipId, initialShip }: ShipFormProps) {
           onChange={(e) => updateField('cruiseLineId', e.target.value)}
           required
         >
-          <option value="">Choisir une ligne…</option>
+          <option value="">{tSelect('choose')}</option>
           {lines.map((l) => (
             <option key={l.id} value={l.id}>
               {l.name}
@@ -122,13 +128,13 @@ export function ShipForm({ mode, shipId, initialShip }: ShipFormProps) {
         </select>
       </div>
       <Input
-        label="Nom du navire"
+        label={tForm('shipName')}
         value={values.name}
         onChange={(e) => updateField('name', e.target.value)}
         required
       />
       <Input
-        label="Année de construction (optionnel)"
+        label={tForm('builtYear')}
         type="number"
         min={1900}
         max={2100}
@@ -137,10 +143,10 @@ export function ShipForm({ mode, shipId, initialShip }: ShipFormProps) {
       />
       <div className="flex gap-3">
         <Button type="submit" loading={submitting}>
-          {mode === 'create' ? 'Créer le navire' : 'Enregistrer'}
+          {mode === 'create' ? tForm('submitCreate') : tActions('save')}
         </Button>
         <Button href="/produits/croisieres/navires" variant="outline">
-          Annuler
+          {tActions('cancel')}
         </Button>
       </div>
     </form>

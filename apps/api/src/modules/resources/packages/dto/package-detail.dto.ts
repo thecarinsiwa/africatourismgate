@@ -21,8 +21,16 @@ export type PackagePricingDto = {
   currency: string;
 };
 
+export type PackageGalleryImageDto = {
+  id: string;
+  url: string;
+  caption: string | null;
+  sortOrder: number;
+};
+
 export type PackageDetailDto = {
   package: Packages;
   items: PackageItemEnrichedDto[];
   pricing: PackagePricingDto;
+  images: PackageGalleryImageDto[];
 };

@@ -2,22 +2,24 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
-const links = [
-  { href: '/paiements', label: 'Transactions' },
-  { href: '/paiements/codes-promo', label: 'Codes promo' },
-  { href: '/paiements/promotions', label: 'Promotions' },
+const linkKeys = [
+  { href: '/paiements', labelKey: 'transactions' as const },
+  { href: '/paiements/codes-promo', labelKey: 'promoCodes' as const },
+  { href: '/paiements/promotions', labelKey: 'promotions' as const },
 ];
 
 export function PaymentsPromoSubnav() {
   const pathname = usePathname();
+  const t = useTranslations('modules.payments.subnav');
 
   return (
     <nav
       className="mb-8 flex flex-wrap gap-2 border-b border-atg-border pb-4"
-      aria-label="Navigation paiements et promotions"
+      aria-label={t('ariaLabel')}
     >
-      {links.map((link) => {
+      {linkKeys.map((link) => {
         const active =
           link.href === '/paiements'
             ? pathname === '/paiements'
@@ -32,7 +34,7 @@ export function PaymentsPromoSubnav() {
                 : 'text-atg-muted hover:bg-atg-elevated hover:text-atg-fg'
             }`}
           >
-            {link.label}
+            {t(link.labelKey)}
           </Link>
         );
       })}

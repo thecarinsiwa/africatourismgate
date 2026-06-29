@@ -1,9 +1,11 @@
 'use client';
 
-import { Card, cn } from '@africatourismgate/ui';
+import { useAdminErrorMessages } from '../lib/i18n/use-admin-error-messages';
+
+import { Avatar, Card, DataTableBadge } from '@africatourismgate/ui';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { getDashboardKpiErrorMessage } from '../lib/dashboard-api-errors';
+import { useTranslations } from 'next-intl';
+import { useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../lib/auth/api';
 import type { UserStatus } from '@africatourismgate/types';
 
@@ -15,30 +17,29 @@ type RecentUser = {
   status: UserStatus;
 };
 
-const statusLabels: Record<UserStatus, string> = {
-  active: 'Actif',
-  suspended: 'Suspendu',
-  deleted: 'Supprimé',
+const statusVariants: Record<UserStatus, 'success' | 'warning' | 'danger'> = {
+  active: 'success',
+  suspended: 'warning',
+  deleted: 'danger',
 };
-
-const statusStyles: Record<UserStatus, string> = {
-  active: 'bg-primary/10 text-primary',
-  suspended: 'bg-atg-border/80 text-atg-muted',
-  deleted: 'bg-red-100 text-red-700 dark:bg-red-950/40 dark:text-red-400',
-};
-
-function getInitials(firstName: string, lastName: string, email: string): string {
-  const name = `${firstName} ${lastName}`.trim();
-  if (name.length >= 2) {
-    return name.slice(0, 2).toUpperCase();
-  }
-  return email.slice(0, 2).toUpperCase();
-}
 
 export function DashboardRecentUsers({ className }: { className?: string }) {
+  const { dashboardKpi: getDashboardKpiErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('dashboard');
+  const tRecent = useTranslations('dashboard.recentUsers');
+  const tStatus = useTranslations('dashboard.recentUsers.status');
   const [state, setState] = useState<
     { status: 'loading' } | { status: 'error'; message: string } | { status: 'ready'; users: RecentUser[] }
   >({ status: 'loading' });
+
+  const statusLabels = useMemo(
+    (): Record<UserStatus, string> => ({
+      active: tStatus('active'),
+      suspended: tStatus('suspended'),
+      deleted: tStatus('deleted'),
+    }),
+    [tStatus],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -59,12 +60,12 @@ export function DashboardRecentUsers({ className }: { className?: string }) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [getDashboardKpiErrorMessage]);
 
   return (
     <Card variant="dashboard" padding="sm" className={className}>
-      <h2 className="text-base font-semibold text-atg-fg">Utilisateurs récents</h2>
-      <p className="mt-1 text-sm text-atg-muted">Dernières inscriptions sur la plateforme</p>
+      <h2 className="text-base font-semibold text-atg-fg">{tRecent('title')}</h2>
+      <p className="mt-1 text-sm text-atg-muted">{tRecent('subtitle')}</p>
 
       {state.status === 'loading' ? (
         <ul className="mt-5 space-y-3" aria-busy="true">
@@ -80,7 +81,7 @@ export function DashboardRecentUsers({ className }: { className?: string }) {
           {state.message}
         </p>
       ) : state.users.length === 0 ? (
-        <p className="mt-5 text-sm text-atg-muted">Aucun utilisateur pour le moment.</p>
+        <p className="mt-5 text-sm text-atg-muted">{tRecent('empty')}</p>
       ) : (
         <ul className="mt-5 space-y-2">
           {state.users.map((user) => (
@@ -88,26 +89,21 @@ export function DashboardRecentUsers({ className }: { className?: string }) {
               key={user.id}
               className="flex items-center gap-3 rounded-lg border border-atg-border bg-atg-surface/40 px-3 py-2.5"
             >
-              <span
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-white"
-                aria-hidden
-              >
-                {getInitials(user.firstName, user.lastName, user.email)}
-              </span>
+              <Avatar
+                email={user.email}
+                firstName={user.firstName}
+                lastName={user.lastName}
+                size="md"
+              />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium text-atg-fg">{user.email}</p>
                 <p className="truncate text-xs text-atg-muted">
                   {[user.firstName, user.lastName].filter(Boolean).join(' ') || '—'}
                 </p>
               </div>
-              <span
-                className={cn(
-                  'shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium',
-                  statusStyles[user.status],
-                )}
-              >
+              <DataTableBadge variant={statusVariants[user.status]}>
                 {statusLabels[user.status]}
-              </span>
+              </DataTableBadge>
             </li>
           ))}
         </ul>
@@ -117,7 +113,7 @@ export function DashboardRecentUsers({ className }: { className?: string }) {
         href="/utilisateurs"
         className="mt-5 inline-block text-sm font-medium text-primary hover:text-primary-hover"
       >
-        Voir tous les utilisateurs →
+        {t('viewAllUsers')}
       </Link>
     </Card>
   );

@@ -1,20 +1,11 @@
 import type { Metadata } from 'next';
-import { PropertyForm } from '../../../../components/properties/property-form';
+import { getAdminPageMetadata } from '../../../../lib/i18n/admin-page-i18n';
+import { NouvelHebergementPageContent } from '../../../../components/pages/hebergements-nouveau-page-content';
 
-export const metadata: Metadata = {
-  title: 'Nouvel hébergement — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('hebergements/nouveau');
+}
 
-export default function NouvelHebergementPage() {
-  return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Nouvel hébergement</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Créez la propriété puis ajoutez images, équipements et chambres.
-        </p>
-      </div>
-      <PropertyForm mode="create" />
-    </div>
-  );
+export default function Page() {
+  return <NouvelHebergementPageContent />;
 }

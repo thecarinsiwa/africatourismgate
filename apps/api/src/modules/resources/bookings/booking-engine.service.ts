@@ -22,8 +22,15 @@ import {
   Users,
   Vehicles,
 } from '../../../entities/generated';
+import { resolveCheckoutBookingMode } from '@africatourismgate/types';
 import { EmailService } from '../../email/email.service';
+import {
+  assertValidVehicleDates,
+  countRentalDays,
+  slotCoversRentalPeriod,
+} from '../../public/vehicles/vehicle-dates.util';
 import { enumerateDates } from '../room-availability/room-availability-date.util';
+import { OrganizationSettingsService } from '../organization-settings/organization-settings.service';
 import {
   BookingCheckoutDto,
   BookingCheckoutItemDto,
@@ -33,9 +40,15 @@ import {
   BookingCheckoutPreviewResponseDto,
 } from './dto/booking-checkout-preview-response.dto';
 import { BookingDetailDto } from './dto/booking-detail.dto';
+import {
+  BOOKING_REQUEST_REGISTERED_MESSAGE,
+  BookingRequestResponseDto,
+} from './dto/booking-request-response.dto';
 import { BookingCheckoutPromoService } from './booking-checkout-promo.service';
+import { BookingPackageCheckoutService } from './booking-package-checkout.service';
 import { BookingStatusHistoryService } from './booking-status-history.service';
 import type { AppliedCheckoutDiscountDto } from './dto/booking-checkout-preview-response.dto';
+import type { AppliedPackageCheckoutDiscountDto } from './dto/booking-checkout-preview-response.dto';
 
 type StockTarget =
   | { kind: 'room'; roomId: string; date: string }
@@ -77,9 +90,11 @@ export class BookingEngineService {
     private readonly activitiesRepository: Repository<Activities>,
     private readonly statusHistory: BookingStatusHistoryService,
     private readonly checkoutPromo: BookingCheckoutPromoService,
+    private readonly packageCheckout: BookingPackageCheckoutService,
     @InjectRepository(Users)
     private readonly usersRepository: Repository<Users>,
     private readonly emailService: EmailService,
+    private readonly organizationSettingsService: OrganizationSettingsService,
   ) {}
 
   async previewCheckout(
@@ -87,13 +102,22 @@ export class BookingEngineService {
     _userId: string,
   ): Promise<BookingCheckoutPreviewResponseDto> {
     const pricing = await this.resolveCheckoutPricing(dto);
+    const modes = await this.organizationSettingsService.getResolvedItemTypeModes();
+    const bookingMode = resolveCheckoutBookingMode({
+      packageId: dto.packageId,
+      itemTypes: dto.items.map((item) => item.itemType),
+      modes,
+    });
     return {
       lines: pricing.lines.map(({ stock: _s, ...rest }) => rest),
       subtotalCents: pricing.subtotalCents,
+      packageDiscountCents: pricing.packageDiscountCents,
       discountCents: pricing.discountCents,
       totalCents: pricing.totalCents,
       currency: pricing.currency,
+      appliedPackageDiscount: pricing.appliedPackageDiscount,
       appliedDiscount: pricing.appliedDiscount,
+      bookingMode,
     };
   }
 
@@ -157,6 +181,142 @@ export class BookingEngineService {
     });
 
     return this.getBookingDetail(bookingId);
+  }
+
+  async createBookingRequest(
+    dto: BookingCheckoutDto,
+    userId: string,
+    actorUserId?: string,
+  ): Promise<BookingRequestResponseDto> {
+    const pricing = await this.resolveCheckoutPricing(dto);
+
+    const bookingId = await this.bookingsRepository.manager.transaction(
+      async (manager) => {
+        const bookingsRepo = manager.getRepository(Bookings);
+        const itemsRepo = manager.getRepository(BookingItems);
+        const id = newId();
+
+        const booking = bookingsRepo.create({
+          id,
+          userId,
+          status: 'pending_approval',
+          totalCents: pricing.totalCents,
+          currency: pricing.currency,
+          promoCodeId: pricing.discount?.promoCodeId ?? null,
+          promotionId: pricing.discount?.promotionId ?? null,
+          createdByUserId: actorUserId ?? null,
+        } as Bookings);
+        await bookingsRepo.save(booking);
+
+        for (const line of pricing.lines) {
+          const item = itemsRepo.create({
+            id: newId(),
+            bookingId: id,
+            itemType: line.itemType,
+            referenceId: line.referenceId,
+            titleSnapshot: line.titleSnapshot,
+            quantity: line.quantity,
+            unitPriceCents: line.unitPriceCents,
+            startDate: line.startDate,
+            endDate: line.endDate,
+            createdByUserId: actorUserId ?? null,
+          } as BookingItems);
+          await itemsRepo.save(item);
+        }
+
+        return id;
+      },
+    );
+
+    await this.statusHistory.record({
+      bookingId,
+      fromStatus: null,
+      toStatus: 'pending_approval',
+      reason: 'Demande de réservation assistée',
+      changedByUserId: actorUserId ?? null,
+    });
+
+    return {
+      bookingId,
+      status: 'pending_approval',
+      message: BOOKING_REQUEST_REGISTERED_MESSAGE,
+      totalCents: pricing.totalCents,
+      currency: pricing.currency,
+    };
+  }
+
+  async approveAssistedBooking(
+    id: string,
+    actorUserId: string,
+    options?: { totalCents?: number; reason?: string },
+  ): Promise<BookingDetailDto> {
+    const booking = await this.findBookingOrThrow(id);
+    if (booking.status !== 'pending_approval') {
+      throw new BadRequestException(
+        `Approbation impossible : statut actuel « ${booking.status} » (attendu : pending_approval).`,
+      );
+    }
+
+    const fromStatus = booking.status;
+    const nextTotalCents =
+      options?.totalCents !== undefined
+        ? Math.max(0, Math.floor(options.totalCents))
+        : booking.totalCents;
+
+    if (nextTotalCents < 1) {
+      throw new BadRequestException('Montant de réservation invalide.');
+    }
+
+    await this.bookingsRepository.manager.transaction(async (manager) => {
+      const items = await manager.getRepository(BookingItems).find({
+        where: { bookingId: id },
+      });
+      const lines = await this.bookingItemsToResolvedLines(manager, items);
+      if (lines.length > 0) {
+        await this.allocateStock(manager, lines, 'decrement', actorUserId);
+      }
+
+      await this.checkoutPromo.recordRedemptionFromBooking(manager, booking);
+
+      const bookingsRepo = manager.getRepository(Bookings);
+      const row = await bookingsRepo.findOne({ where: { id } });
+      if (!row) {
+        throw new NotFoundException('Réservation introuvable.');
+      }
+      row.status = 'pending_payment';
+      row.totalCents = nextTotalCents;
+      row.updatedByUserId = actorUserId;
+      await bookingsRepo.save(row);
+    });
+
+    await this.statusHistory.record({
+      bookingId: id,
+      fromStatus,
+      toStatus: 'pending_payment',
+      reason: options?.reason?.trim() || 'Approbation — en attente de paiement',
+      changedByUserId: actorUserId,
+    });
+
+    return this.getBookingDetail(id);
+  }
+
+  async rejectAssistedBooking(
+    id: string,
+    actorUserId: string,
+    reason?: string,
+  ): Promise<BookingDetailDto> {
+    const booking = await this.findBookingOrThrow(id);
+    if (booking.status !== 'pending_approval') {
+      throw new BadRequestException(
+        `Refus impossible : statut actuel « ${booking.status} » (attendu : pending_approval).`,
+      );
+    }
+
+    const rejectReason = reason?.trim()
+      ? `Refus : ${reason.trim()}`
+      : 'Refus de la demande de réservation';
+
+    return this.cancelBooking(id, actorUserId, rejectReason);
   }
 
   async confirmBooking(
@@ -263,21 +423,29 @@ export class BookingEngineService {
     reason?: string,
   ): Promise<BookingDetailDto> {
     const booking = await this.findBookingOrThrow(id);
-    if (booking.status !== 'pending_payment' && booking.status !== 'confirmed') {
+    if (
+      booking.status !== 'pending_approval' &&
+      booking.status !== 'pending_payment' &&
+      booking.status !== 'confirmed'
+    ) {
       throw new BadRequestException(
         `Impossible d'annuler une réservation au statut « ${booking.status} ».`,
       );
     }
 
     const fromStatus = booking.status;
+    const shouldRestoreStock =
+      fromStatus === 'pending_payment' || fromStatus === 'confirmed';
 
     await this.bookingsRepository.manager.transaction(async (manager) => {
-      const items = await manager.getRepository(BookingItems).find({
-        where: { bookingId: id },
-      });
-      const lines = await this.bookingItemsToResolvedLines(manager, items);
-      if (lines.length > 0) {
-        await this.allocateStock(manager, lines, 'restore', actorUserId);
+      if (shouldRestoreStock) {
+        const items = await manager.getRepository(BookingItems).find({
+          where: { bookingId: id },
+        });
+        const lines = await this.bookingItemsToResolvedLines(manager, items);
+        if (lines.length > 0) {
+          await this.allocateStock(manager, lines, 'restore', actorUserId);
+        }
       }
 
       const bookingsRepo = manager.getRepository(Bookings);
@@ -401,23 +569,48 @@ export class BookingEngineService {
     lines: ResolvedBookingLine[];
     currency: string;
     subtotalCents: number;
+    packageDiscountCents: number;
     discountCents: number;
     totalCents: number;
+    appliedPackageDiscount: AppliedPackageCheckoutDiscountDto | null;
     appliedDiscount: AppliedCheckoutDiscountDto | null;
     discount: import('./booking-checkout-promo.service').AppliedCheckoutDiscount | null;
   }> {
     const { lines, currency } = await this.resolveCheckoutLines(dto);
     const subtotalCents = lines.reduce((sum, l) => sum + l.lineTotalCents, 0);
-    const discount = await this.checkoutPromo.resolveDiscount(dto, subtotalCents);
-    const discountCents = discount?.discountCents ?? 0;
-    const totalCents = Math.max(0, subtotalCents - discountCents);
+
+    let packageDiscountCents = 0;
+    let appliedPackageDiscount: AppliedPackageCheckoutDiscountDto | null = null;
+
+    if (dto.packageId) {
+      const packageDiscount = await this.packageCheckout.resolvePackageDiscount(
+        dto.packageId,
+        dto.items,
+        subtotalCents,
+      );
+      packageDiscountCents = packageDiscount.discountCents;
+      appliedPackageDiscount = {
+        packageId: packageDiscount.packageId,
+        name: packageDiscount.name,
+        discountPercent: packageDiscount.discountPercent,
+        discountCents: packageDiscount.discountCents,
+      };
+    }
+
+    const subtotalAfterPackage = Math.max(0, subtotalCents - packageDiscountCents);
+    const discount = await this.checkoutPromo.resolveDiscount(dto, subtotalAfterPackage);
+    const promoDiscountCents = discount?.discountCents ?? 0;
+    const totalDiscountCents = packageDiscountCents + promoDiscountCents;
+    const totalCents = Math.max(0, subtotalCents - totalDiscountCents);
 
     return {
       lines,
       currency,
       subtotalCents,
-      discountCents,
+      packageDiscountCents,
+      discountCents: totalDiscountCents,
       totalCents,
+      appliedPackageDiscount,
       appliedDiscount: discount
         ? {
             kind: discount.kind,
@@ -593,6 +786,25 @@ export class BookingEngineService {
     if (slot.status !== 'available') {
       throw new BadRequestException('Le véhicule n’est pas disponible sur ce créneau.');
     }
+    if (!item.startDate || !item.endDate) {
+      throw new BadRequestException(
+        'startDate et endDate sont requis pour une location véhicule.',
+      );
+    }
+
+    assertValidVehicleDates(item.startDate, item.endDate);
+    if (
+      !slotCoversRentalPeriod(
+        slot.startDatetime,
+        slot.endDatetime,
+        item.startDate,
+        item.endDate,
+      )
+    ) {
+      throw new BadRequestException(
+        'Le créneau véhicule ne couvre pas la période demandée.',
+      );
+    }
 
     const vehicle = await this.vehiclesRepository.findOne({
       where: { id: slot.vehicleId },
@@ -601,13 +813,8 @@ export class BookingEngineService {
       throw new NotFoundException('Véhicule introuvable.');
     }
 
+    const rentalDays = countRentalDays(item.startDate, item.endDate);
     const unitPriceCents = vehicle.dailyPriceCents;
-    const startIso = slot.startDatetime instanceof Date
-      ? slot.startDatetime.toISOString().slice(0, 10)
-      : String(slot.startDatetime).slice(0, 10);
-    const endIso = slot.endDatetime instanceof Date
-      ? slot.endDatetime.toISOString().slice(0, 10)
-      : String(slot.endDatetime).slice(0, 10);
 
     return [
       {
@@ -615,11 +822,11 @@ export class BookingEngineService {
         referenceId: item.referenceId,
         quantity: item.quantity,
         unitPriceCents,
-        lineTotalCents: item.quantity * unitPriceCents,
+        lineTotalCents: item.quantity * unitPriceCents * rentalDays,
         titleSnapshot: vehicle.licensePlate?.trim() || `Véhicule ${vehicle.id.slice(0, 8)}`,
         currency: vehicle.currency,
-        startDate: startIso,
-        endDate: endIso,
+        startDate: item.startDate,
+        endDate: item.endDate,
         stock: { kind: 'vehicle', availabilityId: item.referenceId },
       },
     ];

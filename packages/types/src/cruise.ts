@@ -193,3 +193,30 @@ export interface CabinAvailabilityListQuery {
   page?: number;
   limit?: number;
 }
+
+export interface ShipImage {
+  id: string;
+  shipId: string;
+  url: string;
+  caption: string | null;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string | null;
+}
+
+export interface CreateShipImageRequest {
+  shipId: string;
+  url: string;
+  caption?: string;
+  sortOrder?: number;
+}
+
+export type UpdateShipImageRequest = Partial<
+  Omit<CreateShipImageRequest, 'shipId'>
+>;
+
+export interface ShipImagesListQuery {
+  page?: number;
+  limit?: number;
+  shipId?: string;
+}

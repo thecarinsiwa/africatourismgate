@@ -1,23 +1,69 @@
 'use client';
 
-import type { User } from '@africatourismgate/types';
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+import { useAccountStatusLabels } from '../../lib/i18n/use-module-labels';
+
+import type { User, UserStatus } from '@africatourismgate/types';
+import {
+  Avatar,
+  DataTableBadge,
+  Skeleton,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@africatourismgate/ui';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
+import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
-import { getUsersErrorMessage } from '../../lib/users-errors';
 import { UserRoleAssignmentsPanel } from '../rbac/user-role-assignments-panel';
+import { UserAddressesList } from './user-addresses-list';
 import { UserForm } from './user-form';
+import { UserPaymentMethodsList } from './user-payment-methods-list';
+import { UserSessionsList } from './user-sessions-list';
 
 type UserEditPageProps = {
   userId: string;
 };
 
+const TAB_VALUES = ['profil', 'adresses', 'paiement', 'sessions', 'roles'] as const;
+type TabValue = (typeof TAB_VALUES)[number];
+
+const statusVariants: Record<UserStatus, 'success' | 'warning' | 'danger'> = {
+  active: 'success',
+  suspended: 'warning',
+  deleted: 'danger',
+};
+
+function isTabValue(value: string | null): value is TabValue {
+  return value !== null && (TAB_VALUES as readonly string[]).includes(value);
+}
+
 export function UserEditPage({ userId }: UserEditPageProps) {
+  const { users: getUsersErrorMessage } = useAdminErrorMessages();
+  const tDetail = useTranslations('modules.users.detail');
+  const tActions = useTranslations('common.actions');
+  const statusLabels = useAccountStatusLabels();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get('tab');
+  const activeTab: TabValue = isTabValue(tabParam) ? tabParam : 'profil';
+
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
     | { status: 'ready'; user: User }
   >({ status: 'loading' });
+
+  useAdminEditPageMeta({
+    ready: state.status === 'ready',
+    title: tDetail('title'),
+    entityLabel: state.status === 'ready' ? state.user.email : undefined,
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -39,10 +85,36 @@ export function UserEditPage({ userId }: UserEditPageProps) {
     return () => {
       cancelled = true;
     };
-  }, [userId]);
+  }, [userId, getUsersErrorMessage]);
+
+  const handleTabChange = useCallback(
+    (tab: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (tab === 'profil') {
+        params.delete('tab');
+      } else {
+        params.set('tab', tab);
+      }
+      const qs = params.toString();
+      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+    },
+    [pathname, router, searchParams],
+  );
 
   if (state.status === 'loading') {
-    return <p className="text-sm text-atg-muted">Chargement…</p>;
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center gap-4">
+          <Skeleton className="h-14 w-14 rounded-full" />
+          <div className="space-y-2">
+            <Skeleton className="h-5 w-48" />
+            <Skeleton className="h-4 w-32" />
+          </div>
+        </div>
+        <Skeleton className="h-10 w-full max-w-xl" />
+        <Skeleton className="h-64 w-full" />
+      </div>
+    );
   }
 
   if (state.status === 'error') {
@@ -55,22 +127,64 @@ export function UserEditPage({ userId }: UserEditPageProps) {
           href="/utilisateurs"
           className="text-sm font-medium text-primary hover:text-primary-hover"
         >
-          ← Retour à la liste
+          ← {tActions('back')}
         </Link>
       </div>
     );
   }
 
   const { user } = state;
+  const fullName = [user.firstName, user.lastName].filter(Boolean).join(' ');
 
   return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Modifier l’utilisateur</h1>
-        <p className="mt-2 text-sm text-atg-muted">{user.email}</p>
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-center gap-4">
+        <Avatar
+          email={user.email}
+          firstName={user.firstName}
+          lastName={user.lastName}
+          size="lg"
+        />
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <h2 className="text-xl font-semibold text-atg-fg">{fullName || user.email}</h2>
+            <DataTableBadge variant={statusVariants[user.status]}>
+              {statusLabels[user.status]}
+            </DataTableBadge>
+          </div>
+          <p className="mt-1 text-sm text-atg-muted">{user.email}</p>
+        </div>
       </div>
-      <UserForm mode="edit" userId={userId} initialUser={user} />
-      <UserRoleAssignmentsPanel userId={userId} />
+
+      <Tabs value={activeTab} onValueChange={handleTabChange}>
+        <TabsList aria-label={tDetail('tabsAria')}>
+          <TabsTrigger value="profil">{tDetail('tabs.profile')}</TabsTrigger>
+          <TabsTrigger value="adresses">{tDetail('tabs.addresses')}</TabsTrigger>
+          <TabsTrigger value="paiement">{tDetail('tabs.paymentMethods')}</TabsTrigger>
+          <TabsTrigger value="sessions">{tDetail('tabs.sessions')}</TabsTrigger>
+          <TabsTrigger value="roles">{tDetail('tabs.roles')}</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="profil">
+          <UserForm mode="edit" userId={userId} initialUser={user} />
+        </TabsContent>
+
+        <TabsContent value="adresses">
+          <UserAddressesList fixedUserId={userId} showUserColumn={false} />
+        </TabsContent>
+
+        <TabsContent value="paiement">
+          <UserPaymentMethodsList fixedUserId={userId} showUserColumn={false} />
+        </TabsContent>
+
+        <TabsContent value="sessions">
+          <UserSessionsList fixedUserId={userId} showUserColumn={false} layout="cards" />
+        </TabsContent>
+
+        <TabsContent value="roles">
+          <UserRoleAssignmentsPanel userId={userId} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

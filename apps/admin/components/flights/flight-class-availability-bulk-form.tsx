@@ -1,10 +1,12 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import { Button, Card, Input } from '@africatourismgate/ui';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { endOfMonth, startOfMonth } from '../../lib/availability-dates';
-import { getVolsErrorMessage } from '../../lib/vols-errors';
 
 type FlightClassAvailabilityBulkFormProps = {
   flightClassId: string;
@@ -19,6 +21,9 @@ export function FlightClassAvailabilityBulkForm({
   defaultPriceCents,
   onApplied,
 }: FlightClassAvailabilityBulkFormProps) {
+  const { vols: getVolsErrorMessage } = useAdminErrorMessages();
+  const tCalendar = useTranslations('modules.common.availabilityCalendar');
+  const tCommon = useTranslations('modules.common');
   const [dateFrom, setDateFrom] = useState(startOfMonth(yearMonth));
   const [dateTo, setDateTo] = useState(endOfMonth(yearMonth));
   const [availableSeats, setAvailableSeats] = useState('10');
@@ -40,15 +45,19 @@ export function FlightClassAvailabilityBulkForm({
     const seats = Number(availableSeats);
     const cents = Number(priceCents);
     if (!Number.isFinite(seats) || seats < 0) {
-      setError('Sièges invalides.');
+      setError(tCommon('validation.invalidSeatsShort'));
       return;
     }
     if (!Number.isFinite(cents) || cents < 0) {
-      setError('Prix invalide (centimes).');
+      setError(tCommon('validation.invalidPriceCents'));
       return;
     }
-    if (!dateFrom || !dateTo || dateFrom > dateTo) {
-      setError('Plage de dates invalide.');
+    if (!dateFrom || !dateTo) {
+      setError(tCommon('validation.datesRequired'));
+      return;
+    }
+    if (dateFrom > dateTo) {
+      setError(tCommon('validation.dateRangeInvalid'));
       return;
     }
 
@@ -61,7 +70,7 @@ export function FlightClassAvailabilityBulkForm({
         availableSeats: seats,
         priceCents: cents,
       });
-      setSuccess(`${result.upsertedCount} jour(s) mis à jour.`);
+      setSuccess(tCalendar('bulkSuccess', { count: result.upsertedCount }));
       onApplied();
     } catch (err) {
       setError(getVolsErrorMessage(err));
@@ -73,11 +82,8 @@ export function FlightClassAvailabilityBulkForm({
   return (
     <Card variant="dashboard" className="max-w-3xl">
       <form onSubmit={handleSubmit} className="space-y-4">
-        <h3 className="text-sm font-medium text-atg-fg">Mise à jour en masse</h3>
-        <p className="text-sm text-atg-muted">
-          Applique les mêmes sièges et le même prix à toutes les dates de la plage (max. 90
-          jours).
-        </p>
+        <h3 className="text-sm font-medium text-atg-fg">{tCalendar('bulkTitle')}</h3>
+        <p className="text-sm text-atg-muted">{tCalendar('bulkIntroSeats')}</p>
         {error ? (
           <p role="alert" className="text-sm text-red-600">
             {error}
@@ -89,19 +95,29 @@ export function FlightClassAvailabilityBulkForm({
           </p>
         ) : null}
         <div className="grid gap-4 sm:grid-cols-2">
-          <Input label="Du" type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
-          <Input label="Au" type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
+          <Input
+            label={tCommon('form.dateFrom')}
+            type="date"
+            value={dateFrom}
+            onChange={(e) => setDateFrom(e.target.value)}
+          />
+          <Input
+            label={tCommon('form.dateTo')}
+            type="date"
+            value={dateTo}
+            onChange={(e) => setDateTo(e.target.value)}
+          />
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <Input
-            label="Sièges disponibles"
+            label={tCalendar('availableSeats')}
             type="number"
             min={0}
             value={availableSeats}
             onChange={(e) => setAvailableSeats(e.target.value)}
           />
           <Input
-            label="Prix (centimes)"
+            label={tCommon('form.priceCentsShort')}
             type="number"
             min={0}
             value={priceCents}
@@ -109,7 +125,7 @@ export function FlightClassAvailabilityBulkForm({
           />
         </div>
         <Button type="submit" loading={submitting}>
-          Appliquer à la plage
+          {tCalendar('applyToRange')}
         </Button>
       </form>
     </Card>

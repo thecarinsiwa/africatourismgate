@@ -1,16 +1,40 @@
+'use client';
+
+import { Button, EmptyState, PageHeader } from '@africatourismgate/ui';
+import { useTranslations } from 'next-intl';
+import { getSectionPlaceholderConfig } from './admin-section-placeholder';
+import { getPlaceholderSectionMessages } from '../lib/placeholder-section-i18n';
+
 type DashboardSectionPageProps = {
-  title: string;
-  description?: string;
+  /** Chemin section (ex. `['contenu', 'messages']`) pour illustration, textes i18n et CTA. */
+  segments: string[];
 };
 
-export function DashboardSectionPage({
-  title,
-  description = 'Contenu à venir.',
-}: DashboardSectionPageProps) {
+export function DashboardSectionPage({ segments }: DashboardSectionPageProps) {
+  const sectionKey = segments.join('/');
+  const placeholder = getSectionPlaceholderConfig(sectionKey);
+  const tPlaceholder = useTranslations('placeholderSections');
+  const tNav = useTranslations('nav');
+  const messages = getPlaceholderSectionMessages({
+    sectionPath: sectionKey,
+    tPlaceholder,
+    tNav,
+  });
+
   return (
     <div>
-      <h1 className="text-2xl font-bold text-atg-fg">{title}</h1>
-      <p className="mt-2 text-sm text-atg-muted">{description}</p>
+      <PageHeader title={messages.title} description={messages.description} />
+      <EmptyState
+        className="mt-6"
+        title={messages.emptyTitle}
+        description={messages.emptyDescription}
+        icon={placeholder.icon}
+        action={
+          placeholder.ctaHref && messages.ctaLabel ? (
+            <Button href={placeholder.ctaHref}>{messages.ctaLabel}</Button>
+          ) : undefined
+        }
+      />
     </div>
   );
 }

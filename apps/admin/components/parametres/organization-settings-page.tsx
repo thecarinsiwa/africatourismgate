@@ -1,23 +1,35 @@
 'use client';
 
-import type { Organization } from '@africatourismgate/types';
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
+import type { OrganizationListItem } from '@africatourismgate/types';
+import { AlertDialog } from '@africatourismgate/ui';
+import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
+import { useSetAdminPageMeta } from '../admin-page-meta-context';
 import { getApiClient } from '../../lib/auth/api';
-import { getOrganizationSettingsErrorMessage } from '../../lib/organization-settings-errors';
-import { ParametresSubnav } from './parametres-subnav';
+import { useUnsavedChangesGuard } from '../rbac/use-unsaved-changes-guard';
+import { ParametresPageLayout } from './parametres-subnav';
 import {
   OrganizationSettingsForm,
   resolveInitialOrganizationId,
 } from './organization-settings-form';
 
 export function OrganizationSettingsPage() {
+  const { organizationSettings: getOrganizationSettingsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.settings');
   const router = useRouter();
   const searchParams = useSearchParams();
   const [accessError, setAccessError] = useState<string | null>(null);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [organizationId, setOrganizationId] = useState<string | null>(null);
-  const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [organizations, setOrganizations] = useState<OrganizationListItem[]>([]);
+  const [formDirty, setFormDirty] = useState(false);
+  const { dialogOpen, setDialogOpen, requestAction, confirmDiscard, cancelDiscard } =
+    useUnsavedChangesGuard(formDirty);
+
+  useSetAdminPageMeta({ title: t('page.title') });
 
   useEffect(() => {
     let cancelled = false;
@@ -31,7 +43,7 @@ export function OrganizationSettingsPage() {
           me.permissions.includes('organization_settings.read');
         if (!canRead) {
           if (!cancelled) {
-            setAccessError('Vous n’avez pas la permission de consulter les paramètres.');
+            setAccessError(t('page.denied'));
           }
           return;
         }
@@ -64,7 +76,7 @@ export function OrganizationSettingsPage() {
     return () => {
       cancelled = true;
     };
-  }, [searchParams]);
+  }, [searchParams, t, getOrganizationSettingsErrorMessage]);
 
   const handleOrganizationChange = useCallback(
     (id: string) => {
@@ -78,39 +90,47 @@ export function OrganizationSettingsPage() {
 
   if (accessError) {
     return (
-      <div>
-        <ParametresSubnav />
+      <ParametresPageLayout>
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {accessError}
         </p>
-      </div>
+      </ParametresPageLayout>
     );
   }
 
   if (!organizationId) {
     return (
-      <div>
-        <ParametresSubnav />
-        <p className="text-sm text-atg-muted">Chargement…</p>
-      </div>
+      <ParametresPageLayout>
+        <p className="text-sm text-atg-muted">{t('form.loading')}</p>
+      </ParametresPageLayout>
     );
   }
 
   return (
-    <div>
-      <ParametresSubnav />
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Paramètres</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Configuration de l’organisation : coordonnées, locale, réservation et branding.
-        </p>
-      </div>
-      <OrganizationSettingsForm
-        organizationId={organizationId}
-        isSuperAdmin={isSuperAdmin}
-        organizations={organizations}
-        onOrganizationIdChange={isSuperAdmin ? handleOrganizationChange : undefined}
+    <>
+      <ParametresPageLayout
+        onSubnavNavigate={formDirty ? (_href, proceed) => requestAction(proceed) : undefined}
+      >
+        <p className="mb-8 text-sm text-atg-muted">{t('page.intro')}</p>
+        <OrganizationSettingsForm
+          organizationId={organizationId}
+          isSuperAdmin={isSuperAdmin}
+          organizations={organizations}
+          onOrganizationIdChange={isSuperAdmin ? handleOrganizationChange : undefined}
+          onDirtyChange={setFormDirty}
+        />
+      </ParametresPageLayout>
+      <AlertDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        title={t('unsaved.title')}
+        description={t('unsaved.description')}
+        confirmLabel={t('unsaved.confirm')}
+        cancelLabel={t('unsaved.cancel')}
+        variant="danger"
+        onConfirm={confirmDiscard}
+        onCancel={cancelDiscard}
       />
-    </div>
+    </>
   );
 }

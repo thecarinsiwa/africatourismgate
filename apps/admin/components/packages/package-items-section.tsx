@@ -1,9 +1,14 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Button,
   Card,
+  cn,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type {
@@ -11,29 +16,28 @@ import type {
   PackageItemEnriched,
   PackageItemType,
 } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getPackagesErrorMessage } from '../../lib/packages-errors';
-
-const ITEM_TYPE_LABELS: Record<PackageItemType, string> = {
-  property: 'Hébergement',
-  flight: 'Vol',
-  vehicle: 'Véhicule',
-  cruise: 'Cabine (croisière)',
-  activity: 'Activité',
-};
+import { formatMoney } from '../../lib/format-money';
+import { usePackageItemTypeOptions } from '../../lib/i18n/use-module-labels';
+import { PackageCompositionBanner } from './package-composition-banner';
+import { PackageItemTypeIcon } from './package-item-type-icon';
+import { PackagePreviewCard } from './package-preview-card';
+import { PackagePricingRecap } from './package-pricing-recap';
 
 type CatalogOption = { id: string; label: string };
-
-function formatMoney(cents: number, currency: string): string {
-  return `${(cents / 100).toFixed(2)} ${currency}`;
-}
 
 type PackageItemsSectionProps = {
   packageId: string;
 };
 
 export function PackageItemsSection({ packageId }: PackageItemsSectionProps) {
+  const { packages: getPackagesErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.packages.sections.items');
+  const tCommon = useTranslations('modules.common');
+  const tActions = useTranslations('common.actions');
+  const itemTypeOptions = usePackageItemTypeOptions();
   const typeId = useId();
   const itemId = useId();
   const [detail, setDetail] = useState<PackageDetail | null>(null);
@@ -60,7 +64,7 @@ export function PackageItemsSection({ packageId }: PackageItemsSectionProps) {
     } catch (error) {
       setState({ status: 'error', message: getPackagesErrorMessage(error) });
     }
-  }, [packageId]);
+  }, [packageId, getPackagesErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -85,7 +89,7 @@ export function PackageItemsSection({ packageId }: PackageItemsSectionProps) {
             const r = await client.listFlights({ page: 1, limit: 100 });
             options = r.data.map((f) => ({
               id: f.id,
-              label: `Vol ${f.flightNumber}`,
+              label: t('flightLabel', { flightNumber: f.flightNumber }),
             }));
             break;
           }
@@ -120,7 +124,7 @@ export function PackageItemsSection({ packageId }: PackageItemsSectionProps) {
     return () => {
       cancelled = true;
     };
-  }, [itemType]);
+  }, [itemType, t]);
 
   function resetForm() {
     setShowForm(false);
@@ -132,7 +136,7 @@ export function PackageItemsSection({ packageId }: PackageItemsSectionProps) {
     event.preventDefault();
     setFormError(null);
     if (!selectedItemId) {
-      setFormError('Sélectionnez un produit.');
+      setFormError(tCommon('validation.selectProduct'));
       return;
     }
     setSubmitting(true);
@@ -153,7 +157,7 @@ export function PackageItemsSection({ packageId }: PackageItemsSectionProps) {
 
   const handleDelete = useCallback(
     async (item: PackageItemEnriched) => {
-      if (!window.confirm(`Retirer « ${item.label} » du forfait ?`)) return;
+      if (!window.confirm(t('removeConfirm', { label: item.label }))) return;
       setDeletingId(item.id);
       try {
         await getApiClient().deletePackageItem(item.id);
@@ -164,20 +168,25 @@ export function PackageItemsSection({ packageId }: PackageItemsSectionProps) {
         setDeletingId(null);
       }
     },
-    [load],
+    [load, t],
   );
 
   const columns = useMemo<ColumnDef<PackageItemEnriched, unknown>[]>(
     () => [
       {
         id: 'type',
-        header: 'Type',
-        cell: ({ row }) => ITEM_TYPE_LABELS[row.original.itemType],
+        header: tCommon('columns.type'),
+        cell: ({ row }) => (
+          <PackageItemTypeIcon itemType={row.original.itemType} showLabel size="sm" />
+        ),
       },
-      { accessorKey: 'label', header: 'Produit' },
+      {
+        accessorKey: 'label',
+        header: tCommon('columns.product'),
+      },
       {
         id: 'price',
-        header: 'Prix unitaire',
+        header: tCommon('columns.unitPrice'),
         meta: { align: 'right' },
         cell: ({ row }) => (
           <span className="tabular-nums text-sm">
@@ -187,28 +196,26 @@ export function PackageItemsSection({ packageId }: PackageItemsSectionProps) {
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tCommon('columns.actions'),
         meta: { align: 'right' },
         cell: ({ row }) => (
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => void handleDelete(row.original)}
-            disabled={deletingId === row.original.id}
-            loading={deletingId === row.original.id}
-            className="!text-red-600"
-          >
-            Retirer
-          </Button>
+          <DataTableActions>
+            <DataTableActionButton
+              action="remove"
+              onClick={() => void handleDelete(row.original)}
+              disabled={deletingId === row.original.id}
+              loading={deletingId === row.original.id}
+            />
+          </DataTableActions>
         ),
       },
     ],
-    [deletingId, handleDelete],
+    [deletingId, handleDelete, tCommon],
   );
 
   const items = detail?.items ?? [];
   const pricing = detail?.pricing;
+  const pkg = detail?.package;
   const selectClass =
     'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg';
 
@@ -216,41 +223,38 @@ export function PackageItemsSection({ packageId }: PackageItemsSectionProps) {
     <section className="mt-12 space-y-6 border-t border-atg-border pt-10">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-atg-fg">Items du forfait</h2>
-          <p className="mt-1 text-sm text-atg-muted">
-            Produits combinés (hébergement, vol, activité, etc.).
-          </p>
+          <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
+          <p className="mt-1 text-sm text-atg-muted">{t('intro')}</p>
         </div>
         {!showForm ? (
           <Button type="button" onClick={() => setShowForm(true)}>
-            Ajouter un item
+            {t('addItem')}
           </Button>
         ) : null}
       </div>
 
-      {pricing ? (
-        <Card variant="dashboard" className="max-w-md">
-          <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-            <dt className="text-atg-muted">Sous-total</dt>
-            <dd className="text-right tabular-nums font-medium text-atg-fg">
-              {formatMoney(pricing.subtotalCents, pricing.currency)}
-            </dd>
-            <dt className="text-atg-muted">Remise ({pricing.discountPercent}%)</dt>
-            <dd className="text-right tabular-nums text-atg-fg">
-              −{formatMoney(pricing.discountAmountCents, pricing.currency)}
-            </dd>
-            <dt className="font-semibold text-atg-fg">Total forfait</dt>
-            <dd className="text-right tabular-nums font-semibold text-atg-fg">
-              {formatMoney(pricing.totalCents, pricing.currency)}
-            </dd>
-          </dl>
-        </Card>
+      {detail && pricing && pkg ? (
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
+          <PackagePricingRecap
+            pricing={pricing}
+            itemCount={items.length}
+            className="max-w-none"
+          />
+          <PackagePreviewCard
+            pkg={pkg}
+            itemCount={items.length}
+            pricing={pricing}
+            className="lg:sticky lg:top-6"
+          />
+        </div>
       ) : null}
+
+      <PackageCompositionBanner items={items} />
 
       {showForm ? (
         <Card variant="dashboard" className="max-w-2xl">
           <form onSubmit={handleSubmit} className="space-y-4">
-            <h3 className="text-sm font-medium">Nouvel item</h3>
+            <h3 className="text-sm font-medium">{t('newItem')}</h3>
             {formError ? (
               <p role="alert" className="text-sm text-red-600">
                 {formError}
@@ -258,24 +262,27 @@ export function PackageItemsSection({ packageId }: PackageItemsSectionProps) {
             ) : null}
             <div>
               <label htmlFor={typeId} className="mb-2 block text-sm font-medium">
-                Type
+                {tCommon('columns.type')}
               </label>
-              <select
-                id={typeId}
-                className={selectClass}
-                value={itemType}
-                onChange={(e) => setItemType(e.target.value as PackageItemType)}
-              >
-                {(Object.keys(ITEM_TYPE_LABELS) as PackageItemType[]).map((t) => (
-                  <option key={t} value={t}>
-                    {ITEM_TYPE_LABELS[t]}
-                  </option>
-                ))}
-              </select>
+              <div className="flex items-center gap-3">
+                <PackageItemTypeIcon itemType={itemType} size="md" />
+                <select
+                  id={typeId}
+                  className={cn(selectClass, 'min-w-0 flex-1')}
+                  value={itemType}
+                  onChange={(e) => setItemType(e.target.value as PackageItemType)}
+                >
+                  {itemTypeOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
             <div>
               <label htmlFor={itemId} className="mb-2 block text-sm font-medium">
-                Produit
+                {tCommon('columns.product')}
               </label>
               <select
                 id={itemId}
@@ -285,7 +292,7 @@ export function PackageItemsSection({ packageId }: PackageItemsSectionProps) {
                 disabled={catalogLoading}
               >
                 <option value="">
-                  {catalogLoading ? 'Chargement…' : '— Choisir —'}
+                  {catalogLoading ? tCommon('loading') : tCommon('select.chooseDash')}
                 </option>
                 {catalog.map((o) => (
                   <option key={o.id} value={o.id}>
@@ -296,10 +303,10 @@ export function PackageItemsSection({ packageId }: PackageItemsSectionProps) {
             </div>
             <div className="flex gap-3">
               <Button type="submit" loading={submitting}>
-                Ajouter
+                {tActions('create')}
               </Button>
               <Button type="button" variant="outline" onClick={resetForm}>
-                Annuler
+                {tActions('cancel')}
               </Button>
             </div>
           </form>
@@ -316,7 +323,7 @@ export function PackageItemsSection({ packageId }: PackageItemsSectionProps) {
             columns={columns}
             data={items}
             isLoading={state.status === 'loading'}
-            emptyMessage="Aucun item dans ce forfait."
+            emptyMessage={t('empty')}
             getRowId={(r) => r.id}
           />
         </Card>

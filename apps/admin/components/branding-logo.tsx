@@ -3,7 +3,7 @@
 import { Logo } from '@africatourismgate/ui';
 import { useEffect, useState } from 'react';
 import { applyFaviconToDocument } from '../lib/organization-theme';
-import { fetchPublicBranding } from '../lib/public-branding';
+import { fetchPublicBranding, type PublicBranding } from '../lib/public-branding';
 import { useOrganizationThemeOptional } from './organization-theme-provider';
 
 type BrandingLogoProps = {
@@ -12,17 +12,9 @@ type BrandingLogoProps = {
   fallbackName?: string;
 };
 
-export function BrandingLogo({
-  href,
-  centered = false,
-  fallbackName = 'Africa Tourism Gate',
-}: BrandingLogoProps) {
+export function useBrandingLogo(fallbackName = 'Africa Tourism Gate') {
   const orgTheme = useOrganizationThemeOptional();
-  const [publicBranding, setPublicBranding] = useState<{
-    displayName: string;
-    logoUrl: string | null;
-    faviconUrl: string | null;
-  } | null>(null);
+  const [publicBranding, setPublicBranding] = useState<PublicBranding | null>(null);
 
   useEffect(() => {
     if (orgTheme?.branding) return;
@@ -39,10 +31,18 @@ export function BrandingLogo({
   }, [orgTheme?.branding]);
 
   const displayName =
-    orgTheme?.branding?.displayName ??
-    publicBranding?.displayName ??
-    fallbackName;
+    orgTheme?.branding?.displayName ?? publicBranding?.displayName ?? fallbackName;
   const logoUrl = orgTheme?.branding?.logoUrl ?? publicBranding?.logoUrl ?? null;
+
+  return { displayName, logoUrl };
+}
+
+export function BrandingLogo({
+  href,
+  centered = false,
+  fallbackName = 'Africa Tourism Gate',
+}: BrandingLogoProps) {
+  const { displayName, logoUrl } = useBrandingLogo(fallbackName);
 
   return (
     <Logo

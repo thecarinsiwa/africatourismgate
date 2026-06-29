@@ -1,18 +1,23 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Button,
   Card,
-  DataTable,
+  DataTableActionButton,
+  DataTableActions,
   Input,
-  type ColumnDef,
 } from '@africatourismgate/ui';
 import type { FlightClass, FlightClassName } from '@africatourismgate/types';
-import Link from 'next/link';
-import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { useTranslations } from 'next-intl';
+import { useCallback, useEffect, useId, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { flightClassLabels, flightClassOptions } from '../../lib/flight-class-labels';
-import { getVolsErrorMessage } from '../../lib/vols-errors';
+import { getFlightClassLabel } from '../../lib/flight-class-labels';
+import {
+  useFlightClassLabels,
+  useFlightClassOptions,
+} from '../../lib/i18n/use-module-labels';
 
 type FormValues = {
   className: FlightClassName;
@@ -32,9 +37,16 @@ function formatPrice(cents: number): string {
 
 type FlightClassesSectionProps = {
   flightId: string;
+  embedded?: boolean;
 };
 
-export function FlightClassesSection({ flightId }: FlightClassesSectionProps) {
+export function FlightClassesSection({ flightId, embedded }: FlightClassesSectionProps) {
+  const { vols: getVolsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.flights.sections.classes');
+  const tActions = useTranslations('common.actions');
+  const tCommon = useTranslations('modules.common');
+  const classLabels = useFlightClassLabels();
+  const classOptions = useFlightClassOptions();
   const classSelectId = useId();
   const [state, setState] = useState<
     | { status: 'loading' }
@@ -60,7 +72,7 @@ export function FlightClassesSection({ flightId }: FlightClassesSectionProps) {
     } catch (error) {
       setState({ status: 'error', message: getVolsErrorMessage(error) });
     }
-  }, [flightId]);
+  }, [flightId, getVolsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -79,11 +91,11 @@ export function FlightClassesSection({ flightId }: FlightClassesSectionProps) {
     const cents = Number(formValues.basePriceCents);
     const seats = Number(formValues.seatsTotal);
     if (!Number.isFinite(cents) || cents < 0) {
-      setFormError('Prix invalide (centimes).');
+      setFormError(tCommon('validation.invalidPriceCents'));
       return;
     }
     if (!Number.isFinite(seats) || seats < 1) {
-      setFormError('Nombre de sièges invalide.');
+      setFormError(tCommon('validation.invalidSeats'));
       return;
     }
     setSubmitting(true);
@@ -107,101 +119,38 @@ export function FlightClassesSection({ flightId }: FlightClassesSectionProps) {
     }
   }
 
-  const columns = useMemo<ColumnDef<FlightClass, unknown>[]>(
-    () => [
-      {
-        accessorKey: 'className',
-        header: 'Classe',
-        cell: ({ row }) => flightClassLabels[row.original.className],
-      },
-      {
-        id: 'price',
-        header: 'Prix de base',
-        meta: { align: 'right' },
-        cell: ({ row }) => (
-          <span className="tabular-nums text-sm">
-            {formatPrice(row.original.basePriceCents)}
-          </span>
-        ),
-      },
-      {
-        accessorKey: 'seatsTotal',
-        header: 'Sièges',
-        meta: { align: 'center' },
-      },
-      {
-        id: 'actions',
-        header: 'Actions',
-        meta: { align: 'right' },
-        cell: ({ row }) => (
-          <div className="flex justify-end gap-1.5">
-            <Link
-              href={`/produits/vols/${flightId}/classes/${row.original.id}/disponibilites`}
-              className="inline-flex items-center rounded-md px-2 py-1 text-sm font-medium text-primary hover:underline"
-            >
-              Disponibilités
-            </Link>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                setEditing(row.original);
-                setFormValues({
-                  className: row.original.className,
-                  basePriceCents: String(row.original.basePriceCents),
-                  seatsTotal: String(row.original.seatsTotal),
-                });
-                setShowForm(true);
-              }}
-            >
-              Modifier
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="!text-red-600"
-              onClick={async () => {
-                if (!window.confirm('Supprimer cette classe ?')) return;
-                setDeletingId(row.original.id);
-                try {
-                  await getApiClient().deleteFlightClass(row.original.id);
-                  await load();
-                } catch (error) {
-                  setFormError(getVolsErrorMessage(error));
-                } finally {
-                  setDeletingId(null);
-                }
-              }}
-              disabled={deletingId === row.original.id}
-              loading={deletingId === row.original.id}
-            >
-              Supprimer
-            </Button>
-          </div>
-        ),
-      },
-    ],
-    [deletingId, flightId, load],
-  );
+  function openEdit(flightClass: FlightClass) {
+    setEditing(flightClass);
+    setFormValues({
+      className: flightClass.className,
+      basePriceCents: String(flightClass.basePriceCents),
+      seatsTotal: String(flightClass.seatsTotal),
+    });
+    setShowForm(true);
+  }
 
   const classes = state.status === 'ready' ? state.classes : [];
   const selectClass =
     'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg';
 
   return (
-    <section className="mt-12 space-y-6 border-t border-atg-border pt-10">
+    <section
+      className={
+        embedded ? 'space-y-6' : 'mt-12 space-y-6 border-t border-atg-border pt-10'
+      }
+    >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="text-lg font-semibold text-atg-fg">Classes cabine</h2>
-          <p className="mt-1 text-sm text-atg-muted">
-            Cabines et tarifs de base pour ce vol.
-          </p>
-        </div>
+        {!embedded ? (
+          <div>
+            <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
+            <p className="mt-1 text-sm text-atg-muted">{t('intro')}</p>
+          </div>
+        ) : (
+          <p className="text-sm text-atg-muted">{t('intro')}</p>
+        )}
         {!showForm ? (
           <Button type="button" onClick={() => setShowForm(true)}>
-            Ajouter une classe
+            {t('addClass')}
           </Button>
         ) : null}
       </div>
@@ -210,7 +159,7 @@ export function FlightClassesSection({ flightId }: FlightClassesSectionProps) {
         <Card variant="dashboard" className="max-w-2xl">
           <form onSubmit={handleSubmit} className="space-y-4">
             <h3 className="text-sm font-medium">
-              {editing ? 'Modifier la classe' : 'Nouvelle classe'}
+              {editing ? t('editClass') : t('newClass')}
             </h3>
             {formError ? (
               <p role="alert" className="text-sm text-red-600">
@@ -219,7 +168,7 @@ export function FlightClassesSection({ flightId }: FlightClassesSectionProps) {
             ) : null}
             <div>
               <label htmlFor={classSelectId} className="mb-2 block text-sm font-medium">
-                Type de cabine
+                {t('cabinType')}
               </label>
               <select
                 id={classSelectId}
@@ -232,7 +181,7 @@ export function FlightClassesSection({ flightId }: FlightClassesSectionProps) {
                   }))
                 }
               >
-                {flightClassOptions.map((o) => (
+                {classOptions.map((o) => (
                   <option key={o.value} value={o.value}>
                     {o.label}
                   </option>
@@ -241,7 +190,7 @@ export function FlightClassesSection({ flightId }: FlightClassesSectionProps) {
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <Input
-                label="Prix de base (centimes)"
+                label={tCommon('form.basePriceCents')}
                 type="number"
                 min={0}
                 value={formValues.basePriceCents}
@@ -250,7 +199,7 @@ export function FlightClassesSection({ flightId }: FlightClassesSectionProps) {
                 }
               />
               <Input
-                label="Sièges totaux"
+                label={t('totalSeats')}
                 type="number"
                 min={1}
                 value={formValues.seatsTotal}
@@ -261,10 +210,10 @@ export function FlightClassesSection({ flightId }: FlightClassesSectionProps) {
             </div>
             <div className="flex gap-3">
               <Button type="submit" loading={submitting}>
-                {editing ? 'Enregistrer' : 'Ajouter'}
+                {editing ? tActions('save') : t('addClass')}
               </Button>
               <Button type="button" variant="outline" onClick={resetForm}>
-                Annuler
+                {tActions('cancel')}
               </Button>
             </div>
           </form>
@@ -275,16 +224,61 @@ export function FlightClassesSection({ flightId }: FlightClassesSectionProps) {
         <p role="alert" className="text-sm text-red-600">
           {state.message}
         </p>
-      ) : (
-        <Card variant="dashboard" padding="none">
-          <DataTable
-            columns={columns}
-            data={classes}
-            isLoading={state.status === 'loading'}
-            emptyMessage="Aucune classe cabine."
-            getRowId={(r) => r.id}
-          />
+      ) : state.status === 'loading' ? (
+        <p className="text-sm text-atg-muted">{tCommon('loading')}</p>
+      ) : classes.length === 0 ? (
+        <Card variant="dashboard" className="py-12 text-center">
+          <p className="text-sm text-atg-muted">{t('empty')}</p>
         </Card>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {classes.map((flightClass) => (
+            <Card key={flightClass.id} variant="dashboard" className="flex flex-col gap-4">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <h3 className="font-semibold text-atg-fg">
+                    {getFlightClassLabel(flightClass.className, classLabels)}
+                  </h3>
+                  <p className="mt-1 text-lg tabular-nums text-atg-fg">
+                    {formatPrice(flightClass.basePriceCents)}
+                  </p>
+                </div>
+                <DataTableActions>
+                  <DataTableActionButton
+                    action="calendar"
+                    href={`/produits/vols/${flightId}/classes/${flightClass.id}/disponibilites`}
+                  />
+                  <DataTableActionButton
+                    action="edit"
+                    onClick={() => openEdit(flightClass)}
+                  />
+                  <DataTableActionButton
+                    action="delete"
+                    onClick={async () => {
+                      if (!window.confirm(t('deleteConfirm'))) return;
+                      setDeletingId(flightClass.id);
+                      try {
+                        await getApiClient().deleteFlightClass(flightClass.id);
+                        await load();
+                      } catch (error) {
+                        setFormError(getVolsErrorMessage(error));
+                      } finally {
+                        setDeletingId(null);
+                      }
+                    }}
+                    disabled={deletingId === flightClass.id}
+                    loading={deletingId === flightClass.id}
+                  />
+                </DataTableActions>
+              </div>
+              <div className="mt-auto border-t border-atg-border pt-3">
+                <p className="text-sm text-atg-muted">
+                  {tCommon('seatsCount', { count: flightClass.seatsTotal })}
+                </p>
+              </div>
+            </Card>
+          ))}
+        </div>
       )}
     </section>
   );

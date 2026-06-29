@@ -1,9 +1,30 @@
 'use client';
 
 import type { PropertyDetail, PropertyDetailRoom } from '@africatourismgate/types';
+import { useState } from 'react';
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import { formatHotelPrice } from '../../lib/hotels/listings';
+import { useBookingCtaLabel } from '../../lib/bookings/use-booking-cta';
 import type { Translations } from '../../lib/i18n/translations';
+import {
+  BookingSidebarBody,
+  BookingSidebarCta,
+  BookingSidebarDesktop,
+  BookingSidebarField,
+  BookingGuestStepper,
+  BookingSidebarHint,
+  BookingSidebarMobileBar,
+  BookingSidebarMobileDrawer,
+  BookingSidebarPriceBlock,
+  BookingSidebarSummary,
+  BookingSidebarTrustHints,
+  bookingSidebarDateGridClass,
+  bookingSidebarInputClass,
+  useBookingDrawerOpenListener,
+  useBookingSidebarTrustHints,
+} from '../shared/booking-sidebar-shell';
+import { HOTEL_MAX_GUESTS } from '../../lib/hotels/listings';
+import { useTranslations, useTranslations as useAppTranslations } from '../../lib/i18n/locale-provider';
 
 type HotelBookingSidebarProps = {
   detail: PropertyDetail;
@@ -41,7 +62,7 @@ function computeTotal(
   return null;
 }
 
-function SidebarContent({
+function HotelBookingContent({
   detail,
   selectedRoom,
   checkIn,
@@ -54,143 +75,135 @@ function SidebarContent({
   t,
   locale,
 }: HotelBookingSidebarProps) {
+  const { bookingSidebar } = useAppTranslations();
+  const trustHints = useBookingSidebarTrustHints();
+  const ctaLabel = useBookingCtaLabel('room');
   const hasDates = Boolean(checkIn && checkOut && checkOut > checkIn);
   const total = computeTotal(detail, selectedRoom);
   const canReserve = hasDates && selectedRoom != null && selectedRoom.available;
+  const noRoomsForGuests = detail.rooms.length === 0;
 
   const nightsLabel =
     detail.stay.nights === 1 ? t.nightSingular : `${detail.stay.nights} ${t.nightPlural}`;
+  const guestsLabel =
+    guests === 1 ? t.guestSingular : t.guestPlural.replace('{n}', String(guests));
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-lg font-bold text-[#0f1a16] dark:text-white">{t.reserveSection}</h2>
-
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
-        <label className="block text-sm">
-          <span className="mb-1 block font-medium text-gray-600 dark:text-atg-muted">{t.checkIn}</span>
+    <BookingSidebarBody title={t.reserveSection}>
+      <div className={bookingSidebarDateGridClass}>
+        <BookingSidebarField label={t.checkIn}>
           <input
             type="date"
             value={checkIn}
             onChange={(e) => onCheckInChange(e.target.value)}
-            className="min-h-[44px] w-full rounded-lg border border-gray-200 px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-surface dark:text-white"
+            className={bookingSidebarInputClass}
           />
-        </label>
-        <label className="block text-sm">
-          <span className="mb-1 block font-medium text-gray-600 dark:text-atg-muted">{t.checkOut}</span>
+        </BookingSidebarField>
+        <BookingSidebarField label={t.checkOut}>
           <input
             type="date"
             value={checkOut}
             min={checkIn || undefined}
             onChange={(e) => onCheckOutChange(e.target.value)}
-            className="min-h-[44px] w-full rounded-lg border border-gray-200 px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-surface dark:text-white"
+            className={bookingSidebarInputClass}
           />
-        </label>
+        </BookingSidebarField>
       </div>
 
-      <label className="block text-sm">
-        <span className="mb-1 block font-medium text-gray-600 dark:text-atg-muted">{t.guests}</span>
-        <input
-          type="number"
-          min={1}
-          max={20}
+      <BookingSidebarField label={t.guests}>
+        <BookingGuestStepper
           value={guests}
-          onChange={(e) => onGuestsChange(Math.max(1, Number.parseInt(e.target.value, 10) || 1))}
-          className="min-h-[44px] w-full rounded-lg border border-gray-200 px-3 py-2 text-sm dark:border-atg-border dark:bg-atg-surface dark:text-white"
+          min={1}
+          max={HOTEL_MAX_GUESTS}
+          onChange={onGuestsChange}
+          decreaseLabel={bookingSidebar.decreaseGuests}
+          increaseLabel={bookingSidebar.increaseGuests}
         />
-      </label>
+      </BookingSidebarField>
 
-      {!hasDates && (
-        <p className="text-sm text-gray-500 dark:text-atg-muted">{t.selectDatesHint}</p>
+      {!hasDates && <BookingSidebarHint>{t.selectDatesHint}</BookingSidebarHint>}
+
+      {noRoomsForGuests && (
+        <BookingSidebarHint tone="warning">
+          {t.noRoomsForGuests.replace('{n}', String(guests))}
+        </BookingSidebarHint>
       )}
 
-      {!selectedRoom && hasDates && (
-        <p className="text-sm text-amber-700 dark:text-amber-300">{t.selectRoomHint}</p>
+      {!selectedRoom && hasDates && !noRoomsForGuests && (
+        <BookingSidebarHint tone="warning">{t.selectRoomHint}</BookingSidebarHint>
       )}
 
       {hasDates && checkIn && checkOut && (
-        <p className="text-sm text-gray-600 dark:text-atg-muted">
+        <BookingSidebarSummary>
           {formatDisplayDate(checkIn, locale)} → {formatDisplayDate(checkOut, locale)}
           {detail.stay.nights > 0 && ` · ${nightsLabel}`}
-        </p>
+          {` · ${guestsLabel}`}
+        </BookingSidebarSummary>
       )}
 
-      {total && (
-        <div className="rounded-lg bg-gray-50 px-4 py-3 dark:bg-white/5">
-          <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-atg-muted">
-            {t.totalStay}
-          </p>
-          <p className="text-2xl font-bold text-[#0f1a16] dark:text-white">
-            {formatHotelPrice(total.cents, total.currency)}
-          </p>
-        </div>
-      )}
+      {total ? (
+        <BookingSidebarPriceBlock
+          label={t.totalStay}
+          amount={formatHotelPrice(total.cents, total.currency)}
+          detail={t.perRoomPriceNote}
+        />
+      ) : null}
 
       {!total && hasDates && (
-        <p className="text-sm text-gray-500 dark:text-atg-muted">
+        <BookingSidebarHint>
           {t.fromPrice}{' '}
           {formatHotelPrice(
             detail.rooms[0]?.basePriceCents ?? 0,
             detail.rooms[0]?.currency ?? detail.stay.currency,
           )}{' '}
           {t.perNight}
-        </p>
+        </BookingSidebarHint>
       )}
 
-      <button
-        type="button"
-        disabled={!canReserve}
-        onClick={onReserve}
-        className="w-full min-h-[48px] rounded-lg bg-primary px-6 py-3 text-sm font-bold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
-      >
-        {t.bookNow}
-      </button>
-
-      <p className="text-xs text-gray-500 dark:text-atg-muted">{t.previewNotice}</p>
-    </div>
+      <BookingSidebarCta label={ctaLabel} disabled={!canReserve} onClick={onReserve} />
+      <BookingSidebarTrustHints items={trustHints} />
+    </BookingSidebarBody>
   );
 }
 
 export function HotelBookingSidebar(props: HotelBookingSidebarProps) {
   return (
-    <aside
-      id="reserve"
-      className="hidden rounded-2xl border border-gray-100 bg-white p-6 shadow-lg dark:border-atg-border dark:bg-atg-elevated lg:block lg:sticky lg:top-24"
-    >
-      <SidebarContent {...props} />
-    </aside>
+    <BookingSidebarDesktop>
+      <HotelBookingContent {...props} />
+    </BookingSidebarDesktop>
   );
 }
 
 export function HotelBookingMobileBar(props: HotelBookingSidebarProps) {
+  const { bookingSidebar } = useTranslations();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const ctaLabel = useBookingCtaLabel('room');
   const total = computeTotal(props.detail, props.selectedRoom);
   const hasDates = Boolean(props.checkIn && props.checkOut && props.checkOut > props.checkIn);
   const canReserve =
     hasDates && props.selectedRoom != null && props.selectedRoom.available;
 
+  useBookingDrawerOpenListener(() => setDrawerOpen(true));
+
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-gray-200 bg-white/95 p-4 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] backdrop-blur-md dark:border-atg-border dark:bg-atg-elevated/95 lg:hidden pb-safe">
-      <div className="mx-auto flex max-w-lg items-center gap-4">
-        <div className="min-w-0 flex-1">
-          {total ? (
-            <>
-              <p className="text-xs text-gray-500 dark:text-atg-muted">{props.t.totalStay}</p>
-              <p className="text-lg font-bold text-[#0f1a16] dark:text-white">
-                {formatHotelPrice(total.cents, total.currency)}
-              </p>
-            </>
-          ) : (
-            <p className="text-sm text-gray-500 dark:text-atg-muted">{props.t.selectDatesHint}</p>
-          )}
-        </div>
-        <button
-          type="button"
-          disabled={!canReserve}
-          onClick={props.onReserve}
-          className="min-h-[48px] shrink-0 rounded-lg bg-primary px-6 py-3 text-sm font-bold uppercase tracking-wide text-white hover:bg-primary-hover disabled:opacity-50"
-        >
-          {props.t.bookNow}
-        </button>
-      </div>
-    </div>
+    <>
+      <BookingSidebarMobileDrawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        title={props.t.reserveSection}
+      >
+        <HotelBookingContent {...props} />
+      </BookingSidebarMobileDrawer>
+      <BookingSidebarMobileBar
+        priceLabel={total ? props.t.totalStay : undefined}
+        priceAmount={total ? formatHotelPrice(total.cents, total.currency) : undefined}
+        hint={total ? undefined : props.t.selectDatesHint}
+        ctaLabel={ctaLabel}
+        ctaDisabled={!canReserve}
+        onCtaClick={props.onReserve}
+        configureLabel={bookingSidebar.mobileConfigure}
+        onConfigureClick={() => setDrawerOpen(true)}
+      />
+    </>
   );
 }

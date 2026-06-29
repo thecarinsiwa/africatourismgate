@@ -1,20 +1,11 @@
 import type { Metadata } from 'next';
-import { RbacAuditLogsList } from '../../../../components/rbac/rbac-audit-logs-list';
+import { getAdminPageMetadata } from '../../../../lib/i18n/admin-page-i18n';
+import { AuditPageContent } from '../../../../components/pages/systeme-audit-page-content';
 
-export const metadata: Metadata = {
-  title: 'Audit RBAC — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('systeme/audit');
+}
 
-export default function RbacAuditPage() {
-  return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Audit RBAC</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Journal des événements de sécurité et des changements de permissions (lecture seule).
-        </p>
-      </div>
-      <RbacAuditLogsList />
-    </div>
-  );
+export default function Page() {
+  return <AuditPageContent />;
 }

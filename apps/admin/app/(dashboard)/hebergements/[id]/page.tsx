@@ -1,14 +1,21 @@
 import type { Metadata } from 'next';
+import { AdminPageLoading } from '../../../../components/pages/admin-page-loading';
+import { getAdminPageMetadata } from '../../../../lib/i18n/admin-page-i18n';
+import { Suspense } from 'react';
 import { PropertyEditPage } from '../../../../components/properties/property-edit-page';
 
 type PageProps = {
   params: { id: string };
 };
 
-export const metadata: Metadata = {
-  title: 'Modifier l’hébergement — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('hebergements/id');
+}
 
 export default function EditHebergementPage({ params }: PageProps) {
-  return <PropertyEditPage propertyId={params.id} />;
+  return (
+    <Suspense fallback={<AdminPageLoading />}>
+      <PropertyEditPage propertyId={params.id} />
+    </Suspense>
+  );
 }

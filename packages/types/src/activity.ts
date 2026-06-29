@@ -20,12 +20,22 @@ export interface ActivityProvidersListQuery {
   destinationId?: string;
 }
 
+export const ACTIVITY_DIFFICULTY_LEVELS = [
+  'easy',
+  'moderate',
+  'hard',
+  'expert',
+] as const;
+
+export type ActivityDifficultyLevel = (typeof ACTIVITY_DIFFICULTY_LEVELS)[number];
+
 export interface Activity {
   id: string;
   providerId: string;
   title: string;
   description: string | null;
   durationMinutes: number | null;
+  difficultyLevel: ActivityDifficultyLevel | null;
   priceCents: number;
   currency: string;
   createdAt: string;
@@ -37,6 +47,7 @@ export interface CreateActivityRequest {
   title: string;
   description?: string;
   durationMinutes?: number;
+  difficultyLevel?: ActivityDifficultyLevel | null;
   priceCents: number;
   currency: string;
 }
@@ -76,4 +87,31 @@ export interface ActivitySchedulesListQuery {
   limit?: number;
   activityId?: string;
   destinationId?: string;
+}
+
+export interface ActivityImage {
+  id: string;
+  activityId: string;
+  url: string;
+  caption: string | null;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string | null;
+}
+
+export interface CreateActivityImageRequest {
+  activityId: string;
+  url: string;
+  caption?: string;
+  sortOrder?: number;
+}
+
+export type UpdateActivityImageRequest = Partial<
+  Omit<CreateActivityImageRequest, 'activityId'>
+>;
+
+export interface ActivityImagesListQuery {
+  page?: number;
+  limit?: number;
+  activityId?: string;
 }

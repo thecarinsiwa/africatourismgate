@@ -1,5 +1,6 @@
 import { getRequestConfig } from 'next-intl/server';
 import { cookies } from 'next/headers';
+import { loadAdminMessages } from '../lib/i18n/load-messages';
 import { defaultLocale, LOCALE_COOKIE, locales, type AppLocale } from './routing';
 
 function resolveLocale(value: string | undefined): AppLocale {
@@ -15,6 +16,6 @@ export default getRequestConfig(async () => {
 
   return {
     locale,
-    messages: (await import(`../messages/${locale}.json`)).default,
+    messages: await loadAdminMessages(locale),
   };
 });

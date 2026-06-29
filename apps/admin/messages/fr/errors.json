@@ -1,0 +1,58 @@
+{
+  "users": {
+    "emailConflict": "Cette adresse e-mail est déjà utilisée par un autre utilisateur."
+  },
+  "bookings": {
+    "forbidden": "Vous n’avez pas la permission bookings.read pour consulter les réservations."
+  },
+  "hebergements": {
+    "slugConflict": "Ce slug est déjà utilisé par une autre propriété.",
+    "codeConflict": "Ce code est déjà utilisé par un autre équipement.",
+    "availabilityConflict": "Une disponibilité existe déjà pour cette date."
+  },
+  "organizations": {
+    "slugConflict": "Ce slug est déjà utilisé par une autre organisation."
+  },
+  "destinations": {
+    "slugConflict": "Ce slug est déjà utilisé par une autre destination."
+  },
+  "tourGuides": {
+    "userConflict": "Cet utilisateur est déjà lié à un guide touristique."
+  },
+  "employees": {
+    "profileConflict": "Cet utilisateur possède déjà un profil employé."
+  },
+  "rbac": {
+    "forbidden": "Accès refusé : votre compte n’a pas les permissions requises (users.read, roles.read). Reconnectez-vous avec un compte administrateur ou exécutez pnpm --filter @africatourismgate/api sync:rbac puis redémarrez l’API.",
+    "assignmentConflict": "Cette assignation existe déjà pour ce périmètre."
+  },
+  "vols": {
+    "conflict": "Conflit : cette ressource existe déjà (code IATA ou disponibilité dupliquée)."
+  },
+  "croisieres": {
+    "conflict": "Conflit : cette ressource existe déjà (code port ou disponibilité dupliquée)."
+  },
+  "reviews": {
+    "forbidden": "Vous n’avez pas la permission d’effectuer cette action (reviews.read / reviews.write).",
+    "notFound": "Avis introuvable."
+  },
+  "supportTickets": {
+    "forbidden": "Vous n’avez pas la permission d’effectuer cette action (support_tickets.read / support_tickets.write).",
+    "notFound": "Ticket introuvable."
+  },
+  "promoCodes": {
+    "forbidden": "Vous n’avez pas la permission d’effectuer cette action (promo_codes.read / promo_codes.write).",
+    "codeConflict": "Ce code promo existe déjà."
+  },
+  "promotions": {
+    "forbidden": "Vous n’avez pas la permission d’effectuer cette action (promo_codes.read / write)."
+  },
+  "loyaltyAccounts": {
+    "forbidden": "Accès refusé. Lecture : users.read — ajustement : super administrateur uniquement.",
+    "notFound": "Compte fidélité introuvable."
+  },
+  "dashboard": {
+    "forbidden": "Accès refusé.",
+    "loadFailed": "Impossible de charger les indicateurs."
+  }
+}

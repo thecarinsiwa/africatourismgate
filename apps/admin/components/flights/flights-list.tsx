@@ -1,33 +1,35 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   DataTablePagination,
   Input,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { Airline, Airport, Flight } from '@africatourismgate/types';
+import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getVolsErrorMessage } from '../../lib/vols-errors';
+import { FlightThumbnail } from './flight-thumbnail';
+import { FlightTimeline } from './flight-timeline';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
 
-function formatSchedule(iso: string): string {
-  try {
-    return new Date(iso).toLocaleString('fr-FR', {
-      dateStyle: 'short',
-      timeStyle: 'short',
-    });
-  } catch {
-    return iso;
-  }
-}
-
 export function FlightsList() {
+  const locale = useLocale();
+  const { vols: getVolsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.flights.list');
+  const tColumns = useTranslations('modules.flights.columns');
+  const tCommonColumns = useTranslations('modules.common.columns');
+  const tPagination = useTranslations('modules.common.pagination');
+  const tCommon = useTranslations('modules.common');
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -40,6 +42,22 @@ export function FlightsList() {
   >({ status: 'loading' });
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const emptyDash = tCommon('empty.dash');
+
+  const formatSchedule = useCallback(
+    (iso: string): string => {
+      try {
+        return new Date(iso).toLocaleString(locale, {
+          dateStyle: 'short',
+          timeStyle: 'short',
+        });
+      } catch {
+        return iso;
+      }
+    },
+    [locale],
+  );
 
   useEffect(() => {
     const client = getApiClient();
@@ -83,7 +101,7 @@ export function FlightsList() {
     } catch (error) {
       setState({ status: 'error', message: getVolsErrorMessage(error) });
     }
-  }, [page, search]);
+  }, [page, search, getVolsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -102,7 +120,7 @@ export function FlightsList() {
 
   const handleDelete = useCallback(
     async (flight: Flight) => {
-      if (!window.confirm(`Supprimer le vol « ${flight.flightNumber} » ?`)) return;
+      if (!window.confirm(t('deleteConfirm', { flightNumber: flight.flightNumber }))) return;
       setDeleteError(null);
       setDeletingId(flight.id);
       try {
@@ -114,14 +132,26 @@ export function FlightsList() {
         setDeletingId(null);
       }
     },
-    [load],
+    [load, t, getVolsErrorMessage],
   );
 
   const columns = useMemo<ColumnDef<Flight, unknown>[]>(
     () => [
       {
+        id: 'thumbnail',
+        header: '',
+        meta: { align: 'center' },
+        cell: ({ row }) => (
+          <FlightThumbnail
+            flightId={row.original.id}
+            label={row.original.flightNumber}
+            size="md"
+          />
+        ),
+      },
+      {
         accessorKey: 'flightNumber',
-        header: 'Code vol',
+        header: tColumns('flightNumber'),
         cell: ({ row }) => (
           <code className="rounded-md bg-atg-surface px-2 py-0.5 font-mono text-sm font-semibold text-atg-fg ring-1 ring-atg-border/60">
             {row.original.flightNumber}
@@ -130,25 +160,31 @@ export function FlightsList() {
       },
       {
         id: 'airline',
-        header: 'Compagnie',
-        cell: ({ row }) => airlineById.get(row.original.airlineId)?.name ?? '—',
+        header: tColumns('airline'),
+        cell: ({ row }) => airlineById.get(row.original.airlineId)?.name ?? emptyDash,
       },
       {
         id: 'route',
-        header: 'Trajet',
+        header: tColumns('route'),
         cell: ({ row }) => {
-          const dep = airportById.get(row.original.departureAirportId);
-          const arr = airportById.get(row.original.arrivalAirportId);
+          const dep = airportById.get(row.original.departureAirportId) ?? null;
+          const arr = airportById.get(row.original.arrivalAirportId) ?? null;
           return (
-            <span className="text-sm">
-              {dep?.iataCode ?? '?'} → {arr?.iataCode ?? '?'}
-            </span>
+            <FlightTimeline
+              compact
+              departureAirport={dep}
+              arrivalAirport={arr}
+              departureTime={row.original.departureTime}
+              arrivalTime={row.original.arrivalTime}
+              durationMinutes={row.original.durationMinutes}
+              className="min-w-[12rem]"
+            />
           );
         },
       },
       {
         id: 'departure',
-        header: 'Départ',
+        header: tColumns('departure'),
         cell: ({ row }) => (
           <span className="text-sm tabular-nums text-atg-muted">
             {formatSchedule(row.original.departureTime)}
@@ -157,36 +193,36 @@ export function FlightsList() {
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tCommonColumns('actions'),
         meta: { align: 'right' },
         cell: ({ row }) => (
-          <div className="flex justify-end gap-1.5">
-            <Button href={`/produits/vols/${row.original.id}`} variant="ghost" size="sm">
-              Modifier
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
+          <DataTableActions>
+            <DataTableActionButton action="edit" href={`/produits/vols/${row.original.id}`} />
+            <DataTableActionButton
+              action="delete"
               onClick={() => void handleDelete(row.original)}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
-              className="!text-red-600"
-            >
-              Supprimer
-            </Button>
-          </div>
+            />
+          </DataTableActions>
         ),
       },
     ],
-    [airlineById, airportById, deletingId, handleDelete],
+    [
+      airlineById,
+      airportById,
+      deletingId,
+      emptyDash,
+      formatSchedule,
+      handleDelete,
+      tColumns,
+      tCommonColumns,
+    ],
   );
 
   const flights = state.status === 'ready' ? state.flights : [];
   const emptyMessage =
-    search.trim().length > 0
-      ? 'Aucun vol ne correspond à ce code.'
-      : 'Aucun vol pour le moment.';
+    search.trim().length > 0 ? t('emptySearch') : t('emptyDefault');
 
   return (
     <div className="space-y-6">
@@ -194,13 +230,13 @@ export function FlightsList() {
         <div className="flex-1 sm:max-w-md">
           <Input
             type="search"
-            placeholder="Rechercher par code vol (ex. ET302)…"
+            placeholder={t('searchPlaceholder')}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            aria-label="Rechercher un vol"
+            aria-label={t('searchAria')}
           />
         </div>
-        <Button href="/produits/vols/nouveau">Nouveau vol</Button>
+        <Button href="/produits/vols/nouveau">{t('newFlight')}</Button>
       </div>
 
       {deleteError ? (
@@ -231,7 +267,7 @@ export function FlightsList() {
               pageSize={PAGE_SIZE}
               totalPages={state.totalPages}
               totalItems={state.total}
-              itemLabel="vol"
+              itemLabel={tPagination('flight')}
               onPageChange={setPage}
             />
           ) : null}

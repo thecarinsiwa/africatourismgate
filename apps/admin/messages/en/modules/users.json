@@ -1,0 +1,127 @@
+{
+  "list": {
+    "newUser": "New user",
+    "emptyDefault": "Tocun utilisateur pour le moment.",
+    "emptyFiltered": "Tocun utilisateur ne correspond à vos critères.",
+    "ariaLabel": "User list",
+    "deleteConfirm": "Delete user « {email} »? This action is reversible in the database."
+  },
+  "filters": {
+    "status": "Status",
+    "organization": "Organization",
+    "role": "Role"
+  },
+  "form": {
+    "email": "Email",
+    "passwordCreate": "Password",
+    "passwordEdit": "New password (optional)",
+    "passwordHintCreate": "At least 8 characters.",
+    "passwordHintEdit": "Leave blank to keep the current password.",
+    "firstName": "First name",
+    "lastName": "Name",
+    "phone": "Phone",
+    "preferredLanguage": "Preferred language",
+    "preferredLanguageHint": "2-letter ISO code (e.g. fr, en).",
+    "organization": "Organization",
+    "organizationNone": "None",
+    "status": "Status",
+    "submitCreate": "Create user",
+    "submitEdit": "Save",
+    "validation": {
+      "emailRequired": "Email address is required.",
+      "passwordMinLength": "Password must be at least 8 characters.",
+      "firstNameRequired": "First name is required.",
+      "lastNameRequired": "Last name is required."
+    }
+  },
+  "detail": {
+    "title": "Edit user",
+    "tabsAria": "User account sections",
+    "tabs": {
+      "profile": "Profile",
+      "addresses": "Addresss",
+      "paymentMethods": "Payment methods",
+      "sessions": "Sessions",
+      "roles": "Roles"
+    }
+  },
+  "userIdFilter": {
+    "label": "User",
+    "allUsers": "All les utilisateurs"
+  },
+  "addresses": {
+    "emptyDefault": "None adresse enregistrée.",
+    "emptyFiltered": "None adresse pour cet utilisateur.",
+    "ariaLabel": "Liste des adresses utilisateur"
+  },
+  "paymentMethods": {
+    "lastFourMasked": "•••• {lastFour}",
+    "emptyDefault": "Tocun moyen de paiement enregistré.",
+    "emptyFiltered": "Tocun moyen de paiement pour cet utilisateur.",
+    "ariaLabel": "Liste des moyens de paiement"
+  },
+  "sessions": {
+    "revokeConfirm": "Revoke this session? The user will need to sign in again.",
+    "emptyDefault": "None session active.",
+    "emptyFiltered": "None session active pour cet utilisateur.",
+    "ariaLabel": "Liste des sessions utilisateur"
+  },
+  "stats": {
+    "total": {
+      "label": "Users",
+      "subtitle": "Registered accounts"
+    },
+    "active": {
+      "label": "Actives",
+      "subtitle": "Active accounts"
+    },
+    "suspended": {
+      "label": "Suspendeds",
+      "subtitle": "Suspended accounts"
+    },
+    "employees": {
+      "label": "Employees",
+      "subtitle": "Profiles employés"
+    }
+  },
+  "roles": {
+    "assignedTitle": "Roles assignés",
+    "empty": "Tocun rôle actif pour cet utilisateur.",
+    "assignFormTitle": "Assigner un rôle",
+    "user": "User",
+    "role": "Role",
+    "selectPlaceholder": "Sélectionner…",
+    "scope": "Périmètre (scope)",
+    "scopeId": "ID du scope (UUID)",
+    "scopeIdHint": "Ex. ID propriété, agence ou file support.",
+    "expiresAt": "Expiration (optionnel)",
+    "superAdminWarning": "Réservé aux super administrateurs — périmètre forcé à Global.",
+    "superAdminConfirm": "Assign role « {roleName} »? This user will get full platform access.",
+    "validation": {
+      "userAndRoleRequired": "User et rôle sont obligatoires.",
+      "scopeIdRequired": "Scope ID is required for this scope."
+    },
+    "scopeTypes": {
+      "global": "Global",
+      "property": "Property",
+      "agency": "Agency",
+      "support_queue": "File support"
+    },
+    "scopeDisplay": {
+      "global": "Global",
+      "property": "Établissement",
+      "agency": "Agency",
+      "support_queue": "File support",
+      "withId": "{label} · {idPrefix}…"
+    },
+    "revokeDialog": {
+      "title": "Révoquer le rôle",
+      "description": "Retirer ce rôle pour cet utilisateur ?"
+    },
+    "toast": {
+      "revokedTitle": "Role révoqué",
+      "revokedMessage": "Assignment removed.",
+      "revokeFailedTitle": "Échec de la révocation"
+    }
+  }
+}

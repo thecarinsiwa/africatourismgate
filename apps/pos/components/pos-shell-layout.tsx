@@ -53,7 +53,8 @@ export function PosShellLayout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let cancelled = false;
-    void fetchPublicBranding().then((branding) => {
+    const organizationSlug = session?.selectedOrganizationSlug ?? null;
+    void fetchPublicBranding({ organizationSlug }).then((branding) => {
       if (cancelled) return;
       setLogo({
         name: `${branding.displayName} — Caisse`,
@@ -64,7 +65,7 @@ export function PosShellLayout({ children }: { children: React.ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [session?.selectedOrganizationSlug]);
 
   const handleLogout = useCallback(async () => {
     await logout();

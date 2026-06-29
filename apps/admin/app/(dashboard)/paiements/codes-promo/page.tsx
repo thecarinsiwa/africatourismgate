@@ -1,27 +1,11 @@
 import type { Metadata } from 'next';
-import { PaymentsPromoSubnav } from '../../../../components/payments/payments-promo-subnav';
-import { PromoCodesList } from '../../../../components/promo-codes/promo-codes-list';
+import { getAdminPageMetadata } from '../../../../lib/i18n/admin-page-i18n';
+import { CodesPromoPageContent } from '../../../../components/pages/paiements-codes-promo-page-content';
 
-export const metadata: Metadata = {
-  title: 'Codes promo — Africa Tourism Gate Admin',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return getAdminPageMetadata('paiements/codes-promo');
+}
 
-export default function PromoCodesPage() {
-  return (
-    <div>
-      <PaymentsPromoSubnav />
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Codes promo</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Créez et gérez les codes utilisables dans le checkout (preview web). Validation des
-          dates, unicité du code et plafond d’utilisations. Voir aussi les{' '}
-          <a href="/paiements/promotions" className="font-medium text-primary hover:underline">
-            promotions
-          </a>
-          . Accès : promo_codes.read / write.
-        </p>
-      </div>
-      <PromoCodesList />
-    </div>
-  );
+export default function Page() {
+  return <CodesPromoPageContent />;
 }

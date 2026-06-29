@@ -3,9 +3,11 @@ import type {
   AirlinesListQuery,
   AirportsListQuery,
   AmenitiesListQuery,
+  ActivityImagesListQuery,
   DestinationsListQuery,
   FlightClassAvailabilityListQuery,
   FlightClassesListQuery,
+  FlightImagesListQuery,
   FlightsListQuery,
   PaginatedResponse,
   PaginationQuery,
@@ -14,6 +16,7 @@ import type {
   PropertiesListQuery,
   PropertyAmenitiesListQuery,
   PropertyImagesListQuery,
+  BookingItemsListQuery,
   BookingsListQuery,
   ReviewsListQuery,
   PaymentsListQuery,
@@ -27,6 +30,7 @@ import type {
   UsersListQuery,
   VehicleAvailabilityListQuery,
   VehicleCategoriesListQuery,
+  VehicleImagesListQuery,
   VehiclesListQuery,
 } from '@africatourismgate/types';
 import type { RequestOptions } from './index';
@@ -47,6 +51,7 @@ const RESOURCE_QUERY_KEYS = [
   'userId',
   'dateFrom',
   'dateTo',
+  'sortOrder',
   'destinationId',
   'propertyId',
   'rating',
@@ -56,6 +61,7 @@ const RESOURCE_QUERY_KEYS = [
   'endTo',
   'flightClassId',
   'flightId',
+  'activityId',
   'agencyId',
   'categoryId',
   'destination',
@@ -63,12 +69,15 @@ const RESOURCE_QUERY_KEYS = [
   'checkOut',
   'guests',
   'propertyType',
+  'itemType',
+  'bookingId',
 ] as const;
 
 export type PaginatedListQuery =
   | PaginationQuery
   | UsersListQuery
   | BookingsListQuery
+  | BookingItemsListQuery
   | ReviewsListQuery
   | PaymentsListQuery
   | PromoCodesListQuery
@@ -87,9 +96,12 @@ export type PaginatedListQuery =
   | FlightsListQuery
   | FlightClassesListQuery
   | FlightClassAvailabilityListQuery
+  | FlightImagesListQuery
   | RentalAgenciesListQuery
   | VehicleCategoriesListQuery
   | VehiclesListQuery
+  | VehicleImagesListQuery
+  | ActivityImagesListQuery
   | VehicleAvailabilityListQuery
   | PropertySearchQuery;
 

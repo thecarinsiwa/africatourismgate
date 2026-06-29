@@ -1,10 +1,18 @@
 'use client';
 
-import { Button, Card, DataTable, Input, type ColumnDef } from '@africatourismgate/ui';
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
+import {
+  Button,
+  Card,
+  DataTableActionButton,
+  DataTableActions,
+  Input,
+} from '@africatourismgate/ui';
 import type { Cabin } from '@africatourismgate/types';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslations } from 'next-intl';
+import { useCallback, useEffect, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getCroisieresErrorMessage } from '../../lib/croisieres-errors';
 
 type FormValues = {
   categoryName: string;
@@ -26,6 +34,11 @@ function formatPrice(cents: number, currency: string): string {
 type CabinsSectionProps = { shipId: string };
 
 export function CabinsSection({ shipId }: CabinsSectionProps) {
+  const { croisieres: getCroisieresErrorMessage } = useAdminErrorMessages();
+  const tSection = useTranslations('modules.cruises.sections.cabins');
+  const tForm = useTranslations('modules.cruises.form.cabin');
+  const tCommon = useTranslations('modules.common');
+  const tActions = useTranslations('common.actions');
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -46,7 +59,7 @@ export function CabinsSection({ shipId }: CabinsSectionProps) {
     } catch (error) {
       setState({ status: 'error', message: getCroisieresErrorMessage(error) });
     }
-  }, [shipId]);
+  }, [shipId, getCroisieresErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -59,17 +72,28 @@ export function CabinsSection({ shipId }: CabinsSectionProps) {
     setFormError(null);
   }
 
+  function openEdit(cabin: Cabin) {
+    setEditing(cabin);
+    setFormValues({
+      categoryName: cabin.categoryName,
+      maxGuests: String(cabin.maxGuests),
+      basePriceCents: String(cabin.basePriceCents),
+      currency: cabin.currency,
+    });
+    setShowForm(true);
+  }
+
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     setFormError(null);
     const guests = Number(formValues.maxGuests);
     const cents = Number(formValues.basePriceCents);
     if (!formValues.categoryName.trim() || !Number.isFinite(guests) || guests < 1) {
-      setFormError('Catégorie et capacité invalides.');
+      setFormError(tForm('validationCategory'));
       return;
     }
     if (!Number.isFinite(cents) || cents < 0) {
-      setFormError('Prix de base invalide.');
+      setFormError(tForm('validationPrice'));
       return;
     }
     setSubmitting(true);
@@ -94,86 +118,18 @@ export function CabinsSection({ shipId }: CabinsSectionProps) {
     }
   }
 
-  const columns = useMemo<ColumnDef<Cabin, unknown>[]>(
-    () => [
-      { accessorKey: 'categoryName', header: 'Catégorie' },
-      { accessorKey: 'maxGuests', header: 'Voyageurs max', meta: { align: 'center' } },
-      {
-        id: 'price',
-        header: 'Prix de base',
-        meta: { align: 'right' },
-        cell: ({ row }) => (
-          <span className="tabular-nums text-sm">
-            {formatPrice(row.original.basePriceCents, row.original.currency)}
-          </span>
-        ),
-      },
-      {
-        id: 'actions',
-        header: 'Actions',
-        meta: { align: 'right' },
-        cell: ({ row }) => (
-          <div className="flex justify-end gap-1.5">
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                setEditing(row.original);
-                setFormValues({
-                  categoryName: row.original.categoryName,
-                  maxGuests: String(row.original.maxGuests),
-                  basePriceCents: String(row.original.basePriceCents),
-                  currency: row.original.currency,
-                });
-                setShowForm(true);
-              }}
-            >
-              Modifier
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="!text-red-600"
-              onClick={async () => {
-                if (!window.confirm('Supprimer cette cabine ?')) return;
-                setDeletingId(row.original.id);
-                try {
-                  await getApiClient().deleteCabin(row.original.id);
-                  await load();
-                } catch (error) {
-                  setFormError(getCroisieresErrorMessage(error));
-                } finally {
-                  setDeletingId(null);
-                }
-              }}
-              disabled={deletingId === row.original.id}
-              loading={deletingId === row.original.id}
-            >
-              Supprimer
-            </Button>
-          </div>
-        ),
-      },
-    ],
-    [deletingId, load],
-  );
-
   const cabins = state.status === 'ready' ? state.cabins : [];
 
   return (
     <section className="mt-12 space-y-6 border-t border-atg-border pt-10">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-atg-fg">Cabines</h2>
-          <p className="mt-1 text-sm text-atg-muted">
-            Catégories de cabines et tarifs de base.
-          </p>
+          <h2 className="text-lg font-semibold text-atg-fg">{tSection('title')}</h2>
+          <p className="mt-1 text-sm text-atg-muted">{tSection('intro')}</p>
         </div>
         {!showForm ? (
           <Button type="button" onClick={() => setShowForm(true)}>
-            Ajouter une cabine
+            {tSection('addCabin')}
           </Button>
         ) : null}
       </div>
@@ -182,7 +138,7 @@ export function CabinsSection({ shipId }: CabinsSectionProps) {
         <Card variant="dashboard" className="max-w-2xl">
           <form onSubmit={handleSubmit} className="space-y-4">
             <h3 className="text-sm font-medium">
-              {editing ? 'Modifier la cabine' : 'Nouvelle cabine'}
+              {editing ? tForm('edit') : tForm('new')}
             </h3>
             {formError ? (
               <p role="alert" className="text-sm text-red-600">
@@ -190,7 +146,7 @@ export function CabinsSection({ shipId }: CabinsSectionProps) {
               </p>
             ) : null}
             <Input
-              label="Catégorie"
+              label={tForm('category')}
               value={formValues.categoryName}
               onChange={(e) =>
                 setFormValues((p) => ({ ...p, categoryName: e.target.value }))
@@ -198,7 +154,7 @@ export function CabinsSection({ shipId }: CabinsSectionProps) {
             />
             <div className="grid gap-4 sm:grid-cols-2">
               <Input
-                label="Voyageurs max"
+                label={tForm('maxGuests')}
                 type="number"
                 min={1}
                 value={formValues.maxGuests}
@@ -207,7 +163,7 @@ export function CabinsSection({ shipId }: CabinsSectionProps) {
                 }
               />
               <Input
-                label="Prix de base (centimes)"
+                label={tCommon('form.basePriceCents')}
                 type="number"
                 min={0}
                 value={formValues.basePriceCents}
@@ -217,17 +173,17 @@ export function CabinsSection({ shipId }: CabinsSectionProps) {
               />
             </div>
             <Input
-              label="Devise"
+              label={tCommon('form.currency')}
               value={formValues.currency}
               onChange={(e) => setFormValues((p) => ({ ...p, currency: e.target.value }))}
               maxLength={3}
             />
             <div className="flex gap-3">
               <Button type="submit" loading={submitting}>
-                {editing ? 'Enregistrer' : 'Ajouter'}
+                {editing ? tActions('save') : tActions('create')}
               </Button>
               <Button type="button" variant="outline" onClick={resetForm}>
-                Annuler
+                {tActions('cancel')}
               </Button>
             </div>
           </form>
@@ -238,16 +194,52 @@ export function CabinsSection({ shipId }: CabinsSectionProps) {
         <p role="alert" className="text-sm text-red-600">
           {state.message}
         </p>
-      ) : (
-        <Card variant="dashboard" padding="none">
-          <DataTable
-            columns={columns}
-            data={cabins}
-            isLoading={state.status === 'loading'}
-            emptyMessage="Aucune cabine."
-            getRowId={(r) => r.id}
-          />
+      ) : state.status === 'loading' ? (
+        <p className="text-sm text-atg-muted">{tCommon('loading')}</p>
+      ) : cabins.length === 0 ? (
+        <Card variant="dashboard" className="py-12 text-center">
+          <p className="text-sm text-atg-muted">{tForm('empty')}</p>
         </Card>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {cabins.map((cabin) => (
+            <Card key={cabin.id} variant="dashboard" className="flex flex-col gap-4">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <h3 className="font-semibold text-atg-fg">{cabin.categoryName}</h3>
+                  <p className="mt-1 text-lg tabular-nums text-atg-fg">
+                    {formatPrice(cabin.basePriceCents, cabin.currency)}
+                  </p>
+                </div>
+                <DataTableActions>
+                  <DataTableActionButton action="edit" onClick={() => openEdit(cabin)} />
+                  <DataTableActionButton
+                    action="delete"
+                    onClick={async () => {
+                      if (!window.confirm(tForm('deleteConfirm'))) return;
+                      setDeletingId(cabin.id);
+                      try {
+                        await getApiClient().deleteCabin(cabin.id);
+                        await load();
+                      } catch (error) {
+                        setFormError(getCroisieresErrorMessage(error));
+                      } finally {
+                        setDeletingId(null);
+                      }
+                    }}
+                    disabled={deletingId === cabin.id}
+                    loading={deletingId === cabin.id}
+                  />
+                </DataTableActions>
+              </div>
+              <div className="mt-auto border-t border-atg-border pt-3">
+                <p className="text-sm text-atg-muted">
+                  {tCommon('maxGuests', { count: cabin.maxGuests })}
+                </p>
+              </div>
+            </Card>
+          ))}
+        </div>
       )}
     </section>
   );

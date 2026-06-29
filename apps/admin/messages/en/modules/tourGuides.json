@@ -1,0 +1,61 @@
+{
+  "list": {
+    "emptyDefault": "No tour guides yet.",
+    "emptySearch": "No guides match your search.",
+    "searchPlaceholder": "Search by name…",
+    "searchAria": "Search guides",
+    "ariaLabel": "Tour guides list",
+    "deleteConfirm": "Delete guide « {name} »?"
+  },
+  "columns": {
+    "name": "Name",
+    "type": "Type",
+    "languages": "Languages",
+    "status": "Status"
+  },
+  "type": {
+    "internal": "Internal",
+    "external": "External"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "role": {
+    "primary": "Primary",
+    "secondary": "Secondary"
+  },
+  "form": {
+    "submitCreate": "Create guide",
+    "submitUpdate": "Save",
+    "sections": {
+      "identity": "Profile",
+      "coverage": "Coverage"
+    },
+    "type": "Guide type",
+    "typeHint": "Internal: linked to a user account. External: provider without login.",
+    "userId": "Linked user",
+    "userIdHint": "Required for internal guides.",
+    "userPlaceholder": "Select a user…",
+    "organizationId": "Organization",
+    "organizationPlaceholder": "None (optional)",
+    "displayName": "Display name",
+    "bio": "Bio",
+    "photoUrl": "Photo URL",
+    "languages": "Languages spoken",
+    "languagesHint": "ISO codes separated by commas (e.g. fr, en, sw).",
+    "destinations": "Covered destinations",
+    "destinationsHint": "Select at least one destination.",
+    "destinationsEmpty": "No destinations available.",
+    "status": "Status"
+  },
+  "detail": {
+    "title": "Edit guide",
+    "backLink": "Back to guides"
+  },
+  "filters": {
+    "type": "Type",
+    "status": "Status",
+    "all": "All"
+  }
+}

@@ -1,17 +1,45 @@
 'use client';
 
+import type { PropertyDetail } from '@africatourismgate/types';
 import Link from 'next/link';
-import { useMemo } from 'react';
-import { HomeFooter } from '../home/home-footer';
-import { HomeHeader } from '../home/home-header';
+import { useEffect, useMemo, useState } from 'react';
+import { formatCarPrice } from '../../lib/cars/listings';
+import type { VehicleDetail } from '../../lib/cars/types';
+import { formatActivityPrice, formatScheduleTime } from '../../lib/activities/listings';
+import type { ActivityDetail } from '../../lib/activities/types';
+import { getAccommodationDetail, getActivityDetail, getCruiseSailingDetail, getFlightDetail, getPackageDetail, getVehicleDetail } from '../../lib/api/public';
+import { formatPackagePrice } from '../../lib/packages/listings';
+import type { PackageDetail } from '../../lib/packages/types';
+import { fetchPackageDraftValidationData } from '../../lib/packages/package-validation';
+import type { PackageDraftValidationData } from '../../lib/reservations/flow';
+import { formatAirportLabel } from '../../lib/flights/airports';
+import { formatFlightPrice } from '../../lib/flights/listings';
+import type { FlightDetail } from '../../lib/flights/types';
+import { formatCruisePrice } from '../../lib/cruises/listings';
+import type { CruiseSailingDetail } from '../../lib/cruises/types';
 import { getClientAccessToken } from '../../lib/auth/client-session';
-import { getAccommodationDetail } from '../../lib/api/public';
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import { formatHotelPrice } from '../../lib/hotels/listings';
-import { useLocale } from '../../lib/i18n/locale-provider';
-import { buildReservationQuery, type ReservationDraft } from '../../lib/reservations/flow';
-import { useEffect, useState } from 'react';
-import type { PropertyDetail } from '@africatourismgate/types';
+import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
+import {
+  buildDraftBrowseHref,
+  buildDraftDetailHref,
+  buildReservationQuery,
+  isActivityScheduleOfferBookable,
+  isActivityScheduleReservationDraft,
+  isCabinReservationDraft,
+  isFlightReservationDraft,
+  isCabinOfferBookable,
+  isPackageReservationDraft,
+  isPackageReservationDraftStructurallyComplete,
+  isRoomReservationDraft,
+  isVehicleReservationDraft,
+  type ReservationDraft,
+} from '../../lib/reservations/flow';
+import { PackagePriceDisplay } from '../packages/package-price-display';
+import { PackageReservationSummary } from '../packages/package-reservation-summary';
+import { CheckoutPageShell } from './checkout-page-shell';
+import { CheckoutRecapLine } from './checkout-recap-line';
 
 type Props = {
   draft: ReservationDraft | null;
@@ -19,30 +47,197 @@ type Props = {
 
 export function ReservationCartPageContent({ draft }: Props) {
   const { locale } = useLocale();
-  const [detail, setDetail] = useState<PropertyDetail | null>(null);
+  const t = useTranslations();
+  const ck = t.checkout;
+  const f = t.flights;
+  const c = t.cars;
+  const cr = t.cruises;
+  const p = t.packages;
+  const act = t.activities;
+
+  const [hotelDetail, setHotelDetail] = useState<PropertyDetail | null>(null);
+  const [flightDetail, setFlightDetail] = useState<FlightDetail | null>(null);
+  const [vehicleDetail, setVehicleDetail] = useState<VehicleDetail | null>(null);
+  const [cruiseDetail, setCruiseDetail] = useState<CruiseSailingDetail | null>(null);
+  const [activityDetail, setActivityDetail] = useState<ActivityDetail | null>(null);
+  const [packageDetail, setPackageDetail] = useState<PackageDetail | null>(null);
+  const [packageValidation, setPackageValidation] = useState<PackageDraftValidationData | null>(
+    null,
+  );
   const [loading, setLoading] = useState(Boolean(draft));
 
   const room = useMemo(
-    () => detail?.rooms.find((item) => item.id === draft?.roomId) ?? null,
-    [detail, draft?.roomId],
+    () =>
+      draft && isRoomReservationDraft(draft)
+        ? (hotelDetail?.rooms.find((item) => item.id === draft.roomId) ?? null)
+        : null,
+    [draft, hotelDetail],
   );
+
+  const flightClass = useMemo(
+    () =>
+      draft && isFlightReservationDraft(draft)
+        ? (flightDetail?.classes.find((item) => item.id === draft.flightClassId) ?? null)
+        : null,
+    [draft, flightDetail],
+  );
+
+  const vehicleReady = useMemo((): VehicleDetail | null => {
+    if (!draft || !isVehicleReservationDraft(draft) || !vehicleDetail) return null;
+    if (vehicleDetail.availabilitySlot?.id !== draft.availabilitySlotId) return null;
+    return vehicleDetail;
+  }, [draft, vehicleDetail]);
+
+  const cruiseCabin = useMemo(
+    () =>
+      draft && isCabinReservationDraft(draft)
+        ? (cruiseDetail?.cabins.find((item) => item.availabilityId === draft.cabinAvailabilityId) ??
+          null)
+        : null,
+    [draft, cruiseDetail],
+  );
+
+  const cruiseReady = useMemo(
+    () =>
+      draft && isCabinReservationDraft(draft) && isCabinOfferBookable(cruiseCabin, draft.guests)
+        ? cruiseCabin
+        : null,
+    [draft, cruiseCabin],
+  );
+
+  const activitySchedule = useMemo(
+    () =>
+      draft && isActivityScheduleReservationDraft(draft)
+        ? (activityDetail?.schedules.find((item) => item.scheduleId === draft.scheduleId) ?? null)
+        : null,
+    [draft, activityDetail],
+  );
+
+  const activityReady = useMemo(
+    () =>
+      draft &&
+      isActivityScheduleReservationDraft(draft) &&
+      isActivityScheduleOfferBookable(activitySchedule, draft.participants)
+        ? activitySchedule
+        : null,
+    [draft, activitySchedule],
+  );
+
+  const packageReady = useMemo(() => {
+    if (!draft || !isPackageReservationDraft(draft) || !packageDetail) {
+      return false;
+    }
+    return isPackageReservationDraftStructurallyComplete(draft, packageDetail.items);
+  }, [draft, packageDetail]);
 
   useEffect(() => {
     let cancelled = false;
     if (!draft) return;
 
     setLoading(true);
-    void getAccommodationDetail(draft.propertyId, {
-      checkIn: draft.checkIn,
-      checkOut: draft.checkOut,
-      guests: draft.guests,
-    })
-      .then((data) => {
-        if (!cancelled) setDetail(data);
+
+    if (isRoomReservationDraft(draft)) {
+      void getAccommodationDetail(draft.propertyId, {
+        checkIn: draft.checkIn,
+        checkOut: draft.checkOut,
+        guests: draft.guests,
       })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
+        .then((data) => {
+          if (!cancelled) {
+            setHotelDetail(data);
+            setFlightDetail(null);
+            setVehicleDetail(null);
+            setCruiseDetail(null);
+            setActivityDetail(null);
+          }
+        })
+        .finally(() => {
+          if (!cancelled) setLoading(false);
+        });
+    } else if (isFlightReservationDraft(draft)) {
+      void getFlightDetail(draft.flightId, {
+        departureDate: draft.departureDate,
+        passengers: draft.passengers,
+      })
+        .then((data) => {
+          if (!cancelled) {
+            setFlightDetail(data);
+            setHotelDetail(null);
+            setVehicleDetail(null);
+            setCruiseDetail(null);
+            setActivityDetail(null);
+          }
+        })
+        .finally(() => {
+          if (!cancelled) setLoading(false);
+        });
+    } else if (isActivityScheduleReservationDraft(draft)) {
+      void getActivityDetail(draft.activityId, {
+        date: draft.date,
+        participants: draft.participants,
+      })
+        .then((data) => {
+          if (!cancelled) {
+            setActivityDetail(data);
+            setHotelDetail(null);
+            setFlightDetail(null);
+            setVehicleDetail(null);
+            setCruiseDetail(null);
+            setPackageDetail(null);
+            setPackageValidation(null);
+          }
+        })
+        .finally(() => {
+          if (!cancelled) setLoading(false);
+        });
+    } else if (isPackageReservationDraft(draft)) {
+      void getPackageDetail(draft.packageId)
+        .then(async (pkg) => {
+          if (cancelled) return;
+          setPackageDetail(pkg);
+          setHotelDetail(null);
+          setFlightDetail(null);
+          setVehicleDetail(null);
+          setCruiseDetail(null);
+          setActivityDetail(null);
+          const validation = await fetchPackageDraftValidationData(draft);
+          if (!cancelled) setPackageValidation(validation);
+        })
+        .finally(() => {
+          if (!cancelled) setLoading(false);
+        });
+    } else if (isCabinReservationDraft(draft)) {
+      void getCruiseSailingDetail(draft.sailingId, { guests: draft.guests })
+        .then((data) => {
+          if (!cancelled) {
+            setCruiseDetail(data);
+            setHotelDetail(null);
+            setFlightDetail(null);
+            setVehicleDetail(null);
+            setActivityDetail(null);
+          }
+        })
+        .finally(() => {
+          if (!cancelled) setLoading(false);
+        });
+    } else if (isVehicleReservationDraft(draft)) {
+      void getVehicleDetail(draft.vehicleId, {
+        pickupDate: draft.pickupDate,
+        returnDate: draft.returnDate,
+      })
+        .then((data) => {
+          if (!cancelled) {
+            setVehicleDetail(data);
+            setHotelDetail(null);
+            setFlightDetail(null);
+            setCruiseDetail(null);
+            setActivityDetail(null);
+          }
+        })
+        .finally(() => {
+          if (!cancelled) setLoading(false);
+        });
+    }
 
     return () => {
       cancelled = true;
@@ -51,70 +246,294 @@ export function ReservationCartPageContent({ draft }: Props) {
 
   const accessToken = getClientAccessToken();
   const nextHref = draft ? `/booking/recap?${buildReservationQuery(draft)}` : '/hotels';
+  const backHref = draft ? buildDraftBrowseHref(draft) : '/hotels';
+  const detailHref = draft ? buildDraftDetailHref(draft) : backHref;
+
+  const totalLabel =
+    draft && isRoomReservationDraft(draft) && room
+      ? formatHotelPrice(room.totalPriceCents ?? room.basePriceCents, room.currency)
+      : draft && isFlightReservationDraft(draft) && flightClass && flightDetail
+        ? formatFlightPrice(flightClass.totalPriceCents, flightDetail.currency)
+        : draft && isCabinReservationDraft(draft) && cruiseReady && cruiseDetail
+          ? formatCruisePrice(cruiseReady.priceCents, cruiseDetail.currency)
+          : draft &&
+              isActivityScheduleReservationDraft(draft) &&
+              activityReady &&
+              activityDetail
+            ? formatActivityPrice(
+                activityReady.priceCents * draft.participants,
+                activityDetail.currency,
+              )
+            : draft && isPackageReservationDraft(draft) && packageDetail && packageReady
+              ? formatPackagePrice(packageDetail.pricing.totalCents, packageDetail.pricing.currency)
+            : vehicleReady
+            ? formatCarPrice(vehicleReady.totalPriceCents, vehicleReady.currency)
+            : '--';
+
+  const canContinue =
+    Boolean(draft) &&
+    !loading &&
+    ((isRoomReservationDraft(draft!) && room) ||
+      (isFlightReservationDraft(draft!) && flightClass) ||
+      (isCabinReservationDraft(draft!) && cruiseReady) ||
+      (isActivityScheduleReservationDraft(draft!) && activityReady) ||
+      (isPackageReservationDraft(draft!) && packageReady) ||
+      Boolean(vehicleReady));
+
+  const stepperLabels = useMemo(
+    () => ({
+      stepperAriaLabel: ck.stepperAriaLabel,
+      cart: ck.stepCart,
+      recap: ck.stepRecap,
+      payment: ck.stepPayment,
+      confirmation: ck.stepConfirmation,
+      cancelled: ck.stepCancelled,
+    }),
+    [ck],
+  );
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-[#0a1210]">
-      <HomeHeader />
-      <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-10 sm:px-6 lg:px-8">
-        <h1 className="text-2xl font-bold text-[#0f1a16] dark:text-white">Panier réservation</h1>
-
+    <CheckoutPageShell
+      title={ck.cartTitle}
+      currentStep="cart"
+      stepperLabels={stepperLabels}
+    >
         {!draft && (
-          <div className="mt-6 rounded-xl border border-red-200 bg-white p-5 dark:border-red-900/40 dark:bg-atg-elevated">
-            <p className="text-sm text-red-700 dark:text-red-300">
-              Données de réservation incomplètes. Reprenez depuis la fiche hôtel.
-            </p>
+          <div className="mt-6 rounded-xl border border-red-200 bg-atg-elevated p-5 dark:border-red-900/40 dark:bg-atg-elevated">
+            <p className="text-sm text-red-700 dark:text-red-300">{ck.invalidDraft}</p>
             <Link
               href="/hotels"
               className="mt-4 inline-flex min-h-[44px] items-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-hover"
             >
-              Retour aux hébergements
+              {ck.invalidDraftBack}
             </Link>
           </div>
         )}
 
         {draft && (
           <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_auto]">
-            <section className="rounded-xl border border-gray-200 bg-white p-5 dark:border-atg-border dark:bg-atg-elevated">
-              {loading && <p className="text-sm text-gray-600 dark:text-atg-muted">Chargement…</p>}
-              {!loading && detail && room && (
-                <div className="space-y-3">
-                  <p className="text-sm text-primary">{detail.destinationName}</p>
-                  <h2 className="text-xl font-bold text-[#0f1a16] dark:text-white">{detail.name}</h2>
-                  <p className="text-sm text-gray-600 dark:text-atg-muted">{room.name}</p>
-                  <p className="text-sm text-gray-600 dark:text-atg-muted">
-                    {formatDisplayDate(draft.checkIn, locale)} {'->'}{' '}
-                    {formatDisplayDate(draft.checkOut, locale)}
+            <section className="space-y-4 rounded-xl border border-atg-border bg-atg-elevated p-5 dark:border-atg-border dark:bg-atg-elevated">
+              {loading && <p className="text-sm text-atg-muted">{ck.loading}</p>}
+
+              {!loading && isRoomReservationDraft(draft) && hotelDetail && room && (
+                <CheckoutRecapLine
+                  icon="hotel"
+                  eyebrow={hotelDetail.destinationName}
+                  title={hotelDetail.name}
+                  details={
+                    <>
+                      <p>{room.name}</p>
+                      <p>
+                        {formatDisplayDate(draft.checkIn, locale)} {'->'}{' '}
+                        {formatDisplayDate(draft.checkOut, locale)}
+                      </p>
+                      <p>
+                        {draft.guests} voyageur{draft.guests > 1 ? 's' : ''}
+                      </p>
+                    </>
+                  }
+                />
+              )}
+
+              {!loading && isFlightReservationDraft(draft) && flightDetail && flightClass && (
+                <CheckoutRecapLine
+                  icon="flight"
+                  eyebrow={`${flightDetail.airlineName} · ${flightDetail.flightNumber}`}
+                  title={`${formatAirportLabel(flightDetail.departureAirport.iataCode, flightDetail.departureAirport)} → ${formatAirportLabel(flightDetail.arrivalAirport.iataCode, flightDetail.arrivalAirport)}`}
+                  details={
+                    <>
+                      <p>{f.classNames[flightClass.className] ?? flightClass.className}</p>
+                      <p>{formatDisplayDate(draft.departureDate, locale)}</p>
+                      <p>
+                        {draft.passengers === 1
+                          ? `1 ${f.passengerSingular}`
+                          : f.passengerPlural.replace('{n}', String(draft.passengers))}
+                      </p>
+                    </>
+                  }
+                />
+              )}
+
+              {!loading && vehicleReady && isVehicleReservationDraft(draft) && (
+                <CheckoutRecapLine
+                  icon="car"
+                  eyebrow={vehicleReady.agency.name}
+                  title={vehicleReady.category.exampleModel ?? vehicleReady.category.name}
+                  details={
+                    <>
+                      <p>{vehicleReady.agency.city || c.pickupLocation}</p>
+                      <p>
+                        {formatDisplayDate(draft.pickupDate, locale)} {'->'}{' '}
+                        {formatDisplayDate(draft.returnDate, locale)}
+                      </p>
+                      <p>
+                        {vehicleReady.rentalDays === 1
+                          ? `1 ${c.daySingular}`
+                          : `${vehicleReady.rentalDays} ${c.dayPlural}`}
+                      </p>
+                    </>
+                  }
+                />
+              )}
+
+              {!loading && cruiseReady && cruiseDetail && isCabinReservationDraft(draft) && (
+                <CheckoutRecapLine
+                  icon="cruise"
+                  eyebrow={cruiseDetail.cruiseLineName}
+                  title={cruiseDetail.itineraryName}
+                  details={
+                    <>
+                      <p>
+                        {cr.shipLabel}: {cruiseDetail.shipName} · {cruiseReady.categoryName}
+                      </p>
+                      <p>
+                        {formatDisplayDate(cruiseDetail.departureDate, locale)} {'->'}{' '}
+                        {formatDisplayDate(cruiseDetail.returnDate, locale)}
+                      </p>
+                      <p>
+                        {draft.guests === 1
+                          ? `1 ${cr.guestSingular}`
+                          : cr.guestPlural.replace('{n}', String(draft.guests))}
+                      </p>
+                    </>
+                  }
+                />
+              )}
+
+              {!loading &&
+                activityReady &&
+                activityDetail &&
+                isActivityScheduleReservationDraft(draft) && (
+                  <CheckoutRecapLine
+                    icon="activity"
+                    eyebrow={activityDetail.providerName}
+                    title={activityDetail.title}
+                    details={
+                      <>
+                        <p>
+                          {formatDisplayDate(draft.date, locale)} ·{' '}
+                          {formatScheduleTime(activityReady.startDatetime, locale)}
+                        </p>
+                        <p>
+                          {draft.participants === 1
+                            ? `1 ${f.passengerSingular}`
+                            : f.passengerPlural.replace('{n}', String(draft.participants))}
+                        </p>
+                      </>
+                    }
+                  />
+                )}
+
+              {!loading &&
+                draft &&
+                isPackageReservationDraft(draft) &&
+                packageDetail &&
+                packageReady &&
+                packageValidation && (
+                  <PackageReservationSummary
+                    draft={draft}
+                    packageDetail={packageDetail}
+                    validation={packageValidation}
+                    t={p}
+                    participantSingular={act.participantSingular}
+                    participantPlural={act.participantPlural}
+                    locale={locale}
+                  />
+                )}
+
+              {!loading &&
+                draft &&
+                isPackageReservationDraft(draft) &&
+                packageDetail &&
+                !packageReady && (
+                  <p className="text-sm text-red-700 dark:text-red-300">
+                    {p.packageCartInvalid}{' '}
+                    <Link href={detailHref} className="font-semibold underline">
+                      {p.modifySelection}
+                    </Link>
                   </p>
-                  <p className="text-sm text-gray-600 dark:text-atg-muted">
-                    {draft.guests} voyageur{draft.guests > 1 ? 's' : ''}
+                )}
+
+              {!loading && isCabinReservationDraft(draft) && cruiseDetail && !cruiseReady && (
+                <p className="text-sm text-red-700 dark:text-red-300">
+                  {cr.unavailable}.{' '}
+                  <Link href={detailHref} className="font-semibold underline">
+                    {cr.modifySearch}
+                  </Link>
+                </p>
+              )}
+
+              {!loading && isVehicleReservationDraft(draft) && vehicleDetail && !vehicleReady && (
+                <p className="text-sm text-red-700 dark:text-red-300">
+                  Créneau indisponible ou modifié.{' '}
+                  <Link href={detailHref} className="font-semibold underline">
+                    Modifier la sélection
+                  </Link>
+                </p>
+              )}
+
+              {!loading &&
+                isActivityScheduleReservationDraft(draft) &&
+                activityDetail &&
+                !activityReady && (
+                  <p className="text-sm text-red-700 dark:text-red-300">
+                    Créneau indisponible ou places insuffisantes.{' '}
+                    <Link href={detailHref} className="font-semibold underline">
+                      Modifier la sélection
+                    </Link>
                   </p>
-                </div>
+                )}
+
+              {!loading &&
+                draft &&
+                !room &&
+                !flightClass &&
+                !cruiseReady &&
+                !activityReady &&
+                !(draft && isPackageReservationDraft(draft) && packageReady) &&
+                !vehicleReady && (
+                <p className="text-sm text-red-700 dark:text-red-300">
+                  Impossible d&apos;afficher cette réservation.{' '}
+                  <Link href={detailHref} className="font-semibold underline">
+                    Modifier la sélection
+                  </Link>
+                </p>
               )}
             </section>
 
-            <aside className="h-fit min-w-[240px] rounded-xl border border-gray-200 bg-white p-5 dark:border-atg-border dark:bg-atg-elevated">
-              <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-atg-muted">
-                Total estimé
+            <aside className="h-fit min-w-[240px] rounded-xl border border-atg-border bg-atg-elevated p-5 dark:border-atg-border dark:bg-atg-elevated">
+              <p className="text-xs uppercase tracking-wide text-atg-muted">
+                {draft && isPackageReservationDraft(draft) ? p.packagePrice : ck.estimatedTotal}
               </p>
-              <p className="mt-1 text-2xl font-bold text-[#0f1a16] dark:text-white">
-                {room ? formatHotelPrice(room.totalPriceCents ?? room.basePriceCents, room.currency) : '--'}
-              </p>
+              {draft && isPackageReservationDraft(draft) && packageDetail && packageReady ? (
+                <div className="mt-2">
+                  <PackagePriceDisplay
+                    pricing={packageDetail.pricing}
+                    discountBadgeTemplate={p.discountBadge}
+                  />
+                </div>
+              ) : (
+                <p className="mt-1 text-2xl font-bold text-atg-fg">{totalLabel}</p>
+              )}
               {!accessToken && (
                 <p className="mt-3 text-xs text-amber-700 dark:text-amber-300">
-                  Connexion client requise au prochain écran.
+                  {ck.authRequiredNext}
                 </p>
               )}
               <Link
                 href={nextHref}
-                className="mt-4 inline-flex min-h-[44px] w-full items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary-hover"
+                aria-disabled={!canContinue}
+                className={`mt-4 inline-flex min-h-[44px] w-full items-center justify-center rounded-lg px-4 py-2 text-sm font-semibold text-white ${
+                  canContinue
+                    ? 'bg-primary hover:bg-primary-hover'
+                    : 'pointer-events-none cursor-not-allowed bg-primary/50'
+                }`}
               >
-                Continuer vers récap
+                {ck.continueToRecap}
               </Link>
             </aside>
           </div>
         )}
-      </main>
-      <HomeFooter />
-    </div>
+    </CheckoutPageShell>
   );
 }

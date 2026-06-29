@@ -1,70 +1,123 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Button,
   Card,
-  DataTable,
   DataTableBadge,
   DataTablePagination,
-  type ColumnDef,
+  EmptyState,
+  Skeleton,
 } from '@africatourismgate/ui';
 import type {
   AdminSupportTicketListItem,
   SupportTicketPriority,
   SupportTicketStatus,
 } from '@africatourismgate/types';
-import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { useCallback, useEffect, useId, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getSupportTicketsErrorMessage } from '../../lib/support-tickets-errors';
+import {
+  useFormatDateTime,
+  useSupportTicketPriorityFilterOptions,
+  useSupportTicketPriorityLabels,
+  useSupportTicketStatusFilterOptions,
+  useSupportTicketStatusLabels,
+} from '../../lib/i18n/use-module-labels';
+import {
+  formatSupportTicketAssignee,
+  supportTicketPriorityVariants,
+  supportTicketStatusVariants,
+} from '../../lib/support-ticket-display';
 
 const PAGE_SIZE = 20;
 
-const statusLabels: Record<SupportTicketStatus, string> = {
-  open: 'Ouvert',
-  pending: 'En cours',
-  resolved: 'Résolu',
-  closed: 'Fermé',
+type SupportTicketInboxItemProps = {
+  ticket: AdminSupportTicketListItem;
 };
 
-const statusVariants: Record<
-  SupportTicketStatus,
-  'success' | 'warning' | 'muted' | 'default'
-> = {
-  open: 'default',
-  pending: 'warning',
-  resolved: 'success',
-  closed: 'muted',
-};
+function SupportTicketInboxItem({ ticket }: SupportTicketInboxItemProps) {
+  const t = useTranslations('modules.support');
+  const tCommon = useTranslations('modules.common');
+  const formatDateTime = useFormatDateTime();
+  const statusLabels = useSupportTicketStatusLabels();
+  const priorityLabels = useSupportTicketPriorityLabels();
+  const unassignedLabel = t('assignee.unassigned');
+  const assignee = formatSupportTicketAssignee(null, unassignedLabel);
+  const isUnassigned = assignee === unassignedLabel;
+  const emptyDash = tCommon('empty.dash');
 
-const priorityLabels: Record<SupportTicketPriority, string> = {
-  low: 'Basse',
-  normal: 'Normale',
-  high: 'Haute',
-  urgent: 'Urgente',
-};
+  return (
+    <Link
+      href={`/contenu/tickets/${ticket.id}`}
+      className="block border-b border-atg-border px-4 py-3 transition-colors last:border-b-0 hover:bg-atg-elevated/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary sm:px-5"
+    >
+      <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-1">
+        <p className="min-w-0 flex-1 font-medium text-atg-fg">{ticket.subject}</p>
+        <time
+          className="shrink-0 text-xs tabular-nums text-atg-muted"
+          dateTime={ticket.createdAt}
+        >
+          {formatDateTime(ticket.createdAt)}
+        </time>
+      </div>
 
-const priorityVariants: Record<
-  SupportTicketPriority,
-  'success' | 'warning' | 'muted' | 'default'
-> = {
-  low: 'muted',
-  normal: 'default',
-  high: 'warning',
-  urgent: 'warning',
-};
+      <p className="mt-1 truncate text-sm text-atg-muted">
+        {ticket.customerFirstName?.trim() || emptyDash}
+        {ticket.customerEmail ? (
+          <span className="text-atg-muted"> · {ticket.customerEmail}</span>
+        ) : null}
+      </p>
 
-function formatDateTime(iso: string): string {
-  try {
-    return new Date(iso).toLocaleString('fr-FR', {
-      dateStyle: 'short',
-      timeStyle: 'short',
-    });
-  } catch {
-    return iso;
-  }
+      <div className="mt-2 flex flex-wrap items-center gap-2">
+        <DataTableBadge variant={supportTicketStatusVariants[ticket.status]}>
+          {statusLabels[ticket.status]}
+        </DataTableBadge>
+        <DataTableBadge variant={supportTicketPriorityVariants[ticket.priority]}>
+          {priorityLabels[ticket.priority]}
+        </DataTableBadge>
+        <span className="text-xs text-atg-muted">
+          {t('list.assignedLabel')}{' '}
+          <span className={isUnassigned ? 'italic text-atg-muted' : 'text-atg-fg'}>
+            {assignee}
+          </span>
+        </span>
+      </div>
+    </Link>
+  );
+}
+
+function SupportTicketInboxSkeleton() {
+  return (
+    <div className="divide-y divide-atg-border">
+      {Array.from({ length: 5 }, (_, index) => (
+        <div key={index} className="space-y-2 px-4 py-3 sm:px-5">
+          <div className="flex justify-between gap-4">
+            <Skeleton className="h-5 w-2/3 max-w-sm" />
+            <Skeleton className="h-4 w-24" />
+          </div>
+          <Skeleton className="h-4 w-48" />
+          <div className="flex gap-2">
+            <Skeleton className="h-6 w-16 rounded-full" />
+            <Skeleton className="h-6 w-20 rounded-full" />
+            <Skeleton className="h-4 w-28" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 export function SupportTicketsList() {
+  const { supportTickets: getSupportTicketsErrorMessage } = useAdminErrorMessages();
+  const tList = useTranslations('modules.support.list');
+  const tColumns = useTranslations('modules.common.columns');
+  const tCommon = useTranslations('modules.common');
+  const tPagination = useTranslations('modules.common.pagination');
+  const statusOptions = useSupportTicketStatusFilterOptions();
+  const priorityOptions = useSupportTicketPriorityFilterOptions();
   const statusFilterId = useId();
   const priorityFilterId = useId();
 
@@ -102,7 +155,7 @@ export function SupportTicketsList() {
     } catch (error) {
       setState({ status: 'error', message: getSupportTicketsErrorMessage(error) });
     }
-  }, [page, statusFilter, priorityFilter, filterTick]);
+  }, [page, statusFilter, priorityFilter, filterTick, getSupportTicketsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -113,76 +166,11 @@ export function SupportTicketsList() {
     setFilterTick((t) => t + 1);
   }, []);
 
-  const columns = useMemo<ColumnDef<AdminSupportTicketListItem, unknown>[]>(
-    () => [
-      {
-        accessorKey: 'subject',
-        header: 'Sujet',
-        cell: ({ row }) => (
-          <span className="font-medium text-atg-fg">{row.original.subject}</span>
-        ),
-      },
-      {
-        id: 'customer',
-        header: 'Client',
-        cell: ({ row }) => (
-          <div>
-            <span className="font-medium text-atg-fg">
-              {row.original.customerFirstName?.trim() || '—'}
-            </span>
-            {row.original.customerEmail ? (
-              <p className="text-xs text-atg-muted">{row.original.customerEmail}</p>
-            ) : null}
-          </div>
-        ),
-      },
-      {
-        accessorKey: 'status',
-        header: 'Statut',
-        meta: { align: 'center' },
-        cell: ({ row }) => (
-          <DataTableBadge variant={statusVariants[row.original.status]}>
-            {statusLabels[row.original.status]}
-          </DataTableBadge>
-        ),
-      },
-      {
-        accessorKey: 'priority',
-        header: 'Priorité',
-        meta: { align: 'center' },
-        cell: ({ row }) => (
-          <DataTableBadge variant={priorityVariants[row.original.priority]}>
-            {priorityLabels[row.original.priority]}
-          </DataTableBadge>
-        ),
-      },
-      {
-        accessorKey: 'createdAt',
-        header: 'Date',
-        cell: ({ row }) => (
-          <span className="whitespace-nowrap text-sm text-atg-muted">
-            {formatDateTime(row.original.createdAt)}
-          </span>
-        ),
-      },
-      {
-        id: 'actions',
-        header: 'Actions',
-        meta: { align: 'right' },
-        cell: ({ row }) => (
-          <Button href={`/contenu/tickets/${row.original.id}`} variant="ghost" size="sm">
-            Voir
-          </Button>
-        ),
-      },
-    ],
-    [],
-  );
-
   const isLoading = state.status === 'loading';
   const isError = state.status === 'error';
   const tickets = state.status === 'ready' ? state.tickets : [];
   const hasFilters = statusFilter !== '' || priorityFilter !== '';
+  const isEmpty = state.status === 'ready' && state.total === 0;
 
   return (
     <div className="space-y-6">
@@ -193,7 +181,7 @@ export function SupportTicketsList() {
               htmlFor={statusFilterId}
               className="mb-1 block text-xs font-medium text-atg-muted"
             >
-              Statut
+              {tColumns('status')}
             </label>
             <select
               id={statusFilterId}
@@ -203,10 +191,9 @@ export function SupportTicketsList() {
               }
               className="w-full rounded-lg border border-atg-border bg-atg-surface px-3 py-2 text-sm text-atg-fg"
             >
-              <option value="">Tous</option>
-              {(Object.keys(statusLabels) as SupportTicketStatus[]).map((s) => (
-                <option key={s} value={s}>
-                  {statusLabels[s]}
+              {statusOptions.map((option) => (
+                <option key={option.value || 'all'} value={option.value}>
+                  {option.label}
                 </option>
               ))}
             </select>
@@ -216,7 +203,7 @@ export function SupportTicketsList() {
               htmlFor={priorityFilterId}
               className="mb-1 block text-xs font-medium text-atg-muted"
             >
-              Priorité
+              {tList('filters.priority')}
             </label>
             <select
               id={priorityFilterId}
@@ -226,17 +213,16 @@ export function SupportTicketsList() {
               }
               className="w-full rounded-lg border border-atg-border bg-atg-surface px-3 py-2 text-sm text-atg-fg"
             >
-              <option value="">Toutes</option>
-              {(Object.keys(priorityLabels) as SupportTicketPriority[]).map((p) => (
-                <option key={p} value={p}>
-                  {priorityLabels[p]}
+              {priorityOptions.map((option) => (
+                <option key={option.value || 'all'} value={option.value}>
+                  {option.label}
                 </option>
               ))}
             </select>
           </div>
           <div className="flex items-end">
             <Button type="button" onClick={applyFilters} className="w-full sm:w-auto">
-              Appliquer les filtres
+              {tCommon('filters.apply')}
             </Button>
           </div>
         </div>
@@ -248,16 +234,34 @@ export function SupportTicketsList() {
         </p>
       ) : null}
 
-      <DataTable
-        columns={columns}
-        data={tickets}
-        isLoading={isLoading}
-        emptyMessage={
-          hasFilters
-            ? 'Aucun ticket ne correspond aux filtres.'
-            : 'Aucun ticket pour le moment.'
-        }
-      />
+      {isLoading ? (
+        <Card variant="dashboard" padding="none" className="overflow-hidden">
+          <SupportTicketInboxSkeleton />
+        </Card>
+      ) : isEmpty ? (
+        <EmptyState
+          title={
+            hasFilters
+              ? tList('empty.filtered.title')
+              : tList('empty.default.title')
+          }
+          description={
+            hasFilters
+              ? tList('empty.filtered.description')
+              : tList('empty.default.description')
+          }
+        />
+      ) : (
+        <Card variant="dashboard" padding="none" className="overflow-hidden">
+          <div role="list" aria-label={tList('ariaLabel')}>
+            {tickets.map((ticket) => (
+              <div key={ticket.id} role="listitem">
+                <SupportTicketInboxItem ticket={ticket} />
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
 
       {state.status === 'ready' && state.totalPages > 1 ? (
         <DataTablePagination
@@ -265,7 +269,7 @@ export function SupportTicketsList() {
           pageSize={PAGE_SIZE}
           totalPages={state.totalPages}
           totalItems={state.total}
-          itemLabel="tickets"
+          itemLabel={tPagination('ticket')}
           onPageChange={setPage}
         />
       ) : null}

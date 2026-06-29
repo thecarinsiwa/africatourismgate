@@ -29,12 +29,14 @@ import {
 import type { ReactNode } from 'react';
 import {
   adminDashboardNavConfig,
+  adminBreadcrumbExtraRoutes,
   navGroupMessageKey,
   type AdminNavLinkConfig,
 } from './dashboard-nav.config';
 
 export {
   adminDashboardNavConfig,
+  adminBreadcrumbExtraRoutes,
   buildAdminMiddlewareMatcher,
   flattenAdminNavHrefs,
   getAdminRouteRootSegments,
@@ -78,6 +80,15 @@ function resolveLinkLabel(link: AdminNavLinkConfig, tNav: (key: string) => strin
     return tNav('dashboard');
   }
   return tNav(`links.${link.labelKey}`);
+}
+
+export function buildAdminBreadcrumbRoutes(
+  tNav: (key: string) => string,
+): { href: string; label: string }[] {
+  return adminBreadcrumbExtraRoutes.map((route) => ({
+    href: route.href,
+    label: tNav(`links.${route.labelKey}`),
+  }));
 }
 
 export function buildAdminDashboardNav(tNav: (key: string) => string): SidebarNavEntry[] {

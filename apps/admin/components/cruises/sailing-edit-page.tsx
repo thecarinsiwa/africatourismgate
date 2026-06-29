@@ -1,16 +1,24 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import type { CruiseSailing, Itinerary, Ship } from '@africatourismgate/types';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
+import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
-import { getCroisieresErrorMessage } from '../../lib/croisieres-errors';
+import { buildCruiseBreadcrumbTail } from '../../lib/cruise-breadcrumbs';
 import { CabinAvailabilitySection } from './cabin-availability-section';
 import { SailingForm } from './sailing-form';
 
 type SailingEditPageProps = { sailingId: string };
 
 export function SailingEditPage({ sailingId }: SailingEditPageProps) {
+  const { croisieres: getCroisieresErrorMessage } = useAdminErrorMessages();
+  const tDetail = useTranslations('modules.cruises.detail');
+  const tColumns = useTranslations('modules.cruises.columns');
+  const tCommon = useTranslations('modules.common');
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -19,8 +27,25 @@ export function SailingEditPage({ sailingId }: SailingEditPageProps) {
         sailing: CruiseSailing;
         itinerary: Itinerary;
         ship: Ship;
+        lineName: string;
       }
   >({ status: 'loading' });
+
+  useAdminEditPageMeta({
+    ready: state.status === 'ready',
+    title: tDetail('sailingTitle'),
+    breadcrumbTail:
+      state.status === 'ready'
+        ? buildCruiseBreadcrumbTail({
+            lineName: state.lineName,
+            shipName: state.ship.name,
+            shipId: state.ship.id,
+            itineraryName: state.itinerary.name,
+            itineraryId: state.itinerary.id,
+            departureLabel: state.sailing.departureDate.slice(0, 10),
+          })
+        : undefined,
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -30,8 +55,9 @@ export function SailingEditPage({ sailingId }: SailingEditPageProps) {
         const sailing = await client.getCruiseSailing(sailingId);
         const itinerary = await client.getItinerary(sailing.itineraryId);
         const ship = await client.getShip(itinerary.shipId);
+        const line = await client.getCruiseLine(ship.cruiseLineId);
         if (!cancelled) {
-          setState({ status: 'ready', sailing, itinerary, ship });
+          setState({ status: 'ready', sailing, itinerary, ship, lineName: line.name });
         }
       } catch (error) {
         if (!cancelled) {
@@ -42,10 +68,10 @@ export function SailingEditPage({ sailingId }: SailingEditPageProps) {
     return () => {
       cancelled = true;
     };
-  }, [sailingId]);
+  }, [sailingId, getCroisieresErrorMessage]);
 
   if (state.status === 'loading') {
-    return <p className="text-sm text-atg-muted">Chargement…</p>;
+    return <p className="text-sm text-atg-muted">{tCommon('loading')}</p>;
   }
 
   if (state.status === 'error') {
@@ -55,7 +81,7 @@ export function SailingEditPage({ sailingId }: SailingEditPageProps) {
           {state.message}
         </p>
         <Link href="/produits/croisieres" className="text-sm font-medium text-primary">
-          ← Retour aux croisières
+          {tCommon('back.toList')}
         </Link>
       </div>
     );
@@ -66,13 +92,10 @@ export function SailingEditPage({ sailingId }: SailingEditPageProps) {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Modifier le départ</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          {departureLabel} · {itinerary.name} · {ship.name} ({itinerary.durationNights}{' '}
-          nuits)
-        </p>
-      </div>
+      <p className="mb-8 text-sm text-atg-muted">
+        {departureLabel} · {itinerary.name} · {ship.name} ({itinerary.durationNights}{' '}
+        {tColumns('nights')})
+      </p>
       <SailingForm mode="edit" sailingId={sailingId} initialSailing={sailing} />
       <CabinAvailabilitySection
         sailingId={sailingId}

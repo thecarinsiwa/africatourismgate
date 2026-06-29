@@ -1,0 +1,61 @@
+{
+  "list": {
+    "emptyDefault": "Aún no hay guías turísticos.",
+    "emptySearch": "Ningún guía coincide con su búsqueda.",
+    "searchPlaceholder": "Buscar por nombre…",
+    "searchAria": "Buscar guías",
+    "ariaLabel": "Lista de guías turísticos",
+    "deleteConfirm": "¿Eliminar el guía « {name} »?"
+  },
+  "columns": {
+    "name": "Nombre",
+    "type": "Tipo",
+    "languages": "Idiomas",
+    "status": "Estado"
+  },
+  "type": {
+    "internal": "Interno",
+    "external": "Externo"
+  },
+  "status": {
+    "active": "Activo",
+    "inactive": "Inactivo"
+  },
+  "role": {
+    "primary": "Principal",
+    "secondary": "Secundario"
+  },
+  "form": {
+    "submitCreate": "Crear guía",
+    "submitUpdate": "Guardar",
+    "sections": {
+      "identity": "Perfil",
+      "coverage": "Cobertura"
+    },
+    "type": "Tipo de guía",
+    "typeHint": "Interno: vinculado a un usuario. Externo: proveedor sin cuenta.",
+    "userId": "Usuario vinculado",
+    "userIdHint": "Obligatorio para guías internos.",
+    "userPlaceholder": "Seleccionar un usuario…",
+    "organizationId": "Organización",
+    "organizationPlaceholder": "Ninguna (opcional)",
+    "displayName": "Nombre mostrado",
+    "bio": "Biografía",
+    "photoUrl": "URL de foto",
+    "languages": "Idiomas hablados",
+    "languagesHint": "Códigos ISO separados por comas (ej. fr, en, sw).",
+    "destinations": "Destinos cubiertos",
+    "destinationsHint": "Seleccione al menos un destino.",
+    "destinationsEmpty": "No hay destinos disponibles.",
+    "status": "Estado"
+  },
+  "detail": {
+    "title": "Editar guía",
+    "backLink": "Volver a guías"
+  },
+  "filters": {
+    "type": "Tipo",
+    "status": "Estado",
+    "all": "Todos"
+  }
+}

@@ -1,16 +1,25 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   Input,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { PropertyImage } from '@africatourismgate/types';
+import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { getApiClient } from '../../lib/auth/api';
-import { getHebergementsErrorMessage } from '../../lib/hebergements-errors';
+import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
+import { getSession } from '../../lib/auth/session';
+
+const PROPERTY_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
+const ALLOWED_PROPERTY_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
 type ImageFormValues = {
   url: string;
@@ -22,9 +31,16 @@ const emptyForm: ImageFormValues = { url: '', caption: '', sortOrder: '0' };
 
 type PropertyImagesSectionProps = {
   propertyId: string;
+  embedded?: boolean;
 };
 
-export function PropertyImagesSection({ propertyId }: PropertyImagesSectionProps) {
+export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSectionProps) {
+  const { hebergements: getHebergementsErrorMessage } = useAdminErrorMessages();
+  const tGallery = useTranslations('modules.common.imagesGallery');
+  const tColumns = useTranslations('modules.common.columns');
+  const tForm = useTranslations('modules.common.form');
+  const tValidation = useTranslations('modules.common.validation');
+  const tActions = useTranslations('common.actions');
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -35,6 +51,7 @@ export function PropertyImagesSection({ propertyId }: PropertyImagesSectionProps
   const [formValues, setFormValues] = useState<ImageFormValues>(emptyForm);
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
@@ -49,7 +66,7 @@ export function PropertyImagesSection({ propertyId }: PropertyImagesSectionProps
     } catch (error) {
       setState({ status: 'error', message: getHebergementsErrorMessage(error) });
     }
-  }, [propertyId]);
+  }, [propertyId, getHebergementsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -60,6 +77,7 @@ export function PropertyImagesSection({ propertyId }: PropertyImagesSectionProps
     setEditing(null);
     setShowForm(false);
     setFormError(null);
+    setUploading(false);
   }
 
   function openCreate() {
@@ -78,11 +96,58 @@ export function PropertyImagesSection({ propertyId }: PropertyImagesSectionProps
     setFormError(null);
   }
 
+  async function handleLocalImagePick(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    try {
+      if (!ALLOWED_PROPERTY_IMAGE_TYPES.has(file.type)) {
+        setFormError(tValidation('imageFormat'));
+        return;
+      }
+      if (file.size > PROPERTY_IMAGE_MAX_BYTES) {
+        setFormError(tValidation('imageTooLarge'));
+        return;
+      }
+      const session = getSession();
+      if (!session?.accessToken) {
+        setFormError(tValidation('sessionExpiredRetry'));
+        return;
+      }
+      setUploading(true);
+      setFormError(null);
+      const body = new FormData();
+      body.append('file', file);
+      const response = await fetch(
+        `${resolveApiBaseUrl()}/properties/${propertyId}/upload-image`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${session.accessToken}`,
+          },
+          body,
+        },
+      );
+      if (!response.ok) {
+        throw new Error('Upload property image failed');
+      }
+      const payload = (await response.json()) as { url?: string };
+      if (!payload.url) {
+        throw new Error('Invalid upload response');
+      }
+      setFormValues((prev) => ({ ...prev, url: payload.url! }));
+    } catch {
+      setFormError(tValidation('uploadFailed'));
+    } finally {
+      setUploading(false);
+      event.target.value = '';
+    }
+  }
+
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     setFormError(null);
     if (!formValues.url.trim()) {
-      setFormError('L’URL est obligatoire.');
+      setFormError(tValidation('urlRequired'));
       return;
     }
     setSubmitting(true);
@@ -110,7 +175,7 @@ export function PropertyImagesSection({ propertyId }: PropertyImagesSectionProps
 
   const handleDelete = useCallback(
     async (img: PropertyImage) => {
-      if (!window.confirm('Supprimer cette image ?')) return;
+      if (!window.confirm(tGallery('deleteConfirm'))) return;
       setDeletingId(img.id);
       try {
         await getApiClient().deletePropertyImage(img.id);
@@ -121,18 +186,21 @@ export function PropertyImagesSection({ propertyId }: PropertyImagesSectionProps
         setDeletingId(null);
       }
     },
-    [load],
+    [load, tGallery, getHebergementsErrorMessage],
   );
 
   const columns = useMemo<ColumnDef<PropertyImage, unknown>[]>(
     () => [
       {
         id: 'preview',
-        header: 'Aperçu',
+        header: tColumns('preview'),
         cell: ({ row }) => (
-          <img
+          <Image
             src={row.original.url}
             alt=""
+            width={64}
+            height={40}
+            unoptimized
             className="h-10 w-16 rounded object-cover"
             onError={(e) => {
               (e.target as HTMLImageElement).style.display = 'none';
@@ -142,7 +210,7 @@ export function PropertyImagesSection({ propertyId }: PropertyImagesSectionProps
       },
       {
         accessorKey: 'url',
-        header: 'URL',
+        header: tColumns('url'),
         cell: ({ row }) => (
           <a
             href={row.original.url}
@@ -156,55 +224,52 @@ export function PropertyImagesSection({ propertyId }: PropertyImagesSectionProps
       },
       {
         accessorKey: 'caption',
-        header: 'Légende',
+        header: tColumns('caption'),
         cell: ({ row }) => (
           <span className="text-sm text-atg-muted">{row.original.caption ?? '—'}</span>
         ),
       },
       {
         accessorKey: 'sortOrder',
-        header: 'Ordre',
+        header: tColumns('sortOrder'),
         meta: { align: 'center' },
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tColumns('actions'),
         meta: { align: 'right' },
         cell: ({ row }) => (
-          <div className="flex justify-end gap-1.5">
-            <Button type="button" variant="ghost" size="sm" onClick={() => openEdit(row.original)}>
-              Modifier
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
+          <DataTableActions>
+            <DataTableActionButton action="edit" onClick={() => openEdit(row.original)} />
+            <DataTableActionButton
+              action="delete"
               onClick={() => void handleDelete(row.original)}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
-              className="!text-red-600"
-            >
-              Supprimer
-            </Button>
-          </div>
+            />
+          </DataTableActions>
         ),
       },
     ],
-    [deletingId, handleDelete],
+    [deletingId, handleDelete, tColumns],
   );
 
   const images = state.status === 'ready' ? state.images : [];
 
   return (
-    <section className="mt-12 space-y-6 border-t border-atg-border pt-10">
+    <section
+      className={
+        embedded ? 'space-y-6' : 'mt-12 space-y-6 border-t border-atg-border pt-10'
+      }
+    >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-atg-fg">Images</h2>
-          <p className="mt-1 text-sm text-atg-muted">URLs des photos de la propriété.</p>
+          <h2 className="text-lg font-semibold text-atg-fg">{tGallery('titleProperty')}</h2>
+          <p className="mt-1 text-sm text-atg-muted">{tGallery('intro')}</p>
         </div>
         {!showForm ? (
           <Button type="button" onClick={openCreate}>
-            Ajouter une image
+            {tGallery('addPhoto')}
           </Button>
         ) : null}
       </div>
@@ -213,38 +278,67 @@ export function PropertyImagesSection({ propertyId }: PropertyImagesSectionProps
         <Card variant="dashboard" className="max-w-2xl">
           <form onSubmit={handleSubmit} className="space-y-4">
             <h3 className="text-sm font-medium">
-              {editing ? 'Modifier l’image' : 'Nouvelle image'}
+              {editing ? tGallery('editPhoto') : tGallery('newPhoto')}
             </h3>
             {formError ? (
               <p role="alert" className="text-sm text-red-600">
                 {formError}
               </p>
             ) : null}
+            <div className="space-y-3">
+              <p className="text-xs font-medium text-atg-fg">{tForm('image')}</p>
+              <div className="flex flex-wrap items-center gap-3">
+                <label className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10">
+                  {uploading ? tForm('uploading') : tForm('chooseFile')}
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    className="hidden"
+                    onChange={(e) => void handleLocalImagePick(e)}
+                    disabled={uploading || submitting}
+                  />
+                </label>
+                <span className="text-xs text-atg-muted">{tForm('imageFormatHint')}</span>
+              </div>
+              {formValues.url.trim() ? (
+                <Image
+                  src={formValues.url.trim()}
+                  alt={formValues.caption.trim() || tColumns('preview')}
+                  width={320}
+                  height={200}
+                  unoptimized
+                  className="h-40 w-full max-w-sm rounded-lg border border-atg-border object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = 'none';
+                  }}
+                />
+              ) : null}
+            </div>
             <Input
-              label="URL"
+              label={tForm('externalUrlOptional')}
               type="url"
               value={formValues.url}
               onChange={(e) => setFormValues((p) => ({ ...p, url: e.target.value }))}
-              required
+              placeholder={tForm('urlPlaceholder')}
             />
             <Input
-              label="Légende"
+              label={tColumns('caption')}
               value={formValues.caption}
               onChange={(e) => setFormValues((p) => ({ ...p, caption: e.target.value }))}
             />
             <Input
-              label="Ordre d’affichage"
+              label={tForm('displayOrder')}
               type="number"
               min={0}
               value={formValues.sortOrder}
               onChange={(e) => setFormValues((p) => ({ ...p, sortOrder: e.target.value }))}
             />
             <div className="flex gap-3">
-              <Button type="submit" loading={submitting}>
-                {editing ? 'Enregistrer' : 'Ajouter'}
+              <Button type="submit" loading={submitting} disabled={uploading}>
+                {editing ? tActions('save') : tActions('create')}
               </Button>
               <Button type="button" variant="outline" onClick={resetForm}>
-                Annuler
+                {tActions('cancel')}
               </Button>
             </div>
           </form>
@@ -261,7 +355,7 @@ export function PropertyImagesSection({ propertyId }: PropertyImagesSectionProps
             columns={columns}
             data={images}
             isLoading={state.status === 'loading'}
-            emptyMessage="Aucune image."
+            emptyMessage={tGallery('emptyProperty')}
             getRowId={(row) => row.id}
           />
         </Card>

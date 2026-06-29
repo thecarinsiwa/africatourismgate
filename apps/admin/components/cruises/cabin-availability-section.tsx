@@ -1,10 +1,12 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import { Button, Card, DataTable, Input, type ColumnDef } from '@africatourismgate/ui';
 import type { Cabin, CabinAvailability, ItineraryPort } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getCroisieresErrorMessage } from '../../lib/croisieres-errors';
 
 type RowState = {
   cabin: Cabin;
@@ -28,6 +30,10 @@ export function CabinAvailabilitySection({
   shipId,
   itineraryId,
 }: CabinAvailabilitySectionProps) {
+  const { croisieres: getCroisieresErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.cruises.sections.cabinAvailability');
+  const tColumns = useTranslations('modules.common.columns');
+  const tValidation = useTranslations('modules.common.validation');
   const [rows, setRows] = useState<RowState[]>([]);
   const [ports, setPorts] = useState<ItineraryPort[]>([]);
   const [portLabels, setPortLabels] = useState<Map<string, string>>(new Map());
@@ -70,48 +76,51 @@ export function CabinAvailabilitySection({
     } finally {
       setLoading(false);
     }
-  }, [itineraryId, sailingId, shipId]);
+  }, [itineraryId, sailingId, shipId, getCroisieresErrorMessage]);
 
   useEffect(() => {
     void load();
   }, [load]);
 
-  const saveRow = useCallback(async (row: RowState) => {
-    const count = Number(row.availableCount);
-    const cents = Number(row.priceCents);
-    if (!Number.isFinite(count) || count < 0) {
-      setError('Nombre de cabines invalide.');
-      return;
-    }
-    if (!Number.isFinite(cents) || cents < 0) {
-      setError('Prix invalide.');
-      return;
-    }
-
-    setSavingCabinId(row.cabin.id);
-    setError(null);
-    try {
-      const client = getApiClient();
-      if (row.availability) {
-        await client.updateCabinAvailability(row.availability.id, {
-          availableCount: count,
-          priceCents: cents,
-        });
-      } else if (count > 0) {
-        await client.createCabinAvailability({
-          cabinId: row.cabin.id,
-          sailingId,
-          availableCount: count,
-          priceCents: cents,
-        });
+  const saveRow = useCallback(
+    async (row: RowState) => {
+      const count = Number(row.availableCount);
+      const cents = Number(row.priceCents);
+      if (!Number.isFinite(count) || count < 0) {
+        setError(tValidation('invalidCabinCount'));
+        return;
       }
-      await load();
-    } catch (err) {
-      setError(getCroisieresErrorMessage(err));
-    } finally {
-      setSavingCabinId(null);
-    }
-  }, [load, sailingId]);
+      if (!Number.isFinite(cents) || cents < 0) {
+        setError(tValidation('invalidPrice'));
+        return;
+      }
+
+      setSavingCabinId(row.cabin.id);
+      setError(null);
+      try {
+        const client = getApiClient();
+        if (row.availability) {
+          await client.updateCabinAvailability(row.availability.id, {
+            availableCount: count,
+            priceCents: cents,
+          });
+        } else if (count > 0) {
+          await client.createCabinAvailability({
+            cabinId: row.cabin.id,
+            sailingId,
+            availableCount: count,
+            priceCents: cents,
+          });
+        }
+        await load();
+      } catch (err) {
+        setError(getCroisieresErrorMessage(err));
+      } finally {
+        setSavingCabinId(null);
+      }
+    },
+    [getCroisieresErrorMessage, load, sailingId, tValidation],
+  );
 
   function updateDraft(cabinId: string, field: 'availableCount' | 'priceCents', value: string) {
     setRows((prev) =>
@@ -134,23 +143,25 @@ export function CabinAvailabilitySection({
     () => [
       {
         id: 'category',
-        header: 'Cabine',
+        header: tColumns('category'),
         cell: ({ row }) => (
           <div>
             <span className="font-medium">{row.original.cabin.categoryName}</span>
             <span className="ml-2 text-xs text-atg-muted">
-              max {row.original.cabin.maxGuests} · base{' '}
-              {formatPrice(
-                row.original.cabin.basePriceCents,
-                row.original.cabin.currency,
-              )}
+              {t('cabinMeta', {
+                maxGuests: row.original.cabin.maxGuests,
+                basePrice: formatPrice(
+                  row.original.cabin.basePriceCents,
+                  row.original.cabin.currency,
+                ),
+              })}
             </span>
           </div>
         ),
       },
       {
         id: 'available',
-        header: 'Disponibles',
+        header: tColumns('available'),
         cell: ({ row }) => (
           <Input
             type="number"
@@ -160,13 +171,13 @@ export function CabinAvailabilitySection({
             onChange={(e) =>
               updateDraft(row.original.cabin.id, 'availableCount', e.target.value)
             }
-            aria-label="Cabines disponibles"
+            aria-label={t('cabinsAvailableAria')}
           />
         ),
       },
       {
         id: 'price',
-        header: 'Prix (centimes)',
+        header: tColumns('price'),
         cell: ({ row }) => (
           <Input
             type="number"
@@ -176,7 +187,7 @@ export function CabinAvailabilitySection({
             onChange={(e) =>
               updateDraft(row.original.cabin.id, 'priceCents', e.target.value)
             }
-            aria-label="Prix en centimes"
+            aria-label={t('priceCentsAria')}
           />
         ),
       },
@@ -192,30 +203,26 @@ export function CabinAvailabilitySection({
             loading={savingCabinId === row.original.cabin.id}
             disabled={savingCabinId !== null && savingCabinId !== row.original.cabin.id}
           >
-            {row.original.availability ? 'Mettre à jour' : 'Rendre réservable'}
+            {row.original.availability ? t('update') : t('makeBookable')}
           </Button>
         ),
       },
     ],
-    [saveRow, savingCabinId],
+    [saveRow, savingCabinId, t, tColumns],
   );
 
   return (
     <section className="mt-12 space-y-6 border-t border-atg-border pt-10">
       <div>
-        <h2 className="text-lg font-semibold text-atg-fg">Cabines réservables</h2>
-        <p className="mt-1 text-sm text-atg-muted">
-          Stock et prix par catégorie pour ce départ.
-        </p>
+        <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
+        <p className="mt-1 text-sm text-atg-muted">{t('intro')}</p>
         {stopColumns.length > 0 ? (
           <p className="mt-3 text-sm text-atg-fg">
-            <span className="font-medium text-atg-muted">Escales : </span>
+            <span className="font-medium text-atg-muted">{t('stopsLabel')}</span>
             {stopColumns.join(' → ')}
           </p>
         ) : (
-          <p className="mt-3 text-sm text-amber-700">
-            Aucune escale sur cet itinéraire — ajoutez-en depuis la fiche navire.
-          </p>
+          <p className="mt-3 text-sm text-amber-700">{t('noStopsWarning')}</p>
         )}
       </div>
 
@@ -230,7 +237,7 @@ export function CabinAvailabilitySection({
           columns={columns}
           data={rows}
           isLoading={loading}
-          emptyMessage="Aucune cabine sur ce navire. Ajoutez des cabines sur la fiche navire."
+          emptyMessage={t('empty')}
           getRowId={(r) => r.cabin.id}
         />
       </Card>

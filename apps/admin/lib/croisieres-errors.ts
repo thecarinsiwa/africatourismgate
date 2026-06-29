@@ -1,22 +1,14 @@
-import { ApiHttpError } from '@africatourismgate/api-client';
+import { resolveUnknownApiError } from './common-api-errors';
+import type { CroisieresErrorMessages } from './i18n/admin-error-messages';
 
-export function getCroisieresErrorMessage(error: unknown): string {
-  if (error instanceof TypeError) {
-    return 'Impossible de joindre l’API. Vérifiez que le serveur est démarré.';
-  }
+export type { CroisieresErrorMessages };
 
-  if (error instanceof ApiHttpError) {
-    if (error.status === 403) {
-      return 'Vous n’avez pas la permission d’effectuer cette action.';
-    }
-    if (error.status === 409) {
-      return 'Conflit : cette ressource existe déjà (code port ou disponibilité dupliquée).';
-    }
-    if (error.message && !error.message.startsWith('HTTP ')) {
-      return error.message;
-    }
-    return `Erreur API (${error.status}).`;
-  }
-
-  return 'Une erreur est survenue.';
+export function getCroisieresErrorMessage(
+  error: unknown,
+  messages: CroisieresErrorMessages,
+): string {
+  return resolveUnknownApiError(error, messages, {
+    sessionExpired: messages.sessionExpiredContinue,
+    conflict: () => messages.resourceConflict,
+  });
 }

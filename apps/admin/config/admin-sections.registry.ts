@@ -172,6 +172,16 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Échanges sur les tickets.',
     apiResource: 'support-messages',
   },
+  guides: {
+    title: 'Guides touristiques',
+    description: 'Catalogue des guides internes et externes.',
+    apiResource: 'tour-guides',
+  },
+  'guides/nouveau': {
+    title: 'Nouveau guide',
+    description: 'Créer un profil guide touristique.',
+    apiResource: 'tour-guides',
+  },
   organisations: {
     title: 'Organisations',
     description: 'Partenaires et entités.',

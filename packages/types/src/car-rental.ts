@@ -79,6 +79,33 @@ export interface VehiclesListQuery {
   categoryId?: string;
 }
 
+export interface VehicleImage {
+  id: string;
+  vehicleId: string;
+  url: string;
+  caption: string | null;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string | null;
+}
+
+export interface CreateVehicleImageRequest {
+  vehicleId: string;
+  url: string;
+  caption?: string;
+  sortOrder?: number;
+}
+
+export type UpdateVehicleImageRequest = Partial<
+  Omit<CreateVehicleImageRequest, 'vehicleId'>
+>;
+
+export interface VehicleImagesListQuery {
+  page?: number;
+  limit?: number;
+  vehicleId?: string;
+}
+
 export interface VehicleAvailability {
   id: string;
   vehicleId: string;

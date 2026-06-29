@@ -1,5 +1,7 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import { Button, Input } from '@africatourismgate/ui';
 import type {
   Airline,
@@ -7,6 +9,7 @@ import type {
   CreateFlightRequest,
   Flight,
 } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useId, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
@@ -14,7 +17,6 @@ import {
   fromDatetimeLocalValue,
   toDatetimeLocalValue,
 } from '../../lib/flight-datetime';
-import { getVolsErrorMessage } from '../../lib/vols-errors';
 
 export type FlightFormValues = {
   airlineId: string;
@@ -64,9 +66,21 @@ type FlightFormProps = {
   mode: 'create' | 'edit';
   flightId?: string;
   initialFlight?: Flight;
+  airlines?: Airline[];
+  airports?: Airport[];
 };
 
-export function FlightForm({ mode, flightId, initialFlight }: FlightFormProps) {
+export function FlightForm({
+  mode,
+  flightId,
+  initialFlight,
+  airlines: airlinesProp,
+  airports: airportsProp,
+}: FlightFormProps) {
+  const { vols: getVolsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.flights.form');
+  const tActions = useTranslations('common.actions');
+  const tCommon = useTranslations('modules.common');
   const router = useRouter();
   const airlineId = useId();
   const depId = useId();
@@ -83,6 +97,11 @@ export function FlightForm({ mode, flightId, initialFlight }: FlightFormProps) {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
+    if (airlinesProp && airportsProp) {
+      setAirlines(airlinesProp);
+      setAirports(airportsProp);
+      return;
+    }
     void Promise.all([
       getApiClient().listAirlines({ page: 1, limit: 100 }),
       getApiClient().listAirports({ page: 1, limit: 100 }),
@@ -95,7 +114,7 @@ export function FlightForm({ mode, flightId, initialFlight }: FlightFormProps) {
         setAirlines([]);
         setAirports([]);
       });
-  }, []);
+  }, [airlinesProp, airportsProp]);
 
   const updateField = useCallback(
     <K extends keyof FlightFormValues>(key: K, value: FlightFormValues[K]) => {
@@ -107,18 +126,20 @@ export function FlightForm({ mode, flightId, initialFlight }: FlightFormProps) {
 
   function validate(): boolean {
     const errors: Partial<Record<keyof FlightFormValues, string>> = {};
-    if (!values.airlineId) errors.airlineId = 'Compagnie obligatoire.';
-    if (!values.flightNumber.trim()) errors.flightNumber = 'Code vol obligatoire.';
-    if (!values.departureAirportId) errors.departureAirportId = 'Aéroport de départ obligatoire.';
-    if (!values.arrivalAirportId) errors.arrivalAirportId = 'Aéroport d’arrivée obligatoire.';
-    if (values.departureAirportId === values.arrivalAirportId) {
-      errors.arrivalAirportId = 'Le départ et l’arrivée doivent être différents.';
+    if (!values.airlineId) errors.airlineId = t('validation.airlineRequired');
+    if (!values.flightNumber.trim()) errors.flightNumber = t('validation.flightNumberRequired');
+    if (!values.departureAirportId) {
+      errors.departureAirportId = t('validation.departureAirportRequired');
     }
-    if (!values.departureTime) errors.departureTime = 'Heure de départ obligatoire.';
-    if (!values.arrivalTime) errors.arrivalTime = 'Heure d’arrivée obligatoire.';
+    if (!values.arrivalAirportId) errors.arrivalAirportId = t('validation.arrivalAirportRequired');
+    if (values.departureAirportId === values.arrivalAirportId) {
+      errors.arrivalAirportId = t('validation.airportsMustDiffer');
+    }
+    if (!values.departureTime) errors.departureTime = t('validation.departureTimeRequired');
+    if (!values.arrivalTime) errors.arrivalTime = t('validation.arrivalTimeRequired');
     const duration = Number(values.durationMinutes);
     if (!Number.isFinite(duration) || duration < 1) {
-      errors.durationMinutes = 'Durée invalide (minutes).';
+      errors.durationMinutes = tCommon('validation.invalidDurationMinutes');
     }
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
@@ -162,7 +183,7 @@ export function FlightForm({ mode, flightId, initialFlight }: FlightFormProps) {
 
       <div>
         <label htmlFor={airlineId} className="mb-2 block text-sm font-medium text-atg-fg">
-          Compagnie
+          {t('airline')}
         </label>
         <select
           id={airlineId}
@@ -170,7 +191,7 @@ export function FlightForm({ mode, flightId, initialFlight }: FlightFormProps) {
           value={values.airlineId}
           onChange={(e) => updateField('airlineId', e.target.value)}
         >
-          <option value="">— Choisir —</option>
+          <option value="">{tCommon('select.chooseDash')}</option>
           {airlines.map((a) => (
             <option key={a.id} value={a.id}>
               {a.iataCode} — {a.name}
@@ -183,17 +204,17 @@ export function FlightForm({ mode, flightId, initialFlight }: FlightFormProps) {
       </div>
 
       <Input
-        label="Code vol"
+        label={t('flightNumber')}
         value={values.flightNumber}
         onChange={(e) => updateField('flightNumber', e.target.value.toUpperCase())}
-        hint="Ex. ET302, 9S101"
+        hint={t('flightNumberHint')}
         error={fieldErrors.flightNumber}
       />
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor={depId} className="mb-2 block text-sm font-medium text-atg-fg">
-            Départ
+            {t('departure')}
           </label>
           <select
             id={depId}
@@ -201,7 +222,7 @@ export function FlightForm({ mode, flightId, initialFlight }: FlightFormProps) {
             value={values.departureAirportId}
             onChange={(e) => updateField('departureAirportId', e.target.value)}
           >
-            <option value="">— Choisir —</option>
+            <option value="">{tCommon('select.chooseDash')}</option>
             {airports.map((a) => (
               <option key={a.id} value={a.id}>
                 {a.iataCode} — {a.city}
@@ -214,7 +235,7 @@ export function FlightForm({ mode, flightId, initialFlight }: FlightFormProps) {
         </div>
         <div>
           <label htmlFor={arrId} className="mb-2 block text-sm font-medium text-atg-fg">
-            Arrivée
+            {t('arrival')}
           </label>
           <select
             id={arrId}
@@ -222,7 +243,7 @@ export function FlightForm({ mode, flightId, initialFlight }: FlightFormProps) {
             value={values.arrivalAirportId}
             onChange={(e) => updateField('arrivalAirportId', e.target.value)}
           >
-            <option value="">— Choisir —</option>
+            <option value="">{tCommon('select.chooseDash')}</option>
             {airports.map((a) => (
               <option key={a.id} value={a.id}>
                 {a.iataCode} — {a.city}
@@ -237,7 +258,7 @@ export function FlightForm({ mode, flightId, initialFlight }: FlightFormProps) {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-2 block text-sm font-medium text-atg-fg">Heure de départ</label>
+          <label className="mb-2 block text-sm font-medium text-atg-fg">{t('departureTime')}</label>
           <input
             type="datetime-local"
             className={selectClass}
@@ -249,7 +270,7 @@ export function FlightForm({ mode, flightId, initialFlight }: FlightFormProps) {
           ) : null}
         </div>
         <div>
-          <label className="mb-2 block text-sm font-medium text-atg-fg">Heure d’arrivée</label>
+          <label className="mb-2 block text-sm font-medium text-atg-fg">{t('arrivalTime')}</label>
           <input
             type="datetime-local"
             className={selectClass}
@@ -263,21 +284,21 @@ export function FlightForm({ mode, flightId, initialFlight }: FlightFormProps) {
       </div>
 
       <Input
-        label="Durée (minutes)"
+        label={t('durationMinutes')}
         type="number"
         min={1}
         value={values.durationMinutes}
         onChange={(e) => updateField('durationMinutes', e.target.value)}
-        hint="Ex. 390 pour 6 h 30"
+        hint={t('durationHint')}
         error={fieldErrors.durationMinutes}
       />
 
       <div className="flex flex-wrap gap-3 pt-2">
         <Button type="submit" loading={submitting}>
-          {mode === 'create' ? 'Créer le vol' : 'Enregistrer'}
+          {mode === 'create' ? t('submitCreate') : tActions('save')}
         </Button>
         <Button type="button" variant="outline" href="/produits/vols">
-          Annuler
+          {tActions('cancel')}
         </Button>
       </div>
     </form>

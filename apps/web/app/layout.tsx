@@ -5,8 +5,17 @@ import { getLocale, getMessages } from 'next-intl/server';
 import './globals.css';
 import { AppShell } from '@africatourismgate/ui';
 import type { CSSProperties } from 'react';
+import type { PublicContact } from '@africatourismgate/types';
+import {
+  DEFAULT_BOOKING_ITEM_TYPE_MODES,
+  normalizeBookingItemTypeModes,
+  type ResolvedBookingItemTypeModes,
+} from '@africatourismgate/types/tour-guide';
+import { DEFAULT_PUBLIC_CONTACT } from '@africatourismgate/types/organization-settings';
 import { normalizeBrandingAssetUrl } from '@africatourismgate/utils';
 import { BrandingProvider } from '../components/branding-provider';
+import { BookingModesProvider } from '../components/booking-modes-provider';
+import { ContactProvider } from '../components/contact-provider';
 import { Providers } from '../components/providers';
 
 const montserrat = Montserrat({
@@ -115,6 +124,26 @@ async function getPublicBranding(): Promise<PublicBranding> {
   }
 }
 
+async function getPublicContact(): Promise<PublicContact> {
+  try {
+    const response = await fetch(`${apiUrl}/organization-settings/public/contact`, {
+      cache: 'no-store',
+    });
+    if (!response.ok) return DEFAULT_PUBLIC_CONTACT;
+    const contact = (await response.json()) as Partial<PublicContact>;
+    return {
+      phone: contact.phone ?? DEFAULT_PUBLIC_CONTACT.phone,
+      email: contact.email ?? DEFAULT_PUBLIC_CONTACT.email,
+      location: contact.location ?? DEFAULT_PUBLIC_CONTACT.location,
+      facebookUrl: contact.facebookUrl ?? DEFAULT_PUBLIC_CONTACT.facebookUrl,
+      twitterUrl: contact.twitterUrl ?? DEFAULT_PUBLIC_CONTACT.twitterUrl,
+      instagramUrl: contact.instagramUrl ?? DEFAULT_PUBLIC_CONTACT.instagramUrl,
+    };
+  } catch {
+    return DEFAULT_PUBLIC_CONTACT;
+  }
+}
+
 export async function generateMetadata(): Promise<Metadata> {
   const branding = await getPublicBranding();
   const siteName = branding.displayName;
@@ -167,10 +196,25 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+async function getPublicBookingModes(): Promise<ResolvedBookingItemTypeModes> {
+  try {
+    const response = await fetch(`${apiUrl}/organization-settings/public/booking-modes`, {
+      cache: 'no-store',
+    });
+    if (!response.ok) return DEFAULT_BOOKING_ITEM_TYPE_MODES;
+    const modes = (await response.json()) as Partial<ResolvedBookingItemTypeModes>;
+    return normalizeBookingItemTypeModes(modes);
+  } catch {
+    return DEFAULT_BOOKING_ITEM_TYPE_MODES;
+  }
+}
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const locale = await getLocale();
   const messages = await getMessages();
   const branding = await getPublicBranding();
+  const contact = await getPublicContact();
+  const bookingModes = await getPublicBookingModes();
   const themeStyle = {
     '--atg-primary': branding.primaryColor,
     '--atg-primary-hover': shiftHexColor(branding.primaryColor, -28),
@@ -194,9 +238,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               logoUrl: branding.logoUrl,
             }}
           >
-            <Providers>
-              <AppShell>{children}</AppShell>
-            </Providers>
+            <ContactProvider contact={contact}>
+              <BookingModesProvider modes={bookingModes}>
+                <Providers>
+                  <AppShell>{children}</AppShell>
+                </Providers>
+              </BookingModesProvider>
+            </ContactProvider>
           </BrandingProvider>
         </NextIntlClientProvider>
       </body>

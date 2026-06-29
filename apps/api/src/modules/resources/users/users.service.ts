@@ -41,6 +41,15 @@ export class UsersService extends CrudService<Users> {
       qb.andWhere('user.organizationId = :organizationId', { organizationId });
     }
 
+    if (query.roleId) {
+      qb.innerJoin(
+        'user_role_assignments',
+        'ura',
+        'ura.user_id = user.id AND ura.role_id = :roleId AND ura.revoked_at IS NULL AND ura.deleted_at IS NULL',
+        { roleId: query.roleId },
+      );
+    }
+
     const search = query.search?.trim();
     if (search) {
       const term = `%${search}%`;

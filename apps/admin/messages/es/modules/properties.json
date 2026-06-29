@@ -1,0 +1,118 @@
+{
+  "list": {
+    "newProperty": "Nouvel hébergement",
+    "amenitiesLink": "Equipamientos",
+    "emptyDefault": "Hastacun hébergement pour le moment.",
+    "ariaLabel": "Liste des hébergements",
+    "searchPlaceholder": "Buscar por nombre o slug…",
+    "searchAria": "Rechercher un hébergement"
+  },
+  "filters": {
+    "destination": "Destino"
+  },
+  "columns": {
+    "property": "Alojamiento",
+    "destination": "Destino",
+    "propertyType": "Tipo"
+  },
+  "dialogs": {
+    "deleteTitle": "Supprimer l'hébergement",
+    "deleteDescription": "Supprimer l'hébergement « {name} » ? Cette action est irréversible."
+  },
+  "form": {
+    "submitCreate": "Créer l'hébergement",
+    "sections": {
+      "identity": "Identidad",
+      "location": "Localisation",
+      "classification": "Classification"
+    },
+    "name": "Apellido",
+    "slug": "Slug",
+    "type": "Tipo",
+    "destination": "Destino",
+    "address": "Dirección",
+    "starRating": "Classement (étoiles)",
+    "starRatingHint": "Optionnel, 0 à 5",
+    "validation": {
+      "destinationRequired": "La destination est obligatoire."
+    }
+  },
+  "status": {
+    "propertyType": {
+      "hotel": "Hotel",
+      "resort": "Resort",
+      "apartment": "Apartamento",
+      "villa": "Villa",
+      "hostel": "Hastaberge",
+      "other": "Hastatre"
+    }
+  },
+  "detail": {
+    "title": "Modifier l'hébergement",
+    "backToList": "← Volver à la liste",
+    "tabsAria": "Sections de l'hébergement",
+    "tabs": {
+      "infos": "Info",
+      "rooms": "Habitacións",
+      "amenities": "Equipamientos",
+      "availability": "Disponibilidad"
+    }
+  },
+  "sections": {
+    "rooms": {
+      "title": "Habitacións",
+      "intro": "Tipos de chambres pour cet hébergement.",
+      "addRoom": "Ajouter une chambre",
+      "newRoom": "Nouvelle chambre",
+      "editRoom": "Modifier la chambre",
+      "roomType": "Tipo de chambre",
+      "roomTypePlaceholder": "standard, suite…",
+      "maxCapacity": "Capacidad max.",
+      "bedConfig": "Configuración lits",
+      "empty": "Ninguna chambre.",
+      "deleteConfirm": "Supprimer la chambre « {name} » ?",
+      "photosAction": "Photos"
+    },
+    "amenities": {
+      "title": "Equipamientos",
+      "intro": "Sélectionnez les équipements disponibles pour cet hébergement.",
+      "saveSelection": "Guardar la sélection",
+      "emptyGlobal": "Hastacun équipement global.",
+      "createLink": "Créer des équipements"
+    },
+    "availability": {
+      "title": "Disponibilidad",
+      "loadingRooms": "Chargement des chambres…",
+      "room": "Habitación",
+      "stockHint": "Stock et prix par nuit ({currency}).",
+      "noRooms": "Ninguna chambre pour cet hébergement. Créez une chambre pour gérer les disponibilités.",
+      "goToRoomsTab": "Aller à l'onglet Habitacións",
+      "roomMismatch": "Cette chambre n'appartient pas à cet hébergement."
+    }
+  },
+  "amenitiesList": {
+    "newAmenity": "Nouvel équipement",
+    "empty": "Hastacun équipement.",
+    "searchPlaceholder": "Rechercher un équipement…",
+    "deleteConfirm": "Supprimer l'équipement « {name} » ?",
+    "ariaLabel": "Liste des équipements"
+  },
+  "stats": {
+    "properties": {
+      "label": "Alojamientos",
+      "subtitle": "Propiedads publiées"
+    },
+    "rooms": {
+      "label": "Habitacións",
+      "subtitle": "Tipos de chambres"
+    },
+    "amenities": {
+      "label": "Equipamientos",
+      "subtitle": "Référentiel global"
+    },
+    "destinations": {
+      "label": "Destinos",
+      "subtitle": "Zones géographiques"
+    }
+  }
+}

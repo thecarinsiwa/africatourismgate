@@ -1,31 +1,46 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+import { usePropertyTypeLabels } from '../../lib/i18n/use-module-labels';
+
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   DataTablePagination,
   Input,
+  Select,
+  useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { Destination, Property } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { getHebergementsErrorMessage } from '../../lib/hebergements-errors';
+import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
+import { PropertyThumbnail } from './property-thumbnail';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
 
-const propertyTypeLabels: Record<Property['propertyType'], string> = {
-  hotel: 'Hôtel',
-  resort: 'Resort',
-  apartment: 'Appartement',
-  villa: 'Villa',
-  hostel: 'Auberge',
-  other: 'Autre',
-};
-
 export function PropertiesList() {
+  const { hebergements: getHebergementsErrorMessage } = useAdminErrorMessages();
+  const tList = useTranslations('modules.properties.list');
+  const tFilters = useTranslations('modules.properties.filters');
+  const tColumns = useTranslations('modules.properties.columns');
+  const tCommonColumns = useTranslations('modules.common.columns');
+  const tCommonFilters = useTranslations('modules.common.filters');
+  const tPagination = useTranslations('modules.common.pagination');
+  const tDataTable = useTranslations('modules.common.dataTable');
+  const tDialogs = useTranslations('modules.properties.dialogs');
+  const tToast = useTranslations('modules.common.toast');
+  const tActions = useTranslations('common.actions');
+  const propertyTypeLabels = usePropertyTypeLabels();
+  const paginationLabels = useDataTablePaginationLabels();
+  const { toast } = useToast();
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [destinationFilter, setDestinationFilter] = useState('');
@@ -42,7 +57,7 @@ export function PropertiesList() {
       }
   >({ status: 'loading' });
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<Property | null>(null);
 
   useEffect(() => {
     void getApiClient()
@@ -69,7 +84,7 @@ export function PropertiesList() {
     } catch (error) {
       setState({ status: 'error', message: getHebergementsErrorMessage(error) });
     }
-  }, [page, search, destinationFilter]);
+  }, [page, search, destinationFilter, getHebergementsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -94,35 +109,57 @@ export function PropertiesList() {
     return map;
   }, [destinations]);
 
-  const handleDelete = useCallback(
-    async (property: Property) => {
-      if (!window.confirm(`Supprimer l’hébergement « ${property.name} » ?`)) return;
-      setDeleteError(null);
-      setDeletingId(property.id);
-      try {
-        await getApiClient().deleteProperty(property.id);
-        await load();
-      } catch (error) {
-        setDeleteError(getHebergementsErrorMessage(error));
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [load],
+  const destinationOptions = useMemo(
+    () => [
+      { value: '', label: tCommonFilters('allFeminine') },
+      ...destinations.map((d) => ({ value: d.id, label: d.name })),
+    ],
+    [destinations, tCommonFilters],
   );
+
+  const confirmDelete = useCallback(async () => {
+    if (!pendingDelete) return;
+    const property = pendingDelete;
+    setDeletingId(property.id);
+    try {
+      await getApiClient().deleteProperty(property.id);
+      setPendingDelete(null);
+      await load();
+      toast({
+        variant: 'success',
+        message: tToast('deletedProperty', { name: property.name }),
+      });
+    } catch (error) {
+      toast({
+        variant: 'error',
+        message: getHebergementsErrorMessage(error),
+      });
+    } finally {
+      setDeletingId(null);
+    }
+  }, [pendingDelete, load, toast, tToast, getHebergementsErrorMessage]);
 
   const columns = useMemo<ColumnDef<Property, unknown>[]>(
     () => [
       {
+        id: 'thumbnail',
+        header: '',
+        meta: { align: 'center' },
+        cell: ({ row }) => (
+          <PropertyThumbnail propertyId={row.original.id} name={row.original.name} size="md" />
+        ),
+      },
+      {
         accessorKey: 'name',
-        header: 'Hébergement',
+        header: tColumns('property'),
         cell: ({ row }) => (
           <span className="font-medium text-atg-fg">{row.original.name}</span>
         ),
       },
       {
         accessorKey: 'slug',
-        header: 'Slug',
+        header: tCommonColumns('slug'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => (
           <code className="rounded-md bg-atg-surface px-2 py-0.5 font-mono text-xs text-atg-muted">
             {row.original.slug}
@@ -131,7 +168,8 @@ export function PropertiesList() {
       },
       {
         id: 'destination',
-        header: 'Destination',
+        header: tColumns('destination'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => (
           <span className="text-sm text-atg-muted">
             {destinationNameById.get(row.original.destinationId) ?? row.original.destinationId}
@@ -140,8 +178,8 @@ export function PropertiesList() {
       },
       {
         accessorKey: 'propertyType',
-        header: 'Type',
-        meta: { align: 'center' },
+        header: tColumns('propertyType'),
+        meta: { align: 'center', hideOnMobile: true },
         cell: ({ row }) => (
           <span className="text-sm text-atg-muted">
             {propertyTypeLabels[row.original.propertyType]}
@@ -150,85 +188,66 @@ export function PropertiesList() {
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tCommonColumns('actions'),
         meta: { align: 'right' },
         cell: ({ row }) => {
           const property = row.original;
           return (
-            <div className="flex justify-end gap-1.5">
-              <Button href={`/hebergements/${property.id}`} variant="ghost" size="sm">
-                Modifier
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => void handleDelete(property)}
+            <DataTableActions>
+              <DataTableActionButton action="view" label={tActions('view')} href={`/hebergements/${property.id}`} />
+              <DataTableActionButton action="edit" label={tActions('edit')} href={`/hebergements/${property.id}`} />
+              <DataTableActionButton
+                action="delete"
+                label={tActions('delete')}
+                onClick={() => setPendingDelete(property)}
                 disabled={deletingId === property.id}
                 loading={deletingId === property.id}
-                loadingText="…"
-                className="!text-red-600 hover:!bg-red-50 dark:!text-red-400"
-              >
-                Supprimer
-              </Button>
-            </div>
+              />
+            </DataTableActions>
           );
         },
       },
     ],
-    [deletingId, destinationNameById, handleDelete],
+    [deletingId, destinationNameById, propertyTypeLabels, tActions, tColumns, tCommonColumns],
   );
 
   const properties = state.status === 'ready' ? state.properties : [];
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:items-end">
-          <div className="flex-1 sm:max-w-md">
+    <div className="min-w-0 space-y-6">
+      <div className="flex min-w-0 flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div className="flex min-w-0 flex-1 flex-col gap-4 sm:flex-row sm:items-end">
+          <div className="min-w-0 flex-1 sm:max-w-md">
             <Input
               type="search"
-              placeholder="Rechercher par nom ou slug…"
+              placeholder={tList('searchPlaceholder')}
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              aria-label="Rechercher un hébergement"
+              aria-label={tList('searchAria')}
             />
           </div>
           <div className="sm:w-56">
-            <label className="mb-2 block text-sm font-medium text-atg-fg">Destination</label>
-            <select
+            <Select
+              label={tFilters('destination')}
               value={destinationFilter}
+              options={destinationOptions}
               onChange={(e) => {
                 setDestinationFilter(e.target.value);
                 setPage(1);
               }}
-              className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg"
-            >
-              <option value="">Toutes</option>
-              {destinations.map((d) => (
-                <option key={d.id} value={d.id}>
-                  {d.name}
-                </option>
-              ))}
-            </select>
+            />
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
           <Button href="/hebergements/equipements" variant="outline">
-            Équipements
+            {tList('amenitiesLink')}
           </Button>
-          <Button href="/hebergements/nouveau">Nouvel hébergement</Button>
+          <Button href="/hebergements/nouveau">{tList('newProperty')}</Button>
         </div>
       </div>
 
-      {deleteError ? (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {deleteError}
-        </p>
-      ) : null}
-
       {state.status === 'error' ? (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {state.message}
         </p>
       ) : (
@@ -238,9 +257,13 @@ export function PropertiesList() {
               columns={columns}
               data={properties}
               isLoading={state.status === 'loading'}
-              emptyMessage="Aucun hébergement pour le moment."
+              loadingMessage={tDataTable('loading')}
+              emptyMessage={tList('emptyDefault')}
+              expandRowLabel={tDataTable('expandRow')}
+              collapseRowLabel={tDataTable('collapseRow')}
+              expandRowAriaLabel={tDataTable('expandRowAria')}
               getRowId={(row) => row.id}
-              aria-label="Liste des hébergements"
+              aria-label={tList('ariaLabel')}
             />
           </Card>
           {state.status === 'ready' ? (
@@ -249,12 +272,32 @@ export function PropertiesList() {
               pageSize={PAGE_SIZE}
               totalPages={state.totalPages}
               totalItems={state.total}
-              itemLabel="hébergement"
+              itemLabel={tPagination('property')}
+              labels={paginationLabels}
               onPageChange={setPage}
             />
           ) : null}
         </>
       )}
+
+      <AlertDialog
+        open={pendingDelete !== null}
+        onOpenChange={(open) => {
+          if (!open && !deletingId) setPendingDelete(null);
+        }}
+        title={tDialogs('deleteTitle')}
+        description={
+          pendingDelete
+            ? tDialogs('deleteDescription', { name: pendingDelete.name })
+            : undefined
+        }
+        confirmLabel={tActions('delete')}
+        cancelLabel={tActions('cancel')}
+        variant="danger"
+        loading={deletingId !== null}
+        onConfirm={() => void confirmDelete()}
+        onCancel={() => setPendingDelete(null)}
+      />
     </div>
   );
 }

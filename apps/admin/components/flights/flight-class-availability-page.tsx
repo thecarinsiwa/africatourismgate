@@ -1,11 +1,16 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
+import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
+import { AdminPageBackLink } from '../admin-page-back-link';
 import { getApiClient } from '../../lib/auth/api';
 import { currentYearMonth } from '../../lib/availability-dates';
-import { flightClassLabels } from '../../lib/flight-class-labels';
-import { getVolsErrorMessage } from '../../lib/vols-errors';
+import { getFlightClassLabel } from '../../lib/flight-class-labels';
+import { useFlightClassLabels } from '../../lib/i18n/use-module-labels';
 import { FlightClassAvailabilityBulkForm } from './flight-class-availability-bulk-form';
 import { FlightClassAvailabilityGrid } from './flight-class-availability-grid';
 
@@ -18,6 +23,11 @@ export function FlightClassAvailabilityPage({
   flightId,
   classId,
 }: FlightClassAvailabilityPageProps) {
+  const { vols: getVolsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.flights.sections.availability');
+  const tDetail = useTranslations('modules.flights.detail');
+  const tCommon = useTranslations('modules.common');
+  const classLabels = useFlightClassLabels();
   const [yearMonth, setYearMonth] = useState(currentYearMonth);
   const [state, setState] = useState<
     | { status: 'loading' }
@@ -30,6 +40,18 @@ export function FlightClassAvailabilityPage({
       }
   >({ status: 'loading' });
   const [gridKey, setGridKey] = useState(0);
+
+  useAdminEditPageMeta({
+    ready: state.status === 'ready',
+    title: t('title'),
+    breadcrumbTail:
+      state.status === 'ready'
+        ? [
+            { label: state.flightNumber, href: `/produits/vols/${flightId}` },
+            { label: state.classLabel },
+          ]
+        : undefined,
+  });
 
   const handleBulkApplied = useCallback(() => {
     setGridKey((k) => k + 1);
@@ -49,7 +71,7 @@ export function FlightClassAvailabilityPage({
           if (!cancelled) {
             setState({
               status: 'error',
-              message: 'Cette classe n’appartient pas à ce vol.',
+              message: t('classMismatch'),
             });
           }
           return;
@@ -58,7 +80,7 @@ export function FlightClassAvailabilityPage({
           setState({
             status: 'ready',
             flightNumber: flight.flightNumber,
-            classLabel: flightClassLabels[flightClass.className],
+            classLabel: getFlightClassLabel(flightClass.className, classLabels),
             basePriceCents: flightClass.basePriceCents,
           });
         }
@@ -71,10 +93,10 @@ export function FlightClassAvailabilityPage({
     return () => {
       cancelled = true;
     };
-  }, [flightId, classId]);
+  }, [flightId, classId, classLabels, t, getVolsErrorMessage]);
 
   if (state.status === 'loading') {
-    return <p className="text-sm text-atg-muted">Chargement…</p>;
+    return <p className="text-sm text-atg-muted">{tCommon('loading')}</p>;
   }
 
   if (state.status === 'error') {
@@ -84,7 +106,7 @@ export function FlightClassAvailabilityPage({
           {state.message}
         </p>
         <Link href="/produits/vols" className="text-sm font-medium text-primary">
-          ← Retour aux vols
+          {tDetail('backLink')}
         </Link>
       </div>
     );
@@ -94,26 +116,14 @@ export function FlightClassAvailabilityPage({
 
   return (
     <div>
-      <nav className="mb-6 text-sm text-atg-muted">
-        <Link href="/produits/vols" className="text-primary hover:underline">
-          Vols
-        </Link>
-        <span className="mx-2">/</span>
-        <Link href={`/produits/vols/${flightId}`} className="text-primary hover:underline">
-          {flightNumber}
-        </Link>
-        <span className="mx-2">/</span>
-        <span>{classLabel}</span>
-        <span className="mx-2">/</span>
-        <span className="text-atg-fg">Disponibilités</span>
-      </nav>
-
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-atg-fg">Disponibilités</h1>
-        <p className="mt-2 text-sm text-atg-muted">
-          Vol {flightNumber} — {classLabel} : sièges et prix par date.
-        </p>
-      </div>
+      <AdminPageBackLink
+        href={`/produits/vols/${flightId}?tab=classes`}
+        label={t('backToFlight')}
+        className="mb-6 block"
+      />
+      <p className="mb-8 text-sm text-atg-muted">
+        {t('summary', { flightNumber, classLabel })}
+      </p>
 
       <div className="space-y-10">
         <FlightClassAvailabilityBulkForm

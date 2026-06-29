@@ -94,4 +94,13 @@ export class BookingCheckoutDto {
   @IsOptional()
   @IsUUID('4')
   customerUserId?: string;
+
+  @ApiPropertyOptional({
+    format: 'uuid',
+    description:
+      'Forfait combiné : applique la remise du forfait après validation des items du panier',
+  })
+  @IsOptional()
+  @IsUUID('4')
+  packageId?: string;
 }

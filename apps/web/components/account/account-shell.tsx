@@ -4,13 +4,22 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { useTranslations } from '../../lib/i18n/locale-provider';
+import { PageHero } from '../shared/page-hero';
+import {
+  AccountAddressesIcon,
+  AccountBrowseIcon,
+  AccountLoyaltyIcon,
+  AccountPaymentIcon,
+  AccountProfileIcon,
+  AccountReservationsIcon,
+} from './account-nav-icons';
 
 const NAV = [
-  { href: '/account/profile', key: 'profile' as const },
-  { href: '/account/addresses', key: 'addresses' as const },
-  { href: '/account/reservations', key: 'reservations' as const },
-  { href: '/account/loyalty', key: 'loyalty' as const },
-  { href: '/account/payment-methods', key: 'paymentMethods' as const },
+  { href: '/account/profile', key: 'profile' as const, Icon: AccountProfileIcon },
+  { href: '/account/addresses', key: 'addresses' as const, Icon: AccountAddressesIcon },
+  { href: '/account/reservations', key: 'reservations' as const, Icon: AccountReservationsIcon },
+  { href: '/account/loyalty', key: 'loyalty' as const, Icon: AccountLoyaltyIcon },
+  { href: '/account/payment-methods', key: 'paymentMethods' as const, Icon: AccountPaymentIcon },
 ] as const;
 
 type NavKey = (typeof NAV)[number]['key'];
@@ -32,6 +41,10 @@ function resolvePageTitle(
   return fallback;
 }
 
+function isDetailPage(pathname: string): boolean {
+  return Boolean(pathname.match(/^\/account\/reservations\/[^/]+$/));
+}
+
 type Props = {
   children: ReactNode;
 };
@@ -45,82 +58,119 @@ export function AccountShell({ children }: Props) {
     t.account.title,
     t.account.reservations.detail.title,
   );
+  const onReservationsDetail = isDetailPage(pathname);
+
+  const breadcrumb = (
+    <nav
+      className="flex flex-wrap items-center gap-2 text-sm text-white/60"
+      aria-label="Breadcrumb"
+    >
+      <Link href="/" className="transition-colors hover:text-white">
+        {t.nav.home}
+      </Link>
+      <span aria-hidden>/</span>
+      <Link
+        href="/account/profile"
+        className={`transition-colors hover:text-white ${
+          pathname === '/account/profile' ? 'font-medium text-white' : ''
+        }`}
+      >
+        {t.account.title}
+      </Link>
+      {pathname !== '/account' && pathname !== '/account/profile' ? (
+        <>
+          <span aria-hidden>/</span>
+          {onReservationsDetail ? (
+            <Link
+              href="/account/reservations"
+              className="transition-colors hover:text-white"
+            >
+              {t.account.nav.reservations}
+            </Link>
+          ) : (
+            <span className="font-medium text-white">{pageTitle}</span>
+          )}
+        </>
+      ) : null}
+      {onReservationsDetail ? (
+        <>
+          <span aria-hidden>/</span>
+          <span className="font-medium text-white">{pageTitle}</span>
+        </>
+      ) : null}
+    </nav>
+  );
 
   return (
-    <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-      <nav
-        className="mb-6 flex flex-wrap items-center gap-2 text-sm text-gray-500 dark:text-atg-muted"
-        aria-label="Breadcrumb"
-      >
-        <Link href="/" className="transition-colors hover:text-primary">
-          {t.nav.home}
-        </Link>
-        <span aria-hidden>/</span>
-        <span className="font-medium text-gray-900 dark:text-white">{t.account.title}</span>
-        {pathname !== '/account' &&
-        pathname !== '/account/profile' &&
-        !pathname.match(/^\/account\/reservations\/[^/]+$/) ? (
-          <>
-            <span aria-hidden>/</span>
-            <span className="text-gray-700 dark:text-white/80">{pageTitle}</span>
-          </>
-        ) : null}
-      </nav>
+    <>
+      <PageHero
+        breadcrumb={breadcrumb}
+        title={
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+            {t.account.title}
+          </h1>
+        }
+        description={
+          <p className="max-w-2xl text-base leading-relaxed text-white/80 sm:text-lg">
+            {t.account.subtitle}
+          </p>
+        }
+      />
 
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-[#0f1a16] dark:text-white sm:text-3xl">
-          {t.account.title}
-        </h1>
-        <p className="mt-1 text-sm text-gray-600 dark:text-atg-muted">{t.account.subtitle}</p>
-      </div>
+      <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+          <aside className="w-full shrink-0 lg:sticky lg:top-6 lg:w-64">
+            <nav
+              className="rounded-xl border border-atg-border bg-atg-elevated shadow-sm dark:border-atg-border dark:bg-atg-elevated"
+              aria-label={t.account.navAria}
+            >
+              <ul className="flex gap-1 overflow-x-auto p-2 lg:flex-col lg:overflow-visible">
+                {NAV.map((item) => {
+                  const active =
+                    pathname === item.href || pathname.startsWith(`${item.href}/`);
+                  const Icon = item.Icon;
+                  return (
+                    <li key={item.href} className="min-w-0 shrink-0 lg:shrink">
+                      <Link
+                        href={item.href}
+                        className={`flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all lg:px-4 ${
+                          active
+                            ? 'bg-primary text-white shadow-md ring-2 ring-primary/30 lg:border-l-4 lg:border-l-white/90 lg:pl-3'
+                            : 'text-atg-fg hover:bg-atg-surface dark:text-white/80 dark:hover:bg-white/5'
+                        }`}
+                        aria-current={active ? 'page' : undefined}
+                      >
+                        <Icon
+                          className={active ? 'text-white' : 'text-primary/80'}
+                        />
+                        <span className="whitespace-nowrap">{t.account.nav[item.key]}</span>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+              <div className="border-t border-atg-border p-2 dark:border-atg-border">
+                <Link
+                  href="/hotels"
+                  className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-primary transition-colors hover:bg-primary/5 lg:px-4"
+                >
+                  <AccountBrowseIcon />
+                  <span>{t.account.browseSite}</span>
+                </Link>
+              </div>
+            </nav>
+          </aside>
 
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-        <aside className="w-full shrink-0 lg:sticky lg:top-6 lg:w-60">
-          <nav
-            className="rounded-xl border border-gray-200 bg-white p-2 shadow-sm dark:border-atg-border dark:bg-atg-elevated"
-            aria-label={t.account.navAria}
-          >
-            <ul className="flex flex-row flex-wrap gap-1 lg:flex-col">
-              {NAV.map((item) => {
-                const active =
-                  pathname === item.href || pathname.startsWith(`${item.href}/`);
-                return (
-                  <li key={item.href} className="min-w-0 flex-1 lg:flex-none">
-                    <Link
-                      href={item.href}
-                      className={`flex min-h-[44px] items-center rounded-lg px-4 py-2.5 text-sm font-medium transition-colors ${
-                        active
-                          ? 'bg-primary text-white shadow-sm'
-                          : 'text-gray-700 hover:bg-gray-50 dark:text-white/75 dark:hover:bg-white/5'
-                      }`}
-                      aria-current={active ? 'page' : undefined}
-                    >
-                      {t.account.nav[item.key]}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-            <div className="mt-2 border-t border-gray-100 pt-2 dark:border-atg-border">
-              <Link
-                href="/hotels"
-                className="flex min-h-[44px] items-center rounded-lg px-4 py-2.5 text-sm font-medium text-primary transition-colors hover:bg-primary/5"
-              >
-                {t.account.browseSite}
-              </Link>
+          <div className="min-w-0 flex-1">
+            <div className="rounded-xl border border-atg-border bg-atg-elevated p-5 shadow-sm sm:p-6 dark:border-atg-border dark:bg-atg-elevated">
+              <h2 className="mb-5 border-b border-atg-border pb-4 text-lg font-semibold text-atg-fg dark:border-atg-border dark:text-white">
+                {pageTitle}
+              </h2>
+              {children}
             </div>
-          </nav>
-        </aside>
-
-        <div className="min-w-0 flex-1">
-          <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6 dark:border-atg-border dark:bg-atg-elevated">
-            <h2 className="mb-5 border-b border-gray-100 pb-4 text-lg font-semibold text-[#0f1a16] dark:border-atg-border dark:text-white">
-              {pageTitle}
-            </h2>
-            {children}
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

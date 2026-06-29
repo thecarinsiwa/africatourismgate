@@ -1,34 +1,71 @@
 'use client';
 
-import { DashboardShell } from '@africatourismgate/ui';
+import { Breadcrumb, DashboardShell } from '@africatourismgate/ui';
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { buildAdminDashboardNav } from '../config/dashboard-nav';
+import {
+  AdminPageMetaProvider,
+  useAdminPageMeta,
+} from './admin-page-meta-context';
+import { buildAdminBreadcrumbRoutes, buildAdminDashboardNav } from '../config/dashboard-nav';
 import { adminDashboardConfig } from '../config/dashboard';
 import { logout } from '../lib/auth/logout';
 import { AUTH_CHANGED_EVENT, getSession } from '../lib/auth/session';
 import type { StoredSession } from '../lib/auth/session';
+import {
+  breadcrumbFromPath,
+  buildAdminBreadcrumbHrefLabels,
+  resolveAdminPageTitle,
+} from '../lib/breadcrumb-from-path';
 import { useOrganizationThemeOptional } from './organization-theme-provider';
 import { SessionSync } from './session-sync';
 import { LanguageSwitcher } from './language-switcher';
+import { CommandPalette } from './command-palette';
 
 function formatDisplayName(firstName: string, lastName: string, email: string): string {
   const name = `${firstName} ${lastName}`.trim();
   return name || email;
 }
 
-export function DashboardShellLayout({ children }: { children: React.ReactNode }) {
+function DashboardShellInner({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
   const router = useRouter();
   const orgTheme = useOrganizationThemeOptional();
   const tNav = useTranslations('nav');
   const tTheme = useTranslations('theme');
+  const tShell = useTranslations('nav.shell');
+  const { meta } = useAdminPageMeta();
   const [session, setSession] = useState<StoredSession | null>(null);
 
   const navItems = useMemo(
     () => buildAdminDashboardNav((key) => tNav(key as Parameters<typeof tNav>[0])),
     [tNav],
   );
+
+  const breadcrumbRoutes = useMemo(
+    () => buildAdminBreadcrumbRoutes((key) => tNav(key as Parameters<typeof tNav>[0])),
+    [tNav],
+  );
+
+  const hrefLabels = useMemo(
+    () => buildAdminBreadcrumbHrefLabels(navItems, breadcrumbRoutes),
+    [navItems, breadcrumbRoutes],
+  );
+
+  const breadcrumbItems = useMemo(
+    () => breadcrumbFromPath(pathname, { hrefLabels, tail: meta.breadcrumbTail }),
+    [pathname, hrefLabels, meta.breadcrumbTail],
+  );
+
+  const autoTitle = useMemo(
+    () => resolveAdminPageTitle(pathname, hrefLabels),
+    [pathname, hrefLabels],
+  );
+
+  const headerTitle = meta.title ?? autoTitle;
+
+  const showShellBreadcrumb = breadcrumbItems.length >= 2;
 
   useEffect(() => {
     function syncSession() {
@@ -62,31 +99,48 @@ export function DashboardShellLayout({ children }: { children: React.ReactNode }
   }, [router]);
 
   return (
+    <DashboardShell
+      navItems={navItems}
+      title={headerTitle}
+      breadcrumb={
+        showShellBreadcrumb ? <Breadcrumb items={breadcrumbItems} /> : undefined
+      }
+      headerActions={<LanguageSwitcher />}
+      openMenuLabel={tShell('openMenu')}
+      closeMenuLabel={tShell('closeMenu')}
+      logo={{
+        name: orgTheme?.branding?.displayName ?? adminDashboardConfig.logo.name,
+        href: adminDashboardConfig.logo.href,
+        logoUrl: orgTheme?.branding?.logoUrl,
+      }}
+      user={{
+        ...user,
+        onLogout: handleLogout,
+        logoutLabel: tShell('logout'),
+        loggingOutLabel: tShell('loggingOut'),
+        menuLinks: [
+          { href: '/dashboard', label: tNav('userMenu.dashboard') },
+          { href: '/parametres', label: tNav('userMenu.settings') },
+        ],
+      }}
+      themeLabels={{
+        light: tTheme('light'),
+        dark: tTheme('dark'),
+      }}
+    >
+      <CommandPalette />
+      {children}
+    </DashboardShell>
+  );
+}
+
+export function DashboardShellLayout({ children }: { children: React.ReactNode }) {
+  return (
     <>
       <SessionSync />
-      <DashboardShell
-        navItems={navItems}
-        headerActions={<LanguageSwitcher />}
-        logo={{
-          name: orgTheme?.branding?.displayName ?? adminDashboardConfig.logo.name,
-          href: adminDashboardConfig.logo.href,
-          logoUrl: orgTheme?.branding?.logoUrl,
-        }}
-        user={{
-          ...user,
-          onLogout: handleLogout,
-          menuLinks: [
-            { href: '/dashboard', label: tNav('userMenu.dashboard') },
-            { href: '/parametres', label: tNav('userMenu.settings') },
-          ],
-        }}
-        themeLabels={{
-          light: tTheme('light'),
-          dark: tTheme('dark'),
-        }}
-      >
-        {children}
-      </DashboardShell>
+      <AdminPageMetaProvider>
+        <DashboardShellInner>{children}</DashboardShellInner>
+      </AdminPageMetaProvider>
     </>
   );
 }

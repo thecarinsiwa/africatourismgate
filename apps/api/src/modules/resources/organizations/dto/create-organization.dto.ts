@@ -51,6 +51,36 @@ export class CreateOrganizationDto {
   @MaxLength(32)
   contactPhone?: string;
 
+  @ApiPropertyOptional({ example: 'SARL', description: 'Forme juridique' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(50)
+  legalForm?: string;
+
+  @ApiPropertyOptional({ description: 'Registre du Commerce et du Crédit Mobilier' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  rccm?: string;
+
+  @ApiPropertyOptional({ description: 'Identification Nationale' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  idNat?: string;
+
+  @ApiPropertyOptional({ description: "Numéro d'Identification Fiscale" })
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  nif?: string;
+
+  @ApiPropertyOptional({ description: 'Caisse Nationale de Sécurité Sociale' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  cnss?: string;
+
   @ApiProperty({ example: 'USD', default: 'USD' })
   @IsNotEmpty({ message: 'La devise est obligatoire.' })
   @IsString()

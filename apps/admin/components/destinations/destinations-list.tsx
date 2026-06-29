@@ -1,22 +1,32 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
-  Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   DataTablePagination,
   Input,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { Destination } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { CountryFlagPlaceholder } from '../flights/country-flag-placeholder';
 import { getApiClient } from '../../lib/auth/api';
-import { getDestinationsErrorMessage } from '../../lib/destinations-errors';
+import { DestinationThumbnail } from './destination-thumbnail';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
 
 export function DestinationsList() {
+  const { destinations: getDestinationsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.destinations.list');
+  const tColumns = useTranslations('modules.destinations.columns');
+  const tCommon = useTranslations('modules.common');
+  const tActions = useTranslations('common.actions');
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -50,7 +60,7 @@ export function DestinationsList() {
     } catch (error) {
       setState({ status: 'error', message: getDestinationsErrorMessage(error) });
     }
-  }, [page, search]);
+  }, [page, search, getDestinationsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -71,11 +81,7 @@ export function DestinationsList() {
 
   const handleDelete = useCallback(
     async (destination: Destination) => {
-      if (
-        !window.confirm(
-          `Supprimer la destination « ${destination.name} » ? Les points d’intérêt associés seront également supprimés.`,
-        )
-      ) {
+      if (!window.confirm(t('deleteConfirm', { name: destination.name }))) {
         return;
       }
       setDeleteError(null);
@@ -89,33 +95,29 @@ export function DestinationsList() {
         setDeletingId(null);
       }
     },
-    [load],
+    [load, t, getDestinationsErrorMessage],
   );
 
   const columns = useMemo<ColumnDef<Destination, unknown>[]>(
     () => [
       {
         accessorKey: 'name',
-        header: 'Destination',
-        cell: ({ row }) => {
-          const name = row.original.name;
-          const initial = name.trim().charAt(0).toUpperCase() || '?';
-          return (
-            <div className="flex items-center gap-3">
-              <span
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-sm font-semibold text-primary ring-1 ring-primary/15"
-                aria-hidden
-              >
-                {initial}
-              </span>
-              <span className="font-medium text-atg-fg">{name}</span>
-            </div>
-          );
-        },
+        header: tColumns('destination'),
+        cell: ({ row }) => (
+          <div className="flex items-center gap-3">
+            <DestinationThumbnail
+              name={row.original.name}
+              countryCode={row.original.countryCode}
+              imageUrl={row.original.imageUrl}
+              size="sm"
+            />
+            <span className="font-medium text-atg-fg">{row.original.name}</span>
+          </div>
+        ),
       },
       {
         accessorKey: 'slug',
-        header: 'Slug',
+        header: tCommon('columns.slug'),
         cell: ({ row }) => (
           <code className="rounded-md bg-atg-surface px-2 py-0.5 font-mono text-xs text-atg-muted ring-1 ring-atg-border/60">
             {row.original.slug}
@@ -124,67 +126,80 @@ export function DestinationsList() {
       },
       {
         accessorKey: 'countryCode',
-        header: 'Pays',
+        header: tColumns('country'),
         meta: { align: 'center' },
         cell: ({ row }) => (
-          <span className="font-mono text-sm tabular-nums text-atg-muted">
-            {row.original.countryCode}
-          </span>
+          <div className="flex items-center justify-center gap-2">
+            <CountryFlagPlaceholder countryCode={row.original.countryCode} className="h-8 w-8" />
+            <span className="font-mono text-xs tabular-nums text-atg-muted">
+              {row.original.countryCode}
+            </span>
+          </div>
         ),
       },
       {
+        accessorKey: 'isFeatured',
+        header: tColumns('featured'),
+        meta: { align: 'center' },
+        cell: ({ row }) =>
+          row.original.isFeatured ? (
+            <span className="inline-flex rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary">
+              {tColumns('featured')}
+            </span>
+          ) : (
+            <span className="text-xs text-atg-muted">—</span>
+          ),
+      },
+      {
         id: 'actions',
-        header: 'Actions',
+        header: tCommon('columns.actions'),
         meta: { align: 'right' },
         cell: ({ row }) => {
           const destination = row.original;
           return (
-            <div className="flex justify-end gap-1.5 opacity-90 transition-opacity group-hover:opacity-100">
-              <Button href={`/produits/destinations/${destination.id}`} variant="ghost" size="sm">
-                Modifier
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
+            <DataTableActions className="opacity-90 transition-opacity group-hover:opacity-100">
+              <DataTableActionButton
+                action="view"
+                label={tActions('view')}
+                href={`/produits/destinations/${destination.id}/voir`}
+              />
+              <DataTableActionButton
+                action="edit"
+                label={tActions('edit')}
+                href={`/produits/destinations/${destination.id}`}
+              />
+              <DataTableActionButton
+                action="delete"
+                label={tActions('delete')}
                 onClick={() => void handleDelete(destination)}
                 disabled={deletingId === destination.id}
                 loading={deletingId === destination.id}
-                loadingText="…"
-                className="!text-red-600 hover:!bg-red-50 hover:!text-red-700 dark:!text-red-400 dark:hover:!bg-red-950/30"
-              >
-                Supprimer
-              </Button>
-            </div>
+              />
+            </DataTableActions>
           );
         },
       },
     ],
-    [deletingId, handleDelete],
+    [deletingId, handleDelete, tActions, tColumns, tCommon],
   );
 
   const isLoading = state.status === 'loading';
   const isError = state.status === 'error';
   const destinations = state.status === 'ready' ? state.destinations : [];
   const emptyMessage =
-    search.trim().length > 0
-      ? 'Aucune destination ne correspond à votre recherche.'
-      : 'Aucune destination pour le moment.';
+    search.trim().length > 0 ? t('emptySearch') : t('emptyDefault');
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex-1 sm:max-w-md">
-          <Input
-            name="search"
-            type="search"
-            placeholder="Rechercher par nom, slug ou pays…"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            aria-label="Rechercher une destination"
-          />
-        </div>
-        <Button href="/produits/destinations/nouveau">Nouvelle destination</Button>
+      <div className="flex-1 sm:max-w-md">
+        <Input
+          name="search"
+          type="search"
+          placeholder={t('searchPlaceholder')}
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          aria-label={t('searchAria')}
+        />
       </div>
 
       {deleteError ? (
@@ -207,7 +222,7 @@ export function DestinationsList() {
               emptyMessage={emptyMessage}
               emptyVariant={search.trim().length > 0 ? 'search' : 'default'}
               getRowId={(row) => row.id}
-              aria-label="Liste des destinations"
+              aria-label={t('ariaLabel')}
             />
           </Card>
 
@@ -217,7 +232,7 @@ export function DestinationsList() {
               pageSize={PAGE_SIZE}
               totalPages={state.totalPages}
               totalItems={state.total}
-              itemLabel="destination"
+              itemLabel={tCommon('pagination.destination')}
               onPageChange={setPage}
             />
           ) : null}

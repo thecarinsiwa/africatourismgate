@@ -1,42 +1,75 @@
-/** Textes de la page réinitialisation mot de passe */
-export const adminResetPasswordPageConfig = {
-  title: 'Nouveau mot de passe',
-  subtitle: 'Choisissez un mot de passe sécurisé pour votre compte.',
-  password: {
-    label: 'Nouveau mot de passe',
-    placeholder: '••••••••',
-  },
-  confirmPassword: {
-    label: 'Confirmer le mot de passe',
-    placeholder: '••••••••',
-    mismatchError: 'Les mots de passe ne correspondent pas',
-  },
-  submit: {
-    label: 'Réinitialiser le mot de passe',
-    loadingLabel: 'Réinitialisation…',
-  },
-  missingToken: {
-    title: 'Lien invalide',
-    message:
-      'Ce lien de réinitialisation est incomplet ou a expiré. Demandez un nouveau lien.',
-    forgotHref: '/forgot-password',
-    forgotLabel: 'Demander un nouveau lien',
-    loginHref: '/login',
-    loginLabel: 'Retour à la connexion',
-  },
-  successRedirect: '/login',
-  logo: {
-    name: 'Africa Tourism Gate',
-  },
-  theme: {
-    light: 'Mode clair',
-    dark: 'Mode sombre',
-  },
-} as const;
+type ResetPasswordFormTranslator = {
+  (
+    key:
+      | 'passwordLabel'
+      | 'passwordPlaceholder'
+      | 'confirmPasswordLabel'
+      | 'confirmPasswordPlaceholder'
+      | 'confirmPasswordMismatch'
+      | 'submit'
+      | 'submitLoading',
+  ): string;
+};
 
-export const adminResetPasswordErrors = {
-  invalidToken:
-    'Lien de réinitialisation expiré ou invalide. Demandez un nouveau lien.',
-  network: 'Impossible de joindre le serveur. Vérifiez votre connexion.',
-  generic: 'Une erreur est survenue. Veuillez réessayer.',
-} as const;
+type ResetPasswordPageTranslator = {
+  (key: 'title' | 'subtitle' | 'backToLogin'): string;
+};
+
+type ResetPasswordMissingTokenTranslator = {
+  (key: 'title' | 'message' | 'forgotLabel' | 'loginLabel'): string;
+};
+
+type ResetPasswordErrorsTranslator = {
+  (key: 'invalidToken' | 'network' | 'generic'): string;
+};
+
+export function getAdminResetPasswordPageCopy(t: ResetPasswordPageTranslator) {
+  return {
+    title: t('title'),
+    subtitle: t('subtitle'),
+    backToLogin: {
+      href: '/login',
+      label: t('backToLogin'),
+    },
+  };
+}
+
+export function getAdminResetPasswordFormConfig(t: ResetPasswordFormTranslator) {
+  return {
+    password: {
+      label: t('passwordLabel'),
+      placeholder: t('passwordPlaceholder'),
+    },
+    confirmPassword: {
+      label: t('confirmPasswordLabel'),
+      placeholder: t('confirmPasswordPlaceholder'),
+      mismatchError: t('confirmPasswordMismatch'),
+    },
+    submit: {
+      label: t('submit'),
+      loadingLabel: t('submitLoading'),
+    },
+    successRedirect: '/login',
+  };
+}
+
+export function getAdminResetPasswordMissingTokenCopy(
+  t: ResetPasswordMissingTokenTranslator,
+) {
+  return {
+    title: t('title'),
+    message: t('message'),
+    forgotHref: '/forgot-password',
+    forgotLabel: t('forgotLabel'),
+    loginHref: '/login',
+    loginLabel: t('loginLabel'),
+  };
+}
+
+export function getAdminResetPasswordErrors(t: ResetPasswordErrorsTranslator) {
+  return {
+    invalidToken: t('invalidToken'),
+    network: t('network'),
+    generic: t('generic'),
+  };
+}

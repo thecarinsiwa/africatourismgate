@@ -1,21 +1,29 @@
 'use client';
 
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+
 import {
   Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   Input,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { VehicleAvailability, VehicleAvailabilityStatus } from '@africatourismgate/types';
+import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import {
   fromDatetimeLocalValue,
   toDatetimeLocalValue,
 } from '../../lib/flight-datetime';
-import { getLocationsErrorMessage } from '../../lib/locations-errors';
-import { vehicleStatusLabels, vehicleStatusOptions } from '../../lib/vehicle-status-labels';
+import { getVehicleStatusLabel } from '../../lib/vehicle-status-labels';
+import {
+  useVehicleAvailabilityStatusLabels,
+  useVehicleAvailabilityStatusOptions,
+} from '../../lib/i18n/use-module-labels';
 
 type FormValues = {
   startDatetime: string;
@@ -29,23 +37,18 @@ const emptyForm: FormValues = {
   status: 'available',
 };
 
-function formatRange(start: string, end: string): string {
-  const opts: Intl.DateTimeFormatOptions = {
-    dateStyle: 'short',
-    timeStyle: 'short',
-  };
-  try {
-    return `${new Date(start).toLocaleString('fr-FR', opts)} → ${new Date(end).toLocaleString('fr-FR', opts)}`;
-  } catch {
-    return `${start} → ${end}`;
-  }
-}
-
 type VehicleAvailabilitySectionProps = {
   vehicleId: string;
 };
 
 export function VehicleAvailabilitySection({ vehicleId }: VehicleAvailabilitySectionProps) {
+  const locale = useLocale();
+  const { locations: getLocationsErrorMessage } = useAdminErrorMessages();
+  const t = useTranslations('modules.locations.sections.availability');
+  const tCommon = useTranslations('modules.common');
+  const tActions = useTranslations('common.actions');
+  const statusLabels = useVehicleAvailabilityStatusLabels();
+  const statusOptions = useVehicleAvailabilityStatusOptions();
   const statusId = useId();
   const [filterStart, setFilterStart] = useState('');
   const [filterEnd, setFilterEnd] = useState('');
@@ -60,6 +63,21 @@ export function VehicleAvailabilitySection({ vehicleId }: VehicleAvailabilitySec
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const formatRange = useCallback(
+    (start: string, end: string): string => {
+      const opts: Intl.DateTimeFormatOptions = {
+        dateStyle: 'short',
+        timeStyle: 'short',
+      };
+      try {
+        return `${new Date(start).toLocaleString(locale, opts)} → ${new Date(end).toLocaleString(locale, opts)}`;
+      } catch {
+        return `${start} → ${end}`;
+      }
+    },
+    [locale],
+  );
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -77,7 +95,7 @@ export function VehicleAvailabilitySection({ vehicleId }: VehicleAvailabilitySec
     } catch (error) {
       setState({ status: 'error', message: getLocationsErrorMessage(error) });
     }
-  }, [vehicleId, filterStart, filterEnd]);
+  }, [vehicleId, filterStart, filterEnd, getLocationsErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -94,7 +112,7 @@ export function VehicleAvailabilitySection({ vehicleId }: VehicleAvailabilitySec
     event.preventDefault();
     setFormError(null);
     if (!formValues.startDatetime || !formValues.endDatetime) {
-      setFormError('Les dates de début et de fin sont obligatoires.');
+      setFormError(tCommon('validation.datesRequired'));
       return;
     }
     setSubmitting(true);
@@ -122,7 +140,7 @@ export function VehicleAvailabilitySection({ vehicleId }: VehicleAvailabilitySec
     () => [
       {
         id: 'range',
-        header: 'Période',
+        header: tCommon('columns.period'),
         cell: ({ row }) => (
           <span className="text-sm">
             {formatRange(row.original.startDatetime, row.original.endDatetime)}
@@ -131,19 +149,17 @@ export function VehicleAvailabilitySection({ vehicleId }: VehicleAvailabilitySec
       },
       {
         accessorKey: 'status',
-        header: 'Statut',
-        cell: ({ row }) => vehicleStatusLabels[row.original.status],
+        header: t('status'),
+        cell: ({ row }) => getVehicleStatusLabel(row.original.status, statusLabels),
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: tCommon('columns.actions'),
         meta: { align: 'right' },
         cell: ({ row }) => (
-          <div className="flex justify-end gap-1.5">
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
+          <DataTableActions>
+            <DataTableActionButton
+              action="edit"
               onClick={() => {
                 setEditing(row.original);
                 setFormValues({
@@ -153,16 +169,11 @@ export function VehicleAvailabilitySection({ vehicleId }: VehicleAvailabilitySec
                 });
                 setShowForm(true);
               }}
-            >
-              Modifier
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="!text-red-600"
+            />
+            <DataTableActionButton
+              action="delete"
               onClick={async () => {
-                if (!window.confirm('Supprimer ce créneau ?')) return;
+                if (!window.confirm(t('deleteConfirm'))) return;
                 setDeletingId(row.original.id);
                 try {
                   await getApiClient().deleteVehicleAvailability(row.original.id);
@@ -175,14 +186,12 @@ export function VehicleAvailabilitySection({ vehicleId }: VehicleAvailabilitySec
               }}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
-            >
-              Supprimer
-            </Button>
-          </div>
+            />
+          </DataTableActions>
         ),
       },
     ],
-    [deletingId, load],
+    [deletingId, formatRange, load, statusLabels, t, tCommon, getLocationsErrorMessage],
   );
 
   const slots = state.status === 'ready' ? state.slots : [];
@@ -193,35 +202,33 @@ export function VehicleAvailabilitySection({ vehicleId }: VehicleAvailabilitySec
     <section className="mt-12 space-y-6 border-t border-atg-border pt-10">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-atg-fg">Disponibilités</h2>
-          <p className="mt-1 text-sm text-atg-muted">
-            Créneaux de disponibilité par dates (location, maintenance, loué).
-          </p>
+          <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
+          <p className="mt-1 text-sm text-atg-muted">{t('intro')}</p>
         </div>
         {!showForm ? (
           <Button type="button" onClick={() => setShowForm(true)}>
-            Ajouter un créneau
+            {t('addSlot')}
           </Button>
         ) : null}
       </div>
 
       <div className="flex flex-wrap items-end gap-4">
         <Input
-          label="Filtrer du"
+          label={t('filterFrom')}
           type="date"
           value={filterStart}
           onChange={(e) => setFilterStart(e.target.value)}
           className="max-w-[180px]"
         />
         <Input
-          label="au"
+          label={t('filterTo')}
           type="date"
           value={filterEnd}
           onChange={(e) => setFilterEnd(e.target.value)}
           className="max-w-[180px]"
         />
         <Button type="button" variant="outline" size="sm" onClick={() => void load()}>
-          Appliquer
+          {tCommon('filters.apply')}
         </Button>
       </div>
 
@@ -229,7 +236,7 @@ export function VehicleAvailabilitySection({ vehicleId }: VehicleAvailabilitySec
         <Card variant="dashboard" className="max-w-2xl">
           <form onSubmit={handleSubmit} className="space-y-4">
             <h3 className="text-sm font-medium">
-              {editing ? 'Modifier le créneau' : 'Nouveau créneau'}
+              {editing ? t('editSlot') : t('newSlot')}
             </h3>
             {formError ? (
               <p role="alert" className="text-sm text-red-600">
@@ -238,7 +245,9 @@ export function VehicleAvailabilitySection({ vehicleId }: VehicleAvailabilitySec
             ) : null}
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label className="mb-2 block text-sm font-medium">Début</label>
+                <label className="mb-2 block text-sm font-medium">
+                  {tCommon('columns.start')}
+                </label>
                 <input
                   type="datetime-local"
                   className={selectClass}
@@ -250,7 +259,9 @@ export function VehicleAvailabilitySection({ vehicleId }: VehicleAvailabilitySec
                 />
               </div>
               <div>
-                <label className="mb-2 block text-sm font-medium">Fin</label>
+                <label className="mb-2 block text-sm font-medium">
+                  {tCommon('columns.end')}
+                </label>
                 <input
                   type="datetime-local"
                   className={selectClass}
@@ -264,7 +275,7 @@ export function VehicleAvailabilitySection({ vehicleId }: VehicleAvailabilitySec
             </div>
             <div>
               <label htmlFor={statusId} className="mb-2 block text-sm font-medium">
-                Statut
+                {t('status')}
               </label>
               <select
                 id={statusId}
@@ -277,7 +288,7 @@ export function VehicleAvailabilitySection({ vehicleId }: VehicleAvailabilitySec
                   }))
                 }
               >
-                {vehicleStatusOptions.map((o) => (
+                {statusOptions.map((o) => (
                   <option key={o.value} value={o.value}>
                     {o.label}
                   </option>
@@ -286,10 +297,10 @@ export function VehicleAvailabilitySection({ vehicleId }: VehicleAvailabilitySec
             </div>
             <div className="flex gap-3">
               <Button type="submit" loading={submitting}>
-                {editing ? 'Enregistrer' : 'Ajouter'}
+                {editing ? tActions('save') : tActions('create')}
               </Button>
               <Button type="button" variant="outline" onClick={resetForm}>
-                Annuler
+                {tActions('cancel')}
               </Button>
             </div>
           </form>
@@ -306,7 +317,7 @@ export function VehicleAvailabilitySection({ vehicleId }: VehicleAvailabilitySec
             columns={columns}
             data={slots}
             isLoading={state.status === 'loading'}
-            emptyMessage="Aucun créneau sur cette période."
+            emptyMessage={t('empty')}
             getRowId={(r) => r.id}
           />
         </Card>

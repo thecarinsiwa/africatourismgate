@@ -1,28 +1,31 @@
 'use client';
 
 import { Button, PasswordInput } from '@africatourismgate/ui';
+import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
-  adminResetPasswordErrors,
-  adminResetPasswordPageConfig,
+  getAdminResetPasswordErrors,
+  getAdminResetPasswordFormConfig,
+  getAdminResetPasswordMissingTokenCopy,
 } from '../config/reset-password';
+import { getAuthErrorMessage } from '../lib/auth/api-errors';
 import { getApiClient } from '../lib/auth/api';
 
-const { password: passwordConfig, confirmPassword, submit } =
-  adminResetPasswordPageConfig;
-
-function getResetPasswordErrorMessage(error: unknown): string {
-  if (error instanceof TypeError) {
-    return adminResetPasswordErrors.network;
-  }
-  if (error instanceof Error && error.message.includes('HTTP 400')) {
-    return adminResetPasswordErrors.invalidToken;
-  }
-  return adminResetPasswordErrors.generic;
-}
-
 export function AdminResetPasswordForm() {
+  const tForm = useTranslations('auth.resetPassword.form');
+  const tMissing = useTranslations('auth.resetPassword.missingToken');
+  const tErrors = useTranslations('auth.resetPassword.errors');
+  const formConfig = useMemo(() => getAdminResetPasswordFormConfig(tForm), [tForm]);
+  const missingToken = useMemo(() => getAdminResetPasswordMissingTokenCopy(tMissing), [tMissing]);
+  const errorMessages = useMemo(
+    () => ({
+      ...getAdminResetPasswordErrors(tErrors),
+      unauthorized: tErrors('invalidToken'),
+    }),
+    [tErrors],
+  );
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get('token')?.trim() ?? '';
@@ -34,7 +37,6 @@ export function AdminResetPasswordForm() {
   const [loading, setLoading] = useState(false);
 
   if (!token) {
-    const { missingToken } = adminResetPasswordPageConfig;
     return (
       <div className="space-y-4 text-center">
         <p className="text-sm font-medium text-atg-fg">{missingToken.title}</p>
@@ -56,7 +58,7 @@ export function AdminResetPasswordForm() {
     setError(null);
 
     if (password !== confirm) {
-      setConfirmError(confirmPassword.mismatchError);
+      setConfirmError(formConfig.confirmPassword.mismatchError);
       return;
     }
     setConfirmError(undefined);
@@ -64,9 +66,13 @@ export function AdminResetPasswordForm() {
     setLoading(true);
     try {
       await getApiClient().resetPassword({ token, password });
-      router.push(adminResetPasswordPageConfig.successRedirect);
+      router.push(formConfig.successRedirect);
     } catch (err) {
-      setError(getResetPasswordErrorMessage(err));
+      if (err instanceof Error && err.message.includes('HTTP 400')) {
+        setError(errorMessages.invalidToken);
+        return;
+      }
+      setError(getAuthErrorMessage(err, errorMessages));
     } finally {
       setLoading(false);
     }
@@ -88,8 +94,8 @@ export function AdminResetPasswordForm() {
           id="password"
           name="password"
           autoComplete="new-password"
-          label={passwordConfig.label}
-          placeholder={passwordConfig.placeholder}
+          label={formConfig.password.label}
+          placeholder={formConfig.password.placeholder}
           value={password}
           onChange={(e) => {
             setPassword(e.target.value);
@@ -103,8 +109,8 @@ export function AdminResetPasswordForm() {
           id="confirmPassword"
           name="confirmPassword"
           autoComplete="new-password"
-          label={confirmPassword.label}
-          placeholder={confirmPassword.placeholder}
+          label={formConfig.confirmPassword.label}
+          placeholder={formConfig.confirmPassword.placeholder}
           value={confirm}
           onChange={(e) => {
             setConfirm(e.target.value);
@@ -121,9 +127,9 @@ export function AdminResetPasswordForm() {
           size="lg"
           fullWidth
           loading={loading}
-          loadingText={submit.loadingLabel}
+          loadingText={formConfig.submit.loadingLabel}
         >
-          {submit.label}
+          {formConfig.submit.label}
         </Button>
       </form>
     </div>

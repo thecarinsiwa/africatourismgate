@@ -10,8 +10,8 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import { Permissions } from '../../../entities/generated';
+import { PermissionsListQueryDto } from './dto/permissions-list-query.dto';
 import { PermissionsService } from './permissions.service';
 
 @ApiTags('permissions')
@@ -21,14 +21,14 @@ export class PermissionsController {
 
   @Get()
   @ApiOperation({ summary: 'List permissions' })
-  findAll(@Query() query: PaginationQueryDto) {
-    return this.service.findAll(query);
+  findAll(@Query() query: PermissionsListQueryDto) {
+    return this.service.list(query);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get permissions by id' })
   findOne(@Param('id') id: string) {
-    return this.service.findOne(id);
+    return this.service.findOneDto(id);
   }
 
   @Post()
