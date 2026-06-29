@@ -492,6 +492,25 @@ Lien e-mail CE-6 : deep link vers cette page (auth ou token).
 À la fin : fichiers + test Playwright lecture/envoi message.
 ```
 
+**Implémenté (CE-10)** — conversation et suivi assisté :
+
+| Zone | Fichier |
+|------|---------|
+| API détail client (`statusHistory`, `paymentInvited`) | `apps/api/.../bookings.service.ts`, `packages/types/src/booking.ts` |
+| Timeline assistée 5 étapes | `apps/web/components/account/booking-status-timeline.tsx` |
+| Thread messages client | `apps/web/components/account/booking-messages-section.tsx` |
+| Fiche + paiement conditionnel | `apps/web/components/account/account-booking-detail.tsx` |
+| Deep link e-mail CE-6 | `apps/web/app/account/reservations/[id]/chat/page.tsx` |
+| i18n FR/EN/ES | `apps/web/lib/i18n/translations.ts`, `translations-es.ts` |
+| E2E lecture/envoi message | `apps/web/tests/e2e/customer-booking-conversation.spec.ts` |
+
+**Scénario test Playwright**
+
+1. Mock session client → `/account/reservations/:id/chat` (lien e-mail `booking_approved_chat`)
+2. Vérifier timeline assistée + message staff affiché
+3. Envoyer une réponse → `POST /bookings/:id/messages` → message visible dans le fil
+4. Mock `pending_payment` + `paymentInvited: true` → bouton **Procéder au paiement** visible
+
 ### CE-11 — Règles par vertical (assisté vs immédiat)
 
 **Branche :** `feature/ce-booking-mode-config`
