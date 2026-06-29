@@ -151,6 +151,17 @@ export class BookingsController {
     return this.bookingMessagesService.createMessage(id, dto, user.id, query.chatToken);
   }
 
+  @Post(':id/thread-presence')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @RequirePermissions('bookings.read')
+  @ApiOperation({ summary: 'Customer heartbeat while viewing booking chat thread' })
+  async touchThreadPresence(
+    @Param('id') id: string,
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<void> {
+    await this.bookingMessagesService.touchThreadPresence(id, user.id);
+  }
+
   @Post(':id/reviews')
   @RequirePermissions('reviews.write')
   @ApiOperation({ summary: 'Submit a post-stay review for a booking' })

@@ -37,4 +37,9 @@ export class BookingListItemDto {
 
   @ApiPropertyOptional({ format: 'uuid', nullable: true })
   organizationId!: string | null;
+
+  @ApiPropertyOptional({
+    description: 'Customer account list: payment invite or unread staff message.',
+  })
+  actionRequired?: boolean;
 }

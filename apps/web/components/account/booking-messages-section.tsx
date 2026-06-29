@@ -53,6 +53,35 @@ export function BookingMessagesSection({
     void load();
   }, [load]);
 
+  useEffect(() => {
+    if (!canReply || chatToken) {
+      return;
+    }
+
+    let cancelled = false;
+
+    const ping = async () => {
+      try {
+        const client = await getAccountApiClient();
+        await client.touchBookingThreadPresence(bookingId);
+      } catch {
+        // Presence is best-effort; thread still works without it.
+      }
+    };
+
+    void ping();
+    const intervalId = window.setInterval(() => {
+      if (!cancelled) {
+        void ping();
+      }
+    }, 30_000);
+
+    return () => {
+      cancelled = true;
+      window.clearInterval(intervalId);
+    };
+  }, [bookingId, canReply, chatToken]);
+
   const handleSend = useCallback(async () => {
     const body = replyBody.trim();
     if (!body) {

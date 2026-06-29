@@ -1,0 +1,29 @@
+export type PromoCodeDiscountType = 'percent' | 'fixed_amount';
+export interface PromoCode {
+    id: string;
+    code: string;
+    discountType: PromoCodeDiscountType;
+    discountValue: string;
+    validFrom: string;
+    validUntil: string;
+    maxRedemptions: number | null;
+    redemptionCount: number;
+    active: number;
+    createdAt: string;
+    updatedAt: string | null;
+}
+export interface PromoCodesListQuery {
+    page?: number;
+    limit?: number;
+    search?: string;
+}
+export interface CreatePromoCodeRequest {
+    code: string;
+    discountType: PromoCodeDiscountType;
+    discountValue: number;
+    validFrom: string;
+    validUntil: string;
+    maxRedemptions?: number | null;
+    active: number;
+}
+export type UpdatePromoCodeRequest = Partial<CreatePromoCodeRequest>;

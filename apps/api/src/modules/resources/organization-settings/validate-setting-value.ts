@@ -8,6 +8,7 @@ import {
   BOOKING_ITEM_TYPE_KEYS,
   isBookingMode,
   normalizeBookingItemTypeModes,
+  type BookingMode,
 } from '@africatourismgate/types';
 import type { AuthVisualDecorIcon } from '@africatourismgate/types';
 
@@ -277,7 +278,8 @@ export function validateSettingValue(
       return { icons };
     }
     case 'item_type_modes': {
-      const modes: Record<string, string> = {};
+      const modes: Partial<Record<(typeof BOOKING_ITEM_TYPE_KEYS)[number], BookingMode>> =
+        {};
       for (const key of BOOKING_ITEM_TYPE_KEYS) {
         const mode = value[key];
         if (mode === undefined || mode === null) {

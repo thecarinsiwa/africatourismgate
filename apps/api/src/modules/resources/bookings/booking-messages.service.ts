@@ -9,6 +9,8 @@ import { IsNull, Repository } from 'typeorm';
 import { newId } from '../../../common/utils/uuid';
 import { BookingMessages, Bookings } from '../../../entities/generated';
 import { PermissionsService } from '../../rbac/permissions.service';
+import { BookingAssistedEmailService } from './booking-assisted-email.service';
+import { BookingNotificationsService } from './booking-notifications.service';
 import { BookingMessageDto, BookingMessagesListDto } from './dto/booking-message.dto';
 import { CreateBookingMessageDto } from './dto/create-booking-message.dto';
 
@@ -20,6 +22,8 @@ export class BookingMessagesService {
     @InjectRepository(Bookings)
     private readonly bookingsRepository: Repository<Bookings>,
     private readonly permissionsService: PermissionsService,
+    private readonly notifications: BookingNotificationsService,
+    private readonly assistedEmail: BookingAssistedEmailService,
   ) {}
 
   async listByBookingId(
@@ -27,12 +31,17 @@ export class BookingMessagesService {
     actorUserId: string,
     chatToken?: string,
   ): Promise<BookingMessagesListDto> {
-    await this.assertCanAccessThread(bookingId, actorUserId, chatToken);
+    const booking = await this.assertCanAccessThread(bookingId, actorUserId, chatToken);
 
     const rows = await this.messagesRepository.find({
       where: { bookingId, deletedAt: IsNull() },
       order: { createdAt: 'ASC', id: 'ASC' },
     });
+
+    const isStaff = await this.isStaffUser(actorUserId);
+    if (!isStaff && booking.userId === actorUserId) {
+      await this.notifications.markThreadSeenByCustomer(bookingId, actorUserId);
+    }
 
     return {
       messages: rows.map((row) => this.toDto(row)),
@@ -45,7 +54,7 @@ export class BookingMessagesService {
     actorUserId: string,
     chatToken?: string,
   ): Promise<BookingMessageDto> {
-    await this.assertCanAccessThread(bookingId, actorUserId, chatToken);
+    const booking = await this.assertCanAccessThread(bookingId, actorUserId, chatToken);
 
     const body = dto.body.trim();
     if (!body) {
@@ -72,7 +81,27 @@ export class BookingMessagesService {
       where: { id: messageId },
     });
 
+    if (isStaff && !this.notifications.isCustomerOnlineOnThread(booking)) {
+      this.assistedEmail.notifyStaffMessage(bookingId, body);
+    }
+
     return this.toDto(message);
+  }
+
+  async touchThreadPresence(bookingId: string, actorUserId: string): Promise<void> {
+    const booking = await this.bookingsRepository.findOne({
+      where: { id: bookingId, deletedAt: IsNull() },
+    });
+    if (!booking) {
+      throw new NotFoundException('Réservation introuvable.');
+    }
+
+    const staff = await this.isStaffUser(actorUserId);
+    if (staff || booking.userId !== actorUserId) {
+      throw new ForbiddenException('Access denied.');
+    }
+
+    await this.notifications.touchThreadPresence(bookingId, actorUserId);
   }
 
   private async assertCanAccessThread(
