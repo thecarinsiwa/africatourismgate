@@ -37,6 +37,7 @@ import { OrganizationSettingDto } from './dto/organization-setting.dto';
 import { OrganizationSettingsListQueryDto } from './dto/organization-settings-list-query.dto';
 import { PublicBrandingDto } from './dto/public-branding.dto';
 import { PublicBrandingQueryDto } from './dto/public-branding-query.dto';
+import { PublicBookingModesDto } from './dto/public-booking-modes.dto';
 import { PublicContactDto } from './dto/public-contact.dto';
 import { OrganizationSettingsService } from './organization-settings.service';
 
@@ -75,6 +76,16 @@ export class OrganizationSettingsController {
   @ApiOperation({ summary: 'Get public contact details for the active/default organization' })
   findPublicContact(@Query() query: PublicBrandingQueryDto): Promise<PublicContactDto> {
     return this.service.findPublicContact(query.organizationSlug);
+  }
+
+  @Public()
+  @Get('public/booking-modes')
+  @ApiOperation({ summary: 'Get per-vertical booking modes (immediate vs assisted) for the public site' })
+  @ApiOkResponse({ type: PublicBookingModesDto })
+  findPublicBookingModes(
+    @Query() query: PublicBrandingQueryDto,
+  ): Promise<PublicBookingModesDto> {
+    return this.service.findPublicBookingModes(query.organizationSlug);
   }
 
   @Put('bulk')

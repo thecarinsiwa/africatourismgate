@@ -22,6 +22,7 @@ import {
   Users,
   Vehicles,
 } from '../../../entities/generated';
+import { resolveCheckoutBookingMode } from '@africatourismgate/types';
 import { EmailService } from '../../email/email.service';
 import {
   assertValidVehicleDates,
@@ -29,6 +30,7 @@ import {
   slotCoversRentalPeriod,
 } from '../../public/vehicles/vehicle-dates.util';
 import { enumerateDates } from '../room-availability/room-availability-date.util';
+import { OrganizationSettingsService } from '../organization-settings/organization-settings.service';
 import {
   BookingCheckoutDto,
   BookingCheckoutItemDto,
@@ -92,6 +94,7 @@ export class BookingEngineService {
     @InjectRepository(Users)
     private readonly usersRepository: Repository<Users>,
     private readonly emailService: EmailService,
+    private readonly organizationSettingsService: OrganizationSettingsService,
   ) {}
 
   async previewCheckout(
@@ -99,6 +102,12 @@ export class BookingEngineService {
     _userId: string,
   ): Promise<BookingCheckoutPreviewResponseDto> {
     const pricing = await this.resolveCheckoutPricing(dto);
+    const modes = await this.organizationSettingsService.getResolvedItemTypeModes();
+    const bookingMode = resolveCheckoutBookingMode({
+      packageId: dto.packageId,
+      itemTypes: dto.items.map((item) => item.itemType),
+      modes,
+    });
     return {
       lines: pricing.lines.map(({ stock: _s, ...rest }) => rest),
       subtotalCents: pricing.subtotalCents,
@@ -108,6 +117,7 @@ export class BookingEngineService {
       currency: pricing.currency,
       appliedPackageDiscount: pricing.appliedPackageDiscount,
       appliedDiscount: pricing.appliedDiscount,
+      bookingMode,
     };
   }
 

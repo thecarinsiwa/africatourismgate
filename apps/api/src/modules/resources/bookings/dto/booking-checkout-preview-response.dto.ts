@@ -56,4 +56,34 @@ export type BookingCheckoutPreviewResponseDto = {
   currency: string;
   appliedPackageDiscount: AppliedPackageCheckoutDiscountDto | null;
   appliedDiscount: AppliedCheckoutDiscountDto | null;
+  bookingMode: 'immediate' | 'assisted';
 };
+
+export class BookingCheckoutPreviewResponseClass {
+  @ApiProperty({ type: [Object] })
+  lines!: BookingCheckoutLineDto[];
+
+  @ApiProperty()
+  subtotalCents!: number;
+
+  @ApiProperty()
+  packageDiscountCents!: number;
+
+  @ApiProperty()
+  discountCents!: number;
+
+  @ApiProperty()
+  totalCents!: number;
+
+  @ApiProperty()
+  currency!: string;
+
+  @ApiPropertyOptional({ type: AppliedPackageCheckoutDiscountDto, nullable: true })
+  appliedPackageDiscount!: AppliedPackageCheckoutDiscountDto | null;
+
+  @ApiPropertyOptional({ type: AppliedCheckoutDiscountDto, nullable: true })
+  appliedDiscount!: AppliedCheckoutDiscountDto | null;
+
+  @ApiProperty({ enum: ['immediate', 'assisted'] })
+  bookingMode!: 'immediate' | 'assisted';
+}

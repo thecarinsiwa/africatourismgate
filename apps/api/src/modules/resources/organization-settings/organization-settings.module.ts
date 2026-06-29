@@ -11,5 +11,6 @@ import { OrganizationSettingsService } from './organization-settings.service';
   imports: [TypeOrmModule.forFeature([OrganizationSettings, Organizations])],
   controllers: [OrganizationSettingsController],
   providers: [OrganizationSettingsService],
+  exports: [OrganizationSettingsService],
 })
 export class OrganizationSettingsModule {}

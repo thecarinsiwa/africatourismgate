@@ -1,23 +1,98 @@
+export type BookingMode = 'immediate' | 'assisted';
+
+export type BookingItemTypeKey =
+  | 'room'
+  | 'flight_class'
+  | 'vehicle'
+  | 'cabin'
+  | 'activity_schedule'
+  | 'package';
+
+/** Per vertical booking mode — stored in `organization_settings` (group `booking`, key `item_type_modes`). */
+export type BookingItemTypeModes = Partial<Record<BookingItemTypeKey, BookingMode>>;
+
+export type ResolvedBookingItemTypeModes = Record<BookingItemTypeKey, BookingMode>;
+
+export const BOOKING_ITEM_TYPE_KEYS = [
+  'room',
+  'flight_class',
+  'vehicle',
+  'cabin',
+  'activity_schedule',
+  'package',
+] as const satisfies readonly BookingItemTypeKey[];
+
+export const DEFAULT_BOOKING_ITEM_TYPE_MODES: ResolvedBookingItemTypeModes = {
+  room: 'immediate',
+  flight_class: 'immediate',
+  vehicle: 'immediate',
+  cabin: 'immediate',
+  activity_schedule: 'assisted',
+  package: 'assisted',
+};
+
+const BOOKING_MODE_VALUES = new Set<BookingMode>(['immediate', 'assisted']);
+
+export function isBookingMode(value: unknown): value is BookingMode {
+  return typeof value === 'string' && BOOKING_MODE_VALUES.has(value as BookingMode);
+}
+
+export function normalizeBookingItemTypeModes(
+  raw: Partial<Record<BookingItemTypeKey, unknown>> | null | undefined,
+): ResolvedBookingItemTypeModes {
+  const result = { ...DEFAULT_BOOKING_ITEM_TYPE_MODES };
+  if (!raw || typeof raw !== 'object') {
+    return result;
+  }
+  for (const key of BOOKING_ITEM_TYPE_KEYS) {
+    const value = raw[key];
+    if (isBookingMode(value)) {
+      result[key] = value;
+    }
+  }
+  return result;
+}
+
+export function resolveBookingModeForItemType(
+  itemType: BookingItemTypeKey | string,
+  modes: ResolvedBookingItemTypeModes = DEFAULT_BOOKING_ITEM_TYPE_MODES,
+): BookingMode {
+  if (itemType === 'package') {
+    return modes.package;
+  }
+  if (BOOKING_ITEM_TYPE_KEYS.includes(itemType as BookingItemTypeKey)) {
+    return modes[itemType as BookingItemTypeKey];
+  }
+  return 'immediate';
+}
+
+export function resolveCheckoutBookingMode(input: {
+  packageId?: string | null;
+  itemTypes: string[];
+  modes?: ResolvedBookingItemTypeModes;
+}): BookingMode {
+  const modes = input.modes ?? DEFAULT_BOOKING_ITEM_TYPE_MODES;
+  if (input.packageId) {
+    return modes.package;
+  }
+  if (input.itemTypes.length === 0) {
+    return 'immediate';
+  }
+  const resolved = input.itemTypes.map((itemType) => resolveBookingModeForItemType(itemType, modes));
+  if (resolved.every((mode) => mode === 'immediate')) {
+    return 'immediate';
+  }
+  if (resolved.every((mode) => mode === 'assisted')) {
+    return 'assisted';
+  }
+  return 'assisted';
+}
+
 export type TourGuideType = 'internal' | 'external';
 
 export type TourGuideStatus = 'active' | 'inactive';
 
 export type BookingGuideRole = 'primary' | 'secondary';
-
-export type BookingMode = 'immediate' | 'assisted';
-
-/** Per vertical booking mode (CE-11 will consume this from organization_settings). */
-export type BookingItemTypeModes = Partial<
-  Record<
-    | 'room'
-    | 'flight_class'
-    | 'vehicle'
-    | 'cabin'
-    | 'activity_schedule'
-    | 'package',
-    BookingMode
-  >
->;
 
 export interface TourGuide {
   id: string;

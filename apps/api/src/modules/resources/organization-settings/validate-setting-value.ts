@@ -4,6 +4,11 @@ import {
   AUTH_VISUAL_ICON_PRESETS,
   AUTH_VISUAL_ICON_SIZES,
 } from './auth-visual.constants';
+import {
+  BOOKING_ITEM_TYPE_KEYS,
+  isBookingMode,
+  normalizeBookingItemTypeModes,
+} from '@africatourismgate/types';
 import type { AuthVisualDecorIcon } from '@africatourismgate/types';
 
 function requireString(
@@ -270,6 +275,22 @@ export function validateSettingValue(
       }
       const icons = rawIcons.map((icon, index) => validateAuthVisualIcon(icon, index));
       return { icons };
+    }
+    case 'item_type_modes': {
+      const modes: Record<string, string> = {};
+      for (const key of BOOKING_ITEM_TYPE_KEYS) {
+        const mode = value[key];
+        if (mode === undefined || mode === null) {
+          continue;
+        }
+        if (!isBookingMode(mode)) {
+          throw new BadRequestException(
+            `${key} doit être « immediate » ou « assisted ».`,
+          );
+        }
+        modes[key] = mode;
+      }
+      return normalizeBookingItemTypeModes(modes);
     }
     default:
       return value;

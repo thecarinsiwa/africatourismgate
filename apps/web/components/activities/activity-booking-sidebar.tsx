@@ -9,6 +9,7 @@ import type { ActivityDetail, ActivityScheduleOffer } from '../../lib/activities
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import type { Translations } from '../../lib/i18n/translations';
 import { useState } from 'react';
+import { useBookingCtaLabel } from '../../lib/bookings/use-booking-cta';
 import { useTranslations } from '../../lib/i18n/locale-provider';
 import {
   BookingSidebarBody,
@@ -47,6 +48,7 @@ function ActivityBookingContent({
   locale,
 }: ActivityBookingSidebarProps) {
   const trustHints = useBookingSidebarTrustHints();
+  const ctaLabel = useBookingCtaLabel('activity_schedule');
   const canReserve =
     selectedSchedule != null && selectedSchedule.remainingPlaces >= participants;
 
@@ -117,7 +119,7 @@ function ActivityBookingContent({
         </BookingSidebarHint>
       )}
 
-      <BookingSidebarCta label={t.bookNow} disabled={!canReserve} onClick={onReserve} />
+      <BookingSidebarCta label={ctaLabel} disabled={!canReserve} onClick={onReserve} />
       <BookingSidebarTrustHints items={trustHints} />
     </BookingSidebarBody>
   );
@@ -135,6 +137,7 @@ export function ActivityBookingMobileBar(props: ActivityBookingSidebarProps) {
   const { bookingSidebar } = useTranslations();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { detail, selectedSchedule, participants, onReserve, t } = props;
+  const ctaLabel = useBookingCtaLabel('activity_schedule');
   const canReserve =
     selectedSchedule != null && selectedSchedule.remainingPlaces >= participants;
 
@@ -157,7 +160,7 @@ export function ActivityBookingMobileBar(props: ActivityBookingSidebarProps) {
             : undefined
         }
         hint={selectedSchedule ? undefined : t.selectScheduleHint}
-        ctaLabel={t.bookNow}
+        ctaLabel={ctaLabel}
         ctaDisabled={!canReserve}
         onCtaClick={onReserve}
         configureLabel={bookingSidebar.mobileConfigure}

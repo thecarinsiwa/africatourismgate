@@ -56,7 +56,19 @@
       "booking": {
         "title": "Booking",
         "holdMinutes": "Fromrée de retenue (minutes)",
-        "allowGuestCheckout": "Totoriser la commande invité"
+        "allowGuestCheckout": "Totoriser la commande invité",
+        "modesTitle": "Mode per vertical",
+        "modesDescription": "Immediate: Stripe payment at checkout. Assisted: request pending staff approval.",
+        "modeImmediate": "Immediate (payment)",
+        "modeAssisted": "Assisted (request)",
+        "itemTypes": {
+          "room": "Accommodation (room)",
+          "flight_class": "Flight",
+          "vehicle": "Car rental",
+          "cabin": "Cruise (cabin)",
+          "activity_schedule": "Activity",
+          "package": "Package"
+        }
       },
       "loyalty": {
         "title": "Fidélité OneKey",

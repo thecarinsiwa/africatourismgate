@@ -5,6 +5,7 @@ import { formatCarPrice } from '../../lib/cars/listings';
 import type { VehicleDetail } from '../../lib/cars/types';
 import type { Translations } from '../../lib/i18n/translations';
 import { useState } from 'react';
+import { useBookingCtaLabel } from '../../lib/bookings/use-booking-cta';
 import { useTranslations } from '../../lib/i18n/locale-provider';
 import {
   BookingSidebarBody,
@@ -45,6 +46,7 @@ function CarBookingContent({
   locale,
 }: CarBookingSidebarProps) {
   const trustHints = useBookingSidebarTrustHints();
+  const ctaLabel = useBookingCtaLabel('vehicle');
   const hasDates = Boolean(pickupDate && returnDate && returnDate > pickupDate);
   const canReserve = hasDates && Boolean(detail.availabilitySlot?.id);
   const daysLabel =
@@ -89,7 +91,7 @@ function CarBookingContent({
         />
       ) : null}
 
-      <BookingSidebarCta label={t.bookNow} disabled={!canReserve} onClick={onReserve} />
+      <BookingSidebarCta label={ctaLabel} disabled={!canReserve} onClick={onReserve} />
       <BookingSidebarTrustHints items={trustHints} />
     </BookingSidebarBody>
   );
@@ -106,6 +108,7 @@ export function CarBookingSidebar(props: CarBookingSidebarProps) {
 export function CarBookingMobileBar(props: CarBookingSidebarProps) {
   const { bookingSidebar } = useTranslations();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const ctaLabel = useBookingCtaLabel('vehicle');
   const hasDates = Boolean(
     props.pickupDate && props.returnDate && props.returnDate > props.pickupDate,
   );
@@ -130,7 +133,7 @@ export function CarBookingMobileBar(props: CarBookingSidebarProps) {
             : undefined
         }
         hint={hasDates ? undefined : props.t.selectDatesHint}
-        ctaLabel={props.t.bookNow}
+        ctaLabel={ctaLabel}
         ctaDisabled={!canReserve}
         onCtaClick={props.onReserve}
         configureLabel={bookingSidebar.mobileConfigure}

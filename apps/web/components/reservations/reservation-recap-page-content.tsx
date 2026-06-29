@@ -20,6 +20,7 @@ import type { FlightDetail } from '../../lib/flights/types';
 import { formatCruisePrice } from '../../lib/cruises/listings';
 import type { CruiseSailingDetail } from '../../lib/cruises/types';
 import { ensureClientAccessToken, getClientAccessToken } from '../../lib/auth/client-session';
+import { useBookingItemTypeModes } from '../../components/booking-modes-provider';
 import { isAssistedBookingDraft } from '../../lib/bookings/booking-mode';
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import { formatHotelPrice } from '../../lib/hotels/listings';
@@ -252,7 +253,8 @@ export function ReservationRecapPageContent({ draft }: Props) {
     return isPackageReservationDraftStructurallyComplete(draft, packageDetail.items);
   }, [draft, packageDetail]);
 
-  const isAssisted = draft ? isAssistedBookingDraft(draft) : false;
+  const modes = useBookingItemTypeModes();
+  const isAssisted = draft ? isAssistedBookingDraft(draft, modes) : false;
 
   async function handleCheckout() {
     if (!draft) return;

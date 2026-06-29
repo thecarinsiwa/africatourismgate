@@ -7,13 +7,20 @@ import type {
   AuthVisualDecorIcon,
   AuthVisualSettingValue,
   BookingDefaultsValue,
+  BookingMode,
   BrandingPlatformValue,
   ContactWebSettingValue,
   LocaleSettingValue,
   LoyaltyOneKeySettingValue,
   Organization,
   OrganizationSetting,
+  ResolvedBookingItemTypeModes,
 } from '@africatourismgate/types';
+import {
+  BOOKING_ITEM_TYPE_KEYS,
+  DEFAULT_BOOKING_ITEM_TYPE_MODES,
+  normalizeBookingItemTypeModes,
+} from '@africatourismgate/types/tour-guide';
 import { DEFAULT_LOYALTY_ONEKEY_SETTING } from '@africatourismgate/types/organization-settings';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
@@ -58,6 +65,7 @@ type SettingsFormValues = {
   loyaltyPointsPerMajorUnit: string;
   loyaltyProgramCode: string;
   authVisualIcons: AuthVisualDecorIcon[];
+  itemTypeModes: ResolvedBookingItemTypeModes;
 };
 
 const defaultValues: SettingsFormValues = {
@@ -81,6 +89,7 @@ const defaultValues: SettingsFormValues = {
   loyaltyPointsPerMajorUnit: String(DEFAULT_LOYALTY_ONEKEY_SETTING.pointsPerMajorUnit),
   loyaltyProgramCode: DEFAULT_LOYALTY_ONEKEY_SETTING.programCode,
   authVisualIcons: [],
+  itemTypeModes: { ...DEFAULT_BOOKING_ITEM_TYPE_MODES },
 };
 
 function settingByKey(
@@ -102,6 +111,9 @@ function toFormValues(
   )?.settingValue as ContactWebSettingValue | undefined;
   const onekey = settingByKey(settings, 'onekey') as LoyaltyOneKeySettingValue | undefined;
   const authVisual = settingByKey(settings, 'auth_visual') as AuthVisualSettingValue | undefined;
+  const itemTypeModes = normalizeBookingItemTypeModes(
+    settingByKey(settings, 'item_type_modes') as Partial<ResolvedBookingItemTypeModes> | undefined,
+  );
 
   return {
     contactEmail: org.contactEmail ?? '',
@@ -127,6 +139,7 @@ function toFormValues(
     loyaltyProgramCode:
       onekey?.programCode ?? DEFAULT_LOYALTY_ONEKEY_SETTING.programCode,
     authVisualIcons: authVisualFromSetting(authVisual).map((icon) => ({ ...icon })),
+    itemTypeModes,
   };
 }
 
@@ -326,6 +339,11 @@ export function OrganizationSettingsForm({
               holdMinutes: Number(values.holdMinutes),
               allowGuestCheckout: values.allowGuestCheckout,
             },
+          },
+          {
+            settingGroup: 'booking',
+            settingKey: 'item_type_modes',
+            settingValue: values.itemTypeModes,
           },
           {
             settingGroup: 'branding',
@@ -572,6 +590,33 @@ export function OrganizationSettingsForm({
           />
           {t('sections.booking.allowGuestCheckout')}
         </label>
+        <div className="space-y-3 border-t border-atg-border pt-4">
+          <p className="text-sm font-medium text-atg-fg">{t('sections.booking.modesTitle')}</p>
+          <p className="text-xs text-atg-muted">{t('sections.booking.modesDescription')}</p>
+          <div className="space-y-2">
+            {BOOKING_ITEM_TYPE_KEYS.map((itemType) => (
+              <label
+                key={itemType}
+                className="flex flex-col gap-1 text-sm text-atg-fg sm:flex-row sm:items-center sm:justify-between"
+              >
+                <span>{t(`sections.booking.itemTypes.${itemType}`)}</span>
+                <select
+                  value={values.itemTypeModes[itemType]}
+                  onChange={(e) =>
+                    updateField('itemTypeModes', {
+                      ...values.itemTypeModes,
+                      [itemType]: e.target.value as BookingMode,
+                    })
+                  }
+                  className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm sm:w-48"
+                >
+                  <option value="immediate">{t('sections.booking.modeImmediate')}</option>
+                  <option value="assisted">{t('sections.booking.modeAssisted')}</option>
+                </select>
+              </label>
+            ))}
+          </div>
+        </div>
           </section>
 
           <section className="space-y-4">
