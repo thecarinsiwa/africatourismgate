@@ -364,6 +364,20 @@ export class AuthService {
     return `${webUrl}/booking/oauth/callback?${query.toString()}`;
   }
 
+  buildWebOAuthErrorUrl(
+    next: string | undefined,
+    code = 'google_auth_failed',
+  ): string {
+    const defaultWebUrl =
+      process.env.NODE_ENV === 'production'
+        ? 'https://africatourismgate.org'
+        : 'http://localhost:3002';
+    const webUrl = (process.env.NEXT_PUBLIC_WEB_URL ?? defaultWebUrl).replace(/\/$/, '');
+    const safeNext = normalizeNextPath(next);
+    const query = new URLSearchParams({ error: code, next: safeNext });
+    return `${webUrl}/booking/login?${query.toString()}`;
+  }
+
   async refresh(refreshToken: string): Promise<AuthTokensResponseDto> {
     const payload = await this.verifyRefreshToken(refreshToken);
     const session = await this.sessionsRepo.findOne({

@@ -10,7 +10,7 @@ function getApiBaseUrl(): string {
   const defaultApiUrl =
     process.env.NODE_ENV === 'production'
       ? 'https://app-africatourismgate.org/api'
-      : 'http://localhost:3000/api';
+      : 'http://localhost:3010/api';
   return (process.env.NEXT_PUBLIC_API_URL ?? defaultApiUrl).replace(/\/$/, '');
 }
 
