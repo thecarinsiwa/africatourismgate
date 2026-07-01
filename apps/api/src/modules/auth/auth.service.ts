@@ -305,59 +305,37 @@ export class AuthService {
       throw new UnauthorizedException('Google account has no email');
     }
 
-    let user = await this.usersRepo.findOne({
-      where: { email, deletedAt: IsNull() },
-    });
-
-    if (!user) {
-      const taken = await this.usersRepo.findOne({ where: { email } });
-      if (taken) {
-        throw new UnauthorizedException('Account is not active');
-      }
-
-      const firstName = profile.name?.givenName?.trim() || 'Google';
-      const lastName = profile.name?.familyName?.trim() || 'User';
-      const pendingId = newId();
-      try {
-        const { verificationId } = await this.emailVerification.createAndSend({
-          email,
-          purpose: 'google_signup',
-          referenceId: pendingId,
-          firstName,
-          metadata: { firstName, lastName, email },
-        });
-        return this.pendingVerificationResponse(verificationId);
-      } catch (err) {
-        const message = err instanceof Error ? err.message : String(err);
-        this.logger.error(
-          `Google signup verification could not be created for ${email}: ${message}`,
-          err instanceof Error ? err.stack : undefined,
-        );
-        throw new InternalServerErrorException(
-          'Google signup could not be started',
-        );
-      }
+    const activeUser = await this.findActiveUserByEmail(email);
+    if (activeUser) {
+      return this.startGoogleLoginVerification(activeUser);
     }
 
-    if (user.status !== 'active') {
+    const taken = await this.findAnyUserByEmail(email);
+    if (taken) {
       throw new UnauthorizedException('Account is not active');
     }
 
+    const firstName = profile.name?.givenName?.trim() || 'Google';
+    const lastName = profile.name?.familyName?.trim() || 'User';
+    const pendingId = newId();
     try {
       const { verificationId } = await this.emailVerification.createAndSend({
-        email: user.email,
-        purpose: 'login',
-        referenceId: user.id,
-        firstName: user.firstName,
+        email,
+        purpose: 'google_signup',
+        referenceId: pendingId,
+        firstName,
+        metadata: { firstName, lastName, email },
       });
       return this.pendingVerificationResponse(verificationId);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       this.logger.error(
-        `Google login verification could not be created for ${email}: ${message}`,
+        `Google signup verification could not be created for ${email}: ${message}`,
         err instanceof Error ? err.stack : undefined,
       );
-      throw new InternalServerErrorException('Google login could not be started');
+      throw new InternalServerErrorException(
+        'Google signup could not be started',
+      );
     }
   }
 
@@ -385,54 +363,65 @@ export class AuthService {
     }
 
     if (row.purpose === 'google_signup') {
-      const existing = await this.usersRepo.findOne({
-        where: { email: row.email, deletedAt: IsNull() },
-      });
+      const existing = await this.findActiveUserByEmail(row.email);
       if (existing) {
-        if (existing.status !== 'active') {
-          throw new BadRequestException('Compte introuvable ou inactif.');
-        }
-        existing.lastLoginAt = new Date();
-        await this.usersRepo.save(existing);
-        const tokens = await this.issueTokenPair(existing);
-        return { ...tokens, user: toAuthUserDto(existing) };
+        return this.completeUserSession(existing);
       }
 
-      const user = await this.createUserFromGoogleSignupRow(row);
-      user.lastLoginAt = new Date();
-      await this.usersRepo.save(user);
-      void this.notifyWelcome(user);
-      const tokens = await this.issueTokenPair(user);
-      return { ...tokens, user: toAuthUserDto(user) };
+      try {
+        const user = await this.createUserFromGoogleSignupRow(row);
+        void this.notifyWelcome(user);
+        return this.completeUserSession(user);
+      } catch (err) {
+        if (err instanceof ConflictException) {
+          const recovered = await this.findActiveUserByEmail(row.email);
+          if (recovered) {
+            return this.completeUserSession(recovered);
+          }
+        }
+        throw err;
+      }
     }
 
     if (row.purpose === 'register') {
       let user = await this.usersRepo.findOne({
         where: { id: row.referenceId, deletedAt: IsNull() },
       });
+      let isNewAccount = false;
       if (!user) {
-        user = await this.createUserFromRegisterRow(row);
+        try {
+          user = await this.createUserFromRegisterRow(row);
+          isNewAccount = true;
+        } catch (err) {
+          if (err instanceof ConflictException) {
+            user = await this.findActiveUserByEmail(row.email);
+            if (!user) {
+              throw err;
+            }
+          } else {
+            throw err;
+          }
+        }
       } else if (user.status !== 'active') {
         throw new BadRequestException('Compte introuvable ou inactif.');
       }
-      user.lastLoginAt = new Date();
-      await this.usersRepo.save(user);
-      void this.notifyWelcome(user);
-      const tokens = await this.issueTokenPair(user);
-      return { ...tokens, user: toAuthUserDto(user) };
+      if (isNewAccount) {
+        void this.notifyWelcome(user);
+      }
+      return this.completeUserSession(user);
     }
 
     if (row.purpose === 'login') {
-      const user = await this.usersRepo.findOne({
+      let user = await this.usersRepo.findOne({
         where: { id: row.referenceId, deletedAt: IsNull() },
       });
-      if (!user || user.status !== 'active') {
+      if (!user) {
+        user = await this.findActiveUserByEmail(row.email);
+      }
+      if (!user) {
         throw new BadRequestException('Compte introuvable ou inactif.');
       }
-      user.lastLoginAt = new Date();
-      await this.usersRepo.save(user);
-      const tokens = await this.issueTokenPair(user);
-      return { ...tokens, user: toAuthUserDto(user) };
+      return this.completeUserSession(user);
     }
 
     const user = await this.usersRepo.findOne({
@@ -787,6 +776,57 @@ export class AuthService {
       refreshToken: '',
       expiresIn: 0,
     };
+  }
+
+  private normalizeEmail(email: string): string {
+    return email.trim().toLowerCase();
+  }
+
+  private findActiveUserByEmail(email: string): Promise<Users | null> {
+    return this.usersRepo.findOne({
+      where: { email: this.normalizeEmail(email), deletedAt: IsNull() },
+    });
+  }
+
+  private findAnyUserByEmail(email: string): Promise<Users | null> {
+    return this.usersRepo.findOne({
+      where: { email: this.normalizeEmail(email) },
+    });
+  }
+
+  private async startGoogleLoginVerification(
+    user: Users,
+  ): Promise<AuthResponseDto> {
+    if (user.status !== 'active') {
+      throw new UnauthorizedException('Account is not active');
+    }
+
+    try {
+      const { verificationId } = await this.emailVerification.createAndSend({
+        email: user.email,
+        purpose: 'login',
+        referenceId: user.id,
+        firstName: user.firstName,
+      });
+      return this.pendingVerificationResponse(verificationId);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      this.logger.error(
+        `Google login verification could not be created for ${user.email}: ${message}`,
+        err instanceof Error ? err.stack : undefined,
+      );
+      throw new InternalServerErrorException('Google login could not be started');
+    }
+  }
+
+  private async completeUserSession(user: Users): Promise<AuthResponseDto> {
+    if (user.status !== 'active') {
+      throw new BadRequestException('Compte introuvable ou inactif.');
+    }
+    user.lastLoginAt = new Date();
+    await this.usersRepo.save(user);
+    const tokens = await this.issueTokenPair(user);
+    return { ...tokens, user: toAuthUserDto(user) };
   }
 
   private async ensurePlatformOrg(): Promise<Organizations> {

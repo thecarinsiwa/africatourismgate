@@ -59,7 +59,7 @@ export function BookingVerifyPageContent() {
           generic: 'Code invalide ou expiré. Vérifiez votre e-mail.',
           envMissing: 'Configuration API manquante.',
           conflict:
-            'Un compte existe déjà avec cette adresse. Connectez-vous avec votre mot de passe ou réessayez via Google.',
+            'Ce code ne peut plus être utilisé. Recommencez « Se connecter avec Google » pour recevoir un nouveau code.',
           unauthorized: 'Compte inactif ou introuvable.',
         }),
       );
