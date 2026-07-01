@@ -36,7 +36,7 @@ import type {
   WelcomeEmailPayload,
 } from './email.types';
 
-type EmailTransportMode = 'smtp' | 'mailpit' | 'ethereal' | 'disabled';
+type EmailTransportMode = 'smtp' | 'mailpit' | 'ethereal' | 'disabled' | 'noop';
 type EmailChannel = 'service' | 'support';
 
 @Injectable()
@@ -204,6 +204,10 @@ export class EmailService implements OnModuleInit {
       return { sent: false };
     }
 
+    if (this.getTransportMode() === 'noop') {
+      return { sent: true, messageId: 'noop' };
+    }
+
     try {
       const transporter = await this.getTransporter(channel);
       if (!transporter) {
@@ -276,6 +280,9 @@ export class EmailService implements OnModuleInit {
     }
     if (explicit === 'ethereal') {
       return 'ethereal';
+    }
+    if (explicit === 'noop' || explicit === 'mock') {
+      return 'noop';
     }
     if (explicit === 'mailpit') {
       return 'mailpit';
