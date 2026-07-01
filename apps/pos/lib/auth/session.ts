@@ -227,6 +227,15 @@ export function clearAuthState(): void {
 }
 
 export function authResponseToStoredSession(response: AuthResponse): PosStoredSession {
+  if (
+    !response.user ||
+    !response.accessToken ||
+    !response.refreshToken ||
+    response.requiresVerification
+  ) {
+    throw new Error('Réponse de connexion invalide.');
+  }
+
   return {
     accessToken: response.accessToken,
     refreshToken: response.refreshToken,

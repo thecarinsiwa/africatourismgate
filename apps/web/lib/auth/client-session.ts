@@ -36,7 +36,7 @@ export function authResponseToWebSession(auth: AuthResponse): WebStoredSession {
     accessToken: auth.accessToken,
     refreshToken: auth.refreshToken,
     expiresAt: Date.now() + auth.expiresIn * 1000,
-    user: auth.user,
+    user: auth.user ?? null,
   };
 }
 

@@ -23,6 +23,18 @@ export class GoogleAuthGuard extends AuthGuard('google') {
   }
 
   override async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = context.switchToHttp().getRequest<{
+      query?: { error?: string; state?: string; next?: string };
+    }>();
+    const oauthError = request.query?.error;
+    if (typeof oauthError === 'string' && oauthError.length > 0) {
+      this.redirectOAuthFailure(
+        context,
+        oauthError === 'access_denied' ? 'google_auth_failed' : 'google_auth_error',
+      );
+      return false;
+    }
+
     try {
       const result = await super.canActivate(context);
       return result as boolean;
@@ -45,7 +57,10 @@ export class GoogleAuthGuard extends AuthGuard('google') {
     return user;
   }
 
-  private redirectOAuthFailure(context: ExecutionContext): void {
+  private redirectOAuthFailure(
+    context: ExecutionContext,
+    code = 'google_auth_failed',
+  ): void {
     const response = context.switchToHttp().getResponse<Response>();
     const request = context.switchToHttp().getRequest<{
       query?: { state?: string; next?: string };
@@ -58,7 +73,7 @@ export class GoogleAuthGuard extends AuthGuard('google') {
           : undefined;
 
     if (!response.headersSent) {
-      response.redirect(this.authService.buildWebOAuthErrorUrl(next));
+      response.redirect(this.authService.buildWebOAuthErrorUrl(next, code));
     }
   }
 }

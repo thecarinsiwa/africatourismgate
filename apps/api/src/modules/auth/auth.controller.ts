@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Logger,
   Query,
   Patch,
   Post,
@@ -50,6 +51,8 @@ import { VerifyOperationDto } from './dto/verify-operation.dto';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
+  private readonly logger = new Logger(AuthController.name);
+
   constructor(private readonly authService: AuthService) {}
 
   @Get('google')
@@ -100,7 +103,9 @@ export class AuthController {
         auth.expiresIn,
       );
       res.redirect(redirectUrl);
-    } catch {
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      this.logger.error(`Google OAuth callback failed: ${message}`, err instanceof Error ? err.stack : undefined);
       res.redirect(
         this.authService.buildWebOAuthErrorUrl(req.user.state, 'google_auth_failed'),
       );
