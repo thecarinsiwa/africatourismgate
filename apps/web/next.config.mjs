@@ -1,10 +1,17 @@
 import createNextIntlPlugin from 'next-intl/plugin';
+import { getDevApiUrl } from '../../packages/config/dev-api-url.mjs';
 import { loadRootEnv } from '../../packages/config/load-root-env.mjs';
 import { ADMIN_ONLY_PATHS, ATG_DOMAINS } from '../../packages/config/domains.mjs';
 
 loadRootEnv(import.meta.url);
 
 const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
+
+const isProduction = process.env.NODE_ENV === 'production';
+
+const apiUrl =
+  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') ??
+  (isProduction ? 'https://app-africatourismgate.org/api' : getDevApiUrl());
 
 const adminBaseUrl =
   process.env.NEXT_PUBLIC_ADMIN_URL?.replace(/\/$/, '') ??
@@ -22,6 +29,9 @@ const AUTH_EXACT_PATHS = new Set([
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   transpilePackages: ['@africatourismgate/ui', '@africatourismgate/types'],
+  env: {
+    NEXT_PUBLIC_API_URL: apiUrl,
+  },
   images: {
     remotePatterns: [
       {

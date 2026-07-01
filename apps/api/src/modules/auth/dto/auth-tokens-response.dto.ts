@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { AuthUserDto } from './auth-user.dto';
 
 export class AuthTokensResponseDto {
@@ -18,6 +18,21 @@ export class AuthTokensResponseDto {
 export class AuthResponseDto extends AuthTokensResponseDto {
   @ApiProperty({ type: AuthUserDto })
   user!: AuthUserDto;
+
+  @ApiPropertyOptional({
+    description: 'True when email verification is required before continuing',
+  })
+  requiresVerification?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Verification record ID — enter the code from the alert email',
+  })
+  verificationId?: string;
+
+  @ApiPropertyOptional({
+    description: 'Booking ID when verifying a reservation operation',
+  })
+  bookingId?: string;
 }
 
 export class LogoutResponseDto {

@@ -19,6 +19,9 @@ export interface AuthTokens {
 
 export interface AuthResponse extends AuthTokens {
   user: AuthUser;
+  requiresVerification?: boolean;
+  verificationId?: string;
+  bookingId?: string;
 }
 
 export interface AuthMe {
@@ -47,6 +50,11 @@ export interface RegisterRequest {
 
 export interface RefreshTokenRequest {
   refreshToken: string;
+}
+
+export interface VerifyOperationRequest {
+  verificationId: string;
+  code: string;
 }
 
 export interface ForgotPasswordRequest {

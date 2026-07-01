@@ -73,7 +73,11 @@ export class EmailController {
     switch (dto.template) {
       case 'welcome':
         return renderWelcomeEmail(
-          { to: 'marie@example.com', firstName: 'Marie' },
+          {
+            to: 'marie@example.com',
+            firstName: 'Marie',
+            webUrl: process.env.NEXT_PUBLIC_WEB_URL,
+          },
           branding,
         );
       case 'booking':

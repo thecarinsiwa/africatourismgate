@@ -145,6 +145,11 @@ export interface BookingDetail {
   guideReviewInvites?: GuideReviewInvite[];
 }
 
+export interface CreateBookingResponse extends BookingDetail {
+  requiresVerification?: boolean;
+  verificationId?: string;
+}
+
 export interface BookingClient {
   id: string;
   email: string;

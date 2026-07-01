@@ -275,6 +275,15 @@ export function ReservationRecapPageContent({ draft }: Props) {
       }
 
       const booking = await createBooking(accessToken, payload);
+      if (booking.requiresVerification && booking.verificationId) {
+        const params = new URLSearchParams({
+          verificationId: booking.verificationId,
+          bookingId: booking.booking.id,
+          next: '/reservations/recap',
+        });
+        router.push(`/booking/verify?${params.toString()}`);
+        return;
+      }
       const checkout = await createBookingCheckoutSession(accessToken, booking.booking.id);
       window.location.assign(checkout.url);
     } catch (err: unknown) {

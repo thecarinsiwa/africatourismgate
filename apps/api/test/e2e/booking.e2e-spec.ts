@@ -45,7 +45,7 @@ describe('Bookings (e2e)', () => {
     expect(res.body.currency).toBe('USD');
   });
 
-  it('POST /bookings creates pending_payment booking (mock checkout)', async () => {
+  it('POST /bookings creates draft booking with email verification (mock checkout)', async () => {
     const res = await request(app.getHttpServer())
       .post(apiPath('/bookings'))
       .set(authHeader(accessToken))
@@ -53,9 +53,11 @@ describe('Bookings (e2e)', () => {
       .expect(201);
 
     expect(res.body.booking?.id).toEqual(expect.any(String));
-    expect(res.body.booking?.status).toBe('pending_payment');
+    expect(res.body.booking?.status).toBe('draft');
     expect(res.body.booking?.totalCents).toBe(9000);
     expect(res.body.items?.length).toBeGreaterThan(0);
+    expect(res.body.requiresVerification).toBe(true);
+    expect(res.body.verificationId).toEqual(expect.any(String));
   });
 
   it('POST /bookings/checkout-preview rejects overbooking', async () => {

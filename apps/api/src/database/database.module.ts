@@ -3,22 +3,24 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'node:path';
 import * as entities from '../entities/generated';
+import { EmailOperationVerifications } from '../entities/email-operation-verification.entity';
 import { ensureRbacPermissions } from './ensure-rbac-permissions';
 import { ensureSchema } from './ensure-schema';
 import { ensureSeeds } from './ensure-seeds';
 
-const entityList = Object.values(entities).filter(
-  (v) => typeof v === 'function',
-) as (new () => unknown)[];
+const entityList = [
+  ...Object.values(entities).filter((v) => typeof v === 'function'),
+  EmailOperationVerifications,
+] as (new () => unknown)[];
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      // Later files override earlier ones — .env.local must stay last (SMTP, secrets).
       envFilePath: [
         join(__dirname, '../../../../.env'),
         join(__dirname, '../../../../.env.local'),
-        '.env',
       ],
     }),
     TypeOrmModule.forRootAsync({

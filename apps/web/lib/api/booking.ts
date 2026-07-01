@@ -6,6 +6,7 @@ import type {
   BookingCheckoutRequest,
   BookingCheckoutSessionResponse,
   BookingDetail,
+  CreateBookingResponse,
   BookingRequestResponse,
   CreateBookingReviewRequest,
   Review,
@@ -36,7 +37,7 @@ export function previewBookingCheckout(
 export function createBooking(
   accessToken: string,
   payload: BookingCheckoutRequest,
-): Promise<BookingDetail> {
+): Promise<CreateBookingResponse> {
   return createBookingClient(accessToken).createBooking(payload);
 }
 
