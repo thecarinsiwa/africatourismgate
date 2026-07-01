@@ -1,6 +1,6 @@
 import type { INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { apiPath, authHeader, loginAsSeedAdmin } from './auth-client';
+import { apiPath, authHeader, loginAsSeedAdmin, registerAndLoginCustomer } from './auth-client';
 import { SEED_ROOM_ID } from './constants';
 import { createE2eApp } from './create-app';
 
@@ -28,7 +28,12 @@ describe('Booking approval (e2e)', () => {
   beforeAll(async () => {
     app = await createE2eApp();
     ({ accessToken: adminToken } = await loginAsSeedAdmin(app));
-    customerToken = await registerAndLoginCustomer(app);
+    customerToken = await registerAndLoginCustomer(app, {
+      email: `booking-approval-e2e-${Date.now()}@example.com`,
+      password: 'ChangeMe123!',
+      firstName: 'Approval',
+      lastName: 'Customer',
+    });
     await ensureRoomAvailabilityForDate(app, adminToken, APPROVAL_E2E_DATE, 3);
     await ensureRoomAvailabilityForDate(app, adminToken, REJECT_E2E_DATE, 3);
   }, 120_000);
@@ -164,26 +169,6 @@ describe('Booking approval (e2e)', () => {
       .expect(400);
   });
 });
-
-async function registerAndLoginCustomer(app: INestApplication): Promise<string> {
-  const email = `booking-approval-e2e-${Date.now()}@example.com`;
-  await request(app.getHttpServer())
-    .post(apiPath('/auth/register/customer'))
-    .send({
-      email,
-      password: 'ChangeMe123!',
-      firstName: 'Approval',
-      lastName: 'Customer',
-    })
-    .expect(201);
-
-  const login = await request(app.getHttpServer())
-    .post(apiPath('/auth/login'))
-    .send({ email, password: 'ChangeMe123!' })
-    .expect(200);
-
-  return login.body.accessToken as string;
-}
 
 async function ensureRoomAvailabilityForDate(
   app: INestApplication,

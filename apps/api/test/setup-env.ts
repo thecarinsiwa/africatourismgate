@@ -29,6 +29,8 @@ process.env.DATABASE_AUTO_SCHEMA =
   process.env.DATABASE_AUTO_SCHEMA ?? 'true';
 process.env.DATABASE_AUTO_SEED = process.env.DATABASE_AUTO_SEED ?? 'true';
 process.env.EMAIL_TRANSPORT = process.env.EMAIL_TRANSPORT ?? 'disabled';
+// Predictable OTP for e2e (registerCustomer / verify-operation flows).
+process.env.E2E_FIXED_OTP = '1';
 
 // Ignore placeholder values from .env.example so e2e can use test defaults.
 if (process.env.SEED_ADMIN_PASSWORD === '') {

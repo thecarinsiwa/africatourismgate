@@ -32,6 +32,9 @@ export function hashOperationCode(code: string): string {
 }
 
 function generateNumericCode(length = OPERATION_CODE_LENGTH): string {
+  if (process.env.E2E_FIXED_OTP === '1') {
+    return '0'.repeat(length);
+  }
   const max = 10 ** length;
   const num = randomInt(0, max);
   return num.toString().padStart(length, '0');

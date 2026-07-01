@@ -1,6 +1,6 @@
 import type { INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { apiPath, authHeader, loginAsSeedAdmin } from './auth-client';
+import { apiPath, authHeader, loginAsSeedAdmin, registerAndLoginCustomer } from './auth-client';
 import { SEED_ROOM_ID } from './constants';
 import { createE2eApp } from './create-app';
 
@@ -19,7 +19,12 @@ describe('Booking messages (e2e)', () => {
   beforeAll(async () => {
     app = await createE2eApp();
     ({ accessToken: adminToken } = await loginAsSeedAdmin(app));
-    customerToken = await registerAndLoginCustomer(app);
+    customerToken = await registerAndLoginCustomer(app, {
+      email: CUSTOMER_EMAIL,
+      password: CUSTOMER_PASSWORD,
+      firstName: 'E2E',
+      lastName: 'Customer',
+    });
     await ensureRoomAvailabilityForDate(app, adminToken, MESSAGES_E2E_DATE, 2);
 
     const created = await request(app.getHttpServer())
@@ -141,28 +146,6 @@ describe('Booking messages (e2e)', () => {
       .expect(403);
   });
 });
-
-async function registerAndLoginCustomer(app: INestApplication): Promise<string> {
-  await request(app.getHttpServer())
-    .post(apiPath('/auth/register/customer'))
-    .send({
-      email: CUSTOMER_EMAIL,
-      password: CUSTOMER_PASSWORD,
-      firstName: 'E2E',
-      lastName: 'Customer',
-    })
-    .expect(201);
-
-  const login = await request(app.getHttpServer())
-    .post(apiPath('/auth/login'))
-    .send({ email: CUSTOMER_EMAIL, password: CUSTOMER_PASSWORD })
-    .expect(200);
-
-  if (!login.body.accessToken) {
-    throw new Error('Customer login missing accessToken');
-  }
-  return login.body.accessToken as string;
-}
 
 async function ensureRoomAvailabilityForDate(
   app: INestApplication,
