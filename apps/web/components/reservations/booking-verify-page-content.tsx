@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { verifyOperation } from '../../lib/api/auth';
+import { getAuthErrorMessage } from '../../lib/auth/api-errors';
 import { completeWebLoginFromAuthResponse } from '../../lib/auth/complete-web-login';
 import { createBookingCheckoutSession } from '../../lib/api/booking';
 import { HomeFooter } from '../home/home-footer';
@@ -53,9 +54,14 @@ export function BookingVerifyPageContent() {
       completeWebLoginFromAuthResponse(response, router, safeNext);
     } catch (err: unknown) {
       setError(
-        err instanceof Error
-          ? err.message
-          : 'Code invalide ou expiré. Vérifiez votre e-mail.',
+        getAuthErrorMessage(err, {
+          network: 'Impossible de joindre le serveur. Vérifiez votre connexion.',
+          generic: 'Code invalide ou expiré. Vérifiez votre e-mail.',
+          envMissing: 'Configuration API manquante.',
+          conflict:
+            'Un compte existe déjà avec cette adresse. Connectez-vous avec votre mot de passe ou réessayez via Google.',
+          unauthorized: 'Compte inactif ou introuvable.',
+        }),
       );
       setSubmitting(false);
     }
