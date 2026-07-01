@@ -310,6 +310,11 @@ export class AuthService {
     });
 
     if (!user) {
+      const taken = await this.usersRepo.findOne({ where: { email } });
+      if (taken) {
+        throw new UnauthorizedException('Account is not active');
+      }
+
       const firstName = profile.name?.givenName?.trim() || 'Google';
       const lastName = profile.name?.familyName?.trim() || 'User';
       const pendingId = newId();
@@ -380,6 +385,19 @@ export class AuthService {
     }
 
     if (row.purpose === 'google_signup') {
+      const existing = await this.usersRepo.findOne({
+        where: { email: row.email, deletedAt: IsNull() },
+      });
+      if (existing) {
+        if (existing.status !== 'active') {
+          throw new BadRequestException('Compte introuvable ou inactif.');
+        }
+        existing.lastLoginAt = new Date();
+        await this.usersRepo.save(existing);
+        const tokens = await this.issueTokenPair(existing);
+        return { ...tokens, user: toAuthUserDto(existing) };
+      }
+
       const user = await this.createUserFromGoogleSignupRow(row);
       user.lastLoginAt = new Date();
       await this.usersRepo.save(user);

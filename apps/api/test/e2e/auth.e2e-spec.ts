@@ -1,6 +1,8 @@
 import type { INestApplication } from '@nestjs/common';
 import request from 'supertest';
+import { randomUUID } from 'node:crypto';
 import { AuthService } from '../../src/modules/auth/auth.service';
+import { EmailVerificationService } from '../../src/modules/email-verification/email-verification.service';
 import { apiPath, authHeader, loginAsSeedAdmin } from './auth-client';
 import { createE2eApp } from './create-app';
 import { E2E_OTP_CODE } from './constants';
@@ -83,6 +85,34 @@ describe('Auth (e2e)', () => {
 
     expect(verify.body.accessToken).toEqual(expect.any(String));
     expect(verify.body.refreshToken).toEqual(expect.any(String));
+    expect(verify.body.user?.email).toBe(credentials.email);
+  });
+
+  it('google_signup OTP logs in when the email already has an account', async () => {
+    const credentials = getSeedAdminLogin();
+    const emailVerification = app.get(EmailVerificationService);
+
+    const { verificationId } = await emailVerification.createAndSend({
+      email: credentials.email,
+      purpose: 'google_signup',
+      referenceId: randomUUID(),
+      firstName: 'Admin',
+      metadata: {
+        firstName: 'Admin',
+        lastName: 'Google',
+        email: credentials.email,
+      },
+    });
+
+    const verify = await request(app.getHttpServer())
+      .post(apiPath('/auth/verify-operation'))
+      .send({
+        verificationId,
+        code: E2E_OTP_CODE,
+      })
+      .expect(200);
+
+    expect(verify.body.accessToken).toEqual(expect.any(String));
     expect(verify.body.user?.email).toBe(credentials.email);
   });
 });
