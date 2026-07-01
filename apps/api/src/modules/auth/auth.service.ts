@@ -62,6 +62,7 @@ import { EmailService } from '../email/email.service';
 import { EmailVerificationService } from '../email-verification/email-verification.service';
 import { BookingEngineService } from '../resources/bookings/booking-engine.service';
 import { VerifyOperationDto } from './dto/verify-operation.dto';
+import { EmailOperationVerifications } from '../../entities/email-operation-verification.entity';
 
 @Injectable()
 export class AuthService {
@@ -105,10 +106,14 @@ export class AuthService {
   }
 
   async registerCustomer(dto: RegisterDto): Promise<AuthResponseDto> {
-    return this.registerWithRole(dto, {
-      roleId: SEED_ROLE_CUSTOMER_ID,
-      scopeType: 'global',
-    });
+    return this.registerWithRole(
+      dto,
+      {
+        roleId: SEED_ROLE_CUSTOMER_ID,
+        scopeType: 'global',
+      },
+      { deferUserCreation: true },
+    );
   }
 
   private async registerWithRole(
@@ -118,6 +123,7 @@ export class AuthService {
       scopeType: 'global' | 'agency';
       scopeId?: string;
     },
+    options?: { deferUserCreation?: boolean },
   ): Promise<AuthResponseDto> {
     const email = dto.email.trim().toLowerCase();
     const existing = await this.usersRepo.findOne({
@@ -127,14 +133,30 @@ export class AuthService {
       throw new ConflictException(EMAIL_ALREADY_REGISTERED_MESSAGE);
     }
 
-    const defaultOrg = await this.organizationsRepo.findOne({
-      where: { id: SEED_ORG_PLATFORM_ID, deletedAt: IsNull() },
-    });
-    if (!defaultOrg) {
-      throw new InternalServerErrorException(
-        'Default organization is not configured. Run database seeds.',
-      );
+    if (options?.deferUserCreation) {
+      const passwordHash = await bcrypt.hash(dto.password, BCRYPT_ROUNDS);
+      const pendingId = newId();
+      const { verificationId } = await this.emailVerification.createAndSend({
+        email,
+        purpose: 'register',
+        referenceId: pendingId,
+        firstName: dto.firstName.trim(),
+        metadata: {
+          lastName: dto.lastName.trim(),
+          passwordHash,
+          roleId: role.roleId,
+          scopeType: role.scopeType,
+          ...(role.scopeId ? { scopeId: role.scopeId } : {}),
+          ...(dto.phone ? { phone: dto.phone.trim() } : {}),
+          ...(dto.preferredLanguage
+            ? { preferredLanguage: dto.preferredLanguage.trim() }
+            : {}),
+        },
+      });
+      return this.pendingVerificationResponse(verificationId);
     }
+
+    await this.ensurePlatformOrg();
 
     const passwordHash = await bcrypt.hash(dto.password, BCRYPT_ROUNDS);
     const userId = newId();
@@ -286,61 +308,22 @@ export class AuthService {
       where: { email, deletedAt: IsNull() },
     });
 
-    let isNewUser = false;
-
     if (!user) {
-      isNewUser = true;
-      const defaultOrg = await this.organizationsRepo.findOne({
-        where: { id: SEED_ORG_PLATFORM_ID, deletedAt: IsNull() },
-      });
-      if (!defaultOrg) {
-        throw new InternalServerErrorException(
-          'Default organization is not configured. Run database seeds.',
-        );
-      }
-
-      const generatedPassword = randomBytes(24).toString('hex');
-      user = this.usersRepo.create({
-        id: newId(),
+      const firstName = profile.name?.givenName?.trim() || 'Google';
+      const lastName = profile.name?.familyName?.trim() || 'User';
+      const pendingId = newId();
+      const { verificationId } = await this.emailVerification.createAndSend({
         email,
-        passwordHash: await bcrypt.hash(generatedPassword, BCRYPT_ROUNDS),
-        firstName: profile.name?.givenName?.trim() || 'Google',
-        lastName: profile.name?.familyName?.trim() || 'User',
-        organizationId: SEED_ORG_PLATFORM_ID,
-        status: 'active',
-      } as DeepPartial<Users>);
-      await this.usersRepo.save(user);
-
-      const assignment = this.roleAssignmentsRepo.create({
-        id: newId(),
-        userId: user.id,
-        roleId: SEED_ROLE_CUSTOMER_ID,
-        scopeType: 'global',
-        assignedByUserId: user.id,
-        assignedAt: new Date(),
-      } as DeepPartial<UserRoleAssignments>);
-      await this.roleAssignmentsRepo.save(assignment);
+        purpose: 'google_signup',
+        referenceId: pendingId,
+        firstName,
+        metadata: { firstName, lastName, email },
+      });
+      return this.pendingVerificationResponse(verificationId);
     }
 
     if (user.status !== 'active') {
       throw new UnauthorizedException('Account is not active');
-    }
-
-    if (isNewUser) {
-      const { verificationId } = await this.emailVerification.createAndSend({
-        email: user.email,
-        purpose: 'google_signup',
-        referenceId: user.id,
-        firstName: user.firstName,
-      });
-      return {
-        requiresVerification: true,
-        verificationId,
-        user: toAuthUserDto(user),
-        accessToken: '',
-        refreshToken: '',
-        expiresIn: 0,
-      };
     }
 
     user.lastLoginAt = new Date();
@@ -374,6 +357,31 @@ export class AuthService {
       };
     }
 
+    if (row.purpose === 'google_signup') {
+      const user = await this.createUserFromGoogleSignupRow(row);
+      user.lastLoginAt = new Date();
+      await this.usersRepo.save(user);
+      void this.notifyWelcome(user);
+      const tokens = await this.issueTokenPair(user);
+      return { ...tokens, user: toAuthUserDto(user) };
+    }
+
+    if (row.purpose === 'register') {
+      let user = await this.usersRepo.findOne({
+        where: { id: row.referenceId, deletedAt: IsNull() },
+      });
+      if (!user) {
+        user = await this.createUserFromRegisterRow(row);
+      } else if (user.status !== 'active') {
+        throw new BadRequestException('Compte introuvable ou inactif.');
+      }
+      user.lastLoginAt = new Date();
+      await this.usersRepo.save(user);
+      void this.notifyWelcome(user);
+      const tokens = await this.issueTokenPair(user);
+      return { ...tokens, user: toAuthUserDto(user) };
+    }
+
     const user = await this.usersRepo.findOne({
       where: { id: row.referenceId, deletedAt: IsNull() },
     });
@@ -383,10 +391,6 @@ export class AuthService {
 
     user.lastLoginAt = new Date();
     await this.usersRepo.save(user);
-
-    if (row.purpose === 'register' || row.purpose === 'google_signup') {
-      void this.notifyWelcome(user);
-    }
 
     const tokens = await this.issueTokenPair(user);
     return { ...tokens, user: toAuthUserDto(user) };
@@ -720,6 +724,141 @@ export class AuthService {
       throw new Error(`Missing required environment variable: ${key}`);
     }
     return value;
+  }
+
+  private pendingVerificationResponse(verificationId: string): AuthResponseDto {
+    return {
+      requiresVerification: true,
+      verificationId,
+      accessToken: '',
+      refreshToken: '',
+      expiresIn: 0,
+    };
+  }
+
+  private async ensurePlatformOrg(): Promise<Organizations> {
+    const defaultOrg = await this.organizationsRepo.findOne({
+      where: { id: SEED_ORG_PLATFORM_ID, deletedAt: IsNull() },
+    });
+    if (!defaultOrg) {
+      throw new InternalServerErrorException(
+        'Default organization is not configured. Run database seeds.',
+      );
+    }
+    return defaultOrg;
+  }
+
+  private async assertEmailAvailable(email: string): Promise<void> {
+    const existing = await this.usersRepo.findOne({
+      where: { email, deletedAt: IsNull() },
+    });
+    if (existing) {
+      throw new ConflictException(EMAIL_ALREADY_REGISTERED_MESSAGE);
+    }
+  }
+
+  private async createUserWithRole(params: {
+    email: string;
+    passwordHash: string;
+    firstName: string;
+    lastName: string;
+    phone?: string;
+    preferredLanguage?: string;
+    roleId: string;
+    scopeType: 'global' | 'agency';
+    scopeId?: string;
+  }): Promise<Users> {
+    await this.ensurePlatformOrg();
+    const userId = newId();
+    const user = this.usersRepo.create({
+      id: userId,
+      email: params.email,
+      passwordHash: params.passwordHash,
+      firstName: params.firstName,
+      lastName: params.lastName,
+      organizationId: SEED_ORG_PLATFORM_ID,
+      ...(params.phone ? { phone: params.phone } : {}),
+      ...(params.preferredLanguage
+        ? { preferredLanguage: params.preferredLanguage }
+        : {}),
+      status: 'active',
+    } as DeepPartial<Users>);
+
+    try {
+      await this.usersRepo.save(user);
+      const assignment = this.roleAssignmentsRepo.create({
+        id: newId(),
+        userId,
+        roleId: params.roleId,
+        scopeType: params.scopeType,
+        ...(params.scopeId ? { scopeId: params.scopeId } : {}),
+        assignedByUserId: userId,
+        assignedAt: new Date(),
+      } as DeepPartial<UserRoleAssignments>);
+      await this.roleAssignmentsRepo.save(assignment);
+    } catch (error) {
+      if (this.isDuplicateEmailError(error)) {
+        throw new ConflictException(EMAIL_ALREADY_REGISTERED_MESSAGE);
+      }
+      throw error;
+    }
+
+    return user;
+  }
+
+  private async createUserFromGoogleSignupRow(
+    row: EmailOperationVerifications,
+  ): Promise<Users> {
+    const meta = row.metadata ?? {};
+    const firstName =
+      typeof meta.firstName === 'string' ? meta.firstName : 'Google';
+    const lastName = typeof meta.lastName === 'string' ? meta.lastName : 'User';
+    await this.assertEmailAvailable(row.email);
+    const passwordHash = await bcrypt.hash(
+      randomBytes(24).toString('hex'),
+      BCRYPT_ROUNDS,
+    );
+    return this.createUserWithRole({
+      email: row.email,
+      passwordHash,
+      firstName,
+      lastName,
+      roleId: SEED_ROLE_CUSTOMER_ID,
+      scopeType: 'global',
+    });
+  }
+
+  private async createUserFromRegisterRow(
+    row: EmailOperationVerifications,
+  ): Promise<Users> {
+    const meta = row.metadata ?? {};
+    const passwordHash =
+      typeof meta.passwordHash === 'string' ? meta.passwordHash : null;
+    if (!passwordHash) {
+      throw new BadRequestException("Données d'inscription invalides.");
+    }
+    const roleId =
+      typeof meta.roleId === 'string' ? meta.roleId : SEED_ROLE_CUSTOMER_ID;
+    const scopeType: 'global' | 'agency' =
+      meta.scopeType === 'agency' ? 'agency' : 'global';
+    const scopeId = typeof meta.scopeId === 'string' ? meta.scopeId : undefined;
+    const firstName =
+      typeof meta.firstName === 'string' ? meta.firstName : 'Client';
+    const lastName = typeof meta.lastName === 'string' ? meta.lastName : '';
+    await this.assertEmailAvailable(row.email);
+    return this.createUserWithRole({
+      email: row.email,
+      passwordHash,
+      firstName,
+      lastName,
+      ...(typeof meta.phone === 'string' ? { phone: meta.phone } : {}),
+      ...(typeof meta.preferredLanguage === 'string'
+        ? { preferredLanguage: meta.preferredLanguage }
+        : {}),
+      roleId,
+      scopeType,
+      scopeId,
+    });
   }
 
   private async notifyLogin(user: Users): Promise<void> {

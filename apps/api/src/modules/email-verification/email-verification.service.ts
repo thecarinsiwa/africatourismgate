@@ -54,15 +54,17 @@ export class EmailVerificationService {
     const code = generateNumericCode();
     const codeHash = hashOperationCode(code);
 
-    await this.repository.update(
-      {
-        email,
-        purpose: params.purpose,
-        referenceId: params.referenceId,
-        verifiedAt: IsNull(),
-      },
-      { verifiedAt: new Date() },
-    );
+    const invalidateWhere =
+      params.purpose === 'register' || params.purpose === 'google_signup'
+        ? { email, purpose: params.purpose, verifiedAt: IsNull() }
+        : {
+            email,
+            purpose: params.purpose,
+            referenceId: params.referenceId,
+            verifiedAt: IsNull(),
+          };
+
+    await this.repository.update(invalidateWhere, { verifiedAt: new Date() });
 
     const row = this.repository.create({
       id: newId(),

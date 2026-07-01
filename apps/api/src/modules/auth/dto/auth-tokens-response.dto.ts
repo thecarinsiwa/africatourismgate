@@ -16,8 +16,8 @@ export class AuthTokensResponseDto {
 }
 
 export class AuthResponseDto extends AuthTokensResponseDto {
-  @ApiProperty({ type: AuthUserDto })
-  user!: AuthUserDto;
+  @ApiPropertyOptional({ type: AuthUserDto })
+  user?: AuthUserDto;
 
   @ApiPropertyOptional({
     description: 'True when email verification is required before continuing',

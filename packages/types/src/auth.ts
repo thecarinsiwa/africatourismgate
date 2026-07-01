@@ -18,7 +18,7 @@ export interface AuthTokens {
 }
 
 export interface AuthResponse extends AuthTokens {
-  user: AuthUser;
+  user?: AuthUser;
   requiresVerification?: boolean;
   verificationId?: string;
   bookingId?: string;

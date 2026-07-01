@@ -91,7 +91,24 @@ export function BookingRegisterPageContent({ nextPath }: Props) {
                     preferredLanguage: locale,
                     ...(phone.trim() ? { phone: phone.trim() } : {}),
                   });
-                  completeWebLoginFromAuthResponse(response, router, safeNext);
+                  if (response.requiresVerification && response.verificationId) {
+                    const params = new URLSearchParams({
+                      verificationId: response.verificationId,
+                      next: safeNext,
+                    });
+                    router.replace(`/booking/verify?${params.toString()}`);
+                    return;
+                  }
+                  completeWebLoginFromAuthResponse(
+                    {
+                      accessToken: response.accessToken,
+                      refreshToken: response.refreshToken,
+                      expiresIn: response.expiresIn,
+                      user: response.user!,
+                    },
+                    router,
+                    safeNext,
+                  );
                 } catch (err) {
                   setEmailConflict(err instanceof ApiHttpError && err.status === 409);
                   setError(getAuthErrorMessage(err, registerErrors));
