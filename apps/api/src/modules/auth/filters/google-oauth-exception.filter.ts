@@ -7,6 +7,7 @@ import {
 import type { Request, Response } from 'express';
 import { AuthService } from '../auth.service';
 import { resolveGoogleOAuthErrorCode } from '../google-profile.utils';
+import { safeOAuthRedirect } from '../oauth-redirect.util';
 
 @Catch(HttpException)
 export class GoogleOAuthExceptionFilter implements ExceptionFilter {
@@ -33,7 +34,8 @@ export class GoogleOAuthExceptionFilter implements ExceptionFilter {
           ? req.query.next
           : undefined;
 
-    res.redirect(
+    safeOAuthRedirect(
+      res,
       this.authService.buildWebOAuthErrorUrl(
         state,
         resolveGoogleOAuthErrorCode(exception),

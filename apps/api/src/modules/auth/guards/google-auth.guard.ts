@@ -1,10 +1,12 @@
 import {
   ExecutionContext,
   Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import type { Response } from 'express';
 import { AuthService } from '../auth.service';
+import { safeOAuthRedirect } from '../oauth-redirect.util';
 
 @Injectable()
 export class GoogleAuthGuard extends AuthGuard('google') {
@@ -36,7 +38,7 @@ export class GoogleAuthGuard extends AuthGuard('google') {
 
     try {
       const result = await super.canActivate(context);
-      return result as boolean;
+      return this.isAllowedGuardResult(result);
     } catch {
       this.redirectOAuthFailure(context);
       return false;
@@ -47,13 +49,23 @@ export class GoogleAuthGuard extends AuthGuard('google') {
     err: unknown,
     user: TUser,
     _info: unknown,
-    context: ExecutionContext,
+    _context: ExecutionContext,
   ): TUser {
-    if (err || !user) {
-      this.redirectOAuthFailure(context);
-      return null as TUser;
+    if (err) {
+      throw err;
+    }
+    if (!user) {
+      throw new UnauthorizedException('Google authentication failed');
     }
     return user;
+  }
+
+  /** Nest only blocks the route when the guard returns `false`, not `null`. */
+  private isAllowedGuardResult(result: boolean | unknown): boolean {
+    if (result === false || result == null) {
+      return false;
+    }
+    return true;
   }
 
   private redirectOAuthFailure(
@@ -71,8 +83,9 @@ export class GoogleAuthGuard extends AuthGuard('google') {
           ? request.query.next
           : undefined;
 
-    if (!response.headersSent) {
-      response.redirect(this.authService.buildWebOAuthErrorUrl(next, code));
-    }
+    safeOAuthRedirect(
+      response,
+      this.authService.buildWebOAuthErrorUrl(next, code),
+    );
   }
 }
