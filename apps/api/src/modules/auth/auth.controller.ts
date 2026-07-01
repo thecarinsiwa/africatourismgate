@@ -31,6 +31,7 @@ import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { GoogleOAuthExceptionFilter } from './filters/google-oauth-exception.filter';
 import { AuthService } from './auth.service';
 import { resolveGoogleOAuthErrorCode } from './google-profile.utils';
+import { safeOAuthRedirect } from './oauth-redirect.util';
 import {
   AuthResponseDto,
   AuthTokensResponseDto,
@@ -79,17 +80,18 @@ export class AuthController {
         state?: string;
       };
     },
-    @Res() res: Response,
+    @Res({ passthrough: false }) res: Response,
   ): Promise<void> {
     if (!req.user?.profile) {
-      res.redirect(this.authService.buildWebOAuthErrorUrl(undefined));
+      safeOAuthRedirect(res, this.authService.buildWebOAuthErrorUrl(undefined));
       return;
     }
 
     try {
       const auth = await this.authService.loginWithGoogleProfile(req.user.profile);
       if (auth.requiresVerification && auth.verificationId) {
-        res.redirect(
+        safeOAuthRedirect(
+          res,
           this.authService.buildWebVerificationUrl(
             auth.verificationId,
             req.user.state,
@@ -103,11 +105,15 @@ export class AuthController {
         auth.refreshToken,
         auth.expiresIn,
       );
-      res.redirect(redirectUrl);
+      safeOAuthRedirect(res, redirectUrl);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      this.logger.error(`Google OAuth callback failed: ${message}`, err instanceof Error ? err.stack : undefined);
-      res.redirect(
+      this.logger.error(
+        `Google OAuth callback failed: ${message}`,
+        err instanceof Error ? err.stack : undefined,
+      );
+      safeOAuthRedirect(
+        res,
         this.authService.buildWebOAuthErrorUrl(
           req.user.state,
           resolveGoogleOAuthErrorCode(err),
