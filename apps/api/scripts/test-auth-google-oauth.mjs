@@ -6,7 +6,7 @@ import { loadEnv } from './lib/load-env.mjs';
 
 loadEnv();
 
-const API_PORT = process.env.API_PORT ?? '3010';
+const API_PORT = process.env.API_PORT ?? '3000';
 const API_URL = (
   process.env.NEXT_PUBLIC_API_URL ?? `http://localhost:${API_PORT}/api`
 ).replace(/\/$/, '');

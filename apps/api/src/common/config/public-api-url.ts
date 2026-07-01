@@ -11,7 +11,7 @@ export function resolvePublicApiBaseUrl(): string {
   }
 
   const port = process.env.API_PORT?.trim();
-  const safePort = port && /^\d+$/.test(port) ? port : '3010';
+  const safePort = port && /^\d+$/.test(port) ? port : '3000';
   return `http://localhost:${safePort}/api`;
 }
 
