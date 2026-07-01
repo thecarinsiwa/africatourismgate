@@ -27,8 +27,9 @@ export function AdminLoginForm() {
           setError(null);
           try {
             const response = await getApiClient().login({ email, password });
-            saveSession(authResponseToStoredSession(response), remember);
-            applyLocaleFromUser(response.user);
+            const session = authResponseToStoredSession(response);
+            saveSession(session, remember);
+            applyLocaleFromUser(session.user);
             router.refresh();
             router.push('/dashboard');
           } catch (err) {

@@ -51,8 +51,9 @@ export function AdminRegisterForm() {
               preferredLanguage,
               ...(phone.trim() ? { phone: phone.trim() } : {}),
             });
-            saveSession(authResponseToStoredSession(response), false);
-            applyLocaleFromUser(response.user);
+            const session = authResponseToStoredSession(response);
+            saveSession(session, false);
+            applyLocaleFromUser(session.user);
             router.refresh();
             router.push('/dashboard');
           } catch (err) {
