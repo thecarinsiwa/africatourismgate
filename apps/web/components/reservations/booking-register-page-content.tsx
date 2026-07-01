@@ -99,16 +99,7 @@ export function BookingRegisterPageContent({ nextPath }: Props) {
                     router.replace(`/booking/verify?${params.toString()}`);
                     return;
                   }
-                  completeWebLoginFromAuthResponse(
-                    {
-                      accessToken: response.accessToken,
-                      refreshToken: response.refreshToken,
-                      expiresIn: response.expiresIn,
-                      user: response.user!,
-                    },
-                    router,
-                    safeNext,
-                  );
+                  completeWebLoginFromAuthResponse(response, router, safeNext);
                 } catch (err) {
                   setEmailConflict(err instanceof ApiHttpError && err.status === 409);
                   setError(getAuthErrorMessage(err, registerErrors));
