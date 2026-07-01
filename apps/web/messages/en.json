@@ -54,7 +54,10 @@
         "envMissing": "Missing API configuration (NEXT_PUBLIC_API_URL).",
         "unauthorized": "Incorrect email or password.",
         "googleAuthFailed": "Google sign-in failed. Try again or use your email.",
-        "googleAuthError": "Google sign-in error. Please try again later."
+        "googleAuthError": "Google sign-in error. Please try again later.",
+        "googleNoEmail": "Your Google account did not share an email address. Allow email access or sign in with your password.",
+        "googleAccountInactive": "This account is suspended or inactive. Please contact support.",
+        "googleSignupUnavailable": "Google sign-up could not be completed right now. Try again later or create an account with email."
       }
     },
     "register": {

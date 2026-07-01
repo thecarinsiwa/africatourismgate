@@ -3,10 +3,10 @@ import {
   Catch,
   ExceptionFilter,
   HttpException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { AuthService } from '../auth.service';
+import { resolveGoogleOAuthErrorCode } from '../google-profile.utils';
 
 @Catch(HttpException)
 export class GoogleOAuthExceptionFilter implements ExceptionFilter {
@@ -33,11 +33,11 @@ export class GoogleOAuthExceptionFilter implements ExceptionFilter {
           ? req.query.next
           : undefined;
 
-    const code =
-      exception instanceof UnauthorizedException
-        ? 'google_auth_failed'
-        : 'google_auth_error';
-
-    res.redirect(this.authService.buildWebOAuthErrorUrl(state, code));
+    res.redirect(
+      this.authService.buildWebOAuthErrorUrl(
+        state,
+        resolveGoogleOAuthErrorCode(exception),
+      ),
+    );
   }
 }
