@@ -1,7 +1,6 @@
 import {
   ExecutionContext,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import type { Response } from 'express';
@@ -52,7 +51,7 @@ export class GoogleAuthGuard extends AuthGuard('google') {
   ): TUser {
     if (err || !user) {
       this.redirectOAuthFailure(context);
-      throw new UnauthorizedException('Google authentication failed');
+      return null as TUser;
     }
     return user;
   }

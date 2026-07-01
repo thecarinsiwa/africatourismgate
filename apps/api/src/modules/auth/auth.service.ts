@@ -45,6 +45,7 @@ import {
   AccessJwtPayload,
   RefreshJwtPayload,
 } from './interfaces/jwt-payload.interface';
+import { extractGoogleProfileEmail } from './google-profile.utils';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ForgotPasswordResponseDto } from './dto/forgot-password-response.dto';
 import { LoginDto } from './dto/login.dto';
@@ -298,8 +299,9 @@ export class AuthService {
   async loginWithGoogleProfile(profile: {
     emails?: Array<{ value?: string }>;
     name?: { givenName?: string; familyName?: string };
+    _json?: { email?: string };
   }): Promise<AuthResponseDto> {
-    const email = profile.emails?.[0]?.value?.trim().toLowerCase();
+    const email = extractGoogleProfileEmail(profile);
     if (!email) {
       throw new UnauthorizedException('Google account has no email');
     }
@@ -312,14 +314,25 @@ export class AuthService {
       const firstName = profile.name?.givenName?.trim() || 'Google';
       const lastName = profile.name?.familyName?.trim() || 'User';
       const pendingId = newId();
-      const { verificationId } = await this.emailVerification.createAndSend({
-        email,
-        purpose: 'google_signup',
-        referenceId: pendingId,
-        firstName,
-        metadata: { firstName, lastName, email },
-      });
-      return this.pendingVerificationResponse(verificationId);
+      try {
+        const { verificationId } = await this.emailVerification.createAndSend({
+          email,
+          purpose: 'google_signup',
+          referenceId: pendingId,
+          firstName,
+          metadata: { firstName, lastName, email },
+        });
+        return this.pendingVerificationResponse(verificationId);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        this.logger.error(
+          `Google signup verification could not be created for ${email}: ${message}`,
+          err instanceof Error ? err.stack : undefined,
+        );
+        throw new InternalServerErrorException(
+          'Google signup could not be started',
+        );
+      }
     }
 
     if (user.status !== 'active') {

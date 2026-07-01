@@ -30,6 +30,7 @@ import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { GoogleOAuthExceptionFilter } from './filters/google-oauth-exception.filter';
 import { AuthService } from './auth.service';
+import { resolveGoogleOAuthErrorCode } from './google-profile.utils';
 import {
   AuthResponseDto,
   AuthTokensResponseDto,
@@ -107,7 +108,10 @@ export class AuthController {
       const message = err instanceof Error ? err.message : String(err);
       this.logger.error(`Google OAuth callback failed: ${message}`, err instanceof Error ? err.stack : undefined);
       res.redirect(
-        this.authService.buildWebOAuthErrorUrl(req.user.state, 'google_auth_failed'),
+        this.authService.buildWebOAuthErrorUrl(
+          req.user.state,
+          resolveGoogleOAuthErrorCode(err),
+        ),
       );
     }
   }

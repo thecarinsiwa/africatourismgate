@@ -54,7 +54,10 @@
         "envMissing": "Configuration API manquante (NEXT_PUBLIC_API_URL).",
         "unauthorized": "Adresse e-mail ou mot de passe incorrect.",
         "googleAuthFailed": "La connexion Google a échoué. Réessayez ou utilisez votre e-mail.",
-        "googleAuthError": "Erreur lors de la connexion Google. Réessayez plus tard."
+        "googleAuthError": "Erreur lors de la connexion Google. Réessayez plus tard.",
+        "googleNoEmail": "Votre compte Google n'a pas partagé d'adresse e-mail. Autorisez l'accès à l'e-mail ou connectez-vous avec votre mot de passe.",
+        "googleAccountInactive": "Ce compte est suspendu ou inactif. Contactez le support.",
+        "googleSignupUnavailable": "Impossible de finaliser l'inscription Google pour le moment. Réessayez plus tard ou créez un compte par e-mail."
       }
     },
     "register": {

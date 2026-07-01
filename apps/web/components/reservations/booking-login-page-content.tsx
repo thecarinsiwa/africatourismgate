@@ -14,6 +14,7 @@ import { getAuthErrorMessage } from '../../lib/auth/api-errors';
 import { completeWebLoginFromAuthResponse } from '../../lib/auth/complete-web-login';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
+import { GoogleIcon } from '../icons/google-icon';
 
 type Props = {
   nextPath?: string;
@@ -39,6 +40,9 @@ function resolveOAuthErrorMessage(
   if (!code) return null;
   if (code === 'google_auth_failed') return tErrors('googleAuthFailed');
   if (code === 'google_auth_error') return tErrors('googleAuthError');
+  if (code === 'google_no_email') return tErrors('googleNoEmail');
+  if (code === 'google_account_inactive') return tErrors('googleAccountInactive');
+  if (code === 'google_signup_unavailable') return tErrors('googleSignupUnavailable');
   return tErrors('googleAuthFailed');
 }
 
@@ -104,6 +108,7 @@ export function BookingLoginPageContent({ nextPath, oauthError }: Props) {
             href={oauthUrl}
             className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-lg border border-atg-border bg-atg-elevated px-4 py-2 text-sm font-semibold text-atg-fg hover:bg-atg-surface dark:border-atg-border dark:bg-transparent dark:text-white"
           >
+            <GoogleIcon />
             {t('google')}
           </a>
 
