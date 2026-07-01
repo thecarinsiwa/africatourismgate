@@ -1,6 +1,5 @@
 'use client';
 
-import { ApiHttpError } from '@africatourismgate/api-client';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { verifyOperation } from '../../lib/api/auth';
