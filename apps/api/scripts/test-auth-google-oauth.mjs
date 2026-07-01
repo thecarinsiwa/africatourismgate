@@ -26,6 +26,22 @@ async function main() {
   }
   console.log('  OK /auth/google redirects to Google consent');
 
+  const googleUrl = new URL(startLocation);
+  const redirectUri = googleUrl.searchParams.get('redirect_uri') ?? '';
+  const apiIsLocal = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?\//.test(
+    `${API_URL}/`,
+  );
+  if (apiIsLocal && redirectUri && !redirectUri.includes('localhost')) {
+    throw new Error(
+      `Local API uses production Google callback (${redirectUri}). ` +
+        'Set GOOGLE_CALLBACK_URL=http://localhost:3000/api/auth/google/callback in .env.local, ' +
+        'add the same URI in Google Cloud Console, then restart the API.',
+    );
+  }
+  if (redirectUri) {
+    console.log(`  callback redirect_uri: ${redirectUri}`);
+  }
+
   const callbackWithoutCode = await fetch(`${API_URL}/auth/google/callback`, {
     redirect: 'manual',
   });
