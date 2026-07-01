@@ -292,7 +292,6 @@ export class AuthService {
     await this.usersRepo.save(user);
 
     const tokens = await this.issueTokenPair(user);
-    void this.notifyLogin(user);
     return { ...tokens, user: toAuthUserDto(user) };
   }
 
@@ -339,12 +338,22 @@ export class AuthService {
       throw new UnauthorizedException('Account is not active');
     }
 
-    user.lastLoginAt = new Date();
-    await this.usersRepo.save(user);
-
-    const tokens = await this.issueTokenPair(user);
-    void this.notifyLogin(user);
-    return { ...tokens, user: toAuthUserDto(user) };
+    try {
+      const { verificationId } = await this.emailVerification.createAndSend({
+        email: user.email,
+        purpose: 'login',
+        referenceId: user.id,
+        firstName: user.firstName,
+      });
+      return this.pendingVerificationResponse(verificationId);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      this.logger.error(
+        `Google login verification could not be created for ${email}: ${message}`,
+        err instanceof Error ? err.stack : undefined,
+      );
+      throw new InternalServerErrorException('Google login could not be started');
+    }
   }
 
   async verifyOperation(dto: VerifyOperationDto): Promise<AuthResponseDto> {
@@ -391,6 +400,19 @@ export class AuthService {
       user.lastLoginAt = new Date();
       await this.usersRepo.save(user);
       void this.notifyWelcome(user);
+      const tokens = await this.issueTokenPair(user);
+      return { ...tokens, user: toAuthUserDto(user) };
+    }
+
+    if (row.purpose === 'login') {
+      const user = await this.usersRepo.findOne({
+        where: { id: row.referenceId, deletedAt: IsNull() },
+      });
+      if (!user || user.status !== 'active') {
+        throw new BadRequestException('Compte introuvable ou inactif.');
+      }
+      user.lastLoginAt = new Date();
+      await this.usersRepo.save(user);
       const tokens = await this.issueTokenPair(user);
       return { ...tokens, user: toAuthUserDto(user) };
     }
@@ -872,24 +894,6 @@ export class AuthService {
       scopeType,
       scopeId,
     });
-  }
-
-  private async notifyLogin(user: Users): Promise<void> {
-    try {
-      const result = await this.emailService.sendLoginNotification({
-        to: user.email,
-        firstName: user.firstName,
-        webUrl: this.config.get<string>('NEXT_PUBLIC_WEB_URL'),
-      });
-      if (!result.sent) {
-        this.logger.warn(
-          `Login notification was not sent to ${user.email} (check EMAIL_TRANSPORT / SMTP)`,
-        );
-      }
-    } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      this.logger.warn(`Login notification failed for ${user.email}: ${message}`);
-    }
   }
 
   private async notifyWelcome(user: Users): Promise<void> {

@@ -48,12 +48,6 @@ export type AbandonmentReminderEmailPayload = {
   webUrl?: string;
 };
 
-export type LoginNotificationEmailPayload = {
-  to: string;
-  firstName: string;
-  webUrl?: string;
-};
-
 export type AssistedBookingEmailBase = {
   to: string;
   firstName: string;

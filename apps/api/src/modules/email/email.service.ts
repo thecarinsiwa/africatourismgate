@@ -7,7 +7,6 @@ import { EmailBrandingService } from './email-branding.service';
 import {
   renderAbandonmentReminderEmail,
   renderBookingConfirmationEmail,
-  renderLoginNotificationEmail,
   renderOperationAlertEmail,
   renderPasswordResetEmail,
   renderWelcomeEmail,
@@ -23,7 +22,6 @@ import {
 import type {
   AbandonmentReminderEmailPayload,
   BookingConfirmationEmailPayload,
-  LoginNotificationEmailPayload,
   OperationAlertEmailPayload,
   BookingApprovedChatEmailPayload,
   BookingPaymentInviteEmailPayload,
@@ -89,19 +87,6 @@ export class EmailService implements OnModuleInit {
     const webUrl =
       payload.webUrl ?? this.config.get<string>('NEXT_PUBLIC_WEB_URL');
     const { subject, html, text } = renderOperationAlertEmail(
-      { ...payload, webUrl },
-      branding,
-    );
-    return this.send('service', { to: payload.to, subject, html, text });
-  }
-
-  async sendLoginNotification(
-    payload: LoginNotificationEmailPayload,
-  ): Promise<SendMailResult> {
-    const branding = await this.resolveBranding();
-    const webUrl =
-      payload.webUrl ?? this.config.get<string>('NEXT_PUBLIC_WEB_URL');
-    const { subject, html, text } = renderLoginNotificationEmail(
       { ...payload, webUrl },
       branding,
     );

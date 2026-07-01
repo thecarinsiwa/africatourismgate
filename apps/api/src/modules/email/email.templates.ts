@@ -4,7 +4,6 @@ import { DEFAULT_EMAIL_BRANDING } from './email-branding.constants';
 import type {
   AbandonmentReminderEmailPayload,
   BookingConfirmationEmailPayload,
-  LoginNotificationEmailPayload,
   OperationAlertEmailPayload,
   PasswordResetEmailPayload,
   WelcomeEmailPayload,
@@ -492,20 +491,6 @@ ${ctaButton(verifyUrl, 'Saisir mon code', branding)}`,
 
   const text = `Bonjour ${payload.firstName},\n\nUne ${operation} a été initiée avec votre e-mail.\n\nCode : ${payload.code}\nValide ${payload.expiresInMinutes} minutes.\n\nSi ce n'est pas vous, ignorez cet e-mail.\nSaisir le code : ${verifyUrl}`;
   return { subject, html, text };
-}
-
-export function renderLoginNotificationEmail(
-  payload: LoginNotificationEmailPayload,
-  branding: EmailBrandingValue,
-): { subject: string; html: string; text: string } {
-  const welcome = renderWelcomeEmail(
-    { to: payload.to, firstName: payload.firstName, webUrl: payload.webUrl },
-    branding,
-  );
-  return {
-    ...welcome,
-    subject: 'Connexion à votre compte — Africa Tourism Gate',
-  };
 }
 
 export function renderAbandonmentReminderEmail(

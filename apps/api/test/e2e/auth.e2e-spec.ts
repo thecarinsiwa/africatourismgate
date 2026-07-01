@@ -1,7 +1,9 @@
 import type { INestApplication } from '@nestjs/common';
 import request from 'supertest';
+import { AuthService } from '../../src/modules/auth/auth.service';
 import { apiPath, authHeader, loginAsSeedAdmin } from './auth-client';
 import { createE2eApp } from './create-app';
+import { E2E_OTP_CODE } from './constants';
 import { getSeedAdminLogin } from './credentials';
 
 describe('Auth (e2e)', () => {
@@ -56,5 +58,31 @@ describe('Auth (e2e)', () => {
 
     expect(res.body.user?.email).toBe(getSeedAdminLogin().email);
     expect(Array.isArray(res.body.permissions)).toBe(true);
+  });
+
+  it('Google login for existing user requires OTP then returns tokens', async () => {
+    const credentials = getSeedAdminLogin();
+    const authService = app.get(AuthService);
+
+    const pending = await authService.loginWithGoogleProfile({
+      emails: [{ value: credentials.email }],
+      name: { givenName: 'Admin', familyName: 'Google' },
+    });
+
+    expect(pending.requiresVerification).toBe(true);
+    expect(pending.verificationId).toEqual(expect.any(String));
+    expect(pending.accessToken).toBe('');
+
+    const verify = await request(app.getHttpServer())
+      .post(apiPath('/auth/verify-operation'))
+      .send({
+        verificationId: pending.verificationId,
+        code: E2E_OTP_CODE,
+      })
+      .expect(200);
+
+    expect(verify.body.accessToken).toEqual(expect.any(String));
+    expect(verify.body.refreshToken).toEqual(expect.any(String));
+    expect(verify.body.user?.email).toBe(credentials.email);
   });
 });
