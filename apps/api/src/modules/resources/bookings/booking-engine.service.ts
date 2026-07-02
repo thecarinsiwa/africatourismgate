@@ -1094,7 +1094,7 @@ export class BookingEngineService {
         if (!row || row.deletedAt) {
           throw new BadRequestException('Créneau activité introuvable.');
         }
-        const next = row.bookedCount + delta * quantity;
+        const next = row.bookedCount - delta * quantity;
         if (next < 0 || next > row.capacity) {
           throw new BadRequestException('Capacité activité invalide.');
         }
