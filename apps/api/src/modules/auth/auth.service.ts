@@ -313,7 +313,7 @@ export class AuthService {
     }
 
     const taken = await this.findAnyUserByEmail(email);
-    if (taken) {
+    if (taken && !taken.deletedAt && taken.status !== 'active') {
       throw new UnauthorizedException('Account is not active');
     }
 
@@ -768,19 +768,23 @@ export class AuthService {
   }
 
   private findActiveCustomerByEmail(email: string): Promise<Users | null> {
-    return this.usersRepo.findOne({
-      where: {
+    return this.usersRepo
+      .createQueryBuilder('user')
+      .where('LOWER(user.email) = :email', {
         email: this.normalizeEmail(email),
-        deletedAt: IsNull(),
-        status: 'active',
-      },
-    });
+      })
+      .andWhere('user.deletedAt IS NULL')
+      .andWhere('user.status = :status', { status: 'active' })
+      .getOne();
   }
 
   private findAnyUserByEmail(email: string): Promise<Users | null> {
-    return this.usersRepo.findOne({
-      where: { email: this.normalizeEmail(email) },
-    });
+    return this.usersRepo
+      .createQueryBuilder('user')
+      .where('LOWER(user.email) = :email', {
+        email: this.normalizeEmail(email),
+      })
+      .getOne();
   }
 
   private async completeGoogleOAuthVerification(
@@ -796,20 +800,12 @@ export class AuthService {
       void this.notifyWelcome(user);
       return this.completeUserSession(user);
     } catch (err) {
-      if (this.isGoogleOAuthDuplicateError(err)) {
-        const recovered = await this.findActiveCustomerByEmail(row.email);
-        if (recovered) {
-          return this.completeUserSession(recovered);
-        }
+      const recovered = await this.findActiveCustomerByEmail(row.email);
+      if (recovered) {
+        return this.completeUserSession(recovered);
       }
       throw err;
     }
-  }
-
-  private isGoogleOAuthDuplicateError(error: unknown): boolean {
-    return (
-      error instanceof ConflictException || this.isDuplicateEmailError(error)
-    );
   }
 
   private async startGoogleLoginVerification(
@@ -860,9 +856,13 @@ export class AuthService {
   }
 
   private async assertEmailAvailable(email: string): Promise<void> {
-    const existing = await this.usersRepo.findOne({
-      where: { email, deletedAt: IsNull() },
-    });
+    const existing = await this.usersRepo
+      .createQueryBuilder('user')
+      .where('LOWER(user.email) = :email', {
+        email: this.normalizeEmail(email),
+      })
+      .andWhere('user.deletedAt IS NULL')
+      .getOne();
     if (existing) {
       throw new ConflictException(EMAIL_ALREADY_REGISTERED_MESSAGE);
     }
