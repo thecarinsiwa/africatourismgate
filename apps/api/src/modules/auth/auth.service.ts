@@ -46,6 +46,7 @@ import {
   RefreshJwtPayload,
 } from './interfaces/jwt-payload.interface';
 import { extractGoogleProfileEmail } from './google-profile.utils';
+import { resolveOAuthWebUrlFromNext } from './resolve-web-origin.util';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ForgotPasswordResponseDto } from './dto/forgot-password-response.dto';
 import { LoginDto } from './dto/login.dto';
@@ -374,7 +375,9 @@ export class AuthService {
         return this.completeUserSession(user);
       } catch (err) {
         if (err instanceof ConflictException) {
-          const recovered = await this.findActiveUserByEmail(row.email);
+          const recovered =
+            (await this.findActiveUserByEmail(row.email)) ??
+            (await this.findRecoverableUserByEmail(row.email));
           if (recovered) {
             return this.completeUserSession(recovered);
           }
@@ -438,16 +441,12 @@ export class AuthService {
     return { ...tokens, user: toAuthUserDto(user) };
   }
 
-  buildWebVerificationUrl(verificationId: string, next?: string): string {
-    const defaultWebUrl =
-      process.env.NODE_ENV === 'production'
-        ? 'https://africatourismgate.org'
-        : 'http://localhost:3002';
-    const webUrl = (process.env.NEXT_PUBLIC_WEB_URL ?? defaultWebUrl).replace(
-      /\/$/,
-      '',
-    );
-    const safeNext = normalizeNextPath(next);
+  buildWebVerificationUrl(
+    verificationId: string,
+    next?: string,
+    webOrigin?: string,
+  ): string {
+    const { webUrl, safeNext } = resolveOAuthWebUrlFromNext(next, webOrigin);
     const query = new URLSearchParams({
       verificationId,
       next: safeNext,
@@ -488,13 +487,9 @@ export class AuthService {
     accessToken: string,
     refreshToken: string,
     expiresIn: number,
+    webOrigin?: string,
   ): string {
-    const defaultWebUrl =
-      process.env.NODE_ENV === 'production'
-        ? 'https://africatourismgate.org'
-        : 'http://localhost:3002';
-    const webUrl = (process.env.NEXT_PUBLIC_WEB_URL ?? defaultWebUrl).replace(/\/$/, '');
-    const safeNext = normalizeNextPath(next);
+    const { webUrl, safeNext } = resolveOAuthWebUrlFromNext(next, webOrigin);
     const query = new URLSearchParams({
       accessToken,
       refreshToken,
@@ -507,13 +502,9 @@ export class AuthService {
   buildWebOAuthErrorUrl(
     next: string | undefined,
     code = 'google_auth_failed',
+    webOrigin?: string,
   ): string {
-    const defaultWebUrl =
-      process.env.NODE_ENV === 'production'
-        ? 'https://africatourismgate.org'
-        : 'http://localhost:3002';
-    const webUrl = (process.env.NEXT_PUBLIC_WEB_URL ?? defaultWebUrl).replace(/\/$/, '');
-    const safeNext = normalizeNextPath(next);
+    const { webUrl, safeNext } = resolveOAuthWebUrlFromNext(next, webOrigin);
     const query = new URLSearchParams({ error: code, next: safeNext });
     return `${webUrl}/booking/login?${query.toString()}`;
   }
@@ -792,6 +783,17 @@ export class AuthService {
     return this.usersRepo.findOne({
       where: { email: this.normalizeEmail(email) },
     });
+  }
+
+  /** Active customer recoverable after google_signup race (e.g. OTP replay). */
+  private async findRecoverableUserByEmail(
+    email: string,
+  ): Promise<Users | null> {
+    const user = await this.findAnyUserByEmail(email);
+    if (!user || user.deletedAt || user.status !== 'active') {
+      return null;
+    }
+    return user;
   }
 
   private async startGoogleLoginVerification(

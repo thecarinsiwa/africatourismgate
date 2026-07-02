@@ -19,18 +19,30 @@ const ITEM_TYPE_LABEL_KEYS: Record<
 
 type PackageItemsSectionProps = {
   items: PackageItemEnriched[];
+  packageId: string;
   t: Translations['packages'];
   a: Translations['activities'];
+  h: Translations['hotels'];
+  c: Translations['cars'];
+  cr: Translations['cruises'];
+  f: Translations['flights'];
   startDate?: string;
+  endDate?: string;
   travelers?: number;
   showHeading?: boolean;
 };
 
 export function PackageItemsSection({
   items,
+  packageId,
   t,
   a,
+  h,
+  c,
+  cr,
+  f,
   startDate,
+  endDate,
   travelers,
   showHeading = true,
 }: PackageItemsSectionProps) {
@@ -95,12 +107,18 @@ export function PackageItemsSection({
 
       <PackageItemDetailModal
         item={selectedItem}
+        packageId={packageId}
         open={selectedItem != null}
         onClose={() => setSelectedItem(null)}
         startDate={startDate}
+        endDate={endDate}
         travelers={travelers}
         t={t}
         a={a}
+        h={h}
+        c={c}
+        cr={cr}
+        f={f}
       />
     </>
   );

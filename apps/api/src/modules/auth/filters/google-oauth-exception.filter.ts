@@ -7,6 +7,7 @@ import {
 import type { Request, Response } from 'express';
 import { AuthService } from '../auth.service';
 import { resolveGoogleOAuthErrorCode } from '../google-profile.utils';
+import { decodeOAuthState } from '../oauth-state.util';
 import { safeOAuthRedirect } from '../oauth-redirect.util';
 
 @Catch(HttpException)
@@ -27,18 +28,20 @@ export class GoogleOAuthExceptionFilter implements ExceptionFilter {
       throw exception;
     }
 
-    const state =
+    const rawState =
       typeof req.query?.state === 'string'
         ? req.query.state
         : typeof req.query?.next === 'string'
           ? req.query.next
           : undefined;
+    const { next, webOrigin } = decodeOAuthState(rawState);
 
     safeOAuthRedirect(
       res,
       this.authService.buildWebOAuthErrorUrl(
-        state,
+        next,
         resolveGoogleOAuthErrorCode(exception),
+        webOrigin,
       ),
     );
   }

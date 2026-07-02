@@ -4,7 +4,7 @@ import { LoginForm } from '@africatourismgate/ui';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   buildBookingLoginErrorMessages,
   buildBookingLoginFormConfig,
@@ -56,7 +56,11 @@ export function BookingLoginPageContent({ nextPath, oauthError }: Props) {
   );
   const safeNext = useMemo(() => normalizeNextPath(nextPath), [nextPath]);
   const registerHref = useMemo(() => buildRegisterHref(safeNext), [safeNext]);
-  const oauthUrl = useMemo(() => buildGoogleOAuthStartUrl(safeNext), [safeNext]);
+  const [oauthUrl, setOauthUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    setOauthUrl(buildGoogleOAuthStartUrl(safeNext, window.location.origin));
+  }, [safeNext]);
   const loginConfig = useMemo(() => buildBookingLoginFormConfig(tForm), [tForm]);
   const loginErrors = useMemo(() => buildBookingLoginErrorMessages(tErrors), [tErrors]);
 
@@ -105,8 +109,14 @@ export function BookingLoginPageContent({ nextPath, oauthError }: Props) {
           </div>
 
           <a
-            href={oauthUrl}
-            className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-lg border border-atg-border bg-atg-elevated px-4 py-2 text-sm font-semibold text-atg-fg hover:bg-atg-surface dark:border-atg-border dark:bg-transparent dark:text-white"
+            href={oauthUrl ?? '#'}
+            aria-disabled={!oauthUrl}
+            onClick={(event) => {
+              if (!oauthUrl) {
+                event.preventDefault();
+              }
+            }}
+            className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-lg border border-atg-border bg-atg-elevated px-4 py-2 text-sm font-semibold text-atg-fg hover:bg-atg-surface disabled:pointer-events-none disabled:opacity-60 dark:border-atg-border dark:bg-transparent dark:text-white"
           >
             <GoogleIcon />
             {t('google')}

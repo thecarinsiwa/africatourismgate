@@ -50,6 +50,10 @@ export function PackageDetailPageContent({
   const t = useTranslations();
   const p = t.packages;
   const a = t.activities;
+  const h = t.hotels;
+  const c = t.cars;
+  const cr = t.cruises;
+  const f = t.flights;
   const { locale } = useLocale();
   const router = useRouter();
 
@@ -279,9 +283,15 @@ export function PackageDetailPageContent({
                 <>
                   <PackageItemsSection
                     items={detail.items}
+                    packageId={packageId}
                     t={p}
                     a={a}
+                    h={h}
+                    c={c}
+                    cr={cr}
+                    f={f}
                     startDate={startDate}
+                    endDate={endDate}
                     travelers={travelers}
                   />
                   <div className="flex justify-end">
@@ -359,9 +369,15 @@ export function PackageDetailPageContent({
                       </h3>
                       <PackageItemsSection
                     items={detail.items}
+                    packageId={packageId}
                     t={p}
                     a={a}
+                    h={h}
+                    c={c}
+                    cr={cr}
+                    f={f}
                     startDate={startDate}
+                    endDate={endDate}
                     travelers={travelers}
                   />
                       <p className="text-sm text-atg-muted">{p.assistedBookingServicesHint}</p>

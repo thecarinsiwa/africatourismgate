@@ -7,6 +7,7 @@ import { AuthGuard } from '@nestjs/passport';
 import type { Response } from 'express';
 import { AuthService } from '../auth.service';
 import { safeOAuthRedirect } from '../oauth-redirect.util';
+import { decodeOAuthState, encodeOAuthState } from '../oauth-state.util';
 
 @Injectable()
 export class GoogleAuthGuard extends AuthGuard('google') {
@@ -15,11 +16,16 @@ export class GoogleAuthGuard extends AuthGuard('google') {
   }
 
   override getAuthenticateOptions(context: ExecutionContext) {
-    const request = context.switchToHttp().getRequest<{ query?: { next?: string } }>();
+    const request = context.switchToHttp().getRequest<{
+      query?: { next?: string; web_origin?: string };
+    }>();
     const next = request.query?.next;
+    const webOrigin = request.query?.web_origin;
+    const nextPath = typeof next === 'string' ? next : '/booking/cart';
+    const origin = typeof webOrigin === 'string' ? webOrigin : undefined;
     return {
       scope: ['profile', 'email'],
-      state: typeof next === 'string' ? next : '/booking/cart',
+      state: encodeOAuthState(nextPath, origin),
     };
   }
 
@@ -76,16 +82,17 @@ export class GoogleAuthGuard extends AuthGuard('google') {
     const request = context.switchToHttp().getRequest<{
       query?: { state?: string; next?: string };
     }>();
-    const next =
+    const rawState =
       typeof request.query?.state === 'string'
         ? request.query.state
         : typeof request.query?.next === 'string'
           ? request.query.next
           : undefined;
+    const { next, webOrigin } = decodeOAuthState(rawState);
 
     safeOAuthRedirect(
       response,
-      this.authService.buildWebOAuthErrorUrl(next, code),
+      this.authService.buildWebOAuthErrorUrl(next, code, webOrigin),
     );
   }
 }

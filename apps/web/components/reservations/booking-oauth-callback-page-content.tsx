@@ -1,9 +1,11 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { getAuthMe } from '../../lib/api/auth';
 import { completeWebLogin } from '../../lib/auth/complete-web-login';
+import { stripDevOriginFromNextPath } from '../../lib/auth/dev-oauth-return';
+import { useDevOAuthReturnRedirect } from '../../lib/auth/use-dev-oauth-return-redirect';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 
@@ -28,8 +30,14 @@ export function BookingOAuthCallbackPageContent({
   nextPath,
 }: Props) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  useDevOAuthReturnRedirect('/booking/oauth/callback');
   const [error, setError] = useState<string | null>(null);
-  const safeNext = useMemo(() => normalizeNextPath(nextPath), [nextPath]);
+  const safeNext = useMemo(() => {
+    const raw = nextPath ?? searchParams.get('next') ?? undefined;
+    if (!raw) return normalizeNextPath(undefined);
+    return normalizeNextPath(stripDevOriginFromNextPath(raw).next);
+  }, [nextPath, searchParams]);
 
   useEffect(() => {
     if (!accessToken || !refreshToken || !expiresIn) {

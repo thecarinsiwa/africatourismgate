@@ -31,6 +31,7 @@ import { GoogleAuthGuard } from './guards/google-auth.guard';
 import { GoogleOAuthExceptionFilter } from './filters/google-oauth-exception.filter';
 import { AuthService } from './auth.service';
 import { resolveGoogleOAuthErrorCode } from './google-profile.utils';
+import { decodeOAuthState } from './oauth-state.util';
 import { safeOAuthRedirect } from './oauth-redirect.util';
 import {
   AuthResponseDto,
@@ -87,6 +88,8 @@ export class AuthController {
       return;
     }
 
+    const { next, webOrigin } = decodeOAuthState(req.user.state);
+
     try {
       const auth = await this.authService.loginWithGoogleProfile(req.user.profile);
       if (auth.requiresVerification && auth.verificationId) {
@@ -94,16 +97,18 @@ export class AuthController {
           res,
           this.authService.buildWebVerificationUrl(
             auth.verificationId,
-            req.user.state,
+            next,
+            webOrigin,
           ),
         );
         return;
       }
       const redirectUrl = this.authService.buildWebOAuthCallbackUrl(
-        req.user.state,
+        next,
         auth.accessToken,
         auth.refreshToken,
         auth.expiresIn,
+        webOrigin,
       );
       safeOAuthRedirect(res, redirectUrl);
     } catch (err) {
@@ -115,8 +120,9 @@ export class AuthController {
       safeOAuthRedirect(
         res,
         this.authService.buildWebOAuthErrorUrl(
-          req.user.state,
+          next,
           resolveGoogleOAuthErrorCode(err),
+          webOrigin,
         ),
       );
     }

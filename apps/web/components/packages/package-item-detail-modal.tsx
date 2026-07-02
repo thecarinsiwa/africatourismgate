@@ -9,8 +9,14 @@ import {
   formatDurationMinutes,
 } from '../../lib/activities/listings';
 import { getActivityDifficultyLabel } from '../../lib/activities/difficulty';
-import type { ActivityDetail } from '../../lib/activities/types';
-import { getActivityDetail } from '../../lib/api/public';
+import { formatCarPrice, buildCarDetailHref } from '../../lib/cars/listings';
+import { buildCruiseDetailHref, formatCruisePrice } from '../../lib/cruises/listings';
+import { formatDuration, formatFlightPrice, buildFlightDetailHref } from '../../lib/flights/listings';
+import { formatHotelPrice, buildHotelDetailHref } from '../../lib/hotels/listings';
+import {
+  loadPackageItemDetail,
+  type PackageItemDetailData,
+} from '../../lib/packages/package-item-detail-load';
 import { formatPackagePrice } from '../../lib/packages/listings';
 import type { PackageItemEnriched } from '../../lib/packages/types';
 import type { Translations } from '../../lib/i18n/translations';
@@ -18,48 +24,316 @@ import { ProductGallery } from '../shared';
 
 type PackageItemDetailModalProps = {
   item: PackageItemEnriched | null;
+  packageId: string;
   open: boolean;
   onClose: () => void;
   startDate?: string;
+  endDate?: string;
   travelers?: number;
   t: Translations['packages'];
   a: Translations['activities'];
+  h: Translations['hotels'];
+  c: Translations['cars'];
+  cr: Translations['cruises'];
+  f: Translations['flights'];
 };
 
-function defaultPreviewDate(): string {
-  const date = new Date();
-  const pad = (value: number) => String(value).padStart(2, '0');
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+function MetaCell({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl bg-atg-surface px-4 py-3 dark:bg-atg-surface/60">
+      <dt className="text-xs font-semibold uppercase tracking-wide text-atg-muted">{label}</dt>
+      <dd className="mt-1 text-sm font-medium text-atg-fg">{value}</dd>
+    </div>
+  );
 }
 
-const PRODUCT_PATHS: Record<PackageItemEnriched['itemType'], string | null> = {
-  property: '/hotels',
-  flight: '/flights',
-  vehicle: '/cars',
-  cruise: '/cruises',
-  activity: '/activities',
-};
+function galleryLabels(t: Translations['packages']) {
+  return {
+    ariaLabel: t.galleryAria,
+    openLightbox: t.galleryOpenLightbox,
+    close: t.galleryClose,
+    previous: t.galleryPrevious,
+    next: t.galleryNext,
+    counter: t.galleryCounter,
+  };
+}
+
+function resolveTitle(item: PackageItemEnriched, data: PackageItemDetailData | null): string {
+  if (!data) return item.label;
+  switch (data.kind) {
+    case 'activity':
+      return data.detail.title;
+    case 'vehicle':
+      return (
+        data.detail.category.exampleModel?.trim() ||
+        data.detail.category.name ||
+        item.label
+      );
+    case 'property':
+      return data.detail.name;
+    case 'flight':
+      return `${data.detail.airlineName} · ${data.detail.flightNumber}`;
+    case 'cruise':
+      return data.cabin.categoryName;
+    default:
+      return item.label;
+  }
+}
+
+function resolveFullPageHref(
+  item: PackageItemEnriched,
+  data: PackageItemDetailData | null,
+  startDate: string | undefined,
+  endDate: string | undefined,
+  travelers: number,
+): string | null {
+  const { start, end } = (() => {
+    if (startDate?.trim()) {
+      const endDateValue =
+        endDate?.trim() && endDate > startDate ? endDate : undefined;
+      return { start: startDate, end: endDateValue };
+    }
+    return { start: undefined, end: undefined };
+  })();
+
+  switch (item.itemType) {
+    case 'activity':
+      return buildActivityDetailHref(item.itemId, {
+        date: start,
+        participants: String(travelers),
+      });
+    case 'vehicle':
+      if (!start || !end) return `/cars/${encodeURIComponent(item.itemId)}`;
+      return buildCarDetailHref(item.itemId, { pickupDate: start, returnDate: end });
+    case 'property':
+      if (!start || !end) return `/hotels/${encodeURIComponent(item.itemId)}`;
+      return buildHotelDetailHref(item.itemId, {
+        checkIn: start,
+        checkOut: end,
+        guests: String(travelers),
+      });
+    case 'flight':
+      if (!start) return `/flights/${encodeURIComponent(item.itemId)}`;
+      return buildFlightDetailHref(item.itemId, {
+        departureDate: start,
+        passengers: String(travelers),
+      });
+    case 'cruise':
+      if (data?.kind === 'cruise') {
+        return buildCruiseDetailHref(data.sailingId, {
+          startDate: start,
+          endDate: end,
+          guests: String(travelers),
+          cabinId: item.itemId,
+        });
+      }
+      return null;
+    default:
+      return null;
+  }
+}
+
+function ItemDetailBody({
+  item,
+  data,
+  t,
+  a,
+  h,
+  c,
+  cr,
+  f,
+}: {
+  item: PackageItemEnriched;
+  data: PackageItemDetailData;
+  t: Translations['packages'];
+  a: Translations['activities'];
+  h: Translations['hotels'];
+  c: Translations['cars'];
+  cr: Translations['cruises'];
+  f: Translations['flights'];
+}) {
+  const labels = galleryLabels(t);
+
+  if (data.kind === 'activity') {
+    const { detail } = data;
+    const durationLabel = formatDurationMinutes(detail.durationMinutes, {
+      hourSingular: a.hourSingular,
+      hourPlural: a.hourPlural,
+      minuteSingular: a.minuteSingular,
+      minutePlural: a.minutePlural,
+    });
+    const difficultyLabel = detail.difficultyLevel
+      ? getActivityDifficultyLabel(detail.difficultyLevel, {
+          easy: a.difficultyEasy,
+          moderate: a.difficultyModerate,
+          hard: a.difficultyHard,
+          expert: a.difficultyExpert,
+        })
+      : null;
+
+    return (
+      <div className="space-y-5">
+        {detail.images && detail.images.length > 0 ? (
+          <ProductGallery images={detail.images} name={detail.title} labels={labels} />
+        ) : null}
+        {detail.description ? (
+          <p className="text-sm leading-relaxed text-atg-muted">{detail.description}</p>
+        ) : null}
+        <dl className="grid gap-3 sm:grid-cols-2">
+          <MetaCell label={a.destination} value={detail.destination} />
+          <MetaCell label={a.providerLabel} value={detail.providerName} />
+          {durationLabel ? <MetaCell label={a.durationLabel} value={durationLabel} /> : null}
+          {difficultyLabel ? <MetaCell label={a.difficultyLabel} value={difficultyLabel} /> : null}
+          <MetaCell
+            label={t.itemDetailPriceLabel}
+            value={formatActivityPrice(detail.priceCents, detail.currency)}
+          />
+        </dl>
+      </div>
+    );
+  }
+
+  if (data.kind === 'vehicle') {
+    const { detail } = data;
+    return (
+      <div className="space-y-5">
+        {detail.images && detail.images.length > 0 ? (
+          <ProductGallery
+            images={detail.images}
+            name={detail.category.name}
+            labels={labels}
+          />
+        ) : null}
+        <dl className="grid gap-3 sm:grid-cols-2">
+          <MetaCell label={c.categoryTitle} value={detail.category.name} />
+          <MetaCell label={c.agencyTitle} value={detail.agency.name} />
+          <MetaCell label={c.rentalPeriod} value={`${detail.rentalDays} ${detail.rentalDays === 1 ? c.daySingular : c.dayPlural}`} />
+          <MetaCell
+            label={t.itemDetailPriceLabel}
+            value={`${formatCarPrice(detail.totalPriceCents, detail.currency)} (${formatCarPrice(detail.dailyPriceCents, detail.currency)}${c.perDay})`}
+          />
+        </dl>
+      </div>
+    );
+  }
+
+  if (data.kind === 'property') {
+    const { detail } = data;
+    return (
+      <div className="space-y-5">
+        {detail.images.length > 0 ? (
+          <ProductGallery images={detail.images} name={detail.name} labels={labels} />
+        ) : null}
+        {detail.description ? (
+          <p className="text-sm leading-relaxed text-atg-muted">{detail.description}</p>
+        ) : null}
+        <dl className="grid gap-3 sm:grid-cols-2">
+          <MetaCell label={a.destination} value={detail.destinationName} />
+          {detail.starRating != null ? (
+            <MetaCell label={h.stars} value={`${detail.starRating}★`} />
+          ) : null}
+          {detail.stay.nights > 0 ? (
+            <MetaCell
+              label={h.checkIn}
+              value={`${detail.stay.checkIn ?? '—'} → ${detail.stay.checkOut ?? '—'}`}
+            />
+          ) : null}
+          <MetaCell
+            label={t.itemDetailPriceLabel}
+            value={
+              detail.stay.minTotalCents != null
+                ? formatHotelPrice(detail.stay.minTotalCents, detail.stay.currency)
+                : formatPackagePrice(item.unitPriceCents, item.currency)
+            }
+          />
+        </dl>
+      </div>
+    );
+  }
+
+  if (data.kind === 'flight') {
+    const { detail } = data;
+    return (
+      <div className="space-y-5">
+        {detail.images && detail.images.length > 0 ? (
+          <ProductGallery images={detail.images} name={detail.flightNumber} labels={labels} />
+        ) : null}
+        <dl className="grid gap-3 sm:grid-cols-2">
+          <MetaCell
+            label={f.departure}
+            value={`${detail.departureAirport.city} (${detail.departureAirport.iataCode})`}
+          />
+          <MetaCell
+            label={f.arrival}
+            value={`${detail.arrivalAirport.city} (${detail.arrivalAirport.iataCode})`}
+          />
+          <MetaCell label={f.itineraryTitle} value={formatDuration(detail.durationMinutes)} />
+          <MetaCell
+            label={t.itemDetailPriceLabel}
+            value={formatFlightPrice(detail.minPriceCents, detail.currency)}
+          />
+        </dl>
+      </div>
+    );
+  }
+
+  const { detail, cabin } = data;
+  return (
+    <div className="space-y-5">
+      {detail.images && detail.images.length > 0 ? (
+        <ProductGallery images={detail.images} name={detail.shipName} labels={labels} />
+      ) : null}
+      <p className="text-sm leading-relaxed text-atg-muted">
+        {detail.cruiseLineName} · {detail.shipName} · {detail.itineraryName}
+      </p>
+      <dl className="grid gap-3 sm:grid-cols-2">
+        <MetaCell
+          label={cr.departure}
+          value={`${detail.sailFromPortName} (${detail.sailFromPortCode})`}
+        />
+        <MetaCell
+          label={cr.arrival}
+          value={`${detail.sailToPortName} (${detail.sailToPortCode})`}
+        />
+        <MetaCell
+          label={cr.capacityLabel}
+          value={`${cabin.maxGuests} ${cabin.maxGuests === 1 ? cr.guestSingular : cr.guestPlural}`}
+        />
+        <MetaCell
+          label={t.itemDetailPriceLabel}
+          value={formatCruisePrice(cabin.priceCents, cabin.currency)}
+        />
+      </dl>
+    </div>
+  );
+}
 
 export function PackageItemDetailModal({
   item,
+  packageId,
   open,
   onClose,
   startDate,
+  endDate,
   travelers = 1,
   t,
   a,
+  h,
+  c,
+  cr,
+  f,
 }: PackageItemDetailModalProps) {
   const titleId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
   const previouslyFocusedRef = useRef<HTMLElement | null>(null);
 
-  const [activityDetail, setActivityDetail] = useState<ActivityDetail | null>(null);
+  const [detailData, setDetailData] = useState<PackageItemDetailData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    if (!open || !item || item.itemType !== 'activity') {
-      setActivityDetail(null);
+    if (!open || !item) {
+      setDetailData(null);
       setLoading(false);
       setError(false);
       return;
@@ -69,16 +343,18 @@ export function PackageItemDetailModal({
     setLoading(true);
     setError(false);
 
-    void getActivityDetail(item.itemId, {
-      date: startDate || defaultPreviewDate(),
-      participants: travelers,
+    void loadPackageItemDetail(item, {
+      packageId,
+      startDate,
+      endDate,
+      travelers,
     })
       .then((data) => {
-        if (!cancelled) setActivityDetail(data);
+        if (!cancelled) setDetailData(data);
       })
       .catch(() => {
         if (!cancelled) {
-          setActivityDetail(null);
+          setDetailData(null);
           setError(true);
         }
       })
@@ -89,7 +365,7 @@ export function PackageItemDetailModal({
     return () => {
       cancelled = true;
     };
-  }, [open, item, startDate, travelers]);
+  }, [open, item, packageId, startDate, endDate, travelers]);
 
   useEffect(() => {
     if (!open) return;
@@ -122,33 +398,13 @@ export function PackageItemDetailModal({
   if (!open || !item || typeof document === 'undefined') return null;
 
   const typeLabel = t.itemTypes[item.itemType];
-  const fullPageHref =
-    item.itemType === 'activity'
-      ? buildActivityDetailHref(item.itemId, {
-          date: startDate,
-          participants: String(travelers),
-        })
-      : PRODUCT_PATHS[item.itemType]
-        ? `${PRODUCT_PATHS[item.itemType]}/${encodeURIComponent(item.itemId)}`
-        : null;
-
-  const durationLabel = activityDetail
-    ? formatDurationMinutes(activityDetail.durationMinutes, {
-        hourSingular: a.hourSingular,
-        hourPlural: a.hourPlural,
-        minuteSingular: a.minuteSingular,
-        minutePlural: a.minutePlural,
-      })
-    : null;
-
-  const difficultyLabel = activityDetail?.difficultyLevel
-    ? getActivityDifficultyLabel(activityDetail.difficultyLevel, {
-        easy: a.difficultyEasy,
-        moderate: a.difficultyModerate,
-        hard: a.difficultyHard,
-        expert: a.difficultyExpert,
-      })
-    : null;
+  const fullPageHref = resolveFullPageHref(
+    item,
+    detailData,
+    startDate,
+    endDate,
+    travelers,
+  );
 
   return createPortal(
     <div
@@ -169,7 +425,7 @@ export function PackageItemDetailModal({
           <div className="min-w-0">
             <p className="text-xs font-semibold uppercase tracking-wide text-primary">{typeLabel}</p>
             <h2 id={titleId} className="mt-1 text-xl font-bold text-atg-fg">
-              {activityDetail?.title ?? item.label}
+              {resolveTitle(item, detailData)}
             </h2>
           </div>
           <button
@@ -183,89 +439,25 @@ export function PackageItemDetailModal({
         </header>
 
         <div className="flex-1 overflow-y-auto px-5 py-5">
-          {item.itemType === 'activity' && loading ? (
+          {loading ? (
             <p className="text-sm text-atg-muted">{t.itemDetailLoading}</p>
           ) : null}
 
-          {item.itemType === 'activity' && error ? (
+          {error ? (
             <p className="text-sm text-red-700 dark:text-red-300">{t.itemDetailError}</p>
           ) : null}
 
-          {item.itemType === 'activity' && activityDetail && !loading ? (
-            <div className="space-y-5">
-              {activityDetail.images && activityDetail.images.length > 0 ? (
-                <ProductGallery
-                  images={activityDetail.images}
-                  name={activityDetail.title}
-                  labels={{
-                    ariaLabel: t.galleryAria,
-                    openLightbox: t.galleryOpenLightbox,
-                    close: t.galleryClose,
-                    previous: t.galleryPrevious,
-                    next: t.galleryNext,
-                    counter: t.galleryCounter,
-                  }}
-                />
-              ) : null}
-
-              {activityDetail.description ? (
-                <p className="text-sm leading-relaxed text-atg-muted">
-                  {activityDetail.description}
-                </p>
-              ) : null}
-
-              <dl className="grid gap-3 sm:grid-cols-2">
-                <div className="rounded-xl bg-atg-surface px-4 py-3 dark:bg-atg-surface/60">
-                  <dt className="text-xs font-semibold uppercase tracking-wide text-atg-muted">
-                    {a.destination}
-                  </dt>
-                  <dd className="mt-1 text-sm font-medium text-atg-fg">
-                    {activityDetail.destination}
-                  </dd>
-                </div>
-                <div className="rounded-xl bg-atg-surface px-4 py-3 dark:bg-atg-surface/60">
-                  <dt className="text-xs font-semibold uppercase tracking-wide text-atg-muted">
-                    {a.providerLabel}
-                  </dt>
-                  <dd className="mt-1 text-sm font-medium text-atg-fg">
-                    {activityDetail.providerName}
-                  </dd>
-                </div>
-                {durationLabel ? (
-                  <div className="rounded-xl bg-atg-surface px-4 py-3 dark:bg-atg-surface/60">
-                    <dt className="text-xs font-semibold uppercase tracking-wide text-atg-muted">
-                      {a.durationLabel}
-                    </dt>
-                    <dd className="mt-1 text-sm font-medium text-atg-fg">{durationLabel}</dd>
-                  </div>
-                ) : null}
-                {difficultyLabel ? (
-                  <div className="rounded-xl bg-atg-surface px-4 py-3 dark:bg-atg-surface/60">
-                    <dt className="text-xs font-semibold uppercase tracking-wide text-atg-muted">
-                      {a.difficultyLabel}
-                    </dt>
-                    <dd className="mt-1 text-sm font-medium text-atg-fg">{difficultyLabel}</dd>
-                  </div>
-                ) : null}
-                <div className="rounded-xl bg-atg-surface px-4 py-3 dark:bg-atg-surface/60">
-                  <dt className="text-xs font-semibold uppercase tracking-wide text-atg-muted">
-                    {t.itemDetailPriceLabel}
-                  </dt>
-                  <dd className="mt-1 text-sm font-semibold text-atg-fg">
-                    {formatActivityPrice(activityDetail.priceCents, activityDetail.currency)}
-                  </dd>
-                </div>
-              </dl>
-            </div>
-          ) : null}
-
-          {item.itemType !== 'activity' ? (
-            <div className="space-y-4">
-              <p className="text-sm text-atg-muted">{t.itemDetailGenericHint}</p>
-              <p className="text-sm font-semibold text-atg-fg">
-                {formatPackagePrice(item.unitPriceCents, item.currency)}
-              </p>
-            </div>
+          {!loading && !error && detailData ? (
+            <ItemDetailBody
+              item={item}
+              data={detailData}
+              t={t}
+              a={a}
+              h={h}
+              c={c}
+              cr={cr}
+              f={f}
+            />
           ) : null}
         </div>
 
