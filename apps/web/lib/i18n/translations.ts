@@ -769,12 +769,21 @@ export type Translations = {
     galleryCounter: (current: number, total: number) => string;
     stepOverview: string;
     stepConfigure: string;
+    stepBook: string;
     stepRecap: string;
     stepOverviewShort: string;
     stepConfigureShort: string;
+    stepBookShort: string;
     stepRecapShort: string;
     compositionStepperAria: string;
     configureProgress: string;
+    bookingReadyHint: string;
+    bookingPendingHint: string;
+    assistedBookingServicesHint: string;
+    assistedItemPendingSchedule: string;
+    travelerSingular: string;
+    travelerPlural: string;
+    estimatedPackageTotal: string;
     startConfiguration: string;
     stepBack: string;
     viewRecap: string;
@@ -1886,9 +1895,11 @@ const fr: Translations = {
     travelersLabel: 'Voyageurs',
     durationDaysLabel: '{days} jour(s)',
     packageBookingHint:
-      'Choisissez la date de départ : la date de retour est calculée automatiquement ({days} jour(s)). Les prestations incluses sont préparées sans contrôle de disponibilité.',
+      'Choisissez la date de départ et le nombre de voyageurs. Les créneaux horaires seront confirmés par notre équipe après votre demande.',
     selectDepartureHint: 'Indiquez une date de départ pour préparer la réservation.',
     includedServicesTitle: 'Prestations incluses',
+    assistedBookingServicesHint:
+      'Les horaires précis seront attribués après validation de votre demande par notre équipe.',
     resolvingPackage: 'Vérification des disponibilités…',
     resolvingItem: 'En cours…',
     itemAutoResolved: 'Inclus',
@@ -1917,17 +1928,28 @@ const fr: Translations = {
     galleryCounter: (current, total) => `Photo ${current} sur ${total}`,
     stepOverview: 'Aperçu des prestations',
     stepConfigure: 'Configuration',
+    stepBook: 'Réserver',
     stepRecap: 'Récapitulatif',
     stepOverviewShort: 'Aperçu',
     stepConfigureShort: 'Config.',
+    stepBookShort: 'Réserver',
     stepRecapShort: 'Récap',
     compositionStepperAria: 'Étapes de composition du forfait',
     configureProgress: '{done} / {total} prestation(s) configurée(s)',
-    startConfiguration: 'Configurer le forfait',
+    bookingReadyHint: 'Dates et voyageurs renseignés',
+    bookingPendingHint: 'Indiquez une date de départ',
+    assistedBookingServicesHint:
+      'Les horaires précis seront attribués après validation de votre demande par notre équipe.',
+    assistedItemPendingSchedule: 'Créneau à confirmer après validation',
+    travelerSingular: 'voyageur',
+    travelerPlural: 'voyageurs',
+    estimatedPackageTotal: 'Total estimé',
+    startConfiguration: 'Réserver ce forfait',
     stepBack: 'Retour',
     viewRecap: 'Voir le récapitulatif',
     recapTitle: 'Récapitulatif du forfait',
-    recapHint: 'Vérifiez chaque prestation avant d’ajouter le forfait au panier.',
+    recapHint:
+      'Vérifiez les informations de voyage avant d’ajouter le forfait au panier. La demande sera traitée par notre équipe.',
     configureSchedulesTitle: 'Choisir les créneaux horaires',
     itemConfigured: 'Configuré',
     itemPending: 'À configurer',
@@ -3060,9 +3082,11 @@ const en: Translations = {
     travelersLabel: 'Travelers',
     durationDaysLabel: '{days} day(s)',
     packageBookingHint:
-      'Pick a departure date — the return date is calculated automatically ({days} day(s)). Included services are prepared without availability checks.',
+      'Pick a departure date and number of travelers. Time slots will be confirmed by our team after your request.',
     selectDepartureHint: 'Enter a departure date to prepare your booking.',
     includedServicesTitle: 'Included services',
+    assistedBookingServicesHint:
+      'Exact time slots will be assigned after our team validates your request.',
     resolvingPackage: 'Checking availability…',
     resolvingItem: 'Pending…',
     itemAutoResolved: 'Included',
@@ -3091,17 +3115,28 @@ const en: Translations = {
     galleryCounter: (current, total) => `Photo ${current} of ${total}`,
     stepOverview: 'Included services overview',
     stepConfigure: 'Configure each service',
+    stepBook: 'Book',
     stepRecap: 'Summary',
     stepOverviewShort: 'Overview',
     stepConfigureShort: 'Config',
+    stepBookShort: 'Book',
     stepRecapShort: 'Summary',
     compositionStepperAria: 'Package composition steps',
     configureProgress: '{done} / {total} service(s) configured',
-    startConfiguration: 'Configure package',
+    bookingReadyHint: 'Dates and travelers set',
+    bookingPendingHint: 'Enter a departure date',
+    assistedBookingServicesHint:
+      'Exact time slots will be assigned after our team validates your request.',
+    assistedItemPendingSchedule: 'Time slot to be confirmed after approval',
+    travelerSingular: 'traveler',
+    travelerPlural: 'travelers',
+    estimatedPackageTotal: 'Estimated total',
+    startConfiguration: 'Book this package',
     stepBack: 'Back',
     viewRecap: 'View summary',
     recapTitle: 'Package summary',
-    recapHint: 'Review each included service before adding the package to your cart.',
+    recapHint:
+      'Review your travel details before adding the package to your cart. Your request will be handled by our team.',
     configureSchedulesTitle: 'Choose time slots',
     itemConfigured: 'Configured',
     itemPending: 'Pending',

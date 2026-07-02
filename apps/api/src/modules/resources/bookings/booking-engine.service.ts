@@ -49,6 +49,7 @@ import {
 import { BookingCheckoutPromoService } from './booking-checkout-promo.service';
 import { BookingPackageCheckoutService } from './booking-package-checkout.service';
 import { BookingStatusHistoryService } from './booking-status-history.service';
+import type { PackageResolvedLineDto } from '../../public/packages/dto/package-resolved-line.dto';
 import type { AppliedCheckoutDiscountDto } from './dto/booking-checkout-preview-response.dto';
 import type { AppliedPackageCheckoutDiscountDto } from './dto/booking-checkout-preview-response.dto';
 
@@ -59,7 +60,7 @@ type StockTarget =
   | { kind: 'cabin'; availabilityId: string }
   | { kind: 'activity_schedule'; scheduleId: string };
 
-type ResolvedBookingLine = BookingCheckoutLineDto & { stock: StockTarget };
+type ResolvedBookingLine = BookingCheckoutLineDto & { stock?: StockTarget };
 
 @Injectable()
 export class BookingEngineService {
@@ -311,9 +312,13 @@ export class BookingEngineService {
     }
 
     await this.bookingsRepository.manager.transaction(async (manager) => {
-      const items = await manager.getRepository(BookingItems).find({
+      const itemsRepo = manager.getRepository(BookingItems);
+      let items = await itemsRepo.find({
         where: { bookingId: id },
       });
+
+      items = await this.expandPackageBookingItems(manager, items, actorUserId);
+
       const lines = await this.bookingItemsToResolvedLines(manager, items);
       if (lines.length > 0) {
         await this.allocateStock(manager, lines, 'decrement', actorUserId);
@@ -712,6 +717,8 @@ export class BookingEngineService {
         return this.resolveCabinItem(item);
       case 'activity_schedule':
         return this.resolveActivityScheduleItem(item);
+      case 'package':
+        return this.resolvePackageItem(item);
       default:
         throw new BadRequestException('Type d’item non supporté.');
     }
@@ -913,6 +920,25 @@ export class BookingEngineService {
     ];
   }
 
+  private async resolvePackageItem(
+    item: BookingCheckoutItemDto,
+  ): Promise<ResolvedBookingLine[]> {
+    const resolved = await this.packageCheckout.resolveAssistedPackageLine(item);
+    return [
+      {
+        itemType: 'package',
+        referenceId: resolved.referenceId,
+        quantity: resolved.quantity,
+        unitPriceCents: resolved.unitPriceCents,
+        lineTotalCents: resolved.lineTotalCents,
+        titleSnapshot: resolved.titleSnapshot,
+        currency: resolved.currency,
+        startDate: resolved.startDate,
+        endDate: resolved.endDate,
+      },
+    ];
+  }
+
   private async resolveActivityScheduleItem(
     item: BookingCheckoutItemDto,
   ): Promise<ResolvedBookingLine[]> {
@@ -965,6 +991,7 @@ export class BookingEngineService {
     actorUserId?: string,
   ): Promise<void> {
     for (const line of lines) {
+      if (!line.stock) continue;
       await this.applyStockChange(manager, line.stock, line.quantity, direction, actorUserId);
     }
   }
@@ -1143,12 +1170,129 @@ export class BookingEngineService {
             stock: { kind: 'activity_schedule', scheduleId: item.referenceId },
           });
           break;
+        case 'package':
+          break;
         default:
           break;
       }
     }
 
     return lines;
+  }
+
+  private async expandPackageBookingItems(
+    manager: EntityManager,
+    items: BookingItems[],
+    actorUserId?: string,
+  ): Promise<BookingItems[]> {
+    const itemsRepo = manager.getRepository(BookingItems);
+    const active = items.filter((item) => !item.deletedAt);
+    const packageItems = active.filter((item) => item.itemType === 'package');
+
+    if (packageItems.length === 0) {
+      return items;
+    }
+
+    const created: BookingItems[] = active.filter((item) => item.itemType !== 'package');
+
+    for (const packageItem of packageItems) {
+      if (!packageItem.startDate || !packageItem.endDate) {
+        throw new BadRequestException('Dates du forfait manquantes.');
+      }
+
+      const resolvedLines = await this.packageCheckout.resolvePackageLinesForApproval(
+        packageItem.referenceId,
+        {
+          startDate: packageItem.startDate,
+          endDate: packageItem.endDate,
+          travelers: packageItem.quantity,
+        },
+      );
+
+      for (const line of resolvedLines) {
+        const checkoutItems = this.packageResolvedLineToCheckoutItems(line);
+        for (const checkoutItem of checkoutItems) {
+          const resolved = await this.resolveItem(checkoutItem);
+          for (const resolvedLine of resolved) {
+            const row = itemsRepo.create({
+              id: newId(),
+              bookingId: packageItem.bookingId,
+              itemType: resolvedLine.itemType,
+              referenceId: resolvedLine.referenceId,
+              titleSnapshot: resolvedLine.titleSnapshot,
+              quantity: resolvedLine.quantity,
+              unitPriceCents: resolvedLine.unitPriceCents,
+              startDate: resolvedLine.startDate,
+              endDate: resolvedLine.endDate,
+              createdByUserId: actorUserId ?? null,
+            } as BookingItems);
+            await itemsRepo.save(row);
+            created.push(row);
+          }
+        }
+      }
+
+      packageItem.deletedAt = new Date();
+      packageItem.deletedByUserId = actorUserId ?? null;
+      packageItem.updatedByUserId = actorUserId ?? null;
+      await itemsRepo.save(packageItem);
+    }
+
+    return created;
+  }
+
+  private packageResolvedLineToCheckoutItems(
+    line: PackageResolvedLineDto,
+  ): BookingCheckoutItemDto[] {
+    switch (line.lineType) {
+      case 'activity':
+        return [
+          {
+            itemType: 'activity_schedule',
+            referenceId: line.scheduleId!,
+            quantity: line.participants!,
+          },
+        ];
+      case 'property':
+        return [
+          {
+            itemType: 'room',
+            referenceId: line.roomId!,
+            quantity: 1,
+            startDate: line.checkIn,
+            endDate: line.checkOut,
+          },
+        ];
+      case 'flight':
+        return [
+          {
+            itemType: 'flight_class',
+            referenceId: line.flightClassId!,
+            quantity: line.passengers!,
+            date: line.departureDate,
+          },
+        ];
+      case 'vehicle':
+        return [
+          {
+            itemType: 'vehicle',
+            referenceId: line.availabilitySlotId!,
+            quantity: 1,
+            startDate: line.pickupDate,
+            endDate: line.returnDate,
+          },
+        ];
+      case 'cruise':
+        return [
+          {
+            itemType: 'cabin',
+            referenceId: line.cabinAvailabilityId!,
+            quantity: line.guests!,
+          },
+        ];
+      default:
+        throw new BadRequestException('Type de ligne forfait non supporté.');
+    }
   }
 
   private async findBookingOrThrow(id: string): Promise<Bookings> {

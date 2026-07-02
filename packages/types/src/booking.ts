@@ -14,7 +14,8 @@ export type BookingCheckoutItemType =
   | 'flight_class'
   | 'vehicle'
   | 'cabin'
-  | 'activity_schedule';
+  | 'activity_schedule'
+  | 'package';
 
 export type BookingItemType =
   | BookingCheckoutItemType

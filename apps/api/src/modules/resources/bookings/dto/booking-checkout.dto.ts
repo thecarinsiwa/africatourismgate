@@ -22,6 +22,7 @@ export const BOOKING_CHECKOUT_ITEM_TYPES = [
   'vehicle',
   'cabin',
   'activity_schedule',
+  'package',
 ] as const satisfies readonly BookingItems['itemType'][];
 
 export type BookingCheckoutItemType = (typeof BOOKING_CHECKOUT_ITEM_TYPES)[number];
@@ -33,7 +34,7 @@ export class BookingCheckoutItemDto {
 
   @ApiProperty({
     description:
-      'room: roomId | flight_class: flightClassId | vehicle/cabin: availability row id | activity_schedule: schedule id',
+      'room: roomId | flight_class: flightClassId | vehicle/cabin: availability row id | activity_schedule: schedule id | package: packageId',
     format: 'uuid',
   })
   @IsUUID('4')
