@@ -154,6 +154,68 @@ describe('Booking approval (e2e)', () => {
       .expect(403);
   });
 
+  it('POST package assisted request approves after schedules exist on requested date', async () => {
+    const PACKAGE_ID = '00000000-0000-4000-8000-000000005001';
+    const startDate = '2026-07-20';
+    const endDate = '2026-07-21';
+
+    const created = await request(app.getHttpServer())
+      .post(apiPath('/bookings/request'))
+      .set(authHeader(customerToken))
+      .send({
+        packageId: PACKAGE_ID,
+        currency: 'USD',
+        items: [
+          {
+            itemType: 'package',
+            referenceId: PACKAGE_ID,
+            quantity: 2,
+            startDate,
+            endDate,
+          },
+        ],
+      })
+      .expect(201);
+
+    const bookingId = created.body.bookingId as string;
+
+    const approved = await request(app.getHttpServer())
+      .post(apiPath(`/bookings/${bookingId}/approve`))
+      .set(authHeader(adminToken))
+      .send({})
+      .expect(201);
+
+    expect(approved.body.booking?.status).toBe('pending_payment');
+  });
+
+  it('POST package assisted request cannot approve without schedules for date', async () => {
+    const PACKAGE_ID = '00000000-0000-4000-8000-000000005001';
+
+    const created = await request(app.getHttpServer())
+      .post(apiPath('/bookings/request'))
+      .set(authHeader(customerToken))
+      .send({
+        packageId: PACKAGE_ID,
+        currency: 'USD',
+        items: [
+          {
+            itemType: 'package',
+            referenceId: PACKAGE_ID,
+            quantity: 2,
+            startDate: '2099-12-15',
+            endDate: '2099-12-16',
+          },
+        ],
+      })
+      .expect(201);
+
+    await request(app.getHttpServer())
+      .post(apiPath(`/bookings/${created.body.bookingId}/approve`))
+      .set(authHeader(adminToken))
+      .send({})
+      .expect(400);
+  });
+
   it('POST /bookings/:id/invite-payment requires pending_payment', async () => {
     await ensureRoomAvailabilityForDate(app, adminToken, '2099-08-27', 2);
 

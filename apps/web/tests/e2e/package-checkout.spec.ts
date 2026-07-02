@@ -1,18 +1,16 @@
 import { expect, test } from '@playwright/test';
 
 const PACKAGE_ID = '00000000-0000-4000-8000-000000005001';
-const ACTIVITY_A = '00000000-0000-4000-8000-000000004031';
-const ACTIVITY_B = '00000000-0000-4000-8000-000000004032';
-const SCHEDULE_A = '00000000-0000-4000-8000-000000004033';
-const SCHEDULE_B = '00000000-0000-4000-8000-000000004035';
 const BOOKING_ID = 'booking-e2e-package';
-const DATE = '2026-07-20';
-const PARTICIPANTS = 2;
+const DATE = '2026-08-01';
+const END_DATE = '2026-08-02';
+const TRAVELERS = 4;
 const UNIT_PRICE_A = 4500;
 const UNIT_PRICE_B = 3500;
 const DISCOUNT_PERCENT = 15;
-const SUBTOTAL_CENTS = (UNIT_PRICE_A + UNIT_PRICE_B) * PARTICIPANTS;
-const TOTAL_CENTS = SUBTOTAL_CENTS - Math.round((SUBTOTAL_CENTS * DISCOUNT_PERCENT) / 100);
+const PER_TRAVELER_TOTAL =
+  UNIT_PRICE_A + UNIT_PRICE_B - Math.round(((UNIT_PRICE_A + UNIT_PRICE_B) * DISCOUNT_PERCENT) / 100);
+const TOTAL_CENTS = PER_TRAVELER_TOTAL * TRAVELERS;
 
 const packageDetailMock = {
   package: {
@@ -27,7 +25,7 @@ const packageDetailMock = {
       id: '00000000-0000-4000-8000-000000005002',
       packageId: PACKAGE_ID,
       itemType: 'activity',
-      itemId: ACTIVITY_A,
+      itemId: '00000000-0000-4000-8000-000000004031',
       label: 'Gombe City Tour',
       unitPriceCents: UNIT_PRICE_A,
       currency: 'USD',
@@ -36,7 +34,7 @@ const packageDetailMock = {
       id: '00000000-0000-4000-8000-000000005003',
       packageId: PACKAGE_ID,
       itemType: 'activity',
-      itemId: ACTIVITY_B,
+      itemId: '00000000-0000-4000-8000-000000004032',
       label: 'Congo River Walk',
       unitPriceCents: UNIT_PRICE_B,
       currency: 'USD',
@@ -46,62 +44,13 @@ const packageDetailMock = {
     subtotalCents: UNIT_PRICE_A + UNIT_PRICE_B,
     discountPercent: DISCOUNT_PERCENT,
     discountAmountCents: Math.round(((UNIT_PRICE_A + UNIT_PRICE_B) * DISCOUNT_PERCENT) / 100),
-    totalCents:
-      UNIT_PRICE_A + UNIT_PRICE_B - Math.round(((UNIT_PRICE_A + UNIT_PRICE_B) * DISCOUNT_PERCENT) / 100),
+    totalCents: PER_TRAVELER_TOTAL,
     currency: 'USD',
   },
   images: [],
 };
 
-function activityDetailMock(
-  id: string,
-  title: string,
-  scheduleId: string,
-  startDatetime: string,
-  priceCents: number,
-) {
-  return {
-    id,
-    title,
-    description: `${title} description`,
-    durationMinutes: 120,
-    priceCents,
-    currency: 'USD',
-    destination: 'Kinshasa',
-    providerName: 'Tourism Gate Experiences Kinshasa',
-    date: DATE,
-    participants: PARTICIPANTS,
-    schedules: [
-      {
-        scheduleId,
-        startDatetime,
-        capacity: 12,
-        bookedCount: 0,
-        remainingPlaces: 12,
-        priceCents,
-        currency: 'USD',
-      },
-    ],
-  };
-}
-
-const activityAMock = activityDetailMock(
-  ACTIVITY_A,
-  'Gombe City Tour',
-  SCHEDULE_A,
-  '2026-07-20T09:00:00.000Z',
-  UNIT_PRICE_A,
-);
-
-const activityBMock = activityDetailMock(
-  ACTIVITY_B,
-  'Congo River Walk',
-  SCHEDULE_B,
-  '2026-07-20T16:00:00.000Z',
-  UNIT_PRICE_B,
-);
-
-test('forfait activités: configurer créneaux, panier -> recap -> demande assistée avec packageId', async ({
+test('forfait activités: réserver sans créneaux, panier -> recap -> demande assistée', async ({
   page,
 }) => {
   test.setTimeout(60_000);
@@ -130,22 +79,6 @@ test('forfait activités: configurer créneaux, panier -> recap -> demande assis
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify(packageDetailMock),
-    });
-  });
-
-  await page.route(`**/api/public/activities/${ACTIVITY_A}**`, async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify(activityAMock),
-    });
-  });
-
-  await page.route(`**/api/public/activities/${ACTIVITY_B}**`, async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify(activityBMock),
     });
   });
 
@@ -194,27 +127,21 @@ test('forfait activités: configurer créneaux, panier -> recap -> demande assis
     });
   });
 
-  await page.goto(`/packages/${PACKAGE_ID}?date=${DATE}&participants=${PARTICIPANTS}`);
+  await page.goto(
+    `/packages/${PACKAGE_ID}?startDate=${DATE}&travelers=${TRAVELERS}#configure`,
+  );
 
   await expect(page.getByRole('heading', { name: 'Kinshasa Activities Duo' })).toBeVisible();
-  await expect(
-    page.getByRole('heading', { name: /choisir les cr|choose time slots|elegir horarios/i }),
-  ).toBeVisible();
-
-  const gombeSection = page.locator('article').filter({ hasText: 'Gombe City Tour' });
-  await gombeSection.getByRole('radio').first().click();
-
-  const riverSection = page.locator('article').filter({ hasText: 'Congo River Walk' });
-  await riverSection.getByRole('radio').first().click();
+  await expect(page.getByText('Gombe City Tour')).toBeVisible();
+  await expect(page.getByText('Congo River Walk')).toBeVisible();
+  await expect(page.getByText(/aucun cr|no time slots|sin horarios/i)).not.toBeVisible();
 
   await page.getByRole('button', { name: /voir le r[ée]cap|view summary|ver resumen/i }).click();
   await expect(
     page.getByRole('heading', { name: /r[ée]capitulatif du forfait|package summary|resumen del paquete/i }),
   ).toBeVisible();
 
-  await page.locator('#reserve').getByRole('button', {
-    name: /ajouter au panier|add to cart|a[ñn]adir al carrito/i,
-  }).click();
+  await page.getByRole('button', { name: /ajouter au panier|add to cart|a[ñn]adir al carrito/i }).click();
 
   await expect(page).toHaveURL(/\/booking\/cart\?.*kind=package/);
   await expect(page.getByText('Kinshasa Activities Duo')).toBeVisible();
@@ -239,14 +166,11 @@ test('forfait activités: configurer créneaux, panier -> recap -> demande assis
     packageId: PACKAGE_ID,
     items: [
       {
-        itemType: 'activity_schedule',
-        referenceId: SCHEDULE_A,
-        quantity: PARTICIPANTS,
-      },
-      {
-        itemType: 'activity_schedule',
-        referenceId: SCHEDULE_B,
-        quantity: PARTICIPANTS,
+        itemType: 'package',
+        referenceId: PACKAGE_ID,
+        quantity: TRAVELERS,
+        startDate: DATE,
+        endDate: END_DATE,
       },
     ],
   });

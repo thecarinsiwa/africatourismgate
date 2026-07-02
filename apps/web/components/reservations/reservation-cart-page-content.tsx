@@ -10,8 +10,6 @@ import type { ActivityDetail } from '../../lib/activities/types';
 import { getAccommodationDetail, getActivityDetail, getCruiseSailingDetail, getFlightDetail, getPackageDetail, getVehicleDetail } from '../../lib/api/public';
 import { formatPackagePrice } from '../../lib/packages/listings';
 import type { PackageDetail } from '../../lib/packages/types';
-import { fetchPackageDraftValidationData } from '../../lib/packages/package-validation';
-import type { PackageDraftValidationData } from '../../lib/reservations/flow';
 import { formatAirportLabel } from '../../lib/flights/airports';
 import { formatFlightPrice } from '../../lib/flights/listings';
 import type { FlightDetail } from '../../lib/flights/types';
@@ -34,6 +32,7 @@ import {
   isPackageReservationDraftStructurallyComplete,
   isRoomReservationDraft,
   isVehicleReservationDraft,
+  packageReservationTotalCents,
   type ReservationDraft,
 } from '../../lib/reservations/flow';
 import { PackagePriceDisplay } from '../packages/package-price-display';
@@ -53,7 +52,6 @@ export function ReservationCartPageContent({ draft }: Props) {
   const c = t.cars;
   const cr = t.cruises;
   const p = t.packages;
-  const act = t.activities;
 
   const [hotelDetail, setHotelDetail] = useState<PropertyDetail | null>(null);
   const [flightDetail, setFlightDetail] = useState<FlightDetail | null>(null);
@@ -61,9 +59,6 @@ export function ReservationCartPageContent({ draft }: Props) {
   const [cruiseDetail, setCruiseDetail] = useState<CruiseSailingDetail | null>(null);
   const [activityDetail, setActivityDetail] = useState<ActivityDetail | null>(null);
   const [packageDetail, setPackageDetail] = useState<PackageDetail | null>(null);
-  const [packageValidation, setPackageValidation] = useState<PackageDraftValidationData | null>(
-    null,
-  );
   const [loading, setLoading] = useState(Boolean(draft));
 
   const room = useMemo(
@@ -124,11 +119,11 @@ export function ReservationCartPageContent({ draft }: Props) {
   );
 
   const packageReady = useMemo(() => {
-    if (!draft || !isPackageReservationDraft(draft) || !packageDetail) {
+    if (!draft || !isPackageReservationDraft(draft)) {
       return false;
     }
-    return isPackageReservationDraftStructurallyComplete(draft, packageDetail.items);
-  }, [draft, packageDetail]);
+    return isPackageReservationDraftStructurallyComplete(draft);
+  }, [draft]);
 
   useEffect(() => {
     let cancelled = false;
@@ -184,7 +179,6 @@ export function ReservationCartPageContent({ draft }: Props) {
             setVehicleDetail(null);
             setCruiseDetail(null);
             setPackageDetail(null);
-            setPackageValidation(null);
           }
         })
         .finally(() => {
@@ -192,7 +186,7 @@ export function ReservationCartPageContent({ draft }: Props) {
         });
     } else if (isPackageReservationDraft(draft)) {
       void getPackageDetail(draft.packageId)
-        .then(async (pkg) => {
+        .then((pkg) => {
           if (cancelled) return;
           setPackageDetail(pkg);
           setHotelDetail(null);
@@ -200,8 +194,6 @@ export function ReservationCartPageContent({ draft }: Props) {
           setVehicleDetail(null);
           setCruiseDetail(null);
           setActivityDetail(null);
-          const validation = await fetchPackageDraftValidationData(draft);
-          if (!cancelled) setPackageValidation(validation);
         })
         .finally(() => {
           if (!cancelled) setLoading(false);
@@ -265,7 +257,10 @@ export function ReservationCartPageContent({ draft }: Props) {
                 activityDetail.currency,
               )
             : draft && isPackageReservationDraft(draft) && packageDetail && packageReady
-              ? formatPackagePrice(packageDetail.pricing.totalCents, packageDetail.pricing.currency)
+              ? formatPackagePrice(
+                  packageReservationTotalCents(packageDetail.pricing, draft.travelers),
+                  packageDetail.pricing.currency,
+                )
             : vehicleReady
             ? formatCarPrice(vehicleReady.totalPriceCents, vehicleReady.currency)
             : '--';
@@ -428,16 +423,13 @@ export function ReservationCartPageContent({ draft }: Props) {
                 draft &&
                 isPackageReservationDraft(draft) &&
                 packageDetail &&
-                packageReady &&
-                packageValidation && (
+                packageReady && (
                   <PackageReservationSummary
                     draft={draft}
                     packageDetail={packageDetail}
-                    validation={packageValidation}
                     t={p}
-                    participantSingular={act.participantSingular}
-                    participantPlural={act.participantPlural}
                     locale={locale}
+                    showPricing
                   />
                 )}
 

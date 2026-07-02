@@ -6,8 +6,7 @@ export type PackageCompositionStep = 'overview' | 'configure' | 'recap';
 
 type PackageCompositionStepperProps = {
   step: PackageCompositionStep;
-  configuredCount: number;
-  totalCount: number;
+  bookingReady: boolean;
   t: Translations['packages'];
 };
 
@@ -18,7 +17,7 @@ function stepLabel(step: PackageCompositionStep, t: Translations['packages']): s
     case 'overview':
       return t.stepOverview;
     case 'configure':
-      return t.stepConfigure;
+      return t.stepBook;
     case 'recap':
       return t.stepRecap;
   }
@@ -29,7 +28,7 @@ function stepShortLabel(step: PackageCompositionStep, t: Translations['packages'
     case 'overview':
       return t.stepOverviewShort;
     case 'configure':
-      return t.stepConfigureShort;
+      return t.stepBookShort;
     case 'recap':
       return t.stepRecapShort;
   }
@@ -37,8 +36,7 @@ function stepShortLabel(step: PackageCompositionStep, t: Translations['packages'
 
 export function PackageCompositionStepper({
   step,
-  configuredCount,
-  totalCount,
+  bookingReady,
   t,
 }: PackageCompositionStepperProps) {
   const currentIndex = STEPS.indexOf(step);
@@ -73,9 +71,9 @@ export function PackageCompositionStepper({
                   <span className="hidden sm:inline">{stepLabel(entry, t)}</span>
                   <span className="sm:hidden">{stepShortLabel(entry, t)}</span>
                 </p>
-                {entry === 'configure' && totalCount > 0 ? (
+                {entry === 'configure' && isCurrent ? (
                   <p className="text-xs text-atg-muted">
-                    {t.configureProgress.replace('{done}', String(configuredCount)).replace('{total}', String(totalCount))}
+                    {bookingReady ? t.bookingReadyHint : t.bookingPendingHint}
                   </p>
                 ) : null}
               </div>

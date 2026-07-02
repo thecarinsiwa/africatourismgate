@@ -29,10 +29,6 @@ export default function PackageDetailPage({ params, searchParams }: PageProps) {
   const initialSearch = normalizePackagesSearchParams(searchParams);
 
   return (
-    <PackageDetailPageContent
-      packageId={params.id}
-      initialSearch={initialSearch}
-      rawSearchParams={searchParams}
-    />
+    <PackageDetailPageContent packageId={params.id} initialSearch={initialSearch} />
   );
 }

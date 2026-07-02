@@ -3,14 +3,7 @@ import type { ActivityDetail } from '../activities/types';
 import type { VehicleDetail } from '../cars/types';
 import type { CruiseSailingDetail } from '../cruises/types';
 import type { FlightDetail } from '../flights/types';
-import type { PackageItemEnriched } from '../packages/types';
-import {
-  appendPackageLineToParams,
-  buildPackageLinesDraft,
-  parsePackageLinesFromSearchParams,
-  type PackageLineSelection,
-} from '../packages/package-lines';
-import { buildPackageDetailHrefWithLines } from '../packages/listings';
+import { parsePackageLinesFromSearchParams } from '../packages/package-lines';
 
 export type RoomReservationDraft = {
   kind: 'room';
@@ -55,7 +48,9 @@ export type ActivityScheduleReservationDraft = {
 export type PackageReservationDraft = {
   kind: 'package';
   packageId: string;
-  lines: PackageLineSelection[];
+  startDate: string;
+  endDate: string;
+  travelers: number;
 };
 
 export type { PackageLineSelection } from '../packages/package-lines';
@@ -139,49 +134,8 @@ export type PackageDraftValidationData = {
   cruiseDetails: Record<string, CruiseSailingDetail | null | undefined>;
 };
 
-export function isPackageReservationDraftReady(
-  draft: PackageReservationDraft,
-  validation: PackageDraftValidationData,
-): boolean {
-  return draft.lines.every((line) => isPackageLineSelectionReady(line, validation));
-}
-
-function isPackageLineSelectionReady(
-  line: PackageLineSelection,
-  validation: PackageDraftValidationData,
-): boolean {
-  switch (line.lineType) {
-    case 'activity': {
-      const activity = validation.activityDetails[line.itemId];
-      const schedule = activity?.schedules.find((item) => item.scheduleId === line.scheduleId);
-      return isActivityScheduleOfferBookable(schedule, line.participants);
-    }
-    case 'property': {
-      const property = validation.propertyDetails[line.itemId];
-      const room = property?.rooms.find((item) => item.id === line.roomId);
-      return Boolean(room?.available);
-    }
-    case 'flight': {
-      const flight = validation.flightDetails[line.itemId];
-      const flightClass = flight?.classes.find((item) => item.id === line.flightClassId);
-      return Boolean(flightClass && flightClass.availableSeats >= line.passengers);
-    }
-    case 'vehicle': {
-      const vehicle = validation.vehicleDetails[line.itemId];
-      return Boolean(
-        vehicle && vehicle.availabilitySlot?.id === line.availabilitySlotId,
-      );
-    }
-    case 'cruise': {
-      const sailing = validation.cruiseDetails[line.sailingId];
-      const cabin = sailing?.cabins.find(
-        (item) => item.availabilityId === line.cabinAvailabilityId && item.cabinId === line.itemId,
-      );
-      return isCabinOfferBookable(cabin, line.guests);
-    }
-    default:
-      return false;
-  }
+export function isPackageReservationDraftReady(draft: PackageReservationDraft): boolean {
+  return isPackageReservationDraftStructurallyComplete(draft);
 }
 
 export function parseReservationDraft(
@@ -195,9 +149,60 @@ export function parseReservationDraft(
 
   if (kind === 'package') {
     const packageId = readString(searchParams.packageId);
-    const lines = parsePackageLinesFromSearchParams(searchParams);
-    if (!packageId || !lines) return null;
-    return { kind: 'package', packageId, lines };
+    const startDate =
+      readString(searchParams.startDate) ||
+      readString(searchParams.date) ||
+      readString(searchParams.checkIn);
+    const travelers =
+      readPositiveInt(searchParams.travelers) ??
+      readPositiveInt(searchParams.participants) ??
+      readPositiveInt(searchParams.guests);
+    const endDate =
+      readString(searchParams.endDate) ||
+      readString(searchParams.checkOut) ||
+      readString(searchParams.returnDate);
+
+    if (!packageId || !startDate || travelers == null) {
+      const legacyLines = parsePackageLinesFromSearchParams(searchParams);
+      if (!packageId || !legacyLines || legacyLines.length === 0) return null;
+      const first = legacyLines[0]!;
+      const legacyStart =
+        first.lineType === 'activity'
+          ? first.date
+          : first.lineType === 'property'
+            ? first.checkIn
+            : first.lineType === 'flight'
+              ? first.departureDate
+              : first.lineType === 'vehicle'
+                ? first.pickupDate
+                : startDate;
+      const legacyTravelers =
+        first.lineType === 'activity'
+          ? first.participants
+          : first.lineType === 'property'
+            ? first.guests
+            : first.lineType === 'flight'
+              ? first.passengers
+              : first.lineType === 'cruise'
+                ? first.guests
+                : travelers ?? 1;
+      if (!legacyStart) return null;
+      return {
+        kind: 'package',
+        packageId,
+        startDate: legacyStart,
+        endDate: endDate || legacyStart,
+        travelers: legacyTravelers,
+      };
+    }
+
+    return {
+      kind: 'package',
+      packageId,
+      startDate,
+      endDate: endDate || startDate,
+      travelers,
+    };
   }
 
   if (kind === 'activity_schedule' || scheduleId) {
@@ -298,10 +303,9 @@ export function buildReservationQuery(draft: ReservationDraft): string {
     const params = new URLSearchParams({
       kind: 'package',
       packageId: draft.packageId,
-      lineCount: String(draft.lines.length),
-    });
-    draft.lines.forEach((line, index) => {
-      appendPackageLineToParams(params, index, line);
+      startDate: draft.startDate,
+      endDate: draft.endDate,
+      travelers: String(draft.travelers),
     });
     return params.toString();
   }
@@ -368,7 +372,15 @@ export function buildFlightReservationQuery(
 
 export function buildCheckoutItems(draft: ReservationDraft): BookingCheckoutItem[] {
   if (draft.kind === 'package') {
-    return draft.lines.map((line) => packageLineToCheckoutItem(line));
+    return [
+      {
+        itemType: 'package',
+        referenceId: draft.packageId,
+        quantity: draft.travelers,
+        startDate: draft.startDate,
+        endDate: draft.endDate,
+      },
+    ];
   }
 
   if (draft.kind === 'activity_schedule') {
@@ -438,94 +450,48 @@ export function buildCheckoutRequest(draft: ReservationDraft): BookingCheckoutRe
   };
 }
 
-export function buildPackageReservationDraft(
+export function buildPackageAssistedReservationDraft(
   packageId: string,
-  items: PackageItemEnriched[],
-  selections: Array<PackageLineSelection | null | undefined>,
+  startDate: string,
+  endDate: string,
+  travelers: number,
 ): PackageReservationDraft | null {
-  return buildPackageLinesDraft(packageId, items, selections);
+  if (!packageId || !startDate || !endDate || !Number.isFinite(travelers) || travelers < 1) {
+    return null;
+  }
+  return { kind: 'package', packageId, startDate, endDate, travelers };
+}
+
+/** @deprecated Assisted package drafts no longer require per-line selections. */
+export function buildPackageReservationDraft(): PackageReservationDraft | null {
+  return null;
 }
 
 export function isPackageReservationDraftStructurallyComplete(
   draft: PackageReservationDraft,
-  items: PackageItemEnriched[],
 ): boolean {
-  return buildPackageReservationDraft(draft.packageId, items, draft.lines) !== null;
+  return Boolean(
+    draft.packageId &&
+      draft.startDate &&
+      draft.endDate &&
+      draft.travelers >= 1,
+  );
 }
 
-function packageLineToCheckoutItem(line: PackageLineSelection): BookingCheckoutItem {
-  switch (line.lineType) {
-    case 'activity':
-      return {
-        itemType: 'activity_schedule',
-        referenceId: line.scheduleId,
-        quantity: line.participants,
-      };
-    case 'property':
-      return {
-        itemType: 'room',
-        referenceId: line.roomId,
-        quantity: 1,
-        startDate: line.checkIn,
-        endDate: line.checkOut,
-      };
-    case 'flight':
-      return {
-        itemType: 'flight_class',
-        referenceId: line.flightClassId,
-        quantity: line.passengers,
-        date: line.departureDate,
-      };
-    case 'vehicle':
-      return {
-        itemType: 'vehicle',
-        referenceId: line.availabilitySlotId,
-        quantity: 1,
-        startDate: line.pickupDate,
-        endDate: line.returnDate,
-      };
-    case 'cruise':
-      return {
-        itemType: 'cabin',
-        referenceId: line.cabinAvailabilityId,
-        quantity: 1,
-      };
-    default:
-      throw new Error('Unsupported package line type');
-  }
-}
-
-function packageDraftSearchParams(lines: PackageLineSelection[]): {
-  startDate?: string;
-  travelers?: string;
-} {
-  const first = lines[0];
-  if (!first) return {};
-
-  switch (first.lineType) {
-    case 'activity':
-      return { startDate: first.date, travelers: String(first.participants) };
-    case 'property':
-      return { startDate: first.checkIn, travelers: String(first.guests) };
-    case 'flight':
-      return { startDate: first.departureDate, travelers: String(first.passengers) };
-    case 'vehicle':
-      return { startDate: first.pickupDate, travelers: '1' };
-    case 'cruise':
-      return { travelers: String(first.guests) };
-    default:
-      return {};
-  }
+export function packageReservationTotalCents(
+  pricing: { totalCents: number },
+  travelers: number,
+): number {
+  return pricing.totalCents * travelers;
 }
 
 export function buildDraftDetailHref(draft: ReservationDraft): string {
   if (draft.kind === 'package') {
-    return buildPackageDetailHrefWithLines(
-      draft.packageId,
-      packageDraftSearchParams(draft.lines),
-      draft.lines,
-      '#configure',
-    );
+    const params = new URLSearchParams({
+      startDate: draft.startDate,
+      travelers: String(draft.travelers),
+    });
+    return `/packages/${encodeURIComponent(draft.packageId)}?${params.toString()}#configure`;
   }
 
   if (draft.kind === 'activity_schedule') {

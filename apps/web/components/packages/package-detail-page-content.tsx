@@ -5,23 +5,19 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getPackageDetail } from '../../lib/api/public';
 import {
-  buildPackageTravelDates,
   computePackageEndDate,
   parsePackageDurationDays,
 } from '../../lib/packages/package-dates';
 import {
-  buildPackageDetailHrefWithLines,
-  isActivityOnlyPackage,
-  parsePackageLineSelections,
+  buildPackageDetailHref,
   parseParticipantsParam,
   type PackagesSearchParams,
 } from '../../lib/packages/listings';
-import { lineMatchesPackageItem, type PackageLineSelection } from '../../lib/packages/package-lines';
 import type { PackageDetail } from '../../lib/packages/types';
 import { formatDisplayDate } from '../../lib/hotels/dates';
 import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import {
-  buildPackageReservationDraft,
+  buildPackageAssistedReservationDraft,
   buildReservationQuery,
 } from '../../lib/reservations/flow';
 import { DetailPageSkeleton } from '../shared/loading-skeletons';
@@ -33,52 +29,27 @@ import {
   PackageCompositionStepper,
   type PackageCompositionStep,
 } from './package-composition-stepper';
-import { PackageItemConfigItem } from './package-item-config-section';
 import { PackageItemsSection } from './package-items-section';
-import { PackageResolvedSummary } from './package-resolved-summary';
+import { PackageAssistedResolvedSummary } from './package-resolved-summary';
 
 type PackageDetailPageContentProps = {
   packageId: string;
   initialSearch: PackagesSearchParams;
-  rawSearchParams: Record<string, string | string[] | undefined>;
 };
 
-function countConfiguredLines(
-  items: PackageDetail['items'],
-  lines: Array<PackageLineSelection | null>,
-): number {
-  return items.filter(
-    (item, index) => {
-      const line = lines[index];
-      return line != null && lineMatchesPackageItem(line, item);
-    },
-  ).length;
-}
-
-function inferInitialStep(
-  items: PackageDetail['items'],
-  lines: Array<PackageLineSelection | null>,
-  startDate: string,
-): PackageCompositionStep {
+function inferInitialStep(startDate: string, hash: string): PackageCompositionStep {
   if (!startDate) return 'overview';
-  const configured = countConfiguredLines(items, lines);
-  if (configured === items.length && items.length > 0) return 'recap';
-  if (startDate) return 'configure';
-  return 'overview';
+  if (hash === '#recap') return 'recap';
+  return 'configure';
 }
 
 export function PackageDetailPageContent({
   packageId,
   initialSearch,
-  rawSearchParams,
 }: PackageDetailPageContentProps) {
   const t = useTranslations();
   const p = t.packages;
   const a = t.activities;
-  const h = t.hotels;
-  const f = t.flights;
-  const c = t.cars;
-  const cr = t.cruises;
   const { locale } = useLocale();
   const router = useRouter();
 
@@ -94,7 +65,6 @@ export function PackageDetailPageContent({
   const [travelers, setTravelers] = useState(
     parseParticipantsParam(initialSearch.travelers ?? initialSearch.participants),
   );
-  const [lineSelections, setLineSelections] = useState<Array<PackageLineSelection | null>>([]);
   const [step, setStep] = useState<PackageCompositionStep>('overview');
 
   const listHref = `/packages${initialSearch.search ? `?search=${encodeURIComponent(initialSearch.search)}` : ''}`;
@@ -112,23 +82,13 @@ export function PackageDetailPageContent({
   );
 
   const syncUrl = useCallback(
-    (
-      overrides: Partial<{
-        lineSelections: Array<PackageLineSelection | null>;
-        search: PackagesSearchParams;
-      }> = {},
-    ) => {
-      const nextLines = overrides.lineSelections ?? lineSelections;
+    (overrides: Partial<{ search: PackagesSearchParams; step: PackageCompositionStep }> = {}) => {
       const nextSearch = overrides.search ?? searchContext;
-      const href = buildPackageDetailHrefWithLines(
-        packageId,
-        nextSearch,
-        nextLines,
-        '#configure',
-      );
+      const hash = overrides.step === 'recap' ? '#recap' : '#configure';
+      const href = buildPackageDetailHref(packageId, nextSearch, hash);
       router.replace(href, { scroll: false });
     },
-    [packageId, lineSelections, searchContext, router],
+    [packageId, searchContext, router],
   );
 
   const hydratedPackageKeyRef = useRef<string | null>(null);
@@ -170,66 +130,34 @@ export function PackageDetailPageContent({
     if (hydratedPackageKeyRef.current === hydrationKey) return;
     hydratedPackageKeyRef.current = hydrationKey;
 
-    const parsedLines = parsePackageLineSelections(rawSearchParams, detail.items.length);
-    setLineSelections(parsedLines);
-    setStep(inferInitialStep(detail.items, parsedLines, initialStartDate));
-  }, [detail, packageId, fetchId, rawSearchParams, initialStartDate]);
+    const hash =
+      typeof window !== 'undefined' ? window.location.hash.replace(/^#/, '') : '';
+    setStep(inferInitialStep(initialStartDate, hash ? `#${hash}` : ''));
+  }, [detail, packageId, fetchId, initialStartDate]);
 
-  const configuredCount = detail ? countConfiguredLines(detail.items, lineSelections) : 0;
-  const allConfigured = detail ? configuredCount === detail.items.length : false;
-  const activityOnly = detail ? isActivityOnlyPackage(detail.items) : false;
-
-  const configContext = useMemo(() => {
-    const dates = startDate
-      ? buildPackageTravelDates(startDate, durationDays, travelers)
-      : null;
-    return {
-      date: startDate,
-      participants: travelers,
-      checkIn: dates?.startDate ?? startDate,
-      checkOut: dates?.endDate ?? endDate,
-      guests: travelers,
-      departureDate: startDate,
-      passengers: travelers,
-      pickupDate: startDate,
-      returnDate: endDate,
-      sailingId: initialSearch.sailingId ?? '',
-    };
-  }, [startDate, durationDays, travelers, endDate, initialSearch.sailingId]);
+  const bookingReady = Boolean(startDate && endDate && travelers >= 1);
 
   function handleStartDateChange(value: string) {
     setStartDate(value);
-    const cleared = detail ? Array.from({ length: detail.items.length }, () => null) : [];
-    setLineSelections(cleared);
     setStep(value ? 'configure' : 'overview');
     syncUrl({
       search: { ...searchContext, startDate: value || undefined },
-      lineSelections: cleared,
+      step: 'configure',
     });
   }
 
   function handleTravelersChange(value: number) {
     const next = Math.max(1, value);
     setTravelers(next);
-    const cleared = detail ? Array.from({ length: detail.items.length }, () => null) : [];
-    setLineSelections(cleared);
     syncUrl({
       search: { ...searchContext, travelers: String(next) },
-      lineSelections: cleared,
-    });
-  }
-
-  function handleLineChange(index: number, line: PackageLineSelection | null) {
-    setLineSelections((current) => {
-      const next = [...current];
-      next[index] = line;
-      syncUrl({ lineSelections: next });
-      return next;
+      step,
     });
   }
 
   function goToStep(next: PackageCompositionStep) {
     setStep(next);
+    syncUrl({ step: next });
     if (next === 'configure') {
       document.getElementById('configure')?.scrollIntoView({ behavior: 'smooth' });
     }
@@ -241,14 +169,18 @@ export function PackageDetailPageContent({
   const canAddToCart = Boolean(
     detail &&
       step === 'recap' &&
-      startDate &&
-      allConfigured &&
-      buildPackageReservationDraft(packageId, detail.items, lineSelections),
+      bookingReady &&
+      buildPackageAssistedReservationDraft(packageId, startDate, endDate, travelers),
   );
 
   function handleAddToCart() {
     if (!detail) return;
-    const draft = buildPackageReservationDraft(packageId, detail.items, lineSelections);
+    const draft = buildPackageAssistedReservationDraft(
+      packageId,
+      startDate,
+      endDate,
+      travelers,
+    );
     if (!draft) return;
     router.push(`/booking/cart?${buildReservationQuery(draft)}`);
   }
@@ -341,16 +273,17 @@ export function PackageDetailPageContent({
                 ) : null}
               </header>
 
-              <PackageCompositionStepper
-                step={step}
-                configuredCount={configuredCount}
-                totalCount={detail.items.length}
-                t={p}
-              />
+              <PackageCompositionStepper step={step} bookingReady={bookingReady} t={p} />
 
               {step === 'overview' ? (
                 <>
-                  <PackageItemsSection items={detail.items} t={p} />
+                  <PackageItemsSection
+                    items={detail.items}
+                    t={p}
+                    a={a}
+                    startDate={startDate}
+                    travelers={travelers}
+                  />
                   <div className="flex justify-end">
                     <button
                       type="button"
@@ -421,39 +354,17 @@ export function PackageDetailPageContent({
                     </p>
                   ) : (
                     <div className="space-y-4">
-                      {activityOnly ? (
-                        <h3 className="text-base font-bold text-atg-fg">
-                          {p.configureSchedulesTitle}
-                        </h3>
-                      ) : (
-                        <h3 className="text-base font-bold text-atg-fg">
-                          {p.includedServicesTitle}
-                        </h3>
-                      )}
-
-                      {detail.items.map((item, index) => (
-                        <PackageItemConfigItem
-                          key={item.id}
-                          item={item}
-                          index={index}
-                          selectedLine={lineSelections[index] ?? null}
-                          onChange={(line) => handleLineChange(index, line)}
-                          context={configContext}
-                          t={p}
-                          a={a}
-                          h={h}
-                          f={f}
-                          c={c}
-                          cr={cr}
-                          locale={locale}
-                        />
-                      ))}
-
-                      {!allConfigured ? (
-                        <p className="text-sm text-amber-700 dark:text-amber-300">
-                          {p.allItemsRequired}
-                        </p>
-                      ) : null}
+                      <h3 className="text-base font-bold text-atg-fg">
+                        {p.includedServicesTitle}
+                      </h3>
+                      <PackageItemsSection
+                    items={detail.items}
+                    t={p}
+                    a={a}
+                    startDate={startDate}
+                    travelers={travelers}
+                  />
+                      <p className="text-sm text-atg-muted">{p.assistedBookingServicesHint}</p>
                     </div>
                   )}
 
@@ -467,7 +378,7 @@ export function PackageDetailPageContent({
                     </button>
                     <button
                       type="button"
-                      disabled={!startDate || !allConfigured}
+                      disabled={!bookingReady}
                       onClick={() => goToStep('recap')}
                       className="min-h-[44px] rounded-lg bg-primary px-6 py-2 text-sm font-bold uppercase tracking-wide text-white hover:bg-primary-hover disabled:cursor-not-allowed disabled:opacity-50"
                     >
@@ -487,10 +398,13 @@ export function PackageDetailPageContent({
                     <p className="mt-2 text-sm text-atg-muted">{p.recapHint}</p>
                   </div>
 
-                  <PackageResolvedSummary
+                  <PackageAssistedResolvedSummary
                     items={detail.items}
-                    lines={lineSelections}
+                    startDate={startDate}
+                    endDate={endDate}
+                    travelers={travelers}
                     t={p}
+                    locale={locale}
                   />
 
                   <div className="flex flex-wrap gap-3 border-t border-atg-border pt-4 dark:border-atg-border">
@@ -511,6 +425,7 @@ export function PackageDetailPageContent({
               startDate={startDate}
               endDate={endDate}
               durationDays={durationDays}
+              travelers={travelers}
               resolving={false}
               canAddToCart={canAddToCart}
               onAddToCart={handleAddToCart}
@@ -527,6 +442,7 @@ export function PackageDetailPageContent({
           startDate={startDate}
           endDate={endDate}
           durationDays={durationDays}
+          travelers={travelers}
           resolving={false}
           canAddToCart={canAddToCart}
           onAddToCart={handleAddToCart}
