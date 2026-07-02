@@ -30,6 +30,12 @@ export class AuthResponseDto extends AuthTokensResponseDto {
   verificationId?: string;
 
   @ApiPropertyOptional({
+    description: 'Why verification is required (login, google_signup, register, booking)',
+    enum: ['register', 'google_signup', 'login', 'booking'],
+  })
+  verificationPurpose?: 'register' | 'google_signup' | 'login' | 'booking';
+
+  @ApiPropertyOptional({
     description: 'Booking ID when verifying a reservation operation',
   })
   bookingId?: string;

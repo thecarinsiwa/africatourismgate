@@ -21,6 +21,7 @@ export interface AuthResponse extends AuthTokens {
   user?: AuthUser;
   requiresVerification?: boolean;
   verificationId?: string;
+  verificationPurpose?: 'register' | 'google_signup' | 'login' | 'booking';
   bookingId?: string;
 }
 

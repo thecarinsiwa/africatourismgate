@@ -18,11 +18,38 @@ function normalizeNextPath(nextPath: string | null): string {
   return nextPath;
 }
 
+function resolveVerifyCopy(purpose: string | null): {
+  title: string;
+  subtitle: string;
+} {
+  if (purpose === 'login') {
+    return {
+      title: 'Confirmez votre connexion',
+      subtitle:
+        'Un code de sécurité a été envoyé à votre adresse. Saisissez-le pour vous connecter.',
+    };
+  }
+  if (purpose === 'google_signup' || purpose === 'register') {
+    return {
+      title: 'Finalisez la création de votre compte',
+      subtitle:
+        'Un code de sécurité a été envoyé à votre adresse. Saisissez-le pour activer votre compte.',
+    };
+  }
+  return {
+    title: 'Vérification par e-mail',
+    subtitle:
+      "Un code de sécurité a été envoyé à votre adresse. Saisissez-le pour continuer. Si vous n'êtes pas à l'origine de cette opération, ignorez cet e-mail.",
+  };
+}
+
 export function BookingVerifyPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   useDevOAuthReturnRedirect('/booking/verify');
   const verificationId = searchParams.get('verificationId') ?? '';
+  const purpose = searchParams.get('purpose');
+  const copy = useMemo(() => resolveVerifyCopy(purpose), [purpose]);
   const bookingId = searchParams.get('bookingId');
   const safeNext = useMemo(() => {
     const raw = searchParams.get('next');
@@ -80,12 +107,10 @@ export function BookingVerifyPageContent() {
       <main className="mx-auto flex w-full max-w-xl flex-1 items-center px-4 py-10 sm:px-6 lg:px-8">
         <section className="w-full rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-atg-border dark:bg-atg-elevated">
           <h1 className="text-2xl font-bold text-[#0f1a16] dark:text-white">
-            Vérification par e-mail
+            {copy.title}
           </h1>
           <p className="mt-2 text-sm text-gray-600 dark:text-atg-muted">
-            Un code de sécurité a été envoyé à votre adresse. Saisissez-le pour
-            continuer. Si vous n&apos;êtes pas à l&apos;origine de cette
-            opération, ignorez cet e-mail.
+            {copy.subtitle}
           </p>
 
           {error ? (
