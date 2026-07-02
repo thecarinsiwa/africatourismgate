@@ -93,7 +93,9 @@ export function BookingVerifyPageContent() {
             'Code invalide ou expiré. Si vous avez déjà validé ce code (ex. sur le site production), reconnectez-vous avec Google pour en recevoir un nouveau.',
           envMissing: 'Configuration API manquante.',
           conflict:
-            'Ce compte existe déjà. Essayez « Se connecter avec Google » à nouveau ou connectez-vous avec votre mot de passe.',
+            purpose === 'google_signup' || purpose === 'login'
+              ? 'Ce compte existe déjà. Relancez « Se connecter avec Google » pour recevoir un nouveau code, ou connectez-vous avec votre mot de passe.'
+              : 'Ce compte existe déjà. Essayez « Se connecter avec Google » à nouveau ou connectez-vous avec votre mot de passe.',
           unauthorized: 'Compte inactif ou introuvable.',
         }),
       );
