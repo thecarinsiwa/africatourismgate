@@ -1,8 +1,6 @@
-import type { PackageDraftValidationData, PackageReservationDraft } from '../reservations/flow';
+import type { PackageDraftValidationData } from '../reservations/flow';
 
-export async function fetchPackageDraftValidationData(
-  _draft: PackageReservationDraft,
-): Promise<PackageDraftValidationData> {
+export async function fetchPackageDraftValidationData(): Promise<PackageDraftValidationData> {
   return {
     activityDetails: {},
     propertyDetails: {},

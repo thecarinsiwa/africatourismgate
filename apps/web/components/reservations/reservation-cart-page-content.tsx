@@ -52,7 +52,6 @@ export function ReservationCartPageContent({ draft }: Props) {
   const c = t.cars;
   const cr = t.cruises;
   const p = t.packages;
-  const act = t.activities;
 
   const [hotelDetail, setHotelDetail] = useState<PropertyDetail | null>(null);
   const [flightDetail, setFlightDetail] = useState<FlightDetail | null>(null);

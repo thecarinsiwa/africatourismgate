@@ -35,7 +35,6 @@ import { PackageAssistedResolvedSummary } from './package-resolved-summary';
 type PackageDetailPageContentProps = {
   packageId: string;
   initialSearch: PackagesSearchParams;
-  rawSearchParams: Record<string, string | string[] | undefined>;
 };
 
 function inferInitialStep(startDate: string, hash: string): PackageCompositionStep {
@@ -47,7 +46,6 @@ function inferInitialStep(startDate: string, hash: string): PackageCompositionSt
 export function PackageDetailPageContent({
   packageId,
   initialSearch,
-  rawSearchParams: _rawSearchParams,
 }: PackageDetailPageContentProps) {
   const t = useTranslations();
   const p = t.packages;

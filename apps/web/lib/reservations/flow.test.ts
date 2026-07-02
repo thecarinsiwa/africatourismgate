@@ -380,14 +380,7 @@ test('isPackageReservationDraftReady accepts assisted package without schedules'
     endDate: '2026-08-02',
     travelers: 4,
   };
-  const validation = {
-    activityDetails: {},
-    propertyDetails: {},
-    flightDetails: {},
-    vehicleDetails: {},
-    cruiseDetails: {},
-  };
-  assert.equal(isPackageReservationDraftReady(draft, validation), true);
+  assert.equal(isPackageReservationDraftReady(draft), true);
 });
 
 test('buildDraftBrowseHref routes package draft to packages listing', () => {

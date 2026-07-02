@@ -3,11 +3,7 @@ import type { ActivityDetail } from '../activities/types';
 import type { VehicleDetail } from '../cars/types';
 import type { CruiseSailingDetail } from '../cruises/types';
 import type { FlightDetail } from '../flights/types';
-import type { PackageItemEnriched } from '../packages/types';
-import {
-  parsePackageLinesFromSearchParams,
-  type PackageLineSelection,
-} from '../packages/package-lines';
+import { parsePackageLinesFromSearchParams } from '../packages/package-lines';
 
 export type RoomReservationDraft = {
   kind: 'room';
@@ -138,10 +134,7 @@ export type PackageDraftValidationData = {
   cruiseDetails: Record<string, CruiseSailingDetail | null | undefined>;
 };
 
-export function isPackageReservationDraftReady(
-  draft: PackageReservationDraft,
-  _validation: PackageDraftValidationData,
-): boolean {
+export function isPackageReservationDraftReady(draft: PackageReservationDraft): boolean {
   return isPackageReservationDraftStructurallyComplete(draft);
 }
 
@@ -470,11 +463,7 @@ export function buildPackageAssistedReservationDraft(
 }
 
 /** @deprecated Assisted package drafts no longer require per-line selections. */
-export function buildPackageReservationDraft(
-  packageId: string,
-  _items: PackageItemEnriched[],
-  _selections: Array<PackageLineSelection | null | undefined>,
-): PackageReservationDraft | null {
+export function buildPackageReservationDraft(): PackageReservationDraft | null {
   return null;
 }
 
