@@ -17,5 +17,6 @@ export function loadRootEnv(appConfigFileUrl) {
   const { loadEnvConfig } = requireFromNext('@next/env');
 
   const repoRoot = join(appDir, '../..');
-  loadEnvConfig(repoRoot);
+  const dev = process.env.NODE_ENV !== 'production';
+  loadEnvConfig(repoRoot, dev);
 }

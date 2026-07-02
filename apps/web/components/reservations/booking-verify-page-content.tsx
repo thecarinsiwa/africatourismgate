@@ -5,6 +5,8 @@ import { useMemo, useState } from 'react';
 import { verifyOperation } from '../../lib/api/auth';
 import { getAuthErrorMessage } from '../../lib/auth/api-errors';
 import { completeWebLoginFromAuthResponse } from '../../lib/auth/complete-web-login';
+import { stripDevOriginFromNextPath } from '../../lib/auth/dev-oauth-return';
+import { useDevOAuthReturnRedirect } from '../../lib/auth/use-dev-oauth-return-redirect';
 import { createBookingCheckoutSession } from '../../lib/api/booking';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
@@ -19,18 +21,21 @@ function normalizeNextPath(nextPath: string | null): string {
 export function BookingVerifyPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  useDevOAuthReturnRedirect('/booking/verify');
   const verificationId = searchParams.get('verificationId') ?? '';
   const bookingId = searchParams.get('bookingId');
-  const safeNext = useMemo(
-    () => normalizeNextPath(searchParams.get('next')),
-    [searchParams],
-  );
+  const safeNext = useMemo(() => {
+    const raw = searchParams.get('next');
+    return normalizeNextPath(raw ? stripDevOriginFromNextPath(raw).next : null);
+  }, [searchParams]);
   const [code, setCode] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
+    if (submitted || submitting) return;
     if (!verificationId || code.length !== 6) {
       setError('Saisissez le code à 6 chiffres reçu par e-mail.');
       return;
@@ -40,6 +45,7 @@ export function BookingVerifyPageContent() {
     setError(null);
     try {
       const response = await verifyOperation({ verificationId, code });
+      setSubmitted(true);
       const resolvedBookingId = response.bookingId ?? bookingId;
 
       if (resolvedBookingId) {
@@ -56,10 +62,11 @@ export function BookingVerifyPageContent() {
       setError(
         getAuthErrorMessage(err, {
           network: 'Impossible de joindre le serveur. Vérifiez votre connexion.',
-          generic: 'Code invalide ou expiré. Vérifiez votre e-mail.',
+          generic:
+            'Code invalide ou expiré. Si vous avez déjà validé ce code (ex. sur le site production), reconnectez-vous avec Google pour en recevoir un nouveau.',
           envMissing: 'Configuration API manquante.',
           conflict:
-            'Ce code ne peut plus être utilisé. Recommencez « Se connecter avec Google » pour recevoir un nouveau code.',
+            'Ce compte existe déjà. Essayez « Se connecter avec Google » à nouveau ou connectez-vous avec votre mot de passe.',
           unauthorized: 'Compte inactif ou introuvable.',
         }),
       );

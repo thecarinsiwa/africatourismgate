@@ -1,17 +1,25 @@
 import createNextIntlPlugin from 'next-intl/plugin';
-import { getDevApiUrl } from '../../packages/config/dev-api-url.mjs';
 import { loadRootEnv } from '../../packages/config/load-root-env.mjs';
 import { ADMIN_ONLY_PATHS, ATG_DOMAINS } from '../../packages/config/domains.mjs';
+import {
+  isRemoteApiDev,
+  getRemoteApiTargetUrl,
+  resolveDevApiUrl,
+} from '../../packages/config/remote-api-dev.mjs';
 
 loadRootEnv(import.meta.url);
 
 const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 
 const isProduction = process.env.NODE_ENV === 'production';
+const webPort = process.env.WEB_PORT ?? '3002';
+const explicitApiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '');
+const remoteProxy = !isProduction && isRemoteApiDev();
 
-const apiUrl =
-  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') ??
-  (isProduction ? 'https://app-africatourismgate.org/api' : getDevApiUrl());
+const apiUrl = remoteProxy
+  ? resolveDevApiUrl({ appPort: webPort })
+  : explicitApiUrl ??
+    (isProduction ? ATG_DOMAINS.api.url : resolveDevApiUrl({ appPort: webPort }));
 
 const adminBaseUrl =
   process.env.NEXT_PUBLIC_ADMIN_URL?.replace(/\/$/, '') ??
@@ -31,6 +39,8 @@ const nextConfig = {
   transpilePackages: ['@africatourismgate/ui', '@africatourismgate/types'],
   env: {
     NEXT_PUBLIC_API_URL: apiUrl,
+    WEB_PORT: webPort,
+    ATG_REMOTE_API_URL: remoteProxy ? getRemoteApiTargetUrl() : '',
   },
   images: {
     remotePatterns: [

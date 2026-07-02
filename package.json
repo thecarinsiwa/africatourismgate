@@ -14,6 +14,7 @@
     "dev:tui": "concurrently -n api,admin,web,pos -c cyan,magenta,green,yellow \"pnpm --filter @africatourismgate/api dev\" \"pnpm --filter @africatourismgate/admin dev\" \"pnpm --filter @africatourismgate/web dev\" \"pnpm --filter @africatourismgate/pos dev\"",
     "dev:api": "pnpm --filter @africatourismgate/api dev",
     "dev:web": "pnpm --filter @africatourismgate/web dev",
+    "dev:front": "pnpm --filter @africatourismgate/admin --filter @africatourismgate/web --parallel run dev",
     "dev:admin": "pnpm --filter @africatourismgate/admin dev",
     "dev:pos": "pnpm --filter @africatourismgate/pos dev",
     "prestart": "node scripts/print-dev-urls.mjs",

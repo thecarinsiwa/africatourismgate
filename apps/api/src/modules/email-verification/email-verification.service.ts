@@ -67,7 +67,10 @@ export class EmailVerificationService {
             verifiedAt: IsNull(),
           };
 
-    await this.repository.update(invalidateWhere, { verifiedAt: new Date() });
+    await this.repository.update(invalidateWhere, {
+      verifiedAt: new Date(),
+      codeHash: `invalidated:${newId()}`,
+    });
 
     const row = this.repository.create({
       id: newId(),
@@ -108,14 +111,30 @@ export class EmailVerificationService {
     verificationId: string,
     code: string,
   ): Promise<EmailOperationVerifications> {
-    const row = await this.repository.findOne({
-      where: { id: verificationId.trim(), verifiedAt: IsNull() },
+    const id = verificationId.trim();
+    const codeHash = hashOperationCode(code);
+
+    let row = await this.repository.findOne({
+      where: { id, verifiedAt: IsNull() },
     });
-    if (!row || row.expiresAt <= new Date()) {
+
+    if (!row) {
+      const consumed = await this.repository.findOne({ where: { id } });
+      if (
+        consumed?.verifiedAt &&
+        !consumed.codeHash.startsWith('invalidated:') &&
+        consumed.codeHash === codeHash &&
+        consumed.expiresAt > new Date()
+      ) {
+        return consumed;
+      }
       throw new BadRequestException('Code de vérification invalide ou expiré.');
     }
 
-    const codeHash = hashOperationCode(code);
+    if (row.expiresAt <= new Date()) {
+      throw new BadRequestException('Code de vérification invalide ou expiré.');
+    }
+
     if (codeHash !== row.codeHash) {
       throw new BadRequestException('Code de vérification invalide ou expiré.');
     }

@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { BookingOAuthCallbackPageContent } from '../../../../components/reservations/booking-oauth-callback-page-content';
 
 type PageProps = {
@@ -10,7 +11,7 @@ function pickParam(value: string | string[] | undefined): string | undefined {
   return undefined;
 }
 
-export default function BookingOAuthCallbackPage({ searchParams }: PageProps) {
+function OAuthCallbackBody({ searchParams }: PageProps) {
   return (
     <BookingOAuthCallbackPageContent
       accessToken={pickParam(searchParams.accessToken)}
@@ -18,5 +19,13 @@ export default function BookingOAuthCallbackPage({ searchParams }: PageProps) {
       expiresIn={pickParam(searchParams.expiresIn)}
       nextPath={pickParam(searchParams.next)}
     />
+  );
+}
+
+export default function BookingOAuthCallbackPage({ searchParams }: PageProps) {
+  return (
+    <Suspense>
+      <OAuthCallbackBody searchParams={searchParams} />
+    </Suspense>
   );
 }
