@@ -73,6 +73,7 @@ describe('Auth (e2e)', () => {
 
     expect(pending.requiresVerification).toBe(true);
     expect(pending.verificationId).toEqual(expect.any(String));
+    expect(pending.verificationPurpose).toBe('login');
     expect(pending.accessToken).toBe('');
 
     const verify = await request(app.getHttpServer())
@@ -114,5 +115,59 @@ describe('Auth (e2e)', () => {
 
     expect(verify.body.accessToken).toEqual(expect.any(String));
     expect(verify.body.user?.email).toBe(credentials.email);
+  });
+
+  it('google_signup OTP double submission still returns tokens', async () => {
+    const credentials = getSeedAdminLogin();
+    const emailVerification = app.get(EmailVerificationService);
+
+    const { verificationId } = await emailVerification.createAndSend({
+      email: credentials.email,
+      purpose: 'google_signup',
+      referenceId: randomUUID(),
+      firstName: 'Admin',
+      metadata: {
+        firstName: 'Admin',
+        lastName: 'Google',
+        email: credentials.email,
+      },
+    });
+
+    const payload = { verificationId, code: E2E_OTP_CODE };
+
+    const first = await request(app.getHttpServer())
+      .post(apiPath('/auth/verify-operation'))
+      .send(payload)
+      .expect(200);
+
+    const second = await request(app.getHttpServer())
+      .post(apiPath('/auth/verify-operation'))
+      .send(payload)
+      .expect(200);
+
+    expect(first.body.accessToken).toEqual(expect.any(String));
+    expect(second.body.accessToken).toEqual(expect.any(String));
+    expect(second.body.user?.email).toBe(credentials.email);
+  });
+
+  it('buildWebVerificationUrl includes purpose for Google login OTP', async () => {
+    const credentials = getSeedAdminLogin();
+    const authService = app.get(AuthService);
+
+    const pending = await authService.loginWithGoogleProfile({
+      emails: [{ value: credentials.email }],
+      name: { givenName: 'Admin', familyName: 'Google' },
+    });
+
+    const url = authService.buildWebVerificationUrl(
+      pending.verificationId!,
+      '/account',
+      'http://localhost:3002',
+      pending.verificationPurpose,
+    );
+
+    expect(url).toContain('purpose=login');
+    expect(url).toContain('verificationId=');
+    expect(url).toContain('next=%2Faccount');
   });
 });

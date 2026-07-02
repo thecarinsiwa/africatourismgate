@@ -99,6 +99,7 @@ export class AuthController {
             auth.verificationId,
             next,
             webOrigin,
+            auth.verificationPurpose,
           ),
         );
         return;

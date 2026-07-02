@@ -65,6 +65,7 @@ import { EmailVerificationService } from '../email-verification/email-verificati
 import { BookingEngineService } from '../resources/bookings/booking-engine.service';
 import { VerifyOperationDto } from './dto/verify-operation.dto';
 import { EmailOperationVerifications } from '../../entities/email-operation-verification.entity';
+import type { EmailOperationPurpose } from '../../entities/email-operation-verification.entity';
 
 @Injectable()
 export class AuthService {
@@ -155,7 +156,7 @@ export class AuthService {
             : {}),
         },
       });
-      return this.pendingVerificationResponse(verificationId);
+      return this.pendingVerificationResponse(verificationId, 'register');
     }
 
     await this.ensurePlatformOrg();
@@ -306,7 +307,7 @@ export class AuthService {
       throw new UnauthorizedException('Google account has no email');
     }
 
-    const activeUser = await this.findActiveUserByEmail(email);
+    const activeUser = await this.findActiveCustomerByEmail(email);
     if (activeUser) {
       return this.startGoogleLoginVerification(activeUser);
     }
@@ -327,7 +328,7 @@ export class AuthService {
         firstName,
         metadata: { firstName, lastName, email },
       });
-      return this.pendingVerificationResponse(verificationId);
+      return this.pendingVerificationResponse(verificationId, 'google_signup');
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       this.logger.error(
@@ -364,26 +365,7 @@ export class AuthService {
     }
 
     if (row.purpose === 'google_signup') {
-      const existing = await this.findActiveUserByEmail(row.email);
-      if (existing) {
-        return this.completeUserSession(existing);
-      }
-
-      try {
-        const user = await this.createUserFromGoogleSignupRow(row);
-        void this.notifyWelcome(user);
-        return this.completeUserSession(user);
-      } catch (err) {
-        if (err instanceof ConflictException) {
-          const recovered =
-            (await this.findActiveUserByEmail(row.email)) ??
-            (await this.findRecoverableUserByEmail(row.email));
-          if (recovered) {
-            return this.completeUserSession(recovered);
-          }
-        }
-        throw err;
-      }
+      return this.completeGoogleOAuthVerification(row);
     }
 
     if (row.purpose === 'register') {
@@ -397,7 +379,7 @@ export class AuthService {
           isNewAccount = true;
         } catch (err) {
           if (err instanceof ConflictException) {
-            user = await this.findActiveUserByEmail(row.email);
+            user = await this.findActiveCustomerByEmail(row.email);
             if (!user) {
               throw err;
             }
@@ -416,10 +398,14 @@ export class AuthService {
 
     if (row.purpose === 'login') {
       let user = await this.usersRepo.findOne({
-        where: { id: row.referenceId, deletedAt: IsNull() },
+        where: {
+          id: row.referenceId,
+          deletedAt: IsNull(),
+          status: 'active',
+        },
       });
       if (!user) {
-        user = await this.findActiveUserByEmail(row.email);
+        user = await this.findActiveCustomerByEmail(row.email);
       }
       if (!user) {
         throw new BadRequestException('Compte introuvable ou inactif.');
@@ -445,12 +431,16 @@ export class AuthService {
     verificationId: string,
     next?: string,
     webOrigin?: string,
+    purpose?: EmailOperationPurpose,
   ): string {
     const { webUrl, safeNext } = resolveOAuthWebUrlFromNext(next, webOrigin);
     const query = new URLSearchParams({
       verificationId,
       next: safeNext,
     });
+    if (purpose) {
+      query.set('purpose', purpose);
+    }
     return `${webUrl}/booking/verify?${query.toString()}`;
   }
 
@@ -759,10 +749,14 @@ export class AuthService {
     return value;
   }
 
-  private pendingVerificationResponse(verificationId: string): AuthResponseDto {
+  private pendingVerificationResponse(
+    verificationId: string,
+    purpose?: EmailOperationPurpose,
+  ): AuthResponseDto {
     return {
       requiresVerification: true,
       verificationId,
+      verificationPurpose: purpose,
       accessToken: '',
       refreshToken: '',
       expiresIn: 0,
@@ -773,9 +767,13 @@ export class AuthService {
     return email.trim().toLowerCase();
   }
 
-  private findActiveUserByEmail(email: string): Promise<Users | null> {
+  private findActiveCustomerByEmail(email: string): Promise<Users | null> {
     return this.usersRepo.findOne({
-      where: { email: this.normalizeEmail(email), deletedAt: IsNull() },
+      where: {
+        email: this.normalizeEmail(email),
+        deletedAt: IsNull(),
+        status: 'active',
+      },
     });
   }
 
@@ -785,15 +783,33 @@ export class AuthService {
     });
   }
 
-  /** Active customer recoverable after google_signup race (e.g. OTP replay). */
-  private async findRecoverableUserByEmail(
-    email: string,
-  ): Promise<Users | null> {
-    const user = await this.findAnyUserByEmail(email);
-    if (!user || user.deletedAt || user.status !== 'active') {
-      return null;
+  private async completeGoogleOAuthVerification(
+    row: EmailOperationVerifications,
+  ): Promise<AuthResponseDto> {
+    const existing = await this.findActiveCustomerByEmail(row.email);
+    if (existing) {
+      return this.completeUserSession(existing);
     }
-    return user;
+
+    try {
+      const user = await this.createUserFromGoogleSignupRow(row);
+      void this.notifyWelcome(user);
+      return this.completeUserSession(user);
+    } catch (err) {
+      if (this.isGoogleOAuthDuplicateError(err)) {
+        const recovered = await this.findActiveCustomerByEmail(row.email);
+        if (recovered) {
+          return this.completeUserSession(recovered);
+        }
+      }
+      throw err;
+    }
+  }
+
+  private isGoogleOAuthDuplicateError(error: unknown): boolean {
+    return (
+      error instanceof ConflictException || this.isDuplicateEmailError(error)
+    );
   }
 
   private async startGoogleLoginVerification(
@@ -810,7 +826,7 @@ export class AuthService {
         referenceId: user.id,
         firstName: user.firstName,
       });
-      return this.pendingVerificationResponse(verificationId);
+      return this.pendingVerificationResponse(verificationId, 'login');
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       this.logger.error(
