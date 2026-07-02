@@ -116,7 +116,7 @@ export function PackageBookingMobileBar({
   onAddToCart,
   t,
   locale,
-}: Omit<PackageBookingSidebarProps, 'durationDays'>) {
+}: PackageBookingSidebarProps) {
   const totalCents = packageReservationTotalCents(detail.pricing, travelers);
   const secondaryLine = startDate
     ? `${formatDisplayDate(startDate, locale)} → ${formatDisplayDate(endDate, locale)} · ${travelers} ${t.travelersLabel.toLowerCase()}`
