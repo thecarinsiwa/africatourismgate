@@ -49,6 +49,7 @@ export function PackageDetailPageContent({
 }: PackageDetailPageContentProps) {
   const t = useTranslations();
   const p = t.packages;
+  const a = t.activities;
   const { locale } = useLocale();
   const router = useRouter();
 
@@ -276,7 +277,13 @@ export function PackageDetailPageContent({
 
               {step === 'overview' ? (
                 <>
-                  <PackageItemsSection items={detail.items} t={p} />
+                  <PackageItemsSection
+                    items={detail.items}
+                    t={p}
+                    a={a}
+                    startDate={startDate}
+                    travelers={travelers}
+                  />
                   <div className="flex justify-end">
                     <button
                       type="button"
@@ -350,7 +357,13 @@ export function PackageDetailPageContent({
                       <h3 className="text-base font-bold text-atg-fg">
                         {p.includedServicesTitle}
                       </h3>
-                      <PackageItemsSection items={detail.items} t={p} />
+                      <PackageItemsSection
+                    items={detail.items}
+                    t={p}
+                    a={a}
+                    startDate={startDate}
+                    travelers={travelers}
+                  />
                       <p className="text-sm text-atg-muted">{p.assistedBookingServicesHint}</p>
                     </div>
                   )}

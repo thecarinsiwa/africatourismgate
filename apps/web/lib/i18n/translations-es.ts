@@ -800,6 +800,13 @@ export const es: Translations = {
     itemsTitle: 'Servicios incluidos',
     noItems: 'Este paquete aún no incluye servicios.',
     viewProduct: 'Ver ficha',
+    itemDetailClose: 'Cerrar',
+    itemDetailLoading: 'Cargando detalles del servicio…',
+    itemDetailError: 'No se pudieron cargar los detalles de este servicio.',
+    itemDetailPriceLabel: 'Precio indicativo',
+    itemDetailGenericHint:
+      'Consulte la ficha completa para ver todos los detalles de este servicio.',
+    itemDetailViewFullPage: 'Ver ficha completa',
     pricingTitle: 'Tarifa del paquete',
     youSave: 'Ahorra {amount}',
     configurePackage: 'Configurar paquete',
@@ -886,8 +893,6 @@ export const es: Translations = {
     configureProgress: '{done} / {total} servicio(s) configurado(s)',
     bookingReadyHint: 'Fechas y viajeros indicados',
     bookingPendingHint: 'Indique una fecha de salida',
-    assistedBookingServicesHint:
-      'Los horarios exactos se asignarán tras la validación de su solicitud por nuestro equipo.',
     assistedItemPendingSchedule: 'Horario por confirmar tras la validación',
     travelerSingular: 'viajero',
     travelerPlural: 'viajeros',

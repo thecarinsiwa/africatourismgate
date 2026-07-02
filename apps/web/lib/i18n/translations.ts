@@ -701,6 +701,12 @@ export type Translations = {
     itemsTitle: string;
     noItems: string;
     viewProduct: string;
+    itemDetailClose: string;
+    itemDetailLoading: string;
+    itemDetailError: string;
+    itemDetailPriceLabel: string;
+    itemDetailGenericHint: string;
+    itemDetailViewFullPage: string;
     pricingTitle: string;
     youSave: string;
     configurePackage: string;
@@ -1852,6 +1858,13 @@ const fr: Translations = {
     itemsTitle: 'Prestations incluses',
     noItems: 'Ce forfait ne contient pas encore de prestations.',
     viewProduct: 'Voir la fiche',
+    itemDetailClose: 'Fermer',
+    itemDetailLoading: 'Chargement de la prestation…',
+    itemDetailError: 'Impossible de charger les détails de cette prestation.',
+    itemDetailPriceLabel: 'Prix indicatif',
+    itemDetailGenericHint:
+      'Consultez la fiche complète pour voir tous les détails de cette prestation.',
+    itemDetailViewFullPage: 'Voir la fiche complète',
     pricingTitle: 'Tarif du forfait',
     youSave: 'Vous économisez {amount}',
     configurePackage: 'Configurer le forfait',
@@ -1938,8 +1951,6 @@ const fr: Translations = {
     configureProgress: '{done} / {total} prestation(s) configurée(s)',
     bookingReadyHint: 'Dates et voyageurs renseignés',
     bookingPendingHint: 'Indiquez une date de départ',
-    assistedBookingServicesHint:
-      'Les horaires précis seront attribués après validation de votre demande par notre équipe.',
     assistedItemPendingSchedule: 'Créneau à confirmer après validation',
     travelerSingular: 'voyageur',
     travelerPlural: 'voyageurs',
@@ -3039,6 +3050,12 @@ const en: Translations = {
     itemsTitle: 'Included services',
     noItems: 'This package has no services yet.',
     viewProduct: 'View product',
+    itemDetailClose: 'Close',
+    itemDetailLoading: 'Loading service details…',
+    itemDetailError: 'Could not load details for this service.',
+    itemDetailPriceLabel: 'Indicative price',
+    itemDetailGenericHint: 'Open the full product page to see all details for this service.',
+    itemDetailViewFullPage: 'View full product page',
     pricingTitle: 'Package pricing',
     youSave: 'You save {amount}',
     configurePackage: 'Configure package',
@@ -3125,8 +3142,6 @@ const en: Translations = {
     configureProgress: '{done} / {total} service(s) configured',
     bookingReadyHint: 'Dates and travelers set',
     bookingPendingHint: 'Enter a departure date',
-    assistedBookingServicesHint:
-      'Exact time slots will be assigned after our team validates your request.',
     assistedItemPendingSchedule: 'Time slot to be confirmed after approval',
     travelerSingular: 'traveler',
     travelerPlural: 'travelers',
