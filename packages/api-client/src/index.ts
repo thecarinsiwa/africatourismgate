@@ -491,11 +491,16 @@ export class ApiClient {
       throw new ApiHttpError(res.status, res.statusText, body, apiMessage);
     }
 
-    if (res.status === 204) {
+    if (res.status === 204 || res.status === 205) {
       return undefined as T;
     }
 
-    return (await res.json()) as T;
+    const text = await res.text();
+    if (!text.trim()) {
+      return undefined as T;
+    }
+
+    return JSON.parse(text) as T;
   }
 
   health(): Promise<{ status: string; service: string }> {
