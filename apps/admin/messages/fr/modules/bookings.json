@@ -104,6 +104,35 @@
     "historyEmpty": "Aucun changement de statut enregistré.",
     "transition": "{fromStatus} → {toStatus}"
   },
+  "identityDocuments": {
+    "title": "Pièces d'identité",
+    "subtitle": "Documents déposés par le client — validez ou demandez une version plus claire.",
+    "empty": "Aucun document déposé.",
+    "statusLabel": "Statut",
+    "view": "Voir",
+    "viewing": "Ouverture…",
+    "approve": "Valider",
+    "approveSuccess": "Document validé.",
+    "requestResubmit": "Demander une version claire",
+    "resubmitDialogTitle": "Demander une nouvelle version",
+    "resubmitDialogDescription": "Indiquez au client ce qui doit être corrigé (lisibilité, cadrage, document expiré…).",
+    "staffNoteLabel": "Message au client",
+    "staffNotePlaceholder": "Ex. Merci de renvoyer une photo nette de la page photo du passeport.",
+    "resubmitConfirm": "Envoyer la demande",
+    "resubmitSuccess": "Demande de nouvelle version enregistrée.",
+    "types": {
+      "passport": "Passeport",
+      "national_id": "Carte d'identité",
+      "drivers_license": "Permis de conduire",
+      "other": "Autre"
+    },
+    "statuses": {
+      "pending_review": "En attente de validation",
+      "approved": "Validé",
+      "resubmit_requested": "Nouvelle version demandée",
+      "rejected": "Refusé"
+    }
+  },
   "approval": {
     "title": "Validation assistée",
     "intro": "Approuvez la demande, refusez-la avec un motif, ou envoyez le lien de paiement une fois validée.",

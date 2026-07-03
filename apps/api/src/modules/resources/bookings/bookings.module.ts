@@ -22,6 +22,7 @@ import {
   Vehicles,
 } from '../../../entities/generated';
 import { ReviewsModule } from '../reviews/reviews.module';
+import { BookingIdentityDocuments } from '../../../entities/booking-identity-document.entity';
 import { EmailVerificationModule } from '../../email-verification/email-verification.module';
 import { PackagesModule } from '../packages/packages.module';
 import { OrganizationSettingsModule } from '../organization-settings/organization-settings.module';
@@ -37,6 +38,7 @@ import { BookingMessagesService } from './booking-messages.service';
 import { BookingNotificationsService } from './booking-notifications.service';
 import { BookingPaymentReminderService } from './booking-payment-reminder.service';
 import { BookingsController } from './bookings.controller';
+import { BookingIdentityDocumentsService } from './booking-identity-documents.service';
 import { BookingsService } from './bookings.service';
 
 @Module({
@@ -67,6 +69,7 @@ import { BookingsService } from './bookings.service';
       Cabins,
       ActivitySchedules,
       Activities,
+      BookingIdentityDocuments,
     ]),
   ],
   controllers: [BookingsController],
@@ -81,6 +84,7 @@ import { BookingsService } from './bookings.service';
     BookingAssistedEmailService,
     BookingNotificationsService,
     BookingPaymentReminderService,
+    BookingIdentityDocumentsService,
   ],
   exports: [
     BookingEngineService,

@@ -20,6 +20,7 @@ import { BookingReviewCard } from './booking-review-card';
 import { BookingReviewForm } from './booking-review-form';
 import { BookingStatusBadge } from './booking-status-badge';
 import { BookingStatusTimeline, isAssistedBookingDetail } from './booking-status-timeline';
+import { BookingIdentityDocumentsSection } from './booking-identity-documents-section';
 
 type Props = {
   bookingId: string;
@@ -217,6 +218,13 @@ export function AccountBookingDetail({
           canReply={canReplyToMessages}
         />
       ) : null}
+
+      <BookingIdentityDocumentsSection
+        bookingId={bookingId}
+        bookingStatus={booking.status}
+        documents={detail.identityDocuments ?? []}
+        onUpdated={load}
+      />
 
       {(showPayActions || canCancel || (isAssisted && booking.status === 'pending_payment')) && (
         <div className="flex flex-wrap gap-3 rounded-lg border border-atg-border bg-atg-surface p-4 dark:border-atg-border dark:bg-white/5">

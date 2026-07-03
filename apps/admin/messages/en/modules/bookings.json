@@ -104,6 +104,35 @@
     "historyEmpty": "Tocun changement de statut enregistré.",
     "transition": "{fromStatus} → {toStatus}"
   },
+  "identityDocuments": {
+    "title": "Identity documents",
+    "subtitle": "Documents uploaded by the customer — approve or request a clearer version.",
+    "empty": "No documents uploaded.",
+    "statusLabel": "Status",
+    "view": "View",
+    "viewing": "Opening…",
+    "approve": "Approve",
+    "approveSuccess": "Document approved.",
+    "requestResubmit": "Request clearer version",
+    "resubmitDialogTitle": "Request a new version",
+    "resubmitDialogDescription": "Tell the customer what needs to be fixed (readability, framing, expired document…).",
+    "staffNoteLabel": "Message to customer",
+    "staffNotePlaceholder": "E.g. Please upload a clear photo of the passport photo page.",
+    "resubmitConfirm": "Send request",
+    "resubmitSuccess": "Resubmit request recorded.",
+    "types": {
+      "passport": "Passport",
+      "national_id": "National ID",
+      "drivers_license": "Driver's license",
+      "other": "Other"
+    },
+    "statuses": {
+      "pending_review": "Pending review",
+      "approved": "Approved",
+      "resubmit_requested": "Clearer version requested",
+      "rejected": "Rejected"
+    }
+  },
   "approval": {
     "title": "Assisted booking validation",
     "intro": "Approve the request, reject it with a reason, or send the payment link once validated.",

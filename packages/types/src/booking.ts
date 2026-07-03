@@ -132,6 +132,38 @@ export interface CreateBookingMessageRequest {
   body: string;
 }
 
+export type BookingIdentityDocumentType =
+  | 'passport'
+  | 'national_id'
+  | 'drivers_license'
+  | 'other';
+
+export type BookingIdentityDocumentStatus =
+  | 'pending_review'
+  | 'approved'
+  | 'resubmit_requested'
+  | 'rejected';
+
+export interface BookingIdentityDocument {
+  id: string;
+  bookingId: string;
+  userId: string;
+  documentType: BookingIdentityDocumentType;
+  originalFilename: string;
+  mimeType: string;
+  fileSizeBytes: number;
+  status: BookingIdentityDocumentStatus;
+  staffNote?: string | null;
+  reviewedByUserId?: string | null;
+  reviewedAt?: string | null;
+  version: number;
+  createdAt: string;
+}
+
+export interface ReviewBookingIdentityDocumentRequest {
+  staffNote?: string;
+}
+
 export interface BookingDetail {
   booking: Booking;
   items: BookingItem[];
@@ -144,6 +176,7 @@ export interface BookingDetail {
   paymentInvited?: boolean;
   /** Post-stay guide rating invitations (CE-13). */
   guideReviewInvites?: GuideReviewInvite[];
+  identityDocuments?: BookingIdentityDocument[];
 }
 
 export interface CreateBookingResponse extends BookingDetail {

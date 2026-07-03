@@ -40,6 +40,7 @@ import { BookingItemCatalogLink } from './booking-item-catalog-link';
 import { BookingItemTypeIcon } from './booking-item-type-icon';
 import { BookingGuidesSection } from './booking-guides-section';
 import { BookingAssistedApprovalPanel } from './booking-assisted-approval-panel';
+import { BookingIdentityDocumentsPanel } from './booking-identity-documents-panel';
 import { BookingMessagesSection } from './booking-messages-section';
 import { BookingStatusTimeline } from './booking-status-timeline';
 
@@ -391,6 +392,13 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
             totalCents={detail.totalCents}
             currency={detail.currency}
             canApprove={canApprove}
+            onUpdated={load}
+          />
+
+          <BookingIdentityDocumentsPanel
+            bookingId={bookingId}
+            documents={detail.identityDocuments ?? []}
+            canReview={canApprove}
             onUpdated={load}
           />
 

@@ -104,6 +104,35 @@
     "historyEmpty": "Hastacun changement de statut enregistré.",
     "transition": "{fromStatus} → {toStatus}"
   },
+  "identityDocuments": {
+    "title": "Documentos de identidad",
+    "subtitle": "Documentos subidos por el cliente — valide o solicite una versión más clara.",
+    "empty": "Ningún documento subido.",
+    "statusLabel": "Estado",
+    "view": "Ver",
+    "viewing": "Abriendo…",
+    "approve": "Validar",
+    "approveSuccess": "Documento validado.",
+    "requestResubmit": "Solicitar versión más clara",
+    "resubmitDialogTitle": "Solicitar nueva versión",
+    "resubmitDialogDescription": "Indique al cliente qué debe corregir (legibilidad, encuadre, documento caducado…).",
+    "staffNoteLabel": "Mensaje al cliente",
+    "staffNotePlaceholder": "Ej. Suba una foto nítida de la página de la foto del pasaporte.",
+    "resubmitConfirm": "Enviar solicitud",
+    "resubmitSuccess": "Solicitud de nueva versión registrada.",
+    "types": {
+      "passport": "Pasaporte",
+      "national_id": "Documento de identidad",
+      "drivers_license": "Permiso de conducir",
+      "other": "Otro"
+    },
+    "statuses": {
+      "pending_review": "Pendiente de validación",
+      "approved": "Validado",
+      "resubmit_requested": "Nueva versión solicitada",
+      "rejected": "Rechazado"
+    }
+  },
   "approval": {
     "title": "Validación de reserva asistida",
     "intro": "Apruebe la solicitud, rechácela con un motivo o envíe el enlace de pago una vez validada.",

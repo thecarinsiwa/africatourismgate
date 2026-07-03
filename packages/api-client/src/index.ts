@@ -87,6 +87,8 @@ import type {
   BookingCheckoutRequest,
   BookingCheckoutSessionResponse,
   BookingDetail,
+  BookingIdentityDocument,
+  ReviewBookingIdentityDocumentRequest,
   CreateBookingResponse,
   BookingRequestResponse,
   BookingMessage,
@@ -1732,6 +1734,39 @@ export class ApiClient {
     return this.request<BookingCheckoutSessionResponse>(`/bookings/${id}/invite-payment`, {
       method: 'POST',
     });
+  }
+
+  approveBookingIdentityDocument(
+    bookingId: string,
+    documentId: string,
+    body?: ReviewBookingIdentityDocumentRequest,
+  ): Promise<BookingIdentityDocument> {
+    return this.request<BookingIdentityDocument>(
+      `/bookings/${bookingId}/identity-documents/${documentId}/approve`,
+      { method: 'POST', body: body ?? {} },
+    );
+  }
+
+  requestBookingIdentityDocumentResubmit(
+    bookingId: string,
+    documentId: string,
+    body: ReviewBookingIdentityDocumentRequest,
+  ): Promise<BookingIdentityDocument> {
+    return this.request<BookingIdentityDocument>(
+      `/bookings/${bookingId}/identity-documents/${documentId}/request-resubmit`,
+      { method: 'POST', body },
+    );
+  }
+
+  rejectBookingIdentityDocument(
+    bookingId: string,
+    documentId: string,
+    body?: ReviewBookingIdentityDocumentRequest,
+  ): Promise<BookingIdentityDocument> {
+    return this.request<BookingIdentityDocument>(
+      `/bookings/${bookingId}/identity-documents/${documentId}/reject`,
+      { method: 'POST', body: body ?? {} },
+    );
   }
 
   recordBookingCashPayment(

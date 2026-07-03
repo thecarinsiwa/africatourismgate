@@ -25,6 +25,8 @@ import { PermissionsService } from '../../rbac/permissions.service';
 import { ReviewsService } from '../reviews/reviews.service';
 import { CreateBookingReviewDto } from '../reviews/dto/create-booking-review.dto';
 import { ReviewDto } from '../reviews/dto/review.dto';
+import { BookingIdentityDocumentsService } from './booking-identity-documents.service';
+import type { BookingIdentityDocumentDto } from './dto/booking-identity-document.dto';
 
 @Injectable()
 export class BookingsService extends CrudService<Bookings> {
@@ -43,6 +45,7 @@ export class BookingsService extends CrudService<Bookings> {
     private readonly reviewsService: ReviewsService,
     private readonly assistedEmail: BookingAssistedEmailService,
     private readonly notifications: BookingNotificationsService,
+    private readonly identityDocuments: BookingIdentityDocumentsService,
   ) {
     super(bookingsRepository);
   }
@@ -236,7 +239,8 @@ export class BookingsService extends CrudService<Bookings> {
       ? false
       : await this.reviewsService.canReview(id, currentUserId);
 
-    const [statusHistory, pendingStripePayments, guideReviewInvites] = await Promise.all([
+    const [statusHistory, pendingStripePayments, guideReviewInvites, identityDocuments] =
+      await Promise.all([
       this.statusHistory.listByBookingId(id),
       this.paymentsRepository.find({
         where: {
@@ -248,6 +252,7 @@ export class BookingsService extends CrudService<Bookings> {
         take: 1,
       }),
       this.reviewsService.listGuideReviewInvitesForBooking(id, currentUserId),
+      this.identityDocuments.listForBooking(id),
     ]);
 
     return {
@@ -257,6 +262,7 @@ export class BookingsService extends CrudService<Bookings> {
       statusHistory,
       paymentInvited: pendingStripePayments.length > 0,
       guideReviewInvites,
+      identityDocuments,
     };
   }
 
@@ -366,6 +372,8 @@ export class BookingsService extends CrudService<Bookings> {
       ];
     }
 
+    const identityDocuments = await this.identityDocuments.listForBooking(id);
+
     return {
       booking: base.booking,
       items: base.items,
@@ -381,6 +389,7 @@ export class BookingsService extends CrudService<Bookings> {
       },
       payments,
       statusHistory,
+      identityDocuments,
     };
   }
 

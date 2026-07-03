@@ -929,6 +929,34 @@ export type Translations = {
         timelineUpcoming: string;
         proceedToPayment: string;
         paymentInvitePending: string;
+        identityDocuments: {
+          title: string;
+          subtitle: string;
+          empty: string;
+          documentType: string;
+          file: string;
+          fileHint: string;
+          upload: string;
+          uploading: string;
+          uploadError: string;
+          fileTooLarge: string;
+          view: string;
+          viewing: string;
+          viewError: string;
+          statusLabel: string;
+          types: {
+            passport: string;
+            national_id: string;
+            drivers_license: string;
+            other: string;
+          };
+          statuses: {
+            pending_review: string;
+            approved: string;
+            resubmit_requested: string;
+            rejected: string;
+          };
+        };
         messages: {
           title: string;
           subtitle: string;
@@ -2098,6 +2126,35 @@ const fr: Translations = {
         proceedToPayment: 'Procéder au paiement',
         paymentInvitePending:
           'Vous recevrez un e-mail avec le lien de paiement dès que votre demande sera validée.',
+        identityDocuments: {
+          title: "Pièce d'identité",
+          subtitle:
+            'Déposez une pièce d\'identité lisible (passeport, carte d\'identité…) pour valider votre réservation.',
+          empty: 'Aucun document déposé pour le moment.',
+          documentType: 'Type de document',
+          file: 'Fichier',
+          fileHint: 'JPEG, PNG, WebP ou PDF — 10 Mo max.',
+          upload: 'Envoyer le document',
+          uploading: 'Envoi…',
+          uploadError: "Impossible d'envoyer le document.",
+          fileTooLarge: 'Fichier trop volumineux (10 Mo max).',
+          view: 'Voir',
+          viewing: 'Ouverture…',
+          viewError: 'Impossible d\'ouvrir le document.',
+          statusLabel: 'Statut',
+          types: {
+            passport: 'Passeport',
+            national_id: "Carte d'identité",
+            drivers_license: 'Permis de conduire',
+            other: 'Autre',
+          },
+          statuses: {
+            pending_review: 'En cours de vérification',
+            approved: 'Validé',
+            resubmit_requested: 'Version plus claire demandée',
+            rejected: 'Refusé',
+          },
+        },
         messages: {
           title: 'Conversation',
           subtitle: 'Échangez avec notre équipe au sujet de votre demande.',
@@ -3289,6 +3346,35 @@ const en: Translations = {
         proceedToPayment: 'Proceed to payment',
         paymentInvitePending:
           'You will receive an email with the payment link once your request is approved.',
+        identityDocuments: {
+          title: 'Identity document',
+          subtitle:
+            'Upload a readable identity document (passport, national ID…) to validate your booking.',
+          empty: 'No document uploaded yet.',
+          documentType: 'Document type',
+          file: 'File',
+          fileHint: 'JPEG, PNG, WebP or PDF — 10 MB max.',
+          upload: 'Upload document',
+          uploading: 'Uploading…',
+          uploadError: 'Could not upload the document.',
+          fileTooLarge: 'File too large (10 MB max).',
+          view: 'View',
+          viewing: 'Opening…',
+          viewError: 'Could not open the document.',
+          statusLabel: 'Status',
+          types: {
+            passport: 'Passport',
+            national_id: 'National ID',
+            drivers_license: "Driver's license",
+            other: 'Other',
+          },
+          statuses: {
+            pending_review: 'Under review',
+            approved: 'Approved',
+            resubmit_requested: 'Clearer version requested',
+            rejected: 'Rejected',
+          },
+        },
         messages: {
           title: 'Conversation',
           subtitle: 'Chat with our team about your booking request.',
