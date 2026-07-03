@@ -72,5 +72,8 @@ jobs:
           --filter @africatourismgate/web
           build
 
+      - name: Sync test database schema
+        run: pnpm db:sync
+
       - name: API e2e tests
         run: pnpm --filter @africatourismgate/api test:e2e

@@ -9,8 +9,15 @@ import {
   Patch,
   Post,
   Query,
+  Res,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import type { Response } from 'express';
 import { ApiForbiddenResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { BadRequestException } from '@nestjs/common';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { AuthUserDto } from '../../auth/dto/auth-user.dto';
 import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
@@ -35,6 +42,22 @@ import { CreateBookingMessageDto } from './dto/create-booking-message.dto';
 import { ApproveBookingDto } from './dto/approve-booking.dto';
 import { RejectBookingDto } from './dto/reject-booking.dto';
 import { BookingApprovalService } from './booking-approval.service';
+import {
+  BOOKING_IDENTITY_DOCUMENT_MAX_BYTES,
+  BookingIdentityDocumentsService,
+  bookingIdentityDocumentFileFilter,
+  bookingIdentityDocumentStorage,
+} from './booking-identity-documents.service';
+import {
+  BookingIdentityDocumentDto,
+  ReviewBookingIdentityDocumentDto,
+} from './dto/booking-identity-document.dto';
+import { BookingManifestService } from './booking-manifest.service';
+import {
+  BookingManifestEntryDto,
+  CreateBookingManifestEntryDto,
+  UpdateBookingManifestEntryDto,
+} from './dto/booking-manifest-entry.dto';
 
 @ApiTags('bookings')
 @ApiForbiddenResponse({ description: 'Missing permission' })
@@ -48,6 +71,8 @@ export class BookingsController {
     private readonly bookingGuideAssignmentsService: BookingGuideAssignmentsService,
     private readonly bookingMessagesService: BookingMessagesService,
     private readonly bookingApprovalService: BookingApprovalService,
+    private readonly bookingIdentityDocumentsService: BookingIdentityDocumentsService,
+    private readonly bookingManifestService: BookingManifestService,
   ) {}
 
   @Post('checkout-preview')
@@ -184,6 +209,168 @@ export class BookingsController {
     @CurrentUser() user: AuthUserDto,
   ) {
     return this.bookingsService.createGuideReview(id, guideId, user.id, dto);
+  }
+
+  @Get(':id/identity-documents')
+  @RequirePermissions('bookings.read')
+  @ApiOperation({ summary: 'List identity documents for a booking' })
+  async listIdentityDocuments(
+    @Param('id') id: string,
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<BookingIdentityDocumentDto[]> {
+    await this.bookingsService.assertBookingOwnerOrStaff(id, user.id);
+    return this.bookingIdentityDocumentsService.listForBooking(id);
+  }
+
+  @Get(':id/identity-documents/:documentId/file')
+  @RequirePermissions('bookings.read')
+  @ApiOperation({ summary: 'Download an identity document (authenticated)' })
+  async downloadIdentityDocument(
+    @Param('id') id: string,
+    @Param('documentId') documentId: string,
+    @CurrentUser() user: AuthUserDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    await this.bookingsService.assertBookingOwnerOrStaff(id, user.id);
+    const { stream, mimeType, filename } =
+      await this.bookingIdentityDocumentsService.getFileStream(id, documentId);
+    res.setHeader('Content-Type', mimeType);
+    res.setHeader(
+      'Content-Disposition',
+      `inline; filename="${encodeURIComponent(filename)}"`,
+    );
+    return stream;
+  }
+
+  @Post(':id/identity-documents')
+  @HttpCode(HttpStatus.CREATED)
+  @RequirePermissions('bookings.write')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage(bookingIdentityDocumentStorage()),
+      limits: { fileSize: BOOKING_IDENTITY_DOCUMENT_MAX_BYTES },
+      fileFilter: bookingIdentityDocumentFileFilter,
+    }),
+  )
+  @ApiOperation({
+    summary: 'Upload an identity document (JPEG, PNG, WebP or PDF, max 10 MB)',
+  })
+  async uploadIdentityDocument(
+    @Param('id') id: string,
+    @Body('documentType') documentTypeRaw: string,
+    @UploadedFile() file: Express.Multer.File | undefined,
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<BookingIdentityDocumentDto> {
+    const booking = await this.bookingsService.assertBookingOwnerOrStaff(id, user.id);
+    if (!file) {
+      throw new BadRequestException(
+        'Fichier requis (JPEG, PNG, WebP ou PDF, max 10 Mo).',
+      );
+    }
+    const documentType =
+      BookingIdentityDocumentsService.parseDocumentType(documentTypeRaw);
+    return this.bookingIdentityDocumentsService.upload(
+      booking,
+      user.id,
+      documentType,
+      file,
+    );
+  }
+
+  @Post(':id/identity-documents/:documentId/approve')
+  @RequirePermissions('bookings.approve', 'bookings.write')
+  @ApiOperation({ summary: 'Approve an identity document (staff)' })
+  approveIdentityDocument(
+    @Param('id') id: string,
+    @Param('documentId') documentId: string,
+    @Body() dto: ReviewBookingIdentityDocumentDto,
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<BookingIdentityDocumentDto> {
+    return this.bookingIdentityDocumentsService.approve(
+      id,
+      documentId,
+      user.id,
+      dto.staffNote,
+    );
+  }
+
+  @Post(':id/identity-documents/:documentId/request-resubmit')
+  @RequirePermissions('bookings.approve', 'bookings.write')
+  @ApiOperation({ summary: 'Request a clearer identity document (staff)' })
+  requestIdentityDocumentResubmit(
+    @Param('id') id: string,
+    @Param('documentId') documentId: string,
+    @Body() dto: ReviewBookingIdentityDocumentDto,
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<BookingIdentityDocumentDto> {
+    return this.bookingIdentityDocumentsService.requestResubmit(
+      id,
+      documentId,
+      user.id,
+      dto.staffNote,
+    );
+  }
+
+  @Post(':id/identity-documents/:documentId/reject')
+  @RequirePermissions('bookings.approve', 'bookings.write')
+  @ApiOperation({ summary: 'Reject an identity document (staff)' })
+  rejectIdentityDocument(
+    @Param('id') id: string,
+    @Param('documentId') documentId: string,
+    @Body() dto: ReviewBookingIdentityDocumentDto,
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<BookingIdentityDocumentDto> {
+    return this.bookingIdentityDocumentsService.reject(
+      id,
+      documentId,
+      user.id,
+      dto.staffNote,
+    );
+  }
+
+  @Get(':id/manifest-entries')
+  @RequirePermissions('bookings.read')
+  @ApiOperation({ summary: 'List manifest entries for a booking' })
+  listManifestEntries(
+    @Param('id') id: string,
+  ): Promise<BookingManifestEntryDto[]> {
+    return this.bookingManifestService.listForBooking(id);
+  }
+
+  @Post(':id/manifest-entries')
+  @HttpCode(HttpStatus.CREATED)
+  @RequirePermissions('bookings.write')
+  @ApiOperation({ summary: 'Add a manifest entry to a booking' })
+  createManifestEntry(
+    @Param('id') id: string,
+    @Body() dto: CreateBookingManifestEntryDto,
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<BookingManifestEntryDto> {
+    return this.bookingManifestService.create(id, dto, user.id);
+  }
+
+  @Patch(':id/manifest-entries/:entryId')
+  @RequirePermissions('bookings.write')
+  @ApiOperation({ summary: 'Update a manifest entry' })
+  updateManifestEntry(
+    @Param('id') id: string,
+    @Param('entryId') entryId: string,
+    @Body() dto: UpdateBookingManifestEntryDto,
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<BookingManifestEntryDto> {
+    return this.bookingManifestService.update(id, entryId, dto, user.id);
+  }
+
+  @Delete(':id/manifest-entries/:entryId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @RequirePermissions('bookings.write')
+  @ApiOperation({ summary: 'Remove a manifest entry' })
+  async removeManifestEntry(
+    @Param('id') id: string,
+    @Param('entryId') entryId: string,
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<void> {
+    await this.bookingManifestService.remove(id, entryId, user.id);
   }
 
   @Get(':id')

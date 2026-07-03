@@ -104,6 +104,80 @@
     "historyEmpty": "Tocun changement de statut enregistré.",
     "transition": "{fromStatus} → {toStatus}"
   },
+  "manifest": {
+    "title": "Manifest",
+    "subtitle": "Traveler manifest for this booking — names, ages, nationalities and additional details.",
+    "suggestedCount": "{count, plural, one {# traveler expected from booking lines} other {# travelers expected from booking lines}}",
+    "addTraveler": "Add traveler",
+    "empty": "No manifest entries yet.",
+    "tableAria": "Booking manifest",
+    "addTitle": "Add traveler",
+    "editTitle": "Edit traveler",
+    "formHint": "Complete traveler information for this booking.",
+    "fullNameRequired": "Full name is required.",
+    "saving": "Saving…",
+    "createSuccess": "Traveler added to manifest.",
+    "updateSuccess": "Manifest entry updated.",
+    "deleteSuccess": "Entry removed from manifest.",
+    "deleteTitle": "Remove from manifest",
+    "deleteDescription": "Remove \"{name}\" from the manifest?",
+    "columns": {
+      "fullName": "Full name",
+      "age": "Age",
+      "sex": "Sex",
+      "nationality": "Nationality",
+      "idNumber": "ID number",
+      "conditions": "Conditions"
+    },
+    "fields": {
+      "fullName": "Full name",
+      "age": "Age",
+      "sex": "Sex",
+      "nationality": "Nationality",
+      "idNumber": "ID number",
+      "conditions": "Conditions",
+      "conditionsPlaceholder": "Allergies, diet, accessibility…",
+      "comment": "Comment",
+      "commentPlaceholder": "Internal notes or special requests…",
+      "other": "Other",
+      "otherPlaceholder": "Additional information…"
+    },
+    "sex": {
+      "unspecified": "Not specified",
+      "M": "Male",
+      "F": "Female",
+      "other": "Other"
+    }
+  },
+  "identityDocuments": {
+    "title": "Identity documents",
+    "subtitle": "Documents uploaded by the customer — approve or request a clearer version.",
+    "empty": "No documents uploaded.",
+    "statusLabel": "Status",
+    "view": "View",
+    "viewing": "Opening…",
+    "approve": "Approve",
+    "approveSuccess": "Document approved.",
+    "requestResubmit": "Request clearer version",
+    "resubmitDialogTitle": "Request a new version",
+    "resubmitDialogDescription": "Tell the customer what needs to be fixed (readability, framing, expired document…).",
+    "staffNoteLabel": "Message to customer",
+    "staffNotePlaceholder": "E.g. Please upload a clear photo of the passport photo page.",
+    "resubmitConfirm": "Send request",
+    "resubmitSuccess": "Resubmit request recorded.",
+    "types": {
+      "passport": "Passport",
+      "national_id": "National ID",
+      "drivers_license": "Driver's license",
+      "other": "Other"
+    },
+    "statuses": {
+      "pending_review": "Pending review",
+      "approved": "Approved",
+      "resubmit_requested": "Clearer version requested",
+      "rejected": "Rejected"
+    }
+  },
   "approval": {
     "title": "Assisted booking validation",
     "intro": "Approve the request, reject it with a reason, or send the payment link once validated.",

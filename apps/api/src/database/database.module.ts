@@ -3,7 +3,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'node:path';
 import * as entities from '../entities/generated';
+import { BookingIdentityDocuments } from '../entities/booking-identity-document.entity';
+import { BookingManifestEntries } from '../entities/booking-manifest-entry.entity';
 import { EmailOperationVerifications } from '../entities/email-operation-verification.entity';
+import { ensureMigrations } from './ensure-migrations';
 import { ensureRbacPermissions } from './ensure-rbac-permissions';
 import { ensureSchema } from './ensure-schema';
 import { ensureSeeds } from './ensure-seeds';
@@ -11,6 +14,8 @@ import { ensureSeeds } from './ensure-seeds';
 const entityList = [
   ...Object.values(entities).filter((v) => typeof v === 'function'),
   EmailOperationVerifications,
+  BookingIdentityDocuments,
+  BookingManifestEntries,
 ] as (new () => unknown)[];
 
 @Module({
@@ -28,6 +33,7 @@ const entityList = [
       inject: [ConfigService],
       useFactory: async (config: ConfigService) => {
         await ensureSchema(config);
+        await ensureMigrations(config);
         await ensureSeeds(config);
         await ensureRbacPermissions(config);
         return {

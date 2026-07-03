@@ -104,6 +104,80 @@
     "historyEmpty": "Hastacun changement de statut enregistré.",
     "transition": "{fromStatus} → {toStatus}"
   },
+  "manifest": {
+    "title": "Manifiesto",
+    "subtitle": "Ficha de viajeros de la reserva — nombres, edades, nacionalidades e información adicional.",
+    "suggestedCount": "{count, plural, one {# viajero esperado según las líneas} other {# viajeros esperados según las líneas}}",
+    "addTraveler": "Añadir viajero",
+    "empty": "Ninguna entrada en el manifiesto.",
+    "tableAria": "Manifiesto de la reserva",
+    "addTitle": "Añadir viajero",
+    "editTitle": "Modificar viajero",
+    "formHint": "Complete la información del viajero para esta reserva.",
+    "fullNameRequired": "El nombre completo es obligatorio.",
+    "saving": "Guardando…",
+    "createSuccess": "Viajero añadido al manifiesto.",
+    "updateSuccess": "Entrada del manifiesto actualizada.",
+    "deleteSuccess": "Entrada eliminada del manifiesto.",
+    "deleteTitle": "Eliminar del manifiesto",
+    "deleteDescription": "¿Eliminar « {name} » del manifiesto?",
+    "columns": {
+      "fullName": "Nombre completo",
+      "age": "Edad",
+      "sex": "Sexo",
+      "nationality": "Nacionalidad",
+      "idNumber": "N.º ID",
+      "conditions": "Condiciones"
+    },
+    "fields": {
+      "fullName": "Nombre completo",
+      "age": "Edad",
+      "sex": "Sexo",
+      "nationality": "Nacionalidad",
+      "idNumber": "Número ID",
+      "conditions": "Condiciones",
+      "conditionsPlaceholder": "Alergias, dieta, accesibilidad…",
+      "comment": "Comentario",
+      "commentPlaceholder": "Notas internas o peticiones especiales…",
+      "other": "Otros",
+      "otherPlaceholder": "Información complementaria…"
+    },
+    "sex": {
+      "unspecified": "No indicado",
+      "M": "Hombre",
+      "F": "Mujer",
+      "other": "Otro"
+    }
+  },
+  "identityDocuments": {
+    "title": "Documentos de identidad",
+    "subtitle": "Documentos subidos por el cliente — valide o solicite una versión más clara.",
+    "empty": "Ningún documento subido.",
+    "statusLabel": "Estado",
+    "view": "Ver",
+    "viewing": "Abriendo…",
+    "approve": "Validar",
+    "approveSuccess": "Documento validado.",
+    "requestResubmit": "Solicitar versión más clara",
+    "resubmitDialogTitle": "Solicitar nueva versión",
+    "resubmitDialogDescription": "Indique al cliente qué debe corregir (legibilidad, encuadre, documento caducado…).",
+    "staffNoteLabel": "Mensaje al cliente",
+    "staffNotePlaceholder": "Ej. Suba una foto nítida de la página de la foto del pasaporte.",
+    "resubmitConfirm": "Enviar solicitud",
+    "resubmitSuccess": "Solicitud de nueva versión registrada.",
+    "types": {
+      "passport": "Pasaporte",
+      "national_id": "Documento de identidad",
+      "drivers_license": "Permiso de conducir",
+      "other": "Otro"
+    },
+    "statuses": {
+      "pending_review": "Pendiente de validación",
+      "approved": "Validado",
+      "resubmit_requested": "Nueva versión solicitada",
+      "rejected": "Rechazado"
+    }
+  },
   "approval": {
     "title": "Validación de reserva asistida",
     "intro": "Apruebe la solicitud, rechácela con un motivo o envíe el enlace de pago una vez validada.",
