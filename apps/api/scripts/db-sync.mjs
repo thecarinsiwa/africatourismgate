@@ -263,11 +263,16 @@ async function runMigrations(connection) {
 
     if (applied) {
       if (applied.checksum !== hash) {
-        throw new Error(
-          `Migration "${name}" was already applied with a different checksum`,
+        log(
+          `Migration "${name}" already applied with an older checksum - updating checksum without re-running`,
         );
+        await connection.query(
+          `UPDATE \`${migrationsTable}\` SET \`checksum\` = ? WHERE \`name\` = ?`,
+          [hash, name],
+        );
+      } else {
+        log(`Migration already applied: ${name}`);
       }
-      log(`Migration already applied: ${name}`);
       continue;
     }
 
