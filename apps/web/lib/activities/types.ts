@@ -23,6 +23,8 @@ export interface ActivitySearchResult {
   priceCents: number;
   currency: string;
   destination: string;
+  latitude?: number | null;
+  longitude?: number | null;
   providerName: string;
   availableSchedulesCount: number;
   nextStartDatetime?: string;

@@ -19,6 +19,20 @@ export class ActivitySearchResultDto {
   @ApiProperty({ example: 'Kinshasa' })
   destination!: string;
 
+  @ApiPropertyOptional({
+    nullable: true,
+    description: 'Destination latitude for map display',
+    example: -4.3217,
+  })
+  latitude?: number | null;
+
+  @ApiPropertyOptional({
+    nullable: true,
+    description: 'Destination longitude for map display',
+    example: 15.3125,
+  })
+  longitude?: number | null;
+
   @ApiProperty({ example: 'Tourism Gate Experiences Kinshasa' })
   providerName!: string;
 

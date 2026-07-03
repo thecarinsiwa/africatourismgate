@@ -319,6 +319,18 @@ export const es: Translations = {
     imageAlt: 'Viajeros felices en África',
     bars: { flights: 'Vuelos', hotels: 'Hoteles', cars: 'Coches', cruises: 'Cruceros' },
   },
+  activitiesMap: {
+    title: 'Actividades próximas',
+    subtitle:
+      'Explore experiencias disponibles en África. Haga clic en un marcador para ver el detalle y reservar.',
+    loading: 'Cargando mapa…',
+    loadError: 'No se pudieron cargar las actividades en el mapa.',
+    empty: 'Ninguna actividad con ubicación disponible por el momento.',
+    browseAll: 'Ver todas las actividades',
+    mapAria: 'Mapa de actividades disponibles en África',
+    nextDate: 'Próxima fecha',
+    viewActivity: 'Ver actividad',
+  },
   footer: {
     tagline:
       'Su puerta de entrada a las mejores experiencias de viaje en África. Descubra destinos únicos y reserve con confianza.',
