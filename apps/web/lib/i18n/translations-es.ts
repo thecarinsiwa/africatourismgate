@@ -1040,6 +1040,35 @@ export const es: Translations = {
         proceedToPayment: 'Proceder al pago',
         paymentInvitePending:
           'Recibirá un correo con el enlace de pago cuando su solicitud sea validada.',
+        identityDocuments: {
+          title: 'Documento de identidad',
+          subtitle:
+            'Suba un documento de identidad legible (pasaporte, DNI…) para validar su reserva.',
+          empty: 'Ningún documento subido por el momento.',
+          documentType: 'Tipo de documento',
+          file: 'Archivo',
+          fileHint: 'JPEG, PNG, WebP o PDF — 10 MB máx.',
+          upload: 'Enviar documento',
+          uploading: 'Enviando…',
+          uploadError: 'No se pudo enviar el documento.',
+          fileTooLarge: 'Archivo demasiado grande (10 MB máx.).',
+          view: 'Ver',
+          viewing: 'Abriendo…',
+          viewError: 'No se pudo abrir el documento.',
+          statusLabel: 'Estado',
+          types: {
+            passport: 'Pasaporte',
+            national_id: 'Documento de identidad',
+            drivers_license: 'Permiso de conducir',
+            other: 'Otro',
+          },
+          statuses: {
+            pending_review: 'En revisión',
+            approved: 'Validado',
+            resubmit_requested: 'Se solicita versión más clara',
+            rejected: 'Rechazado',
+          },
+        },
         messages: {
           title: 'Conversación',
           subtitle: 'Intercambie con nuestro equipo sobre su solicitud.',

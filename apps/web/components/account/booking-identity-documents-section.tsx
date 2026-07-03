@@ -33,7 +33,7 @@ function latestDocumentsByType(
       map.set(doc.documentType, doc);
     }
   }
-  return [...map.values()].sort((a, b) =>
+  return Array.from(map.values()).sort((a, b) =>
     a.documentType.localeCompare(b.documentType),
   );
 }
