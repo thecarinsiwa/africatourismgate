@@ -6,6 +6,7 @@ import * as entities from '../entities/generated';
 import { BookingIdentityDocuments } from '../entities/booking-identity-document.entity';
 import { BookingManifestEntries } from '../entities/booking-manifest-entry.entity';
 import { EmailOperationVerifications } from '../entities/email-operation-verification.entity';
+import { ensureMigrations } from './ensure-migrations';
 import { ensureRbacPermissions } from './ensure-rbac-permissions';
 import { ensureSchema } from './ensure-schema';
 import { ensureSeeds } from './ensure-seeds';
@@ -32,6 +33,7 @@ const entityList = [
       inject: [ConfigService],
       useFactory: async (config: ConfigService) => {
         await ensureSchema(config);
+        await ensureMigrations(config);
         await ensureSeeds(config);
         await ensureRbacPermissions(config);
         return {
