@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'node:path';
 import * as entities from '../entities/generated';
+import { BookingIdentityDocuments } from '../entities/booking-identity-document.entity';
 import { EmailOperationVerifications } from '../entities/email-operation-verification.entity';
 import { ensureRbacPermissions } from './ensure-rbac-permissions';
 import { ensureSchema } from './ensure-schema';
@@ -11,6 +12,7 @@ import { ensureSeeds } from './ensure-seeds';
 const entityList = [
   ...Object.values(entities).filter((v) => typeof v === 'function'),
   EmailOperationVerifications,
+  BookingIdentityDocuments,
 ] as (new () => unknown)[];
 
 @Module({
