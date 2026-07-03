@@ -790,9 +790,20 @@ export class AuthService {
   private async completeGoogleOAuthVerification(
     row: EmailOperationVerifications,
   ): Promise<AuthResponseDto> {
-    const existing = await this.findActiveCustomerByEmail(row.email);
-    if (existing) {
-      return this.completeUserSession(existing);
+    const email = this.normalizeEmail(row.email);
+    const existing = await this.findAnyUserByEmail(email);
+
+    if (existing && !existing.deletedAt) {
+      if (existing.status === 'active') {
+        return this.completeUserSession(existing);
+      }
+      throw new UnauthorizedException('Account is not active');
+    }
+
+    if (existing?.deletedAt) {
+      const reactivated = await this.reactivateUserFromGoogleSignup(existing, row);
+      void this.notifyWelcome(reactivated);
+      return this.completeUserSession(reactivated);
     }
 
     try {
@@ -800,12 +811,64 @@ export class AuthService {
       void this.notifyWelcome(user);
       return this.completeUserSession(user);
     } catch (err) {
-      const recovered = await this.findActiveCustomerByEmail(row.email);
-      if (recovered) {
+      const recovered = await this.findAnyUserByEmail(email);
+      if (recovered && !recovered.deletedAt && recovered.status === 'active') {
         return this.completeUserSession(recovered);
+      }
+      if (recovered?.deletedAt) {
+        const reactivated = await this.reactivateUserFromGoogleSignup(
+          recovered,
+          row,
+        );
+        return this.completeUserSession(reactivated);
       }
       throw err;
     }
+  }
+
+  private async reactivateUserFromGoogleSignup(
+    user: Users,
+    row: EmailOperationVerifications,
+  ): Promise<Users> {
+    const meta = row.metadata ?? {};
+    const firstName =
+      typeof meta.firstName === 'string' ? meta.firstName : user.firstName;
+    const lastName =
+      typeof meta.lastName === 'string' ? meta.lastName : user.lastName;
+
+    user.deletedAt = null;
+    user.deletedByUserId = null;
+    user.status = 'active';
+    user.firstName = firstName;
+    user.lastName = lastName;
+    user.organizationId = user.organizationId ?? SEED_ORG_PLATFORM_ID;
+    user.passwordHash = await bcrypt.hash(
+      randomBytes(24).toString('hex'),
+      BCRYPT_ROUNDS,
+    );
+
+    await this.usersRepo.save(user);
+    await this.ensureCustomerRoleAssignment(user.id);
+    return user;
+  }
+
+  private async ensureCustomerRoleAssignment(userId: string): Promise<void> {
+    const existing = await this.roleAssignmentsRepo.findOne({
+      where: { userId, roleId: SEED_ROLE_CUSTOMER_ID },
+    });
+    if (existing) {
+      return;
+    }
+
+    const assignment = this.roleAssignmentsRepo.create({
+      id: newId(),
+      userId,
+      roleId: SEED_ROLE_CUSTOMER_ID,
+      scopeType: 'global',
+      assignedByUserId: userId,
+      assignedAt: new Date(),
+    } as DeepPartial<UserRoleAssignments>);
+    await this.roleAssignmentsRepo.save(assignment);
   }
 
   private async startGoogleLoginVerification(
