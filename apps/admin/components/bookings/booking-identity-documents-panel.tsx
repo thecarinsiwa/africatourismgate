@@ -2,7 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { AlertDialog, Button, Card, Input, useToast } from '@africatourismgate/ui';
+import { Button, Card, Input, Modal, useToast } from '@africatourismgate/ui';
 import type { BookingIdentityDocument } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useId, useMemo, useState } from 'react';
@@ -124,11 +124,12 @@ export function BookingIdentityDocumentsPanel({
                         disabled={loading}
                         onClick={() =>
                           void runAction(
-                            () =>
-                              getApiClient().approveBookingIdentityDocument(
+                            async () => {
+                              await getApiClient().approveBookingIdentityDocument(
                                 bookingId,
                                 doc.id,
-                              ),
+                              );
+                            },
                             t('approveSuccess'),
                           )
                         }
@@ -156,33 +157,16 @@ export function BookingIdentityDocumentsPanel({
         </ul>
       )}
 
-      <AlertDialog
+      <Modal
         open={Boolean(resubmitDoc)}
         onOpenChange={(open) => {
-          if (!open) setResubmitDoc(null);
+          if (!loading && !open) setResubmitDoc(null);
         }}
         title={t('resubmitDialogTitle')}
         description={t('resubmitDialogDescription')}
-        confirmLabel={t('resubmitConfirm')}
-        cancelLabel={tActions('cancel')}
-        confirmDisabled={!staffNote.trim() || loading}
-        onConfirm={() => {
-          if (!resubmitDoc) return;
-          void runAction(
-            async () => {
-              await getApiClient().requestBookingIdentityDocumentResubmit(
-                bookingId,
-                resubmitDoc.id,
-                { staffNote: staffNote.trim() },
-              );
-              setResubmitDoc(null);
-              setStaffNote('');
-            },
-            t('resubmitSuccess'),
-          );
-        }}
+        showClose
       >
-        <label className="mt-4 block text-sm" htmlFor={noteId}>
+        <label className="block text-sm" htmlFor={noteId}>
           <span className="font-medium text-atg-fg">{t('staffNoteLabel')}</span>
           <Input
             id={noteId}
@@ -192,7 +176,38 @@ export function BookingIdentityDocumentsPanel({
             placeholder={t('staffNotePlaceholder')}
           />
         </label>
-      </AlertDialog>
+        <div className="mt-6 flex flex-wrap justify-end gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            disabled={loading}
+            onClick={() => setResubmitDoc(null)}
+          >
+            {tActions('cancel')}
+          </Button>
+          <Button
+            type="button"
+            disabled={!staffNote.trim() || loading}
+            onClick={() => {
+              if (!resubmitDoc) return;
+              void runAction(
+                async () => {
+                  await getApiClient().requestBookingIdentityDocumentResubmit(
+                    bookingId,
+                    resubmitDoc.id,
+                    { staffNote: staffNote.trim() },
+                  );
+                  setResubmitDoc(null);
+                  setStaffNote('');
+                },
+                t('resubmitSuccess'),
+              );
+            }}
+          >
+            {t('resubmitConfirm')}
+          </Button>
+        </div>
+      </Modal>
     </Card>
   );
 }
