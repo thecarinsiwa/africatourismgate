@@ -1,4 +1,5 @@
 @import '@africatourismgate/config/theme.css';
+@import 'leaflet/dist/leaflet.css';
 
 @tailwind base;
 @tailwind components;
@@ -159,4 +160,17 @@
 }
 .scroll-animate.is-visible {
   opacity: 1;
+}
+
+/* ── Leaflet map (activities section) ─────────────────── */
+.leaflet-container {
+  font-family: inherit;
+  background: var(--atg-surface);
+}
+.leaflet-popup-content-wrapper {
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 16px rgb(0 0 0 / 0.12);
+}
+.leaflet-popup-content {
+  margin: 12px 14px;
 }

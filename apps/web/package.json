@@ -16,6 +16,7 @@
     "@africatourismgate/types": "workspace:*",
     "@africatourismgate/ui": "workspace:*",
     "@africatourismgate/utils": "workspace:*",
+    "leaflet": "^1.9.4",
     "next": "14.2.18",
     "next-intl": "^3.26.0",
     "react": "^18.3.1",
@@ -24,6 +25,7 @@
   "devDependencies": {
     "@africatourismgate/config": "workspace:*",
     "@playwright/test": "^1.60.0",
+    "@types/leaflet": "^1.9.21",
     "@types/node": "^22.10.2",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",

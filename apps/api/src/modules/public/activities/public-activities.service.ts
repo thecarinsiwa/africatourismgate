@@ -108,7 +108,7 @@ export class PublicActivitiesService {
       where: { id: In(destIds) },
     });
     const destinationById = new Map(
-      destinations.filter((d) => !d.deletedAt).map((d) => [d.id, d.name]),
+      destinations.filter((d) => !d.deletedAt).map((d) => [d.id, d]),
     );
 
     const activityIds = activeActivities.map((a) => a.id);
@@ -143,13 +143,17 @@ export class PublicActivitiesService {
         (schedule) => this.remainingPlaces(schedule) >= participants,
       );
 
+      const dest = destinationById.get(provider.destinationId);
+
       const result: ActivitySearchResultDto = {
         id: activity.id,
         title: activity.title,
         durationMinutes: activity.durationMinutes,
         priceCents: activity.priceCents,
         currency: activity.currency,
-        destination: destinationById.get(provider.destinationId) ?? '',
+        destination: dest?.name ?? '',
+        latitude: this.toCoord(dest?.latitude),
+        longitude: this.toCoord(dest?.longitude),
         providerName: provider.name,
         availableSchedulesCount: availableSchedules.length,
         imageUrl: imageUrlByActivityId.get(activity.id) ?? null,
@@ -229,7 +233,7 @@ export class PublicActivitiesService {
       where: { id: In(destIds) },
     });
     const destinationById = new Map(
-      destinations.filter((d) => !d.deletedAt).map((d) => [d.id, d.name]),
+      destinations.filter((d) => !d.deletedAt).map((d) => [d.id, d]),
     );
 
     const activityIds = activeActivities.map((a) => a.id);
@@ -267,8 +271,8 @@ export class PublicActivitiesService {
         continue;
       }
 
-      const destinationName =
-        destinationById.get(provider.destinationId) ?? query.destination?.trim() ?? '';
+      const dest = destinationById.get(provider.destinationId);
+      const destinationName = dest?.name ?? query.destination?.trim() ?? '';
 
       results.push({
         id: activity.id,
@@ -277,6 +281,8 @@ export class PublicActivitiesService {
         priceCents: activity.priceCents,
         currency: activity.currency,
         destination: destinationName,
+        latitude: this.toCoord(dest?.latitude),
+        longitude: this.toCoord(dest?.longitude),
         providerName: provider.name,
         availableSchedulesCount: availableSchedules.length,
         nextStartDatetime: this.toIsoDatetime(availableSchedules[0].startDatetime),
@@ -484,6 +490,14 @@ export class PublicActivitiesService {
 
   private remainingPlaces(schedule: ActivitySchedules): number {
     return schedule.capacity - schedule.bookedCount;
+  }
+
+  private toCoord(value: string | null | undefined): number | null {
+    if (value == null) {
+      return null;
+    }
+    const n = Number(value);
+    return Number.isFinite(n) ? n : null;
   }
 
   private toIsoDatetime(value: Date | string): string {

@@ -7,7 +7,7 @@ import { WhyUsSection } from '../components/home/verticals-section';
 import { ParallaxPromo } from '../components/home/parallax-promo';
 import { DestinationsCarousel } from '../components/home/destinations-carousel';
 import { HappyCustomers } from '../components/home/happy-customers';
-import { PartnersSection } from '../components/home/partners-section';
+import { ActivitiesMapSection } from '../components/home/activities-map-section';
 
 type PublicBranding = {
   displayName?: string;
@@ -52,7 +52,7 @@ export default function HomePage() {
         <ParallaxPromo />
         <DestinationsCarousel />
         <HappyCustomers />
-        <PartnersSection />
+        <ActivitiesMapSection />
       </main>
 
       <HomeFooter />

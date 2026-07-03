@@ -244,6 +244,17 @@ export type Translations = {
     imageAlt: string;
     bars: { flights: string; hotels: string; cars: string; cruises: string };
   };
+  activitiesMap: {
+    title: string;
+    subtitle: string;
+    loading: string;
+    loadError: string;
+    empty: string;
+    browseAll: string;
+    mapAria: string;
+    nextDate: string;
+    viewActivity: string;
+  };
   footer: {
     tagline: string;
     learnMore: string;
@@ -1403,6 +1414,18 @@ const fr: Translations = {
     clients: 'Clients',
     imageAlt: 'Voyageurs heureux en Afrique',
     bars: { flights: 'Vols', hotels: 'Hôtels', cars: 'Voitures', cruises: 'Croisières' },
+  },
+  activitiesMap: {
+    title: 'Activités à venir',
+    subtitle:
+      'Explorez les expériences disponibles à travers l\'Afrique. Cliquez sur un point pour voir le détail et réserver.',
+    loading: 'Chargement de la carte…',
+    loadError: 'Impossible de charger les activités sur la carte.',
+    empty: 'Aucune activité disponible avec localisation pour le moment.',
+    browseAll: 'Voir toutes les activités',
+    mapAria: 'Carte des activités disponibles en Afrique',
+    nextDate: 'Prochaine date',
+    viewActivity: 'Voir l\'activité',
   },
   footer: {
     tagline:
@@ -2625,6 +2648,18 @@ const en: Translations = {
     clients: 'Clients',
     imageAlt: 'Happy travelers in Africa',
     bars: { flights: 'Flights', hotels: 'Hotels', cars: 'Cars', cruises: 'Cruises' },
+  },
+  activitiesMap: {
+    title: 'Upcoming Activities',
+    subtitle:
+      'Explore available experiences across Africa. Click a marker to view details and book.',
+    loading: 'Loading map…',
+    loadError: 'Could not load activities on the map.',
+    empty: 'No activities with location available at the moment.',
+    browseAll: 'Browse all activities',
+    mapAria: 'Map of available activities in Africa',
+    nextDate: 'Next date',
+    viewActivity: 'View activity',
   },
   footer: {
     tagline:
