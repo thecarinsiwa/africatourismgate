@@ -52,6 +52,12 @@ import {
   BookingIdentityDocumentDto,
   ReviewBookingIdentityDocumentDto,
 } from './dto/booking-identity-document.dto';
+import { BookingManifestService } from './booking-manifest.service';
+import {
+  BookingManifestEntryDto,
+  CreateBookingManifestEntryDto,
+  UpdateBookingManifestEntryDto,
+} from './dto/booking-manifest-entry.dto';
 
 @ApiTags('bookings')
 @ApiForbiddenResponse({ description: 'Missing permission' })
@@ -66,6 +72,7 @@ export class BookingsController {
     private readonly bookingMessagesService: BookingMessagesService,
     private readonly bookingApprovalService: BookingApprovalService,
     private readonly bookingIdentityDocumentsService: BookingIdentityDocumentsService,
+    private readonly bookingManifestService: BookingManifestService,
   ) {}
 
   @Post('checkout-preview')
@@ -319,6 +326,51 @@ export class BookingsController {
       user.id,
       dto.staffNote,
     );
+  }
+
+  @Get(':id/manifest-entries')
+  @RequirePermissions('bookings.read')
+  @ApiOperation({ summary: 'List manifest entries for a booking' })
+  listManifestEntries(
+    @Param('id') id: string,
+  ): Promise<BookingManifestEntryDto[]> {
+    return this.bookingManifestService.listForBooking(id);
+  }
+
+  @Post(':id/manifest-entries')
+  @HttpCode(HttpStatus.CREATED)
+  @RequirePermissions('bookings.write')
+  @ApiOperation({ summary: 'Add a manifest entry to a booking' })
+  createManifestEntry(
+    @Param('id') id: string,
+    @Body() dto: CreateBookingManifestEntryDto,
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<BookingManifestEntryDto> {
+    return this.bookingManifestService.create(id, dto, user.id);
+  }
+
+  @Patch(':id/manifest-entries/:entryId')
+  @RequirePermissions('bookings.write')
+  @ApiOperation({ summary: 'Update a manifest entry' })
+  updateManifestEntry(
+    @Param('id') id: string,
+    @Param('entryId') entryId: string,
+    @Body() dto: UpdateBookingManifestEntryDto,
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<BookingManifestEntryDto> {
+    return this.bookingManifestService.update(id, entryId, dto, user.id);
+  }
+
+  @Delete(':id/manifest-entries/:entryId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @RequirePermissions('bookings.write')
+  @ApiOperation({ summary: 'Remove a manifest entry' })
+  async removeManifestEntry(
+    @Param('id') id: string,
+    @Param('entryId') entryId: string,
+    @CurrentUser() user: AuthUserDto,
+  ): Promise<void> {
+    await this.bookingManifestService.remove(id, entryId, user.id);
   }
 
   @Get(':id')

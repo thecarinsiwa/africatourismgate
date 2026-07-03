@@ -89,6 +89,9 @@ import type {
   BookingDetail,
   BookingIdentityDocument,
   ReviewBookingIdentityDocumentRequest,
+  BookingManifestEntry,
+  CreateBookingManifestEntryRequest,
+  UpdateBookingManifestEntryRequest,
   CreateBookingResponse,
   BookingRequestResponse,
   BookingMessage,
@@ -1766,6 +1769,40 @@ export class ApiClient {
     return this.request<BookingIdentityDocument>(
       `/bookings/${bookingId}/identity-documents/${documentId}/reject`,
       { method: 'POST', body: body ?? {} },
+    );
+  }
+
+  listBookingManifestEntries(bookingId: string): Promise<BookingManifestEntry[]> {
+    return this.request<BookingManifestEntry[]>(
+      `/bookings/${bookingId}/manifest-entries`,
+    );
+  }
+
+  createBookingManifestEntry(
+    bookingId: string,
+    body: CreateBookingManifestEntryRequest,
+  ): Promise<BookingManifestEntry> {
+    return this.request<BookingManifestEntry>(
+      `/bookings/${bookingId}/manifest-entries`,
+      { method: 'POST', body },
+    );
+  }
+
+  updateBookingManifestEntry(
+    bookingId: string,
+    entryId: string,
+    body: UpdateBookingManifestEntryRequest,
+  ): Promise<BookingManifestEntry> {
+    return this.request<BookingManifestEntry>(
+      `/bookings/${bookingId}/manifest-entries/${entryId}`,
+      { method: 'PATCH', body },
+    );
+  }
+
+  removeBookingManifestEntry(bookingId: string, entryId: string): Promise<void> {
+    return this.request<void>(
+      `/bookings/${bookingId}/manifest-entries/${entryId}`,
+      { method: 'DELETE' },
     );
   }
 

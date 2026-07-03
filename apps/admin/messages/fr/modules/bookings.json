@@ -104,6 +104,51 @@
     "historyEmpty": "Aucun changement de statut enregistré.",
     "transition": "{fromStatus} → {toStatus}"
   },
+  "manifest": {
+    "title": "Manifeste",
+    "subtitle": "Fiche voyageurs de la réservation — noms, âges, nationalités et informations complémentaires.",
+    "suggestedCount": "{count, plural, one {# voyageur attendu selon les lignes} other {# voyageurs attendus selon les lignes}}",
+    "addTraveler": "Ajouter un voyageur",
+    "empty": "Aucune entrée dans le manifeste.",
+    "tableAria": "Manifeste de la réservation",
+    "addTitle": "Ajouter un voyageur",
+    "editTitle": "Modifier le voyageur",
+    "formHint": "Complétez les informations du voyageur pour cette réservation.",
+    "fullNameRequired": "Le nom complet est obligatoire.",
+    "saving": "Enregistrement…",
+    "createSuccess": "Voyageur ajouté au manifeste.",
+    "updateSuccess": "Entrée du manifeste mise à jour.",
+    "deleteSuccess": "Entrée retirée du manifeste.",
+    "deleteTitle": "Retirer du manifeste",
+    "deleteDescription": "Retirer « {name} » du manifeste ?",
+    "columns": {
+      "fullName": "Nom complet",
+      "age": "Âge",
+      "sex": "Sexe",
+      "nationality": "Nationalité",
+      "idNumber": "N° ID",
+      "conditions": "Conditions"
+    },
+    "fields": {
+      "fullName": "Nom complet",
+      "age": "Âge",
+      "sex": "Sexe",
+      "nationality": "Nationalité",
+      "idNumber": "Numéro ID",
+      "conditions": "Conditions",
+      "conditionsPlaceholder": "Allergies, régime, accessibilité…",
+      "comment": "Commentaire",
+      "commentPlaceholder": "Notes internes ou demandes particulières…",
+      "other": "Autres",
+      "otherPlaceholder": "Informations complémentaires…"
+    },
+    "sex": {
+      "unspecified": "Non renseigné",
+      "M": "Homme",
+      "F": "Femme",
+      "other": "Autre"
+    }
+  },
   "identityDocuments": {
     "title": "Pièces d'identité",
     "subtitle": "Documents déposés par le client — validez ou demandez une version plus claire.",

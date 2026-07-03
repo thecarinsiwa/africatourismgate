@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsOptional, IsString, MaxLength } from 'class-validator';
 import type {
   BookingIdentityDocumentStatus,
   BookingIdentityDocumentType,
@@ -49,5 +50,8 @@ export class BookingIdentityDocumentDto {
 
 export class ReviewBookingIdentityDocumentDto {
   @ApiPropertyOptional({ description: 'Note for the customer (required for resubmit request)' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(2000)
   staffNote?: string;
 }

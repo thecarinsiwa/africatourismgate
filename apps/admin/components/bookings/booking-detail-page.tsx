@@ -41,6 +41,7 @@ import { BookingItemTypeIcon } from './booking-item-type-icon';
 import { BookingGuidesSection } from './booking-guides-section';
 import { BookingAssistedApprovalPanel } from './booking-assisted-approval-panel';
 import { BookingIdentityDocumentsPanel } from './booking-identity-documents-panel';
+import { BookingManifestSection } from './booking-manifest-section';
 import { BookingMessagesSection } from './booking-messages-section';
 import { BookingStatusTimeline } from './booking-status-timeline';
 
@@ -321,6 +322,10 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   }
 
   const { booking, client } = detail;
+  const suggestedTravelerCount = detail.items.reduce(
+    (sum, item) => sum + item.quantity,
+    0,
+  );
   const manualStatusTargets = getManualBookingStatusTargets(booking.status);
   const showManualStatusChange = canWrite && manualStatusTargets.length > 0;
   const canCancel =
@@ -496,6 +501,12 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
               />
             </Card>
           </section>
+
+          <BookingManifestSection
+            bookingId={bookingId}
+            canWrite={canWrite}
+            suggestedCount={suggestedTravelerCount}
+          />
 
           <BookingGuidesSection bookingId={bookingId} canWrite={canWrite} />
 

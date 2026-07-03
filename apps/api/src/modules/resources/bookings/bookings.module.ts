@@ -23,6 +23,7 @@ import {
 } from '../../../entities/generated';
 import { ReviewsModule } from '../reviews/reviews.module';
 import { BookingIdentityDocuments } from '../../../entities/booking-identity-document.entity';
+import { BookingManifestEntries } from '../../../entities/booking-manifest-entry.entity';
 import { EmailVerificationModule } from '../../email-verification/email-verification.module';
 import { PackagesModule } from '../packages/packages.module';
 import { OrganizationSettingsModule } from '../organization-settings/organization-settings.module';
@@ -39,6 +40,7 @@ import { BookingNotificationsService } from './booking-notifications.service';
 import { BookingPaymentReminderService } from './booking-payment-reminder.service';
 import { BookingsController } from './bookings.controller';
 import { BookingIdentityDocumentsService } from './booking-identity-documents.service';
+import { BookingManifestService } from './booking-manifest.service';
 import { BookingsService } from './bookings.service';
 
 @Module({
@@ -70,6 +72,7 @@ import { BookingsService } from './bookings.service';
       ActivitySchedules,
       Activities,
       BookingIdentityDocuments,
+      BookingManifestEntries,
     ]),
   ],
   controllers: [BookingsController],
@@ -85,6 +88,7 @@ import { BookingsService } from './bookings.service';
     BookingNotificationsService,
     BookingPaymentReminderService,
     BookingIdentityDocumentsService,
+    BookingManifestService,
   ],
   exports: [
     BookingEngineService,

@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'node:path';
 import * as entities from '../entities/generated';
 import { BookingIdentityDocuments } from '../entities/booking-identity-document.entity';
+import { BookingManifestEntries } from '../entities/booking-manifest-entry.entity';
 import { EmailOperationVerifications } from '../entities/email-operation-verification.entity';
 import { ensureRbacPermissions } from './ensure-rbac-permissions';
 import { ensureSchema } from './ensure-schema';
@@ -13,6 +14,7 @@ const entityList = [
   ...Object.values(entities).filter((v) => typeof v === 'function'),
   EmailOperationVerifications,
   BookingIdentityDocuments,
+  BookingManifestEntries,
 ] as (new () => unknown)[];
 
 @Module({

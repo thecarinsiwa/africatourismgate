@@ -164,6 +164,38 @@ export interface ReviewBookingIdentityDocumentRequest {
   staffNote?: string;
 }
 
+export type BookingManifestSex = 'M' | 'F' | 'other';
+
+export interface BookingManifestEntry {
+  id: string;
+  bookingId: string;
+  sortOrder: number;
+  fullName: string;
+  age?: number | null;
+  sex?: BookingManifestSex | null;
+  nationality?: string | null;
+  idNumber?: string | null;
+  conditions?: string | null;
+  comment?: string | null;
+  other?: string | null;
+  createdAt: string;
+  updatedAt?: string | null;
+}
+
+export interface CreateBookingManifestEntryRequest {
+  fullName: string;
+  age?: number;
+  sex?: BookingManifestSex;
+  nationality?: string;
+  idNumber?: string;
+  conditions?: string;
+  comment?: string;
+  other?: string;
+  sortOrder?: number;
+}
+
+export type UpdateBookingManifestEntryRequest = CreateBookingManifestEntryRequest;
+
 export interface BookingDetail {
   booking: Booking;
   items: BookingItem[];
