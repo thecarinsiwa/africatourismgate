@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, type MutableRefObject } from 'react';
+import { useEffect, useRef, useState, type MutableRefObject } from 'react';
 import type { CircleMarker, Map as LeafletMap } from 'leaflet';
 import type { ActivityMapMarker } from './activities-map-section';
 
@@ -13,6 +13,7 @@ export function ActivitiesMapInner({ markers, ariaLabel }: ActivitiesMapInnerPro
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LeafletMap | null>(null);
   const markerLayerRef = useRef<CircleMarker[]>([]);
+  const [mapReady, setMapReady] = useState(false);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -38,11 +39,12 @@ export function ActivitiesMapInner({ markers, ariaLabel }: ActivitiesMapInnerPro
       }).addTo(map);
 
       mapRef.current = map;
-      renderMarkers(L, map, markers, markerLayerRef);
+      setMapReady(true);
     });
 
     return () => {
       cancelled = true;
+      setMapReady(false);
       for (const marker of markerLayerRef.current) {
         marker.remove();
       }
@@ -50,19 +52,18 @@ export function ActivitiesMapInner({ markers, ariaLabel }: ActivitiesMapInnerPro
       mapRef.current?.remove();
       mapRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- map init once
   }, []);
 
   useEffect(() => {
     const map = mapRef.current;
-    if (!map) {
+    if (!mapReady || !map) {
       return;
     }
 
     void import('leaflet').then((L) => {
       renderMarkers(L, map, markers, markerLayerRef);
     });
-  }, [markers]);
+  }, [markers, mapReady]);
 
   return (
     <div
