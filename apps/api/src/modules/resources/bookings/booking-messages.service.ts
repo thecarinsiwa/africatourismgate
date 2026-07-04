@@ -254,9 +254,14 @@ export class BookingMessagesService {
       select: ['id', 'firstName', 'lastName'],
     });
 
-    return new Map(
-      users.map((user) => [user.id, this.formatUserDisplayName(user)]).filter((entry) => entry[1]),
-    );
+    const entries: [string, string][] = [];
+    for (const user of users) {
+      const name = this.formatUserDisplayName(user);
+      if (name) {
+        entries.push([user.id, name]);
+      }
+    }
+    return new Map(entries);
   }
 
   private formatUserDisplayName(user: Pick<Users, 'firstName' | 'lastName'>): string {
