@@ -81,6 +81,7 @@ import type {
   UpdateActivityRequest,
   UpdateActivityScheduleRequest,
   ApproveBookingRequest,
+  UpdateBookingPricingRequest,
   RejectBookingRequest,
   BookingAdminDetail,
   BookingCheckoutPreview,
@@ -1736,6 +1737,16 @@ export class ApiClient {
   inviteBookingPayment(id: string): Promise<BookingCheckoutSessionResponse> {
     return this.request<BookingCheckoutSessionResponse>(`/bookings/${id}/invite-payment`, {
       method: 'POST',
+    });
+  }
+
+  updateBookingPricing(
+    id: string,
+    body: UpdateBookingPricingRequest,
+  ): Promise<BookingAdminDetail> {
+    return this.request<BookingAdminDetail>(`/bookings/${id}/pricing`, {
+      method: 'PUT',
+      body,
     });
   }
 

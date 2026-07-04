@@ -230,6 +230,123 @@ describe('Booking approval (e2e)', () => {
       .set(authHeader(adminToken))
       .expect(400);
   });
+
+  it('POST /bookings/:id/approve with travelers creates manifest and sets total to sum', async () => {
+    const date = '2099-09-01';
+    await ensureRoomAvailabilityForDate(app, adminToken, date, 2);
+
+    const created = await request(app.getHttpServer())
+      .post(apiPath('/bookings/request'))
+      .set(authHeader(customerToken))
+      .send(assistedCheckoutBody(date))
+      .expect(201);
+
+    const bookingId = created.body.bookingId as string;
+
+    const approved = await request(app.getHttpServer())
+      .post(apiPath(`/bookings/${bookingId}/approve`))
+      .set(authHeader(adminToken))
+      .send({
+        travelers: [
+          { fullName: 'Alice Martin', priceCents: 5000 },
+          { fullName: 'Bob Martin', priceCents: 3500 },
+        ],
+      })
+      .expect(201);
+
+    expect(approved.body.booking?.status).toBe('pending_payment');
+    expect(approved.body.booking?.totalCents).toBe(8500);
+
+    const manifest = await request(app.getHttpServer())
+      .get(apiPath(`/bookings/${bookingId}/manifest-entries`))
+      .set(authHeader(adminToken))
+      .expect(200);
+
+    expect(manifest.body).toHaveLength(2);
+    expect(manifest.body).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ fullName: 'Alice Martin', priceCents: 5000 }),
+        expect.objectContaining({ fullName: 'Bob Martin', priceCents: 3500 }),
+      ]),
+    );
+  });
+
+  it('POST /bookings/:id/approve with travelers respects totalCents override', async () => {
+    const date = '2099-09-02';
+    await ensureRoomAvailabilityForDate(app, adminToken, date, 2);
+
+    const created = await request(app.getHttpServer())
+      .post(apiPath('/bookings/request'))
+      .set(authHeader(customerToken))
+      .send(assistedCheckoutBody(date))
+      .expect(201);
+
+    const bookingId = created.body.bookingId as string;
+
+    const approved = await request(app.getHttpServer())
+      .post(apiPath(`/bookings/${bookingId}/approve`))
+      .set(authHeader(adminToken))
+      .send({
+        travelers: [{ fullName: 'Solo Traveler', priceCents: 6000 }],
+        totalCents: 10000,
+      })
+      .expect(201);
+
+    expect(approved.body.booking?.totalCents).toBe(10000);
+
+    const manifest = await request(app.getHttpServer())
+      .get(apiPath(`/bookings/${bookingId}/manifest-entries`))
+      .set(authHeader(adminToken))
+      .expect(200);
+
+    expect(manifest.body).toHaveLength(1);
+    expect(manifest.body[0].priceCents).toBe(6000);
+  });
+
+  it('PUT /bookings/:id/pricing updates manifest prices and total in pending_payment', async () => {
+    const date = '2099-09-03';
+    await ensureRoomAvailabilityForDate(app, adminToken, date, 2);
+
+    const created = await request(app.getHttpServer())
+      .post(apiPath('/bookings/request'))
+      .set(authHeader(customerToken))
+      .send(assistedCheckoutBody(date))
+      .expect(201);
+
+    const bookingId = created.body.bookingId as string;
+
+    await request(app.getHttpServer())
+      .post(apiPath(`/bookings/${bookingId}/approve`))
+      .set(authHeader(adminToken))
+      .send({
+        travelers: [{ fullName: 'Jean Dupont', priceCents: 4000 }],
+      })
+      .expect(201);
+
+    const manifestBefore = await request(app.getHttpServer())
+      .get(apiPath(`/bookings/${bookingId}/manifest-entries`))
+      .set(authHeader(adminToken))
+      .expect(200);
+
+    const entryId = manifestBefore.body[0].id as string;
+
+    const updated = await request(app.getHttpServer())
+      .put(apiPath(`/bookings/${bookingId}/pricing`))
+      .set(authHeader(adminToken))
+      .send({
+        travelers: [{ id: entryId, priceCents: 5500 }],
+      })
+      .expect(200);
+
+    expect(updated.body.booking?.totalCents).toBe(5500);
+
+    const manifestAfter = await request(app.getHttpServer())
+      .get(apiPath(`/bookings/${bookingId}/manifest-entries`))
+      .set(authHeader(adminToken))
+      .expect(200);
+
+    expect(manifestAfter.body[0].priceCents).toBe(5500);
+  });
 });
 
 async function ensureRoomAvailabilityForDate(

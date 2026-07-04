@@ -172,6 +172,7 @@ export interface BookingManifestEntry {
   id: string;
   bookingId: string;
   sortOrder: number;
+  priceCents?: number | null;
   fullName: string;
   age?: number | null;
   sex?: BookingManifestSex | null;
@@ -186,6 +187,7 @@ export interface BookingManifestEntry {
 
 export interface CreateBookingManifestEntryRequest {
   fullName: string;
+  priceCents?: number;
   age?: number;
   sex?: BookingManifestSex;
   nationality?: string;
@@ -272,10 +274,30 @@ export interface RejectBookingRequest {
   reason?: string;
 }
 
+export interface ApproveTravelerPricingRequest {
+  id?: string;
+  fullName: string;
+  age?: number;
+  sex?: BookingManifestSex;
+  priceCents: number;
+}
+
 export interface ApproveBookingRequest {
   totalCents?: number;
   reason?: string;
+  travelers?: ApproveTravelerPricingRequest[];
   guides?: Array<{ guideId: string; role?: 'primary' | 'secondary' }>;
+}
+
+export interface UpdateBookingPricingRequest {
+  travelers: Array<{
+    id?: string;
+    fullName: string;
+    age?: number;
+    sex?: BookingManifestSex;
+    priceCents: number;
+  }>;
+  totalCents?: number;
 }
 
 export interface BookingPaymentIntentResponse {

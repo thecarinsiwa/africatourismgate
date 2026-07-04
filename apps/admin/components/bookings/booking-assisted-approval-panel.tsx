@@ -3,10 +3,18 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import { AlertDialog, Button, Card, Input, useToast } from '@africatourismgate/ui';
-import type { BookingStatus } from '@africatourismgate/types';
+import type { BookingManifestEntry, BookingStatus } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
-import { useEffect, useId, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+
+type TravelerDraft = {
+  key: string;
+  id?: string;
+  fullName: string;
+  age: string;
+  price: string;
+};
 
 type BookingAssistedApprovalPanelProps = {
   bookingId: string;
@@ -16,6 +24,37 @@ type BookingAssistedApprovalPanelProps = {
   canApprove: boolean;
   onUpdated: () => Promise<void>;
 };
+
+function parseMoneyToCents(value: string): number | null {
+  const parsed = Number.parseFloat(value.replace(',', '.'));
+  if (!Number.isFinite(parsed) || parsed < 0) {
+    return null;
+  }
+  return Math.round(parsed * 100);
+}
+
+function formatCentsToMoney(cents: number): string {
+  return (cents / 100).toFixed(2);
+}
+
+function entryToDraft(entry: BookingManifestEntry): TravelerDraft {
+  return {
+    key: entry.id,
+    id: entry.id,
+    fullName: entry.fullName,
+    age: entry.age != null ? String(entry.age) : '',
+    price: entry.priceCents != null ? formatCentsToMoney(entry.priceCents) : '',
+  };
+}
+
+function createEmptyTraveler(defaultPrice = ''): TravelerDraft {
+  return {
+    key: crypto.randomUUID(),
+    fullName: '',
+    age: '',
+    price: defaultPrice,
+  };
+}
 
 export function BookingAssistedApprovalPanel({
   bookingId,
@@ -33,15 +72,63 @@ export function BookingAssistedApprovalPanel({
   const approveReasonId = useId();
 
   const [loading, setLoading] = useState(false);
+  const [manifestLoading, setManifestLoading] = useState(true);
   const [actionError, setActionError] = useState<string | null>(null);
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [approveDialogOpen, setApproveDialogOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
   const [approveReason, setApproveReason] = useState('');
-  const [adjustedTotal, setAdjustedTotal] = useState(() => (totalCents / 100).toFixed(2));
+  const [travelers, setTravelers] = useState<TravelerDraft[]>([]);
+  const [adjustedTotal, setAdjustedTotal] = useState(() => formatCentsToMoney(totalCents));
+  const [totalTouched, setTotalTouched] = useState(false);
+  const [pricingDirty, setPricingDirty] = useState(false);
+
+  const subtotalCents = useMemo(() => {
+    return travelers.reduce((sum, traveler) => {
+      const cents = parseMoneyToCents(traveler.price);
+      return sum + (cents ?? 0);
+    }, 0);
+  }, [travelers]);
+
+  const loadManifest = useCallback(async () => {
+    setManifestLoading(true);
+    try {
+      const entries = await getApiClient().listBookingManifestEntries(bookingId);
+      if (entries.length > 0) {
+        setTravelers(entries.map(entryToDraft));
+      } else if (status === 'pending_approval') {
+        setTravelers([
+          {
+            key: crypto.randomUUID(),
+            fullName: t('defaultTravelerName'),
+            age: '',
+            price: formatCentsToMoney(totalCents),
+          },
+        ]);
+      } else {
+        setTravelers([]);
+      }
+      setPricingDirty(false);
+    } catch {
+      setTravelers([]);
+    } finally {
+      setManifestLoading(false);
+    }
+  }, [bookingId, status, t, totalCents]);
 
   useEffect(() => {
-    setAdjustedTotal((totalCents / 100).toFixed(2));
+    void loadManifest();
+  }, [loadManifest]);
+
+  useEffect(() => {
+    if (!totalTouched) {
+      setAdjustedTotal(formatCentsToMoney(subtotalCents > 0 ? subtotalCents : totalCents));
+    }
+  }, [subtotalCents, totalCents, totalTouched]);
+
+  useEffect(() => {
+    setAdjustedTotal(formatCentsToMoney(totalCents));
+    setTotalTouched(false);
   }, [totalCents]);
 
   if (!canApprove) {
@@ -49,6 +136,40 @@ export function BookingAssistedApprovalPanel({
   }
 
   if (status !== 'pending_approval' && status !== 'pending_payment') {
+    return null;
+  }
+
+  function buildTravelerPayload() {
+    return travelers
+      .map((traveler) => {
+        const priceCents = parseMoneyToCents(traveler.price);
+        const fullName = traveler.fullName.trim();
+        if (!fullName || priceCents == null) {
+          return null;
+        }
+        const ageTrimmed = traveler.age.trim();
+        const ageParsed = ageTrimmed ? Number.parseInt(ageTrimmed, 10) : undefined;
+        return {
+          id: traveler.id,
+          fullName,
+          age: ageParsed != null && !Number.isNaN(ageParsed) ? ageParsed : undefined,
+          priceCents,
+        };
+      })
+      .filter((traveler): traveler is NonNullable<typeof traveler> => traveler != null);
+  }
+
+  function validateTravelers(): string | null {
+    const payload = buildTravelerPayload();
+    if (payload.length === 0) {
+      return t('travelerRequired');
+    }
+    if (travelers.some((traveler) => !traveler.fullName.trim())) {
+      return t('travelerNameRequired');
+    }
+    if (travelers.some((traveler) => parseMoneyToCents(traveler.price) == null)) {
+      return t('travelerPriceRequired');
+    }
     return null;
   }
 
@@ -67,19 +188,21 @@ export function BookingAssistedApprovalPanel({
   }
 
   async function handleApprove() {
-    const parsedTotal = Number.parseFloat(adjustedTotal.replace(',', '.'));
-    const totalCentsOverride =
-      Number.isFinite(parsedTotal) && parsedTotal > 0
-        ? Math.round(parsedTotal * 100)
-        : undefined;
+    const validationError = validateTravelers();
+    if (validationError) {
+      setActionError(validationError);
+      return;
+    }
+
+    const parsedTotal = parseMoneyToCents(adjustedTotal);
+    const travelerPayload = buildTravelerPayload();
 
     await runAction(
       async () => {
         await getApiClient().approveBooking(bookingId, {
           reason: approveReason.trim() || undefined,
-          ...(totalCentsOverride !== undefined && totalCentsOverride !== totalCents
-            ? { totalCents: totalCentsOverride }
-            : {}),
+          travelers: travelerPayload,
+          ...(parsedTotal != null ? { totalCents: parsedTotal } : {}),
         });
       },
       () => {
@@ -105,6 +228,36 @@ export function BookingAssistedApprovalPanel({
     );
   }
 
+  async function handleSavePricing() {
+    const validationError = validateTravelers();
+    if (validationError) {
+      setActionError(validationError);
+      return;
+    }
+
+    const parsedTotal = parseMoneyToCents(adjustedTotal);
+    const travelerPayload = buildTravelerPayload();
+
+    await runAction(
+      async () => {
+        await getApiClient().updateBookingPricing(bookingId, {
+          travelers: travelerPayload.map((traveler) => ({
+            id: traveler.id,
+            fullName: traveler.fullName,
+            age: traveler.age,
+            priceCents: traveler.priceCents,
+          })),
+          ...(parsedTotal != null ? { totalCents: parsedTotal } : {}),
+        });
+      },
+      () => {
+        setPricingDirty(false);
+        toast({ variant: 'success', message: t('pricingSaved') });
+        void loadManifest();
+      },
+    );
+  }
+
   async function handleInvitePayment() {
     await runAction(async () => {
       const session = await getApiClient().inviteBookingPayment(bookingId);
@@ -113,6 +266,121 @@ export function BookingAssistedApprovalPanel({
         message: t('inviteSuccess', { url: session.url }),
       });
     });
+  }
+
+  function updateTraveler(key: string, patch: Partial<TravelerDraft>) {
+    setTravelers((prev) =>
+      prev.map((traveler) => (traveler.key === key ? { ...traveler, ...patch } : traveler)),
+    );
+    setPricingDirty(true);
+  }
+
+  function removeTraveler(key: string) {
+    setTravelers((prev) => prev.filter((traveler) => traveler.key !== key));
+    setPricingDirty(true);
+  }
+
+  function addTraveler() {
+    setTravelers((prev) => [...prev, createEmptyTraveler()]);
+    setPricingDirty(true);
+  }
+
+  function renderTravelerPricingEditor(editable: boolean) {
+    if (manifestLoading) {
+      return <p className="text-sm text-atg-muted">{t('loadingTravelers')}</p>;
+    }
+
+    return (
+      <div className="space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h3 className="text-sm font-semibold text-atg-fg">{t('travelersTitle')}</h3>
+          {editable ? (
+            <Button type="button" size="sm" variant="outline" onClick={addTraveler}>
+              {t('addTraveler')}
+            </Button>
+          ) : null}
+        </div>
+
+        {travelers.length === 0 ? (
+          <p className="text-sm text-atg-muted">{t('noTravelersHint')}</p>
+        ) : (
+          <div className="space-y-3">
+            {travelers.map((traveler) => (
+              <div
+                key={traveler.key}
+                className="grid gap-3 rounded-lg border border-atg-border bg-atg-surface/50 p-3 sm:grid-cols-[1fr_6rem_8rem_auto]"
+              >
+                <Input
+                  label={t('travelerName')}
+                  name={`traveler-name-${traveler.key}`}
+                  value={traveler.fullName}
+                  onChange={(e) => updateTraveler(traveler.key, { fullName: e.target.value })}
+                  disabled={!editable || loading}
+                />
+                <Input
+                  label={t('travelerAge')}
+                  name={`traveler-age-${traveler.key}`}
+                  type="number"
+                  min={0}
+                  max={150}
+                  value={traveler.age}
+                  onChange={(e) => updateTraveler(traveler.key, { age: e.target.value })}
+                  disabled={!editable || loading}
+                />
+                <Input
+                  label={t('travelerPrice', { currency })}
+                  name={`traveler-price-${traveler.key}`}
+                  type="text"
+                  inputMode="decimal"
+                  value={traveler.price}
+                  onChange={(e) => updateTraveler(traveler.key, { price: e.target.value })}
+                  disabled={!editable || loading}
+                />
+                {editable && travelers.length > 1 ? (
+                  <div className="flex items-end">
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      className="!border-red-300 !text-red-700 dark:!text-red-400"
+                      onClick={() => removeTraveler(traveler.key)}
+                      disabled={loading}
+                    >
+                      {t('removeTraveler')}
+                    </Button>
+                  </div>
+                ) : null}
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="rounded-lg border border-atg-border bg-atg-muted/10 px-4 py-3">
+            <p className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+              {t('subtotalLabel')}
+            </p>
+            <p className="mt-1 text-lg font-semibold tabular-nums text-atg-fg">
+              {formatCentsToMoney(subtotalCents)} {currency}
+            </p>
+          </div>
+          <Input
+            label={t('totalLabel', { currency })}
+            name="adjustedTotal"
+            type="text"
+            inputMode="decimal"
+            value={adjustedTotal}
+            onChange={(e) => {
+              setTotalTouched(true);
+              setAdjustedTotal(e.target.value);
+              setPricingDirty(true);
+            }}
+            hint={t('totalOverrideHint')}
+            disabled={loading}
+          />
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -129,15 +397,7 @@ export function BookingAssistedApprovalPanel({
 
         {status === 'pending_approval' ? (
           <div className="space-y-4">
-            <Input
-              label={t('totalLabel', { currency })}
-              name="adjustedTotal"
-              type="text"
-              inputMode="decimal"
-              value={adjustedTotal}
-              onChange={(e) => setAdjustedTotal(e.target.value)}
-              hint={t('totalHint')}
-            />
+            {renderTravelerPricingEditor(true)}
             <div>
               <label htmlFor={approveReasonId} className="mb-1 block text-sm font-medium text-atg-fg">
                 {t('reasonLabel')}
@@ -168,7 +428,7 @@ export function BookingAssistedApprovalPanel({
               <Button
                 type="button"
                 variant="primary"
-                disabled={loading}
+                disabled={loading || validateTravelers() != null}
                 onClick={() => setApproveDialogOpen(true)}
               >
                 {t('approve')}
@@ -187,15 +447,28 @@ export function BookingAssistedApprovalPanel({
         ) : null}
 
         {status === 'pending_payment' ? (
-          <Button
-            type="button"
-            variant="primary"
-            disabled={loading}
-            loading={loading}
-            onClick={() => void handleInvitePayment()}
-          >
-            {t('invitePayment')}
-          </Button>
+          <div className="space-y-4">
+            {renderTravelerPricingEditor(true)}
+            <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+              <Button
+                type="button"
+                variant="outline"
+                disabled={loading || !pricingDirty}
+                onClick={() => void handleSavePricing()}
+              >
+                {t('savePricing')}
+              </Button>
+              <Button
+                type="button"
+                variant="primary"
+                disabled={loading}
+                loading={loading}
+                onClick={() => void handleInvitePayment()}
+              >
+                {t('invitePayment')}
+              </Button>
+            </div>
+          </div>
         ) : null}
       </Card>
 

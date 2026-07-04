@@ -10,6 +10,9 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { AssignBookingGuideItemDto } from '../../tour-guides/dto/booking-guide-assignment.dto';
+import { ApproveTravelerPricingDto } from './update-booking-pricing.dto';
+
+export { ApproveTravelerPricingDto } from './update-booking-pricing.dto';
 
 export class ApproveBookingDto {
   @ApiPropertyOptional({
@@ -20,6 +23,16 @@ export class ApproveBookingDto {
   @IsInt()
   @Min(1)
   totalCents?: number;
+
+  @ApiPropertyOptional({
+    type: [ApproveTravelerPricingDto],
+    description: 'Voyageurs et tarifs par personne (création ou mise à jour du manifeste)',
+  })
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ApproveTravelerPricingDto)
+  travelers?: ApproveTravelerPricingDto[];
 
   @ApiPropertyOptional({ description: 'Commentaire enregistré dans l’historique' })
   @IsOptional()

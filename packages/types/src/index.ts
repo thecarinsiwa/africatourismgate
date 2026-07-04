@@ -208,6 +208,8 @@ export type {
   BookingPayment,
   BookingStatusHistoryEntry,
   ApproveBookingRequest,
+  ApproveTravelerPricingRequest,
+  UpdateBookingPricingRequest,
   RejectBookingRequest,
   BookingCheckoutSessionResponse,
   BookingPaymentIntentResponse,

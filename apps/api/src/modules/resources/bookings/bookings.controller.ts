@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   Query,
   Res,
   UploadedFile,
@@ -41,6 +42,7 @@ import { BookingMessagesQueryDto } from './dto/booking-messages-query.dto';
 import { CreateBookingMessageDto } from './dto/create-booking-message.dto';
 import { ApproveBookingDto } from './dto/approve-booking.dto';
 import { RejectBookingDto } from './dto/reject-booking.dto';
+import { UpdateBookingPricingDto } from './dto/update-booking-pricing.dto';
 import { BookingApprovalService } from './booking-approval.service';
 import {
   BOOKING_IDENTITY_DOCUMENT_MAX_BYTES,
@@ -487,5 +489,18 @@ export class BookingsController {
   })
   invitePayment(@Param('id') id: string, @CurrentUser() user: AuthUserDto) {
     return this.bookingApprovalService.invitePayment(id, user.id);
+  }
+
+  @Put(':id/pricing')
+  @RequirePermissions('bookings.approve', 'bookings.write')
+  @ApiOperation({
+    summary: 'Update per-traveler pricing and booking total (pending_payment)',
+  })
+  updatePricing(
+    @Param('id') id: string,
+    @Body() dto: UpdateBookingPricingDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.bookingApprovalService.updatePricing(id, dto, user.id);
   }
 }
