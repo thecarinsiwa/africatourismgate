@@ -4,6 +4,12 @@ export type SendMailResult = {
   previewUrl?: string;
 };
 
+export type EmailAttachment = {
+  filename: string;
+  content: Buffer;
+  contentType?: string;
+};
+
 export type PasswordResetEmailPayload = {
   to: string;
   firstName: string;
@@ -62,6 +68,8 @@ export type BookingRequestReceivedEmailPayload = AssistedBookingEmailBase;
 
 export type BookingApprovedChatEmailPayload = AssistedBookingEmailBase & {
   chatUrl: string;
+  locale?: 'fr' | 'en' | 'es';
+  hasPdfAttachment?: boolean;
 };
 
 export type BookingRejectedEmailPayload = AssistedBookingEmailBase & {
