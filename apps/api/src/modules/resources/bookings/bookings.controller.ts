@@ -460,6 +460,18 @@ export class BookingsController {
     return this.bookingEngine.confirmBooking(id, user.id);
   }
 
+  @Post(':id/sync-payment')
+  @RequirePermissions('bookings.write')
+  @ApiOperation({
+    summary:
+      'Sync booking payment status from Stripe (fallback when webhook is delayed or missing)',
+  })
+  async syncPayment(@Param('id') id: string, @CurrentUser() user: AuthUserDto) {
+    await this.bookingsService.assertBookingOwnerOrStaff(id, user.id);
+    await this.stripeService.syncBookingPaymentFromStripe(id);
+    return this.bookingEngine.getBookingDetail(id);
+  }
+
   @Post(':id/cancel')
   @RequirePermissions('bookings.write')
   @ApiOperation({ summary: 'Cancel booking, restore stock, optional reason' })

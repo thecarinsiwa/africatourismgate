@@ -106,6 +106,11 @@ export class BookingApprovalService {
     booking.updatedByUserId = actorUserId;
     await this.bookingsRepository.save(booking);
 
+    await this.stripeService.invalidateStalePendingCheckoutSessions(
+      bookingId,
+      actorUserId,
+    );
+
     return this.bookingsService.getAdminDetail(bookingId);
   }
 

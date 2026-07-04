@@ -59,6 +59,13 @@ export function getBooking(accessToken: string, bookingId: string): Promise<Book
   return createBookingClient(accessToken).getBooking(bookingId);
 }
 
+export function syncBookingPayment(
+  accessToken: string,
+  bookingId: string,
+): Promise<BookingDetail> {
+  return createBookingClient(accessToken).syncBookingPayment(bookingId);
+}
+
 export function getBookingReview(
   accessToken: string,
   bookingId: string,

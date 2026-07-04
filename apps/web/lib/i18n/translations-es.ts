@@ -187,11 +187,17 @@ export const es: Translations = {
       dismiss: 'Cerrar',
     },
     success: {
-      title: 'Reserva confirmada',
+      title: 'Confirmación en curso',
+      titleConfirmed: 'Reserva confirmada',
       subtitle:
-        'Su pago Stripe fue recibido. La confirmación final puede tardar unos segundos.',
-      bookingIdLabel: 'Booking ID:',
+        'Su pago Stripe fue recibido. Estamos finalizando la confirmación de su reserva…',
+      subtitleConfirmed: 'Su pago fue recibido y su reserva está confirmada.',
+      bookingIdLabel: 'Ref. reserva:',
       statusLabel: 'Estado:',
+      statusConfirmed: 'Confirmada',
+      statusPendingPayment: 'Pendiente de pago',
+      statusPendingHint:
+        'La confirmación tarda más de lo esperado. Consulte su cuenta en unos instantes o contacte al soporte si el estado no cambia.',
       totalLabel: 'Total:',
       verifying: 'Verificando estado…',
       statusUnavailable: 'Estado detallado no disponible por ahora. Actualice en un momento.',
