@@ -61,7 +61,7 @@ type DraggableFabProps = {
   children: ReactNode;
   className?: string;
   storageKey?: string;
-  badge?: ReactNode;
+  badgeCount?: number;
 };
 
 export function DraggableFab({
@@ -70,7 +70,7 @@ export function DraggableFab({
   children,
   className,
   storageKey,
-  badge,
+  badgeCount = 0,
 }: DraggableFabProps) {
   const [position, setPosition] = useState<FabPosition>(() => {
     return loadStoredPosition(storageKey) ?? defaultBottomRight();
@@ -181,8 +181,13 @@ export function DraggableFab({
       onPointerCancel={finishPointer}
     >
       {children}
-      {badge ? (
-        <span className="pointer-events-none absolute -right-0.5 -top-0.5 flex size-5 items-center justify-center rounded-full bg-atg-warning ring-2 ring-primary dark:ring-primary" />
+      {badgeCount > 0 ? (
+        <span
+          aria-hidden
+          className="pointer-events-none absolute -right-1 -top-1 flex min-h-5 min-w-5 items-center justify-center rounded-full bg-red-600 px-1 text-[11px] font-bold leading-none text-white ring-2 ring-primary"
+        >
+          {badgeCount > 9 ? '9+' : badgeCount}
+        </span>
       ) : null}
     </button>
   );

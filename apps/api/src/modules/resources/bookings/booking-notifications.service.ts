@@ -67,6 +67,30 @@ export class BookingNotificationsService {
     });
   }
 
+  async countUnreadCustomerMessages(bookingId: string): Promise<number> {
+    const booking = await this.bookingsRepository.findOne({
+      where: { id: bookingId, deletedAt: IsNull() },
+      select: ['id', 'staffThreadLastSeenAt'],
+    });
+    if (!booking) {
+      return 0;
+    }
+
+    const qb = this.messagesRepository
+      .createQueryBuilder('message')
+      .where('message.booking_id = :bookingId', { bookingId })
+      .andWhere('message.deleted_at IS NULL')
+      .andWhere('message.is_staff = 0');
+
+    if (booking.staffThreadLastSeenAt) {
+      qb.andWhere('message.created_at > :lastSeen', {
+        lastSeen: booking.staffThreadLastSeenAt,
+      });
+    }
+
+    return qb.getCount();
+  }
+
   async getUnreadCustomerMessageBookingIds(bookingIds: string[]): Promise<Set<string>> {
     if (bookingIds.length === 0) {
       return new Set();

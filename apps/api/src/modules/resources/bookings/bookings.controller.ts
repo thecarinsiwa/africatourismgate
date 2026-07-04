@@ -155,6 +155,15 @@ export class BookingsController {
     await this.bookingGuideAssignmentsService.removeGuide(id, guideId);
   }
 
+  @Get(':id/messages/unread-count')
+  @RequirePermissions('bookings.read')
+  @ApiOperation({ summary: 'Count unread customer messages for staff' })
+  getUnreadMessageCount(@Param('id') id: string, @CurrentUser() user: AuthUserDto) {
+    return this.bookingMessagesService
+      .getUnreadCountForStaff(id, user.id)
+      .then((count) => ({ count }));
+  }
+
   @Get(':id/messages')
   @RequirePermissions('bookings.read')
   @ApiOperation({ summary: 'List messages on a booking thread' })
@@ -163,7 +172,10 @@ export class BookingsController {
     @Query() query: BookingMessagesQueryDto,
     @CurrentUser() user: AuthUserDto,
   ): Promise<BookingMessagesListDto> {
-    return this.bookingMessagesService.listByBookingId(id, user.id, query.chatToken);
+    return this.bookingMessagesService.listByBookingId(id, user.id, {
+      chatToken: query.chatToken,
+      markRead: query.markRead !== 'false',
+    });
   }
 
   @Post(':id/messages')

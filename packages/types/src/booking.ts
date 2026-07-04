@@ -255,6 +255,7 @@ export interface BookingAdminDetail extends BookingDetail {
   client: BookingClient;
   payments: BookingPayment[];
   statusHistory: BookingStatusHistoryEntry[];
+  unreadCustomerMessageCount?: number;
 }
 
 export interface UpdateBookingStatusRequest {

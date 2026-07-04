@@ -29,9 +29,13 @@ export class BookingMessagesService {
   async listByBookingId(
     bookingId: string,
     actorUserId: string,
-    chatToken?: string,
+    options?: { chatToken?: string; markRead?: boolean },
   ): Promise<BookingMessagesListDto> {
-    const booking = await this.assertCanAccessThread(bookingId, actorUserId, chatToken);
+    const booking = await this.assertCanAccessThread(
+      bookingId,
+      actorUserId,
+      options?.chatToken,
+    );
 
     const rows = await this.messagesRepository.find({
       where: { bookingId, deletedAt: IsNull() },
@@ -39,15 +43,27 @@ export class BookingMessagesService {
     });
 
     const isStaff = await this.isStaffUser(actorUserId);
-    if (isStaff) {
-      await this.notifications.markThreadSeenByStaff(bookingId);
-    } else if (booking.userId === actorUserId) {
-      await this.notifications.markThreadSeenByCustomer(bookingId, actorUserId);
+    const shouldMarkRead = options?.markRead !== false;
+    if (shouldMarkRead) {
+      if (isStaff) {
+        await this.notifications.markThreadSeenByStaff(bookingId);
+      } else if (booking.userId === actorUserId) {
+        await this.notifications.markThreadSeenByCustomer(bookingId, actorUserId);
+      }
     }
 
     return {
       messages: rows.map((row) => this.toDto(row)),
     };
+  }
+
+  async getUnreadCountForStaff(bookingId: string, actorUserId: string): Promise<number> {
+    const staff = await this.isStaffUser(actorUserId);
+    if (!staff) {
+      throw new ForbiddenException('Access denied.');
+    }
+    await this.assertCanAccessThread(bookingId, actorUserId);
+    return this.notifications.countUnreadCustomerMessages(bookingId);
   }
 
   async createMessage(

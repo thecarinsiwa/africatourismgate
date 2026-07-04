@@ -378,6 +378,8 @@ export class BookingsService extends CrudService<Bookings> {
     }
 
     const identityDocuments = await this.identityDocuments.listForBooking(id);
+    const unreadCustomerMessageCount =
+      await this.notifications.countUnreadCustomerMessages(id);
 
     return {
       booking: base.booking,
@@ -395,6 +397,7 @@ export class BookingsService extends CrudService<Bookings> {
       payments,
       statusHistory,
       identityDocuments,
+      unreadCustomerMessageCount,
     };
   }
 

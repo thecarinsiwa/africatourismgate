@@ -232,6 +232,7 @@
   "messages": {
     "title": "Conversation",
     "fabAriaLabel": "Ouvrir la conversation de la réservation",
+    "fabAriaLabelWithUnread": "Ouvrir la conversation ({count} non lu(s))",
     "loading": "Chargement des messages…",
     "empty": "Aucun message pour le moment.",
     "threadAria": "Fil de messages de la réservation",

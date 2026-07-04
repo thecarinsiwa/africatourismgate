@@ -513,7 +513,11 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
         </div>
       </div>
 
-      <BookingMessagesSection bookingId={bookingId} canWrite={canWrite} />
+      <BookingMessagesSection
+        bookingId={bookingId}
+        canWrite={canWrite}
+        initialUnreadCount={detail?.unreadCustomerMessageCount ?? 0}
+      />
 
       <AlertDialog
         open={statusDialogOpen}

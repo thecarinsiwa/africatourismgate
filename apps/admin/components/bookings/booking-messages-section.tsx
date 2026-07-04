@@ -16,6 +16,7 @@ const FAB_STORAGE_KEY = 'atg-admin-booking-chat-fab-position';
 type BookingMessagesSectionProps = {
   bookingId: string;
   canWrite: boolean;
+  initialUnreadCount?: number;
 };
 
 function formatDateTime(iso: string): string {
@@ -42,88 +43,79 @@ function formatDateSeparator(iso: string): string {
   }
 }
 
-export function BookingMessagesSection({ bookingId, canWrite }: BookingMessagesSectionProps) {
+export function BookingMessagesSection({
+  bookingId,
+  canWrite,
+  initialUnreadCount = 0,
+}: BookingMessagesSectionProps) {
   const { bookings: getBookingsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.bookings.messages');
   const { toast } = useToast();
 
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<BookingMessage[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [replyBody, setReplyBody] = useState('');
   const [replyError, setReplyError] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
-  const [hasUnread, setHasUnread] = useState(false);
-  const knownMessageIdsRef = useRef<Set<string>>(new Set());
-  const initialLoadDoneRef = useRef(false);
+  const [unreadCount, setUnreadCount] = useState(initialUnreadCount);
+  const previousUnreadCountRef = useRef(initialUnreadCount);
 
-  const load = useCallback(
-    async (options?: { silent?: boolean }) => {
-      if (!options?.silent) {
-        setLoading(true);
+  const refreshUnreadCount = useCallback(async () => {
+    try {
+      const result = await getApiClient().getBookingUnreadMessageCount(bookingId);
+      const nextCount = result.count;
+      if (nextCount > previousUnreadCountRef.current && !open) {
+        toast({
+          variant: 'info',
+          message: t('toast.newCustomerMessage'),
+        });
       }
-      setError(null);
-      try {
-        const result = await getApiClient().listBookingMessages(bookingId);
-        const nextMessages = result.messages;
+      previousUnreadCountRef.current = nextCount;
+      setUnreadCount(nextCount);
+    } catch {
+      // ignore polling errors
+    }
+  }, [bookingId, open, t, toast]);
 
-        if (initialLoadDoneRef.current) {
-          const known = knownMessageIdsRef.current;
-          const newCustomerMessages = nextMessages.filter(
-            (message) => !known.has(message.id) && !message.isStaff,
-          );
-          if (newCustomerMessages.length > 0) {
-            if (open) {
-              toast({
-                variant: 'info',
-                message: t('toast.newCustomerMessage'),
-              });
-            } else {
-              setHasUnread(true);
-            }
-          }
-        }
-
-        knownMessageIdsRef.current = new Set(nextMessages.map((message) => message.id));
-        initialLoadDoneRef.current = true;
-        setMessages(nextMessages);
-      } catch (err) {
-        if (!options?.silent) {
-          setError(getBookingsErrorMessage(err));
-          setMessages([]);
-        }
-      } finally {
-        if (!options?.silent) {
-          setLoading(false);
-        }
-      }
-    },
-    [bookingId, getBookingsErrorMessage, open, t, toast],
-  );
+  const loadMessages = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await getApiClient().listBookingMessages(bookingId, { markRead: true });
+      setMessages(result.messages);
+      setUnreadCount(0);
+      previousUnreadCountRef.current = 0;
+    } catch (err) {
+      setError(getBookingsErrorMessage(err));
+      setMessages([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [bookingId, getBookingsErrorMessage]);
 
   useEffect(() => {
-    initialLoadDoneRef.current = false;
-    knownMessageIdsRef.current = new Set();
-    setHasUnread(false);
-    void load();
-  }, [load]);
+    setUnreadCount(initialUnreadCount);
+    previousUnreadCountRef.current = initialUnreadCount;
+  }, [bookingId, initialUnreadCount]);
 
   useEffect(() => {
-    const intervalId = window.setInterval(() => {
-      void load({ silent: true });
-    }, POLL_INTERVAL_MS);
-
-    return () => {
-      window.clearInterval(intervalId);
-    };
-  }, [load]);
+    if (!open) {
+      void refreshUnreadCount();
+      const intervalId = window.setInterval(() => {
+        void refreshUnreadCount();
+      }, POLL_INTERVAL_MS);
+      return () => window.clearInterval(intervalId);
+    }
+    return undefined;
+  }, [open, refreshUnreadCount]);
 
   useEffect(() => {
     if (open) {
-      setHasUnread(false);
+      void loadMessages();
     }
-  }, [open]);
+  }, [open, loadMessages]);
 
   const handleSend = useCallback(async () => {
     const body = replyBody.trim();
@@ -135,7 +127,7 @@ export function BookingMessagesSection({ bookingId, canWrite }: BookingMessagesS
     try {
       const created = await getApiClient().createBookingMessage(bookingId, { body });
       setReplyBody('');
-      await load({ silent: true });
+      await loadMessages();
       toast({
         variant: 'success',
         message: created.customerNotifiedByEmail
@@ -147,16 +139,21 @@ export function BookingMessagesSection({ bookingId, canWrite }: BookingMessagesS
     } finally {
       setSending(false);
     }
-  }, [bookingId, getBookingsErrorMessage, load, replyBody, t, toast]);
+  }, [bookingId, getBookingsErrorMessage, loadMessages, replyBody, t, toast]);
+
+  const fabAriaLabel =
+    unreadCount > 0
+      ? t('fabAriaLabelWithUnread', { count: unreadCount })
+      : t('fabAriaLabel');
 
   return (
     <>
       {!open ? (
         <DraggableFab
           onClick={() => setOpen(true)}
-          ariaLabel={t('fabAriaLabel')}
+          ariaLabel={fabAriaLabel}
           storageKey={FAB_STORAGE_KEY}
-          badge={hasUnread ? <span aria-hidden /> : undefined}
+          badgeCount={unreadCount}
         >
           <BookingChatFabIcon className="size-11" />
         </DraggableFab>
