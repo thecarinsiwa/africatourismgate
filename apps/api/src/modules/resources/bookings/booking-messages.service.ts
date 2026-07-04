@@ -39,7 +39,9 @@ export class BookingMessagesService {
     });
 
     const isStaff = await this.isStaffUser(actorUserId);
-    if (!isStaff && booking.userId === actorUserId) {
+    if (isStaff) {
+      await this.notifications.markThreadSeenByStaff(bookingId);
+    } else if (booking.userId === actorUserId) {
       await this.notifications.markThreadSeenByCustomer(bookingId, actorUserId);
     }
 
@@ -81,11 +83,16 @@ export class BookingMessagesService {
       where: { id: messageId },
     });
 
-    if (isStaff && !this.notifications.isCustomerOnlineOnThread(booking)) {
+    const customerNotifiedByEmail =
+      isStaff && !this.notifications.isCustomerOnlineOnThread(booking);
+    if (customerNotifiedByEmail) {
       this.assistedEmail.notifyStaffMessage(bookingId, body);
     }
 
-    return this.toDto(message);
+    return {
+      ...this.toDto(message),
+      customerNotifiedByEmail,
+    };
   }
 
   async touchThreadPresence(bookingId: string, actorUserId: string): Promise<void> {

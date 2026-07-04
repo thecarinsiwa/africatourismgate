@@ -44,6 +44,44 @@ import { AuthVisualIconsField } from './auth-visual-icons-field';
 import { authVisualFromSetting } from '../../lib/auth-visual';
 import { OrganizationOrgSelector } from '../organizations/organization-org-selector';
 
+const BRANDING_IMAGE_MAX_BYTES = 2 * 1024 * 1024;
+const ALLOWED_BRANDING_IMAGE_TYPES = new Set([
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/webp',
+  'image/gif',
+  'image/svg+xml',
+  'image/x-icon',
+  'image/vnd.microsoft.icon',
+]);
+const ALLOWED_BRANDING_IMAGE_EXTENSIONS = new Set([
+  '.jpg',
+  '.jpeg',
+  '.png',
+  '.webp',
+  '.gif',
+  '.svg',
+  '.ico',
+]);
+const BRANDING_LOGO_ACCEPT =
+  'image/jpeg,image/png,image/webp,image/gif,image/svg+xml,.jpg,.jpeg,.png,.webp,.gif,.svg';
+const BRANDING_FAVICON_ACCEPT =
+  'image/jpeg,image/png,image/webp,image/gif,image/svg+xml,image/x-icon,image/vnd.microsoft.icon,.jpg,.jpeg,.png,.webp,.gif,.svg,.ico';
+
+function isAllowedBrandingImage(file: File): boolean {
+  const extension = file.name.includes('.')
+    ? file.name.slice(file.name.lastIndexOf('.')).toLowerCase()
+    : '';
+  if (!ALLOWED_BRANDING_IMAGE_EXTENSIONS.has(extension)) {
+    return false;
+  }
+  if (ALLOWED_BRANDING_IMAGE_TYPES.has(file.type)) {
+    return true;
+  }
+  return file.type === 'application/octet-stream';
+}
+
 type SettingsFormValues = {
   contactEmail: string;
   contactPhone: string;
@@ -160,7 +198,7 @@ export function OrganizationSettingsForm({
 }: OrganizationSettingsFormProps) {
   const { organizationSettings: getOrganizationSettingsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.settings.form');
-  const tCommon = useTranslations('modules.common.form');
+  const tValidation = useTranslations('modules.common.validation');
   const router = useRouter();
   const orgTheme = useOrganizationThemeOptional();
   const [values, setValues] = useState<SettingsFormValues>(defaultValues);
@@ -388,10 +426,10 @@ export function OrganizationSettingsForm({
   }
 
   async function uploadBrandingImage(file: File): Promise<string> {
-    if (!file.type.startsWith('image/')) {
+    if (!isAllowedBrandingImage(file)) {
       throw new Error('Invalid image type');
     }
-    if (file.size > 2 * 1024 * 1024) {
+    if (file.size > BRANDING_IMAGE_MAX_BYTES) {
       throw new Error('Image too large');
     }
     const session = getSession();
@@ -401,7 +439,7 @@ export function OrganizationSettingsForm({
     const body = new FormData();
     body.append('file', file);
     const response = await fetch(`${resolveApiBaseUrl()}/organization-settings/upload-branding`, {
-      method: 'PUT',
+      method: 'POST',
       headers: {
         Authorization: `Bearer ${session.accessToken}`,
       },
@@ -424,17 +462,17 @@ export function OrganizationSettingsForm({
     const file = event.target.files?.[0];
     if (!file) return;
     try {
-      if (!file.type.startsWith('image/')) {
+      if (!isAllowedBrandingImage(file)) {
         setFormError(t('upload.invalidImage'));
         return;
       }
-      if (file.size > 2 * 1024 * 1024) {
+      if (file.size > BRANDING_IMAGE_MAX_BYTES) {
         setFormError(t('upload.tooLarge'));
         return;
       }
       const session = getSession();
       if (!session?.accessToken) {
-        setFormError(tCommon('sessionExpiredRetry'));
+        setFormError(tValidation('sessionExpiredRetry'));
         return;
       }
       setUploadingField(field);
@@ -442,7 +480,7 @@ export function OrganizationSettingsForm({
       updateField(field, url);
       setFormError(null);
     } catch {
-      setFormError(tCommon('uploadFailed'));
+      setFormError(tValidation('uploadFailed'));
     } finally {
       setUploadingField(null);
       event.target.value = '';
@@ -456,7 +494,7 @@ export function OrganizationSettingsForm({
       setFormError(null);
       return url;
     } catch {
-      setFormError(tCommon('uploadFailed'));
+      setFormError(tValidation('uploadFailed'));
       throw new Error('Upload failed');
     } finally {
       setUploadingAuthIconIndex(null);
@@ -681,7 +719,7 @@ export function OrganizationSettingsForm({
             {uploadingField === 'logoUrl' ? t('sections.branding.uploading') : t('sections.branding.chooseLogo')}
             <input
               type="file"
-              accept="image/*"
+              accept={BRANDING_LOGO_ACCEPT}
               className="hidden"
               onChange={(e) => void handleLocalImagePick(e, 'logoUrl')}
               disabled={uploadingField !== null}
@@ -700,7 +738,7 @@ export function OrganizationSettingsForm({
             {uploadingField === 'faviconUrl' ? t('sections.branding.uploading') : t('sections.branding.chooseFavicon')}
             <input
               type="file"
-              accept="image/*"
+              accept={BRANDING_FAVICON_ACCEPT}
               className="hidden"
               onChange={(e) => void handleLocalImagePick(e, 'faviconUrl')}
               disabled={uploadingField !== null}

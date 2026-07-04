@@ -1095,6 +1095,7 @@ export const es: Translations = {
           sendReply: 'Enviar',
           loadError: 'No se pudo cargar la conversación.',
           sendError: 'No se pudo enviar el mensaje.',
+          newStaffMessageToast: 'Nuevo mensaje de nuestro equipo',
         },
         guideReviews: {
           sectionTitle: 'Su guía',

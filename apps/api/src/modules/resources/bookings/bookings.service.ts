@@ -187,6 +187,9 @@ export class BookingsService extends CrudService<Bookings> {
     const unreadStaffIds = customerView
       ? await this.notifications.getUnreadStaffMessageBookingIds(bookings.map((b) => b.id))
       : new Set<string>();
+    const unreadCustomerIds = customerView
+      ? new Set<string>()
+      : await this.notifications.getUnreadCustomerMessageBookingIds(bookings.map((b) => b.id));
 
     const data = bookings.map((booking) => {
       const client = userById.get(booking.userId);
@@ -211,7 +214,9 @@ export class BookingsService extends CrudService<Bookings> {
                 unreadStaffIds,
               ),
             }
-          : {}),
+          : {
+              unreadCustomerMessage: unreadCustomerIds.has(booking.id),
+            }),
       } satisfies BookingListItemDto;
     });
 

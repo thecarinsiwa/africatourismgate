@@ -97,6 +97,7 @@ export function EmailBrandingForm({ canWrite, onDirtyChange }: EmailBrandingForm
   const t = useTranslations('modules.settings.emails.form');
   const tForm = useTranslations('modules.settings.form');
   const tCommon = useTranslations('modules.common.form');
+  const tValidation = useTranslations('modules.common.validation');
   const tPreview = useTranslations('modules.settings.emails.preview');
   const [values, setValues] = useState<EmailBrandingFormValues>(defaultValues);
   const [initialValues, setInitialValues] = useState<EmailBrandingFormValues>(defaultValues);
@@ -233,7 +234,7 @@ export function EmailBrandingForm({ canWrite, onDirtyChange }: EmailBrandingForm
       }
       const session = getSession();
       if (!session?.accessToken) {
-        setFormError(tCommon('sessionExpiredRetry'));
+        setFormError(tValidation('sessionExpiredRetry'));
         return;
       }
       setUploadingLogo(true);
@@ -242,7 +243,7 @@ export function EmailBrandingForm({ canWrite, onDirtyChange }: EmailBrandingForm
       const response = await fetch(
         `${resolveApiBaseUrl()}/organization-settings/upload-branding`,
         {
-          method: 'PUT',
+          method: 'POST',
           headers: { Authorization: `Bearer ${session.accessToken}` },
           body,
         },

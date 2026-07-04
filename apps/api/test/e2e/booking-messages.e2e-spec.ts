@@ -62,6 +62,16 @@ describe('Booking messages (e2e)', () => {
     expect(res.body.bookingId).toBe(bookingId);
     expect(res.body.isStaff).toBe(false);
     expect(res.body.body).toContain('confirmer ma demande');
+
+    const adminList = await request(app.getHttpServer())
+      .get(apiPath('/bookings'))
+      .set(authHeader(adminToken))
+      .expect(200);
+
+    const row = (
+      adminList.body.data as Array<{ id: string; unreadCustomerMessage?: boolean }>
+    ).find((item) => item.id === bookingId);
+    expect(row?.unreadCustomerMessage).toBe(true);
   });
 
   it('admin replies (isStaff true)', async () => {
@@ -73,6 +83,7 @@ describe('Booking messages (e2e)', () => {
 
     expect(res.body.isStaff).toBe(true);
     expect(res.body.body).toContain('examinons votre demande');
+    expect(res.body.customerNotifiedByEmail).toBe(true);
   });
 
   it('admin reply sets actionRequired until customer reads thread', async () => {
@@ -118,6 +129,16 @@ describe('Booking messages (e2e)', () => {
       .expect(200);
 
     expect(adminView.body.messages).toHaveLength(2);
+
+    const adminListAfterRead = await request(app.getHttpServer())
+      .get(apiPath('/bookings'))
+      .set(authHeader(adminToken))
+      .expect(200);
+
+    const rowAfterStaffRead = (
+      adminListAfterRead.body.data as Array<{ id: string; unreadCustomerMessage?: boolean }>
+    ).find((item) => item.id === bookingId);
+    expect(rowAfterStaffRead?.unreadCustomerMessage).toBe(false);
   });
 
   it('customer cannot read messages on another user booking', async () => {

@@ -209,7 +209,7 @@
     "imageTooLarge": "Image trop lourde (max 5 Mo).",
     "sessionExpiredRetry": "Session expirée. Reconnectez-vous puis réessayez.",
     "urlRequired": "L'URL est obligatoire.",
-    "uploadFailed": "Impossible d'uploader l'image locale.",
+    "uploadFailed": "Could not upload the image. Please try again.",
     "dateRangeInvalid": "La date de début doit être avant la date de fin.",
     "discountRange": "La remise doit être entre 0 et 100.",
     "durationDaysRange": "La durée doit être entre 1 et 365 jours.",

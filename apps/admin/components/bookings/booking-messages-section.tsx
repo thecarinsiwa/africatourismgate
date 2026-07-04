@@ -2,11 +2,13 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Card } from '@africatourismgate/ui';
+import { ConversationChat, useToast } from '@africatourismgate/ui';
 import type { BookingMessage } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useId, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+
+const POLL_INTERVAL_MS = 20_000;
 
 type BookingMessagesSectionProps = {
   bookingId: string;
@@ -24,10 +26,23 @@ function formatDateTime(iso: string): string {
   }
 }
 
+function formatDateSeparator(iso: string): string {
+  try {
+    return new Date(iso).toLocaleDateString('fr-FR', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    });
+  } catch {
+    return iso;
+  }
+}
+
 export function BookingMessagesSection({ bookingId, canWrite }: BookingMessagesSectionProps) {
   const { bookings: getBookingsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.bookings.messages');
-  const replyBodyId = useId();
+  const { toast } = useToast();
 
   const [messages, setMessages] = useState<BookingMessage[]>([]);
   const [loading, setLoading] = useState(true);
@@ -35,23 +50,63 @@ export function BookingMessagesSection({ bookingId, canWrite }: BookingMessagesS
   const [replyBody, setReplyBody] = useState('');
   const [replyError, setReplyError] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
+  const knownMessageIdsRef = useRef<Set<string>>(new Set());
+  const initialLoadDoneRef = useRef(false);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await getApiClient().listBookingMessages(bookingId);
-      setMessages(result.messages);
-    } catch (err) {
-      setError(getBookingsErrorMessage(err));
-      setMessages([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [bookingId, getBookingsErrorMessage]);
+  const load = useCallback(
+    async (options?: { silent?: boolean }) => {
+      if (!options?.silent) {
+        setLoading(true);
+      }
+      setError(null);
+      try {
+        const result = await getApiClient().listBookingMessages(bookingId);
+        const nextMessages = result.messages;
+
+        if (initialLoadDoneRef.current) {
+          const known = knownMessageIdsRef.current;
+          const newCustomerMessages = nextMessages.filter(
+            (message) => !known.has(message.id) && !message.isStaff,
+          );
+          if (newCustomerMessages.length > 0) {
+            toast({
+              variant: 'info',
+              message: t('toast.newCustomerMessage'),
+            });
+          }
+        }
+
+        knownMessageIdsRef.current = new Set(nextMessages.map((message) => message.id));
+        initialLoadDoneRef.current = true;
+        setMessages(nextMessages);
+      } catch (err) {
+        if (!options?.silent) {
+          setError(getBookingsErrorMessage(err));
+          setMessages([]);
+        }
+      } finally {
+        if (!options?.silent) {
+          setLoading(false);
+        }
+      }
+    },
+    [bookingId, getBookingsErrorMessage, t, toast],
+  );
 
   useEffect(() => {
+    initialLoadDoneRef.current = false;
+    knownMessageIdsRef.current = new Set();
     void load();
+  }, [load]);
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      void load({ silent: true });
+    }, POLL_INTERVAL_MS);
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
   }, [load]);
 
   const handleSend = useCallback(async () => {
@@ -62,15 +117,21 @@ export function BookingMessagesSection({ bookingId, canWrite }: BookingMessagesS
     setReplyError(null);
     setSending(true);
     try {
-      await getApiClient().createBookingMessage(bookingId, { body });
+      const created = await getApiClient().createBookingMessage(bookingId, { body });
       setReplyBody('');
-      await load();
+      await load({ silent: true });
+      toast({
+        variant: 'success',
+        message: created.customerNotifiedByEmail
+          ? t('toast.sentWithEmail')
+          : t('toast.sent'),
+      });
     } catch (err) {
       setReplyError(getBookingsErrorMessage(err));
     } finally {
       setSending(false);
     }
-  }, [bookingId, getBookingsErrorMessage, load, replyBody]);
+  }, [bookingId, getBookingsErrorMessage, load, replyBody, t, toast]);
 
   return (
     <section className="space-y-3">
@@ -82,68 +143,29 @@ export function BookingMessagesSection({ bookingId, canWrite }: BookingMessagesS
         </p>
       ) : null}
 
-      <Card variant="dashboard" padding="md">
-        {loading ? (
-          <p className="text-sm text-atg-muted">{t('loading')}</p>
-        ) : messages.length === 0 ? (
-          <p className="text-sm text-atg-muted">{t('empty')}</p>
-        ) : (
-          <ul className="space-y-4" aria-label={t('threadAria')}>
-            {messages.map((message) => (
-              <li
-                key={message.id}
-                className={`rounded-lg border p-4 ${
-                  message.isStaff
-                    ? 'border-primary/30 bg-primary/5 dark:border-primary/40 dark:bg-primary/10'
-                    : 'border-atg-border bg-atg-surface'
-                }`}
-              >
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <span className="text-xs font-medium uppercase tracking-wide text-atg-muted">
-                    {message.isStaff ? t('author.staff') : t('author.customer')}
-                  </span>
-                  <time className="text-xs text-atg-muted">{formatDateTime(message.createdAt)}</time>
-                </div>
-                <p className="mt-2 whitespace-pre-wrap text-sm text-atg-fg">{message.body}</p>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Card>
-
-      {canWrite ? (
-        <Card variant="dashboard" padding="md" className="space-y-4">
-          <h3 className="text-sm font-semibold text-atg-fg">{t('replyTitle')}</h3>
-          <div>
-            <label htmlFor={replyBodyId} className="mb-1 block text-xs font-medium text-atg-muted">
-              {t('replyLabel')}
-            </label>
-            <textarea
-              id={replyBodyId}
-              rows={4}
-              value={replyBody}
-              onChange={(e) => setReplyBody(e.target.value)}
-              disabled={sending}
-              placeholder={t('replyPlaceholder')}
-              className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg placeholder:text-atg-muted disabled:opacity-60"
-            />
-          </div>
-          {replyError ? (
-            <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-              {replyError}
-            </p>
-          ) : null}
-          <Button
-            type="button"
-            variant="primary"
-            disabled={sending || !replyBody.trim()}
-            loading={sending}
-            onClick={() => void handleSend()}
-          >
-            {t('sendReply')}
-          </Button>
-        </Card>
-      ) : null}
+      <ConversationChat
+        messages={messages}
+        loading={loading}
+        labels={{
+          threadAria: t('threadAria'),
+          loading: t('loading'),
+          empty: t('empty'),
+          authorStaff: t('author.staff'),
+          authorCustomer: t('author.customer'),
+          replyTitle: canWrite ? t('replyTitle') : undefined,
+          replyLabel: t('replyLabel'),
+          replyPlaceholder: t('replyPlaceholder'),
+          sendReply: t('sendReply'),
+        }}
+        formatDateTime={formatDateTime}
+        formatDateSeparator={formatDateSeparator}
+        canReply={canWrite}
+        replyBody={replyBody}
+        onReplyBodyChange={setReplyBody}
+        onSend={() => void handleSend()}
+        sending={sending}
+        replyError={replyError}
+      />
     </section>
   );
 }

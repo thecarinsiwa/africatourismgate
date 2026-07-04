@@ -30,7 +30,8 @@
       "ariaLabel": "Quick status filters",
       "all": "All",
       "pendingApproval": "Pending approval"
-    }
+    },
+    "unreadCustomerMessage": "Customer message"
   },
   "itemsList": {
     "filters": {
@@ -215,7 +216,12 @@
     "replyTitle": "Reply to customer",
     "replyLabel": "Your message",
     "replyPlaceholder": "Reply to the customer…",
-    "sendReply": "Send"
+    "sendReply": "Send",
+    "toast": {
+      "newCustomerMessage": "New message from the customer",
+      "sent": "Message sent",
+      "sentWithEmail": "Message sent — the customer was notified by email"
+    }
   },
   "guides": {
     "title": "Assigned guides",

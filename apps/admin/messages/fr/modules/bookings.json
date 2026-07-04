@@ -30,7 +30,8 @@
       "ariaLabel": "Filtres rapides par statut",
       "all": "Toutes",
       "pendingApproval": "En attente de validation"
-    }
+    },
+    "unreadCustomerMessage": "Message client"
   },
   "itemsList": {
     "filters": {
@@ -215,7 +216,12 @@
     "replyTitle": "Répondre au client",
     "replyLabel": "Votre message",
     "replyPlaceholder": "Répondez au client…",
-    "sendReply": "Envoyer"
+    "sendReply": "Envoyer",
+    "toast": {
+      "newCustomerMessage": "Nouveau message du client",
+      "sent": "Message envoyé",
+      "sentWithEmail": "Message envoyé — le client a été notifié par e-mail"
+    }
   },
   "guides": {
     "title": "Guides assignés",

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useId, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '../lib/cn';
-import { getFocusableElements, trapFocus } from '../lib/focus-trap';
+import { getInitialFocusElement, trapFocus } from '../lib/focus-trap';
 import { Button } from './button';
 
 export type DrawerSide = 'right' | 'bottom';
@@ -36,10 +36,12 @@ export function Drawer({
   const descriptionId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
   const previouslyFocusedRef = useRef<HTMLElement | null>(null);
+  const onOpenChangeRef = useRef(onOpenChange);
+  onOpenChangeRef.current = onOpenChange;
 
   const close = useCallback(() => {
-    onOpenChange(false);
-  }, [onOpenChange]);
+    onOpenChangeRef.current(false);
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -51,9 +53,9 @@ export function Drawer({
     const frame = window.requestAnimationFrame(() => {
       const panel = panelRef.current;
       if (!panel) return;
-      const focusable = getFocusableElements(panel);
-      if (focusable.length > 0) {
-        focusable[0].focus();
+      const initialFocus = getInitialFocusElement(panel);
+      if (initialFocus) {
+        initialFocus.focus();
       } else {
         panel.focus();
       }
@@ -62,7 +64,7 @@ export function Drawer({
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         event.preventDefault();
-        close();
+        onOpenChangeRef.current(false);
         return;
       }
       const panel = panelRef.current;
@@ -77,7 +79,7 @@ export function Drawer({
       document.removeEventListener('keydown', onKeyDown);
       previouslyFocusedRef.current?.focus?.();
     };
-  }, [open, close]);
+  }, [open]);
 
   if (!open || typeof document === 'undefined') return null;
 

@@ -122,6 +122,8 @@ export interface BookingMessage {
   body: string;
   isStaff: boolean;
   createdAt: string;
+  /** Present on staff POST responses when the customer was offline. */
+  customerNotifiedByEmail?: boolean;
 }
 
 export interface BookingMessagesList {
@@ -309,6 +311,8 @@ export interface BookingListItem extends Booking {
   organizationId: string | null;
   /** Customer account list: payment invite or unread staff message. */
   actionRequired?: boolean;
+  /** Admin list: unread customer message on the booking thread. */
+  unreadCustomerMessage?: boolean;
 }
 
 export interface BookingsListQuery {

@@ -239,9 +239,14 @@ export function BookingsList() {
         cell: ({ row }) => {
           const status = row.original.status;
           return (
-            <DataTableBadge variant={BOOKING_STATUS_VARIANTS[status]}>
-              {getBookingStatusLabel(status, statusLabels)}
-            </DataTableBadge>
+            <div className="flex flex-col items-center gap-1">
+              <DataTableBadge variant={BOOKING_STATUS_VARIANTS[status]}>
+                {getBookingStatusLabel(status, statusLabels)}
+              </DataTableBadge>
+              {row.original.unreadCustomerMessage ? (
+                <DataTableBadge variant="warning">{t('unreadCustomerMessage')}</DataTableBadge>
+              ) : null}
+            </div>
           );
         },
       },
@@ -270,7 +275,7 @@ export function BookingsList() {
         ),
       },
     ],
-    [emptyDash, orgNameById, statusLabels, tActions, tCommon],
+    [emptyDash, orgNameById, statusLabels, t, tActions, tCommon],
   );
 
   const isLoading = state.status === 'loading';

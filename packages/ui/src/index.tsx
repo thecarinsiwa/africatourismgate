@@ -46,6 +46,12 @@ export { Input, type InputProps } from './components/input';
 export { PasswordInput, type PasswordInputProps } from './components/password-input';
 export { Checkbox, type CheckboxProps } from './components/checkbox';
 export { Card, type CardProps } from './components/card';
+export {
+  ConversationChat,
+  type ConversationChatLabels,
+  type ConversationChatMessage,
+  type ConversationChatProps,
+} from './components/conversation-chat';
 export { Skeleton, type SkeletonProps } from './components/skeleton';
 export { StarRatingInput, type StarRatingInputProps } from './components/star-rating-input';
 export { StarRatingDisplay, type StarRatingDisplayProps } from './components/star-rating-display';

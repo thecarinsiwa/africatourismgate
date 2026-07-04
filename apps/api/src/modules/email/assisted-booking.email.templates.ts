@@ -145,11 +145,12 @@ export function renderBookingStaffMessageEmail(
 <p style="margin:0 0 16px;line-height:1.6;">Bonjour ${name},</p>
 <p style="margin:0 0 16px;line-height:1.6;">Notre équipe vous a répondu au sujet de votre réservation <strong>${bookingRef(payload.bookingId)}</strong>.</p>
 <p style="margin:0 0 16px;padding:12px 16px;background:#f4f6f5;border-radius:8px;border-left:4px solid #0d9488;line-height:1.6;">${preview}</p>
-${button(payload.chatUrl, 'Voir la conversation', branding)}`,
+<p style="margin:0 0 16px;line-height:1.6;">Connectez-vous à votre espace client pour nous répondre et poursuivre la conversation.</p>
+${button(payload.chatUrl, 'Répondre à la conversation', branding)}`,
     branding,
     { webUrl: payload.webUrl },
   );
-  const text = `Bonjour ${payload.firstName},\n\nNouveau message sur votre réservation ${payload.bookingId.slice(0, 8)} :\n\n${payload.messagePreview.trim()}\n\nConversation : ${payload.chatUrl}`;
+  const text = `Bonjour ${payload.firstName},\n\nNotre équipe vous a répondu sur votre réservation ${payload.bookingId.slice(0, 8)} :\n\n${payload.messagePreview.trim()}\n\nConnectez-vous à votre espace client pour nous répondre : ${payload.chatUrl}`;
   return { subject, html, text };
 }
 

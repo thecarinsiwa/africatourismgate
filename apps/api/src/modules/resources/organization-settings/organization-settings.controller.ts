@@ -44,10 +44,13 @@ import { OrganizationSettingsService } from './organization-settings.service';
 const BRANDING_IMAGE_MAX_BYTES = 2 * 1024 * 1024;
 const ALLOWED_BRANDING_IMAGE_MIMES = new Set([
   'image/jpeg',
+  'image/jpg',
   'image/png',
   'image/webp',
   'image/gif',
   'image/svg+xml',
+  'image/x-icon',
+  'image/vnd.microsoft.icon',
 ]);
 const ALLOWED_BRANDING_IMAGE_EXTENSIONS = new Set([
   '.jpg',
@@ -56,6 +59,7 @@ const ALLOWED_BRANDING_IMAGE_EXTENSIONS = new Set([
   '.webp',
   '.gif',
   '.svg',
+  '.ico',
 ]);
 
 @ApiTags('organization-settings')
@@ -127,10 +131,11 @@ export class OrganizationSettingsController {
       limits: { fileSize: BRANDING_IMAGE_MAX_BYTES },
       fileFilter: (_req, file, cb) => {
         const extension = extname(file.originalname || '').toLowerCase();
-        if (
-          !ALLOWED_BRANDING_IMAGE_MIMES.has(file.mimetype) ||
-          !ALLOWED_BRANDING_IMAGE_EXTENSIONS.has(extension)
-        ) {
+        const extensionOk = ALLOWED_BRANDING_IMAGE_EXTENSIONS.has(extension);
+        const mimeOk =
+          ALLOWED_BRANDING_IMAGE_MIMES.has(file.mimetype) ||
+          (file.mimetype === 'application/octet-stream' && extensionOk);
+        if (!mimeOk || !extensionOk) {
           cb(null, false);
           return;
         }
@@ -138,7 +143,7 @@ export class OrganizationSettingsController {
       },
     }),
   )
-  @Put('upload-branding')
+  @Post('upload-branding')
   @RequirePermissions('organization_settings.write')
   @ApiOperation({
     summary: 'Upload branding image (logo, favicon, auth visual — max 2 MB)',
@@ -148,7 +153,7 @@ export class OrganizationSettingsController {
   ): { url: string } {
     if (!file) {
       throw new BadRequestException(
-        'Fichier image requis (JPEG, PNG, WebP, GIF ou SVG, max 2 Mo).',
+        'Fichier image requis (JPEG, PNG, WebP, GIF, SVG ou ICO, max 2 Mo).',
       );
     }
     return { url: brandingUploadUrl(file.filename) };

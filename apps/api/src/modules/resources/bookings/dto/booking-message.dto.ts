@@ -18,6 +18,11 @@ export class BookingMessageDto {
 
   @ApiProperty()
   createdAt!: string;
+
+  @ApiPropertyOptional({
+    description: 'True when a staff reply triggered an offline email notification to the customer.',
+  })
+  customerNotifiedByEmail?: boolean;
 }
 
 export class BookingMessagesListDto {

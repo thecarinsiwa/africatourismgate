@@ -1,11 +1,13 @@
 'use client';
 
 import type { BookingMessage } from '@africatourismgate/types';
-import { Button } from '@africatourismgate/ui';
-import { useCallback, useEffect, useId, useState } from 'react';
+import { ConversationChat, useToast } from '@africatourismgate/ui';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { getAccountApiClient } from '../../lib/api/account';
 import { formatBookingDateTime } from '../../lib/bookings/display';
 import { useTranslations } from '../../lib/i18n/locale-provider';
+
+const POLL_INTERVAL_MS = 20_000;
 
 type BookingMessagesSectionProps = {
   bookingId: string;
@@ -22,7 +24,7 @@ export function BookingMessagesSection({
 }: BookingMessagesSectionProps) {
   const t = useTranslations();
   const m = t.account.reservations.detail.messages;
-  const replyBodyId = useId();
+  const { toast } = useToast();
 
   const [messages, setMessages] = useState<BookingMessage[]>([]);
   const [loading, setLoading] = useState(true);
@@ -30,27 +32,67 @@ export function BookingMessagesSection({
   const [replyBody, setReplyBody] = useState('');
   const [replyError, setReplyError] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
+  const knownMessageIdsRef = useRef<Set<string>>(new Set());
+  const initialLoadDoneRef = useRef(false);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const client = await getAccountApiClient();
-      const result = await client.listBookingMessages(
-        bookingId,
-        chatToken ? { chatToken } : undefined,
-      );
-      setMessages(result.messages);
-    } catch {
-      setError(m.loadError);
-      setMessages([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [bookingId, chatToken, m.loadError]);
+  const load = useCallback(
+    async (options?: { silent?: boolean }) => {
+      if (!options?.silent) {
+        setLoading(true);
+      }
+      setError(null);
+      try {
+        const client = await getAccountApiClient();
+        const result = await client.listBookingMessages(
+          bookingId,
+          chatToken ? { chatToken } : undefined,
+        );
+        const nextMessages = result.messages;
+
+        if (initialLoadDoneRef.current) {
+          const known = knownMessageIdsRef.current;
+          const newStaffMessages = nextMessages.filter(
+            (message) => !known.has(message.id) && message.isStaff,
+          );
+          if (newStaffMessages.length > 0) {
+            toast({
+              variant: 'info',
+              message: m.newStaffMessageToast,
+            });
+          }
+        }
+
+        knownMessageIdsRef.current = new Set(nextMessages.map((message) => message.id));
+        initialLoadDoneRef.current = true;
+        setMessages(nextMessages);
+      } catch {
+        if (!options?.silent) {
+          setError(m.loadError);
+          setMessages([]);
+        }
+      } finally {
+        if (!options?.silent) {
+          setLoading(false);
+        }
+      }
+    },
+    [bookingId, chatToken, m.loadError, m.newStaffMessageToast, toast],
+  );
 
   useEffect(() => {
+    initialLoadDoneRef.current = false;
+    knownMessageIdsRef.current = new Set();
     void load();
+  }, [load]);
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      void load({ silent: true });
+    }, POLL_INTERVAL_MS);
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
   }, [load]);
 
   useEffect(() => {
@@ -97,13 +139,29 @@ export function BookingMessagesSection({
         chatToken ? { chatToken } : undefined,
       );
       setReplyBody('');
-      await load();
+      await load({ silent: true });
     } catch {
       setReplyError(m.sendError);
     } finally {
       setSending(false);
     }
   }, [bookingId, chatToken, load, m.sendError, replyBody]);
+
+  const formatDateSeparator = useCallback(
+    (iso: string) => {
+      try {
+        return new Date(iso).toLocaleDateString(localeTag, {
+          weekday: 'long',
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        });
+      } catch {
+        return iso;
+      }
+    },
+    [localeTag],
+  );
 
   return (
     <section id="conversation" className="space-y-3 scroll-mt-6">
@@ -116,70 +174,29 @@ export function BookingMessagesSection({
         </p>
       ) : null}
 
-      <div className="rounded-lg border border-atg-border bg-atg-surface p-4 dark:border-atg-border dark:bg-white/5">
-        {loading ? (
-          <p className="text-sm text-atg-muted">{m.loading}</p>
-        ) : messages.length === 0 ? (
-          <p className="text-sm text-atg-muted">{m.empty}</p>
-        ) : (
-          <ul className="space-y-4" aria-label={m.threadAria}>
-            {messages.map((message) => (
-              <li
-                key={message.id}
-                className={`rounded-lg border p-4 ${
-                  message.isStaff
-                    ? 'border-primary/30 bg-primary/5 dark:border-primary/40 dark:bg-primary/10'
-                    : 'border-atg-border bg-atg-elevated dark:bg-white/5'
-                }`}
-              >
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <span className="text-xs font-medium uppercase tracking-wide text-atg-muted">
-                    {message.isStaff ? m.authorStaff : m.authorCustomer}
-                  </span>
-                  <time className="text-xs text-atg-muted">
-                    {formatBookingDateTime(message.createdAt, localeTag)}
-                  </time>
-                </div>
-                <p className="mt-2 whitespace-pre-wrap text-sm text-atg-fg">{message.body}</p>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-
-      {canReply ? (
-        <div className="space-y-4 rounded-lg border border-atg-border bg-atg-surface p-4 dark:border-atg-border dark:bg-white/5">
-          <h4 className="text-sm font-semibold text-atg-fg">{m.replyTitle}</h4>
-          <div>
-            <label htmlFor={replyBodyId} className="mb-1 block text-xs font-medium text-atg-muted">
-              {m.replyLabel}
-            </label>
-            <textarea
-              id={replyBodyId}
-              rows={4}
-              value={replyBody}
-              onChange={(e) => setReplyBody(e.target.value)}
-              disabled={sending}
-              placeholder={m.replyPlaceholder}
-              className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg placeholder:text-atg-muted disabled:opacity-60 dark:bg-white/5"
-            />
-          </div>
-          {replyError ? (
-            <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-              {replyError}
-            </p>
-          ) : null}
-          <Button
-            type="button"
-            variant="primary"
-            disabled={sending || !replyBody.trim()}
-            loading={sending}
-            onClick={() => void handleSend()}
-          >
-            {m.sendReply}
-          </Button>
-        </div>
-      ) : null}
+      <ConversationChat
+        messages={messages}
+        loading={loading}
+        labels={{
+          threadAria: m.threadAria,
+          loading: m.loading,
+          empty: m.empty,
+          authorStaff: m.authorStaff,
+          authorCustomer: m.authorCustomer,
+          replyTitle: canReply ? m.replyTitle : undefined,
+          replyLabel: m.replyLabel,
+          replyPlaceholder: m.replyPlaceholder,
+          sendReply: m.sendReply,
+        }}
+        formatDateTime={(iso) => formatBookingDateTime(iso, localeTag)}
+        formatDateSeparator={formatDateSeparator}
+        canReply={canReply}
+        replyBody={replyBody}
+        onReplyBodyChange={setReplyBody}
+        onSend={() => void handleSend()}
+        sending={sending}
+        replyError={replyError}
+      />
     </section>
   );
 }
