@@ -48,6 +48,93 @@ export class BookingNotificationsService {
     });
   }
 
+  async markThreadSeenByStaff(bookingId: string): Promise<void> {
+    const now = new Date();
+
+    const latestCustomerMessage = await this.messagesRepository.findOne({
+      where: { bookingId, deletedAt: IsNull(), isStaff: 0 },
+      order: { createdAt: 'DESC', id: 'DESC' },
+      select: ['createdAt'],
+    });
+
+    const seenAt =
+      latestCustomerMessage?.createdAt && latestCustomerMessage.createdAt > now
+        ? latestCustomerMessage.createdAt
+        : now;
+
+    await this.bookingsRepository.update(bookingId, {
+      staffThreadLastSeenAt: seenAt,
+    });
+  }
+
+  async countUnreadCustomerMessages(bookingId: string): Promise<number> {
+    const booking = await this.bookingsRepository.findOne({
+      where: { id: bookingId, deletedAt: IsNull() },
+      select: ['id', 'staffThreadLastSeenAt'],
+    });
+    if (!booking) {
+      return 0;
+    }
+
+    const qb = this.messagesRepository
+      .createQueryBuilder('message')
+      .where('message.booking_id = :bookingId', { bookingId })
+      .andWhere('message.deleted_at IS NULL')
+      .andWhere('message.is_staff = 0');
+
+    if (booking.staffThreadLastSeenAt) {
+      qb.andWhere('message.created_at > :lastSeen', {
+        lastSeen: booking.staffThreadLastSeenAt,
+      });
+    }
+
+    return qb.getCount();
+  }
+
+  async countUnreadStaffMessages(bookingId: string): Promise<number> {
+    const booking = await this.bookingsRepository.findOne({
+      where: { id: bookingId, deletedAt: IsNull() },
+      select: ['id', 'customerThreadLastSeenAt'],
+    });
+    if (!booking) {
+      return 0;
+    }
+
+    const qb = this.messagesRepository
+      .createQueryBuilder('message')
+      .where('message.booking_id = :bookingId', { bookingId })
+      .andWhere('message.deleted_at IS NULL')
+      .andWhere('message.is_staff = 1');
+
+    if (booking.customerThreadLastSeenAt) {
+      qb.andWhere('message.created_at > :lastSeen', {
+        lastSeen: booking.customerThreadLastSeenAt,
+      });
+    }
+
+    return qb.getCount();
+  }
+
+  async getUnreadCustomerMessageBookingIds(bookingIds: string[]): Promise<Set<string>> {
+    if (bookingIds.length === 0) {
+      return new Set();
+    }
+
+    const rows = await this.messagesRepository
+      .createQueryBuilder('message')
+      .innerJoin(Bookings, 'booking', 'booking.id = message.booking_id')
+      .where('message.booking_id IN (:...bookingIds)', { bookingIds })
+      .andWhere('message.deleted_at IS NULL')
+      .andWhere('message.is_staff = 0')
+      .andWhere(
+        '(booking.staff_thread_last_seen_at IS NULL OR message.created_at > booking.staff_thread_last_seen_at)',
+      )
+      .select('DISTINCT message.booking_id', 'bookingId')
+      .getRawMany<{ bookingId: string }>();
+
+    return new Set(rows.map((row) => row.bookingId));
+  }
+
   async markThreadSeenByCustomer(bookingId: string, customerUserId: string): Promise<void> {
     const booking = await this.bookingsRepository.findOne({
       where: { id: bookingId, userId: customerUserId, deletedAt: IsNull() },

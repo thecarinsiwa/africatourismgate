@@ -16,8 +16,19 @@ export class BookingMessageDto {
   @ApiProperty({ description: 'True when posted by staff (admin/agent)' })
   isStaff!: boolean;
 
+  @ApiPropertyOptional({
+    description: 'Display name of the message author (customer messages).',
+    nullable: true,
+  })
+  authorName?: string | null;
+
   @ApiProperty()
   createdAt!: string;
+
+  @ApiPropertyOptional({
+    description: 'True when a staff reply triggered an offline email notification to the customer.',
+  })
+  customerNotifiedByEmail?: boolean;
 }
 
 export class BookingMessagesListDto {

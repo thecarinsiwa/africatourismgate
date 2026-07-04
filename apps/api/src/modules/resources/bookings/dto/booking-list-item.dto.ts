@@ -42,4 +42,9 @@ export class BookingListItemDto {
     description: 'Customer account list: payment invite or unread staff message.',
   })
   actionRequired?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Admin list: unread customer message on the booking thread.',
+  })
+  unreadCustomerMessage?: boolean;
 }

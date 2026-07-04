@@ -396,6 +396,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
             status={booking.status}
             totalCents={detail.totalCents}
             currency={detail.currency}
+            items={detail.items}
             canApprove={canApprove}
             onUpdated={load}
           />
@@ -509,10 +510,14 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
           />
 
           <BookingGuidesSection bookingId={bookingId} canWrite={canWrite} />
-
-          <BookingMessagesSection bookingId={bookingId} canWrite={canWrite} />
         </div>
       </div>
+
+      <BookingMessagesSection
+        bookingId={bookingId}
+        canWrite={canWrite}
+        initialUnreadCount={detail?.unreadCustomerMessageCount ?? 0}
+      />
 
       <AlertDialog
         open={statusDialogOpen}

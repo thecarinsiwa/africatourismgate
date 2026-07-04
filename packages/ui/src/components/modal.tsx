@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useId, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { cn } from '../lib/cn';
-import { getFocusableElements, trapFocus } from '../lib/focus-trap';
+import { getInitialFocusElement, trapFocus } from '../lib/focus-trap';
 import { Button } from './button';
 
 export type ModalProps = {
@@ -17,6 +17,8 @@ export type ModalProps = {
   description?: string;
   children?: React.ReactNode;
   className?: string;
+  /** Classes appliquées au conteneur plein écran (z-index, etc.). */
+  containerClassName?: string;
   /** Affiche un bouton de fermeture en haut à droite. */
   showClose?: boolean;
 };
@@ -29,15 +31,18 @@ export function Modal({
   children,
   className,
   showClose = false,
+  containerClassName,
 }: ModalProps) {
   const titleId = useId();
   const descriptionId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
   const previouslyFocusedRef = useRef<HTMLElement | null>(null);
+  const onOpenChangeRef = useRef(onOpenChange);
+  onOpenChangeRef.current = onOpenChange;
 
   const close = useCallback(() => {
-    onOpenChange(false);
-  }, [onOpenChange]);
+    onOpenChangeRef.current(false);
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -49,9 +54,9 @@ export function Modal({
     const frame = window.requestAnimationFrame(() => {
       const panel = panelRef.current;
       if (!panel) return;
-      const focusable = getFocusableElements(panel);
-      if (focusable.length > 0) {
-        focusable[0].focus();
+      const initialFocus = getInitialFocusElement(panel);
+      if (initialFocus) {
+        initialFocus.focus();
       } else {
         panel.focus();
       }
@@ -60,7 +65,7 @@ export function Modal({
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         event.preventDefault();
-        close();
+        onOpenChangeRef.current(false);
         return;
       }
       const panel = panelRef.current;
@@ -75,12 +80,12 @@ export function Modal({
       document.removeEventListener('keydown', onKeyDown);
       previouslyFocusedRef.current?.focus?.();
     };
-  }, [open, close]);
+  }, [open]);
 
   if (!open || typeof document === 'undefined') return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className={cn('fixed inset-0 z-50 flex items-center justify-center p-4', containerClassName)}>
       <div
         className="absolute inset-0 bg-black/50 dark:bg-black/70"
         aria-hidden

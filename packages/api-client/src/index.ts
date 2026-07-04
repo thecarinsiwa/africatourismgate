@@ -81,6 +81,8 @@ import type {
   UpdateActivityRequest,
   UpdateActivityScheduleRequest,
   ApproveBookingRequest,
+  UpdateBookingPricingRequest,
+  UpdateBookingVisitDatesRequest,
   RejectBookingRequest,
   BookingAdminDetail,
   BookingCheckoutPreview,
@@ -1541,16 +1543,23 @@ export class ApiClient {
 
   listBookingMessages(
     bookingId: string,
-    query?: { chatToken?: string },
+    query?: { chatToken?: string; markRead?: boolean },
   ): Promise<BookingMessagesList> {
     const params = new URLSearchParams();
     if (query?.chatToken) {
       params.set('chatToken', query.chatToken);
     }
+    if (query?.markRead === false) {
+      params.set('markRead', 'false');
+    }
     const qs = params.toString();
     return this.request<BookingMessagesList>(
       `/bookings/${bookingId}/messages${qs ? `?${qs}` : ''}`,
     );
+  }
+
+  getBookingUnreadMessageCount(bookingId: string): Promise<{ count: number }> {
+    return this.request<{ count: number }>(`/bookings/${bookingId}/messages/unread-count`);
   }
 
   createBookingMessage(
@@ -1736,6 +1745,26 @@ export class ApiClient {
   inviteBookingPayment(id: string): Promise<BookingCheckoutSessionResponse> {
     return this.request<BookingCheckoutSessionResponse>(`/bookings/${id}/invite-payment`, {
       method: 'POST',
+    });
+  }
+
+  updateBookingPricing(
+    id: string,
+    body: UpdateBookingPricingRequest,
+  ): Promise<BookingAdminDetail> {
+    return this.request<BookingAdminDetail>(`/bookings/${id}/pricing`, {
+      method: 'PUT',
+      body,
+    });
+  }
+
+  updateBookingVisitDates(
+    id: string,
+    body: UpdateBookingVisitDatesRequest,
+  ): Promise<BookingAdminDetail> {
+    return this.request<BookingAdminDetail>(`/bookings/${id}/visit-dates`, {
+      method: 'PUT',
+      body,
     });
   }
 

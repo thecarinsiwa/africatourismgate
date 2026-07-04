@@ -28,6 +28,7 @@ type FormState = {
   fullName: string;
   age: string;
   sex: '' | BookingManifestSex;
+  price: string;
   nationality: string;
   idNumber: string;
   conditions: string;
@@ -39,6 +40,7 @@ const EMPTY_FORM: FormState = {
   fullName: '',
   age: '',
   sex: '',
+  price: '',
   nationality: '',
   idNumber: '',
   conditions: '',
@@ -51,6 +53,7 @@ function entryToForm(entry: BookingManifestEntry): FormState {
     fullName: entry.fullName,
     age: entry.age != null ? String(entry.age) : '',
     sex: entry.sex ?? '',
+    price: entry.priceCents != null ? (entry.priceCents / 100).toFixed(2) : '',
     nationality: entry.nationality ?? '',
     idNumber: entry.idNumber ?? '',
     conditions: entry.conditions ?? '',
@@ -62,10 +65,18 @@ function entryToForm(entry: BookingManifestEntry): FormState {
 function formToPayload(form: FormState) {
   const ageTrimmed = form.age.trim();
   const ageParsed = ageTrimmed ? Number.parseInt(ageTrimmed, 10) : undefined;
+  const priceTrimmed = form.price.trim();
+  const priceParsed = priceTrimmed
+    ? Math.round(Number.parseFloat(priceTrimmed.replace(',', '.')) * 100)
+    : undefined;
   return {
     fullName: form.fullName.trim(),
     age: ageParsed != null && !Number.isNaN(ageParsed) ? ageParsed : undefined,
     sex: form.sex || undefined,
+    priceCents:
+      priceParsed != null && !Number.isNaN(priceParsed) && priceParsed >= 0
+        ? priceParsed
+        : undefined,
     nationality: form.nationality.trim() || undefined,
     idNumber: form.idNumber.trim() || undefined,
     conditions: form.conditions.trim() || undefined,
@@ -233,6 +244,17 @@ export function BookingManifestSection({
         ),
       },
       {
+        accessorKey: 'priceCents',
+        header: t('columns.price'),
+        cell: ({ row }) => (
+          <span className="tabular-nums">
+            {row.original.priceCents != null
+              ? (row.original.priceCents / 100).toFixed(2)
+              : tCommon('empty.dash')}
+          </span>
+        ),
+      },
+      {
         accessorKey: 'conditions',
         header: t('columns.conditions'),
         cell: ({ row }) => (
@@ -352,6 +374,15 @@ export function BookingManifestSection({
                 sex: e.target.value as FormState['sex'],
               }))
             }
+          />
+          <Input
+            label={t('fields.price')}
+            name="price"
+            type="text"
+            inputMode="decimal"
+            value={form.price}
+            onChange={(e) => setForm((prev) => ({ ...prev, price: e.target.value }))}
+            placeholder={t('fields.pricePlaceholder')}
           />
           <Input
             label={t('fields.nationality')}

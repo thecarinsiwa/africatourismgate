@@ -187,6 +187,9 @@ export class BookingsService extends CrudService<Bookings> {
     const unreadStaffIds = customerView
       ? await this.notifications.getUnreadStaffMessageBookingIds(bookings.map((b) => b.id))
       : new Set<string>();
+    const unreadCustomerIds = customerView
+      ? new Set<string>()
+      : await this.notifications.getUnreadCustomerMessageBookingIds(bookings.map((b) => b.id));
 
     const data = bookings.map((booking) => {
       const client = userById.get(booking.userId);
@@ -211,7 +214,9 @@ export class BookingsService extends CrudService<Bookings> {
                 unreadStaffIds,
               ),
             }
-          : {}),
+          : {
+              unreadCustomerMessage: unreadCustomerIds.has(booking.id),
+            }),
       } satisfies BookingListItemDto;
     });
 
@@ -239,7 +244,7 @@ export class BookingsService extends CrudService<Bookings> {
       ? false
       : await this.reviewsService.canReview(id, currentUserId);
 
-    const [statusHistory, pendingStripePayments, guideReviewInvites, identityDocuments] =
+    const [statusHistory, pendingStripePayments, guideReviewInvites, identityDocuments, unreadStaffMessageCount] =
       await Promise.all([
       this.statusHistory.listByBookingId(id),
       this.paymentsRepository.find({
@@ -253,6 +258,7 @@ export class BookingsService extends CrudService<Bookings> {
       }),
       this.reviewsService.listGuideReviewInvitesForBooking(id, currentUserId),
       this.identityDocuments.listForBooking(id),
+      this.notifications.countUnreadStaffMessages(id),
     ]);
 
     return {
@@ -263,6 +269,7 @@ export class BookingsService extends CrudService<Bookings> {
       paymentInvited: pendingStripePayments.length > 0,
       guideReviewInvites,
       identityDocuments,
+      unreadStaffMessageCount,
     };
   }
 
@@ -373,6 +380,8 @@ export class BookingsService extends CrudService<Bookings> {
     }
 
     const identityDocuments = await this.identityDocuments.listForBooking(id);
+    const unreadCustomerMessageCount =
+      await this.notifications.countUnreadCustomerMessages(id);
 
     return {
       booking: base.booking,
@@ -390,6 +399,7 @@ export class BookingsService extends CrudService<Bookings> {
       payments,
       statusHistory,
       identityDocuments,
+      unreadCustomerMessageCount,
     };
   }
 

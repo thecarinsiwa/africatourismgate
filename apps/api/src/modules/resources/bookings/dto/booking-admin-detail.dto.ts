@@ -47,4 +47,9 @@ export class BookingAdminDetailDto {
 
   @ApiPropertyOptional({ type: [Object] })
   identityDocuments?: BookingIdentityDocumentDto[];
+
+  @ApiPropertyOptional({
+    description: 'Unread customer messages for staff on this booking thread.',
+  })
+  unreadCustomerMessageCount?: number;
 }

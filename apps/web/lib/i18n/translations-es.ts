@@ -1095,6 +1095,9 @@ export const es: Translations = {
           sendReply: 'Enviar',
           loadError: 'No se pudo cargar la conversación.',
           sendError: 'No se pudo enviar el mensaje.',
+          newStaffMessageToast: 'Nuevo mensaje de nuestro equipo',
+          fabAriaLabel: 'Abrir conversación',
+          fabAriaLabelWithUnread: 'Abrir conversación ({count} sin leer)',
         },
         guideReviews: {
           sectionTitle: 'Su guía',

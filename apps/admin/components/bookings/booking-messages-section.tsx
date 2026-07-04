@@ -1,16 +1,19 @@
 'use client';
 
+import type { BookingMessage } from '@africatourismgate/types';
+import { ConversationChat, DraggableFab, BookingChatFabIcon, Modal, useToast } from '@africatourismgate/ui';
+import { useTranslations } from 'next-intl';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { getApiClient } from '../../lib/auth/api';
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Card } from '@africatourismgate/ui';
-import type { BookingMessage } from '@africatourismgate/types';
-import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useId, useState } from 'react';
-import { getApiClient } from '../../lib/auth/api';
+const POLL_INTERVAL_MS = 20_000;
+const FAB_STORAGE_KEY = 'atg-admin-booking-chat-fab-position';
 
 type BookingMessagesSectionProps = {
   bookingId: string;
   canWrite: boolean;
+  initialUnreadCount?: number;
 };
 
 function formatDateTime(iso: string): string {
@@ -24,24 +27,63 @@ function formatDateTime(iso: string): string {
   }
 }
 
-export function BookingMessagesSection({ bookingId, canWrite }: BookingMessagesSectionProps) {
+function formatDateSeparator(iso: string): string {
+  try {
+    return new Date(iso).toLocaleDateString('fr-FR', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    });
+  } catch {
+    return iso;
+  }
+}
+
+export function BookingMessagesSection({
+  bookingId,
+  canWrite,
+  initialUnreadCount = 0,
+}: BookingMessagesSectionProps) {
   const { bookings: getBookingsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.bookings.messages');
-  const replyBodyId = useId();
+  const { toast } = useToast();
 
+  const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<BookingMessage[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [replyBody, setReplyBody] = useState('');
   const [replyError, setReplyError] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(initialUnreadCount);
+  const previousUnreadCountRef = useRef(initialUnreadCount);
 
-  const load = useCallback(async () => {
+  const refreshUnreadCount = useCallback(async () => {
+    try {
+      const result = await getApiClient().getBookingUnreadMessageCount(bookingId);
+      const nextCount = result.count;
+      if (nextCount > previousUnreadCountRef.current && !open) {
+        toast({
+          variant: 'info',
+          message: t('toast.newCustomerMessage'),
+        });
+      }
+      previousUnreadCountRef.current = nextCount;
+      setUnreadCount(nextCount);
+    } catch {
+      // ignore polling errors
+    }
+  }, [bookingId, open, t, toast]);
+
+  const loadMessages = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const result = await getApiClient().listBookingMessages(bookingId);
+      const result = await getApiClient().listBookingMessages(bookingId, { markRead: true });
       setMessages(result.messages);
+      setUnreadCount(0);
+      previousUnreadCountRef.current = 0;
     } catch (err) {
       setError(getBookingsErrorMessage(err));
       setMessages([]);
@@ -51,8 +93,26 @@ export function BookingMessagesSection({ bookingId, canWrite }: BookingMessagesS
   }, [bookingId, getBookingsErrorMessage]);
 
   useEffect(() => {
-    void load();
-  }, [load]);
+    setUnreadCount(initialUnreadCount);
+    previousUnreadCountRef.current = initialUnreadCount;
+  }, [bookingId, initialUnreadCount]);
+
+  useEffect(() => {
+    if (!open) {
+      void refreshUnreadCount();
+      const intervalId = window.setInterval(() => {
+        void refreshUnreadCount();
+      }, POLL_INTERVAL_MS);
+      return () => window.clearInterval(intervalId);
+    }
+    return undefined;
+  }, [open, refreshUnreadCount]);
+
+  useEffect(() => {
+    if (open) {
+      void loadMessages();
+    }
+  }, [open, loadMessages]);
 
   const handleSend = useCallback(async () => {
     const body = replyBody.trim();
@@ -62,88 +122,78 @@ export function BookingMessagesSection({ bookingId, canWrite }: BookingMessagesS
     setReplyError(null);
     setSending(true);
     try {
-      await getApiClient().createBookingMessage(bookingId, { body });
+      const created = await getApiClient().createBookingMessage(bookingId, { body });
       setReplyBody('');
-      await load();
+      await loadMessages();
+      toast({
+        variant: 'success',
+        message: created.customerNotifiedByEmail
+          ? t('toast.sentWithEmail')
+          : t('toast.sent'),
+      });
     } catch (err) {
       setReplyError(getBookingsErrorMessage(err));
     } finally {
       setSending(false);
     }
-  }, [bookingId, getBookingsErrorMessage, load, replyBody]);
+  }, [bookingId, getBookingsErrorMessage, loadMessages, replyBody, t, toast]);
+
+  const fabAriaLabel =
+    unreadCount > 0
+      ? t('fabAriaLabelWithUnread', { count: unreadCount })
+      : t('fabAriaLabel');
 
   return (
-    <section className="space-y-3">
-      <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
-
-      {error ? (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {error}
-        </p>
+    <>
+      {!open ? (
+        <DraggableFab
+          onClick={() => setOpen(true)}
+          ariaLabel={fabAriaLabel}
+          storageKey={FAB_STORAGE_KEY}
+          badgeCount={unreadCount}
+        >
+          <BookingChatFabIcon className="size-11" />
+        </DraggableFab>
       ) : null}
 
-      <Card variant="dashboard" padding="md">
-        {loading ? (
-          <p className="text-sm text-atg-muted">{t('loading')}</p>
-        ) : messages.length === 0 ? (
-          <p className="text-sm text-atg-muted">{t('empty')}</p>
-        ) : (
-          <ul className="space-y-4" aria-label={t('threadAria')}>
-            {messages.map((message) => (
-              <li
-                key={message.id}
-                className={`rounded-lg border p-4 ${
-                  message.isStaff
-                    ? 'border-primary/30 bg-primary/5 dark:border-primary/40 dark:bg-primary/10'
-                    : 'border-atg-border bg-atg-surface'
-                }`}
-              >
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <span className="text-xs font-medium uppercase tracking-wide text-atg-muted">
-                    {message.isStaff ? t('author.staff') : t('author.customer')}
-                  </span>
-                  <time className="text-xs text-atg-muted">{formatDateTime(message.createdAt)}</time>
-                </div>
-                <p className="mt-2 whitespace-pre-wrap text-sm text-atg-fg">{message.body}</p>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Card>
+      <Modal
+        open={open}
+        onOpenChange={setOpen}
+        title={t('title')}
+        showClose
+        className="flex max-h-[min(720px,90vh)] w-full max-w-2xl flex-col"
+      >
+        {error ? (
+          <p role="alert" className="mb-3 text-sm text-red-600 dark:text-red-400">
+            {error}
+          </p>
+        ) : null}
 
-      {canWrite ? (
-        <Card variant="dashboard" padding="md" className="space-y-4">
-          <h3 className="text-sm font-semibold text-atg-fg">{t('replyTitle')}</h3>
-          <div>
-            <label htmlFor={replyBodyId} className="mb-1 block text-xs font-medium text-atg-muted">
-              {t('replyLabel')}
-            </label>
-            <textarea
-              id={replyBodyId}
-              rows={4}
-              value={replyBody}
-              onChange={(e) => setReplyBody(e.target.value)}
-              disabled={sending}
-              placeholder={t('replyPlaceholder')}
-              className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg placeholder:text-atg-muted disabled:opacity-60"
-            />
-          </div>
-          {replyError ? (
-            <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-              {replyError}
-            </p>
-          ) : null}
-          <Button
-            type="button"
-            variant="primary"
-            disabled={sending || !replyBody.trim()}
-            loading={sending}
-            onClick={() => void handleSend()}
-          >
-            {t('sendReply')}
-          </Button>
-        </Card>
-      ) : null}
-    </section>
+        <ConversationChat
+          messages={messages}
+          loading={loading}
+          labels={{
+            threadAria: t('threadAria'),
+            loading: t('loading'),
+            empty: t('empty'),
+            authorStaff: t('author.staff'),
+            authorCustomer: t('author.customer'),
+            replyTitle: canWrite ? t('replyTitle') : undefined,
+            replyLabel: t('replyLabel'),
+            replyPlaceholder: t('replyPlaceholder'),
+            sendReply: t('sendReply'),
+          }}
+          formatDateTime={formatDateTime}
+          formatDateSeparator={formatDateSeparator}
+          canReply={canWrite}
+          replyBody={replyBody}
+          onReplyBodyChange={setReplyBody}
+          onSend={() => void handleSend()}
+          sending={sending}
+          replyError={replyError}
+          className="min-h-0 flex-1"
+        />
+      </Modal>
+    </>
   );
 }

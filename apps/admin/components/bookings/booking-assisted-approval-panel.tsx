@@ -3,25 +3,114 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import { AlertDialog, Button, Card, Input, useToast } from '@africatourismgate/ui';
-import type { BookingStatus } from '@africatourismgate/types';
+import type { BookingItem, BookingManifestEntry, BookingStatus } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
-import { useEffect, useId, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import { formatMoney } from '../../lib/format-money';
+
+type TravelerDraft = {
+  key: string;
+  id?: string;
+  fullName: string;
+  age: string;
+  price: string;
+  basePriceCents?: number | null;
+};
 
 type BookingAssistedApprovalPanelProps = {
   bookingId: string;
   status: BookingStatus;
   totalCents: number;
   currency: string;
+  items: BookingItem[];
   canApprove: boolean;
   onUpdated: () => Promise<void>;
 };
+
+function expandBasePricesFromItems(items: BookingItem[]): number[] {
+  const bases: number[] = [];
+  for (const item of items) {
+    for (let index = 0; index < item.quantity; index++) {
+      bases.push(item.unitPriceCents);
+    }
+  }
+  return bases;
+}
+
+function deriveVisitDatesFromItems(
+  items: BookingItem[],
+): { startDate: string; endDate: string } | null {
+  const dated = items.filter((item) => item.startDate);
+  if (dated.length === 0) {
+    return null;
+  }
+  const starts = dated.map((item) => toDateOnlyString(item.startDate!)).sort();
+  const ends = dated
+    .map((item) => toDateOnlyString(item.endDate ?? item.startDate!))
+    .sort();
+  return {
+    startDate: starts[0]!,
+    endDate: ends[ends.length - 1]!,
+  };
+}
+
+function toDateOnlyString(value: string): string {
+  const match = /^(\d{4}-\d{2}-\d{2})/.exec(value.trim());
+  return match ? match[1]! : value.slice(0, 10);
+}
+
+function addDaysToDateOnly(iso: string, days: number): string {
+  const date = new Date(`${toDateOnlyString(iso)}T00:00:00Z`);
+  date.setUTCDate(date.getUTCDate() + days);
+  return date.toISOString().slice(0, 10);
+}
+
+function visitSpanDays(startDate: string, endDate: string): number {
+  const start = new Date(`${toDateOnlyString(startDate)}T00:00:00Z`);
+  const end = new Date(`${toDateOnlyString(endDate)}T00:00:00Z`);
+  return Math.max(0, Math.round((end.getTime() - start.getTime()) / 86_400_000));
+}
+
+function parseMoneyToCents(value: string): number | null {
+  const parsed = Number.parseFloat(value.replace(',', '.'));
+  if (!Number.isFinite(parsed) || parsed < 0) {
+    return null;
+  }
+  return Math.round(parsed * 100);
+}
+
+function formatCentsToMoney(cents: number): string {
+  return (cents / 100).toFixed(2);
+}
+
+function entryToDraft(entry: BookingManifestEntry, basePriceCents?: number | null): TravelerDraft {
+  return {
+    key: entry.id,
+    id: entry.id,
+    fullName: entry.fullName,
+    age: entry.age != null ? String(entry.age) : '',
+    price: entry.priceCents != null ? formatCentsToMoney(entry.priceCents) : '',
+    basePriceCents: basePriceCents ?? null,
+  };
+}
+
+function createEmptyTraveler(defaultPrice = '', basePriceCents?: number | null): TravelerDraft {
+  return {
+    key: crypto.randomUUID(),
+    fullName: '',
+    age: '',
+    price: defaultPrice,
+    basePriceCents: basePriceCents ?? null,
+  };
+}
 
 export function BookingAssistedApprovalPanel({
   bookingId,
   status,
   totalCents,
   currency,
+  items,
   canApprove,
   onUpdated,
 }: BookingAssistedApprovalPanelProps) {
@@ -33,15 +122,112 @@ export function BookingAssistedApprovalPanel({
   const approveReasonId = useId();
 
   const [loading, setLoading] = useState(false);
+  const [manifestLoading, setManifestLoading] = useState(true);
   const [actionError, setActionError] = useState<string | null>(null);
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [approveDialogOpen, setApproveDialogOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
   const [approveReason, setApproveReason] = useState('');
-  const [adjustedTotal, setAdjustedTotal] = useState(() => (totalCents / 100).toFixed(2));
+  const [travelers, setTravelers] = useState<TravelerDraft[]>([]);
+  const [adjustedTotal, setAdjustedTotal] = useState(() => formatCentsToMoney(totalCents));
+  const [totalTouched, setTotalTouched] = useState(false);
+  const [pricingDirty, setPricingDirty] = useState(false);
+  const [visitStartDate, setVisitStartDate] = useState('');
+  const [visitDatesDirty, setVisitDatesDirty] = useState(false);
+  const [approveDialogError, setApproveDialogError] = useState<string | null>(null);
+  const [rejectDialogError, setRejectDialogError] = useState<string | null>(null);
+
+  const initialVisitDates = useMemo(() => deriveVisitDatesFromItems(items), [items]);
+  const hasVisitDates = initialVisitDates != null;
+  const visitSpanDaysCount = useMemo(() => {
+    if (!initialVisitDates) {
+      return 0;
+    }
+    return visitSpanDays(initialVisitDates.startDate, initialVisitDates.endDate);
+  }, [initialVisitDates]);
+
+  const computedVisitEndDate = useMemo(() => {
+    if (!visitStartDate) {
+      return '';
+    }
+    return addDaysToDateOnly(visitStartDate, visitSpanDaysCount);
+  }, [visitStartDate, visitSpanDaysCount]);
+
+  const subtotalCents = useMemo(() => {
+    return travelers.reduce((sum, traveler) => {
+      const cents = parseMoneyToCents(traveler.price);
+      return sum + (cents ?? 0);
+    }, 0);
+  }, [travelers]);
+
+  const basePricesPerTraveler = useMemo(() => expandBasePricesFromItems(items), [items]);
+
+  const loadManifest = useCallback(async () => {
+    setManifestLoading(true);
+    try {
+      const entries = await getApiClient().listBookingManifestEntries(bookingId);
+      if (entries.length > 0) {
+        setTravelers(
+          entries.map((entry, index) =>
+            entryToDraft(entry, basePricesPerTraveler[index] ?? null),
+          ),
+        );
+      } else if (status === 'pending_approval') {
+        if (basePricesPerTraveler.length > 0) {
+          setTravelers(
+            basePricesPerTraveler.map((basePriceCents, index) => ({
+              key: crypto.randomUUID(),
+              fullName:
+                basePricesPerTraveler.length === 1
+                  ? t('defaultTravelerName')
+                  : `${t('defaultTravelerName')} ${index + 1}`,
+              age: '',
+              price: formatCentsToMoney(basePriceCents),
+              basePriceCents,
+            })),
+          );
+        } else {
+          setTravelers([
+            {
+              key: crypto.randomUUID(),
+              fullName: t('defaultTravelerName'),
+              age: '',
+              price: formatCentsToMoney(totalCents),
+              basePriceCents: totalCents > 0 ? totalCents : null,
+            },
+          ]);
+        }
+      } else {
+        setTravelers([]);
+      }
+      setPricingDirty(false);
+    } catch {
+      setTravelers([]);
+    } finally {
+      setManifestLoading(false);
+    }
+  }, [bookingId, status, t, totalCents, basePricesPerTraveler]);
 
   useEffect(() => {
-    setAdjustedTotal((totalCents / 100).toFixed(2));
+    void loadManifest();
+  }, [loadManifest]);
+
+  useEffect(() => {
+    if (initialVisitDates) {
+      setVisitStartDate(toDateOnlyString(initialVisitDates.startDate));
+      setVisitDatesDirty(false);
+    }
+  }, [initialVisitDates]);
+
+  useEffect(() => {
+    if (!totalTouched) {
+      setAdjustedTotal(formatCentsToMoney(subtotalCents > 0 ? subtotalCents : totalCents));
+    }
+  }, [subtotalCents, totalCents, totalTouched]);
+
+  useEffect(() => {
+    setAdjustedTotal(formatCentsToMoney(totalCents));
+    setTotalTouched(false);
   }, [totalCents]);
 
   if (!canApprove) {
@@ -52,7 +238,45 @@ export function BookingAssistedApprovalPanel({
     return null;
   }
 
-  async function runAction(action: () => Promise<void>, onSuccess?: () => void) {
+  function buildTravelerPayload() {
+    return travelers
+      .map((traveler) => {
+        const priceCents = parseMoneyToCents(traveler.price);
+        const fullName = traveler.fullName.trim();
+        if (!fullName || priceCents == null) {
+          return null;
+        }
+        const ageTrimmed = traveler.age.trim();
+        const ageParsed = ageTrimmed ? Number.parseInt(ageTrimmed, 10) : undefined;
+        return {
+          id: traveler.id,
+          fullName,
+          age: ageParsed != null && !Number.isNaN(ageParsed) ? ageParsed : undefined,
+          priceCents,
+        };
+      })
+      .filter((traveler): traveler is NonNullable<typeof traveler> => traveler != null);
+  }
+
+  function validateTravelers(): string | null {
+    const payload = buildTravelerPayload();
+    if (payload.length === 0) {
+      return t('travelerRequired');
+    }
+    if (travelers.some((traveler) => !traveler.fullName.trim())) {
+      return t('travelerNameRequired');
+    }
+    if (travelers.some((traveler) => parseMoneyToCents(traveler.price) == null)) {
+      return t('travelerPriceRequired');
+    }
+    return null;
+  }
+
+  async function runAction(
+    action: () => Promise<void>,
+    onSuccess?: () => void,
+    options?: { onError?: (message: string) => void },
+  ) {
     setActionError(null);
     setLoading(true);
     try {
@@ -60,37 +284,80 @@ export function BookingAssistedApprovalPanel({
       await onUpdated();
       onSuccess?.();
     } catch (error) {
-      setActionError(getBookingsErrorMessage(error));
+      const message = getBookingsErrorMessage(error);
+      setActionError(message);
+      options?.onError?.(message);
     } finally {
       setLoading(false);
     }
   }
 
+  function buildVisitDatesPayload() {
+    if (!hasVisitDates || !visitStartDate) {
+      return null;
+    }
+    return {
+      startDate: toDateOnlyString(visitStartDate),
+      endDate: toDateOnlyString(computedVisitEndDate || visitStartDate),
+    };
+  }
+
+  async function handleSaveVisitDates() {
+    const payload = buildVisitDatesPayload();
+    if (!payload) {
+      return;
+    }
+
+    await runAction(
+      async () => {
+        await getApiClient().updateBookingVisitDates(bookingId, payload);
+      },
+      () => {
+        setVisitDatesDirty(false);
+        toast({ variant: 'success', message: t('visitDatesSaved') });
+      },
+    );
+  }
+
   async function handleApprove() {
-    const parsedTotal = Number.parseFloat(adjustedTotal.replace(',', '.'));
-    const totalCentsOverride =
-      Number.isFinite(parsedTotal) && parsedTotal > 0
-        ? Math.round(parsedTotal * 100)
-        : undefined;
+    setApproveDialogError(null);
+    const validationError = validateTravelers();
+    if (validationError) {
+      setApproveDialogError(validationError);
+      setActionError(validationError);
+      return;
+    }
+
+    const parsedTotal = parseMoneyToCents(adjustedTotal);
+    const travelerPayload = buildTravelerPayload();
+    const visitPayload = buildVisitDatesPayload();
 
     await runAction(
       async () => {
         await getApiClient().approveBooking(bookingId, {
           reason: approveReason.trim() || undefined,
-          ...(totalCentsOverride !== undefined && totalCentsOverride !== totalCents
-            ? { totalCents: totalCentsOverride }
+          travelers: travelerPayload,
+          ...(parsedTotal != null ? { totalCents: parsedTotal } : {}),
+          ...(visitPayload
+            ? {
+                visitStartDate: visitPayload.startDate,
+                visitEndDate: visitPayload.endDate,
+              }
             : {}),
         });
       },
       () => {
         setApproveDialogOpen(false);
         setApproveReason('');
+        setApproveDialogError(null);
         toast({ variant: 'success', message: t('approveSuccess') });
       },
+      { onError: setApproveDialogError },
     );
   }
 
   async function handleReject() {
+    setRejectDialogError(null);
     await runAction(
       async () => {
         await getApiClient().rejectBooking(bookingId, {
@@ -100,7 +367,39 @@ export function BookingAssistedApprovalPanel({
       () => {
         setRejectDialogOpen(false);
         setRejectReason('');
+        setRejectDialogError(null);
         toast({ variant: 'success', message: t('rejectSuccess') });
+      },
+      { onError: setRejectDialogError },
+    );
+  }
+
+  async function handleSavePricing() {
+    const validationError = validateTravelers();
+    if (validationError) {
+      setActionError(validationError);
+      return;
+    }
+
+    const parsedTotal = parseMoneyToCents(adjustedTotal);
+    const travelerPayload = buildTravelerPayload();
+
+    await runAction(
+      async () => {
+        await getApiClient().updateBookingPricing(bookingId, {
+          travelers: travelerPayload.map((traveler) => ({
+            id: traveler.id,
+            fullName: traveler.fullName,
+            age: traveler.age,
+            priceCents: traveler.priceCents,
+          })),
+          ...(parsedTotal != null ? { totalCents: parsedTotal } : {}),
+        });
+      },
+      () => {
+        setPricingDirty(false);
+        toast({ variant: 'success', message: t('pricingSaved') });
+        void loadManifest();
       },
     );
   }
@@ -113,6 +412,177 @@ export function BookingAssistedApprovalPanel({
         message: t('inviteSuccess', { url: session.url }),
       });
     });
+  }
+
+  function updateTraveler(key: string, patch: Partial<TravelerDraft>) {
+    setTravelers((prev) =>
+      prev.map((traveler) => (traveler.key === key ? { ...traveler, ...patch } : traveler)),
+    );
+    setPricingDirty(true);
+  }
+
+  function removeTraveler(key: string) {
+    setTravelers((prev) => prev.filter((traveler) => traveler.key !== key));
+    setPricingDirty(true);
+  }
+
+  function addTraveler() {
+    const nextBasePrice = basePricesPerTraveler[travelers.length] ?? null;
+    const defaultPrice =
+      nextBasePrice != null ? formatCentsToMoney(nextBasePrice) : '';
+    setTravelers((prev) => [...prev, createEmptyTraveler(defaultPrice, nextBasePrice)]);
+    setPricingDirty(true);
+  }
+
+  function renderVisitDatesEditor(editable: boolean) {
+    if (!hasVisitDates) {
+      return null;
+    }
+
+    return (
+      <div className="space-y-3 rounded-lg border border-atg-border bg-atg-surface/50 p-3">
+        <h3 className="text-sm font-semibold text-atg-fg">{t('visitDatesTitle')}</h3>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Input
+            label={t('visitStartDate')}
+            name="visitStartDate"
+            type="date"
+            value={visitStartDate}
+            onChange={(e) => {
+              setVisitStartDate(e.target.value);
+              setVisitDatesDirty(true);
+            }}
+            disabled={!editable || loading}
+          />
+          <div>
+            <p className="mb-1 text-sm font-medium text-atg-fg">{t('visitEndDate')}</p>
+            <p className="flex h-11 items-center rounded-lg border border-atg-border bg-atg-muted/20 px-3 text-sm tabular-nums text-atg-muted">
+              {computedVisitEndDate || '—'}
+            </p>
+            <p className="mt-1 text-xs text-atg-muted">{t('visitEndDateAutoHint')}</p>
+          </div>
+        </div>
+        {editable && status === 'pending_payment' ? (
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            disabled={loading || !visitDatesDirty}
+            onClick={() => void handleSaveVisitDates()}
+          >
+            {t('saveVisitDates')}
+          </Button>
+        ) : null}
+      </div>
+    );
+  }
+
+  function renderTravelerPricingEditor(editable: boolean) {
+    if (manifestLoading) {
+      return <p className="text-sm text-atg-muted">{t('loadingTravelers')}</p>;
+    }
+
+    return (
+      <div className="space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h3 className="text-sm font-semibold text-atg-fg">{t('travelersTitle')}</h3>
+          {editable ? (
+            <Button type="button" size="sm" variant="outline" onClick={addTraveler}>
+              {t('addTraveler')}
+            </Button>
+          ) : null}
+        </div>
+
+        {travelers.length === 0 ? (
+          <p className="text-sm text-atg-muted">{t('noTravelersHint')}</p>
+        ) : (
+          <div className="space-y-3">
+            {travelers.map((traveler) => (
+              <div
+                key={traveler.key}
+                className="grid gap-3 rounded-lg border border-atg-border bg-atg-surface/50 p-3 sm:grid-cols-[1fr_5rem_7rem_8rem_auto]"
+              >
+                <Input
+                  label={t('travelerName')}
+                  name={`traveler-name-${traveler.key}`}
+                  value={traveler.fullName}
+                  onChange={(e) => updateTraveler(traveler.key, { fullName: e.target.value })}
+                  disabled={!editable || loading}
+                />
+                <Input
+                  label={t('travelerAge')}
+                  name={`traveler-age-${traveler.key}`}
+                  type="number"
+                  min={0}
+                  max={150}
+                  value={traveler.age}
+                  onChange={(e) => updateTraveler(traveler.key, { age: e.target.value })}
+                  disabled={!editable || loading}
+                />
+                <div>
+                  <p className="mb-1 text-sm font-medium text-atg-fg">
+                    {t('travelerBasePrice', { currency })}
+                  </p>
+                  <p className="flex h-11 items-center rounded-lg border border-atg-border bg-atg-muted/20 px-3 text-sm tabular-nums text-atg-muted">
+                    {traveler.basePriceCents != null
+                      ? formatMoney(traveler.basePriceCents, currency)
+                      : '—'}
+                  </p>
+                </div>
+                <Input
+                  label={t('travelerPrice', { currency })}
+                  name={`traveler-price-${traveler.key}`}
+                  type="text"
+                  inputMode="decimal"
+                  value={traveler.price}
+                  onChange={(e) => updateTraveler(traveler.key, { price: e.target.value })}
+                  disabled={!editable || loading}
+                />
+                {editable && travelers.length > 1 ? (
+                  <div className="flex items-end">
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      className="!border-red-300 !text-red-700 dark:!text-red-400"
+                      onClick={() => removeTraveler(traveler.key)}
+                      disabled={loading}
+                    >
+                      {t('removeTraveler')}
+                    </Button>
+                  </div>
+                ) : null}
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="rounded-lg border border-atg-border bg-atg-muted/10 px-4 py-3">
+            <p className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+              {t('subtotalLabel')}
+            </p>
+            <p className="mt-1 text-lg font-semibold tabular-nums text-atg-fg">
+              {formatCentsToMoney(subtotalCents)} {currency}
+            </p>
+          </div>
+          <Input
+            label={t('totalLabel', { currency })}
+            name="adjustedTotal"
+            type="text"
+            inputMode="decimal"
+            value={adjustedTotal}
+            onChange={(e) => {
+              setTotalTouched(true);
+              setAdjustedTotal(e.target.value);
+              setPricingDirty(true);
+            }}
+            hint={t('totalOverrideHint')}
+            disabled={loading}
+          />
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -129,15 +599,8 @@ export function BookingAssistedApprovalPanel({
 
         {status === 'pending_approval' ? (
           <div className="space-y-4">
-            <Input
-              label={t('totalLabel', { currency })}
-              name="adjustedTotal"
-              type="text"
-              inputMode="decimal"
-              value={adjustedTotal}
-              onChange={(e) => setAdjustedTotal(e.target.value)}
-              hint={t('totalHint')}
-            />
+            {renderVisitDatesEditor(true)}
+            {renderTravelerPricingEditor(true)}
             <div>
               <label htmlFor={approveReasonId} className="mb-1 block text-sm font-medium text-atg-fg">
                 {t('reasonLabel')}
@@ -168,8 +631,11 @@ export function BookingAssistedApprovalPanel({
               <Button
                 type="button"
                 variant="primary"
-                disabled={loading}
-                onClick={() => setApproveDialogOpen(true)}
+                disabled={loading || validateTravelers() != null}
+                onClick={() => {
+                  setApproveDialogError(null);
+                  setApproveDialogOpen(true);
+                }}
               >
                 {t('approve')}
               </Button>
@@ -178,7 +644,10 @@ export function BookingAssistedApprovalPanel({
                 variant="outline"
                 className="!border-red-300 !text-red-700 hover:!bg-red-50 dark:!text-red-400"
                 disabled={loading}
-                onClick={() => setRejectDialogOpen(true)}
+                onClick={() => {
+                  setRejectDialogError(null);
+                  setRejectDialogOpen(true);
+                }}
               >
                 {t('reject')}
               </Button>
@@ -187,28 +656,49 @@ export function BookingAssistedApprovalPanel({
         ) : null}
 
         {status === 'pending_payment' ? (
-          <Button
-            type="button"
-            variant="primary"
-            disabled={loading}
-            loading={loading}
-            onClick={() => void handleInvitePayment()}
-          >
-            {t('invitePayment')}
-          </Button>
+          <div className="space-y-4">
+            {renderVisitDatesEditor(true)}
+            {renderTravelerPricingEditor(true)}
+            <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+              <Button
+                type="button"
+                variant="outline"
+                disabled={loading || !pricingDirty}
+                onClick={() => void handleSavePricing()}
+              >
+                {t('savePricing')}
+              </Button>
+              <Button
+                type="button"
+                variant="primary"
+                disabled={loading}
+                loading={loading}
+                onClick={() => void handleInvitePayment()}
+              >
+                {t('invitePayment')}
+              </Button>
+            </div>
+          </div>
         ) : null}
       </Card>
 
       <AlertDialog
         open={approveDialogOpen}
         onOpenChange={(open) => {
-          if (!loading) setApproveDialogOpen(open);
+          if (!loading) {
+            setApproveDialogOpen(open);
+            if (!open) {
+              setApproveDialogError(null);
+            }
+          }
         }}
         title={t('approveDialog.title')}
         description={t('approveDialog.description')}
         confirmLabel={t('approve')}
         cancelLabel={tActions('cancel')}
         loading={loading}
+        error={approveDialogError}
+        containerClassName="z-[60]"
         onConfirm={() => void handleApprove()}
         onCancel={() => setApproveDialogOpen(false)}
       />
@@ -216,7 +706,12 @@ export function BookingAssistedApprovalPanel({
       <AlertDialog
         open={rejectDialogOpen}
         onOpenChange={(open) => {
-          if (!loading) setRejectDialogOpen(open);
+          if (!loading) {
+            setRejectDialogOpen(open);
+            if (!open) {
+              setRejectDialogError(null);
+            }
+          }
         }}
         title={t('rejectDialog.title')}
         description={
@@ -228,6 +723,8 @@ export function BookingAssistedApprovalPanel({
         cancelLabel={tActions('cancel')}
         variant="danger"
         loading={loading}
+        error={rejectDialogError}
+        containerClassName="z-[60]"
         onConfirm={() => void handleReject()}
         onCancel={() => setRejectDialogOpen(false)}
       />

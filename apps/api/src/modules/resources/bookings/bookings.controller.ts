@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   Query,
   Res,
   UploadedFile,
@@ -41,6 +42,8 @@ import { BookingMessagesQueryDto } from './dto/booking-messages-query.dto';
 import { CreateBookingMessageDto } from './dto/create-booking-message.dto';
 import { ApproveBookingDto } from './dto/approve-booking.dto';
 import { RejectBookingDto } from './dto/reject-booking.dto';
+import { UpdateBookingPricingDto } from './dto/update-booking-pricing.dto';
+import { UpdateBookingVisitDatesDto } from './dto/update-booking-visit-dates.dto';
 import { BookingApprovalService } from './booking-approval.service';
 import {
   BOOKING_IDENTITY_DOCUMENT_MAX_BYTES,
@@ -152,6 +155,15 @@ export class BookingsController {
     await this.bookingGuideAssignmentsService.removeGuide(id, guideId);
   }
 
+  @Get(':id/messages/unread-count')
+  @RequirePermissions('bookings.read')
+  @ApiOperation({ summary: 'Count unread messages on a booking thread (staff or customer)' })
+  getUnreadMessageCount(@Param('id') id: string, @CurrentUser() user: AuthUserDto) {
+    return this.bookingMessagesService
+      .getUnreadCount(id, user.id)
+      .then((count) => ({ count }));
+  }
+
   @Get(':id/messages')
   @RequirePermissions('bookings.read')
   @ApiOperation({ summary: 'List messages on a booking thread' })
@@ -160,7 +172,10 @@ export class BookingsController {
     @Query() query: BookingMessagesQueryDto,
     @CurrentUser() user: AuthUserDto,
   ): Promise<BookingMessagesListDto> {
-    return this.bookingMessagesService.listByBookingId(id, user.id, query.chatToken);
+    return this.bookingMessagesService.listByBookingId(id, user.id, {
+      chatToken: query.chatToken,
+      markRead: query.markRead !== 'false',
+    });
   }
 
   @Post(':id/messages')
@@ -487,5 +502,31 @@ export class BookingsController {
   })
   invitePayment(@Param('id') id: string, @CurrentUser() user: AuthUserDto) {
     return this.bookingApprovalService.invitePayment(id, user.id);
+  }
+
+  @Put(':id/pricing')
+  @RequirePermissions('bookings.approve', 'bookings.write')
+  @ApiOperation({
+    summary: 'Update per-traveler pricing and booking total (pending_payment)',
+  })
+  updatePricing(
+    @Param('id') id: string,
+    @Body() dto: UpdateBookingPricingDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.bookingApprovalService.updatePricing(id, dto, user.id);
+  }
+
+  @Put(':id/visit-dates')
+  @RequirePermissions('bookings.approve', 'bookings.write')
+  @ApiOperation({
+    summary: 'Update visit dates on booking lines (pending_approval / pending_payment)',
+  })
+  updateVisitDates(
+    @Param('id') id: string,
+    @Body() dto: UpdateBookingVisitDatesDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.bookingApprovalService.updateVisitDates(id, dto, user.id);
   }
 }

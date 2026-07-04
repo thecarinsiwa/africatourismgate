@@ -7,6 +7,24 @@ export function getFocusableElements(container: HTMLElement): HTMLElement[] {
   );
 }
 
+/** Prefer explicit autofocus, then first form control, then first focusable element. */
+export function getInitialFocusElement(container: HTMLElement): HTMLElement | null {
+  const explicit = container.querySelector<HTMLElement>('[autofocus]');
+  if (explicit && !explicit.hasAttribute('disabled')) {
+    return explicit;
+  }
+
+  const formControl = container.querySelector<HTMLElement>(
+    'textarea:not([disabled]), input:not([disabled]), select:not([disabled])',
+  );
+  if (formControl && formControl.offsetParent !== null) {
+    return formControl;
+  }
+
+  const focusable = getFocusableElements(container);
+  return focusable[0] ?? null;
+}
+
 export function trapFocus(container: HTMLElement, event: KeyboardEvent): void {
   if (event.key !== 'Tab') return;
 

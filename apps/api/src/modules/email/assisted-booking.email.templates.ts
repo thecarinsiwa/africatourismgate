@@ -22,6 +22,34 @@ function itemListHtml(titles: string[]): string {
     .join('')}</ul>`;
 }
 
+function travelerPricingHtml(
+  travelers: Array<{ fullName: string; priceCents: number }>,
+  currency: string,
+): string {
+  if (travelers.length === 0) {
+    return '';
+  }
+  const rows = travelers
+    .map(
+      (traveler) =>
+        `<tr><td style="padding:8px 12px;border-bottom:1px solid #e4e4e7;">${escapeHtml(traveler.fullName)}</td><td style="padding:8px 12px;border-bottom:1px solid #e4e4e7;text-align:right;">${escapeHtml(formatMoney(traveler.priceCents, currency))}</td></tr>`,
+    )
+    .join('');
+  return `<table style="width:100%;margin:0 0 16px;border-collapse:collapse;font-size:14px;"><thead><tr><th style="padding:8px 12px;text-align:left;border-bottom:2px solid #d4d4d8;">Voyageur</th><th style="padding:8px 12px;text-align:right;border-bottom:2px solid #d4d4d8;">Montant</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+function travelerPricingText(
+  travelers: Array<{ fullName: string; priceCents: number }>,
+  currency: string,
+): string {
+  if (travelers.length === 0) {
+    return '';
+  }
+  return `\nDétail par voyageur :\n${travelers
+    .map((traveler) => `  - ${traveler.fullName}: ${formatMoney(traveler.priceCents, currency)}`)
+    .join('\n')}\n`;
+}
+
 function itemListText(titles: string[]): string {
   if (titles.length === 0) {
     return '';
@@ -117,18 +145,22 @@ export function renderBookingPaymentInviteEmail(
   const name = escapeHtml(payload.firstName.trim() || 'Client');
   const subject = `Paiement de votre réservation — lien sécurisé`;
   const total = escapeHtml(formatMoney(payload.totalCents, payload.currency));
+  const travelerBlock = payload.travelerPricing?.length
+    ? travelerPricingHtml(payload.travelerPricing, payload.currency)
+    : '';
   const html = layout(
     subject,
     `<h1 style="margin:0 0 16px;font-size:22px;">Finalisez votre réservation</h1>
 <p style="margin:0 0 16px;line-height:1.6;">Bonjour ${name},</p>
 <p style="margin:0 0 16px;line-height:1.6;">Votre réservation <strong>${bookingRef(payload.bookingId)}</strong> est prête. Cliquez ci-dessous pour régler <strong>${total}</strong> en toute sécurité via notre partenaire de paiement.</p>
+${travelerBlock}
 ${itemListHtml(payload.itemTitles)}
 ${button(payload.paymentUrl, 'Payer maintenant', branding)}
 <p style="margin:16px 0 0;font-size:13px;color:#71717a;line-height:1.5;">Ce lien est personnel. Si vous avez déjà payé, ignorez cet e-mail.</p>`,
     branding,
     { webUrl: payload.webUrl },
   );
-  const text = `Bonjour ${payload.firstName},\n\nRéglez votre réservation ${payload.bookingId.slice(0, 8)} (${formatMoney(payload.totalCents, payload.currency)}) : ${payload.paymentUrl}`;
+  const text = `Bonjour ${payload.firstName},\n\nRéglez votre réservation ${payload.bookingId.slice(0, 8)} (${formatMoney(payload.totalCents, payload.currency)}) : ${payload.paymentUrl}${travelerPricingText(payload.travelerPricing ?? [], payload.currency)}`;
   return { subject, html, text };
 }
 
@@ -145,11 +177,12 @@ export function renderBookingStaffMessageEmail(
 <p style="margin:0 0 16px;line-height:1.6;">Bonjour ${name},</p>
 <p style="margin:0 0 16px;line-height:1.6;">Notre équipe vous a répondu au sujet de votre réservation <strong>${bookingRef(payload.bookingId)}</strong>.</p>
 <p style="margin:0 0 16px;padding:12px 16px;background:#f4f6f5;border-radius:8px;border-left:4px solid #0d9488;line-height:1.6;">${preview}</p>
-${button(payload.chatUrl, 'Voir la conversation', branding)}`,
+<p style="margin:0 0 16px;line-height:1.6;">Connectez-vous à votre espace client pour nous répondre et poursuivre la conversation.</p>
+${button(payload.chatUrl, 'Répondre à la conversation', branding)}`,
     branding,
     { webUrl: payload.webUrl },
   );
-  const text = `Bonjour ${payload.firstName},\n\nNouveau message sur votre réservation ${payload.bookingId.slice(0, 8)} :\n\n${payload.messagePreview.trim()}\n\nConversation : ${payload.chatUrl}`;
+  const text = `Bonjour ${payload.firstName},\n\nNotre équipe vous a répondu sur votre réservation ${payload.bookingId.slice(0, 8)} :\n\n${payload.messagePreview.trim()}\n\nConnectez-vous à votre espace client pour nous répondre : ${payload.chatUrl}`;
   return { subject, html, text };
 }
 

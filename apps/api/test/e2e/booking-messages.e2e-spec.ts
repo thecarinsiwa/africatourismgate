@@ -61,7 +61,18 @@ describe('Booking messages (e2e)', () => {
     expect(res.body.id).toEqual(expect.any(String));
     expect(res.body.bookingId).toBe(bookingId);
     expect(res.body.isStaff).toBe(false);
+    expect(res.body.authorName).toBe('E2E Customer');
     expect(res.body.body).toContain('confirmer ma demande');
+
+    const adminList = await request(app.getHttpServer())
+      .get(apiPath('/bookings'))
+      .set(authHeader(adminToken))
+      .expect(200);
+
+    const row = (
+      adminList.body.data as Array<{ id: string; unreadCustomerMessage?: boolean }>
+    ).find((item) => item.id === bookingId);
+    expect(row?.unreadCustomerMessage).toBe(true);
   });
 
   it('admin replies (isStaff true)', async () => {
@@ -73,9 +84,16 @@ describe('Booking messages (e2e)', () => {
 
     expect(res.body.isStaff).toBe(true);
     expect(res.body.body).toContain('examinons votre demande');
+    expect(res.body.customerNotifiedByEmail).toBe(true);
   });
 
   it('admin reply sets actionRequired until customer reads thread', async () => {
+    const unreadBeforeRead = await request(app.getHttpServer())
+      .get(apiPath(`/bookings/${bookingId}/messages/unread-count`))
+      .set(authHeader(customerToken))
+      .expect(200);
+    expect(unreadBeforeRead.body.count).toBe(1);
+
     const listAfterReply = await request(app.getHttpServer())
       .get(apiPath('/bookings'))
       .set(authHeader(customerToken))
@@ -90,6 +108,12 @@ describe('Booking messages (e2e)', () => {
       .get(apiPath(`/bookings/${bookingId}/messages`))
       .set(authHeader(customerToken))
       .expect(200);
+
+    const unreadAfterRead = await request(app.getHttpServer())
+      .get(apiPath(`/bookings/${bookingId}/messages/unread-count`))
+      .set(authHeader(customerToken))
+      .expect(200);
+    expect(unreadAfterRead.body.count).toBe(0);
 
     const listAfterRead = await request(app.getHttpServer())
       .get(apiPath('/bookings'))
@@ -110,6 +134,7 @@ describe('Booking messages (e2e)', () => {
 
     expect(customerView.body.messages).toHaveLength(2);
     expect(customerView.body.messages[0].isStaff).toBe(false);
+    expect(customerView.body.messages[0].authorName).toBe('E2E Customer');
     expect(customerView.body.messages[1].isStaff).toBe(true);
 
     const adminView = await request(app.getHttpServer())
@@ -118,6 +143,17 @@ describe('Booking messages (e2e)', () => {
       .expect(200);
 
     expect(adminView.body.messages).toHaveLength(2);
+    expect(adminView.body.messages[0].authorName).toBe('E2E Customer');
+
+    const adminListAfterRead = await request(app.getHttpServer())
+      .get(apiPath('/bookings'))
+      .set(authHeader(adminToken))
+      .expect(200);
+
+    const rowAfterStaffRead = (
+      adminListAfterRead.body.data as Array<{ id: string; unreadCustomerMessage?: boolean }>
+    ).find((item) => item.id === bookingId);
+    expect(rowAfterStaffRead?.unreadCustomerMessage).toBe(false);
   });
 
   it('customer cannot read messages on another user booking', async () => {

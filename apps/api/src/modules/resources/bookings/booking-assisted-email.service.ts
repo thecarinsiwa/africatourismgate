@@ -6,6 +6,7 @@ import { EmailService } from '../../email/email.service';
 import { webBase } from '../../email/email.templates';
 import type { AssistedBookingEmailBase } from '../../email/email.types';
 import { BookingEngineService } from './booking-engine.service';
+import { BookingManifestService } from './booking-manifest.service';
 
 @Injectable()
 export class BookingAssistedEmailService {
@@ -13,6 +14,7 @@ export class BookingAssistedEmailService {
     @InjectRepository(Users)
     private readonly usersRepository: Repository<Users>,
     private readonly bookingEngine: BookingEngineService,
+    private readonly manifestService: BookingManifestService,
     private readonly emailService: EmailService,
   ) {}
 
@@ -105,9 +107,17 @@ export class BookingAssistedEmailService {
     if (!base) {
       return;
     }
+    const manifest = await this.manifestService.listForBooking(bookingId);
+    const travelerPricing = manifest
+      .filter((entry) => entry.priceCents != null && entry.priceCents >= 0)
+      .map((entry) => ({
+        fullName: entry.fullName,
+        priceCents: entry.priceCents as number,
+      }));
     await this.emailService.sendBookingPaymentInvite({
       ...base,
       paymentUrl,
+      travelerPricing: travelerPricing.length > 0 ? travelerPricing : undefined,
     });
   }
 

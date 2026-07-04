@@ -13,6 +13,9 @@ export class BookingManifestEntries {
   @Column({ type: 'smallint', name: 'sort_order', unsigned: true, default: 0 })
   sortOrder!: number;
 
+  @Column({ type: 'int', name: 'price_cents', unsigned: true, nullable: true })
+  priceCents!: number | null;
+
   @Column({ type: 'varchar', name: 'full_name', length: 200 })
   fullName!: string;
 

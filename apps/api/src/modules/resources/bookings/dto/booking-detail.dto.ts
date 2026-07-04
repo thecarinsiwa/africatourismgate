@@ -15,4 +15,5 @@ export type BookingDetailDto = {
   paymentInvited?: boolean;
   guideReviewInvites?: GuideReviewInviteDto[];
   identityDocuments?: BookingIdentityDocumentDto[];
+  unreadStaffMessageCount?: number;
 };

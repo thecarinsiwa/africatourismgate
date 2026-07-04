@@ -30,7 +30,8 @@
       "ariaLabel": "Filtres rapides par statut",
       "all": "Toutes",
       "pendingApproval": "En attente de validation"
-    }
+    },
+    "unreadCustomerMessage": "Message client"
   },
   "itemsList": {
     "filters": {
@@ -127,12 +128,15 @@
       "sex": "Sexe",
       "nationality": "Nationalité",
       "idNumber": "N° ID",
+      "price": "Prix",
       "conditions": "Conditions"
     },
     "fields": {
       "fullName": "Nom complet",
       "age": "Âge",
       "sex": "Sexe",
+      "price": "Prix",
+      "pricePlaceholder": "0,00",
       "nationality": "Nationalité",
       "idNumber": "Numéro ID",
       "conditions": "Conditions",
@@ -184,8 +188,31 @@
     "approve": "Approuver",
     "reject": "Refuser",
     "invitePayment": "Inviter au paiement",
-    "totalLabel": "Montant ({currency})",
+    "totalLabel": "Total ({currency})",
     "totalHint": "Ajustez le total si nécessaire avant approbation.",
+    "totalOverrideHint": "Calculé automatiquement à partir des prix voyageurs. Modifiez pour forcer un total manuel.",
+    "travelersTitle": "Détail du paiement par voyageur",
+    "travelerName": "Nom du voyageur",
+    "travelerAge": "Âge",
+    "travelerBasePrice": "Prix de base ({currency})",
+    "travelerPrice": "Prix ({currency})",
+    "addTraveler": "Ajouter un voyageur",
+    "removeTraveler": "Retirer",
+    "subtotalLabel": "Sous-total voyageurs",
+    "noTravelersHint": "Ajoutez au moins un voyageur avec un prix.",
+    "defaultTravelerName": "Client",
+    "loadingTravelers": "Chargement des voyageurs…",
+    "travelerRequired": "Ajoutez au moins un voyageur avec un nom et un prix.",
+    "travelerNameRequired": "Chaque voyageur doit avoir un nom.",
+    "travelerPriceRequired": "Chaque voyageur doit avoir un prix valide.",
+    "savePricing": "Enregistrer la tarification",
+    "pricingSaved": "Tarification mise à jour.",
+    "visitDatesTitle": "Dates de visite",
+    "visitStartDate": "Date de départ",
+    "visitEndDate": "Date de retour",
+    "visitEndDateAutoHint": "Calculée automatiquement selon la durée initiale du séjour.",
+    "saveVisitDates": "Enregistrer les dates",
+    "visitDatesSaved": "Dates de visite mises à jour.",
     "reasonLabel": "Note interne (historique)",
     "reasonPlaceholder": "Ex. validation des dates et disponibilités…",
     "rejectReasonLabel": "Motif du refus (client)",
@@ -205,6 +232,8 @@
   },
   "messages": {
     "title": "Conversation",
+    "fabAriaLabel": "Ouvrir la conversation de la réservation",
+    "fabAriaLabelWithUnread": "Ouvrir la conversation ({count} non lu(s))",
     "loading": "Chargement des messages…",
     "empty": "Aucun message pour le moment.",
     "threadAria": "Fil de messages de la réservation",
@@ -215,7 +244,12 @@
     "replyTitle": "Répondre au client",
     "replyLabel": "Votre message",
     "replyPlaceholder": "Répondez au client…",
-    "sendReply": "Envoyer"
+    "sendReply": "Envoyer",
+    "toast": {
+      "newCustomerMessage": "Nouveau message du client",
+      "sent": "Message envoyé",
+      "sentWithEmail": "Message envoyé — le client a été notifié par e-mail"
+    }
   },
   "guides": {
     "title": "Guides assignés",

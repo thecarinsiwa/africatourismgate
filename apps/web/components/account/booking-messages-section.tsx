@@ -1,17 +1,28 @@
 'use client';
 
 import type { BookingMessage } from '@africatourismgate/types';
-import { Button } from '@africatourismgate/ui';
-import { useCallback, useEffect, useId, useState } from 'react';
+import {
+  BookingChatFabIcon,
+  ConversationChat,
+  DraggableFab,
+  Modal,
+  useToast,
+} from '@africatourismgate/ui';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { getAccountApiClient } from '../../lib/api/account';
 import { formatBookingDateTime } from '../../lib/bookings/display';
 import { useTranslations } from '../../lib/i18n/locale-provider';
+
+const POLL_INTERVAL_MS = 20_000;
+const FAB_STORAGE_KEY = 'atg-web-booking-chat-fab-position';
 
 type BookingMessagesSectionProps = {
   bookingId: string;
   localeTag: string;
   chatToken?: string | null;
   canReply?: boolean;
+  initialUnreadCount?: number;
+  autoOpen?: boolean;
 };
 
 export function BookingMessagesSection({
@@ -19,28 +30,56 @@ export function BookingMessagesSection({
   localeTag,
   chatToken,
   canReply = true,
+  initialUnreadCount = 0,
+  autoOpen = false,
 }: BookingMessagesSectionProps) {
   const t = useTranslations();
   const m = t.account.reservations.detail.messages;
-  const replyBodyId = useId();
+  const { toast } = useToast();
 
+  const [open, setOpen] = useState(autoOpen);
   const [messages, setMessages] = useState<BookingMessage[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [replyBody, setReplyBody] = useState('');
   const [replyError, setReplyError] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(initialUnreadCount);
+  const previousUnreadCountRef = useRef(initialUnreadCount);
 
-  const load = useCallback(async () => {
+  const refreshUnreadCount = useCallback(async () => {
+    if (chatToken) {
+      return;
+    }
+    try {
+      const client = await getAccountApiClient();
+      const result = await client.getBookingUnreadMessageCount(bookingId);
+      const nextCount = result.count;
+      if (nextCount > previousUnreadCountRef.current && !open) {
+        toast({
+          variant: 'info',
+          message: m.newStaffMessageToast,
+        });
+      }
+      previousUnreadCountRef.current = nextCount;
+      setUnreadCount(nextCount);
+    } catch {
+      // ignore polling errors
+    }
+  }, [bookingId, chatToken, m.newStaffMessageToast, open, toast]);
+
+  const loadMessages = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       const client = await getAccountApiClient();
       const result = await client.listBookingMessages(
         bookingId,
-        chatToken ? { chatToken } : undefined,
+        chatToken ? { chatToken, markRead: true } : { markRead: true },
       );
       setMessages(result.messages);
+      setUnreadCount(0);
+      previousUnreadCountRef.current = 0;
     } catch {
       setError(m.loadError);
       setMessages([]);
@@ -50,11 +89,35 @@ export function BookingMessagesSection({
   }, [bookingId, chatToken, m.loadError]);
 
   useEffect(() => {
-    void load();
-  }, [load]);
+    setUnreadCount(initialUnreadCount);
+    previousUnreadCountRef.current = initialUnreadCount;
+  }, [bookingId, initialUnreadCount]);
 
   useEffect(() => {
-    if (!canReply || chatToken) {
+    if (autoOpen) {
+      setOpen(true);
+    }
+  }, [autoOpen, bookingId]);
+
+  useEffect(() => {
+    if (!open) {
+      void refreshUnreadCount();
+      const intervalId = window.setInterval(() => {
+        void refreshUnreadCount();
+      }, POLL_INTERVAL_MS);
+      return () => window.clearInterval(intervalId);
+    }
+    return undefined;
+  }, [open, refreshUnreadCount]);
+
+  useEffect(() => {
+    if (open) {
+      void loadMessages();
+    }
+  }, [open, loadMessages]);
+
+  useEffect(() => {
+    if (!open || !canReply || chatToken) {
       return;
     }
 
@@ -80,7 +143,7 @@ export function BookingMessagesSection({
       cancelled = true;
       window.clearInterval(intervalId);
     };
-  }, [bookingId, canReply, chatToken]);
+  }, [bookingId, canReply, chatToken, open]);
 
   const handleSend = useCallback(async () => {
     const body = replyBody.trim();
@@ -97,89 +160,90 @@ export function BookingMessagesSection({
         chatToken ? { chatToken } : undefined,
       );
       setReplyBody('');
-      await load();
+      await loadMessages();
     } catch {
       setReplyError(m.sendError);
     } finally {
       setSending(false);
     }
-  }, [bookingId, chatToken, load, m.sendError, replyBody]);
+  }, [bookingId, chatToken, loadMessages, m.sendError, replyBody]);
+
+  const formatDateSeparator = useCallback(
+    (iso: string) => {
+      try {
+        return new Date(iso).toLocaleDateString(localeTag, {
+          weekday: 'long',
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        });
+      } catch {
+        return iso;
+      }
+    },
+    [localeTag],
+  );
+
+  const fabAriaLabel =
+    unreadCount > 0
+      ? m.fabAriaLabelWithUnread.replace('{count}', String(unreadCount))
+      : m.fabAriaLabel;
 
   return (
-    <section id="conversation" className="space-y-3 scroll-mt-6">
-      <h3 className="text-base font-semibold text-atg-fg">{m.title}</h3>
-      <p className="text-sm text-atg-muted">{m.subtitle}</p>
-
-      {error ? (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {error}
-        </p>
+    <>
+      {!open ? (
+        <DraggableFab
+          onClick={() => setOpen(true)}
+          ariaLabel={fabAriaLabel}
+          storageKey={FAB_STORAGE_KEY}
+          badgeCount={unreadCount}
+        >
+          <BookingChatFabIcon className="size-11" />
+        </DraggableFab>
       ) : null}
 
-      <div className="rounded-lg border border-atg-border bg-atg-surface p-4 dark:border-atg-border dark:bg-white/5">
-        {loading ? (
-          <p className="text-sm text-atg-muted">{m.loading}</p>
-        ) : messages.length === 0 ? (
-          <p className="text-sm text-atg-muted">{m.empty}</p>
-        ) : (
-          <ul className="space-y-4" aria-label={m.threadAria}>
-            {messages.map((message) => (
-              <li
-                key={message.id}
-                className={`rounded-lg border p-4 ${
-                  message.isStaff
-                    ? 'border-primary/30 bg-primary/5 dark:border-primary/40 dark:bg-primary/10'
-                    : 'border-atg-border bg-atg-elevated dark:bg-white/5'
-                }`}
-              >
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <span className="text-xs font-medium uppercase tracking-wide text-atg-muted">
-                    {message.isStaff ? m.authorStaff : m.authorCustomer}
-                  </span>
-                  <time className="text-xs text-atg-muted">
-                    {formatBookingDateTime(message.createdAt, localeTag)}
-                  </time>
-                </div>
-                <p className="mt-2 whitespace-pre-wrap text-sm text-atg-fg">{message.body}</p>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      <Modal
+        open={open}
+        onOpenChange={setOpen}
+        title={m.title}
+        showClose
+        className="flex max-h-[min(720px,90vh)] w-full max-w-2xl flex-col"
+      >
+        <p className="mb-3 text-sm text-atg-muted">{m.subtitle}</p>
 
-      {canReply ? (
-        <div className="space-y-4 rounded-lg border border-atg-border bg-atg-surface p-4 dark:border-atg-border dark:bg-white/5">
-          <h4 className="text-sm font-semibold text-atg-fg">{m.replyTitle}</h4>
-          <div>
-            <label htmlFor={replyBodyId} className="mb-1 block text-xs font-medium text-atg-muted">
-              {m.replyLabel}
-            </label>
-            <textarea
-              id={replyBodyId}
-              rows={4}
-              value={replyBody}
-              onChange={(e) => setReplyBody(e.target.value)}
-              disabled={sending}
-              placeholder={m.replyPlaceholder}
-              className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg placeholder:text-atg-muted disabled:opacity-60 dark:bg-white/5"
-            />
-          </div>
-          {replyError ? (
-            <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-              {replyError}
-            </p>
-          ) : null}
-          <Button
-            type="button"
-            variant="primary"
-            disabled={sending || !replyBody.trim()}
-            loading={sending}
-            onClick={() => void handleSend()}
-          >
-            {m.sendReply}
-          </Button>
-        </div>
-      ) : null}
-    </section>
+        {error ? (
+          <p role="alert" className="mb-3 text-sm text-red-600 dark:text-red-400">
+            {error}
+          </p>
+        ) : null}
+
+        <ConversationChat
+          messages={messages.map((message) =>
+            message.isStaff ? message : { ...message, authorName: undefined },
+          )}
+          loading={loading}
+          labels={{
+            threadAria: m.threadAria,
+            loading: m.loading,
+            empty: m.empty,
+            authorStaff: m.authorStaff,
+            authorCustomer: m.authorCustomer,
+            replyTitle: canReply ? m.replyTitle : undefined,
+            replyLabel: m.replyLabel,
+            replyPlaceholder: m.replyPlaceholder,
+            sendReply: m.sendReply,
+          }}
+          formatDateTime={(iso) => formatBookingDateTime(iso, localeTag)}
+          formatDateSeparator={formatDateSeparator}
+          canReply={canReply}
+          replyBody={replyBody}
+          onReplyBodyChange={setReplyBody}
+          onSend={() => void handleSend()}
+          sending={sending}
+          replyError={replyError}
+          className="min-h-0 flex-1"
+        />
+      </Modal>
+    </>
   );
 }

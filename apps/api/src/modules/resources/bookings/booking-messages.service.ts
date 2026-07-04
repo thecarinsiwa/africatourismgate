@@ -5,9 +5,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Repository } from 'typeorm';
+import { In, IsNull, Repository } from 'typeorm';
 import { newId } from '../../../common/utils/uuid';
-import { BookingMessages, Bookings } from '../../../entities/generated';
+import { BookingMessages, Bookings, Users } from '../../../entities/generated';
 import { PermissionsService } from '../../rbac/permissions.service';
 import { BookingAssistedEmailService } from './booking-assisted-email.service';
 import { BookingNotificationsService } from './booking-notifications.service';
@@ -21,6 +21,8 @@ export class BookingMessagesService {
     private readonly messagesRepository: Repository<BookingMessages>,
     @InjectRepository(Bookings)
     private readonly bookingsRepository: Repository<Bookings>,
+    @InjectRepository(Users)
+    private readonly usersRepository: Repository<Users>,
     private readonly permissionsService: PermissionsService,
     private readonly notifications: BookingNotificationsService,
     private readonly assistedEmail: BookingAssistedEmailService,
@@ -29,9 +31,13 @@ export class BookingMessagesService {
   async listByBookingId(
     bookingId: string,
     actorUserId: string,
-    chatToken?: string,
+    options?: { chatToken?: string; markRead?: boolean },
   ): Promise<BookingMessagesListDto> {
-    const booking = await this.assertCanAccessThread(bookingId, actorUserId, chatToken);
+    const booking = await this.assertCanAccessThread(
+      bookingId,
+      actorUserId,
+      options?.chatToken,
+    );
 
     const rows = await this.messagesRepository.find({
       where: { bookingId, deletedAt: IsNull() },
@@ -39,13 +45,35 @@ export class BookingMessagesService {
     });
 
     const isStaff = await this.isStaffUser(actorUserId);
-    if (!isStaff && booking.userId === actorUserId) {
-      await this.notifications.markThreadSeenByCustomer(bookingId, actorUserId);
+    const shouldMarkRead = options?.markRead !== false;
+    if (shouldMarkRead) {
+      if (isStaff) {
+        await this.notifications.markThreadSeenByStaff(bookingId);
+      } else if (booking.userId === actorUserId) {
+        await this.notifications.markThreadSeenByCustomer(bookingId, actorUserId);
+      }
     }
 
     return {
-      messages: rows.map((row) => this.toDto(row)),
+      messages: await this.toDtos(rows),
     };
+  }
+
+  async getUnreadCount(bookingId: string, actorUserId: string): Promise<number> {
+    const booking = await this.assertCanAccessThread(bookingId, actorUserId);
+    const isStaff = await this.isStaffUser(actorUserId);
+    if (isStaff) {
+      return this.notifications.countUnreadCustomerMessages(bookingId);
+    }
+    if (booking.userId === actorUserId) {
+      return this.notifications.countUnreadStaffMessages(bookingId);
+    }
+    throw new ForbiddenException('Access denied.');
+  }
+
+  /** @deprecated Use getUnreadCount */
+  async getUnreadCountForStaff(bookingId: string, actorUserId: string): Promise<number> {
+    return this.getUnreadCount(bookingId, actorUserId);
   }
 
   async createMessage(
@@ -81,11 +109,16 @@ export class BookingMessagesService {
       where: { id: messageId },
     });
 
-    if (isStaff && !this.notifications.isCustomerOnlineOnThread(booking)) {
+    const customerNotifiedByEmail =
+      isStaff && !this.notifications.isCustomerOnlineOnThread(booking);
+    if (customerNotifiedByEmail) {
       this.assistedEmail.notifyStaffMessage(bookingId, body);
     }
 
-    return this.toDto(message);
+    return {
+      ...(await this.toDto(message)),
+      customerNotifiedByEmail,
+    };
   }
 
   async touchThreadPresence(bookingId: string, actorUserId: string): Promise<void> {
@@ -174,14 +207,64 @@ export class BookingMessagesService {
     return new Date((lastSec + 1) * 1000);
   }
 
-  private toDto(message: BookingMessages): BookingMessageDto {
+  private async toDtos(messages: BookingMessages[]): Promise<BookingMessageDto[]> {
+    const authorNames = await this.loadCustomerAuthorNames(messages);
+    return Promise.all(
+      messages.map((message) => this.toDto(message, authorNames.get(message.userId ?? '') ?? null)),
+    );
+  }
+
+  private async toDto(
+    message: BookingMessages,
+    authorName?: string | null,
+  ): Promise<BookingMessageDto> {
+    const resolvedAuthorName =
+      authorName === undefined
+        ? (await this.loadCustomerAuthorNames([message])).get(message.userId ?? '') ?? null
+        : authorName;
+
     return {
       id: message.id,
       bookingId: message.bookingId,
       userId: message.userId,
       body: message.body,
       isStaff: message.isStaff === 1,
+      authorName: message.isStaff === 1 ? null : resolvedAuthorName,
       createdAt: message.createdAt.toISOString(),
     };
+  }
+
+  private async loadCustomerAuthorNames(
+    messages: BookingMessages[],
+  ): Promise<Map<string, string>> {
+    const userIds = [
+      ...new Set(
+        messages
+          .filter((message) => message.isStaff !== 1 && message.userId)
+          .map((message) => message.userId as string),
+      ),
+    ];
+
+    if (userIds.length === 0) {
+      return new Map();
+    }
+
+    const users = await this.usersRepository.find({
+      where: { id: In(userIds), deletedAt: IsNull() },
+      select: ['id', 'firstName', 'lastName'],
+    });
+
+    const entries: [string, string][] = [];
+    for (const user of users) {
+      const name = this.formatUserDisplayName(user);
+      if (name) {
+        entries.push([user.id, name]);
+      }
+    }
+    return new Map(entries);
+  }
+
+  private formatUserDisplayName(user: Pick<Users, 'firstName' | 'lastName'>): string {
+    return [user.firstName, user.lastName].filter(Boolean).join(' ').trim();
   }
 }

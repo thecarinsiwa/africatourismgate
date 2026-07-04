@@ -21,6 +21,9 @@ export class BookingManifestEntryDto {
   @ApiProperty()
   sortOrder!: number;
 
+  @ApiPropertyOptional()
+  priceCents?: number | null;
+
   @ApiProperty()
   fullName!: string;
 
@@ -53,6 +56,12 @@ export class BookingManifestEntryDto {
 }
 
 export class CreateBookingManifestEntryDto {
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  priceCents?: number;
+
   @ApiProperty()
   @IsString()
   @IsNotEmpty()

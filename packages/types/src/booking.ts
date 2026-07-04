@@ -121,7 +121,11 @@ export interface BookingMessage {
   userId: string | null;
   body: string;
   isStaff: boolean;
+  /** Full name of the customer who posted the message (non-staff only). */
+  authorName?: string | null;
   createdAt: string;
+  /** Present on staff POST responses when the customer was offline. */
+  customerNotifiedByEmail?: boolean;
 }
 
 export interface BookingMessagesList {
@@ -170,6 +174,7 @@ export interface BookingManifestEntry {
   id: string;
   bookingId: string;
   sortOrder: number;
+  priceCents?: number | null;
   fullName: string;
   age?: number | null;
   sex?: BookingManifestSex | null;
@@ -184,6 +189,7 @@ export interface BookingManifestEntry {
 
 export interface CreateBookingManifestEntryRequest {
   fullName: string;
+  priceCents?: number;
   age?: number;
   sex?: BookingManifestSex;
   nationality?: string;
@@ -209,6 +215,8 @@ export interface BookingDetail {
   /** Post-stay guide rating invitations (CE-13). */
   guideReviewInvites?: GuideReviewInvite[];
   identityDocuments?: BookingIdentityDocument[];
+  /** Unread staff messages for the booking owner (assisted booking chat). */
+  unreadStaffMessageCount?: number;
 }
 
 export interface CreateBookingResponse extends BookingDetail {
@@ -251,6 +259,7 @@ export interface BookingAdminDetail extends BookingDetail {
   client: BookingClient;
   payments: BookingPayment[];
   statusHistory: BookingStatusHistoryEntry[];
+  unreadCustomerMessageCount?: number;
 }
 
 export interface UpdateBookingStatusRequest {
@@ -270,10 +279,37 @@ export interface RejectBookingRequest {
   reason?: string;
 }
 
+export interface ApproveTravelerPricingRequest {
+  id?: string;
+  fullName: string;
+  age?: number;
+  sex?: BookingManifestSex;
+  priceCents: number;
+}
+
 export interface ApproveBookingRequest {
   totalCents?: number;
   reason?: string;
+  travelers?: ApproveTravelerPricingRequest[];
   guides?: Array<{ guideId: string; role?: 'primary' | 'secondary' }>;
+  visitStartDate?: string;
+  visitEndDate?: string;
+}
+
+export interface UpdateBookingVisitDatesRequest {
+  startDate: string;
+  endDate?: string;
+}
+
+export interface UpdateBookingPricingRequest {
+  travelers: Array<{
+    id?: string;
+    fullName: string;
+    age?: number;
+    sex?: BookingManifestSex;
+    priceCents: number;
+  }>;
+  totalCents?: number;
 }
 
 export interface BookingPaymentIntentResponse {
@@ -309,6 +345,8 @@ export interface BookingListItem extends Booking {
   organizationId: string | null;
   /** Customer account list: payment invite or unread staff message. */
   actionRequired?: boolean;
+  /** Admin list: unread customer message on the booking thread. */
+  unreadCustomerMessage?: boolean;
 }
 
 export interface BookingsListQuery {

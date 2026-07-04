@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -11,12 +12,14 @@ import {
   CreateBookingManifestEntryDto,
   UpdateBookingManifestEntryDto,
 } from './dto/booking-manifest-entry.dto';
+import type { ApproveTravelerPricingDto } from './dto/update-booking-pricing.dto';
 
 function toDto(row: BookingManifestEntries): BookingManifestEntryDto {
   return {
     id: row.id,
     bookingId: row.bookingId,
     sortOrder: row.sortOrder,
+    priceCents: row.priceCents,
     fullName: row.fullName,
     age: row.age,
     sex: row.sex,
@@ -35,6 +38,14 @@ function normalizeOptionalText(value: string | undefined): string | null {
   return trimmed ? trimmed : null;
 }
 
+export type TravelerPricingInput = {
+  id?: string;
+  fullName?: string;
+  age?: number;
+  sex?: ApproveTravelerPricingDto['sex'];
+  priceCents: number;
+};
+
 @Injectable()
 export class BookingManifestService {
   constructor(
@@ -50,6 +61,66 @@ export class BookingManifestService {
     return rows.map(toDto);
   }
 
+  sumTravelerPrices(entries: Array<{ priceCents?: number | null }>): number {
+    return entries.reduce((sum, entry) => sum + (entry.priceCents ?? 0), 0);
+  }
+
+  async upsertTravelerPricing(
+    bookingId: string,
+    travelers: TravelerPricingInput[],
+    actorUserId: string,
+  ): Promise<BookingManifestEntryDto[]> {
+    if (travelers.length === 0) {
+      throw new BadRequestException('Au moins un voyageur avec un prix est requis.');
+    }
+
+    const results: BookingManifestEntryDto[] = [];
+    for (let index = 0; index < travelers.length; index++) {
+      const traveler = travelers[index]!;
+      if (traveler.priceCents < 0) {
+        throw new BadRequestException('Le prix du voyageur doit être positif ou nul.');
+      }
+
+      if (traveler.id) {
+        const existing = await this.findActiveRow(bookingId, traveler.id);
+        const fullName = traveler.fullName?.trim() || existing.fullName;
+        const updated = await this.update(
+          bookingId,
+          traveler.id,
+          {
+            fullName,
+            age: traveler.age ?? existing.age ?? undefined,
+            sex: traveler.sex ?? existing.sex ?? undefined,
+            priceCents: traveler.priceCents,
+            sortOrder: index,
+          },
+          actorUserId,
+        );
+        results.push(updated);
+        continue;
+      }
+
+      const fullName = traveler.fullName?.trim();
+      if (!fullName) {
+        throw new BadRequestException('Le nom du voyageur est obligatoire.');
+      }
+
+      const created = await this.create(
+        bookingId,
+        {
+          fullName,
+          age: traveler.age,
+          sex: traveler.sex,
+          priceCents: traveler.priceCents,
+          sortOrder: index,
+        },
+        actorUserId,
+      );
+      results.push(created);
+    }
+    return results;
+  }
+
   async create(
     bookingId: string,
     dto: CreateBookingManifestEntryDto,
@@ -63,6 +134,7 @@ export class BookingManifestService {
       id: newId(),
       bookingId,
       sortOrder,
+      priceCents: dto.priceCents ?? null,
       fullName: dto.fullName.trim(),
       age: dto.age ?? null,
       sex: dto.sex ?? null,
@@ -95,6 +167,9 @@ export class BookingManifestService {
     row.conditions = normalizeOptionalText(dto.conditions);
     row.comment = normalizeOptionalText(dto.comment);
     row.other = normalizeOptionalText(dto.other);
+    if (dto.priceCents !== undefined) {
+      row.priceCents = dto.priceCents;
+    }
     if (dto.sortOrder != null) {
       row.sortOrder = dto.sortOrder;
     }

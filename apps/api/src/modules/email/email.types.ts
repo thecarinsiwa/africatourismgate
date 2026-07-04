@@ -70,6 +70,7 @@ export type BookingRejectedEmailPayload = AssistedBookingEmailBase & {
 
 export type BookingPaymentInviteEmailPayload = AssistedBookingEmailBase & {
   paymentUrl: string;
+  travelerPricing?: Array<{ fullName: string; priceCents: number }>;
 };
 
 export type BookingStaffMessageEmailPayload = AssistedBookingEmailBase & {
