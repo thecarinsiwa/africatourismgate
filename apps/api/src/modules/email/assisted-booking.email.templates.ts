@@ -1,5 +1,6 @@
 import type { EmailBrandingValue } from '@africatourismgate/types';
 import { formatMoney, escapeHtml, layout, button, webBase } from './email.templates';
+import type { BookingDetailPdfLocale } from './booking-detail-pdf.labels';
 import type {
   BookingApprovedChatEmailPayload,
   BookingPaymentInviteEmailPayload,
@@ -66,6 +67,59 @@ function bookingSummaryBlock(
 ${itemListHtml(payload.itemTitles)}`;
 }
 
+const APPROVED_EMAIL_COPY: Record<
+  BookingDetailPdfLocale,
+  {
+    subject: string;
+    headline: string;
+    greeting: string;
+    intro: string;
+    amountLabel: string;
+    body: string;
+    cta: string;
+    pdfNote: string;
+    pdfNoteText: string;
+  }
+> = {
+  fr: {
+    subject: 'Réservation approuvée — échangez avec notre équipe',
+    headline: 'Demande approuvée',
+    greeting: 'Bonjour',
+    intro: 'a été validée par notre équipe.',
+    amountLabel: 'Montant',
+    body: 'Vous pouvez échanger avec un conseiller via la messagerie dédiée, puis procéder au paiement lorsque vous serez prêt.',
+    cta: 'Ouvrir la conversation',
+    pdfNote:
+      'Un récapitulatif détaillé de votre réservation est joint à ce message au format PDF.',
+    pdfNoteText:
+      '\nUn récapitulatif PDF détaillé de votre réservation est joint à ce message.',
+  },
+  en: {
+    subject: 'Booking approved — chat with our team',
+    headline: 'Request approved',
+    greeting: 'Hello',
+    intro: 'has been approved by our team.',
+    amountLabel: 'Amount',
+    body: 'You can chat with an advisor via our dedicated messaging, then complete payment when you are ready.',
+    cta: 'Open conversation',
+    pdfNote: 'A detailed PDF summary of your booking is attached to this email.',
+    pdfNoteText: '\nA detailed PDF summary of your booking is attached to this email.',
+  },
+  es: {
+    subject: 'Reserva aprobada — converse con nuestro equipo',
+    headline: 'Solicitud aprobada',
+    greeting: 'Hola',
+    intro: 'ha sido aprobada por nuestro equipo.',
+    amountLabel: 'Importe',
+    body: 'Puede intercambiar con un asesor a través de la mensajería dedicada y pagar cuando esté listo.',
+    cta: 'Abrir conversación',
+    pdfNote:
+      'Se adjunta a este mensaje un resumen detallado de su reserva en formato PDF.',
+    pdfNoteText:
+      '\nSe adjunta un resumen PDF detallado de su reserva a este mensaje.',
+  },
+};
+
 export function renderBookingRequestReceivedEmail(
   payload: BookingRequestReceivedEmailPayload,
   branding: EmailBrandingValue,
@@ -92,22 +146,29 @@ export function renderBookingApprovedChatEmail(
   payload: BookingApprovedChatEmailPayload,
   branding: EmailBrandingValue,
 ): { subject: string; html: string; text: string } {
+  const locale = payload.locale ?? 'fr';
+  const copy = APPROVED_EMAIL_COPY[locale];
   const name = escapeHtml(payload.firstName.trim() || 'Client');
-  const subject = `Réservation approuvée — échangez avec notre équipe`;
+  const subject = copy.subject;
   const total = escapeHtml(formatMoney(payload.totalCents, payload.currency));
+  const pdfBlock = payload.hasPdfAttachment
+    ? `<p style="margin:0 0 16px;line-height:1.6;font-size:14px;color:#5c6d66;">${escapeHtml(copy.pdfNote)}</p>`
+    : '';
   const html = layout(
     subject,
-    `<h1 style="margin:0 0 16px;font-size:22px;">Demande approuvée</h1>
-<p style="margin:0 0 16px;line-height:1.6;">Bonjour ${name},</p>
-<p style="margin:0 0 16px;line-height:1.6;">Bonne nouvelle : votre demande de réservation <strong>${bookingRef(payload.bookingId)}</strong> a été validée par notre équipe.</p>
-<p style="margin:0 0 8px;line-height:1.6;"><strong>Montant :</strong> ${total}</p>
+    `<h1 style="margin:0 0 16px;font-size:22px;">${escapeHtml(copy.headline)}</h1>
+<p style="margin:0 0 16px;line-height:1.6;">${escapeHtml(copy.greeting)} ${name},</p>
+<p style="margin:0 0 16px;line-height:1.6;">${locale === 'fr' ? 'Bonne nouvelle : votre demande de réservation' : locale === 'en' ? 'Good news: your booking request' : 'Buenas noticias: su solicitud de reserva'} <strong>${bookingRef(payload.bookingId)}</strong> ${escapeHtml(copy.intro)}</p>
+<p style="margin:0 0 8px;line-height:1.6;"><strong>${escapeHtml(copy.amountLabel)} :</strong> ${total}</p>
 ${itemListHtml(payload.itemTitles)}
-<p style="margin:0 0 16px;line-height:1.6;">Vous pouvez échanger avec un conseiller via la messagerie dédiée, puis procéder au paiement lorsque vous serez prêt.</p>
-${button(payload.chatUrl, 'Ouvrir la conversation', branding)}`,
+${pdfBlock}
+<p style="margin:0 0 16px;line-height:1.6;">${escapeHtml(copy.body)}</p>
+${button(payload.chatUrl, copy.cta, branding)}`,
     branding,
     { webUrl: payload.webUrl },
   );
-  const text = `Bonjour ${payload.firstName},\n\nVotre demande ${payload.bookingId.slice(0, 8)} est approuvée. Montant : ${formatMoney(payload.totalCents, payload.currency)}.\n\nConversation : ${payload.chatUrl}`;
+  const pdfText = payload.hasPdfAttachment ? copy.pdfNoteText : '';
+  const text = `${copy.greeting} ${payload.firstName},\n\n${locale === 'fr' ? 'Votre demande' : locale === 'en' ? 'Your request' : 'Su solicitud'} ${payload.bookingId.slice(0, 8)} ${copy.intro} ${copy.amountLabel}: ${formatMoney(payload.totalCents, payload.currency)}.${pdfText}\n\n${copy.cta}: ${payload.chatUrl}`;
   return { subject, html, text };
 }
 

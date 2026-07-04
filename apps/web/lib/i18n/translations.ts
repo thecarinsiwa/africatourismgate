@@ -159,9 +159,14 @@ export type Translations = {
     };
     success: {
       title: string;
+      titleConfirmed: string;
       subtitle: string;
+      subtitleConfirmed: string;
       bookingIdLabel: string;
       statusLabel: string;
+      statusConfirmed: string;
+      statusPendingPayment: string;
+      statusPendingHint: string;
       totalLabel: string;
       verifying: string;
       statusUnavailable: string;
@@ -1282,19 +1287,26 @@ const fr: Translations = {
       dismiss: 'Fermer',
     },
     success: {
-      title: 'Reservation confirmee',
+      title: 'Confirmation en cours',
+      titleConfirmed: 'Réservation confirmée',
       subtitle:
-        'Votre paiement Stripe est recu. La confirmation definitive peut prendre quelques secondes le temps du webhook.',
-      bookingIdLabel: 'Booking ID:',
-      statusLabel: 'Statut:',
-      totalLabel: 'Total:',
-      verifying: 'Verification du statut en cours…',
+        'Votre paiement Stripe est reçu. Nous finalisons la confirmation de votre réservation…',
+      subtitleConfirmed:
+        'Votre paiement a été reçu et votre réservation est confirmée.',
+      bookingIdLabel: 'Réf. réservation :',
+      statusLabel: 'Statut :',
+      statusConfirmed: 'Confirmée',
+      statusPendingPayment: 'En attente de paiement',
+      statusPendingHint:
+        'La confirmation prend plus de temps que prévu. Consultez votre compte dans quelques instants ou contactez le support si le statut ne change pas.',
+      totalLabel: 'Total :',
+      verifying: 'Vérification du statut en cours…',
       statusUnavailable:
-        'Statut detaille indisponible pour le moment. Rechargez la page dans quelques instants.',
+        'Statut détaillé indisponible pour le moment. Rechargez la page dans quelques instants.',
       backHome: 'Retour accueil',
-      browseHotels: 'Voir les hotels',
+      browseHotels: 'Voir les hôtels',
       viewAccount: 'Mon compte',
-      signOut: 'Se deconnecter',
+      signOut: 'Se déconnecter',
       nextStepsTitle: 'Prochaines étapes',
       nextStepEmail: 'Un e-mail de confirmation vous sera envoyé sous peu.',
       nextStepAccount: 'Consultez vos réservations depuis votre espace compte.',
@@ -2523,11 +2535,17 @@ const en: Translations = {
       dismiss: 'Dismiss',
     },
     success: {
-      title: 'Booking confirmed',
+      title: 'Confirming booking',
+      titleConfirmed: 'Booking confirmed',
       subtitle:
-        'Your Stripe payment was received. Final confirmation may take a few seconds while the webhook completes.',
-      bookingIdLabel: 'Booking ID:',
+        'Your Stripe payment was received. We are finalizing your booking confirmation…',
+      subtitleConfirmed: 'Your payment was received and your booking is confirmed.',
+      bookingIdLabel: 'Booking ref:',
       statusLabel: 'Status:',
+      statusConfirmed: 'Confirmed',
+      statusPendingPayment: 'Pending payment',
+      statusPendingHint:
+        'Confirmation is taking longer than expected. Check your account shortly or contact support if the status does not update.',
       totalLabel: 'Total:',
       verifying: 'Checking status…',
       statusUnavailable: 'Detailed status is unavailable for now. Refresh in a moment.',

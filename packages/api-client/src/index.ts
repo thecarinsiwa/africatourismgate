@@ -1857,6 +1857,12 @@ export class ApiClient {
     });
   }
 
+  syncBookingPayment(id: string): Promise<BookingDetail> {
+    return this.request<BookingDetail>(`/bookings/${id}/sync-payment`, {
+      method: 'POST',
+    });
+  }
+
   listAirlines(query?: AirlinesListQuery): Promise<PaginatedResponse<Airline>> {
     return fetchPaginated<Airline>(this, '/airlines', query);
   }

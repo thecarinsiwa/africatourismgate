@@ -199,7 +199,7 @@
     "addTraveler": "Add traveler",
     "removeTraveler": "Remove",
     "subtotalLabel": "Travelers subtotal",
-    "noTravelersHint": "Add at least one traveler with a price.",
+    "noTravelersHint": "Add travelers in the manifest below or via \"Add traveler\".",
     "defaultTravelerName": "Customer",
     "loadingTravelers": "Loading travelers…",
     "travelerRequired": "Add at least one traveler with a name and price.",

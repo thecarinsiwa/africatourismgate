@@ -3,12 +3,22 @@
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import type { BookingDetail } from '@africatourismgate/types';
-import { getBooking } from '../../lib/api/booking';
+import type { BookingDetail, BookingStatus } from '@africatourismgate/types';
+import { getBooking, syncBookingPayment } from '../../lib/api/booking';
 import { ensureClientAccessToken } from '../../lib/auth/client-session';
 import { formatHotelPrice } from '../../lib/hotels/listings';
 import { useTranslations } from '../../lib/i18n/locale-provider';
 import { CheckoutPageShell } from './checkout-page-shell';
+
+const CONFIRMED: BookingStatus = 'confirmed';
+const POLL_INTERVAL_MS = 500;
+const POLL_MAX_ATTEMPTS = 30;
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    window.setTimeout(resolve, ms);
+  });
+}
 
 export function ReservationSuccessPageContent() {
   const router = useRouter();
@@ -20,7 +30,9 @@ export function ReservationSuccessPageContent() {
 
   const bookingId = searchParams.get('booking_id');
   const [booking, setBooking] = useState<BookingDetail | null>(null);
-  const [status, setStatus] = useState<'idle' | 'loading' | 'ready' | 'error'>('idle');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'confirming' | 'ready' | 'error'>(
+    'idle',
+  );
 
   const stepperLabels = useMemo(
     () => ({
@@ -37,26 +49,56 @@ export function ReservationSuccessPageContent() {
   useEffect(() => {
     let cancelled = false;
     if (!bookingId) return;
+
+    async function resolveBookingStatus(accessToken: string): Promise<BookingDetail | null> {
+      let detail = await getBooking(accessToken, bookingId!);
+      if (detail.booking.status === CONFIRMED) {
+        return detail;
+      }
+      if (detail.booking.status !== 'pending_payment') {
+        return detail;
+      }
+
+      try {
+        detail = await syncBookingPayment(accessToken, bookingId!);
+        if (detail.booking.status === CONFIRMED) {
+          return detail;
+        }
+      } catch {
+        // webhook may still be in flight; polling continues below
+      }
+
+      for (let attempt = 0; attempt < POLL_MAX_ATTEMPTS; attempt += 1) {
+        if (cancelled) return null;
+        await sleep(POLL_INTERVAL_MS);
+        detail = await getBooking(accessToken, bookingId!);
+        if (detail.booking.status === CONFIRMED) {
+          return detail;
+        }
+      }
+
+      return detail;
+    }
+
     setStatus('loading');
     void ensureClientAccessToken()
-      .then((token) => {
+      .then(async (token) => {
         if (!token) {
           const next = encodeURIComponent(`${pathname}?${searchParams.toString()}`);
           router.replace(`/booking/login?next=${next}`);
           return;
         }
-        return getBooking(token, bookingId)
-          .then((data) => {
-            if (!cancelled) {
-              setBooking(data);
-              setStatus('ready');
-            }
-          })
-          .catch(() => {
-            if (!cancelled) {
-              setStatus('error');
-            }
-          });
+
+        setStatus('confirming');
+        const data = await resolveBookingStatus(token);
+        if (!cancelled) {
+          if (data) {
+            setBooking(data);
+            setStatus('ready');
+          } else {
+            setStatus('error');
+          }
+        }
       })
       .catch(() => {
         if (!cancelled) setStatus('error');
@@ -67,29 +109,44 @@ export function ReservationSuccessPageContent() {
     };
   }, [bookingId, pathname, router, searchParams]);
 
+  const isConfirmed = booking?.booking.status === CONFIRMED;
+  const isPendingPayment = booking?.booking.status === 'pending_payment';
+
   return (
     <CheckoutPageShell
-      title={s.title}
+      title={isConfirmed ? s.titleConfirmed : s.title}
       currentStep="confirmation"
       stepperLabels={stepperLabels}
     >
       <div className="mt-6 rounded-xl border border-green-200 bg-atg-elevated p-6 dark:border-green-900/40 dark:bg-atg-elevated">
-        <p className="text-sm text-atg-muted">{s.subtitle}</p>
+        <p className="text-sm text-atg-muted">
+          {isConfirmed ? s.subtitleConfirmed : s.subtitle}
+        </p>
 
         <div className="mt-5 space-y-2 text-sm text-atg-fg">
           <p>
             <span className="font-semibold">{s.bookingIdLabel}</span> {bookingId ?? 'non fourni'}
           </p>
-          {status === 'loading' && <p className="text-atg-muted">{s.verifying}</p>}
+          {(status === 'loading' || status === 'confirming') && (
+            <p className="text-atg-muted">{s.verifying}</p>
+          )}
           {status === 'ready' && booking && (
             <>
               <p>
-                <span className="font-semibold">{s.statusLabel}</span> {booking.booking.status}
+                <span className="font-semibold">{s.statusLabel}</span>{' '}
+                {isConfirmed
+                  ? s.statusConfirmed
+                  : isPendingPayment
+                    ? s.statusPendingPayment
+                    : booking.booking.status}
               </p>
               <p>
                 <span className="font-semibold">{s.totalLabel}</span>{' '}
                 {formatHotelPrice(booking.totalCents, booking.currency)}
               </p>
+              {isPendingPayment ? (
+                <p className="text-amber-700 dark:text-amber-300">{s.statusPendingHint}</p>
+              ) : null}
             </>
           )}
           {status === 'error' && (

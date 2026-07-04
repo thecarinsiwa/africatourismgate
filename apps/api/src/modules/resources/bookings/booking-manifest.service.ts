@@ -118,6 +118,17 @@ export class BookingManifestService {
       );
       results.push(created);
     }
+
+    const keptIds = new Set(results.map((entry) => entry.id));
+    const existing = await this.repository.find({
+      where: { bookingId, deletedAt: IsNull() },
+    });
+    for (const row of existing) {
+      if (!keptIds.has(row.id)) {
+        await this.remove(bookingId, row.id, actorUserId);
+      }
+    }
+
     return results;
   }
 

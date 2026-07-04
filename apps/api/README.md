@@ -120,7 +120,49 @@ DATABASE_NAME=africatourismgate_test pnpm --filter @africatourismgate/api test:e
 pnpm test:e2e
 ```
 
-Specs live in `apps/api/test/e2e/` (`health`, `auth`, `booking`, `stripe-webhook`).
+Specs live in `apps/api/test/e2e/` (`health`, `auth`, `booking`, `stripe-webhook`, `stripe-booking-confirm`).
+
+## Stripe (paiement + webhooks)
+
+La confirmation d’une réservation (`pending_payment` → `confirmed`) passe par le webhook Stripe. **En local, sans forwarding, le paiement Checkout réussit côté Stripe mais le statut reste bloqué.**
+
+### Prérequis
+
+| Variable | Rôle |
+| -------- | ---- |
+| `STRIPE_SECRET_KEY` | Clé secrète test (`sk_test_…`) |
+| `STRIPE_WEBHOOK_SECRET` | Secret du endpoint webhook (`whsec_…`) |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Clé publique côté web (optionnel selon flux) |
+
+### Dev local (obligatoire pour Checkout)
+
+Dans un terminal dédié :
+
+```bash
+stripe listen --forward-to localhost:3000/api/stripe/webhook
+```
+
+Copier le `whsec_…` affiché dans `STRIPE_WEBHOOK_SECRET` (`.env` ou `.env.local`), puis **redémarrer l’API**.
+
+Sans `stripe listen`, utilisez le repli client :
+
+- `POST /api/bookings/:id/sync-payment` (après retour Checkout, appelé par la page succès)
+- ou `POST /api/bookings/:id/confirm` (staff / contournement manuel)
+
+### Scripts de test
+
+```bash
+pnpm --filter @africatourismgate/api test:stripe-payment
+pnpm --filter @africatourismgate/api test:stripe-refund
+```
+
+### Production
+
+Configurer dans le [Dashboard Stripe → Webhooks](https://dashboard.stripe.com/webhooks) l’URL :
+
+`https://app-africatourismgate.org/api/stripe/webhook`
+
+Événements : `checkout.session.completed`, `payment_intent.succeeded`, `payment_intent.payment_failed`, `refund.updated`, `charge.refunded`.
 
 ## Configuration
 

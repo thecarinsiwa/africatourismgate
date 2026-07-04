@@ -199,7 +199,7 @@
     "addTraveler": "Añadir viajero",
     "removeTraveler": "Quitar",
     "subtotalLabel": "Subtotal viajeros",
-    "noTravelersHint": "Añada al menos un viajero con un precio.",
+    "noTravelersHint": "Añada viajeros en el manifiesto de abajo o con « Añadir viajero ».",
     "defaultTravelerName": "Cliente",
     "loadingTravelers": "Cargando viajeros…",
     "travelerRequired": "Añada al menos un viajero con nombre y precio.",

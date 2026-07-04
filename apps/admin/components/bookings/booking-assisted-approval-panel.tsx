@@ -25,6 +25,7 @@ type BookingAssistedApprovalPanelProps = {
   currency: string;
   items: BookingItem[];
   canApprove: boolean;
+  manifestSyncKey?: number;
   onUpdated: () => Promise<void>;
 };
 
@@ -85,13 +86,14 @@ function formatCentsToMoney(cents: number): string {
 }
 
 function entryToDraft(entry: BookingManifestEntry, basePriceCents?: number | null): TravelerDraft {
+  const priceCents = entry.priceCents ?? basePriceCents ?? null;
   return {
     key: entry.id,
     id: entry.id,
     fullName: entry.fullName,
     age: entry.age != null ? String(entry.age) : '',
-    price: entry.priceCents != null ? formatCentsToMoney(entry.priceCents) : '',
-    basePriceCents: basePriceCents ?? null,
+    price: priceCents != null ? formatCentsToMoney(priceCents) : '',
+    basePriceCents: basePriceCents ?? entry.priceCents ?? null,
   };
 }
 
@@ -112,6 +114,7 @@ export function BookingAssistedApprovalPanel({
   currency,
   items,
   canApprove,
+  manifestSyncKey = 0,
   onUpdated,
 }: BookingAssistedApprovalPanelProps) {
   const { bookings: getBookingsErrorMessage } = useAdminErrorMessages();
@@ -172,31 +175,6 @@ export function BookingAssistedApprovalPanel({
             entryToDraft(entry, basePricesPerTraveler[index] ?? null),
           ),
         );
-      } else if (status === 'pending_approval') {
-        if (basePricesPerTraveler.length > 0) {
-          setTravelers(
-            basePricesPerTraveler.map((basePriceCents, index) => ({
-              key: crypto.randomUUID(),
-              fullName:
-                basePricesPerTraveler.length === 1
-                  ? t('defaultTravelerName')
-                  : `${t('defaultTravelerName')} ${index + 1}`,
-              age: '',
-              price: formatCentsToMoney(basePriceCents),
-              basePriceCents,
-            })),
-          );
-        } else {
-          setTravelers([
-            {
-              key: crypto.randomUUID(),
-              fullName: t('defaultTravelerName'),
-              age: '',
-              price: formatCentsToMoney(totalCents),
-              basePriceCents: totalCents > 0 ? totalCents : null,
-            },
-          ]);
-        }
       } else {
         setTravelers([]);
       }
@@ -206,11 +184,11 @@ export function BookingAssistedApprovalPanel({
     } finally {
       setManifestLoading(false);
     }
-  }, [bookingId, status, t, totalCents, basePricesPerTraveler]);
+  }, [bookingId, status, basePricesPerTraveler]);
 
   useEffect(() => {
     void loadManifest();
-  }, [loadManifest]);
+  }, [loadManifest, manifestSyncKey]);
 
   useEffect(() => {
     if (initialVisitDates) {
@@ -276,17 +254,19 @@ export function BookingAssistedApprovalPanel({
     action: () => Promise<void>,
     onSuccess?: () => void,
     options?: { onError?: (message: string) => void },
-  ) {
+  ): Promise<boolean> {
     setActionError(null);
     setLoading(true);
     try {
       await action();
       await onUpdated();
       onSuccess?.();
+      return true;
     } catch (error) {
       const message = getBookingsErrorMessage(error);
       setActionError(message);
       options?.onError?.(message);
+      return false;
     } finally {
       setLoading(false);
     }
@@ -405,6 +385,38 @@ export function BookingAssistedApprovalPanel({
   }
 
   async function handleInvitePayment() {
+    if (pricingDirty) {
+      const validationError = validateTravelers();
+      if (validationError) {
+        setActionError(validationError);
+        return;
+      }
+
+      const parsedTotal = parseMoneyToCents(adjustedTotal);
+      const travelerPayload = buildTravelerPayload();
+
+      const saved = await runAction(
+        async () => {
+          await getApiClient().updateBookingPricing(bookingId, {
+            travelers: travelerPayload.map((traveler) => ({
+              id: traveler.id,
+              fullName: traveler.fullName,
+              age: traveler.age,
+              priceCents: traveler.priceCents,
+            })),
+            ...(parsedTotal != null ? { totalCents: parsedTotal } : {}),
+          });
+        },
+        () => {
+          setPricingDirty(false);
+          void loadManifest();
+        },
+      );
+      if (!saved) {
+        return;
+      }
+    }
+
     await runAction(async () => {
       const session = await getApiClient().inviteBookingPayment(bookingId);
       toast({
@@ -500,7 +512,7 @@ export function BookingAssistedApprovalPanel({
             {travelers.map((traveler) => (
               <div
                 key={traveler.key}
-                className="grid gap-3 rounded-lg border border-atg-border bg-atg-surface/50 p-3 sm:grid-cols-[1fr_5rem_7rem_8rem_auto]"
+                className="space-y-3 rounded-lg border border-atg-border bg-atg-surface/50 p-3"
               >
                 <Input
                   label={t('travelerName')}
@@ -509,49 +521,51 @@ export function BookingAssistedApprovalPanel({
                   onChange={(e) => updateTraveler(traveler.key, { fullName: e.target.value })}
                   disabled={!editable || loading}
                 />
-                <Input
-                  label={t('travelerAge')}
-                  name={`traveler-age-${traveler.key}`}
-                  type="number"
-                  min={0}
-                  max={150}
-                  value={traveler.age}
-                  onChange={(e) => updateTraveler(traveler.key, { age: e.target.value })}
-                  disabled={!editable || loading}
-                />
-                <div>
-                  <p className="mb-1 text-sm font-medium text-atg-fg">
-                    {t('travelerBasePrice', { currency })}
-                  </p>
-                  <p className="flex h-11 items-center rounded-lg border border-atg-border bg-atg-muted/20 px-3 text-sm tabular-nums text-atg-muted">
-                    {traveler.basePriceCents != null
-                      ? formatMoney(traveler.basePriceCents, currency)
-                      : '—'}
-                  </p>
-                </div>
-                <Input
-                  label={t('travelerPrice', { currency })}
-                  name={`traveler-price-${traveler.key}`}
-                  type="text"
-                  inputMode="decimal"
-                  value={traveler.price}
-                  onChange={(e) => updateTraveler(traveler.key, { price: e.target.value })}
-                  disabled={!editable || loading}
-                />
-                {editable && travelers.length > 1 ? (
-                  <div className="flex items-end">
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="outline"
-                      className="!border-red-300 !text-red-700 dark:!text-red-400"
-                      onClick={() => removeTraveler(traveler.key)}
-                      disabled={loading}
-                    >
-                      {t('removeTraveler')}
-                    </Button>
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[6rem_minmax(7rem,1fr)_minmax(7rem,1fr)_auto]">
+                  <Input
+                    label={t('travelerAge')}
+                    name={`traveler-age-${traveler.key}`}
+                    type="number"
+                    min={0}
+                    max={150}
+                    value={traveler.age}
+                    onChange={(e) => updateTraveler(traveler.key, { age: e.target.value })}
+                    disabled={!editable || loading}
+                  />
+                  <div className="min-w-0">
+                    <p className="mb-1 text-sm font-medium text-atg-fg">
+                      {t('travelerBasePrice', { currency })}
+                    </p>
+                    <p className="flex h-11 items-center rounded-lg border border-atg-border bg-atg-muted/20 px-3 text-sm tabular-nums text-atg-muted">
+                      {traveler.basePriceCents != null
+                        ? formatMoney(traveler.basePriceCents, currency)
+                        : '—'}
+                    </p>
                   </div>
-                ) : null}
+                  <Input
+                    label={t('travelerPrice', { currency })}
+                    name={`traveler-price-${traveler.key}`}
+                    type="text"
+                    inputMode="decimal"
+                    value={traveler.price}
+                    onChange={(e) => updateTraveler(traveler.key, { price: e.target.value })}
+                    disabled={!editable || loading}
+                  />
+                  {editable && travelers.length > 1 ? (
+                    <div className="flex items-end sm:col-span-2 lg:col-span-1">
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        className="!border-red-300 !text-red-700 dark:!text-red-400"
+                        onClick={() => removeTraveler(traveler.key)}
+                        disabled={loading}
+                      >
+                        {t('removeTraveler')}
+                      </Button>
+                    </div>
+                  ) : null}
+                </div>
               </div>
             ))}
           </div>

@@ -108,6 +108,11 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   const [cancelReason, setCancelReason] = useState('');
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+  const [manifestSync, setManifestSync] = useState(0);
+
+  const bumpManifestSync = useCallback(() => {
+    setManifestSync((value) => value + 1);
+  }, []);
 
   useAdminEditPageMeta({
     ready: state.status === 'ready' && detail != null,
@@ -127,6 +132,11 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
       setState({ status: 'error', message: getBookingsErrorMessage(error) });
     }
   }, [bookingId, getBookingsErrorMessage]);
+
+  const refreshDetail = useCallback(async () => {
+    await load();
+    bumpManifestSync();
+  }, [load, bumpManifestSync]);
 
   useEffect(() => {
     void load();
@@ -398,7 +408,8 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
             currency={detail.currency}
             items={detail.items}
             canApprove={canApprove}
-            onUpdated={load}
+            manifestSyncKey={manifestSync}
+            onUpdated={refreshDetail}
           />
 
           <BookingIdentityDocumentsPanel
@@ -507,6 +518,8 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
             bookingId={bookingId}
             canWrite={canWrite}
             suggestedCount={suggestedTravelerCount}
+            syncKey={manifestSync}
+            onChanged={bumpManifestSync}
           />
 
           <BookingGuidesSection bookingId={bookingId} canWrite={canWrite} />

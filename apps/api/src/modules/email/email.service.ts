@@ -31,6 +31,7 @@ import type {
   BookingStaffMessageEmailPayload,
   PasswordResetEmailPayload,
   SendMailResult,
+  EmailAttachment,
   WelcomeEmailPayload,
 } from './email.types';
 
@@ -116,10 +117,17 @@ export class EmailService implements OnModuleInit {
 
   async sendBookingApprovedChat(
     payload: BookingApprovedChatEmailPayload,
+    options?: { attachments?: EmailAttachment[] },
   ): Promise<SendMailResult> {
     const branding = await this.resolveBranding();
     const { subject, html, text } = renderBookingApprovedChatEmail(payload, branding);
-    return this.send('service', { to: payload.to, subject, html, text });
+    return this.send('service', {
+      to: payload.to,
+      subject,
+      html,
+      text,
+      attachments: options?.attachments,
+    });
   }
 
   async sendBookingRejected(
@@ -174,6 +182,7 @@ export class EmailService implements OnModuleInit {
       subject: string;
       html: string;
       text: string;
+      attachments?: EmailAttachment[];
     },
   ): Promise<SendMailResult> {
     const to = options.to.trim();
@@ -208,6 +217,11 @@ export class EmailService implements OnModuleInit {
         subject: options.subject,
         html: options.html,
         text: options.text,
+        attachments: options.attachments?.map((attachment) => ({
+          filename: attachment.filename,
+          content: attachment.content,
+          contentType: attachment.contentType ?? 'application/pdf',
+        })),
       });
 
       const previewUrl = nodemailer.getTestMessageUrl(info) || undefined;

@@ -512,6 +512,102 @@ export class StripeService {
     });
   }
 
+  /**
+   * Repli lorsque le webhook Stripe n'a pas encore confirmé la réservation
+   * (typique en dev local sans `stripe listen`).
+   * @returns true si la réservation est confirmée (ou l'était déjà).
+   */
+  async syncBookingPaymentFromStripe(bookingId: string): Promise<boolean> {
+    const booking = await this.bookingsRepository.findOne({
+      where: { id: bookingId, deletedAt: IsNull() },
+    });
+    if (!booking) {
+      throw new NotFoundException('Réservation introuvable.');
+    }
+    if (booking.status === 'confirmed') {
+      return true;
+    }
+    if (booking.status !== 'pending_payment') {
+      throw new BadRequestException(
+        `Synchronisation impossible : statut actuel « ${booking.status} ».`,
+      );
+    }
+
+    const pending = await this.findPendingStripePayment(bookingId);
+    if (!pending?.externalId?.trim()) {
+      return false;
+    }
+
+    const stripe = this.getStripe();
+    const externalId = pending.externalId.trim();
+
+    if (externalId.startsWith('cs_')) {
+      const session = await stripe.checkout.sessions.retrieve(externalId);
+      if (session.payment_status !== 'paid') {
+        return false;
+      }
+      const paymentIntentId =
+        typeof session.payment_intent === 'string'
+          ? session.payment_intent
+          : session.payment_intent?.id;
+      if (!paymentIntentId) {
+        return false;
+      }
+      const intent = await stripe.paymentIntents.retrieve(paymentIntentId);
+      await this.handlePaymentIntentSucceeded(intent);
+      return true;
+    }
+
+    if (externalId.startsWith('pi_')) {
+      const intent = await stripe.paymentIntents.retrieve(externalId);
+      if (intent.status !== 'succeeded') {
+        return false;
+      }
+      await this.handlePaymentIntentSucceeded(intent);
+      return true;
+    }
+
+    return false;
+  }
+
+  /** Expire une session Checkout obsolète si le total de la réservation a changé. */
+  async invalidateStalePendingCheckoutSessions(
+    bookingId: string,
+    actorUserId?: string,
+  ): Promise<void> {
+    const booking = await this.bookingsRepository.findOne({
+      where: { id: bookingId, deletedAt: IsNull() },
+    });
+    if (!booking || booking.status !== 'pending_payment') {
+      return;
+    }
+
+    const pending = await this.findPendingStripePayment(bookingId);
+    if (!pending || pending.amountCents === booking.totalCents) {
+      return;
+    }
+
+    const externalId = pending.externalId?.trim();
+    if (externalId?.startsWith('cs_')) {
+      try {
+        const stripe = this.getStripe();
+        const session = await stripe.checkout.sessions.retrieve(externalId);
+        if (session.status === 'open') {
+          await stripe.checkout.sessions.expire(externalId);
+        }
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        this.logger.warn(
+          `Impossible d'expirer la session Checkout ${externalId} : ${message}`,
+        );
+      }
+    }
+
+    pending.status = 'failed';
+    pending.updatedByUserId = actorUserId ?? pending.updatedByUserId;
+    await this.paymentsRepository.save(pending);
+  }
+
   private async handleRefundUpdated(refund: StripeRefund): Promise<void> {
     if (refund.status !== 'succeeded') {
       return;

@@ -17,6 +17,73 @@ function brandingUploadsDir(): string {
   return join(process.cwd(), 'uploads', 'branding');
 }
 
+/** Extrait le nom de fichier depuis une URL ou un chemin de logo branding. */
+export function extractBrandingUploadFilename(url: string): string | null {
+  const trimmed = url.trim();
+  if (!trimmed) return null;
+
+  const patterns = [
+    /\/uploads\/branding\/([^/?#]+)$/i,
+    /\/api\/uploads\/branding\/([^/?#]+)$/i,
+  ];
+  for (const pattern of patterns) {
+    const match = pattern.exec(trimmed);
+    if (match?.[1]) return match[1];
+  }
+
+  try {
+    const parsed = new URL(trimmed);
+    for (const pattern of patterns) {
+      const match = pattern.exec(parsed.pathname);
+      if (match?.[1]) return match[1];
+    }
+  } catch {
+    // not a full URL
+  }
+
+  return null;
+}
+
+/** Chemin local d'un logo branding à partir de son URL publique. */
+export function resolveLogoFilePathFromUrl(logoUrl?: string | null): string | null {
+  if (!logoUrl?.trim()) {
+    return null;
+  }
+
+  const filename = extractBrandingUploadFilename(logoUrl);
+  if (filename) {
+    const path = join(brandingUploadsDir(), filename);
+    if (existsSync(path)) return path;
+  }
+
+  return null;
+}
+
+/**
+ * Résout le logo pour inclusion dans un PDF (fichier local, fetch distant, ou fallback).
+ */
+export async function resolveLogoForPdf(
+  logoUrl?: string | null,
+): Promise<string | Buffer | null> {
+  const local = resolveLogoFilePathFromUrl(logoUrl);
+  if (local) return local;
+
+  if (logoUrl?.trim()) {
+    const remoteUrl = normalizeBrandingAssetUrl(logoUrl) ?? logoUrl.trim();
+    try {
+      const response = await fetch(remoteUrl);
+      if (response.ok) {
+        const buffer = Buffer.from(await response.arrayBuffer());
+        if (buffer.length > 0) return buffer;
+      }
+    } catch {
+      // optional remote logo
+    }
+  }
+
+  return resolveLogoFilePath();
+}
+
 function latestBrandingPngFilename(): string | null {
   const dir = brandingUploadsDir();
   if (!existsSync(dir)) return null;

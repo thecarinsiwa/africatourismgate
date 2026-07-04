@@ -42,6 +42,8 @@ const templates = [
         {
           ...sample,
           chatUrl: `${webBase(webUrl)}/account/reservations/${PREVIEW_BOOKING_ID}/chat`,
+          locale: 'fr',
+          hasPdfAttachment: true,
         },
         DEFAULT_EMAIL_BRANDING,
       ),
