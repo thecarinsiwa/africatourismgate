@@ -45,23 +45,30 @@ function deriveVisitDatesFromItems(
   if (dated.length === 0) {
     return null;
   }
-  const starts = dated.map((item) => item.startDate!).sort();
-  const ends = dated.map((item) => item.endDate ?? item.startDate!).sort();
+  const starts = dated.map((item) => toDateOnlyString(item.startDate!)).sort();
+  const ends = dated
+    .map((item) => toDateOnlyString(item.endDate ?? item.startDate!))
+    .sort();
   return {
     startDate: starts[0]!,
     endDate: ends[ends.length - 1]!,
   };
 }
 
+function toDateOnlyString(value: string): string {
+  const match = /^(\d{4}-\d{2}-\d{2})/.exec(value.trim());
+  return match ? match[1]! : value.slice(0, 10);
+}
+
 function addDaysToDateOnly(iso: string, days: number): string {
-  const date = new Date(`${iso}T00:00:00Z`);
+  const date = new Date(`${toDateOnlyString(iso)}T00:00:00Z`);
   date.setUTCDate(date.getUTCDate() + days);
   return date.toISOString().slice(0, 10);
 }
 
 function visitSpanDays(startDate: string, endDate: string): number {
-  const start = new Date(`${startDate}T00:00:00Z`);
-  const end = new Date(`${endDate}T00:00:00Z`);
+  const start = new Date(`${toDateOnlyString(startDate)}T00:00:00Z`);
+  const end = new Date(`${toDateOnlyString(endDate)}T00:00:00Z`);
   return Math.max(0, Math.round((end.getTime() - start.getTime()) / 86_400_000));
 }
 
@@ -127,6 +134,8 @@ export function BookingAssistedApprovalPanel({
   const [pricingDirty, setPricingDirty] = useState(false);
   const [visitStartDate, setVisitStartDate] = useState('');
   const [visitDatesDirty, setVisitDatesDirty] = useState(false);
+  const [approveDialogError, setApproveDialogError] = useState<string | null>(null);
+  const [rejectDialogError, setRejectDialogError] = useState<string | null>(null);
 
   const initialVisitDates = useMemo(() => deriveVisitDatesFromItems(items), [items]);
   const hasVisitDates = initialVisitDates != null;
@@ -205,7 +214,7 @@ export function BookingAssistedApprovalPanel({
 
   useEffect(() => {
     if (initialVisitDates) {
-      setVisitStartDate(initialVisitDates.startDate);
+      setVisitStartDate(toDateOnlyString(initialVisitDates.startDate));
       setVisitDatesDirty(false);
     }
   }, [initialVisitDates]);
@@ -263,7 +272,11 @@ export function BookingAssistedApprovalPanel({
     return null;
   }
 
-  async function runAction(action: () => Promise<void>, onSuccess?: () => void) {
+  async function runAction(
+    action: () => Promise<void>,
+    onSuccess?: () => void,
+    options?: { onError?: (message: string) => void },
+  ) {
     setActionError(null);
     setLoading(true);
     try {
@@ -271,7 +284,9 @@ export function BookingAssistedApprovalPanel({
       await onUpdated();
       onSuccess?.();
     } catch (error) {
-      setActionError(getBookingsErrorMessage(error));
+      const message = getBookingsErrorMessage(error);
+      setActionError(message);
+      options?.onError?.(message);
     } finally {
       setLoading(false);
     }
@@ -282,8 +297,8 @@ export function BookingAssistedApprovalPanel({
       return null;
     }
     return {
-      startDate: visitStartDate,
-      endDate: computedVisitEndDate || visitStartDate,
+      startDate: toDateOnlyString(visitStartDate),
+      endDate: toDateOnlyString(computedVisitEndDate || visitStartDate),
     };
   }
 
@@ -305,8 +320,10 @@ export function BookingAssistedApprovalPanel({
   }
 
   async function handleApprove() {
+    setApproveDialogError(null);
     const validationError = validateTravelers();
     if (validationError) {
+      setApproveDialogError(validationError);
       setActionError(validationError);
       return;
     }
@@ -332,12 +349,15 @@ export function BookingAssistedApprovalPanel({
       () => {
         setApproveDialogOpen(false);
         setApproveReason('');
+        setApproveDialogError(null);
         toast({ variant: 'success', message: t('approveSuccess') });
       },
+      { onError: setApproveDialogError },
     );
   }
 
   async function handleReject() {
+    setRejectDialogError(null);
     await runAction(
       async () => {
         await getApiClient().rejectBooking(bookingId, {
@@ -347,8 +367,10 @@ export function BookingAssistedApprovalPanel({
       () => {
         setRejectDialogOpen(false);
         setRejectReason('');
+        setRejectDialogError(null);
         toast({ variant: 'success', message: t('rejectSuccess') });
       },
+      { onError: setRejectDialogError },
     );
   }
 
@@ -610,7 +632,10 @@ export function BookingAssistedApprovalPanel({
                 type="button"
                 variant="primary"
                 disabled={loading || validateTravelers() != null}
-                onClick={() => setApproveDialogOpen(true)}
+                onClick={() => {
+                  setApproveDialogError(null);
+                  setApproveDialogOpen(true);
+                }}
               >
                 {t('approve')}
               </Button>
@@ -619,7 +644,10 @@ export function BookingAssistedApprovalPanel({
                 variant="outline"
                 className="!border-red-300 !text-red-700 hover:!bg-red-50 dark:!text-red-400"
                 disabled={loading}
-                onClick={() => setRejectDialogOpen(true)}
+                onClick={() => {
+                  setRejectDialogError(null);
+                  setRejectDialogOpen(true);
+                }}
               >
                 {t('reject')}
               </Button>
@@ -657,13 +685,20 @@ export function BookingAssistedApprovalPanel({
       <AlertDialog
         open={approveDialogOpen}
         onOpenChange={(open) => {
-          if (!loading) setApproveDialogOpen(open);
+          if (!loading) {
+            setApproveDialogOpen(open);
+            if (!open) {
+              setApproveDialogError(null);
+            }
+          }
         }}
         title={t('approveDialog.title')}
         description={t('approveDialog.description')}
         confirmLabel={t('approve')}
         cancelLabel={tActions('cancel')}
         loading={loading}
+        error={approveDialogError}
+        containerClassName="z-[60]"
         onConfirm={() => void handleApprove()}
         onCancel={() => setApproveDialogOpen(false)}
       />
@@ -671,7 +706,12 @@ export function BookingAssistedApprovalPanel({
       <AlertDialog
         open={rejectDialogOpen}
         onOpenChange={(open) => {
-          if (!loading) setRejectDialogOpen(open);
+          if (!loading) {
+            setRejectDialogOpen(open);
+            if (!open) {
+              setRejectDialogError(null);
+            }
+          }
         }}
         title={t('rejectDialog.title')}
         description={
@@ -683,6 +723,8 @@ export function BookingAssistedApprovalPanel({
         cancelLabel={tActions('cancel')}
         variant="danger"
         loading={loading}
+        error={rejectDialogError}
+        containerClassName="z-[60]"
         onConfirm={() => void handleReject()}
         onCancel={() => setRejectDialogOpen(false)}
       />

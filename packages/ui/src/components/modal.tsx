@@ -17,6 +17,8 @@ export type ModalProps = {
   description?: string;
   children?: React.ReactNode;
   className?: string;
+  /** Classes appliquées au conteneur plein écran (z-index, etc.). */
+  containerClassName?: string;
   /** Affiche un bouton de fermeture en haut à droite. */
   showClose?: boolean;
 };
@@ -29,6 +31,7 @@ export function Modal({
   children,
   className,
   showClose = false,
+  containerClassName,
 }: ModalProps) {
   const titleId = useId();
   const descriptionId = useId();
@@ -82,7 +85,7 @@ export function Modal({
   if (!open || typeof document === 'undefined') return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className={cn('fixed inset-0 z-50 flex items-center justify-center p-4', containerClassName)}>
       <div
         className="absolute inset-0 bg-black/50 dark:bg-black/70"
         aria-hidden

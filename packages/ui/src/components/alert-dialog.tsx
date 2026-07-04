@@ -20,6 +20,10 @@ export type AlertDialogProps = {
   /** `danger` applique un style destructif au bouton de confirmation. */
   variant?: AlertDialogVariant;
   loading?: boolean;
+  /** Erreur affichée dans la modale (ex. échec API ou validation). */
+  error?: string | null;
+  /** z-index du conteneur (au-dessus des autres modales). */
+  containerClassName?: string;
 };
 
 export function AlertDialog({
@@ -33,6 +37,8 @@ export function AlertDialog({
   onCancel,
   variant = 'default',
   loading = false,
+  error,
+  containerClassName,
 }: AlertDialogProps) {
   const handleCancel = () => {
     onCancel?.();
@@ -44,7 +50,18 @@ export function AlertDialog({
   };
 
   return (
-    <Modal open={open} onOpenChange={onOpenChange} title={title} description={description}>
+    <Modal
+      open={open}
+      onOpenChange={onOpenChange}
+      title={title}
+      description={description}
+      containerClassName={containerClassName}
+    >
+      {error ? (
+        <p role="alert" className="mb-4 text-sm text-red-600 dark:text-red-400">
+          {error}
+        </p>
+      ) : null}
       <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
         <Button type="button" variant="outline" onClick={handleCancel} disabled={loading}>
           {cancelLabel}

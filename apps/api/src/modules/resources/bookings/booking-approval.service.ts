@@ -45,9 +45,11 @@ export class BookingApprovalService {
     );
 
     if (dto.visitStartDate) {
+      const visitStartDate = dto.visitStartDate.slice(0, 10);
+      const visitEndDate = dto.visitEndDate?.slice(0, 10);
       await this.bookingEngine.updateVisitDates(bookingId, actorUserId, {
-        startDate: dto.visitStartDate,
-        endDate: dto.visitEndDate,
+        startDate: visitStartDate,
+        endDate: visitEndDate,
       });
     }
 
