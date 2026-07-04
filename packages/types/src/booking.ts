@@ -287,6 +287,13 @@ export interface ApproveBookingRequest {
   reason?: string;
   travelers?: ApproveTravelerPricingRequest[];
   guides?: Array<{ guideId: string; role?: 'primary' | 'secondary' }>;
+  visitStartDate?: string;
+  visitEndDate?: string;
+}
+
+export interface UpdateBookingVisitDatesRequest {
+  startDate: string;
+  endDate?: string;
 }
 
 export interface UpdateBookingPricingRequest {

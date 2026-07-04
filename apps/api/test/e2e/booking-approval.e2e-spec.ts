@@ -347,6 +347,29 @@ describe('Booking approval (e2e)', () => {
 
     expect(manifestAfter.body[0].priceCents).toBe(5500);
   });
+
+  it('PUT /bookings/:id/visit-dates updates item dates in pending_approval', async () => {
+    const date = '2099-09-10';
+    const newDate = '2099-09-15';
+    await ensureRoomAvailabilityForDate(app, adminToken, date, 2);
+    await ensureRoomAvailabilityForDate(app, adminToken, newDate, 2);
+
+    const created = await request(app.getHttpServer())
+      .post(apiPath('/bookings/request'))
+      .set(authHeader(customerToken))
+      .send(assistedCheckoutBody(date))
+      .expect(201);
+
+    const bookingId = created.body.bookingId as string;
+
+    const updated = await request(app.getHttpServer())
+      .put(apiPath(`/bookings/${bookingId}/visit-dates`))
+      .set(authHeader(adminToken))
+      .send({ startDate: newDate })
+      .expect(200);
+
+    expect(updated.body.items?.[0]?.startDate).toMatch(new RegExp(`^${newDate}`));
+  });
 });
 
 async function ensureRoomAvailabilityForDate(

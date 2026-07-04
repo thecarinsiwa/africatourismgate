@@ -14,6 +14,7 @@ import { ApproveBookingDto } from './dto/approve-booking.dto';
 import { BookingAdminDetailDto } from './dto/booking-admin-detail.dto';
 import { RejectBookingDto } from './dto/reject-booking.dto';
 import { UpdateBookingPricingDto } from './dto/update-booking-pricing.dto';
+import { UpdateBookingVisitDatesDto } from './dto/update-booking-visit-dates.dto';
 
 @Injectable()
 export class BookingApprovalService {
@@ -42,6 +43,13 @@ export class BookingApprovalService {
       dto.totalCents,
       actorUserId,
     );
+
+    if (dto.visitStartDate) {
+      await this.bookingEngine.updateVisitDates(bookingId, actorUserId, {
+        startDate: dto.visitStartDate,
+        endDate: dto.visitEndDate,
+      });
+    }
 
     await this.bookingEngine.approveAssistedBooking(bookingId, actorUserId, {
       totalCents: finalTotalCents,
@@ -96,6 +104,19 @@ export class BookingApprovalService {
     booking.updatedByUserId = actorUserId;
     await this.bookingsRepository.save(booking);
 
+    return this.bookingsService.getAdminDetail(bookingId);
+  }
+
+  async updateVisitDates(
+    bookingId: string,
+    dto: UpdateBookingVisitDatesDto,
+    actorUserId: string,
+  ): Promise<BookingAdminDetailDto> {
+    await this.assertApprovalAccess(actorUserId);
+    await this.bookingEngine.updateVisitDates(bookingId, actorUserId, {
+      startDate: dto.startDate,
+      endDate: dto.endDate,
+    });
     return this.bookingsService.getAdminDetail(bookingId);
   }
 

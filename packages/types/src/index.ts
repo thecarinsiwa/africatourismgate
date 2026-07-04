@@ -210,6 +210,7 @@ export type {
   ApproveBookingRequest,
   ApproveTravelerPricingRequest,
   UpdateBookingPricingRequest,
+  UpdateBookingVisitDatesRequest,
   RejectBookingRequest,
   BookingCheckoutSessionResponse,
   BookingPaymentIntentResponse,

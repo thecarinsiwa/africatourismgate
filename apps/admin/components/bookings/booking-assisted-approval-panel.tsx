@@ -38,6 +38,34 @@ function expandBasePricesFromItems(items: BookingItem[]): number[] {
   return bases;
 }
 
+function deriveVisitDatesFromItems(
+  items: BookingItem[],
+): { startDate: string; endDate: string } | null {
+  const dated = items.filter((item) => item.startDate);
+  if (dated.length === 0) {
+    return null;
+  }
+  const starts = dated.map((item) => item.startDate!).sort();
+  const ends = dated.map((item) => item.endDate ?? item.startDate!).sort();
+  return {
+    startDate: starts[0]!,
+    endDate: ends[ends.length - 1]!,
+  };
+}
+
+function shouldShowVisitEndDate(items: BookingItem[]): boolean {
+  const dated = items.filter((item) => item.startDate);
+  if (dated.length > 1) {
+    return true;
+  }
+  if (dated.length === 1) {
+    const item = dated[0]!;
+    const end = item.endDate ?? item.startDate!;
+    return item.startDate !== end;
+  }
+  return false;
+}
+
 function parseMoneyToCents(value: string): number | null {
   const parsed = Number.parseFloat(value.replace(',', '.'));
   if (!Number.isFinite(parsed) || parsed < 0) {
@@ -98,6 +126,13 @@ export function BookingAssistedApprovalPanel({
   const [adjustedTotal, setAdjustedTotal] = useState(() => formatCentsToMoney(totalCents));
   const [totalTouched, setTotalTouched] = useState(false);
   const [pricingDirty, setPricingDirty] = useState(false);
+  const [visitStartDate, setVisitStartDate] = useState('');
+  const [visitEndDate, setVisitEndDate] = useState('');
+  const [visitDatesDirty, setVisitDatesDirty] = useState(false);
+
+  const initialVisitDates = useMemo(() => deriveVisitDatesFromItems(items), [items]);
+  const hasVisitDates = initialVisitDates != null;
+  const showVisitEndDate = shouldShowVisitEndDate(items);
 
   const subtotalCents = useMemo(() => {
     return travelers.reduce((sum, traveler) => {
@@ -157,6 +192,14 @@ export function BookingAssistedApprovalPanel({
   useEffect(() => {
     void loadManifest();
   }, [loadManifest]);
+
+  useEffect(() => {
+    if (initialVisitDates) {
+      setVisitStartDate(initialVisitDates.startDate);
+      setVisitEndDate(initialVisitDates.endDate);
+      setVisitDatesDirty(false);
+    }
+  }, [initialVisitDates]);
 
   useEffect(() => {
     if (!totalTouched) {
@@ -225,6 +268,33 @@ export function BookingAssistedApprovalPanel({
     }
   }
 
+  function buildVisitDatesPayload() {
+    if (!hasVisitDates || !visitStartDate) {
+      return null;
+    }
+    return {
+      startDate: visitStartDate,
+      endDate: showVisitEndDate ? visitEndDate || visitStartDate : visitStartDate,
+    };
+  }
+
+  async function handleSaveVisitDates() {
+    const payload = buildVisitDatesPayload();
+    if (!payload) {
+      return;
+    }
+
+    await runAction(
+      async () => {
+        await getApiClient().updateBookingVisitDates(bookingId, payload);
+      },
+      () => {
+        setVisitDatesDirty(false);
+        toast({ variant: 'success', message: t('visitDatesSaved') });
+      },
+    );
+  }
+
   async function handleApprove() {
     const validationError = validateTravelers();
     if (validationError) {
@@ -234,6 +304,7 @@ export function BookingAssistedApprovalPanel({
 
     const parsedTotal = parseMoneyToCents(adjustedTotal);
     const travelerPayload = buildTravelerPayload();
+    const visitPayload = buildVisitDatesPayload();
 
     await runAction(
       async () => {
@@ -241,6 +312,12 @@ export function BookingAssistedApprovalPanel({
           reason: approveReason.trim() || undefined,
           travelers: travelerPayload,
           ...(parsedTotal != null ? { totalCents: parsedTotal } : {}),
+          ...(visitPayload
+            ? {
+                visitStartDate: visitPayload.startDate,
+                visitEndDate: visitPayload.endDate,
+              }
+            : {}),
         });
       },
       () => {
@@ -324,6 +401,60 @@ export function BookingAssistedApprovalPanel({
       nextBasePrice != null ? formatCentsToMoney(nextBasePrice) : '';
     setTravelers((prev) => [...prev, createEmptyTraveler(defaultPrice, nextBasePrice)]);
     setPricingDirty(true);
+  }
+
+  function renderVisitDatesEditor(editable: boolean) {
+    if (!hasVisitDates) {
+      return null;
+    }
+
+    return (
+      <div className="space-y-3 rounded-lg border border-atg-border bg-atg-surface/50 p-3">
+        <h3 className="text-sm font-semibold text-atg-fg">{t('visitDatesTitle')}</h3>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Input
+            label={t('visitStartDate')}
+            name="visitStartDate"
+            type="date"
+            value={visitStartDate}
+            onChange={(e) => {
+              const nextStart = e.target.value;
+              setVisitStartDate(nextStart);
+              if (!showVisitEndDate) {
+                setVisitEndDate(nextStart);
+              }
+              setVisitDatesDirty(true);
+            }}
+            disabled={!editable || loading}
+          />
+          {showVisitEndDate ? (
+            <Input
+              label={t('visitEndDate')}
+              name="visitEndDate"
+              type="date"
+              value={visitEndDate}
+              min={visitStartDate || undefined}
+              onChange={(e) => {
+                setVisitEndDate(e.target.value);
+                setVisitDatesDirty(true);
+              }}
+              disabled={!editable || loading}
+            />
+          ) : null}
+        </div>
+        {editable && status === 'pending_payment' ? (
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            disabled={loading || !visitDatesDirty}
+            onClick={() => void handleSaveVisitDates()}
+          >
+            {t('saveVisitDates')}
+          </Button>
+        ) : null}
+      </div>
+    );
   }
 
   function renderTravelerPricingEditor(editable: boolean) {
@@ -448,6 +579,7 @@ export function BookingAssistedApprovalPanel({
 
         {status === 'pending_approval' ? (
           <div className="space-y-4">
+            {renderVisitDatesEditor(true)}
             {renderTravelerPricingEditor(true)}
             <div>
               <label htmlFor={approveReasonId} className="mb-1 block text-sm font-medium text-atg-fg">
@@ -499,6 +631,7 @@ export function BookingAssistedApprovalPanel({
 
         {status === 'pending_payment' ? (
           <div className="space-y-4">
+            {renderVisitDatesEditor(true)}
             {renderTravelerPricingEditor(true)}
             <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
               <Button

@@ -43,6 +43,7 @@ import { CreateBookingMessageDto } from './dto/create-booking-message.dto';
 import { ApproveBookingDto } from './dto/approve-booking.dto';
 import { RejectBookingDto } from './dto/reject-booking.dto';
 import { UpdateBookingPricingDto } from './dto/update-booking-pricing.dto';
+import { UpdateBookingVisitDatesDto } from './dto/update-booking-visit-dates.dto';
 import { BookingApprovalService } from './booking-approval.service';
 import {
   BOOKING_IDENTITY_DOCUMENT_MAX_BYTES,
@@ -502,5 +503,18 @@ export class BookingsController {
     @CurrentUser() user: AuthUserDto,
   ) {
     return this.bookingApprovalService.updatePricing(id, dto, user.id);
+  }
+
+  @Put(':id/visit-dates')
+  @RequirePermissions('bookings.approve', 'bookings.write')
+  @ApiOperation({
+    summary: 'Update visit dates on booking lines (pending_approval / pending_payment)',
+  })
+  updateVisitDates(
+    @Param('id') id: string,
+    @Body() dto: UpdateBookingVisitDatesDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.bookingApprovalService.updateVisitDates(id, dto, user.id);
   }
 }

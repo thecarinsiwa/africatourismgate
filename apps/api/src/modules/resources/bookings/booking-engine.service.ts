@@ -367,6 +367,82 @@ export class BookingEngineService {
     return this.cancelBooking(id, actorUserId, rejectReason);
   }
 
+  async updateVisitDates(
+    bookingId: string,
+    actorUserId: string,
+    options: { startDate: string; endDate?: string },
+  ): Promise<void> {
+    const booking = await this.findBookingOrThrow(bookingId);
+    if (
+      booking.status !== 'pending_approval' &&
+      booking.status !== 'pending_payment'
+    ) {
+      throw new BadRequestException(
+        'Les dates de visite ne peuvent être modifiées que pour une réservation en attente de validation ou de paiement.',
+      );
+    }
+
+    const startDate = options.startDate;
+    const endDate = options.endDate ?? options.startDate;
+    const newDates = enumerateDates(startDate, endDate);
+
+    await this.bookingsRepository.manager.transaction(async (manager) => {
+      const itemsRepo = manager.getRepository(BookingItems);
+      const items = await itemsRepo.find({ where: { bookingId } });
+      const active = items.filter((item) => !item.deletedAt);
+      const datedItems = active
+        .filter((item) => item.startDate != null)
+        .sort((left, right) => left.startDate!.localeCompare(right.startDate!));
+
+      if (datedItems.length === 0) {
+        throw new BadRequestException('Aucune ligne de réservation avec dates à modifier.');
+      }
+
+      if (booking.status === 'pending_payment') {
+        const lines = await this.bookingItemsToResolvedLines(manager, items);
+        if (lines.length > 0) {
+          await this.allocateStock(manager, lines, 'restore', actorUserId);
+        }
+      }
+
+      if (datedItems.length === 1) {
+        const item = datedItems[0]!;
+        item.startDate = startDate;
+        item.endDate = endDate;
+        item.updatedByUserId = actorUserId;
+        await itemsRepo.save(item);
+      } else {
+        if (datedItems.length !== newDates.length) {
+          throw new BadRequestException(
+            `La période doit couvrir ${datedItems.length} nuit(s) (actuellement ${newDates.length}).`,
+          );
+        }
+        for (let index = 0; index < datedItems.length; index++) {
+          const item = datedItems[index]!;
+          item.startDate = newDates[index]!;
+          item.endDate = newDates[index]!;
+          item.updatedByUserId = actorUserId;
+          await itemsRepo.save(item);
+        }
+      }
+
+      if (booking.status === 'pending_payment') {
+        const refreshedItems = await itemsRepo.find({ where: { bookingId } });
+        const lines = await this.bookingItemsToResolvedLines(manager, refreshedItems);
+        if (lines.length > 0) {
+          await this.allocateStock(manager, lines, 'decrement', actorUserId);
+        }
+      }
+
+      const bookingsRepo = manager.getRepository(Bookings);
+      const row = await bookingsRepo.findOne({ where: { id: bookingId } });
+      if (row) {
+        row.updatedByUserId = actorUserId;
+        await bookingsRepo.save(row);
+      }
+    });
+  }
+
   async confirmBooking(
     id: string,
     actorUserId?: string,
