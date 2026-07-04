@@ -213,6 +213,8 @@ export interface BookingDetail {
   /** Post-stay guide rating invitations (CE-13). */
   guideReviewInvites?: GuideReviewInvite[];
   identityDocuments?: BookingIdentityDocument[];
+  /** Unread staff messages for the booking owner (assisted booking chat). */
+  unreadStaffMessageCount?: number;
 }
 
 export interface CreateBookingResponse extends BookingDetail {

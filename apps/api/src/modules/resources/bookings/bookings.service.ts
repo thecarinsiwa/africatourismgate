@@ -244,7 +244,7 @@ export class BookingsService extends CrudService<Bookings> {
       ? false
       : await this.reviewsService.canReview(id, currentUserId);
 
-    const [statusHistory, pendingStripePayments, guideReviewInvites, identityDocuments] =
+    const [statusHistory, pendingStripePayments, guideReviewInvites, identityDocuments, unreadStaffMessageCount] =
       await Promise.all([
       this.statusHistory.listByBookingId(id),
       this.paymentsRepository.find({
@@ -258,6 +258,7 @@ export class BookingsService extends CrudService<Bookings> {
       }),
       this.reviewsService.listGuideReviewInvitesForBooking(id, currentUserId),
       this.identityDocuments.listForBooking(id),
+      this.notifications.countUnreadStaffMessages(id),
     ]);
 
     return {
@@ -268,6 +269,7 @@ export class BookingsService extends CrudService<Bookings> {
       paymentInvited: pendingStripePayments.length > 0,
       guideReviewInvites,
       identityDocuments,
+      unreadStaffMessageCount,
     };
   }
 

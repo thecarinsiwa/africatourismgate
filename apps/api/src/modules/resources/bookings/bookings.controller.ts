@@ -157,10 +157,10 @@ export class BookingsController {
 
   @Get(':id/messages/unread-count')
   @RequirePermissions('bookings.read')
-  @ApiOperation({ summary: 'Count unread customer messages for staff' })
+  @ApiOperation({ summary: 'Count unread messages on a booking thread (staff or customer)' })
   getUnreadMessageCount(@Param('id') id: string, @CurrentUser() user: AuthUserDto) {
     return this.bookingMessagesService
-      .getUnreadCountForStaff(id, user.id)
+      .getUnreadCount(id, user.id)
       .then((count) => ({ count }));
   }
 

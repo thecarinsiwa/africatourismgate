@@ -57,13 +57,21 @@ export class BookingMessagesService {
     };
   }
 
-  async getUnreadCountForStaff(bookingId: string, actorUserId: string): Promise<number> {
-    const staff = await this.isStaffUser(actorUserId);
-    if (!staff) {
-      throw new ForbiddenException('Access denied.');
+  async getUnreadCount(bookingId: string, actorUserId: string): Promise<number> {
+    const booking = await this.assertCanAccessThread(bookingId, actorUserId);
+    const isStaff = await this.isStaffUser(actorUserId);
+    if (isStaff) {
+      return this.notifications.countUnreadCustomerMessages(bookingId);
     }
-    await this.assertCanAccessThread(bookingId, actorUserId);
-    return this.notifications.countUnreadCustomerMessages(bookingId);
+    if (booking.userId === actorUserId) {
+      return this.notifications.countUnreadStaffMessages(bookingId);
+    }
+    throw new ForbiddenException('Access denied.');
+  }
+
+  /** @deprecated Use getUnreadCount */
+  async getUnreadCountForStaff(bookingId: string, actorUserId: string): Promise<number> {
+    return this.getUnreadCount(bookingId, actorUserId);
   }
 
   async createMessage(

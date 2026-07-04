@@ -91,6 +91,30 @@ export class BookingNotificationsService {
     return qb.getCount();
   }
 
+  async countUnreadStaffMessages(bookingId: string): Promise<number> {
+    const booking = await this.bookingsRepository.findOne({
+      where: { id: bookingId, deletedAt: IsNull() },
+      select: ['id', 'customerThreadLastSeenAt'],
+    });
+    if (!booking) {
+      return 0;
+    }
+
+    const qb = this.messagesRepository
+      .createQueryBuilder('message')
+      .where('message.booking_id = :bookingId', { bookingId })
+      .andWhere('message.deleted_at IS NULL')
+      .andWhere('message.is_staff = 1');
+
+    if (booking.customerThreadLastSeenAt) {
+      qb.andWhere('message.created_at > :lastSeen', {
+        lastSeen: booking.customerThreadLastSeenAt,
+      });
+    }
+
+    return qb.getCount();
+  }
+
   async getUnreadCustomerMessageBookingIds(bookingIds: string[]): Promise<Set<string>> {
     if (bookingIds.length === 0) {
       return new Set();

@@ -14,7 +14,7 @@ export default function AccountReservationChatPage({ params }: PageProps) {
   return (
     <AccountBookingDetail
       bookingId={params.id}
-      scrollToConversation
+      autoOpenChat
       chatToken={chatToken}
     />
   );

@@ -87,6 +87,12 @@ describe('Booking messages (e2e)', () => {
   });
 
   it('admin reply sets actionRequired until customer reads thread', async () => {
+    const unreadBeforeRead = await request(app.getHttpServer())
+      .get(apiPath(`/bookings/${bookingId}/messages/unread-count`))
+      .set(authHeader(customerToken))
+      .expect(200);
+    expect(unreadBeforeRead.body.count).toBe(1);
+
     const listAfterReply = await request(app.getHttpServer())
       .get(apiPath('/bookings'))
       .set(authHeader(customerToken))
@@ -101,6 +107,12 @@ describe('Booking messages (e2e)', () => {
       .get(apiPath(`/bookings/${bookingId}/messages`))
       .set(authHeader(customerToken))
       .expect(200);
+
+    const unreadAfterRead = await request(app.getHttpServer())
+      .get(apiPath(`/bookings/${bookingId}/messages/unread-count`))
+      .set(authHeader(customerToken))
+      .expect(200);
+    expect(unreadAfterRead.body.count).toBe(0);
 
     const listAfterRead = await request(app.getHttpServer())
       .get(apiPath('/bookings'))

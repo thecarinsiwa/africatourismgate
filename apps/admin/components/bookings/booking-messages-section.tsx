@@ -1,14 +1,11 @@
 'use client';
 
-import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
-
-import { ConversationChat, Modal, useToast } from '@africatourismgate/ui';
 import type { BookingMessage } from '@africatourismgate/types';
+import { ConversationChat, DraggableFab, BookingChatFabIcon, Modal, useToast } from '@africatourismgate/ui';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { DraggableFab } from '../draggable-fab';
 import { getApiClient } from '../../lib/auth/api';
-import { BookingChatFabIcon } from './booking-chat-fab-icon';
+import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 const POLL_INTERVAL_MS = 20_000;
 const FAB_STORAGE_KEY = 'atg-admin-booking-chat-fab-position';

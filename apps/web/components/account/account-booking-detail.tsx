@@ -24,13 +24,13 @@ import { BookingIdentityDocumentsSection } from './booking-identity-documents-se
 
 type Props = {
   bookingId: string;
-  scrollToConversation?: boolean;
+  autoOpenChat?: boolean;
   chatToken?: string | null;
 };
 
 export function AccountBookingDetail({
   bookingId,
-  scrollToConversation = false,
+  autoOpenChat = false,
   chatToken = null,
 }: Props) {
   const t = useTranslations();
@@ -66,16 +66,6 @@ export function AccountBookingDetail({
   useEffect(() => {
     void load();
   }, [load]);
-
-  useEffect(() => {
-    if (!scrollToConversation || loading) {
-      return;
-    }
-    const timer = window.setTimeout(() => {
-      document.getElementById('conversation')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
-    return () => window.clearTimeout(timer);
-  }, [scrollToConversation, loading]);
 
   async function handlePay() {
     setActionError(null);
@@ -216,6 +206,8 @@ export function AccountBookingDetail({
           localeTag={localeTag}
           chatToken={chatToken}
           canReply={canReplyToMessages}
+          initialUnreadCount={detail.unreadStaffMessageCount ?? 0}
+          autoOpen={autoOpenChat}
         />
       ) : null}
 

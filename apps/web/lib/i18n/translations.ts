@@ -983,6 +983,8 @@ export type Translations = {
           loadError: string;
           sendError: string;
           newStaffMessageToast: string;
+          fabAriaLabel: string;
+          fabAriaLabelWithUnread: string;
         };
         guideReviews: {
           sectionTitle: string;
@@ -2194,6 +2196,8 @@ const fr: Translations = {
           loadError: 'Impossible de charger la conversation.',
           sendError: 'Impossible d\'envoyer le message.',
           newStaffMessageToast: 'Nouveau message de notre équipe',
+          fabAriaLabel: 'Ouvrir la conversation',
+          fabAriaLabelWithUnread: 'Ouvrir la conversation ({count} non lu(s))',
         },
         guideReviews: {
           sectionTitle: 'Votre guide',
@@ -3427,6 +3431,8 @@ const en: Translations = {
           loadError: 'Could not load the conversation.',
           sendError: 'Could not send your message.',
           newStaffMessageToast: 'New message from our team',
+          fabAriaLabel: 'Open conversation',
+          fabAriaLabelWithUnread: 'Open conversation ({count} unread)',
         },
         guideReviews: {
           sectionTitle: 'Your guide',

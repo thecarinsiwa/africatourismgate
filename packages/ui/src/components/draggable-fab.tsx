@@ -1,6 +1,5 @@
 'use client';
 
-import { cn } from '@africatourismgate/ui';
 import {
   useCallback,
   useEffect,
@@ -9,6 +8,7 @@ import {
   type PointerEvent as ReactPointerEvent,
   type ReactNode,
 } from 'react';
+import { cn } from '../lib/cn';
 
 const FAB_SIZE = 80;
 const VIEWPORT_MARGIN = 24;
@@ -55,7 +55,7 @@ function loadStoredPosition(storageKey: string | undefined): FabPosition | null 
   }
 }
 
-type DraggableFabProps = {
+export type DraggableFabProps = {
   onClick: () => void;
   ariaLabel: string;
   children: ReactNode;
