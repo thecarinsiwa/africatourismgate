@@ -61,6 +61,7 @@ describe('Booking messages (e2e)', () => {
     expect(res.body.id).toEqual(expect.any(String));
     expect(res.body.bookingId).toBe(bookingId);
     expect(res.body.isStaff).toBe(false);
+    expect(res.body.authorName).toBe('E2E Customer');
     expect(res.body.body).toContain('confirmer ma demande');
 
     const adminList = await request(app.getHttpServer())
@@ -133,6 +134,7 @@ describe('Booking messages (e2e)', () => {
 
     expect(customerView.body.messages).toHaveLength(2);
     expect(customerView.body.messages[0].isStaff).toBe(false);
+    expect(customerView.body.messages[0].authorName).toBe('E2E Customer');
     expect(customerView.body.messages[1].isStaff).toBe(true);
 
     const adminView = await request(app.getHttpServer())
@@ -141,6 +143,7 @@ describe('Booking messages (e2e)', () => {
       .expect(200);
 
     expect(adminView.body.messages).toHaveLength(2);
+    expect(adminView.body.messages[0].authorName).toBe('E2E Customer');
 
     const adminListAfterRead = await request(app.getHttpServer())
       .get(apiPath('/bookings'))

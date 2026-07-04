@@ -8,6 +8,7 @@ export type ConversationChatMessage = {
   id: string;
   body: string;
   isStaff: boolean;
+  authorName?: string | null;
   createdAt: string;
 };
 
@@ -157,8 +158,19 @@ export function ConversationChat({
                       )}
                     >
                       <div className="mb-1 flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                        <span className="text-[10px] font-semibold uppercase tracking-wide text-atg-muted">
-                          {message.isStaff ? labels.authorStaff : labels.authorCustomer}
+                        <span
+                          className={cn(
+                            'text-[10px] font-semibold text-atg-muted',
+                            message.authorName?.trim()
+                              ? 'normal-case'
+                              : 'uppercase tracking-wide',
+                          )}
+                        >
+                          {message.authorName?.trim()
+                            ? message.authorName.trim()
+                            : message.isStaff
+                              ? labels.authorStaff
+                              : labels.authorCustomer}
                         </span>
                         <time
                           className="text-[10px] text-atg-muted"

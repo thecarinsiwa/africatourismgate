@@ -218,7 +218,9 @@ export function BookingMessagesSection({
         ) : null}
 
         <ConversationChat
-          messages={messages}
+          messages={messages.map((message) =>
+            message.isStaff ? message : { ...message, authorName: undefined },
+          )}
           loading={loading}
           labels={{
             threadAria: m.threadAria,

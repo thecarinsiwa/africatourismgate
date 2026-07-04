@@ -5,9 +5,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Repository } from 'typeorm';
+import { In, IsNull, Repository } from 'typeorm';
 import { newId } from '../../../common/utils/uuid';
-import { BookingMessages, Bookings } from '../../../entities/generated';
+import { BookingMessages, Bookings, Users } from '../../../entities/generated';
 import { PermissionsService } from '../../rbac/permissions.service';
 import { BookingAssistedEmailService } from './booking-assisted-email.service';
 import { BookingNotificationsService } from './booking-notifications.service';
@@ -21,6 +21,8 @@ export class BookingMessagesService {
     private readonly messagesRepository: Repository<BookingMessages>,
     @InjectRepository(Bookings)
     private readonly bookingsRepository: Repository<Bookings>,
+    @InjectRepository(Users)
+    private readonly usersRepository: Repository<Users>,
     private readonly permissionsService: PermissionsService,
     private readonly notifications: BookingNotificationsService,
     private readonly assistedEmail: BookingAssistedEmailService,
@@ -53,7 +55,7 @@ export class BookingMessagesService {
     }
 
     return {
-      messages: rows.map((row) => this.toDto(row)),
+      messages: await this.toDtos(rows),
     };
   }
 
@@ -114,7 +116,7 @@ export class BookingMessagesService {
     }
 
     return {
-      ...this.toDto(message),
+      ...(await this.toDto(message)),
       customerNotifiedByEmail,
     };
   }
@@ -205,14 +207,59 @@ export class BookingMessagesService {
     return new Date((lastSec + 1) * 1000);
   }
 
-  private toDto(message: BookingMessages): BookingMessageDto {
+  private async toDtos(messages: BookingMessages[]): Promise<BookingMessageDto[]> {
+    const authorNames = await this.loadCustomerAuthorNames(messages);
+    return Promise.all(
+      messages.map((message) => this.toDto(message, authorNames.get(message.userId ?? '') ?? null)),
+    );
+  }
+
+  private async toDto(
+    message: BookingMessages,
+    authorName?: string | null,
+  ): Promise<BookingMessageDto> {
+    const resolvedAuthorName =
+      authorName === undefined
+        ? (await this.loadCustomerAuthorNames([message])).get(message.userId ?? '') ?? null
+        : authorName;
+
     return {
       id: message.id,
       bookingId: message.bookingId,
       userId: message.userId,
       body: message.body,
       isStaff: message.isStaff === 1,
+      authorName: message.isStaff === 1 ? null : resolvedAuthorName,
       createdAt: message.createdAt.toISOString(),
     };
+  }
+
+  private async loadCustomerAuthorNames(
+    messages: BookingMessages[],
+  ): Promise<Map<string, string>> {
+    const userIds = [
+      ...new Set(
+        messages
+          .filter((message) => message.isStaff !== 1 && message.userId)
+          .map((message) => message.userId as string),
+      ),
+    ];
+
+    if (userIds.length === 0) {
+      return new Map();
+    }
+
+    const users = await this.usersRepository.find({
+      where: { id: In(userIds), deletedAt: IsNull() },
+      select: ['id', 'firstName', 'lastName'],
+    });
+
+    return new Map(
+      users.map((user) => [user.id, this.formatUserDisplayName(user)]).filter((entry) => entry[1]),
+    );
+  }
+
+  private formatUserDisplayName(user: Pick<Users, 'firstName' | 'lastName'>): string {
+    return [user.firstName, user.lastName].filter(Boolean).join(' ').trim();
   }
 }
