@@ -9,7 +9,10 @@ export class UpdateBookingVisitDatesDto {
   @Matches(DATE_PATTERN, { message: 'startDate doit être au format YYYY-MM-DD.' })
   startDate!: string;
 
-  @ApiPropertyOptional({ example: '2026-07-22', description: 'Date de fin (défaut : startDate)' })
+  @ApiPropertyOptional({
+    example: '2026-07-22',
+    description: 'Date de fin (calculée automatiquement à partir de la durée initiale si omise)',
+  })
   @IsOptional()
   @IsString()
   @Matches(DATE_PATTERN, { message: 'endDate doit être au format YYYY-MM-DD.' })

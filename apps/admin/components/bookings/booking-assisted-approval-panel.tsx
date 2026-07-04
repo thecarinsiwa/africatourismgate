@@ -53,17 +53,16 @@ function deriveVisitDatesFromItems(
   };
 }
 
-function shouldShowVisitEndDate(items: BookingItem[]): boolean {
-  const dated = items.filter((item) => item.startDate);
-  if (dated.length > 1) {
-    return true;
-  }
-  if (dated.length === 1) {
-    const item = dated[0]!;
-    const end = item.endDate ?? item.startDate!;
-    return item.startDate !== end;
-  }
-  return false;
+function addDaysToDateOnly(iso: string, days: number): string {
+  const date = new Date(`${iso}T00:00:00Z`);
+  date.setUTCDate(date.getUTCDate() + days);
+  return date.toISOString().slice(0, 10);
+}
+
+function visitSpanDays(startDate: string, endDate: string): number {
+  const start = new Date(`${startDate}T00:00:00Z`);
+  const end = new Date(`${endDate}T00:00:00Z`);
+  return Math.max(0, Math.round((end.getTime() - start.getTime()) / 86_400_000));
 }
 
 function parseMoneyToCents(value: string): number | null {
@@ -127,12 +126,23 @@ export function BookingAssistedApprovalPanel({
   const [totalTouched, setTotalTouched] = useState(false);
   const [pricingDirty, setPricingDirty] = useState(false);
   const [visitStartDate, setVisitStartDate] = useState('');
-  const [visitEndDate, setVisitEndDate] = useState('');
   const [visitDatesDirty, setVisitDatesDirty] = useState(false);
 
   const initialVisitDates = useMemo(() => deriveVisitDatesFromItems(items), [items]);
   const hasVisitDates = initialVisitDates != null;
-  const showVisitEndDate = shouldShowVisitEndDate(items);
+  const visitSpanDaysCount = useMemo(() => {
+    if (!initialVisitDates) {
+      return 0;
+    }
+    return visitSpanDays(initialVisitDates.startDate, initialVisitDates.endDate);
+  }, [initialVisitDates]);
+
+  const computedVisitEndDate = useMemo(() => {
+    if (!visitStartDate) {
+      return '';
+    }
+    return addDaysToDateOnly(visitStartDate, visitSpanDaysCount);
+  }, [visitStartDate, visitSpanDaysCount]);
 
   const subtotalCents = useMemo(() => {
     return travelers.reduce((sum, traveler) => {
@@ -196,7 +206,6 @@ export function BookingAssistedApprovalPanel({
   useEffect(() => {
     if (initialVisitDates) {
       setVisitStartDate(initialVisitDates.startDate);
-      setVisitEndDate(initialVisitDates.endDate);
       setVisitDatesDirty(false);
     }
   }, [initialVisitDates]);
@@ -274,7 +283,7 @@ export function BookingAssistedApprovalPanel({
     }
     return {
       startDate: visitStartDate,
-      endDate: showVisitEndDate ? visitEndDate || visitStartDate : visitStartDate,
+      endDate: computedVisitEndDate || visitStartDate,
     };
   }
 
@@ -418,29 +427,18 @@ export function BookingAssistedApprovalPanel({
             type="date"
             value={visitStartDate}
             onChange={(e) => {
-              const nextStart = e.target.value;
-              setVisitStartDate(nextStart);
-              if (!showVisitEndDate) {
-                setVisitEndDate(nextStart);
-              }
+              setVisitStartDate(e.target.value);
               setVisitDatesDirty(true);
             }}
             disabled={!editable || loading}
           />
-          {showVisitEndDate ? (
-            <Input
-              label={t('visitEndDate')}
-              name="visitEndDate"
-              type="date"
-              value={visitEndDate}
-              min={visitStartDate || undefined}
-              onChange={(e) => {
-                setVisitEndDate(e.target.value);
-                setVisitDatesDirty(true);
-              }}
-              disabled={!editable || loading}
-            />
-          ) : null}
+          <div>
+            <p className="mb-1 text-sm font-medium text-atg-fg">{t('visitEndDate')}</p>
+            <p className="flex h-11 items-center rounded-lg border border-atg-border bg-atg-muted/20 px-3 text-sm tabular-nums text-atg-muted">
+              {computedVisitEndDate || '—'}
+            </p>
+            <p className="mt-1 text-xs text-atg-muted">{t('visitEndDateAutoHint')}</p>
+          </div>
         </div>
         {editable && status === 'pending_payment' ? (
           <Button

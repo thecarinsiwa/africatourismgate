@@ -25,6 +25,16 @@ export function enumerateDates(dateFrom: string, dateTo: string): string[] {
   return dates;
 }
 
+export function visitSpanDays(dateFrom: string, dateTo: string): number {
+  return enumerateDates(dateFrom, dateTo).length - 1;
+}
+
+export function addDaysToDateOnly(iso: string, days: number): string {
+  const date = parseDateOnly(iso);
+  date.setUTCDate(date.getUTCDate() + days);
+  return formatDateOnly(date);
+}
+
 function parseDateOnly(iso: string): Date {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
   if (!match) {

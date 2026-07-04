@@ -349,15 +349,32 @@ describe('Booking approval (e2e)', () => {
   });
 
   it('PUT /bookings/:id/visit-dates updates item dates in pending_approval', async () => {
-    const date = '2099-09-10';
-    const newDate = '2099-09-15';
-    await ensureRoomAvailabilityForDate(app, adminToken, date, 2);
-    await ensureRoomAvailabilityForDate(app, adminToken, newDate, 2);
+    const startDate = '2099-09-10';
+    const endDate = '2099-09-12';
+    const newStartDate = '2099-09-15';
+    const expectedEndDate = '2099-09-17';
+    await ensureRoomAvailabilityForDate(app, adminToken, startDate, 2);
+    await ensureRoomAvailabilityForDate(app, adminToken, '2099-09-11', 2);
+    await ensureRoomAvailabilityForDate(app, adminToken, endDate, 2);
+    await ensureRoomAvailabilityForDate(app, adminToken, newStartDate, 2);
+    await ensureRoomAvailabilityForDate(app, adminToken, '2099-09-16', 2);
+    await ensureRoomAvailabilityForDate(app, adminToken, expectedEndDate, 2);
 
     const created = await request(app.getHttpServer())
       .post(apiPath('/bookings/request'))
       .set(authHeader(customerToken))
-      .send(assistedCheckoutBody(date))
+      .send({
+        items: [
+          {
+            itemType: 'room',
+            referenceId: SEED_ROOM_ID,
+            startDate,
+            endDate,
+            quantity: 1,
+          },
+        ],
+        currency: 'USD',
+      })
       .expect(201);
 
     const bookingId = created.body.bookingId as string;
@@ -365,10 +382,12 @@ describe('Booking approval (e2e)', () => {
     const updated = await request(app.getHttpServer())
       .put(apiPath(`/bookings/${bookingId}/visit-dates`))
       .set(authHeader(adminToken))
-      .send({ startDate: newDate })
+      .send({ startDate: newStartDate })
       .expect(200);
 
-    expect(updated.body.items?.[0]?.startDate).toMatch(new RegExp(`^${newDate}`));
+    expect(updated.body.items).toHaveLength(3);
+    expect(updated.body.items[0]?.startDate).toMatch(new RegExp(`^${newStartDate}`));
+    expect(updated.body.items[2]?.startDate).toMatch(new RegExp(`^${expectedEndDate}`));
   });
 });
 

@@ -30,7 +30,7 @@ import {
   countRentalDays,
   slotCoversRentalPeriod,
 } from '../../public/vehicles/vehicle-dates.util';
-import { enumerateDates } from '../room-availability/room-availability-date.util';
+import { enumerateDates, addDaysToDateOnly, visitSpanDays } from '../room-availability/room-availability-date.util';
 import { OrganizationSettingsService } from '../organization-settings/organization-settings.service';
 import {
   BookingCheckoutDto,
@@ -383,8 +383,7 @@ export class BookingEngineService {
     }
 
     const startDate = options.startDate;
-    const endDate = options.endDate ?? options.startDate;
-    const newDates = enumerateDates(startDate, endDate);
+    let endDate = options.endDate;
 
     await this.bookingsRepository.manager.transaction(async (manager) => {
       const itemsRepo = manager.getRepository(BookingItems);
@@ -397,6 +396,16 @@ export class BookingEngineService {
       if (datedItems.length === 0) {
         throw new BadRequestException('Aucune ligne de réservation avec dates à modifier.');
       }
+
+      if (!endDate) {
+        const originalStart = datedItems[0]!.startDate!;
+        const lastItem = datedItems[datedItems.length - 1]!;
+        const originalEnd = lastItem.endDate ?? lastItem.startDate!;
+        const spanDays = visitSpanDays(originalStart, originalEnd);
+        endDate = addDaysToDateOnly(startDate, spanDays);
+      }
+
+      const newDates = enumerateDates(startDate, endDate);
 
       if (booking.status === 'pending_payment') {
         const lines = await this.bookingItemsToResolvedLines(manager, items);
