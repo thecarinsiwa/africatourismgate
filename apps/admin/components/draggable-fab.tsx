@@ -10,7 +10,7 @@ import {
   type ReactNode,
 } from 'react';
 
-const FAB_SIZE = 56;
+const FAB_SIZE = 80;
 const VIEWPORT_MARGIN = 24;
 const DRAG_THRESHOLD_PX = 6;
 
@@ -171,7 +171,7 @@ export function DraggableFab({
       type="button"
       aria-label={ariaLabel}
       className={cn(
-        'fixed z-40 flex size-14 cursor-grab touch-none items-center justify-center rounded-2xl border border-atg-border bg-white p-2 shadow-lg transition-shadow hover:shadow-xl active:cursor-grabbing focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:bg-atg-elevated',
+        'fixed z-40 flex size-20 cursor-grab touch-none items-center justify-center rounded-2xl border border-primary/20 bg-primary p-3 text-white shadow-lg shadow-primary/25 transition-[box-shadow,background-color] hover:bg-primary-hover hover:shadow-xl hover:shadow-primary/30 active:cursor-grabbing focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-primary/30 dark:shadow-black/40',
         className,
       )}
       style={{ left: position.x, top: position.y }}
@@ -182,7 +182,7 @@ export function DraggableFab({
     >
       {children}
       {badge ? (
-        <span className="pointer-events-none absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full bg-amber-500 ring-2 ring-white dark:ring-atg-elevated" />
+        <span className="pointer-events-none absolute -right-0.5 -top-0.5 flex size-5 items-center justify-center rounded-full bg-atg-warning ring-2 ring-primary dark:ring-primary" />
       ) : null}
     </button>
   );

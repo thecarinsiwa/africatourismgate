@@ -158,7 +158,7 @@ export function BookingMessagesSection({ bookingId, canWrite }: BookingMessagesS
           storageKey={FAB_STORAGE_KEY}
           badge={hasUnread ? <span aria-hidden /> : undefined}
         >
-          <BookingChatFabIcon className="size-full" />
+          <BookingChatFabIcon className="size-11" />
         </DraggableFab>
       ) : null}
 
