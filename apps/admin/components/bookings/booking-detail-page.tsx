@@ -510,10 +510,10 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
           />
 
           <BookingGuidesSection bookingId={bookingId} canWrite={canWrite} />
-
-          <BookingMessagesSection bookingId={bookingId} canWrite={canWrite} />
         </div>
       </div>
+
+      <BookingMessagesSection bookingId={bookingId} canWrite={canWrite} />
 
       <AlertDialog
         open={statusDialogOpen}

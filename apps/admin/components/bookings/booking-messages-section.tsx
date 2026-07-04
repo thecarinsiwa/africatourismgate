@@ -2,13 +2,16 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { ConversationChat, useToast } from '@africatourismgate/ui';
+import { ConversationChat, Modal, useToast } from '@africatourismgate/ui';
 import type { BookingMessage } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { DraggableFab } from '../draggable-fab';
 import { getApiClient } from '../../lib/auth/api';
+import { BookingChatFabIcon } from './booking-chat-fab-icon';
 
 const POLL_INTERVAL_MS = 20_000;
+const FAB_STORAGE_KEY = 'atg-admin-booking-chat-fab-position';
 
 type BookingMessagesSectionProps = {
   bookingId: string;
@@ -44,12 +47,14 @@ export function BookingMessagesSection({ bookingId, canWrite }: BookingMessagesS
   const t = useTranslations('modules.bookings.messages');
   const { toast } = useToast();
 
+  const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<BookingMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [replyBody, setReplyBody] = useState('');
   const [replyError, setReplyError] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
+  const [hasUnread, setHasUnread] = useState(false);
   const knownMessageIdsRef = useRef<Set<string>>(new Set());
   const initialLoadDoneRef = useRef(false);
 
@@ -69,10 +74,14 @@ export function BookingMessagesSection({ bookingId, canWrite }: BookingMessagesS
             (message) => !known.has(message.id) && !message.isStaff,
           );
           if (newCustomerMessages.length > 0) {
-            toast({
-              variant: 'info',
-              message: t('toast.newCustomerMessage'),
-            });
+            if (open) {
+              toast({
+                variant: 'info',
+                message: t('toast.newCustomerMessage'),
+              });
+            } else {
+              setHasUnread(true);
+            }
           }
         }
 
@@ -90,12 +99,13 @@ export function BookingMessagesSection({ bookingId, canWrite }: BookingMessagesS
         }
       }
     },
-    [bookingId, getBookingsErrorMessage, t, toast],
+    [bookingId, getBookingsErrorMessage, open, t, toast],
   );
 
   useEffect(() => {
     initialLoadDoneRef.current = false;
     knownMessageIdsRef.current = new Set();
+    setHasUnread(false);
     void load();
   }, [load]);
 
@@ -108,6 +118,12 @@ export function BookingMessagesSection({ bookingId, canWrite }: BookingMessagesS
       window.clearInterval(intervalId);
     };
   }, [load]);
+
+  useEffect(() => {
+    if (open) {
+      setHasUnread(false);
+    }
+  }, [open]);
 
   const handleSend = useCallback(async () => {
     const body = replyBody.trim();
@@ -134,38 +150,56 @@ export function BookingMessagesSection({ bookingId, canWrite }: BookingMessagesS
   }, [bookingId, getBookingsErrorMessage, load, replyBody, t, toast]);
 
   return (
-    <section className="space-y-3">
-      <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
-
-      {error ? (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {error}
-        </p>
+    <>
+      {!open ? (
+        <DraggableFab
+          onClick={() => setOpen(true)}
+          ariaLabel={t('fabAriaLabel')}
+          storageKey={FAB_STORAGE_KEY}
+          badge={hasUnread ? <span aria-hidden /> : undefined}
+        >
+          <BookingChatFabIcon className="size-full" />
+        </DraggableFab>
       ) : null}
 
-      <ConversationChat
-        messages={messages}
-        loading={loading}
-        labels={{
-          threadAria: t('threadAria'),
-          loading: t('loading'),
-          empty: t('empty'),
-          authorStaff: t('author.staff'),
-          authorCustomer: t('author.customer'),
-          replyTitle: canWrite ? t('replyTitle') : undefined,
-          replyLabel: t('replyLabel'),
-          replyPlaceholder: t('replyPlaceholder'),
-          sendReply: t('sendReply'),
-        }}
-        formatDateTime={formatDateTime}
-        formatDateSeparator={formatDateSeparator}
-        canReply={canWrite}
-        replyBody={replyBody}
-        onReplyBodyChange={setReplyBody}
-        onSend={() => void handleSend()}
-        sending={sending}
-        replyError={replyError}
-      />
-    </section>
+      <Modal
+        open={open}
+        onOpenChange={setOpen}
+        title={t('title')}
+        showClose
+        className="flex max-h-[min(720px,90vh)] w-full max-w-2xl flex-col"
+      >
+        {error ? (
+          <p role="alert" className="mb-3 text-sm text-red-600 dark:text-red-400">
+            {error}
+          </p>
+        ) : null}
+
+        <ConversationChat
+          messages={messages}
+          loading={loading}
+          labels={{
+            threadAria: t('threadAria'),
+            loading: t('loading'),
+            empty: t('empty'),
+            authorStaff: t('author.staff'),
+            authorCustomer: t('author.customer'),
+            replyTitle: canWrite ? t('replyTitle') : undefined,
+            replyLabel: t('replyLabel'),
+            replyPlaceholder: t('replyPlaceholder'),
+            sendReply: t('sendReply'),
+          }}
+          formatDateTime={formatDateTime}
+          formatDateSeparator={formatDateSeparator}
+          canReply={canWrite}
+          replyBody={replyBody}
+          onReplyBodyChange={setReplyBody}
+          onSend={() => void handleSend()}
+          sending={sending}
+          replyError={replyError}
+          className="min-h-0 flex-1"
+        />
+      </Modal>
+    </>
   );
 }

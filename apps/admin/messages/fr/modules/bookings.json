@@ -226,6 +226,7 @@
   },
   "messages": {
     "title": "Conversation",
+    "fabAriaLabel": "Ouvrir la conversation de la réservation",
     "loading": "Chargement des messages…",
     "empty": "Aucun message pour le moment.",
     "threadAria": "Fil de messages de la réservation",
