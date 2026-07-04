@@ -348,6 +348,56 @@ describe('Booking approval (e2e)', () => {
     expect(manifestAfter.body[0].priceCents).toBe(5500);
   });
 
+  it('PUT /bookings/:id/pricing removes manifest entries omitted from travelers', async () => {
+    const date = '2099-09-04';
+    await ensureRoomAvailabilityForDate(app, adminToken, date, 2);
+
+    const created = await request(app.getHttpServer())
+      .post(apiPath('/bookings/request'))
+      .set(authHeader(customerToken))
+      .send(assistedCheckoutBody(date))
+      .expect(201);
+
+    const bookingId = created.body.bookingId as string;
+
+    await request(app.getHttpServer())
+      .post(apiPath(`/bookings/${bookingId}/approve`))
+      .set(authHeader(adminToken))
+      .send({
+        travelers: [
+          { fullName: 'Alice Martin', priceCents: 4000 },
+          { fullName: 'Bob Martin', priceCents: 4000 },
+        ],
+      })
+      .expect(201);
+
+    const manifestBefore = await request(app.getHttpServer())
+      .get(apiPath(`/bookings/${bookingId}/manifest-entries`))
+      .set(authHeader(adminToken))
+      .expect(200);
+
+    expect(manifestBefore.body).toHaveLength(2);
+    const keptId = manifestBefore.body[0].id as string;
+
+    await request(app.getHttpServer())
+      .put(apiPath(`/bookings/${bookingId}/pricing`))
+      .set(authHeader(adminToken))
+      .send({
+        travelers: [{ id: keptId, fullName: 'Alice Martin', priceCents: 4200 }],
+      })
+      .expect(200);
+
+    const manifestAfter = await request(app.getHttpServer())
+      .get(apiPath(`/bookings/${bookingId}/manifest-entries`))
+      .set(authHeader(adminToken))
+      .expect(200);
+
+    expect(manifestAfter.body).toHaveLength(1);
+    expect(manifestAfter.body[0].id).toBe(keptId);
+    expect(manifestAfter.body[0].fullName).toBe('Alice Martin');
+    expect(manifestAfter.body[0].priceCents).toBe(4200);
+  });
+
   it('PUT /bookings/:id/visit-dates updates item dates in pending_approval', async () => {
     const startDate = '2099-09-10';
     const endDate = '2099-09-12';

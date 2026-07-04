@@ -89,12 +89,16 @@ type Props = {
   bookingId: string;
   canWrite: boolean;
   suggestedCount?: number;
+  syncKey?: number;
+  onChanged?: () => void;
 };
 
 export function BookingManifestSection({
   bookingId,
   canWrite,
   suggestedCount = 0,
+  syncKey = 0,
+  onChanged,
 }: Props) {
   const { bookings: getBookingsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.bookings.manifest');
@@ -133,7 +137,7 @@ export function BookingManifestSection({
 
   useEffect(() => {
     void load();
-  }, [load]);
+  }, [load, syncKey]);
 
   function openCreate() {
     setEditingEntry(null);
@@ -171,6 +175,7 @@ export function BookingManifestSection({
       }
       setEditorOpen(false);
       await load();
+      onChanged?.();
     } catch (err) {
       setActionError(getBookingsErrorMessage(err));
     } finally {
@@ -187,6 +192,7 @@ export function BookingManifestSection({
       setDeleteTarget(null);
       toast({ variant: 'success', message: t('deleteSuccess') });
       await load();
+      onChanged?.();
     } catch (err) {
       setActionError(getBookingsErrorMessage(err));
     } finally {
