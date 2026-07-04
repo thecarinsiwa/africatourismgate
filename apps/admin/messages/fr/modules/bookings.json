@@ -194,6 +194,7 @@
     "travelersTitle": "Détail du paiement par voyageur",
     "travelerName": "Nom du voyageur",
     "travelerAge": "Âge",
+    "travelerBasePrice": "Prix de base ({currency})",
     "travelerPrice": "Prix ({currency})",
     "addTraveler": "Ajouter un voyageur",
     "removeTraveler": "Retirer",

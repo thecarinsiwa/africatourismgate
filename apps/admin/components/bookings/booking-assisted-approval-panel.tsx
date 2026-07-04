@@ -3,10 +3,11 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import { AlertDialog, Button, Card, Input, useToast } from '@africatourismgate/ui';
-import type { BookingManifestEntry, BookingStatus } from '@africatourismgate/types';
+import type { BookingItem, BookingManifestEntry, BookingStatus } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import { formatMoney } from '../../lib/format-money';
 
 type TravelerDraft = {
   key: string;
@@ -14,6 +15,7 @@ type TravelerDraft = {
   fullName: string;
   age: string;
   price: string;
+  basePriceCents?: number | null;
 };
 
 type BookingAssistedApprovalPanelProps = {
@@ -21,9 +23,20 @@ type BookingAssistedApprovalPanelProps = {
   status: BookingStatus;
   totalCents: number;
   currency: string;
+  items: BookingItem[];
   canApprove: boolean;
   onUpdated: () => Promise<void>;
 };
+
+function expandBasePricesFromItems(items: BookingItem[]): number[] {
+  const bases: number[] = [];
+  for (const item of items) {
+    for (let index = 0; index < item.quantity; index++) {
+      bases.push(item.unitPriceCents);
+    }
+  }
+  return bases;
+}
 
 function parseMoneyToCents(value: string): number | null {
   const parsed = Number.parseFloat(value.replace(',', '.'));
@@ -37,22 +50,24 @@ function formatCentsToMoney(cents: number): string {
   return (cents / 100).toFixed(2);
 }
 
-function entryToDraft(entry: BookingManifestEntry): TravelerDraft {
+function entryToDraft(entry: BookingManifestEntry, basePriceCents?: number | null): TravelerDraft {
   return {
     key: entry.id,
     id: entry.id,
     fullName: entry.fullName,
     age: entry.age != null ? String(entry.age) : '',
     price: entry.priceCents != null ? formatCentsToMoney(entry.priceCents) : '',
+    basePriceCents: basePriceCents ?? null,
   };
 }
 
-function createEmptyTraveler(defaultPrice = ''): TravelerDraft {
+function createEmptyTraveler(defaultPrice = '', basePriceCents?: number | null): TravelerDraft {
   return {
     key: crypto.randomUUID(),
     fullName: '',
     age: '',
     price: defaultPrice,
+    basePriceCents: basePriceCents ?? null,
   };
 }
 
@@ -61,6 +76,7 @@ export function BookingAssistedApprovalPanel({
   status,
   totalCents,
   currency,
+  items,
   canApprove,
   onUpdated,
 }: BookingAssistedApprovalPanelProps) {
@@ -90,21 +106,43 @@ export function BookingAssistedApprovalPanel({
     }, 0);
   }, [travelers]);
 
+  const basePricesPerTraveler = useMemo(() => expandBasePricesFromItems(items), [items]);
+
   const loadManifest = useCallback(async () => {
     setManifestLoading(true);
     try {
       const entries = await getApiClient().listBookingManifestEntries(bookingId);
       if (entries.length > 0) {
-        setTravelers(entries.map(entryToDraft));
+        setTravelers(
+          entries.map((entry, index) =>
+            entryToDraft(entry, basePricesPerTraveler[index] ?? null),
+          ),
+        );
       } else if (status === 'pending_approval') {
-        setTravelers([
-          {
-            key: crypto.randomUUID(),
-            fullName: t('defaultTravelerName'),
-            age: '',
-            price: formatCentsToMoney(totalCents),
-          },
-        ]);
+        if (basePricesPerTraveler.length > 0) {
+          setTravelers(
+            basePricesPerTraveler.map((basePriceCents, index) => ({
+              key: crypto.randomUUID(),
+              fullName:
+                basePricesPerTraveler.length === 1
+                  ? t('defaultTravelerName')
+                  : `${t('defaultTravelerName')} ${index + 1}`,
+              age: '',
+              price: formatCentsToMoney(basePriceCents),
+              basePriceCents,
+            })),
+          );
+        } else {
+          setTravelers([
+            {
+              key: crypto.randomUUID(),
+              fullName: t('defaultTravelerName'),
+              age: '',
+              price: formatCentsToMoney(totalCents),
+              basePriceCents: totalCents > 0 ? totalCents : null,
+            },
+          ]);
+        }
       } else {
         setTravelers([]);
       }
@@ -114,7 +152,7 @@ export function BookingAssistedApprovalPanel({
     } finally {
       setManifestLoading(false);
     }
-  }, [bookingId, status, t, totalCents]);
+  }, [bookingId, status, t, totalCents, basePricesPerTraveler]);
 
   useEffect(() => {
     void loadManifest();
@@ -281,7 +319,10 @@ export function BookingAssistedApprovalPanel({
   }
 
   function addTraveler() {
-    setTravelers((prev) => [...prev, createEmptyTraveler()]);
+    const nextBasePrice = basePricesPerTraveler[travelers.length] ?? null;
+    const defaultPrice =
+      nextBasePrice != null ? formatCentsToMoney(nextBasePrice) : '';
+    setTravelers((prev) => [...prev, createEmptyTraveler(defaultPrice, nextBasePrice)]);
     setPricingDirty(true);
   }
 
@@ -308,7 +349,7 @@ export function BookingAssistedApprovalPanel({
             {travelers.map((traveler) => (
               <div
                 key={traveler.key}
-                className="grid gap-3 rounded-lg border border-atg-border bg-atg-surface/50 p-3 sm:grid-cols-[1fr_6rem_8rem_auto]"
+                className="grid gap-3 rounded-lg border border-atg-border bg-atg-surface/50 p-3 sm:grid-cols-[1fr_5rem_7rem_8rem_auto]"
               >
                 <Input
                   label={t('travelerName')}
@@ -327,6 +368,16 @@ export function BookingAssistedApprovalPanel({
                   onChange={(e) => updateTraveler(traveler.key, { age: e.target.value })}
                   disabled={!editable || loading}
                 />
+                <div>
+                  <p className="mb-1 text-sm font-medium text-atg-fg">
+                    {t('travelerBasePrice', { currency })}
+                  </p>
+                  <p className="flex h-11 items-center rounded-lg border border-atg-border bg-atg-muted/20 px-3 text-sm tabular-nums text-atg-muted">
+                    {traveler.basePriceCents != null
+                      ? formatMoney(traveler.basePriceCents, currency)
+                      : '—'}
+                  </p>
+                </div>
                 <Input
                   label={t('travelerPrice', { currency })}
                   name={`traveler-price-${traveler.key}`}

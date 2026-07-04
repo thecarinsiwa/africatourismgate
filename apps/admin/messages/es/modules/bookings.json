@@ -194,6 +194,7 @@
     "travelersTitle": "Desglose del pago por viajero",
     "travelerName": "Nombre del viajero",
     "travelerAge": "Edad",
+    "travelerBasePrice": "Precio base ({currency})",
     "travelerPrice": "Precio ({currency})",
     "addTraveler": "Añadir viajero",
     "removeTraveler": "Quitar",

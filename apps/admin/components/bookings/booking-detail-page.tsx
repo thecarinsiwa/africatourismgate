@@ -396,6 +396,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
             status={booking.status}
             totalCents={detail.totalCents}
             currency={detail.currency}
+            items={detail.items}
             canApprove={canApprove}
             onUpdated={load}
           />

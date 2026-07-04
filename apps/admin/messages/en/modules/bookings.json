@@ -194,6 +194,7 @@
     "travelersTitle": "Payment breakdown by traveler",
     "travelerName": "Traveler name",
     "travelerAge": "Age",
+    "travelerBasePrice": "Base price ({currency})",
     "travelerPrice": "Price ({currency})",
     "addTraveler": "Add traveler",
     "removeTraveler": "Remove",
