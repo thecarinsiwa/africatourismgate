@@ -142,10 +142,16 @@ export function renderBookingDetailPdf(input: BookingDetailPdfInput): Promise<Bu
   });
 
   let headerX = PAGE_MARGIN;
+  let headerTop = PAGE_MARGIN;
+  const logoHeight = 48;
   if (input.logoPath) {
     try {
-      doc.image(input.logoPath, PAGE_MARGIN, PAGE_MARGIN, { width: 44, height: 44 });
-      headerX = PAGE_MARGIN + 54;
+      const logoWidth = 120;
+      doc.image(input.logoPath, PAGE_MARGIN, PAGE_MARGIN, {
+        fit: [logoWidth, logoHeight],
+      });
+      headerX = PAGE_MARGIN + logoWidth + 10;
+      headerTop = PAGE_MARGIN;
     } catch {
       // logo optional
     }
@@ -155,7 +161,7 @@ export function renderBookingDetailPdf(input: BookingDetailPdfInput): Promise<Bu
     .fillColor(brandColor)
     .fontSize(18)
     .font('Helvetica-Bold')
-    .text(labels.documentTitle, headerX, PAGE_MARGIN, {
+    .text(labels.documentTitle, headerX, headerTop, {
       width: CONTENT_WIDTH - (headerX - PAGE_MARGIN),
     });
 
@@ -166,7 +172,10 @@ export function renderBookingDetailPdf(input: BookingDetailPdfInput): Promise<Bu
     .font('Helvetica')
     .text(orgName, headerX, doc.y, { width: CONTENT_WIDTH - (headerX - PAGE_MARGIN) });
 
-  doc.y = Math.max(doc.y, PAGE_MARGIN + 50);
+  doc.y = Math.max(
+    doc.y,
+    input.logoPath ? PAGE_MARGIN + logoHeight + 4 : PAGE_MARGIN + 44,
+  );
   doc
     .fillColor(mutedColor)
     .fontSize(9)

@@ -1,4 +1,5 @@
 import { DEFAULT_EMAIL_BRANDING } from '../../src/modules/email/email-branding.constants';
+import { extractBrandingUploadFilename } from '../../src/modules/email/email-attachments';
 import { getBookingDetailPdfLabels } from '../../src/modules/email/booking-detail-pdf.labels';
 import {
   bookingRefForPdf,
@@ -45,6 +46,17 @@ function sampleInput(locale: 'fr' | 'en' | 'es' = 'fr') {
 }
 
 describe('booking-detail-pdf', () => {
+  it('extracts branding upload filename from logo URLs', () => {
+    expect(
+      extractBrandingUploadFilename(
+        'https://app-africatourismgate.org/api/uploads/branding/logo-org.png',
+      ),
+    ).toBe('logo-org.png');
+    expect(extractBrandingUploadFilename('/api/uploads/branding/sample.png')).toBe(
+      'sample.png',
+    );
+  });
+
   it('generates a non-empty PDF buffer with booking reference', async () => {
     const buffer = await renderBookingDetailPdf(sampleInput('fr'));
     expect(buffer.length).toBeGreaterThan(500);

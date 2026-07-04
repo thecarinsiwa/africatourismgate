@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { IsNull, Repository } from 'typeorm';
+import { Organizations } from '../../entities/generated';
 import type { BookingManifestEntryDto } from '../resources/bookings/dto/booking-manifest-entry.dto';
 import type { BookingDetailDto } from '../resources/bookings/dto/booking-detail.dto';
 import { EmailBrandingService } from './email-branding.service';
-import { resolveLogoFilePath } from './email-attachments';
+import { resolveLogoForPdf } from './email-attachments';
 import { PLATFORM_ORG_ID } from '../../common/org-scope/org-scope.service';
 import { DEFAULT_EMAIL_BRANDING } from './email-branding.constants';
 import { bookingDetailPdfFilename, resolvePdfLocale } from './booking-detail-pdf.labels';
@@ -17,8 +20,10 @@ type GeneratePdfParams = {
     lastName: string;
     email: string;
     preferredLanguage?: string | null;
+    organizationId?: string | null;
   };
   webUrl?: string;
+  organizationId?: string;
 };
 
 function toDateOnlyString(value: string | null | undefined): string | null {
@@ -52,12 +57,20 @@ function deriveVisitDates(
 
 @Injectable()
 export class BookingDetailPdfService {
-  constructor(private readonly brandingService: EmailBrandingService) {}
+  constructor(
+    private readonly brandingService: EmailBrandingService,
+    @InjectRepository(Organizations)
+    private readonly organizationsRepository: Repository<Organizations>,
+  ) {}
 
   async generate(params: GeneratePdfParams): Promise<{ buffer: Buffer; filename: string }> {
     const { detail, manifest, customer, webUrl } = params;
     const locale = resolvePdfLocale(customer.preferredLanguage);
-    const branding = await this.resolveBranding();
+    const organizationId =
+      params.organizationId ?? customer.organizationId ?? PLATFORM_ORG_ID;
+    const branding = await this.resolveBranding(organizationId);
+    const logoUrl = await this.resolveOrganizationLogoUrl(organizationId, branding.logoUrl);
+    const logoPath = await resolveLogoForPdf(logoUrl);
     const visitDates = deriveVisitDates(detail.items);
     const baseUrl = webBase(webUrl);
     const bookingId = detail.booking.id;
@@ -91,7 +104,7 @@ export class BookingDetailPdfService {
       accountUrl: `${baseUrl}/account/reservations/${bookingId}`,
       locale,
       branding,
-      logoPath: resolveLogoFilePath(),
+      logoPath,
       generatedAt: new Date().toISOString(),
     });
 
@@ -101,11 +114,26 @@ export class BookingDetailPdfService {
     };
   }
 
-  private async resolveBranding() {
+  private async resolveBranding(organizationId: string) {
     try {
-      return await this.brandingService.resolveForOrganization(PLATFORM_ORG_ID);
+      return await this.brandingService.resolveForOrganization(organizationId);
     } catch {
       return DEFAULT_EMAIL_BRANDING;
     }
+  }
+
+  private async resolveOrganizationLogoUrl(
+    organizationId: string,
+    brandingLogoUrl?: string,
+  ): Promise<string | undefined> {
+    if (brandingLogoUrl?.trim()) {
+      return brandingLogoUrl.trim();
+    }
+
+    const organization = await this.organizationsRepository.findOne({
+      where: { id: organizationId, deletedAt: IsNull() },
+    });
+    const orgLogo = organization?.logoUrl?.trim();
+    return orgLogo || undefined;
   }
 }

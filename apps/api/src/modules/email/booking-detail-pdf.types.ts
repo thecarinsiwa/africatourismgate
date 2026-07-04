@@ -34,6 +34,6 @@ export type BookingDetailPdfInput = {
   accountUrl: string;
   locale: BookingDetailPdfLocale;
   branding: EmailBrandingValue;
-  logoPath?: string | null;
+  logoPath?: string | Buffer | null;
   generatedAt: string;
 };

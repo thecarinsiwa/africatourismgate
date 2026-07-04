@@ -125,6 +125,7 @@ export class BookingAssistedEmailService {
           lastName: user.lastName,
           email: user.email,
           preferredLanguage: user.preferredLanguage,
+          organizationId: user.organizationId,
         },
         webUrl: base.webUrl,
       });
