@@ -1207,6 +1207,23 @@ export const es: Translations = {
       },
     },
   },
+  blog: {
+    metaTitle: 'Blog de viajes en África',
+    metaDescription:
+      'Consejos, guías e inspiración para planificar su próximo viaje a África con Africa Tourism Gate.',
+    heroTitle: 'Blog',
+    heroSubtitle: 'Guías, consejos e inspiración para viajar por África.',
+    readMore: 'Leer más',
+    loading: 'Cargando artículos…',
+    loadError: 'No se pudo cargar el blog. Compruebe que la API esté en ejecución.',
+    retry: 'Reintentar',
+    noResults: 'No hay artículos publicados',
+    noResultsHint: 'Vuelva pronto para descubrir nuevo contenido.',
+    backToBlog: 'Volver al blog',
+    publishedOn: 'Publicado el',
+    breadcrumbHome: 'Inicio',
+    breadcrumbBlog: 'Blog',
+  },
   comingSoon: {
     badge: 'Próximamente',
     title: 'Próximamente',

@@ -274,6 +274,17 @@ export type {
 } from './tour-guide.js';
 
 export type {
+  BlogPost,
+  BlogPostStatus,
+  BlogPostsListQuery,
+  CreateBlogPostRequest,
+  PublicBlogPostDetail,
+  PublicBlogPostListItem,
+  PublicBlogPostsListQuery,
+  UpdateBlogPostRequest,
+} from './blog-post.js';
+
+export type {
   AdminReviewDetail,
   AdminReviewListItem,
   CreateBookingReviewRequest,

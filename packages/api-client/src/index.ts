@@ -162,6 +162,10 @@ import type {
   TourGuidesListQuery,
   CreateTourGuideRequest,
   UpdateTourGuideRequest,
+  BlogPost,
+  BlogPostsListQuery,
+  CreateBlogPostRequest,
+  UpdateBlogPostRequest,
   Permission,
   PermissionsListQuery,
   RbacAuditLog,
@@ -1178,6 +1182,34 @@ export class ApiClient {
 
   deleteTourGuide(id: string): Promise<void> {
     return this.request<void>(`/tour-guides/${id}`, { method: 'DELETE' });
+  }
+
+  listBlogPosts(
+    query?: BlogPostsListQuery,
+  ): Promise<PaginatedResponse<BlogPost>> {
+    return fetchPaginated<BlogPost>(this, '/blog-posts', query);
+  }
+
+  getBlogPost(id: string): Promise<BlogPost> {
+    return this.request<BlogPost>(`/blog-posts/${id}`);
+  }
+
+  createBlogPost(body: CreateBlogPostRequest): Promise<BlogPost> {
+    return this.request<BlogPost>('/blog-posts', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateBlogPost(id: string, body: UpdateBlogPostRequest): Promise<BlogPost> {
+    return this.request<BlogPost>(`/blog-posts/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteBlogPost(id: string): Promise<void> {
+    return this.request<void>(`/blog-posts/${id}`, { method: 'DELETE' });
   }
 
   getSucceededPaymentsRevenue(): Promise<SucceededPaymentsRevenue> {
