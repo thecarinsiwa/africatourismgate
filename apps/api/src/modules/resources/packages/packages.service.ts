@@ -64,7 +64,11 @@ export class PackagesService extends CrudService<Packages> {
   private normalizePackagePayload(
     dto: CreatePackageDto | UpdatePackageDto,
   ): DeepPartial<Packages> {
-    const payload: DeepPartial<Packages> = { ...dto };
+    const payload: DeepPartial<Packages> = {};
+
+    if (dto.name !== undefined) payload.name = dto.name;
+    if (dto.description !== undefined) payload.description = dto.description;
+    if (dto.durationDays !== undefined) payload.durationDays = dto.durationDays;
 
     if (dto.active !== undefined) {
       payload.active = dto.active ? 1 : 0;
