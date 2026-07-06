@@ -1219,6 +1219,8 @@ export const es: Translations = {
     retry: 'Reintentar',
     noResults: 'No hay artículos publicados',
     noResultsHint: 'Vuelva pronto para descubrir nuevo contenido.',
+    localeFallback:
+      'No hay artículos en su idioma por ahora — se muestran los disponibles en otros idiomas.',
     backToBlog: 'Volver al blog',
     publishedOn: 'Publicado el',
     breadcrumbHome: 'Inicio',

@@ -45,6 +45,10 @@ export function packageUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/packages/${filename}`;
 }
 
+export function blogPostUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/blog/${filename}`;
+}
+
 function getApiPublicOrigin(): string {
   return getApiBaseUrl().replace(/\/api$/, '');
 }

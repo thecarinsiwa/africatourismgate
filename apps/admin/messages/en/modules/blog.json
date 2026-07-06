@@ -42,6 +42,7 @@
       "content": "Content",
       "contentPlaceholder": "<p>Post body (HTML)…</p>",
       "coverImageUrl": "Cover image (URL)",
+      "coverPreviewAlt": "Cover image preview",
       "locale": "Language",
       "publishedAtOptional": "Publish date (optional)"
     },

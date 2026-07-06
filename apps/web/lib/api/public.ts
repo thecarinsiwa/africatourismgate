@@ -440,6 +440,30 @@ export async function browseBlogPosts(
   );
 }
 
+/** Prefer posts in `locale`, then fall back to all published posts. */
+export async function browseBlogPostsForLocale(
+  locale: string,
+  params: Omit<PublicBlogPostsListQuery, 'locale'> = {},
+): Promise<{
+  response: PaginatedResponse<PublicBlogPostListItem>;
+  usedLocaleFallback: boolean;
+}> {
+  try {
+    const localized = await browseBlogPosts({ ...params, locale });
+    if (localized.data.length > 0) {
+      return { response: localized, usedLocaleFallback: false };
+    }
+  } catch {
+    /* try without locale filter below */
+  }
+
+  const all = await browseBlogPosts(params);
+  return {
+    response: all,
+    usedLocaleFallback: all.data.length > 0,
+  };
+}
+
 export async function getBlogPostBySlug(
   slug: string,
   locale?: string,
@@ -448,4 +472,20 @@ export async function getBlogPostBySlug(
   return fetchPublic<PublicBlogPostDetail>(
     `/public/blog/${encodeURIComponent(slug)}${qs}`,
   );
+}
+
+/** Resolve by slug in `locale`, then without locale filter. */
+export async function getBlogPostBySlugForLocale(
+  slug: string,
+  locale?: string,
+): Promise<PublicBlogPostDetail> {
+  if (!locale) {
+    return getBlogPostBySlug(slug);
+  }
+
+  try {
+    return await getBlogPostBySlug(slug, locale);
+  } catch {
+    return getBlogPostBySlug(slug);
+  }
 }

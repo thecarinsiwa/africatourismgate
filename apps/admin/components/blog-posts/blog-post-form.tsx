@@ -4,11 +4,17 @@ import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import { Button, Input } from '@africatourismgate/ui';
 import type { BlogPost, BlogPostStatus, CreateBlogPostRequest } from '@africatourismgate/types';
+import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useId, useState } from 'react';
-import { getApiClient } from '../../lib/auth/api';
+import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
+import { getSession } from '../../lib/auth/session';
+import { resolveMediaUrl } from '../../lib/resolve-media-url';
 import { isValidSlug, slugifyName } from '../../lib/slug';
+
+const BLOG_COVER_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
+const ALLOWED_BLOG_COVER_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
 export type BlogPostFormValues = {
   title: string;
@@ -77,6 +83,8 @@ export function BlogPostForm({ mode, postId, initialPost }: BlogPostFormProps) {
   const { blog: getBlogErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.blog.form');
   const tCommon = useTranslations('modules.common');
+  const tCommonForm = useTranslations('modules.common.form');
+  const tValidation = useTranslations('modules.common.validation');
   const tLocale = useTranslations('modules.blog.locale');
   const router = useRouter();
   const statusId = useId();
@@ -90,6 +98,8 @@ export function BlogPostForm({ mode, postId, initialPost }: BlogPostFormProps) {
   );
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [uploadingCover, setUploadingCover] = useState(false);
+  const coverFileInputId = useId();
 
   const updateField = useCallback(
     <K extends keyof BlogPostFormValues>(key: K, value: BlogPostFormValues[K]) => {
@@ -104,6 +114,62 @@ export function BlogPostForm({ mode, postId, initialPost }: BlogPostFormProps) {
     },
     [slugTouched],
   );
+
+  async function handleCoverImagePick(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    try {
+      if (!ALLOWED_BLOG_COVER_IMAGE_TYPES.has(file.type)) {
+        setFieldErrors((prev) => ({
+          ...prev,
+          coverImageUrl: tValidation('imageFormat'),
+        }));
+        return;
+      }
+      if (file.size > BLOG_COVER_IMAGE_MAX_BYTES) {
+        setFieldErrors((prev) => ({
+          ...prev,
+          coverImageUrl: tValidation('imageTooLarge'),
+        }));
+        return;
+      }
+      const session = getSession();
+      if (!session?.accessToken) {
+        setFieldErrors((prev) => ({
+          ...prev,
+          coverImageUrl: tValidation('sessionExpiredRetry'),
+        }));
+        return;
+      }
+      setUploadingCover(true);
+      setFieldErrors((prev) => ({ ...prev, coverImageUrl: undefined }));
+      const body = new FormData();
+      body.append('file', file);
+      const response = await fetch(`${resolveApiBaseUrl()}/blog-posts/upload-cover`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${session.accessToken}`,
+        },
+        body,
+      });
+      if (!response.ok) {
+        throw new Error('Upload blog cover failed');
+      }
+      const payload = (await response.json()) as { url?: string };
+      if (!payload.url) {
+        throw new Error('Invalid upload response');
+      }
+      updateField('coverImageUrl', payload.url);
+    } catch {
+      setFieldErrors((prev) => ({
+        ...prev,
+        coverImageUrl: tValidation('uploadFailed'),
+      }));
+    } finally {
+      setUploadingCover(false);
+      event.target.value = '';
+    }
+  }
 
   function validate(): boolean {
     const errors: Partial<Record<keyof BlogPostFormValues, string>> = {};
@@ -120,15 +186,8 @@ export function BlogPostForm({ mode, postId, initialPost }: BlogPostFormProps) {
       errors.content = t('validation.contentRequired');
     }
     const coverUrl = values.coverImageUrl.trim();
-    if (coverUrl) {
-      try {
-        const parsed = new URL(coverUrl);
-        if (!['http:', 'https:'].includes(parsed.protocol)) {
-          errors.coverImageUrl = t('validation.coverUrlInvalid');
-        }
-      } catch {
-        errors.coverImageUrl = t('validation.coverUrlInvalid');
-      }
+    if (coverUrl && !isValidCoverImageUrl(coverUrl)) {
+      errors.coverImageUrl = t('validation.coverUrlInvalid');
     }
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
@@ -232,15 +291,48 @@ export function BlogPostForm({ mode, postId, initialPost }: BlogPostFormProps) {
         )}
       </div>
 
-      <Input
-        label={t('fields.coverImageUrl')}
-        name="coverImageUrl"
-        type="url"
-        value={values.coverImageUrl}
-        onChange={(e) => updateField('coverImageUrl', e.target.value)}
-        placeholder={tCommon('form.urlPlaceholder')}
-        error={fieldErrors.coverImageUrl}
-      />
+      <div className="space-y-3">
+        <p className="text-sm font-medium text-atg-fg">{t('fields.coverImageUrl')}</p>
+        <div className="flex flex-wrap items-center gap-3">
+          <label
+            htmlFor={coverFileInputId}
+            className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10"
+          >
+            {uploadingCover ? tCommonForm('uploading') : tCommonForm('chooseFile')}
+            <input
+              id={coverFileInputId}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              className="hidden"
+              onChange={(e) => void handleCoverImagePick(e)}
+              disabled={uploadingCover || submitting}
+            />
+          </label>
+          <span className="text-xs text-atg-muted">{tCommonForm('imageFormatHint')}</span>
+        </div>
+        {values.coverImageUrl.trim() ? (
+          <Image
+            src={resolveMediaUrl(values.coverImageUrl.trim())}
+            alt={t('fields.coverPreviewAlt')}
+            width={640}
+            height={360}
+            unoptimized
+            className="h-44 w-full max-w-xl rounded-lg border border-atg-border object-cover"
+            onError={(e) => {
+              (e.target as HTMLImageElement).style.display = 'none';
+            }}
+          />
+        ) : null}
+        <Input
+          label={tCommonForm('externalUrlOptional')}
+          name="coverImageUrl"
+          type="url"
+          value={values.coverImageUrl}
+          onChange={(e) => updateField('coverImageUrl', e.target.value)}
+          placeholder={tCommonForm('urlPlaceholder')}
+          error={fieldErrors.coverImageUrl}
+        />
+      </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
@@ -284,7 +376,7 @@ export function BlogPostForm({ mode, postId, initialPost }: BlogPostFormProps) {
       />
 
       <div className="flex flex-wrap gap-3 pt-2">
-        <Button type="submit" loading={submitting} loadingText={t('saving')}>
+        <Button type="submit" loading={submitting} loadingText={t('saving')} disabled={uploadingCover}>
           {mode === 'create' ? t('createButton') : t('saveButton')}
         </Button>
         <Button type="button" variant="outline" href="/contenu/blog">
@@ -293,4 +385,16 @@ export function BlogPostForm({ mode, postId, initialPost }: BlogPostFormProps) {
       </div>
     </form>
   );
+}
+
+function isValidCoverImageUrl(url: string): boolean {
+  if (url.startsWith('/api/uploads/') || url.startsWith('/uploads/')) {
+    return true;
+  }
+  try {
+    const parsed = new URL(url);
+    return ['http:', 'https:'].includes(parsed.protocol);
+  } catch {
+    return false;
+  }
 }

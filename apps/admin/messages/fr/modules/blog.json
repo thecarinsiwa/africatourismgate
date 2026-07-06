@@ -42,6 +42,7 @@
       "content": "Contenu",
       "contentPlaceholder": "<p>Corps de l'article (HTML)…</p>",
       "coverImageUrl": "Image de couverture (URL)",
+      "coverPreviewAlt": "Aperçu de l'image de couverture",
       "locale": "Langue",
       "publishedAtOptional": "Date de publication (optionnel)"
     },
