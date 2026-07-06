@@ -106,7 +106,7 @@ export function HomeHeader() {
   const navLinks = useMemo(
     () => [
       { href: '/', label: t('home'), children: [] as { href: string; label: string }[] },
-      { href: '/#about', label: t('about'), children: [] },
+      { href: '/a-propos/qui-nous-sommes', label: t('about'), children: [] },
       { href: '/#gallery', label: t('gallery'), children: [] },
       {
         href: '/#search',

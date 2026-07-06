@@ -43,12 +43,12 @@ export function HomeFooter() {
                 <span className="text-lg font-bold">{branding.displayName}</span>
               </Link>
               <p className="text-sm text-white/60 leading-relaxed mb-5">{t.footer.tagline}</p>
-              <a
-                href="#about"
+              <Link
+                href="/a-propos/qui-nous-sommes"
                 className="inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover"
               >
                 {t.footer.learnMore}
-              </a>
+              </Link>
             </div>
 
             <div>
@@ -170,17 +170,17 @@ export function HomeFooter() {
               {t.footer.privacy}
             </a>
             <span className="mx-2">|</span>
-            <a href="#about" className="hover:text-white transition-colors">
+            <Link href="/a-propos/qui-nous-sommes" className="hover:text-white transition-colors">
               {t.footer.about}
-            </a>
+            </Link>
             <span className="mx-2">|</span>
             <Link href="/support" className="hover:text-white transition-colors">
               {t.footer.faq}
             </Link>
             <span className="mx-2">|</span>
-            <a href="#contact" className="hover:text-white transition-colors">
+            <Link href="/a-propos/contact" className="hover:text-white transition-colors">
               {t.footer.contact}
-            </a>
+            </Link>
           </p>
           <p className="text-xs">
             {t.footer.designedBy} <strong className="text-white/70">{branding.displayName}</strong>

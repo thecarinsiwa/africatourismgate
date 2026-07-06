@@ -1226,6 +1226,45 @@ export const es: Translations = {
     breadcrumbHome: 'Inicio',
     breadcrumbBlog: 'Blog',
   },
+  about: {
+    heroTitle: 'Sobre nosotros',
+    heroSubtitle:
+      'Descubra nuestra misión, equipo y compromiso con un turismo africano responsable.',
+    sidebarAria: 'Secciones Sobre nosotros',
+    breadcrumbHome: 'Inicio',
+    breadcrumbAbout: 'Sobre nosotros',
+    loading: 'Cargando…',
+    loadError: 'No se pudo cargar el contenido. Compruebe que la API está en ejecución.',
+    emptyPage: 'Contenido en preparación',
+    emptyPageHint: 'Esta sección estará disponible pronto. Contáctenos para más información.',
+    localeFallback:
+      'Mostrando contenido en otro idioma — la versión en su idioma se publicará pronto.',
+    nav: {
+      whoWeAre: 'Quiénes somos',
+      team: 'Nuestro equipo',
+      howWeWork: 'Cómo trabajamos',
+      governance: 'Nuestra gobernanza',
+      reports: 'Informes y finanzas',
+      responsibility: 'Responsabilidad',
+      media: 'Medios y recursos',
+      contact: 'Contáctenos',
+    },
+    team: {
+      empty: 'Aún no hay miembros del equipo publicados.',
+    },
+    resources: {
+      empty: 'No hay documentos disponibles por el momento.',
+      download: 'Descargar',
+      openLink: 'Abrir enlace',
+      publishedOn: 'Publicado el',
+    },
+    contact: {
+      subtitle: 'Nuestro equipo está a su disposición para cualquier consulta.',
+      infoTitle: 'Datos de contacto',
+      formTitle: 'Enviar un mensaje',
+      formSubtitle: 'Describa su solicitud — le responderemos lo antes posible.',
+    },
+  },
   comingSoon: {
     badge: 'Próximamente',
     title: 'Próximamente',

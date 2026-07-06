@@ -1084,6 +1084,43 @@ export type Translations = {
     breadcrumbHome: string;
     breadcrumbBlog: string;
   };
+  about: {
+    heroTitle: string;
+    heroSubtitle: string;
+    sidebarAria: string;
+    breadcrumbHome: string;
+    breadcrumbAbout: string;
+    loading: string;
+    loadError: string;
+    emptyPage: string;
+    emptyPageHint: string;
+    localeFallback: string;
+    nav: {
+      whoWeAre: string;
+      team: string;
+      howWeWork: string;
+      governance: string;
+      reports: string;
+      responsibility: string;
+      media: string;
+      contact: string;
+    };
+    team: {
+      empty: string;
+    };
+    resources: {
+      empty: string;
+      download: string;
+      openLink: string;
+      publishedOn: string;
+    };
+    contact: {
+      subtitle: string;
+      infoTitle: string;
+      formTitle: string;
+      formSubtitle: string;
+    };
+  };
   comingSoon: {
     badge: string;
     title: string;
@@ -2350,6 +2387,45 @@ const fr: Translations = {
     breadcrumbHome: 'Accueil',
     breadcrumbBlog: 'Blog',
   },
+  about: {
+    heroTitle: 'À propos',
+    heroSubtitle:
+      'Découvrez notre mission, notre équipe et nos engagements pour un tourisme africain responsable.',
+    sidebarAria: 'Sections À propos',
+    breadcrumbHome: 'Accueil',
+    breadcrumbAbout: 'À propos',
+    loading: 'Chargement…',
+    loadError: 'Impossible de charger le contenu. Vérifiez que l’API est démarrée.',
+    emptyPage: 'Contenu en cours de préparation',
+    emptyPageHint: 'Cette section sera bientôt disponible. Contactez-nous pour en savoir plus.',
+    localeFallback:
+      'Contenu affiché dans une autre langue — la version dans votre langue sera publiée prochainement.',
+    nav: {
+      whoWeAre: 'Qui nous sommes',
+      team: 'Notre équipe',
+      howWeWork: 'Comment nous travaillons',
+      governance: 'Notre gouvernance',
+      reports: 'Rapports et finances',
+      responsibility: 'Responsabilité',
+      media: 'Médias & ressources',
+      contact: 'Nous contacter',
+    },
+    team: {
+      empty: 'Aucun membre de l’équipe publié pour le moment.',
+    },
+    resources: {
+      empty: 'Aucun document disponible pour le moment.',
+      download: 'Télécharger',
+      openLink: 'Ouvrir le lien',
+      publishedOn: 'Publié le',
+    },
+    contact: {
+      subtitle: 'Notre équipe est à votre écoute pour toute question.',
+      infoTitle: 'Coordonnées',
+      formTitle: 'Envoyer un message',
+      formSubtitle: 'Décrivez votre demande — nous vous répondrons dans les meilleurs délais.',
+    },
+  },
   comingSoon: {
     badge: 'Bientôt disponible',
     title: 'Bientôt disponible',
@@ -3606,6 +3682,45 @@ const en: Translations = {
     publishedOn: 'Published on',
     breadcrumbHome: 'Home',
     breadcrumbBlog: 'Blog',
+  },
+  about: {
+    heroTitle: 'About us',
+    heroSubtitle:
+      'Discover our mission, team and commitment to responsible tourism across Africa.',
+    sidebarAria: 'About sections',
+    breadcrumbHome: 'Home',
+    breadcrumbAbout: 'About',
+    loading: 'Loading…',
+    loadError: 'Could not load content. Check that the API is running.',
+    emptyPage: 'Content coming soon',
+    emptyPageHint: 'This section will be available shortly. Contact us to learn more.',
+    localeFallback:
+      'Showing content in another language — your language version will be published soon.',
+    nav: {
+      whoWeAre: 'Who we are',
+      team: 'Our team',
+      howWeWork: 'How we work',
+      governance: 'Our governance',
+      reports: 'Reports & finances',
+      responsibility: 'Responsibility',
+      media: 'Media & resources',
+      contact: 'Contact us',
+    },
+    team: {
+      empty: 'No team members published yet.',
+    },
+    resources: {
+      empty: 'No documents available yet.',
+      download: 'Download',
+      openLink: 'Open link',
+      publishedOn: 'Published on',
+    },
+    contact: {
+      subtitle: 'Our team is here to answer your questions.',
+      infoTitle: 'Contact details',
+      formTitle: 'Send a message',
+      formSubtitle: 'Describe your request — we will get back to you as soon as possible.',
+    },
   },
   comingSoon: {
     badge: 'Coming soon',
