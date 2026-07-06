@@ -3,7 +3,67 @@
 import { cn } from '@africatourismgate/ui';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { useEffect, useId } from 'react';
+import { useEffect, useId, type ReactNode } from 'react';
+
+const iconClass = 'h-4 w-4';
+
+function BoldIcon() {
+  return (
+    <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M6 4h7a4 4 0 0 1 0 8H6V4zm0 8h8a4 4 0 0 1 0 8H6v-8z"
+      />
+    </svg>
+  );
+}
+
+function ItalicIcon() {
+  return (
+    <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 4h9M5 20h9M14 4 10 20" />
+    </svg>
+  );
+}
+
+function HeadingIcon() {
+  return (
+    <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6v12M20 6v12M4 12h16" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 6v12" />
+    </svg>
+  );
+}
+
+function BulletListIcon() {
+  return (
+    <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 6h12M9 12h12M9 18h12" />
+      <circle cx="4" cy="6" r="1" fill="currentColor" stroke="none" />
+      <circle cx="4" cy="12" r="1" fill="currentColor" stroke="none" />
+      <circle cx="4" cy="18" r="1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+function OrderedListIcon() {
+  return (
+    <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 6h12M9 12h12M9 18h12" />
+      <text x="2" y="8" fill="currentColor" stroke="none" fontSize="7" fontWeight="600">
+        1
+      </text>
+      <text x="2" y="14" fill="currentColor" stroke="none" fontSize="7" fontWeight="600">
+        2
+      </text>
+      <text x="2" y="20" fill="currentColor" stroke="none" fontSize="7" fontWeight="600">
+        3
+      </text>
+    </svg>
+  );
+}
 
 const editorContentClass = cn(
   'min-h-[140px] px-4 py-3 text-sm leading-relaxed text-atg-fg',
@@ -18,12 +78,13 @@ const editorContentClass = cn(
 
 type ToolbarButtonProps = {
   label: string;
+  icon: ReactNode;
   active?: boolean;
   disabled?: boolean;
   onClick: () => void;
 };
 
-function ToolbarButton({ label, active, disabled, onClick }: ToolbarButtonProps) {
+function ToolbarButton({ label, icon, active, disabled, onClick }: ToolbarButtonProps) {
   return (
     <button
       type="button"
@@ -32,7 +93,7 @@ function ToolbarButton({ label, active, disabled, onClick }: ToolbarButtonProps)
       disabled={disabled}
       onClick={onClick}
       className={cn(
-        'inline-flex h-8 min-w-8 items-center justify-center rounded-md px-2 text-xs font-medium transition-colors',
+        'inline-flex h-8 w-8 items-center justify-center rounded-md transition-colors',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-atg-surface',
         active
           ? 'bg-primary/10 text-primary'
@@ -40,7 +101,7 @@ function ToolbarButton({ label, active, disabled, onClick }: ToolbarButtonProps)
         disabled && 'pointer-events-none opacity-50',
       )}
     >
-      {label}
+      {icon}
     </button>
   );
 }
@@ -109,30 +170,35 @@ export function RichTextEditor({
         >
           <ToolbarButton
             label="Gras"
+            icon={<BoldIcon />}
             active={editor?.isActive('bold')}
             disabled={disabled}
             onClick={() => editor?.chain().focus().toggleBold().run()}
           />
           <ToolbarButton
             label="Italique"
+            icon={<ItalicIcon />}
             active={editor?.isActive('italic')}
             disabled={disabled}
             onClick={() => editor?.chain().focus().toggleItalic().run()}
           />
           <ToolbarButton
             label="Titre"
+            icon={<HeadingIcon />}
             active={editor?.isActive('heading', { level: 2 })}
             disabled={disabled}
             onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()}
           />
           <ToolbarButton
             label="Liste"
+            icon={<BulletListIcon />}
             active={editor?.isActive('bulletList')}
             disabled={disabled}
             onClick={() => editor?.chain().focus().toggleBulletList().run()}
           />
           <ToolbarButton
-            label="Liste num."
+            label="Liste numérotée"
+            icon={<OrderedListIcon />}
             active={editor?.isActive('orderedList')}
             disabled={disabled}
             onClick={() => editor?.chain().focus().toggleOrderedList().run()}
