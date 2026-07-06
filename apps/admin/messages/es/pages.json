@@ -284,6 +284,16 @@
     }
   },
   "contenu": {
+    "blog": {
+      "description": "Gestione los artículos publicados en el sitio de marketing. Filtros por estado e idioma. Acceso: blog.read / blog.write.",
+      "nouveau": {
+        "metaTitle": "Nuevo artículo",
+        "description": "Redacte un artículo de blog para el sitio público."
+      },
+      "id": {
+        "metaTitle": "Editar artículo"
+      }
+    },
     "tickets": {
       "description": "Solicitudes de asistencia al cliente. Filtre por estado y prioridad. Acceso: support_tickets.read / support_tickets.write.",
       "id": {

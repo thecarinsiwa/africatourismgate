@@ -284,6 +284,16 @@
     }
   },
   "contenu": {
+    "blog": {
+      "description": "Manage posts published on the marketing site. Filter by status and language. Access: blog.read / blog.write.",
+      "nouveau": {
+        "metaTitle": "New post",
+        "description": "Write a blog post for the public site."
+      },
+      "id": {
+        "metaTitle": "Edit post"
+      }
+    },
     "tickets": {
       "description": "Customer support requests. Filter by status and priority. Access: support_tickets.read / support_tickets.write.",
       "id": {

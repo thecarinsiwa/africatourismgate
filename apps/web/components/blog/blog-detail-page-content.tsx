@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { getBlogPostBySlug } from '../../lib/api/public';
+import { getBlogPostBySlugForLocale } from '../../lib/api/public';
 import { useAppLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { formatRelativeReviewDate } from '../../lib/i18n/format-relative-date';
 import type { PublicBlogPostDetail } from '@africatourismgate/types';
@@ -28,7 +28,7 @@ export function BlogDetailPageContent({ slug }: BlogDetailPageContentProps) {
     setLoading(true);
     setError(false);
 
-    void getBlogPostBySlug(slug, locale)
+    void getBlogPostBySlugForLocale(slug, locale)
       .then((data) => {
         if (!cancelled) setPost(data);
       })
@@ -67,7 +67,18 @@ export function BlogDetailPageContent({ slug }: BlogDetailPageContentProps) {
           </div>
         ) : (
           <>
-            <PageHero title={post.title} description={post.excerpt ?? undefined} />
+            <PageHero
+              title={
+                <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{post.title}</h1>
+              }
+              description={
+                post.excerpt ? (
+                  <p className="max-w-2xl text-base leading-relaxed text-white/80 sm:text-lg">
+                    {post.excerpt}
+                  </p>
+                ) : undefined
+              }
+            />
             <article className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
               <nav className="mb-6 text-sm text-atg-muted" aria-label="Breadcrumb">
                 <ol className="flex flex-wrap items-center gap-2">

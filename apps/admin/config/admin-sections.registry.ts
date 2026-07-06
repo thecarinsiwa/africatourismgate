@@ -157,6 +157,16 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Campagnes et offres.',
     apiResource: 'promotions',
   },
+  'contenu/blog': {
+    title: 'Blog',
+    description: 'Articles du site public.',
+    apiResource: 'blog-posts',
+  },
+  'contenu/blog/nouveau': {
+    title: 'Nouvel article',
+    description: 'Rédiger un article de blog.',
+    apiResource: 'blog-posts',
+  },
   'contenu/avis': {
     title: 'Avis',
     description: 'Notes et commentaires clients.',

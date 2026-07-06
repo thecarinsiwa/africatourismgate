@@ -284,6 +284,16 @@
     }
   },
   "contenu": {
+    "blog": {
+      "description": "Gérez les articles publiés sur le site marketing. Filtres par statut et langue. Accès : blog.read / blog.write.",
+      "nouveau": {
+        "metaTitle": "Nouvel article",
+        "description": "Rédigez un article de blog pour le site public."
+      },
+      "id": {
+        "metaTitle": "Modifier l'article"
+      }
+    },
     "tickets": {
       "description": "Demandes d'assistance clients. Filtres par statut et priorité. Accès : support_tickets.read / support_tickets.write.",
       "id": {

@@ -47,6 +47,10 @@
   "promotions": {
     "forbidden": "You do not have permission to perform this action (promo_codes.read / write)."
   },
+  "blog": {
+    "forbidden": "You do not have permission to perform this action (blog.read / blog.write).",
+    "slugConflict": "This post slug already exists."
+  },
   "loyaltyAccounts": {
     "forbidden": "Access denied. Read: users.read — adjustment: super admin only.",
     "notFound": "Loyalty account not found."

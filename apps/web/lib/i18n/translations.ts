@@ -1078,6 +1078,7 @@ export type Translations = {
     retry: string;
     noResults: string;
     noResultsHint: string;
+    localeFallback: string;
     backToBlog: string;
     publishedOn: string;
     breadcrumbHome: string;
@@ -2342,6 +2343,8 @@ const fr: Translations = {
     retry: 'Réessayer',
     noResults: 'Aucun article publié',
     noResultsHint: 'Revenez bientôt pour découvrir nos nouveaux contenus.',
+    localeFallback:
+      'Aucun article dans votre langue pour le moment — affichage des articles disponibles dans les autres langues.',
     backToBlog: 'Retour au blog',
     publishedOn: 'Publié le',
     breadcrumbHome: 'Accueil',
@@ -3597,6 +3600,8 @@ const en: Translations = {
     retry: 'Retry',
     noResults: 'No published articles',
     noResultsHint: 'Check back soon for new content.',
+    localeFallback:
+      'No articles in your language yet — showing posts available in other languages.',
     backToBlog: 'Back to blog',
     publishedOn: 'Published on',
     breadcrumbHome: 'Home',

@@ -47,6 +47,10 @@
   "promotions": {
     "forbidden": "No tiene permiso para realizar esta acción (promo_codes.read / write)."
   },
+  "blog": {
+    "forbidden": "No tiene permiso para realizar esta acción (blog.read / blog.write).",
+    "slugConflict": "Este slug de artículo ya existe."
+  },
   "loyaltyAccounts": {
     "forbidden": "Acceso denegado. Lectura: users.read — ajuste: solo superadministrador.",
     "notFound": "Cuenta de fidelidad no encontrada."

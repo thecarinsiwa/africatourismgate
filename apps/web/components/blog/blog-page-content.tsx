@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
-import { browseBlogPosts } from '../../lib/api/public';
+import { browseBlogPostsForLocale } from '../../lib/api/public';
 import { useAppLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { formatRelativeReviewDate } from '../../lib/i18n/format-relative-date';
 import { useListingPagination } from '../../lib/listing/pagination';
@@ -22,16 +22,21 @@ export function BlogPageContent() {
   const [posts, setPosts] = useState<PublicBlogPostListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [usedLocaleFallback, setUsedLocaleFallback] = useState(false);
   const [fetchId, setFetchId] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
     setError(false);
+    setUsedLocaleFallback(false);
 
-    void browseBlogPosts({ locale, limit: 50 })
-      .then((response) => {
-        if (!cancelled) setPosts(response.data);
+    void browseBlogPostsForLocale(locale, { limit: 50 })
+      .then(({ response, usedLocaleFallback: fallback }) => {
+        if (!cancelled) {
+          setPosts(response.data);
+          setUsedLocaleFallback(fallback);
+        }
       })
       .catch(() => {
         if (!cancelled) {
@@ -66,8 +71,22 @@ export function BlogPageContent() {
     <div className="flex min-h-screen flex-col bg-atg-bg text-atg-fg">
       <HomeHeader />
       <main className="flex-1">
-        <PageHero title={b.heroTitle} description={b.heroSubtitle} />
+        <PageHero
+          title={
+            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{b.heroTitle}</h1>
+          }
+          description={
+            <p className="max-w-2xl text-base leading-relaxed text-white/80 sm:text-lg">
+              {b.heroSubtitle}
+            </p>
+          }
+        />
         <ListingPageBody>
+          {usedLocaleFallback ? (
+            <p className="mb-6 rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-muted">
+              {b.localeFallback}
+            </p>
+          ) : null}
           {loading ? (
             <p className="text-center text-atg-muted">{b.loading}</p>
           ) : error ? (

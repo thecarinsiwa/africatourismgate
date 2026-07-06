@@ -1,0 +1,80 @@
+{
+  "status": {
+    "draft": "Brouillon",
+    "published": "Publié"
+  },
+  "locale": {
+    "fr": "Français",
+    "en": "Anglais",
+    "es": "Espagnol"
+  },
+  "stats": {
+    "total": {
+      "label": "Articles",
+      "subtitle": "Total du catalogue"
+    },
+    "published": {
+      "label": "Publiés",
+      "subtitle": "Visibles sur le site"
+    },
+    "draft": {
+      "label": "Brouillons",
+      "subtitle": "Non publiés"
+    },
+    "french": {
+      "label": "En français",
+      "subtitle": "Articles locale FR"
+    }
+  },
+  "list": {
+    "deleteConfirm": "Supprimer l'article « {title} » ?",
+    "columns": {
+      "title": "Titre",
+      "locale": "Langue",
+      "publishedAt": "Publication"
+    },
+    "emptySearch": "Aucun article ne correspond à votre recherche.",
+    "emptyDefault": "Aucun article pour le moment.",
+    "searchPlaceholder": "Rechercher par titre, slug ou extrait…",
+    "searchAria": "Rechercher un article",
+    "newButton": "Nouvel article",
+    "tableAria": "Liste des articles de blog",
+    "paginationItem": "article"
+  },
+  "edit": {
+    "pageTitle": "Modifier l'article"
+  },
+  "form": {
+    "info": {
+      "slugUnique": "Le slug est unique sur toute la plateforme (pas par langue).",
+      "publishedAtHint": "À la publication, la date est renseignée automatiquement si elle est vide."
+    },
+    "validation": {
+      "contentRequired": "Le contenu est obligatoire.",
+      "coverUrlInvalid": "L'URL de l'image de couverture doit être valide (http ou https)."
+    },
+    "fields": {
+      "title": "Titre",
+      "excerpt": "Extrait",
+      "excerptPlaceholder": "Résumé court affiché dans la liste…",
+      "content": "Contenu",
+      "contentPlaceholder": "Rédigez le corps de l'article…",
+      "coverImageUrl": "Image de couverture (URL)",
+      "coverPreviewAlt": "Aperçu de l'image de couverture",
+      "locale": "Langue",
+      "publishedAtOptional": "Date de publication (optionnel)"
+    },
+    "hints": {
+      "contentHtml": "HTML autorisé (balises p, h2, ul, a, etc.).",
+      "publishedAt": "Laisser vide pour utiliser la date actuelle à la publication."
+    },
+    "status": {
+      "draft": "Brouillon",
+      "published": "Publié"
+    },
+    "saving": "Enregistrement…",
+    "createButton": "Créer l'article",
+    "saveButton": "Enregistrer",
+    "cancelButton": "Annuler"
+  }
+}

@@ -90,6 +90,7 @@ export const adminDashboardNavConfig: AdminNavEntryConfig[] = [
     id: 'content-support',
     iconKey: 'headset',
     children: [
+      { href: '/contenu/blog', labelKey: 'blog', iconKey: 'document' },
       { href: '/contenu/avis', labelKey: 'reviews', iconKey: 'star' },
       { href: '/contenu/tickets', labelKey: 'supportTickets', iconKey: 'ticket' },
       { href: '/contenu/messages', labelKey: 'supportMessages', iconKey: 'chat' },
@@ -139,6 +140,7 @@ export const adminBreadcrumbExtraRoutes: AdminBreadcrumbRouteConfig[] = [
   { href: '/systeme/roles/assignations', labelKey: 'roleAssignments' },
   { href: '/systeme/roles/permissions', labelKey: 'permissions' },
   { href: '/paiements/promotions/nouveau', labelKey: 'newPromotion' },
+  { href: '/contenu/blog/nouveau', labelKey: 'newBlogPost' },
   { href: '/paiements/codes-promo/nouveau', labelKey: 'newPromoCode' },
   { href: '/guides/nouveau', labelKey: 'newTourGuide' },
   { href: '/parametres/comptes', labelKey: 'bankAccounts' },
