@@ -47,6 +47,10 @@
   "promotions": {
     "forbidden": "Vous n’avez pas la permission d’effectuer cette action (promo_codes.read / write)."
   },
+  "blog": {
+    "forbidden": "Vous n'avez pas la permission d'effectuer cette action (blog.read / blog.write).",
+    "slugConflict": "Ce slug d'article existe déjà."
+  },
   "loyaltyAccounts": {
     "forbidden": "Accès refusé. Lecture : users.read — ajustement : super administrateur uniquement.",
     "notFound": "Compte fidélité introuvable."

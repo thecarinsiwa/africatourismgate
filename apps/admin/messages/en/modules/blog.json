@@ -1,0 +1,61 @@
+{
+  "status": {
+    "draft": "Draft",
+    "published": "Published"
+  },
+  "locale": {
+    "fr": "French",
+    "en": "English",
+    "es": "Spanish"
+  },
+  "list": {
+    "deleteConfirm": "Delete post \"{title}\"?",
+    "columns": {
+      "title": "Title",
+      "locale": "Language",
+      "publishedAt": "Published"
+    },
+    "emptySearch": "No posts match your search.",
+    "emptyDefault": "No blog posts yet.",
+    "searchPlaceholder": "Search by title, slug or excerpt…",
+    "searchAria": "Search blog posts",
+    "newButton": "New post",
+    "tableAria": "Blog posts list",
+    "paginationItem": "post"
+  },
+  "edit": {
+    "pageTitle": "Edit post"
+  },
+  "form": {
+    "info": {
+      "slugUnique": "The slug is globally unique (not per language).",
+      "publishedAtHint": "When publishing, the date is set automatically if left empty."
+    },
+    "validation": {
+      "contentRequired": "Content is required.",
+      "coverUrlInvalid": "Cover image URL must be valid (http or https)."
+    },
+    "fields": {
+      "title": "Title",
+      "excerpt": "Excerpt",
+      "excerptPlaceholder": "Short summary shown in listings…",
+      "content": "Content",
+      "contentPlaceholder": "<p>Post body (HTML)…</p>",
+      "coverImageUrl": "Cover image (URL)",
+      "locale": "Language",
+      "publishedAtOptional": "Publish date (optional)"
+    },
+    "hints": {
+      "contentHtml": "HTML allowed (p, h2, ul, a tags, etc.).",
+      "publishedAt": "Leave empty to use the current date when publishing."
+    },
+    "status": {
+      "draft": "Draft",
+      "published": "Published"
+    },
+    "saving": "Saving…",
+    "createButton": "Create post",
+    "saveButton": "Save",
+    "cancelButton": "Cancel"
+  }
+}

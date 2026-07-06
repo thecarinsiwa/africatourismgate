@@ -16,6 +16,7 @@ export const ADMIN_MODULE_NAMES = [
   'packages',
   'rbac',
   'reviews',
+  'blog',
   'support',
   'loyalty',
   'promotions',

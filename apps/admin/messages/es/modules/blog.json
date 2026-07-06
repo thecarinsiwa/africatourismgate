@@ -1,0 +1,61 @@
+{
+  "status": {
+    "draft": "Borrador",
+    "published": "Publicado"
+  },
+  "locale": {
+    "fr": "Francés",
+    "en": "Inglés",
+    "es": "Español"
+  },
+  "list": {
+    "deleteConfirm": "¿Eliminar el artículo «{title}»?",
+    "columns": {
+      "title": "Título",
+      "locale": "Idioma",
+      "publishedAt": "Publicación"
+    },
+    "emptySearch": "Ningún artículo coincide con su búsqueda.",
+    "emptyDefault": "Aún no hay artículos.",
+    "searchPlaceholder": "Buscar por título, slug o extracto…",
+    "searchAria": "Buscar artículos",
+    "newButton": "Nuevo artículo",
+    "tableAria": "Lista de artículos del blog",
+    "paginationItem": "artículo"
+  },
+  "edit": {
+    "pageTitle": "Editar artículo"
+  },
+  "form": {
+    "info": {
+      "slugUnique": "El slug es único en toda la plataforma (no por idioma).",
+      "publishedAtHint": "Al publicar, la fecha se rellena automáticamente si está vacía."
+    },
+    "validation": {
+      "contentRequired": "El contenido es obligatorio.",
+      "coverUrlInvalid": "La URL de la imagen de portada debe ser válida (http o https)."
+    },
+    "fields": {
+      "title": "Título",
+      "excerpt": "Extracto",
+      "excerptPlaceholder": "Resumen breve mostrado en el listado…",
+      "content": "Contenido",
+      "contentPlaceholder": "<p>Cuerpo del artículo (HTML)…</p>",
+      "coverImageUrl": "Imagen de portada (URL)",
+      "locale": "Idioma",
+      "publishedAtOptional": "Fecha de publicación (opcional)"
+    },
+    "hints": {
+      "contentHtml": "HTML permitido (etiquetas p, h2, ul, a, etc.).",
+      "publishedAt": "Dejar vacío para usar la fecha actual al publicar."
+    },
+    "status": {
+      "draft": "Borrador",
+      "published": "Publicado"
+    },
+    "saving": "Guardando…",
+    "createButton": "Crear artículo",
+    "saveButton": "Guardar",
+    "cancelButton": "Cancelar"
+  }
+}
