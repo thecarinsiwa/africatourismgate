@@ -6,10 +6,12 @@ import {
   AboutPages,
   type AboutPageSectionKey,
 } from '../../../entities/about-page.entity';
+import { AboutTimelineMilestones } from '../../../entities/about-timeline-milestone.entity';
 import { AboutResources } from '../../../entities/about-resource.entity';
 import { TeamMembers } from '../../../entities/team-member.entity';
 import { PublicAboutPagesListQueryDto } from './dto/public-about-pages-list-query.dto';
 import { PublicAboutResourcesListQueryDto } from './dto/public-about-resources-list-query.dto';
+import { PublicAboutTimelineMilestonesListQueryDto } from './dto/public-about-timeline-milestones-list-query.dto';
 import { PublicTeamMembersListQueryDto } from './dto/public-team-members-list-query.dto';
 
 export type PublicAboutPageDto = {
@@ -45,6 +47,21 @@ export type PublicAboutResourceDto = {
   locale: string;
 };
 
+export type PublicAboutTimelineMilestoneDto = {
+  id: string;
+  periodLabel: string;
+  periodTitle: string;
+  periodSortOrder: number;
+  year: number;
+  title: string;
+  excerpt: string | null;
+  content: string | null;
+  imageUrl: string | null;
+  linkUrl: string | null;
+  sortOrder: number;
+  locale: string;
+};
+
 @Injectable()
 export class PublicAboutService {
   constructor(
@@ -54,6 +71,8 @@ export class PublicAboutService {
     private readonly teamMembersRepository: Repository<TeamMembers>,
     @InjectRepository(AboutResources)
     private readonly aboutResourcesRepository: Repository<AboutResources>,
+    @InjectRepository(AboutTimelineMilestones)
+    private readonly timelineMilestonesRepository: Repository<AboutTimelineMilestones>,
   ) {}
 
   async listPages(
@@ -108,6 +127,20 @@ export class PublicAboutService {
     let result = await this.queryResources(page, limit, query.type, query.locale);
     if (result.data.length === 0 && query.locale) {
       result = await this.queryResources(page, limit, query.type);
+    }
+
+    return result;
+  }
+
+  async listTimelineMilestones(
+    query: PublicAboutTimelineMilestonesListQueryDto,
+  ): Promise<PaginatedResult<PublicAboutTimelineMilestoneDto>> {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 100;
+
+    let result = await this.queryTimelineMilestones(page, limit, query.locale);
+    if (result.data.length === 0 && query.locale) {
+      result = await this.queryTimelineMilestones(page, limit);
     }
 
     return result;
@@ -228,6 +261,39 @@ export class PublicAboutService {
     };
   }
 
+  private async queryTimelineMilestones(
+    page: number,
+    limit: number,
+    locale?: string,
+  ): Promise<PaginatedResult<PublicAboutTimelineMilestoneDto>> {
+    const qb = this.timelineMilestonesRepository
+      .createQueryBuilder('milestone')
+      .where('milestone.deletedAt IS NULL')
+      .andWhere('milestone.status = :status', { status: 'published' });
+
+    if (locale) {
+      qb.andWhere('milestone.locale = :locale', { locale });
+    }
+
+    qb.orderBy('milestone.periodSortOrder', 'ASC')
+      .addOrderBy('milestone.sortOrder', 'ASC')
+      .addOrderBy('milestone.year', 'ASC')
+      .skip((page - 1) * limit)
+      .take(limit);
+
+    const [milestones, total] = await qb.getManyAndCount();
+
+    return {
+      data: milestones.map((milestone) => this.toTimelineMilestoneDto(milestone)),
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit) || 1,
+      },
+    };
+  }
+
   private toAboutPageDto(page: AboutPages): PublicAboutPageDto {
     return {
       id: page.id,
@@ -264,6 +330,25 @@ export class PublicAboutService {
       publishedAt: resource.publishedAt?.toISOString() ?? null,
       sortOrder: resource.sortOrder,
       locale: resource.locale,
+    };
+  }
+
+  private toTimelineMilestoneDto(
+    milestone: AboutTimelineMilestones,
+  ): PublicAboutTimelineMilestoneDto {
+    return {
+      id: milestone.id,
+      periodLabel: milestone.periodLabel,
+      periodTitle: milestone.periodTitle,
+      periodSortOrder: milestone.periodSortOrder,
+      year: milestone.year,
+      title: milestone.title,
+      excerpt: milestone.excerpt,
+      content: milestone.content,
+      imageUrl: milestone.imageUrl,
+      linkUrl: milestone.linkUrl,
+      sortOrder: milestone.sortOrder,
+      locale: milestone.locale,
     };
   }
 }

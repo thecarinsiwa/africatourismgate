@@ -307,6 +307,16 @@ export type {
 } from './about-resource.js';
 
 export type {
+  AboutTimelineMilestone,
+  AboutTimelineMilestoneStatus,
+  AboutTimelineMilestonesListQuery,
+  CreateAboutTimelineMilestoneRequest,
+  PublicAboutTimelineMilestone,
+  PublicAboutTimelineMilestonesListQuery,
+  UpdateAboutTimelineMilestoneRequest,
+} from './about-timeline-milestone.js';
+
+export type {
   CreateTeamMemberRequest,
   PublicTeamMember,
   PublicTeamMembersListQuery,

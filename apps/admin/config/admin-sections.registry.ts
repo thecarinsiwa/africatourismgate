@@ -187,6 +187,16 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Ajouter un membre de l\'équipe.',
     apiResource: 'team-members',
   },
+  'contenu/a-propos/timeline': {
+    title: 'Frise chronologique',
+    description: 'Jalons de l\'histoire affichés sur le site.',
+    apiResource: 'about-timeline-milestones',
+  },
+  'contenu/a-propos/timeline/nouveau': {
+    title: 'Nouveau jalon',
+    description: 'Ajouter un jalon à la frise chronologique.',
+    apiResource: 'about-timeline-milestones',
+  },
   'contenu/a-propos/ressources': {
     title: 'Ressources',
     description: 'Rapports et ressources médias.',

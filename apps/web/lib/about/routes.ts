@@ -2,6 +2,7 @@ import type { AboutPageSectionKey, AboutResourceType } from '@africatourismgate/
 
 export type AboutNavLabelKey =
   | 'whoWeAre'
+  | 'history'
   | 'team'
   | 'howWeWork'
   | 'governance'
@@ -19,6 +20,7 @@ export type AboutNavItem = {
 
 export const ABOUT_NAV_ITEMS: AboutNavItem[] = [
   { href: '/a-propos/qui-nous-sommes', labelKey: 'whoWeAre', sectionKey: 'who-we-are' },
+  { href: '/a-propos/notre-histoire', labelKey: 'history' },
   { href: '/a-propos/equipe', labelKey: 'team' },
   {
     href: '/a-propos/comment-nous-travaillons',

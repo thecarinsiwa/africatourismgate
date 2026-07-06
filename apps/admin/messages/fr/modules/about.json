@@ -68,6 +68,52 @@
       "cancelButton": "Annuler"
     }
   },
+  "timeline": {
+    "list": {
+      "deleteConfirm": "Supprimer le jalon « {title} » ?",
+      "columns": {
+        "title": "Jalon",
+        "period": "Période",
+        "sortOrder": "Ordre",
+        "locale": "Langue"
+      },
+      "emptyDefault": "Aucun jalon chronologique pour le moment.",
+      "searchPlaceholder": "Rechercher par titre ou période…",
+      "newButton": "Nouveau jalon",
+      "paginationItem": "jalon"
+    },
+    "edit": {
+      "pageTitle": "Modifier le jalon"
+    },
+    "form": {
+      "validation": {
+        "periodLabelRequired": "Le libellé de période est obligatoire.",
+        "periodTitleRequired": "Le titre de période est obligatoire.",
+        "titleRequired": "Le titre est obligatoire.",
+        "yearInvalid": "L'année doit être comprise entre 1800 et 2200.",
+        "imageUrlInvalid": "L'URL de l'image doit être valide.",
+        "linkUrlInvalid": "L'URL du lien doit être valide."
+      },
+      "fields": {
+        "periodLabel": "Libellé de période",
+        "periodTitle": "Titre de période",
+        "periodSortOrder": "Ordre de période",
+        "year": "Année",
+        "title": "Titre",
+        "excerpt": "Extrait",
+        "content": "Contenu",
+        "image": "Image",
+        "imagePreviewAlt": "Aperçu de l'image",
+        "linkUrl": "Lien (URL)",
+        "sortOrder": "Ordre d'affichage",
+        "locale": "Langue"
+      },
+      "saving": "Enregistrement…",
+      "createButton": "Ajouter le jalon",
+      "saveButton": "Enregistrer",
+      "cancelButton": "Annuler"
+    }
+  },
   "team": {
     "list": {
       "deleteConfirm": "Supprimer {name} de l'équipe ?",

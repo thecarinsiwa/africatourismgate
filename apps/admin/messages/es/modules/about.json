@@ -68,6 +68,52 @@
       "cancelButton": "Cancelar"
     }
   },
+  "timeline": {
+    "list": {
+      "deleteConfirm": "¿Eliminar el hito «{title}»?",
+      "columns": {
+        "title": "Hito",
+        "period": "Período",
+        "sortOrder": "Orden",
+        "locale": "Idioma"
+      },
+      "emptyDefault": "Aún no hay hitos cronológicos.",
+      "searchPlaceholder": "Buscar por título o período…",
+      "newButton": "Nuevo hito",
+      "paginationItem": "hito"
+    },
+    "edit": {
+      "pageTitle": "Editar hito"
+    },
+    "form": {
+      "validation": {
+        "periodLabelRequired": "La etiqueta del período es obligatoria.",
+        "periodTitleRequired": "El título del período es obligatorio.",
+        "titleRequired": "El título es obligatorio.",
+        "yearInvalid": "El año debe estar entre 1800 y 2200.",
+        "imageUrlInvalid": "La URL de la imagen debe ser válida.",
+        "linkUrlInvalid": "La URL del enlace debe ser válida."
+      },
+      "fields": {
+        "periodLabel": "Etiqueta del período",
+        "periodTitle": "Título del período",
+        "periodSortOrder": "Orden del período",
+        "year": "Año",
+        "title": "Título",
+        "excerpt": "Extracto",
+        "content": "Contenido",
+        "image": "Imagen",
+        "imagePreviewAlt": "Vista previa de imagen",
+        "linkUrl": "Enlace (URL)",
+        "sortOrder": "Orden de visualización",
+        "locale": "Idioma"
+      },
+      "saving": "Guardando…",
+      "createButton": "Añadir hito",
+      "saveButton": "Guardar",
+      "cancelButton": "Cancelar"
+    }
+  },
   "team": {
     "list": {
       "deleteConfirm": "¿Eliminar a {name} del equipo?",

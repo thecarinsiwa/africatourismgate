@@ -13,6 +13,8 @@ import type {
   PublicBlogPostsListQuery,
   PublicAboutPage,
   PublicAboutResource,
+  PublicAboutTimelineMilestone,
+  PublicAboutTimelineMilestonesListQuery,
   PublicTeamMember,
   PublicAboutResourcesListQuery,
   PublicTeamMembersListQuery,
@@ -598,6 +600,48 @@ export async function browseAboutResourcesForLocale(
   }
 
   const all = await browseAboutResources(params);
+  return {
+    response: all,
+    usedLocaleFallback: all.data.length > 0,
+  };
+}
+
+function buildAboutTimelineMilestonesQuery(
+  params: PublicAboutTimelineMilestonesListQuery,
+): string {
+  const qs = new URLSearchParams();
+  if (params.locale) qs.set('locale', params.locale);
+  if (params.page !== undefined) qs.set('page', String(params.page));
+  if (params.limit !== undefined) qs.set('limit', String(params.limit));
+  const s = qs.toString();
+  return s ? `?${s}` : '';
+}
+
+export async function browseAboutTimelineMilestones(
+  params: PublicAboutTimelineMilestonesListQuery = {},
+): Promise<PaginatedResponse<PublicAboutTimelineMilestone>> {
+  return fetchPublic<PaginatedResponse<PublicAboutTimelineMilestone>>(
+    `/public/about-timeline-milestones${buildAboutTimelineMilestonesQuery(params)}`,
+  );
+}
+
+export async function browseAboutTimelineMilestonesForLocale(
+  locale: string,
+  params: Omit<PublicAboutTimelineMilestonesListQuery, 'locale'> = {},
+): Promise<{
+  response: PaginatedResponse<PublicAboutTimelineMilestone>;
+  usedLocaleFallback: boolean;
+}> {
+  try {
+    const localized = await browseAboutTimelineMilestones({ ...params, locale });
+    if (localized.data.length > 0) {
+      return { response: localized, usedLocaleFallback: false };
+    }
+  } catch {
+    /* try without locale below */
+  }
+
+  const all = await browseAboutTimelineMilestones(params);
   return {
     response: all,
     usedLocaleFallback: all.data.length > 0,

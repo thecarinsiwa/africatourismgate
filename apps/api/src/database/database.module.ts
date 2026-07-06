@@ -8,6 +8,7 @@ import { BookingManifestEntries } from '../entities/booking-manifest-entry.entit
 import { AboutPages } from '../entities/about-page.entity';
 import { AboutResources } from '../entities/about-resource.entity';
 import { BlogPosts } from '../entities/blog-post.entity';
+import { AboutTimelineMilestones } from '../entities/about-timeline-milestone.entity';
 import { TeamMembers } from '../entities/team-member.entity';
 import { EmailOperationVerifications } from '../entities/email-operation-verification.entity';
 import { ensureMigrations } from './ensure-migrations';
@@ -21,6 +22,7 @@ const entityList = [
   BlogPosts,
   AboutPages,
   TeamMembers,
+  AboutTimelineMilestones,
   AboutResources,
   BookingIdentityDocuments,
   BookingManifestEntries,

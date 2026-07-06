@@ -174,6 +174,10 @@ import type {
   TeamMembersListQuery,
   CreateTeamMemberRequest,
   UpdateTeamMemberRequest,
+  AboutTimelineMilestone,
+  AboutTimelineMilestonesListQuery,
+  CreateAboutTimelineMilestoneRequest,
+  UpdateAboutTimelineMilestoneRequest,
   AboutResource,
   AboutResourcesListQuery,
   CreateAboutResourceRequest,
@@ -1278,6 +1282,39 @@ export class ApiClient {
 
   deleteTeamMember(id: string): Promise<void> {
     return this.request<void>(`/team-members/${id}`, { method: 'DELETE' });
+  }
+
+  listAboutTimelineMilestones(
+    query?: AboutTimelineMilestonesListQuery,
+  ): Promise<PaginatedResponse<AboutTimelineMilestone>> {
+    return fetchPaginated<AboutTimelineMilestone>(this, '/about-timeline-milestones', query);
+  }
+
+  getAboutTimelineMilestone(id: string): Promise<AboutTimelineMilestone> {
+    return this.request<AboutTimelineMilestone>(`/about-timeline-milestones/${id}`);
+  }
+
+  createAboutTimelineMilestone(
+    body: CreateAboutTimelineMilestoneRequest,
+  ): Promise<AboutTimelineMilestone> {
+    return this.request<AboutTimelineMilestone>('/about-timeline-milestones', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateAboutTimelineMilestone(
+    id: string,
+    body: UpdateAboutTimelineMilestoneRequest,
+  ): Promise<AboutTimelineMilestone> {
+    return this.request<AboutTimelineMilestone>(`/about-timeline-milestones/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteAboutTimelineMilestone(id: string): Promise<void> {
+    return this.request<void>(`/about-timeline-milestones/${id}`, { method: 'DELETE' });
   }
 
   listAboutResources(

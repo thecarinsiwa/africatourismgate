@@ -4,6 +4,7 @@ import type { AboutPageSectionKey } from '../../../entities/about-page.entity';
 import { Public } from '../../auth/decorators/public.decorator';
 import { PublicAboutPagesListQueryDto } from './dto/public-about-pages-list-query.dto';
 import { PublicAboutResourcesListQueryDto } from './dto/public-about-resources-list-query.dto';
+import { PublicAboutTimelineMilestonesListQueryDto } from './dto/public-about-timeline-milestones-list-query.dto';
 import { PublicTeamMembersListQueryDto } from './dto/public-team-members-list-query.dto';
 import { PublicAboutService } from './public-about.service';
 
@@ -55,5 +56,12 @@ export class PublicAboutController {
   @ApiOperation({ summary: 'List published about resources' })
   listResources(@Query() query: PublicAboutResourcesListQueryDto) {
     return this.service.listResources(query);
+  }
+
+  @Public()
+  @Get('about-timeline-milestones')
+  @ApiOperation({ summary: 'List published about timeline milestones' })
+  listTimelineMilestones(@Query() query: PublicAboutTimelineMilestonesListQueryDto) {
+    return this.service.listTimelineMilestones(query);
   }
 }

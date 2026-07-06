@@ -68,6 +68,52 @@
       "cancelButton": "Cancel"
     }
   },
+  "timeline": {
+    "list": {
+      "deleteConfirm": "Delete milestone \"{title}\"?",
+      "columns": {
+        "title": "Milestone",
+        "period": "Period",
+        "sortOrder": "Order",
+        "locale": "Language"
+      },
+      "emptyDefault": "No timeline milestones yet.",
+      "searchPlaceholder": "Search by title or period…",
+      "newButton": "New milestone",
+      "paginationItem": "milestone"
+    },
+    "edit": {
+      "pageTitle": "Edit milestone"
+    },
+    "form": {
+      "validation": {
+        "periodLabelRequired": "Period label is required.",
+        "periodTitleRequired": "Period title is required.",
+        "titleRequired": "Title is required.",
+        "yearInvalid": "Year must be between 1800 and 2200.",
+        "imageUrlInvalid": "Image URL must be valid.",
+        "linkUrlInvalid": "Link URL must be valid."
+      },
+      "fields": {
+        "periodLabel": "Period label",
+        "periodTitle": "Period title",
+        "periodSortOrder": "Period order",
+        "year": "Year",
+        "title": "Title",
+        "excerpt": "Excerpt",
+        "content": "Content",
+        "image": "Image",
+        "imagePreviewAlt": "Image preview",
+        "linkUrl": "Link (URL)",
+        "sortOrder": "Display order",
+        "locale": "Language"
+      },
+      "saving": "Saving…",
+      "createButton": "Add milestone",
+      "saveButton": "Save",
+      "cancelButton": "Cancel"
+    }
+  },
   "team": {
     "list": {
       "deleteConfirm": "Remove {name} from the team?",

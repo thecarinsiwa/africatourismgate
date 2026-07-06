@@ -1098,6 +1098,7 @@ export type Translations = {
     localeFallback: string;
     nav: {
       whoWeAre: string;
+      history: string;
       team: string;
       howWeWork: string;
       governance: string;
@@ -1108,6 +1109,12 @@ export type Translations = {
     };
     team: {
       empty: string;
+    };
+    timeline: {
+      intro: string;
+      empty: string;
+      readMore: string;
+      sidebarAria: string;
     };
     resources: {
       empty: string;
@@ -1123,6 +1130,7 @@ export type Translations = {
     };
     meta: Record<
       | 'whoWeAre'
+      | 'history'
       | 'team'
       | 'howWeWork'
       | 'governance'
@@ -2415,6 +2423,7 @@ const fr: Translations = {
       'Contenu affiché dans une autre langue — la version dans votre langue sera publiée prochainement.',
     nav: {
       whoWeAre: 'Qui nous sommes',
+      history: 'Notre histoire',
       team: 'Notre équipe',
       howWeWork: 'Comment nous travaillons',
       governance: 'Notre gouvernance',
@@ -2425,6 +2434,13 @@ const fr: Translations = {
     },
     team: {
       empty: 'Aucun membre de l’équipe publié pour le moment.',
+    },
+    timeline: {
+      intro:
+        'Parcourez les étapes clés qui ont façonné Africa Tourism Gate, de la genèse du projet à notre vision pour l’avenir.',
+      empty: 'Aucun jalon publié pour le moment.',
+      readMore: 'En savoir plus',
+      sidebarAria: 'Périodes de l’historique',
     },
     resources: {
       empty: 'Aucun document disponible pour le moment.',
@@ -2443,6 +2459,11 @@ const fr: Translations = {
         title: 'Qui nous sommes',
         description:
           'Découvrez Africa Tourism Gate : notre mission, notre vision et notre engagement pour le tourisme en Afrique.',
+      },
+      history: {
+        title: 'Notre histoire',
+        description:
+          'Retracez les grandes étapes du développement d’Africa Tourism Gate à travers une frise chronologique interactive.',
       },
       team: {
         title: 'Notre équipe',
@@ -3754,6 +3775,7 @@ const en: Translations = {
       'Showing content in another language — your language version will be published soon.',
     nav: {
       whoWeAre: 'Who we are',
+      history: 'Our history',
       team: 'Our team',
       howWeWork: 'How we work',
       governance: 'Our governance',
@@ -3764,6 +3786,13 @@ const en: Translations = {
     },
     team: {
       empty: 'No team members published yet.',
+    },
+    timeline: {
+      intro:
+        'Explore the key milestones that shaped Africa Tourism Gate, from our beginnings to our vision for the future.',
+      empty: 'No timeline milestones published yet.',
+      readMore: 'Read more',
+      sidebarAria: 'History periods',
     },
     resources: {
       empty: 'No documents available yet.',
@@ -3782,6 +3811,11 @@ const en: Translations = {
         title: 'Who we are',
         description:
           'Discover Africa Tourism Gate: our mission, vision and commitment to tourism across Africa.',
+      },
+      history: {
+        title: 'Our history',
+        description:
+          'Trace the major milestones in Africa Tourism Gate’s development through an interactive timeline.',
       },
       team: {
         title: 'Our team',

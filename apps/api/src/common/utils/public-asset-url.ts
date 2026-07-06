@@ -61,6 +61,10 @@ export function aboutResourceUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/about/resources/${filename}`;
 }
 
+export function aboutTimelineUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/about/timeline/${filename}`;
+}
+
 function getApiPublicOrigin(): string {
   return getApiBaseUrl().replace(/\/api$/, '');
 }
