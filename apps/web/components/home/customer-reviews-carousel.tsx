@@ -141,10 +141,16 @@ export function CustomerReviewsCarousel() {
     (index: number) => {
       if (slides.length === 0) return;
       const normalized = (index + slides.length) % slides.length;
-      slideRefs.current[normalized]?.scrollIntoView({
+      const viewport = viewportRef.current;
+      const slide = slideRefs.current[normalized];
+      if (!viewport || !slide) return;
+
+      const targetLeft =
+        slide.offsetLeft - (viewport.clientWidth - slide.offsetWidth) / 2;
+
+      viewport.scrollTo({
+        left: Math.max(0, targetLeft),
         behavior: 'smooth',
-        block: 'nearest',
-        inline: 'center',
       });
       setCurrent(normalized);
     },
@@ -187,14 +193,14 @@ export function CustomerReviewsCarousel() {
   }, [slides.length]);
 
   useEffect(() => {
-    if (loading) return;
+    if (loading || !isVisible) return;
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReducedMotion || slides.length <= 1) return;
 
     const timer = window.setInterval(next, AUTO_PLAY_MS);
     return () => window.clearInterval(timer);
-  }, [loading, next, slides.length]);
+  }, [isVisible, loading, next, slides.length]);
 
   if (!loading && slides.length === 0) {
     return null;
