@@ -76,6 +76,17 @@ export class PublicPackagesService {
     };
   }
 
+  async getFeatured(): Promise<PublicPackageListItemDto | null> {
+    const pkg = await this.packagesService.findFeaturedActive();
+    if (!pkg) return null;
+
+    const imageUrlByPackageId = await this.packagesService.findPrimaryImageUrlsByPackageIds([
+      pkg.id,
+    ]);
+
+    return this.toListItem(pkg, imageUrlByPackageId);
+  }
+
   async getById(id: string): Promise<PackageDetailDto> {
     const pkg = await this.packagesRepository.findOne({ where: { id } });
     if (!pkg || pkg.deletedAt || pkg.active !== 1) {

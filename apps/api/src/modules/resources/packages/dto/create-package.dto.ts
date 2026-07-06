@@ -34,6 +34,14 @@ export class CreatePackageDto {
   @IsBoolean()
   active!: boolean;
 
+  @ApiPropertyOptional({
+    default: false,
+    description: 'Highlight this package on the marketing homepage promo banner.',
+  })
+  @IsOptional()
+  @IsBoolean()
+  isFeatured?: boolean;
+
   @ApiPropertyOptional({ example: 5, default: 3, description: 'Package length in calendar days (departure to return).' })
   @IsOptional()
   @Type(() => Number)

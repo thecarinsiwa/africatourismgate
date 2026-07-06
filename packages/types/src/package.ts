@@ -7,6 +7,7 @@ export interface Package {
   discountPercent: string;
   durationDays: number;
   active: number;
+  isFeatured: number;
   createdAt: string;
   updatedAt: string | null;
 }
@@ -17,6 +18,7 @@ export interface CreatePackageRequest {
   discountPercent: number;
   durationDays?: number;
   active: boolean;
+  isFeatured?: boolean;
 }
 
 export type UpdatePackageRequest = Partial<CreatePackageRequest>;

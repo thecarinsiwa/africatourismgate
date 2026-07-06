@@ -17,6 +17,7 @@ export type PackageFormValues = {
   discountPercent: string;
   durationDays: string;
   active: boolean;
+  isFeatured: boolean;
 };
 
 const defaultValues: PackageFormValues = {
@@ -25,6 +26,7 @@ const defaultValues: PackageFormValues = {
   discountPercent: '0',
   durationDays: '3',
   active: true,
+  isFeatured: false,
 };
 
 function packageToFormValues(pkg: Package): PackageFormValues {
@@ -34,6 +36,7 @@ function packageToFormValues(pkg: Package): PackageFormValues {
     discountPercent: String(pkg.discountPercent),
     durationDays: String(pkg.durationDays ?? 3),
     active: pkg.active === 1,
+    isFeatured: pkg.isFeatured === 1,
   };
 }
 
@@ -43,6 +46,7 @@ function toPayload(values: PackageFormValues): CreatePackageRequest {
     discountPercent: Number(values.discountPercent),
     durationDays: Number(values.durationDays),
     active: values.active,
+    isFeatured: values.isFeatured,
     ...(values.description.trim() && !isRichTextEmpty(values.description)
       ? { description: values.description.trim() }
       : {}),
@@ -172,6 +176,16 @@ export function PackageForm({ mode, packageId, initialPackage }: PackageFormProp
           />
           {t('activeLabel')}
         </label>
+        <label className="flex items-center gap-2 text-sm text-atg-fg">
+          <input
+            type="checkbox"
+            checked={values.isFeatured}
+            onChange={(e) => updateField('isFeatured', e.target.checked)}
+            className="rounded border-atg-border"
+          />
+          {t('featuredLabel')}
+        </label>
+        <p className="text-xs text-atg-muted">{t('featuredHint')}</p>
       </Card>
 
       <div className="flex gap-3">

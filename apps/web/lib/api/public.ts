@@ -381,6 +381,14 @@ export async function browsePackages(
   );
 }
 
+export async function getFeaturedPackage(): Promise<PackageListItem | null> {
+  try {
+    return await fetchPublic<PackageListItem | null>('/public/packages/featured');
+  } catch {
+    return null;
+  }
+}
+
 export async function getPackageDetail(id: string): Promise<PackageDetail> {
   return fetchPublic<PackageDetail>(`/public/packages/${encodeURIComponent(id)}`);
 }

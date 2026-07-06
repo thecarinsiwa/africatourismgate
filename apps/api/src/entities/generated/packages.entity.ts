@@ -20,6 +20,9 @@ export class Packages extends BaseAuditEntity {
   @Column({ type: 'int', name: 'active' })
   active!: number;
 
+  @Column({ type: 'tinyint', name: 'is_featured', width: 1, default: 0 })
+  isFeatured!: number;
+
 }
 
 @Entity('package_items')

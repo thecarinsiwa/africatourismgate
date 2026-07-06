@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { DeepPartial, In, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import { PackageItems, PackageImages, Packages } from '../../../entities/generated';
 import { CrudService } from '../../../common/crud/crud.service';
 import { PackageDetailDto, PackageGalleryImageDto } from './dto/package-detail.dto';
+import { CreatePackageDto } from './dto/create-package.dto';
 import { PackagesListQueryDto } from './dto/packages-list-query.dto';
+import { UpdatePackageDto } from './dto/update-package.dto';
 import { PackageItemPricingService } from './package-item-pricing.service';
 
 @Injectable()
@@ -20,6 +22,76 @@ export class PackagesService extends CrudService<Packages> {
     private readonly pricingService: PackageItemPricingService,
   ) {
     super(packagesRepository);
+  }
+
+  createFromDto(dto: CreatePackageDto, actorUserId?: string): Promise<Packages> {
+    return this.savePackageDto(dto, undefined, actorUserId);
+  }
+
+  updateFromDto(id: string, dto: UpdatePackageDto, actorUserId?: string): Promise<Packages> {
+    return this.savePackageDto(dto, id, actorUserId);
+  }
+
+  async findFeaturedActive(): Promise<Packages | null> {
+    return this.packagesRepository
+      .createQueryBuilder('pkg')
+      .where('pkg.deletedAt IS NULL')
+      .andWhere('pkg.active = 1')
+      .andWhere('pkg.isFeatured = 1')
+      .orderBy('pkg.updatedAt', 'DESC')
+      .addOrderBy('pkg.createdAt', 'DESC')
+      .getOne();
+  }
+
+  private async savePackageDto(
+    dto: CreatePackageDto | UpdatePackageDto,
+    id: string | undefined,
+    actorUserId?: string,
+  ): Promise<Packages> {
+    const payload = this.normalizePackagePayload(dto);
+
+    if (payload.isFeatured === 1) {
+      await this.clearFeaturedExcept(id);
+    }
+
+    if (id) {
+      return this.update(id, payload, actorUserId);
+    }
+
+    return this.create(payload, actorUserId);
+  }
+
+  private normalizePackagePayload(
+    dto: CreatePackageDto | UpdatePackageDto,
+  ): DeepPartial<Packages> {
+    const payload: DeepPartial<Packages> = { ...dto };
+
+    if (dto.active !== undefined) {
+      payload.active = dto.active ? 1 : 0;
+    }
+
+    if (dto.isFeatured !== undefined) {
+      payload.isFeatured = dto.isFeatured ? 1 : 0;
+    }
+
+    if (dto.discountPercent !== undefined) {
+      payload.discountPercent = String(dto.discountPercent);
+    }
+
+    return payload;
+  }
+
+  private async clearFeaturedExcept(exceptId?: string): Promise<void> {
+    const qb = this.packagesRepository
+      .createQueryBuilder()
+      .update(Packages)
+      .set({ isFeatured: 0 });
+
+    if (exceptId) {
+      qb.where('id != :exceptId', { exceptId });
+    }
+
+    await qb.execute();
   }
 
   override async findAll(query: PackagesListQueryDto): Promise<PaginatedResult<Packages>> {
