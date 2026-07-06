@@ -8,6 +8,24 @@
     "en": "English",
     "es": "Spanish"
   },
+  "stats": {
+    "total": {
+      "label": "Posts",
+      "subtitle": "Total in catalog"
+    },
+    "published": {
+      "label": "Published",
+      "subtitle": "Visible on the site"
+    },
+    "draft": {
+      "label": "Drafts",
+      "subtitle": "Not published"
+    },
+    "french": {
+      "label": "In French",
+      "subtitle": "Posts with FR locale"
+    }
+  },
   "list": {
     "deleteConfirm": "Delete post \"{title}\"?",
     "columns": {

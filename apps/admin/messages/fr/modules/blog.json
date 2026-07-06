@@ -8,6 +8,24 @@
     "en": "Anglais",
     "es": "Espagnol"
   },
+  "stats": {
+    "total": {
+      "label": "Articles",
+      "subtitle": "Total du catalogue"
+    },
+    "published": {
+      "label": "Publiés",
+      "subtitle": "Visibles sur le site"
+    },
+    "draft": {
+      "label": "Brouillons",
+      "subtitle": "Non publiés"
+    },
+    "french": {
+      "label": "En français",
+      "subtitle": "Articles locale FR"
+    }
+  },
   "list": {
     "deleteConfirm": "Supprimer l'article « {title} » ?",
     "columns": {
