@@ -76,7 +76,6 @@ export function CustomerReviewsCarousel() {
   const { ref, isVisible } = useScrollAnimation(0.1);
   const [reviews, setReviews] = useState<ReviewSlide[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -91,7 +90,6 @@ export function CustomerReviewsCarousel() {
       }));
 
     setLoading(true);
-    setError(false);
 
     void getPublicFeaturedReviews({ limit: FETCH_LIMIT })
       .then((data) => {
@@ -110,7 +108,6 @@ export function CustomerReviewsCarousel() {
       })
       .catch(() => {
         if (!cancelled) {
-          setError(true);
           setReviews(buildFallbackSlides());
         }
       })
@@ -223,12 +220,6 @@ export function CustomerReviewsCarousel() {
             {t.customerReviews.subtitle}
           </p>
         </div>
-
-        {error ? (
-          <p className="mb-6 text-center text-sm text-atg-muted" role="status">
-            {t.customerReviews.loadError}
-          </p>
-        ) : null}
 
         <div
           className={`relative ${isVisible ? 'animate-fade-in-up delay-150' : 'opacity-0'}`}
