@@ -40,7 +40,7 @@
       "excerpt": "Excerpt",
       "excerptPlaceholder": "Short summary shown in listings…",
       "content": "Content",
-      "contentPlaceholder": "<p>Post body (HTML)…</p>",
+      "contentPlaceholder": "Write the body of your post…",
       "coverImageUrl": "Cover image (URL)",
       "coverPreviewAlt": "Cover image preview",
       "locale": "Language",

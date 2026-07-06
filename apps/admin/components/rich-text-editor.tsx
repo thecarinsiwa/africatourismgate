@@ -52,6 +52,7 @@ export type RichTextEditorProps = {
   onChange: (html: string) => void;
   placeholder?: string;
   className?: string;
+  contentClassName?: string;
 };
 
 export function RichTextEditor({
@@ -61,6 +62,7 @@ export function RichTextEditor({
   onChange,
   placeholder = 'Saisissez une description…',
   className,
+  contentClassName,
 }: RichTextEditorProps) {
   const generatedId = useId();
   const editorId = id ?? generatedId;
@@ -72,7 +74,7 @@ export function RichTextEditor({
     editorProps: {
       attributes: {
         id: editorId,
-        class: editorContentClass,
+        class: cn(editorContentClass, contentClassName),
         'aria-label': label ?? 'Éditeur de texte enrichi',
         'data-placeholder': placeholder,
       },

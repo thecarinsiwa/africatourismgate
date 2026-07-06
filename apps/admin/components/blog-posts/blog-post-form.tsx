@@ -10,8 +10,10 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useId, useState } from 'react';
 import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
 import { getSession } from '../../lib/auth/session';
+import { isRichTextEmpty } from '../../lib/rich-text';
 import { resolveMediaUrl } from '../../lib/resolve-media-url';
 import { isValidSlug, slugifyName } from '../../lib/slug';
+import { RichTextEditor } from '../rich-text-editor';
 
 const BLOG_COVER_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
 const ALLOWED_BLOG_COVER_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
@@ -182,7 +184,7 @@ export function BlogPostForm({ mode, postId, initialPost }: BlogPostFormProps) {
     } else if (!isValidSlug(slug)) {
       errors.slug = tCommon('validation.slugInvalidLong');
     }
-    if (!values.content.trim()) {
+    if (isRichTextEmpty(values.content)) {
       errors.content = t('validation.contentRequired');
     }
     const coverUrl = values.coverImageUrl.trim();
@@ -270,26 +272,16 @@ export function BlogPostForm({ mode, postId, initialPost }: BlogPostFormProps) {
         />
       </div>
 
-      <div>
-        <label htmlFor="content" className="mb-2 block text-sm font-medium text-atg-fg">
-          {t('fields.content')}
-        </label>
-        <textarea
-          id="content"
-          name="content"
-          rows={14}
-          value={values.content}
-          onChange={(e) => updateField('content', e.target.value)}
-          placeholder={t('fields.contentPlaceholder')}
-          className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 font-mono text-sm text-atg-fg placeholder:text-atg-muted/70 outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
-          aria-invalid={Boolean(fieldErrors.content)}
-        />
-        {fieldErrors.content ? (
-          <p className="mt-1 text-sm text-red-600 dark:text-red-400">{fieldErrors.content}</p>
-        ) : (
-          <p className="mt-1 text-xs text-atg-muted">{t('hints.contentHtml')}</p>
-        )}
-      </div>
+      <RichTextEditor
+        label={t('fields.content')}
+        value={values.content}
+        onChange={(html) => updateField('content', html)}
+        placeholder={t('fields.contentPlaceholder')}
+        contentClassName="min-h-[280px]"
+      />
+      {fieldErrors.content ? (
+        <p className="mt-1 text-sm text-red-600 dark:text-red-400">{fieldErrors.content}</p>
+      ) : null}
 
       <div className="space-y-3">
         <p className="text-sm font-medium text-atg-fg">{t('fields.coverImageUrl')}</p>

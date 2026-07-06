@@ -40,7 +40,7 @@
       "excerpt": "Extrait",
       "excerptPlaceholder": "Résumé court affiché dans la liste…",
       "content": "Contenu",
-      "contentPlaceholder": "<p>Corps de l'article (HTML)…</p>",
+      "contentPlaceholder": "Rédigez le corps de l'article…",
       "coverImageUrl": "Image de couverture (URL)",
       "coverPreviewAlt": "Aperçu de l'image de couverture",
       "locale": "Langue",
