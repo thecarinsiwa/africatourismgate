@@ -22,7 +22,9 @@
     "descriptionPlaceholder": "Décrivez le forfait, les inclusions, les conditions…",
     "discountPercent": "Descuento (%)",
     "durationDays": "Desderée (jours)",
-    "activeLabel": "Paquete actif"
+    "activeLabel": "Paquete activo",
+    "featuredLabel": "Destacado en la página de inicio",
+    "featuredHint": "Solo un paquete puede destacarse a la vez en el banner promocional del sitio público."
   },
   "detail": {
     "editTitle": "Modifier le forfait",

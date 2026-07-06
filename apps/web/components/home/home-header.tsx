@@ -9,7 +9,7 @@ import { AUTH_CHANGED_EVENT, hasWebSession } from '../../lib/auth/client-session
 import { useResolvedPublicContact } from '../../lib/contact/use-resolved-public-contact';
 import { buildSocialLinks } from '../../lib/contact/social-links';
 import { buildVerticalListRoute } from '../../lib/search/route';
-import { ABOUT_NAV_ITEMS } from '../../lib/about/routes';
+import { ABOUT_NAV_ITEMS, ABOUT_PATHS } from '../../lib/about/routes';
 import { useTranslations as useIntlTranslations } from 'next-intl';
 import { useTranslations as useLegacyTranslations } from '../../lib/i18n/locale-provider';
 
@@ -110,7 +110,7 @@ export function HomeHeader() {
     () => [
       { href: '/', label: t('home'), children: [] as { href: string; label: string }[] },
       {
-        href: '/a-propos/qui-nous-sommes',
+        href: ABOUT_PATHS.whoWeAre,
         label: t('about'),
         children: ABOUT_NAV_ITEMS.map((item) => ({
           href: item.href,

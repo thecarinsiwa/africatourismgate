@@ -18,6 +18,13 @@ export class PublicPackagesController {
   }
 
   @Public()
+  @Get('packages/featured')
+  @ApiOperation({ summary: 'Get homepage featured package' })
+  getFeatured() {
+    return this.service.getFeatured();
+  }
+
+  @Public()
   @Get('packages/:id/resolve-lines')
   @ApiOperation({
     summary: 'Resolve package checkout lines from catalog (ignores availability)',

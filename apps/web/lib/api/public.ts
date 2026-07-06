@@ -18,6 +18,11 @@ import type {
   PublicTeamMember,
   PublicAboutResourcesListQuery,
   PublicTeamMembersListQuery,
+  PublicWhyUsContent,
+  PublicWhyUsListQuery,
+  PublicHappyCustomersContent,
+  PublicHappyCustomersListQuery,
+  PublicFeaturedReviewsListQuery,
   AboutPageSectionKey,
 } from '@africatourismgate/types';
 import type {
@@ -381,6 +386,14 @@ export async function browsePackages(
   );
 }
 
+export async function getFeaturedPackage(): Promise<PackageListItem | null> {
+  try {
+    return await fetchPublic<PackageListItem | null>('/public/packages/featured');
+  } catch {
+    return null;
+  }
+}
+
 export async function getPackageDetail(id: string): Promise<PackageDetail> {
   return fetchPublic<PackageDetail>(`/public/packages/${encodeURIComponent(id)}`);
 }
@@ -646,4 +659,79 @@ export async function browseAboutTimelineMilestonesForLocale(
     response: all,
     usedLocaleFallback: all.data.length > 0,
   };
+}
+
+function buildWhyUsQuery(params: PublicWhyUsListQuery): string {
+  const qs = new URLSearchParams();
+  if (params.locale) qs.set('locale', params.locale);
+  const s = qs.toString();
+  return s ? `?${s}` : '';
+}
+
+export async function getPublicWhyUs(
+  params: PublicWhyUsListQuery = {},
+): Promise<PublicWhyUsContent> {
+  return fetchPublic<PublicWhyUsContent>(`/public/why-us${buildWhyUsQuery(params)}`);
+}
+
+export async function getPublicWhyUsForLocale(
+  locale: string,
+): Promise<{ content: PublicWhyUsContent; usedLocaleFallback: boolean }> {
+  try {
+    const localized = await getPublicWhyUs({ locale });
+    if (localized.section || localized.items.length > 0) {
+      return { content: localized, usedLocaleFallback: false };
+    }
+  } catch {
+    /* try without locale below */
+  }
+
+  const fallback = await getPublicWhyUs();
+  return {
+    content: fallback,
+    usedLocaleFallback: Boolean(fallback.section || fallback.items.length > 0),
+  };
+}
+
+function buildHappyCustomersQuery(params: PublicHappyCustomersListQuery): string {
+  const qs = new URLSearchParams();
+  if (params.locale) qs.set('locale', params.locale);
+  const s = qs.toString();
+  return s ? `?${s}` : '';
+}
+
+export async function getPublicHappyCustomers(
+  params: PublicHappyCustomersListQuery = {},
+): Promise<PublicHappyCustomersContent> {
+  return fetchPublic<PublicHappyCustomersContent>(
+    `/public/happy-customers${buildHappyCustomersQuery(params)}`,
+  );
+}
+
+export async function getPublicHappyCustomersForLocale(
+  locale: string,
+): Promise<{ content: PublicHappyCustomersContent; usedLocaleFallback: boolean }> {
+  try {
+    const localized = await getPublicHappyCustomers({ locale });
+    if (localized.section || localized.stats.length > 0) {
+      return { content: localized, usedLocaleFallback: false };
+    }
+  } catch {
+    /* try without locale below */
+  }
+
+  const fallback = await getPublicHappyCustomers();
+  return {
+    content: fallback,
+    usedLocaleFallback: Boolean(fallback.section || fallback.stats.length > 0),
+  };
+}
+
+export async function getPublicFeaturedReviews(
+  params: PublicFeaturedReviewsListQuery = {},
+): Promise<Review[]> {
+  const qs = new URLSearchParams();
+  if (params.limit !== undefined) qs.set('limit', String(params.limit));
+  const query = qs.toString();
+  return fetchPublic<Review[]>(`/public/reviews/featured${query ? `?${query}` : ''}`);
 }

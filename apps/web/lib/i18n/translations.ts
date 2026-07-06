@@ -260,6 +260,21 @@ export type Translations = {
     nextDate: string;
     viewActivity: string;
   };
+  customerReviews: {
+    title: string;
+    subtitle: string;
+    loadError: string;
+    anonymous: string;
+    carouselAria: string;
+    prev: string;
+    next: string;
+    items: Array<{
+      rating: number;
+      title?: string;
+      body: string;
+      author: string;
+    }>;
+  };
   footer: {
     tagline: string;
     learnMore: string;
@@ -1515,6 +1530,40 @@ const fr: Translations = {
     mapAria: 'Carte des activités disponibles en Afrique',
     nextDate: 'Prochaine date',
     viewActivity: 'Voir l\'activité',
+  },
+  customerReviews: {
+    title: 'Avis de nos clients',
+    subtitle:
+      'Découvrez ce que nos voyageurs disent de leurs expériences avec Africa Tourism Gate.',
+    loadError: 'Impossible de charger les avis en ligne. Affichage des témoignages par défaut.',
+    anonymous: 'Voyageur',
+    carouselAria: 'Carrousel des avis clients',
+    prev: 'Avis précédent',
+    next: 'Avis suivant',
+    items: [
+      {
+        rating: 5,
+        title: 'Safari inoubliable',
+        body: 'Organisation impeccable du début à la fin. L\'équipe a su répondre à toutes nos attentes pour notre premier safari en Afrique de l\'Est.',
+        author: 'Marie L.',
+      },
+      {
+        rating: 5,
+        body: 'Réservation simple, support réactif et hébergements de qualité. Je recommande vivement pour découvrir l\'Afrique en toute sérénité.',
+        author: 'Thomas K.',
+      },
+      {
+        rating: 4,
+        title: 'Très belle expérience',
+        body: 'Des activités variées et des guides passionnés. Nous avons adoré notre séjour à Zanzibar et le suivi personnalisé de l\'agence.',
+        author: 'Sophie M.',
+      },
+      {
+        rating: 5,
+        body: 'Une plateforme fiable pour planifier un voyage en Afrique. Tout s\'est déroulé comme prévu, avec une excellente communication.',
+        author: 'David R.',
+      },
+    ],
   },
   footer: {
     tagline:
@@ -2872,6 +2921,39 @@ const en: Translations = {
     mapAria: 'Map of available activities in Africa',
     nextDate: 'Next date',
     viewActivity: 'View activity',
+  },
+  customerReviews: {
+    title: 'What our travelers say',
+    subtitle: 'Read feedback from guests who explored Africa with Africa Tourism Gate.',
+    loadError: 'Could not load live reviews. Showing default testimonials.',
+    anonymous: 'Traveler',
+    carouselAria: 'Customer reviews carousel',
+    prev: 'Previous review',
+    next: 'Next review',
+    items: [
+      {
+        rating: 5,
+        title: 'Unforgettable safari',
+        body: 'Flawless organization from start to finish. The team exceeded our expectations on our first East Africa safari.',
+        author: 'Marie L.',
+      },
+      {
+        rating: 5,
+        body: 'Easy booking, responsive support and quality stays. I highly recommend them for discovering Africa with peace of mind.',
+        author: 'Thomas K.',
+      },
+      {
+        rating: 4,
+        title: 'Wonderful experience',
+        body: 'Varied activities and passionate guides. We loved our Zanzibar trip and the personalized follow-up from the agency.',
+        author: 'Sophie M.',
+      },
+      {
+        rating: 5,
+        body: 'A reliable platform to plan a trip in Africa. Everything went as expected with excellent communication.',
+        author: 'David R.',
+      },
+    ],
   },
   footer: {
     tagline:

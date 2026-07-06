@@ -22,7 +22,9 @@
     "descriptionPlaceholder": "Décrivez le forfait, les inclusions, les conditions…",
     "discountPercent": "Remise (%)",
     "durationDays": "Durée (jours)",
-    "activeLabel": "Forfait actif"
+    "activeLabel": "Forfait actif",
+    "featuredLabel": "Mise en avant page d'accueil",
+    "featuredHint": "Un seul forfait peut être mis en avant à la fois sur la bannière promotionnelle du site public."
   },
   "detail": {
     "editTitle": "Modifier le forfait",

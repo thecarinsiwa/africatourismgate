@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
-import { findAboutNavItem } from '../../lib/about/routes';
+import { ABOUT_PATHS, findAboutNavItem, normalizeAboutPathname } from '../../lib/about/routes';
 import { useTranslations } from '../../lib/i18n/locale-provider';
 import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
@@ -15,7 +15,7 @@ type AboutShellProps = {
 };
 
 export function AboutShell({ children }: AboutShellProps) {
-  const pathname = usePathname();
+  const pathname = normalizeAboutPathname(usePathname());
   const t = useTranslations();
   const a = t.about;
   const navItem = findAboutNavItem(pathname);
@@ -36,7 +36,7 @@ export function AboutShell({ children }: AboutShellProps) {
                 </li>
                 <li aria-hidden>/</li>
                 <li>
-                  <Link href="/a-propos/qui-nous-sommes" className="hover:text-white">
+                  <Link href={ABOUT_PATHS.whoWeAre} className="hover:text-white">
                     {a.breadcrumbAbout}
                   </Link>
                 </li>

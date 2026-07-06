@@ -6,6 +6,7 @@ import { PublicActivitiesModule } from './activities/public-activities.module';
 import { PublicCruisesModule } from './cruises/public-cruises.module';
 import { PublicFlightsModule } from './flights/public-flights.module';
 import { PublicPackagesModule } from './packages/public-packages.module';
+import { PublicReviewsModule } from './reviews/public-reviews.module';
 import { PublicVehiclesModule } from './vehicles/public-vehicles.module';
 
 @Module({
@@ -18,6 +19,7 @@ import { PublicVehiclesModule } from './vehicles/public-vehicles.module';
     PublicCruisesModule,
     PublicActivitiesModule,
     PublicPackagesModule,
+    PublicReviewsModule,
   ],
 })
 export class PublicModule {}

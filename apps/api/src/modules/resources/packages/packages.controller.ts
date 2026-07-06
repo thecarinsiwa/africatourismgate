@@ -24,10 +24,10 @@ import { randomUUID } from 'node:crypto';
 import { existsSync, mkdirSync } from 'node:fs';
 import { extname, join } from 'node:path';
 import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
-import { DeepPartial } from 'typeorm';
 import { packageUploadUrl } from '../../../common/utils/public-asset-url';
-import { Packages } from '../../../entities/generated';
+import { CreatePackageDto } from './dto/create-package.dto';
 import { PackagesListQueryDto } from './dto/packages-list-query.dto';
+import { UpdatePackageDto } from './dto/update-package.dto';
 import { PackageImageSuggestionsService } from './package-image-suggestions.service';
 import { PackagesService } from './packages.service';
 
@@ -123,15 +123,15 @@ export class PackagesController {
   @RequirePermissions('packages.write')
   @Post()
   @ApiOperation({ summary: 'Create packages' })
-  create(@Body() dto: DeepPartial<Packages>) {
-    return this.service.create(dto);
+  create(@Body() dto: CreatePackageDto) {
+    return this.service.createFromDto(dto);
   }
 
   @RequirePermissions('packages.write')
   @Patch(':id')
   @ApiOperation({ summary: 'Update packages' })
-  update(@Param('id') id: string, @Body() dto: DeepPartial<Packages>) {
-    return this.service.update(id, dto);
+  update(@Param('id') id: string, @Body() dto: UpdatePackageDto) {
+    return this.service.updateFromDto(id, dto);
   }
 
   @RequirePermissions('packages.write')

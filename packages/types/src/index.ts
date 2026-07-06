@@ -327,12 +327,47 @@ export type {
 } from './team-member.js';
 
 export type {
+  CreateWhyUsItemRequest,
+  CreateWhyUsSectionRequest,
+  PublicWhyUsContent,
+  PublicWhyUsItem,
+  PublicWhyUsListQuery,
+  PublicWhyUsSection,
+  UpdateWhyUsItemRequest,
+  UpdateWhyUsSectionRequest,
+  WhyUsIconKey,
+  WhyUsItem,
+  WhyUsItemStatus,
+  WhyUsItemsListQuery,
+  WhyUsSection,
+  WhyUsSectionsListQuery,
+} from './why-us-item.js';
+
+export type {
+  CreateHappyCustomersSectionRequest,
+  CreateHappyCustomersStatRequest,
+  HappyCustomersColorKey,
+  HappyCustomersSection,
+  HappyCustomersSectionsListQuery,
+  HappyCustomersStat,
+  HappyCustomersStatsListQuery,
+  HappyCustomersStatus,
+  PublicHappyCustomersContent,
+  PublicHappyCustomersListQuery,
+  PublicHappyCustomersSection,
+  PublicHappyCustomersStat,
+  UpdateHappyCustomersSectionRequest,
+  UpdateHappyCustomersStatRequest,
+} from './happy-customers.js';
+
+export type {
   AdminReviewDetail,
   AdminReviewListItem,
   CreateBookingReviewRequest,
   GuideReviewInvite,
   PropertyReviewSummary,
   PropertyReviewsListQuery,
+  PublicFeaturedReviewsListQuery,
   Review,
   ReviewEntityType,
   ReviewStatus,

@@ -79,6 +79,23 @@ const nextConfig = {
       }
     }
 
+    const legacyAboutRedirects = [
+      ['/a-propos', '/about/who-we-are'],
+      ['/a-propos/qui-nous-sommes', '/about/who-we-are'],
+      ['/a-propos/notre-histoire', '/about/our-history'],
+      ['/a-propos/equipe', '/about/team'],
+      ['/a-propos/comment-nous-travaillons', '/about/how-we-work'],
+      ['/a-propos/gouvernance', '/about/governance'],
+      ['/a-propos/rapports-finances', '/about/reports'],
+      ['/a-propos/responsabilite', '/about/responsibility'],
+      ['/a-propos/medias-ressources', '/about/media-resources'],
+      ['/a-propos/contact', '/about/contact'],
+    ];
+
+    for (const [source, destination] of legacyAboutRedirects) {
+      redirects.push({ source, destination, permanent: true });
+    }
+
     return redirects;
   },
 };

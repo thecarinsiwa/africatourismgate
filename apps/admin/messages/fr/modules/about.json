@@ -195,5 +195,123 @@
       "saveButton": "Enregistrer",
       "cancelButton": "Annuler"
     }
+  },
+  "whyUs": {
+    "page": {
+      "localeFilter": "Langue"
+    },
+    "icons": {
+      "globe": "Globe (voyages)",
+      "search": "Loupe (découvertes)",
+      "booking": "Réservation",
+      "support": "Support"
+    },
+    "section": {
+      "heading": "En-tête de section",
+      "fields": {
+        "title": "Titre",
+        "subtitle": "Sous-titre"
+      },
+      "saving": "Enregistrement…",
+      "saveButton": "Enregistrer la section"
+    },
+    "items": {
+      "list": {
+        "deleteConfirm": "Supprimer la carte « {title} » ?",
+        "columns": {
+          "title": "Carte",
+          "icon": "Icône",
+          "sortOrder": "Ordre"
+        },
+        "emptyDefault": "Aucune carte pour le moment.",
+        "emptySearch": "Aucune carte ne correspond à votre recherche.",
+        "searchPlaceholder": "Rechercher par titre ou description…",
+        "newButton": "Nouvelle carte",
+        "tableAria": "Liste des cartes Pourquoi nous choisir",
+        "paginationItem": "carte"
+      },
+      "edit": {
+        "pageTitle": "Modifier la carte"
+      },
+      "form": {
+        "validation": {
+          "titleRequired": "Le titre est obligatoire.",
+          "descriptionRequired": "La description est obligatoire.",
+          "linkUrlRequired": "Le lien est obligatoire."
+        },
+        "fields": {
+          "title": "Titre",
+          "description": "Description",
+          "linkUrl": "Lien",
+          "iconKey": "Icône",
+          "sortOrder": "Ordre d'affichage",
+          "locale": "Langue"
+        },
+        "saving": "Enregistrement…",
+        "createButton": "Ajouter la carte",
+        "saveButton": "Enregistrer",
+        "cancelButton": "Annuler"
+      }
+    }
+  },
+  "happyCustomers": {
+    "page": {
+      "localeFilter": "Langue"
+    },
+    "colors": {
+      "primary": "Vert principal",
+      "secondary": "Vert secondaire"
+    },
+    "section": {
+      "heading": "Contenu de la section",
+      "fields": {
+        "title": "Titre",
+        "subtitle": "Sous-titre",
+        "paragraph1": "Premier paragraphe",
+        "paragraph2": "Deuxième paragraphe",
+        "imageUrl": "URL de l'image",
+        "imageAlt": "Texte alternatif de l'image",
+        "badgeValue": "Valeur du badge",
+        "badgeLabel": "Libellé du badge"
+      },
+      "saving": "Enregistrement…",
+      "saveButton": "Enregistrer la section"
+    },
+    "stats": {
+      "list": {
+        "deleteConfirm": "Supprimer la statistique « {label} » ?",
+        "columns": {
+          "label": "Libellé",
+          "percent": "Pourcentage",
+          "color": "Couleur",
+          "sortOrder": "Ordre"
+        },
+        "emptyDefault": "Aucune statistique pour le moment.",
+        "emptySearch": "Aucune statistique ne correspond à votre recherche.",
+        "searchPlaceholder": "Rechercher par libellé…",
+        "newButton": "Nouvelle statistique",
+        "paginationItem": "statistique"
+      },
+      "edit": {
+        "pageTitle": "Modifier la statistique"
+      },
+      "form": {
+        "validation": {
+          "labelRequired": "Le libellé est obligatoire.",
+          "percentInvalid": "Le pourcentage doit être entre 0 et 100."
+        },
+        "fields": {
+          "label": "Libellé",
+          "percentValue": "Pourcentage (%)",
+          "colorKey": "Couleur de la barre",
+          "sortOrder": "Ordre d'affichage",
+          "locale": "Langue"
+        },
+        "saving": "Enregistrement…",
+        "createButton": "Ajouter la statistique",
+        "saveButton": "Enregistrer",
+        "cancelButton": "Annuler"
+      }
+    }
   }
 }

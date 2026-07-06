@@ -9,10 +9,16 @@ import {
 import { AboutTimelineMilestones } from '../../../entities/about-timeline-milestone.entity';
 import { AboutResources } from '../../../entities/about-resource.entity';
 import { TeamMembers } from '../../../entities/team-member.entity';
+import { WhyUsItems } from '../../../entities/why-us-item.entity';
+import { WhyUsSections } from '../../../entities/why-us-section.entity';
+import { HappyCustomersSections } from '../../../entities/happy-customers-section.entity';
+import { HappyCustomersStats } from '../../../entities/happy-customers-stat.entity';
 import { PublicAboutPagesListQueryDto } from './dto/public-about-pages-list-query.dto';
 import { PublicAboutResourcesListQueryDto } from './dto/public-about-resources-list-query.dto';
 import { PublicAboutTimelineMilestonesListQueryDto } from './dto/public-about-timeline-milestones-list-query.dto';
 import { PublicTeamMembersListQueryDto } from './dto/public-team-members-list-query.dto';
+import { PublicWhyUsListQueryDto } from './dto/public-why-us-list-query.dto';
+import { PublicHappyCustomersListQueryDto } from './dto/public-happy-customers-list-query.dto';
 
 export type PublicAboutPageDto = {
   id: string;
@@ -47,6 +53,55 @@ export type PublicAboutResourceDto = {
   locale: string;
 };
 
+export type PublicWhyUsSectionDto = {
+  id: string;
+  title: string;
+  subtitle: string;
+  locale: string;
+};
+
+export type PublicWhyUsItemDto = {
+  id: string;
+  title: string;
+  description: string;
+  linkUrl: string;
+  iconKey: 'globe' | 'search' | 'booking' | 'support';
+  sortOrder: number;
+  locale: string;
+};
+
+export type PublicWhyUsContentDto = {
+  section: PublicWhyUsSectionDto | null;
+  items: PublicWhyUsItemDto[];
+};
+
+export type PublicHappyCustomersSectionDto = {
+  id: string;
+  title: string;
+  subtitle: string;
+  paragraph1: string;
+  paragraph2: string;
+  imageUrl: string;
+  imageAlt: string;
+  badgeValue: string;
+  badgeLabel: string;
+  locale: string;
+};
+
+export type PublicHappyCustomersStatDto = {
+  id: string;
+  label: string;
+  percentValue: number;
+  colorKey: 'primary' | 'secondary';
+  sortOrder: number;
+  locale: string;
+};
+
+export type PublicHappyCustomersContentDto = {
+  section: PublicHappyCustomersSectionDto | null;
+  stats: PublicHappyCustomersStatDto[];
+};
+
 export type PublicAboutTimelineMilestoneDto = {
   id: string;
   periodLabel: string;
@@ -73,6 +128,14 @@ export class PublicAboutService {
     private readonly aboutResourcesRepository: Repository<AboutResources>,
     @InjectRepository(AboutTimelineMilestones)
     private readonly timelineMilestonesRepository: Repository<AboutTimelineMilestones>,
+    @InjectRepository(WhyUsSections)
+    private readonly whyUsSectionsRepository: Repository<WhyUsSections>,
+    @InjectRepository(WhyUsItems)
+    private readonly whyUsItemsRepository: Repository<WhyUsItems>,
+    @InjectRepository(HappyCustomersSections)
+    private readonly happyCustomersSectionsRepository: Repository<HappyCustomersSections>,
+    @InjectRepository(HappyCustomersStats)
+    private readonly happyCustomersStatsRepository: Repository<HappyCustomersStats>,
   ) {}
 
   async listPages(
@@ -130,6 +193,24 @@ export class PublicAboutService {
     }
 
     return result;
+  }
+
+  async getWhyUsContent(query: PublicWhyUsListQueryDto): Promise<PublicWhyUsContentDto> {
+    let content = await this.fetchWhyUsContent(query.locale);
+    if ((!content.section || content.items.length === 0) && query.locale) {
+      content = await this.fetchWhyUsContent();
+    }
+    return content;
+  }
+
+  async getHappyCustomersContent(
+    query: PublicHappyCustomersListQueryDto,
+  ): Promise<PublicHappyCustomersContentDto> {
+    let content = await this.fetchHappyCustomersContent(query.locale);
+    if ((!content.section || content.stats.length === 0) && query.locale) {
+      content = await this.fetchHappyCustomersContent();
+    }
+    return content;
   }
 
   async listTimelineMilestones(
@@ -349,6 +430,121 @@ export class PublicAboutService {
       linkUrl: milestone.linkUrl,
       sortOrder: milestone.sortOrder,
       locale: milestone.locale,
+    };
+  }
+
+  private async fetchWhyUsContent(locale?: string): Promise<PublicWhyUsContentDto> {
+    const sectionQb = this.whyUsSectionsRepository
+      .createQueryBuilder('section')
+      .where('section.deletedAt IS NULL')
+      .andWhere('section.status = :status', { status: 'published' });
+
+    if (locale) {
+      sectionQb.andWhere('section.locale = :locale', { locale });
+    }
+
+    const section = await sectionQb.getOne();
+
+    const itemsQb = this.whyUsItemsRepository
+      .createQueryBuilder('item')
+      .where('item.deletedAt IS NULL')
+      .andWhere('item.status = :status', { status: 'published' });
+
+    if (locale) {
+      itemsQb.andWhere('item.locale = :locale', { locale });
+    }
+
+    const items = await itemsQb
+      .orderBy('item.sortOrder', 'ASC')
+      .addOrderBy('item.title', 'ASC')
+      .getMany();
+
+    return {
+      section: section ? this.toWhyUsSectionDto(section) : null,
+      items: items.map((item) => this.toWhyUsItemDto(item)),
+    };
+  }
+
+  private toWhyUsSectionDto(section: WhyUsSections): PublicWhyUsSectionDto {
+    return {
+      id: section.id,
+      title: section.title,
+      subtitle: section.subtitle,
+      locale: section.locale,
+    };
+  }
+
+  private toWhyUsItemDto(item: WhyUsItems): PublicWhyUsItemDto {
+    return {
+      id: item.id,
+      title: item.title,
+      description: item.description,
+      linkUrl: item.linkUrl,
+      iconKey: item.iconKey,
+      sortOrder: item.sortOrder,
+      locale: item.locale,
+    };
+  }
+
+  private async fetchHappyCustomersContent(
+    locale?: string,
+  ): Promise<PublicHappyCustomersContentDto> {
+    const sectionQb = this.happyCustomersSectionsRepository
+      .createQueryBuilder('section')
+      .where('section.deletedAt IS NULL')
+      .andWhere('section.status = :status', { status: 'published' });
+
+    if (locale) {
+      sectionQb.andWhere('section.locale = :locale', { locale });
+    }
+
+    const section = await sectionQb.getOne();
+
+    const statsQb = this.happyCustomersStatsRepository
+      .createQueryBuilder('stat')
+      .where('stat.deletedAt IS NULL')
+      .andWhere('stat.status = :status', { status: 'published' });
+
+    if (locale) {
+      statsQb.andWhere('stat.locale = :locale', { locale });
+    }
+
+    const stats = await statsQb
+      .orderBy('stat.sortOrder', 'ASC')
+      .addOrderBy('stat.label', 'ASC')
+      .getMany();
+
+    return {
+      section: section ? this.toHappyCustomersSectionDto(section) : null,
+      stats: stats.map((stat) => this.toHappyCustomersStatDto(stat)),
+    };
+  }
+
+  private toHappyCustomersSectionDto(
+    section: HappyCustomersSections,
+  ): PublicHappyCustomersSectionDto {
+    return {
+      id: section.id,
+      title: section.title,
+      subtitle: section.subtitle,
+      paragraph1: section.paragraph1,
+      paragraph2: section.paragraph2,
+      imageUrl: section.imageUrl,
+      imageAlt: section.imageAlt,
+      badgeValue: section.badgeValue,
+      badgeLabel: section.badgeLabel,
+      locale: section.locale,
+    };
+  }
+
+  private toHappyCustomersStatDto(stat: HappyCustomersStats): PublicHappyCustomersStatDto {
+    return {
+      id: stat.id,
+      label: stat.label,
+      percentValue: stat.percentValue,
+      colorKey: stat.colorKey,
+      sortOrder: stat.sortOrder,
+      locale: stat.locale,
     };
   }
 }

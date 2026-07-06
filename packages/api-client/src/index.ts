@@ -174,6 +174,22 @@ import type {
   TeamMembersListQuery,
   CreateTeamMemberRequest,
   UpdateTeamMemberRequest,
+  WhyUsItem,
+  WhyUsItemsListQuery,
+  CreateWhyUsItemRequest,
+  UpdateWhyUsItemRequest,
+  WhyUsSection,
+  WhyUsSectionsListQuery,
+  CreateWhyUsSectionRequest,
+  UpdateWhyUsSectionRequest,
+  HappyCustomersSection,
+  HappyCustomersSectionsListQuery,
+  CreateHappyCustomersSectionRequest,
+  UpdateHappyCustomersSectionRequest,
+  HappyCustomersStat,
+  HappyCustomersStatsListQuery,
+  CreateHappyCustomersStatRequest,
+  UpdateHappyCustomersStatRequest,
   AboutTimelineMilestone,
   AboutTimelineMilestonesListQuery,
   CreateAboutTimelineMilestoneRequest,
@@ -1282,6 +1298,124 @@ export class ApiClient {
 
   deleteTeamMember(id: string): Promise<void> {
     return this.request<void>(`/team-members/${id}`, { method: 'DELETE' });
+  }
+
+  listWhyUsSections(
+    query?: WhyUsSectionsListQuery,
+  ): Promise<PaginatedResponse<WhyUsSection>> {
+    return fetchPaginated<WhyUsSection>(this, '/why-us-sections', query);
+  }
+
+  getWhyUsSection(id: string): Promise<WhyUsSection> {
+    return this.request<WhyUsSection>(`/why-us-sections/${id}`);
+  }
+
+  createWhyUsSection(body: CreateWhyUsSectionRequest): Promise<WhyUsSection> {
+    return this.request<WhyUsSection>('/why-us-sections', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateWhyUsSection(id: string, body: UpdateWhyUsSectionRequest): Promise<WhyUsSection> {
+    return this.request<WhyUsSection>(`/why-us-sections/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteWhyUsSection(id: string): Promise<void> {
+    return this.request<void>(`/why-us-sections/${id}`, { method: 'DELETE' });
+  }
+
+  listWhyUsItems(query?: WhyUsItemsListQuery): Promise<PaginatedResponse<WhyUsItem>> {
+    return fetchPaginated<WhyUsItem>(this, '/why-us-items', query);
+  }
+
+  getWhyUsItem(id: string): Promise<WhyUsItem> {
+    return this.request<WhyUsItem>(`/why-us-items/${id}`);
+  }
+
+  createWhyUsItem(body: CreateWhyUsItemRequest): Promise<WhyUsItem> {
+    return this.request<WhyUsItem>('/why-us-items', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateWhyUsItem(id: string, body: UpdateWhyUsItemRequest): Promise<WhyUsItem> {
+    return this.request<WhyUsItem>(`/why-us-items/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteWhyUsItem(id: string): Promise<void> {
+    return this.request<void>(`/why-us-items/${id}`, { method: 'DELETE' });
+  }
+
+  listHappyCustomersSections(
+    query?: HappyCustomersSectionsListQuery,
+  ): Promise<PaginatedResponse<HappyCustomersSection>> {
+    return fetchPaginated<HappyCustomersSection>(this, '/happy-customers-sections', query);
+  }
+
+  getHappyCustomersSection(id: string): Promise<HappyCustomersSection> {
+    return this.request<HappyCustomersSection>(`/happy-customers-sections/${id}`);
+  }
+
+  createHappyCustomersSection(
+    body: CreateHappyCustomersSectionRequest,
+  ): Promise<HappyCustomersSection> {
+    return this.request<HappyCustomersSection>('/happy-customers-sections', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateHappyCustomersSection(
+    id: string,
+    body: UpdateHappyCustomersSectionRequest,
+  ): Promise<HappyCustomersSection> {
+    return this.request<HappyCustomersSection>(`/happy-customers-sections/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteHappyCustomersSection(id: string): Promise<void> {
+    return this.request<void>(`/happy-customers-sections/${id}`, { method: 'DELETE' });
+  }
+
+  listHappyCustomersStats(
+    query?: HappyCustomersStatsListQuery,
+  ): Promise<PaginatedResponse<HappyCustomersStat>> {
+    return fetchPaginated<HappyCustomersStat>(this, '/happy-customers-stats', query);
+  }
+
+  getHappyCustomersStat(id: string): Promise<HappyCustomersStat> {
+    return this.request<HappyCustomersStat>(`/happy-customers-stats/${id}`);
+  }
+
+  createHappyCustomersStat(body: CreateHappyCustomersStatRequest): Promise<HappyCustomersStat> {
+    return this.request<HappyCustomersStat>('/happy-customers-stats', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateHappyCustomersStat(
+    id: string,
+    body: UpdateHappyCustomersStatRequest,
+  ): Promise<HappyCustomersStat> {
+    return this.request<HappyCustomersStat>(`/happy-customers-stats/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteHappyCustomersStat(id: string): Promise<void> {
+    return this.request<void>(`/happy-customers-stats/${id}`, { method: 'DELETE' });
   }
 
   listAboutTimelineMilestones(
