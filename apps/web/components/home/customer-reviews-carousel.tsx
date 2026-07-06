@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Review } from '@africatourismgate/types';
 import { getPublicFeaturedReviews } from '../../lib/api/public';
 import { useAppLocale, useTranslations } from '../../lib/i18n/locale-provider';
@@ -78,26 +78,25 @@ export function CustomerReviewsCarousel() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  const fallbackSlides = useMemo<ReviewSlide[]>(
-    () =>
+  useEffect(() => {
+    let cancelled = false;
+
+    const buildFallbackSlides = (): ReviewSlide[] =>
       t.customerReviews.items.map((item, index) => ({
         id: `fallback-${index}`,
         rating: item.rating,
         title: item.title ?? null,
         body: item.body,
         authorName: item.author,
-      })),
-    [t.customerReviews.items],
-  );
+      }));
 
-  useEffect(() => {
-    let cancelled = false;
     setLoading(true);
     setError(false);
 
     void getPublicFeaturedReviews({ limit: FETCH_LIMIT })
       .then((data) => {
         if (cancelled) return;
+        const anonymousLabel = t.customerReviews.anonymous;
         const slides = data
           .filter((review) => review.body?.trim())
           .map((review: Review) => ({
@@ -105,14 +104,14 @@ export function CustomerReviewsCarousel() {
             rating: review.rating,
             title: review.title,
             body: review.body!.trim(),
-            authorName: formatAuthorName(review.authorFirstName, t.customerReviews.anonymous),
+            authorName: formatAuthorName(review.authorFirstName, anonymousLabel),
           }));
-        setReviews(slides.length > 0 ? slides : fallbackSlides);
+        setReviews(slides.length > 0 ? slides : buildFallbackSlides());
       })
       .catch(() => {
         if (!cancelled) {
           setError(true);
-          setReviews(fallbackSlides);
+          setReviews(buildFallbackSlides());
         }
       })
       .finally(() => {
@@ -122,9 +121,9 @@ export function CustomerReviewsCarousel() {
     return () => {
       cancelled = true;
     };
-  }, [fallbackSlides, locale, t.customerReviews.anonymous]);
+  }, [locale]);
 
-  const slides = reviews.length > 0 ? reviews : fallbackSlides;
+  const slides = reviews;
 
   const viewportRef = useRef<HTMLDivElement>(null);
   const slideRefs = useRef<(HTMLElement | null)[]>([]);
@@ -177,7 +176,7 @@ export function CustomerReviewsCarousel() {
 
         const index = Number(visible.target.getAttribute('data-index'));
         if (!Number.isNaN(index)) {
-          setCurrent(index);
+          setCurrent((prev) => (prev === index ? prev : index));
         }
       },
       { root: viewport, threshold: [0.55, 0.7, 0.85] },
@@ -191,12 +190,14 @@ export function CustomerReviewsCarousel() {
   }, [slides.length]);
 
   useEffect(() => {
+    if (loading) return;
+
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReducedMotion || slides.length <= 1) return;
 
     const timer = window.setInterval(next, AUTO_PLAY_MS);
     return () => window.clearInterval(timer);
-  }, [next, slides.length]);
+  }, [loading, next, slides.length]);
 
   if (!loading && slides.length === 0) {
     return null;
