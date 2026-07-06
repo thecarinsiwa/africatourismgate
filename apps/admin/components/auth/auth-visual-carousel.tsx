@@ -1,10 +1,12 @@
 'use client';
 
 import { cn } from '@africatourismgate/ui';
-import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { fetchRecentPublicBlogPostsForLocale } from '../../lib/public-blog';
+import { resolveMediaUrl } from '../../lib/resolve-media-url';
 
-const SLIDE_IMAGES = [
+const FALLBACK_IMAGES = [
   'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Elephants_at_Amboseli_national_park_against_Mount_Kilimanjaro.jpg/1280px-Elephants_at_Amboseli_national_park_against_Mount_Kilimanjaro.jpg',
   'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Zanzibar_beach.jpg/1280px-Zanzibar_beach.jpg',
   'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Koutoubia_Mosque%2C_Marrakech.jpg/1280px-Koutoubia_Mosque%2C_Marrakech.jpg',
@@ -14,6 +16,7 @@ const SLIDE_IMAGES = [
 const AUTO_PLAY_MS = 5500;
 
 type Slide = {
+  id: string;
   title: string;
   caption: string;
   image: string;
@@ -23,13 +26,61 @@ type Props = {
   className?: string;
 };
 
+function formatPublishedDate(value: string | null, locale: string): string | null {
+  if (!value) return null;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+  return date.toLocaleDateString(locale, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+}
+
 export function AuthVisualCarousel({ className }: Props) {
+  const locale = useLocale();
   const t = useTranslations('auth.shell.carousel');
-  const rawSlides = t.raw('slides') as Array<{ title: string; caption: string }>;
-  const slides: Slide[] = rawSlides.map((slide, index) => ({
-    ...slide,
-    image: SLIDE_IMAGES[index] ?? SLIDE_IMAGES[0],
-  }));
+  const blogLabel = t('blogLabel');
+  const rawFallbackSlides = t.raw('slides') as Array<{ title: string; caption: string }>;
+
+  const fallbackSlides = useMemo<Slide[]>(
+    () =>
+      rawFallbackSlides.map((slide, index) => ({
+        id: `fallback-${index}`,
+        title: slide.title,
+        caption: slide.caption,
+        image: FALLBACK_IMAGES[index] ?? FALLBACK_IMAGES[0],
+      })),
+    [rawFallbackSlides],
+  );
+
+  const [slides, setSlides] = useState<Slide[]>(fallbackSlides);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void fetchRecentPublicBlogPostsForLocale(locale, 4).then((posts) => {
+      if (cancelled || posts.length === 0) return;
+
+      setSlides(
+        posts.map((post, index) => ({
+          id: post.id,
+          title: post.title,
+          caption:
+            post.excerpt?.trim() ||
+            formatPublishedDate(post.publishedAt, locale) ||
+            blogLabel,
+          image: post.coverImageUrl
+            ? resolveMediaUrl(post.coverImageUrl)
+            : (FALLBACK_IMAGES[index] ?? FALLBACK_IMAGES[0]),
+        })),
+      );
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [locale, blogLabel]);
 
   const viewportRef = useRef<HTMLDivElement>(null);
   const slideRefs = useRef<(HTMLElement | null)[]>([]);
@@ -40,15 +91,25 @@ export function AuthVisualCarousel({ className }: Props) {
     currentRef.current = current;
   }, [current]);
 
-  const scrollToSlide = useCallback((index: number) => {
-    const normalized = (index + slides.length) % slides.length;
-    slideRefs.current[normalized]?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'nearest',
-      inline: 'center',
-    });
-    setCurrent(normalized);
-  }, [slides.length]);
+  useEffect(() => {
+    if (current >= slides.length) {
+      setCurrent(0);
+    }
+  }, [current, slides.length]);
+
+  const scrollToSlide = useCallback(
+    (index: number) => {
+      if (slides.length === 0) return;
+      const normalized = (index + slides.length) % slides.length;
+      slideRefs.current[normalized]?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'center',
+      });
+      setCurrent(normalized);
+    },
+    [slides.length],
+  );
 
   const next = useCallback(() => {
     scrollToSlide(currentRef.current + 1);
@@ -83,18 +144,20 @@ export function AuthVisualCarousel({ className }: Props) {
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReducedMotion) return;
+    if (prefersReducedMotion || slides.length <= 1) return;
 
     const timer = window.setInterval(next, AUTO_PLAY_MS);
     return () => window.clearInterval(timer);
-  }, [next]);
+  }, [next, slides.length]);
+
+  if (slides.length === 0) return null;
 
   return (
     <div
       className={cn('relative w-full max-w-2xl', className)}
       role="region"
       aria-roledescription="carousel"
-      aria-label={t('ariaLabel')}
+      aria-label={t('recentPostsAriaLabel')}
     >
       <div
         ref={viewportRef}
@@ -109,7 +172,7 @@ export function AuthVisualCarousel({ className }: Props) {
 
           return (
             <article
-              key={item.title}
+              key={item.id}
               ref={(element) => {
                 slideRefs.current[index] = element;
               }}
@@ -130,10 +193,12 @@ export function AuthVisualCarousel({ className }: Props) {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/10" />
               <div className="absolute inset-x-0 bottom-0 p-4 lg:p-5">
-                <p className="text-xs font-semibold uppercase tracking-[0.15em] text-white/70">{item.caption}</p>
+                <p className="line-clamp-2 text-xs font-semibold uppercase tracking-[0.15em] text-white/70">
+                  {item.caption}
+                </p>
                 <p
                   className={cn(
-                    'mt-1 font-bold leading-snug text-white',
+                    'mt-1 line-clamp-3 font-bold leading-snug text-white',
                     isActive ? 'text-base lg:text-lg' : 'text-sm lg:text-base',
                   )}
                 >
@@ -148,7 +213,7 @@ export function AuthVisualCarousel({ className }: Props) {
       <div className="mt-4 flex items-center justify-center gap-2" aria-live="polite">
         {slides.map((item, index) => (
           <button
-            key={item.title}
+            key={item.id}
             type="button"
             onClick={() => scrollToSlide(index)}
             className={cn(
