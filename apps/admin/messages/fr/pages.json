@@ -294,6 +294,38 @@
         "metaTitle": "Modifier l'article"
       }
     },
+    "a-propos": {
+      "pages": {
+        "description": "Pages institutionnelles du site (Qui nous sommes, gouvernance, etc.). Accès : content.read / content.write.",
+        "nouveau": {
+          "metaTitle": "Nouvelle page institutionnelle",
+          "description": "Créez une page pour une section À propos."
+        },
+        "id": {
+          "metaTitle": "Modifier la page"
+        }
+      },
+      "equipe": {
+        "description": "Membres de l'équipe affichés sur le site public. Accès : content.read / content.write.",
+        "nouveau": {
+          "metaTitle": "Nouveau membre",
+          "description": "Ajoutez un membre à l'équipe."
+        },
+        "id": {
+          "metaTitle": "Modifier le membre"
+        }
+      },
+      "ressources": {
+        "description": "Rapports financiers et ressources médias téléchargeables. Accès : content.read / content.write.",
+        "nouveau": {
+          "metaTitle": "Nouvelle ressource",
+          "description": "Ajoutez un document ou une ressource média."
+        },
+        "id": {
+          "metaTitle": "Modifier la ressource"
+        }
+      }
+    },
     "tickets": {
       "description": "Demandes d'assistance clients. Filtres par statut et priorité. Accès : support_tickets.read / support_tickets.write.",
       "id": {

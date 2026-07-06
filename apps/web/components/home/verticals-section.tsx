@@ -1,7 +1,15 @@
 'use client';
 
+import Link from 'next/link';
 import { useScrollAnimation } from './use-scroll-animation';
 import { useTranslations } from '../../lib/i18n/locale-provider';
+
+const WHY_US_ABOUT_LINKS = [
+  '/a-propos/qui-nous-sommes',
+  '/a-propos/comment-nous-travaillons',
+  '/a-propos/responsabilite',
+  '/a-propos/contact',
+] as const;
 
 const WHY_US_ICONS = [
   (
@@ -59,15 +67,15 @@ export function WhyUsSection() {
               <h3 className="mb-2 text-lg font-bold text-atg-fg">{item.title}</h3>
               <p className="mb-4 text-sm leading-relaxed text-atg-muted">{item.description}</p>
 
-              <a
-                href="#about"
+              <Link
+                href={WHY_US_ABOUT_LINKS[i] ?? '/a-propos/qui-nous-sommes'}
                 className="inline-flex items-center gap-1 text-sm font-semibold text-primary transition-colors hover:text-primary-hover hover:underline"
               >
                 {t.whyUs.learnMore}
                 <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
-              </a>
+              </Link>
             </div>
           ))}
         </div>

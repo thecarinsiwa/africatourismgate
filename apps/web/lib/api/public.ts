@@ -11,6 +11,14 @@ import type {
   PublicBlogPostDetail,
   PublicBlogPostListItem,
   PublicBlogPostsListQuery,
+  PublicAboutPage,
+  PublicAboutResource,
+  PublicAboutTimelineMilestone,
+  PublicAboutTimelineMilestonesListQuery,
+  PublicTeamMember,
+  PublicAboutResourcesListQuery,
+  PublicTeamMembersListQuery,
+  AboutPageSectionKey,
 } from '@africatourismgate/types';
 import type {
   VehicleDetail,
@@ -488,4 +496,154 @@ export async function getBlogPostBySlugForLocale(
   } catch {
     return getBlogPostBySlug(slug);
   }
+}
+
+export type { PublicAboutPage, PublicAboutResource, PublicTeamMember };
+
+export async function getAboutPageBySectionKey(
+  sectionKey: AboutPageSectionKey,
+  locale?: string,
+): Promise<PublicAboutPage> {
+  const qs = locale ? `?locale=${encodeURIComponent(locale)}` : '';
+  return fetchPublic<PublicAboutPage>(
+    `/public/about-pages/${encodeURIComponent(sectionKey)}${qs}`,
+  );
+}
+
+export async function getAboutPageBySectionKeyForLocale(
+  sectionKey: AboutPageSectionKey,
+  locale?: string,
+): Promise<PublicAboutPage> {
+  if (!locale) {
+    return getAboutPageBySectionKey(sectionKey);
+  }
+
+  try {
+    return await getAboutPageBySectionKey(sectionKey, locale);
+  } catch {
+    return getAboutPageBySectionKey(sectionKey);
+  }
+}
+
+function buildTeamMembersQuery(params: PublicTeamMembersListQuery): string {
+  const qs = new URLSearchParams();
+  if (params.locale) qs.set('locale', params.locale);
+  if (params.page !== undefined) qs.set('page', String(params.page));
+  if (params.limit !== undefined) qs.set('limit', String(params.limit));
+  const s = qs.toString();
+  return s ? `?${s}` : '';
+}
+
+export async function browseTeamMembers(
+  params: PublicTeamMembersListQuery = {},
+): Promise<PaginatedResponse<PublicTeamMember>> {
+  return fetchPublic<PaginatedResponse<PublicTeamMember>>(
+    `/public/team-members${buildTeamMembersQuery(params)}`,
+  );
+}
+
+export async function browseTeamMembersForLocale(
+  locale: string,
+  params: Omit<PublicTeamMembersListQuery, 'locale'> = {},
+): Promise<{
+  response: PaginatedResponse<PublicTeamMember>;
+  usedLocaleFallback: boolean;
+}> {
+  try {
+    const localized = await browseTeamMembers({ ...params, locale });
+    if (localized.data.length > 0) {
+      return { response: localized, usedLocaleFallback: false };
+    }
+  } catch {
+    /* try without locale below */
+  }
+
+  const all = await browseTeamMembers(params);
+  return {
+    response: all,
+    usedLocaleFallback: all.data.length > 0,
+  };
+}
+
+function buildAboutResourcesQuery(params: PublicAboutResourcesListQuery): string {
+  const qs = new URLSearchParams();
+  if (params.type) qs.set('type', params.type);
+  if (params.locale) qs.set('locale', params.locale);
+  if (params.page !== undefined) qs.set('page', String(params.page));
+  if (params.limit !== undefined) qs.set('limit', String(params.limit));
+  const s = qs.toString();
+  return s ? `?${s}` : '';
+}
+
+export async function browseAboutResources(
+  params: PublicAboutResourcesListQuery = {},
+): Promise<PaginatedResponse<PublicAboutResource>> {
+  return fetchPublic<PaginatedResponse<PublicAboutResource>>(
+    `/public/about-resources${buildAboutResourcesQuery(params)}`,
+  );
+}
+
+export async function browseAboutResourcesForLocale(
+  locale: string,
+  params: Omit<PublicAboutResourcesListQuery, 'locale'> = {},
+): Promise<{
+  response: PaginatedResponse<PublicAboutResource>;
+  usedLocaleFallback: boolean;
+}> {
+  try {
+    const localized = await browseAboutResources({ ...params, locale });
+    if (localized.data.length > 0) {
+      return { response: localized, usedLocaleFallback: false };
+    }
+  } catch {
+    /* try without locale below */
+  }
+
+  const all = await browseAboutResources(params);
+  return {
+    response: all,
+    usedLocaleFallback: all.data.length > 0,
+  };
+}
+
+function buildAboutTimelineMilestonesQuery(
+  params: PublicAboutTimelineMilestonesListQuery,
+): string {
+  const qs = new URLSearchParams();
+  if (params.locale) qs.set('locale', params.locale);
+  if (params.page !== undefined) qs.set('page', String(params.page));
+  if (params.limit !== undefined) qs.set('limit', String(params.limit));
+  const s = qs.toString();
+  return s ? `?${s}` : '';
+}
+
+export async function browseAboutTimelineMilestones(
+  params: PublicAboutTimelineMilestonesListQuery = {},
+): Promise<PaginatedResponse<PublicAboutTimelineMilestone>> {
+  return fetchPublic<PaginatedResponse<PublicAboutTimelineMilestone>>(
+    `/public/about-timeline-milestones${buildAboutTimelineMilestonesQuery(params)}`,
+  );
+}
+
+export async function browseAboutTimelineMilestonesForLocale(
+  locale: string,
+  params: Omit<PublicAboutTimelineMilestonesListQuery, 'locale'> = {},
+): Promise<{
+  response: PaginatedResponse<PublicAboutTimelineMilestone>;
+  usedLocaleFallback: boolean;
+}> {
+  try {
+    const localized = await browseAboutTimelineMilestones({ ...params, locale });
+    if (localized.data.length > 0) {
+      return { response: localized, usedLocaleFallback: false };
+    }
+  } catch {
+    /* try without locale below */
+  }
+
+  const all = await browseAboutTimelineMilestones(params);
+  return {
+    response: all,
+    usedLocaleFallback: all.data.length > 0,
+  };
 }

@@ -1,0 +1,199 @@
+{
+  "status": {
+    "draft": "Draft",
+    "published": "Published"
+  },
+  "locale": {
+    "fr": "French",
+    "en": "English",
+    "es": "Spanish"
+  },
+  "sections": {
+    "who-we-are": "Who we are",
+    "how-we-work": "How we work",
+    "governance": "Our governance",
+    "responsibility": "Responsibility"
+  },
+  "resourceTypes": {
+    "financial": "Reports & finances",
+    "media": "Media & resources"
+  },
+  "pages": {
+    "list": {
+      "deleteConfirm": "Delete page \"{title}\"?",
+      "columns": {
+        "section": "Section",
+        "title": "Title",
+        "locale": "Language",
+        "publishedAt": "Published"
+      },
+      "emptySearch": "No pages match your search.",
+      "emptyDefault": "No institutional pages yet.",
+      "searchPlaceholder": "Search by title or excerpt…",
+      "searchAria": "Search pages",
+      "newButton": "New page",
+      "tableAria": "About pages list",
+      "paginationItem": "page"
+    },
+    "edit": {
+      "pageTitle": "Edit page"
+    },
+    "form": {
+      "info": {
+        "sectionLocaleUnique": "Each section + language combination is unique.",
+        "publishedAtHint": "When publishing, the date is set automatically if left empty."
+      },
+      "validation": {
+        "contentRequired": "Content is required.",
+        "coverUrlInvalid": "Cover image URL must be valid."
+      },
+      "fields": {
+        "section": "Section",
+        "title": "Title",
+        "excerpt": "Excerpt",
+        "excerptPlaceholder": "Short summary for the page header…",
+        "content": "Content",
+        "contentPlaceholder": "Write the page body…",
+        "coverImageUrl": "Cover image",
+        "coverPreviewAlt": "Cover preview",
+        "locale": "Language",
+        "publishedAtOptional": "Publication date (optional)"
+      },
+      "hints": {
+        "publishedAt": "Leave empty to use the current date when publishing."
+      },
+      "saving": "Saving…",
+      "createButton": "Create page",
+      "saveButton": "Save",
+      "cancelButton": "Cancel"
+    }
+  },
+  "timeline": {
+    "list": {
+      "deleteConfirm": "Delete milestone \"{title}\"?",
+      "columns": {
+        "title": "Milestone",
+        "period": "Period",
+        "sortOrder": "Order",
+        "locale": "Language"
+      },
+      "emptyDefault": "No timeline milestones yet.",
+      "searchPlaceholder": "Search by title or period…",
+      "newButton": "New milestone",
+      "paginationItem": "milestone"
+    },
+    "edit": {
+      "pageTitle": "Edit milestone"
+    },
+    "form": {
+      "validation": {
+        "periodLabelRequired": "Period label is required.",
+        "periodTitleRequired": "Period title is required.",
+        "titleRequired": "Title is required.",
+        "yearInvalid": "Year must be between 1800 and 2200.",
+        "imageUrlInvalid": "Image URL must be valid.",
+        "linkUrlInvalid": "Link URL must be valid."
+      },
+      "fields": {
+        "periodLabel": "Period label",
+        "periodTitle": "Period title",
+        "periodSortOrder": "Period order",
+        "year": "Year",
+        "title": "Title",
+        "excerpt": "Excerpt",
+        "content": "Content",
+        "image": "Image",
+        "imagePreviewAlt": "Image preview",
+        "linkUrl": "Link (URL)",
+        "sortOrder": "Display order",
+        "locale": "Language"
+      },
+      "saving": "Saving…",
+      "createButton": "Add milestone",
+      "saveButton": "Save",
+      "cancelButton": "Cancel"
+    }
+  },
+  "team": {
+    "list": {
+      "deleteConfirm": "Remove {name} from the team?",
+      "columns": {
+        "name": "Member",
+        "sortOrder": "Order",
+        "locale": "Language"
+      },
+      "emptyDefault": "No team members yet.",
+      "searchPlaceholder": "Search by name or role…",
+      "newButton": "New member",
+      "paginationItem": "member"
+    },
+    "edit": {
+      "pageTitle": "Edit team member"
+    },
+    "form": {
+      "validation": {
+        "nameRequired": "Name is required.",
+        "roleRequired": "Role is required.",
+        "photoUrlInvalid": "Photo URL must be valid."
+      },
+      "fields": {
+        "name": "Name",
+        "role": "Role",
+        "bio": "Bio",
+        "photo": "Photo",
+        "photoPreviewAlt": "Photo preview",
+        "sortOrder": "Display order",
+        "locale": "Language"
+      },
+      "saving": "Saving…",
+      "createButton": "Add member",
+      "saveButton": "Save",
+      "cancelButton": "Cancel"
+    }
+  },
+  "resources": {
+    "list": {
+      "deleteConfirm": "Delete resource \"{title}\"?",
+      "columns": {
+        "type": "Type",
+        "title": "Title",
+        "locale": "Language",
+        "publishedAt": "Date"
+      },
+      "emptyDefault": "No document resources yet.",
+      "searchPlaceholder": "Search by title…",
+      "newButton": "New resource",
+      "paginationItem": "resource"
+    },
+    "edit": {
+      "pageTitle": "Edit resource"
+    },
+    "form": {
+      "validation": {
+        "fileFormat": "Unsupported format (PDF or image).",
+        "fileTooLarge": "File too large (max 10 MB).",
+        "fileOrUrlRequired": "Add a file or an external URL.",
+        "fileUrlInvalid": "File URL must be valid.",
+        "externalUrlInvalid": "External URL must be valid."
+      },
+      "fields": {
+        "type": "Type",
+        "title": "Title",
+        "description": "Description",
+        "file": "File",
+        "externalUrl": "External link",
+        "sortOrder": "Display order",
+        "publishedAtOptional": "Publication date (optional)",
+        "locale": "Language"
+      },
+      "hints": {
+        "fileFormat": "PDF, JPEG, PNG or WebP — max 10 MB.",
+        "externalUrl": "Link to a document hosted elsewhere (optional if file uploaded)."
+      },
+      "saving": "Saving…",
+      "createButton": "Create resource",
+      "saveButton": "Save",
+      "cancelButton": "Cancel"
+    }
+  }
+}

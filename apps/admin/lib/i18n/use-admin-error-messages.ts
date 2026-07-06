@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 import { getActivitiesErrorMessage } from '../activities-errors';
+import { getAboutErrorMessage } from '../about-errors';
 import { getBlogErrorMessage } from '../blog-errors';
 import { getBookingsErrorMessage } from '../bookings-errors';
 import { getCroisieresErrorMessage } from '../croisieres-errors';
@@ -43,6 +44,7 @@ export function useAdminErrorMessages() {
   const tPromoCodes = useTranslations('errors.promoCodes');
   const tPromotions = useTranslations('errors.promotions');
   const tBlog = useTranslations('errors.blog');
+  const tAbout = useTranslations('errors.about');
   const tLoyaltyAccounts = useTranslations('errors.loyaltyAccounts');
   const tDashboard = useTranslations('errors.dashboard');
 
@@ -65,6 +67,7 @@ export function useAdminErrorMessages() {
         promoCodes: (key) => tPromoCodes(key),
         promotions: (key) => tPromotions(key),
         blog: (key) => tBlog(key),
+        about: (key) => tAbout(key),
         loyaltyAccounts: (key) => tLoyaltyAccounts(key),
         dashboard: (key) => tDashboard(key),
       }),
@@ -85,6 +88,7 @@ export function useAdminErrorMessages() {
       tPromoCodes,
       tPromotions,
       tBlog,
+      tAbout,
       tLoyaltyAccounts,
       tDashboard,
     ],
@@ -111,6 +115,7 @@ export function useAdminErrorMessages() {
       promoCodes: (error: unknown) => getPromoCodesErrorMessage(error, messages.promoCodes),
       promotions: (error: unknown) => getPromotionsErrorMessage(error, messages.promotions),
       blog: (error: unknown) => getBlogErrorMessage(error, messages.blog),
+      about: (error: unknown) => getAboutErrorMessage(error, messages.about),
       loyaltyAccounts: (error: unknown) =>
         getLoyaltyAccountsErrorMessage(error, messages.loyaltyAccounts),
       payments: (error: unknown) => getPaymentsErrorMessage(error, messages.payments),

@@ -243,6 +243,22 @@ export function buildBlogErrorMessages(
   };
 }
 
+export type AboutErrorMessages = CommonErrorMessages & {
+  forbiddenDetail: string;
+  sectionLocaleConflict: string;
+};
+
+export function buildAboutErrorMessages(
+  tCommon: ErrorTranslator,
+  t: ErrorTranslator,
+): AboutErrorMessages {
+  return {
+    ...buildCommonErrorMessages(tCommon),
+    forbiddenDetail: t('forbidden'),
+    sectionLocaleConflict: t('sectionLocaleConflict'),
+  };
+}
+
 export type LoyaltyAccountsErrorMessages = CommonErrorMessages & {
   forbiddenDetail: string;
   notFound: string;
@@ -291,6 +307,7 @@ export type ModuleErrorMessages = {
   promoCodes: PromoCodesErrorMessages;
   promotions: PromotionsErrorMessages;
   blog: BlogErrorMessages;
+  about: AboutErrorMessages;
   loyaltyAccounts: LoyaltyAccountsErrorMessages;
   dashboardKpi: DashboardKpiErrorMessages;
   activities: CommonErrorMessages;
@@ -317,6 +334,7 @@ export function buildModuleErrorMessages(translators: {
   promoCodes: ErrorTranslator;
   promotions: ErrorTranslator;
   blog: ErrorTranslator;
+  about: ErrorTranslator;
   loyaltyAccounts: ErrorTranslator;
   dashboard: ErrorTranslator;
 }): ModuleErrorMessages {
@@ -338,6 +356,7 @@ export function buildModuleErrorMessages(translators: {
     promoCodes: buildPromoCodesErrorMessages(tCommon, translators.promoCodes),
     promotions: buildPromotionsErrorMessages(tCommon, translators.promotions),
     blog: buildBlogErrorMessages(tCommon, translators.blog),
+    about: buildAboutErrorMessages(tCommon, translators.about),
     loyaltyAccounts: buildLoyaltyAccountsErrorMessages(tCommon, translators.loyaltyAccounts),
     dashboardKpi: buildDashboardKpiErrorMessages(tCommon, translators.dashboard),
     activities: buildCommonErrorMessages(tCommon),

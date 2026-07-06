@@ -8,6 +8,7 @@ import { useResolvedPublicBranding } from '../../lib/branding/use-resolved-publi
 import { useResolvedPublicContact } from '../../lib/contact/use-resolved-public-contact';
 import { buildSocialLinks } from '../../lib/contact/social-links';
 import { buildVerticalListRoute } from '../../lib/search/route';
+import { ABOUT_NAV_ITEMS } from '../../lib/about/routes';
 
 export function HomeFooter() {
   const t = useTranslations();
@@ -28,11 +29,20 @@ export function HomeFooter() {
     [t],
   );
 
+  const aboutLinks = useMemo(
+    () =>
+      ABOUT_NAV_ITEMS.map((item) => ({
+        href: item.href,
+        label: t.about.nav[item.labelKey],
+      })),
+    [t],
+  );
+
   return (
     <footer>
       <div className="bg-[#1b1b2f] text-white">
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             <div>
               <Link href="/" className="flex items-center gap-2 mb-4">
                 <BrandingLogo
@@ -43,12 +53,12 @@ export function HomeFooter() {
                 <span className="text-lg font-bold">{branding.displayName}</span>
               </Link>
               <p className="text-sm text-white/60 leading-relaxed mb-5">{t.footer.tagline}</p>
-              <a
-                href="#about"
+              <Link
+                href="/a-propos/qui-nous-sommes"
                 className="inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover"
               >
                 {t.footer.learnMore}
-              </a>
+              </Link>
             </div>
 
             <div>
@@ -57,6 +67,27 @@ export function HomeFooter() {
               </h3>
               <ul className="space-y-2.5">
                 {productLinks.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="text-sm text-white/60 hover:text-white transition-colors flex items-center gap-1.5"
+                    >
+                      <svg className="h-3 w-3 text-primary" fill="currentColor" viewBox="0 0 6 10" aria-hidden>
+                        <path d="M1 1l4 4-4 4" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-sm font-bold uppercase tracking-wide text-white mb-5">
+                {t.footer.aboutPages}
+              </h3>
+              <ul className="space-y-2.5">
+                {aboutLinks.map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
@@ -102,7 +133,9 @@ export function HomeFooter() {
 
             <div id="contact" className="scroll-mt-24">
               <h3 className="text-sm font-bold uppercase tracking-wide text-white mb-5">
-                {t.footer.contact}
+                <Link href="/a-propos/contact" className="hover:text-white/90 transition-colors">
+                  {t.footer.contact}
+                </Link>
               </h3>
 
               <div className="space-y-4">
@@ -170,17 +203,17 @@ export function HomeFooter() {
               {t.footer.privacy}
             </a>
             <span className="mx-2">|</span>
-            <a href="#about" className="hover:text-white transition-colors">
+            <Link href="/a-propos/qui-nous-sommes" className="hover:text-white transition-colors">
               {t.footer.about}
-            </a>
+            </Link>
             <span className="mx-2">|</span>
             <Link href="/support" className="hover:text-white transition-colors">
               {t.footer.faq}
             </Link>
             <span className="mx-2">|</span>
-            <a href="#contact" className="hover:text-white transition-colors">
+            <Link href="/a-propos/contact" className="hover:text-white transition-colors">
               {t.footer.contact}
-            </a>
+            </Link>
           </p>
           <p className="text-xs">
             {t.footer.designedBy} <strong className="text-white/70">{branding.displayName}</strong>

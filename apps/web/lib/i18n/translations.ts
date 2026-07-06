@@ -281,6 +281,7 @@ export type Translations = {
     location: string;
     privacy: string;
     about: string;
+    aboutPages: string;
     faq: string;
     designedBy: string;
   };
@@ -1084,6 +1085,62 @@ export type Translations = {
     breadcrumbHome: string;
     breadcrumbBlog: string;
   };
+  about: {
+    heroTitle: string;
+    heroSubtitle: string;
+    sidebarAria: string;
+    breadcrumbHome: string;
+    breadcrumbAbout: string;
+    loading: string;
+    loadError: string;
+    emptyPage: string;
+    emptyPageHint: string;
+    localeFallback: string;
+    nav: {
+      whoWeAre: string;
+      history: string;
+      team: string;
+      howWeWork: string;
+      governance: string;
+      reports: string;
+      responsibility: string;
+      media: string;
+      contact: string;
+    };
+    team: {
+      empty: string;
+    };
+    timeline: {
+      intro: string;
+      empty: string;
+      readMore: string;
+      sidebarAria: string;
+    };
+    resources: {
+      empty: string;
+      download: string;
+      openLink: string;
+      publishedOn: string;
+    };
+    contact: {
+      subtitle: string;
+      infoTitle: string;
+      formTitle: string;
+      formSubtitle: string;
+    };
+    meta: Record<
+      | 'whoWeAre'
+      | 'history'
+      | 'team'
+      | 'howWeWork'
+      | 'governance'
+      | 'reports'
+      | 'responsibility'
+      | 'media'
+      | 'contact',
+      { title: string; description: string }
+    >;
+  };
   comingSoon: {
     badge: string;
     title: string;
@@ -1481,6 +1538,7 @@ const fr: Translations = {
     location: 'Kinshasa, RD Congo',
     privacy: 'Politique de Confidentialité',
     about: 'À propos',
+    aboutPages: 'À propos',
     faq: 'FAQ',
     designedBy: 'Conçu par',
   },
@@ -2350,6 +2408,100 @@ const fr: Translations = {
     breadcrumbHome: 'Accueil',
     breadcrumbBlog: 'Blog',
   },
+  about: {
+    heroTitle: 'À propos',
+    heroSubtitle:
+      'Découvrez notre mission, notre équipe et nos engagements pour un tourisme africain responsable.',
+    sidebarAria: 'Sections À propos',
+    breadcrumbHome: 'Accueil',
+    breadcrumbAbout: 'À propos',
+    loading: 'Chargement…',
+    loadError: 'Impossible de charger le contenu. Vérifiez que l’API est démarrée.',
+    emptyPage: 'Contenu en cours de préparation',
+    emptyPageHint: 'Cette section sera bientôt disponible. Contactez-nous pour en savoir plus.',
+    localeFallback:
+      'Contenu affiché dans une autre langue — la version dans votre langue sera publiée prochainement.',
+    nav: {
+      whoWeAre: 'Qui nous sommes',
+      history: 'Notre histoire',
+      team: 'Notre équipe',
+      howWeWork: 'Comment nous travaillons',
+      governance: 'Notre gouvernance',
+      reports: 'Rapports et finances',
+      responsibility: 'Responsabilité',
+      media: 'Médias & ressources',
+      contact: 'Nous contacter',
+    },
+    team: {
+      empty: 'Aucun membre de l’équipe publié pour le moment.',
+    },
+    timeline: {
+      intro:
+        'Parcourez les étapes clés qui ont façonné Africa Tourism Gate, de la genèse du projet à notre vision pour l’avenir.',
+      empty: 'Aucun jalon publié pour le moment.',
+      readMore: 'En savoir plus',
+      sidebarAria: 'Périodes de l’historique',
+    },
+    resources: {
+      empty: 'Aucun document disponible pour le moment.',
+      download: 'Télécharger',
+      openLink: 'Ouvrir le lien',
+      publishedOn: 'Publié le',
+    },
+    contact: {
+      subtitle: 'Notre équipe est à votre écoute pour toute question.',
+      infoTitle: 'Coordonnées',
+      formTitle: 'Envoyer un message',
+      formSubtitle: 'Décrivez votre demande — nous vous répondrons dans les meilleurs délais.',
+    },
+    meta: {
+      whoWeAre: {
+        title: 'Qui nous sommes',
+        description:
+          'Découvrez Africa Tourism Gate : notre mission, notre vision et notre engagement pour le tourisme en Afrique.',
+      },
+      history: {
+        title: 'Notre histoire',
+        description:
+          'Retracez les grandes étapes du développement d’Africa Tourism Gate à travers une frise chronologique interactive.',
+      },
+      team: {
+        title: 'Notre équipe',
+        description:
+          'Rencontrez les femmes et les hommes qui font vivre Africa Tourism Gate au quotidien.',
+      },
+      howWeWork: {
+        title: 'Comment nous travaillons',
+        description:
+          'Notre approche qualité, transparence et partenariat local pour des voyages en Afrique.',
+      },
+      governance: {
+        title: 'Notre gouvernance',
+        description:
+          'Structure de gouvernance, décisions et transparence institutionnelle d’Africa Tourism Gate.',
+      },
+      reports: {
+        title: 'Rapports et finances',
+        description:
+          'Consultez les rapports d’activité et documents financiers publiés par Africa Tourism Gate.',
+      },
+      responsibility: {
+        title: 'Responsabilité',
+        description:
+          'Nos engagements pour un tourisme durable, éthique et responsable en Afrique.',
+      },
+      media: {
+        title: 'Médias & ressources',
+        description:
+          'Kit presse, logos et ressources médias pour parler d’Africa Tourism Gate.',
+      },
+      contact: {
+        title: 'Nous contacter',
+        description:
+          'Contactez l’équipe Africa Tourism Gate par téléphone, e-mail ou formulaire de support.',
+      },
+    },
+  },
   comingSoon: {
     badge: 'Bientôt disponible',
     title: 'Bientôt disponible',
@@ -2743,6 +2895,7 @@ const en: Translations = {
     location: 'Kinshasa, DR Congo',
     privacy: 'Privacy Policy',
     about: 'About',
+    aboutPages: 'About us',
     faq: 'FAQ',
     designedBy: 'Designed by',
   },
@@ -3606,6 +3759,98 @@ const en: Translations = {
     publishedOn: 'Published on',
     breadcrumbHome: 'Home',
     breadcrumbBlog: 'Blog',
+  },
+  about: {
+    heroTitle: 'About us',
+    heroSubtitle:
+      'Discover our mission, team and commitment to responsible tourism across Africa.',
+    sidebarAria: 'About sections',
+    breadcrumbHome: 'Home',
+    breadcrumbAbout: 'About',
+    loading: 'Loading…',
+    loadError: 'Could not load content. Check that the API is running.',
+    emptyPage: 'Content coming soon',
+    emptyPageHint: 'This section will be available shortly. Contact us to learn more.',
+    localeFallback:
+      'Showing content in another language — your language version will be published soon.',
+    nav: {
+      whoWeAre: 'Who we are',
+      history: 'Our history',
+      team: 'Our team',
+      howWeWork: 'How we work',
+      governance: 'Our governance',
+      reports: 'Reports & finances',
+      responsibility: 'Responsibility',
+      media: 'Media & resources',
+      contact: 'Contact us',
+    },
+    team: {
+      empty: 'No team members published yet.',
+    },
+    timeline: {
+      intro:
+        'Explore the key milestones that shaped Africa Tourism Gate, from our beginnings to our vision for the future.',
+      empty: 'No timeline milestones published yet.',
+      readMore: 'Read more',
+      sidebarAria: 'History periods',
+    },
+    resources: {
+      empty: 'No documents available yet.',
+      download: 'Download',
+      openLink: 'Open link',
+      publishedOn: 'Published on',
+    },
+    contact: {
+      subtitle: 'Our team is here to answer your questions.',
+      infoTitle: 'Contact details',
+      formTitle: 'Send a message',
+      formSubtitle: 'Describe your request — we will get back to you as soon as possible.',
+    },
+    meta: {
+      whoWeAre: {
+        title: 'Who we are',
+        description:
+          'Discover Africa Tourism Gate: our mission, vision and commitment to tourism across Africa.',
+      },
+      history: {
+        title: 'Our history',
+        description:
+          'Trace the major milestones in Africa Tourism Gate’s development through an interactive timeline.',
+      },
+      team: {
+        title: 'Our team',
+        description: 'Meet the people behind Africa Tourism Gate.',
+      },
+      howWeWork: {
+        title: 'How we work',
+        description:
+          'Our approach to quality, transparency and local partnerships for travel in Africa.',
+      },
+      governance: {
+        title: 'Our governance',
+        description:
+          'Governance structure, decision-making and institutional transparency at Africa Tourism Gate.',
+      },
+      reports: {
+        title: 'Reports & finances',
+        description:
+          'Browse activity reports and financial documents published by Africa Tourism Gate.',
+      },
+      responsibility: {
+        title: 'Responsibility',
+        description:
+          'Our commitments to sustainable, ethical and responsible tourism in Africa.',
+      },
+      media: {
+        title: 'Media & resources',
+        description: 'Press kit, logos and media resources about Africa Tourism Gate.',
+      },
+      contact: {
+        title: 'Contact us',
+        description:
+          'Reach the Africa Tourism Gate team by phone, email or support form.',
+      },
+    },
   },
   comingSoon: {
     badge: 'Coming soon',

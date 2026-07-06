@@ -167,6 +167,46 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Rédiger un article de blog.',
     apiResource: 'blog-posts',
   },
+  'contenu/a-propos/pages': {
+    title: 'Pages À propos',
+    description: 'Pages institutionnelles du site public.',
+    apiResource: 'about-pages',
+  },
+  'contenu/a-propos/pages/nouveau': {
+    title: 'Nouvelle page',
+    description: 'Créer une page institutionnelle.',
+    apiResource: 'about-pages',
+  },
+  'contenu/a-propos/equipe': {
+    title: 'Équipe',
+    description: 'Membres de l\'équipe affichés sur le site.',
+    apiResource: 'team-members',
+  },
+  'contenu/a-propos/equipe/nouveau': {
+    title: 'Nouveau membre',
+    description: 'Ajouter un membre de l\'équipe.',
+    apiResource: 'team-members',
+  },
+  'contenu/a-propos/timeline': {
+    title: 'Frise chronologique',
+    description: 'Jalons de l\'histoire affichés sur le site.',
+    apiResource: 'about-timeline-milestones',
+  },
+  'contenu/a-propos/timeline/nouveau': {
+    title: 'Nouveau jalon',
+    description: 'Ajouter un jalon à la frise chronologique.',
+    apiResource: 'about-timeline-milestones',
+  },
+  'contenu/a-propos/ressources': {
+    title: 'Ressources',
+    description: 'Rapports et ressources médias.',
+    apiResource: 'about-resources',
+  },
+  'contenu/a-propos/ressources/nouveau': {
+    title: 'Nouvelle ressource',
+    description: 'Ajouter un document ou une ressource média.',
+    apiResource: 'about-resources',
+  },
   'contenu/avis': {
     title: 'Avis',
     description: 'Notes et commentaires clients.',

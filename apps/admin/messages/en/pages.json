@@ -294,6 +294,38 @@
         "metaTitle": "Edit post"
       }
     },
+    "a-propos": {
+      "pages": {
+        "description": "Institutional site pages (Who we are, governance, etc.). Access: content.read / content.write.",
+        "nouveau": {
+          "metaTitle": "New institutional page",
+          "description": "Create a page for an About section."
+        },
+        "id": {
+          "metaTitle": "Edit page"
+        }
+      },
+      "equipe": {
+        "description": "Team members shown on the public site. Access: content.read / content.write.",
+        "nouveau": {
+          "metaTitle": "New team member",
+          "description": "Add a team member."
+        },
+        "id": {
+          "metaTitle": "Edit team member"
+        }
+      },
+      "ressources": {
+        "description": "Financial reports and downloadable media resources. Access: content.read / content.write.",
+        "nouveau": {
+          "metaTitle": "New resource",
+          "description": "Add a document or media resource."
+        },
+        "id": {
+          "metaTitle": "Edit resource"
+        }
+      }
+    },
     "tickets": {
       "description": "Customer support requests. Filter by status and priority. Access: support_tickets.read / support_tickets.write.",
       "id": {

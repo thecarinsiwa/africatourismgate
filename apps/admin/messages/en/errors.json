@@ -51,6 +51,10 @@
     "forbidden": "You do not have permission to perform this action (blog.read / blog.write).",
     "slugConflict": "This post slug already exists."
   },
+  "about": {
+    "forbidden": "You do not have permission to perform this action (content.read / content.write).",
+    "sectionLocaleConflict": "A page already exists for this section and language."
+  },
   "loyaltyAccounts": {
     "forbidden": "Access denied. Read: users.read — adjustment: super admin only.",
     "notFound": "Loyalty account not found."
