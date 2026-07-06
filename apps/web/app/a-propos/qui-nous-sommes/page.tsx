@@ -1,12 +1,10 @@
 import type { Metadata } from 'next';
 import { AboutTextPageContent } from '../../../components/about/about-text-page-content';
+import { buildAboutPageMetadata } from '../../../lib/about/metadata';
 
-export const metadata: Metadata = {
-  title: 'Qui nous sommes',
-  description:
-    'Découvrez Africa Tourism Gate : notre mission, notre vision et notre engagement pour le tourisme en Afrique.',
-  alternates: { canonical: '/a-propos/qui-nous-sommes' },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return buildAboutPageMetadata('/a-propos/qui-nous-sommes', 'whoWeAre');
+}
 
 export default function Page() {
   return <AboutTextPageContent sectionKey="who-we-are" />;

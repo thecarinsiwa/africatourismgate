@@ -1,11 +1,10 @@
 import type { Metadata } from 'next';
 import { AboutTextPageContent } from '../../../components/about/about-text-page-content';
+import { buildAboutPageMetadata } from '../../../lib/about/metadata';
 
-export const metadata: Metadata = {
-  title: 'Notre gouvernance',
-  description: 'Structure de gouvernance et transparence d’Africa Tourism Gate.',
-  alternates: { canonical: '/a-propos/gouvernance' },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return buildAboutPageMetadata('/a-propos/gouvernance', 'governance');
+}
 
 export default function Page() {
   return <AboutTextPageContent sectionKey="governance" />;

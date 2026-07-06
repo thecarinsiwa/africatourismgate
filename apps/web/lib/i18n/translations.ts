@@ -281,6 +281,7 @@ export type Translations = {
     location: string;
     privacy: string;
     about: string;
+    aboutPages: string;
     faq: string;
     designedBy: string;
   };
@@ -1120,6 +1121,17 @@ export type Translations = {
       formTitle: string;
       formSubtitle: string;
     };
+    meta: Record<
+      | 'whoWeAre'
+      | 'team'
+      | 'howWeWork'
+      | 'governance'
+      | 'reports'
+      | 'responsibility'
+      | 'media'
+      | 'contact',
+      { title: string; description: string }
+    >;
   };
   comingSoon: {
     badge: string;
@@ -1518,6 +1530,7 @@ const fr: Translations = {
     location: 'Kinshasa, RD Congo',
     privacy: 'Politique de Confidentialité',
     about: 'À propos',
+    aboutPages: 'À propos',
     faq: 'FAQ',
     designedBy: 'Conçu par',
   },
@@ -2425,6 +2438,48 @@ const fr: Translations = {
       formTitle: 'Envoyer un message',
       formSubtitle: 'Décrivez votre demande — nous vous répondrons dans les meilleurs délais.',
     },
+    meta: {
+      whoWeAre: {
+        title: 'Qui nous sommes',
+        description:
+          'Découvrez Africa Tourism Gate : notre mission, notre vision et notre engagement pour le tourisme en Afrique.',
+      },
+      team: {
+        title: 'Notre équipe',
+        description:
+          'Rencontrez les femmes et les hommes qui font vivre Africa Tourism Gate au quotidien.',
+      },
+      howWeWork: {
+        title: 'Comment nous travaillons',
+        description:
+          'Notre approche qualité, transparence et partenariat local pour des voyages en Afrique.',
+      },
+      governance: {
+        title: 'Notre gouvernance',
+        description:
+          'Structure de gouvernance, décisions et transparence institutionnelle d’Africa Tourism Gate.',
+      },
+      reports: {
+        title: 'Rapports et finances',
+        description:
+          'Consultez les rapports d’activité et documents financiers publiés par Africa Tourism Gate.',
+      },
+      responsibility: {
+        title: 'Responsabilité',
+        description:
+          'Nos engagements pour un tourisme durable, éthique et responsable en Afrique.',
+      },
+      media: {
+        title: 'Médias & ressources',
+        description:
+          'Kit presse, logos et ressources médias pour parler d’Africa Tourism Gate.',
+      },
+      contact: {
+        title: 'Nous contacter',
+        description:
+          'Contactez l’équipe Africa Tourism Gate par téléphone, e-mail ou formulaire de support.',
+      },
+    },
   },
   comingSoon: {
     badge: 'Bientôt disponible',
@@ -2819,6 +2874,7 @@ const en: Translations = {
     location: 'Kinshasa, DR Congo',
     privacy: 'Privacy Policy',
     about: 'About',
+    aboutPages: 'About us',
     faq: 'FAQ',
     designedBy: 'Designed by',
   },
@@ -3720,6 +3776,46 @@ const en: Translations = {
       infoTitle: 'Contact details',
       formTitle: 'Send a message',
       formSubtitle: 'Describe your request — we will get back to you as soon as possible.',
+    },
+    meta: {
+      whoWeAre: {
+        title: 'Who we are',
+        description:
+          'Discover Africa Tourism Gate: our mission, vision and commitment to tourism across Africa.',
+      },
+      team: {
+        title: 'Our team',
+        description: 'Meet the people behind Africa Tourism Gate.',
+      },
+      howWeWork: {
+        title: 'How we work',
+        description:
+          'Our approach to quality, transparency and local partnerships for travel in Africa.',
+      },
+      governance: {
+        title: 'Our governance',
+        description:
+          'Governance structure, decision-making and institutional transparency at Africa Tourism Gate.',
+      },
+      reports: {
+        title: 'Reports & finances',
+        description:
+          'Browse activity reports and financial documents published by Africa Tourism Gate.',
+      },
+      responsibility: {
+        title: 'Responsibility',
+        description:
+          'Our commitments to sustainable, ethical and responsible tourism in Africa.',
+      },
+      media: {
+        title: 'Media & resources',
+        description: 'Press kit, logos and media resources about Africa Tourism Gate.',
+      },
+      contact: {
+        title: 'Contact us',
+        description:
+          'Reach the Africa Tourism Gate team by phone, email or support form.',
+      },
     },
   },
   comingSoon: {

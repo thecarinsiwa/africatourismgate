@@ -359,6 +359,7 @@ export const es: Translations = {
     location: 'Kinshasa, RD Congo',
     privacy: 'Política de privacidad',
     about: 'Acerca de',
+    aboutPages: 'Sobre nosotros',
     faq: 'FAQ',
     designedBy: 'Diseñado por',
   },
@@ -1263,6 +1264,46 @@ export const es: Translations = {
       infoTitle: 'Datos de contacto',
       formTitle: 'Enviar un mensaje',
       formSubtitle: 'Describa su solicitud — le responderemos lo antes posible.',
+    },
+    meta: {
+      whoWeAre: {
+        title: 'Quiénes somos',
+        description:
+          'Descubra Africa Tourism Gate: nuestra misión, visión y compromiso con el turismo en África.',
+      },
+      team: {
+        title: 'Nuestro equipo',
+        description: 'Conozca a las personas que hacen posible Africa Tourism Gate.',
+      },
+      howWeWork: {
+        title: 'Cómo trabajamos',
+        description:
+          'Nuestro enfoque de calidad, transparencia y alianzas locales para viajar por África.',
+      },
+      governance: {
+        title: 'Nuestra gobernanza',
+        description:
+          'Estructura de gobernanza, decisiones y transparencia institucional de Africa Tourism Gate.',
+      },
+      reports: {
+        title: 'Informes y finanzas',
+        description:
+          'Consulte informes de actividad y documentos financieros publicados por Africa Tourism Gate.',
+      },
+      responsibility: {
+        title: 'Responsabilidad',
+        description:
+          'Nuestros compromisos con un turismo sostenible, ético y responsable en África.',
+      },
+      media: {
+        title: 'Medios y recursos',
+        description: 'Kit de prensa, logotipos y recursos multimedia sobre Africa Tourism Gate.',
+      },
+      contact: {
+        title: 'Contáctenos',
+        description:
+          'Comuníquese con el equipo de Africa Tourism Gate por teléfono, correo o formulario.',
+      },
     },
   },
   comingSoon: {

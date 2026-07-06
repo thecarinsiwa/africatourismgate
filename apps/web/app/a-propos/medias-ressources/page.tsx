@@ -1,11 +1,10 @@
 import type { Metadata } from 'next';
 import { AboutResourcesPageContent } from '../../../components/about/about-resources-page-content';
+import { buildAboutPageMetadata } from '../../../lib/about/metadata';
 
-export const metadata: Metadata = {
-  title: 'Médias & ressources',
-  description: 'Kit presse et ressources médias Africa Tourism Gate.',
-  alternates: { canonical: '/a-propos/medias-ressources' },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return buildAboutPageMetadata('/a-propos/medias-ressources', 'media');
+}
 
 export default function Page() {
   return <AboutResourcesPageContent type="media" />;

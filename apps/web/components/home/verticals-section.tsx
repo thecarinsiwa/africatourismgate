@@ -7,7 +7,7 @@ import { useTranslations } from '../../lib/i18n/locale-provider';
 const WHY_US_ABOUT_LINKS = [
   '/a-propos/qui-nous-sommes',
   '/a-propos/comment-nous-travaillons',
-  '/a-propos/comment-nous-travaillons',
+  '/a-propos/responsabilite',
   '/a-propos/contact',
 ] as const;
 

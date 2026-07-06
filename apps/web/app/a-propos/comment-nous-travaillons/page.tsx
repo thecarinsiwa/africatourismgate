@@ -1,11 +1,10 @@
 import type { Metadata } from 'next';
 import { AboutTextPageContent } from '../../../components/about/about-text-page-content';
+import { buildAboutPageMetadata } from '../../../lib/about/metadata';
 
-export const metadata: Metadata = {
-  title: 'Comment nous travaillons',
-  description: 'Notre approche qualité, transparence et partenariat local.',
-  alternates: { canonical: '/a-propos/comment-nous-travaillons' },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return buildAboutPageMetadata('/a-propos/comment-nous-travaillons', 'howWeWork');
+}
 
 export default function Page() {
   return <AboutTextPageContent sectionKey="how-we-work" />;
