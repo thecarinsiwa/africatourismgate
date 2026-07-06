@@ -93,7 +93,6 @@ export function BlogPageContent() {
                   <li key={post.id}>
                     <article className="flex h-full flex-col overflow-hidden rounded-xl border border-atg-border bg-atg-elevated shadow-sm transition-shadow hover:shadow-md dark:border-atg-border dark:bg-atg-elevated">
                       {post.coverImageUrl ? (
-                        // eslint-disable-next-line @next/next/no-img-element
                         <img
                           src={post.coverImageUrl}
                           alt=""
