@@ -337,6 +337,40 @@ export const es: Translations = {
     nextDate: 'Próxima fecha',
     viewActivity: 'Ver actividad',
   },
+  customerReviews: {
+    title: 'Opiniones de nuestros clientes',
+    subtitle:
+      'Descubra lo que dicen nuestros viajeros sobre sus experiencias con Africa Tourism Gate.',
+    loadError: 'No se pudieron cargar las opiniones en línea. Mostrando testimonios predeterminados.',
+    anonymous: 'Viajero',
+    carouselAria: 'Carrusel de opiniones de clientes',
+    prev: 'Opinión anterior',
+    next: 'Opinión siguiente',
+    items: [
+      {
+        rating: 5,
+        title: 'Safari inolvidable',
+        body: 'Organización impecable de principio a fin. El equipo superó nuestras expectativas en nuestro primer safari en África Oriental.',
+        author: 'Marie L.',
+      },
+      {
+        rating: 5,
+        body: 'Reserva sencilla, soporte ágil y alojamientos de calidad. Recomiendo encarecidamente para descubrir África con tranquilidad.',
+        author: 'Thomas K.',
+      },
+      {
+        rating: 4,
+        title: 'Experiencia maravillosa',
+        body: 'Actividades variadas y guías apasionados. Nos encantó nuestro viaje a Zanzíbar y el seguimiento personalizado de la agencia.',
+        author: 'Sophie M.',
+      },
+      {
+        rating: 5,
+        body: 'Una plataforma fiable para planificar un viaje en África. Todo salió como estaba previsto, con una excelente comunicación.',
+        author: 'David R.',
+      },
+    ],
+  },
   footer: {
     tagline:
       'Su puerta de entrada a las mejores experiencias de viaje en África. Descubra destinos únicos y reserve con confianza.',

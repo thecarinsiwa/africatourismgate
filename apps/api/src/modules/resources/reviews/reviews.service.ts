@@ -402,6 +402,40 @@ export class ReviewsService extends CrudService<Reviews> {
     };
   }
 
+  async listFeaturedForHomepage(limit = 12): Promise<ReviewDto[]> {
+    const cappedLimit = Math.min(Math.max(limit, 1), 24);
+
+    const rows = await this.reviewsRepository
+      .createQueryBuilder('r')
+      .innerJoin(Users, 'u', 'u.id = r.userId AND u.deletedAt IS NULL')
+      .select('r.id', 'id')
+      .addSelect('r.rating', 'rating')
+      .addSelect('r.title', 'title')
+      .addSelect('r.body', 'body')
+      .addSelect('r.createdAt', 'createdAt')
+      .addSelect('u.firstName', 'authorFirstName')
+      .where('r.deletedAt IS NULL')
+      .andWhere("r.status = 'approved'")
+      .andWhere('r.body IS NOT NULL')
+      .andWhere("TRIM(r.body) != ''")
+      .andWhere('r.rating >= :minRating', { minRating: 4 })
+      .orderBy('r.createdAt', 'DESC')
+      .limit(cappedLimit)
+      .getRawMany<ReviewRow>();
+
+    return rows.map((row) => ({
+      id: row.id,
+      rating: Number(row.rating),
+      title: row.title,
+      body: row.body,
+      authorFirstName: row.authorFirstName,
+      createdAt:
+        row.createdAt instanceof Date
+          ? row.createdAt.toISOString()
+          : String(row.createdAt),
+    }));
+  }
+
   async listForAdmin(
     query: ReviewsListQueryDto,
   ): Promise<PaginatedResult<AdminReviewListItemDto>> {

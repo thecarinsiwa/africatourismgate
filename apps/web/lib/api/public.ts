@@ -22,6 +22,7 @@ import type {
   PublicWhyUsListQuery,
   PublicHappyCustomersContent,
   PublicHappyCustomersListQuery,
+  PublicFeaturedReviewsListQuery,
   AboutPageSectionKey,
 } from '@africatourismgate/types';
 import type {
@@ -724,4 +725,13 @@ export async function getPublicHappyCustomersForLocale(
     content: fallback,
     usedLocaleFallback: Boolean(fallback.section || fallback.stats.length > 0),
   };
+}
+
+export async function getPublicFeaturedReviews(
+  params: PublicFeaturedReviewsListQuery = {},
+): Promise<Review[]> {
+  const qs = new URLSearchParams();
+  if (params.limit !== undefined) qs.set('limit', String(params.limit));
+  const query = qs.toString();
+  return fetchPublic<Review[]>(`/public/reviews/featured${query ? `?${query}` : ''}`);
 }

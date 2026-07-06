@@ -74,6 +74,10 @@ export interface GuideReviewInvite {
   review: Review | null;
 }
 
+export interface PublicFeaturedReviewsListQuery {
+  limit?: number;
+}
+
 export interface PropertyReviewsListQuery {
   page?: number;
   limit?: number;

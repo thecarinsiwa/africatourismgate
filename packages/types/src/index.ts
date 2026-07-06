@@ -367,6 +367,7 @@ export type {
   GuideReviewInvite,
   PropertyReviewSummary,
   PropertyReviewsListQuery,
+  PublicFeaturedReviewsListQuery,
   Review,
   ReviewEntityType,
   ReviewStatus,
