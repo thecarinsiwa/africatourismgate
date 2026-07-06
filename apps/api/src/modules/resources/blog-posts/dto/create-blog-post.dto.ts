@@ -41,7 +41,10 @@ export class CreateBlogPostDto {
   @IsOptional()
   @IsString()
   @MaxLength(512)
-  @IsUrl({}, { message: "L'URL de l'image doit être valide." })
+  @IsUrl(
+    { require_tld: false, protocols: ['http', 'https'] },
+    { message: "L'URL de l'image doit être valide." },
+  )
   coverImageUrl?: string | null;
 
   @ApiPropertyOptional({ enum: ['draft', 'published'] })
