@@ -66,6 +66,8 @@ import { AboutTimelineMilestonesModule } from './resources/about-timeline-milest
 import { TeamMembersModule } from './resources/team-members/team-members.module';
 import { WhyUsItemsModule } from './resources/why-us-items/why-us-items.module';
 import { WhyUsSectionsModule } from './resources/why-us-sections/why-us-sections.module';
+import { HappyCustomersSectionsModule } from './resources/happy-customers-sections/happy-customers-sections.module';
+import { HappyCustomersStatsModule } from './resources/happy-customers-stats/happy-customers-stats.module';
 
 import { Module } from '@nestjs/common';
 
@@ -139,6 +141,8 @@ import { Module } from '@nestjs/common';
     AboutResourcesModule,
     WhyUsSectionsModule,
     WhyUsItemsModule,
+    HappyCustomersSectionsModule,
+    HappyCustomersStatsModule,
   ],
 })
 export class ApiResourcesModule {}

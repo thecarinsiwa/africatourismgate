@@ -92,7 +92,7 @@ export const CATALOG_PERMISSION_MAP = {
   promotions: ['promotions'],
   reviews: ['reviews'],
   blog: ['blog-posts'],
-  content: ['about-pages', 'team-members', 'about-resources', 'why-us-sections', 'why-us-items'],
+  content: ['about-pages', 'team-members', 'about-resources', 'why-us-sections', 'why-us-items', 'happy-customers-sections', 'happy-customers-stats'],
 } as const;
 
 export type CatalogPermissionResource = keyof typeof CATALOG_PERMISSION_MAP;

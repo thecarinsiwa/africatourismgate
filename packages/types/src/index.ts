@@ -344,6 +344,23 @@ export type {
 } from './why-us-item.js';
 
 export type {
+  CreateHappyCustomersSectionRequest,
+  CreateHappyCustomersStatRequest,
+  HappyCustomersColorKey,
+  HappyCustomersSection,
+  HappyCustomersSectionsListQuery,
+  HappyCustomersStat,
+  HappyCustomersStatsListQuery,
+  HappyCustomersStatus,
+  PublicHappyCustomersContent,
+  PublicHappyCustomersListQuery,
+  PublicHappyCustomersSection,
+  PublicHappyCustomersStat,
+  UpdateHappyCustomersSectionRequest,
+  UpdateHappyCustomersStatRequest,
+} from './happy-customers.js';
+
+export type {
   AdminReviewDetail,
   AdminReviewListItem,
   CreateBookingReviewRequest,

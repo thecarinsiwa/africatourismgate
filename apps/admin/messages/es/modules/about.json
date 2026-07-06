@@ -253,5 +253,65 @@
         "cancelButton": "Cancelar"
       }
     }
+  },
+  "happyCustomers": {
+    "page": {
+      "localeFilter": "Idioma"
+    },
+    "colors": {
+      "primary": "Verde principal",
+      "secondary": "Verde secundario"
+    },
+    "section": {
+      "heading": "Contenido de la sección",
+      "fields": {
+        "title": "Título",
+        "subtitle": "Subtítulo",
+        "paragraph1": "Primer párrafo",
+        "paragraph2": "Segundo párrafo",
+        "imageUrl": "URL de la imagen",
+        "imageAlt": "Texto alternativo de la imagen",
+        "badgeValue": "Valor del distintivo",
+        "badgeLabel": "Etiqueta del distintivo"
+      },
+      "saving": "Guardando…",
+      "saveButton": "Guardar sección"
+    },
+    "stats": {
+      "list": {
+        "deleteConfirm": "¿Eliminar la estadística «{label}»?",
+        "columns": {
+          "label": "Etiqueta",
+          "percent": "Porcentaje",
+          "color": "Color",
+          "sortOrder": "Orden"
+        },
+        "emptyDefault": "No hay estadísticas por el momento.",
+        "emptySearch": "Ninguna estadística coincide con su búsqueda.",
+        "searchPlaceholder": "Buscar por etiqueta…",
+        "newButton": "Nueva estadística",
+        "paginationItem": "estadística"
+      },
+      "edit": {
+        "pageTitle": "Modificar estadística"
+      },
+      "form": {
+        "validation": {
+          "labelRequired": "La etiqueta es obligatoria.",
+          "percentInvalid": "El porcentaje debe estar entre 0 y 100."
+        },
+        "fields": {
+          "label": "Etiqueta",
+          "percentValue": "Porcentaje (%)",
+          "colorKey": "Color de la barra",
+          "sortOrder": "Orden de visualización",
+          "locale": "Idioma"
+        },
+        "saving": "Guardando…",
+        "createButton": "Añadir estadística",
+        "saveButton": "Guardar",
+        "cancelButton": "Cancelar"
+      }
+    }
   }
 }

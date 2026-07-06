@@ -7,6 +7,7 @@ import { PublicAboutResourcesListQueryDto } from './dto/public-about-resources-l
 import { PublicAboutTimelineMilestonesListQueryDto } from './dto/public-about-timeline-milestones-list-query.dto';
 import { PublicTeamMembersListQueryDto } from './dto/public-team-members-list-query.dto';
 import { PublicWhyUsListQueryDto } from './dto/public-why-us-list-query.dto';
+import { PublicHappyCustomersListQueryDto } from './dto/public-happy-customers-list-query.dto';
 import { PublicAboutService } from './public-about.service';
 
 const SECTION_KEYS = new Set<AboutPageSectionKey>([
@@ -71,5 +72,12 @@ export class PublicAboutController {
   @ApiOperation({ summary: 'Get published why-us section and items' })
   getWhyUs(@Query() query: PublicWhyUsListQueryDto) {
     return this.service.getWhyUsContent(query);
+  }
+
+  @Public()
+  @Get('happy-customers')
+  @ApiOperation({ summary: 'Get published happy-customers section and stats' })
+  getHappyCustomers(@Query() query: PublicHappyCustomersListQueryDto) {
+    return this.service.getHappyCustomersContent(query);
   }
 }

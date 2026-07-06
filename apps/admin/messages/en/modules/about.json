@@ -253,5 +253,65 @@
         "cancelButton": "Cancel"
       }
     }
+  },
+  "happyCustomers": {
+    "page": {
+      "localeFilter": "Language"
+    },
+    "colors": {
+      "primary": "Primary green",
+      "secondary": "Secondary green"
+    },
+    "section": {
+      "heading": "Section content",
+      "fields": {
+        "title": "Title",
+        "subtitle": "Subtitle",
+        "paragraph1": "First paragraph",
+        "paragraph2": "Second paragraph",
+        "imageUrl": "Image URL",
+        "imageAlt": "Image alt text",
+        "badgeValue": "Badge value",
+        "badgeLabel": "Badge label"
+      },
+      "saving": "Saving…",
+      "saveButton": "Save section"
+    },
+    "stats": {
+      "list": {
+        "deleteConfirm": "Delete stat \"{label}\"?",
+        "columns": {
+          "label": "Label",
+          "percent": "Percentage",
+          "color": "Color",
+          "sortOrder": "Order"
+        },
+        "emptyDefault": "No stats yet.",
+        "emptySearch": "No stats match your search.",
+        "searchPlaceholder": "Search by label…",
+        "newButton": "New stat",
+        "paginationItem": "stat"
+      },
+      "edit": {
+        "pageTitle": "Edit stat"
+      },
+      "form": {
+        "validation": {
+          "labelRequired": "Label is required.",
+          "percentInvalid": "Percentage must be between 0 and 100."
+        },
+        "fields": {
+          "label": "Label",
+          "percentValue": "Percentage (%)",
+          "colorKey": "Bar color",
+          "sortOrder": "Display order",
+          "locale": "Language"
+        },
+        "saving": "Saving…",
+        "createButton": "Add stat",
+        "saveButton": "Save",
+        "cancelButton": "Cancel"
+      }
+    }
   }
 }

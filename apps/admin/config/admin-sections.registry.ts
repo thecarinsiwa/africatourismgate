@@ -217,6 +217,16 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Ajouter une carte à la section Pourquoi nous choisir.',
     apiResource: 'why-us-items',
   },
+  'contenu/clients-satisfaits': {
+    title: 'Clients satisfaits',
+    description: 'Section d\'accueil « Clients satisfaits » et ses statistiques.',
+    apiResource: 'happy-customers-sections',
+  },
+  'contenu/clients-satisfaits/nouveau': {
+    title: 'Nouvelle statistique',
+    description: 'Ajouter une barre de satisfaction.',
+    apiResource: 'happy-customers-stats',
+  },
   'contenu/avis': {
     title: 'Avis',
     description: 'Notes et commentaires clients.',

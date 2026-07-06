@@ -182,6 +182,14 @@ import type {
   WhyUsSectionsListQuery,
   CreateWhyUsSectionRequest,
   UpdateWhyUsSectionRequest,
+  HappyCustomersSection,
+  HappyCustomersSectionsListQuery,
+  CreateHappyCustomersSectionRequest,
+  UpdateHappyCustomersSectionRequest,
+  HappyCustomersStat,
+  HappyCustomersStatsListQuery,
+  CreateHappyCustomersStatRequest,
+  UpdateHappyCustomersStatRequest,
   AboutTimelineMilestone,
   AboutTimelineMilestonesListQuery,
   CreateAboutTimelineMilestoneRequest,
@@ -1344,6 +1352,70 @@ export class ApiClient {
 
   deleteWhyUsItem(id: string): Promise<void> {
     return this.request<void>(`/why-us-items/${id}`, { method: 'DELETE' });
+  }
+
+  listHappyCustomersSections(
+    query?: HappyCustomersSectionsListQuery,
+  ): Promise<PaginatedResponse<HappyCustomersSection>> {
+    return fetchPaginated<HappyCustomersSection>(this, '/happy-customers-sections', query);
+  }
+
+  getHappyCustomersSection(id: string): Promise<HappyCustomersSection> {
+    return this.request<HappyCustomersSection>(`/happy-customers-sections/${id}`);
+  }
+
+  createHappyCustomersSection(
+    body: CreateHappyCustomersSectionRequest,
+  ): Promise<HappyCustomersSection> {
+    return this.request<HappyCustomersSection>('/happy-customers-sections', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateHappyCustomersSection(
+    id: string,
+    body: UpdateHappyCustomersSectionRequest,
+  ): Promise<HappyCustomersSection> {
+    return this.request<HappyCustomersSection>(`/happy-customers-sections/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteHappyCustomersSection(id: string): Promise<void> {
+    return this.request<void>(`/happy-customers-sections/${id}`, { method: 'DELETE' });
+  }
+
+  listHappyCustomersStats(
+    query?: HappyCustomersStatsListQuery,
+  ): Promise<PaginatedResponse<HappyCustomersStat>> {
+    return fetchPaginated<HappyCustomersStat>(this, '/happy-customers-stats', query);
+  }
+
+  getHappyCustomersStat(id: string): Promise<HappyCustomersStat> {
+    return this.request<HappyCustomersStat>(`/happy-customers-stats/${id}`);
+  }
+
+  createHappyCustomersStat(body: CreateHappyCustomersStatRequest): Promise<HappyCustomersStat> {
+    return this.request<HappyCustomersStat>('/happy-customers-stats', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateHappyCustomersStat(
+    id: string,
+    body: UpdateHappyCustomersStatRequest,
+  ): Promise<HappyCustomersStat> {
+    return this.request<HappyCustomersStat>(`/happy-customers-stats/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteHappyCustomersStat(id: string): Promise<void> {
+    return this.request<void>(`/happy-customers-stats/${id}`, { method: 'DELETE' });
   }
 
   listAboutTimelineMilestones(

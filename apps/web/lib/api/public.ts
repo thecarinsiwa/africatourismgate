@@ -20,6 +20,8 @@ import type {
   PublicTeamMembersListQuery,
   PublicWhyUsContent,
   PublicWhyUsListQuery,
+  PublicHappyCustomersContent,
+  PublicHappyCustomersListQuery,
   AboutPageSectionKey,
 } from '@africatourismgate/types';
 import type {
@@ -687,5 +689,39 @@ export async function getPublicWhyUsForLocale(
   return {
     content: fallback,
     usedLocaleFallback: Boolean(fallback.section || fallback.items.length > 0),
+  };
+}
+
+function buildHappyCustomersQuery(params: PublicHappyCustomersListQuery): string {
+  const qs = new URLSearchParams();
+  if (params.locale) qs.set('locale', params.locale);
+  const s = qs.toString();
+  return s ? `?${s}` : '';
+}
+
+export async function getPublicHappyCustomers(
+  params: PublicHappyCustomersListQuery = {},
+): Promise<PublicHappyCustomersContent> {
+  return fetchPublic<PublicHappyCustomersContent>(
+    `/public/happy-customers${buildHappyCustomersQuery(params)}`,
+  );
+}
+
+export async function getPublicHappyCustomersForLocale(
+  locale: string,
+): Promise<{ content: PublicHappyCustomersContent; usedLocaleFallback: boolean }> {
+  try {
+    const localized = await getPublicHappyCustomers({ locale });
+    if (localized.section || localized.stats.length > 0) {
+      return { content: localized, usedLocaleFallback: false };
+    }
+  } catch {
+    /* try without locale below */
+  }
+
+  const fallback = await getPublicHappyCustomers();
+  return {
+    content: fallback,
+    usedLocaleFallback: Boolean(fallback.section || fallback.stats.length > 0),
   };
 }
