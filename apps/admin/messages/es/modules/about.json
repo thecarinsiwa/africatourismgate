@@ -1,0 +1,153 @@
+{
+  "status": {
+    "draft": "Borrador",
+    "published": "Publicado"
+  },
+  "locale": {
+    "fr": "Francés",
+    "en": "Inglés",
+    "es": "Español"
+  },
+  "sections": {
+    "who-we-are": "Quiénes somos",
+    "how-we-work": "Cómo trabajamos",
+    "governance": "Nuestra gobernanza",
+    "responsibility": "Responsabilidad"
+  },
+  "resourceTypes": {
+    "financial": "Informes y finanzas",
+    "media": "Medios y recursos"
+  },
+  "pages": {
+    "list": {
+      "deleteConfirm": "¿Eliminar la página «{title}»?",
+      "columns": {
+        "section": "Sección",
+        "title": "Título",
+        "locale": "Idioma",
+        "publishedAt": "Publicación"
+      },
+      "emptySearch": "Ninguna página coincide con su búsqueda.",
+      "emptyDefault": "Aún no hay páginas institucionales.",
+      "searchPlaceholder": "Buscar por título o extracto…",
+      "searchAria": "Buscar páginas",
+      "newButton": "Nueva página",
+      "tableAria": "Lista de páginas Acerca de",
+      "paginationItem": "página"
+    },
+    "edit": {
+      "pageTitle": "Editar página"
+    },
+    "form": {
+      "info": {
+        "sectionLocaleUnique": "Cada combinación sección + idioma es única.",
+        "publishedAtHint": "Al publicar, la fecha se rellena automáticamente si está vacía."
+      },
+      "validation": {
+        "contentRequired": "El contenido es obligatorio.",
+        "coverUrlInvalid": "La URL de la imagen de portada debe ser válida."
+      },
+      "fields": {
+        "section": "Sección",
+        "title": "Título",
+        "excerpt": "Extracto",
+        "excerptPlaceholder": "Resumen breve para el encabezado…",
+        "content": "Contenido",
+        "contentPlaceholder": "Redacte el cuerpo de la página…",
+        "coverImageUrl": "Imagen de portada",
+        "coverPreviewAlt": "Vista previa de portada",
+        "locale": "Idioma",
+        "publishedAtOptional": "Fecha de publicación (opcional)"
+      },
+      "hints": {
+        "publishedAt": "Dejar vacío para usar la fecha actual al publicar."
+      },
+      "saving": "Guardando…",
+      "createButton": "Crear página",
+      "saveButton": "Guardar",
+      "cancelButton": "Cancelar"
+    }
+  },
+  "team": {
+    "list": {
+      "deleteConfirm": "¿Eliminar a {name} del equipo?",
+      "columns": {
+        "name": "Miembro",
+        "sortOrder": "Orden",
+        "locale": "Idioma"
+      },
+      "emptyDefault": "Aún no hay miembros del equipo.",
+      "searchPlaceholder": "Buscar por nombre o rol…",
+      "newButton": "Nuevo miembro",
+      "paginationItem": "miembro"
+    },
+    "edit": {
+      "pageTitle": "Editar miembro"
+    },
+    "form": {
+      "validation": {
+        "nameRequired": "El nombre es obligatorio.",
+        "roleRequired": "El rol es obligatorio.",
+        "photoUrlInvalid": "La URL de la foto debe ser válida."
+      },
+      "fields": {
+        "name": "Nombre",
+        "role": "Rol",
+        "bio": "Biografía",
+        "photo": "Foto",
+        "photoPreviewAlt": "Vista previa de foto",
+        "sortOrder": "Orden de visualización",
+        "locale": "Idioma"
+      },
+      "saving": "Guardando…",
+      "createButton": "Añadir miembro",
+      "saveButton": "Guardar",
+      "cancelButton": "Cancelar"
+    }
+  },
+  "resources": {
+    "list": {
+      "deleteConfirm": "¿Eliminar el recurso «{title}»?",
+      "columns": {
+        "type": "Tipo",
+        "title": "Título",
+        "locale": "Idioma",
+        "publishedAt": "Fecha"
+      },
+      "emptyDefault": "Aún no hay recursos documentales.",
+      "searchPlaceholder": "Buscar por título…",
+      "newButton": "Nuevo recurso",
+      "paginationItem": "recurso"
+    },
+    "edit": {
+      "pageTitle": "Editar recurso"
+    },
+    "form": {
+      "validation": {
+        "fileFormat": "Formato no admitido (PDF o imagen).",
+        "fileTooLarge": "Archivo demasiado grande (máx. 10 MB).",
+        "fileOrUrlRequired": "Añada un archivo o una URL externa.",
+        "fileUrlInvalid": "La URL del archivo debe ser válida.",
+        "externalUrlInvalid": "La URL externa debe ser válida."
+      },
+      "fields": {
+        "type": "Tipo",
+        "title": "Título",
+        "description": "Descripción",
+        "file": "Archivo",
+        "externalUrl": "Enlace externo",
+        "sortOrder": "Orden de visualización",
+        "publishedAtOptional": "Fecha de publicación (opcional)",
+        "locale": "Idioma"
+      },
+      "hints": {
+        "fileFormat": "PDF, JPEG, PNG o WebP — máx. 10 MB.",
+        "externalUrl": "Enlace a un documento alojado en otro sitio (opcional si hay archivo)."
+      },
+      "saving": "Guardando…",
+      "createButton": "Crear recurso",
+      "saveButton": "Guardar",
+      "cancelButton": "Cancelar"
+    }
+  }
+}

@@ -1,0 +1,153 @@
+{
+  "status": {
+    "draft": "Brouillon",
+    "published": "Publié"
+  },
+  "locale": {
+    "fr": "Français",
+    "en": "Anglais",
+    "es": "Espagnol"
+  },
+  "sections": {
+    "who-we-are": "Qui nous sommes",
+    "how-we-work": "Comment nous travaillons",
+    "governance": "Notre gouvernance",
+    "responsibility": "Responsabilité"
+  },
+  "resourceTypes": {
+    "financial": "Rapports et finances",
+    "media": "Médias & ressources"
+  },
+  "pages": {
+    "list": {
+      "deleteConfirm": "Supprimer la page « {title} » ?",
+      "columns": {
+        "section": "Section",
+        "title": "Titre",
+        "locale": "Langue",
+        "publishedAt": "Publication"
+      },
+      "emptySearch": "Aucune page ne correspond à votre recherche.",
+      "emptyDefault": "Aucune page institutionnelle pour le moment.",
+      "searchPlaceholder": "Rechercher par titre ou extrait…",
+      "searchAria": "Rechercher une page",
+      "newButton": "Nouvelle page",
+      "tableAria": "Liste des pages À propos",
+      "paginationItem": "page"
+    },
+    "edit": {
+      "pageTitle": "Modifier la page"
+    },
+    "form": {
+      "info": {
+        "sectionLocaleUnique": "Chaque combinaison section + langue est unique.",
+        "publishedAtHint": "À la publication, la date est renseignée automatiquement si elle est vide."
+      },
+      "validation": {
+        "contentRequired": "Le contenu est obligatoire.",
+        "coverUrlInvalid": "L'URL de l'image de couverture doit être valide."
+      },
+      "fields": {
+        "section": "Section",
+        "title": "Titre",
+        "excerpt": "Extrait",
+        "excerptPlaceholder": "Résumé court affiché en en-tête…",
+        "content": "Contenu",
+        "contentPlaceholder": "Rédigez le corps de la page…",
+        "coverImageUrl": "Image de couverture",
+        "coverPreviewAlt": "Aperçu de la couverture",
+        "locale": "Langue",
+        "publishedAtOptional": "Date de publication (optionnel)"
+      },
+      "hints": {
+        "publishedAt": "Laisser vide pour utiliser la date actuelle à la publication."
+      },
+      "saving": "Enregistrement…",
+      "createButton": "Créer la page",
+      "saveButton": "Enregistrer",
+      "cancelButton": "Annuler"
+    }
+  },
+  "team": {
+    "list": {
+      "deleteConfirm": "Supprimer {name} de l'équipe ?",
+      "columns": {
+        "name": "Membre",
+        "sortOrder": "Ordre",
+        "locale": "Langue"
+      },
+      "emptyDefault": "Aucun membre d'équipe pour le moment.",
+      "searchPlaceholder": "Rechercher par nom ou rôle…",
+      "newButton": "Nouveau membre",
+      "paginationItem": "membre"
+    },
+    "edit": {
+      "pageTitle": "Modifier le membre"
+    },
+    "form": {
+      "validation": {
+        "nameRequired": "Le nom est obligatoire.",
+        "roleRequired": "Le rôle est obligatoire.",
+        "photoUrlInvalid": "L'URL de la photo doit être valide."
+      },
+      "fields": {
+        "name": "Nom",
+        "role": "Rôle",
+        "bio": "Biographie",
+        "photo": "Photo",
+        "photoPreviewAlt": "Aperçu photo",
+        "sortOrder": "Ordre d'affichage",
+        "locale": "Langue"
+      },
+      "saving": "Enregistrement…",
+      "createButton": "Ajouter le membre",
+      "saveButton": "Enregistrer",
+      "cancelButton": "Annuler"
+    }
+  },
+  "resources": {
+    "list": {
+      "deleteConfirm": "Supprimer la ressource « {title} » ?",
+      "columns": {
+        "type": "Type",
+        "title": "Titre",
+        "locale": "Langue",
+        "publishedAt": "Date"
+      },
+      "emptyDefault": "Aucune ressource documentaire pour le moment.",
+      "searchPlaceholder": "Rechercher par titre…",
+      "newButton": "Nouvelle ressource",
+      "paginationItem": "ressource"
+    },
+    "edit": {
+      "pageTitle": "Modifier la ressource"
+    },
+    "form": {
+      "validation": {
+        "fileFormat": "Format non accepté (PDF ou image).",
+        "fileTooLarge": "Fichier trop volumineux (max 10 Mo).",
+        "fileOrUrlRequired": "Ajoutez un fichier ou une URL externe.",
+        "fileUrlInvalid": "L'URL du fichier doit être valide.",
+        "externalUrlInvalid": "L'URL externe doit être valide."
+      },
+      "fields": {
+        "type": "Type",
+        "title": "Titre",
+        "description": "Description",
+        "file": "Fichier",
+        "externalUrl": "Lien externe",
+        "sortOrder": "Ordre d'affichage",
+        "publishedAtOptional": "Date de publication (optionnel)",
+        "locale": "Langue"
+      },
+      "hints": {
+        "fileFormat": "PDF, JPEG, PNG ou WebP — max 10 Mo.",
+        "externalUrl": "Lien vers un document hébergé ailleurs (optionnel si fichier uploadé)."
+      },
+      "saving": "Enregistrement…",
+      "createButton": "Créer la ressource",
+      "saveButton": "Enregistrer",
+      "cancelButton": "Annuler"
+    }
+  }
+}

@@ -166,6 +166,18 @@ import type {
   BlogPostsListQuery,
   CreateBlogPostRequest,
   UpdateBlogPostRequest,
+  AboutPage,
+  AboutPagesListQuery,
+  CreateAboutPageRequest,
+  UpdateAboutPageRequest,
+  TeamMember,
+  TeamMembersListQuery,
+  CreateTeamMemberRequest,
+  UpdateTeamMemberRequest,
+  AboutResource,
+  AboutResourcesListQuery,
+  CreateAboutResourceRequest,
+  UpdateAboutResourceRequest,
   Permission,
   PermissionsListQuery,
   RbacAuditLog,
@@ -1210,6 +1222,93 @@ export class ApiClient {
 
   deleteBlogPost(id: string): Promise<void> {
     return this.request<void>(`/blog-posts/${id}`, { method: 'DELETE' });
+  }
+
+  listAboutPages(
+    query?: AboutPagesListQuery,
+  ): Promise<PaginatedResponse<AboutPage>> {
+    return fetchPaginated<AboutPage>(this, '/about-pages', query);
+  }
+
+  getAboutPage(id: string): Promise<AboutPage> {
+    return this.request<AboutPage>(`/about-pages/${id}`);
+  }
+
+  createAboutPage(body: CreateAboutPageRequest): Promise<AboutPage> {
+    return this.request<AboutPage>('/about-pages', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateAboutPage(id: string, body: UpdateAboutPageRequest): Promise<AboutPage> {
+    return this.request<AboutPage>(`/about-pages/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteAboutPage(id: string): Promise<void> {
+    return this.request<void>(`/about-pages/${id}`, { method: 'DELETE' });
+  }
+
+  listTeamMembers(
+    query?: TeamMembersListQuery,
+  ): Promise<PaginatedResponse<TeamMember>> {
+    return fetchPaginated<TeamMember>(this, '/team-members', query);
+  }
+
+  getTeamMember(id: string): Promise<TeamMember> {
+    return this.request<TeamMember>(`/team-members/${id}`);
+  }
+
+  createTeamMember(body: CreateTeamMemberRequest): Promise<TeamMember> {
+    return this.request<TeamMember>('/team-members', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateTeamMember(id: string, body: UpdateTeamMemberRequest): Promise<TeamMember> {
+    return this.request<TeamMember>(`/team-members/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteTeamMember(id: string): Promise<void> {
+    return this.request<void>(`/team-members/${id}`, { method: 'DELETE' });
+  }
+
+  listAboutResources(
+    query?: AboutResourcesListQuery,
+  ): Promise<PaginatedResponse<AboutResource>> {
+    return fetchPaginated<AboutResource>(this, '/about-resources', query);
+  }
+
+  getAboutResource(id: string): Promise<AboutResource> {
+    return this.request<AboutResource>(`/about-resources/${id}`);
+  }
+
+  createAboutResource(body: CreateAboutResourceRequest): Promise<AboutResource> {
+    return this.request<AboutResource>('/about-resources', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateAboutResource(
+    id: string,
+    body: UpdateAboutResourceRequest,
+  ): Promise<AboutResource> {
+    return this.request<AboutResource>(`/about-resources/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteAboutResource(id: string): Promise<void> {
+    return this.request<void>(`/about-resources/${id}`, { method: 'DELETE' });
   }
 
   getSucceededPaymentsRevenue(): Promise<SucceededPaymentsRevenue> {
