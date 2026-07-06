@@ -1,11 +1,12 @@
 import type { Metadata } from 'next';
 import { AboutTextPageContent } from '../../../components/about/about-text-page-content';
 import { buildAboutPageMetadata } from '../../../lib/about/metadata';
+import { ABOUT_PATHS } from '../../../lib/about/routes';
 
 export async function generateMetadata(): Promise<Metadata> {
-  return buildAboutPageMetadata('/a-propos/comment-nous-travaillons', 'howWeWork');
+  return buildAboutPageMetadata(ABOUT_PATHS.governance, 'governance');
 }
 
 export default function Page() {
-  return <AboutTextPageContent sectionKey="how-we-work" />;
+  return <AboutTextPageContent sectionKey="governance" />;
 }

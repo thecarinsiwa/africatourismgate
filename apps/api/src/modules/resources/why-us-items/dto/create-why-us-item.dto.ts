@@ -21,7 +21,7 @@ export class CreateWhyUsItemDto {
   @IsString()
   description!: string;
 
-  @ApiProperty({ example: '/a-propos/qui-nous-sommes' })
+  @ApiProperty({ example: '/about/who-we-are' })
   @IsNotEmpty()
   @IsString()
   @MaxLength(512)

@@ -8,7 +8,7 @@ import { useResolvedPublicBranding } from '../../lib/branding/use-resolved-publi
 import { useResolvedPublicContact } from '../../lib/contact/use-resolved-public-contact';
 import { buildSocialLinks } from '../../lib/contact/social-links';
 import { buildVerticalListRoute } from '../../lib/search/route';
-import { ABOUT_NAV_ITEMS } from '../../lib/about/routes';
+import { ABOUT_NAV_ITEMS, ABOUT_PATHS } from '../../lib/about/routes';
 
 export function HomeFooter() {
   const t = useTranslations();
@@ -54,7 +54,7 @@ export function HomeFooter() {
               </Link>
               <p className="text-sm text-white/60 leading-relaxed mb-5">{t.footer.tagline}</p>
               <Link
-                href="/a-propos/qui-nous-sommes"
+                href={ABOUT_PATHS.whoWeAre}
                 className="inline-flex items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white transition-colors hover:bg-primary-hover"
               >
                 {t.footer.learnMore}
@@ -133,7 +133,7 @@ export function HomeFooter() {
 
             <div id="contact" className="scroll-mt-24">
               <h3 className="text-sm font-bold uppercase tracking-wide text-white mb-5">
-                <Link href="/a-propos/contact" className="hover:text-white/90 transition-colors">
+                <Link href={ABOUT_PATHS.contact} className="hover:text-white/90 transition-colors">
                   {t.footer.contact}
                 </Link>
               </h3>
@@ -203,7 +203,7 @@ export function HomeFooter() {
               {t.footer.privacy}
             </a>
             <span className="mx-2">|</span>
-            <Link href="/a-propos/qui-nous-sommes" className="hover:text-white transition-colors">
+            <Link href={ABOUT_PATHS.whoWeAre} className="hover:text-white transition-colors">
               {t.footer.about}
             </Link>
             <span className="mx-2">|</span>
@@ -211,7 +211,7 @@ export function HomeFooter() {
               {t.footer.faq}
             </Link>
             <span className="mx-2">|</span>
-            <Link href="/a-propos/contact" className="hover:text-white transition-colors">
+            <Link href={ABOUT_PATHS.contact} className="hover:text-white transition-colors">
               {t.footer.contact}
             </Link>
           </p>

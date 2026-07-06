@@ -3,6 +3,6 @@
 import type { ReactNode } from 'react';
 import { AboutShell } from '../../components/about/about-shell';
 
-export default function AProposLayout({ children }: { children: ReactNode }) {
+export default function AboutLayout({ children }: { children: ReactNode }) {
   return <AboutShell>{children}</AboutShell>;
 }

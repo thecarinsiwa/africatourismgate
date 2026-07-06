@@ -3,11 +3,11 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from '../../lib/i18n/locale-provider';
-import { ABOUT_NAV_ITEMS } from '../../lib/about/routes';
+import { ABOUT_NAV_ITEMS, normalizeAboutPathname } from '../../lib/about/routes';
 import { cn } from '@africatourismgate/ui';
 
 export function AboutSidebar() {
-  const pathname = usePathname();
+  const pathname = normalizeAboutPathname(usePathname());
   const t = useTranslations();
   const a = t.about;
 

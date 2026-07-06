@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
 import { AboutTextPageContent } from '../../../components/about/about-text-page-content';
 import { buildAboutPageMetadata } from '../../../lib/about/metadata';
+import { ABOUT_PATHS } from '../../../lib/about/routes';
 
 export async function generateMetadata(): Promise<Metadata> {
-  return buildAboutPageMetadata('/a-propos/responsabilite', 'responsibility');
+  return buildAboutPageMetadata(ABOUT_PATHS.responsibility, 'responsibility');
 }
 
 export default function Page() {

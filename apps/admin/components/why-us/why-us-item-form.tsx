@@ -182,7 +182,7 @@ export function WhyUsItemForm({
           id={linkUrlId}
           value={values.linkUrl}
           onChange={(e) => updateField('linkUrl', e.target.value)}
-          placeholder="/a-propos/qui-nous-sommes"
+          placeholder="/about/who-we-are"
           aria-invalid={Boolean(fieldErrors.linkUrl)}
         />
         {fieldErrors.linkUrl ? (

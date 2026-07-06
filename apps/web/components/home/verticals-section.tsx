@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState, type ReactNode } from 'react';
 import type { PublicWhyUsContent, PublicWhyUsItem, WhyUsIconKey } from '@africatourismgate/types';
+import { ABOUT_PATHS } from '../../lib/about/routes';
 import { getPublicWhyUsForLocale } from '../../lib/api/public';
 import { useAppLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { useScrollAnimation } from './use-scroll-animation';
@@ -67,16 +68,16 @@ function mapFallbackItems(
     id: `fallback-${i}`,
     title: item.title,
     description: item.description,
-    linkUrl: links[i] ?? '/a-propos/qui-nous-sommes',
+    linkUrl: links[i] ?? ABOUT_PATHS.whoWeAre,
     iconKey: iconKeys[i] ?? 'globe',
   }));
 }
 
 const FALLBACK_LINKS = [
-  '/a-propos/qui-nous-sommes',
-  '/a-propos/comment-nous-travaillons',
-  '/a-propos/responsabilite',
-  '/a-propos/contact',
+  ABOUT_PATHS.whoWeAre,
+  ABOUT_PATHS.howWeWork,
+  ABOUT_PATHS.responsibility,
+  ABOUT_PATHS.contact,
 ] as const;
 
 function toDisplayItems(content: PublicWhyUsContent | null, fallbackItems: DisplayItem[]): DisplayItem[] {
