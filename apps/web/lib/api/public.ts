@@ -498,14 +498,6 @@ export async function getBlogPostBySlugForLocale(
 
 export type { PublicAboutPage, PublicAboutResource, PublicTeamMember };
 
-function buildAboutPagesQuery(locale?: string, sectionKey?: AboutPageSectionKey): string {
-  const qs = new URLSearchParams();
-  if (locale) qs.set('locale', locale);
-  if (sectionKey) qs.set('sectionKey', sectionKey);
-  const s = qs.toString();
-  return s ? `?${s}` : '';
-}
-
 export async function getAboutPageBySectionKey(
   sectionKey: AboutPageSectionKey,
   locale?: string,
