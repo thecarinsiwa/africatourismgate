@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { browseBlogPosts } from '../../lib/api/public';
-import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
+import { useAppLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { formatRelativeReviewDate } from '../../lib/i18n/format-relative-date';
 import { useListingPagination } from '../../lib/listing/pagination';
 import { toListingPaginationLabels, scrollListingToTop } from '../../lib/listing/pagination-labels';
@@ -14,7 +14,7 @@ import { ListingPageBody, ListingPaginationBar } from '../shared/listing-pattern
 import { PageHero } from '../shared/page-hero';
 
 export function BlogPageContent() {
-  const { locale } = useLocale();
+  const locale = useAppLocale();
   const t = useTranslations();
   const b = t.blog;
   const l = t.listing;
@@ -66,7 +66,7 @@ export function BlogPageContent() {
     <div className="flex min-h-screen flex-col bg-atg-bg text-atg-fg">
       <HomeHeader />
       <main className="flex-1">
-        <PageHero title={b.heroTitle} subtitle={b.heroSubtitle} />
+        <PageHero title={b.heroTitle} description={b.heroSubtitle} />
         <ListingPageBody>
           {loading ? (
             <p className="text-center text-atg-muted">{b.loading}</p>
@@ -147,6 +147,7 @@ export function BlogPageContent() {
                   totalPages={totalPages}
                   totalItems={totalItems}
                   pageSize={pageSize}
+                  itemLabel={l.resultItem}
                   labels={paginationLabels}
                   onPageChange={(next) => {
                     setPage(next);

@@ -2348,6 +2348,7 @@ const fr: Translations = {
     breadcrumbBlog: 'Blog',
   },
   comingSoon: {
+    badge: 'Bientôt disponible',
     title: 'Bientôt disponible',
     siteBody:
       'Cette section du site est en cours de préparation. Revenez bientôt pour découvrir de nouvelles fonctionnalités sur Africa Tourism Gate.',

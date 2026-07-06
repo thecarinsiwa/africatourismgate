@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { getBlogPostBySlug } from '../../lib/api/public';
-import { useLocale, useTranslations } from '../../lib/i18n/locale-provider';
+import { useAppLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { formatRelativeReviewDate } from '../../lib/i18n/format-relative-date';
 import type { PublicBlogPostDetail } from '@africatourismgate/types';
 import { HomeFooter } from '../home/home-footer';
@@ -15,7 +15,7 @@ type BlogDetailPageContentProps = {
 };
 
 export function BlogDetailPageContent({ slug }: BlogDetailPageContentProps) {
-  const { locale } = useLocale();
+  const locale = useAppLocale();
   const t = useTranslations();
   const b = t.blog;
 
@@ -67,7 +67,7 @@ export function BlogDetailPageContent({ slug }: BlogDetailPageContentProps) {
           </div>
         ) : (
           <>
-            <PageHero title={post.title} subtitle={post.excerpt ?? undefined} />
+            <PageHero title={post.title} description={post.excerpt ?? undefined} />
             <article className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
               <nav className="mb-6 text-sm text-atg-muted" aria-label="Breadcrumb">
                 <ol className="flex flex-wrap items-center gap-2">
