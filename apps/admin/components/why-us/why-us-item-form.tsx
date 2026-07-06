@@ -77,7 +77,6 @@ export function WhyUsItemForm({
   const t = useTranslations('modules.about.whyUs.items.form');
   const tIcons = useTranslations('modules.about.whyUs.icons');
   const tCommon = useTranslations('modules.common');
-  const tCommonForm = useTranslations('modules.common.form');
   const tLocale = useTranslations('modules.about.locale');
   const tStatus = useTranslations('modules.about.status');
   const router = useRouter();
