@@ -18,6 +18,8 @@ import type {
   PublicTeamMember,
   PublicAboutResourcesListQuery,
   PublicTeamMembersListQuery,
+  PublicWhyUsContent,
+  PublicWhyUsListQuery,
   AboutPageSectionKey,
 } from '@africatourismgate/types';
 import type {
@@ -653,5 +655,37 @@ export async function browseAboutTimelineMilestonesForLocale(
   return {
     response: all,
     usedLocaleFallback: all.data.length > 0,
+  };
+}
+
+function buildWhyUsQuery(params: PublicWhyUsListQuery): string {
+  const qs = new URLSearchParams();
+  if (params.locale) qs.set('locale', params.locale);
+  const s = qs.toString();
+  return s ? `?${s}` : '';
+}
+
+export async function getPublicWhyUs(
+  params: PublicWhyUsListQuery = {},
+): Promise<PublicWhyUsContent> {
+  return fetchPublic<PublicWhyUsContent>(`/public/why-us${buildWhyUsQuery(params)}`);
+}
+
+export async function getPublicWhyUsForLocale(
+  locale: string,
+): Promise<{ content: PublicWhyUsContent; usedLocaleFallback: boolean }> {
+  try {
+    const localized = await getPublicWhyUs({ locale });
+    if (localized.section || localized.items.length > 0) {
+      return { content: localized, usedLocaleFallback: false };
+    }
+  } catch {
+    /* try without locale below */
+  }
+
+  const fallback = await getPublicWhyUs();
+  return {
+    content: fallback,
+    usedLocaleFallback: Boolean(fallback.section || fallback.items.length > 0),
   };
 }

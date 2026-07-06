@@ -207,6 +207,16 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Ajouter un document ou une ressource média.',
     apiResource: 'about-resources',
   },
+  'contenu/pourquoi-nous': {
+    title: 'Pourquoi nous choisir',
+    description: 'Section d\'accueil « Pourquoi nous choisir » et ses cartes.',
+    apiResource: 'why-us-sections',
+  },
+  'contenu/pourquoi-nous/nouveau': {
+    title: 'Nouvelle carte',
+    description: 'Ajouter une carte à la section Pourquoi nous choisir.',
+    apiResource: 'why-us-items',
+  },
   'contenu/avis': {
     title: 'Avis',
     description: 'Notes et commentaires clients.',

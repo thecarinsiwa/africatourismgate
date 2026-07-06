@@ -174,6 +174,14 @@ import type {
   TeamMembersListQuery,
   CreateTeamMemberRequest,
   UpdateTeamMemberRequest,
+  WhyUsItem,
+  WhyUsItemsListQuery,
+  CreateWhyUsItemRequest,
+  UpdateWhyUsItemRequest,
+  WhyUsSection,
+  WhyUsSectionsListQuery,
+  CreateWhyUsSectionRequest,
+  UpdateWhyUsSectionRequest,
   AboutTimelineMilestone,
   AboutTimelineMilestonesListQuery,
   CreateAboutTimelineMilestoneRequest,
@@ -1282,6 +1290,60 @@ export class ApiClient {
 
   deleteTeamMember(id: string): Promise<void> {
     return this.request<void>(`/team-members/${id}`, { method: 'DELETE' });
+  }
+
+  listWhyUsSections(
+    query?: WhyUsSectionsListQuery,
+  ): Promise<PaginatedResponse<WhyUsSection>> {
+    return fetchPaginated<WhyUsSection>(this, '/why-us-sections', query);
+  }
+
+  getWhyUsSection(id: string): Promise<WhyUsSection> {
+    return this.request<WhyUsSection>(`/why-us-sections/${id}`);
+  }
+
+  createWhyUsSection(body: CreateWhyUsSectionRequest): Promise<WhyUsSection> {
+    return this.request<WhyUsSection>('/why-us-sections', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateWhyUsSection(id: string, body: UpdateWhyUsSectionRequest): Promise<WhyUsSection> {
+    return this.request<WhyUsSection>(`/why-us-sections/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteWhyUsSection(id: string): Promise<void> {
+    return this.request<void>(`/why-us-sections/${id}`, { method: 'DELETE' });
+  }
+
+  listWhyUsItems(query?: WhyUsItemsListQuery): Promise<PaginatedResponse<WhyUsItem>> {
+    return fetchPaginated<WhyUsItem>(this, '/why-us-items', query);
+  }
+
+  getWhyUsItem(id: string): Promise<WhyUsItem> {
+    return this.request<WhyUsItem>(`/why-us-items/${id}`);
+  }
+
+  createWhyUsItem(body: CreateWhyUsItemRequest): Promise<WhyUsItem> {
+    return this.request<WhyUsItem>('/why-us-items', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateWhyUsItem(id: string, body: UpdateWhyUsItemRequest): Promise<WhyUsItem> {
+    return this.request<WhyUsItem>(`/why-us-items/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteWhyUsItem(id: string): Promise<void> {
+    return this.request<void>(`/why-us-items/${id}`, { method: 'DELETE' });
   }
 
   listAboutTimelineMilestones(

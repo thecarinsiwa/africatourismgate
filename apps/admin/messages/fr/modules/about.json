@@ -195,5 +195,63 @@
       "saveButton": "Enregistrer",
       "cancelButton": "Annuler"
     }
+  },
+  "whyUs": {
+    "page": {
+      "localeFilter": "Langue"
+    },
+    "icons": {
+      "globe": "Globe (voyages)",
+      "search": "Loupe (découvertes)",
+      "booking": "Réservation",
+      "support": "Support"
+    },
+    "section": {
+      "heading": "En-tête de section",
+      "fields": {
+        "title": "Titre",
+        "subtitle": "Sous-titre"
+      },
+      "saving": "Enregistrement…",
+      "saveButton": "Enregistrer la section"
+    },
+    "items": {
+      "list": {
+        "deleteConfirm": "Supprimer la carte « {title} » ?",
+        "columns": {
+          "title": "Carte",
+          "icon": "Icône",
+          "sortOrder": "Ordre"
+        },
+        "emptyDefault": "Aucune carte pour le moment.",
+        "emptySearch": "Aucune carte ne correspond à votre recherche.",
+        "searchPlaceholder": "Rechercher par titre ou description…",
+        "newButton": "Nouvelle carte",
+        "tableAria": "Liste des cartes Pourquoi nous choisir",
+        "paginationItem": "carte"
+      },
+      "edit": {
+        "pageTitle": "Modifier la carte"
+      },
+      "form": {
+        "validation": {
+          "titleRequired": "Le titre est obligatoire.",
+          "descriptionRequired": "La description est obligatoire.",
+          "linkUrlRequired": "Le lien est obligatoire."
+        },
+        "fields": {
+          "title": "Titre",
+          "description": "Description",
+          "linkUrl": "Lien",
+          "iconKey": "Icône",
+          "sortOrder": "Ordre d'affichage",
+          "locale": "Langue"
+        },
+        "saving": "Enregistrement…",
+        "createButton": "Ajouter la carte",
+        "saveButton": "Enregistrer",
+        "cancelButton": "Annuler"
+      }
+    }
   }
 }

@@ -10,6 +10,8 @@ import { AboutResources } from '../entities/about-resource.entity';
 import { BlogPosts } from '../entities/blog-post.entity';
 import { AboutTimelineMilestones } from '../entities/about-timeline-milestone.entity';
 import { TeamMembers } from '../entities/team-member.entity';
+import { WhyUsItems } from '../entities/why-us-item.entity';
+import { WhyUsSections } from '../entities/why-us-section.entity';
 import { EmailOperationVerifications } from '../entities/email-operation-verification.entity';
 import { ensureMigrations } from './ensure-migrations';
 import { ensureRbacPermissions } from './ensure-rbac-permissions';
@@ -24,6 +26,8 @@ const entityList = [
   TeamMembers,
   AboutTimelineMilestones,
   AboutResources,
+  WhyUsSections,
+  WhyUsItems,
   BookingIdentityDocuments,
   BookingManifestEntries,
 ] as (new () => unknown)[];

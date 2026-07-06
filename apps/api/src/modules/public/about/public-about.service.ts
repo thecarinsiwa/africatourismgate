@@ -9,10 +9,13 @@ import {
 import { AboutTimelineMilestones } from '../../../entities/about-timeline-milestone.entity';
 import { AboutResources } from '../../../entities/about-resource.entity';
 import { TeamMembers } from '../../../entities/team-member.entity';
+import { WhyUsItems } from '../../../entities/why-us-item.entity';
+import { WhyUsSections } from '../../../entities/why-us-section.entity';
 import { PublicAboutPagesListQueryDto } from './dto/public-about-pages-list-query.dto';
 import { PublicAboutResourcesListQueryDto } from './dto/public-about-resources-list-query.dto';
 import { PublicAboutTimelineMilestonesListQueryDto } from './dto/public-about-timeline-milestones-list-query.dto';
 import { PublicTeamMembersListQueryDto } from './dto/public-team-members-list-query.dto';
+import { PublicWhyUsListQueryDto } from './dto/public-why-us-list-query.dto';
 
 export type PublicAboutPageDto = {
   id: string;
@@ -47,6 +50,28 @@ export type PublicAboutResourceDto = {
   locale: string;
 };
 
+export type PublicWhyUsSectionDto = {
+  id: string;
+  title: string;
+  subtitle: string;
+  locale: string;
+};
+
+export type PublicWhyUsItemDto = {
+  id: string;
+  title: string;
+  description: string;
+  linkUrl: string;
+  iconKey: 'globe' | 'search' | 'booking' | 'support';
+  sortOrder: number;
+  locale: string;
+};
+
+export type PublicWhyUsContentDto = {
+  section: PublicWhyUsSectionDto | null;
+  items: PublicWhyUsItemDto[];
+};
+
 export type PublicAboutTimelineMilestoneDto = {
   id: string;
   periodLabel: string;
@@ -73,6 +98,10 @@ export class PublicAboutService {
     private readonly aboutResourcesRepository: Repository<AboutResources>,
     @InjectRepository(AboutTimelineMilestones)
     private readonly timelineMilestonesRepository: Repository<AboutTimelineMilestones>,
+    @InjectRepository(WhyUsSections)
+    private readonly whyUsSectionsRepository: Repository<WhyUsSections>,
+    @InjectRepository(WhyUsItems)
+    private readonly whyUsItemsRepository: Repository<WhyUsItems>,
   ) {}
 
   async listPages(
@@ -130,6 +159,14 @@ export class PublicAboutService {
     }
 
     return result;
+  }
+
+  async getWhyUsContent(query: PublicWhyUsListQueryDto): Promise<PublicWhyUsContentDto> {
+    let content = await this.fetchWhyUsContent(query.locale);
+    if ((!content.section || content.items.length === 0) && query.locale) {
+      content = await this.fetchWhyUsContent();
+    }
+    return content;
   }
 
   async listTimelineMilestones(
@@ -349,6 +386,59 @@ export class PublicAboutService {
       linkUrl: milestone.linkUrl,
       sortOrder: milestone.sortOrder,
       locale: milestone.locale,
+    };
+  }
+
+  private async fetchWhyUsContent(locale?: string): Promise<PublicWhyUsContentDto> {
+    const sectionQb = this.whyUsSectionsRepository
+      .createQueryBuilder('section')
+      .where('section.deletedAt IS NULL')
+      .andWhere('section.status = :status', { status: 'published' });
+
+    if (locale) {
+      sectionQb.andWhere('section.locale = :locale', { locale });
+    }
+
+    const section = await sectionQb.getOne();
+
+    const itemsQb = this.whyUsItemsRepository
+      .createQueryBuilder('item')
+      .where('item.deletedAt IS NULL')
+      .andWhere('item.status = :status', { status: 'published' });
+
+    if (locale) {
+      itemsQb.andWhere('item.locale = :locale', { locale });
+    }
+
+    const items = await itemsQb
+      .orderBy('item.sortOrder', 'ASC')
+      .addOrderBy('item.title', 'ASC')
+      .getMany();
+
+    return {
+      section: section ? this.toWhyUsSectionDto(section) : null,
+      items: items.map((item) => this.toWhyUsItemDto(item)),
+    };
+  }
+
+  private toWhyUsSectionDto(section: WhyUsSections): PublicWhyUsSectionDto {
+    return {
+      id: section.id,
+      title: section.title,
+      subtitle: section.subtitle,
+      locale: section.locale,
+    };
+  }
+
+  private toWhyUsItemDto(item: WhyUsItems): PublicWhyUsItemDto {
+    return {
+      id: item.id,
+      title: item.title,
+      description: item.description,
+      linkUrl: item.linkUrl,
+      iconKey: item.iconKey,
+      sortOrder: item.sortOrder,
+      locale: item.locale,
     };
   }
 }

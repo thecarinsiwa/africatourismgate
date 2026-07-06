@@ -195,5 +195,63 @@
       "saveButton": "Guardar",
       "cancelButton": "Cancelar"
     }
+  },
+  "whyUs": {
+    "page": {
+      "localeFilter": "Idioma"
+    },
+    "icons": {
+      "globe": "Globo (viajes)",
+      "search": "Lupa (descubrimientos)",
+      "booking": "Reserva",
+      "support": "Soporte"
+    },
+    "section": {
+      "heading": "Encabezado de sección",
+      "fields": {
+        "title": "Título",
+        "subtitle": "Subtítulo"
+      },
+      "saving": "Guardando…",
+      "saveButton": "Guardar sección"
+    },
+    "items": {
+      "list": {
+        "deleteConfirm": "¿Eliminar la tarjeta «{title}»?",
+        "columns": {
+          "title": "Tarjeta",
+          "icon": "Icono",
+          "sortOrder": "Orden"
+        },
+        "emptyDefault": "No hay tarjetas por el momento.",
+        "emptySearch": "Ninguna tarjeta coincide con su búsqueda.",
+        "searchPlaceholder": "Buscar por título o descripción…",
+        "newButton": "Nueva tarjeta",
+        "tableAria": "Lista de tarjetas Por qué elegirnos",
+        "paginationItem": "tarjeta"
+      },
+      "edit": {
+        "pageTitle": "Modificar tarjeta"
+      },
+      "form": {
+        "validation": {
+          "titleRequired": "El título es obligatorio.",
+          "descriptionRequired": "La descripción es obligatoria.",
+          "linkUrlRequired": "El enlace es obligatorio."
+        },
+        "fields": {
+          "title": "Título",
+          "description": "Descripción",
+          "linkUrl": "Enlace",
+          "iconKey": "Icono",
+          "sortOrder": "Orden de visualización",
+          "locale": "Idioma"
+        },
+        "saving": "Guardando…",
+        "createButton": "Añadir tarjeta",
+        "saveButton": "Guardar",
+        "cancelButton": "Cancelar"
+      }
+    }
   }
 }

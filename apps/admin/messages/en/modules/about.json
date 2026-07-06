@@ -195,5 +195,63 @@
       "saveButton": "Save",
       "cancelButton": "Cancel"
     }
+  },
+  "whyUs": {
+    "page": {
+      "localeFilter": "Language"
+    },
+    "icons": {
+      "globe": "Globe (trips)",
+      "search": "Search (discoveries)",
+      "booking": "Booking",
+      "support": "Support"
+    },
+    "section": {
+      "heading": "Section header",
+      "fields": {
+        "title": "Title",
+        "subtitle": "Subtitle"
+      },
+      "saving": "Saving…",
+      "saveButton": "Save section"
+    },
+    "items": {
+      "list": {
+        "deleteConfirm": "Delete card \"{title}\"?",
+        "columns": {
+          "title": "Card",
+          "icon": "Icon",
+          "sortOrder": "Order"
+        },
+        "emptyDefault": "No cards yet.",
+        "emptySearch": "No cards match your search.",
+        "searchPlaceholder": "Search by title or description…",
+        "newButton": "New card",
+        "tableAria": "Why choose us cards list",
+        "paginationItem": "card"
+      },
+      "edit": {
+        "pageTitle": "Edit card"
+      },
+      "form": {
+        "validation": {
+          "titleRequired": "Title is required.",
+          "descriptionRequired": "Description is required.",
+          "linkUrlRequired": "Link is required."
+        },
+        "fields": {
+          "title": "Title",
+          "description": "Description",
+          "linkUrl": "Link",
+          "iconKey": "Icon",
+          "sortOrder": "Display order",
+          "locale": "Language"
+        },
+        "saving": "Saving…",
+        "createButton": "Add card",
+        "saveButton": "Save",
+        "cancelButton": "Cancel"
+      }
+    }
   }
 }
