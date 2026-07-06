@@ -103,6 +103,20 @@ const PERMISSION_UPSERTS: Array<{
     action: 'write',
     description: 'Manage blog posts',
   },
+  {
+    id: '00000000-0000-4000-8000-000000001048',
+    code: 'content.read',
+    resource: 'content',
+    action: 'read',
+    description: 'View institutional about content',
+  },
+  {
+    id: '00000000-0000-4000-8000-000000001049',
+    code: 'content.write',
+    resource: 'content',
+    action: 'write',
+    description: 'Manage institutional about content',
+  },
 ];
 
 /** Full org_admin set (install.seed.sql) — repairs partial or missing grants. */
@@ -134,6 +148,8 @@ const ORG_ADMIN_PERMISSION_IDS = [
   '00000000-0000-4000-8000-000000001045',
   '00000000-0000-4000-8000-000000001046',
   '00000000-0000-4000-8000-000000001047',
+  '00000000-0000-4000-8000-000000001048',
+  '00000000-0000-4000-8000-000000001049',
 ];
 
 async function platformOrgExists(config: ConfigService): Promise<boolean> {

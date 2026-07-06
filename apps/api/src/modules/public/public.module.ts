@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { PublicAboutModule } from './about/public-about.module';
 import { PublicBlogModule } from './blog/public-blog.module';
 import { PublicAccommodationsModule } from './accommodations/public-accommodations.module';
 import { PublicActivitiesModule } from './activities/public-activities.module';
@@ -9,6 +10,7 @@ import { PublicVehiclesModule } from './vehicles/public-vehicles.module';
 
 @Module({
   imports: [
+    PublicAboutModule,
     PublicBlogModule,
     PublicAccommodationsModule,
     PublicFlightsModule,

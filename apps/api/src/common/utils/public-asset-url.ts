@@ -49,6 +49,18 @@ export function blogPostUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/blog/${filename}`;
 }
 
+export function aboutPageUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/about/pages/${filename}`;
+}
+
+export function teamMemberUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/about/team/${filename}`;
+}
+
+export function aboutResourceUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/about/resources/${filename}`;
+}
+
 function getApiPublicOrigin(): string {
   return getApiBaseUrl().replace(/\/api$/, '');
 }

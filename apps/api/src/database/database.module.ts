@@ -5,7 +5,10 @@ import { join } from 'node:path';
 import * as entities from '../entities/generated';
 import { BookingIdentityDocuments } from '../entities/booking-identity-document.entity';
 import { BookingManifestEntries } from '../entities/booking-manifest-entry.entity';
+import { AboutPages } from '../entities/about-page.entity';
+import { AboutResources } from '../entities/about-resource.entity';
 import { BlogPosts } from '../entities/blog-post.entity';
+import { TeamMembers } from '../entities/team-member.entity';
 import { EmailOperationVerifications } from '../entities/email-operation-verification.entity';
 import { ensureMigrations } from './ensure-migrations';
 import { ensureRbacPermissions } from './ensure-rbac-permissions';
@@ -16,6 +19,9 @@ const entityList = [
   ...Object.values(entities).filter((v) => typeof v === 'function'),
   EmailOperationVerifications,
   BlogPosts,
+  AboutPages,
+  TeamMembers,
+  AboutResources,
   BookingIdentityDocuments,
   BookingManifestEntries,
 ] as (new () => unknown)[];
