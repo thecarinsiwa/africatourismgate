@@ -8,6 +8,9 @@ import type {
   PublicDestination,
   PublicDestinationHighlight,
   Review,
+  PublicBlogPostDetail,
+  PublicBlogPostListItem,
+  PublicBlogPostsListQuery,
 } from '@africatourismgate/types';
 import type {
   VehicleDetail,
@@ -414,5 +417,35 @@ export async function getPackageResolvedLines(
 ): Promise<PackageResolvedLine[]> {
   return fetchPublic<PackageResolvedLine[]>(
     `/public/packages/${encodeURIComponent(packageId)}/resolve-lines${buildPackageResolveLinesQuery(params)}`,
+  );
+}
+
+export type { PublicBlogPostDetail, PublicBlogPostListItem, PublicBlogPostsListQuery };
+
+function buildBlogQuery(params: PublicBlogPostsListQuery): string {
+  const qs = new URLSearchParams();
+  if (params.search) qs.set('search', params.search);
+  if (params.locale) qs.set('locale', params.locale);
+  if (params.page !== undefined) qs.set('page', String(params.page));
+  if (params.limit !== undefined) qs.set('limit', String(params.limit));
+  const s = qs.toString();
+  return s ? `?${s}` : '';
+}
+
+export async function browseBlogPosts(
+  params: PublicBlogPostsListQuery = {},
+): Promise<PaginatedResponse<PublicBlogPostListItem>> {
+  return fetchPublic<PaginatedResponse<PublicBlogPostListItem>>(
+    `/public/blog${buildBlogQuery(params)}`,
+  );
+}
+
+export async function getBlogPostBySlug(
+  slug: string,
+  locale?: string,
+): Promise<PublicBlogPostDetail> {
+  const qs = locale ? `?locale=${encodeURIComponent(locale)}` : '';
+  return fetchPublic<PublicBlogPostDetail>(
+    `/public/blog/${encodeURIComponent(slug)}${qs}`,
   );
 }

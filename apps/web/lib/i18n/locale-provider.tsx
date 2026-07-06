@@ -86,6 +86,11 @@ export function useLocale() {
   return ctx;
 }
 
+/** Current UI locale code (`fr` | `en` | `es`). */
+export function useAppLocale(): Locale {
+  return useLocale().locale;
+}
+
 /** Legacy translations for pages not yet on next-intl message files. */
 export function useLegacyTranslations() {
   return useLocale().t;

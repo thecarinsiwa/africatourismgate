@@ -61,12 +61,12 @@ export function LanguageSwitcher({ variant = 'topbar' }: LanguageSwitcherProps) 
 
   const buttonClass =
     variant === 'topbar'
-      ? 'inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-1.5 rounded-md border border-white/20 bg-white/5 px-3 text-xs font-semibold text-white transition-colors hover:bg-white/10 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary'
+      ? 'inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-1.5 rounded-md border border-atg-border bg-atg-elevated px-3 text-xs font-semibold text-atg-fg transition-colors hover:bg-atg-surface focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-white/20 dark:bg-white/5 dark:text-white dark:hover:bg-white/10'
       : 'inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-1.5 rounded-md border border-atg-border bg-atg-elevated px-3 text-xs font-semibold text-atg-fg transition-colors hover:bg-atg-surface focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-atg-border dark:bg-atg-surface dark:text-white/75 dark:hover:bg-white/5';
 
   const menuClass =
     variant === 'topbar'
-      ? 'absolute right-0 top-full z-50 mt-2 w-40 overflow-hidden rounded-lg border border-white/15 bg-[#101827] shadow-xl'
+      ? 'absolute right-0 top-full z-50 mt-2 w-40 overflow-hidden rounded-lg border border-atg-border bg-atg-elevated shadow-xl dark:border-white/15 dark:bg-[#101827]'
       : 'absolute right-0 top-full z-50 mt-2 w-44 overflow-hidden rounded-lg border border-atg-border bg-atg-elevated shadow-xl dark:border-atg-border dark:bg-atg-elevated';
 
   return (
@@ -74,7 +74,7 @@ export function LanguageSwitcher({ variant = 'topbar' }: LanguageSwitcherProps) 
       <span className="sr-only">{t('select')}</span>
       <svg
         className={`h-3.5 w-3.5 shrink-0 ${
-          variant === 'topbar' ? 'text-white/70' : 'text-atg-muted'
+          variant === 'topbar' ? 'text-atg-muted dark:text-white/80' : 'text-atg-muted'
         }`}
         fill="none"
         viewBox="0 0 24 24"
@@ -99,7 +99,7 @@ export function LanguageSwitcher({ variant = 'topbar' }: LanguageSwitcherProps) 
         <span>{current.label}</span>
         <svg
           className={`h-3.5 w-3.5 ${
-            variant === 'topbar' ? 'text-white/70' : 'text-atg-muted'
+            variant === 'topbar' ? 'text-atg-muted dark:text-white/80' : 'text-atg-muted'
           }`}
           fill="none"
           viewBox="0 0 24 24"
@@ -123,8 +123,8 @@ export function LanguageSwitcher({ variant = 'topbar' }: LanguageSwitcherProps) 
                 className={`flex min-h-[44px] w-full items-center justify-between px-3 py-2.5 text-left text-xs font-semibold transition-colors ${
                   variant === 'topbar'
                     ? selected
-                      ? 'bg-white/10 text-white'
-                      : 'text-white/85 hover:bg-white/10'
+                      ? 'bg-atg-surface text-atg-fg dark:bg-white/10 dark:text-white'
+                      : 'text-atg-fg hover:bg-atg-surface dark:text-white/85 dark:hover:bg-white/10'
                     : selected
                       ? 'bg-atg-surface text-atg-fg dark:bg-white/5 dark:text-white'
                       : 'text-atg-fg hover:bg-atg-surface dark:text-white/75 dark:hover:bg-white/5'
@@ -137,7 +137,7 @@ export function LanguageSwitcher({ variant = 'topbar' }: LanguageSwitcherProps) 
                   </span>
                   <span
                     className={
-                      variant === 'topbar' ? 'text-white/80' : 'text-atg-muted'
+                      variant === 'topbar' ? 'text-atg-muted dark:text-white/80' : 'text-atg-muted'
                     }
                   >
                     {l.name}

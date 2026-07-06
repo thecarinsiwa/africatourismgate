@@ -1067,6 +1067,22 @@ export type Translations = {
       contact: { question: string; answer: string };
     };
   };
+  blog: {
+    metaTitle: string;
+    metaDescription: string;
+    heroTitle: string;
+    heroSubtitle: string;
+    readMore: string;
+    loading: string;
+    loadError: string;
+    retry: string;
+    noResults: string;
+    noResultsHint: string;
+    backToBlog: string;
+    publishedOn: string;
+    breadcrumbHome: string;
+    breadcrumbBlog: string;
+  };
   comingSoon: {
     badge: string;
     title: string;
@@ -2314,6 +2330,23 @@ const fr: Translations = {
       },
     },
   },
+  blog: {
+    metaTitle: 'Blog voyage en Afrique',
+    metaDescription:
+      'Conseils, guides et inspirations pour préparer votre prochain voyage en Afrique avec Africa Tourism Gate.',
+    heroTitle: 'Blog',
+    heroSubtitle: 'Guides, conseils et inspirations pour voyager en Afrique.',
+    readMore: 'Lire la suite',
+    loading: 'Chargement des articles…',
+    loadError: "Impossible de charger le blog. Vérifiez que l'API est démarrée.",
+    retry: 'Réessayer',
+    noResults: 'Aucun article publié',
+    noResultsHint: 'Revenez bientôt pour découvrir nos nouveaux contenus.',
+    backToBlog: 'Retour au blog',
+    publishedOn: 'Publié le',
+    breadcrumbHome: 'Accueil',
+    breadcrumbBlog: 'Blog',
+  },
   comingSoon: {
     badge: 'Bientôt disponible',
     title: 'Bientôt disponible',
@@ -3551,6 +3584,23 @@ const en: Translations = {
           'We handle requests Monday�Friday. Most tickets get a first reply within 1�2 business days.',
       },
     },
+  },
+  blog: {
+    metaTitle: 'Africa travel blog',
+    metaDescription:
+      'Tips, guides and inspiration to plan your next trip to Africa with Africa Tourism Gate.',
+    heroTitle: 'Blog',
+    heroSubtitle: 'Guides, tips and inspiration for traveling in Africa.',
+    readMore: 'Read more',
+    loading: 'Loading articles…',
+    loadError: 'Could not load the blog. Check that the API is running.',
+    retry: 'Retry',
+    noResults: 'No published articles',
+    noResultsHint: 'Check back soon for new content.',
+    backToBlog: 'Back to blog',
+    publishedOn: 'Published on',
+    breadcrumbHome: 'Home',
+    breadcrumbBlog: 'Blog',
   },
   comingSoon: {
     badge: 'Coming soon',

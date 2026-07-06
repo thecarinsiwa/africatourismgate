@@ -89,6 +89,20 @@ const PERMISSION_UPSERTS: Array<{
     action: 'approve',
     description: 'Approve or reject assisted booking requests',
   },
+  {
+    id: '00000000-0000-4000-8000-000000001046',
+    code: 'blog.read',
+    resource: 'blog',
+    action: 'read',
+    description: 'View blog posts',
+  },
+  {
+    id: '00000000-0000-4000-8000-000000001047',
+    code: 'blog.write',
+    resource: 'blog',
+    action: 'write',
+    description: 'Manage blog posts',
+  },
 ];
 
 /** Full org_admin set (install.seed.sql) — repairs partial or missing grants. */
@@ -118,6 +132,8 @@ const ORG_ADMIN_PERMISSION_IDS = [
   '00000000-0000-4000-8000-000000001043',
   '00000000-0000-4000-8000-000000001044',
   '00000000-0000-4000-8000-000000001045',
+  '00000000-0000-4000-8000-000000001046',
+  '00000000-0000-4000-8000-000000001047',
 ];
 
 async function platformOrgExists(config: ConfigService): Promise<boolean> {

@@ -5,6 +5,7 @@ import { join } from 'node:path';
 import * as entities from '../entities/generated';
 import { BookingIdentityDocuments } from '../entities/booking-identity-document.entity';
 import { BookingManifestEntries } from '../entities/booking-manifest-entry.entity';
+import { BlogPosts } from '../entities/blog-post.entity';
 import { EmailOperationVerifications } from '../entities/email-operation-verification.entity';
 import { ensureMigrations } from './ensure-migrations';
 import { ensureRbacPermissions } from './ensure-rbac-permissions';
@@ -14,6 +15,7 @@ import { ensureSeeds } from './ensure-seeds';
 const entityList = [
   ...Object.values(entities).filter((v) => typeof v === 'function'),
   EmailOperationVerifications,
+  BlogPosts,
   BookingIdentityDocuments,
   BookingManifestEntries,
 ] as (new () => unknown)[];
