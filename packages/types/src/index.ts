@@ -285,6 +285,38 @@ export type {
 } from './blog-post.js';
 
 export type {
+  AboutPage,
+  AboutPageSectionKey,
+  AboutPageStatus,
+  AboutPagesListQuery,
+  CreateAboutPageRequest,
+  PublicAboutPage,
+  PublicAboutPagesListQuery,
+  UpdateAboutPageRequest,
+} from './about-page.js';
+
+export type {
+  AboutResource,
+  AboutResourceStatus,
+  AboutResourceType,
+  AboutResourcesListQuery,
+  CreateAboutResourceRequest,
+  PublicAboutResource,
+  PublicAboutResourcesListQuery,
+  UpdateAboutResourceRequest,
+} from './about-resource.js';
+
+export type {
+  CreateTeamMemberRequest,
+  PublicTeamMember,
+  PublicTeamMembersListQuery,
+  TeamMember,
+  TeamMemberStatus,
+  TeamMembersListQuery,
+  UpdateTeamMemberRequest,
+} from './team-member.js';
+
+export type {
   AdminReviewDetail,
   AdminReviewListItem,
   CreateBookingReviewRequest,
