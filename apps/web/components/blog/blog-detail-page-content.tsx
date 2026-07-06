@@ -15,7 +15,7 @@ type BlogDetailPageContentProps = {
 };
 
 export function BlogDetailPageContent({ slug }: BlogDetailPageContentProps) {
-  const locale = useLocale();
+  const { locale } = useLocale();
   const t = useTranslations();
   const b = t.blog;
 

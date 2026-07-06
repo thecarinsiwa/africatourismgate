@@ -14,7 +14,7 @@ import { ListingPageBody, ListingPaginationBar } from '../shared/listing-pattern
 import { PageHero } from '../shared/page-hero';
 
 export function BlogPageContent() {
-  const locale = useLocale();
+  const { locale } = useLocale();
   const t = useTranslations();
   const b = t.blog;
   const l = t.listing;
