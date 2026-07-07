@@ -101,6 +101,7 @@ export function HomeHeader() {
   const onAccountArea = pathname.startsWith('/account');
   const [menuOpen, setMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [mobileOpenGroup, setMobileOpenGroup] = useState<string | null>(null);
   const [theme, setTheme] = useState<ThemeMode>('light');
   const [hasSession, setHasSession] = useState(false);
   const mobileNavRef = useRef<HTMLElement>(null);
@@ -153,6 +154,7 @@ export function HomeHeader() {
 
   useEffect(() => {
     setMenuOpen(false);
+    setMobileOpenGroup(null);
   }, [pathname]);
 
   useEffect(() => {
@@ -406,18 +408,42 @@ export function HomeHeader() {
             ) : null}
             {navLinks.map((link) => {
               const linkActive = isNavItemActive(link.href, pathname, link.children);
+              const groupOpen = mobileOpenGroup === link.href;
               return (
                 <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className={`flex min-h-[44px] items-center rounded-lg px-3 py-3 text-sm font-medium ${navLinkClass(linkActive, 'mobile')}`}
-                    aria-current={linkActive && link.children.length === 0 ? 'page' : undefined}
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    {link.label}
-                  </Link>
+                  <div className="flex items-center gap-1">
+                    <Link
+                      href={link.href}
+                      className={`flex min-h-[44px] flex-1 items-center rounded-lg px-3 py-3 text-sm font-medium ${navLinkClass(linkActive, 'mobile')}`}
+                      aria-current={linkActive && link.children.length === 0 ? 'page' : undefined}
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      {link.label}
+                    </Link>
+                    {link.children.length > 0 ? (
+                      <button
+                        type="button"
+                        className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-atg-muted transition-colors hover:bg-atg-surface hover:text-primary dark:text-white/75 dark:hover:bg-white/5 dark:hover:text-white"
+                        aria-expanded={groupOpen}
+                        aria-label={groupOpen ? `Fermer ${link.label}` : `Ouvrir ${link.label}`}
+                        onClick={() =>
+                          setMobileOpenGroup((prev) => (prev === link.href ? null : link.href))
+                        }
+                      >
+                        <svg
+                          className={`h-4 w-4 transition-transform ${groupOpen ? 'rotate-180' : ''}`}
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          aria-hidden
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+                    ) : null}
+                  </div>
                   {link.children.length > 0 && (
-                    <ul className="ml-4">
+                    <ul className={`ml-4 ${groupOpen ? 'block' : 'hidden'}`}>
                       {link.children.map((child) => {
                         const childActive = isPathActive(child.href, pathname);
                         return (
