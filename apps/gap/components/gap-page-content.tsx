@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import type { GapPageSectionKey } from '@africatourismgate/types';
-import type { PublicGapPage } from '@africatourismgate/types';
+import type { GapPageSectionKey, PublicGapPage } from '@africatourismgate/types';
+import Image from 'next/image';
 import { useLocale, useTranslations } from 'next-intl';
-import { getGapPageBySectionKeyForLocale } from '@/lib/api/public-gap';
+import { useEffect, useState } from 'react';
+import { getGapPageBySectionKeyForLocale, resolveGapMediaUrl } from '@/lib/api/public-gap';
 
 type GapPageContentProps = {
   sectionKey: GapPageSectionKey;
@@ -76,12 +76,15 @@ export function GapPageContent({ sectionKey, title }: GapPageContentProps) {
           ) : null}
 
           {page.coverImageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={page.coverImageUrl}
-              alt=""
-              className="mb-8 w-full rounded-xl object-cover"
-            />
+            <div className="relative mb-8 aspect-[16/9] w-full overflow-hidden rounded-xl">
+              <Image
+                src={resolveGapMediaUrl(page.coverImageUrl) ?? page.coverImageUrl}
+                alt=""
+                fill
+                className="object-cover"
+                sizes="(max-width: 896px) 100vw, 896px"
+              />
+            </div>
           ) : null}
 
           <div
