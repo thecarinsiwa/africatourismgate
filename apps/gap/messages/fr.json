@@ -2,10 +2,15 @@
   "theme": {
     "label": "Apparence",
     "light": "Mode clair",
-    "dark": "Mode sombre"
+    "dark": "Mode sombre",
+    "lightMode": "Mode clair",
+    "darkMode": "Mode sombre",
+    "enableLight": "Activer le mode clair",
+    "enableDark": "Activer le mode sombre"
   },
   "language": {
     "label": "Langue",
+    "select": "Choisir la langue",
     "fr": "Français",
     "en": "English",
     "es": "Español"
@@ -17,8 +22,9 @@
     "unesco": "UNESCO",
     "activities": "Activités",
     "media": "Médias",
-    "openMenu": "Ouvrir le menu",
-    "closeMenu": "Fermer le menu"
+    "mainAria": "Navigation principale",
+    "mobileAria": "Navigation mobile",
+    "menu": "Menu"
   },
   "common": {
     "loading": "Chargement…",
