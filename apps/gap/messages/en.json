@@ -1,0 +1,79 @@
+{
+  "theme": {
+    "label": "Appearance",
+    "light": "Light mode",
+    "dark": "Dark mode",
+    "lightMode": "Light mode",
+    "darkMode": "Dark mode",
+    "enableLight": "Enable light mode",
+    "enableDark": "Enable dark mode"
+  },
+  "language": {
+    "label": "Language",
+    "select": "Choose language",
+    "fr": "Français",
+    "en": "English",
+    "es": "Español"
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "objectives": "Objectives",
+    "unesco": "UNESCO",
+    "activities": "Activities",
+    "media": "Media",
+    "donate": "Donate",
+    "mainAria": "Main navigation",
+    "mobileAria": "Mobile navigation",
+    "menu": "Menu"
+  },
+  "common": {
+    "loading": "Loading…",
+    "empty": "Content is not available at the moment.",
+    "emptyHint": "Please check back later or contact the GAP team.",
+    "localeFallback": "This content is not yet available in your language — showing another locale.",
+    "learnMore": "Learn more",
+    "backHome": "Back to home"
+  },
+  "home": {
+    "impactTitle": "Our impact",
+    "impactSubtitle": "Measurable outcomes for gorilla conservation and community engagement.",
+    "activitiesTitle": "Our activities",
+    "activitiesSubtitle": "Awareness, reforestation, art, park visits, and community engagement.",
+    "exploreActivities": "View all activities",
+    "exploreMedia": "Media gallery"
+  },
+  "pages": {
+    "about": { "title": "About the program" },
+    "objectives": { "title": "Our objectives" },
+    "unesco": { "title": "UNESCO recognition" }
+  },
+  "activities": {
+    "title": "Program activities",
+    "subtitle": "On-the-ground initiatives to educate, protect, and mobilize communities.",
+    "empty": "No activities published yet."
+  },
+  "media": {
+    "title": "Media",
+    "subtitle": "Images and videos from the Gorilla Ambassadors Program.",
+    "empty": "No media published yet.",
+    "image": "Image",
+    "video": "Video",
+    "watch": "Watch video"
+  },
+  "footer": {
+    "tagline": "Environmental education program — Virunga National Park, DRC.",
+    "mainSite": "Africa Tourism Gate",
+    "rights": "All rights reserved."
+  },
+  "meta": {
+    "siteName": "Gorilla Ambassadors Program",
+    "defaultDescription": "Gorilla Ambassadors Program — environmental education and conservation in Virunga National Park."
+  },
+  "donate": {
+    "title": "Support the GAP program",
+    "intro": "Several donation campaigns are offered based on needs on the ground.",
+    "allCampaigns": "All campaigns",
+    "empty": "No donation campaigns are available at the moment."
+  }
+}

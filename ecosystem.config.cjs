@@ -5,6 +5,8 @@
  *
  *   pm2 start ecosystem.config.cjs
  *   pm2 start ecosystem.config.cjs --only atg-api,atg-web,atg-admin
+ *   ATG_ENABLE_POS=1 pm2 start ecosystem.config.cjs --only atg-pos
+ *   ATG_ENABLE_GAP=1 pm2 start ecosystem.config.cjs --only atg-gap
  */
 const path = require('node:path');
 
@@ -48,6 +50,15 @@ if (process.env.ATG_ENABLE_POS === '1') {
     ...base,
     name: 'atg-pos',
     script: path.join(ROOT, 'scripts/pm2-start-pos.sh'),
+    interpreter: 'bash',
+  });
+}
+
+if (process.env.ATG_ENABLE_GAP === '1') {
+  apps.push({
+    ...base,
+    name: 'atg-gap',
+    script: path.join(ROOT, 'scripts/pm2-start-gap.sh'),
     interpreter: 'bash',
   });
 }

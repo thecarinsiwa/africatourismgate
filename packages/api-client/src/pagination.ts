@@ -32,6 +32,13 @@ import type {
   VehicleCategoriesListQuery,
   VehicleImagesListQuery,
   VehiclesListQuery,
+  GapSiteSettingsListQuery,
+  GapPagesListQuery,
+  GapActivitiesListQuery,
+  GapImpactStatsListQuery,
+  GapMediaItemsListQuery,
+  PublicGapMediaListQuery,
+  PublicGapPagesListQuery,
 } from '@africatourismgate/types';
 import type { RequestOptions } from './index';
 
@@ -71,6 +78,10 @@ const RESOURCE_QUERY_KEYS = [
   'propertyType',
   'itemType',
   'bookingId',
+  'locale',
+  'sectionKey',
+  'mediaType',
+  'type',
 ] as const;
 
 export type PaginatedListQuery =
@@ -103,7 +114,14 @@ export type PaginatedListQuery =
   | VehicleImagesListQuery
   | ActivityImagesListQuery
   | VehicleAvailabilityListQuery
-  | PropertySearchQuery;
+  | PropertySearchQuery
+  | GapSiteSettingsListQuery
+  | GapPagesListQuery
+  | GapActivitiesListQuery
+  | GapImpactStatsListQuery
+  | GapMediaItemsListQuery
+  | PublicGapMediaListQuery
+  | PublicGapPagesListQuery;
 
 function buildQueryString(query?: PaginatedListQuery): string {
   const params = new URLSearchParams();

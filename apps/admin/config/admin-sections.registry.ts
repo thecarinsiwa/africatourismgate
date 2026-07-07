@@ -227,6 +227,61 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Ajouter une barre de satisfaction.',
     apiResource: 'happy-customers-stats',
   },
+  'contenu/hero': {
+    title: 'Carousel hero',
+    description: 'Diapositives du bandeau principal de la page d\'accueil.',
+    apiResource: 'hero-slides',
+  },
+  'contenu/hero/nouveau': {
+    title: 'Nouvelle diapositive',
+    description: 'Ajouter une diapositive au carousel hero.',
+    apiResource: 'hero-slides',
+  },
+  'gap/parametres': {
+    title: 'Paramètres site GAP',
+    description: 'Titre, sous-titre et bannière du programme Gorilla Ambassadors.',
+    apiResource: 'gap-site-settings',
+  },
+  'gap/pages': {
+    title: 'Pages GAP',
+    description: 'Pages institutionnelles du programme GAP.',
+    apiResource: 'gap-pages',
+  },
+  'gap/pages/nouveau': {
+    title: 'Nouvelle page GAP',
+    description: 'Créer une page institutionnelle GAP.',
+    apiResource: 'gap-pages',
+  },
+  'gap/activites': {
+    title: 'Activités GAP',
+    description: 'Activités et initiatives du programme.',
+    apiResource: 'gap-activities',
+  },
+  'gap/activites/nouveau': {
+    title: 'Nouvelle activité GAP',
+    description: 'Ajouter une activité au programme.',
+    apiResource: 'gap-activities',
+  },
+  'gap/impact': {
+    title: 'Impact GAP',
+    description: 'Statistiques d\'impact du programme.',
+    apiResource: 'gap-impact-stats',
+  },
+  'gap/impact/nouveau': {
+    title: 'Nouvelle statistique d\'impact',
+    description: 'Ajouter une statistique d\'impact.',
+    apiResource: 'gap-impact-stats',
+  },
+  'gap/medias': {
+    title: 'Médias GAP',
+    description: 'Galerie photos et vidéos du programme.',
+    apiResource: 'gap-media-items',
+  },
+  'gap/medias/nouveau': {
+    title: 'Nouveau média GAP',
+    description: 'Ajouter une image ou une vidéo.',
+    apiResource: 'gap-media-items',
+  },
   'contenu/avis': {
     title: 'Avis',
     description: 'Notes et commentaires clients.',

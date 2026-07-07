@@ -13,12 +13,14 @@ import { WhyUsItems } from '../../../entities/why-us-item.entity';
 import { WhyUsSections } from '../../../entities/why-us-section.entity';
 import { HappyCustomersSections } from '../../../entities/happy-customers-section.entity';
 import { HappyCustomersStats } from '../../../entities/happy-customers-stat.entity';
+import { HeroSlides } from '../../../entities/hero-slide.entity';
 import { PublicAboutPagesListQueryDto } from './dto/public-about-pages-list-query.dto';
 import { PublicAboutResourcesListQueryDto } from './dto/public-about-resources-list-query.dto';
 import { PublicAboutTimelineMilestonesListQueryDto } from './dto/public-about-timeline-milestones-list-query.dto';
 import { PublicTeamMembersListQueryDto } from './dto/public-team-members-list-query.dto';
 import { PublicWhyUsListQueryDto } from './dto/public-why-us-list-query.dto';
 import { PublicHappyCustomersListQueryDto } from './dto/public-happy-customers-list-query.dto';
+import { PublicHeroSlidesListQueryDto } from './dto/public-hero-slides-list-query.dto';
 
 export type PublicAboutPageDto = {
   id: string;
@@ -102,6 +104,18 @@ export type PublicHappyCustomersContentDto = {
   stats: PublicHappyCustomersStatDto[];
 };
 
+export type PublicHeroSlideDto = {
+  id: string;
+  subtitle: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+  imageAlt: string;
+  href: string | null;
+  sortOrder: number;
+  locale: string;
+};
+
 export type PublicAboutTimelineMilestoneDto = {
   id: string;
   periodLabel: string;
@@ -136,6 +150,8 @@ export class PublicAboutService {
     private readonly happyCustomersSectionsRepository: Repository<HappyCustomersSections>,
     @InjectRepository(HappyCustomersStats)
     private readonly happyCustomersStatsRepository: Repository<HappyCustomersStats>,
+    @InjectRepository(HeroSlides)
+    private readonly heroSlidesRepository: Repository<HeroSlides>,
   ) {}
 
   async listPages(
@@ -211,6 +227,14 @@ export class PublicAboutService {
       content = await this.fetchHappyCustomersContent();
     }
     return content;
+  }
+
+  async listHeroSlides(query: PublicHeroSlidesListQueryDto): Promise<PublicHeroSlideDto[]> {
+    let slides = await this.fetchPublishedHeroSlides(query.locale);
+    if (slides.length === 0 && query.locale) {
+      slides = await this.fetchPublishedHeroSlides();
+    }
+    return slides;
   }
 
   async listTimelineMilestones(
@@ -313,8 +337,9 @@ export class PublicAboutService {
       .createQueryBuilder('resource')
       .where('resource.deletedAt IS NULL')
       .andWhere('resource.status = :status', { status: 'published' })
-      .andWhere('resource.publishedAt IS NOT NULL')
-      .andWhere('resource.publishedAt <= :now', { now: new Date() });
+      .andWhere('(resource.publishedAt IS NULL OR resource.publishedAt <= :now)', {
+        now: new Date(),
+      });
 
     if (type) {
       qb.andWhere('resource.type = :type', { type });
@@ -483,6 +508,38 @@ export class PublicAboutService {
       iconKey: item.iconKey,
       sortOrder: item.sortOrder,
       locale: item.locale,
+    };
+  }
+
+  private async fetchPublishedHeroSlides(locale?: string): Promise<PublicHeroSlideDto[]> {
+    const qb = this.heroSlidesRepository
+      .createQueryBuilder('slide')
+      .where('slide.deletedAt IS NULL')
+      .andWhere('slide.status = :status', { status: 'published' });
+
+    if (locale) {
+      qb.andWhere('slide.locale = :locale', { locale });
+    }
+
+    const slides = await qb
+      .orderBy('slide.sortOrder', 'ASC')
+      .addOrderBy('slide.title', 'ASC')
+      .getMany();
+
+    return slides.map((slide) => this.toHeroSlideDto(slide));
+  }
+
+  private toHeroSlideDto(slide: HeroSlides): PublicHeroSlideDto {
+    return {
+      id: slide.id,
+      subtitle: slide.subtitle,
+      title: slide.title,
+      description: slide.description,
+      imageUrl: slide.imageUrl,
+      imageAlt: slide.imageAlt,
+      href: slide.href,
+      sortOrder: slide.sortOrder,
+      locale: slide.locale,
     };
   }
 

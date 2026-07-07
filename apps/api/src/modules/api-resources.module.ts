@@ -68,6 +68,13 @@ import { WhyUsItemsModule } from './resources/why-us-items/why-us-items.module';
 import { WhyUsSectionsModule } from './resources/why-us-sections/why-us-sections.module';
 import { HappyCustomersSectionsModule } from './resources/happy-customers-sections/happy-customers-sections.module';
 import { HappyCustomersStatsModule } from './resources/happy-customers-stats/happy-customers-stats.module';
+import { HeroSlidesModule } from './resources/hero-slides/hero-slides.module';
+import { GapSiteSettingsModule } from './resources/gap-site-settings/gap-site-settings.module';
+import { GapPagesModule } from './resources/gap-pages/gap-pages.module';
+import { GapActivitiesModule } from './resources/gap-activities/gap-activities.module';
+import { GapImpactStatsModule } from './resources/gap-impact-stats/gap-impact-stats.module';
+import { GapMediaItemsModule } from './resources/gap-media-items/gap-media-items.module';
+import { DonationsModule } from './resources/donations/donations.module';
 
 import { Module } from '@nestjs/common';
 
@@ -143,6 +150,13 @@ import { Module } from '@nestjs/common';
     WhyUsItemsModule,
     HappyCustomersSectionsModule,
     HappyCustomersStatsModule,
+    HeroSlidesModule,
+    GapSiteSettingsModule,
+    GapPagesModule,
+    GapActivitiesModule,
+    GapImpactStatsModule,
+    GapMediaItemsModule,
+    DonationsModule,
   ],
 })
 export class ApiResourcesModule {}

@@ -3,6 +3,7 @@
     "ariaLabel": "Navigation paramètres",
     "settings": "Ajustes",
     "emails": "Correos",
+    "donations": "Donaciones",
     "bankAccounts": "Comptes bancaires"
   },
   "page": {
@@ -260,6 +261,60 @@
       "saving": "Enregistrement…",
       "dirty": "Modifications non enregistrées",
       "clean": "Ninguna modification en attente"
+    }
+  },
+  "donations": {
+    "list": {
+      "pageTitle": "Campañas de donación",
+      "intro": "Gestione varios llamados a donación según el contexto. Solo uno puede destacarse en la barra de navegación (web y GAP).",
+      "createButton": "Nueva donación",
+      "searchPlaceholder": "Buscar…",
+      "localeFilter": "Idioma",
+      "allLocales": "Todos los idiomas",
+      "allStatuses": "Todos los estados",
+      "empty": "No hay campañas de donación por el momento.",
+      "denied": "No tiene permiso para ver las donaciones.",
+      "deleteConfirm": "¿Eliminar la campaña « {title} »?",
+      "featuredYes": "Navbar",
+      "columns": {
+        "title": "Título",
+        "locale": "Idioma",
+        "surfaces": "Sitios",
+        "featured": "Destacado"
+      }
+    },
+    "form": {
+      "createTitle": "Nueva campaña de donación",
+      "editTitle": "Editar campaña de donación",
+      "intro": "La donación marcada como destacada en la navbar aparece en el botón Donar del sitio web y GAP (una por idioma).",
+      "denied": "Acceso denegado.",
+      "notFound": "Campaña no encontrada.",
+      "loading": "Cargando…",
+      "saving": "Guardando…",
+      "saveButton": "Guardar",
+      "surfaces": {
+        "web": "Sitio web",
+        "gap": "Sitio GAP"
+      },
+      "fields": {
+        "title": "Título",
+        "description": "Descripción",
+        "contextNote": "Contexto / circunstancias",
+        "contextNotePlaceholder": "Ej. emergencia, temporada de lluvias",
+        "buttonLabel": "Etiqueta del botón",
+        "url": "Enlace de donación",
+        "locale": "Idioma",
+        "sortOrder": "Orden de visualización",
+        "visibility": "Visibilidad",
+        "navbarFeatured": "Destacado en la navbar (botón Donar)",
+        "navbarFeaturedHint": "Solo una donación por idioma puede destacarse. Las demás aparecen en /donate."
+      },
+      "validation": {
+        "titleRequired": "El título es obligatorio.",
+        "buttonLabelRequired": "La etiqueta del botón es obligatoria.",
+        "urlRequired": "El enlace es obligatorio.",
+        "urlInvalid": "El enlace debe ser una URL válida."
+      }
     }
   }
 }

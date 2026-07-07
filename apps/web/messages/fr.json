@@ -27,6 +27,7 @@
     "mainAria": "Navigation principale",
     "mobileAria": "Navigation mobile",
     "menu": "Menu",
+    "donate": "Faire un don",
     "myAccount": "Mon compte",
     "signIn": "Connexion",
     "signOut": "Se déconnecter"
@@ -108,5 +109,11 @@
     "calendarLegendAvailable": "Disponible",
     "calendarLegendSelected": "Dates sélectionnées",
     "calendarLegendUnavailable": "Indisponible"
+  },
+  "donate": {
+    "title": "Soutenir nos actions",
+    "intro": "Plusieurs campagnes de don sont disponibles selon le contexte. Choisissez celle qui correspond à votre engagement.",
+    "allCampaigns": "Toutes les campagnes",
+    "empty": "Aucune campagne de don disponible pour le moment."
   }
 }

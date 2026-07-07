@@ -124,5 +124,7 @@ export const config = {
     '/systeme/:path*',
     '/parametres',
     '/parametres/:path*',
+    '/gap',
+    '/gap/:path*',
   ],
 };

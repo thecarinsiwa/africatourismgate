@@ -1,0 +1,79 @@
+{
+  "theme": {
+    "label": "Apariencia",
+    "light": "Modo claro",
+    "dark": "Modo oscuro",
+    "lightMode": "Modo claro",
+    "darkMode": "Modo oscuro",
+    "enableLight": "Activar modo claro",
+    "enableDark": "Activar modo oscuro"
+  },
+  "language": {
+    "label": "Idioma",
+    "select": "Elegir idioma",
+    "fr": "Français",
+    "en": "English",
+    "es": "Español"
+  },
+  "nav": {
+    "home": "Inicio",
+    "about": "Acerca de",
+    "objectives": "Objetivos",
+    "unesco": "UNESCO",
+    "activities": "Actividades",
+    "media": "Medios",
+    "donate": "Donar",
+    "mainAria": "Navegación principal",
+    "mobileAria": "Navegación móvil",
+    "menu": "Menú"
+  },
+  "common": {
+    "loading": "Cargando…",
+    "empty": "El contenido no está disponible por el momento.",
+    "emptyHint": "Vuelva más tarde o contacte al equipo GAP.",
+    "localeFallback": "Este contenido aún no está disponible en su idioma — se muestra otra versión.",
+    "learnMore": "Más información",
+    "backHome": "Volver al inicio"
+  },
+  "home": {
+    "impactTitle": "Nuestro impacto",
+    "impactSubtitle": "Resultados concretos para la conservación del gorila y el compromiso comunitario.",
+    "activitiesTitle": "Nuestras actividades",
+    "activitiesSubtitle": "Sensibilización, reforestación, arte, visitas al parque y compromiso comunitario.",
+    "exploreActivities": "Ver todas las actividades",
+    "exploreMedia": "Galería de medios"
+  },
+  "pages": {
+    "about": { "title": "Acerca del programa" },
+    "objectives": { "title": "Nuestros objetivos" },
+    "unesco": { "title": "Reconocimiento UNESCO" }
+  },
+  "activities": {
+    "title": "Actividades del programa",
+    "subtitle": "Iniciativas sobre el terreno para educar, proteger y movilizar a las comunidades.",
+    "empty": "Ninguna actividad publicada por el momento."
+  },
+  "media": {
+    "title": "Medios",
+    "subtitle": "Imágenes y vídeos del Gorilla Ambassadors Program.",
+    "empty": "Ningún medio publicado por el momento.",
+    "image": "Imagen",
+    "video": "Vídeo",
+    "watch": "Ver vídeo"
+  },
+  "footer": {
+    "tagline": "Programa de educación ambiental — Parque Nacional de Virunga, RDC.",
+    "mainSite": "Africa Tourism Gate",
+    "rights": "Todos los derechos reservados."
+  },
+  "meta": {
+    "siteName": "Gorilla Ambassadors Program",
+    "defaultDescription": "Programa de embajadores de gorilas — educación ambiental y conservación en el Parque Nacional de Virunga."
+  },
+  "donate": {
+    "title": "Apoyar el programa GAP",
+    "intro": "Varias campañas de donación se ofrecen según las necesidades en el terreno.",
+    "allCampaigns": "Todas las campañas",
+    "empty": "No hay campañas de donación disponibles por el momento."
+  }
+}

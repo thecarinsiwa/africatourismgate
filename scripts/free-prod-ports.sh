@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Free ports 3000–3003 on Linux (VPS). Use before restarting PM2 if you see EADDRINUSE.
+# Free ports 3000–3004 on Linux (VPS). Use before restarting PM2 if you see EADDRINUSE.
 set -euo pipefail
 
-PORTS=(3000 3001 3002 3003)
+PORTS=(3000 3001 3002 3003 3004)
 
 echo "==> Stopping PM2 apps (if any)…"
 if command -v pm2 >/dev/null 2>&1; then
-  pm2 stop atg-api atg-web atg-admin atg-pos 2>/dev/null || true
+  pm2 stop atg-api atg-web atg-admin atg-pos atg-gap 2>/dev/null || true
 fi
 
 echo "==> Killing processes listening on API/Web/Admin/POS ports…"

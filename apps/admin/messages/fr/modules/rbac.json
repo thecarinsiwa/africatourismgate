@@ -32,7 +32,8 @@
     "users": "Utilisateurs",
     "vehicles": "Locations",
     "activities": "Activités",
-    "packages": "Forfaits"
+    "packages": "Forfaits",
+    "gap": "GAP (Gorilla Ambassadors Program)"
   },
   "permissionActions": {
     "read": "Lecture",

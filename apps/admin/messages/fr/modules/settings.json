@@ -3,6 +3,7 @@
     "ariaLabel": "Navigation paramètres",
     "settings": "Paramètres",
     "emails": "E-mails",
+    "donations": "Dons",
     "bankAccounts": "Comptes bancaires"
   },
   "page": {
@@ -260,6 +261,60 @@
       "saving": "Enregistrement…",
       "dirty": "Modifications non enregistrées",
       "clean": "Aucune modification en attente"
+    }
+  },
+  "donations": {
+    "list": {
+      "pageTitle": "Campagnes de don",
+      "intro": "Gérez plusieurs appels à don selon le contexte. Un seul don peut être mis en avant dans la barre de navigation (site web et GAP).",
+      "createButton": "Nouveau don",
+      "searchPlaceholder": "Rechercher…",
+      "localeFilter": "Langue",
+      "allLocales": "Toutes les langues",
+      "allStatuses": "Tous les statuts",
+      "empty": "Aucune campagne de don pour le moment.",
+      "denied": "Vous n'avez pas la permission de consulter les dons.",
+      "deleteConfirm": "Supprimer la campagne « {title} » ?",
+      "featuredYes": "Navbar",
+      "columns": {
+        "title": "Titre",
+        "locale": "Langue",
+        "surfaces": "Sites",
+        "featured": "Mise en avant"
+      }
+    },
+    "form": {
+      "createTitle": "Nouvelle campagne de don",
+      "editTitle": "Modifier la campagne de don",
+      "intro": "Le don coché « mise en avant navbar » apparaît sur le bouton Don du site web et du site GAP (une seule par langue).",
+      "denied": "Accès refusé.",
+      "notFound": "Campagne introuvable.",
+      "loading": "Chargement…",
+      "saving": "Enregistrement…",
+      "saveButton": "Enregistrer",
+      "surfaces": {
+        "web": "Site web",
+        "gap": "Site GAP"
+      },
+      "fields": {
+        "title": "Titre",
+        "description": "Description",
+        "contextNote": "Contexte / circonstances",
+        "contextNotePlaceholder": "Ex. urgence, saison des pluies, rentrée scolaire",
+        "buttonLabel": "Libellé du bouton",
+        "url": "Lien de don",
+        "locale": "Langue",
+        "sortOrder": "Ordre d'affichage",
+        "visibility": "Visibilité",
+        "navbarFeatured": "Mise en avant dans la navbar (bouton Don)",
+        "navbarFeaturedHint": "Un seul don par langue peut être mis en avant. Les autres restent listés sur la page /donate."
+      },
+      "validation": {
+        "titleRequired": "Le titre est obligatoire.",
+        "buttonLabelRequired": "Le libellé du bouton est obligatoire.",
+        "urlRequired": "Le lien est obligatoire.",
+        "urlInvalid": "Le lien doit être une URL valide."
+      }
     }
   }
 }

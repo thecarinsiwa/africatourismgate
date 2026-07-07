@@ -1,0 +1,224 @@
+{
+  "access": {
+    "deniedRead": "You do not have gap.read permission to view this section.",
+    "deniedWrite": "You do not have gap.write permission to perform this action."
+  },
+  "parametres": {
+    "localeFilter": "Content language"
+  },
+  "sections": {
+    "about": "About",
+    "objectives": "Objectives",
+    "unesco": "UNESCO"
+  },
+  "activityIcons": {
+    "school": "School",
+    "tree": "Tree / environment",
+    "art": "Art & culture",
+    "park": "Park",
+    "community": "Community"
+  },
+  "colors": {
+    "primary": "Primary",
+    "secondary": "Secondary"
+  },
+  "mediaTypes": {
+    "image": "Image",
+    "video": "Video"
+  },
+  "siteSettings": {
+    "heading": "GAP site settings",
+    "fields": {
+      "title": "Title",
+      "subtitle": "Subtitle",
+      "heroImageUrl": "Hero image URL",
+      "heroImageAlt": "Hero image alt text",
+      "unescoLabel": "UNESCO label (optional)",
+      "unescoUrl": "UNESCO link (optional)",
+      "donateLabel": "Donate button label (optional)",
+      "donateUrl": "Donate link (optional)"
+    },
+    "validation": {
+      "titleRequired": "Title is required.",
+      "subtitleRequired": "Subtitle is required.",
+      "heroImageUrlRequired": "Hero image URL is required.",
+      "heroImageUrlInvalid": "Hero image URL must be valid.",
+      "heroImageAltRequired": "Alt text is required.",
+      "unescoUrlInvalid": "UNESCO URL must be valid.",
+      "donateUrlInvalid": "Donate URL must be valid."
+    },
+    "saving": "Saving…",
+    "saveButton": "Save"
+  },
+  "pages": {
+    "list": {
+      "deleteConfirm": "Delete page \"{title}\"?",
+      "columns": {
+        "section": "Section",
+        "title": "Title",
+        "locale": "Language",
+        "publishedAt": "Published"
+      },
+      "emptySearch": "No pages match your search.",
+      "emptyDefault": "No GAP pages yet.",
+      "searchPlaceholder": "Search by title or excerpt…",
+      "searchAria": "Search GAP pages",
+      "newButton": "New page",
+      "tableAria": "GAP pages list",
+      "paginationItem": "page"
+    },
+    "edit": {
+      "pageTitle": "Edit page"
+    },
+    "form": {
+      "info": {
+        "sectionLocaleUnique": "Each section + language combination is unique.",
+        "publishedAtHint": "On publish, the date is set automatically if left empty."
+      },
+      "validation": {
+        "contentRequired": "Content is required.",
+        "coverUrlInvalid": "Cover image URL must be valid."
+      },
+      "fields": {
+        "section": "Section",
+        "title": "Title",
+        "excerpt": "Excerpt",
+        "excerptPlaceholder": "Short summary shown in the header…",
+        "content": "Content",
+        "contentPlaceholder": "Write the page body…",
+        "coverImageUrl": "Cover image",
+        "coverPreviewAlt": "Cover preview",
+        "locale": "Language",
+        "publishedAtOptional": "Publication date (optional)"
+      },
+      "hints": {
+        "publishedAt": "Leave empty to use the current date on publish."
+      },
+      "saving": "Saving…",
+      "createButton": "Create page",
+      "saveButton": "Save",
+      "cancelButton": "Cancel"
+    }
+  },
+  "activities": {
+    "list": {
+      "deleteConfirm": "Delete activity \"{title}\"?",
+      "columns": {
+        "title": "Title",
+        "icon": "Icon",
+        "sortOrder": "Order",
+        "locale": "Language"
+      },
+      "emptySearch": "No activities match your search.",
+      "emptyDefault": "No GAP activities yet.",
+      "searchPlaceholder": "Search by title or description…",
+      "newButton": "New activity",
+      "paginationItem": "activity"
+    },
+    "edit": {
+      "pageTitle": "Edit activity"
+    },
+    "form": {
+      "validation": {
+        "titleRequired": "Title is required.",
+        "descriptionRequired": "Description is required.",
+        "imageUrlInvalid": "Image URL must be valid."
+      },
+      "fields": {
+        "title": "Title",
+        "description": "Description",
+        "iconKey": "Icon",
+        "imageUrl": "Image (URL)",
+        "imagePreviewAlt": "Image preview",
+        "sortOrder": "Display order",
+        "locale": "Language"
+      },
+      "saving": "Saving…",
+      "createButton": "Create activity",
+      "saveButton": "Save",
+      "cancelButton": "Cancel"
+    }
+  },
+  "impact": {
+    "list": {
+      "deleteConfirm": "Delete stat \"{label}\"?",
+      "columns": {
+        "label": "Label",
+        "value": "Value",
+        "color": "Color",
+        "sortOrder": "Order",
+        "locale": "Language"
+      },
+      "emptySearch": "No stats match your search.",
+      "emptyDefault": "No impact stats yet.",
+      "searchPlaceholder": "Search by label…",
+      "newButton": "New stat",
+      "paginationItem": "stat"
+    },
+    "edit": {
+      "pageTitle": "Edit stat"
+    },
+    "form": {
+      "validation": {
+        "labelRequired": "Label is required.",
+        "valueRequired": "Displayed value is required."
+      },
+      "fields": {
+        "label": "Label",
+        "valueDisplay": "Displayed value",
+        "valueDisplayPlaceholder": "e.g. 12,000+",
+        "description": "Description (optional)",
+        "colorKey": "Color",
+        "sortOrder": "Display order",
+        "locale": "Language"
+      },
+      "saving": "Saving…",
+      "createButton": "Create stat",
+      "saveButton": "Save",
+      "cancelButton": "Cancel"
+    }
+  },
+  "media": {
+    "list": {
+      "deleteConfirm": "Delete media \"{title}\"?",
+      "columns": {
+        "title": "Title",
+        "mediaType": "Type",
+        "sortOrder": "Order",
+        "locale": "Language",
+        "publishedAt": "Published"
+      },
+      "emptySearch": "No media match your search.",
+      "emptyDefault": "No GAP media yet.",
+      "searchPlaceholder": "Search by title…",
+      "newButton": "New media",
+      "paginationItem": "item"
+    },
+    "edit": {
+      "pageTitle": "Edit media"
+    },
+    "form": {
+      "validation": {
+        "titleRequired": "Title is required.",
+        "urlRequired": "Provide at least a file URL or external URL.",
+        "urlInvalid": "URL must be valid."
+      },
+      "fields": {
+        "mediaType": "Media type",
+        "title": "Title",
+        "description": "Description",
+        "fileUrl": "File URL",
+        "externalUrl": "External URL (video, etc.)",
+        "thumbnailUrl": "Thumbnail URL",
+        "thumbnailPreviewAlt": "Thumbnail preview",
+        "publishedAtOptional": "Publication date (optional)",
+        "sortOrder": "Display order",
+        "locale": "Language"
+      },
+      "saving": "Saving…",
+      "createButton": "Create media",
+      "saveButton": "Save",
+      "cancelButton": "Cancel"
+    }
+  }
+}

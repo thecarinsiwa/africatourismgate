@@ -1,7 +1,7 @@
 import { existsSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 
-const apps = ['admin', 'web', 'pos'];
+const apps = ['admin', 'web', 'pos', 'gap'];
 
 for (const app of apps) {
   const dir = join('apps', app, '.next');
@@ -10,4 +10,4 @@ for (const app of apps) {
   }
 }
 
-console.log('Cleared Next.js caches: admin, web, pos');
+console.log('Cleared Next.js caches: admin, web, pos, gap');

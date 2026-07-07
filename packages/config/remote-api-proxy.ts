@@ -1,4 +1,5 @@
 import { ATG_DOMAINS } from './domains.mjs';
+import { getDevApiUrl } from './dev-api-url.mjs';
 
 function remoteApiTarget(): string {
   return (
@@ -13,18 +14,10 @@ export function shouldProxyRemoteApi(appPort: string): boolean {
   return apiUrl === `http://localhost:${appPort}/api`;
 }
 
-export async function proxyRemoteApiRequest(
-  req: Request,
-  pathSegments: string[],
-  appPort: string,
-): Promise<Response> {
-  if (!shouldProxyRemoteApi(appPort)) {
-    return Response.json({ message: 'Not found' }, { status: 404 });
-  }
-
+async function forwardApiRequest(req: Request, targetBaseUrl: string, pathSegments: string[]): Promise<Response> {
   const requestUrl = new URL(req.url);
   const path = pathSegments.map((segment) => encodeURIComponent(segment)).join('/');
-  const url = `${remoteApiTarget()}/${path}${requestUrl.search}`;
+  const url = `${targetBaseUrl.replace(/\/$/, '')}/${path}${requestUrl.search}`;
   const headers = new Headers();
   const accept = req.headers.get('accept');
   const contentType = req.headers.get('content-type');
@@ -55,4 +48,26 @@ export async function proxyRemoteApiRequest(
     status: res.status,
     headers: responseHeaders,
   });
+}
+
+export async function proxyRemoteApiRequest(
+  req: Request,
+  pathSegments: string[],
+  appPort: string,
+): Promise<Response> {
+  if (!shouldProxyRemoteApi(appPort)) {
+    return Response.json({ message: 'Not found' }, { status: 404 });
+  }
+
+  return forwardApiRequest(req, remoteApiTarget(), pathSegments);
+}
+
+/** Dev proxy: same-origin /api → local NestJS (avoids browser CORS). */
+export async function proxyLocalDevApiRequest(
+  req: Request,
+  pathSegments: string[],
+): Promise<Response> {
+  const target =
+    process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') ?? getDevApiUrl();
+  return forwardApiRequest(req, target, pathSegments);
 }

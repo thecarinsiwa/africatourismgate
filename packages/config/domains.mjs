@@ -7,6 +7,7 @@
  * | Admin       | https://app-africatourismgate.org      | atg-admin  | 3001 |
  * | API         | https://app-africatourismgate.org/api  | atg-api    | 3000 |
  * | POS         | https://pos.africatourismgate.org      | atg-pos    | 3003 |
+ * | GAP         | https://gap.africatourismgate.org      | atg-gap    | 3004 |
  */
 
 export const ATG_DOMAINS = {
@@ -42,6 +43,14 @@ export const ATG_DOMAINS = {
     pm2: 'atg-pos',
     port: 3003,
     label: 'Point de vente (apps/pos, optionnel)',
+  },
+  gap: {
+    host: 'gap.africatourismgate.org',
+    hosts: ['gap.africatourismgate.org'],
+    url: 'https://gap.africatourismgate.org',
+    pm2: 'atg-gap',
+    port: 3004,
+    label: 'GAP — Gorilla Ambassadors Program (apps/gap)',
   },
 };
 

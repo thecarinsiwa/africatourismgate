@@ -8,7 +8,7 @@ CONF_DEST="/etc/nginx/sites-available/${SITE_NAME}"
 
 # HTTPS site public + admin requis ; API et POS optionnels (snippets)
 REQUIRED_CERT_DOMAINS=(africatourismgate.org app-africatourismgate.org)
-OPTIONAL_CERT_DOMAINS=(api.africatourismgate.org pos.africatourismgate.org)
+OPTIONAL_CERT_DOMAINS=(api.africatourismgate.org pos.africatourismgate.org gap.africatourismgate.org)
 
 live_dir_for() {
   local name="$1"
@@ -85,15 +85,21 @@ if [[ "${CONF_SRC}" == *http-only* ]]; then
   install_snippet /etc/nginx/snippets/atg-api-servers-http.conf atg-api-servers-http.conf 1
   install_snippet /etc/nginx/snippets/atg-pos-servers-http.conf atg-pos-servers-http.conf \
     "$(has_cert_for pos.africatourismgate.org && echo 1 || echo 0)"
+  install_snippet /etc/nginx/snippets/atg-gap-servers-http.conf atg-gap-servers-http.conf \
+    "$(has_cert_for gap.africatourismgate.org && echo 1 || echo 0)"
   echo "# unused in http-only main config" | sudo tee /etc/nginx/snippets/atg-api-servers.conf >/dev/null
   echo "# unused in http-only main config" | sudo tee /etc/nginx/snippets/atg-pos-servers.conf >/dev/null
+  echo "# unused in http-only main config" | sudo tee /etc/nginx/snippets/atg-gap-servers.conf >/dev/null
 else
   install_snippet /etc/nginx/snippets/atg-api-servers.conf atg-api-servers.conf \
     "$(has_cert_for api.africatourismgate.org && echo 1 || echo 0)"
   install_snippet /etc/nginx/snippets/atg-pos-servers.conf atg-pos-servers.conf \
     "$(has_cert_for pos.africatourismgate.org && echo 1 || echo 0)"
+  install_snippet /etc/nginx/snippets/atg-gap-servers.conf atg-gap-servers.conf \
+    "$(has_cert_for gap.africatourismgate.org && echo 1 || echo 0)"
   echo "# unused in https main config" | sudo tee /etc/nginx/snippets/atg-api-servers-http.conf >/dev/null
   echo "# unused in https main config" | sudo tee /etc/nginx/snippets/atg-pos-servers-http.conf >/dev/null
+  echo "# unused in https main config" | sudo tee /etc/nginx/snippets/atg-gap-servers-http.conf >/dev/null
   patch_ssl_live_paths "${CONF_DEST}" africatourismgate.org app-africatourismgate.org
 fi
 
@@ -136,6 +142,7 @@ echo "  www.africatourismgate.org      → redirige vers africatourismgate.org"
 echo "  www.app-africatourismgate.org  → redirige vers app-africatourismgate.org"
 print_domain_row "API" "https://app-africatourismgate.org/api" "3000"
 print_domain_row "POS (optionnel)" "https://pos.africatourismgate.org" "3003"
+print_domain_row "GAP (optionnel)" "https://gap.africatourismgate.org" "3004"
 
 echo ""
 echo "==> Certificats Let's Encrypt :"

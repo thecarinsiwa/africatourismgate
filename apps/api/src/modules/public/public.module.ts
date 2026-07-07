@@ -8,6 +8,8 @@ import { PublicFlightsModule } from './flights/public-flights.module';
 import { PublicPackagesModule } from './packages/public-packages.module';
 import { PublicReviewsModule } from './reviews/public-reviews.module';
 import { PublicVehiclesModule } from './vehicles/public-vehicles.module';
+import { PublicGapModule } from './gap/public-gap.module';
+import { PublicDonationsModule } from './donations/public-donations.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { PublicVehiclesModule } from './vehicles/public-vehicles.module';
     PublicActivitiesModule,
     PublicPackagesModule,
     PublicReviewsModule,
+    PublicGapModule,
+    PublicDonationsModule,
   ],
 })
 export class PublicModule {}

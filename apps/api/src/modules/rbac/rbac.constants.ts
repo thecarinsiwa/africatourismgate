@@ -1,4 +1,5 @@
 export const SUPER_ADMIN_ROLE_CODE = 'super_admin';
+export const GAP_COORDINATOR_ROLE_CODE = 'gap_coordinator';
 
 export const RBAC_EVENT_PERMISSION_DENIED = 'permission_denied' as const;
 
@@ -92,7 +93,14 @@ export const CATALOG_PERMISSION_MAP = {
   promotions: ['promotions'],
   reviews: ['reviews'],
   blog: ['blog-posts'],
-  content: ['about-pages', 'team-members', 'about-resources', 'why-us-sections', 'why-us-items', 'happy-customers-sections', 'happy-customers-stats'],
+  content: ['about-pages', 'team-members', 'about-resources', 'why-us-sections', 'why-us-items', 'happy-customers-sections', 'happy-customers-stats', 'hero-slides'],
+  gap: [
+    'gap-site-settings',
+    'gap-pages',
+    'gap-activities',
+    'gap-impact-stats',
+    'gap-media-items',
+  ],
 } as const;
 
 export type CatalogPermissionResource = keyof typeof CATALOG_PERMISSION_MAP;

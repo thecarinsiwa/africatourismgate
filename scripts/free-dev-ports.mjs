@@ -20,6 +20,7 @@ const ports = [
   process.env.ADMIN_PORT ?? '3001',
   process.env.WEB_PORT ?? '3002',
   process.env.POS_PORT ?? '3003',
+  process.env.GAP_PORT ?? '3004',
 ];
 
 function listeningPids(port) {

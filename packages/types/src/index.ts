@@ -344,6 +344,16 @@ export type {
 } from './why-us-item.js';
 
 export type {
+  CreateHeroSlideRequest,
+  HeroSlide,
+  HeroSlideStatus,
+  HeroSlidesListQuery,
+  PublicHeroSlide,
+  PublicHeroSlidesListQuery,
+  UpdateHeroSlideRequest,
+} from './hero-slides.js';
+
+export type {
   CreateHappyCustomersSectionRequest,
   CreateHappyCustomersStatRequest,
   HappyCustomersColorKey,
@@ -359,6 +369,55 @@ export type {
   UpdateHappyCustomersSectionRequest,
   UpdateHappyCustomersStatRequest,
 } from './happy-customers.js';
+
+export type {
+  CreateGapActivityRequest,
+  CreateGapImpactStatRequest,
+  CreateGapMediaItemRequest,
+  CreateGapPageRequest,
+  CreateGapSiteSettingsRequest,
+  GapActivitiesListQuery,
+  GapActivity,
+  GapActivityIconKey,
+  GapImpactStat,
+  GapImpactStatColorKey,
+  GapImpactStatsListQuery,
+  GapMediaItem,
+  GapMediaItemsListQuery,
+  GapMediaItemType,
+  GapPage,
+  GapPageSectionKey,
+  GapPagesListQuery,
+  GapSiteSettings,
+  GapSiteSettingsListQuery,
+  GapStatus,
+  PublicGapActivity,
+  PublicGapHome,
+  PublicGapImpactStat,
+  PublicGapLocaleQuery,
+  PublicGapMediaItem,
+  PublicGapMediaListQuery,
+  PublicGapPage,
+  PublicGapPagesListQuery,
+  PublicGapSiteSettings,
+  UpdateGapActivityRequest,
+  UpdateGapImpactStatRequest,
+  UpdateGapMediaItemRequest,
+  UpdateGapPageRequest,
+  UpdateGapSiteSettingsRequest,
+} from './gap.js';
+
+export type {
+  CreateDonationRequest,
+  Donation,
+  DonationStatus,
+  DonationSurface,
+  DonationsListQuery,
+  PublicDonation,
+  PublicDonationsPayload,
+  PublicDonationsQuery,
+  UpdateDonationRequest,
+} from './donations.js';
 
 export type {
   AdminReviewDetail,

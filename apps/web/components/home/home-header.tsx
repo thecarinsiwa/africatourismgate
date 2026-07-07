@@ -7,6 +7,8 @@ import { BrandingMark } from '../branding-mark';
 import { LanguageSwitcher } from '../language-switcher';
 import { AUTH_CHANGED_EVENT, hasWebSession } from '../../lib/auth/client-session';
 import { useResolvedPublicContact } from '../../lib/contact/use-resolved-public-contact';
+import { useNavbarDonation } from '../donation-provider';
+import { DonateButton } from '../donate-button';
 import { buildSocialLinks } from '../../lib/contact/social-links';
 import { buildVerticalListRoute } from '../../lib/search/route';
 import { ABOUT_NAV_ITEMS, ABOUT_PATHS } from '../../lib/about/routes';
@@ -92,6 +94,7 @@ type ThemeMode = 'light' | 'dark';
 
 export function HomeHeader() {
   const contact = useResolvedPublicContact();
+  const navbarDonation = useNavbarDonation();
   const socialLinks = useMemo(() => buildSocialLinks(contact), [contact]);
   const t = useIntlTranslations('nav');
   const tTheme = useIntlTranslations('theme');
@@ -135,6 +138,9 @@ export function HomeHeader() {
     ],
     [t, tAbout],
   );
+
+  const donateHref = navbarDonation?.url?.trim() || null;
+  const donateText = navbarDonation?.buttonLabel?.trim() || t('donate');
 
   useEffect(() => {
     setTheme(document.documentElement.classList.contains('dark') ? 'dark' : 'light');
@@ -307,6 +313,13 @@ export function HomeHeader() {
           </nav>
 
           <div className="hidden items-center gap-2 lg:flex">
+            {donateHref ? (
+              <DonateButton
+                href={donateHref}
+                label={donateText}
+                variant="header"
+              />
+            ) : null}
             <Link
               href={hasSession ? '/account' : '/booking/login?next=%2Faccount'}
               className={`inline-flex min-h-[44px] items-center rounded-lg px-4 py-2.5 text-sm font-medium transition-colors ${
@@ -465,6 +478,11 @@ export function HomeHeader() {
               );
             })}
           </ul>
+          {donateHref ? (
+            <div className="mt-4 border-t border-atg-border pt-4">
+              <DonateButton href={donateHref} label={donateText} variant="mobile" />
+            </div>
+          ) : null}
         </nav>
       )}
     </header>
