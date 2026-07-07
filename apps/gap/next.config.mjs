@@ -46,8 +46,19 @@ const nextConfig = {
         pathname: '/api/uploads/**',
       },
       {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '3004',
+        pathname: '/api/uploads/**',
+      },
+      {
         protocol: 'https',
         hostname: 'app-africatourismgate.org',
+        pathname: '/api/uploads/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'gap.africatourismgate.org',
         pathname: '/api/uploads/**',
       },
     ],

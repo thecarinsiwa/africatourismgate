@@ -7,15 +7,10 @@ import type {
   PublicGapMediaListQuery,
   PublicGapPage,
 } from '@africatourismgate/types';
-
-const defaultApiUrl =
-  process.env.NODE_ENV === 'production'
-    ? 'https://app-africatourismgate.org/api'
-    : 'http://localhost:3000/api';
-
-const apiUrl = (process.env.NEXT_PUBLIC_API_URL ?? defaultApiUrl).replace(/\/$/, '');
+import { getPublicApiBaseUrl, getPublicApiOrigin } from './api-base-url';
 
 async function fetchPublic<T>(path: string): Promise<T> {
+  const apiUrl = getPublicApiBaseUrl();
   const res = await fetch(`${apiUrl}${path}`, {
     headers: { Accept: 'application/json' },
     cache: 'no-store',
@@ -119,7 +114,8 @@ export async function listGapMediaForLocale(
 export function resolveGapMediaUrl(url: string | null | undefined): string | null {
   if (!url) return null;
   if (url.startsWith('http://') || url.startsWith('https://')) return url;
-  if (url.startsWith('/api/')) return `${apiUrl.replace(/\/api$/, '')}${url}`;
-  if (url.startsWith('/uploads/')) return `${apiUrl}${url}`;
+  const origin = getPublicApiOrigin();
+  if (url.startsWith('/api/')) return `${origin}${url}`;
+  if (url.startsWith('/uploads/')) return `${origin}/api${url}`;
   return url;
 }
