@@ -1,9 +1,10 @@
 'use client';
 
-import type { BookingListItem, BookingStatus } from '@africatourismgate/types';
+import type { BookingDetail, BookingListItem, BookingStatus } from '@africatourismgate/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { isAssistedBookingDetail } from '../components/account/booking-status-timeline';
 import { getAccountApiClient } from '../lib/api/account';
+import { formatBookingDisplayName } from '../lib/bookings/display';
 import { AUTH_CHANGED_EVENT, hasWebSession } from '../lib/auth/client-session';
 
 const TERMINAL_STATUSES = new Set<BookingStatus>(['cancelled', 'refunded']);
@@ -11,6 +12,7 @@ const REFRESH_INTERVAL_MS = 20_000;
 
 export type AssistedBookingChatItem = {
   id: string;
+  name: string;
   status: BookingStatus;
   totalCents: number;
   currency: string;
@@ -19,6 +21,25 @@ export type AssistedBookingChatItem = {
   canReply: boolean;
   actionRequired: boolean;
 };
+
+function toAssistedBookingChatItem(
+  booking: BookingListItem,
+  detail: BookingDetail,
+  unreadCount: number,
+): AssistedBookingChatItem {
+  return {
+    id: booking.id,
+    name: formatBookingDisplayName(detail.items),
+    status: booking.status,
+    totalCents: booking.totalCents,
+    currency: booking.currency,
+    createdAt: booking.createdAt,
+    unreadCount,
+    canReply:
+      detail.booking.status !== 'cancelled' && detail.booking.status !== 'refunded',
+    actionRequired: Boolean(booking.actionRequired),
+  };
+}
 
 async function resolveAssistedBooking(
   booking: BookingListItem,
@@ -36,17 +57,7 @@ async function resolveAssistedBooking(
     if (!isAssistedBookingDetail(detail.booking.status, detail.statusHistory ?? [])) {
       return null;
     }
-    return {
-      id: booking.id,
-      status: booking.status,
-      totalCents: booking.totalCents,
-      currency: booking.currency,
-      createdAt: booking.createdAt,
-      unreadCount: unread.count,
-      canReply:
-        detail.booking.status !== 'cancelled' && detail.booking.status !== 'refunded',
-      actionRequired: Boolean(booking.actionRequired),
-    };
+    return toAssistedBookingChatItem(booking, detail, unread.count);
   }
 
   const detail = await client.getBooking(booking.id);
@@ -57,16 +68,7 @@ async function resolveAssistedBooking(
     return null;
   }
   const unread = await client.getBookingUnreadMessageCount(booking.id);
-  return {
-    id: booking.id,
-    status: booking.status,
-    totalCents: booking.totalCents,
-    currency: booking.currency,
-    createdAt: booking.createdAt,
-    unreadCount: unread.count,
-    canReply: detail.booking.status !== 'cancelled' && detail.booking.status !== 'refunded',
-    actionRequired: Boolean(booking.actionRequired),
-  };
+  return toAssistedBookingChatItem(booking, detail, unread.count);
 }
 
 async function fetchAssistedBookings(): Promise<AssistedBookingChatItem[]> {

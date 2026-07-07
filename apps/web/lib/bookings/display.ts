@@ -52,6 +52,26 @@ export function formatBookingMoney(cents: number, currency: string): string {
   return `${(cents / 100).toFixed(2)} ${currency}`;
 }
 
+export function formatBookingDisplayName(
+  items: Array<{ itemType: string; titleSnapshot: string }>,
+): string {
+  if (items.length === 0) {
+    return '';
+  }
+
+  const first = items[0];
+  const primary =
+    first.titleSnapshot?.trim() ||
+    bookingItemTypeLabels[first.itemType] ||
+    first.itemType;
+
+  if (items.length === 1) {
+    return primary;
+  }
+
+  return `${primary} (+${items.length - 1})`;
+}
+
 export function formatBookingDateTime(iso: string, locale = 'fr-FR'): string {
   try {
     return new Date(iso).toLocaleString(locale, {

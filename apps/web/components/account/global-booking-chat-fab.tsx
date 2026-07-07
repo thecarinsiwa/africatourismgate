@@ -52,10 +52,13 @@ function ReservationChatPicker({
             className="flex w-full items-start justify-between gap-3 rounded-xl border border-atg-border bg-atg-surface/50 px-4 py-3 text-left transition-colors hover:border-primary/40 hover:bg-atg-surface dark:border-atg-border dark:bg-white/5 dark:hover:bg-white/10"
           >
             <div className="min-w-0 flex-1">
-              <p className="font-mono text-xs text-atg-muted">
+              <p className="truncate text-base font-semibold text-atg-fg">
+                {item.name || `${item.id.slice(0, 8)}…`}
+              </p>
+              <p className="mt-0.5 font-mono text-xs text-atg-muted">
                 {item.id.slice(0, 8)}…
               </p>
-              <p className="mt-1 text-sm font-semibold text-atg-fg">
+              <p className="mt-1 text-sm font-medium text-primary">
                 {formatBookingMoney(item.totalCents, item.currency)}
               </p>
               <p className="mt-1 text-xs text-atg-muted">
@@ -138,7 +141,9 @@ export function GlobalBookingChatFab() {
       ? m.fabAriaLabelWithUnread.replace('{count}', String(totalUnread))
       : m.fabAriaLabel;
 
-  const modalTitle = selectedBooking ? m.title : m.pickerTitle;
+  const modalTitle = selectedBooking
+    ? selectedBooking.name || m.title
+    : m.pickerTitle;
 
   return (
     <>
