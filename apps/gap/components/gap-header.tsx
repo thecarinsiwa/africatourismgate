@@ -6,6 +6,7 @@ import { useTheme } from 'next-themes';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { GapBrandingMark } from './gap-branding-mark';
+import { GapDonateButton } from './gap-donate-button';
 import { LanguageSwitcher } from './language-switcher';
 
 const NAV_LINKS = [
@@ -34,7 +35,13 @@ function navLinkClass(active: boolean, mobile = false): string {
     : `${base} text-atg-fg hover:text-primary dark:text-white/75 dark:hover:text-white`;
 }
 
-export function GapHeader() {
+export function GapHeader({
+  donateUrl,
+  donateLabel,
+}: {
+  donateUrl?: string | null;
+  donateLabel?: string | null;
+}) {
   const t = useTranslations('nav');
   const tTheme = useTranslations('theme');
   const tFooter = useTranslations('footer');
@@ -62,6 +69,8 @@ export function GapHeader() {
   }, []);
 
   const isDark = themeMounted && resolvedTheme === 'dark';
+  const donateHref = donateUrl?.trim() || null;
+  const donateText = donateLabel?.trim() || t('donate');
 
   return (
     <header className="sticky top-0 z-50 w-full">
@@ -108,6 +117,15 @@ export function GapHeader() {
           </nav>
 
           <div className="flex items-center">
+            {donateHref ? (
+              <GapDonateButton
+                href={donateHref}
+                label={donateText}
+                variant="header"
+                className="hidden lg:inline-flex"
+              />
+            ) : null}
+
             <button
               type="button"
               onClick={() => setTheme(isDark ? 'light' : 'dark')}
@@ -187,6 +205,11 @@ export function GapHeader() {
               );
             })}
           </ul>
+          {donateHref ? (
+            <div className="mt-4 border-t border-atg-border pt-4">
+              <GapDonateButton href={donateHref} label={donateText} variant="mobile" />
+            </div>
+          ) : null}
         </nav>
       ) : null}
     </header>

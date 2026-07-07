@@ -18,6 +18,8 @@ export interface GapSiteSettings extends AuditFields {
   heroImageAlt: string;
   unescoLabel: string | null;
   unescoUrl: string | null;
+  donateUrl: string | null;
+  donateLabel: string | null;
   status: GapStatus;
   locale: string;
 }
@@ -78,6 +80,8 @@ export interface PublicGapSiteSettings {
   heroImageAlt: string;
   unescoLabel: string | null;
   unescoUrl: string | null;
+  donateUrl: string | null;
+  donateLabel: string | null;
   locale: string;
 }
 
@@ -137,6 +141,8 @@ export interface CreateGapSiteSettingsRequest {
   heroImageAlt: string;
   unescoLabel?: string | null;
   unescoUrl?: string | null;
+  donateUrl?: string | null;
+  donateLabel?: string | null;
   status?: GapStatus;
   locale?: string;
 }

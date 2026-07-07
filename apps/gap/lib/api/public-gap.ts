@@ -119,3 +119,12 @@ export function resolveGapMediaUrl(url: string | null | undefined): string | nul
   if (url.startsWith('/uploads/')) return `${origin}/api${url}`;
   return url;
 }
+
+export function resolveGapDonateUrl(
+  settings: { donateUrl?: string | null } | null | undefined,
+): string | null {
+  const fromSettings = settings?.donateUrl?.trim();
+  if (fromSettings) return fromSettings;
+  const fromEnv = process.env.NEXT_PUBLIC_GAP_DONATE_URL?.trim();
+  return fromEnv || null;
+}

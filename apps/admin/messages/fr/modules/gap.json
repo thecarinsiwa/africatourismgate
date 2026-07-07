@@ -34,7 +34,9 @@
       "heroImageUrl": "URL de l'image bannière",
       "heroImageAlt": "Texte alternatif de la bannière",
       "unescoLabel": "Libellé UNESCO (optionnel)",
-      "unescoUrl": "Lien UNESCO (optionnel)"
+      "unescoUrl": "Lien UNESCO (optionnel)",
+      "donateLabel": "Libellé du bouton Don (optionnel)",
+      "donateUrl": "Lien de don (optionnel)"
     },
     "validation": {
       "titleRequired": "Le titre est obligatoire.",
@@ -42,7 +44,8 @@
       "heroImageUrlRequired": "L'URL de l'image bannière est obligatoire.",
       "heroImageUrlInvalid": "L'URL de l'image bannière doit être valide.",
       "heroImageAltRequired": "Le texte alternatif est obligatoire.",
-      "unescoUrlInvalid": "L'URL UNESCO doit être valide."
+      "unescoUrlInvalid": "L'URL UNESCO doit être valide.",
+      "donateUrlInvalid": "L'URL de don doit être valide."
     },
     "saving": "Enregistrement…",
     "saveButton": "Enregistrer"

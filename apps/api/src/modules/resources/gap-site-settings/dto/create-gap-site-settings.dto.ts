@@ -52,6 +52,22 @@ export class CreateGapSiteSettingsDto {
   )
   unescoUrl?: string | null;
 
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  @MaxLength(512)
+  @IsUrl(
+    { require_tld: false, protocols: ['http', 'https'] },
+    { message: "L'URL de don doit être valide." },
+  )
+  donateUrl?: string | null;
+
+  @ApiPropertyOptional({ example: 'Faire un don' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(120)
+  donateLabel?: string | null;
+
   @ApiPropertyOptional({ enum: ['draft', 'published'] })
   @IsOptional()
   @IsEnum(['draft', 'published'])

@@ -19,6 +19,8 @@ export type PublicGapSiteSettingsDto = {
   heroImageAlt: string;
   unescoLabel: string | null;
   unescoUrl: string | null;
+  donateUrl: string | null;
+  donateLabel: string | null;
   locale: string;
 };
 
@@ -285,6 +287,8 @@ export class PublicGapService {
       heroImageAlt: settings.heroImageAlt,
       unescoLabel: settings.unescoLabel,
       unescoUrl: settings.unescoUrl,
+      donateUrl: settings.donateUrl,
+      donateLabel: settings.donateLabel,
       locale: settings.locale,
     };
   }

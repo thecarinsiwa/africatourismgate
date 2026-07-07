@@ -34,7 +34,9 @@
       "heroImageUrl": "URL de imagen principal",
       "heroImageAlt": "Texto alternativo de la imagen",
       "unescoLabel": "Etiqueta UNESCO (opcional)",
-      "unescoUrl": "Enlace UNESCO (opcional)"
+      "unescoUrl": "Enlace UNESCO (opcional)",
+      "donateLabel": "Etiqueta del botón Donar (opcional)",
+      "donateUrl": "Enlace de donación (opcional)"
     },
     "validation": {
       "titleRequired": "El título es obligatorio.",
@@ -42,7 +44,8 @@
       "heroImageUrlRequired": "La URL de la imagen principal es obligatoria.",
       "heroImageUrlInvalid": "La URL de la imagen principal debe ser válida.",
       "heroImageAltRequired": "El texto alternativo es obligatorio.",
-      "unescoUrlInvalid": "La URL de UNESCO debe ser válida."
+      "unescoUrlInvalid": "La URL de UNESCO debe ser válida.",
+      "donateUrlInvalid": "La URL de donación debe ser válida."
     },
     "saving": "Guardando…",
     "saveButton": "Guardar"

@@ -2,7 +2,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { PublicGapSiteSettings } from '@africatourismgate/types';
 import { getTranslations } from 'next-intl/server';
-import { resolveGapMediaUrl } from '@/lib/api/public-gap';
+import { GapDonateButton } from '@/components/gap-donate-button';
+import { resolveGapDonateUrl, resolveGapMediaUrl } from '@/lib/api/public-gap';
 
 type GapHeroProps = {
   settings: PublicGapSiteSettings | null;
@@ -14,6 +15,8 @@ export async function GapHero({ settings }: GapHeroProps) {
   const subtitle = settings?.subtitle ?? t('defaultDescription');
   const heroUrl = resolveGapMediaUrl(settings?.heroImageUrl);
   const heroAlt = settings?.heroImageAlt ?? title;
+  const donateUrl = resolveGapDonateUrl(settings);
+  const donateLabel = settings?.donateLabel?.trim() || (await getTranslations('nav'))('donate');
 
   return (
     <section className="relative isolate overflow-hidden bg-gap-forest text-white">
@@ -70,6 +73,9 @@ export async function GapHero({ settings }: GapHeroProps) {
             >
               {(await getTranslations('nav'))('activities')}
             </Link>
+            {donateUrl ? (
+              <GapDonateButton href={donateUrl} label={donateLabel} variant="hero" />
+            ) : null}
           </div>
         </div>
       </div>

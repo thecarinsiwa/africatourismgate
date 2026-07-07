@@ -26,6 +26,12 @@ export class GapSiteSettings extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'unesco_url', length: 512, nullable: true })
   unescoUrl!: string | null;
 
+  @Column({ type: 'varchar', name: 'donate_url', length: 512, nullable: true })
+  donateUrl!: string | null;
+
+  @Column({ type: 'varchar', name: 'donate_label', length: 120, nullable: true })
+  donateLabel!: string | null;
+
   @Column({
     name: 'status',
     type: 'enum',
