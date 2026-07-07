@@ -5,6 +5,7 @@ const ports = {
   admin: process.env.ADMIN_PORT ?? '3001',
   web: process.env.WEB_PORT ?? '3002',
   pos: process.env.POS_PORT ?? '3003',
+  gap: process.env.GAP_PORT ?? '3004',
 };
 const apiPrefix = process.env.API_GLOBAL_PREFIX ?? 'api';
 const remoteApi = isRemoteApiDev();
@@ -26,6 +27,7 @@ console.log('          Production: https://app-africatourismgate.org/login');
 console.log(`  Web     http://localhost:${ports.web}/`);
 console.log('          Production: https://africatourismgate.org/');
 console.log(`  POS     http://localhost:${ports.pos}`);
+console.log(`  GAP     http://localhost:${ports.gap}/`);
 if (remoteApi) {
   console.log('');
   console.log('  Remote API mode — run: pnpm dev:front');

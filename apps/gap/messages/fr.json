@@ -1,0 +1,61 @@
+{
+  "language": {
+    "label": "Langue",
+    "fr": "Français",
+    "en": "English",
+    "es": "Español"
+  },
+  "nav": {
+    "home": "Accueil",
+    "about": "À propos",
+    "objectives": "Objectifs",
+    "unesco": "UNESCO",
+    "activities": "Activités",
+    "media": "Médias",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu"
+  },
+  "common": {
+    "loading": "Chargement…",
+    "empty": "Contenu indisponible pour le moment.",
+    "emptyHint": "Revenez plus tard ou contactez l'équipe GAP.",
+    "localeFallback": "Ce contenu n'est pas encore disponible dans votre langue — version affichée dans une autre langue.",
+    "learnMore": "En savoir plus",
+    "backHome": "Retour à l'accueil"
+  },
+  "home": {
+    "impactTitle": "Notre impact",
+    "impactSubtitle": "Des résultats concrets pour la conservation des gorilles et l'engagement communautaire.",
+    "activitiesTitle": "Nos activités",
+    "activitiesSubtitle": "Sensibilisation, reboisement, art, visites du parc et engagement communautaire.",
+    "exploreActivities": "Voir toutes les activités",
+    "exploreMedia": "Galerie médias"
+  },
+  "pages": {
+    "about": { "title": "À propos du programme" },
+    "objectives": { "title": "Nos objectifs" },
+    "unesco": { "title": "Reconnaissance UNESCO" }
+  },
+  "activities": {
+    "title": "Activités du programme",
+    "subtitle": "Initiatives sur le terrain pour éduquer, protéger et mobiliser les communautés.",
+    "empty": "Aucune activité publiée pour le moment."
+  },
+  "media": {
+    "title": "Médias",
+    "subtitle": "Images et vidéos du Gorilla Ambassadors Program.",
+    "empty": "Aucun média publié pour le moment.",
+    "image": "Image",
+    "video": "Vidéo",
+    "watch": "Voir la vidéo"
+  },
+  "footer": {
+    "tagline": "Programme d'éducation environnementale — Parc national des Virunga, RDC.",
+    "mainSite": "Africa Tourism Gate",
+    "rights": "Tous droits réservés."
+  },
+  "meta": {
+    "siteName": "Gorilla Ambassadors Program",
+    "defaultDescription": "Programme d'ambassadeurs des gorilles — éducation environnementale et conservation au Parc national des Virunga."
+  }
+}

@@ -5,6 +5,7 @@ const ports = [
   { name: 'Admin', port: process.env.ADMIN_PORT ?? '3001' },
   { name: 'Web', port: process.env.WEB_PORT ?? '3002' },
   { name: 'POS', port: process.env.POS_PORT ?? '3003' },
+  { name: 'GAP', port: process.env.GAP_PORT ?? '3004' },
 ];
 
 function portInUse(port) {

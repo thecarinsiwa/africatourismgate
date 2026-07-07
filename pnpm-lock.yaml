@@ -248,6 +248,64 @@ importers:
         specifier: ^5.7.2
         version: 5.9.3
 
+  apps/gap:
+    dependencies:
+      '@africatourismgate/api-client':
+        specifier: workspace:*
+        version: link:../../packages/api-client
+      '@africatourismgate/types':
+        specifier: workspace:*
+        version: link:../../packages/types
+      '@africatourismgate/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      '@africatourismgate/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
+      next:
+        specifier: 14.2.18
+        version: 14.2.18(@playwright/test@1.60.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      next-intl:
+        specifier: ^3.26.0
+        version: 3.26.5(next@14.2.18(@playwright/test@1.60.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
+    devDependencies:
+      '@africatourismgate/config':
+        specifier: workspace:*
+        version: link:../../packages/config
+      '@types/node':
+        specifier: ^22.10.2
+        version: 22.19.19
+      '@types/react':
+        specifier: ^18.3.18
+        version: 18.3.30
+      '@types/react-dom':
+        specifier: ^18.3.5
+        version: 18.3.7(@types/react@18.3.30)
+      autoprefixer:
+        specifier: ^10.4.20
+        version: 10.5.0(postcss@8.5.15)
+      eslint:
+        specifier: ^8.57.0
+        version: 8.57.1
+      eslint-config-next:
+        specifier: 14.2.18
+        version: 14.2.18(eslint@8.57.1)(typescript@5.9.3)
+      postcss:
+        specifier: ^8.4.49
+        version: 8.5.15
+      tailwindcss:
+        specifier: ^3.4.17
+        version: 3.4.19(tsx@4.22.4)
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+
   apps/pos:
     dependencies:
       '@africatourismgate/api-client':

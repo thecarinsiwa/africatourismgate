@@ -1,0 +1,60 @@
+@import '@africatourismgate/config/theme.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* GAP conservation palette — overrides ATG commerce greens */
+:root {
+  --atg-primary: #1b4332;
+  --atg-primary-hover: #143326;
+  --atg-primary-light: #2d6a4f;
+  --atg-secondary: #40916c;
+  --atg-secondary-hover: #348563;
+  --gap-accent: #d4a574;
+  --gap-forest: #081c15;
+  --gap-hero-overlay: rgba(8, 28, 21, 0.62);
+}
+
+.dark {
+  --atg-surface: #0a1510;
+  --atg-elevated: #0f1f18;
+  --atg-border: #1a3328;
+  --atg-muted: #8b9a94;
+  --atg-fg: #f4f8f6;
+}
+
+@layer utilities {
+  .gap-hero-gradient {
+    background: linear-gradient(
+      135deg,
+      var(--gap-forest) 0%,
+      color-mix(in srgb, var(--atg-primary) 85%, black) 50%,
+      var(--atg-primary-light) 100%
+    );
+  }
+
+  .gap-section-pattern {
+    background-image: radial-gradient(
+      circle at 1px 1px,
+      color-mix(in srgb, var(--atg-primary) 12%, transparent) 1px,
+      transparent 0
+    );
+    background-size: 24px 24px;
+  }
+}
+
+@keyframes gap-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.gap-animate-fade-up {
+  animation: gap-fade-up 0.7s ease-out both;
+}
