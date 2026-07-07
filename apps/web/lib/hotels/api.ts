@@ -68,9 +68,11 @@ function mapListing(
   };
 }
 
+import { getWebApiUrl } from '../api/get-api-url';
+
 function apiClient() {
   return createApiClient({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000/api',
+    baseUrl: getWebApiUrl(),
     accessToken: null,
   });
 }

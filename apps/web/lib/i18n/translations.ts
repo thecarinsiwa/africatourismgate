@@ -1072,6 +1072,15 @@ export type Translations = {
     metaDescription: string;
     heroTitle: string;
     heroSubtitle: string;
+    heroBadge: string;
+    cardBadge: string;
+    featuredLabel: string;
+    storiesLabel: string;
+    storiesHint: string;
+    articlesCount: string;
+    explorePackages: string;
+    relatedTitle: string;
+    relatedHint: string;
     readMore: string;
     loading: string;
     loadError: string;
@@ -2331,11 +2340,21 @@ const fr: Translations = {
     },
   },
   blog: {
-    metaTitle: 'Blog voyage en Afrique',
+    metaTitle: 'Carnets de voyage en Afrique',
     metaDescription:
-      'Conseils, guides et inspirations pour préparer votre prochain voyage en Afrique avec Africa Tourism Gate.',
-    heroTitle: 'Blog',
-    heroSubtitle: 'Guides, conseils et inspirations pour voyager en Afrique.',
+      'Inspirations, guides et récits pour préparer votre prochain voyage en Afrique avec Africa Tourism Gate.',
+    heroTitle: 'Carnets de voyage',
+    heroSubtitle:
+      'Récits, conseils et inspirations pour explorer l’Afrique autrement — entre safari, plages et cultures.',
+    heroBadge: 'Inspirations',
+    cardBadge: 'Récit',
+    featuredLabel: 'À la une',
+    storiesLabel: 'Tous les récits',
+    storiesHint: 'Des idées concrètes pour préparer votre prochain séjour sur le continent.',
+    articlesCount: 'articles',
+    explorePackages: 'Découvrir nos forfaits',
+    relatedTitle: 'Continuer la lecture',
+    relatedHint: 'D’autres idées pour nourrir votre prochain voyage.',
     readMore: 'Lire la suite',
     loading: 'Chargement des articles…',
     loadError: "Impossible de charger le blog. Vérifiez que l'API est démarrée.",
@@ -3586,11 +3605,21 @@ const en: Translations = {
     },
   },
   blog: {
-    metaTitle: 'Africa travel blog',
+    metaTitle: 'Africa travel journals',
     metaDescription:
-      'Tips, guides and inspiration to plan your next trip to Africa with Africa Tourism Gate.',
-    heroTitle: 'Blog',
-    heroSubtitle: 'Guides, tips and inspiration for traveling in Africa.',
+      'Stories, guides and inspiration to plan your next African journey with Africa Tourism Gate.',
+    heroTitle: 'Travel journals',
+    heroSubtitle:
+      'Stories, tips and inspiration to explore Africa — safaris, beaches and cultures.',
+    heroBadge: 'Inspiration',
+    cardBadge: 'Story',
+    featuredLabel: 'Featured',
+    storiesLabel: 'All stories',
+    storiesHint: 'Practical ideas to plan your next stay on the continent.',
+    articlesCount: 'articles',
+    explorePackages: 'Explore our packages',
+    relatedTitle: 'Keep reading',
+    relatedHint: 'More ideas for your next trip.',
     readMore: 'Read more',
     loading: 'Loading articles…',
     loadError: 'Could not load the blog. Check that the API is running.',

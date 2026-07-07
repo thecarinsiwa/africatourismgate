@@ -8,17 +8,14 @@ import { ParallaxPromo } from '../components/home/parallax-promo';
 import { DestinationsCarousel } from '../components/home/destinations-carousel';
 import { HappyCustomers } from '../components/home/happy-customers';
 import { ActivitiesMapSection } from '../components/home/activities-map-section';
+import { getWebApiUrl } from '../lib/api/get-api-url';
 
 type PublicBranding = {
   displayName?: string;
 };
 
 async function getPublicDisplayName(): Promise<string> {
-  const defaultApiUrl =
-    process.env.NODE_ENV === 'production'
-      ? 'https://app-africatourismgate.org/api'
-      : 'http://localhost:3000/api';
-  const apiUrl = (process.env.NEXT_PUBLIC_API_URL ?? defaultApiUrl).replace(/\/$/, '');
+  const apiUrl = getWebApiUrl();
 
   try {
     const response = await fetch(`${apiUrl}/organization-settings/public/branding`, {
