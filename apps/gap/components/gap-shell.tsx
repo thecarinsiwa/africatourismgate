@@ -4,6 +4,7 @@ import { getLocale } from 'next-intl/server';
 import { GapFooter } from './gap-footer';
 import { GapHeader } from './gap-header';
 import { getGapHomeForLocale, resolveGapDonateUrl } from '@/lib/api/public-gap';
+import { getPublicDonationsForLocale, resolveNavbarDonation } from '@/lib/api/public-donations';
 
 export async function GapShell({ children }: { children: ReactNode }) {
   const locale = await getLocale();
@@ -11,9 +12,16 @@ export async function GapShell({ children }: { children: ReactNode }) {
   let donateLabel: string | null = null;
 
   try {
-    const home = await getGapHomeForLocale(locale);
-    donateUrl = resolveGapDonateUrl(home.settings);
-    donateLabel = home.settings?.donateLabel?.trim() || null;
+    const [donations, home] = await Promise.all([
+      getPublicDonationsForLocale(locale, 'gap').catch(() => null),
+      getGapHomeForLocale(locale).catch(() => ({ settings: null, impactStats: [] })),
+    ]);
+    const featured = resolveNavbarDonation(donations);
+    donateUrl = featured?.url ?? resolveGapDonateUrl(home.settings);
+    donateLabel =
+      featured?.buttonLabel?.trim() ||
+      home.settings?.donateLabel?.trim() ||
+      null;
   } catch {
     donateUrl = resolveGapDonateUrl(null);
   }

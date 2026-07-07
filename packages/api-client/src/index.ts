@@ -218,6 +218,12 @@ import type {
   PublicGapPagesListQuery,
   PublicGapMediaListQuery,
   GapPageSectionKey,
+  Donation,
+  DonationsListQuery,
+  CreateDonationRequest,
+  UpdateDonationRequest,
+  PublicDonationsPayload,
+  PublicDonationsQuery,
   AboutTimelineMilestone,
   AboutTimelineMilestonesListQuery,
   CreateAboutTimelineMilestoneRequest,
@@ -1646,6 +1652,42 @@ export class ApiClient {
     query?: PublicGapMediaListQuery,
   ): Promise<PaginatedResponse<PublicGapMediaItem>> {
     return fetchPaginated<PublicGapMediaItem>(this, '/public/gap/media', query, {
+      skipAuth: true,
+    });
+  }
+
+  listDonations(query?: DonationsListQuery): Promise<PaginatedResponse<Donation>> {
+    return fetchPaginated<Donation>(this, '/donations', query);
+  }
+
+  getDonation(id: string): Promise<Donation> {
+    return this.request<Donation>(`/donations/${id}`);
+  }
+
+  createDonation(body: CreateDonationRequest): Promise<Donation> {
+    return this.request<Donation>('/donations', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateDonation(id: string, body: UpdateDonationRequest): Promise<Donation> {
+    return this.request<Donation>(`/donations/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteDonation(id: string): Promise<void> {
+    return this.request<void>(`/donations/${id}`, { method: 'DELETE' });
+  }
+
+  getPublicDonations(query?: PublicDonationsQuery): Promise<PublicDonationsPayload> {
+    const qs = new URLSearchParams();
+    if (query?.locale) qs.set('locale', query.locale);
+    if (query?.surface) qs.set('surface', query.surface);
+    const suffix = qs.toString() ? `?${qs.toString()}` : '';
+    return this.request<PublicDonationsPayload>(`/public/donations${suffix}`, {
       skipAuth: true,
     });
   }

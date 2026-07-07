@@ -20,8 +20,6 @@ type SiteSettingsFormValues = {
   heroImageAlt: string;
   unescoLabel: string;
   unescoUrl: string;
-  donateLabel: string;
-  donateUrl: string;
   status: GapStatus;
 };
 
@@ -32,8 +30,6 @@ const emptyValues: SiteSettingsFormValues = {
   heroImageAlt: '',
   unescoLabel: '',
   unescoUrl: '',
-  donateLabel: '',
-  donateUrl: '',
   status: 'draft',
 };
 
@@ -62,8 +58,6 @@ export function GapSiteSettingsForm({ locale }: GapSiteSettingsFormProps) {
   const heroImageAltId = useId();
   const unescoLabelId = useId();
   const unescoUrlId = useId();
-  const donateLabelId = useId();
-  const donateUrlId = useId();
   const statusId = useId();
 
   const loadSettings = useCallback(async () => {
@@ -81,8 +75,6 @@ export function GapSiteSettingsForm({ locale }: GapSiteSettingsFormProps) {
           heroImageAlt: settings.heroImageAlt,
           unescoLabel: settings.unescoLabel ?? '',
           unescoUrl: settings.unescoUrl ?? '',
-          donateLabel: settings.donateLabel ?? '',
-          donateUrl: settings.donateUrl ?? '',
           status: settings.status,
         });
       } else {
@@ -117,10 +109,6 @@ export function GapSiteSettingsForm({ locale }: GapSiteSettingsFormProps) {
     if (unescoUrl && !isValidMediaUrl(unescoUrl)) {
       errors.unescoUrl = t('validation.unescoUrlInvalid');
     }
-    const donateUrl = values.donateUrl.trim();
-    if (donateUrl && !isValidMediaUrl(donateUrl)) {
-      errors.donateUrl = t('validation.donateUrlInvalid');
-    }
     setFieldErrors(errors);
     if (Object.keys(errors).length > 0) return;
 
@@ -134,8 +122,6 @@ export function GapSiteSettingsForm({ locale }: GapSiteSettingsFormProps) {
       heroImageAlt: values.heroImageAlt.trim(),
       unescoLabel: values.unescoLabel.trim() || null,
       unescoUrl: unescoUrl || null,
-      donateLabel: values.donateLabel.trim() || null,
-      donateUrl: donateUrl || null,
       status: values.status,
       locale,
     };
@@ -279,36 +265,6 @@ export function GapSiteSettingsForm({ locale }: GapSiteSettingsFormProps) {
             />
             {fieldErrors.unescoUrl ? (
               <p className="mt-1 text-sm text-destructive">{fieldErrors.unescoUrl}</p>
-            ) : null}
-          </div>
-        </div>
-
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label htmlFor={donateLabelId} className="mb-1 block text-sm font-medium">
-              {t('fields.donateLabel')}
-            </label>
-            <Input
-              id={donateLabelId}
-              value={values.donateLabel}
-              onChange={(e) => setValues((prev) => ({ ...prev, donateLabel: e.target.value }))}
-              disabled={!canWrite}
-            />
-          </div>
-          <div>
-            <label htmlFor={donateUrlId} className="mb-1 block text-sm font-medium">
-              {t('fields.donateUrl')}
-            </label>
-            <Input
-              id={donateUrlId}
-              type="url"
-              value={values.donateUrl}
-              onChange={(e) => setValues((prev) => ({ ...prev, donateUrl: e.target.value }))}
-              disabled={!canWrite}
-              aria-invalid={Boolean(fieldErrors.donateUrl)}
-            />
-            {fieldErrors.donateUrl ? (
-              <p className="mt-1 text-sm text-destructive">{fieldErrors.donateUrl}</p>
             ) : null}
           </div>
         </div>

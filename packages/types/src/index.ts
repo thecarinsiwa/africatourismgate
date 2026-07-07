@@ -398,6 +398,18 @@ export type {
 } from './gap.js';
 
 export type {
+  CreateDonationRequest,
+  Donation,
+  DonationStatus,
+  DonationSurface,
+  DonationsListQuery,
+  PublicDonation,
+  PublicDonationsPayload,
+  PublicDonationsQuery,
+  UpdateDonationRequest,
+} from './donations.js';
+
+export type {
   AdminReviewDetail,
   AdminReviewListItem,
   CreateBookingReviewRequest,

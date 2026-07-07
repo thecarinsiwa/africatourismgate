@@ -9,6 +9,7 @@ import { useCallback } from 'react';
 const linkKeys = [
   { href: '/parametres', labelKey: 'settings' as const },
   { href: '/parametres/emails', labelKey: 'emails' as const },
+  { href: '/parametres/dons', labelKey: 'donations' as const },
   { href: '/parametres/comptes', labelKey: 'bankAccounts' as const },
 ] as const;
 

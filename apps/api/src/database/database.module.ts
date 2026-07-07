@@ -19,6 +19,7 @@ import { GapImpactStats } from '../entities/gap-impact-stat.entity';
 import { GapMediaItems } from '../entities/gap-media-item.entity';
 import { GapPages } from '../entities/gap-page.entity';
 import { GapSiteSettings } from '../entities/gap-site-settings.entity';
+import { Donations } from '../entities/donation.entity';
 import { EmailOperationVerifications } from '../entities/email-operation-verification.entity';
 import { ensureMigrations } from './ensure-migrations';
 import { ensureRbacPermissions } from './ensure-rbac-permissions';
@@ -42,6 +43,7 @@ const entityList = [
   GapActivities,
   GapImpactStats,
   GapMediaItems,
+  Donations,
   BookingIdentityDocuments,
   BookingManifestEntries,
 ] as (new () => unknown)[];

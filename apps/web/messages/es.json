@@ -27,6 +27,7 @@
     "mainAria": "Navegación principal",
     "mobileAria": "Navegación móvil",
     "menu": "Menú",
+    "donate": "Donar",
     "myAccount": "Mi cuenta",
     "signIn": "Iniciar sesión",
     "signOut": "Cerrar sesión"
@@ -103,5 +104,11 @@
     "calendarLegendAvailable": "Disponible",
     "calendarLegendSelected": "Fechas seleccionadas",
     "calendarLegendUnavailable": "No disponible"
+  },
+  "donate": {
+    "title": "Apoye nuestras acciones",
+    "intro": "Varias campañas de donación están disponibles según el contexto. Elija la que corresponda a su compromiso.",
+    "allCampaigns": "Todas las campañas",
+    "empty": "No hay campañas de donación disponibles por el momento."
   }
 }

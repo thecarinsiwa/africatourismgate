@@ -69,5 +69,11 @@
   "meta": {
     "siteName": "Gorilla Ambassadors Program",
     "defaultDescription": "Programa de embajadores de gorilas — educación ambiental y conservación en el Parque Nacional de Virunga."
+  },
+  "donate": {
+    "title": "Apoyar el programa GAP",
+    "intro": "Varias campañas de donación se ofrecen según las necesidades en el terreno.",
+    "allCampaigns": "Todas las campañas",
+    "empty": "No hay campañas de donación disponibles por el momento."
   }
 }

@@ -16,7 +16,9 @@ import { normalizeBrandingAssetUrl } from '@africatourismgate/utils';
 import { BrandingProvider } from '../components/branding-provider';
 import { BookingModesProvider } from '../components/booking-modes-provider';
 import { ContactProvider } from '../components/contact-provider';
+import { DonationProvider } from '../components/donation-provider';
 import { Providers } from '../components/providers';
+import { getPublicDonationsForLocale } from '../lib/api/public-donations';
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -215,6 +217,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const branding = await getPublicBranding();
   const contact = await getPublicContact();
   const bookingModes = await getPublicBookingModes();
+  const donations = await getPublicDonationsForLocale(locale, 'web').catch(() => null);
   const themeStyle = {
     '--atg-primary': branding.primaryColor,
     '--atg-primary-hover': shiftHexColor(branding.primaryColor, -28),
@@ -239,11 +242,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             }}
           >
             <ContactProvider contact={contact}>
-              <BookingModesProvider modes={bookingModes}>
-                <Providers>
-                  <AppShell>{children}</AppShell>
-                </Providers>
-              </BookingModesProvider>
+              <DonationProvider donations={donations}>
+                <BookingModesProvider modes={bookingModes}>
+                  <Providers>
+                    <AppShell>{children}</AppShell>
+                  </Providers>
+                </BookingModesProvider>
+              </DonationProvider>
             </ContactProvider>
           </BrandingProvider>
         </NextIntlClientProvider>

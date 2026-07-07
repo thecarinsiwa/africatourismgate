@@ -27,6 +27,7 @@
     "mainAria": "Main navigation",
     "mobileAria": "Mobile navigation",
     "menu": "Menu",
+    "donate": "Donate",
     "myAccount": "My account",
     "signIn": "Sign in",
     "signOut": "Sign out"
@@ -108,5 +109,11 @@
     "calendarLegendAvailable": "Available",
     "calendarLegendSelected": "Selected dates",
     "calendarLegendUnavailable": "Unavailable"
+  },
+  "donate": {
+    "title": "Support our work",
+    "intro": "Several donation campaigns are available depending on the context. Choose the one that fits your commitment.",
+    "allCampaigns": "All campaigns",
+    "empty": "No donation campaigns are available at the moment."
   }
 }

@@ -69,5 +69,11 @@
   "meta": {
     "siteName": "Gorilla Ambassadors Program",
     "defaultDescription": "Gorilla Ambassadors Program — environmental education and conservation in Virunga National Park."
+  },
+  "donate": {
+    "title": "Support the GAP program",
+    "intro": "Several donation campaigns are offered based on needs on the ground.",
+    "allCampaigns": "All campaigns",
+    "empty": "No donation campaigns are available at the moment."
   }
 }

@@ -3,6 +3,7 @@
     "ariaLabel": "Navigation paramètres",
     "settings": "Settings",
     "emails": "Emails",
+    "donations": "Donations",
     "bankAccounts": "Comptes bancaires"
   },
   "page": {
@@ -260,6 +261,60 @@
       "saving": "Enregistrement…",
       "dirty": "Modifications non enregistrées",
       "clean": "None modification en attente"
+    }
+  },
+  "donations": {
+    "list": {
+      "pageTitle": "Donation campaigns",
+      "intro": "Manage multiple donation appeals by context. Only one can be featured in the navigation bar (web and GAP).",
+      "createButton": "New donation",
+      "searchPlaceholder": "Search…",
+      "localeFilter": "Language",
+      "allLocales": "All languages",
+      "allStatuses": "All statuses",
+      "empty": "No donation campaigns yet.",
+      "denied": "You do not have permission to view donations.",
+      "deleteConfirm": "Delete campaign \"{title}\"?",
+      "featuredYes": "Navbar",
+      "columns": {
+        "title": "Title",
+        "locale": "Language",
+        "surfaces": "Sites",
+        "featured": "Featured"
+      }
+    },
+    "form": {
+      "createTitle": "New donation campaign",
+      "editTitle": "Edit donation campaign",
+      "intro": "The donation marked as navbar featured appears on the Donate button on the web and GAP sites (one per language).",
+      "denied": "Access denied.",
+      "notFound": "Campaign not found.",
+      "loading": "Loading…",
+      "saving": "Saving…",
+      "saveButton": "Save",
+      "surfaces": {
+        "web": "Web site",
+        "gap": "GAP site"
+      },
+      "fields": {
+        "title": "Title",
+        "description": "Description",
+        "contextNote": "Context / circumstances",
+        "contextNotePlaceholder": "E.g. emergency, rainy season, back to school",
+        "buttonLabel": "Button label",
+        "url": "Donation link",
+        "locale": "Language",
+        "sortOrder": "Display order",
+        "visibility": "Visibility",
+        "navbarFeatured": "Featured in navbar (Donate button)",
+        "navbarFeaturedHint": "Only one donation per language can be featured. Others appear on the /donate page."
+      },
+      "validation": {
+        "titleRequired": "Title is required.",
+        "buttonLabelRequired": "Button label is required.",
+        "urlRequired": "Link is required.",
+        "urlInvalid": "Link must be a valid URL."
+      }
     }
   }
 }
