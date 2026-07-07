@@ -11,6 +11,8 @@ const devCorsOrigins = [
   'http://127.0.0.1:3002',
   'http://localhost:3003',
   'http://127.0.0.1:3003',
+  'http://localhost:3004',
+  'http://127.0.0.1:3004',
 ].join(',');
 
 export default defineConfig({

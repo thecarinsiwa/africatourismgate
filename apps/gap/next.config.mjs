@@ -12,6 +12,9 @@ const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 
 const isProduction = process.env.NODE_ENV === 'production';
 const gapPort = process.env.GAP_PORT ?? '3004';
+const gapPublicUrl =
+  process.env.NEXT_PUBLIC_GAP_URL?.replace(/\/$/, '') ??
+  (isProduction ? 'https://gap.africatourismgate.org' : `http://localhost:${gapPort}`);
 const explicitApiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '');
 const remoteProxy = !isProduction && isRemoteApiDev();
 
@@ -28,6 +31,7 @@ const nextConfig = {
   env: {
     NEXT_PUBLIC_API_URL: apiUrl,
     GAP_PORT: gapPort,
+    NEXT_PUBLIC_GAP_URL: gapPublicUrl,
     ATG_REMOTE_API_URL: remoteProxy ? getRemoteApiTargetUrl() : '',
   },
   images: {

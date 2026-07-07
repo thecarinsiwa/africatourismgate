@@ -28,6 +28,7 @@ console.log(`  Web     http://localhost:${ports.web}/`);
 console.log('          Production: https://africatourismgate.org/');
 console.log(`  POS     http://localhost:${ports.pos}`);
 console.log(`  GAP     http://localhost:${ports.gap}/`);
+console.log('          Production: https://gap.africatourismgate.org/');
 if (remoteApi) {
   console.log('');
   console.log('  Remote API mode — run: pnpm dev:front');

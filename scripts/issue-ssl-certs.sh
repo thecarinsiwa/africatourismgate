@@ -9,6 +9,7 @@ echo "  Site public : africatourismgate.org (+ www)"
 echo "  Admin       : app-africatourismgate.org (+ www)  → /login"
 echo "  API         : app-africatourismgate.org/api (nginx) — api.* optionnel"
 echo "  POS         : pos.africatourismgate.org (optionnel)"
+echo "  GAP         : gap.africatourismgate.org (optionnel)"
 echo ""
 
 if ! command -v certbot >/dev/null 2>&1; then
@@ -36,6 +37,9 @@ issue api.africatourismgate.org || echo "==> API ignoré — configurez le DNS p
 
 echo ""
 issue pos.africatourismgate.org || echo "==> POS ignoré (optionnel)."
+
+echo ""
+issue gap.africatourismgate.org || echo "==> GAP ignoré (optionnel)."
 
 echo ""
 echo "==> Reinstall HTTPS nginx config:"
