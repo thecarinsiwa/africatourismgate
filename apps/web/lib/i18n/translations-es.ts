@@ -1043,6 +1043,9 @@ export const es: Translations = {
       filterCancelled: 'Canceladas',
       filterAria: 'Filtrar por estado',
       actionRequired: 'Acción requerida',
+      leaveReviewCta: 'Dejar una opinión',
+      reviewPrompt:
+        'Tiene {count} estancia(s) finalizada(s) pendiente(s) de opinión — comparta su experiencia.',
       detail: {
         bookedOn: 'Reservado el',
         itemsCount: 'Elementos',
