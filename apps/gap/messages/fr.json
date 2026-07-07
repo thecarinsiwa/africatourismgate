@@ -1,4 +1,9 @@
 {
+  "theme": {
+    "label": "Apparence",
+    "light": "Mode clair",
+    "dark": "Mode sombre"
+  },
   "language": {
     "label": "Langue",
     "fr": "Français",

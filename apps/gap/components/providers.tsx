@@ -1,8 +1,12 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { ToastProvider } from '@africatourismgate/ui';
+import { ThemeProvider, ToastProvider } from '@africatourismgate/ui';
 
 export function Providers({ children }: { children: ReactNode }) {
-  return <ToastProvider>{children}</ToastProvider>;
+  return (
+    <ThemeProvider defaultTheme="system" storageKey="atg-theme">
+      <ToastProvider>{children}</ToastProvider>
+    </ThemeProvider>
+  );
 }

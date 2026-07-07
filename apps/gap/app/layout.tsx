@@ -13,16 +13,6 @@ const montserrat = Montserrat({
   variable: '--font-montserrat',
 });
 
-const themeInitScript = `
-  try {
-    const storedTheme = localStorage.getItem('atg-theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (storedTheme === 'dark' || (!storedTheme && prefersDark)) {
-      document.documentElement.classList.add('dark');
-    }
-  } catch {}
-`;
-
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('meta');
   return {
@@ -40,11 +30,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang={locale} className={montserrat.variable} suppressHydrationWarning>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
-      </head>
       <body
-        className="min-h-screen bg-atg-surface font-sans text-atg-fg antialiased"
+        className="min-h-screen bg-atg-surface font-sans text-atg-fg antialiased transition-colors"
         style={gapThemeCssVars as CSSProperties}
       >
         <NextIntlClientProvider messages={messages}>

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import { ThemeToggle } from '@africatourismgate/ui';
 import { LanguageSwitcher } from './language-switcher';
 
 const NAV_LINKS = [
@@ -17,11 +18,12 @@ const NAV_LINKS = [
 
 export function GapHeader() {
   const t = useTranslations('nav');
+  const tTheme = useTranslations('theme');
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-atg-border/80 bg-atg-elevated/95 backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b border-atg-border/80 bg-atg-elevated/95 text-atg-fg backdrop-blur-md dark:bg-atg-elevated/90">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
         <Link href="/" className="group flex min-w-0 flex-col">
           <span className="truncate text-sm font-bold uppercase tracking-wide text-primary">
@@ -55,6 +57,7 @@ export function GapHeader() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <ThemeToggle labels={{ light: tTheme('light'), dark: tTheme('dark') }} />
           <LanguageSwitcher />
           <button
             type="button"

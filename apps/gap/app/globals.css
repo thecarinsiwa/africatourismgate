@@ -17,11 +17,25 @@
 }
 
 .dark {
+  --atg-primary: #2d6a4f;
+  --atg-primary-hover: #40916c;
+  --atg-primary-light: #52b788;
+  --atg-secondary: #52b788;
+  --atg-secondary-hover: #74c69d;
+  --gap-hero-overlay: rgba(4, 12, 9, 0.78);
   --atg-surface: #0a1510;
   --atg-elevated: #0f1f18;
   --atg-border: #1a3328;
   --atg-muted: #8b9a94;
   --atg-fg: #f4f8f6;
+}
+
+.dark .gap-section-pattern {
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    color-mix(in srgb, var(--atg-primary) 18%, transparent) 1px,
+    transparent 0
+  );
 }
 
 @layer utilities {
