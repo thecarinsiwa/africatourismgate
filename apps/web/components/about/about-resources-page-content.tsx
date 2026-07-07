@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react';
 import { browseAboutResourcesForLocale } from '../../lib/api/public';
 import { useAppLocale, useTranslations } from '../../lib/i18n/locale-provider';
 import { formatRelativeReviewDate } from '../../lib/i18n/format-relative-date';
-import { useScrollAnimation } from '../home/use-scroll-animation';
 
 type AboutResourcesPageContentProps = {
   type: AboutResourceType;
@@ -20,15 +19,16 @@ export function AboutResourcesPageContent({ type }: AboutResourcesPageContentPro
   const locale = useAppLocale();
   const t = useTranslations();
   const a = t.about;
-  const { ref, isVisible } = useScrollAnimation(0.08);
 
   const [resources, setResources] = useState<PublicAboutResource[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [localeFallback, setLocaleFallback] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
+    setLoadError(false);
 
     void browseAboutResourcesForLocale(locale, { type, limit: 50 })
       .then(({ response, usedLocaleFallback }) => {
@@ -38,7 +38,10 @@ export function AboutResourcesPageContent({ type }: AboutResourcesPageContentPro
         }
       })
       .catch(() => {
-        if (!cancelled) setResources([]);
+        if (!cancelled) {
+          setResources([]);
+          setLoadError(true);
+        }
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -53,6 +56,17 @@ export function AboutResourcesPageContent({ type }: AboutResourcesPageContentPro
     return <p className="text-sm text-atg-muted">{a.loading}</p>;
   }
 
+  if (loadError) {
+    return (
+      <div
+        className="rounded-lg border border-red-200 bg-red-50 px-4 py-8 text-center dark:border-red-900/40 dark:bg-red-950/30"
+        role="alert"
+      >
+        <p className="text-sm text-red-800 dark:text-red-200">{a.loadError}</p>
+      </div>
+    );
+  }
+
   if (resources.length === 0) {
     return (
       <div className="rounded-lg border border-atg-border bg-atg-elevated/50 px-4 py-8 text-center">
@@ -62,10 +76,7 @@ export function AboutResourcesPageContent({ type }: AboutResourcesPageContentPro
   }
 
   return (
-    <div
-      ref={ref}
-      className={`space-y-4 transition-opacity duration-500 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
-    >
+    <div className="space-y-4">
       {localeFallback ? (
         <p className="rounded-lg border border-amber-200/60 bg-amber-50 px-3 py-2 text-sm text-amber-900 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-200">
           {a.localeFallback}

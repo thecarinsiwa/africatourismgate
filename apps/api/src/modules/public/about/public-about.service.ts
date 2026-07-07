@@ -337,8 +337,9 @@ export class PublicAboutService {
       .createQueryBuilder('resource')
       .where('resource.deletedAt IS NULL')
       .andWhere('resource.status = :status', { status: 'published' })
-      .andWhere('resource.publishedAt IS NOT NULL')
-      .andWhere('resource.publishedAt <= :now', { now: new Date() });
+      .andWhere('(resource.publishedAt IS NULL OR resource.publishedAt <= :now)', {
+        now: new Date(),
+      });
 
     if (type) {
       qb.andWhere('resource.type = :type', { type });
