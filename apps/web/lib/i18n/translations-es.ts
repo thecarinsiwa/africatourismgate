@@ -1139,6 +1139,13 @@ export const es: Translations = {
           newStaffMessageToast: 'Nuevo mensaje de nuestro equipo',
           fabAriaLabel: 'Abrir conversación',
           fabAriaLabelWithUnread: 'Abrir conversación ({count} sin leer)',
+          pickerTitle: 'Sus conversaciones',
+          pickerSubtitle: 'Seleccione una reserva para abrir el chat.',
+          pickerEmpty: 'Ninguna reserva con conversación activa.',
+          pickerLoading: 'Cargando sus reservas…',
+          backToReservations: 'Volver a las reservas',
+          viewBooking: 'Ver reserva',
+          unreadBadge: '{count} mensaje(s) sin leer',
         },
         guideReviews: {
           sectionTitle: 'Su guía',

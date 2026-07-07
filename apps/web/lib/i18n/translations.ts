@@ -1006,6 +1006,13 @@ export type Translations = {
           newStaffMessageToast: string;
           fabAriaLabel: string;
           fabAriaLabelWithUnread: string;
+          pickerTitle: string;
+          pickerSubtitle: string;
+          pickerEmpty: string;
+          pickerLoading: string;
+          backToReservations: string;
+          viewBooking: string;
+          unreadBadge: string;
         };
         guideReviews: {
           sectionTitle: string;
@@ -2334,6 +2341,13 @@ const fr: Translations = {
           newStaffMessageToast: 'Nouveau message de notre équipe',
           fabAriaLabel: 'Ouvrir la conversation',
           fabAriaLabelWithUnread: 'Ouvrir la conversation ({count} non lu(s))',
+          pickerTitle: 'Vos conversations',
+          pickerSubtitle: 'Sélectionnez une réservation pour ouvrir le chat.',
+          pickerEmpty: 'Aucune réservation avec conversation active.',
+          pickerLoading: 'Chargement de vos réservations…',
+          backToReservations: 'Retour aux réservations',
+          viewBooking: 'Voir la réservation',
+          unreadBadge: '{count} message(s) non lu(s)',
         },
         guideReviews: {
           sectionTitle: 'Votre guide',
@@ -3722,6 +3736,13 @@ const en: Translations = {
           newStaffMessageToast: 'New message from our team',
           fabAriaLabel: 'Open conversation',
           fabAriaLabelWithUnread: 'Open conversation ({count} unread)',
+          pickerTitle: 'Your conversations',
+          pickerSubtitle: 'Select a booking to open the chat.',
+          pickerEmpty: 'No bookings with an active conversation.',
+          pickerLoading: 'Loading your bookings…',
+          backToReservations: 'Back to bookings',
+          viewBooking: 'View booking',
+          unreadBadge: '{count} unread message(s)',
         },
         guideReviews: {
           sectionTitle: 'Your guide',
