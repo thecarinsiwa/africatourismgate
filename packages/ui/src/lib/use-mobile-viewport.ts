@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-export const MOBILE_VIEWPORT_QUERY = '(max-width: 767px)';
+export const MOBILE_VIEWPORT_QUERY = '(max-width: 767.98px)';
 
 export function useMobileViewport(query = MOBILE_VIEWPORT_QUERY): boolean {
   const [isMobile, setIsMobile] = useState(() =>

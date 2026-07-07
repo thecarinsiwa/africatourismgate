@@ -419,7 +419,7 @@ export function Sidebar({
       <aside
         ref={mobileAsideRef}
         className={cn(
-          'fixed inset-y-0 left-0 z-50 flex w-[min(100%,16rem)] flex-col border-r border-atg-border bg-atg-elevated',
+          'fixed inset-y-0 left-0 z-50 flex w-[min(100%,17rem)] max-w-full flex-col border-r border-atg-border bg-atg-elevated pb-[env(safe-area-inset-bottom)]',
           'transition-transform duration-200 ease-out md:hidden',
           mobileOpen ? 'translate-x-0' : '-translate-x-full',
           className,

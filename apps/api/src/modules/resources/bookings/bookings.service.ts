@@ -190,6 +190,9 @@ export class BookingsService extends CrudService<Bookings> {
     const unreadCustomerIds = customerView
       ? new Set<string>()
       : await this.notifications.getUnreadCustomerMessageBookingIds(bookings.map((b) => b.id));
+    const canReviewIds = customerView
+      ? await this.reviewsService.batchCanReviewBookingIds(bookings, currentUserId)
+      : new Set<string>();
 
     const data = bookings.map((booking) => {
       const client = userById.get(booking.userId);
@@ -213,6 +216,7 @@ export class BookingsService extends CrudService<Bookings> {
                 paymentInvitedIds,
                 unreadStaffIds,
               ),
+              canReview: canReviewIds.has(booking.id),
             }
           : {
               unreadCustomerMessage: unreadCustomerIds.has(booking.id),

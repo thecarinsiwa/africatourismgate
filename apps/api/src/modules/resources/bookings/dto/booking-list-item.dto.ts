@@ -44,6 +44,11 @@ export class BookingListItemDto {
   actionRequired?: boolean;
 
   @ApiPropertyOptional({
+    description: 'Customer account list: post-stay review can be submitted.',
+  })
+  canReview?: boolean;
+
+  @ApiPropertyOptional({
     description: 'Admin list: unread customer message on the booking thread.',
   })
   unreadCustomerMessage?: boolean;

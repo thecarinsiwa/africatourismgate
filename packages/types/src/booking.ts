@@ -345,6 +345,8 @@ export interface BookingListItem extends Booking {
   organizationId: string | null;
   /** Customer account list: payment invite or unread staff message. */
   actionRequired?: boolean;
+  /** Customer account list: post-stay review can be submitted. */
+  canReview?: boolean;
   /** Admin list: unread customer message on the booking thread. */
   unreadCustomerMessage?: boolean;
 }

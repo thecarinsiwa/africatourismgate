@@ -357,27 +357,29 @@ export function BookingSidebarMobileBar({
   return (
     <div
       id="mobile-reserve"
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-atg-border bg-atg-elevated/95 p-4 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] backdrop-blur-md dark:border-atg-border dark:bg-atg-elevated/95 lg:hidden pb-safe"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-atg-border bg-atg-elevated p-4 shadow-[0_-4px_20px_rgba(0,0,0,0.12)] dark:border-atg-border dark:bg-[#121f1a] dark:shadow-[0_-4px_24px_rgba(0,0,0,0.45)] lg:hidden pb-safe"
     >
       <div className="mx-auto flex max-w-lg min-w-0 items-center gap-3">
         <div className="min-w-0 flex-1">
           {hasPrice ? (
             <>
-              <p className="text-xs text-atg-muted">{priceLabel}</p>
-              <p className="truncate text-lg font-bold text-atg-fg">{priceAmount}</p>
+              <p className="text-xs font-medium uppercase tracking-wide text-atg-muted dark:text-white/75">
+                {priceLabel}
+              </p>
+              <p className="truncate text-lg font-bold text-atg-fg dark:text-white">{priceAmount}</p>
               {secondaryLine ? (
-                <p className="truncate text-xs text-atg-muted">{secondaryLine}</p>
+                <p className="truncate text-xs text-atg-muted dark:text-white/65">{secondaryLine}</p>
               ) : null}
             </>
           ) : (
-            <p className="text-sm text-atg-muted">{hint}</p>
+            <p className="text-sm text-atg-muted dark:text-white/75">{hint}</p>
           )}
         </div>
         {configureLabel && onConfigureClick ? (
           <button
             type="button"
             onClick={onConfigureClick}
-            className="inline-flex min-h-[44px] shrink-0 items-center rounded-lg border border-atg-border px-4 py-2 text-sm font-semibold text-atg-fg transition-colors hover:border-primary dark:border-atg-border dark:text-white"
+            className="inline-flex min-h-[44px] shrink-0 items-center rounded-lg border border-atg-border px-4 py-2 text-sm font-semibold text-atg-fg transition-colors hover:border-primary dark:border-white/25 dark:text-white dark:hover:border-primary"
           >
             {configureLabel}
           </button>

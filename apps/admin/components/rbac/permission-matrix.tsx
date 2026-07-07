@@ -224,8 +224,8 @@ export function PermissionMatrix({
                   </div>
                 </div>
 
-                <div className="overflow-x-auto">
-                  <table className="w-full min-w-[360px] border-collapse text-sm">
+                <div className="-mx-2 overflow-x-auto px-2 sm:mx-0 sm:px-0">
+                  <table className="w-full min-w-[320px] border-collapse text-sm">
                     <thead>
                       <tr className="border-b border-atg-border text-left text-atg-muted">
                         <th className="py-2 pr-4 font-medium">{t('columns.scope')}</th>

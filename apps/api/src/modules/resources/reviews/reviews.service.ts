@@ -106,6 +106,46 @@ export class ReviewsService extends CrudService<Reviews> {
     }
   }
 
+  async batchCanReviewBookingIds(
+    bookings: Array<{ id: string; userId: string; status: Bookings['status'] }>,
+    currentUserId: string,
+  ): Promise<Set<string>> {
+    const eligible = new Set<string>();
+    const confirmedIds = bookings
+      .filter((b) => b.userId === currentUserId && b.status === 'confirmed')
+      .map((b) => b.id);
+    if (confirmedIds.length === 0) return eligible;
+
+    const items = await this.bookingItemsRepository.find({
+      where: { bookingId: In(confirmedIds), deletedAt: IsNull() },
+    });
+    const itemsByBooking = new Map<string, BookingItems[]>();
+    for (const item of items) {
+      const list = itemsByBooking.get(item.bookingId) ?? [];
+      list.push(item);
+      itemsByBooking.set(item.bookingId, list);
+    }
+
+    const stayEndedIds = confirmedIds.filter((id) =>
+      isStayEnded(itemsByBooking.get(id) ?? []),
+    );
+    if (stayEndedIds.length === 0) return eligible;
+
+    const existingReviews = await this.reviewsRepository.find({
+      where: {
+        entityType: 'booking',
+        entityId: In(stayEndedIds),
+        deletedAt: IsNull(),
+      },
+    });
+    const reviewedIds = new Set(existingReviews.map((review) => review.entityId));
+
+    for (const id of stayEndedIds) {
+      if (!reviewedIds.has(id)) eligible.add(id);
+    }
+    return eligible;
+  }
+
   async assertCanReview(bookingId: string, userId: string): Promise<void> {
     const booking = await this.bookingsRepository.findOne({
       where: { id: bookingId, deletedAt: IsNull() },

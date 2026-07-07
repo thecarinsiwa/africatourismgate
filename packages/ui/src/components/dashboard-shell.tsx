@@ -58,7 +58,7 @@ export function DashboardShell({
             onMenuClick={openMobileNav}
             openMenuLabel={openMenuLabel}
           />
-          <main className="flex-1 overflow-auto bg-atg-surface p-6 md:p-8">{children}</main>
+          <main className="flex-1 overflow-auto bg-atg-surface p-4 sm:p-6 md:p-8">{children}</main>
         </div>
       </div>
     </AppShell>

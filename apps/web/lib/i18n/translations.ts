@@ -913,6 +913,8 @@ export type Translations = {
       filterCancelled: string;
       filterAria: string;
       actionRequired: string;
+      leaveReviewCta: string;
+      reviewPrompt: string;
       detail: {
         bookedOn: string;
         itemsCount: string;
@@ -1006,6 +1008,13 @@ export type Translations = {
           newStaffMessageToast: string;
           fabAriaLabel: string;
           fabAriaLabelWithUnread: string;
+          pickerTitle: string;
+          pickerSubtitle: string;
+          pickerEmpty: string;
+          pickerLoading: string;
+          backToReservations: string;
+          viewBooking: string;
+          unreadBadge: string;
         };
         guideReviews: {
           sectionTitle: string;
@@ -2238,6 +2247,9 @@ const fr: Translations = {
       filterCancelled: 'Annulées',
       filterAria: 'Filtrer par statut',
       actionRequired: 'Action requise',
+      leaveReviewCta: 'Laisser un avis',
+      reviewPrompt:
+        'Vous avez {count} séjour(s) terminé(s) en attente d’avis — partagez votre expérience.',
       detail: {
         bookedOn: 'Réservée le',
         itemsCount: 'Articles',
@@ -2334,6 +2346,13 @@ const fr: Translations = {
           newStaffMessageToast: 'Nouveau message de notre équipe',
           fabAriaLabel: 'Ouvrir la conversation',
           fabAriaLabelWithUnread: 'Ouvrir la conversation ({count} non lu(s))',
+          pickerTitle: 'Vos conversations',
+          pickerSubtitle: 'Sélectionnez une réservation pour ouvrir le chat.',
+          pickerEmpty: 'Aucune réservation avec conversation active.',
+          pickerLoading: 'Chargement de vos réservations…',
+          backToReservations: 'Retour aux réservations',
+          viewBooking: 'Voir la réservation',
+          unreadBadge: '{count} message(s) non lu(s)',
         },
         guideReviews: {
           sectionTitle: 'Votre guide',
@@ -3626,6 +3645,9 @@ const en: Translations = {
       filterCancelled: 'Cancelled',
       filterAria: 'Filter by status',
       actionRequired: 'Action required',
+      leaveReviewCta: 'Leave a review',
+      reviewPrompt:
+        'You have {count} completed stay(s) waiting for a review — share your experience.',
       detail: {
         bookedOn: 'Booked on',
         itemsCount: 'Items',
@@ -3722,6 +3744,13 @@ const en: Translations = {
           newStaffMessageToast: 'New message from our team',
           fabAriaLabel: 'Open conversation',
           fabAriaLabelWithUnread: 'Open conversation ({count} unread)',
+          pickerTitle: 'Your conversations',
+          pickerSubtitle: 'Select a booking to open the chat.',
+          pickerEmpty: 'No bookings with an active conversation.',
+          pickerLoading: 'Loading your bookings…',
+          backToReservations: 'Back to bookings',
+          viewBooking: 'View booking',
+          unreadBadge: '{count} unread message(s)',
         },
         guideReviews: {
           sectionTitle: 'Your guide',

@@ -224,7 +224,7 @@ export function ListingFiltersAside({
           filters={panel}
         />
       </div>
-      <aside className="hidden lg:block lg:w-64 lg:shrink-0">
+      <aside className="hidden lg:block lg:w-full lg:max-w-64 lg:shrink-0">
         <div className="rounded-2xl border border-atg-border bg-atg-elevated p-5 shadow-sm dark:border-atg-border dark:bg-atg-elevated">
           {panel}
         </div>

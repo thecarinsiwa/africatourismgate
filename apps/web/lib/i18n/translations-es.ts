@@ -1043,6 +1043,9 @@ export const es: Translations = {
       filterCancelled: 'Canceladas',
       filterAria: 'Filtrar por estado',
       actionRequired: 'Acción requerida',
+      leaveReviewCta: 'Dejar una opinión',
+      reviewPrompt:
+        'Tiene {count} estancia(s) finalizada(s) pendiente(s) de opinión — comparta su experiencia.',
       detail: {
         bookedOn: 'Reservado el',
         itemsCount: 'Elementos',
@@ -1139,6 +1142,13 @@ export const es: Translations = {
           newStaffMessageToast: 'Nuevo mensaje de nuestro equipo',
           fabAriaLabel: 'Abrir conversación',
           fabAriaLabelWithUnread: 'Abrir conversación ({count} sin leer)',
+          pickerTitle: 'Sus conversaciones',
+          pickerSubtitle: 'Seleccione una reserva para abrir el chat.',
+          pickerEmpty: 'Ninguna reserva con conversación activa.',
+          pickerLoading: 'Cargando sus reservas…',
+          backToReservations: 'Volver a las reservas',
+          viewBooking: 'Ver reserva',
+          unreadBadge: '{count} mensaje(s) sin leer',
         },
         guideReviews: {
           sectionTitle: 'Su guía',
