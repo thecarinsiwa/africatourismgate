@@ -1,4 +1,5 @@
 export const SUPER_ADMIN_ROLE_CODE = 'super_admin';
+export const GAP_COORDINATOR_ROLE_CODE = 'gap_coordinator';
 
 export const RBAC_EVENT_PERMISSION_DENIED = 'permission_denied' as const;
 

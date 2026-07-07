@@ -7,6 +7,7 @@ const ROLE_CODE_VARIANTS: Record<string, DataTableBadgeVariant> = {
   support_agent: 'default',
   sales_manager: 'default',
   content_editor: 'muted',
+  gap_coordinator: 'success',
   customer: 'muted',
 };
 

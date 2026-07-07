@@ -9,7 +9,20 @@ const PLATFORM_ORG_ID = '00000000-0000-4000-8000-000000000001';
 const USER_SUPER_ADMIN_ID = '00000000-0000-4000-8000-000000000010';
 const ROLE_SUPER_ADMIN_ID = '00000000-0000-4000-8000-000000000100';
 const ROLE_ORG_ADMIN_ID = '00000000-0000-4000-8000-000000000101';
+const ROLE_GAP_COORDINATOR_ID = '00000000-0000-4000-8000-000000000104';
 const URA_SUPER_ADMIN_ID = '00000000-0000-4000-8000-000000000050';
+
+const GAP_PERMISSION_IDS = [
+  '00000000-0000-4000-8000-000000001050',
+  '00000000-0000-4000-8000-000000001051',
+] as const;
+
+const GAP_COORDINATOR_ROLE = {
+  id: ROLE_GAP_COORDINATOR_ID,
+  code: 'gap_coordinator',
+  name: 'GAP coordinator',
+  description: 'Manage Gorilla Ambassadors Program (GAP) content',
+} as const;
 
 /** Permissions that may be missing on DBs seeded before RBAC / employees deliverables. */
 const PERMISSION_UPSERTS: Array<{
@@ -205,6 +218,7 @@ async function platformOrgExists(config: ConfigService): Promise<boolean> {
  * - upsert permissions added after initial seed
  * - grant all permissions to super_admin
  * - repair full org_admin permission set (incl. users.read, roles.*)
+ * - ensure gap_coordinator role exists with gap.read / gap.write
  * - ensure seed admin keeps an active super_admin assignment
  */
 export async function ensureRbacPermissions(config: ConfigService): Promise<void> {
@@ -261,6 +275,34 @@ export async function ensureRbacPermissions(config: ConfigService): Promise<void
     }
 
     await connection.query(
+      `INSERT INTO \`roles\` (\`id\`, \`code\`, \`name\`, \`description\`, \`is_system\`)
+       VALUES (?, ?, ?, ?, 1)
+       ON DUPLICATE KEY UPDATE
+         \`code\` = VALUES(\`code\`),
+         \`name\` = VALUES(\`name\`),
+         \`description\` = VALUES(\`description\`),
+         \`is_system\` = VALUES(\`is_system\`),
+         \`deleted_at\` = NULL`,
+      [
+        GAP_COORDINATOR_ROLE.id,
+        GAP_COORDINATOR_ROLE.code,
+        GAP_COORDINATOR_ROLE.name,
+        GAP_COORDINATOR_ROLE.description,
+      ],
+    );
+
+    for (const permissionId of GAP_PERMISSION_IDS) {
+      await connection.query(
+        `INSERT INTO \`role_permissions\` (\`role_id\`, \`permission_id\`, \`granted_by_user_id\`)
+         VALUES (?, ?, ?)
+         ON DUPLICATE KEY UPDATE
+           \`deleted_at\` = NULL,
+           \`granted_by_user_id\` = VALUES(\`granted_by_user_id\`)`,
+        [ROLE_GAP_COORDINATOR_ID, permissionId, USER_SUPER_ADMIN_ID],
+      );
+    }
+
+    await connection.query(
       `INSERT INTO \`user_role_assignments\` (
          \`id\`, \`user_id\`, \`role_id\`, \`scope_type\`, \`assigned_by_user_id\`
        ) VALUES (?, ?, ?, 'global', ?)
@@ -278,7 +320,7 @@ export async function ensureRbacPermissions(config: ConfigService): Promise<void
     );
 
     logger.log(
-      `RBAC permissions synchronized (super_admin links: ${superAdminLinked ?? 'ok'})`,
+      `RBAC permissions synchronized (super_admin links: ${superAdminLinked ?? 'ok'}, gap_coordinator: ok)`,
     );
   } catch (err) {
     logger.error(
