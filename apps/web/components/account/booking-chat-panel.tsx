@@ -17,6 +17,7 @@ type BookingChatPanelProps = {
   initialUnreadCount?: number;
   /** When false, skip unread polling (parent handles aggregate badge). */
   trackUnread?: boolean;
+  onUnreadChange?: (count: number) => void;
   /** When false, skip loading and unread polling. */
   active?: boolean;
   className?: string;
@@ -43,7 +44,6 @@ export function BookingChatPanel({
   const [replyBody, setReplyBody] = useState('');
   const [replyError, setReplyError] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(initialUnreadCount);
   const previousUnreadCountRef = useRef(initialUnreadCount);
 
   const refreshUnreadCount = useCallback(async () => {
@@ -61,7 +61,6 @@ export function BookingChatPanel({
         });
       }
       previousUnreadCountRef.current = nextCount;
-      setUnreadCount(nextCount);
       onUnreadChange?.(nextCount);
     } catch {
       // ignore polling errors
@@ -78,7 +77,6 @@ export function BookingChatPanel({
         chatToken ? { chatToken, markRead: true } : { markRead: true },
       );
       setMessages(result.messages);
-      setUnreadCount(0);
       previousUnreadCountRef.current = 0;
       onUnreadChange?.(0);
     } catch {
@@ -90,9 +88,9 @@ export function BookingChatPanel({
   }, [bookingId, chatToken, m.loadError, onUnreadChange]);
 
   useEffect(() => {
-    setUnreadCount(initialUnreadCount);
     previousUnreadCountRef.current = initialUnreadCount;
-  }, [bookingId, initialUnreadCount]);
+    onUnreadChange?.(initialUnreadCount);
+  }, [bookingId, initialUnreadCount, onUnreadChange]);
 
   useEffect(() => {
     if (!active) {
