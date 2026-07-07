@@ -14,6 +14,11 @@ import { WhyUsItems } from '../entities/why-us-item.entity';
 import { WhyUsSections } from '../entities/why-us-section.entity';
 import { HappyCustomersSections } from '../entities/happy-customers-section.entity';
 import { HappyCustomersStats } from '../entities/happy-customers-stat.entity';
+import { GapActivities } from '../entities/gap-activity.entity';
+import { GapImpactStats } from '../entities/gap-impact-stat.entity';
+import { GapMediaItems } from '../entities/gap-media-item.entity';
+import { GapPages } from '../entities/gap-page.entity';
+import { GapSiteSettings } from '../entities/gap-site-settings.entity';
 import { EmailOperationVerifications } from '../entities/email-operation-verification.entity';
 import { ensureMigrations } from './ensure-migrations';
 import { ensureRbacPermissions } from './ensure-rbac-permissions';
@@ -32,6 +37,11 @@ const entityList = [
   WhyUsItems,
   HappyCustomersSections,
   HappyCustomersStats,
+  GapSiteSettings,
+  GapPages,
+  GapActivities,
+  GapImpactStats,
+  GapMediaItems,
   BookingIdentityDocuments,
   BookingManifestEntries,
 ] as (new () => unknown)[];
