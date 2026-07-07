@@ -93,6 +93,13 @@ export const CATALOG_PERMISSION_MAP = {
   reviews: ['reviews'],
   blog: ['blog-posts'],
   content: ['about-pages', 'team-members', 'about-resources', 'why-us-sections', 'why-us-items', 'happy-customers-sections', 'happy-customers-stats'],
+  gap: [
+    'gap-site-settings',
+    'gap-pages',
+    'gap-activities',
+    'gap-impact-stats',
+    'gap-media-items',
+  ],
 } as const;
 
 export type CatalogPermissionResource = keyof typeof CATALOG_PERMISSION_MAP;
