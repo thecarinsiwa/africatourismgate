@@ -7,8 +7,12 @@ export function todayUtcDate(): string {
 export function maxStayEndDate(items: BookingItems[]): string | null {
   let max: string | null = null;
   for (const item of items) {
-    if (!item.endDate) continue;
-    const date = String(item.endDate).slice(0, 10);
+    const date = item.endDate
+      ? String(item.endDate).slice(0, 10)
+      : item.startDate
+        ? String(item.startDate).slice(0, 10)
+        : null;
+    if (!date) continue;
     if (!max || date > max) max = date;
   }
   return max;

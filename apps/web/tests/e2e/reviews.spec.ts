@@ -175,6 +175,45 @@ test('booking detail shows post-stay review form when canReview', async ({ page 
   await expect(page.getByRole('radiogroup')).toBeVisible();
 });
 
+test('bookings list shows leave review CTA when canReview', async ({ page }) => {
+  await mockSession(page);
+
+  await page.route('**/api/bookings?**', async (route) => {
+    if (route.request().method() !== 'GET') {
+      await route.continue();
+      return;
+    }
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        data: [
+          {
+            id: BOOKING_ID,
+            userId: USER_ID,
+            status: 'confirmed',
+            totalCents: 18000,
+            currency: 'USD',
+            promoCodeId: null,
+            createdAt: '2026-04-01T10:00:00.000Z',
+            updatedAt: null,
+            clientEmail: 'reviews.e2e@example.com',
+            clientFirstName: 'Review',
+            clientLastName: 'E2E',
+            organizationId: null,
+            canReview: true,
+          },
+        ],
+        meta: { total: 1, page: 1, limit: 50, totalPages: 1 },
+      }),
+    });
+  });
+
+  await page.goto('/account/reservations');
+  await expect(page.getByRole('link', { name: /Laisser un avis|Leave a review/i })).toBeVisible();
+  await expect(page.getByText(/séjour.*avis|stay.*review/i)).toBeVisible();
+});
+
 test('booking detail submits review via POST /bookings/:id/reviews', async ({ page }) => {
   await mockSession(page);
 

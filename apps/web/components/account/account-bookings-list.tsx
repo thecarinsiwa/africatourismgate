@@ -102,6 +102,11 @@ export function AccountBookingsList() {
     [bookings, statusFilter],
   );
 
+  const pendingReviewCount = useMemo(
+    () => bookings.filter((b) => b.canReview).length,
+    [bookings],
+  );
+
   const filterOptions: { id: StatusFilter; label: string }[] = [
     { id: 'all', label: t.account.reservations.filterAll },
     { id: 'confirmed', label: t.account.reservations.filterConfirmed },
@@ -134,6 +139,20 @@ export function AccountBookingsList() {
 
   return (
     <div className="space-y-4">
+      {pendingReviewCount > 0 ? (
+        <div
+          className="rounded-xl border border-primary/30 bg-primary/5 p-4 dark:border-primary/40 dark:bg-primary/10"
+          role="status"
+        >
+          <p className="text-sm text-atg-fg">
+            {t.account.reservations.reviewPrompt.replace(
+              '{count}',
+              String(pendingReviewCount),
+            )}
+          </p>
+        </div>
+      ) : null}
+
       <div
         className="flex flex-wrap gap-2"
         role="group"
@@ -199,18 +218,37 @@ export function AccountBookingsList() {
                           {t.account.reservations.actionRequired}
                         </span>
                       ) : null}
+                      {booking.canReview ? (
+                        <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary dark:bg-primary/20">
+                          {t.account.reservations.leaveReviewCta}
+                        </span>
+                      ) : null}
                     </div>
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap">
                     {formatBookingMoney(booking.totalCents, booking.currency)}
                   </td>
                   <td className="px-4 py-3">
-                    <Link
-                      href={`/account/reservations/${booking.id}`}
-                      className="inline-flex min-h-[44px] items-center font-medium text-primary hover:underline"
-                    >
-                      {t.account.reservations.view}
-                    </Link>
+                    <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
+                      {booking.canReview ? (
+                        <Link
+                          href={`/account/reservations/${booking.id}#booking-review`}
+                          className="inline-flex min-h-[44px] items-center font-semibold text-primary hover:underline"
+                        >
+                          {t.account.reservations.leaveReviewCta}
+                        </Link>
+                      ) : null}
+                      <Link
+                        href={`/account/reservations/${booking.id}`}
+                        className={`inline-flex min-h-[44px] items-center hover:underline ${
+                          booking.canReview
+                            ? 'font-medium text-atg-muted hover:text-primary'
+                            : 'font-medium text-primary'
+                        }`}
+                      >
+                        {t.account.reservations.view}
+                      </Link>
+                    </div>
                   </td>
                 </tr>
               ))}

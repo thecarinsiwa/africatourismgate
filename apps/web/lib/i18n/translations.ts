@@ -913,6 +913,8 @@ export type Translations = {
       filterCancelled: string;
       filterAria: string;
       actionRequired: string;
+      leaveReviewCta: string;
+      reviewPrompt: string;
       detail: {
         bookedOn: string;
         itemsCount: string;
@@ -2245,6 +2247,9 @@ const fr: Translations = {
       filterCancelled: 'Annulées',
       filterAria: 'Filtrer par statut',
       actionRequired: 'Action requise',
+      leaveReviewCta: 'Laisser un avis',
+      reviewPrompt:
+        'Vous avez {count} séjour(s) terminé(s) en attente d’avis — partagez votre expérience.',
       detail: {
         bookedOn: 'Réservée le',
         itemsCount: 'Articles',
@@ -3640,6 +3645,9 @@ const en: Translations = {
       filterCancelled: 'Cancelled',
       filterAria: 'Filter by status',
       actionRequired: 'Action required',
+      leaveReviewCta: 'Leave a review',
+      reviewPrompt:
+        'You have {count} completed stay(s) waiting for a review — share your experience.',
       detail: {
         bookedOn: 'Booked on',
         itemsCount: 'Items',

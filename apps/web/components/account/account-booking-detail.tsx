@@ -67,6 +67,20 @@ export function AccountBookingDetail({
     void load();
   }, [load]);
 
+  useEffect(() => {
+    if (!detail || loading) return;
+    if (typeof window === 'undefined') return;
+    if (window.location.hash !== '#booking-review') return;
+    if (!detail.canReview && !detail.review) return;
+
+    requestAnimationFrame(() => {
+      document.getElementById('booking-review')?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    });
+  }, [detail, loading]);
+
   async function handlePay() {
     setActionError(null);
     setPaying(true);
@@ -254,41 +268,45 @@ export function AccountBookingDetail({
         </p>
       ) : null}
 
-      {review ? (
-        <BookingReviewCard
-          review={review}
-          localeTag={localeTag}
-          showPublishedBanner={reviewJustPublished}
-          labels={{
-            yourReview: d.yourReview,
-            reviewPublished: d.reviewPublished,
-          }}
-        />
-      ) : canReview ? (
-        <BookingReviewForm
-          bookingId={bookingId}
-          labels={{
-            leaveReview: d.leaveReview,
-            leaveReviewHint: d.leaveReviewHint,
-            reviewRating: d.reviewRating,
-            reviewTitle: d.reviewTitle,
-            reviewTitlePlaceholder: d.reviewTitlePlaceholder,
-            reviewBody: d.reviewBody,
-            reviewBodyPlaceholder: d.reviewBodyPlaceholder,
-            submitReview: d.submitReview,
-            submittingReview: d.submittingReview,
-            reviewSubmitError: d.reviewSubmitError,
-            reviewRatingRequired: d.reviewRatingRequired,
-            reviewCharCount: d.reviewCharCount,
-            ratingAria: (n) => d.reviewStarAria.replace('{n}', String(n)),
-          }}
-          onSubmitted={(submitted) => {
-            setReviewJustPublished(true);
-            setDetail((prev) =>
-              prev ? { ...prev, review: submitted, canReview: false } : prev,
-            );
-          }}
-        />
+      {review || canReview ? (
+        <section id="booking-review" className="scroll-mt-24">
+          {review ? (
+            <BookingReviewCard
+              review={review}
+              localeTag={localeTag}
+              showPublishedBanner={reviewJustPublished}
+              labels={{
+                yourReview: d.yourReview,
+                reviewPublished: d.reviewPublished,
+              }}
+            />
+          ) : (
+            <BookingReviewForm
+              bookingId={bookingId}
+              labels={{
+                leaveReview: d.leaveReview,
+                leaveReviewHint: d.leaveReviewHint,
+                reviewRating: d.reviewRating,
+                reviewTitle: d.reviewTitle,
+                reviewTitlePlaceholder: d.reviewTitlePlaceholder,
+                reviewBody: d.reviewBody,
+                reviewBodyPlaceholder: d.reviewBodyPlaceholder,
+                submitReview: d.submitReview,
+                submittingReview: d.submittingReview,
+                reviewSubmitError: d.reviewSubmitError,
+                reviewRatingRequired: d.reviewRatingRequired,
+                reviewCharCount: d.reviewCharCount,
+                ratingAria: (n) => d.reviewStarAria.replace('{n}', String(n)),
+              }}
+              onSubmitted={(submitted) => {
+                setReviewJustPublished(true);
+                setDetail((prev) =>
+                  prev ? { ...prev, review: submitted, canReview: false } : prev,
+                );
+              }}
+            />
+          )}
+        </section>
       ) : null}
 
       {guideReviewInvites && guideReviewInvites.length > 0 ? (
