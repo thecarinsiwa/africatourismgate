@@ -39,6 +39,7 @@ const nextConfig = {
   transpilePackages: ['@africatourismgate/ui', '@africatourismgate/types'],
   env: {
     NEXT_PUBLIC_API_URL: apiUrl,
+    NEXT_PUBLIC_API_PORT: process.env.API_PORT ?? '3010',
     WEB_PORT: webPort,
     ATG_REMOTE_API_URL: remoteProxy ? getRemoteApiTargetUrl() : '',
   },

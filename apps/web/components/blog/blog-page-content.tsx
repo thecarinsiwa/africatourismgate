@@ -3,8 +3,8 @@
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { browseBlogPosts } from '../../lib/api/public';
+import { resolveBlogCoverUrl } from '../../lib/blog/cover-images';
 import { useAppLocale, useTranslations } from '../../lib/i18n/locale-provider';
-import { formatRelativeReviewDate } from '../../lib/i18n/format-relative-date';
 import { useListingPagination } from '../../lib/listing/pagination';
 import { toListingPaginationLabels, scrollListingToTop } from '../../lib/listing/pagination-labels';
 import type { PublicBlogPostListItem } from '@africatourismgate/types';
@@ -12,6 +12,9 @@ import { HomeFooter } from '../home/home-footer';
 import { HomeHeader } from '../home/home-header';
 import { ListingPageBody, ListingPaginationBar } from '../shared/listing-patterns';
 import { PageHero } from '../shared/page-hero';
+import { BlogCard } from './blog-card';
+import { BlogFeaturedCard } from './blog-featured-card';
+import { BlogFeaturedSkeleton, BlogGridSkeleton } from './blog-skeleton';
 
 export function BlogPageContent() {
   const locale = useAppLocale();
@@ -48,6 +51,9 @@ export function BlogPageContent() {
     };
   }, [locale, fetchId]);
 
+  const featuredPost = posts[0] ?? null;
+  const gridPosts = posts.slice(1);
+
   const paginationResetKey = useMemo(() => `${locale}-${fetchId}`, [locale, fetchId]);
 
   const {
@@ -58,20 +64,51 @@ export function BlogPageContent() {
     totalItems,
     pageSize,
     showPagination,
-  } = useListingPagination(posts, paginationResetKey);
+  } = useListingPagination(gridPosts, paginationResetKey);
 
   const paginationLabels = useMemo(() => toListingPaginationLabels(l), [l]);
+
+  const heroBackground = featuredPost ? resolveBlogCoverUrl(featuredPost) : undefined;
 
   return (
     <div className="flex min-h-screen flex-col bg-atg-bg text-atg-fg">
       <HomeHeader />
       <main className="flex-1">
-        <PageHero title={b.heroTitle} description={b.heroSubtitle} />
+        <PageHero
+          backgroundImage={heroBackground}
+          title={
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.25em] text-primary/90">
+                {b.heroBadge}
+              </p>
+              <h1 className="mt-3 text-3xl font-bold uppercase tracking-wide sm:text-4xl lg:text-5xl">
+                {b.heroTitle}
+              </h1>
+            </div>
+          }
+          description={
+            <p className="max-w-2xl text-base leading-relaxed text-white/85 sm:text-lg">
+              {b.heroSubtitle}
+            </p>
+          }
+          actions={
+            <Link
+              href="/packages"
+              className="inline-flex min-h-[44px] items-center rounded-lg border border-white/25 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white backdrop-blur-sm transition-colors hover:bg-white/20"
+            >
+              {b.explorePackages}
+            </Link>
+          }
+        />
+
         <ListingPageBody>
           {loading ? (
-            <p className="text-center text-atg-muted">{b.loading}</p>
+            <div className="space-y-12">
+              <BlogFeaturedSkeleton />
+              <BlogGridSkeleton count={3} />
+            </div>
           ) : error ? (
-            <div className="mx-auto max-w-lg text-center">
+            <div className="mx-auto max-w-lg rounded-2xl border border-atg-border bg-atg-elevated px-6 py-10 text-center shadow-sm">
               <p className="text-atg-muted">{b.loadError}</p>
               <button
                 type="button"
@@ -82,80 +119,68 @@ export function BlogPageContent() {
               </button>
             </div>
           ) : posts.length === 0 ? (
-            <div className="mx-auto max-w-lg text-center">
+            <div className="mx-auto max-w-lg rounded-2xl border border-dashed border-atg-border bg-atg-surface px-6 py-12 text-center">
               <p className="text-lg font-semibold text-atg-fg">{b.noResults}</p>
-              <p className="mt-2 text-atg-muted">{b.noResultsHint}</p>
+              <p className="mt-2 text-sm text-atg-muted">{b.noResultsHint}</p>
             </div>
           ) : (
-            <>
-              <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {pageItems.map((post) => (
-                  <li key={post.id}>
-                    <article className="flex h-full flex-col overflow-hidden rounded-xl border border-atg-border bg-atg-elevated shadow-sm transition-shadow hover:shadow-md dark:border-atg-border dark:bg-atg-elevated">
-                      {post.coverImageUrl ? (
-                        <img
-                          src={post.coverImageUrl}
-                          alt=""
-                          className="h-44 w-full object-cover"
-                        />
-                      ) : (
-                        <div className="flex h-44 items-center justify-center bg-primary/10 text-primary">
-                          <svg className="h-12 w-12 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-                          </svg>
-                        </div>
-                      )}
-                      <div className="flex flex-1 flex-col p-5">
-                        {post.publishedAt ? (
-                          <time
-                            dateTime={post.publishedAt}
-                            className="text-xs font-medium uppercase tracking-wide text-atg-muted"
-                          >
-                            {formatRelativeReviewDate(post.publishedAt, locale)}
-                          </time>
-                        ) : null}
-                        <h2 className="mt-2 text-lg font-semibold text-atg-fg">
-                          <Link
-                            href={`/blog/${post.slug}`}
-                            className="transition-colors hover:text-primary"
-                          >
-                            {post.title}
-                          </Link>
-                        </h2>
-                        {post.excerpt ? (
-                          <p className="mt-2 line-clamp-3 flex-1 text-sm text-atg-muted">
-                            {post.excerpt}
-                          </p>
-                        ) : null}
-                        <Link
-                          href={`/blog/${post.slug}`}
-                          className="mt-4 inline-flex min-h-[44px] items-center text-sm font-semibold text-primary transition-colors hover:text-primary/80"
-                        >
-                          {b.readMore}
-                          <svg className="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
-                        </Link>
-                      </div>
-                    </article>
-                  </li>
-                ))}
-              </ul>
-              {showPagination ? (
-                <ListingPaginationBar
-                  page={page}
-                  totalPages={totalPages}
-                  totalItems={totalItems}
-                  pageSize={pageSize}
-                  itemLabel={l.resultItem}
-                  labels={paginationLabels}
-                  onPageChange={(next) => {
-                    setPage(next);
-                    scrollListingToTop();
-                  }}
-                />
+            <div className="space-y-14">
+              {featuredPost ? (
+                <section aria-labelledby="blog-featured-heading">
+                  <h2 id="blog-featured-heading" className="sr-only">
+                    {b.featuredLabel}
+                  </h2>
+                  <BlogFeaturedCard post={featuredPost} locale={locale} labels={b} />
+                </section>
               ) : null}
-            </>
+
+              {gridPosts.length > 0 ? (
+                <section aria-labelledby="blog-stories-heading">
+                  <div className="mb-8 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
+                        {b.heroBadge}
+                      </p>
+                      <h2
+                        id="blog-stories-heading"
+                        className="mt-2 text-2xl font-bold uppercase tracking-wide text-atg-fg sm:text-3xl"
+                      >
+                        {b.storiesLabel}
+                      </h2>
+                      <p className="mt-2 max-w-xl text-sm text-atg-muted">{b.storiesHint}</p>
+                    </div>
+                    <p className="text-sm font-medium text-atg-muted">
+                      {posts.length} {b.articlesCount}
+                    </p>
+                  </div>
+
+                  <ul className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                    {pageItems.map((post) => (
+                      <li key={post.id}>
+                        <BlogCard post={post} locale={locale} labels={b} />
+                      </li>
+                    ))}
+                  </ul>
+
+                  {showPagination ? (
+                    <div className="mt-10">
+                      <ListingPaginationBar
+                        page={page}
+                        totalPages={totalPages}
+                        totalItems={totalItems}
+                        pageSize={pageSize}
+                        itemLabel={l.resultItem}
+                        labels={paginationLabels}
+                        onPageChange={(next) => {
+                          setPage(next);
+                          scrollListingToTop();
+                        }}
+                      />
+                    </div>
+                  ) : null}
+                </section>
+              ) : null}
+            </div>
           )}
         </ListingPageBody>
       </main>

@@ -2,9 +2,9 @@ import type { Metadata } from 'next';
 import { BlogPageContent } from '../../components/blog/blog-page-content';
 
 export const metadata: Metadata = {
-  title: 'Blog voyage en Afrique',
+  title: 'Carnets de voyage en Afrique',
   description:
-    'Conseils, guides et inspirations pour préparer votre prochain voyage en Afrique avec Africa Tourism Gate.',
+    'Récits, guides et inspirations pour préparer votre prochain voyage en Afrique avec Africa Tourism Gate.',
   alternates: {
     canonical: '/blog',
     languages: {

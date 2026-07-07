@@ -1,4 +1,5 @@
 import { ATG_DOMAINS } from './domains.mjs';
+import { isRemoteApiDev } from './remote-api-dev.mjs';
 
 function remoteApiTarget(): string {
   return (
@@ -6,9 +7,22 @@ function remoteApiTarget(): string {
   );
 }
 
-/** True when this Next app proxies /api to production (see next.config + ATG_USE_REMOTE_API). */
+function localDevApiTarget(): string {
+  const port =
+    process.env.API_PORT?.trim() ||
+    process.env.NEXT_PUBLIC_API_PORT?.trim() ||
+    '3010';
+  return `http://localhost:${port}/api`;
+}
+
+function devProxyTarget(): string {
+  return isRemoteApiDev() ? remoteApiTarget() : localDevApiTarget();
+}
+
+/** True when this Next app proxies /api (same-origin dev URL or ATG_USE_REMOTE_API). */
 export function shouldProxyRemoteApi(appPort: string): boolean {
   if (process.env.NODE_ENV === 'production') return false;
+  if (isRemoteApiDev()) return true;
   const apiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') ?? '';
   return apiUrl === `http://localhost:${appPort}/api`;
 }
@@ -18,13 +32,13 @@ export async function proxyRemoteApiRequest(
   pathSegments: string[],
   appPort: string,
 ): Promise<Response> {
-  if (!shouldProxyRemoteApi(appPort)) {
+  if (process.env.NODE_ENV === 'production') {
     return Response.json({ message: 'Not found' }, { status: 404 });
   }
 
   const requestUrl = new URL(req.url);
   const path = pathSegments.map((segment) => encodeURIComponent(segment)).join('/');
-  const url = `${remoteApiTarget()}/${path}${requestUrl.search}`;
+  const url = `${devProxyTarget()}/${path}${requestUrl.search}`;
   const headers = new Headers();
   const accept = req.headers.get('accept');
   const contentType = req.headers.get('content-type');

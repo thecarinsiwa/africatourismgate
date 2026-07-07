@@ -3,6 +3,7 @@
 import { normalizeBrandingAssetUrl } from '@africatourismgate/utils';
 import { useEffect, useState } from 'react';
 import { usePublicBranding } from '../../components/branding-provider';
+import { getWebApiUrl } from '../api/get-api-url';
 
 export const DEFAULT_PUBLIC_DISPLAY_NAME = 'Africa Tourism Gate';
 
@@ -31,11 +32,7 @@ export function useResolvedPublicBranding() {
       return;
     }
 
-    const defaultApiUrl =
-      process.env.NODE_ENV === 'production'
-        ? 'https://app-africatourismgate.org/api'
-        : 'http://localhost:3000/api';
-    const apiUrl = (process.env.NEXT_PUBLIC_API_URL ?? defaultApiUrl).replace(/\/$/, '');
+    const apiUrl = getWebApiUrl();
 
     async function loadBranding() {
       try {

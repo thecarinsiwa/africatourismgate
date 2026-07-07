@@ -4,6 +4,7 @@ import type { PublicContact } from '@africatourismgate/types';
 import { DEFAULT_PUBLIC_CONTACT } from '@africatourismgate/types/organization-settings';
 import { useEffect, useState } from 'react';
 import { usePublicContact } from '../../components/contact-provider';
+import { getWebApiUrl } from '../api/get-api-url';
 
 export function useResolvedPublicContact(): PublicContact {
   const serverContact = usePublicContact();
@@ -17,11 +18,7 @@ export function useResolvedPublicContact(): PublicContact {
       return;
     }
 
-    const defaultApiUrl =
-      process.env.NODE_ENV === 'production'
-        ? 'https://app-africatourismgate.org/api'
-        : 'http://localhost:3000/api';
-    const apiUrl = (process.env.NEXT_PUBLIC_API_URL ?? defaultApiUrl).replace(/\/$/, '');
+    const apiUrl = getWebApiUrl();
 
     async function loadContact() {
       try {
