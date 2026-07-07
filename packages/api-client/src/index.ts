@@ -190,6 +190,34 @@ import type {
   HappyCustomersStatsListQuery,
   CreateHappyCustomersStatRequest,
   UpdateHappyCustomersStatRequest,
+  GapSiteSettings,
+  GapSiteSettingsListQuery,
+  CreateGapSiteSettingsRequest,
+  UpdateGapSiteSettingsRequest,
+  GapPage,
+  GapPagesListQuery,
+  CreateGapPageRequest,
+  UpdateGapPageRequest,
+  GapActivity,
+  GapActivitiesListQuery,
+  CreateGapActivityRequest,
+  UpdateGapActivityRequest,
+  GapImpactStat,
+  GapImpactStatsListQuery,
+  CreateGapImpactStatRequest,
+  UpdateGapImpactStatRequest,
+  GapMediaItem,
+  GapMediaItemsListQuery,
+  CreateGapMediaItemRequest,
+  UpdateGapMediaItemRequest,
+  PublicGapHome,
+  PublicGapPage,
+  PublicGapActivity,
+  PublicGapMediaItem,
+  PublicGapLocaleQuery,
+  PublicGapPagesListQuery,
+  PublicGapMediaListQuery,
+  GapPageSectionKey,
   AboutTimelineMilestone,
   AboutTimelineMilestonesListQuery,
   CreateAboutTimelineMilestoneRequest,
@@ -327,6 +355,22 @@ import {
 } from './pagination';
 
 export { ApiHttpError, parseApiErrorMessage } from './http-error';
+
+function buildGapPublicQueryString(query?: {
+  locale?: string;
+  sectionKey?: string;
+  page?: number;
+  limit?: number;
+}): string {
+  if (!query) return '';
+  const params = new URLSearchParams();
+  if (query.locale) params.set('locale', query.locale);
+  if (query.sectionKey) params.set('sectionKey', query.sectionKey);
+  if (query.page !== undefined) params.set('page', String(query.page));
+  if (query.limit !== undefined) params.set('limit', String(query.limit));
+  const qs = params.toString();
+  return qs ? `?${qs}` : '';
+}
 
 /** OpenAPI-generated types and typed fetch client (see `pnpm codegen:api`). */
 export {
@@ -1416,6 +1460,194 @@ export class ApiClient {
 
   deleteHappyCustomersStat(id: string): Promise<void> {
     return this.request<void>(`/happy-customers-stats/${id}`, { method: 'DELETE' });
+  }
+
+  listGapSiteSettings(
+    query?: GapSiteSettingsListQuery,
+  ): Promise<PaginatedResponse<GapSiteSettings>> {
+    return fetchPaginated<GapSiteSettings>(this, '/gap-site-settings', query);
+  }
+
+  getGapSiteSettings(id: string): Promise<GapSiteSettings> {
+    return this.request<GapSiteSettings>(`/gap-site-settings/${id}`);
+  }
+
+  createGapSiteSettings(body: CreateGapSiteSettingsRequest): Promise<GapSiteSettings> {
+    return this.request<GapSiteSettings>('/gap-site-settings', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateGapSiteSettings(
+    id: string,
+    body: UpdateGapSiteSettingsRequest,
+  ): Promise<GapSiteSettings> {
+    return this.request<GapSiteSettings>(`/gap-site-settings/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteGapSiteSettings(id: string): Promise<void> {
+    return this.request<void>(`/gap-site-settings/${id}`, { method: 'DELETE' });
+  }
+
+  listGapPages(query?: GapPagesListQuery): Promise<PaginatedResponse<GapPage>> {
+    return fetchPaginated<GapPage>(this, '/gap-pages', query);
+  }
+
+  getGapPage(id: string): Promise<GapPage> {
+    return this.request<GapPage>(`/gap-pages/${id}`);
+  }
+
+  createGapPage(body: CreateGapPageRequest): Promise<GapPage> {
+    return this.request<GapPage>('/gap-pages', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateGapPage(id: string, body: UpdateGapPageRequest): Promise<GapPage> {
+    return this.request<GapPage>(`/gap-pages/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteGapPage(id: string): Promise<void> {
+    return this.request<void>(`/gap-pages/${id}`, { method: 'DELETE' });
+  }
+
+  listGapActivities(
+    query?: GapActivitiesListQuery,
+  ): Promise<PaginatedResponse<GapActivity>> {
+    return fetchPaginated<GapActivity>(this, '/gap-activities', query);
+  }
+
+  getGapActivity(id: string): Promise<GapActivity> {
+    return this.request<GapActivity>(`/gap-activities/${id}`);
+  }
+
+  createGapActivity(body: CreateGapActivityRequest): Promise<GapActivity> {
+    return this.request<GapActivity>('/gap-activities', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateGapActivity(id: string, body: UpdateGapActivityRequest): Promise<GapActivity> {
+    return this.request<GapActivity>(`/gap-activities/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteGapActivity(id: string): Promise<void> {
+    return this.request<void>(`/gap-activities/${id}`, { method: 'DELETE' });
+  }
+
+  listGapImpactStats(
+    query?: GapImpactStatsListQuery,
+  ): Promise<PaginatedResponse<GapImpactStat>> {
+    return fetchPaginated<GapImpactStat>(this, '/gap-impact-stats', query);
+  }
+
+  getGapImpactStat(id: string): Promise<GapImpactStat> {
+    return this.request<GapImpactStat>(`/gap-impact-stats/${id}`);
+  }
+
+  createGapImpactStat(body: CreateGapImpactStatRequest): Promise<GapImpactStat> {
+    return this.request<GapImpactStat>('/gap-impact-stats', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateGapImpactStat(
+    id: string,
+    body: UpdateGapImpactStatRequest,
+  ): Promise<GapImpactStat> {
+    return this.request<GapImpactStat>(`/gap-impact-stats/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteGapImpactStat(id: string): Promise<void> {
+    return this.request<void>(`/gap-impact-stats/${id}`, { method: 'DELETE' });
+  }
+
+  listGapMediaItems(
+    query?: GapMediaItemsListQuery,
+  ): Promise<PaginatedResponse<GapMediaItem>> {
+    return fetchPaginated<GapMediaItem>(this, '/gap-media-items', query);
+  }
+
+  getGapMediaItem(id: string): Promise<GapMediaItem> {
+    return this.request<GapMediaItem>(`/gap-media-items/${id}`);
+  }
+
+  createGapMediaItem(body: CreateGapMediaItemRequest): Promise<GapMediaItem> {
+    return this.request<GapMediaItem>('/gap-media-items', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateGapMediaItem(
+    id: string,
+    body: UpdateGapMediaItemRequest,
+  ): Promise<GapMediaItem> {
+    return this.request<GapMediaItem>(`/gap-media-items/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteGapMediaItem(id: string): Promise<void> {
+    return this.request<void>(`/gap-media-items/${id}`, { method: 'DELETE' });
+  }
+
+  getPublicGapHome(query?: PublicGapLocaleQuery): Promise<PublicGapHome> {
+    const qs = query?.locale
+      ? `?locale=${encodeURIComponent(query.locale)}`
+      : '';
+    return this.request<PublicGapHome>(`/public/gap${qs}`, { skipAuth: true });
+  }
+
+  listPublicGapPages(query?: PublicGapPagesListQuery): Promise<PublicGapPage[]> {
+    return this.request<PublicGapPage[]>(
+      `/public/gap/pages${buildGapPublicQueryString(query)}`,
+      { skipAuth: true },
+    );
+  }
+
+  getPublicGapPageBySectionKey(
+    sectionKey: GapPageSectionKey,
+    locale?: string,
+  ): Promise<PublicGapPage> {
+    const qs = locale ? `?locale=${encodeURIComponent(locale)}` : '';
+    return this.request<PublicGapPage>(`/public/gap/pages/${sectionKey}${qs}`, {
+      skipAuth: true,
+    });
+  }
+
+  listPublicGapActivities(query?: PublicGapLocaleQuery): Promise<PublicGapActivity[]> {
+    const qs = query?.locale
+      ? `?locale=${encodeURIComponent(query.locale)}`
+      : '';
+    return this.request<PublicGapActivity[]>(`/public/gap/activities${qs}`, {
+      skipAuth: true,
+    });
+  }
+
+  listPublicGapMedia(
+    query?: PublicGapMediaListQuery,
+  ): Promise<PaginatedResponse<PublicGapMediaItem>> {
+    return fetchPaginated<PublicGapMediaItem>(this, '/public/gap/media', query, {
+      skipAuth: true,
+    });
   }
 
   listAboutTimelineMilestones(
