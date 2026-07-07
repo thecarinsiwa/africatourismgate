@@ -227,6 +227,16 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Ajouter une barre de satisfaction.',
     apiResource: 'happy-customers-stats',
   },
+  'contenu/hero': {
+    title: 'Carousel hero',
+    description: 'Diapositives du bandeau principal de la page d\'accueil.',
+    apiResource: 'hero-slides',
+  },
+  'contenu/hero/nouveau': {
+    title: 'Nouvelle diapositive',
+    description: 'Ajouter une diapositive au carousel hero.',
+    apiResource: 'hero-slides',
+  },
   'gap/parametres': {
     title: 'Paramètres site GAP',
     description: 'Titre, sous-titre et bannière du programme Gorilla Ambassadors.',

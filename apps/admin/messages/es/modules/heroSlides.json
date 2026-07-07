@@ -1,0 +1,53 @@
+{
+  "status": {
+    "draft": "Borrador",
+    "published": "Publicado"
+  },
+  "locale": {
+    "fr": "Francés",
+    "en": "Inglés",
+    "es": "Español"
+  },
+  "page": {
+    "localeFilter": "Idioma"
+  },
+  "list": {
+    "deleteConfirm": "¿Eliminar la diapositiva « {title} »?",
+    "columns": {
+      "title": "Diapositiva",
+      "sortOrder": "Orden"
+    },
+    "emptyDefault": "No hay diapositivas por el momento.",
+    "emptySearch": "Ninguna diapositiva coincide con su búsqueda.",
+    "searchPlaceholder": "Buscar por título, subtítulo o descripción…",
+    "newButton": "Nueva diapositiva",
+    "paginationItem": "diapositiva"
+  },
+  "edit": {
+    "pageTitle": "Editar diapositiva"
+  },
+  "form": {
+    "validation": {
+      "subtitleRequired": "El subtítulo es obligatorio.",
+      "titleRequired": "El título es obligatorio.",
+      "descriptionRequired": "La descripción es obligatoria.",
+      "imageUrlRequired": "La URL de la imagen es obligatoria.",
+      "imageAltRequired": "El texto alternativo es obligatorio."
+    },
+    "fields": {
+      "subtitle": "Subtítulo",
+      "title": "Título",
+      "description": "Descripción",
+      "imageUrl": "URL de la imagen",
+      "imageAlt": "Texto alternativo de la imagen",
+      "href": "Enlace (opcional)",
+      "hrefHint": "Enlace interno o externo en el título. Déjelo vacío si no hay enlace.",
+      "sortOrder": "Orden de visualización",
+      "locale": "Idioma"
+    },
+    "saving": "Guardando…",
+    "createButton": "Añadir diapositiva",
+    "saveButton": "Guardar",
+    "cancelButton": "Cancelar"
+  }
+}

@@ -22,6 +22,8 @@ import type {
   PublicWhyUsListQuery,
   PublicHappyCustomersContent,
   PublicHappyCustomersListQuery,
+  PublicHeroSlide,
+  PublicHeroSlidesListQuery,
   PublicFeaturedReviewsListQuery,
   AboutPageSectionKey,
 } from '@africatourismgate/types';
@@ -724,6 +726,38 @@ export async function getPublicHappyCustomersForLocale(
   return {
     content: fallback,
     usedLocaleFallback: Boolean(fallback.section || fallback.stats.length > 0),
+  };
+}
+
+function buildHeroSlidesQuery(params: PublicHeroSlidesListQuery): string {
+  const qs = new URLSearchParams();
+  if (params.locale) qs.set('locale', params.locale);
+  const s = qs.toString();
+  return s ? `?${s}` : '';
+}
+
+export async function getPublicHeroSlides(
+  params: PublicHeroSlidesListQuery = {},
+): Promise<PublicHeroSlide[]> {
+  return fetchPublic<PublicHeroSlide[]>(`/public/hero-slides${buildHeroSlidesQuery(params)}`);
+}
+
+export async function getPublicHeroSlidesForLocale(
+  locale: string,
+): Promise<{ slides: PublicHeroSlide[]; usedLocaleFallback: boolean }> {
+  try {
+    const localized = await getPublicHeroSlides({ locale });
+    if (localized.length > 0) {
+      return { slides: localized, usedLocaleFallback: false };
+    }
+  } catch {
+    /* try without locale below */
+  }
+
+  const fallback = await getPublicHeroSlides();
+  return {
+    slides: fallback,
+    usedLocaleFallback: fallback.length > 0,
   };
 }
 

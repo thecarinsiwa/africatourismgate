@@ -182,6 +182,10 @@ import type {
   WhyUsSectionsListQuery,
   CreateWhyUsSectionRequest,
   UpdateWhyUsSectionRequest,
+  HeroSlide,
+  HeroSlidesListQuery,
+  CreateHeroSlideRequest,
+  UpdateHeroSlideRequest,
   HappyCustomersSection,
   HappyCustomersSectionsListQuery,
   CreateHappyCustomersSectionRequest,
@@ -1402,6 +1406,32 @@ export class ApiClient {
 
   deleteWhyUsItem(id: string): Promise<void> {
     return this.request<void>(`/why-us-items/${id}`, { method: 'DELETE' });
+  }
+
+  listHeroSlides(query?: HeroSlidesListQuery): Promise<PaginatedResponse<HeroSlide>> {
+    return fetchPaginated<HeroSlide>(this, '/hero-slides', query);
+  }
+
+  getHeroSlide(id: string): Promise<HeroSlide> {
+    return this.request<HeroSlide>(`/hero-slides/${id}`);
+  }
+
+  createHeroSlide(body: CreateHeroSlideRequest): Promise<HeroSlide> {
+    return this.request<HeroSlide>('/hero-slides', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateHeroSlide(id: string, body: UpdateHeroSlideRequest): Promise<HeroSlide> {
+    return this.request<HeroSlide>(`/hero-slides/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteHeroSlide(id: string): Promise<void> {
+    return this.request<void>(`/hero-slides/${id}`, { method: 'DELETE' });
   }
 
   listHappyCustomersSections(

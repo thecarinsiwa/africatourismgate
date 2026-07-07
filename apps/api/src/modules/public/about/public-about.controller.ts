@@ -8,6 +8,7 @@ import { PublicAboutTimelineMilestonesListQueryDto } from './dto/public-about-ti
 import { PublicTeamMembersListQueryDto } from './dto/public-team-members-list-query.dto';
 import { PublicWhyUsListQueryDto } from './dto/public-why-us-list-query.dto';
 import { PublicHappyCustomersListQueryDto } from './dto/public-happy-customers-list-query.dto';
+import { PublicHeroSlidesListQueryDto } from './dto/public-hero-slides-list-query.dto';
 import { PublicAboutService } from './public-about.service';
 
 const SECTION_KEYS = new Set<AboutPageSectionKey>([
@@ -79,5 +80,12 @@ export class PublicAboutController {
   @ApiOperation({ summary: 'Get published happy-customers section and stats' })
   getHappyCustomers(@Query() query: PublicHappyCustomersListQueryDto) {
     return this.service.getHappyCustomersContent(query);
+  }
+
+  @Public()
+  @Get('hero-slides')
+  @ApiOperation({ summary: 'List published homepage hero slides' })
+  listHeroSlides(@Query() query: PublicHeroSlidesListQueryDto) {
+    return this.service.listHeroSlides(query);
   }
 }

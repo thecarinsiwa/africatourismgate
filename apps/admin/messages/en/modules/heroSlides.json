@@ -1,0 +1,53 @@
+{
+  "status": {
+    "draft": "Draft",
+    "published": "Published"
+  },
+  "locale": {
+    "fr": "French",
+    "en": "English",
+    "es": "Spanish"
+  },
+  "page": {
+    "localeFilter": "Language"
+  },
+  "list": {
+    "deleteConfirm": "Delete slide \"{title}\"?",
+    "columns": {
+      "title": "Slide",
+      "sortOrder": "Order"
+    },
+    "emptyDefault": "No slides yet.",
+    "emptySearch": "No slides match your search.",
+    "searchPlaceholder": "Search by title, subtitle or description…",
+    "newButton": "New slide",
+    "paginationItem": "slide"
+  },
+  "edit": {
+    "pageTitle": "Edit slide"
+  },
+  "form": {
+    "validation": {
+      "subtitleRequired": "Subtitle is required.",
+      "titleRequired": "Title is required.",
+      "descriptionRequired": "Description is required.",
+      "imageUrlRequired": "Image URL is required.",
+      "imageAltRequired": "Alt text is required."
+    },
+    "fields": {
+      "subtitle": "Subtitle",
+      "title": "Title",
+      "description": "Description",
+      "imageUrl": "Image URL",
+      "imageAlt": "Image alt text",
+      "href": "Link (optional)",
+      "hrefHint": "Internal or external link on the title. Leave empty for no link.",
+      "sortOrder": "Display order",
+      "locale": "Language"
+    },
+    "saving": "Saving…",
+    "createButton": "Add slide",
+    "saveButton": "Save",
+    "cancelButton": "Cancel"
+  }
+}

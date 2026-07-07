@@ -344,6 +344,16 @@ export type {
 } from './why-us-item.js';
 
 export type {
+  CreateHeroSlideRequest,
+  HeroSlide,
+  HeroSlideStatus,
+  HeroSlidesListQuery,
+  PublicHeroSlide,
+  PublicHeroSlidesListQuery,
+  UpdateHeroSlideRequest,
+} from './hero-slides.js';
+
+export type {
   CreateHappyCustomersSectionRequest,
   CreateHappyCustomersStatRequest,
   HappyCustomersColorKey,
