@@ -156,11 +156,18 @@ export function HomeHeader() {
   }, [pathname]);
 
   useEffect(() => {
+    const media = window.matchMedia('(min-width: 1024px)');
+    const handleChange = (event: MediaQueryListEvent) => {
+      if (event.matches) setMenuOpen(false);
+    };
+    media.addEventListener('change', handleChange);
+    return () => media.removeEventListener('change', handleChange);
+  }, []);
+
+  useEffect(() => {
     if (!menuOpen) return;
 
-    const previousOverflow = document.body.style.overflow;
     const menuButton = menuButtonRef.current;
-    document.body.style.overflow = 'hidden';
 
     const frame = window.requestAnimationFrame(() => {
       const panel = mobileNavRef.current;
@@ -187,7 +194,6 @@ export function HomeHeader() {
 
     return () => {
       window.cancelAnimationFrame(frame);
-      document.body.style.overflow = previousOverflow;
       document.removeEventListener('keydown', onKeyDown);
       menuButton?.focus();
     };
@@ -365,7 +371,7 @@ export function HomeHeader() {
           ref={mobileNavRef}
           id="mobile-nav"
           tabIndex={-1}
-          className="border-b border-atg-border bg-atg-elevated px-4 py-4 shadow-lg transition-[opacity,transform] duration-200 ease-out opacity-100 translate-y-0 dark:border-atg-border dark:bg-atg-elevated lg:hidden"
+          className="border-b border-atg-border bg-atg-elevated px-4 py-4 shadow-lg transition-[opacity,transform] duration-200 ease-out opacity-100 translate-y-0 max-h-[calc(100dvh-8.5rem)] overflow-y-auto overscroll-contain dark:border-atg-border dark:bg-atg-elevated lg:hidden"
           aria-label={t('mobileAria')}
         >
           <div className="mb-3 flex items-center justify-between">

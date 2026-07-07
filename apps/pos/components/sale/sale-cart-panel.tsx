@@ -36,7 +36,7 @@ export function SaleCartPanel() {
   const currency = preview?.currency ?? linesWithPricing[0]?.previewLine?.currency;
 
   return (
-    <aside className="w-full shrink-0 lg:w-[22rem] xl:w-96">
+    <aside className="w-full min-w-0 shrink-0 lg:max-w-[22rem]">
       <div className="sticky top-4">
         <Card variant="dashboard" padding="sm" className="flex flex-col">
           <div className="mb-5 flex items-center justify-between gap-2">

@@ -305,11 +305,11 @@ export function DataTable<TData>({
   const totalColSpan = visibleHeaders.length + (hasExpandColumn ? 1 : 0);
 
   return (
-    <div className={cn(useMobileLayout ? 'overflow-hidden' : 'overflow-x-auto', className)}>
+    <div className={cn(useMobileLayout ? 'overflow-hidden' : '-mx-2 overflow-x-auto px-2 sm:mx-0 sm:px-0', className)}>
       <table
         className={cn(
           'w-full border-collapse text-left text-sm',
-          !useMobileLayout && 'min-w-[640px]',
+          !useMobileLayout && 'min-w-[560px]',
           tableClassName,
         )}
         aria-label={ariaLabel}

@@ -306,8 +306,8 @@ export function ReservationCartPageContent({ draft }: Props) {
         )}
 
         {draft && (
-          <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_auto]">
-            <section className="space-y-4 rounded-xl border border-atg-border bg-atg-elevated p-5 dark:border-atg-border dark:bg-atg-elevated">
+          <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_auto]">
+            <section className="min-w-0 space-y-4 rounded-xl border border-atg-border bg-atg-elevated p-5 dark:border-atg-border dark:bg-atg-elevated">
               {loading && <p className="text-sm text-atg-muted">{ck.loading}</p>}
 
               {!loading && isRoomReservationDraft(draft) && hotelDetail && room && (
@@ -493,7 +493,7 @@ export function ReservationCartPageContent({ draft }: Props) {
               )}
             </section>
 
-            <aside className="h-fit min-w-[240px] rounded-xl border border-atg-border bg-atg-elevated p-5 dark:border-atg-border dark:bg-atg-elevated">
+            <aside className="h-fit w-full rounded-xl border border-atg-border bg-atg-elevated p-5 dark:border-atg-border dark:bg-atg-elevated lg:w-[260px]">
               <p className="text-xs uppercase tracking-wide text-atg-muted">
                 {draft && isPackageReservationDraft(draft) ? p.packagePrice : ck.estimatedTotal}
               </p>

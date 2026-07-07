@@ -71,7 +71,7 @@ export function LoyaltyTransactionHistoryPanel({
             </p>
             <p className="text-xs text-atg-muted">{t('pointsUnit')}</p>
           </div>
-          <div className="min-w-[12rem] flex-1 sm:max-w-xs">
+          <div className="min-w-0 flex-1 sm:max-w-xs">
             <LoyaltyTierProgress pointsBalance={account.pointsBalance} tier={account.tier} />
           </div>
         </div>
@@ -81,8 +81,8 @@ export function LoyaltyTransactionHistoryPanel({
         {t('apiUnavailable')}
       </p>
 
-      <div className="overflow-x-auto rounded-lg border border-atg-border">
-        <table className="w-full min-w-[480px] text-left text-sm">
+      <div className="-mx-2 overflow-x-auto rounded-lg border border-atg-border px-2 sm:mx-0 sm:px-0">
+        <table className="w-full min-w-[420px] text-left text-sm">
           <thead className="bg-atg-surface/80 text-xs font-semibold uppercase tracking-wider text-atg-muted">
             <tr>
               <th className="px-4 py-3" scope="col">
