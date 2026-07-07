@@ -55,6 +55,10 @@
     "forbidden": "You do not have permission to perform this action (content.read / content.write).",
     "sectionLocaleConflict": "A page already exists for this section and language."
   },
+  "gap": {
+    "forbidden": "You do not have permission to perform this action (gap.read / gap.write).",
+    "sectionLocaleConflict": "A record already exists for this section and language."
+  },
   "loyaltyAccounts": {
     "forbidden": "Access denied. Read: users.read — adjustment: super admin only.",
     "notFound": "Loyalty account not found."

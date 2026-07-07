@@ -87,6 +87,18 @@ export const adminDashboardNavConfig: AdminNavEntryConfig[] = [
   },
   {
     type: 'group',
+    id: 'gap',
+    iconKey: 'globe',
+    children: [
+      { href: '/gap/parametres', labelKey: 'gapParametres', iconKey: 'settings' },
+      { href: '/gap/pages', labelKey: 'gapPages', iconKey: 'document' },
+      { href: '/gap/activites', labelKey: 'gapActivites', iconKey: 'activity' },
+      { href: '/gap/impact', labelKey: 'gapImpact', iconKey: 'star' },
+      { href: '/gap/medias', labelKey: 'gapMedias', iconKey: 'document' },
+    ],
+  },
+  {
+    type: 'group',
     id: 'content-support',
     iconKey: 'headset',
     children: [
@@ -153,6 +165,10 @@ export const adminBreadcrumbExtraRoutes: AdminBreadcrumbRouteConfig[] = [
   { href: '/contenu/a-propos/ressources/nouveau', labelKey: 'newAboutResource' },
   { href: '/contenu/pourquoi-nous/nouveau', labelKey: 'newWhyUsItem' },
   { href: '/contenu/clients-satisfaits/nouveau', labelKey: 'newHappyCustomersStat' },
+  { href: '/gap/pages/nouveau', labelKey: 'newGapPage' },
+  { href: '/gap/activites/nouveau', labelKey: 'newGapActivity' },
+  { href: '/gap/impact/nouveau', labelKey: 'newGapImpactStat' },
+  { href: '/gap/medias/nouveau', labelKey: 'newGapMediaItem' },
   { href: '/paiements/codes-promo/nouveau', labelKey: 'newPromoCode' },
   { href: '/guides/nouveau', labelKey: 'newTourGuide' },
   { href: '/parametres/comptes', labelKey: 'bankAccounts' },

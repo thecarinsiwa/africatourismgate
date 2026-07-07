@@ -1,0 +1,221 @@
+{
+  "access": {
+    "deniedRead": "Vous n'avez pas la permission gap.read pour consulter cette section.",
+    "deniedWrite": "Vous n'avez pas la permission gap.write pour effectuer cette action."
+  },
+  "parametres": {
+    "localeFilter": "Langue du contenu"
+  },
+  "sections": {
+    "about": "À propos",
+    "objectives": "Objectifs",
+    "unesco": "UNESCO"
+  },
+  "activityIcons": {
+    "school": "École",
+    "tree": "Arbre / environnement",
+    "art": "Art & culture",
+    "park": "Parc",
+    "community": "Communauté"
+  },
+  "colors": {
+    "primary": "Primaire",
+    "secondary": "Secondaire"
+  },
+  "mediaTypes": {
+    "image": "Image",
+    "video": "Vidéo"
+  },
+  "siteSettings": {
+    "heading": "Paramètres du site GAP",
+    "fields": {
+      "title": "Titre",
+      "subtitle": "Sous-titre",
+      "heroImageUrl": "URL de l'image bannière",
+      "heroImageAlt": "Texte alternatif de la bannière",
+      "unescoLabel": "Libellé UNESCO (optionnel)",
+      "unescoUrl": "Lien UNESCO (optionnel)"
+    },
+    "validation": {
+      "titleRequired": "Le titre est obligatoire.",
+      "subtitleRequired": "Le sous-titre est obligatoire.",
+      "heroImageUrlRequired": "L'URL de l'image bannière est obligatoire.",
+      "heroImageUrlInvalid": "L'URL de l'image bannière doit être valide.",
+      "heroImageAltRequired": "Le texte alternatif est obligatoire.",
+      "unescoUrlInvalid": "L'URL UNESCO doit être valide."
+    },
+    "saving": "Enregistrement…",
+    "saveButton": "Enregistrer"
+  },
+  "pages": {
+    "list": {
+      "deleteConfirm": "Supprimer la page « {title} » ?",
+      "columns": {
+        "section": "Section",
+        "title": "Titre",
+        "locale": "Langue",
+        "publishedAt": "Publication"
+      },
+      "emptySearch": "Aucune page ne correspond à votre recherche.",
+      "emptyDefault": "Aucune page GAP pour le moment.",
+      "searchPlaceholder": "Rechercher par titre ou extrait…",
+      "searchAria": "Rechercher une page GAP",
+      "newButton": "Nouvelle page",
+      "tableAria": "Liste des pages GAP",
+      "paginationItem": "page"
+    },
+    "edit": {
+      "pageTitle": "Modifier la page"
+    },
+    "form": {
+      "info": {
+        "sectionLocaleUnique": "Chaque combinaison section + langue est unique.",
+        "publishedAtHint": "À la publication, la date est renseignée automatiquement si elle est vide."
+      },
+      "validation": {
+        "contentRequired": "Le contenu est obligatoire.",
+        "coverUrlInvalid": "L'URL de l'image de couverture doit être valide."
+      },
+      "fields": {
+        "section": "Section",
+        "title": "Titre",
+        "excerpt": "Extrait",
+        "excerptPlaceholder": "Résumé court affiché en en-tête…",
+        "content": "Contenu",
+        "contentPlaceholder": "Rédigez le corps de la page…",
+        "coverImageUrl": "Image de couverture",
+        "coverPreviewAlt": "Aperçu de la couverture",
+        "locale": "Langue",
+        "publishedAtOptional": "Date de publication (optionnel)"
+      },
+      "hints": {
+        "publishedAt": "Laisser vide pour utiliser la date actuelle à la publication."
+      },
+      "saving": "Enregistrement…",
+      "createButton": "Créer la page",
+      "saveButton": "Enregistrer",
+      "cancelButton": "Annuler"
+    }
+  },
+  "activities": {
+    "list": {
+      "deleteConfirm": "Supprimer l'activité « {title} » ?",
+      "columns": {
+        "title": "Titre",
+        "icon": "Icône",
+        "sortOrder": "Ordre",
+        "locale": "Langue"
+      },
+      "emptySearch": "Aucune activité ne correspond à votre recherche.",
+      "emptyDefault": "Aucune activité GAP pour le moment.",
+      "searchPlaceholder": "Rechercher par titre ou description…",
+      "newButton": "Nouvelle activité",
+      "paginationItem": "activité"
+    },
+    "edit": {
+      "pageTitle": "Modifier l'activité"
+    },
+    "form": {
+      "validation": {
+        "titleRequired": "Le titre est obligatoire.",
+        "descriptionRequired": "La description est obligatoire.",
+        "imageUrlInvalid": "L'URL de l'image doit être valide."
+      },
+      "fields": {
+        "title": "Titre",
+        "description": "Description",
+        "iconKey": "Icône",
+        "imageUrl": "Image (URL)",
+        "imagePreviewAlt": "Aperçu de l'image",
+        "sortOrder": "Ordre d'affichage",
+        "locale": "Langue"
+      },
+      "saving": "Enregistrement…",
+      "createButton": "Créer l'activité",
+      "saveButton": "Enregistrer",
+      "cancelButton": "Annuler"
+    }
+  },
+  "impact": {
+    "list": {
+      "deleteConfirm": "Supprimer la statistique « {label} » ?",
+      "columns": {
+        "label": "Libellé",
+        "value": "Valeur",
+        "color": "Couleur",
+        "sortOrder": "Ordre",
+        "locale": "Langue"
+      },
+      "emptySearch": "Aucune statistique ne correspond à votre recherche.",
+      "emptyDefault": "Aucune statistique d'impact pour le moment.",
+      "searchPlaceholder": "Rechercher par libellé…",
+      "newButton": "Nouvelle statistique",
+      "paginationItem": "statistique"
+    },
+    "edit": {
+      "pageTitle": "Modifier la statistique"
+    },
+    "form": {
+      "validation": {
+        "labelRequired": "Le libellé est obligatoire.",
+        "valueRequired": "La valeur affichée est obligatoire."
+      },
+      "fields": {
+        "label": "Libellé",
+        "valueDisplay": "Valeur affichée",
+        "valueDisplayPlaceholder": "ex. 12 000+",
+        "description": "Description (optionnel)",
+        "colorKey": "Couleur",
+        "sortOrder": "Ordre d'affichage",
+        "locale": "Langue"
+      },
+      "saving": "Enregistrement…",
+      "createButton": "Créer la statistique",
+      "saveButton": "Enregistrer",
+      "cancelButton": "Annuler"
+    }
+  },
+  "media": {
+    "list": {
+      "deleteConfirm": "Supprimer le média « {title} » ?",
+      "columns": {
+        "title": "Titre",
+        "mediaType": "Type",
+        "sortOrder": "Ordre",
+        "locale": "Langue",
+        "publishedAt": "Publication"
+      },
+      "emptySearch": "Aucun média ne correspond à votre recherche.",
+      "emptyDefault": "Aucun média GAP pour le moment.",
+      "searchPlaceholder": "Rechercher par titre…",
+      "newButton": "Nouveau média",
+      "paginationItem": "média"
+    },
+    "edit": {
+      "pageTitle": "Modifier le média"
+    },
+    "form": {
+      "validation": {
+        "titleRequired": "Le titre est obligatoire.",
+        "urlRequired": "Indiquez au moins une URL de fichier ou externe.",
+        "urlInvalid": "L'URL doit être valide."
+      },
+      "fields": {
+        "mediaType": "Type de média",
+        "title": "Titre",
+        "description": "Description",
+        "fileUrl": "URL du fichier",
+        "externalUrl": "URL externe (vidéo, etc.)",
+        "thumbnailUrl": "URL de la miniature",
+        "thumbnailPreviewAlt": "Aperçu de la miniature",
+        "publishedAtOptional": "Date de publication (optionnel)",
+        "sortOrder": "Ordre d'affichage",
+        "locale": "Langue"
+      },
+      "saving": "Enregistrement…",
+      "createButton": "Créer le média",
+      "saveButton": "Enregistrer",
+      "cancelButton": "Annuler"
+    }
+  }
+}

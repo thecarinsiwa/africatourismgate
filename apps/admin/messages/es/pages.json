@@ -339,6 +339,51 @@
       }
     }
   },
+  "gap": {
+    "parametres": {
+      "description": "Título, subtítulo y banner del programa Gorilla Ambassadors por idioma. Acceso: gap.read / gap.write."
+    },
+    "pages": {
+      "description": "Páginas institucionales del programa GAP (Acerca de, objetivos, UNESCO). Acceso: gap.read / gap.write.",
+      "nouveau": {
+        "metaTitle": "Nueva página GAP",
+        "description": "Cree una página para una sección del programa GAP."
+      },
+      "id": {
+        "metaTitle": "Modificar la página GAP"
+      }
+    },
+    "activites": {
+      "description": "Actividades e iniciativas del programa Gorilla Ambassadors. Acceso: gap.read / gap.write.",
+      "nouveau": {
+        "metaTitle": "Nueva actividad GAP",
+        "description": "Añada una actividad al programa."
+      },
+      "id": {
+        "metaTitle": "Modificar la actividad GAP"
+      }
+    },
+    "impact": {
+      "description": "Estadísticas de impacto mostradas en el sitio GAP. Acceso: gap.read / gap.write.",
+      "nouveau": {
+        "metaTitle": "Nueva estadística de impacto",
+        "description": "Añada una estadística de impacto."
+      },
+      "id": {
+        "metaTitle": "Modificar la estadística de impacto"
+      }
+    },
+    "medias": {
+      "description": "Galería de fotos y vídeos del programa GAP. Acceso: gap.read / gap.write.",
+      "nouveau": {
+        "metaTitle": "Nuevo medio GAP",
+        "description": "Añada una imagen o un vídeo."
+      },
+      "id": {
+        "metaTitle": "Modificar el medio GAP"
+      }
+    }
+  },
   "systeme": {
     "roles": {
       "title": "Roles y permisos",
