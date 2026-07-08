@@ -149,6 +149,11 @@ export interface PackageDescriptionAssetsListQuery {
   assetType?: PackageDescriptionAssetType;
 }
 
+export interface PackageDescriptionAssetUploadResponse {
+  url: string;
+  assetType: PackageDescriptionAssetType;
+}
+
 export interface PackageSuggestedImage {
   url: string;
   caption: string | null;

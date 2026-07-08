@@ -459,6 +459,7 @@ export type {
   PackageDescriptionAsset,
   PackageDescriptionAssetType,
   PackageDescriptionAssetsListQuery,
+  PackageDescriptionAssetUploadResponse,
   PackageImage,
   PackageImagesListQuery,
   PackageItem,

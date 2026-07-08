@@ -134,6 +134,7 @@ import type {
   PackageDetail,
   PackageDescriptionAsset,
   PackageDescriptionAssetsListQuery,
+  PackageDescriptionAssetType,
   PackageImage,
   PackageImagesListQuery,
   PackageItem,
@@ -566,10 +567,14 @@ export class ApiClient {
 
   async request<T>(path: string, options: RequestOptions = {}): Promise<T> {
     const url = `${this.baseUrl.replace(/\/$/, '')}${path.startsWith('/') ? path : `/${path}`}`;
+    const isFormData =
+      typeof FormData !== 'undefined' && options.body instanceof FormData;
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
       ...options.headers,
     };
+    if (!isFormData) {
+      headers['Content-Type'] = 'application/json';
+    }
 
     if (!options.skipAuth && this.accessToken && !headers.Authorization) {
       headers.Authorization = `Bearer ${this.accessToken}`;
@@ -578,7 +583,12 @@ export class ApiClient {
     const res = await fetch(url, {
       method: options.method ?? 'GET',
       headers,
-      body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
+      body:
+        options.body === undefined
+          ? undefined
+          : isFormData
+            ? (options.body as FormData)
+            : JSON.stringify(options.body),
     });
 
     if (!res.ok) {
@@ -2156,6 +2166,19 @@ export class ApiClient {
 
   deletePackageDescriptionAsset(id: string): Promise<void> {
     return this.request<void>(`/package-description-assets/${id}`, { method: 'DELETE' });
+  }
+
+  uploadPackageDescriptionAsset(
+    body: FormData,
+    packageId?: string,
+  ): Promise<{ url: string; assetType: PackageDescriptionAssetType }> {
+    const route = packageId
+      ? `/packages/${packageId}/upload-description-asset`
+      : '/packages/upload-description-asset';
+    return this.request<{ url: string; assetType: PackageDescriptionAssetType }>(route, {
+      method: 'POST',
+      body,
+    });
   }
 
   listPackageSuggestedImages(packageId: string): Promise<PackageSuggestedImageGroup[]> {
