@@ -56,9 +56,20 @@
     }
   },
   "detail": {
-    "title": "Modifier l'activité",
-    "backLink": "Back aux activités",
-    "tabsAria": "Sections de l'activité",
+    "title": "Edit activity",
+    "viewTitle": "View activity",
+    "backLink": "Back to activities",
+    "viewButton": "View activity",
+    "editButton": "Edit activity",
+    "notFound": "Activity not found.",
+    "description": "Description",
+    "photoGallery": "Photo gallery",
+    "photoGalleryIntro": "{count} photo(s) linked to this activity.",
+    "noPhotos": "No photos for this activity.",
+    "descriptionAssets": "Attachments",
+    "descriptionAssetsIntro": "{count} attachment(s) linked to the description.",
+    "schedulesIntro": "{count} scheduled slot(s).",
+    "tabsAria": "Activity sections",
     "tabs": {
       "activity": "Activity",
       "schedules": "Slotx"

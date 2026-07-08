@@ -3,7 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import type { Activity } from '@africatourismgate/types';
-import { Skeleton, Tabs, TabsContent, TabsList, TabsTrigger } from '@africatourismgate/ui';
+import { Button, DataTableBadge, Skeleton, Tabs, TabsContent, TabsList, TabsTrigger } from '@africatourismgate/ui';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
@@ -11,6 +11,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { AdminPageBackLink } from '../admin-page-back-link';
 import { getApiClient } from '../../lib/auth/api';
+import { formatMoney } from '../../lib/format-money';
 import { ActivityForm } from './activity-form';
 import { ActivityImagesSection } from './activity-images-section';
 import { ActivityDescriptionAssetsSection } from './activity-description-assets-section';
@@ -124,12 +125,22 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
     <div className="space-y-6">
       <AdminPageBackLink href="/produits/activites" label={tDetail('backLink')} />
 
-      <div className="space-y-2">
-        <h2 className="text-lg font-semibold text-atg-fg">{activity.title}</h2>
-        <ActivityMetaBadges
-          durationMinutes={activity.durationMinutes}
-          difficultyLevel={activity.difficultyLevel}
-        />
+      <div className="flex flex-col gap-4 rounded-xl border border-atg-border bg-atg-elevated p-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="space-y-2">
+          <h2 className="text-lg font-semibold text-atg-fg">{activity.title}</h2>
+          <div className="flex flex-wrap items-center gap-2">
+            <DataTableBadge variant="muted">
+              {formatMoney(activity.priceCents, activity.currency)}
+            </DataTableBadge>
+            <ActivityMetaBadges
+              durationMinutes={activity.durationMinutes}
+              difficultyLevel={activity.difficultyLevel}
+            />
+          </div>
+        </div>
+        <Button href={`/produits/activites/${activityId}/voir`} variant="outline">
+          {tDetail('viewButton')}
+        </Button>
       </div>
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4">

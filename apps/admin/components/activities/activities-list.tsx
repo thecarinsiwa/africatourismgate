@@ -168,6 +168,10 @@ export function ActivitiesList() {
           const activity = row.original;
           return (
             <DataTableActions>
+              <DataTableActionButton
+                action="view"
+                href={`/produits/activites/${activity.id}/voir`}
+              />
               <DataTableActionButton action="edit" href={`/produits/activites/${activity.id}`} />
               <DataTableActionButton
                 action="delete"

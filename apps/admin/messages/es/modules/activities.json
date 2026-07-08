@@ -56,9 +56,20 @@
     }
   },
   "detail": {
-    "title": "Modifier l'activité",
-    "backLink": "Volver aux activités",
-    "tabsAria": "Sections de l'activité",
+    "title": "Editar actividad",
+    "viewTitle": "Ver actividad",
+    "backLink": "Volver a actividades",
+    "viewButton": "Ver actividad",
+    "editButton": "Editar actividad",
+    "notFound": "Actividad no encontrada.",
+    "description": "Descripción",
+    "photoGallery": "Galería de fotos",
+    "photoGalleryIntro": "{count} foto(s) vinculada(s) a la actividad.",
+    "noPhotos": "Ninguna foto para esta actividad.",
+    "descriptionAssets": "Adjuntos",
+    "descriptionAssetsIntro": "{count} adjunto(s) vinculado(s) a la descripción.",
+    "schedulesIntro": "{count} franja(s) programada(s).",
+    "tabsAria": "Secciones de la actividad",
     "tabs": {
       "activity": "Actividad",
       "schedules": "Franjax"

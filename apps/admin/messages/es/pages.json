@@ -110,7 +110,10 @@
         "description": "Operadores vinculados a destinos."
       },
       "id": {
-        "metaTitle": "Editar actividad"
+        "metaTitle": "Editar actividad",
+        "voir": {
+          "metaTitle": "Ver actividad"
+        }
       }
     },
     "destinations": {

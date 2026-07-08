@@ -1,13 +1,14 @@
 'use client';
 
 import { ActivityForm } from '../activities/activity-form';
-import { AdminListPageHeader } from './admin-list-page-header';
+import { AdminIntroPage } from './admin-intro-page';
 
 export function NouvelleActivitePageContent() {
   return (
-    <div>
-      <AdminListPageHeader routePath="produits/activites/nouveau" titleKey="metaTitle" />
-      <ActivityForm mode="create" />
-    </div>
+    <AdminIntroPage routePath="produits/activites/nouveau">
+      <div className="rounded-xl border border-atg-border bg-atg-elevated/60 p-4 sm:p-6">
+        <ActivityForm mode="create" />
+      </div>
+    </AdminIntroPage>
   );
 }

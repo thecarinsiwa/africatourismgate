@@ -110,7 +110,10 @@
         "description": "Operators linked to destinations."
       },
       "id": {
-        "metaTitle": "Edit activity"
+        "metaTitle": "Edit activity",
+        "voir": {
+          "metaTitle": "View activity"
+        }
       }
     },
     "destinations": {

@@ -57,7 +57,18 @@
   },
   "detail": {
     "title": "Modifier l'activité",
+    "viewTitle": "Voir l'activité",
     "backLink": "Retour aux activités",
+    "viewButton": "Voir l'activité",
+    "editButton": "Modifier l'activité",
+    "notFound": "Activité introuvable.",
+    "description": "Description",
+    "photoGallery": "Galerie photos",
+    "photoGalleryIntro": "{count} photo(s) associée(s) à l'activité.",
+    "noPhotos": "Aucune photo pour cette activité.",
+    "descriptionAssets": "Pièces jointes",
+    "descriptionAssetsIntro": "{count} pièce(s) jointe(s) liée(s) à la description.",
+    "schedulesIntro": "{count} créneau(x) programmé(s).",
     "tabsAria": "Sections de l'activité",
     "tabs": {
       "activity": "Activité",
