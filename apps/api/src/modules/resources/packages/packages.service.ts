@@ -79,6 +79,12 @@ export class PackagesService extends CrudService<Packages> {
 
     if (dto.name !== undefined) payload.name = dto.name;
     if (dto.description !== undefined) payload.description = dto.description;
+
+    if (dto.coverImageUrl !== undefined) {
+      const trimmed = dto.coverImageUrl?.trim();
+      payload.coverImageUrl = trimmed ? trimmed : null;
+    }
+
     if (dto.durationDays !== undefined) payload.durationDays = dto.durationDays;
 
     if (dto.active !== undefined) {
@@ -109,7 +115,9 @@ export class PackagesService extends CrudService<Packages> {
     await qb.execute();
   }
 
-  override async findAll(query: PackagesListQueryDto): Promise<PaginatedResult<Packages>> {
+  override async findAll(
+    query: PackagesListQueryDto,
+  ): Promise<PaginatedResult<Packages & { imageUrl: string | null }>> {
     const page = query.page ?? 1;
     const limit = query.limit ?? 20;
 
@@ -131,9 +139,15 @@ export class PackagesService extends CrudService<Packages> {
       .take(limit);
 
     const [data, total] = await qb.getManyAndCount();
+    const imageUrlByPackageId = await this.findPrimaryImageUrlsByPackageIds(
+      data.map((pkg) => pkg.id),
+    );
 
     return {
-      data,
+      data: data.map((pkg) => ({
+        ...pkg,
+        imageUrl: imageUrlByPackageId.get(pkg.id) ?? null,
+      })),
       meta: {
         total,
         page,
@@ -172,11 +186,29 @@ export class PackagesService extends CrudService<Packages> {
       return new Map();
     }
 
-    const rows = await this.packageImagesRepository.find({
-      where: { packageId: In(packageIds) },
-      order: { sortOrder: 'ASC' },
+    const packages = await this.packagesRepository.find({
+      where: { id: In(packageIds) },
     });
     const imageUrlByPackageId = new Map<string, string>();
+    const fallbackPackageIds: string[] = [];
+
+    for (const pkg of packages) {
+      const cover = pkg.coverImageUrl?.trim();
+      if (cover) {
+        imageUrlByPackageId.set(pkg.id, cover);
+      } else {
+        fallbackPackageIds.push(pkg.id);
+      }
+    }
+
+    if (!fallbackPackageIds.length) {
+      return imageUrlByPackageId;
+    }
+
+    const rows = await this.packageImagesRepository.find({
+      where: { packageId: In(fallbackPackageIds) },
+      order: { sortOrder: 'ASC' },
+    });
     for (const row of rows) {
       if (!row.deletedAt && !imageUrlByPackageId.has(row.packageId)) {
         imageUrlByPackageId.set(row.packageId, row.url);

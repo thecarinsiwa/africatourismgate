@@ -36,6 +36,6 @@ export class PublicPackageListItemDto {
   @ApiProperty({ type: PublicPackagePricingDto })
   pricing!: PublicPackagePricingDto;
 
-  @ApiPropertyOptional({ nullable: true, description: 'First package photo URL' })
+  @ApiPropertyOptional({ nullable: true, description: 'Cover image URL or first gallery photo' })
   imageUrl!: string | null;
 }

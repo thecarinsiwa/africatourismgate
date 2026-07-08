@@ -6,9 +6,11 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  IsUrl,
   Max,
   MaxLength,
   Min,
+  ValidateIf,
 } from 'class-validator';
 
 export class CreatePackageDto {
@@ -23,6 +25,19 @@ export class CreatePackageDto {
   @IsString()
   @MaxLength(5000)
   description?: string;
+
+  @ApiPropertyOptional({
+    description: 'Cover image URL shown in package listings (admin and public site).',
+  })
+  @IsOptional()
+  @ValidateIf((_, value) => value != null && value !== '')
+  @IsString()
+  @MaxLength(512)
+  @IsUrl(
+    { require_tld: false, protocols: ['http', 'https'] },
+    { message: "L'URL de l'image de couverture doit être valide." },
+  )
+  coverImageUrl?: string | null;
 
   @ApiProperty({ example: 10, default: 0 })
   @Type(() => Number)

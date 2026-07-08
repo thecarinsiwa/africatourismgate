@@ -11,6 +11,9 @@ export class Packages extends BaseAuditEntity {
   @Column({ type: 'text', name: 'description', nullable: true })
   description!: string | null;
 
+  @Column({ type: 'varchar', name: 'cover_image_url', length: 512, nullable: true })
+  coverImageUrl!: string | null;
+
   @Column({ type: 'decimal', name: 'discount_percent', precision: 5, scale: 2 })
   discountPercent!: string;
 

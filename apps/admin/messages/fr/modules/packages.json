@@ -6,6 +6,7 @@
     "deleteConfirm": "Supprimer le forfait « {name} » ?"
   },
   "columns": {
+    "cover": "Couverture",
     "package": "Forfait",
     "discount": "Remise",
     "total": "Total",
@@ -77,7 +78,7 @@
       "hints": {
         "informations": "Renseignez les informations de base du forfait: nom, description, remise et durée.",
         "prestations": "Ajoutez les produits inclus (hébergement, vol, activité, véhicule ou croisière).",
-        "medias": "Gérez la galerie photo et les pièces jointes (images, PDF, documents Word).",
+        "medias": "Définissez la photo de couverture, la galerie photo et les pièces jointes (images, PDF, documents Word).",
         "publication": "Définissez le statut actif et la mise en avant sur la page d'accueil."
       },
       "lockedHint": {
@@ -85,6 +86,20 @@
         "medias": "Ajoutez au moins un média ou une pièce jointe pour déverrouiller Publication."
       }
     }
+  },
+  "coverImage": {
+    "title": "Photo de couverture",
+    "hint": "Cette image s'affiche dans les listes de forfaits côté admin et sur le site public.",
+    "previewAlt": "Aperçu de la couverture",
+    "empty": "Aucune photo de couverture définie.",
+    "upload": "Téléverser une image",
+    "remove": "Retirer la couverture",
+    "saveUrl": "Enregistrer l'URL",
+    "saving": "Enregistrement…",
+    "pickFromGallery": "Choisir depuis la galerie",
+    "galleryThumbAlt": "Photo de la galerie",
+    "current": "Actuelle",
+    "noGalleryImages": "Ajoutez des photos à la galerie pour pouvoir en choisir une comme couverture."
   },
   "sections": {
     "items": {

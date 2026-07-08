@@ -13,9 +13,11 @@ import {
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { Package, PackageDetail } from '@africatourismgate/types';
+import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import { resolveMediaUrl } from '../../lib/resolve-media-url';
 import { usePackageStatusLabels } from '../../lib/i18n/use-module-labels';
 
 const PAGE_SIZE = 20;
@@ -25,7 +27,11 @@ function formatMoney(cents: number, currency: string): string {
   return `${(cents / 100).toFixed(2)} ${currency}`;
 }
 
-type PackageRow = Package & { totalCents?: number; currency?: string };
+type PackageRow = Package & {
+  totalCents?: number;
+  currency?: string;
+  imageUrl?: string | null;
+};
 
 export function PackagesList() {
   const { packages: getPackagesErrorMessage } = useAdminErrorMessages();
@@ -111,6 +117,29 @@ export function PackagesList() {
 
   const columns = useMemo<ColumnDef<PackageRow, unknown>[]>(
     () => [
+      {
+        id: 'cover',
+        header: tColumns('cover'),
+        meta: { align: 'center' },
+        cell: ({ row }) => {
+          const imageUrl = row.original.imageUrl ?? row.original.coverImageUrl;
+          if (!imageUrl?.trim()) {
+            return <span className="text-sm text-atg-muted">{tEmpty('dash')}</span>;
+          }
+          return (
+            <div className="relative mx-auto h-12 w-16 overflow-hidden rounded-md border border-atg-border">
+              <Image
+                src={resolveMediaUrl(imageUrl.trim())}
+                alt=""
+                fill
+                unoptimized
+                className="object-cover"
+                sizes="64px"
+              />
+            </div>
+          );
+        },
+      },
       {
         accessorKey: 'name',
         header: tColumns('package'),

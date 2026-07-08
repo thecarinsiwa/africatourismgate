@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import { PackageCoverImageSection } from './package-cover-image-section';
 import { PackageDescriptionAssetsSection } from './package-description-assets-section';
 import { PackageForm } from './package-form';
 import { PackageImagesSection } from './package-images-section';
@@ -32,6 +33,7 @@ export function PackageEditorTabs({ packageId, pkg, onPackageUpdated }: PackageE
   const searchParams = useSearchParams();
   const [counts, setCounts] = useState({ items: 0, images: 0, assets: 0 });
   const [countsReady, setCountsReady] = useState(false);
+  const [galleryRefreshKey, setGalleryRefreshKey] = useState(0);
 
   const tabParam = searchParams.get('tab');
   const requestedTab: TabValue = isTabValue(tabParam) ? tabParam : 'informations';
@@ -125,6 +127,7 @@ export function PackageEditorTabs({ packageId, pkg, onPackageUpdated }: PackageE
   }, [countsReady, isStepEnabled, pathname, requestedTab, router, searchParams]);
   const handleSectionChanged = useCallback(() => {
     void loadCompletion();
+    setGalleryRefreshKey((value) => value + 1);
   }, [loadCompletion]);
 
   return (
@@ -220,6 +223,12 @@ export function PackageEditorTabs({ packageId, pkg, onPackageUpdated }: PackageE
         className="rounded-xl border border-atg-border bg-atg-elevated/60 p-4 sm:p-6"
       >
         <div className="space-y-6">
+          <PackageCoverImageSection
+            packageId={packageId}
+            coverImageUrl={pkg.coverImageUrl ?? null}
+            onSaved={onPackageUpdated}
+            refreshKey={galleryRefreshKey}
+          />
           <PackageImagesSection
             packageId={packageId}
             embedded

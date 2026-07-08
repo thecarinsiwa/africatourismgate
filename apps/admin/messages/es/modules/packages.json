@@ -6,6 +6,7 @@
     "deleteConfirm": "Supprimer le forfait « {name} » ?"
   },
   "columns": {
+    "cover": "Portada",
     "package": "Paquete",
     "discount": "Descuento",
     "total": "Total",
@@ -77,7 +78,7 @@
       "hints": {
         "informations": "Complete la base del paquete: nombre, descripción, descuento y duración.",
         "prestations": "Añada los productos incluidos (alojamiento, vuelo, actividad, vehículo o crucero).",
-        "medias": "Gestione la galería de fotos y los adjuntos de descripción (imágenes, PDF y Word).",
+        "medias": "Defina la foto de portada, la galería de fotos y los adjuntos de descripción (imágenes, PDF y Word).",
         "publication": "Defina el estado activo y la visibilidad destacada en la página principal."
       },
       "lockedHint": {
@@ -85,6 +86,20 @@
         "medias": "Añada al menos un medio o adjunto para desbloquear Publicación."
       }
     }
+  },
+  "coverImage": {
+    "title": "Foto de portada",
+    "hint": "Esta imagen se muestra en las listas de paquetes en el admin y en el sitio público.",
+    "previewAlt": "Vista previa de la portada",
+    "empty": "Ninguna foto de portada definida.",
+    "upload": "Subir imagen",
+    "remove": "Quitar portada",
+    "saveUrl": "Guardar URL",
+    "saving": "Guardando…",
+    "pickFromGallery": "Elegir de la galería",
+    "galleryThumbAlt": "Foto de la galería",
+    "current": "Actual",
+    "noGalleryImages": "Añada fotos a la galería para elegir una como portada."
   },
   "sections": {
     "items": {
