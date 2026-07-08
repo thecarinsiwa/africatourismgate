@@ -109,6 +109,18 @@ export type RichTextUploadedAsset = {
 type ImageSize = 'sm' | 'md' | 'lg' | 'full';
 type ImageAlign = 'left' | 'center' | 'right';
 type ImageModalPosition = { top: number; left: number } | null;
+const StyledImage = Image.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      style: {
+        default: null,
+        parseHTML: (element) => element.getAttribute('style'),
+        renderHTML: (attributes) => (attributes.style ? { style: attributes.style } : {}),
+      },
+    };
+  },
+});
 
 type ToolbarButtonProps = {
   label: string;
@@ -228,7 +240,7 @@ export function RichTextEditor({
   const editor = useEditor({
     extensions: [
       StarterKit,
-      Image.configure({
+      StyledImage.configure({
         allowBase64: false,
         HTMLAttributes: {
           style: buildImageStyle('md', 'center'),
