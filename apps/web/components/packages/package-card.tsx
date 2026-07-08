@@ -20,12 +20,17 @@ type PackageCardProps = {
   searchParams?: PackagesSearchParams;
 };
 
+function stripHtml(html: string): string {
+  return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
 export function PackageCard({ pkg, t, searchParams = {} }: PackageCardProps) {
   const ctaLabel = useBookingCtaLabel('package');
   const detailHref = buildPackageDetailHref(pkg.id, searchParams);
   const reserveHref = buildPackageDetailHref(pkg.id, searchParams, '#configure');
   const itemsLabel = t.itemsIncluded.replace('{n}', String(pkg.itemCount));
   const showSavings = hasPackageDiscount(pkg.pricing);
+  const descriptionPreview = pkg.description ? stripHtml(pkg.description) : '';
 
   const imageOverlay = (
     <div className="absolute inset-0 flex flex-col justify-center px-6 py-8 text-white">
@@ -33,8 +38,8 @@ export function PackageCard({ pkg, t, searchParams = {} }: PackageCardProps) {
         {t.cardBadge}
       </span>
       <p className="mt-3 text-xl font-bold leading-tight">{pkg.name}</p>
-      {pkg.description ? (
-        <p className="mt-2 line-clamp-3 text-sm text-white/80">{pkg.description}</p>
+      {descriptionPreview ? (
+        <p className="mt-2 line-clamp-3 text-sm text-white/80">{descriptionPreview}</p>
       ) : null}
     </div>
   );
@@ -60,8 +65,8 @@ export function PackageCard({ pkg, t, searchParams = {} }: PackageCardProps) {
               {t.cardBadge}
             </span>
             <p className="mt-3 text-xl font-bold leading-tight">{pkg.name}</p>
-            {pkg.description ? (
-              <p className="mt-2 line-clamp-3 text-sm text-white/80">{pkg.description}</p>
+            {descriptionPreview ? (
+              <p className="mt-2 line-clamp-3 text-sm text-white/80">{descriptionPreview}</p>
             ) : null}
           </div>
         )
