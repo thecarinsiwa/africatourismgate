@@ -480,10 +480,6 @@ export type Translations = {
     sortRecommended: string;
     sortPriceLow: string;
     sortPriceHigh: string;
-    displayModeLabel: string;
-    displayModeCards: string;
-    displayModeList: string;
-    displayModeCompact: string;
     loading: string;
     loadError: string;
     retry: string;
@@ -716,6 +712,10 @@ export type Translations = {
     sortRecommended: string;
     sortPriceLow: string;
     sortPriceHigh: string;
+    displayModeLabel: string;
+    displayModeCards: string;
+    displayModeList: string;
+    displayModeCompact: string;
     loading: string;
     loadingDetail: string;
     loadError: string;
