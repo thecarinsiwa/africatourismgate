@@ -15,6 +15,12 @@ function stripHtml(html: string): string {
   return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
+function toWordsPreview(text: string, minWords = 20): string {
+  const words = text.split(/\s+/).filter(Boolean);
+  if (words.length <= minWords) return text;
+  return `${words.slice(0, minWords).join(' ')}…`;
+}
+
 export function ParallaxPromo() {
   const t = useTranslations();
   const { ref, isVisible } = useScrollAnimation(0.15);
@@ -32,7 +38,7 @@ export function ParallaxPromo() {
 
   const title = featured?.name ?? t.promo.title;
   const description = featured?.description
-    ? stripHtml(featured.description)
+    ? toWordsPreview(stripHtml(featured.description), 20)
     : t.promo.description;
   const price = featured
     ? formatPackagePrice(featured.pricing.totalCents, featured.pricing.currency)
@@ -41,7 +47,7 @@ export function ParallaxPromo() {
   const backgroundImage = featured?.imageUrl ?? FALLBACK_IMAGE;
 
   return (
-    <section ref={ref} className="relative overflow-hidden py-20 sm:py-28">
+    <section ref={ref} className="relative min-h-[440px] overflow-hidden py-20 sm:py-28">
       <div
         className="absolute inset-0 parallax-bg"
         style={{ backgroundImage: `url("${backgroundImage}")` }}

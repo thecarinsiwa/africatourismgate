@@ -120,12 +120,6 @@
   background-repeat: no-repeat;
   background-size: cover;
 }
-@media (max-width: 767.98px) {
-  /* Disable parallax on mobile for performance */
-  .parallax-bg {
-    background-attachment: scroll;
-  }
-}
 
 /* ── Progress bars (Happy Customers) ──────────────────── */
 @keyframes progress-fill {
