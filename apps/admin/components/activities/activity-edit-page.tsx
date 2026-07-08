@@ -37,6 +37,15 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
   const searchParams = useSearchParams();
   const tabParam = searchParams.get('tab');
   const activeTab: TabValue = isTabValue(tabParam) ? tabParam : 'activite';
+  const stepItems: Array<{ value: TabValue; label: string }> = [
+    { value: 'activite', label: tDetail('tabs.activity') },
+    { value: 'creneaux', label: tDetail('tabs.schedules') },
+  ];
+  const activeStepIndex = Math.max(
+    0,
+    stepItems.findIndex((step) => step.value === activeTab),
+  );
+  const progressPercent = Math.round(((activeStepIndex + 1) / stepItems.length) * 100);
 
   const [state, setState] = useState<
     | { status: 'loading' }
@@ -123,24 +132,84 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
         />
       </div>
 
-      <Tabs value={activeTab} onValueChange={handleTabChange}>
-        <TabsList aria-label={tDetail('tabsAria')}>
-          <TabsTrigger value="activite">{tDetail('tabs.activity')}</TabsTrigger>
-          <TabsTrigger value="creneaux">{tDetail('tabs.schedules')}</TabsTrigger>
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4">
+        <div className="rounded-xl border border-atg-border bg-atg-elevated p-4">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <p className="text-sm font-semibold text-atg-fg">{tDetail('tabsAria')}</p>
+            <p className="text-xs font-medium text-atg-muted">
+              {activeStepIndex + 1}/{stepItems.length} · {progressPercent}%
+            </p>
+          </div>
+          <div className="h-2 w-full overflow-hidden rounded-full bg-atg-border/70">
+            <div
+              className="h-full rounded-full bg-primary transition-all duration-300"
+              style={{ width: `${progressPercent}%` }}
+              aria-hidden
+            />
+          </div>
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            {stepItems.map((step, index) => {
+              const isActive = step.value === activeTab;
+              const isDone = index < activeStepIndex;
+              return (
+                <button
+                  key={step.value}
+                  type="button"
+                  onClick={() => handleTabChange(step.value)}
+                  className={`flex items-center gap-2 rounded-lg border px-2.5 py-2 text-left text-xs transition ${
+                    isActive
+                      ? 'border-primary bg-primary/10 text-primary'
+                      : isDone
+                        ? 'border-emerald-500/40 bg-emerald-500/5 text-emerald-700 dark:text-emerald-300'
+                        : 'border-atg-border text-atg-muted hover:border-primary/40 hover:text-atg-fg'
+                  }`}
+                >
+                  <span
+                    className={`inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold ${
+                      isActive ? 'bg-primary/20' : isDone ? 'bg-emerald-500/20' : 'bg-atg-surface/70'
+                    }`}
+                  >
+                    {index + 1}
+                  </span>
+                  <span className="truncate">{step.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <TabsList
+          aria-label={tDetail('tabsAria')}
+          className="rounded-xl border border-atg-border bg-atg-elevated px-1.5 py-1"
+        >
+          <TabsTrigger value="activite" className="rounded-lg">
+            {tDetail('tabs.activity')}
+          </TabsTrigger>
+          <TabsTrigger value="creneaux" className="rounded-lg">
+            {tDetail('tabs.schedules')}
+          </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="activite">
-          <ActivityForm
-            mode="edit"
-            activityId={activityId}
-            initialActivity={activity}
-            onUpdated={(updated) => setState({ status: 'ready', activity: updated })}
-          />
-          <ActivityImagesSection activityId={activityId} embedded />
-          <ActivityDescriptionAssetsSection activityId={activityId} />
+        <TabsContent
+          value="activite"
+          className="rounded-xl border border-atg-border bg-atg-elevated/60 p-4 sm:p-6"
+        >
+          <div className="space-y-6">
+            <ActivityForm
+              mode="edit"
+              activityId={activityId}
+              initialActivity={activity}
+              onUpdated={(updated) => setState({ status: 'ready', activity: updated })}
+            />
+            <ActivityImagesSection activityId={activityId} embedded />
+            <ActivityDescriptionAssetsSection activityId={activityId} />
+          </div>
         </TabsContent>
 
-        <TabsContent value="creneaux">
+        <TabsContent
+          value="creneaux"
+          className="rounded-xl border border-atg-border bg-atg-elevated/60 p-4 sm:p-6"
+        >
           <ActivitySchedulesSection activityId={activityId} embedded />
         </TabsContent>
       </Tabs>
