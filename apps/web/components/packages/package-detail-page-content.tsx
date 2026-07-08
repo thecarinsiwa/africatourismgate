@@ -246,7 +246,7 @@ export function PackageDetailPageContent({
         )}
 
         {detail && !loading && !notFound && (
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(280px,320px)]">
             <div className="space-y-6">
               {detail.images && detail.images.length > 0 ? (
                 <ProductGallery
@@ -267,7 +267,7 @@ export function PackageDetailPageContent({
                 <p className="text-xs font-semibold uppercase tracking-wide text-primary">
                   {p.cardBadge}
                 </p>
-                <h1 className="mt-2 text-3xl font-bold text-atg-fg">
+                <h1 className="mt-2 break-words text-3xl font-bold text-atg-fg">
                   {detail.package.name}
                 </h1>
                 {detail.package.description ? (

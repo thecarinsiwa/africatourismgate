@@ -79,15 +79,15 @@ export function PackageItemsSection({
             return (
               <li
                 key={item.id}
-                className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-atg-border px-4 py-3 dark:border-atg-border"
+                className="flex flex-col gap-3 rounded-xl border border-atg-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between dark:border-atg-border"
               >
-                <div>
+                <div className="min-w-0">
                   <p className="text-xs font-semibold uppercase tracking-wide text-primary">
                     {typeLabel}
                   </p>
-                  <p className="font-medium text-atg-fg">{item.label}</p>
+                  <p className="break-words font-medium text-atg-fg">{item.label}</p>
                 </div>
-                <div className="flex flex-wrap items-center gap-3">
+                <div className="flex w-full flex-wrap items-center gap-3 sm:w-auto sm:justify-end">
                   <p className="text-sm font-semibold text-atg-fg/90">
                     {formatPackagePrice(item.unitPriceCents, item.currency)}
                   </p>
