@@ -18,6 +18,7 @@
     "title": "Title",
     "difficulty": "Difficulty",
     "priceCents": "Price (cents)",
+    "descriptionPlaceholder": "Describe the activity, itinerary, conditions…",
     "validation": {
       "providerRequired": "Provider is required.",
       "titleRequired": "Title is required.",

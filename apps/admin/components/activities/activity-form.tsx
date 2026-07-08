@@ -12,7 +12,10 @@ import type {
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useId, useState } from 'react';
-import { getApiClient } from '../../lib/auth/api';
+import { RichTextEditor, type RichTextUploadedAsset } from '../rich-text-editor';
+import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
+import { isRichTextEmpty } from '../../lib/rich-text';
+import { getSession } from '../../lib/auth/session';
 import { useActivityDifficultyOptions } from '../../lib/i18n/use-module-labels';
 
 export type ActivityFormValues = {
@@ -64,7 +67,9 @@ function toPayload(values: ActivityFormValues): CreateActivityRequest {
     title: values.title.trim(),
     priceCents: Number(values.priceCents),
     currency: values.currency.trim().toUpperCase(),
-    ...(values.description.trim() ? { description: values.description.trim() } : {}),
+    ...(values.description.trim() && !isRichTextEmpty(values.description)
+      ? { description: values.description.trim() }
+      : {}),
     ...(duration !== undefined && Number.isFinite(duration) ? { durationMinutes: duration } : {}),
     difficultyLevel,
   };
@@ -104,6 +109,41 @@ export function ActivityForm({ mode, activityId, initialActivity, onUpdated }: A
       .then((r) => setProviders(r.data))
       .catch(() => setProviders([]));
   }, []);
+
+  const handleUploadDescriptionAsset = useCallback(
+    async (file: File): Promise<RichTextUploadedAsset> => {
+      const session = getSession();
+      if (!session?.accessToken) {
+        throw new Error('Session expirée');
+      }
+      const body = new FormData();
+      body.append('file', file);
+      const uploadPath = activityId
+        ? `/activities/${activityId}/upload-description-asset`
+        : '/activities/upload-description-asset';
+      const response = await fetch(`${resolveApiBaseUrl()}${uploadPath}`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${session.accessToken}` },
+        body,
+      });
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+      const payload = (await response.json()) as {
+        url?: string;
+        assetType?: 'image' | 'pdf' | 'word';
+      };
+      if (!payload.url || !payload.assetType) {
+        throw new Error('Invalid upload response');
+      }
+      return {
+        url: payload.url,
+        assetType: payload.assetType,
+        name: file.name,
+      };
+    },
+    [activityId],
+  );
 
   const updateField = useCallback(
     <K extends keyof ActivityFormValues>(key: K, value: ActivityFormValues[K]) => {
@@ -190,27 +230,16 @@ export function ActivityForm({ mode, activityId, initialActivity, onUpdated }: A
         onChange={(e) => updateField('title', e.target.value)}
         error={fieldErrors.title}
       />
-      <div>
-        <label className="mb-2 block text-sm font-medium text-atg-fg">
-          {tCommonForm('description')}
-        </label>
-        <textarea
-          value={values.description}
-          onChange={(e) => updateField('description', e.target.value)}
-          rows={4}
-          maxLength={DESCRIPTION_MAX_LENGTH}
-          className={selectClass}
-        />
-        <p className="mt-1 text-xs text-atg-muted">
-          {tValidation('descriptionCounter', {
-            current: values.description.length,
-            max: DESCRIPTION_MAX_LENGTH,
-          })}
-        </p>
-        {fieldErrors.description ? (
-          <p className="mt-1 text-sm text-red-600">{fieldErrors.description}</p>
-        ) : null}
-      </div>
+      <RichTextEditor
+        label={tCommonForm('description')}
+        value={values.description}
+        onChange={(html) => updateField('description', html)}
+        placeholder={tForm('descriptionPlaceholder')}
+        onUploadAsset={handleUploadDescriptionAsset}
+      />
+      {fieldErrors.description ? (
+        <p className="mt-1 text-sm text-red-600">{fieldErrors.description}</p>
+      ) : null}
       <Input
         label={tCommonForm('durationMinutesOptional')}
         type="number"

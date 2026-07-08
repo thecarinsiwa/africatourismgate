@@ -18,6 +18,7 @@
     "title": "Título",
     "difficulty": "Dificultad",
     "priceCents": "Precio (centavos)",
+    "descriptionPlaceholder": "Describa la actividad, el programa, las condiciones…",
     "validation": {
       "providerRequired": "El proveedor es obligatorio.",
       "titleRequired": "El título es obligatorio.",
