@@ -48,10 +48,12 @@ const emptyForm: FormValues = {
 
 type PackageDescriptionAssetsSectionProps = {
   packageId?: string;
+  onChanged?: () => void;
 };
 
 export function PackageDescriptionAssetsSection({
   packageId,
+  onChanged,
 }: PackageDescriptionAssetsSectionProps) {
   const { packages: getPackagesErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.packages.form.attachments');
@@ -81,10 +83,11 @@ export function PackageDescriptionAssetsSection({
         limit: 200,
       });
       setState({ status: 'ready', assets: result.data });
+      onChanged?.();
     } catch (error) {
       setState({ status: 'error', message: getPackagesErrorMessage(error) });
     }
-  }, [packageId, getPackagesErrorMessage]);
+  }, [packageId, getPackagesErrorMessage, onChanged]);
 
   useEffect(() => {
     if (!packageId) return;

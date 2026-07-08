@@ -4,7 +4,8 @@ import type { Package } from '@africatourismgate/types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@africatourismgate/ui';
 import { useTranslations } from 'next-intl';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { getApiClient } from '../../lib/auth/api';
 import { PackageDescriptionAssetsSection } from './package-description-assets-section';
 import { PackageForm } from './package-form';
 import { PackageImagesSection } from './package-images-section';
@@ -29,9 +30,34 @@ export function PackageEditorTabs({ packageId, pkg, onPackageUpdated }: PackageE
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [counts, setCounts] = useState({ items: 0, images: 0, assets: 0 });
+  const [countsReady, setCountsReady] = useState(false);
 
   const tabParam = searchParams.get('tab');
-  const activeTab: TabValue = isTabValue(tabParam) ? tabParam : 'informations';
+  const requestedTab: TabValue = isTabValue(tabParam) ? tabParam : 'informations';
+  const informationComplete = useMemo(() => {
+    const discount = Number(pkg.discountPercent);
+    return (
+      pkg.name.trim().length > 0 &&
+      Number.isFinite(discount) &&
+      discount >= 0 &&
+      discount <= 100 &&
+      pkg.durationDays >= 1 &&
+      pkg.durationDays <= 365
+    );
+  }, [pkg.discountPercent, pkg.durationDays, pkg.name]);
+  const prestationsComplete = counts.items > 0;
+  const mediasComplete = counts.images + counts.assets > 0;
+  const isStepEnabled = useCallback(
+    (tab: TabValue) => {
+      if (tab === 'informations') return true;
+      if (tab === 'prestations') return informationComplete;
+      if (tab === 'medias') return informationComplete && prestationsComplete;
+      return informationComplete && prestationsComplete && mediasComplete;
+    },
+    [informationComplete, prestationsComplete, mediasComplete],
+  );
+  const activeTab: TabValue = isStepEnabled(requestedTab) ? requestedTab : 'informations';
   const stepItems: Array<{ value: TabValue; label: string }> = [
     { value: 'informations', label: t('informations') },
     { value: 'prestations', label: t('prestations') },
@@ -54,6 +80,7 @@ export function PackageEditorTabs({ packageId, pkg, onPackageUpdated }: PackageE
 
   const handleTabChange = useCallback(
     (tab: string) => {
+      if (!isTabValue(tab) || !isStepEnabled(tab)) return;
       const params = new URLSearchParams(searchParams.toString());
       if (tab === 'informations') {
         params.delete('tab');
@@ -63,8 +90,39 @@ export function PackageEditorTabs({ packageId, pkg, onPackageUpdated }: PackageE
       const qs = params.toString();
       router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
     },
-    [pathname, router, searchParams],
+    [isStepEnabled, pathname, router, searchParams],
   );
+
+  const loadCompletion = useCallback(async () => {
+    setCountsReady(false);
+    try {
+      const client = getApiClient();
+      const [itemsResult, imagesResult, assetsResult] = await Promise.all([
+        client.listPackageItems({ packageId, page: 1, limit: 200 }),
+        client.listPackageImages({ packageId, page: 1, limit: 200 }),
+        client.listPackageDescriptionAssets({ packageId, page: 1, limit: 200 }),
+      ]);
+      setCounts({
+        items: itemsResult.data.length,
+        images: imagesResult.data.length,
+        assets: assetsResult.data.length,
+      });
+    } finally {
+      setCountsReady(true);
+    }
+  }, [packageId]);
+
+  useEffect(() => {
+    void loadCompletion();
+  }, [loadCompletion]);
+
+  useEffect(() => {
+    if (!countsReady || isStepEnabled(requestedTab)) return;
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('tab');
+    const qs = params.toString();
+    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+  }, [countsReady, isStepEnabled, pathname, requestedTab, router, searchParams]);
 
   return (
     <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4">
@@ -86,18 +144,20 @@ export function PackageEditorTabs({ packageId, pkg, onPackageUpdated }: PackageE
           {stepItems.map((step, index) => {
             const isActive = step.value === activeTab;
             const isDone = index < activeStepIndex;
+            const isEnabled = isStepEnabled(step.value);
             return (
               <button
                 key={step.value}
                 type="button"
                 onClick={() => handleTabChange(step.value)}
+                disabled={!isEnabled}
                 className={`flex items-center gap-2 rounded-lg border px-2.5 py-2 text-left text-xs transition ${
                   isActive
                     ? 'border-primary bg-primary/10 text-primary'
                     : isDone
                       ? 'border-emerald-500/40 bg-emerald-500/5 text-emerald-700 dark:text-emerald-300'
                       : 'border-atg-border text-atg-muted hover:border-primary/40 hover:text-atg-fg'
-                }`}
+                } ${!isEnabled ? 'cursor-not-allowed opacity-45' : ''}`}
               >
                 <span
                   className={`inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold ${
@@ -122,12 +182,21 @@ export function PackageEditorTabs({ packageId, pkg, onPackageUpdated }: PackageE
         className="rounded-xl border border-atg-border bg-atg-elevated px-1.5 py-1"
       >
         {stepItems.map((step) => (
-          <TabsTrigger key={step.value} value={step.value} className="rounded-lg">
+          <TabsTrigger
+            key={step.value}
+            value={step.value}
+            className="rounded-lg"
+            disabled={!isStepEnabled(step.value)}
+          >
             {step.label}
           </TabsTrigger>
         ))}
       </TabsList>
-      <p className="text-sm text-atg-muted">{activeTabHint}</p>
+      <p className="text-sm text-atg-muted">
+        {activeTabHint}
+        {!prestationsComplete ? ` ${t('lockedHint.prestations')}` : ''}
+        {prestationsComplete && !mediasComplete ? ` ${t('lockedHint.medias')}` : ''}
+      </p>
 
       <TabsContent
         value="informations"
@@ -140,7 +209,7 @@ export function PackageEditorTabs({ packageId, pkg, onPackageUpdated }: PackageE
         value="prestations"
         className="rounded-xl border border-atg-border bg-atg-elevated/60 p-4 sm:p-6"
       >
-        <PackageItemsSection packageId={packageId} embedded />
+        <PackageItemsSection packageId={packageId} embedded onChanged={() => void loadCompletion()} />
       </TabsContent>
 
       <TabsContent
@@ -148,8 +217,15 @@ export function PackageEditorTabs({ packageId, pkg, onPackageUpdated }: PackageE
         className="rounded-xl border border-atg-border bg-atg-elevated/60 p-4 sm:p-6"
       >
         <div className="space-y-6">
-          <PackageImagesSection packageId={packageId} embedded />
-          <PackageDescriptionAssetsSection packageId={packageId} />
+          <PackageImagesSection
+            packageId={packageId}
+            embedded
+            onChanged={() => void loadCompletion()}
+          />
+          <PackageDescriptionAssetsSection
+            packageId={packageId}
+            onChanged={() => void loadCompletion()}
+          />
         </div>
       </TabsContent>
 

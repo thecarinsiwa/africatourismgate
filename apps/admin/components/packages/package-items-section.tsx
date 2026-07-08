@@ -31,9 +31,14 @@ type CatalogOption = { id: string; label: string };
 type PackageItemsSectionProps = {
   packageId: string;
   embedded?: boolean;
+  onChanged?: () => void;
 };
 
-export function PackageItemsSection({ packageId, embedded = false }: PackageItemsSectionProps) {
+export function PackageItemsSection({
+  packageId,
+  embedded = false,
+  onChanged,
+}: PackageItemsSectionProps) {
   const { packages: getPackagesErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.packages.sections.items');
   const tCommon = useTranslations('modules.common');
@@ -62,10 +67,11 @@ export function PackageItemsSection({ packageId, embedded = false }: PackageItem
       const data = await getApiClient().getPackage(packageId);
       setDetail(data);
       setState({ status: 'ready' });
+      onChanged?.();
     } catch (error) {
       setState({ status: 'error', message: getPackagesErrorMessage(error) });
     }
-  }, [packageId, getPackagesErrorMessage]);
+  }, [packageId, getPackagesErrorMessage, onChanged]);
 
   useEffect(() => {
     void load();
@@ -169,7 +175,7 @@ export function PackageItemsSection({ packageId, embedded = false }: PackageItem
         setDeletingId(null);
       }
     },
-    [load, t],
+    [getPackagesErrorMessage, load, t],
   );
 
   const columns = useMemo<ColumnDef<PackageItemEnriched, unknown>[]>(

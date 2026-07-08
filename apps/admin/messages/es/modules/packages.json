@@ -79,6 +79,10 @@
         "prestations": "Añada los productos incluidos (alojamiento, vuelo, actividad, vehículo o crucero).",
         "medias": "Gestione la galería de fotos y los adjuntos de descripción (imágenes, PDF y Word).",
         "publication": "Defina el estado activo y la visibilidad destacada en la página principal."
+      },
+      "lockedHint": {
+        "prestations": "Añada al menos una prestación para desbloquear las siguientes etapas.",
+        "medias": "Añada al menos un medio o adjunto para desbloquear Publicación."
       }
     }
   },

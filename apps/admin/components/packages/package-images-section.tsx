@@ -9,6 +9,7 @@ import {
   DataTableActionButton,
   DataTableActions,
   Input,
+  cn,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { PackageImage, PackageSuggestedImageGroup } from '@africatourismgate/types';
@@ -35,9 +36,14 @@ const emptyForm: ImageFormValues = { url: '', caption: '', sortOrder: '0' };
 type PackageImagesSectionProps = {
   packageId: string;
   embedded?: boolean;
+  onChanged?: () => void;
 };
 
-export function PackageImagesSection({ packageId, embedded = false }: PackageImagesSectionProps) {
+export function PackageImagesSection({
+  packageId,
+  embedded = false,
+  onChanged,
+}: PackageImagesSectionProps) {
   const { packages: getPackagesErrorMessage } = useAdminErrorMessages();
   const tGallery = useTranslations('modules.common.imagesGallery');
   const tCommon = useTranslations('modules.common');
@@ -69,10 +75,11 @@ export function PackageImagesSection({ packageId, embedded = false }: PackageIma
         limit: 100,
       });
       setState({ status: 'ready', images: result.data });
+      onChanged?.();
     } catch (error) {
       setState({ status: 'error', message: getPackagesErrorMessage(error) });
     }
-  }, [packageId, getPackagesErrorMessage]);
+  }, [packageId, getPackagesErrorMessage, onChanged]);
 
   const loadSuggestions = useCallback(async () => {
     setSuggestionsLoading(true);

@@ -79,6 +79,10 @@
         "prestations": "Ajoutez les produits inclus (hébergement, vol, activité, véhicule ou croisière).",
         "medias": "Gérez la galerie photo et les pièces jointes (images, PDF, documents Word).",
         "publication": "Définissez le statut actif et la mise en avant sur la page d'accueil."
+      },
+      "lockedHint": {
+        "prestations": "Ajoutez au moins une prestation pour déverrouiller les étapes suivantes.",
+        "medias": "Ajoutez au moins un média ou une pièce jointe pour déverrouiller Publication."
       }
     }
   },

@@ -79,6 +79,10 @@
         "prestations": "Add included products (stay, flight, activity, vehicle or cruise).",
         "medias": "Manage the photo gallery and description attachments (images, PDF, Word files).",
         "publication": "Set active status and homepage featured visibility."
+      },
+      "lockedHint": {
+        "prestations": "Add at least one included item to unlock next steps.",
+        "medias": "Add at least one media item or attachment to unlock Publication."
       }
     }
   },
