@@ -141,7 +141,7 @@ export function PackageForm({ mode, packageId, initialPackage }: PackageFormProp
       const body = toPayload(values);
       if (mode === 'create') {
         const created = await getApiClient().createPackage(body);
-        router.push(`/produits/forfaits/${created.id}`);
+        router.push(`/produits/forfaits/${created.id}?tab=prestations`);
       } else if (packageId) {
         await getApiClient().updatePackage(packageId, body);
         router.refresh();
