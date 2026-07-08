@@ -24,7 +24,7 @@ export class Activities extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'title', length: 255 })
   title!: string;
 
-  @Column({ type: 'text', name: 'description', nullable: true })
+  @Column({ type: 'varchar', name: 'description', length: 5000, nullable: true })
   description!: string | null;
 
   @Column({ type: 'int', name: 'duration_minutes', nullable: true })
@@ -63,6 +63,27 @@ export class ActivityImages extends BaseAuditEntity {
   @Column({ type: 'int', name: 'sort_order' })
   sortOrder!: number;
 
+}
+
+@Entity('activity_description_assets')
+export class ActivityDescriptionAssets extends BaseAuditEntity {
+  @PrimaryColumn('uuid', { name: 'id', length: 36 })
+  id!: string;
+
+  @Column({ type: 'varchar', name: 'activity_id', length: 36 })
+  activityId!: string;
+
+  @Column({ name: 'asset_type', enum: ['image', 'pdf', 'word'] })
+  assetType!: 'image' | 'pdf' | 'word';
+
+  @Column({ type: 'varchar', name: 'url', length: 1024 })
+  url!: string;
+
+  @Column({ type: 'varchar', name: 'name', length: 255, nullable: true })
+  name!: string | null;
+
+  @Column({ type: 'int', name: 'sort_order', default: 0 })
+  sortOrder!: number;
 }
 
 @Entity('activity_schedules')

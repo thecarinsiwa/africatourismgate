@@ -13,11 +13,46 @@
     "difficulty": "Difficulty"
   },
   "form": {
-    "submitCreate": "Créer",
+    "submitCreate": "Create",
     "provider": "Provider",
     "title": "Title",
     "difficulty": "Difficulty",
-    "priceCents": "Price (centimes)"
+    "priceCents": "Price (cents)",
+    "validation": {
+      "providerRequired": "Provider is required.",
+      "titleRequired": "Title is required.",
+      "invalidPrice": "Invalid price.",
+      "currencyThreeLetters": "Currency must be 3 letters.",
+      "invalidDuration": "Invalid duration (minutes).",
+      "descriptionTooLong": "Description cannot exceed {max} characters.",
+      "descriptionCounter": "{current} / {max} characters"
+    },
+    "attachments": {
+      "title": "Description attachments",
+      "hint": "Add images, PDFs or Word documents linked to the activity description.",
+      "add": "Add attachment",
+      "saveFirst": "Create the activity first to save attachments.",
+      "empty": "No attachments saved.",
+      "unnamed": "Unnamed",
+      "fileHint": "Formats: JPG, PNG, WEBP, PDF, DOC, DOCX (max 10 MB)",
+      "deleteConfirm": "Delete attachment « {name} »?",
+      "fields": {
+        "name": "Display name",
+        "type": "Type"
+      },
+      "types": {
+        "image": "Image",
+        "pdf": "PDF",
+        "word": "Word"
+      },
+      "columns": {
+        "name": "Name"
+      },
+      "validation": {
+        "invalidType": "Unsupported file type.",
+        "fileTooLarge": "File exceeds 10 MB."
+      }
+    }
   },
   "detail": {
     "title": "Modifier l'activité",

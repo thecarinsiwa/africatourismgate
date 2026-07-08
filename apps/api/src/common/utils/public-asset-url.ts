@@ -41,6 +41,10 @@ export function activityUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/activities/${filename}`;
 }
 
+export function activityDescriptionAssetUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/activities/description-assets/${filename}`;
+}
+
 export function packageUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/packages/${filename}`;
 }

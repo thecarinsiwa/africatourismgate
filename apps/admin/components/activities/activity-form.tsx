@@ -25,6 +25,8 @@ export type ActivityFormValues = {
   currency: string;
 };
 
+const DESCRIPTION_MAX_LENGTH = 5000;
+
 const defaultValues: ActivityFormValues = {
   providerId: '',
   title: '',
@@ -122,6 +124,9 @@ export function ActivityForm({ mode, activityId, initialActivity, onUpdated }: A
       const d = Number(values.durationMinutes);
       if (!Number.isFinite(d) || d < 1) errors.durationMinutes = tValidation('invalidDuration');
     }
+    if (values.description.length > DESCRIPTION_MAX_LENGTH) {
+      errors.description = tValidation('descriptionTooLong', { max: DESCRIPTION_MAX_LENGTH });
+    }
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
   }
@@ -193,8 +198,18 @@ export function ActivityForm({ mode, activityId, initialActivity, onUpdated }: A
           value={values.description}
           onChange={(e) => updateField('description', e.target.value)}
           rows={4}
+          maxLength={DESCRIPTION_MAX_LENGTH}
           className={selectClass}
         />
+        <p className="mt-1 text-xs text-atg-muted">
+          {tValidation('descriptionCounter', {
+            current: values.description.length,
+            max: DESCRIPTION_MAX_LENGTH,
+          })}
+        </p>
+        {fieldErrors.description ? (
+          <p className="mt-1 text-sm text-red-600">{fieldErrors.description}</p>
+        ) : null}
       </div>
       <Input
         label={tCommonForm('durationMinutesOptional')}

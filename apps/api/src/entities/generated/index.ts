@@ -45,6 +45,7 @@ export { CabinAvailability } from './cruises.entity';
 export { ActivityProviders } from './activities.entity';
 export { Activities } from './activities.entity';
 export { ActivityImages } from './activities.entity';
+export { ActivityDescriptionAssets } from './activities.entity';
 export { ActivitySchedules } from './activities.entity';
 export { Packages } from './packages.entity';
 export { PackageItems } from './packages.entity';

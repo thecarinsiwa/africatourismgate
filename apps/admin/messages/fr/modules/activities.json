@@ -17,7 +17,42 @@
     "provider": "Fournisseur",
     "title": "Titre",
     "difficulty": "Difficulté",
-    "priceCents": "Prix (centimes)"
+    "priceCents": "Prix (centimes)",
+    "validation": {
+      "providerRequired": "Le fournisseur est obligatoire.",
+      "titleRequired": "Le titre est obligatoire.",
+      "invalidPrice": "Prix invalide.",
+      "currencyThreeLetters": "La devise doit comporter 3 lettres.",
+      "invalidDuration": "Durée invalide (minutes).",
+      "descriptionTooLong": "La description ne peut pas dépasser {max} caractères.",
+      "descriptionCounter": "{current} / {max} caractères"
+    },
+    "attachments": {
+      "title": "Pièces jointes de description",
+      "hint": "Ajoutez des images, PDF ou documents Word liés à la description de l'activité.",
+      "add": "Ajouter une pièce jointe",
+      "saveFirst": "Créez d'abord l'activité pour enregistrer les pièces jointes en base.",
+      "empty": "Aucune pièce jointe enregistrée.",
+      "unnamed": "Sans nom",
+      "fileHint": "Formats: JPG, PNG, WEBP, PDF, DOC, DOCX (max 10 Mo)",
+      "deleteConfirm": "Supprimer la pièce jointe « {name} » ?",
+      "fields": {
+        "name": "Nom affiché",
+        "type": "Type"
+      },
+      "types": {
+        "image": "Image",
+        "pdf": "PDF",
+        "word": "Word"
+      },
+      "columns": {
+        "name": "Nom"
+      },
+      "validation": {
+        "invalidType": "Type de fichier non supporté.",
+        "fileTooLarge": "Le fichier dépasse 10 Mo."
+      }
+    }
   },
   "detail": {
     "title": "Modifier l'activité",
