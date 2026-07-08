@@ -49,6 +49,7 @@ export { ActivitySchedules } from './activities.entity';
 export { Packages } from './packages.entity';
 export { PackageItems } from './packages.entity';
 export { PackageImages } from './packages.entity';
+export { PackageDescriptionAssets } from './packages.entity';
 export { Bookings } from './commerce.entity';
 export { BookingItems } from './commerce.entity';
 export { BookingStatusHistory } from './commerce.entity';
