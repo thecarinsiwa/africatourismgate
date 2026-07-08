@@ -810,6 +810,8 @@ export type Translations = {
     openAttachment: string;
     attachmentImageAlt: string;
     attachmentFallbackName: string;
+    descriptionShowMore: string;
+    descriptionShowLess: string;
     stepOverview: string;
     stepConfigure: string;
     stepBook: string;
@@ -2148,6 +2150,8 @@ const fr: Translations = {
     openAttachment: 'Ouvrir le fichier',
     attachmentImageAlt: 'Pièce jointe image',
     attachmentFallbackName: 'Pièce jointe',
+    descriptionShowMore: 'Voir plus',
+    descriptionShowLess: 'Voir moins',
     stepOverview: 'Aperçu des prestations',
     stepConfigure: 'Configuration',
     stepBook: 'Réserver',
@@ -3551,6 +3555,8 @@ const en: Translations = {
     openAttachment: 'Open file',
     attachmentImageAlt: 'Attached image',
     attachmentFallbackName: 'Attachment',
+    descriptionShowMore: 'Show more',
+    descriptionShowLess: 'Show less',
     stepOverview: 'Included services overview',
     stepConfigure: 'Configure each service',
     stepBook: 'Book',

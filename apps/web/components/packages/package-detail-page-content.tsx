@@ -48,6 +48,21 @@ function hasHtmlMarkup(value: string): boolean {
   return /<[^>]+>/.test(value);
 }
 
+function stripHtml(value: string): string {
+  return value.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function countWords(value: string): number {
+  if (!value.trim()) return 0;
+  return value.trim().split(/\s+/).length;
+}
+
+function truncateWords(value: string, limit: number): string {
+  const words = value.trim().split(/\s+/);
+  if (words.length <= limit) return value.trim();
+  return `${words.slice(0, limit).join(' ')}...`;
+}
+
 function isImageAsset(url: string): boolean {
   return /\.(png|jpe?g|webp|gif|svg)(\?.*)?$/i.test(url);
 }
@@ -79,6 +94,7 @@ export function PackageDetailPageContent({
     parseParticipantsParam(initialSearch.travelers ?? initialSearch.participants),
   );
   const [step, setStep] = useState<PackageCompositionStep>('overview');
+  const [showFullDescription, setShowFullDescription] = useState(false);
 
   const listHref = `/packages${initialSearch.search ? `?search=${encodeURIComponent(initialSearch.search)}` : ''}`;
 
@@ -198,6 +214,21 @@ export function PackageDetailPageContent({
     router.push(`/booking/cart?${buildReservationQuery(draft)}`);
   }
 
+  const descriptionText = useMemo(
+    () => stripHtml(detail?.package.description ?? ''),
+    [detail?.package.description],
+  );
+  const descriptionWordCount = useMemo(() => countWords(descriptionText), [descriptionText]);
+  const shouldCollapseDescription = descriptionWordCount > 100;
+  const truncatedDescriptionText = useMemo(
+    () => truncateWords(descriptionText, 100),
+    [descriptionText],
+  );
+
+  useEffect(() => {
+    setShowFullDescription(false);
+  }, [packageId, fetchId]);
+
   return (
     <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
       <HomeHeader />
@@ -280,7 +311,11 @@ export function PackageDetailPageContent({
                   {detail.package.name}
                 </h1>
                 {detail.package.description ? (
-                  hasHtmlMarkup(detail.package.description) ? (
+                  shouldCollapseDescription && !showFullDescription ? (
+                    <p className="mt-4 break-words text-base leading-relaxed text-atg-muted [overflow-wrap:anywhere]">
+                      {truncatedDescriptionText}
+                    </p>
+                  ) : hasHtmlMarkup(detail.package.description) ? (
                     <div
                       className="mt-4 max-w-none break-words text-base leading-relaxed text-atg-muted [overflow-wrap:anywhere] [&_a]:break-all [&_p]:my-2 [&_strong]:font-semibold"
                       dangerouslySetInnerHTML={{ __html: detail.package.description }}
@@ -290,6 +325,15 @@ export function PackageDetailPageContent({
                       {detail.package.description}
                     </p>
                   )
+                ) : null}
+                {shouldCollapseDescription ? (
+                  <button
+                    type="button"
+                    onClick={() => setShowFullDescription((value) => !value)}
+                    className="mt-2 text-sm font-semibold text-primary hover:text-primary-hover"
+                  >
+                    {showFullDescription ? p.descriptionShowLess : p.descriptionShowMore}
+                  </button>
                 ) : null}
 
                 {detail.descriptionAssets && detail.descriptionAssets.length > 0 ? (

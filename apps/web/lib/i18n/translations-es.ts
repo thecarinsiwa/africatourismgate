@@ -939,6 +939,8 @@ export const es: Translations = {
     openAttachment: 'Abrir archivo',
     attachmentImageAlt: 'Imagen adjunta',
     attachmentFallbackName: 'Adjunto',
+    descriptionShowMore: 'Ver más',
+    descriptionShowLess: 'Ver menos',
     stepOverview: 'Vista previa de servicios',
     stepConfigure: 'Configuración',
     stepBook: 'Reservar',
