@@ -328,5 +328,22 @@
     "agency": "Agence",
     "support_queue": "File support",
     "withId": "{label} · {idPrefix}…"
+  },
+  "richTextImage": {
+    "title": "Image",
+    "sizeAria": "Taille de l'image",
+    "alignAria": "Alignement de l'image",
+    "remove": "Supprimer",
+    "size": {
+      "sm": "Petit",
+      "md": "Moyen",
+      "lg": "Grand",
+      "full": "Plein"
+    },
+    "align": {
+      "left": "Gauche",
+      "center": "Centre",
+      "right": "Droite"
+    }
   }
 }

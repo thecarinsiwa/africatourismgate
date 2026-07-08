@@ -6,6 +6,7 @@ import Link from '@tiptap/extension-link';
 import type { Editor } from '@tiptap/react';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from 'react';
 
 const iconClass = 'h-4 w-4';
@@ -173,6 +174,7 @@ export function RichTextEditor({
   contentClassName,
   onUploadAsset,
 }: RichTextEditorProps) {
+  const tRich = useTranslations('modules.common.richTextImage');
   const generatedId = useId();
   const editorId = id ?? generatedId;
   const imageInputRef = useRef<HTMLInputElement | null>(null);
@@ -452,34 +454,34 @@ export function RichTextEditor({
           className="fixed z-50 flex flex-wrap items-center gap-2 rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 shadow-lg"
           style={{ top: `${imageModalPosition.top}px`, left: `${imageModalPosition.left}px` }}
         >
-          <span className="text-xs font-medium text-atg-muted">Image</span>
+          <span className="text-xs font-medium text-atg-muted">{tRich('title')}</span>
           <select
-            aria-label="Taille image"
+            aria-label={tRich('sizeAria')}
             value={selectedImageSize}
             onChange={(event) => applyImageSettings(event.target.value as ImageSize, selectedImageAlign)}
             className="min-h-[30px] rounded border border-atg-border bg-atg-surface px-2 text-xs text-atg-fg"
           >
-            <option value="sm">Petit</option>
-            <option value="md">Moyen</option>
-            <option value="lg">Grand</option>
-            <option value="full">Plein</option>
+            <option value="sm">{tRich('size.sm')}</option>
+            <option value="md">{tRich('size.md')}</option>
+            <option value="lg">{tRich('size.lg')}</option>
+            <option value="full">{tRich('size.full')}</option>
           </select>
           <select
-            aria-label="Alignement image"
+            aria-label={tRich('alignAria')}
             value={selectedImageAlign}
             onChange={(event) => applyImageSettings(selectedImageSize, event.target.value as ImageAlign)}
             className="min-h-[30px] rounded border border-atg-border bg-atg-surface px-2 text-xs text-atg-fg"
           >
-            <option value="left">Gauche</option>
-            <option value="center">Centre</option>
-            <option value="right">Droite</option>
+            <option value="left">{tRich('align.left')}</option>
+            <option value="center">{tRich('align.center')}</option>
+            <option value="right">{tRich('align.right')}</option>
           </select>
           <button
             type="button"
             className="rounded border border-red-300 px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50 dark:border-red-900/40 dark:text-red-400 dark:hover:bg-red-950/30"
             onClick={() => editor?.chain().focus().deleteSelection().run()}
           >
-            Supprimer
+            {tRich('remove')}
           </button>
         </div>
       ) : null}
