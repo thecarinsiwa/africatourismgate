@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { getFeaturedPackage } from '../../lib/api/public';
+import { packageDescriptionPreview } from '../../lib/packages/description-preview';
 import { formatPackagePrice } from '../../lib/packages/listings';
 import type { PackageListItem } from '../../lib/packages/types';
 import { useTranslations } from '../../lib/i18n/locale-provider';
@@ -10,16 +11,6 @@ import { useScrollAnimation } from './use-scroll-animation';
 
 const FALLBACK_IMAGE =
   'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Elephants_at_Amboseli_national_park_against_Mount_Kilimanjaro.jpg/1280px-Elephants_at_Amboseli_national_park_against_Mount_Kilimanjaro.jpg';
-
-function stripHtml(html: string): string {
-  return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
-}
-
-function toWordsPreview(text: string, minWords = 20): string {
-  const words = text.split(/\s+/).filter(Boolean);
-  if (words.length <= minWords) return text;
-  return `${words.slice(0, minWords).join(' ')}…`;
-}
 
 export function ParallaxPromo() {
   const t = useTranslations();
@@ -38,7 +29,7 @@ export function ParallaxPromo() {
 
   const title = featured?.name ?? t.promo.title;
   const description = featured?.description
-    ? toWordsPreview(stripHtml(featured.description), 20)
+    ? packageDescriptionPreview(featured.description)
     : t.promo.description;
   const price = featured
     ? formatPackagePrice(featured.pricing.totalCents, featured.pricing.currency)

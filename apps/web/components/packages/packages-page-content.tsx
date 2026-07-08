@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { browsePackages } from '../../lib/api/public';
+import { packageDescriptionPreview } from '../../lib/packages/description-preview';
 import {
   formatPackagePrice,
   hasPackageDiscount,
@@ -259,8 +260,8 @@ export function PackagesPageContent({ initialSearch }: PackagesPageContentProps)
                   <div className="min-w-0 space-y-2">
                     <h3 className="break-words text-lg font-bold text-atg-fg">{pkg.name}</h3>
                     {pkg.description ? (
-                      <p className="line-clamp-3 text-sm text-atg-muted">
-                        {pkg.description.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()}
+                      <p className="text-sm text-atg-muted">
+                        {packageDescriptionPreview(pkg.description)}
                       </p>
                     ) : null}
                     <p className="text-sm font-medium text-primary">
