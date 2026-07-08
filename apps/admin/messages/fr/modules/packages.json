@@ -67,7 +67,14 @@
     "photoGallery": "Galerie photos",
     "photoGalleryIntro": "{count} photo(s) associée(s) au forfait.",
     "noPhotos": "Aucune photo pour ce forfait.",
-    "noIncludedProducts": "Aucun produit inclus."
+    "noIncludedProducts": "Aucun produit inclus.",
+    "tabs": {
+      "aria": "Étapes de configuration du forfait",
+      "informations": "Informations",
+      "prestations": "Prestations",
+      "medias": "Médias",
+      "publication": "Publication"
+    }
   },
   "sections": {
     "items": {

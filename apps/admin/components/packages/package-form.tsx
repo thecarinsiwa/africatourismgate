@@ -59,9 +59,17 @@ type PackageFormProps = {
   mode: 'create' | 'edit';
   packageId?: string;
   initialPackage?: Package;
+  showAttachmentsSection?: boolean;
+  showPublicationSection?: boolean;
 };
 
-export function PackageForm({ mode, packageId, initialPackage }: PackageFormProps) {
+export function PackageForm({
+  mode,
+  packageId,
+  initialPackage,
+  showAttachmentsSection = true,
+  showPublicationSection = true,
+}: PackageFormProps) {
   const { packages: getPackagesErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.packages.form');
   const tCommon = useTranslations('modules.common');
@@ -182,7 +190,7 @@ export function PackageForm({ mode, packageId, initialPackage }: PackageFormProp
         />
       </Card>
 
-      <PackageDescriptionAssetsSection packageId={packageId} />
+      {showAttachmentsSection ? <PackageDescriptionAssetsSection packageId={packageId} /> : null}
 
       <Card variant="dashboard" className="space-y-4">
         <h3 className="text-sm font-semibold text-atg-fg">{t('sections.pricing')}</h3>
@@ -205,28 +213,30 @@ export function PackageForm({ mode, packageId, initialPackage }: PackageFormProp
         />
       </Card>
 
-      <Card variant="dashboard" className="space-y-4">
-        <h3 className="text-sm font-semibold text-atg-fg">{t('sections.publication')}</h3>
-        <label className="flex items-center gap-2 text-sm text-atg-fg">
-          <input
-            type="checkbox"
-            checked={values.active}
-            onChange={(e) => updateField('active', e.target.checked)}
-            className="rounded border-atg-border"
-          />
-          {t('activeLabel')}
-        </label>
-        <label className="flex items-center gap-2 text-sm text-atg-fg">
-          <input
-            type="checkbox"
-            checked={values.isFeatured}
-            onChange={(e) => updateField('isFeatured', e.target.checked)}
-            className="rounded border-atg-border"
-          />
-          {t('featuredLabel')}
-        </label>
-        <p className="text-xs text-atg-muted">{t('featuredHint')}</p>
-      </Card>
+      {showPublicationSection ? (
+        <Card variant="dashboard" className="space-y-4">
+          <h3 className="text-sm font-semibold text-atg-fg">{t('sections.publication')}</h3>
+          <label className="flex items-center gap-2 text-sm text-atg-fg">
+            <input
+              type="checkbox"
+              checked={values.active}
+              onChange={(e) => updateField('active', e.target.checked)}
+              className="rounded border-atg-border"
+            />
+            {t('activeLabel')}
+          </label>
+          <label className="flex items-center gap-2 text-sm text-atg-fg">
+            <input
+              type="checkbox"
+              checked={values.isFeatured}
+              onChange={(e) => updateField('isFeatured', e.target.checked)}
+              className="rounded border-atg-border"
+            />
+            {t('featuredLabel')}
+          </label>
+          <p className="text-xs text-atg-muted">{t('featuredHint')}</p>
+        </Card>
+      ) : null}
 
       <div className="flex gap-3">
         <Button type="submit" loading={submitting}>
