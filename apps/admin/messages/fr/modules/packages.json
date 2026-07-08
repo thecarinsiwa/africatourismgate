@@ -73,7 +73,13 @@
       "informations": "Informations",
       "prestations": "Prestations",
       "medias": "Médias",
-      "publication": "Publication"
+      "publication": "Publication",
+      "hints": {
+        "informations": "Renseignez les informations de base du forfait: nom, description, remise et durée.",
+        "prestations": "Ajoutez les produits inclus (hébergement, vol, activité, véhicule ou croisière).",
+        "medias": "Gérez la galerie photo et les pièces jointes (images, PDF, documents Word).",
+        "publication": "Définissez le statut actif et la mise en avant sur la page d'accueil."
+      }
     }
   },
   "sections": {

@@ -32,6 +32,14 @@ export function PackageEditorTabs({ packageId, pkg, onPackageUpdated }: PackageE
 
   const tabParam = searchParams.get('tab');
   const activeTab: TabValue = isTabValue(tabParam) ? tabParam : 'informations';
+  const activeTabHint =
+    activeTab === 'informations'
+      ? t('hints.informations')
+      : activeTab === 'prestations'
+        ? t('hints.prestations')
+        : activeTab === 'medias'
+          ? t('hints.medias')
+          : t('hints.publication');
 
   const handleTabChange = useCallback(
     (tab: string) => {
@@ -55,6 +63,7 @@ export function PackageEditorTabs({ packageId, pkg, onPackageUpdated }: PackageE
         <TabsTrigger value="medias">{t('medias')}</TabsTrigger>
         <TabsTrigger value="publication">{t('publication')}</TabsTrigger>
       </TabsList>
+      <p className="mt-3 text-sm text-atg-muted">{activeTabHint}</p>
 
       <TabsContent value="informations">
         <PackageForm mode="edit" packageId={packageId} initialPackage={pkg} />

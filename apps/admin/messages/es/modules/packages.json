@@ -73,7 +73,13 @@
       "informations": "Información",
       "prestations": "Prestaciones",
       "medias": "Medios",
-      "publication": "Publicación"
+      "publication": "Publicación",
+      "hints": {
+        "informations": "Complete la base del paquete: nombre, descripción, descuento y duración.",
+        "prestations": "Añada los productos incluidos (alojamiento, vuelo, actividad, vehículo o crucero).",
+        "medias": "Gestione la galería de fotos y los adjuntos de descripción (imágenes, PDF y Word).",
+        "publication": "Defina el estado activo y la visibilidad destacada en la página principal."
+      }
     }
   },
   "sections": {

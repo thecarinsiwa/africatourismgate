@@ -73,7 +73,13 @@
       "informations": "Information",
       "prestations": "Included items",
       "medias": "Media",
-      "publication": "Publication"
+      "publication": "Publication",
+      "hints": {
+        "informations": "Fill in the package basics: name, description, discount and duration.",
+        "prestations": "Add included products (stay, flight, activity, vehicle or cruise).",
+        "medias": "Manage the photo gallery and description attachments (images, PDF, Word files).",
+        "publication": "Set active status and homepage featured visibility."
+      }
     }
   },
   "sections": {
