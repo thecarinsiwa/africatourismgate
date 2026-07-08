@@ -43,6 +43,10 @@ function inferInitialStep(startDate: string, hash: string): PackageCompositionSt
   return 'configure';
 }
 
+function hasHtmlMarkup(value: string): boolean {
+  return /<[^>]+>/.test(value);
+}
+
 export function PackageDetailPageContent({
   packageId,
   initialSearch,
@@ -246,7 +250,7 @@ export function PackageDetailPageContent({
         )}
 
         {detail && !loading && !notFound && (
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(280px,320px)]">
             <div className="space-y-6">
               {detail.images && detail.images.length > 0 ? (
                 <ProductGallery
@@ -267,13 +271,20 @@ export function PackageDetailPageContent({
                 <p className="text-xs font-semibold uppercase tracking-wide text-primary">
                   {p.cardBadge}
                 </p>
-                <h1 className="mt-2 text-3xl font-bold text-atg-fg">
+                <h1 className="mt-2 break-words text-3xl font-bold text-atg-fg">
                   {detail.package.name}
                 </h1>
                 {detail.package.description ? (
-                  <p className="mt-4 text-base leading-relaxed text-atg-muted">
-                    {detail.package.description}
-                  </p>
+                  hasHtmlMarkup(detail.package.description) ? (
+                    <div
+                      className="mt-4 max-w-none break-words text-base leading-relaxed text-atg-muted [&_p]:my-2 [&_strong]:font-semibold"
+                      dangerouslySetInnerHTML={{ __html: detail.package.description }}
+                    />
+                  ) : (
+                    <p className="mt-4 break-words text-base leading-relaxed text-atg-muted">
+                      {detail.package.description}
+                    </p>
+                  )
                 ) : null}
               </header>
 
