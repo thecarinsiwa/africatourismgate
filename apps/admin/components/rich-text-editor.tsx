@@ -6,7 +6,7 @@ import Link from '@tiptap/extension-link';
 import type { Editor } from '@tiptap/react';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from 'react';
 
 const iconClass = 'h-4 w-4';
 
@@ -108,6 +108,7 @@ export type RichTextUploadedAsset = {
 
 type ImageSize = 'sm' | 'md' | 'lg' | 'full';
 type ImageAlign = 'left' | 'center' | 'right';
+type ImageModalPosition = { top: number; left: number } | null;
 
 type ToolbarButtonProps = {
   label: string;
@@ -169,16 +170,17 @@ export function RichTextEditor({
   const [isImageSelected, setIsImageSelected] = useState(false);
   const [selectedImageSize, setSelectedImageSize] = useState<ImageSize>('md');
   const [selectedImageAlign, setSelectedImageAlign] = useState<ImageAlign>('center');
+  const [imageModalPosition, setImageModalPosition] = useState<ImageModalPosition>(null);
 
-  function buildImageStyle(size: ImageSize, align: ImageAlign): string {
+  const buildImageStyle = useCallback((size: ImageSize, align: ImageAlign): string => {
     const width =
       size === 'sm' ? '25%' : size === 'md' ? '50%' : size === 'lg' ? '75%' : '100%';
     const margin =
       align === 'left' ? '0 auto 0 0' : align === 'right' ? '0 0 0 auto' : '0 auto';
     return `display:block;width:${width};height:auto;margin:${margin};`;
-  }
+  }, []);
 
-  function parseImageStyle(styleValue: unknown): { size: ImageSize; align: ImageAlign } {
+  const parseImageStyle = useCallback((styleValue: unknown): { size: ImageSize; align: ImageAlign } => {
     const style = typeof styleValue === 'string' ? styleValue : '';
     const normalized = style.toLowerCase();
     const size = normalized.includes('width:25%')
@@ -194,17 +196,34 @@ export function RichTextEditor({
         ? 'right'
         : 'center';
     return { size, align };
-  }
+  }, []);
 
-  function syncSelectedImageState(currentEditor: Editor) {
+  const syncSelectedImageState = useCallback((currentEditor: Editor) => {
     const imageActive = currentEditor.isActive('image');
     setIsImageSelected(imageActive);
-    if (!imageActive) return;
+    if (!imageActive) {
+      setImageModalPosition(null);
+      return;
+    }
     const attrs = currentEditor.getAttributes('image') as { style?: string };
     const parsed = parseImageStyle(attrs.style);
     setSelectedImageSize(parsed.size);
     setSelectedImageAlign(parsed.align);
-  }
+    const nodeAtSelection = currentEditor.view.nodeDOM(currentEditor.state.selection.from);
+    if (!(nodeAtSelection instanceof HTMLElement)) {
+      setImageModalPosition(null);
+      return;
+    }
+    const rect = nodeAtSelection.getBoundingClientRect();
+    const modalWidth = 340;
+    const safeLeft = Math.min(
+      Math.max(8, rect.left + rect.width / 2 - modalWidth / 2),
+      window.innerWidth - modalWidth - 8,
+    );
+    const desiredTop = rect.top - 52;
+    const safeTop = desiredTop > 8 ? desiredTop : rect.bottom + 8;
+    setImageModalPosition({ top: safeTop, left: safeLeft });
+  }, [parseImageStyle]);
 
   const editor = useEditor({
     extensions: [
@@ -254,10 +273,35 @@ export function RichTextEditor({
       editor.off('selectionUpdate', handleChange);
       editor.off('transaction', handleChange);
     };
-  }, [editor]);
+  }, [editor, syncSelectedImageState]);
+
+  useEffect(() => {
+    if (!editor || !isImageSelected) return;
+    const reposition = () => syncSelectedImageState(editor);
+    window.addEventListener('scroll', reposition, true);
+    window.addEventListener('resize', reposition);
+    return () => {
+      window.removeEventListener('scroll', reposition, true);
+      window.removeEventListener('resize', reposition);
+    };
+  }, [editor, isImageSelected, syncSelectedImageState]);
 
   const disabled = !editor;
   const canUpload = Boolean(onUploadAsset) && !disabled;
+  const applyImageSettings = useCallback(
+    (size: ImageSize, align: ImageAlign) => {
+      if (!editor) return;
+      editor
+        .chain()
+        .focus()
+        .updateAttributes('image', { style: buildImageStyle(size, align) })
+        .run();
+      setSelectedImageSize(size);
+      setSelectedImageAlign(align);
+      syncSelectedImageState(editor);
+    },
+    [buildImageStyle, editor, syncSelectedImageState],
+  );
 
   async function handleAssetPick(file: File) {
     if (!editor || !onUploadAsset) return;
@@ -377,59 +421,6 @@ export function RichTextEditor({
             }}
           />
         </div>
-        {isImageSelected ? (
-          <div className="flex flex-wrap items-center gap-2 border-b border-atg-border bg-atg-surface/40 px-3 py-2">
-            <span className="text-xs font-medium text-atg-muted">Image</span>
-            <select
-              aria-label="Taille image"
-              value={selectedImageSize}
-              onChange={(event) => {
-                const nextSize = event.target.value as ImageSize;
-                setSelectedImageSize(nextSize);
-                editor
-                  ?.chain()
-                  .focus()
-                  .updateAttributes('image', {
-                    style: buildImageStyle(nextSize, selectedImageAlign),
-                  })
-                  .run();
-              }}
-              className="min-h-[30px] rounded border border-atg-border bg-atg-elevated px-2 text-xs text-atg-fg"
-            >
-              <option value="sm">Petit</option>
-              <option value="md">Moyen</option>
-              <option value="lg">Grand</option>
-              <option value="full">Plein</option>
-            </select>
-            <select
-              aria-label="Alignement image"
-              value={selectedImageAlign}
-              onChange={(event) => {
-                const nextAlign = event.target.value as ImageAlign;
-                setSelectedImageAlign(nextAlign);
-                editor
-                  ?.chain()
-                  .focus()
-                  .updateAttributes('image', {
-                    style: buildImageStyle(selectedImageSize, nextAlign),
-                  })
-                  .run();
-              }}
-              className="min-h-[30px] rounded border border-atg-border bg-atg-elevated px-2 text-xs text-atg-fg"
-            >
-              <option value="left">Gauche</option>
-              <option value="center">Centre</option>
-              <option value="right">Droite</option>
-            </select>
-            <button
-              type="button"
-              className="rounded border border-red-300 px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50 dark:border-red-900/40 dark:text-red-400 dark:hover:bg-red-950/30"
-              onClick={() => editor?.chain().focus().deleteSelection().run()}
-            >
-              Supprimer
-            </button>
-          </div>
-        ) : null}
         {uploadError ? (
           <p className="border-b border-atg-border bg-red-50 px-3 py-2 text-xs text-red-700 dark:bg-red-950/30 dark:text-red-300">
             {uploadError}
@@ -444,6 +435,42 @@ export function RichTextEditor({
           <EditorContent editor={editor} />
         </div>
       </div>
+      {isImageSelected && imageModalPosition ? (
+        <div
+          className="fixed z-50 flex flex-wrap items-center gap-2 rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 shadow-lg"
+          style={{ top: `${imageModalPosition.top}px`, left: `${imageModalPosition.left}px` }}
+        >
+          <span className="text-xs font-medium text-atg-muted">Image</span>
+          <select
+            aria-label="Taille image"
+            value={selectedImageSize}
+            onChange={(event) => applyImageSettings(event.target.value as ImageSize, selectedImageAlign)}
+            className="min-h-[30px] rounded border border-atg-border bg-atg-surface px-2 text-xs text-atg-fg"
+          >
+            <option value="sm">Petit</option>
+            <option value="md">Moyen</option>
+            <option value="lg">Grand</option>
+            <option value="full">Plein</option>
+          </select>
+          <select
+            aria-label="Alignement image"
+            value={selectedImageAlign}
+            onChange={(event) => applyImageSettings(selectedImageSize, event.target.value as ImageAlign)}
+            className="min-h-[30px] rounded border border-atg-border bg-atg-surface px-2 text-xs text-atg-fg"
+          >
+            <option value="left">Gauche</option>
+            <option value="center">Centre</option>
+            <option value="right">Droite</option>
+          </select>
+          <button
+            type="button"
+            className="rounded border border-red-300 px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50 dark:border-red-900/40 dark:text-red-400 dark:hover:bg-red-950/30"
+            onClick={() => editor?.chain().focus().deleteSelection().run()}
+          >
+            Supprimer
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 }
