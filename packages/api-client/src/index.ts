@@ -127,10 +127,14 @@ import type {
   RecordCashPaymentRequest,
   UpdateBookingStatusRequest,
   CreatePackageImageRequest,
+  CreatePackageDescriptionAssetRequest,
   CreatePackageItemRequest,
   CreatePackageRequest,
   Package,
   PackageDetail,
+  PackageDescriptionAsset,
+  PackageDescriptionAssetsListQuery,
+  PackageDescriptionAssetType,
   PackageImage,
   PackageImagesListQuery,
   PackageItem,
@@ -138,6 +142,7 @@ import type {
   PackageSuggestedImageGroup,
   PackagesListQuery,
   UpdatePackageImageRequest,
+  UpdatePackageDescriptionAssetRequest,
   UpdatePackageItemRequest,
   UpdatePackageRequest,
   CreateAirlineRequest,
@@ -562,10 +567,14 @@ export class ApiClient {
 
   async request<T>(path: string, options: RequestOptions = {}): Promise<T> {
     const url = `${this.baseUrl.replace(/\/$/, '')}${path.startsWith('/') ? path : `/${path}`}`;
+    const isFormData =
+      typeof FormData !== 'undefined' && options.body instanceof FormData;
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
       ...options.headers,
     };
+    if (!isFormData) {
+      headers['Content-Type'] = 'application/json';
+    }
 
     if (!options.skipAuth && this.accessToken && !headers.Authorization) {
       headers.Authorization = `Bearer ${this.accessToken}`;
@@ -574,7 +583,12 @@ export class ApiClient {
     const res = await fetch(url, {
       method: options.method ?? 'GET',
       headers,
-      body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
+      body:
+        options.body === undefined
+          ? undefined
+          : isFormData
+            ? (options.body as FormData)
+            : JSON.stringify(options.body),
     });
 
     if (!res.ok) {
@@ -2119,6 +2133,52 @@ export class ApiClient {
 
   deletePackageImage(id: string): Promise<void> {
     return this.request<void>(`/package-images/${id}`, { method: 'DELETE' });
+  }
+
+  listPackageDescriptionAssets(
+    query?: PackageDescriptionAssetsListQuery,
+  ): Promise<PaginatedResponse<PackageDescriptionAsset>> {
+    return fetchPaginated<PackageDescriptionAsset>(this, '/package-description-assets', query);
+  }
+
+  getPackageDescriptionAsset(id: string): Promise<PackageDescriptionAsset> {
+    return this.request<PackageDescriptionAsset>(`/package-description-assets/${id}`);
+  }
+
+  createPackageDescriptionAsset(
+    body: CreatePackageDescriptionAssetRequest,
+  ): Promise<PackageDescriptionAsset> {
+    return this.request<PackageDescriptionAsset>('/package-description-assets', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updatePackageDescriptionAsset(
+    id: string,
+    body: UpdatePackageDescriptionAssetRequest,
+  ): Promise<PackageDescriptionAsset> {
+    return this.request<PackageDescriptionAsset>(`/package-description-assets/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deletePackageDescriptionAsset(id: string): Promise<void> {
+    return this.request<void>(`/package-description-assets/${id}`, { method: 'DELETE' });
+  }
+
+  uploadPackageDescriptionAsset(
+    body: FormData,
+    packageId?: string,
+  ): Promise<{ url: string; assetType: PackageDescriptionAssetType }> {
+    const route = packageId
+      ? `/packages/${packageId}/upload-description-asset`
+      : '/packages/upload-description-asset';
+    return this.request<{ url: string; assetType: PackageDescriptionAssetType }>(route, {
+      method: 'POST',
+      body,
+    });
   }
 
   listPackageSuggestedImages(packageId: string): Promise<PackageSuggestedImageGroup[]> {

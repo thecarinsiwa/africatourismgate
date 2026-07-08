@@ -7,9 +7,10 @@ import type { CreatePackageRequest, Package } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
-import { RichTextEditor } from '../rich-text-editor';
-import { getApiClient } from '../../lib/auth/api';
+import { RichTextEditor, type RichTextUploadedAsset } from '../rich-text-editor';
+import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
 import { isRichTextEmpty } from '../../lib/rich-text';
+import { getSession } from '../../lib/auth/session';
 
 export type PackageFormValues = {
   name: string;
@@ -71,6 +72,41 @@ export function PackageForm({ mode, packageId, initialPackage }: PackageFormProp
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
+  const handleUploadDescriptionAsset = useCallback(
+    async (file: File): Promise<RichTextUploadedAsset> => {
+      const session = getSession();
+      if (!session?.accessToken) {
+        throw new Error('Session expirée');
+      }
+      const body = new FormData();
+      body.append('file', file);
+      const uploadPath = packageId
+        ? `/packages/${packageId}/upload-description-asset`
+        : '/packages/upload-description-asset';
+      const response = await fetch(`${resolveApiBaseUrl()}${uploadPath}`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${session.accessToken}` },
+        body,
+      });
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+      const payload = (await response.json()) as {
+        url?: string;
+        assetType?: 'image' | 'pdf' | 'word';
+      };
+      if (!payload.url || !payload.assetType) {
+        throw new Error('Invalid upload response');
+      }
+      return {
+        url: payload.url,
+        assetType: payload.assetType,
+        name: file.name,
+      };
+    },
+    [packageId],
+  );
+
   const updateField = useCallback(
     <K extends keyof PackageFormValues>(key: K, value: PackageFormValues[K]) => {
       setValues((prev) => ({ ...prev, [key]: value }));
@@ -105,7 +141,7 @@ export function PackageForm({ mode, packageId, initialPackage }: PackageFormProp
       const body = toPayload(values);
       if (mode === 'create') {
         const created = await getApiClient().createPackage(body);
-        router.push(`/produits/forfaits/${created.id}`);
+        router.push(`/produits/forfaits/${created.id}?tab=prestations`);
       } else if (packageId) {
         await getApiClient().updatePackage(packageId, body);
         router.refresh();
@@ -141,6 +177,7 @@ export function PackageForm({ mode, packageId, initialPackage }: PackageFormProp
           value={values.description}
           onChange={(html) => updateField('description', html)}
           placeholder={t('descriptionPlaceholder')}
+          onUploadAsset={handleUploadDescriptionAsset}
         />
       </Card>
 
@@ -163,29 +200,6 @@ export function PackageForm({ mode, packageId, initialPackage }: PackageFormProp
           value={values.durationDays}
           onChange={(e) => updateField('durationDays', e.target.value)}
         />
-      </Card>
-
-      <Card variant="dashboard" className="space-y-4">
-        <h3 className="text-sm font-semibold text-atg-fg">{t('sections.publication')}</h3>
-        <label className="flex items-center gap-2 text-sm text-atg-fg">
-          <input
-            type="checkbox"
-            checked={values.active}
-            onChange={(e) => updateField('active', e.target.checked)}
-            className="rounded border-atg-border"
-          />
-          {t('activeLabel')}
-        </label>
-        <label className="flex items-center gap-2 text-sm text-atg-fg">
-          <input
-            type="checkbox"
-            checked={values.isFeatured}
-            onChange={(e) => updateField('isFeatured', e.target.checked)}
-            className="rounded border-atg-border"
-          />
-          {t('featuredLabel')}
-        </label>
-        <p className="text-xs text-atg-muted">{t('featuredHint')}</p>
       </Card>
 
       <div className="flex gap-3">

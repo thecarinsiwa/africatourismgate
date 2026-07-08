@@ -4,6 +4,9 @@ import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { browsePackages } from '../../lib/api/public';
 import {
+  formatPackagePrice,
+  hasPackageDiscount,
+  buildPackageDetailHref,
   toPackagesBrowseQuery,
   type PackagesSearchParams,
 } from '../../lib/packages/listings';
@@ -16,10 +19,14 @@ import { PackageCard } from './package-card';
 import { PackagesSearchForm } from './packages-search-form';
 import { toListingPaginationLabels, scrollListingToTop } from '../../lib/listing/pagination-labels';
 import { useListingPagination } from '../../lib/listing/pagination';
+import { PackagePriceDisplay } from './package-price-display';
+import { useBookingCtaLabel } from '../../lib/bookings/use-booking-cta';
+import Image from 'next/image';
 
 export type { PackagesSearchParams };
 
 type SortKey = 'recommended' | 'price-asc' | 'price-desc';
+type ViewMode = 'cards' | 'list' | 'compact';
 
 type PackagesPageContentProps = {
   initialSearch: PackagesSearchParams;
@@ -29,8 +36,10 @@ export function PackagesPageContent({ initialSearch }: PackagesPageContentProps)
   const t = useTranslations();
   const p = t.packages;
   const l = t.listing;
+  const ctaLabel = useBookingCtaLabel('package');
 
   const [sort, setSort] = useState<SortKey>('recommended');
+  const [viewMode, setViewMode] = useState<ViewMode>('cards');
   const [results, setResults] = useState<PackageListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -99,6 +108,19 @@ export function PackagesPageContent({ initialSearch }: PackagesPageContentProps)
     ? `${p.searchLabel}: ${initialSearch.search}`
     : p.browseHint;
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const saved = window.localStorage.getItem('packages:viewMode');
+    if (saved === 'cards' || saved === 'list' || saved === 'compact') {
+      setViewMode(saved);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    window.localStorage.setItem('packages:viewMode', viewMode);
+  }, [viewMode]);
+
   return (
     <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
       <HomeHeader />
@@ -150,6 +172,33 @@ export function PackagesPageContent({ initialSearch }: PackagesPageContentProps)
         disabled={loading}
       />
 
+      <section className="border-b border-atg-border bg-atg-elevated dark:border-atg-border dark:bg-atg-elevated">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-2 px-4 py-3 sm:px-6 lg:px-8">
+          <span className="text-sm font-medium text-atg-muted">{p.displayModeLabel}</span>
+          {(
+            [
+              ['cards', p.displayModeCards],
+              ['list', p.displayModeList],
+              ['compact', p.displayModeCompact],
+            ] as Array<[ViewMode, string]>
+          ).map(([mode, label]) => (
+            <button
+              key={mode}
+              type="button"
+              onClick={() => setViewMode(mode)}
+              className={`rounded-lg border px-3 py-1.5 text-sm transition ${
+                viewMode === mode
+                  ? 'border-primary bg-primary/10 font-semibold text-primary'
+                  : 'border-atg-border text-atg-muted hover:border-primary/50 hover:text-atg-fg'
+              }`}
+              aria-pressed={viewMode === mode}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </section>
+
       <ListingPageBody
         error={
           error
@@ -187,9 +236,93 @@ export function PackagesPageContent({ initialSearch }: PackagesPageContentProps)
           ) : undefined
         }
       >
-        {pageItems.map((pkg) => (
-          <PackageCard key={pkg.id} pkg={pkg} t={p} searchParams={initialSearch} />
-        ))}
+        {viewMode === 'cards'
+          ? pageItems.map((pkg) => (
+              <PackageCard key={pkg.id} pkg={pkg} t={p} searchParams={initialSearch} />
+            ))
+          : null}
+        {viewMode === 'list' ? (
+          <div className="space-y-4">
+            {pageItems.map((pkg) => {
+              const detailHref = buildPackageDetailHref(pkg.id, initialSearch);
+              const reserveHref = buildPackageDetailHref(pkg.id, initialSearch, '#configure');
+              return (
+                <article
+                  key={pkg.id}
+                  className="grid gap-4 rounded-2xl border border-atg-border bg-atg-elevated p-4 sm:grid-cols-[200px_minmax(0,1fr)_auto] sm:items-center dark:border-atg-border dark:bg-atg-elevated"
+                >
+                  <div className="relative h-36 overflow-hidden rounded-xl bg-atg-surface">
+                    {pkg.imageUrl ? (
+                      <Image src={pkg.imageUrl} alt={pkg.name} fill className="object-cover" />
+                    ) : null}
+                  </div>
+                  <div className="min-w-0 space-y-2">
+                    <h3 className="break-words text-lg font-bold text-atg-fg">{pkg.name}</h3>
+                    {pkg.description ? (
+                      <p className="line-clamp-3 text-sm text-atg-muted">
+                        {pkg.description.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()}
+                      </p>
+                    ) : null}
+                    <p className="text-sm font-medium text-primary">
+                      {p.itemsIncluded.replace('{n}', String(pkg.itemCount))}
+                    </p>
+                  </div>
+                  <div className="space-y-3 sm:text-right">
+                    <PackagePriceDisplay
+                      pricing={pkg.pricing}
+                      priceLabel={p.packagePrice}
+                      discountBadgeTemplate={p.discountBadge}
+                    />
+                    <div className="flex gap-2 sm:justify-end">
+                      <Link
+                        href={detailHref}
+                        className="inline-flex min-h-[40px] items-center rounded-lg border border-atg-border px-3 py-2 text-sm font-semibold text-atg-fg hover:border-primary"
+                      >
+                        {p.viewDetails}
+                      </Link>
+                      <Link
+                        href={reserveHref}
+                        className="inline-flex min-h-[40px] items-center rounded-lg bg-primary px-3 py-2 text-sm font-bold text-white hover:bg-primary-hover"
+                      >
+                        {ctaLabel}
+                      </Link>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        ) : null}
+        {viewMode === 'compact' ? (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {pageItems.map((pkg) => {
+              const detailHref = buildPackageDetailHref(pkg.id, initialSearch);
+              return (
+                <Link
+                  key={pkg.id}
+                  href={detailHref}
+                  className="rounded-xl border border-atg-border bg-atg-elevated p-4 transition hover:border-primary/50 dark:border-atg-border dark:bg-atg-elevated"
+                >
+                  <p className="line-clamp-2 font-semibold text-atg-fg">{pkg.name}</p>
+                  <p className="mt-1 text-sm text-atg-muted">
+                    {p.itemsIncluded.replace('{n}', String(pkg.itemCount))}
+                  </p>
+                  <p className="mt-2 text-sm font-bold text-primary">
+                    {formatPackagePrice(pkg.pricing.totalCents, pkg.pricing.currency)}
+                  </p>
+                  {hasPackageDiscount(pkg.pricing) ? (
+                    <p className="mt-1 text-xs text-emerald-700 dark:text-emerald-300">
+                      {p.estimatedSavings.replace(
+                        '{amount}',
+                        formatPackagePrice(pkg.pricing.discountAmountCents, pkg.pricing.currency),
+                      )}
+                    </p>
+                  ) : null}
+                </Link>
+              );
+            })}
+          </div>
+        ) : null}
       </ListingPageBody>
 
       <HomeFooter />

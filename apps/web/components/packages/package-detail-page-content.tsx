@@ -47,6 +47,21 @@ function hasHtmlMarkup(value: string): boolean {
   return /<[^>]+>/.test(value);
 }
 
+function stripHtml(value: string): string {
+  return value.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function countWords(value: string): number {
+  if (!value.trim()) return 0;
+  return value.trim().split(/\s+/).length;
+}
+
+function truncateWords(value: string, limit: number): string {
+  const words = value.trim().split(/\s+/);
+  if (words.length <= limit) return value.trim();
+  return `${words.slice(0, limit).join(' ')}...`;
+}
+
 export function PackageDetailPageContent({
   packageId,
   initialSearch,
@@ -74,6 +89,7 @@ export function PackageDetailPageContent({
     parseParticipantsParam(initialSearch.travelers ?? initialSearch.participants),
   );
   const [step, setStep] = useState<PackageCompositionStep>('overview');
+  const [showFullDescription, setShowFullDescription] = useState(false);
 
   const listHref = `/packages${initialSearch.search ? `?search=${encodeURIComponent(initialSearch.search)}` : ''}`;
 
@@ -193,6 +209,24 @@ export function PackageDetailPageContent({
     router.push(`/booking/cart?${buildReservationQuery(draft)}`);
   }
 
+  const descriptionText = useMemo(() => stripHtml(detail?.package.description ?? ''), [
+    detail?.package.description,
+  ]);
+  const descriptionWordCount = useMemo(() => countWords(descriptionText), [descriptionText]);
+  const descriptionHasHtml = useMemo(
+    () => hasHtmlMarkup(detail?.package.description ?? ''),
+    [detail?.package.description],
+  );
+  const shouldCollapseDescription = descriptionWordCount > 100;
+  const truncatedDescriptionText = useMemo(
+    () => truncateWords(descriptionText, 100),
+    [descriptionText],
+  );
+
+  useEffect(() => {
+    setShowFullDescription(false);
+  }, [packageId, fetchId]);
+
   return (
     <div className="flex min-h-screen flex-col bg-atg-surface dark:bg-atg-surface">
       <HomeHeader />
@@ -251,7 +285,7 @@ export function PackageDetailPageContent({
 
         {detail && !loading && !notFound && (
           <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(280px,320px)]">
-            <div className="space-y-6">
+            <div className="min-w-0 space-y-6">
               {detail.images && detail.images.length > 0 ? (
                 <ProductGallery
                   images={detail.images}
@@ -275,16 +309,29 @@ export function PackageDetailPageContent({
                   {detail.package.name}
                 </h1>
                 {detail.package.description ? (
-                  hasHtmlMarkup(detail.package.description) ? (
+                  !descriptionHasHtml && shouldCollapseDescription && !showFullDescription ? (
+                    <p className="mt-4 break-words text-base leading-relaxed text-atg-muted [overflow-wrap:anywhere]">
+                      {truncatedDescriptionText}
+                    </p>
+                  ) : descriptionHasHtml ? (
                     <div
-                      className="mt-4 max-w-none break-words text-base leading-relaxed text-atg-muted [&_p]:my-2 [&_strong]:font-semibold"
+                      className="mt-4 max-w-none break-words text-base leading-relaxed text-atg-muted [overflow-wrap:anywhere] [&_a]:break-all [&_img]:my-3 [&_img]:h-auto [&_img]:max-w-full [&_p]:my-2 [&_strong]:font-semibold"
                       dangerouslySetInnerHTML={{ __html: detail.package.description }}
                     />
                   ) : (
-                    <p className="mt-4 break-words text-base leading-relaxed text-atg-muted">
+                    <p className="mt-4 break-words text-base leading-relaxed text-atg-muted [overflow-wrap:anywhere]">
                       {detail.package.description}
                     </p>
                   )
+                ) : null}
+                {!descriptionHasHtml && shouldCollapseDescription ? (
+                  <button
+                    type="button"
+                    onClick={() => setShowFullDescription((value) => !value)}
+                    className="mt-2 text-sm font-semibold text-primary hover:text-primary-hover"
+                  >
+                    {showFullDescription ? p.descriptionShowLess : p.descriptionShowMore}
+                  </button>
                 ) : null}
               </header>
 
@@ -309,7 +356,7 @@ export function PackageDetailPageContent({
                     <button
                       type="button"
                       onClick={() => goToStep('configure')}
-                      className="min-h-[48px] rounded-lg bg-primary px-6 py-3 text-sm font-bold uppercase tracking-wide text-white hover:bg-primary-hover"
+                      className="min-h-[48px] w-full rounded-lg bg-primary px-6 py-3 text-center text-sm font-bold uppercase tracking-wide text-white hover:bg-primary-hover sm:w-auto"
                     >
                       {p.startConfiguration}
                     </button>

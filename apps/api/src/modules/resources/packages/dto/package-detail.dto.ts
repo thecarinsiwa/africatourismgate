@@ -28,9 +28,21 @@ export type PackageGalleryImageDto = {
   sortOrder: number;
 };
 
+export type PackageDescriptionAssetDto = {
+  id: string;
+  packageId: string;
+  assetType: 'image' | 'pdf' | 'word';
+  url: string;
+  name: string | null;
+  sortOrder: number;
+  createdAt: Date;
+  updatedAt: Date | null;
+};
+
 export type PackageDetailDto = {
   package: Packages;
   items: PackageItemEnrichedDto[];
   pricing: PackagePricingDto;
   images: PackageGalleryImageDto[];
+  descriptionAssets: PackageDescriptionAssetDto[];
 };

@@ -21,6 +21,7 @@ export class CreatePackageDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
+  @MaxLength(5000)
   description?: string;
 
   @ApiProperty({ example: 10, default: 0 })

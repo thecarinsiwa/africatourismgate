@@ -79,6 +79,13 @@ export interface PackageDetail {
   package: Package;
   items: PackageItemEnriched[];
   pricing: PackagePricing;
+  images?: {
+    id: string;
+    url: string;
+    caption: string | null;
+    sortOrder: number;
+  }[];
+  descriptionAssets?: PackageDescriptionAsset[];
 }
 
 export interface PackageImage {
@@ -108,6 +115,43 @@ export interface PackageImagesListQuery {
   page?: number;
   limit?: number;
   packageId?: string;
+}
+
+export type PackageDescriptionAssetType = 'image' | 'pdf' | 'word';
+
+export interface PackageDescriptionAsset {
+  id: string;
+  packageId: string;
+  assetType: PackageDescriptionAssetType;
+  url: string;
+  name: string | null;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string | null;
+}
+
+export interface CreatePackageDescriptionAssetRequest {
+  packageId: string;
+  assetType: PackageDescriptionAssetType;
+  url: string;
+  name?: string;
+  sortOrder?: number;
+}
+
+export type UpdatePackageDescriptionAssetRequest = Partial<
+  Omit<CreatePackageDescriptionAssetRequest, 'packageId'>
+>;
+
+export interface PackageDescriptionAssetsListQuery {
+  page?: number;
+  limit?: number;
+  packageId?: string;
+  assetType?: PackageDescriptionAssetType;
+}
+
+export interface PackageDescriptionAssetUploadResponse {
+  url: string;
+  assetType: PackageDescriptionAssetType;
 }
 
 export interface PackageSuggestedImage {

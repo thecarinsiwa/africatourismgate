@@ -712,6 +712,10 @@ export type Translations = {
     sortRecommended: string;
     sortPriceLow: string;
     sortPriceHigh: string;
+    displayModeLabel: string;
+    displayModeCards: string;
+    displayModeList: string;
+    displayModeCompact: string;
     loading: string;
     loadingDetail: string;
     loadError: string;
@@ -805,6 +809,13 @@ export type Translations = {
     galleryPrevious: string;
     galleryNext: string;
     galleryCounter: (current: number, total: number) => string;
+    attachmentsTitle: string;
+    attachmentsCount: string;
+    openAttachment: string;
+    attachmentImageAlt: string;
+    attachmentFallbackName: string;
+    descriptionShowMore: string;
+    descriptionShowLess: string;
     stepOverview: string;
     stepConfigure: string;
     stepBook: string;
@@ -2036,6 +2047,10 @@ const fr: Translations = {
     sortRecommended: 'Recommandés',
     sortPriceLow: 'Prix croissant',
     sortPriceHigh: 'Prix décroissant',
+    displayModeLabel: 'Affichage',
+    displayModeCards: 'Cartes',
+    displayModeList: 'Liste',
+    displayModeCompact: 'Compact',
     loading: 'Chargement des forfaits…',
     loadingDetail: 'Chargement du forfait…',
     loadError: "Impossible de charger les forfaits. Vérifiez que l'API est démarrée.",
@@ -2138,6 +2153,13 @@ const fr: Translations = {
     galleryPrevious: 'Photo précédente',
     galleryNext: 'Photo suivante',
     galleryCounter: (current, total) => `Photo ${current} sur ${total}`,
+    attachmentsTitle: 'Pièces jointes',
+    attachmentsCount: '{count} pièce(s) jointe(s)',
+    openAttachment: 'Ouvrir le fichier',
+    attachmentImageAlt: 'Pièce jointe image',
+    attachmentFallbackName: 'Pièce jointe',
+    descriptionShowMore: 'Voir plus',
+    descriptionShowLess: 'Voir moins',
     stepOverview: 'Aperçu des prestations',
     stepConfigure: 'Configuration',
     stepBook: 'Réserver',
@@ -3435,6 +3457,10 @@ const en: Translations = {
     sortRecommended: 'Recommended',
     sortPriceLow: 'Price: low to high',
     sortPriceHigh: 'Price: high to low',
+    displayModeLabel: 'View',
+    displayModeCards: 'Cards',
+    displayModeList: 'List',
+    displayModeCompact: 'Compact',
     loading: 'Loading packages…',
     loadingDetail: 'Loading package…',
     loadError: 'Could not load packages. Check that the API is running.',
@@ -3536,6 +3562,13 @@ const en: Translations = {
     galleryPrevious: 'Previous photo',
     galleryNext: 'Next photo',
     galleryCounter: (current, total) => `Photo ${current} of ${total}`,
+    attachmentsTitle: 'Attachments',
+    attachmentsCount: '{count} attachment(s)',
+    openAttachment: 'Open file',
+    attachmentImageAlt: 'Attached image',
+    attachmentFallbackName: 'Attachment',
+    descriptionShowMore: 'Show more',
+    descriptionShowLess: 'Show less',
     stepOverview: 'Included services overview',
     stepConfigure: 'Configure each service',
     stepBook: 'Book',

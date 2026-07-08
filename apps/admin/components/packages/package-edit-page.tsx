@@ -10,9 +10,7 @@ import { AdminPageBackLink } from '../admin-page-back-link';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
 import { usePackageStatusLabels } from '../../lib/i18n/use-module-labels';
-import { PackageForm } from './package-form';
-import { PackageImagesSection } from './package-images-section';
-import { PackageItemsSection } from './package-items-section';
+import { PackageEditorTabs } from './package-editor-tabs';
 
 type PackageEditPageProps = {
   packageId: string;
@@ -123,9 +121,11 @@ export function PackageEditPage({ packageId }: PackageEditPageProps) {
         </Button>
       </div>
 
-      <PackageForm mode="edit" packageId={packageId} initialPackage={pkg} />
-      <PackageItemsSection packageId={packageId} />
-      <PackageImagesSection packageId={packageId} />
+      <PackageEditorTabs
+        packageId={packageId}
+        pkg={pkg}
+        onPackageUpdated={(nextPackage) => setState({ status: 'ready', pkg: nextPackage })}
+      />
     </div>
   );
 }
