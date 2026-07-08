@@ -1,6 +1,8 @@
 'use client';
 
 import { cn } from '@africatourismgate/ui';
+import Image from '@tiptap/extension-image';
+import Link from '@tiptap/extension-link';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
@@ -162,7 +164,17 @@ export function RichTextEditor({
   const [uploadError, setUploadError] = useState<string | null>(null);
 
   const editor = useEditor({
-    extensions: [StarterKit],
+    extensions: [
+      StarterKit,
+      Image.configure({
+        allowBase64: false,
+      }),
+      Link.configure({
+        openOnClick: false,
+        autolink: true,
+        defaultProtocol: 'https',
+      }),
+    ],
     content: value || '',
     immediatelyRender: false,
     editorProps: {
@@ -199,9 +211,8 @@ export function RichTextEditor({
         editor
           .chain()
           .focus()
-          .insertContent(
-            `<p><img src="${uploaded.url}" alt="${uploaded.name ?? 'Image'}" /></p>`,
-          )
+          .insertContent(`<img src="${uploaded.url}" alt="${uploaded.name ?? 'Image'}" />`)
+          .createParagraphNear()
           .run();
         return;
       }
