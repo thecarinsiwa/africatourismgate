@@ -80,7 +80,7 @@ export function PackageDescriptionAssetsSection({
       const result = await getApiClient().listPackageDescriptionAssets({
         packageId,
         page: 1,
-        limit: 200,
+        limit: 100,
       });
       setState({ status: 'ready', assets: result.data });
       onChanged?.();

@@ -98,9 +98,9 @@ export function PackageEditorTabs({ packageId, pkg, onPackageUpdated }: PackageE
     try {
       const client = getApiClient();
       const [itemsResult, imagesResult, assetsResult] = await Promise.all([
-        client.listPackageItems({ packageId, page: 1, limit: 200 }),
-        client.listPackageImages({ packageId, page: 1, limit: 200 }),
-        client.listPackageDescriptionAssets({ packageId, page: 1, limit: 200 }),
+        client.listPackageItems({ packageId, page: 1, limit: 100 }),
+        client.listPackageImages({ packageId, page: 1, limit: 100 }),
+        client.listPackageDescriptionAssets({ packageId, page: 1, limit: 100 }),
       ]);
       setCounts({
         items: itemsResult.data.length,

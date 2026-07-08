@@ -85,7 +85,7 @@ export function PermissionMatrix({
     try {
       const client = getApiClient();
       const [permsResult, rolePerms] = await Promise.all([
-        client.listPermissions({ page: 1, limit: 200 }),
+        client.listPermissions({ page: 1, limit: 100 }),
         client.getRolePermissions(roleId),
       ]);
       setPermissions(permsResult.data);
