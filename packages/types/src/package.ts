@@ -79,6 +79,13 @@ export interface PackageDetail {
   package: Package;
   items: PackageItemEnriched[];
   pricing: PackagePricing;
+  images?: {
+    id: string;
+    url: string;
+    caption: string | null;
+    sortOrder: number;
+  }[];
+  descriptionAssets?: PackageDescriptionAsset[];
 }
 
 export interface PackageImage {

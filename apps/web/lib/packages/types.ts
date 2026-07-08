@@ -30,6 +30,19 @@ export type PackageItemEnriched = {
   currency: string;
 };
 
+export type PackageDescriptionAssetType = 'image' | 'pdf' | 'word';
+
+export type PackageDescriptionAsset = {
+  id: string;
+  packageId: string;
+  assetType: PackageDescriptionAssetType;
+  url: string;
+  name: string | null;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string | null;
+};
+
 export type PackageDetail = {
   package: {
     id: string;
@@ -41,6 +54,7 @@ export type PackageDetail = {
   items: PackageItemEnriched[];
   pricing: PackagePricing;
   images?: ProductGalleryImage[];
+  descriptionAssets?: PackageDescriptionAsset[];
 };
 
 export type PackagesBrowseQuery = {

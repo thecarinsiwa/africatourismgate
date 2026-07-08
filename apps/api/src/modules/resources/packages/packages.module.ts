@@ -8,6 +8,7 @@ import {
   FlightImages,
   Flights,
   PackageItems,
+  PackageDescriptionAssets,
   PackageImages,
   Packages,
   Properties,
@@ -27,6 +28,7 @@ import { PackagesService } from './packages.service';
     TypeOrmModule.forFeature([
       Packages,
       PackageItems,
+      PackageDescriptionAssets,
       PackageImages,
       Properties,
       Rooms,

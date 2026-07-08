@@ -805,6 +805,11 @@ export type Translations = {
     galleryPrevious: string;
     galleryNext: string;
     galleryCounter: (current: number, total: number) => string;
+    attachmentsTitle: string;
+    attachmentsCount: string;
+    openAttachment: string;
+    attachmentImageAlt: string;
+    attachmentFallbackName: string;
     stepOverview: string;
     stepConfigure: string;
     stepBook: string;
@@ -2138,6 +2143,11 @@ const fr: Translations = {
     galleryPrevious: 'Photo précédente',
     galleryNext: 'Photo suivante',
     galleryCounter: (current, total) => `Photo ${current} sur ${total}`,
+    attachmentsTitle: 'Pièces jointes',
+    attachmentsCount: '{count} pièce(s) jointe(s)',
+    openAttachment: 'Ouvrir le fichier',
+    attachmentImageAlt: 'Pièce jointe image',
+    attachmentFallbackName: 'Pièce jointe',
     stepOverview: 'Aperçu des prestations',
     stepConfigure: 'Configuration',
     stepBook: 'Réserver',
@@ -3536,6 +3546,11 @@ const en: Translations = {
     galleryPrevious: 'Previous photo',
     galleryNext: 'Next photo',
     galleryCounter: (current, total) => `Photo ${current} of ${total}`,
+    attachmentsTitle: 'Attachments',
+    attachmentsCount: '{count} attachment(s)',
+    openAttachment: 'Open file',
+    attachmentImageAlt: 'Attached image',
+    attachmentFallbackName: 'Attachment',
     stepOverview: 'Included services overview',
     stepConfigure: 'Configure each service',
     stepBook: 'Book',

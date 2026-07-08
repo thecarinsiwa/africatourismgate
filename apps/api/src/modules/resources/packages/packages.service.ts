@@ -2,9 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, In, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
-import { PackageItems, PackageImages, Packages } from '../../../entities/generated';
+import {
+  PackageDescriptionAssets,
+  PackageItems,
+  PackageImages,
+  Packages,
+} from '../../../entities/generated';
 import { CrudService } from '../../../common/crud/crud.service';
-import { PackageDetailDto, PackageGalleryImageDto } from './dto/package-detail.dto';
+import {
+  PackageDescriptionAssetDto,
+  PackageDetailDto,
+  PackageGalleryImageDto,
+} from './dto/package-detail.dto';
 import { CreatePackageDto } from './dto/create-package.dto';
 import { PackagesListQueryDto } from './dto/packages-list-query.dto';
 import { UpdatePackageDto } from './dto/update-package.dto';
@@ -19,6 +28,8 @@ export class PackagesService extends CrudService<Packages> {
     private readonly packageItemsRepository: Repository<PackageItems>,
     @InjectRepository(PackageImages)
     private readonly packageImagesRepository: Repository<PackageImages>,
+    @InjectRepository(PackageDescriptionAssets)
+    private readonly packageDescriptionAssetsRepository: Repository<PackageDescriptionAssets>,
     private readonly pricingService: PackageItemPricingService,
   ) {
     super(packagesRepository);
@@ -149,8 +160,9 @@ export class PackagesService extends CrudService<Packages> {
     const discountPercent = Number(pkg.discountPercent);
     const pricing = this.pricingService.computePricing(items, discountPercent);
     const images = await this.loadPackageGallery(id);
+    const descriptionAssets = await this.loadPackageDescriptionAssets(id);
 
-    return { package: pkg, items, pricing, images };
+    return { package: pkg, items, pricing, images, descriptionAssets };
   }
 
   async findPrimaryImageUrlsByPackageIds(
@@ -185,6 +197,27 @@ export class PackagesService extends CrudService<Packages> {
         url: row.url,
         caption: row.caption ?? null,
         sortOrder: row.sortOrder,
+      }));
+  }
+
+  private async loadPackageDescriptionAssets(
+    packageId: string,
+  ): Promise<PackageDescriptionAssetDto[]> {
+    const rows = await this.packageDescriptionAssetsRepository.find({
+      where: { packageId },
+      order: { sortOrder: 'ASC', createdAt: 'DESC' },
+    });
+    return rows
+      .filter((row) => !row.deletedAt)
+      .map((row) => ({
+        id: row.id,
+        packageId: row.packageId,
+        assetType: row.assetType,
+        url: row.url,
+        name: row.name ?? null,
+        sortOrder: row.sortOrder,
+        createdAt: row.createdAt,
+        updatedAt: row.updatedAt ?? null,
       }));
   }
 }

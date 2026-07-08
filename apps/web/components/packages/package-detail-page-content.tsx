@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getPackageDetail } from '../../lib/api/public';
@@ -45,6 +46,10 @@ function inferInitialStep(startDate: string, hash: string): PackageCompositionSt
 
 function hasHtmlMarkup(value: string): boolean {
   return /<[^>]+>/.test(value);
+}
+
+function isImageAsset(url: string): boolean {
+  return /\.(png|jpe?g|webp|gif|svg)(\?.*)?$/i.test(url);
 }
 
 export function PackageDetailPageContent({
@@ -285,6 +290,55 @@ export function PackageDetailPageContent({
                       {detail.package.description}
                     </p>
                   )
+                ) : null}
+
+                {detail.descriptionAssets && detail.descriptionAssets.length > 0 ? (
+                  <section className="mt-6 space-y-3 rounded-xl border border-atg-border bg-atg-elevated p-4 dark:border-atg-border dark:bg-atg-elevated">
+                    <div>
+                      <h2 className="text-sm font-semibold text-atg-fg">{p.attachmentsTitle}</h2>
+                      <p className="mt-1 text-xs text-atg-muted">
+                        {p.attachmentsCount.replace(
+                          '{count}',
+                          String(detail.descriptionAssets.length),
+                        )}
+                      </p>
+                    </div>
+
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {detail.descriptionAssets.map((asset) => {
+                        const showImage =
+                          asset.assetType === 'image' || isImageAsset(asset.url);
+                        return (
+                          <a
+                            key={asset.id}
+                            href={asset.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="group rounded-lg border border-atg-border bg-atg-surface p-3 transition hover:border-primary/60 dark:border-atg-border dark:bg-atg-surface/50"
+                          >
+                            {showImage ? (
+                              <Image
+                                src={asset.url}
+                                alt={asset.name ?? p.attachmentImageAlt}
+                                width={520}
+                                height={300}
+                                unoptimized
+                                className="aspect-[16/10] w-full rounded-md object-cover"
+                              />
+                            ) : (
+                              <div className="flex h-[92px] items-center justify-center rounded-md bg-atg-muted/10 text-xs font-semibold uppercase tracking-wide text-atg-muted">
+                                {asset.assetType}
+                              </div>
+                            )}
+                            <p className="mt-2 truncate text-sm font-medium text-atg-fg group-hover:text-primary">
+                              {asset.name ?? p.attachmentFallbackName}
+                            </p>
+                            <p className="mt-1 text-xs text-atg-muted">{p.openAttachment}</p>
+                          </a>
+                        );
+                      })}
+                    </div>
+                  </section>
                 ) : null}
               </header>
 
