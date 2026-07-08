@@ -42,3 +42,4 @@ for port in "${PORTS[@]}"; do
 done
 
 echo "Done. Start apps with: pm2 start ecosystem.config.cjs --only atg-api,atg-web,atg-admin"
+echo "  GAP (if enabled): bash scripts/restart-production.sh"

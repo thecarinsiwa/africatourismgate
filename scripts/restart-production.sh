@@ -1,11 +1,30 @@
 #!/usr/bin/env bash
-# Clean restart: free ports, remove duplicate PM2 entries, start api + web + admin.
+# Clean restart: free ports, remove duplicate PM2 entries, start api + web + admin (+ optional pos/gap).
 set -euo pipefail
 
 REPO_DIR="${REPO_DIR:-$(cd "$(dirname "$0")/.." && pwd)}"
 cd "${REPO_DIR}"
 
+if [[ -f "${REPO_DIR}/.env" ]]; then
+  set -a
+  # shellcheck disable=SC1091
+  source "${REPO_DIR}/.env"
+  set +a
+fi
+
+# Enable GAP when explicitly requested or when production GAP URL is configured.
+if [[ "${ATG_ENABLE_GAP:-0}" != "1" ]] && [[ -n "${NEXT_PUBLIC_GAP_URL:-}" ]]; then
+  export ATG_ENABLE_GAP=1
+fi
+
+export ATG_ENABLE_GAP="${ATG_ENABLE_GAP:-0}"
+export ATG_ENABLE_POS="${ATG_ENABLE_POS:-0}"
+GAP_PORT="${GAP_PORT:-3004}"
+
 echo "==> Clean restart (Africa Tourism Gate)…"
+if [[ "${ATG_ENABLE_GAP:-0}" == "1" ]]; then
+  echo "    GAP enabled (ATG_ENABLE_GAP=1, port ${GAP_PORT:-3004})"
+fi
 
 # Remove duplicate PM2 apps (e.g. atg-api id 4 and id 0)
 if command -v pm2 >/dev/null 2>&1; then
@@ -64,5 +83,5 @@ curl -sf "http://127.0.0.1:3000/api/health" && echo " API OK" || echo " API fail
 curl -sf -o /dev/null "http://127.0.0.1:3001" && echo " Admin OK" || echo " Admin failed"
 curl -sf -o /dev/null "http://127.0.0.1:3002" && echo " Web OK" || echo " Web failed"
 if [[ "${ATG_ENABLE_GAP:-0}" == "1" ]]; then
-  curl -sf -o /dev/null "http://127.0.0.1:3004" && echo " GAP OK" || echo " GAP failed"
+  curl -sf -o /dev/null "http://127.0.0.1:${GAP_PORT}" && echo " GAP OK (${NEXT_PUBLIC_GAP_URL:-http://127.0.0.1:${GAP_PORT}})" || echo " GAP failed (port ${GAP_PORT})"
 fi
