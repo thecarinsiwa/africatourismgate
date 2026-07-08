@@ -5,12 +5,9 @@ set -euo pipefail
 REPO_DIR="${REPO_DIR:-$(cd "$(dirname "$0")/.." && pwd)}"
 cd "${REPO_DIR}"
 
-if [[ -f "${REPO_DIR}/.env" ]]; then
-  set -a
-  # shellcheck disable=SC1091
-  source "${REPO_DIR}/.env"
-  set +a
-fi
+# shellcheck source=lib/load-dotenv.sh
+source "${REPO_DIR}/scripts/lib/load-dotenv.sh"
+load_dotenv "${REPO_DIR}/.env"
 
 # Enable GAP when explicitly requested or when production GAP URL is configured.
 if [[ "${ATG_ENABLE_GAP:-0}" != "1" ]] && [[ -n "${NEXT_PUBLIC_GAP_URL:-}" ]]; then
@@ -42,7 +39,7 @@ fi
 
 bash "${REPO_DIR}/scripts/free-prod-ports.sh"
 
-chmod +x "${REPO_DIR}"/scripts/pm2-start-*.sh "${REPO_DIR}"/scripts/free-prod-ports.sh
+chmod +x "${REPO_DIR}"/scripts/pm2-start-*.sh "${REPO_DIR}"/scripts/free-prod-ports.sh "${REPO_DIR}"/scripts/lib/load-dotenv.sh
 
 if [[ ! -d "${REPO_DIR}/apps/web/.next" ]] || [[ ! -d "${REPO_DIR}/apps/admin/.next" ]]; then
   echo "==> Missing Next.js build — running pnpm build…"
