@@ -154,7 +154,7 @@ export function PackageForm({ mode, packageId, initialPackage }: PackageFormProp
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-2xl space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-4">
       {formError ? (
         <p
           role="alert"
@@ -181,7 +181,7 @@ export function PackageForm({ mode, packageId, initialPackage }: PackageFormProp
         />
       </Card>
 
-      <Card variant="dashboard" className="space-y-4">
+      <Card variant="dashboard" className="max-w-xl space-y-4">
         <h3 className="text-sm font-semibold text-atg-fg">{t('sections.pricing')}</h3>
         <Input
           label={t('discountPercent')}
@@ -202,7 +202,7 @@ export function PackageForm({ mode, packageId, initialPackage }: PackageFormProp
         />
       </Card>
 
-      <div className="flex gap-3">
+      <div className="flex flex-wrap gap-3">
         <Button type="submit" loading={submitting}>
           {mode === 'create' ? t('submitCreate') : tActions('save')}
         </Button>

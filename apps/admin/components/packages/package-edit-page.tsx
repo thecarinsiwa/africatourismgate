@@ -103,7 +103,7 @@ export function PackageEditPage({ packageId }: PackageEditPageProps) {
     <div className="space-y-6">
       <AdminPageBackLink href="/produits/forfaits" label={t('backLink')} />
 
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div className="flex flex-col gap-4 rounded-xl border border-atg-border bg-atg-elevated p-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-2">
           <h2 className="text-lg font-semibold text-atg-fg">{pkg.name}</h2>
           <div className="flex flex-wrap items-center gap-2">

@@ -34,9 +34,10 @@ const emptyForm: ImageFormValues = { url: '', caption: '', sortOrder: '0' };
 
 type PackageImagesSectionProps = {
   packageId: string;
+  embedded?: boolean;
 };
 
-export function PackageImagesSection({ packageId }: PackageImagesSectionProps) {
+export function PackageImagesSection({ packageId, embedded = false }: PackageImagesSectionProps) {
   const { packages: getPackagesErrorMessage } = useAdminErrorMessages();
   const tGallery = useTranslations('modules.common.imagesGallery');
   const tCommon = useTranslations('modules.common');
@@ -319,7 +320,7 @@ export function PackageImagesSection({ packageId }: PackageImagesSectionProps) {
   const hasSuggestions = suggestions.some((group) => group.images.length > 0);
 
   return (
-    <section className="space-y-6 border-t border-atg-border pt-10">
+    <section className={cn('space-y-6', embedded ? '' : 'border-t border-atg-border pt-10')}>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-lg font-semibold text-atg-fg">{tGallery('titlePackage')}</h2>
