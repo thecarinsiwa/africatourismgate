@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getPackageDetail } from '../../lib/api/public';
@@ -61,10 +60,6 @@ function truncateWords(value: string, limit: number): string {
   const words = value.trim().split(/\s+/);
   if (words.length <= limit) return value.trim();
   return `${words.slice(0, limit).join(' ')}...`;
-}
-
-function isImageAsset(url: string): boolean {
-  return /\.(png|jpe?g|webp|gif|svg)(\?.*)?$/i.test(url);
 }
 
 export function PackageDetailPageContent({
@@ -214,11 +209,14 @@ export function PackageDetailPageContent({
     router.push(`/booking/cart?${buildReservationQuery(draft)}`);
   }
 
-  const descriptionText = useMemo(
-    () => stripHtml(detail?.package.description ?? ''),
+  const descriptionText = useMemo(() => stripHtml(detail?.package.description ?? ''), [
+    detail?.package.description,
+  ]);
+  const descriptionWordCount = useMemo(() => countWords(descriptionText), [descriptionText]);
+  const descriptionHasHtml = useMemo(
+    () => hasHtmlMarkup(detail?.package.description ?? ''),
     [detail?.package.description],
   );
-  const descriptionWordCount = useMemo(() => countWords(descriptionText), [descriptionText]);
   const shouldCollapseDescription = descriptionWordCount > 100;
   const truncatedDescriptionText = useMemo(
     () => truncateWords(descriptionText, 100),
@@ -311,13 +309,13 @@ export function PackageDetailPageContent({
                   {detail.package.name}
                 </h1>
                 {detail.package.description ? (
-                  shouldCollapseDescription && !showFullDescription ? (
+                  !descriptionHasHtml && shouldCollapseDescription && !showFullDescription ? (
                     <p className="mt-4 break-words text-base leading-relaxed text-atg-muted [overflow-wrap:anywhere]">
                       {truncatedDescriptionText}
                     </p>
-                  ) : hasHtmlMarkup(detail.package.description) ? (
+                  ) : descriptionHasHtml ? (
                     <div
-                      className="mt-4 max-w-none break-words text-base leading-relaxed text-atg-muted [overflow-wrap:anywhere] [&_a]:break-all [&_p]:my-2 [&_strong]:font-semibold"
+                      className="mt-4 max-w-none break-words text-base leading-relaxed text-atg-muted [overflow-wrap:anywhere] [&_a]:break-all [&_img]:my-3 [&_img]:h-auto [&_img]:max-w-full [&_p]:my-2 [&_strong]:font-semibold"
                       dangerouslySetInnerHTML={{ __html: detail.package.description }}
                     />
                   ) : (
@@ -326,7 +324,7 @@ export function PackageDetailPageContent({
                     </p>
                   )
                 ) : null}
-                {shouldCollapseDescription ? (
+                {!descriptionHasHtml && shouldCollapseDescription ? (
                   <button
                     type="button"
                     onClick={() => setShowFullDescription((value) => !value)}
@@ -334,55 +332,6 @@ export function PackageDetailPageContent({
                   >
                     {showFullDescription ? p.descriptionShowLess : p.descriptionShowMore}
                   </button>
-                ) : null}
-
-                {detail.descriptionAssets && detail.descriptionAssets.length > 0 ? (
-                  <section className="mt-6 space-y-3 rounded-xl border border-atg-border bg-atg-elevated p-4 dark:border-atg-border dark:bg-atg-elevated">
-                    <div>
-                      <h2 className="text-sm font-semibold text-atg-fg">{p.attachmentsTitle}</h2>
-                      <p className="mt-1 text-xs text-atg-muted">
-                        {p.attachmentsCount.replace(
-                          '{count}',
-                          String(detail.descriptionAssets.length),
-                        )}
-                      </p>
-                    </div>
-
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      {detail.descriptionAssets.map((asset) => {
-                        const showImage =
-                          asset.assetType === 'image' || isImageAsset(asset.url);
-                        return (
-                          <a
-                            key={asset.id}
-                            href={asset.url}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="group rounded-lg border border-atg-border bg-atg-surface p-3 transition hover:border-primary/60 dark:border-atg-border dark:bg-atg-surface/50"
-                          >
-                            {showImage ? (
-                              <Image
-                                src={asset.url}
-                                alt={asset.name ?? p.attachmentImageAlt}
-                                width={520}
-                                height={300}
-                                unoptimized
-                                className="aspect-[16/10] w-full rounded-md object-cover"
-                              />
-                            ) : (
-                              <div className="flex h-[92px] items-center justify-center rounded-md bg-atg-muted/10 text-xs font-semibold uppercase tracking-wide text-atg-muted">
-                                {asset.assetType}
-                              </div>
-                            )}
-                            <p className="mt-2 truncate text-sm font-medium text-atg-fg group-hover:text-primary">
-                              {asset.name ?? p.attachmentFallbackName}
-                            </p>
-                            <p className="mt-1 text-xs text-atg-muted">{p.openAttachment}</p>
-                          </a>
-                        );
-                      })}
-                    </div>
-                  </section>
                 ) : null}
               </header>
 
