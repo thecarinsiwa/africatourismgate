@@ -1,11 +1,11 @@
 export type SearchVertical = 'hotels' | 'flights' | 'cars' | 'cruises' | 'tours';
 
 export const SEARCH_VERTICALS: SearchVertical[] = [
+  'tours',
   'hotels',
   'flights',
   'cars',
   'cruises',
-  'tours',
 ];
 
 /** Toggle per vertical; unimplemented verticals route to /coming-soon/[vertical]. */

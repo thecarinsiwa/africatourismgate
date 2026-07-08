@@ -169,13 +169,13 @@ export function SearchTabs() {
     () => activityDestinations.map((destination) => destination.name),
     [activityDestinations],
   );
-  const [activeTab, setActiveTab] = useState<SearchTab>('hotels');
+  const [activeTab, setActiveTab] = useState<SearchTab>('tours');
   const tabs = useMemo(() => ([
-    { id: 'flights' as const, label: t.search.tabs.flights },
+    { id: 'tours' as const, label: t.search.tabs.tours },
     { id: 'hotels' as const, label: t.search.tabs.hotels },
+    { id: 'flights' as const, label: t.search.tabs.flights },
     { id: 'cars' as const, label: t.search.tabs.cars },
     { id: 'cruises' as const, label: t.search.tabs.cruises },
-    { id: 'tours' as const, label: t.search.tabs.tours },
   ]), [t]);
 
   const [departDate, setDepartDate] = useState('');
