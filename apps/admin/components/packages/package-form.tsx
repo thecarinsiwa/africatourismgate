@@ -7,9 +7,10 @@ import type { CreatePackageRequest, Package } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
-import { RichTextEditor } from '../rich-text-editor';
-import { getApiClient } from '../../lib/auth/api';
+import { RichTextEditor, type RichTextUploadedAsset } from '../rich-text-editor';
+import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
 import { isRichTextEmpty } from '../../lib/rich-text';
+import { getSession } from '../../lib/auth/session';
 
 export type PackageFormValues = {
   name: string;
@@ -70,6 +71,41 @@ export function PackageForm({ mode, packageId, initialPackage }: PackageFormProp
   );
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  const handleUploadDescriptionAsset = useCallback(
+    async (file: File): Promise<RichTextUploadedAsset> => {
+      const session = getSession();
+      if (!session?.accessToken) {
+        throw new Error('Session expirée');
+      }
+      const body = new FormData();
+      body.append('file', file);
+      const uploadPath = packageId
+        ? `/packages/${packageId}/upload-description-asset`
+        : '/packages/upload-description-asset';
+      const response = await fetch(`${resolveApiBaseUrl()}${uploadPath}`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${session.accessToken}` },
+        body,
+      });
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+      const payload = (await response.json()) as {
+        url?: string;
+        assetType?: 'image' | 'pdf' | 'word';
+      };
+      if (!payload.url || !payload.assetType) {
+        throw new Error('Invalid upload response');
+      }
+      return {
+        url: payload.url,
+        assetType: payload.assetType,
+        name: file.name,
+      };
+    },
+    [packageId],
+  );
 
   const updateField = useCallback(
     <K extends keyof PackageFormValues>(key: K, value: PackageFormValues[K]) => {
@@ -141,6 +177,7 @@ export function PackageForm({ mode, packageId, initialPackage }: PackageFormProp
           value={values.description}
           onChange={(html) => updateField('description', html)}
           placeholder={t('descriptionPlaceholder')}
+          onUploadAsset={handleUploadDescriptionAsset}
         />
       </Card>
 
