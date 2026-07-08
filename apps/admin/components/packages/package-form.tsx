@@ -11,7 +11,6 @@ import { RichTextEditor, type RichTextUploadedAsset } from '../rich-text-editor'
 import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
 import { isRichTextEmpty } from '../../lib/rich-text';
 import { getSession } from '../../lib/auth/session';
-import { PackageDescriptionAssetsSection } from './package-description-assets-section';
 
 export type PackageFormValues = {
   name: string;
@@ -59,17 +58,9 @@ type PackageFormProps = {
   mode: 'create' | 'edit';
   packageId?: string;
   initialPackage?: Package;
-  showAttachmentsSection?: boolean;
-  showPublicationSection?: boolean;
 };
 
-export function PackageForm({
-  mode,
-  packageId,
-  initialPackage,
-  showAttachmentsSection = true,
-  showPublicationSection = true,
-}: PackageFormProps) {
+export function PackageForm({ mode, packageId, initialPackage }: PackageFormProps) {
   const { packages: getPackagesErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.packages.form');
   const tCommon = useTranslations('modules.common');
@@ -190,8 +181,6 @@ export function PackageForm({
         />
       </Card>
 
-      {showAttachmentsSection ? <PackageDescriptionAssetsSection packageId={packageId} /> : null}
-
       <Card variant="dashboard" className="space-y-4">
         <h3 className="text-sm font-semibold text-atg-fg">{t('sections.pricing')}</h3>
         <Input
@@ -212,31 +201,6 @@ export function PackageForm({
           onChange={(e) => updateField('durationDays', e.target.value)}
         />
       </Card>
-
-      {showPublicationSection ? (
-        <Card variant="dashboard" className="space-y-4">
-          <h3 className="text-sm font-semibold text-atg-fg">{t('sections.publication')}</h3>
-          <label className="flex items-center gap-2 text-sm text-atg-fg">
-            <input
-              type="checkbox"
-              checked={values.active}
-              onChange={(e) => updateField('active', e.target.checked)}
-              className="rounded border-atg-border"
-            />
-            {t('activeLabel')}
-          </label>
-          <label className="flex items-center gap-2 text-sm text-atg-fg">
-            <input
-              type="checkbox"
-              checked={values.isFeatured}
-              onChange={(e) => updateField('isFeatured', e.target.checked)}
-              className="rounded border-atg-border"
-            />
-            {t('featuredLabel')}
-          </label>
-          <p className="text-xs text-atg-muted">{t('featuredHint')}</p>
-        </Card>
-      ) : null}
 
       <div className="flex gap-3">
         <Button type="submit" loading={submitting}>

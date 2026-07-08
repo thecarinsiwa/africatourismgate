@@ -57,13 +57,7 @@ export function PackageEditorTabs({ packageId, pkg, onPackageUpdated }: PackageE
       </TabsList>
 
       <TabsContent value="informations">
-        <PackageForm
-          mode="edit"
-          packageId={packageId}
-          initialPackage={pkg}
-          showAttachmentsSection={false}
-          showPublicationSection={false}
-        />
+        <PackageForm mode="edit" packageId={packageId} initialPackage={pkg} />
       </TabsContent>
 
       <TabsContent value="prestations">
