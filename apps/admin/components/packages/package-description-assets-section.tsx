@@ -83,11 +83,10 @@ export function PackageDescriptionAssetsSection({
         limit: 100,
       });
       setState({ status: 'ready', assets: result.data });
-      onChanged?.();
     } catch (error) {
       setState({ status: 'error', message: getPackagesErrorMessage(error) });
     }
-  }, [packageId, getPackagesErrorMessage, onChanged]);
+  }, [packageId, getPackagesErrorMessage]);
 
   useEffect(() => {
     if (!packageId) return;
@@ -176,6 +175,7 @@ export function PackageDescriptionAssetsSection({
       await getApiClient().createPackageDescriptionAsset(body);
       resetForm();
       await load();
+      onChanged?.();
     } catch (error) {
       setFormError(getPackagesErrorMessage(error));
     } finally {
@@ -190,13 +190,14 @@ export function PackageDescriptionAssetsSection({
       try {
         await getApiClient().deletePackageDescriptionAsset(asset.id);
         await load();
+        onChanged?.();
       } catch (error) {
         setFormError(getPackagesErrorMessage(error));
       } finally {
         setDeletingId(null);
       }
     },
-    [getPackagesErrorMessage, load, t],
+    [getPackagesErrorMessage, load, onChanged, t],
   );
 
   const columns = useMemo<ColumnDef<PackageDescriptionAsset, unknown>[]>(

@@ -75,11 +75,10 @@ export function PackageImagesSection({
         limit: 100,
       });
       setState({ status: 'ready', images: result.data });
-      onChanged?.();
     } catch (error) {
       setState({ status: 'error', message: getPackagesErrorMessage(error) });
     }
-  }, [packageId, getPackagesErrorMessage, onChanged]);
+  }, [packageId, getPackagesErrorMessage]);
 
   const loadSuggestions = useCallback(async () => {
     setSuggestionsLoading(true);
@@ -197,6 +196,7 @@ export function PackageImagesSection({
       }
       resetForm();
       await load();
+      onChanged?.();
     } catch (error) {
       setFormError(getPackagesErrorMessage(error));
     } finally {
@@ -224,6 +224,7 @@ export function PackageImagesSection({
         ...(caption ? { caption } : {}),
       });
       await load();
+      onChanged?.();
     } catch (error) {
       setFormError(getPackagesErrorMessage(error));
     } finally {
@@ -238,13 +239,14 @@ export function PackageImagesSection({
       try {
         await getApiClient().deletePackageImage(img.id);
         await load();
+        onChanged?.();
       } catch (error) {
         setFormError(getPackagesErrorMessage(error));
       } finally {
         setDeletingId(null);
       }
     },
-    [load, tGallery, getPackagesErrorMessage],
+    [getPackagesErrorMessage, load, onChanged, tGallery],
   );
 
   const columns = useMemo<ColumnDef<PackageImage, unknown>[]>(

@@ -67,11 +67,10 @@ export function PackageItemsSection({
       const data = await getApiClient().getPackage(packageId);
       setDetail(data);
       setState({ status: 'ready' });
-      onChanged?.();
     } catch (error) {
       setState({ status: 'error', message: getPackagesErrorMessage(error) });
     }
-  }, [packageId, getPackagesErrorMessage, onChanged]);
+  }, [packageId, getPackagesErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -155,6 +154,7 @@ export function PackageItemsSection({
       });
       resetForm();
       await load();
+      onChanged?.();
     } catch (error) {
       setFormError(getPackagesErrorMessage(error));
     } finally {
@@ -169,13 +169,14 @@ export function PackageItemsSection({
       try {
         await getApiClient().deletePackageItem(item.id);
         await load();
+        onChanged?.();
       } catch (error) {
         setFormError(getPackagesErrorMessage(error));
       } finally {
         setDeletingId(null);
       }
     },
-    [getPackagesErrorMessage, load, t],
+    [getPackagesErrorMessage, load, onChanged, t],
   );
 
   const columns = useMemo<ColumnDef<PackageItemEnriched, unknown>[]>(

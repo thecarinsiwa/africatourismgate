@@ -123,6 +123,9 @@ export function PackageEditorTabs({ packageId, pkg, onPackageUpdated }: PackageE
     const qs = params.toString();
     router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
   }, [countsReady, isStepEnabled, pathname, requestedTab, router, searchParams]);
+  const handleSectionChanged = useCallback(() => {
+    void loadCompletion();
+  }, [loadCompletion]);
 
   return (
     <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4">
@@ -209,7 +212,7 @@ export function PackageEditorTabs({ packageId, pkg, onPackageUpdated }: PackageE
         value="prestations"
         className="rounded-xl border border-atg-border bg-atg-elevated/60 p-4 sm:p-6"
       >
-        <PackageItemsSection packageId={packageId} embedded onChanged={() => void loadCompletion()} />
+        <PackageItemsSection packageId={packageId} embedded onChanged={handleSectionChanged} />
       </TabsContent>
 
       <TabsContent
@@ -220,11 +223,11 @@ export function PackageEditorTabs({ packageId, pkg, onPackageUpdated }: PackageE
           <PackageImagesSection
             packageId={packageId}
             embedded
-            onChanged={() => void loadCompletion()}
+            onChanged={handleSectionChanged}
           />
           <PackageDescriptionAssetsSection
             packageId={packageId}
-            onChanged={() => void loadCompletion()}
+            onChanged={handleSectionChanged}
           />
         </div>
       </TabsContent>
