@@ -24,7 +24,33 @@
     "durationDays": "Fromrée (jours)",
     "activeLabel": "Active package",
     "featuredLabel": "Homepage featured promo",
-    "featuredHint": "Only one package can be highlighted at a time on the public homepage promo banner."
+    "featuredHint": "Only one package can be highlighted at a time on the public homepage promo banner.",
+    "attachments": {
+      "title": "Description attachments",
+      "hint": "Add images, PDF or Word documents related to the package description.",
+      "add": "Add attachment",
+      "saveFirst": "Create the package first to save attachments in database.",
+      "empty": "No attachments saved yet.",
+      "unnamed": "Unnamed",
+      "fileHint": "Formats: JPG, PNG, WEBP, PDF, DOC, DOCX (max 10 MB)",
+      "deleteConfirm": "Delete attachment \"{name}\"?",
+      "fields": {
+        "name": "Display name",
+        "type": "Type"
+      },
+      "types": {
+        "image": "Image",
+        "pdf": "PDF",
+        "word": "Word"
+      },
+      "columns": {
+        "name": "Name"
+      },
+      "validation": {
+        "invalidType": "Unsupported file type.",
+        "fileTooLarge": "File exceeds 10 MB."
+      }
+    }
   },
   "detail": {
     "editTitle": "Modifier le forfait",

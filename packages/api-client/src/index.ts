@@ -127,10 +127,13 @@ import type {
   RecordCashPaymentRequest,
   UpdateBookingStatusRequest,
   CreatePackageImageRequest,
+  CreatePackageDescriptionAssetRequest,
   CreatePackageItemRequest,
   CreatePackageRequest,
   Package,
   PackageDetail,
+  PackageDescriptionAsset,
+  PackageDescriptionAssetsListQuery,
   PackageImage,
   PackageImagesListQuery,
   PackageItem,
@@ -138,6 +141,7 @@ import type {
   PackageSuggestedImageGroup,
   PackagesListQuery,
   UpdatePackageImageRequest,
+  UpdatePackageDescriptionAssetRequest,
   UpdatePackageItemRequest,
   UpdatePackageRequest,
   CreateAirlineRequest,
@@ -2119,6 +2123,39 @@ export class ApiClient {
 
   deletePackageImage(id: string): Promise<void> {
     return this.request<void>(`/package-images/${id}`, { method: 'DELETE' });
+  }
+
+  listPackageDescriptionAssets(
+    query?: PackageDescriptionAssetsListQuery,
+  ): Promise<PaginatedResponse<PackageDescriptionAsset>> {
+    return fetchPaginated<PackageDescriptionAsset>(this, '/package-description-assets', query);
+  }
+
+  getPackageDescriptionAsset(id: string): Promise<PackageDescriptionAsset> {
+    return this.request<PackageDescriptionAsset>(`/package-description-assets/${id}`);
+  }
+
+  createPackageDescriptionAsset(
+    body: CreatePackageDescriptionAssetRequest,
+  ): Promise<PackageDescriptionAsset> {
+    return this.request<PackageDescriptionAsset>('/package-description-assets', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updatePackageDescriptionAsset(
+    id: string,
+    body: UpdatePackageDescriptionAssetRequest,
+  ): Promise<PackageDescriptionAsset> {
+    return this.request<PackageDescriptionAsset>(`/package-description-assets/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deletePackageDescriptionAsset(id: string): Promise<void> {
+    return this.request<void>(`/package-description-assets/${id}`, { method: 'DELETE' });
   }
 
   listPackageSuggestedImages(packageId: string): Promise<PackageSuggestedImageGroup[]> {

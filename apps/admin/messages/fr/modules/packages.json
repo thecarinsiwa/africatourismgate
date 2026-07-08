@@ -24,7 +24,33 @@
     "durationDays": "Durée (jours)",
     "activeLabel": "Forfait actif",
     "featuredLabel": "Mise en avant page d'accueil",
-    "featuredHint": "Un seul forfait peut être mis en avant à la fois sur la bannière promotionnelle du site public."
+    "featuredHint": "Un seul forfait peut être mis en avant à la fois sur la bannière promotionnelle du site public.",
+    "attachments": {
+      "title": "Pièces jointes de description",
+      "hint": "Ajoutez des images, PDF ou documents Word liés à la description du forfait.",
+      "add": "Ajouter une pièce jointe",
+      "saveFirst": "Créez d'abord le forfait pour enregistrer les pièces jointes en base.",
+      "empty": "Aucune pièce jointe enregistrée.",
+      "unnamed": "Sans nom",
+      "fileHint": "Formats: JPG, PNG, WEBP, PDF, DOC, DOCX (max 10 Mo)",
+      "deleteConfirm": "Supprimer la pièce jointe « {name} » ?",
+      "fields": {
+        "name": "Nom affiché",
+        "type": "Type"
+      },
+      "types": {
+        "image": "Image",
+        "pdf": "PDF",
+        "word": "Word"
+      },
+      "columns": {
+        "name": "Nom"
+      },
+      "validation": {
+        "invalidType": "Type de fichier non supporté.",
+        "fileTooLarge": "Le fichier dépasse 10 Mo."
+      }
+    }
   },
   "detail": {
     "editTitle": "Modifier le forfait",

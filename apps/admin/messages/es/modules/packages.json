@@ -24,7 +24,33 @@
     "durationDays": "Desderée (jours)",
     "activeLabel": "Paquete activo",
     "featuredLabel": "Destacado en la página de inicio",
-    "featuredHint": "Solo un paquete puede destacarse a la vez en el banner promocional del sitio público."
+    "featuredHint": "Solo un paquete puede destacarse a la vez en el banner promocional del sitio público.",
+    "attachments": {
+      "title": "Adjuntos de descripción",
+      "hint": "Añada imágenes, PDF o documentos Word relacionados con la descripción del paquete.",
+      "add": "Añadir adjunto",
+      "saveFirst": "Primero cree el paquete para guardar los adjuntos en la base de datos.",
+      "empty": "No hay adjuntos guardados.",
+      "unnamed": "Sin nombre",
+      "fileHint": "Formatos: JPG, PNG, WEBP, PDF, DOC, DOCX (máx 10 MB)",
+      "deleteConfirm": "¿Eliminar el adjunto « {name} »?",
+      "fields": {
+        "name": "Nombre mostrado",
+        "type": "Tipo"
+      },
+      "types": {
+        "image": "Imagen",
+        "pdf": "PDF",
+        "word": "Word"
+      },
+      "columns": {
+        "name": "Nombre"
+      },
+      "validation": {
+        "invalidType": "Tipo de archivo no compatible.",
+        "fileTooLarge": "El archivo supera los 10 MB."
+      }
+    }
   },
   "detail": {
     "editTitle": "Modifier le forfait",

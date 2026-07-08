@@ -110,6 +110,38 @@ export interface PackageImagesListQuery {
   packageId?: string;
 }
 
+export type PackageDescriptionAssetType = 'image' | 'pdf' | 'word';
+
+export interface PackageDescriptionAsset {
+  id: string;
+  packageId: string;
+  assetType: PackageDescriptionAssetType;
+  url: string;
+  name: string | null;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string | null;
+}
+
+export interface CreatePackageDescriptionAssetRequest {
+  packageId: string;
+  assetType: PackageDescriptionAssetType;
+  url: string;
+  name?: string;
+  sortOrder?: number;
+}
+
+export type UpdatePackageDescriptionAssetRequest = Partial<
+  Omit<CreatePackageDescriptionAssetRequest, 'packageId'>
+>;
+
+export interface PackageDescriptionAssetsListQuery {
+  page?: number;
+  limit?: number;
+  packageId?: string;
+  assetType?: PackageDescriptionAssetType;
+}
+
 export interface PackageSuggestedImage {
   url: string;
   caption: string | null;

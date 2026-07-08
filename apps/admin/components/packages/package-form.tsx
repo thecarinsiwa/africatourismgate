@@ -11,6 +11,7 @@ import { RichTextEditor, type RichTextUploadedAsset } from '../rich-text-editor'
 import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
 import { isRichTextEmpty } from '../../lib/rich-text';
 import { getSession } from '../../lib/auth/session';
+import { PackageDescriptionAssetsSection } from './package-description-assets-section';
 
 export type PackageFormValues = {
   name: string;
@@ -180,6 +181,8 @@ export function PackageForm({ mode, packageId, initialPackage }: PackageFormProp
           onUploadAsset={handleUploadDescriptionAsset}
         />
       </Card>
+
+      <PackageDescriptionAssetsSection packageId={packageId} />
 
       <Card variant="dashboard" className="space-y-4">
         <h3 className="text-sm font-semibold text-atg-fg">{t('sections.pricing')}</h3>

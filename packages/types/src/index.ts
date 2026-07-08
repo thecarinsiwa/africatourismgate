@@ -451,10 +451,14 @@ export type {
 
 export type {
   CreatePackageImageRequest,
+  CreatePackageDescriptionAssetRequest,
   CreatePackageItemRequest,
   CreatePackageRequest,
   Package,
   PackageDetail,
+  PackageDescriptionAsset,
+  PackageDescriptionAssetType,
+  PackageDescriptionAssetsListQuery,
   PackageImage,
   PackageImagesListQuery,
   PackageItem,
@@ -466,6 +470,7 @@ export type {
   PackageSuggestedImageGroup,
   PackagesListQuery,
   UpdatePackageImageRequest,
+  UpdatePackageDescriptionAssetRequest,
   UpdatePackageItemRequest,
   UpdatePackageRequest,
 } from './package.js';
