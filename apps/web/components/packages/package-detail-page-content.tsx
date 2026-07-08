@@ -256,7 +256,7 @@ export function PackageDetailPageContent({
 
         {detail && !loading && !notFound && (
           <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(280px,320px)]">
-            <div className="space-y-6">
+            <div className="min-w-0 space-y-6">
               {detail.images && detail.images.length > 0 ? (
                 <ProductGallery
                   images={detail.images}
@@ -282,11 +282,11 @@ export function PackageDetailPageContent({
                 {detail.package.description ? (
                   hasHtmlMarkup(detail.package.description) ? (
                     <div
-                      className="mt-4 max-w-none break-words text-base leading-relaxed text-atg-muted [&_p]:my-2 [&_strong]:font-semibold"
+                      className="mt-4 max-w-none break-words text-base leading-relaxed text-atg-muted [overflow-wrap:anywhere] [&_a]:break-all [&_p]:my-2 [&_strong]:font-semibold"
                       dangerouslySetInnerHTML={{ __html: detail.package.description }}
                     />
                   ) : (
-                    <p className="mt-4 break-words text-base leading-relaxed text-atg-muted">
+                    <p className="mt-4 break-words text-base leading-relaxed text-atg-muted [overflow-wrap:anywhere]">
                       {detail.package.description}
                     </p>
                   )
@@ -363,7 +363,7 @@ export function PackageDetailPageContent({
                     <button
                       type="button"
                       onClick={() => goToStep('configure')}
-                      className="min-h-[48px] rounded-lg bg-primary px-6 py-3 text-sm font-bold uppercase tracking-wide text-white hover:bg-primary-hover"
+                      className="min-h-[48px] w-full rounded-lg bg-primary px-6 py-3 text-center text-sm font-bold uppercase tracking-wide text-white hover:bg-primary-hover sm:w-auto"
                     >
                       {p.startConfiguration}
                     </button>
