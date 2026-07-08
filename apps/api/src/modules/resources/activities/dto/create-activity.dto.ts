@@ -28,6 +28,7 @@ export class CreateActivityDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
+  @MaxLength(5000)
   description?: string;
 
   @ApiPropertyOptional({ example: 120 })

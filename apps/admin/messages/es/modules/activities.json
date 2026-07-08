@@ -13,16 +13,63 @@
     "difficulty": "Dificultad"
   },
   "form": {
-    "submitCreate": "Créer",
+    "submitCreate": "Crear",
     "provider": "Proveedor",
     "title": "Título",
     "difficulty": "Dificultad",
-    "priceCents": "Precio (centimes)"
+    "priceCents": "Precio (centavos)",
+    "descriptionPlaceholder": "Describa la actividad, el programa, las condiciones…",
+    "validation": {
+      "providerRequired": "El proveedor es obligatorio.",
+      "titleRequired": "El título es obligatorio.",
+      "invalidPrice": "Precio inválido.",
+      "currencyThreeLetters": "La moneda debe tener 3 letras.",
+      "invalidDuration": "Duración inválida (minutos).",
+      "descriptionTooLong": "La descripción no puede superar {max} caracteres.",
+      "descriptionCounter": "{current} / {max} caracteres"
+    },
+    "attachments": {
+      "title": "Adjuntos de descripción",
+      "hint": "Añada imágenes, PDF o documentos Word vinculados a la descripción de la actividad.",
+      "add": "Añadir adjunto",
+      "saveFirst": "Cree primero la actividad para guardar los adjuntos.",
+      "empty": "Ningún adjunto guardado.",
+      "unnamed": "Sin nombre",
+      "fileHint": "Formatos: JPG, PNG, WEBP, PDF, DOC, DOCX (máx. 10 MB)",
+      "deleteConfirm": "¿Eliminar el adjunto « {name} »?",
+      "fields": {
+        "name": "Nombre mostrado",
+        "type": "Tipo"
+      },
+      "types": {
+        "image": "Imagen",
+        "pdf": "PDF",
+        "word": "Word"
+      },
+      "columns": {
+        "name": "Nombre"
+      },
+      "validation": {
+        "invalidType": "Tipo de archivo no compatible.",
+        "fileTooLarge": "El archivo supera 10 MB."
+      }
+    }
   },
   "detail": {
-    "title": "Modifier l'activité",
-    "backLink": "Volver aux activités",
-    "tabsAria": "Sections de l'activité",
+    "title": "Editar actividad",
+    "viewTitle": "Ver actividad",
+    "backLink": "Volver a actividades",
+    "viewButton": "Ver actividad",
+    "editButton": "Editar actividad",
+    "notFound": "Actividad no encontrada.",
+    "description": "Descripción",
+    "photoGallery": "Galería de fotos",
+    "photoGalleryIntro": "{count} foto(s) vinculada(s) a la actividad.",
+    "noPhotos": "Ninguna foto para esta actividad.",
+    "descriptionAssets": "Adjuntos",
+    "descriptionAssetsIntro": "{count} adjunto(s) vinculado(s) a la descripción.",
+    "schedulesIntro": "{count} franja(s) programada(s).",
+    "tabsAria": "Secciones de la actividad",
     "tabs": {
       "activity": "Actividad",
       "schedules": "Franjax"

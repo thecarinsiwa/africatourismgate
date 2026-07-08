@@ -61,7 +61,7 @@ export const en: Translations = {
   },
   search: {
     tablistAria: 'Search type',
-    tabs: { flights: 'Flights', hotels: 'Hotels', cars: 'Cars', cruises: 'Cruises', tours: 'Tours' },
+    tabs: { flights: 'Flights', hotels: 'Hotels', cars: 'Cars', cruises: 'Cruises', tours: 'Activities' },
     search: 'Search',
     departDate: 'Departure date',
     returnDate: 'Return date',

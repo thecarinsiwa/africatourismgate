@@ -61,7 +61,7 @@ export const es: Translations = {
   },
   search: {
     tablistAria: 'Tipo de búsqueda',
-    tabs: { flights: 'Vuelos', hotels: 'Hoteles', cars: 'Coches', cruises: 'Cruceros', tours: 'Tours' },
+    tabs: { flights: 'Vuelos', hotels: 'Hoteles', cars: 'Coches', cruises: 'Cruceros', tours: 'Actividades' },
     search: 'Buscar',
     departDate: 'Fecha de salida',
     returnDate: 'Fecha de regreso',

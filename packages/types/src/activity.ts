@@ -115,3 +115,40 @@ export interface ActivityImagesListQuery {
   limit?: number;
   activityId?: string;
 }
+
+export type ActivityDescriptionAssetType = 'image' | 'pdf' | 'word';
+
+export interface ActivityDescriptionAsset {
+  id: string;
+  activityId: string;
+  assetType: ActivityDescriptionAssetType;
+  url: string;
+  name: string | null;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string | null;
+}
+
+export interface CreateActivityDescriptionAssetRequest {
+  activityId: string;
+  assetType: ActivityDescriptionAssetType;
+  url: string;
+  name?: string;
+  sortOrder?: number;
+}
+
+export type UpdateActivityDescriptionAssetRequest = Partial<
+  Omit<CreateActivityDescriptionAssetRequest, 'activityId'>
+>;
+
+export interface ActivityDescriptionAssetsListQuery {
+  page?: number;
+  limit?: number;
+  activityId?: string;
+  assetType?: ActivityDescriptionAssetType;
+}
+
+export interface ActivityDescriptionAssetUploadResponse {
+  url: string;
+  assetType: ActivityDescriptionAssetType;
+}

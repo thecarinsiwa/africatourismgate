@@ -17,11 +17,58 @@
     "provider": "Fournisseur",
     "title": "Titre",
     "difficulty": "Difficulté",
-    "priceCents": "Prix (centimes)"
+    "priceCents": "Prix (centimes)",
+    "descriptionPlaceholder": "Décrivez l'activité, le programme, les conditions…",
+    "validation": {
+      "providerRequired": "Le fournisseur est obligatoire.",
+      "titleRequired": "Le titre est obligatoire.",
+      "invalidPrice": "Prix invalide.",
+      "currencyThreeLetters": "La devise doit comporter 3 lettres.",
+      "invalidDuration": "Durée invalide (minutes).",
+      "descriptionTooLong": "La description ne peut pas dépasser {max} caractères.",
+      "descriptionCounter": "{current} / {max} caractères"
+    },
+    "attachments": {
+      "title": "Pièces jointes de description",
+      "hint": "Ajoutez des images, PDF ou documents Word liés à la description de l'activité.",
+      "add": "Ajouter une pièce jointe",
+      "saveFirst": "Créez d'abord l'activité pour enregistrer les pièces jointes en base.",
+      "empty": "Aucune pièce jointe enregistrée.",
+      "unnamed": "Sans nom",
+      "fileHint": "Formats: JPG, PNG, WEBP, PDF, DOC, DOCX (max 10 Mo)",
+      "deleteConfirm": "Supprimer la pièce jointe « {name} » ?",
+      "fields": {
+        "name": "Nom affiché",
+        "type": "Type"
+      },
+      "types": {
+        "image": "Image",
+        "pdf": "PDF",
+        "word": "Word"
+      },
+      "columns": {
+        "name": "Nom"
+      },
+      "validation": {
+        "invalidType": "Type de fichier non supporté.",
+        "fileTooLarge": "Le fichier dépasse 10 Mo."
+      }
+    }
   },
   "detail": {
     "title": "Modifier l'activité",
+    "viewTitle": "Voir l'activité",
     "backLink": "Retour aux activités",
+    "viewButton": "Voir l'activité",
+    "editButton": "Modifier l'activité",
+    "notFound": "Activité introuvable.",
+    "description": "Description",
+    "photoGallery": "Galerie photos",
+    "photoGalleryIntro": "{count} photo(s) associée(s) à l'activité.",
+    "noPhotos": "Aucune photo pour cette activité.",
+    "descriptionAssets": "Pièces jointes",
+    "descriptionAssetsIntro": "{count} pièce(s) jointe(s) liée(s) à la description.",
+    "schedulesIntro": "{count} créneau(x) programmé(s).",
     "tabsAria": "Sections de l'activité",
     "tabs": {
       "activity": "Activité",

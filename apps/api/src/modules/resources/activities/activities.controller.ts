@@ -25,7 +25,7 @@ import { existsSync, mkdirSync } from 'node:fs';
 import { extname, join } from 'node:path';
 import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
 import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
-import { activityUploadUrl } from '../../../common/utils/public-asset-url';
+import { activityUploadUrl, activityDescriptionAssetUploadUrl } from '../../../common/utils/public-asset-url';
 import { ActivitiesService } from './activities.service';
 import { CreateActivityDto } from './dto/create-activity.dto';
 import { UpdateActivityDto } from './dto/update-activity.dto';
@@ -33,6 +33,24 @@ import { UpdateActivityDto } from './dto/update-activity.dto';
 const ACTIVITY_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
 const ALLOWED_ACTIVITY_IMAGE_MIMES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 const ALLOWED_ACTIVITY_IMAGE_EXTENSIONS = new Set(['.jpg', '.jpeg', '.png', '.webp']);
+const ACTIVITY_DESCRIPTION_ASSET_MAX_BYTES = 10 * 1024 * 1024;
+const ALLOWED_ACTIVITY_DESCRIPTION_ASSET_MIMES = new Set([
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'application/pdf',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+]);
+const ALLOWED_ACTIVITY_DESCRIPTION_ASSET_EXTENSIONS = new Set([
+  '.jpg',
+  '.jpeg',
+  '.png',
+  '.webp',
+  '.pdf',
+  '.doc',
+  '.docx',
+]);
 
 @ApiTags('activities')
 @ApiForbiddenResponse({ description: 'Missing permission' })
@@ -100,6 +118,138 @@ export class ActivitiesController {
       );
     }
     return { url: activityUploadUrl(file.filename) };
+  }
+
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: { type: 'string', format: 'binary' },
+      },
+      required: ['file'],
+    },
+  })
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: (_req, _file, cb) => {
+          const uploadDir = join(process.cwd(), 'uploads', 'activities', 'description-assets');
+          if (!existsSync(uploadDir)) {
+            mkdirSync(uploadDir, { recursive: true });
+          }
+          cb(null, uploadDir);
+        },
+        filename: (_req, file, cb) => {
+          const extension = extname(file.originalname || '').toLowerCase();
+          cb(null, `${Date.now()}-${randomUUID()}${extension}`);
+        },
+      }),
+      limits: { fileSize: ACTIVITY_DESCRIPTION_ASSET_MAX_BYTES },
+      fileFilter: (_req, file, cb) => {
+        const extension = extname(file.originalname || '').toLowerCase();
+        if (
+          !ALLOWED_ACTIVITY_DESCRIPTION_ASSET_MIMES.has(file.mimetype) ||
+          !ALLOWED_ACTIVITY_DESCRIPTION_ASSET_EXTENSIONS.has(extension)
+        ) {
+          cb(null, false);
+          return;
+        }
+        cb(null, true);
+      },
+    }),
+  )
+  @RequirePermissions('activities.write')
+  @Post('upload-description-asset')
+  @ApiOperation({
+    summary: 'Upload activity description asset (image/PDF/Word, max 10 MB)',
+  })
+  async uploadDescriptionAssetWithoutActivity(
+    @UploadedFile() file: Express.Multer.File | undefined,
+  ): Promise<{ url: string; assetType: 'image' | 'pdf' | 'word' }> {
+    if (!file) {
+      throw new BadRequestException(
+        'Fichier requis (image, PDF ou Word, max 10 Mo).',
+      );
+    }
+    const extension = extname(file.originalname || '').toLowerCase();
+    const assetType: 'image' | 'pdf' | 'word' =
+      extension === '.pdf'
+        ? 'pdf'
+        : extension === '.doc' || extension === '.docx'
+          ? 'word'
+          : 'image';
+    return {
+      url: activityDescriptionAssetUploadUrl(file.filename),
+      assetType,
+    };
+  }
+
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: { type: 'string', format: 'binary' },
+      },
+      required: ['file'],
+    },
+  })
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: (_req, _file, cb) => {
+          const uploadDir = join(process.cwd(), 'uploads', 'activities', 'description-assets');
+          if (!existsSync(uploadDir)) {
+            mkdirSync(uploadDir, { recursive: true });
+          }
+          cb(null, uploadDir);
+        },
+        filename: (_req, file, cb) => {
+          const extension = extname(file.originalname || '').toLowerCase();
+          cb(null, `${Date.now()}-${randomUUID()}${extension}`);
+        },
+      }),
+      limits: { fileSize: ACTIVITY_DESCRIPTION_ASSET_MAX_BYTES },
+      fileFilter: (_req, file, cb) => {
+        const extension = extname(file.originalname || '').toLowerCase();
+        if (
+          !ALLOWED_ACTIVITY_DESCRIPTION_ASSET_MIMES.has(file.mimetype) ||
+          !ALLOWED_ACTIVITY_DESCRIPTION_ASSET_EXTENSIONS.has(extension)
+        ) {
+          cb(null, false);
+          return;
+        }
+        cb(null, true);
+      },
+    }),
+  )
+  @RequirePermissions('activities.write')
+  @Post(':id/upload-description-asset')
+  @ApiOperation({
+    summary: 'Upload activity description asset (image/PDF/Word, max 10 MB)',
+  })
+  async uploadDescriptionAsset(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File | undefined,
+  ): Promise<{ url: string; assetType: 'image' | 'pdf' | 'word' }> {
+    await this.service.findOne(id);
+    if (!file) {
+      throw new BadRequestException(
+        'Fichier requis (image, PDF ou Word, max 10 Mo).',
+      );
+    }
+    const extension = extname(file.originalname || '').toLowerCase();
+    const assetType: 'image' | 'pdf' | 'word' =
+      extension === '.pdf'
+        ? 'pdf'
+        : extension === '.doc' || extension === '.docx'
+          ? 'word'
+          : 'image';
+    return {
+      url: activityDescriptionAssetUploadUrl(file.filename),
+      assetType,
+    };
   }
 
   @RequirePermissions('activities.read')

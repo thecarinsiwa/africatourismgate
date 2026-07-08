@@ -68,16 +68,21 @@ import type {
   ActivitiesListQuery,
   ActivityImage,
   ActivityImagesListQuery,
+  ActivityDescriptionAsset,
+  ActivityDescriptionAssetsListQuery,
+  ActivityDescriptionAssetType,
   ActivityProvider,
   ActivityProvidersListQuery,
   ActivitySchedule,
   ActivitySchedulesListQuery,
   CreateActivityProviderRequest,
   CreateActivityImageRequest,
+  CreateActivityDescriptionAssetRequest,
   CreateActivityRequest,
   CreateActivityScheduleRequest,
   UpdateActivityProviderRequest,
   UpdateActivityImageRequest,
+  UpdateActivityDescriptionAssetRequest,
   UpdateActivityRequest,
   UpdateActivityScheduleRequest,
   ApproveBookingRequest,
@@ -2060,6 +2065,52 @@ export class ApiClient {
 
   deleteActivityImage(id: string): Promise<void> {
     return this.request<void>(`/activity-images/${id}`, { method: 'DELETE' });
+  }
+
+  listActivityDescriptionAssets(
+    query?: ActivityDescriptionAssetsListQuery,
+  ): Promise<PaginatedResponse<ActivityDescriptionAsset>> {
+    return fetchPaginated<ActivityDescriptionAsset>(this, '/activity-description-assets', query);
+  }
+
+  getActivityDescriptionAsset(id: string): Promise<ActivityDescriptionAsset> {
+    return this.request<ActivityDescriptionAsset>(`/activity-description-assets/${id}`);
+  }
+
+  createActivityDescriptionAsset(
+    body: CreateActivityDescriptionAssetRequest,
+  ): Promise<ActivityDescriptionAsset> {
+    return this.request<ActivityDescriptionAsset>('/activity-description-assets', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateActivityDescriptionAsset(
+    id: string,
+    body: UpdateActivityDescriptionAssetRequest,
+  ): Promise<ActivityDescriptionAsset> {
+    return this.request<ActivityDescriptionAsset>(`/activity-description-assets/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteActivityDescriptionAsset(id: string): Promise<void> {
+    return this.request<void>(`/activity-description-assets/${id}`, { method: 'DELETE' });
+  }
+
+  uploadActivityDescriptionAsset(
+    body: FormData,
+    activityId?: string,
+  ): Promise<{ url: string; assetType: ActivityDescriptionAssetType }> {
+    const route = activityId
+      ? `/activities/${activityId}/upload-description-asset`
+      : '/activities/upload-description-asset';
+    return this.request<{ url: string; assetType: ActivityDescriptionAssetType }>(route, {
+      method: 'POST',
+      body,
+    });
   }
 
   listPackages(query?: PackagesListQuery): Promise<PaginatedResponse<Package>> {
