@@ -9,6 +9,7 @@ import {
   DataTableActionButton,
   DataTableActions,
   Input,
+  cn,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { PackageImage, PackageSuggestedImageGroup } from '@africatourismgate/types';
@@ -34,9 +35,15 @@ const emptyForm: ImageFormValues = { url: '', caption: '', sortOrder: '0' };
 
 type PackageImagesSectionProps = {
   packageId: string;
+  embedded?: boolean;
+  onChanged?: () => void;
 };
 
-export function PackageImagesSection({ packageId }: PackageImagesSectionProps) {
+export function PackageImagesSection({
+  packageId,
+  embedded = false,
+  onChanged,
+}: PackageImagesSectionProps) {
   const { packages: getPackagesErrorMessage } = useAdminErrorMessages();
   const tGallery = useTranslations('modules.common.imagesGallery');
   const tCommon = useTranslations('modules.common');
@@ -189,6 +196,7 @@ export function PackageImagesSection({ packageId }: PackageImagesSectionProps) {
       }
       resetForm();
       await load();
+      onChanged?.();
     } catch (error) {
       setFormError(getPackagesErrorMessage(error));
     } finally {
@@ -216,6 +224,7 @@ export function PackageImagesSection({ packageId }: PackageImagesSectionProps) {
         ...(caption ? { caption } : {}),
       });
       await load();
+      onChanged?.();
     } catch (error) {
       setFormError(getPackagesErrorMessage(error));
     } finally {
@@ -230,13 +239,14 @@ export function PackageImagesSection({ packageId }: PackageImagesSectionProps) {
       try {
         await getApiClient().deletePackageImage(img.id);
         await load();
+        onChanged?.();
       } catch (error) {
         setFormError(getPackagesErrorMessage(error));
       } finally {
         setDeletingId(null);
       }
     },
-    [load, tGallery, getPackagesErrorMessage],
+    [getPackagesErrorMessage, load, onChanged, tGallery],
   );
 
   const columns = useMemo<ColumnDef<PackageImage, unknown>[]>(
@@ -319,7 +329,7 @@ export function PackageImagesSection({ packageId }: PackageImagesSectionProps) {
   const hasSuggestions = suggestions.some((group) => group.images.length > 0);
 
   return (
-    <section className="space-y-6 border-t border-atg-border pt-10">
+    <section className={cn('space-y-6', embedded ? '' : 'border-t border-atg-border pt-10')}>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-lg font-semibold text-atg-fg">{tGallery('titlePackage')}</h2>

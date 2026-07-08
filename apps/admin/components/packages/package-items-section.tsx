@@ -30,9 +30,15 @@ type CatalogOption = { id: string; label: string };
 
 type PackageItemsSectionProps = {
   packageId: string;
+  embedded?: boolean;
+  onChanged?: () => void;
 };
 
-export function PackageItemsSection({ packageId }: PackageItemsSectionProps) {
+export function PackageItemsSection({
+  packageId,
+  embedded = false,
+  onChanged,
+}: PackageItemsSectionProps) {
   const { packages: getPackagesErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.packages.sections.items');
   const tCommon = useTranslations('modules.common');
@@ -148,6 +154,7 @@ export function PackageItemsSection({ packageId }: PackageItemsSectionProps) {
       });
       resetForm();
       await load();
+      onChanged?.();
     } catch (error) {
       setFormError(getPackagesErrorMessage(error));
     } finally {
@@ -162,13 +169,14 @@ export function PackageItemsSection({ packageId }: PackageItemsSectionProps) {
       try {
         await getApiClient().deletePackageItem(item.id);
         await load();
+        onChanged?.();
       } catch (error) {
         setFormError(getPackagesErrorMessage(error));
       } finally {
         setDeletingId(null);
       }
     },
-    [load, t],
+    [getPackagesErrorMessage, load, onChanged, t],
   );
 
   const columns = useMemo<ColumnDef<PackageItemEnriched, unknown>[]>(
@@ -220,7 +228,12 @@ export function PackageItemsSection({ packageId }: PackageItemsSectionProps) {
     'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg';
 
   return (
-    <section className="mt-12 space-y-6 border-t border-atg-border pt-10">
+    <section
+      className={cn(
+        'space-y-6',
+        embedded ? '' : 'mt-12 border-t border-atg-border pt-10',
+      )}
+    >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>

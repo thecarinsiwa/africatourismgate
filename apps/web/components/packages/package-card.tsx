@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { packageDescriptionPreview } from '../../lib/packages/description-preview';
 import {
   buildPackageDetailHref,
   formatPackagePrice,
@@ -20,17 +21,13 @@ type PackageCardProps = {
   searchParams?: PackagesSearchParams;
 };
 
-function stripHtml(html: string): string {
-  return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
-}
-
 export function PackageCard({ pkg, t, searchParams = {} }: PackageCardProps) {
   const ctaLabel = useBookingCtaLabel('package');
   const detailHref = buildPackageDetailHref(pkg.id, searchParams);
   const reserveHref = buildPackageDetailHref(pkg.id, searchParams, '#configure');
   const itemsLabel = t.itemsIncluded.replace('{n}', String(pkg.itemCount));
   const showSavings = hasPackageDiscount(pkg.pricing);
-  const descriptionPreview = pkg.description ? stripHtml(pkg.description) : '';
+  const descriptionPreview = packageDescriptionPreview(pkg.description);
 
   const imageOverlay = (
     <div className="absolute inset-0 flex flex-col justify-center px-6 py-8 text-white">

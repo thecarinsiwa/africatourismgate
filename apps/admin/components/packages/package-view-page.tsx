@@ -147,45 +147,52 @@ export function PackageViewPage({ packageId }: PackageViewPageProps) {
       : tCommon('daysCount', { count: pkg.durationDays });
 
   return (
-    <div className="space-y-6">
+    <div className="mx-auto w-full max-w-7xl space-y-6">
       <AdminPageBackLink href="/produits/forfaits" label={t('backLink')} />
 
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <Card
+        variant="dashboard"
+        className="flex flex-col gap-4 border border-atg-border/80 bg-atg-elevated/70 p-4 sm:flex-row sm:items-start sm:justify-between sm:p-5"
+      >
         <div className="space-y-2">
-          <h2 className="text-lg font-semibold text-atg-fg">{pkg.name}</h2>
+          <h2 className="text-xl font-semibold leading-tight text-atg-fg sm:text-2xl">{pkg.name}</h2>
           <div className="flex flex-wrap items-center gap-2">
-            <DataTableBadge variant={discount > 0 ? 'success' : 'muted'}>
-              {t('discountBadge', { percent: pkg.discountPercent })}
-            </DataTableBadge>
             <DataTableBadge variant={pkg.active === 1 ? 'success' : 'muted'}>
               {pkg.active === 1 ? packageStatusLabels.active : packageStatusLabels.inactive}
+            </DataTableBadge>
+            <DataTableBadge variant={discount > 0 ? 'success' : 'muted'}>
+              {t('discountBadge', { percent: pkg.discountPercent })}
             </DataTableBadge>
             <DataTableBadge variant="muted">{durationLabel}</DataTableBadge>
           </div>
         </div>
-        <Button href={`/produits/forfaits/${packageId}`}>{t('editButton')}</Button>
-      </div>
+        <Button href={`/produits/forfaits/${packageId}`} className="w-full sm:w-auto">
+          {t('editButton')}
+        </Button>
+      </Card>
 
       {pkg.description ? (
-        <Card variant="dashboard" className="max-w-3xl">
-          <h3 className="text-sm font-semibold text-atg-fg">{t('description')}</h3>
-          <RichTextContent html={pkg.description} className="mt-2" />
+        <Card variant="dashboard" className="border border-atg-border/80">
+          <h3 className="text-base font-semibold text-atg-fg">{t('description')}</h3>
+          <RichTextContent html={pkg.description} className="mt-3" />
         </Card>
       ) : null}
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
-        <PackagePricingRecap pricing={pricing} itemCount={items.length} className="max-w-none" />
-        <PackagePreviewCard
-          pkg={pkg}
-          itemCount={items.length}
-          pricing={pricing}
-          className="lg:sticky lg:top-6"
-        />
-      </div>
+      <Card variant="dashboard" className="border border-atg-border/80">
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_300px] xl:items-start">
+          <PackagePricingRecap pricing={pricing} itemCount={items.length} className="max-w-none" />
+          <PackagePreviewCard
+            pkg={pkg}
+            itemCount={items.length}
+            pricing={pricing}
+            className="xl:sticky xl:top-6"
+          />
+        </div>
+      </Card>
 
       <PackageCompositionBanner items={items} />
 
-      <section className="space-y-4">
+      <section className="space-y-4 rounded-xl border border-atg-border/80 bg-atg-elevated/40 p-4 sm:p-5">
         <div>
           <h3 className="text-lg font-semibold text-atg-fg">{t('includedProducts')}</h3>
           <p className="mt-1 text-sm text-atg-muted">
@@ -202,7 +209,7 @@ export function PackageViewPage({ packageId }: PackageViewPageProps) {
         </Card>
       </section>
 
-      <section className="space-y-4">
+      <section className="space-y-4 rounded-xl border border-atg-border/80 bg-atg-elevated/40 p-4 sm:p-5">
         <div>
           <h3 className="text-lg font-semibold text-atg-fg">{t('photoGallery')}</h3>
           <p className="mt-1 text-sm text-atg-muted">
@@ -214,11 +221,11 @@ export function PackageViewPage({ packageId }: PackageViewPageProps) {
             <p className="text-sm text-atg-muted">{t('noPhotos')}</p>
           </Card>
         ) : (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
             {images.map((image) => (
               <figure
                 key={image.id}
-                className="overflow-hidden rounded-lg border border-atg-border bg-atg-elevated"
+                className="overflow-hidden rounded-lg border border-atg-border bg-atg-elevated shadow-sm"
               >
                 <Image
                   src={image.url}

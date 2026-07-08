@@ -4,6 +4,7 @@ export interface Package {
   id: string;
   name: string;
   description: string | null;
+  coverImageUrl: string | null;
   discountPercent: string;
   durationDays: number;
   active: number;
@@ -15,6 +16,7 @@ export interface Package {
 export interface CreatePackageRequest {
   name: string;
   description?: string;
+  coverImageUrl?: string | null;
   discountPercent: number;
   durationDays?: number;
   active: boolean;

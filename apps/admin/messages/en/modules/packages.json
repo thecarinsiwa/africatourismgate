@@ -6,6 +6,7 @@
     "deleteConfirm": "Supprimer le forfait « {name} » ?"
   },
   "columns": {
+    "cover": "Cover",
     "package": "Package",
     "discount": "Discount",
     "total": "Total",
@@ -77,10 +78,28 @@
       "hints": {
         "informations": "Fill in the package basics: name, description, discount and duration.",
         "prestations": "Add included products (stay, flight, activity, vehicle or cruise).",
-        "medias": "Manage the photo gallery and description attachments (images, PDF, Word files).",
+        "medias": "Set the cover photo, photo gallery and description attachments (images, PDF, Word files).",
         "publication": "Set active status and homepage featured visibility."
+      },
+      "lockedHint": {
+        "prestations": "Add at least one included item to unlock next steps.",
+        "medias": "Add at least one media item or attachment to unlock Publication."
       }
     }
+  },
+  "coverImage": {
+    "title": "Cover photo",
+    "hint": "This image appears in package lists in the admin and on the public website.",
+    "previewAlt": "Cover preview",
+    "empty": "No cover photo set.",
+    "upload": "Upload image",
+    "remove": "Remove cover",
+    "saveUrl": "Save URL",
+    "saving": "Saving…",
+    "pickFromGallery": "Pick from gallery",
+    "galleryThumbAlt": "Gallery photo",
+    "current": "Current",
+    "noGalleryImages": "Add photos to the gallery to pick one as the cover."
   },
   "sections": {
     "items": {

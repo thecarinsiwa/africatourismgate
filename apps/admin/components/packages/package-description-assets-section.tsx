@@ -48,10 +48,12 @@ const emptyForm: FormValues = {
 
 type PackageDescriptionAssetsSectionProps = {
   packageId?: string;
+  onChanged?: () => void;
 };
 
 export function PackageDescriptionAssetsSection({
   packageId,
+  onChanged,
 }: PackageDescriptionAssetsSectionProps) {
   const { packages: getPackagesErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.packages.form.attachments');
@@ -78,7 +80,7 @@ export function PackageDescriptionAssetsSection({
       const result = await getApiClient().listPackageDescriptionAssets({
         packageId,
         page: 1,
-        limit: 200,
+        limit: 100,
       });
       setState({ status: 'ready', assets: result.data });
     } catch (error) {
@@ -173,6 +175,7 @@ export function PackageDescriptionAssetsSection({
       await getApiClient().createPackageDescriptionAsset(body);
       resetForm();
       await load();
+      onChanged?.();
     } catch (error) {
       setFormError(getPackagesErrorMessage(error));
     } finally {
@@ -187,13 +190,14 @@ export function PackageDescriptionAssetsSection({
       try {
         await getApiClient().deletePackageDescriptionAsset(asset.id);
         await load();
+        onChanged?.();
       } catch (error) {
         setFormError(getPackagesErrorMessage(error));
       } finally {
         setDeletingId(null);
       }
     },
-    [getPackagesErrorMessage, load, t],
+    [getPackagesErrorMessage, load, onChanged, t],
   );
 
   const columns = useMemo<ColumnDef<PackageDescriptionAsset, unknown>[]>(

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { getFeaturedPackage } from '../../lib/api/public';
+import { packageDescriptionPreview } from '../../lib/packages/description-preview';
 import { formatPackagePrice } from '../../lib/packages/listings';
 import type { PackageListItem } from '../../lib/packages/types';
 import { useTranslations } from '../../lib/i18n/locale-provider';
@@ -10,10 +11,6 @@ import { useScrollAnimation } from './use-scroll-animation';
 
 const FALLBACK_IMAGE =
   'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Elephants_at_Amboseli_national_park_against_Mount_Kilimanjaro.jpg/1280px-Elephants_at_Amboseli_national_park_against_Mount_Kilimanjaro.jpg';
-
-function stripHtml(html: string): string {
-  return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
-}
 
 export function ParallaxPromo() {
   const t = useTranslations();
@@ -32,7 +29,7 @@ export function ParallaxPromo() {
 
   const title = featured?.name ?? t.promo.title;
   const description = featured?.description
-    ? stripHtml(featured.description)
+    ? packageDescriptionPreview(featured.description)
     : t.promo.description;
   const price = featured
     ? formatPackagePrice(featured.pricing.totalCents, featured.pricing.currency)
@@ -41,7 +38,7 @@ export function ParallaxPromo() {
   const backgroundImage = featured?.imageUrl ?? FALLBACK_IMAGE;
 
   return (
-    <section ref={ref} className="relative overflow-hidden py-20 sm:py-28">
+    <section ref={ref} className="relative min-h-[440px] overflow-hidden py-20 sm:py-28">
       <div
         className="absolute inset-0 parallax-bg"
         style={{ backgroundImage: `url("${backgroundImage}")` }}
