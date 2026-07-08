@@ -480,6 +480,10 @@ export type Translations = {
     sortRecommended: string;
     sortPriceLow: string;
     sortPriceHigh: string;
+    displayModeLabel: string;
+    displayModeCards: string;
+    displayModeList: string;
+    displayModeCompact: string;
     loading: string;
     loadError: string;
     retry: string;
@@ -2043,6 +2047,10 @@ const fr: Translations = {
     sortRecommended: 'Recommandés',
     sortPriceLow: 'Prix croissant',
     sortPriceHigh: 'Prix décroissant',
+    displayModeLabel: 'Affichage',
+    displayModeCards: 'Cartes',
+    displayModeList: 'Liste',
+    displayModeCompact: 'Compact',
     loading: 'Chargement des forfaits…',
     loadingDetail: 'Chargement du forfait…',
     loadError: "Impossible de charger les forfaits. Vérifiez que l'API est démarrée.",
@@ -3449,6 +3457,10 @@ const en: Translations = {
     sortRecommended: 'Recommended',
     sortPriceLow: 'Price: low to high',
     sortPriceHigh: 'Price: high to low',
+    displayModeLabel: 'View',
+    displayModeCards: 'Cards',
+    displayModeList: 'List',
+    displayModeCompact: 'Compact',
     loading: 'Loading packages…',
     loadingDetail: 'Loading package…',
     loadError: 'Could not load packages. Check that the API is running.',
