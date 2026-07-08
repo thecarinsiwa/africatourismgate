@@ -43,6 +43,10 @@ function inferInitialStep(startDate: string, hash: string): PackageCompositionSt
   return 'configure';
 }
 
+function hasHtmlMarkup(value: string): boolean {
+  return /<[^>]+>/.test(value);
+}
+
 export function PackageDetailPageContent({
   packageId,
   initialSearch,
@@ -271,9 +275,16 @@ export function PackageDetailPageContent({
                   {detail.package.name}
                 </h1>
                 {detail.package.description ? (
-                  <p className="mt-4 text-base leading-relaxed text-atg-muted">
-                    {detail.package.description}
-                  </p>
+                  hasHtmlMarkup(detail.package.description) ? (
+                    <div
+                      className="mt-4 max-w-none break-words text-base leading-relaxed text-atg-muted [&_p]:my-2 [&_strong]:font-semibold"
+                      dangerouslySetInnerHTML={{ __html: detail.package.description }}
+                    />
+                  ) : (
+                    <p className="mt-4 break-words text-base leading-relaxed text-atg-muted">
+                      {detail.package.description}
+                    </p>
+                  )
                 ) : null}
               </header>
 
