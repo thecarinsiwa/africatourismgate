@@ -195,12 +195,12 @@ export function ActivityItineraryStopsSection({
       },
       {
         id: 'latitude',
-        header: tCommon('columns.latitude'),
+        header: tCommon('form.latitude'),
         cell: ({ row }) => formatCoord(row.original.latitude),
       },
       {
         id: 'longitude',
-        header: tCommon('columns.longitude'),
+        header: tCommon('form.longitude'),
         cell: ({ row }) => formatCoord(row.original.longitude),
       },
       {
@@ -292,7 +292,7 @@ export function ActivityItineraryStopsSection({
             />
             <div className="grid gap-4 sm:grid-cols-2">
               <Input
-                label={tCommon('columns.latitude')}
+                label={tCommon('form.latitude')}
                 value={formValues.latitude}
                 onChange={(e) => setFormValues((prev) => ({ ...prev, latitude: e.target.value }))}
                 error={fieldErrors.latitude}
@@ -300,7 +300,7 @@ export function ActivityItineraryStopsSection({
                 required
               />
               <Input
-                label={tCommon('columns.longitude')}
+                label={tCommon('form.longitude')}
                 value={formValues.longitude}
                 onChange={(e) => setFormValues((prev) => ({ ...prev, longitude: e.target.value }))}
                 error={fieldErrors.longitude}
