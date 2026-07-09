@@ -1,10 +1,12 @@
 import { getLocale } from 'next-intl/server';
 import { getPublicGapHomeForLocale } from '../../lib/api/public';
-import { getTranslations } from '../../lib/i18n/translations';
+import { translations } from '../../lib/i18n/translations';
+import { DEFAULT_LOCALE, isLocale } from '../../lib/i18n/types';
 
 export async function GapImpactSection() {
-  const locale = await getLocale();
-  const t = getTranslations(locale);
+  const rawLocale = await getLocale();
+  const locale = isLocale(rawLocale) ? rawLocale : DEFAULT_LOCALE;
+  const t = translations[locale];
   const home = await getPublicGapHomeForLocale(locale).catch(() => ({ settings: null, impactStats: [] }));
   const stats = home.impactStats;
 
