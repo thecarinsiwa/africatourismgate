@@ -30,6 +30,7 @@ import {
   type PackageCompositionStep,
 } from './package-composition-stepper';
 import { PackageItemsSection } from './package-items-section';
+import { PackageItineraryMapSection } from './package-itinerary-map-section';
 import { PackageAssistedResolvedSummary } from './package-resolved-summary';
 
 type PackageDetailPageContentProps = {
@@ -339,6 +340,21 @@ export function PackageDetailPageContent({
 
               {step === 'overview' ? (
                 <>
+                  {detail.mapPoints && detail.mapPoints.length > 0 ? (
+                    <PackageItineraryMapSection
+                      mapPoints={detail.mapPoints}
+                      packageItemTypes={detail.items.map((item) => item.itemType)}
+                      labels={{
+                        itineraryMapTitle: p.itineraryMapTitle,
+                        itineraryMapAria: p.itineraryMapAria,
+                        itineraryMapLegendTitle: p.itineraryMapLegendTitle,
+                        itineraryMapLegendPoints: p.itineraryMapLegendPoints,
+                        itineraryMapPartialHint: p.itineraryMapPartialHint,
+                        itemTypes: p.itemTypes,
+                      }}
+                    />
+                  ) : null}
+
                   <PackageItemsSection
                     items={detail.items}
                     packageId={packageId}

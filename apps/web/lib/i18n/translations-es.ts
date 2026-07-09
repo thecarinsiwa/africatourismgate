@@ -823,6 +823,9 @@ export const es: Translations = {
     galleryPrevious: 'Foto anterior',
     galleryNext: 'Foto siguiente',
     galleryCounter: (current, total) => `Foto ${current} de ${total}`,
+    itineraryTitle: 'Itinerario',
+    itineraryMapAria: 'Mapa del itinerario de la actividad',
+    itineraryStopLabel: 'Coordenadas',
   },
   packages: {
     metaTitle: 'Paquetes combinados en África',
@@ -984,6 +987,12 @@ export const es: Translations = {
     recapVehicleLine: 'Del {pickup} al {return}',
     recapCruiseLine: '{guests} pasajero(s) · cabina seleccionada',
     estimatedSavings: 'Ahorro estimado: {amount}',
+    itineraryMapTitle: 'Mapa del paquete',
+    itineraryMapAria: 'Mapa de los lugares incluidos en el paquete',
+    itineraryMapLegendTitle: 'Leyenda',
+    itineraryMapLegendPoints: '({count})',
+    itineraryMapPartialHint:
+      'Algunos servicios (vehículo, crucero) no aparecen en el mapa por falta de coordenadas geográficas.',
   },
   account: {
     title: 'Mi cuenta',
