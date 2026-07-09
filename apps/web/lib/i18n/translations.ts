@@ -278,6 +278,7 @@ export type Translations = {
   gapImpact: {
     title: string;
     subtitle: string;
+    cta: string;
   };
   footer: {
     tagline: string;
@@ -1593,6 +1594,7 @@ const fr: Translations = {
   gapImpact: {
     title: 'Notre impact',
     subtitle: 'Découvrez les résultats concrets du programme GAP en faveur des communautés et de la conservation.',
+    cta: 'Découvrir GAP',
   },
   footer: {
     tagline:
@@ -3009,6 +3011,7 @@ const en: Translations = {
   gapImpact: {
     title: 'Our impact',
     subtitle: 'See the measurable results of the GAP program for communities and conservation.',
+    cta: 'Discover GAP',
   },
   footer: {
     tagline:

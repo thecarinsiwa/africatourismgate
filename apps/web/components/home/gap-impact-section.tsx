@@ -7,6 +7,8 @@ export async function GapImpactSection() {
   const rawLocale = await getLocale();
   const locale = isLocale(rawLocale) ? rawLocale : DEFAULT_LOCALE;
   const t = translations[locale];
+  const gapUrl =
+    process.env.NEXT_PUBLIC_GAP_URL?.trim() || 'https://gap.africatourismgate.org';
   const home = await getPublicGapHomeForLocale(locale).catch(() => ({ settings: null, impactStats: [] }));
   const stats = home.impactStats;
 
@@ -20,6 +22,14 @@ export async function GapImpactSection() {
         <div className="mb-10 max-w-2xl">
           <h2 className="text-3xl font-bold text-atg-fg sm:text-4xl">{t.gapImpact.title}</h2>
           <p className="mt-3 text-atg-muted">{t.gapImpact.subtitle}</p>
+          <a
+            href={gapUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-5 inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-hover"
+          >
+            {t.gapImpact.cta}
+          </a>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
