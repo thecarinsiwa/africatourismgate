@@ -145,6 +145,7 @@ export const en: Translations = {
     ],
   },
   promo: {
+    badge: 'Special offer',
     title: 'Kenya Safari — Holiday Package',
     description:
       'Discover the endless plains of the Masai Mara, spot the Big Five in their natural habitat and enjoy luxury lodges in the heart of the savanna. An experience that will change how you see Africa.',

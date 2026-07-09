@@ -146,6 +146,7 @@ export const es: Translations = {
     ],
   },
   promo: {
+    badge: 'Oferta especial',
     title: 'Safari en Kenia — Paquete vacacional',
     description:
       'Descubra las llanuras infinitas del Masai Mara, observe los Cinco Grandes en su hábitat natural y disfrute de alojamientos de lujo en el corazón de la sabana. Una experiencia que cambiará su visión de África.',

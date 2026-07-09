@@ -224,6 +224,7 @@ export type Translations = {
     items: { title: string; description: string }[];
   };
   promo: {
+    badge: string;
     title: string;
     description: string;
     priceFrom: string;
@@ -1497,6 +1498,7 @@ const fr: Translations = {
     ],
   },
   promo: {
+    badge: 'Offre spéciale',
     title: 'Safari au Kenya — Forfait Vacances',
     description:
       "Découvrez les plaines infinies du Masai Mara, observez les Big Five dans leur habitat naturel et profitez d'hébergements de luxe au cœur de la savane. Une expérience qui changera votre vision de l'Afrique.",
@@ -2915,7 +2917,8 @@ const en: Translations = {
     ],
   },
   promo: {
-    title: 'Kenya Safari � Holiday Package',
+    badge: 'Special offer',
+    title: 'Kenya Safari — Holiday Package',
     description:
       'Discover the endless plains of the Masai Mara, spot the Big Five in their natural habitat and enjoy luxury lodges in the heart of the savanna. An experience that will change how you see Africa.',
     priceFrom: 'From:',

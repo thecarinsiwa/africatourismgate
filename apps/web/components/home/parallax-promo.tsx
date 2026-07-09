@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { getFeaturedPackage } from '../../lib/api/public';
@@ -35,39 +36,51 @@ export function ParallaxPromo() {
     ? formatPackagePrice(featured.pricing.totalCents, featured.pricing.currency)
     : '$159.00';
   const detailsHref = featured ? `/packages/${featured.id}` : '/packages';
-  const backgroundImage = featured?.imageUrl ?? FALLBACK_IMAGE;
+  const imageUrl = featured?.imageUrl ?? FALLBACK_IMAGE;
 
   return (
-    <section ref={ref} className="relative min-h-[440px] overflow-hidden py-20 sm:py-28">
-      <div
-        className="absolute inset-0 parallax-bg"
-        style={{ backgroundImage: `url("${backgroundImage}")` }}
-      />
-      <div className="absolute inset-0 bg-black/60" />
+    <section ref={ref} className="bg-atg-surface py-4 sm:py-5">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div
+          className={`overflow-hidden rounded-xl border border-secondary/30 bg-gradient-to-r from-secondary/15 via-atg-elevated to-atg-elevated shadow-sm ring-1 ring-secondary/20 transition-shadow hover:shadow-md dark:from-secondary/20 dark:via-atg-elevated dark:to-atg-elevated ${
+            isVisible ? 'animate-fade-in-up' : 'opacity-0'
+          }`}
+        >
+          <div className="flex flex-col gap-3 p-3 sm:flex-row sm:items-center sm:gap-4 sm:p-4">
+            <div className="relative h-20 w-full shrink-0 overflow-hidden rounded-lg sm:h-24 sm:w-32">
+              <Image
+                src={imageUrl}
+                alt=""
+                fill
+                className="object-cover"
+                sizes="(max-width: 640px) 100vw, 128px"
+              />
+              <div className="absolute inset-0 bg-secondary/25" aria-hidden />
+            </div>
 
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col items-start gap-8 lg:flex-row lg:items-center lg:justify-between">
-          <div className={`max-w-3xl ${isVisible ? 'animate-fade-in-left' : 'opacity-0'}`}>
-            <h2 className="text-2xl font-bold leading-tight text-white sm:text-3xl lg:text-4xl">
-              {title}
-            </h2>
-            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/80 sm:text-base">
-              {description}
-            </p>
-            <p className="mt-4 text-lg text-white/90">
-              {t.promo.priceFrom}{' '}
-              <span className="text-2xl font-bold text-white">{price}</span>
-              <span className="ml-1 text-sm text-white/70">{t.promo.perPerson}</span>
-            </p>
-          </div>
+            <div className="min-w-0 flex-1 border-l-0 sm:border-l-4 sm:border-secondary sm:pl-4">
+              <span className="inline-flex rounded-full bg-secondary px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-sm">
+                {t.promo.badge}
+              </span>
+              <h2 className="mt-1.5 line-clamp-1 text-base font-bold text-atg-fg sm:text-lg">{title}</h2>
+              <p className="mt-0.5 line-clamp-1 text-xs leading-snug text-atg-muted sm:line-clamp-2 sm:text-sm">
+                {description}
+              </p>
+              <p className="mt-1.5 text-xs text-atg-muted sm:text-sm">
+                {t.promo.priceFrom}{' '}
+                <span className="text-base font-bold text-secondary sm:text-lg">{price}</span>
+                <span className="ml-1">{t.promo.perPerson}</span>
+              </p>
+            </div>
 
-          <div className={`shrink-0 ${isVisible ? 'animate-fade-in-right delay-200' : 'opacity-0'}`}>
-            <Link
-              href={detailsHref}
-              className="inline-flex min-h-[52px] items-center justify-center rounded-lg bg-primary px-8 py-3 text-sm font-bold uppercase tracking-wider text-white shadow-sm transition-colors hover:bg-primary-hover hover:shadow-md"
-            >
-              {t.promo.details}
-            </Link>
+            <div className="shrink-0 sm:self-center">
+              <Link
+                href={detailsHref}
+                className="inline-flex min-h-[40px] w-full items-center justify-center rounded-lg bg-secondary px-5 py-2 text-xs font-bold uppercase tracking-wide text-white shadow-sm transition-colors hover:bg-secondary/90 sm:w-auto sm:text-sm"
+              >
+                {t.promo.details}
+              </Link>
+            </div>
           </div>
         </div>
       </div>
