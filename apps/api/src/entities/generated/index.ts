@@ -47,6 +47,7 @@ export { Activities } from './activities.entity';
 export { ActivityImages } from './activities.entity';
 export { ActivityDescriptionAssets } from './activities.entity';
 export { ActivitySchedules } from './activities.entity';
+export { ActivityItineraryStops } from './activities.entity';
 export { Packages } from './packages.entity';
 export { PackageItems } from './packages.entity';
 export { PackageImages } from './packages.entity';

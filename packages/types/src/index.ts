@@ -207,6 +207,13 @@ export type {
 } from './activity.js';
 
 export type {
+  ActivityItineraryStop,
+  ActivityItineraryStopsListQuery,
+  CreateActivityItineraryStopRequest,
+  UpdateActivityItineraryStopRequest,
+} from './activity-itinerary-stop.js';
+
+export type {
   Booking,
   BookingAdminDetail,
   BookingClient,
