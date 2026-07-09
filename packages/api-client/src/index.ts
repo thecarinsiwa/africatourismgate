@@ -68,6 +68,8 @@ import type {
   ActivitiesListQuery,
   ActivityImage,
   ActivityImagesListQuery,
+  ActivityItineraryStop,
+  ActivityItineraryStopsListQuery,
   ActivityDescriptionAsset,
   ActivityDescriptionAssetsListQuery,
   ActivityDescriptionAssetType,
@@ -77,11 +79,13 @@ import type {
   ActivitySchedulesListQuery,
   CreateActivityProviderRequest,
   CreateActivityImageRequest,
+  CreateActivityItineraryStopRequest,
   CreateActivityDescriptionAssetRequest,
   CreateActivityRequest,
   CreateActivityScheduleRequest,
   UpdateActivityProviderRequest,
   UpdateActivityImageRequest,
+  UpdateActivityItineraryStopRequest,
   UpdateActivityDescriptionAssetRequest,
   UpdateActivityRequest,
   UpdateActivityScheduleRequest,
@@ -2065,6 +2069,39 @@ export class ApiClient {
 
   deleteActivityImage(id: string): Promise<void> {
     return this.request<void>(`/activity-images/${id}`, { method: 'DELETE' });
+  }
+
+  listActivityItineraryStops(
+    query?: ActivityItineraryStopsListQuery,
+  ): Promise<PaginatedResponse<ActivityItineraryStop>> {
+    return fetchPaginated<ActivityItineraryStop>(this, '/activity-itinerary-stops', query);
+  }
+
+  getActivityItineraryStop(id: string): Promise<ActivityItineraryStop> {
+    return this.request<ActivityItineraryStop>(`/activity-itinerary-stops/${id}`);
+  }
+
+  createActivityItineraryStop(
+    body: CreateActivityItineraryStopRequest,
+  ): Promise<ActivityItineraryStop> {
+    return this.request<ActivityItineraryStop>('/activity-itinerary-stops', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateActivityItineraryStop(
+    id: string,
+    body: UpdateActivityItineraryStopRequest,
+  ): Promise<ActivityItineraryStop> {
+    return this.request<ActivityItineraryStop>(`/activity-itinerary-stops/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteActivityItineraryStop(id: string): Promise<void> {
+    return this.request<void>(`/activity-itinerary-stops/${id}`, { method: 'DELETE' });
   }
 
   listActivityDescriptionAssets(

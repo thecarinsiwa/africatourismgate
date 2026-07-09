@@ -47,6 +47,7 @@ import { ActivitiesModule } from './resources/activities/activities.module';
 import { ActivityImagesModule } from './resources/activity-images/activity-images.module';
 import { ActivityDescriptionAssetsModule } from './resources/activity-description-assets/activity-description-assets.module';
 import { ActivitySchedulesModule } from './resources/activity-schedules/activity-schedules.module';
+import { ActivityItineraryStopsModule } from './resources/activity-itinerary-stops/activity-itinerary-stops.module';
 import { PackagesModule } from './resources/packages/packages.module';
 import { PackageImagesModule } from './resources/package-images/package-images.module';
 import { PackageDescriptionAssetsModule } from './resources/package-description-assets/package-description-assets.module';
@@ -131,6 +132,7 @@ import { Module } from '@nestjs/common';
     ActivityImagesModule,
     ActivityDescriptionAssetsModule,
     ActivitySchedulesModule,
+    ActivityItineraryStopsModule,
     PackagesModule,
     PackageImagesModule,
     PackageDescriptionAssetsModule,

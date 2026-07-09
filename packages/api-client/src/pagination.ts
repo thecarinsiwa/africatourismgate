@@ -4,6 +4,7 @@ import type {
   AirportsListQuery,
   AmenitiesListQuery,
   ActivityImagesListQuery,
+  ActivityItineraryStopsListQuery,
   DestinationsListQuery,
   FlightClassAvailabilityListQuery,
   FlightClassesListQuery,
@@ -113,6 +114,7 @@ export type PaginatedListQuery =
   | VehiclesListQuery
   | VehicleImagesListQuery
   | ActivityImagesListQuery
+  | ActivityItineraryStopsListQuery
   | VehicleAvailabilityListQuery
   | PropertySearchQuery
   | GapSiteSettingsListQuery
