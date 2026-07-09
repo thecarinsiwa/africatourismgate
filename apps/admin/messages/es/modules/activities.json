@@ -3,6 +3,7 @@
     "emptyDefault": "Ninguna activité pour le moment.",
     "ariaLabel": "Liste des activités",
     "searchPlaceholder": "Rechercher par titre…",
+    "destination": "Destino",
     "deleteConfirm": "Supprimer l'activité « {title} » ?"
   },
   "columns": {
