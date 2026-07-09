@@ -72,6 +72,7 @@
     "tabsAria": "Secciones de la actividad",
     "tabs": {
       "activity": "Actividad",
+      "itinerary": "Itinerario",
       "schedules": "Franjax"
     }
   },
@@ -89,6 +90,21 @@
       "viewTimeline": "Frise",
       "timelineAria": "Timeline des créneaux horaires",
       "fillAria": "Remplissage du créneau : {percent} %"
+    },
+    "itineraryStops": {
+      "title": "Itinerario",
+      "add": "Añadir etapa",
+      "new": "Nueva etapa",
+      "edit": "Editar etapa",
+      "empty": "Ninguna etapa de itinerario para esta actividad.",
+      "deleteConfirm": "¿Eliminar esta etapa?",
+      "order": "Etapa",
+      "description": "Descripción (opcional)",
+      "mapPreview": "Vista previa del mapa",
+      "timelineAria": "Línea de tiempo del itinerario",
+      "validation": {
+        "stopOrder": "El orden debe ser un entero ≥ 1."
+      }
     }
   },
   "referential": {

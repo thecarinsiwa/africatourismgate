@@ -17,12 +17,13 @@ import { ActivityImagesSection } from './activity-images-section';
 import { ActivityDescriptionAssetsSection } from './activity-description-assets-section';
 import { ActivityMetaBadges } from './activity-meta-badges';
 import { ActivitySchedulesSection } from './activity-schedules-section';
+import { ActivityItineraryStopsSection } from './activity-itinerary-stops-section';
 
 type ActivityEditPageProps = {
   activityId: string;
 };
 
-const TAB_VALUES = ['activite', 'creneaux'] as const;
+const TAB_VALUES = ['activite', 'itineraire', 'creneaux'] as const;
 type TabValue = (typeof TAB_VALUES)[number];
 
 function isTabValue(value: string | null): value is TabValue {
@@ -40,6 +41,7 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
   const activeTab: TabValue = isTabValue(tabParam) ? tabParam : 'activite';
   const stepItems: Array<{ value: TabValue; label: string }> = [
     { value: 'activite', label: tDetail('tabs.activity') },
+    { value: 'itineraire', label: tDetail('tabs.itinerary') },
     { value: 'creneaux', label: tDetail('tabs.schedules') },
   ];
   const activeStepIndex = Math.max(
@@ -158,7 +160,7 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
               aria-hidden
             />
           </div>
-          <div className="mt-3 grid grid-cols-2 gap-2">
+          <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
             {stepItems.map((step, index) => {
               const isActive = step.value === activeTab;
               const isDone = index < activeStepIndex;
@@ -196,6 +198,9 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
           <TabsTrigger value="activite" className="rounded-lg">
             {tDetail('tabs.activity')}
           </TabsTrigger>
+          <TabsTrigger value="itineraire" className="rounded-lg">
+            {tDetail('tabs.itinerary')}
+          </TabsTrigger>
           <TabsTrigger value="creneaux" className="rounded-lg">
             {tDetail('tabs.schedules')}
           </TabsTrigger>
@@ -215,6 +220,13 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
             <ActivityImagesSection activityId={activityId} embedded />
             <ActivityDescriptionAssetsSection activityId={activityId} />
           </div>
+        </TabsContent>
+
+        <TabsContent
+          value="itineraire"
+          className="rounded-xl border border-atg-border bg-atg-elevated/60 p-4 sm:p-6"
+        >
+          <ActivityItineraryStopsSection activityId={activityId} embedded />
         </TabsContent>
 
         <TabsContent
