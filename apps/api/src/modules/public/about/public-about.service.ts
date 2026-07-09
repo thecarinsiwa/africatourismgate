@@ -230,11 +230,16 @@ export class PublicAboutService {
   }
 
   async listHeroSlides(query: PublicHeroSlidesListQueryDto): Promise<PublicHeroSlideDto[]> {
-    let slides = await this.fetchPublishedHeroSlides(query.locale);
-    if (slides.length === 0 && query.locale) {
-      slides = await this.fetchPublishedHeroSlides();
+    if (!query.locale) {
+      return this.fetchPublishedHeroSlides();
     }
-    return slides;
+
+    const localized = await this.fetchPublishedHeroSlides(query.locale);
+    if (localized.length > 0) {
+      return localized;
+    }
+
+    return this.fetchPublishedHeroSlides('fr');
   }
 
   async listTimelineMilestones(

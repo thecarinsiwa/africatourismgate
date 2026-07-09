@@ -62,11 +62,14 @@ export function HeroSlider() {
     let cancelled = false;
 
     void getPublicHeroSlidesForLocale(locale)
-      .then(({ slides: apiSlides }) => {
-        if (cancelled || apiSlides.length === 0) return;
+      .then(({ slides: apiSlides, usedLocaleFallback }) => {
+        if (cancelled || apiSlides.length === 0 || usedLocaleFallback) return;
+
+        const localizedSlides = apiSlides.filter((slide) => slide.locale === locale);
+        if (localizedSlides.length === 0) return;
 
         setSlides(
-          apiSlides.map((slide) => ({
+          localizedSlides.map((slide) => ({
             id: slide.id,
             subtitle: slide.subtitle,
             title: slide.title,
