@@ -212,11 +212,20 @@ export class PublicAboutService {
   }
 
   async getWhyUsContent(query: PublicWhyUsListQueryDto): Promise<PublicWhyUsContentDto> {
-    let content = await this.fetchWhyUsContent(query.locale);
-    if ((!content.section || content.items.length === 0) && query.locale) {
-      content = await this.fetchWhyUsContent();
+    if (!query.locale) {
+      return this.fetchWhyUsContent();
     }
-    return content;
+
+    const localized = await this.fetchWhyUsContent(query.locale);
+    if (localized.section && localized.items.length > 0) {
+      return localized;
+    }
+
+    const fallback = await this.fetchWhyUsContent('fr');
+    return {
+      section: localized.section ?? fallback.section,
+      items: localized.items.length > 0 ? localized.items : fallback.items,
+    };
   }
 
   async getHappyCustomersContent(

@@ -682,17 +682,20 @@ export async function getPublicWhyUsForLocale(
 ): Promise<{ content: PublicWhyUsContent; usedLocaleFallback: boolean }> {
   try {
     const localized = await getPublicWhyUs({ locale });
-    if (localized.section || localized.items.length > 0) {
+    const sectionOk = !localized.section || localized.section.locale === locale;
+    const itemsOk =
+      localized.items.length === 0 || localized.items.every((item) => item.locale === locale);
+
+    if (sectionOk && itemsOk && (localized.section || localized.items.length > 0)) {
       return { content: localized, usedLocaleFallback: false };
     }
   } catch {
-    /* try without locale below */
+    /* use translation fallbacks below */
   }
 
-  const fallback = await getPublicWhyUs();
   return {
-    content: fallback,
-    usedLocaleFallback: Boolean(fallback.section || fallback.items.length > 0),
+    content: { section: null, items: [] },
+    usedLocaleFallback: true,
   };
 }
 

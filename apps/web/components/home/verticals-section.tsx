@@ -101,8 +101,10 @@ export function WhyUsSection() {
 
   useEffect(() => {
     let cancelled = false;
-    void getPublicWhyUsForLocale(locale).then(({ content: fetched }) => {
-      if (!cancelled) setContent(fetched);
+    void getPublicWhyUsForLocale(locale).then(({ content: fetched, usedLocaleFallback }) => {
+      if (!cancelled) {
+        setContent(usedLocaleFallback ? null : fetched);
+      }
     });
     return () => {
       cancelled = true;
