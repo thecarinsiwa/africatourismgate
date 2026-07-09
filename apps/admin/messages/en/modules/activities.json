@@ -10,7 +10,7 @@
     "activity": "Activity",
     "provider": "Provider",
     "price": "Price",
-    "duration": "Fromrée",
+    "duration": "Duration",
     "difficulty": "Difficulty"
   },
   "form": {
@@ -74,23 +74,28 @@
     "tabs": {
       "activity": "Activity",
       "itinerary": "Itinerary",
-      "schedules": "Slotx"
+      "schedules": "Slots"
     }
   },
   "sections": {
     "schedules": {
-      "title": "Slotx",
-      "addSlot": "Nouveau créneau",
-      "editSlot": "Modifier le créneau",
-      "dateTime": "Date et heure",
+      "title": "Time slots",
+      "intro": "Manage scheduled time slots for this activity.",
+      "addSchedule": "Add slot",
+      "addSlot": "New slot",
+      "editSlot": "Edit slot",
+      "dateTime": "Date and time",
       "capacity": "Capacity",
-      "empty": "Tocun créneau pour cette activité.",
-      "deleteConfirm": "Supprimer ce créneau ?",
-      "validationCapacity": "La capacité doit être au moins 1.",
-      "viewList": "Liste",
-      "viewTimeline": "Frise",
-      "timelineAria": "Timeline des créneaux horaires",
-      "fillAria": "Remplissage du créneau : {percent} %"
+      "empty": "No time slots for this activity.",
+      "deleteConfirm": "Delete this slot?",
+      "validationDateTime": "Date and time are required.",
+      "validationCapacity": "Capacity must be at least 1.",
+      "viewList": "List",
+      "viewTimeline": "Timeline",
+      "timelineAria": "Time slot timeline",
+      "fillAria": "Slot fill rate: {percent}%",
+      "placesBadge": "{booked} / {capacity} seats",
+      "bookedSummary": "{booked} booked of {capacity}"
     },
     "itineraryStops": {
       "title": "Itinerary",
@@ -131,8 +136,8 @@
       "subtitle": "Opérateurs locaux"
     },
     "schedules": {
-      "label": "Slotx",
-      "subtitle": "Horaires programmés"
+      "label": "Time slots",
+      "subtitle": "Scheduled sessions"
     }
   }
 }

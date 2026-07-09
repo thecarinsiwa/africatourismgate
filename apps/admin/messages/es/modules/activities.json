@@ -74,23 +74,28 @@
     "tabs": {
       "activity": "Actividad",
       "itinerary": "Itinerario",
-      "schedules": "Franjax"
+      "schedules": "Franjas"
     }
   },
   "sections": {
     "schedules": {
-      "title": "Franjax",
-      "addSlot": "Nouveau créneau",
-      "editSlot": "Modifier le créneau",
-      "dateTime": "Fecha et heure",
+      "title": "Franjas horarias",
+      "intro": "Gestione las franjas horarias disponibles para esta actividad.",
+      "addSchedule": "Añadir franja",
+      "addSlot": "Nueva franja",
+      "editSlot": "Editar franja",
+      "dateTime": "Fecha y hora",
       "capacity": "Capacidad",
-      "empty": "Hastacun créneau pour cette activité.",
-      "deleteConfirm": "Supprimer ce créneau ?",
-      "validationCapacity": "La capacité doit être au moins 1.",
-      "viewList": "Liste",
-      "viewTimeline": "Frise",
-      "timelineAria": "Timeline des créneaux horaires",
-      "fillAria": "Remplissage du créneau : {percent} %"
+      "empty": "Ninguna franja para esta actividad.",
+      "deleteConfirm": "¿Eliminar esta franja?",
+      "validationDateTime": "La fecha y la hora son obligatorias.",
+      "validationCapacity": "La capacidad debe ser al menos 1.",
+      "viewList": "Lista",
+      "viewTimeline": "Línea de tiempo",
+      "timelineAria": "Línea de tiempo de franjas horarias",
+      "fillAria": "Ocupación de la franja: {percent} %",
+      "placesBadge": "{booked} / {capacity} plazas",
+      "bookedSummary": "{booked} reservada(s) de {capacity}"
     },
     "itineraryStops": {
       "title": "Itinerario",
@@ -131,8 +136,8 @@
       "subtitle": "Opérateurs locaux"
     },
     "schedules": {
-      "label": "Franjax",
-      "subtitle": "Horaires programmés"
+      "label": "Franjas horarias",
+      "subtitle": "Horarios programados"
     }
   }
 }
