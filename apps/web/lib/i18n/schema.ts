@@ -88,6 +88,7 @@ export type Translations = {
     items: { title: string; description: string }[];
   };
   promo: {
+    badge: string;
     title: string;
     description: string;
     priceFrom: string;

@@ -25,6 +25,7 @@ import type {
   PublicHeroSlide,
   PublicHeroSlidesListQuery,
   PublicFeaturedReviewsListQuery,
+  PublicGapHome,
   AboutPageSectionKey,
 } from '@africatourismgate/types';
 import type {
@@ -681,17 +682,20 @@ export async function getPublicWhyUsForLocale(
 ): Promise<{ content: PublicWhyUsContent; usedLocaleFallback: boolean }> {
   try {
     const localized = await getPublicWhyUs({ locale });
-    if (localized.section || localized.items.length > 0) {
+    const sectionOk = !localized.section || localized.section.locale === locale;
+    const itemsOk =
+      localized.items.length === 0 || localized.items.every((item) => item.locale === locale);
+
+    if (sectionOk && itemsOk && (localized.section || localized.items.length > 0)) {
       return { content: localized, usedLocaleFallback: false };
     }
   } catch {
-    /* try without locale below */
+    /* use translation fallbacks below */
   }
 
-  const fallback = await getPublicWhyUs();
   return {
-    content: fallback,
-    usedLocaleFallback: Boolean(fallback.section || fallback.items.length > 0),
+    content: { section: null, items: [] },
+    usedLocaleFallback: true,
   };
 }
 
@@ -768,4 +772,20 @@ export async function getPublicFeaturedReviews(
   if (params.limit !== undefined) qs.set('limit', String(params.limit));
   const query = qs.toString();
   return fetchPublic<Review[]>(`/public/reviews/featured${query ? `?${query}` : ''}`);
+}
+
+export async function getPublicGapHome(locale?: string): Promise<PublicGapHome> {
+  const qs = locale ? `?locale=${encodeURIComponent(locale)}` : '';
+  return fetchPublic<PublicGapHome>(`/public/gap${qs}`);
+}
+
+export async function getPublicGapHomeForLocale(locale?: string): Promise<PublicGapHome> {
+  if (!locale) {
+    return getPublicGapHome();
+  }
+  try {
+    return await getPublicGapHome(locale);
+  } catch {
+    return getPublicGapHome();
+  }
 }

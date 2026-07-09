@@ -224,6 +224,7 @@ export type Translations = {
     items: { title: string; description: string }[];
   };
   promo: {
+    badge: string;
     title: string;
     description: string;
     priceFrom: string;
@@ -275,6 +276,11 @@ export type Translations = {
       author: string;
     }>;
   };
+  gapImpact: {
+    title: string;
+    subtitle: string;
+    cta: string;
+  };
   footer: {
     tagline: string;
     learnMore: string;
@@ -297,6 +303,7 @@ export type Translations = {
     privacy: string;
     about: string;
     aboutPages: string;
+    gap: string;
     faq: string;
     designedBy: string;
   };
@@ -1491,6 +1498,7 @@ const fr: Translations = {
     ],
   },
   promo: {
+    badge: 'Offre spéciale',
     title: 'Safari au Kenya — Forfait Vacances',
     description:
       "Découvrez les plaines infinies du Masai Mara, observez les Big Five dans leur habitat naturel et profitez d'hébergements de luxe au cœur de la savane. Une expérience qui changera votre vision de l'Afrique.",
@@ -1585,6 +1593,11 @@ const fr: Translations = {
       },
     ],
   },
+  gapImpact: {
+    title: 'Notre impact',
+    subtitle: 'Découvrez les résultats concrets du programme GAP en faveur des communautés et de la conservation.',
+    cta: 'Découvrir GAP',
+  },
   footer: {
     tagline:
       'Votre passerelle vers les meilleures expériences de voyage en Afrique. Découvrez des destinations uniques et réservez en toute confiance.',
@@ -1608,6 +1621,7 @@ const fr: Translations = {
     privacy: 'Politique de Confidentialité',
     about: 'À propos',
     aboutPages: 'À propos',
+    gap: 'GAP',
     faq: 'FAQ',
     designedBy: 'Conçu par',
   },
@@ -2903,7 +2917,8 @@ const en: Translations = {
     ],
   },
   promo: {
-    title: 'Kenya Safari � Holiday Package',
+    badge: 'Special offer',
+    title: 'Kenya Safari — Holiday Package',
     description:
       'Discover the endless plains of the Masai Mara, spot the Big Five in their natural habitat and enjoy luxury lodges in the heart of the savanna. An experience that will change how you see Africa.',
     priceFrom: 'From:',
@@ -2996,6 +3011,11 @@ const en: Translations = {
       },
     ],
   },
+  gapImpact: {
+    title: 'Our impact',
+    subtitle: 'See the measurable results of the GAP program for communities and conservation.',
+    cta: 'Discover GAP',
+  },
   footer: {
     tagline:
       'Your gateway to the best travel experiences in Africa. Discover unique destinations and book with confidence.',
@@ -3019,6 +3039,7 @@ const en: Translations = {
     privacy: 'Privacy Policy',
     about: 'About',
     aboutPages: 'About us',
+    gap: 'GAP',
     faq: 'FAQ',
     designedBy: 'Designed by',
   },

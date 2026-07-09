@@ -5,10 +5,10 @@ import { HeroSlider } from '../components/home/hero-search';
 import { SearchTabs } from '../components/home/search-tabs';
 import { WhyUsSection } from '../components/home/verticals-section';
 import { ParallaxPromo } from '../components/home/parallax-promo';
-import { DestinationsCarousel } from '../components/home/destinations-carousel';
 import { HappyCustomers } from '../components/home/happy-customers';
 import { ActivitiesMapSection } from '../components/home/activities-map-section';
 import { CustomerReviewsCarousel } from '../components/home/customer-reviews-carousel';
+import { GapImpactSection } from '../components/home/gap-impact-section';
 
 type PublicBranding = {
   displayName?: string;
@@ -51,10 +51,10 @@ export default function HomePage() {
         <SearchTabs />
         <WhyUsSection />
         <ParallaxPromo />
-        <DestinationsCarousel />
-        <HappyCustomers />
         <ActivitiesMapSection />
+        <HappyCustomers />
         <CustomerReviewsCarousel />
+        <GapImpactSection />
       </main>
 
       <HomeFooter />

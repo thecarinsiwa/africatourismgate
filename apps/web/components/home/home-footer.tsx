@@ -13,6 +13,7 @@ import { ABOUT_NAV_ITEMS, ABOUT_PATHS } from '../../lib/about/routes';
 export function HomeFooter() {
   const t = useTranslations();
   const [email, setEmail] = useState('');
+  const gapUrl = process.env.NEXT_PUBLIC_GAP_URL?.trim() || null;
   const { branding, logoBroken, setLogoBroken } = useResolvedPublicBranding();
   const contact = useResolvedPublicContact();
   const socialLinks = useMemo(() => buildSocialLinks(contact), [contact]);
@@ -214,6 +215,19 @@ export function HomeFooter() {
             <Link href={ABOUT_PATHS.contact} className="hover:text-white transition-colors">
               {t.footer.contact}
             </Link>
+            {gapUrl ? (
+              <>
+                <span className="mx-2">|</span>
+                <a
+                  href={gapUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition-colors"
+                >
+                  {t.footer.gap}
+                </a>
+              </>
+            ) : null}
           </p>
           <p className="text-xs">
             {t.footer.designedBy} <strong className="text-white/70">{branding.displayName}</strong>

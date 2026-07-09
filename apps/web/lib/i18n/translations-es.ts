@@ -277,6 +277,7 @@ export const es: Translations = {
     ],
   },
   promo: {
+    badge: 'Oferta especial',
     title: 'Safari en Kenia — Paquete vacacional',
     description:
       'Descubra las llanuras infinitas del Masai Mara, observe los Cinco Grandes en su hábitat y disfrute de lodges de lujo en el corazón de la sabana. Una experiencia que cambiará su visión de África.',
@@ -371,6 +372,12 @@ export const es: Translations = {
       },
     ],
   },
+  gapImpact: {
+    title: 'Nuestro impacto',
+    subtitle:
+      'Descubra los resultados concretos del programa GAP en favor de las comunidades y la conservación.',
+    cta: 'Descubrir GAP',
+  },
   footer: {
     tagline:
       'Su puerta de entrada a las mejores experiencias de viaje en África. Descubra destinos únicos y reserve con confianza.',
@@ -394,6 +401,7 @@ export const es: Translations = {
     privacy: 'Política de privacidad',
     about: 'Acerca de',
     aboutPages: 'Sobre nosotros',
+    gap: 'GAP',
     faq: 'FAQ',
     designedBy: 'Diseñado por',
   },

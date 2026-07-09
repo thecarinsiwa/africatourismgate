@@ -119,8 +119,9 @@ export function ActivitiesMapSection() {
 
   return (
     <section
+      id="gallery"
       ref={ref}
-      className="border-y border-atg-border bg-atg-elevated py-16 transition-colors dark:border-atg-border dark:bg-atg-elevated sm:py-20"
+      className="scroll-mt-24 border-y border-atg-border bg-atg-elevated py-16 transition-colors dark:border-atg-border dark:bg-atg-elevated sm:py-20"
       aria-labelledby="activities-map-heading"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

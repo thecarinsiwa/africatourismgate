@@ -146,6 +146,7 @@ export const fr: Translations = {
     ],
   },
   promo: {
+    badge: 'Offre spéciale',
     title: 'Safari au Kenya — Forfait Vacances',
     description:
       "Découvrez les plaines infinies du Masai Mara, observez les Big Five dans leur habitat naturel et profitez d'hébergements de luxe au cœur de la savane. Une expérience qui changera votre vision de l'Afrique.",

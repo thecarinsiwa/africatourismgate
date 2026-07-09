@@ -36,7 +36,8 @@ for (const rawLine of text.split(/\r?\n/)) {
     value = value.slice(1, -1);
   }
 
-  process.stdout.write(`export ${key}=${JSON.stringify(value)}\n`);
+  const escaped = value.replace(/'/g, `'\\''`);
+  process.stdout.write(`export ${key}='${escaped}'\n`);
 }
 NODE
   )"
