@@ -479,6 +479,7 @@ export type {
   PackageItemEnriched,
   PackageItemType,
   PackageItemsListQuery,
+  PackageMapPoint,
   PackagePricing,
   PackageSuggestedImage,
   PackageSuggestedImageGroup,

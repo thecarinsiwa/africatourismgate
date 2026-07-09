@@ -43,6 +43,15 @@ export type PackageDescriptionAsset = {
   updatedAt: string | null;
 };
 
+export type PackageMapPoint = {
+  label: string;
+  latitude: number;
+  longitude: number;
+  itemType: PackageItemType;
+  itemId: string;
+  itemName: string;
+};
+
 export type PackageDetail = {
   package: {
     id: string;
@@ -55,6 +64,7 @@ export type PackageDetail = {
   pricing: PackagePricing;
   images?: ProductGalleryImage[];
   descriptionAssets?: PackageDescriptionAsset[];
+  mapPoints?: PackageMapPoint[];
 };
 
 export type PackagesBrowseQuery = {
