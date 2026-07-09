@@ -25,6 +25,7 @@ import type {
   PublicHeroSlide,
   PublicHeroSlidesListQuery,
   PublicFeaturedReviewsListQuery,
+  PublicGapHome,
   AboutPageSectionKey,
 } from '@africatourismgate/types';
 import type {
@@ -768,4 +769,20 @@ export async function getPublicFeaturedReviews(
   if (params.limit !== undefined) qs.set('limit', String(params.limit));
   const query = qs.toString();
   return fetchPublic<Review[]>(`/public/reviews/featured${query ? `?${query}` : ''}`);
+}
+
+export async function getPublicGapHome(locale?: string): Promise<PublicGapHome> {
+  const qs = locale ? `?locale=${encodeURIComponent(locale)}` : '';
+  return fetchPublic<PublicGapHome>(`/public/gap${qs}`);
+}
+
+export async function getPublicGapHomeForLocale(locale?: string): Promise<PublicGapHome> {
+  if (!locale) {
+    return getPublicGapHome();
+  }
+  try {
+    return await getPublicGapHome(locale);
+  } catch {
+    return getPublicGapHome();
+  }
 }

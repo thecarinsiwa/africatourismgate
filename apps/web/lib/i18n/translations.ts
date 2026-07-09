@@ -275,6 +275,10 @@ export type Translations = {
       author: string;
     }>;
   };
+  gapImpact: {
+    title: string;
+    subtitle: string;
+  };
   footer: {
     tagline: string;
     learnMore: string;
@@ -297,6 +301,7 @@ export type Translations = {
     privacy: string;
     about: string;
     aboutPages: string;
+    gap: string;
     faq: string;
     designedBy: string;
   };
@@ -1585,6 +1590,10 @@ const fr: Translations = {
       },
     ],
   },
+  gapImpact: {
+    title: 'Notre impact',
+    subtitle: 'Découvrez les résultats concrets du programme GAP en faveur des communautés et de la conservation.',
+  },
   footer: {
     tagline:
       'Votre passerelle vers les meilleures expériences de voyage en Afrique. Découvrez des destinations uniques et réservez en toute confiance.',
@@ -1608,6 +1617,7 @@ const fr: Translations = {
     privacy: 'Politique de Confidentialité',
     about: 'À propos',
     aboutPages: 'À propos',
+    gap: 'GAP',
     faq: 'FAQ',
     designedBy: 'Conçu par',
   },
@@ -2996,6 +3006,10 @@ const en: Translations = {
       },
     ],
   },
+  gapImpact: {
+    title: 'Our impact',
+    subtitle: 'See the measurable results of the GAP program for communities and conservation.',
+  },
   footer: {
     tagline:
       'Your gateway to the best travel experiences in Africa. Discover unique destinations and book with confidence.',
@@ -3019,6 +3033,7 @@ const en: Translations = {
     privacy: 'Privacy Policy',
     about: 'About',
     aboutPages: 'About us',
+    gap: 'GAP',
     faq: 'FAQ',
     designedBy: 'Designed by',
   },

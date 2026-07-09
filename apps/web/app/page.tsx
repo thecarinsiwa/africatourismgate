@@ -9,6 +9,7 @@ import { DestinationsCarousel } from '../components/home/destinations-carousel';
 import { HappyCustomers } from '../components/home/happy-customers';
 import { ActivitiesMapSection } from '../components/home/activities-map-section';
 import { CustomerReviewsCarousel } from '../components/home/customer-reviews-carousel';
+import { GapImpactSection } from '../components/home/gap-impact-section';
 
 type PublicBranding = {
   displayName?: string;
@@ -55,6 +56,7 @@ export default function HomePage() {
         <HappyCustomers />
         <ActivitiesMapSection />
         <CustomerReviewsCarousel />
+        <GapImpactSection />
       </main>
 
       <HomeFooter />

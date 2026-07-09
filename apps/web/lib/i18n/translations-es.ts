@@ -371,6 +371,11 @@ export const es: Translations = {
       },
     ],
   },
+  gapImpact: {
+    title: 'Nuestro impacto',
+    subtitle:
+      'Descubra los resultados concretos del programa GAP en favor de las comunidades y la conservación.',
+  },
   footer: {
     tagline:
       'Su puerta de entrada a las mejores experiencias de viaje en África. Descubra destinos únicos y reserve con confianza.',
@@ -394,6 +399,7 @@ export const es: Translations = {
     privacy: 'Política de privacidad',
     about: 'Acerca de',
     aboutPages: 'Sobre nosotros',
+    gap: 'GAP',
     faq: 'FAQ',
     designedBy: 'Diseñado por',
   },
