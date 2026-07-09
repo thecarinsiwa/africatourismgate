@@ -89,11 +89,21 @@ export class PublicGapService {
   ) {}
 
   async getHomeContent(query: PublicGapLocaleQueryDto): Promise<PublicGapHomeDto> {
-    let content = await this.fetchHomeContent(query.locale);
-    if ((!content.settings || content.impactStats.length === 0) && query.locale) {
-      content = await this.fetchHomeContent();
+    if (!query.locale) {
+      return this.fetchHomeContent();
     }
-    return content;
+
+    const localized = await this.fetchHomeContent(query.locale);
+    if (localized.settings && localized.impactStats.length > 0) {
+      return localized;
+    }
+
+    const fallback = await this.fetchHomeContent();
+    return {
+      settings: localized.settings ?? fallback.settings,
+      impactStats:
+        localized.impactStats.length > 0 ? localized.impactStats : fallback.impactStats,
+    };
   }
 
   async listPages(query: PublicGapPagesListQueryDto): Promise<PublicGapPageDto[]> {
