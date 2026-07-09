@@ -27,6 +27,10 @@ const adminBaseUrl =
     ? ATG_DOMAINS.admin.url
     : `http://localhost:${process.env.ADMIN_PORT ?? '3001'}`);
 
+const gapPublicUrl =
+  process.env.NEXT_PUBLIC_GAP_URL?.replace(/\/$/, '') ??
+  (isProduction ? ATG_DOMAINS.gap.url : `http://localhost:${process.env.GAP_PORT ?? '3004'}`);
+
 const AUTH_EXACT_PATHS = new Set([
   '/login',
   '/register',
@@ -39,6 +43,7 @@ const nextConfig = {
   transpilePackages: ['@africatourismgate/ui', '@africatourismgate/types'],
   env: {
     NEXT_PUBLIC_API_URL: apiUrl,
+    NEXT_PUBLIC_GAP_URL: gapPublicUrl,
     WEB_PORT: webPort,
     ATG_REMOTE_API_URL: remoteProxy ? getRemoteApiTargetUrl() : '',
   },
