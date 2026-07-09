@@ -1,4 +1,5 @@
 -- Hero slides — English and Spanish locales (French seeded in add_hero_slides.sql)
+-- Runs after add_hero_slides.sql (numeric suffix avoids localeCompare ordering: *_i18n before *.sql).
 
 INSERT INTO `hero_slides` (
   `id`, `subtitle`, `title`, `description`, `image_url`, `image_alt`,
