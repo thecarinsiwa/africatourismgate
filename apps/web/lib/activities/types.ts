@@ -49,6 +49,15 @@ export interface ActivityScheduleOffer {
   currency: string;
 }
 
+export interface ActivityItineraryStop {
+  id: string;
+  stopOrder: number;
+  name: string;
+  latitude: number;
+  longitude: number;
+  description: string | null;
+}
+
 export interface ActivityDetail {
   id: string;
   title: string;
@@ -62,6 +71,7 @@ export interface ActivityDetail {
   participants: number;
   schedules: ActivityScheduleOffer[];
   images?: ProductGalleryImage[];
+  itineraryStops?: ActivityItineraryStop[];
   difficultyLevel?: ActivityDifficultyLevel | null;
   averageRating?: number | null;
   reviewCount?: number;

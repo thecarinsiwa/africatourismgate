@@ -1,6 +1,26 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { PublicGalleryImageDto } from '../../dto/public-gallery-image.dto';
 
+export class ActivityDetailItineraryStopDto {
+  @ApiProperty({ format: 'uuid' })
+  id!: string;
+
+  @ApiProperty({ example: 1 })
+  stopOrder!: number;
+
+  @ApiProperty({ example: 'Place de la Gare' })
+  name!: string;
+
+  @ApiProperty({ example: -4.3058 })
+  latitude!: number;
+
+  @ApiProperty({ example: 15.3 })
+  longitude!: number;
+
+  @ApiPropertyOptional({ nullable: true })
+  description!: string | null;
+}
+
 export class ActivityDetailScheduleDto {
   @ApiProperty({
     format: 'uuid',
@@ -63,6 +83,9 @@ export class ActivityDetailDto {
 
   @ApiProperty({ type: [PublicGalleryImageDto] })
   images!: PublicGalleryImageDto[];
+
+  @ApiProperty({ type: [ActivityDetailItineraryStopDto] })
+  itineraryStops!: ActivityDetailItineraryStopDto[];
 
   @ApiPropertyOptional({
     nullable: true,

@@ -5,6 +5,7 @@ import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import {
   Activities,
   ActivityImages,
+  ActivityItineraryStops,
   ActivityProviders,
   ActivitySchedules,
   Destinations,
@@ -28,6 +29,8 @@ export class PublicActivitiesService {
     private readonly activitiesRepository: Repository<Activities>,
     @InjectRepository(ActivityImages)
     private readonly activityImagesRepository: Repository<ActivityImages>,
+    @InjectRepository(ActivityItineraryStops)
+    private readonly itineraryStopsRepository: Repository<ActivityItineraryStops>,
     @InjectRepository(ActivityProviders)
     private readonly providersRepository: Repository<ActivityProviders>,
     @InjectRepository(ActivitySchedules)
@@ -357,6 +360,7 @@ export class PublicActivitiesService {
       participants,
       schedules,
       images: await this.loadActivityGallery(activity.id),
+      itineraryStops: await this.loadActivityItineraryStops(activity.id),
       difficultyLevel: activity.difficultyLevel,
       ...this.toReviewFields(reviewSummary.get(activity.id)),
     };
@@ -395,6 +399,35 @@ export class PublicActivitiesService {
         caption: row.caption ?? null,
         sortOrder: row.sortOrder,
       }));
+  }
+
+  private async loadActivityItineraryStops(
+    activityId: string,
+  ): Promise<ActivityDetailDto['itineraryStops']> {
+    const rows = await this.itineraryStopsRepository.find({
+      where: { activityId },
+      order: { stopOrder: 'ASC', createdAt: 'ASC' },
+    });
+
+    return rows
+      .filter((row) => !row.deletedAt)
+      .map((row) => {
+        const latitude = this.toCoord(row.latitude);
+        const longitude = this.toCoord(row.longitude);
+        if (latitude === null || longitude === null) {
+          return null;
+        }
+
+        return {
+          id: row.id,
+          stopOrder: row.stopOrder,
+          name: row.name,
+          latitude,
+          longitude,
+          description: row.description,
+        };
+      })
+      .filter((row): row is NonNullable<typeof row> => row !== null);
   }
 
   private async resolveDestinationIds(destination: string): Promise<string[]> {
