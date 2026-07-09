@@ -106,6 +106,9 @@
       "deleteConfirm": "Supprimer cette étape ?",
       "order": "Étape",
       "description": "Description (optionnelle)",
+      "mapPicker": "Carte d'assistance",
+      "mapPickerHint": "Cliquez sur la carte ou déplacez le marqueur pour renseigner automatiquement la latitude et la longitude.",
+      "mapPickerAria": "Carte interactive pour sélectionner les coordonnées",
       "mapPreview": "Aperçu carte",
       "timelineAria": "Frise chronologique de l'itinéraire",
       "validation": {

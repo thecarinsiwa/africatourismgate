@@ -106,6 +106,9 @@
       "deleteConfirm": "Delete this stop?",
       "order": "Stop",
       "description": "Description (optional)",
+      "mapPicker": "Location picker",
+      "mapPickerHint": "Click on the map or drag the marker to fill in latitude and longitude automatically.",
+      "mapPickerAria": "Interactive map to pick coordinates",
       "mapPreview": "Map preview",
       "timelineAria": "Itinerary timeline",
       "validation": {

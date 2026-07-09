@@ -106,6 +106,9 @@
       "deleteConfirm": "¿Eliminar esta etapa?",
       "order": "Etapa",
       "description": "Descripción (opcional)",
+      "mapPicker": "Mapa de ayuda",
+      "mapPickerHint": "Haga clic en el mapa o arrastre el marcador para rellenar automáticamente la latitud y la longitud.",
+      "mapPickerAria": "Mapa interactivo para seleccionar coordenadas",
       "mapPreview": "Vista previa del mapa",
       "timelineAria": "Línea de tiempo del itinerario",
       "validation": {

@@ -15,7 +15,7 @@ import type { ActivityItineraryStop } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { DestinationStaticMap } from '../destinations/destination-static-map';
+import { CoordinatePickerMap } from '../maps/coordinate-picker-map';
 import { ActivityItineraryStopsTimeline } from './activity-itinerary-stops-timeline';
 
 type FormValues = {
@@ -93,6 +93,23 @@ export function ActivityItineraryStopsSection({
     if (!rows.length) return 1;
     return Math.max(...rows.map((row) => row.stopOrder)) + 1;
   }, [rows]);
+
+  const mapDefaultCenter = useMemo(() => {
+    const lastStop = rows[rows.length - 1];
+    if (lastStop) {
+      const lat = Number(lastStop.latitude);
+      const lng = Number(lastStop.longitude);
+      if (Number.isFinite(lat) && Number.isFinite(lng)) {
+        return { latitude: lat, longitude: lng };
+      }
+    }
+    return { latitude: -4.3058, longitude: 15.3 };
+  }, [rows]);
+
+  function handleCoordinatePick(latitude: string, longitude: string) {
+    setFormValues((prev) => ({ ...prev, latitude, longitude }));
+    setFieldErrors((prev) => ({ ...prev, latitude: undefined, longitude: undefined }));
+  }
 
   function resetForm() {
     setFormValues(emptyForm);
@@ -308,15 +325,20 @@ export function ActivityItineraryStopsSection({
                 required
               />
             </div>
+            <CoordinatePickerMap
+              latitude={formValues.latitude}
+              longitude={formValues.longitude}
+              onCoordinateChange={handleCoordinatePick}
+              defaultLatitude={mapDefaultCenter.latitude}
+              defaultLongitude={mapDefaultCenter.longitude}
+              title={t('mapPicker')}
+              hint={t('mapPickerHint')}
+              ariaLabel={t('mapPickerAria')}
+            />
             <Input
               label={t('description')}
               value={formValues.description}
               onChange={(e) => setFormValues((prev) => ({ ...prev, description: e.target.value }))}
-            />
-            <DestinationStaticMap
-              latitude={formValues.latitude}
-              longitude={formValues.longitude}
-              title={t('mapPreview')}
             />
             <div className="flex gap-3">
               <Button type="submit" loading={submitting}>
