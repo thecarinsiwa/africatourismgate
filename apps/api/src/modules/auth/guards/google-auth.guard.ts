@@ -7,7 +7,7 @@ import { AuthGuard } from '@nestjs/passport';
 import type { Response } from 'express';
 import { AuthService } from '../auth.service';
 import { safeOAuthRedirect } from '../oauth-redirect.util';
-import { decodeOAuthState, encodeOAuthState } from '../oauth-state.util';
+import { decodeOAuthState, encodeOAuthState, type OAuthContext } from '../oauth-state.util';
 
 @Injectable()
 export class GoogleAuthGuard extends AuthGuard('google') {
@@ -17,15 +17,23 @@ export class GoogleAuthGuard extends AuthGuard('google') {
 
   override getAuthenticateOptions(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest<{
-      query?: { next?: string; web_origin?: string };
+      query?: { next?: string; web_origin?: string; context?: string };
     }>();
     const next = request.query?.next;
     const webOrigin = request.query?.web_origin;
-    const nextPath = typeof next === 'string' ? next : '/booking/cart';
+    const rawContext = request.query?.context;
+    const oauthContext: OAuthContext | undefined =
+      rawContext === 'admin_register' ? 'admin_register' : undefined;
+    const nextPath =
+      typeof next === 'string'
+        ? next
+        : oauthContext === 'admin_register'
+          ? '/register/pending'
+          : '/booking/cart';
     const origin = typeof webOrigin === 'string' ? webOrigin : undefined;
     return {
       scope: ['profile', 'email'],
-      state: encodeOAuthState(nextPath, origin),
+      state: encodeOAuthState(nextPath, origin, oauthContext),
     };
   }
 
@@ -88,11 +96,11 @@ export class GoogleAuthGuard extends AuthGuard('google') {
         : typeof request.query?.next === 'string'
           ? request.query.next
           : undefined;
-    const { next, webOrigin } = decodeOAuthState(rawState);
+    const { next, webOrigin, context: oauthContext } = decodeOAuthState(rawState);
 
     safeOAuthRedirect(
       response,
-      this.authService.buildWebOAuthErrorUrl(next, code, webOrigin),
+      this.authService.buildOAuthErrorUrl(next, code, webOrigin, oauthContext),
     );
   }
 }

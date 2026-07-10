@@ -25,3 +25,6 @@ export const RESET_PASSWORD_INVALID_MESSAGE =
   'Lien de réinitialisation expiré ou invalide.';
 
 export const EMAIL_ALREADY_REGISTERED_MESSAGE = 'Email already registered';
+
+export const GMAIL_ONLY_MESSAGE =
+  'Only Gmail accounts (@gmail.com) are allowed for admin registration.';

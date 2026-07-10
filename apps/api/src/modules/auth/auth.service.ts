@@ -32,9 +32,9 @@ import {
   PASSWORD_RESET_TTL_SECONDS,
   RESET_PASSWORD_INVALID_MESSAGE,
   EMAIL_ALREADY_REGISTERED_MESSAGE,
+  GMAIL_ONLY_MESSAGE,
   SEED_ORG_PLATFORM_ID,
   SEED_ROLE_CUSTOMER_ID,
-  SEED_ROLE_ORG_ADMIN_ID,
 } from './auth.constants';
 import {
   AuthResponseDto,
@@ -46,6 +46,7 @@ import {
   RefreshJwtPayload,
 } from './interfaces/jwt-payload.interface';
 import { extractGoogleProfileEmail } from './google-profile.utils';
+import { isGmailAddress } from './gmail.utils';
 import { resolveOAuthWebUrlFromNext } from './resolve-web-origin.util';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ForgotPasswordResponseDto } from './dto/forgot-password-response.dto';
@@ -101,11 +102,30 @@ export class AuthService {
   }
 
   async register(dto: RegisterDto): Promise<AuthResponseDto> {
-    return this.registerWithRole(dto, {
-      roleId: SEED_ROLE_ORG_ADMIN_ID,
-      scopeType: 'agency',
-      scopeId: SEED_ORG_PLATFORM_ID,
+    const email = dto.email.trim().toLowerCase();
+    this.assertGmailEmail(email);
+
+    const existing = await this.findAnyUserByEmail(email);
+    if (existing && !existing.deletedAt) {
+      if (existing.status === 'active') {
+        throw new ConflictException(EMAIL_ALREADY_REGISTERED_MESSAGE);
+      }
+      return this.pendingApprovalResponse(existing);
+    }
+
+    const passwordHash = await bcrypt.hash(dto.password, BCRYPT_ROUNDS);
+    const user = await this.createPendingAdminUser({
+      email,
+      passwordHash,
+      firstName: dto.firstName.trim(),
+      lastName: dto.lastName.trim(),
+      ...(dto.phone ? { phone: dto.phone.trim() } : {}),
+      ...(dto.preferredLanguage
+        ? { preferredLanguage: dto.preferredLanguage.trim() }
+        : {}),
     });
+
+    return this.pendingApprovalResponse(user);
   }
 
   async registerCustomer(dto: RegisterDto): Promise<AuthResponseDto> {
@@ -297,6 +317,41 @@ export class AuthService {
     return { ...tokens, user: toAuthUserDto(user) };
   }
 
+  async registerAdminWithGoogleProfile(profile: {
+    emails?: Array<{ value?: string }>;
+    name?: { givenName?: string; familyName?: string };
+    _json?: { email?: string };
+  }): Promise<AuthResponseDto> {
+    const email = extractGoogleProfileEmail(profile);
+    if (!email) {
+      throw new UnauthorizedException('Google account has no email');
+    }
+    this.assertGmailEmail(email);
+
+    const existing = await this.findAnyUserByEmail(email);
+    if (existing && !existing.deletedAt) {
+      if (existing.status === 'active') {
+        throw new ConflictException(EMAIL_ALREADY_REGISTERED_MESSAGE);
+      }
+      return this.pendingApprovalResponse(existing);
+    }
+
+    const firstName = profile.name?.givenName?.trim() || 'Google';
+    const lastName = profile.name?.familyName?.trim() || 'User';
+    const passwordHash = await bcrypt.hash(
+      randomBytes(24).toString('hex'),
+      BCRYPT_ROUNDS,
+    );
+    const user = await this.createPendingAdminUser({
+      email,
+      passwordHash,
+      firstName,
+      lastName,
+    });
+
+    return this.pendingApprovalResponse(user);
+  }
+
   async loginWithGoogleProfile(profile: {
     emails?: Array<{ value?: string }>;
     name?: { givenName?: string; familyName?: string };
@@ -425,6 +480,32 @@ export class AuthService {
 
     const tokens = await this.issueTokenPair(user);
     return { ...tokens, user: toAuthUserDto(user) };
+  }
+
+  buildAdminRegisterPendingUrl(webOrigin?: string): string {
+    const { webUrl } = resolveOAuthWebUrlFromNext('/register/pending', webOrigin);
+    return `${webUrl}/register/pending`;
+  }
+
+  buildAdminOAuthErrorUrl(
+    webOrigin?: string,
+    code = 'google_auth_failed',
+  ): string {
+    const { webUrl } = resolveOAuthWebUrlFromNext('/register', webOrigin);
+    const query = new URLSearchParams({ error: code });
+    return `${webUrl}/register?${query.toString()}`;
+  }
+
+  buildOAuthErrorUrl(
+    next: string | undefined,
+    code: string,
+    webOrigin?: string,
+    context?: 'admin_register' | 'web',
+  ): string {
+    if (context === 'admin_register') {
+      return this.buildAdminOAuthErrorUrl(webOrigin, code);
+    }
+    return this.buildWebOAuthErrorUrl(next, code, webOrigin);
   }
 
   buildWebVerificationUrl(
@@ -761,6 +842,58 @@ export class AuthService {
       refreshToken: '',
       expiresIn: 0,
     };
+  }
+
+  private pendingApprovalResponse(user: Users): AuthResponseDto {
+    return {
+      pendingApproval: true,
+      accessToken: '',
+      refreshToken: '',
+      expiresIn: 0,
+      user: toAuthUserDto(user),
+    };
+  }
+
+  private assertGmailEmail(email: string): void {
+    if (!isGmailAddress(email)) {
+      throw new BadRequestException(GMAIL_ONLY_MESSAGE);
+    }
+  }
+
+  private async createPendingAdminUser(params: {
+    email: string;
+    passwordHash: string;
+    firstName: string;
+    lastName: string;
+    phone?: string;
+    preferredLanguage?: string;
+  }): Promise<Users> {
+    await this.ensurePlatformOrg();
+    const userId = newId();
+    const user = this.usersRepo.create({
+      id: userId,
+      email: params.email,
+      passwordHash: params.passwordHash,
+      firstName: params.firstName,
+      lastName: params.lastName,
+      organizationId: SEED_ORG_PLATFORM_ID,
+      status: 'suspended',
+      ...(params.phone ? { phone: params.phone } : {}),
+      ...(params.preferredLanguage
+        ? { preferredLanguage: params.preferredLanguage }
+        : {}),
+    } as DeepPartial<Users>);
+
+    try {
+      await this.usersRepo.save(user);
+    } catch (error) {
+      if (this.isDuplicateEmailError(error)) {
+        throw new ConflictException(EMAIL_ALREADY_REGISTERED_MESSAGE);
+      }
+      throw error;
+    }
+
+    return user;
   }
 
   private normalizeEmail(email: string): string {

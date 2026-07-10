@@ -34,14 +34,15 @@ export class GoogleOAuthExceptionFilter implements ExceptionFilter {
         : typeof req.query?.next === 'string'
           ? req.query.next
           : undefined;
-    const { next, webOrigin } = decodeOAuthState(rawState);
+    const { next, webOrigin, context } = decodeOAuthState(rawState);
 
     safeOAuthRedirect(
       res,
-      this.authService.buildWebOAuthErrorUrl(
+      this.authService.buildOAuthErrorUrl(
         next,
         resolveGoogleOAuthErrorCode(exception),
         webOrigin,
+        context,
       ),
     );
   }

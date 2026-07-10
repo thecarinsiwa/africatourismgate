@@ -88,10 +88,22 @@ export class AuthController {
       return;
     }
 
-    const { next, webOrigin } = decodeOAuthState(req.user.state);
+    const { next, webOrigin, context } = decodeOAuthState(req.user.state);
 
     try {
-      const auth = await this.authService.loginWithGoogleProfile(req.user.profile);
+      const auth =
+        context === 'admin_register'
+          ? await this.authService.registerAdminWithGoogleProfile(req.user.profile)
+          : await this.authService.loginWithGoogleProfile(req.user.profile);
+
+      if (auth.pendingApproval) {
+        safeOAuthRedirect(
+          res,
+          this.authService.buildAdminRegisterPendingUrl(webOrigin),
+        );
+        return;
+      }
+
       if (auth.requiresVerification && auth.verificationId) {
         safeOAuthRedirect(
           res,
@@ -120,10 +132,11 @@ export class AuthController {
       );
       safeOAuthRedirect(
         res,
-        this.authService.buildWebOAuthErrorUrl(
+        this.authService.buildOAuthErrorUrl(
           next,
           resolveGoogleOAuthErrorCode(err),
           webOrigin,
+          context,
         ),
       );
     }

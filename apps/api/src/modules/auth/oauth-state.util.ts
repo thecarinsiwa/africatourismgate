@@ -1,14 +1,27 @@
+export type OAuthContext = 'admin_register' | 'web';
+
 export type OAuthState = {
   next: string;
   webOrigin?: string;
+  context?: OAuthContext;
 };
 
-export function encodeOAuthState(next: string, webOrigin?: string): string {
-  const safeNext = normalizeOAuthNext(next);
-  if (!webOrigin?.trim()) {
+export function encodeOAuthState(
+  next: string,
+  webOrigin?: string,
+  context?: OAuthContext,
+): string {
+  const safeNext = normalizeOAuthNext(next, context);
+  const payload: OAuthState = { next: safeNext };
+  if (webOrigin?.trim()) {
+    payload.webOrigin = webOrigin.trim();
+  }
+  if (context) {
+    payload.context = context;
+  }
+  if (!payload.webOrigin && !payload.context) {
     return safeNext;
   }
-  const payload: OAuthState = { next: safeNext, webOrigin: webOrigin.trim() };
   return Buffer.from(JSON.stringify(payload)).toString('base64url');
 }
 
@@ -23,9 +36,13 @@ export function decodeOAuthState(state: string | undefined): OAuthState {
     ) as Partial<OAuthState>;
     if (parsed && typeof parsed.next === 'string') {
       return {
-        next: normalizeOAuthNext(parsed.next),
+        next: normalizeOAuthNext(parsed.next, parsed.context),
         webOrigin:
           typeof parsed.webOrigin === 'string' ? parsed.webOrigin.trim() : undefined,
+        context:
+          parsed.context === 'admin_register' || parsed.context === 'web'
+            ? parsed.context
+            : undefined,
       };
     }
   } catch {
@@ -35,9 +52,14 @@ export function decodeOAuthState(state: string | undefined): OAuthState {
   return { next: normalizeOAuthNext(state) };
 }
 
-function normalizeOAuthNext(next: string | undefined): string {
-  if (!next?.trim()) return '/booking/cart';
-  if (!next.startsWith('/')) return '/booking/cart';
-  if (next.startsWith('//')) return '/booking/cart';
+function normalizeOAuthNext(
+  next: string | undefined,
+  context?: OAuthContext,
+): string {
+  const fallback =
+    context === 'admin_register' ? '/register/pending' : '/booking/cart';
+  if (!next?.trim()) return fallback;
+  if (!next.startsWith('/')) return fallback;
+  if (next.startsWith('//')) return fallback;
   return next;
 }

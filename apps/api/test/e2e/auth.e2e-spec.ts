@@ -1,8 +1,12 @@
 import type { INestApplication } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 import request from 'supertest';
 import { randomUUID } from 'node:crypto';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { AuthService } from '../../src/modules/auth/auth.service';
 import { EmailVerificationService } from '../../src/modules/email-verification/email-verification.service';
+import { UserRoleAssignments } from '../../src/entities/generated/rbac.entity';
 import { apiPath, authHeader, loginAsSeedAdmin } from './auth-client';
 import { createE2eApp } from './create-app';
 import { E2E_OTP_CODE } from './constants';
@@ -17,6 +21,76 @@ describe('Auth (e2e)', () => {
 
   afterAll(async () => {
     await app.close();
+  });
+
+  it('POST /auth/register creates suspended Gmail user without role', async () => {
+    const email = `pending.admin.${randomUUID().slice(0, 8)}@gmail.com`;
+    const password = 'SecurePass123!';
+
+    const res = await request(app.getHttpServer())
+      .post(apiPath('/auth/register'))
+      .send({
+        email,
+        password,
+        firstName: 'Pending',
+        lastName: 'Admin',
+      })
+      .expect(201);
+
+    expect(res.body.pendingApproval).toBe(true);
+    expect(res.body.accessToken).toBe('');
+    expect(res.body.user?.status).toBe('suspended');
+    expect(res.body.user?.email).toBe(email);
+
+    const roleAssignments = app.get<Repository<UserRoleAssignments>>(
+      getRepositoryToken(UserRoleAssignments),
+    );
+    const assignments = await roleAssignments.find({
+      where: { userId: res.body.user.id },
+    });
+    expect(assignments).toHaveLength(0);
+
+    await request(app.getHttpServer())
+      .post(apiPath('/auth/login'))
+      .send({ email, password })
+      .expect(401);
+  });
+
+  it('POST /auth/register rejects non-Gmail email', async () => {
+    await request(app.getHttpServer())
+      .post(apiPath('/auth/register'))
+      .send({
+        email: `not.gmail.${randomUUID().slice(0, 8)}@outlook.com`,
+        password: 'SecurePass123!',
+        firstName: 'Test',
+        lastName: 'User',
+      })
+      .expect(400);
+  });
+
+  it('registerAdminWithGoogleProfile creates suspended user pending approval', async () => {
+    const authService = app.get(AuthService);
+    const email = `google.admin.${randomUUID().slice(0, 8)}@gmail.com`;
+
+    const res = await authService.registerAdminWithGoogleProfile({
+      emails: [{ value: email }],
+      name: { givenName: 'Google', familyName: 'Pending' },
+    });
+
+    expect(res.pendingApproval).toBe(true);
+    expect(res.user?.status).toBe('suspended');
+    expect(res.accessToken).toBe('');
+  });
+
+  it('registerAdminWithGoogleProfile rejects non-Gmail email', async () => {
+    const authService = app.get(AuthService);
+
+    await expect(
+      authService.registerAdminWithGoogleProfile({
+        emails: [{ value: 'user@company.com' }],
+        name: { givenName: 'Work', familyName: 'User' },
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException);
   });
 
   it('POST /auth/login returns tokens for seed admin', async () => {
