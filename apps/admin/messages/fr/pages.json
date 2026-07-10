@@ -151,11 +151,13 @@
       },
       "agences": {
         "title": "Agences de location",
-        "description": "Référentiel des agences liées aux destinations."
+        "description": "Référentiel des agences liées aux destinations.",
+        "backLabel": "Retour aux véhicules"
       },
       "categories": {
         "title": "Catégories véhicules",
-        "description": "Types de véhicules (compact, SUV, premium, etc.)."
+        "description": "Types de véhicules (compact, SUV, premium, etc.).",
+        "backLabel": "Retour aux véhicules"
       },
       "nouveau": {
         "metaTitle": "Nouveau véhicule",

@@ -70,16 +70,20 @@
     "categories": {
       "new": "New category",
       "edit": "Edit category",
-      "empty": "No categories yet.",
+      "emptyDefault": "No categories yet.",
+      "emptySearch": "No category matches this search.",
       "searchPlaceholder": "Search by name or model…",
+      "searchAria": "Search categories",
       "exampleModel": "Example model",
       "deleteConfirm": "Delete category « {name} »?"
     },
     "agencies": {
       "new": "New agency",
       "edit": "Edit agency",
-      "empty": "No agencies yet.",
+      "emptyDefault": "No agencies yet.",
+      "emptySearch": "No agency matches this search.",
       "searchPlaceholder": "Search by name or address…",
+      "searchAria": "Search agencies",
       "agency": "Agency",
       "address": "Address",
       "destinationOptional": "Destination (optional)",

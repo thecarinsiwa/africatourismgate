@@ -70,16 +70,20 @@
     "categories": {
       "new": "Nouvelle catégorie",
       "edit": "Modifier la catégorie",
-      "empty": "Aucune catégorie.",
+      "emptyDefault": "Aucune catégorie.",
+      "emptySearch": "Aucune catégorie ne correspond à cette recherche.",
       "searchPlaceholder": "Rechercher par nom ou modèle…",
+      "searchAria": "Rechercher une catégorie",
       "exampleModel": "Modèle type",
       "deleteConfirm": "Supprimer la catégorie « {name} » ?"
     },
     "agencies": {
       "new": "Nouvelle agence",
       "edit": "Modifier l'agence",
-      "empty": "Aucune agence.",
+      "emptyDefault": "Aucune agence.",
+      "emptySearch": "Aucune agence ne correspond à cette recherche.",
       "searchPlaceholder": "Rechercher par nom ou adresse…",
+      "searchAria": "Rechercher une agence",
       "agency": "Agence",
       "address": "Adresse",
       "destinationOptional": "Destination (optionnel)",

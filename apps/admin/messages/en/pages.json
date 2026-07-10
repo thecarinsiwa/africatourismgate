@@ -151,11 +151,13 @@
       },
       "agences": {
         "title": "Rental agencies",
-        "description": "Agency directory linked to destinations."
+        "description": "Agency directory linked to destinations.",
+        "backLabel": "Back to vehicles"
       },
       "categories": {
         "title": "Vehicle categories",
-        "description": "Vehicle types (compact, SUV, premium, etc.)."
+        "description": "Vehicle types (compact, SUV, premium, etc.).",
+        "backLabel": "Back to vehicles"
       },
       "nouveau": {
         "metaTitle": "New vehicle",

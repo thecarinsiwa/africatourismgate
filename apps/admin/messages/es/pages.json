@@ -151,11 +151,13 @@
       },
       "agences": {
         "title": "Agencias de alquiler",
-        "description": "Directorio de agencias vinculadas a destinos."
+        "description": "Directorio de agencias vinculadas a destinos.",
+        "backLabel": "Volver a vehículos"
       },
       "categories": {
         "title": "Categorías de vehículos",
-        "description": "Tipos de vehículos (compacto, SUV, premium, etc.)."
+        "description": "Tipos de vehículos (compacto, SUV, premium, etc.).",
+        "backLabel": "Volver a vehículos"
       },
       "nouveau": {
         "metaTitle": "Nuevo vehículo",

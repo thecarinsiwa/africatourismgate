@@ -1,13 +1,16 @@
 'use client';
 
 import { RentalAgenciesList } from '../locations/rental-agencies-list';
-import { AdminListPageHeader } from './admin-list-page-header';
+import { AdminIntroPage } from './admin-intro-page';
 
 export function AgencesLocationPageContent() {
   return (
-    <div>
-      <AdminListPageHeader routePath="produits/locations/agences" />
+    <AdminIntroPage
+      routePath="produits/locations/agences"
+      backHref="/produits/locations"
+      backLabelKey="backLabel"
+    >
       <RentalAgenciesList />
-    </div>
+    </AdminIntroPage>
   );
 }

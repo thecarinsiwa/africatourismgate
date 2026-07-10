@@ -70,16 +70,20 @@
     "categories": {
       "new": "Nueva categoría",
       "edit": "Editar categoría",
-      "empty": "Ninguna categoría.",
+      "emptyDefault": "Ninguna categoría.",
+      "emptySearch": "Ninguna categoría coincide con esta búsqueda.",
       "searchPlaceholder": "Buscar por nombre o modelo…",
+      "searchAria": "Buscar categorías",
       "exampleModel": "Modelo de ejemplo",
       "deleteConfirm": "¿Eliminar la categoría « {name} »?"
     },
     "agencies": {
       "new": "Nueva agencia",
       "edit": "Editar agencia",
-      "empty": "Ninguna agencia.",
+      "emptyDefault": "Ninguna agencia.",
+      "emptySearch": "Ninguna agencia coincide con esta búsqueda.",
       "searchPlaceholder": "Buscar por nombre o dirección…",
+      "searchAria": "Buscar agencias",
       "agency": "Agencia",
       "address": "Dirección",
       "destinationOptional": "Destino (opcional)",
