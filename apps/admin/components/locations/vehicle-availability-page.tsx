@@ -2,7 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { DataTableBadge, Skeleton } from '@africatourismgate/ui';
+import { Button, Card, DataTableBadge, Skeleton } from '@africatourismgate/ui';
 import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -16,20 +16,28 @@ type VehicleAvailabilityPageProps = {
   vehicleId: string;
 };
 
+function formatPrice(cents: number, currency: string): string {
+  return `${(cents / 100).toFixed(2)} ${currency}`;
+}
+
 export function VehicleAvailabilityPage({ vehicleId }: VehicleAvailabilityPageProps) {
   const { locations: getLocationsErrorMessage } = useAdminErrorMessages();
   const searchParams = useSearchParams();
   const autoOpenAdd = searchParams.get('add') === '1';
   const tPage = useTranslations('pages.produits.locations.id.disponibilites');
   const tAvailability = useTranslations('modules.locations.sections.availability');
+  const tDetail = useTranslations('modules.locations.detail');
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
     | {
         status: 'ready';
         label: string;
+        licensePlate: string | null;
         agencyName: string;
         categoryName: string;
+        dailyPriceCents: number;
+        currency: string;
       }
   >({ status: 'loading' });
 
@@ -64,8 +72,11 @@ export function VehicleAvailabilityPage({ vehicleId }: VehicleAvailabilityPagePr
           setState({
             status: 'ready',
             label: vehicle.licensePlate ?? category.name,
+            licensePlate: vehicle.licensePlate,
             agencyName: agency.name,
             categoryName: category.name,
+            dailyPriceCents: vehicle.dailyPriceCents,
+            currency: vehicle.currency,
           });
         }
       } catch (error) {
@@ -85,9 +96,10 @@ export function VehicleAvailabilityPage({ vehicleId }: VehicleAvailabilityPagePr
 
   if (state.status === 'loading') {
     return (
-      <div className="space-y-6">
+      <div className="mx-auto w-full max-w-7xl space-y-6">
         <Skeleton className="h-5 w-40" />
-        <Skeleton className="h-16 w-full max-w-xl" />
+        <Skeleton className="h-28 w-full" />
+        <Skeleton className="h-16 w-full max-w-3xl" />
         <Skeleton className="h-64 w-full" />
       </div>
     );
@@ -95,7 +107,7 @@ export function VehicleAvailabilityPage({ vehicleId }: VehicleAvailabilityPagePr
 
   if (state.status === 'error') {
     return (
-      <div className="space-y-4">
+      <div className="mx-auto w-full max-w-7xl space-y-4">
         <AdminPageBackLink href={vehicleBackHref} label={backLabel} />
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {state.message}
@@ -104,37 +116,56 @@ export function VehicleAvailabilityPage({ vehicleId }: VehicleAvailabilityPagePr
     );
   }
 
-  const { label, agencyName, categoryName } = state;
+  const { label, licensePlate, agencyName, categoryName, dailyPriceCents, currency } = state;
 
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="mx-auto w-full max-w-7xl space-y-6">
       <AdminPageBackLink href={vehicleBackHref} label={backLabel} />
 
-      <div className="flex flex-wrap items-center gap-4">
-        <VehicleThumbnail
-          vehicleId={vehicleId}
-          label={label}
-          categoryName={categoryName}
-          size="md"
-        />
-        <div className="min-w-0 flex-1 space-y-2">
-          <p className="text-sm text-atg-muted">
-            {tAvailability('summary', { label, agencyName, categoryName })}
-          </p>
-          <div className="flex flex-wrap items-center gap-2">
-            <DataTableBadge variant="muted">{agencyName}</DataTableBadge>
-            <DataTableBadge variant="default">{categoryName}</DataTableBadge>
+      <Card
+        variant="dashboard"
+        className="flex flex-col gap-4 border border-atg-border/80 bg-atg-elevated/70 p-4 sm:flex-row sm:items-start sm:justify-between sm:p-5"
+      >
+        <div className="flex min-w-0 flex-1 items-start gap-4">
+          <VehicleThumbnail
+            vehicleId={vehicleId}
+            label={label}
+            categoryName={categoryName}
+            size="md"
+          />
+          <div className="min-w-0 space-y-3">
+            <div className="flex flex-wrap items-center gap-2">
+              {licensePlate ? (
+                <code className="rounded-md bg-atg-surface px-2.5 py-1 font-mono text-sm font-semibold text-atg-fg ring-1 ring-atg-border/60">
+                  {licensePlate}
+                </code>
+              ) : (
+                <span className="text-sm font-medium text-atg-fg">{tDetail('noLicensePlate')}</span>
+              )}
+              <DataTableBadge variant="muted">{agencyName}</DataTableBadge>
+              <DataTableBadge variant="default">{categoryName}</DataTableBadge>
+            </div>
+            <p className="text-sm text-atg-muted">
+              {tAvailability('summary', { label, agencyName, categoryName })}
+            </p>
+            <p className="tabular-nums text-sm font-medium text-atg-fg">
+              {formatPrice(dailyPriceCents, currency)}
+            </p>
           </div>
         </div>
-      </div>
+        <Button href={vehicleBackHref} variant="outline" className="w-full shrink-0 sm:w-auto">
+          {tDetail('editButton')}
+        </Button>
+      </Card>
 
       {tPage.has?.('description') ? (
-        <p className="text-sm text-atg-muted">{tPage('description')}</p>
+        <p className="text-sm leading-relaxed text-atg-muted">{tPage('description')}</p>
       ) : null}
 
       <VehicleAvailabilitySection
         vehicleId={vehicleId}
         embedded
+        variant="page"
         autoOpenAdd={autoOpenAdd}
       />
     </div>

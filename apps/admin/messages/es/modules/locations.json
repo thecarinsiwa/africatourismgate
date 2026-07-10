@@ -58,6 +58,8 @@
       "intro": "Franjas de disponibilidad por fechas (alquiler, mantenimiento, alquilado).",
       "backToVehicle": "Volver al vehículo",
       "summary": "Vehículo {label} — {agencyName} / {categoryName}",
+      "slotsCount": "{count, plural, =0 {Ninguna franja} one {# franja registrada} other {# franjas registradas}}",
+      "formHint": "Indique el período y el estado del vehículo para esta franja.",
       "addSlot": "Añadir una franja",
       "newSlot": "Nueva franja",
       "editSlot": "Editar franja",

@@ -58,6 +58,8 @@
       "intro": "Créneaux de disponibilité par dates (location, maintenance, loué).",
       "backToVehicle": "Retour au véhicule",
       "summary": "Véhicule {label} — {agencyName} / {categoryName}",
+      "slotsCount": "{count, plural, =0 {Aucun créneau} one {# créneau enregistré} other {# créneaux enregistrés}}",
+      "formHint": "Indiquez la période et le statut du véhicule pour ce créneau.",
       "addSlot": "Ajouter un créneau",
       "newSlot": "Nouveau créneau",
       "editSlot": "Modifier le créneau",

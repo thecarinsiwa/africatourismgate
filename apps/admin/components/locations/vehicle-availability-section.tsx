@@ -8,12 +8,16 @@ import {
   DataTable,
   DataTableActionButton,
   DataTableActions,
+  DataTableBadge,
   Input,
+  Modal,
+  Select,
+  Skeleton,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { VehicleAvailability, VehicleAvailabilityStatus } from '@africatourismgate/types';
 import { useLocale, useTranslations } from 'next-intl';
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import {
   fromDatetimeLocalValue,
@@ -41,13 +45,31 @@ type VehicleAvailabilitySectionProps = {
   vehicleId: string;
   autoOpenAdd?: boolean;
   embedded?: boolean;
+  variant?: 'default' | 'page';
 };
+
+function statusBadgeVariant(
+  status: VehicleAvailabilityStatus,
+): 'success' | 'warning' | 'danger' | 'muted' {
+  switch (status) {
+    case 'available':
+      return 'success';
+    case 'rented':
+      return 'warning';
+    case 'maintenance':
+      return 'danger';
+    default:
+      return 'muted';
+  }
+}
 
 export function VehicleAvailabilitySection({
   vehicleId,
   autoOpenAdd = false,
   embedded = false,
+  variant = 'default',
 }: VehicleAvailabilitySectionProps) {
+  const isPageVariant = variant === 'page';
   const locale = useLocale();
   const { locations: getLocationsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.locations.sections.availability');
@@ -55,7 +77,6 @@ export function VehicleAvailabilitySection({
   const tActions = useTranslations('common.actions');
   const statusLabels = useVehicleAvailabilityStatusLabels();
   const statusOptions = useVehicleAvailabilityStatusOptions();
-  const statusId = useId();
   const sectionRef = useRef<HTMLElement>(null);
   const [filterStart, setFilterStart] = useState('');
   const [filterEnd, setFilterEnd] = useState('');
@@ -108,14 +129,21 @@ export function VehicleAvailabilitySection({
     void load();
   }, [load]);
 
-  useEffect(() => {
-    if (!autoOpenAdd) return;
-    setEditing(null);
-    setFormValues(emptyForm);
+  function openForm(slot?: VehicleAvailability) {
+    if (slot) {
+      setEditing(slot);
+      setFormValues({
+        startDatetime: toDatetimeLocalValue(slot.startDatetime),
+        endDatetime: toDatetimeLocalValue(slot.endDatetime),
+        status: slot.status,
+      });
+    } else {
+      setEditing(null);
+      setFormValues(emptyForm);
+    }
     setFormError(null);
     setShowForm(true);
-    sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, [autoOpenAdd]);
+  }
 
   function resetForm() {
     setFormValues(emptyForm);
@@ -123,6 +151,14 @@ export function VehicleAvailabilitySection({
     setShowForm(false);
     setFormError(null);
   }
+
+  useEffect(() => {
+    if (!autoOpenAdd) return;
+    setEditing(null);
+    setFormValues(emptyForm);
+    setFormError(null);
+    setShowForm(true);
+  }, [autoOpenAdd]);
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -158,7 +194,7 @@ export function VehicleAvailabilitySection({
         id: 'range',
         header: tCommon('columns.period'),
         cell: ({ row }) => (
-          <span className="text-sm">
+          <span className="text-sm tabular-nums text-atg-fg">
             {formatRange(row.original.startDatetime, row.original.endDatetime)}
           </span>
         ),
@@ -166,7 +202,11 @@ export function VehicleAvailabilitySection({
       {
         accessorKey: 'status',
         header: t('status'),
-        cell: ({ row }) => getVehicleStatusLabel(row.original.status, statusLabels),
+        cell: ({ row }) => (
+          <DataTableBadge variant={statusBadgeVariant(row.original.status)}>
+            {getVehicleStatusLabel(row.original.status, statusLabels)}
+          </DataTableBadge>
+        ),
       },
       {
         id: 'actions',
@@ -176,15 +216,7 @@ export function VehicleAvailabilitySection({
           <DataTableActions>
             <DataTableActionButton
               action="edit"
-              onClick={() => {
-                setEditing(row.original);
-                setFormValues({
-                  startDatetime: toDatetimeLocalValue(row.original.startDatetime),
-                  endDatetime: toDatetimeLocalValue(row.original.endDatetime),
-                  status: row.original.status,
-                });
-                setShowForm(true);
-              }}
+              onClick={() => openForm(row.original)}
             />
             <DataTableActionButton
               action="delete"
@@ -211,8 +243,156 @@ export function VehicleAvailabilitySection({
   );
 
   const slots = state.status === 'ready' ? state.slots : [];
-  const selectClass =
-    'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg';
+
+  const slotFormModal = (
+    <Modal
+      open={showForm}
+      onOpenChange={(open) => {
+        if (!open && !submitting) resetForm();
+      }}
+      title={editing ? t('editSlot') : t('newSlot')}
+      description={!editing ? t('formHint') : undefined}
+      showClose
+      className="max-w-lg"
+    >
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {formError ? (
+          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+            {formError}
+          </p>
+        ) : null}
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Input
+            label={tCommon('columns.start')}
+            type="datetime-local"
+            value={formValues.startDatetime}
+            onChange={(e) =>
+              setFormValues((p) => ({ ...p, startDatetime: e.target.value }))
+            }
+            required
+          />
+          <Input
+            label={tCommon('columns.end')}
+            type="datetime-local"
+            value={formValues.endDatetime}
+            onChange={(e) =>
+              setFormValues((p) => ({ ...p, endDatetime: e.target.value }))
+            }
+            required
+          />
+        </div>
+        <Select
+          label={t('status')}
+          value={formValues.status}
+          onChange={(e) =>
+            setFormValues((p) => ({
+              ...p,
+              status: e.target.value as VehicleAvailabilityStatus,
+            }))
+          }
+          options={statusOptions}
+        />
+        <div className="flex justify-end gap-3">
+          <Button type="button" variant="outline" onClick={resetForm} disabled={submitting}>
+            {tActions('cancel')}
+          </Button>
+          <Button type="submit" loading={submitting}>
+            {editing ? tActions('save') : tActions('create')}
+          </Button>
+        </div>
+      </form>
+    </Modal>
+  );
+
+  const filterToolbar = (
+    <Card variant="dashboard" className="p-4">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div className="flex flex-wrap items-end gap-4">
+          <Input
+            label={t('filterFrom')}
+            type="date"
+            value={filterStart}
+            onChange={(e) => setFilterStart(e.target.value)}
+            wrapperClassName="w-full sm:w-auto sm:min-w-[180px]"
+          />
+          <Input
+            label={t('filterTo')}
+            type="date"
+            value={filterEnd}
+            onChange={(e) => setFilterEnd(e.target.value)}
+            wrapperClassName="w-full sm:w-auto sm:min-w-[180px]"
+          />
+          <Button type="button" variant="outline" size="sm" onClick={() => void load()}>
+            {tCommon('filters.apply')}
+          </Button>
+        </div>
+        <Button type="button" onClick={() => openForm()} className="w-full lg:w-auto">
+          {t('addSlot')}
+        </Button>
+      </div>
+    </Card>
+  );
+
+  const defaultFilterToolbar = (
+    <div className="flex flex-wrap items-end gap-4">
+      <Input
+        label={t('filterFrom')}
+        type="date"
+        value={filterStart}
+        onChange={(e) => setFilterStart(e.target.value)}
+        className="max-w-[180px]"
+      />
+      <Input
+        label={t('filterTo')}
+        type="date"
+        value={filterEnd}
+        onChange={(e) => setFilterEnd(e.target.value)}
+        className="max-w-[180px]"
+      />
+      <Button type="button" variant="outline" size="sm" onClick={() => void load()}>
+        {tCommon('filters.apply')}
+      </Button>
+    </div>
+  );
+
+  const slotsTable = state.status === 'error' ? (
+    <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+      {state.message}
+    </p>
+  ) : (
+    <Card variant="dashboard" padding="none">
+      <DataTable
+        columns={columns}
+        data={slots}
+        isLoading={state.status === 'loading'}
+        emptyMessage={t('empty')}
+        getRowId={(r) => r.id}
+      />
+    </Card>
+  );
+
+  if (isPageVariant) {
+    return (
+      <section ref={sectionRef} id="vehicle-availability" className="space-y-6">
+        {slotFormModal}
+        {filterToolbar}
+        <section className="space-y-4 rounded-xl border border-atg-border/80 bg-atg-elevated/40 p-4 sm:p-5">
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
+              <p className="mt-1 text-sm text-atg-muted">{t('intro')}</p>
+            </div>
+            {state.status === 'ready' ? (
+              <p className="text-sm font-medium text-atg-muted">{t('slotsCount', { count: slots.length })}</p>
+            ) : state.status === 'loading' ? (
+              <Skeleton className="h-4 w-28" />
+            ) : null}
+          </div>
+          {slotsTable}
+        </section>
+      </section>
+    );
+  }
 
   return (
     <section
@@ -222,128 +402,18 @@ export function VehicleAvailabilitySection({
         embedded ? 'space-y-6' : 'mt-12 space-y-6 border-t border-atg-border pt-10'
       }
     >
+      {slotFormModal}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
           <p className="mt-1 text-sm text-atg-muted">{t('intro')}</p>
         </div>
-        {!showForm ? (
-          <Button type="button" onClick={() => setShowForm(true)}>
-            {t('addSlot')}
-          </Button>
-        ) : null}
-      </div>
-
-      <div className="flex flex-wrap items-end gap-4">
-        <Input
-          label={t('filterFrom')}
-          type="date"
-          value={filterStart}
-          onChange={(e) => setFilterStart(e.target.value)}
-          className="max-w-[180px]"
-        />
-        <Input
-          label={t('filterTo')}
-          type="date"
-          value={filterEnd}
-          onChange={(e) => setFilterEnd(e.target.value)}
-          className="max-w-[180px]"
-        />
-        <Button type="button" variant="outline" size="sm" onClick={() => void load()}>
-          {tCommon('filters.apply')}
+        <Button type="button" onClick={() => openForm()}>
+          {t('addSlot')}
         </Button>
       </div>
-
-      {showForm ? (
-        <Card variant="dashboard" className="max-w-2xl">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <h3 className="text-sm font-medium">
-              {editing ? t('editSlot') : t('newSlot')}
-            </h3>
-            {formError ? (
-              <p role="alert" className="text-sm text-red-600">
-                {formError}
-              </p>
-            ) : null}
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label className="mb-2 block text-sm font-medium">
-                  {tCommon('columns.start')}
-                </label>
-                <input
-                  type="datetime-local"
-                  className={selectClass}
-                  value={formValues.startDatetime}
-                  onChange={(e) =>
-                    setFormValues((p) => ({ ...p, startDatetime: e.target.value }))
-                  }
-                  required
-                />
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium">
-                  {tCommon('columns.end')}
-                </label>
-                <input
-                  type="datetime-local"
-                  className={selectClass}
-                  value={formValues.endDatetime}
-                  onChange={(e) =>
-                    setFormValues((p) => ({ ...p, endDatetime: e.target.value }))
-                  }
-                  required
-                />
-              </div>
-            </div>
-            <div>
-              <label htmlFor={statusId} className="mb-2 block text-sm font-medium">
-                {t('status')}
-              </label>
-              <select
-                id={statusId}
-                className={selectClass}
-                value={formValues.status}
-                onChange={(e) =>
-                  setFormValues((p) => ({
-                    ...p,
-                    status: e.target.value as VehicleAvailabilityStatus,
-                  }))
-                }
-              >
-                {statusOptions.map((o) => (
-                  <option key={o.value} value={o.value}>
-                    {o.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="flex gap-3">
-              <Button type="submit" loading={submitting}>
-                {editing ? tActions('save') : tActions('create')}
-              </Button>
-              <Button type="button" variant="outline" onClick={resetForm}>
-                {tActions('cancel')}
-              </Button>
-            </div>
-          </form>
-        </Card>
-      ) : null}
-
-      {state.status === 'error' ? (
-        <p role="alert" className="text-sm text-red-600">
-          {state.message}
-        </p>
-      ) : (
-        <Card variant="dashboard" padding="none">
-          <DataTable
-            columns={columns}
-            data={slots}
-            isLoading={state.status === 'loading'}
-            emptyMessage={t('empty')}
-            getRowId={(r) => r.id}
-          />
-        </Card>
-      )}
+      {defaultFilterToolbar}
+      {slotsTable}
     </section>
   );
 }
