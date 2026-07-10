@@ -3,6 +3,7 @@
     "emptyDefault": "Ninguna activité pour le moment.",
     "ariaLabel": "Liste des activités",
     "searchPlaceholder": "Rechercher par titre…",
+    "destination": "Destino",
     "deleteConfirm": "Supprimer l'activité « {title} » ?"
   },
   "columns": {
@@ -69,26 +70,57 @@
     "descriptionAssets": "Adjuntos",
     "descriptionAssetsIntro": "{count} adjunto(s) vinculado(s) a la descripción.",
     "schedulesIntro": "{count} franja(s) programada(s).",
+    "itineraryStopsIntro": "{count} etapa(s) de itinerario.",
     "tabsAria": "Secciones de la actividad",
     "tabs": {
       "activity": "Actividad",
-      "schedules": "Franjax"
+      "itinerary": "Itinerario",
+      "schedules": "Franjas"
     }
   },
   "sections": {
     "schedules": {
-      "title": "Franjax",
-      "addSlot": "Nouveau créneau",
-      "editSlot": "Modifier le créneau",
-      "dateTime": "Fecha et heure",
+      "title": "Franjas horarias",
+      "intro": "Gestione las franjas horarias disponibles para esta actividad.",
+      "addSchedule": "Añadir franja",
+      "addSlot": "Nueva franja",
+      "editSlot": "Editar franja",
+      "dateTime": "Fecha y hora",
       "capacity": "Capacidad",
-      "empty": "Hastacun créneau pour cette activité.",
-      "deleteConfirm": "Supprimer ce créneau ?",
-      "validationCapacity": "La capacité doit être au moins 1.",
-      "viewList": "Liste",
-      "viewTimeline": "Frise",
-      "timelineAria": "Timeline des créneaux horaires",
-      "fillAria": "Remplissage du créneau : {percent} %"
+      "empty": "Ninguna franja para esta actividad.",
+      "deleteConfirm": "¿Eliminar esta franja?",
+      "validationDateTime": "La fecha y la hora son obligatorias.",
+      "validationCapacity": "La capacidad debe ser al menos 1.",
+      "viewList": "Lista",
+      "viewTimeline": "Línea de tiempo",
+      "timelineAria": "Línea de tiempo de franjas horarias",
+      "fillAria": "Ocupación de la franja: {percent} %",
+      "placesBadge": "{booked} / {capacity} plazas",
+      "bookedSummary": "{booked} reservada(s) de {capacity}"
+    },
+    "itineraryStops": {
+      "title": "Itinerario",
+      "add": "Añadir etapa",
+      "new": "Nueva etapa",
+      "edit": "Editar etapa",
+      "empty": "Ninguna etapa de itinerario para esta actividad.",
+      "deleteConfirm": "¿Eliminar esta etapa?",
+      "order": "Etapa",
+      "description": "Descripción (opcional)",
+      "mapPicker": "Mapa de ayuda",
+      "mapPickerHint": "Haga clic en el mapa o arrastre el marcador para rellenar automáticamente la latitud y la longitud.",
+      "mapPickerAria": "Mapa interactivo para seleccionar coordenadas",
+      "mapPreview": "Vista previa del mapa",
+      "durationHint": "Indique una duración por etapa para adaptar el itinerario mostrado a la duración de la actividad.",
+      "durationFieldHint": "Tiempo en esta etapa. El itinerario público se detiene cuando la suma alcanza la duración de la actividad.",
+      "durationSummaryActivity": "Duración de la actividad: {duration}",
+      "durationSummaryStops": "Duración acumulada de etapas: {duration}",
+      "durationExceedsActivity": "La duración acumulada supera la duración de la actividad: solo las primeras etapas serán visibles en el sitio.",
+      "timelineAria": "Línea de tiempo del itinerario",
+      "validation": {
+        "stopOrder": "El orden debe ser un entero ≥ 1.",
+        "durationMinutes": "La duración debe ser un entero ≥ 1."
+      }
     }
   },
   "referential": {
@@ -114,8 +146,8 @@
       "subtitle": "Opérateurs locaux"
     },
     "schedules": {
-      "label": "Franjax",
-      "subtitle": "Horaires programmés"
+      "label": "Franjas horarias",
+      "subtitle": "Horarios programados"
     }
   }
 }

@@ -280,6 +280,7 @@ export type Translations = {
     title: string;
     subtitle: string;
     cta: string;
+    programNameFallback: string;
   };
   footer: {
     tagline: string;
@@ -704,6 +705,10 @@ export type Translations = {
     galleryPrevious: string;
     galleryNext: string;
     galleryCounter: (current: number, total: number) => string;
+    itineraryTitle: string;
+    itineraryMapAria: string;
+    itineraryStopLabel: string;
+    itineraryStopDuration: string;
   };
   packages: {
     metaTitle: string;
@@ -854,6 +859,11 @@ export type Translations = {
     recapVehicleLine: string;
     recapCruiseLine: string;
     estimatedSavings: string;
+    itineraryMapTitle: string;
+    itineraryMapAria: string;
+    itineraryMapLegendTitle: string;
+    itineraryMapLegendPoints: string;
+    itineraryMapPartialHint: string;
   };
   account: {
     title: string;
@@ -1596,7 +1606,8 @@ const fr: Translations = {
   gapImpact: {
     title: 'Notre impact',
     subtitle: 'Découvrez les résultats concrets du programme GAP en faveur des communautés et de la conservation.',
-    cta: 'Découvrir GAP',
+    cta: 'Découvrir {programName}',
+    programNameFallback: 'GAP',
   },
   footer: {
     tagline:
@@ -2044,6 +2055,10 @@ const fr: Translations = {
     galleryPrevious: 'Photo précédente',
     galleryNext: 'Photo suivante',
     galleryCounter: (current, total) => `Photo ${current} sur ${total}`,
+    itineraryTitle: 'Itinéraire',
+    itineraryMapAria: 'Carte de l\'itinéraire de l\'activité',
+    itineraryStopLabel: 'Coordonnées',
+    itineraryStopDuration: 'Durée',
   },
   packages: {
     metaTitle: 'Forfaits combinés en Afrique',
@@ -2205,6 +2220,12 @@ const fr: Translations = {
     recapVehicleLine: 'Du {pickup} au {return}',
     recapCruiseLine: '{guests} passager(s) · cabine sélectionnée',
     estimatedSavings: 'Économie estimée : {amount}',
+    itineraryMapTitle: 'Carte du forfait',
+    itineraryMapAria: 'Carte des lieux inclus dans le forfait',
+    itineraryMapLegendTitle: 'Légende',
+    itineraryMapLegendPoints: '({count})',
+    itineraryMapPartialHint:
+      'Certains services (véhicule, croisière) ne sont pas affichés sur la carte faute de coordonnées géographiques.',
   },
   account: {
     title: 'Mon compte',
@@ -3014,7 +3035,8 @@ const en: Translations = {
   gapImpact: {
     title: 'Our impact',
     subtitle: 'See the measurable results of the GAP program for communities and conservation.',
-    cta: 'Discover GAP',
+    cta: 'Discover {programName}',
+    programNameFallback: 'GAP',
   },
   footer: {
     tagline:
@@ -3461,6 +3483,10 @@ const en: Translations = {
     galleryPrevious: 'Previous photo',
     galleryNext: 'Next photo',
     galleryCounter: (current, total) => `Photo ${current} of ${total}`,
+    itineraryTitle: 'Itinerary',
+    itineraryMapAria: 'Activity itinerary map',
+    itineraryStopLabel: 'Coordinates',
+    itineraryStopDuration: 'Duration',
   },
   packages: {
     metaTitle: 'Combined packages in Africa',
@@ -3621,6 +3647,12 @@ const en: Translations = {
     recapVehicleLine: 'From {pickup} to {return}',
     recapCruiseLine: '{guests} guest(s) · cabin selected',
     estimatedSavings: 'Estimated savings: {amount}',
+    itineraryMapTitle: 'Package map',
+    itineraryMapAria: 'Map of locations included in this package',
+    itineraryMapLegendTitle: 'Legend',
+    itineraryMapLegendPoints: '({count})',
+    itineraryMapPartialHint:
+      'Some services (vehicle, cruise) are not shown on the map because geographic coordinates are unavailable.',
   },
   account: {
     title: 'My account',

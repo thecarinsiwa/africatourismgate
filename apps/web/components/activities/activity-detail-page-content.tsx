@@ -25,6 +25,7 @@ import { DetailPageSkeletonShell } from '../shared/loading-skeletons';
 import { ProductGallery } from '../shared';
 import { ActivityBookingMobileBar, ActivityBookingSidebar } from './activity-booking-sidebar';
 import { ActivitySchedulesSection } from './activity-schedules-section';
+import { ActivityItinerarySection } from './activity-itinerary-section';
 
 export type ActivityDetailPageSearch = ActivityDetailSearchParams;
 
@@ -317,6 +318,22 @@ export function ActivityDetailPageContent({
                 </p>
               </section>
             )}
+
+            {detail.itineraryStops && detail.itineraryStops.length > 0 ? (
+              <ActivityItinerarySection
+                stops={detail.itineraryStops}
+                labels={{
+                  itineraryTitle: a.itineraryTitle,
+                  itineraryMapAria: a.itineraryMapAria,
+                  itineraryStopLabel: a.itineraryStopLabel,
+                  itineraryStopDuration: a.itineraryStopDuration,
+                  hourSingular: a.hourSingular,
+                  hourPlural: a.hourPlural,
+                  minuteSingular: a.minuteSingular,
+                  minutePlural: a.minutePlural,
+                }}
+              />
+            ) : null}
 
             <ActivitySchedulesSection
               schedules={detail.schedules}

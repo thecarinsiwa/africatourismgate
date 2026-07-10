@@ -77,6 +77,15 @@ export interface PackagePricing {
   currency: string;
 }
 
+export interface PackageMapPoint {
+  label: string;
+  latitude: number;
+  longitude: number;
+  itemType: PackageItemType;
+  itemId: string;
+  itemName: string;
+}
+
 export interface PackageDetail {
   package: Package;
   items: PackageItemEnriched[];
@@ -88,6 +97,7 @@ export interface PackageDetail {
     sortOrder: number;
   }[];
   descriptionAssets?: PackageDescriptionAsset[];
+  mapPoints?: PackageMapPoint[];
 }
 
 export interface PackageImage {

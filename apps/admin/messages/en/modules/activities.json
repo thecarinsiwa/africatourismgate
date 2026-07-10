@@ -3,13 +3,14 @@
     "emptyDefault": "None activité pour le moment.",
     "ariaLabel": "Liste des activités",
     "searchPlaceholder": "Rechercher par titre…",
+    "destination": "Destination",
     "deleteConfirm": "Supprimer l'activité « {title} » ?"
   },
   "columns": {
     "activity": "Activity",
     "provider": "Provider",
     "price": "Price",
-    "duration": "Fromrée",
+    "duration": "Duration",
     "difficulty": "Difficulty"
   },
   "form": {
@@ -69,26 +70,57 @@
     "descriptionAssets": "Attachments",
     "descriptionAssetsIntro": "{count} attachment(s) linked to the description.",
     "schedulesIntro": "{count} scheduled slot(s).",
+    "itineraryStopsIntro": "{count} itinerary stop(s).",
     "tabsAria": "Activity sections",
     "tabs": {
       "activity": "Activity",
-      "schedules": "Slotx"
+      "itinerary": "Itinerary",
+      "schedules": "Slots"
     }
   },
   "sections": {
     "schedules": {
-      "title": "Slotx",
-      "addSlot": "Nouveau créneau",
-      "editSlot": "Modifier le créneau",
-      "dateTime": "Date et heure",
+      "title": "Time slots",
+      "intro": "Manage scheduled time slots for this activity.",
+      "addSchedule": "Add slot",
+      "addSlot": "New slot",
+      "editSlot": "Edit slot",
+      "dateTime": "Date and time",
       "capacity": "Capacity",
-      "empty": "Tocun créneau pour cette activité.",
-      "deleteConfirm": "Supprimer ce créneau ?",
-      "validationCapacity": "La capacité doit être au moins 1.",
-      "viewList": "Liste",
-      "viewTimeline": "Frise",
-      "timelineAria": "Timeline des créneaux horaires",
-      "fillAria": "Remplissage du créneau : {percent} %"
+      "empty": "No time slots for this activity.",
+      "deleteConfirm": "Delete this slot?",
+      "validationDateTime": "Date and time are required.",
+      "validationCapacity": "Capacity must be at least 1.",
+      "viewList": "List",
+      "viewTimeline": "Timeline",
+      "timelineAria": "Time slot timeline",
+      "fillAria": "Slot fill rate: {percent}%",
+      "placesBadge": "{booked} / {capacity} seats",
+      "bookedSummary": "{booked} booked of {capacity}"
+    },
+    "itineraryStops": {
+      "title": "Itinerary",
+      "add": "Add stop",
+      "new": "New stop",
+      "edit": "Edit stop",
+      "empty": "No itinerary stops for this activity.",
+      "deleteConfirm": "Delete this stop?",
+      "order": "Stop",
+      "description": "Description (optional)",
+      "mapPicker": "Location picker",
+      "mapPickerHint": "Click on the map or drag the marker to fill in latitude and longitude automatically.",
+      "mapPickerAria": "Interactive map to pick coordinates",
+      "mapPreview": "Map preview",
+      "durationHint": "Set a duration per stop so the displayed itinerary matches the activity duration.",
+      "durationFieldHint": "Time spent at this stop. The public itinerary stops when the total reaches the activity duration.",
+      "durationSummaryActivity": "Activity duration: {duration}",
+      "durationSummaryStops": "Cumulative stop duration: {duration}",
+      "durationExceedsActivity": "Cumulative stop duration exceeds the activity duration: only the first stops will appear on the website.",
+      "timelineAria": "Itinerary timeline",
+      "validation": {
+        "stopOrder": "Order must be an integer ≥ 1.",
+        "durationMinutes": "Duration must be an integer ≥ 1."
+      }
     }
   },
   "referential": {
@@ -114,8 +146,8 @@
       "subtitle": "Opérateurs locaux"
     },
     "schedules": {
-      "label": "Slotx",
-      "subtitle": "Horaires programmés"
+      "label": "Time slots",
+      "subtitle": "Scheduled sessions"
     }
   }
 }

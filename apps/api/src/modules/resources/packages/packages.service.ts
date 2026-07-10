@@ -18,6 +18,7 @@ import { CreatePackageDto } from './dto/create-package.dto';
 import { PackagesListQueryDto } from './dto/packages-list-query.dto';
 import { UpdatePackageDto } from './dto/update-package.dto';
 import { PackageItemPricingService } from './package-item-pricing.service';
+import { PackageMapPointsService } from './package-map-points.service';
 
 @Injectable()
 export class PackagesService extends CrudService<Packages> {
@@ -31,6 +32,7 @@ export class PackagesService extends CrudService<Packages> {
     @InjectRepository(PackageDescriptionAssets)
     private readonly packageDescriptionAssetsRepository: Repository<PackageDescriptionAssets>,
     private readonly pricingService: PackageItemPricingService,
+    private readonly mapPointsService: PackageMapPointsService,
   ) {
     super(packagesRepository);
   }
@@ -175,8 +177,9 @@ export class PackagesService extends CrudService<Packages> {
     const pricing = this.pricingService.computePricing(items, discountPercent);
     const images = await this.loadPackageGallery(id);
     const descriptionAssets = await this.loadPackageDescriptionAssets(id);
+    const mapPoints = await this.mapPointsService.resolveForItems(items);
 
-    return { package: pkg, items, pricing, images, descriptionAssets };
+    return { package: pkg, items, pricing, images, descriptionAssets, mapPoints };
   }
 
   async findPrimaryImageUrlsByPackageIds(

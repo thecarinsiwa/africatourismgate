@@ -3,6 +3,7 @@
     "emptyDefault": "Aucune activité pour le moment.",
     "ariaLabel": "Liste des activités",
     "searchPlaceholder": "Rechercher par titre…",
+    "destination": "Destination",
     "deleteConfirm": "Supprimer l'activité « {title} » ?"
   },
   "columns": {
@@ -69,26 +70,57 @@
     "descriptionAssets": "Pièces jointes",
     "descriptionAssetsIntro": "{count} pièce(s) jointe(s) liée(s) à la description.",
     "schedulesIntro": "{count} créneau(x) programmé(s).",
+    "itineraryStopsIntro": "{count} étape(s) d'itinéraire.",
     "tabsAria": "Sections de l'activité",
     "tabs": {
       "activity": "Activité",
+      "itinerary": "Itinéraire",
       "schedules": "Créneaux"
     }
   },
   "sections": {
     "schedules": {
       "title": "Créneaux",
+      "intro": "Gérez les créneaux horaires disponibles pour cette activité.",
+      "addSchedule": "Ajouter un créneau",
       "addSlot": "Nouveau créneau",
       "editSlot": "Modifier le créneau",
       "dateTime": "Date et heure",
       "capacity": "Capacité",
       "empty": "Aucun créneau pour cette activité.",
       "deleteConfirm": "Supprimer ce créneau ?",
+      "validationDateTime": "La date et l'heure sont obligatoires.",
       "validationCapacity": "La capacité doit être au moins 1.",
       "viewList": "Liste",
       "viewTimeline": "Frise",
-      "timelineAria": "Timeline des créneaux horaires",
-      "fillAria": "Remplissage du créneau : {percent} %"
+      "timelineAria": "Frise chronologique des créneaux horaires",
+      "fillAria": "Remplissage du créneau : {percent} %",
+      "placesBadge": "{booked} / {capacity} places",
+      "bookedSummary": "{booked} réservé(s) sur {capacity}"
+    },
+    "itineraryStops": {
+      "title": "Itinéraire",
+      "add": "Ajouter une étape",
+      "new": "Nouvelle étape",
+      "edit": "Modifier l'étape",
+      "empty": "Aucune étape d'itinéraire pour cette activité.",
+      "deleteConfirm": "Supprimer cette étape ?",
+      "order": "Étape",
+      "description": "Description (optionnelle)",
+      "mapPicker": "Carte d'assistance",
+      "mapPickerHint": "Cliquez sur la carte ou déplacez le marqueur pour renseigner automatiquement la latitude et la longitude.",
+      "mapPickerAria": "Carte interactive pour sélectionner les coordonnées",
+      "mapPreview": "Aperçu carte",
+      "durationHint": "Renseignez une durée par étape pour adapter l'itinéraire affiché à la durée de l'activité.",
+      "durationFieldHint": "Temps passé à cette étape. L'itinéraire public s'arrête lorsque la somme atteint la durée de l'activité.",
+      "durationSummaryActivity": "Durée de l'activité : {duration}",
+      "durationSummaryStops": "Durée cumulée des étapes : {duration}",
+      "durationExceedsActivity": "La durée cumulée des étapes dépasse la durée de l'activité : seules les premières étapes seront visibles sur le site.",
+      "timelineAria": "Frise chronologique de l'itinéraire",
+      "validation": {
+        "stopOrder": "L'ordre doit être un entier ≥ 1.",
+        "durationMinutes": "La durée doit être un entier ≥ 1."
+      }
     }
   },
   "referential": {

@@ -168,3 +168,24 @@
 .leaflet-popup-content {
   margin: 12px 14px;
 }
+
+.atg-itinerary-marker {
+  background: transparent;
+  border: none;
+}
+
+.atg-itinerary-marker__badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 9999px;
+  border: 2px solid #ffffff;
+  background: var(--atg-primary, #c8102e);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.2);
+}

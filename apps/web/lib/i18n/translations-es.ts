@@ -376,7 +376,8 @@ export const es: Translations = {
     title: 'Nuestro impacto',
     subtitle:
       'Descubra los resultados concretos del programa GAP en favor de las comunidades y la conservación.',
-    cta: 'Descubrir GAP',
+    cta: 'Descubrir {programName}',
+    programNameFallback: 'GAP',
   },
   footer: {
     tagline:
@@ -823,6 +824,10 @@ export const es: Translations = {
     galleryPrevious: 'Foto anterior',
     galleryNext: 'Foto siguiente',
     galleryCounter: (current, total) => `Foto ${current} de ${total}`,
+    itineraryTitle: 'Itinerario',
+    itineraryMapAria: 'Mapa del itinerario de la actividad',
+    itineraryStopLabel: 'Coordenadas',
+    itineraryStopDuration: 'Duración',
   },
   packages: {
     metaTitle: 'Paquetes combinados en África',
@@ -984,6 +989,12 @@ export const es: Translations = {
     recapVehicleLine: 'Del {pickup} al {return}',
     recapCruiseLine: '{guests} pasajero(s) · cabina seleccionada',
     estimatedSavings: 'Ahorro estimado: {amount}',
+    itineraryMapTitle: 'Mapa del paquete',
+    itineraryMapAria: 'Mapa de los lugares incluidos en el paquete',
+    itineraryMapLegendTitle: 'Leyenda',
+    itineraryMapLegendPoints: '({count})',
+    itineraryMapPartialHint:
+      'Algunos servicios (vehículo, crucero) no aparecen en el mapa por falta de coordenadas geográficas.',
   },
   account: {
     title: 'Mi cuenta',

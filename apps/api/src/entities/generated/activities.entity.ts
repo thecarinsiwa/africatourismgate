@@ -104,3 +104,30 @@ export class ActivitySchedules extends BaseAuditEntity {
   bookedCount!: number;
 
 }
+
+@Entity('activity_itinerary_stops')
+export class ActivityItineraryStops extends BaseAuditEntity {
+  @PrimaryColumn('uuid', { name: 'id', length: 36 })
+  id!: string;
+
+  @Column({ type: 'varchar', name: 'activity_id', length: 36 })
+  activityId!: string;
+
+  @Column({ type: 'int', name: 'stop_order' })
+  stopOrder!: number;
+
+  @Column({ type: 'varchar', name: 'name', length: 180 })
+  name!: string;
+
+  @Column({ type: 'decimal', name: 'latitude', precision: 10, scale: 7 })
+  latitude!: string;
+
+  @Column({ type: 'decimal', name: 'longitude', precision: 10, scale: 7 })
+  longitude!: string;
+
+  @Column({ type: 'text', name: 'description', nullable: true })
+  description!: string | null;
+
+  @Column({ type: 'int', name: 'duration_minutes', nullable: true })
+  durationMinutes!: number | null;
+}

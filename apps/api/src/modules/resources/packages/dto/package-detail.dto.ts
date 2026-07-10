@@ -39,10 +39,20 @@ export type PackageDescriptionAssetDto = {
   updatedAt: Date | null;
 };
 
+export type PackageMapPointDto = {
+  label: string;
+  latitude: number;
+  longitude: number;
+  itemType: PackageItems['itemType'];
+  itemId: string;
+  itemName: string;
+};
+
 export type PackageDetailDto = {
   package: Packages;
   items: PackageItemEnrichedDto[];
   pricing: PackagePricingDto;
   images: PackageGalleryImageDto[];
   descriptionAssets: PackageDescriptionAssetDto[];
+  mapPoints: PackageMapPointDto[];
 };
