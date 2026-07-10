@@ -44,6 +44,13 @@ export function CoordinatePickerMap({
   const mapRef = useRef<import('leaflet').Map | null>(null);
   const markerRef = useRef<import('leaflet').Marker | null>(null);
   const onChangeRef = useRef(onCoordinateChange);
+  const initRef = useRef({
+    latitude,
+    longitude,
+    defaultLatitude,
+    defaultLongitude,
+    defaultZoom,
+  });
   const [mapReady, setMapReady] = useState(false);
 
   onChangeRef.current = onCoordinateChange;
@@ -54,6 +61,14 @@ export function CoordinatePickerMap({
       return;
     }
 
+    const {
+      latitude: initialLatitude,
+      longitude: initialLongitude,
+      defaultLatitude: centerLat,
+      defaultLongitude: centerLng,
+      defaultZoom: zoom,
+    } = initRef.current;
+
     let cancelled = false;
 
     void import('leaflet').then((L) => {
@@ -61,13 +76,13 @@ export function CoordinatePickerMap({
         return;
       }
 
-      const initialLat = parseDestinationCoord(latitude) ?? defaultLatitude;
-      const initialLng = parseDestinationCoord(longitude) ?? defaultLongitude;
-      const hasInitialCoords = hasValidDestinationCoords(latitude, longitude);
+      const initialLat = parseDestinationCoord(initialLatitude) ?? centerLat;
+      const initialLng = parseDestinationCoord(initialLongitude) ?? centerLng;
+      const hasInitialCoords = hasValidDestinationCoords(initialLatitude, initialLongitude);
 
       const map = L.map(containerRef.current!, {
         scrollWheelZoom: true,
-      }).setView([initialLat, initialLng], hasInitialCoords ? SELECTED_ZOOM : defaultZoom);
+      }).setView([initialLat, initialLng], hasInitialCoords ? SELECTED_ZOOM : zoom);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution:
@@ -119,8 +134,6 @@ export function CoordinatePickerMap({
       mapRef.current?.remove();
       mapRef.current = null;
     };
-    // Map is initialized once per mount; coordinate sync is handled below.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
