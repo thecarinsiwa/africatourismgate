@@ -140,6 +140,11 @@
     "locations": {
       "title": "Locations véhicules",
       "description": "Véhicules par agence, catégories et créneaux de disponibilité.",
+      "actions": {
+        "agencies": "Agences",
+        "categories": "Catégories",
+        "new": "Nouveau véhicule"
+      },
       "links": {
         "agencies": "Agences de location",
         "categories": "Catégories véhicules"

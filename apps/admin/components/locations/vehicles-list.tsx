@@ -254,7 +254,9 @@ export function VehiclesList() {
             </select>
           </div>
         </div>
-        <Button href="/produits/locations/nouveau">{t('newVehicle')}</Button>
+        <Button href="/produits/locations/nouveau" className="lg:hidden">
+          {t('newVehicle')}
+        </Button>
       </div>
 
       {deleteError ? (

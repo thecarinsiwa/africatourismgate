@@ -140,6 +140,11 @@
     "locations": {
       "title": "Alquiler de vehículos",
       "description": "Vehículos por agencia, categorías y franjas de disponibilidad.",
+      "actions": {
+        "agencies": "Agencias",
+        "categories": "Categorías",
+        "new": "Nuevo vehículo"
+      },
       "links": {
         "agencies": "Agencias de alquiler",
         "categories": "Categorías de vehículos"

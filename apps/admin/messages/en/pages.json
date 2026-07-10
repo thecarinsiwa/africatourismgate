@@ -140,6 +140,11 @@
     "locations": {
       "title": "Vehicle rentals",
       "description": "Vehicles by agency, categories and availability slots.",
+      "actions": {
+        "agencies": "Agencies",
+        "categories": "Categories",
+        "new": "New vehicle"
+      },
       "links": {
         "agencies": "Rental agencies",
         "categories": "Vehicle categories"
