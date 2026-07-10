@@ -5,7 +5,7 @@
   },
   "rootDir": "..",
   "testEnvironment": "node",
-  "testRegex": "booking-detail-pdf\\.spec\\.ts$",
+  "testRegex": "(booking-detail-pdf|accommodation-workbook)\\.spec\\.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
   }

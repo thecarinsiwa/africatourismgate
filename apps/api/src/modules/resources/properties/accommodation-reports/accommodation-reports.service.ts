@@ -29,7 +29,14 @@ import type {
 } from './accommodation-reports.types';
 import { AccommodationReportsDatedQueryDto } from './dto/accommodation-reports-dated-query.dto';
 import { AccommodationReportsScopeQueryDto } from './dto/accommodation-reports-scope-query.dto';
+import {
+  buildAccommodationWorkbook,
+  type AccommodationWorkbookAmenityRow,
+  type AccommodationWorkbookAvailabilityRow,
+  type AccommodationWorkbookRoomRow,
+} from './excel/accommodation-workbook.builder';
 import { resolveAccommodationReportLocale } from './labels/accommodation-reports.labels';
+import { accommodationWorkbookFilename } from './labels/accommodation-workbook.labels';
 
 export type AccommodationReportFile = {
   buffer: Buffer;
@@ -145,8 +152,28 @@ export class AccommodationReportsService {
     query: AccommodationReportsDatedQueryDto,
   ): Promise<AccommodationReportFile> {
     this.assertValidDateRange(query.dateFrom, query.dateTo);
-    await this.loadReportScope(query);
-    throw new NotImplementedException('Accommodation workbook export is not implemented yet.');
+
+    const locale = resolveAccommodationReportLocale(query.locale);
+    const scope = await this.loadReportScope(query);
+    const [rooms, availability, amenities] = await Promise.all([
+      this.loadScopedRooms(scope.propertyIds),
+      this.loadScopedAvailability(scope.propertyIds, query.dateFrom, query.dateTo),
+      this.loadScopedAmenities(scope.propertyIds),
+    ]);
+
+    const buffer = await buildAccommodationWorkbook({
+      locale,
+      properties: scope.properties,
+      rooms,
+      availability,
+      amenities,
+    });
+
+    return {
+      buffer,
+      filename: accommodationWorkbookFilename(query.dateFrom, query.dateTo),
+      contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    };
   }
 
   async generateKpiSummaryPdf(
@@ -187,6 +214,150 @@ export class AccommodationReportsService {
 
     await this.resolvePdfBrandingContext(localeInput);
     throw new NotImplementedException('Property dossier PDF export is not implemented yet.');
+  }
+
+  private async loadScopedRooms(
+    propertyIds: string[],
+  ): Promise<AccommodationWorkbookRoomRow[]> {
+    if (propertyIds.length === 0) {
+      return [];
+    }
+
+    const rows = await this.roomsRepository
+      .createQueryBuilder('room')
+      .innerJoin(
+        Properties,
+        'property',
+        'property.id = room.propertyId AND property.deletedAt IS NULL',
+      )
+      .where('room.deletedAt IS NULL')
+      .andWhere('room.propertyId IN (:...propertyIds)', { propertyIds })
+      .orderBy('property.name', 'ASC')
+      .addOrderBy('room.name', 'ASC')
+      .select('property.name', 'propertyName')
+      .addSelect('room.id', 'roomId')
+      .addSelect('room.name', 'name')
+      .addSelect('room.roomType', 'roomType')
+      .addSelect('room.maxGuests', 'maxGuests')
+      .addSelect('room.bedConfig', 'bedConfig')
+      .addSelect('room.basePriceCents', 'basePriceCents')
+      .addSelect('room.currency', 'currency')
+      .getRawMany<{
+        propertyName: string;
+        roomId: string;
+        name: string;
+        roomType: string | null;
+        maxGuests: number;
+        bedConfig: string | null;
+        basePriceCents: number;
+        currency: string;
+      }>();
+
+    return rows.map((row) => ({
+      propertyName: row.propertyName,
+      roomId: row.roomId,
+      name: row.name,
+      roomType: row.roomType,
+      maxGuests: Number(row.maxGuests),
+      bedConfig: row.bedConfig,
+      basePrice: Number(row.basePriceCents),
+      currency: row.currency,
+    }));
+  }
+
+  private async loadScopedAvailability(
+    propertyIds: string[],
+    dateFrom: string,
+    dateTo: string,
+  ): Promise<AccommodationWorkbookAvailabilityRow[]> {
+    if (propertyIds.length === 0) {
+      return [];
+    }
+
+    const from = dateFrom.slice(0, 10);
+    const to = dateTo.slice(0, 10);
+
+    const rows = await this.roomAvailabilityRepository
+      .createQueryBuilder('availability')
+      .innerJoin(
+        Rooms,
+        'room',
+        'room.id = availability.roomId AND room.deletedAt IS NULL',
+      )
+      .innerJoin(
+        Properties,
+        'property',
+        'property.id = room.propertyId AND property.deletedAt IS NULL',
+      )
+      .where('availability.deletedAt IS NULL')
+      .andWhere('room.propertyId IN (:...propertyIds)', { propertyIds })
+      .andWhere('availability.date >= :dateFrom', { dateFrom: from })
+      .andWhere('availability.date <= :dateTo', { dateTo: to })
+      .orderBy('property.name', 'ASC')
+      .addOrderBy('room.name', 'ASC')
+      .addOrderBy('availability.date', 'ASC')
+      .select('property.name', 'propertyName')
+      .addSelect('room.name', 'roomName')
+      .addSelect('availability.date', 'date')
+      .addSelect('availability.availableUnits', 'availableUnits')
+      .addSelect('availability.priceCents', 'priceCents')
+      .addSelect('room.currency', 'currency')
+      .getRawMany<{
+        propertyName: string;
+        roomName: string;
+        date: string;
+        availableUnits: number;
+        priceCents: number;
+        currency: string;
+      }>();
+
+    return rows.map((row) => ({
+      propertyName: row.propertyName,
+      roomName: row.roomName,
+      date: String(row.date).slice(0, 10),
+      availableUnits: Number(row.availableUnits),
+      price: Number(row.priceCents),
+      currency: row.currency,
+    }));
+  }
+
+  private async loadScopedAmenities(
+    propertyIds: string[],
+  ): Promise<AccommodationWorkbookAmenityRow[]> {
+    if (propertyIds.length === 0) {
+      return [];
+    }
+
+    const rows = await this.propertyAmenitiesRepository
+      .createQueryBuilder('propertyAmenity')
+      .innerJoin(
+        Amenities,
+        'amenity',
+        'amenity.id = propertyAmenity.amenityId AND amenity.deletedAt IS NULL',
+      )
+      .innerJoin(
+        Properties,
+        'property',
+        'property.id = propertyAmenity.propertyId AND property.deletedAt IS NULL',
+      )
+      .where('propertyAmenity.deletedAt IS NULL')
+      .andWhere('propertyAmenity.propertyId IN (:...propertyIds)', { propertyIds })
+      .orderBy('property.name', 'ASC')
+      .addOrderBy('amenity.name', 'ASC')
+      .select('property.name', 'propertyName')
+      .addSelect('amenity.code', 'code')
+      .addSelect('amenity.name', 'name')
+      .getRawMany<{
+        propertyName: string;
+        code: string;
+        name: string;
+      }>();
+
+    return rows.map((row) => ({
+      propertyName: row.propertyName,
+      code: row.code,
+      name: row.name,
+    }));
   }
 
   private async loadDestinationNameMap(destinationIds: string[]): Promise<Map<string, string>> {
