@@ -5,7 +5,11 @@
     "emptyDefault": "Ningún alojamiento por el momento.",
     "ariaLabel": "Lista de alojamientos",
     "searchPlaceholder": "Buscar por nombre o slug…",
-    "searchAria": "Buscar un alojamiento"
+    "searchAria": "Buscar un alojamiento",
+    "viewTable": "Tabla",
+    "viewGrid": "Cuadrícula",
+    "viewCompact": "Lista compacta",
+    "viewModeAria": "Modo de visualización"
   },
   "filters": {
     "destination": "Destino"
@@ -95,7 +99,10 @@
     "empty": "Ningún equipamiento.",
     "searchPlaceholder": "Buscar un equipamiento…",
     "deleteConfirm": "¿Eliminar el equipamiento « {name} »?",
-    "ariaLabel": "Lista de equipamientos"
+    "ariaLabel": "Lista de equipamientos",
+    "viewGrid": "Cuadrícula",
+    "viewTable": "Tabla",
+    "viewModeAria": "Modo de visualización"
   },
   "stats": {
     "properties": {

@@ -5,7 +5,11 @@
     "emptyDefault": "No accommodations yet.",
     "ariaLabel": "Accommodations list",
     "searchPlaceholder": "Search by name or slug…",
-    "searchAria": "Search accommodations"
+    "searchAria": "Search accommodations",
+    "viewTable": "Table",
+    "viewGrid": "Grid",
+    "viewCompact": "Compact list",
+    "viewModeAria": "Display mode"
   },
   "filters": {
     "destination": "Destination"
@@ -95,7 +99,10 @@
     "empty": "No amenities yet.",
     "searchPlaceholder": "Search amenities…",
     "deleteConfirm": "Delete amenity « {name} »?",
-    "ariaLabel": "Amenities list"
+    "ariaLabel": "Amenities list",
+    "viewGrid": "Grid",
+    "viewTable": "Table",
+    "viewModeAria": "Display mode"
   },
   "stats": {
     "properties": {
