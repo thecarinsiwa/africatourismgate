@@ -5,13 +5,15 @@ import { useAdminErrorMessages } from '../lib/i18n/use-admin-error-messages';
 import { StatCard } from '@africatourismgate/ui';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { dashboardKpis, type DashboardKpiKey } from '../config/dashboard-kpi';
+import { isApiForbidden } from '../lib/auth/is-api-forbidden';
+import { usePermissions } from '../lib/auth/use-permissions';
 import { formatCount, formatMoney } from '../lib/format-money';
 import { getApiClient } from '../lib/auth/api';
 
 type KpiCardState = {
-  status: 'loading' | 'ready' | 'error';
+  status: 'loading' | 'ready' | 'error' | 'hidden';
   displayValue?: string;
   errorMessage?: string;
 };
@@ -20,7 +22,14 @@ const initialCardState: KpiCardState = { status: 'loading' };
 
 export function DashboardKpiCards({ className }: { className?: string }) {
   const { dashboardKpi: getDashboardKpiErrorMessage } = useAdminErrorMessages();
+  const { hasPermission, loading: permissionsLoading } = usePermissions();
   const t = useTranslations('dashboard');
+
+  const visibleKpis = useMemo(
+    () => dashboardKpis.filter((kpi) => hasPermission(kpi.permission)),
+    [hasPermission],
+  );
+
   const [cards, setCards] = useState<Record<DashboardKpiKey, KpiCardState>>(() => ({
     users: { ...initialCardState },
     bookings: { ...initialCardState },
@@ -29,6 +38,8 @@ export function DashboardKpiCards({ className }: { className?: string }) {
   }));
 
   useEffect(() => {
+    if (permissionsLoading || visibleKpis.length === 0) return;
+
     let cancelled = false;
     const client = getApiClient();
 
@@ -52,6 +63,9 @@ export function DashboardKpiCards({ className }: { className?: string }) {
           displayValue: formatMoney(revenue.totalCents, revenue.currency),
         };
       } catch (error) {
+        if (isApiForbidden(error)) {
+          return { status: 'hidden' };
+        }
         return {
           status: 'error',
           errorMessage: getDashboardKpiErrorMessage(error),
@@ -61,12 +75,15 @@ export function DashboardKpiCards({ className }: { className?: string }) {
 
     async function loadAll() {
       const results = await Promise.all(
-        dashboardKpis.map(async (kpi) => [kpi.key, await loadKpi(kpi.key)] as const),
+        visibleKpis.map(async (kpi) => [kpi.key, await loadKpi(kpi.key)] as const),
       );
 
       if (cancelled) return;
 
-      setCards(Object.fromEntries(results) as Record<DashboardKpiKey, KpiCardState>);
+      setCards((current) => ({
+        ...current,
+        ...Object.fromEntries(results),
+      }));
     }
 
     void loadAll();
@@ -74,18 +91,28 @@ export function DashboardKpiCards({ className }: { className?: string }) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [getDashboardKpiErrorMessage, permissionsLoading, visibleKpis]);
+
+  if (permissionsLoading) {
+    return null;
+  }
+
+  const renderableKpis = visibleKpis.filter((kpi) => cards[kpi.key].status !== 'hidden');
+
+  if (renderableKpis.length === 0) {
+    return null;
+  }
 
   return (
     <div className={className}>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {dashboardKpis.map((kpi) => {
+        {renderableKpis.map((kpi) => {
           const state = cards[kpi.key];
           const card = (
             <StatCard
               label={t(kpi.labelKey)}
               subtitle={t(kpi.subtitleKey)}
-              status={state.status}
+              status={state.status === 'hidden' ? 'loading' : state.status}
               value={state.displayValue}
               errorMessage={state.errorMessage}
               icon={kpi.icon}

@@ -18,7 +18,10 @@ import {
   buildAdminBreadcrumbHrefLabels,
   resolveAdminPageTitle,
 } from '../lib/breadcrumb-from-path';
+import { filterAdminNav } from '../lib/auth/filter-admin-nav';
+import { usePermissions } from '../lib/auth/use-permissions';
 import { useOrganizationThemeOptional } from './organization-theme-provider';
+import { RouteAccessGate } from './route-access-gate';
 import { SessionSync } from './session-sync';
 import { LanguageSwitcher } from './language-switcher';
 import { CommandPalette } from './command-palette';
@@ -36,12 +39,14 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
   const tTheme = useTranslations('theme');
   const tShell = useTranslations('nav.shell');
   const { meta } = useAdminPageMeta();
+  const { permissions, isSuperAdmin, loading: permissionsLoading } = usePermissions();
   const [session, setSession] = useState<StoredSession | null>(null);
 
-  const navItems = useMemo(
-    () => buildAdminDashboardNav((key) => tNav(key as Parameters<typeof tNav>[0])),
-    [tNav],
-  );
+  const navItems = useMemo(() => {
+    const allItems = buildAdminDashboardNav((key) => tNav(key as Parameters<typeof tNav>[0]));
+    if (permissionsLoading) return allItems;
+    return filterAdminNav(allItems, { permissions, isSuperAdmin });
+  }, [tNav, permissions, isSuperAdmin, permissionsLoading]);
 
   const breadcrumbRoutes = useMemo(
     () => buildAdminBreadcrumbRoutes((key) => tNav(key as Parameters<typeof tNav>[0])),
@@ -129,7 +134,7 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
       }}
     >
       <CommandPalette />
-      {children}
+      <RouteAccessGate>{children}</RouteAccessGate>
     </DashboardShell>
   );
 }

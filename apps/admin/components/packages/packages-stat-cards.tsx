@@ -6,6 +6,7 @@ import { StatCard } from '@africatourismgate/ui';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { packagesKpis, type PackagesKpiKey } from '../../config/packages-kpi';
+import { useModuleStatCards } from '../../lib/auth/use-module-stat-cards';
 import { getApiClient } from '../../lib/auth/api';
 import { formatCount } from '../../lib/format-money';
 
@@ -19,6 +20,7 @@ const initialCardState: KpiCardState = { status: 'loading' };
 
 export function PackagesStatCards({ className }: { className?: string }) {
   const { dashboardKpi: getDashboardKpiErrorMessage } = useAdminErrorMessages();
+  const { canLoad, loading: permissionsLoading, shouldRender } = useModuleStatCards('packages.read');
   const t = useTranslations('modules.packages');
   const [cards, setCards] = useState<Record<PackagesKpiKey, KpiCardState>>(() => ({
     packages: { ...initialCardState },
@@ -28,6 +30,8 @@ export function PackagesStatCards({ className }: { className?: string }) {
   }));
 
   useEffect(() => {
+    if (permissionsLoading || !canLoad) return;
+
     let cancelled = false;
     const client = getApiClient();
 
@@ -70,7 +74,11 @@ export function PackagesStatCards({ className }: { className?: string }) {
     return () => {
       cancelled = true;
     };
-  }, [getDashboardKpiErrorMessage]);
+  }, [canLoad, getDashboardKpiErrorMessage, permissionsLoading]);
+
+  if (!shouldRender) {
+    return null;
+  }
 
   return (
     <div className={className}>

@@ -10,6 +10,7 @@ import {
   destinationsRelatedKpis,
   type DestinationsRelatedKpiKey,
 } from '../../config/destinations-related-kpi';
+import { useModuleStatCards } from '../../lib/auth/use-module-stat-cards';
 import { getApiClient } from '../../lib/auth/api';
 import { formatCount } from '../../lib/format-money';
 
@@ -31,6 +32,7 @@ export function DestinationRelatedStatCards({
   className,
 }: DestinationRelatedStatCardsProps) {
   const { dashboardKpi: getDashboardKpiErrorMessage } = useAdminErrorMessages();
+  const { canLoad, loading: permissionsLoading, shouldRender } = useModuleStatCards('destinations.read');
   const t = useTranslations('modules.destinations');
   const [cards, setCards] = useState<Record<DestinationsRelatedKpiKey, KpiCardState>>(() => ({
     properties: { ...initialCardState },
@@ -39,6 +41,8 @@ export function DestinationRelatedStatCards({
   }));
 
   useEffect(() => {
+    if (permissionsLoading || !canLoad) return;
+
     let cancelled = false;
 
     async function loadAll() {
@@ -74,7 +78,11 @@ export function DestinationRelatedStatCards({
     return () => {
       cancelled = true;
     };
-  }, [destinationId, getDashboardKpiErrorMessage]);
+  }, [canLoad, destinationId, getDashboardKpiErrorMessage, permissionsLoading]);
+
+  if (!shouldRender) {
+    return null;
+  }
 
   return (
     <div className={className}>

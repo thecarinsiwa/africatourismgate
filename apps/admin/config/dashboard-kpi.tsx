@@ -1,6 +1,7 @@
 export const dashboardKpis = [
   {
     key: 'users',
+    permission: 'users.read',
     labelKey: 'kpi.users.label',
     subtitleKey: 'kpi.users.subtitle',
     href: '/utilisateurs',
@@ -18,6 +19,7 @@ export const dashboardKpis = [
   },
   {
     key: 'bookings',
+    permission: 'bookings.read',
     labelKey: 'kpi.bookings.label',
     subtitleKey: 'kpi.bookings.subtitle',
     href: '/reservations',
@@ -35,6 +37,7 @@ export const dashboardKpis = [
   },
   {
     key: 'revenue',
+    permission: 'payments.read',
     labelKey: 'kpi.revenue.label',
     subtitleKey: 'kpi.revenue.subtitle',
     iconClass: 'bg-atg-success-light text-atg-success',
@@ -51,6 +54,7 @@ export const dashboardKpis = [
   },
   {
     key: 'properties',
+    permission: 'properties.read',
     labelKey: 'kpi.properties.label',
     subtitleKey: 'kpi.properties.subtitle',
     href: '/hebergements',

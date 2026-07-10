@@ -17,6 +17,11 @@ export type DashboardTrendResult = {
   currency: string;
 };
 
+export type DashboardTrendAccess = {
+  canReadBookings: boolean;
+  canReadPayments: boolean;
+};
+
 const PERIOD_DAYS: Record<DashboardPeriod, number> = {
   '7d': 7,
   '30d': 30,
@@ -82,15 +87,22 @@ function bucketPayments(
   return totals;
 }
 
-export async function fetchDashboardTrend(period: DashboardPeriod): Promise<DashboardTrendResult> {
+export async function fetchDashboardTrend(
+  period: DashboardPeriod,
+  access: DashboardTrendAccess,
+): Promise<DashboardTrendResult> {
   const client = getApiClient();
   const { dateFrom, dateTo, days } = getPeriodRange(period);
 
   const [bookings, payments] = await Promise.all([
-    fetchAllPaginated((page, limit) =>
-      client.listBookings({ page, limit, dateFrom, dateTo }),
-    ),
-    fetchAllPaginated((page, limit) => client.listPayments({ page, limit })),
+    access.canReadBookings
+      ? fetchAllPaginated((page, limit) =>
+          client.listBookings({ page, limit, dateFrom, dateTo }),
+        )
+      : Promise.resolve([] as BookingListItem[]),
+    access.canReadPayments
+      ? fetchAllPaginated((page, limit) => client.listPayments({ page, limit }))
+      : Promise.resolve([] as PaymentListItem[]),
   ]);
 
   const bookingCounts = bucketBookings(bookings, days);

@@ -6,6 +6,8 @@ import { Card, cn } from '@africatourismgate/ui';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
+import { isApiForbidden } from '../lib/auth/is-api-forbidden';
+import { usePermissions } from '../lib/auth/use-permissions';
 import { formatCount } from '../lib/format-money';
 import { getApiClient } from '../lib/auth/api';
 import type { UserStatus } from '@africatourismgate/types';
@@ -16,6 +18,7 @@ type UserListItem = {
 
 type StatsState =
   | { status: 'loading' }
+  | { status: 'hidden' }
   | { status: 'error'; message: string }
   | { status: 'ready'; active: number; suspended: number; total: number };
 
@@ -64,6 +67,7 @@ const statRowDefs = [
 
 export function DashboardUserStats({ className }: { className?: string }) {
   const { dashboardKpi: getDashboardKpiErrorMessage } = useAdminErrorMessages();
+  const { hasPermission, loading: permissionsLoading } = usePermissions();
   const t = useTranslations('dashboard');
   const tStats = useTranslations('dashboard.userStats');
   const [stats, setStats] = useState<StatsState>({ status: 'loading' });
@@ -73,7 +77,11 @@ export function DashboardUserStats({ className }: { className?: string }) {
     [tStats],
   );
 
+  const canRead = hasPermission('users.read');
+
   useEffect(() => {
+    if (permissionsLoading || !canRead) return;
+
     let cancelled = false;
     const client = getApiClient();
 
@@ -95,6 +103,10 @@ export function DashboardUserStats({ className }: { className?: string }) {
         });
       } catch (error) {
         if (cancelled) return;
+        if (isApiForbidden(error)) {
+          setStats({ status: 'hidden' });
+          return;
+        }
         setStats({ status: 'error', message: getDashboardKpiErrorMessage(error) });
       }
     }
@@ -103,7 +115,11 @@ export function DashboardUserStats({ className }: { className?: string }) {
     return () => {
       cancelled = true;
     };
-  }, [getDashboardKpiErrorMessage]);
+  }, [canRead, getDashboardKpiErrorMessage, permissionsLoading]);
+
+  if (permissionsLoading || !canRead || stats.status === 'hidden') {
+    return null;
+  }
 
   const values =
     stats.status === 'ready'
