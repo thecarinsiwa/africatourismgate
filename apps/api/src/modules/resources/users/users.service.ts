@@ -8,6 +8,7 @@ import { CrudService } from '../../../common/crud/crud.service';
 import { Users } from '../../../entities/generated';
 import { AuthUserDto } from '../../auth/dto/auth-user.dto';
 import { EmailService } from '../../email/email.service';
+import { resolvePdfLocale } from '../../email/booking-detail-pdf.labels';
 import { UsersListQueryDto } from './dto/users-list-query.dto';
 
 @Injectable()
@@ -119,6 +120,7 @@ export class UsersService extends CrudService<Users> {
         to: user.email,
         firstName: user.firstName,
         loginUrl: `${adminUrl}/login`,
+        locale: resolvePdfLocale(user.preferredLanguage),
       });
       if (!result.sent) {
         this.logger.warn(

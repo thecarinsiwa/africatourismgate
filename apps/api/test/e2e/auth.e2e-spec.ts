@@ -103,6 +103,7 @@ describe('Auth (e2e)', () => {
         password: 'SecurePass123!',
         firstName: 'Activate',
         lastName: 'Me',
+        preferredLanguage: 'en',
       })
       .expect(201);
 
@@ -123,6 +124,7 @@ describe('Auth (e2e)', () => {
       expect.objectContaining({
         to: email,
         firstName: 'Activate',
+        locale: 'en',
         loginUrl: expect.stringContaining('/login'),
       }),
     );

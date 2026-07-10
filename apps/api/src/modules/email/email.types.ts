@@ -35,6 +35,7 @@ export type AdminAccountActivatedEmailPayload = {
   to: string;
   firstName: string;
   loginUrl: string;
+  locale?: 'fr' | 'en' | 'es';
 };
 
 export type BookingConfirmationEmailPayload = {

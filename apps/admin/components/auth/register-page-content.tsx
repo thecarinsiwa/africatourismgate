@@ -35,7 +35,8 @@ export function RegisterPageContent({ oauthError }: Props) {
   const [oauthUrl, setOauthUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    setOauthUrl(buildAdminGoogleRegisterUrl(window.location.origin));
+    const lang = document.documentElement.lang === 'en' ? 'en' : document.documentElement.lang === 'es' ? 'es' : 'fr';
+    setOauthUrl(buildAdminGoogleRegisterUrl(window.location.origin, lang));
   }, []);
 
   useEffect(() => {

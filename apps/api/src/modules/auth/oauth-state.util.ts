@@ -4,12 +4,14 @@ export type OAuthState = {
   next: string;
   webOrigin?: string;
   context?: OAuthContext;
+  preferredLanguage?: string;
 };
 
 export function encodeOAuthState(
   next: string,
   webOrigin?: string,
   context?: OAuthContext,
+  preferredLanguage?: string,
 ): string {
   const safeNext = normalizeOAuthNext(next, context);
   const payload: OAuthState = { next: safeNext };
@@ -19,7 +21,11 @@ export function encodeOAuthState(
   if (context) {
     payload.context = context;
   }
-  if (!payload.webOrigin && !payload.context) {
+  const lang = preferredLanguage?.trim().toLowerCase().slice(0, 2);
+  if (lang === 'en' || lang === 'es' || lang === 'fr') {
+    payload.preferredLanguage = lang;
+  }
+  if (!payload.webOrigin && !payload.context && !payload.preferredLanguage) {
     return safeNext;
   }
   return Buffer.from(JSON.stringify(payload)).toString('base64url');
@@ -42,6 +48,12 @@ export function decodeOAuthState(state: string | undefined): OAuthState {
         context:
           parsed.context === 'admin_register' || parsed.context === 'web'
             ? parsed.context
+            : undefined,
+        preferredLanguage:
+          parsed.preferredLanguage === 'en' ||
+          parsed.preferredLanguage === 'es' ||
+          parsed.preferredLanguage === 'fr'
+            ? parsed.preferredLanguage
             : undefined,
       };
     }

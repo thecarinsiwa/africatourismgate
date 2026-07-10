@@ -1,6 +1,10 @@
 import type { EmailBrandingValue } from '@africatourismgate/types';
 import { resolveEmailLogoUrl } from './email-attachments';
 import { DEFAULT_EMAIL_BRANDING } from './email-branding.constants';
+import {
+  resolvePdfLocale,
+  type BookingDetailPdfLocale,
+} from './booking-detail-pdf.labels';
 import type {
   AbandonmentReminderEmailPayload,
   AdminPendingRegistrationEmailPayload,
@@ -400,26 +404,80 @@ ${paragraph('Activez le compte et assignez les rôles appropriés depuis la fich
   return { subject, html, text };
 }
 
+const ADMIN_ACCOUNT_ACTIVATED_COPY: Record<
+  BookingDetailPdfLocale,
+  {
+    subject: string;
+    headline: string;
+    greeting: string;
+    body: string;
+    cta: string;
+    roleHint: string;
+    preheader: string;
+    textIntro: string;
+    textSignInLabel: string;
+    defaultName: string;
+  }
+> = {
+  fr: {
+    subject: 'Votre accès au back-office est activé',
+    headline: 'Compte activé',
+    greeting: 'Bonjour',
+    body: "Votre demande d'accès au back-office Africa Tourism Gate a été approuvée. Vous pouvez maintenant vous connecter avec votre compte Google Gmail ou votre mot de passe.",
+    cta: 'Se connecter au back-office',
+    roleHint: "Si vous n'avez pas encore de rôle attribué, contactez votre administrateur.",
+    preheader: 'Votre compte admin est prêt — connectez-vous au back-office.',
+    textIntro: 'Votre accès au back-office Africa Tourism Gate est activé.',
+    textSignInLabel: 'Connexion',
+    defaultName: 'Utilisateur',
+  },
+  en: {
+    subject: 'Your back-office access is now active',
+    headline: 'Account activated',
+    greeting: 'Hello',
+    body: 'Your Africa Tourism Gate back-office access request has been approved. You can now sign in with your Gmail Google account or your password.',
+    cta: 'Sign in to the back office',
+    roleHint: 'If you have not been assigned a role yet, contact your administrator.',
+    preheader: 'Your admin account is ready — sign in to the back office.',
+    textIntro: 'Your Africa Tourism Gate back-office access is now active.',
+    textSignInLabel: 'Sign in',
+    defaultName: 'User',
+  },
+  es: {
+    subject: 'Su acceso al back office está activado',
+    headline: 'Cuenta activada',
+    greeting: 'Hola',
+    body: 'Su solicitud de acceso al back office de Africa Tourism Gate ha sido aprobada. Ya puede iniciar sesión con su cuenta Google Gmail o su contraseña.',
+    cta: 'Iniciar sesión en el back office',
+    roleHint: 'Si aún no tiene un rol asignado, contacte a su administrador.',
+    preheader: 'Su cuenta admin está lista — inicie sesión en el back office.',
+    textIntro: 'Su acceso al back office de Africa Tourism Gate está activado.',
+    textSignInLabel: 'Iniciar sesión',
+    defaultName: 'Usuario',
+  },
+};
+
 export function renderAdminAccountActivatedEmail(
   payload: AdminAccountActivatedEmailPayload,
   branding: EmailBrandingValue,
 ): { subject: string; html: string; text: string } {
-  const name = escapeHtml(payload.firstName.trim() || 'Utilisateur');
+  const locale = payload.locale ?? resolvePdfLocale(null);
+  const copy = ADMIN_ACCOUNT_ACTIVATED_COPY[locale];
+  const name = escapeHtml(payload.firstName.trim() || copy.defaultName);
   const loginUrl = payload.loginUrl;
-  const subject = 'Votre accès au back-office est activé';
 
   const html = layout(
-    subject,
-    `${headline('Compte activé', branding)}
-${paragraph(`Bonjour <strong>${name}</strong>,`)}
-${paragraph('Votre demande d\'accès au back-office Africa Tourism Gate a été approuvée. Vous pouvez maintenant vous connecter avec votre compte Google Gmail ou votre mot de passe.')}
-${ctaButton(loginUrl, 'Se connecter au back-office', branding)}
-${paragraph('Si vous n\'avez pas encore de rôle attribué, contactez votre administrateur.')}`,
+    copy.subject,
+    `${headline(copy.headline, branding)}
+${paragraph(`${copy.greeting} <strong>${name}</strong>,`)}
+${paragraph(copy.body)}
+${ctaButton(loginUrl, copy.cta, branding)}
+${paragraph(copy.roleHint)}`,
     branding,
-    { preheader: 'Votre compte admin est prêt — connectez-vous au back-office.' },
+    { preheader: copy.preheader },
   );
-  const text = `Bonjour ${payload.firstName},\n\nVotre accès au back-office Africa Tourism Gate est activé.\n\nConnexion : ${loginUrl}`;
-  return { subject, html, text };
+  const text = `${copy.greeting} ${payload.firstName},\n\n${copy.textIntro}\n\n${copy.textSignInLabel} : ${loginUrl}`;
+  return { subject: copy.subject, html, text };
 }
 
 export function renderBookingConfirmationEmail(

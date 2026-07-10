@@ -88,12 +88,17 @@ export class AuthController {
       return;
     }
 
-    const { next, webOrigin, context } = decodeOAuthState(req.user.state);
+    const { next, webOrigin, context, preferredLanguage } = decodeOAuthState(
+      req.user.state,
+    );
 
     try {
       const auth =
         context === 'admin_register'
-          ? await this.authService.registerAdminWithGoogleProfile(req.user.profile)
+          ? await this.authService.registerAdminWithGoogleProfile(
+              req.user.profile,
+              preferredLanguage ? { preferredLanguage } : undefined,
+            )
           : await this.authService.loginWithGoogleProfile(req.user.profile);
 
       if (auth.pendingApproval) {

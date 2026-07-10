@@ -17,11 +17,12 @@ export class GoogleAuthGuard extends AuthGuard('google') {
 
   override getAuthenticateOptions(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest<{
-      query?: { next?: string; web_origin?: string; context?: string };
+      query?: { next?: string; web_origin?: string; context?: string; lang?: string };
     }>();
     const next = request.query?.next;
     const webOrigin = request.query?.web_origin;
     const rawContext = request.query?.context;
+    const rawLang = request.query?.lang;
     const oauthContext: OAuthContext | undefined =
       rawContext === 'admin_register' ? 'admin_register' : undefined;
     const nextPath =
@@ -31,9 +32,10 @@ export class GoogleAuthGuard extends AuthGuard('google') {
           ? '/register/pending'
           : '/booking/cart';
     const origin = typeof webOrigin === 'string' ? webOrigin : undefined;
+    const preferredLanguage = typeof rawLang === 'string' ? rawLang : undefined;
     return {
       scope: ['profile', 'email'],
-      state: encodeOAuthState(nextPath, origin, oauthContext),
+      state: encodeOAuthState(nextPath, origin, oauthContext, preferredLanguage),
     };
   }
 

@@ -318,11 +318,14 @@ export class AuthService {
     return { ...tokens, user: toAuthUserDto(user) };
   }
 
-  async registerAdminWithGoogleProfile(profile: {
-    emails?: Array<{ value?: string }>;
-    name?: { givenName?: string; familyName?: string };
-    _json?: { email?: string };
-  }): Promise<AuthResponseDto> {
+  async registerAdminWithGoogleProfile(
+    profile: {
+      emails?: Array<{ value?: string }>;
+      name?: { givenName?: string; familyName?: string };
+      _json?: { email?: string };
+    },
+    options?: { preferredLanguage?: string },
+  ): Promise<AuthResponseDto> {
     const email = extractGoogleProfileEmail(profile);
     if (!email) {
       throw new UnauthorizedException('Google account has no email');
@@ -348,6 +351,9 @@ export class AuthService {
       passwordHash,
       firstName,
       lastName,
+      ...(options?.preferredLanguage
+        ? { preferredLanguage: options.preferredLanguage }
+        : {}),
     });
 
     void this.notifySuperAdminsOfPendingRegistration(user);
