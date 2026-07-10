@@ -18,7 +18,7 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ReferentialListToolbar } from '../referential-list-toolbar';
 import { getApiClient } from '../../lib/auth/api';
-import { parseDestinationCoord, hasValidDestinationCoords } from '../../lib/destination-coords';
+import { parseDestinationCoord } from '../../lib/destination-coords';
 import { CoordinatePickerMap } from '../maps/coordinate-picker-map';
 import { CountryFlagPlaceholder } from './country-flag-placeholder';
 
