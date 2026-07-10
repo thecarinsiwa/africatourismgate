@@ -2,10 +2,10 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
+import { AdminPageBackLink } from '../admin-page-back-link';
 import { getApiClient } from '../../lib/auth/api';
 import { currentYearMonth } from '../../lib/availability-dates';
 import { RoomAvailabilityBulkForm } from './room-availability-bulk-form';
@@ -20,7 +20,6 @@ export function RoomAvailabilityPage({ propertyId, roomId }: RoomAvailabilityPag
   const { hebergements: getHebergementsErrorMessage } = useAdminErrorMessages();
   const tAvailability = useTranslations('modules.properties.sections.availability');
   const tCommon = useTranslations('modules.common');
-  const tBack = useTranslations('modules.common.back');
   const [yearMonth, setYearMonth] = useState(currentYearMonth);
   const [state, setState] = useState<
     | { status: 'loading' }
@@ -97,12 +96,13 @@ export function RoomAvailabilityPage({ propertyId, roomId }: RoomAvailabilityPag
   if (state.status === 'error') {
     return (
       <div className="space-y-4">
+        <AdminPageBackLink
+          href={`/hebergements/${propertyId}?tab=chambres`}
+          label={tAvailability('backToProperty')}
+        />
         <p role="alert" className="text-sm text-red-600">
           {state.message}
         </p>
-        <Link href="/hebergements" className="text-sm font-medium text-primary">
-          {tBack('toList')}
-        </Link>
       </div>
     );
   }
@@ -110,8 +110,12 @@ export function RoomAvailabilityPage({ propertyId, roomId }: RoomAvailabilityPag
   const { roomName, currency, basePriceCents } = state;
 
   return (
-    <div>
-      <p className="mb-8 text-sm text-atg-muted">
+    <div className="min-w-0 space-y-6">
+      <AdminPageBackLink
+        href={`/hebergements/${propertyId}?tab=chambres`}
+        label={tAvailability('backToProperty')}
+      />
+      <p className="text-sm text-atg-muted">
         {tAvailability('room')} {roomName} — {tAvailability('stockHint', { currency })}
       </p>
 

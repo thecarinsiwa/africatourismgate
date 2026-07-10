@@ -92,7 +92,8 @@
       "stockHint": "Stock y precio por noche ({currency}).",
       "noRooms": "Ninguna habitación para este alojamiento. Cree una habitación para gestionar la disponibilidad.",
       "goToRoomsTab": "Ir a la pestaña Habitaciones",
-      "roomMismatch": "Esta habitación no pertenece a este alojamiento."
+      "roomMismatch": "Esta habitación no pertenece a este alojamiento.",
+      "backToProperty": "Volver al alojamiento"
     }
   },
   "amenitiesList": {
