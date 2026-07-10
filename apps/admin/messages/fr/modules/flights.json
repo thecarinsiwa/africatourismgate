@@ -91,7 +91,11 @@
       "searchPlaceholder": "Rechercher par IATA, nom ou ville…",
       "searchAria": "Rechercher un aéroport",
       "airport": "Aéroport",
-      "countryCode": "Code pays"
+      "countryCode": "Code pays",
+      "deleteConfirm": "Supprimer « {name} » ?",
+      "validation": {
+        "required": "Tous les champs sont obligatoires."
+      }
     }
   },
   "stats": {

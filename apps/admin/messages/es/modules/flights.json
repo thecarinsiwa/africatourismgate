@@ -74,24 +74,28 @@
   },
   "referential": {
     "airlines": {
-      "new": "Nouvelle compagnie",
-      "edit": "Modifier la compagnie",
-      "emptyDefault": "Ninguna compagnie.",
-      "emptySearch": "Ninguna compagnie ne correspond à cette recherche.",
-      "searchPlaceholder": "Rechercher par code IATA ou nom…",
-      "searchAria": "Rechercher une compagnie",
-      "iataCode": "Code IATA",
-      "deleteConfirm": "Supprimer « {name} » ?"
+      "new": "Nueva aerolínea",
+      "edit": "Editar aerolínea",
+      "emptyDefault": "Ninguna aerolínea.",
+      "emptySearch": "Ninguna aerolínea coincide con esta búsqueda.",
+      "searchPlaceholder": "Buscar por código IATA o nombre…",
+      "searchAria": "Buscar aerolíneas",
+      "iataCode": "Código IATA",
+      "deleteConfirm": "¿Eliminar « {name} »?"
     },
     "airports": {
-      "new": "Nouvel aéroport",
-      "edit": "Modifier l'aéroport",
-      "emptyDefault": "Hastacun aéroport.",
-      "emptySearch": "Hastacun aéroport ne correspond à cette recherche.",
-      "searchPlaceholder": "Rechercher par IATA, nom ou ville…",
-      "searchAria": "Rechercher un aéroport",
+      "new": "Nuevo aeropuerto",
+      "edit": "Editar aeropuerto",
+      "emptyDefault": "Ningún aeropuerto.",
+      "emptySearch": "Ningún aeropuerto coincide con esta búsqueda.",
+      "searchPlaceholder": "Buscar por IATA, nombre o ciudad…",
+      "searchAria": "Buscar aeropuertos",
       "airport": "Aeropuerto",
-      "countryCode": "Code pays"
+      "countryCode": "Código de país",
+      "deleteConfirm": "¿Eliminar « {name} »?",
+      "validation": {
+        "required": "Todos los campos son obligatorios."
+      }
     }
   },
   "stats": {

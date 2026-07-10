@@ -25,9 +25,9 @@ import { existsSync, mkdirSync } from 'node:fs';
 import { extname, join } from 'node:path';
 import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
 import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import { flightUploadUrl } from '../../../common/utils/public-asset-url';
 import { Flights } from '../../../entities/generated';
+import { FlightsListQueryDto } from './dto/flights-list-query.dto';
 import { FlightsService } from './flights.service';
 
 const FLIGHT_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
@@ -43,7 +43,7 @@ export class FlightsController {
   @RequirePermissions('flights.read')
   @Get()
   @ApiOperation({ summary: 'List flights' })
-  findAll(@Query() query: PaginationQueryDto) {
+  findAll(@Query() query: FlightsListQueryDto) {
     return this.service.findAll(query);
   }
 
