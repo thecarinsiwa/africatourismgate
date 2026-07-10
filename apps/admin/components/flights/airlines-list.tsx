@@ -10,6 +10,7 @@ import {
   DataTableActions,
   DataTablePagination,
   Input,
+  Modal,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { Airline } from '@africatourismgate/types';
@@ -81,6 +82,21 @@ export function AirlinesList() {
     return () => window.clearTimeout(t);
   }, [searchInput]);
 
+  function openForm(airline?: Airline) {
+    if (airline) {
+      setEditing(airline);
+      setFormValues({
+        iataCode: airline.iataCode,
+        name: airline.name,
+      });
+    } else {
+      setEditing(null);
+      setFormValues(emptyForm);
+    }
+    setFormError(null);
+    setShowForm(true);
+  }
+
   function resetForm() {
     setFormValues(emptyForm);
     setEditing(null);
@@ -139,14 +155,7 @@ export function AirlinesList() {
           <DataTableActions>
             <DataTableActionButton
               action="edit"
-              onClick={() => {
-                setEditing(row.original);
-                setFormValues({
-                  iataCode: row.original.iataCode,
-                  name: row.original.name,
-                });
-                setShowForm(true);
-              }}
+              onClick={() => openForm(row.original)}
             />
             <DataTableActionButton
               action="delete"
@@ -183,53 +192,50 @@ export function AirlinesList() {
         placeholder={t('searchPlaceholder')}
         ariaLabel={t('searchAria')}
         action={
-          !showForm ? (
-            <Button
-              type="button"
-              onClick={() => {
-                resetForm();
-                setShowForm(true);
-              }}
-            >
-              {t('new')}
-            </Button>
-          ) : undefined
+          <Button type="button" onClick={() => openForm()}>
+            {t('new')}
+          </Button>
         }
       />
 
-      {showForm ? (
-        <Card variant="dashboard" className="max-w-lg">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <h3 className="text-sm font-medium">{editing ? t('edit') : t('new')}</h3>
-            {formError ? (
-              <p role="alert" className="text-sm text-red-600">
-                {formError}
-              </p>
-            ) : null}
-            <Input
-              label={t('iataCode')}
-              maxLength={2}
-              value={formValues.iataCode}
-              onChange={(e) =>
-                setFormValues((p) => ({ ...p, iataCode: e.target.value.toUpperCase() }))
-              }
-            />
-            <Input
-              label={tCommon('columns.name')}
-              value={formValues.name}
-              onChange={(e) => setFormValues((p) => ({ ...p, name: e.target.value }))}
-            />
-            <div className="flex gap-3">
-              <Button type="submit" loading={submitting}>
-                {editing ? tActions('save') : tActions('create')}
-              </Button>
-              <Button type="button" variant="outline" onClick={resetForm}>
-                {tActions('cancel')}
-              </Button>
-            </div>
-          </form>
-        </Card>
-      ) : null}
+      <Modal
+        open={showForm}
+        onOpenChange={(open) => {
+          if (!open && !submitting) resetForm();
+        }}
+        title={editing ? t('edit') : t('new')}
+        showClose
+        className="max-w-lg"
+      >
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {formError ? (
+            <p role="alert" className="text-sm text-red-600">
+              {formError}
+            </p>
+          ) : null}
+          <Input
+            label={t('iataCode')}
+            maxLength={2}
+            value={formValues.iataCode}
+            onChange={(e) =>
+              setFormValues((p) => ({ ...p, iataCode: e.target.value.toUpperCase() }))
+            }
+          />
+          <Input
+            label={tCommon('columns.name')}
+            value={formValues.name}
+            onChange={(e) => setFormValues((p) => ({ ...p, name: e.target.value }))}
+          />
+          <div className="flex justify-end gap-3">
+            <Button type="button" variant="outline" onClick={resetForm} disabled={submitting}>
+              {tActions('cancel')}
+            </Button>
+            <Button type="submit" loading={submitting}>
+              {editing ? tActions('save') : tActions('create')}
+            </Button>
+          </div>
+        </form>
+      </Modal>
 
       {state.status === 'error' ? (
         <p role="alert" className="text-sm text-red-600">
