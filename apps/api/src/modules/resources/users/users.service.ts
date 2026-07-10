@@ -1,21 +1,45 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import { OrgScopeService } from '../../../common/org-scope/org-scope.service';
 import { CrudService } from '../../../common/crud/crud.service';
 import { Users } from '../../../entities/generated';
 import { AuthUserDto } from '../../auth/dto/auth-user.dto';
+import { EmailService } from '../../email/email.service';
 import { UsersListQueryDto } from './dto/users-list-query.dto';
 
 @Injectable()
 export class UsersService extends CrudService<Users> {
+  private readonly logger = new Logger(UsersService.name);
+
   constructor(
     @InjectRepository(Users)
     private readonly usersRepository: Repository<Users>,
     private readonly orgScopeService: OrgScopeService,
+    private readonly emailService: EmailService,
+    private readonly config: ConfigService,
   ) {
     super(usersRepository);
+  }
+
+  override async update(
+    id: string,
+    dto: DeepPartial<Users>,
+    actorUserId?: string,
+  ): Promise<Users> {
+    const existing = await this.findOne(id);
+    const shouldNotifyActivation =
+      existing.status === 'suspended' && dto.status === 'active';
+
+    const saved = await super.update(id, dto, actorUserId);
+
+    if (shouldNotifyActivation && saved.status === 'active') {
+      void this.notifyAccountActivated(saved);
+    }
+
+    return saved;
   }
 
   async list(
@@ -82,5 +106,30 @@ export class UsersService extends CrudService<Users> {
         totalPages: Math.ceil(total / limit) || 1,
       },
     };
+  }
+
+  private async notifyAccountActivated(user: Users): Promise<void> {
+    try {
+      const adminUrl =
+        this.config.get<string>('NEXT_PUBLIC_ADMIN_URL')?.replace(/\/$/, '') ||
+        (process.env.NODE_ENV === 'production'
+          ? 'https://app-africatourismgate.org'
+          : 'http://localhost:3001');
+      const result = await this.emailService.sendAdminAccountActivated({
+        to: user.email,
+        firstName: user.firstName,
+        loginUrl: `${adminUrl}/login`,
+      });
+      if (!result.sent) {
+        this.logger.warn(
+          `Account activation email was not sent to ${user.email} (check EMAIL_TRANSPORT / SMTP)`,
+        );
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      this.logger.warn(
+        `Account activation email failed for ${user.email}: ${message}`,
+      );
+    }
   }
 }

@@ -31,6 +31,12 @@ export type AdminPendingRegistrationEmailPayload = {
   reviewUrl: string;
 };
 
+export type AdminAccountActivatedEmailPayload = {
+  to: string;
+  firstName: string;
+  loginUrl: string;
+};
+
 export type BookingConfirmationEmailPayload = {
   to: string;
   firstName: string;

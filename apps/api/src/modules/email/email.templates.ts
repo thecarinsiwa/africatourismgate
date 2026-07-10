@@ -4,6 +4,7 @@ import { DEFAULT_EMAIL_BRANDING } from './email-branding.constants';
 import type {
   AbandonmentReminderEmailPayload,
   AdminPendingRegistrationEmailPayload,
+  AdminAccountActivatedEmailPayload,
   BookingConfirmationEmailPayload,
   OperationAlertEmailPayload,
   PasswordResetEmailPayload,
@@ -396,6 +397,28 @@ ${paragraph('Activez le compte et assignez les rôles appropriés depuis la fich
     { preheader: 'Une nouvelle inscription admin Gmail attend votre validation.' },
   );
   const text = `Bonjour ${payload.firstName},\n\n${payload.applicantName} (${payload.applicantEmail}) demande l'accès au back-office admin.\n\nExaminer : ${reviewUrl}`;
+  return { subject, html, text };
+}
+
+export function renderAdminAccountActivatedEmail(
+  payload: AdminAccountActivatedEmailPayload,
+  branding: EmailBrandingValue,
+): { subject: string; html: string; text: string } {
+  const name = escapeHtml(payload.firstName.trim() || 'Utilisateur');
+  const loginUrl = payload.loginUrl;
+  const subject = 'Votre accès au back-office est activé';
+
+  const html = layout(
+    subject,
+    `${headline('Compte activé', branding)}
+${paragraph(`Bonjour <strong>${name}</strong>,`)}
+${paragraph('Votre demande d\'accès au back-office Africa Tourism Gate a été approuvée. Vous pouvez maintenant vous connecter avec votre compte Google Gmail ou votre mot de passe.')}
+${ctaButton(loginUrl, 'Se connecter au back-office', branding)}
+${paragraph('Si vous n\'avez pas encore de rôle attribué, contactez votre administrateur.')}`,
+    branding,
+    { preheader: 'Votre compte admin est prêt — connectez-vous au back-office.' },
+  );
+  const text = `Bonjour ${payload.firstName},\n\nVotre accès au back-office Africa Tourism Gate est activé.\n\nConnexion : ${loginUrl}`;
   return { subject, html, text };
 }
 

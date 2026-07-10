@@ -7,6 +7,7 @@ import { EmailBrandingService } from './email-branding.service';
 import {
   renderAbandonmentReminderEmail,
   renderAdminPendingRegistrationEmail,
+  renderAdminAccountActivatedEmail,
   renderBookingConfirmationEmail,
   renderOperationAlertEmail,
   renderPasswordResetEmail,
@@ -23,6 +24,7 @@ import {
 import type {
   AbandonmentReminderEmailPayload,
   AdminPendingRegistrationEmailPayload,
+  AdminAccountActivatedEmailPayload,
   BookingConfirmationEmailPayload,
   OperationAlertEmailPayload,
   BookingApprovedChatEmailPayload,
@@ -77,6 +79,17 @@ export class EmailService implements OnModuleInit {
   ): Promise<SendMailResult> {
     const branding = await this.resolveBranding();
     const { subject, html, text } = renderAdminPendingRegistrationEmail(
+      payload,
+      branding,
+    );
+    return this.send('service', { to: payload.to, subject, html, text });
+  }
+
+  async sendAdminAccountActivated(
+    payload: AdminAccountActivatedEmailPayload,
+  ): Promise<SendMailResult> {
+    const branding = await this.resolveBranding();
+    const { subject, html, text } = renderAdminAccountActivatedEmail(
       payload,
       branding,
     );

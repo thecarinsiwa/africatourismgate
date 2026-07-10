@@ -5,6 +5,7 @@ import { randomUUID } from 'node:crypto';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AuthService } from '../../src/modules/auth/auth.service';
+import { EmailService } from '../../src/modules/email/email.service';
 import { EmailVerificationService } from '../../src/modules/email-verification/email-verification.service';
 import { UserRoleAssignments } from '../../src/entities/generated/rbac.entity';
 import { apiPath, authHeader, loginAsSeedAdmin } from './auth-client';
@@ -91,6 +92,42 @@ describe('Auth (e2e)', () => {
         name: { givenName: 'Work', familyName: 'User' },
       }),
     ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('PATCH /users/:id to active sends activation email for suspended account', async () => {
+    const email = `activate.admin.${randomUUID().slice(0, 8)}@gmail.com`;
+    const register = await request(app.getHttpServer())
+      .post(apiPath('/auth/register'))
+      .send({
+        email,
+        password: 'SecurePass123!',
+        firstName: 'Activate',
+        lastName: 'Me',
+      })
+      .expect(201);
+
+    const userId = register.body.user.id as string;
+    const { accessToken } = await loginAsSeedAdmin(app);
+    const emailService = app.get(EmailService);
+    const sendSpy = jest
+      .spyOn(emailService, 'sendAdminAccountActivated')
+      .mockResolvedValue({ sent: true });
+
+    await request(app.getHttpServer())
+      .patch(apiPath(`/users/${userId}`))
+      .set(authHeader(accessToken))
+      .send({ status: 'active' })
+      .expect(200);
+
+    expect(sendSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: email,
+        firstName: 'Activate',
+        loginUrl: expect.stringContaining('/login'),
+      }),
+    );
+
+    sendSpy.mockRestore();
   });
 
   it('POST /auth/login returns tokens for seed admin', async () => {
