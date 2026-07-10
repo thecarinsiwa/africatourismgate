@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { locationsKpis, type LocationsKpiKey } from '../../config/locations-kpi';
+import { useModuleStatCards } from '../../lib/auth/use-module-stat-cards';
 import { getApiClient } from '../../lib/auth/api';
 import { formatCount } from '../../lib/format-money';
 
@@ -20,6 +21,7 @@ const initialCardState: KpiCardState = { status: 'loading' };
 
 export function LocationsStatCards({ className }: { className?: string }) {
   const { dashboardKpi: getDashboardKpiErrorMessage } = useAdminErrorMessages();
+  const { canLoad, loading: permissionsLoading, shouldRender } = useModuleStatCards('vehicles.read');
   const t = useTranslations('modules.locations');
   const [cards, setCards] = useState<Record<LocationsKpiKey, KpiCardState>>(() => ({
     vehicles: { ...initialCardState },
@@ -28,6 +30,8 @@ export function LocationsStatCards({ className }: { className?: string }) {
   }));
 
   useEffect(() => {
+    if (permissionsLoading || !canLoad) return;
+
     let cancelled = false;
     const client = getApiClient();
 
@@ -66,7 +70,11 @@ export function LocationsStatCards({ className }: { className?: string }) {
     return () => {
       cancelled = true;
     };
-  }, [getDashboardKpiErrorMessage]);
+  }, [canLoad, getDashboardKpiErrorMessage, permissionsLoading]);
+
+  if (!shouldRender) {
+    return null;
+  }
 
   return (
     <div className={className}>

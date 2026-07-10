@@ -14,6 +14,8 @@ import {
   YAxis,
 } from 'recharts';
 import { fetchDashboardTrend, type TrendPoint } from '../lib/dashboard-trend-data';
+import { isApiForbidden } from '../lib/auth/is-api-forbidden';
+import { usePermissions } from '../lib/auth/use-permissions';
 import { formatMoney } from '../lib/format-money';
 import { useFormatChartAxisDate } from '../lib/i18n/use-module-labels';
 import { useChartTheme } from '../lib/use-chart-theme';
@@ -21,6 +23,7 @@ import { useDashboardPeriod } from './dashboard-period-context';
 
 type ChartState =
   | { status: 'loading' }
+  | { status: 'hidden' }
   | { status: 'error' }
   | { status: 'ready'; points: TrendPoint[]; currency: string };
 
@@ -123,21 +126,33 @@ function ChartLegend({
 export function DashboardTrendChart({ className }: { className?: string }) {
   const t = useTranslations('dashboard.chart');
   const { period } = useDashboardPeriod();
+  const { hasPermission, loading: permissionsLoading } = usePermissions();
   const chartTheme = useChartTheme();
   const formatAxisDate = useFormatChartAxisDate();
   const [state, setState] = useState<ChartState>({ status: 'loading' });
 
+  const canReadBookings = hasPermission('bookings.read');
+  const canReadPayments = hasPermission('payments.read');
+  const canShowChart = canReadBookings || canReadPayments;
+
   useEffect(() => {
+    if (permissionsLoading || !canShowChart) return;
+
     let cancelled = false;
 
     async function load() {
       setState({ status: 'loading' });
       try {
-        const { points, currency } = await fetchDashboardTrend(period);
+        const { points, currency } = await fetchDashboardTrend(period, {
+          canReadBookings,
+          canReadPayments,
+        });
         if (cancelled) return;
         setState({ status: 'ready', points, currency });
-      } catch {
-        if (!cancelled) setState({ status: 'error' });
+      } catch (error) {
+        if (!cancelled) {
+          setState(isApiForbidden(error) ? { status: 'hidden' } : { status: 'error' });
+        }
       }
     }
 
@@ -145,7 +160,7 @@ export function DashboardTrendChart({ className }: { className?: string }) {
     return () => {
       cancelled = true;
     };
-  }, [period]);
+  }, [canReadBookings, canReadPayments, canShowChart, period, permissionsLoading]);
 
   const rows = useMemo<ChartRow[] | null>(() => {
     if (state.status !== 'ready') return null;
@@ -169,6 +184,10 @@ export function DashboardTrendChart({ className }: { className?: string }) {
   }, [rows]);
 
   const chartKey = `${chartTheme.bookings}-${chartTheme.revenue}-${chartTheme.tick}`;
+
+  if (permissionsLoading || !canShowChart || state.status === 'hidden') {
+    return null;
+  }
 
   return (
     <Card variant="dashboard" padding="sm" className={className}>

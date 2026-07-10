@@ -4,6 +4,8 @@ import { Card, cn } from '@africatourismgate/ui';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
+import { isApiForbidden } from '../lib/auth/is-api-forbidden';
+import { usePermissions } from '../lib/auth/use-permissions';
 import { formatCount } from '../lib/format-money';
 import { getApiClient } from '../lib/auth/api';
 
@@ -12,6 +14,7 @@ type PlatformMetricKey = 'organizations' | 'properties' | 'bookings' | 'users';
 type PlatformMetricDef = {
   key: PlatformMetricKey;
   href: string;
+  permission?: string;
   icon: React.ReactNode;
   iconClass: string;
 };
@@ -35,6 +38,7 @@ const metricDefs: PlatformMetricDef[] = [
   {
     key: 'properties',
     href: '/hebergements',
+    permission: 'properties.read',
     iconClass: 'bg-primary/10 text-primary',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -50,6 +54,7 @@ const metricDefs: PlatformMetricDef[] = [
   {
     key: 'bookings',
     href: '/reservations',
+    permission: 'bookings.read',
     iconClass: 'bg-primary/10 text-primary',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -65,6 +70,7 @@ const metricDefs: PlatformMetricDef[] = [
   {
     key: 'users',
     href: '/utilisateurs',
+    permission: 'users.read',
     iconClass: 'bg-primary/10 text-primary',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -79,20 +85,30 @@ const metricDefs: PlatformMetricDef[] = [
   },
 ];
 
-type CountsState = Record<string, { status: 'loading' | 'ready' | 'error'; value?: number }>;
+type CountsState = Record<string, { status: 'loading' | 'ready' | 'error' | 'hidden'; value?: number }>;
 
 export function DashboardPlatformOverview({ className }: { className?: string }) {
   const t = useTranslations('dashboard.platformOverview');
+  const { hasPermission, loading: permissionsLoading } = usePermissions();
+
+  const visibleMetrics = useMemo(
+    () =>
+      metricDefs.filter((metric) => !metric.permission || hasPermission(metric.permission)),
+    [hasPermission],
+  );
+
   const [counts, setCounts] = useState<CountsState>(() =>
     Object.fromEntries(metricDefs.map((m) => [m.key, { status: 'loading' }])),
   );
 
   const metrics = useMemo(
-    () => metricDefs.map((metric) => ({ ...metric, label: t(metric.key) })),
-    [t],
+    () => visibleMetrics.map((metric) => ({ ...metric, label: t(metric.key) })),
+    [t, visibleMetrics],
   );
 
   useEffect(() => {
+    if (permissionsLoading || visibleMetrics.length === 0) return;
+
     let cancelled = false;
     const client = getApiClient();
 
@@ -104,17 +120,23 @@ export function DashboardPlatformOverview({ className }: { className?: string })
         else if (key === 'bookings') value = await client.countBookings();
         else if (key === 'users') value = await client.countUsers();
         return { status: 'ready' as const, value };
-      } catch {
+      } catch (error) {
+        if (isApiForbidden(error)) {
+          return { status: 'hidden' as const };
+        }
         return { status: 'error' as const };
       }
     }
 
     async function loadAll() {
       const results = await Promise.all(
-        metricDefs.map(async (m) => [m.key, await loadMetric(m.key)] as const),
+        visibleMetrics.map(async (m) => [m.key, await loadMetric(m.key)] as const),
       );
       if (!cancelled) {
-        setCounts(Object.fromEntries(results));
+        setCounts((current) => ({
+          ...current,
+          ...Object.fromEntries(results),
+        }));
       }
     }
 
@@ -122,7 +144,15 @@ export function DashboardPlatformOverview({ className }: { className?: string })
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [permissionsLoading, visibleMetrics]);
+
+  const renderableMetrics = metrics.filter(
+    (metric) => (counts[metric.key]?.status ?? 'loading') !== 'hidden',
+  );
+
+  if (permissionsLoading || renderableMetrics.length === 0) {
+    return null;
+  }
 
   return (
     <Card variant="dashboard" padding="sm" className={className}>
@@ -130,7 +160,7 @@ export function DashboardPlatformOverview({ className }: { className?: string })
       <p className="mt-1 text-sm text-atg-muted">{t('subtitle')}</p>
 
       <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {metrics.map((metric) => {
+        {renderableMetrics.map((metric) => {
           const state = counts[metric.key] ?? { status: 'loading' };
           return (
             <Link

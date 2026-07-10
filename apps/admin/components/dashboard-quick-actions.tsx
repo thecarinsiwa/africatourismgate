@@ -4,12 +4,14 @@ import { Card, cn } from '@africatourismgate/ui';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
+import { usePermissions } from '../lib/auth/use-permissions';
 
 type QuickActionKey = 'users' | 'organizations' | 'properties' | 'bookings';
 
 type QuickActionDef = {
   key: QuickActionKey;
   href: string;
+  permission?: string;
   iconClass: string;
   icon: React.ReactNode;
 };
@@ -18,6 +20,7 @@ const actionDefs: QuickActionDef[] = [
   {
     key: 'users',
     href: '/utilisateurs',
+    permission: 'users.read',
     iconClass: 'bg-primary/10 text-primary',
     icon: (
       <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -48,6 +51,7 @@ const actionDefs: QuickActionDef[] = [
   {
     key: 'properties',
     href: '/hebergements',
+    permission: 'properties.read',
     iconClass: 'bg-primary/10 text-primary',
     icon: (
       <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -63,6 +67,7 @@ const actionDefs: QuickActionDef[] = [
   {
     key: 'bookings',
     href: '/reservations',
+    permission: 'bookings.read',
     iconClass: 'bg-primary/10 text-primary',
     icon: (
       <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -79,16 +84,23 @@ const actionDefs: QuickActionDef[] = [
 
 export function DashboardQuickActions({ className }: { className?: string }) {
   const t = useTranslations('dashboard.quickActions');
+  const { hasPermission, loading: permissionsLoading } = usePermissions();
 
   const actions = useMemo(
     () =>
-      actionDefs.map((action) => ({
-        ...action,
-        label: t(`${action.key}.label`),
-        description: t(`${action.key}.description`),
-      })),
-    [t],
+      actionDefs
+        .filter((action) => !action.permission || hasPermission(action.permission))
+        .map((action) => ({
+          ...action,
+          label: t(`${action.key}.label`),
+          description: t(`${action.key}.description`),
+        })),
+    [hasPermission, t],
   );
+
+  if (permissionsLoading || actions.length === 0) {
+    return null;
+  }
 
   return (
     <Card variant="dashboard" padding="sm" className={className}>

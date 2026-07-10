@@ -6,6 +6,8 @@ import { Avatar, Card, DataTableBadge } from '@africatourismgate/ui';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
+import { isApiForbidden } from '../lib/auth/is-api-forbidden';
+import { usePermissions } from '../lib/auth/use-permissions';
 import { getApiClient } from '../lib/auth/api';
 import type { UserStatus } from '@africatourismgate/types';
 
@@ -25,11 +27,15 @@ const statusVariants: Record<UserStatus, 'success' | 'warning' | 'danger'> = {
 
 export function DashboardRecentUsers({ className }: { className?: string }) {
   const { dashboardKpi: getDashboardKpiErrorMessage } = useAdminErrorMessages();
+  const { hasPermission, loading: permissionsLoading } = usePermissions();
   const t = useTranslations('dashboard');
   const tRecent = useTranslations('dashboard.recentUsers');
   const tStatus = useTranslations('dashboard.recentUsers.status');
   const [state, setState] = useState<
-    { status: 'loading' } | { status: 'error'; message: string } | { status: 'ready'; users: RecentUser[] }
+    | { status: 'loading' }
+    | { status: 'hidden' }
+    | { status: 'error'; message: string }
+    | { status: 'ready'; users: RecentUser[] }
   >({ status: 'loading' });
 
   const statusLabels = useMemo(
@@ -41,7 +47,11 @@ export function DashboardRecentUsers({ className }: { className?: string }) {
     [tStatus],
   );
 
+  const canRead = hasPermission('users.read');
+
   useEffect(() => {
+    if (permissionsLoading || !canRead) return;
+
     let cancelled = false;
     const client = getApiClient();
 
@@ -52,6 +62,10 @@ export function DashboardRecentUsers({ className }: { className?: string }) {
         setState({ status: 'ready', users: result.data as RecentUser[] });
       } catch (error) {
         if (cancelled) return;
+        if (isApiForbidden(error)) {
+          setState({ status: 'hidden' });
+          return;
+        }
         setState({ status: 'error', message: getDashboardKpiErrorMessage(error) });
       }
     }
@@ -60,7 +74,11 @@ export function DashboardRecentUsers({ className }: { className?: string }) {
     return () => {
       cancelled = true;
     };
-  }, [getDashboardKpiErrorMessage]);
+  }, [canRead, getDashboardKpiErrorMessage, permissionsLoading]);
+
+  if (permissionsLoading || !canRead || state.status === 'hidden') {
+    return null;
+  }
 
   return (
     <Card variant="dashboard" padding="sm" className={className}>

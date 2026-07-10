@@ -8,6 +8,8 @@ import {
   adminBreadcrumbExtraRoutes,
   buildAdminDashboardNav,
 } from '../config/dashboard-nav';
+import { isHrefAllowed } from '../config/admin-route-permissions';
+import { usePermissions } from '../lib/auth/use-permissions';
 
 type CommandPaletteItem = {
   href: string;
@@ -34,6 +36,7 @@ export function CommandPalette() {
   const router = useRouter();
   const t = useTranslations('common.commandPalette');
   const tNav = useTranslations('nav');
+  const { permissions, isSuperAdmin, loading: permissionsLoading } = usePermissions();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
@@ -51,8 +54,14 @@ export function CommandPalette() {
         byHref.set(item.href, item);
       }
     }
-    return Array.from(byHref.values()).sort((a, b) => a.label.localeCompare(b.label));
-  }, [tNav]);
+    const items = Array.from(byHref.values());
+    if (permissionsLoading) {
+      return items.sort((a, b) => a.label.localeCompare(b.label));
+    }
+    return items
+      .filter((item) => isHrefAllowed(item.href, { permissions, isSuperAdmin }))
+      .sort((a, b) => a.label.localeCompare(b.label));
+  }, [tNav, permissions, isSuperAdmin, permissionsLoading]);
 
   const filteredItems = useMemo(() => {
     const normalized = query.trim().toLowerCase();
