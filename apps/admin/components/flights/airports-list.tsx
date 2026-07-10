@@ -22,6 +22,7 @@ import { parseDestinationCoord, hasValidDestinationCoords } from '../../lib/dest
 import { CoordinatePickerMap } from '../maps/coordinate-picker-map';
 import { CountryFlagPlaceholder } from './country-flag-placeholder';
 
+const PAGE_SIZE = 20;
 const DEFAULT_MAP_CENTER = { latitude: -4.3058, longitude: 15.3 };
 const DEFAULT_MAP_ZOOM = 5;
 const SEARCH_DEBOUNCE_MS = 300;
