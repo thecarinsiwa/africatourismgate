@@ -44,8 +44,9 @@
   <div class="deck" id="deck">
 
     <!-- Slide 1 — Titre -->
-    <section class="slide slide--hero active" data-slide="1">
+    <section class="slide slide--hero slide--hero-image active" data-slide="1">
       <div class="slide-inner">
+        <img src="presentation-assets/logo.png" alt="Africa Tourism Gate" class="slide-logo" />
         <span class="badge">Présentation · Juillet 2026</span>
         <h1>Africa Tourism Gate</h1>
         <p class="subtitle">
@@ -57,20 +58,27 @@
 
     <!-- Slide 2 — En une phrase -->
     <section class="slide slide--light" data-slide="2">
-      <div class="slide-inner">
-        <span class="slide-label">Introduction</span>
-        <h2>En une phrase</h2>
-        <p class="lead">
-          <strong>Africa Tourism Gate</strong> est votre plateforme de voyage en ligne&nbsp;:
-          les clients peuvent <span class="highlight">chercher, réserver et payer</span> leurs voyages&nbsp;;
-          votre équipe peut <span class="highlight">gérer le catalogue, les réservations et les paiements</span>
-          depuis un espace de travail dédié.
-        </p>
-        <p class="subtitle">
-          Tout ce qu'offrent les grandes plateformes internationales, mais adapté à votre marché,
-          sous votre contrôle, avec votre identité.
-        </p>
+      <div class="slide-inner slide-split">
+        <div class="slide-split__content">
+          <span class="slide-label">Introduction</span>
+          <h2>En une phrase</h2>
+          <p class="lead">
+            <strong>Africa Tourism Gate</strong> est votre plateforme de voyage en ligne&nbsp;:
+            les clients peuvent <span class="highlight">chercher, réserver et payer</span> leurs voyages&nbsp;;
+            votre équipe peut <span class="highlight">gérer le catalogue, les réservations et les paiements</span>
+            depuis un espace de travail dédié.
+          </p>
+          <p class="subtitle">
+            Tout ce qu'offrent les grandes plateformes internationales, mais adapté à votre marché,
+            sous votre contrôle, avec votre identité.
+          </p>
+        </div>
+        <div class="slide-split__media">
+          <img src="presentation-assets/activity.jpg" alt="Expérience touristique en Afrique" class="slide-image slide-image--tall" />
+          <p class="image-caption">Des expériences authentiques, présentées sur une plateforme moderne</p>
+        </div>
       </div>
+      <img src="presentation-assets/africa-outline.svg" alt="" class="decor-africa" aria-hidden="true" />
     </section>
 
     <!-- Slide 3 — À quoi sert -->
@@ -149,59 +157,107 @@
       </div>
     </section>
 
-    <!-- Slide 5 — Site web -->
-    <section class="slide slide--light" data-slide="5">
+    <!-- Slide 5 — Aperçu visuel -->
+    <section class="slide slide--white" data-slide="5">
       <div class="slide-inner">
-        <span class="slide-label">Espace 1 · Voyageurs</span>
-        <h2>Le site web</h2>
-        <p class="lead">
-          Le site que voient vos clients — disponible en
-          <strong>français, anglais et espagnol</strong>.
-        </p>
-        <ul class="feature-list">
-          <li>Grande bannière avec vos visuels (modifiables par l'équipe)</li>
-          <li>Barre de recherche multi-produits (hôtel, vol, voiture…)</li>
-          <li>Mise en avant de vos atouts, promotions et avis clients</li>
-          <li>Pages institutionnelles, blog, support et dons</li>
-        </ul>
-        <p class="subtitle" style="margin-top:1.25rem">
-          Parcours type&nbsp;: <strong>recherche → fiche → réservation → paiement → confirmation par e-mail</strong>
-        </p>
+        <span class="slide-label">Aperçu</span>
+        <h2>La plateforme en images</h2>
+        <p class="subtitle">Contenu réel du catalogue — hébergements, activités, forfaits et véhicules.</p>
+        <div class="photo-grid">
+          <figure class="photo-card">
+            <img src="presentation-assets/hotel.jpg" alt="Hébergement" />
+            <figcaption class="photo-card__label">Hébergements</figcaption>
+          </figure>
+          <figure class="photo-card">
+            <img src="presentation-assets/activity.jpg" alt="Activité touristique" />
+            <figcaption class="photo-card__label">Activités &amp; tours</figcaption>
+          </figure>
+          <figure class="photo-card">
+            <img src="presentation-assets/package.jpg" alt="Forfait voyage" />
+            <figcaption class="photo-card__label">Forfaits combinés</figcaption>
+          </figure>
+          <figure class="photo-card">
+            <img src="presentation-assets/vehicle.jpg" alt="Location véhicule" />
+            <figcaption class="photo-card__label">Locations véhicules</figcaption>
+          </figure>
+        </div>
       </div>
     </section>
 
-    <!-- Slide 6 — 6 produits -->
-    <section class="slide slide--white" data-slide="6">
+    <!-- Slide 6 — Site web -->
+    <section class="slide slide--light" data-slide="6">
+      <div class="slide-inner slide-split">
+        <div class="slide-split__content">
+          <span class="slide-label">Espace 1 · Voyageurs</span>
+          <h2>Le site web</h2>
+          <p class="lead">
+            Le site que voient vos clients — disponible en
+            <strong>français, anglais et espagnol</strong>.
+          </p>
+          <ul class="feature-list">
+            <li>Grande bannière avec vos visuels (modifiables par l'équipe)</li>
+            <li>Barre de recherche multi-produits (hôtel, vol, voiture…)</li>
+            <li>Mise en avant de vos atouts, promotions et avis clients</li>
+            <li>Pages institutionnelles, blog, support et dons</li>
+          </ul>
+          <p class="subtitle" style="margin-top:1rem">
+            Parcours&nbsp;: <strong>recherche → fiche → réservation → paiement → confirmation</strong>
+          </p>
+        </div>
+        <div class="slide-split__media">
+          <div class="browser-frame">
+            <div class="browser-frame__bar">
+              <span class="browser-frame__dot"></span>
+              <span class="browser-frame__dot"></span>
+              <span class="browser-frame__dot"></span>
+              <span class="browser-frame__url">africatourismgate.org</span>
+            </div>
+            <div class="browser-frame__body">
+              <img src="presentation-assets/hero-brand.png" alt="Page d'accueil Africa Tourism Gate" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 7 — 6 produits -->
+    <section class="slide slide--white" data-slide="7">
       <div class="slide-inner">
         <span class="slide-label">Site web</span>
         <h2>Six types de voyages réservables</h2>
         <div class="product-grid">
-          <div class="product-pill">
+          <div class="product-pill product-pill--photo">
+            <img src="presentation-assets/hotel.jpg" alt="" class="product-pill__img" />
             <span class="icon-wrap"><svg class="icon" aria-hidden="true"><use href="#i-bed"/></svg></span>
             <strong>Hôtels</strong>
             <span>Destination, dates, photos, tarifs</span>
           </div>
-          <div class="product-pill">
+          <div class="product-pill product-pill--photo">
+            <img src="presentation-assets/marketing.jpg" alt="" class="product-pill__img" />
             <span class="icon-wrap"><svg class="icon" aria-hidden="true"><use href="#i-plane"/></svg></span>
             <strong>Vols</strong>
             <span>Comparer, choisir une classe</span>
           </div>
-          <div class="product-pill">
+          <div class="product-pill product-pill--photo">
+            <img src="presentation-assets/vehicle.jpg" alt="" class="product-pill__img" />
             <span class="icon-wrap"><svg class="icon" aria-hidden="true"><use href="#i-car"/></svg></span>
             <strong>Locations</strong>
             <span>Véhicule, retrait, dates</span>
           </div>
-          <div class="product-pill">
+          <div class="product-pill product-pill--photo">
+            <img src="presentation-assets/package.jpg" alt="" class="product-pill__img" />
             <span class="icon-wrap"><svg class="icon" aria-hidden="true"><use href="#i-ship"/></svg></span>
             <strong>Croisières</strong>
             <span>Cabines et itinéraires</span>
           </div>
-          <div class="product-pill">
+          <div class="product-pill product-pill--photo">
+            <img src="presentation-assets/activity.jpg" alt="" class="product-pill__img" />
             <span class="icon-wrap"><svg class="icon" aria-hidden="true"><use href="#i-compass"/></svg></span>
             <strong>Activités</strong>
             <span>Excursions et expériences</span>
           </div>
-          <div class="product-pill">
+          <div class="product-pill product-pill--photo">
+            <img src="presentation-assets/room.jpg" alt="" class="product-pill__img" />
             <span class="icon-wrap"><svg class="icon" aria-hidden="true"><use href="#i-package"/></svg></span>
             <strong>Forfaits</strong>
             <span>Packs combinés à prix réduit</span>
@@ -222,46 +278,54 @@
       </div>
     </section>
 
-    <!-- Slide 7 — Espace de gestion -->
-    <section class="slide slide--light" data-slide="7">
-      <div class="slide-inner">
-        <span class="slide-label">Espace 2 · Équipe</span>
-        <h2>L'espace de gestion</h2>
-        <p class="lead">
-          Le tableau de bord où votre staff travaille au quotidien.
-          Chaque personne voit uniquement ce à quoi elle a droit selon son rôle.
-        </p>
-        <div class="card-grid card-grid--3">
-          <div class="card">
-            <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-chart-line"/></svg></span> Tableau de bord</h3>
-            <p>Réservations, chiffre d'affaires, nouveaux clients et graphiques d'évolution.</p>
+    <!-- Slide 8 — Espace de gestion -->
+    <section class="slide slide--light" data-slide="8">
+      <div class="slide-inner slide-split">
+        <div class="slide-split__content">
+          <span class="slide-label">Espace 2 · Équipe</span>
+          <h2>L'espace de gestion</h2>
+          <p class="lead">
+            Le tableau de bord où votre staff travaille au quotidien.
+            Chaque personne voit uniquement ce à quoi elle a droit selon son rôle.
+          </p>
+          <div class="card-grid card-grid--2" style="margin-top:1rem">
+            <div class="card">
+              <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-chart-line"/></svg></span> Tableau de bord</h3>
+              <p>Réservations, chiffre d'affaires, nouveaux clients.</p>
+            </div>
+            <div class="card">
+              <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-wallet"/></svg></span> Paiements</h3>
+              <p>Transactions, remboursements, codes promo.</p>
+            </div>
+            <div class="card">
+              <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-file-text"/></svg></span> Contenu</h3>
+              <p>Blog, bannières, pages « À propos », avis.</p>
+            </div>
+            <div class="card">
+              <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-shield"/></svg></span> Droits d'accès</h3>
+              <p>Admin, support, commercial… par rôle.</p>
+            </div>
           </div>
-          <div class="card">
-            <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-users"/></svg></span> Utilisateurs</h3>
-            <p>Comptes clients et employés, adresses, sécurité.</p>
+        </div>
+        <div class="slide-split__media">
+          <div class="browser-frame">
+            <div class="browser-frame__bar">
+              <span class="browser-frame__dot"></span>
+              <span class="browser-frame__dot"></span>
+              <span class="browser-frame__dot"></span>
+              <span class="browser-frame__url">app-africatourismgate.org</span>
+            </div>
+            <div class="browser-frame__body">
+              <img src="presentation-assets/marketing.jpg" alt="Interface de gestion — contenu et catalogue" />
+            </div>
           </div>
-          <div class="card">
-            <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-wallet"/></svg></span> Paiements</h3>
-            <p>Transactions, remboursements, codes promo et promotions.</p>
-          </div>
-          <div class="card">
-            <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-file-text"/></svg></span> Contenu</h3>
-            <p>Blog, bannières, pages « À propos », avis et tickets support.</p>
-          </div>
-          <div class="card">
-            <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-sprout"/></svg></span> Programme GAP</h3>
-            <p>Pages, activités, impact et médias du programme conservation.</p>
-          </div>
-          <div class="card">
-            <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-shield"/></svg></span> Droits d'accès</h3>
-            <p>Admin, support, commercial… chaque rôle a ses sections.</p>
-          </div>
+          <p class="image-caption">Catalogue, réservations et contenu gérés depuis un seul espace</p>
         </div>
       </div>
     </section>
 
-    <!-- Slide 8 — Catalogue & réservations -->
-    <section class="slide slide--white" data-slide="8">
+    <!-- Slide 9 — Catalogue & réservations -->
+    <section class="slide slide--white" data-slide="9">
       <div class="slide-inner">
         <span class="slide-label">Espace de gestion</span>
         <h2>Catalogue &amp; réservations</h2>
@@ -284,45 +348,54 @@
               <li>Messagerie client sur chaque réservation</li>
               <li>Assignation de guides touristiques</li>
             </ul>
+            <div class="card-image-side" style="margin-top:1rem">
+              <img src="presentation-assets/room.jpg" alt="Exemple de chambre d'hôtel dans le catalogue" />
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Slide 9 — Guichet & GAP -->
-    <section class="slide slide--accent" data-slide="9">
+    <!-- Slide 10 — Guichet & GAP -->
+    <section class="slide slide--accent" data-slide="10">
       <div class="slide-inner">
         <span class="slide-label">Espaces 3 &amp; 4</span>
         <h2>Guichet de vente &amp; site GAP</h2>
         <div class="two-columns">
-          <div class="card">
-            <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-store"/></svg></div>
-            <h3>Guichet de vente</h3>
-            <p><em>Comptoir, agence, événement</em></p>
-            <ol class="steps" style="margin-top:0.75rem">
-              <li>Connexion employé</li>
-              <li>Ajout produits au panier</li>
-              <li>Encaissement espèces ou carte</li>
-              <li>Impression du reçu</li>
-            </ol>
+          <div class="card card--photo">
+            <img src="presentation-assets/vehicle.jpg" alt="Vente en agence" class="card-photo" />
+            <div class="card-body">
+              <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-store"/></svg></div>
+              <h3>Guichet de vente</h3>
+              <p><em>Comptoir, agence, événement</em></p>
+              <ol class="steps" style="margin-top:0.75rem">
+                <li>Connexion employé</li>
+                <li>Ajout produits au panier</li>
+                <li>Encaissement espèces ou carte</li>
+                <li>Impression du reçu</li>
+              </ol>
+            </div>
           </div>
-          <div class="card">
-            <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-sprout"/></svg></div>
-            <h3>Site GAP</h3>
-            <p><em>Gorilla Ambassadors Program</em></p>
-            <ul class="feature-list" style="margin-top:0.75rem">
-              <li>Présentation et objectifs du programme</li>
-              <li>Activités sur le terrain et galerie médias</li>
-              <li>Statistiques d'impact</li>
-              <li>Page de dons — contenu géré depuis l'espace admin</li>
-            </ul>
+          <div class="card card--photo">
+            <img src="presentation-assets/activity.jpg" alt="Programme GAP — conservation" class="card-photo" />
+            <div class="card-body">
+              <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-sprout"/></svg></div>
+              <h3>Site GAP</h3>
+              <p><em>Gorilla Ambassadors Program</em></p>
+              <ul class="feature-list" style="margin-top:0.75rem">
+                <li>Présentation et objectifs du programme</li>
+                <li>Activités sur le terrain et galerie médias</li>
+                <li>Statistiques d'impact</li>
+                <li>Page de dons — contenu géré depuis l'espace admin</li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Slide 10 — Deux façons de réserver -->
-    <section class="slide slide--white" data-slide="10">
+    <!-- Slide 11 — Deux façons de réserver -->
+    <section class="slide slide--white" data-slide="11">
       <div class="slide-inner">
         <span class="slide-label">Parcours client</span>
         <h2>Deux façons de réserver</h2>
@@ -356,8 +429,8 @@
       </div>
     </section>
 
-    <!-- Slide 11 — Ce qui fonctionne -->
-    <section class="slide slide--light" data-slide="11">
+    <!-- Slide 12 — Ce qui fonctionne -->
+    <section class="slide slide--light" data-slide="12">
       <div class="slide-inner">
         <span class="slide-label">État actuel</span>
         <h2>Ce qui fonctionne déjà</h2>
@@ -392,8 +465,8 @@
       </div>
     </section>
 
-    <!-- Slide 12 — Ce qui arrive -->
-    <section class="slide slide--white" data-slide="12">
+    <!-- Slide 13 — Ce qui arrive -->
+    <section class="slide slide--white" data-slide="13">
       <div class="slide-inner">
         <span class="slide-label">Transparence</span>
         <h2>Ce qui arrive bientôt</h2>
@@ -432,8 +505,8 @@
       </div>
     </section>
 
-    <!-- Slide 13 — Démo -->
-    <section class="slide slide--accent" data-slide="13">
+    <!-- Slide 14 — Démo -->
+    <section class="slide slide--accent" data-slide="14">
       <div class="slide-inner">
         <span class="slide-label">Démonstration</span>
         <h2>Déroulé suggéré pour la démo</h2>
@@ -473,44 +546,53 @@
       </div>
     </section>
 
-    <!-- Slide 14 — Bénéfices -->
-    <section class="slide slide--light" data-slide="14">
+    <!-- Slide 15 — Bénéfices -->
+    <section class="slide slide--light" data-slide="15">
       <div class="slide-inner">
         <span class="slide-label">Valeur</span>
         <h2>Les bénéfices concrets</h2>
         <div class="card-grid card-grid--3">
-          <div class="card">
-            <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-building"/></svg></span> Pour votre entreprise</h3>
+          <div class="card card--photo">
+            <img src="presentation-assets/hero-brand.png" alt="" class="card-photo" />
+            <div class="card-body">
+              <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-building"/></svg></span> Pour votre entreprise</h3>
             <ul class="feature-list" style="margin-top:0.5rem">
               <li>Indépendance sur catalogue et tarifs</li>
               <li>Revenus en ligne 24 h/24</li>
               <li>Une seule plateforme centralisée</li>
               <li>Image professionnelle multilingue</li>
             </ul>
+            </div>
           </div>
-          <div class="card">
-            <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-luggage"/></svg></span> Pour vos clients</h3>
+          <div class="card card--photo">
+            <img src="presentation-assets/hotel.jpg" alt="" class="card-photo" />
+            <div class="card-body">
+              <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-luggage"/></svg></span> Pour vos clients</h3>
             <ul class="feature-list" style="margin-top:0.5rem">
               <li>Tout réserver au même endroit</li>
               <li>Tarifs clairs, confirmation immédiate</li>
               <li>En ligne ou avec un conseiller</li>
               <li>Avis, support et fidélité</li>
             </ul>
+            </div>
           </div>
-          <div class="card">
-            <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-sprout"/></svg></span> Pour la cause GAP</h3>
+          <div class="card card--photo">
+            <img src="presentation-assets/activity.jpg" alt="" class="card-photo" />
+            <div class="card-body">
+              <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-sprout"/></svg></span> Pour la cause GAP</h3>
             <ul class="feature-list" style="margin-top:0.5rem">
               <li>Visibilité du programme conservation</li>
               <li>Collecte de dons intégrée</li>
               <li>Contenu mis à jour facilement</li>
             </ul>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Slide 15 — FAQ -->
-    <section class="slide slide--white" data-slide="15">
+    <!-- Slide 16 — FAQ -->
+    <section class="slide slide--white" data-slide="16">
       <div class="slide-inner">
         <span class="slide-label">Questions</span>
         <h2>Questions fréquentes</h2>
@@ -539,8 +621,8 @@
       </div>
     </section>
 
-    <!-- Slide 16 — Avancement -->
-    <section class="slide slide--dark" data-slide="16">
+    <!-- Slide 17 — Avancement -->
+    <section class="slide slide--dark slide--hero-image" data-slide="17">
       <div class="slide-inner">
         <span class="slide-label">Bilan</span>
         <h2>Où en sommes-nous&nbsp;?</h2>
@@ -567,8 +649,8 @@
       </div>
     </section>
 
-    <!-- Slide 17 — Priorités & accès -->
-    <section class="slide slide--light" data-slide="17">
+    <!-- Slide 18 — Priorités & accès -->
+    <section class="slide slide--light" data-slide="18">
       <div class="slide-inner">
         <span class="slide-label">Suite</span>
         <h2>Prochaines priorités &amp; accès</h2>
@@ -641,9 +723,9 @@
   <nav class="nav-bar" aria-label="Navigation présentation">
     <button class="nav-prev" id="btnPrev" aria-label="Slide précédente">← Précédent</button>
     <div class="nav-info">
-      <span class="nav-counter" id="navCounter">1 / 17</span>
+      <span class="nav-counter" id="navCounter">1 / 18</span>
       <div class="progress-track">
-        <div class="progress-fill" id="progressFill" style="width: 5.88%"></div>
+        <div class="progress-fill" id="progressFill" style="width: 5.56%"></div>
       </div>
     </div>
     <button class="nav-next" id="btnNext" aria-label="Slide suivante">Suivant →</button>
