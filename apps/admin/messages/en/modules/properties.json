@@ -53,6 +53,7 @@
   },
   "detail": {
     "title": "Edit accommodation",
+    "backLink": "Back to accommodations",
     "backToList": "← Back to list",
     "tabsAria": "Accommodation sections",
     "tabs": {

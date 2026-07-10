@@ -163,7 +163,7 @@
     "basePriceCents": "Precio de base (centimes)",
     "dailyPriceCents": "Precio journalier (centimes)",
     "pricePerNightCents": "Precio/nuit (centimes)",
-    "priceCentsShort": "Precio (centimes)",
+    "priceCentsShort": "Precio (céntimos)",
     "durationMinutes": "Desderée (minutes)",
     "durationMinutesOptional": "Desderée (minutes, optionnel)",
     "durationNights": "Desderée (nuits)",
@@ -178,7 +178,7 @@
     "chooseFile": "Choisir un fichier",
     "uploading": "Upload en cours…",
     "imageFormatHint": "JPEG, PNG ou WebP, max 5 Mo",
-    "centsHint": "Ex. 8500 = 85,00",
+    "centsHint": "Ej. 8500 = 85,00",
     "urlPlaceholder": "https://..."
   },
   "validation": {
@@ -231,22 +231,25 @@
     "deletedProperty": "L'hébergement « {name} » a été supprimé."
   },
   "availabilityCalendar": {
-    "previousMonth": "Mois précédent",
-    "nextMonth": "Mois suivant",
-    "today": "Hastajourd'hui",
+    "previousMonth": "Mes anterior",
+    "nextMonth": "Mes siguiente",
+    "today": "Hoy",
+    "bulkTitle": "Actualización masiva",
+    "bulkIntro": "Defina el stock y el precio para todos los días del rango seleccionado.",
     "weekdays": {
       "mon": "lun.",
       "tue": "mar.",
-      "wed": "mer.",
-      "thu": "jeu.",
-      "fri": "ven.",
-      "sat": "sam.",
-      "sun": "dim."
+      "wed": "mié.",
+      "thu": "jue.",
+      "fri": "vie.",
+      "sat": "sáb.",
+      "sun": "dom."
     },
-    "bulkSuccess": "{count} jour(s) mis à jour.",
-    "stockUnits": "Stock (unités)",
-    "availableSeats": "Sièges disponibles",
-    "seatsAria": "Sièges {date}"
+    "bulkSuccess": "{count} día(s) actualizado(s).",
+    "stockUnits": "Stock (unidades)",
+    "availableSeats": "Asientos disponibles",
+    "seatsAria": "Asientos el {date}",
+    "unitsShort": "{count} u."
   },
   "imagesGallery": {
     "title": "Photos",

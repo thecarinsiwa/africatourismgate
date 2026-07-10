@@ -53,6 +53,7 @@
   },
   "detail": {
     "title": "Editar alojamiento",
+    "backLink": "Volver a alojamientos",
     "backToList": "← Volver a la lista",
     "tabsAria": "Secciones del alojamiento",
     "tabs": {

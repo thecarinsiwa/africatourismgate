@@ -163,7 +163,7 @@
     "basePriceCents": "Price de base (centimes)",
     "dailyPriceCents": "Price journalier (centimes)",
     "pricePerNightCents": "Price/nuit (centimes)",
-    "priceCentsShort": "Price (centimes)",
+    "priceCentsShort": "Price (cents)",
     "durationMinutes": "Fromrée (minutes)",
     "durationMinutesOptional": "Fromrée (minutes, optionnel)",
     "durationNights": "Fromrée (nuits)",
@@ -178,7 +178,7 @@
     "chooseFile": "Choisir un fichier",
     "uploading": "Upload en cours…",
     "imageFormatHint": "JPEG, PNG ou WebP, max 5 Mo",
-    "centsHint": "Ex. 8500 = 85,00",
+    "centsHint": "E.g. 8500 = 85.00",
     "urlPlaceholder": "https://..."
   },
   "validation": {
@@ -231,22 +231,25 @@
     "deletedProperty": "L'hébergement « {name} » a été supprimé."
   },
   "availabilityCalendar": {
-    "previousMonth": "Mois précédent",
-    "nextMonth": "Mois suivant",
-    "today": "Tojourd'hui",
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month",
+    "today": "Today",
+    "bulkTitle": "Bulk update",
+    "bulkIntro": "Set stock and price for all days in the selected date range.",
     "weekdays": {
-      "mon": "lun.",
-      "tue": "mar.",
-      "wed": "mer.",
-      "thu": "jeu.",
-      "fri": "ven.",
-      "sat": "sam.",
-      "sun": "dim."
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun"
     },
-    "bulkSuccess": "{count} jour(s) mis à jour.",
-    "stockUnits": "Stock (unités)",
-    "availableSeats": "Sièges disponibles",
-    "seatsAria": "Sièges {date}"
+    "bulkSuccess": "{count} day(s) updated.",
+    "stockUnits": "Stock (units)",
+    "availableSeats": "Available seats",
+    "seatsAria": "Seats on {date}",
+    "unitsShort": "{count} units"
   },
   "imagesGallery": {
     "title": "Photos",

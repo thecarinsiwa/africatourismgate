@@ -111,7 +111,7 @@ export function PropertyAvailabilitySection({ propertyId }: PropertyAvailability
   }
 
   return (
-    <div className="space-y-8">
+    <div className="min-w-0 space-y-8">
       <div className="max-w-md">
         <Select
           label={t('room')}
