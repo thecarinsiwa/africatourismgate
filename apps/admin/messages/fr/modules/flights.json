@@ -16,6 +16,22 @@
     "deleteTitle": "Supprimer le vol",
     "deleteDescription": "Supprimer le vol « {flightNumber} » ? Cette action est irréversible."
   },
+  "exports": {
+    "button": "Exporter",
+    "dialogTitle": "Exporter les vols",
+    "dialogDescription": "Les exports respectent le filtre de recherche actif.",
+    "excel": "Exporter Excel (3 onglets)",
+    "pdfKpi": "Synthèse KPI (PDF)",
+    "pdfCatalog": "Catalogue (PDF)",
+    "pdfBookings": "Réservations (PDF)",
+    "dateFrom": "Date de début",
+    "dateTo": "Date de fin",
+    "periodRequired": "Indiquez une période pour cet export.",
+    "periodInvalid": "La date de fin doit être postérieure ou égale à la date de début.",
+    "success": "Export téléchargé.",
+    "error": "Impossible de générer l'export.",
+    "noPermissionBookings": "Export réservations réservé aux utilisateurs avec l'accès réservations."
+  },
   "columns": {
     "flightNumber": "Code vol",
     "airline": "Compagnie",

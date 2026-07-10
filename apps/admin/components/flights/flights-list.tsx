@@ -21,6 +21,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
 import { ListViewModeToggle } from '../list-view-mode-toggle';
+import { FlightsExportDialog } from './flights-export-dialog';
 import { FlightThumbnail } from './flight-thumbnail';
 import { FlightTimeline } from './flight-timeline';
 
@@ -37,6 +38,7 @@ export function FlightsList() {
   const tPagination = useTranslations('modules.common.pagination');
   const tDataTable = useTranslations('modules.common.dataTable');
   const tDialogs = useTranslations('modules.flights.dialogs');
+  const tExports = useTranslations('modules.flights.exports');
   const tCommon = useTranslations('modules.common');
   const tActions = useTranslations('common.actions');
   const tToast = useTranslations('modules.common.toast');
@@ -56,8 +58,21 @@ export function FlightsList() {
   >({ status: 'loading' });
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [pendingDelete, setPendingDelete] = useState<Flight | null>(null);
+  const [exportOpen, setExportOpen] = useState(false);
+  const [canExportBookings, setCanExportBookings] = useState(false);
 
   const emptyDash = tCommon('empty.dash');
+
+  useEffect(() => {
+    void getApiClient()
+      .getAuthMe()
+      .then((me) => {
+        setCanExportBookings(
+          me.isSuperAdmin || me.permissions.includes('bookings.read'),
+        );
+      })
+      .catch(() => setCanExportBookings(false));
+  }, []);
 
   useEffect(() => {
     const client = getApiClient();
@@ -274,10 +289,22 @@ export function FlightsList() {
             ariaLabel={t('viewModeAria')}
           />
         </div>
-        <div className="flex flex-wrap gap-2 lg:hidden">
-          <Button href="/produits/vols/nouveau">{t('newFlight')}</Button>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" onClick={() => setExportOpen(true)}>
+            {tExports('button')}
+          </Button>
+          <Button href="/produits/vols/nouveau" className="lg:hidden">
+            {t('newFlight')}
+          </Button>
         </div>
       </div>
+
+      <FlightsExportDialog
+        open={exportOpen}
+        onOpenChange={setExportOpen}
+        search={search}
+        canExportBookings={canExportBookings}
+      />
 
       {state.status === 'error' ? (
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">

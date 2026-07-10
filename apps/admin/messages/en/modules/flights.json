@@ -16,6 +16,22 @@
     "deleteTitle": "Delete flight",
     "deleteDescription": "Delete flight « {flightNumber} »? This action cannot be undone."
   },
+  "exports": {
+    "button": "Export",
+    "dialogTitle": "Export flights",
+    "dialogDescription": "Exports use the current search filter.",
+    "excel": "Export Excel (3 sheets)",
+    "pdfKpi": "KPI summary (PDF)",
+    "pdfCatalog": "Catalog (PDF)",
+    "pdfBookings": "Bookings (PDF)",
+    "dateFrom": "Start date",
+    "dateTo": "End date",
+    "periodRequired": "Select a date range for this export.",
+    "periodInvalid": "End date must be on or after the start date.",
+    "success": "Export downloaded.",
+    "error": "Could not generate the export.",
+    "noPermissionBookings": "Bookings export requires bookings access."
+  },
   "columns": {
     "flightNumber": "Code vol",
     "airline": "Airline",
