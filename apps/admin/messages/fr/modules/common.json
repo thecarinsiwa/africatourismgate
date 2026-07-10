@@ -114,7 +114,8 @@
     "amenity": "équipement",
     "review": "avis",
     "ticket": "tickets",
-    "loyaltyAccount": "comptes"
+    "loyaltyAccount": "comptes",
+    "activity": "activité"
   },
   "dataTable": {
     "loading": "Chargement…",

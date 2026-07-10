@@ -15,6 +15,7 @@ import type { Activity, ActivityProvider, Destination } from '@africatourismgate
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
 import {
   ActivityDifficultyBadge,
   ActivityDurationBadge,
@@ -33,7 +34,9 @@ export function ActivitiesList() {
   const tColumns = useTranslations('modules.activities.columns');
   const tCommonColumns = useTranslations('modules.common.columns');
   const tPagination = useTranslations('modules.common.pagination');
+  const tDataTable = useTranslations('modules.common.dataTable');
   const tCommon = useTranslations('modules.common');
+  const paginationLabels = useDataTablePaginationLabels();
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [destinationFilter, setDestinationFilter] = useState('');
@@ -128,6 +131,7 @@ export function ActivitiesList() {
       {
         id: 'provider',
         header: tColumns('provider'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => (
           <span className="text-sm text-atg-muted">
             {providerById.get(row.original.providerId) ?? row.original.providerId}
@@ -147,7 +151,7 @@ export function ActivitiesList() {
       {
         id: 'duration',
         header: tColumns('duration'),
-        meta: { align: 'center' },
+        meta: { align: 'center', hideOnMobile: true },
         cell: ({ row }) => (
           <ActivityDurationBadge durationMinutes={row.original.durationMinutes} />
         ),
@@ -155,7 +159,7 @@ export function ActivitiesList() {
       {
         id: 'difficulty',
         header: tColumns('difficulty'),
-        meta: { align: 'center' },
+        meta: { align: 'center', hideOnMobile: true },
         cell: ({ row }) => (
           <ActivityDifficultyBadge difficultyLevel={row.original.difficultyLevel} />
         ),
@@ -192,17 +196,18 @@ export function ActivitiesList() {
     'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg';
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
-        <div className="flex-1 sm:max-w-md">
+    <div className="min-w-0 space-y-6">
+      <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-end">
+        <div className="min-w-0 flex-1 sm:max-w-md">
           <Input
             type="search"
             placeholder={tList('searchPlaceholder')}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
+            aria-label={tList('searchPlaceholder')}
           />
         </div>
-        <div className="sm:w-56">
+        <div className="min-w-0 sm:w-56">
           <label className="mb-2 block text-sm font-medium text-atg-fg">
             {tList('destination')}
           </label>
@@ -241,7 +246,11 @@ export function ActivitiesList() {
               columns={columns}
               data={activities}
               isLoading={state.status === 'loading'}
+              loadingMessage={tDataTable('loading')}
               emptyMessage={tList('emptyDefault')}
+              expandRowLabel={tDataTable('expandRow')}
+              collapseRowLabel={tDataTable('collapseRow')}
+              expandRowAriaLabel={tDataTable('expandRowAria')}
               getRowId={(row) => row.id}
               aria-label={tList('ariaLabel')}
             />
@@ -253,6 +262,7 @@ export function ActivitiesList() {
               totalPages={state.totalPages}
               totalItems={state.total}
               itemLabel={tPagination('activity')}
+              labels={paginationLabels}
               onPageChange={setPage}
             />
           ) : null}
