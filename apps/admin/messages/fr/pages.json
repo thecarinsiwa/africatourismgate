@@ -60,14 +60,18 @@
     "description": "Propriétés, chambres et équipements. Filtrez par destination.",
     "nouveau": {
       "metaTitle": "Nouvel hébergement",
-      "description": "Créez la propriété puis ajoutez images, équipements et chambres."
+      "description": "Créez la propriété puis ajoutez images, équipements et chambres.",
+      "backLabel": "Retour aux hébergements"
     },
     "id": {
       "metaTitle": "Modifier l'hébergement",
       "chambres": {
         "roomId": {
           "disponibilites": {
-            "metaTitle": "Disponibilités chambre"
+            "metaTitle": "Disponibilités chambre",
+            "title": "Disponibilités chambre",
+            "description": "Gérez le stock et le prix par nuit pour cette chambre.",
+            "backLabel": "Retour à l'hébergement"
           }
         }
       }
@@ -136,17 +140,24 @@
     "locations": {
       "title": "Locations véhicules",
       "description": "Véhicules par agence, catégories et créneaux de disponibilité.",
+      "actions": {
+        "agencies": "Agences",
+        "categories": "Catégories",
+        "new": "Nouveau véhicule"
+      },
       "links": {
         "agencies": "Agences de location",
         "categories": "Catégories véhicules"
       },
       "agences": {
         "title": "Agences de location",
-        "description": "Référentiel des agences liées aux destinations."
+        "description": "Référentiel des agences liées aux destinations.",
+        "backLabel": "Retour aux véhicules"
       },
       "categories": {
         "title": "Catégories véhicules",
-        "description": "Types de véhicules (compact, SUV, premium, etc.)."
+        "description": "Types de véhicules (compact, SUV, premium, etc.).",
+        "backLabel": "Retour aux véhicules"
       },
       "nouveau": {
         "metaTitle": "Nouveau véhicule",
@@ -154,11 +165,26 @@
         "backLabel": "Retour aux véhicules"
       },
       "id": {
-        "metaTitle": "Modifier le véhicule"
+        "metaTitle": "Modifier le véhicule",
+        "voir": {
+          "metaTitle": "Voir le véhicule"
+        },
+        "disponibilites": {
+          "metaTitle": "Disponibilités véhicule",
+          "title": "Disponibilités véhicule",
+          "description": "Ajoutez ou modifiez les créneaux de location, maintenance ou location active.",
+          "backLabel": "Retour au véhicule"
+        }
       }
     },
     "vols": {
+      "title": "Vols",
       "description": "Catalogue des vols, classes cabine et disponibilités. Recherche par code vol.",
+      "actions": {
+        "airlines": "Compagnies",
+        "airports": "Aéroports",
+        "new": "Nouveau vol"
+      },
       "links": {
         "airlines": "Compagnies aériennes",
         "airports": "Aéroports"
@@ -178,6 +204,9 @@
       },
       "id": {
         "metaTitle": "Modifier le vol",
+        "voir": {
+          "metaTitle": "Voir le vol"
+        },
         "classes": {
           "classId": {
             "disponibilites": {

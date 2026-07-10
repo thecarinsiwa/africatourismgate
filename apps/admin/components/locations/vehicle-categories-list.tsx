@@ -10,11 +10,13 @@ import {
   DataTableActions,
   DataTablePagination,
   Input,
+  Modal,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { VehicleCategory } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ReferentialListToolbar } from '../referential-list-toolbar';
 import { getApiClient } from '../../lib/auth/api';
 import { getVehicleCategoryIcon } from '../../lib/vehicle-category-icon-map';
 
@@ -80,6 +82,21 @@ export function VehicleCategoriesList() {
     return () => window.clearTimeout(timer);
   }, [searchInput]);
 
+  function openForm(category?: VehicleCategory) {
+    if (category) {
+      setEditing(category);
+      setFormValues({
+        name: category.name,
+        exampleModel: category.exampleModel ?? '',
+      });
+    } else {
+      setEditing(null);
+      setFormValues(emptyForm);
+    }
+    setFormError(null);
+    setShowForm(true);
+  }
+
   function resetForm() {
     setFormValues(emptyForm);
     setEditing(null);
@@ -140,17 +157,7 @@ export function VehicleCategoriesList() {
         meta: { align: 'right' },
         cell: ({ row }) => (
           <DataTableActions>
-            <DataTableActionButton
-              action="edit"
-              onClick={() => {
-                setEditing(row.original);
-                setFormValues({
-                  name: row.original.name,
-                  exampleModel: row.original.exampleModel ?? '',
-                });
-                setShowForm(true);
-              }}
-            />
+            <DataTableActionButton action="edit" onClick={() => openForm(row.original)} />
             <DataTableActionButton
               action="delete"
               onClick={async () => {
@@ -176,66 +183,62 @@ export function VehicleCategoriesList() {
   );
 
   const categories = state.status === 'ready' ? state.categories : [];
+  const emptyMessage = search.trim().length > 0 ? t('emptySearch') : t('emptyDefault');
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex-1 sm:max-w-md">
-          <Input
-            type="search"
-            placeholder={t('searchPlaceholder')}
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-          />
-        </div>
-        {!showForm ? (
-          <Button
-            type="button"
-            onClick={() => {
-              resetForm();
-              setShowForm(true);
-            }}
-          >
+      <ReferentialListToolbar
+        searchValue={searchInput}
+        onSearchChange={setSearchInput}
+        placeholder={t('searchPlaceholder')}
+        ariaLabel={t('searchAria')}
+        action={
+          <Button type="button" onClick={() => openForm()}>
             {t('new')}
           </Button>
-        ) : null}
-      </div>
+        }
+      />
 
-      {showForm ? (
-        <Card variant="dashboard" className="max-w-lg">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <h3 className="text-sm font-medium">{editing ? t('edit') : t('new')}</h3>
-            {formError ? (
-              <p role="alert" className="text-sm text-red-600">
-                {formError}
-              </p>
-            ) : null}
-            <Input
-              label={tCommon('columns.name')}
-              value={formValues.name}
-              onChange={(e) => setFormValues((p) => ({ ...p, name: e.target.value }))}
-            />
-            <Input
-              label={t('exampleModel')}
-              value={formValues.exampleModel}
-              onChange={(e) =>
-                setFormValues((p) => ({ ...p, exampleModel: e.target.value }))
-              }
-            />
-            <div className="flex gap-3">
-              <Button type="submit" loading={submitting}>
-                {editing ? tActions('save') : tActions('create')}
-              </Button>
-              <Button type="button" variant="outline" onClick={resetForm}>
-                {tActions('cancel')}
-              </Button>
-            </div>
-          </form>
-        </Card>
-      ) : null}
+      <Modal
+        open={showForm}
+        onOpenChange={(open) => {
+          if (!open && !submitting) resetForm();
+        }}
+        title={editing ? t('edit') : t('new')}
+        showClose
+        className="max-w-lg"
+      >
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {formError ? (
+            <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+              {formError}
+            </p>
+          ) : null}
+          <Input
+            label={tCommon('columns.name')}
+            value={formValues.name}
+            onChange={(e) => setFormValues((p) => ({ ...p, name: e.target.value }))}
+          />
+          <Input
+            label={t('exampleModel')}
+            value={formValues.exampleModel}
+            onChange={(e) =>
+              setFormValues((p) => ({ ...p, exampleModel: e.target.value }))
+            }
+          />
+          <div className="flex justify-end gap-3">
+            <Button type="button" variant="outline" onClick={resetForm} disabled={submitting}>
+              {tActions('cancel')}
+            </Button>
+            <Button type="submit" loading={submitting}>
+              {editing ? tActions('save') : tActions('create')}
+            </Button>
+          </div>
+        </form>
+      </Modal>
 
       {state.status === 'error' ? (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {state.message}
         </p>
       ) : (
@@ -245,7 +248,8 @@ export function VehicleCategoriesList() {
               columns={columns}
               data={categories}
               isLoading={state.status === 'loading'}
-              emptyMessage={t('empty')}
+              emptyMessage={emptyMessage}
+              emptyVariant={search.trim().length > 0 ? 'search' : 'default'}
               getRowId={(r) => r.id}
             />
           </Card>

@@ -1,7 +1,7 @@
 'use client';
 
 import { cn, DataTableBadge } from '@africatourismgate/ui';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import {
   formatDurationMinutes,
   formatFlightSchedule,
@@ -13,6 +13,8 @@ export type FlightTimelineAirport = {
   name?: string;
 };
 
+type FlightTimelineVariant = 'default' | 'compact' | 'card';
+
 type FlightTimelineProps = {
   departureAirport: FlightTimelineAirport | null;
   arrivalAirport: FlightTimelineAirport | null;
@@ -20,6 +22,7 @@ type FlightTimelineProps = {
   arrivalTime: string;
   durationMinutes: number;
   compact?: boolean;
+  variant?: FlightTimelineVariant;
   className?: string;
 };
 
@@ -67,15 +70,15 @@ function AirportBlock({
 }
 
 function DurationConnector({
-  durationMinutes,
+  durationLabel,
   compact,
   durationAriaLabel,
 }: {
-  durationMinutes: number;
+  durationLabel: string;
   compact?: boolean;
   durationAriaLabel: string;
 }) {
-  const label = formatDurationMinutes(durationMinutes);
+  const label = durationLabel;
 
   if (compact) {
     return (
@@ -112,6 +115,69 @@ function DurationConnector({
   );
 }
 
+function CardAirportBlock({
+  airport,
+  time,
+  align,
+  emptyDash,
+}: {
+  airport: FlightTimelineAirport | null;
+  time: string;
+  align: 'start' | 'end';
+  emptyDash: string;
+}) {
+  return (
+    <div
+      className={cn(
+        'flex min-w-0 flex-col gap-1',
+        align === 'end' && 'items-end text-right',
+      )}
+    >
+      <DataTableBadge variant="default">{airport?.iataCode ?? '?'}</DataTableBadge>
+      <span className="line-clamp-1 text-sm font-medium text-atg-fg">
+        {airport?.city ?? emptyDash}
+      </span>
+      <div className="min-h-[2.5rem]">
+        {airport?.name ? (
+          <span className="line-clamp-2 text-xs leading-snug text-atg-muted">{airport.name}</span>
+        ) : null}
+      </div>
+      <span className="text-xs leading-snug tabular-nums text-atg-muted">{time}</span>
+    </div>
+  );
+}
+
+function CardDurationConnector({
+  durationLabel,
+  durationAriaLabel,
+}: {
+  durationLabel: string;
+  durationAriaLabel: string;
+}) {
+  const label = durationLabel;
+
+  return (
+    <div
+      className="flex flex-col items-center justify-center gap-0.5 self-center px-1 pt-5"
+      aria-label={durationAriaLabel}
+    >
+      <svg
+        className="h-4 w-4 shrink-0 text-atg-muted"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        aria-hidden
+      >
+        <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+      <span className="whitespace-nowrap text-xs font-medium tabular-nums text-atg-muted">
+        {label}
+      </span>
+    </div>
+  );
+}
+
 export function FlightTimeline({
   departureAirport,
   arrivalAirport,
@@ -119,18 +185,54 @@ export function FlightTimeline({
   arrivalTime,
   durationMinutes,
   compact = false,
+  variant,
   className,
 }: FlightTimelineProps) {
+  const locale = useLocale();
   const tDetail = useTranslations('modules.flights.detail');
   const tCommon = useTranslations('modules.common');
-  const schedule = formatFlightSchedule(departureTime, arrivalTime);
-  const durationLabel = formatDurationMinutes(durationMinutes);
+  const schedule = formatFlightSchedule(departureTime, arrivalTime, locale);
+  const durationLabel = formatDurationMinutes(durationMinutes, locale);
+  const resolvedVariant: FlightTimelineVariant =
+    variant ?? (compact ? 'compact' : 'default');
+
+  if (resolvedVariant === 'card') {
+    return (
+      <div
+        className={cn(
+          'grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-start gap-x-2',
+          className,
+        )}
+        role="group"
+        aria-label={tDetail('timelineAria')}
+      >
+        <CardAirportBlock
+          airport={departureAirport}
+          time={schedule.departure}
+          align="start"
+          emptyDash={tCommon('empty.dash')}
+        />
+        <CardDurationConnector
+          durationLabel={durationLabel}
+          durationAriaLabel={tDetail('durationAria', { label: durationLabel })}
+        />
+        <CardAirportBlock
+          airport={arrivalAirport}
+          time={schedule.arrival}
+          align="end"
+          emptyDash={tCommon('empty.dash')}
+        />
+      </div>
+    );
+  }
+
+  const isCompact = resolvedVariant === 'compact';
 
   return (
     <div
       className={cn(
         'flex flex-col gap-4 md:flex-row md:items-center md:justify-between',
-        compact && 'gap-2 md:gap-3',
+        isCompact && 'gap-2 md:gap-3',
         className,
       )}
       role="group"
@@ -140,19 +242,19 @@ export function FlightTimeline({
         airport={departureAirport}
         time={schedule.departure}
         align="start"
-        compact={compact}
+        compact={isCompact}
         emptyDash={tCommon('empty.dash')}
       />
       <DurationConnector
-        durationMinutes={durationMinutes}
-        compact={compact}
+        durationLabel={durationLabel}
+        compact={isCompact}
         durationAriaLabel={tDetail('durationAria', { label: durationLabel })}
       />
       <AirportBlock
         airport={arrivalAirport}
         time={schedule.arrival}
         align="end"
-        compact={compact}
+        compact={isCompact}
         emptyDash={tCommon('empty.dash')}
       />
     </div>

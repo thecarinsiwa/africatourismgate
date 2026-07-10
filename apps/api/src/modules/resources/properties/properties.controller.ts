@@ -25,9 +25,9 @@ import { existsSync, mkdirSync } from 'node:fs';
 import { extname, join } from 'node:path';
 import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
 import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import { propertyUploadUrl } from '../../../common/utils/public-asset-url';
 import { Properties } from '../../../entities/generated';
+import { PropertiesListQueryDto } from './dto/properties-list-query.dto';
 import { PropertiesService } from './properties.service';
 
 const PROPERTY_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
@@ -47,7 +47,7 @@ export class PropertiesController {
   @RequirePermissions('properties.read')
   @Get()
   @ApiOperation({ summary: 'List properties' })
-  findAll(@Query() query: PaginationQueryDto) {
+  findAll(@Query() query: PropertiesListQueryDto) {
     return this.service.findAll(query);
   }
 

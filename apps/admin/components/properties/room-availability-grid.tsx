@@ -311,9 +311,9 @@ export function RoomAvailabilityGrid({
   const monthLabel = formatMonthLabel(yearMonth);
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
+    <div className="min-w-0 space-y-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex w-full items-center justify-center gap-2 sm:w-auto sm:justify-start">
           <Button
             type="button"
             variant="outline"
@@ -343,6 +343,7 @@ export function RoomAvailabilityGrid({
           type="button"
           variant="outline"
           size="sm"
+          className="w-full sm:w-auto"
           onClick={() => onYearMonthChange(currentYearMonth())}
         >
           {tCalendar('today')}
@@ -355,17 +356,97 @@ export function RoomAvailabilityGrid({
         </p>
       ) : null}
 
-      <Card variant="dashboard" padding="md">
+      <Card variant="dashboard" padding="md" className="min-w-0 overflow-hidden">
         {loading ? (
           <p className="text-sm text-atg-muted">{tCommon('loading')}</p>
         ) : (
-          <div
-            ref={gridRef}
-            role="grid"
-            aria-label={monthLabel}
-            className="grid grid-cols-7 gap-1 sm:gap-2"
-            onKeyDown={handleGridKeyDown}
-          >
+          <>
+            <ul className="divide-y divide-atg-border md:hidden">
+              {monthDays.map((date) => {
+                const existing = rows.get(date);
+                const draft = drafts.get(date);
+                const units = Number(draft?.availableUnits ?? 0);
+                const cents = Number(draft?.priceCents ?? defaultPriceCents);
+                const tone = occupancyTone(Number.isFinite(units) ? units : 0);
+                const isEditing = editingDate === date;
+
+                return (
+                  <li key={date} className="py-3">
+                    {isEditing ? (
+                      <div className="space-y-3 rounded-lg border border-primary/40 bg-atg-elevated p-3">
+                        <p className="text-sm font-medium text-atg-fg">{formatShortDay(date)}</p>
+                        <Input
+                          type="number"
+                          min={0}
+                          label={tCalendar('stockUnits')}
+                          value={draft?.availableUnits ?? '0'}
+                          onChange={(e) => updateDraft(date, 'availableUnits', e.target.value)}
+                        />
+                        <Input
+                          type="number"
+                          min={0}
+                          label={tForm('priceCentsShort')}
+                          value={draft?.priceCents ?? String(defaultPriceCents)}
+                          onChange={(e) => updateDraft(date, 'priceCents', e.target.value)}
+                        />
+                        <div className="flex flex-wrap gap-2">
+                          <Button
+                            type="button"
+                            size="sm"
+                            loading={savingDate === date}
+                            onClick={() => void handleSaveDay(date)}
+                          >
+                            {tActions('confirm')}
+                          </Button>
+                          <Button type="button" variant="outline" size="sm" onClick={closeEdit}>
+                            {tActions('cancel')}
+                          </Button>
+                          {existing ? (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              className="!text-red-600"
+                              loading={deletingId === existing.id}
+                              onClick={() => void handleDelete(date)}
+                            >
+                              {tActions('delete')}
+                            </Button>
+                          ) : null}
+                        </div>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        className={`flex w-full items-center justify-between gap-3 rounded-lg p-3 text-left ring-1 ring-inset ${toneClasses[tone]}`}
+                        onClick={() => openEdit(date)}
+                      >
+                        <span className="text-sm font-medium">{formatShortDay(date)}</span>
+                        <span className="text-right text-sm tabular-nums">
+                          <span className="block">
+                            {Number.isFinite(units)
+                              ? tCalendar('unitsShort', { count: units })
+                              : '—'}
+                          </span>
+                          <span className="block text-xs opacity-90">
+                            {Number.isFinite(cents) ? formatPrice(cents, currency) : '—'}
+                          </span>
+                        </span>
+                      </button>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+
+            <div className="hidden overflow-x-auto md:block">
+              <div
+                ref={gridRef}
+                role="grid"
+                aria-label={monthLabel}
+                className="grid min-w-[42rem] grid-cols-7 gap-1 lg:gap-2"
+                onKeyDown={handleGridKeyDown}
+              >
             {weekdayHeaders.map((label) => (
               <div
                 key={label}
@@ -467,7 +548,9 @@ export function RoomAvailabilityGrid({
                     >
                       <span className="text-xs font-semibold">{dayNum}</span>
                       <span className="mt-1 text-xs tabular-nums">
-                        {Number.isFinite(units) ? `${units} u.` : '—'}
+                        {Number.isFinite(units)
+                          ? tCalendar('unitsShort', { count: units })
+                          : '—'}
                       </span>
                       <span className="text-[10px] tabular-nums opacity-90 sm:text-xs">
                         {Number.isFinite(cents)
@@ -479,7 +562,9 @@ export function RoomAvailabilityGrid({
                 </div>
               );
             })}
-          </div>
+              </div>
+            </div>
+          </>
         )}
       </Card>
     </div>

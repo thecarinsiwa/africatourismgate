@@ -60,14 +60,18 @@
     "description": "Propiedades, habitaciones y equipamientos. Filtre por destino.",
     "nouveau": {
       "metaTitle": "Nuevo alojamiento",
-      "description": "Cree la propiedad y luego añada imágenes, equipamientos y habitaciones."
+      "description": "Cree la propiedad y luego añada imágenes, equipamientos y habitaciones.",
+      "backLabel": "Volver a alojamientos"
     },
     "id": {
       "metaTitle": "Editar alojamiento",
       "chambres": {
         "roomId": {
           "disponibilites": {
-            "metaTitle": "Disponibilidad de habitación"
+            "metaTitle": "Disponibilidad de habitación",
+            "title": "Disponibilidad de habitación",
+            "description": "Gestione el stock y el precio por noche de esta habitación.",
+            "backLabel": "Volver al alojamiento"
           }
         }
       }
@@ -136,17 +140,24 @@
     "locations": {
       "title": "Alquiler de vehículos",
       "description": "Vehículos por agencia, categorías y franjas de disponibilidad.",
+      "actions": {
+        "agencies": "Agencias",
+        "categories": "Categorías",
+        "new": "Nuevo vehículo"
+      },
       "links": {
         "agencies": "Agencias de alquiler",
         "categories": "Categorías de vehículos"
       },
       "agences": {
         "title": "Agencias de alquiler",
-        "description": "Directorio de agencias vinculadas a destinos."
+        "description": "Directorio de agencias vinculadas a destinos.",
+        "backLabel": "Volver a vehículos"
       },
       "categories": {
         "title": "Categorías de vehículos",
-        "description": "Tipos de vehículos (compacto, SUV, premium, etc.)."
+        "description": "Tipos de vehículos (compacto, SUV, premium, etc.).",
+        "backLabel": "Volver a vehículos"
       },
       "nouveau": {
         "metaTitle": "Nuevo vehículo",
@@ -154,11 +165,26 @@
         "backLabel": "Volver a vehículos"
       },
       "id": {
-        "metaTitle": "Editar vehículo"
+        "metaTitle": "Editar vehículo",
+        "voir": {
+          "metaTitle": "Ver vehículo"
+        },
+        "disponibilites": {
+          "metaTitle": "Disponibilidad del vehículo",
+          "title": "Disponibilidad del vehículo",
+          "description": "Añada o modifique franjas de alquiler, mantenimiento o alquilado.",
+          "backLabel": "Volver al vehículo"
+        }
       }
     },
     "vols": {
+      "title": "Vuelos",
       "description": "Catálogo de vuelos, clases de cabina y disponibilidad. Busque por código de vuelo.",
+      "actions": {
+        "airlines": "Aerolíneas",
+        "airports": "Aeropuertos",
+        "new": "Nuevo vuelo"
+      },
       "links": {
         "airlines": "Aerolíneas",
         "airports": "Aeropuertos"
@@ -178,6 +204,9 @@
       },
       "id": {
         "metaTitle": "Editar vuelo",
+        "voir": {
+          "metaTitle": "Ver vuelo"
+        },
         "classes": {
           "classId": {
             "disponibilites": {

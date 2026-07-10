@@ -21,10 +21,14 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
+import { ListViewModeToggle } from '../list-view-mode-toggle';
+import { PropertiesExportDialog } from './properties-export-dialog';
 import { PropertyThumbnail } from './property-thumbnail';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
+
+type PropertiesViewMode = 'table' | 'grid' | 'compact';
 
 export function PropertiesList() {
   const { hebergements: getHebergementsErrorMessage } = useAdminErrorMessages();
@@ -36,6 +40,7 @@ export function PropertiesList() {
   const tPagination = useTranslations('modules.common.pagination');
   const tDataTable = useTranslations('modules.common.dataTable');
   const tDialogs = useTranslations('modules.properties.dialogs');
+  const tExports = useTranslations('modules.properties.exports');
   const tToast = useTranslations('modules.common.toast');
   const tActions = useTranslations('common.actions');
   const propertyTypeLabels = usePropertyTypeLabels();
@@ -58,12 +63,26 @@ export function PropertiesList() {
   >({ status: 'loading' });
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [pendingDelete, setPendingDelete] = useState<Property | null>(null);
+  const [viewMode, setViewMode] = useState<PropertiesViewMode>('table');
+  const [exportOpen, setExportOpen] = useState(false);
+  const [canExportBookings, setCanExportBookings] = useState(false);
 
   useEffect(() => {
     void getApiClient()
       .listDestinations({ page: 1, limit: 100 })
       .then((r) => setDestinations(r.data))
       .catch(() => setDestinations([]));
+  }, []);
+
+  useEffect(() => {
+    void getApiClient()
+      .getAuthMe()
+      .then((me) => {
+        setCanExportBookings(
+          me.isSuperAdmin || me.permissions.includes('bookings.read'),
+        );
+      })
+      .catch(() => setCanExportBookings(false));
   }, []);
 
   const load = useCallback(async () => {
@@ -115,6 +134,40 @@ export function PropertiesList() {
       ...destinations.map((d) => ({ value: d.id, label: d.name })),
     ],
     [destinations, tCommonFilters],
+  );
+
+  const viewModeOptions = useMemo(
+    () => [
+      { value: 'table' as const, label: tList('viewTable') },
+      { value: 'grid' as const, label: tList('viewGrid') },
+      { value: 'compact' as const, label: tList('viewCompact') },
+    ],
+    [tList],
+  );
+
+  const renderPropertyActions = useCallback(
+    (property: Property) => (
+      <DataTableActions>
+        <DataTableActionButton
+          action="view"
+          label={tActions('view')}
+          href={`/hebergements/${property.id}`}
+        />
+        <DataTableActionButton
+          action="edit"
+          label={tActions('edit')}
+          href={`/hebergements/${property.id}`}
+        />
+        <DataTableActionButton
+          action="delete"
+          label={tActions('delete')}
+          onClick={() => setPendingDelete(property)}
+          disabled={deletingId === property.id}
+          loading={deletingId === property.id}
+        />
+      </DataTableActions>
+    ),
+    [deletingId, tActions],
   );
 
   const confirmDelete = useCallback(async () => {
@@ -190,25 +243,10 @@ export function PropertiesList() {
         id: 'actions',
         header: tCommonColumns('actions'),
         meta: { align: 'right' },
-        cell: ({ row }) => {
-          const property = row.original;
-          return (
-            <DataTableActions>
-              <DataTableActionButton action="view" label={tActions('view')} href={`/hebergements/${property.id}`} />
-              <DataTableActionButton action="edit" label={tActions('edit')} href={`/hebergements/${property.id}`} />
-              <DataTableActionButton
-                action="delete"
-                label={tActions('delete')}
-                onClick={() => setPendingDelete(property)}
-                disabled={deletingId === property.id}
-                loading={deletingId === property.id}
-              />
-            </DataTableActions>
-          );
-        },
+        cell: ({ row }) => renderPropertyActions(row.original),
       },
     ],
-    [deletingId, destinationNameById, propertyTypeLabels, tActions, tColumns, tCommonColumns],
+    [deletingId, destinationNameById, propertyTypeLabels, renderPropertyActions, tColumns, tCommonColumns],
   );
 
   const properties = state.status === 'ready' ? state.properties : [];
@@ -237,8 +275,17 @@ export function PropertiesList() {
               }}
             />
           </div>
+          <ListViewModeToggle
+            value={viewMode}
+            options={viewModeOptions}
+            onChange={setViewMode}
+            ariaLabel={tList('viewModeAria')}
+          />
         </div>
         <div className="flex flex-wrap gap-2">
+          <Button variant="outline" onClick={() => setExportOpen(true)}>
+            {tExports('button')}
+          </Button>
           <Button href="/hebergements/equipements" variant="outline">
             {tList('amenitiesLink')}
           </Button>
@@ -252,20 +299,81 @@ export function PropertiesList() {
         </p>
       ) : (
         <>
-          <Card variant="dashboard" padding="none" className="overflow-hidden">
-            <DataTable
-              columns={columns}
-              data={properties}
-              isLoading={state.status === 'loading'}
-              loadingMessage={tDataTable('loading')}
-              emptyMessage={tList('emptyDefault')}
-              expandRowLabel={tDataTable('expandRow')}
-              collapseRowLabel={tDataTable('collapseRow')}
-              expandRowAriaLabel={tDataTable('expandRowAria')}
-              getRowId={(row) => row.id}
-              aria-label={tList('ariaLabel')}
-            />
-          </Card>
+          {viewMode === 'table' ? (
+            <Card variant="dashboard" padding="none" className="overflow-hidden">
+              <DataTable
+                columns={columns}
+                data={properties}
+                isLoading={state.status === 'loading'}
+                loadingMessage={tDataTable('loading')}
+                emptyMessage={tList('emptyDefault')}
+                expandRowLabel={tDataTable('expandRow')}
+                collapseRowLabel={tDataTable('collapseRow')}
+                expandRowAriaLabel={tDataTable('expandRowAria')}
+                getRowId={(row) => row.id}
+                aria-label={tList('ariaLabel')}
+              />
+            </Card>
+          ) : state.status === 'loading' ? (
+            <p className="text-sm text-atg-muted">{tDataTable('loading')}</p>
+          ) : properties.length === 0 ? (
+            <p className="text-sm text-atg-muted">{tList('emptyDefault')}</p>
+          ) : viewMode === 'grid' ? (
+            <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+              {properties.map((property) => (
+                <li key={property.id}>
+                  <Card variant="dashboard" className="flex h-full flex-col gap-4">
+                    <PropertyThumbnail
+                      propertyId={property.id}
+                      name={property.name}
+                      size="md"
+                      className="!h-36 !w-full max-w-none rounded-lg"
+                    />
+                    <div className="min-w-0 space-y-1">
+                      <p className="font-medium text-atg-fg">{property.name}</p>
+                      <code className="rounded-md bg-atg-surface px-2 py-0.5 font-mono text-xs text-atg-muted">
+                        {property.slug}
+                      </code>
+                      <p className="text-sm text-atg-muted">
+                        {destinationNameById.get(property.destinationId) ?? property.destinationId}
+                      </p>
+                      <p className="text-sm text-atg-muted">
+                        {propertyTypeLabels[property.propertyType]}
+                      </p>
+                    </div>
+                    <div className="mt-auto flex justify-end border-t border-atg-border pt-3">
+                      {renderPropertyActions(property)}
+                    </div>
+                  </Card>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <Card variant="dashboard" padding="none" className="overflow-hidden">
+              <ul className="divide-y divide-atg-border">
+                {properties.map((property) => (
+                  <li
+                    key={property.id}
+                    className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+                  >
+                    <div className="flex min-w-0 flex-1 items-center gap-3">
+                      <PropertyThumbnail propertyId={property.id} name={property.name} size="sm" />
+                      <div className="min-w-0">
+                        <p className="truncate font-medium text-atg-fg">{property.name}</p>
+                        <p className="truncate text-sm text-atg-muted">
+                          {destinationNameById.get(property.destinationId) ?? property.destinationId}
+                          {' · '}
+                          {propertyTypeLabels[property.propertyType]}
+                        </p>
+                        <code className="font-mono text-xs text-atg-muted">{property.slug}</code>
+                      </div>
+                    </div>
+                    <div className="flex shrink-0 justify-end">{renderPropertyActions(property)}</div>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          )}
           {state.status === 'ready' ? (
             <DataTablePagination
               page={page}
@@ -297,6 +405,14 @@ export function PropertiesList() {
         loading={deletingId !== null}
         onConfirm={() => void confirmDelete()}
         onCancel={() => setPendingDelete(null)}
+      />
+
+      <PropertiesExportDialog
+        open={exportOpen}
+        onOpenChange={setExportOpen}
+        search={search}
+        destinationId={destinationFilter}
+        canExportBookings={canExportBookings}
       />
     </div>
   );

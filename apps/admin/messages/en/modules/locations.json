@@ -1,78 +1,135 @@
 {
   "list": {
-    "newVehicle": "Nouveau véhicule",
-    "emptyDefault": "Tocun véhicule pour le moment.",
-    "emptyFiltered": "Tocun véhicule ne correspond aux filtres.",
-    "searchPlaceholder": "Rechercher par plaque…",
-    "deleteConfirm": "Supprimer le véhicule « {label} » ?",
+    "newVehicle": "New vehicle",
+    "emptyDefault": "No vehicles yet.",
+    "emptyFiltered": "No vehicle matches the current filters.",
+    "searchPlaceholder": "Search by license plate…",
+    "searchAria": "Search vehicles",
+    "ariaLabel": "Vehicles list",
+    "viewTable": "Table",
+    "viewGrid": "Grid",
+    "viewCompact": "Compact list",
+    "viewModeAria": "Display mode",
+    "deleteConfirm": "Delete vehicle « {label} »?",
     "fallbackLabel": "Vehicle"
+  },
+  "dialogs": {
+    "deleteTitle": "Delete vehicle",
+    "deleteDescription": "Delete vehicle « {label} »? This action cannot be undone."
   },
   "filters": {
     "agency": "Agency",
-    "allAgencies": "All les agences"
+    "allAgencies": "All agencies",
+    "category": "Category",
+    "allCategories": "All categories"
   },
   "columns": {
     "agency": "Agency",
-    "category": "Catégorie",
-    "licensePlate": "Immatriculation",
-    "pricePerDay": "Price / jour"
+    "category": "Category",
+    "licensePlate": "License plate",
+    "pricePerDay": "Price / day"
   },
   "form": {
-    "submitCreate": "Créer le véhicule",
-    "rentalAgency": "Agency de location",
-    "category": "Catégorie",
-    "licensePlate": "Plaque d'immatriculation",
-    "dailyPriceCents": "Price journalier (centimes)",
+    "submitCreate": "Create vehicle",
+    "rentalAgency": "Rental agency",
+    "category": "Category",
+    "licensePlate": "License plate",
+    "dailyPriceCents": "Daily price (cents)",
     "validation": {
-      "agencyRequired": "Agency obligatoire.",
-      "categoryRequired": "Catégorie obligatoire."
+      "agencyRequired": "Agency is required.",
+      "categoryRequired": "Category is required."
     }
   },
   "detail": {
-    "title": "Modifier le véhicule",
-    "backLink": "Back aux véhicules"
+    "title": "Edit vehicle",
+    "viewTitle": "View vehicle",
+    "backLink": "Back to vehicles",
+    "viewButton": "View vehicle",
+    "editButton": "Edit vehicle",
+    "notFound": "Vehicle not found.",
+    "noLicensePlate": "No license plate",
+    "photoGallery": "Photo gallery",
+    "photoGalleryIntro": "{count, plural, =0 {No photos} one {# photo} other {# photos}}",
+    "noPhotos": "No photos for this vehicle."
   },
   "sections": {
     "availability": {
       "title": "Availability",
-      "intro": "Slotx de disponibilité par dates (location, maintenance, loué).",
-      "addSlot": "Ajouter un créneau",
-      "newSlot": "Nouveau créneau",
-      "editSlot": "Modifier le créneau",
-      "filterFrom": "Filtrer du",
-      "filterTo": "au",
+      "intro": "Availability slots by date (rental, maintenance, rented).",
+      "backToVehicle": "Back to vehicle",
+      "summary": "Vehicle {label} — {agencyName} / {categoryName}",
+      "slotsCount": "{count, plural, =0 {No slots} one {# slot recorded} other {# slots recorded}}",
+      "formHint": "Set the period, pickup location, and vehicle status for this slot.",
+      "editFormHint": "Update the period, pickup location, or status for this slot.",
+      "startDatetime": "Start date and time",
+      "endDatetime": "End date and time",
+      "mapPreview": "Location on map",
+      "mapPickerHint": "Click on the map or drag the marker to fill in latitude and longitude.",
+      "mapPickerAria": "Interactive map to pick slot coordinates",
+      "latitudeHint": "Optional, -90 to 90",
+      "longitudeHint": "Optional, -180 to 180",
+      "addSlot": "Add a slot",
+      "newSlot": "New slot",
+      "editSlot": "Edit slot",
+      "filterFrom": "Filter from",
+      "filterTo": "to",
       "status": "Status",
-      "empty": "Tocun créneau sur cette période.",
-      "deleteConfirm": "Supprimer ce créneau ?"
+      "empty": "No slots in this period.",
+      "deleteConfirm": "Delete this slot?"
     }
   },
   "referential": {
     "categories": {
-      "new": "Nouvelle catégorie",
-      "edit": "Modifier la catégorie",
-      "empty": "None catégorie.",
-      "searchPlaceholder": "Rechercher par nom ou modèle…",
-      "exampleModel": "Modèle type"
+      "new": "New category",
+      "edit": "Edit category",
+      "emptyDefault": "No categories yet.",
+      "emptySearch": "No category matches this search.",
+      "searchPlaceholder": "Search by name or model…",
+      "searchAria": "Search categories",
+      "exampleModel": "Example model",
+      "deleteConfirm": "Delete category « {name} »?"
     },
     "agencies": {
-      "empty": "None agence.",
-      "searchPlaceholder": "Rechercher par nom ou adresse…",
+      "new": "New agency",
+      "edit": "Edit agency",
+      "emptyDefault": "No agencies yet.",
+      "emptySearch": "No agency matches this search.",
+      "searchPlaceholder": "Search by name or address…",
+      "searchAria": "Search agencies",
       "agency": "Agency",
-      "address": "Address"
+      "address": "Address",
+      "destinationOptional": "Destination (optional)",
+      "deleteConfirm": "Delete agency « {name} »?"
     }
   },
   "stats": {
     "vehicles": {
       "label": "Vehicles",
-      "subtitle": "Flotte catalogue"
+      "subtitle": "Catalog fleet"
     },
     "categories": {
-      "label": "Catégories",
-      "subtitle": "Types de véhicules"
+      "label": "Categories",
+      "subtitle": "Vehicle types"
     },
     "agencies": {
-      "label": "Agencys",
-      "subtitle": "Points de location"
+      "label": "Agencies",
+      "subtitle": "Rental locations"
     }
+  },
+  "exports": {
+    "button": "Export",
+    "dialogTitle": "Export vehicles",
+    "dialogDescription": "Exports use the current search, agency and category filters.",
+    "excel": "Export Excel (3 sheets)",
+    "pdfKpi": "KPI summary (PDF)",
+    "pdfCatalog": "Catalog (PDF)",
+    "pdfBookings": "Bookings (PDF)",
+    "dateFrom": "Start date",
+    "dateTo": "End date",
+    "periodRequired": "Select a date range for this export.",
+    "periodInvalid": "End date must be on or after the start date.",
+    "success": "Export downloaded.",
+    "error": "Could not generate the export.",
+    "noPermissionBookings": "Bookings export requires bookings access."
   }
 }

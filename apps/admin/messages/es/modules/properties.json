@@ -1,11 +1,15 @@
 {
   "list": {
-    "newProperty": "Nouvel hébergement",
+    "newProperty": "Nuevo alojamiento",
     "amenitiesLink": "Equipamientos",
-    "emptyDefault": "Hastacun hébergement pour le moment.",
-    "ariaLabel": "Liste des hébergements",
+    "emptyDefault": "Ningún alojamiento por el momento.",
+    "ariaLabel": "Lista de alojamientos",
     "searchPlaceholder": "Buscar por nombre o slug…",
-    "searchAria": "Rechercher un hébergement"
+    "searchAria": "Buscar un alojamiento",
+    "viewTable": "Tabla",
+    "viewGrid": "Cuadrícula",
+    "viewCompact": "Lista compacta",
+    "viewModeAria": "Modo de visualización"
   },
   "filters": {
     "destination": "Destino"
@@ -16,25 +20,43 @@
     "propertyType": "Tipo"
   },
   "dialogs": {
-    "deleteTitle": "Supprimer l'hébergement",
-    "deleteDescription": "Supprimer l'hébergement « {name} » ? Cette action est irréversible."
+    "deleteTitle": "Eliminar alojamiento",
+    "deleteDescription": "¿Eliminar el alojamiento « {name} »? Esta acción es irreversible."
+  },
+  "exports": {
+    "button": "Exportar",
+    "dialogTitle": "Exportar alojamientos",
+    "dialogDescription": "Las exportaciones respetan los filtros de búsqueda y destino activos.",
+    "excel": "Exportar Excel (4 hojas)",
+    "pdfKpi": "Resumen KPI (PDF)",
+    "pdfCatalog": "Catálogo (PDF)",
+    "pdfBookings": "Reservas (PDF)",
+    "pdfDossier": "Exportar PDF",
+    "dateFrom": "Fecha de inicio",
+    "dateTo": "Fecha de fin",
+    "periodRequired": "Indique un período para esta exportación.",
+    "periodInvalid": "La fecha de fin debe ser posterior o igual a la fecha de inicio.",
+    "downloading": "Generando…",
+    "success": "Exportación descargada.",
+    "error": "No se pudo generar la exportación.",
+    "noPermissionBookings": "La exportación de reservas requiere acceso a reservas."
   },
   "form": {
-    "submitCreate": "Créer l'hébergement",
+    "submitCreate": "Crear alojamiento",
     "sections": {
       "identity": "Identidad",
-      "location": "Localisation",
-      "classification": "Classification"
+      "location": "Ubicación",
+      "classification": "Clasificación"
     },
-    "name": "Apellido",
+    "name": "Nombre",
     "slug": "Slug",
     "type": "Tipo",
     "destination": "Destino",
     "address": "Dirección",
-    "starRating": "Classement (étoiles)",
-    "starRatingHint": "Optionnel, 0 à 5",
+    "starRating": "Clasificación (estrellas)",
+    "starRatingHint": "Opcional, de 0 a 5",
     "validation": {
-      "destinationRequired": "La destination est obligatoire."
+      "destinationRequired": "El destino es obligatorio."
     }
   },
   "status": {
@@ -43,76 +65,82 @@
       "resort": "Resort",
       "apartment": "Apartamento",
       "villa": "Villa",
-      "hostel": "Hastaberge",
-      "other": "Hastatre"
+      "hostel": "Albergue",
+      "other": "Otro"
     }
   },
   "detail": {
-    "title": "Modifier l'hébergement",
-    "backToList": "← Volver à la liste",
-    "tabsAria": "Sections de l'hébergement",
+    "title": "Editar alojamiento",
+    "backLink": "Volver a alojamientos",
+    "backToList": "← Volver a la lista",
+    "tabsAria": "Secciones del alojamiento",
     "tabs": {
       "infos": "Info",
-      "rooms": "Habitacións",
+      "rooms": "Habitaciones",
       "amenities": "Equipamientos",
       "availability": "Disponibilidad"
     }
   },
   "sections": {
     "rooms": {
-      "title": "Habitacións",
-      "intro": "Tipos de chambres pour cet hébergement.",
-      "addRoom": "Ajouter une chambre",
-      "newRoom": "Nouvelle chambre",
-      "editRoom": "Modifier la chambre",
-      "roomType": "Tipo de chambre",
-      "roomTypePlaceholder": "standard, suite…",
-      "maxCapacity": "Capacidad max.",
-      "bedConfig": "Configuración lits",
-      "empty": "Ninguna chambre.",
-      "deleteConfirm": "Supprimer la chambre « {name} » ?",
-      "photosAction": "Photos"
+      "title": "Habitaciones",
+      "intro": "Tipos de habitación para este alojamiento.",
+      "addRoom": "Añadir habitación",
+      "newRoom": "Nueva habitación",
+      "editRoom": "Editar habitación",
+      "roomType": "Tipo de habitación",
+      "roomTypePlaceholder": "estándar, suite…",
+      "maxCapacity": "Capacidad máx.",
+      "bedConfig": "Configuración de camas",
+      "empty": "Ninguna habitación.",
+      "deleteConfirm": "¿Eliminar la habitación « {name} »?",
+      "photosAction": "Fotos"
     },
     "amenities": {
       "title": "Equipamientos",
-      "intro": "Sélectionnez les équipements disponibles pour cet hébergement.",
-      "saveSelection": "Guardar la sélection",
-      "emptyGlobal": "Hastacun équipement global.",
-      "createLink": "Créer des équipements"
+      "intro": "Seleccione los equipamientos disponibles en este alojamiento.",
+      "saveSelection": "Guardar selección",
+      "emptyGlobal": "Ningún equipamiento global.",
+      "createLink": "Crear equipamientos"
     },
     "availability": {
       "title": "Disponibilidad",
-      "loadingRooms": "Chargement des chambres…",
+      "loadingRooms": "Cargando habitaciones…",
       "room": "Habitación",
-      "stockHint": "Stock et prix par nuit ({currency}).",
-      "noRooms": "Ninguna chambre pour cet hébergement. Créez une chambre pour gérer les disponibilités.",
-      "goToRoomsTab": "Aller à l'onglet Habitacións",
-      "roomMismatch": "Cette chambre n'appartient pas à cet hébergement."
+      "stockHint": "Stock y precio por noche ({currency}).",
+      "noRooms": "Ninguna habitación para este alojamiento. Cree una habitación para gestionar la disponibilidad.",
+      "goToRoomsTab": "Ir a la pestaña Habitaciones",
+      "roomMismatch": "Esta habitación no pertenece a este alojamiento.",
+      "backToProperty": "Volver al alojamiento",
+      "summary": "Habitación {roomName} — stock y precio por noche ({currency})."
     }
   },
   "amenitiesList": {
-    "newAmenity": "Nouvel équipement",
-    "empty": "Hastacun équipement.",
-    "searchPlaceholder": "Rechercher un équipement…",
-    "deleteConfirm": "Supprimer l'équipement « {name} » ?",
-    "ariaLabel": "Liste des équipements"
+    "newAmenity": "Nuevo equipamiento",
+    "empty": "Ningún equipamiento.",
+    "searchPlaceholder": "Buscar un equipamiento…",
+    "deleteConfirm": "¿Eliminar el equipamiento « {name} »?",
+    "ariaLabel": "Lista de equipamientos",
+    "viewGrid": "Cuadrícula",
+    "viewTable": "Tabla",
+    "viewModeAria": "Modo de visualización"
   },
   "stats": {
     "properties": {
       "label": "Alojamientos",
-      "subtitle": "Propiedads publiées"
+      "subtitle": "Propiedades publicadas"
     },
     "rooms": {
-      "label": "Habitacións",
-      "subtitle": "Tipos de chambres"
+      "label": "Habitaciones",
+      "subtitle": "Tipos de habitación"
     },
     "amenities": {
       "label": "Equipamientos",
-      "subtitle": "Référentiel global"
+      "subtitle": "Catálogo global"
     },
     "destinations": {
       "label": "Destinos",
-      "subtitle": "Zones géographiques"
+      "subtitle": "Zonas geográficas"
     }
   }
 }

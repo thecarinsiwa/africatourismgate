@@ -60,14 +60,18 @@
     "description": "Properties, rooms and amenities. Filter by destination.",
     "nouveau": {
       "metaTitle": "New accommodation",
-      "description": "Create the property then add images, amenities and rooms."
+      "description": "Create the property then add images, amenities and rooms.",
+      "backLabel": "Back to accommodations"
     },
     "id": {
       "metaTitle": "Edit accommodation",
       "chambres": {
         "roomId": {
           "disponibilites": {
-            "metaTitle": "Room availability"
+            "metaTitle": "Room availability",
+            "title": "Room availability",
+            "description": "Manage nightly stock and price for this room.",
+            "backLabel": "Back to accommodation"
           }
         }
       }
@@ -136,17 +140,24 @@
     "locations": {
       "title": "Vehicle rentals",
       "description": "Vehicles by agency, categories and availability slots.",
+      "actions": {
+        "agencies": "Agencies",
+        "categories": "Categories",
+        "new": "New vehicle"
+      },
       "links": {
         "agencies": "Rental agencies",
         "categories": "Vehicle categories"
       },
       "agences": {
         "title": "Rental agencies",
-        "description": "Agency directory linked to destinations."
+        "description": "Agency directory linked to destinations.",
+        "backLabel": "Back to vehicles"
       },
       "categories": {
         "title": "Vehicle categories",
-        "description": "Vehicle types (compact, SUV, premium, etc.)."
+        "description": "Vehicle types (compact, SUV, premium, etc.).",
+        "backLabel": "Back to vehicles"
       },
       "nouveau": {
         "metaTitle": "New vehicle",
@@ -154,11 +165,26 @@
         "backLabel": "Back to vehicles"
       },
       "id": {
-        "metaTitle": "Edit vehicle"
+        "metaTitle": "Edit vehicle",
+        "voir": {
+          "metaTitle": "View vehicle"
+        },
+        "disponibilites": {
+          "metaTitle": "Vehicle availability",
+          "title": "Vehicle availability",
+          "description": "Add or update rental, maintenance or rented availability slots.",
+          "backLabel": "Back to vehicle"
+        }
       }
     },
     "vols": {
+      "title": "Flights",
       "description": "Flight catalog, cabin classes and availability. Search by flight code.",
+      "actions": {
+        "airlines": "Airlines",
+        "airports": "Airports",
+        "new": "New flight"
+      },
       "links": {
         "airlines": "Airlines",
         "airports": "Airports"
@@ -178,6 +204,9 @@
       },
       "id": {
         "metaTitle": "Edit flight",
+        "voir": {
+          "metaTitle": "View flight"
+        },
         "classes": {
           "classId": {
             "disponibilites": {

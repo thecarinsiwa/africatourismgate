@@ -10,11 +10,14 @@ import {
   DataTableActions,
   DataTablePagination,
   Input,
+  Modal,
+  Select,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { Destination, RentalAgency } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ReferentialListToolbar } from '../referential-list-toolbar';
 import { getApiClient } from '../../lib/auth/api';
 
 const PAGE_SIZE = 20;
@@ -32,7 +35,6 @@ export function RentalAgenciesList() {
   const tActions = useTranslations('common.actions');
   const tDestinations = useTranslations('modules.destinations.columns');
   const emptyDash = tCommon('empty.dash');
-  const destId = useId();
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -59,6 +61,14 @@ export function RentalAgenciesList() {
   const destById = useMemo(
     () => new Map(destinations.map((d) => [d.id, d.name])),
     [destinations],
+  );
+
+  const destinationOptions = useMemo(
+    () => [
+      { value: '', label: tCommon('filters.none') },
+      ...destinations.map((d) => ({ value: d.id, label: d.name })),
+    ],
+    [destinations, tCommon],
   );
 
   const load = useCallback(async () => {
@@ -94,6 +104,22 @@ export function RentalAgenciesList() {
     }, SEARCH_DEBOUNCE_MS);
     return () => window.clearTimeout(timer);
   }, [searchInput]);
+
+  function openForm(agency?: RentalAgency) {
+    if (agency) {
+      setEditing(agency);
+      setFormValues({
+        name: agency.name,
+        destinationId: agency.destinationId ?? '',
+        address: agency.address ?? '',
+      });
+    } else {
+      setEditing(null);
+      setFormValues(emptyForm);
+    }
+    setFormError(null);
+    setShowForm(true);
+  }
 
   function resetForm() {
     setFormValues(emptyForm);
@@ -154,18 +180,7 @@ export function RentalAgenciesList() {
         meta: { align: 'right' },
         cell: ({ row }) => (
           <DataTableActions>
-            <DataTableActionButton
-              action="edit"
-              onClick={() => {
-                setEditing(row.original);
-                setFormValues({
-                  name: row.original.name,
-                  destinationId: row.original.destinationId ?? '',
-                  address: row.original.address ?? '',
-                });
-                setShowForm(true);
-              }}
-            />
+            <DataTableActionButton action="edit" onClick={() => openForm(row.original)} />
             <DataTableActionButton
               action="delete"
               onClick={async () => {
@@ -191,86 +206,68 @@ export function RentalAgenciesList() {
   );
 
   const agencies = state.status === 'ready' ? state.agencies : [];
-  const selectClass =
-    'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg';
+  const emptyMessage = search.trim().length > 0 ? t('emptySearch') : t('emptyDefault');
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex-1 sm:max-w-md">
-          <Input
-            type="search"
-            placeholder={t('searchPlaceholder')}
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-          />
-        </div>
-        {!showForm ? (
-          <Button
-            type="button"
-            onClick={() => {
-              resetForm();
-              setShowForm(true);
-            }}
-          >
+      <ReferentialListToolbar
+        searchValue={searchInput}
+        onSearchChange={setSearchInput}
+        placeholder={t('searchPlaceholder')}
+        ariaLabel={t('searchAria')}
+        action={
+          <Button type="button" onClick={() => openForm()}>
             {t('new')}
           </Button>
-        ) : null}
-      </div>
+        }
+      />
 
-      {showForm ? (
-        <Card variant="dashboard" className="max-w-2xl">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <h3 className="text-sm font-medium">{editing ? t('edit') : t('new')}</h3>
-            {formError ? (
-              <p role="alert" className="text-sm text-red-600">
-                {formError}
-              </p>
-            ) : null}
-            <Input
-              label={tCommon('columns.name')}
-              value={formValues.name}
-              onChange={(e) => setFormValues((p) => ({ ...p, name: e.target.value }))}
-            />
-            <div>
-              <label htmlFor={destId} className="mb-2 block text-sm font-medium">
-                {t('destinationOptional')}
-              </label>
-              <select
-                id={destId}
-                className={selectClass}
-                value={formValues.destinationId}
-                onChange={(e) =>
-                  setFormValues((p) => ({ ...p, destinationId: e.target.value }))
-                }
-              >
-                <option value="">{tCommon('filters.none')}</option>
-                {destinations.map((d) => (
-                  <option key={d.id} value={d.id}>
-                    {d.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <Input
-              label={t('address')}
-              value={formValues.address}
-              onChange={(e) => setFormValues((p) => ({ ...p, address: e.target.value }))}
-            />
-            <div className="flex gap-3">
-              <Button type="submit" loading={submitting}>
-                {editing ? tActions('save') : tActions('create')}
-              </Button>
-              <Button type="button" variant="outline" onClick={resetForm}>
-                {tActions('cancel')}
-              </Button>
-            </div>
-          </form>
-        </Card>
-      ) : null}
+      <Modal
+        open={showForm}
+        onOpenChange={(open) => {
+          if (!open && !submitting) resetForm();
+        }}
+        title={editing ? t('edit') : t('new')}
+        showClose
+        className="max-w-lg"
+      >
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {formError ? (
+            <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+              {formError}
+            </p>
+          ) : null}
+          <Input
+            label={tCommon('columns.name')}
+            value={formValues.name}
+            onChange={(e) => setFormValues((p) => ({ ...p, name: e.target.value }))}
+          />
+          <Select
+            label={t('destinationOptional')}
+            value={formValues.destinationId}
+            options={destinationOptions}
+            onChange={(e) =>
+              setFormValues((p) => ({ ...p, destinationId: e.target.value }))
+            }
+          />
+          <Input
+            label={t('address')}
+            value={formValues.address}
+            onChange={(e) => setFormValues((p) => ({ ...p, address: e.target.value }))}
+          />
+          <div className="flex justify-end gap-3">
+            <Button type="button" variant="outline" onClick={resetForm} disabled={submitting}>
+              {tActions('cancel')}
+            </Button>
+            <Button type="submit" loading={submitting}>
+              {editing ? tActions('save') : tActions('create')}
+            </Button>
+          </div>
+        </form>
+      </Modal>
 
       {state.status === 'error' ? (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {state.message}
         </p>
       ) : (
@@ -280,7 +277,8 @@ export function RentalAgenciesList() {
               columns={columns}
               data={agencies}
               isLoading={state.status === 'loading'}
-              emptyMessage={t('empty')}
+              emptyMessage={emptyMessage}
+              emptyVariant={search.trim().length > 0 ? 'search' : 'default'}
               getRowId={(r) => r.id}
             />
           </Card>

@@ -546,7 +546,7 @@ INSERT INTO `vehicles` (
 );
 
 INSERT INTO `vehicle_availability` (
-  `id`, `vehicle_id`, `start_datetime`, `end_datetime`, `status`, `created_by_user_id`
+  `id`, `vehicle_id`, `start_datetime`, `end_datetime`, `status`, `latitude`, `longitude`, `created_by_user_id`
 ) VALUES
 (
   '00000000-0000-4000-8000-000000004023',
@@ -554,6 +554,8 @@ INSERT INTO `vehicle_availability` (
   '2026-08-01 08:00:00',
   '2026-08-31 18:00:00',
   'available',
+  -4.3058000,
+  15.3000000,
   '00000000-0000-4000-8000-000000000010'
 ),
 (
@@ -562,6 +564,8 @@ INSERT INTO `vehicle_availability` (
   '2026-08-01 08:00:00',
   '2026-08-31 18:00:00',
   'rented',
+  -4.3217000,
+  15.3120000,
   '00000000-0000-4000-8000-000000000010'
 );
 

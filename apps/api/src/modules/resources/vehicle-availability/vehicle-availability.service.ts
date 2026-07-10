@@ -67,11 +67,9 @@ export class VehicleAvailabilityService extends CrudService<VehicleAvailability>
 
     return super.create(
       {
-        vehicleId: dto.vehicleId,
-        startDatetime: dto.startDatetime,
-        endDatetime: dto.endDatetime,
+        ...this.toEntityPayload(dto),
         status: dto.status ?? 'available',
-      } as DeepPartial<VehicleAvailability>,
+      },
       actorUserId,
     );
   }
@@ -85,7 +83,23 @@ export class VehicleAvailabilityService extends CrudService<VehicleAvailability>
       this.assertValidRange(dto.startDatetime, dto.endDatetime);
     }
 
-    return super.update(id, dto as DeepPartial<VehicleAvailability>, actorUserId);
+    return super.update(id, this.toEntityPayload(dto), actorUserId);
+  }
+
+  private toEntityPayload(
+    dto: CreateVehicleAvailabilityDto | UpdateVehicleAvailabilityDto,
+  ): DeepPartial<VehicleAvailability> {
+    const { latitude, longitude, ...rest } = dto;
+    const payload: DeepPartial<VehicleAvailability> = { ...rest };
+
+    if (latitude !== undefined) {
+      payload.latitude = latitude == null ? null : String(latitude);
+    }
+    if (longitude !== undefined) {
+      payload.longitude = longitude == null ? null : String(longitude);
+    }
+
+    return payload;
   }
 
   private assertValidRange(startDatetime: string, endDatetime: string): void {

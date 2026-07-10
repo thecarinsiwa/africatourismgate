@@ -11,8 +11,8 @@ import {
 import { ApiForbiddenResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
 import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import { Airports } from '../../../entities/generated';
+import { AirportsListQueryDto } from './dto/airports-list-query.dto';
 import { AirportsService } from './airports.service';
 
 @ApiTags('airports')
@@ -24,7 +24,7 @@ export class AirportsController {
   @RequirePermissions('flights.read')
   @Get()
   @ApiOperation({ summary: 'List airports' })
-  findAll(@Query() query: PaginationQueryDto) {
+  findAll(@Query() query: AirportsListQueryDto) {
     return this.service.findAll(query);
   }
 

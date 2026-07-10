@@ -5,7 +5,11 @@
     "emptyDefault": "Aucun hébergement pour le moment.",
     "ariaLabel": "Liste des hébergements",
     "searchPlaceholder": "Rechercher par nom ou slug…",
-    "searchAria": "Rechercher un hébergement"
+    "searchAria": "Rechercher un hébergement",
+    "viewTable": "Tableau",
+    "viewGrid": "Grille",
+    "viewCompact": "Liste compacte",
+    "viewModeAria": "Mode d'affichage"
   },
   "filters": {
     "destination": "Destination"
@@ -18,6 +22,24 @@
   "dialogs": {
     "deleteTitle": "Supprimer l'hébergement",
     "deleteDescription": "Supprimer l'hébergement « {name} » ? Cette action est irréversible."
+  },
+  "exports": {
+    "button": "Exporter",
+    "dialogTitle": "Exporter les hébergements",
+    "dialogDescription": "Les exports respectent les filtres de recherche et de destination actifs.",
+    "excel": "Exporter Excel (4 onglets)",
+    "pdfKpi": "Synthèse KPI (PDF)",
+    "pdfCatalog": "Catalogue (PDF)",
+    "pdfBookings": "Réservations (PDF)",
+    "pdfDossier": "Exporter PDF",
+    "dateFrom": "Date de début",
+    "dateTo": "Date de fin",
+    "periodRequired": "Indiquez une période pour cet export.",
+    "periodInvalid": "La date de fin doit être postérieure ou égale à la date de début.",
+    "downloading": "Génération en cours…",
+    "success": "Export téléchargé.",
+    "error": "Impossible de générer l'export.",
+    "noPermissionBookings": "Export réservations réservé aux utilisateurs avec l'accès réservations."
   },
   "form": {
     "submitCreate": "Créer l'hébergement",
@@ -49,6 +71,7 @@
   },
   "detail": {
     "title": "Modifier l'hébergement",
+    "backLink": "Retour aux hébergements",
     "backToList": "← Retour à la liste",
     "tabsAria": "Sections de l'hébergement",
     "tabs": {
@@ -87,7 +110,9 @@
       "stockHint": "Stock et prix par nuit ({currency}).",
       "noRooms": "Aucune chambre pour cet hébergement. Créez une chambre pour gérer les disponibilités.",
       "goToRoomsTab": "Aller à l'onglet Chambres",
-      "roomMismatch": "Cette chambre n'appartient pas à cet hébergement."
+      "roomMismatch": "Cette chambre n'appartient pas à cet hébergement.",
+      "backToProperty": "Retour à l'hébergement",
+      "summary": "Chambre {roomName} — stock et prix par nuit ({currency})."
     }
   },
   "amenitiesList": {
@@ -95,7 +120,10 @@
     "empty": "Aucun équipement.",
     "searchPlaceholder": "Rechercher un équipement…",
     "deleteConfirm": "Supprimer l'équipement « {name} » ?",
-    "ariaLabel": "Liste des équipements"
+    "ariaLabel": "Liste des équipements",
+    "viewGrid": "Grille",
+    "viewTable": "Tableau",
+    "viewModeAria": "Mode d'affichage"
   },
   "stats": {
     "properties": {

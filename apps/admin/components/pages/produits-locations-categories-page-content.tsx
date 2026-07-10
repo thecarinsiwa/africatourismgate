@@ -1,13 +1,16 @@
 'use client';
 
 import { VehicleCategoriesList } from '../locations/vehicle-categories-list';
-import { AdminListPageHeader } from './admin-list-page-header';
+import { AdminIntroPage } from './admin-intro-page';
 
 export function CategoriesVehiculesPageContent() {
   return (
-    <div>
-      <AdminListPageHeader routePath="produits/locations/categories" />
+    <AdminIntroPage
+      routePath="produits/locations/categories"
+      backHref="/produits/locations"
+      backLabelKey="backLabel"
+    >
       <VehicleCategoriesList />
-    </div>
+    </AdminIntroPage>
   );
 }

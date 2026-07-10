@@ -5,21 +5,26 @@ import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 import {
   Button,
   Card,
+  DataTable,
   DataTableActionButton,
   DataTableActions,
   DataTablePagination,
   Input,
+  type ColumnDef,
 } from '@africatourismgate/ui';
 import type { Amenity } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getAmenityIcon } from '../../lib/amenity-icon-map';
 import { getApiClient } from '../../lib/auth/api';
+import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
+import { ListViewModeToggle } from '../list-view-mode-toggle';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
 
 type AmenityFormValues = { code: string; name: string };
+type AmenitiesViewMode = 'grid' | 'table';
 
 const emptyForm: AmenityFormValues = { code: '', name: '' };
 
@@ -30,11 +35,14 @@ export function AmenitiesList() {
   const tValidation = useTranslations('modules.common.validation');
   const tPagination = useTranslations('modules.common.pagination');
   const tCommon = useTranslations('modules.common');
+  const tDataTable = useTranslations('modules.common.dataTable');
   const tActions = useTranslations('common.actions');
   const tNav = useTranslations('nav.links');
+  const paginationLabels = useDataTablePaginationLabels();
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
+  const [viewMode, setViewMode] = useState<AmenitiesViewMode>('grid');
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -72,14 +80,22 @@ export function AmenitiesList() {
 
   useEffect(() => {
     const q = searchInput.trim();
-    const t = window.setTimeout(() => {
+    const timer = window.setTimeout(() => {
       setSearch((prev) => {
         if (prev !== q) setPage(1);
         return q;
       });
     }, SEARCH_DEBOUNCE_MS);
-    return () => window.clearTimeout(t);
+    return () => window.clearTimeout(timer);
   }, [searchInput]);
+
+  const viewModeOptions = useMemo(
+    () => [
+      { value: 'grid' as const, label: t('viewGrid') },
+      { value: 'table' as const, label: t('viewTable') },
+    ],
+    [t],
+  );
 
   function resetForm() {
     setFormValues(emptyForm);
@@ -142,17 +158,78 @@ export function AmenitiesList() {
     [load, t, getHebergementsErrorMessage],
   );
 
+  const renderAmenityActions = useCallback(
+    (amenity: Amenity) => (
+      <DataTableActions>
+        <DataTableActionButton action="edit" onClick={() => openEdit(amenity)} />
+        <DataTableActionButton
+          action="delete"
+          onClick={() => void handleDelete(amenity)}
+          disabled={deletingId === amenity.id}
+          loading={deletingId === amenity.id}
+        />
+      </DataTableActions>
+    ),
+    [deletingId, handleDelete],
+  );
+
+  const columns = useMemo<ColumnDef<Amenity, unknown>[]>(
+    () => [
+      {
+        id: 'icon',
+        header: '',
+        meta: { align: 'center' },
+        cell: ({ row }) => (
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-atg-surface text-primary">
+            {getAmenityIcon(row.original.code, 'h-4 w-4')}
+          </span>
+        ),
+      },
+      {
+        accessorKey: 'name',
+        header: tColumns('name'),
+        cell: ({ row }) => (
+          <span className="font-medium text-atg-fg">{row.original.name}</span>
+        ),
+      },
+      {
+        accessorKey: 'code',
+        header: tColumns('code'),
+        cell: ({ row }) => (
+          <code className="rounded-md bg-atg-surface px-2 py-0.5 font-mono text-xs text-atg-muted">
+            {row.original.code}
+          </code>
+        ),
+      },
+      {
+        id: 'actions',
+        header: tColumns('actions'),
+        meta: { align: 'right' },
+        cell: ({ row }) => renderAmenityActions(row.original),
+      },
+    ],
+    [renderAmenityActions, tColumns],
+  );
+
   const amenities = state.status === 'ready' ? state.amenities : [];
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex-1 sm:max-w-md">
-          <Input
-            type="search"
-            placeholder={t('searchPlaceholder')}
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex min-w-0 flex-1 flex-col gap-4 sm:flex-row sm:items-center">
+          <div className="min-w-0 flex-1 sm:max-w-md">
+            <Input
+              type="search"
+              placeholder={t('searchPlaceholder')}
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+            />
+          </div>
+          <ListViewModeToggle
+            value={viewMode}
+            options={viewModeOptions}
+            onChange={setViewMode}
+            ariaLabel={t('viewModeAria')}
           />
         </div>
         <div className="flex gap-2">
@@ -211,7 +288,19 @@ export function AmenitiesList() {
         </p>
       ) : (
         <>
-          {state.status === 'loading' ? (
+          {viewMode === 'table' ? (
+            <Card variant="dashboard" padding="none" className="overflow-hidden">
+              <DataTable
+                columns={columns}
+                data={amenities}
+                isLoading={state.status === 'loading'}
+                loadingMessage={tDataTable('loading')}
+                emptyMessage={t('empty')}
+                getRowId={(row) => row.id}
+                aria-label={t('ariaLabel')}
+              />
+            </Card>
+          ) : state.status === 'loading' ? (
             <p className="text-sm text-atg-muted">{tCommon('loading')}</p>
           ) : amenities.length === 0 ? (
             <p className="text-sm text-atg-muted">{t('empty')}</p>
@@ -230,15 +319,7 @@ export function AmenitiesList() {
                       </div>
                     </div>
                     <div className="mt-auto flex justify-end border-t border-atg-border pt-3">
-                      <DataTableActions>
-                        <DataTableActionButton action="edit" onClick={() => openEdit(a)} />
-                        <DataTableActionButton
-                          action="delete"
-                          onClick={() => void handleDelete(a)}
-                          disabled={deletingId === a.id}
-                          loading={deletingId === a.id}
-                        />
-                      </DataTableActions>
+                      {renderAmenityActions(a)}
                     </div>
                   </Card>
                 </li>
@@ -252,6 +333,7 @@ export function AmenitiesList() {
               totalPages={state.totalPages}
               totalItems={state.total}
               itemLabel={tPagination('amenity')}
+              labels={paginationLabels}
               onPageChange={setPage}
             />
           ) : null}

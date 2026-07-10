@@ -18,6 +18,8 @@ type CoordinatePickerMapProps = {
   hint?: string;
   className?: string;
   ariaLabel?: string;
+  /** When true, triggers Leaflet size recalculation (e.g. modal just opened). */
+  active?: boolean;
 };
 
 const DEFAULT_CENTER = { latitude: 0, longitude: 20 };
@@ -39,6 +41,7 @@ export function CoordinatePickerMap({
   hint,
   className,
   ariaLabel,
+  active = true,
 }: CoordinatePickerMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<import('leaflet').Map | null>(null);
@@ -178,6 +181,25 @@ export function CoordinatePickerMap({
       map.panTo([lat, lng], { animate: true });
     });
   }, [latitude, longitude, mapReady]);
+
+  useEffect(() => {
+    if (!active || !mapReady || !mapRef.current) {
+      return;
+    }
+
+    const map = mapRef.current;
+    const frame = window.requestAnimationFrame(() => {
+      map.invalidateSize();
+    });
+    const timer = window.setTimeout(() => {
+      map.invalidateSize();
+    }, 150);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.clearTimeout(timer);
+    };
+  }, [active, mapReady]);
 
   return (
     <section className={cn('space-y-2', className)} aria-label={ariaLabel ?? title}>

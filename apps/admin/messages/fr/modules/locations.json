@@ -4,12 +4,24 @@
     "emptyDefault": "Aucun véhicule pour le moment.",
     "emptyFiltered": "Aucun véhicule ne correspond aux filtres.",
     "searchPlaceholder": "Rechercher par plaque…",
+    "searchAria": "Rechercher un véhicule",
+    "ariaLabel": "Liste des véhicules",
+    "viewTable": "Tableau",
+    "viewGrid": "Grille",
+    "viewCompact": "Liste compacte",
+    "viewModeAria": "Mode d'affichage",
     "deleteConfirm": "Supprimer le véhicule « {label} » ?",
     "fallbackLabel": "Véhicule"
   },
+  "dialogs": {
+    "deleteTitle": "Supprimer le véhicule",
+    "deleteDescription": "Supprimer le véhicule « {label} » ? Cette action est irréversible."
+  },
   "filters": {
     "agency": "Agence",
-    "allAgencies": "Toutes les agences"
+    "allAgencies": "Toutes les agences",
+    "category": "Catégorie",
+    "allCategories": "Toutes les catégories"
   },
   "columns": {
     "agency": "Agence",
@@ -30,12 +42,32 @@
   },
   "detail": {
     "title": "Modifier le véhicule",
-    "backLink": "Retour aux véhicules"
+    "viewTitle": "Voir le véhicule",
+    "backLink": "Retour aux véhicules",
+    "viewButton": "Voir le véhicule",
+    "editButton": "Modifier le véhicule",
+    "notFound": "Véhicule introuvable.",
+    "noLicensePlate": "Sans plaque",
+    "photoGallery": "Galerie photos",
+    "photoGalleryIntro": "{count, plural, =0 {Aucune photo} one {# photo} other {# photos}}",
+    "noPhotos": "Aucune photo pour ce véhicule."
   },
   "sections": {
     "availability": {
       "title": "Disponibilités",
       "intro": "Créneaux de disponibilité par dates (location, maintenance, loué).",
+      "backToVehicle": "Retour au véhicule",
+      "summary": "Véhicule {label} — {agencyName} / {categoryName}",
+      "slotsCount": "{count, plural, =0 {Aucun créneau} one {# créneau enregistré} other {# créneaux enregistrés}}",
+      "formHint": "Indiquez la période, le lieu de prise en charge et le statut du véhicule pour ce créneau.",
+      "editFormHint": "Modifiez la période, le lieu de prise en charge ou le statut de ce créneau.",
+      "startDatetime": "Date et heure de début",
+      "endDatetime": "Date et heure de fin",
+      "mapPreview": "Lieu sur la carte",
+      "mapPickerHint": "Cliquez sur la carte ou déplacez le marqueur pour renseigner la latitude et la longitude.",
+      "mapPickerAria": "Carte interactive pour choisir les coordonnées du créneau",
+      "latitudeHint": "Optionnel, -90 à 90",
+      "longitudeHint": "Optionnel, -180 à 180",
       "addSlot": "Ajouter un créneau",
       "newSlot": "Nouveau créneau",
       "editSlot": "Modifier le créneau",
@@ -50,15 +82,24 @@
     "categories": {
       "new": "Nouvelle catégorie",
       "edit": "Modifier la catégorie",
-      "empty": "Aucune catégorie.",
+      "emptyDefault": "Aucune catégorie.",
+      "emptySearch": "Aucune catégorie ne correspond à cette recherche.",
       "searchPlaceholder": "Rechercher par nom ou modèle…",
-      "exampleModel": "Modèle type"
+      "searchAria": "Rechercher une catégorie",
+      "exampleModel": "Modèle type",
+      "deleteConfirm": "Supprimer la catégorie « {name} » ?"
     },
     "agencies": {
-      "empty": "Aucune agence.",
+      "new": "Nouvelle agence",
+      "edit": "Modifier l'agence",
+      "emptyDefault": "Aucune agence.",
+      "emptySearch": "Aucune agence ne correspond à cette recherche.",
       "searchPlaceholder": "Rechercher par nom ou adresse…",
+      "searchAria": "Rechercher une agence",
       "agency": "Agence",
-      "address": "Adresse"
+      "address": "Adresse",
+      "destinationOptional": "Destination (optionnel)",
+      "deleteConfirm": "Supprimer l'agence « {name} » ?"
     }
   },
   "stats": {
@@ -74,5 +115,21 @@
       "label": "Agences",
       "subtitle": "Points de location"
     }
+  },
+  "exports": {
+    "button": "Exporter",
+    "dialogTitle": "Exporter les véhicules",
+    "dialogDescription": "Les exports respectent les filtres de recherche, d'agence et de catégorie actifs.",
+    "excel": "Exporter Excel (3 onglets)",
+    "pdfKpi": "Synthèse KPI (PDF)",
+    "pdfCatalog": "Catalogue (PDF)",
+    "pdfBookings": "Réservations (PDF)",
+    "dateFrom": "Date de début",
+    "dateTo": "Date de fin",
+    "periodRequired": "Indiquez une période pour cet export.",
+    "periodInvalid": "La date de fin doit être postérieure ou égale à la date de début.",
+    "success": "Export téléchargé.",
+    "error": "Impossible de générer l'export.",
+    "noPermissionBookings": "Export réservations réservé aux utilisateurs avec l'accès réservations."
   }
 }

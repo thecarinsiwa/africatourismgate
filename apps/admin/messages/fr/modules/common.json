@@ -114,7 +114,8 @@
     "amenity": "équipement",
     "review": "avis",
     "ticket": "tickets",
-    "loyaltyAccount": "comptes"
+    "loyaltyAccount": "comptes",
+    "activity": "activité"
   },
   "dataTable": {
     "loading": "Chargement…",
@@ -227,12 +228,16 @@
     "amenitiesSavedTitle": "Équipements enregistrés",
     "amenitiesSavedMessage": "La sélection a été mise à jour.",
     "propertySavedTitle": "Hébergement enregistré",
-    "deletedProperty": "L'hébergement « {name} » a été supprimé."
+    "deletedProperty": "L'hébergement « {name} » a été supprimé.",
+    "deletedFlight": "Le vol « {flightNumber} » a été supprimé.",
+    "deletedVehicle": "Le véhicule « {label} » a été supprimé."
   },
   "availabilityCalendar": {
     "previousMonth": "Mois précédent",
     "nextMonth": "Mois suivant",
     "today": "Aujourd'hui",
+    "bulkTitle": "Mise à jour groupée",
+    "bulkIntro": "Définissez le stock et le prix pour toutes les dates de la plage sélectionnée.",
     "weekdays": {
       "mon": "lun.",
       "tue": "mar.",
@@ -245,7 +250,8 @@
     "bulkSuccess": "{count} jour(s) mis à jour.",
     "stockUnits": "Stock (unités)",
     "availableSeats": "Sièges disponibles",
-    "seatsAria": "Sièges {date}"
+    "seatsAria": "Sièges {date}",
+    "unitsShort": "{count} u."
   },
   "imagesGallery": {
     "title": "Photos",

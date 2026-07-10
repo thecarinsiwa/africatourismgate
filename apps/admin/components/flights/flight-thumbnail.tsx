@@ -33,6 +33,7 @@ export function FlightThumbnail({
   className,
 }: FlightThumbnailProps) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [imageFailed, setImageFailed] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -48,8 +49,12 @@ export function FlightThumbnail({
         if (cancelled) return;
         const first = result.data.sort((a, b) => a.sortOrder - b.sortOrder)[0];
         setImageUrl(first?.url ?? null);
+        setImageFailed(false);
       } catch {
-        if (!cancelled) setImageUrl(null);
+        if (!cancelled) {
+          setImageUrl(null);
+          setImageFailed(false);
+        }
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -62,7 +67,7 @@ export function FlightThumbnail({
   }, [flightId]);
 
   const session = getSession();
-  const imgSrc = imageUrl ? resolveImageUrl(imageUrl) : null;
+  const imgSrc = imageUrl && !imageFailed ? resolveImageUrl(imageUrl) : null;
 
   return (
     <div
@@ -83,6 +88,7 @@ export function FlightThumbnail({
           className="object-cover"
           sizes={size === 'sm' ? '56px' : '64px'}
           unoptimized
+          onError={() => setImageFailed(true)}
           {...(session?.accessToken
             ? {
                 loader: ({ src }) => src,

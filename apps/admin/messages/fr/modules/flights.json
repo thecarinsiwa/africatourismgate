@@ -5,7 +5,32 @@
     "emptySearch": "Aucun vol ne correspond à ce code.",
     "searchPlaceholder": "Rechercher par code vol (ex. ET302)…",
     "searchAria": "Rechercher un vol",
+    "ariaLabel": "Liste des vols",
+    "viewTable": "Tableau",
+    "viewGrid": "Grille",
+    "viewCompact": "Liste compacte",
+    "viewModeAria": "Mode d'affichage",
     "deleteConfirm": "Supprimer le vol « {flightNumber} » ?"
+  },
+  "dialogs": {
+    "deleteTitle": "Supprimer le vol",
+    "deleteDescription": "Supprimer le vol « {flightNumber} » ? Cette action est irréversible."
+  },
+  "exports": {
+    "button": "Exporter",
+    "dialogTitle": "Exporter les vols",
+    "dialogDescription": "Les exports respectent le filtre de recherche actif.",
+    "excel": "Exporter Excel (3 onglets)",
+    "pdfKpi": "Synthèse KPI (PDF)",
+    "pdfCatalog": "Catalogue (PDF)",
+    "pdfBookings": "Réservations (PDF)",
+    "dateFrom": "Date de début",
+    "dateTo": "Date de fin",
+    "periodRequired": "Indiquez une période pour cet export.",
+    "periodInvalid": "La date de fin doit être postérieure ou égale à la date de début.",
+    "success": "Export téléchargé.",
+    "error": "Impossible de générer l'export.",
+    "noPermissionBookings": "Export réservations réservé aux utilisateurs avec l'accès réservations."
   },
   "columns": {
     "flightNumber": "Code vol",
@@ -36,7 +61,14 @@
   },
   "detail": {
     "title": "Modifier le vol",
+    "viewTitle": "Voir le vol",
     "backLink": "Retour aux vols",
+    "viewButton": "Voir le vol",
+    "editButton": "Modifier le vol",
+    "notFound": "Vol introuvable.",
+    "photoGallery": "Galerie photos",
+    "photoGalleryIntro": "{count, plural, =0 {Aucune photo} one {# photo} other {# photos}}",
+    "noPhotos": "Aucune photo pour ce vol.",
     "tabsAria": "Sections du vol",
     "tabs": {
       "flight": "Vol",
@@ -82,7 +114,18 @@
       "searchPlaceholder": "Rechercher par IATA, nom ou ville…",
       "searchAria": "Rechercher un aéroport",
       "airport": "Aéroport",
-      "countryCode": "Code pays"
+      "countryCode": "Code pays",
+      "latitudeHint": "Optionnel, -90 à 90",
+      "longitudeHint": "Optionnel, -180 à 180",
+      "mapAssistIntro": "Saisissez la latitude et la longitude pour prévisualiser l'aéroport sur la carte.",
+      "mapPreview": "Aperçu de la position",
+      "mapPickerHint": "Cliquez sur la carte ou déplacez le marqueur pour remplir automatiquement la latitude et la longitude.",
+      "mapPickerAria": "Carte interactive pour choisir les coordonnées de l'aéroport",
+      "openStreetMap": "Ouvrir dans OpenStreetMap",
+      "deleteConfirm": "Supprimer « {name} » ?",
+      "validation": {
+        "required": "Tous les champs sont obligatoires."
+      }
     }
   },
   "stats": {

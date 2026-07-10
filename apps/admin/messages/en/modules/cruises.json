@@ -105,7 +105,7 @@
   },
   "calendar": {
     "ariaLabel": "Calendrier des départs — {month}",
-    "today": "Tojourd'hui"
+    "today": "Today"
   },
   "stats": {
     "sailings": {

@@ -112,6 +112,8 @@ export interface VehicleAvailability {
   startDatetime: string;
   endDatetime: string;
   status: VehicleAvailabilityStatus;
+  latitude: string | null;
+  longitude: string | null;
   createdAt: string;
   updatedAt: string | null;
 }
@@ -121,6 +123,8 @@ export interface CreateVehicleAvailabilityRequest {
   startDatetime: string;
   endDatetime: string;
   status?: VehicleAvailabilityStatus;
+  latitude?: number | string | null;
+  longitude?: number | string | null;
 }
 
 export type UpdateVehicleAvailabilityRequest = Partial<

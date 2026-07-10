@@ -4,6 +4,7 @@ import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import type { Airline, Airport, Flight } from '@africatourismgate/types';
 import {
+  Button,
   DataTableBadge,
   Skeleton,
   Tabs,
@@ -151,27 +152,32 @@ export function FlightEditPage({ flightId }: FlightEditPageProps) {
   return (
     <div className="space-y-6">
       <AdminPageBackLink href="/produits/vols" label={t('backLink')} />
-      <div className="flex flex-wrap items-start gap-4">
-        <FlightThumbnail flightId={flightId} label={flight.flightNumber} size="md" />
-        <div className="min-w-0 flex-1 space-y-4">
-          <div className="flex flex-wrap items-center gap-2">
-            <code className="rounded-md bg-atg-surface px-2.5 py-1 font-mono text-sm font-semibold text-atg-fg ring-1 ring-atg-border/60">
-              {flight.flightNumber}
-            </code>
-            {airline ? (
-              <DataTableBadge variant="muted">
-                {airline.iataCode} — {airline.name}
-              </DataTableBadge>
-            ) : null}
+      <div className="flex flex-col gap-4 rounded-xl border border-atg-border bg-atg-elevated p-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex min-w-0 flex-1 items-start gap-4">
+          <FlightThumbnail flightId={flightId} label={flight.flightNumber} size="md" />
+          <div className="min-w-0 flex-1 space-y-4">
+            <div className="flex flex-wrap items-center gap-2">
+              <code className="rounded-md bg-atg-surface px-2.5 py-1 font-mono text-sm font-semibold text-atg-fg ring-1 ring-atg-border/60">
+                {flight.flightNumber}
+              </code>
+              {airline ? (
+                <DataTableBadge variant="muted">
+                  {airline.iataCode} — {airline.name}
+                </DataTableBadge>
+              ) : null}
+            </div>
+            <FlightTimeline
+              departureAirport={departureAirport}
+              arrivalAirport={arrivalAirport}
+              departureTime={flight.departureTime}
+              arrivalTime={flight.arrivalTime}
+              durationMinutes={flight.durationMinutes}
+            />
           </div>
-          <FlightTimeline
-            departureAirport={departureAirport}
-            arrivalAirport={arrivalAirport}
-            departureTime={flight.departureTime}
-            arrivalTime={flight.arrivalTime}
-            durationMinutes={flight.durationMinutes}
-          />
         </div>
+        <Button href={`/produits/vols/${flightId}/voir`} variant="outline" className="w-full sm:w-auto">
+          {t('viewButton')}
+        </Button>
       </div>
 
       <Tabs value={activeTab} onValueChange={handleTabChange}>

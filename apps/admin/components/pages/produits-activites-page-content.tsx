@@ -9,7 +9,7 @@ import { AdminListPageHeader } from './admin-list-page-header';
 export function ActivitesPageContent() {
   const t = useTranslations('pages.produits.activites');
   return (
-    <div>
+    <div className="min-w-0">
       <AdminListPageHeader
         routePath="produits/activites"
         actions={

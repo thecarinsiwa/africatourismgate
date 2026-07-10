@@ -1,11 +1,15 @@
 {
   "list": {
-    "newProperty": "Nouvel hébergement",
-    "amenitiesLink": "Amenitys",
-    "emptyDefault": "Tocun hébergement pour le moment.",
-    "ariaLabel": "Liste des hébergements",
+    "newProperty": "New accommodation",
+    "amenitiesLink": "Amenities",
+    "emptyDefault": "No accommodations yet.",
+    "ariaLabel": "Accommodations list",
     "searchPlaceholder": "Search by name or slug…",
-    "searchAria": "Rechercher un hébergement"
+    "searchAria": "Search accommodations",
+    "viewTable": "Table",
+    "viewGrid": "Grid",
+    "viewCompact": "Compact list",
+    "viewModeAria": "Display mode"
   },
   "filters": {
     "destination": "Destination"
@@ -16,14 +20,32 @@
     "propertyType": "Type"
   },
   "dialogs": {
-    "deleteTitle": "Supprimer l'hébergement",
-    "deleteDescription": "Supprimer l'hébergement « {name} » ? Cette action est irréversible."
+    "deleteTitle": "Delete accommodation",
+    "deleteDescription": "Delete accommodation « {name} »? This action cannot be undone."
+  },
+  "exports": {
+    "button": "Export",
+    "dialogTitle": "Export accommodations",
+    "dialogDescription": "Exports use the current search and destination filters.",
+    "excel": "Export Excel (4 sheets)",
+    "pdfKpi": "KPI summary (PDF)",
+    "pdfCatalog": "Catalog (PDF)",
+    "pdfBookings": "Bookings (PDF)",
+    "pdfDossier": "Export PDF",
+    "dateFrom": "Start date",
+    "dateTo": "End date",
+    "periodRequired": "Select a date range for this export.",
+    "periodInvalid": "End date must be on or after the start date.",
+    "downloading": "Generating…",
+    "success": "Export downloaded.",
+    "error": "Could not generate the export.",
+    "noPermissionBookings": "Bookings export requires bookings access."
   },
   "form": {
-    "submitCreate": "Créer l'hébergement",
+    "submitCreate": "Create accommodation",
     "sections": {
       "identity": "Identity",
-      "location": "Localisation",
+      "location": "Location",
       "classification": "Classification"
     },
     "name": "Name",
@@ -31,10 +53,10 @@
     "type": "Type",
     "destination": "Destination",
     "address": "Address",
-    "starRating": "Classement (étoiles)",
-    "starRatingHint": "Optionnel, 0 à 5",
+    "starRating": "Star rating",
+    "starRatingHint": "Optional, 0 to 5",
     "validation": {
-      "destinationRequired": "La destination est obligatoire."
+      "destinationRequired": "Destination is required."
     }
   },
   "status": {
@@ -43,76 +65,82 @@
       "resort": "Resort",
       "apartment": "Apartment",
       "villa": "Villa",
-      "hostel": "Toberge",
-      "other": "Totre"
+      "hostel": "Hostel",
+      "other": "Other"
     }
   },
   "detail": {
-    "title": "Modifier l'hébergement",
-    "backToList": "← Back à la liste",
-    "tabsAria": "Sections de l'hébergement",
+    "title": "Edit accommodation",
+    "backLink": "Back to accommodations",
+    "backToList": "← Back to list",
+    "tabsAria": "Accommodation sections",
     "tabs": {
       "infos": "Info",
       "rooms": "Rooms",
-      "amenities": "Amenitys",
+      "amenities": "Amenities",
       "availability": "Availability"
     }
   },
   "sections": {
     "rooms": {
       "title": "Rooms",
-      "intro": "Types de chambres pour cet hébergement.",
-      "addRoom": "Ajouter une chambre",
-      "newRoom": "Nouvelle chambre",
-      "editRoom": "Modifier la chambre",
-      "roomType": "Type de chambre",
+      "intro": "Room types for this accommodation.",
+      "addRoom": "Add room",
+      "newRoom": "New room",
+      "editRoom": "Edit room",
+      "roomType": "Room type",
       "roomTypePlaceholder": "standard, suite…",
-      "maxCapacity": "Capacity max.",
-      "bedConfig": "Settings lits",
-      "empty": "None chambre.",
-      "deleteConfirm": "Supprimer la chambre « {name} » ?",
+      "maxCapacity": "Max capacity",
+      "bedConfig": "Bed configuration",
+      "empty": "No rooms yet.",
+      "deleteConfirm": "Delete room « {name} »?",
       "photosAction": "Photos"
     },
     "amenities": {
-      "title": "Amenitys",
-      "intro": "Sélectionnez les équipements disponibles pour cet hébergement.",
-      "saveSelection": "Save la sélection",
-      "emptyGlobal": "Tocun équipement global.",
-      "createLink": "Créer des équipements"
+      "title": "Amenities",
+      "intro": "Select amenities available at this accommodation.",
+      "saveSelection": "Save selection",
+      "emptyGlobal": "No global amenities yet.",
+      "createLink": "Create amenities"
     },
     "availability": {
       "title": "Availability",
-      "loadingRooms": "Chargement des chambres…",
+      "loadingRooms": "Loading rooms…",
       "room": "Room",
-      "stockHint": "Stock et prix par nuit ({currency}).",
-      "noRooms": "None chambre pour cet hébergement. Créez une chambre pour gérer les disponibilités.",
-      "goToRoomsTab": "Aller à l'onglet Rooms",
-      "roomMismatch": "Cette chambre n'appartient pas à cet hébergement."
+      "stockHint": "Stock and price per night ({currency}).",
+      "noRooms": "No rooms for this accommodation. Create a room to manage availability.",
+      "goToRoomsTab": "Go to Rooms tab",
+      "roomMismatch": "This room does not belong to this accommodation.",
+      "backToProperty": "Back to accommodation",
+      "summary": "Room {roomName} — stock and price per night ({currency})."
     }
   },
   "amenitiesList": {
-    "newAmenity": "Nouvel équipement",
-    "empty": "Tocun équipement.",
-    "searchPlaceholder": "Rechercher un équipement…",
-    "deleteConfirm": "Supprimer l'équipement « {name} » ?",
-    "ariaLabel": "Liste des équipements"
+    "newAmenity": "New amenity",
+    "empty": "No amenities yet.",
+    "searchPlaceholder": "Search amenities…",
+    "deleteConfirm": "Delete amenity « {name} »?",
+    "ariaLabel": "Amenities list",
+    "viewGrid": "Grid",
+    "viewTable": "Table",
+    "viewModeAria": "Display mode"
   },
   "stats": {
     "properties": {
       "label": "Accommodations",
-      "subtitle": "Propertys publiées"
+      "subtitle": "Published properties"
     },
     "rooms": {
       "label": "Rooms",
-      "subtitle": "Types de chambres"
+      "subtitle": "Room types"
     },
     "amenities": {
-      "label": "Amenitys",
-      "subtitle": "Référentiel global"
+      "label": "Amenities",
+      "subtitle": "Global catalog"
     },
     "destinations": {
       "label": "Destinations",
-      "subtitle": "Zones géographiques"
+      "subtitle": "Geographic areas"
     }
   }
 }

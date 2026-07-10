@@ -1,106 +1,149 @@
 {
   "list": {
-    "newFlight": "Nouveau vol",
-    "emptyDefault": "Tocun vol pour le moment.",
-    "emptySearch": "Tocun vol ne correspond à ce code.",
-    "searchPlaceholder": "Rechercher par code vol (ex. ET302)…",
-    "searchAria": "Rechercher un vol",
-    "deleteConfirm": "Supprimer le vol « {flightNumber} » ?"
+    "newFlight": "New flight",
+    "emptyDefault": "No flights yet.",
+    "emptySearch": "No flight matches this code.",
+    "searchPlaceholder": "Search by flight code (e.g. ET302)…",
+    "searchAria": "Search flights",
+    "ariaLabel": "Flights list",
+    "viewTable": "Table",
+    "viewGrid": "Grid",
+    "viewCompact": "Compact list",
+    "viewModeAria": "Display mode",
+    "deleteConfirm": "Delete flight « {flightNumber} »?"
+  },
+  "dialogs": {
+    "deleteTitle": "Delete flight",
+    "deleteDescription": "Delete flight « {flightNumber} »? This action cannot be undone."
+  },
+  "exports": {
+    "button": "Export",
+    "dialogTitle": "Export flights",
+    "dialogDescription": "Exports use the current search filter.",
+    "excel": "Export Excel (3 sheets)",
+    "pdfKpi": "KPI summary (PDF)",
+    "pdfCatalog": "Catalog (PDF)",
+    "pdfBookings": "Bookings (PDF)",
+    "dateFrom": "Start date",
+    "dateTo": "End date",
+    "periodRequired": "Select a date range for this export.",
+    "periodInvalid": "End date must be on or after the start date.",
+    "success": "Export downloaded.",
+    "error": "Could not generate the export.",
+    "noPermissionBookings": "Bookings export requires bookings access."
   },
   "columns": {
-    "flightNumber": "Code vol",
+    "flightNumber": "Flight code",
     "airline": "Airline",
-    "route": "Trajet",
+    "route": "Route",
     "departure": "Departure"
   },
   "form": {
-    "submitCreate": "Créer le vol",
+    "submitCreate": "Create flight",
     "airline": "Airline",
-    "flightNumber": "Code vol",
-    "flightNumberHint": "Ex. ET302, 9S101",
+    "flightNumber": "Flight code",
+    "flightNumberHint": "E.g. ET302, 9S101",
     "departure": "Departure",
-    "arrival": "Arrivée",
-    "departureTime": "Heure de départ",
-    "arrivalTime": "Heure d'arrivée",
-    "durationMinutes": "Fromrée (minutes)",
-    "durationHint": "Ex. 390 pour 6 h 30",
+    "arrival": "Arrival",
+    "departureTime": "Departure time",
+    "arrivalTime": "Arrival time",
+    "durationMinutes": "Duration (minutes)",
+    "durationHint": "E.g. 390 for 6 h 30",
     "validation": {
-      "airlineRequired": "Airline obligatoire.",
-      "flightNumberRequired": "Code vol obligatoire.",
-      "departureAirportRequired": "Airport de départ obligatoire.",
-      "arrivalAirportRequired": "Airport d'arrivée obligatoire.",
-      "airportsMustDiffer": "Le départ et l'arrivée doivent être différents.",
-      "departureTimeRequired": "Heure de départ obligatoire.",
-      "arrivalTimeRequired": "Heure d'arrivée obligatoire."
+      "airlineRequired": "Airline is required.",
+      "flightNumberRequired": "Flight code is required.",
+      "departureAirportRequired": "Departure airport is required.",
+      "arrivalAirportRequired": "Arrival airport is required.",
+      "airportsMustDiffer": "Departure and arrival must be different.",
+      "departureTimeRequired": "Departure time is required.",
+      "arrivalTimeRequired": "Arrival time is required."
     }
   },
   "detail": {
-    "title": "Modifier le vol",
-    "backLink": "Back aux vols",
-    "tabsAria": "Sections du vol",
+    "title": "Edit flight",
+    "viewTitle": "View flight",
+    "backLink": "Back to flights",
+    "viewButton": "View flight",
+    "editButton": "Edit flight",
+    "notFound": "Flight not found.",
+    "photoGallery": "Photo gallery",
+    "photoGalleryIntro": "{count, plural, =0 {No photos} one {# photo} other {# photos}}",
+    "noPhotos": "No photos for this flight.",
+    "tabsAria": "Flight sections",
     "tabs": {
       "flight": "Flight",
       "classes": "Classes"
     },
-    "timelineAria": "Trajet du vol",
-    "durationAria": "Fromrée du vol : {label}"
+    "timelineAria": "Flight route",
+    "durationAria": "Flight duration: {label}"
   },
   "sections": {
     "classes": {
-      "title": "Classes cabine",
-      "intro": "Cabins et tarifs de base pour ce vol.",
-      "addClass": "Ajouter une classe",
-      "newClass": "Nouvelle classe",
-      "editClass": "Modifier la classe",
-      "cabinType": "Type de cabine",
-      "totalSeats": "Sièges totaux",
-      "empty": "None classe cabine.",
-      "deleteConfirm": "Supprimer cette classe ?"
+      "title": "Cabin classes",
+      "intro": "Cabins and base fares for this flight.",
+      "addClass": "Add a class",
+      "newClass": "New class",
+      "editClass": "Edit class",
+      "cabinType": "Cabin type",
+      "totalSeats": "Total seats",
+      "empty": "No cabin classes yet.",
+      "deleteConfirm": "Delete this class?"
     },
     "availability": {
       "title": "Availability",
-      "backToFlight": "Back au vol",
-      "classMismatch": "Cette classe n'appartient pas à ce vol."
+      "backToFlight": "Back to flight",
+      "classMismatch": "This class does not belong to this flight."
     }
   },
   "referential": {
     "airlines": {
-      "new": "Nouvelle compagnie",
-      "edit": "Modifier la compagnie",
-      "emptyDefault": "None compagnie.",
-      "emptySearch": "None compagnie ne correspond à cette recherche.",
-      "searchPlaceholder": "Rechercher par code IATA ou nom…",
-      "searchAria": "Rechercher une compagnie",
-      "iataCode": "Code IATA",
-      "deleteConfirm": "Supprimer « {name} » ?"
+      "new": "New airline",
+      "edit": "Edit airline",
+      "emptyDefault": "No airlines yet.",
+      "emptySearch": "No airline matches this search.",
+      "searchPlaceholder": "Search by IATA code or name…",
+      "searchAria": "Search airlines",
+      "iataCode": "IATA code",
+      "deleteConfirm": "Delete « {name} »?"
     },
     "airports": {
-      "new": "Nouvel aéroport",
-      "edit": "Modifier l'aéroport",
-      "emptyDefault": "Tocun aéroport.",
-      "emptySearch": "Tocun aéroport ne correspond à cette recherche.",
-      "searchPlaceholder": "Rechercher par IATA, nom ou ville…",
-      "searchAria": "Rechercher un aéroport",
+      "new": "New airport",
+      "edit": "Edit airport",
+      "emptyDefault": "No airports yet.",
+      "emptySearch": "No airport matches this search.",
+      "searchPlaceholder": "Search by IATA, name or city…",
+      "searchAria": "Search airports",
       "airport": "Airport",
-      "countryCode": "Code pays"
+      "countryCode": "Country code",
+      "latitudeHint": "Optional, -90 to 90",
+      "longitudeHint": "Optional, -180 to 180",
+      "mapAssistIntro": "Enter latitude and longitude to preview the airport on the map.",
+      "mapPreview": "Location preview",
+      "mapPickerHint": "Click on the map or drag the marker to fill latitude and longitude automatically.",
+      "mapPickerAria": "Interactive map to pick airport coordinates",
+      "openStreetMap": "Open in OpenStreetMap",
+      "deleteConfirm": "Delete « {name} »?",
+      "validation": {
+        "required": "All fields are required."
+      }
     }
   },
   "stats": {
     "flights": {
       "label": "Flights",
-      "subtitle": "Lines catalogue"
+      "subtitle": "Catalog lines"
     },
     "classes": {
-      "label": "Classes cabine",
-      "subtitle": "Tarifs par vol"
+      "label": "Cabin classes",
+      "subtitle": "Fares per flight"
     },
     "airlines": {
       "label": "Airlines",
-      "subtitle": "Référentiel IATA"
+      "subtitle": "IATA directory"
     },
     "airports": {
       "label": "Airports",
-      "subtitle": "Référentiel mondial"
+      "subtitle": "Global directory"
     }
   }
 }

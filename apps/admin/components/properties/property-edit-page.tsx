@@ -12,14 +12,15 @@ import {
   TabsList,
   TabsTrigger,
 } from '@africatourismgate/ui';
-import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
+import { AdminPageBackLink } from '../admin-page-back-link';
 import { getApiClient } from '../../lib/auth/api';
 import { PropertyAmenitiesSection } from './property-amenities-section';
 import { PropertyAvailabilitySection } from './property-availability-section';
+import { PropertyExportPdfButton } from './property-export-pdf-button';
 import { PropertyForm } from './property-form';
 import { PropertyImagesSection } from './property-images-section';
 import { PropertyRoomsSection } from './property-rooms-section';
@@ -112,15 +113,10 @@ export function PropertyEditPage({ propertyId }: PropertyEditPageProps) {
   if (state.status === 'error') {
     return (
       <div className="space-y-4">
+        <AdminPageBackLink href="/hebergements" label={tDetail('backLink')} />
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {state.message}
         </p>
-        <Link
-          href="/hebergements"
-          className="text-sm font-medium text-primary hover:text-primary-hover"
-        >
-          {tDetail('backToList')}
-        </Link>
       </div>
     );
   }
@@ -129,6 +125,8 @@ export function PropertyEditPage({ propertyId }: PropertyEditPageProps) {
 
   return (
     <div className="space-y-6">
+      <AdminPageBackLink href="/hebergements" label={tDetail('backLink')} />
+
       <div className="flex flex-wrap items-center gap-4">
         <PropertyThumbnail propertyId={propertyId} name={property.name} size="md" />
         <div className="min-w-0 flex-1">
@@ -143,6 +141,7 @@ export function PropertyEditPage({ propertyId }: PropertyEditPageProps) {
           </div>
           <p className="mt-1 font-mono text-sm text-atg-muted">{property.slug}</p>
         </div>
+        <PropertyExportPdfButton propertyId={propertyId} className="ml-auto shrink-0" />
       </div>
 
       <Tabs value={activeTab} onValueChange={handleTabChange}>
