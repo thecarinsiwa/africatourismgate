@@ -87,4 +87,10 @@ export class VehicleAvailability extends BaseAuditEntity {
   @Column({ name: 'status', enum: ["available","maintenance","rented"] })
   status!: 'available' | 'maintenance' | 'rented';
 
+  @Column({ type: 'decimal', name: 'latitude', precision: 10, scale: 7, nullable: true })
+  latitude!: string | null;
+
+  @Column({ type: 'decimal', name: 'longitude', precision: 10, scale: 7, nullable: true })
+  longitude!: string | null;
+
 }

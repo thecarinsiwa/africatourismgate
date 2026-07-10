@@ -862,6 +862,8 @@ CREATE TABLE `vehicle_availability` (
   `start_datetime` DATETIME NOT NULL,
   `end_datetime` DATETIME NOT NULL,
   `status` ENUM('available','maintenance','rented') NOT NULL DEFAULT 'available',
+  `latitude` DECIMAL(10, 7) DEFAULT NULL,
+  `longitude` DECIMAL(10, 7) DEFAULT NULL,
   `created_by_user_id` CHAR(36) DEFAULT NULL,
   `updated_by_user_id` CHAR(36) DEFAULT NULL,
   `deleted_by_user_id` CHAR(36) DEFAULT NULL,
