@@ -18,6 +18,7 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ReferentialListToolbar } from '../referential-list-toolbar';
 import { getApiClient } from '../../lib/auth/api';
+import { parseDestinationCoord } from '../../lib/destination-coords';
 import { CountryFlagPlaceholder } from './country-flag-placeholder';
 
 const PAGE_SIZE = 20;
@@ -28,6 +29,8 @@ type FormValues = {
   name: string;
   city: string;
   countryCode: string;
+  latitude: string;
+  longitude: string;
 };
 
 const emptyForm: FormValues = {
@@ -35,7 +38,17 @@ const emptyForm: FormValues = {
   name: '',
   city: '',
   countryCode: 'CD',
+  latitude: '',
+  longitude: '',
 };
+
+function formatCoordInput(value: string | null | undefined): string {
+  if (value === null || value === undefined || value === '') {
+    return '';
+  }
+  const num = Number(value);
+  return Number.isFinite(num) ? String(num) : '';
+}
 
 export function AirportsList() {
   const { vols: getVolsErrorMessage } = useAdminErrorMessages();
@@ -43,6 +56,7 @@ export function AirportsList() {
   const tCommon = useTranslations('modules.common');
   const tPagination = useTranslations('modules.common.pagination');
   const tActions = useTranslations('common.actions');
+  const tValidation = useTranslations('modules.common.validation');
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -100,6 +114,8 @@ export function AirportsList() {
         name: airport.name,
         city: airport.city,
         countryCode: airport.countryCode,
+        latitude: formatCoordInput(airport.latitude),
+        longitude: formatCoordInput(airport.longitude),
       });
     } else {
       setEditing(null);
@@ -128,6 +144,26 @@ export function AirportsList() {
       setFormError(t('validation.required'));
       return;
     }
+
+    const hasLat = formValues.latitude.trim().length > 0;
+    const hasLng = formValues.longitude.trim().length > 0;
+    if (hasLat !== hasLng) {
+      setFormError(tValidation('coordsBothRequired'));
+      return;
+    }
+    if (hasLat && hasLng) {
+      const lat = parseDestinationCoord(formValues.latitude);
+      const lng = parseDestinationCoord(formValues.longitude);
+      if (lat === null || lat < -90 || lat > 90) {
+        setFormError(tValidation('latitudeInvalid'));
+        return;
+      }
+      if (lng === null || lng < -180 || lng > 180) {
+        setFormError(tValidation('longitudeInvalid'));
+        return;
+      }
+    }
+
     setSubmitting(true);
     try {
       const body = {
@@ -135,6 +171,14 @@ export function AirportsList() {
         name: formValues.name.trim(),
         city: formValues.city.trim(),
         countryCode: formValues.countryCode.trim().toUpperCase(),
+        ...(hasLat && hasLng
+          ? {
+              latitude: Number(formValues.latitude.trim()),
+              longitude: Number(formValues.longitude.trim()),
+            }
+          : editing
+            ? { latitude: null, longitude: null }
+            : {}),
       };
       if (editing) {
         await getApiClient().updateAirport(editing.id, body);
@@ -271,6 +315,26 @@ export function AirportsList() {
             value={formValues.city}
             onChange={(e) => setFormValues((p) => ({ ...p, city: e.target.value }))}
           />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Input
+              label={tCommon('form.latitude')}
+              type="number"
+              step="any"
+              inputMode="decimal"
+              hint={t('latitudeHint')}
+              value={formValues.latitude}
+              onChange={(e) => setFormValues((p) => ({ ...p, latitude: e.target.value }))}
+            />
+            <Input
+              label={tCommon('form.longitude')}
+              type="number"
+              step="any"
+              inputMode="decimal"
+              hint={t('longitudeHint')}
+              value={formValues.longitude}
+              onChange={(e) => setFormValues((p) => ({ ...p, longitude: e.target.value }))}
+            />
+          </div>
           <div className="flex justify-end gap-3">
             <Button type="button" variant="outline" onClick={resetForm} disabled={submitting}>
               {tActions('cancel')}

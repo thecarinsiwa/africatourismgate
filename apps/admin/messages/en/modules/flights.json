@@ -92,6 +92,8 @@
       "searchAria": "Search airports",
       "airport": "Airport",
       "countryCode": "Country code",
+      "latitudeHint": "Optional, -90 to 90",
+      "longitudeHint": "Optional, -180 to 180",
       "deleteConfirm": "Delete « {name} »?",
       "validation": {
         "required": "All fields are required."

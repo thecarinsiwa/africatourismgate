@@ -92,6 +92,8 @@
       "searchAria": "Buscar aeropuertos",
       "airport": "Aeropuerto",
       "countryCode": "Código de país",
+      "latitudeHint": "Opcional, -90 a 90",
+      "longitudeHint": "Opcional, -180 a 180",
       "deleteConfirm": "¿Eliminar « {name} »?",
       "validation": {
         "required": "Todos los campos son obligatorios."
