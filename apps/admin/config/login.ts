@@ -5,7 +5,7 @@ type LoginFormTranslator = {
 };
 
 type LoginErrorsTranslator = {
-  (key: 'invalidCredentials' | 'network' | 'envMissing' | 'generic'): string;
+  (key: 'invalidCredentials' | 'network' | 'envMissing' | 'generic' | 'accountPendingApproval'): string;
 };
 
 /** Textes du formulaire de connexion admin (i18n via next-intl). */
@@ -40,5 +40,6 @@ export function getAdminLoginErrors(t: LoginErrorsTranslator) {
     envMissing: t('envMissing'),
     generic: t('generic'),
     unauthorized: t('invalidCredentials'),
+    accountPendingApproval: t('accountPendingApproval'),
   };
 }

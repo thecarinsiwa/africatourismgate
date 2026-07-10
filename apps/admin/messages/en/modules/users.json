@@ -9,7 +9,8 @@
   "filters": {
     "status": "Status",
     "organization": "Organization",
-    "role": "Role"
+    "role": "Role",
+    "withoutRole": "Without role only"
   },
   "form": {
     "email": "Email",

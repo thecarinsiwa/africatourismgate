@@ -3,6 +3,7 @@ import { resolveEmailLogoUrl } from './email-attachments';
 import { DEFAULT_EMAIL_BRANDING } from './email-branding.constants';
 import type {
   AbandonmentReminderEmailPayload,
+  AdminPendingRegistrationEmailPayload,
   BookingConfirmationEmailPayload,
   OperationAlertEmailPayload,
   PasswordResetEmailPayload,
@@ -371,6 +372,30 @@ ${paragraph('Merci de nous faire confiance pour vos aventures en Afrique.')}`,
     },
   );
   const text = `Bonjour ${payload.firstName},\n\nBienvenue sur ${branding.displayName}. Votre compte a été créé avec succès.\n\nExplorer : ${exploreUrl}\nSe connecter : ${loginUrl}`;
+  return { subject, html, text };
+}
+
+export function renderAdminPendingRegistrationEmail(
+  payload: AdminPendingRegistrationEmailPayload,
+  branding: EmailBrandingValue,
+): { subject: string; html: string; text: string } {
+  const name = escapeHtml(payload.firstName.trim() || 'Administrateur');
+  const applicantName = escapeHtml(payload.applicantName.trim() || payload.applicantEmail);
+  const applicantEmail = escapeHtml(payload.applicantEmail);
+  const reviewUrl = payload.reviewUrl;
+  const subject = 'Nouvelle inscription admin en attente';
+
+  const html = layout(
+    subject,
+    `${headline('Inscription admin en attente', branding)}
+${paragraph(`Bonjour <strong>${name}</strong>,`)}
+${paragraph(`<strong>${applicantName}</strong> (${applicantEmail}) vient de demander l'accès au back-office admin. Le compte est suspendu et n'a pas encore de rôle.`)}
+${ctaButton(reviewUrl, 'Examiner la demande', branding)}
+${paragraph('Activez le compte et assignez les rôles appropriés depuis la fiche utilisateur.')}`,
+    branding,
+    { preheader: 'Une nouvelle inscription admin Gmail attend votre validation.' },
+  );
+  const text = `Bonjour ${payload.firstName},\n\n${payload.applicantName} (${payload.applicantEmail}) demande l'accès au back-office admin.\n\nExaminer : ${reviewUrl}`;
   return { subject, html, text };
 }
 

@@ -50,6 +50,14 @@ export class UsersService extends CrudService<Users> {
       );
     }
 
+    if (query.withoutRole) {
+      qb.leftJoin(
+        'user_role_assignments',
+        'ura_none',
+        'ura_none.user_id = user.id AND ura_none.revoked_at IS NULL AND ura_none.deleted_at IS NULL',
+      ).andWhere('ura_none.id IS NULL');
+    }
+
     const search = query.search?.trim();
     if (search) {
       const term = `%${search}%`;

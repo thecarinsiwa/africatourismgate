@@ -6,6 +6,7 @@ const LOCAL_DEV_ORIGIN =
 const PRODUCTION_WEB_ORIGINS = new Set([
   'https://africatourismgate.org',
   'https://www.africatourismgate.org',
+  'https://app-africatourismgate.org',
 ]);
 
 export function stripDevOriginFromNextPath(nextPath: string | undefined): {

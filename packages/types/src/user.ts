@@ -37,4 +37,5 @@ export interface UsersListQuery extends PaginationQuery {
   organizationId?: string;
   roleId?: string;
   search?: string;
+  withoutRole?: boolean;
 }

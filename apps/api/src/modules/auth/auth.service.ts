@@ -125,6 +125,7 @@ export class AuthService {
         : {}),
     });
 
+    void this.notifySuperAdminsOfPendingRegistration(user);
     return this.pendingApprovalResponse(user);
   }
 
@@ -349,6 +350,7 @@ export class AuthService {
       lastName,
     });
 
+    void this.notifySuperAdminsOfPendingRegistration(user);
     return this.pendingApprovalResponse(user);
   }
 
@@ -1183,6 +1185,47 @@ export class AuthService {
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       this.logger.warn(`Welcome email failed for ${user.email}: ${message}`);
+    }
+  }
+
+  private async notifySuperAdminsOfPendingRegistration(user: Users): Promise<void> {
+    try {
+      const recipients =
+        await this.permissionsService.listSuperAdminRecipients();
+      if (recipients.length === 0) {
+        return;
+      }
+
+      const adminUrl =
+        this.config.get<string>('NEXT_PUBLIC_ADMIN_URL')?.replace(/\/$/, '') ||
+        (process.env.NODE_ENV === 'production'
+          ? 'https://app-africatourismgate.org'
+          : 'http://localhost:3001');
+      const reviewUrl = `${adminUrl}/utilisateurs?status=suspended&withoutRole=1`;
+      const applicantName =
+        [user.firstName, user.lastName].filter(Boolean).join(' ') || user.email;
+
+      for (const recipient of recipients) {
+        const result = await this.emailService.sendAdminPendingRegistrationReview(
+          {
+            to: recipient.email,
+            firstName: recipient.firstName,
+            applicantName,
+            applicantEmail: user.email,
+            reviewUrl,
+          },
+        );
+        if (!result.sent) {
+          this.logger.warn(
+            `Pending registration alert was not sent to ${recipient.email}`,
+          );
+        }
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      this.logger.warn(
+        `Pending registration alert failed for ${user.email}: ${message}`,
+      );
     }
   }
 }
