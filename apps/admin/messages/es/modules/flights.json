@@ -33,59 +33,59 @@
     "noPermissionBookings": "La exportación de reservas requiere acceso a reservas."
   },
   "columns": {
-    "flightNumber": "Code vol",
+    "flightNumber": "Código de vuelo",
     "airline": "Aerolínea",
-    "route": "Trajet",
+    "route": "Ruta",
     "departure": "Salida"
   },
   "form": {
-    "submitCreate": "Créer le vol",
+    "submitCreate": "Crear vuelo",
     "airline": "Aerolínea",
-    "flightNumber": "Code vol",
-    "flightNumberHint": "Ex. ET302, 9S101",
+    "flightNumber": "Código de vuelo",
+    "flightNumberHint": "Ej. ET302, 9S101",
     "departure": "Salida",
-    "arrival": "Arrivée",
-    "departureTime": "Heure de départ",
-    "arrivalTime": "Heure d'arrivée",
-    "durationMinutes": "Desderée (minutes)",
-    "durationHint": "Ex. 390 pour 6 h 30",
+    "arrival": "Llegada",
+    "departureTime": "Hora de salida",
+    "arrivalTime": "Hora de llegada",
+    "durationMinutes": "Duración (minutos)",
+    "durationHint": "Ej. 390 para 6 h 30",
     "validation": {
-      "airlineRequired": "Aerolínea obligatoire.",
-      "flightNumberRequired": "Code vol obligatoire.",
-      "departureAirportRequired": "Aeropuerto de départ obligatoire.",
-      "arrivalAirportRequired": "Aeropuerto d'arrivée obligatoire.",
-      "airportsMustDiffer": "Le départ et l'arrivée doivent être différents.",
-      "departureTimeRequired": "Heure de départ obligatoire.",
-      "arrivalTimeRequired": "Heure d'arrivée obligatoire."
+      "airlineRequired": "La aerolínea es obligatoria.",
+      "flightNumberRequired": "El código de vuelo es obligatorio.",
+      "departureAirportRequired": "El aeropuerto de salida es obligatorio.",
+      "arrivalAirportRequired": "El aeropuerto de llegada es obligatorio.",
+      "airportsMustDiffer": "La salida y la llegada deben ser diferentes.",
+      "departureTimeRequired": "La hora de salida es obligatoria.",
+      "arrivalTimeRequired": "La hora de llegada es obligatoria."
     }
   },
   "detail": {
-    "title": "Modifier le vol",
-    "backLink": "Volver aux vols",
-    "tabsAria": "Sections du vol",
+    "title": "Editar vuelo",
+    "backLink": "Volver a vuelos",
+    "tabsAria": "Secciones del vuelo",
     "tabs": {
       "flight": "Vuelo",
-      "classes": "Classes"
+      "classes": "Clases"
     },
-    "timelineAria": "Trajet du vol",
-    "durationAria": "Desderée du vol : {label}"
+    "timelineAria": "Ruta del vuelo",
+    "durationAria": "Duración del vuelo: {label}"
   },
   "sections": {
     "classes": {
-      "title": "Classes cabine",
-      "intro": "Camarotes et tarifs de base pour ce vol.",
-      "addClass": "Ajouter une classe",
-      "newClass": "Nouvelle classe",
-      "editClass": "Modifier la classe",
-      "cabinType": "Tipo de cabine",
-      "totalSeats": "Sièges totaux",
-      "empty": "Ninguna classe cabine.",
-      "deleteConfirm": "Supprimer cette classe ?"
+      "title": "Clases de cabina",
+      "intro": "Cabinas y tarifas base para este vuelo.",
+      "addClass": "Añadir una clase",
+      "newClass": "Nueva clase",
+      "editClass": "Editar clase",
+      "cabinType": "Tipo de cabina",
+      "totalSeats": "Asientos totales",
+      "empty": "Ninguna clase de cabina.",
+      "deleteConfirm": "¿Eliminar esta clase?"
     },
     "availability": {
       "title": "Disponibilidad",
-      "backToFlight": "Volver au vol",
-      "classMismatch": "Cette classe n'appartient pas à ce vol."
+      "backToFlight": "Volver al vuelo",
+      "classMismatch": "Esta clase no pertenece a este vuelo."
     }
   },
   "referential": {
@@ -124,19 +124,19 @@
   "stats": {
     "flights": {
       "label": "Vuelos",
-      "subtitle": "Líneas catalogue"
+      "subtitle": "Líneas de catálogo"
     },
     "classes": {
-      "label": "Classes cabine",
-      "subtitle": "Tarifs par vol"
+      "label": "Clases de cabina",
+      "subtitle": "Tarifas por vuelo"
     },
     "airlines": {
       "label": "Aerolíneas",
-      "subtitle": "Référentiel IATA"
+      "subtitle": "Directorio IATA"
     },
     "airports": {
       "label": "Aeropuertos",
-      "subtitle": "Référentiel mondial"
+      "subtitle": "Directorio mundial"
     }
   }
 }

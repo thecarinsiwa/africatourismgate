@@ -33,59 +33,59 @@
     "noPermissionBookings": "Bookings export requires bookings access."
   },
   "columns": {
-    "flightNumber": "Code vol",
+    "flightNumber": "Flight code",
     "airline": "Airline",
-    "route": "Trajet",
+    "route": "Route",
     "departure": "Departure"
   },
   "form": {
-    "submitCreate": "Créer le vol",
+    "submitCreate": "Create flight",
     "airline": "Airline",
-    "flightNumber": "Code vol",
-    "flightNumberHint": "Ex. ET302, 9S101",
+    "flightNumber": "Flight code",
+    "flightNumberHint": "E.g. ET302, 9S101",
     "departure": "Departure",
-    "arrival": "Arrivée",
-    "departureTime": "Heure de départ",
-    "arrivalTime": "Heure d'arrivée",
-    "durationMinutes": "Fromrée (minutes)",
-    "durationHint": "Ex. 390 pour 6 h 30",
+    "arrival": "Arrival",
+    "departureTime": "Departure time",
+    "arrivalTime": "Arrival time",
+    "durationMinutes": "Duration (minutes)",
+    "durationHint": "E.g. 390 for 6 h 30",
     "validation": {
-      "airlineRequired": "Airline obligatoire.",
-      "flightNumberRequired": "Code vol obligatoire.",
-      "departureAirportRequired": "Airport de départ obligatoire.",
-      "arrivalAirportRequired": "Airport d'arrivée obligatoire.",
-      "airportsMustDiffer": "Le départ et l'arrivée doivent être différents.",
-      "departureTimeRequired": "Heure de départ obligatoire.",
-      "arrivalTimeRequired": "Heure d'arrivée obligatoire."
+      "airlineRequired": "Airline is required.",
+      "flightNumberRequired": "Flight code is required.",
+      "departureAirportRequired": "Departure airport is required.",
+      "arrivalAirportRequired": "Arrival airport is required.",
+      "airportsMustDiffer": "Departure and arrival must be different.",
+      "departureTimeRequired": "Departure time is required.",
+      "arrivalTimeRequired": "Arrival time is required."
     }
   },
   "detail": {
-    "title": "Modifier le vol",
-    "backLink": "Back aux vols",
-    "tabsAria": "Sections du vol",
+    "title": "Edit flight",
+    "backLink": "Back to flights",
+    "tabsAria": "Flight sections",
     "tabs": {
       "flight": "Flight",
       "classes": "Classes"
     },
-    "timelineAria": "Trajet du vol",
-    "durationAria": "Fromrée du vol : {label}"
+    "timelineAria": "Flight route",
+    "durationAria": "Flight duration: {label}"
   },
   "sections": {
     "classes": {
-      "title": "Classes cabine",
-      "intro": "Cabins et tarifs de base pour ce vol.",
-      "addClass": "Ajouter une classe",
-      "newClass": "Nouvelle classe",
-      "editClass": "Modifier la classe",
-      "cabinType": "Type de cabine",
-      "totalSeats": "Sièges totaux",
-      "empty": "None classe cabine.",
-      "deleteConfirm": "Supprimer cette classe ?"
+      "title": "Cabin classes",
+      "intro": "Cabins and base fares for this flight.",
+      "addClass": "Add a class",
+      "newClass": "New class",
+      "editClass": "Edit class",
+      "cabinType": "Cabin type",
+      "totalSeats": "Total seats",
+      "empty": "No cabin classes yet.",
+      "deleteConfirm": "Delete this class?"
     },
     "availability": {
       "title": "Availability",
-      "backToFlight": "Back au vol",
-      "classMismatch": "Cette classe n'appartient pas à ce vol."
+      "backToFlight": "Back to flight",
+      "classMismatch": "This class does not belong to this flight."
     }
   },
   "referential": {
@@ -124,19 +124,19 @@
   "stats": {
     "flights": {
       "label": "Flights",
-      "subtitle": "Lines catalogue"
+      "subtitle": "Catalog lines"
     },
     "classes": {
-      "label": "Classes cabine",
-      "subtitle": "Tarifs par vol"
+      "label": "Cabin classes",
+      "subtitle": "Fares per flight"
     },
     "airlines": {
       "label": "Airlines",
-      "subtitle": "Référentiel IATA"
+      "subtitle": "IATA directory"
     },
     "airports": {
       "label": "Airports",
-      "subtitle": "Référentiel mondial"
+      "subtitle": "Global directory"
     }
   }
 }

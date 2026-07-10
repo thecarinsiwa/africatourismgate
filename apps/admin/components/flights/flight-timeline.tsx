@@ -1,7 +1,7 @@
 'use client';
 
 import { cn, DataTableBadge } from '@africatourismgate/ui';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import {
   formatDurationMinutes,
   formatFlightSchedule,
@@ -70,15 +70,15 @@ function AirportBlock({
 }
 
 function DurationConnector({
-  durationMinutes,
+  durationLabel,
   compact,
   durationAriaLabel,
 }: {
-  durationMinutes: number;
+  durationLabel: string;
   compact?: boolean;
   durationAriaLabel: string;
 }) {
-  const label = formatDurationMinutes(durationMinutes);
+  const label = durationLabel;
 
   if (compact) {
     return (
@@ -148,13 +148,13 @@ function CardAirportBlock({
 }
 
 function CardDurationConnector({
-  durationMinutes,
+  durationLabel,
   durationAriaLabel,
 }: {
-  durationMinutes: number;
+  durationLabel: string;
   durationAriaLabel: string;
 }) {
-  const label = formatDurationMinutes(durationMinutes);
+  const label = durationLabel;
 
   return (
     <div
@@ -188,10 +188,11 @@ export function FlightTimeline({
   variant,
   className,
 }: FlightTimelineProps) {
+  const locale = useLocale();
   const tDetail = useTranslations('modules.flights.detail');
   const tCommon = useTranslations('modules.common');
-  const schedule = formatFlightSchedule(departureTime, arrivalTime);
-  const durationLabel = formatDurationMinutes(durationMinutes);
+  const schedule = formatFlightSchedule(departureTime, arrivalTime, locale);
+  const durationLabel = formatDurationMinutes(durationMinutes, locale);
   const resolvedVariant: FlightTimelineVariant =
     variant ?? (compact ? 'compact' : 'default');
 
@@ -212,7 +213,7 @@ export function FlightTimeline({
           emptyDash={tCommon('empty.dash')}
         />
         <CardDurationConnector
-          durationMinutes={durationMinutes}
+          durationLabel={durationLabel}
           durationAriaLabel={tDetail('durationAria', { label: durationLabel })}
         />
         <CardAirportBlock
@@ -245,7 +246,7 @@ export function FlightTimeline({
         emptyDash={tCommon('empty.dash')}
       />
       <DurationConnector
-        durationMinutes={durationMinutes}
+        durationLabel={durationLabel}
         compact={isCompact}
         durationAriaLabel={tDetail('durationAria', { label: durationLabel })}
       />
