@@ -7,6 +7,7 @@ import { Button, DataTableBadge, Skeleton } from '@africatourismgate/ui';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { AdminPageBackLink } from '../admin-page-back-link';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
@@ -22,6 +23,8 @@ type VehicleEditPageProps = {
 
 export function VehicleEditPage({ vehicleId }: VehicleEditPageProps) {
   const { locations: getLocationsErrorMessage } = useAdminErrorMessages();
+  const searchParams = useSearchParams();
+  const autoOpenAvailabilityAdd = searchParams.get('availability') === 'add';
   const t = useTranslations('modules.locations.detail');
   const [state, setState] = useState<
     | { status: 'loading' }
@@ -154,7 +157,10 @@ export function VehicleEditPage({ vehicleId }: VehicleEditPageProps) {
 
       <VehicleForm mode="edit" vehicleId={vehicleId} initialVehicle={vehicle} />
       <VehicleImagesSection vehicleId={vehicleId} embedded />
-      <VehicleAvailabilitySection vehicleId={vehicleId} />
+      <VehicleAvailabilitySection
+        vehicleId={vehicleId}
+        autoOpenAdd={autoOpenAvailabilityAdd}
+      />
     </div>
   );
 }

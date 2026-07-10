@@ -13,7 +13,7 @@ import {
 } from '@africatourismgate/ui';
 import type { VehicleAvailability, VehicleAvailabilityStatus } from '@africatourismgate/types';
 import { useLocale, useTranslations } from 'next-intl';
-import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import {
   fromDatetimeLocalValue,
@@ -39,9 +39,13 @@ const emptyForm: FormValues = {
 
 type VehicleAvailabilitySectionProps = {
   vehicleId: string;
+  autoOpenAdd?: boolean;
 };
 
-export function VehicleAvailabilitySection({ vehicleId }: VehicleAvailabilitySectionProps) {
+export function VehicleAvailabilitySection({
+  vehicleId,
+  autoOpenAdd = false,
+}: VehicleAvailabilitySectionProps) {
   const locale = useLocale();
   const { locations: getLocationsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.locations.sections.availability');
@@ -50,6 +54,7 @@ export function VehicleAvailabilitySection({ vehicleId }: VehicleAvailabilitySec
   const statusLabels = useVehicleAvailabilityStatusLabels();
   const statusOptions = useVehicleAvailabilityStatusOptions();
   const statusId = useId();
+  const sectionRef = useRef<HTMLElement>(null);
   const [filterStart, setFilterStart] = useState('');
   const [filterEnd, setFilterEnd] = useState('');
   const [state, setState] = useState<
@@ -100,6 +105,15 @@ export function VehicleAvailabilitySection({ vehicleId }: VehicleAvailabilitySec
   useEffect(() => {
     void load();
   }, [load]);
+
+  useEffect(() => {
+    if (!autoOpenAdd) return;
+    setEditing(null);
+    setFormValues(emptyForm);
+    setFormError(null);
+    setShowForm(true);
+    sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [autoOpenAdd]);
 
   function resetForm() {
     setFormValues(emptyForm);
@@ -199,7 +213,11 @@ export function VehicleAvailabilitySection({ vehicleId }: VehicleAvailabilitySec
     'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg';
 
   return (
-    <section className="mt-12 space-y-6 border-t border-atg-border pt-10">
+    <section
+      ref={sectionRef}
+      id="vehicle-availability"
+      className="mt-12 space-y-6 border-t border-atg-border pt-10"
+    >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>

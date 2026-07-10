@@ -52,6 +52,7 @@ export function VehiclesList() {
   const tDataTable = useTranslations('modules.common.dataTable');
   const tDialogs = useTranslations('modules.locations.dialogs');
   const tExports = useTranslations('modules.locations.exports');
+  const tAvailability = useTranslations('modules.locations.sections.availability');
   const tCommon = useTranslations('modules.common');
   const tActions = useTranslations('common.actions');
   const tToast = useTranslations('modules.common.toast');
@@ -228,6 +229,11 @@ export function VehiclesList() {
           href={`/produits/locations/${vehicle.id}`}
         />
         <DataTableActionButton
+          action="calendar"
+          label={tAvailability('addSlot')}
+          href={`/produits/locations/${vehicle.id}?availability=add`}
+        />
+        <DataTableActionButton
           action="delete"
           label={tActions('delete')}
           onClick={() => setPendingDelete(vehicle)}
@@ -236,7 +242,7 @@ export function VehiclesList() {
         />
       </DataTableActions>
     ),
-    [deletingId, tActions],
+    [deletingId, tActions, tAvailability],
   );
 
   const columns = useMemo<ColumnDef<Vehicle, unknown>[]>(
