@@ -5,7 +5,7 @@ import { DeepPartial, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import { OrgScopeService } from '../../../common/org-scope/org-scope.service';
 import { CrudService } from '../../../common/crud/crud.service';
-import { Users } from '../../../entities/generated';
+import { Roles, UserRoleAssignments, Users } from '../../../entities/generated';
 import { AuthUserDto } from '../../auth/dto/auth-user.dto';
 import { EmailService } from '../../email/email.service';
 import { resolvePdfLocale } from '../../email/booking-detail-pdf.labels';
@@ -18,6 +18,8 @@ export class UsersService extends CrudService<Users> {
   constructor(
     @InjectRepository(Users)
     private readonly usersRepository: Repository<Users>,
+    @InjectRepository(UserRoleAssignments)
+    private readonly roleAssignmentsRepository: Repository<UserRoleAssignments>,
     private readonly orgScopeService: OrgScopeService,
     private readonly emailService: EmailService,
     private readonly config: ConfigService,
@@ -37,7 +39,7 @@ export class UsersService extends CrudService<Users> {
     const saved = await super.update(id, dto, actorUserId);
 
     if (shouldNotifyActivation && saved.status === 'active') {
-      void this.notifyAccountActivated(saved);
+      await this.notifyAccountActivated(saved);
     }
 
     return saved;
@@ -109,6 +111,24 @@ export class UsersService extends CrudService<Users> {
     };
   }
 
+  private async listActiveRoleNames(userId: string): Promise<string[]> {
+    const rows = await this.roleAssignmentsRepository
+      .createQueryBuilder('ura')
+      .innerJoin(Roles, 'role', 'role.id = ura.roleId')
+      .select('role.name', 'name')
+      .where('ura.userId = :userId', { userId })
+      .andWhere('ura.deletedAt IS NULL')
+      .andWhere('ura.revokedAt IS NULL')
+      .andWhere('(ura.expiresAt IS NULL OR ura.expiresAt > :now)', {
+        now: new Date(),
+      })
+      .andWhere('role.deletedAt IS NULL')
+      .orderBy('role.name', 'ASC')
+      .getRawMany<{ name: string }>();
+
+    return rows.map((row) => row.name).filter((name) => Boolean(name?.trim()));
+  }
+
   private async notifyAccountActivated(user: Users): Promise<void> {
     try {
       const adminUrl =
@@ -116,11 +136,13 @@ export class UsersService extends CrudService<Users> {
         (process.env.NODE_ENV === 'production'
           ? 'https://app-africatourismgate.org'
           : 'http://localhost:3001');
+      const roles = await this.listActiveRoleNames(user.id);
       const result = await this.emailService.sendAdminAccountActivated({
         to: user.email,
         firstName: user.firstName,
         loginUrl: `${adminUrl}/login`,
         locale: resolvePdfLocale(user.preferredLanguage),
+        roles,
       });
       if (!result.sent) {
         this.logger.warn(

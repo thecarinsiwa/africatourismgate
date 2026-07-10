@@ -109,6 +109,18 @@ describe('Auth (e2e)', () => {
 
     const userId = register.body.user.id as string;
     const { accessToken } = await loginAsSeedAdmin(app);
+
+    await request(app.getHttpServer())
+      .post(apiPath('/user-role-assignments'))
+      .set(authHeader(accessToken))
+      .send({
+        userId,
+        roleId: '00000000-0000-4000-8000-000000000101',
+        scopeType: 'agency',
+        scopeId: '00000000-0000-4000-8000-000000000001',
+      })
+      .expect(201);
+
     const emailService = app.get(EmailService);
     const sendSpy = jest
       .spyOn(emailService, 'sendAdminAccountActivated')
@@ -125,6 +137,7 @@ describe('Auth (e2e)', () => {
         to: email,
         firstName: 'Activate',
         locale: 'en',
+        roles: ['Organization administrator'],
         loginUrl: expect.stringContaining('/login'),
       }),
     );

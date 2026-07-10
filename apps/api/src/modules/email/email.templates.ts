@@ -413,6 +413,7 @@ const ADMIN_ACCOUNT_ACTIVATED_COPY: Record<
     body: string;
     cta: string;
     roleHint: string;
+    rolesLabel: string;
     preheader: string;
     textIntro: string;
     textSignInLabel: string;
@@ -426,6 +427,7 @@ const ADMIN_ACCOUNT_ACTIVATED_COPY: Record<
     body: "Votre demande d'accès au back-office Africa Tourism Gate a été approuvée. Vous pouvez maintenant vous connecter avec votre compte Google Gmail ou votre mot de passe.",
     cta: 'Se connecter au back-office',
     roleHint: "Si vous n'avez pas encore de rôle attribué, contactez votre administrateur.",
+    rolesLabel: 'Rôles attribués',
     preheader: 'Votre compte admin est prêt — connectez-vous au back-office.',
     textIntro: 'Votre accès au back-office Africa Tourism Gate est activé.',
     textSignInLabel: 'Connexion',
@@ -438,6 +440,7 @@ const ADMIN_ACCOUNT_ACTIVATED_COPY: Record<
     body: 'Your Africa Tourism Gate back-office access request has been approved. You can now sign in with your Gmail Google account or your password.',
     cta: 'Sign in to the back office',
     roleHint: 'If you have not been assigned a role yet, contact your administrator.',
+    rolesLabel: 'Assigned roles',
     preheader: 'Your admin account is ready — sign in to the back office.',
     textIntro: 'Your Africa Tourism Gate back-office access is now active.',
     textSignInLabel: 'Sign in',
@@ -450,12 +453,29 @@ const ADMIN_ACCOUNT_ACTIVATED_COPY: Record<
     body: 'Su solicitud de acceso al back office de Africa Tourism Gate ha sido aprobada. Ya puede iniciar sesión con su cuenta Google Gmail o su contraseña.',
     cta: 'Iniciar sesión en el back office',
     roleHint: 'Si aún no tiene un rol asignado, contacte a su administrador.',
+    rolesLabel: 'Roles asignados',
     preheader: 'Su cuenta admin está lista — inicie sesión en el back office.',
     textIntro: 'Su acceso al back office de Africa Tourism Gate está activado.',
     textSignInLabel: 'Iniciar sesión',
     defaultName: 'Usuario',
   },
 };
+
+function adminActivatedRolesListHtml(roles: string[]): string {
+  if (roles.length === 0) {
+    return '';
+  }
+  return `<ul style="margin:8px 0 16px;padding-left:20px;line-height:1.6;">${roles
+    .map((role) => `<li style="font-size:15px;color:${BRAND.text};">${escapeHtml(role)}</li>`)
+    .join('')}</ul>`;
+}
+
+function adminActivatedRolesListText(roles: string[]): string {
+  if (roles.length === 0) {
+    return '';
+  }
+  return `\n${roles.map((role) => `  - ${role}`).join('\n')}`;
+}
 
 export function renderAdminAccountActivatedEmail(
   payload: AdminAccountActivatedEmailPayload,
@@ -465,18 +485,27 @@ export function renderAdminAccountActivatedEmail(
   const copy = ADMIN_ACCOUNT_ACTIVATED_COPY[locale];
   const name = escapeHtml(payload.firstName.trim() || copy.defaultName);
   const loginUrl = payload.loginUrl;
+  const roles = payload.roles ?? [];
+  const rolesSection =
+    roles.length > 0
+      ? `${paragraph(`<strong>${escapeHtml(copy.rolesLabel)}</strong>`)}${adminActivatedRolesListHtml(roles)}`
+      : paragraph(copy.roleHint);
 
   const html = layout(
     copy.subject,
     `${headline(copy.headline, branding)}
 ${paragraph(`${copy.greeting} <strong>${name}</strong>,`)}
 ${paragraph(copy.body)}
-${ctaButton(loginUrl, copy.cta, branding)}
-${paragraph(copy.roleHint)}`,
+${rolesSection}
+${ctaButton(loginUrl, copy.cta, branding)}`,
     branding,
     { preheader: copy.preheader },
   );
-  const text = `${copy.greeting} ${payload.firstName},\n\n${copy.textIntro}\n\n${copy.textSignInLabel} : ${loginUrl}`;
+  const rolesText =
+    roles.length > 0
+      ? `\n\n${copy.rolesLabel}:${adminActivatedRolesListText(roles)}`
+      : `\n\n${copy.roleHint}`;
+  const text = `${copy.greeting} ${payload.firstName},\n\n${copy.textIntro}${rolesText}\n\n${copy.textSignInLabel} : ${loginUrl}`;
   return { subject: copy.subject, html, text };
 }
 
