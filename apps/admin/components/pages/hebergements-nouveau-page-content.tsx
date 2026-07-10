@@ -5,7 +5,11 @@ import { AdminIntroPage } from './admin-intro-page';
 
 export function NouvelHebergementPageContent() {
   return (
-    <AdminIntroPage routePath="hebergements/nouveau">
+    <AdminIntroPage
+      routePath="hebergements/nouveau"
+      backHref="/hebergements"
+      backLabelKey="backLabel"
+    >
       <PropertyForm mode="create" />
     </AdminIntroPage>
   );

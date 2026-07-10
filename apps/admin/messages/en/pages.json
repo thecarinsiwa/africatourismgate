@@ -60,7 +60,8 @@
     "description": "Properties, rooms and amenities. Filter by destination.",
     "nouveau": {
       "metaTitle": "New accommodation",
-      "description": "Create the property then add images, amenities and rooms."
+      "description": "Create the property then add images, amenities and rooms.",
+      "backLabel": "Back to accommodations"
     },
     "id": {
       "metaTitle": "Edit accommodation",

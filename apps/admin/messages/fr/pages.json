@@ -60,7 +60,8 @@
     "description": "Propriétés, chambres et équipements. Filtrez par destination.",
     "nouveau": {
       "metaTitle": "Nouvel hébergement",
-      "description": "Créez la propriété puis ajoutez images, équipements et chambres."
+      "description": "Créez la propriété puis ajoutez images, équipements et chambres.",
+      "backLabel": "Retour aux hébergements"
     },
     "id": {
       "metaTitle": "Modifier l'hébergement",

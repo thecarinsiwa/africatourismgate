@@ -60,7 +60,8 @@
     "description": "Propiedades, habitaciones y equipamientos. Filtre por destino.",
     "nouveau": {
       "metaTitle": "Nuevo alojamiento",
-      "description": "Cree la propiedad y luego añada imágenes, equipamientos y habitaciones."
+      "description": "Cree la propiedad y luego añada imágenes, equipamientos y habitaciones.",
+      "backLabel": "Volver a alojamientos"
     },
     "id": {
       "metaTitle": "Editar alojamiento",
