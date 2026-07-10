@@ -162,10 +162,6 @@ export function DashboardTrendChart({ className }: { className?: string }) {
     };
   }, [canReadBookings, canReadPayments, canShowChart, period, permissionsLoading]);
 
-  if (permissionsLoading || !canShowChart || state.status === 'hidden') {
-    return null;
-  }
-
   const rows = useMemo<ChartRow[] | null>(() => {
     if (state.status !== 'ready') return null;
     return state.points.map((point) => ({
@@ -188,6 +184,10 @@ export function DashboardTrendChart({ className }: { className?: string }) {
   }, [rows]);
 
   const chartKey = `${chartTheme.bookings}-${chartTheme.revenue}-${chartTheme.tick}`;
+
+  if (permissionsLoading || !canShowChart || state.status === 'hidden') {
+    return null;
+  }
 
   return (
     <Card variant="dashboard" padding="sm" className={className}>
