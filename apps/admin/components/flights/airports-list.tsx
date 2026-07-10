@@ -10,6 +10,7 @@ import {
   DataTableActions,
   DataTablePagination,
   Input,
+  Modal,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { Airport } from '@africatourismgate/types';
@@ -91,6 +92,23 @@ export function AirportsList() {
     return () => window.clearTimeout(timer);
   }, [searchInput]);
 
+  function openForm(airport?: Airport) {
+    if (airport) {
+      setEditing(airport);
+      setFormValues({
+        iataCode: airport.iataCode,
+        name: airport.name,
+        city: airport.city,
+        countryCode: airport.countryCode,
+      });
+    } else {
+      setEditing(null);
+      setFormValues(emptyForm);
+    }
+    setFormError(null);
+    setShowForm(true);
+  }
+
   function resetForm() {
     setFormValues(emptyForm);
     setEditing(null);
@@ -164,16 +182,7 @@ export function AirportsList() {
           <DataTableActions>
             <DataTableActionButton
               action="edit"
-              onClick={() => {
-                setEditing(row.original);
-                setFormValues({
-                  iataCode: row.original.iataCode,
-                  name: row.original.name,
-                  city: row.original.city,
-                  countryCode: row.original.countryCode,
-                });
-                setShowForm(true);
-              }}
+              onClick={() => openForm(row.original)}
             />
             <DataTableActionButton
               action="delete"
@@ -210,71 +219,68 @@ export function AirportsList() {
         placeholder={t('searchPlaceholder')}
         ariaLabel={t('searchAria')}
         action={
-          !showForm ? (
-            <Button
-              type="button"
-              onClick={() => {
-                resetForm();
-                setShowForm(true);
-              }}
-            >
-              {t('new')}
-            </Button>
-          ) : undefined
+          <Button type="button" onClick={() => openForm()}>
+            {t('new')}
+          </Button>
         }
       />
 
-      {showForm ? (
-        <Card variant="dashboard" className="max-w-2xl">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <h3 className="text-sm font-medium">{editing ? t('edit') : t('new')}</h3>
-            {formError ? (
-              <p role="alert" className="text-sm text-red-600">
-                {formError}
-              </p>
-            ) : null}
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Input
-                label={tCommon('columns.iata')}
-                maxLength={3}
-                value={formValues.iataCode}
-                onChange={(e) =>
-                  setFormValues((p) => ({ ...p, iataCode: e.target.value.toUpperCase() }))
-                }
-              />
-              <Input
-                label={t('countryCode')}
-                maxLength={2}
-                value={formValues.countryCode}
-                onChange={(e) =>
-                  setFormValues((p) => ({
-                    ...p,
-                    countryCode: e.target.value.toUpperCase(),
-                  }))
-                }
-              />
-            </div>
+      <Modal
+        open={showForm}
+        onOpenChange={(open) => {
+          if (!open && !submitting) resetForm();
+        }}
+        title={editing ? t('edit') : t('new')}
+        showClose
+        className="max-w-2xl"
+      >
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {formError ? (
+            <p role="alert" className="text-sm text-red-600">
+              {formError}
+            </p>
+          ) : null}
+          <div className="grid gap-4 sm:grid-cols-2">
             <Input
-              label={tCommon('columns.name')}
-              value={formValues.name}
-              onChange={(e) => setFormValues((p) => ({ ...p, name: e.target.value }))}
+              label={tCommon('columns.iata')}
+              maxLength={3}
+              value={formValues.iataCode}
+              onChange={(e) =>
+                setFormValues((p) => ({ ...p, iataCode: e.target.value.toUpperCase() }))
+              }
             />
             <Input
-              label={tCommon('columns.city')}
-              value={formValues.city}
-              onChange={(e) => setFormValues((p) => ({ ...p, city: e.target.value }))}
+              label={t('countryCode')}
+              maxLength={2}
+              value={formValues.countryCode}
+              onChange={(e) =>
+                setFormValues((p) => ({
+                  ...p,
+                  countryCode: e.target.value.toUpperCase(),
+                }))
+              }
             />
-            <div className="flex gap-3">
-              <Button type="submit" loading={submitting}>
-                {editing ? tActions('save') : tActions('create')}
-              </Button>
-              <Button type="button" variant="outline" onClick={resetForm}>
-                {tActions('cancel')}
-              </Button>
-            </div>
-          </form>
-        </Card>
-      ) : null}
+          </div>
+          <Input
+            label={tCommon('columns.name')}
+            value={formValues.name}
+            onChange={(e) => setFormValues((p) => ({ ...p, name: e.target.value }))}
+          />
+          <Input
+            label={tCommon('columns.city')}
+            value={formValues.city}
+            onChange={(e) => setFormValues((p) => ({ ...p, city: e.target.value }))}
+          />
+          <div className="flex justify-end gap-3">
+            <Button type="button" variant="outline" onClick={resetForm} disabled={submitting}>
+              {tActions('cancel')}
+            </Button>
+            <Button type="submit" loading={submitting}>
+              {editing ? tActions('save') : tActions('create')}
+            </Button>
+          </div>
+        </form>
+      </Modal>
 
       {state.status === 'error' ? (
         <p role="alert" className="text-sm text-red-600">
