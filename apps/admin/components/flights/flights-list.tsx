@@ -150,18 +150,26 @@ export function FlightsList() {
   );
 
   const renderFlightRoute = useCallback(
-    (flight: Flight, compact?: boolean) => {
+    (
+      flight: Flight,
+      options?: { compact?: boolean; variant?: 'default' | 'compact' | 'card' },
+    ) => {
       const dep = airportById.get(flight.departureAirportId) ?? null;
       const arr = airportById.get(flight.arrivalAirportId) ?? null;
+      const compact = options?.compact ?? false;
+      const variant = options?.variant ?? (compact ? 'compact' : 'default');
       return (
         <FlightTimeline
           compact={compact}
+          variant={variant}
           departureAirport={dep}
           arrivalAirport={arr}
           departureTime={flight.departureTime}
           arrivalTime={flight.arrivalTime}
           durationMinutes={flight.durationMinutes}
-          className={compact ? 'min-w-0' : 'min-w-[12rem]'}
+          className={
+            variant === 'card' ? 'min-w-0' : compact ? 'min-w-0' : 'min-w-[12rem]'
+          }
         />
       );
     },
@@ -224,7 +232,7 @@ export function FlightsList() {
       {
         id: 'route',
         header: tColumns('route'),
-        cell: ({ row }) => renderFlightRoute(row.original, true),
+        cell: ({ row }) => renderFlightRoute(row.original, { compact: true }),
       },
       {
         id: 'actions',
@@ -302,7 +310,7 @@ export function FlightsList() {
               {flights.map((flight) => {
                 const airline = airlineById.get(flight.airlineId);
                 return (
-                  <li key={flight.id}>
+                  <li key={flight.id} className="min-w-0">
                     <Card variant="dashboard" className="flex h-full flex-col gap-4 p-4">
                       <div className="flex items-start gap-3">
                         <FlightThumbnail
@@ -310,20 +318,22 @@ export function FlightsList() {
                           label={flight.flightNumber}
                           size="md"
                         />
-                        <div className="min-w-0 flex-1 space-y-1">
-                          <code className="rounded-md bg-atg-surface px-2 py-0.5 font-mono text-sm font-semibold text-atg-fg ring-1 ring-atg-border/60">
-                            {flight.flightNumber}
-                          </code>
-                          <p className="truncate text-sm font-medium text-atg-fg">
+                        <div className="min-w-0 flex-1 space-y-1.5">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <code className="rounded-md bg-atg-surface px-2 py-0.5 font-mono text-sm font-semibold text-atg-fg ring-1 ring-atg-border/60">
+                              {flight.flightNumber}
+                            </code>
+                            {airline?.iataCode ? (
+                              <DataTableBadge variant="muted">{airline.iataCode}</DataTableBadge>
+                            ) : null}
+                          </div>
+                          <p className="line-clamp-2 text-sm font-medium leading-snug text-atg-fg">
                             {airline?.name ?? emptyDash}
                           </p>
-                          {airline?.iataCode ? (
-                            <DataTableBadge variant="muted">{airline.iataCode}</DataTableBadge>
-                          ) : null}
                         </div>
                       </div>
-                      <div className="rounded-lg border border-atg-border/70 bg-atg-surface/50 p-3">
-                        {renderFlightRoute(flight)}
+                      <div className="min-h-[7.5rem] rounded-lg border border-atg-border/70 bg-atg-surface/50 p-3">
+                        {renderFlightRoute(flight, { variant: 'card' })}
                       </div>
                       <div className="mt-auto flex justify-end border-t border-atg-border pt-3">
                         {renderFlightActions(flight)}
@@ -358,7 +368,9 @@ export function FlightsList() {
                               {airline?.name ?? emptyDash}
                             </span>
                           </div>
-                          <div className="mt-2 max-w-xl">{renderFlightRoute(flight, true)}</div>
+                          <div className="mt-2 max-w-xl">
+                            {renderFlightRoute(flight, { compact: true })}
+                          </div>
                         </div>
                       </div>
                       <div className="flex shrink-0 justify-end">{renderFlightActions(flight)}</div>
