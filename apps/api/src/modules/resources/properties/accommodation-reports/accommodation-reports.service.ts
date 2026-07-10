@@ -2,7 +2,6 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
-  NotImplementedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository, SelectQueryBuilder } from 'typeorm';
@@ -37,6 +36,16 @@ import {
 } from './excel/accommodation-workbook.builder';
 import { resolveAccommodationReportLocale } from './labels/accommodation-reports.labels';
 import { accommodationWorkbookFilename } from './labels/accommodation-workbook.labels';
+import {
+  bookingsPdfFilename,
+  catalogPdfFilename,
+  kpiSummaryPdfFilename,
+  propertyDossierPdfFilename,
+} from './labels/accommodation-pdf.labels';
+import { renderBookingsPdf } from './pdf/bookings.renderer';
+import { renderCatalogPdf } from './pdf/catalog.renderer';
+import { renderKpiSummaryPdf } from './pdf/kpi-summary.renderer';
+import { renderPropertyDossierPdf } from './pdf/property-dossier.renderer';
 
 export type AccommodationReportFile = {
   buffer: Buffer;
@@ -179,26 +188,63 @@ export class AccommodationReportsService {
   async generateKpiSummaryPdf(
     query: AccommodationReportsScopeQueryDto,
   ): Promise<AccommodationReportFile> {
-    await this.loadReportScope(query);
-    await this.resolvePdfBrandingContext(query.locale);
-    throw new NotImplementedException('KPI summary PDF export is not implemented yet.');
+    const [scope, branding] = await Promise.all([
+      this.loadReportScope(query),
+      this.resolvePdfBrandingContext(query.locale),
+    ]);
+    const data = await this.loadKpiSummary(scope);
+    const buffer = await renderKpiSummaryPdf({ ...branding, data });
+
+    return {
+      buffer,
+      filename: kpiSummaryPdfFilename(),
+      contentType: 'application/pdf',
+    };
   }
 
   async generateCatalogPdf(
     query: AccommodationReportsScopeQueryDto,
   ): Promise<AccommodationReportFile> {
-    await this.loadReportScope(query);
-    await this.resolvePdfBrandingContext(query.locale);
-    throw new NotImplementedException('Catalog PDF export is not implemented yet.');
+    const [scope, branding] = await Promise.all([
+      this.loadReportScope(query),
+      this.resolvePdfBrandingContext(query.locale),
+    ]);
+    const rows = await this.loadCatalogPdfRows(scope);
+    const buffer = await renderCatalogPdf({ ...branding, rows });
+
+    return {
+      buffer,
+      filename: catalogPdfFilename(),
+      contentType: 'application/pdf',
+    };
   }
 
   async generateBookingsPdf(
     query: AccommodationReportsDatedQueryDto,
   ): Promise<AccommodationReportFile> {
     this.assertValidDateRange(query.dateFrom, query.dateTo);
-    await this.loadReportScope(query);
-    await this.resolvePdfBrandingContext(query.locale);
-    throw new NotImplementedException('Bookings PDF export is not implemented yet.');
+
+    const [scope, branding] = await Promise.all([
+      this.loadReportScope(query),
+      this.resolvePdfBrandingContext(query.locale),
+    ]);
+    const rows = await this.loadScopedBookingRows(
+      scope.propertyIds,
+      query.dateFrom,
+      query.dateTo,
+    );
+    const buffer = await renderBookingsPdf({
+      ...branding,
+      dateFrom: query.dateFrom,
+      dateTo: query.dateTo,
+      rows,
+    });
+
+    return {
+      buffer,
+      filename: bookingsPdfFilename(query.dateFrom, query.dateTo),
+      contentType: 'application/pdf',
+    };
   }
 
   async generatePropertyDossierPdf(
@@ -212,8 +258,215 @@ export class AccommodationReportsService {
       throw new NotFoundException(`Property ${propertyId} not found.`);
     }
 
-    await this.resolvePdfBrandingContext(localeInput);
-    throw new NotImplementedException('Property dossier PDF export is not implemented yet.');
+    const [branding, destinationNameById, rooms, amenities] = await Promise.all([
+      this.resolvePdfBrandingContext(localeInput),
+      this.loadDestinationNameMap([property.destinationId]),
+      this.loadPropertyDossierRooms(propertyId),
+      this.loadPropertyDossierAmenities(propertyId),
+    ]);
+
+    const scopedProperty: ScopedPropertyRow = {
+      ...property,
+      destinationName: destinationNameById.get(property.destinationId) ?? '',
+    };
+
+    const buffer = await renderPropertyDossierPdf({
+      ...branding,
+      property: scopedProperty,
+      rooms,
+      amenities,
+    });
+
+    return {
+      buffer,
+      filename: propertyDossierPdfFilename(property.slug),
+      contentType: 'application/pdf',
+    };
+  }
+
+  private async loadKpiSummary(scope: AccommodationReportScope) {
+    const propertyIds = scope.propertyIds;
+    const byTypeMap = new Map<string, number>();
+
+    for (const property of scope.properties) {
+      byTypeMap.set(property.propertyType, (byTypeMap.get(property.propertyType) ?? 0) + 1);
+    }
+
+    if (propertyIds.length === 0) {
+      return {
+        propertiesCount: 0,
+        roomsCount: 0,
+        amenitiesCount: 0,
+        destinationsCount: 0,
+        byPropertyType: [],
+      };
+    }
+
+    const [roomsCount, amenitiesCount] = await Promise.all([
+      this.roomsRepository
+        .createQueryBuilder('room')
+        .where('room.deletedAt IS NULL')
+        .andWhere('room.propertyId IN (:...propertyIds)', { propertyIds })
+        .getCount(),
+      this.propertyAmenitiesRepository
+        .createQueryBuilder('propertyAmenity')
+        .innerJoin(
+          Amenities,
+          'amenity',
+          'amenity.id = propertyAmenity.amenityId AND amenity.deletedAt IS NULL',
+        )
+        .where('propertyAmenity.deletedAt IS NULL')
+        .andWhere('propertyAmenity.propertyId IN (:...propertyIds)', { propertyIds })
+        .select('COUNT(DISTINCT amenity.id)', 'count')
+        .getRawOne<{ count: string }>(),
+    ]);
+
+    return {
+      propertiesCount: scope.properties.length,
+      roomsCount,
+      amenitiesCount: Number(amenitiesCount?.count ?? 0),
+      destinationsCount: new Set(scope.properties.map((property) => property.destinationId)).size,
+      byPropertyType: [...byTypeMap.entries()]
+        .map(([propertyType, count]) => ({ propertyType, count }))
+        .sort((a, b) => a.propertyType.localeCompare(b.propertyType)),
+    };
+  }
+
+  private async loadCatalogPdfRows(scope: AccommodationReportScope) {
+    if (scope.propertyIds.length === 0) {
+      return [];
+    }
+
+    const roomCounts = await this.roomsRepository
+      .createQueryBuilder('room')
+      .select('room.propertyId', 'propertyId')
+      .addSelect('COUNT(room.id)', 'roomCount')
+      .where('room.deletedAt IS NULL')
+      .andWhere('room.propertyId IN (:...propertyIds)', { propertyIds: scope.propertyIds })
+      .groupBy('room.propertyId')
+      .getRawMany<{ propertyId: string; roomCount: string }>();
+
+    const roomCountByPropertyId = new Map(
+      roomCounts.map((row) => [row.propertyId, Number(row.roomCount)]),
+    );
+
+    return scope.properties.map((property) => ({
+      name: property.name,
+      propertyType: property.propertyType,
+      destinationName: property.destinationName,
+      starRating: property.starRating,
+      roomCount: roomCountByPropertyId.get(property.id) ?? 0,
+    }));
+  }
+
+  private async loadScopedBookingRows(
+    propertyIds: string[],
+    dateFrom: string,
+    dateTo: string,
+  ) {
+    if (propertyIds.length === 0) {
+      return [];
+    }
+
+    const from = dateFrom.slice(0, 10);
+    const to = dateTo.slice(0, 10);
+
+    const rows = await this.bookingItemsRepository
+      .createQueryBuilder('item')
+      .innerJoin(
+        Bookings,
+        'booking',
+        'booking.id = item.bookingId AND booking.deletedAt IS NULL',
+      )
+      .innerJoin(
+        Rooms,
+        'room',
+        'room.id = item.referenceId AND room.deletedAt IS NULL',
+      )
+      .innerJoin(
+        Properties,
+        'property',
+        'property.id = room.propertyId AND property.deletedAt IS NULL',
+      )
+      .where('item.deletedAt IS NULL')
+      .andWhere('item.itemType = :itemType', { itemType: 'room' })
+      .andWhere('room.propertyId IN (:...propertyIds)', { propertyIds })
+      .andWhere('item.startDate IS NOT NULL')
+      .andWhere('item.startDate <= :dateTo', { dateTo: to })
+      .andWhere('COALESCE(item.endDate, item.startDate) >= :dateFrom', { dateFrom: from })
+      .select('booking.id', 'bookingId')
+      .addSelect('booking.status', 'bookingStatus')
+      .addSelect('booking.currency', 'currency')
+      .addSelect('property.name', 'propertyName')
+      .addSelect('room.name', 'roomName')
+      .addSelect('MIN(item.startDate)', 'stayFrom')
+      .addSelect('MAX(COALESCE(item.endDate, item.startDate))', 'stayTo')
+      .addSelect('SUM(item.quantity * item.unitPriceCents)', 'lineTotalCents')
+      .groupBy('booking.id')
+      .addGroupBy('booking.status')
+      .addGroupBy('booking.currency')
+      .addGroupBy('property.name')
+      .addGroupBy('room.name')
+      .addGroupBy('item.referenceId')
+      .orderBy('stayFrom', 'ASC')
+      .addOrderBy('property.name', 'ASC')
+      .getRawMany<{
+        bookingId: string;
+        bookingStatus: string;
+        currency: string;
+        propertyName: string;
+        roomName: string;
+        stayFrom: string;
+        stayTo: string;
+        lineTotalCents: string;
+      }>();
+
+    return rows.map((row) => ({
+      bookingId: row.bookingId,
+      bookingStatus: row.bookingStatus,
+      propertyName: row.propertyName,
+      roomName: row.roomName,
+      stayFrom: String(row.stayFrom).slice(0, 10),
+      stayTo: String(row.stayTo).slice(0, 10),
+      lineTotalCents: Number(row.lineTotalCents),
+      currency: row.currency,
+    }));
+  }
+
+  private async loadPropertyDossierRooms(propertyId: string) {
+    const rooms = await this.roomsRepository.find({
+      where: { propertyId, deletedAt: IsNull() },
+      order: { name: 'ASC' },
+    });
+
+    return rooms.map((room) => ({
+      name: room.name,
+      roomType: room.roomType,
+      maxGuests: room.maxGuests,
+      basePriceCents: room.basePriceCents,
+      currency: room.currency,
+    }));
+  }
+
+  private async loadPropertyDossierAmenities(propertyId: string) {
+    const rows = await this.propertyAmenitiesRepository
+      .createQueryBuilder('propertyAmenity')
+      .innerJoin(
+        Amenities,
+        'amenity',
+        'amenity.id = propertyAmenity.amenityId AND amenity.deletedAt IS NULL',
+      )
+      .where('propertyAmenity.deletedAt IS NULL')
+      .andWhere('propertyAmenity.propertyId = :propertyId', { propertyId })
+      .orderBy('amenity.name', 'ASC')
+      .select('amenity.code', 'code')
+      .addSelect('amenity.name', 'name')
+      .getRawMany<{ code: string; name: string }>();
+
+    return rows.map((row) => ({
+      code: row.code,
+      name: row.name,
+    }));
   }
 
   private async loadScopedRooms(
