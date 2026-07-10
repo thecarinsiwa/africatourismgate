@@ -56,6 +56,8 @@
     "availability": {
       "title": "Disponibilités",
       "intro": "Créneaux de disponibilité par dates (location, maintenance, loué).",
+      "backToVehicle": "Retour au véhicule",
+      "summary": "Véhicule {label} — {agencyName} / {categoryName}",
       "addSlot": "Ajouter un créneau",
       "newSlot": "Nouveau créneau",
       "editSlot": "Modifier le créneau",

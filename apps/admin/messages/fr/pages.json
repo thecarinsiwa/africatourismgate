@@ -168,6 +168,12 @@
         "metaTitle": "Modifier le véhicule",
         "voir": {
           "metaTitle": "Voir le véhicule"
+        },
+        "disponibilites": {
+          "metaTitle": "Disponibilités véhicule",
+          "title": "Disponibilités véhicule",
+          "description": "Ajoutez ou modifiez les créneaux de location, maintenance ou location active.",
+          "backLabel": "Retour au véhicule"
         }
       }
     },

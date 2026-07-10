@@ -168,6 +168,12 @@
         "metaTitle": "Editar vehículo",
         "voir": {
           "metaTitle": "Ver vehículo"
+        },
+        "disponibilites": {
+          "metaTitle": "Disponibilidad del vehículo",
+          "title": "Disponibilidad del vehículo",
+          "description": "Añada o modifique franjas de alquiler, mantenimiento o alquilado.",
+          "backLabel": "Volver al vehículo"
         }
       }
     },

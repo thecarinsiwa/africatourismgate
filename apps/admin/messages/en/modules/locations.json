@@ -56,6 +56,8 @@
     "availability": {
       "title": "Availability",
       "intro": "Availability slots by date (rental, maintenance, rented).",
+      "backToVehicle": "Back to vehicle",
+      "summary": "Vehicle {label} — {agencyName} / {categoryName}",
       "addSlot": "Add a slot",
       "newSlot": "New slot",
       "editSlot": "Edit slot",

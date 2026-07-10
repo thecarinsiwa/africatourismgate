@@ -40,11 +40,13 @@ const emptyForm: FormValues = {
 type VehicleAvailabilitySectionProps = {
   vehicleId: string;
   autoOpenAdd?: boolean;
+  embedded?: boolean;
 };
 
 export function VehicleAvailabilitySection({
   vehicleId,
   autoOpenAdd = false,
+  embedded = false,
 }: VehicleAvailabilitySectionProps) {
   const locale = useLocale();
   const { locations: getLocationsErrorMessage } = useAdminErrorMessages();
@@ -216,7 +218,9 @@ export function VehicleAvailabilitySection({
     <section
       ref={sectionRef}
       id="vehicle-availability"
-      className="mt-12 space-y-6 border-t border-atg-border pt-10"
+      className={
+        embedded ? 'space-y-6' : 'mt-12 space-y-6 border-t border-atg-border pt-10'
+      }
     >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>

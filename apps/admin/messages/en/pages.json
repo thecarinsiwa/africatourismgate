@@ -168,6 +168,12 @@
         "metaTitle": "Edit vehicle",
         "voir": {
           "metaTitle": "View vehicle"
+        },
+        "disponibilites": {
+          "metaTitle": "Vehicle availability",
+          "title": "Vehicle availability",
+          "description": "Add or update rental, maintenance or rented availability slots.",
+          "backLabel": "Back to vehicle"
         }
       }
     },

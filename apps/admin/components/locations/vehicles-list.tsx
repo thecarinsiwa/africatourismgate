@@ -231,7 +231,7 @@ export function VehiclesList() {
         <DataTableActionButton
           action="calendar"
           label={tAvailability('addSlot')}
-          href={`/produits/locations/${vehicle.id}?availability=add`}
+          href={`/produits/locations/${vehicle.id}/disponibilites?add=1`}
         />
         <DataTableActionButton
           action="delete"

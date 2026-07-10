@@ -56,6 +56,8 @@
     "availability": {
       "title": "Disponibilidad",
       "intro": "Franjas de disponibilidad por fechas (alquiler, mantenimiento, alquilado).",
+      "backToVehicle": "Volver al vehículo",
+      "summary": "Vehículo {label} — {agencyName} / {categoryName}",
       "addSlot": "Añadir una franja",
       "newSlot": "Nueva franja",
       "editSlot": "Editar franja",
