@@ -10,6 +10,11 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function RegisterPage() {
-  return <RegisterPageContent />;
+type Props = {
+  searchParams?: Promise<{ error?: string }>;
+};
+
+export default async function RegisterPage({ searchParams }: Props) {
+  const params = (await searchParams) ?? {};
+  return <RegisterPageContent oauthError={params.error} />;
 }

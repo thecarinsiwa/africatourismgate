@@ -1,4 +1,6 @@
 import {
+  BadRequestException,
+  ConflictException,
   HttpException,
   InternalServerErrorException,
   UnauthorizedException,
@@ -9,7 +11,9 @@ export type GoogleOAuthErrorCode =
   | 'google_auth_error'
   | 'google_no_email'
   | 'google_account_inactive'
-  | 'google_signup_unavailable';
+  | 'google_signup_unavailable'
+  | 'gmail_only'
+  | 'account_exists';
 
 export function extractGoogleProfileEmail(profile: {
   emails?: Array<{ value?: string }>;
@@ -31,6 +35,17 @@ export function extractGoogleProfileEmail(profile: {
 }
 
 export function resolveGoogleOAuthErrorCode(err: unknown): GoogleOAuthErrorCode {
+  if (err instanceof BadRequestException) {
+    const message = err.message.toLowerCase();
+    if (message.includes('gmail')) {
+      return 'gmail_only';
+    }
+  }
+
+  if (err instanceof ConflictException) {
+    return 'account_exists';
+  }
+
   if (err instanceof UnauthorizedException) {
     const message = err.message.toLowerCase();
     if (message.includes('no email')) {

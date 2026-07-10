@@ -1,8 +1,14 @@
 import type { EmailBrandingValue } from '@africatourismgate/types';
 import { resolveEmailLogoUrl } from './email-attachments';
 import { DEFAULT_EMAIL_BRANDING } from './email-branding.constants';
+import {
+  resolvePdfLocale,
+  type BookingDetailPdfLocale,
+} from './booking-detail-pdf.labels';
 import type {
   AbandonmentReminderEmailPayload,
+  AdminPendingRegistrationEmailPayload,
+  AdminAccountActivatedEmailPayload,
   BookingConfirmationEmailPayload,
   OperationAlertEmailPayload,
   PasswordResetEmailPayload,
@@ -372,6 +378,135 @@ ${paragraph('Merci de nous faire confiance pour vos aventures en Afrique.')}`,
   );
   const text = `Bonjour ${payload.firstName},\n\nBienvenue sur ${branding.displayName}. Votre compte a été créé avec succès.\n\nExplorer : ${exploreUrl}\nSe connecter : ${loginUrl}`;
   return { subject, html, text };
+}
+
+export function renderAdminPendingRegistrationEmail(
+  payload: AdminPendingRegistrationEmailPayload,
+  branding: EmailBrandingValue,
+): { subject: string; html: string; text: string } {
+  const name = escapeHtml(payload.firstName.trim() || 'Administrateur');
+  const applicantName = escapeHtml(payload.applicantName.trim() || payload.applicantEmail);
+  const applicantEmail = escapeHtml(payload.applicantEmail);
+  const reviewUrl = payload.reviewUrl;
+  const subject = 'Nouvelle inscription admin en attente';
+
+  const html = layout(
+    subject,
+    `${headline('Inscription admin en attente', branding)}
+${paragraph(`Bonjour <strong>${name}</strong>,`)}
+${paragraph(`<strong>${applicantName}</strong> (${applicantEmail}) vient de demander l'accès au back-office admin. Le compte est suspendu et n'a pas encore de rôle.`)}
+${ctaButton(reviewUrl, 'Examiner la demande', branding)}
+${paragraph('Activez le compte et assignez les rôles appropriés depuis la fiche utilisateur.')}`,
+    branding,
+    { preheader: 'Une nouvelle inscription admin Gmail attend votre validation.' },
+  );
+  const text = `Bonjour ${payload.firstName},\n\n${payload.applicantName} (${payload.applicantEmail}) demande l'accès au back-office admin.\n\nExaminer : ${reviewUrl}`;
+  return { subject, html, text };
+}
+
+const ADMIN_ACCOUNT_ACTIVATED_COPY: Record<
+  BookingDetailPdfLocale,
+  {
+    subject: string;
+    headline: string;
+    greeting: string;
+    body: string;
+    cta: string;
+    roleHint: string;
+    rolesLabel: string;
+    preheader: string;
+    textIntro: string;
+    textSignInLabel: string;
+    defaultName: string;
+  }
+> = {
+  fr: {
+    subject: 'Votre accès au back-office est activé',
+    headline: 'Compte activé',
+    greeting: 'Bonjour',
+    body: "Votre demande d'accès au back-office Africa Tourism Gate a été approuvée. Vous pouvez maintenant vous connecter avec votre compte Google Gmail ou votre mot de passe.",
+    cta: 'Se connecter au back-office',
+    roleHint: "Si vous n'avez pas encore de rôle attribué, contactez votre administrateur.",
+    rolesLabel: 'Rôles attribués',
+    preheader: 'Votre compte admin est prêt — connectez-vous au back-office.',
+    textIntro: 'Votre accès au back-office Africa Tourism Gate est activé.',
+    textSignInLabel: 'Connexion',
+    defaultName: 'Utilisateur',
+  },
+  en: {
+    subject: 'Your back-office access is now active',
+    headline: 'Account activated',
+    greeting: 'Hello',
+    body: 'Your Africa Tourism Gate back-office access request has been approved. You can now sign in with your Gmail Google account or your password.',
+    cta: 'Sign in to the back office',
+    roleHint: 'If you have not been assigned a role yet, contact your administrator.',
+    rolesLabel: 'Assigned roles',
+    preheader: 'Your admin account is ready — sign in to the back office.',
+    textIntro: 'Your Africa Tourism Gate back-office access is now active.',
+    textSignInLabel: 'Sign in',
+    defaultName: 'User',
+  },
+  es: {
+    subject: 'Su acceso al back office está activado',
+    headline: 'Cuenta activada',
+    greeting: 'Hola',
+    body: 'Su solicitud de acceso al back office de Africa Tourism Gate ha sido aprobada. Ya puede iniciar sesión con su cuenta Google Gmail o su contraseña.',
+    cta: 'Iniciar sesión en el back office',
+    roleHint: 'Si aún no tiene un rol asignado, contacte a su administrador.',
+    rolesLabel: 'Roles asignados',
+    preheader: 'Su cuenta admin está lista — inicie sesión en el back office.',
+    textIntro: 'Su acceso al back office de Africa Tourism Gate está activado.',
+    textSignInLabel: 'Iniciar sesión',
+    defaultName: 'Usuario',
+  },
+};
+
+function adminActivatedRolesListHtml(roles: string[]): string {
+  if (roles.length === 0) {
+    return '';
+  }
+  return `<ul style="margin:8px 0 16px;padding-left:20px;line-height:1.6;">${roles
+    .map((role) => `<li style="font-size:15px;color:${BRAND.text};">${escapeHtml(role)}</li>`)
+    .join('')}</ul>`;
+}
+
+function adminActivatedRolesListText(roles: string[]): string {
+  if (roles.length === 0) {
+    return '';
+  }
+  return `\n${roles.map((role) => `  - ${role}`).join('\n')}`;
+}
+
+export function renderAdminAccountActivatedEmail(
+  payload: AdminAccountActivatedEmailPayload,
+  branding: EmailBrandingValue,
+): { subject: string; html: string; text: string } {
+  const locale = payload.locale ?? resolvePdfLocale(null);
+  const copy = ADMIN_ACCOUNT_ACTIVATED_COPY[locale];
+  const name = escapeHtml(payload.firstName.trim() || copy.defaultName);
+  const loginUrl = payload.loginUrl;
+  const roles = payload.roles ?? [];
+  const rolesSection =
+    roles.length > 0
+      ? `${paragraph(`<strong>${escapeHtml(copy.rolesLabel)}</strong>`)}${adminActivatedRolesListHtml(roles)}`
+      : paragraph(copy.roleHint);
+
+  const html = layout(
+    copy.subject,
+    `${headline(copy.headline, branding)}
+${paragraph(`${copy.greeting} <strong>${name}</strong>,`)}
+${paragraph(copy.body)}
+${rolesSection}
+${ctaButton(loginUrl, copy.cta, branding)}`,
+    branding,
+    { preheader: copy.preheader },
+  );
+  const rolesText =
+    roles.length > 0
+      ? `\n\n${copy.rolesLabel}:${adminActivatedRolesListText(roles)}`
+      : `\n\n${copy.roleHint}`;
+  const text = `${copy.greeting} ${payload.firstName},\n\n${copy.textIntro}${rolesText}\n\n${copy.textSignInLabel} : ${loginUrl}`;
+  return { subject: copy.subject, html, text };
 }
 
 export function renderBookingConfirmationEmail(

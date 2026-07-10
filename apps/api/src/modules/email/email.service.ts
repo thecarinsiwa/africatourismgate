@@ -6,6 +6,8 @@ import { PLATFORM_ORG_ID } from '../../common/org-scope/org-scope.service';
 import { EmailBrandingService } from './email-branding.service';
 import {
   renderAbandonmentReminderEmail,
+  renderAdminPendingRegistrationEmail,
+  renderAdminAccountActivatedEmail,
   renderBookingConfirmationEmail,
   renderOperationAlertEmail,
   renderPasswordResetEmail,
@@ -21,6 +23,8 @@ import {
 } from './assisted-booking.email.templates';
 import type {
   AbandonmentReminderEmailPayload,
+  AdminPendingRegistrationEmailPayload,
+  AdminAccountActivatedEmailPayload,
   BookingConfirmationEmailPayload,
   OperationAlertEmailPayload,
   BookingApprovedChatEmailPayload,
@@ -67,6 +71,28 @@ export class EmailService implements OnModuleInit {
   async sendWelcome(payload: WelcomeEmailPayload): Promise<SendMailResult> {
     const branding = await this.resolveBranding();
     const { subject, html, text } = renderWelcomeEmail(payload, branding);
+    return this.send('service', { to: payload.to, subject, html, text });
+  }
+
+  async sendAdminPendingRegistrationReview(
+    payload: AdminPendingRegistrationEmailPayload,
+  ): Promise<SendMailResult> {
+    const branding = await this.resolveBranding();
+    const { subject, html, text } = renderAdminPendingRegistrationEmail(
+      payload,
+      branding,
+    );
+    return this.send('service', { to: payload.to, subject, html, text });
+  }
+
+  async sendAdminAccountActivated(
+    payload: AdminAccountActivatedEmailPayload,
+  ): Promise<SendMailResult> {
+    const branding = await this.resolveBranding();
+    const { subject, html, text } = renderAdminAccountActivatedEmail(
+      payload,
+      branding,
+    );
     return this.send('service', { to: payload.to, subject, html, text });
   }
 

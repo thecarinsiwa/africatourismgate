@@ -23,6 +23,7 @@ export interface AuthResponse extends AuthTokens {
   verificationId?: string;
   verificationPurpose?: 'register' | 'google_signup' | 'login' | 'booking';
   bookingId?: string;
+  pendingApproval?: boolean;
 }
 
 export interface AuthMe {

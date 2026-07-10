@@ -14,10 +14,10 @@ import {
   type StoredSession,
 } from './lib/auth/session';
 
-const AUTH_PATHS = new Set(['/login', '/register']);
+const AUTH_PATHS = new Set(['/login', '/register', '/register/pending']);
 
 function isAuthPath(pathname: string): boolean {
-  return AUTH_PATHS.has(pathname);
+  return AUTH_PATHS.has(pathname) || pathname.startsWith('/register/');
 }
 
 function isProtectedPath(pathname: string): boolean {
@@ -102,6 +102,7 @@ export const config = {
   matcher: [
     '/login',
     '/register',
+    '/register/:path*',
     '/dashboard',
     '/dashboard/:path*',
     '/utilisateurs',

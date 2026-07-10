@@ -23,6 +23,22 @@ export type WelcomeEmailPayload = {
   webUrl?: string;
 };
 
+export type AdminPendingRegistrationEmailPayload = {
+  to: string;
+  firstName: string;
+  applicantName: string;
+  applicantEmail: string;
+  reviewUrl: string;
+};
+
+export type AdminAccountActivatedEmailPayload = {
+  to: string;
+  firstName: string;
+  loginUrl: string;
+  locale?: 'fr' | 'en' | 'es';
+  roles?: string[];
+};
+
 export type BookingConfirmationEmailPayload = {
   to: string;
   firstName: string;

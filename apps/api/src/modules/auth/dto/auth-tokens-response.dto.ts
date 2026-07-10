@@ -39,6 +39,12 @@ export class AuthResponseDto extends AuthTokensResponseDto {
     description: 'Booking ID when verifying a reservation operation',
   })
   bookingId?: string;
+
+  @ApiPropertyOptional({
+    description:
+      'True when the account was created but requires super admin activation',
+  })
+  pendingApproval?: boolean;
 }
 
 export class LogoutResponseDto {

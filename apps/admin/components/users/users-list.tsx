@@ -19,6 +19,7 @@ import {
 } from '@africatourismgate/ui';
 import type { OrganizationListItem, Role, User, UserStatus } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
+import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 
@@ -34,6 +35,7 @@ const statusVariants: Record<UserStatus, 'success' | 'warning' | 'danger'> = {
 };
 
 export function UsersList() {
+  const searchParams = useSearchParams();
   const { users: getUsersErrorMessage } = useAdminErrorMessages();
   const tList = useTranslations('modules.users.list');
   const tFilters = useTranslations('modules.users.filters');
@@ -46,6 +48,7 @@ export function UsersList() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('');
   const [organizationFilter, setOrganizationFilter] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
+  const [withoutRoleFilter, setWithoutRoleFilter] = useState(false);
   const [page, setPage] = useState(1);
   const [organizations, setOrganizations] = useState<OrganizationListItem[]>([]);
   const [roles, setRoles] = useState<Role[]>([]);
@@ -120,6 +123,17 @@ export function UsersList() {
     [statusLabels, tCommonFilters],
   );
 
+  useEffect(() => {
+    const status = searchParams.get('status');
+    if (status === 'active' || status === 'suspended') {
+      setStatusFilter(status);
+    }
+    const withoutRole = searchParams.get('withoutRole');
+    if (withoutRole === '1' || withoutRole === 'true') {
+      setWithoutRoleFilter(true);
+    }
+  }, [searchParams]);
+
   const load = useCallback(async () => {
     setState({ status: 'loading' });
     try {
@@ -130,6 +144,7 @@ export function UsersList() {
         status: statusFilter || undefined,
         organizationId: organizationFilter || undefined,
         roleId: roleFilter || undefined,
+        withoutRole: withoutRoleFilter || undefined,
       });
       setState({
         status: 'ready',
@@ -140,7 +155,7 @@ export function UsersList() {
     } catch (error) {
       setState({ status: 'error', message: getUsersErrorMessage(error) });
     }
-  }, [page, search, statusFilter, organizationFilter, roleFilter, getUsersErrorMessage]);
+  }, [page, search, statusFilter, organizationFilter, roleFilter, withoutRoleFilter, getUsersErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -262,6 +277,7 @@ export function UsersList() {
     statusFilter !== '',
     organizationFilter !== '',
     roleFilter !== '',
+    withoutRoleFilter,
   ].filter(Boolean).length;
   const hasFilters = activeFilterCount > 0;
   const emptyMessage = hasFilters ? tList('emptyFiltered') : tList('emptyDefault');
@@ -272,6 +288,7 @@ export function UsersList() {
     setStatusFilter('');
     setOrganizationFilter('');
     setRoleFilter('');
+    setWithoutRoleFilter(false);
     setPage(1);
   }, []);
 
@@ -326,6 +343,18 @@ export function UsersList() {
                 }}
               />
             </div>
+            <label className="flex min-h-[44px] items-center gap-2 text-sm text-atg-fg">
+              <input
+                type="checkbox"
+                className="h-4 w-4 rounded border-atg-border text-atg-primary focus:ring-atg-primary"
+                checked={withoutRoleFilter}
+                onChange={(e) => {
+                  setWithoutRoleFilter(e.target.checked);
+                  setPage(1);
+                }}
+              />
+              {tFilters('withoutRole')}
+            </label>
           </>
         }
       />

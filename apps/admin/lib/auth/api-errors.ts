@@ -6,6 +6,7 @@ export type AuthErrorMessages = {
   envMissing?: string;
   conflict?: string;
   unauthorized?: string;
+  accountPendingApproval?: string;
   server?: string;
 };
 
@@ -28,8 +29,18 @@ export function getAuthErrorMessage(
     if (error.status === 409 && messages.conflict) {
       return messages.conflict;
     }
-    if (error.status === 401 && messages.unauthorized) {
-      return messages.unauthorized;
+    if (error.status === 401) {
+      const detail =
+        typeof error.message === 'string' ? error.message.toLowerCase() : '';
+      if (
+        detail.includes('not active') &&
+        messages.accountPendingApproval
+      ) {
+        return messages.accountPendingApproval;
+      }
+      if (messages.unauthorized) {
+        return messages.unauthorized;
+      }
     }
     if (error.status === 500 && messages.server) {
       const detail = typeof error.message === 'string' ? error.message : '';

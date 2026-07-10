@@ -7,6 +7,7 @@ import {
   RolePermissions,
   UserRoleAssignments,
 } from '../../entities/generated/rbac.entity';
+import { Users } from '../../entities/generated/users.entity';
 import { SUPER_ADMIN_ROLE_CODE } from './rbac.constants';
 
 @Injectable()
@@ -37,6 +38,29 @@ export class PermissionsService {
       .getCount();
 
     return count > 0;
+  }
+
+  async listSuperAdminRecipients(): Promise<
+    Array<{ email: string; firstName: string }>
+  > {
+    const rows = await this.assignmentsRepo
+      .createQueryBuilder('ura')
+      .innerJoin(Roles, 'role', 'role.id = ura.roleId')
+      .innerJoin(Users, 'user', 'user.id = ura.userId')
+      .select('user.email', 'email')
+      .addSelect('user.firstName', 'firstName')
+      .where('ura.deletedAt IS NULL')
+      .andWhere('ura.revokedAt IS NULL')
+      .andWhere('(ura.expiresAt IS NULL OR ura.expiresAt > :now)', {
+        now: new Date(),
+      })
+      .andWhere('role.code = :code', { code: SUPER_ADMIN_ROLE_CODE })
+      .andWhere('role.deletedAt IS NULL')
+      .andWhere('user.deletedAt IS NULL')
+      .andWhere('user.status = :status', { status: 'active' })
+      .getRawMany<{ email: string; firstName: string }>();
+
+    return rows.filter((row) => row.email?.trim());
   }
 
   async getUserPermissionCodes(userId: string): Promise<Set<string>> {
