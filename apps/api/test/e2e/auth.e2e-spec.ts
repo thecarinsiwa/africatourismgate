@@ -145,6 +145,38 @@ describe('Auth (e2e)', () => {
     sendSpy.mockRestore();
   });
 
+  it('PATCH /users/:id password allows login with assigned password', async () => {
+    const email = `password.admin.${randomUUID().slice(0, 8)}@gmail.com`;
+    const assignedPassword = 'AssignedPass123!';
+
+    const register = await request(app.getHttpServer())
+      .post(apiPath('/auth/register'))
+      .send({
+        email,
+        password: 'InitialPass123!',
+        firstName: 'Password',
+        lastName: 'Test',
+      })
+      .expect(201);
+
+    const userId = register.body.user.id as string;
+    const { accessToken } = await loginAsSeedAdmin(app);
+
+    await request(app.getHttpServer())
+      .patch(apiPath(`/users/${userId}`))
+      .set(authHeader(accessToken))
+      .send({ status: 'active', password: assignedPassword })
+      .expect(200);
+
+    const login = await request(app.getHttpServer())
+      .post(apiPath('/auth/login'))
+      .send({ email, password: assignedPassword })
+      .expect(200);
+
+    expect(login.body.accessToken).toEqual(expect.any(String));
+    expect(login.body.user?.email).toBe(email);
+  });
+
   it('POST /auth/login returns tokens for seed admin', async () => {
     const credentials = getSeedAdminLogin();
     const res = await request(app.getHttpServer())

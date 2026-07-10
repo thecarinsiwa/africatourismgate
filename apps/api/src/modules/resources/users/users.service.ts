@@ -1,15 +1,19 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcryptjs';
 import { DeepPartial, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import { OrgScopeService } from '../../../common/org-scope/org-scope.service';
 import { CrudService } from '../../../common/crud/crud.service';
 import { Roles, UserRoleAssignments, Users } from '../../../entities/generated';
+import { BCRYPT_ROUNDS } from '../../auth/auth.constants';
 import { AuthUserDto } from '../../auth/dto/auth-user.dto';
 import { EmailService } from '../../email/email.service';
 import { resolvePdfLocale } from '../../email/booking-detail-pdf.labels';
 import { UsersListQueryDto } from './dto/users-list-query.dto';
+
+type UserWriteDto = DeepPartial<Users> & { password?: string };
 
 @Injectable()
 export class UsersService extends CrudService<Users> {
@@ -27,22 +31,48 @@ export class UsersService extends CrudService<Users> {
     super(usersRepository);
   }
 
+  override async create(
+    dto: UserWriteDto,
+    actorUserId?: string,
+  ): Promise<Users> {
+    const normalized = await this.normalizeWriteDto(dto);
+    return super.create(normalized, actorUserId);
+  }
+
   override async update(
     id: string,
-    dto: DeepPartial<Users>,
+    dto: UserWriteDto,
     actorUserId?: string,
   ): Promise<Users> {
     const existing = await this.findOne(id);
     const shouldNotifyActivation =
       existing.status === 'suspended' && dto.status === 'active';
 
-    const saved = await super.update(id, dto, actorUserId);
+    const normalized = await this.normalizeWriteDto(dto);
+    const saved = await super.update(id, normalized, actorUserId);
 
     if (shouldNotifyActivation && saved.status === 'active') {
       await this.notifyAccountActivated(saved);
     }
 
     return saved;
+  }
+
+  private async normalizeWriteDto(
+    dto: UserWriteDto,
+  ): Promise<DeepPartial<Users>> {
+    const { password, email, ...rest } = dto;
+    const normalized: DeepPartial<Users> = { ...rest };
+
+    if (typeof email === 'string') {
+      normalized.email = email.trim().toLowerCase();
+    }
+
+    if (typeof password === 'string' && password.length > 0) {
+      normalized.passwordHash = await bcrypt.hash(password, BCRYPT_ROUNDS);
+    }
+
+    return normalized;
   }
 
   async list(
