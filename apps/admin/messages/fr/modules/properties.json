@@ -93,7 +93,8 @@
       "noRooms": "Aucune chambre pour cet hébergement. Créez une chambre pour gérer les disponibilités.",
       "goToRoomsTab": "Aller à l'onglet Chambres",
       "roomMismatch": "Cette chambre n'appartient pas à cet hébergement.",
-      "backToProperty": "Retour à l'hébergement"
+      "backToProperty": "Retour à l'hébergement",
+      "summary": "Chambre {roomName} — stock et prix par nuit ({currency})."
     }
   },
   "amenitiesList": {

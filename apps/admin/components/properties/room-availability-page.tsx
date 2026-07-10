@@ -3,7 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { AdminPageBackLink } from '../admin-page-back-link';
 import { getApiClient } from '../../lib/auth/api';
@@ -18,7 +18,9 @@ type RoomAvailabilityPageProps = {
 
 export function RoomAvailabilityPage({ propertyId, roomId }: RoomAvailabilityPageProps) {
   const { hebergements: getHebergementsErrorMessage } = useAdminErrorMessages();
+  const tPage = useTranslations('pages.hebergements.id.chambres.roomId.disponibilites');
   const tAvailability = useTranslations('modules.properties.sections.availability');
+  const tDetail = useTranslations('modules.properties.detail');
   const tCommon = useTranslations('modules.common');
   const [yearMonth, setYearMonth] = useState(currentYearMonth);
   const [state, setState] = useState<
@@ -34,9 +36,17 @@ export function RoomAvailabilityPage({ propertyId, roomId }: RoomAvailabilityPag
   >({ status: 'loading' });
   const [gridKey, setGridKey] = useState(0);
 
+  const backLabel = useMemo(() => {
+    if (tPage.has?.('backLabel')) return tPage('backLabel');
+    if (tAvailability.has?.('backToProperty')) return tAvailability('backToProperty');
+    return tDetail('backLink');
+  }, [tPage, tAvailability, tDetail]);
+
+  const pageTitle = tPage.has?.('title') ? tPage('title') : tAvailability('title');
+
   useAdminEditPageMeta({
     ready: state.status === 'ready',
-    title: tAvailability('title'),
+    title: pageTitle,
     breadcrumbTail:
       state.status === 'ready'
         ? [
@@ -89,6 +99,8 @@ export function RoomAvailabilityPage({ propertyId, roomId }: RoomAvailabilityPag
     };
   }, [propertyId, roomId, getHebergementsErrorMessage, tAvailability]);
 
+  const propertyBackHref = `/hebergements/${propertyId}?tab=chambres`;
+
   if (state.status === 'loading') {
     return <p className="text-sm text-atg-muted">{tCommon('loading')}</p>;
   }
@@ -96,10 +108,7 @@ export function RoomAvailabilityPage({ propertyId, roomId }: RoomAvailabilityPag
   if (state.status === 'error') {
     return (
       <div className="space-y-4">
-        <AdminPageBackLink
-          href={`/hebergements/${propertyId}?tab=chambres`}
-          label={tAvailability('backToProperty')}
-        />
+        <AdminPageBackLink href={propertyBackHref} label={backLabel} />
         <p role="alert" className="text-sm text-red-600">
           {state.message}
         </p>
@@ -111,12 +120,11 @@ export function RoomAvailabilityPage({ propertyId, roomId }: RoomAvailabilityPag
 
   return (
     <div className="min-w-0 space-y-6">
-      <AdminPageBackLink
-        href={`/hebergements/${propertyId}?tab=chambres`}
-        label={tAvailability('backToProperty')}
-      />
+      <AdminPageBackLink href={propertyBackHref} label={backLabel} />
       <p className="text-sm text-atg-muted">
-        {tAvailability('room')} {roomName} — {tAvailability('stockHint', { currency })}
+        {tAvailability.has?.('summary')
+          ? tAvailability('summary', { roomName, currency })
+          : `${tAvailability('room')} ${roomName} — ${tAvailability('stockHint', { currency })}`}
       </p>
 
       <div className="space-y-10">

@@ -93,7 +93,8 @@
       "noRooms": "No rooms for this accommodation. Create a room to manage availability.",
       "goToRoomsTab": "Go to Rooms tab",
       "roomMismatch": "This room does not belong to this accommodation.",
-      "backToProperty": "Back to accommodation"
+      "backToProperty": "Back to accommodation",
+      "summary": "Room {roomName} — stock and price per night ({currency})."
     }
   },
   "amenitiesList": {

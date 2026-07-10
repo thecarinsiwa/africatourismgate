@@ -68,7 +68,10 @@
       "chambres": {
         "roomId": {
           "disponibilites": {
-            "metaTitle": "Disponibilidad de habitación"
+            "metaTitle": "Disponibilidad de habitación",
+            "title": "Disponibilidad de habitación",
+            "description": "Gestione el stock y el precio por noche de esta habitación.",
+            "backLabel": "Volver al alojamiento"
           }
         }
       }
