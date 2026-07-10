@@ -35,18 +35,21 @@ import { GoogleStrategy } from './strategies/google.strategy';
     ]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({}),
-    ThrottlerModule.forRoot([
-      {
-        name: 'login',
-        ttl: 60_000,
-        limit: 5,
-      },
-      {
-        name: 'forgotPassword',
-        ttl: 60_000,
-        limit: 5,
-      },
-    ]),
+    ThrottlerModule.forRoot({
+      skipIf: () => process.env.NODE_ENV === 'test',
+      throttlers: [
+        {
+          name: 'login',
+          ttl: 60_000,
+          limit: 5,
+        },
+        {
+          name: 'forgotPassword',
+          ttl: 60_000,
+          limit: 5,
+        },
+      ],
+    }),
   ],
   controllers: [AuthController],
   providers: [
