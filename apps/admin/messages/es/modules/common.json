@@ -228,7 +228,8 @@
     "amenitiesSavedTitle": "Equipamientos enregistrés",
     "amenitiesSavedMessage": "La sélection a été mise à jour.",
     "propertySavedTitle": "Alojamiento enregistré",
-    "deletedProperty": "L'hébergement « {name} » a été supprimé."
+    "deletedProperty": "El alojamiento « {name} » ha sido eliminado.",
+    "deletedFlight": "El vuelo « {flightNumber} » ha sido eliminado."
   },
   "availabilityCalendar": {
     "previousMonth": "Mes anterior",

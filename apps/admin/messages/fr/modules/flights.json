@@ -5,7 +5,16 @@
     "emptySearch": "Aucun vol ne correspond à ce code.",
     "searchPlaceholder": "Rechercher par code vol (ex. ET302)…",
     "searchAria": "Rechercher un vol",
+    "ariaLabel": "Liste des vols",
+    "viewTable": "Tableau",
+    "viewGrid": "Grille",
+    "viewCompact": "Liste compacte",
+    "viewModeAria": "Mode d'affichage",
     "deleteConfirm": "Supprimer le vol « {flightNumber} » ?"
+  },
+  "dialogs": {
+    "deleteTitle": "Supprimer le vol",
+    "deleteDescription": "Supprimer le vol « {flightNumber} » ? Cette action est irréversible."
   },
   "columns": {
     "flightNumber": "Code vol",

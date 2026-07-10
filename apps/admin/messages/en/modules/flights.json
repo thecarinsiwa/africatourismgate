@@ -1,11 +1,20 @@
 {
   "list": {
-    "newFlight": "Nouveau vol",
-    "emptyDefault": "Tocun vol pour le moment.",
-    "emptySearch": "Tocun vol ne correspond à ce code.",
-    "searchPlaceholder": "Rechercher par code vol (ex. ET302)…",
-    "searchAria": "Rechercher un vol",
-    "deleteConfirm": "Supprimer le vol « {flightNumber} » ?"
+    "newFlight": "New flight",
+    "emptyDefault": "No flights yet.",
+    "emptySearch": "No flight matches this code.",
+    "searchPlaceholder": "Search by flight code (e.g. ET302)…",
+    "searchAria": "Search flights",
+    "ariaLabel": "Flights list",
+    "viewTable": "Table",
+    "viewGrid": "Grid",
+    "viewCompact": "Compact list",
+    "viewModeAria": "Display mode",
+    "deleteConfirm": "Delete flight « {flightNumber} »?"
+  },
+  "dialogs": {
+    "deleteTitle": "Delete flight",
+    "deleteDescription": "Delete flight « {flightNumber} »? This action cannot be undone."
   },
   "columns": {
     "flightNumber": "Code vol",

@@ -162,7 +162,13 @@
       }
     },
     "vols": {
+      "title": "Vols",
       "description": "Catalogue des vols, classes cabine et disponibilités. Recherche par code vol.",
+      "actions": {
+        "airlines": "Compagnies",
+        "airports": "Aéroports",
+        "new": "Nouveau vol"
+      },
       "links": {
         "airlines": "Compagnies aériennes",
         "airports": "Aéroports"

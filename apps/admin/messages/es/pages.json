@@ -162,7 +162,13 @@
       }
     },
     "vols": {
+      "title": "Vuelos",
       "description": "Catálogo de vuelos, clases de cabina y disponibilidad. Busque por código de vuelo.",
+      "actions": {
+        "airlines": "Aerolíneas",
+        "airports": "Aeropuertos",
+        "new": "Nuevo vuelo"
+      },
       "links": {
         "airlines": "Aerolíneas",
         "airports": "Aeropuertos"

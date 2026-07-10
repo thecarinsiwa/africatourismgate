@@ -162,7 +162,13 @@
       }
     },
     "vols": {
+      "title": "Flights",
       "description": "Flight catalog, cabin classes and availability. Search by flight code.",
+      "actions": {
+        "airlines": "Airlines",
+        "airports": "Airports",
+        "new": "New flight"
+      },
       "links": {
         "airlines": "Airlines",
         "airports": "Airports"
