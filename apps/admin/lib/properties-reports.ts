@@ -18,6 +18,8 @@ type ReportDownload = {
   filename: string;
 };
 
+export type { ReportDownload as PropertiesReportDownload };
+
 function parseFilenameFromContentDisposition(header: string | null): string | null {
   if (!header) {
     return null;
@@ -48,7 +50,10 @@ function buildQuery(params: Record<string, string | undefined>): string {
   return query ? `?${query}` : '';
 }
 
-async function fetchPropertiesReport(path: string, query: Record<string, string | undefined>): Promise<ReportDownload> {
+async function fetchPropertiesReport(
+  path: string,
+  query: Record<string, string | undefined>,
+): Promise<ReportDownload> {
   const session = getSession();
   if (!session?.accessToken) {
     throw new Error('Not authenticated');
@@ -79,6 +84,14 @@ async function fetchPropertiesReport(path: string, query: Record<string, string 
     parseFilenameFromContentDisposition(res.headers.get('Content-Disposition')) ?? 'export';
 
   return { blob, filename };
+}
+
+/** Fetch a report as Blob + filename (authenticated). */
+export function fetchPropertiesReportBlob(
+  path: string,
+  query: Record<string, string | undefined> = {},
+): Promise<ReportDownload> {
+  return fetchPropertiesReport(path, query);
 }
 
 export function downloadBlob(blob: Blob, filename: string): void {
