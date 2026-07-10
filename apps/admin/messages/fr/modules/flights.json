@@ -61,7 +61,14 @@
   },
   "detail": {
     "title": "Modifier le vol",
+    "viewTitle": "Voir le vol",
     "backLink": "Retour aux vols",
+    "viewButton": "Voir le vol",
+    "editButton": "Modifier le vol",
+    "notFound": "Vol introuvable.",
+    "photoGallery": "Galerie photos",
+    "photoGalleryIntro": "{count, plural, =0 {Aucune photo} one {# photo} other {# photos}}",
+    "noPhotos": "Aucune photo pour ce vol.",
     "tabsAria": "Sections du vol",
     "tabs": {
       "flight": "Vol",

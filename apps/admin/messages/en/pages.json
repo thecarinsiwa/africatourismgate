@@ -188,6 +188,9 @@
       },
       "id": {
         "metaTitle": "Edit flight",
+        "voir": {
+          "metaTitle": "View flight"
+        },
         "classes": {
           "classId": {
             "disponibilites": {

@@ -195,6 +195,11 @@ export function FlightsList() {
     (flight: Flight) => (
       <DataTableActions>
         <DataTableActionButton
+          action="view"
+          label={tActions('view')}
+          href={`/produits/vols/${flight.id}/voir`}
+        />
+        <DataTableActionButton
           action="edit"
           label={tActions('edit')}
           href={`/produits/vols/${flight.id}`}

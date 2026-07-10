@@ -61,7 +61,14 @@
   },
   "detail": {
     "title": "Edit flight",
+    "viewTitle": "View flight",
     "backLink": "Back to flights",
+    "viewButton": "View flight",
+    "editButton": "Edit flight",
+    "notFound": "Flight not found.",
+    "photoGallery": "Photo gallery",
+    "photoGalleryIntro": "{count, plural, =0 {No photos} one {# photo} other {# photos}}",
+    "noPhotos": "No photos for this flight.",
     "tabsAria": "Flight sections",
     "tabs": {
       "flight": "Flight",

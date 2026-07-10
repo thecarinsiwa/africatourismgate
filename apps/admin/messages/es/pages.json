@@ -188,6 +188,9 @@
       },
       "id": {
         "metaTitle": "Editar vuelo",
+        "voir": {
+          "metaTitle": "Ver vuelo"
+        },
         "classes": {
           "classId": {
             "disponibilites": {

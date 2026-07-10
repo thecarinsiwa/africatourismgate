@@ -61,7 +61,14 @@
   },
   "detail": {
     "title": "Editar vuelo",
+    "viewTitle": "Ver vuelo",
     "backLink": "Volver a vuelos",
+    "viewButton": "Ver vuelo",
+    "editButton": "Editar vuelo",
+    "notFound": "Vuelo no encontrado.",
+    "photoGallery": "Galería de fotos",
+    "photoGalleryIntro": "{count, plural, =0 {Ninguna foto} one {# foto} other {# fotos}}",
+    "noPhotos": "Ninguna foto para este vuelo.",
     "tabsAria": "Secciones del vuelo",
     "tabs": {
       "flight": "Vuelo",
