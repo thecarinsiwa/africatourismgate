@@ -229,7 +229,8 @@
     "amenitiesSavedMessage": "La sélection a été mise à jour.",
     "propertySavedTitle": "Accommodation enregistré",
     "deletedProperty": "Accommodation « {name} » has been deleted.",
-    "deletedFlight": "Flight « {flightNumber} » has been deleted."
+    "deletedFlight": "Flight « {flightNumber} » has been deleted.",
+    "deletedVehicle": "Vehicle « {label} » has been deleted."
   },
   "availabilityCalendar": {
     "previousMonth": "Previous month",

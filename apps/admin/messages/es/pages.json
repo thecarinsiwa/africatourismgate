@@ -158,7 +158,10 @@
         "backLabel": "Volver a vehículos"
       },
       "id": {
-        "metaTitle": "Editar vehículo"
+        "metaTitle": "Editar vehículo",
+        "voir": {
+          "metaTitle": "Ver vehículo"
+        }
       }
     },
     "vols": {

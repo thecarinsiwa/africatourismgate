@@ -1,78 +1,116 @@
 {
   "list": {
-    "newVehicle": "Nouveau véhicule",
-    "emptyDefault": "Hastacun véhicule pour le moment.",
-    "emptyFiltered": "Hastacun véhicule ne correspond aux filtres.",
-    "searchPlaceholder": "Rechercher par plaque…",
-    "deleteConfirm": "Supprimer le véhicule « {label} » ?",
+    "newVehicle": "Nuevo vehículo",
+    "emptyDefault": "Ningún vehículo por el momento.",
+    "emptyFiltered": "Ningún vehículo coincide con los filtros actuales.",
+    "searchPlaceholder": "Buscar por matrícula…",
+    "searchAria": "Buscar vehículos",
+    "ariaLabel": "Lista de vehículos",
+    "viewTable": "Tabla",
+    "viewGrid": "Cuadrícula",
+    "viewCompact": "Lista compacta",
+    "viewModeAria": "Modo de visualización",
+    "deleteConfirm": "¿Eliminar el vehículo « {label} »?",
     "fallbackLabel": "Vehículo"
+  },
+  "dialogs": {
+    "deleteTitle": "Eliminar vehículo",
+    "deleteDescription": "¿Eliminar el vehículo « {label} »? Esta acción es irreversible."
   },
   "filters": {
     "agency": "Agencia",
-    "allAgencies": "Todas les agences"
+    "allAgencies": "Todas las agencias",
+    "category": "Categoría",
+    "allCategories": "Todas las categorías"
   },
   "columns": {
     "agency": "Agencia",
-    "category": "Catégorie",
-    "licensePlate": "Immatriculation",
-    "pricePerDay": "Precio / jour"
+    "category": "Categoría",
+    "licensePlate": "Matrícula",
+    "pricePerDay": "Precio / día"
   },
   "form": {
-    "submitCreate": "Créer le véhicule",
-    "rentalAgency": "Agencia de location",
-    "category": "Catégorie",
-    "licensePlate": "Plaque d'immatriculation",
-    "dailyPriceCents": "Precio journalier (centimes)",
+    "submitCreate": "Crear vehículo",
+    "rentalAgency": "Agencia de alquiler",
+    "category": "Categoría",
+    "licensePlate": "Matrícula",
+    "dailyPriceCents": "Precio diario (céntimos)",
     "validation": {
-      "agencyRequired": "Agencia obligatoire.",
-      "categoryRequired": "Catégorie obligatoire."
+      "agencyRequired": "La agencia es obligatoria.",
+      "categoryRequired": "La categoría es obligatoria."
     }
   },
   "detail": {
-    "title": "Modifier le véhicule",
-    "backLink": "Volver aux véhicules"
+    "title": "Editar vehículo",
+    "viewTitle": "Ver vehículo",
+    "backLink": "Volver a vehículos",
+    "viewButton": "Ver vehículo",
+    "editButton": "Editar vehículo",
+    "notFound": "Vehículo no encontrado.",
+    "noLicensePlate": "Sin matrícula"
   },
   "sections": {
     "availability": {
       "title": "Disponibilidad",
-      "intro": "Franjax de disponibilité par dates (location, maintenance, loué).",
-      "addSlot": "Ajouter un créneau",
-      "newSlot": "Nouveau créneau",
-      "editSlot": "Modifier le créneau",
-      "filterFrom": "Filtrer du",
-      "filterTo": "au",
+      "intro": "Franjas de disponibilidad por fechas (alquiler, mantenimiento, alquilado).",
+      "addSlot": "Añadir una franja",
+      "newSlot": "Nueva franja",
+      "editSlot": "Editar franja",
+      "filterFrom": "Filtrar desde",
+      "filterTo": "hasta",
       "status": "Estado",
-      "empty": "Hastacun créneau sur cette période.",
-      "deleteConfirm": "Supprimer ce créneau ?"
+      "empty": "Ninguna franja en este período.",
+      "deleteConfirm": "¿Eliminar esta franja?"
     }
   },
   "referential": {
     "categories": {
-      "new": "Nouvelle catégorie",
-      "edit": "Modifier la catégorie",
-      "empty": "Ninguna catégorie.",
-      "searchPlaceholder": "Rechercher par nom ou modèle…",
-      "exampleModel": "Modèle type"
+      "new": "Nueva categoría",
+      "edit": "Editar categoría",
+      "empty": "Ninguna categoría.",
+      "searchPlaceholder": "Buscar por nombre o modelo…",
+      "exampleModel": "Modelo de ejemplo",
+      "deleteConfirm": "¿Eliminar la categoría « {name} »?"
     },
     "agencies": {
-      "empty": "Ninguna agence.",
-      "searchPlaceholder": "Rechercher par nom ou adresse…",
+      "new": "Nueva agencia",
+      "edit": "Editar agencia",
+      "empty": "Ninguna agencia.",
+      "searchPlaceholder": "Buscar por nombre o dirección…",
       "agency": "Agencia",
-      "address": "Dirección"
+      "address": "Dirección",
+      "destinationOptional": "Destino (opcional)",
+      "deleteConfirm": "¿Eliminar la agencia « {name} »?"
     }
   },
   "stats": {
     "vehicles": {
       "label": "Vehículos",
-      "subtitle": "Flotte catalogue"
+      "subtitle": "Flota de catálogo"
     },
     "categories": {
-      "label": "Catégories",
-      "subtitle": "Tipos de véhicules"
+      "label": "Categorías",
+      "subtitle": "Tipos de vehículos"
     },
     "agencies": {
       "label": "Agencias",
-      "subtitle": "Points de location"
+      "subtitle": "Puntos de alquiler"
     }
+  },
+  "exports": {
+    "button": "Exportar",
+    "dialogTitle": "Exportar vehículos",
+    "dialogDescription": "Las exportaciones respetan los filtros de búsqueda, agencia y categoría actuales.",
+    "excel": "Exportar Excel (3 hojas)",
+    "pdfKpi": "Resumen KPI (PDF)",
+    "pdfCatalog": "Catálogo (PDF)",
+    "pdfBookings": "Reservas (PDF)",
+    "dateFrom": "Fecha de inicio",
+    "dateTo": "Fecha de fin",
+    "periodRequired": "Indique un período para esta exportación.",
+    "periodInvalid": "La fecha de fin debe ser posterior o igual a la de inicio.",
+    "success": "Exportación descargada.",
+    "error": "No se pudo generar la exportación.",
+    "noPermissionBookings": "La exportación de reservas requiere acceso a reservas."
   }
 }

@@ -4,12 +4,24 @@
     "emptyDefault": "Aucun véhicule pour le moment.",
     "emptyFiltered": "Aucun véhicule ne correspond aux filtres.",
     "searchPlaceholder": "Rechercher par plaque…",
+    "searchAria": "Rechercher un véhicule",
+    "ariaLabel": "Liste des véhicules",
+    "viewTable": "Tableau",
+    "viewGrid": "Grille",
+    "viewCompact": "Liste compacte",
+    "viewModeAria": "Mode d'affichage",
     "deleteConfirm": "Supprimer le véhicule « {label} » ?",
     "fallbackLabel": "Véhicule"
   },
+  "dialogs": {
+    "deleteTitle": "Supprimer le véhicule",
+    "deleteDescription": "Supprimer le véhicule « {label} » ? Cette action est irréversible."
+  },
   "filters": {
     "agency": "Agence",
-    "allAgencies": "Toutes les agences"
+    "allAgencies": "Toutes les agences",
+    "category": "Catégorie",
+    "allCategories": "Toutes les catégories"
   },
   "columns": {
     "agency": "Agence",
@@ -30,7 +42,12 @@
   },
   "detail": {
     "title": "Modifier le véhicule",
-    "backLink": "Retour aux véhicules"
+    "viewTitle": "Voir le véhicule",
+    "backLink": "Retour aux véhicules",
+    "viewButton": "Voir le véhicule",
+    "editButton": "Modifier le véhicule",
+    "notFound": "Véhicule introuvable.",
+    "noLicensePlate": "Sans plaque"
   },
   "sections": {
     "availability": {
@@ -52,13 +69,18 @@
       "edit": "Modifier la catégorie",
       "empty": "Aucune catégorie.",
       "searchPlaceholder": "Rechercher par nom ou modèle…",
-      "exampleModel": "Modèle type"
+      "exampleModel": "Modèle type",
+      "deleteConfirm": "Supprimer la catégorie « {name} » ?"
     },
     "agencies": {
+      "new": "Nouvelle agence",
+      "edit": "Modifier l'agence",
       "empty": "Aucune agence.",
       "searchPlaceholder": "Rechercher par nom ou adresse…",
       "agency": "Agence",
-      "address": "Adresse"
+      "address": "Adresse",
+      "destinationOptional": "Destination (optionnel)",
+      "deleteConfirm": "Supprimer l'agence « {name} » ?"
     }
   },
   "stats": {
@@ -74,5 +96,21 @@
       "label": "Agences",
       "subtitle": "Points de location"
     }
+  },
+  "exports": {
+    "button": "Exporter",
+    "dialogTitle": "Exporter les véhicules",
+    "dialogDescription": "Les exports respectent les filtres de recherche, d'agence et de catégorie actifs.",
+    "excel": "Exporter Excel (3 onglets)",
+    "pdfKpi": "Synthèse KPI (PDF)",
+    "pdfCatalog": "Catalogue (PDF)",
+    "pdfBookings": "Réservations (PDF)",
+    "dateFrom": "Date de début",
+    "dateTo": "Date de fin",
+    "periodRequired": "Indiquez une période pour cet export.",
+    "periodInvalid": "La date de fin doit être postérieure ou égale à la date de début.",
+    "success": "Export téléchargé.",
+    "error": "Impossible de générer l'export.",
+    "noPermissionBookings": "Export réservations réservé aux utilisateurs avec l'accès réservations."
   }
 }
