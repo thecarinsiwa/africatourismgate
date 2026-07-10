@@ -18,10 +18,12 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ReferentialListToolbar } from '../referential-list-toolbar';
 import { getApiClient } from '../../lib/auth/api';
-import { parseDestinationCoord } from '../../lib/destination-coords';
+import { parseDestinationCoord, hasValidDestinationCoords } from '../../lib/destination-coords';
+import { CoordinatePickerMap } from '../maps/coordinate-picker-map';
 import { CountryFlagPlaceholder } from './country-flag-placeholder';
 
-const PAGE_SIZE = 20;
+const DEFAULT_MAP_CENTER = { latitude: -4.3058, longitude: 15.3 };
+const DEFAULT_MAP_ZOOM = 5;
 const SEARCH_DEBOUNCE_MS = 300;
 
 type FormValues = {
@@ -48,6 +50,10 @@ function formatCoordInput(value: string | null | undefined): string {
   }
   const num = Number(value);
   return Number.isFinite(num) ? String(num) : '';
+}
+
+function normalizeCoordInput(value: string): string {
+  return value.replace(',', '.').trim();
 }
 
 export function AirportsList() {
@@ -129,6 +135,11 @@ export function AirportsList() {
     setFormValues(emptyForm);
     setEditing(null);
     setShowForm(false);
+    setFormError(null);
+  }
+
+  function handleCoordinatePick(latitude: string, longitude: string) {
+    setFormValues((prev) => ({ ...prev, latitude, longitude }));
     setFormError(null);
   }
 
@@ -276,7 +287,7 @@ export function AirportsList() {
         }}
         title={editing ? t('edit') : t('new')}
         showClose
-        className="max-w-2xl"
+        className="max-h-[min(90vh,52rem)] max-w-2xl overflow-y-auto"
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           {formError ? (
@@ -318,23 +329,47 @@ export function AirportsList() {
           <div className="grid gap-4 sm:grid-cols-2">
             <Input
               label={tCommon('form.latitude')}
-              type="number"
-              step="any"
+              type="text"
               inputMode="decimal"
+              placeholder="-4.3858"
               hint={t('latitudeHint')}
               value={formValues.latitude}
-              onChange={(e) => setFormValues((p) => ({ ...p, latitude: e.target.value }))}
+              onChange={(e) =>
+                setFormValues((p) => ({
+                  ...p,
+                  latitude: normalizeCoordInput(e.target.value),
+                }))
+              }
             />
             <Input
               label={tCommon('form.longitude')}
-              type="number"
-              step="any"
+              type="text"
               inputMode="decimal"
+              placeholder="15.4446"
               hint={t('longitudeHint')}
               value={formValues.longitude}
-              onChange={(e) => setFormValues((p) => ({ ...p, longitude: e.target.value }))}
+              onChange={(e) =>
+                setFormValues((p) => ({
+                  ...p,
+                  longitude: normalizeCoordInput(e.target.value),
+                }))
+              }
             />
           </div>
+          <CoordinatePickerMap
+            key={editing?.id ?? 'new-airport'}
+            latitude={formValues.latitude}
+            longitude={formValues.longitude}
+            onCoordinateChange={handleCoordinatePick}
+            defaultLatitude={DEFAULT_MAP_CENTER.latitude}
+            defaultLongitude={DEFAULT_MAP_CENTER.longitude}
+            defaultZoom={DEFAULT_MAP_ZOOM}
+            title={t('mapPreview')}
+            hint={t('mapPickerHint')}
+            ariaLabel={t('mapPickerAria')}
+            active={showForm}
+            className="pt-1"
+          />
           <div className="flex justify-end gap-3">
             <Button type="button" variant="outline" onClick={resetForm} disabled={submitting}>
               {tActions('cancel')}

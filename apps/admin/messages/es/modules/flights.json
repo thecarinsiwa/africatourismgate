@@ -94,6 +94,11 @@
       "countryCode": "Código de país",
       "latitudeHint": "Opcional, -90 a 90",
       "longitudeHint": "Opcional, -180 a 180",
+      "mapAssistIntro": "Introduzca latitud y longitud para previsualizar el aeropuerto en el mapa.",
+      "mapPreview": "Vista previa de la ubicación",
+      "mapPickerHint": "Haga clic en el mapa o arrastre el marcador para rellenar latitud y longitud automáticamente.",
+      "mapPickerAria": "Mapa interactivo para elegir las coordenadas del aeropuerto",
+      "openStreetMap": "Abrir en OpenStreetMap",
       "deleteConfirm": "¿Eliminar « {name} »?",
       "validation": {
         "required": "Todos los campos son obligatorios."

@@ -12,6 +12,7 @@ type DestinationStaticMapProps = {
   latitude: string | number | null | undefined;
   longitude: string | number | null | undefined;
   title?: string;
+  openMapsLabel?: string;
   className?: string;
 };
 
@@ -19,10 +20,12 @@ export function DestinationStaticMap({
   latitude,
   longitude,
   title,
+  openMapsLabel,
   className,
 }: DestinationStaticMapProps) {
   const t = useTranslations('modules.destinations');
   const mapTitle = title ?? t('form.mapPreview');
+  const mapsLinkLabel = openMapsLabel ?? t('form.openStreetMap');
 
   if (!hasValidDestinationCoords(latitude, longitude)) {
     return null;
@@ -46,7 +49,7 @@ export function DestinationStaticMap({
           title={mapTitle}
           src={embedUrl}
           className="h-56 w-full border-0 sm:h-64"
-          loading="lazy"
+          loading="eager"
           referrerPolicy="no-referrer-when-downgrade"
         />
       </div>
@@ -57,7 +60,7 @@ export function DestinationStaticMap({
           rel="noreferrer"
           className="font-medium text-primary hover:text-primary-hover"
         >
-          {t('map.openStreetMap')}
+          {mapsLinkLabel}
         </a>
       </p>
     </section>

@@ -30,7 +30,8 @@
     "geographyIntro": "Coordonnées du centre de la destination pour la carte statique.",
     "latitudeHint": "Optionnel, -90 à 90",
     "longitudeHint": "Optionnel, -180 à 180",
-    "mapPreview": "Preview carte"
+    "mapPreview": "Map preview",
+    "openStreetMap": "Open in OpenStreetMap"
   },
   "detail": {
     "title": "Edit destination",
