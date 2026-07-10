@@ -11,6 +11,36 @@
 </head>
 <body>
 
+  <!-- Icon sprite — style outline uniforme -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></symbol>
+    <symbol id="i-credit-card" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></symbol>
+    <symbol id="i-bar-chart" viewBox="0 0 24 24"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
+    <symbol id="i-megaphone" viewBox="0 0 24 24"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></symbol>
+    <symbol id="i-heart-handshake" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"/><path d="m18 15-2-2"/><path d="m15 18-2-2"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></symbol>
+    <symbol id="i-store" viewBox="0 0 24 24"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path d="M2 7h20"/><path d="M22 7v3a2 2 0 0 1-2 2a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 16 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 12 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 8 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 4 12a2 2 0 0 1-2-2V7"/></symbol>
+    <symbol id="i-bed" viewBox="0 0 24 24"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></symbol>
+    <symbol id="i-plane" viewBox="0 0 24 24"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></symbol>
+    <symbol id="i-car" viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></symbol>
+    <symbol id="i-ship" viewBox="0 0 24 24"><path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1 .6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M19.38 20A11.6 11.6 0 0 0 21 14l-9-4-9 4c0 2.9.94 5.34 2.81 7.25"/><path d="M19 13V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6"/><path d="M12 10v4"/><path d="M12 2v3"/></symbol>
+    <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z"/></symbol>
+    <symbol id="i-package" viewBox="0 0 24 24"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></symbol>
+    <symbol id="i-chart-line" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></symbol>
+    <symbol id="i-file-text" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></symbol>
+    <symbol id="i-shopping-cart" viewBox="0 0 24 24"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></symbol>
+    <symbol id="i-handshake" viewBox="0 0 24 24"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/><path d="m21 3 1 11h-2"/><path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"/><path d="M3 4h8"/></symbol>
+    <symbol id="i-building" viewBox="0 0 24 24"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></symbol>
+    <symbol id="i-luggage" viewBox="0 0 24 24"><path d="M6 20a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2"/><path d="M8 18V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v14"/><path d="M10 20h4"/><circle cx="16" cy="20" r="2"/><circle cx="8" cy="20" r="2"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+    <symbol id="i-sprout" viewBox="0 0 24 24"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/></symbol>
+  </svg>
+
   <div class="deck" id="deck">
 
     <!-- Slide 1 — Titre -->
@@ -51,32 +81,32 @@
         <p class="lead">Imaginez un <strong>guichet unique</strong> pour tout le tourisme.</p>
         <div class="card-grid card-grid--2">
           <div class="card">
-            <div class="card-icon">🌐</div>
+            <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-globe"/></svg></div>
             <h3>Proposer des voyages en ligne</h3>
             <p>Hôtels, vols, voitures, croisières, activités et forfaits sur un site moderne.</p>
           </div>
           <div class="card">
-            <div class="card-icon">💳</div>
+            <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-credit-card"/></svg></div>
             <h3>Encaisser des paiements</h3>
             <p>En ligne par carte bancaire, ou en agence (espèces ou carte).</p>
           </div>
           <div class="card">
-            <div class="card-icon">📊</div>
+            <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-bar-chart"/></svg></div>
             <h3>Gérer votre activité</h3>
             <p>Réservations, clients, paiements et contenu du site au quotidien.</p>
           </div>
           <div class="card">
-            <div class="card-icon">⭐</div>
+            <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-star"/></svg></div>
             <h3>Fidéliser vos clients</h3>
             <p>Programme OneKey, avis clients et support personnalisé.</p>
           </div>
           <div class="card">
-            <div class="card-icon">📣</div>
+            <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-megaphone"/></svg></div>
             <h3>Communiquer sur votre marque</h3>
             <p>Articles, photos, histoire et témoignages clients.</p>
           </div>
           <div class="card">
-            <div class="card-icon">🦍</div>
+            <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-heart-handshake"/></svg></div>
             <h3>Soutenir une cause</h3>
             <p>Programme GAP (Gorilla Ambassadors) et collecte de dons.</p>
           </div>
@@ -92,25 +122,25 @@
         <p class="subtitle">Quatre interfaces distinctes, chacune pour un type d'utilisateur.</p>
         <div class="card-grid">
           <div class="card card--space">
-            <div class="card-icon">🌐</div>
+            <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-globe"/></svg></div>
             <h3>Site web</h3>
             <p>Pour les voyageurs — recherche et réservation en ligne.</p>
             <span class="card-url">africatourismgate.org</span>
           </div>
           <div class="card card--space">
-            <div class="card-icon">🖥️</div>
+            <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-monitor"/></svg></div>
             <h3>Espace de gestion</h3>
             <p>Pour votre équipe — administration et suivi.</p>
             <span class="card-url">app-africatourismgate.org</span>
           </div>
           <div class="card card--space">
-            <div class="card-icon">🏪</div>
+            <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-store"/></svg></div>
             <h3>Guichet de vente</h3>
             <p>Pour les vendeurs en agence ou au comptoir.</p>
             <span class="card-url">Point de vente (POS)</span>
           </div>
           <div class="card card--space">
-            <div class="card-icon">🦍</div>
+            <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-sprout"/></svg></div>
             <h3>Site GAP</h3>
             <p>Pour le programme Gorilla Ambassadors.</p>
             <span class="card-url">gap.africatourismgate.org</span>
@@ -147,32 +177,32 @@
         <h2>Six types de voyages réservables</h2>
         <div class="product-grid">
           <div class="product-pill">
-            <span class="emoji">🏨</span>
+            <span class="icon-wrap"><svg class="icon" aria-hidden="true"><use href="#i-bed"/></svg></span>
             <strong>Hôtels</strong>
             <span>Destination, dates, photos, tarifs</span>
           </div>
           <div class="product-pill">
-            <span class="emoji">✈️</span>
+            <span class="icon-wrap"><svg class="icon" aria-hidden="true"><use href="#i-plane"/></svg></span>
             <strong>Vols</strong>
             <span>Comparer, choisir une classe</span>
           </div>
           <div class="product-pill">
-            <span class="emoji">🚗</span>
+            <span class="icon-wrap"><svg class="icon" aria-hidden="true"><use href="#i-car"/></svg></span>
             <strong>Locations</strong>
             <span>Véhicule, retrait, dates</span>
           </div>
           <div class="product-pill">
-            <span class="emoji">🚢</span>
+            <span class="icon-wrap"><svg class="icon" aria-hidden="true"><use href="#i-ship"/></svg></span>
             <strong>Croisières</strong>
             <span>Cabines et itinéraires</span>
           </div>
           <div class="product-pill">
-            <span class="emoji">🎯</span>
+            <span class="icon-wrap"><svg class="icon" aria-hidden="true"><use href="#i-compass"/></svg></span>
             <strong>Activités</strong>
             <span>Excursions et expériences</span>
           </div>
           <div class="product-pill">
-            <span class="emoji">📦</span>
+            <span class="icon-wrap"><svg class="icon" aria-hidden="true"><use href="#i-package"/></svg></span>
             <strong>Forfaits</strong>
             <span>Packs combinés à prix réduit</span>
           </div>
@@ -203,27 +233,27 @@
         </p>
         <div class="card-grid card-grid--3">
           <div class="card">
-            <h3>📈 Tableau de bord</h3>
+            <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-chart-line"/></svg></span> Tableau de bord</h3>
             <p>Réservations, chiffre d'affaires, nouveaux clients et graphiques d'évolution.</p>
           </div>
           <div class="card">
-            <h3>👥 Utilisateurs</h3>
+            <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-users"/></svg></span> Utilisateurs</h3>
             <p>Comptes clients et employés, adresses, sécurité.</p>
           </div>
           <div class="card">
-            <h3>💰 Paiements</h3>
+            <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-wallet"/></svg></span> Paiements</h3>
             <p>Transactions, remboursements, codes promo et promotions.</p>
           </div>
           <div class="card">
-            <h3>📝 Contenu</h3>
+            <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-file-text"/></svg></span> Contenu</h3>
             <p>Blog, bannières, pages « À propos », avis et tickets support.</p>
           </div>
           <div class="card">
-            <h3>🦍 Programme GAP</h3>
+            <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-sprout"/></svg></span> Programme GAP</h3>
             <p>Pages, activités, impact et médias du programme conservation.</p>
           </div>
           <div class="card">
-            <h3>🔐 Droits d'accès</h3>
+            <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-shield"/></svg></span> Droits d'accès</h3>
             <p>Admin, support, commercial… chaque rôle a ses sections.</p>
           </div>
         </div>
@@ -266,7 +296,7 @@
         <h2>Guichet de vente &amp; site GAP</h2>
         <div class="two-columns">
           <div class="card">
-            <div class="card-icon">🏪</div>
+            <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-store"/></svg></div>
             <h3>Guichet de vente</h3>
             <p><em>Comptoir, agence, événement</em></p>
             <ol class="steps" style="margin-top:0.75rem">
@@ -277,7 +307,7 @@
             </ol>
           </div>
           <div class="card">
-            <div class="card-icon">🦍</div>
+            <div class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-sprout"/></svg></div>
             <h3>Site GAP</h3>
             <p><em>Gorilla Ambassadors Program</em></p>
             <ul class="feature-list" style="margin-top:0.75rem">
@@ -298,7 +328,7 @@
         <h2>Deux façons de réserver</h2>
         <div class="compare-grid">
           <div class="compare-card">
-            <h3>🛒 Réservation en ligne</h3>
+            <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-shopping-cart"/></svg></span> Réservation en ligne</h3>
             <dl>
               <dt>Qui ?</dt>
               <dd>Client autonome sur le site</dd>
@@ -309,7 +339,7 @@
             </dl>
           </div>
           <div class="compare-card">
-            <h3>🤝 Réservation assistée</h3>
+            <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-handshake"/></svg></span> Réservation assistée</h3>
             <dl>
               <dt>Qui ?</dt>
               <dd>Client accompagné par votre équipe</dd>
@@ -330,7 +360,7 @@
     <section class="slide slide--light" data-slide="11">
       <div class="slide-inner">
         <span class="slide-label">État actuel</span>
-        <h2>Ce qui fonctionne déjà ✅</h2>
+        <h2>Ce qui fonctionne déjà</h2>
         <div class="two-columns">
           <div>
             <h3>Pour les voyageurs</h3>
@@ -354,10 +384,10 @@
           </div>
         </div>
         <div class="status-row">
-          <span class="status-badge">✅ Guichet de vente + reçus</span>
-          <span class="status-badge">✅ E-mails automatiques</span>
-          <span class="status-badge">✅ Plateforme en ligne</span>
-          <span class="status-badge">✅ Multi-organisations</span>
+          <span class="status-badge"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> Guichet de vente + reçus</span>
+          <span class="status-badge"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> E-mails automatiques</span>
+          <span class="status-badge"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> Plateforme en ligne</span>
+          <span class="status-badge"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> Multi-organisations</span>
         </div>
       </div>
     </section>
@@ -366,7 +396,7 @@
     <section class="slide slide--white" data-slide="12">
       <div class="slide-inner">
         <span class="slide-label">Transparence</span>
-        <h2>Ce qui arrive bientôt ⏳</h2>
+        <h2>Ce qui arrive bientôt</h2>
         <p class="subtitle">Rien de bloquant — surtout des finitions pour plus de confort.</p>
         <div class="table-wrap">
           <table>
@@ -450,7 +480,7 @@
         <h2>Les bénéfices concrets</h2>
         <div class="card-grid card-grid--3">
           <div class="card">
-            <h3>🏢 Pour votre entreprise</h3>
+            <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-building"/></svg></span> Pour votre entreprise</h3>
             <ul class="feature-list" style="margin-top:0.5rem">
               <li>Indépendance sur catalogue et tarifs</li>
               <li>Revenus en ligne 24 h/24</li>
@@ -459,7 +489,7 @@
             </ul>
           </div>
           <div class="card">
-            <h3>🧳 Pour vos clients</h3>
+            <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-luggage"/></svg></span> Pour vos clients</h3>
             <ul class="feature-list" style="margin-top:0.5rem">
               <li>Tout réserver au même endroit</li>
               <li>Tarifs clairs, confirmation immédiate</li>
@@ -468,7 +498,7 @@
             </ul>
           </div>
           <div class="card">
-            <h3>🦍 Pour la cause GAP</h3>
+            <h3 class="title-with-icon"><span class="icon-wrap"><svg class="icon icon--sm" aria-hidden="true"><use href="#i-sprout"/></svg></span> Pour la cause GAP</h3>
             <ul class="feature-list" style="margin-top:0.5rem">
               <li>Visibilité du programme conservation</li>
               <li>Collecte de dons intégrée</li>
@@ -520,12 +550,12 @@
             <div class="progress-bar-large-fill"></div>
           </div>
           <div class="status-row">
-            <span class="status-badge">✅ Site voyageur (6 produits)</span>
-            <span class="status-badge">✅ Paiements en ligne</span>
-            <span class="status-badge">✅ Espace de gestion</span>
-            <span class="status-badge">✅ Guichet + GAP</span>
-            <span class="status-badge">✅ Multilingue</span>
-            <span class="status-badge status-badge--pending">⏳ Finitions en cours</span>
+            <span class="status-badge"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> Site voyageur (6 produits)</span>
+            <span class="status-badge"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> Paiements en ligne</span>
+            <span class="status-badge"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> Espace de gestion</span>
+            <span class="status-badge"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> Guichet + GAP</span>
+            <span class="status-badge"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg> Multilingue</span>
+            <span class="status-badge status-badge--pending"><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg> Finitions en cours</span>
           </div>
         </div>
         <blockquote class="quote-block">
@@ -577,15 +607,24 @@
         </div>
         <div class="link-grid">
           <a class="link-card" href="https://africatourismgate.org" target="_blank" rel="noopener">
-            <strong>🌐 Site voyageurs</strong>
+            <div class="link-card-head">
+              <span class="icon-wrap"><svg class="icon" aria-hidden="true"><use href="#i-globe"/></svg></span>
+              <strong>Site voyageurs</strong>
+            </div>
             <span>africatourismgate.org</span>
           </a>
           <a class="link-card" href="https://app-africatourismgate.org" target="_blank" rel="noopener">
-            <strong>🖥️ Espace de gestion</strong>
+            <div class="link-card-head">
+              <span class="icon-wrap"><svg class="icon" aria-hidden="true"><use href="#i-monitor"/></svg></span>
+              <strong>Espace de gestion</strong>
+            </div>
             <span>app-africatourismgate.org</span>
           </a>
           <a class="link-card" href="https://gap.africatourismgate.org" target="_blank" rel="noopener">
-            <strong>🦍 Site GAP</strong>
+            <div class="link-card-head">
+              <span class="icon-wrap"><svg class="icon" aria-hidden="true"><use href="#i-sprout"/></svg></span>
+              <strong>Site GAP</strong>
+            </div>
             <span>gap.africatourismgate.org</span>
           </a>
         </div>

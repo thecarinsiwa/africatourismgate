@@ -336,9 +336,86 @@ h3 {
 }
 
 .card-icon {
-  font-size: 1.75rem;
-  margin-bottom: 0.5rem;
-  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin-bottom: 0.75rem;
+  background: rgba(27, 94, 74, 0.08);
+  border-radius: 10px;
+  color: var(--color-primary);
+}
+
+.icon :is(circle, path, rect, line, polygon) {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.icon {
+  display: block;
+  width: 1.35rem;
+  height: 1.35rem;
+  color: inherit;
+}
+
+.icon--lg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.icon--sm {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.card-icon .icon {
+  width: 1.35rem;
+  height: 1.35rem;
+}
+
+.title-with-icon {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+.title-with-icon .icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+  background: rgba(27, 94, 74, 0.08);
+  border-radius: 8px;
+  color: var(--color-primary);
+}
+
+.link-card .link-card-head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.35rem;
+}
+
+.link-card .icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex-shrink: 0;
+  background: rgba(27, 94, 74, 0.08);
+  border-radius: 8px;
+  color: var(--color-primary);
 }
 
 .card h3 {
@@ -471,10 +548,21 @@ tr:nth-child(even) td {
   box-shadow: var(--shadow);
 }
 
-.product-pill .emoji {
-  font-size: 1.75rem;
-  display: block;
-  margin-bottom: 0.35rem;
+.product-pill .icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin: 0 auto 0.5rem;
+  background: rgba(27, 94, 74, 0.08);
+  border-radius: 10px;
+  color: var(--color-primary);
+}
+
+.product-pill .icon-wrap .icon {
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 .product-pill strong {
@@ -583,7 +671,8 @@ tr:nth-child(even) td {
   box-shadow: var(--shadow);
 }
 
-.compare-card h3 {
+.compare-card h3,
+.compare-card h3.title-with-icon {
   font-family: var(--font-body);
   font-size: 1.1rem;
   padding-bottom: 0.75rem;
@@ -777,13 +866,19 @@ a:hover {
 .status-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.4rem;
   font-size: 0.78rem;
   font-weight: 600;
   padding: 0.35rem 0.75rem;
   border-radius: 999px;
   background: rgba(45, 138, 110, 0.12);
   color: var(--color-success);
+}
+
+.status-badge .icon {
+  width: 0.85rem;
+  height: 0.85rem;
+  flex-shrink: 0;
 }
 
 .status-badge--pending {
