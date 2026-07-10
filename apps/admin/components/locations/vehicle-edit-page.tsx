@@ -3,7 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import type { Vehicle } from '@africatourismgate/types';
-import { DataTableBadge, Skeleton } from '@africatourismgate/ui';
+import { Button, DataTableBadge, Skeleton } from '@africatourismgate/ui';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
@@ -119,26 +119,35 @@ export function VehicleEditPage({ vehicleId }: VehicleEditPageProps) {
     <div className="space-y-8">
       <AdminPageBackLink href="/produits/locations" label={t('backLink')} />
 
-      <div className="flex flex-wrap items-center gap-4">
-        <VehicleThumbnail
-          vehicleId={vehicleId}
-          label={thumbnailLabel}
-          categoryName={categoryName}
-          size="md"
-        />
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-2">
-            {vehicle.licensePlate ? (
-              <code className="rounded-md bg-atg-surface px-2.5 py-1 font-mono text-sm font-semibold text-atg-fg ring-1 ring-atg-border/60">
-                {vehicle.licensePlate}
-              </code>
-            ) : (
-              <span className="text-sm font-medium text-atg-fg">{t('noLicensePlate')}</span>
-            )}
-            <DataTableBadge variant="muted">{agencyName}</DataTableBadge>
-            <DataTableBadge variant="default">{categoryName}</DataTableBadge>
+      <div className="flex flex-col gap-4 rounded-xl border border-atg-border bg-atg-elevated p-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex min-w-0 flex-1 items-start gap-4">
+          <VehicleThumbnail
+            vehicleId={vehicleId}
+            label={thumbnailLabel}
+            categoryName={categoryName}
+            size="md"
+          />
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              {vehicle.licensePlate ? (
+                <code className="rounded-md bg-atg-surface px-2.5 py-1 font-mono text-sm font-semibold text-atg-fg ring-1 ring-atg-border/60">
+                  {vehicle.licensePlate}
+                </code>
+              ) : (
+                <span className="text-sm font-medium text-atg-fg">{t('noLicensePlate')}</span>
+              )}
+              <DataTableBadge variant="muted">{agencyName}</DataTableBadge>
+              <DataTableBadge variant="default">{categoryName}</DataTableBadge>
+            </div>
           </div>
         </div>
+        <Button
+          href={`/produits/locations/${vehicleId}/voir`}
+          variant="outline"
+          className="w-full sm:w-auto"
+        >
+          {t('viewButton')}
+        </Button>
       </div>
 
       <VehicleSpecsGrid categoryName={categoryName} />

@@ -47,7 +47,10 @@
     "viewButton": "Voir le véhicule",
     "editButton": "Modifier le véhicule",
     "notFound": "Véhicule introuvable.",
-    "noLicensePlate": "Sans plaque"
+    "noLicensePlate": "Sans plaque",
+    "photoGallery": "Galerie photos",
+    "photoGalleryIntro": "{count, plural, =0 {Aucune photo} one {# photo} other {# photos}}",
+    "noPhotos": "Aucune photo pour ce véhicule."
   },
   "sections": {
     "availability": {

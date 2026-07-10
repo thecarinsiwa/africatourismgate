@@ -47,7 +47,10 @@
     "viewButton": "View vehicle",
     "editButton": "Edit vehicle",
     "notFound": "Vehicle not found.",
-    "noLicensePlate": "No license plate"
+    "noLicensePlate": "No license plate",
+    "photoGallery": "Photo gallery",
+    "photoGalleryIntro": "{count, plural, =0 {No photos} one {# photo} other {# photos}}",
+    "noPhotos": "No photos for this vehicle."
   },
   "sections": {
     "availability": {
