@@ -21,6 +21,8 @@ export type ModalProps = {
   containerClassName?: string;
   /** Affiche un bouton de fermeture en haut à droite. */
   showClose?: boolean;
+  /** Libellé accessible du bouton de fermeture. */
+  closeAriaLabel?: string;
 };
 
 export function Modal({
@@ -32,6 +34,7 @@ export function Modal({
   className,
   showClose = false,
   containerClassName,
+  closeAriaLabel = 'Fermer',
 }: ModalProps) {
   const titleId = useId();
   const descriptionId = useId();
@@ -119,7 +122,7 @@ export function Modal({
                 variant="ghost"
                 size="sm"
                 onClick={close}
-                aria-label="Fermer"
+                aria-label={closeAriaLabel}
                 className="shrink-0"
               >
                 ✕

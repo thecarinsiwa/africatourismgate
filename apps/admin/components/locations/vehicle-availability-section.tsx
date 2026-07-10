@@ -260,12 +260,8 @@ export function VehicleAvailabilitySection({
     }
 
     if (hasLat !== hasLng) {
-      if (!hasLat) {
-        errors.latitude = tCommon('validation.latitudeInvalid');
-      }
-      if (!hasLng) {
-        errors.longitude = tCommon('validation.longitudeInvalid');
-      }
+      setFormError(tCommon('validation.coordsBothRequired'));
+      return;
     }
 
     if (Object.keys(errors).length > 0) {
@@ -377,8 +373,9 @@ export function VehicleAvailabilitySection({
         if (!open && !submitting) resetForm();
       }}
       title={editing ? t('editSlot') : t('newSlot')}
-      description={!editing ? t('formHint') : undefined}
+      description={editing ? t('editFormHint') : t('formHint')}
       showClose
+      closeAriaLabel={tActions('close')}
       className="max-w-2xl"
     >
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -389,7 +386,7 @@ export function VehicleAvailabilitySection({
         ) : null}
         <div className="grid gap-4 sm:grid-cols-2">
           <Input
-            label={tCommon('columns.start')}
+            label={t('startDatetime')}
             type="datetime-local"
             value={formValues.startDatetime}
             onChange={(e) =>
@@ -398,7 +395,7 @@ export function VehicleAvailabilitySection({
             required
           />
           <Input
-            label={tCommon('columns.end')}
+            label={t('endDatetime')}
             type="datetime-local"
             value={formValues.endDatetime}
             onChange={(e) =>
