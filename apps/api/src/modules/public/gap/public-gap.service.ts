@@ -165,7 +165,15 @@ export class PublicGapService {
       settingsQb.andWhere('settings.locale = :locale', { locale });
     }
 
-    const settings = await settingsQb.getOne();
+    let settings = await settingsQb.getOne();
+    if (!settings && locale) {
+      settings = await this.settingsRepository
+        .createQueryBuilder('settings')
+        .where('settings.deletedAt IS NULL')
+        .andWhere('settings.status = :status', { status: 'published' })
+        .orderBy('settings.updatedAt', 'DESC')
+        .getOne();
+    }
 
     const statsQb = this.impactStatsRepository
       .createQueryBuilder('stat')

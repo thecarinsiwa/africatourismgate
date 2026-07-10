@@ -376,7 +376,8 @@ export const es: Translations = {
     title: 'Nuestro impacto',
     subtitle:
       'Descubra los resultados concretos del programa GAP en favor de las comunidades y la conservación.',
-    cta: 'Descubrir GAP',
+    cta: 'Descubrir {programName}',
+    programNameFallback: 'GAP',
   },
   footer: {
     tagline:
