@@ -13,8 +13,8 @@
   --color-border: #e8e4dc;
   --color-success: #2d8a6e;
   --color-warning: #c47f17;
-  --font-display: "Playfair Display", Georgia, serif;
-  --font-body: "DM Sans", system-ui, sans-serif;
+  --font-display: "Montserrat", system-ui, sans-serif;
+  --font-body: "Montserrat", system-ui, sans-serif;
   --slide-padding: clamp(2rem, 5vw, 4rem);
   --radius: 12px;
   --shadow: 0 4px 24px rgba(27, 94, 74, 0.08);
