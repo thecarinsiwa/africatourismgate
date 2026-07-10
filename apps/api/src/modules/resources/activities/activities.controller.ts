@@ -24,9 +24,9 @@ import { randomUUID } from 'node:crypto';
 import { existsSync, mkdirSync } from 'node:fs';
 import { extname, join } from 'node:path';
 import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import { activityUploadUrl, activityDescriptionAssetUploadUrl } from '../../../common/utils/public-asset-url';
 import { ActivitiesService } from './activities.service';
+import { ActivitiesListQueryDto } from './dto/activities-list-query.dto';
 import { CreateActivityDto } from './dto/create-activity.dto';
 import { UpdateActivityDto } from './dto/update-activity.dto';
 
@@ -61,7 +61,7 @@ export class ActivitiesController {
   @RequirePermissions('activities.read')
   @Get()
   @ApiOperation({ summary: 'List activities' })
-  findAll(@Query() query: PaginationQueryDto) {
+  findAll(@Query() query: ActivitiesListQueryDto) {
     return this.service.findAll(query);
   }
 
