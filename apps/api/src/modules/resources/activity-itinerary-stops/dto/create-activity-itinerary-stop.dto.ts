@@ -49,4 +49,12 @@ export class CreateActivityItineraryStopDto {
   @IsString()
   @MaxLength(5000)
   description?: string | null;
+
+  @ApiPropertyOptional({ example: 30, description: 'Durée de cette étape en minutes' })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt({ message: 'La durée doit être un entier.' })
+  @Min(1)
+  @Max(24 * 60)
+  durationMinutes?: number | null;
 }

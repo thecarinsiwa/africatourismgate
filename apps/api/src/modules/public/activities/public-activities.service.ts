@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
+import { filterActivityItineraryStopsByDuration } from '../../../common/activity-itinerary-stops.util';
 import {
   Activities,
   ActivityImages,
@@ -360,7 +361,10 @@ export class PublicActivitiesService {
       participants,
       schedules,
       images: await this.loadActivityGallery(activity.id),
-      itineraryStops: await this.loadActivityItineraryStops(activity.id),
+      itineraryStops: await this.loadActivityItineraryStops(
+        activity.id,
+        activity.durationMinutes,
+      ),
       difficultyLevel: activity.difficultyLevel,
       ...this.toReviewFields(reviewSummary.get(activity.id)),
     };
@@ -403,13 +407,14 @@ export class PublicActivitiesService {
 
   private async loadActivityItineraryStops(
     activityId: string,
+    activityDurationMinutes: number | null,
   ): Promise<ActivityDetailDto['itineraryStops']> {
     const rows = await this.itineraryStopsRepository.find({
       where: { activityId },
       order: { stopOrder: 'ASC', createdAt: 'ASC' },
     });
 
-    return rows
+    const mapped = rows
       .filter((row) => !row.deletedAt)
       .map((row) => {
         const latitude = this.toCoord(row.latitude);
@@ -425,9 +430,12 @@ export class PublicActivitiesService {
           latitude,
           longitude,
           description: row.description,
+          durationMinutes: row.durationMinutes,
         };
       })
       .filter((row): row is NonNullable<typeof row> => row !== null);
+
+    return filterActivityItineraryStopsByDuration(mapped, activityDurationMinutes);
   }
 
   private async resolveDestinationIds(destination: string): Promise<string[]> {

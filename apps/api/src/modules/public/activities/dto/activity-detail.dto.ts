@@ -19,6 +19,9 @@ export class ActivityDetailItineraryStopDto {
 
   @ApiPropertyOptional({ nullable: true })
   description!: string | null;
+
+  @ApiPropertyOptional({ nullable: true, example: 30, description: 'Durée de cette étape en minutes' })
+  durationMinutes!: number | null;
 }
 
 export class ActivityDetailScheduleDto {

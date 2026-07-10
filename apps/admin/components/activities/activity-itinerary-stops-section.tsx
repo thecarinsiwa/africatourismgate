@@ -16,6 +16,7 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { CoordinatePickerMap } from '../maps/coordinate-picker-map';
+import { formatDurationMinutes } from '../../lib/flight-datetime';
 import { ActivityItineraryStopsTimeline } from './activity-itinerary-stops-timeline';
 
 type FormValues = {
@@ -24,6 +25,7 @@ type FormValues = {
   latitude: string;
   longitude: string;
   description: string;
+  durationMinutes: string;
 };
 
 const emptyForm: FormValues = {
@@ -32,6 +34,7 @@ const emptyForm: FormValues = {
   latitude: '',
   longitude: '',
   description: '',
+  durationMinutes: '',
 };
 
 function parseCoord(value: string): number | undefined {
@@ -43,11 +46,13 @@ function parseCoord(value: string): number | undefined {
 
 type ActivityItineraryStopsSectionProps = {
   activityId: string;
+  activityDurationMinutes?: number | null;
   embedded?: boolean;
 };
 
 export function ActivityItineraryStopsSection({
   activityId,
+  activityDurationMinutes = null,
   embedded = false,
 }: ActivityItineraryStopsSectionProps) {
   const { activities: getActivitiesErrorMessage } = useAdminErrorMessages();
@@ -88,6 +93,24 @@ export function ActivityItineraryStopsSection({
   }, [load]);
 
   const rows = useMemo(() => (state.status === 'ready' ? state.rows : []), [state]);
+
+  const totalStopDurationMinutes = useMemo(
+    () =>
+      rows.reduce((total, row) => {
+        if (row.durationMinutes == null || row.durationMinutes <= 0) {
+          return total;
+        }
+        return total + row.durationMinutes;
+      }, 0),
+    [rows],
+  );
+
+  const activityDurationLabel =
+    activityDurationMinutes != null && activityDurationMinutes > 0
+      ? formatDurationMinutes(activityDurationMinutes)
+      : null;
+  const totalStopDurationLabel =
+    totalStopDurationMinutes > 0 ? formatDurationMinutes(totalStopDurationMinutes) : null;
 
   const nextStopOrder = useMemo(() => {
     if (!rows.length) return 1;
@@ -149,6 +172,13 @@ export function ActivityItineraryStopsSection({
       errors.longitude = tCommon('validation.longitudeOutOfRange');
     }
 
+    if (formValues.durationMinutes.trim()) {
+      const durationMinutes = Number(formValues.durationMinutes);
+      if (!Number.isFinite(durationMinutes) || durationMinutes < 1) {
+        errors.durationMinutes = t('validation.durationMinutes');
+      }
+    }
+
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
   }
@@ -162,6 +192,8 @@ export function ActivityItineraryStopsSection({
     const latitude = parseCoord(formValues.latitude)!;
     const longitude = parseCoord(formValues.longitude)!;
     const description = formValues.description.trim() || null;
+    const durationTrimmed = formValues.durationMinutes.trim();
+    const durationMinutes = durationTrimmed ? Number(durationTrimmed) : null;
 
     setSubmitting(true);
     try {
@@ -171,6 +203,7 @@ export function ActivityItineraryStopsSection({
         latitude,
         longitude,
         description,
+        durationMinutes,
       };
 
       if (editing) {
@@ -199,6 +232,14 @@ export function ActivityItineraryStopsSection({
     [emptyDash],
   );
 
+  const formatDuration = useCallback(
+    (value: number | null): string => {
+      if (value == null || value <= 0) return emptyDash;
+      return formatDurationMinutes(value);
+    },
+    [emptyDash],
+  );
+
   const columns = useMemo<ColumnDef<ActivityItineraryStop, unknown>[]>(
     () => [
       {
@@ -221,6 +262,11 @@ export function ActivityItineraryStopsSection({
         cell: ({ row }) => formatCoord(row.original.longitude),
       },
       {
+        id: 'durationMinutes',
+        header: tCommon('columns.duration'),
+        cell: ({ row }) => formatDuration(row.original.durationMinutes),
+      },
+      {
         id: 'actions',
         header: tColumns('actions'),
         meta: { align: 'right' },
@@ -236,6 +282,10 @@ export function ActivityItineraryStopsSection({
                   latitude: row.original.latitude ?? '',
                   longitude: row.original.longitude ?? '',
                   description: row.original.description ?? '',
+                  durationMinutes:
+                    row.original.durationMinutes != null
+                      ? String(row.original.durationMinutes)
+                      : '',
                 });
                 setFieldErrors({});
                 setFormError(null);
@@ -263,12 +313,32 @@ export function ActivityItineraryStopsSection({
         ),
       },
     ],
-    [deletingId, emptyDash, formatCoord, getActivitiesErrorMessage, load, t, tColumns, tCommon],
+    [deletingId, emptyDash, formatCoord, formatDuration, getActivitiesErrorMessage, load, t, tColumns, tCommon],
   );
 
   return (
     <div className="space-y-6">
       {!embedded ? <h3 className="text-base font-semibold text-atg-fg">{t('title')}</h3> : null}
+
+      {activityDurationLabel || totalStopDurationLabel ? (
+        <p className="text-sm text-atg-muted">
+          {activityDurationLabel
+            ? t('durationSummaryActivity', { duration: activityDurationLabel })
+            : null}
+          {activityDurationLabel && totalStopDurationLabel ? ' · ' : null}
+          {totalStopDurationLabel
+            ? t('durationSummaryStops', { duration: totalStopDurationLabel })
+            : null}
+          {activityDurationMinutes != null &&
+          totalStopDurationMinutes > activityDurationMinutes ? (
+            <span className="mt-1 block text-atg-warning">
+              {t('durationExceedsActivity')}
+            </span>
+          ) : null}
+        </p>
+      ) : (
+        <p className="text-sm text-atg-muted">{t('durationHint')}</p>
+      )}
 
       {state.status === 'ready' && rows.length > 0 ? (
         <ActivityItineraryStopsTimeline stops={rows} />
@@ -339,6 +409,17 @@ export function ActivityItineraryStopsSection({
               label={t('description')}
               value={formValues.description}
               onChange={(e) => setFormValues((prev) => ({ ...prev, description: e.target.value }))}
+            />
+            <Input
+              label={tCommon('form.durationMinutesOptional')}
+              type="number"
+              min={1}
+              value={formValues.durationMinutes}
+              onChange={(e) =>
+                setFormValues((prev) => ({ ...prev, durationMinutes: e.target.value }))
+              }
+              error={fieldErrors.durationMinutes}
+              hint={t('durationFieldHint')}
             />
             <div className="flex gap-3">
               <Button type="submit" loading={submitting}>

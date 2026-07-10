@@ -226,7 +226,11 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
           value="itineraire"
           className="rounded-xl border border-atg-border bg-atg-elevated/60 p-4 sm:p-6"
         >
-          <ActivityItineraryStopsSection activityId={activityId} embedded />
+          <ActivityItineraryStopsSection
+            activityId={activityId}
+            activityDurationMinutes={activity.durationMinutes}
+            embedded
+          />
         </TabsContent>
 
         <TabsContent

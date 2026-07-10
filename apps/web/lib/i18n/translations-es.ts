@@ -826,6 +826,7 @@ export const es: Translations = {
     itineraryTitle: 'Itinerario',
     itineraryMapAria: 'Mapa del itinerario de la actividad',
     itineraryStopLabel: 'Coordenadas',
+    itineraryStopDuration: 'Duración',
   },
   packages: {
     metaTitle: 'Paquetes combinados en África',

@@ -2,12 +2,18 @@
 
 import { useMemo } from 'react';
 import type { ActivityItineraryStop } from '../../lib/activities/types';
+import { formatDurationMinutes } from '../../lib/activities/listings';
 import { ItineraryMapSection } from '../maps/itinerary-map-section';
 
 type ActivityItineraryLabels = {
   itineraryTitle: string;
   itineraryMapAria: string;
   itineraryStopLabel: string;
+  itineraryStopDuration: string;
+  hourSingular: string;
+  hourPlural: string;
+  minuteSingular: string;
+  minutePlural: string;
 };
 
 type ActivityItinerarySectionProps = {
@@ -61,6 +67,17 @@ export function ActivityItinerarySection({ stops, labels }: ActivityItinerarySec
               <p className="text-sm font-semibold text-atg-fg">{stop.name}</p>
               {stop.description ? (
                 <p className="mt-1 text-sm leading-relaxed text-atg-muted">{stop.description}</p>
+              ) : null}
+              {stop.durationMinutes != null && stop.durationMinutes > 0 ? (
+                <p className="mt-1 text-sm text-atg-muted">
+                  {labels.itineraryStopDuration}:{' '}
+                  {formatDurationMinutes(stop.durationMinutes, {
+                    hourSingular: labels.hourSingular,
+                    hourPlural: labels.hourPlural,
+                    minuteSingular: labels.minuteSingular,
+                    minutePlural: labels.minutePlural,
+                  })}
+                </p>
               ) : null}
               <p className="mt-1 font-mono text-xs tabular-nums text-atg-muted">
                 {labels.itineraryStopLabel}: {Number(stop.latitude).toFixed(5)},{' '}

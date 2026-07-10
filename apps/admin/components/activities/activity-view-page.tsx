@@ -14,6 +14,7 @@ import type {
   Activity,
   ActivityDescriptionAsset,
   ActivityImage,
+  ActivityItineraryStop,
   ActivityProvider,
   ActivitySchedule,
 } from '@africatourismgate/types';
@@ -25,7 +26,9 @@ import { RichTextContent } from '../rich-text-content';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
 import { formatMoney } from '../../lib/format-money';
+import { formatDurationMinutes } from '../../lib/flight-datetime';
 import { ActivityMetaBadges } from './activity-meta-badges';
+import { ActivityItineraryStopsTimeline } from './activity-itinerary-stops-timeline';
 
 type ActivityViewPageProps = {
   activityId: string;
@@ -35,6 +38,8 @@ export function ActivityViewPage({ activityId }: ActivityViewPageProps) {
   const { activities: getActivitiesErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.activities.detail');
   const tSchedules = useTranslations('modules.activities.sections.schedules');
+  const tItinerary = useTranslations('modules.activities.sections.itineraryStops');
+  const tCommon = useTranslations('modules.common');
   const tColumns = useTranslations('modules.common.columns');
   const locale = useLocale();
   const [activity, setActivity] = useState<Activity | null>(null);
@@ -42,6 +47,7 @@ export function ActivityViewPage({ activityId }: ActivityViewPageProps) {
   const [images, setImages] = useState<ActivityImage[]>([]);
   const [assets, setAssets] = useState<ActivityDescriptionAsset[]>([]);
   const [schedules, setSchedules] = useState<ActivitySchedule[]>([]);
+  const [itineraryStops, setItineraryStops] = useState<ActivityItineraryStop[]>([]);
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -59,10 +65,12 @@ export function ActivityViewPage({ activityId }: ActivityViewPageProps) {
     try {
       const client = getApiClient();
       const activityData = await client.getActivity(activityId);
-      const [imagesResult, assetsResult, schedulesResult, providerData] = await Promise.all([
+      const [imagesResult, assetsResult, schedulesResult, itineraryStopsResult, providerData] =
+        await Promise.all([
         client.listActivityImages({ activityId, page: 1, limit: 100 }),
         client.listActivityDescriptionAssets({ activityId, page: 1, limit: 100 }),
         client.listActivitySchedules({ activityId, page: 1, limit: 100 }),
+        client.listActivityItineraryStops({ activityId, page: 1, limit: 100 }),
         client.getActivityProvider(activityData.providerId).catch(() => null),
       ]);
       setActivity(activityData);
@@ -70,6 +78,7 @@ export function ActivityViewPage({ activityId }: ActivityViewPageProps) {
       setImages(imagesResult.data);
       setAssets(assetsResult.data);
       setSchedules(schedulesResult.data);
+      setItineraryStops(itineraryStopsResult.data);
       setState({ status: 'ready' });
     } catch (error) {
       setState({ status: 'error', message: getActivitiesErrorMessage(error) });
@@ -107,6 +116,51 @@ export function ActivityViewPage({ activityId }: ActivityViewPageProps) {
       },
     ],
     [formatDatetime, tColumns, tSchedules],
+  );
+
+  const emptyDash = tCommon('empty.dash');
+
+  const formatCoord = useCallback(
+    (value: string | null): string => {
+      if (value === null || value === '') return emptyDash;
+      const num = Number(value);
+      return Number.isFinite(num) ? num.toFixed(5) : value;
+    },
+    [emptyDash],
+  );
+
+  const itineraryColumns = useMemo<ColumnDef<ActivityItineraryStop, unknown>[]>(
+    () => [
+      {
+        accessorKey: 'stopOrder',
+        header: tItinerary('order'),
+        meta: { align: 'center' },
+      },
+      {
+        accessorKey: 'name',
+        header: tColumns('name'),
+      },
+      {
+        id: 'latitude',
+        header: tCommon('form.latitude'),
+        cell: ({ row }) => formatCoord(row.original.latitude),
+      },
+      {
+        id: 'longitude',
+        header: tCommon('form.longitude'),
+        cell: ({ row }) => formatCoord(row.original.longitude),
+      },
+      {
+        id: 'durationMinutes',
+        header: tColumns('duration'),
+        cell: ({ row }) => {
+          const value = row.original.durationMinutes;
+          if (value == null || value <= 0) return emptyDash;
+          return formatDurationMinutes(value);
+        },
+      },
+    ],
+    [emptyDash, formatCoord, tColumns, tCommon, tItinerary],
   );
 
   if (state.status === 'loading') {
@@ -233,6 +287,26 @@ export function ActivityViewPage({ activityId }: ActivityViewPageProps) {
           </Card>
         </section>
       ) : null}
+
+      <section className="space-y-4 rounded-xl border border-atg-border/80 bg-atg-elevated/40 p-4 sm:p-5">
+        <div>
+          <h3 className="text-lg font-semibold text-atg-fg">{tItinerary('title')}</h3>
+          <p className="mt-1 text-sm text-atg-muted">
+            {t('itineraryStopsIntro', { count: itineraryStops.length })}
+          </p>
+        </div>
+        {itineraryStops.length > 0 ? (
+          <ActivityItineraryStopsTimeline stops={itineraryStops} />
+        ) : null}
+        <Card variant="dashboard" padding="none" className="overflow-hidden">
+          <DataTable
+            columns={itineraryColumns}
+            data={itineraryStops}
+            emptyMessage={tItinerary('empty')}
+            getRowId={(row) => row.id}
+          />
+        </Card>
+      </section>
 
       <section className="space-y-4 rounded-xl border border-atg-border/80 bg-atg-elevated/40 p-4 sm:p-5">
         <div>

@@ -35,7 +35,7 @@ export class ActivityItineraryStopsService extends CrudService<ActivityItinerary
   private toEntityPayload(
     dto: CreateActivityItineraryStopDto | UpdateActivityItineraryStopDto,
   ): DeepPartial<ActivityItineraryStops> {
-    const { latitude, longitude, description, ...rest } = dto;
+    const { latitude, longitude, description, durationMinutes, ...rest } = dto;
     const payload: DeepPartial<ActivityItineraryStops> = { ...rest };
 
     if (latitude !== undefined) {
@@ -46,6 +46,9 @@ export class ActivityItineraryStopsService extends CrudService<ActivityItinerary
     }
     if (description !== undefined) {
       payload.description = description ?? null;
+    }
+    if (durationMinutes !== undefined) {
+      payload.durationMinutes = durationMinutes ?? null;
     }
 
     return payload;

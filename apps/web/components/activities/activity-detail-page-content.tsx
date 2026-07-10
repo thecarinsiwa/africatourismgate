@@ -326,6 +326,11 @@ export function ActivityDetailPageContent({
                   itineraryTitle: a.itineraryTitle,
                   itineraryMapAria: a.itineraryMapAria,
                   itineraryStopLabel: a.itineraryStopLabel,
+                  itineraryStopDuration: a.itineraryStopDuration,
+                  hourSingular: a.hourSingular,
+                  hourPlural: a.hourPlural,
+                  minuteSingular: a.minuteSingular,
+                  minutePlural: a.minutePlural,
                 }}
               />
             ) : null}

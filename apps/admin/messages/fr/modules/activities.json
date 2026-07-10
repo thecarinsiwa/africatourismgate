@@ -70,6 +70,7 @@
     "descriptionAssets": "Pièces jointes",
     "descriptionAssetsIntro": "{count} pièce(s) jointe(s) liée(s) à la description.",
     "schedulesIntro": "{count} créneau(x) programmé(s).",
+    "itineraryStopsIntro": "{count} étape(s) d'itinéraire.",
     "tabsAria": "Sections de l'activité",
     "tabs": {
       "activity": "Activité",
@@ -110,9 +111,15 @@
       "mapPickerHint": "Cliquez sur la carte ou déplacez le marqueur pour renseigner automatiquement la latitude et la longitude.",
       "mapPickerAria": "Carte interactive pour sélectionner les coordonnées",
       "mapPreview": "Aperçu carte",
+      "durationHint": "Renseignez une durée par étape pour adapter l'itinéraire affiché à la durée de l'activité.",
+      "durationFieldHint": "Temps passé à cette étape. L'itinéraire public s'arrête lorsque la somme atteint la durée de l'activité.",
+      "durationSummaryActivity": "Durée de l'activité : {duration}",
+      "durationSummaryStops": "Durée cumulée des étapes : {duration}",
+      "durationExceedsActivity": "La durée cumulée des étapes dépasse la durée de l'activité : seules les premières étapes seront visibles sur le site.",
       "timelineAria": "Frise chronologique de l'itinéraire",
       "validation": {
-        "stopOrder": "L'ordre doit être un entier ≥ 1."
+        "stopOrder": "L'ordre doit être un entier ≥ 1.",
+        "durationMinutes": "La durée doit être un entier ≥ 1."
       }
     }
   },

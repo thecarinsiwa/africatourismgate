@@ -3,6 +3,7 @@
 import { cn, DataTableBadge } from '@africatourismgate/ui';
 import type { ActivityItineraryStop } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
+import { formatDurationMinutes } from '../../lib/flight-datetime';
 
 type ActivityItineraryStopsTimelineProps = {
   stops: ActivityItineraryStop[];
@@ -26,6 +27,11 @@ function StopBlock({
       <span className="truncate text-sm font-medium text-atg-fg">{stop.name}</span>
       {stop.description ? (
         <p className="line-clamp-2 text-xs text-atg-muted">{stop.description}</p>
+      ) : null}
+      {stop.durationMinutes != null && stop.durationMinutes > 0 ? (
+        <p className="text-xs text-atg-muted">
+          {formatDurationMinutes(stop.durationMinutes)}
+        </p>
       ) : null}
       <p className="font-mono text-xs tabular-nums text-atg-muted">
         {Number(stop.latitude).toFixed(5)}, {Number(stop.longitude).toFixed(5)}

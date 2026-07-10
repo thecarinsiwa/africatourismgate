@@ -6,6 +6,7 @@ export interface ActivityItineraryStop {
   latitude: string;
   longitude: string;
   description: string | null;
+  durationMinutes: number | null;
   createdAt: string;
   updatedAt: string | null;
 }
@@ -17,6 +18,7 @@ export interface CreateActivityItineraryStopRequest {
   latitude: number | string;
   longitude: number | string;
   description?: string | null;
+  durationMinutes?: number | null;
 }
 
 export type UpdateActivityItineraryStopRequest = Partial<

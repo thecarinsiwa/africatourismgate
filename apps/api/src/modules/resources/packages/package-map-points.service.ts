@@ -10,6 +10,7 @@ import {
   Flights,
   Properties,
 } from '../../../entities/generated';
+import { filterActivityItineraryStopsByDuration } from '../../../common/activity-itinerary-stops.util';
 import { PackageItemEnrichedDto, PackageMapPointDto } from './dto/package-detail.dto';
 
 @Injectable()
@@ -77,7 +78,10 @@ export class PackageMapPointsService {
       order: { stopOrder: 'ASC', createdAt: 'ASC' },
     });
 
-    const activeStops = stops.filter((stop) => !stop.deletedAt);
+    const activeStops = filterActivityItineraryStopsByDuration(
+      stops.filter((stop) => !stop.deletedAt),
+      activity.durationMinutes,
+    );
     if (activeStops.length) {
       return activeStops.flatMap((stop) => {
         const latitude = this.toCoord(stop.latitude);

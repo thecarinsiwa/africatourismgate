@@ -707,6 +707,7 @@ export type Translations = {
     itineraryTitle: string;
     itineraryMapAria: string;
     itineraryStopLabel: string;
+    itineraryStopDuration: string;
   };
   packages: {
     metaTitle: string;
@@ -2055,6 +2056,7 @@ const fr: Translations = {
     itineraryTitle: 'Itinéraire',
     itineraryMapAria: 'Carte de l\'itinéraire de l\'activité',
     itineraryStopLabel: 'Coordonnées',
+    itineraryStopDuration: 'Durée',
   },
   packages: {
     metaTitle: 'Forfaits combinés en Afrique',
@@ -3481,6 +3483,7 @@ const en: Translations = {
     itineraryTitle: 'Itinerary',
     itineraryMapAria: 'Activity itinerary map',
     itineraryStopLabel: 'Coordinates',
+    itineraryStopDuration: 'Duration',
   },
   packages: {
     metaTitle: 'Combined packages in Africa',

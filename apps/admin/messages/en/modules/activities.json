@@ -70,6 +70,7 @@
     "descriptionAssets": "Attachments",
     "descriptionAssetsIntro": "{count} attachment(s) linked to the description.",
     "schedulesIntro": "{count} scheduled slot(s).",
+    "itineraryStopsIntro": "{count} itinerary stop(s).",
     "tabsAria": "Activity sections",
     "tabs": {
       "activity": "Activity",
@@ -110,9 +111,15 @@
       "mapPickerHint": "Click on the map or drag the marker to fill in latitude and longitude automatically.",
       "mapPickerAria": "Interactive map to pick coordinates",
       "mapPreview": "Map preview",
+      "durationHint": "Set a duration per stop so the displayed itinerary matches the activity duration.",
+      "durationFieldHint": "Time spent at this stop. The public itinerary stops when the total reaches the activity duration.",
+      "durationSummaryActivity": "Activity duration: {duration}",
+      "durationSummaryStops": "Cumulative stop duration: {duration}",
+      "durationExceedsActivity": "Cumulative stop duration exceeds the activity duration: only the first stops will appear on the website.",
       "timelineAria": "Itinerary timeline",
       "validation": {
-        "stopOrder": "Order must be an integer ≥ 1."
+        "stopOrder": "Order must be an integer ≥ 1.",
+        "durationMinutes": "Duration must be an integer ≥ 1."
       }
     }
   },

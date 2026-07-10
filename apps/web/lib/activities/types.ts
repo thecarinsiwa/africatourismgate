@@ -56,6 +56,7 @@ export interface ActivityItineraryStop {
   latitude: number;
   longitude: number;
   description: string | null;
+  durationMinutes?: number | null;
 }
 
 export interface ActivityDetail {

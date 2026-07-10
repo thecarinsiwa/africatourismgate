@@ -127,4 +127,7 @@ export class ActivityItineraryStops extends BaseAuditEntity {
 
   @Column({ type: 'text', name: 'description', nullable: true })
   description!: string | null;
+
+  @Column({ type: 'int', name: 'duration_minutes', nullable: true })
+  durationMinutes!: number | null;
 }

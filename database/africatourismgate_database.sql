@@ -1158,6 +1158,7 @@ CREATE TABLE `activity_itinerary_stops` (
   `latitude` DECIMAL(10,7) NOT NULL,
   `longitude` DECIMAL(10,7) NOT NULL,
   `description` TEXT DEFAULT NULL,
+  `duration_minutes` INT DEFAULT NULL,
   `created_by_user_id` CHAR(36) DEFAULT NULL,
   `updated_by_user_id` CHAR(36) DEFAULT NULL,
   `deleted_by_user_id` CHAR(36) DEFAULT NULL,
