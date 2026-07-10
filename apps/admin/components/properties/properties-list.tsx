@@ -22,6 +22,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
 import { ListViewModeToggle } from '../list-view-mode-toggle';
+import { PropertiesExportDialog } from './properties-export-dialog';
 import { PropertyThumbnail } from './property-thumbnail';
 
 const PAGE_SIZE = 20;
@@ -39,6 +40,7 @@ export function PropertiesList() {
   const tPagination = useTranslations('modules.common.pagination');
   const tDataTable = useTranslations('modules.common.dataTable');
   const tDialogs = useTranslations('modules.properties.dialogs');
+  const tExports = useTranslations('modules.properties.exports');
   const tToast = useTranslations('modules.common.toast');
   const tActions = useTranslations('common.actions');
   const propertyTypeLabels = usePropertyTypeLabels();
@@ -62,12 +64,25 @@ export function PropertiesList() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [pendingDelete, setPendingDelete] = useState<Property | null>(null);
   const [viewMode, setViewMode] = useState<PropertiesViewMode>('table');
+  const [exportOpen, setExportOpen] = useState(false);
+  const [canExportBookings, setCanExportBookings] = useState(false);
 
   useEffect(() => {
     void getApiClient()
       .listDestinations({ page: 1, limit: 100 })
       .then((r) => setDestinations(r.data))
       .catch(() => setDestinations([]));
+  }, []);
+
+  useEffect(() => {
+    void getApiClient()
+      .getAuthMe()
+      .then((me) => {
+        setCanExportBookings(
+          me.isSuperAdmin || me.permissions.includes('bookings.read'),
+        );
+      })
+      .catch(() => setCanExportBookings(false));
   }, []);
 
   const load = useCallback(async () => {
@@ -268,6 +283,9 @@ export function PropertiesList() {
           />
         </div>
         <div className="flex flex-wrap gap-2">
+          <Button variant="outline" onClick={() => setExportOpen(true)}>
+            {tExports('button')}
+          </Button>
           <Button href="/hebergements/equipements" variant="outline">
             {tList('amenitiesLink')}
           </Button>
@@ -387,6 +405,14 @@ export function PropertiesList() {
         loading={deletingId !== null}
         onConfirm={() => void confirmDelete()}
         onCancel={() => setPendingDelete(null)}
+      />
+
+      <PropertiesExportDialog
+        open={exportOpen}
+        onOpenChange={setExportOpen}
+        search={search}
+        destinationId={destinationFilter}
+        canExportBookings={canExportBookings}
       />
     </div>
   );

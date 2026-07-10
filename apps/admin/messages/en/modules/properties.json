@@ -23,6 +23,24 @@
     "deleteTitle": "Delete accommodation",
     "deleteDescription": "Delete accommodation « {name} »? This action cannot be undone."
   },
+  "exports": {
+    "button": "Export",
+    "dialogTitle": "Export accommodations",
+    "dialogDescription": "Exports use the current search and destination filters.",
+    "excel": "Export Excel (4 sheets)",
+    "pdfKpi": "KPI summary (PDF)",
+    "pdfCatalog": "Catalog (PDF)",
+    "pdfBookings": "Bookings (PDF)",
+    "pdfDossier": "Export PDF",
+    "dateFrom": "Start date",
+    "dateTo": "End date",
+    "periodRequired": "Select a date range for this export.",
+    "periodInvalid": "End date must be on or after the start date.",
+    "downloading": "Generating…",
+    "success": "Export downloaded.",
+    "error": "Could not generate the export.",
+    "noPermissionBookings": "Bookings export requires bookings access."
+  },
   "form": {
     "submitCreate": "Create accommodation",
     "sections": {

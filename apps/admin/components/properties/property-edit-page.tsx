@@ -20,6 +20,7 @@ import { AdminPageBackLink } from '../admin-page-back-link';
 import { getApiClient } from '../../lib/auth/api';
 import { PropertyAmenitiesSection } from './property-amenities-section';
 import { PropertyAvailabilitySection } from './property-availability-section';
+import { PropertyExportPdfButton } from './property-export-pdf-button';
 import { PropertyForm } from './property-form';
 import { PropertyImagesSection } from './property-images-section';
 import { PropertyRoomsSection } from './property-rooms-section';
@@ -140,6 +141,7 @@ export function PropertyEditPage({ propertyId }: PropertyEditPageProps) {
           </div>
           <p className="mt-1 font-mono text-sm text-atg-muted">{property.slug}</p>
         </div>
+        <PropertyExportPdfButton propertyId={propertyId} className="ml-auto shrink-0" />
       </div>
 
       <Tabs value={activeTab} onValueChange={handleTabChange}>

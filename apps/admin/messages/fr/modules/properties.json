@@ -23,6 +23,24 @@
     "deleteTitle": "Supprimer l'hébergement",
     "deleteDescription": "Supprimer l'hébergement « {name} » ? Cette action est irréversible."
   },
+  "exports": {
+    "button": "Exporter",
+    "dialogTitle": "Exporter les hébergements",
+    "dialogDescription": "Les exports respectent les filtres de recherche et de destination actifs.",
+    "excel": "Exporter Excel (4 onglets)",
+    "pdfKpi": "Synthèse KPI (PDF)",
+    "pdfCatalog": "Catalogue (PDF)",
+    "pdfBookings": "Réservations (PDF)",
+    "pdfDossier": "Exporter PDF",
+    "dateFrom": "Date de début",
+    "dateTo": "Date de fin",
+    "periodRequired": "Indiquez une période pour cet export.",
+    "periodInvalid": "La date de fin doit être postérieure ou égale à la date de début.",
+    "downloading": "Génération en cours…",
+    "success": "Export téléchargé.",
+    "error": "Impossible de générer l'export.",
+    "noPermissionBookings": "Export réservations réservé aux utilisateurs avec l'accès réservations."
+  },
   "form": {
     "submitCreate": "Créer l'hébergement",
     "sections": {
