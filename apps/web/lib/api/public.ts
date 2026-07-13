@@ -107,9 +107,13 @@ export type {
 } from '../packages/types';
 
 export type { PublicDestinationHighlight } from '@africatourismgate/types';
-import { getWebApiUrl } from './get-api-url';
 
-const apiUrl = getWebApiUrl();
+const defaultApiUrl =
+  process.env.NODE_ENV === 'production'
+    ? 'https://app-africatourismgate.org/api'
+    : 'http://localhost:3000/api';
+
+const apiUrl = (process.env.NEXT_PUBLIC_API_URL ?? defaultApiUrl).replace(/\/$/, '');
 
 async function fetchPublic<T>(path: string): Promise<T> {
   const res = await fetch(`${apiUrl}${path}`, {
