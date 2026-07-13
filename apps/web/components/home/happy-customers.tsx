@@ -78,7 +78,11 @@ export function HappyCustomers() {
     };
   }, [locale]);
 
-  const useLocalizedCopy = usedLocaleFallback || !content?.section;
+  const useLocalizedCopy =
+    usedLocaleFallback ||
+    !content?.section ||
+    (content.section.locale !== locale &&
+      (content.stats.length === 0 || content.stats.some((stat) => stat.locale !== locale)));
   const section = useLocalizedCopy ? null : content?.section;
   const title = section?.title ?? t.customers.title;
   const subtitle = section?.subtitle ?? t.customers.subtitle;
