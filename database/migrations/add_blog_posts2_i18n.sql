@@ -1,4 +1,5 @@
 -- Blog posts — English and Spanish locales (French seeded in add_blog_posts.sql)
+-- Runs after add_blog_posts.sql (numeric suffix avoids localeCompare ordering: *_i18n before *.sql).
 
 INSERT INTO `blog_posts` (
   `id`, `title`, `slug`, `excerpt`, `content`, `cover_image_url`,
