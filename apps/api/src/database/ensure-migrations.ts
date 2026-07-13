@@ -173,7 +173,7 @@ export async function ensureMigrations(config: ConfigService): Promise<void> {
         await connection.query(statement);
       }
       await connection.query(
-        `INSERT INTO \`${MIGRATIONS_TABLE}\` (\`name\`, \`checksum\`) VALUES (?, ?)`,
+        `INSERT IGNORE INTO \`${MIGRATIONS_TABLE}\` (\`name\`, \`checksum\`) VALUES (?, ?)`,
         [name, hash],
       );
     }

@@ -107,16 +107,9 @@ export type {
 } from '../packages/types';
 
 export type { PublicDestinationHighlight } from '@africatourismgate/types';
+import { getWebApiUrl } from './get-api-url';
 
-const defaultApiUrl =
-  process.env.NODE_ENV === 'production'
-    ? 'https://app-africatourismgate.org/api'
-    : 'http://localhost:3000/api';
-
-const apiUrl = (process.env.NEXT_PUBLIC_API_URL ?? defaultApiUrl).replace(
-  /\/$/,
-  '',
-);
+const apiUrl = getWebApiUrl();
 
 async function fetchPublic<T>(path: string): Promise<T> {
   const res = await fetch(`${apiUrl}${path}`, {
@@ -475,13 +468,22 @@ export async function browseBlogPostsForLocale(
   try {
     const localized = await browseBlogPosts({ ...params, locale });
     if (localized.data.length > 0) {
-      return { response: localized, usedLocaleFallback: false };
+      const allMatchLocale = localized.data.every((post) => post.locale === locale);
+      return { response: localized, usedLocaleFallback: !allMatchLocale };
     }
   } catch {
     /* try without locale filter below */
   }
 
   const all = await browseBlogPosts(params);
+  const localizedPosts = all.data.filter((post) => post.locale === locale);
+  if (localizedPosts.length > 0) {
+    return {
+      response: { ...all, data: localizedPosts },
+      usedLocaleFallback: false,
+    };
+  }
+
   return {
     response: all,
     usedLocaleFallback: all.data.length > 0,
@@ -714,13 +716,27 @@ export async function getPublicHappyCustomers(
   );
 }
 
+function happyCustomersContentMatchesLocale(
+  content: PublicHappyCustomersContent,
+  locale: string,
+): boolean {
+  if (content.section?.locale === locale) return true;
+  if (content.stats.length > 0 && content.stats.every((stat) => stat.locale === locale)) {
+    return true;
+  }
+  return false;
+}
+
 export async function getPublicHappyCustomersForLocale(
   locale: string,
 ): Promise<{ content: PublicHappyCustomersContent; usedLocaleFallback: boolean }> {
   try {
     const localized = await getPublicHappyCustomers({ locale });
-    if (localized.section || localized.stats.length > 0) {
+    if (happyCustomersContentMatchesLocale(localized, locale)) {
       return { content: localized, usedLocaleFallback: false };
+    }
+    if (localized.section || localized.stats.length > 0) {
+      return { content: localized, usedLocaleFallback: true };
     }
   } catch {
     /* try without locale below */

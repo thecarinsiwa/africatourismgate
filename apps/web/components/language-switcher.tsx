@@ -1,10 +1,9 @@
 'use client';
 
-import { useLocale, useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
+import { useLocale as useNextIntlLocale, useTranslations } from 'next-intl';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { locales, type AppLocale } from '../i18n/routing';
-import { setLocaleCookie } from '../lib/i18n/set-locale-cookie';
+import { useLocale as useAppLocaleContext } from '../lib/i18n/locale-provider';
 import { persistPreferredLanguage } from '../lib/i18n/preferred-language';
 
 type LanguageSwitcherProps = {
@@ -12,9 +11,9 @@ type LanguageSwitcherProps = {
 };
 
 export function LanguageSwitcher({ variant = 'topbar' }: LanguageSwitcherProps) {
-  const locale = useLocale() as AppLocale;
+  const locale = useNextIntlLocale() as AppLocale;
+  const { setLocale: setAppLocale } = useAppLocaleContext();
   const t = useTranslations('language');
-  const router = useRouter();
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -47,16 +46,9 @@ export function LanguageSwitcher({ variant = 'topbar' }: LanguageSwitcherProps) 
       setOpen(false);
       return;
     }
-    setLocaleCookie(next);
-    document.documentElement.lang = next;
-    try {
-      localStorage.setItem('atg-locale', next);
-    } catch {
-      /* ignore */
-    }
     await persistPreferredLanguage(next);
     setOpen(false);
-    router.refresh();
+    setAppLocale(next);
   }
 
   const buttonClass =
