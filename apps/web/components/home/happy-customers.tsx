@@ -59,20 +59,27 @@ export function HappyCustomers() {
   const locale = useAppLocale();
   const { ref, isVisible } = useScrollAnimation(0.15);
   const [content, setContent] = useState<PublicHappyCustomersContent | null>(null);
+  const [usedLocaleFallback, setUsedLocaleFallback] = useState(false);
 
   const fallbackBars = mapFallbackBars(t.customers.bars);
 
   useEffect(() => {
     let cancelled = false;
-    void getPublicHappyCustomersForLocale(locale).then(({ content: fetched }) => {
-      if (!cancelled) setContent(fetched);
-    });
+    void getPublicHappyCustomersForLocale(locale).then(
+      ({ content: fetched, usedLocaleFallback: fallback }) => {
+        if (!cancelled) {
+          setContent(fetched);
+          setUsedLocaleFallback(fallback);
+        }
+      },
+    );
     return () => {
       cancelled = true;
     };
   }, [locale]);
 
-  const section = content?.section;
+  const useLocalizedCopy = usedLocaleFallback || !content?.section;
+  const section = useLocalizedCopy ? null : content?.section;
   const title = section?.title ?? t.customers.title;
   const subtitle = section?.subtitle ?? t.customers.subtitle;
   const p1 = section?.paragraph1 ?? t.customers.p1;
@@ -81,7 +88,10 @@ export function HappyCustomers() {
   const imageAlt = section?.imageAlt ?? t.customers.imageAlt;
   const badgeValue = section?.badgeValue ?? '10K+';
   const badgeLabel = section?.badgeLabel ?? t.customers.clients;
-  const bars = toDisplayBars(content, fallbackBars);
+  const bars =
+    useLocalizedCopy || !content?.stats.length
+      ? fallbackBars
+      : toDisplayBars(content, fallbackBars);
 
   return (
     <section ref={ref} className="overflow-hidden bg-atg-elevated py-16 transition-colors dark:bg-atg-surface sm:py-24">
