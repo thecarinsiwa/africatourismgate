@@ -13,10 +13,12 @@ import {
   DataTableBadge,
   DataTablePagination,
   Input,
+  useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { Employee, EmployeeStatus, OrganizationListItem } from '@africatourismgate/types';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { getApiClient } from '../../lib/auth/api';
 
 const PAGE_SIZE = 20;
@@ -55,6 +57,8 @@ export function EmployeesList({
   embedded = false,
 }: EmployeesListProps = {}) {
   const { employees: getEmployeesErrorMessage } = useAdminErrorMessages();
+  const tToast = useTranslations('modules.common.toast');
+  const { toast } = useToast();
   const statusFilterId = useId();
   const orgFilterId = useId();
   const [searchInput, setSearchInput] = useState('');
@@ -159,12 +163,21 @@ export function EmployeesList({
     try {
       await getApiClient().deleteEmployee(employee.id);
       await load();
+      const label =
+        employee.user?.email ?? employee.employeeCode ?? employee.userId.slice(0, 8);
+      toast({
+        variant: 'success',
+        message: tToast('deletedEmployee', { label }),
+      });
     } catch (error) {
-      setDeleteError(getEmployeesErrorMessage(error));
+      toast({
+        variant: 'error',
+        message: getEmployeesErrorMessage(error),
+      });
     } finally {
       setDeletingId(null);
     }
-  }, [confirmTarget, load, getEmployeesErrorMessage]);
+  }, [confirmTarget, load, getEmployeesErrorMessage, toast, tToast]);
 
   const columns = useMemo<ColumnDef<Employee, unknown>[]>(() => {
     const base: ColumnDef<Employee, unknown>[] = [

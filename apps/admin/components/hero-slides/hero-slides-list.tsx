@@ -12,6 +12,7 @@ import {
   DataTableBadge,
   DataTablePagination,
   Input,
+  useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { HeroSlide, HeroSlideStatus } from '@africatourismgate/types';
@@ -31,6 +32,8 @@ export function HeroSlidesList({ locale }: HeroSlidesListProps) {
   const t = useTranslations('modules.heroSlides.list');
   const tStatus = useTranslations('modules.heroSlides.status');
   const tCommon = useTranslations('modules.common');
+  const tToast = useTranslations('modules.common.toast');
+  const { toast } = useToast();
   const statusFilterId = useId();
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
@@ -111,12 +114,19 @@ export function HeroSlidesList({ locale }: HeroSlidesListProps) {
     try {
       await getApiClient().deleteHeroSlide(item.id);
       await load();
-    } catch {
-      /* reload at next load */
+      toast({
+        variant: 'success',
+        message: tToast('deletedHeroSlide', { title: item.title }),
+      });
+    } catch (error) {
+      toast({
+        variant: 'error',
+        message: getAboutErrorMessage(error),
+      });
     } finally {
       setDeletingId(null);
     }
-  }, [confirmTarget, load]);
+  }, [confirmTarget, getAboutErrorMessage, load, toast, tToast]);
 
   const columns = useMemo<ColumnDef<HeroSlide, unknown>[]>(
     () => [

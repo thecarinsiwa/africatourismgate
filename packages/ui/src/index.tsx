@@ -43,8 +43,12 @@ export { ThemeProvider } from './theme-provider';
 export { ThemeToggle, type ThemeToggleProps } from './components/theme-toggle';
 export { Button, type ButtonProps, type ButtonVariant, type ButtonSize } from './components/button';
 export { Input, type InputProps } from './components/input';
+export { Textarea, type TextareaProps } from './components/textarea';
 export { PasswordInput, type PasswordInputProps } from './components/password-input';
 export { Checkbox, type CheckboxProps } from './components/checkbox';
+export { Switch, type SwitchProps } from './components/switch';
+export { DatePicker, type DatePickerProps } from './components/date-picker';
+export { Tooltip, type TooltipProps, type TooltipPosition } from './components/tooltip';
 export { Card, type CardProps } from './components/card';
 export {
   ConversationChat,

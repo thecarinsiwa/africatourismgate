@@ -18,10 +18,12 @@
     "view": "Ver"
   },
   "loading": {
+    "default": "Cargando…",
     "page": "Cargando…",
     "submit": "Guardando…"
   },
   "empty": {
+    "default": "Sin elementos",
     "noResults": "Sin resultados",
     "noMatch": "Ninguna coincidencia para su búsqueda"
   },

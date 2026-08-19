@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Input } from '@africatourismgate/ui';
+import { Button, Input, Textarea } from '@africatourismgate/ui';
 import type {
   CreateGapActivityRequest,
   GapActivity,
@@ -166,22 +166,15 @@ export function GapActivityForm({
         ) : null}
       </div>
 
-      <div>
-        <label htmlFor={descriptionId} className="mb-1 block text-sm font-medium">
-          {t('fields.description')}
-        </label>
-        <textarea
-          id={descriptionId}
-          rows={4}
-          value={values.description}
-          onChange={(e) => updateField('description', e.target.value)}
-          disabled={!canWrite}
-          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-        />
-        {fieldErrors.description ? (
-          <p className="mt-1 text-sm text-destructive">{fieldErrors.description}</p>
-        ) : null}
-      </div>
+      <Textarea
+        id={descriptionId}
+        label={t('fields.description')}
+        rows={4}
+        value={values.description}
+        onChange={(e) => updateField('description', e.target.value)}
+        disabled={!canWrite}
+        error={fieldErrors.description}
+      />
 
       <div>
         <label htmlFor={iconKeyId} className="mb-1 block text-sm font-medium">

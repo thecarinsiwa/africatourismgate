@@ -11,6 +11,7 @@ import {
   DataTableActions,
   DataTablePagination,
   Input,
+  useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { Amenity } from '@africatourismgate/types';
@@ -38,6 +39,8 @@ export function AmenitiesList() {
   const tCommon = useTranslations('modules.common');
   const tDataTable = useTranslations('modules.common.dataTable');
   const tActions = useTranslations('common.actions');
+  const tToast = useTranslations('modules.common.toast');
+  const { toast } = useToast();
   const tNav = useTranslations('nav.links');
   const paginationLabels = useDataTablePaginationLabels();
   const [searchInput, setSearchInput] = useState('');
@@ -156,12 +159,19 @@ export function AmenitiesList() {
     try {
       await getApiClient().deleteAmenity(a.id);
       await load();
+      toast({
+        variant: 'success',
+        message: tToast('deletedAmenity', { name: a.name }),
+      });
     } catch (error) {
-      setFormError(getHebergementsErrorMessage(error));
+      toast({
+        variant: 'error',
+        message: getHebergementsErrorMessage(error),
+      });
     } finally {
       setDeletingId(null);
     }
-  }, [confirmTarget, getHebergementsErrorMessage, load]);
+  }, [confirmTarget, getHebergementsErrorMessage, load, toast, tToast]);
 
   const renderAmenityActions = useCallback(
     (amenity: Amenity) => (

@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Input } from '@africatourismgate/ui';
+import { Button, Input, Textarea } from '@africatourismgate/ui';
 import type {
   CreateGapImpactStatRequest,
   GapImpactStat,
@@ -176,19 +176,14 @@ export function GapImpactStatForm({
         ) : null}
       </div>
 
-      <div>
-        <label htmlFor={descriptionId} className="mb-1 block text-sm font-medium">
-          {t('fields.description')}
-        </label>
-        <textarea
-          id={descriptionId}
-          rows={3}
-          value={values.description}
-          onChange={(e) => updateField('description', e.target.value)}
-          disabled={!canWrite}
-          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-        />
-      </div>
+      <Textarea
+        id={descriptionId}
+        label={t('fields.description')}
+        rows={3}
+        value={values.description}
+        onChange={(e) => updateField('description', e.target.value)}
+        disabled={!canWrite}
+      />
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>

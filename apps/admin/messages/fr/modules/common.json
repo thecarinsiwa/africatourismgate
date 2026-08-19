@@ -230,7 +230,12 @@
     "propertySavedTitle": "Hébergement enregistré",
     "deletedProperty": "L'hébergement « {name} » a été supprimé.",
     "deletedFlight": "Le vol « {flightNumber} » a été supprimé.",
-    "deletedVehicle": "Le véhicule « {label} » a été supprimé."
+    "deletedVehicle": "Le véhicule « {label} » a été supprimé.",
+    "deletedBlogPost": "L'article « {title} » a été supprimé.",
+    "deletedHeroSlide": "La diapositive « {title} » a été supprimée.",
+    "deletedEmployee": "L'employé « {label} » a été supprimé.",
+    "deletedAmenity": "L'équipement « {name} » a été supprimé.",
+    "deletedDestination": "La destination « {name} » a été supprimée."
   },
   "availabilityCalendar": {
     "previousMonth": "Mois précédent",

@@ -27,7 +27,8 @@
     "description": "Platform accounts. Filter by status or organization.",
     "nouveau": {
       "metaTitle": "New user",
-      "description": "Create a user account."
+      "description": "Create a user account.",
+      "backLabel": "Back to users"
     },
     "id": {
       "metaTitle": "Edit user",

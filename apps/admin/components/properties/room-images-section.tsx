@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -54,6 +55,8 @@ export function RoomImagesSection({ roomId, roomName, onClose }: RoomImagesSecti
   const [submitting, setSubmitting] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<RoomImage | null>(null);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -171,21 +174,26 @@ export function RoomImagesSection({ roomId, roomName, onClose }: RoomImagesSecti
     }
   }
 
-  const handleDelete = useCallback(
-    async (img: RoomImage) => {
-      if (!window.confirm(tGallery('deleteConfirm'))) return;
-      setDeletingId(img.id);
-      try {
-        await getApiClient().deleteRoomImage(img.id);
-        await load();
-      } catch (error) {
-        setFormError(getHebergementsErrorMessage(error));
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [load, tGallery, getHebergementsErrorMessage],
-  );
+  const handleDeleteRequest = useCallback((img: RoomImage) => {
+    setConfirmTarget(img);
+    setDeleteError(null);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const img = confirmTarget;
+    setDeleteError(null);
+    setDeletingId(img.id);
+    try {
+      await getApiClient().deleteRoomImage(img.id);
+      setConfirmTarget(null);
+      await load();
+    } catch (error) {
+      setDeleteError(getHebergementsErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, load, getHebergementsErrorMessage]);
 
   const columns = useMemo<ColumnDef<RoomImage, unknown>[]>(
     () => [
@@ -241,7 +249,7 @@ export function RoomImagesSection({ roomId, roomName, onClose }: RoomImagesSecti
             <DataTableActionButton action="edit" onClick={() => openEdit(row.original)} />
             <DataTableActionButton
               action="delete"
-              onClick={() => void handleDelete(row.original)}
+              onClick={() => handleDeleteRequest(row.original)}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
             />
@@ -249,12 +257,27 @@ export function RoomImagesSection({ roomId, roomName, onClose }: RoomImagesSecti
         ),
       },
     ],
-    [deletingId, handleDelete, tColumns],
+    [deletingId, handleDeleteRequest, tColumns],
   );
 
   const images = state.status === 'ready' ? state.images : [];
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => {
+          if (!open && !deletingId) setConfirmTarget(null);
+        }}
+        title={tGallery('deleteTitle')}
+        description={tGallery('deleteConfirm')}
+        confirmLabel={tGallery('deleteConfirmButton')}
+        cancelLabel={tActions('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <div className="space-y-4 rounded-lg border border-atg-border bg-atg-surface/40 p-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -364,5 +387,6 @@ export function RoomImagesSection({ roomId, roomName, onClose }: RoomImagesSecti
         </Card>
       )}
     </div>
+    </>
   );
 }

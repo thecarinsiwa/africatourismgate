@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Input } from '@africatourismgate/ui';
+import { Button, Input, Textarea } from '@africatourismgate/ui';
 import type {
   CreateGapPageRequest,
   GapPage,
@@ -196,21 +196,16 @@ export function GapPageForm({ mode, pageId, initialPage }: GapPageFormProps) {
         disabled={!canWrite}
       />
 
-      <div>
-        <label htmlFor="excerpt" className="mb-2 block text-sm font-medium text-atg-fg">
-          {t('fields.excerpt')}
-        </label>
-        <textarea
-          id="excerpt"
-          name="excerpt"
-          rows={3}
-          value={values.excerpt}
-          onChange={(e) => updateField('excerpt', e.target.value)}
-          disabled={!canWrite}
-          placeholder={t('fields.excerptPlaceholder')}
-          className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg placeholder:text-atg-muted/70 outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
-        />
-      </div>
+      <Textarea
+        id="excerpt"
+        name="excerpt"
+        label={t('fields.excerpt')}
+        rows={3}
+        value={values.excerpt}
+        onChange={(e) => updateField('excerpt', e.target.value)}
+        disabled={!canWrite}
+        placeholder={t('fields.excerptPlaceholder')}
+      />
 
       <RichTextEditor
         label={t('fields.content')}

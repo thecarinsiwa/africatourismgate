@@ -27,7 +27,8 @@
     "description": "Cuentas de la plataforma. Filtre por estado u organización.",
     "nouveau": {
       "metaTitle": "Nuevo usuario",
-      "description": "Crear una cuenta de usuario."
+      "description": "Crear una cuenta de usuario.",
+      "backLabel": "Volver a usuarios"
     },
     "id": {
       "metaTitle": "Editar usuario",
