@@ -65,7 +65,10 @@
     "ariaLabel": "Liste des moyens de paiement"
   },
   "sessions": {
-    "revokeConfirm": "Révoquer cette session ? L'utilisateur devra se reconnecter.",
+    "revokeTitle": "Révoquer la session",
+    "revokeConfirm": "Cette session sera révoquée. L'utilisateur devra se reconnecter.",
+    "revokeConfirmButton": "Révoquer",
+    "cancel": "Annuler",
     "emptyDefault": "Aucune session active.",
     "emptyFiltered": "Aucune session active pour cet utilisateur.",
     "ariaLabel": "Liste des sessions utilisateur"

@@ -65,10 +65,13 @@
     "ariaLabel": "Liste des moyens de paiement"
   },
   "sessions": {
-    "revokeConfirm": "¿Revocar esta sesión? El usuario deberá volver a iniciar sesión.",
-    "emptyDefault": "Ninguna session active.",
-    "emptyFiltered": "Ninguna session active pour cet utilisateur.",
-    "ariaLabel": "Liste des sessions utilisateur"
+    "revokeTitle": "Revocar sesión",
+    "revokeConfirm": "Esta sesión será revocada. El usuario deberá volver a iniciar sesión.",
+    "revokeConfirmButton": "Revocar",
+    "cancel": "Cancelar",
+    "emptyDefault": "Ninguna sesión activa.",
+    "emptyFiltered": "Ninguna sesión activa para este usuario.",
+    "ariaLabel": "Lista de sesiones de usuario"
   },
   "stats": {
     "total": {
