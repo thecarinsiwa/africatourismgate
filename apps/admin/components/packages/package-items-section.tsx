@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   cn,
@@ -60,6 +61,7 @@ export function PackageItemsSection({
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<PackageItemEnriched | null>(null);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -162,22 +164,25 @@ export function PackageItemsSection({
     }
   }
 
-  const handleDelete = useCallback(
-    async (item: PackageItemEnriched) => {
-      if (!window.confirm(t('removeConfirm', { label: item.label }))) return;
-      setDeletingId(item.id);
-      try {
-        await getApiClient().deletePackageItem(item.id);
-        await load();
-        onChanged?.();
-      } catch (error) {
-        setFormError(getPackagesErrorMessage(error));
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [getPackagesErrorMessage, load, onChanged, t],
-  );
+  const handleDeleteRequest = useCallback((item: PackageItemEnriched) => {
+    setConfirmTarget(item);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const item = confirmTarget;
+    setConfirmTarget(null);
+    setDeletingId(item.id);
+    try {
+      await getApiClient().deletePackageItem(item.id);
+      await load();
+      onChanged?.();
+    } catch (error) {
+      setFormError(getPackagesErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getPackagesErrorMessage, load, onChanged]);
 
   const columns = useMemo<ColumnDef<PackageItemEnriched, unknown>[]>(
     () => [
@@ -210,7 +215,7 @@ export function PackageItemsSection({
           <DataTableActions>
             <DataTableActionButton
               action="remove"
-              onClick={() => void handleDelete(row.original)}
+              onClick={() => handleDeleteRequest(row.original)}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
             />
@@ -218,7 +223,7 @@ export function PackageItemsSection({
         ),
       },
     ],
-    [deletingId, handleDelete, tCommon],
+    [deletingId, handleDeleteRequest, tCommon],
   );
 
   const items = detail?.items ?? [];
@@ -228,6 +233,18 @@ export function PackageItemsSection({
     'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg';
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={t('removeTitle')}
+        description={confirmTarget ? t('removeConfirm', { label: confirmTarget.label }) : ''}
+        confirmLabel={t('removeConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <section
       className={cn(
         'space-y-6',
@@ -342,5 +359,6 @@ export function PackageItemsSection({
         </Card>
       )}
     </section>
+    </>
   );
 }

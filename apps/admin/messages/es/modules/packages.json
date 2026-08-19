@@ -1,9 +1,12 @@
 {
   "list": {
-    "newPackage": "Nouveau forfait",
-    "emptyDefault": "Hastacun forfait pour le moment.",
-    "searchPlaceholder": "Rechercher un forfait…",
-    "deleteConfirm": "Supprimer le forfait « {name} » ?"
+    "newPackage": "Nuevo paquete",
+    "emptyDefault": "Ningún paquete por el momento.",
+    "searchPlaceholder": "Buscar paquetes…",
+    "deleteTitle": "Eliminar paquete",
+    "deleteConfirm": "El paquete «{name}» será eliminado permanentemente.",
+    "deleteConfirmButton": "Eliminar",
+    "cancel": "Cancelar"
   },
   "columns": {
     "cover": "Portada",
@@ -34,7 +37,10 @@
       "empty": "No hay adjuntos guardados.",
       "unnamed": "Sin nombre",
       "fileHint": "Formatos: JPG, PNG, WEBP, PDF, DOC, DOCX (máx 10 MB)",
-      "deleteConfirm": "¿Eliminar el adjunto « {name} »?",
+      "deleteTitle": "Eliminar adjunto",
+      "deleteConfirm": "El adjunto «{name}» será eliminado permanentemente.",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar",
       "fields": {
         "name": "Nombre mostrado",
         "type": "Tipo"
@@ -108,7 +114,10 @@
       "addItem": "Ajouter un item",
       "newItem": "Nouvel item",
       "empty": "Hastacun item dans ce forfait.",
-      "removeConfirm": "Retirer « {label} » du forfait ?",
+      "removeTitle": "Quitar del paquete",
+      "removeConfirm": "«{label}» será retirado del paquete.",
+      "removeConfirmButton": "Quitar",
+      "cancel": "Cancelar",
       "flightLabel": "Vuelo {flightNumber}"
     },
     "composition": {
