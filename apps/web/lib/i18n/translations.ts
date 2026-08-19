@@ -214,6 +214,12 @@ export type Translations = {
       idDocumentHint: string;
       idDocumentSelected: string;
       idDocumentRemove: string;
+      takePhoto: string;
+      cameraCapture: string;
+      cameraRetake: string;
+      cameraConfirm: string;
+      cameraCancel: string;
+      cameraError: string;
     };
     cancel: {
       title: string;
@@ -1535,8 +1541,14 @@ const fr: Translations = {
       fullNameRequired: 'Le nom complet du voyageur {n} est obligatoire.',
       idDocument: "Pi?ce d'identit?",
       idDocumentHint: 'JPEG, PNG, WebP ou PDF ? 10 Mo max.',
-      idDocumentSelected: 'Fichier s?lectionn?',
+      idDocumentSelected: 'Choisir un fichier',
       idDocumentRemove: 'Retirer',
+      takePhoto: 'Prendre une photo',
+      cameraCapture: 'Capturer',
+      cameraRetake: 'Reprendre',
+      cameraConfirm: 'Confirmer',
+      cameraCancel: 'Annuler',
+      cameraError: "Impossible d'acc?der ? la cam?ra. V?rifiez les autorisations.",
     },
     cancel: {
       title: 'Paiement annule',
@@ -3029,8 +3041,14 @@ const en: Translations = {
       fullNameRequired: 'Full name of traveler {n} is required.',
       idDocument: 'Identity document',
       idDocumentHint: 'JPEG, PNG, WebP or PDF ? 10 MB max.',
-      idDocumentSelected: 'File selected',
+      idDocumentSelected: 'Choose a file',
       idDocumentRemove: 'Remove',
+      takePhoto: 'Take a photo',
+      cameraCapture: 'Capture',
+      cameraRetake: 'Retake',
+      cameraConfirm: 'Confirm',
+      cameraCancel: 'Cancel',
+      cameraError: 'Cannot access camera. Please check permissions.',
     },
     cancel: {
       title: 'Payment cancelled',
