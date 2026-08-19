@@ -2522,6 +2522,12 @@ export class ApiClient {
     });
   }
 
+  listBookingIdentityDocuments(bookingId: string): Promise<BookingIdentityDocument[]> {
+    return this.request<BookingIdentityDocument[]>(
+      `/bookings/${bookingId}/identity-documents`,
+    );
+  }
+
   approveBookingIdentityDocument(
     bookingId: string,
     documentId: string,

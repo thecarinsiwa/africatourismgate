@@ -346,9 +346,11 @@ export class BookingsController {
   @Get(':id/manifest-entries')
   @RequirePermissions('bookings.read')
   @ApiOperation({ summary: 'List manifest entries for a booking' })
-  listManifestEntries(
+  async listManifestEntries(
     @Param('id') id: string,
+    @CurrentUser() user: AuthUserDto,
   ): Promise<BookingManifestEntryDto[]> {
+    await this.bookingsService.assertBookingOwnerOrStaff(id, user.id);
     return this.bookingManifestService.listForBooking(id);
   }
 
@@ -356,23 +358,25 @@ export class BookingsController {
   @HttpCode(HttpStatus.CREATED)
   @RequirePermissions('bookings.write')
   @ApiOperation({ summary: 'Add a manifest entry to a booking' })
-  createManifestEntry(
+  async createManifestEntry(
     @Param('id') id: string,
     @Body() dto: CreateBookingManifestEntryDto,
     @CurrentUser() user: AuthUserDto,
   ): Promise<BookingManifestEntryDto> {
+    await this.bookingsService.assertBookingOwnerOrStaff(id, user.id);
     return this.bookingManifestService.create(id, dto, user.id);
   }
 
   @Patch(':id/manifest-entries/:entryId')
   @RequirePermissions('bookings.write')
   @ApiOperation({ summary: 'Update a manifest entry' })
-  updateManifestEntry(
+  async updateManifestEntry(
     @Param('id') id: string,
     @Param('entryId') entryId: string,
     @Body() dto: UpdateBookingManifestEntryDto,
     @CurrentUser() user: AuthUserDto,
   ): Promise<BookingManifestEntryDto> {
+    await this.bookingsService.assertBookingOwnerOrStaff(id, user.id);
     return this.bookingManifestService.update(id, entryId, dto, user.id);
   }
 
@@ -385,6 +389,7 @@ export class BookingsController {
     @Param('entryId') entryId: string,
     @CurrentUser() user: AuthUserDto,
   ): Promise<void> {
+    await this.bookingsService.assertBookingOwnerOrStaff(id, user.id);
     await this.bookingManifestService.remove(id, entryId, user.id);
   }
 

@@ -260,14 +260,14 @@ export function HomeHeader() {
 
       <div className="border-b border-atg-border bg-atg-elevated shadow-sm transition-colors dark:border-atg-border dark:bg-atg-elevated">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-0 sm:px-6 lg:px-8">
-          <Link href="/" className="flex items-center gap-2 py-4">
+          <Link href="/" className="flex shrink-0 items-center gap-2 py-4">
             <BrandingMark
               showName
               nameClassName="text-lg font-bold text-atg-fg"
             />
           </Link>
 
-          <nav className="hidden items-center gap-0 lg:flex" aria-label={t('mainAria')}>
+          <nav className="hidden items-center gap-0 lg:flex min-w-0 flex-1 justify-center" aria-label={t('mainAria')}>
             {navLinks.map((link) => {
               const linkActive = isNavItemActive(link.href, pathname, link.children);
               return (
@@ -279,7 +279,7 @@ export function HomeHeader() {
                 >
                   <Link
                     href={link.href}
-                    className={`relative flex items-center gap-1 px-4 py-5 text-sm font-medium ${navLinkClass(linkActive, 'desktop')}`}
+                    className={`relative flex items-center gap-1 px-3 py-5 text-sm font-medium whitespace-nowrap ${navLinkClass(linkActive, 'desktop')}`}
                     aria-current={linkActive && link.children.length === 0 ? 'page' : undefined}
                   >
                     {link.label}
@@ -312,7 +312,7 @@ export function HomeHeader() {
             })}
           </nav>
 
-          <div className="hidden items-center gap-2 lg:flex">
+          <div className="hidden items-center gap-2 lg:flex shrink-0">
             {donateHref ? (
               <DonateButton
                 href={donateHref}
@@ -322,7 +322,7 @@ export function HomeHeader() {
             ) : null}
             <Link
               href={hasSession ? '/account' : '/booking/login?next=%2Faccount'}
-              className={`inline-flex min-h-[44px] items-center rounded-lg px-4 py-2.5 text-sm font-medium transition-colors ${
+              className={`inline-flex min-h-[44px] items-center whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                 onAccountArea
                   ? 'bg-primary/10 text-primary'
                   : 'text-atg-fg hover:text-primary dark:text-white/75 dark:hover:text-white'
@@ -334,7 +334,7 @@ export function HomeHeader() {
             {hasSession ? (
               <Link
                 href="/booking/logout"
-                className="inline-flex min-h-[44px] items-center rounded-lg border border-red-200 bg-red-50 px-5 py-2.5 text-base font-semibold text-red-700 transition-colors hover:border-red-300 hover:bg-red-100 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300 dark:hover:bg-red-950/60"
+                className="inline-flex min-h-[44px] items-center whitespace-nowrap rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700 transition-colors hover:border-red-300 hover:bg-red-100 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300 dark:hover:bg-red-950/60"
               >
                 {t('signOut')}
               </Link>

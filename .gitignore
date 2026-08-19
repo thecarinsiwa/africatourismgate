@@ -15,6 +15,14 @@ coverage
 .vscode/*.log
 *.tsbuildinfo
 
+# Images / assets locaux (captures, assets Cursor)
+assets/
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.gif
+
 # TypeScript emit must not live next to package sources
 packages/types/src/*.js
 packages/types/src/*.d.ts

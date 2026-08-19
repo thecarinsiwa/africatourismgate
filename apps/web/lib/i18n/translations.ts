@@ -194,6 +194,34 @@ export type Translations = {
       nextStepContact: string;
       nextStepAccount: string;
     };
+    manifest: {
+      title: string;
+      subtitle: string;
+      travelerN: string;
+      fullName: string;
+      age: string;
+      sex: string;
+      sexUnspecified: string;
+      sexM: string;
+      sexF: string;
+      sexOther: string;
+      nationality: string;
+      idNumber: string;
+      conditions: string;
+      conditionsPlaceholder: string;
+      fullNameRequired: string;
+      idDocument: string;
+      idDocumentHint: string;
+      idDocumentSelected: string;
+      idDocumentRemove: string;
+      viewDocument: string;
+      takePhoto: string;
+      cameraCapture: string;
+      cameraRetake: string;
+      cameraConfirm: string;
+      cameraCancel: string;
+      cameraError: string;
+    };
     cancel: {
       title: string;
       subtitle: string;
@@ -1019,6 +1047,52 @@ export type Translations = {
             rejected: string;
           };
         };
+        manifest: {
+          title: string;
+          subtitle: string;
+          empty: string;
+          loading: string;
+          loadError: string;
+          addTraveler: string;
+          viewDocuments: string;
+          viewDocument: string;
+          docsTitle: string;
+          docsEmpty: string;
+          docsLoadError: string;
+          addTitle: string;
+          editTitle: string;
+          formHint: string;
+          fullNameRequired: string;
+          save: string;
+          saving: string;
+          saveError: string;
+          edit: string;
+          delete: string;
+          deleting: string;
+          deleteError: string;
+          deleteTitle: string;
+          deleteDescription: string;
+          cancel: string;
+          sex: {
+            unspecified: string;
+            M: string;
+            F: string;
+            other: string;
+          };
+          fields: {
+            fullName: string;
+            age: string;
+            sex: string;
+            nationality: string;
+            idNumber: string;
+            conditions: string;
+            conditionsPlaceholder: string;
+            comment: string;
+            commentPlaceholder: string;
+            other: string;
+            otherPlaceholder: string;
+          };
+        };
         messages: {
           title: string;
           subtitle: string;
@@ -1280,7 +1354,7 @@ const fr: Translations = {
       },
       {
         subtitle: 'Croisière de 12 jours',
-        title: 'ZANZIBAR À MADAGASCAR',
+        title: 'ZANZIBAR → MADAGASCAR',
         description:
           "Navigation côtière le long de l'Océan Indien — plages de rêve et faune unique.",
       },
@@ -1329,7 +1403,7 @@ const fr: Translations = {
     flightReturnAfterDeparture: 'La date de retour doit être après la date de départ.',
     flightReturnRequired: 'Indiquez la date de retour pour un aller-retour.',
     flightSameAirport: 'Le départ et la destination doivent être différents.',
-    swapAirports: 'Inverser départ et arrivée',
+    swapAirports: "Inverser départ et arrivée",
     tripTypeAria: 'Type de vol',
     oneWay: 'Aller simple',
     roundTrip: 'Aller-retour',
@@ -1340,9 +1414,9 @@ const fr: Translations = {
     carsDurationHint: 'Sélectionnez les dates pour voir la durée',
     pickupLocationPh: 'Ville ou aéroport',
     viewAllCars: 'Voir toutes les locations',
-    cruisesRequired: 'Indiquez les ports de départ et d\'arrivée ainsi que la plage de dates.',
+    cruisesRequired: "Indiquez les ports de départ et d'arrivée ainsi que la plage de dates.",
     cruisesEndAfterStart: 'La date de fin doit être après la date de début.',
-    cruisesSamePort: 'Les ports de départ et d\'arrivée doivent être différents.',
+    cruisesSamePort: "Les ports de départ et d'arrivée doivent être différents.",
     viewAllCruises: 'Voir toutes les croisières',
     viewAllActivities: 'Voir toutes les activités',
     toursRequired: 'Indiquez une date.',
@@ -1383,7 +1457,7 @@ const fr: Translations = {
     stepConfirmation: 'Confirmation',
     stepCancelled: 'Annulé',
     cartTitle: 'Panier réservation',
-    recapTitle: 'Recapitulatif',
+    recapTitle: 'Récapitulatif',
     continueToRecap: 'Continuer vers récap',
     backToCart: 'Retour panier',
     payWithStripe: 'Payer avec Stripe',
@@ -1397,7 +1471,7 @@ const fr: Translations = {
     authRequiredRequest: 'Connexion client requise pour envoyer votre demande.',
     invalidDraft: 'Données de réservation incomplètes. Reprenez depuis une fiche produit.',
     invalidDraftBack: 'Retour aux hébergements',
-    invalidRecap: 'Donnees de reservation invalides. Revenez au panier.',
+    invalidRecap: 'Données de réservation invalides. Revenez au panier.',
     modifySelection: 'Modifier la sélection',
     resumeSearch: 'Reprendre la recherche',
     stripeError: {
@@ -1453,23 +1527,51 @@ const fr: Translations = {
       signOut: 'Se déconnecter',
       nextStepsTitle: 'Prochaines étapes',
       nextStepContact: 'Notre équipe validera votre demande et vous contactera par e-mail.',
-      nextStepAccount: 'Suivez l’avancement depuis votre espace compte.',
+      nextStepAccount: "Suivez l\u2019avancement depuis votre espace compte.",
+    },
+    manifest: {
+      title: 'Informations des voyageurs',
+      subtitle: 'Renseignez les informations de chaque voyageur. Seul le nom complet est obligatoire.',
+      travelerN: 'Voyageur {n}',
+      fullName: 'Nom complet',
+      age: 'Âge',
+      sex: 'Genre',
+      sexUnspecified: 'Non précisé',
+      sexM: 'Homme',
+      sexF: 'Femme',
+      sexOther: 'Autre',
+      nationality: 'Nationalité',
+      idNumber: "N° pièce d'identité",
+      conditions: 'Conditions médicales',
+      conditionsPlaceholder: 'Allergies, traitements, besoins particuliers…',
+      fullNameRequired: 'Le nom complet du voyageur {n} est obligatoire.',
+      idDocument: "Pièce d'identité",
+      idDocumentHint: 'JPEG, PNG, WebP ou PDF — 10 Mo max.',
+      idDocumentSelected: 'Choisir un fichier',
+      idDocumentRemove: 'Retirer',
+      viewDocument: 'Voir le document',
+      takePhoto: 'Prendre une photo',
+      cameraCapture: 'Capturer',
+      cameraRetake: 'Reprendre',
+      cameraConfirm: 'Confirmer',
+      cameraCancel: 'Annuler',
+      cameraError: "Impossible d'accéder à la caméra. Vérifiez les autorisations.",
     },
     cancel: {
-      title: 'Paiement annule',
+      title: 'Paiement annulé',
       subtitle:
-        "Aucun debit n'a ete confirme. Vous pouvez reprendre votre reservation quand vous voulez.",
+        "Aucun débit n'a été confirmé. Vous pouvez reprendre votre réservation quand vous voulez.",
       backToCart: 'Revenir au panier',
       continueSearch: 'Continuer la recherche',
     },
   },
   verticalSearch: {
-    backHome: 'Retour à l\'accueil',
+    backHome: "Retour à l'accueil",
     resultsTitle: 'Résultats',
     exploreHint: 'Explorez les options disponibles.',
     forDestination: 'Résultats pour {destination}.',
     noResults: 'Aucun résultat pour cette recherche.',
-    noResultsHint: 'Modifiez vos critères ou revenez à l\'accueil.',
+    noResultsHint: "Modifiez vos critères ou revenez à l'accueil.",
     continue: 'Continuer',
     verticals: {
       hotels: 'Hébergements',
@@ -1560,14 +1662,14 @@ const fr: Translations = {
   activitiesMap: {
     title: 'Activités à venir',
     subtitle:
-      'Explorez les expériences disponibles à travers l\'Afrique. Cliquez sur un point pour voir le détail et réserver.',
+      "Explorez les expériences disponibles à travers l'Afrique. Cliquez sur un point pour voir le détail et réserver.",
     loading: 'Chargement de la carte…',
     loadError: 'Impossible de charger les activités sur la carte.',
     empty: 'Aucune activité disponible avec localisation pour le moment.',
     browseAll: 'Voir toutes les activités',
     mapAria: 'Carte des activités disponibles en Afrique',
     nextDate: 'Prochaine date',
-    viewActivity: 'Voir l\'activité',
+    viewActivity: "Voir l'activité",
   },
   customerReviews: {
     title: 'Avis de nos clients',
@@ -1582,23 +1684,23 @@ const fr: Translations = {
       {
         rating: 5,
         title: 'Safari inoubliable',
-        body: 'Organisation impeccable du début à la fin. L\'équipe a su répondre à toutes nos attentes pour notre premier safari en Afrique de l\'Est.',
+        body: "Organisation impeccable du début à la fin. L'équipe a su répondre à toutes nos attentes pour notre premier safari en Afrique de l'Est.",
         author: 'Marie L.',
       },
       {
         rating: 5,
-        body: 'Réservation simple, support réactif et hébergements de qualité. Je recommande vivement pour découvrir l\'Afrique en toute sérénité.',
+        body: "Réservation simple, support réactif et hébergements de qualité. Je recommande vivement pour découvrir l'Afrique en toute sérénité.",
         author: 'Thomas K.',
       },
       {
         rating: 4,
         title: 'Très belle expérience',
-        body: 'Des activités variées et des guides passionnés. Nous avons adoré notre séjour à Zanzibar et le suivi personnalisé de l\'agence.',
+        body: "Des activités variées et des guides passionnés. Nous avons adoré notre séjour à Zanzibar et le suivi personnalisé de l'agence.",
         author: 'Sophie M.',
       },
       {
         rating: 5,
-        body: 'Une plateforme fiable pour planifier un voyage en Afrique. Tout s\'est déroulé comme prévu, avec une excellente communication.',
+        body: "Une plateforme fiable pour planifier un voyage en Afrique. Tout s'est déroulé comme prévu, avec une excellente communication.",
         author: 'David R.',
       },
     ],
@@ -1643,12 +1745,12 @@ const fr: Translations = {
     breadcrumbHome: 'Accueil',
     breadcrumbHotels: 'Hébergements',
     breadcrumbHotelsDetail: 'Hôtels',
-    heroTitle: 'Hébergements d\'exception en Afrique',
+    heroTitle: "Hébergements d'exception en Afrique",
     heroSubtitle:
       'Lodges de safari, riads authentiques et resorts en bord de mer — sélectionnés par nos experts voyage.',
     resultsFor: 'Résultats pour',
-    allAfrica: 'Toute l\'Afrique',
-    propertiesFound: 'établissements',
+    allAfrica: "Toute l'Afrique",
+    propertiesFound: 'Établissements',
     sortBy: 'Trier par',
     sortRecommended: 'Recommandés',
     sortPriceLow: 'Prix croissant',
@@ -1687,7 +1789,7 @@ const fr: Translations = {
     guests: 'Voyageurs',
     noResults: 'Aucun hébergement pour ces critères',
     noResultsHint: 'Élargissez votre recherche ou explorez toutes nos destinations.',
-    backHome: 'Retour à l\'accueil',
+    backHome: "Retour à l'accueil",
     previewNotice:
       'Prix affichés : minimum par nuit pour votre séjour. La réservation en ligne arrive bientôt.',
     stars: 'étoiles',
@@ -1747,7 +1849,7 @@ const fr: Translations = {
     breadcrumbHome: 'Accueil',
     breadcrumbFlights: 'Vols',
     breadcrumbFlightsDetail: 'Vols',
-    heroTitle: 'Vols vers l\'Afrique',
+    heroTitle: "Vols vers l'Afrique",
     heroSubtitle:
       'Comparez les compagnies, horaires et tarifs pour votre prochain voyage continental.',
     resultsFor: 'Résultats pour',
@@ -1768,12 +1870,12 @@ const fr: Translations = {
     passengerSingular: 'passager',
     passengerPlural: '{n} passagers',
     noResults: 'Aucun vol pour ces critères',
-    noResultsHint: 'Essayez d\'autres dates ou aéroports (ex. Kinshasa → Nairobi).',
+    noResultsHint: "Essayez d'autres dates ou aéroports (ex. Kinshasa → Nairobi).",
     noSearchParams: 'Lancez une recherche de vols',
     noSearchParamsHint: 'Indiquez un départ, une destination et une date de départ.',
     browseAllHint: 'Tous les vols disponibles — tarifs à la prochaine date avec places libres.',
     startSearch: 'Lancer une recherche',
-    backHome: 'Retour à l\'accueil',
+    backHome: "Retour à l'accueil",
     viewDetails: 'Voir détails',
     bookNow: 'Réserver',
     roundTripBadge: 'Aller-retour',
@@ -1821,7 +1923,7 @@ const fr: Translations = {
     breadcrumbCarsDetail: 'Locations',
     heroTitle: 'Location de voitures en Afrique',
     heroSubtitle:
-      'SUV, berlines et 4×4 auprès d\'agences locales de confiance — tarif journalier transparent.',
+      "SUV, berlines et 4×4 auprès d'agences locales de confiance — tarif journalier transparent.",
     resultsFor: 'Résultats pour',
     anyLocation: 'Toutes les villes',
     vehiclesFound: 'véhicules',
@@ -1837,13 +1939,13 @@ const fr: Translations = {
     returnDate: 'Date de retour',
     pickupLocation: 'Lieu de prise en charge',
     noResults: 'Aucun véhicule pour ces critères',
-    noResultsHint: 'Essayez d\'autres dates ou une autre ville (ex. Kinshasa).',
+    noResultsHint: "Essayez d'autres dates ou une autre ville (ex. Kinshasa).",
     noSearchParams: 'Lancez une recherche de location',
     noSearchParamsHint: 'Indiquez un lieu, une date de prise en charge et une date de retour.',
     browseAllHint:
       'Tous les véhicules disponibles — tarifs sur la prochaine plage de location.',
     startSearch: 'Lancer une recherche',
-    backHome: 'Retour à l\'accueil',
+    backHome: "Retour à l'accueil",
     viewDetails: 'Voir détails',
     bookNow: 'Réserver',
     perDay: '/ jour',
@@ -1887,10 +1989,10 @@ const fr: Translations = {
     },
     conditionItems: {
       minAge:
-        'Conducteur âgé d\'au moins 21 ans avec permis valide depuis 1 an minimum.',
+        "Conducteur âgé d'au moins 21 ans avec permis valide depuis 1 an minimum.",
       deposit:
         'Caution remboursable exigée à la prise en charge (carte bancaire au nom du conducteur).',
-      mileage: 'Kilométrage illimité sur le territoire indiqué par l\'agence.',
+      mileage: "Kilométrage illimité sur le territoire indiqué par l'agence.",
       insurance:
         'Assurance responsabilité civile incluse ; options sans franchise disponibles sur place.',
       fuelPolicy:
@@ -1927,17 +2029,17 @@ const fr: Translations = {
     startDate: 'Date de début',
     endDate: 'Date de fin',
     sailFrom: 'Port de départ',
-    sailTo: 'Port d\'arrivée',
+    sailTo: "Port d'arrivée",
     guests: 'Voyageurs',
     guestSingular: 'voyageur',
     guestPlural: '{n} voyageurs',
     noResults: 'Aucune croisière pour ces critères',
-    noResultsHint: 'Essayez d\'autres dates ou ports (ex. CDKIN → CDBNW).',
+    noResultsHint: "Essayez d'autres dates ou ports (ex. CDKIN → CDBNW).",
     noSearchParams: 'Lancez une recherche de croisières',
     noSearchParamsHint: 'Indiquez les ports, une plage de dates de départ et le nombre de voyageurs.',
     browseAllHint: 'Toutes les croisières disponibles — tarifs pour les cabines en stock.',
     startSearch: 'Lancer une recherche',
-    backHome: 'Retour à l\'accueil',
+    backHome: "Retour à l'accueil",
     viewDetails: 'Voir détails',
     bookNow: 'Réserver',
     fromPrice: 'À partir de',
@@ -1965,7 +2067,7 @@ const fr: Translations = {
     totalCruise: 'Total croisière',
     reserveSection: 'Réserver',
     notFound: 'Croisière introuvable',
-    notFoundHint: 'Ce départ n\'existe pas ou n\'est plus disponible.',
+    notFoundHint: "Ce départ n'existe pas ou n'est plus disponible.",
     backToList: 'Retour aux résultats',
     shipLabel: 'Navire',
     cruiseLineLabel: 'Compagnie',
@@ -2009,11 +2111,11 @@ const fr: Translations = {
     participantPlural: '{n} participants',
     noResults: 'Aucune activité pour ces critères',
     noResultsHint: 'Essayez une autre date ou destination (ex. Kinshasa).',
-    noSearchParams: 'Lancez une recherche d\'activités',
+    noSearchParams: "Lancez une recherche d'activités",
     noSearchParamsHint: 'Indiquez une destination, une date et le nombre de participants.',
     browseHint: 'Parcourez les activités disponibles ou affinez avec destination, date et participants.',
     noUpcomingSlot: 'Aucun créneau à venir',
-    backHome: 'Retour à l\'accueil',
+    backHome: "Retour à l'accueil",
     viewDetails: 'Voir détails',
     bookNow: 'Réserver',
     fromPrice: 'À partir de',
@@ -2027,7 +2129,7 @@ const fr: Translations = {
     totalActivity: 'Total activité',
     reserveSection: 'Réserver',
     notFound: 'Activité introuvable',
-    notFoundHint: 'Cette activité n\'existe pas ou aucun créneau n\'est disponible.',
+    notFoundHint: "Cette activité n'existe pas ou aucun créneau n'est disponible.",
     backToList: 'Retour aux résultats',
     providerLabel: 'Prestataire',
     durationLabel: 'Durée',
@@ -2049,14 +2151,14 @@ const fr: Translations = {
     difficultyExpert: 'Expert',
     ratingAria: 'Note moyenne {rating} sur 5',
     reviewCount: '{n} avis',
-    galleryAria: 'Galerie photos de l\'activité',
+    galleryAria: "Galerie photos de l'activité",
     galleryOpenLightbox: 'Agrandir la photo',
     galleryClose: 'Fermer la galerie',
     galleryPrevious: 'Photo précédente',
     galleryNext: 'Photo suivante',
     galleryCounter: (current, total) => `Photo ${current} sur ${total}`,
     itineraryTitle: 'Itinéraire',
-    itineraryMapAria: 'Carte de l\'itinéraire de l\'activité',
+    itineraryMapAria: "Carte de l'itinéraire de l'activité",
     itineraryStopLabel: 'Coordonnées',
     itineraryStopDuration: 'Durée',
   },
@@ -2091,7 +2193,7 @@ const fr: Translations = {
     browseHint: 'Parcourez tous les forfaits actifs ou recherchez par nom.',
     noResults: 'Aucun forfait trouvé',
     noResultsHint: 'Essayez un autre mot-clé ou revenez plus tard.',
-    backHome: 'Retour à l\'accueil',
+    backHome: "Retour à l'accueil",
     viewDetails: 'Voir détails',
     bookNow: 'Réserver',
     packagePrice: 'Prix forfait',
@@ -2120,25 +2222,25 @@ const fr: Translations = {
     configureOnProduct: 'Configurer sur la fiche',
     configureOnProductHint: 'Réservation à finaliser sur la fiche produit dédiée.',
     mixedCheckoutDisabled:
-      'La remise forfait s\'applique au checkout groupé une fois toutes les prestations configurées.',
+      "La remise forfait s'applique au checkout groupé une fois toutes les prestations configurées.",
     loadingActivitySchedules: 'Chargement des créneaux…',
     activitySchedulesError: 'Impossible de charger les créneaux pour cette activité.',
     noActivitySchedules: 'Aucun créneau disponible pour cette date.',
     schedulesProgress: '{selected} / {total} activité(s) configurée(s)',
     itemsProgress: '{selected} / {total} prestation(s) configurée(s)',
     allSchedulesRequired: 'Sélectionnez un créneau pour chaque activité du forfait.',
-    allItemsRequired: 'Configurez chaque prestation du forfait avant d\'ajouter au panier.',
-    selectStayDatesHint: 'Indiquez les dates d\'arrivée et de départ pour choisir une chambre.',
+    allItemsRequired: "Configurez chaque prestation du forfait avant d'ajouter au panier.",
+    selectStayDatesHint: "Indiquez les dates d'arrivée et de départ pour choisir une chambre.",
     loadingPropertyRooms: 'Chargement des chambres…',
-    propertyRoomsError: 'Impossible de charger les chambres pour cet hébergement.',
+    propertyRoomsError: "Impossible de charger les chambres pour cet hébergement.",
     selectDepartureDateHint: 'Indiquez la date de départ du vol.',
     loadingFlightClasses: 'Chargement des classes…',
     flightClassesError: 'Impossible de charger les classes pour ce vol.',
     selectRentalDatesHint: 'Indiquez les dates de prise en charge et de retour.',
-    loadingVehicleAvailability: 'Vérification de la disponibilité…',
+    loadingVehicleAvailability: 'Vérification de la disponibilité',
     vehicleAvailabilityError: 'Véhicule indisponible pour ces dates.',
     vehicleDatesConfirmed: 'Véhicule disponible pour ces dates',
-    selectSailingHint: 'Indiquez l\'identifiant du départ croisière (sailingId).',
+    selectSailingHint: "Indiquez l'identifiant du départ croisière (sailingId).",
     sailingIdLabel: 'Identifiant du départ',
     sailingIdPlaceholder: '00000000-0000-4000-8000-000000003036',
     loadingCruiseCabins: 'Chargement des cabines…',
@@ -2151,81 +2253,81 @@ const fr: Translations = {
     travelersLabel: 'Voyageurs',
     durationDaysLabel: '{days} jour(s)',
     packageBookingHint:
-      'Choisissez la date de départ et le nombre de voyageurs. Les créneaux horaires seront confirmés par notre équipe après votre demande.',
+      "Choisissez la date de départ et le nombre de voyageurs. Les créneaux horaires seront confirmés par notre équipe après votre demande.",
     selectDepartureHint: 'Indiquez une date de départ pour préparer la réservation.',
     includedServicesTitle: 'Prestations incluses',
     assistedBookingServicesHint:
-      'Les horaires précis seront attribués après validation de votre demande par notre équipe.',
+      "Les horaires précis seront attribués après validation de votre demande par notre équipe.",
     resolvingPackage: 'Vérification des disponibilités…',
     resolvingItem: 'En cours…',
     itemAutoResolved: 'Inclus',
     itemUnavailable: 'Indisponible',
-    itemMissing: 'Non configuré',
+    itemMissing: 'Non configur?',
     itemResolveError: 'Erreur',
     someItemsUnavailable:
-      'Certaines prestations ne sont pas disponibles pour ces dates. Essayez une autre date de départ.',
+      'Certaines prestations ne sont pas disponibles pour ces dates. Essayez une autre date de d?part.',
     someItemsMissing:
-      'Certaines prestations du forfait n’ont pas pu être associées au catalogue.',
+      'Certaines prestations du forfait n?ont pas pu ?tre associ?es au catalogue.',
     notFound: 'Forfait introuvable',
     notFoundHint: 'Ce forfait n\'existe pas ou n\'est plus disponible.',
     backToList: 'Retour aux forfaits',
     itemTypes: {
-      property: 'Hébergement',
+      property: 'H?bergement',
       flight: 'Vol',
-      vehicle: 'Véhicule',
-      cruise: 'Cabine croisière',
-      activity: 'Activité',
+      vehicle: 'V?hicule',
+      cruise: 'Cabine croisi?re',
+      activity: 'Activit?',
     },
     galleryAria: 'Galerie photos du forfait',
     galleryOpenLightbox: 'Agrandir la photo',
     galleryClose: 'Fermer la galerie',
-    galleryPrevious: 'Photo précédente',
+    galleryPrevious: 'Photo pr?c?dente',
     galleryNext: 'Photo suivante',
     galleryCounter: (current, total) => `Photo ${current} sur ${total}`,
-    attachmentsTitle: 'Pièces jointes',
-    attachmentsCount: '{count} pièce(s) jointe(s)',
+    attachmentsTitle: 'Pi?ces jointes',
+    attachmentsCount: '{count} pi?ce(s) jointe(s)',
     openAttachment: 'Ouvrir le fichier',
-    attachmentImageAlt: 'Pièce jointe image',
-    attachmentFallbackName: 'Pièce jointe',
+    attachmentImageAlt: 'Pi?ce jointe image',
+    attachmentFallbackName: 'Pi?ce jointe',
     descriptionShowMore: 'Voir plus',
     descriptionShowLess: 'Voir moins',
-    stepOverview: 'Aperçu des prestations',
+    stepOverview: 'Aper?u des prestations',
     stepConfigure: 'Configuration',
-    stepBook: 'Réserver',
-    stepRecap: 'Récapitulatif',
-    stepOverviewShort: 'Aperçu',
+    stepBook: 'R?server',
+    stepRecap: 'R?capitulatif',
+    stepOverviewShort: 'Aper?u',
     stepConfigureShort: 'Config.',
-    stepBookShort: 'Réserver',
-    stepRecapShort: 'Récap',
-    compositionStepperAria: 'Étapes de composition du forfait',
-    configureProgress: '{done} / {total} prestation(s) configurée(s)',
-    bookingReadyHint: 'Dates et voyageurs renseignés',
-    bookingPendingHint: 'Indiquez une date de départ',
-    assistedItemPendingSchedule: 'Créneau à confirmer après validation',
+    stepBookShort: 'R?server',
+    stepRecapShort: 'R?cap',
+    compositionStepperAria: '?tapes de composition du forfait',
+    configureProgress: '{done} / {total} prestation(s) configur?e(s)',
+    bookingReadyHint: 'Dates et voyageurs renseign?s',
+    bookingPendingHint: 'Indiquez une date de d?part',
+    assistedItemPendingSchedule: 'Cr?neau ? confirmer apr?s validation',
     travelerSingular: 'voyageur',
     travelerPlural: 'voyageurs',
-    estimatedPackageTotal: 'Total estimé',
-    startConfiguration: 'Réserver ce forfait',
+    estimatedPackageTotal: 'Total estim?',
+    startConfiguration: 'R?server ce forfait',
     stepBack: 'Retour',
-    viewRecap: 'Voir le récapitulatif',
-    recapTitle: 'Récapitulatif du forfait',
+    viewRecap: 'Voir le r?capitulatif',
+    recapTitle: 'R?capitulatif du forfait',
     recapHint:
-      'Vérifiez les informations de voyage avant d’ajouter le forfait au panier. La demande sera traitée par notre équipe.',
-    configureSchedulesTitle: 'Choisir les créneaux horaires',
-    itemConfigured: 'Configuré',
-    itemPending: 'À configurer',
-    recapActivityLine: '{n} participant(s) · créneau sélectionné',
-    recapPropertyLine: 'Séjour du {checkIn} au {checkOut}',
-    recapFlightLine: 'Départ le {date}',
+      'V?rifiez les informations de voyage avant d?ajouter le forfait au panier. La demande sera trait?e par notre ?quipe.',
+    configureSchedulesTitle: 'Choisir les cr?neaux horaires',
+    itemConfigured: 'Configur?',
+    itemPending: '? configurer',
+    recapActivityLine: '{n} participant(s) ? cr?neau s?lectionn?',
+    recapPropertyLine: 'S?jour du {checkIn} au {checkOut}',
+    recapFlightLine: 'D?part le {date}',
     recapVehicleLine: 'Du {pickup} au {return}',
-    recapCruiseLine: '{guests} passager(s) · cabine sélectionnée',
-    estimatedSavings: 'Économie estimée : {amount}',
+    recapCruiseLine: '{guests} passager(s) ? cabine s?lectionn?e',
+    estimatedSavings: '?conomie estim?e : {amount}',
     itineraryMapTitle: 'Carte du forfait',
     itineraryMapAria: 'Carte des lieux inclus dans le forfait',
-    itineraryMapLegendTitle: 'Légende',
+    itineraryMapLegendTitle: 'L?gende',
     itineraryMapLegendPoints: '({count})',
     itineraryMapPartialHint:
-      'Certains services (véhicule, croisière) ne sont pas affichés sur la carte faute de coordonnées géographiques.',
+      'Certains services (v?hicule, croisi?re) ne sont pas affich?s sur la carte faute de coordonn?es g?ographiques.',
   },
   account: {
     title: 'Mon compte',
@@ -2306,7 +2408,7 @@ const fr: Translations = {
       actionRequired: 'Action requise',
       leaveReviewCta: 'Laisser un avis',
       reviewPrompt:
-        'Vous avez {count} séjour(s) terminé(s) en attente d’avis — partagez votre expérience.',
+        'Vous avez {count} s\u00e9jour(s) termin\u00e9(s) en attente d\u2019avis \u2014 partagez votre exp\u00e9rience.',
       detail: {
         bookedOn: 'Réservée le',
         itemsCount: 'Articles',
@@ -2349,7 +2451,7 @@ const fr: Translations = {
         timelineStepCancelled: 'Annulée',
         timelineStepRefunded: 'Remboursée',
         timelineStepRequest: 'Demande envoyée',
-        timelineStepValidation: 'Validation par l\'équipe',
+        timelineStepValidation: "Validation par l'équipe",
         timelineStepDiscussion: 'Échanges',
         timelineStepPayment: 'Paiement',
         timelineCurrent: 'Étape en cours',
@@ -2360,18 +2462,18 @@ const fr: Translations = {
         identityDocuments: {
           title: "Pièce d'identité",
           subtitle:
-            'Déposez une pièce d\'identité lisible (passeport, carte d\'identité…) pour valider votre réservation.',
+            "Déposez une pièce d'identité lisible (passeport, carte d'identité…) pour valider votre réservation.",
           empty: 'Aucun document déposé pour le moment.',
           documentType: 'Type de document',
           file: 'Fichier',
-          fileHint: 'JPEG, PNG, WebP ou PDF — 10 Mo max.',
+          fileHint: 'JPEG, PNG, WebP ou PDF ? 10 Mo max.',
           upload: 'Envoyer le document',
-          uploading: 'Envoi…',
+          uploading: 'Envoi?',
           uploadError: "Impossible d'envoyer le document.",
           fileTooLarge: 'Fichier trop volumineux (10 Mo max).',
           view: 'Voir',
-          viewing: 'Ouverture…',
-          viewError: 'Impossible d\'ouvrir le document.',
+          viewing: 'Ouverture?',
+          viewError: "Impossible d'ouvrir le document.",
           statusLabel: 'Statut',
           types: {
             passport: 'Passeport',
@@ -2386,10 +2488,56 @@ const fr: Translations = {
             rejected: 'Refusé',
           },
         },
+        manifest: {
+          title: 'Liste des voyageurs',
+          subtitle: 'Renseignez les informations de chaque voyageur inclus dans cette réservation.',
+          empty: 'Aucun voyageur renseigné pour le moment.',
+          loading: 'Chargement…',
+          loadError: 'Impossible de charger la liste des voyageurs.',
+          addTraveler: 'Ajouter un voyageur',
+          viewDocuments: 'Pièces jointes',
+          viewDocument: 'Voir',
+          docsTitle: 'Documents déposés',
+          docsEmpty: 'Aucun document déposé pour cette réservation.',
+          docsLoadError: 'Impossible de charger les documents.',
+          addTitle: 'Ajouter un voyageur',
+          editTitle: 'Modifier le voyageur',
+          formHint: 'Seul le nom complet est obligatoire.',
+          fullNameRequired: 'Le nom complet est obligatoire.',
+          save: 'Enregistrer',
+          saving: 'Enregistrement…',
+          saveError: "Impossible d'enregistrer le voyageur.",
+          edit: 'Modifier',
+          delete: 'Supprimer',
+          deleting: 'Suppression…',
+          deleteError: 'Impossible de supprimer le voyageur.',
+          deleteTitle: 'Supprimer ce voyageur ?',
+          deleteDescription: 'Confirmer la suppression de {name} de la liste des voyageurs.',
+          cancel: 'Annuler',
+          sex: {
+            unspecified: 'Non précisé',
+            M: 'Homme',
+            F: 'Femme',
+            other: 'Autre',
+          },
+          fields: {
+            fullName: 'Nom complet',
+            age: 'Âge',
+            sex: 'Genre',
+            nationality: 'Nationalité',
+            idNumber: "N° pièce d'identité",
+            conditions: 'Conditions médicales',
+            conditionsPlaceholder: 'Allergies, traitements en cours, besoins particuliers?',
+            comment: 'Commentaire',
+            commentPlaceholder: 'Informations complémentaires…',
+            other: 'Autres informations',
+            otherPlaceholder: 'Toute autre information utile?',
+          },
+        },
         messages: {
           title: 'Conversation',
           subtitle: 'Échangez avec notre équipe au sujet de votre demande.',
-          loading: 'Chargement des messages…',
+          loading: 'Chargement des messages?',
           empty: 'Aucun message pour le moment. Notre équipe vous répondra ici.',
           threadAria: 'Fil de messages de la réservation',
           authorStaff: 'Équipe',
@@ -2399,7 +2547,7 @@ const fr: Translations = {
           replyPlaceholder: 'Écrivez votre message…',
           sendReply: 'Envoyer',
           loadError: 'Impossible de charger la conversation.',
-          sendError: 'Impossible d\'envoyer le message.',
+          sendError: "Impossible d'envoyer le message.",
           newStaffMessageToast: 'Nouveau message de notre équipe',
           fabAriaLabel: 'Ouvrir la conversation',
           fabAriaLabelWithUnread: 'Ouvrir la conversation ({count} non lu(s))',
@@ -2418,10 +2566,10 @@ const fr: Translations = {
           rolePrimary: 'Guide principal',
           roleSecondary: 'Guide secondaire',
           leaveReview: 'Noter ce guide',
-          leaveReviewHint: 'Votre avis sera publié après modération par notre équipe.',
-          submitReview: 'Envoyer l\'avis',
+          leaveReviewHint: "Votre avis sera publié après modération par notre équipe.",
+          submitReview: "Envoyer l'avis",
           yourReview: 'Votre avis',
-          reviewPublished: 'Merci, votre avis a été envoyé et sera publié après modération.',
+          reviewPublished: "Merci, votre avis a été envoyé et sera publié après modération.",
         },
       },
     },
@@ -2470,7 +2618,7 @@ const fr: Translations = {
     faqTitle: 'Questions fréquentes',
     formTitle: 'Contacter le support',
     formSubtitle:
-      'Décrivez votre demande : nous créons un ticket et vous répondons par e-mail.',
+      "Décrivez votre demande : nous créons un ticket et vous répondons par e-mail.",
     signInPrompt: 'Connectez-vous pour envoyer une demande au support.',
     signInCta: 'Se connecter',
     checkingSession: 'Vérification de la session…',
@@ -2517,144 +2665,144 @@ const fr: Translations = {
   blog: {
     metaTitle: 'Blog voyage en Afrique',
     metaDescription:
-      'Conseils, guides et inspirations pour préparer votre prochain voyage en Afrique avec Africa Tourism Gate.',
+      'Conseils, guides et inspirations pour pr?parer votre prochain voyage en Afrique avec Africa Tourism Gate.',
     heroTitle: 'Blog',
     heroSubtitle: 'Guides, conseils et inspirations pour voyager en Afrique.',
     readMore: 'Lire la suite',
-    loading: 'Chargement des articles…',
-    loadError: "Impossible de charger le blog. Vérifiez que l'API est démarrée.",
-    retry: 'Réessayer',
-    noResults: 'Aucun article publié',
-    noResultsHint: 'Revenez bientôt pour découvrir nos nouveaux contenus.',
+    loading: 'Chargement des articles?',
+    loadError: "Impossible de charger le blog. V?rifiez que l'API est d?marr?e.",
+    retry: 'R?essayer',
+    noResults: 'Aucun article publi?',
+    noResultsHint: 'Revenez bient?t pour d?couvrir nos nouveaux contenus.',
     localeFallback:
-      'Aucun article dans votre langue pour le moment — affichage des articles disponibles dans les autres langues.',
+      'Aucun article dans votre langue pour le moment ? affichage des articles disponibles dans les autres langues.',
     backToBlog: 'Retour au blog',
-    publishedOn: 'Publié le',
+    publishedOn: 'Publi? le',
     breadcrumbHome: 'Accueil',
     breadcrumbBlog: 'Blog',
   },
   about: {
-    heroTitle: 'À propos',
+    heroTitle: '? propos',
     heroSubtitle:
-      'Découvrez notre mission, notre équipe et nos engagements pour un tourisme africain responsable.',
-    sidebarAria: 'Sections À propos',
+      'D?couvrez notre mission, notre ?quipe et nos engagements pour un tourisme africain responsable.',
+    sidebarAria: 'Sections ? propos',
     breadcrumbHome: 'Accueil',
-    breadcrumbAbout: 'À propos',
+    breadcrumbAbout: '? propos',
     loading: 'Chargement…',
-    loadError: 'Impossible de charger le contenu. Vérifiez que l’API est démarrée.',
-    emptyPage: 'Contenu en cours de préparation',
-    emptyPageHint: 'Cette section sera bientôt disponible. Contactez-nous pour en savoir plus.',
+    loadError: 'Impossible de charger le contenu. V?rifiez que l?API est d?marr?e.',
+    emptyPage: 'Contenu en cours de pr?paration',
+    emptyPageHint: 'Cette section sera bient?t disponible. Contactez-nous pour en savoir plus.',
     localeFallback:
-      'Contenu affiché dans une autre langue — la version dans votre langue sera publiée prochainement.',
+      'Contenu affich? dans une autre langue ? la version dans votre langue sera publi?e prochainement.',
     nav: {
       whoWeAre: 'Qui nous sommes',
       history: 'Notre histoire',
-      team: 'Notre équipe',
+      team: 'Notre ?quipe',
       howWeWork: 'Comment nous travaillons',
       governance: 'Notre gouvernance',
       reports: 'Rapports et finances',
-      responsibility: 'Responsabilité',
-      media: 'Médias & ressources',
+      responsibility: 'Responsabilit?',
+      media: 'M?dias & ressources',
       contact: 'Nous contacter',
     },
     team: {
-      empty: 'Aucun membre de l’équipe publié pour le moment.',
+      empty: 'Aucun membre de l??quipe publi? pour le moment.',
     },
     timeline: {
       intro:
-        'Parcourez les étapes clés qui ont façonné Africa Tourism Gate, de la genèse du projet à notre vision pour l’avenir.',
-      empty: 'Aucun jalon publié pour le moment.',
+        'Parcourez les ?tapes cl?s qui ont fa?onn? Africa Tourism Gate, de la gen?se du projet ? notre vision pour l?avenir.',
+      empty: 'Aucun jalon publi? pour le moment.',
       readMore: 'En savoir plus',
-      sidebarAria: 'Périodes de l’historique',
+      sidebarAria: 'P?riodes de l?historique',
     },
     resources: {
       empty: 'Aucun document disponible pour le moment.',
-      download: 'Télécharger',
+      download: 'T?l?charger',
       openLink: 'Ouvrir le lien',
-      publishedOn: 'Publié le',
+      publishedOn: 'Publi? le',
     },
     contact: {
-      subtitle: 'Notre équipe est à votre écoute pour toute question.',
-      infoTitle: 'Coordonnées',
+      subtitle: 'Notre ?quipe est ? votre ?coute pour toute question.',
+      infoTitle: 'Coordonn?es',
       formTitle: 'Envoyer un message',
-      formSubtitle: 'Décrivez votre demande — nous vous répondrons dans les meilleurs délais.',
+      formSubtitle: 'D?crivez votre demande ? nous vous r?pondrons dans les meilleurs d?lais.',
     },
     meta: {
       whoWeAre: {
         title: 'Qui nous sommes',
         description:
-          'Découvrez Africa Tourism Gate : notre mission, notre vision et notre engagement pour le tourisme en Afrique.',
+          'D?couvrez Africa Tourism Gate : notre mission, notre vision et notre engagement pour le tourisme en Afrique.',
       },
       history: {
         title: 'Notre histoire',
         description:
-          'Retracez les grandes étapes du développement d’Africa Tourism Gate à travers une frise chronologique interactive.',
+          'Retracez les grandes ?tapes du d?veloppement d?Africa Tourism Gate ? travers une frise chronologique interactive.',
       },
       team: {
-        title: 'Notre équipe',
+        title: 'Notre ?quipe',
         description:
           'Rencontrez les femmes et les hommes qui font vivre Africa Tourism Gate au quotidien.',
       },
       howWeWork: {
         title: 'Comment nous travaillons',
         description:
-          'Notre approche qualité, transparence et partenariat local pour des voyages en Afrique.',
+          'Notre approche qualit?, transparence et partenariat local pour des voyages en Afrique.',
       },
       governance: {
         title: 'Notre gouvernance',
         description:
-          'Structure de gouvernance, décisions et transparence institutionnelle d’Africa Tourism Gate.',
+          'Structure de gouvernance, d?cisions et transparence institutionnelle d?Africa Tourism Gate.',
       },
       reports: {
         title: 'Rapports et finances',
         description:
-          'Consultez les rapports d’activité et documents financiers publiés par Africa Tourism Gate.',
+          'Consultez les rapports d?activit? et documents financiers publi?s par Africa Tourism Gate.',
       },
       responsibility: {
-        title: 'Responsabilité',
+        title: 'Responsabilit?',
         description:
-          'Nos engagements pour un tourisme durable, éthique et responsable en Afrique.',
+          'Nos engagements pour un tourisme durable, ?thique et responsable en Afrique.',
       },
       media: {
-        title: 'Médias & ressources',
+        title: 'M?dias & ressources',
         description:
-          'Kit presse, logos et ressources médias pour parler d’Africa Tourism Gate.',
+          'Kit presse, logos et ressources m?dias pour parler d?Africa Tourism Gate.',
       },
       contact: {
         title: 'Nous contacter',
         description:
-          'Contactez l’équipe Africa Tourism Gate par téléphone, e-mail ou formulaire de support.',
+          'Contactez l??quipe Africa Tourism Gate par t?l?phone, e-mail ou formulaire de support.',
       },
     },
   },
   comingSoon: {
-    badge: 'Bientôt disponible',
-    title: 'Bientôt disponible',
+    badge: 'Bient?t disponible',
+    title: 'Bient?t disponible',
     siteBody:
-      'Cette section du site est en cours de préparation. Revenez bientôt pour découvrir de nouvelles fonctionnalités sur Africa Tourism Gate.',
-    body: 'La réservation en ligne pour cette catégorie arrive prochainement. Vos critères de recherche ont été conservés dans l’URL.',
+      'Cette section du site est en cours de pr?paration. Revenez bient?t pour d?couvrir de nouvelles fonctionnalit?s sur Africa Tourism Gate.',
+    body: 'La r?servation en ligne pour cette cat?gorie arrive prochainement. Vos crit?res de recherche ont ?t? conserv?s dans l?URL.',
     backToSearch: 'Modifier ma recherche',
-    backHome: 'Retour à l’accueil',
+    backHome: 'Retour ? l?accueil',
   },
   booking: {
     login: {
       title: 'Connexion client',
       subtitle:
-        'Connectez-vous avec votre e-mail et mot de passe, ou utilisez Google pour poursuivre votre réservation.',
+        'Connectez-vous avec votre e-mail et mot de passe, ou utilisez Google pour poursuivre votre r?servation.',
       divider: 'ou',
       google: 'Se connecter avec Google',
-      backToHotels: 'Retour aux hôtels',
+      backToHotels: 'Retour aux h?tels',
       form: {
         emailLabel: 'Adresse e-mail',
         emailPlaceholder: 'vous@exemple.com',
         passwordLabel: 'Mot de passe',
-        passwordPlaceholder: '••••••••',
+        passwordPlaceholder: '????????',
         submit: 'Se connecter',
-        submitLoading: 'Connexion…',
+        submitLoading: 'Connexion?',
       },
       errors: {
-        network: 'Impossible de joindre le serveur. Vérifiez votre connexion.',
-        generic: 'Une erreur est survenue. Veuillez réessayer.',
+        network: 'Impossible de joindre le serveur. V?rifiez votre connexion.',
+        generic: 'Une erreur est survenue. Veuillez r?essayer.',
         envMissing: 'Configuration API manquante (NEXT_PUBLIC_API_URL).',
         unauthorized: 'Adresse e-mail ou mot de passe incorrect.',
       },
@@ -2706,19 +2854,19 @@ const en: Translations = {
         subtitle: '7-day safari',
         title: 'MAGICAL MASAI MARA',
         description:
-          'Witness the wildebeest migration and the Big Five in Africa�"s most famous reserve.',
+          'Witness the wildebeest migration and the Big Five in Africa?"s most famous reserve.',
       },
       {
         subtitle: '5 days in',
         title: 'MARRAKECH (Pearl of the South)',
         description:
-          'Immerse yourself in souks, riads and the spiced flavors of Morocco�"s ochre city.',
+          'Immerse yourself in souks, riads and the spiced flavors of Morocco?"s ochre city.',
       },
       {
         subtitle: '12-day cruise',
         title: 'ZANZIBAR TO MADAGASCAR',
         description:
-          'Coastal sailing along the Indian Ocean � dream beaches and unique wildlife.',
+          'Coastal sailing along the Indian Ocean ? dream beaches and unique wildlife.',
       },
     ],
     prev: 'Previous slide',
@@ -2796,12 +2944,12 @@ const en: Translations = {
     navAriaLabel: 'Results pagination',
     pageAria: (page) => `Page ${page}`,
     range: ({ start, end, total, itemLabel, pluralSuffix }) =>
-      `${start}–${end} of ${total} ${itemLabel}${pluralSuffix}`,
+      `${start}?${end} of ${total} ${itemLabel}${pluralSuffix}`,
     pageOf: ({ page, totalPages }) => `page ${page} / ${totalPages}`,
     resultItem: 'result',
   },
   bookingSidebar: {
-    trustDemoCatalog: 'Indicative prices — online booking coming soon.',
+    trustDemoCatalog: 'Indicative prices ? online booking coming soon.',
     trustTransparentPricing: 'No hidden fees on the amount shown.',
     trustSupport: 'Questions? Our team is here to help.',
     mobileConfigure: 'Options',
@@ -2823,10 +2971,10 @@ const en: Translations = {
     backToCart: 'Back to cart',
     payWithStripe: 'Pay with Stripe',
     requestBooking: 'Request a booking',
-    requestSubmitting: 'Submitting request…',
-    stripeRedirecting: 'Redirecting to Stripe…',
+    requestSubmitting: 'Submitting request?',
+    stripeRedirecting: 'Redirecting to Stripe?',
     estimatedTotal: 'Estimated total',
-    loading: 'Loading…',
+    loading: 'Loading?',
     authRequiredNext: 'Customer sign-in required on the next step.',
     authRequiredPayment: 'Customer sign-in required to start Stripe Checkout.',
     authRequiredRequest: 'Customer sign-in required to submit your booking request.',
@@ -2851,7 +2999,7 @@ const en: Translations = {
       title: 'Confirming booking',
       titleConfirmed: 'Booking confirmed',
       subtitle:
-        'Your Stripe payment was received. We are finalizing your booking confirmation…',
+        'Your Stripe payment was received. We are finalizing your booking confirmation?',
       subtitleConfirmed: 'Your payment was received and your booking is confirmed.',
       bookingIdLabel: 'Booking ref:',
       statusLabel: 'Status:',
@@ -2860,7 +3008,7 @@ const en: Translations = {
       statusPendingHint:
         'Confirmation is taking longer than expected. Check your account shortly or contact support if the status does not update.',
       totalLabel: 'Total:',
-      verifying: 'Checking status…',
+      verifying: 'Checking status?',
       statusUnavailable: 'Detailed status is unavailable for now. Refresh in a moment.',
       backHome: 'Back to home',
       browseHotels: 'Browse hotels',
@@ -2873,11 +3021,11 @@ const en: Translations = {
     requestSuccess: {
       title: 'Request submitted',
       subtitle:
-        'Your booking request has been sent to our team. You will be contacted within 24–48 hours.',
+        'Your booking request has been sent to our team. You will be contacted within 24?48 hours.',
       bookingIdLabel: 'Request ref:',
       statusLabel: 'Status:',
       totalLabel: 'Estimated total:',
-      verifying: 'Checking status…',
+      verifying: 'Checking status?',
       statusUnavailable: 'Detailed status is unavailable for now. Refresh in a moment.',
       backHome: 'Back to home',
       browseActivities: 'Browse activities',
@@ -2886,6 +3034,34 @@ const en: Translations = {
       nextStepsTitle: 'What happens next',
       nextStepContact: 'Our team will review your request and contact you by email.',
       nextStepAccount: 'Track progress from your account area.',
+    },
+    manifest: {
+      title: 'Traveler information',
+      subtitle: 'Fill in the details for each traveler. Only the full name is required.',
+      travelerN: 'Traveler {n}',
+      fullName: 'Full name',
+      age: 'Age',
+      sex: 'Gender',
+      sexUnspecified: 'Not specified',
+      sexM: 'Male',
+      sexF: 'Female',
+      sexOther: 'Other',
+      nationality: 'Nationality',
+      idNumber: 'ID / Passport number',
+      conditions: 'Medical conditions',
+      conditionsPlaceholder: 'Allergies, treatments, special needs?',
+      fullNameRequired: 'Full name of traveler {n} is required.',
+      idDocument: 'Identity document',
+      idDocumentHint: 'JPEG, PNG, WebP or PDF ? 10 MB max.',
+      idDocumentSelected: 'Choose a file',
+      idDocumentRemove: 'Remove',
+      viewDocument: 'View document',
+      takePhoto: 'Take a photo',
+      cameraCapture: 'Capture',
+      cameraRetake: 'Retake',
+      cameraConfirm: 'Confirm',
+      cameraCancel: 'Cancel',
+      cameraError: 'Cannot access camera. Please check permissions.',
     },
     cancel: {
       title: 'Payment cancelled',
@@ -2924,7 +3100,7 @@ const en: Translations = {
       {
         title: 'Discoveries',
         description:
-          'Explore rich cultures, breathtaking landscapes and Africa�"s incredible wildlife.',
+          'Explore rich cultures, breathtaking landscapes and Africa?"s incredible wildlife.',
       },
       {
         title: 'Easy Booking',
@@ -2939,7 +3115,7 @@ const en: Translations = {
   },
   promo: {
     badge: 'Special offer',
-    title: 'Kenya Safari — Holiday Package',
+    title: 'Kenya Safari ? Holiday Package',
     description:
       'Discover the endless plains of the Masai Mara, spot the Big Five in their natural habitat and enjoy luxury lodges in the heart of the savanna. An experience that will change how you see Africa.',
     priceFrom: 'From:',
@@ -2952,7 +3128,7 @@ const en: Translations = {
       'Discover our most sought-after African destinations. From safaris to paradise beaches, every trip is a unique adventure.',
     reviews: 'Reviews',
     details: 'Details',
-    loading: 'Loading destinations…',
+    loading: 'Loading destinations?',
     loadError: 'Could not load destinations.',
     empty: 'No featured destinations at the moment.',
     items: [
@@ -2974,13 +3150,13 @@ const en: Translations = {
       {
         title: 'Zanzibar Beaches',
         subtitle: 'Tanzania, 6 days',
-        description: 'White sand, turquoise waters and spices � Indian Ocean paradise.',
+        description: 'White sand, turquoise waters and spices ? Indian Ocean paradise.',
       },
     ],
   },
   customers: {
     title: 'Happy Customers',
-    subtitle: 'Our travelers�" satisfaction is our top priority.',
+    subtitle: 'Our travelers?" satisfaction is our top priority.',
     p1: 'Since launch, we have helped thousands of travelers discover Africa. Our commitment to excellence and authentic experiences has earned the trust of our growing community.',
     p2: 'Every positive review motivates us to keep improving and offering ever more memorable journeys across the continent.',
     clients: 'Clients',
@@ -2991,7 +3167,7 @@ const en: Translations = {
     title: 'Upcoming Activities',
     subtitle:
       'Explore available experiences across Africa. Click a marker to view details and book.',
-    loading: 'Loading map…',
+    loading: 'Loading map?',
     loadError: 'Could not load activities on the map.',
     empty: 'No activities with location available at the moment.',
     browseAll: 'Browse all activities',
@@ -3074,7 +3250,7 @@ const en: Translations = {
     breadcrumbHotelsDetail: 'Hotels',
     heroTitle: 'Exceptional stays across Africa',
     heroSubtitle:
-      'Safari lodges, authentic riads and beach resorts � curated by our travel experts.',
+      'Safari lodges, authentic riads and beach resorts ? curated by our travel experts.',
     resultsFor: 'Results for',
     allAfrica: 'All Africa',
     propertiesFound: 'properties',
@@ -3083,7 +3259,7 @@ const en: Translations = {
     sortPriceLow: 'Price: low to high',
     sortPriceHigh: 'Price: high to low',
     sortRating: 'Top rated',
-    loading: 'Searching accommodations⬦',
+    loading: 'Searching accommodations?',
     loadError: 'Could not load results. Make sure the API is running.',
     retry: 'Retry',
     filters: 'Filters',
@@ -3164,7 +3340,7 @@ const en: Translations = {
     guestRating: 'Guest rating',
     reviewsTitle: 'Guest reviews',
     noReviews: 'No reviews yet.',
-    reviewsLoading: 'Loading reviews⬦',
+    reviewsLoading: 'Loading reviews?',
     reviewsLoadError: 'Could not load reviews.',
     loadMoreReviews: 'Show more reviews',
     anonymousGuest: 'Guest',
@@ -3187,7 +3363,7 @@ const en: Translations = {
     sortPriceLow: 'Price: low to high',
     sortPriceHigh: 'Price: high to low',
     sortDuration: 'Shortest duration',
-    loading: 'Searching flights…',
+    loading: 'Searching flights?',
     loadError: 'Could not load flights. Make sure the API is running.',
     retry: 'Retry',
     modifySearch: 'Modify search',
@@ -3197,10 +3373,10 @@ const en: Translations = {
     passengerSingular: 'passenger',
     passengerPlural: '{n} passengers',
     noResults: 'No flights match your criteria',
-    noResultsHint: 'Try different dates or airports (e.g. Kinshasa → Nairobi).',
+    noResultsHint: 'Try different dates or airports (e.g. Kinshasa ? Nairobi).',
     noSearchParams: 'Start a flight search',
     noSearchParamsHint: 'Enter departure, destination and a departure date.',
-    browseAllHint: 'All available flights — fares shown for the next date with seats.',
+    browseAllHint: 'All available flights ? fares shown for the next date with seats.',
     startSearch: 'Start search',
     backHome: 'Back to home',
     viewDetails: 'View details',
@@ -3250,7 +3426,7 @@ const en: Translations = {
     breadcrumbCarsDetail: 'Car rental',
     heroTitle: 'Car rental in Africa',
     heroSubtitle:
-      'SUVs, sedans and 4×4 from trusted local agencies — transparent daily rates.',
+      'SUVs, sedans and 4?4 from trusted local agencies ? transparent daily rates.',
     resultsFor: 'Results for',
     anyLocation: 'All cities',
     vehiclesFound: 'vehicles',
@@ -3258,7 +3434,7 @@ const en: Translations = {
     sortRecommended: 'Recommended',
     sortPriceLow: 'Price: low to high',
     sortPriceHigh: 'Price: high to low',
-    loading: 'Searching vehicles…',
+    loading: 'Searching vehicles?',
     loadError: 'Could not load vehicles. Make sure the API is running.',
     retry: 'Retry',
     modifySearch: 'Modify search',
@@ -3270,7 +3446,7 @@ const en: Translations = {
     noSearchParams: 'Start a car rental search',
     noSearchParamsHint: 'Enter a location, pick-up date and return date.',
     browseAllHint:
-      'All available vehicles — prices shown for the next available rental window.',
+      'All available vehicles ? prices shown for the next available rental window.',
     startSearch: 'Start search',
     backHome: 'Back to home',
     viewDetails: 'View details',
@@ -3341,7 +3517,7 @@ const en: Translations = {
     breadcrumbCruisesDetail: 'Cruises',
     heroTitle: 'Cruises in Africa',
     heroSubtitle:
-      'River and coastal itineraries — pick your cabin and sail with confidence.',
+      'River and coastal itineraries ? pick your cabin and sail with confidence.',
     resultsFor: 'Results for',
     anyRoute: 'All routes',
     sailingsFound: 'sailings',
@@ -3349,7 +3525,7 @@ const en: Translations = {
     sortRecommended: 'Recommended',
     sortPriceLow: 'Price: low to high',
     sortPriceHigh: 'Price: high to low',
-    loading: 'Searching cruises…',
+    loading: 'Searching cruises?',
     loadError: 'Could not load cruises. Check that the API is running.',
     retry: 'Retry',
     modifySearch: 'Modify search',
@@ -3361,10 +3537,10 @@ const en: Translations = {
     guestSingular: 'guest',
     guestPlural: '{n} guests',
     noResults: 'No cruises for these criteria',
-    noResultsHint: 'Try other dates or ports (e.g. CDKIN → CDBNW).',
+    noResultsHint: 'Try other dates or ports (e.g. CDKIN ? CDBNW).',
     noSearchParams: 'Start a cruise search',
     noSearchParamsHint: 'Enter ports, a departure date range, and guest count.',
-    browseAllHint: 'All available cruises — fares for cabins in stock.',
+    browseAllHint: 'All available cruises ? fares for cabins in stock.',
     startSearch: 'Start search',
     backHome: 'Back to home',
     viewDetails: 'View details',
@@ -3416,7 +3592,7 @@ const en: Translations = {
     breadcrumbActivities: 'Activities',
     heroTitle: 'Activities & tours in Africa',
     heroSubtitle:
-      'Guided excursions and local experiences — pick your time slot and book online.',
+      'Guided excursions and local experiences ? pick your time slot and book online.',
     resultsFor: 'Results for',
     anyDestination: 'All destinations',
     activitiesFound: 'activities',
@@ -3424,9 +3600,9 @@ const en: Translations = {
     sortRecommended: 'Recommended',
     sortPriceLow: 'Price: low to high',
     sortPriceHigh: 'Price: high to low',
-    loading: 'Searching activities…',
+    loading: 'Searching activities?',
     loadError: 'Could not load activities. Check that the API is running.',
-    destinationsLoading: 'Loading…',
+    destinationsLoading: 'Loading?',
     destinationsLoadError: 'Could not load destinations.',
     retry: 'Retry',
     modifySearch: 'Modify search',
@@ -3491,12 +3667,12 @@ const en: Translations = {
   packages: {
     metaTitle: 'Combined packages in Africa',
     metaDescription:
-      'Save with bundled travel packages — activities, stays and more on Africa Tourism Gate.',
+      'Save with bundled travel packages ? activities, stays and more on Africa Tourism Gate.',
     breadcrumbHome: 'Home',
     breadcrumbPackages: 'Packages',
     heroTitle: 'Combined packages in Africa',
     heroSubtitle:
-      'Bundle multiple services at a discount — compare catalog price and package price.',
+      'Bundle multiple services at a discount ? compare catalog price and package price.',
     cardBadge: 'Combined package',
     resultsFor: 'Available packages',
     packagesFound: 'packages',
@@ -3508,13 +3684,13 @@ const en: Translations = {
     displayModeCards: 'Cards',
     displayModeList: 'List',
     displayModeCompact: 'Compact',
-    loading: 'Loading packages…',
-    loadingDetail: 'Loading package…',
+    loading: 'Loading packages?',
+    loadingDetail: 'Loading package?',
     loadError: 'Could not load packages. Check that the API is running.',
     retry: 'Retry',
     modifySearch: 'Modify search',
     searchLabel: 'Search',
-    searchPlaceholder: 'Package name…',
+    searchPlaceholder: 'Package name?',
     searchSubmit: 'Search',
     browseHint: 'Browse all active packages or search by name.',
     noResults: 'No packages found',
@@ -3530,7 +3706,7 @@ const en: Translations = {
     noItems: 'This package has no services yet.',
     viewProduct: 'View product',
     itemDetailClose: 'Close',
-    itemDetailLoading: 'Loading service details…',
+    itemDetailLoading: 'Loading service details?',
     itemDetailError: 'Could not load details for this service.',
     itemDetailPriceLabel: 'Indicative price',
     itemDetailGenericHint: 'Open the full product page to see all details for this service.',
@@ -3548,7 +3724,7 @@ const en: Translations = {
     configureOnProductHint: 'Complete booking on the dedicated product page.',
     mixedCheckoutDisabled:
       'The package discount applies to grouped checkout once every service is configured.',
-    loadingActivitySchedules: 'Loading time slots…',
+    loadingActivitySchedules: 'Loading time slots?',
     activitySchedulesError: 'Could not load time slots for this activity.',
     noActivitySchedules: 'No time slots available for this date.',
     schedulesProgress: '{selected} / {total} activity(ies) configured',
@@ -3556,19 +3732,19 @@ const en: Translations = {
     allSchedulesRequired: 'Select a time slot for every activity in the package.',
     allItemsRequired: 'Configure every service in the package before adding to cart.',
     selectStayDatesHint: 'Enter check-in and check-out dates to choose a room.',
-    loadingPropertyRooms: 'Loading rooms…',
+    loadingPropertyRooms: 'Loading rooms?',
     propertyRoomsError: 'Could not load rooms for this property.',
     selectDepartureDateHint: 'Enter the flight departure date.',
-    loadingFlightClasses: 'Loading fare classes…',
+    loadingFlightClasses: 'Loading fare classes?',
     flightClassesError: 'Could not load classes for this flight.',
     selectRentalDatesHint: 'Enter pickup and return dates.',
-    loadingVehicleAvailability: 'Checking availability…',
+    loadingVehicleAvailability: 'Checking availability?',
     vehicleAvailabilityError: 'Vehicle unavailable for these dates.',
     vehicleDatesConfirmed: 'Vehicle available for these dates',
     selectSailingHint: 'Enter the cruise sailing ID (sailingId).',
     sailingIdLabel: 'Sailing ID',
     sailingIdPlaceholder: '00000000-0000-4000-8000-000000003036',
-    loadingCruiseCabins: 'Loading cabins…',
+    loadingCruiseCabins: 'Loading cabins?',
     cruiseCabinsError: 'Could not load cabins for this sailing.',
     addToCart: 'Add to cart',
     packageCartInvalid: 'Package configuration is unavailable or incomplete.',
@@ -3583,8 +3759,8 @@ const en: Translations = {
     includedServicesTitle: 'Included services',
     assistedBookingServicesHint:
       'Exact time slots will be assigned after our team validates your request.',
-    resolvingPackage: 'Checking availability…',
-    resolvingItem: 'Pending…',
+    resolvingPackage: 'Checking availability?',
+    resolvingItem: 'Pending?',
     itemAutoResolved: 'Included',
     itemUnavailable: 'Unavailable',
     itemMissing: 'Not configured',
@@ -3641,11 +3817,11 @@ const en: Translations = {
     configureSchedulesTitle: 'Choose time slots',
     itemConfigured: 'Configured',
     itemPending: 'Pending',
-    recapActivityLine: '{n} participant(s) · slot selected',
+    recapActivityLine: '{n} participant(s) ? slot selected',
     recapPropertyLine: 'Stay from {checkIn} to {checkOut}',
     recapFlightLine: 'Departure on {date}',
     recapVehicleLine: 'From {pickup} to {return}',
-    recapCruiseLine: '{guests} guest(s) · cabin selected',
+    recapCruiseLine: '{guests} guest(s) ? cabin selected',
     estimatedSavings: 'Estimated savings: {amount}',
     itineraryMapTitle: 'Package map',
     itineraryMapAria: 'Map of locations included in this package',
@@ -3659,7 +3835,7 @@ const en: Translations = {
     subtitle: 'Manage your profile, addresses and bookings.',
     browseSite: 'Browse accommodations',
     navAria: 'Account navigation',
-    loading: 'Loading⬦',
+    loading: 'Loading?',
     nav: {
       profile: 'Profile',
       addresses: 'Addresses',
@@ -3674,7 +3850,7 @@ const en: Translations = {
       phone: 'Phone',
       language: 'Preferred language',
       save: 'Save',
-      saving: 'Saving⬦',
+      saving: 'Saving?',
       saved: 'Profile updated successfully.',
       loadError: 'Could not load profile.',
       saveError: 'Could not update profile.',
@@ -3696,7 +3872,7 @@ const en: Translations = {
       empty: 'No saved addresses.',
       addNew: 'Add address',
       add: 'Add',
-      saving: 'Saving⬦',
+      saving: 'Saving?',
       cancel: 'Cancel',
       delete: 'Delete',
       deleteConfirm: 'Delete this address?',
@@ -3733,7 +3909,7 @@ const en: Translations = {
       actionRequired: 'Action required',
       leaveReviewCta: 'Leave a review',
       reviewPrompt:
-        'You have {count} completed stay(s) waiting for a review — share your experience.',
+        'You have {count} completed stay(s) waiting for a review ? share your experience.',
       detail: {
         bookedOn: 'Booked on',
         itemsCount: 'Items',
@@ -3745,10 +3921,10 @@ const en: Translations = {
         lineTotal: 'Amount',
         actions: 'Actions',
         payNow: 'Pay now',
-        paying: 'Redirecting to payment⬦',
+        paying: 'Redirecting to payment?',
         payError: 'Could not open the payment page.',
         cancelBooking: 'Cancel booking',
-        cancelling: 'Cancelling⬦',
+        cancelling: 'Cancelling?',
         cancelConfirm: 'Cancel this booking?',
         cancelError: 'Could not cancel the booking.',
         title: 'Booking details',
@@ -3761,7 +3937,7 @@ const en: Translations = {
         reviewBody: 'Comment (optional)',
         reviewBodyPlaceholder: 'What did you enjoy?',
         submitReview: 'Submit review',
-        submittingReview: 'Submitting⬦',
+        submittingReview: 'Submitting?',
         reviewSubmitError: 'Could not submit your review.',
         reviewRatingRequired: 'Please select a rating from 1 to 5.',
         reviewCharCount: '{current} / {max}',
@@ -3769,7 +3945,7 @@ const en: Translations = {
         reviewStarAria: '{n} out of 5',
         timelineTitle: 'Booking progress',
         timelinePlaceholder:
-          'Detailed history unavailable — steps estimated from current status.',
+          'Detailed history unavailable ? steps estimated from current status.',
         timelineStepCreated: 'Booking created',
         timelineStepPending: 'Awaiting payment',
         timelineStepConfirmed: 'Confirmed',
@@ -3787,17 +3963,17 @@ const en: Translations = {
         identityDocuments: {
           title: 'Identity document',
           subtitle:
-            'Upload a readable identity document (passport, national ID…) to validate your booking.',
+            'Upload a readable identity document (passport, national ID?) to validate your booking.',
           empty: 'No document uploaded yet.',
           documentType: 'Document type',
           file: 'File',
-          fileHint: 'JPEG, PNG, WebP or PDF — 10 MB max.',
+          fileHint: 'JPEG, PNG, WebP or PDF ? 10 MB max.',
           upload: 'Upload document',
-          uploading: 'Uploading…',
+          uploading: 'Uploading?',
           uploadError: 'Could not upload the document.',
           fileTooLarge: 'File too large (10 MB max).',
           view: 'View',
-          viewing: 'Opening…',
+          viewing: 'Opening?',
           viewError: 'Could not open the document.',
           statusLabel: 'Status',
           types: {
@@ -3813,17 +3989,63 @@ const en: Translations = {
             rejected: 'Rejected',
           },
         },
+        manifest: {
+          title: 'Traveler list',
+          subtitle: 'Fill in the details for each traveler included in this booking.',
+          empty: 'No travelers added yet.',
+          loading: 'Loading?',
+          loadError: 'Could not load the traveler list.',
+          addTraveler: 'Add traveler',
+          viewDocuments: 'Attachments',
+          viewDocument: 'View',
+          docsTitle: 'Uploaded documents',
+          docsEmpty: 'No documents uploaded for this booking.',
+          docsLoadError: 'Could not load documents.',
+          addTitle: 'Add a traveler',
+          editTitle: 'Edit traveler',
+          formHint: 'Only the full name is required.',
+          fullNameRequired: 'Full name is required.',
+          save: 'Save',
+          saving: 'Saving?',
+          saveError: 'Could not save the traveler.',
+          edit: 'Edit',
+          delete: 'Remove',
+          deleting: 'Removing?',
+          deleteError: 'Could not remove the traveler.',
+          deleteTitle: 'Remove this traveler?',
+          deleteDescription: 'Confirm removal of {name} from the traveler list.',
+          cancel: 'Cancel',
+          sex: {
+            unspecified: 'Not specified',
+            M: 'Male',
+            F: 'Female',
+            other: 'Other',
+          },
+          fields: {
+            fullName: 'Full name',
+            age: 'Age',
+            sex: 'Gender',
+            nationality: 'Nationality',
+            idNumber: 'ID / Passport number',
+            conditions: 'Medical conditions',
+            conditionsPlaceholder: 'Allergies, ongoing treatments, special needs?',
+            comment: 'Comment',
+            commentPlaceholder: 'Additional information?',
+            other: 'Other information',
+            otherPlaceholder: 'Any other relevant information?',
+          },
+        },
         messages: {
           title: 'Conversation',
           subtitle: 'Chat with our team about your booking request.',
-          loading: 'Loading messages…',
+          loading: 'Loading messages?',
           empty: 'No messages yet. Our team will reply here.',
           threadAria: 'Booking message thread',
           authorStaff: 'Team',
           authorCustomer: 'You',
           replyTitle: 'Your message',
           replyLabel: 'Message',
-          replyPlaceholder: 'Write your message…',
+          replyPlaceholder: 'Write your message?',
           sendReply: 'Send',
           loadError: 'Could not load the conversation.',
           sendError: 'Could not send your message.',
@@ -3833,7 +4055,7 @@ const en: Translations = {
           pickerTitle: 'Your conversations',
           pickerSubtitle: 'Select a booking to open the chat.',
           pickerEmpty: 'No bookings with an active conversation.',
-          pickerLoading: 'Loading your bookings…',
+          pickerLoading: 'Loading your bookings?',
           backToReservations: 'Back to bookings',
           viewBooking: 'View booking',
           unreadBadge: '{count} unread message(s)',
@@ -3847,7 +4069,7 @@ const en: Translations = {
           leaveReviewHint: 'Your review will be published after our team moderates it.',
           submitReview: 'Submit review',
           yourReview: 'Your review',
-          reviewPublished: 'Thank you — your review was submitted and will be published after moderation.',
+          reviewPublished: 'Thank you ? your review was submitted and will be published after moderation.',
         },
       },
     },
@@ -3855,7 +4077,7 @@ const en: Translations = {
       empty: 'No payment methods saved.',
       addNew: 'Add payment method',
       add: 'Add',
-      saving: 'Saving⬦',
+      saving: 'Saving?',
       cancel: 'Cancel',
       delete: 'Delete',
       deleteConfirm: 'Delete this payment method?',
@@ -3894,19 +4116,19 @@ const en: Translations = {
     pageSubtitle: 'Frequently asked questions and a form to reach our support team.',
     faqTitle: 'Frequently asked questions',
     formTitle: 'Contact support',
-    formSubtitle: 'Describe your request � we open a ticket and reply by email.',
+    formSubtitle: 'Describe your request ? we open a ticket and reply by email.',
     signInPrompt: 'Sign in to send a request to support.',
     signInCta: 'Sign in',
-    checkingSession: 'Checking session⬦',
+    checkingSession: 'Checking session?',
     subjectLabel: 'Subject',
-    subjectPlaceholder: 'e.g. Question about booking #⬦',
+    subjectPlaceholder: 'e.g. Question about booking #?',
     messageLabel: 'Message',
-    messagePlaceholder: 'Describe your situation in a few sentences⬦',
+    messagePlaceholder: 'Describe your situation in a few sentences?',
     submit: 'Send request',
-    submitting: 'Sending⬦',
+    submitting: 'Sending?',
     successTitle: 'Request received',
     successMessage:
-      'Thank you. Your ticket was created. Keep this reference: {ticketId}. Our team will reply within 1�2 business days.',
+      'Thank you. Your ticket was created. Keep this reference: {ticketId}. Our team will reply within 1?2 business days.',
     subjectRequired: 'Subject is required.',
     messageTooShort: 'Message must be at least 10 characters.',
     submitError: 'Could not send your request. Please try again.',
@@ -3914,7 +4136,7 @@ const en: Translations = {
       booking: {
         question: 'How do I change or cancel a booking?',
         answer:
-          'Open My account â†’ Bookings, select your stay and use the available actions (pay, cancel). If an option is missing, contact us with your booking reference.',
+          'Open My account ? Bookings, select your stay and use the available actions (pay, cancel). If an option is missing, contact us with your booking reference.',
       },
       payment: {
         question: 'Which payment methods do you accept?',
@@ -3934,7 +4156,7 @@ const en: Translations = {
       contact: {
         question: 'How fast does support reply?',
         answer:
-          'We handle requests Monday�Friday. Most tickets get a first reply within 1�2 business days.',
+          'We handle requests Monday?Friday. Most tickets get a first reply within 1?2 business days.',
       },
     },
   },
@@ -3945,13 +4167,13 @@ const en: Translations = {
     heroTitle: 'Blog',
     heroSubtitle: 'Guides, tips and inspiration for traveling in Africa.',
     readMore: 'Read more',
-    loading: 'Loading articles…',
+    loading: 'Loading articles?',
     loadError: 'Could not load the blog. Check that the API is running.',
     retry: 'Retry',
     noResults: 'No published articles',
     noResultsHint: 'Check back soon for new content.',
     localeFallback:
-      'No articles in your language yet — showing posts available in other languages.',
+      'No articles in your language yet ? showing posts available in other languages.',
     backToBlog: 'Back to blog',
     publishedOn: 'Published on',
     breadcrumbHome: 'Home',
@@ -3964,12 +4186,12 @@ const en: Translations = {
     sidebarAria: 'About sections',
     breadcrumbHome: 'Home',
     breadcrumbAbout: 'About',
-    loading: 'Loading…',
+    loading: 'Loading?',
     loadError: 'Could not load content. Check that the API is running.',
     emptyPage: 'Content coming soon',
     emptyPageHint: 'This section will be available shortly. Contact us to learn more.',
     localeFallback:
-      'Showing content in another language — your language version will be published soon.',
+      'Showing content in another language ? your language version will be published soon.',
     nav: {
       whoWeAre: 'Who we are',
       history: 'Our history',
@@ -4001,7 +4223,7 @@ const en: Translations = {
       subtitle: 'Our team is here to answer your questions.',
       infoTitle: 'Contact details',
       formTitle: 'Send a message',
-      formSubtitle: 'Describe your request — we will get back to you as soon as possible.',
+      formSubtitle: 'Describe your request ? we will get back to you as soon as possible.',
     },
     meta: {
       whoWeAre: {
@@ -4012,7 +4234,7 @@ const en: Translations = {
       history: {
         title: 'Our history',
         description:
-          'Trace the major milestones in Africa Tourism Gate’s development through an interactive timeline.',
+          'Trace the major milestones in Africa Tourism Gate?s development through an interactive timeline.',
       },
       team: {
         title: 'Our team',
@@ -4070,9 +4292,9 @@ const en: Translations = {
         emailLabel: 'Email address',
         emailPlaceholder: 'you@example.com',
         passwordLabel: 'Password',
-        passwordPlaceholder: '⬢⬢⬢⬢⬢⬢⬢⬢',
+        passwordPlaceholder: '????????',
         submit: 'Sign in',
-        submitLoading: 'Signing in⬦',
+        submitLoading: 'Signing in?',
       },
       errors: {
         network: 'Could not reach the server. Check your connection.',
