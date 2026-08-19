@@ -44,7 +44,7 @@ import {
 import { PackagePriceDisplay } from '../packages/package-price-display';
 import { PackageReservationSummary } from '../packages/package-reservation-summary';
 import { CheckoutPageShell } from './checkout-page-shell';
-import { CheckoutManifestForm, manifestDraftToPayload, emptyManifestEntryDraft, type ManifestEntryDraft } from './checkout-manifest-form';
+import { CheckoutManifestForm, manifestDraftToPayload, type ManifestEntryDraft } from './checkout-manifest-form';
 import { CheckoutRecapLine } from './checkout-recap-line';
 import { StripePaymentError } from './stripe-payment-error';
 import { createApiClient } from '@africatourismgate/api-client';

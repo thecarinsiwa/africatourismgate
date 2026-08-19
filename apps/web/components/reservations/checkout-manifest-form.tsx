@@ -102,7 +102,6 @@ function CameraCapture({ onCapture, onClose, labels }: CameraCaptureProps) {
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-black" role="dialog" aria-modal="true">
       <div className="relative flex-1 overflow-hidden">
-        {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
         <video
           ref={videoRef}
           autoPlay
