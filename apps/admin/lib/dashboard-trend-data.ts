@@ -124,7 +124,7 @@ export async function fetchDashboardTrend(
   access: DashboardTrendAccess,
 ): Promise<DashboardTrendResult> {
   const client = getApiClient();
-  const { dateFrom, dateTo, days } = getPeriodRange(period);
+  const { dateFrom, dateTo } = getPeriodRange(period);
 
   const [bookings, payments] = await Promise.all([
     access.canReadBookings
@@ -136,6 +136,17 @@ export async function fetchDashboardTrend(
       ? fetchAllPaginated((page, limit) => client.listPayments({ page, limit }))
       : Promise.resolve([] as PaymentListItem[]),
   ]);
+
+  return buildDashboardTrendResult(period, bookings, payments);
+}
+
+/** Construit la série tendance à partir de listes déjà chargées (batch dashboard). */
+export function buildDashboardTrendResult(
+  period: DashboardPeriod,
+  bookings: BookingListItem[],
+  payments: PaymentListItem[],
+): DashboardTrendResult {
+  const { dateFrom, dateTo, days } = getPeriodRange(period);
 
   const bookingCounts = bucketBookings(bookings, days);
   const revenueTotals = bucketPayments(payments, days, dateFrom, dateTo);

@@ -1,30 +1,17 @@
 'use client';
 
-import { useAdminErrorMessages } from '../lib/i18n/use-admin-error-messages';
-
 import { StatCard, type StatCardChange } from '@africatourismgate/ui';
 import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
-import { useEffect, useMemo, useState } from 'react';
-import { useDashboardPeriod } from './dashboard-period-context';
+import { useMemo } from 'react';
 import { dashboardKpis, type DashboardKpiKey } from '../config/dashboard-kpi';
-import { isApiForbidden } from '../lib/auth/is-api-forbidden';
-import { usePermissions } from '../lib/auth/use-permissions';
 import {
-  fetchDashboardKpiData,
   formatKpiChangePercent,
   type DashboardKpiChange,
 } from '../lib/dashboard-kpi-data';
 import { formatCount, formatMoney } from '../lib/format-money';
-
-type KpiCardState = {
-  status: 'loading' | 'ready' | 'error' | 'hidden';
-  displayValue?: string;
-  change?: DashboardKpiChange;
-  errorMessage?: string;
-};
-
-const initialCardState: KpiCardState = { status: 'loading' };
+import { useDashboardData } from './dashboard-data-context';
+import { usePermissions } from '../lib/auth/use-permissions';
 
 function kpiSubtitleKey(key: DashboardKpiKey): string {
   if (key === 'bookings' || key === 'revenue') {
@@ -51,9 +38,8 @@ function toStatCardChange(
 }
 
 export function DashboardKpiCards({ className }: { className?: string }) {
-  const { dashboardKpi: getDashboardKpiErrorMessage } = useAdminErrorMessages();
   const { hasPermission, loading: permissionsLoading } = usePermissions();
-  const { period } = useDashboardPeriod();
+  const { kpis, permissionsLoading: dataPermissionsLoading, dataLoading } = useDashboardData();
   const locale = useLocale();
   const t = useTranslations('dashboard');
 
@@ -62,79 +48,15 @@ export function DashboardKpiCards({ className }: { className?: string }) {
     [hasPermission],
   );
 
-  const [cards, setCards] = useState<Record<DashboardKpiKey, KpiCardState>>(() => ({
-    users: { ...initialCardState },
-    bookings: { ...initialCardState },
-    revenue: { ...initialCardState },
-    properties: { ...initialCardState },
-  }));
+  const loading = permissionsLoading || dataPermissionsLoading || dataLoading;
 
-  useEffect(() => {
-    if (permissionsLoading || visibleKpis.length === 0) return;
-
-    let cancelled = false;
-
-    async function loadKpi(key: DashboardKpiKey): Promise<KpiCardState> {
-      try {
-        const data = await fetchDashboardKpiData(key, period);
-        const displayValue =
-          key === 'revenue'
-            ? formatMoney(data.rawValue, data.currency ?? 'CDF')
-            : formatCount(data.rawValue);
-
-        const showChange = key === 'bookings' || key === 'revenue';
-
-        return {
-          status: 'ready',
-          displayValue,
-          change: showChange ? data.change : undefined,
-        };
-      } catch (error) {
-        if (isApiForbidden(error)) {
-          return { status: 'hidden' };
-        }
-        return {
-          status: 'error',
-          errorMessage: getDashboardKpiErrorMessage(error),
-        };
-      }
-    }
-
-    async function loadAll() {
-      setCards((current) => {
-        const next = { ...current };
-        for (const kpi of visibleKpis) {
-          next[kpi.key] = { status: 'loading' };
-        }
-        return next;
-      });
-
-      const results = await Promise.all(
-        visibleKpis.map(async (kpi) => [kpi.key, await loadKpi(kpi.key)] as const),
-      );
-
-      if (cancelled) return;
-
-      setCards((current) => ({
-        ...current,
-        ...Object.fromEntries(results),
-      }));
-    }
-
-    void loadAll();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [getDashboardKpiErrorMessage, permissionsLoading, period, visibleKpis]);
-
-  if (permissionsLoading) {
+  if (!loading && visibleKpis.length === 0) {
     return null;
   }
 
-  const renderableKpis = visibleKpis.filter((kpi) => cards[kpi.key].status !== 'hidden');
+  const renderableKpis = visibleKpis.filter((kpi) => loading || kpis[kpi.key].status !== 'hidden');
 
-  if (renderableKpis.length === 0) {
+  if (!loading && renderableKpis.length === 0) {
     return null;
   }
 
@@ -144,21 +66,42 @@ export function DashboardKpiCards({ className }: { className?: string }) {
     <div className={className}>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {renderableKpis.map((kpi) => {
-          const state = cards[kpi.key];
+          const slot = kpis[kpi.key];
+          const cardStatus =
+            loading || slot.status === 'loading'
+              ? 'loading'
+              : slot.status === 'error'
+                ? 'error'
+                : slot.status === 'ready'
+                  ? 'ready'
+                  : 'loading';
+
+          const displayValue =
+            slot.status === 'ready'
+              ? kpi.key === 'revenue'
+                ? formatMoney(slot.data.rawValue, slot.data.currency ?? 'CDF')
+                : formatCount(slot.data.rawValue)
+              : undefined;
+
+          const change =
+            slot.status === 'ready' && (kpi.key === 'bookings' || kpi.key === 'revenue')
+              ? slot.data.change
+              : undefined;
+
           const card = (
             <StatCard
               label={t(kpi.labelKey)}
               subtitle={t(kpiSubtitleKey(kpi.key))}
-              status={state.status === 'hidden' ? 'loading' : state.status}
-              value={state.displayValue}
-              change={toStatCardChange(state.change, locale, changeLabel)}
-              errorMessage={state.errorMessage}
+              status={cardStatus}
+              value={displayValue}
+              change={toStatCardChange(change, locale, changeLabel)}
+              errorMessage={slot.status === 'error' ? slot.errorMessage : undefined}
               icon={kpi.icon}
               iconClassName={kpi.iconClass}
             />
           );
 
-          if ('href' in kpi && kpi.href && state.status === 'ready') {
+          if ('href' in kpi && kpi.href && slot.status === 'ready') {
             return (
               <Link
                 key={kpi.key}

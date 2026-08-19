@@ -1,6 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
+import { DashboardDataProvider } from './dashboard-data-context';
 import { DashboardKpiCards } from './dashboard-kpi-cards';
 import { DashboardPageHeader } from './dashboard-page-header';
 import { DashboardPeriodProvider } from './dashboard-period-context';
@@ -37,23 +38,25 @@ function DashboardTwoColumnSection({ children }: { children: ReactNode }) {
 export function DashboardPageContent() {
   return (
     <DashboardPeriodProvider>
-      <div className="space-y-8">
-        <DashboardPageHeader />
+      <DashboardDataProvider>
+        <div className="space-y-8">
+          <DashboardPageHeader />
 
-        <DashboardKpiCards />
+          <DashboardKpiCards />
 
-        <DashboardTrendChart />
+          <DashboardTrendChart />
 
-        <DashboardTwoColumnSection>
-          <DashboardUserStats />
-          <DashboardPlatformOverview />
-        </DashboardTwoColumnSection>
+          <DashboardTwoColumnSection>
+            <DashboardUserStats />
+            <DashboardPlatformOverview />
+          </DashboardTwoColumnSection>
 
-        <DashboardTwoColumnSection>
-          <DashboardQuickActions />
-          <DashboardRecentUsers />
-        </DashboardTwoColumnSection>
-      </div>
+          <DashboardTwoColumnSection>
+            <DashboardQuickActions />
+            <DashboardRecentUsers />
+          </DashboardTwoColumnSection>
+        </div>
+      </DashboardDataProvider>
     </DashboardPeriodProvider>
   );
 }
