@@ -246,6 +246,7 @@ export const es: Translations = {
       idDocumentHint: 'JPEG, PNG, WebP o PDF — 10 MB máx.',
       idDocumentSelected: 'Elegir archivo',
       idDocumentRemove: 'Quitar',
+      viewDocument: 'Ver documento',
       takePhoto: 'Tomar una foto',
       cameraCapture: 'Capturar',
       cameraRetake: 'Repetir',

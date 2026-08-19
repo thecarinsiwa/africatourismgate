@@ -214,6 +214,7 @@ export type Translations = {
       idDocumentHint: string;
       idDocumentSelected: string;
       idDocumentRemove: string;
+      viewDocument: string;
       takePhoto: string;
       cameraCapture: string;
       cameraRetake: string;
@@ -1543,6 +1544,7 @@ const fr: Translations = {
       idDocumentHint: 'JPEG, PNG, WebP ou PDF ? 10 Mo max.',
       idDocumentSelected: 'Choisir un fichier',
       idDocumentRemove: 'Retirer',
+      viewDocument: 'Voir le document',
       takePhoto: 'Prendre une photo',
       cameraCapture: 'Capturer',
       cameraRetake: 'Reprendre',
@@ -3043,6 +3045,7 @@ const en: Translations = {
       idDocumentHint: 'JPEG, PNG, WebP or PDF ? 10 MB max.',
       idDocumentSelected: 'Choose a file',
       idDocumentRemove: 'Remove',
+      viewDocument: 'View document',
       takePhoto: 'Take a photo',
       cameraCapture: 'Capture',
       cameraRetake: 'Retake',

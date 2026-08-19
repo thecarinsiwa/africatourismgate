@@ -201,6 +201,7 @@ type Labels = {
   idDocumentHint: string;
   idDocumentSelected: string;
   idDocumentRemove: string;
+  viewDocument: string;
   takePhoto: string;
   cameraCapture: string;
   cameraRetake: string;
@@ -220,6 +221,20 @@ type Props = {
 export function CheckoutManifestForm({ count, entries, onChange, labels, validationErrors }: Props) {
   const baseId = useId();
   const [cameraIndex, setCameraIndex] = useState<number | null>(null);
+  const [previewFile, setPreviewFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  function openPreview(file: File) {
+    const url = URL.createObjectURL(file);
+    setPreviewUrl(url);
+    setPreviewFile(file);
+  }
+
+  function closePreview() {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setPreviewUrl(null);
+    setPreviewFile(null);
+  }
 
   useEffect(() => {
     if (entries.length === count) return;
@@ -254,6 +269,50 @@ export function CheckoutManifestForm({ count, entries, onChange, labels, validat
           }}
           onClose={() => setCameraIndex(null)}
         />
+      ) : null}
+
+      {previewFile && previewUrl ? (
+        <div
+          className="fixed inset-0 z-50 flex flex-col bg-black/80 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label={previewFile.name}
+          onClick={closePreview}
+        >
+          <div className="flex items-center justify-between pb-3">
+            <span className="max-w-[calc(100%-3rem)] truncate text-sm text-white/80">
+              {previewFile.name}
+            </span>
+            <button
+              type="button"
+              onClick={closePreview}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
+              aria-label={labels.cameraCancel}
+            >
+              <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5" aria-hidden="true">
+                <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+              </svg>
+            </button>
+          </div>
+          <div
+            className="flex flex-1 items-center justify-center overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {previewFile.type === 'application/pdf' ? (
+              <iframe
+                src={previewUrl}
+                title={previewFile.name}
+                className="h-full w-full rounded-lg bg-white"
+              />
+            ) : (
+              <img
+                src={previewUrl}
+                alt={previewFile.name}
+                className="max-h-full max-w-full rounded-lg object-contain shadow-xl"
+              />
+            )}
+          </div>
+        </div>
       ) : null}
 
       <div className="space-y-4 rounded-xl border border-atg-border bg-atg-elevated p-5 dark:border-atg-border dark:bg-atg-elevated">
@@ -376,7 +435,7 @@ export function CheckoutManifestForm({ count, entries, onChange, labels, validat
                         <img
                           src={URL.createObjectURL(entry.file)}
                           alt=""
-                          className="h-10 w-14 rounded object-cover"
+                          className="h-10 w-14 shrink-0 rounded object-cover"
                         />
                       ) : (
                         <svg className="h-8 w-8 shrink-0 text-atg-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
@@ -384,6 +443,13 @@ export function CheckoutManifestForm({ count, entries, onChange, labels, validat
                         </svg>
                       )}
                       <span className="flex-1 truncate text-sm text-atg-fg">{entry.file.name}</span>
+                      <button
+                        type="button"
+                        onClick={() => openPreview(entry.file!)}
+                        className="shrink-0 text-xs font-medium text-primary hover:underline"
+                      >
+                        {labels.viewDocument}
+                      </button>
                       <button
                         type="button"
                         onClick={() => update(index, { file: undefined })}
