@@ -5,7 +5,10 @@
     "searchPlaceholder": "Rechercher par nom, slug ou pays…",
     "searchAria": "Rechercher une destination",
     "ariaLabel": "Liste des destinations",
-    "deleteConfirm": "Supprimer la destination « {name} » ? Les points d'intérêt associés seront également supprimés."
+    "deleteTitle": "Supprimer la destination",
+    "deleteConfirm": "La destination « {name} » et ses points d'intérêt associés seront supprimés définitivement.",
+    "deleteConfirmButton": "Supprimer",
+    "cancel": "Annuler"
   },
   "columns": {
     "destination": "Destination",
@@ -58,7 +61,10 @@
       "edit": "Modifier le point d'intérêt",
       "empty": "Aucun point d'intérêt pour cette destination.",
       "ariaLabel": "Points d'intérêt de la destination",
-      "deleteConfirm": "Supprimer le point d'intérêt « {name} » ?"
+      "deleteTitle": "Supprimer le point d'intérêt",
+      "deleteConfirm": "Le point d'intérêt « {name} » sera supprimé définitivement.",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler"
     },
     "related": {
       "properties": {

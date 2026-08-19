@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Card,
   DataTable,
   DataTableActionButton,
@@ -42,6 +43,7 @@ export function DestinationsList() {
   >({ status: 'loading' });
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<Destination | null>(null);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -79,24 +81,25 @@ export function DestinationsList() {
     return () => window.clearTimeout(timer);
   }, [searchInput]);
 
-  const handleDelete = useCallback(
-    async (destination: Destination) => {
-      if (!window.confirm(t('deleteConfirm', { name: destination.name }))) {
-        return;
-      }
-      setDeleteError(null);
-      setDeletingId(destination.id);
-      try {
-        await getApiClient().deleteDestination(destination.id);
-        await load();
-      } catch (error) {
-        setDeleteError(getDestinationsErrorMessage(error));
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [load, t, getDestinationsErrorMessage],
-  );
+  const handleDeleteRequest = useCallback((destination: Destination) => {
+    setConfirmTarget(destination);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const destination = confirmTarget;
+    setConfirmTarget(null);
+    setDeleteError(null);
+    setDeletingId(destination.id);
+    try {
+      await getApiClient().deleteDestination(destination.id);
+      await load();
+    } catch (error) {
+      setDeleteError(getDestinationsErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getDestinationsErrorMessage, load]);
 
   const columns = useMemo<ColumnDef<Destination, unknown>[]>(
     () => [
@@ -171,7 +174,7 @@ export function DestinationsList() {
               <DataTableActionButton
                 action="delete"
                 label={tActions('delete')}
-                onClick={() => void handleDelete(destination)}
+                onClick={() => handleDeleteRequest(destination)}
                 disabled={deletingId === destination.id}
                 loading={deletingId === destination.id}
               />
@@ -180,7 +183,7 @@ export function DestinationsList() {
         },
       },
     ],
-    [deletingId, handleDelete, tActions, tColumns, tCommon],
+    [deletingId, handleDeleteRequest, tActions, tColumns, tCommon],
   );
 
   const isLoading = state.status === 'loading';
@@ -190,6 +193,19 @@ export function DestinationsList() {
     search.trim().length > 0 ? t('emptySearch') : t('emptyDefault');
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={t('deleteTitle')}
+        description={confirmTarget ? t('deleteConfirm', { name: confirmTarget.name }) : ''}
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <div className="space-y-6">
       <div className="flex-1 sm:max-w-md">
         <Input
@@ -201,12 +217,6 @@ export function DestinationsList() {
           aria-label={t('searchAria')}
         />
       </div>
-
-      {deleteError ? (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {deleteError}
-        </p>
-      ) : null}
 
       {isError ? (
         <p className="text-sm text-red-600 dark:text-red-400" role="alert">
@@ -239,5 +249,6 @@ export function DestinationsList() {
         </>
       )}
     </div>
+    </>
   );
 }

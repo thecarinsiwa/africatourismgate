@@ -1,11 +1,14 @@
 {
   "list": {
-    "emptyDefault": "Ninguna destination pour le moment.",
-    "emptySearch": "Ninguna destination ne correspond à votre recherche.",
-    "searchPlaceholder": "Rechercher par nom, slug ou pays…",
-    "searchAria": "Rechercher une destination",
-    "ariaLabel": "Liste des destinations",
-    "deleteConfirm": "Supprimer la destination « {name} » ? Les points d'intérêt associés seront également supprimés."
+    "emptyDefault": "Ningún destino por el momento.",
+    "emptySearch": "Ningún destino coincide con tu búsqueda.",
+    "searchPlaceholder": "Buscar por nombre, slug o país…",
+    "searchAria": "Buscar destinos",
+    "ariaLabel": "Lista de destinos",
+    "deleteTitle": "Eliminar destino",
+    "deleteConfirm": "El destino «{name}» y sus puntos de interés asociados serán eliminados permanentemente.",
+    "deleteConfirmButton": "Eliminar",
+    "cancel": "Cancelar"
   },
   "columns": {
     "destination": "Destino",
@@ -54,11 +57,14 @@
   },
   "sections": {
     "pois": {
-      "new": "Nouveau point d'intérêt",
-      "edit": "Modifier le point d'intérêt",
-      "empty": "Hastacun point d'intérêt pour cette destination.",
-      "ariaLabel": "Points d'intérêt de la destination",
-      "deleteConfirm": "Supprimer le point d'intérêt « {name} » ?"
+      "new": "Nuevo punto de interés",
+      "edit": "Editar punto de interés",
+      "empty": "Ningún punto de interés para este destino.",
+      "ariaLabel": "Puntos de interés del destino",
+      "deleteTitle": "Eliminar punto de interés",
+      "deleteConfirm": "El punto de interés «{name}» será eliminado permanentemente.",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar"
     },
     "related": {
       "properties": {
