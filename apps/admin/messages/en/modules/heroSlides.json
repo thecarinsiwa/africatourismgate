@@ -11,6 +11,24 @@
   "page": {
     "localeFilter": "Language"
   },
+  "stats": {
+    "total": {
+      "label": "Slides",
+      "subtitle": "Homepage carousel"
+    },
+    "published": {
+      "label": "Published",
+      "subtitle": "Visible on the site"
+    },
+    "draft": {
+      "label": "Drafts",
+      "subtitle": "Not published"
+    },
+    "french": {
+      "label": "In French",
+      "subtitle": "FR locale slides"
+    }
+  },
   "list": {
     "deleteTitle": "Delete slide",
     "deleteConfirm": "Slide \"{title}\" will be permanently deleted.",

@@ -71,4 +71,6 @@ export interface OrganizationListItem {
   createdAt: string;
   userCount: number;
   employeeCount: number;
+  /** Catalog items linked to the org (currently tour guides). */
+  productCount: number;
 }

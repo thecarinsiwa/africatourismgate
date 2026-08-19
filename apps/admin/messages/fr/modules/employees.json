@@ -1,0 +1,25 @@
+{
+  "status": {
+    "active": "Actif",
+    "on_leave": "En congé",
+    "terminated": "Terminé"
+  },
+  "columns": {
+    "jobTitle": "Poste"
+  },
+  "list": {
+    "emptyDefault": "Aucun employé pour le moment.",
+    "emptyFiltered": "Aucun employé ne correspond à vos critères.",
+    "emptyOrganization": "Aucun employé pour cette organisation.",
+    "searchPlaceholder": "Rechercher par code, poste ou utilisateur…",
+    "searchAria": "Rechercher des employés",
+    "ariaLabel": "Liste des employés",
+    "viewOrganization": "Voir l'organisation {name}",
+    "deleteTitle": "Supprimer l'employé",
+    "deleteDescription": "L'employé « {label} » sera supprimé. Cette action est réversible en base de données."
+  },
+  "filters": {
+    "status": "Statut",
+    "organization": "Organisation"
+  }
+}

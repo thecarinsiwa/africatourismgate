@@ -8,6 +8,44 @@
     "en": "Anglais",
     "es": "Espagnol"
   },
+  "stats": {
+    "pages": {
+      "total": { "label": "Pages", "subtitle": "Pages institutionnelles" },
+      "published": { "label": "Publiées", "subtitle": "Visibles sur le site" },
+      "draft": { "label": "Brouillons", "subtitle": "Non publiées" },
+      "french": { "label": "En français", "subtitle": "Contenu locale FR" }
+    },
+    "resources": {
+      "total": { "label": "Ressources", "subtitle": "Documents et médias" },
+      "published": { "label": "Publiées", "subtitle": "Visibles sur le site" },
+      "draft": { "label": "Brouillons", "subtitle": "Non publiées" },
+      "french": { "label": "En français", "subtitle": "Contenu locale FR" }
+    },
+    "team": {
+      "total": { "label": "Membres", "subtitle": "Équipe affichée" },
+      "published": { "label": "Publiés", "subtitle": "Visibles sur le site" },
+      "draft": { "label": "Brouillons", "subtitle": "Non publiés" },
+      "french": { "label": "En français", "subtitle": "Profils locale FR" }
+    },
+    "timeline": {
+      "total": { "label": "Jalons", "subtitle": "Frise chronologique" },
+      "published": { "label": "Publiés", "subtitle": "Visibles sur le site" },
+      "draft": { "label": "Brouillons", "subtitle": "Non publiés" },
+      "french": { "label": "En français", "subtitle": "Entrées locale FR" }
+    },
+    "whyUs": {
+      "total": { "label": "Cartes", "subtitle": "Arguments « Pourquoi nous »" },
+      "published": { "label": "Publiées", "subtitle": "Visibles sur le site" },
+      "draft": { "label": "Brouillons", "subtitle": "Non publiées" },
+      "french": { "label": "En français", "subtitle": "Cartes locale FR" }
+    },
+    "happyCustomers": {
+      "total": { "label": "Statistiques", "subtitle": "Indicateurs satisfaction" },
+      "published": { "label": "Publiées", "subtitle": "Visibles sur le site" },
+      "draft": { "label": "Brouillons", "subtitle": "Non publiées" },
+      "french": { "label": "En français", "subtitle": "Stats locale FR" }
+    }
+  },
   "sections": {
     "who-we-are": "Qui nous sommes",
     "how-we-work": "Comment nous travaillons",

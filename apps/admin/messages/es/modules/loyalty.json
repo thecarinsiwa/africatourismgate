@@ -54,19 +54,24 @@
     "reasonPlaceholder": "Ex. geste commercial",
     "apply": "Aplicar"
   },
+  "toast": {
+    "adjustedMessage": "El saldo de {email} se ha actualizado."
+  },
   "history": {
-    "title": "Historial des transactions",
-    "close": "Fermer",
-    "currentBalance": "Solde actuel",
-    "pointsUnit": "points",
-    "apiUnavailable": "L'API d'historique des transactions n'est pas encore disponible. La structure ci-dessous anticipe le futur journal des mouvements de points.",
+    "title": "Historial de transacciones",
+    "close": "Cerrar",
+    "currentBalance": "Saldo actual",
+    "pointsUnit": "puntos",
+    "apiUnavailable": "La API de historial de transacciones aún no está disponible. La tabla siguiente anticipa la estructura del registro de puntos.",
+    "tableAria": "Historial de transacciones de puntos",
     "columns": {
-      "delta": "Variation",
-      "balanceAfter": "Solde après"
+      "delta": "Variación",
+      "balanceAfter": "Saldo después"
     },
     "transactionTypes": {
-      "paymentCredit": "Crédit paiement",
-      "manualAdjust": "Ajustement manuel"
+      "paymentCredit": "Crédito por pago",
+      "manualAdjust": "Ajuste manual",
+      "redemption": "Canje de puntos"
     }
   }
 }

@@ -8,7 +8,16 @@
     "emptyTableDefault": "Aucune organisation pour le moment.",
     "ariaLabel": "Liste des organisations",
     "columns": {
-      "type": "Type"
+      "type": "Type",
+      "counts": "Effectifs"
+    },
+    "counts": {
+      "usersShort": "Util.",
+      "usersHint": "Comptes utilisateurs rattachés à cette organisation",
+      "employeesShort": "Empl.",
+      "employeesHint": "Employés rattachés à cette organisation",
+      "productsShort": "Prod.",
+      "productsHint": "Guides touristiques rattachés (d'autres types de produits suivront)"
     },
     "deleteDialog": {
       "title": "Supprimer l'organisation",

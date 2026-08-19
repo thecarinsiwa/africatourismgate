@@ -63,7 +63,9 @@ export function StatCard({
             </p>
           ) : (
             <>
-              <p className="mt-2 text-3xl font-bold tracking-tight text-atg-fg">{value}</p>
+              <p className="mt-2 text-3xl font-bold tabular-nums tracking-tight text-atg-fg">
+                {value}
+              </p>
               {change ? (
                 <p
                   className={cn(

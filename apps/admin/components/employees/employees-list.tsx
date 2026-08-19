@@ -1,6 +1,7 @@
 ﻿'use client';
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+import { useEmployeeStatusLabels } from '../../lib/i18n/use-module-labels';
 
 import {
   AlertDialog,
@@ -17,6 +18,7 @@ import {
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { Employee, EmployeeStatus, OrganizationListItem } from '@africatourismgate/types';
+import Link from 'next/link';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { getApiClient } from '../../lib/auth/api';
@@ -25,12 +27,6 @@ const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
 
 type StatusFilter = '' | EmployeeStatus;
-
-const statusLabels: Record<EmployeeStatus, string> = {
-  active: 'Actif',
-  on_leave: 'En congé',
-  terminated: 'Terminé',
-};
 
 const statusVariants: Record<EmployeeStatus, 'success' | 'muted' | 'danger'> = {
   active: 'success',
@@ -57,10 +53,21 @@ export function EmployeesList({
   embedded = false,
 }: EmployeesListProps = {}) {
   const { employees: getEmployeesErrorMessage } = useAdminErrorMessages();
+  const tList = useTranslations('modules.employees.list');
+  const tFilters = useTranslations('modules.employees.filters');
+  const tColumns = useTranslations('modules.common.columns');
+  const tEmployeeColumns = useTranslations('modules.employees.columns');
+  const tCommonFilters = useTranslations('modules.common.filters');
+  const tCommon = useTranslations('modules.common');
+  const tPagination = useTranslations('modules.common.pagination');
+  const tActions = useTranslations('common.actions');
+  const tNav = useTranslations('nav');
   const tToast = useTranslations('modules.common.toast');
+  const statusLabels = useEmployeeStatusLabels();
   const { toast } = useToast();
   const statusFilterId = useId();
   const orgFilterId = useId();
+  const emptyDash = tCommon('empty.dash');
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('');
@@ -183,7 +190,7 @@ export function EmployeesList({
     const base: ColumnDef<Employee, unknown>[] = [
       {
         id: 'user',
-        header: 'Utilisateur',
+        header: tColumns('user'),
         cell: ({ row }) => {
           const emp = row.original;
           const email = emp.user?.email ?? '';
@@ -212,21 +219,23 @@ export function EmployeesList({
       },
       {
         accessorKey: 'employeeCode',
-        header: 'Code',
+        header: tColumns('code'),
         cell: ({ row }) => (
-          <span className="text-atg-fg">{row.original.employeeCode ?? '—'}</span>
+          <span className="font-mono tabular-nums text-atg-fg">
+            {row.original.employeeCode ?? emptyDash}
+          </span>
         ),
       },
       {
         accessorKey: 'jobTitle',
-        header: 'Poste',
+        header: tEmployeeColumns('jobTitle'),
         cell: ({ row }) => (
-          <span className="text-atg-muted">{row.original.jobTitle ?? '—'}</span>
+          <span className="text-atg-muted">{row.original.jobTitle ?? emptyDash}</span>
         ),
       },
       {
         accessorKey: 'status',
-        header: 'Statut',
+        header: tColumns('status'),
         meta: { align: 'center' },
         cell: ({ row }) => {
           const status = row.original.status;
@@ -242,14 +251,26 @@ export function EmployeesList({
     if (!lockedOrganizationId) {
       base.splice(4, 0, {
         id: 'organization',
-        header: 'Organisation',
+        header: tColumns('organization'),
         cell: ({ row }) => {
           const orgId = row.original.organizationId;
           if (!orgId) {
-            return <span className="text-atg-muted">—</span>;
+            return <span className="text-atg-muted">{emptyDash}</span>;
           }
+          const orgName = orgNameById.get(orgId) ?? orgId.slice(0, 8);
           return (
-            <span className="text-atg-muted">{orgNameById.get(orgId) ?? orgId.slice(0, 8)}</span>
+            <Link
+              href={`/organisations/${orgId}`}
+              aria-label={tList('viewOrganization', { name: orgName })}
+              className="inline-flex max-w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-atg-surface"
+            >
+              <DataTableBadge
+                variant="default"
+                className="max-w-[12rem] truncate transition-colors hover:bg-primary/10 hover:text-primary"
+              >
+                {orgName}
+              </DataTableBadge>
+            </Link>
           );
         },
       });
@@ -257,7 +278,7 @@ export function EmployeesList({
 
     base.push({
       id: 'actions',
-      header: 'Actions',
+      header: tColumns('actions'),
       meta: { align: 'right' },
       cell: ({ row }) => {
         const employee = row.original;
@@ -276,7 +297,17 @@ export function EmployeesList({
     });
 
     return base;
-  }, [deletingId, handleDeleteRequest, lockedOrganizationId, orgNameById]);
+  }, [
+    deletingId,
+    emptyDash,
+    handleDeleteRequest,
+    lockedOrganizationId,
+    orgNameById,
+    statusLabels,
+    tColumns,
+    tEmployeeColumns,
+    tList,
+  ]);
 
   const isLoading = state.status === 'loading';
   const isError = state.status === 'error';
@@ -286,10 +317,10 @@ export function EmployeesList({
     statusFilter !== '' ||
     (!lockedOrganizationId && organizationFilter !== '');
   const emptyMessage = hasFilters
-    ? 'Aucun employé ne correspond à vos critères.'
+    ? tList('emptyFiltered')
     : lockedOrganizationId
-      ? 'Aucun employé pour cette organisation.'
-      : 'Aucun employé pour le moment.';
+      ? tList('emptyOrganization')
+      : tList('emptyDefault');
 
   const newEmployeeHref = lockedOrganizationId
     ? `/utilisateurs/employes/nouveau?organizationId=${lockedOrganizationId}`
@@ -304,10 +335,10 @@ export function EmployeesList({
       <AlertDialog
         open={!!confirmTarget}
         onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
-        title="Supprimer l'employ\u00e9"
-        description={`L'employ\u00e9 \u00ab\u00a0${confirmLabel}\u00a0\u00bb sera supprim\u00e9. Cette action est r\u00e9versible en base de donn\u00e9es.`}
-        confirmLabel="Supprimer"
-        cancelLabel="Annuler"
+        title={tList('deleteTitle')}
+        description={tList('deleteDescription', { label: confirmLabel })}
+        confirmLabel={tActions('delete')}
+        cancelLabel={tActions('cancel')}
         variant="danger"
         loading={!!deletingId}
         error={deleteError}
@@ -320,15 +351,15 @@ export function EmployeesList({
             <Input
               name="search"
               type="search"
-              placeholder="Rechercher par code, poste ou utilisateur…"
+              placeholder={tList('searchPlaceholder')}
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              aria-label="Rechercher des employés"
+              aria-label={tList('searchAria')}
             />
           </div>
           <div>
             <label htmlFor={statusFilterId} className="mb-2 block text-sm font-medium text-atg-fg">
-              Statut
+              {tFilters('status')}
             </label>
             <select
               id={statusFilterId}
@@ -339,16 +370,16 @@ export function EmployeesList({
               }}
               className="w-full min-w-[140px] rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
             >
-              <option value="">Tous</option>
-              <option value="active">Actif</option>
-              <option value="on_leave">En congé</option>
-              <option value="terminated">Terminé</option>
+              <option value="">{tCommonFilters('all')}</option>
+              <option value="active">{statusLabels.active}</option>
+              <option value="on_leave">{statusLabels.on_leave}</option>
+              <option value="terminated">{statusLabels.terminated}</option>
             </select>
           </div>
           {!lockedOrganizationId ? (
             <div>
               <label htmlFor={orgFilterId} className="mb-2 block text-sm font-medium text-atg-fg">
-                Organisation
+                {tFilters('organization')}
               </label>
               <select
                 id={orgFilterId}
@@ -359,7 +390,7 @@ export function EmployeesList({
                 }}
                 className="w-full min-w-[180px] rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
               >
-                <option value="">Toutes</option>
+                <option value="">{tCommonFilters('allFeminine')}</option>
                 {organizations.map((org) => (
                   <option key={org.id} value={org.id}>
                     {org.name}
@@ -369,7 +400,7 @@ export function EmployeesList({
             </div>
           ) : null}
         </div>
-        <Button href={newEmployeeHref}>Nouvel employé</Button>
+        <Button href={newEmployeeHref}>{tNav('links.newEmployee')}</Button>
       </div>
 
       {deleteError ? (
@@ -392,7 +423,7 @@ export function EmployeesList({
               emptyMessage={emptyMessage}
               emptyVariant={hasFilters ? 'search' : 'default'}
               getRowId={(row) => row.id}
-              aria-label="Liste des employés"
+              aria-label={tList('ariaLabel')}
             />
           </Card>
 
@@ -402,7 +433,7 @@ export function EmployeesList({
               pageSize={PAGE_SIZE}
               totalPages={state.totalPages}
               totalItems={state.total}
-              itemLabel="employé"
+              itemLabel={tPagination('employee')}
               onPageChange={setPage}
             />
           ) : null}

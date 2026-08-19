@@ -115,7 +115,8 @@
     "review": "reseña",
     "ticket": "tickets",
     "loyaltyAccount": "cuentas",
-    "activity": "actividad"
+    "activity": "actividad",
+    "employee": "empleado"
   },
   "dataTable": {
     "loading": "Cargando…",
@@ -235,7 +236,9 @@
     "deletedHeroSlide": "La diapositiva « {title} » ha sido eliminada.",
     "deletedEmployee": "El empleado « {label} » ha sido eliminado.",
     "deletedAmenity": "El equipamiento « {name} » ha sido eliminado.",
-    "deletedDestination": "El destino « {name} » ha sido eliminado."
+    "deletedDestination": "El destino « {name} » ha sido eliminado.",
+    "deletedTourGuide": "El guía « {name} » ha sido eliminado.",
+    "deletedOrganization": "La organización « {name} » ha sido eliminada."
   },
   "availabilityCalendar": {
     "previousMonth": "Mes anterior",

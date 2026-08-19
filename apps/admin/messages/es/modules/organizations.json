@@ -8,7 +8,16 @@
     "emptyTableDefault": "Ninguna organisation pour le moment.",
     "ariaLabel": "Liste des organisations",
     "columns": {
-      "type": "Tipo"
+      "type": "Tipo",
+      "counts": "Plantilla"
+    },
+    "counts": {
+      "usersShort": "Usu.",
+      "usersHint": "Cuentas de usuario vinculadas a esta organización",
+      "employeesShort": "Empl.",
+      "employeesHint": "Empleados vinculados a esta organización",
+      "productsShort": "Prod.",
+      "productsHint": "Guías turísticos vinculados (más tipos de productos próximamente)"
     },
     "deleteDialog": {
       "title": "Eliminar organización",

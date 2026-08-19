@@ -31,4 +31,8 @@ export class OrganizationListItemDto {
 
   @ApiProperty({ minimum: 0 })
   employeeCount!: number;
+
+  /** Tour guides linked to the organization (more product types may follow). */
+  @ApiProperty({ minimum: 0 })
+  productCount!: number;
 }

@@ -1,7 +1,26 @@
 {
+  "stats": {
+    "total": {
+      "label": "Guides",
+      "subtitle": "Catalog total"
+    },
+    "active": {
+      "label": "Active",
+      "subtitle": "Available for assignment"
+    },
+    "inactive": {
+      "label": "Inactive",
+      "subtitle": "Not in active catalog"
+    },
+    "internal": {
+      "label": "Internal",
+      "subtitle": "Linked to a user account"
+    }
+  },
   "list": {
     "emptyDefault": "No tour guides yet.",
     "emptySearch": "No guides match your search.",
+    "emptyFiltered": "No guides match your criteria.",
     "searchPlaceholder": "Search by name…",
     "searchAria": "Search guides",
     "ariaLabel": "Tour guides list",
