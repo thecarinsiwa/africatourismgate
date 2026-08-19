@@ -4,7 +4,10 @@
     "emptyDefault": "Tocun utilisateur pour le moment.",
     "emptyFiltered": "Tocun utilisateur ne correspond à vos critères.",
     "ariaLabel": "User list",
-    "deleteConfirm": "Delete user « {email} »? This action is reversible in the database."
+    "deleteConfirm": "User « {email} » will be deleted. This action is reversible in the database.",
+    "deleteTitle": "Delete user",
+    "deleteConfirmButton": "Delete",
+    "cancel": "Cancel"
   },
   "filters": {
     "status": "Status",

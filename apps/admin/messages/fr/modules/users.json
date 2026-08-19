@@ -4,7 +4,10 @@
     "emptyDefault": "Aucun utilisateur pour le moment.",
     "emptyFiltered": "Aucun utilisateur ne correspond à vos critères.",
     "ariaLabel": "Liste des utilisateurs",
-    "deleteConfirm": "Supprimer l'utilisateur « {email} » ? Cette action est réversible côté base."
+    "deleteConfirm": "L'utilisateur « {email} » sera supprimé. Cette action est réversible en base de données.",
+    "deleteTitle": "Supprimer l'utilisateur",
+    "deleteConfirmButton": "Supprimer",
+    "cancel": "Annuler"
   },
   "filters": {
     "status": "Statut",

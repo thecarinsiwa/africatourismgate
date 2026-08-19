@@ -64,6 +64,7 @@ export function UsersList() {
   >({ status: 'loading' });
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<User | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -174,24 +175,25 @@ export function UsersList() {
     return () => window.clearTimeout(timer);
   }, [searchInput]);
 
-  const handleDelete = useCallback(
-    async (user: User) => {
-      if (!window.confirm(tList('deleteConfirm', { email: user.email }))) {
-        return;
-      }
-      setDeleteError(null);
-      setDeletingId(user.id);
-      try {
-        await getApiClient().deleteUser(user.id);
-        await load();
-      } catch (error) {
-        setDeleteError(getUsersErrorMessage(error));
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [load, tList, getUsersErrorMessage],
-  );
+  const handleDeleteRequest = useCallback((user: User) => {
+    setConfirmTarget(user);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const user = confirmTarget;
+    setConfirmTarget(null);
+    setDeleteError(null);
+    setDeletingId(user.id);
+    try {
+      await getApiClient().deleteUser(user.id);
+      await load();
+    } catch (error) {
+      setDeleteError(getUsersErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, load, getUsersErrorMessage]);
 
   const columns = useMemo<ColumnDef<User, unknown>[]>(
     () => [
@@ -257,7 +259,7 @@ export function UsersList() {
               <DataTableActionButton action="edit" href={`/utilisateurs/${user.id}`} />
               <DataTableActionButton
                 action="delete"
-                onClick={() => void handleDelete(user)}
+                onClick={() => handleDeleteRequest(user)}
                 disabled={deletingId === user.id}
                 loading={deletingId === user.id}
               />
@@ -266,7 +268,7 @@ export function UsersList() {
         },
       },
     ],
-    [deletingId, handleDelete, orgNameById, statusLabels, tColumns],
+    [deletingId, handleDeleteRequest, orgNameById, statusLabels, tColumns],
   );
 
   const isLoading = state.status === 'loading';
@@ -293,6 +295,81 @@ export function UsersList() {
   }, []);
 
   return (
+    <>
+    {confirmTarget ? (
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="delete-modal-title"
+        onClick={(e) => { if (e.target === e.currentTarget) setConfirmTarget(null); }}
+      >
+        <div className="w-full max-w-md rounded-2xl bg-white shadow-2xl dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+          {/* Header */}
+          <div className="flex items-start gap-4 p-6 pb-4">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-red-100 dark:bg-red-950">
+              <svg className="h-5 w-5 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+              </svg>
+            </div>
+            <div className="min-w-0 flex-1">
+              <h2 id="delete-modal-title" className="text-base font-semibold text-neutral-900 dark:text-white">
+                {tList('deleteTitle')}
+              </h2>
+              <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+                {tList('deleteConfirm', { email: confirmTarget.email })}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setConfirmTarget(null)}
+              className="ml-2 shrink-0 rounded-lg p-1 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-200 transition-colors"
+              aria-label={tList('cancel')}
+            >
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          {/* User info */}
+          <div className="mx-6 mb-4 rounded-xl bg-neutral-50 dark:bg-neutral-800 px-4 py-3 flex items-center gap-3">
+            <div className="h-9 w-9 shrink-0 rounded-full bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center text-sm font-semibold text-neutral-600 dark:text-neutral-300 uppercase">
+              {confirmTarget.firstName?.[0] ?? confirmTarget.email[0]}
+            </div>
+            <div className="min-w-0">
+              {(confirmTarget.firstName || confirmTarget.lastName) ? (
+                <p className="text-sm font-medium text-neutral-900 dark:text-white truncate">
+                  {[confirmTarget.firstName, confirmTarget.lastName].filter(Boolean).join(' ')}
+                </p>
+              ) : null}
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 truncate">{confirmTarget.email}</p>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex items-center justify-end gap-3 border-t border-neutral-100 dark:border-neutral-800 px-6 py-4">
+            <button
+              type="button"
+              onClick={() => setConfirmTarget(null)}
+              className="inline-flex h-9 items-center rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 px-4 text-sm font-medium text-neutral-700 dark:text-neutral-300 transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-700"
+            >
+              {tList('cancel')}
+            </button>
+            <button
+              type="button"
+              onClick={() => void handleDeleteConfirm()}
+              className="inline-flex h-9 items-center gap-2 rounded-lg bg-red-600 px-4 text-sm font-semibold text-white transition-colors hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900"
+            >
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              {tList('deleteConfirmButton')}
+            </button>
+          </div>
+        </div>
+      </div>
+    ) : null}
     <div className="space-y-6">
       <FilterBar
         activeCount={activeFilterCount}
@@ -396,5 +473,6 @@ export function UsersList() {
         </>
       )}
     </div>
+    </>
   );
 }
