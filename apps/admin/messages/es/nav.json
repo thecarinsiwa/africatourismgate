@@ -103,6 +103,7 @@
     "openMenu": "Abrir menú",
     "closeMenu": "Cerrar menú",
     "logout": "Cerrar sesión",
-    "loggingOut": "Cerrando sesión…"
+    "loggingOut": "Cerrando sesión…",
+    "breadcrumb": "Miga de pan"
   }
 }

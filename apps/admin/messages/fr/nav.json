@@ -103,6 +103,7 @@
     "openMenu": "Ouvrir le menu",
     "closeMenu": "Fermer le menu",
     "logout": "Se déconnecter",
-    "loggingOut": "Déconnexion…"
+    "loggingOut": "Déconnexion…",
+    "breadcrumb": "Fil d'Ariane"
   }
 }

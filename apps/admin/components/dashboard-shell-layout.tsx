@@ -108,7 +108,9 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
       navItems={navItems}
       title={headerTitle}
       breadcrumb={
-        showShellBreadcrumb ? <Breadcrumb items={breadcrumbItems} /> : undefined
+        showShellBreadcrumb ? (
+          <Breadcrumb items={breadcrumbItems} ariaLabel={tShell('breadcrumb')} />
+        ) : undefined
       }
       headerActions={<LanguageSwitcher />}
       openMenuLabel={tShell('openMenu')}

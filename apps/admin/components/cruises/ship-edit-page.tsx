@@ -34,6 +34,7 @@ export function ShipEditPage({ shipId }: ShipEditPageProps) {
         ? buildCruiseBreadcrumbTail({
             lineName: state.lineName,
             shipName: state.ship.name,
+            shipId,
           })
         : undefined,
   });
