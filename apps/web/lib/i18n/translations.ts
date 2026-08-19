@@ -1019,6 +1019,47 @@ export type Translations = {
             rejected: string;
           };
         };
+        manifest: {
+          title: string;
+          subtitle: string;
+          empty: string;
+          loading: string;
+          loadError: string;
+          addTraveler: string;
+          addTitle: string;
+          editTitle: string;
+          formHint: string;
+          fullNameRequired: string;
+          save: string;
+          saving: string;
+          saveError: string;
+          edit: string;
+          delete: string;
+          deleting: string;
+          deleteError: string;
+          deleteTitle: string;
+          deleteDescription: string;
+          cancel: string;
+          sex: {
+            unspecified: string;
+            M: string;
+            F: string;
+            other: string;
+          };
+          fields: {
+            fullName: string;
+            age: string;
+            sex: string;
+            nationality: string;
+            idNumber: string;
+            conditions: string;
+            conditionsPlaceholder: string;
+            comment: string;
+            commentPlaceholder: string;
+            other: string;
+            otherPlaceholder: string;
+          };
+        };
         messages: {
           title: string;
           subtitle: string;
@@ -2384,6 +2425,47 @@ const fr: Translations = {
             approved: 'Validé',
             resubmit_requested: 'Version plus claire demandée',
             rejected: 'Refusé',
+          },
+        },
+        manifest: {
+          title: 'Liste des voyageurs',
+          subtitle: 'Renseignez les informations de chaque voyageur inclus dans cette réservation.',
+          empty: 'Aucun voyageur renseigné pour le moment.',
+          loading: 'Chargement…',
+          loadError: 'Impossible de charger la liste des voyageurs.',
+          addTraveler: 'Ajouter un voyageur',
+          addTitle: 'Ajouter un voyageur',
+          editTitle: 'Modifier le voyageur',
+          formHint: 'Seul le nom complet est obligatoire.',
+          fullNameRequired: 'Le nom complet est obligatoire.',
+          save: 'Enregistrer',
+          saving: 'Enregistrement…',
+          saveError: 'Impossible d\'enregistrer le voyageur.',
+          edit: 'Modifier',
+          delete: 'Supprimer',
+          deleting: 'Suppression…',
+          deleteError: 'Impossible de supprimer le voyageur.',
+          deleteTitle: 'Supprimer ce voyageur ?',
+          deleteDescription: 'Confirmer la suppression de {name} de la liste des voyageurs.',
+          cancel: 'Annuler',
+          sex: {
+            unspecified: 'Non précisé',
+            M: 'Homme',
+            F: 'Femme',
+            other: 'Autre',
+          },
+          fields: {
+            fullName: 'Nom complet',
+            age: 'Âge',
+            sex: 'Genre',
+            nationality: 'Nationalité',
+            idNumber: 'N° pièce d\'identité',
+            conditions: 'Conditions médicales',
+            conditionsPlaceholder: 'Allergies, traitements en cours, besoins particuliers…',
+            comment: 'Commentaire',
+            commentPlaceholder: 'Informations complémentaires…',
+            other: 'Autres informations',
+            otherPlaceholder: 'Toute autre information utile…',
           },
         },
         messages: {
@@ -3811,6 +3893,47 @@ const en: Translations = {
             approved: 'Approved',
             resubmit_requested: 'Clearer version requested',
             rejected: 'Rejected',
+          },
+        },
+        manifest: {
+          title: 'Traveler list',
+          subtitle: 'Fill in the details for each traveler included in this booking.',
+          empty: 'No travelers added yet.',
+          loading: 'Loading…',
+          loadError: 'Could not load the traveler list.',
+          addTraveler: 'Add traveler',
+          addTitle: 'Add a traveler',
+          editTitle: 'Edit traveler',
+          formHint: 'Only the full name is required.',
+          fullNameRequired: 'Full name is required.',
+          save: 'Save',
+          saving: 'Saving…',
+          saveError: 'Could not save the traveler.',
+          edit: 'Edit',
+          delete: 'Remove',
+          deleting: 'Removing…',
+          deleteError: 'Could not remove the traveler.',
+          deleteTitle: 'Remove this traveler?',
+          deleteDescription: 'Confirm removal of {name} from the traveler list.',
+          cancel: 'Cancel',
+          sex: {
+            unspecified: 'Not specified',
+            M: 'Male',
+            F: 'Female',
+            other: 'Other',
+          },
+          fields: {
+            fullName: 'Full name',
+            age: 'Age',
+            sex: 'Gender',
+            nationality: 'Nationality',
+            idNumber: 'ID / Passport number',
+            conditions: 'Medical conditions',
+            conditionsPlaceholder: 'Allergies, ongoing treatments, special needs…',
+            comment: 'Comment',
+            commentPlaceholder: 'Additional information…',
+            other: 'Other information',
+            otherPlaceholder: 'Any other relevant information…',
           },
         },
         messages: {
