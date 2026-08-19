@@ -1,71 +1,80 @@
 {
   "status": {
     "pending": "Pending",
-    "approved": "Approuvé",
-    "hidden": "Masqué"
+    "approved": "Approved",
+    "hidden": "Hidden"
   },
   "actions": {
-    "approve": "Approuver",
-    "hide": "Masquer",
-    "delete": "Supprimer"
+    "approve": "Approve",
+    "hide": "Hide",
+    "delete": "Delete"
   },
   "toast": {
     "approved": {
-      "title": "Avis approuvé",
-      "message": "L'avis est visible côté client."
+      "title": "Review approved",
+      "message": "The review is now visible to customers."
     },
     "hidden": {
-      "title": "Avis masqué",
-      "message": "L'avis n'est plus affiché publiquement."
+      "title": "Review hidden",
+      "message": "The review is no longer shown publicly."
     },
     "deleted": {
-      "title": "Avis supprimé",
-      "message": "L'avis a été retiré de la modération."
+      "title": "Review deleted",
+      "message": "The review has been removed from moderation."
     }
   },
   "deleteDialog": {
-    "title": "Supprimer cet avis",
-    "description": "Suppression logique : l'avis ne sera plus visible dans la modération."
+    "title": "Delete this review",
+    "description": "Soft delete: the review will no longer appear in moderation."
   },
   "detail": {
-    "title": "Avis",
-    "backLink": "Back aux avis",
+    "title": "Review",
+    "backLink": "Back to reviews",
     "sections": {
-      "context": "Contexte",
-      "comment": "Commentaire"
+      "context": "Context",
+      "comment": "Comment"
     },
     "fields": {
-      "author": "Toteur",
+      "author": "Author",
       "property": "Property",
-      "entity": "Entité",
+      "entity": "Linked entity",
       "booking": "Booking",
-      "guide": "Guide",
-      "publishedAt": "Publié le"
+      "guide": "Tour guide",
+      "publishedAt": "Published on"
     },
-    "viewBooking": "Voir la réservation",
-    "noComment": "Tocun commentaire.",
-    "moderationActionsAria": "Actions de modération"
+    "entityTypes": {
+      "property": "Property",
+      "flight": "Flight",
+      "vehicle": "Vehicle rental",
+      "cruise": "Cruise",
+      "activity": "Activity",
+      "booking": "Booking",
+      "tour_guide": "Tour guide"
+    },
+    "viewBooking": "View booking",
+    "noComment": "No comment provided.",
+    "moderationActionsAria": "Moderation actions"
   },
   "list": {
     "columns": {
-      "author": "Toteur",
+      "author": "Author",
       "property": "Property"
     },
     "filters": {
-      "apply": "Apply les filtres"
+      "apply": "Apply filters"
     },
     "empty": {
       "default": {
-        "title": "Tocun avis en attente",
-        "description": "La file de modération est vide. Les nouveaux avis clients apparaîtront ici.",
-        "tableMessage": "Tocun avis pour le moment."
+        "title": "No pending reviews",
+        "description": "The moderation queue is empty. New customer reviews will appear here.",
+        "tableMessage": "No reviews yet."
       },
       "filtered": {
-        "title": "Tocun avis ne correspond aux filtres",
-        "description": "Modifiez les filtres ou affichez tous les statuts pour élargir la recherche.",
-        "tableMessage": "Tocun avis ne correspond aux filtres."
+        "title": "No reviews match your filters",
+        "description": "Change filters or show all statuses to broaden the search.",
+        "tableMessage": "No reviews match your filters."
       }
     },
-    "ariaLabel": "Liste des avis à modérer"
+    "ariaLabel": "Reviews moderation list"
   }
 }
