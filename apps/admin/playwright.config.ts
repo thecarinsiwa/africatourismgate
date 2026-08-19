@@ -3,6 +3,8 @@ import { defineConfig } from '@playwright/test';
 const port = 3001;
 const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? `http://localhost:${port}`;
 const apiURL = process.env.PLAYWRIGHT_API_URL ?? 'http://localhost:3000';
+const gapPort = 3004;
+const gapURL = process.env.PLAYWRIGHT_GAP_URL ?? `http://localhost:${gapPort}`;
 
 const devCorsOrigins = [
   'http://localhost:3001',
@@ -39,6 +41,13 @@ export default defineConfig({
       command: 'pnpm dev',
       url: `${baseURL}/login`,
       cwd: __dirname,
+      reuseExistingServer: !process.env.CI,
+      timeout: 120_000,
+    },
+    {
+      command: 'pnpm --filter @africatourismgate/gap dev',
+      url: `${gapURL}/`,
+      cwd: `${__dirname}/../..`,
       reuseExistingServer: !process.env.CI,
       timeout: 120_000,
     },
