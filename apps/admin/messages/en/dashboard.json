@@ -89,5 +89,17 @@
       "suspended": "Suspended",
       "deleted": "Deleted"
     }
+  },
+  "activity": {
+    "title": "Recent activity",
+    "subtitle": "Bookings, reviews and support tickets",
+    "empty": "No recent activity.",
+    "loading": "Loading activity…",
+    "reviewTitle": "{author} · {rating}/5",
+    "types": {
+      "booking": "Booking",
+      "review": "Review",
+      "ticket": "Support ticket"
+    }
   }
 }

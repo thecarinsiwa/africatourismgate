@@ -89,5 +89,17 @@
       "suspended": "Suspendido",
       "deleted": "Eliminado"
     }
+  },
+  "activity": {
+    "title": "Actividad reciente",
+    "subtitle": "Reservas, reseñas y tickets de soporte",
+    "empty": "Ninguna actividad reciente.",
+    "loading": "Cargando actividad…",
+    "reviewTitle": "{author} · {rating}/5",
+    "types": {
+      "booking": "Reserva",
+      "review": "Reseña",
+      "ticket": "Ticket de soporte"
+    }
   }
 }

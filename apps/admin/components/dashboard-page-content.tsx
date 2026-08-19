@@ -7,7 +7,7 @@ import { DashboardPageHeader } from './dashboard-page-header';
 import { DashboardPeriodProvider } from './dashboard-period-context';
 import { DashboardPlatformOverview } from './dashboard-platform-overview';
 import { DashboardQuickActions } from './dashboard-quick-actions';
-import { DashboardRecentUsers } from './dashboard-recent-users';
+import { DashboardRecentActivity } from './dashboard-recent-activity';
 import { DashboardTrendChart } from './dashboard-trend-chart';
 import { DashboardUserStats } from './dashboard-user-stats';
 
@@ -53,7 +53,7 @@ export function DashboardPageContent() {
 
           <DashboardTwoColumnSection>
             <DashboardQuickActions />
-            <DashboardRecentUsers />
+            <DashboardRecentActivity />
           </DashboardTwoColumnSection>
         </div>
       </DashboardDataProvider>

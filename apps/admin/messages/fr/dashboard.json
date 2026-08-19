@@ -89,5 +89,17 @@
       "suspended": "Suspendu",
       "deleted": "Supprimé"
     }
+  },
+  "activity": {
+    "title": "Activité récente",
+    "subtitle": "Réservations, avis et tickets support",
+    "empty": "Aucune activité récente.",
+    "loading": "Chargement de l'activité…",
+    "reviewTitle": "{author} · {rating}/5",
+    "types": {
+      "booking": "Réservation",
+      "review": "Avis",
+      "ticket": "Ticket support"
+    }
   }
 }
