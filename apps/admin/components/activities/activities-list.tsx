@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Card,
   DataTable,
   DataTableActionButton,
@@ -50,6 +51,7 @@ export function ActivitiesList() {
   >({ status: 'loading' });
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<Activity | null>(null);
 
   useEffect(() => {
     void getApiClient()
@@ -102,22 +104,25 @@ export function ActivitiesList() {
     return () => window.clearTimeout(timer);
   }, [searchInput]);
 
-  const handleDelete = useCallback(
-    async (activity: Activity) => {
-      if (!window.confirm(tList('deleteConfirm', { title: activity.title }))) return;
-      setDeleteError(null);
-      setDeletingId(activity.id);
-      try {
-        await getApiClient().deleteActivity(activity.id);
-        await load();
-      } catch (error) {
-        setDeleteError(getActivitiesErrorMessage(error));
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [getActivitiesErrorMessage, load, tList],
-  );
+  const handleDeleteRequest = useCallback((activity: Activity) => {
+    setConfirmTarget(activity);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const activity = confirmTarget;
+    setConfirmTarget(null);
+    setDeleteError(null);
+    setDeletingId(activity.id);
+    try {
+      await getApiClient().deleteActivity(activity.id);
+      await load();
+    } catch (error) {
+      setDeleteError(getActivitiesErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getActivitiesErrorMessage, load]);
 
   const columns = useMemo<ColumnDef<Activity, unknown>[]>(
     () => [
@@ -179,7 +184,7 @@ export function ActivitiesList() {
               <DataTableActionButton action="edit" href={`/produits/activites/${activity.id}`} />
               <DataTableActionButton
                 action="delete"
-                onClick={() => void handleDelete(activity)}
+                onClick={() => handleDeleteRequest(activity)}
                 disabled={deletingId === activity.id}
                 loading={deletingId === activity.id}
               />
@@ -188,7 +193,7 @@ export function ActivitiesList() {
         },
       },
     ],
-    [deletingId, handleDelete, providerById, tColumns, tCommonColumns],
+    [deletingId, handleDeleteRequest, providerById, tColumns, tCommonColumns],
   );
 
   const activities = state.status === 'ready' ? state.activities : [];
@@ -196,6 +201,19 @@ export function ActivitiesList() {
     'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg';
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={tList('deleteTitle')}
+        description={confirmTarget ? tList('deleteConfirm', { title: confirmTarget.title }) : ''}
+        confirmLabel={tList('deleteConfirmButton')}
+        cancelLabel={tList('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <div className="min-w-0 space-y-6">
       <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-end">
         <div className="min-w-0 flex-1 sm:max-w-md">
@@ -269,5 +287,6 @@ export function ActivitiesList() {
         </>
       )}
     </div>
+    </>
   );
 }

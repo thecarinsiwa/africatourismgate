@@ -4,7 +4,10 @@
     "ariaLabel": "Liste des activités",
     "searchPlaceholder": "Rechercher par titre…",
     "destination": "Destination",
-    "deleteConfirm": "Supprimer l'activité « {title} » ?"
+    "deleteConfirm": "Delete activity « {title} »?",
+    "deleteTitle": "Delete activity",
+    "deleteConfirmButton": "Delete",
+    "cancel": "Cancel"
   },
   "columns": {
     "activity": "Activity",
@@ -38,6 +41,9 @@
       "unnamed": "Unnamed",
       "fileHint": "Formats: JPG, PNG, WEBP, PDF, DOC, DOCX (max 10 MB)",
       "deleteConfirm": "Delete attachment « {name} »?",
+      "deleteTitle": "Delete attachment",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
       "fields": {
         "name": "Display name",
         "type": "Type"
@@ -88,7 +94,10 @@
       "dateTime": "Date and time",
       "capacity": "Capacity",
       "empty": "No time slots for this activity.",
-      "deleteConfirm": "Delete this slot?",
+      "deleteConfirm": "This time slot will be deleted.",
+      "deleteTitle": "Delete time slot",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
       "validationDateTime": "Date and time are required.",
       "validationCapacity": "Capacity must be at least 1.",
       "viewList": "List",
@@ -104,7 +113,10 @@
       "new": "New stop",
       "edit": "Edit stop",
       "empty": "No itinerary stops for this activity.",
-      "deleteConfirm": "Delete this stop?",
+      "deleteConfirm": "This itinerary stop will be deleted.",
+      "deleteTitle": "Delete stop",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
       "order": "Stop",
       "description": "Description (optional)",
       "mapPicker": "Location picker",
@@ -130,9 +142,12 @@
       "empty": "Tocun fournisseur.",
       "searchPlaceholder": "Rechercher un fournisseur…",
       "ratingTitle": "Note moyenne (à venir)",
-      "deleteConfirm": "Supprimer « {name} » ?",
+      "deleteConfirm": "Delete « {name} »?",
+      "deleteTitle": "Delete provider",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
       "validation": {
-        "destinationRequired": "La destination est obligatoire."
+        "destinationRequired": "Destination is required."
       }
     }
   },

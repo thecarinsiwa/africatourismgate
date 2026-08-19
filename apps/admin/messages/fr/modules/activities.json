@@ -4,7 +4,10 @@
     "ariaLabel": "Liste des activités",
     "searchPlaceholder": "Rechercher par titre…",
     "destination": "Destination",
-    "deleteConfirm": "Supprimer l'activité « {title} » ?"
+    "deleteConfirm": "Supprimer l'activité « {title} » ?",
+    "deleteTitle": "Supprimer l'activité",
+    "deleteConfirmButton": "Supprimer",
+    "cancel": "Annuler"
   },
   "columns": {
     "activity": "Activité",
@@ -38,6 +41,9 @@
       "unnamed": "Sans nom",
       "fileHint": "Formats: JPG, PNG, WEBP, PDF, DOC, DOCX (max 10 Mo)",
       "deleteConfirm": "Supprimer la pièce jointe « {name} » ?",
+      "deleteTitle": "Supprimer la pièce jointe",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler",
       "fields": {
         "name": "Nom affiché",
         "type": "Type"
@@ -88,7 +94,10 @@
       "dateTime": "Date et heure",
       "capacity": "Capacité",
       "empty": "Aucun créneau pour cette activité.",
-      "deleteConfirm": "Supprimer ce créneau ?",
+      "deleteConfirm": "Ce créneau sera supprimé.",
+      "deleteTitle": "Supprimer le créneau",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler",
       "validationDateTime": "La date et l'heure sont obligatoires.",
       "validationCapacity": "La capacité doit être au moins 1.",
       "viewList": "Liste",
@@ -104,7 +113,10 @@
       "new": "Nouvelle étape",
       "edit": "Modifier l'étape",
       "empty": "Aucune étape d'itinéraire pour cette activité.",
-      "deleteConfirm": "Supprimer cette étape ?",
+      "deleteConfirm": "Cette étape d'itinéraire sera supprimée.",
+      "deleteTitle": "Supprimer l'étape",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler",
       "order": "Étape",
       "description": "Description (optionnelle)",
       "mapPicker": "Carte d'assistance",
@@ -131,6 +143,9 @@
       "searchPlaceholder": "Rechercher un fournisseur…",
       "ratingTitle": "Note moyenne (à venir)",
       "deleteConfirm": "Supprimer « {name} » ?",
+      "deleteTitle": "Supprimer le fournisseur",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler",
       "validation": {
         "destinationRequired": "La destination est obligatoire."
       }
