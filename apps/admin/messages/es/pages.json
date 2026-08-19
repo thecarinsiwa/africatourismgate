@@ -30,7 +30,8 @@
       "description": "Crear una cuenta de usuario."
     },
     "id": {
-      "metaTitle": "Editar usuario"
+      "metaTitle": "Editar usuario",
+      "backLabel": "Volver a usuarios"
     },
     "employes": {
       "description": "Perfiles de empleados vinculados a usuarios y organizaciones.",
