@@ -2,7 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Card, Input, Select, useToast } from '@africatourismgate/ui';
+import { Button, Card, Input, Select, Textarea, useToast } from '@africatourismgate/ui';
 import type {
   CreateOrganizationRequest,
   Organization,
@@ -49,9 +49,6 @@ const defaultValues: OrganizationFormValues = {
   currency: 'USD',
   status: 'active',
 };
-
-const textareaClass =
-  'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg placeholder:text-atg-muted/70 outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary';
 
 function organizationToFormValues(org: Organization): OrganizationFormValues {
   return {
@@ -271,19 +268,14 @@ export function OrganizationForm({
           error={fieldErrors.slug}
           required
         />
-        <div>
-          <label htmlFor={descriptionId} className="mb-2 block text-sm font-medium text-atg-fg">
-            {t('description')}
-          </label>
-          <textarea
-            id={descriptionId}
-            name="description"
-            rows={3}
-            value={values.description}
-            onChange={(e) => updateField('description', e.target.value)}
-            className={textareaClass}
-          />
-        </div>
+        <Textarea
+          id={descriptionId}
+          name="description"
+          label={t('description')}
+          rows={3}
+          value={values.description}
+          onChange={(e) => updateField('description', e.target.value)}
+        />
       </Card>
 
       <Card variant="dashboard" className="space-y-4">

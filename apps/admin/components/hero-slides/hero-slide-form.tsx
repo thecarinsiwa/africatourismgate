@@ -2,7 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Input } from '@africatourismgate/ui';
+import { Button, Input, Textarea } from '@africatourismgate/ui';
 import type { CreateHeroSlideRequest, HeroSlide, HeroSlideStatus } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
@@ -177,22 +177,14 @@ export function HeroSlideForm({
         ) : null}
       </div>
 
-      <div>
-        <label htmlFor={descriptionId} className="mb-1 block text-sm font-medium">
-          {t('fields.description')}
-        </label>
-        <textarea
-          id={descriptionId}
-          value={values.description}
-          onChange={(e) => updateField('description', e.target.value)}
-          rows={4}
-          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-          aria-invalid={Boolean(fieldErrors.description)}
-        />
-        {fieldErrors.description ? (
-          <p className="mt-1 text-sm text-destructive">{fieldErrors.description}</p>
-        ) : null}
-      </div>
+      <Textarea
+        id={descriptionId}
+        label={t('fields.description')}
+        rows={4}
+        value={values.description}
+        onChange={(e) => updateField('description', e.target.value)}
+        error={fieldErrors.description}
+      />
 
       <div>
         <label htmlFor={imageUrlId} className="mb-1 block text-sm font-medium">

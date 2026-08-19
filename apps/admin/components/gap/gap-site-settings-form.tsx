@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Card, Input } from '@africatourismgate/ui';
+import { Button, Card, Input, Textarea } from '@africatourismgate/ui';
 import type {
   CreateGapSiteSettingsRequest,
   GapSiteSettings,
@@ -185,23 +185,16 @@ export function GapSiteSettingsForm({ locale }: GapSiteSettingsFormProps) {
           </div>
         </div>
 
-        <div>
-          <label htmlFor={subtitleId} className="mb-1 block text-sm font-medium">
-            {t('fields.subtitle')}
-          </label>
-          <textarea
-            id={subtitleId}
-            value={values.subtitle}
-            onChange={(e) => setValues((prev) => ({ ...prev, subtitle: e.target.value }))}
-            disabled={!canWrite}
-            required
-            rows={2}
-            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-          />
-          {fieldErrors.subtitle ? (
-            <p className="mt-1 text-sm text-destructive">{fieldErrors.subtitle}</p>
-          ) : null}
-        </div>
+        <Textarea
+          id={subtitleId}
+          label={t('fields.subtitle')}
+          rows={2}
+          value={values.subtitle}
+          onChange={(e) => setValues((prev) => ({ ...prev, subtitle: e.target.value }))}
+          disabled={!canWrite}
+          required
+          error={fieldErrors.subtitle}
+        />
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
