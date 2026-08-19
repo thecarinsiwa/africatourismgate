@@ -39,7 +39,7 @@ function toStatCardChange(
 
 export function DashboardKpiCards({ className }: { className?: string }) {
   const { hasPermission, loading: permissionsLoading } = usePermissions();
-  const { kpis, permissionsLoading: dataPermissionsLoading, dataLoading } = useDashboardData();
+  const { kpis, dataLoading } = useDashboardData();
   const locale = useLocale();
   const t = useTranslations('dashboard');
 
@@ -48,15 +48,19 @@ export function DashboardKpiCards({ className }: { className?: string }) {
     [hasPermission],
   );
 
-  const loading = permissionsLoading || dataPermissionsLoading || dataLoading;
+  const dataLoadingState = permissionsLoading || dataLoading;
 
-  if (!loading && visibleKpis.length === 0) {
-    return null;
-  }
+  const displayKpis = useMemo(() => {
+    if (permissionsLoading) {
+      return dashboardKpis;
+    }
+    if (dataLoadingState) {
+      return visibleKpis;
+    }
+    return visibleKpis.filter((kpi) => kpis[kpi.key].status !== 'hidden');
+  }, [dataLoadingState, kpis, permissionsLoading, visibleKpis]);
 
-  const renderableKpis = visibleKpis.filter((kpi) => loading || kpis[kpi.key].status !== 'hidden');
-
-  if (!loading && renderableKpis.length === 0) {
+  if (!permissionsLoading && !dataLoadingState && displayKpis.length === 0) {
     return null;
   }
 
@@ -65,10 +69,10 @@ export function DashboardKpiCards({ className }: { className?: string }) {
   return (
     <div className={className}>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {renderableKpis.map((kpi) => {
-          const slot = kpis[kpi.key];
+        {displayKpis.map((kpi) => {
+          const slot = permissionsLoading ? { status: 'loading' as const } : kpis[kpi.key];
           const cardStatus =
-            loading || slot.status === 'loading'
+            dataLoadingState || slot.status === 'loading'
               ? 'loading'
               : slot.status === 'error'
                 ? 'error'
