@@ -25,11 +25,11 @@ import {
   useOrganizationLegalFormOptions,
 } from '../../lib/i18n/use-module-labels';
 import {
-  formatOrganizationCount,
   formatOrganizationLegalForm,
   organizationStatusVariants,
 } from '../../lib/organization-display';
 import { OrganizationLogo } from './organization-logo';
+import { OrganizationListCounts } from './organization-list-counts';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -163,23 +163,15 @@ export function OrganizationsList() {
         },
       },
       {
-        id: 'userCount',
-        header: tCommon('columns.user'),
+        id: 'counts',
+        header: t('list.columns.counts'),
         meta: { align: 'right' },
         cell: ({ row }) => (
-          <span className="tabular-nums text-sm text-atg-fg">
-            {formatOrganizationCount(row.original.userCount)}
-          </span>
-        ),
-      },
-      {
-        id: 'employeeCount',
-        header: tCommon('columns.employees'),
-        meta: { align: 'right' },
-        cell: ({ row }) => (
-          <span className="tabular-nums text-sm text-atg-fg">
-            {formatOrganizationCount(row.original.employeeCount)}
-          </span>
+          <OrganizationListCounts
+            userCount={row.original.userCount}
+            employeeCount={row.original.employeeCount}
+            productCount={row.original.productCount}
+          />
         ),
       },
       {

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
-import { Employees, Organizations, Users } from '../../../entities/generated';
+import { Employees, Organizations, TourGuides, Users } from '../../../entities/generated';
 import { CrudService } from '../../../common/crud/crud.service';
 import { OrganizationListItemDto } from './dto/organization-list-item.dto';
 import { OrganizationsListQueryDto } from './dto/organizations-list-query.dto';
@@ -21,6 +21,8 @@ export class OrganizationsService extends CrudService<Organizations> {
     private readonly usersRepository: Repository<Users>,
     @InjectRepository(Employees)
     private readonly employeesRepository: Repository<Employees>,
+    @InjectRepository(TourGuides)
+    private readonly tourGuidesRepository: Repository<TourGuides>,
   ) {
     super(organizationsRepository);
   }
@@ -53,6 +55,7 @@ export class OrganizationsService extends CrudService<Organizations> {
     const orgIds = organizations.map((org) => org.id);
     const userCountByOrgId = await this.loadUserCountByOrganizationId(orgIds);
     const employeeCountByOrgId = await this.loadEmployeeCountByOrganizationId(orgIds);
+    const productCountByOrgId = await this.loadProductCountByOrganizationId(orgIds);
 
     const data = organizations.map((org) => ({
       id: org.id,
@@ -65,6 +68,7 @@ export class OrganizationsService extends CrudService<Organizations> {
       createdAt: org.createdAt.toISOString(),
       userCount: userCountByOrgId.get(org.id) ?? 0,
       employeeCount: employeeCountByOrgId.get(org.id) ?? 0,
+      productCount: productCountByOrgId.get(org.id) ?? 0,
     }));
 
     return {
@@ -111,6 +115,25 @@ export class OrganizationsService extends CrudService<Organizations> {
       .where('employee.organizationId IN (:...organizationIds)', { organizationIds })
       .andWhere('employee.deletedAt IS NULL')
       .groupBy('employee.organizationId')
+      .getRawMany<CountRow>();
+
+    return new Map(rows.map((row) => [row.organizationId, Number(row.count)]));
+  }
+
+  private async loadProductCountByOrganizationId(
+    organizationIds: string[],
+  ): Promise<Map<string, number>> {
+    if (organizationIds.length === 0) {
+      return new Map();
+    }
+
+    const rows = await this.tourGuidesRepository
+      .createQueryBuilder('guide')
+      .select('guide.organizationId', 'organizationId')
+      .addSelect('COUNT(guide.id)', 'count')
+      .where('guide.organizationId IN (:...organizationIds)', { organizationIds })
+      .andWhere('guide.deletedAt IS NULL')
+      .groupBy('guide.organizationId')
       .getRawMany<CountRow>();
 
     return new Map(rows.map((row) => [row.organizationId, Number(row.count)]));
