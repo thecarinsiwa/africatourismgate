@@ -283,8 +283,10 @@
     "suggestionsTitle": "Suggestions depuis la composition",
     "suggestionsLoading": "Chargement des suggestions…",
     "suggestionsEmpty": "None photo disponible dans les produits inclus. Ajoutez des produits au forfait ou uploadez une photo manuellement.",
-    "alreadyAdded": "Ajoutée",
-    "addFromSuggestion": "Ajouter"
+    "alreadyAdded": "Added",
+    "addFromSuggestion": "Add",
+    "ariaLabel": "Photo gallery",
+    "loading": "Loading gallery…"
   },
   "flightClass": {
     "economy": "Economy",
