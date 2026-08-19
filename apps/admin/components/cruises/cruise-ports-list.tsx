@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -46,6 +47,8 @@ export function CruisePortsList() {
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<CruisePort | null>(null);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -115,6 +118,26 @@ export function CruisePortsList() {
     }
   }
 
+  const handleDeleteRequest = useCallback((port: CruisePort) => {
+    setConfirmTarget(port);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const port = confirmTarget;
+    setConfirmTarget(null);
+    setDeleteError(null);
+    setDeletingId(port.id);
+    try {
+      await getApiClient().deleteCruisePort(port.id);
+      await load();
+    } catch (error) {
+      setDeleteError(getCroisieresErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getCroisieresErrorMessage, load]);
+
   const columns = useMemo<ColumnDef<CruisePort, unknown>[]>(
     () => [
       {
@@ -148,18 +171,7 @@ export function CruisePortsList() {
             />
             <DataTableActionButton
               action="delete"
-              onClick={async () => {
-                if (!window.confirm(tForm('deleteConfirm', { name: row.original.name }))) return;
-                setDeletingId(row.original.id);
-                try {
-                  await getApiClient().deleteCruisePort(row.original.id);
-                  await load();
-                } catch (error) {
-                  setFormError(getCroisieresErrorMessage(error));
-                } finally {
-                  setDeletingId(null);
-                }
-              }}
+              onClick={() => handleDeleteRequest(row.original)}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
             />
@@ -167,12 +179,25 @@ export function CruisePortsList() {
         ),
       },
     ],
-    [deletingId, getCroisieresErrorMessage, load, tColumns, tCruise, tForm],
+    [deletingId, handleDeleteRequest, tColumns, tCruise, tForm],
   );
 
   const ports = state.status === 'ready' ? state.ports : [];
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={tForm('deleteTitle')}
+        description={confirmTarget ? tForm('deleteConfirm', { name: confirmTarget.name }) : ''}
+        confirmLabel={tForm('deleteConfirmButton')}
+        cancelLabel={tForm('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <div className="space-y-6">
       <ReferentialListToolbar
         searchValue={searchInput}
@@ -260,5 +285,6 @@ export function CruisePortsList() {
         </>
       )}
     </div>
+    </>
   );
 }

@@ -1,10 +1,13 @@
 {
   "list": {
-    "newSailing": "Nouveau départ",
-    "viewList": "Liste",
-    "viewCalendar": "Calendrier",
-    "emptySailings": "Hastacun départ programmé.",
-    "deleteSailingConfirm": "Supprimer le départ « {label} » ?",
+    "newSailing": "Nueva salida",
+    "viewList": "Lista",
+    "viewCalendar": "Calendario",
+    "emptySailings": "No hay salidas programadas.",
+    "deleteSailingTitle": "Eliminar salida",
+    "deleteSailingConfirm": "La salida \"{label}\" será eliminada permanentemente.",
+    "deleteSailingButton": "Eliminar",
+    "cancel": "Cancelar",
     "fallbackDeparture": "Salida"
   },
   "columns": {
@@ -38,35 +41,47 @@
       "validation": "Itinerario et date de départ sont obligatoires."
     },
     "itinerary": {
-      "new": "Nouvel itinéraire",
-      "edit": "Modifier l'itinéraire",
-      "durationNights": "Desderée (nuits)",
-      "empty": "Hastacun itinéraire.",
-      "deleteConfirm": "Supprimer cet itinéraire ?",
-      "validation": "Apellido et durée (nuits) invalides."
+      "new": "Nuevo itinerario",
+      "edit": "Editar itinerario",
+      "durationNights": "Duración (noches)",
+      "empty": "Ningún itinerario.",
+      "deleteConfirm": "Este itinerario será eliminado permanentemente.",
+      "deleteTitle": "Eliminar itinerario",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar",
+      "validation": "Nombre y duración (noches) son obligatorios."
     },
     "port": {
-      "new": "Nouveau port de croisière",
-      "edit": "Modifier le port",
+      "new": "Nuevo puerto de crucero",
+      "edit": "Editar puerto",
       "countryIso": "País (ISO)",
-      "empty": "Hastacun port.",
-      "deleteConfirm": "Supprimer le port « {name} » ?"
+      "empty": "Ningún puerto.",
+      "deleteConfirm": "El puerto «{name}» será eliminado permanentemente.",
+      "deleteTitle": "Eliminar puerto",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar"
     },
     "line": {
-      "new": "Nouvelle ligne de croisière",
-      "edit": "Modifier la ligne",
-      "empty": "Ninguna ligne de croisière.",
-      "deleteConfirm": "Supprimer la ligne « {name} » ?"
+      "new": "Nueva línea de crucero",
+      "edit": "Editar línea",
+      "empty": "Ninguna línea de crucero.",
+      "deleteConfirm": "La línea «{name}» será eliminada permanentemente.",
+      "deleteTitle": "Eliminar línea",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar"
     },
     "cabin": {
-      "new": "Nouvelle cabine",
-      "edit": "Modifier la cabine",
-      "category": "Catégorie",
-      "maxGuests": "Voyageurs max",
-      "empty": "Ninguna cabine.",
-      "deleteConfirm": "Supprimer cette cabine ?",
-      "validationCategory": "Catégorie et capacité invalides.",
-      "validationPrice": "Precio de base invalide."
+      "new": "Nueva cabina",
+      "edit": "Editar cabina",
+      "category": "Categoría",
+      "maxGuests": "Máx. viajeros",
+      "empty": "Ninguna cabina.",
+      "deleteConfirm": "Esta cabina será eliminada permanentemente.",
+      "deleteTitle": "Eliminar cabina",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar",
+      "validationCategory": "Categoría y capacidad son obligatorias.",
+      "validationPrice": "El precio base no es válido."
     }
   },
   "detail": {
@@ -79,13 +94,16 @@
   },
   "sections": {
     "itineraryPorts": {
-      "day": "Jour",
-      "arrivalTime": "Heure d'arrivée (HH:MM)",
-      "departureTime": "Heure de départ (HH:MM)",
+      "day": "Día",
+      "arrivalTime": "Hora de llegada (HH:MM)",
+      "departureTime": "Hora de salida (HH:MM)",
       "arrivalPlaceholder": "08:00",
       "departurePlaceholder": "18:00",
-      "empty": "Ninguna escale.",
-      "deleteConfirm": "Supprimer cette escale ?"
+      "empty": "Ninguna escala.",
+      "deleteConfirm": "Esta escala será eliminada permanentemente.",
+      "deleteTitle": "Eliminar escala",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar"
     },
     "cabinAvailability": {
       "title": "Camarotes réservables",
@@ -101,7 +119,10 @@
     }
   },
   "dialogs": {
-    "deleteShip": "Supprimer le navire « {name} » ?"
+    "deleteShip": "El barco «{name}» será eliminado permanentemente.",
+    "deleteShipTitle": "Eliminar barco",
+    "deleteShipButton": "Eliminar",
+    "cancel": "Cancelar"
   },
   "calendar": {
     "ariaLabel": "Calendrier des départs — {month}",

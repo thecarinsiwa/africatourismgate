@@ -2,7 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Card, DataTable, DataTableActionButton, DataTableActions, Input, type ColumnDef } from '@africatourismgate/ui';
+import { AlertDialog, Button, Card, DataTable, DataTableActionButton, DataTableActions, Input, type ColumnDef } from '@africatourismgate/ui';
 import type { Itinerary } from '@africatourismgate/types';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
@@ -32,6 +32,7 @@ export function ItinerariesSection({ shipId }: ItinerariesSectionProps) {
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<Itinerary | null>(null);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -85,6 +86,25 @@ export function ItinerariesSection({ shipId }: ItinerariesSectionProps) {
     }
   }
 
+  const handleDeleteRequest = useCallback((itinerary: Itinerary) => {
+    setConfirmTarget(itinerary);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const itinerary = confirmTarget;
+    setConfirmTarget(null);
+    setDeletingId(itinerary.id);
+    try {
+      await withApiClient((client) => client.deleteItinerary(itinerary.id));
+      await load();
+    } catch (error) {
+      setFormError(getCroisieresErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getCroisieresErrorMessage, load]);
+
   const columns = useMemo<ColumnDef<Itinerary, unknown>[]>(
     () => [
       { accessorKey: 'name', header: tColumns('itinerary') },
@@ -118,18 +138,7 @@ export function ItinerariesSection({ shipId }: ItinerariesSectionProps) {
             />
             <DataTableActionButton
               action="delete"
-              onClick={async () => {
-                if (!window.confirm(tForm('deleteConfirm'))) return;
-                setDeletingId(row.original.id);
-                try {
-                  await withApiClient((client) => client.deleteItinerary(row.original.id));
-                  await load();
-                } catch (error) {
-                  setFormError(getCroisieresErrorMessage(error));
-                } finally {
-                  setDeletingId(null);
-                }
-              }}
+              onClick={() => handleDeleteRequest(row.original)}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
             />
@@ -137,12 +146,24 @@ export function ItinerariesSection({ shipId }: ItinerariesSectionProps) {
         ),
       },
     ],
-    [deletingId, getCroisieresErrorMessage, load, shipId, tColumns, tCommonColumns, tForm, tSection],
+    [deletingId, handleDeleteRequest, shipId, tColumns, tCommonColumns, tForm, tSection],
   );
 
   const itineraries = state.status === 'ready' ? state.itineraries : [];
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={tForm('deleteTitle')}
+        description={tForm('deleteConfirm')}
+        confirmLabel={tForm('deleteConfirmButton')}
+        cancelLabel={tForm('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <section className="mt-12 space-y-6 border-t border-atg-border pt-10">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -209,5 +230,6 @@ export function ItinerariesSection({ shipId }: ItinerariesSectionProps) {
         </Card>
       )}
     </section>
+    </>
   );
 }
