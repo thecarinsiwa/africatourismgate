@@ -36,7 +36,8 @@
       "description": "Employee profiles linked to users and organizations.",
       "nouveau": {
         "metaTitle": "New employee",
-        "description": "Link an existing user to an organization."
+        "description": "Link an existing user to an organization.",
+        "backLabel": "Back to employees"
       },
       "id": {
         "metaTitle": "Edit employee"

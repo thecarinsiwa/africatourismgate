@@ -36,7 +36,8 @@
       "description": "Profils employés liés aux utilisateurs et organisations.",
       "nouveau": {
         "metaTitle": "Nouvel employé",
-        "description": "Lier un utilisateur existant à une organisation."
+        "description": "Lier un utilisateur existant à une organisation.",
+        "backLabel": "Retour aux employés"
       },
       "id": {
         "metaTitle": "Modifier l'employé"

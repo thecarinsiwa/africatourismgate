@@ -36,7 +36,8 @@
       "description": "Perfiles de empleados vinculados a usuarios y organizaciones.",
       "nouveau": {
         "metaTitle": "Nuevo empleado",
-        "description": "Vincular un usuario existente a una organización."
+        "description": "Vincular un usuario existente a una organización.",
+        "backLabel": "Volver a empleados"
       },
       "id": {
         "metaTitle": "Editar empleado"
