@@ -3,7 +3,7 @@
 import { useAdminErrorMessages } from '../lib/i18n/use-admin-error-messages';
 
 import { Card, DataTableBadge, Skeleton } from '@africatourismgate/ui';
-import type { BookingStatus, SupportTicketStatus } from '@africatourismgate/types';
+import type { SupportTicketStatus } from '@africatourismgate/types';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';

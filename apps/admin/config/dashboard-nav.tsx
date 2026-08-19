@@ -155,8 +155,7 @@ export function applyNavBadgeCounts(
       if (count == null || count <= 0) {
         if (child.badge != null) {
           changed = true;
-          const { badge: _removed, ...rest } = child;
-          return rest;
+          return { ...child, badge: undefined };
         }
         return child;
       }
