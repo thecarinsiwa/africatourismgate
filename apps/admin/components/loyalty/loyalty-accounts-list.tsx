@@ -301,12 +301,13 @@ export function LoyaltyAccountsList() {
         </Card>
       )}
 
-      {historyAccount ? (
-        <LoyaltyTransactionHistoryPanel
-          account={historyAccount}
-          onClose={() => setHistoryAccount(null)}
-        />
-      ) : null}
+      <LoyaltyTransactionHistoryPanel
+        open={historyAccount !== null}
+        onOpenChange={(open) => {
+          if (!open) setHistoryAccount(null);
+        }}
+        account={historyAccount}
+      />
 
       {state.status === 'ready' && state.totalPages > 1 ? (
         <DataTablePagination
