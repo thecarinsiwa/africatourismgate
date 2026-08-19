@@ -1,4 +1,22 @@
 {
+  "stats": {
+    "total": {
+      "label": "Guías",
+      "subtitle": "Total del catálogo"
+    },
+    "active": {
+      "label": "Activos",
+      "subtitle": "Disponibles para asignación"
+    },
+    "inactive": {
+      "label": "Inactivos",
+      "subtitle": "Fuera del catálogo activo"
+    },
+    "internal": {
+      "label": "Internos",
+      "subtitle": "Vinculados a una cuenta de usuario"
+    }
+  },
   "list": {
     "emptyDefault": "Aún no hay guías turísticos.",
     "emptySearch": "Ningún guía coincide con su búsqueda.",

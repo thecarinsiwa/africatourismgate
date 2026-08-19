@@ -3,6 +3,7 @@
 import { Button } from '@africatourismgate/ui';
 import { useTranslations } from 'next-intl';
 import { TourGuidesList } from '../tour-guides/tour-guides-list';
+import { TourGuidesStatCards } from '../tour-guides/tour-guides-stat-cards';
 import { AdminListPageHeader } from './admin-list-page-header';
 
 export function GuidesPageContent() {
@@ -17,6 +18,7 @@ export function GuidesPageContent() {
           </Button>
         }
       />
+      <TourGuidesStatCards className="mb-6" />
       <TourGuidesList />
     </div>
   );
