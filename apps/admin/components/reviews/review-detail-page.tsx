@@ -187,20 +187,19 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
   }`;
 
   return (
-    <div className={showFooter ? 'pb-24' : undefined}>
-      <div className="space-y-6">
-        <AdminPageBackLink href="/contenu/avis" label={tDetail('backLink')} />
+    <div className="space-y-6">
+      <AdminPageBackLink href="/contenu/avis" label={tDetail('backLink')} />
 
-        {actionError ? (
-          <p
-            className="rounded-lg border border-red-500 bg-red-500/5 px-3 py-2 text-sm text-red-600 dark:border-red-500/50 dark:bg-red-500/10 dark:text-red-400"
-            role="alert"
-          >
-            {actionError}
-          </p>
-        ) : null}
+      {actionError ? (
+        <p
+          className="rounded-lg border border-red-500 bg-red-500/5 px-3 py-2 text-sm text-red-600 dark:border-red-500/50 dark:bg-red-500/10 dark:text-red-400"
+          role="alert"
+        >
+          {actionError}
+        </p>
+      ) : null}
 
-        <div className="grid gap-6 lg:grid-cols-[minmax(280px,1fr)_minmax(0,1.6fr)] lg:items-start">
+      <div className="grid gap-6 lg:grid-cols-[minmax(280px,1fr)_minmax(0,1.6fr)] lg:items-start">
           <Card variant="dashboard" padding="md" className="lg:sticky lg:top-4">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
               <h2 className="text-lg font-semibold text-atg-fg">{tDetail('sections.context')}</h2>
@@ -318,48 +317,51 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
               <p className="text-sm italic text-atg-muted">{tDetail('noComment')}</p>
             )}
           </Card>
-        </div>
       </div>
 
       {showFooter ? (
         <div
-          className="fixed inset-x-0 bottom-0 z-20 border-t border-atg-border bg-atg-surface/95 backdrop-blur supports-[backdrop-filter]:bg-atg-surface/80"
+          className="sticky bottom-0 z-10 -mx-4 border-t border-atg-border bg-atg-surface/95 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-atg-surface/90 sm:-mx-6 sm:px-6 md:-mx-8 md:px-8"
           role="region"
           aria-label={tDetail('moderationActionsAria')}
         >
-          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-end gap-2 px-4 py-3 sm:px-6 lg:px-8">
-            {canApprove ? (
-              <Button
-                type="button"
-                disabled={acting}
-                loading={acting}
-                loadingText={tLoading('default')}
-                onClick={() => void runModerationAction('approve')}
-              >
-                {t('actions.approve')}
-              </Button>
-            ) : null}
-            {canHide ? (
-              <Button
-                type="button"
-                variant="secondary"
-                disabled={acting}
-                loading={acting}
-                loadingText={tLoading('default')}
-                onClick={() => void runModerationAction('hide')}
-              >
-                {t('actions.hide')}
-              </Button>
-            ) : null}
+          <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
             <Button
               type="button"
               variant="ghost"
               disabled={acting}
               onClick={() => setDeleteDialogOpen(true)}
-              className="!text-red-600 hover:!bg-red-50 dark:!text-red-400"
+              className="order-3 w-full sm:order-1 sm:w-auto !text-red-600 hover:!bg-red-50 dark:!text-red-400"
             >
               {t('actions.delete')}
             </Button>
+            <div className="flex flex-col gap-2 sm:order-2 sm:ml-auto sm:flex-row sm:items-center">
+              {canHide ? (
+                <Button
+                  type="button"
+                  variant="secondary"
+                  disabled={acting}
+                  loading={acting}
+                  loadingText={tLoading('default')}
+                  className="w-full sm:w-auto"
+                  onClick={() => void runModerationAction('hide')}
+                >
+                  {t('actions.hide')}
+                </Button>
+              ) : null}
+              {canApprove ? (
+                <Button
+                  type="button"
+                  disabled={acting}
+                  loading={acting}
+                  loadingText={tLoading('default')}
+                  className="w-full sm:w-auto"
+                  onClick={() => void runModerationAction('approve')}
+                >
+                  {t('actions.approve')}
+                </Button>
+              ) : null}
+            </div>
           </div>
         </div>
       ) : null}
