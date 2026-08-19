@@ -21,6 +21,7 @@ import { BookingReviewForm } from './booking-review-form';
 import { BookingStatusBadge } from './booking-status-badge';
 import { BookingStatusTimeline, isAssistedBookingDetail } from './booking-status-timeline';
 import { BookingIdentityDocumentsSection } from './booking-identity-documents-section';
+import { AccountBookingManifestSection } from './account-booking-manifest-section';
 
 type Props = {
   bookingId: string;
@@ -230,6 +231,11 @@ export function AccountBookingDetail({
         bookingStatus={booking.status}
         documents={detail.identityDocuments ?? []}
         onUpdated={load}
+      />
+
+      <AccountBookingManifestSection
+        bookingId={bookingId}
+        bookingStatus={booking.status}
       />
 
       {(showPayActions || canCancel || (isAssisted && booking.status === 'pending_payment')) && (
