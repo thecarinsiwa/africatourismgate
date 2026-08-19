@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -59,6 +60,7 @@ export function BookingGuidesSection({ bookingId, canWrite }: BookingGuidesSecti
   const [actionError, setActionError] = useState<string | null>(null);
   const [assigning, setAssigning] = useState(false);
   const [removingGuideId, setRemovingGuideId] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -116,24 +118,25 @@ export function BookingGuidesSection({ bookingId, canWrite }: BookingGuidesSecti
     }
   }, [bookingId, getBookingsErrorMessage, load, selectedGuideId, selectedRole]);
 
-  const handleRemove = useCallback(
-    async (guideId: string) => {
-      if (!window.confirm(t('removeConfirm'))) {
-        return;
-      }
-      setActionError(null);
-      setRemovingGuideId(guideId);
-      try {
-        await getApiClient().removeBookingGuide(bookingId, guideId);
-        await load();
-      } catch (err) {
-        setActionError(getBookingsErrorMessage(err));
-      } finally {
-        setRemovingGuideId(null);
-      }
-    },
-    [bookingId, getBookingsErrorMessage, load, t],
-  );
+  const handleRemoveRequest = useCallback((guideId: string) => {
+    setConfirmTarget(guideId);
+  }, []);
+
+  const handleRemoveConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const guideId = confirmTarget;
+    setConfirmTarget(null);
+    setActionError(null);
+    setRemovingGuideId(guideId);
+    try {
+      await getApiClient().removeBookingGuide(bookingId, guideId);
+      await load();
+    } catch (err) {
+      setActionError(getBookingsErrorMessage(err));
+    } finally {
+      setRemovingGuideId(null);
+    }
+  }, [bookingId, confirmTarget, getBookingsErrorMessage, load]);
 
   const columns = useMemo<ColumnDef<AssignmentRow, unknown>[]>(
     () => [
@@ -179,7 +182,7 @@ export function BookingGuidesSection({ bookingId, canWrite }: BookingGuidesSecti
                   <DataTableActionButton
                     action="delete"
                     label={tActions('delete')}
-                    onClick={() => void handleRemove(row.original.guideId)}
+                    onClick={() => handleRemoveRequest(row.original.guideId)}
                     disabled={removingGuideId === row.original.guideId}
                     loading={removingGuideId === row.original.guideId}
                   />
@@ -191,7 +194,7 @@ export function BookingGuidesSection({ bookingId, canWrite }: BookingGuidesSecti
     ],
     [
       canWrite,
-      handleRemove,
+      handleRemoveRequest,
       removingGuideId,
       roleLabels,
       t,
@@ -201,6 +204,18 @@ export function BookingGuidesSection({ bookingId, canWrite }: BookingGuidesSecti
   );
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={t('removeTitle')}
+        description={t('removeConfirm')}
+        confirmLabel={t('removeConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!removingGuideId}
+        onConfirm={() => void handleRemoveConfirm()}
+      />
     <section className="space-y-3">
       <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
 
@@ -279,5 +294,6 @@ export function BookingGuidesSection({ bookingId, canWrite }: BookingGuidesSecti
         </Card>
       ) : null}
     </section>
+    </>
   );
 }

@@ -5,7 +5,10 @@
     "searchPlaceholder": "Buscar por nombre…",
     "searchAria": "Buscar guías",
     "ariaLabel": "Lista de guías turísticos",
-    "deleteConfirm": "¿Eliminar el guía « {name} »?"
+    "deleteTitle": "Eliminar guía",
+    "deleteConfirm": "El guía «{name}» será eliminado permanentemente.",
+    "deleteConfirmButton": "Eliminar",
+    "cancel": "Cancelar"
   },
   "columns": {
     "name": "Nombre",

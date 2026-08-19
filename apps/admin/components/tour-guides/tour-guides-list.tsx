@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Card,
   DataTable,
   DataTableActionButton,
@@ -61,6 +62,7 @@ export function TourGuidesList() {
   >({ status: 'loading' });
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<TourGuide | null>(null);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -100,24 +102,25 @@ export function TourGuidesList() {
     return () => window.clearTimeout(timer);
   }, [searchInput]);
 
-  const handleDelete = useCallback(
-    async (guide: TourGuide) => {
-      if (!window.confirm(t('deleteConfirm', { name: guide.displayName }))) {
-        return;
-      }
-      setDeleteError(null);
-      setDeletingId(guide.id);
-      try {
-        await getApiClient().deleteTourGuide(guide.id);
-        await load();
-      } catch (error) {
-        setDeleteError(getTourGuidesErrorMessage(error));
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [load, t, getTourGuidesErrorMessage],
-  );
+  const handleDeleteRequest = useCallback((guide: TourGuide) => {
+    setConfirmTarget(guide);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const guide = confirmTarget;
+    setConfirmTarget(null);
+    setDeleteError(null);
+    setDeletingId(guide.id);
+    try {
+      await getApiClient().deleteTourGuide(guide.id);
+      await load();
+    } catch (error) {
+      setDeleteError(getTourGuidesErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getTourGuidesErrorMessage, load]);
 
   const columns = useMemo<ColumnDef<TourGuide, unknown>[]>(
     () => [
@@ -181,7 +184,7 @@ export function TourGuidesList() {
               <DataTableActionButton
                 action="delete"
                 label={tActions('delete')}
-                onClick={() => void handleDelete(guide)}
+                onClick={() => handleDeleteRequest(guide)}
                 disabled={deletingId === guide.id}
                 loading={deletingId === guide.id}
               />
@@ -192,7 +195,7 @@ export function TourGuidesList() {
     ],
     [
       deletingId,
-      handleDelete,
+      handleDeleteRequest,
       statusLabels,
       tActions,
       tColumns,
@@ -207,6 +210,19 @@ export function TourGuidesList() {
   const emptyMessage = search.trim().length > 0 ? t('emptySearch') : t('emptyDefault');
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={t('deleteTitle')}
+        description={confirmTarget ? t('deleteConfirm', { name: confirmTarget.displayName }) : ''}
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <div className="space-y-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end">
         <div className="flex-1 sm:max-w-md">
@@ -262,12 +278,6 @@ export function TourGuidesList() {
         </div>
       </div>
 
-      {deleteError ? (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {deleteError}
-        </p>
-      ) : null}
-
       {isError ? (
         <p className="text-sm text-red-600 dark:text-red-400" role="alert">
           {state.message}
@@ -299,5 +309,6 @@ export function TourGuidesList() {
         </>
       )}
     </div>
+    </>
   );
 }

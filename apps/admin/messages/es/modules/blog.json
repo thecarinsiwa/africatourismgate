@@ -27,7 +27,10 @@
     }
   },
   "list": {
-    "deleteConfirm": "¿Eliminar el artículo «{title}»?",
+    "deleteTitle": "Eliminar artículo",
+    "deleteConfirm": "El artículo «{title}» será eliminado permanentemente.",
+    "deleteConfirmButton": "Eliminar",
+    "cancel": "Cancelar",
     "columns": {
       "title": "Título",
       "locale": "Idioma",

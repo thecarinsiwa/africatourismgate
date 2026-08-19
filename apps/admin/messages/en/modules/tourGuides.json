@@ -5,7 +5,10 @@
     "searchPlaceholder": "Search by name…",
     "searchAria": "Search guides",
     "ariaLabel": "Tour guides list",
-    "deleteConfirm": "Delete guide « {name} »?"
+    "deleteTitle": "Delete guide",
+    "deleteConfirm": "Guide \"{name}\" will be permanently deleted.",
+    "deleteConfirmButton": "Delete",
+    "cancel": "Cancel"
   },
   "columns": {
     "name": "Name",
