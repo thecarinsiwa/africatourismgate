@@ -26,15 +26,20 @@
     },
     "bookings": {
       "label": "Bookings",
-      "subtitle": "Total bookings"
+      "subtitle": "Total bookings",
+      "subtitlePeriod": "For the selected period"
     },
     "revenue": {
       "label": "Revenue",
-      "subtitle": "Successful payments"
+      "subtitle": "Successful payments",
+      "subtitlePeriod": "Successful payments in period"
     },
     "properties": {
       "label": "Accommodations",
       "subtitle": "Published properties"
+    },
+    "change": {
+      "vsPreviousPeriod": "vs previous period"
     }
   },
   "metaTitle": "Dashboard — Africa Tourism Gate Admin",

@@ -26,15 +26,20 @@
     },
     "bookings": {
       "label": "Reservas",
-      "subtitle": "Reservas totales"
+      "subtitle": "Reservas totales",
+      "subtitlePeriod": "En el período seleccionado"
     },
     "revenue": {
       "label": "Ingresos",
-      "subtitle": "Pagos exitosos"
+      "subtitle": "Pagos exitosos",
+      "subtitlePeriod": "Pagos exitosos en el período"
     },
     "properties": {
       "label": "Alojamientos",
       "subtitle": "Propiedades publicadas"
+    },
+    "change": {
+      "vsPreviousPeriod": "vs período anterior"
     }
   },
   "metaTitle": "Panel de control — Africa Tourism Gate Admin",

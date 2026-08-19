@@ -26,15 +26,20 @@
     },
     "bookings": {
       "label": "Réservations",
-      "subtitle": "Réservations totales"
+      "subtitle": "Réservations totales",
+      "subtitlePeriod": "Sur la période sélectionnée"
     },
     "revenue": {
       "label": "Revenus",
-      "subtitle": "Paiements réussis"
+      "subtitle": "Paiements réussis",
+      "subtitlePeriod": "Paiements réussis sur la période"
     },
     "properties": {
       "label": "Hébergements",
       "subtitle": "Hébergements publiés"
+    },
+    "change": {
+      "vsPreviousPeriod": "vs période précédente"
     }
   },
   "metaTitle": "Tableau de bord — Africa Tourism Gate Admin",

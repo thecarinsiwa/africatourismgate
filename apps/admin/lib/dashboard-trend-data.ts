@@ -28,11 +28,19 @@ const PERIOD_DAYS: Record<DashboardPeriod, number> = {
   '90d': 90,
 };
 
+export { PERIOD_DAYS as DASHBOARD_PERIOD_DAYS };
+
 function formatDateOnly(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
 
-function getPeriodRange(period: DashboardPeriod): { dateFrom: string; dateTo: string; days: string[] } {
+export type DashboardDateRange = {
+  dateFrom: string;
+  dateTo: string;
+  days: string[];
+};
+
+export function getDashboardPeriodRange(period: DashboardPeriod): DashboardDateRange {
   const dayCount = PERIOD_DAYS[period];
   const end = new Date();
   end.setUTCHours(0, 0, 0, 0);
@@ -53,10 +61,34 @@ function getPeriodRange(period: DashboardPeriod): { dateFrom: string; dateTo: st
   };
 }
 
+/** Période immédiatement précédente (même durée que `period`). */
+export function getPreviousDashboardPeriodRange(
+  period: DashboardPeriod,
+): Pick<DashboardDateRange, 'dateFrom' | 'dateTo'> {
+  const dayCount = PERIOD_DAYS[period];
+  const current = getDashboardPeriodRange(period);
+  const currentStart = new Date(`${current.dateFrom}T00:00:00.000Z`);
+  const previousEnd = new Date(currentStart);
+  previousEnd.setUTCDate(previousEnd.getUTCDate() - 1);
+  const previousStart = new Date(previousEnd);
+  previousStart.setUTCDate(previousStart.getUTCDate() - (dayCount - 1));
+
+  return {
+    dateFrom: formatDateOnly(previousStart),
+    dateTo: formatDateOnly(previousEnd),
+  };
+}
+
+function getPeriodRange(period: DashboardPeriod): DashboardDateRange {
+  return getDashboardPeriodRange(period);
+}
+
 function isWithinRange(isoDate: string, dateFrom: string, dateTo: string): boolean {
   const day = isoDate.slice(0, 10);
   return day >= dateFrom && day <= dateTo;
 }
+
+export { isWithinRange as isDashboardDateInRange };
 
 function bucketBookings(bookings: BookingListItem[], days: string[]): Map<string, number> {
   const counts = new Map<string, number>(days.map((day) => [day, 0]));
