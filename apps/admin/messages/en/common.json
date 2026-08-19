@@ -18,10 +18,12 @@
     "view": "View"
   },
   "loading": {
+    "default": "Loading…",
     "page": "Loading…",
     "submit": "Saving…"
   },
   "empty": {
+    "default": "No items",
     "noResults": "No results",
     "noMatch": "No matches for your search"
   },

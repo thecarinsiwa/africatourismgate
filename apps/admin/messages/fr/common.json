@@ -18,10 +18,12 @@
     "view": "Voir"
   },
   "loading": {
+    "default": "Chargement…",
     "page": "Chargement…",
     "submit": "Enregistrement…"
   },
   "empty": {
+    "default": "Aucun élément",
     "noResults": "Aucun résultat",
     "noMatch": "Aucune correspondance pour votre recherche"
   },
