@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -42,6 +43,7 @@ export function ShipsList() {
   >({ status: 'loading' });
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<Ship | null>(null);
 
   useEffect(() => {
     void getApiClient()
@@ -87,22 +89,25 @@ export function ShipsList() {
     return () => window.clearTimeout(timer);
   }, [searchInput]);
 
-  const handleDelete = useCallback(
-    async (ship: Ship) => {
-      if (!window.confirm(t('dialogs.deleteShip', { name: ship.name }))) return;
-      setDeleteError(null);
-      setDeletingId(ship.id);
-      try {
-        await getApiClient().deleteShip(ship.id);
-        await load();
-      } catch (error) {
-        setDeleteError(getCroisieresErrorMessage(error));
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [getCroisieresErrorMessage, load, t],
-  );
+  const handleDeleteRequest = useCallback((ship: Ship) => {
+    setConfirmTarget(ship);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const ship = confirmTarget;
+    setConfirmTarget(null);
+    setDeleteError(null);
+    setDeletingId(ship.id);
+    try {
+      await getApiClient().deleteShip(ship.id);
+      await load();
+    } catch (error) {
+      setDeleteError(getCroisieresErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getCroisieresErrorMessage, load]);
 
   const columns = useMemo<ColumnDef<Ship, unknown>[]>(
     () => [
@@ -137,7 +142,7 @@ export function ShipsList() {
             />
             <DataTableActionButton
               action="delete"
-              onClick={() => void handleDelete(row.original)}
+              onClick={() => handleDeleteRequest(row.original)}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
             />
@@ -145,7 +150,7 @@ export function ShipsList() {
         ),
       },
     ],
-    [deletingId, emptyDash, handleDelete, lineById, t, tColumns],
+    [deletingId, emptyDash, handleDeleteRequest, lineById, t, tColumns],
   );
 
   const ships = state.status === 'ready' ? state.ships : [];
@@ -153,6 +158,19 @@ export function ShipsList() {
     'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg';
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={t('dialogs.deleteShipTitle')}
+        description={confirmTarget ? t('dialogs.deleteShip', { name: confirmTarget.name }) : ''}
+        confirmLabel={t('dialogs.deleteShipButton')}
+        cancelLabel={t('dialogs.cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <div className="space-y-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex flex-1 flex-col gap-3 sm:flex-row sm:max-w-2xl">
@@ -217,5 +235,6 @@ export function ShipsList() {
         </>
       )}
     </div>
+    </>
   );
 }

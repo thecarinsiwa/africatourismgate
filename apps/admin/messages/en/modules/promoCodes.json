@@ -4,7 +4,10 @@
     "inactive": "Inactive"
   },
   "list": {
-    "deleteConfirm": "Supprimer le code promo « {code} » ?",
+    "deleteTitle": "Delete promo code",
+    "deleteConfirm": "Promo code \"{code}\" will be permanently deleted.",
+    "deleteConfirmButton": "Delete",
+    "cancel": "Cancel",
     "columns": {
       "code": "Code",
       "discount": "Réduction",

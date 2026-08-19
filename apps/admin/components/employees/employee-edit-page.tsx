@@ -4,6 +4,7 @@ import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import type { Employee } from '@africatourismgate/types';
 import Link from 'next/link';
+import { AdminPageBackLink } from '../admin-page-back-link';
 import { useEffect, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
@@ -80,6 +81,7 @@ export function EmployeeEditPage({ employeeId }: EmployeeEditPageProps) {
 
   return (
     <div>
+      <AdminPageBackLink href="/utilisateurs/employes" label="Retour aux employés" className="mb-8 block" />
       <EmployeeForm mode="edit" employeeId={employeeId} initialEmployee={employee} />
     </div>
   );

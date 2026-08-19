@@ -4,18 +4,21 @@
     "ariaLabel": "Liste des activités",
     "searchPlaceholder": "Rechercher par titre…",
     "destination": "Destino",
-    "deleteConfirm": "Supprimer l'activité « {title} » ?"
+    "deleteConfirm": "¿Eliminar la actividad « {title} »?",
+    "deleteTitle": "Eliminar actividad",
+    "deleteConfirmButton": "Eliminar",
+    "cancel": "Cancelar"
   },
   "columns": {
     "activity": "Actividad",
-    "provider": "Proveedor",
+    "provider": "Socio",
     "price": "Precio",
     "duration": "Desderée",
     "difficulty": "Dificultad"
   },
   "form": {
     "submitCreate": "Crear",
-    "provider": "Proveedor",
+    "provider": "Socio",
     "title": "Título",
     "difficulty": "Dificultad",
     "priceCents": "Precio (centavos)",
@@ -38,6 +41,9 @@
       "unnamed": "Sin nombre",
       "fileHint": "Formatos: JPG, PNG, WEBP, PDF, DOC, DOCX (máx. 10 MB)",
       "deleteConfirm": "¿Eliminar el adjunto « {name} »?",
+      "deleteTitle": "Eliminar adjunto",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar",
       "fields": {
         "name": "Nombre mostrado",
         "type": "Tipo"
@@ -88,7 +94,10 @@
       "dateTime": "Fecha y hora",
       "capacity": "Capacidad",
       "empty": "Ninguna franja para esta actividad.",
-      "deleteConfirm": "¿Eliminar esta franja?",
+      "deleteConfirm": "Esta franja horaria será eliminada.",
+      "deleteTitle": "Eliminar franja",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar",
       "validationDateTime": "La fecha y la hora son obligatorias.",
       "validationCapacity": "La capacidad debe ser al menos 1.",
       "viewList": "Lista",
@@ -104,7 +113,10 @@
       "new": "Nueva etapa",
       "edit": "Editar etapa",
       "empty": "Ninguna etapa de itinerario para esta actividad.",
-      "deleteConfirm": "¿Eliminar esta etapa?",
+      "deleteConfirm": "Esta etapa de itinerario será eliminada.",
+      "deleteTitle": "Eliminar etapa",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar",
       "order": "Etapa",
       "description": "Descripción (opcional)",
       "mapPicker": "Mapa de ayuda",
@@ -125,25 +137,28 @@
   },
   "referential": {
     "providers": {
-      "new": "Nouveau fournisseur",
-      "edit": "Modifier le fournisseur",
-      "empty": "Hastacun fournisseur.",
-      "searchPlaceholder": "Rechercher un fournisseur…",
-      "ratingTitle": "Note moyenne (à venir)",
-      "deleteConfirm": "Supprimer « {name} » ?",
+      "new": "Nuevo socio",
+      "edit": "Editar socio",
+      "empty": "No hay socios aún.",
+      "searchPlaceholder": "Buscar un socio…",
+      "ratingTitle": "Calificación media (próximamente)",
+      "deleteConfirm": "El socio «{name}» será eliminado permanentemente.",
+      "deleteTitle": "Eliminar socio",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar",
       "validation": {
-        "destinationRequired": "La destination est obligatoire."
+        "destinationRequired": "El destino es obligatorio."
       }
     }
   },
   "stats": {
     "activities": {
-      "label": "Actividads",
-      "subtitle": "Expériences catalogue"
+      "label": "Actividades",
+      "subtitle": "Catálogo de experiencias"
     },
     "providers": {
-      "label": "Proveedors",
-      "subtitle": "Opérateurs locaux"
+      "label": "Socios",
+      "subtitle": "Operadores locales"
     },
     "schedules": {
       "label": "Franjas horarias",

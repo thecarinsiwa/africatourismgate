@@ -219,22 +219,25 @@
   },
   "bankAccounts": {
     "page": {
-      "title": "Comptes bancaires",
-      "intro": "Comptes B2B de l'organisation pour les virements et paiements hors ligne.",
-      "denied": "Vous n'avez pas la permission de consulter les comptes bancaires."
+      "title": "Cuentas bancarias",
+      "intro": "Cuentas B2B de la organización para transferencias y pagos fuera de línea.",
+      "denied": "No tiene permiso para ver las cuentas bancarias."
     },
     "list": {
-      "deleteConfirm": "Supprimer ce compte bancaire ?",
+      "deleteTitle": "Eliminar cuenta bancaria",
+      "deleteConfirm": "Esta cuenta bancaria será eliminada permanentemente.",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar",
       "columns": {
-        "bank": "Banque",
-        "account": "Compte",
-        "accountNumber": "N° compte",
+        "bank": "Banco",
+        "account": "Cuenta",
+        "accountNumber": "N.° de cuenta",
         "currency": "Moneda",
-        "isDefault": "Défaut"
+        "isDefault": "Predeterminado"
       },
-      "newButton": "Nouveau compte",
+      "newButton": "Nueva cuenta",
       "orgSelectAria": "Organización",
-      "empty": "Hastacun compte bancaire."
+      "empty": "No hay cuentas bancarias aún."
     },
     "form": {
       "validation": {
@@ -274,7 +277,10 @@
       "allStatuses": "Todos los estados",
       "empty": "No hay campañas de donación por el momento.",
       "denied": "No tiene permiso para ver las donaciones.",
-      "deleteConfirm": "¿Eliminar la campaña « {title} »?",
+      "deleteTitle": "Eliminar campaña",
+      "deleteConfirm": "La campaña «{title}» será eliminada permanentemente.",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar",
       "featuredYes": "Navbar",
       "columns": {
         "title": "Título",

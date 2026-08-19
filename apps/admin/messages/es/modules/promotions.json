@@ -19,7 +19,10 @@
     "fixedFormat": "−{value}"
   },
   "list": {
-    "deleteConfirm": "Supprimer la promotion « {name} » ?",
+    "deleteTitle": "Eliminar promoción",
+    "deleteConfirm": "La promoción «{name}» será eliminada permanentemente.",
+    "deleteConfirmButton": "Eliminar",
+    "cancel": "Cancelar",
     "columns": {
       "campaign": "Campagne",
       "validity": "Validité",

@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -50,6 +51,8 @@ export function RentalAgenciesList() {
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<RentalAgency | null>(null);
 
   useEffect(() => {
     void getApiClient()
@@ -158,6 +161,26 @@ export function RentalAgenciesList() {
     }
   }
 
+  const handleDeleteRequest = useCallback((agency: RentalAgency) => {
+    setConfirmTarget(agency);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const agency = confirmTarget;
+    setConfirmTarget(null);
+    setDeleteError(null);
+    setDeletingId(agency.id);
+    try {
+      await getApiClient().deleteRentalAgency(agency.id);
+      await load();
+    } catch (error) {
+      setDeleteError(getLocationsErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getLocationsErrorMessage, load]);
+
   const columns = useMemo<ColumnDef<RentalAgency, unknown>[]>(
     () => [
       { accessorKey: 'name', header: t('agency') },
@@ -183,18 +206,7 @@ export function RentalAgenciesList() {
             <DataTableActionButton action="edit" onClick={() => openForm(row.original)} />
             <DataTableActionButton
               action="delete"
-              onClick={async () => {
-                if (!window.confirm(t('deleteConfirm', { name: row.original.name }))) return;
-                setDeletingId(row.original.id);
-                try {
-                  await getApiClient().deleteRentalAgency(row.original.id);
-                  await load();
-                } catch (error) {
-                  setFormError(getLocationsErrorMessage(error));
-                } finally {
-                  setDeletingId(null);
-                }
-              }}
+              onClick={() => handleDeleteRequest(row.original)}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
             />
@@ -202,13 +214,26 @@ export function RentalAgenciesList() {
         ),
       },
     ],
-    [deletingId, destById, emptyDash, load, t, tCommon, tDestinations, getLocationsErrorMessage],
+    [deletingId, destById, emptyDash, handleDeleteRequest, t, tCommon, tDestinations],
   );
 
   const agencies = state.status === 'ready' ? state.agencies : [];
   const emptyMessage = search.trim().length > 0 ? t('emptySearch') : t('emptyDefault');
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={t('deleteTitle')}
+        description={confirmTarget ? t('deleteConfirm', { name: confirmTarget.name }) : ''}
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <div className="space-y-6">
       <ReferentialListToolbar
         searchValue={searchInput}
@@ -295,5 +320,6 @@ export function RentalAgenciesList() {
         </>
       )}
     </div>
+    </>
   );
 }

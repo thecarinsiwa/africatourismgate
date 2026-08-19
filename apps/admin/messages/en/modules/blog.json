@@ -27,7 +27,10 @@
     }
   },
   "list": {
-    "deleteConfirm": "Delete post \"{title}\"?",
+    "deleteTitle": "Delete post",
+    "deleteConfirm": "Post \"{title}\" will be permanently deleted.",
+    "deleteConfirmButton": "Delete",
+    "cancel": "Cancel",
     "columns": {
       "title": "Title",
       "locale": "Language",

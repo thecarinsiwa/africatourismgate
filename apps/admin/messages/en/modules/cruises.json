@@ -1,10 +1,13 @@
 {
   "list": {
-    "newSailing": "Nouveau départ",
-    "viewList": "Liste",
-    "viewCalendar": "Calendrier",
-    "emptySailings": "Tocun départ programmé.",
-    "deleteSailingConfirm": "Supprimer le départ « {label} » ?",
+    "newSailing": "New sailing",
+    "viewList": "List",
+    "viewCalendar": "Calendar",
+    "emptySailings": "No sailings scheduled.",
+    "deleteSailingTitle": "Delete sailing",
+    "deleteSailingConfirm": "The sailing \"{label}\" will be permanently deleted.",
+    "deleteSailingButton": "Delete",
+    "cancel": "Cancel",
     "fallbackDeparture": "Departure"
   },
   "columns": {
@@ -38,35 +41,47 @@
       "validation": "Itinerary et date de départ sont obligatoires."
     },
     "itinerary": {
-      "new": "Nouvel itinéraire",
-      "edit": "Modifier l'itinéraire",
-      "durationNights": "Fromrée (nuits)",
-      "empty": "Tocun itinéraire.",
-      "deleteConfirm": "Supprimer cet itinéraire ?",
-      "validation": "Name et durée (nuits) invalides."
+      "new": "New itinerary",
+      "edit": "Edit itinerary",
+      "durationNights": "Duration (nights)",
+      "empty": "No itineraries.",
+      "deleteConfirm": "This itinerary will be permanently deleted.",
+      "deleteTitle": "Delete itinerary",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
+      "validation": "Name and duration (nights) are required."
     },
     "port": {
-      "new": "Nouveau port de croisière",
-      "edit": "Modifier le port",
+      "new": "New cruise port",
+      "edit": "Edit port",
       "countryIso": "Country (ISO)",
-      "empty": "Tocun port.",
-      "deleteConfirm": "Supprimer le port « {name} » ?"
+      "empty": "No ports.",
+      "deleteConfirm": "Port \"{name}\" will be permanently deleted.",
+      "deleteTitle": "Delete port",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel"
     },
     "line": {
-      "new": "Nouvelle ligne de croisière",
-      "edit": "Modifier la ligne",
-      "empty": "None ligne de croisière.",
-      "deleteConfirm": "Supprimer la ligne « {name} » ?"
+      "new": "New cruise line",
+      "edit": "Edit line",
+      "empty": "No cruise lines.",
+      "deleteConfirm": "Line \"{name}\" will be permanently deleted.",
+      "deleteTitle": "Delete line",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel"
     },
     "cabin": {
-      "new": "Nouvelle cabine",
-      "edit": "Modifier la cabine",
-      "category": "Catégorie",
-      "maxGuests": "Voyageurs max",
-      "empty": "None cabine.",
-      "deleteConfirm": "Supprimer cette cabine ?",
-      "validationCategory": "Catégorie et capacité invalides.",
-      "validationPrice": "Price de base invalide."
+      "new": "New cabin",
+      "edit": "Edit cabin",
+      "category": "Category",
+      "maxGuests": "Max guests",
+      "empty": "No cabins.",
+      "deleteConfirm": "This cabin will be permanently deleted.",
+      "deleteTitle": "Delete cabin",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
+      "validationCategory": "Category and capacity are required.",
+      "validationPrice": "Base price is invalid."
     }
   },
   "detail": {
@@ -79,13 +94,16 @@
   },
   "sections": {
     "itineraryPorts": {
-      "day": "Jour",
-      "arrivalTime": "Heure d'arrivée (HH:MM)",
-      "departureTime": "Heure de départ (HH:MM)",
+      "day": "Day",
+      "arrivalTime": "Arrival time (HH:MM)",
+      "departureTime": "Departure time (HH:MM)",
       "arrivalPlaceholder": "08:00",
       "departurePlaceholder": "18:00",
-      "empty": "None escale.",
-      "deleteConfirm": "Supprimer cette escale ?"
+      "empty": "No ports of call.",
+      "deleteConfirm": "This port of call will be permanently deleted.",
+      "deleteTitle": "Delete port of call",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel"
     },
     "cabinAvailability": {
       "title": "Cabins réservables",
@@ -101,7 +119,10 @@
     }
   },
   "dialogs": {
-    "deleteShip": "Supprimer le navire « {name} » ?"
+    "deleteShip": "Ship \"{name}\" will be permanently deleted.",
+    "deleteShipTitle": "Delete ship",
+    "deleteShipButton": "Delete",
+    "cancel": "Cancel"
   },
   "calendar": {
     "ariaLabel": "Calendrier des départs — {month}",

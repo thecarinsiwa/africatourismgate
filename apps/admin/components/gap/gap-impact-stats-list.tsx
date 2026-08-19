@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -44,6 +45,7 @@ export function GapImpactStatsList() {
   >({ status: 'loading' });
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<GapImpactStat | null>(null);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -81,22 +83,25 @@ export function GapImpactStatsList() {
     return () => window.clearTimeout(timer);
   }, [searchInput]);
 
-  const handleDelete = useCallback(
-    async (stat: GapImpactStat) => {
-      if (!window.confirm(t('deleteConfirm', { label: stat.label }))) return;
-      setDeleteError(null);
-      setDeletingId(stat.id);
-      try {
-        await getApiClient().deleteGapImpactStat(stat.id);
-        await load();
-      } catch (error) {
-        setDeleteError(getGapErrorMessage(error));
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [load, t, getGapErrorMessage],
-  );
+  const handleDeleteRequest = useCallback((stat: GapImpactStat) => {
+    setConfirmTarget(stat);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const stat = confirmTarget;
+    setConfirmTarget(null);
+    setDeleteError(null);
+    setDeletingId(stat.id);
+    try {
+      await getApiClient().deleteGapImpactStat(stat.id);
+      await load();
+    } catch (error) {
+      setDeleteError(getGapErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getGapErrorMessage, load]);
 
   const columns = useMemo<ColumnDef<GapImpactStat, unknown>[]>(
     () => [
@@ -161,7 +166,7 @@ export function GapImpactStatsList() {
             {canWrite ? (
               <DataTableActionButton
                 action="delete"
-                onClick={() => void handleDelete(row.original)}
+                onClick={() => handleDeleteRequest(row.original)}
                 disabled={deletingId === row.original.id}
                 loading={deletingId === row.original.id}
               />
@@ -170,13 +175,26 @@ export function GapImpactStatsList() {
         ),
       },
     ],
-    [canWrite, deletingId, handleDelete, t, tColors, tCommon, tStatus],
+    [canWrite, deletingId, handleDeleteRequest, t, tColors, tCommon, tStatus],
   );
 
   const stats = state.status === 'ready' ? state.stats : [];
   const hasActiveFilters = Boolean(statusFilter || localeFilter);
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={t('deleteTitle')}
+        description={confirmTarget ? t('deleteConfirm', { label: confirmTarget.label }) : ''}
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <div className="space-y-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:items-end">
@@ -241,12 +259,6 @@ export function GapImpactStatsList() {
         {canWrite ? <Button href="/gap/impact/nouveau">{t('newButton')}</Button> : null}
       </div>
 
-      {deleteError ? (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {deleteError}
-        </p>
-      ) : null}
-
       {state.status === 'error' ? (
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {state.message}
@@ -276,5 +288,6 @@ export function GapImpactStatsList() {
         </>
       )}
     </div>
+    </>
   );
 }

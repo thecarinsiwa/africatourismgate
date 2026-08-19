@@ -52,7 +52,10 @@
   },
   "pages": {
     "list": {
-      "deleteConfirm": "¿Eliminar la página « {title} »?",
+      "deleteTitle": "Eliminar página",
+      "deleteConfirm": "La página «{title}» será eliminada permanentemente.",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar",
       "columns": {
         "section": "Sección",
         "title": "Título",
@@ -102,7 +105,10 @@
   },
   "activities": {
     "list": {
-      "deleteConfirm": "¿Eliminar la actividad « {title} »?",
+      "deleteTitle": "Eliminar actividad",
+      "deleteConfirm": "La actividad «{title}» será eliminada permanentemente.",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar",
       "columns": {
         "title": "Título",
         "icon": "Icono",
@@ -141,7 +147,10 @@
   },
   "impact": {
     "list": {
-      "deleteConfirm": "¿Eliminar la estadística « {label} »?",
+      "deleteTitle": "Eliminar estadística",
+      "deleteConfirm": "La estadística «{label}» será eliminada permanentemente.",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar",
       "columns": {
         "label": "Etiqueta",
         "value": "Valor",
@@ -180,7 +189,10 @@
   },
   "media": {
     "list": {
-      "deleteConfirm": "¿Eliminar el medio « {title} »?",
+      "deleteTitle": "Eliminar medio",
+      "deleteConfirm": "El medio «{title}» será eliminado permanentemente.",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar",
       "columns": {
         "title": "Título",
         "mediaType": "Tipo",

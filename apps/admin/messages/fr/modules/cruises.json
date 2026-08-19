@@ -4,7 +4,10 @@
     "viewList": "Liste",
     "viewCalendar": "Calendrier",
     "emptySailings": "Aucun départ programmé.",
-    "deleteSailingConfirm": "Supprimer le départ « {label} » ?",
+    "deleteSailingTitle": "Supprimer le départ",
+    "deleteSailingConfirm": "Le départ « {label} » sera supprimé définitivement.",
+    "deleteSailingButton": "Supprimer",
+    "cancel": "Annuler",
     "fallbackDeparture": "Départ"
   },
   "columns": {
@@ -42,7 +45,10 @@
       "edit": "Modifier l'itinéraire",
       "durationNights": "Durée (nuits)",
       "empty": "Aucun itinéraire.",
-      "deleteConfirm": "Supprimer cet itinéraire ?",
+      "deleteConfirm": "Cet itinéraire sera supprimé définitivement.",
+      "deleteTitle": "Supprimer l'itinéraire",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler",
       "validation": "Nom et durée (nuits) invalides."
     },
     "port": {
@@ -50,13 +56,19 @@
       "edit": "Modifier le port",
       "countryIso": "Pays (ISO)",
       "empty": "Aucun port.",
-      "deleteConfirm": "Supprimer le port « {name} » ?"
+      "deleteConfirm": "Le port « {name} » sera supprimé définitivement.",
+      "deleteTitle": "Supprimer le port",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler"
     },
     "line": {
       "new": "Nouvelle ligne de croisière",
       "edit": "Modifier la ligne",
       "empty": "Aucune ligne de croisière.",
-      "deleteConfirm": "Supprimer la ligne « {name} » ?"
+      "deleteConfirm": "La ligne « {name} » sera supprimée définitivement.",
+      "deleteTitle": "Supprimer la ligne",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler"
     },
     "cabin": {
       "new": "Nouvelle cabine",
@@ -64,7 +76,10 @@
       "category": "Catégorie",
       "maxGuests": "Voyageurs max",
       "empty": "Aucune cabine.",
-      "deleteConfirm": "Supprimer cette cabine ?",
+      "deleteConfirm": "Cette cabine sera supprimée définitivement.",
+      "deleteTitle": "Supprimer la cabine",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler",
       "validationCategory": "Catégorie et capacité invalides.",
       "validationPrice": "Prix de base invalide."
     }
@@ -85,7 +100,10 @@
       "arrivalPlaceholder": "08:00",
       "departurePlaceholder": "18:00",
       "empty": "Aucune escale.",
-      "deleteConfirm": "Supprimer cette escale ?"
+      "deleteConfirm": "Cette escale sera supprimée définitivement.",
+      "deleteTitle": "Supprimer l'escale",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler"
     },
     "cabinAvailability": {
       "title": "Cabines réservables",
@@ -101,7 +119,10 @@
     }
   },
   "dialogs": {
-    "deleteShip": "Supprimer le navire « {name} » ?"
+    "deleteShip": "Le navire « {name} » sera supprimé définitivement.",
+    "deleteShipTitle": "Supprimer le navire",
+    "deleteShipButton": "Supprimer",
+    "cancel": "Annuler"
   },
   "calendar": {
     "ariaLabel": "Calendrier des départs — {month}",

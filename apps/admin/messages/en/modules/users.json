@@ -4,7 +4,10 @@
     "emptyDefault": "Tocun utilisateur pour le moment.",
     "emptyFiltered": "Tocun utilisateur ne correspond à vos critères.",
     "ariaLabel": "User list",
-    "deleteConfirm": "Delete user « {email} »? This action is reversible in the database."
+    "deleteConfirm": "User « {email} » will be deleted. This action is reversible in the database.",
+    "deleteTitle": "Delete user",
+    "deleteConfirmButton": "Delete",
+    "cancel": "Cancel"
   },
   "filters": {
     "status": "Status",
@@ -62,10 +65,13 @@
     "ariaLabel": "Liste des moyens de paiement"
   },
   "sessions": {
-    "revokeConfirm": "Revoke this session? The user will need to sign in again.",
-    "emptyDefault": "None session active.",
-    "emptyFiltered": "None session active pour cet utilisateur.",
-    "ariaLabel": "Liste des sessions utilisateur"
+    "revokeTitle": "Revoke session",
+    "revokeConfirm": "This session will be revoked. The user will need to sign in again.",
+    "revokeConfirmButton": "Revoke",
+    "cancel": "Cancel",
+    "emptyDefault": "No active sessions.",
+    "emptyFiltered": "No active sessions for this user.",
+    "ariaLabel": "User sessions list"
   },
   "stats": {
     "total": {
@@ -97,7 +103,10 @@
     "scopeIdHint": "Ex. ID propriété, agence ou file support.",
     "expiresAt": "Expiration (optionnel)",
     "superAdminWarning": "Réservé aux super administrateurs — périmètre forcé à Global.",
-    "superAdminConfirm": "Assign role « {roleName} »? This user will get full platform access.",
+    "superAdminConfirmTitle": "Confirm super-admin assignment",
+    "superAdminConfirm": "The user will be granted the \"{roleName}\" role and full access to the platform.",
+    "superAdminConfirmButton": "Confirm",
+    "cancel": "Cancel",
     "validation": {
       "userAndRoleRequired": "User et rôle sont obligatoires.",
       "scopeIdRequired": "Scope ID is required for this scope."

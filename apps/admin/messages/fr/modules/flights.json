@@ -87,7 +87,10 @@
       "cabinType": "Type de cabine",
       "totalSeats": "Sièges totaux",
       "empty": "Aucune classe cabine.",
-      "deleteConfirm": "Supprimer cette classe ?"
+      "deleteConfirm": "Cette classe cabine sera supprimée.",
+      "deleteTitle": "Supprimer la classe",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler"
     },
     "availability": {
       "title": "Disponibilités",
@@ -104,7 +107,10 @@
       "searchPlaceholder": "Rechercher par code IATA ou nom…",
       "searchAria": "Rechercher une compagnie",
       "iataCode": "Code IATA",
-      "deleteConfirm": "Supprimer « {name} » ?"
+      "deleteConfirm": "Supprimer « {name} » ?",
+      "deleteTitle": "Supprimer la compagnie",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler"
     },
     "airports": {
       "new": "Nouvel aéroport",
@@ -123,6 +129,9 @@
       "mapPickerAria": "Carte interactive pour choisir les coordonnées de l'aéroport",
       "openStreetMap": "Ouvrir dans OpenStreetMap",
       "deleteConfirm": "Supprimer « {name} » ?",
+      "deleteTitle": "Supprimer l'aéroport",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler",
       "validation": {
         "required": "Tous les champs sont obligatoires."
       }

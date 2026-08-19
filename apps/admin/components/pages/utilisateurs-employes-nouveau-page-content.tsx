@@ -5,7 +5,11 @@ import { AdminIntroPage } from './admin-intro-page';
 
 export function NouveauEmployePageContent() {
   return (
-    <AdminIntroPage routePath="utilisateurs/employes/nouveau">
+    <AdminIntroPage
+      routePath="utilisateurs/employes/nouveau"
+      backHref="/utilisateurs/employes"
+      backLabelKey="backLabel"
+    >
       <EmployeeForm mode="create" />
     </AdminIntroPage>
   );

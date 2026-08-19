@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -122,6 +123,8 @@ export function UserSessionsList({
   const [userIdFilter, setUserIdFilter] = useState(fixedUserId ?? '');
   const [users, setUsers] = useState<User[]>([]);
   const [revokingId, setRevokingId] = useState<string | null>(null);
+  const [revokeError, setRevokeError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<UserSession | null>(null);
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -168,23 +171,25 @@ export function UserSessionsList({
     void load();
   }, [load]);
 
-  const handleRevoke = useCallback(
-    async (row: UserSession) => {
-      if (!window.confirm(tSessions('revokeConfirm'))) {
-        return;
-      }
-      setRevokingId(row.id);
-      try {
-        await getApiClient().revokeUserSession(row.id);
-        await load();
-      } catch (error) {
-        window.alert(getUsersErrorMessage(error));
-      } finally {
-        setRevokingId(null);
-      }
-    },
-    [load, tSessions, getUsersErrorMessage],
-  );
+  const handleRevokeRequest = useCallback((row: UserSession) => {
+    setConfirmTarget(row);
+  }, []);
+
+  const handleRevokeConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const row = confirmTarget;
+    setConfirmTarget(null);
+    setRevokeError(null);
+    setRevokingId(row.id);
+    try {
+      await getApiClient().revokeUserSession(row.id);
+      await load();
+    } catch (error) {
+      setRevokeError(getUsersErrorMessage(error));
+    } finally {
+      setRevokingId(null);
+    }
+  }, [confirmTarget, load, getUsersErrorMessage]);
 
   const columns = useMemo<ColumnDef<UserSession, unknown>[]>(() => {
     const cols: ColumnDef<UserSession, unknown>[] = [];
@@ -238,7 +243,7 @@ export function UserSessionsList({
             <DataTableActionButton
               action="revoke"
               label={tRoles('revokeDialog.title')}
-              onClick={() => void handleRevoke(row.original)}
+              onClick={() => handleRevokeRequest(row.original)}
               disabled={revokingId === row.original.id}
               loading={revokingId === row.original.id}
             />
@@ -249,7 +254,7 @@ export function UserSessionsList({
 
     return cols;
   }, [
-    handleRevoke,
+    handleRevokeRequest,
     revokingId,
     showUserColumn,
     tColumns,
@@ -264,6 +269,18 @@ export function UserSessionsList({
 
   return (
     <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={tSessions('revokeTitle')}
+        description={tSessions('revokeConfirm')}
+        confirmLabel={tSessions('revokeConfirmButton')}
+        cancelLabel={tSessions('cancel')}
+        variant="danger"
+        loading={!!revokingId}
+        error={revokeError}
+        onConfirm={() => void handleRevokeConfirm()}
+      />
       {!fixedUserId ? (
         <UserIdFilterBar onUserIdChange={handleUserIdChange} onUsersLoaded={setUsers} />
       ) : null}
@@ -295,7 +312,7 @@ export function UserSessionsList({
                   usersById={usersById}
                   showUser={showUserColumn}
                   revoking={revokingId === session.id}
-                  onRevoke={(s) => void handleRevoke(s)}
+                  onRevoke={(s) => handleRevokeRequest(s)}
                   tSessionStatus={tSessionStatus}
                   tDates={tDates}
                   tRoles={tRoles}

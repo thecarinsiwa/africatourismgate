@@ -4,7 +4,10 @@
     "emptyDefault": "Aucun utilisateur pour le moment.",
     "emptyFiltered": "Aucun utilisateur ne correspond à vos critères.",
     "ariaLabel": "Liste des utilisateurs",
-    "deleteConfirm": "Supprimer l'utilisateur « {email} » ? Cette action est réversible côté base."
+    "deleteConfirm": "L'utilisateur « {email} » sera supprimé. Cette action est réversible en base de données.",
+    "deleteTitle": "Supprimer l'utilisateur",
+    "deleteConfirmButton": "Supprimer",
+    "cancel": "Annuler"
   },
   "filters": {
     "status": "Statut",
@@ -62,7 +65,10 @@
     "ariaLabel": "Liste des moyens de paiement"
   },
   "sessions": {
-    "revokeConfirm": "Révoquer cette session ? L'utilisateur devra se reconnecter.",
+    "revokeTitle": "Révoquer la session",
+    "revokeConfirm": "Cette session sera révoquée. L'utilisateur devra se reconnecter.",
+    "revokeConfirmButton": "Révoquer",
+    "cancel": "Annuler",
     "emptyDefault": "Aucune session active.",
     "emptyFiltered": "Aucune session active pour cet utilisateur.",
     "ariaLabel": "Liste des sessions utilisateur"
@@ -97,7 +103,10 @@
     "scopeIdHint": "Ex. ID propriété, agence ou file support.",
     "expiresAt": "Expiration (optionnel)",
     "superAdminWarning": "Réservé aux super administrateurs — périmètre forcé à Global.",
-    "superAdminConfirm": "Attribuer le rôle « {roleName} » ? Cet utilisateur obtiendra un accès complet à la plateforme.",
+    "superAdminConfirmTitle": "Confirmer l'attribution super-admin",
+    "superAdminConfirm": "L'utilisateur obtiendra le rôle « {roleName} » et un accès complet à la plateforme.",
+    "superAdminConfirmButton": "Confirmer",
+    "cancel": "Annuler",
     "validation": {
       "userAndRoleRequired": "Utilisateur et rôle sont obligatoires.",
       "scopeIdRequired": "L'identifiant de scope est obligatoire pour ce périmètre."

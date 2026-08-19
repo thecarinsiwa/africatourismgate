@@ -2,7 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Card, DataTable, DataTableActionButton, DataTableActions, Input, type ColumnDef } from '@africatourismgate/ui';
+import { AlertDialog, Button, Card, DataTable, DataTableActionButton, DataTableActions, Input, type ColumnDef } from '@africatourismgate/ui';
 import type { CruisePort, ItineraryPort } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
@@ -62,6 +62,7 @@ export function ItineraryPortsSection({
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<ItineraryPort | null>(null);
 
   useAdminEditPageMeta({
     ready: true,
@@ -138,6 +139,25 @@ export function ItineraryPortsSection({
     }
   }
 
+  const handleDeleteRequest = useCallback((row: ItineraryPort) => {
+    setConfirmTarget(row);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const row = confirmTarget;
+    setConfirmTarget(null);
+    setDeletingId(row.id);
+    try {
+      await getApiClient().deleteItineraryPort(row.id);
+      await load();
+    } catch (error) {
+      setFormError(getCroisieresErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getCroisieresErrorMessage, load]);
+
   const formatTime = useCallback(
     (value: string | null) => {
       if (!value) return emptyDash;
@@ -198,18 +218,7 @@ export function ItineraryPortsSection({
             />
             <DataTableActionButton
               action="delete"
-              onClick={async () => {
-                if (!window.confirm(t('deleteConfirm'))) return;
-                setDeletingId(row.original.id);
-                try {
-                  await getApiClient().deleteItineraryPort(row.original.id);
-                  await load();
-                } catch (error) {
-                  setFormError(getCroisieresErrorMessage(error));
-                } finally {
-                  setDeletingId(null);
-                }
-              }}
+              onClick={() => handleDeleteRequest(row.original)}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
             />
@@ -217,7 +226,7 @@ export function ItineraryPortsSection({
         ),
       },
     ],
-    [deletingId, emptyDash, formatTime, getCroisieresErrorMessage, load, portById, t, tColumns, tCruise],
+    [deletingId, emptyDash, formatTime, handleDeleteRequest, portById, t, tColumns, tCruise],
   );
 
   const rows = useMemo(
@@ -236,6 +245,18 @@ export function ItineraryPortsSection({
     'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg';
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={t('deleteTitle')}
+        description={t('deleteConfirm')}
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <div>
       <AdminPageBackLink href={`/produits/croisieres/navires/${shipId}`} label={tDetail('backToShip')} />
 
@@ -350,5 +371,6 @@ export function ItineraryPortsSection({
         )}
       </div>
     </div>
+    </>
   );
 }

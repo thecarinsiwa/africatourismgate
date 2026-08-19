@@ -30,13 +30,15 @@
       "description": "Create a user account."
     },
     "id": {
-      "metaTitle": "Edit user"
+      "metaTitle": "Edit user",
+      "backLabel": "Back to users"
     },
     "employes": {
       "description": "Employee profiles linked to users and organizations.",
       "nouveau": {
         "metaTitle": "New employee",
-        "description": "Link an existing user to an organization."
+        "description": "Link an existing user to an organization.",
+        "backLabel": "Back to employees"
       },
       "id": {
         "metaTitle": "Edit employee"
@@ -100,9 +102,9 @@
   "produits": {
     "activites": {
       "title": "Activities & tours",
-      "description": "Experiences, providers and time slots by destination.",
+      "description": "Experiences, partners and time slots by destination.",
       "actions": {
-        "providers": "Providers",
+        "providers": "Partners",
         "new": "New activity"
       },
       "nouveau": {
@@ -110,7 +112,7 @@
         "description": "Create an experience then add schedules on the edit page."
       },
       "fournisseurs": {
-        "title": "Activity providers",
+        "title": "Activity partners",
         "description": "Operators linked to destinations."
       },
       "id": {

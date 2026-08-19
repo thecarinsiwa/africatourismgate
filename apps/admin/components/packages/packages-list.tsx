@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -51,6 +52,7 @@ export function PackagesList() {
   >({ status: 'loading' });
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<Package | null>(null);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -98,22 +100,25 @@ export function PackagesList() {
     return () => window.clearTimeout(timer);
   }, [searchInput]);
 
-  const handleDelete = useCallback(
-    async (pkg: Package) => {
-      if (!window.confirm(tList('deleteConfirm', { name: pkg.name }))) return;
-      setDeleteError(null);
-      setDeletingId(pkg.id);
-      try {
-        await getApiClient().deletePackage(pkg.id);
-        await load();
-      } catch (error) {
-        setDeleteError(getPackagesErrorMessage(error));
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [load, tList, getPackagesErrorMessage],
-  );
+  const handleDeleteRequest = useCallback((pkg: Package) => {
+    setConfirmTarget(pkg);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const pkg = confirmTarget;
+    setConfirmTarget(null);
+    setDeleteError(null);
+    setDeletingId(pkg.id);
+    try {
+      await getApiClient().deletePackage(pkg.id);
+      await load();
+    } catch (error) {
+      setDeleteError(getPackagesErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getPackagesErrorMessage, load]);
 
   const columns = useMemo<ColumnDef<PackageRow, unknown>[]>(
     () => [
@@ -192,7 +197,7 @@ export function PackagesList() {
               <DataTableActionButton action="edit" href={`/produits/forfaits/${pkg.id}`} />
               <DataTableActionButton
                 action="delete"
-                onClick={() => void handleDelete(pkg)}
+                onClick={() => handleDeleteRequest(pkg)}
                 disabled={deletingId === pkg.id}
                 loading={deletingId === pkg.id}
               />
@@ -201,12 +206,25 @@ export function PackagesList() {
         },
       },
     ],
-    [deletingId, handleDelete, packageStatusLabels, tColumns, tCommonColumns, tEmpty],
+    [deletingId, handleDeleteRequest, packageStatusLabels, tColumns, tCommonColumns, tEmpty],
   );
 
   const packages = state.status === 'ready' ? state.packages : [];
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={tList('deleteTitle')}
+        description={confirmTarget ? tList('deleteConfirm', { name: confirmTarget.name }) : ''}
+        confirmLabel={tList('deleteConfirmButton')}
+        cancelLabel={tList('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex-1 sm:max-w-md">
@@ -219,12 +237,6 @@ export function PackagesList() {
         </div>
         <Button href="/produits/forfaits/nouveau">{tList('newPackage')}</Button>
       </div>
-
-      {deleteError ? (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {deleteError}
-        </p>
-      ) : null}
 
       {state.status === 'error' ? (
         <p role="alert" className="text-sm text-red-600">
@@ -254,5 +266,6 @@ export function PackagesList() {
         </>
       )}
     </div>
+    </>
   );
 }

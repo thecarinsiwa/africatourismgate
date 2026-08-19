@@ -75,7 +75,10 @@
       "filterTo": "to",
       "status": "Status",
       "empty": "No slots in this period.",
-      "deleteConfirm": "Delete this slot?"
+      "deleteTitle": "Delete slot",
+      "deleteConfirm": "This slot will be permanently deleted.",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel"
     }
   },
   "referential": {
@@ -87,7 +90,10 @@
       "searchPlaceholder": "Search by name or model…",
       "searchAria": "Search categories",
       "exampleModel": "Example model",
-      "deleteConfirm": "Delete category « {name} »?"
+      "deleteTitle": "Delete category",
+      "deleteConfirm": "Category \"{name}\" will be permanently deleted.",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel"
     },
     "agencies": {
       "new": "New agency",
@@ -99,7 +105,10 @@
       "agency": "Agency",
       "address": "Address",
       "destinationOptional": "Destination (optional)",
-      "deleteConfirm": "Delete agency « {name} »?"
+      "deleteTitle": "Delete agency",
+      "deleteConfirm": "Agency \"{name}\" will be permanently deleted.",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel"
     }
   },
   "stats": {

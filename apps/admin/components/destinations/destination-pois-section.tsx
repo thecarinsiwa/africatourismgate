@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -61,6 +62,7 @@ export function DestinationPoisSection({ destinationId }: DestinationPoisSection
   );
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<PointOfInterest | null>(null);
 
   const formatCoord = useCallback(
     (value: string | null): string => {
@@ -168,23 +170,24 @@ export function DestinationPoisSection({ destinationId }: DestinationPoisSection
     }
   }
 
-  const handleDelete = useCallback(
-    async (poi: PointOfInterest) => {
-      if (!window.confirm(t('deleteConfirm', { name: poi.name }))) {
-        return;
-      }
-      setDeletingId(poi.id);
-      try {
-        await getApiClient().deletePointOfInterest(poi.id);
-        await load();
-      } catch (error) {
-        setFormError(getDestinationsErrorMessage(error));
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [load, t, getDestinationsErrorMessage],
-  );
+  const handleDeleteRequest = useCallback((poi: PointOfInterest) => {
+    setConfirmTarget(poi);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const poi = confirmTarget;
+    setConfirmTarget(null);
+    setDeletingId(poi.id);
+    try {
+      await getApiClient().deletePointOfInterest(poi.id);
+      await load();
+    } catch (error) {
+      setFormError(getDestinationsErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getDestinationsErrorMessage, load]);
 
   const columns = useMemo<ColumnDef<PointOfInterest, unknown>[]>(
     () => [
@@ -226,7 +229,7 @@ export function DestinationPoisSection({ destinationId }: DestinationPoisSection
               <DataTableActionButton action="edit" onClick={() => openEditForm(poi)} />
               <DataTableActionButton
                 action="delete"
-                onClick={() => void handleDelete(poi)}
+                onClick={() => handleDeleteRequest(poi)}
                 disabled={deletingId === poi.id}
                 loading={deletingId === poi.id}
               />
@@ -235,12 +238,24 @@ export function DestinationPoisSection({ destinationId }: DestinationPoisSection
         },
       },
     ],
-    [deletingId, formatCoord, handleDelete, tCommon],
+    [deletingId, formatCoord, handleDeleteRequest, tCommon],
   );
 
   const pois = state.status === 'ready' ? state.pois : [];
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={t('deleteTitle')}
+        description={confirmTarget ? t('deleteConfirm', { name: confirmTarget.name }) : ''}
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <section className="mt-12 space-y-6 border-t border-atg-border pt-10">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -344,5 +359,6 @@ export function DestinationPoisSection({ destinationId }: DestinationPoisSection
         </Card>
       )}
     </section>
+    </>
   );
 }

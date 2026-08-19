@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -48,6 +49,7 @@ export function GapActivitiesList({ locale }: GapActivitiesListProps) {
   >({ status: 'loading' });
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<GapActivity | null>(null);
 
   useEffect(() => {
     if (locale !== undefined) {
@@ -91,22 +93,25 @@ export function GapActivitiesList({ locale }: GapActivitiesListProps) {
     return () => window.clearTimeout(timer);
   }, [searchInput]);
 
-  const handleDelete = useCallback(
-    async (item: GapActivity) => {
-      if (!window.confirm(t('deleteConfirm', { title: item.title }))) return;
-      setDeleteError(null);
-      setDeletingId(item.id);
-      try {
-        await getApiClient().deleteGapActivity(item.id);
-        await load();
-      } catch (error) {
-        setDeleteError(getGapErrorMessage(error));
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [load, t, getGapErrorMessage],
-  );
+  const handleDeleteRequest = useCallback((item: GapActivity) => {
+    setConfirmTarget(item);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const item = confirmTarget;
+    setConfirmTarget(null);
+    setDeleteError(null);
+    setDeletingId(item.id);
+    try {
+      await getApiClient().deleteGapActivity(item.id);
+      await load();
+    } catch (error) {
+      setDeleteError(getGapErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getGapErrorMessage, load]);
 
   const columns = useMemo<ColumnDef<GapActivity, unknown>[]>(
     () => [
@@ -164,7 +169,7 @@ export function GapActivitiesList({ locale }: GapActivitiesListProps) {
             {canWrite ? (
               <DataTableActionButton
                 action="delete"
-                onClick={() => void handleDelete(row.original)}
+                onClick={() => handleDeleteRequest(row.original)}
                 disabled={deletingId === row.original.id}
                 loading={deletingId === row.original.id}
               />
@@ -173,7 +178,7 @@ export function GapActivitiesList({ locale }: GapActivitiesListProps) {
         ),
       },
     ],
-    [canWrite, deletingId, handleDelete, t, tCommon, tIcons, tStatus],
+    [canWrite, deletingId, handleDeleteRequest, t, tCommon, tIcons, tStatus],
   );
 
   const activities = state.status === 'ready' ? state.activities : [];
@@ -181,6 +186,19 @@ export function GapActivitiesList({ locale }: GapActivitiesListProps) {
   const showLocaleFilter = locale === undefined;
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={t('deleteTitle')}
+        description={confirmTarget ? t('deleteConfirm', { title: confirmTarget.title }) : ''}
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <div className="space-y-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:items-end">
@@ -247,12 +265,6 @@ export function GapActivitiesList({ locale }: GapActivitiesListProps) {
         {canWrite ? <Button href="/gap/activites/nouveau">{t('newButton')}</Button> : null}
       </div>
 
-      {deleteError ? (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {deleteError}
-        </p>
-      ) : null}
-
       {state.status === 'error' ? (
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {state.message}
@@ -282,5 +294,6 @@ export function GapActivitiesList({ locale }: GapActivitiesListProps) {
         </>
       )}
     </div>
+    </>
   );
 }

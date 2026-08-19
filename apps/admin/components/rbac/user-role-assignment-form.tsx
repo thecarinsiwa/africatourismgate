@@ -2,7 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Input } from '@africatourismgate/ui';
+import { AlertDialog, Button, Input } from '@africatourismgate/ui';
 import type {
   CreateUserRoleAssignmentRequest,
   Role,
@@ -41,6 +41,7 @@ export function UserRoleAssignmentForm({
   const [error, setError] = useState<string | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [superAdminDialogOpen, setSuperAdminDialogOpen] = useState(false);
 
   const scopeTypeOptions = useMemo(
     () =>
@@ -91,6 +92,30 @@ export function UserRoleAssignmentForm({
     };
   }, [getRbacErrorMessage]);
 
+  const submitAssignment = useCallback(async () => {
+    setSubmitting(true);
+    try {
+      const body: CreateUserRoleAssignmentRequest = {
+        userId,
+        roleId,
+        scopeType: isSuperAdminRole ? 'global' : scopeType,
+        ...(scopeType !== 'global' && !isSuperAdminRole
+          ? { scopeId: scopeId.trim() }
+          : {}),
+        ...(expiresAt ? { expiresAt } : {}),
+      };
+      await getApiClient().createUserRoleAssignment(body);
+      setRoleId('');
+      setScopeId('');
+      setExpiresAt('');
+      onSuccess?.();
+    } catch (err) {
+      setError(getRbacErrorMessage(err));
+    } finally {
+      setSubmitting(false);
+    }
+  }, [userId, roleId, scopeType, scopeId, expiresAt, onSuccess, isSuperAdminRole, getRbacErrorMessage]);
+
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
@@ -105,50 +130,28 @@ export function UserRoleAssignmentForm({
       }
 
       if (isSuperAdminRole) {
-        const label = selectedRole?.name ?? 'super_admin';
-        const confirmed = window.confirm(
-          tRoles('superAdminConfirm', { roleName: label }),
-        );
-        if (!confirmed) return;
+        setSuperAdminDialogOpen(true);
+        return;
       }
 
-      setSubmitting(true);
-      try {
-        const body: CreateUserRoleAssignmentRequest = {
-          userId,
-          roleId,
-          scopeType: isSuperAdminRole ? 'global' : scopeType,
-          ...(scopeType !== 'global' && !isSuperAdminRole
-            ? { scopeId: scopeId.trim() }
-            : {}),
-          ...(expiresAt ? { expiresAt } : {}),
-        };
-        await getApiClient().createUserRoleAssignment(body);
-        setRoleId('');
-        setScopeId('');
-        setExpiresAt('');
-        onSuccess?.();
-      } catch (err) {
-        setError(getRbacErrorMessage(err));
-      } finally {
-        setSubmitting(false);
-      }
+      await submitAssignment();
     },
-    [
-      userId,
-      roleId,
-      scopeType,
-      scopeId,
-      expiresAt,
-      onSuccess,
-      isSuperAdminRole,
-      selectedRole?.name,
-      tRoles,
-      getRbacErrorMessage,
-    ],
+    [userId, roleId, scopeType, scopeId, isSuperAdminRole, tRoles, submitAssignment],
   );
 
   return (
+    <>
+      <AlertDialog
+        open={superAdminDialogOpen}
+        onOpenChange={setSuperAdminDialogOpen}
+        title={tRoles('superAdminConfirmTitle')}
+        description={tRoles('superAdminConfirm', { roleName: selectedRole?.name ?? 'super_admin' })}
+        confirmLabel={tRoles('superAdminConfirmButton')}
+        cancelLabel={tRoles('cancel')}
+        variant="danger"
+        loading={submitting}
+        onConfirm={() => { setSuperAdminDialogOpen(false); void submitAssignment(); }}
+      />
     <form onSubmit={handleSubmit} className="space-y-4 rounded-lg border border-atg-border p-4">
       <h3 className="text-sm font-semibold text-atg-fg">{tRoles('assignFormTitle')}</h3>
       {loadError ? (
@@ -257,5 +260,6 @@ export function UserRoleAssignmentForm({
         {tRoles('assignFormTitle')}
       </Button>
     </form>
+    </>
   );
 }

@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTableActionButton,
@@ -12,6 +13,7 @@ import {
 import type { Cabin } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
+
 import { getApiClient } from '../../lib/auth/api';
 
 type FormValues = {
@@ -50,6 +52,7 @@ export function CabinsSection({ shipId }: CabinsSectionProps) {
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<Cabin | null>(null);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -118,9 +121,40 @@ export function CabinsSection({ shipId }: CabinsSectionProps) {
     }
   }
 
+  const handleDeleteRequest = useCallback((cabin: Cabin) => {
+    setConfirmTarget(cabin);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const cabin = confirmTarget;
+    setConfirmTarget(null);
+    setDeletingId(cabin.id);
+    try {
+      await getApiClient().deleteCabin(cabin.id);
+      await load();
+    } catch (error) {
+      setFormError(getCroisieresErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getCroisieresErrorMessage, load]);
+
   const cabins = state.status === 'ready' ? state.cabins : [];
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={tForm('deleteTitle')}
+        description={tForm('deleteConfirm')}
+        confirmLabel={tForm('deleteConfirmButton')}
+        cancelLabel={tForm('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <section className="mt-12 space-y-6 border-t border-atg-border pt-10">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -215,18 +249,7 @@ export function CabinsSection({ shipId }: CabinsSectionProps) {
                   <DataTableActionButton action="edit" onClick={() => openEdit(cabin)} />
                   <DataTableActionButton
                     action="delete"
-                    onClick={async () => {
-                      if (!window.confirm(tForm('deleteConfirm'))) return;
-                      setDeletingId(cabin.id);
-                      try {
-                        await getApiClient().deleteCabin(cabin.id);
-                        await load();
-                      } catch (error) {
-                        setFormError(getCroisieresErrorMessage(error));
-                      } finally {
-                        setDeletingId(null);
-                      }
-                    }}
+                    onClick={() => handleDeleteRequest(cabin)}
                     disabled={deletingId === cabin.id}
                     loading={deletingId === cabin.id}
                   />
@@ -242,5 +265,6 @@ export function CabinsSection({ shipId }: CabinsSectionProps) {
         </div>
       )}
     </section>
+    </>
   );
 }

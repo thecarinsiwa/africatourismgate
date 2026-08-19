@@ -261,7 +261,10 @@
     "selectRole": "Rol",
     "assignButton": "Asignar",
     "noGuidesAvailable": "Todos los guías activos ya están asignados.",
-    "removeConfirm": "¿Quitar este guía de la reserva?",
+    "removeTitle": "Quitar guía",
+    "removeConfirm": "Este guía será eliminado de la reserva.",
+    "removeConfirmButton": "Quitar",
+    "cancel": "Cancelar",
     "viewProfile": "Ver perfil",
     "columns": {
       "guide": "Guía",

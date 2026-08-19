@@ -30,13 +30,15 @@
       "description": "Crear una cuenta de usuario."
     },
     "id": {
-      "metaTitle": "Editar usuario"
+      "metaTitle": "Editar usuario",
+      "backLabel": "Volver a usuarios"
     },
     "employes": {
       "description": "Perfiles de empleados vinculados a usuarios y organizaciones.",
       "nouveau": {
         "metaTitle": "Nuevo empleado",
-        "description": "Vincular un usuario existente a una organización."
+        "description": "Vincular un usuario existente a una organización.",
+        "backLabel": "Volver a empleados"
       },
       "id": {
         "metaTitle": "Editar empleado"
@@ -100,9 +102,9 @@
   "produits": {
     "activites": {
       "title": "Actividades y tours",
-      "description": "Experiencias, proveedores y franjas horarias por destino.",
+      "description": "Experiencias, socios y franjas horarias por destino.",
       "actions": {
-        "providers": "Proveedores",
+        "providers": "Socios",
         "new": "Nueva actividad"
       },
       "nouveau": {
@@ -110,7 +112,7 @@
         "description": "Cree una experiencia y luego añada horarios en la página de edición."
       },
       "fournisseurs": {
-        "title": "Proveedores de actividades",
+        "title": "Socios de actividades",
         "description": "Operadores vinculados a destinos."
       },
       "id": {

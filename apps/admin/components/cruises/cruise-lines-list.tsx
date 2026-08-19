@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -45,6 +46,8 @@ export function CruiseLinesList() {
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<CruiseLine | null>(null);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -111,6 +114,26 @@ export function CruiseLinesList() {
     }
   }
 
+  const handleDeleteRequest = useCallback((line: CruiseLine) => {
+    setConfirmTarget(line);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const line = confirmTarget;
+    setConfirmTarget(null);
+    setDeleteError(null);
+    setDeletingId(line.id);
+    try {
+      await getApiClient().deleteCruiseLine(line.id);
+      await load();
+    } catch (error) {
+      setDeleteError(getCroisieresErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getCroisieresErrorMessage, load]);
+
   const columns = useMemo<ColumnDef<CruiseLine, unknown>[]>(
     () => [
       {
@@ -136,18 +159,7 @@ export function CruiseLinesList() {
             />
             <DataTableActionButton
               action="delete"
-              onClick={async () => {
-                if (!window.confirm(tForm('deleteConfirm', { name: row.original.name }))) return;
-                setDeletingId(row.original.id);
-                try {
-                  await getApiClient().deleteCruiseLine(row.original.id);
-                  await load();
-                } catch (error) {
-                  setFormError(getCroisieresErrorMessage(error));
-                } finally {
-                  setDeletingId(null);
-                }
-              }}
+              onClick={() => handleDeleteRequest(row.original)}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
             />
@@ -155,12 +167,25 @@ export function CruiseLinesList() {
         ),
       },
     ],
-    [deletingId, getCroisieresErrorMessage, load, tColumns, tForm],
+    [deletingId, handleDeleteRequest, tColumns, tForm],
   );
 
   const lines = state.status === 'ready' ? state.lines : [];
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={tForm('deleteTitle')}
+        description={confirmTarget ? tForm('deleteConfirm', { name: confirmTarget.name }) : ''}
+        confirmLabel={tForm('deleteConfirmButton')}
+        cancelLabel={tForm('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <div className="space-y-6">
       <ReferentialListToolbar
         searchValue={searchInput}
@@ -233,5 +258,6 @@ export function CruiseLinesList() {
         </>
       )}
     </div>
+    </>
   );
 }

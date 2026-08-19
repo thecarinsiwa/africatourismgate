@@ -30,13 +30,15 @@
       "description": "Créer un compte utilisateur."
     },
     "id": {
-      "metaTitle": "Modifier l'utilisateur"
+      "metaTitle": "Modifier l'utilisateur",
+      "backLabel": "Retour aux utilisateurs"
     },
     "employes": {
       "description": "Profils employés liés aux utilisateurs et organisations.",
       "nouveau": {
         "metaTitle": "Nouvel employé",
-        "description": "Lier un utilisateur existant à une organisation."
+        "description": "Lier un utilisateur existant à une organisation.",
+        "backLabel": "Retour aux employés"
       },
       "id": {
         "metaTitle": "Modifier l'employé"
@@ -100,9 +102,9 @@
   "produits": {
     "activites": {
       "title": "Activités & tours",
-      "description": "Expériences, fournisseurs et créneaux par destination.",
+      "description": "Expériences, partenaires et créneaux par destination.",
       "actions": {
-        "providers": "Fournisseurs",
+        "providers": "Partenaires",
         "new": "Nouvelle activité"
       },
       "nouveau": {
@@ -110,7 +112,7 @@
         "description": "Créez une expérience puis ajoutez des créneaux sur la page d'édition."
       },
       "fournisseurs": {
-        "title": "Fournisseurs d'activités",
+        "title": "Partenaires d'activités",
         "description": "Opérateurs liés aux destinations."
       },
       "id": {

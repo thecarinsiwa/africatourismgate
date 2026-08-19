@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -43,6 +44,7 @@ export function HeroSlidesList({ locale }: HeroSlidesListProps) {
     | { status: 'ready'; items: HeroSlide[]; total: number; totalPages: number }
   >({ status: 'loading' });
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<HeroSlide | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -97,21 +99,24 @@ export function HeroSlidesList({ locale }: HeroSlidesListProps) {
     return () => window.clearTimeout(timer);
   }, [searchInput]);
 
-  const handleDelete = useCallback(
-    async (item: HeroSlide) => {
-      if (!window.confirm(t('deleteConfirm', { title: item.title }))) return;
-      setDeletingId(item.id);
-      try {
-        await getApiClient().deleteHeroSlide(item.id);
-        await load();
-      } catch {
-        /* list reload shows error on next load */
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [load, t],
-  );
+  const handleDeleteRequest = useCallback((item: HeroSlide) => {
+    setConfirmTarget(item);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const item = confirmTarget;
+    setConfirmTarget(null);
+    setDeletingId(item.id);
+    try {
+      await getApiClient().deleteHeroSlide(item.id);
+      await load();
+    } catch {
+      /* reload at next load */
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, load]);
 
   const columns = useMemo<ColumnDef<HeroSlide, unknown>[]>(
     () => [
@@ -153,7 +158,7 @@ export function HeroSlidesList({ locale }: HeroSlidesListProps) {
             {canWrite ? (
               <DataTableActionButton
                 action="delete"
-                onClick={() => void handleDelete(row.original)}
+                onClick={() => handleDeleteRequest(row.original)}
                 disabled={deletingId === row.original.id}
                 loading={deletingId === row.original.id}
               />
@@ -162,12 +167,24 @@ export function HeroSlidesList({ locale }: HeroSlidesListProps) {
         ),
       },
     ],
-    [canWrite, deletingId, handleDelete, t, tCommon, tStatus],
+    [canWrite, deletingId, handleDeleteRequest, t, tCommon, tStatus],
   );
 
   const items = state.status === 'ready' ? state.items : [];
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={t('deleteTitle')}
+        description={confirmTarget ? t('deleteConfirm', { title: confirmTarget.title }) : ''}
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <div className="space-y-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:items-end">
@@ -226,5 +243,6 @@ export function HeroSlidesList({ locale }: HeroSlidesListProps) {
         </>
       )}
     </div>
+    </>
   );
 }

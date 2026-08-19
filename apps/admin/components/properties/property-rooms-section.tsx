@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -63,6 +64,8 @@ export function PropertyRoomsSection({ propertyId, embedded }: PropertyRoomsSect
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<Room | null>(null);
   const [photosRoom, setPhotosRoom] = useState<Room | null>(null);
 
   const load = useCallback(async () => {
@@ -160,21 +163,25 @@ export function PropertyRoomsSection({ propertyId, embedded }: PropertyRoomsSect
     }
   }
 
-  const handleDelete = useCallback(
-    async (room: Room) => {
-      if (!window.confirm(t('deleteConfirm', { name: room.name }))) return;
-      setDeletingId(room.id);
-      try {
-        await getApiClient().deleteRoom(room.id);
-        await load();
-      } catch (error) {
-        setFormError(getHebergementsErrorMessage(error));
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [load, t, getHebergementsErrorMessage],
-  );
+  const handleDeleteRequest = useCallback((room: Room) => {
+    setConfirmTarget(room);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const room = confirmTarget;
+    setConfirmTarget(null);
+    setDeleteError(null);
+    setDeletingId(room.id);
+    try {
+      await getApiClient().deleteRoom(room.id);
+      await load();
+    } catch (error) {
+      setDeleteError(getHebergementsErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, load, getHebergementsErrorMessage]);
 
   const columns = useMemo<ColumnDef<Room, unknown>[]>(
     () => [
@@ -220,7 +227,7 @@ export function PropertyRoomsSection({ propertyId, embedded }: PropertyRoomsSect
             <DataTableActionButton action="edit" onClick={() => openEdit(row.original)} />
             <DataTableActionButton
               action="delete"
-              onClick={() => void handleDelete(row.original)}
+              onClick={() => handleDeleteRequest(row.original)}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
             />
@@ -228,12 +235,25 @@ export function PropertyRoomsSection({ propertyId, embedded }: PropertyRoomsSect
         ),
       },
     ],
-    [deletingId, handleDelete, propertyId, t, tColumns],
+    [deletingId, handleDeleteRequest, propertyId, t, tColumns],
   );
 
   const rooms = state.status === 'ready' ? state.rooms : [];
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={t('deleteTitle')}
+        description={confirmTarget ? t('deleteConfirm', { name: confirmTarget.name }) : ''}
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <section
       className={
         embedded ? 'space-y-6' : 'mt-12 space-y-6 border-t border-atg-border pt-10'
@@ -344,5 +364,6 @@ export function PropertyRoomsSection({ propertyId, embedded }: PropertyRoomsSect
         />
       ) : null}
     </section>
+    </>
   );
 }

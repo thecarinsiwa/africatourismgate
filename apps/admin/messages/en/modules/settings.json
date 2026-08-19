@@ -219,22 +219,25 @@
   },
   "bankAccounts": {
     "page": {
-      "title": "Comptes bancaires",
-      "intro": "Comptes B2B de l'organisation pour les virements et paiements hors ligne.",
-      "denied": "Vous n'avez pas la permission de consulter les comptes bancaires."
+      "title": "Bank accounts",
+      "intro": "Organization B2B accounts for transfers and offline payments.",
+      "denied": "You do not have permission to view bank accounts."
     },
     "list": {
-      "deleteConfirm": "Supprimer ce compte bancaire ?",
+      "deleteTitle": "Delete bank account",
+      "deleteConfirm": "This bank account will be permanently deleted.",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
       "columns": {
-        "bank": "Banque",
-        "account": "Compte",
-        "accountNumber": "N° compte",
+        "bank": "Bank",
+        "account": "Account",
+        "accountNumber": "Account No.",
         "currency": "Currency",
-        "isDefault": "Défaut"
+        "isDefault": "Default"
       },
-      "newButton": "Nouveau compte",
+      "newButton": "New account",
       "orgSelectAria": "Organization",
-      "empty": "Tocun compte bancaire."
+      "empty": "No bank accounts yet."
     },
     "form": {
       "validation": {
@@ -274,7 +277,10 @@
       "allStatuses": "All statuses",
       "empty": "No donation campaigns yet.",
       "denied": "You do not have permission to view donations.",
-      "deleteConfirm": "Delete campaign \"{title}\"?",
+      "deleteTitle": "Delete campaign",
+      "deleteConfirm": "Campaign \"{title}\" will be permanently deleted.",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
       "featuredYes": "Navbar",
       "columns": {
         "title": "Title",

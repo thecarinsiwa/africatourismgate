@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -43,6 +44,7 @@ export function SailingsList() {
   >({ status: 'loading' });
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<CruiseSailing | null>(null);
 
   const formatDate = useCallback(
     (iso: string): string => {
@@ -102,26 +104,33 @@ export function SailingsList() {
     }
   }, [load, viewMode]);
 
-  const handleDelete = useCallback(
-    async (sailing: CruiseSailing) => {
-      const itinerary = itineraryById.get(sailing.itineraryId);
-      const label = itinerary
-        ? `${itinerary.name} — ${formatDate(sailing.departureDate)}`
-        : formatDate(sailing.departureDate);
-      if (!window.confirm(t('deleteSailingConfirm', { label }))) return;
-      setDeleteError(null);
-      setDeletingId(sailing.id);
-      try {
-        await getApiClient().deleteCruiseSailing(sailing.id);
-        await load();
-      } catch (error) {
-        setDeleteError(getCroisieresErrorMessage(error));
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [formatDate, itineraryById, load, t, getCroisieresErrorMessage],
-  );
+  const handleDeleteRequest = useCallback((sailing: CruiseSailing) => {
+    setConfirmTarget(sailing);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const sailing = confirmTarget;
+    setConfirmTarget(null);
+    setDeleteError(null);
+    setDeletingId(sailing.id);
+    try {
+      await getApiClient().deleteCruiseSailing(sailing.id);
+      await load();
+    } catch (error) {
+      setDeleteError(getCroisieresErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getCroisieresErrorMessage, load]);
+
+  const confirmLabel = useMemo(() => {
+    if (!confirmTarget) return '';
+    const itinerary = itineraryById.get(confirmTarget.itineraryId);
+    return itinerary
+      ? `${itinerary.name} — ${formatDate(confirmTarget.departureDate)}`
+      : formatDate(confirmTarget.departureDate);
+  }, [confirmTarget, formatDate, itineraryById]);
 
   const columns = useMemo<ColumnDef<CruiseSailing, unknown>[]>(
     () => [
@@ -172,7 +181,7 @@ export function SailingsList() {
             />
             <DataTableActionButton
               action="delete"
-              onClick={() => void handleDelete(row.original)}
+              onClick={() => handleDeleteRequest(row.original)}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
             />
@@ -184,7 +193,7 @@ export function SailingsList() {
       deletingId,
       emptyDash,
       formatDate,
-      handleDelete,
+      handleDeleteRequest,
       itineraryById,
       shipById,
       tColumns,
@@ -195,6 +204,19 @@ export function SailingsList() {
   const sailings = state.status === 'ready' ? state.sailings : [];
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={t('deleteSailingTitle')}
+        description={t('deleteSailingConfirm', { label: confirmLabel })}
+        confirmLabel={t('deleteSailingButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex gap-2">
@@ -217,12 +239,6 @@ export function SailingsList() {
         </div>
         <Button href="/produits/croisieres/nouveau">{t('newSailing')}</Button>
       </div>
-
-      {deleteError ? (
-        <p role="alert" className="text-sm text-red-600">
-          {deleteError}
-        </p>
-      ) : null}
 
       {viewMode === 'calendar' ? (
         <SailingsCalendarView itineraryById={itineraryById} shipById={shipById} />
@@ -254,5 +270,6 @@ export function SailingsList() {
         </>
       )}
     </div>
+    </>
   );
 }

@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -120,6 +121,7 @@ export function VehicleAvailabilitySection({
   );
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<VehicleAvailability | null>(null);
 
   const formatRange = useCallback(
     (start: string, end: string): string => {
@@ -221,6 +223,25 @@ export function VehicleAvailabilitySection({
     setFieldErrors({});
     setShowForm(true);
   }, [autoOpenAdd]);
+
+  const handleDeleteRequest = useCallback((slot: VehicleAvailability) => {
+    setConfirmTarget(slot);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const slot = confirmTarget;
+    setConfirmTarget(null);
+    setDeletingId(slot.id);
+    try {
+      await getApiClient().deleteVehicleAvailability(slot.id);
+      await load();
+    } catch (error) {
+      setFormError(getLocationsErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getLocationsErrorMessage, load]);
 
   function handleCoordinatePick(latitude: string, longitude: string) {
     setFormValues((prev) => ({ ...prev, latitude, longitude }));
@@ -342,18 +363,7 @@ export function VehicleAvailabilitySection({
             />
             <DataTableActionButton
               action="delete"
-              onClick={async () => {
-                if (!window.confirm(t('deleteConfirm'))) return;
-                setDeletingId(row.original.id);
-                try {
-                  await getApiClient().deleteVehicleAvailability(row.original.id);
-                  await load();
-                } catch (error) {
-                  setFormError(getLocationsErrorMessage(error));
-                } finally {
-                  setDeletingId(null);
-                }
-              }}
+              onClick={() => handleDeleteRequest(row.original)}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
             />
@@ -361,7 +371,7 @@ export function VehicleAvailabilitySection({
         ),
       },
     ],
-    [deletingId, emptyDash, formatRange, load, statusLabels, t, tCommon, getLocationsErrorMessage],
+    [deletingId, emptyDash, formatRange, handleDeleteRequest, statusLabels, t, tCommon],
   );
 
   const slots = state.status === 'ready' ? state.slots : [];
@@ -539,9 +549,24 @@ export function VehicleAvailabilitySection({
     </Card>
   );
 
+  const deleteDialog = (
+    <AlertDialog
+      open={!!confirmTarget}
+      onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+      title={t('deleteTitle')}
+      description={t('deleteConfirm')}
+      confirmLabel={t('deleteConfirmButton')}
+      cancelLabel={t('cancel')}
+      variant="danger"
+      loading={!!deletingId}
+      onConfirm={() => void handleDeleteConfirm()}
+    />
+  );
+
   if (isPageVariant) {
     return (
       <section ref={sectionRef} id="vehicle-availability" className="space-y-6">
+        {deleteDialog}
         {slotFormModal}
         {filterToolbar}
         <section className="space-y-4 rounded-xl border border-atg-border/80 bg-atg-elevated/40 p-4 sm:p-5">
@@ -570,6 +595,7 @@ export function VehicleAvailabilitySection({
         embedded ? 'space-y-6' : 'mt-12 space-y-6 border-t border-atg-border pt-10'
       }
     >
+      {deleteDialog}
       {slotFormModal}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>

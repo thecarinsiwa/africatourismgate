@@ -94,6 +94,9 @@
       "bedConfig": "Bed configuration",
       "empty": "No rooms yet.",
       "deleteConfirm": "Delete room « {name} »?",
+      "deleteTitle": "Delete room",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
       "photosAction": "Photos"
     },
     "amenities": {
@@ -119,7 +122,10 @@
     "newAmenity": "New amenity",
     "empty": "No amenities yet.",
     "searchPlaceholder": "Search amenities…",
-    "deleteConfirm": "Delete amenity « {name} »?",
+    "deleteTitle": "Delete amenity",
+    "deleteConfirm": "Amenity \"{name}\" will be permanently deleted.",
+    "deleteConfirmButton": "Delete",
+    "cancel": "Cancel",
     "ariaLabel": "Amenities list",
     "viewGrid": "Grid",
     "viewTable": "Table",

@@ -20,7 +20,10 @@
   },
   "pages": {
     "list": {
-      "deleteConfirm": "¿Eliminar la página «{title}»?",
+      "deleteTitle": "Eliminar página",
+      "deleteConfirm": "La página «{title}» será eliminada permanentemente.",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar",
       "columns": {
         "section": "Sección",
         "title": "Título",
@@ -70,7 +73,10 @@
   },
   "timeline": {
     "list": {
-      "deleteConfirm": "¿Eliminar el hito «{title}»?",
+      "deleteTitle": "Eliminar hito",
+      "deleteConfirm": "El hito «{title}» será eliminado permanentemente.",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar",
       "columns": {
         "title": "Hito",
         "period": "Período",
@@ -116,7 +122,10 @@
   },
   "team": {
     "list": {
-      "deleteConfirm": "¿Eliminar a {name} del equipo?",
+      "deleteTitle": "Eliminar miembro",
+      "deleteConfirm": "{name} será eliminado del equipo permanentemente.",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar",
       "columns": {
         "name": "Miembro",
         "sortOrder": "Orden",
@@ -153,7 +162,10 @@
   },
   "resources": {
     "list": {
-      "deleteConfirm": "¿Eliminar el recurso «{title}»?",
+      "deleteTitle": "Eliminar recurso",
+      "deleteConfirm": "El recurso «{title}» será eliminado permanentemente.",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar",
       "columns": {
         "type": "Tipo",
         "title": "Título",
@@ -217,7 +229,10 @@
     },
     "items": {
       "list": {
-        "deleteConfirm": "¿Eliminar la tarjeta «{title}»?",
+        "deleteTitle": "Eliminar tarjeta",
+        "deleteConfirm": "La tarjeta «{title}» será eliminada permanentemente.",
+        "deleteConfirmButton": "Eliminar",
+        "cancel": "Cancelar",
         "columns": {
           "title": "Tarjeta",
           "icon": "Icono",
@@ -279,7 +294,10 @@
     },
     "stats": {
       "list": {
-        "deleteConfirm": "¿Eliminar la estadística «{label}»?",
+        "deleteTitle": "Eliminar estadística",
+        "deleteConfirm": "La estadística «{label}» será eliminada permanentemente.",
+        "deleteConfirmButton": "Eliminar",
+        "cancel": "Cancelar",
         "columns": {
           "label": "Etiqueta",
           "percent": "Porcentaje",

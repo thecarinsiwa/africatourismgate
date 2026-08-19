@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -72,6 +73,8 @@ export function PackageDescriptionAssetsSection({
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<PackageDescriptionAsset | null>(null);
 
   const load = useCallback(async () => {
     if (!packageId) return;
@@ -183,22 +186,26 @@ export function PackageDescriptionAssetsSection({
     }
   }
 
-  const handleDelete = useCallback(
-    async (asset: PackageDescriptionAsset) => {
-      if (!window.confirm(t('deleteConfirm', { name: asset.name ?? asset.url }))) return;
-      setDeletingId(asset.id);
-      try {
-        await getApiClient().deletePackageDescriptionAsset(asset.id);
-        await load();
-        onChanged?.();
-      } catch (error) {
-        setFormError(getPackagesErrorMessage(error));
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [getPackagesErrorMessage, load, onChanged, t],
-  );
+  const handleDeleteRequest = useCallback((asset: PackageDescriptionAsset) => {
+    setConfirmTarget(asset);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const asset = confirmTarget;
+    setConfirmTarget(null);
+    setDeleteError(null);
+    setDeletingId(asset.id);
+    try {
+      await getApiClient().deletePackageDescriptionAsset(asset.id);
+      await load();
+      onChanged?.();
+    } catch (error) {
+      setDeleteError(getPackagesErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getPackagesErrorMessage, load, onChanged]);
 
   const columns = useMemo<ColumnDef<PackageDescriptionAsset, unknown>[]>(
     () => [
@@ -260,7 +267,7 @@ export function PackageDescriptionAssetsSection({
           <DataTableActions>
             <DataTableActionButton
               action="delete"
-              onClick={() => void handleDelete(row.original)}
+              onClick={() => handleDeleteRequest(row.original)}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
             />
@@ -268,10 +275,23 @@ export function PackageDescriptionAssetsSection({
         ),
       },
     ],
-    [deletingId, handleDelete, t, tCommon],
+    [deletingId, handleDeleteRequest, t, tCommon],
   );
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={t('deleteTitle')}
+        description={confirmTarget ? t('deleteConfirm', { name: confirmTarget.name ?? confirmTarget.url }) : ''}
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <Card variant="dashboard" className="space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
@@ -379,5 +399,6 @@ export function PackageDescriptionAssetsSection({
         )
       ) : null}
     </Card>
+    </>
   );
 }

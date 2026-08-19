@@ -137,6 +137,7 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
     Partial<Record<keyof EmployeeFormValues, string>>
   >({});
   const [formError, setFormError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -238,6 +239,7 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     setFormError(null);
+    setSuccessMessage(null);
     if (!validate()) return;
 
     setSubmitting(true);
@@ -246,10 +248,9 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
       if (mode === 'create') {
         const created = await client.createEmployee(toCreatePayload(values));
         router.push(`/utilisateurs/employes/${created.id}`);
-        router.refresh();
       } else if (employeeId) {
         await client.updateEmployee(employeeId, toUpdatePayload(values));
-        router.push('/utilisateurs/employes');
+        setSuccessMessage('Les modifications ont été enregistrées.');
         router.refresh();
       }
     } catch (error) {
@@ -261,6 +262,14 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
 
   return (
     <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
+      {successMessage ? (
+        <p
+          role="status"
+          className="rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-700 dark:border-green-900/50 dark:bg-green-950/40 dark:text-green-400"
+        >
+          {successMessage}
+        </p>
+      ) : null}
       {formError ? (
         <p
           role="alert"

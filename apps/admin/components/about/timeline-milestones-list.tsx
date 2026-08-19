@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -50,6 +51,7 @@ export function TimelineMilestonesList() {
       }
   >({ status: 'loading' });
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<AboutTimelineMilestone | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -104,21 +106,24 @@ export function TimelineMilestonesList() {
     return () => window.clearTimeout(timer);
   }, [searchInput]);
 
-  const handleDelete = useCallback(
-    async (milestone: AboutTimelineMilestone) => {
-      if (!window.confirm(t('deleteConfirm', { title: milestone.title }))) return;
-      setDeletingId(milestone.id);
-      try {
-        await getApiClient().deleteAboutTimelineMilestone(milestone.id);
-        await load();
-      } catch {
-        /* list reload shows error on next load */
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [load, t],
-  );
+  const handleDeleteRequest = useCallback((milestone: AboutTimelineMilestone) => {
+    setConfirmTarget(milestone);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const milestone = confirmTarget;
+    setConfirmTarget(null);
+    setDeletingId(milestone.id);
+    try {
+      await getApiClient().deleteAboutTimelineMilestone(milestone.id);
+      await load();
+    } catch {
+      /* reload at next load */
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, load]);
 
   const columns = useMemo<ColumnDef<AboutTimelineMilestone, unknown>[]>(
     () => [
@@ -181,7 +186,7 @@ export function TimelineMilestonesList() {
             {canWrite ? (
               <DataTableActionButton
                 action="delete"
-                onClick={() => void handleDelete(row.original)}
+                onClick={() => handleDeleteRequest(row.original)}
                 disabled={deletingId === row.original.id}
                 loading={deletingId === row.original.id}
               />
@@ -190,12 +195,24 @@ export function TimelineMilestonesList() {
         ),
       },
     ],
-    [canWrite, deletingId, handleDelete, t, tCommon, tStatus],
+    [canWrite, deletingId, handleDeleteRequest, t, tCommon, tStatus],
   );
 
   const milestones = state.status === 'ready' ? state.milestones : [];
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={t('deleteTitle')}
+        description={confirmTarget ? t('deleteConfirm', { title: confirmTarget.title }) : ''}
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <div className="space-y-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:items-end">
@@ -265,5 +282,6 @@ export function TimelineMilestonesList() {
         </>
       )}
     </div>
+    </>
   );
 }

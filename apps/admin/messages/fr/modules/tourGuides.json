@@ -5,7 +5,10 @@
     "searchPlaceholder": "Rechercher par nom…",
     "searchAria": "Rechercher un guide",
     "ariaLabel": "Liste des guides touristiques",
-    "deleteConfirm": "Supprimer le guide « {name} » ?"
+    "deleteTitle": "Supprimer le guide",
+    "deleteConfirm": "Le guide « {name} » sera supprimé définitivement.",
+    "deleteConfirmButton": "Supprimer",
+    "cancel": "Annuler"
   },
   "columns": {
     "name": "Nom",

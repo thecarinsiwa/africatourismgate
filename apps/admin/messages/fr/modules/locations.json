@@ -75,7 +75,10 @@
       "filterTo": "au",
       "status": "Statut",
       "empty": "Aucun créneau sur cette période.",
-      "deleteConfirm": "Supprimer ce créneau ?"
+      "deleteTitle": "Supprimer le créneau",
+      "deleteConfirm": "Ce créneau sera supprimé définitivement.",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler"
     }
   },
   "referential": {
@@ -87,7 +90,10 @@
       "searchPlaceholder": "Rechercher par nom ou modèle…",
       "searchAria": "Rechercher une catégorie",
       "exampleModel": "Modèle type",
-      "deleteConfirm": "Supprimer la catégorie « {name} » ?"
+      "deleteTitle": "Supprimer la catégorie",
+      "deleteConfirm": "La catégorie « {name} » sera supprimée définitivement.",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler"
     },
     "agencies": {
       "new": "Nouvelle agence",
@@ -99,7 +105,10 @@
       "agency": "Agence",
       "address": "Adresse",
       "destinationOptional": "Destination (optionnel)",
-      "deleteConfirm": "Supprimer l'agence « {name} » ?"
+      "deleteTitle": "Supprimer l'agence",
+      "deleteConfirm": "L'agence « {name} » sera supprimée définitivement.",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler"
     }
   },
   "stats": {

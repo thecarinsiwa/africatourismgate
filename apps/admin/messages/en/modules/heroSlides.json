@@ -12,7 +12,10 @@
     "localeFilter": "Language"
   },
   "list": {
-    "deleteConfirm": "Delete slide \"{title}\"?",
+    "deleteTitle": "Delete slide",
+    "deleteConfirm": "Slide \"{title}\" will be permanently deleted.",
+    "deleteConfirmButton": "Delete",
+    "cancel": "Cancel",
     "columns": {
       "title": "Slide",
       "sortOrder": "Order"

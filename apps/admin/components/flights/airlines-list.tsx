@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -47,6 +48,8 @@ export function AirlinesList() {
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<Airline | null>(null);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -131,6 +134,26 @@ export function AirlinesList() {
     }
   }
 
+  const handleDeleteRequest = useCallback((airline: Airline) => {
+    setConfirmTarget(airline);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const airline = confirmTarget;
+    setConfirmTarget(null);
+    setDeleteError(null);
+    setDeletingId(airline.id);
+    try {
+      await getApiClient().deleteAirline(airline.id);
+      await load();
+    } catch (error) {
+      setDeleteError(getVolsErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getVolsErrorMessage, load]);
+
   const columns = useMemo<ColumnDef<Airline, unknown>[]>(
     () => [
       {
@@ -159,18 +182,7 @@ export function AirlinesList() {
             />
             <DataTableActionButton
               action="delete"
-              onClick={async () => {
-                if (!window.confirm(t('deleteConfirm', { name: row.original.name }))) return;
-                setDeletingId(row.original.id);
-                try {
-                  await getApiClient().deleteAirline(row.original.id);
-                  await load();
-                } catch (error) {
-                  setFormError(getVolsErrorMessage(error));
-                } finally {
-                  setDeletingId(null);
-                }
-              }}
+              onClick={() => handleDeleteRequest(row.original)}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
             />
@@ -178,13 +190,26 @@ export function AirlinesList() {
         ),
       },
     ],
-    [deletingId, load, t, tColumns, tCommon, getVolsErrorMessage],
+    [deletingId, handleDeleteRequest, t, tColumns, tCommon],
   );
 
   const airlines = state.status === 'ready' ? state.airlines : [];
   const emptyMessage = search.trim().length > 0 ? t('emptySearch') : t('emptyDefault');
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={t('deleteTitle')}
+        description={confirmTarget ? t('deleteConfirm', { name: confirmTarget.name }) : ''}
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <div className="space-y-6">
       <ReferentialListToolbar
         searchValue={searchInput}
@@ -266,5 +291,6 @@ export function AirlinesList() {
         </>
       )}
     </div>
+    </>
   );
 }

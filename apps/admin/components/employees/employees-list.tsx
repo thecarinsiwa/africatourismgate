@@ -1,8 +1,9 @@
-'use client';
+﻿'use client';
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Avatar,
   Button,
   Card,
@@ -74,6 +75,7 @@ export function EmployeesList({
   >({ status: 'loading' });
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<Employee | null>(null);
 
   useEffect(() => {
     if (lockedOrganizationId) {
@@ -144,29 +146,25 @@ export function EmployeesList({
     return () => window.clearTimeout(timer);
   }, [searchInput]);
 
-  const handleDelete = useCallback(
-    async (employee: Employee) => {
-      const label = employee.user?.email ?? employee.employeeCode ?? employee.id;
-      if (
-        !window.confirm(
-          `Supprimer l’employé « ${label} » ? Cette action est réversible côté base.`,
-        )
-      ) {
-        return;
-      }
-      setDeleteError(null);
-      setDeletingId(employee.id);
-      try {
-        await getApiClient().deleteEmployee(employee.id);
-        await load();
-      } catch (error) {
-        setDeleteError(getEmployeesErrorMessage(error));
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [load],
-  );
+  const handleDeleteRequest = useCallback((employee: Employee) => {
+    setConfirmTarget(employee);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const employee = confirmTarget;
+    setConfirmTarget(null);
+    setDeleteError(null);
+    setDeletingId(employee.id);
+    try {
+      await getApiClient().deleteEmployee(employee.id);
+      await load();
+    } catch (error) {
+      setDeleteError(getEmployeesErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, load, getEmployeesErrorMessage]);
 
   const columns = useMemo<ColumnDef<Employee, unknown>[]>(() => {
     const base: ColumnDef<Employee, unknown>[] = [
@@ -255,7 +253,7 @@ export function EmployeesList({
             <DataTableActionButton action="edit" href={`/utilisateurs/employes/${employee.id}`} />
             <DataTableActionButton
               action="delete"
-              onClick={() => void handleDelete(employee)}
+              onClick={() => handleDeleteRequest(employee)}
               disabled={deletingId === employee.id}
               loading={deletingId === employee.id}
             />
@@ -265,7 +263,7 @@ export function EmployeesList({
     });
 
     return base;
-  }, [deletingId, handleDelete, lockedOrganizationId, orgNameById]);
+  }, [deletingId, handleDeleteRequest, lockedOrganizationId, orgNameById]);
 
   const isLoading = state.status === 'loading';
   const isError = state.status === 'error';
@@ -284,7 +282,24 @@ export function EmployeesList({
     ? `/utilisateurs/employes/nouveau?organizationId=${lockedOrganizationId}`
     : '/utilisateurs/employes/nouveau';
 
+  const confirmLabel = confirmTarget
+    ? `${confirmTarget.user?.email ?? confirmTarget.employeeCode ?? confirmTarget.id}`
+    : '';
+
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title="Supprimer l'employ\u00e9"
+        description={`L'employ\u00e9 \u00ab\u00a0${confirmLabel}\u00a0\u00bb sera supprim\u00e9. Cette action est r\u00e9versible en base de donn\u00e9es.`}
+        confirmLabel="Supprimer"
+        cancelLabel="Annuler"
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <div className={embedded ? 'space-y-4' : 'space-y-6'}>
       <div className="flex flex-col gap-4 lg:flex-row lg:flex-wrap lg:items-end lg:justify-between">
         <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end">
@@ -381,5 +396,6 @@ export function EmployeesList({
         </>
       )}
     </div>
+    </>
   );
 }

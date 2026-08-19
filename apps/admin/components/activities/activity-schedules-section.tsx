@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -60,6 +61,8 @@ export function ActivitySchedulesSection({
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<ActivitySchedule | null>(null);
 
   const formatDatetime = useCallback(
     (iso: string) => {
@@ -146,21 +149,25 @@ export function ActivitySchedulesSection({
     }
   }
 
-  const handleDelete = useCallback(
-    async (schedule: ActivitySchedule) => {
-      if (!window.confirm(t('deleteConfirm'))) return;
-      setDeletingId(schedule.id);
-      try {
-        await getApiClient().deleteActivitySchedule(schedule.id);
-        await load();
-      } catch (error) {
-        setFormError(getActivitiesErrorMessage(error));
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [getActivitiesErrorMessage, load, t],
-  );
+  const handleDeleteRequest = useCallback((schedule: ActivitySchedule) => {
+    setConfirmTarget(schedule);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const schedule = confirmTarget;
+    setConfirmTarget(null);
+    setDeleteError(null);
+    setDeletingId(schedule.id);
+    try {
+      await getApiClient().deleteActivitySchedule(schedule.id);
+      await load();
+    } catch (error) {
+      setDeleteError(getActivitiesErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getActivitiesErrorMessage, load]);
 
   const columns = useMemo<ColumnDef<ActivitySchedule, unknown>[]>(
     () => [
@@ -188,7 +195,7 @@ export function ActivitySchedulesSection({
             <DataTableActionButton action="edit" onClick={() => openEdit(row.original)} />
             <DataTableActionButton
               action="delete"
-              onClick={() => void handleDelete(row.original)}
+              onClick={() => handleDeleteRequest(row.original)}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
             />
@@ -196,12 +203,25 @@ export function ActivitySchedulesSection({
         ),
       },
     ],
-    [deletingId, formatDatetime, handleDelete, t, tColumns],
+    [deletingId, formatDatetime, handleDeleteRequest, t, tColumns],
   );
 
   const schedules = state.status === 'ready' ? state.schedules : [];
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={t('deleteTitle')}
+        description={t('deleteConfirm')}
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <section
       className={
         embedded ? 'space-y-6' : 'mt-12 space-y-6 border-t border-atg-border pt-10'
@@ -288,7 +308,7 @@ export function ActivitySchedulesSection({
           <ActivitySchedulesTimeline
             schedules={schedules}
             onEdit={openEdit}
-            onDelete={handleDelete}
+            onDelete={handleDeleteRequest}
             deletingId={deletingId}
           />
         )
@@ -304,5 +324,6 @@ export function ActivitySchedulesSection({
         </Card>
       )}
     </section>
+    </>
   );
 }

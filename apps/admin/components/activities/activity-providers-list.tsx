@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -53,6 +54,8 @@ export function ActivityProvidersList() {
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<ActivityProvider | null>(null);
 
   useEffect(() => {
     void getApiClient()
@@ -139,6 +142,26 @@ export function ActivityProvidersList() {
     }
   }
 
+  const handleDeleteRequest = useCallback((provider: ActivityProvider) => {
+    setConfirmTarget(provider);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const provider = confirmTarget;
+    setConfirmTarget(null);
+    setDeleteError(null);
+    setDeletingId(provider.id);
+    try {
+      await getApiClient().deleteActivityProvider(provider.id);
+      await load();
+    } catch (error) {
+      setDeleteError(getActivitiesErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getActivitiesErrorMessage, load]);
+
   const columns = useMemo<ColumnDef<ActivityProvider, unknown>[]>(
     () => [
       {
@@ -185,18 +208,7 @@ export function ActivityProvidersList() {
             />
             <DataTableActionButton
               action="delete"
-              onClick={async () => {
-                if (!window.confirm(t('deleteConfirm', { name: row.original.name }))) return;
-                setDeletingId(row.original.id);
-                try {
-                  await getApiClient().deleteActivityProvider(row.original.id);
-                  await load();
-                } catch (error) {
-                  setFormError(getActivitiesErrorMessage(error));
-                } finally {
-                  setDeletingId(null);
-                }
-              }}
+              onClick={() => handleDeleteRequest(row.original)}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
             />
@@ -204,7 +216,7 @@ export function ActivityProvidersList() {
         ),
       },
     ],
-    [deletingId, destById, emptyDash, getActivitiesErrorMessage, load, t, tColumns, tList],
+    [deletingId, destById, emptyDash, handleDeleteRequest, t, tColumns, tList],
   );
 
   const providers = state.status === 'ready' ? state.providers : [];
@@ -212,6 +224,19 @@ export function ActivityProvidersList() {
     'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg';
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={t('deleteTitle')}
+        description={confirmTarget ? t('deleteConfirm', { name: confirmTarget.name }) : ''}
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <div className="space-y-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:items-end">
@@ -334,5 +359,6 @@ export function ActivityProvidersList() {
         </>
       )}
     </div>
+    </>
   );
 }

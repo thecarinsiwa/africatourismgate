@@ -94,6 +94,9 @@
       "bedConfig": "Configuración de camas",
       "empty": "Ninguna habitación.",
       "deleteConfirm": "¿Eliminar la habitación « {name} »?",
+      "deleteTitle": "Eliminar habitación",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar",
       "photosAction": "Fotos"
     },
     "amenities": {
@@ -119,7 +122,10 @@
     "newAmenity": "Nuevo equipamiento",
     "empty": "Ningún equipamiento.",
     "searchPlaceholder": "Buscar un equipamiento…",
-    "deleteConfirm": "¿Eliminar el equipamiento « {name} »?",
+    "deleteTitle": "Eliminar equipamiento",
+    "deleteConfirm": "El equipamiento «{name}» será eliminado permanentemente.",
+    "deleteConfirmButton": "Eliminar",
+    "cancel": "Cancelar",
     "ariaLabel": "Lista de equipamientos",
     "viewGrid": "Cuadrícula",
     "viewTable": "Tabla",

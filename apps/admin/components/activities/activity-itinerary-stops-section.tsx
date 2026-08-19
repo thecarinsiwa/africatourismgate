@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -73,6 +74,8 @@ export function ActivityItineraryStopsSection({
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof FormValues, string>>>({});
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<ActivityItineraryStop | null>(null);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -240,6 +243,26 @@ export function ActivityItineraryStopsSection({
     [emptyDash],
   );
 
+  const handleDeleteRequest = useCallback((stop: ActivityItineraryStop) => {
+    setConfirmTarget(stop);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const stop = confirmTarget;
+    setConfirmTarget(null);
+    setDeleteError(null);
+    setDeletingId(stop.id);
+    try {
+      await getApiClient().deleteActivityItineraryStop(stop.id);
+      await load();
+    } catch (error) {
+      setDeleteError(getActivitiesErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getActivitiesErrorMessage, load]);
+
   const columns = useMemo<ColumnDef<ActivityItineraryStop, unknown>[]>(
     () => [
       {
@@ -294,18 +317,7 @@ export function ActivityItineraryStopsSection({
             />
             <DataTableActionButton
               action="delete"
-              onClick={async () => {
-                if (!window.confirm(t('deleteConfirm'))) return;
-                setDeletingId(row.original.id);
-                try {
-                  await getApiClient().deleteActivityItineraryStop(row.original.id);
-                  await load();
-                } catch (error) {
-                  setFormError(getActivitiesErrorMessage(error));
-                } finally {
-                  setDeletingId(null);
-                }
-              }}
+              onClick={() => handleDeleteRequest(row.original)}
               disabled={deletingId === row.original.id}
               loading={deletingId === row.original.id}
             />
@@ -313,10 +325,23 @@ export function ActivityItineraryStopsSection({
         ),
       },
     ],
-    [deletingId, emptyDash, formatCoord, formatDuration, getActivitiesErrorMessage, load, t, tColumns, tCommon],
+    [deletingId, emptyDash, formatCoord, formatDuration, handleDeleteRequest, t, tColumns, tCommon],
   );
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={t('deleteTitle')}
+        description={t('deleteConfirm')}
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <div className="space-y-6">
       {!embedded ? <h3 className="text-base font-semibold text-atg-fg">{t('title')}</h3> : null}
 
@@ -455,5 +480,6 @@ export function ActivityItineraryStopsSection({
         </Card>
       )}
     </div>
+    </>
   );
 }

@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTableActionButton,
@@ -59,6 +60,8 @@ export function FlightClassesSection({ flightId, embedded }: FlightClassesSectio
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<FlightClass | null>(null);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -129,11 +132,44 @@ export function FlightClassesSection({ flightId, embedded }: FlightClassesSectio
     setShowForm(true);
   }
 
+  const handleDeleteRequest = useCallback((flightClass: FlightClass) => {
+    setConfirmTarget(flightClass);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const flightClass = confirmTarget;
+    setConfirmTarget(null);
+    setDeleteError(null);
+    setDeletingId(flightClass.id);
+    try {
+      await getApiClient().deleteFlightClass(flightClass.id);
+      await load();
+    } catch (error) {
+      setDeleteError(getVolsErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getVolsErrorMessage, load]);
+
   const classes = state.status === 'ready' ? state.classes : [];
   const selectClass =
     'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg';
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={t('deleteTitle')}
+        description={t('deleteConfirm')}
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <section
       className={
         embedded ? 'space-y-6' : 'mt-12 space-y-6 border-t border-atg-border pt-10'
@@ -254,18 +290,7 @@ export function FlightClassesSection({ flightId, embedded }: FlightClassesSectio
                   />
                   <DataTableActionButton
                     action="delete"
-                    onClick={async () => {
-                      if (!window.confirm(t('deleteConfirm'))) return;
-                      setDeletingId(flightClass.id);
-                      try {
-                        await getApiClient().deleteFlightClass(flightClass.id);
-                        await load();
-                      } catch (error) {
-                        setFormError(getVolsErrorMessage(error));
-                      } finally {
-                        setDeletingId(null);
-                      }
-                    }}
+                    onClick={() => handleDeleteRequest(flightClass)}
                     disabled={deletingId === flightClass.id}
                     loading={deletingId === flightClass.id}
                   />
@@ -281,5 +306,6 @@ export function FlightClassesSection({ flightId, embedded }: FlightClassesSectio
         </div>
       )}
     </section>
+    </>
   );
 }
