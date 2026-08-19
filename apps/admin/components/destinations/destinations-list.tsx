@@ -10,6 +10,7 @@ import {
   DataTableActions,
   DataTablePagination,
   Input,
+  useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { Destination } from '@africatourismgate/types';
@@ -28,6 +29,8 @@ export function DestinationsList() {
   const tColumns = useTranslations('modules.destinations.columns');
   const tCommon = useTranslations('modules.common');
   const tActions = useTranslations('common.actions');
+  const tToast = useTranslations('modules.common.toast');
+  const { toast } = useToast();
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -94,12 +97,19 @@ export function DestinationsList() {
     try {
       await getApiClient().deleteDestination(destination.id);
       await load();
+      toast({
+        variant: 'success',
+        message: tToast('deletedDestination', { name: destination.name }),
+      });
     } catch (error) {
-      setDeleteError(getDestinationsErrorMessage(error));
+      toast({
+        variant: 'error',
+        message: getDestinationsErrorMessage(error),
+      });
     } finally {
       setDeletingId(null);
     }
-  }, [confirmTarget, getDestinationsErrorMessage, load]);
+  }, [confirmTarget, getDestinationsErrorMessage, load, toast, tToast]);
 
   const columns = useMemo<ColumnDef<Destination, unknown>[]>(
     () => [

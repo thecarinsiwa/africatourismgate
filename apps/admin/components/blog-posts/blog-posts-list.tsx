@@ -12,6 +12,7 @@ import {
   DataTableBadge,
   DataTablePagination,
   Input,
+  useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { BlogPost, BlogPostStatus } from '@africatourismgate/types';
@@ -41,6 +42,8 @@ export function BlogPostsList() {
   const tStatus = useTranslations('modules.blog.status');
   const tLocale = useTranslations('modules.blog.locale');
   const tCommon = useTranslations('modules.common');
+  const tToast = useTranslations('modules.common.toast');
+  const { toast } = useToast();
   const statusFilterId = useId();
   const localeFilterId = useId();
   const [searchInput, setSearchInput] = useState('');
@@ -125,12 +128,19 @@ export function BlogPostsList() {
     try {
       await getApiClient().deleteBlogPost(post.id);
       await load();
+      toast({
+        variant: 'success',
+        message: tToast('deletedBlogPost', { title: post.title }),
+      });
     } catch (error) {
-      setDeleteError(getBlogErrorMessage(error));
+      toast({
+        variant: 'error',
+        message: getBlogErrorMessage(error),
+      });
     } finally {
       setDeletingId(null);
     }
-  }, [confirmTarget, getBlogErrorMessage, load]);
+  }, [confirmTarget, getBlogErrorMessage, load, toast, tToast]);
 
   const columns = useMemo<ColumnDef<BlogPost, unknown>[]>(
     () => [
