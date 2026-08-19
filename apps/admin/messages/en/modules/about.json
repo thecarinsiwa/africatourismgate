@@ -8,6 +8,44 @@
     "en": "English",
     "es": "Spanish"
   },
+  "stats": {
+    "pages": {
+      "total": { "label": "Pages", "subtitle": "Institutional pages" },
+      "published": { "label": "Published", "subtitle": "Visible on the site" },
+      "draft": { "label": "Drafts", "subtitle": "Not published" },
+      "french": { "label": "In French", "subtitle": "FR locale content" }
+    },
+    "resources": {
+      "total": { "label": "Resources", "subtitle": "Documents and media" },
+      "published": { "label": "Published", "subtitle": "Visible on the site" },
+      "draft": { "label": "Drafts", "subtitle": "Not published" },
+      "french": { "label": "In French", "subtitle": "FR locale content" }
+    },
+    "team": {
+      "total": { "label": "Members", "subtitle": "Displayed team" },
+      "published": { "label": "Published", "subtitle": "Visible on the site" },
+      "draft": { "label": "Drafts", "subtitle": "Not published" },
+      "french": { "label": "In French", "subtitle": "FR locale profiles" }
+    },
+    "timeline": {
+      "total": { "label": "Milestones", "subtitle": "Timeline entries" },
+      "published": { "label": "Published", "subtitle": "Visible on the site" },
+      "draft": { "label": "Drafts", "subtitle": "Not published" },
+      "french": { "label": "In French", "subtitle": "FR locale entries" }
+    },
+    "whyUs": {
+      "total": { "label": "Cards", "subtitle": "Why choose us cards" },
+      "published": { "label": "Published", "subtitle": "Visible on the site" },
+      "draft": { "label": "Drafts", "subtitle": "Not published" },
+      "french": { "label": "In French", "subtitle": "FR locale cards" }
+    },
+    "happyCustomers": {
+      "total": { "label": "Statistics", "subtitle": "Satisfaction indicators" },
+      "published": { "label": "Published", "subtitle": "Visible on the site" },
+      "draft": { "label": "Drafts", "subtitle": "Not published" },
+      "french": { "label": "In French", "subtitle": "FR locale stats" }
+    }
+  },
   "sections": {
     "who-we-are": "Who we are",
     "how-we-work": "How we work",

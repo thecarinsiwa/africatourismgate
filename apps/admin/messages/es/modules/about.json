@@ -8,6 +8,44 @@
     "en": "Inglés",
     "es": "Español"
   },
+  "stats": {
+    "pages": {
+      "total": { "label": "Páginas", "subtitle": "Páginas institucionales" },
+      "published": { "label": "Publicadas", "subtitle": "Visibles en el sitio" },
+      "draft": { "label": "Borradores", "subtitle": "No publicadas" },
+      "french": { "label": "En francés", "subtitle": "Contenido locale FR" }
+    },
+    "resources": {
+      "total": { "label": "Recursos", "subtitle": "Documentos y medios" },
+      "published": { "label": "Publicados", "subtitle": "Visibles en el sitio" },
+      "draft": { "label": "Borradores", "subtitle": "No publicados" },
+      "french": { "label": "En francés", "subtitle": "Contenido locale FR" }
+    },
+    "team": {
+      "total": { "label": "Miembros", "subtitle": "Equipo mostrado" },
+      "published": { "label": "Publicados", "subtitle": "Visibles en el sitio" },
+      "draft": { "label": "Borradores", "subtitle": "No publicados" },
+      "french": { "label": "En francés", "subtitle": "Perfiles locale FR" }
+    },
+    "timeline": {
+      "total": { "label": "Hitos", "subtitle": "Línea de tiempo" },
+      "published": { "label": "Publicados", "subtitle": "Visibles en el sitio" },
+      "draft": { "label": "Borradores", "subtitle": "No publicados" },
+      "french": { "label": "En francés", "subtitle": "Entradas locale FR" }
+    },
+    "whyUs": {
+      "total": { "label": "Tarjetas", "subtitle": "Argumentos « Por qué nosotros »" },
+      "published": { "label": "Publicadas", "subtitle": "Visibles en el sitio" },
+      "draft": { "label": "Borradores", "subtitle": "No publicadas" },
+      "french": { "label": "En francés", "subtitle": "Tarjetas locale FR" }
+    },
+    "happyCustomers": {
+      "total": { "label": "Estadísticas", "subtitle": "Indicadores de satisfacción" },
+      "published": { "label": "Publicadas", "subtitle": "Visibles en el sitio" },
+      "draft": { "label": "Borradores", "subtitle": "No publicadas" },
+      "french": { "label": "En francés", "subtitle": "Stats locale FR" }
+    }
+  },
   "sections": {
     "who-we-are": "Quiénes somos",
     "how-we-work": "Cómo trabajamos",

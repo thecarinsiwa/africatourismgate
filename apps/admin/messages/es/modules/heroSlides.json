@@ -11,6 +11,24 @@
   "page": {
     "localeFilter": "Idioma"
   },
+  "stats": {
+    "total": {
+      "label": "Diapositivas",
+      "subtitle": "Carrusel de inicio"
+    },
+    "published": {
+      "label": "Publicadas",
+      "subtitle": "Visibles en el sitio"
+    },
+    "draft": {
+      "label": "Borradores",
+      "subtitle": "No publicadas"
+    },
+    "french": {
+      "label": "En francés",
+      "subtitle": "Diapositivas locale FR"
+    }
+  },
   "list": {
     "deleteTitle": "Eliminar diapositiva",
     "deleteConfirm": "La diapositiva «{title}» será eliminada permanentemente.",
