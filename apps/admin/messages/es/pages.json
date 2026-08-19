@@ -100,9 +100,9 @@
   "produits": {
     "activites": {
       "title": "Actividades y tours",
-      "description": "Experiencias, proveedores y franjas horarias por destino.",
+      "description": "Experiencias, socios y franjas horarias por destino.",
       "actions": {
-        "providers": "Proveedores",
+        "providers": "Socios",
         "new": "Nueva actividad"
       },
       "nouveau": {
@@ -110,7 +110,7 @@
         "description": "Cree una experiencia y luego añada horarios en la página de edición."
       },
       "fournisseurs": {
-        "title": "Proveedores de actividades",
+        "title": "Socios de actividades",
         "description": "Operadores vinculados a destinos."
       },
       "id": {

@@ -2589,7 +2589,7 @@ const fr: Translations = {
       typeCard: 'Carte bancaire',
       typePaypal: 'PayPal',
       typeOther: 'Autre',
-      provider: 'Fournisseur (ex. visa)',
+      provider: 'Partenaire (ex. visa)',
       lastFour: '4 derniers chiffres',
     },
     loyalty: {

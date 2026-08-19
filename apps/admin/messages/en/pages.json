@@ -100,9 +100,9 @@
   "produits": {
     "activites": {
       "title": "Activities & tours",
-      "description": "Experiences, providers and time slots by destination.",
+      "description": "Experiences, partners and time slots by destination.",
       "actions": {
-        "providers": "Providers",
+        "providers": "Partners",
         "new": "New activity"
       },
       "nouveau": {
@@ -110,7 +110,7 @@
         "description": "Create an experience then add schedules on the edit page."
       },
       "fournisseurs": {
-        "title": "Activity providers",
+        "title": "Activity partners",
         "description": "Operators linked to destinations."
       },
       "id": {

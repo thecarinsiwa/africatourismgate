@@ -11,14 +11,14 @@
   },
   "columns": {
     "activity": "Activity",
-    "provider": "Provider",
+    "provider": "Partner",
     "price": "Price",
     "duration": "Duration",
     "difficulty": "Difficulty"
   },
   "form": {
     "submitCreate": "Create",
-    "provider": "Provider",
+    "provider": "Partner",
     "title": "Title",
     "difficulty": "Difficulty",
     "priceCents": "Price (cents)",
@@ -137,13 +137,13 @@
   },
   "referential": {
     "providers": {
-      "new": "Nouveau fournisseur",
-      "edit": "Modifier le fournisseur",
-      "empty": "Tocun fournisseur.",
-      "searchPlaceholder": "Rechercher un fournisseur…",
+      "new": "New partner",
+      "edit": "Edit partner",
+      "empty": "No partners yet.",
+      "searchPlaceholder": "Search for a partner…",
       "ratingTitle": "Note moyenne (à venir)",
-      "deleteConfirm": "Delete « {name} »?",
-      "deleteTitle": "Delete provider",
+      "deleteConfirm": "Partner \"{name}\" will be permanently deleted.",
+      "deleteTitle": "Delete partner",
       "deleteConfirmButton": "Delete",
       "cancel": "Cancel",
       "validation": {
@@ -154,11 +154,11 @@
   "stats": {
     "activities": {
       "label": "Activitys",
-      "subtitle": "Expériences catalogue"
+      "subtitle": "Catalog experiences"
     },
     "providers": {
-      "label": "Providers",
-      "subtitle": "Opérateurs locaux"
+      "label": "Partners",
+      "subtitle": "Local operators"
     },
     "schedules": {
       "label": "Time slots",

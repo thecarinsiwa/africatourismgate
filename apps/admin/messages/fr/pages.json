@@ -100,9 +100,9 @@
   "produits": {
     "activites": {
       "title": "Activités & tours",
-      "description": "Expériences, fournisseurs et créneaux par destination.",
+      "description": "Expériences, partenaires et créneaux par destination.",
       "actions": {
-        "providers": "Fournisseurs",
+        "providers": "Partenaires",
         "new": "Nouvelle activité"
       },
       "nouveau": {
@@ -110,7 +110,7 @@
         "description": "Créez une expérience puis ajoutez des créneaux sur la page d'édition."
       },
       "fournisseurs": {
-        "title": "Fournisseurs d'activités",
+        "title": "Partenaires d'activités",
         "description": "Opérateurs liés aux destinations."
       },
       "id": {

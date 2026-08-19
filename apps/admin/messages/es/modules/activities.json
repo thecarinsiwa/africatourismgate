@@ -11,14 +11,14 @@
   },
   "columns": {
     "activity": "Actividad",
-    "provider": "Proveedor",
+    "provider": "Socio",
     "price": "Precio",
     "duration": "Desderée",
     "difficulty": "Dificultad"
   },
   "form": {
     "submitCreate": "Crear",
-    "provider": "Proveedor",
+    "provider": "Socio",
     "title": "Título",
     "difficulty": "Dificultad",
     "priceCents": "Precio (centavos)",
@@ -137,13 +137,13 @@
   },
   "referential": {
     "providers": {
-      "new": "Nouveau fournisseur",
-      "edit": "Modifier le fournisseur",
-      "empty": "Hastacun fournisseur.",
-      "searchPlaceholder": "Rechercher un fournisseur…",
-      "ratingTitle": "Note moyenne (à venir)",
-      "deleteConfirm": "¿Eliminar « {name} »?",
-      "deleteTitle": "Eliminar proveedor",
+      "new": "Nuevo socio",
+      "edit": "Editar socio",
+      "empty": "No hay socios aún.",
+      "searchPlaceholder": "Buscar un socio…",
+      "ratingTitle": "Calificación media (próximamente)",
+      "deleteConfirm": "El socio «{name}» será eliminado permanentemente.",
+      "deleteTitle": "Eliminar socio",
       "deleteConfirmButton": "Eliminar",
       "cancel": "Cancelar",
       "validation": {
@@ -153,12 +153,12 @@
   },
   "stats": {
     "activities": {
-      "label": "Actividads",
-      "subtitle": "Expériences catalogue"
+      "label": "Actividades",
+      "subtitle": "Catálogo de experiencias"
     },
     "providers": {
-      "label": "Proveedors",
-      "subtitle": "Opérateurs locaux"
+      "label": "Socios",
+      "subtitle": "Operadores locales"
     },
     "schedules": {
       "label": "Franjas horarias",

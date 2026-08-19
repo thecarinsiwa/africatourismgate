@@ -11,20 +11,20 @@
   },
   "columns": {
     "activity": "Activité",
-    "provider": "Fournisseur",
+    "provider": "Partenaire",
     "price": "Prix",
     "duration": "Durée",
     "difficulty": "Difficulté"
   },
   "form": {
     "submitCreate": "Créer",
-    "provider": "Fournisseur",
+    "provider": "Partenaire",
     "title": "Titre",
     "difficulty": "Difficulté",
     "priceCents": "Prix (centimes)",
     "descriptionPlaceholder": "Décrivez l'activité, le programme, les conditions…",
     "validation": {
-      "providerRequired": "Le fournisseur est obligatoire.",
+      "providerRequired": "Le partenaire est obligatoire.",
       "titleRequired": "Le titre est obligatoire.",
       "invalidPrice": "Prix invalide.",
       "currencyThreeLetters": "La devise doit comporter 3 lettres.",
@@ -137,13 +137,13 @@
   },
   "referential": {
     "providers": {
-      "new": "Nouveau fournisseur",
-      "edit": "Modifier le fournisseur",
-      "empty": "Aucun fournisseur.",
-      "searchPlaceholder": "Rechercher un fournisseur…",
+      "new": "Nouveau partenaire",
+      "edit": "Modifier le partenaire",
+      "empty": "Aucun partenaire.",
+      "searchPlaceholder": "Rechercher un partenaire…",
       "ratingTitle": "Note moyenne (à venir)",
       "deleteConfirm": "Supprimer « {name} » ?",
-      "deleteTitle": "Supprimer le fournisseur",
+      "deleteTitle": "Supprimer le partenaire",
       "deleteConfirmButton": "Supprimer",
       "cancel": "Annuler",
       "validation": {
@@ -157,7 +157,7 @@
       "subtitle": "Expériences catalogue"
     },
     "providers": {
-      "label": "Fournisseurs",
+      "label": "Partenaires",
       "subtitle": "Opérateurs locaux"
     },
     "schedules": {
