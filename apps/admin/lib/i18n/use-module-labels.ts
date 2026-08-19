@@ -5,6 +5,7 @@ import type {
   BookingItemType,
   BookingGuideRole,
   BookingStatus,
+  EmployeeStatus,
   FlightClassName,
   LoyaltyTier,
   OrganizationStatus,
@@ -43,6 +44,18 @@ export function useAccountStatusLabels() {
       active: t('active'),
       suspended: t('suspended'),
       deleted: t('deleted'),
+    }),
+    [t],
+  );
+}
+
+export function useEmployeeStatusLabels() {
+  const t = useTranslations('modules.employees.status');
+  return useMemo(
+    (): Record<EmployeeStatus, string> => ({
+      active: t('active'),
+      on_leave: t('on_leave'),
+      terminated: t('terminated'),
     }),
     [t],
   );

@@ -115,7 +115,8 @@
     "review": "reseña",
     "ticket": "tickets",
     "loyaltyAccount": "cuentas",
-    "activity": "actividad"
+    "activity": "actividad",
+    "employee": "empleado"
   },
   "dataTable": {
     "loading": "Cargando…",

@@ -1,0 +1,25 @@
+{
+  "status": {
+    "active": "Activo",
+    "on_leave": "De permiso",
+    "terminated": "Finalizado"
+  },
+  "columns": {
+    "jobTitle": "Puesto"
+  },
+  "list": {
+    "emptyDefault": "Ningún empleado por el momento.",
+    "emptyFiltered": "Ningún empleado coincide con sus criterios.",
+    "emptyOrganization": "Ningún empleado para esta organización.",
+    "searchPlaceholder": "Buscar por código, puesto o usuario…",
+    "searchAria": "Buscar empleados",
+    "ariaLabel": "Lista de empleados",
+    "viewOrganization": "Ver organización {name}",
+    "deleteTitle": "Eliminar empleado",
+    "deleteDescription": "El empleado « {label} » será eliminado. Esta acción es reversible en la base de datos."
+  },
+  "filters": {
+    "status": "Estado",
+    "organization": "Organización"
+  }
+}

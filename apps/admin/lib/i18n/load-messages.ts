@@ -4,6 +4,7 @@ import type { AppLocale } from '../../i18n/routing';
 export const ADMIN_MODULE_NAMES = [
   'common',
   'users',
+  'employees',
   'organizations',
   'bookings',
   'payments',
