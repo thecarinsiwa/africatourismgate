@@ -10,8 +10,8 @@ import { formatReviewPreview } from './review-display';
 import { getApiClient } from './auth/api';
 import { isApiForbidden } from './auth/is-api-forbidden';
 
-const ACTIVITY_FETCH_LIMIT = 8;
-const ACTIVITY_DISPLAY_LIMIT = 10;
+const ACTIVITY_FETCH_LIMIT = 3;
+const ACTIVITY_DISPLAY_LIMIT = 3;
 
 export type DashboardActivityBookingItem = {
   type: 'booking';
