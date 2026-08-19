@@ -236,7 +236,8 @@
     "deletedHeroSlide": "Slide « {title} » has been deleted.",
     "deletedEmployee": "Employee « {label} » has been deleted.",
     "deletedAmenity": "Amenity « {name} » has been deleted.",
-    "deletedDestination": "Destination « {name} » has been deleted."
+    "deletedDestination": "Destination « {name} » has been deleted.",
+    "deletedTourGuide": "Tour guide « {name} » has been deleted."
   },
   "availabilityCalendar": {
     "previousMonth": "Previous month",

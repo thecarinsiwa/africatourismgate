@@ -2,6 +2,7 @@
   "list": {
     "emptyDefault": "No tour guides yet.",
     "emptySearch": "No guides match your search.",
+    "emptyFiltered": "No guides match your criteria.",
     "searchPlaceholder": "Search by name…",
     "searchAria": "Search guides",
     "ariaLabel": "Tour guides list",

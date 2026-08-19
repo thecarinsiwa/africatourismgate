@@ -236,7 +236,8 @@
     "deletedHeroSlide": "La diapositive « {title} » a été supprimée.",
     "deletedEmployee": "L'employé « {label} » a été supprimé.",
     "deletedAmenity": "L'équipement « {name} » a été supprimé.",
-    "deletedDestination": "La destination « {name} » a été supprimée."
+    "deletedDestination": "La destination « {name} » a été supprimée.",
+    "deletedTourGuide": "Le guide « {name} » a été supprimé."
   },
   "availabilityCalendar": {
     "previousMonth": "Mois précédent",

@@ -2,6 +2,7 @@
   "list": {
     "emptyDefault": "Aún no hay guías turísticos.",
     "emptySearch": "Ningún guía coincide con su búsqueda.",
+    "emptyFiltered": "Ningún guía coincide con sus criterios.",
     "searchPlaceholder": "Buscar por nombre…",
     "searchAria": "Buscar guías",
     "ariaLabel": "Lista de guías turísticos",

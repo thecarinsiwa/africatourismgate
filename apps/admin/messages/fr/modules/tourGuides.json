@@ -2,6 +2,7 @@
   "list": {
     "emptyDefault": "Aucun guide touristique pour le moment.",
     "emptySearch": "Aucun guide ne correspond à votre recherche.",
+    "emptyFiltered": "Aucun guide ne correspond à vos critères.",
     "searchPlaceholder": "Rechercher par nom…",
     "searchAria": "Rechercher un guide",
     "ariaLabel": "Liste des guides touristiques",

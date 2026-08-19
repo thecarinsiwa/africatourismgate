@@ -4,21 +4,27 @@ import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
   AlertDialog,
+  Avatar,
   Card,
   DataTable,
   DataTableActionButton,
   DataTableActions,
   DataTableBadge,
   DataTablePagination,
+  FilterBar,
   Input,
+  Select,
   type ColumnDef,
+  useToast,
 } from '@africatourismgate/ui';
 import type { TourGuide, TourGuideStatus, TourGuideType } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import {
+  useTourGuideStatusFilterOptions,
   useTourGuideStatusLabels,
+  useTourGuideTypeFilterOptions,
   useTourGuideTypeLabels,
 } from '../../lib/i18n/use-module-labels';
 
@@ -33,17 +39,46 @@ const STATUS_VARIANTS: Record<TourGuideStatus, 'success' | 'muted'> = {
   inactive: 'muted',
 };
 
+function TourGuideAvatar({ guide }: { guide: TourGuide }) {
+  const user = guide.user;
+
+  if (user) {
+    return (
+      <Avatar
+        email={user.email}
+        firstName={user.firstName}
+        lastName={user.lastName}
+        src={guide.photoUrl}
+        size="md"
+      />
+    );
+  }
+
+  return (
+    <Avatar
+      email={`${guide.id}@guide`}
+      firstName={guide.displayName}
+      src={guide.photoUrl}
+      size="md"
+      label={guide.displayName}
+    />
+  );
+}
+
 export function TourGuidesList() {
   const { tourGuides: getTourGuidesErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.tourGuides.list');
   const tColumns = useTranslations('modules.tourGuides.columns');
   const tFilters = useTranslations('modules.tourGuides.filters');
   const tCommon = useTranslations('modules.common');
+  const tCommonFilters = useTranslations('modules.common.filters');
   const tActions = useTranslations('common.actions');
+  const tToast = useTranslations('modules.common.toast');
   const typeLabels = useTourGuideTypeLabels();
   const statusLabels = useTourGuideStatusLabels();
-  const typeFilterId = useId();
-  const statusFilterId = useId();
+  const typeOptions = useTourGuideTypeFilterOptions();
+  const statusOptions = useTourGuideStatusFilterOptions();
+  const { toast } = useToast();
 
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
@@ -115,34 +150,46 @@ export function TourGuidesList() {
     try {
       await getApiClient().deleteTourGuide(guide.id);
       await load();
+      toast({
+        variant: 'success',
+        message: tToast('deletedTourGuide', { name: guide.displayName }),
+      });
     } catch (error) {
-      setDeleteError(getTourGuidesErrorMessage(error));
+      const message = getTourGuidesErrorMessage(error);
+      setDeleteError(message);
+      toast({
+        variant: 'error',
+        message,
+      });
     } finally {
       setDeletingId(null);
     }
-  }, [confirmTarget, getTourGuidesErrorMessage, load]);
+  }, [confirmTarget, getTourGuidesErrorMessage, load, tToast, toast]);
 
   const columns = useMemo<ColumnDef<TourGuide, unknown>[]>(
     () => [
       {
         accessorKey: 'displayName',
         header: tColumns('name'),
-        cell: ({ row }) => (
-          <div className="flex items-center gap-3">
-            {row.original.photoUrl ? (
-              <img
-                src={row.original.photoUrl}
-                alt=""
-                className="h-9 w-9 rounded-full object-cover ring-1 ring-atg-border"
-              />
-            ) : (
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
-                {row.original.displayName.slice(0, 1).toUpperCase()}
+        cell: ({ row }) => {
+          const guide = row.original;
+          const user = guide.user;
+          return (
+            <div className="flex items-center gap-3">
+              <TourGuideAvatar guide={guide} />
+              <div className="min-w-0">
+                <span className="block truncate font-medium text-atg-fg">{guide.displayName}</span>
+                {user ? (
+                  <span className="block truncate text-xs text-atg-muted">{user.email}</span>
+                ) : guide.type === 'external' ? (
+                  <span className="block truncate text-xs text-atg-muted">
+                    {typeLabels.external}
+                  </span>
+                ) : null}
               </div>
-            )}
-            <span className="font-medium text-atg-fg">{row.original.displayName}</span>
-          </div>
-        ),
+            </div>
+          );
+        },
       },
       {
         accessorKey: 'type',
@@ -207,108 +254,114 @@ export function TourGuidesList() {
   const isLoading = state.status === 'loading';
   const isError = state.status === 'error';
   const guides = state.status === 'ready' ? state.guides : [];
-  const emptyMessage = search.trim().length > 0 ? t('emptySearch') : t('emptyDefault');
+  const activeFilterCount = [
+    search.trim().length > 0,
+    typeFilter !== '',
+    statusFilter !== '',
+  ].filter(Boolean).length;
+  const hasFilters = activeFilterCount > 0;
+  const emptyMessage = hasFilters ? t('emptyFiltered') : t('emptyDefault');
+
+  const handleClearFilters = useCallback(() => {
+    setSearchInput('');
+    setSearch('');
+    setTypeFilter('');
+    setStatusFilter('');
+    setPage(1);
+  }, []);
 
   return (
     <>
       <AlertDialog
         open={!!confirmTarget}
-        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        onOpenChange={(open) => {
+          if (!open) setConfirmTarget(null);
+        }}
         title={t('deleteTitle')}
         description={confirmTarget ? t('deleteConfirm', { name: confirmTarget.displayName }) : ''}
         confirmLabel={t('deleteConfirmButton')}
-        cancelLabel={t('cancel')}
+        cancelLabel={tActions('cancel')}
         variant="danger"
         loading={!!deletingId}
         error={deleteError}
         onConfirm={() => void handleDeleteConfirm()}
       />
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end">
-        <div className="flex-1 sm:max-w-md">
-          <Input
-            name="search"
-            type="search"
-            placeholder={t('searchPlaceholder')}
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            aria-label={t('searchAria')}
-          />
-        </div>
-        <div className="flex flex-wrap gap-3">
-          <div>
-            <label htmlFor={typeFilterId} className="mb-1 block text-xs font-medium text-atg-muted">
-              {tFilters('type')}
-            </label>
-            <select
-              id={typeFilterId}
-              value={typeFilter}
-              onChange={(e) => {
-                setTypeFilter(e.target.value as TypeFilter);
-                setPage(1);
-              }}
-              className="rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg"
-            >
-              <option value="">{tFilters('all')}</option>
-              <option value="internal">{typeLabels.internal}</option>
-              <option value="external">{typeLabels.external}</option>
-            </select>
-          </div>
-          <div>
-            <label
-              htmlFor={statusFilterId}
-              className="mb-1 block text-xs font-medium text-atg-muted"
-            >
-              {tFilters('status')}
-            </label>
-            <select
-              id={statusFilterId}
-              value={statusFilter}
-              onChange={(e) => {
-                setStatusFilter(e.target.value as StatusFilter);
-                setPage(1);
-              }}
-              className="rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg"
-            >
-              <option value="">{tFilters('all')}</option>
-              <option value="active">{statusLabels.active}</option>
-              <option value="inactive">{statusLabels.inactive}</option>
-            </select>
-          </div>
-        </div>
+      <div className="space-y-6">
+        <FilterBar
+          activeCount={activeFilterCount}
+          onClear={handleClearFilters}
+          clearLabel={tCommonFilters('clearAll')}
+          toggleLabel={tCommonFilters('toggle')}
+          applyLabel={tCommonFilters('apply')}
+          filters={
+            <>
+              <div className="min-w-[200px] flex-1 sm:max-w-md">
+                <Input
+                  name="search"
+                  type="search"
+                  placeholder={t('searchPlaceholder')}
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  aria-label={t('searchAria')}
+                />
+              </div>
+              <div className="w-full sm:w-40">
+                <Select
+                  label={tFilters('type')}
+                  value={typeFilter}
+                  options={typeOptions}
+                  onChange={(e) => {
+                    setTypeFilter(e.target.value as TypeFilter);
+                    setPage(1);
+                  }}
+                />
+              </div>
+              <div className="w-full sm:w-40">
+                <Select
+                  label={tFilters('status')}
+                  value={statusFilter}
+                  options={statusOptions}
+                  onChange={(e) => {
+                    setStatusFilter(e.target.value as StatusFilter);
+                    setPage(1);
+                  }}
+                />
+              </div>
+            </>
+          }
+        />
+
+        {isError ? (
+          <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+            {state.message}
+          </p>
+        ) : (
+          <>
+            <Card variant="dashboard" padding="none" className="overflow-hidden">
+              <DataTable
+                columns={columns}
+                data={guides}
+                isLoading={isLoading}
+                emptyMessage={emptyMessage}
+                emptyVariant={hasFilters ? 'search' : 'default'}
+                getRowId={(row) => row.id}
+                aria-label={t('ariaLabel')}
+              />
+            </Card>
+
+            {state.status === 'ready' && state.totalPages > 1 ? (
+              <DataTablePagination
+                page={page}
+                pageSize={PAGE_SIZE}
+                totalPages={state.totalPages}
+                totalItems={state.total}
+                itemLabel={tCommon('pagination.guide')}
+                onPageChange={setPage}
+              />
+            ) : null}
+          </>
+        )}
       </div>
-
-      {isError ? (
-        <p className="text-sm text-red-600 dark:text-red-400" role="alert">
-          {state.message}
-        </p>
-      ) : (
-        <>
-          <Card variant="dashboard" padding="none" className="overflow-hidden">
-            <DataTable
-              columns={columns}
-              data={guides}
-              isLoading={isLoading}
-              emptyMessage={emptyMessage}
-              emptyVariant={search.trim().length > 0 ? 'search' : 'default'}
-              getRowId={(row) => row.id}
-              aria-label={t('ariaLabel')}
-            />
-          </Card>
-
-          {state.status === 'ready' && state.totalPages > 1 ? (
-            <DataTablePagination
-              page={page}
-              pageSize={PAGE_SIZE}
-              totalPages={state.totalPages}
-              totalItems={state.total}
-              itemLabel={tCommon('pagination.guide')}
-              onPageChange={setPage}
-            />
-          ) : null}
-        </>
-      )}
-    </div>
     </>
   );
 }

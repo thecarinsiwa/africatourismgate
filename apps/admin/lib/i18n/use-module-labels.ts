@@ -113,6 +113,32 @@ export function useTourGuideStatusLabels() {
   );
 }
 
+export function useTourGuideTypeFilterOptions() {
+  const tAll = useTranslations('modules.tourGuides.filters');
+  const typeLabels = useTourGuideTypeLabels();
+  return useMemo(
+    () => [
+      { value: '', label: tAll('all') },
+      { value: 'internal', label: typeLabels.internal },
+      { value: 'external', label: typeLabels.external },
+    ],
+    [typeLabels, tAll],
+  );
+}
+
+export function useTourGuideStatusFilterOptions() {
+  const tAll = useTranslations('modules.tourGuides.filters');
+  const statusLabels = useTourGuideStatusLabels();
+  return useMemo(
+    () => [
+      { value: '', label: tAll('all') },
+      { value: 'active', label: statusLabels.active },
+      { value: 'inactive', label: statusLabels.inactive },
+    ],
+    [statusLabels, tAll],
+  );
+}
+
 export function useBookingGuideRoleLabels() {
   const t = useTranslations('modules.tourGuides.role');
   return useMemo(
