@@ -11,6 +11,7 @@ import {
   DataTableBadge,
   DataTablePagination,
   EmptyState,
+  useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { AdminLoyaltyAccountListItem, LoyaltyAccount, LoyaltyTier } from '@africatourismgate/types';
@@ -56,6 +57,7 @@ export function LoyaltyAccountsList() {
   const { loyaltyAccounts: getLoyaltyAccountsErrorMessage } = useAdminErrorMessages();
   const tList = useTranslations('modules.loyalty.list');
   const tAdjust = useTranslations('modules.loyalty.adjust');
+  const tLoyaltyToast = useTranslations('modules.loyalty.toast');
   const tColumns = useTranslations('modules.common.columns');
   const tCommon = useTranslations('modules.common');
   const tActions = useTranslations('common.actions');
@@ -63,6 +65,7 @@ export function LoyaltyAccountsList() {
   const formatPoints = useFormatPoints();
   const formatDateTime = useFormatDateTime('short');
   const tierLabels = useLoyaltyTierLabels();
+  const { toast } = useToast();
   const deltaInputId = useId();
   const reasonInputId = useId();
 
@@ -148,12 +151,30 @@ export function LoyaltyAccountsList() {
       setAdjustReason('');
       setHistoryAccount(null);
       await load();
+      toast({
+        variant: 'success',
+        message: tLoyaltyToast('adjustedMessage', { email: adjustingAccount.userEmail }),
+      });
     } catch (error) {
-      setAdjustError(getLoyaltyAccountsErrorMessage(error));
+      const message = getLoyaltyAccountsErrorMessage(error);
+      setAdjustError(message);
+      toast({
+        variant: 'error',
+        message,
+      });
     } finally {
       setActing(false);
     }
-  }, [adjustDelta, adjustReason, adjustingAccount, load, tAdjust, getLoyaltyAccountsErrorMessage]);
+  }, [
+    adjustDelta,
+    adjustReason,
+    adjustingAccount,
+    load,
+    tAdjust,
+    tLoyaltyToast,
+    getLoyaltyAccountsErrorMessage,
+    toast,
+  ]);
 
   const emptyDash = tCommon('empty.dash');
 

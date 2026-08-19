@@ -221,7 +221,9 @@ export function EmployeesList({
         accessorKey: 'employeeCode',
         header: tColumns('code'),
         cell: ({ row }) => (
-          <span className="text-atg-fg">{row.original.employeeCode ?? emptyDash}</span>
+          <span className="font-mono tabular-nums text-atg-fg">
+            {row.original.employeeCode ?? emptyDash}
+          </span>
         ),
       },
       {

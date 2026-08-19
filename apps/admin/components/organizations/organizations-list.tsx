@@ -12,6 +12,7 @@ import {
   DataTablePagination,
   EmptyState,
   Input,
+  useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import { ApiHttpError } from '@africatourismgate/api-client';
@@ -39,6 +40,8 @@ export function OrganizationsList() {
   const t = useTranslations('modules.organizations');
   const tCommon = useTranslations('modules.common');
   const tActions = useTranslations('common.actions');
+  const tToast = useTranslations('modules.common.toast');
+  const { toast } = useToast();
   const accountStatusLabels = useAccountStatusLabels();
   const legalFormOptions = useOrganizationLegalFormOptions();
   const emptyDash = tCommon('empty.dash');
@@ -99,23 +102,33 @@ export function OrganizationsList() {
   const confirmDelete = useCallback(async () => {
     if (!pendingDelete) return;
 
+    const organization = pendingDelete;
     setDeleteError(null);
-    setDeletingId(pendingDelete.id);
+    setDeletingId(organization.id);
     try {
-      await getApiClient().deleteOrganization(pendingDelete.id);
+      await getApiClient().deleteOrganization(organization.id);
       setPendingDelete(null);
       await load();
+      toast({
+        variant: 'success',
+        message: tToast('deletedOrganization', { name: organization.name }),
+      });
     } catch (error) {
       if (error instanceof ApiHttpError && error.status === 404) {
         setPendingDelete(null);
         await load();
         return;
       }
-      setDeleteError(getOrganizationsErrorMessage(error));
+      const message = getOrganizationsErrorMessage(error);
+      setDeleteError(message);
+      toast({
+        variant: 'error',
+        message,
+      });
     } finally {
       setDeletingId(null);
     }
-  }, [load, pendingDelete, getOrganizationsErrorMessage]);
+  }, [load, pendingDelete, getOrganizationsErrorMessage, tToast, toast]);
 
   const columns = useMemo<ColumnDef<OrganizationListItem, unknown>[]>(
     () => [

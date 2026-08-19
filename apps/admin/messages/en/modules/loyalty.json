@@ -54,6 +54,9 @@
     "reasonPlaceholder": "Ex. geste commercial",
     "apply": "Apply"
   },
+  "toast": {
+    "adjustedMessage": "Balance for {email} has been updated."
+  },
   "history": {
     "title": "Transaction history",
     "close": "Close",

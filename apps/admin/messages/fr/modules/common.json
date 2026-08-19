@@ -237,7 +237,8 @@
     "deletedEmployee": "L'employé « {label} » a été supprimé.",
     "deletedAmenity": "L'équipement « {name} » a été supprimé.",
     "deletedDestination": "La destination « {name} » a été supprimée.",
-    "deletedTourGuide": "Le guide « {name} » a été supprimé."
+    "deletedTourGuide": "Le guide « {name} » a été supprimé.",
+    "deletedOrganization": "L'organisation « {name} » a été supprimée."
   },
   "availabilityCalendar": {
     "previousMonth": "Mois précédent",

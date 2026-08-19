@@ -54,6 +54,9 @@
     "reasonPlaceholder": "Ex. geste commercial",
     "apply": "Aplicar"
   },
+  "toast": {
+    "adjustedMessage": "El saldo de {email} se ha actualizado."
+  },
   "history": {
     "title": "Historial de transacciones",
     "close": "Cerrar",
