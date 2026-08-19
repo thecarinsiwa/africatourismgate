@@ -1,12 +1,7 @@
 import { expect, test } from '@playwright/test';
-
-const SEED_ADMIN_EMAIL = process.env.SEED_ADMIN_EMAIL ?? 'admin@africatourismgate.local';
-const SEED_ADMIN_PASSWORD = process.env.SEED_ADMIN_PASSWORD ?? 'ChangeMe123!';
+import { loginAsSeedAdmin } from './helpers/admin-auth';
 
 const LANGUAGE_BUTTON = /Choisir la langue|Select language|Elegir idioma/i;
-const EMAIL_LABEL = /Adresse email|Email address|Correo electrónico/i;
-const PASSWORD_LABEL = /Mot de passe|Password|Contraseña/i;
-const SUBMIT_LABEL = /Se connecter|Sign in|Iniciar sesión/i;
 
 async function openLanguageMenu(page: import('@playwright/test').Page) {
   await page.getByRole('button', { name: LANGUAGE_BUTTON }).click();
@@ -16,14 +11,6 @@ async function openLanguageMenu(page: import('@playwright/test').Page) {
 async function selectLocale(page: import('@playwright/test').Page, localeName: RegExp) {
   await openLanguageMenu(page);
   await page.getByRole('menuitemradio', { name: localeName }).click();
-}
-
-async function loginAsSeedAdmin(page: import('@playwright/test').Page) {
-  await page.goto('/login');
-  await page.getByRole('textbox', { name: EMAIL_LABEL }).fill(SEED_ADMIN_EMAIL);
-  await page.getByRole('textbox', { name: PASSWORD_LABEL }).fill(SEED_ADMIN_PASSWORD);
-  await page.getByRole('button', { name: SUBMIT_LABEL }).click();
-  await expect(page).toHaveURL(/\/dashboard/, { timeout: 20_000 });
 }
 
 test.describe('Language switch (FR/EN/ES)', () => {
