@@ -1,8 +1,9 @@
 'use client';
 
 import { Button } from '@africatourismgate/ui';
-import type { BookingManifestEntry, BookingManifestSex, BookingStatus } from '@africatourismgate/types';
+import type { BookingIdentityDocument, BookingManifestEntry, BookingManifestSex, BookingStatus } from '@africatourismgate/types';
 import { useCallback, useEffect, useId, useState } from 'react';
+import { fetchBookingIdentityDocumentBlob } from '../../lib/api/booking-identity-documents';
 import { getAccountApiClient } from '../../lib/api/account';
 import { useTranslations } from '../../lib/i18n/locale-provider';
 
@@ -87,6 +88,56 @@ export function AccountBookingManifestSection({ bookingId, bookingStatus }: Prop
   const [editorOpen, setEditorOpen] = useState(false);
   const [editingEntry, setEditingEntry] = useState<BookingManifestEntry | null>(null);
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
+
+  // Document viewer
+  const [docsOpen, setDocsOpen] = useState(false);
+  const [documents, setDocuments] = useState<BookingIdentityDocument[]>([]);
+  const [docsLoading, setDocsLoading] = useState(false);
+  const [docsError, setDocsError] = useState<string | null>(null);
+  const [previewDoc, setPreviewDoc] = useState<BookingIdentityDocument | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+
+  async function openDocs() {
+    setDocsOpen(true);
+    if (documents.length > 0) return;
+    setDocsLoading(true);
+    setDocsError(null);
+    try {
+      const client = await getAccountApiClient();
+      const docs = await client.listBookingIdentityDocuments(bookingId);
+      setDocuments(docs);
+    } catch {
+      setDocsError(m.docsLoadError);
+    } finally {
+      setDocsLoading(false);
+    }
+  }
+
+  async function openPreview(doc: BookingIdentityDocument) {
+    setPreviewDoc(doc);
+    setPreviewLoading(true);
+    try {
+      const blob = await fetchBookingIdentityDocumentBlob(bookingId, doc.id);
+      const url = URL.createObjectURL(blob);
+      setPreviewUrl(url);
+    } catch {
+      setPreviewUrl(null);
+    } finally {
+      setPreviewLoading(false);
+    }
+  }
+
+  function closePreview() {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setPreviewUrl(null);
+    setPreviewDoc(null);
+  }
+
+  function closeDocs() {
+    closePreview();
+    setDocsOpen(false);
+  }
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -184,11 +235,16 @@ export function AccountBookingManifestSection({ bookingId, bookingStatus }: Prop
           <h3 className="text-base font-semibold text-atg-fg">{m.title}</h3>
           <p className="mt-1 text-sm text-atg-muted">{m.subtitle}</p>
         </div>
-        {canWrite ? (
-          <Button type="button" size="sm" onClick={openCreate}>
-            {m.addTraveler}
+        <div className="flex gap-2">
+          <Button type="button" variant="outline" size="sm" onClick={() => void openDocs()}>
+            {m.viewDocuments}
           </Button>
-        ) : null}
+          {canWrite ? (
+            <Button type="button" size="sm" onClick={openCreate}>
+              {m.addTraveler}
+            </Button>
+          ) : null}
+        </div>
       </div>
 
       {loadError ? (
@@ -480,6 +536,108 @@ export function AccountBookingManifestSection({ bookingId, bookingStatus }: Prop
               >
                 {deletingId ? m.deleting : m.delete}
               </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {/* Documents modal */}
+      {docsOpen ? (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+          role="dialog"
+          aria-modal="true"
+          onClick={closeDocs}
+        >
+          <div
+            className="flex w-full max-w-lg flex-col rounded-xl border border-atg-border bg-atg-surface shadow-xl dark:border-atg-border dark:bg-atg-bg"
+            style={{ maxHeight: '90vh' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-atg-border px-5 py-4 dark:border-atg-border">
+              <h2 className="text-base font-semibold text-atg-fg">{m.docsTitle}</h2>
+              <button
+                type="button"
+                onClick={closeDocs}
+                className="flex h-8 w-8 items-center justify-center rounded-full text-atg-muted hover:bg-atg-surface hover:text-atg-fg"
+                aria-label={m.cancel}
+              >
+                <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5" aria-hidden="true">
+                  <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="flex-1 overflow-y-auto p-5">
+              {docsLoading ? (
+                <p className="text-sm text-atg-muted">{m.loading}</p>
+              ) : docsError ? (
+                <p className="text-sm text-red-600 dark:text-red-400">{docsError}</p>
+              ) : documents.length === 0 ? (
+                <p className="text-sm text-atg-muted">{m.docsEmpty}</p>
+              ) : (
+                <ul className="space-y-3">
+                  {documents.map((doc) => (
+                    <li
+                      key={doc.id}
+                      className="flex items-center gap-3 rounded-lg border border-atg-border bg-white/50 px-3 py-3 dark:bg-black/10"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-atg-fg">{doc.originalFilename}</p>
+                        <p className="text-xs text-atg-muted">
+                          {doc.documentType} · v{doc.version}
+                        </p>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        disabled={previewLoading && previewDoc?.id === doc.id}
+                        onClick={() => void openPreview(doc)}
+                      >
+                        {previewLoading && previewDoc?.id === doc.id ? m.loading : m.viewDocument}
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {/* Preview inline */}
+              {previewDoc && (
+                <div className="mt-4 overflow-hidden rounded-lg border border-atg-border dark:border-atg-border">
+                  <div className="flex items-center justify-between border-b border-atg-border bg-atg-elevated px-3 py-2 dark:border-atg-border dark:bg-white/5">
+                    <span className="truncate text-xs text-atg-muted">{previewDoc.originalFilename}</span>
+                    <button
+                      type="button"
+                      onClick={closePreview}
+                      className="ml-2 shrink-0 text-xs text-atg-muted hover:text-atg-fg"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  {previewLoading ? (
+                    <div className="flex h-48 items-center justify-center">
+                      <p className="text-sm text-atg-muted">{m.loading}</p>
+                    </div>
+                  ) : previewUrl ? (
+                    previewDoc.mimeType === 'application/pdf' ? (
+                      <iframe
+                        src={previewUrl}
+                        title={previewDoc.originalFilename}
+                        className="h-96 w-full"
+                      />
+                    ) : (
+                      <img
+                        src={previewUrl}
+                        alt={previewDoc.originalFilename}
+                        className="max-h-96 w-full object-contain"
+                      />
+                    )
+                  ) : null}
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -1054,6 +1054,11 @@ export type Translations = {
           loading: string;
           loadError: string;
           addTraveler: string;
+          viewDocuments: string;
+          viewDocument: string;
+          docsTitle: string;
+          docsEmpty: string;
+          docsLoadError: string;
           addTitle: string;
           editTitle: string;
           formHint: string;
@@ -2490,6 +2495,11 @@ const fr: Translations = {
           loading: 'Chargement?',
           loadError: 'Impossible de charger la liste des voyageurs.',
           addTraveler: 'Ajouter un voyageur',
+          viewDocuments: 'Pi?ces jointes',
+          viewDocument: 'Voir',
+          docsTitle: 'Documents d?pos?s',
+          docsEmpty: 'Aucun document d?pos? pour cette r?servation.',
+          docsLoadError: 'Impossible de charger les documents.',
           addTitle: 'Ajouter un voyageur',
           editTitle: 'Modifier le voyageur',
           formHint: 'Seul le nom complet est obligatoire.',
@@ -3986,6 +3996,11 @@ const en: Translations = {
           loading: 'Loading?',
           loadError: 'Could not load the traveler list.',
           addTraveler: 'Add traveler',
+          viewDocuments: 'Attachments',
+          viewDocument: 'View',
+          docsTitle: 'Uploaded documents',
+          docsEmpty: 'No documents uploaded for this booking.',
+          docsLoadError: 'Could not load documents.',
           addTitle: 'Add a traveler',
           editTitle: 'Edit traveler',
           formHint: 'Only the full name is required.',
