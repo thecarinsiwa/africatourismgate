@@ -1511,7 +1511,8 @@ const fr: Translations = {
       signOut: 'Se d?connecter',
       nextStepsTitle: 'Prochaines ?tapes',
       nextStepContact: 'Notre ?quipe validera votre demande et vous contactera par e-mail.',
-      nextStepAccount: 'Suivez l?avancement depuis votre espace compte.',
+      nextStepAccount: 'Suivez l\u2019avancement depuis votre espace compte.',
+    },
     manifest: {
       title: 'Informations des voyageurs',
       subtitle: 'Renseignez les informations de chaque voyageur. Seul le nom complet est obligatoire.',
