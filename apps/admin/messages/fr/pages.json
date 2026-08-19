@@ -27,7 +27,8 @@
     "description": "Comptes plateforme. Filtrez par statut ou organisation.",
     "nouveau": {
       "metaTitle": "Nouvel utilisateur",
-      "description": "Créer un compte utilisateur."
+      "description": "Créer un compte utilisateur.",
+      "backLabel": "Retour aux utilisateurs"
     },
     "id": {
       "metaTitle": "Modifier l'utilisateur",
