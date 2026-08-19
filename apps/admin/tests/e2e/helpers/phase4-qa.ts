@@ -1,6 +1,9 @@
-import type { Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 
 export { waitForPageIdle } from './phase3-qa';
+
+/** Mois cible des seeds disponibilités chambres / classes vol. */
+export const SEED_AVAILABILITY_YEAR_MONTH = '2026-08';
 
 /** Site vitrine GAP (apps/gap) — aligné sur playwright.config.ts. */
 export const gapURL = process.env.PLAYWRIGHT_GAP_URL ?? 'http://localhost:3004';
@@ -149,4 +152,62 @@ export async function gotoGap(page: Page, path: '/' | '/about' | '/activities' |
           ? gapActivitiesUrl()
           : gapImpactUrl();
   await page.goto(url);
+}
+
+const MONTH_HEADING_PATTERNS: Record<number, RegExp> = {
+  1: /jan/i,
+  2: /f[eé]v|feb/i,
+  3: /mar/i,
+  4: /avr|apr/i,
+  5: /\bmai\b|\bmay\b|\bmayo\b/i,
+  6: /juin|jun/i,
+  7: /juil|jul/i,
+  8: /ao[uû]t|aug/i,
+  9: /sep/i,
+  10: /oct/i,
+  11: /nov/i,
+  12: /d[eé]c|dec/i,
+};
+
+function parseAvailabilityMonthHeading(text: string): { year: number; month: number } | null {
+  const yearMatch = text.match(/(\d{4})/);
+  if (!yearMatch) return null;
+
+  const year = Number(yearMatch[1]);
+  for (let month = 1; month <= 12; month += 1) {
+    if (MONTH_HEADING_PATTERNS[month].test(text)) {
+      return { year, month };
+    }
+  }
+  return null;
+}
+
+/** Affiche le mois YYYY-MM dans une grille H4/V3 (navigation ‹ ›). */
+export async function ensureAvailabilityMonth(
+  page: Page,
+  targetYearMonth = SEED_AVAILABILITY_YEAR_MONTH,
+) {
+  const [targetYear, targetMonth] = targetYearMonth.split('-').map(Number);
+  const heading = page.locator('h3[aria-live="polite"]').first();
+
+  for (let attempt = 0; attempt < 36; attempt += 1) {
+    await expect(heading).toBeVisible({ timeout: 15_000 });
+    const parsed = parseAvailabilityMonthHeading((await heading.textContent()) ?? '');
+    if (parsed?.year === targetYear && parsed.month === targetMonth) {
+      return;
+    }
+
+    const goForward =
+      !parsed ||
+      parsed.year < targetYear ||
+      (parsed.year === targetYear && parsed.month < targetMonth);
+
+    const button = page.getByRole('button', {
+      name: goForward ? AVAILABILITY_NEXT_MONTH : AVAILABILITY_PREVIOUS_MONTH,
+    });
+    await button.click();
+    await expect(page.locator('[aria-busy="true"]')).toHaveCount(0, { timeout: 30_000 });
+  }
+
+  throw new Error(`Impossible d'afficher le mois ${targetYearMonth} dans la grille disponibilités.`);
 }
