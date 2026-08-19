@@ -12,7 +12,10 @@
     "localeFilter": "Idioma"
   },
   "list": {
-    "deleteConfirm": "¿Eliminar la diapositiva « {title} »?",
+    "deleteTitle": "Eliminar diapositiva",
+    "deleteConfirm": "La diapositiva «{title}» será eliminada permanentemente.",
+    "deleteConfirmButton": "Eliminar",
+    "cancel": "Cancelar",
     "columns": {
       "title": "Diapositiva",
       "sortOrder": "Orden"

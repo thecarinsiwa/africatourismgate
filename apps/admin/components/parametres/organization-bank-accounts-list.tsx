@@ -42,6 +42,8 @@ export function OrganizationBankAccountsList() {
   const [editing, setEditing] = useState<OrganizationBankAccount | null>(null);
   const [creating, setCreating] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<OrganizationBankAccount | null>(null);
   const [formDirty, setFormDirty] = useState(false);
   const { dialogOpen, setDialogOpen, requestAction, confirmDiscard, cancelDiscard } =
     useUnsavedChangesGuard(formDirty);
@@ -125,25 +127,28 @@ export function OrganizationBankAccountsList() {
     [router, searchParams, loadAccounts],
   );
 
-  const handleDelete = useCallback(
-    async (account: OrganizationBankAccount) => {
-      if (!organizationId) return;
-      if (!window.confirm(tBank('list.deleteConfirm'))) return;
-      setDeletingId(account.id);
-      try {
-        await getApiClient().deleteOrganizationBankAccount(
-          account.id,
-          isSuperAdmin ? organizationId : undefined,
-        );
-        await loadAccounts(organizationId);
-      } catch (error) {
-        window.alert(getOrganizationSettingsErrorMessage(error));
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [organizationId, isSuperAdmin, loadAccounts, tBank, getOrganizationSettingsErrorMessage],
-  );
+  const handleDeleteRequest = useCallback((account: OrganizationBankAccount) => {
+    setDeleteTarget(account);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!deleteTarget || !organizationId) return;
+    const account = deleteTarget;
+    setDeleteTarget(null);
+    setDeleteError(null);
+    setDeletingId(account.id);
+    try {
+      await getApiClient().deleteOrganizationBankAccount(
+        account.id,
+        isSuperAdmin ? organizationId : undefined,
+      );
+      await loadAccounts(organizationId);
+    } catch (error) {
+      setDeleteError(getOrganizationSettingsErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [deleteTarget, organizationId, isSuperAdmin, loadAccounts, getOrganizationSettingsErrorMessage]);
 
   const columns = useMemo<ColumnDef<OrganizationBankAccount, unknown>[]>(
     () => [
@@ -197,13 +202,13 @@ export function OrganizationBankAccountsList() {
             <DataTableActionButton
               action="delete"
               loading={deletingId === row.original.id}
-              onClick={() => void handleDelete(row.original)}
+              onClick={() => handleDeleteRequest(row.original)}
             />
           </DataTableActions>
         ),
       },
     ],
-    [deletingId, handleDelete, tBank, tCommon],
+    [deletingId, handleDeleteRequest, tBank, tCommon],
   );
 
   if (accessError) {
@@ -313,6 +318,18 @@ export function OrganizationBankAccountsList() {
         variant="danger"
         onConfirm={confirmDiscard}
         onCancel={cancelDiscard}
+      />
+      <AlertDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => { if (!open) setDeleteTarget(null); }}
+        title={tBank('list.deleteTitle')}
+        description={tBank('list.deleteConfirm')}
+        confirmLabel={tBank('list.deleteConfirmButton')}
+        cancelLabel={tBank('list.cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
       />
     </>
   );

@@ -103,7 +103,10 @@
     "scopeIdHint": "Ex. ID propriété, agence ou file support.",
     "expiresAt": "Expiration (optionnel)",
     "superAdminWarning": "Réservé aux super administrateurs — périmètre forcé à Global.",
-    "superAdminConfirm": "Attribuer le rôle « {roleName} » ? Cet utilisateur obtiendra un accès complet à la plateforme.",
+    "superAdminConfirmTitle": "Confirmer l'attribution super-admin",
+    "superAdminConfirm": "L'utilisateur obtiendra le rôle « {roleName} » et un accès complet à la plateforme.",
+    "superAdminConfirmButton": "Confirmer",
+    "cancel": "Annuler",
     "validation": {
       "userAndRoleRequired": "Utilisateur et rôle sont obligatoires.",
       "scopeIdRequired": "L'identifiant de scope est obligatoire pour ce périmètre."

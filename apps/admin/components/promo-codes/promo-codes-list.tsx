@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -58,6 +59,7 @@ export function PromoCodesList() {
   >({ status: 'loading' });
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<PromoCode | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -110,22 +112,25 @@ export function PromoCodesList() {
     return () => window.clearTimeout(timer);
   }, [searchInput]);
 
-  const handleDelete = useCallback(
-    async (promo: PromoCode) => {
-      if (!window.confirm(t('deleteConfirm', { code: promo.code }))) return;
-      setDeleteError(null);
-      setDeletingId(promo.id);
-      try {
-        await getApiClient().deletePromoCode(promo.id);
-        await load();
-      } catch (error) {
-        setDeleteError(getPromoCodesErrorMessage(error));
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [load, t, getPromoCodesErrorMessage],
-  );
+  const handleDeleteRequest = useCallback((promo: PromoCode) => {
+    setConfirmTarget(promo);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const promo = confirmTarget;
+    setConfirmTarget(null);
+    setDeleteError(null);
+    setDeletingId(promo.id);
+    try {
+      await getApiClient().deletePromoCode(promo.id);
+      await load();
+    } catch (error) {
+      setDeleteError(getPromoCodesErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getPromoCodesErrorMessage, load]);
 
   const columns = useMemo<ColumnDef<PromoCode, unknown>[]>(
     () => [
@@ -220,7 +225,7 @@ export function PromoCodesList() {
               {canWrite ? (
                 <DataTableActionButton
                   action="delete"
-                  onClick={() => void handleDelete(promo)}
+                  onClick={() => handleDeleteRequest(promo)}
                   disabled={deletingId === promo.id}
                   loading={deletingId === promo.id}
                 />
@@ -235,7 +240,7 @@ export function PromoCodesList() {
       deletingId,
       discountLabels,
       discountTypeLabels,
-      handleDelete,
+      handleDeleteRequest,
       hydrated,
       t,
       tCommon,
@@ -251,6 +256,19 @@ export function PromoCodesList() {
   const emptyMessage = search.trim() ? t('emptySearch') : t('emptyDefault');
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={t('deleteTitle')}
+        description={confirmTarget ? t('deleteConfirm', { code: confirmTarget.code }) : ''}
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex-1 sm:max-w-md">
@@ -267,12 +285,6 @@ export function PromoCodesList() {
           <Button href="/paiements/codes-promo/nouveau">{t('newButton')}</Button>
         ) : null}
       </div>
-
-      {deleteError ? (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {deleteError}
-        </p>
-      ) : null}
 
       {isError ? (
         <p className="text-sm text-red-600 dark:text-red-400" role="alert">
@@ -301,9 +313,10 @@ export function PromoCodesList() {
               itemLabel={t('paginationItem')}
               onPageChange={setPage}
             />
-          ) : null}
-        </>
-      )}
+        ) : null}
+      </>
+    )}
     </div>
+    </>
   );
 }

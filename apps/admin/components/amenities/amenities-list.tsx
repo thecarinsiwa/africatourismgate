@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -54,6 +55,7 @@ export function AmenitiesList() {
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<Amenity | null>(null);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -142,21 +144,24 @@ export function AmenitiesList() {
     }
   }
 
-  const handleDelete = useCallback(
-    async (a: Amenity) => {
-      if (!window.confirm(t('deleteConfirm', { name: a.name }))) return;
-      setDeletingId(a.id);
-      try {
-        await getApiClient().deleteAmenity(a.id);
-        await load();
-      } catch (error) {
-        setFormError(getHebergementsErrorMessage(error));
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [load, t, getHebergementsErrorMessage],
-  );
+  const handleDeleteRequest = useCallback((a: Amenity) => {
+    setConfirmTarget(a);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const a = confirmTarget;
+    setConfirmTarget(null);
+    setDeletingId(a.id);
+    try {
+      await getApiClient().deleteAmenity(a.id);
+      await load();
+    } catch (error) {
+      setFormError(getHebergementsErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getHebergementsErrorMessage, load]);
 
   const renderAmenityActions = useCallback(
     (amenity: Amenity) => (
@@ -164,13 +169,13 @@ export function AmenitiesList() {
         <DataTableActionButton action="edit" onClick={() => openEdit(amenity)} />
         <DataTableActionButton
           action="delete"
-          onClick={() => void handleDelete(amenity)}
+          onClick={() => handleDeleteRequest(amenity)}
           disabled={deletingId === amenity.id}
           loading={deletingId === amenity.id}
         />
       </DataTableActions>
     ),
-    [deletingId, handleDelete],
+    [deletingId, handleDeleteRequest],
   );
 
   const columns = useMemo<ColumnDef<Amenity, unknown>[]>(
@@ -214,6 +219,18 @@ export function AmenitiesList() {
   const amenities = state.status === 'ready' ? state.amenities : [];
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={t('deleteTitle')}
+        description={confirmTarget ? t('deleteConfirm', { name: confirmTarget.name }) : ''}
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <div className="space-y-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex min-w-0 flex-1 flex-col gap-4 sm:flex-row sm:items-center">
@@ -340,5 +357,6 @@ export function AmenitiesList() {
         </>
       )}
     </div>
+    </>
   );
 }

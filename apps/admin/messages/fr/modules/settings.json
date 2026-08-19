@@ -224,7 +224,10 @@
       "denied": "Vous n'avez pas la permission de consulter les comptes bancaires."
     },
     "list": {
-      "deleteConfirm": "Supprimer ce compte bancaire ?",
+      "deleteTitle": "Supprimer le compte bancaire",
+      "deleteConfirm": "Ce compte bancaire sera supprimé définitivement.",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler",
       "columns": {
         "bank": "Banque",
         "account": "Compte",
@@ -274,7 +277,10 @@
       "allStatuses": "Tous les statuts",
       "empty": "Aucune campagne de don pour le moment.",
       "denied": "Vous n'avez pas la permission de consulter les dons.",
-      "deleteConfirm": "Supprimer la campagne « {title} » ?",
+      "deleteTitle": "Supprimer la campagne",
+      "deleteConfirm": "La campagne « {title} » sera supprimée définitivement.",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler",
       "featuredYes": "Navbar",
       "columns": {
         "title": "Titre",

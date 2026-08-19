@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -49,6 +50,7 @@ export function PromotionsList() {
   >({ status: 'loading' });
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<Promotion | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -101,22 +103,25 @@ export function PromotionsList() {
     return () => window.clearTimeout(timer);
   }, [searchInput]);
 
-  const handleDelete = useCallback(
-    async (promo: Promotion) => {
-      if (!window.confirm(t('deleteConfirm', { name: promo.name }))) return;
-      setDeleteError(null);
-      setDeletingId(promo.id);
-      try {
-        await getApiClient().deletePromotion(promo.id);
-        await load();
-      } catch (error) {
-        setDeleteError(getPromotionsErrorMessage(error));
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [load, t, getPromotionsErrorMessage],
-  );
+  const handleDeleteRequest = useCallback((promo: Promotion) => {
+    setConfirmTarget(promo);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const promo = confirmTarget;
+    setConfirmTarget(null);
+    setDeleteError(null);
+    setDeletingId(promo.id);
+    try {
+      await getApiClient().deletePromotion(promo.id);
+      await load();
+    } catch (error) {
+      setDeleteError(getPromotionsErrorMessage(error));
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getPromotionsErrorMessage, load]);
 
   const columns = useMemo<ColumnDef<Promotion, unknown>[]>(
     () => [
@@ -188,7 +193,7 @@ export function PromotionsList() {
               {canWrite ? (
                 <DataTableActionButton
                   action="delete"
-                  onClick={() => void handleDelete(promo)}
+                  onClick={() => handleDeleteRequest(promo)}
                   disabled={deletingId === promo.id}
                   loading={deletingId === promo.id}
                 />
@@ -198,7 +203,7 @@ export function PromotionsList() {
         },
       },
     ],
-    [canWrite, deletingId, discountLabels, handleDelete, t, tCommon, tStatus, tUsage],
+    [canWrite, deletingId, discountLabels, handleDeleteRequest, t, tCommon, tStatus, tUsage],
   );
 
   const isLoading = state.status === 'loading';
@@ -207,6 +212,19 @@ export function PromotionsList() {
   const emptyMessage = search.trim() ? t('emptySearch') : t('emptyDefault');
 
   return (
+    <>
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        title={t('deleteTitle')}
+        description={confirmTarget ? t('deleteConfirm', { name: confirmTarget.name }) : ''}
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex-1 sm:max-w-md">
@@ -223,12 +241,6 @@ export function PromotionsList() {
           <Button href="/paiements/promotions/nouveau">{t('newButton')}</Button>
         ) : null}
       </div>
-
-      {deleteError ? (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {deleteError}
-        </p>
-      ) : null}
 
       {isError ? (
         <p className="text-sm text-red-600 dark:text-red-400" role="alert">
@@ -257,9 +269,10 @@ export function PromotionsList() {
               itemLabel={t('paginationItem')}
               onPageChange={setPage}
             />
-          ) : null}
-        </>
-      )}
+        ) : null}
+      </>
+    )}
     </div>
+    </>
   );
 }
