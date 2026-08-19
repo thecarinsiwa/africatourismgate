@@ -31,6 +31,7 @@ import {
   adminDashboardNavConfig,
   adminBreadcrumbExtraRoutes,
   navGroupMessageKey,
+  type AdminNavBadgeKey,
   type AdminNavLinkConfig,
 } from './dashboard-nav.config';
 
@@ -41,6 +42,7 @@ export {
   flattenAdminNavHrefs,
   getAdminRouteRootSegments,
   navGroupMessageKey,
+  type AdminNavBadgeKey,
 } from './dashboard-nav.config';
 
 const iconMap: Record<string, ReactNode> = {
@@ -113,5 +115,58 @@ export function buildAdminDashboardNav(tNav: (key: string) => string): SidebarNa
         icon: resolveIcon(child.iconKey),
       })),
     };
+  });
+}
+
+const navBadgeHrefMap = (() => {
+  const map = new Map<string, AdminNavBadgeKey>();
+  for (const entry of adminDashboardNavConfig) {
+    if (entry.type !== 'group') continue;
+    for (const child of entry.children) {
+      if (child.badgeKey) {
+        map.set(child.href, child.badgeKey);
+      }
+    }
+  }
+  return map;
+})();
+
+/** Applique les compteurs nav aux entrées sidebar (après filtrage RBAC). */
+export function applyNavBadgeCounts(
+  navItems: SidebarNavEntry[],
+  counts: Partial<Record<AdminNavBadgeKey, number>>,
+): SidebarNavEntry[] {
+  if (navBadgeHrefMap.size === 0) {
+    return navItems;
+  }
+
+  return navItems.map((entry) => {
+    if (entry.type !== 'group') {
+      return entry;
+    }
+
+    let changed = false;
+    const children = entry.children.map((child) => {
+      const badgeKey = navBadgeHrefMap.get(child.href);
+      if (!badgeKey) {
+        return child;
+      }
+      const count = counts[badgeKey];
+      if (count == null || count <= 0) {
+        if (child.badge != null) {
+          changed = true;
+          const { badge: _removed, ...rest } = child;
+          return rest;
+        }
+        return child;
+      }
+      if (child.badge === count) {
+        return child;
+      }
+      changed = true;
+      return { ...child, badge: count };
+    });
+
+    return changed ? { ...entry, children } : entry;
   });
 }
