@@ -177,7 +177,7 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
   const { review } = state;
   const canApprove = review.status !== 'approved';
   const canHide = review.status !== 'hidden';
-  const showFooter = canWrite;
+  const showActions = canWrite;
   const entityTypeLabel = tDetail.has(reviewEntityTypeKey(review.entityType))
     ? tDetail(reviewEntityTypeKey(review.entityType))
     : review.entityType;
@@ -188,7 +188,51 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
 
   return (
     <div className="space-y-6">
-      <AdminPageBackLink href="/contenu/avis" label={tDetail('backLink')} />
+      <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+        <AdminPageBackLink href="/contenu/avis" label={tDetail('backLink')} />
+        {showActions ? (
+          <div
+            className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end"
+            role="region"
+            aria-label={tDetail('moderationActionsAria')}
+          >
+            {canApprove ? (
+              <Button
+                type="button"
+                disabled={acting}
+                loading={acting}
+                loadingText={tLoading('default')}
+                className="w-full sm:w-auto"
+                onClick={() => void runModerationAction('approve')}
+              >
+                {t('actions.approve')}
+              </Button>
+            ) : null}
+            {canHide ? (
+              <Button
+                type="button"
+                variant="secondary"
+                disabled={acting}
+                loading={acting}
+                loadingText={tLoading('default')}
+                className="w-full sm:w-auto"
+                onClick={() => void runModerationAction('hide')}
+              >
+                {t('actions.hide')}
+              </Button>
+            ) : null}
+            <Button
+              type="button"
+              variant="ghost"
+              disabled={acting}
+              onClick={() => setDeleteDialogOpen(true)}
+              className="w-full sm:w-auto !text-red-600 hover:!bg-red-50 dark:!text-red-400"
+            >
+              {t('actions.delete')}
+            </Button>
+          </div>
+        ) : null}
+      </div>
 
       {actionError ? (
         <p
@@ -318,53 +362,6 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
             )}
           </Card>
       </div>
-
-      {showFooter ? (
-        <div
-          className="sticky bottom-0 z-10 -mx-4 border-t border-atg-border bg-atg-surface/95 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-atg-surface/90 sm:-mx-6 sm:px-6 md:-mx-8 md:px-8"
-          role="region"
-          aria-label={tDetail('moderationActionsAria')}
-        >
-          <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
-            <Button
-              type="button"
-              variant="ghost"
-              disabled={acting}
-              onClick={() => setDeleteDialogOpen(true)}
-              className="order-3 w-full sm:order-1 sm:w-auto !text-red-600 hover:!bg-red-50 dark:!text-red-400"
-            >
-              {t('actions.delete')}
-            </Button>
-            <div className="flex flex-col gap-2 sm:order-2 sm:ml-auto sm:flex-row sm:items-center">
-              {canHide ? (
-                <Button
-                  type="button"
-                  variant="secondary"
-                  disabled={acting}
-                  loading={acting}
-                  loadingText={tLoading('default')}
-                  className="w-full sm:w-auto"
-                  onClick={() => void runModerationAction('hide')}
-                >
-                  {t('actions.hide')}
-                </Button>
-              ) : null}
-              {canApprove ? (
-                <Button
-                  type="button"
-                  disabled={acting}
-                  loading={acting}
-                  loadingText={tLoading('default')}
-                  className="w-full sm:w-auto"
-                  onClick={() => void runModerationAction('approve')}
-                >
-                  {t('actions.approve')}
-                </Button>
-              ) : null}
-            </div>
-          </div>
-        </div>
-      ) : null}
 
       <AlertDialog
         open={deleteDialogOpen}
