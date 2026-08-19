@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { createBooking, createBookingCheckoutSession, requestBooking } from '../../lib/api/booking';
+import { uploadBookingIdentityDocument } from '../../lib/api/booking-identity-documents';
 import { formatCarPrice } from '../../lib/cars/listings';
 import type { VehicleDetail } from '../../lib/cars/types';
 import { formatActivityPrice, formatScheduleTime } from '../../lib/activities/listings';
@@ -303,6 +304,14 @@ export function ReservationRecapPageContent({ draft }: Props) {
             ),
           ),
         );
+        const filesToUpload = filled.filter((e) => e.file);
+        if (filesToUpload.length > 0) {
+          await Promise.allSettled(
+            filesToUpload.map((entry) =>
+              uploadBookingIdentityDocument(response.bookingId, entry.file!, 'passport'),
+            ),
+          );
+        }
 
         router.push(`/booking/request-success?booking_id=${response.bookingId}`);
         return;

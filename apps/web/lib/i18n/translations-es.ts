@@ -242,6 +242,10 @@ export const es: Translations = {
       conditions: 'Condiciones médicas',
       conditionsPlaceholder: 'Alergias, tratamientos, necesidades especiales…',
       fullNameRequired: 'El nombre completo del viajero {n} es obligatorio.',
+      idDocument: 'Documento de identidad',
+      idDocumentHint: 'JPEG, PNG, WebP o PDF — 10 MB máx.',
+      idDocumentSelected: 'Archivo seleccionado',
+      idDocumentRemove: 'Quitar',
     },
     cancel: {
       title: 'Pago cancelado',

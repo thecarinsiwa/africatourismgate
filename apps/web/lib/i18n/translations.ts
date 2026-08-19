@@ -210,6 +210,10 @@ export type Translations = {
       conditions: string;
       conditionsPlaceholder: string;
       fullNameRequired: string;
+      idDocument: string;
+      idDocumentHint: string;
+      idDocumentSelected: string;
+      idDocumentRemove: string;
     };
     cancel: {
       title: string;
@@ -1529,6 +1533,10 @@ const fr: Translations = {
       conditions: 'Conditions m?dicales',
       conditionsPlaceholder: 'Allergies, traitements, besoins particuliers?',
       fullNameRequired: 'Le nom complet du voyageur {n} est obligatoire.',
+      idDocument: "Pi?ce d'identit?",
+      idDocumentHint: 'JPEG, PNG, WebP ou PDF ? 10 Mo max.',
+      idDocumentSelected: 'Fichier s?lectionn?',
+      idDocumentRemove: 'Retirer',
     },
     cancel: {
       title: 'Paiement annule',
@@ -3019,6 +3027,10 @@ const en: Translations = {
       conditions: 'Medical conditions',
       conditionsPlaceholder: 'Allergies, treatments, special needs?',
       fullNameRequired: 'Full name of traveler {n} is required.',
+      idDocument: 'Identity document',
+      idDocumentHint: 'JPEG, PNG, WebP or PDF ? 10 MB max.',
+      idDocumentSelected: 'File selected',
+      idDocumentRemove: 'Remove',
     },
     cancel: {
       title: 'Payment cancelled',
