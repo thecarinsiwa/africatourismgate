@@ -75,7 +75,10 @@
       "filterTo": "hasta",
       "status": "Estado",
       "empty": "Ninguna franja en este período.",
-      "deleteConfirm": "¿Eliminar esta franja?"
+      "deleteTitle": "Eliminar franja",
+      "deleteConfirm": "Esta franja será eliminada permanentemente.",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar"
     }
   },
   "referential": {
@@ -87,7 +90,10 @@
       "searchPlaceholder": "Buscar por nombre o modelo…",
       "searchAria": "Buscar categorías",
       "exampleModel": "Modelo de ejemplo",
-      "deleteConfirm": "¿Eliminar la categoría « {name} »?"
+      "deleteTitle": "Eliminar categoría",
+      "deleteConfirm": "La categoría «{name}» será eliminada permanentemente.",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar"
     },
     "agencies": {
       "new": "Nueva agencia",
@@ -99,7 +105,10 @@
       "agency": "Agencia",
       "address": "Dirección",
       "destinationOptional": "Destino (opcional)",
-      "deleteConfirm": "¿Eliminar la agencia « {name} »?"
+      "deleteTitle": "Eliminar agencia",
+      "deleteConfirm": "La agencia «{name}» será eliminada permanentemente.",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar"
     }
   },
   "stats": {
