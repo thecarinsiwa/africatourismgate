@@ -28,11 +28,19 @@ const PERIOD_DAYS: Record<DashboardPeriod, number> = {
   '90d': 90,
 };
 
+export { PERIOD_DAYS as DASHBOARD_PERIOD_DAYS };
+
 function formatDateOnly(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
 
-function getPeriodRange(period: DashboardPeriod): { dateFrom: string; dateTo: string; days: string[] } {
+export type DashboardDateRange = {
+  dateFrom: string;
+  dateTo: string;
+  days: string[];
+};
+
+export function getDashboardPeriodRange(period: DashboardPeriod): DashboardDateRange {
   const dayCount = PERIOD_DAYS[period];
   const end = new Date();
   end.setUTCHours(0, 0, 0, 0);
@@ -53,10 +61,34 @@ function getPeriodRange(period: DashboardPeriod): { dateFrom: string; dateTo: st
   };
 }
 
+/** Période immédiatement précédente (même durée que `period`). */
+export function getPreviousDashboardPeriodRange(
+  period: DashboardPeriod,
+): Pick<DashboardDateRange, 'dateFrom' | 'dateTo'> {
+  const dayCount = PERIOD_DAYS[period];
+  const current = getDashboardPeriodRange(period);
+  const currentStart = new Date(`${current.dateFrom}T00:00:00.000Z`);
+  const previousEnd = new Date(currentStart);
+  previousEnd.setUTCDate(previousEnd.getUTCDate() - 1);
+  const previousStart = new Date(previousEnd);
+  previousStart.setUTCDate(previousStart.getUTCDate() - (dayCount - 1));
+
+  return {
+    dateFrom: formatDateOnly(previousStart),
+    dateTo: formatDateOnly(previousEnd),
+  };
+}
+
+function getPeriodRange(period: DashboardPeriod): DashboardDateRange {
+  return getDashboardPeriodRange(period);
+}
+
 function isWithinRange(isoDate: string, dateFrom: string, dateTo: string): boolean {
   const day = isoDate.slice(0, 10);
   return day >= dateFrom && day <= dateTo;
 }
+
+export { isWithinRange as isDashboardDateInRange };
 
 function bucketBookings(bookings: BookingListItem[], days: string[]): Map<string, number> {
   const counts = new Map<string, number>(days.map((day) => [day, 0]));
@@ -92,7 +124,7 @@ export async function fetchDashboardTrend(
   access: DashboardTrendAccess,
 ): Promise<DashboardTrendResult> {
   const client = getApiClient();
-  const { dateFrom, dateTo, days } = getPeriodRange(period);
+  const { dateFrom, dateTo } = getPeriodRange(period);
 
   const [bookings, payments] = await Promise.all([
     access.canReadBookings
@@ -104,6 +136,17 @@ export async function fetchDashboardTrend(
       ? fetchAllPaginated((page, limit) => client.listPayments({ page, limit }))
       : Promise.resolve([] as PaymentListItem[]),
   ]);
+
+  return buildDashboardTrendResult(period, bookings, payments);
+}
+
+/** Construit la série tendance à partir de listes déjà chargées (batch dashboard). */
+export function buildDashboardTrendResult(
+  period: DashboardPeriod,
+  bookings: BookingListItem[],
+  payments: PaymentListItem[],
+): DashboardTrendResult {
+  const { dateFrom, dateTo, days } = getPeriodRange(period);
 
   const bookingCounts = bucketBookings(bookings, days);
   const revenueTotals = bucketPayments(payments, days, dateFrom, dateTo);

@@ -2,7 +2,7 @@
 
 import { Card, Skeleton } from '@africatourismgate/ui';
 import { useTranslations } from 'next-intl';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import {
   Bar,
   BarChart,
@@ -13,19 +13,11 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { fetchDashboardTrend, type TrendPoint } from '../lib/dashboard-trend-data';
-import { isApiForbidden } from '../lib/auth/is-api-forbidden';
-import { usePermissions } from '../lib/auth/use-permissions';
 import { formatMoney } from '../lib/format-money';
 import { useFormatChartAxisDate } from '../lib/i18n/use-module-labels';
 import { useChartTheme } from '../lib/use-chart-theme';
-import { useDashboardPeriod } from './dashboard-period-context';
-
-type ChartState =
-  | { status: 'loading' }
-  | { status: 'hidden' }
-  | { status: 'error' }
-  | { status: 'ready'; points: TrendPoint[]; currency: string };
+import { useDashboardTrendData } from './dashboard-data-context';
+import { usePermissions } from '../lib/auth/use-permissions';
 
 type ChartRow = {
   date: string;
@@ -125,53 +117,25 @@ function ChartLegend({
 
 export function DashboardTrendChart({ className }: { className?: string }) {
   const t = useTranslations('dashboard.chart');
-  const { period } = useDashboardPeriod();
   const { hasPermission, loading: permissionsLoading } = usePermissions();
+  const trendState = useDashboardTrendData();
   const chartTheme = useChartTheme();
   const formatAxisDate = useFormatChartAxisDate();
-  const [state, setState] = useState<ChartState>({ status: 'loading' });
 
   const canReadBookings = hasPermission('bookings.read');
   const canReadPayments = hasPermission('payments.read');
   const canShowChart = canReadBookings || canReadPayments;
 
-  useEffect(() => {
-    if (permissionsLoading || !canShowChart) return;
-
-    let cancelled = false;
-
-    async function load() {
-      setState({ status: 'loading' });
-      try {
-        const { points, currency } = await fetchDashboardTrend(period, {
-          canReadBookings,
-          canReadPayments,
-        });
-        if (cancelled) return;
-        setState({ status: 'ready', points, currency });
-      } catch (error) {
-        if (!cancelled) {
-          setState(isApiForbidden(error) ? { status: 'hidden' } : { status: 'error' });
-        }
-      }
-    }
-
-    void load();
-    return () => {
-      cancelled = true;
-    };
-  }, [canReadBookings, canReadPayments, canShowChart, period, permissionsLoading]);
-
   const rows = useMemo<ChartRow[] | null>(() => {
-    if (state.status !== 'ready') return null;
-    return state.points.map((point) => ({
+    if (trendState.status !== 'ready') return null;
+    return trendState.result.points.map((point) => ({
       date: point.date,
       label: formatAxisDate(point.date),
       bookings: point.bookings,
       revenue: point.revenueCents / 100,
       revenueCents: point.revenueCents,
     }));
-  }, [formatAxisDate, state]);
+  }, [formatAxisDate, trendState]);
 
   const hasData = useMemo(
     () => rows?.some((row) => row.bookings > 0 || row.revenue > 0) ?? false,
@@ -184,8 +148,10 @@ export function DashboardTrendChart({ className }: { className?: string }) {
   }, [rows]);
 
   const chartKey = `${chartTheme.bookings}-${chartTheme.revenue}-${chartTheme.tick}`;
+  const loading = permissionsLoading || trendState.status === 'loading';
+  const currency = trendState.status === 'ready' ? trendState.result.currency : 'CDF';
 
-  if (permissionsLoading || !canShowChart || state.status === 'hidden') {
+  if (!canShowChart || trendState.status === 'hidden') {
     return null;
   }
 
@@ -196,12 +162,12 @@ export function DashboardTrendChart({ className }: { className?: string }) {
       </div>
 
       <div className="mt-4">
-        {state.status === 'loading' ? (
+        {loading ? (
           <div className="space-y-3" aria-busy="true">
             <Skeleton className="h-[280px] w-full rounded-lg" />
             <p className="text-sm text-atg-muted">{t('loading')}</p>
           </div>
-        ) : state.status === 'error' ? (
+        ) : trendState.status === 'error' ? (
           <p className="py-16 text-center text-sm text-atg-danger" role="alert">
             {t('error')}
           </p>
@@ -237,7 +203,7 @@ export function DashboardTrendChart({ className }: { className?: string }) {
                     <ChartTooltip
                       bookingsLabel={t('bookings')}
                       revenueLabel={t('revenue')}
-                      currency={state.currency}
+                      currency={currency}
                       bookingsColor={chartTheme.bookings}
                       revenueColor={chartTheme.revenue}
                     />
@@ -286,7 +252,7 @@ export function DashboardTrendChart({ className }: { className?: string }) {
                   <tr key={row.date}>
                     <td>{row.date}</td>
                     <td>{row.bookings}</td>
-                    <td>{formatMoney(row.revenueCents, state.currency)}</td>
+                    <td>{formatMoney(row.revenueCents, currency)}</td>
                   </tr>
                 ))}
               </tbody>

@@ -1,71 +1,80 @@
 {
   "status": {
     "pending": "Pendiente",
-    "approved": "Approuvé",
-    "hidden": "Masqué"
+    "approved": "Aprobado",
+    "hidden": "Oculto"
   },
   "actions": {
-    "approve": "Approuver",
-    "hide": "Masquer",
-    "delete": "Supprimer"
+    "approve": "Aprobar",
+    "hide": "Ocultar",
+    "delete": "Eliminar"
   },
   "toast": {
     "approved": {
-      "title": "Avis approuvé",
-      "message": "L'avis est visible côté client."
+      "title": "Reseña aprobada",
+      "message": "La reseña ya es visible para los clientes."
     },
     "hidden": {
-      "title": "Avis masqué",
-      "message": "L'avis n'est plus affiché publiquement."
+      "title": "Reseña oculta",
+      "message": "La reseña ya no se muestra públicamente."
     },
     "deleted": {
-      "title": "Avis supprimé",
-      "message": "L'avis a été retiré de la modération."
+      "title": "Reseña eliminada",
+      "message": "La reseña se ha retirado de la moderación."
     }
   },
   "deleteDialog": {
-    "title": "Supprimer cet avis",
-    "description": "Suppression logique : l'avis ne sera plus visible dans la modération."
+    "title": "Eliminar esta reseña",
+    "description": "Eliminación lógica: la reseña ya no aparecerá en moderación."
   },
   "detail": {
-    "title": "Avis",
-    "backLink": "Volver aux avis",
+    "title": "Reseña",
+    "backLink": "Volver a las reseñas",
     "sections": {
-      "context": "Contexte",
-      "comment": "Commentaire"
+      "context": "Contexto",
+      "comment": "Comentario"
     },
     "fields": {
-      "author": "Hastateur",
+      "author": "Autor",
       "property": "Propiedad",
-      "entity": "Entité",
+      "entity": "Entidad vinculada",
       "booking": "Reserva",
-      "guide": "Guía",
-      "publishedAt": "Publié le"
+      "guide": "Guía turístico",
+      "publishedAt": "Publicado el"
     },
-    "viewBooking": "Voir la réservation",
-    "noComment": "Hastacun commentaire.",
-    "moderationActionsAria": "Acciones de modération"
+    "entityTypes": {
+      "property": "Propiedad",
+      "flight": "Vuelo",
+      "vehicle": "Alquiler de vehículo",
+      "cruise": "Crucero",
+      "activity": "Actividad",
+      "booking": "Reserva",
+      "tour_guide": "Guía turístico"
+    },
+    "viewBooking": "Ver reserva",
+    "noComment": "Sin comentario.",
+    "moderationActionsAria": "Acciones de moderación"
   },
   "list": {
     "columns": {
-      "author": "Hastateur",
+      "author": "Autor",
       "property": "Propiedad"
     },
     "filters": {
-      "apply": "Aplicar les filtres"
+      "apply": "Aplicar filtros"
     },
     "empty": {
       "default": {
-        "title": "Hastacun avis en attente",
-        "description": "La file de modération est vide. Les nouveaux avis clients apparaîtront ici.",
-        "tableMessage": "Hastacun avis pour le moment."
+        "title": "Ninguna reseña pendiente",
+        "description": "La cola de moderación está vacía. Las nuevas reseñas aparecerán aquí.",
+        "tableMessage": "Ninguna reseña por el momento."
       },
       "filtered": {
-        "title": "Hastacun avis ne correspond aux filtres",
-        "description": "Modifiez les filtres ou affichez tous les statuts pour élargir la recherche.",
-        "tableMessage": "Hastacun avis ne correspond aux filtres."
+        "title": "Ninguna reseña coincide con los filtros",
+        "description": "Modifique los filtros o muestre todos los estados para ampliar la búsqueda.",
+        "tableMessage": "Ninguna reseña coincide con los filtros."
       }
     },
-    "ariaLabel": "Liste des avis à modérer"
+    "ariaLabel": "Lista de reseñas a moderar"
   }
 }

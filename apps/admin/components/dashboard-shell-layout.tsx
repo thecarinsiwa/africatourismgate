@@ -8,7 +8,7 @@ import {
   AdminPageMetaProvider,
   useAdminPageMeta,
 } from './admin-page-meta-context';
-import { buildAdminBreadcrumbRoutes, buildAdminDashboardNav } from '../config/dashboard-nav';
+import { buildAdminBreadcrumbRoutes, buildAdminDashboardNav, applyNavBadgeCounts } from '../config/dashboard-nav';
 import { adminDashboardConfig } from '../config/dashboard';
 import { logout } from '../lib/auth/logout';
 import { AUTH_CHANGED_EVENT, getSession } from '../lib/auth/session';
@@ -19,6 +19,7 @@ import {
   resolveAdminPageTitle,
 } from '../lib/breadcrumb-from-path';
 import { filterAdminNav } from '../lib/auth/filter-admin-nav';
+import { useNavBadgeCounts } from '../lib/use-nav-badge-counts';
 import { usePermissions } from '../lib/auth/use-permissions';
 import { useOrganizationThemeOptional } from './organization-theme-provider';
 import { RouteAccessGate } from './route-access-gate';
@@ -40,13 +41,16 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
   const tShell = useTranslations('nav.shell');
   const { meta } = useAdminPageMeta();
   const { permissions, isSuperAdmin, loading: permissionsLoading } = usePermissions();
+  const badgeCounts = useNavBadgeCounts();
   const [session, setSession] = useState<StoredSession | null>(null);
 
   const navItems = useMemo(() => {
     const allItems = buildAdminDashboardNav((key) => tNav(key as Parameters<typeof tNav>[0]));
-    if (permissionsLoading) return allItems;
-    return filterAdminNav(allItems, { permissions, isSuperAdmin });
-  }, [tNav, permissions, isSuperAdmin, permissionsLoading]);
+    const visibleItems = permissionsLoading
+      ? allItems
+      : filterAdminNav(allItems, { permissions, isSuperAdmin });
+    return applyNavBadgeCounts(visibleItems, badgeCounts);
+  }, [tNav, permissions, isSuperAdmin, permissionsLoading, badgeCounts]);
 
   const breadcrumbRoutes = useMemo(
     () => buildAdminBreadcrumbRoutes((key) => tNav(key as Parameters<typeof tNav>[0])),
@@ -108,7 +112,9 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
       navItems={navItems}
       title={headerTitle}
       breadcrumb={
-        showShellBreadcrumb ? <Breadcrumb items={breadcrumbItems} /> : undefined
+        showShellBreadcrumb ? (
+          <Breadcrumb items={breadcrumbItems} ariaLabel={tShell('breadcrumb')} />
+        ) : undefined
       }
       headerActions={<LanguageSwitcher />}
       openMenuLabel={tShell('openMenu')}

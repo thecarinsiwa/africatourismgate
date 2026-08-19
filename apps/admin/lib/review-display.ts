@@ -28,9 +28,11 @@ export function formatReviewDateTime(
 
 export function formatReviewEntity(
   review: Pick<AdminReviewListItem, 'entityType' | 'entityId'>,
+  entityTypeLabel?: string,
 ): string {
   const shortId = review.entityId.slice(0, 8);
-  return `${review.entityType} · ${shortId}…`;
+  const label = entityTypeLabel ?? review.entityType;
+  return `${label} · ${shortId}…`;
 }
 
 export function truncateReviewPreview(text: string, maxLength = 120): string {

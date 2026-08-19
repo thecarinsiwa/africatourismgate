@@ -10,6 +10,8 @@ export type BreadcrumbItem = {
 
 export type BreadcrumbProps = {
   items: BreadcrumbItem[];
+  /** Accessible name for the navigation landmark (i18n). */
+  ariaLabel?: string;
   className?: string;
 };
 
@@ -83,7 +85,7 @@ function BreadcrumbList({ items, showEllipsisAfterFirst, className }: Breadcrumb
   );
 }
 
-export function Breadcrumb({ items, className }: BreadcrumbProps) {
+export function Breadcrumb({ items, ariaLabel = 'Breadcrumb', className }: BreadcrumbProps) {
   if (items.length === 0) return null;
 
   const collapseOnMobile = items.length > 2;
@@ -92,7 +94,7 @@ export function Breadcrumb({ items, className }: BreadcrumbProps) {
     : items;
 
   return (
-    <nav aria-label="Fil d'Ariane" className={cn('min-w-0 text-sm', className)}>
+    <nav aria-label={ariaLabel} className={cn('min-w-0 text-sm', className)}>
       <BreadcrumbList
         items={items}
         className="hidden min-w-0 sm:flex sm:flex-wrap"

@@ -1,7 +1,11 @@
+export type AdminNavBadgeKey = 'pendingReviews' | 'openSupportTickets';
+
 export type AdminNavLinkConfig = {
   href: string;
   labelKey: string;
   iconKey: string;
+  /** Compteur nav (voir useNavBadgeCounts). */
+  badgeKey?: AdminNavBadgeKey;
 };
 
 export type AdminNavGroupConfig = {
@@ -109,8 +113,8 @@ export const adminDashboardNavConfig: AdminNavEntryConfig[] = [
       { href: '/contenu/pourquoi-nous', labelKey: 'whyUs', iconKey: 'document' },
       { href: '/contenu/hero', labelKey: 'heroSlides', iconKey: 'document' },
       { href: '/contenu/clients-satisfaits', labelKey: 'happyCustomers', iconKey: 'document' },
-      { href: '/contenu/avis', labelKey: 'reviews', iconKey: 'star' },
-      { href: '/contenu/tickets', labelKey: 'supportTickets', iconKey: 'ticket' },
+      { href: '/contenu/avis', labelKey: 'reviews', iconKey: 'star', badgeKey: 'pendingReviews' },
+      { href: '/contenu/tickets', labelKey: 'supportTickets', iconKey: 'ticket', badgeKey: 'openSupportTickets' },
       { href: '/contenu/messages', labelKey: 'supportMessages', iconKey: 'chat' },
     ],
   },

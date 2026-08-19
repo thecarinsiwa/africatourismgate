@@ -37,10 +37,19 @@
     "fields": {
       "author": "Auteur",
       "property": "Propriété",
-      "entity": "Entité",
+      "entity": "Entité liée",
       "booking": "Réservation",
       "guide": "Guide",
       "publishedAt": "Publié le"
+    },
+    "entityTypes": {
+      "property": "Hébergement",
+      "flight": "Vol",
+      "vehicle": "Location véhicule",
+      "cruise": "Croisière",
+      "activity": "Activité",
+      "booking": "Réservation",
+      "tour_guide": "Guide touristique"
     },
     "viewBooking": "Voir la réservation",
     "noComment": "Aucun commentaire.",
