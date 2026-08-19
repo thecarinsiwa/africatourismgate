@@ -94,6 +94,9 @@
       "bedConfig": "Bed configuration",
       "empty": "No rooms yet.",
       "deleteConfirm": "Delete room « {name} »?",
+      "deleteTitle": "Delete room",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
       "photosAction": "Photos"
     },
     "amenities": {

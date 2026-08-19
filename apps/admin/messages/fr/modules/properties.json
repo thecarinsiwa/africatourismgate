@@ -94,6 +94,9 @@
       "bedConfig": "Configuration lits",
       "empty": "Aucune chambre.",
       "deleteConfirm": "Supprimer la chambre « {name} » ?",
+      "deleteTitle": "Supprimer la chambre",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler",
       "photosAction": "Photos"
     },
     "amenities": {
