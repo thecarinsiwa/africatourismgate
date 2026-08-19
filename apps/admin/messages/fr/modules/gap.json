@@ -52,7 +52,10 @@
   },
   "pages": {
     "list": {
-      "deleteConfirm": "Supprimer la page « {title} » ?",
+      "deleteTitle": "Supprimer la page",
+      "deleteConfirm": "La page « {title} » sera supprimée définitivement.",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler",
       "columns": {
         "section": "Section",
         "title": "Titre",
@@ -102,7 +105,10 @@
   },
   "activities": {
     "list": {
-      "deleteConfirm": "Supprimer l'activité « {title} » ?",
+      "deleteTitle": "Supprimer l'activité",
+      "deleteConfirm": "L'activité « {title} » sera supprimée définitivement.",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler",
       "columns": {
         "title": "Titre",
         "icon": "Icône",
@@ -141,7 +147,10 @@
   },
   "impact": {
     "list": {
-      "deleteConfirm": "Supprimer la statistique « {label} » ?",
+      "deleteTitle": "Supprimer la statistique",
+      "deleteConfirm": "La statistique « {label} » sera supprimée définitivement.",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler",
       "columns": {
         "label": "Libellé",
         "value": "Valeur",
@@ -180,7 +189,10 @@
   },
   "media": {
     "list": {
-      "deleteConfirm": "Supprimer le média « {title} » ?",
+      "deleteTitle": "Supprimer le média",
+      "deleteConfirm": "Le média « {title} » sera supprimé définitivement.",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler",
       "columns": {
         "title": "Titre",
         "mediaType": "Type",

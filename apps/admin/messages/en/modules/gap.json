@@ -52,7 +52,10 @@
   },
   "pages": {
     "list": {
-      "deleteConfirm": "Delete page \"{title}\"?",
+      "deleteTitle": "Delete page",
+      "deleteConfirm": "Page \"{title}\" will be permanently deleted.",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
       "columns": {
         "section": "Section",
         "title": "Title",
@@ -102,7 +105,10 @@
   },
   "activities": {
     "list": {
-      "deleteConfirm": "Delete activity \"{title}\"?",
+      "deleteTitle": "Delete activity",
+      "deleteConfirm": "Activity \"{title}\" will be permanently deleted.",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
       "columns": {
         "title": "Title",
         "icon": "Icon",
@@ -141,7 +147,10 @@
   },
   "impact": {
     "list": {
-      "deleteConfirm": "Delete stat \"{label}\"?",
+      "deleteTitle": "Delete stat",
+      "deleteConfirm": "Stat \"{label}\" will be permanently deleted.",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
       "columns": {
         "label": "Label",
         "value": "Value",
@@ -180,7 +189,10 @@
   },
   "media": {
     "list": {
-      "deleteConfirm": "Delete media \"{title}\"?",
+      "deleteTitle": "Delete media",
+      "deleteConfirm": "Media item \"{title}\" will be permanently deleted.",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
       "columns": {
         "title": "Title",
         "mediaType": "Type",

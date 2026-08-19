@@ -20,7 +20,10 @@
   },
   "pages": {
     "list": {
-      "deleteConfirm": "Delete page \"{title}\"?",
+      "deleteTitle": "Delete page",
+      "deleteConfirm": "Page \"{title}\" will be permanently deleted.",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
       "columns": {
         "section": "Section",
         "title": "Title",
@@ -70,7 +73,10 @@
   },
   "timeline": {
     "list": {
-      "deleteConfirm": "Delete milestone \"{title}\"?",
+      "deleteTitle": "Delete milestone",
+      "deleteConfirm": "Milestone \"{title}\" will be permanently deleted.",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
       "columns": {
         "title": "Milestone",
         "period": "Period",
@@ -116,7 +122,10 @@
   },
   "team": {
     "list": {
-      "deleteConfirm": "Remove {name} from the team?",
+      "deleteTitle": "Remove team member",
+      "deleteConfirm": "{name} will be permanently removed from the team.",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
       "columns": {
         "name": "Member",
         "sortOrder": "Order",
@@ -153,7 +162,10 @@
   },
   "resources": {
     "list": {
-      "deleteConfirm": "Delete resource \"{title}\"?",
+      "deleteTitle": "Delete resource",
+      "deleteConfirm": "Resource \"{title}\" will be permanently deleted.",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel",
       "columns": {
         "type": "Type",
         "title": "Title",
