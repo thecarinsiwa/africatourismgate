@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { isRichTextEmpty } from '../../lib/rich-text';
 import { resolveMediaUrl } from '../../lib/resolve-media-url';
+import { RichTextContent } from '../rich-text-content';
 
 type GapActivityDetailModalProps = {
   open: boolean;
@@ -104,10 +105,7 @@ export function GapActivityDetailModal({
             <div className="sm:col-span-2">
               <DetailField label={tForm('description')}>
                 {activity.description.trim() && !isRichTextEmpty(activity.description) ? (
-                  <div
-                    className="prose prose-sm max-w-none dark:prose-invert"
-                    dangerouslySetInnerHTML={{ __html: activity.description }}
-                  />
+                  <RichTextContent html={activity.description} />
                 ) : (
                   <span className="text-atg-muted">{emptyDash}</span>
                 )}
