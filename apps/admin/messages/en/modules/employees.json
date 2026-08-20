@@ -5,7 +5,8 @@
     "terminated": "Terminated"
   },
   "columns": {
-    "jobTitle": "Job title"
+    "jobTitle": "Job title",
+    "department": "Department"
   },
   "list": {
     "emptyDefault": "No employees yet.",
@@ -20,7 +21,8 @@
   },
   "filters": {
     "status": "Status",
-    "organization": "Organization"
+    "organization": "Organization",
+    "department": "Department"
   },
   "detail": {
     "viewTitle": "View employee",

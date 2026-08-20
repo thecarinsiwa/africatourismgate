@@ -5,7 +5,8 @@
     "terminated": "Terminé"
   },
   "columns": {
-    "jobTitle": "Poste"
+    "jobTitle": "Poste",
+    "department": "Département"
   },
   "list": {
     "emptyDefault": "Aucun employé pour le moment.",
@@ -20,7 +21,8 @@
   },
   "filters": {
     "status": "Statut",
-    "organization": "Organisation"
+    "organization": "Organisation",
+    "department": "Département"
   },
   "detail": {
     "viewTitle": "Voir l'employé",

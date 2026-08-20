@@ -67,13 +67,16 @@ export function EmployeesList({
   const { toast } = useToast();
   const statusFilterId = useId();
   const orgFilterId = useId();
+  const departmentFilterId = useId();
   const emptyDash = tCommon('empty.dash');
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('');
   const [organizationFilter, setOrganizationFilter] = useState('');
+  const [departmentFilter, setDepartmentFilter] = useState('');
   const [page, setPage] = useState(1);
   const [organizations, setOrganizations] = useState<OrganizationListItem[]>([]);
+  const [departments, setDepartments] = useState<string[]>([]);
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -87,6 +90,26 @@ export function EmployeesList({
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [confirmTarget, setConfirmTarget] = useState<Employee | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function loadDepartments() {
+      try {
+        const result = await getApiClient().listEmployeeDepartments();
+        if (!cancelled) {
+          setDepartments(result);
+        }
+      } catch {
+        if (!cancelled) {
+          setDepartments([]);
+        }
+      }
+    }
+    void loadDepartments();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (lockedOrganizationId) {
@@ -128,6 +151,7 @@ export function EmployeesList({
         search: search || undefined,
         status: statusFilter || undefined,
         organizationId: lockedOrganizationId || organizationFilter || undefined,
+        department: departmentFilter || undefined,
       });
       setState({
         status: 'ready',
@@ -138,7 +162,15 @@ export function EmployeesList({
     } catch (error) {
       setState({ status: 'error', message: getEmployeesErrorMessage(error) });
     }
-  }, [page, search, statusFilter, organizationFilter, lockedOrganizationId]);
+  }, [
+    page,
+    search,
+    statusFilter,
+    organizationFilter,
+    departmentFilter,
+    lockedOrganizationId,
+    getEmployeesErrorMessage,
+  ]);
 
   useEffect(() => {
     void load();
@@ -234,6 +266,14 @@ export function EmployeesList({
         ),
       },
       {
+        accessorKey: 'department',
+        header: tEmployeeColumns('department'),
+        meta: { hideOnMobile: true },
+        cell: ({ row }) => (
+          <span className="text-atg-muted">{row.original.department ?? emptyDash}</span>
+        ),
+      },
+      {
         accessorKey: 'status',
         header: tColumns('status'),
         meta: { align: 'center' },
@@ -249,7 +289,7 @@ export function EmployeesList({
     ];
 
     if (!lockedOrganizationId) {
-      base.splice(4, 0, {
+      base.splice(5, 0, {
         id: 'organization',
         header: tColumns('organization'),
         cell: ({ row }) => {
@@ -316,6 +356,7 @@ export function EmployeesList({
   const hasFilters =
     search.trim().length > 0 ||
     statusFilter !== '' ||
+    departmentFilter !== '' ||
     (!lockedOrganizationId && organizationFilter !== '');
   const emptyMessage = hasFilters
     ? tList('emptyFiltered')
@@ -400,6 +441,27 @@ export function EmployeesList({
               </select>
             </div>
           ) : null}
+          <div>
+            <label htmlFor={departmentFilterId} className="mb-2 block text-sm font-medium text-atg-fg">
+              {tFilters('department')}
+            </label>
+            <select
+              id={departmentFilterId}
+              value={departmentFilter}
+              onChange={(e) => {
+                setDepartmentFilter(e.target.value);
+                setPage(1);
+              }}
+              className="w-full min-w-[160px] rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
+            >
+              <option value="">{tCommonFilters('all')}</option>
+              {departments.map((department) => (
+                <option key={department} value={department}>
+                  {department}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
         <Button href={newEmployeeHref}>{tNav('links.newEmployee')}</Button>
       </div>

@@ -5,7 +5,8 @@
     "terminated": "Finalizado"
   },
   "columns": {
-    "jobTitle": "Puesto"
+    "jobTitle": "Puesto",
+    "department": "Departamento"
   },
   "list": {
     "emptyDefault": "Ningún empleado por el momento.",
@@ -20,7 +21,8 @@
   },
   "filters": {
     "status": "Estado",
-    "organization": "Organización"
+    "organization": "Organización",
+    "department": "Departamento"
   },
   "detail": {
     "viewTitle": "Ver empleado",
