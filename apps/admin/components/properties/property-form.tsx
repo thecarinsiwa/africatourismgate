@@ -225,13 +225,26 @@ export function PropertyForm({
               error={fieldErrors.slug}
               required
             />
+            <Select
+              id={typeId}
+              label={tForm('type')}
+              value={values.propertyType}
+              onChange={(e) => updateField('propertyType', e.target.value as PropertyType)}
+              options={propertyTypeOptions}
+            />
+            <Select
+              label={tForm('destination')}
+              value={values.destinationId}
+              onChange={(e) => updateField('destinationId', e.target.value)}
+              options={destinationOptions}
+              error={fieldErrors.destinationId}
+              required
+            />
             <div className="sm:col-span-2">
-              <Select
-                id={typeId}
-                label={tForm('type')}
-                value={values.propertyType}
-                onChange={(e) => updateField('propertyType', e.target.value as PropertyType)}
-                options={propertyTypeOptions}
+              <Input
+                label={tForm('address')}
+                value={values.addressLine}
+                onChange={(e) => updateField('addressLine', e.target.value)}
               />
             </div>
           </div>
@@ -239,25 +252,6 @@ export function PropertyForm({
 
         {identityAside ? <div className="min-w-0">{identityAside}</div> : null}
       </div>
-
-      <Card variant="dashboard" padding="sm">
-        <h3 className="text-sm font-semibold text-atg-fg">{tForm('sections.location')}</h3>
-        <div className="mt-3 grid gap-3 sm:grid-cols-2">
-          <Select
-            label={tForm('destination')}
-            value={values.destinationId}
-            onChange={(e) => updateField('destinationId', e.target.value)}
-            options={destinationOptions}
-            error={fieldErrors.destinationId}
-            required
-          />
-          <Input
-            label={tForm('address')}
-            value={values.addressLine}
-            onChange={(e) => updateField('addressLine', e.target.value)}
-          />
-        </div>
-      </Card>
 
       <Card variant="dashboard" padding="sm">
         <h3 className="text-sm font-semibold text-atg-fg">{tForm('sections.classification')}</h3>
