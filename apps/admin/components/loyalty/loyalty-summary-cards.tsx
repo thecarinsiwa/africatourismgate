@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { loyaltyKpis } from '../../config/loyalty-kpi';
 import { getApiClient } from '../../lib/auth/api';
+import { useModuleStatCards } from '../../lib/auth/use-module-stat-cards';
 import { useFormatCount, useFormatPoints, useLoyaltyTierLabels } from '../../lib/i18n/use-module-labels';
 
 type SummaryState =
@@ -22,6 +23,8 @@ type SummaryState =
 
 export function LoyaltySummaryCards({ className }: { className?: string }) {
   const { dashboardKpi: getDashboardKpiErrorMessage } = useAdminErrorMessages();
+  const { canLoad, loading: permissionsLoading, shouldRender } =
+    useModuleStatCards('users.read');
   const t = useTranslations('modules.loyalty');
   const tEmpty = useTranslations('modules.common.empty');
   const formatCount = useFormatCount();
@@ -35,9 +38,12 @@ export function LoyaltySummaryCards({ className }: { className?: string }) {
   >;
 
   useEffect(() => {
+    if (permissionsLoading || !canLoad) return;
+
     let cancelled = false;
 
     async function load() {
+      setState({ status: 'loading' });
       try {
         const result = await getApiClient().listLoyaltyAccounts({ page: 1, limit: 100 });
         if (cancelled) return;
@@ -70,7 +76,11 @@ export function LoyaltySummaryCards({ className }: { className?: string }) {
     return () => {
       cancelled = true;
     };
-  }, [getDashboardKpiErrorMessage]);
+  }, [canLoad, getDashboardKpiErrorMessage, permissionsLoading]);
+
+  if (!shouldRender) {
+    return null;
+  }
 
   if (state.status === 'loading') {
     return (
