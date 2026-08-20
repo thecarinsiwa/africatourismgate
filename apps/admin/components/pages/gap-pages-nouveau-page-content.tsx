@@ -7,7 +7,11 @@ import { AdminIntroPage } from './admin-intro-page';
 export function GapPagesNouveauPageContent() {
   return (
     <GapAccessShell requireWrite>
-      <AdminIntroPage routePath="gap/pages/nouveau">
+      <AdminIntroPage
+        routePath="gap/pages/nouveau"
+        backHref="/gap/pages"
+        backLabelKey="backLabel"
+      >
         <GapPageForm mode="create" />
       </AdminIntroPage>
     </GapAccessShell>

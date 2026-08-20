@@ -382,7 +382,8 @@
       "description": "Páginas institucionales del programa GAP (Acerca de, objetivos, UNESCO). Acceso: gap.read / gap.write.",
       "nouveau": {
         "metaTitle": "Nueva página GAP",
-        "description": "Cree una página para una sección del programa GAP."
+        "description": "Cree una página para una sección del programa GAP.",
+        "backLabel": "Volver a páginas"
       },
       "id": {
         "metaTitle": "Modificar la página GAP",
