@@ -25,13 +25,14 @@ export function DashboardSectionPage({ segments }: DashboardSectionPageProps) {
     <div>
       <PageHeader title={messages.title} description={messages.description} />
       <EmptyState
-        className="mt-6"
         title={messages.emptyTitle}
         description={messages.emptyDescription}
         icon={placeholder.icon}
         action={
           placeholder.ctaHref && messages.ctaLabel ? (
-            <Button href={placeholder.ctaHref}>{messages.ctaLabel}</Button>
+            <Button href={placeholder.ctaHref} size="md">
+              {messages.ctaLabel}
+            </Button>
           ) : undefined
         }
       />
