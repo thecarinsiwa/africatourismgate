@@ -110,6 +110,12 @@
     }
   },
   "activities": {
+    "stats": {
+      "total": { "label": "Actividades", "subtitle": "Iniciativas del programa" },
+      "published": { "label": "Publicadas", "subtitle": "Visibles en el sitio" },
+      "draft": { "label": "Borradores", "subtitle": "No publicadas" },
+      "french": { "label": "En francés", "subtitle": "Contenido locale FR" }
+    },
     "list": {
       "deleteTitle": "Eliminar actividad",
       "deleteConfirm": "La actividad «{title}» será eliminada permanentemente.",

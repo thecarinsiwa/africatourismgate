@@ -110,6 +110,12 @@
     }
   },
   "activities": {
+    "stats": {
+      "total": { "label": "Activities", "subtitle": "Program initiatives" },
+      "published": { "label": "Published", "subtitle": "Visible on the site" },
+      "draft": { "label": "Drafts", "subtitle": "Not published" },
+      "french": { "label": "In French", "subtitle": "FR locale content" }
+    },
     "list": {
       "deleteTitle": "Delete activity",
       "deleteConfirm": "Activity \"{title}\" will be permanently deleted.",

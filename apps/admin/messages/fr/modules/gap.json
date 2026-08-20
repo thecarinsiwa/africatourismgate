@@ -110,6 +110,12 @@
     }
   },
   "activities": {
+    "stats": {
+      "total": { "label": "Activités", "subtitle": "Initiatives du programme" },
+      "published": { "label": "Publiées", "subtitle": "Visibles sur le site" },
+      "draft": { "label": "Brouillons", "subtitle": "Non publiées" },
+      "french": { "label": "En français", "subtitle": "Contenu locale FR" }
+    },
     "list": {
       "deleteTitle": "Supprimer l'activité",
       "deleteConfirm": "L'activité « {title} » sera supprimée définitivement.",
