@@ -416,11 +416,11 @@ export function RbacAuditLogsList({
     };
   }, [access.status, showFilterBar, userFilterMode]);
 
-  const handleUserIdChange = useCallback((_userId: string) => {
+  const handleUserIdChange = useCallback(() => {
     setPage(1);
   }, []);
 
-  const handleDateRangeChange = useCallback((_dateFrom: string, _dateTo: string) => {
+  const handleDateRangeChange = useCallback(() => {
     setPage(1);
   }, []);
 
