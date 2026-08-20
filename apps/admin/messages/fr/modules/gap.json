@@ -145,6 +145,7 @@
       "fields": {
         "title": "Titre",
         "description": "Description",
+        "descriptionPlaceholder": "Décrivez l'activité…",
         "iconKey": "Icône",
         "imageUrl": "Image (URL)",
         "imagePreviewAlt": "Aperçu de l'image",

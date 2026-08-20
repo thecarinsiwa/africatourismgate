@@ -18,6 +18,7 @@ import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { useGapPermissions } from '../../lib/gap/use-gap-permissions';
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+import { stripHtml } from '../../lib/rich-text';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -121,7 +122,9 @@ export function GapActivitiesList({ locale }: GapActivitiesListProps) {
         cell: ({ row }) => (
           <div className="max-w-md space-y-1">
             <p className="font-medium text-atg-fg">{row.original.title}</p>
-            <p className="line-clamp-2 text-sm text-atg-muted">{row.original.description}</p>
+            <p className="line-clamp-2 text-sm text-atg-muted">
+              {stripHtml(row.original.description)}
+            </p>
           </div>
         ),
       },

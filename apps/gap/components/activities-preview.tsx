@@ -69,7 +69,10 @@ export async function ActivitiesPreview({
                 <div className="space-y-3 p-5">
                   <GapActivityIcon iconKey={activity.iconKey} />
                   <h3 className="text-lg font-semibold text-atg-fg">{activity.title}</h3>
-                  <p className="text-sm leading-relaxed text-atg-muted">{activity.description}</p>
+                  <div
+                    className="prose prose-sm max-w-none text-atg-muted dark:prose-invert prose-p:my-1 prose-p:leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: activity.description }}
+                  />
                 </div>
               </article>
             );

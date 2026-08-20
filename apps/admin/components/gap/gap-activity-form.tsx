@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Input, Textarea } from '@africatourismgate/ui';
+import { Button, Input } from '@africatourismgate/ui';
 import type {
   CreateGapActivityRequest,
   GapActivity,
@@ -16,7 +16,9 @@ import { getApiClient } from '../../lib/auth/api';
 import { GAP_ACTIVITY_ICON_KEYS } from '../../lib/gap/constants';
 import { useGapPermissions } from '../../lib/gap/use-gap-permissions';
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+import { isRichTextEmpty } from '../../lib/rich-text';
 import { resolveMediaUrl } from '../../lib/resolve-media-url';
+import { RichTextEditor } from '../rich-text-editor';
 
 export type GapActivityFormValues = {
   title: string;
@@ -86,14 +88,15 @@ export function GapActivityForm({
   const router = useRouter();
 
   const titleId = useId();
-  const descriptionId = useId();
   const iconKeyId = useId();
   const sortOrderId = useId();
   const statusId = useId();
   const localeId = useId();
 
   const [values, setValues] = useState<GapActivityFormValues>(() =>
-    initialActivity ? activityToFormValues(initialActivity) : { ...defaultValues, locale: defaultLocale },
+    initialActivity
+      ? activityToFormValues(initialActivity)
+      : { ...defaultValues, locale: defaultLocale },
   );
   const [fieldErrors, setFieldErrors] = useState<
     Partial<Record<keyof GapActivityFormValues, string>>
@@ -112,7 +115,9 @@ export function GapActivityForm({
   const validate = (): boolean => {
     const errors: Partial<Record<keyof GapActivityFormValues, string>> = {};
     if (!values.title.trim()) errors.title = t('validation.titleRequired');
-    if (!values.description.trim()) errors.description = t('validation.descriptionRequired');
+    if (isRichTextEmpty(values.description)) {
+      errors.description = t('validation.descriptionRequired');
+    }
     const imageUrl = values.imageUrl.trim();
     if (imageUrl && !isValidMediaUrl(imageUrl)) {
       errors.imageUrl = t('validation.imageUrlInvalid');
@@ -166,15 +171,28 @@ export function GapActivityForm({
         ) : null}
       </div>
 
-      <Textarea
-        id={descriptionId}
-        label={t('fields.description')}
-        rows={4}
-        value={values.description}
-        onChange={(e) => updateField('description', e.target.value)}
-        disabled={!canWrite}
-        error={fieldErrors.description}
-      />
+      {canWrite ? (
+        <div>
+          <RichTextEditor
+            label={t('fields.description')}
+            value={values.description}
+            onChange={(html) => updateField('description', html)}
+            placeholder={t('fields.descriptionPlaceholder')}
+            contentClassName="min-h-[180px]"
+          />
+          {fieldErrors.description ? (
+            <p className="mt-1 text-sm text-destructive">{fieldErrors.description}</p>
+          ) : null}
+        </div>
+      ) : values.description.trim() && !isRichTextEmpty(values.description) ? (
+        <div>
+          <p className="mb-1 text-sm font-medium">{t('fields.description')}</p>
+          <div
+            className="rounded-md border border-atg-border bg-atg-surface px-3 py-2 text-sm text-atg-muted"
+            dangerouslySetInnerHTML={{ __html: values.description }}
+          />
+        </div>
+      ) : null}
 
       <div>
         <label htmlFor={iconKeyId} className="mb-1 block text-sm font-medium">
