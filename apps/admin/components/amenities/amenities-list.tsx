@@ -20,6 +20,7 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getAmenityIcon } from '../../lib/amenity-icon-map';
 import { getApiClient } from '../../lib/auth/api';
+import { useFormatDateTime } from '../../lib/i18n/use-module-labels';
 import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
 import { ListViewModeToggle } from '../list-view-mode-toggle';
 
@@ -43,7 +44,10 @@ export function AmenitiesList() {
   const tToast = useTranslations('modules.common.toast');
   const { toast } = useToast();
   const tNav = useTranslations('nav.links');
+  const tDates = useTranslations('modules.common.dates');
+  const formatDateTime = useFormatDateTime('short');
   const paginationLabels = useDataTablePaginationLabels();
+  const emptyDash = tCommon('empty.dash');
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -55,6 +59,7 @@ export function AmenitiesList() {
   >({ status: 'loading' });
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<Amenity | null>(null);
+  const [viewing, setViewing] = useState<Amenity | null>(null);
   const [formValues, setFormValues] = useState<AmenityFormValues>(emptyForm);
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -110,14 +115,21 @@ export function AmenitiesList() {
     setFormError(null);
   }
 
+  function openView(a: Amenity) {
+    setViewing(a);
+  }
+
   function openCreate() {
+    setViewing(null);
     resetForm();
     setShowForm(true);
   }
 
   function openEdit(a: Amenity) {
+    setViewing(null);
     setEditing(a);
     setFormValues({ code: a.code, name: a.name });
+    setFormError(null);
     setShowForm(true);
   }
 
@@ -177,16 +189,26 @@ export function AmenitiesList() {
   const renderAmenityActions = useCallback(
     (amenity: Amenity) => (
       <DataTableActions>
-        <DataTableActionButton action="edit" onClick={() => openEdit(amenity)} />
+        <DataTableActionButton
+          action="view"
+          label={tActions('view')}
+          onClick={() => openView(amenity)}
+        />
+        <DataTableActionButton
+          action="edit"
+          label={tActions('edit')}
+          onClick={() => openEdit(amenity)}
+        />
         <DataTableActionButton
           action="delete"
+          label={tActions('delete')}
           onClick={() => handleDeleteRequest(amenity)}
           disabled={deletingId === amenity.id}
           loading={deletingId === amenity.id}
         />
       </DataTableActions>
     ),
-    [deletingId, handleDeleteRequest],
+    [deletingId, handleDeleteRequest, tActions],
   );
 
   const columns = useMemo<ColumnDef<Amenity, unknown>[]>(
@@ -269,6 +291,69 @@ export function AmenitiesList() {
           </Button>
         </div>
       </div>
+
+      <Modal
+        open={viewing !== null}
+        onOpenChange={(open) => {
+          if (!open) setViewing(null);
+        }}
+        title={t('viewAmenity')}
+        showClose
+        closeAriaLabel={tActions('close')}
+        className="max-w-lg"
+      >
+        {viewing ? (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4 rounded-xl border border-atg-border bg-atg-surface/60 px-4 py-3">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-atg-surface text-primary">
+                {getAmenityIcon(viewing.code, 'h-6 w-6')}
+              </span>
+              <div className="min-w-0">
+                <p className="truncate text-base font-semibold text-atg-fg">{viewing.name}</p>
+                <code className="font-mono text-xs text-atg-muted">{viewing.code}</code>
+              </div>
+            </div>
+            <dl className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <dt className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+                  {tColumns('name')}
+                </dt>
+                <dd className="mt-1 text-sm text-atg-fg">{viewing.name}</dd>
+              </div>
+              <div>
+                <dt className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+                  {tColumns('code')}
+                </dt>
+                <dd className="mt-1 font-mono text-sm text-atg-fg">{viewing.code}</dd>
+              </div>
+              <div>
+                <dt className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+                  {tDates('createdAt')}
+                </dt>
+                <dd className="mt-1 text-sm tabular-nums text-atg-fg">
+                  {formatDateTime(viewing.createdAt)}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+                  {tDates('updatedAt')}
+                </dt>
+                <dd className="mt-1 text-sm tabular-nums text-atg-fg">
+                  {viewing.updatedAt ? formatDateTime(viewing.updatedAt) : emptyDash}
+                </dd>
+              </div>
+            </dl>
+            <div className="flex flex-wrap justify-end gap-2 border-t border-atg-border pt-4">
+              <Button type="button" variant="outline" onClick={() => setViewing(null)}>
+                {tActions('close')}
+              </Button>
+              <Button type="button" onClick={() => openEdit(viewing)}>
+                {tActions('edit')}
+              </Button>
+            </div>
+          </div>
+        ) : null}
+      </Modal>
 
       <Modal
         open={showForm}

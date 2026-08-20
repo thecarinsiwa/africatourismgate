@@ -148,6 +148,7 @@
   },
   "dates": {
     "createdAt": "Créée le",
+    "updatedAt": "Modifiée le",
     "expiresAt": "Expire le"
   },
   "select": {

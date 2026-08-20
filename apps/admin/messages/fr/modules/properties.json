@@ -121,6 +121,7 @@
   "amenitiesList": {
     "newAmenity": "Nouvel équipement",
     "editAmenity": "Modifier l'équipement",
+    "viewAmenity": "Détail de l'équipement",
     "empty": "Aucun équipement.",
     "searchPlaceholder": "Rechercher un équipement…",
     "deleteTitle": "Supprimer l'équipement",

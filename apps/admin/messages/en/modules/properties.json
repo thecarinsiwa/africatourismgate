@@ -121,6 +121,7 @@
   "amenitiesList": {
     "newAmenity": "New amenity",
     "editAmenity": "Edit amenity",
+    "viewAmenity": "Amenity details",
     "empty": "No amenities yet.",
     "searchPlaceholder": "Search amenities…",
     "deleteTitle": "Delete amenity",
