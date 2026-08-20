@@ -126,7 +126,10 @@
       "intro": "Select amenities available at this accommodation.",
       "saveSelection": "Save selection",
       "emptyGlobal": "No global amenities yet.",
-      "createLink": "Create amenities"
+      "createLink": "Create amenities",
+      "editAmenities": "Edit selection",
+      "searchPlaceholder": "Search amenities…",
+      "searchEmpty": "No amenities match your search."
     },
     "availability": {
       "title": "Availability",

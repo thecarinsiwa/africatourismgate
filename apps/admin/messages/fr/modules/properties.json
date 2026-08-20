@@ -126,7 +126,10 @@
       "intro": "Sélectionnez les équipements disponibles pour cet hébergement.",
       "saveSelection": "Enregistrer la sélection",
       "emptyGlobal": "Aucun équipement global.",
-      "createLink": "Créer des équipements"
+      "createLink": "Créer des équipements",
+      "editAmenities": "Modifier la sélection",
+      "searchPlaceholder": "Rechercher un équipement…",
+      "searchEmpty": "Aucun équipement ne correspond à votre recherche."
     },
     "availability": {
       "title": "Disponibilités",

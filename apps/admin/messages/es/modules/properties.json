@@ -126,7 +126,10 @@
       "intro": "Seleccione los equipamientos disponibles en este alojamiento.",
       "saveSelection": "Guardar selección",
       "emptyGlobal": "Ningún equipamiento global.",
-      "createLink": "Crear equipamientos"
+      "createLink": "Crear equipamientos",
+      "editAmenities": "Editar la selección",
+      "searchPlaceholder": "Buscar un equipamiento…",
+      "searchEmpty": "Ningún equipamiento coincide con su búsqueda."
     },
     "availability": {
       "title": "Disponibilidad",

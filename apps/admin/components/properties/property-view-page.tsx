@@ -63,6 +63,7 @@ export function PropertyViewPage({ propertyId }: PropertyViewPageProps) {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [roomSearch, setRoomSearch] = useState('');
   const [amenities, setAmenities] = useState<Amenity[]>([]);
+  const [amenitySearch, setAmenitySearch] = useState('');
   const [images, setImages] = useState<PropertyImage[]>([]);
   const [state, setState] = useState<
     | { status: 'loading' }
@@ -207,6 +208,21 @@ export function PropertyViewPage({ propertyId }: PropertyViewPageProps) {
   }, [rooms, roomSearch]);
 
   const hasRoomSearch = roomSearch.trim().length > 0;
+
+  const filteredAmenities = useMemo(() => {
+    const query = amenitySearch.trim().toLowerCase();
+    const sorted = [...amenities].sort((a, b) =>
+      a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }),
+    );
+    if (!query) return sorted;
+
+    return sorted.filter((amenity) => {
+      const haystack = `${amenity.name} ${amenity.code}`.toLowerCase();
+      return haystack.includes(query);
+    });
+  }, [amenities, amenitySearch]);
+
+  const hasAmenitySearch = amenitySearch.trim().length > 0;
 
   if (state.status === 'loading') {
     return (
@@ -367,25 +383,65 @@ export function PropertyViewPage({ propertyId }: PropertyViewPageProps) {
       </section>
 
       <section className="space-y-4">
-        <div>
-          <h3 className="text-lg font-semibold text-atg-fg">{tAmenities('title')}</h3>
-          <p className="mt-1 text-sm text-atg-muted">
-            {tView('amenitiesIntro', { count: amenities.length })}
-          </p>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <h3 className="text-lg font-semibold text-atg-fg">{tAmenities('title')}</h3>
+              <DataTableBadge variant="muted">
+                {hasAmenitySearch
+                  ? `${filteredAmenities.length}/${amenities.length}`
+                  : amenities.length}
+              </DataTableBadge>
+            </div>
+            <p className="mt-1 text-sm text-atg-muted">
+              {tView('amenitiesIntro', { count: amenities.length })}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button href="/hebergements/equipements" variant="outline" size="sm">
+              {tAmenities('createLink')}
+            </Button>
+            <Button href={`/hebergements/${propertyId}`} variant="outline" size="sm">
+              {tAmenities('editAmenities')}
+            </Button>
+          </div>
         </div>
+
+        {amenities.length > 0 ? (
+          <div className="max-w-md">
+            <Input
+              type="search"
+              placeholder={tAmenities('searchPlaceholder')}
+              value={amenitySearch}
+              onChange={(e) => setAmenitySearch(e.target.value)}
+              aria-label={tAmenities('searchPlaceholder')}
+            />
+          </div>
+        ) : null}
+
         {amenities.length === 0 ? (
-          <p className="text-sm text-atg-muted">{tView('amenitiesEmpty')}</p>
+          <Card variant="dashboard" padding="sm">
+            <p className="text-sm text-atg-muted">{tView('amenitiesEmpty')}</p>
+          </Card>
+        ) : filteredAmenities.length === 0 ? (
+          <Card variant="dashboard" padding="sm">
+            <p className="text-sm text-atg-muted">{tAmenities('searchEmpty')}</p>
+          </Card>
         ) : (
-          <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {amenities.map((amenity) => (
+          <ul className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {filteredAmenities.map((amenity) => (
               <li key={amenity.id}>
-                <Card variant="dashboard" className="flex items-center gap-3">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-atg-surface text-primary">
-                    {getAmenityIcon(amenity.code, 'h-5 w-5')}
-                  </span>
-                  <div className="min-w-0">
-                    <p className="truncate font-medium text-atg-fg">{amenity.name}</p>
-                    <code className="font-mono text-xs text-atg-muted">{amenity.code}</code>
+                <Card variant="dashboard" padding="sm" className="h-full">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-atg-surface text-primary">
+                      {getAmenityIcon(amenity.code, 'h-5 w-5')}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium text-atg-fg">{amenity.name}</p>
+                      <code className="mt-0.5 inline-block max-w-full truncate rounded-md bg-atg-surface px-1.5 py-0.5 font-mono text-[11px] text-atg-muted">
+                        {amenity.code}
+                      </code>
+                    </div>
                   </div>
                 </Card>
               </li>
