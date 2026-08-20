@@ -73,6 +73,7 @@
     "title": "Editar alojamiento",
     "backLink": "Volver a alojamientos",
     "backToList": "← Volver a la lista",
+    "viewButton": "Ver",
     "tabsAria": "Secciones del alojamiento",
     "tabs": {
       "infos": "Info",

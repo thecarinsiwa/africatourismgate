@@ -73,6 +73,7 @@
     "title": "Edit accommodation",
     "backLink": "Back to accommodations",
     "backToList": "← Back to list",
+    "viewButton": "View",
     "tabsAria": "Accommodation sections",
     "tabs": {
       "infos": "Info",

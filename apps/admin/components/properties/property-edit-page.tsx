@@ -5,6 +5,7 @@ import { usePropertyTypeLabels } from '../../lib/i18n/use-module-labels';
 
 import type { Property } from '@africatourismgate/types';
 import {
+  Button,
   DataTableBadge,
   Skeleton,
   Tabs,
@@ -97,6 +98,13 @@ export function PropertyEditPage({ propertyId }: PropertyEditPageProps) {
   if (state.status === 'loading') {
     return (
       <div className="space-y-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <Skeleton className="h-5 w-44" />
+          <div className="flex gap-2">
+            <Skeleton className="h-9 w-20" />
+            <Skeleton className="h-9 w-28" />
+          </div>
+        </div>
         <div className="flex items-center gap-4">
           <Skeleton className="h-12 w-16 rounded-lg" />
           <div className="space-y-2">
@@ -125,7 +133,15 @@ export function PropertyEditPage({ propertyId }: PropertyEditPageProps) {
 
   return (
     <div className="space-y-6">
-      <AdminPageBackLink href="/hebergements" label={tDetail('backLink')} />
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <AdminPageBackLink href="/hebergements" label={tDetail('backLink')} />
+        <div className="flex flex-wrap items-center gap-2">
+          <Button href={`/hebergements/${propertyId}/voir`} variant="outline">
+            {tDetail('viewButton')}
+          </Button>
+          <PropertyExportPdfButton propertyId={propertyId} />
+        </div>
+      </div>
 
       <div className="flex flex-wrap items-center gap-4">
         <PropertyThumbnail propertyId={propertyId} name={property.name} size="md" />
@@ -141,7 +157,6 @@ export function PropertyEditPage({ propertyId }: PropertyEditPageProps) {
           </div>
           <p className="mt-1 font-mono text-sm text-atg-muted">{property.slug}</p>
         </div>
-        <PropertyExportPdfButton propertyId={propertyId} className="ml-auto shrink-0" />
       </div>
 
       <Tabs value={activeTab} onValueChange={handleTabChange}>

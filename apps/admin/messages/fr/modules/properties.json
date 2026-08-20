@@ -73,6 +73,7 @@
     "title": "Modifier l'hébergement",
     "backLink": "Retour aux hébergements",
     "backToList": "← Retour à la liste",
+    "viewButton": "Voir",
     "tabsAria": "Sections de l'hébergement",
     "tabs": {
       "infos": "Infos",
