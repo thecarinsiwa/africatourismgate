@@ -81,7 +81,25 @@
     "viewTable": "Tabla",
     "viewGrid": "Cuadrícula",
     "viewCompact": "Lista compacta",
-    "viewModeAria": "Modo de visualización"
+    "viewModeAria": "Modo de visualización",
+    "stats": {
+      "total": {
+        "label": "Sesiones",
+        "subtitle": "Registradas"
+      },
+      "active": {
+        "label": "Activas",
+        "subtitle": "No expiradas"
+      },
+      "expired": {
+        "label": "Expiradas",
+        "subtitle": "A revocar o limpiar"
+      },
+      "users": {
+        "label": "Usuarios",
+        "subtitle": "Con una sesión"
+      }
+    }
   },
   "stats": {
     "total": {

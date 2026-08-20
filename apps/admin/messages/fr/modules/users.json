@@ -81,7 +81,25 @@
     "viewTable": "Tableau",
     "viewGrid": "Grille",
     "viewCompact": "Liste compacte",
-    "viewModeAria": "Mode d'affichage"
+    "viewModeAria": "Mode d'affichage",
+    "stats": {
+      "total": {
+        "label": "Sessions",
+        "subtitle": "Enregistrées"
+      },
+      "active": {
+        "label": "Actives",
+        "subtitle": "Non expirées"
+      },
+      "expired": {
+        "label": "Expirées",
+        "subtitle": "À révoquer ou purger"
+      },
+      "users": {
+        "label": "Utilisateurs",
+        "subtitle": "Avec une session"
+      }
+    }
   },
   "stats": {
     "total": {
