@@ -15,7 +15,6 @@ import {
   Skeleton,
   type ColumnDef,
 } from '@africatourismgate/ui';
-import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AdminPageBackLink } from '../admin-page-back-link';
@@ -23,8 +22,8 @@ import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getAmenityIcon } from '../../lib/amenity-icon-map';
 import { getApiClient } from '../../lib/auth/api';
 import { formatMoney } from '../../lib/format-money';
-import { resolveMediaUrl } from '../../lib/resolve-media-url';
 import { PropertyExportPdfButton } from './property-export-pdf-button';
+import { PropertyPhotosCarousel } from './property-photos-carousel';
 import { PropertyThumbnail } from './property-thumbnail';
 
 type PropertyViewPageProps = {
@@ -252,29 +251,7 @@ export function PropertyViewPage({ propertyId }: PropertyViewPageProps) {
             {tView('imagesIntro', { count: images.length })}
           </p>
           <div className="mt-3">
-            {images.length === 0 ? (
-              <p className="text-sm text-atg-muted">{tView('imagesEmpty')}</p>
-            ) : (
-              <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3">
-                {images.map((image) => (
-                  <li key={image.id}>
-                    <div className="relative aspect-square overflow-hidden rounded-lg border border-atg-border bg-atg-surface">
-                      <Image
-                        src={resolveMediaUrl(image.url)}
-                        alt={image.caption?.trim() || property.name}
-                        fill
-                        className="object-cover"
-                        sizes="160px"
-                        unoptimized
-                      />
-                    </div>
-                    {image.caption?.trim() ? (
-                      <p className="mt-1 truncate text-[10px] text-atg-muted">{image.caption}</p>
-                    ) : null}
-                  </li>
-                ))}
-              </ul>
-            )}
+            <PropertyPhotosCarousel images={images} altFallback={property.name} />
           </div>
         </Card>
       </div>

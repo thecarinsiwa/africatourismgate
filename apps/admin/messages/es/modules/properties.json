@@ -90,6 +90,10 @@
     "imagesTitle": "Fotos",
     "imagesIntro": "{count, plural, =0 {Ninguna foto} one {# foto} other {# fotos}}",
     "imagesEmpty": "Ninguna foto para este alojamiento.",
+    "carouselPrev": "Foto anterior",
+    "carouselNext": "Foto siguiente",
+    "carouselThumbs": "Miniaturas de fotos",
+    "carouselGoTo": "Ir a la foto {index}",
     "roomsIntro": "{count, plural, =0 {Ninguna habitación} one {# habitación} other {# habitaciones}}",
     "amenitiesIntro": "{count, plural, =0 {Ningún equipamiento} one {# equipamiento} other {# equipamientos}}",
     "amenitiesEmpty": "Ningún equipamiento asociado."
