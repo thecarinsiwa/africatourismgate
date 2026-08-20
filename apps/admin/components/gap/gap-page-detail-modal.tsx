@@ -46,7 +46,7 @@ function formatDateTime(iso: string | null, emptyDash: string): string {
 function resolvePageCoverImageUrls(page: GapPage): string[] {
   const fromArray = Array.isArray(page.coverImageUrls) ? page.coverImageUrls : [];
   if (fromArray.length > 0) {
-    return [...new Set(fromArray.map((url) => url.trim()).filter(Boolean))];
+    return Array.from(new Set(fromArray.map((url) => url.trim()).filter(Boolean)));
   }
   return page.coverImageUrl?.trim() ? [page.coverImageUrl.trim()] : [];
 }

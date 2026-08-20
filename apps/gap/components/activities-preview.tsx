@@ -49,8 +49,8 @@ export async function ActivitiesPreview({
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {items.map((activity) => {
-            const galleryUrls = [
-              ...new Set(
+            const galleryUrls = Array.from(
+              new Set(
                 [
                   ...(Array.isArray(activity.imageUrls) ? activity.imageUrls : []),
                   activity.imageUrl,
@@ -58,7 +58,7 @@ export async function ActivitiesPreview({
                   .map((url) => resolveGapMediaUrl(url))
                   .filter((url): url is string => Boolean(url)),
               ),
-            ];
+            );
             const coverUrl = galleryUrls[0] ?? null;
             const extraUrls = !compact ? galleryUrls.slice(1) : [];
 

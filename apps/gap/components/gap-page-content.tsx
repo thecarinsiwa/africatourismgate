@@ -76,8 +76,8 @@ export function GapPageContent({ sectionKey, title }: GapPageContentProps) {
           ) : null}
 
           {(() => {
-            const galleryUrls = [
-              ...new Set(
+            const galleryUrls = Array.from(
+              new Set(
                 [
                   ...(Array.isArray(page.coverImageUrls) ? page.coverImageUrls : []),
                   page.coverImageUrl,
@@ -85,7 +85,7 @@ export function GapPageContent({ sectionKey, title }: GapPageContentProps) {
                   .map((url) => resolveGapMediaUrl(url) ?? url?.trim() ?? null)
                   .filter((url): url is string => Boolean(url)),
               ),
-            ];
+            );
             const coverUrl = galleryUrls[0] ?? null;
             const extraUrls = galleryUrls.slice(1);
 

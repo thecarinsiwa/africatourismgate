@@ -50,7 +50,7 @@ const defaultValues: GapPageFormValues = {
 function resolvePageCoverImageUrls(page: GapPage): string[] {
   const fromArray = Array.isArray(page.coverImageUrls) ? page.coverImageUrls : [];
   if (fromArray.length > 0) {
-    return [...new Set(fromArray.map((url) => url.trim()).filter(Boolean))].slice(
+    return Array.from(new Set(fromArray.map((url) => url.trim()).filter(Boolean))).slice(
       0,
       MAX_PAGE_IMAGES,
     );
@@ -73,9 +73,9 @@ function gapPageToFormValues(page: GapPage): GapPageFormValues {
 
 function toPayload(values: GapPageFormValues): CreateGapPageRequest {
   const publishedAt = values.publishedAt.trim();
-  const coverImageUrls = [
-    ...new Set(values.coverImageUrls.map((url) => url.trim()).filter(Boolean)),
-  ].slice(0, MAX_PAGE_IMAGES);
+  const coverImageUrls = Array.from(
+    new Set(values.coverImageUrls.map((url) => url.trim()).filter(Boolean)),
+  ).slice(0, MAX_PAGE_IMAGES);
   return {
     sectionKey: values.sectionKey,
     title: values.title.trim(),

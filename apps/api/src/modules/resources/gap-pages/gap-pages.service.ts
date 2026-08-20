@@ -21,7 +21,7 @@ function normalizeCoverImageUrls(
     ? [legacyCoverImageUrl.trim()]
     : [];
   const merged = fromArray.length > 0 ? fromArray : fromLegacy;
-  return [...new Set(merged)].slice(0, MAX_PAGE_IMAGES);
+  return Array.from(new Set(merged)).slice(0, MAX_PAGE_IMAGES);
 }
 
 @Injectable()

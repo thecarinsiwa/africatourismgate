@@ -19,7 +19,7 @@ function normalizeImageUrls(
     .filter(Boolean);
   const fromLegacy = legacyImageUrl?.trim() ? [legacyImageUrl.trim()] : [];
   const merged = fromArray.length > 0 ? fromArray : fromLegacy;
-  return [...new Set(merged)].slice(0, MAX_ACTIVITY_IMAGES);
+  return Array.from(new Set(merged)).slice(0, MAX_ACTIVITY_IMAGES);
 }
 
 function toActivityPayload(

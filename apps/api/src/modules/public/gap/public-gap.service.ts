@@ -336,8 +336,8 @@ export class PublicGapService {
   }
 
   private toPageDto(page: GapPages): PublicGapPageDto {
-    const coverImageUrls = [
-      ...new Set(
+    const coverImageUrls = Array.from(
+      new Set(
         [
           ...(Array.isArray(page.coverImageUrls) ? page.coverImageUrls : []),
           page.coverImageUrl,
@@ -345,7 +345,7 @@ export class PublicGapService {
           .map((url) => url?.trim())
           .filter((url): url is string => Boolean(url)),
       ),
-    ].slice(0, 10);
+    ).slice(0, 10);
 
     return {
       id: page.id,
@@ -361,8 +361,8 @@ export class PublicGapService {
   }
 
   private toActivityDto(activity: GapActivities): PublicGapActivityDto {
-    const imageUrls = [
-      ...new Set(
+    const imageUrls = Array.from(
+      new Set(
         [
           ...(Array.isArray(activity.imageUrls) ? activity.imageUrls : []),
           activity.imageUrl,
@@ -370,7 +370,7 @@ export class PublicGapService {
           .map((url) => url?.trim())
           .filter((url): url is string => Boolean(url)),
       ),
-    ].slice(0, 10);
+    ).slice(0, 10);
 
     return {
       id: activity.id,

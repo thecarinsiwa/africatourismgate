@@ -33,7 +33,7 @@ function DetailField({
 function resolveActivityImageUrls(activity: GapActivity): string[] {
   const fromArray = Array.isArray(activity.imageUrls) ? activity.imageUrls : [];
   if (fromArray.length > 0) {
-    return [...new Set(fromArray.map((url) => url.trim()).filter(Boolean))];
+    return Array.from(new Set(fromArray.map((url) => url.trim()).filter(Boolean)));
   }
   return activity.imageUrl?.trim() ? [activity.imageUrl.trim()] : [];
 }

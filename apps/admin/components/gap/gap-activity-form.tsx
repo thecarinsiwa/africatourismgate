@@ -48,7 +48,7 @@ const defaultValues: GapActivityFormValues = {
 function resolveActivityImageUrls(activity: GapActivity): string[] {
   const fromArray = Array.isArray(activity.imageUrls) ? activity.imageUrls : [];
   if (fromArray.length > 0) {
-    return [...new Set(fromArray.map((url) => url.trim()).filter(Boolean))].slice(
+    return Array.from(new Set(fromArray.map((url) => url.trim()).filter(Boolean))).slice(
       0,
       MAX_ACTIVITY_IMAGES,
     );
@@ -69,10 +69,9 @@ function activityToFormValues(activity: GapActivity): GapActivityFormValues {
 }
 
 function toPayload(values: GapActivityFormValues): CreateGapActivityRequest {
-  const imageUrls = [...new Set(values.imageUrls.map((url) => url.trim()).filter(Boolean))].slice(
-    0,
-    MAX_ACTIVITY_IMAGES,
-  );
+  const imageUrls = Array.from(
+    new Set(values.imageUrls.map((url) => url.trim()).filter(Boolean)),
+  ).slice(0, MAX_ACTIVITY_IMAGES);
   return {
     title: values.title.trim(),
     description: values.description.trim(),
