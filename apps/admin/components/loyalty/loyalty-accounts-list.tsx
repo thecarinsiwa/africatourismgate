@@ -11,6 +11,7 @@ import {
   DataTableBadge,
   DataTablePagination,
   EmptyState,
+  Modal,
   useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
@@ -338,83 +339,95 @@ export function LoyaltyAccountsList() {
         />
       ) : null}
 
-      {adjustingAccount ? (
-        <Card variant="dashboard" padding="md">
-          <h3 className="text-sm font-semibold text-atg-fg">{tAdjust('title')}</h3>
-          <p className="mt-1 text-sm text-atg-muted">
-            {adjustingAccount.userEmail} · {adjustingAccount.programCode} ·{' '}
-            {tAdjust('currentBalance')}{' '}
-            <span className="font-medium tabular-nums text-atg-fg">
-              {formatPoints(adjustingAccount.pointsBalance)}
-            </span>
-          </p>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            <div>
-              <label
-                htmlFor={deltaInputId}
-                className="mb-1 block text-xs font-medium text-atg-muted"
-              >
-                {tAdjust('fields.delta')}
-              </label>
-              <input
-                id={deltaInputId}
-                type="number"
-                step={1}
-                value={adjustDelta}
-                disabled={acting}
-                onChange={(e) => setAdjustDelta(e.target.value)}
-                placeholder={tAdjust('deltaPlaceholder')}
-                className="w-full rounded-lg border border-atg-border bg-atg-surface px-3 py-2 text-sm tabular-nums text-atg-fg disabled:opacity-60"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor={reasonInputId}
-                className="mb-1 block text-xs font-medium text-atg-muted"
-              >
-                {tAdjust('fields.reason')}
-              </label>
-              <input
-                id={reasonInputId}
-                type="text"
-                value={adjustReason}
-                disabled={acting}
-                onChange={(e) => setAdjustReason(e.target.value)}
-                placeholder={tAdjust('reasonPlaceholder')}
-                maxLength={500}
-                className="w-full rounded-lg border border-atg-border bg-atg-surface px-3 py-2 text-sm text-atg-fg disabled:opacity-60"
-              />
-            </div>
-          </div>
-          {adjustError ? (
-            <p className="mt-3 text-sm text-red-600 dark:text-red-400" role="alert">
-              {adjustError}
+      <Modal
+        open={adjustingAccount !== null}
+        onOpenChange={(open) => {
+          if (!open && !acting) {
+            setAdjustingAccount(null);
+            setAdjustError(null);
+          }
+        }}
+        title={tAdjust('title')}
+        showClose={!acting}
+        closeAriaLabel={tActions('cancel')}
+      >
+        {adjustingAccount ? (
+          <>
+            <p className="mb-4 text-sm text-atg-muted">
+              {adjustingAccount.userEmail} · {adjustingAccount.programCode} ·{' '}
+              {tAdjust('currentBalance')}{' '}
+              <span className="font-medium tabular-nums text-atg-fg">
+                {formatPoints(adjustingAccount.pointsBalance)}
+              </span>
             </p>
-          ) : null}
-          <div className="mt-4 flex flex-wrap gap-2">
-            <Button
-              type="button"
-              disabled={acting}
-              loading={acting}
-              loadingText="…"
-              onClick={() => void submitAdjust()}
-            >
-              {tAdjust('apply')}
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              disabled={acting}
-              onClick={() => {
-                setAdjustingAccount(null);
-                setAdjustError(null);
-              }}
-            >
-              {tActions('cancel')}
-            </Button>
-          </div>
-        </Card>
-      ) : null}
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label
+                  htmlFor={deltaInputId}
+                  className="mb-1 block text-xs font-medium text-atg-muted"
+                >
+                  {tAdjust('fields.delta')}
+                </label>
+                <input
+                  id={deltaInputId}
+                  type="number"
+                  step={1}
+                  value={adjustDelta}
+                  disabled={acting}
+                  onChange={(e) => setAdjustDelta(e.target.value)}
+                  placeholder={tAdjust('deltaPlaceholder')}
+                  className="w-full rounded-lg border border-atg-border bg-atg-surface px-3 py-2 text-sm tabular-nums text-atg-fg disabled:opacity-60"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor={reasonInputId}
+                  className="mb-1 block text-xs font-medium text-atg-muted"
+                >
+                  {tAdjust('fields.reason')}
+                </label>
+                <input
+                  id={reasonInputId}
+                  type="text"
+                  value={adjustReason}
+                  disabled={acting}
+                  onChange={(e) => setAdjustReason(e.target.value)}
+                  placeholder={tAdjust('reasonPlaceholder')}
+                  maxLength={500}
+                  className="w-full rounded-lg border border-atg-border bg-atg-surface px-3 py-2 text-sm text-atg-fg disabled:opacity-60"
+                />
+              </div>
+            </div>
+            {adjustError ? (
+              <p className="mt-3 text-sm text-red-600 dark:text-red-400" role="alert">
+                {adjustError}
+              </p>
+            ) : null}
+            <div className="mt-6 flex flex-wrap justify-end gap-2">
+              <Button
+                type="button"
+                variant="ghost"
+                disabled={acting}
+                onClick={() => {
+                  setAdjustingAccount(null);
+                  setAdjustError(null);
+                }}
+              >
+                {tActions('cancel')}
+              </Button>
+              <Button
+                type="button"
+                disabled={acting}
+                loading={acting}
+                loadingText="…"
+                onClick={() => void submitAdjust()}
+              >
+                {tAdjust('apply')}
+              </Button>
+            </div>
+          </>
+        ) : null}
+      </Modal>
     </div>
   );
 }
