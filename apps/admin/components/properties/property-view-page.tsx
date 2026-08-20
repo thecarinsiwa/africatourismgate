@@ -198,88 +198,86 @@ export function PropertyViewPage({ propertyId }: PropertyViewPageProps) {
         </div>
       </div>
 
-      <Card variant="dashboard" padding="md" className="max-w-2xl">
-        <h3 className="text-sm font-semibold text-atg-fg">{tView('infoTitle')}</h3>
-        <dl className="mt-3 grid gap-x-6 gap-y-3 sm:grid-cols-2">
-          <ProfileField
-            label={tPropForm('destination')}
-            value={destinationName ?? emptyDash}
-          />
-          <ProfileField label={tPropForm('slug')} value={property.slug} />
-          <ProfileField
-            label={tPropColumns('propertyType')}
-            value={propertyTypeLabels[property.propertyType]}
-          />
-          <ProfileField
-            label={tPropForm('starRating')}
-            value={
-              property.starRating != null && Number(property.starRating) > 0
-                ? `${property.starRating} ★`
-                : emptyDash
-            }
-          />
-          <ProfileField
-            label={tPropForm('address')}
-            value={property.addressLine?.trim() || emptyDash}
-          />
-          <ProfileField
-            label={tDates('createdAt')}
-            value={formatDateTime(property.createdAt)}
-          />
-          <ProfileField
-            label={tDates('updatedAt')}
-            value={property.updatedAt ? formatDateTime(property.updatedAt) : emptyDash}
-          />
-          <div className="min-w-0 sm:col-span-2">
-            <dt className="text-[11px] font-medium uppercase tracking-wide text-atg-muted">
-              {tView('description')}
-            </dt>
-            <dd className="mt-0.5 text-sm text-atg-fg">
-              {property.description?.trim() ? (
-                <p className="whitespace-pre-wrap">{property.description}</p>
-              ) : (
-                emptyDash
-              )}
-            </dd>
-          </div>
-        </dl>
-      </Card>
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-start">
+        <Card variant="dashboard" padding="md">
+          <h3 className="text-sm font-semibold text-atg-fg">{tView('infoTitle')}</h3>
+          <dl className="mt-3 grid gap-x-6 gap-y-3 sm:grid-cols-2">
+            <ProfileField
+              label={tPropForm('destination')}
+              value={destinationName ?? emptyDash}
+            />
+            <ProfileField label={tPropForm('slug')} value={property.slug} />
+            <ProfileField
+              label={tPropColumns('propertyType')}
+              value={propertyTypeLabels[property.propertyType]}
+            />
+            <ProfileField
+              label={tPropForm('starRating')}
+              value={
+                property.starRating != null && Number(property.starRating) > 0
+                  ? `${property.starRating} ★`
+                  : emptyDash
+              }
+            />
+            <ProfileField
+              label={tPropForm('address')}
+              value={property.addressLine?.trim() || emptyDash}
+            />
+            <ProfileField
+              label={tDates('createdAt')}
+              value={formatDateTime(property.createdAt)}
+            />
+            <ProfileField
+              label={tDates('updatedAt')}
+              value={property.updatedAt ? formatDateTime(property.updatedAt) : emptyDash}
+            />
+            <div className="min-w-0 sm:col-span-2">
+              <dt className="text-[11px] font-medium uppercase tracking-wide text-atg-muted">
+                {tView('description')}
+              </dt>
+              <dd className="mt-0.5 text-sm text-atg-fg">
+                {property.description?.trim() ? (
+                  <p className="whitespace-pre-wrap">{property.description}</p>
+                ) : (
+                  emptyDash
+                )}
+              </dd>
+            </div>
+          </dl>
+        </Card>
 
-      <section className="space-y-4">
-        <div>
-          <h3 className="text-lg font-semibold text-atg-fg">{tView('imagesTitle')}</h3>
-          <p className="mt-1 text-sm text-atg-muted">
+        <Card variant="dashboard" padding="md">
+          <h3 className="text-sm font-semibold text-atg-fg">{tView('imagesTitle')}</h3>
+          <p className="mt-1 text-xs text-atg-muted">
             {tView('imagesIntro', { count: images.length })}
           </p>
-        </div>
-        {images.length === 0 ? (
-          <p className="text-sm text-atg-muted">{tView('imagesEmpty')}</p>
-        ) : (
-          <ul className="flex flex-wrap gap-2">
-            {images.map((image) => (
-              <li key={image.id} className="w-28 sm:w-32">
-                <Card variant="dashboard" padding="none" className="overflow-hidden">
-                  <div className="relative aspect-square bg-atg-surface">
-                    <Image
-                      src={resolveMediaUrl(image.url)}
-                      alt={image.caption?.trim() || property.name}
-                      fill
-                      className="object-cover"
-                      sizes="128px"
-                      unoptimized
-                    />
-                  </div>
-                  {image.caption?.trim() ? (
-                    <p className="truncate px-1.5 py-1 text-[10px] text-atg-muted">
-                      {image.caption}
-                    </p>
-                  ) : null}
-                </Card>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+          <div className="mt-3">
+            {images.length === 0 ? (
+              <p className="text-sm text-atg-muted">{tView('imagesEmpty')}</p>
+            ) : (
+              <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3">
+                {images.map((image) => (
+                  <li key={image.id}>
+                    <div className="relative aspect-square overflow-hidden rounded-lg border border-atg-border bg-atg-surface">
+                      <Image
+                        src={resolveMediaUrl(image.url)}
+                        alt={image.caption?.trim() || property.name}
+                        fill
+                        className="object-cover"
+                        sizes="160px"
+                        unoptimized
+                      />
+                    </div>
+                    {image.caption?.trim() ? (
+                      <p className="mt-1 truncate text-[10px] text-atg-muted">{image.caption}</p>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </Card>
+      </div>
 
       <section className="space-y-4">
         <div>
