@@ -75,17 +75,51 @@ export function GapPageContent({ sectionKey, title }: GapPageContentProps) {
             <p className="mb-6 text-lg leading-relaxed text-atg-muted">{page.excerpt}</p>
           ) : null}
 
-          {page.coverImageUrl ? (
-            <div className="relative mb-8 aspect-[16/9] w-full overflow-hidden rounded-xl">
-              <Image
-                src={resolveGapMediaUrl(page.coverImageUrl) ?? page.coverImageUrl}
-                alt=""
-                fill
-                className="object-cover"
-                sizes="(max-width: 896px) 100vw, 896px"
-              />
-            </div>
-          ) : null}
+          {(() => {
+            const galleryUrls = [
+              ...new Set(
+                [
+                  ...(Array.isArray(page.coverImageUrls) ? page.coverImageUrls : []),
+                  page.coverImageUrl,
+                ]
+                  .map((url) => resolveGapMediaUrl(url) ?? url?.trim() ?? null)
+                  .filter((url): url is string => Boolean(url)),
+              ),
+            ];
+            const coverUrl = galleryUrls[0] ?? null;
+            const extraUrls = galleryUrls.slice(1);
+
+            if (!coverUrl) return null;
+
+            return (
+              <div className="mb-8 space-y-2">
+                <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl">
+                  <Image
+                    src={coverUrl}
+                    alt=""
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 896px) 100vw, 896px"
+                  />
+                </div>
+                {extraUrls.length > 0 ? (
+                  <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+                    {extraUrls.map((url) => (
+                      <div key={url} className="relative aspect-square overflow-hidden rounded-lg">
+                        <Image
+                          src={url}
+                          alt=""
+                          fill
+                          className="object-cover"
+                          sizes="200px"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+            );
+          })()}
 
           <div
             className="prose prose-neutral max-w-none dark:prose-invert prose-p:text-atg-muted prose-headings:text-atg-fg"

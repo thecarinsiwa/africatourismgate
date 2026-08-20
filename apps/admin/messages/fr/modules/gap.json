@@ -91,7 +91,8 @@
       },
       "validation": {
         "contentRequired": "Le contenu est obligatoire.",
-        "coverUrlInvalid": "L'URL de l'image de couverture doit être valide."
+        "coverUrlInvalid": "L'URL de l'image de couverture doit être valide.",
+        "maxImages": "Maximum 10 images par page."
       },
       "fields": {
         "section": "Section",
@@ -100,8 +101,14 @@
         "excerptPlaceholder": "Résumé court affiché en en-tête…",
         "content": "Contenu",
         "contentPlaceholder": "Rédigez le corps de la page…",
+        "images": "Images",
+        "imagesCount": "{count} / {max}",
+        "imagesEmpty": "Aucune image pour le moment.",
         "coverImageUrl": "Image de couverture",
         "coverPreviewAlt": "Aperçu de la couverture",
+        "coverBadge": "Couverture",
+        "removeImage": "Retirer",
+        "addImageUrl": "Ajouter l'URL",
         "removeCover": "Retirer l'image",
         "locale": "Langue",
         "publishedAtOptional": "Date de publication (optionnel)"

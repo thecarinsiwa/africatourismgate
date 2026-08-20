@@ -1,5 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
+  ArrayMaxSize,
+  IsArray,
   IsEnum,
   IsNotEmpty,
   IsOptional,
@@ -37,7 +39,25 @@ export class CreateGapPageDto {
   @IsString()
   content!: string;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    type: [String],
+    description: 'Up to 10 cover image URLs (first becomes coverImageUrl)',
+  })
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(10)
+  @IsString({ each: true })
+  @MaxLength(1024, { each: true })
+  @IsUrl(
+    { require_tld: false, protocols: ['http', 'https'] },
+    { each: true, message: "Chaque URL d'image doit être valide." },
+  )
+  coverImageUrls?: string[] | null;
+
+  @ApiPropertyOptional({
+    deprecated: true,
+    description: 'Legacy single cover image; prefer coverImageUrls',
+  })
   @IsOptional()
   @IsString()
   @MaxLength(512)

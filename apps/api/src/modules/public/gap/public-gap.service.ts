@@ -31,6 +31,7 @@ export type PublicGapPageDto = {
   excerpt: string | null;
   content: string;
   coverImageUrl: string | null;
+  coverImageUrls: string[];
   publishedAt: string | null;
   locale: string;
 };
@@ -313,13 +314,25 @@ export class PublicGapService {
   }
 
   private toPageDto(page: GapPages): PublicGapPageDto {
+    const coverImageUrls = [
+      ...new Set(
+        [
+          ...(Array.isArray(page.coverImageUrls) ? page.coverImageUrls : []),
+          page.coverImageUrl,
+        ]
+          .map((url) => url?.trim())
+          .filter((url): url is string => Boolean(url)),
+      ),
+    ].slice(0, 10);
+
     return {
       id: page.id,
       sectionKey: page.sectionKey,
       title: page.title,
       excerpt: page.excerpt,
       content: page.content,
-      coverImageUrl: page.coverImageUrl,
+      coverImageUrl: coverImageUrls[0] ?? null,
+      coverImageUrls,
       publishedAt: page.publishedAt?.toISOString() ?? null,
       locale: page.locale,
     };

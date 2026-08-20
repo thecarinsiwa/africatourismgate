@@ -31,6 +31,8 @@ export interface GapPage extends AuditFields {
   excerpt: string | null;
   content: string;
   coverImageUrl: string | null;
+  /** Up to 10 image URLs; `coverImageUrl` is the cover (first). */
+  coverImageUrls: string[] | null;
   status: GapStatus;
   publishedAt: string | null;
   locale: string;
@@ -94,6 +96,7 @@ export interface PublicGapPage {
   excerpt: string | null;
   content: string;
   coverImageUrl: string | null;
+  coverImageUrls: string[];
   publishedAt: string | null;
   locale: string;
 }
@@ -164,6 +167,9 @@ export interface CreateGapPageRequest {
   title: string;
   excerpt?: string | null;
   content: string;
+  /** Up to 10 image URLs; first becomes the cover. */
+  coverImageUrls?: string[] | null;
+  /** @deprecated Prefer coverImageUrls */
   coverImageUrl?: string | null;
   status?: GapStatus;
   publishedAt?: string | null;

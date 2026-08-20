@@ -28,6 +28,10 @@ export class GapPages extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'cover_image_url', length: 512, nullable: true })
   coverImageUrl!: string | null;
 
+  /** Up to 10 image URLs; `coverImageUrl` mirrors the first entry for public cover. */
+  @Column({ type: 'json', name: 'cover_image_urls', nullable: true })
+  coverImageUrls!: string[] | null;
+
   @Column({
     name: 'status',
     type: 'enum',

@@ -43,6 +43,14 @@ function formatDateTime(iso: string | null, emptyDash: string): string {
   });
 }
 
+function resolvePageCoverImageUrls(page: GapPage): string[] {
+  const fromArray = Array.isArray(page.coverImageUrls) ? page.coverImageUrls : [];
+  if (fromArray.length > 0) {
+    return [...new Set(fromArray.map((url) => url.trim()).filter(Boolean))];
+  }
+  return page.coverImageUrl?.trim() ? [page.coverImageUrl.trim()] : [];
+}
+
 export function GapPageDetailModal({
   open,
   page,
@@ -58,7 +66,7 @@ export function GapPageDetailModal({
   const tCommon = useTranslations('modules.common');
   const emptyDash = tCommon('empty.dash');
 
-  const coverUrl = page?.coverImageUrl?.trim() || '';
+  const imageUrls = page ? resolvePageCoverImageUrls(page) : [];
 
   return (
     <Modal
@@ -71,16 +79,25 @@ export function GapPageDetailModal({
     >
       {!page ? null : (
         <div className="space-y-6">
-          {coverUrl ? (
-            <div className="overflow-hidden rounded-lg border border-atg-border">
-              <Image
-                src={resolveMediaUrl(coverUrl)}
-                alt={page.title}
-                width={640}
-                height={360}
-                unoptimized
-                className="h-48 w-full object-cover"
-              />
+          {imageUrls.length > 0 ? (
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+              {imageUrls.map((url, index) => (
+                <div
+                  key={`${url}-${index}`}
+                  className="overflow-hidden rounded-lg border border-atg-border"
+                >
+                  <Image
+                    src={resolveMediaUrl(url)}
+                    alt={
+                      index === 0 ? page.title : `${page.title} (${index + 1})`
+                    }
+                    width={320}
+                    height={200}
+                    unoptimized
+                    className="aspect-[4/3] h-auto w-full object-cover"
+                  />
+                </div>
+              ))}
             </div>
           ) : null}
 

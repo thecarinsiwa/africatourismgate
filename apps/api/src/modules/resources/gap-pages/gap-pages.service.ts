@@ -8,6 +8,22 @@ import { CreateGapPageDto } from './dto/create-gap-page.dto';
 import { GapPagesListQueryDto } from './dto/gap-pages-list-query.dto';
 import { UpdateGapPageDto } from './dto/update-gap-page.dto';
 
+const MAX_PAGE_IMAGES = 10;
+
+function normalizeCoverImageUrls(
+  coverImageUrls?: string[] | null,
+  legacyCoverImageUrl?: string | null,
+): string[] {
+  const fromArray = (coverImageUrls ?? [])
+    .map((url) => url.trim())
+    .filter(Boolean);
+  const fromLegacy = legacyCoverImageUrl?.trim()
+    ? [legacyCoverImageUrl.trim()]
+    : [];
+  const merged = fromArray.length > 0 ? fromArray : fromLegacy;
+  return [...new Set(merged)].slice(0, MAX_PAGE_IMAGES);
+}
+
 @Injectable()
 export class GapPagesService extends CrudService<GapPages> {
   constructor(
@@ -32,7 +48,22 @@ export class GapPagesService extends CrudService<GapPages> {
   private toEntityPayload(
     dto: CreateGapPageDto | UpdateGapPageDto,
   ): DeepPartial<GapPages> {
+    const hasCoverImageUrls = Object.prototype.hasOwnProperty.call(
+      dto,
+      'coverImageUrls',
+    );
+    const hasCoverImageUrl = Object.prototype.hasOwnProperty.call(
+      dto,
+      'coverImageUrl',
+    );
+
     const payload: DeepPartial<GapPages> = { ...dto };
+
+    if (hasCoverImageUrls || hasCoverImageUrl) {
+      const urls = normalizeCoverImageUrls(dto.coverImageUrls, dto.coverImageUrl);
+      payload.coverImageUrls = urls;
+      payload.coverImageUrl = urls[0] ?? null;
+    }
 
     if (dto.publishedAt !== undefined) {
       payload.publishedAt =
@@ -84,7 +115,7 @@ export class GapPagesService extends CrudService<GapPages> {
     const [data, total] = await qb.getManyAndCount();
 
     return {
-      data,
+      data: data.map((item) => this.withResolvedCoverImageUrls(item)),
       meta: {
         total,
         page,
@@ -92,5 +123,17 @@ export class GapPagesService extends CrudService<GapPages> {
         totalPages: Math.ceil(total / limit) || 1,
       },
     };
+  }
+
+  override async findOne(id: string): Promise<GapPages> {
+    const page = await super.findOne(id);
+    return this.withResolvedCoverImageUrls(page);
+  }
+
+  private withResolvedCoverImageUrls(page: GapPages): GapPages {
+    const urls = normalizeCoverImageUrls(page.coverImageUrls, page.coverImageUrl);
+    page.coverImageUrls = urls;
+    page.coverImageUrl = urls[0] ?? null;
+    return page;
   }
 }
