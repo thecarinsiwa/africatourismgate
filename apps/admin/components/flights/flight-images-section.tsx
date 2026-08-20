@@ -10,6 +10,7 @@ import {
   DataTableActionButton,
   DataTableActions,
   Input,
+  Modal,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { FlightImage } from '@africatourismgate/types';
@@ -283,83 +284,90 @@ export function FlightImagesSection({ flightId, embedded }: FlightImagesSectionP
           <h2 className="text-lg font-semibold text-atg-fg">{tGallery('title')}</h2>
           <p className="mt-1 text-sm text-atg-muted">{tGallery('intro')}</p>
         </div>
-        {!showForm ? (
-          <Button type="button" onClick={openCreate}>
-            {tGallery('addPhoto')}
-          </Button>
-        ) : null}
+        <Button type="button" onClick={openCreate}>
+          {tGallery('addPhoto')}
+        </Button>
       </div>
 
-      {showForm ? (
-        <Card variant="dashboard" className="max-w-2xl">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <h3 className="text-sm font-medium">
-              {editing ? tGallery('editPhoto') : tGallery('newPhoto')}
-            </h3>
-            {formError ? (
-              <p role="alert" className="text-sm text-red-600">
-                {formError}
-              </p>
-            ) : null}
-            <div className="space-y-3">
-              <p className="text-xs font-medium text-atg-fg">{tCommon('form.image')}</p>
-              <div className="flex flex-wrap items-center gap-3">
-                <label className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10">
-                  {uploading ? tCommon('form.uploading') : tCommon('form.chooseFile')}
-                  <input
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp"
-                    className="hidden"
-                    onChange={(e) => void handleLocalImagePick(e)}
-                    disabled={uploading || submitting}
-                  />
-                </label>
-                <span className="text-xs text-atg-muted">{tCommon('form.imageFormatHint')}</span>
-              </div>
-              {formValues.url.trim() ? (
-                <Image
-                  src={formValues.url.trim()}
-                  alt={formValues.caption.trim() || tCommon('columns.preview')}
-                  width={320}
-                  height={200}
-                  unoptimized
-                  className="h-40 w-full max-w-sm rounded-lg border border-atg-border object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = 'none';
-                  }}
+      <Modal
+        open={showForm}
+        onOpenChange={(open) => {
+          if (!open && !submitting && !uploading) resetForm();
+        }}
+        title={editing ? tGallery('editPhoto') : tGallery('newPhoto')}
+        showClose={!submitting && !uploading}
+        closeAriaLabel={tActions('close')}
+        className="max-w-lg"
+      >
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {formError ? (
+            <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+              {formError}
+            </p>
+          ) : null}
+          <div className="space-y-3">
+            <p className="text-xs font-medium text-atg-fg">{tCommon('form.image')}</p>
+            <div className="flex flex-wrap items-center gap-3">
+              <label className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10">
+                {uploading ? tCommon('form.uploading') : tCommon('form.chooseFile')}
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="hidden"
+                  onChange={(e) => void handleLocalImagePick(e)}
+                  disabled={uploading || submitting}
                 />
-              ) : null}
+              </label>
+              <span className="text-xs text-atg-muted">{tCommon('form.imageFormatHint')}</span>
             </div>
-            <Input
-              label={tCommon('form.externalUrlOptional')}
-              type="url"
-              value={formValues.url}
-              onChange={(e) => setFormValues((p) => ({ ...p, url: e.target.value }))}
-              placeholder={tCommon('form.urlPlaceholder')}
-            />
-            <Input
-              label={tCommon('columns.caption')}
-              value={formValues.caption}
-              onChange={(e) => setFormValues((p) => ({ ...p, caption: e.target.value }))}
-            />
-            <Input
-              label={tCommon('form.displayOrder')}
-              type="number"
-              min={0}
-              value={formValues.sortOrder}
-              onChange={(e) => setFormValues((p) => ({ ...p, sortOrder: e.target.value }))}
-            />
-            <div className="flex gap-3">
-              <Button type="submit" loading={submitting} disabled={uploading}>
-                {editing ? tActions('save') : tActions('create')}
-              </Button>
-              <Button type="button" variant="outline" onClick={resetForm}>
-                {tActions('cancel')}
-              </Button>
-            </div>
-          </form>
-        </Card>
-      ) : null}
+            {formValues.url.trim() ? (
+              <Image
+                src={formValues.url.trim()}
+                alt={formValues.caption.trim() || tCommon('columns.preview')}
+                width={320}
+                height={200}
+                unoptimized
+                className="h-40 w-full max-w-sm rounded-lg border border-atg-border object-cover"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                }}
+              />
+            ) : null}
+          </div>
+          <Input
+            label={tCommon('form.externalUrlOptional')}
+            type="url"
+            value={formValues.url}
+            onChange={(e) => setFormValues((p) => ({ ...p, url: e.target.value }))}
+            placeholder={tCommon('form.urlPlaceholder')}
+          />
+          <Input
+            label={tCommon('columns.caption')}
+            value={formValues.caption}
+            onChange={(e) => setFormValues((p) => ({ ...p, caption: e.target.value }))}
+          />
+          <Input
+            label={tCommon('form.displayOrder')}
+            type="number"
+            min={0}
+            value={formValues.sortOrder}
+            onChange={(e) => setFormValues((p) => ({ ...p, sortOrder: e.target.value }))}
+          />
+          <div className="flex gap-3 pt-1">
+            <Button type="submit" loading={submitting} disabled={uploading}>
+              {editing ? tActions('save') : tActions('create')}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={resetForm}
+              disabled={submitting || uploading}
+            >
+              {tActions('cancel')}
+            </Button>
+          </div>
+        </form>
+      </Modal>
 
       {state.status === 'error' ? (
         <p role="alert" className="text-sm text-red-600">
