@@ -239,10 +239,13 @@ function AuditTimelineItem({ log, isLast }: { log: RbacAuditLog; isLast: boolean
 
 export function RbacAuditLogsList({
   showSubnav = true,
+  showFilterBar = true,
   userFilterMode = showSubnav ? 'actor' : 'involved',
   pageSize = DEFAULT_PAGE_SIZE,
 }: {
   showSubnav?: boolean;
+  /** Barre dates / type d’événement / acteur (absente sur journaux sécurité utilisateurs). */
+  showFilterBar?: boolean;
   userFilterMode?: 'actor' | 'involved';
   pageSize?: number;
 }) {
@@ -293,7 +296,13 @@ export function RbacAuditLogsList({
   }, []);
 
   useEffect(() => {
-    if (access.status !== 'allowed' || userFilterMode === 'involved') return;
+    if (
+      access.status !== 'allowed' ||
+      !showFilterBar ||
+      userFilterMode === 'involved'
+    ) {
+      return;
+    }
     let cancelled = false;
     async function loadUsers() {
       try {
@@ -311,7 +320,7 @@ export function RbacAuditLogsList({
     return () => {
       cancelled = true;
     };
-  }, [access.status, userFilterMode]);
+  }, [access.status, showFilterBar, userFilterMode]);
 
   const handleUserIdChange = useCallback((userId: string) => {
     setUserIdFilter(userId);
@@ -320,20 +329,20 @@ export function RbacAuditLogsList({
   }, []);
 
   const activeFilterCount = useMemo(() => {
+    if (!showFilterBar) return 0;
     let count = 0;
     if (appliedDateFrom) count += 1;
     if (appliedDateTo) count += 1;
     if (appliedEventType) count += 1;
     if (userFilterMode === 'actor' && appliedActorUserId) count += 1;
-    if (userFilterMode === 'involved' && userIdFilter) count += 1;
     return count;
   }, [
+    showFilterBar,
     appliedDateFrom,
     appliedDateTo,
     appliedEventType,
     appliedActorUserId,
     userFilterMode,
-    userIdFilter,
   ]);
 
   const applyFilters = useCallback(() => {
@@ -366,10 +375,13 @@ export function RbacAuditLogsList({
       const result = await getApiClient().listRbacAuditLogs({
         page,
         limit,
-        dateFrom: appliedDateFrom || undefined,
-        dateTo: appliedDateTo || undefined,
-        eventType: appliedEventType || undefined,
-        actorUserId: userFilterMode === 'actor' ? appliedActorUserId || undefined : undefined,
+        dateFrom: showFilterBar ? appliedDateFrom || undefined : undefined,
+        dateTo: showFilterBar ? appliedDateTo || undefined : undefined,
+        eventType: showFilterBar ? appliedEventType || undefined : undefined,
+        actorUserId:
+          showFilterBar && userFilterMode === 'actor'
+            ? appliedActorUserId || undefined
+            : undefined,
         userId: userFilterMode === 'involved' ? userIdFilter || undefined : undefined,
       });
       setState({
@@ -391,6 +403,7 @@ export function RbacAuditLogsList({
     access.status,
     page,
     limit,
+    showFilterBar,
     appliedDateFrom,
     appliedDateTo,
     appliedEventType,
@@ -504,14 +517,16 @@ export function RbacAuditLogsList({
         <UserIdFilterBar onUserIdChange={handleUserIdChange} onUsersLoaded={setUsers} />
       ) : null}
 
-      <FilterBar
-        activeCount={activeFilterCount}
-        filters={filterControls}
-        onClear={clearFilters}
-        onApply={applyFilters}
-        className="mb-6"
-        mobileVariant="drawer"
-      />
+      {showFilterBar ? (
+        <FilterBar
+          activeCount={activeFilterCount}
+          filters={filterControls}
+          onClear={clearFilters}
+          onApply={applyFilters}
+          className="mb-6"
+          mobileVariant="drawer"
+        />
+      ) : null}
 
       {state.status === 'error' ? (
         <p role="alert" className="mb-4 text-sm text-red-600">
