@@ -1,8 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
+import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import { PropertyAmenities } from '../../../entities/generated';
-import { PaginationQueryDto, PaginatedResult } from '../../../common/dto/pagination-query.dto';
+import { PropertyAmenitiesListQueryDto } from './dto/property-amenities-list-query.dto';
 
 @Injectable()
 export class PropertyAmenitiesService {
@@ -11,14 +12,22 @@ export class PropertyAmenitiesService {
     private readonly repository: Repository<PropertyAmenities>,
   ) {}
 
-  async findAll(query: PaginationQueryDto): Promise<PaginatedResult<PropertyAmenities>> {
+  async findAll(
+    query: PropertyAmenitiesListQueryDto,
+  ): Promise<PaginatedResult<PropertyAmenities>> {
     const page = query.page ?? 1;
     const limit = query.limit ?? 20;
+
     const [data, total] = await this.repository.findAndCount({
+      where: {
+        deletedAt: IsNull(),
+        ...(query.propertyId ? { propertyId: query.propertyId } : {}),
+      },
       skip: (page - 1) * limit,
       take: limit,
       order: { createdAt: 'DESC' },
     });
+
     return {
       data,
       meta: { total, page, limit, totalPages: Math.ceil(total / limit) || 1 },

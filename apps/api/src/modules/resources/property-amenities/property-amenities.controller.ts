@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import { PropertyAmenities } from '../../../entities/generated';
+import { PropertyAmenitiesListQueryDto } from './dto/property-amenities-list-query.dto';
 import { PropertyAmenitiesService } from './property-amenities.service';
 
 @ApiTags('property-amenities')
@@ -11,7 +11,7 @@ export class PropertyAmenitiesController {
 
   @Get()
   @ApiOperation({ summary: 'List property-amenities' })
-  findAll(@Query() query: PaginationQueryDto) {
+  findAll(@Query() query: PropertyAmenitiesListQueryDto) {
     return this.service.findAll(query);
   }
 

@@ -10,8 +10,8 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import { PropertyImages } from '../../../entities/generated';
+import { PropertyImagesListQueryDto } from './dto/property-images-list-query.dto';
 import { PropertyImagesService } from './property-images.service';
 
 @ApiTags('property-images')
@@ -21,7 +21,7 @@ export class PropertyImagesController {
 
   @Get()
   @ApiOperation({ summary: 'List property-images' })
-  findAll(@Query() query: PaginationQueryDto) {
+  findAll(@Query() query: PropertyImagesListQueryDto) {
     return this.service.findAll(query);
   }
 
