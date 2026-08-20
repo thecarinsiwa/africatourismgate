@@ -51,6 +51,9 @@
         }
       }
     },
+    "departements": {
+      "description": "Organizational departments used to classify employees."
+    },
     "adresses": {
       "description": "Addresses saved by users."
     },

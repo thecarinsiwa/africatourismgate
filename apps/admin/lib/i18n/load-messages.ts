@@ -5,6 +5,7 @@ export const ADMIN_MODULE_NAMES = [
   'common',
   'users',
   'employees',
+  'departments',
   'organizations',
   'bookings',
   'payments',

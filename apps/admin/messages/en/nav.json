@@ -13,6 +13,7 @@
   "links": {
     "users": "Users",
     "employees": "Employees",
+    "departments": "Departments",
     "addresses": "Addresses",
     "paymentMethods": "Payment methods",
     "sessions": "Sessions",

@@ -51,6 +51,9 @@
         }
       }
     },
+    "departements": {
+      "description": "Départements organisationnels. Utilisés pour classer les employés."
+    },
     "adresses": {
       "description": "Adresses enregistrées par les utilisateurs."
     },

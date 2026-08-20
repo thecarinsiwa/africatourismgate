@@ -1,0 +1,19 @@
+{
+  "list": {
+    "new": "New department",
+    "edit": "Edit department",
+    "emptyDefault": "No departments yet.",
+    "emptySearch": "No department matches this search.",
+    "searchPlaceholder": "Search by name…",
+    "searchAria": "Search departments",
+    "deleteTitle": "Delete department",
+    "deleteConfirm": "Department \"{name}\" will be deleted.",
+    "deleteConfirmButton": "Delete"
+  },
+  "form": {
+    "selectOrganization": "Select an organization",
+    "validation": {
+      "organizationRequired": "Organization is required."
+    }
+  }
+}

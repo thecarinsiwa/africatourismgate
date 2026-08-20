@@ -1,0 +1,19 @@
+{
+  "list": {
+    "new": "Nouveau département",
+    "edit": "Modifier le département",
+    "emptyDefault": "Aucun département pour le moment.",
+    "emptySearch": "Aucun département ne correspond à cette recherche.",
+    "searchPlaceholder": "Rechercher par nom…",
+    "searchAria": "Rechercher des départements",
+    "deleteTitle": "Supprimer le département",
+    "deleteConfirm": "Le département « {name} » sera supprimé.",
+    "deleteConfirmButton": "Supprimer"
+  },
+  "form": {
+    "selectOrganization": "Sélectionner une organisation",
+    "validation": {
+      "organizationRequired": "L'organisation est obligatoire."
+    }
+  }
+}

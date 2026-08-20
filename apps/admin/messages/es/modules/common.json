@@ -116,7 +116,8 @@
     "ticket": "tickets",
     "loyaltyAccount": "cuentas",
     "activity": "actividad",
-    "employee": "empleado"
+    "employee": "empleado",
+    "department": "departamento"
   },
   "dataTable": {
     "loading": "Cargando…",

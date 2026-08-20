@@ -116,7 +116,8 @@
     "ticket": "tickets",
     "loyaltyAccount": "comptes",
     "activity": "activité",
-    "employee": "employé"
+    "employee": "employé",
+    "department": "département"
   },
   "dataTable": {
     "loading": "Chargement…",

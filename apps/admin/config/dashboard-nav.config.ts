@@ -42,6 +42,7 @@ export const adminDashboardNavConfig: AdminNavEntryConfig[] = [
     children: [
       { href: '/utilisateurs', labelKey: 'users', iconKey: 'users' },
       { href: '/utilisateurs/employes', labelKey: 'employees', iconKey: 'userCircle' },
+      { href: '/utilisateurs/departements', labelKey: 'departments', iconKey: 'list' },
       { href: '/utilisateurs/adresses', labelKey: 'addresses', iconKey: 'mapPin' },
       { href: '/utilisateurs/moyens-paiement', labelKey: 'paymentMethods', iconKey: 'creditCard' },
       { href: '/utilisateurs/sessions', labelKey: 'sessions', iconKey: 'shield' },

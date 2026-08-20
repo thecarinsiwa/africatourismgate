@@ -1,0 +1,19 @@
+{
+  "list": {
+    "new": "Nuevo departamento",
+    "edit": "Editar departamento",
+    "emptyDefault": "No hay departamentos por el momento.",
+    "emptySearch": "Ningún departamento coincide con esta búsqueda.",
+    "searchPlaceholder": "Buscar por nombre…",
+    "searchAria": "Buscar departamentos",
+    "deleteTitle": "Eliminar departamento",
+    "deleteConfirm": "El departamento « {name} » será eliminado.",
+    "deleteConfirmButton": "Eliminar"
+  },
+  "form": {
+    "selectOrganization": "Seleccionar una organización",
+    "validation": {
+      "organizationRequired": "La organización es obligatoria."
+    }
+  }
+}

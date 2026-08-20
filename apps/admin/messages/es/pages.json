@@ -51,6 +51,9 @@
         }
       }
     },
+    "departements": {
+      "description": "Departamentos organizativos usados para clasificar a los empleados."
+    },
     "adresses": {
       "description": "Direcciones guardadas por los usuarios."
     },
