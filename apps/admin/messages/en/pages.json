@@ -89,6 +89,7 @@
       }
     },
     "equipements": {
+      "title": "Amenities",
       "description": "Global catalog reused across accommodations (Wi-Fi, pool, etc.)."
     }
   },

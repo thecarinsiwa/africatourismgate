@@ -220,7 +220,8 @@
     "selectProduct": "Sélectionnez un produit.",
     "invalidCabinCount": "Nombre de cabines invalide.",
     "datesRequired": "Les dates de début et de fin sont obligatoires.",
-    "iataAndNameRequired": "Code IATA (2 lettres) et nom sont obligatoires."
+    "iataAndNameRequired": "Code IATA (2 lettres) et nom sont obligatoires.",
+    "codeAndNameRequired": "Le code et le nom sont obligatoires."
   },
   "toast": {
     "saved": "Enregistré",

@@ -89,6 +89,7 @@
       }
     },
     "equipements": {
+      "title": "Équipements",
       "description": "Catalogue global réutilisable sur les hébergements (Wi-Fi, piscine, etc.)."
     }
   },

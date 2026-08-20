@@ -220,7 +220,8 @@
     "selectProduct": "Sélectionnez un produit.",
     "invalidCabinCount": "Namebre de cabines invalide.",
     "datesRequired": "Start and end dates are required.",
-    "iataAndNameRequired": "Code IATA (2 lettres) et nom sont obligatoires."
+    "iataAndNameRequired": "IATA code (2 letters) and name are required.",
+    "codeAndNameRequired": "Code and name are required."
   },
   "toast": {
     "saved": "Enregistré",
@@ -228,9 +229,9 @@
     "deleteError": "Erreur de suppression",
     "availabilitySaved": "Disponibilité enregistrée",
     "availabilityDeleted": "Disponibilité supprimée",
-    "amenitiesSavedTitle": "Amenitys enregistrés",
-    "amenitiesSavedMessage": "La sélection a été mise à jour.",
-    "propertySavedTitle": "Accommodation enregistré",
+    "amenitiesSavedTitle": "Amenities saved",
+    "amenitiesSavedMessage": "The selection has been updated.",
+    "propertySavedTitle": "Accommodation saved",
     "deletedProperty": "Accommodation « {name} » has been deleted.",
     "deletedFlight": "Flight « {flightNumber} » has been deleted.",
     "deletedVehicle": "Vehicle « {label} » has been deleted.",

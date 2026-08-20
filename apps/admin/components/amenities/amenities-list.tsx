@@ -125,7 +125,7 @@ export function AmenitiesList() {
     event.preventDefault();
     setFormError(null);
     if (!formValues.code.trim() || !formValues.name.trim()) {
-      setFormError(tValidation('iataAndNameRequired'));
+      setFormError(tValidation('codeAndNameRequired'));
       return;
     }
     setSubmitting(true);
