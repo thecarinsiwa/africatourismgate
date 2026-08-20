@@ -95,6 +95,10 @@
     "assignedTitle": "Rôles assignés",
     "empty": "Aucun rôle actif pour cet utilisateur.",
     "assignFormTitle": "Assigner un rôle",
+    "assignSubmit": "Assigner le rôle",
+    "manageAction": "Gérer les rôles",
+    "modalTitle": "Gérer les rôles",
+    "modalDescription": "Ajoutez ou retirez les rôles de cet utilisateur.",
     "user": "Utilisateur",
     "role": "Rôle",
     "selectPlaceholder": "Sélectionner…",
@@ -129,6 +133,8 @@
       "description": "Retirer ce rôle pour cet utilisateur ?"
     },
     "toast": {
+      "assignedTitle": "Rôle assigné",
+      "assignedMessage": "L'assignation a été créée.",
       "revokedTitle": "Rôle révoqué",
       "revokedMessage": "L'assignation a été retirée.",
       "revokeFailedTitle": "Échec de la révocation"

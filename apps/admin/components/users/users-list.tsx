@@ -10,6 +10,7 @@ import {
   DataTable,
   DataTableActionButton,
   DataTableActions,
+  DataTableAdjustButton,
   DataTableBadge,
   DataTablePagination,
   FilterBar,
@@ -24,6 +25,7 @@ import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { exportCsv } from '../../lib/export-csv';
+import { UserRoleModal } from './user-role-modal';
 
 const PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -42,6 +44,7 @@ export function UsersList() {
   const tList = useTranslations('modules.users.list');
   const tFilters = useTranslations('modules.users.filters');
   const tForm = useTranslations('modules.users.form');
+  const tRoles = useTranslations('modules.users.roles');
   const tCommonFilters = useTranslations('modules.common.filters');
   const tColumns = useTranslations('modules.common.columns');
   const tPagination = useTranslations('modules.common.pagination');
@@ -72,6 +75,7 @@ export function UsersList() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [confirmTarget, setConfirmTarget] = useState<User | null>(null);
+  const [roleModalUser, setRoleModalUser] = useState<User | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -265,6 +269,10 @@ export function UsersList() {
             <DataTableActions className="opacity-90 transition-opacity group-hover:opacity-100">
               <DataTableActionButton action="view" href={`/utilisateurs/${user.id}`} />
               <DataTableActionButton action="edit" href={`/utilisateurs/${user.id}`} />
+              <DataTableAdjustButton
+                label={tRoles('manageAction')}
+                onClick={() => setRoleModalUser(user)}
+              />
               <DataTableActionButton
                 action="delete"
                 onClick={() => handleDeleteRequest(user)}
@@ -276,7 +284,7 @@ export function UsersList() {
         },
       },
     ],
-    [deletingId, handleDeleteRequest, orgNameById, statusLabels, tColumns],
+    [deletingId, handleDeleteRequest, orgNameById, statusLabels, tColumns, tRoles],
   );
 
   const isLoading = state.status === 'loading';
@@ -331,6 +339,14 @@ export function UsersList() {
 
   return (
     <>
+    <UserRoleModal
+      user={roleModalUser}
+      open={roleModalUser !== null}
+      onOpenChange={(open) => {
+        if (!open) setRoleModalUser(null);
+      }}
+      onChanged={() => void load()}
+    />
     {confirmTarget ? (
       <div
         className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
