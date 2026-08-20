@@ -51,6 +51,12 @@
     "saveButton": "Guardar"
   },
   "pages": {
+    "stats": {
+      "total": { "label": "Páginas", "subtitle": "Páginas institucionales GAP" },
+      "published": { "label": "Publicadas", "subtitle": "Visibles en el sitio" },
+      "draft": { "label": "Borradores", "subtitle": "No publicadas" },
+      "french": { "label": "En francés", "subtitle": "Contenido locale FR" }
+    },
     "list": {
       "deleteTitle": "Eliminar página",
       "deleteConfirm": "La página «{title}» será eliminada permanentemente.",

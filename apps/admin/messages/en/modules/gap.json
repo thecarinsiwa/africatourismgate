@@ -51,6 +51,12 @@
     "saveButton": "Save"
   },
   "pages": {
+    "stats": {
+      "total": { "label": "Pages", "subtitle": "GAP institutional pages" },
+      "published": { "label": "Published", "subtitle": "Visible on the site" },
+      "draft": { "label": "Drafts", "subtitle": "Not published" },
+      "french": { "label": "In French", "subtitle": "FR locale content" }
+    },
     "list": {
       "deleteTitle": "Delete page",
       "deleteConfirm": "Page \"{title}\" will be permanently deleted.",
