@@ -132,6 +132,92 @@ function MetaChip({ label, value }: { label: string; value: ReactNode }) {
   );
 }
 
+function AuditLogRow({ log }: { log: RbacAuditLog }) {
+  const formatDateTime = useFormatDateTime('mediumTime');
+  const t = useTranslations('modules.rbac.audit');
+  const tActions = useTranslations('common.actions');
+  const [detailOpen, setDetailOpen] = useState(false);
+  const hasPayload = log.payload && Object.keys(log.payload).length > 0;
+  const tone = eventTone(log.eventType);
+  const label = t(`eventTypes.${log.eventType}`);
+  const payloadJson = hasPayload ? JSON.stringify(log.payload, null, 2) : '';
+  const actorName = log.actor
+    ? `${log.actor.firstName} ${log.actor.lastName}`.trim()
+    : null;
+
+  return (
+    <li className="flex flex-col gap-2 border-b border-atg-border/70 py-4 last:border-b-0 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+      <div className="min-w-0 space-y-1.5">
+        <div className="flex flex-wrap items-center gap-2">
+          <DataTableBadge variant={eventBadgeVariant(tone)}>{label}</DataTableBadge>
+          <span className="text-xs text-atg-muted tabular-nums">
+            {formatDateTime(log.createdAt)}
+          </span>
+        </div>
+        {actorName ? (
+          <p className="truncate text-sm text-atg-fg">
+            {actorName}
+            {log.actor?.email ? (
+              <span className="text-atg-muted"> · {log.actor.email}</span>
+            ) : null}
+          </p>
+        ) : log.actorUserId ? (
+          <p className="text-sm text-atg-muted">
+            {t('actorFallback', { actorId: log.actorUserId.slice(0, 8) })}
+          </p>
+        ) : null}
+        {(log.targetUserId || log.ipAddress) && (
+          <p className="text-xs text-atg-muted">
+            {log.targetUserId ? (
+              <span>
+                {t('targetLabel')}: {log.targetUserId.slice(0, 8)}…
+              </span>
+            ) : null}
+            {log.targetUserId && log.ipAddress ? <span> · </span> : null}
+            {log.ipAddress ? (
+              <span>
+                {t('ipLabel')}: {log.ipAddress}
+              </span>
+            ) : null}
+          </p>
+        )}
+      </div>
+      {hasPayload ? (
+        <>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="shrink-0 self-start"
+            onClick={() => setDetailOpen(true)}
+          >
+            {t('showDetailJson')}
+          </Button>
+          <Modal
+            open={detailOpen}
+            onOpenChange={setDetailOpen}
+            title={t('detailModalTitle')}
+            description={label}
+            showClose
+            className="max-w-2xl"
+          >
+            <div className="space-y-4">
+              <pre className="max-h-[min(28rem,60vh)] overflow-auto rounded-lg border border-atg-border/80 bg-atg-elevated p-4 text-xs leading-relaxed text-atg-fg">
+                {payloadJson}
+              </pre>
+              <div className="flex justify-end">
+                <Button type="button" variant="outline" onClick={() => setDetailOpen(false)}>
+                  {tActions('close')}
+                </Button>
+              </div>
+            </div>
+          </Modal>
+        </>
+      ) : null}
+    </li>
+  );
+}
+
 function AuditTimelineItem({ log, isLast }: { log: RbacAuditLog; isLast: boolean }) {
   const formatDateTime = useFormatDateTime('mediumTime');
   const t = useTranslations('modules.rbac.audit');
@@ -240,12 +326,15 @@ function AuditTimelineItem({ log, isLast }: { log: RbacAuditLog; isLast: boolean
 export function RbacAuditLogsList({
   showSubnav = true,
   showFilterBar = true,
+  variant = 'timeline',
   userFilterMode = showSubnav ? 'actor' : 'involved',
   pageSize = DEFAULT_PAGE_SIZE,
 }: {
   showSubnav?: boolean;
   /** Barre dates / type d’événement / acteur (absente sur journaux sécurité utilisateurs). */
   showFilterBar?: boolean;
+  /** `simple` = liste plate (page utilisateurs) ; `timeline` = affichage détaillé. */
+  variant?: 'timeline' | 'simple';
   userFilterMode?: 'actor' | 'involved';
   pageSize?: number;
 }) {
@@ -535,32 +624,34 @@ export function RbacAuditLogsList({
       ) : null}
 
       {state.status === 'loading' ? (
-        <div className="space-y-4">
-          {Array.from({ length: Math.min(limit, 5) }).map((_, index) => (
-            <div
-              key={index}
-              className="grid grid-cols-[2.75rem_minmax(0,1fr)] gap-x-3 sm:gap-x-4"
-            >
-              <div className="flex justify-center pt-1">
-                <Skeleton className="h-10 w-10 rounded-full" />
+        <div className="space-y-3">
+          {Array.from({ length: Math.min(limit, 5) }).map((_, index) =>
+            variant === 'simple' ? (
+              <Skeleton key={index} className="h-16 w-full rounded-lg" />
+            ) : (
+              <div
+                key={index}
+                className="grid grid-cols-[2.75rem_minmax(0,1fr)] gap-x-3 sm:gap-x-4"
+              >
+                <div className="flex justify-center pt-1">
+                  <Skeleton className="h-10 w-10 rounded-full" />
+                </div>
+                <Skeleton className="h-32 rounded-xl" />
               </div>
-              <Skeleton className="h-32 rounded-xl" />
-            </div>
-          ))}
+            ),
+          )}
         </div>
       ) : logs.length === 0 ? (
-        <Card variant="dashboard" padding="lg" className="text-center">
-          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-atg-surface text-atg-muted ring-1 ring-atg-border">
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.75}
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              />
-            </svg>
-          </div>
-          <p className="text-sm font-medium text-atg-fg">{t('empty')}</p>
+        <Card variant="dashboard" padding="lg">
+          <p className="text-center text-sm text-atg-muted">{t('empty')}</p>
+        </Card>
+      ) : variant === 'simple' ? (
+        <Card variant="dashboard" padding="md">
+          <ol>
+            {logs.map((log) => (
+              <AuditLogRow key={log.id} log={log} />
+            ))}
+          </ol>
         </Card>
       ) : (
         <ol className="space-y-0">
