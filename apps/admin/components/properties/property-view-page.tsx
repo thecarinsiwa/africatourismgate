@@ -11,6 +11,8 @@ import {
   Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   DataTableBadge,
   Skeleton,
   type ColumnDef,
@@ -109,25 +111,38 @@ export function PropertyViewPage({ propertyId }: PropertyViewPageProps) {
       {
         accessorKey: 'name',
         header: tColumns('name'),
-        cell: ({ row }) => (
-          <span className="font-medium text-atg-fg">{row.original.name}</span>
-        ),
+        cell: ({ row }) => {
+          const bedConfig = row.original.bedConfig?.trim();
+          return (
+            <div className="min-w-0">
+              <p className="truncate font-medium text-atg-fg">{row.original.name}</p>
+              {bedConfig ? (
+                <p className="mt-0.5 truncate text-xs text-atg-muted">{bedConfig}</p>
+              ) : null}
+            </div>
+          );
+        },
       },
       {
         id: 'roomType',
         header: tRooms('roomType'),
-        cell: ({ row }) => (
-          <span className="text-sm text-atg-muted">
-            {row.original.roomType?.trim() || emptyDash}
-          </span>
-        ),
+        meta: { hideOnMobile: true },
+        cell: ({ row }) => {
+          const roomType = row.original.roomType?.trim();
+          if (!roomType) {
+            return <span className="text-sm text-atg-muted">{emptyDash}</span>;
+          }
+          return <DataTableBadge variant="muted">{roomType}</DataTableBadge>;
+        },
       },
       {
         id: 'maxGuests',
         header: tRooms('maxCapacity'),
-        meta: { align: 'right' },
+        meta: { align: 'center', hideOnMobile: true },
         cell: ({ row }) => (
-          <span className="tabular-nums text-sm text-atg-fg">{row.original.maxGuests}</span>
+          <span className="inline-flex items-center justify-center rounded-md bg-atg-surface px-2 py-0.5 text-xs font-medium tabular-nums text-atg-fg">
+            {tCommon('maxGuests', { count: row.original.maxGuests })}
+          </span>
         ),
       },
       {
@@ -135,13 +150,41 @@ export function PropertyViewPage({ propertyId }: PropertyViewPageProps) {
         header: tColumns('basePrice'),
         meta: { align: 'right' },
         cell: ({ row }) => (
-          <span className="tabular-nums text-sm text-atg-fg">
-            {formatMoney(row.original.basePriceCents, row.original.currency)}
-          </span>
+          <div className="text-right">
+            <p className="tabular-nums text-sm font-semibold text-atg-fg">
+              {formatMoney(row.original.basePriceCents, row.original.currency)}
+            </p>
+            <p className="mt-0.5 text-[11px] font-medium uppercase tracking-wide text-atg-muted">
+              {row.original.currency}
+            </p>
+          </div>
+        ),
+      },
+      {
+        id: 'actions',
+        header: tColumns('actions'),
+        meta: { align: 'right' },
+        cell: ({ row }) => (
+          <DataTableActions className="opacity-90 transition-opacity group-hover:opacity-100">
+            <DataTableActionButton
+              action="calendar"
+              href={`/hebergements/${propertyId}/chambres/${row.original.id}/disponibilites`}
+            />
+            <DataTableActionButton
+              action="edit"
+              href={`/hebergements/${propertyId}`}
+              label={tActions('edit')}
+            />
+          </DataTableActions>
         ),
       },
     ],
-    [emptyDash, tColumns, tRooms],
+    [emptyDash, propertyId, tActions, tColumns, tCommon, tRooms],
+  );
+
+  const sortedRooms = useMemo(
+    () => [...rooms].sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })),
+    [rooms],
   );
 
   if (state.status === 'loading') {
@@ -259,20 +302,31 @@ export function PropertyViewPage({ propertyId }: PropertyViewPageProps) {
       </Card>
 
       <section className="space-y-4">
-        <div>
-          <h3 className="text-lg font-semibold text-atg-fg">{tRooms('title')}</h3>
-          <p className="mt-1 text-sm text-atg-muted">
-            {tView('roomsIntro', { count: rooms.length })}
-          </p>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <h3 className="text-lg font-semibold text-atg-fg">{tRooms('title')}</h3>
+              <DataTableBadge variant="muted">{rooms.length}</DataTableBadge>
+            </div>
+            <p className="mt-1 text-sm text-atg-muted">
+              {tView('roomsIntro', { count: rooms.length })}
+            </p>
+          </div>
+          <Button href={`/hebergements/${propertyId}`} variant="outline" size="sm">
+            {tRooms('editRoom')}
+          </Button>
         </div>
         <Card variant="dashboard" padding="none" className="overflow-hidden">
           <DataTable
             columns={roomColumns}
-            data={rooms}
+            data={sortedRooms}
             emptyMessage={tRooms('empty')}
             getRowId={(row) => row.id}
             aria-label={tRooms('title')}
             loadingMessage={tCommon('dataTable.loading')}
+            expandRowLabel={tCommon('dataTable.expandRow')}
+            collapseRowLabel={tCommon('dataTable.collapseRow')}
+            expandRowAriaLabel={tCommon('dataTable.expandRowAria')}
           />
         </Card>
       </section>
