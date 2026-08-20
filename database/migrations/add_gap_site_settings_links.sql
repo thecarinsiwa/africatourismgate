@@ -1,8 +1,23 @@
 -- Partner / external links for GAP site settings (max 10 enforced in API).
 -- Backfills from legacy unesco_label + unesco_url.
 
-ALTER TABLE `gap_site_settings`
-  ADD COLUMN `links` JSON NULL AFTER `unesco_url`;
+SET @has_column := (
+  SELECT COUNT(*)
+  FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE()
+    AND TABLE_NAME = 'gap_site_settings'
+    AND COLUMN_NAME = 'links'
+);
+
+SET @ddl := IF(
+  @has_column = 0,
+  'ALTER TABLE `gap_site_settings` ADD COLUMN `links` JSON NULL AFTER `unesco_url`',
+  'SELECT 1'
+);
+
+PREPARE stmt FROM @ddl;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
 
 UPDATE `gap_site_settings`
 SET `links` = JSON_ARRAY(
