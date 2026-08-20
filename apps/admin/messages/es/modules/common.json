@@ -295,7 +295,9 @@
     "viewerClose": "Cerrar la vista previa",
     "viewerPrev": "Foto anterior",
     "viewerNext": "Foto siguiente",
-    "viewerOpen": "Ampliar la foto"
+    "viewerOpen": "Ampliar la foto",
+    "maxPhotosHint": "Máximo {max} fotos por habitación.",
+    "maxPhotosReached": "Límite alcanzado: {max} fotos máximo por habitación."
   },
   "flightClass": {
     "economy": "Económica",

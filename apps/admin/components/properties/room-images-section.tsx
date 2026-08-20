@@ -24,6 +24,7 @@ import { getSession } from '../../lib/auth/session';
 import { resolveMediaUrl } from '../../lib/resolve-media-url';
 
 const ROOM_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
+const ROOM_IMAGE_MAX_COUNT = 10;
 const ALLOWED_ROOM_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
 type ImageFormValues = {
@@ -96,14 +97,6 @@ export function RoomImagesSection({ roomId, roomName, onClose }: RoomImagesSecti
     setUploading(false);
   }
 
-  function openCreate() {
-    setFormValues(emptyForm);
-    setEditing(null);
-    setFormError(null);
-    setUploading(false);
-    setShowForm(true);
-  }
-
   function openEdit(img: RoomImage) {
     setEditing(img);
     setFormValues({
@@ -116,6 +109,16 @@ export function RoomImagesSection({ roomId, roomName, onClose }: RoomImagesSecti
   }
 
   const images = state.status === 'ready' ? state.images : [];
+  const atPhotoLimit = images.length >= ROOM_IMAGE_MAX_COUNT;
+
+  const handleOpenCreate = useCallback(() => {
+    if (images.length >= ROOM_IMAGE_MAX_COUNT) return;
+    setFormValues(emptyForm);
+    setEditing(null);
+    setFormError(null);
+    setUploading(false);
+    setShowForm(true);
+  }, [images.length]);
 
   const openViewer = useCallback(
     (img: RoomImage) => {
@@ -174,6 +177,10 @@ export function RoomImagesSection({ roomId, roomName, onClose }: RoomImagesSecti
     setFormError(null);
     if (!formValues.url.trim()) {
       setFormError(tValidation('urlRequired'));
+      return;
+    }
+    if (!editing && images.length >= ROOM_IMAGE_MAX_COUNT) {
+      setFormError(tGallery('maxPhotosReached', { max: ROOM_IMAGE_MAX_COUNT }));
       return;
     }
     setSubmitting(true);
@@ -417,13 +424,29 @@ export function RoomImagesSection({ roomId, roomName, onClose }: RoomImagesSecti
                 {tGallery('title')} — {roomName}
               </h3>
               {state.status === 'ready' ? (
-                <DataTableBadge variant="muted">{images.length}</DataTableBadge>
+                <DataTableBadge variant="muted">
+                  {images.length}/{ROOM_IMAGE_MAX_COUNT}
+                </DataTableBadge>
               ) : null}
             </div>
             <p className="mt-1 text-sm text-atg-muted">{tGallery('intro')}</p>
+            {atPhotoLimit ? (
+              <p className="mt-1 text-xs text-atg-muted">
+                {tGallery('maxPhotosReached', { max: ROOM_IMAGE_MAX_COUNT })}
+              </p>
+            ) : (
+              <p className="mt-1 text-xs text-atg-muted">
+                {tGallery('maxPhotosHint', { max: ROOM_IMAGE_MAX_COUNT })}
+              </p>
+            )}
           </div>
           <div className="flex gap-2">
-            <Button type="button" size="sm" onClick={openCreate}>
+            <Button
+              type="button"
+              size="sm"
+              onClick={handleOpenCreate}
+              disabled={atPhotoLimit}
+            >
               {tGallery('addPhoto')}
             </Button>
             {onClose ? (
