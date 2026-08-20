@@ -49,16 +49,28 @@ export async function ActivitiesPreview({
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {items.map((activity) => {
-            const imageUrl = resolveGapMediaUrl(activity.imageUrl);
+            const galleryUrls = Array.from(
+              new Set(
+                [
+                  ...(Array.isArray(activity.imageUrls) ? activity.imageUrls : []),
+                  activity.imageUrl,
+                ]
+                  .map((url) => resolveGapMediaUrl(url))
+                  .filter((url): url is string => Boolean(url)),
+              ),
+            );
+            const coverUrl = galleryUrls[0] ?? null;
+            const extraUrls = !compact ? galleryUrls.slice(1) : [];
+
             return (
               <article
                 key={activity.id}
                 className="overflow-hidden rounded-2xl border border-atg-border bg-atg-elevated shadow-sm"
               >
-                {imageUrl ? (
+                {coverUrl ? (
                   <div className="relative aspect-[16/10] w-full">
                     <Image
-                      src={imageUrl}
+                      src={coverUrl}
                       alt=""
                       fill
                       className="object-cover"
@@ -66,10 +78,28 @@ export async function ActivitiesPreview({
                     />
                   </div>
                 ) : null}
+                {extraUrls.length > 0 ? (
+                  <div className="grid grid-cols-4 gap-1 border-t border-atg-border p-1">
+                    {extraUrls.map((url) => (
+                      <div key={url} className="relative aspect-square overflow-hidden">
+                        <Image
+                          src={url}
+                          alt=""
+                          fill
+                          className="object-cover"
+                          sizes="80px"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
                 <div className="space-y-3 p-5">
                   <GapActivityIcon iconKey={activity.iconKey} />
                   <h3 className="text-lg font-semibold text-atg-fg">{activity.title}</h3>
-                  <p className="text-sm leading-relaxed text-atg-muted">{activity.description}</p>
+                  <div
+                    className="prose prose-sm max-w-none text-atg-muted dark:prose-invert prose-p:my-1 prose-p:leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: activity.description }}
+                  />
                 </div>
               </article>
             );

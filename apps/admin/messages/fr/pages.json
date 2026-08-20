@@ -382,17 +382,20 @@
       "description": "Pages institutionnelles du programme GAP (À propos, objectifs, UNESCO). Accès : gap.read / gap.write.",
       "nouveau": {
         "metaTitle": "Nouvelle page GAP",
-        "description": "Créez une page pour une section du programme GAP."
+        "description": "Créez une page pour une section du programme GAP.",
+        "backLabel": "Retour aux pages"
       },
       "id": {
-        "metaTitle": "Modifier la page GAP"
+        "metaTitle": "Modifier la page GAP",
+        "backLabel": "Retour aux pages"
       }
     },
     "activites": {
       "description": "Activités et initiatives du programme Gorilla Ambassadors. Accès : gap.read / gap.write.",
       "nouveau": {
         "metaTitle": "Nouvelle activité GAP",
-        "description": "Ajoutez une activité au programme."
+        "description": "Ajoutez une activité au programme.",
+        "backLabel": "Retour aux activités"
       },
       "id": {
         "metaTitle": "Modifier l'activité GAP"
@@ -402,20 +405,24 @@
       "description": "Statistiques d'impact affichées sur le site GAP. Accès : gap.read / gap.write.",
       "nouveau": {
         "metaTitle": "Nouvelle statistique d'impact",
-        "description": "Ajoutez une statistique d'impact."
+        "description": "Ajoutez une statistique d'impact.",
+        "backLabel": "Retour à l'impact"
       },
       "id": {
-        "metaTitle": "Modifier la statistique d'impact"
+        "metaTitle": "Modifier la statistique d'impact",
+        "backLabel": "Retour à l'impact"
       }
     },
     "medias": {
       "description": "Galerie photos et vidéos du programme GAP. Accès : gap.read / gap.write.",
       "nouveau": {
         "metaTitle": "Nouveau média GAP",
-        "description": "Ajoutez une image ou une vidéo."
+        "description": "Ajoutez une image ou une vidéo.",
+        "backLabel": "Retour aux médias"
       },
       "id": {
-        "metaTitle": "Modifier le média GAP"
+        "metaTitle": "Modifier le média GAP",
+        "backLabel": "Retour aux médias"
       }
     }
   },

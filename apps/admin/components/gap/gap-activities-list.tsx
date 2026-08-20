@@ -18,6 +18,8 @@ import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { useGapPermissions } from '../../lib/gap/use-gap-permissions';
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+import { stripHtml } from '../../lib/rich-text';
+import { GapActivityDetailModal } from './gap-activity-detail-modal';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -50,6 +52,7 @@ export function GapActivitiesList({ locale }: GapActivitiesListProps) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [confirmTarget, setConfirmTarget] = useState<GapActivity | null>(null);
+  const [viewTarget, setViewTarget] = useState<GapActivity | null>(null);
 
   useEffect(() => {
     if (locale !== undefined) {
@@ -121,7 +124,9 @@ export function GapActivitiesList({ locale }: GapActivitiesListProps) {
         cell: ({ row }) => (
           <div className="max-w-md space-y-1">
             <p className="font-medium text-atg-fg">{row.original.title}</p>
-            <p className="line-clamp-2 text-sm text-atg-muted">{row.original.description}</p>
+            <p className="line-clamp-2 text-sm text-atg-muted">
+              {stripHtml(row.original.description)}
+            </p>
           </div>
         ),
       },
@@ -165,6 +170,10 @@ export function GapActivitiesList({ locale }: GapActivitiesListProps) {
         meta: { align: 'right' },
         cell: ({ row }) => (
           <DataTableActions>
+            <DataTableActionButton
+              action="view"
+              onClick={() => setViewTarget(row.original)}
+            />
             <DataTableActionButton action="edit" href={`/gap/activites/${row.original.id}`} />
             {canWrite ? (
               <DataTableActionButton
@@ -198,6 +207,14 @@ export function GapActivitiesList({ locale }: GapActivitiesListProps) {
         loading={!!deletingId}
         error={deleteError}
         onConfirm={() => void handleDeleteConfirm()}
+      />
+      <GapActivityDetailModal
+        open={!!viewTarget}
+        activity={viewTarget}
+        onOpenChange={(open) => {
+          if (!open) setViewTarget(null);
+        }}
+        canWrite={canWrite}
       />
     <div className="space-y-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">

@@ -26,6 +26,10 @@ export class GapActivities extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'image_url', length: 1024, nullable: true })
   imageUrl!: string | null;
 
+  /** Up to 10 image URLs; `imageUrl` mirrors the first entry for public cover. */
+  @Column({ type: 'json', name: 'image_urls', nullable: true })
+  imageUrls!: string[] | null;
+
   @Column({ type: 'int', name: 'sort_order', default: 0 })
   sortOrder!: number;
 

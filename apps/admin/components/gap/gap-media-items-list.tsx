@@ -15,6 +15,7 @@ import {
 import type { GapMediaItem, GapMediaItemType, GapStatus } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { GapMediaItemDetailModal } from './gap-media-item-detail-modal';
 import { getApiClient } from '../../lib/auth/api';
 import { GAP_MEDIA_TYPES } from '../../lib/gap/constants';
 import { useGapPermissions } from '../../lib/gap/use-gap-permissions';
@@ -62,6 +63,7 @@ export function GapMediaItemsList() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [confirmTarget, setConfirmTarget] = useState<GapMediaItem | null>(null);
+  const [viewTarget, setViewTarget] = useState<GapMediaItem | null>(null);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -183,6 +185,10 @@ export function GapMediaItemsList() {
         meta: { align: 'right' },
         cell: ({ row }) => (
           <DataTableActions>
+            <DataTableActionButton
+              action="view"
+              onClick={() => setViewTarget(row.original)}
+            />
             <DataTableActionButton action="edit" href={`/gap/medias/${row.original.id}`} />
             {canWrite ? (
               <DataTableActionButton
@@ -215,6 +221,14 @@ export function GapMediaItemsList() {
         loading={!!deletingId}
         error={deleteError}
         onConfirm={() => void handleDeleteConfirm()}
+      />
+      <GapMediaItemDetailModal
+        open={!!viewTarget}
+        item={viewTarget}
+        onOpenChange={(open) => {
+          if (!open) setViewTarget(null);
+        }}
+        canWrite={canWrite}
       />
     <div className="space-y-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">

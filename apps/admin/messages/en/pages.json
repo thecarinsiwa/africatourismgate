@@ -382,17 +382,20 @@
       "description": "Institutional GAP program pages (About, objectives, UNESCO). Access: gap.read / gap.write.",
       "nouveau": {
         "metaTitle": "New GAP page",
-        "description": "Create a page for a GAP program section."
+        "description": "Create a page for a GAP program section.",
+        "backLabel": "Back to pages"
       },
       "id": {
-        "metaTitle": "Edit GAP page"
+        "metaTitle": "Edit GAP page",
+        "backLabel": "Back to pages"
       }
     },
     "activites": {
       "description": "Activities and initiatives of the Gorilla Ambassadors program. Access: gap.read / gap.write.",
       "nouveau": {
         "metaTitle": "New GAP activity",
-        "description": "Add an activity to the program."
+        "description": "Add an activity to the program.",
+        "backLabel": "Back to activities"
       },
       "id": {
         "metaTitle": "Edit GAP activity"
@@ -402,20 +405,24 @@
       "description": "Impact statistics displayed on the GAP site. Access: gap.read / gap.write.",
       "nouveau": {
         "metaTitle": "New impact stat",
-        "description": "Add an impact statistic."
+        "description": "Add an impact statistic.",
+        "backLabel": "Back to impact"
       },
       "id": {
-        "metaTitle": "Edit impact stat"
+        "metaTitle": "Edit impact stat",
+        "backLabel": "Back to impact"
       }
     },
     "medias": {
       "description": "Photo and video gallery for the GAP program. Access: gap.read / gap.write.",
       "nouveau": {
         "metaTitle": "New GAP media",
-        "description": "Add an image or video."
+        "description": "Add an image or video.",
+        "backLabel": "Back to media"
       },
       "id": {
-        "metaTitle": "Edit GAP media"
+        "metaTitle": "Edit GAP media",
+        "backLabel": "Back to media"
       }
     }
   },

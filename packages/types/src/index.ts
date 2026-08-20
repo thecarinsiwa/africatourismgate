@@ -401,6 +401,7 @@ export type {
   GapPage,
   GapPageSectionKey,
   GapPagesListQuery,
+  GapSiteLink,
   GapSiteSettings,
   GapSiteSettingsListQuery,
   GapStatus,

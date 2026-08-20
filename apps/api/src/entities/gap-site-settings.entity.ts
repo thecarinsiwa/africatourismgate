@@ -3,6 +3,11 @@ import { BaseAuditEntity } from '../common/entities/base-audit.entity';
 
 export type GapSiteSettingsStatus = 'draft' | 'published';
 
+export type GapSiteLink = {
+  label: string;
+  url: string | null;
+};
+
 @Entity('gap_site_settings')
 export class GapSiteSettings extends BaseAuditEntity {
   @PrimaryColumn('uuid', { name: 'id', length: 36 })
@@ -20,11 +25,17 @@ export class GapSiteSettings extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'hero_image_alt', length: 255 })
   heroImageAlt!: string;
 
+  /** @deprecated Prefer `links`. Kept for backward compatibility. */
   @Column({ type: 'varchar', name: 'unesco_label', length: 160, nullable: true })
   unescoLabel!: string | null;
 
+  /** @deprecated Prefer `links`. Kept for backward compatibility. */
   @Column({ type: 'varchar', name: 'unesco_url', length: 512, nullable: true })
   unescoUrl!: string | null;
+
+  /** Up to 10 partner / external links (label + optional URL). */
+  @Column({ type: 'json', name: 'links', nullable: true })
+  links!: GapSiteLink[] | null;
 
   @Column({ type: 'varchar', name: 'donate_url', length: 512, nullable: true })
   donateUrl!: string | null;
