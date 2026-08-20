@@ -18,6 +18,7 @@ import type { PropertyImage } from '@africatourismgate/types';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { AdminImageViewerModal } from '../admin-image-viewer-modal';
 import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
 import { getSession } from '../../lib/auth/session';
 import { resolveMediaUrl } from '../../lib/resolve-media-url';
@@ -61,6 +62,7 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [confirmTarget, setConfirmTarget] = useState<PropertyImage | null>(null);
+  const [viewerIndex, setViewerIndex] = useState<number | null>(null);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -209,6 +211,16 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
     }
   }, [confirmTarget, load, getHebergementsErrorMessage]);
 
+  const images = state.status === 'ready' ? state.images : [];
+
+  const openViewer = useCallback(
+    (img: PropertyImage) => {
+      const index = images.findIndex((item) => item.id === img.id);
+      setViewerIndex(index >= 0 ? index : 0);
+    },
+    [images],
+  );
+
   const columns = useMemo<ColumnDef<PropertyImage, unknown>[]>(
     () => [
       {
@@ -218,8 +230,13 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
           const src = resolveMediaUrl(row.original.url);
           const caption = row.original.caption?.trim();
           return (
-            <div className="flex min-w-0 items-center gap-3">
-              <span className="relative h-12 w-16 shrink-0 overflow-hidden rounded-md border border-atg-border bg-atg-surface">
+            <button
+              type="button"
+              onClick={() => openViewer(row.original)}
+              className="flex min-w-0 items-center gap-3 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              aria-label={tGallery('viewerOpen')}
+            >
+              <span className="relative h-12 w-16 shrink-0 cursor-zoom-in overflow-hidden rounded-md border border-atg-border bg-atg-surface">
                 <Image
                   src={src}
                   alt={caption || ''}
@@ -237,7 +254,7 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
                   #{row.original.sortOrder}
                 </p>
               </div>
-            </div>
+            </button>
           );
         },
       },
@@ -284,6 +301,11 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
         meta: { align: 'right' },
         cell: ({ row }) => (
           <DataTableActions className="opacity-90 transition-opacity group-hover:opacity-100">
+            <DataTableActionButton
+              action="view"
+              label={tGallery('viewerOpen')}
+              onClick={() => openViewer(row.original)}
+            />
             <DataTableActionButton action="edit" onClick={() => openEdit(row.original)} />
             <DataTableActionButton
               action="delete"
@@ -295,10 +317,9 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
         ),
       },
     ],
-    [deletingId, emptyDash, handleDeleteRequest, tColumns],
+    [deletingId, emptyDash, handleDeleteRequest, openViewer, tColumns, tGallery],
   );
 
-  const images = state.status === 'ready' ? state.images : [];
   const previewSrc = formValues.url.trim() ? resolveMediaUrl(formValues.url.trim()) : '';
 
   return (
@@ -396,6 +417,17 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
           </div>
         </form>
       </Modal>
+
+      <AdminImageViewerModal
+        open={viewerIndex !== null}
+        onOpenChange={(open) => {
+          if (!open) setViewerIndex(null);
+        }}
+        images={images}
+        index={viewerIndex ?? 0}
+        onIndexChange={setViewerIndex}
+        fallbackLabel={tGallery('titleProperty')}
+      />
 
       <section
         className={

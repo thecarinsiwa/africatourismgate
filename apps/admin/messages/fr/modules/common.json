@@ -290,7 +290,12 @@
     "alreadyAdded": "Ajoutée",
     "addFromSuggestion": "Ajouter",
     "ariaLabel": "Galerie photos",
-    "loading": "Chargement de la galerie…"
+    "loading": "Chargement de la galerie…",
+    "viewerTitle": "Aperçu de la photo",
+    "viewerClose": "Fermer l'aperçu",
+    "viewerPrev": "Photo précédente",
+    "viewerNext": "Photo suivante",
+    "viewerOpen": "Agrandir la photo"
   },
   "flightClass": {
     "economy": "Économique",
