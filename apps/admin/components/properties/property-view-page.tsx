@@ -255,22 +255,24 @@ export function PropertyViewPage({ propertyId }: PropertyViewPageProps) {
         {images.length === 0 ? (
           <p className="text-sm text-atg-muted">{tView('imagesEmpty')}</p>
         ) : (
-          <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="flex flex-wrap gap-2">
             {images.map((image) => (
-              <li key={image.id}>
+              <li key={image.id} className="w-28 sm:w-32">
                 <Card variant="dashboard" padding="none" className="overflow-hidden">
-                  <div className="relative aspect-[4/3] bg-atg-surface">
+                  <div className="relative aspect-square bg-atg-surface">
                     <Image
                       src={resolveMediaUrl(image.url)}
                       alt={image.caption?.trim() || property.name}
                       fill
                       className="object-cover"
-                      sizes="(max-width: 640px) 100vw, 33vw"
+                      sizes="128px"
                       unoptimized
                     />
                   </div>
                   {image.caption?.trim() ? (
-                    <p className="truncate px-3 py-2 text-xs text-atg-muted">{image.caption}</p>
+                    <p className="truncate px-1.5 py-1 text-[10px] text-atg-muted">
+                      {image.caption}
+                    </p>
                   ) : null}
                 </Card>
               </li>
