@@ -44,6 +44,17 @@
     "title": "Quick navigation",
     "placeholder": "Search for a page…",
     "empty": "No pages found",
-    "shortcutHint": "Ctrl+K"
+    "shortcutHint": "Ctrl+K · ⌘K — press ? for help"
+  },
+  "keyboardShortcuts": {
+    "title": "Keyboard shortcuts",
+    "description": "Shortcuts available in the admin.",
+    "close": "Close",
+    "hint": "Shortcuts are ignored while typing in a field.",
+    "items": {
+      "palette": "Open / close quick navigation",
+      "escape": "Close the palette or this help",
+      "help": "Show this help"
+    }
   }
 }
