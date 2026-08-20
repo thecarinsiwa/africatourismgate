@@ -247,37 +247,33 @@ export function PropertyForm({
                 onChange={(e) => updateField('addressLine', e.target.value)}
               />
             </div>
+            <div className="sm:col-span-2">
+              <StarRatingInput
+                label={tForm('starRating')}
+                value={Number.isFinite(starValue) ? starValue : 0}
+                onChange={(v) => updateField('starRating', v > 0 ? String(v) : '')}
+                step={0.5}
+                hint={tForm('starRatingHint')}
+                error={fieldErrors.starRating}
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <label htmlFor={descId} className="mb-1.5 block text-sm font-medium text-atg-fg">
+                {tCommonForm('description')}
+              </label>
+              <textarea
+                id={descId}
+                rows={3}
+                value={values.description}
+                onChange={(e) => updateField('description', e.target.value)}
+                className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2.5 text-sm"
+              />
+            </div>
           </div>
         </Card>
 
         {identityAside ? <div className="min-w-0">{identityAside}</div> : null}
       </div>
-
-      <Card variant="dashboard" padding="sm">
-        <h3 className="text-sm font-semibold text-atg-fg">{tForm('sections.classification')}</h3>
-        <div className="mt-3 space-y-3">
-          <StarRatingInput
-            label={tForm('starRating')}
-            value={Number.isFinite(starValue) ? starValue : 0}
-            onChange={(v) => updateField('starRating', v > 0 ? String(v) : '')}
-            step={0.5}
-            hint={tForm('starRatingHint')}
-            error={fieldErrors.starRating}
-          />
-          <div>
-            <label htmlFor={descId} className="mb-1.5 block text-sm font-medium text-atg-fg">
-              {tCommonForm('description')}
-            </label>
-            <textarea
-              id={descId}
-              rows={3}
-              value={values.description}
-              onChange={(e) => updateField('description', e.target.value)}
-              className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2.5 text-sm"
-            />
-          </div>
-        </div>
-      </Card>
 
       <div className="flex flex-wrap gap-3">
         <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>
