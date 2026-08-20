@@ -77,7 +77,11 @@
     "cancel": "Cancelar",
     "emptyDefault": "Ninguna sesión activa.",
     "emptyFiltered": "Ninguna sesión activa para este usuario.",
-    "ariaLabel": "Lista de sesiones de usuario"
+    "ariaLabel": "Lista de sesiones de usuario",
+    "viewTable": "Tabla",
+    "viewGrid": "Cuadrícula",
+    "viewCompact": "Lista compacta",
+    "viewModeAria": "Modo de visualización"
   },
   "stats": {
     "total": {

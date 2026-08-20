@@ -77,7 +77,11 @@
     "cancel": "Cancel",
     "emptyDefault": "No active sessions.",
     "emptyFiltered": "No active sessions for this user.",
-    "ariaLabel": "User sessions list"
+    "ariaLabel": "User sessions list",
+    "viewTable": "Table",
+    "viewGrid": "Grid",
+    "viewCompact": "Compact list",
+    "viewModeAria": "Display mode"
   },
   "stats": {
     "total": {
