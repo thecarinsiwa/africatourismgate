@@ -15,6 +15,7 @@ import {
   FilterBar,
   Input,
   Select,
+  useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { OrganizationListItem, Role, User, UserStatus } from '@africatourismgate/types';
@@ -22,6 +23,7 @@ import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import { exportCsv } from '../../lib/export-csv';
 
 const PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -39,11 +41,15 @@ export function UsersList() {
   const { users: getUsersErrorMessage } = useAdminErrorMessages();
   const tList = useTranslations('modules.users.list');
   const tFilters = useTranslations('modules.users.filters');
+  const tForm = useTranslations('modules.users.form');
   const tCommonFilters = useTranslations('modules.common.filters');
   const tColumns = useTranslations('modules.common.columns');
   const tPagination = useTranslations('modules.common.pagination');
   const tDataTable = useTranslations('modules.common.dataTable');
+  const tExport = useTranslations('modules.common.exportCsv');
+  const tEmpty = useTranslations('modules.common.empty');
   const statusLabels = useAccountStatusLabels();
+  const { toast } = useToast();
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('');
@@ -285,6 +291,33 @@ export function UsersList() {
   ].filter(Boolean).length;
   const hasFilters = activeFilterCount > 0;
   const emptyMessage = hasFilters ? tList('emptyFiltered') : tList('emptyDefault');
+  const emptyDash = tEmpty('dash');
+
+  const handleExportCsv = useCallback(() => {
+    if (users.length === 0) return;
+    const date = new Date().toISOString().slice(0, 10);
+    exportCsv({
+      filename: `users-${date}.csv`,
+      columns: [
+        { header: tForm('email'), value: (row) => row.email },
+        { header: tForm('firstName'), value: (row) => row.firstName ?? '' },
+        { header: tForm('lastName'), value: (row) => row.lastName ?? '' },
+        {
+          header: tColumns('status'),
+          value: (row) => statusLabels[row.status] ?? row.status,
+        },
+        {
+          header: tColumns('organization'),
+          value: (row) =>
+            row.organizationId
+              ? (orgNameById.get(row.organizationId) ?? row.organizationId)
+              : emptyDash,
+        },
+      ],
+      rows: users,
+    });
+    toast({ variant: 'success', message: tExport('success') });
+  }, [emptyDash, orgNameById, statusLabels, tColumns, tExport, tForm, toast, users]);
 
   const handleClearFilters = useCallback(() => {
     setSearchInput('');
@@ -376,7 +409,20 @@ export function UsersList() {
       <FilterBar
         activeCount={activeFilterCount}
         onClear={handleClearFilters}
-        actions={<Button href="/utilisateurs/nouveau">{tList('newUser')}</Button>}
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={isLoading || users.length === 0}
+              onClick={handleExportCsv}
+            >
+              {tExport('button')}
+            </Button>
+            <Button href="/utilisateurs/nouveau">{tList('newUser')}</Button>
+          </div>
+        }
         filters={
           <>
             <div className="min-w-[200px] flex-1 sm:max-w-md">
