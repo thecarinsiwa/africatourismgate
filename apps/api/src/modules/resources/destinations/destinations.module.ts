@@ -1,18 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import {
-  Activities,
-  Destinations,
-  Packages,
-  Properties,
-} from '../../../entities/generated';
+import { Destinations } from '../../../entities/generated';
 import { DestinationsController } from './destinations.controller';
 import { DestinationsService } from './destinations.service';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Destinations, Properties, Activities, Packages]),
-  ],
+  imports: [TypeOrmModule.forFeature([Destinations])],
   controllers: [DestinationsController],
   providers: [DestinationsService],
 })

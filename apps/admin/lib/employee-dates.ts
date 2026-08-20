@@ -1,16 +1,14 @@
-const DATE_MESSAGE =
-  'La date d’embauche doit être antérieure à la date de fin.';
-
 export function employmentDateFieldErrors(
   hireDate: string,
   terminationDate: string,
+  message = 'La date d’embauche doit être antérieure à la date de fin.',
 ): { hireDate?: string; terminationDate?: string } {
   if (!hireDate || !terminationDate || hireDate < terminationDate) {
     return {};
   }
   return {
-    hireDate: DATE_MESSAGE,
-    terminationDate: DATE_MESSAGE,
+    hireDate: message,
+    terminationDate: message,
   };
 }
 

@@ -40,6 +40,12 @@
   },
   "detail": {
     "title": "Editar usuario",
+    "viewTitle": "Ver usuario",
+    "viewButton": "Ver",
+    "editButton": "Editar",
+    "createdAt": "Creado el",
+    "updatedAt": "Modificado el",
+    "profileIntro": "Información de la cuenta en solo lectura.",
     "tabsAria": "Secciones de la cuenta de usuario",
     "tabs": {
       "profile": "Perfil",
@@ -71,7 +77,29 @@
     "cancel": "Cancelar",
     "emptyDefault": "Ninguna sesión activa.",
     "emptyFiltered": "Ninguna sesión activa para este usuario.",
-    "ariaLabel": "Lista de sesiones de usuario"
+    "ariaLabel": "Lista de sesiones de usuario",
+    "viewTable": "Tabla",
+    "viewGrid": "Cuadrícula",
+    "viewCompact": "Lista compacta",
+    "viewModeAria": "Modo de visualización",
+    "stats": {
+      "total": {
+        "label": "Sesiones",
+        "subtitle": "Registradas"
+      },
+      "active": {
+        "label": "Activas",
+        "subtitle": "No expiradas"
+      },
+      "expired": {
+        "label": "Expiradas",
+        "subtitle": "A revocar o limpiar"
+      },
+      "users": {
+        "label": "Usuarios",
+        "subtitle": "Con una sesión"
+      }
+    }
   },
   "stats": {
     "total": {
@@ -95,6 +123,10 @@
     "assignedTitle": "Roles asignados",
     "empty": "No hay ningún rol activo para este usuario.",
     "assignFormTitle": "Asignar un rol",
+    "assignSubmit": "Asignar el rol",
+    "manageAction": "Gestionar roles",
+    "modalTitle": "Gestionar roles",
+    "modalDescription": "Añada o retire roles de este usuario.",
     "user": "Usuario",
     "role": "Rol",
     "selectPlaceholder": "Seleccionar…",
@@ -129,6 +161,8 @@
       "description": "¿Retirar este rol a este usuario?"
     },
     "toast": {
+      "assignedTitle": "Rol asignado",
+      "assignedMessage": "La asignación fue creada.",
       "revokedTitle": "Rol revocado",
       "revokedMessage": "La asignación fue retirada.",
       "revokeFailedTitle": "Error al revocar"

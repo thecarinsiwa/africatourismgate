@@ -1,18 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import {
-  SupportMessages,
-  SupportTickets,
-} from '../../../entities/generated';
-import { RbacModule } from '../../rbac/rbac.module';
+import { SupportMessages } from '../../../entities/generated';
 import { SupportMessagesController } from './support-messages.controller';
 import { SupportMessagesService } from './support-messages.service';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([SupportMessages, SupportTickets]),
-    RbacModule,
-  ],
+  imports: [TypeOrmModule.forFeature([SupportMessages])],
   controllers: [SupportMessagesController],
   providers: [SupportMessagesService],
 })

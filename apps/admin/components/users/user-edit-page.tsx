@@ -6,6 +6,7 @@ import { useAccountStatusLabels } from '../../lib/i18n/use-module-labels';
 import type { User, UserStatus } from '@africatourismgate/types';
 import {
   Avatar,
+  Button,
   DataTableBadge,
   Skeleton,
   Tabs,
@@ -161,6 +162,9 @@ export function UserEditPage({ userId }: UserEditPageProps) {
           </div>
           <p className="mt-1 text-sm text-atg-muted">{user.email}</p>
         </div>
+        <Button href={`/utilisateurs/${userId}/voir`} variant="outline" className="w-full sm:w-auto">
+          {tDetail('viewButton')}
+        </Button>
       </div>
 
       <Tabs value={activeTab} onValueChange={handleTabChange}>

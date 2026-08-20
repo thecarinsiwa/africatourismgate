@@ -409,6 +409,7 @@ export function useRbacPermissionDomainLabels() {
       cruises: t('cruises'),
       destinations: t('destinations'),
       employees: t('employees'),
+      departments: t('departments'),
       flights: t('flights'),
       loyalty: t('loyalty'),
       organizations: t('organizations'),

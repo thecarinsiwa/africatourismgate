@@ -1,0 +1,37 @@
+{
+  "list": {
+    "new": "New department",
+    "edit": "Edit department",
+    "emptyDefault": "No departments yet.",
+    "emptySearch": "No department matches this search.",
+    "searchPlaceholder": "Search by name…",
+    "searchAria": "Search departments",
+    "deleteTitle": "Delete department",
+    "deleteConfirm": "Department \"{name}\" will be deleted.",
+    "deleteConfirmButton": "Delete"
+  },
+  "form": {
+    "selectOrganization": "Select an organization",
+    "validation": {
+      "organizationRequired": "Organization is required."
+    }
+  },
+  "stats": {
+    "total": {
+      "label": "Departments",
+      "subtitle": "Registered"
+    },
+    "organizations": {
+      "label": "Organizations",
+      "subtitle": "With at least one department"
+    },
+    "withDescription": {
+      "label": "Documented",
+      "subtitle": "With a description"
+    },
+    "employees": {
+      "label": "Employees",
+      "subtitle": "Employee profiles"
+    }
+  }
+}

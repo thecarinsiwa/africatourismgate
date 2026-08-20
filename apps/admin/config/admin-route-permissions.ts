@@ -13,6 +13,7 @@ export type RouteAccessRule = {
 export const ADMIN_ROUTE_ACCESS_RULES: RouteAccessRule[] = [
   { prefix: '/systeme/audit', superAdminOnly: true },
   { prefix: '/utilisateurs/employes', permission: 'employees.read' },
+  { prefix: '/utilisateurs/departements', permission: 'departments.read' },
   { prefix: '/utilisateurs', permission: 'users.read' },
   { prefix: '/fidelite', permission: 'users.read' },
   { prefix: '/hebergements', permission: 'properties.read' },

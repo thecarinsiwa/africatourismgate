@@ -4,9 +4,12 @@ import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
   Avatar,
+  Button,
   Card,
+  DataTableBadge,
   DataTablePagination,
   FilterBar,
+  Modal,
   Skeleton,
   useToast,
 } from '@africatourismgate/ui';
@@ -17,72 +20,256 @@ import type {
   User,
 } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { getApiClient } from '../../lib/auth/api';
 import { useFormatDateTime } from '../../lib/i18n/use-module-labels';
 import { UserIdFilterBar } from '../users/user-id-filter-bar';
 import { RbacSubnav } from './rbac-subnav';
 
-const PAGE_SIZE = 20;
+const DEFAULT_PAGE_SIZE = 20;
 
-function eventIcon(eventType: RbacAuditEventType): string {
-  if (eventType.startsWith('role_') && !eventType.includes('permission')) return '🛡';
-  if (eventType.startsWith('permission_') || eventType.includes('permission')) return '🔑';
-  if (eventType.startsWith('user_role_')) return '👤';
-  if (eventType.startsWith('impersonation_')) return '🎭';
-  if (eventType === 'permission_denied') return '🔒';
-  return '📋';
+type EventTone = 'danger' | 'success' | 'warning' | 'neutral';
+
+function eventTone(eventType: RbacAuditEventType): EventTone {
+  if (eventType === 'permission_denied') return 'danger';
+  if (eventType.includes('granted') || eventType.includes('created') || eventType.includes('started')) {
+    return 'success';
+  }
+  if (
+    eventType.includes('revoked') ||
+    eventType.includes('deleted') ||
+    eventType.includes('ended')
+  ) {
+    return 'warning';
+  }
+  return 'neutral';
 }
 
-function eventAccentClass(eventType: RbacAuditEventType): string {
+function eventMarkerClass(tone: EventTone): string {
+  switch (tone) {
+    case 'danger':
+      return 'bg-atg-danger-light text-atg-danger-fg ring-atg-danger/30';
+    case 'success':
+      return 'bg-atg-success-light text-atg-success-fg ring-atg-success/30';
+    case 'warning':
+      return 'bg-atg-warning-light text-atg-warning-fg ring-atg-warning/30';
+    default:
+      return 'bg-atg-info-light text-atg-info ring-atg-info/25';
+  }
+}
+
+function eventBadgeVariant(
+  tone: EventTone,
+): 'danger' | 'success' | 'warning' | 'muted' | 'default' {
+  switch (tone) {
+    case 'danger':
+      return 'danger';
+    case 'success':
+      return 'success';
+    case 'warning':
+      return 'warning';
+    default:
+      return 'default';
+  }
+}
+
+function EventGlyph({ eventType }: { eventType: RbacAuditEventType }) {
+  const common = 'h-4 w-4';
   if (eventType === 'permission_denied') {
-    return 'bg-atg-danger-light text-atg-danger-fg ring-atg-danger/25';
+    return (
+      <svg className={common} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={1.75}
+          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+        />
+      </svg>
+    );
   }
-  if (eventType.startsWith('user_role_granted') || eventType.includes('granted')) {
-    return 'bg-atg-success-light text-atg-success-fg ring-atg-success/25';
+  if (eventType.startsWith('user_role_') || eventType.startsWith('impersonation_')) {
+    return (
+      <svg className={common} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={1.75}
+          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+        />
+      </svg>
+    );
   }
-  if (eventType.includes('revoked') || eventType.includes('deleted')) {
-    return 'bg-atg-warning-light text-atg-warning-fg ring-atg-warning/25';
+  if (eventType.includes('permission')) {
+    return (
+      <svg className={common} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={1.75}
+          d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"
+        />
+      </svg>
+    );
   }
-  return 'bg-atg-surface text-atg-fg ring-atg-border/80';
+  return (
+    <svg className={common} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.75}
+        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+      />
+    </svg>
+  );
 }
 
-function AuditTimelineItem({ log }: { log: RbacAuditLog }) {
+function MetaChip({ label, value }: { label: string; value: ReactNode }) {
+  return (
+    <div className="inline-flex max-w-full items-center gap-1.5 rounded-md bg-atg-surface px-2.5 py-1 text-xs ring-1 ring-atg-border/70">
+      <span className="font-medium text-atg-muted">{label}</span>
+      <span className="truncate font-mono text-atg-fg">{value}</span>
+    </div>
+  );
+}
+
+function AuditLogRow({ log }: { log: RbacAuditLog }) {
   const formatDateTime = useFormatDateTime('mediumTime');
   const t = useTranslations('modules.rbac.audit');
-  const [expanded, setExpanded] = useState(false);
+  const tActions = useTranslations('common.actions');
+  const [detailOpen, setDetailOpen] = useState(false);
   const hasPayload = log.payload && Object.keys(log.payload).length > 0;
-
+  const tone = eventTone(log.eventType);
   const label = t(`eventTypes.${log.eventType}`);
+  const payloadJson = hasPayload ? JSON.stringify(log.payload, null, 2) : '';
+  const actorName = log.actor
+    ? `${log.actor.firstName} ${log.actor.lastName}`.trim()
+    : null;
 
   return (
-    <li className="relative pl-10">
-      <span
-        className={`absolute left-0 top-1 flex h-8 w-8 items-center justify-center rounded-full text-sm ring-1 ring-inset ${eventAccentClass(log.eventType)}`}
-        aria-hidden
+    <li className="flex flex-col gap-2 border-b border-atg-border/70 py-4 last:border-b-0 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+      <div className="min-w-0 space-y-1.5">
+        <div className="flex flex-wrap items-center gap-2">
+          <DataTableBadge variant={eventBadgeVariant(tone)}>{label}</DataTableBadge>
+          <span className="text-xs text-atg-muted tabular-nums">
+            {formatDateTime(log.createdAt)}
+          </span>
+        </div>
+        {actorName ? (
+          <p className="truncate text-sm text-atg-fg">
+            {actorName}
+            {log.actor?.email ? (
+              <span className="text-atg-muted"> · {log.actor.email}</span>
+            ) : null}
+          </p>
+        ) : log.actorUserId ? (
+          <p className="text-sm text-atg-muted">
+            {t('actorFallback', { actorId: log.actorUserId.slice(0, 8) })}
+          </p>
+        ) : null}
+        {(log.targetUserId || log.ipAddress) && (
+          <p className="text-xs text-atg-muted">
+            {log.targetUserId ? (
+              <span>
+                {t('targetLabel')}: {log.targetUserId.slice(0, 8)}…
+              </span>
+            ) : null}
+            {log.targetUserId && log.ipAddress ? <span> · </span> : null}
+            {log.ipAddress ? (
+              <span>
+                {t('ipLabel')}: {log.ipAddress}
+              </span>
+            ) : null}
+          </p>
+        )}
+      </div>
+      {hasPayload ? (
+        <>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="shrink-0 self-start"
+            onClick={() => setDetailOpen(true)}
+          >
+            {t('showDetailJson')}
+          </Button>
+          <Modal
+            open={detailOpen}
+            onOpenChange={setDetailOpen}
+            title={t('detailModalTitle')}
+            description={label}
+            showClose
+            className="max-w-2xl"
+          >
+            <div className="space-y-4">
+              <pre className="max-h-[min(28rem,60vh)] overflow-auto rounded-lg border border-atg-border/80 bg-atg-elevated p-4 text-xs leading-relaxed text-atg-fg">
+                {payloadJson}
+              </pre>
+              <div className="flex justify-end">
+                <Button type="button" variant="outline" onClick={() => setDetailOpen(false)}>
+                  {tActions('close')}
+                </Button>
+              </div>
+            </div>
+          </Modal>
+        </>
+      ) : null}
+    </li>
+  );
+}
+
+function AuditTimelineItem({ log, isLast }: { log: RbacAuditLog; isLast: boolean }) {
+  const formatDateTime = useFormatDateTime('mediumTime');
+  const t = useTranslations('modules.rbac.audit');
+  const tActions = useTranslations('common.actions');
+  const [detailOpen, setDetailOpen] = useState(false);
+  const hasPayload = log.payload && Object.keys(log.payload).length > 0;
+  const tone = eventTone(log.eventType);
+  const label = t(`eventTypes.${log.eventType}`);
+  const payloadJson = hasPayload ? JSON.stringify(log.payload, null, 2) : '';
+
+  return (
+    <li className="relative grid grid-cols-[2.75rem_minmax(0,1fr)] gap-x-3 pb-6 last:pb-0 sm:gap-x-4">
+      <div className="relative flex justify-center" aria-hidden>
+        {!isLast ? (
+          <span className="absolute top-10 bottom-0 w-px bg-gradient-to-b from-atg-border via-atg-border to-transparent" />
+        ) : null}
+        <span
+          className={`relative z-[1] mt-1 flex h-10 w-10 items-center justify-center rounded-full ring-1 ring-inset shadow-sm ${eventMarkerClass(tone)}`}
+        >
+          <EventGlyph eventType={log.eventType} />
+        </span>
+      </div>
+
+      <Card
+        variant="dashboard"
+        padding="md"
+        className="min-w-0 space-y-4 transition-shadow hover:shadow-md"
       >
-        {eventIcon(log.eventType)}
-      </span>
-      <Card variant="dashboard" padding="md" className="space-y-3">
-        <div className="flex flex-wrap items-start justify-between gap-2">
-          <div>
-            <p className="font-medium text-atg-fg">{label}</p>
-            <p className="mt-0.5 text-xs text-atg-muted">{formatDateTime(log.createdAt)}</p>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="min-w-0 space-y-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <DataTableBadge variant={eventBadgeVariant(tone)}>{label}</DataTableBadge>
+            </div>
+            <p className="text-xs text-atg-muted tabular-nums">
+              {formatDateTime(log.createdAt)}
+            </p>
           </div>
           {hasPayload ? (
-            <button
+            <Button
               type="button"
-              onClick={() => setExpanded((value) => !value)}
-              className="text-xs font-medium text-primary hover:underline"
-              aria-expanded={expanded}
+              variant="outline"
+              size="sm"
+              onClick={() => setDetailOpen(true)}
             >
-              {expanded ? t('hideDetail') : t('showDetailJson')}
-            </button>
+              {t('showDetailJson')}
+            </Button>
           ) : null}
         </div>
 
         {log.actor ? (
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 rounded-lg border border-atg-border/70 bg-atg-surface/60 px-3 py-2.5">
             <Avatar
               email={log.actor.email}
               firstName={log.actor.firstName}
@@ -90,55 +277,75 @@ function AuditTimelineItem({ log }: { log: RbacAuditLog }) {
               size="sm"
             />
             <div className="min-w-0 text-sm">
-              <p className="font-medium text-atg-fg">
+              <p className="truncate font-medium text-atg-fg">
                 {log.actor.firstName} {log.actor.lastName}
               </p>
               <p className="truncate text-xs text-atg-muted">{log.actor.email}</p>
             </div>
           </div>
         ) : log.actorUserId ? (
-          <p className="text-sm text-atg-muted">
+          <p className="rounded-lg border border-dashed border-atg-border px-3 py-2 text-sm text-atg-muted">
             {t('actorFallback', { actorId: log.actorUserId.slice(0, 8) })}
           </p>
         ) : null}
 
-        <dl className="grid gap-1 text-xs text-atg-muted sm:grid-cols-2">
-          {log.targetUserId ? (
-            <div>
-              <dt className="inline font-medium">{t('targetLabel')} </dt>
-              <dd className="inline font-mono">{log.targetUserId.slice(0, 8)}…</dd>
-            </div>
-          ) : null}
-          {log.ipAddress ? (
-            <div>
-              <dt className="inline font-medium">{t('ipLabel')} </dt>
-              <dd className="inline">{log.ipAddress}</dd>
-            </div>
-          ) : null}
-        </dl>
-
-        {hasPayload && expanded ? (
-          <pre className="max-h-80 overflow-x-auto rounded-lg bg-atg-elevated p-3 text-xs text-atg-fg">
-            {JSON.stringify(log.payload, null, 2)}
-          </pre>
+        {log.targetUserId || log.ipAddress ? (
+          <div className="flex flex-wrap gap-2">
+            {log.targetUserId ? (
+              <MetaChip label={t('targetLabel')} value={`${log.targetUserId.slice(0, 8)}…`} />
+            ) : null}
+            {log.ipAddress ? <MetaChip label={t('ipLabel')} value={log.ipAddress} /> : null}
+          </div>
         ) : null}
       </Card>
+
+      {hasPayload ? (
+        <Modal
+          open={detailOpen}
+          onOpenChange={setDetailOpen}
+          title={t('detailModalTitle')}
+          description={label}
+          showClose
+          className="max-w-2xl"
+        >
+          <div className="space-y-4">
+            <pre className="max-h-[min(28rem,60vh)] overflow-auto rounded-lg border border-atg-border/80 bg-atg-elevated p-4 text-xs leading-relaxed text-atg-fg">
+              {payloadJson}
+            </pre>
+            <div className="flex justify-end">
+              <Button type="button" variant="outline" onClick={() => setDetailOpen(false)}>
+                {tActions('close')}
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      ) : null}
     </li>
   );
 }
 
 export function RbacAuditLogsList({
   showSubnav = true,
+  showFilterBar = true,
+  variant = 'timeline',
   userFilterMode = showSubnav ? 'actor' : 'involved',
+  pageSize = DEFAULT_PAGE_SIZE,
 }: {
   showSubnav?: boolean;
+  /** Barre dates / type d’événement / acteur (absente sur journaux sécurité utilisateurs). */
+  showFilterBar?: boolean;
+  /** `simple` = liste plate (page utilisateurs) ; `timeline` = affichage détaillé. */
+  variant?: 'timeline' | 'simple';
   userFilterMode?: 'actor' | 'involved';
+  pageSize?: number;
 }) {
   const { rbac: getRbacErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.rbac.audit');
   const tFilters = useTranslations('modules.common.filters');
   const { toast } = useToast();
+  const searchParams = useSearchParams();
   const [page, setPage] = useState(1);
+  const limit = pageSize > 0 ? pageSize : DEFAULT_PAGE_SIZE;
   const [filterTick, setFilterTick] = useState(0);
   const [draftDateFrom, setDraftDateFrom] = useState('');
   const [draftDateTo, setDraftDateTo] = useState('');
@@ -148,8 +355,11 @@ export function RbacAuditLogsList({
   const [appliedDateTo, setAppliedDateTo] = useState('');
   const [appliedEventType, setAppliedEventType] = useState<RbacAuditEventType | ''>('');
   const [appliedActorUserId, setAppliedActorUserId] = useState('');
-  const [userIdFilter, setUserIdFilter] = useState('');
   const [users, setUsers] = useState<User[]>([]);
+  const loadSeqRef = useRef(0);
+  const urlUserId = searchParams.get('userId')?.trim() ?? '';
+  const urlDateFrom = searchParams.get('dateFrom')?.trim() ?? '';
+  const urlDateTo = searchParams.get('dateTo')?.trim() ?? '';
   const [access, setAccess] = useState<
     | { status: 'checking' }
     | { status: 'denied' }
@@ -180,7 +390,13 @@ export function RbacAuditLogsList({
   }, []);
 
   useEffect(() => {
-    if (access.status !== 'allowed' || userFilterMode === 'involved') return;
+    if (
+      access.status !== 'allowed' ||
+      !showFilterBar ||
+      userFilterMode === 'involved'
+    ) {
+      return;
+    }
     let cancelled = false;
     async function loadUsers() {
       try {
@@ -198,29 +414,31 @@ export function RbacAuditLogsList({
     return () => {
       cancelled = true;
     };
-  }, [access.status, userFilterMode]);
+  }, [access.status, showFilterBar, userFilterMode]);
 
-  const handleUserIdChange = useCallback((userId: string) => {
-    setUserIdFilter(userId);
+  const handleUserIdChange = useCallback(() => {
     setPage(1);
-    setFilterTick((tick) => tick + 1);
+  }, []);
+
+  const handleDateRangeChange = useCallback(() => {
+    setPage(1);
   }, []);
 
   const activeFilterCount = useMemo(() => {
+    if (!showFilterBar) return 0;
     let count = 0;
     if (appliedDateFrom) count += 1;
     if (appliedDateTo) count += 1;
     if (appliedEventType) count += 1;
     if (userFilterMode === 'actor' && appliedActorUserId) count += 1;
-    if (userFilterMode === 'involved' && userIdFilter) count += 1;
     return count;
   }, [
+    showFilterBar,
     appliedDateFrom,
     appliedDateTo,
     appliedEventType,
     appliedActorUserId,
     userFilterMode,
-    userIdFilter,
   ]);
 
   const applyFilters = useCallback(() => {
@@ -248,17 +466,24 @@ export function RbacAuditLogsList({
   const load = useCallback(async () => {
     void filterTick;
     if (access.status !== 'allowed') return;
+    const seq = ++loadSeqRef.current;
     setState({ status: 'loading' });
     try {
       const result = await getApiClient().listRbacAuditLogs({
         page,
-        limit: PAGE_SIZE,
-        dateFrom: appliedDateFrom || undefined,
-        dateTo: appliedDateTo || undefined,
-        eventType: appliedEventType || undefined,
-        actorUserId: userFilterMode === 'actor' ? appliedActorUserId || undefined : undefined,
-        userId: userFilterMode === 'involved' ? userIdFilter || undefined : undefined,
+        limit,
+        dateFrom: showFilterBar
+          ? appliedDateFrom || undefined
+          : urlDateFrom || undefined,
+        dateTo: showFilterBar ? appliedDateTo || undefined : urlDateTo || undefined,
+        eventType: showFilterBar ? appliedEventType || undefined : undefined,
+        actorUserId:
+          showFilterBar && userFilterMode === 'actor'
+            ? appliedActorUserId || undefined
+            : undefined,
+        userId: userFilterMode === 'involved' ? urlUserId || undefined : undefined,
       });
+      if (seq !== loadSeqRef.current) return;
       setState({
         status: 'ready',
         logs: result.data,
@@ -266,6 +491,7 @@ export function RbacAuditLogsList({
         totalPages: result.meta.totalPages,
       });
     } catch (error) {
+      if (seq !== loadSeqRef.current) return;
       const message = getRbacErrorMessage(error);
       setState({ status: 'error', message });
       toast({
@@ -277,11 +503,15 @@ export function RbacAuditLogsList({
   }, [
     access.status,
     page,
+    limit,
+    showFilterBar,
     appliedDateFrom,
     appliedDateTo,
     appliedEventType,
     appliedActorUserId,
-    userIdFilter,
+    urlDateFrom,
+    urlDateTo,
+    urlUserId,
     userFilterMode,
     filterTick,
     toast,
@@ -387,17 +617,24 @@ export function RbacAuditLogsList({
       {showSubnav ? <RbacSubnav /> : null}
 
       {userFilterMode === 'involved' ? (
-        <UserIdFilterBar onUserIdChange={handleUserIdChange} onUsersLoaded={setUsers} />
+        <UserIdFilterBar
+          onUserIdChange={handleUserIdChange}
+          onUsersLoaded={setUsers}
+          showDateRange
+          onDateRangeChange={handleDateRangeChange}
+        />
       ) : null}
 
-      <FilterBar
-        activeCount={activeFilterCount}
-        filters={filterControls}
-        onClear={clearFilters}
-        onApply={applyFilters}
-        className="mb-6"
-        mobileVariant="drawer"
-      />
+      {showFilterBar ? (
+        <FilterBar
+          activeCount={activeFilterCount}
+          filters={filterControls}
+          onClear={clearFilters}
+          onApply={applyFilters}
+          className="mb-6"
+          mobileVariant="drawer"
+        />
+      ) : null}
 
       {state.status === 'error' ? (
         <p role="alert" className="mb-4 text-sm text-red-600">
@@ -406,27 +643,51 @@ export function RbacAuditLogsList({
       ) : null}
 
       {state.status === 'loading' ? (
-        <div className="space-y-4">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <Skeleton key={index} className="h-28 rounded-xl" />
-          ))}
+        <div className="space-y-3">
+          {Array.from({ length: Math.min(limit, 5) }).map((_, index) =>
+            variant === 'simple' ? (
+              <Skeleton key={index} className="h-16 w-full rounded-lg" />
+            ) : (
+              <div
+                key={index}
+                className="grid grid-cols-[2.75rem_minmax(0,1fr)] gap-x-3 sm:gap-x-4"
+              >
+                <div className="flex justify-center pt-1">
+                  <Skeleton className="h-10 w-10 rounded-full" />
+                </div>
+                <Skeleton className="h-32 rounded-xl" />
+              </div>
+            ),
+          )}
         </div>
       ) : logs.length === 0 ? (
         <Card variant="dashboard" padding="lg">
-          <p className="text-sm text-atg-muted">{t('empty')}</p>
+          <p className="text-center text-sm text-atg-muted">{t('empty')}</p>
+        </Card>
+      ) : variant === 'simple' ? (
+        <Card variant="dashboard" padding="md">
+          <ol>
+            {logs.map((log) => (
+              <AuditLogRow key={log.id} log={log} />
+            ))}
+          </ol>
         </Card>
       ) : (
-        <ol className="relative space-y-6 border-l border-atg-border pl-4">
-          {logs.map((log) => (
-            <AuditTimelineItem key={log.id} log={log} />
+        <ol className="space-y-0">
+          {logs.map((log, index) => (
+            <AuditTimelineItem
+              key={log.id}
+              log={log}
+              isLast={index === logs.length - 1}
+            />
           ))}
         </ol>
       )}
 
-      {state.status === 'ready' && state.totalPages > 1 ? (
+      {state.status === 'ready' && state.totalPages > 0 ? (
         <DataTablePagination
           page={page}
-          pageSize={PAGE_SIZE}
+          pageSize={limit}
           totalPages={state.totalPages}
           totalItems={state.total}
           itemLabel={t('paginationItem')}

@@ -83,6 +83,22 @@ export class Employees extends BaseAuditEntity {
 
 }
 
+@Entity('departments')
+export class Departments extends BaseAuditEntity {
+  @PrimaryColumn('uuid', { name: 'id', length: 36 })
+  id!: string;
+
+  @Column({ type: 'varchar', name: 'organization_id', length: 36 })
+  organizationId!: string;
+
+  @Column({ type: 'varchar', name: 'name', length: 100 })
+  name!: string;
+
+  @Column({ type: 'varchar', name: 'description', length: 255, nullable: true })
+  description!: string | null;
+
+}
+
 @Entity('user_sessions')
 export class UserSessions extends BaseAuditEntity {
   @PrimaryColumn('uuid', { name: 'id', length: 36 })

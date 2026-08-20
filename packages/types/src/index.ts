@@ -594,6 +594,13 @@ export type {
 } from './employee.js';
 
 export type {
+  CreateDepartmentRequest,
+  Department,
+  DepartmentsListQuery,
+  UpdateDepartmentRequest,
+} from './department.js';
+
+export type {
   CreateRoleRequest,
   CreateUserRoleAssignmentRequest,
   Permission,

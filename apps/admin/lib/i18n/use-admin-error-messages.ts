@@ -10,6 +10,7 @@ import { getBookingsErrorMessage } from '../bookings-errors';
 import { getCroisieresErrorMessage } from '../croisieres-errors';
 import { getDashboardKpiErrorMessage } from '../dashboard-api-errors';
 import { getDestinationsErrorMessage } from '../destinations-errors';
+import { getDepartmentsErrorMessage } from '../departments-errors';
 import { getEmployeesErrorMessage } from '../employees-errors';
 import { getHebergementsErrorMessage } from '../hebergements-errors';
 import { getLocationsErrorMessage } from '../locations-errors';
@@ -110,6 +111,8 @@ export function useAdminErrorMessages() {
       destinations: (error: unknown) => getDestinationsErrorMessage(error, messages.destinations),
       tourGuides: (error: unknown) => getTourGuidesErrorMessage(error, messages.tourGuides),
       employees: (error: unknown) => getEmployeesErrorMessage(error, messages.employees),
+      departments: (error: unknown) =>
+        getDepartmentsErrorMessage(error, messages.departments),
       rbac: (error: unknown) => getRbacErrorMessage(error, messages.rbac),
       vols: (error: unknown) => getVolsErrorMessage(error, messages.vols),
       croisieres: (error: unknown) => getCroisieresErrorMessage(error, messages.croisieres),

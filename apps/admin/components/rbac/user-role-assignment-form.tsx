@@ -17,12 +17,17 @@ import { getApiClient } from '../../lib/auth/api';
 type UserRoleAssignmentFormProps = {
   defaultUserId?: string;
   lockUser?: boolean;
+  /** Sans cadre ni titre (ex. contenu d’une Modal). */
+  embedded?: boolean;
+  submitLabel?: string;
   onSuccess?: () => void;
 };
 
 export function UserRoleAssignmentForm({
   defaultUserId = '',
   lockUser = false,
+  embedded = false,
+  submitLabel,
   onSuccess,
 }: UserRoleAssignmentFormProps) {
   const { rbac: getRbacErrorMessage } = useAdminErrorMessages();
@@ -152,8 +157,17 @@ export function UserRoleAssignmentForm({
         loading={submitting}
         onConfirm={() => { setSuperAdminDialogOpen(false); void submitAssignment(); }}
       />
-    <form onSubmit={handleSubmit} className="space-y-4 rounded-lg border border-atg-border p-4">
-      <h3 className="text-sm font-semibold text-atg-fg">{tRoles('assignFormTitle')}</h3>
+    <form
+      onSubmit={handleSubmit}
+      className={
+        embedded
+          ? 'space-y-4'
+          : 'space-y-4 rounded-lg border border-atg-border p-4'
+      }
+    >
+      {embedded ? null : (
+        <h3 className="text-sm font-semibold text-atg-fg">{tRoles('assignFormTitle')}</h3>
+      )}
       {loadError ? (
         <p role="alert" className="text-sm text-red-600">
           {loadError}
@@ -165,25 +179,26 @@ export function UserRoleAssignmentForm({
         </p>
       ) : null}
 
-      <div>
-        <label htmlFor={userFieldId} className="mb-2 block text-sm font-medium text-atg-fg">
-          {tRoles('user')}
-        </label>
-        <select
-          id={userFieldId}
-          value={userId}
-          onChange={(e) => setUserId(e.target.value)}
-          disabled={lockUser}
-          className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm disabled:opacity-60"
-        >
-          <option value="">{tRoles('selectPlaceholder')}</option>
-          {users.map((u) => (
-            <option key={u.id} value={u.id}>
-              {u.firstName} {u.lastName} — {u.email}
-            </option>
-          ))}
-        </select>
-      </div>
+      {lockUser ? null : (
+        <div>
+          <label htmlFor={userFieldId} className="mb-2 block text-sm font-medium text-atg-fg">
+            {tRoles('user')}
+          </label>
+          <select
+            id={userFieldId}
+            value={userId}
+            onChange={(e) => setUserId(e.target.value)}
+            className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm"
+          >
+            <option value="">{tRoles('selectPlaceholder')}</option>
+            {users.map((u) => (
+              <option key={u.id} value={u.id}>
+                {u.firstName} {u.lastName} — {u.email}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       <div>
         <label htmlFor={roleFieldId} className="mb-2 block text-sm font-medium text-atg-fg">
@@ -257,7 +272,7 @@ export function UserRoleAssignmentForm({
       />
 
       <Button type="submit" loading={submitting} size="sm">
-        {tRoles('assignFormTitle')}
+        {submitLabel ?? tRoles('assignFormTitle')}
       </Button>
     </form>
     </>

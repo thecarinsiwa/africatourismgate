@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryColumn, CreateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn } from 'typeorm';
 import { BaseAuditEntity } from '../../common/entities/base-audit.entity';
+
 @Entity('activity_providers')
 export class ActivityProviders extends BaseAuditEntity {
   @PrimaryColumn('uuid', { name: 'id', length: 36 })
@@ -10,7 +11,6 @@ export class ActivityProviders extends BaseAuditEntity {
 
   @Column({ type: 'varchar', name: 'name', length: 180 })
   name!: string;
-
 }
 
 @Entity('activities')
@@ -24,45 +24,20 @@ export class Activities extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'title', length: 255 })
   title!: string;
 
-  @Column({ type: 'varchar', name: 'description', length: 5000, nullable: true })
+  @Column({ type: 'text', name: 'description', nullable: true })
   description!: string | null;
 
   @Column({ type: 'int', name: 'duration_minutes', nullable: true })
   durationMinutes!: number | null;
 
-  @Column({
-    type: 'enum',
-    enum: ['easy', 'moderate', 'hard', 'expert'],
-    name: 'difficulty_level',
-    nullable: true,
-  })
-  difficultyLevel!: 'easy' | 'moderate' | 'hard' | 'expert' | null;
+  @Column({ name: 'difficulty_level', enum: ["easy","moderate","hard","expert"], nullable: true })
+  difficultyLevel!: 'easy' | 'moderate' | 'hard' | 'expert';
 
   @Column({ type: 'int', name: 'price_cents' })
   priceCents!: number;
 
   @Column({ type: 'varchar', name: 'currency', length: 3 })
   currency!: string;
-
-}
-
-@Entity('activity_images')
-export class ActivityImages extends BaseAuditEntity {
-  @PrimaryColumn('uuid', { name: 'id', length: 36 })
-  id!: string;
-
-  @Column({ type: 'varchar', name: 'activity_id', length: 36 })
-  activityId!: string;
-
-  @Column({ type: 'varchar', name: 'url', length: 512 })
-  url!: string;
-
-  @Column({ type: 'varchar', name: 'caption', length: 255, nullable: true })
-  caption!: string | null;
-
-  @Column({ type: 'int', name: 'sort_order' })
-  sortOrder!: number;
-
 }
 
 @Entity('activity_description_assets')
@@ -102,32 +77,4 @@ export class ActivitySchedules extends BaseAuditEntity {
 
   @Column({ type: 'int', name: 'booked_count' })
   bookedCount!: number;
-
-}
-
-@Entity('activity_itinerary_stops')
-export class ActivityItineraryStops extends BaseAuditEntity {
-  @PrimaryColumn('uuid', { name: 'id', length: 36 })
-  id!: string;
-
-  @Column({ type: 'varchar', name: 'activity_id', length: 36 })
-  activityId!: string;
-
-  @Column({ type: 'int', name: 'stop_order' })
-  stopOrder!: number;
-
-  @Column({ type: 'varchar', name: 'name', length: 180 })
-  name!: string;
-
-  @Column({ type: 'decimal', name: 'latitude', precision: 10, scale: 7 })
-  latitude!: string;
-
-  @Column({ type: 'decimal', name: 'longitude', precision: 10, scale: 7 })
-  longitude!: string;
-
-  @Column({ type: 'text', name: 'description', nullable: true })
-  description!: string | null;
-
-  @Column({ type: 'int', name: 'duration_minutes', nullable: true })
-  durationMinutes!: number | null;
 }

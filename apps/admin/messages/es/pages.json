@@ -32,7 +32,10 @@
     },
     "id": {
       "metaTitle": "Editar usuario",
-      "backLabel": "Volver a usuarios"
+      "backLabel": "Volver a usuarios",
+      "voir": {
+        "metaTitle": "Ver usuario"
+      }
     },
     "employes": {
       "description": "Perfiles de empleados vinculados a usuarios y organizaciones.",
@@ -42,8 +45,14 @@
         "backLabel": "Volver a empleados"
       },
       "id": {
-        "metaTitle": "Editar empleado"
+        "metaTitle": "Editar empleado",
+        "voir": {
+          "metaTitle": "Ver empleado"
+        }
       }
+    },
+    "departements": {
+      "description": "Departamentos organizativos usados para clasificar a los empleados."
     },
     "adresses": {
       "description": "Direcciones guardadas por los usuarios."

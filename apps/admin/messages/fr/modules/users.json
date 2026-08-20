@@ -40,6 +40,12 @@
   },
   "detail": {
     "title": "Modifier l'utilisateur",
+    "viewTitle": "Voir l'utilisateur",
+    "viewButton": "Voir",
+    "editButton": "Modifier",
+    "createdAt": "Créé le",
+    "updatedAt": "Modifié le",
+    "profileIntro": "Informations du compte en lecture seule.",
     "tabsAria": "Sections du compte utilisateur",
     "tabs": {
       "profile": "Profil",
@@ -71,7 +77,29 @@
     "cancel": "Annuler",
     "emptyDefault": "Aucune session active.",
     "emptyFiltered": "Aucune session active pour cet utilisateur.",
-    "ariaLabel": "Liste des sessions utilisateur"
+    "ariaLabel": "Liste des sessions utilisateur",
+    "viewTable": "Tableau",
+    "viewGrid": "Grille",
+    "viewCompact": "Liste compacte",
+    "viewModeAria": "Mode d'affichage",
+    "stats": {
+      "total": {
+        "label": "Sessions",
+        "subtitle": "Enregistrées"
+      },
+      "active": {
+        "label": "Actives",
+        "subtitle": "Non expirées"
+      },
+      "expired": {
+        "label": "Expirées",
+        "subtitle": "À révoquer ou purger"
+      },
+      "users": {
+        "label": "Utilisateurs",
+        "subtitle": "Avec une session"
+      }
+    }
   },
   "stats": {
     "total": {
@@ -95,6 +123,10 @@
     "assignedTitle": "Rôles assignés",
     "empty": "Aucun rôle actif pour cet utilisateur.",
     "assignFormTitle": "Assigner un rôle",
+    "assignSubmit": "Assigner le rôle",
+    "manageAction": "Gérer les rôles",
+    "modalTitle": "Gérer les rôles",
+    "modalDescription": "Ajoutez ou retirez les rôles de cet utilisateur.",
     "user": "Utilisateur",
     "role": "Rôle",
     "selectPlaceholder": "Sélectionner…",
@@ -129,6 +161,8 @@
       "description": "Retirer ce rôle pour cet utilisateur ?"
     },
     "toast": {
+      "assignedTitle": "Rôle assigné",
+      "assignedMessage": "L'assignation a été créée.",
       "revokedTitle": "Rôle révoqué",
       "revokedMessage": "L'assignation a été retirée.",
       "revokeFailedTitle": "Échec de la révocation"

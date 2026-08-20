@@ -144,6 +144,20 @@ const PERMISSION_UPSERTS: Array<{
     action: 'write',
     description: 'Manage Gorilla Ambassadors Program content',
   },
+  {
+    id: '00000000-0000-4000-8000-000000001052',
+    code: 'departments.read',
+    resource: 'departments',
+    action: 'read',
+    description: 'View departments',
+  },
+  {
+    id: '00000000-0000-4000-8000-000000001053',
+    code: 'departments.write',
+    resource: 'departments',
+    action: 'write',
+    description: 'Manage departments',
+  },
 ];
 
 /** Full org_admin set (install.seed.sql) — repairs partial or missing grants. */
@@ -179,6 +193,8 @@ const ORG_ADMIN_PERMISSION_IDS = [
   '00000000-0000-4000-8000-000000001049',
   '00000000-0000-4000-8000-000000001050',
   '00000000-0000-4000-8000-000000001051',
+  '00000000-0000-4000-8000-000000001052',
+  '00000000-0000-4000-8000-000000001053',
 ];
 
 async function platformOrgExists(config: ConfigService): Promise<boolean> {

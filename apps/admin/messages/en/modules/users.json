@@ -40,6 +40,12 @@
   },
   "detail": {
     "title": "Edit user",
+    "viewTitle": "View user",
+    "viewButton": "View",
+    "editButton": "Edit",
+    "createdAt": "Created at",
+    "updatedAt": "Updated at",
+    "profileIntro": "Account details in read-only mode.",
     "tabsAria": "User account sections",
     "tabs": {
       "profile": "Profile",
@@ -71,7 +77,29 @@
     "cancel": "Cancel",
     "emptyDefault": "No active sessions.",
     "emptyFiltered": "No active sessions for this user.",
-    "ariaLabel": "User sessions list"
+    "ariaLabel": "User sessions list",
+    "viewTable": "Table",
+    "viewGrid": "Grid",
+    "viewCompact": "Compact list",
+    "viewModeAria": "Display mode",
+    "stats": {
+      "total": {
+        "label": "Sessions",
+        "subtitle": "Registered"
+      },
+      "active": {
+        "label": "Active",
+        "subtitle": "Not expired"
+      },
+      "expired": {
+        "label": "Expired",
+        "subtitle": "To revoke or purge"
+      },
+      "users": {
+        "label": "Users",
+        "subtitle": "With a session"
+      }
+    }
   },
   "stats": {
     "total": {
@@ -95,13 +123,17 @@
     "assignedTitle": "Assigned roles",
     "empty": "No active role for this user.",
     "assignFormTitle": "Assign a role",
+    "assignSubmit": "Assign role",
+    "manageAction": "Manage roles",
+    "modalTitle": "Manage roles",
+    "modalDescription": "Add or remove roles for this user.",
     "user": "User",
     "role": "Role",
     "selectPlaceholder": "Select…",
     "scope": "Scope",
     "scopeId": "Scope ID (UUID)",
     "scopeIdHint": "E.g. property, agency, or support queue ID.",
-    "expiresAt": "Expiration (optionnel)",
+    "expiresAt": "Expiration (optional)",
     "superAdminWarning": "Reserved for super administrators — scope forced to Global.",
     "superAdminConfirmTitle": "Confirm super-admin assignment",
     "superAdminConfirm": "The user will be granted the \"{roleName}\" role and full access to the platform.",
@@ -129,6 +161,8 @@
       "description": "Remove this role from this user?"
     },
     "toast": {
+      "assignedTitle": "Role assigned",
+      "assignedMessage": "Assignment created.",
       "revokedTitle": "Role revoked",
       "revokedMessage": "Assignment removed.",
       "revokeFailedTitle": "Revocation failed"

@@ -84,7 +84,8 @@
     "reserved": "Réservés",
     "available": "Disponibles",
     "product": "Produit",
-    "category": "Catégorie"
+    "category": "Catégorie",
+    "description": "Description"
   },
   "pagination": {
     "session": "session",
@@ -116,7 +117,8 @@
     "ticket": "tickets",
     "loyaltyAccount": "comptes",
     "activity": "activité",
-    "employee": "employé"
+    "employee": "employé",
+    "department": "département"
   },
   "dataTable": {
     "loading": "Chargement…",

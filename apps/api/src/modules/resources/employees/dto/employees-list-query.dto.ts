@@ -14,6 +14,15 @@ export class EmployeesListQueryDto extends PaginationQueryDto {
   status?: 'active' | 'on_leave' | 'terminated';
 
   @ApiPropertyOptional({
+    description: 'Filter by exact department name',
+    maxLength: 100,
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  department?: string;
+
+  @ApiPropertyOptional({
     description: 'Search by code, job title, or linked user email/name',
   })
   @IsOptional()

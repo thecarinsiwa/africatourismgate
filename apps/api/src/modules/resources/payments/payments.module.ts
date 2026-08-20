@@ -1,15 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Bookings, Payments, Users } from '../../../entities/generated';
-import { StripeModule } from '../../stripe/stripe.module';
+import { Payments } from '../../../entities/generated';
 import { PaymentsController } from './payments.controller';
 import { PaymentsService } from './payments.service';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Payments, Bookings, Users]),
-    StripeModule,
-  ],
+  imports: [TypeOrmModule.forFeature([Payments])],
   controllers: [PaymentsController],
   providers: [PaymentsService],
 })

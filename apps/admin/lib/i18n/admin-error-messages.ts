@@ -315,6 +315,7 @@ export type ModuleErrorMessages = {
   destinations: DestinationsErrorMessages;
   tourGuides: TourGuidesErrorMessages;
   employees: EmployeesErrorMessages;
+  departments: CommonErrorMessages;
   rbac: RbacErrorMessages;
   vols: VolsErrorMessages;
   croisieres: CroisieresErrorMessages;
@@ -366,6 +367,7 @@ export function buildModuleErrorMessages(translators: {
     destinations: buildDestinationsErrorMessages(tCommon, translators.destinations),
     tourGuides: buildTourGuidesErrorMessages(tCommon, translators.tourGuides),
     employees: buildEmployeesErrorMessages(tCommon, translators.employees),
+    departments: buildCommonErrorMessages(tCommon),
     rbac: buildRbacErrorMessages(tCommon, translators.rbac),
     vols: buildVolsErrorMessages(tCommon, translators.vols),
     croisieres: buildCroisieresErrorMessages(tCommon, translators.croisieres),

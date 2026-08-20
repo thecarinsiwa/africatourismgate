@@ -5,7 +5,8 @@
     "terminated": "Finalizado"
   },
   "columns": {
-    "jobTitle": "Puesto"
+    "jobTitle": "Puesto",
+    "department": "Departamento"
   },
   "list": {
     "emptyDefault": "Ningún empleado por el momento.",
@@ -20,6 +21,65 @@
   },
   "filters": {
     "status": "Estado",
-    "organization": "Organización"
+    "organization": "Organización",
+    "department": "Departamento",
+    "departmentNeedsOrganization": "Seleccione una organización"
+  },
+  "detail": {
+    "viewTitle": "Ver empleado",
+    "editButton": "Editar",
+    "viewButton": "Ver",
+    "fallbackLabel": "Empleado",
+    "profileIntro": "Información del perfil de empleado en solo lectura.",
+    "sections": {
+      "info": "Información"
+    },
+    "fields": {
+      "linkedUser": "Usuario vinculado",
+      "status": "Estado",
+      "organization": "Organización",
+      "employeeCode": "Código de empleado",
+      "jobTitle": "Puesto",
+      "department": "Departamento",
+      "hireDate": "Fecha de contratación",
+      "terminationDate": "Fecha de fin",
+      "salary": "Salario",
+      "createdAt": "Creado el",
+      "updatedAt": "Modificado el"
+    }
+  },
+  "form": {
+    "linkedUser": "Usuario vinculado",
+    "selectUser": "Seleccionar un usuario",
+    "linkedUserHintCreate": "Un usuario solo puede vincularse a un perfil de empleado.",
+    "noUsersAvailable": "Ningún usuario disponible.",
+    "linkedUserHintEdit": "El usuario vinculado no se puede modificar después de la creación.",
+    "organization": "Organización",
+    "organizationNone": "Ninguna",
+    "employeeCode": "Código de empleado",
+    "employeeCodeHintCreate": "Asignado automáticamente al guardar (prefijo de organización + número secuencial).",
+    "employeeCodeHintEdit": "El código de empleado no cambia después de la creación.",
+    "jobTitle": "Puesto",
+    "department": "Departamento",
+    "departmentNone": "Ninguno",
+    "departmentHint": "Departamentos de la organización seleccionada.",
+    "departmentNeedsOrganization": "Seleccione primero una organización.",
+    "hireDate": "Fecha de contratación",
+    "terminationDate": "Fecha de fin",
+    "salary": "Salario",
+    "currency": "Moneda",
+    "currencyHint": "Código ISO de 3 letras (ej. USD, EUR).",
+    "manager": "Manager",
+    "managerNone": "Ninguno",
+    "status": "Estado",
+    "submitCreate": "Crear empleado",
+    "submitEdit": "Guardar",
+    "successSaved": "Los cambios se han guardado.",
+    "validation": {
+      "userRequired": "El usuario vinculado es obligatorio.",
+      "userAlreadyLinked": "Este usuario ya tiene un perfil de empleado.",
+      "salaryPositive": "El salario debe ser un número positivo.",
+      "hireBeforeTermination": "La fecha de contratación debe ser anterior a la fecha de fin."
+    }
   }
 }
