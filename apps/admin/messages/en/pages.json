@@ -412,7 +412,8 @@
       "description": "Photo and video gallery for the GAP program. Access: gap.read / gap.write.",
       "nouveau": {
         "metaTitle": "New GAP media",
-        "description": "Add an image or video."
+        "description": "Add an image or video.",
+        "backLabel": "Back to media"
       },
       "id": {
         "metaTitle": "Edit GAP media",

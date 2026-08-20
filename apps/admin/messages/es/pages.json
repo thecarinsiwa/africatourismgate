@@ -412,7 +412,8 @@
       "description": "Galería de fotos y vídeos del programa GAP. Acceso: gap.read / gap.write.",
       "nouveau": {
         "metaTitle": "Nuevo medio GAP",
-        "description": "Añada una imagen o un vídeo."
+        "description": "Añada una imagen o un vídeo.",
+        "backLabel": "Volver a medios"
       },
       "id": {
         "metaTitle": "Modificar el medio GAP",
