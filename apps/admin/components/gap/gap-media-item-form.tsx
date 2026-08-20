@@ -183,7 +183,7 @@ export function GapMediaItemForm({
           id={mediaTypeId}
           value={values.mediaType}
           onChange={(e) => updateField('mediaType', e.target.value as GapMediaItemType)}
-          disabled={!canWrite || mode === 'edit'}
+          disabled={!canWrite}
           className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
         >
           {GAP_MEDIA_TYPES.map((key) => (
