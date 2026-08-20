@@ -42,6 +42,7 @@ export function UsersList() {
   const tCommonFilters = useTranslations('modules.common.filters');
   const tColumns = useTranslations('modules.common.columns');
   const tPagination = useTranslations('modules.common.pagination');
+  const tDataTable = useTranslations('modules.common.dataTable');
   const statusLabels = useAccountStatusLabels();
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
@@ -224,7 +225,7 @@ export function UsersList() {
       {
         accessorKey: 'status',
         header: tColumns('status'),
-        meta: { align: 'center' },
+        meta: { align: 'center', hideOnMobile: true },
         cell: ({ row }) => {
           const status = row.original.status;
           return (
@@ -237,6 +238,7 @@ export function UsersList() {
       {
         id: 'organization',
         header: tColumns('organization'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => {
           const orgId = row.original.organizationId;
           if (!orgId) {
@@ -453,8 +455,12 @@ export function UsersList() {
               columns={columns}
               data={users}
               isLoading={isLoading}
+              loadingMessage={tDataTable('loading')}
               emptyMessage={emptyMessage}
               emptyVariant={hasFilters ? 'search' : 'default'}
+              expandRowLabel={tDataTable('expandRow')}
+              collapseRowLabel={tDataTable('collapseRow')}
+              expandRowAriaLabel={tDataTable('expandRowAria')}
               getRowId={(row) => row.id}
               aria-label={tList('ariaLabel')}
             />

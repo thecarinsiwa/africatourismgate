@@ -208,9 +208,9 @@ export function BookingsList() {
         id: 'client',
         header: tCommon('columns.client'),
         cell: ({ row }) => (
-          <div>
-            <span className="font-medium text-atg-fg">{row.original.clientEmail}</span>
-            <p className="text-xs text-atg-muted">
+          <div className="min-w-0">
+            <span className="block truncate font-medium text-atg-fg">{row.original.clientEmail}</span>
+            <p className="truncate text-xs text-atg-muted">
               {row.original.clientFirstName} {row.original.clientLastName}
             </p>
           </div>
@@ -253,7 +253,7 @@ export function BookingsList() {
       {
         id: 'total',
         header: tCommon('columns.amount'),
-        meta: { align: 'right' },
+        meta: { align: 'right', hideOnMobile: true },
         cell: ({ row }) => (
           <span className="tabular-nums text-sm font-medium">
             {formatMoney(row.original.totalCents, row.original.currency)}
