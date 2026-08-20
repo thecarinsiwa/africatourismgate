@@ -3,14 +3,15 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  Avatar,
   Button,
   Card,
   DataTable,
+  DataTableActionButton,
   DataTableActions,
   DataTableAdjustButton,
   DataTableBadge,
   DataTablePagination,
-  EmptyState,
   Modal,
   useToast,
   type ColumnDef,
@@ -42,17 +43,6 @@ function isAdminListItem(
   return 'userEmail' in account;
 }
 
-const loyaltyEmptyIcon = (
-  <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={1.5}
-      d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"
-    />
-  </svg>
-);
-
 export function LoyaltyAccountsList() {
   const { loyaltyAccounts: getLoyaltyAccountsErrorMessage } = useAdminErrorMessages();
   const tList = useTranslations('modules.loyalty.list');
@@ -62,6 +52,7 @@ export function LoyaltyAccountsList() {
   const tCommon = useTranslations('modules.common');
   const tActions = useTranslations('common.actions');
   const tPagination = useTranslations('modules.common.pagination');
+  const tDataTable = useTranslations('modules.common.dataTable');
   const formatPoints = useFormatPoints();
   const formatDateTime = useFormatDateTime('short');
   const tierLabels = useLoyaltyTierLabels();
@@ -183,34 +174,50 @@ export function LoyaltyAccountsList() {
       {
         id: 'user',
         header: tColumns('user'),
-        cell: ({ row }) => (
-          <div>
-            <span className="font-medium text-atg-fg">
-              {[row.original.userFirstName, row.original.userLastName]
-                .filter(Boolean)
-                .join(' ')
-                .trim() || emptyDash}
-            </span>
-            <p className="text-xs text-atg-muted">{row.original.userEmail}</p>
-          </div>
-        ),
+        cell: ({ row }) => {
+          const account = row.original;
+          const fullName = [account.userFirstName, account.userLastName]
+            .filter(Boolean)
+            .join(' ')
+            .trim();
+          return (
+            <div className="flex min-w-0 items-center gap-3">
+              <Avatar
+                email={account.userEmail}
+                firstName={account.userFirstName}
+                lastName={account.userLastName}
+                size="sm"
+              />
+              <div className="min-w-0">
+                <span className="block truncate text-sm font-medium text-atg-fg">
+                  {fullName || account.userEmail || emptyDash}
+                </span>
+                {fullName ? (
+                  <span className="block truncate text-xs text-atg-muted">
+                    {account.userEmail}
+                  </span>
+                ) : null}
+              </div>
+            </div>
+          );
+        },
       },
       {
         accessorKey: 'programCode',
         header: tList('columns.program'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => (
-          <span className="font-mono text-sm text-atg-fg">{row.original.programCode}</span>
+          <DataTableBadge variant="muted">{row.original.programCode}</DataTableBadge>
         ),
       },
       {
         id: 'points',
         header: tList('columns.balanceProgress'),
-        meta: { align: 'right' },
         cell: ({ row }) => {
           const account = row.original;
           return (
-            <div className="ml-auto max-w-[12rem] space-y-2 text-right">
-              <p className="tabular-nums text-lg font-bold text-atg-fg">
+            <div className="min-w-[10rem] max-w-[14rem] space-y-2">
+              <p className="tabular-nums text-base font-semibold text-atg-fg">
                 {formatPoints(account.pointsBalance)}
               </p>
               <LoyaltyTierProgress
@@ -235,6 +242,7 @@ export function LoyaltyAccountsList() {
       {
         accessorKey: 'lastActivityAt',
         header: tList('columns.lastActivity'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => (
           <span className="whitespace-nowrap text-sm tabular-nums text-atg-muted">
             {formatDateTime(row.original.lastActivityAt)}
@@ -247,23 +255,19 @@ export function LoyaltyAccountsList() {
         meta: { align: 'right' },
         cell: ({ row }) => {
           const account = row.original;
-          const historyOpen = historyAccount?.id === account.id;
           return (
-            <DataTableActions>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="!px-2"
-                aria-expanded={historyOpen}
+            <DataTableActions className="opacity-90 transition-opacity group-hover:opacity-100">
+              <DataTableActionButton
+                action="view"
+                label={tList('actions.history')}
+                aria-expanded={historyAccount?.id === account.id}
                 onClick={() =>
                   setHistoryAccount((prev) => (prev?.id === account.id ? null : account))
                 }
-              >
-                {tList('actions.history')}
-              </Button>
+              />
               {isSuperAdmin ? (
                 <DataTableAdjustButton
+                  label={tList('actions.adjust')}
                   onClick={() => {
                     setAdjustingAccount(account);
                     setAdjustDelta('');
@@ -289,36 +293,40 @@ export function LoyaltyAccountsList() {
     ],
   );
 
-  const isLoading = state.status === 'loading';
-  const isError = state.status === 'error';
   const accounts = state.status === 'ready' ? state.accounts : [];
-  const isEmpty = !isLoading && !isError && accounts.length === 0;
+
+  const pagination =
+    state.status === 'ready' && state.totalPages > 0 ? (
+      <DataTablePagination
+        page={page}
+        pageSize={PAGE_SIZE}
+        totalPages={state.totalPages}
+        totalItems={state.total}
+        itemLabel={tPagination('loyaltyAccount')}
+        onPageChange={setPage}
+      />
+    ) : null;
 
   return (
     <div className="space-y-6">
-      {isError ? (
+      {state.status === 'error' ? (
         <p className="text-sm text-red-600 dark:text-red-400" role="alert">
           {state.message}
         </p>
       ) : null}
 
-      {isEmpty ? (
-        <EmptyState
-          title={tList('empty.title')}
-          description={tList('empty.description')}
-          icon={loyaltyEmptyIcon}
+      <Card variant="dashboard" padding="none" className="overflow-hidden">
+        <DataTable
+          columns={columns}
+          data={accounts}
+          getRowId={(row) => row.id}
+          isLoading={state.status === 'loading'}
+          loadingMessage={tDataTable('loading')}
+          emptyMessage={tList('empty.tableMessage')}
+          aria-label={tList('ariaLabel')}
         />
-      ) : (
-        <Card variant="dashboard" padding="none" className="overflow-hidden">
-          <DataTable
-            columns={columns}
-            data={accounts}
-            isLoading={isLoading}
-            emptyMessage={tList('empty.tableMessage')}
-            aria-label={tList('ariaLabel')}
-          />
-        </Card>
-      )}
+        {pagination}
+      </Card>
 
       <LoyaltyTransactionHistoryPanel
         open={historyAccount !== null}
@@ -327,17 +335,6 @@ export function LoyaltyAccountsList() {
         }}
         account={historyAccount}
       />
-
-      {state.status === 'ready' && state.totalPages > 1 ? (
-        <DataTablePagination
-          page={page}
-          pageSize={PAGE_SIZE}
-          totalPages={state.totalPages}
-          totalItems={state.total}
-          itemLabel={tPagination('loyaltyAccount')}
-          onPageChange={setPage}
-        />
-      ) : null}
 
       <Modal
         open={adjustingAccount !== null}

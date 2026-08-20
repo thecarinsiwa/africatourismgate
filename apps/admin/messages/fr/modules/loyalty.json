@@ -33,7 +33,8 @@
       "lastActivity": "Dernière activité"
     },
     "actions": {
-      "history": "Historique"
+      "history": "Historique",
+      "adjust": "Ajuster les points"
     },
     "empty": {
       "title": "Aucun compte fidélité",
