@@ -158,6 +158,12 @@
     }
   },
   "impact": {
+    "stats": {
+      "total": { "label": "Statistics", "subtitle": "Impact indicators" },
+      "published": { "label": "Published", "subtitle": "Visible on the site" },
+      "draft": { "label": "Drafts", "subtitle": "Not published" },
+      "french": { "label": "In French", "subtitle": "FR locale content" }
+    },
     "list": {
       "deleteTitle": "Delete stat",
       "deleteConfirm": "Stat \"{label}\" will be permanently deleted.",

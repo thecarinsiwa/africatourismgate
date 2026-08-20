@@ -158,6 +158,12 @@
     }
   },
   "impact": {
+    "stats": {
+      "total": { "label": "Statistiques", "subtitle": "Indicateurs d'impact" },
+      "published": { "label": "Publiées", "subtitle": "Visibles sur le site" },
+      "draft": { "label": "Brouillons", "subtitle": "Non publiées" },
+      "french": { "label": "En français", "subtitle": "Contenu locale FR" }
+    },
     "list": {
       "deleteTitle": "Supprimer la statistique",
       "deleteConfirm": "La statistique « {label} » sera supprimée définitivement.",
