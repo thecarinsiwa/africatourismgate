@@ -33,8 +33,12 @@
       "lastActivity": "Dernière activité"
     },
     "actions": {
-      "history": "Historique"
+      "history": "Historique",
+      "adjust": "Ajuster les points"
     },
+    "searchPlaceholder": "Rechercher par email, nom ou programme…",
+    "searchAria": "Rechercher des comptes fidélité",
+    "emptySearch": "Aucun compte fidélité ne correspond à votre recherche.",
     "empty": {
       "title": "Aucun compte fidélité",
       "description": "Les comptes OneKey sont créés automatiquement lors des premiers paiements réussis. Ajustements manuels réservés au super administrateur.",

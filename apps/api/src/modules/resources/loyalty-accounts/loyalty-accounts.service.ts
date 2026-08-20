@@ -25,6 +25,7 @@ import {
   CreateLoyaltyAccountDto,
   UpdateLoyaltyAccountDto,
 } from './dto/loyalty-account.dto';
+import { LoyaltyAccountsListQueryDto } from './dto/loyalty-accounts-list-query.dto';
 
 type AdminLoyaltyRow = {
   id: string;
@@ -87,7 +88,7 @@ export class LoyaltyAccountsService {
   }
 
   async findAll(
-    query: PaginationQueryDto,
+    query: LoyaltyAccountsListQueryDto,
     currentUserId: string,
   ): Promise<PaginatedResult<LoyaltyAccounts | AdminLoyaltyAccountListItemDto>> {
     const staff = await this.isStaffUser(currentUserId);
@@ -275,10 +276,11 @@ export class LoyaltyAccountsService {
   }
 
   private async listForAdmin(
-    query: PaginationQueryDto,
+    query: LoyaltyAccountsListQueryDto,
   ): Promise<PaginatedResult<AdminLoyaltyAccountListItemDto>> {
     const page = query.page ?? 1;
     const limit = query.limit ?? 20;
+    const search = query.search?.trim();
 
     const qb = this.repository
       .createQueryBuilder('la')
@@ -300,7 +302,16 @@ export class LoyaltyAccountsService {
 
     const countQb = this.repository
       .createQueryBuilder('la')
+      .innerJoin(Users, 'u', 'u.id = la.userId AND u.deletedAt IS NULL')
       .where('la.deletedAt IS NULL');
+
+    if (search) {
+      const term = `%${search}%`;
+      const searchClause =
+        '(u.email LIKE :term OR u.firstName LIKE :term OR u.lastName LIKE :term OR la.programCode LIKE :term)';
+      qb.andWhere(searchClause, { term });
+      countQb.andWhere(searchClause, { term });
+    }
 
     const [rows, total] = await Promise.all([
       qb.getRawMany<AdminLoyaltyRow>(),

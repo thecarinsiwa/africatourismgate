@@ -16,7 +16,6 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import { LoyaltyAccounts } from '../../../entities/generated';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { AuthUserDto } from '../../auth/dto/auth-user.dto';
@@ -27,6 +26,7 @@ import {
   CreateLoyaltyAccountDto,
   UpdateLoyaltyAccountDto,
 } from './dto/loyalty-account.dto';
+import { LoyaltyAccountsListQueryDto } from './dto/loyalty-accounts-list-query.dto';
 import { LoyaltyAccountsService } from './loyalty-accounts.service';
 
 @ApiTags('loyalty-accounts')
@@ -40,7 +40,7 @@ export class LoyaltyAccountsController {
     summary: 'List loyalty accounts (scoped to current user unless staff)',
   })
   findAll(
-    @Query() query: PaginationQueryDto,
+    @Query() query: LoyaltyAccountsListQueryDto,
     @CurrentUser() user: AuthUserDto,
   ): Promise<{
     data: (LoyaltyAccounts | AdminLoyaltyAccountListItemDto)[];
