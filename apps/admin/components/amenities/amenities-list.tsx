@@ -11,6 +11,7 @@ import {
   DataTableActions,
   DataTablePagination,
   Input,
+  Modal,
   useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
@@ -263,51 +264,59 @@ export function AmenitiesList() {
           <Button href="/hebergements" variant="outline">
             {tNav('accommodations')}
           </Button>
-          {!showForm ? (
-            <Button type="button" onClick={openCreate}>
-              {t('newAmenity')}
-            </Button>
-          ) : null}
+          <Button type="button" onClick={openCreate}>
+            {t('newAmenity')}
+          </Button>
         </div>
       </div>
 
-      {showForm ? (
-        <Card variant="dashboard" className="max-w-lg">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <h3 className="text-sm font-medium">
-              {editing ? `${tActions('edit')} — ${tNav('amenities')}` : t('newAmenity')}
-            </h3>
-            {formError ? (
-              <p role="alert" className="text-sm text-red-600">
-                {formError}
-              </p>
-            ) : null}
-            <Input
-              label={tColumns('code')}
-              value={formValues.code}
-              onChange={(e) =>
-                setFormValues((p) => ({ ...p, code: e.target.value.toLowerCase() }))
-              }
-              disabled={Boolean(editing)}
-              required
-            />
-            <Input
-              label={tColumns('name')}
-              value={formValues.name}
-              onChange={(e) => setFormValues((p) => ({ ...p, name: e.target.value }))}
-              required
-            />
-            <div className="flex gap-3">
-              <Button type="submit" loading={submitting}>
-                {editing ? tActions('save') : tActions('create')}
-              </Button>
-              <Button type="button" variant="outline" onClick={resetForm}>
-                {tActions('cancel')}
-              </Button>
-            </div>
-          </form>
-        </Card>
-      ) : null}
+      <Modal
+        open={showForm}
+        onOpenChange={(open) => {
+          if (!open && !submitting) resetForm();
+        }}
+        title={editing ? t('editAmenity') : t('newAmenity')}
+        showClose={!submitting}
+        closeAriaLabel={tActions('cancel')}
+        className="max-w-lg"
+      >
+        <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4">
+          {formError ? (
+            <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+              {formError}
+            </p>
+          ) : null}
+          <Input
+            label={tColumns('code')}
+            value={formValues.code}
+            onChange={(e) =>
+              setFormValues((p) => ({ ...p, code: e.target.value.toLowerCase() }))
+            }
+            disabled={Boolean(editing) || submitting}
+            required
+          />
+          <Input
+            label={tColumns('name')}
+            value={formValues.name}
+            onChange={(e) => setFormValues((p) => ({ ...p, name: e.target.value }))}
+            disabled={submitting}
+            required
+          />
+          <div className="flex justify-end gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={resetForm}
+              disabled={submitting}
+            >
+              {tActions('cancel')}
+            </Button>
+            <Button type="submit" loading={submitting}>
+              {editing ? tActions('save') : tActions('create')}
+            </Button>
+          </div>
+        </form>
+      </Modal>
 
       {state.status === 'error' ? (
         <p role="alert" className="text-sm text-red-600">

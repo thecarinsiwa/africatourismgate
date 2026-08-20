@@ -120,6 +120,7 @@
   },
   "amenitiesList": {
     "newAmenity": "Nuevo equipamiento",
+    "editAmenity": "Editar equipamiento",
     "empty": "Ningún equipamiento.",
     "searchPlaceholder": "Buscar un equipamiento…",
     "deleteTitle": "Eliminar equipamiento",

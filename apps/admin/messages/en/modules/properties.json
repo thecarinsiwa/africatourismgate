@@ -120,6 +120,7 @@
   },
   "amenitiesList": {
     "newAmenity": "New amenity",
+    "editAmenity": "Edit amenity",
     "empty": "No amenities yet.",
     "searchPlaceholder": "Search amenities…",
     "deleteTitle": "Delete amenity",
