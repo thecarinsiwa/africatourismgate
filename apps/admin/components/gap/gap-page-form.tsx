@@ -12,13 +12,17 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useId, useState } from 'react';
 import { isValidMediaUrl, toDatetimeLocalValue } from '../../lib/about/form-utils';
-import { getApiClient } from '../../lib/auth/api';
+import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
+import { getSession } from '../../lib/auth/session';
 import { GAP_PAGE_SECTION_KEYS } from '../../lib/gap/constants';
 import { useGapPermissions } from '../../lib/gap/use-gap-permissions';
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 import { isRichTextEmpty } from '../../lib/rich-text';
 import { resolveMediaUrl } from '../../lib/resolve-media-url';
 import { RichTextEditor } from '../rich-text-editor';
+
+const IMAGE_MAX_BYTES = 5 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
 export type GapPageFormValues = {
   sectionKey: GapPageSectionKey;
@@ -82,12 +86,14 @@ export function GapPageForm({ mode, pageId, initialPage }: GapPageFormProps) {
   const tSections = useTranslations('modules.gap.sections');
   const tCommon = useTranslations('modules.common');
   const tCommonForm = useTranslations('modules.common.form');
+  const tValidation = useTranslations('modules.common.validation');
   const tLocale = useTranslations('modules.about.locale');
   const tStatus = useTranslations('modules.about.status');
   const router = useRouter();
   const statusId = useId();
   const localeId = useId();
   const sectionId = useId();
+  const coverInputId = useId();
   const [values, setValues] = useState<GapPageFormValues>(() =>
     initialPage ? gapPageToFormValues(initialPage) : defaultValues,
   );
@@ -96,6 +102,7 @@ export function GapPageForm({ mode, pageId, initialPage }: GapPageFormProps) {
   >({});
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [uploadingCover, setUploadingCover] = useState(false);
 
   const updateField = useCallback(
     <K extends keyof GapPageFormValues>(key: K, value: GapPageFormValues[K]) => {
@@ -104,6 +111,52 @@ export function GapPageForm({ mode, pageId, initialPage }: GapPageFormProps) {
     },
     [],
   );
+
+  async function handleCoverPick(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
+      setFieldErrors((prev) => ({ ...prev, coverImageUrl: tValidation('imageFormat') }));
+      event.target.value = '';
+      return;
+    }
+    if (file.size > IMAGE_MAX_BYTES) {
+      setFieldErrors((prev) => ({ ...prev, coverImageUrl: tValidation('imageTooLarge') }));
+      event.target.value = '';
+      return;
+    }
+
+    const session = getSession();
+    if (!session?.accessToken) {
+      setFieldErrors((prev) => ({
+        ...prev,
+        coverImageUrl: tValidation('sessionExpiredRetry'),
+      }));
+      event.target.value = '';
+      return;
+    }
+
+    setUploadingCover(true);
+    try {
+      const body = new FormData();
+      body.append('file', file);
+      const response = await fetch(`${resolveApiBaseUrl()}/gap-pages/upload-image`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${session.accessToken}` },
+        body,
+      });
+      if (!response.ok) throw new Error('Upload failed');
+      const payload = (await response.json()) as { url?: string };
+      if (!payload.url) throw new Error('Invalid upload response');
+      updateField('coverImageUrl', payload.url);
+    } catch {
+      setFieldErrors((prev) => ({ ...prev, coverImageUrl: tValidation('uploadFailed') }));
+    } finally {
+      setUploadingCover(false);
+      event.target.value = '';
+    }
+  }
 
   function validate(): boolean {
     const errors: Partial<Record<keyof GapPageFormValues, string>> = {};
@@ -146,6 +199,8 @@ export function GapPageForm({ mode, pageId, initialPage }: GapPageFormProps) {
       setSubmitting(false);
     }
   }
+
+  const busy = submitting || uploadingCover;
 
   return (
     <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
@@ -221,17 +276,47 @@ export function GapPageForm({ mode, pageId, initialPage }: GapPageFormProps) {
       <div className="space-y-3">
         <p className="text-sm font-medium text-atg-fg">{t('fields.coverImageUrl')}</p>
         {values.coverImageUrl.trim() ? (
-          <Image
-            src={resolveMediaUrl(values.coverImageUrl.trim())}
-            alt={t('fields.coverPreviewAlt')}
-            width={640}
-            height={360}
-            unoptimized
-            className="h-44 w-full max-w-xl rounded-lg border border-atg-border object-cover"
-            onError={(e) => {
-              (e.target as HTMLImageElement).style.display = 'none';
-            }}
-          />
+          <div className="space-y-2">
+            <Image
+              src={resolveMediaUrl(values.coverImageUrl.trim())}
+              alt={t('fields.coverPreviewAlt')}
+              width={640}
+              height={360}
+              unoptimized
+              className="h-44 w-full max-w-xl rounded-lg border border-atg-border object-cover"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = 'none';
+              }}
+            />
+            {canWrite ? (
+              <button
+                type="button"
+                onClick={() => updateField('coverImageUrl', '')}
+                className="text-xs font-medium text-red-600 hover:underline dark:text-red-400"
+              >
+                {t('fields.removeCover')}
+              </button>
+            ) : null}
+          </div>
+        ) : null}
+        {canWrite ? (
+          <div className="flex flex-wrap items-center gap-3">
+            <label
+              htmlFor={coverInputId}
+              className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10"
+            >
+              {uploadingCover ? tCommonForm('uploading') : tCommonForm('chooseFile')}
+              <input
+                id={coverInputId}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="hidden"
+                onChange={(e) => void handleCoverPick(e)}
+                disabled={busy}
+              />
+            </label>
+            <span className="text-xs text-atg-muted">{tCommonForm('imageFormatHint')}</span>
+          </div>
         ) : null}
         <Input
           label={tCommonForm('externalUrlOptional')}
@@ -241,7 +326,7 @@ export function GapPageForm({ mode, pageId, initialPage }: GapPageFormProps) {
           onChange={(e) => updateField('coverImageUrl', e.target.value)}
           placeholder={tCommonForm('urlPlaceholder')}
           error={fieldErrors.coverImageUrl}
-          disabled={!canWrite}
+          disabled={!canWrite || uploadingCover}
         />
       </div>
 
@@ -291,7 +376,7 @@ export function GapPageForm({ mode, pageId, initialPage }: GapPageFormProps) {
 
       {canWrite ? (
         <div className="flex flex-wrap gap-3 pt-2">
-          <Button type="submit" loading={submitting} loadingText={t('saving')}>
+          <Button type="submit" loading={submitting} loadingText={t('saving')} disabled={busy}>
             {mode === 'create' ? t('createButton') : t('saveButton')}
           </Button>
           <Button type="button" variant="outline" href="/gap/pages">

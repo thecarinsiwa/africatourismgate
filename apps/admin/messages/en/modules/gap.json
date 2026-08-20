@@ -97,6 +97,7 @@
         "contentPlaceholder": "Write the page body…",
         "coverImageUrl": "Cover image",
         "coverPreviewAlt": "Cover preview",
+        "removeCover": "Remove image",
         "locale": "Language",
         "publishedAtOptional": "Publication date (optional)"
       },

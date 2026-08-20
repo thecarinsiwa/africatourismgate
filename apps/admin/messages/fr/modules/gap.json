@@ -97,6 +97,7 @@
         "contentPlaceholder": "Rédigez le corps de la page…",
         "coverImageUrl": "Image de couverture",
         "coverPreviewAlt": "Aperçu de la couverture",
+        "removeCover": "Retirer l'image",
         "locale": "Langue",
         "publishedAtOptional": "Date de publication (optionnel)"
       },
