@@ -136,6 +136,11 @@
     "edit": {
       "pageTitle": "Modifier l'activité"
     },
+    "detail": {
+      "title": "Détail de l'activité",
+      "close": "Fermer",
+      "edit": "Modifier"
+    },
     "form": {
       "validation": {
         "titleRequired": "Le titre est obligatoire.",

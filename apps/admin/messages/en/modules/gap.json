@@ -136,6 +136,11 @@
     "edit": {
       "pageTitle": "Edit activity"
     },
+    "detail": {
+      "title": "Activity details",
+      "close": "Close",
+      "edit": "Edit"
+    },
     "form": {
       "validation": {
         "titleRequired": "Title is required.",
