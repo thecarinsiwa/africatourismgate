@@ -1,8 +1,8 @@
 {
   "list": {
     "newUser": "Nuevo usuario",
-    "emptyDefault": "Hastacun utilisateur pour le moment.",
-    "emptyFiltered": "Hastacun utilisateur ne correspond à vos critères.",
+    "emptyDefault": "Ningún usuario por el momento.",
+    "emptyFiltered": "Ningún usuario coincide con tus criterios.",
     "ariaLabel": "Lista de usuarios",
     "deleteConfirm": "El usuario « {email} » será eliminado. Esta acción es reversible en la base de datos.",
     "deleteTitle": "Eliminar usuario",
@@ -54,15 +54,15 @@
     "allUsers": "Todos les utilisateurs"
   },
   "addresses": {
-    "emptyDefault": "Ninguna adresse enregistrée.",
-    "emptyFiltered": "Ninguna adresse pour cet utilisateur.",
-    "ariaLabel": "Liste des adresses utilisateur"
+    "emptyDefault": "Ninguna dirección registrada.",
+    "emptyFiltered": "Ninguna dirección para este usuario.",
+    "ariaLabel": "Lista de direcciones del usuario"
   },
   "paymentMethods": {
     "lastFourMasked": "•••• {lastFour}",
-    "emptyDefault": "Hastacun moyen de paiement enregistré.",
-    "emptyFiltered": "Hastacun moyen de paiement pour cet utilisateur.",
-    "ariaLabel": "Liste des moyens de paiement"
+    "emptyDefault": "Ningún medio de pago registrado.",
+    "emptyFiltered": "Ningún medio de pago para este usuario.",
+    "ariaLabel": "Lista de medios de pago"
   },
   "sessions": {
     "revokeTitle": "Revocar sesión",
@@ -88,7 +88,7 @@
     },
     "employees": {
       "label": "Empleados",
-      "subtitle": "Perfils employés"
+      "subtitle": "Perfiles de empleados"
     }
   },
   "roles": {
