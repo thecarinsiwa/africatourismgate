@@ -12,10 +12,10 @@ type GapAccessShellProps = {
 export function GapAccessShell({ children, requireWrite = false }: GapAccessShellProps) {
   const { canRead, canWrite, loading } = useGapPermissions();
   const t = useTranslations('modules.gap.access');
-  const tCommonForm = useTranslations('modules.common.form');
+  const tCommon = useTranslations('modules.common');
 
   if (loading) {
-    return <p className="text-sm text-atg-muted">{tCommonForm('loading')}</p>;
+    return <p className="text-sm text-atg-muted">{tCommon('loading')}</p>;
   }
 
   if (!canRead) {

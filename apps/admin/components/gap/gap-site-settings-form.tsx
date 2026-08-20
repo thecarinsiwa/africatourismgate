@@ -200,7 +200,7 @@ export function GapSiteSettingsForm({ locale }: GapSiteSettingsFormProps) {
   };
 
   if (loading) {
-    return <p className="text-sm text-muted-foreground">{tCommonForm('loading')}</p>;
+    return <p className="text-sm text-atg-muted">{tCommon('loading')}</p>;
   }
 
   const busy = saving || uploadingHero;
