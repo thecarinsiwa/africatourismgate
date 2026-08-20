@@ -45,6 +45,7 @@
     "editButton": "Editar",
     "createdAt": "Creado el",
     "updatedAt": "Modificado el",
+    "profileIntro": "Información de la cuenta en solo lectura.",
     "tabsAria": "Secciones de la cuenta de usuario",
     "tabs": {
       "profile": "Perfil",

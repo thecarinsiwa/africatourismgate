@@ -45,6 +45,7 @@
     "editButton": "Edit",
     "createdAt": "Created at",
     "updatedAt": "Updated at",
+    "profileIntro": "Account details in read-only mode.",
     "tabsAria": "User account sections",
     "tabs": {
       "profile": "Profile",
