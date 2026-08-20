@@ -1243,6 +1243,10 @@ export class ApiClient {
     return fetchPaginated<Employee>(this, '/employees', query);
   }
 
+  listEmployeeDepartments(): Promise<string[]> {
+    return this.request<string[]>('/employees/departments');
+  }
+
   getEmployee(id: string): Promise<Employee> {
     return this.request<Employee>(`/employees/${id}`);
   }

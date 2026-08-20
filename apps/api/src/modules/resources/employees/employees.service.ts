@@ -60,6 +60,11 @@ export class EmployeesService extends CrudService<Employees> {
       qb.andWhere('employee.organizationId = :organizationId', { organizationId });
     }
 
+    const department = query.department?.trim();
+    if (department) {
+      qb.andWhere('employee.department = :department', { department });
+    }
+
     const search = query.search?.trim();
     if (search) {
       const term = `%${search}%`;
@@ -100,6 +105,21 @@ export class EmployeesService extends CrudService<Employees> {
         totalPages: Math.ceil(total / limit) || 1,
       },
     };
+  }
+
+  async listDepartments(): Promise<string[]> {
+    const rows = await this.employeesRepository
+      .createQueryBuilder('employee')
+      .select('DISTINCT employee.department', 'department')
+      .where('employee.deletedAt IS NULL')
+      .andWhere('employee.department IS NOT NULL')
+      .andWhere("TRIM(employee.department) <> ''")
+      .orderBy('employee.department', 'ASC')
+      .getRawMany<{ department: string }>();
+
+    return rows
+      .map((row) => row.department?.trim())
+      .filter((value): value is string => Boolean(value));
   }
 
   async createFromDto(
