@@ -14,8 +14,11 @@ export const REVIEW_MODERATION_REGION =
 
 export const NOTIFICATIONS_REGION = /Notifications/i;
 
+const PAGE_LOADING_TEXT = /^Loading…$|^Chargement…$|^Cargando…$/i;
+
 export async function waitForPageIdle(page: Page) {
   await expect(page.locator('[aria-busy="true"]')).toHaveCount(0, { timeout: 30_000 });
+  await expect(page.getByText(PAGE_LOADING_TEXT)).toHaveCount(0, { timeout: 60_000 });
 }
 
 export async function expectTabularNumsVisible(scope: Locator) {

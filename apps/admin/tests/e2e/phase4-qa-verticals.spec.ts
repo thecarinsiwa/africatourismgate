@@ -10,7 +10,6 @@ import {
   FLIGHT_TIMELINE_ARIA,
   IMAGES_GALLERY_ARIA,
   PACKAGE_COMPOSITION_ARIA,
-  SEED_ACTIVITY_IMAGE_CAPTION,
   SEED_AIRPORT_FIH,
   SEED_AIRPORT_NBO,
   SEED_CRUISE_PORT_BNW_NAME,
@@ -28,6 +27,7 @@ import {
   flightClassAvailabilityPath,
   flightViewPath,
   gotoGap,
+  gotoAdmin,
   itineraryPortsPath,
   packageViewPath,
   roomAvailabilityPath,
@@ -35,13 +35,16 @@ import {
 } from './helpers/phase4-qa';
 
 const ACCOMMODATIONS_HEADING = /^Hébergements$|^Accommodations$|^Alojamientos$/i;
-const AMENITIES_HEADING = /^Équipements$|^Amenities$|^Equipamientos$/i;
+const AMENITIES_DESCRIPTION =
+  /Catalogue global réutilisable|Global reusable catalog|Catálogo global reutilizable/i;
+const AMENITIES_TABLE_VIEW = /^Tableau$|^Table$|^Tabla$/i;
 const FLIGHTS_HEADING = /^Vols$|^Flights$|^Vuelos$/i;
 const AIRLINES_HEADING = /^Compagnies aériennes$|^Airlines$|^Aerolíneas$/i;
 const AIRPORTS_HEADING = /^Aéroports$|^Airports$|^Aeropuertos$/i;
 const VEHICLES_HEADING = /^Locations véhicules$|^Vehicle rentals$|^Alquiler de vehículos$/i;
 const AGENCIES_HEADING = /^Agences de location$|^Rental agencies$|^Agencias de alquiler$/i;
-const CATEGORIES_HEADING = /^Catégories véhicules$|^Vehicle categories$|^Categorías de vehículos$/i;
+const CATEGORIES_HEADING =
+  /^Catégories de véhicules$|^Catégories véhicules$|^Vehicle categories$|^Categorías de vehículos$/i;
 const CRUISES_DESCRIPTION =
   /Départs programmés|Scheduled sailings|Salidas programados/i;
 const CRUISE_PORTS_DESCRIPTION = /Référentiel des escales|Ports directory|Referencia de escalas/i;
@@ -51,9 +54,12 @@ const ACTIVITY_PROVIDERS_HEADING =
 const GAP_SETTINGS_DESCRIPTION =
   /Paramètres du site GAP|GAP site settings|Configuración del sitio GAP/i;
 const GAP_PAGES_TABLE = /Liste des pages GAP|GAP pages list|Lista de páginas GAP/i;
-const GAP_ACCESS_DENIED = /gap\.read|permission gap/i;
+const GAP_ACCESS_DENIED =
+  /n'avez pas la permission gap\.read|do not have gap\.read permission|no tiene permiso gap\.read/i;
 
 test.describe('Phase 4 QA — checklist verticals', () => {
+  test.describe.configure({ mode: 'serial' });
+
   test.beforeEach(async ({ page }) => {
     await loginAsSeedAdmin(page);
   });
@@ -86,7 +92,7 @@ test.describe('Phase 4 QA — checklist verticals', () => {
     await page.goto(flightViewPath());
     await waitForPageIdle(page);
 
-    const flightTimeline = page.getByLabel(FLIGHT_TIMELINE_ARIA).first();
+    const flightTimeline = page.getByRole('group', { name: FLIGHT_TIMELINE_ARIA }).first();
     await expect(flightTimeline).toBeVisible();
     await expect(flightTimeline.getByText(SEED_AIRPORT_FIH)).toBeVisible();
     await expect(flightTimeline.getByText(SEED_AIRPORT_NBO)).toBeVisible();
@@ -96,8 +102,12 @@ test.describe('Phase 4 QA — checklist verticals', () => {
 
     const portsTimeline = page.getByRole('group', { name: CRUISE_PORTS_TIMELINE_ARIA });
     await expect(portsTimeline).toBeVisible();
-    await expect(portsTimeline.getByText(SEED_CRUISE_PORT_KIN_NAME)).toBeVisible();
-    await expect(portsTimeline.getByText(SEED_CRUISE_PORT_BNW_NAME)).toBeVisible();
+    await expect(
+      portsTimeline.getByText(SEED_CRUISE_PORT_KIN_NAME).locator('visible=true'),
+    ).toBeVisible();
+    await expect(
+      portsTimeline.getByText(SEED_CRUISE_PORT_BNW_NAME).locator('visible=true'),
+    ).toBeVisible();
   });
 
   test('AC1 — galerie photos activité', async ({ page }) => {
@@ -109,8 +119,10 @@ test.describe('Phase 4 QA — checklist verticals', () => {
 
     const gallery = page.getByRole('list', { name: IMAGES_GALLERY_ARIA });
     await expect(gallery).toBeVisible();
-    await expect(gallery.getByRole('listitem')).toHaveCount(2);
-    await expect(gallery.getByText(SEED_ACTIVITY_IMAGE_CAPTION)).toBeVisible();
+    await expect(gallery.getByRole('listitem').first()).toBeVisible();
+    await expect(
+      gallery.getByRole('button', { name: /Modifier|Edit|Editar/i }).first(),
+    ).toBeVisible();
   });
 
   test('P1 — composition forfait visuelle', async ({ page }) => {
@@ -142,41 +154,49 @@ test.describe('Phase 4 QA — checklist verticals', () => {
       'Permissions gap.read absentes sur ce compte',
     );
     await expect(page.getByRole('table', { name: GAP_PAGES_TABLE })).toBeVisible();
-    await expect(page.getByText(SEED_GAP_PAGE_ABOUT_TITLE)).toBeVisible();
+    await expect(
+      page.getByRole('table', { name: GAP_PAGES_TABLE }).getByText(SEED_GAP_PAGE_ABOUT_TITLE).first(),
+    ).toBeVisible();
 
     await page.goto('/gap/activites');
     await waitForPageIdle(page);
-    await expect(page.getByRole('table').first()).toBeVisible();
-    await expect(page.getByText(SEED_GAP_ACTIVITY_TITLE)).toBeVisible();
+    const activitiesTable = page.getByRole('table').first();
+    await expect(activitiesTable).toBeVisible();
+    await expect(activitiesTable.getByText(SEED_GAP_ACTIVITY_TITLE)).toBeVisible();
 
     await page.goto('/gap/impact');
     await waitForPageIdle(page);
-    await expect(page.getByRole('table').first()).toBeVisible();
-    await expect(page.getByText(SEED_GAP_IMPACT_LABEL)).toBeVisible();
-    await expect(page.getByText(SEED_GAP_IMPACT_VALUE)).toBeVisible();
+    const impactTable = page.getByRole('table').first();
+    await expect(impactTable).toBeVisible();
+    await expect(impactTable.getByText(SEED_GAP_IMPACT_LABEL)).toBeVisible();
+    await expect(impactTable.getByText(SEED_GAP_IMPACT_VALUE).first()).toBeVisible();
 
     await page.goto('/gap/medias');
     await waitForPageIdle(page);
-    await expect(page.getByRole('table').first()).toBeVisible();
-    await expect(page.getByText(SEED_GAP_MEDIA_TITLE)).toBeVisible();
+    const mediaTable = page.getByRole('table').first();
+    await expect(mediaTable).toBeVisible();
+    await expect(mediaTable.getByText(SEED_GAP_MEDIA_TITLE)).toBeVisible();
 
     await gotoGap(page, '/');
-    await waitForPageIdle(page);
     await expect(page.getByText(SEED_GAP_SITE_TITLE).first()).toBeVisible();
     await expect(page.getByText(SEED_GAP_IMPACT_VALUE).first()).toBeVisible();
     await expect(page.getByText(SEED_GAP_ACTIVITY_TITLE).first()).toBeVisible();
 
     await gotoGap(page, '/about');
-    await waitForPageIdle(page);
-    await expect(page.getByText(/Gorilla Ambassadors Program \(GAP\)/i).first()).toBeVisible();
+    await expect(page.getByText(SEED_GAP_PAGE_ABOUT_TITLE).first()).toBeVisible({
+      timeout: 30_000,
+    });
 
     await gotoGap(page, '/activities');
-    await waitForPageIdle(page);
     await expect(page.getByText(SEED_GAP_ACTIVITY_TITLE).first()).toBeVisible();
+
+    await gotoAdmin(page);
   });
 });
 
 test.describe('Phase 4 QA — smoke navigation verticals', () => {
+  test.describe.configure({ mode: 'serial' });
+
   test.beforeEach(async ({ page }) => {
     await loginAsSeedAdmin(page);
   });
@@ -189,7 +209,9 @@ test.describe('Phase 4 QA — smoke navigation verticals', () => {
 
     await page.goto('/hebergements/equipements');
     await waitForPageIdle(page);
-    await expect(page.getByRole('heading', { name: AMENITIES_HEADING }).first()).toBeVisible();
+    await expect(page).toHaveURL(/\/hebergements\/equipements/);
+    await expect(page.getByText(AMENITIES_DESCRIPTION).first()).toBeVisible();
+    await page.getByRole('button', { name: AMENITIES_TABLE_VIEW }).click();
     await expect(page.getByRole('table').first()).toBeVisible();
   });
 

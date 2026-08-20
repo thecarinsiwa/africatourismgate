@@ -8,6 +8,12 @@ export const SEED_AVAILABILITY_YEAR_MONTH = '2026-08';
 /** Site vitrine GAP (apps/gap) — aligné sur playwright.config.ts. */
 export const gapURL = process.env.PLAYWRIGHT_GAP_URL ?? 'http://localhost:3004';
 
+/** Admin — origine absolue pour revenir depuis la vitrine GAP. */
+export const adminURL = (process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:3001').replace(
+  /\/$/,
+  '',
+);
+
 // --- Catalog seed IDs (database/seeds/install.seed.sql) ---
 
 export const SEED_DESTINATION_ID = '00000000-0000-4000-8000-000000002001';
@@ -151,31 +157,44 @@ export async function gotoGap(page: Page, path: '/' | '/about' | '/activities' |
         : path === '/activities'
           ? gapActivitiesUrl()
           : gapImpactUrl();
-  await page.goto(url);
+  await page.goto(url, { waitUntil: 'domcontentloaded' });
+  await waitForGapPageReady(page);
 }
 
-const MONTH_HEADING_PATTERNS: Record<number, RegExp> = {
-  1: /jan/i,
-  2: /f[eé]v|feb/i,
-  3: /mar/i,
-  4: /avr|apr/i,
-  5: /\bmai\b|\bmay\b|\bmayo\b/i,
-  6: /juin|jun/i,
-  7: /juil|jul/i,
-  8: /ao[uû]t|aug/i,
-  9: /sep/i,
-  10: /oct/i,
-  11: /nov/i,
-  12: /d[eé]c|dec/i,
-};
+const GAP_LOADING_TEXT = /^Chargement…$|^Loading…$|^Cargando…$/i;
+
+/** Attend la fin du fetch client-side sur les pages GAP. */
+export async function waitForGapPageReady(page: Page) {
+  await expect(page.getByText(GAP_LOADING_TEXT)).toHaveCount(0, { timeout: 60_000 });
+}
+
+/** Retourne sur l'admin après navigation cross-origin (GAP). */
+export async function gotoAdmin(page: Page, path = '/dashboard') {
+  await page.goto(`${adminURL}${path}`, { waitUntil: 'domcontentloaded' });
+}
+
+const MONTH_HEADING_CHECKS: Array<{ month: number; pattern: RegExp }> = [
+  { month: 12, pattern: /d[eé]cembre|december|diciembre/i },
+  { month: 11, pattern: /novembre|november|noviembre/i },
+  { month: 10, pattern: /octobre|october|octubre/i },
+  { month: 9, pattern: /septembre|september|septiembre/i },
+  { month: 8, pattern: /ao[uû]t|august|agosto/i },
+  { month: 7, pattern: /juillet|july|julio/i },
+  { month: 6, pattern: /juin|june|junio/i },
+  { month: 5, pattern: /\bmai\b|\bmay\b|\bmayo\b/i },
+  { month: 4, pattern: /avril|april/i },
+  { month: 3, pattern: /mars|march|marzo/i },
+  { month: 2, pattern: /f[eé]vrier|february|febrero/i },
+  { month: 1, pattern: /janvier|january|enero/i },
+];
 
 function parseAvailabilityMonthHeading(text: string): { year: number; month: number } | null {
   const yearMatch = text.match(/(\d{4})/);
   if (!yearMatch) return null;
 
   const year = Number(yearMatch[1]);
-  for (let month = 1; month <= 12; month += 1) {
-    if (MONTH_HEADING_PATTERNS[month].test(text)) {
+  for (const { month, pattern } of MONTH_HEADING_CHECKS) {
+    if (pattern.test(text)) {
       return { year, month };
     }
   }

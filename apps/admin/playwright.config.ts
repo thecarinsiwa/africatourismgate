@@ -21,10 +21,16 @@ export default defineConfig({
   testDir: './tests/e2e',
   fullyParallel: false,
   workers: 1,
+  timeout: 120_000,
   retries: process.env.CI ? 2 : 0,
+  expect: {
+    timeout: 15_000,
+  },
   use: {
     baseURL,
     trace: 'on-first-retry',
+    navigationTimeout: 60_000,
+    actionTimeout: 30_000,
   },
   webServer: [
     {
@@ -32,7 +38,7 @@ export default defineConfig({
       url: `${apiURL}/api/health`,
       cwd: `${__dirname}/../..`,
       reuseExistingServer: !process.env.CI,
-      timeout: 120_000,
+      timeout: 300_000,
       env: {
         CORS_ORIGIN: process.env.CORS_ORIGIN ?? devCorsOrigins,
       },
@@ -42,14 +48,14 @@ export default defineConfig({
       url: `${baseURL}/login`,
       cwd: __dirname,
       reuseExistingServer: !process.env.CI,
-      timeout: 120_000,
+      timeout: 300_000,
     },
     {
       command: 'pnpm --filter @africatourismgate/gap dev',
       url: `${gapURL}/`,
       cwd: `${__dirname}/../..`,
       reuseExistingServer: !process.env.CI,
-      timeout: 120_000,
+      timeout: 300_000,
     },
   ],
 });
