@@ -38,7 +38,10 @@ export async function ImpactStatsSection({ stats, showHeader = true }: ImpactSta
                 </p>
                 <p className="mt-2 font-medium text-atg-fg">{stat.label}</p>
                 {stat.description ? (
-                  <p className="mt-2 text-sm leading-relaxed text-atg-muted">{stat.description}</p>
+                  <div
+                    className="prose prose-sm mt-2 max-w-none text-atg-muted dark:prose-invert prose-p:my-1 prose-p:leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: stat.description }}
+                  />
                 ) : null}
               </article>
             );

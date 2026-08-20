@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Input, Textarea } from '@africatourismgate/ui';
+import { Button, Input } from '@africatourismgate/ui';
 import type {
   CreateGapImpactStatRequest,
   GapImpactStat,
@@ -14,6 +14,8 @@ import { getApiClient } from '../../lib/auth/api';
 import { GAP_COLOR_KEYS } from '../../lib/gap/constants';
 import { useGapPermissions } from '../../lib/gap/use-gap-permissions';
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+import { isRichTextEmpty } from '../../lib/rich-text';
+import { RichTextEditor } from '../rich-text-editor';
 
 export type GapImpactStatFormValues = {
   label: string;
@@ -48,10 +50,11 @@ function statToFormValues(stat: GapImpactStat): GapImpactStatFormValues {
 }
 
 function toPayload(values: GapImpactStatFormValues): CreateGapImpactStatRequest {
+  const description = values.description.trim();
   return {
     label: values.label.trim(),
     valueDisplay: values.valueDisplay.trim(),
-    description: values.description.trim() || null,
+    description: description && !isRichTextEmpty(description) ? description : null,
     colorKey: values.colorKey,
     sortOrder: Number.parseInt(values.sortOrder, 10) || 0,
     status: values.status,
@@ -83,7 +86,6 @@ export function GapImpactStatForm({
 
   const labelId = useId();
   const valueDisplayId = useId();
-  const descriptionId = useId();
   const colorKeyId = useId();
   const sortOrderId = useId();
   const statusId = useId();
@@ -176,14 +178,23 @@ export function GapImpactStatForm({
         ) : null}
       </div>
 
-      <Textarea
-        id={descriptionId}
-        label={t('fields.description')}
-        rows={3}
-        value={values.description}
-        onChange={(e) => updateField('description', e.target.value)}
-        disabled={!canWrite}
-      />
+      {canWrite ? (
+        <RichTextEditor
+          label={t('fields.description')}
+          value={values.description}
+          onChange={(html) => updateField('description', html)}
+          placeholder={t('fields.descriptionPlaceholder')}
+          contentClassName="min-h-[160px]"
+        />
+      ) : values.description.trim() && !isRichTextEmpty(values.description) ? (
+        <div>
+          <p className="mb-1 text-sm font-medium">{t('fields.description')}</p>
+          <div
+            className="rounded-md border border-atg-border bg-atg-surface px-3 py-2 text-sm text-atg-muted"
+            dangerouslySetInnerHTML={{ __html: values.description }}
+          />
+        </div>
+      ) : null}
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>

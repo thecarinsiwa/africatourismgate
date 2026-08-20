@@ -195,6 +195,7 @@
         "valueDisplay": "Displayed value",
         "valueDisplayPlaceholder": "e.g. 12,000+",
         "description": "Description (optional)",
+        "descriptionPlaceholder": "Add a formatted description…",
         "colorKey": "Color",
         "sortOrder": "Display order",
         "locale": "Language"
