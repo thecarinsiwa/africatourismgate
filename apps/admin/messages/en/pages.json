@@ -406,7 +406,8 @@
         "backLabel": "Back to impact"
       },
       "id": {
-        "metaTitle": "Edit impact stat"
+        "metaTitle": "Edit impact stat",
+        "backLabel": "Back to impact"
       }
     },
     "medias": {

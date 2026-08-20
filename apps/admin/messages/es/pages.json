@@ -406,7 +406,8 @@
         "backLabel": "Volver a impacto"
       },
       "id": {
-        "metaTitle": "Modificar la estadística de impacto"
+        "metaTitle": "Modificar la estadística de impacto",
+        "backLabel": "Volver a impacto"
       }
     },
     "medias": {
