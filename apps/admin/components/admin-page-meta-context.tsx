@@ -75,7 +75,5 @@ export function useSetAdminPageMeta(meta: AdminPageMeta): void {
       title,
       breadcrumbTail,
     });
-    // Use tailKey for content equality — breadcrumbTail is often a new array each render.
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- breadcrumbTail identity intentionally omitted
-  }, [title, tailKey, setPageMeta]);
+  }, [title, tailKey, breadcrumbTail, setPageMeta]);
 }

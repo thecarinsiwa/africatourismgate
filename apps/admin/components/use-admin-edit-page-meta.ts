@@ -27,8 +27,7 @@ export function useAdminEditPageMeta({
     const tail =
       breadcrumbTail ?? (entityLabel ? [{ label: entityLabel }] : undefined);
     return { title, breadcrumbTail: tail };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- tailKey captures breadcrumbTail content
-  }, [ready, title, entityLabel, tailKey]);
+  }, [ready, title, entityLabel, breadcrumbTail, tailKey]);
 
   useSetAdminPageMeta(pageMeta);
 }
