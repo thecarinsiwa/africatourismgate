@@ -22,6 +22,7 @@ import { AdminImageViewerModal } from '../admin-image-viewer-modal';
 import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
 import { getSession } from '../../lib/auth/session';
 import { resolveMediaUrl } from '../../lib/resolve-media-url';
+import { PropertyPhotosCarousel } from './property-photos-carousel';
 
 const PROPERTY_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
 const ALLOWED_PROPERTY_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
@@ -37,9 +38,17 @@ const emptyForm: ImageFormValues = { url: '', caption: '', sortOrder: '0' };
 type PropertyImagesSectionProps = {
   propertyId: string;
   embedded?: boolean;
+  /** Panneau compact à droite de Identité (carrousel + actions). */
+  variant?: 'default' | 'aside';
+  altFallback?: string;
 };
 
-export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSectionProps) {
+export function PropertyImagesSection({
+  propertyId,
+  embedded,
+  variant = 'default',
+  altFallback,
+}: PropertyImagesSectionProps) {
   const { hebergements: getHebergementsErrorMessage } = useAdminErrorMessages();
   const tGallery = useTranslations('modules.common.imagesGallery');
   const tColumns = useTranslations('modules.common.columns');
@@ -426,50 +435,115 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
         images={images}
         index={viewerIndex ?? 0}
         onIndexChange={setViewerIndex}
-        fallbackLabel={tGallery('titleProperty')}
+        fallbackLabel={altFallback || tGallery('titleProperty')}
       />
 
-      <section
-        className={
-          embedded ? 'space-y-4' : 'mt-12 space-y-4 border-t border-atg-border pt-10'
-        }
-      >
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-lg font-semibold text-atg-fg">{tGallery('titleProperty')}</h2>
-              {state.status === 'ready' ? (
-                <DataTableBadge variant="muted">{images.length}</DataTableBadge>
-              ) : null}
+      {variant === 'aside' ? (
+        <Card variant="dashboard" padding="sm">
+          <div className="flex items-center justify-between gap-2">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <h3 className="text-sm font-semibold text-atg-fg">{tGallery('titleProperty')}</h3>
+                {state.status === 'ready' ? (
+                  <DataTableBadge variant="muted">{images.length}</DataTableBadge>
+                ) : null}
+              </div>
             </div>
-            <p className="mt-1 text-sm text-atg-muted">{tGallery('intro')}</p>
+            <Button type="button" size="sm" onClick={openCreate}>
+              {tGallery('addPhoto')}
+            </Button>
           </div>
-          <Button type="button" onClick={openCreate} size="sm">
-            {tGallery('addPhoto')}
-          </Button>
-        </div>
 
-        {state.status === 'error' ? (
-          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-            {state.message}
-          </p>
-        ) : (
-          <Card variant="dashboard" padding="none" className="overflow-hidden">
-            <DataTable
-              columns={columns}
-              data={images}
-              isLoading={state.status === 'loading'}
-              emptyMessage={tGallery('emptyProperty')}
-              getRowId={(row) => row.id}
-              aria-label={tGallery('titleProperty')}
-              loadingMessage={tCommon('dataTable.loading')}
-              expandRowLabel={tCommon('dataTable.expandRow')}
-              collapseRowLabel={tCommon('dataTable.collapseRow')}
-              expandRowAriaLabel={tCommon('dataTable.expandRowAria')}
-            />
-          </Card>
-        )}
-      </section>
+          <div className="mt-3">
+            {state.status === 'loading' ? (
+              <p className="text-sm text-atg-muted">{tCommon('dataTable.loading')}</p>
+            ) : state.status === 'error' ? (
+              <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+                {state.message}
+              </p>
+            ) : (
+              <>
+                <PropertyPhotosCarousel
+                  images={images}
+                  altFallback={altFallback || tGallery('titleProperty')}
+                />
+                {images.length > 0 ? (
+                  <ul className="mt-3 max-h-40 space-y-1 overflow-y-auto">
+                    {images.map((image, index) => (
+                      <li
+                        key={image.id}
+                        className="flex items-center gap-2 rounded-md border border-atg-border px-2 py-1.5"
+                      >
+                        <button
+                          type="button"
+                          onClick={() => openViewer(image)}
+                          className="min-w-0 flex-1 truncate text-left text-xs text-atg-fg hover:text-primary"
+                        >
+                          {image.caption?.trim() || `#${image.sortOrder || index + 1}`}
+                        </button>
+                        <DataTableActions>
+                          <DataTableActionButton
+                            action="edit"
+                            onClick={() => openEdit(image)}
+                          />
+                          <DataTableActionButton
+                            action="delete"
+                            onClick={() => handleDeleteRequest(image)}
+                            disabled={deletingId === image.id}
+                            loading={deletingId === image.id}
+                          />
+                        </DataTableActions>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </>
+            )}
+          </div>
+        </Card>
+      ) : (
+        <section
+          className={
+            embedded ? 'space-y-4' : 'mt-12 space-y-4 border-t border-atg-border pt-10'
+          }
+        >
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <h2 className="text-lg font-semibold text-atg-fg">{tGallery('titleProperty')}</h2>
+                {state.status === 'ready' ? (
+                  <DataTableBadge variant="muted">{images.length}</DataTableBadge>
+                ) : null}
+              </div>
+              <p className="mt-1 text-sm text-atg-muted">{tGallery('intro')}</p>
+            </div>
+            <Button type="button" onClick={openCreate} size="sm">
+              {tGallery('addPhoto')}
+            </Button>
+          </div>
+
+          {state.status === 'error' ? (
+            <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+              {state.message}
+            </p>
+          ) : (
+            <Card variant="dashboard" padding="none" className="overflow-hidden">
+              <DataTable
+                columns={columns}
+                data={images}
+                isLoading={state.status === 'loading'}
+                emptyMessage={tGallery('emptyProperty')}
+                getRowId={(row) => row.id}
+                aria-label={tGallery('titleProperty')}
+                loadingMessage={tCommon('dataTable.loading')}
+                expandRowLabel={tCommon('dataTable.expandRow')}
+                collapseRowLabel={tCommon('dataTable.collapseRow')}
+                expandRowAriaLabel={tCommon('dataTable.expandRowAria')}
+              />
+            </Card>
+          )}
+        </section>
+      )}
     </>
   );
 }

@@ -12,7 +12,7 @@ import type {
 } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useState, type ReactNode } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { isValidSlug, slugifyName } from '../../lib/slug';
 
@@ -66,9 +66,16 @@ type PropertyFormProps = {
   mode: 'create' | 'edit';
   propertyId?: string;
   initialProperty?: Property;
+  /** Affiché à droite de la carte Identité (ex. photos en édition). */
+  identityAside?: ReactNode;
 };
 
-export function PropertyForm({ mode, propertyId, initialProperty }: PropertyFormProps) {
+export function PropertyForm({
+  mode,
+  propertyId,
+  initialProperty,
+  identityAside,
+}: PropertyFormProps) {
   const { hebergements: getHebergementsErrorMessage } = useAdminErrorMessages();
   const tForm = useTranslations('modules.properties.form');
   const tValidation = useTranslations('modules.common.validation');
@@ -178,7 +185,10 @@ export function PropertyForm({ mode, propertyId, initialProperty }: PropertyForm
   const starValue = values.starRating.trim() !== '' ? Number(values.starRating) : 0;
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-3xl space-y-4">
+    <form
+      onSubmit={handleSubmit}
+      className={identityAside ? 'w-full space-y-4' : 'w-full max-w-3xl space-y-4'}
+    >
       {formError ? (
         <p
           role="alert"
@@ -188,37 +198,47 @@ export function PropertyForm({ mode, propertyId, initialProperty }: PropertyForm
         </p>
       ) : null}
 
-      <Card variant="dashboard" padding="sm">
-        <h3 className="text-sm font-semibold text-atg-fg">{tForm('sections.identity')}</h3>
-        <div className="mt-3 grid gap-3 sm:grid-cols-2">
-          <Input
-            label={tForm('name')}
-            value={values.name}
-            onChange={(e) => updateField('name', e.target.value)}
-            error={fieldErrors.name}
-            required
-          />
-          <Input
-            label={tForm('slug')}
-            value={values.slug}
-            onChange={(e) => {
-              setSlugTouched(true);
-              updateField('slug', e.target.value.toLowerCase());
-            }}
-            error={fieldErrors.slug}
-            required
-          />
-          <div className="sm:col-span-2">
-            <Select
-              id={typeId}
-              label={tForm('type')}
-              value={values.propertyType}
-              onChange={(e) => updateField('propertyType', e.target.value as PropertyType)}
-              options={propertyTypeOptions}
+      <div
+        className={
+          identityAside
+            ? 'grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)] lg:items-start xl:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]'
+            : undefined
+        }
+      >
+        <Card variant="dashboard" padding="sm">
+          <h3 className="text-sm font-semibold text-atg-fg">{tForm('sections.identity')}</h3>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+            <Input
+              label={tForm('name')}
+              value={values.name}
+              onChange={(e) => updateField('name', e.target.value)}
+              error={fieldErrors.name}
+              required
             />
+            <Input
+              label={tForm('slug')}
+              value={values.slug}
+              onChange={(e) => {
+                setSlugTouched(true);
+                updateField('slug', e.target.value.toLowerCase());
+              }}
+              error={fieldErrors.slug}
+              required
+            />
+            <div className="sm:col-span-2">
+              <Select
+                id={typeId}
+                label={tForm('type')}
+                value={values.propertyType}
+                onChange={(e) => updateField('propertyType', e.target.value as PropertyType)}
+                options={propertyTypeOptions}
+              />
+            </div>
           </div>
-        </div>
-      </Card>
+        </Card>
+
+        {identityAside ? <div className="min-w-0">{identityAside}</div> : null}
+      </div>
 
       <Card variant="dashboard" padding="sm">
         <h3 className="text-sm font-semibold text-atg-fg">{tForm('sections.location')}</h3>

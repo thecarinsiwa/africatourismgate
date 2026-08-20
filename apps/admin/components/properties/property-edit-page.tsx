@@ -168,10 +168,19 @@ export function PropertyEditPage({ propertyId }: PropertyEditPageProps) {
         </TabsList>
 
         <TabsContent value="infos">
-          <div className="space-y-8">
-            <PropertyForm mode="edit" propertyId={propertyId} initialProperty={property} />
-            <PropertyImagesSection propertyId={propertyId} embedded />
-          </div>
+          <PropertyForm
+            mode="edit"
+            propertyId={propertyId}
+            initialProperty={property}
+            identityAside={
+              <PropertyImagesSection
+                propertyId={propertyId}
+                embedded
+                variant="aside"
+                altFallback={property.name}
+              />
+            }
+          />
         </TabsContent>
 
         <TabsContent value="chambres">
