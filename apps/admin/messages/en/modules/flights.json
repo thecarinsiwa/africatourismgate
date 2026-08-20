@@ -59,6 +59,23 @@
       "arrivalTimeRequired": "Arrival time is required."
     }
   },
+  "view": {
+    "title": "View flight",
+    "editButton": "Edit flight",
+    "notFound": "Flight not found.",
+    "infoTitle": "Information",
+    "imagesTitle": "Photos",
+    "imagesIntro": "{count, plural, =0 {No photos} one {# photo} other {# photos}}",
+    "imagesEmpty": "No photos for this flight.",
+    "carouselPrev": "Previous photo",
+    "carouselNext": "Next photo",
+    "carouselThumbs": "Photo thumbnails",
+    "carouselGoTo": "Go to photo {index}",
+    "carouselOpen": "Enlarge photo {index}",
+    "carouselViewerTitle": "Photo preview",
+    "carouselClose": "Close preview",
+    "classesIntro": "{count, plural, =0 {No cabin classes} one {# cabin class} other {# cabin classes}}"
+  },
   "detail": {
     "title": "Edit flight",
     "viewTitle": "View flight",
@@ -86,6 +103,8 @@
       "editClass": "Edit class",
       "cabinType": "Cabin type",
       "totalSeats": "Total seats",
+      "searchPlaceholder": "Search a cabin class…",
+      "searchEmpty": "No cabin class matches your search.",
       "empty": "No cabin classes yet.",
       "deleteConfirm": "This cabin class will be deleted.",
       "deleteTitle": "Delete class",

@@ -59,6 +59,23 @@
       "arrivalTimeRequired": "Heure d'arrivée obligatoire."
     }
   },
+  "view": {
+    "title": "Voir le vol",
+    "editButton": "Modifier le vol",
+    "notFound": "Vol introuvable.",
+    "infoTitle": "Informations",
+    "imagesTitle": "Photos",
+    "imagesIntro": "{count, plural, =0 {Aucune photo} one {# photo} other {# photos}}",
+    "imagesEmpty": "Aucune photo pour ce vol.",
+    "carouselPrev": "Photo précédente",
+    "carouselNext": "Photo suivante",
+    "carouselThumbs": "Miniatures des photos",
+    "carouselGoTo": "Aller à la photo {index}",
+    "carouselOpen": "Agrandir la photo {index}",
+    "carouselViewerTitle": "Aperçu de la photo",
+    "carouselClose": "Fermer l'aperçu",
+    "classesIntro": "{count, plural, =0 {Aucune classe cabine} one {# classe cabine} other {# classes cabine}}"
+  },
   "detail": {
     "title": "Modifier le vol",
     "viewTitle": "Voir le vol",
@@ -86,6 +103,8 @@
       "editClass": "Modifier la classe",
       "cabinType": "Type de cabine",
       "totalSeats": "Sièges totaux",
+      "searchPlaceholder": "Rechercher une classe…",
+      "searchEmpty": "Aucune classe ne correspond à votre recherche.",
       "empty": "Aucune classe cabine.",
       "deleteConfirm": "Cette classe cabine sera supprimée.",
       "deleteTitle": "Supprimer la classe",
