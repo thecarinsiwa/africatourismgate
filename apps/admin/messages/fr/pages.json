@@ -392,7 +392,8 @@
       "description": "Activités et initiatives du programme Gorilla Ambassadors. Accès : gap.read / gap.write.",
       "nouveau": {
         "metaTitle": "Nouvelle activité GAP",
-        "description": "Ajoutez une activité au programme."
+        "description": "Ajoutez une activité au programme.",
+        "backLabel": "Retour aux activités"
       },
       "id": {
         "metaTitle": "Modifier l'activité GAP"
