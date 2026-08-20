@@ -17,6 +17,7 @@ export type PublicGapSiteSettingsDto = {
   subtitle: string;
   heroImageUrl: string;
   heroImageAlt: string;
+  links: Array<{ label: string; url: string | null }>;
   unescoLabel: string | null;
   unescoUrl: string | null;
   donateUrl: string | null;
@@ -299,14 +300,35 @@ export class PublicGapService {
   }
 
   private toSettingsDto(settings: GapSiteSettings): PublicGapSiteSettingsDto {
+    const links = [
+      ...(Array.isArray(settings.links) ? settings.links : []),
+    ]
+      .map((item) => ({
+        label: item.label?.trim() ?? '',
+        url: item.url?.trim() || null,
+      }))
+      .filter((item) => item.label)
+      .slice(0, 10);
+
+    if (
+      links.length === 0 &&
+      settings.unescoLabel?.trim()
+    ) {
+      links.push({
+        label: settings.unescoLabel.trim(),
+        url: settings.unescoUrl?.trim() || null,
+      });
+    }
+
     return {
       id: settings.id,
       title: settings.title,
       subtitle: settings.subtitle,
       heroImageUrl: settings.heroImageUrl,
       heroImageAlt: settings.heroImageAlt,
-      unescoLabel: settings.unescoLabel,
-      unescoUrl: settings.unescoUrl,
+      links,
+      unescoLabel: links[0]?.label ?? null,
+      unescoUrl: links[0]?.url ?? null,
       donateUrl: settings.donateUrl,
       donateLabel: settings.donateLabel,
       locale: settings.locale,

@@ -10,13 +10,22 @@ export type GapImpactStatColorKey = 'primary' | 'secondary';
 
 export type GapMediaItemType = 'image' | 'video';
 
+export interface GapSiteLink {
+  label: string;
+  url: string | null;
+}
+
 export interface GapSiteSettings extends AuditFields {
   id: string;
   title: string;
   subtitle: string;
   heroImageUrl: string;
   heroImageAlt: string;
+  /** Up to 10 partner / external links. */
+  links: GapSiteLink[] | null;
+  /** @deprecated Prefer links */
   unescoLabel: string | null;
+  /** @deprecated Prefer links */
   unescoUrl: string | null;
   donateUrl: string | null;
   donateLabel: string | null;
@@ -82,7 +91,10 @@ export interface PublicGapSiteSettings {
   subtitle: string;
   heroImageUrl: string;
   heroImageAlt: string;
+  links: GapSiteLink[];
+  /** @deprecated Prefer links */
   unescoLabel: string | null;
+  /** @deprecated Prefer links */
   unescoUrl: string | null;
   donateUrl: string | null;
   donateLabel: string | null;
@@ -145,7 +157,11 @@ export interface CreateGapSiteSettingsRequest {
   subtitle: string;
   heroImageUrl: string;
   heroImageAlt: string;
+  /** Up to 10 partner / external links. */
+  links?: GapSiteLink[] | null;
+  /** @deprecated Prefer links */
   unescoLabel?: string | null;
+  /** @deprecated Prefer links */
   unescoUrl?: string | null;
   donateUrl?: string | null;
   donateLabel?: string | null;

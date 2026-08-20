@@ -27,6 +27,13 @@ export async function GapHero({ settings }: GapHeroProps) {
     settings?.donateLabel?.trim() ||
     (await getTranslations('nav'))('donate');
 
+  const links =
+    settings?.links?.length
+      ? settings.links
+      : settings?.unescoLabel
+        ? [{ label: settings.unescoLabel, url: settings.unescoUrl }]
+        : [];
+
   return (
     <section className="relative isolate overflow-hidden bg-gap-forest text-white">
       {heroUrl ? (
@@ -49,21 +56,28 @@ export async function GapHero({ settings }: GapHeroProps) {
 
       <div className="relative mx-auto flex min-h-[min(72vh,640px)] max-w-6xl flex-col justify-end px-4 pb-12 pt-24 sm:px-6 sm:pb-16">
         <div className="max-w-3xl gap-animate-fade-up">
-          {settings?.unescoLabel ? (
-            <p className="mb-4 inline-flex rounded-full border border-white/25 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide backdrop-blur-sm">
-              {settings.unescoUrl ? (
-                <a
-                  href={settings.unescoUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:underline"
+          {links.length > 0 ? (
+            <div className="mb-4 flex flex-wrap gap-2">
+              {links.map((link) => (
+                <p
+                  key={`${link.label}-${link.url ?? ''}`}
+                  className="inline-flex rounded-full border border-white/25 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide backdrop-blur-sm"
                 >
-                  {settings.unescoLabel}
-                </a>
-              ) : (
-                settings.unescoLabel
-              )}
-            </p>
+                  {link.url ? (
+                    <a
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:underline"
+                    >
+                      {link.label}
+                    </a>
+                  ) : (
+                    link.label
+                  )}
+                </p>
+              ))}
+            </div>
           ) : null}
           <h1 className="text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">{title}</h1>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/85 sm:text-lg">

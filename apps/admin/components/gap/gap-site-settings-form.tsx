@@ -3,6 +3,7 @@
 import { Button, Card, Input, Textarea } from '@africatourismgate/ui';
 import type {
   CreateGapSiteSettingsRequest,
+  GapSiteLink,
   GapSiteSettings,
   GapStatus,
 } from '@africatourismgate/types';
@@ -18,14 +19,19 @@ import { resolveMediaUrl } from '../../lib/resolve-media-url';
 
 const IMAGE_MAX_BYTES = 5 * 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
+const MAX_SITE_LINKS = 10;
+
+type SiteLinkDraft = {
+  label: string;
+  url: string;
+};
 
 type SiteSettingsFormValues = {
   title: string;
   subtitle: string;
   heroImageUrl: string;
   heroImageAlt: string;
-  unescoLabel: string;
-  unescoUrl: string;
+  links: SiteLinkDraft[];
   status: GapStatus;
 };
 
@@ -34,10 +40,31 @@ const emptyValues: SiteSettingsFormValues = {
   subtitle: '',
   heroImageUrl: '',
   heroImageAlt: '',
-  unescoLabel: '',
-  unescoUrl: '',
+  links: [],
   status: 'draft',
 };
+
+function resolveSettingsLinks(settings: GapSiteSettings): SiteLinkDraft[] {
+  const fromArray = Array.isArray(settings.links) ? settings.links : [];
+  if (fromArray.length > 0) {
+    return fromArray
+      .map((item) => ({
+        label: item.label?.trim() ?? '',
+        url: item.url?.trim() ?? '',
+      }))
+      .filter((item) => item.label)
+      .slice(0, MAX_SITE_LINKS);
+  }
+  if (settings.unescoLabel?.trim()) {
+    return [
+      {
+        label: settings.unescoLabel.trim(),
+        url: settings.unescoUrl?.trim() ?? '',
+      },
+    ];
+  }
+  return [];
+}
 
 type GapSiteSettingsFormProps = {
   locale: string;
@@ -59,7 +86,7 @@ export function GapSiteSettingsForm({ locale }: GapSiteSettingsFormProps) {
   const [uploadingHero, setUploadingHero] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<
-    Partial<Record<keyof SiteSettingsFormValues, string>>
+    Partial<Record<'title' | 'subtitle' | 'heroImageUrl' | 'heroImageAlt' | 'links', string>>
   >({});
 
   const titleId = useId();
@@ -67,8 +94,6 @@ export function GapSiteSettingsForm({ locale }: GapSiteSettingsFormProps) {
   const heroInputId = useId();
   const heroImageUrlId = useId();
   const heroImageAltId = useId();
-  const unescoLabelId = useId();
-  const unescoUrlId = useId();
   const statusId = useId();
 
   const loadSettings = useCallback(async () => {
@@ -84,8 +109,7 @@ export function GapSiteSettingsForm({ locale }: GapSiteSettingsFormProps) {
           subtitle: settings.subtitle,
           heroImageUrl: settings.heroImageUrl,
           heroImageAlt: settings.heroImageAlt,
-          unescoLabel: settings.unescoLabel ?? '',
-          unescoUrl: settings.unescoUrl ?? '',
+          links: resolveSettingsLinks(settings),
           status: settings.status,
         });
       } else {
@@ -102,6 +126,29 @@ export function GapSiteSettingsForm({ locale }: GapSiteSettingsFormProps) {
   useEffect(() => {
     void loadSettings();
   }, [loadSettings]);
+
+  const updateLink = useCallback((index: number, patch: Partial<SiteLinkDraft>) => {
+    setValues((prev) => ({
+      ...prev,
+      links: prev.links.map((link, i) => (i === index ? { ...link, ...patch } : link)),
+    }));
+    setFieldErrors((prev) => ({ ...prev, links: undefined }));
+  }, []);
+
+  const addLink = useCallback(() => {
+    setValues((prev) => {
+      if (prev.links.length >= MAX_SITE_LINKS) return prev;
+      return { ...prev, links: [...prev.links, { label: '', url: '' }] };
+    });
+    setFieldErrors((prev) => ({ ...prev, links: undefined }));
+  }, []);
+
+  const removeLink = useCallback((index: number) => {
+    setValues((prev) => ({
+      ...prev,
+      links: prev.links.filter((_, i) => i !== index),
+    }));
+  }, []);
 
   async function handleHeroPick(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -154,7 +201,9 @@ export function GapSiteSettingsForm({ locale }: GapSiteSettingsFormProps) {
     event.preventDefault();
     if (!canWrite) return;
 
-    const errors: Partial<Record<keyof SiteSettingsFormValues, string>> = {};
+    const errors: Partial<
+      Record<'title' | 'subtitle' | 'heroImageUrl' | 'heroImageAlt' | 'links', string>
+    > = {};
     if (!values.title.trim()) errors.title = t('validation.titleRequired');
     if (!values.subtitle.trim()) errors.subtitle = t('validation.subtitleRequired');
     if (!values.heroImageUrl.trim()) {
@@ -163,10 +212,26 @@ export function GapSiteSettingsForm({ locale }: GapSiteSettingsFormProps) {
       errors.heroImageUrl = t('validation.heroImageUrlInvalid');
     }
     if (!values.heroImageAlt.trim()) errors.heroImageAlt = t('validation.heroImageAltRequired');
-    const unescoUrl = values.unescoUrl.trim();
-    if (unescoUrl && !isValidMediaUrl(unescoUrl)) {
-      errors.unescoUrl = t('validation.unescoUrlInvalid');
+
+    const normalizedLinks: GapSiteLink[] = [];
+    for (const link of values.links) {
+      const label = link.label.trim();
+      const url = link.url.trim();
+      if (!label && !url) continue;
+      if (!label) {
+        errors.links = t('validation.linkLabelRequired');
+        break;
+      }
+      if (url && !isValidMediaUrl(url)) {
+        errors.links = t('validation.linkUrlInvalid');
+        break;
+      }
+      normalizedLinks.push({ label, url: url || null });
     }
+    if (normalizedLinks.length > MAX_SITE_LINKS) {
+      errors.links = t('validation.maxLinks');
+    }
+
     setFieldErrors(errors);
     if (Object.keys(errors).length > 0) return;
 
@@ -178,8 +243,9 @@ export function GapSiteSettingsForm({ locale }: GapSiteSettingsFormProps) {
       subtitle: values.subtitle.trim(),
       heroImageUrl: values.heroImageUrl.trim(),
       heroImageAlt: values.heroImageAlt.trim(),
-      unescoLabel: values.unescoLabel.trim() || null,
-      unescoUrl: unescoUrl || null,
+      links: normalizedLinks,
+      unescoLabel: normalizedLinks[0]?.label ?? null,
+      unescoUrl: normalizedLinks[0]?.url ?? null,
       status: values.status,
       locale,
     };
@@ -192,6 +258,13 @@ export function GapSiteSettingsForm({ locale }: GapSiteSettingsFormProps) {
         const created = await client.createGapSiteSettings(payload);
         setSettingsId(created.id);
       }
+      setValues((prev) => ({
+        ...prev,
+        links: normalizedLinks.map((link) => ({
+          label: link.label,
+          url: link.url ?? '',
+        })),
+      }));
     } catch (err) {
       setError(getGapErrorMessage(err));
     } finally {
@@ -204,6 +277,7 @@ export function GapSiteSettingsForm({ locale }: GapSiteSettingsFormProps) {
   }
 
   const busy = saving || uploadingHero;
+  const canAddLink = values.links.length < MAX_SITE_LINKS;
 
   return (
     <Card className="p-6">
@@ -337,34 +411,69 @@ export function GapSiteSettingsForm({ locale }: GapSiteSettingsFormProps) {
           </div>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label htmlFor={unescoLabelId} className="mb-1 block text-sm font-medium">
-              {t('fields.unescoLabel')}
-            </label>
-            <Input
-              id={unescoLabelId}
-              value={values.unescoLabel}
-              onChange={(e) => setValues((prev) => ({ ...prev, unescoLabel: e.target.value }))}
-              disabled={!canWrite}
-            />
+        <div className="space-y-3">
+          <div className="flex items-baseline justify-between gap-3">
+            <div>
+              <p className="text-sm font-medium">{t('fields.links')}</p>
+              <p className="mt-0.5 text-xs text-atg-muted">{t('fields.linksHint')}</p>
+            </div>
+            <p className="text-xs text-atg-muted">
+              {t('fields.linksCount', {
+                count: values.links.length,
+                max: MAX_SITE_LINKS,
+              })}
+            </p>
           </div>
-          <div>
-            <label htmlFor={unescoUrlId} className="mb-1 block text-sm font-medium">
-              {t('fields.unescoUrl')}
-            </label>
-            <Input
-              id={unescoUrlId}
-              type="url"
-              value={values.unescoUrl}
-              onChange={(e) => setValues((prev) => ({ ...prev, unescoUrl: e.target.value }))}
-              disabled={!canWrite}
-              aria-invalid={Boolean(fieldErrors.unescoUrl)}
-            />
-            {fieldErrors.unescoUrl ? (
-              <p className="mt-1 text-sm text-destructive">{fieldErrors.unescoUrl}</p>
-            ) : null}
-          </div>
+
+          {values.links.length > 0 ? (
+            <ul className="space-y-3">
+              {values.links.map((link, index) => (
+                <li
+                  key={`link-${index}`}
+                  className="grid gap-3 rounded-lg border border-atg-border p-3 sm:grid-cols-[1fr_1fr_auto]"
+                >
+                  <Input
+                    label={t('fields.linkLabel')}
+                    value={link.label}
+                    onChange={(e) => updateLink(index, { label: e.target.value })}
+                    placeholder={t('fields.linkLabelPlaceholder')}
+                    disabled={!canWrite}
+                  />
+                  <Input
+                    label={t('fields.linkUrl')}
+                    type="url"
+                    value={link.url}
+                    onChange={(e) => updateLink(index, { url: e.target.value })}
+                    placeholder={tCommonForm('urlPlaceholder')}
+                    disabled={!canWrite}
+                  />
+                  {canWrite ? (
+                    <div className="flex items-end">
+                      <button
+                        type="button"
+                        onClick={() => removeLink(index)}
+                        className="text-xs font-medium text-red-600 hover:underline dark:text-red-400"
+                      >
+                        {t('fields.removeLink')}
+                      </button>
+                    </div>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-atg-muted">{t('fields.linksEmpty')}</p>
+          )}
+
+          {canWrite && canAddLink ? (
+            <Button type="button" variant="outline" onClick={addLink} disabled={busy}>
+              {t('fields.addLink')}
+            </Button>
+          ) : null}
+
+          {fieldErrors.links ? (
+            <p className="text-sm text-destructive">{fieldErrors.links}</p>
+          ) : null}
         </div>
 
         {error ? <p className="text-sm text-destructive">{error}</p> : null}
