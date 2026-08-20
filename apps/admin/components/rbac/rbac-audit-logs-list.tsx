@@ -20,7 +20,8 @@ import type {
   User,
 } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { getApiClient } from '../../lib/auth/api';
 import { useFormatDateTime } from '../../lib/i18n/use-module-labels';
 import { UserIdFilterBar } from '../users/user-id-filter-bar';
@@ -342,6 +343,7 @@ export function RbacAuditLogsList({
   const t = useTranslations('modules.rbac.audit');
   const tFilters = useTranslations('modules.common.filters');
   const { toast } = useToast();
+  const searchParams = useSearchParams();
   const [page, setPage] = useState(1);
   const limit = pageSize > 0 ? pageSize : DEFAULT_PAGE_SIZE;
   const [filterTick, setFilterTick] = useState(0);
@@ -353,10 +355,11 @@ export function RbacAuditLogsList({
   const [appliedDateTo, setAppliedDateTo] = useState('');
   const [appliedEventType, setAppliedEventType] = useState<RbacAuditEventType | ''>('');
   const [appliedActorUserId, setAppliedActorUserId] = useState('');
-  const [userIdFilter, setUserIdFilter] = useState('');
-  const [dateFromFilter, setDateFromFilter] = useState('');
-  const [dateToFilter, setDateToFilter] = useState('');
   const [users, setUsers] = useState<User[]>([]);
+  const loadSeqRef = useRef(0);
+  const urlUserId = searchParams.get('userId')?.trim() ?? '';
+  const urlDateFrom = searchParams.get('dateFrom')?.trim() ?? '';
+  const urlDateTo = searchParams.get('dateTo')?.trim() ?? '';
   const [access, setAccess] = useState<
     | { status: 'checking' }
     | { status: 'denied' }
@@ -413,17 +416,12 @@ export function RbacAuditLogsList({
     };
   }, [access.status, showFilterBar, userFilterMode]);
 
-  const handleUserIdChange = useCallback((userId: string) => {
-    setUserIdFilter(userId);
+  const handleUserIdChange = useCallback((_userId: string) => {
     setPage(1);
-    setFilterTick((tick) => tick + 1);
   }, []);
 
-  const handleDateRangeChange = useCallback((dateFrom: string, dateTo: string) => {
-    setDateFromFilter(dateFrom);
-    setDateToFilter(dateTo);
+  const handleDateRangeChange = useCallback((_dateFrom: string, _dateTo: string) => {
     setPage(1);
-    setFilterTick((tick) => tick + 1);
   }, []);
 
   const activeFilterCount = useMemo(() => {
@@ -468,6 +466,7 @@ export function RbacAuditLogsList({
   const load = useCallback(async () => {
     void filterTick;
     if (access.status !== 'allowed') return;
+    const seq = ++loadSeqRef.current;
     setState({ status: 'loading' });
     try {
       const result = await getApiClient().listRbacAuditLogs({
@@ -475,15 +474,16 @@ export function RbacAuditLogsList({
         limit,
         dateFrom: showFilterBar
           ? appliedDateFrom || undefined
-          : dateFromFilter || undefined,
-        dateTo: showFilterBar ? appliedDateTo || undefined : dateToFilter || undefined,
+          : urlDateFrom || undefined,
+        dateTo: showFilterBar ? appliedDateTo || undefined : urlDateTo || undefined,
         eventType: showFilterBar ? appliedEventType || undefined : undefined,
         actorUserId:
           showFilterBar && userFilterMode === 'actor'
             ? appliedActorUserId || undefined
             : undefined,
-        userId: userFilterMode === 'involved' ? userIdFilter || undefined : undefined,
+        userId: userFilterMode === 'involved' ? urlUserId || undefined : undefined,
       });
+      if (seq !== loadSeqRef.current) return;
       setState({
         status: 'ready',
         logs: result.data,
@@ -491,6 +491,7 @@ export function RbacAuditLogsList({
         totalPages: result.meta.totalPages,
       });
     } catch (error) {
+      if (seq !== loadSeqRef.current) return;
       const message = getRbacErrorMessage(error);
       setState({ status: 'error', message });
       toast({
@@ -508,9 +509,9 @@ export function RbacAuditLogsList({
     appliedDateTo,
     appliedEventType,
     appliedActorUserId,
-    dateFromFilter,
-    dateToFilter,
-    userIdFilter,
+    urlDateFrom,
+    urlDateTo,
+    urlUserId,
     userFilterMode,
     filterTick,
     toast,

@@ -43,13 +43,13 @@ export class RbacAuditLogsService {
       );
     }
     if (query.dateFrom) {
-      qb.andWhere('log.createdAt >= :dateFrom', {
-        dateFrom: `${query.dateFrom}T00:00:00.000Z`,
+      qb.andWhere('DATE(log.createdAt) >= :dateFrom', {
+        dateFrom: query.dateFrom,
       });
     }
     if (query.dateTo) {
-      qb.andWhere('log.createdAt <= :dateTo', {
-        dateTo: `${query.dateTo}T23:59:59.999Z`,
+      qb.andWhere('DATE(log.createdAt) <= :dateTo', {
+        dateTo: query.dateTo,
       });
     }
 
