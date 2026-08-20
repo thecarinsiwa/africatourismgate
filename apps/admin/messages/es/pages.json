@@ -45,7 +45,10 @@
         "backLabel": "Volver a empleados"
       },
       "id": {
-        "metaTitle": "Editar empleado"
+        "metaTitle": "Editar empleado",
+        "voir": {
+          "metaTitle": "Ver empleado"
+        }
       }
     },
     "adresses": {

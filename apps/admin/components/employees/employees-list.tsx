@@ -284,6 +284,7 @@ export function EmployeesList({
         const employee = row.original;
         return (
           <DataTableActions className="opacity-90 transition-opacity group-hover:opacity-100">
+            <DataTableActionButton action="view" href={`/utilisateurs/employes/${employee.id}/voir`} />
             <DataTableActionButton action="edit" href={`/utilisateurs/employes/${employee.id}`} />
             <DataTableActionButton
               action="delete"

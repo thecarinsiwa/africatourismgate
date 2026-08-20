@@ -21,5 +21,28 @@
   "filters": {
     "status": "Estado",
     "organization": "Organización"
+  },
+  "detail": {
+    "viewTitle": "Ver empleado",
+    "editButton": "Editar",
+    "viewButton": "Ver",
+    "fallbackLabel": "Empleado",
+    "profileIntro": "Información del perfil de empleado en solo lectura.",
+    "sections": {
+      "info": "Información"
+    },
+    "fields": {
+      "linkedUser": "Usuario vinculado",
+      "status": "Estado",
+      "organization": "Organización",
+      "employeeCode": "Código de empleado",
+      "jobTitle": "Puesto",
+      "department": "Departamento",
+      "hireDate": "Fecha de contratación",
+      "terminationDate": "Fecha de fin",
+      "salary": "Salario",
+      "createdAt": "Creado el",
+      "updatedAt": "Modificado el"
+    }
   }
 }

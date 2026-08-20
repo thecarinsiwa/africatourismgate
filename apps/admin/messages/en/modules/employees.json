@@ -21,5 +21,28 @@
   "filters": {
     "status": "Status",
     "organization": "Organization"
+  },
+  "detail": {
+    "viewTitle": "View employee",
+    "editButton": "Edit",
+    "viewButton": "View",
+    "fallbackLabel": "Employee",
+    "profileIntro": "Employee profile details in read-only mode.",
+    "sections": {
+      "info": "Details"
+    },
+    "fields": {
+      "linkedUser": "Linked user",
+      "status": "Status",
+      "organization": "Organization",
+      "employeeCode": "Employee code",
+      "jobTitle": "Job title",
+      "department": "Department",
+      "hireDate": "Hire date",
+      "terminationDate": "End date",
+      "salary": "Salary",
+      "createdAt": "Created at",
+      "updatedAt": "Updated at"
+    }
   }
 }
