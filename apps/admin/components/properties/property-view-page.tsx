@@ -14,6 +14,7 @@ import {
   DataTableActionButton,
   DataTableActions,
   DataTableBadge,
+  Input,
   Skeleton,
   type ColumnDef,
 } from '@africatourismgate/ui';
@@ -60,6 +61,7 @@ export function PropertyViewPage({ propertyId }: PropertyViewPageProps) {
   const [property, setProperty] = useState<Property | null>(null);
   const [destinationName, setDestinationName] = useState<string | null>(null);
   const [rooms, setRooms] = useState<Room[]>([]);
+  const [roomSearch, setRoomSearch] = useState('');
   const [amenities, setAmenities] = useState<Amenity[]>([]);
   const [images, setImages] = useState<PropertyImage[]>([]);
   const [state, setState] = useState<
@@ -182,10 +184,29 @@ export function PropertyViewPage({ propertyId }: PropertyViewPageProps) {
     [emptyDash, propertyId, tActions, tColumns, tCommon, tRooms],
   );
 
-  const sortedRooms = useMemo(
-    () => [...rooms].sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })),
-    [rooms],
-  );
+  const filteredRooms = useMemo(() => {
+    const query = roomSearch.trim().toLowerCase();
+    const sorted = [...rooms].sort((a, b) =>
+      a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }),
+    );
+    if (!query) return sorted;
+
+    return sorted.filter((room) => {
+      const haystack = [
+        room.name,
+        room.roomType,
+        room.bedConfig,
+        room.currency,
+        String(room.maxGuests),
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+      return haystack.includes(query);
+    });
+  }, [rooms, roomSearch]);
+
+  const hasRoomSearch = roomSearch.trim().length > 0;
 
   if (state.status === 'loading') {
     return (
@@ -306,7 +327,9 @@ export function PropertyViewPage({ propertyId }: PropertyViewPageProps) {
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <h3 className="text-lg font-semibold text-atg-fg">{tRooms('title')}</h3>
-              <DataTableBadge variant="muted">{rooms.length}</DataTableBadge>
+              <DataTableBadge variant="muted">
+                {hasRoomSearch ? `${filteredRooms.length}/${rooms.length}` : rooms.length}
+              </DataTableBadge>
             </div>
             <p className="mt-1 text-sm text-atg-muted">
               {tView('roomsIntro', { count: rooms.length })}
@@ -316,11 +339,23 @@ export function PropertyViewPage({ propertyId }: PropertyViewPageProps) {
             {tRooms('editRoom')}
           </Button>
         </div>
+        {rooms.length > 0 ? (
+          <div className="max-w-md">
+            <Input
+              type="search"
+              placeholder={tRooms('searchPlaceholder')}
+              value={roomSearch}
+              onChange={(e) => setRoomSearch(e.target.value)}
+              aria-label={tRooms('searchPlaceholder')}
+            />
+          </div>
+        ) : null}
         <Card variant="dashboard" padding="none" className="overflow-hidden">
           <DataTable
             columns={roomColumns}
-            data={sortedRooms}
-            emptyMessage={tRooms('empty')}
+            data={filteredRooms}
+            emptyMessage={hasRoomSearch ? tRooms('searchEmpty') : tRooms('empty')}
+            emptyVariant={hasRoomSearch ? 'search' : 'default'}
             getRowId={(row) => row.id}
             aria-label={tRooms('title')}
             loadingMessage={tCommon('dataTable.loading')}

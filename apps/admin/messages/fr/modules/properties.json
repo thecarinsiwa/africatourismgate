@@ -112,6 +112,8 @@
       "roomTypePlaceholder": "standard, suite…",
       "maxCapacity": "Capacité max.",
       "bedConfig": "Configuration lits",
+      "searchPlaceholder": "Rechercher une chambre…",
+      "searchEmpty": "Aucune chambre ne correspond à votre recherche.",
       "empty": "Aucune chambre.",
       "deleteConfirm": "Supprimer la chambre « {name} » ?",
       "deleteTitle": "Supprimer la chambre",

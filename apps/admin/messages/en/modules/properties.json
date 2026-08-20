@@ -112,6 +112,8 @@
       "roomTypePlaceholder": "standard, suite…",
       "maxCapacity": "Max capacity",
       "bedConfig": "Bed configuration",
+      "searchPlaceholder": "Search rooms…",
+      "searchEmpty": "No rooms match your search.",
       "empty": "No rooms yet.",
       "deleteConfirm": "Delete room « {name} »?",
       "deleteTitle": "Delete room",
