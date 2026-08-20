@@ -197,64 +197,66 @@ export function PropertyViewPage({ propertyId }: PropertyViewPageProps) {
         </div>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-start">
-        <Card variant="dashboard" padding="md">
-          <h3 className="text-sm font-semibold text-atg-fg">{tView('infoTitle')}</h3>
-          <dl className="mt-3 grid gap-x-6 gap-y-3 sm:grid-cols-2">
-            <ProfileField
-              label={tPropForm('destination')}
-              value={destinationName ?? emptyDash}
-            />
-            <ProfileField label={tPropForm('slug')} value={property.slug} />
-            <ProfileField
-              label={tPropColumns('propertyType')}
-              value={propertyTypeLabels[property.propertyType]}
-            />
-            <ProfileField
-              label={tPropForm('starRating')}
-              value={
-                property.starRating != null && Number(property.starRating) > 0
-                  ? `${property.starRating} ★`
-                  : emptyDash
-              }
-            />
-            <ProfileField
-              label={tPropForm('address')}
-              value={property.addressLine?.trim() || emptyDash}
-            />
-            <ProfileField
-              label={tDates('createdAt')}
-              value={formatDateTime(property.createdAt)}
-            />
-            <ProfileField
-              label={tDates('updatedAt')}
-              value={property.updatedAt ? formatDateTime(property.updatedAt) : emptyDash}
-            />
-            <div className="min-w-0 sm:col-span-2">
-              <dt className="text-[11px] font-medium uppercase tracking-wide text-atg-muted">
-                {tView('description')}
-              </dt>
-              <dd className="mt-0.5 text-sm text-atg-fg">
-                {property.description?.trim() ? (
-                  <p className="whitespace-pre-wrap">{property.description}</p>
-                ) : (
-                  emptyDash
-                )}
-              </dd>
-            </div>
-          </dl>
-        </Card>
-
-        <Card variant="dashboard" padding="md">
-          <h3 className="text-sm font-semibold text-atg-fg">{tView('imagesTitle')}</h3>
-          <p className="mt-1 text-xs text-atg-muted">
-            {tView('imagesIntro', { count: images.length })}
-          </p>
-          <div className="mt-3">
-            <PropertyPhotosCarousel images={images} altFallback={property.name} />
+      <Card variant="dashboard" padding="sm">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,18rem)] lg:items-start xl:grid-cols-[minmax(0,1fr)_minmax(0,20rem)]">
+          <div className="min-w-0">
+            <h3 className="text-sm font-semibold text-atg-fg">{tView('infoTitle')}</h3>
+            <dl className="mt-3 grid gap-x-6 gap-y-2.5 sm:grid-cols-2">
+              <ProfileField
+                label={tPropForm('destination')}
+                value={destinationName ?? emptyDash}
+              />
+              <ProfileField label={tPropForm('slug')} value={property.slug} />
+              <ProfileField
+                label={tPropColumns('propertyType')}
+                value={propertyTypeLabels[property.propertyType]}
+              />
+              <ProfileField
+                label={tPropForm('starRating')}
+                value={
+                  property.starRating != null && Number(property.starRating) > 0
+                    ? `${property.starRating} ★`
+                    : emptyDash
+                }
+              />
+              <ProfileField
+                label={tPropForm('address')}
+                value={property.addressLine?.trim() || emptyDash}
+              />
+              <ProfileField
+                label={tDates('createdAt')}
+                value={formatDateTime(property.createdAt)}
+              />
+              <ProfileField
+                label={tDates('updatedAt')}
+                value={property.updatedAt ? formatDateTime(property.updatedAt) : emptyDash}
+              />
+              <div className="min-w-0 sm:col-span-2">
+                <dt className="text-[11px] font-medium uppercase tracking-wide text-atg-muted">
+                  {tView('description')}
+                </dt>
+                <dd className="mt-0.5 text-sm text-atg-fg">
+                  {property.description?.trim() ? (
+                    <p className="whitespace-pre-wrap">{property.description}</p>
+                  ) : (
+                    emptyDash
+                  )}
+                </dd>
+              </div>
+            </dl>
           </div>
-        </Card>
-      </div>
+
+          <div className="min-w-0 lg:border-l lg:border-atg-border lg:pl-6">
+            <h3 className="text-sm font-semibold text-atg-fg">{tView('imagesTitle')}</h3>
+            <p className="mt-0.5 text-xs text-atg-muted">
+              {tView('imagesIntro', { count: images.length })}
+            </p>
+            <div className="mt-2">
+              <PropertyPhotosCarousel images={images} altFallback={property.name} />
+            </div>
+          </div>
+        </div>
+      </Card>
 
       <section className="space-y-4">
         <div>
