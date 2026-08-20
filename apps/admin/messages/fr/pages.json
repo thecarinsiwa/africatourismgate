@@ -402,7 +402,8 @@
       "description": "Statistiques d'impact affichées sur le site GAP. Accès : gap.read / gap.write.",
       "nouveau": {
         "metaTitle": "Nouvelle statistique d'impact",
-        "description": "Ajoutez une statistique d'impact."
+        "description": "Ajoutez une statistique d'impact.",
+        "backLabel": "Retour à l'impact"
       },
       "id": {
         "metaTitle": "Modifier la statistique d'impact"
