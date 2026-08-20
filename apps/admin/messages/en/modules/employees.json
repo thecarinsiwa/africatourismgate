@@ -60,6 +60,7 @@
     "employeeCodeHintEdit": "The employee code does not change after creation.",
     "jobTitle": "Job title",
     "department": "Department",
+    "departmentHint": "Pick a suggestion or type a new department.",
     "hireDate": "Hire date",
     "terminationDate": "End date",
     "salary": "Salary",

@@ -60,6 +60,7 @@
     "employeeCodeHintEdit": "Le matricule ne change pas après la création.",
     "jobTitle": "Poste",
     "department": "Département",
+    "departmentHint": "Choisissez une suggestion ou saisissez un nouveau département.",
     "hireDate": "Date d'embauche",
     "terminationDate": "Date de fin",
     "salary": "Salaire",

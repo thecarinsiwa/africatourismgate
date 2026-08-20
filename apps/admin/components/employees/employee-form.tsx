@@ -126,6 +126,7 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
   const orgId = useId();
   const managerId = useId();
   const statusId = useId();
+  const departmentListId = useId();
   const [values, setValues] = useState<EmployeeFormValues>(() => {
     if (initialEmployee) {
       return employeeToFormValues(initialEmployee);
@@ -139,6 +140,7 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
   const [organizations, setOrganizations] = useState<OrganizationListItem[]>([]);
   const [existingEmployees, setExistingEmployees] = useState<Employee[]>([]);
   const [managers, setManagers] = useState<Employee[]>([]);
+  const [departments, setDepartments] = useState<string[]>([]);
   const [fieldErrors, setFieldErrors] = useState<
     Partial<Record<keyof EmployeeFormValues, string>>
   >({});
@@ -151,11 +153,13 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
     async function loadLookups() {
       try {
         const client = getApiClient();
-        const [usersResult, orgsResult, employeesResult] = await Promise.all([
-          client.listUsers({ page: 1, limit: 100, status: 'active' }),
-          client.listOrganizations({ page: 1, limit: 100 }),
-          client.listEmployees({ page: 1, limit: 100 }),
-        ]);
+        const [usersResult, orgsResult, employeesResult, departmentsResult] =
+          await Promise.all([
+            client.listUsers({ page: 1, limit: 100, status: 'active' }),
+            client.listOrganizations({ page: 1, limit: 100 }),
+            client.listEmployees({ page: 1, limit: 100 }),
+            client.listEmployeeDepartments(),
+          ]);
         if (!cancelled) {
           setUsers(usersResult.data);
           setOrganizations(orgsResult.data);
@@ -163,6 +167,7 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
           setManagers(
             employeesResult.data.filter((e) => e.id !== employeeId && e.status !== 'terminated'),
           );
+          setDepartments(departmentsResult);
         }
       } catch {
         if (!cancelled) {
@@ -170,6 +175,7 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
           setOrganizations([]);
           setExistingEmployees([]);
           setManagers([]);
+          setDepartments([]);
         }
       }
     }
@@ -178,6 +184,14 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
       cancelled = true;
     };
   }, [employeeId]);
+
+  const departmentOptions = useMemo(() => {
+    const current = values.department.trim();
+    if (!current || departments.includes(current)) {
+      return departments;
+    }
+    return [...departments, current].sort((a, b) => a.localeCompare(b));
+  }, [departments, values.department]);
 
   const suggestedEmployeeCode = useMemo(() => {
     if (mode !== 'create') return null;
@@ -371,14 +385,23 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
         />
       </div>
 
-      <Input
-        label={tForm('department')}
-        name="department"
-        value={values.department}
-        onChange={(e) => updateField('department', e.target.value)}
-        maxLength={100}
-      />
-
+      <div>
+        <Input
+          label={tForm('department')}
+          name="department"
+          value={values.department}
+          onChange={(e) => updateField('department', e.target.value)}
+          maxLength={100}
+          list={departmentListId}
+          hint={tForm('departmentHint')}
+          autoComplete="off"
+        />
+        <datalist id={departmentListId}>
+          {departmentOptions.map((department) => (
+            <option key={department} value={department} />
+          ))}
+        </datalist>
+      </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <Input
           label={tForm('hireDate')}

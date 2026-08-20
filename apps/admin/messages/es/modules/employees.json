@@ -60,6 +60,7 @@
     "employeeCodeHintEdit": "El código de empleado no cambia después de la creación.",
     "jobTitle": "Puesto",
     "department": "Departamento",
+    "departmentHint": "Elija una sugerencia o escriba un nuevo departamento.",
     "hireDate": "Fecha de contratación",
     "terminationDate": "Fecha de fin",
     "salary": "Salario",
