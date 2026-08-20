@@ -12,13 +12,17 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useId, useState } from 'react';
 import { isValidMediaUrl } from '../../lib/about/form-utils';
-import { getApiClient } from '../../lib/auth/api';
+import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
+import { getSession } from '../../lib/auth/session';
 import { GAP_ACTIVITY_ICON_KEYS } from '../../lib/gap/constants';
 import { useGapPermissions } from '../../lib/gap/use-gap-permissions';
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 import { isRichTextEmpty } from '../../lib/rich-text';
 import { resolveMediaUrl } from '../../lib/resolve-media-url';
 import { RichTextEditor } from '../rich-text-editor';
+
+const IMAGE_MAX_BYTES = 5 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
 export type GapActivityFormValues = {
   title: string;
@@ -83,12 +87,14 @@ export function GapActivityForm({
   const tIcons = useTranslations('modules.gap.activityIcons');
   const tCommon = useTranslations('modules.common');
   const tCommonForm = useTranslations('modules.common.form');
+  const tValidation = useTranslations('modules.common.validation');
   const tLocale = useTranslations('modules.about.locale');
   const tStatus = useTranslations('modules.about.status');
   const router = useRouter();
 
   const titleId = useId();
   const iconKeyId = useId();
+  const imageInputId = useId();
   const sortOrderId = useId();
   const statusId = useId();
   const localeId = useId();
@@ -103,6 +109,7 @@ export function GapActivityForm({
   >({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   const updateField = useCallback(
     <K extends keyof GapActivityFormValues>(key: K, value: GapActivityFormValues[K]) => {
@@ -111,6 +118,43 @@ export function GapActivityForm({
     },
     [],
   );
+
+  async function handleImagePick(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    try {
+      if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
+        setFieldErrors((prev) => ({ ...prev, imageUrl: tValidation('imageFormat') }));
+        return;
+      }
+      if (file.size > IMAGE_MAX_BYTES) {
+        setFieldErrors((prev) => ({ ...prev, imageUrl: tValidation('imageTooLarge') }));
+        return;
+      }
+      const session = getSession();
+      if (!session?.accessToken) {
+        setFieldErrors((prev) => ({ ...prev, imageUrl: tValidation('sessionExpiredRetry') }));
+        return;
+      }
+      setUploadingImage(true);
+      const body = new FormData();
+      body.append('file', file);
+      const response = await fetch(`${resolveApiBaseUrl()}/gap-activities/upload-image`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${session.accessToken}` },
+        body,
+      });
+      if (!response.ok) throw new Error('Upload failed');
+      const payload = (await response.json()) as { url?: string };
+      if (!payload.url) throw new Error('Invalid upload response');
+      updateField('imageUrl', payload.url);
+    } catch {
+      setFieldErrors((prev) => ({ ...prev, imageUrl: tValidation('uploadFailed') }));
+    } finally {
+      setUploadingImage(false);
+      event.target.value = '';
+    }
+  }
 
   const validate = (): boolean => {
     const errors: Partial<Record<keyof GapActivityFormValues, string>> = {};
@@ -214,7 +258,26 @@ export function GapActivityForm({
       </div>
 
       <div className="space-y-3">
-        <p className="text-sm font-medium">{t('fields.imageUrl')}</p>
+        <p className="text-sm font-medium">{t('fields.image')}</p>
+        {canWrite ? (
+          <div className="flex flex-wrap items-center gap-3">
+            <label
+              htmlFor={imageInputId}
+              className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10"
+            >
+              {uploadingImage ? tCommonForm('uploading') : tCommonForm('chooseFile')}
+              <input
+                id={imageInputId}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="hidden"
+                onChange={(e) => void handleImagePick(e)}
+                disabled={uploadingImage || saving}
+              />
+            </label>
+            <span className="text-xs text-atg-muted">{tCommonForm('imageFormatHint')}</span>
+          </div>
+        ) : null}
         {values.imageUrl.trim() ? (
           <Image
             src={resolveMediaUrl(values.imageUrl.trim())}
@@ -285,7 +348,7 @@ export function GapActivityForm({
 
       {canWrite ? (
         <div className="flex flex-wrap gap-3">
-          <Button type="submit" disabled={saving}>
+          <Button type="submit" disabled={saving || uploadingImage}>
             {saving ? t('saving') : mode === 'create' ? t('createButton') : t('saveButton')}
           </Button>
           <Button type="button" variant="outline" href="/gap/activites">

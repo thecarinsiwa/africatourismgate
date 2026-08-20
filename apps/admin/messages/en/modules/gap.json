@@ -147,6 +147,7 @@
         "description": "Description",
         "descriptionPlaceholder": "Describe the activity…",
         "iconKey": "Icon",
+        "image": "Image",
         "imageUrl": "Image (URL)",
         "imagePreviewAlt": "Image preview",
         "sortOrder": "Display order",
