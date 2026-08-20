@@ -233,6 +233,12 @@
     "edit": {
       "pageTitle": "Edit media"
     },
+    "detail": {
+      "title": "Media details",
+      "close": "Close",
+      "edit": "Edit",
+      "openUrl": "Open link"
+    },
     "form": {
       "validation": {
         "titleRequired": "Title is required.",

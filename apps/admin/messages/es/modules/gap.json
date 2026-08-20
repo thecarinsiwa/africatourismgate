@@ -233,6 +233,12 @@
     "edit": {
       "pageTitle": "Modificar el medio"
     },
+    "detail": {
+      "title": "Detalle del medio",
+      "close": "Cerrar",
+      "edit": "Editar",
+      "openUrl": "Abrir enlace"
+    },
     "form": {
       "validation": {
         "titleRequired": "El título es obligatorio.",
