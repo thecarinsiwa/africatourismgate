@@ -4,7 +4,7 @@ import { Button, Modal } from '@africatourismgate/ui';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect } from 'react';
-import { resolveMediaUrl } from '../../lib/resolve-media-url';
+import { resolveMediaUrl } from '../lib/resolve-media-url';
 
 export type AdminImageViewerItem = {
   id: string;
