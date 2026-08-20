@@ -23,7 +23,6 @@ import {
   useFormatPoints,
   useLoyaltyTierLabels,
 } from '../../lib/i18n/use-module-labels';
-import { LoyaltySummaryCards } from './loyalty-summary-cards';
 import { LoyaltyTierProgress } from './loyalty-tier-progress';
 import { LoyaltyTransactionHistoryPanel } from './loyalty-transaction-history-panel';
 
@@ -296,8 +295,6 @@ export function LoyaltyAccountsList() {
 
   return (
     <div className="space-y-6">
-      <LoyaltySummaryCards />
-
       {isError ? (
         <p className="text-sm text-red-600 dark:text-red-400" role="alert">
           {state.message}
