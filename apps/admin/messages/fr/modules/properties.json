@@ -129,6 +129,7 @@
       "emptyGlobal": "Aucun équipement global.",
       "createLink": "Créer des équipements",
       "editAmenities": "Modifier la sélection",
+      "selectedCount": "{count, plural, =0 {Aucun sélectionné} one {# sélectionné} other {# sélectionnés}}",
       "searchPlaceholder": "Rechercher un équipement…",
       "searchEmpty": "Aucun équipement ne correspond à votre recherche."
     },

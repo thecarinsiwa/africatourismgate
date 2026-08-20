@@ -129,6 +129,7 @@
       "emptyGlobal": "No global amenities yet.",
       "createLink": "Create amenities",
       "editAmenities": "Edit selection",
+      "selectedCount": "{count, plural, =0 {None selected} one {# selected} other {# selected}}",
       "searchPlaceholder": "Search amenities…",
       "searchEmpty": "No amenities match your search."
     },
