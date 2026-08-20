@@ -77,6 +77,9 @@ export function EmployeesList({
   const [page, setPage] = useState(1);
   const [organizations, setOrganizations] = useState<OrganizationListItem[]>([]);
   const [departments, setDepartments] = useState<string[]>([]);
+  const departmentsOrganizationId =
+    lockedOrganizationId || organizationFilter || undefined;
+
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -94,19 +97,30 @@ export function EmployeesList({
   useEffect(() => {
     let cancelled = false;
     async function loadDepartments() {
+      if (!departmentsOrganizationId) {
+        if (!cancelled) {
+          setDepartments([]);
+          setDepartmentFilter('');
+        }
+        return;
+      }
       try {
-        const organizationId = lockedOrganizationId || organizationFilter || undefined;
         const result = await getApiClient().listDepartments({
           page: 1,
           limit: 100,
-          organizationId,
+          organizationId: departmentsOrganizationId,
         });
         if (!cancelled) {
-          setDepartments(result.data.map((department) => department.name));
+          const names = result.data.map((department) => department.name);
+          setDepartments(names);
+          setDepartmentFilter((current) =>
+            current && !names.includes(current) ? '' : current,
+          );
         }
       } catch {
         if (!cancelled) {
           setDepartments([]);
+          setDepartmentFilter('');
         }
       }
     }
@@ -114,7 +128,7 @@ export function EmployeesList({
     return () => {
       cancelled = true;
     };
-  }, [lockedOrganizationId, organizationFilter]);
+  }, [departmentsOrganizationId]);
 
   useEffect(() => {
     if (lockedOrganizationId) {
@@ -433,6 +447,7 @@ export function EmployeesList({
                 value={organizationFilter}
                 onChange={(e) => {
                   setOrganizationFilter(e.target.value);
+                  setDepartmentFilter('');
                   setPage(1);
                 }}
                 className="w-full min-w-[180px] rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
@@ -457,9 +472,17 @@ export function EmployeesList({
                 setDepartmentFilter(e.target.value);
                 setPage(1);
               }}
-              className="w-full min-w-[160px] rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
+              disabled={!departmentsOrganizationId}
+              title={
+                !departmentsOrganizationId ? tFilters('departmentNeedsOrganization') : undefined
+              }
+              className="w-full min-w-[160px] rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-60"
             >
-              <option value="">{tCommonFilters('all')}</option>
+              <option value="">
+                {departmentsOrganizationId
+                  ? tCommonFilters('all')
+                  : tFilters('departmentNeedsOrganization')}
+              </option>
               {departments.map((department) => (
                 <option key={department} value={department}>
                   {department}

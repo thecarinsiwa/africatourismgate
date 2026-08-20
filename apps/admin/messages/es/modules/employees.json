@@ -22,7 +22,8 @@
   "filters": {
     "status": "Estado",
     "organization": "Organización",
-    "department": "Departamento"
+    "department": "Departamento",
+    "departmentNeedsOrganization": "Seleccione una organización"
   },
   "detail": {
     "viewTitle": "Ver empleado",
@@ -60,7 +61,8 @@
     "employeeCodeHintEdit": "El código de empleado no cambia después de la creación.",
     "jobTitle": "Puesto",
     "department": "Departamento",
-    "departmentHint": "Elija una sugerencia o escriba un nuevo departamento.",
+    "departmentHint": "Elija una sugerencia de la organización o escriba un nuevo departamento.",
+    "departmentNeedsOrganization": "Seleccione primero una organización para ver las sugerencias.",
     "hireDate": "Fecha de contratación",
     "terminationDate": "Fecha de fin",
     "salary": "Salario",

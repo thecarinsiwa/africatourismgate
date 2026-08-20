@@ -203,10 +203,10 @@ export class TourGuides extends BaseAuditEntity {
   photoUrl!: string | null;
 
   @Column({ type: 'json', name: 'languages' })
-  languages!: Record<string, unknown>;
+  languages!: string[];
 
   @Column({ type: 'json', name: 'destinations' })
-  destinations!: Record<string, unknown>;
+  destinations!: string[];
 
   @Column({ name: 'status', enum: ["active","inactive"] })
   status!: 'active' | 'inactive';

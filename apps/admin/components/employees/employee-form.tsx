@@ -184,8 +184,14 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
   useEffect(() => {
     let cancelled = false;
     async function loadDepartments() {
+      const organizationId = values.organizationId.trim();
+      if (!organizationId) {
+        if (!cancelled) {
+          setDepartments([]);
+        }
+        return;
+      }
       try {
-        const organizationId = values.organizationId.trim() || undefined;
         const result = await getApiClient().listDepartments({
           page: 1,
           limit: 100,
@@ -368,7 +374,20 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
           id={orgId}
           name="organizationId"
           value={values.organizationId}
-          onChange={(e) => updateField('organizationId', e.target.value)}
+          onChange={(e) => {
+            const organizationId = e.target.value;
+            setValues((prev) => ({
+              ...prev,
+              organizationId,
+              department: organizationId === prev.organizationId ? prev.department : '',
+            }));
+            setFieldErrors((prev) => {
+              const next = { ...prev };
+              delete next.organizationId;
+              delete next.department;
+              return next;
+            });
+          }}
           className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
         >
           <option value="">{tForm('organizationNone')}</option>
@@ -413,15 +432,21 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
           value={values.department}
           onChange={(e) => updateField('department', e.target.value)}
           maxLength={100}
-          list={departmentListId}
-          hint={tForm('departmentHint')}
+          list={values.organizationId ? departmentListId : undefined}
+          hint={
+            values.organizationId
+              ? tForm('departmentHint')
+              : tForm('departmentNeedsOrganization')
+          }
           autoComplete="off"
         />
-        <datalist id={departmentListId}>
-          {departmentOptions.map((department) => (
-            <option key={department} value={department} />
-          ))}
-        </datalist>
+        {values.organizationId ? (
+          <datalist id={departmentListId}>
+            {departmentOptions.map((department) => (
+              <option key={department} value={department} />
+            ))}
+          </datalist>
+        ) : null}
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <Input

@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryColumn, CreateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn } from 'typeorm';
 import { BaseAuditEntity } from '../../common/entities/base-audit.entity';
+
 @Entity('packages')
 export class Packages extends BaseAuditEntity {
   @PrimaryColumn('uuid', { name: 'id', length: 36 })
@@ -11,15 +12,20 @@ export class Packages extends BaseAuditEntity {
   @Column({ type: 'text', name: 'description', nullable: true })
   description!: string | null;
 
+  @Column({ type: 'varchar', name: 'cover_image_url', length: 512, nullable: true })
+  coverImageUrl!: string | null;
+
   @Column({ type: 'decimal', name: 'discount_percent', precision: 5, scale: 2 })
   discountPercent!: string;
 
-  @Column({ type: 'int', name: 'duration_days' })
+  @Column({ type: 'int', name: 'duration_days', default: 3 })
   durationDays!: number;
 
   @Column({ type: 'int', name: 'active' })
   active!: number;
 
+  @Column({ type: 'tinyint', name: 'is_featured', width: 1, default: 0 })
+  isFeatured!: number;
 }
 
 @Entity('package_items')
@@ -35,5 +41,25 @@ export class PackageItems extends BaseAuditEntity {
 
   @Column({ type: 'varchar', name: 'item_id', length: 36 })
   itemId!: string;
+}
 
+@Entity('package_description_assets')
+export class PackageDescriptionAssets extends BaseAuditEntity {
+  @PrimaryColumn('uuid', { name: 'id', length: 36 })
+  id!: string;
+
+  @Column({ type: 'varchar', name: 'package_id', length: 36 })
+  packageId!: string;
+
+  @Column({ name: 'asset_type', enum: ['image', 'pdf', 'word'] })
+  assetType!: 'image' | 'pdf' | 'word';
+
+  @Column({ type: 'varchar', name: 'url', length: 1024 })
+  url!: string;
+
+  @Column({ type: 'varchar', name: 'name', length: 255, nullable: true })
+  name!: string | null;
+
+  @Column({ type: 'int', name: 'sort_order', default: 0 })
+  sortOrder!: number;
 }

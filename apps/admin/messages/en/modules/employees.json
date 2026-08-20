@@ -22,7 +22,8 @@
   "filters": {
     "status": "Status",
     "organization": "Organization",
-    "department": "Department"
+    "department": "Department",
+    "departmentNeedsOrganization": "Select an organization"
   },
   "detail": {
     "viewTitle": "View employee",
@@ -60,7 +61,8 @@
     "employeeCodeHintEdit": "The employee code does not change after creation.",
     "jobTitle": "Job title",
     "department": "Department",
-    "departmentHint": "Pick a suggestion or type a new department.",
+    "departmentHint": "Pick a suggestion for this organization or type a new department.",
+    "departmentNeedsOrganization": "Select an organization first to see suggestions.",
     "hireDate": "Hire date",
     "terminationDate": "End date",
     "salary": "Salary",

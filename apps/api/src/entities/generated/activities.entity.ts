@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryColumn, CreateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn } from 'typeorm';
 import { BaseAuditEntity } from '../../common/entities/base-audit.entity';
+
 @Entity('activity_providers')
 export class ActivityProviders extends BaseAuditEntity {
   @PrimaryColumn('uuid', { name: 'id', length: 36 })
@@ -10,7 +11,6 @@ export class ActivityProviders extends BaseAuditEntity {
 
   @Column({ type: 'varchar', name: 'name', length: 180 })
   name!: string;
-
 }
 
 @Entity('activities')
@@ -38,7 +38,27 @@ export class Activities extends BaseAuditEntity {
 
   @Column({ type: 'varchar', name: 'currency', length: 3 })
   currency!: string;
+}
 
+@Entity('activity_description_assets')
+export class ActivityDescriptionAssets extends BaseAuditEntity {
+  @PrimaryColumn('uuid', { name: 'id', length: 36 })
+  id!: string;
+
+  @Column({ type: 'varchar', name: 'activity_id', length: 36 })
+  activityId!: string;
+
+  @Column({ name: 'asset_type', enum: ['image', 'pdf', 'word'] })
+  assetType!: 'image' | 'pdf' | 'word';
+
+  @Column({ type: 'varchar', name: 'url', length: 1024 })
+  url!: string;
+
+  @Column({ type: 'varchar', name: 'name', length: 255, nullable: true })
+  name!: string | null;
+
+  @Column({ type: 'int', name: 'sort_order', default: 0 })
+  sortOrder!: number;
 }
 
 @Entity('activity_schedules')
@@ -57,5 +77,4 @@ export class ActivitySchedules extends BaseAuditEntity {
 
   @Column({ type: 'int', name: 'booked_count' })
   bookedCount!: number;
-
 }

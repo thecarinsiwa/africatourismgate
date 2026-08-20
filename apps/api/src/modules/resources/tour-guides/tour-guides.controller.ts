@@ -8,44 +8,57 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
-import { TourGuides } from '../../../entities/generated';
+import { ApiForbiddenResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { AuthUserDto } from '../../auth/dto/auth-user.dto';
+import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
+import { CreateTourGuideDto } from './dto/create-tour-guide.dto';
+import { TourGuidesListQueryDto } from './dto/tour-guides-list-query.dto';
+import { UpdateTourGuideDto } from './dto/update-tour-guide.dto';
 import { TourGuidesService } from './tour-guides.service';
 
 @ApiTags('tour-guides')
+@ApiForbiddenResponse({ description: 'Permission manquante' })
 @Controller('tour-guides')
 export class TourGuidesController {
   constructor(private readonly service: TourGuidesService) {}
 
   @Get()
-  @ApiOperation({ summary: 'List tour-guides' })
-  findAll(@Query() query: PaginationQueryDto) {
-    return this.service.findAll(query);
+  @RequirePermissions('guides.read')
+  @ApiOperation({ summary: 'Liste paginée des guides touristiques' })
+  findAll(@Query() query: TourGuidesListQueryDto) {
+    return this.service.list(query);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get tour-guides by id' })
+  @RequirePermissions('guides.read')
+  @ApiOperation({ summary: 'Détail d’un guide touristique' })
   findOne(@Param('id') id: string) {
-    return this.service.findOne(id);
+    return this.service.findOneDto(id);
   }
 
   @Post()
-  @ApiOperation({ summary: 'Create tour-guides' })
-  create(@Body() dto: DeepPartial<TourGuides>) {
-    return this.service.create(dto);
+  @RequirePermissions('guides.write')
+  @ApiOperation({ summary: 'Créer un guide touristique' })
+  create(@Body() dto: CreateTourGuideDto, @CurrentUser() user: AuthUserDto) {
+    return this.service.createFromDto(dto, user.id);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Update tour-guides' })
-  update(@Param('id') id: string, @Body() dto: DeepPartial<TourGuides>) {
-    return this.service.update(id, dto);
+  @RequirePermissions('guides.write')
+  @ApiOperation({ summary: 'Mettre à jour un guide touristique' })
+  update(
+    @Param('id') id: string,
+    @Body() dto: UpdateTourGuideDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.service.updateFromDto(id, dto, user.id);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Soft-delete tour-guides' })
-  remove(@Param('id') id: string) {
-    return this.service.remove(id);
+  @RequirePermissions('guides.write')
+  @ApiOperation({ summary: 'Suppression logique d’un guide touristique' })
+  async remove(@Param('id') id: string, @CurrentUser() user: AuthUserDto) {
+    await this.service.removeDto(id, user.id);
   }
 }

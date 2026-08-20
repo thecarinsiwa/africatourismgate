@@ -22,7 +22,8 @@
   "filters": {
     "status": "Statut",
     "organization": "Organisation",
-    "department": "Département"
+    "department": "Département",
+    "departmentNeedsOrganization": "Choisir une organisation"
   },
   "detail": {
     "viewTitle": "Voir l'employé",
@@ -60,7 +61,8 @@
     "employeeCodeHintEdit": "Le matricule ne change pas après la création.",
     "jobTitle": "Poste",
     "department": "Département",
-    "departmentHint": "Choisissez une suggestion ou saisissez un nouveau département.",
+    "departmentHint": "Choisissez une suggestion de l'organisation ou saisissez un nouveau département.",
+    "departmentNeedsOrganization": "Sélectionnez d'abord une organisation pour voir les suggestions.",
     "hireDate": "Date d'embauche",
     "terminationDate": "Date de fin",
     "salary": "Salaire",
