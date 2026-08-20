@@ -35,7 +35,16 @@ export function AdminPageMetaProvider({ children }: { children: ReactNode }) {
   }, [pathname]);
 
   const setPageMeta = useCallback((next: AdminPageMeta) => {
-    setMeta(next);
+    setMeta((prev) => {
+      const prevTailKey =
+        prev.breadcrumbTail?.map((item) => `${item.href ?? ''}:${item.label}`).join('|') ?? '';
+      const nextTailKey =
+        next.breadcrumbTail?.map((item) => `${item.href ?? ''}:${item.label}`).join('|') ?? '';
+      if (prev.title === next.title && prevTailKey === nextTailKey) {
+        return prev;
+      }
+      return next;
+    });
   }, []);
 
   const value = useMemo(() => ({ meta, setPageMeta }), [meta, setPageMeta]);
@@ -56,13 +65,17 @@ export function useAdminPageMeta(): AdminPageMetaContextValue {
 /** Enregistre titre et/ou segments de breadcrumb pour la page courante. */
 export function useSetAdminPageMeta(meta: AdminPageMeta): void {
   const { setPageMeta } = useAdminPageMeta();
+  const title = meta.title;
+  const breadcrumbTail = meta.breadcrumbTail;
   const tailKey =
-    meta.breadcrumbTail?.map((item) => `${item.href ?? ''}:${item.label}`).join('|') ?? '';
+    breadcrumbTail?.map((item) => `${item.href ?? ''}:${item.label}`).join('|') ?? '';
 
   useEffect(() => {
     setPageMeta({
-      title: meta.title,
-      breadcrumbTail: meta.breadcrumbTail,
+      title,
+      breadcrumbTail,
     });
-  }, [meta.title, meta.breadcrumbTail, tailKey, setPageMeta]);
+    // Use tailKey for content equality — breadcrumbTail is often a new array each render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- breadcrumbTail identity intentionally omitted
+  }, [title, tailKey, setPageMeta]);
 }

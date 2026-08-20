@@ -18,12 +18,17 @@ export function useAdminEditPageMeta({
   entityLabel,
   breadcrumbTail,
 }: UseAdminEditPageMetaOptions): void {
+  const tailKey =
+    breadcrumbTail?.map((item) => `${item.href ?? ''}:${item.label}`).join('|') ??
+    (entityLabel ? `:${entityLabel}` : '');
+
   const pageMeta = useMemo(() => {
     if (!ready) return {};
     const tail =
       breadcrumbTail ?? (entityLabel ? [{ label: entityLabel }] : undefined);
     return { title, breadcrumbTail: tail };
-  }, [ready, title, entityLabel, breadcrumbTail]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- tailKey captures breadcrumbTail content
+  }, [ready, title, entityLabel, tailKey]);
 
   useSetAdminPageMeta(pageMeta);
 }

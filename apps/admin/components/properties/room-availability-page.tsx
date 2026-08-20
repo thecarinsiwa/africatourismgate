@@ -44,16 +44,18 @@ export function RoomAvailabilityPage({ propertyId, roomId }: RoomAvailabilityPag
 
   const pageTitle = tPage.has?.('title') ? tPage('title') : tAvailability('title');
 
+  const breadcrumbTail = useMemo(() => {
+    if (state.status !== 'ready') return undefined;
+    return [
+      { label: state.propertyName, href: `/hebergements/${propertyId}` },
+      { label: state.roomName },
+    ];
+  }, [state, propertyId]);
+
   useAdminEditPageMeta({
     ready: state.status === 'ready',
     title: pageTitle,
-    breadcrumbTail:
-      state.status === 'ready'
-        ? [
-            { label: state.propertyName, href: `/hebergements/${propertyId}` },
-            { label: state.roomName },
-          ]
-        : undefined,
+    breadcrumbTail,
   });
 
   const handleBulkApplied = useCallback(() => {
