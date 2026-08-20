@@ -84,7 +84,8 @@
     "reserved": "Réservés",
     "available": "Disponibles",
     "product": "Produit",
-    "category": "Catégorie"
+    "category": "Catégorie",
+    "description": "Description"
   },
   "pagination": {
     "session": "session",
