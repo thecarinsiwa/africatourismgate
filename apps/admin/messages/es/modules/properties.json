@@ -81,6 +81,19 @@
       "availability": "Disponibilidad"
     }
   },
+  "view": {
+    "title": "Ver alojamiento",
+    "editButton": "Editar alojamiento",
+    "notFound": "Alojamiento no encontrado.",
+    "infoTitle": "Información",
+    "description": "Descripción",
+    "imagesTitle": "Fotos",
+    "imagesIntro": "{count, plural, =0 {Ninguna foto} one {# foto} other {# fotos}}",
+    "imagesEmpty": "Ninguna foto para este alojamiento.",
+    "roomsIntro": "{count, plural, =0 {Ninguna habitación} one {# habitación} other {# habitaciones}}",
+    "amenitiesIntro": "{count, plural, =0 {Ningún equipamiento} one {# equipamiento} other {# equipamientos}}",
+    "amenitiesEmpty": "Ningún equipamiento asociado."
+  },
   "sections": {
     "rooms": {
       "title": "Habitaciones",
