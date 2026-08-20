@@ -27,8 +27,10 @@ import {
 } from '../../lib/i18n/use-module-labels';
 import { LoyaltyTierProgress } from './loyalty-tier-progress';
 import { LoyaltyTransactionHistoryPanel } from './loyalty-transaction-history-panel';
+import { ReferentialListToolbar } from '../referential-list-toolbar';
 
 const PAGE_SIZE = 20;
+const SEARCH_DEBOUNCE_MS = 300;
 
 const tierVariants: Record<LoyaltyTier, 'success' | 'warning' | 'muted' | 'default'> = {
   member: 'muted',
@@ -61,6 +63,8 @@ export function LoyaltyAccountsList() {
   const reasonInputId = useId();
 
   const [page, setPage] = useState(1);
+  const [searchInput, setSearchInput] = useState('');
+  const [search, setSearch] = useState('');
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [historyAccount, setHistoryAccount] = useState<AdminLoyaltyAccountListItem | null>(null);
   const [adjustingAccount, setAdjustingAccount] = useState<AdminLoyaltyAccountListItem | null>(
@@ -87,6 +91,7 @@ export function LoyaltyAccountsList() {
       const result = await getApiClient().listLoyaltyAccounts({
         page,
         limit: PAGE_SIZE,
+        search: search || undefined,
       });
       const accounts = result.data.filter(isAdminListItem);
       setState({
@@ -98,11 +103,22 @@ export function LoyaltyAccountsList() {
     } catch (error) {
       setState({ status: 'error', message: getLoyaltyAccountsErrorMessage(error) });
     }
-  }, [page, getLoyaltyAccountsErrorMessage]);
+  }, [page, search, getLoyaltyAccountsErrorMessage]);
 
   useEffect(() => {
     void load();
   }, [load]);
+
+  useEffect(() => {
+    const query = searchInput.trim();
+    const timer = window.setTimeout(() => {
+      setSearch((prev) => {
+        if (prev !== query) setPage(1);
+        return query;
+      });
+    }, SEARCH_DEBOUNCE_MS);
+    return () => window.clearTimeout(timer);
+  }, [searchInput]);
 
   useEffect(() => {
     let cancelled = false;
@@ -294,6 +310,9 @@ export function LoyaltyAccountsList() {
   );
 
   const accounts = state.status === 'ready' ? state.accounts : [];
+  const emptyMessage = search.trim()
+    ? tList('emptySearch')
+    : tList('empty.tableMessage');
 
   const pagination =
     state.status === 'ready' && state.totalPages > 0 ? (
@@ -309,6 +328,13 @@ export function LoyaltyAccountsList() {
 
   return (
     <div className="space-y-6">
+      <ReferentialListToolbar
+        searchValue={searchInput}
+        onSearchChange={setSearchInput}
+        placeholder={tList('searchPlaceholder')}
+        ariaLabel={tList('searchAria')}
+      />
+
       {state.status === 'error' ? (
         <p className="text-sm text-red-600 dark:text-red-400" role="alert">
           {state.message}
@@ -322,7 +348,8 @@ export function LoyaltyAccountsList() {
           getRowId={(row) => row.id}
           isLoading={state.status === 'loading'}
           loadingMessage={tDataTable('loading')}
-          emptyMessage={tList('empty.tableMessage')}
+          emptyMessage={emptyMessage}
+          emptyVariant={search.trim() ? 'search' : 'default'}
           aria-label={tList('ariaLabel')}
         />
         {pagination}

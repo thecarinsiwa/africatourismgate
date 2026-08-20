@@ -36,6 +36,9 @@
       "history": "History",
       "adjust": "Adjust points"
     },
+    "searchPlaceholder": "Search by email, name, or program…",
+    "searchAria": "Search loyalty accounts",
+    "emptySearch": "No loyalty accounts match your search.",
     "empty": {
       "title": "Tocun compte fidélité",
       "description": "Les comptes OneKey sont créés automatiquement lors des premiers paiements réussis. Ajustements manuels réservés au super administrateur.",

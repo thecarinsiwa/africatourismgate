@@ -6,6 +6,7 @@
 - Align `/fidelite/comptes` with the recent admin list pattern (sessions, security logs).
 - Fix duplicated KPI rendering and move points adjustment into a Modal (super-admin).
 - Gate StatCards via `useModuleStatCards('users.read')`.
+- Add debounced search (email, name, program) with API support.
 
 ## Scope
 ### Page `/fidelite/comptes`
@@ -16,6 +17,7 @@
 ### List & actions
 - Points adjust Modal (delta + reason) for super-admin
 - DataTable polish: user Avatar, program badge, icon actions (history / adjust), `getRowId`, loading message, pagination inside the Card
+- Server-side search (email, name, program code) with debounced toolbar
 - History drawer unchanged (transactions API not wired)
 
 ### KPIs
@@ -33,6 +35,7 @@
 ## Test plan
 - [ ] Open `http://localhost:3001/fidelite/comptes`: single KPI block, consistent intro page
 - [ ] Paginated list, empty/error states OK
+- [ ] Search by email / name / program filters the list and resets to page 1
 - [ ] Super-admin: open adjust Modal, apply, toast + list refresh
 - [ ] Non super-admin: no adjust button
 - [ ] History drawer opens/closes (placeholder unchanged)

@@ -36,6 +36,9 @@
       "history": "Historial",
       "adjust": "Ajustar puntos"
     },
+    "searchPlaceholder": "Buscar por email, nombre o programa…",
+    "searchAria": "Buscar cuentas de fidelidad",
+    "emptySearch": "Ninguna cuenta de fidelidad coincide con su búsqueda.",
     "empty": {
       "title": "Hastacun compte fidélité",
       "description": "Les comptes OneKey sont créés automatiquement lors des premiers paiements réussis. Ajustements manuels réservés au super administrateur.",
