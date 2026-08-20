@@ -415,7 +415,8 @@
         "description": "Add an image or video."
       },
       "id": {
-        "metaTitle": "Edit GAP media"
+        "metaTitle": "Edit GAP media",
+        "backLabel": "Back to media"
       }
     }
   },

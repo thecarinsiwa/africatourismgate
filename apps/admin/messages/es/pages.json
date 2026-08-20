@@ -415,7 +415,8 @@
         "description": "Añada una imagen o un vídeo."
       },
       "id": {
-        "metaTitle": "Modificar el medio GAP"
+        "metaTitle": "Modificar el medio GAP",
+        "backLabel": "Volver a medios"
       }
     }
   },
