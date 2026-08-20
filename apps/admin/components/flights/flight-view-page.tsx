@@ -1,23 +1,30 @@
 'use client';
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+import { useFormatDateTime, useFlightClassLabels } from '../../lib/i18n/use-module-labels';
 
+import type { Airline, Airport, Flight, FlightClass, FlightImage } from '@africatourismgate/types';
 import {
   Button,
   Card,
   DataTable,
+  DataTableActionButton,
+  DataTableActions,
   DataTableBadge,
+  Input,
   Skeleton,
   type ColumnDef,
 } from '@africatourismgate/ui';
-import type { Airline, Airport, Flight, FlightClass, FlightImage } from '@africatourismgate/types';
-import Image from 'next/image';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AdminPageBackLink } from '../admin-page-back-link';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
-import { useFlightClassLabels } from '../../lib/i18n/use-module-labels';
+import {
+  formatDurationMinutes,
+  formatFlightSchedule,
+} from '../../lib/flight-datetime';
+import { FlightPhotosCarousel } from './flight-photos-carousel';
 import { FlightThumbnail } from './flight-thumbnail';
 import { FlightTimeline } from './flight-timeline';
 
@@ -25,16 +32,37 @@ type FlightViewPageProps = {
   flightId: string;
 };
 
+function ProfileField({ label, value }: { label: string; value: React.ReactNode }) {
+  return (
+    <div className="min-w-0">
+      <dt className="text-[11px] font-medium uppercase tracking-wide text-atg-muted">{label}</dt>
+      <dd className="mt-0.5 break-words text-sm font-medium text-atg-fg">{value}</dd>
+    </div>
+  );
+}
+
 function formatPrice(cents: number): string {
   return `${(cents / 100).toFixed(2)} USD`;
 }
 
+function formatAirportLabel(airport: Airport | null, emptyDash: string): string {
+  if (!airport) return emptyDash;
+  return `${airport.iataCode} — ${airport.city}`;
+}
+
 export function FlightViewPage({ flightId }: FlightViewPageProps) {
   const { vols: getVolsErrorMessage } = useAdminErrorMessages();
-  const t = useTranslations('modules.flights.detail');
+  const tDetail = useTranslations('modules.flights.detail');
+  const tView = useTranslations('modules.flights.view');
+  const tForm = useTranslations('modules.flights.form');
   const tSections = useTranslations('modules.flights.sections.classes');
+  const tColumns = useTranslations('modules.common.columns');
+  const tDates = useTranslations('modules.common.dates');
   const tCommon = useTranslations('modules.common');
+  const tActions = useTranslations('common.actions');
   const classLabels = useFlightClassLabels();
+  const formatDateTime = useFormatDateTime('short');
+  const locale = useLocale();
   const emptyDash = tCommon('empty.dash');
 
   const [flight, setFlight] = useState<Flight | null>(null);
@@ -42,6 +70,7 @@ export function FlightViewPage({ flightId }: FlightViewPageProps) {
   const [departureAirport, setDepartureAirport] = useState<Airport | null>(null);
   const [arrivalAirport, setArrivalAirport] = useState<Airport | null>(null);
   const [classes, setClasses] = useState<FlightClass[]>([]);
+  const [classSearch, setClassSearch] = useState('');
   const [images, setImages] = useState<FlightImage[]>([]);
   const [state, setState] = useState<
     | { status: 'loading' }
@@ -51,7 +80,7 @@ export function FlightViewPage({ flightId }: FlightViewPageProps) {
 
   useAdminEditPageMeta({
     ready: state.status === 'ready' && flight != null,
-    title: t('viewTitle'),
+    title: tView('title'),
     entityLabel: flight?.flightNumber,
   });
 
@@ -71,7 +100,11 @@ export function FlightViewPage({ flightId }: FlightViewPageProps) {
 
       setFlight(flightData);
       setClasses(classesResult.data);
-      setImages(imagesResult.data);
+      setImages(
+        [...imagesResult.data].sort(
+          (a, b) => a.sortOrder - b.sortOrder || a.createdAt.localeCompare(b.createdAt),
+        ),
+      );
       setAirline(airlineData);
       setDepartureAirport(departureData);
       setArrivalAirport(arrivalData);
@@ -90,30 +123,96 @@ export function FlightViewPage({ flightId }: FlightViewPageProps) {
       {
         accessorKey: 'className',
         header: tSections('cabinType'),
-        cell: ({ row }) => classLabels[row.original.className] ?? row.original.className,
+        cell: ({ row }) => (
+          <DataTableBadge variant="muted">
+            {classLabels[row.original.className] ?? row.original.className}
+          </DataTableBadge>
+        ),
       },
       {
         accessorKey: 'seatsTotal',
         header: tSections('totalSeats'),
-        meta: { align: 'right' },
+        meta: { align: 'center', hideOnMobile: true },
+        cell: ({ row }) => (
+          <span className="inline-flex items-center justify-center rounded-md bg-atg-surface px-2 py-0.5 text-xs font-medium tabular-nums text-atg-fg">
+            {row.original.seatsTotal}
+          </span>
+        ),
       },
       {
         id: 'basePrice',
-        header: tCommon('columns.price'),
+        header: tColumns('price'),
         meta: { align: 'right' },
-        cell: ({ row }) => formatPrice(row.original.basePriceCents),
+        cell: ({ row }) => (
+          <div className="text-right">
+            <p className="tabular-nums text-sm font-semibold text-atg-fg">
+              {formatPrice(row.original.basePriceCents)}
+            </p>
+            <p className="mt-0.5 text-[11px] font-medium uppercase tracking-wide text-atg-muted">
+              USD
+            </p>
+          </div>
+        ),
+      },
+      {
+        id: 'actions',
+        header: tColumns('actions'),
+        meta: { align: 'right' },
+        cell: ({ row }) => (
+          <DataTableActions className="opacity-90 transition-opacity group-hover:opacity-100">
+            <DataTableActionButton
+              action="calendar"
+              href={`/produits/vols/${flightId}/classes/${row.original.id}/disponibilites`}
+            />
+            <DataTableActionButton
+              action="edit"
+              href={`/produits/vols/${flightId}`}
+              label={tActions('edit')}
+            />
+          </DataTableActions>
+        ),
       },
     ],
-    [classLabels, tCommon, tSections],
+    [classLabels, flightId, tActions, tColumns, tSections],
   );
+
+  const filteredClasses = useMemo(() => {
+    const query = classSearch.trim().toLowerCase();
+    const sorted = [...classes].sort((a, b) => {
+      const labelA = classLabels[a.className] ?? a.className;
+      const labelB = classLabels[b.className] ?? b.className;
+      return labelA.localeCompare(labelB, undefined, { sensitivity: 'base' });
+    });
+    if (!query) return sorted;
+
+    return sorted.filter((flightClass) => {
+      const label = classLabels[flightClass.className] ?? flightClass.className;
+      const haystack = [
+        label,
+        flightClass.className,
+        String(flightClass.seatsTotal),
+        formatPrice(flightClass.basePriceCents),
+      ]
+        .join(' ')
+        .toLowerCase();
+      return haystack.includes(query);
+    });
+  }, [classes, classSearch, classLabels]);
+
+  const hasClassSearch = classSearch.trim().length > 0;
 
   if (state.status === 'loading') {
     return (
       <div className="space-y-6">
         <Skeleton className="h-5 w-40" />
-        <Skeleton className="h-24 w-full max-w-3xl" />
-        <Skeleton className="h-48 w-full max-w-2xl" />
-        <Skeleton className="h-64 w-full" />
+        <div className="flex items-center gap-4">
+          <Skeleton className="h-12 w-16 rounded-lg" />
+          <div className="space-y-2">
+            <Skeleton className="h-5 w-48" />
+            <Skeleton className="h-4 w-32" />
+          </div>
+        </div>
+        <Skeleton className="h-64 w-full max-w-3xl" />
       </div>
     );
   }
@@ -121,137 +220,165 @@ export function FlightViewPage({ flightId }: FlightViewPageProps) {
   if (state.status === 'error' || !flight) {
     return (
       <div className="space-y-4">
-        <AdminPageBackLink href="/produits/vols" label={t('backLink')} />
+        <AdminPageBackLink href="/produits/vols" label={tDetail('backLink')} />
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {state.status === 'error' ? state.message : t('notFound')}
+          {state.status === 'error' ? state.message : tView('notFound')}
         </p>
       </div>
     );
   }
 
+  const schedule = formatFlightSchedule(flight.departureTime, flight.arrivalTime, locale);
+  const editHref = `/produits/vols/${flightId}`;
+
   return (
-    <div className="mx-auto w-full max-w-7xl space-y-6">
-      <AdminPageBackLink href="/produits/vols" label={t('backLink')} />
+    <div className="space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <AdminPageBackLink href="/produits/vols" label={tDetail('backLink')} />
+        <Button href={editHref}>{tView('editButton')}</Button>
+      </div>
 
-      <Card
-        variant="dashboard"
-        className="flex flex-col gap-4 border border-atg-border/80 bg-atg-elevated/70 p-4 sm:flex-row sm:items-start sm:justify-between sm:p-5"
-      >
-        <div className="flex min-w-0 flex-1 items-start gap-4">
-          <FlightThumbnail flightId={flightId} label={flight.flightNumber} size="md" />
-          <div className="min-w-0 space-y-3">
-            <div className="flex flex-wrap items-center gap-2">
-              <code className="rounded-md bg-atg-surface px-2.5 py-1 font-mono text-sm font-semibold text-atg-fg ring-1 ring-atg-border/60">
-                {flight.flightNumber}
-              </code>
-              {airline ? (
-                <DataTableBadge variant="muted">
-                  {airline.iataCode} — {airline.name}
-                </DataTableBadge>
-              ) : null}
+      <div className="flex flex-wrap items-start gap-4">
+        <FlightThumbnail flightId={flightId} label={flight.flightNumber} size="md" />
+        <div className="min-w-0 flex-1 space-y-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <h2 className="text-xl font-semibold text-atg-fg">{flight.flightNumber}</h2>
+            {airline ? (
+              <DataTableBadge variant="muted">
+                {airline.iataCode} — {airline.name}
+              </DataTableBadge>
+            ) : null}
+          </div>
+          <FlightTimeline
+            departureAirport={departureAirport}
+            arrivalAirport={arrivalAirport}
+            departureTime={flight.departureTime}
+            arrivalTime={flight.arrivalTime}
+            durationMinutes={flight.durationMinutes}
+          />
+        </div>
+      </div>
+
+      <Card variant="dashboard" padding="sm">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,18rem)] lg:items-start xl:grid-cols-[minmax(0,1fr)_minmax(0,20rem)]">
+          <div className="min-w-0">
+            <h3 className="text-sm font-semibold text-atg-fg">{tView('infoTitle')}</h3>
+            <dl className="mt-3 grid gap-x-6 gap-y-2.5 sm:grid-cols-2">
+              <ProfileField
+                label={tForm('airline')}
+                value={
+                  airline ? `${airline.iataCode} — ${airline.name}` : emptyDash
+                }
+              />
+              <ProfileField label={tForm('flightNumber')} value={flight.flightNumber} />
+              <ProfileField
+                label={tForm('departure')}
+                value={
+                  <span>
+                    {formatAirportLabel(departureAirport, emptyDash)}
+                    {departureAirport?.name ? (
+                      <span className="mt-0.5 block text-xs font-normal text-atg-muted">
+                        {departureAirport.name}
+                      </span>
+                    ) : null}
+                  </span>
+                }
+              />
+              <ProfileField
+                label={tForm('arrival')}
+                value={
+                  <span>
+                    {formatAirportLabel(arrivalAirport, emptyDash)}
+                    {arrivalAirport?.name ? (
+                      <span className="mt-0.5 block text-xs font-normal text-atg-muted">
+                        {arrivalAirport.name}
+                      </span>
+                    ) : null}
+                  </span>
+                }
+              />
+              <ProfileField label={tForm('departureTime')} value={schedule.departure} />
+              <ProfileField label={tForm('arrivalTime')} value={schedule.arrival} />
+              <ProfileField
+                label={tForm('durationMinutes')}
+                value={formatDurationMinutes(flight.durationMinutes, locale)}
+              />
+              <ProfileField
+                label={tDates('createdAt')}
+                value={formatDateTime(flight.createdAt)}
+              />
+              <ProfileField
+                label={tDates('updatedAt')}
+                value={flight.updatedAt ? formatDateTime(flight.updatedAt) : emptyDash}
+              />
+            </dl>
+          </div>
+
+          <div className="min-w-0 lg:border-l lg:border-atg-border lg:pl-6">
+            <h3 className="text-sm font-semibold text-atg-fg">{tView('imagesTitle')}</h3>
+            <p className="mt-0.5 text-xs text-atg-muted">
+              {tView('imagesIntro', { count: images.length })}
+            </p>
+            <div className="mt-2">
+              <FlightPhotosCarousel images={images} altFallback={flight.flightNumber} />
             </div>
-            <FlightTimeline
-              departureAirport={departureAirport}
-              arrivalAirport={arrivalAirport}
-              departureTime={flight.departureTime}
-              arrivalTime={flight.arrivalTime}
-              durationMinutes={flight.durationMinutes}
-            />
           </div>
         </div>
-        <Button href={`/produits/vols/${flightId}`} className="w-full sm:w-auto">
-          {t('editButton')}
+      </Card>
+
+      <section className="space-y-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <h3 className="text-lg font-semibold text-atg-fg">{tSections('title')}</h3>
+              <DataTableBadge variant="muted">
+                {hasClassSearch
+                  ? `${filteredClasses.length}/${classes.length}`
+                  : classes.length}
+              </DataTableBadge>
+            </div>
+            <p className="mt-1 text-sm text-atg-muted">
+              {tView('classesIntro', { count: classes.length })}
+            </p>
+          </div>
+          <Button href={editHref} variant="outline" size="sm">
+            {tSections('editClass')}
+          </Button>
+        </div>
+
+        {classes.length > 0 ? (
+          <div className="max-w-md">
+            <Input
+              type="search"
+              placeholder={tSections('searchPlaceholder')}
+              value={classSearch}
+              onChange={(e) => setClassSearch(e.target.value)}
+              aria-label={tSections('searchPlaceholder')}
+            />
+          </div>
+        ) : null}
+
+        <Card variant="dashboard" padding="none" className="overflow-hidden">
+          <DataTable
+            columns={classColumns}
+            data={filteredClasses}
+            emptyMessage={hasClassSearch ? tSections('searchEmpty') : tSections('empty')}
+            emptyVariant={hasClassSearch ? 'search' : 'default'}
+            getRowId={(row) => row.id}
+            aria-label={tSections('title')}
+            loadingMessage={tCommon('dataTable.loading')}
+            expandRowLabel={tCommon('dataTable.expandRow')}
+            collapseRowLabel={tCommon('dataTable.collapseRow')}
+            expandRowAriaLabel={tCommon('dataTable.expandRowAria')}
+          />
+        </Card>
+      </section>
+
+      <div className="flex justify-end">
+        <Button href={editHref} variant="outline">
+          {tActions('edit')}
         </Button>
-      </Card>
-
-      <section className="space-y-4 rounded-xl border border-atg-border/80 bg-atg-elevated/40 p-4 sm:p-5">
-        <div>
-          <h3 className="text-lg font-semibold text-atg-fg">{tSections('title')}</h3>
-          <p className="mt-1 text-sm text-atg-muted">{tSections('intro')}</p>
-        </div>
-        {classes.length === 0 ? (
-          <Card variant="dashboard">
-            <p className="text-sm text-atg-muted">{tSections('empty')}</p>
-          </Card>
-        ) : (
-          <Card variant="dashboard" padding="none" className="overflow-hidden">
-            <DataTable
-              columns={classColumns}
-              data={classes}
-              getRowId={(row) => row.id}
-              emptyMessage={tSections('empty')}
-              aria-label={tSections('title')}
-            />
-          </Card>
-        )}
-      </section>
-
-      <section className="space-y-4 rounded-xl border border-atg-border/80 bg-atg-elevated/40 p-4 sm:p-5">
-        <div>
-          <h3 className="text-lg font-semibold text-atg-fg">{t('photoGallery')}</h3>
-          <p className="mt-1 text-sm text-atg-muted">
-            {t('photoGalleryIntro', { count: images.length })}
-          </p>
-        </div>
-        {images.length === 0 ? (
-          <Card variant="dashboard">
-            <p className="text-sm text-atg-muted">{t('noPhotos')}</p>
-          </Card>
-        ) : (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-            {images.map((image) => (
-              <figure
-                key={image.id}
-                className="overflow-hidden rounded-lg border border-atg-border bg-atg-elevated shadow-sm"
-              >
-                <Image
-                  src={image.url}
-                  alt={image.caption ?? flight.flightNumber}
-                  width={240}
-                  height={160}
-                  unoptimized
-                  className="aspect-[3/2] w-full object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = 'none';
-                  }}
-                />
-                {image.caption ? (
-                  <figcaption className="truncate px-2 py-1.5 text-xs text-atg-muted">
-                    {image.caption}
-                  </figcaption>
-                ) : null}
-              </figure>
-            ))}
-          </div>
-        )}
-      </section>
-
-      <Card variant="dashboard" className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-atg-muted">
-            {tCommon('columns.departure')}
-          </p>
-          <p className="mt-1 text-sm font-medium text-atg-fg">
-            {departureAirport
-              ? `${departureAirport.iataCode} — ${departureAirport.city}`
-              : emptyDash}
-          </p>
-          {departureAirport?.name ? (
-            <p className="text-xs text-atg-muted">{departureAirport.name}</p>
-          ) : null}
-        </div>
-        <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-atg-muted">
-            {tCommon('columns.arrival')}
-          </p>
-          <p className="mt-1 text-sm font-medium text-atg-fg">
-            {arrivalAirport ? `${arrivalAirport.iataCode} — ${arrivalAirport.city}` : emptyDash}
-          </p>
-          {arrivalAirport?.name ? (
-            <p className="text-xs text-atg-muted">{arrivalAirport.name}</p>
-          ) : null}
-        </div>
-      </Card>
+      </div>
     </div>
   );
 }
