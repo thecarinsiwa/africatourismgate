@@ -354,6 +354,8 @@ export function RbacAuditLogsList({
   const [appliedEventType, setAppliedEventType] = useState<RbacAuditEventType | ''>('');
   const [appliedActorUserId, setAppliedActorUserId] = useState('');
   const [userIdFilter, setUserIdFilter] = useState('');
+  const [dateFromFilter, setDateFromFilter] = useState('');
+  const [dateToFilter, setDateToFilter] = useState('');
   const [users, setUsers] = useState<User[]>([]);
   const [access, setAccess] = useState<
     | { status: 'checking' }
@@ -417,6 +419,13 @@ export function RbacAuditLogsList({
     setFilterTick((tick) => tick + 1);
   }, []);
 
+  const handleDateRangeChange = useCallback((dateFrom: string, dateTo: string) => {
+    setDateFromFilter(dateFrom);
+    setDateToFilter(dateTo);
+    setPage(1);
+    setFilterTick((tick) => tick + 1);
+  }, []);
+
   const activeFilterCount = useMemo(() => {
     if (!showFilterBar) return 0;
     let count = 0;
@@ -464,8 +473,10 @@ export function RbacAuditLogsList({
       const result = await getApiClient().listRbacAuditLogs({
         page,
         limit,
-        dateFrom: showFilterBar ? appliedDateFrom || undefined : undefined,
-        dateTo: showFilterBar ? appliedDateTo || undefined : undefined,
+        dateFrom: showFilterBar
+          ? appliedDateFrom || undefined
+          : dateFromFilter || undefined,
+        dateTo: showFilterBar ? appliedDateTo || undefined : dateToFilter || undefined,
         eventType: showFilterBar ? appliedEventType || undefined : undefined,
         actorUserId:
           showFilterBar && userFilterMode === 'actor'
@@ -497,6 +508,8 @@ export function RbacAuditLogsList({
     appliedDateTo,
     appliedEventType,
     appliedActorUserId,
+    dateFromFilter,
+    dateToFilter,
     userIdFilter,
     userFilterMode,
     filterTick,
@@ -603,7 +616,12 @@ export function RbacAuditLogsList({
       {showSubnav ? <RbacSubnav /> : null}
 
       {userFilterMode === 'involved' ? (
-        <UserIdFilterBar onUserIdChange={handleUserIdChange} onUsersLoaded={setUsers} />
+        <UserIdFilterBar
+          onUserIdChange={handleUserIdChange}
+          onUsersLoaded={setUsers}
+          showDateRange
+          onDateRangeChange={handleDateRangeChange}
+        />
       ) : null}
 
       {showFilterBar ? (
