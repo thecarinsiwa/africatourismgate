@@ -1,0 +1,308 @@
+{
+  "generatedAt": "2026-08-20T15:09:45.114Z",
+  "findings": [
+    {
+      "page": "reservations",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "reservations",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "hebergements",
+      "severity": "warn",
+      "issue": "2 éléments h1 (idéal : 1)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    }
+  ],
+  "errors": [],
+  "warns": [
+    {
+      "page": "reservations",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "reservations",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "hebergements",
+      "severity": "warn",
+      "issue": "2 éléments h1 (idéal : 1)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    },
+    {
+      "page": "parametres",
+      "severity": "warn",
+      "issue": "Champ input sans label accessible (id=—)"
+    }
+  ]
+}

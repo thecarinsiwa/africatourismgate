@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import { forwardRef, useId } from 'react';
 import { cn } from '../lib/cn';
 
 export type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
@@ -29,7 +29,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   },
   ref,
 ) {
-  const id = idProp ?? props.name;
+  const generatedId = useId();
+  const id = idProp ?? props.name ?? generatedId;
   const hasError = Boolean(error);
 
   return (

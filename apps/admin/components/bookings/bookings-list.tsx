@@ -394,6 +394,7 @@ export function BookingsList() {
             <div className="w-full sm:w-40">
               <Input
                 label={tCommon('filters.dateFrom')}
+                name="dateFrom"
                 type="date"
                 value={dateFrom}
                 onChange={(e) => {
@@ -405,6 +406,7 @@ export function BookingsList() {
             <div className="w-full sm:w-40">
               <Input
                 label={tCommon('filters.dateTo')}
+                name="dateTo"
                 type="date"
                 value={dateTo}
                 onChange={(e) => {
