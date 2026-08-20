@@ -118,3 +118,13 @@ export function downloadFlightsCatalogPdf(params: FlightsReportScope): Promise<v
 export function downloadFlightsBookingsPdf(params: FlightsReportDateRange): Promise<void> {
   return downloadReport('/flights/reports/pdf/bookings', params);
 }
+
+export function downloadFlightDossierPdf(
+  flightId: string,
+  params?: FlightsReportScope,
+): Promise<void> {
+  return downloadReport(
+    `/flights/${encodeURIComponent(flightId)}/reports/pdf/dossier`,
+    params ?? {},
+  );
+}

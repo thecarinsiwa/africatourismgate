@@ -24,6 +24,7 @@ import {
   formatDurationMinutes,
   formatFlightSchedule,
 } from '../../lib/flight-datetime';
+import { FlightExportPdfButton } from './flight-export-pdf-button';
 import { FlightPhotosCarousel } from './flight-photos-carousel';
 import { FlightThumbnail } from './flight-thumbnail';
 import { FlightTimeline } from './flight-timeline';
@@ -235,7 +236,10 @@ export function FlightViewPage({ flightId }: FlightViewPageProps) {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <AdminPageBackLink href="/produits/vols" label={tDetail('backLink')} />
-        <Button href={editHref}>{tView('editButton')}</Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <FlightExportPdfButton flightId={flightId} />
+          <Button href={editHref}>{tView('editButton')}</Button>
+        </div>
       </div>
 
       <div className="flex flex-wrap items-start gap-4">

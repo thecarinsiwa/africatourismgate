@@ -24,6 +24,7 @@
     "pdfKpi": "KPI summary (PDF)",
     "pdfCatalog": "Catalog (PDF)",
     "pdfBookings": "Bookings (PDF)",
+    "pdfDossier": "Export PDF",
     "dateFrom": "Start date",
     "dateTo": "End date",
     "periodRequired": "Select a date range for this export.",

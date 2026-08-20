@@ -24,6 +24,7 @@
     "pdfKpi": "Synthèse KPI (PDF)",
     "pdfCatalog": "Catalogue (PDF)",
     "pdfBookings": "Réservations (PDF)",
+    "pdfDossier": "Exporter PDF",
     "dateFrom": "Date de début",
     "dateTo": "Date de fin",
     "periodRequired": "Indiquez une période pour cet export.",
