@@ -41,6 +41,7 @@ function isSessionExpired(expiresAt: string): boolean {
 
 type UserSessionsListProps = UserScopedListProps & {
   layout?: 'table' | 'cards';
+  readOnly?: boolean;
 };
 
 function SessionCard({
@@ -49,6 +50,7 @@ function SessionCard({
   showUser,
   revoking,
   onRevoke,
+  readOnly,
   tSessionStatus,
   tDates,
   tRoles,
@@ -58,6 +60,7 @@ function SessionCard({
   showUser: boolean;
   revoking: boolean;
   onRevoke: (session: UserSession) => void;
+  readOnly: boolean;
   tSessionStatus: ReturnType<typeof useTranslations<'modules.common.sessionStatus'>>;
   tDates: ReturnType<typeof useTranslations<'modules.common.dates'>>;
   tRoles: ReturnType<typeof useTranslations<'modules.users.roles'>>;
@@ -90,7 +93,7 @@ function SessionCard({
           <dd className="text-right text-atg-fg">{formatDateTime(session.expiresAt)}</dd>
         </div>
       </dl>
-      {!expired ? (
+      {!readOnly && !expired ? (
         <Button
           type="button"
           variant="outline"
@@ -111,6 +114,7 @@ export function UserSessionsList({
   fixedUserId,
   showUserColumn = true,
   layout = 'cards',
+  readOnly = false,
 }: UserSessionsListProps = {}) {
   const { users: getUsersErrorMessage } = useAdminErrorMessages();
   const tSessions = useTranslations('modules.users.sessions');
@@ -234,7 +238,10 @@ export function UserSessionsList({
             <DataTableBadge variant="success">{tSessionStatus('active')}</DataTableBadge>
           ),
       },
-      {
+    );
+
+    if (!readOnly) {
+      cols.push({
         id: 'actions',
         header: tColumns('actions'),
         meta: { align: 'right' },
@@ -249,12 +256,13 @@ export function UserSessionsList({
             />
           </DataTableActions>
         ),
-      },
-    );
+      });
+    }
 
     return cols;
   }, [
     handleRevokeRequest,
+    readOnly,
     revokingId,
     showUserColumn,
     tColumns,
@@ -313,6 +321,7 @@ export function UserSessionsList({
                   showUser={showUserColumn}
                   revoking={revokingId === session.id}
                   onRevoke={(s) => handleRevokeRequest(s)}
+                  readOnly={readOnly}
                   tSessionStatus={tSessionStatus}
                   tDates={tDates}
                   tRoles={tRoles}

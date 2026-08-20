@@ -32,7 +32,10 @@
     },
     "id": {
       "metaTitle": "Edit user",
-      "backLabel": "Back to users"
+      "backLabel": "Back to users",
+      "voir": {
+        "metaTitle": "View user"
+      }
     },
     "employes": {
       "description": "Employee profiles linked to users and organizations.",

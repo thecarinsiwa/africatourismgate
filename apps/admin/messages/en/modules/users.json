@@ -40,6 +40,11 @@
   },
   "detail": {
     "title": "Edit user",
+    "viewTitle": "View user",
+    "viewButton": "View",
+    "editButton": "Edit",
+    "createdAt": "Created at",
+    "updatedAt": "Updated at",
     "tabsAria": "User account sections",
     "tabs": {
       "profile": "Profile",

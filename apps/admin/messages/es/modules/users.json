@@ -40,6 +40,11 @@
   },
   "detail": {
     "title": "Editar usuario",
+    "viewTitle": "Ver usuario",
+    "viewButton": "Ver",
+    "editButton": "Editar",
+    "createdAt": "Creado el",
+    "updatedAt": "Modificado el",
     "tabsAria": "Secciones de la cuenta de usuario",
     "tabs": {
       "profile": "Perfil",

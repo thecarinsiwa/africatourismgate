@@ -267,7 +267,7 @@ export function UsersList() {
           const user = row.original;
           return (
             <DataTableActions className="opacity-90 transition-opacity group-hover:opacity-100">
-              <DataTableActionButton action="view" href={`/utilisateurs/${user.id}`} />
+              <DataTableActionButton action="view" href={`/utilisateurs/${user.id}/voir`} />
               <DataTableActionButton action="edit" href={`/utilisateurs/${user.id}`} />
               <DataTableAdjustButton
                 label={tRoles('manageAction')}
