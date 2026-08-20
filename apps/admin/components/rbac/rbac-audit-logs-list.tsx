@@ -23,7 +23,7 @@ import { useFormatDateTime } from '../../lib/i18n/use-module-labels';
 import { UserIdFilterBar } from '../users/user-id-filter-bar';
 import { RbacSubnav } from './rbac-subnav';
 
-const PAGE_SIZE = 20;
+const DEFAULT_PAGE_SIZE = 20;
 
 function eventIcon(eventType: RbacAuditEventType): string {
   if (eventType.startsWith('role_') && !eventType.includes('permission')) return '🛡';
@@ -130,15 +130,18 @@ function AuditTimelineItem({ log }: { log: RbacAuditLog }) {
 export function RbacAuditLogsList({
   showSubnav = true,
   userFilterMode = showSubnav ? 'actor' : 'involved',
+  pageSize = DEFAULT_PAGE_SIZE,
 }: {
   showSubnav?: boolean;
   userFilterMode?: 'actor' | 'involved';
+  pageSize?: number;
 }) {
   const { rbac: getRbacErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.rbac.audit');
   const tFilters = useTranslations('modules.common.filters');
   const { toast } = useToast();
   const [page, setPage] = useState(1);
+  const limit = pageSize > 0 ? pageSize : DEFAULT_PAGE_SIZE;
   const [filterTick, setFilterTick] = useState(0);
   const [draftDateFrom, setDraftDateFrom] = useState('');
   const [draftDateTo, setDraftDateTo] = useState('');
@@ -252,7 +255,7 @@ export function RbacAuditLogsList({
     try {
       const result = await getApiClient().listRbacAuditLogs({
         page,
-        limit: PAGE_SIZE,
+        limit,
         dateFrom: appliedDateFrom || undefined,
         dateTo: appliedDateTo || undefined,
         eventType: appliedEventType || undefined,
@@ -277,6 +280,7 @@ export function RbacAuditLogsList({
   }, [
     access.status,
     page,
+    limit,
     appliedDateFrom,
     appliedDateTo,
     appliedEventType,
@@ -407,7 +411,7 @@ export function RbacAuditLogsList({
 
       {state.status === 'loading' ? (
         <div className="space-y-4">
-          {Array.from({ length: 4 }).map((_, index) => (
+          {Array.from({ length: Math.min(limit, 5) }).map((_, index) => (
             <Skeleton key={index} className="h-28 rounded-xl" />
           ))}
         </div>
@@ -423,10 +427,10 @@ export function RbacAuditLogsList({
         </ol>
       )}
 
-      {state.status === 'ready' && state.totalPages > 1 ? (
+      {state.status === 'ready' && state.totalPages > 0 ? (
         <DataTablePagination
           page={page}
-          pageSize={PAGE_SIZE}
+          pageSize={limit}
           totalPages={state.totalPages}
           totalItems={state.total}
           itemLabel={t('paginationItem')}
