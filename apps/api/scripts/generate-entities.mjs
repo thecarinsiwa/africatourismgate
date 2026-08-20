@@ -23,6 +23,7 @@ const AUDIT_COLS = new Set([
 const DOMAIN_MAP = {
   users: 'users',
   employees: 'users',
+  departments: 'users',
   user_sessions: 'users',
   password_reset_tokens: 'users',
   user_addresses: 'users',

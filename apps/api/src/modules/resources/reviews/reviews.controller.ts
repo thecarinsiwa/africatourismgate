@@ -5,62 +5,47 @@ import {
   Get,
   Param,
   Patch,
+  Post,
   Query,
 } from '@nestjs/common';
-import {
-  ApiForbiddenResponse,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
-import { CurrentUser } from '../../auth/decorators/current-user.decorator';
-import { AuthUserDto } from '../../auth/dto/auth-user.dto';
-import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
-import { AdminReviewDetailDto } from './dto/admin-review-detail.dto';
-import { AdminReviewListItemDto } from './dto/admin-review-list-item.dto';
-import { ReviewsListQueryDto } from './dto/reviews-list-query.dto';
-import { UpdateReviewStatusDto } from './dto/update-review-status.dto';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { DeepPartial } from 'typeorm';
+import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
+import { Reviews } from '../../../entities/generated';
 import { ReviewsService } from './reviews.service';
 
 @ApiTags('reviews')
-@ApiForbiddenResponse({ description: 'Missing permission' })
 @Controller('reviews')
 export class ReviewsController {
   constructor(private readonly service: ReviewsService) {}
 
   @Get()
-  @RequirePermissions('reviews.read')
-  @ApiOperation({ summary: 'List reviews for moderation (admin)' })
-  findAll(
-    @Query() query: ReviewsListQueryDto,
-  ): Promise<{ data: AdminReviewListItemDto[]; meta: { total: number; page: number; limit: number; totalPages: number } }> {
-    return this.service.listForAdmin(query);
+  @ApiOperation({ summary: 'List reviews' })
+  findAll(@Query() query: PaginationQueryDto) {
+    return this.service.findAll(query);
   }
 
   @Get(':id')
-  @RequirePermissions('reviews.read')
-  @ApiOperation({ summary: 'Get review detail for moderation (admin)' })
-  findOne(@Param('id') id: string): Promise<AdminReviewDetailDto> {
-    return this.service.findOneForAdmin(id);
+  @ApiOperation({ summary: 'Get reviews by id' })
+  findOne(@Param('id') id: string) {
+    return this.service.findOne(id);
+  }
+
+  @Post()
+  @ApiOperation({ summary: 'Create reviews' })
+  create(@Body() dto: DeepPartial<Reviews>) {
+    return this.service.create(dto);
   }
 
   @Patch(':id')
-  @RequirePermissions('reviews.write')
-  @ApiOperation({ summary: 'Approve or hide a review' })
-  updateStatus(
-    @Param('id') id: string,
-    @Body() dto: UpdateReviewStatusDto,
-    @CurrentUser() user: AuthUserDto,
-  ): Promise<AdminReviewDetailDto> {
-    return this.service.updateStatus(id, dto.status, user.id);
+  @ApiOperation({ summary: 'Update reviews' })
+  update(@Param('id') id: string, @Body() dto: DeepPartial<Reviews>) {
+    return this.service.update(id, dto);
   }
 
   @Delete(':id')
-  @RequirePermissions('reviews.write')
-  @ApiOperation({ summary: 'Soft-delete a review' })
-  async remove(
-    @Param('id') id: string,
-    @CurrentUser() user: AuthUserDto,
-  ): Promise<void> {
-    await this.service.removeReview(id, user.id);
+  @ApiOperation({ summary: 'Soft-delete reviews' })
+  remove(@Param('id') id: string) {
+    return this.service.remove(id);
   }
 }

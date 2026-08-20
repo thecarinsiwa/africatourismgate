@@ -10,11 +10,8 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DeepPartial } from 'typeorm';
-import { CurrentUser } from '../../auth/decorators/current-user.decorator';
-import { AuthUserDto } from '../../auth/dto/auth-user.dto';
+import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import { UserRoleAssignments } from '../../../entities/generated';
-import { CreateUserRoleAssignmentDto } from './dto/create-user-role-assignment.dto';
-import { UserRoleAssignmentsListQueryDto } from './dto/user-role-assignments-list-query.dto';
 import { UserRoleAssignmentsService } from './user-role-assignments.service';
 
 @ApiTags('user-role-assignments')
@@ -24,29 +21,20 @@ export class UserRoleAssignmentsController {
 
   @Get()
   @ApiOperation({ summary: 'List user-role-assignments' })
-  findAll(@Query() query: UserRoleAssignmentsListQueryDto) {
-    return this.service.list(query);
+  findAll(@Query() query: PaginationQueryDto) {
+    return this.service.findAll(query);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get user-role-assignments by id' })
   findOne(@Param('id') id: string) {
-    return this.service.findOneDto(id);
+    return this.service.findOne(id);
   }
 
   @Post()
   @ApiOperation({ summary: 'Create user-role-assignments' })
-  create(
-    @Body() dto: CreateUserRoleAssignmentDto,
-    @CurrentUser() user: AuthUserDto,
-  ) {
-    return this.service.createFromDto(dto, user.id);
-  }
-
-  @Patch(':id/revoke')
-  @ApiOperation({ summary: 'Revoke a user role assignment' })
-  revoke(@Param('id') id: string, @CurrentUser() user: AuthUserDto) {
-    return this.service.revoke(id, user.id);
+  create(@Body() dto: DeepPartial<UserRoleAssignments>) {
+    return this.service.create(dto);
   }
 
   @Patch(':id')

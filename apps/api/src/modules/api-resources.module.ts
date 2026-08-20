@@ -1,10 +1,22 @@
 import { UsersModule } from './resources/users/users.module';
 import { EmployeesModule } from './resources/employees/employees.module';
+import { DepartmentsModule } from './resources/departments/departments.module';
 import { UserSessionsModule } from './resources/user-sessions/user-sessions.module';
 import { PasswordResetTokensModule } from './resources/password-reset-tokens/password-reset-tokens.module';
 import { UserAddressesModule } from './resources/user-addresses/user-addresses.module';
 import { UserPaymentMethodsModule } from './resources/user-payment-methods/user-payment-methods.module';
 import { LoyaltyAccountsModule } from './resources/loyalty-accounts/loyalty-accounts.module';
+import { EmailOperationVerificationsModule } from './resources/email-operation-verifications/email-operation-verifications.module';
+import { RoomImagesModule } from './resources/room-images/room-images.module';
+import { FlightImagesModule } from './resources/flight-images/flight-images.module';
+import { VehicleImagesModule } from './resources/vehicle-images/vehicle-images.module';
+import { ShipImagesModule } from './resources/ship-images/ship-images.module';
+import { ActivityImagesModule } from './resources/activity-images/activity-images.module';
+import { ActivityItineraryStopsModule } from './resources/activity-itinerary-stops/activity-itinerary-stops.module';
+import { PackageImagesModule } from './resources/package-images/package-images.module';
+import { TourGuidesModule } from './resources/tour-guides/tour-guides.module';
+import { BookingGuideAssignmentsModule } from './resources/booking-guide-assignments/booking-guide-assignments.module';
+import { BookingMessagesModule } from './resources/booking-messages/booking-messages.module';
 import { OrganizationsModule } from './resources/organizations/organizations.module';
 import { OrganizationSettingsModule } from './resources/organization-settings/organization-settings.module';
 import { OrganizationBankAccountsModule } from './resources/organization-bank-accounts/organization-bank-accounts.module';
@@ -21,19 +33,15 @@ import { PropertyImagesModule } from './resources/property-images/property-image
 import { PropertyAmenitiesModule } from './resources/property-amenities/property-amenities.module';
 import { RoomsModule } from './resources/rooms/rooms.module';
 import { RoomAvailabilityModule } from './resources/room-availability/room-availability.module';
-import { RoomImagesModule } from './resources/room-images/room-images.module';
 import { AirlinesModule } from './resources/airlines/airlines.module';
 import { AirportsModule } from './resources/airports/airports.module';
 import { FlightsModule } from './resources/flights/flights.module';
 import { FlightClassesModule } from './resources/flight-classes/flight-classes.module';
 import { FlightClassAvailabilityModule } from './resources/flight-class-availability/flight-class-availability.module';
-import { FlightImagesModule } from './resources/flight-images/flight-images.module';
 import { RentalAgenciesModule } from './resources/rental-agencies/rental-agencies.module';
 import { VehicleCategoriesModule } from './resources/vehicle-categories/vehicle-categories.module';
 import { VehiclesModule } from './resources/vehicles/vehicles.module';
 import { VehicleAvailabilityModule } from './resources/vehicle-availability/vehicle-availability.module';
-import { VehicleImagesModule } from './resources/vehicle-images/vehicle-images.module';
-import { ShipImagesModule } from './resources/ship-images/ship-images.module';
 import { CruiseLinesModule } from './resources/cruise-lines/cruise-lines.module';
 import { CruisePortsModule } from './resources/cruise-ports/cruise-ports.module';
 import { ShipsModule } from './resources/ships/ships.module';
@@ -44,13 +52,8 @@ import { CruiseSailingsModule } from './resources/cruise-sailings/cruise-sailing
 import { CabinAvailabilityModule } from './resources/cabin-availability/cabin-availability.module';
 import { ActivityProvidersModule } from './resources/activity-providers/activity-providers.module';
 import { ActivitiesModule } from './resources/activities/activities.module';
-import { ActivityImagesModule } from './resources/activity-images/activity-images.module';
-import { ActivityDescriptionAssetsModule } from './resources/activity-description-assets/activity-description-assets.module';
 import { ActivitySchedulesModule } from './resources/activity-schedules/activity-schedules.module';
-import { ActivityItineraryStopsModule } from './resources/activity-itinerary-stops/activity-itinerary-stops.module';
 import { PackagesModule } from './resources/packages/packages.module';
-import { PackageImagesModule } from './resources/package-images/package-images.module';
-import { PackageDescriptionAssetsModule } from './resources/package-description-assets/package-description-assets.module';
 import { PackageItemsModule } from './resources/package-items/package-items.module';
 import { BookingsModule } from './resources/bookings/bookings.module';
 import { BookingItemsModule } from './resources/booking-items/booking-items.module';
@@ -61,23 +64,6 @@ import { PromotionsModule } from './resources/promotions/promotions.module';
 import { ReviewsModule } from './resources/reviews/reviews.module';
 import { SupportTicketsModule } from './resources/support-tickets/support-tickets.module';
 import { SupportMessagesModule } from './resources/support-messages/support-messages.module';
-import { TourGuidesModule } from './resources/tour-guides/tour-guides.module';
-import { AboutPagesModule } from './resources/about-pages/about-pages.module';
-import { AboutResourcesModule } from './resources/about-resources/about-resources.module';
-import { BlogPostsModule } from './resources/blog-posts/blog-posts.module';
-import { AboutTimelineMilestonesModule } from './resources/about-timeline-milestones/about-timeline-milestones.module';
-import { TeamMembersModule } from './resources/team-members/team-members.module';
-import { WhyUsItemsModule } from './resources/why-us-items/why-us-items.module';
-import { WhyUsSectionsModule } from './resources/why-us-sections/why-us-sections.module';
-import { HappyCustomersSectionsModule } from './resources/happy-customers-sections/happy-customers-sections.module';
-import { HappyCustomersStatsModule } from './resources/happy-customers-stats/happy-customers-stats.module';
-import { HeroSlidesModule } from './resources/hero-slides/hero-slides.module';
-import { GapSiteSettingsModule } from './resources/gap-site-settings/gap-site-settings.module';
-import { GapPagesModule } from './resources/gap-pages/gap-pages.module';
-import { GapActivitiesModule } from './resources/gap-activities/gap-activities.module';
-import { GapImpactStatsModule } from './resources/gap-impact-stats/gap-impact-stats.module';
-import { GapMediaItemsModule } from './resources/gap-media-items/gap-media-items.module';
-import { DonationsModule } from './resources/donations/donations.module';
 
 import { Module } from '@nestjs/common';
 
@@ -85,11 +71,23 @@ import { Module } from '@nestjs/common';
   imports: [
     UsersModule,
     EmployeesModule,
+    DepartmentsModule,
     UserSessionsModule,
     PasswordResetTokensModule,
     UserAddressesModule,
     UserPaymentMethodsModule,
     LoyaltyAccountsModule,
+    EmailOperationVerificationsModule,
+    RoomImagesModule,
+    FlightImagesModule,
+    VehicleImagesModule,
+    ShipImagesModule,
+    ActivityImagesModule,
+    ActivityItineraryStopsModule,
+    PackageImagesModule,
+    TourGuidesModule,
+    BookingGuideAssignmentsModule,
+    BookingMessagesModule,
     OrganizationsModule,
     OrganizationSettingsModule,
     OrganizationBankAccountsModule,
@@ -105,23 +103,19 @@ import { Module } from '@nestjs/common';
     PropertyImagesModule,
     PropertyAmenitiesModule,
     RoomsModule,
-    RoomImagesModule,
     RoomAvailabilityModule,
     AirlinesModule,
     AirportsModule,
     FlightsModule,
     FlightClassesModule,
     FlightClassAvailabilityModule,
-    FlightImagesModule,
     RentalAgenciesModule,
     VehicleCategoriesModule,
     VehiclesModule,
     VehicleAvailabilityModule,
-    VehicleImagesModule,
     CruiseLinesModule,
     CruisePortsModule,
     ShipsModule,
-    ShipImagesModule,
     ItinerariesModule,
     ItineraryPortsModule,
     CabinsModule,
@@ -129,13 +123,8 @@ import { Module } from '@nestjs/common';
     CabinAvailabilityModule,
     ActivityProvidersModule,
     ActivitiesModule,
-    ActivityImagesModule,
-    ActivityDescriptionAssetsModule,
     ActivitySchedulesModule,
-    ActivityItineraryStopsModule,
     PackagesModule,
-    PackageImagesModule,
-    PackageDescriptionAssetsModule,
     PackageItemsModule,
     BookingsModule,
     BookingItemsModule,
@@ -146,23 +135,6 @@ import { Module } from '@nestjs/common';
     ReviewsModule,
     SupportTicketsModule,
     SupportMessagesModule,
-    TourGuidesModule,
-    BlogPostsModule,
-    AboutPagesModule,
-    TeamMembersModule,
-    AboutTimelineMilestonesModule,
-    AboutResourcesModule,
-    WhyUsSectionsModule,
-    WhyUsItemsModule,
-    HappyCustomersSectionsModule,
-    HappyCustomersStatsModule,
-    HeroSlidesModule,
-    GapSiteSettingsModule,
-    GapPagesModule,
-    GapActivitiesModule,
-    GapImpactStatsModule,
-    GapMediaItemsModule,
-    DonationsModule,
   ],
 })
 export class ApiResourcesModule {}

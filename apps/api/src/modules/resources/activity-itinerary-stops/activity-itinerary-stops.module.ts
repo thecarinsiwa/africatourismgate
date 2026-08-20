@@ -8,6 +8,5 @@ import { ActivityItineraryStopsService } from './activity-itinerary-stops.servic
   imports: [TypeOrmModule.forFeature([ActivityItineraryStops])],
   controllers: [ActivityItineraryStopsController],
   providers: [ActivityItineraryStopsService],
-  exports: [ActivityItineraryStopsService],
 })
 export class ActivityItineraryStopsModule {}
