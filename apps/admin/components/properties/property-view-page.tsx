@@ -28,6 +28,8 @@ import { formatMoney } from '../../lib/format-money';
 import { PropertyExportPdfButton } from './property-export-pdf-button';
 import { PropertyPhotosCarousel } from './property-photos-carousel';
 import { PropertyThumbnail } from './property-thumbnail';
+import { RichTextContent } from '../rich-text-content';
+import { isRichTextEmpty } from '../../lib/rich-text';
 
 type PropertyViewPageProps = {
   propertyId: string;
@@ -316,8 +318,8 @@ export function PropertyViewPage({ propertyId }: PropertyViewPageProps) {
                   {tView('description')}
                 </dt>
                 <dd className="mt-0.5 text-sm text-atg-fg">
-                  {property.description?.trim() ? (
-                    <p className="whitespace-pre-wrap">{property.description}</p>
+                  {property.description?.trim() && !isRichTextEmpty(property.description) ? (
+                    <RichTextContent html={property.description} />
                   ) : (
                     emptyDash
                   )}

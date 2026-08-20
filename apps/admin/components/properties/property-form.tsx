@@ -14,7 +14,9 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useId, useMemo, useState, type ReactNode } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import { isRichTextEmpty } from '../../lib/rich-text';
 import { isValidSlug, slugifyName } from '../../lib/slug';
+import { RichTextEditor } from '../rich-text-editor';
 
 export type PropertyFormValues = {
   destinationId: string;
@@ -57,7 +59,9 @@ function toPayload(values: PropertyFormValues): CreatePropertyRequest {
     slug: values.slug.trim().toLowerCase(),
     propertyType: values.propertyType,
     ...(star !== undefined && Number.isFinite(star) ? { starRating: star } : {}),
-    ...(values.description.trim() ? { description: values.description.trim() } : {}),
+    ...(values.description.trim() && !isRichTextEmpty(values.description)
+      ? { description: values.description.trim() }
+      : {}),
     ...(values.addressLine.trim() ? { addressLine: values.addressLine.trim() } : {}),
   };
 }
@@ -88,7 +92,6 @@ export function PropertyForm({
   const router = useRouter();
   const { toast } = useToast();
   const typeId = useId();
-  const descId = useId();
   const [destinations, setDestinations] = useState<Destination[]>([]);
   const [values, setValues] = useState<PropertyFormValues>(() =>
     initialProperty ? propertyToFormValues(initialProperty) : defaultValues,
@@ -258,15 +261,11 @@ export function PropertyForm({
               />
             </div>
             <div className="sm:col-span-2">
-              <label htmlFor={descId} className="mb-1.5 block text-sm font-medium text-atg-fg">
-                {tCommonForm('description')}
-              </label>
-              <textarea
-                id={descId}
-                rows={3}
+              <RichTextEditor
+                label={tCommonForm('description')}
                 value={values.description}
-                onChange={(e) => updateField('description', e.target.value)}
-                className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2.5 text-sm"
+                onChange={(html) => updateField('description', html)}
+                contentClassName="min-h-[140px]"
               />
             </div>
           </div>
