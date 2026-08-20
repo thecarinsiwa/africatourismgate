@@ -126,7 +126,7 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
   const orgId = useId();
   const managerId = useId();
   const statusId = useId();
-  const departmentListId = useId();
+  const departmentId = useId();
   const [values, setValues] = useState<EmployeeFormValues>(() => {
     if (initialEmployee) {
       return employeeToFormValues(initialEmployee);
@@ -141,6 +141,7 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
   const [existingEmployees, setExistingEmployees] = useState<Employee[]>([]);
   const [managers, setManagers] = useState<Employee[]>([]);
   const [departments, setDepartments] = useState<string[]>([]);
+  const [departmentsLoading, setDepartmentsLoading] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<
     Partial<Record<keyof EmployeeFormValues, string>>
   >({});
@@ -188,9 +189,11 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
       if (!organizationId) {
         if (!cancelled) {
           setDepartments([]);
+          setDepartmentsLoading(false);
         }
         return;
       }
+      setDepartmentsLoading(true);
       try {
         const result = await getApiClient().listDepartments({
           page: 1,
@@ -203,6 +206,10 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
       } catch {
         if (!cancelled) {
           setDepartments([]);
+        }
+      } finally {
+        if (!cancelled) {
+          setDepartmentsLoading(false);
         }
       }
     }
@@ -426,27 +433,35 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
       </div>
 
       <div>
-        <Input
-          label={tForm('department')}
+        <label htmlFor={departmentId} className="mb-2 block text-sm font-medium text-atg-fg">
+          {tForm('department')}
+        </label>
+        <select
+          id={departmentId}
           name="department"
           value={values.department}
           onChange={(e) => updateField('department', e.target.value)}
-          maxLength={100}
-          list={values.organizationId ? departmentListId : undefined}
-          hint={
-            values.organizationId
-              ? tForm('departmentHint')
-              : tForm('departmentNeedsOrganization')
-          }
-          autoComplete="off"
-        />
-        {values.organizationId ? (
-          <datalist id={departmentListId}>
-            {departmentOptions.map((department) => (
-              <option key={department} value={department} />
-            ))}
-          </datalist>
-        ) : null}
+          disabled={!values.organizationId || departmentsLoading}
+          className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          <option value="">
+            {!values.organizationId
+              ? tForm('departmentNeedsOrganization')
+              : departmentsLoading
+                ? tLoading('default')
+                : tForm('departmentNone')}
+          </option>
+          {departmentOptions.map((department) => (
+            <option key={department} value={department}>
+              {department}
+            </option>
+          ))}
+        </select>
+        <p className="mt-1 text-xs text-atg-muted">
+          {values.organizationId
+            ? tForm('departmentHint')
+            : tForm('departmentNeedsOrganization')}
+        </p>
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <Input
