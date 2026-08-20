@@ -12,7 +12,7 @@
   "contenu": {
     "messages": {
       "title": "Support messages",
-      "description": "Conversations on support tickets.",
+      "description": "Customer conversations tied to support tickets. Open a ticket to read and reply in the thread.",
       "emptyTitle": "Messages live inside tickets",
       "emptyDescription": "Customer conversations happen in each support ticket thread. Open a ticket to read and reply to messages.",
       "ctaLabel": "View tickets"

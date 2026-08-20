@@ -103,7 +103,7 @@ function buildPlaceholderConfig(
   const Illustration = ILLUSTRATION_COMPONENTS[illustration];
   return {
     illustration,
-    icon: <Illustration />,
+    icon: <Illustration className="h-12 w-12" />,
     ...(ctaHref ? { ctaHref } : {}),
   };
 }

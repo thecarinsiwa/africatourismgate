@@ -26,6 +26,7 @@ import { RouteAccessGate } from './route-access-gate';
 import { SessionSync } from './session-sync';
 import { LanguageSwitcher } from './language-switcher';
 import { CommandPalette } from './command-palette';
+import { KeyboardShortcutsHelp } from './keyboard-shortcuts-help';
 
 function formatDisplayName(firstName: string, lastName: string, email: string): string {
   const name = `${firstName} ${lastName}`.trim();
@@ -140,6 +141,7 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
       }}
     >
       <CommandPalette />
+      <KeyboardShortcutsHelp />
       <RouteAccessGate>{children}</RouteAccessGate>
     </DashboardShell>
   );

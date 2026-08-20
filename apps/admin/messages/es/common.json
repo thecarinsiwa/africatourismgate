@@ -44,6 +44,17 @@
     "title": "Navegación rápida",
     "placeholder": "Buscar una página…",
     "empty": "Ninguna página encontrada",
-    "shortcutHint": "Ctrl+K"
+    "shortcutHint": "Ctrl+K · ⌘K — pulse ? para la ayuda"
+  },
+  "keyboardShortcuts": {
+    "title": "Atajos de teclado",
+    "description": "Atajos disponibles en el back office.",
+    "close": "Cerrar",
+    "hint": "Los atajos se ignoran mientras escribe en un campo.",
+    "items": {
+      "palette": "Abrir / cerrar la navegación rápida",
+      "escape": "Cerrar la paleta o esta ayuda",
+      "help": "Mostrar esta ayuda"
+    }
   }
 }

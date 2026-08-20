@@ -18,7 +18,7 @@ import {
   type SortingState,
 } from '@africatourismgate/ui';
 import type { BookingListItem, BookingStatus, OrganizationListItem, User } from '@africatourismgate/types';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import {
@@ -36,9 +36,9 @@ const PAGE_SIZE = 10;
 
 type StatusFilter = '' | BookingStatus;
 
-function formatDateTime(iso: string): string {
+function formatDateTime(iso: string, locale: string): string {
   try {
-    return new Date(iso).toLocaleString('fr-FR', {
+    return new Date(iso).toLocaleString(locale, {
       dateStyle: 'short',
       timeStyle: 'short',
     });
@@ -53,6 +53,7 @@ function formatMoney(cents: number, currency: string): string {
 
 export function BookingsList() {
   const { bookings: getBookingsErrorMessage } = useAdminErrorMessages();
+  const locale = useLocale();
   const t = useTranslations('modules.bookings.list');
   const tCommon = useTranslations('modules.common');
   const tDataTable = useTranslations('modules.common.dataTable');
@@ -200,7 +201,7 @@ export function BookingsList() {
         meta: { hideOnMobile: true },
         cell: ({ row }) => (
           <span className="whitespace-nowrap text-sm tabular-nums">
-            {formatDateTime(row.original.createdAt)}
+            {formatDateTime(row.original.createdAt, locale)}
           </span>
         ),
       },
@@ -208,9 +209,9 @@ export function BookingsList() {
         id: 'client',
         header: tCommon('columns.client'),
         cell: ({ row }) => (
-          <div>
-            <span className="font-medium text-atg-fg">{row.original.clientEmail}</span>
-            <p className="text-xs text-atg-muted">
+          <div className="min-w-0">
+            <span className="block truncate font-medium text-atg-fg">{row.original.clientEmail}</span>
+            <p className="truncate text-xs text-atg-muted">
               {row.original.clientFirstName} {row.original.clientLastName}
             </p>
           </div>
@@ -253,7 +254,7 @@ export function BookingsList() {
       {
         id: 'total',
         header: tCommon('columns.amount'),
-        meta: { align: 'right' },
+        meta: { align: 'right', hideOnMobile: true },
         cell: ({ row }) => (
           <span className="tabular-nums text-sm font-medium">
             {formatMoney(row.original.totalCents, row.original.currency)}
@@ -275,7 +276,7 @@ export function BookingsList() {
         ),
       },
     ],
-    [emptyDash, orgNameById, statusLabels, t, tActions, tCommon],
+    [emptyDash, locale, orgNameById, statusLabels, t, tActions, tCommon],
   );
 
   const isLoading = state.status === 'loading';
@@ -289,7 +290,7 @@ export function BookingsList() {
     exportCsv({
       filename: `reservations-${date}.csv`,
       columns: [
-        { header: tCommon('columns.date'), value: (row) => formatDateTime(row.createdAt) },
+        { header: tCommon('columns.date'), value: (row) => formatDateTime(row.createdAt, locale) },
         { header: tCommon('columns.client'), value: (row) => row.clientEmail },
         {
           header: tCommon('columns.organization'),
@@ -310,7 +311,7 @@ export function BookingsList() {
       rows: bookings,
     });
     toast({ variant: 'success', message: tExport('success') });
-  }, [bookings, emptyDash, orgNameById, statusLabels, tCommon, tExport, toast]);
+  }, [bookings, emptyDash, locale, orgNameById, statusLabels, tCommon, tExport, toast]);
 
   return (
     <div className="space-y-6">
@@ -393,6 +394,7 @@ export function BookingsList() {
             <div className="w-full sm:w-40">
               <Input
                 label={tCommon('filters.dateFrom')}
+                name="dateFrom"
                 type="date"
                 value={dateFrom}
                 onChange={(e) => {
@@ -404,6 +406,7 @@ export function BookingsList() {
             <div className="w-full sm:w-40">
               <Input
                 label={tCommon('filters.dateTo')}
+                name="dateTo"
                 type="date"
                 value={dateTo}
                 onChange={(e) => {

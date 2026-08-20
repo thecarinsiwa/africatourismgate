@@ -26,7 +26,10 @@ export function EmptyState({
       )}
     >
       <div
-        className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-atg-surface text-atg-muted ring-1 ring-atg-border/80"
+        className={cn(
+          'mb-4 flex items-center justify-center rounded-2xl bg-atg-surface text-atg-muted ring-1 ring-atg-border/80',
+          icon ? 'h-16 w-16' : 'h-14 w-14',
+        )}
         aria-hidden
       >
         {icon ?? <DataTableEmptyIcon className="h-8 w-8" />}

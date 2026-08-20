@@ -63,7 +63,7 @@ export function AppHeader({
 
         <div className="min-w-0 flex-1 space-y-1">
           {title ? (
-            <h1 className="truncate text-lg font-bold text-atg-fg md:text-xl">{title}</h1>
+            <p className="truncate text-lg font-bold text-atg-fg md:text-xl">{title}</p>
           ) : hasHeading ? null : (
             <span className="sr-only">Africa Tourism Gate Admin</span>
           )}

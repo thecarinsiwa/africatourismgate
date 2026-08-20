@@ -12,8 +12,8 @@
   "contenu": {
     "messages": {
       "title": "Mensajes de soporte",
-      "description": "Conversaciones en los tickets.",
-      "emptyTitle": "Los mensajes están en los tickets",
+      "description": "Conversaciones de clientes vinculadas a los tickets de soporte. Abra un ticket para leer y responder en el hilo.",
+      "emptyTitle": "Los mensajes viven en los tickets",
       "emptyDescription": "Las conversaciones con los clientes se realizan en el hilo de cada ticket de soporte. Abra un ticket para leer y responder mensajes.",
       "ctaLabel": "Ver tickets"
     }

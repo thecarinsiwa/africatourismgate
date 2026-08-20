@@ -197,7 +197,7 @@ export function PropertiesList() {
       {
         id: 'thumbnail',
         header: '',
-        meta: { align: 'center' },
+        meta: { align: 'center', hideOnMobile: true },
         cell: ({ row }) => (
           <PropertyThumbnail propertyId={row.original.id} name={row.original.name} size="md" />
         ),
@@ -206,7 +206,7 @@ export function PropertiesList() {
         accessorKey: 'name',
         header: tColumns('property'),
         cell: ({ row }) => (
-          <span className="font-medium text-atg-fg">{row.original.name}</span>
+          <span className="block min-w-0 truncate font-medium text-atg-fg">{row.original.name}</span>
         ),
       },
       {
