@@ -385,7 +385,8 @@
         "description": "Create a page for a GAP program section."
       },
       "id": {
-        "metaTitle": "Edit GAP page"
+        "metaTitle": "Edit GAP page",
+        "backLabel": "Back to pages"
       }
     },
     "activites": {
