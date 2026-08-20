@@ -237,19 +237,28 @@
       "validation": {
         "titleRequired": "Le titre est obligatoire.",
         "urlRequired": "Indiquez au moins une URL de fichier ou externe.",
-        "urlInvalid": "L'URL doit être valide."
+        "urlInvalid": "L'URL doit être valide.",
+        "imageFormat": "Format image invalide (JPEG, PNG ou WebP).",
+        "videoFormat": "Format vidéo invalide (MP4 ou WebM).",
+        "fileTooLarge": "Le fichier ne doit pas dépasser 50 Mo."
       },
       "fields": {
         "mediaType": "Type de média",
         "title": "Titre",
         "description": "Description",
+        "file": "Fichier",
         "fileUrl": "URL du fichier",
         "externalUrl": "URL externe (vidéo, etc.)",
+        "thumbnail": "Miniature",
         "thumbnailUrl": "URL de la miniature",
         "thumbnailPreviewAlt": "Aperçu de la miniature",
         "publishedAtOptional": "Date de publication (optionnel)",
         "sortOrder": "Ordre d'affichage",
         "locale": "Langue"
+      },
+      "hints": {
+        "imageFormat": "JPEG, PNG ou WebP, max 50 Mo",
+        "videoFormat": "MP4 ou WebM, max 50 Mo"
       },
       "saving": "Enregistrement…",
       "createButton": "Créer le média",

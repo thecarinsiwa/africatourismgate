@@ -12,11 +12,16 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useId, useState } from 'react';
 import { isValidMediaUrl, toDatetimeLocalValue } from '../../lib/about/form-utils';
-import { getApiClient } from '../../lib/auth/api';
+import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
+import { getSession } from '../../lib/auth/session';
 import { GAP_MEDIA_TYPES } from '../../lib/gap/constants';
 import { useGapPermissions } from '../../lib/gap/use-gap-permissions';
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 import { resolveMediaUrl } from '../../lib/resolve-media-url';
+
+const FILE_MAX_BYTES = 50 * 1024 * 1024;
+const IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
+const VIDEO_TYPES = new Set(['video/mp4', 'video/webm']);
 
 export type GapMediaItemFormValues = {
   mediaType: GapMediaItemType;
@@ -82,6 +87,8 @@ type GapMediaItemFormProps = {
   defaultLocale?: string;
 };
 
+type UploadTarget = 'fileUrl' | 'thumbnailUrl';
+
 export function GapMediaItemForm({
   mode,
   mediaItemId,
@@ -94,6 +101,7 @@ export function GapMediaItemForm({
   const tTypes = useTranslations('modules.gap.mediaTypes');
   const tCommon = useTranslations('modules.common');
   const tCommonForm = useTranslations('modules.common.form');
+  const tValidation = useTranslations('modules.common.validation');
   const tLocale = useTranslations('modules.about.locale');
   const tStatus = useTranslations('modules.about.status');
   const router = useRouter();
@@ -104,6 +112,8 @@ export function GapMediaItemForm({
   const sortOrderId = useId();
   const statusId = useId();
   const localeId = useId();
+  const fileInputId = useId();
+  const thumbnailInputId = useId();
 
   const [values, setValues] = useState<GapMediaItemFormValues>(() =>
     initialMediaItem
@@ -115,6 +125,8 @@ export function GapMediaItemForm({
   >({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [uploadingFile, setUploadingFile] = useState(false);
+  const [uploadingThumbnail, setUploadingThumbnail] = useState(false);
 
   const updateField = useCallback(
     <K extends keyof GapMediaItemFormValues>(key: K, value: GapMediaItemFormValues[K]) => {
@@ -123,6 +135,66 @@ export function GapMediaItemForm({
     },
     [],
   );
+
+  async function uploadFile(
+    file: File,
+    target: UploadTarget,
+    allowedTypes: Set<string>,
+    formatError: string,
+  ) {
+    if (!allowedTypes.has(file.type)) {
+      setFieldErrors((prev) => ({ ...prev, [target]: formatError }));
+      return;
+    }
+    if (file.size > FILE_MAX_BYTES) {
+      setFieldErrors((prev) => ({ ...prev, [target]: t('validation.fileTooLarge') }));
+      return;
+    }
+    const session = getSession();
+    if (!session?.accessToken) {
+      setFieldErrors((prev) => ({ ...prev, [target]: tValidation('sessionExpiredRetry') }));
+      return;
+    }
+
+    const setUploading = target === 'fileUrl' ? setUploadingFile : setUploadingThumbnail;
+    setUploading(true);
+    try {
+      const body = new FormData();
+      body.append('file', file);
+      const response = await fetch(`${resolveApiBaseUrl()}/gap-media-items/upload-file`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${session.accessToken}` },
+        body,
+      });
+      if (!response.ok) throw new Error('Upload failed');
+      const payload = (await response.json()) as { url?: string };
+      if (!payload.url) throw new Error('Invalid upload response');
+      updateField(target, payload.url);
+    } catch {
+      setFieldErrors((prev) => ({ ...prev, [target]: tValidation('uploadFailed') }));
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  async function handleFilePick(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const allowed = values.mediaType === 'video' ? VIDEO_TYPES : IMAGE_TYPES;
+    const formatError =
+      values.mediaType === 'video'
+        ? t('validation.videoFormat')
+        : t('validation.imageFormat');
+    await uploadFile(file, 'fileUrl', allowed, formatError);
+    event.target.value = '';
+  }
+
+  async function handleThumbnailPick(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    await uploadFile(file, 'thumbnailUrl', IMAGE_TYPES, t('validation.imageFormat'));
+    event.target.value = '';
+  }
 
   const validate = (): boolean => {
     const errors: Partial<Record<keyof GapMediaItemFormValues, string>> = {};
@@ -170,6 +242,11 @@ export function GapMediaItemForm({
   };
 
   const previewUrl = values.thumbnailUrl.trim() || values.fileUrl.trim();
+  const busy = uploadingFile || uploadingThumbnail || saving;
+  const fileAccept =
+    values.mediaType === 'video'
+      ? 'video/mp4,video/webm'
+      : 'image/jpeg,image/png,image/webp';
 
   return (
     <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
@@ -220,15 +297,42 @@ export function GapMediaItemForm({
       />
 
       <div className="space-y-4">
-        <Input
-          label={t('fields.fileUrl')}
-          type="url"
-          value={values.fileUrl}
-          onChange={(e) => updateField('fileUrl', e.target.value)}
-          placeholder={tCommonForm('urlPlaceholder')}
-          disabled={!canWrite}
-          error={fieldErrors.fileUrl}
-        />
+        <div className="space-y-3">
+          <p className="text-sm font-medium text-atg-fg">{t('fields.file')}</p>
+          {canWrite ? (
+            <div className="flex flex-wrap items-center gap-3">
+              <label
+                htmlFor={fileInputId}
+                className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10"
+              >
+                {uploadingFile ? tCommonForm('uploading') : tCommonForm('chooseFile')}
+                <input
+                  id={fileInputId}
+                  type="file"
+                  accept={fileAccept}
+                  className="hidden"
+                  onChange={(e) => void handleFilePick(e)}
+                  disabled={busy}
+                />
+              </label>
+              <span className="text-xs text-atg-muted">
+                {values.mediaType === 'video'
+                  ? t('hints.videoFormat')
+                  : t('hints.imageFormat')}
+              </span>
+            </div>
+          ) : null}
+          <Input
+            label={tCommonForm('externalUrlOptional')}
+            type="url"
+            value={values.fileUrl}
+            onChange={(e) => updateField('fileUrl', e.target.value)}
+            placeholder={tCommonForm('urlPlaceholder')}
+            disabled={!canWrite}
+            error={fieldErrors.fileUrl}
+          />
+        </div>
+
         <Input
           label={t('fields.externalUrl')}
           type="url"
@@ -238,16 +342,41 @@ export function GapMediaItemForm({
           disabled={!canWrite}
           error={fieldErrors.externalUrl}
         />
-        <Input
-          label={t('fields.thumbnailUrl')}
-          type="url"
-          value={values.thumbnailUrl}
-          onChange={(e) => updateField('thumbnailUrl', e.target.value)}
-          placeholder={tCommonForm('urlPlaceholder')}
-          disabled={!canWrite}
-          error={fieldErrors.thumbnailUrl}
-        />
-        {previewUrl && values.mediaType === 'image' ? (
+
+        <div className="space-y-3">
+          <p className="text-sm font-medium text-atg-fg">{t('fields.thumbnail')}</p>
+          {canWrite ? (
+            <div className="flex flex-wrap items-center gap-3">
+              <label
+                htmlFor={thumbnailInputId}
+                className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10"
+              >
+                {uploadingThumbnail ? tCommonForm('uploading') : tCommonForm('chooseFile')}
+                <input
+                  id={thumbnailInputId}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="hidden"
+                  onChange={(e) => void handleThumbnailPick(e)}
+                  disabled={busy}
+                />
+              </label>
+              <span className="text-xs text-atg-muted">{t('hints.imageFormat')}</span>
+            </div>
+          ) : null}
+          <Input
+            label={tCommonForm('externalUrlOptional')}
+            type="url"
+            value={values.thumbnailUrl}
+            onChange={(e) => updateField('thumbnailUrl', e.target.value)}
+            placeholder={tCommonForm('urlPlaceholder')}
+            disabled={!canWrite}
+            error={fieldErrors.thumbnailUrl}
+          />
+        </div>
+
+        {previewUrl &&
+        (values.mediaType === 'image' || values.thumbnailUrl.trim()) ? (
           <Image
             src={resolveMediaUrl(previewUrl)}
             alt={t('fields.thumbnailPreviewAlt')}
@@ -316,7 +445,7 @@ export function GapMediaItemForm({
 
       {canWrite ? (
         <div className="flex flex-wrap gap-3">
-          <Button type="submit" disabled={saving}>
+          <Button type="submit" disabled={busy}>
             {saving ? t('saving') : mode === 'create' ? t('createButton') : t('saveButton')}
           </Button>
           <Button type="button" variant="outline" href="/gap/medias">

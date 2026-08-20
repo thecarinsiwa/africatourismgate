@@ -237,19 +237,28 @@
       "validation": {
         "titleRequired": "Title is required.",
         "urlRequired": "Provide at least a file URL or external URL.",
-        "urlInvalid": "URL must be valid."
+        "urlInvalid": "URL must be valid.",
+        "imageFormat": "Invalid image format (JPEG, PNG or WebP).",
+        "videoFormat": "Invalid video format (MP4 or WebM).",
+        "fileTooLarge": "File must not exceed 50 MB."
       },
       "fields": {
         "mediaType": "Media type",
         "title": "Title",
         "description": "Description",
+        "file": "File",
         "fileUrl": "File URL",
         "externalUrl": "External URL (video, etc.)",
+        "thumbnail": "Thumbnail",
         "thumbnailUrl": "Thumbnail URL",
         "thumbnailPreviewAlt": "Thumbnail preview",
         "publishedAtOptional": "Publication date (optional)",
         "sortOrder": "Display order",
         "locale": "Language"
+      },
+      "hints": {
+        "imageFormat": "JPEG, PNG or WebP, max 50 MB",
+        "videoFormat": "MP4 or WebM, max 50 MB"
       },
       "saving": "Saving…",
       "createButton": "Create media",
