@@ -15,5 +15,23 @@
     "validation": {
       "organizationRequired": "Organization is required."
     }
+  },
+  "stats": {
+    "total": {
+      "label": "Departments",
+      "subtitle": "Registered"
+    },
+    "organizations": {
+      "label": "Organizations",
+      "subtitle": "With at least one department"
+    },
+    "withDescription": {
+      "label": "Documented",
+      "subtitle": "With a description"
+    },
+    "employees": {
+      "label": "Employees",
+      "subtitle": "Employee profiles"
+    }
   }
 }
