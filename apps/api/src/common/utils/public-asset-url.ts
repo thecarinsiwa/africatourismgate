@@ -85,6 +85,10 @@ export function gapPageUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/gap/pages/${filename}`;
 }
 
+export function gapSiteSettingsUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/gap/settings/${filename}`;
+}
+
 function getApiPublicOrigin(): string {
   return getApiBaseUrl().replace(/\/api$/, '');
 }

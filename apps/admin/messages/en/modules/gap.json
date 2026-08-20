@@ -31,8 +31,11 @@
     "fields": {
       "title": "Title",
       "subtitle": "Subtitle",
+      "heroImage": "Hero image",
       "heroImageUrl": "Hero image URL",
       "heroImageAlt": "Hero image alt text",
+      "heroPreviewAlt": "Hero image preview",
+      "removeHero": "Remove image",
       "unescoLabel": "UNESCO label (optional)",
       "unescoUrl": "UNESCO link (optional)",
       "donateLabel": "Donate button label (optional)",

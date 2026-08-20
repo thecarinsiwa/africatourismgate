@@ -31,8 +31,11 @@
     "fields": {
       "title": "Titre",
       "subtitle": "Sous-titre",
+      "heroImage": "Image bannière",
       "heroImageUrl": "URL de l'image bannière",
       "heroImageAlt": "Texte alternatif de la bannière",
+      "heroPreviewAlt": "Aperçu de la bannière",
+      "removeHero": "Retirer l'image",
       "unescoLabel": "Libellé UNESCO (optionnel)",
       "unescoUrl": "Lien UNESCO (optionnel)",
       "donateLabel": "Libellé du bouton Don (optionnel)",

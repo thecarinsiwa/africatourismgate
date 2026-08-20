@@ -6,12 +6,18 @@ import type {
   GapSiteSettings,
   GapStatus,
 } from '@africatourismgate/types';
+import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useId, useState } from 'react';
 import { isValidMediaUrl } from '../../lib/about/form-utils';
-import { getApiClient } from '../../lib/auth/api';
+import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
+import { getSession } from '../../lib/auth/session';
 import { useGapPermissions } from '../../lib/gap/use-gap-permissions';
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+import { resolveMediaUrl } from '../../lib/resolve-media-url';
+
+const IMAGE_MAX_BYTES = 5 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
 type SiteSettingsFormValues = {
   title: string;
@@ -44,16 +50,21 @@ export function GapSiteSettingsForm({ locale }: GapSiteSettingsFormProps) {
   const tStatus = useTranslations('modules.about.status');
   const tCommon = useTranslations('modules.common');
   const tCommonForm = useTranslations('modules.common.form');
+  const tValidation = useTranslations('modules.common.validation');
 
   const [settingsId, setSettingsId] = useState<string | null>(null);
   const [values, setValues] = useState<SiteSettingsFormValues>(emptyValues);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploadingHero, setUploadingHero] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof SiteSettingsFormValues, string>>>({});
+  const [fieldErrors, setFieldErrors] = useState<
+    Partial<Record<keyof SiteSettingsFormValues, string>>
+  >({});
 
   const titleId = useId();
   const subtitleId = useId();
+  const heroInputId = useId();
   const heroImageUrlId = useId();
   const heroImageAltId = useId();
   const unescoLabelId = useId();
@@ -91,6 +102,53 @@ export function GapSiteSettingsForm({ locale }: GapSiteSettingsFormProps) {
   useEffect(() => {
     void loadSettings();
   }, [loadSettings]);
+
+  async function handleHeroPick(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
+      setFieldErrors((prev) => ({ ...prev, heroImageUrl: tValidation('imageFormat') }));
+      event.target.value = '';
+      return;
+    }
+    if (file.size > IMAGE_MAX_BYTES) {
+      setFieldErrors((prev) => ({ ...prev, heroImageUrl: tValidation('imageTooLarge') }));
+      event.target.value = '';
+      return;
+    }
+
+    const session = getSession();
+    if (!session?.accessToken) {
+      setFieldErrors((prev) => ({
+        ...prev,
+        heroImageUrl: tValidation('sessionExpiredRetry'),
+      }));
+      event.target.value = '';
+      return;
+    }
+
+    setUploadingHero(true);
+    try {
+      const body = new FormData();
+      body.append('file', file);
+      const response = await fetch(`${resolveApiBaseUrl()}/gap-site-settings/upload-image`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${session.accessToken}` },
+        body,
+      });
+      if (!response.ok) throw new Error('Upload failed');
+      const payload = (await response.json()) as { url?: string };
+      if (!payload.url) throw new Error('Invalid upload response');
+      setValues((prev) => ({ ...prev, heroImageUrl: payload.url! }));
+      setFieldErrors((prev) => ({ ...prev, heroImageUrl: undefined }));
+    } catch {
+      setFieldErrors((prev) => ({ ...prev, heroImageUrl: tValidation('uploadFailed') }));
+    } finally {
+      setUploadingHero(false);
+      event.target.value = '';
+    }
+  }
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -145,6 +203,8 @@ export function GapSiteSettingsForm({ locale }: GapSiteSettingsFormProps) {
     return <p className="text-sm text-muted-foreground">{tCommonForm('loading')}</p>;
   }
 
+  const busy = saving || uploadingHero;
+
   return (
     <Card className="p-6">
       <h2 className="mb-4 text-lg font-semibold">{t('heading')}</h2>
@@ -196,39 +256,84 @@ export function GapSiteSettingsForm({ locale }: GapSiteSettingsFormProps) {
           error={fieldErrors.subtitle}
         />
 
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label htmlFor={heroImageUrlId} className="mb-1 block text-sm font-medium">
-              {t('fields.heroImageUrl')}
-            </label>
-            <Input
-              id={heroImageUrlId}
-              type="url"
-              value={values.heroImageUrl}
-              onChange={(e) => setValues((prev) => ({ ...prev, heroImageUrl: e.target.value }))}
-              disabled={!canWrite}
-              required
-              aria-invalid={Boolean(fieldErrors.heroImageUrl)}
-            />
-            {fieldErrors.heroImageUrl ? (
-              <p className="mt-1 text-sm text-destructive">{fieldErrors.heroImageUrl}</p>
-            ) : null}
-          </div>
-          <div>
-            <label htmlFor={heroImageAltId} className="mb-1 block text-sm font-medium">
-              {t('fields.heroImageAlt')}
-            </label>
-            <Input
-              id={heroImageAltId}
-              value={values.heroImageAlt}
-              onChange={(e) => setValues((prev) => ({ ...prev, heroImageAlt: e.target.value }))}
-              disabled={!canWrite}
-              required
-              aria-invalid={Boolean(fieldErrors.heroImageAlt)}
-            />
-            {fieldErrors.heroImageAlt ? (
-              <p className="mt-1 text-sm text-destructive">{fieldErrors.heroImageAlt}</p>
-            ) : null}
+        <div className="space-y-3">
+          <p className="text-sm font-medium">{t('fields.heroImage')}</p>
+          {values.heroImageUrl.trim() ? (
+            <div className="space-y-2">
+              <Image
+                src={resolveMediaUrl(values.heroImageUrl.trim())}
+                alt={values.heroImageAlt.trim() || t('fields.heroPreviewAlt')}
+                width={960}
+                height={540}
+                unoptimized
+                className="h-44 w-full max-w-xl rounded-lg border border-atg-border object-cover"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                }}
+              />
+              {canWrite ? (
+                <button
+                  type="button"
+                  onClick={() => setValues((prev) => ({ ...prev, heroImageUrl: '' }))}
+                  className="text-xs font-medium text-red-600 hover:underline dark:text-red-400"
+                >
+                  {t('fields.removeHero')}
+                </button>
+              ) : null}
+            </div>
+          ) : null}
+          {canWrite ? (
+            <div className="flex flex-wrap items-center gap-3">
+              <label
+                htmlFor={heroInputId}
+                className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10"
+              >
+                {uploadingHero ? tCommonForm('uploading') : tCommonForm('chooseFile')}
+                <input
+                  id={heroInputId}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="hidden"
+                  onChange={(e) => void handleHeroPick(e)}
+                  disabled={busy}
+                />
+              </label>
+              <span className="text-xs text-atg-muted">{tCommonForm('imageFormatHint')}</span>
+            </div>
+          ) : null}
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <Input
+                id={heroImageUrlId}
+                label={tCommonForm('externalUrlOptional')}
+                type="url"
+                value={values.heroImageUrl}
+                onChange={(e) => {
+                  setValues((prev) => ({ ...prev, heroImageUrl: e.target.value }));
+                  setFieldErrors((prev) => ({ ...prev, heroImageUrl: undefined }));
+                }}
+                placeholder={tCommonForm('urlPlaceholder')}
+                disabled={!canWrite || uploadingHero}
+                required
+                error={fieldErrors.heroImageUrl}
+              />
+            </div>
+            <div>
+              <label htmlFor={heroImageAltId} className="mb-1 block text-sm font-medium">
+                {t('fields.heroImageAlt')}
+              </label>
+              <Input
+                id={heroImageAltId}
+                value={values.heroImageAlt}
+                onChange={(e) => setValues((prev) => ({ ...prev, heroImageAlt: e.target.value }))}
+                disabled={!canWrite}
+                required
+                aria-invalid={Boolean(fieldErrors.heroImageAlt)}
+              />
+              {fieldErrors.heroImageAlt ? (
+                <p className="mt-1 text-sm text-destructive">{fieldErrors.heroImageAlt}</p>
+              ) : null}
+            </div>
           </div>
         </div>
 
@@ -265,7 +370,7 @@ export function GapSiteSettingsForm({ locale }: GapSiteSettingsFormProps) {
         {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
         {canWrite ? (
-          <Button type="submit" disabled={saving}>
+          <Button type="submit" disabled={busy}>
             {saving ? t('saving') : t('saveButton')}
           </Button>
         ) : null}

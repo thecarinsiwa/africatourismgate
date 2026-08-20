@@ -31,8 +31,11 @@
     "fields": {
       "title": "Título",
       "subtitle": "Subtítulo",
+      "heroImage": "Imagen principal",
       "heroImageUrl": "URL de imagen principal",
       "heroImageAlt": "Texto alternativo de la imagen",
+      "heroPreviewAlt": "Vista previa de la imagen principal",
+      "removeHero": "Quitar la imagen",
       "unescoLabel": "Etiqueta UNESCO (opcional)",
       "unescoUrl": "Enlace UNESCO (opcional)",
       "donateLabel": "Etiqueta del botón Donar (opcional)",
