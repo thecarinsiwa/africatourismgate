@@ -44,5 +44,36 @@
       "createdAt": "Created at",
       "updatedAt": "Updated at"
     }
+  },
+  "form": {
+    "linkedUser": "Linked user",
+    "selectUser": "Select a user",
+    "linkedUserHintCreate": "A user can only be linked to one employee profile.",
+    "noUsersAvailable": "No users available.",
+    "linkedUserHintEdit": "The linked user cannot be changed after creation.",
+    "organization": "Organization",
+    "organizationNone": "None",
+    "employeeCode": "Employee code",
+    "employeeCodeHintCreate": "Assigned automatically on save (organization prefix + sequential number).",
+    "employeeCodeHintEdit": "The employee code does not change after creation.",
+    "jobTitle": "Job title",
+    "department": "Department",
+    "hireDate": "Hire date",
+    "terminationDate": "End date",
+    "salary": "Salary",
+    "currency": "Currency",
+    "currencyHint": "3-letter ISO code (e.g. USD, EUR).",
+    "manager": "Manager",
+    "managerNone": "None",
+    "status": "Status",
+    "submitCreate": "Create employee",
+    "submitEdit": "Save",
+    "successSaved": "Changes have been saved.",
+    "validation": {
+      "userRequired": "A linked user is required.",
+      "userAlreadyLinked": "This user already has an employee profile.",
+      "salaryPositive": "Salary must be a positive number.",
+      "hireBeforeTermination": "Hire date must be before the end date."
+    }
   }
 }

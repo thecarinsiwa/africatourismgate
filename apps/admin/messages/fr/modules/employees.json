@@ -44,5 +44,36 @@
       "createdAt": "Créé le",
       "updatedAt": "Modifié le"
     }
+  },
+  "form": {
+    "linkedUser": "Utilisateur lié",
+    "selectUser": "Sélectionner un utilisateur",
+    "linkedUserHintCreate": "Un utilisateur ne peut être lié qu'à un seul profil employé.",
+    "noUsersAvailable": "Aucun utilisateur disponible.",
+    "linkedUserHintEdit": "L'utilisateur lié ne peut pas être modifié après création.",
+    "organization": "Organisation",
+    "organizationNone": "Aucune",
+    "employeeCode": "Code employé",
+    "employeeCodeHintCreate": "Attribué automatiquement à l'enregistrement (préfixe organisation + numéro séquentiel).",
+    "employeeCodeHintEdit": "Le matricule ne change pas après la création.",
+    "jobTitle": "Poste",
+    "department": "Département",
+    "hireDate": "Date d'embauche",
+    "terminationDate": "Date de fin",
+    "salary": "Salaire",
+    "currency": "Devise",
+    "currencyHint": "Code ISO à 3 lettres (ex. USD, EUR).",
+    "manager": "Manager",
+    "managerNone": "Aucun",
+    "status": "Statut",
+    "submitCreate": "Créer l'employé",
+    "submitEdit": "Enregistrer",
+    "successSaved": "Les modifications ont été enregistrées.",
+    "validation": {
+      "userRequired": "L'utilisateur lié est obligatoire.",
+      "userAlreadyLinked": "Cet utilisateur possède déjà un profil employé.",
+      "salaryPositive": "Le salaire doit être un nombre positif.",
+      "hireBeforeTermination": "La date d'embauche doit être antérieure à la date de fin."
+    }
   }
 }

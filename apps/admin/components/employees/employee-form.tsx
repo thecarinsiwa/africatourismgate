@@ -1,6 +1,7 @@
 'use client';
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+import { useEmployeeStatusLabels } from '../../lib/i18n/use-module-labels';
 
 import { Button, Input } from '@africatourismgate/ui';
 import type {
@@ -11,6 +12,7 @@ import type {
   UpdateEmployeeRequest,
   User,
 } from '@africatourismgate/types';
+import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
@@ -113,6 +115,10 @@ type EmployeeFormProps = {
 
 export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeFormProps) {
   const { employees: getEmployeesErrorMessage } = useAdminErrorMessages();
+  const tForm = useTranslations('modules.employees.form');
+  const tStatus = useEmployeeStatusLabels();
+  const tActions = useTranslations('common.actions');
+  const tLoading = useTranslations('common.loading');
   const router = useRouter();
   const searchParams = useSearchParams();
   const defaultOrganizationId = searchParams.get('organizationId') ?? '';
@@ -221,17 +227,24 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
   function validate(): boolean {
     const errors: Partial<Record<keyof EmployeeFormValues, string>> = {};
     if (!values.userId) {
-      errors.userId = 'L’utilisateur lié est obligatoire.';
+      errors.userId = tForm('validation.userRequired');
     } else if (mode === 'create' && linkedUserIds.has(values.userId)) {
-      errors.userId = 'Cet utilisateur possède déjà un profil employé.';
+      errors.userId = tForm('validation.userAlreadyLinked');
     }
     if (values.salary.trim()) {
       const n = Number.parseFloat(values.salary);
       if (Number.isNaN(n) || n < 0) {
-        errors.salary = 'Le salaire doit être un nombre positif.';
+        errors.salary = tForm('validation.salaryPositive');
       }
     }
-    Object.assign(errors, employmentDateFieldErrors(values.hireDate, values.terminationDate));
+    Object.assign(
+      errors,
+      employmentDateFieldErrors(
+        values.hireDate,
+        values.terminationDate,
+        tForm('validation.hireBeforeTermination'),
+      ),
+    );
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
   }
@@ -250,7 +263,7 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
         router.push(`/utilisateurs/employes/${created.id}`);
       } else if (employeeId) {
         await client.updateEmployee(employeeId, toUpdatePayload(values));
-        setSuccessMessage('Les modifications ont été enregistrées.');
+        setSuccessMessage(tForm('successSaved'));
         router.refresh();
       }
     } catch (error) {
@@ -281,7 +294,7 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
 
       <div>
         <label htmlFor={userId} className="mb-2 block text-sm font-medium text-atg-fg">
-          Utilisateur lié
+          {tForm('linkedUser')}
         </label>
         <select
           id={userId}
@@ -291,7 +304,7 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
           disabled={mode === 'edit'}
           className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary disabled:opacity-60"
         >
-          <option value="">Sélectionner un utilisateur</option>
+          <option value="">{tForm('selectUser')}</option>
           {userOptions.map((user) => (
             <option key={user.id} value={user.id}>
               {user.firstName} {user.lastName} — {user.email}
@@ -303,20 +316,18 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
         ) : null}
         {mode === 'create' ? (
           <p className="mt-1 text-xs text-atg-muted">
-            Un utilisateur ne peut être lié qu’à un seul profil employé.
-            {userOptions.length === 0 ? ' Aucun utilisateur disponible.' : null}
+            {tForm('linkedUserHintCreate')}
+            {userOptions.length === 0 ? ` ${tForm('noUsersAvailable')}` : null}
           </p>
         ) : null}
         {mode === 'edit' ? (
-          <p className="mt-1 text-xs text-atg-muted">
-            L’utilisateur lié ne peut pas être modifié après création.
-          </p>
+          <p className="mt-1 text-xs text-atg-muted">{tForm('linkedUserHintEdit')}</p>
         ) : null}
       </div>
 
       <div>
         <label htmlFor={orgId} className="mb-2 block text-sm font-medium text-atg-fg">
-          Organisation
+          {tForm('organization')}
         </label>
         <select
           id={orgId}
@@ -325,7 +336,7 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
           onChange={(e) => updateField('organizationId', e.target.value)}
           className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
         >
-          <option value="">Aucune</option>
+          <option value="">{tForm('organizationNone')}</option>
           {organizations.map((org) => (
             <option key={org.id} value={org.id}>
               {org.name}
@@ -336,7 +347,7 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Input
-          label="Code employé"
+          label={tForm('employeeCode')}
           name="employeeCode"
           value={
             mode === 'create'
@@ -347,12 +358,12 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
           disabled={mode === 'create'}
           hint={
             mode === 'create'
-              ? 'Attribué automatiquement à l’enregistrement (préfixe organisation + numéro séquentiel).'
-              : 'Le matricule ne change pas après la création.'
+              ? tForm('employeeCodeHintCreate')
+              : tForm('employeeCodeHintEdit')
           }
         />
         <Input
-          label="Poste"
+          label={tForm('jobTitle')}
           name="jobTitle"
           value={values.jobTitle}
           onChange={(e) => updateField('jobTitle', e.target.value)}
@@ -361,7 +372,7 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
       </div>
 
       <Input
-        label="Département"
+        label={tForm('department')}
         name="department"
         value={values.department}
         onChange={(e) => updateField('department', e.target.value)}
@@ -370,7 +381,7 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Input
-          label="Date d’embauche"
+          label={tForm('hireDate')}
           name="hireDate"
           type="date"
           value={values.hireDate}
@@ -381,7 +392,7 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
           error={fieldErrors.hireDate}
         />
         <Input
-          label="Date de fin"
+          label={tForm('terminationDate')}
           name="terminationDate"
           type="date"
           value={values.terminationDate}
@@ -393,7 +404,7 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Input
-          label="Salaire"
+          label={tForm('salary')}
           name="salary"
           type="number"
           min={0}
@@ -403,19 +414,19 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
           error={fieldErrors.salary}
         />
         <Input
-          label="Devise"
+          label={tForm('currency')}
           name="currency"
           value={values.currency}
           onChange={(e) => updateField('currency', e.target.value)}
           maxLength={3}
-          hint="Code ISO à 3 lettres (ex. USD, EUR)."
+          hint={tForm('currencyHint')}
         />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor={managerId} className="mb-2 block text-sm font-medium text-atg-fg">
-            Manager
+            {tForm('manager')}
           </label>
           <select
             id={managerId}
@@ -424,7 +435,7 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
             onChange={(e) => updateField('managerId', e.target.value)}
             className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
           >
-            <option value="">Aucun</option>
+            <option value="">{tForm('managerNone')}</option>
             {managers.map((mgr) => (
               <option key={mgr.id} value={mgr.id}>
                 {mgr.user
@@ -438,7 +449,7 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
 
         <div>
           <label htmlFor={statusId} className="mb-2 block text-sm font-medium text-atg-fg">
-            Statut
+            {tForm('status')}
           </label>
           <select
             id={statusId}
@@ -449,19 +460,19 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
             }
             className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
           >
-            <option value="active">Actif</option>
-            <option value="on_leave">En congé</option>
-            <option value="terminated">Terminé</option>
+            <option value="active">{tStatus.active}</option>
+            <option value="on_leave">{tStatus.on_leave}</option>
+            <option value="terminated">{tStatus.terminated}</option>
           </select>
         </div>
       </div>
 
       <div className="flex flex-wrap gap-3 pt-2">
-        <Button type="submit" loading={submitting} loadingText="Enregistrement…">
-          {mode === 'create' ? 'Créer l’employé' : 'Enregistrer'}
+        <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>
+          {mode === 'create' ? tForm('submitCreate') : tForm('submitEdit')}
         </Button>
         <Button type="button" variant="outline" href="/utilisateurs/employes">
-          Annuler
+          {tActions('cancel')}
         </Button>
       </div>
     </form>
