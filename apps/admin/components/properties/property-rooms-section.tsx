@@ -15,9 +15,11 @@ import {
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { Room } from '@africatourismgate/types';
+import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { getApiClient } from '../../lib/auth/api';
+import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
+import { getSession } from '../../lib/auth/session';
 import { formatMoney } from '../../lib/format-money';
 import { RoomImagesSection } from './room-images-section';
 
@@ -30,6 +32,12 @@ type RoomFormValues = {
   currency: string;
 };
 
+type PendingPhoto = {
+  id: string;
+  file: File;
+  previewUrl: string;
+};
+
 const emptyForm: RoomFormValues = {
   name: '',
   roomType: '',
@@ -39,6 +47,10 @@ const emptyForm: RoomFormValues = {
   currency: 'USD',
 };
 
+const ROOM_PHOTO_MAX_COUNT = 10;
+const ROOM_PHOTO_MAX_BYTES = 5 * 1024 * 1024;
+const ALLOWED_ROOM_PHOTO_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
+
 type PropertyRoomsSectionProps = {
   propertyId: string;
   embedded?: boolean;
@@ -47,6 +59,7 @@ type PropertyRoomsSectionProps = {
 export function PropertyRoomsSection({ propertyId, embedded }: PropertyRoomsSectionProps) {
   const { hebergements: getHebergementsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.properties.sections.rooms');
+  const tGallery = useTranslations('modules.common.imagesGallery');
   const tColumns = useTranslations('modules.common.columns');
   const tForm = useTranslations('modules.common.form');
   const tValidation = useTranslations('modules.common.validation');
@@ -69,6 +82,7 @@ export function PropertyRoomsSection({ propertyId, embedded }: PropertyRoomsSect
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [confirmTarget, setConfirmTarget] = useState<Room | null>(null);
   const [photosRoom, setPhotosRoom] = useState<Room | null>(null);
+  const [pendingPhotos, setPendingPhotos] = useState<PendingPhoto[]>([]);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -88,15 +102,24 @@ export function PropertyRoomsSection({ propertyId, embedded }: PropertyRoomsSect
     void load();
   }, [load]);
 
+  const clearPendingPhotos = useCallback(() => {
+    setPendingPhotos((prev) => {
+      for (const photo of prev) URL.revokeObjectURL(photo.previewUrl);
+      return [];
+    });
+  }, []);
+
   function resetForm() {
     setFormValues(emptyForm);
     setEditing(null);
     setShowForm(false);
     setFormError(null);
+    clearPendingPhotos();
   }
 
   function openCreate() {
     setPhotosRoom(null);
+    clearPendingPhotos();
     setFormValues(emptyForm);
     setEditing(null);
     setFormError(null);
@@ -105,6 +128,7 @@ export function PropertyRoomsSection({ propertyId, embedded }: PropertyRoomsSect
 
   function openEdit(room: Room) {
     setPhotosRoom(null);
+    clearPendingPhotos();
     setEditing(room);
     setFormValues({
       name: room.name,
@@ -140,12 +164,85 @@ export function PropertyRoomsSection({ propertyId, embedded }: PropertyRoomsSect
     return true;
   }
 
+  function handlePendingPhotoPick(event: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(event.target.files ?? []);
+    event.target.value = '';
+    if (files.length === 0) return;
+
+    const remaining = ROOM_PHOTO_MAX_COUNT - pendingPhotos.length;
+    if (remaining <= 0) {
+      setFormError(tGallery('maxPhotosReached', { max: ROOM_PHOTO_MAX_COUNT }));
+      return;
+    }
+
+    const accepted: PendingPhoto[] = [];
+    for (const file of files.slice(0, remaining)) {
+      if (!ALLOWED_ROOM_PHOTO_TYPES.has(file.type)) {
+        setFormError(tValidation('imageFormat'));
+        continue;
+      }
+      if (file.size > ROOM_PHOTO_MAX_BYTES) {
+        setFormError(tValidation('imageTooLarge'));
+        continue;
+      }
+      accepted.push({
+        id: `${file.name}-${file.size}-${file.lastModified}-${Math.random()}`,
+        file,
+        previewUrl: URL.createObjectURL(file),
+      });
+    }
+
+    if (accepted.length > 0) {
+      setFormError(null);
+      setPendingPhotos((prev) => [...prev, ...accepted].slice(0, ROOM_PHOTO_MAX_COUNT));
+    }
+  }
+
+  function removePendingPhoto(id: string) {
+    setPendingPhotos((prev) => {
+      const target = prev.find((photo) => photo.id === id);
+      if (target) URL.revokeObjectURL(target.previewUrl);
+      return prev.filter((photo) => photo.id !== id);
+    });
+  }
+
+  async function uploadPendingPhotos(roomId: string, photos: PendingPhoto[]) {
+    const session = getSession();
+    if (!session?.accessToken) {
+      throw new Error(tValidation('sessionExpiredRetry'));
+    }
+    const client = getApiClient();
+    for (let index = 0; index < photos.length; index += 1) {
+      const photo = photos[index]!;
+      const body = new FormData();
+      body.append('file', photo.file);
+      const response = await fetch(`${resolveApiBaseUrl()}/rooms/${roomId}/upload-image`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${session.accessToken}` },
+        body,
+      });
+      if (!response.ok) {
+        throw new Error(tValidation('uploadFailed'));
+      }
+      const payload = (await response.json()) as { url?: string };
+      if (!payload.url) {
+        throw new Error(tValidation('uploadFailed'));
+      }
+      await client.createRoomImage({
+        roomId,
+        url: payload.url,
+        sortOrder: index,
+      });
+    }
+  }
+
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     setFormError(null);
     if (!validate()) return;
     setSubmitting(true);
     try {
+      const client = getApiClient();
       const body = {
         name: formValues.name.trim(),
         maxGuests: Number(formValues.maxGuests),
@@ -155,14 +252,24 @@ export function PropertyRoomsSection({ propertyId, embedded }: PropertyRoomsSect
         ...(formValues.bedConfig.trim() ? { bedConfig: formValues.bedConfig.trim() } : {}),
       };
       if (editing) {
-        await getApiClient().updateRoom(editing.id, body);
+        await client.updateRoom(editing.id, body);
+        if (pendingPhotos.length > 0) {
+          await uploadPendingPhotos(editing.id, pendingPhotos);
+        }
       } else {
-        await getApiClient().createRoom({ propertyId, ...body });
+        const created = await client.createRoom({ propertyId, ...body });
+        if (pendingPhotos.length > 0) {
+          await uploadPendingPhotos(created.id, pendingPhotos);
+        }
       }
       resetForm();
       await load();
     } catch (error) {
-      setFormError(getHebergementsErrorMessage(error));
+      setFormError(
+        error instanceof Error && error.message
+          ? error.message
+          : getHebergementsErrorMessage(error),
+      );
     } finally {
       setSubmitting(false);
     }
@@ -378,6 +485,78 @@ export function PropertyRoomsSection({ propertyId, embedded }: PropertyRoomsSect
               }
             />
           </div>
+
+          <div className="space-y-2 rounded-lg border border-atg-border bg-atg-surface/40 p-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <p className="text-sm font-medium text-atg-fg">{tGallery('title')}</p>
+                <p className="text-xs text-atg-muted">
+                  {tGallery('maxPhotosHint', { max: ROOM_PHOTO_MAX_COUNT })}
+                </p>
+              </div>
+              <DataTableBadge variant="muted">
+                {pendingPhotos.length}/{ROOM_PHOTO_MAX_COUNT}
+              </DataTableBadge>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <label className="inline-flex cursor-pointer items-center rounded-md border border-atg-border bg-atg-elevated px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10">
+                {tGallery('addPhoto')}
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  multiple
+                  className="hidden"
+                  onChange={handlePendingPhotoPick}
+                  disabled={submitting || pendingPhotos.length >= ROOM_PHOTO_MAX_COUNT}
+                />
+              </label>
+              {editing ? (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    const room = editing;
+                    resetForm();
+                    setPhotosRoom(room);
+                  }}
+                  disabled={submitting}
+                >
+                  {t('photosAction')}
+                </Button>
+              ) : null}
+            </div>
+            <p className="text-xs text-atg-muted">{tForm('imageFormatHint')}</p>
+
+            {pendingPhotos.length > 0 ? (
+              <ul className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+                {pendingPhotos.map((photo) => (
+                  <li key={photo.id} className="relative">
+                    <div className="relative aspect-square overflow-hidden rounded-md border border-atg-border bg-atg-surface">
+                      <Image
+                        src={photo.previewUrl}
+                        alt=""
+                        fill
+                        unoptimized
+                        className="object-cover"
+                        sizes="96px"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removePendingPhoto(photo.id)}
+                      className="absolute right-1 top-1 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-medium text-white"
+                      aria-label={tActions('delete')}
+                    >
+                      ✕
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
+
           <div className="flex gap-3 pt-1">
             <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>
               {editing ? tActions('save') : tActions('create')}
