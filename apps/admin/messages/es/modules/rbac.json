@@ -119,9 +119,10 @@
     "accessDenied": "Cette page est réservée au super administrateur. Connectez-vous avec admin@africatourismgate.local ou un compte disposant du rôle super_admin.",
     "empty": "Hastacun événement pour ces critères.",
     "paginationItem": "événement",
-    "hideDetail": "Masquer le détail",
-    "showDetailJson": "Voir le détail JSON",
-    "actorFallback": "Acteur : {actorId}…",
+    "hideDetail": "Ocultar detalle",
+    "showDetailJson": "Ver detalle JSON",
+    "detailModalTitle": "Detalle JSON del evento",
+    "actorFallback": "Actor: {actorId}…",
     "targetLabel": "Cible",
     "ipLabel": "IP",
     "filters": {

@@ -4,10 +4,12 @@ import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
   Avatar,
+  Button,
   Card,
   DataTableBadge,
   DataTablePagination,
   FilterBar,
+  Modal,
   Skeleton,
   useToast,
 } from '@africatourismgate/ui';
@@ -133,10 +135,12 @@ function MetaChip({ label, value }: { label: string; value: ReactNode }) {
 function AuditTimelineItem({ log, isLast }: { log: RbacAuditLog; isLast: boolean }) {
   const formatDateTime = useFormatDateTime('mediumTime');
   const t = useTranslations('modules.rbac.audit');
-  const [expanded, setExpanded] = useState(false);
+  const tActions = useTranslations('common.actions');
+  const [detailOpen, setDetailOpen] = useState(false);
   const hasPayload = log.payload && Object.keys(log.payload).length > 0;
   const tone = eventTone(log.eventType);
   const label = t(`eventTypes.${log.eventType}`);
+  const payloadJson = hasPayload ? JSON.stringify(log.payload, null, 2) : '';
 
   return (
     <li className="relative grid grid-cols-[2.75rem_minmax(0,1fr)] gap-x-3 pb-6 last:pb-0 sm:gap-x-4">
@@ -166,14 +170,14 @@ function AuditTimelineItem({ log, isLast }: { log: RbacAuditLog; isLast: boolean
             </p>
           </div>
           {hasPayload ? (
-            <button
+            <Button
               type="button"
-              onClick={() => setExpanded((value) => !value)}
-              className="shrink-0 rounded-md px-2 py-1 text-xs font-medium text-primary transition-colors hover:bg-primary/10"
-              aria-expanded={expanded}
+              variant="outline"
+              size="sm"
+              onClick={() => setDetailOpen(true)}
             >
-              {expanded ? t('hideDetail') : t('showDetailJson')}
-            </button>
+              {t('showDetailJson')}
+            </Button>
           ) : null}
         </div>
 
@@ -206,13 +210,29 @@ function AuditTimelineItem({ log, isLast }: { log: RbacAuditLog; isLast: boolean
             {log.ipAddress ? <MetaChip label={t('ipLabel')} value={log.ipAddress} /> : null}
           </div>
         ) : null}
-
-        {hasPayload && expanded ? (
-          <pre className="max-h-72 overflow-auto rounded-lg border border-atg-border/80 bg-atg-elevated p-3 text-xs leading-relaxed text-atg-fg">
-            {JSON.stringify(log.payload, null, 2)}
-          </pre>
-        ) : null}
       </Card>
+
+      {hasPayload ? (
+        <Modal
+          open={detailOpen}
+          onOpenChange={setDetailOpen}
+          title={t('detailModalTitle')}
+          description={label}
+          showClose
+          className="max-w-2xl"
+        >
+          <div className="space-y-4">
+            <pre className="max-h-[min(28rem,60vh)] overflow-auto rounded-lg border border-atg-border/80 bg-atg-elevated p-4 text-xs leading-relaxed text-atg-fg">
+              {payloadJson}
+            </pre>
+            <div className="flex justify-end">
+              <Button type="button" variant="outline" onClick={() => setDetailOpen(false)}>
+                {tActions('close')}
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      ) : null}
     </li>
   );
 }
