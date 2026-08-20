@@ -94,6 +94,9 @@
     "carouselNext": "Next photo",
     "carouselThumbs": "Photo thumbnails",
     "carouselGoTo": "Go to photo {index}",
+    "carouselOpen": "Enlarge photo {index}",
+    "carouselViewerTitle": "Photo preview",
+    "carouselClose": "Close preview",
     "roomsIntro": "{count, plural, =0 {No rooms} one {# room} other {# rooms}}",
     "amenitiesIntro": "{count, plural, =0 {No amenities} one {# amenity} other {# amenities}}",
     "amenitiesEmpty": "No amenities linked."

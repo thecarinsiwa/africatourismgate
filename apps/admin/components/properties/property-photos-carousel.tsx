@@ -1,7 +1,7 @@
 'use client';
 
 import type { PropertyImage } from '@africatourismgate/types';
-import { Button, cn } from '@africatourismgate/ui';
+import { Button, Modal, cn } from '@africatourismgate/ui';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
@@ -20,14 +20,17 @@ export function PropertyPhotosCarousel({
 }: PropertyPhotosCarouselProps) {
   const t = useTranslations('modules.properties.view');
   const [index, setIndex] = useState(0);
+  const [viewerOpen, setViewerOpen] = useState(false);
 
   useEffect(() => {
     setIndex(0);
+    setViewerOpen(false);
   }, [images]);
 
   const count = images.length;
   const safeIndex = count === 0 ? 0 : ((index % count) + count) % count;
   const current = count > 0 ? images[safeIndex] : null;
+  const alt = current?.caption?.trim() || altFallback;
 
   const goPrev = useCallback(() => {
     setIndex((prev) => (prev - 1 + count) % count);
@@ -36,6 +39,23 @@ export function PropertyPhotosCarousel({
   const goNext = useCallback(() => {
     setIndex((prev) => (prev + 1) % count);
   }, [count]);
+
+  useEffect(() => {
+    if (!viewerOpen || count <= 1) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        goPrev();
+      } else if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        goNext();
+      }
+    };
+
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [viewerOpen, count, goPrev, goNext]);
 
   if (count === 0 || !current) {
     return <p className="text-sm text-atg-muted">{t('imagesEmpty')}</p>;
@@ -49,16 +69,23 @@ export function PropertyPhotosCarousel({
         aria-roledescription="carousel"
         aria-label={t('imagesTitle')}
       >
-        <Image
-          key={current.id}
-          src={resolveMediaUrl(current.url)}
-          alt={current.caption?.trim() || altFallback}
-          fill
-          className="object-cover"
-          sizes="(max-width: 1024px) 100vw, 20rem"
-          unoptimized
-          priority={safeIndex === 0}
-        />
+        <button
+          type="button"
+          onClick={() => setViewerOpen(true)}
+          className="absolute inset-0 z-0 cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"
+          aria-label={t('carouselOpen', { index: safeIndex + 1 })}
+        >
+          <Image
+            key={current.id}
+            src={resolveMediaUrl(current.url)}
+            alt={alt}
+            fill
+            className="object-cover"
+            sizes="(max-width: 1024px) 100vw, 20rem"
+            unoptimized
+            priority={safeIndex === 0}
+          />
+        </button>
 
         {count > 1 ? (
           <>
@@ -82,7 +109,7 @@ export function PropertyPhotosCarousel({
             >
               ›
             </Button>
-            <p className="absolute bottom-1.5 right-1.5 rounded-md bg-black/55 px-1.5 py-0.5 text-[10px] font-medium tabular-nums text-white">
+            <p className="pointer-events-none absolute bottom-1.5 right-1.5 z-10 rounded-md bg-black/55 px-1.5 py-0.5 text-[10px] font-medium tabular-nums text-white">
               {safeIndex + 1}/{count}
             </p>
           </>
@@ -125,6 +152,65 @@ export function PropertyPhotosCarousel({
           })}
         </ul>
       ) : null}
+
+      <Modal
+        open={viewerOpen}
+        onOpenChange={setViewerOpen}
+        title={t('carouselViewerTitle')}
+        showClose
+        closeAriaLabel={t('carouselClose')}
+        className="max-w-4xl p-4 sm:p-5"
+        containerClassName="bg-black/40"
+      >
+        <div className="space-y-3">
+          <div className="relative flex min-h-[50vh] items-center justify-center overflow-hidden rounded-lg bg-atg-surface">
+            <Image
+              key={`viewer-${current.id}`}
+              src={resolveMediaUrl(current.url)}
+              alt={alt}
+              width={1280}
+              height={960}
+              className="max-h-[70vh] w-auto max-w-full object-contain"
+              unoptimized
+              priority
+            />
+
+            {count > 1 ? (
+              <>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="absolute left-2 top-1/2 z-10 h-9 w-9 -translate-y-1/2 !px-0 bg-atg-elevated/95 shadow-sm"
+                  onClick={goPrev}
+                  aria-label={t('carouselPrev')}
+                >
+                  ‹
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="absolute right-2 top-1/2 z-10 h-9 w-9 -translate-y-1/2 !px-0 bg-atg-elevated/95 shadow-sm"
+                  onClick={goNext}
+                  aria-label={t('carouselNext')}
+                >
+                  ›
+                </Button>
+              </>
+            ) : null}
+          </div>
+
+          <div className="flex items-center justify-between gap-3">
+            <p className="min-w-0 truncate text-sm text-atg-muted">
+              {current.caption?.trim() || altFallback}
+            </p>
+            <p className="shrink-0 text-xs font-medium tabular-nums text-atg-muted">
+              {safeIndex + 1}/{count}
+            </p>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

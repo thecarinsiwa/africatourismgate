@@ -94,6 +94,9 @@
     "carouselNext": "Foto siguiente",
     "carouselThumbs": "Miniaturas de fotos",
     "carouselGoTo": "Ir a la foto {index}",
+    "carouselOpen": "Ampliar la foto {index}",
+    "carouselViewerTitle": "Vista previa de la foto",
+    "carouselClose": "Cerrar la vista previa",
     "roomsIntro": "{count, plural, =0 {Ninguna habitación} one {# habitación} other {# habitaciones}}",
     "amenitiesIntro": "{count, plural, =0 {Ningún equipamiento} one {# equipamiento} other {# equipamientos}}",
     "amenitiesEmpty": "Ningún equipamiento asociado."
