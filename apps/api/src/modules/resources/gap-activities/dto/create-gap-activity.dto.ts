@@ -1,5 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
+  ArrayMaxSize,
+  IsArray,
   IsEnum,
   IsInt,
   IsNotEmpty,
@@ -35,7 +37,25 @@ export class CreateGapActivityDto {
   @IsEnum(ICON_KEYS)
   iconKey!: GapActivityIconKey;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    type: [String],
+    description: 'Up to 10 image URLs (first becomes the cover imageUrl)',
+  })
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(10)
+  @IsString({ each: true })
+  @MaxLength(1024, { each: true })
+  @IsUrl(
+    { require_tld: false, protocols: ['http', 'https'] },
+    { each: true, message: "Chaque URL d'image doit être valide." },
+  )
+  imageUrls?: string[] | null;
+
+  @ApiPropertyOptional({
+    deprecated: true,
+    description: 'Legacy single image; prefer imageUrls',
+  })
   @IsOptional()
   @IsString()
   @MaxLength(1024)

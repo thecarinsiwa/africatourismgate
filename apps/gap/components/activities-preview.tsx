@@ -49,21 +49,48 @@ export async function ActivitiesPreview({
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {items.map((activity) => {
-            const imageUrl = resolveGapMediaUrl(activity.imageUrl);
+            const galleryUrls = [
+              ...new Set(
+                [
+                  ...(Array.isArray(activity.imageUrls) ? activity.imageUrls : []),
+                  activity.imageUrl,
+                ]
+                  .map((url) => resolveGapMediaUrl(url))
+                  .filter((url): url is string => Boolean(url)),
+              ),
+            ];
+            const coverUrl = galleryUrls[0] ?? null;
+            const extraUrls = !compact ? galleryUrls.slice(1) : [];
+
             return (
               <article
                 key={activity.id}
                 className="overflow-hidden rounded-2xl border border-atg-border bg-atg-elevated shadow-sm"
               >
-                {imageUrl ? (
+                {coverUrl ? (
                   <div className="relative aspect-[16/10] w-full">
                     <Image
-                      src={imageUrl}
+                      src={coverUrl}
                       alt=""
                       fill
                       className="object-cover"
                       sizes="(max-width: 768px) 100vw, 33vw"
                     />
+                  </div>
+                ) : null}
+                {extraUrls.length > 0 ? (
+                  <div className="grid grid-cols-4 gap-1 border-t border-atg-border p-1">
+                    {extraUrls.map((url) => (
+                      <div key={url} className="relative aspect-square overflow-hidden">
+                        <Image
+                          src={url}
+                          alt=""
+                          fill
+                          className="object-cover"
+                          sizes="80px"
+                        />
+                      </div>
+                    ))}
                   </div>
                 ) : null}
                 <div className="space-y-3 p-5">

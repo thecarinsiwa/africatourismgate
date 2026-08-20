@@ -140,16 +140,23 @@
       "validation": {
         "titleRequired": "Le titre est obligatoire.",
         "descriptionRequired": "La description est obligatoire.",
-        "imageUrlInvalid": "L'URL de l'image doit être valide."
+        "imageUrlInvalid": "L'URL de l'image doit être valide.",
+        "maxImages": "Maximum 10 images par activité."
       },
       "fields": {
         "title": "Titre",
         "description": "Description",
         "descriptionPlaceholder": "Décrivez l'activité…",
         "iconKey": "Icône",
+        "images": "Images",
+        "imagesCount": "{count} / {max}",
+        "imagesEmpty": "Aucune image pour le moment.",
         "image": "Image",
         "imageUrl": "Image (URL)",
         "imagePreviewAlt": "Aperçu de l'image",
+        "coverBadge": "Couverture",
+        "removeImage": "Retirer",
+        "addImageUrl": "Ajouter l'URL",
         "sortOrder": "Ordre d'affichage",
         "locale": "Langue"
       },

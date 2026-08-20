@@ -41,6 +41,7 @@ export type PublicGapActivityDto = {
   description: string;
   iconKey: 'school' | 'tree' | 'art' | 'park' | 'community';
   imageUrl: string | null;
+  imageUrls: string[];
   sortOrder: number;
   locale: string;
 };
@@ -325,12 +326,24 @@ export class PublicGapService {
   }
 
   private toActivityDto(activity: GapActivities): PublicGapActivityDto {
+    const imageUrls = [
+      ...new Set(
+        [
+          ...(Array.isArray(activity.imageUrls) ? activity.imageUrls : []),
+          activity.imageUrl,
+        ]
+          .map((url) => url?.trim())
+          .filter((url): url is string => Boolean(url)),
+      ),
+    ].slice(0, 10);
+
     return {
       id: activity.id,
       title: activity.title,
       description: activity.description,
       iconKey: activity.iconKey,
-      imageUrl: activity.imageUrl,
+      imageUrl: imageUrls[0] ?? null,
+      imageUrls,
       sortOrder: activity.sortOrder,
       locale: activity.locale,
     };

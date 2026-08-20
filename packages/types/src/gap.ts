@@ -42,6 +42,8 @@ export interface GapActivity extends AuditFields {
   description: string;
   iconKey: GapActivityIconKey;
   imageUrl: string | null;
+  /** Up to 10 image URLs; `imageUrl` is the cover (first). */
+  imageUrls: string[] | null;
   sortOrder: number;
   status: GapStatus;
   locale: string;
@@ -102,6 +104,7 @@ export interface PublicGapActivity {
   description: string;
   iconKey: GapActivityIconKey;
   imageUrl: string | null;
+  imageUrls: string[];
   sortOrder: number;
   locale: string;
 }
@@ -182,6 +185,9 @@ export interface CreateGapActivityRequest {
   title: string;
   description: string;
   iconKey: GapActivityIconKey;
+  /** Up to 10 image URLs; first becomes the cover. */
+  imageUrls?: string[] | null;
+  /** @deprecated Prefer imageUrls */
   imageUrl?: string | null;
   sortOrder?: number;
   status?: GapStatus;
