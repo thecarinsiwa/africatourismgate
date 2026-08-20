@@ -12,6 +12,7 @@ import type {
   CreateAmenityRequest,
   CreateDestinationRequest,
   CreateEmployeeRequest,
+  CreateDepartmentRequest,
   CreateOrganizationRequest,
   CreatePointOfInterestRequest,
   CreatePropertyImageRequest,
@@ -172,6 +173,8 @@ import type {
   LoyaltyAccountsListQuery,
   Employee,
   EmployeesListQuery,
+  Department,
+  DepartmentsListQuery,
   TourGuide,
   TourGuidesListQuery,
   CreateTourGuideRequest,
@@ -321,6 +324,7 @@ import type {
   UpdateAirportRequest,
   UpdateDestinationRequest,
   UpdateEmployeeRequest,
+  UpdateDepartmentRequest,
   UpdateFlightClassAvailabilityRequest,
   UpdateFlightClassRequest,
   UpdateFlightImageRequest,
@@ -443,6 +447,7 @@ export type {
   DestinationsListQuery,
   CreateDestinationRequest,
   CreateEmployeeRequest,
+  CreateDepartmentRequest,
   CreateOrganizationRequest,
   CreatePointOfInterestRequest,
   PointOfInterest,
@@ -452,6 +457,7 @@ export type {
   CreateRoleRequest,
   CreateUserRoleAssignmentRequest,
   UpdateEmployeeRequest,
+  UpdateDepartmentRequest,
   BulkUpsertOrganizationSettingsRequest,
   CreateOrganizationBankAccountRequest,
   EmailBrandingValue,
@@ -469,6 +475,8 @@ export type {
   UpdateUserRequest,
   Employee,
   EmployeesListQuery,
+  Department,
+  DepartmentsListQuery,
   Permission,
   PermissionsListQuery,
   RbacAuditLog,
@@ -1243,8 +1251,35 @@ export class ApiClient {
     return fetchPaginated<Employee>(this, '/employees', query);
   }
 
-  listEmployeeDepartments(): Promise<string[]> {
-    return this.request<string[]>('/employees/departments');
+  listDepartments(
+    query?: DepartmentsListQuery,
+  ): Promise<PaginatedResponse<Department>> {
+    return fetchPaginated<Department>(this, '/departments', query);
+  }
+
+  getDepartment(id: string): Promise<Department> {
+    return this.request<Department>(`/departments/${id}`);
+  }
+
+  createDepartment(body: CreateDepartmentRequest): Promise<Department> {
+    return this.request<Department>('/departments', {
+      method: 'POST',
+      body,
+    });
+  }
+
+  updateDepartment(
+    id: string,
+    body: UpdateDepartmentRequest,
+  ): Promise<Department> {
+    return this.request<Department>(`/departments/${id}`, {
+      method: 'PATCH',
+      body,
+    });
+  }
+
+  deleteDepartment(id: string): Promise<void> {
+    return this.request<void>(`/departments/${id}`, { method: 'DELETE' });
   }
 
   getEmployee(id: string): Promise<Employee> {

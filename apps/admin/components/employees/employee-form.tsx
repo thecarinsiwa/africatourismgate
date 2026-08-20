@@ -153,13 +153,11 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
     async function loadLookups() {
       try {
         const client = getApiClient();
-        const [usersResult, orgsResult, employeesResult, departmentsResult] =
-          await Promise.all([
-            client.listUsers({ page: 1, limit: 100, status: 'active' }),
-            client.listOrganizations({ page: 1, limit: 100 }),
-            client.listEmployees({ page: 1, limit: 100 }),
-            client.listEmployeeDepartments(),
-          ]);
+        const [usersResult, orgsResult, employeesResult] = await Promise.all([
+          client.listUsers({ page: 1, limit: 100, status: 'active' }),
+          client.listOrganizations({ page: 1, limit: 100 }),
+          client.listEmployees({ page: 1, limit: 100 }),
+        ]);
         if (!cancelled) {
           setUsers(usersResult.data);
           setOrganizations(orgsResult.data);
@@ -167,7 +165,6 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
           setManagers(
             employeesResult.data.filter((e) => e.id !== employeeId && e.status !== 'terminated'),
           );
-          setDepartments(departmentsResult);
         }
       } catch {
         if (!cancelled) {
@@ -175,7 +172,6 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
           setOrganizations([]);
           setExistingEmployees([]);
           setManagers([]);
-          setDepartments([]);
         }
       }
     }
@@ -184,6 +180,31 @@ export function EmployeeForm({ mode, employeeId, initialEmployee }: EmployeeForm
       cancelled = true;
     };
   }, [employeeId]);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function loadDepartments() {
+      try {
+        const organizationId = values.organizationId.trim() || undefined;
+        const result = await getApiClient().listDepartments({
+          page: 1,
+          limit: 100,
+          organizationId,
+        });
+        if (!cancelled) {
+          setDepartments(result.data.map((department) => department.name));
+        }
+      } catch {
+        if (!cancelled) {
+          setDepartments([]);
+        }
+      }
+    }
+    void loadDepartments();
+    return () => {
+      cancelled = true;
+    };
+  }, [values.organizationId]);
 
   const departmentOptions = useMemo(() => {
     const current = values.department.trim();

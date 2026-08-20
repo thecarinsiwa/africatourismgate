@@ -95,9 +95,14 @@ export function EmployeesList({
     let cancelled = false;
     async function loadDepartments() {
       try {
-        const result = await getApiClient().listEmployeeDepartments();
+        const organizationId = lockedOrganizationId || organizationFilter || undefined;
+        const result = await getApiClient().listDepartments({
+          page: 1,
+          limit: 100,
+          organizationId,
+        });
         if (!cancelled) {
-          setDepartments(result);
+          setDepartments(result.data.map((department) => department.name));
         }
       } catch {
         if (!cancelled) {
@@ -109,7 +114,7 @@ export function EmployeesList({
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [lockedOrganizationId, organizationFilter]);
 
   useEffect(() => {
     if (lockedOrganizationId) {

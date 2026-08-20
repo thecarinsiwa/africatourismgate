@@ -107,21 +107,6 @@ export class EmployeesService extends CrudService<Employees> {
     };
   }
 
-  async listDepartments(): Promise<string[]> {
-    const rows = await this.employeesRepository
-      .createQueryBuilder('employee')
-      .select('DISTINCT employee.department', 'department')
-      .where('employee.deletedAt IS NULL')
-      .andWhere('employee.department IS NOT NULL')
-      .andWhere("TRIM(employee.department) <> ''")
-      .orderBy('employee.department', 'ASC')
-      .getRawMany<{ department: string }>();
-
-    return rows
-      .map((row) => row.department?.trim())
-      .filter((value): value is string => Boolean(value));
-  }
-
   async createFromDto(
     dto: CreateEmployeeDto,
     actorUserId?: string,

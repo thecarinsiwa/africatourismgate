@@ -30,12 +30,6 @@ export class EmployeesController {
     return this.service.list(query, user);
   }
 
-  @Get('departments')
-  @ApiOperation({ summary: 'List distinct employee departments' })
-  listDepartments() {
-    return this.service.listDepartments();
-  }
-
   @Get(':id')
   @ApiOperation({ summary: 'Get employees by id' })
   findOne(@Param('id') id: string) {
