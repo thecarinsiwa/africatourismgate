@@ -79,6 +79,11 @@
     "edit": {
       "pageTitle": "Modifier la page"
     },
+    "detail": {
+      "title": "Détail de la page",
+      "close": "Fermer",
+      "edit": "Modifier"
+    },
     "form": {
       "info": {
         "sectionLocaleUnique": "Chaque combinaison section + langue est unique.",

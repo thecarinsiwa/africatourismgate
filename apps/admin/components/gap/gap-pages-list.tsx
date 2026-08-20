@@ -19,6 +19,7 @@ import { GAP_PAGE_SECTION_KEYS } from '../../lib/gap/constants';
 import { useGapPermissions } from '../../lib/gap/use-gap-permissions';
 import { getApiClient } from '../../lib/auth/api';
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+import { GapPageDetailModal } from './gap-page-detail-modal';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -62,6 +63,7 @@ export function GapPagesList() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [confirmTarget, setConfirmTarget] = useState<GapPage | null>(null);
+  const [viewTarget, setViewTarget] = useState<GapPage | null>(null);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -176,6 +178,10 @@ export function GapPagesList() {
         meta: { align: 'right' },
         cell: ({ row }) => (
           <DataTableActions>
+            <DataTableActionButton
+              action="view"
+              onClick={() => setViewTarget(row.original)}
+            />
             <DataTableActionButton action="edit" href={`/gap/pages/${row.original.id}`} />
             {canWrite ? (
               <DataTableActionButton
@@ -208,6 +214,14 @@ export function GapPagesList() {
         loading={!!deletingId}
         error={deleteError}
         onConfirm={() => void handleDeleteConfirm()}
+      />
+      <GapPageDetailModal
+        open={!!viewTarget}
+        page={viewTarget}
+        onOpenChange={(open) => {
+          if (!open) setViewTarget(null);
+        }}
+        canWrite={canWrite}
       />
     <div className="space-y-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
