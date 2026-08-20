@@ -206,6 +206,12 @@
     }
   },
   "media": {
+    "stats": {
+      "total": { "label": "Media", "subtitle": "Photos and videos" },
+      "published": { "label": "Published", "subtitle": "Visible on the site" },
+      "draft": { "label": "Drafts", "subtitle": "Not published" },
+      "french": { "label": "In French", "subtitle": "FR locale content" }
+    },
     "list": {
       "deleteTitle": "Delete media",
       "deleteConfirm": "Media item \"{title}\" will be permanently deleted.",

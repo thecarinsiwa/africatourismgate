@@ -206,6 +206,12 @@
     }
   },
   "media": {
+    "stats": {
+      "total": { "label": "Medios", "subtitle": "Fotos y vídeos" },
+      "published": { "label": "Publicados", "subtitle": "Visibles en el sitio" },
+      "draft": { "label": "Borradores", "subtitle": "No publicados" },
+      "french": { "label": "En francés", "subtitle": "Contenido locale FR" }
+    },
     "list": {
       "deleteTitle": "Eliminar medio",
       "deleteConfirm": "El medio «{title}» será eliminado permanentemente.",
