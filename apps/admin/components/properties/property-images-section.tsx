@@ -9,7 +9,9 @@ import {
   DataTable,
   DataTableActionButton,
   DataTableActions,
+  DataTableBadge,
   Input,
+  Modal,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { PropertyImage } from '@africatourismgate/types';
@@ -18,6 +20,7 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
 import { getSession } from '../../lib/auth/session';
+import { resolveMediaUrl } from '../../lib/resolve-media-url';
 
 const PROPERTY_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
 const ALLOWED_PROPERTY_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
@@ -41,7 +44,9 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
   const tColumns = useTranslations('modules.common.columns');
   const tForm = useTranslations('modules.common.form');
   const tValidation = useTranslations('modules.common.validation');
+  const tCommon = useTranslations('modules.common');
   const tActions = useTranslations('common.actions');
+  const emptyDash = tCommon('empty.dash');
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -65,7 +70,12 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
         page: 1,
         limit: 100,
       });
-      setState({ status: 'ready', images: result.data });
+      setState({
+        status: 'ready',
+        images: [...result.data].sort(
+          (a, b) => a.sortOrder - b.sortOrder || a.createdAt.localeCompare(b.createdAt),
+        ),
+      });
     } catch (error) {
       setState({ status: 'error', message: getHebergementsErrorMessage(error) });
     }
@@ -84,7 +94,10 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
   }
 
   function openCreate() {
-    resetForm();
+    setFormValues(emptyForm);
+    setEditing(null);
+    setFormError(null);
+    setUploading(false);
     setShowForm(true);
   }
 
@@ -201,52 +214,76 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
       {
         id: 'preview',
         header: tColumns('preview'),
+        cell: ({ row }) => {
+          const src = resolveMediaUrl(row.original.url);
+          const caption = row.original.caption?.trim();
+          return (
+            <div className="flex min-w-0 items-center gap-3">
+              <span className="relative h-12 w-16 shrink-0 overflow-hidden rounded-md border border-atg-border bg-atg-surface">
+                <Image
+                  src={src}
+                  alt={caption || ''}
+                  fill
+                  unoptimized
+                  className="object-cover"
+                  sizes="64px"
+                />
+              </span>
+              <div className="min-w-0 md:hidden">
+                <p className="truncate text-sm font-medium text-atg-fg">
+                  {caption || emptyDash}
+                </p>
+                <p className="mt-0.5 text-xs tabular-nums text-atg-muted">
+                  #{row.original.sortOrder}
+                </p>
+              </div>
+            </div>
+          );
+        },
+      },
+      {
+        accessorKey: 'caption',
+        header: tColumns('caption'),
+        meta: { hideOnMobile: true },
+        cell: ({ row }) => {
+          const caption = row.original.caption?.trim();
+          return (
+            <span className="text-sm text-atg-fg">{caption || emptyDash}</span>
+          );
+        },
+      },
+      {
+        accessorKey: 'sortOrder',
+        header: tColumns('sortOrder'),
+        meta: { align: 'center', hideOnMobile: true },
         cell: ({ row }) => (
-          <Image
-            src={row.original.url}
-            alt=""
-            width={64}
-            height={40}
-            unoptimized
-            className="h-10 w-16 rounded object-cover"
-            onError={(e) => {
-              (e.target as HTMLImageElement).style.display = 'none';
-            }}
-          />
+          <DataTableBadge variant="muted">{row.original.sortOrder}</DataTableBadge>
         ),
       },
       {
         accessorKey: 'url',
         header: tColumns('url'),
-        cell: ({ row }) => (
-          <a
-            href={row.original.url}
-            target="_blank"
-            rel="noreferrer"
-            className="max-w-xs truncate text-sm text-primary hover:underline"
-          >
-            {row.original.url}
-          </a>
-        ),
-      },
-      {
-        accessorKey: 'caption',
-        header: tColumns('caption'),
-        cell: ({ row }) => (
-          <span className="text-sm text-atg-muted">{row.original.caption ?? '—'}</span>
-        ),
-      },
-      {
-        accessorKey: 'sortOrder',
-        header: tColumns('sortOrder'),
-        meta: { align: 'center' },
+        meta: { hideOnMobile: true },
+        cell: ({ row }) => {
+          const href = resolveMediaUrl(row.original.url);
+          return (
+            <a
+              href={href}
+              target="_blank"
+              rel="noreferrer"
+              className="block max-w-[14rem] truncate text-sm text-primary hover:underline"
+            >
+              {row.original.url}
+            </a>
+          );
+        },
       },
       {
         id: 'actions',
         header: tColumns('actions'),
         meta: { align: 'right' },
         cell: ({ row }) => (
-          <DataTableActions>
+          <DataTableActions className="opacity-90 transition-opacity group-hover:opacity-100">
             <DataTableActionButton action="edit" onClick={() => openEdit(row.original)} />
             <DataTableActionButton
               action="delete"
@@ -258,16 +295,19 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
         ),
       },
     ],
-    [deletingId, handleDeleteRequest, tColumns],
+    [deletingId, emptyDash, handleDeleteRequest, tColumns],
   );
 
   const images = state.status === 'ready' ? state.images : [];
+  const previewSrc = formValues.url.trim() ? resolveMediaUrl(formValues.url.trim()) : '';
 
   return (
     <>
       <AlertDialog
         open={!!confirmTarget}
-        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        onOpenChange={(open) => {
+          if (!open) setConfirmTarget(null);
+        }}
         title={tGallery('deleteTitle')}
         description={tGallery('deleteConfirm')}
         confirmLabel={tGallery('deleteConfirmButton')}
@@ -277,110 +317,127 @@ export function PropertyImagesSection({ propertyId, embedded }: PropertyImagesSe
         error={deleteError}
         onConfirm={() => void handleDeleteConfirm()}
       />
-    <section
-      className={
-        embedded ? 'space-y-6' : 'mt-12 space-y-6 border-t border-atg-border pt-10'
-      }
-    >
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="text-lg font-semibold text-atg-fg">{tGallery('titleProperty')}</h2>
-          <p className="mt-1 text-sm text-atg-muted">{tGallery('intro')}</p>
-        </div>
-        {!showForm ? (
-          <Button type="button" onClick={openCreate}>
-            {tGallery('addPhoto')}
-          </Button>
-        ) : null}
-      </div>
 
-      {showForm ? (
-        <Card variant="dashboard" className="max-w-2xl">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <h3 className="text-sm font-medium">
-              {editing ? tGallery('editPhoto') : tGallery('newPhoto')}
-            </h3>
-            {formError ? (
-              <p role="alert" className="text-sm text-red-600">
-                {formError}
-              </p>
-            ) : null}
-            <div className="space-y-3">
-              <p className="text-xs font-medium text-atg-fg">{tForm('image')}</p>
-              <div className="flex flex-wrap items-center gap-3">
-                <label className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10">
-                  {uploading ? tForm('uploading') : tForm('chooseFile')}
-                  <input
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp"
-                    className="hidden"
-                    onChange={(e) => void handleLocalImagePick(e)}
-                    disabled={uploading || submitting}
-                  />
-                </label>
-                <span className="text-xs text-atg-muted">{tForm('imageFormatHint')}</span>
-              </div>
-              {formValues.url.trim() ? (
-                <Image
-                  src={formValues.url.trim()}
-                  alt={formValues.caption.trim() || tColumns('preview')}
-                  width={320}
-                  height={200}
-                  unoptimized
-                  className="h-40 w-full max-w-sm rounded-lg border border-atg-border object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = 'none';
-                  }}
+      <Modal
+        open={showForm}
+        onOpenChange={(open) => {
+          if (!open && !submitting && !uploading) resetForm();
+        }}
+        title={editing ? tGallery('editPhoto') : tGallery('newPhoto')}
+        showClose={!submitting && !uploading}
+        closeAriaLabel={tActions('close')}
+        className="max-w-lg"
+      >
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {formError ? (
+            <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+              {formError}
+            </p>
+          ) : null}
+          <div className="space-y-3">
+            <p className="text-xs font-medium text-atg-fg">{tForm('image')}</p>
+            <div className="flex flex-wrap items-center gap-3">
+              <label className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10">
+                {uploading ? tForm('uploading') : tForm('chooseFile')}
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="hidden"
+                  onChange={(e) => void handleLocalImagePick(e)}
+                  disabled={uploading || submitting}
                 />
+              </label>
+              <span className="text-xs text-atg-muted">{tForm('imageFormatHint')}</span>
+            </div>
+            {previewSrc ? (
+              <div className="relative h-40 w-full max-w-sm overflow-hidden rounded-lg border border-atg-border bg-atg-surface">
+                <Image
+                  src={previewSrc}
+                  alt={formValues.caption.trim() || tColumns('preview')}
+                  fill
+                  unoptimized
+                  className="object-cover"
+                  sizes="320px"
+                />
+              </div>
+            ) : null}
+          </div>
+          <Input
+            label={tForm('externalUrlOptional')}
+            type="url"
+            value={formValues.url}
+            onChange={(e) => setFormValues((p) => ({ ...p, url: e.target.value }))}
+            placeholder={tForm('urlPlaceholder')}
+          />
+          <Input
+            label={tColumns('caption')}
+            value={formValues.caption}
+            onChange={(e) => setFormValues((p) => ({ ...p, caption: e.target.value }))}
+          />
+          <Input
+            label={tForm('displayOrder')}
+            type="number"
+            min={0}
+            value={formValues.sortOrder}
+            onChange={(e) => setFormValues((p) => ({ ...p, sortOrder: e.target.value }))}
+          />
+          <div className="flex gap-3 pt-1">
+            <Button type="submit" loading={submitting} disabled={uploading}>
+              {editing ? tActions('save') : tActions('create')}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={resetForm}
+              disabled={submitting || uploading}
+            >
+              {tActions('cancel')}
+            </Button>
+          </div>
+        </form>
+      </Modal>
+
+      <section
+        className={
+          embedded ? 'space-y-4' : 'mt-12 space-y-4 border-t border-atg-border pt-10'
+        }
+      >
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-lg font-semibold text-atg-fg">{tGallery('titleProperty')}</h2>
+              {state.status === 'ready' ? (
+                <DataTableBadge variant="muted">{images.length}</DataTableBadge>
               ) : null}
             </div>
-            <Input
-              label={tForm('externalUrlOptional')}
-              type="url"
-              value={formValues.url}
-              onChange={(e) => setFormValues((p) => ({ ...p, url: e.target.value }))}
-              placeholder={tForm('urlPlaceholder')}
-            />
-            <Input
-              label={tColumns('caption')}
-              value={formValues.caption}
-              onChange={(e) => setFormValues((p) => ({ ...p, caption: e.target.value }))}
-            />
-            <Input
-              label={tForm('displayOrder')}
-              type="number"
-              min={0}
-              value={formValues.sortOrder}
-              onChange={(e) => setFormValues((p) => ({ ...p, sortOrder: e.target.value }))}
-            />
-            <div className="flex gap-3">
-              <Button type="submit" loading={submitting} disabled={uploading}>
-                {editing ? tActions('save') : tActions('create')}
-              </Button>
-              <Button type="button" variant="outline" onClick={resetForm}>
-                {tActions('cancel')}
-              </Button>
-            </div>
-          </form>
-        </Card>
-      ) : null}
+            <p className="mt-1 text-sm text-atg-muted">{tGallery('intro')}</p>
+          </div>
+          <Button type="button" onClick={openCreate} size="sm">
+            {tGallery('addPhoto')}
+          </Button>
+        </div>
 
-      {state.status === 'error' ? (
-        <p role="alert" className="text-sm text-red-600">
-          {state.message}
-        </p>
-      ) : (
-        <Card variant="dashboard" padding="none" className="overflow-hidden">
-          <DataTable
-            columns={columns}
-            data={images}
-            isLoading={state.status === 'loading'}
-            emptyMessage={tGallery('emptyProperty')}
-            getRowId={(row) => row.id}
-          />
-        </Card>
-      )}
-    </section>
+        {state.status === 'error' ? (
+          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+            {state.message}
+          </p>
+        ) : (
+          <Card variant="dashboard" padding="none" className="overflow-hidden">
+            <DataTable
+              columns={columns}
+              data={images}
+              isLoading={state.status === 'loading'}
+              emptyMessage={tGallery('emptyProperty')}
+              getRowId={(row) => row.id}
+              aria-label={tGallery('titleProperty')}
+              loadingMessage={tCommon('dataTable.loading')}
+              expandRowLabel={tCommon('dataTable.expandRow')}
+              collapseRowLabel={tCommon('dataTable.collapseRow')}
+              expandRowAriaLabel={tCommon('dataTable.expandRowAria')}
+            />
+          </Card>
+        )}
+      </section>
     </>
   );
 }

@@ -178,7 +178,7 @@ export function PropertyForm({ mode, propertyId, initialProperty }: PropertyForm
   const starValue = values.starRating.trim() !== '' ? Number(values.starRating) : 0;
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
+    <form onSubmit={handleSubmit} className="w-full max-w-3xl space-y-4">
       {formError ? (
         <p
           role="alert"
@@ -188,72 +188,80 @@ export function PropertyForm({ mode, propertyId, initialProperty }: PropertyForm
         </p>
       ) : null}
 
-      <Card variant="dashboard" className="space-y-4">
+      <Card variant="dashboard" padding="sm">
         <h3 className="text-sm font-semibold text-atg-fg">{tForm('sections.identity')}</h3>
-        <Input
-          label={tForm('name')}
-          value={values.name}
-          onChange={(e) => updateField('name', e.target.value)}
-          error={fieldErrors.name}
-          required
-        />
-        <Input
-          label={tForm('slug')}
-          value={values.slug}
-          onChange={(e) => {
-            setSlugTouched(true);
-            updateField('slug', e.target.value.toLowerCase());
-          }}
-          error={fieldErrors.slug}
-          required
-        />
-        <Select
-          id={typeId}
-          label={tForm('type')}
-          value={values.propertyType}
-          onChange={(e) => updateField('propertyType', e.target.value as PropertyType)}
-          options={propertyTypeOptions}
-        />
-      </Card>
-
-      <Card variant="dashboard" className="space-y-4">
-        <h3 className="text-sm font-semibold text-atg-fg">{tForm('sections.location')}</h3>
-        <Select
-          label={tForm('destination')}
-          value={values.destinationId}
-          onChange={(e) => updateField('destinationId', e.target.value)}
-          options={destinationOptions}
-          error={fieldErrors.destinationId}
-          required
-        />
-        <Input
-          label={tForm('address')}
-          value={values.addressLine}
-          onChange={(e) => updateField('addressLine', e.target.value)}
-        />
-      </Card>
-
-      <Card variant="dashboard" className="space-y-4">
-        <h3 className="text-sm font-semibold text-atg-fg">{tForm('sections.classification')}</h3>
-        <StarRatingInput
-          label={tForm('starRating')}
-          value={Number.isFinite(starValue) ? starValue : 0}
-          onChange={(v) => updateField('starRating', v > 0 ? String(v) : '')}
-          step={0.5}
-          hint={tForm('starRatingHint')}
-          error={fieldErrors.starRating}
-        />
-        <div>
-          <label htmlFor={descId} className="mb-2 block text-sm font-medium text-atg-fg">
-            {tCommonForm('description')}
-          </label>
-          <textarea
-            id={descId}
-            rows={3}
-            value={values.description}
-            onChange={(e) => updateField('description', e.target.value)}
-            className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm"
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          <Input
+            label={tForm('name')}
+            value={values.name}
+            onChange={(e) => updateField('name', e.target.value)}
+            error={fieldErrors.name}
+            required
           />
+          <Input
+            label={tForm('slug')}
+            value={values.slug}
+            onChange={(e) => {
+              setSlugTouched(true);
+              updateField('slug', e.target.value.toLowerCase());
+            }}
+            error={fieldErrors.slug}
+            required
+          />
+          <div className="sm:col-span-2">
+            <Select
+              id={typeId}
+              label={tForm('type')}
+              value={values.propertyType}
+              onChange={(e) => updateField('propertyType', e.target.value as PropertyType)}
+              options={propertyTypeOptions}
+            />
+          </div>
+        </div>
+      </Card>
+
+      <Card variant="dashboard" padding="sm">
+        <h3 className="text-sm font-semibold text-atg-fg">{tForm('sections.location')}</h3>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          <Select
+            label={tForm('destination')}
+            value={values.destinationId}
+            onChange={(e) => updateField('destinationId', e.target.value)}
+            options={destinationOptions}
+            error={fieldErrors.destinationId}
+            required
+          />
+          <Input
+            label={tForm('address')}
+            value={values.addressLine}
+            onChange={(e) => updateField('addressLine', e.target.value)}
+          />
+        </div>
+      </Card>
+
+      <Card variant="dashboard" padding="sm">
+        <h3 className="text-sm font-semibold text-atg-fg">{tForm('sections.classification')}</h3>
+        <div className="mt-3 space-y-3">
+          <StarRatingInput
+            label={tForm('starRating')}
+            value={Number.isFinite(starValue) ? starValue : 0}
+            onChange={(v) => updateField('starRating', v > 0 ? String(v) : '')}
+            step={0.5}
+            hint={tForm('starRatingHint')}
+            error={fieldErrors.starRating}
+          />
+          <div>
+            <label htmlFor={descId} className="mb-1.5 block text-sm font-medium text-atg-fg">
+              {tCommonForm('description')}
+            </label>
+            <textarea
+              id={descId}
+              rows={3}
+              value={values.description}
+              onChange={(e) => updateField('description', e.target.value)}
+              className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2.5 text-sm"
+            />
+          </div>
         </div>
       </Card>
 
