@@ -338,7 +338,7 @@ export function PackageItemsSection({
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)] lg:items-start xl:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
-          <div className="min-w-0 space-y-4">
+          <div className="min-w-0 space-y-4 self-start">
             <PackageCompositionBanner items={items} />
 
             {state.status === 'error' ? (
@@ -346,7 +346,7 @@ export function PackageItemsSection({
                 {state.message}
               </p>
             ) : (
-              <Card variant="dashboard" padding="none" className="overflow-hidden">
+              <Card variant="dashboard" padding="none" className="h-fit overflow-hidden">
                 <DataTable
                   columns={columns}
                   data={items}
@@ -358,23 +358,22 @@ export function PackageItemsSection({
             )}
           </div>
 
-          <aside className="min-w-0 space-y-4 lg:sticky lg:top-6">
-            {detail && pricing && pkg ? (
-              <>
-                <PackagePricingRecap
-                  pricing={pricing}
-                  itemCount={items.length}
-                  className="max-w-none"
-                />
-                <PackagePreviewCard
-                  pkg={pkg}
-                  itemCount={items.length}
-                  pricing={pricing}
-                />
-              </>
+          <aside className="min-w-0 self-start lg:sticky lg:top-6">
+            {detail && pricing ? (
+              <PackagePricingRecap
+                pricing={pricing}
+                itemCount={items.length}
+                className="max-w-none"
+              />
             ) : null}
           </aside>
         </div>
+
+        {detail && pricing && pkg ? (
+          <div className="max-w-sm">
+            <PackagePreviewCard pkg={pkg} itemCount={items.length} pricing={pricing} />
+          </div>
+        ) : null}
       </section>
     </>
   );
