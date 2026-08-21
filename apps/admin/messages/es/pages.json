@@ -123,7 +123,8 @@
       },
       "nouveau": {
         "metaTitle": "Nueva actividad",
-        "description": "Cree una experiencia y luego añada horarios en la página de edición."
+        "description": "Cree una experiencia y luego añada horarios en la página de edición.",
+        "backLabel": "Volver a actividades"
       },
       "fournisseurs": {
         "title": "Socios de actividades",

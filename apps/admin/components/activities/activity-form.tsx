@@ -194,12 +194,12 @@ export function ActivityForm({ mode, activityId, initialActivity, onUpdated }: A
   }
 
   const selectClass =
-    'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg';
+    'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none focus:border-primary focus:ring-1 focus:ring-primary';
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-2xl space-y-4">
+    <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
       {formError ? (
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {formError}
         </p>
       ) : null}
@@ -282,7 +282,7 @@ export function ActivityForm({ mode, activityId, initialActivity, onUpdated }: A
           maxLength={3}
         />
       </div>
-      <div className="flex gap-3 pt-2">
+      <div className="flex flex-wrap gap-3 pt-2">
         <Button type="submit" loading={submitting}>
           {mode === 'create' ? tForm('submitCreate') : tActions('save')}
         </Button>

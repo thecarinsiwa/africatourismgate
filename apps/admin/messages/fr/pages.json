@@ -123,7 +123,8 @@
       },
       "nouveau": {
         "metaTitle": "Nouvelle activité",
-        "description": "Créez une expérience puis ajoutez des créneaux sur la page d'édition."
+        "description": "Créez une expérience puis ajoutez des créneaux sur la page d'édition.",
+        "backLabel": "Retour aux activités"
       },
       "fournisseurs": {
         "title": "Partenaires d'activités",

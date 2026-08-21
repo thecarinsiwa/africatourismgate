@@ -123,7 +123,8 @@
       },
       "nouveau": {
         "metaTitle": "New activity",
-        "description": "Create an experience then add schedules on the edit page."
+        "description": "Create an experience then add schedules on the edit page.",
+        "backLabel": "Back to activities"
       },
       "fournisseurs": {
         "title": "Activity partners",
