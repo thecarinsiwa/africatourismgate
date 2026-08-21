@@ -65,6 +65,17 @@
     "notFound": "Destino no encontrado."
   },
   "view": {
+    "title": "Ver destino",
+    "editButton": "Modificar el destino",
+    "subtitle": "Vista previa del catálogo del destino.",
+    "infoTitle": "Información",
+    "coordinates": "Coordenadas",
+    "featuredNo": "No destacado",
+    "heroTitle": "Imagen de cabecera",
+    "heroIntro": "Visual principal del destino.",
+    "heroAlt": "Imagen de cabecera de {name}",
+    "heroEmpty": "Ninguna imagen de cabecera.",
+    "mapEmpty": "No hay coordenadas para el mapa.",
     "poisTitle": "Puntos de interés",
     "poisIntro": "{count} punto(s) de interés registrado(s)",
     "poisEmpty": "Ningún punto de interés para este destino.",

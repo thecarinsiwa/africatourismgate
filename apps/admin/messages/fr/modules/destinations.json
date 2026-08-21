@@ -65,6 +65,17 @@
     "notFound": "Destination introuvable."
   },
   "view": {
+    "title": "Voir la destination",
+    "editButton": "Modifier la destination",
+    "subtitle": "Aperçu catalogue de la destination.",
+    "infoTitle": "Informations",
+    "coordinates": "Coordonnées",
+    "featuredNo": "Non mise en avant",
+    "heroTitle": "Image hero",
+    "heroIntro": "Visuel principal de la destination.",
+    "heroAlt": "Image hero de {name}",
+    "heroEmpty": "Aucune image hero.",
+    "mapEmpty": "Aucune coordonnée renseignée pour la carte.",
     "poisTitle": "Points d'intérêt",
     "poisIntro": "{count} point(s) d'intérêt enregistré(s)",
     "poisEmpty": "Aucun point d'intérêt pour cette destination.",

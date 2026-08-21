@@ -65,6 +65,17 @@
     "notFound": "Destination not found."
   },
   "view": {
+    "title": "View destination",
+    "editButton": "Edit destination",
+    "subtitle": "Catalogue overview of the destination.",
+    "infoTitle": "Information",
+    "coordinates": "Coordinates",
+    "featuredNo": "Not featured",
+    "heroTitle": "Hero image",
+    "heroIntro": "Main visual for the destination.",
+    "heroAlt": "Hero image for {name}",
+    "heroEmpty": "No hero image.",
+    "mapEmpty": "No coordinates set for the map.",
     "poisTitle": "Points of interest",
     "poisIntro": "{count} point(s) of interest recorded",
     "poisEmpty": "No points of interest for this destination.",

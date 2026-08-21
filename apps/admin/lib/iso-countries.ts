@@ -266,18 +266,25 @@ function resolveDisplayLocale(locale: string): string {
   return 'en';
 }
 
+export function getIsoCountryLabel(countryCode: string, locale: string): string {
+  const code = countryCode.trim().toUpperCase();
+  if (!code) return '';
+  try {
+    const name = new Intl.DisplayNames([resolveDisplayLocale(locale)], {
+      type: 'region',
+    }).of(code);
+    return name?.trim() || code;
+  } catch {
+    return code;
+  }
+}
+
 /** Localized country options sorted by display name (code shown in label). */
 export function getIsoCountryOptions(locale: string): IsoCountryOption[] {
   const displayLocale = resolveDisplayLocale(locale);
-  let displayNames: Intl.DisplayNames | null = null;
-  try {
-    displayNames = new Intl.DisplayNames([displayLocale], { type: 'region' });
-  } catch {
-    displayNames = null;
-  }
 
   return ISO_3166_1_ALPHA_2_CODES.map((code) => {
-    const name = displayNames?.of(code)?.trim() || code;
+    const name = getIsoCountryLabel(code, displayLocale);
     return {
       code,
       label: `${name} (${code})`,
