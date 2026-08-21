@@ -36,7 +36,7 @@ export interface VehicleCategory {
 
 export interface CreateVehicleCategoryRequest {
   name: string;
-  exampleModel?: string;
+  exampleModel?: string | null;
 }
 
 export type UpdateVehicleCategoryRequest = Partial<CreateVehicleCategoryRequest>;

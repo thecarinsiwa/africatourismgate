@@ -89,11 +89,29 @@
       "emptySearch": "No category matches this search.",
       "searchPlaceholder": "Search by name or model…",
       "searchAria": "Search categories",
+      "ariaLabel": "Vehicle categories list",
       "exampleModel": "Example model",
+      "viewGrid": "Grid",
+      "viewTable": "Table",
+      "viewModeAria": "View mode",
       "deleteTitle": "Delete category",
       "deleteConfirm": "Category \"{name}\" will be permanently deleted.",
       "deleteConfirmButton": "Delete",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "stats": {
+        "total": {
+          "label": "Categories",
+          "subtitle": "Vehicle types"
+        },
+        "withExampleModel": {
+          "label": "With model",
+          "subtitle": "Example filled in"
+        },
+        "withoutExampleModel": {
+          "label": "Without model",
+          "subtitle": "To complete"
+        }
+      }
     },
     "agencies": {
       "new": "New agency",

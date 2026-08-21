@@ -89,11 +89,29 @@
       "emptySearch": "Aucune catégorie ne correspond à cette recherche.",
       "searchPlaceholder": "Rechercher par nom ou modèle…",
       "searchAria": "Rechercher une catégorie",
+      "ariaLabel": "Liste des catégories de véhicules",
       "exampleModel": "Modèle type",
+      "viewGrid": "Grille",
+      "viewTable": "Tableau",
+      "viewModeAria": "Mode d'affichage",
       "deleteTitle": "Supprimer la catégorie",
       "deleteConfirm": "La catégorie « {name} » sera supprimée définitivement.",
       "deleteConfirmButton": "Supprimer",
-      "cancel": "Annuler"
+      "cancel": "Annuler",
+      "stats": {
+        "total": {
+          "label": "Catégories",
+          "subtitle": "Types de véhicules"
+        },
+        "withExampleModel": {
+          "label": "Avec modèle",
+          "subtitle": "Exemple renseigné"
+        },
+        "withoutExampleModel": {
+          "label": "Sans modèle",
+          "subtitle": "À compléter"
+        }
+      }
     },
     "agencies": {
       "new": "Nouvelle agence",
