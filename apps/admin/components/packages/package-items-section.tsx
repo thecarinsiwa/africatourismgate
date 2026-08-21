@@ -337,7 +337,7 @@ export function PackageItemsSection({
           </Button>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)] lg:items-start xl:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,18rem)] lg:items-start xl:grid-cols-[minmax(0,1fr)_minmax(0,20rem)]">
           <div className="min-w-0 space-y-4 self-start">
             <PackageCompositionBanner items={items} />
 
@@ -358,22 +358,25 @@ export function PackageItemsSection({
             )}
           </div>
 
-          <aside className="min-w-0 self-start lg:sticky lg:top-6">
-            {detail && pricing ? (
-              <PackagePricingRecap
-                pricing={pricing}
-                itemCount={items.length}
-                className="max-w-none"
-              />
+          <aside className="min-w-0 space-y-3 self-start lg:sticky lg:top-6">
+            {detail && pricing && pkg ? (
+              <>
+                <PackagePricingRecap
+                  pricing={pricing}
+                  itemCount={items.length}
+                  size="sm"
+                  className="max-w-none"
+                />
+                <PackagePreviewCard
+                  pkg={pkg}
+                  itemCount={items.length}
+                  pricing={pricing}
+                  size="sm"
+                />
+              </>
             ) : null}
           </aside>
         </div>
-
-        {detail && pricing && pkg ? (
-          <div className="max-w-sm">
-            <PackagePreviewCard pkg={pkg} itemCount={items.length} pricing={pricing} />
-          </div>
-        ) : null}
       </section>
     </>
   );
