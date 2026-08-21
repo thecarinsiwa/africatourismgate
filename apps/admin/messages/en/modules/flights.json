@@ -115,7 +115,8 @@
     "availability": {
       "title": "Availability",
       "backToFlight": "Back to flight",
-      "classMismatch": "This class does not belong to this flight."
+      "classMismatch": "This class does not belong to this flight.",
+      "summary": "Flight {flightNumber} — {classLabel}: seats and price by date."
     }
   },
   "referential": {

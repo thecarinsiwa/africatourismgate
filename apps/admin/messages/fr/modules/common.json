@@ -250,6 +250,8 @@
     "today": "Aujourd'hui",
     "bulkTitle": "Mise à jour groupée",
     "bulkIntro": "Définissez le stock et le prix pour toutes les dates de la plage sélectionnée.",
+    "bulkIntroSeats": "Définissez les sièges disponibles et le prix pour toutes les dates de la plage sélectionnée.",
+    "applyToRange": "Appliquer à la plage",
     "weekdays": {
       "mon": "lun.",
       "tue": "mar.",
@@ -263,6 +265,8 @@
     "stockUnits": "Stock (unités)",
     "availableSeats": "Sièges disponibles",
     "seatsAria": "Sièges {date}",
+    "priceAria": "Prix {date}",
+    "seatsShort": "{count} sièges",
     "unitsShort": "{count} u."
   },
   "imagesGallery": {

@@ -226,7 +226,9 @@
         "classes": {
           "classId": {
             "disponibilites": {
-              "metaTitle": "Disponibilidad de clase"
+              "metaTitle": "Disponibilidad de clase",
+              "title": "Disponibilidad de clase",
+              "description": "Asientos y precio por fecha para esta clase de cabina."
             }
           }
         }

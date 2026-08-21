@@ -115,7 +115,8 @@
     "availability": {
       "title": "Disponibilités",
       "backToFlight": "Retour au vol",
-      "classMismatch": "Cette classe n'appartient pas à ce vol."
+      "classMismatch": "Cette classe n'appartient pas à ce vol.",
+      "summary": "Vol {flightNumber} — {classLabel} : sièges et prix par date."
     }
   },
   "referential": {

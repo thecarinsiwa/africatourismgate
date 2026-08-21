@@ -225,11 +225,11 @@
     "codeAndNameRequired": "El código y el nombre son obligatorios."
   },
   "toast": {
-    "saved": "Enregistré",
+    "saved": "Guardado",
     "saveError": "Error al guardar",
-    "deleteError": "Erreur de suppression",
-    "availabilitySaved": "Disponibilité enregistrée",
-    "availabilityDeleted": "Disponibilité supprimée",
+    "deleteError": "Error al eliminar",
+    "availabilitySaved": "Disponibilidad guardada",
+    "availabilityDeleted": "Disponibilidad eliminada",
     "amenitiesSavedTitle": "Equipamientos guardados",
     "amenitiesSavedMessage": "La selección se ha actualizado.",
     "propertySavedTitle": "Alojamiento guardado",
@@ -250,6 +250,8 @@
     "today": "Hoy",
     "bulkTitle": "Actualización masiva",
     "bulkIntro": "Defina el stock y el precio para todos los días del rango seleccionado.",
+    "bulkIntroSeats": "Defina los asientos disponibles y el precio para todos los días del rango seleccionado.",
+    "applyToRange": "Aplicar al rango",
     "weekdays": {
       "mon": "lun.",
       "tue": "mar.",
@@ -263,6 +265,8 @@
     "stockUnits": "Stock (unidades)",
     "availableSeats": "Asientos disponibles",
     "seatsAria": "Asientos el {date}",
+    "priceAria": "Precio el {date}",
+    "seatsShort": "{count} asientos",
     "unitsShort": "{count} u."
   },
   "imagesGallery": {
