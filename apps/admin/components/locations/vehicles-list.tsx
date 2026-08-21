@@ -25,7 +25,7 @@ import { ListViewModeToggle } from '../list-view-mode-toggle';
 import { VehicleThumbnail } from './vehicle-thumbnail';
 import { VehiclesExportDialog } from './vehicles-export-dialog';
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_MS = 300;
 
 type VehiclesViewMode = 'table' | 'grid' | 'compact';
@@ -64,7 +64,7 @@ export function VehiclesList() {
   const [agencyFilter, setAgencyFilter] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
   const [page, setPage] = useState(1);
-  const [viewMode, setViewMode] = useState<VehiclesViewMode>('table');
+  const [viewMode, setViewMode] = useState<VehiclesViewMode>('grid');
   const [agencies, setAgencies] = useState<RentalAgency[]>([]);
   const [categories, setCategories] = useState<VehicleCategory[]>([]);
   const [state, setState] = useState<
@@ -192,8 +192,8 @@ export function VehiclesList() {
 
   const viewModeOptions = useMemo(
     () => [
-      { value: 'table' as const, label: t('viewTable') },
       { value: 'grid' as const, label: t('viewGrid') },
+      { value: 'table' as const, label: t('viewTable') },
       { value: 'compact' as const, label: t('viewCompact') },
     ],
     [t],
@@ -408,13 +408,13 @@ export function VehiclesList() {
           ) : vehicles.length === 0 ? (
             <p className="text-sm text-atg-muted">{emptyMessage}</p>
           ) : viewMode === 'grid' ? (
-            <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
               {vehicles.map((vehicle) => {
                 const categoryName = categoryById.get(vehicle.categoryId);
                 const label = getVehicleLabel(vehicle, categoryById, t('fallbackLabel'));
                 return (
                   <li key={vehicle.id} className="min-w-0">
-                    <Card variant="dashboard" className="flex h-full flex-col gap-4 p-4">
+                    <Card variant="dashboard" className="flex h-full flex-col gap-3">
                       <div className="flex items-start gap-3">
                         <VehicleThumbnail
                           vehicleId={vehicle.id}
@@ -422,22 +422,23 @@ export function VehiclesList() {
                           categoryName={categoryName}
                           size="md"
                         />
-                        <div className="min-w-0 flex-1 space-y-1.5">
-                          <code className="rounded-md bg-atg-surface px-2 py-0.5 font-mono text-sm font-semibold text-atg-fg ring-1 ring-atg-border/60">
-                            {vehicle.licensePlate ?? tCommon('empty.dash')}
+                        <div className="min-w-0 flex-1">
+                          <code className="inline-block rounded-md bg-atg-surface px-2 py-0.5 font-mono text-xs font-semibold text-atg-fg ring-1 ring-atg-border/60">
+                            {vehicle.licensePlate ?? emptyDash}
                           </code>
-                          <p className="line-clamp-2 text-sm font-medium leading-snug text-atg-fg">
+                          <p className="mt-1 truncate text-sm font-medium text-atg-fg">
                             {agencyById.get(vehicle.agencyId) ?? emptyDash}
+                          </p>
+                          <p className="mt-0.5 truncate text-xs text-atg-muted">
+                            {categoryName ?? emptyDash}
                           </p>
                         </div>
                       </div>
-                      <div className="min-h-[3.5rem] rounded-lg border border-atg-border/70 bg-atg-surface/50 p-3">
-                        <div className="flex items-center justify-between gap-3">
-                          {renderCategory(vehicle.categoryId)}
-                          <span className="shrink-0 tabular-nums text-sm font-medium text-atg-fg">
-                            {formatPrice(vehicle.dailyPriceCents, vehicle.currency)}
-                          </span>
-                        </div>
+                      <div className="flex items-center justify-between gap-2 rounded-lg bg-atg-surface/50 px-3 py-2">
+                        <span className="text-xs text-atg-muted">{tColumns('pricePerDay')}</span>
+                        <span className="tabular-nums text-sm font-semibold text-atg-fg">
+                          {formatPrice(vehicle.dailyPriceCents, vehicle.currency)}
+                        </span>
                       </div>
                       <div className="mt-auto flex justify-end border-t border-atg-border pt-3">
                         {renderVehicleActions(vehicle)}
