@@ -8,6 +8,7 @@ export interface Airline {
   id: string;
   iataCode: string;
   name: string;
+  logoUrl: string | null;
   createdAt: string;
   updatedAt: string | null;
 }
@@ -15,6 +16,7 @@ export interface Airline {
 export interface CreateAirlineRequest {
   iataCode: string;
   name: string;
+  logoUrl?: string | null;
 }
 
 export type UpdateAirlineRequest = Partial<CreateAirlineRequest>;
