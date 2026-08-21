@@ -46,8 +46,15 @@
   "detail": {
     "title": "Edit destination",
     "viewTitle": "View destination",
+    "viewButton": "View destination",
     "editButton": "Edit destination",
     "backLink": "Back to destinations",
+    "subtitle": "Identity, geography and points of interest.",
+    "tabsAria": "Destination sections",
+    "tabs": {
+      "informations": "Information",
+      "pois": "Points of interest"
+    },
     "mapTitle": "Destination map",
     "description": "Description",
     "noDescription": "No description provided.",
@@ -64,6 +71,9 @@
   },
   "sections": {
     "pois": {
+      "title": "Points of interest",
+      "intro": "Landmarks linked to this destination.",
+      "addPoi": "Add a point of interest",
       "new": "New point of interest",
       "edit": "Edit point of interest",
       "empty": "No points of interest for this destination.",

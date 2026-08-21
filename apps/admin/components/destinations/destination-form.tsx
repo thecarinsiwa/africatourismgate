@@ -184,7 +184,7 @@ export function DestinationForm({
       const payload = toPayload(values, mode);
       if (mode === 'create') {
         const created = await client.createDestination(payload);
-        router.push(`/produits/destinations/${created.id}`);
+        router.push(`/produits/destinations/${created.id}?tab=pois`);
         router.refresh();
       } else if (destinationId) {
         const updated = await client.updateDestination(destinationId, payload);

@@ -38,9 +38,13 @@ function parseCoord(value: string): number | undefined {
 
 type DestinationPoisSectionProps = {
   destinationId: string;
+  embedded?: boolean;
 };
 
-export function DestinationPoisSection({ destinationId }: DestinationPoisSectionProps) {
+export function DestinationPoisSection({
+  destinationId,
+  embedded = false,
+}: DestinationPoisSectionProps) {
   const { destinations: getDestinationsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.destinations.sections.pois');
   const tForm = useTranslations('modules.destinations.form');
@@ -256,11 +260,17 @@ export function DestinationPoisSection({ destinationId }: DestinationPoisSection
         loading={!!deletingId}
         onConfirm={() => void handleDeleteConfirm()}
       />
-    <section className="mt-12 space-y-6 border-t border-atg-border pt-10">
+    <section
+      className={
+        embedded ? 'space-y-6' : 'mt-12 space-y-6 border-t border-atg-border pt-10'
+      }
+    >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
-          <p className="mt-1 text-sm text-atg-muted">{t('intro')}</p>
+          {embedded ? null : <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>}
+          <p className={embedded ? 'text-sm text-atg-muted' : 'mt-1 text-sm text-atg-muted'}>
+            {t('intro')}
+          </p>
         </div>
         {!showForm ? (
           <Button type="button" onClick={openCreateForm}>

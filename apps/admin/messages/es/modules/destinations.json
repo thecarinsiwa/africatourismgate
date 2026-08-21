@@ -46,8 +46,15 @@
   "detail": {
     "title": "Modificar el destino",
     "viewTitle": "Ver destino",
+    "viewButton": "Ver destino",
     "editButton": "Modificar el destino",
     "backLink": "Volver a destinos",
+    "subtitle": "Identidad, geografía y puntos de interés.",
+    "tabsAria": "Secciones del destino",
+    "tabs": {
+      "informations": "Información",
+      "pois": "Puntos de interés"
+    },
     "mapTitle": "Mapa del destino",
     "description": "Descripción",
     "noDescription": "Sin descripción.",
@@ -64,6 +71,9 @@
   },
   "sections": {
     "pois": {
+      "title": "Puntos de interés",
+      "intro": "Lugares destacados vinculados a este destino.",
+      "addPoi": "Añadir un punto de interés",
       "new": "Nuevo punto de interés",
       "edit": "Editar punto de interés",
       "empty": "Ningún punto de interés para este destino.",
