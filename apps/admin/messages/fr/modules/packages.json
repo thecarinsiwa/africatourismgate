@@ -71,12 +71,12 @@
     "invalidResponse": "Réponse forfait invalide.",
     "discountBadge": "Remise {percent}%",
     "description": "Description",
-    "includedProducts": "Produits inclus",
-    "includedProductsIntro": "{count} produit(s) dans ce forfait.",
+    "includedProducts": "Prestations incluses",
+    "includedProductsIntro": "{count} prestation(s) dans ce forfait.",
     "photoGallery": "Galerie photos",
     "photoGalleryIntro": "{count} photo(s) associée(s) au forfait.",
     "noPhotos": "Aucune photo pour ce forfait.",
-    "noIncludedProducts": "Aucun produit inclus.",
+    "noIncludedProducts": "Aucune prestation incluse.",
     "tabs": {
       "aria": "Étapes de configuration du forfait",
       "informations": "Informations",
@@ -94,6 +94,19 @@
         "medias": "Ajoutez au moins un média ou une pièce jointe pour déverrouiller Publication."
       }
     }
+  },
+  "view": {
+    "title": "Voir le forfait",
+    "notFound": "Forfait introuvable.",
+    "editButton": "Modifier le forfait",
+    "subtitle": "Fiche détaillée du forfait et de ses prestations.",
+    "infoTitle": "Informations",
+    "imagesTitle": "Photos",
+    "imagesIntro": "{count} photo(s)",
+    "imagesEmpty": "Aucune photo pour ce forfait.",
+    "packagePrice": "Prix forfait",
+    "separatePrice": "Prix séparé",
+    "featuredBadge": "Mis en avant"
   },
   "coverImage": {
     "title": "Photo de couverture",

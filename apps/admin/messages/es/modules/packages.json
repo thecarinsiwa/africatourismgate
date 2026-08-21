@@ -95,6 +95,19 @@
       }
     }
   },
+  "view": {
+    "title": "Ver el paquete",
+    "notFound": "Paquete no encontrado.",
+    "editButton": "Editar el paquete",
+    "subtitle": "Ficha detallada del paquete y sus servicios.",
+    "infoTitle": "Información",
+    "imagesTitle": "Fotos",
+    "imagesIntro": "{count} foto(s)",
+    "imagesEmpty": "Ninguna foto para este paquete.",
+    "packagePrice": "Precio del paquete",
+    "separatePrice": "Precio por separado",
+    "featuredBadge": "Destacado"
+  },
   "coverImage": {
     "title": "Foto de portada",
     "hint": "Esta imagen se muestra en las listas de paquetes en el admin y en el sitio público.",

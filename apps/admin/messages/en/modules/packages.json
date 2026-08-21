@@ -95,6 +95,19 @@
       }
     }
   },
+  "view": {
+    "title": "View package",
+    "notFound": "Package not found.",
+    "editButton": "Edit package",
+    "subtitle": "Detailed package sheet and included services.",
+    "infoTitle": "Information",
+    "imagesTitle": "Photos",
+    "imagesIntro": "{count} photo(s)",
+    "imagesEmpty": "No photos for this package.",
+    "packagePrice": "Package price",
+    "separatePrice": "Separate price",
+    "featuredBadge": "Featured"
+  },
   "coverImage": {
     "title": "Cover photo",
     "hint": "This image appears in package lists in the admin and on the public website.",
