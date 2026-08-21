@@ -1,5 +1,12 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, Length, MaxLength } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Length,
+  MaxLength,
+  ValidateIf,
+} from 'class-validator';
 
 export class CreateAirlineDto {
   @ApiProperty({ example: 'ET' })
@@ -13,4 +20,11 @@ export class CreateAirlineDto {
   @IsString()
   @MaxLength(180)
   name!: string;
+
+  @ApiPropertyOptional({ nullable: true, maxLength: 512 })
+  @IsOptional()
+  @ValidateIf((_, value) => value !== null)
+  @IsString()
+  @MaxLength(512)
+  logoUrl?: string | null;
 }

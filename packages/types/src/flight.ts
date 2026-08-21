@@ -25,6 +25,7 @@ export interface AirlinesListQuery {
   page?: number;
   limit?: number;
   search?: string;
+  hasLogo?: boolean;
 }
 
 export interface Airport {
