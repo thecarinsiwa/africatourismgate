@@ -118,7 +118,8 @@
     "loyaltyAccount": "cuentas",
     "activity": "actividad",
     "employee": "empleado",
-    "department": "departamento"
+    "department": "departamento",
+    "date": "fecha"
   },
   "dataTable": {
     "loading": "Cargando…",

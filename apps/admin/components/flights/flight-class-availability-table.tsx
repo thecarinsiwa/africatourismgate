@@ -5,12 +5,16 @@ import {
   DataTable,
   DataTableActionButton,
   DataTableActions,
+  DataTablePagination,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { FlightClassAvailability } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { formatDateLabel, formatPrice } from '../../lib/availability-dates';
+import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
+
+const PAGE_SIZE = 2;
 
 type FlightClassAvailabilityTableProps = {
   rows: FlightClassAvailability[];
@@ -31,6 +35,27 @@ export function FlightClassAvailabilityTable({
   const tColumns = useTranslations('modules.common.columns');
   const tCalendar = useTranslations('modules.common.availabilityCalendar');
   const tCommon = useTranslations('modules.common');
+  const tPagination = useTranslations('modules.common.pagination');
+  const paginationLabels = useDataTablePaginationLabels();
+  const [page, setPage] = useState(1);
+
+  const totalPages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
+  const listKey = `${rows.length}:${rows[0]?.date?.slice(0, 7) ?? ''}`;
+
+  useEffect(() => {
+    setPage(1);
+  }, [listKey]);
+
+  useEffect(() => {
+    if (page > totalPages) {
+      setPage(totalPages);
+    }
+  }, [page, totalPages]);
+
+  const pageRows = useMemo(() => {
+    const start = (page - 1) * PAGE_SIZE;
+    return rows.slice(start, start + PAGE_SIZE);
+  }, [page, rows]);
 
   const columns = useMemo<ColumnDef<FlightClassAvailability, unknown>[]>(
     () => [
@@ -98,10 +123,10 @@ export function FlightClassAvailabilityTable({
         </div>
         <p className="mt-0.5 text-xs text-atg-muted">{t('tableIntro')}</p>
       </div>
-      <Card variant="dashboard" padding="none" className="max-h-[min(28rem,50vh)] overflow-auto">
+      <Card variant="dashboard" padding="none" className="overflow-hidden">
         <DataTable
           columns={columns}
-          data={rows}
+          data={pageRows}
           isLoading={isLoading}
           emptyMessage={t('tableEmpty')}
           getRowId={(row) => row.id}
@@ -112,6 +137,17 @@ export function FlightClassAvailabilityTable({
           expandRowAriaLabel={tCommon('dataTable.expandRowAria')}
         />
       </Card>
+      {!isLoading && rows.length > 0 ? (
+        <DataTablePagination
+          page={page}
+          pageSize={PAGE_SIZE}
+          totalPages={totalPages}
+          totalItems={rows.length}
+          itemLabel={tPagination('date')}
+          onPageChange={setPage}
+          labels={paginationLabels}
+        />
+      ) : null}
     </section>
   );
 }
