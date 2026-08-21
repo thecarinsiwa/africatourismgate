@@ -32,7 +32,6 @@ export function ShipsList() {
   const { croisieres: getCroisieresErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.cruises.referential.ships');
   const tDialogs = useTranslations('modules.cruises.dialogs');
-  const tNav = useTranslations('dashboard.links');
   const tCommon = useTranslations('modules.common');
   const tColumns = useTranslations('modules.cruises.columns');
   const tPagination = useTranslations('modules.common.pagination');
@@ -237,7 +236,7 @@ export function ShipsList() {
               ariaLabel={t('viewModeAria')}
             />
           </div>
-          <Button href="/produits/croisieres/navires/nouveau">{tNav('newShip')}</Button>
+          <Button href="/produits/croisieres/navires/nouveau">{t('new')}</Button>
         </div>
 
         {state.status === 'error' ? (

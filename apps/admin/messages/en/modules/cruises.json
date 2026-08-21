@@ -76,6 +76,7 @@
       "cancel": "Cancel"
     },
     "ships": {
+      "new": "New ship",
       "emptyDefault": "No ships.",
       "emptySearch": "No ship matches these filters.",
       "searchPlaceholder": "Search ships…",
@@ -184,16 +185,16 @@
       "cancel": "Cancel"
     },
     "cabinAvailability": {
-      "title": "Cabins réservables",
-      "intro": "Stock et prix par catégorie pour ce départ.",
-      "stopsLabel": "Ports of call : ",
-      "noStopsWarning": "None escale sur cet itinéraire — ajoutez-en depuis la fiche navire.",
+      "title": "Bookable cabins",
+      "intro": "Stock and price by category for this sailing.",
+      "stopsLabel": "Ports of call: ",
+      "noStopsWarning": "No ports of call on this itinerary — add some from the ship page.",
       "cabinMeta": "max {maxGuests} · base {basePrice}",
-      "cabinsAvailableAria": "Cabins disponibles",
-      "priceCentsAria": "Price en centimes",
-      "update": "Mettre à jour",
-      "makeBookable": "Rendre réservable",
-      "empty": "None cabine sur ce navire. Ajoutez des cabines sur la fiche navire."
+      "cabinsAvailableAria": "Available cabins",
+      "priceCentsAria": "Price in cents",
+      "update": "Update",
+      "makeBookable": "Make bookable",
+      "empty": "No cabins on this ship. Add cabins from the ship page."
     }
   },
   "dialogs": {
@@ -203,7 +204,7 @@
     "cancel": "Cancel"
   },
   "calendar": {
-    "ariaLabel": "Calendrier des départs — {month}",
+    "ariaLabel": "Sailings calendar — {month}",
     "today": "Today"
   },
   "stats": {

@@ -76,6 +76,7 @@
       "cancel": "Cancelar"
     },
     "ships": {
+      "new": "Nuevo barco",
       "emptyDefault": "Ningún barco.",
       "emptySearch": "Ningún barco coincide con estos filtros.",
       "searchPlaceholder": "Buscar barcos…",
@@ -184,16 +185,16 @@
       "cancel": "Cancelar"
     },
     "cabinAvailability": {
-      "title": "Camarotes réservables",
-      "intro": "Stock et prix par catégorie pour ce départ.",
-      "stopsLabel": "Escalas : ",
-      "noStopsWarning": "Ninguna escale sur cet itinéraire — ajoutez-en depuis la fiche navire.",
-      "cabinMeta": "max {maxGuests} · base {basePrice}",
-      "cabinsAvailableAria": "Camarotes disponibles",
-      "priceCentsAria": "Precio en centimes",
-      "update": "Mettre à jour",
-      "makeBookable": "Rendre réservable",
-      "empty": "Ninguna cabine sur ce navire. Ajoutez des cabines sur la fiche navire."
+      "title": "Cabinas reservables",
+      "intro": "Stock y precio por categoría para esta salida.",
+      "stopsLabel": "Escalas: ",
+      "noStopsWarning": "Ninguna escala en este itinerario — añádalas desde la ficha del barco.",
+      "cabinMeta": "máx. {maxGuests} · base {basePrice}",
+      "cabinsAvailableAria": "Cabinas disponibles",
+      "priceCentsAria": "Precio en céntimos",
+      "update": "Actualizar",
+      "makeBookable": "Hacer reservable",
+      "empty": "Ninguna cabina en este barco. Añada cabinas desde la ficha del barco."
     }
   },
   "dialogs": {
@@ -203,8 +204,8 @@
     "cancel": "Cancelar"
   },
   "calendar": {
-    "ariaLabel": "Calendrier des départs — {month}",
-    "today": "Hastajourd'hui"
+    "ariaLabel": "Calendario de salidas — {month}",
+    "today": "Hoy"
   },
   "stats": {
     "sailings": {
