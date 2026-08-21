@@ -142,7 +142,10 @@
       "goToRoomsTab": "Ir a la pestaña Habitaciones",
       "roomMismatch": "Esta habitación no pertenece a este alojamiento.",
       "backToProperty": "Volver al alojamiento",
-      "summary": "Habitación {roomName} — stock y precio por noche ({currency})."
+      "summary": "Habitación {roomName} — stock y precio por noche ({currency}).",
+      "tableTitle": "Fechas disponibles",
+      "tableIntro": "Días con stock y tarifa para esta habitación.",
+      "tableEmpty": "Ninguna disponibilidad en este mes."
     }
   },
   "amenitiesList": {

@@ -30,6 +30,9 @@ type RoomAvailabilityGridProps = {
   defaultPriceCents: number;
   yearMonth: string;
   onYearMonthChange: (yearMonth: string) => void;
+  onRowsChange?: (rows: RoomAvailability[]) => void;
+  pendingEditDate?: string | null;
+  onPendingEditHandled?: () => void;
 };
 
 type OccupancyTone = 'danger' | 'warning' | 'success' | 'neutral';
@@ -54,6 +57,9 @@ export function RoomAvailabilityGrid({
   defaultPriceCents,
   yearMonth,
   onYearMonthChange,
+  onRowsChange,
+  pendingEditDate,
+  onPendingEditHandled,
 }: RoomAvailabilityGridProps) {
   const { hebergements: getHebergementsErrorMessage } = useAdminErrorMessages();
   const locale = useLocale();
@@ -122,6 +128,9 @@ export function RoomAvailabilityGrid({
         map.set(row.date.slice(0, 10), row);
       }
       setRows(map);
+      onRowsChange?.(
+        [...map.values()].sort((a, b) => a.date.localeCompare(b.date)),
+      );
       const nextDrafts = new Map<string, DayDraft>();
       for (const date of monthDays) {
         const existing = map.get(date);
@@ -136,10 +145,11 @@ export function RoomAvailabilityGrid({
       );
     } catch (err) {
       setError(getHebergementsErrorMessage(err));
+      onRowsChange?.([]);
     } finally {
       setLoading(false);
     }
-  }, [roomId, monthDays, defaultPriceCents, getHebergementsErrorMessage]);
+  }, [roomId, monthDays, defaultPriceCents, getHebergementsErrorMessage, onRowsChange]);
 
   useEffect(() => {
     void load();
@@ -148,6 +158,14 @@ export function RoomAvailabilityGrid({
   useEffect(() => {
     setEditingDate(null);
   }, [yearMonth, roomId]);
+
+  useEffect(() => {
+    if (!pendingEditDate) return;
+    if (!monthDays.includes(pendingEditDate)) return;
+    setEditingDate(pendingEditDate);
+    setFocusedDate(pendingEditDate);
+    onPendingEditHandled?.();
+  }, [pendingEditDate, monthDays, onPendingEditHandled]);
 
   function updateDraft(date: string, field: keyof DayDraft, value: string) {
     setDrafts((prev) => {

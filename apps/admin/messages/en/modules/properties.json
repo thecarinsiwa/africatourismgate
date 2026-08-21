@@ -142,7 +142,10 @@
       "goToRoomsTab": "Go to Rooms tab",
       "roomMismatch": "This room does not belong to this accommodation.",
       "backToProperty": "Back to accommodation",
-      "summary": "Room {roomName} — stock and price per night ({currency})."
+      "summary": "Room {roomName} — stock and price per night ({currency}).",
+      "tableTitle": "Available dates",
+      "tableIntro": "Days with stock and fare for this room.",
+      "tableEmpty": "No availability for this month."
     }
   },
   "amenitiesList": {

@@ -2,14 +2,17 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
+import type { RoomAvailability } from '@africatourismgate/types';
+import { useToast } from '@africatourismgate/ui';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { AdminPageBackLink } from '../admin-page-back-link';
 import { getApiClient } from '../../lib/auth/api';
-import { currentYearMonth } from '../../lib/availability-dates';
+import { currentYearMonth, formatDateLabel } from '../../lib/availability-dates';
 import { RoomAvailabilityBulkForm } from './room-availability-bulk-form';
 import { RoomAvailabilityGrid } from './room-availability-grid';
+import { RoomAvailabilityTable } from './room-availability-table';
 
 type RoomAvailabilityPageProps = {
   propertyId: string;
@@ -22,6 +25,8 @@ export function RoomAvailabilityPage({ propertyId, roomId }: RoomAvailabilityPag
   const tAvailability = useTranslations('modules.properties.sections.availability');
   const tDetail = useTranslations('modules.properties.detail');
   const tCommon = useTranslations('modules.common');
+  const tToast = useTranslations('modules.common.toast');
+  const { toast } = useToast();
   const [yearMonth, setYearMonth] = useState(currentYearMonth);
   const [state, setState] = useState<
     | { status: 'loading' }
@@ -35,6 +40,9 @@ export function RoomAvailabilityPage({ propertyId, roomId }: RoomAvailabilityPag
       }
   >({ status: 'loading' });
   const [gridKey, setGridKey] = useState(0);
+  const [availabilityRows, setAvailabilityRows] = useState<RoomAvailability[]>([]);
+  const [pendingEditDate, setPendingEditDate] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const backLabel = useMemo(() => {
     if (tPage.has?.('backLabel')) return tPage('backLabel');
@@ -61,6 +69,34 @@ export function RoomAvailabilityPage({ propertyId, roomId }: RoomAvailabilityPag
   const handleBulkApplied = useCallback(() => {
     setGridKey((k) => k + 1);
   }, []);
+
+  const handleRowsChange = useCallback((rows: RoomAvailability[]) => {
+    setAvailabilityRows(rows);
+  }, []);
+
+  const handleDeleteRow = useCallback(
+    async (row: RoomAvailability) => {
+      setDeletingId(row.id);
+      try {
+        await getApiClient().deleteRoomAvailability(row.id);
+        toast({
+          title: tToast('availabilityDeleted'),
+          message: formatDateLabel(row.date.slice(0, 10)),
+          variant: 'success',
+        });
+        setGridKey((k) => k + 1);
+      } catch (error) {
+        toast({
+          title: tToast('deleteError'),
+          message: getHebergementsErrorMessage(error),
+          variant: 'error',
+        });
+      } finally {
+        setDeletingId(null);
+      }
+    },
+    [getHebergementsErrorMessage, tToast, toast],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -129,13 +165,28 @@ export function RoomAvailabilityPage({ propertyId, roomId }: RoomAvailabilityPag
           : `${tAvailability('room')} ${roomName} — ${tAvailability('stockHint', { currency })}`}
       </p>
 
-      <div className="space-y-10">
-        <RoomAvailabilityBulkForm
-          roomId={roomId}
-          yearMonth={yearMonth}
-          defaultPriceCents={basePriceCents}
-          onApplied={handleBulkApplied}
-        />
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,28rem)_minmax(0,1fr)] lg:items-start xl:grid-cols-[minmax(0,32rem)_minmax(0,1fr)]">
+        <div className="flex min-w-0 flex-col gap-6">
+          <RoomAvailabilityBulkForm
+            roomId={roomId}
+            yearMonth={yearMonth}
+            defaultPriceCents={basePriceCents}
+            onApplied={handleBulkApplied}
+          />
+          <RoomAvailabilityTable
+            rows={availabilityRows}
+            currency={currency}
+            onEditDate={(date) => {
+              const ym = date.slice(0, 7);
+              if (ym !== yearMonth) {
+                setYearMonth(ym);
+              }
+              setPendingEditDate(date);
+            }}
+            onDelete={(row) => void handleDeleteRow(row)}
+            deletingId={deletingId}
+          />
+        </div>
         <RoomAvailabilityGrid
           key={gridKey}
           roomId={roomId}
@@ -143,6 +194,9 @@ export function RoomAvailabilityPage({ propertyId, roomId }: RoomAvailabilityPag
           defaultPriceCents={basePriceCents}
           yearMonth={yearMonth}
           onYearMonthChange={setYearMonth}
+          onRowsChange={handleRowsChange}
+          pendingEditDate={pendingEditDate}
+          onPendingEditHandled={() => setPendingEditDate(null)}
         />
       </div>
     </div>
