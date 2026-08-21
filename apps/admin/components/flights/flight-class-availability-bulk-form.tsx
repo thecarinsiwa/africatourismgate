@@ -80,7 +80,7 @@ export function FlightClassAvailabilityBulkForm({
   }
 
   return (
-    <Card variant="dashboard" className="max-w-3xl">
+    <Card variant="dashboard" className="h-full">
       <form onSubmit={handleSubmit} className="space-y-4">
         <h3 className="text-sm font-medium text-atg-fg">{tCalendar('bulkTitle')}</h3>
         <p className="text-sm text-atg-muted">{tCalendar('bulkIntroSeats')}</p>

@@ -27,6 +27,9 @@ type FlightClassAvailabilityGridProps = {
   defaultPriceCents: number;
   yearMonth: string;
   onYearMonthChange: (yearMonth: string) => void;
+  onRowsChange?: (rows: FlightClassAvailability[]) => void;
+  pendingEditDate?: string | null;
+  onPendingEditHandled?: () => void;
 };
 
 type OccupancyTone = 'danger' | 'warning' | 'success' | 'neutral';
@@ -50,6 +53,9 @@ export function FlightClassAvailabilityGrid({
   defaultPriceCents,
   yearMonth,
   onYearMonthChange,
+  onRowsChange,
+  pendingEditDate,
+  onPendingEditHandled,
 }: FlightClassAvailabilityGridProps) {
   const locale = useLocale();
   const { vols: getVolsErrorMessage } = useAdminErrorMessages();
@@ -125,6 +131,9 @@ export function FlightClassAvailabilityGrid({
         map.set(row.date.slice(0, 10), row);
       }
       setRows(map);
+      onRowsChange?.(
+        [...map.values()].sort((a, b) => a.date.localeCompare(b.date)),
+      );
       const nextDrafts = new Map<string, DayDraft>();
       for (const date of monthDays) {
         const existing = map.get(date);
@@ -139,10 +148,11 @@ export function FlightClassAvailabilityGrid({
       );
     } catch (err) {
       setError(getVolsErrorMessage(err));
+      onRowsChange?.([]);
     } finally {
       setLoading(false);
     }
-  }, [flightClassId, monthDays, defaultPriceCents, getVolsErrorMessage]);
+  }, [flightClassId, monthDays, defaultPriceCents, getVolsErrorMessage, onRowsChange]);
 
   useEffect(() => {
     void load();
@@ -151,6 +161,14 @@ export function FlightClassAvailabilityGrid({
   useEffect(() => {
     setEditingDate(null);
   }, [yearMonth, flightClassId]);
+
+  useEffect(() => {
+    if (!pendingEditDate) return;
+    if (!monthDays.includes(pendingEditDate)) return;
+    setEditingDate(pendingEditDate);
+    setFocusedDate(pendingEditDate);
+    onPendingEditHandled?.();
+  }, [pendingEditDate, monthDays, onPendingEditHandled]);
 
   function updateDraft(date: string, field: keyof DayDraft, value: string) {
     setDrafts((prev) => {

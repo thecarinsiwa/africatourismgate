@@ -116,7 +116,10 @@
       "title": "Availability",
       "backToFlight": "Back to flight",
       "classMismatch": "This class does not belong to this flight.",
-      "summary": "Flight {flightNumber} — {classLabel}: seats and price by date."
+      "summary": "Flight {flightNumber} — {classLabel}: seats and price by date.",
+      "tableTitle": "Available dates",
+      "tableIntro": "Days with seats and fare for this cabin class.",
+      "tableEmpty": "No availability for this month."
     }
   },
   "referential": {

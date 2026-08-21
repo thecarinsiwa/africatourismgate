@@ -116,7 +116,10 @@
       "title": "Disponibilités",
       "backToFlight": "Retour au vol",
       "classMismatch": "Cette classe n'appartient pas à ce vol.",
-      "summary": "Vol {flightNumber} — {classLabel} : sièges et prix par date."
+      "summary": "Vol {flightNumber} — {classLabel} : sièges et prix par date.",
+      "tableTitle": "Dates disponibles",
+      "tableIntro": "Liste des jours avec sièges et tarif pour cette classe cabine.",
+      "tableEmpty": "Aucune disponibilité sur ce mois."
     }
   },
   "referential": {
