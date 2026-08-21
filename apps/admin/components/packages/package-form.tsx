@@ -161,7 +161,7 @@ export function PackageForm({ mode, packageId, initialPackage }: PackageFormProp
   return (
     <form
       onSubmit={(e) => void handleSubmit(e)}
-      className={mode === 'create' ? 'mx-auto max-w-2xl space-y-6' : 'max-w-2xl space-y-6'}
+      className={mode === 'create' ? 'mx-auto w-full max-w-5xl space-y-6' : 'w-full space-y-6'}
     >
       {formError ? (
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">
@@ -169,73 +169,75 @@ export function PackageForm({ mode, packageId, initialPackage }: PackageFormProp
         </p>
       ) : null}
 
-      <section className="space-y-4">
-        <h3 className="text-sm font-semibold text-atg-fg">{t('sections.identity')}</h3>
-        <Input
-          label={t('packageName')}
-          value={values.name}
-          onChange={(e) => updateField('name', e.target.value)}
-          error={fieldErrors.name}
-          required
-        />
-        <RichTextEditor
-          label={tCommon('form.description')}
-          value={values.description}
-          onChange={(html) => updateField('description', html)}
-          placeholder={t('descriptionPlaceholder')}
-          onUploadAsset={handleUploadDescriptionAsset}
-        />
-      </section>
-
-      <section className="space-y-4">
-        <h3 className="text-sm font-semibold text-atg-fg">{t('sections.pricing')}</h3>
-        <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)] lg:items-start xl:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
+        <section className="min-w-0 space-y-4">
+          <h3 className="text-sm font-semibold text-atg-fg">{t('sections.identity')}</h3>
           <Input
-            label={t('discountPercent')}
-            type="number"
-            min={0}
-            max={100}
-            step={0.01}
-            value={values.discountPercent}
-            onChange={(e) => updateField('discountPercent', e.target.value)}
-            error={fieldErrors.discountPercent}
+            label={t('packageName')}
+            value={values.name}
+            onChange={(e) => updateField('name', e.target.value)}
+            error={fieldErrors.name}
+            required
           />
-          <Input
-            label={t('durationDays')}
-            type="number"
-            min={1}
-            max={365}
-            value={values.durationDays}
-            onChange={(e) => updateField('durationDays', e.target.value)}
-            error={fieldErrors.durationDays}
+          <RichTextEditor
+            label={tCommon('form.description')}
+            value={values.description}
+            onChange={(html) => updateField('description', html)}
+            placeholder={t('descriptionPlaceholder')}
+            onUploadAsset={handleUploadDescriptionAsset}
           />
-        </div>
-      </section>
-
-      {mode === 'create' ? (
-        <section className="space-y-3">
-          <h3 className="text-sm font-semibold text-atg-fg">{t('sections.publication')}</h3>
-          <label className="flex items-center gap-2 text-sm text-atg-fg">
-            <input
-              type="checkbox"
-              checked={values.active}
-              onChange={(e) => updateField('active', e.target.checked)}
-              className="rounded border-atg-border"
-            />
-            {t('activeLabel')}
-          </label>
-          <label className="flex items-center gap-2 text-sm text-atg-fg">
-            <input
-              type="checkbox"
-              checked={values.isFeatured}
-              onChange={(e) => updateField('isFeatured', e.target.checked)}
-              className="rounded border-atg-border"
-            />
-            {t('featuredLabel')}
-          </label>
-          <p className="text-xs text-atg-muted">{t('featuredHint')}</p>
         </section>
-      ) : null}
+
+        <aside className="min-w-0 space-y-4 lg:sticky lg:top-6">
+          <section className="space-y-4">
+            <h3 className="text-sm font-semibold text-atg-fg">{t('sections.pricing')}</h3>
+            <Input
+              label={t('discountPercent')}
+              type="number"
+              min={0}
+              max={100}
+              step={0.01}
+              value={values.discountPercent}
+              onChange={(e) => updateField('discountPercent', e.target.value)}
+              error={fieldErrors.discountPercent}
+            />
+            <Input
+              label={t('durationDays')}
+              type="number"
+              min={1}
+              max={365}
+              value={values.durationDays}
+              onChange={(e) => updateField('durationDays', e.target.value)}
+              error={fieldErrors.durationDays}
+            />
+          </section>
+
+          {mode === 'create' ? (
+            <section className="space-y-3">
+              <h3 className="text-sm font-semibold text-atg-fg">{t('sections.publication')}</h3>
+              <label className="flex items-center gap-2 text-sm text-atg-fg">
+                <input
+                  type="checkbox"
+                  checked={values.active}
+                  onChange={(e) => updateField('active', e.target.checked)}
+                  className="rounded border-atg-border"
+                />
+                {t('activeLabel')}
+              </label>
+              <label className="flex items-center gap-2 text-sm text-atg-fg">
+                <input
+                  type="checkbox"
+                  checked={values.isFeatured}
+                  onChange={(e) => updateField('isFeatured', e.target.checked)}
+                  className="rounded border-atg-border"
+                />
+                {t('featuredLabel')}
+              </label>
+              <p className="text-xs text-atg-muted">{t('featuredHint')}</p>
+            </section>
+          ) : null}
+        </aside>
+      </div>
 
       <div className="flex flex-wrap gap-3 pt-2">
         <Button type="submit" loading={submitting}>
