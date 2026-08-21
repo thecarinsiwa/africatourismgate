@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
 import { AdminImagesGalleryGrid } from '../common/admin-images-gallery-grid';
+import { AdminImageViewerModal } from '../admin-image-viewer-modal';
 import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
 import { getSession } from '../../lib/auth/session';
 
@@ -50,6 +51,7 @@ export function ActivityImagesSection({ activityId, embedded }: ActivityImagesSe
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [confirmTarget, setConfirmTarget] = useState<ActivityImage | null>(null);
+  const [viewerIndex, setViewerIndex] = useState<number | null>(null);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -192,6 +194,14 @@ export function ActivityImagesSection({ activityId, embedded }: ActivityImagesSe
 
   const images = state.status === 'ready' ? state.images : [];
 
+  const openViewer = useCallback(
+    (img: ActivityImage) => {
+      const index = images.findIndex((item) => item.id === img.id);
+      setViewerIndex(index >= 0 ? index : 0);
+    },
+    [images],
+  );
+
   return (
     <>
       <AlertDialog
@@ -207,6 +217,16 @@ export function ActivityImagesSection({ activityId, embedded }: ActivityImagesSe
         loading={!!deletingId}
         error={deleteError}
         onConfirm={() => void handleDeleteConfirm()}
+      />
+      <AdminImageViewerModal
+        open={viewerIndex !== null}
+        onOpenChange={(open) => {
+          if (!open) setViewerIndex(null);
+        }}
+        images={images}
+        index={viewerIndex ?? 0}
+        onIndexChange={setViewerIndex}
+        fallbackLabel={tGallery('title')}
       />
       <section
         className={
@@ -309,8 +329,10 @@ export function ActivityImagesSection({ activityId, embedded }: ActivityImagesSe
             loadingMessage={tGallery('loading')}
             deletingId={deletingId}
             emptyDash={emptyDash}
+            viewLabel={tGallery('viewerOpen')}
             editLabel={tActions('edit')}
             deleteLabel={tActions('delete')}
+            onView={openViewer}
             onEdit={openEdit}
             onDelete={handleDeleteRequest}
           />
