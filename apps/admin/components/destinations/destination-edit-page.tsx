@@ -38,7 +38,6 @@ function isTabValue(value: string | null): value is TabValue {
 export function DestinationEditPage({ destinationId }: DestinationEditPageProps) {
   const { destinations: getDestinationsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.destinations.detail');
-  const tForm = useTranslations('modules.destinations.form');
   const tCommon = useTranslations('modules.common');
   const router = useRouter();
   const pathname = usePathname();
@@ -156,7 +155,7 @@ export function DestinationEditPage({ destinationId }: DestinationEditPageProps)
             </DataTableBadge>
             <DataTableBadge variant="default">{destination.countryCode}</DataTableBadge>
             {destination.isFeatured ? (
-              <DataTableBadge variant="success">{tForm('isFeatured')}</DataTableBadge>
+              <DataTableBadge variant="success">{t('featuredBadge')}</DataTableBadge>
             ) : null}
           </div>
           <p className="text-sm text-atg-muted">{t('subtitle')}</p>

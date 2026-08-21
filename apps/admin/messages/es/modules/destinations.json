@@ -9,8 +9,8 @@
     "viewTable": "Tabla",
     "viewModeAria": "Modo de visualización de destinos",
     "featuredFilter": "Destacado",
-    "featuredYes": "Homepage",
-    "featuredNo": "Fuera de homepage",
+    "featuredYes": "Página de inicio",
+    "featuredNo": "Fuera de la página de inicio",
     "deleteTitle": "Eliminar destino",
     "deleteConfirm": "El destino «{name}» y sus puntos de interés asociados serán eliminados permanentemente.",
     "deleteConfirmButton": "Eliminar",
@@ -19,7 +19,7 @@
   "columns": {
     "destination": "Destino",
     "country": "País",
-    "featured": "Homepage"
+    "featured": "Página de inicio"
   },
   "form": {
     "submitCreate": "Crear destino",
@@ -33,7 +33,7 @@
     "slugHint": "Identificador único (ej. kinshasa).",
     "countryCode": "Código de país (ISO)",
     "countryCodeHint": "2 letras, ej. CD, KE, ZA.",
-    "heroImageUrl": "URL de imagen hero",
+    "heroImageUrl": "URL de la imagen de cabecera",
     "heroImageHint": "Se muestra en el banner. Déjelo vacío para un degradado.",
     "isFeatured": "Mostrar en la página de inicio",
     "isFeaturedHint": "Sección « Destinos populares » del sitio público (máx. 4).",
@@ -50,6 +50,7 @@
     "editButton": "Modificar el destino",
     "backLink": "Volver a destinos",
     "subtitle": "Identidad, geografía y puntos de interés.",
+    "featuredBadge": "Página de inicio",
     "tabsAria": "Secciones del destino",
     "tabs": {
       "informations": "Información",

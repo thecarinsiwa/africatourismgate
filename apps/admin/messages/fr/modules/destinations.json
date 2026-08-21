@@ -9,8 +9,8 @@
     "viewTable": "Tableau",
     "viewModeAria": "Mode d'affichage des destinations",
     "featuredFilter": "Mise en avant",
-    "featuredYes": "Homepage",
-    "featuredNo": "Hors homepage",
+    "featuredYes": "Page d'accueil",
+    "featuredNo": "Hors page d'accueil",
     "deleteTitle": "Supprimer la destination",
     "deleteConfirm": "La destination « {name} » et ses points d'intérêt associés seront supprimés définitivement.",
     "deleteConfirmButton": "Supprimer",
@@ -19,7 +19,7 @@
   "columns": {
     "destination": "Destination",
     "country": "Pays",
-    "featured": "Homepage"
+    "featured": "Page d'accueil"
   },
   "form": {
     "submitCreate": "Créer la destination",
@@ -33,14 +33,14 @@
     "slugHint": "Identifiant unique (ex. kinshasa).",
     "countryCode": "Code pays (ISO)",
     "countryCodeHint": "2 lettres, ex. CD, KE, ZA.",
-    "heroImageUrl": "URL image hero",
+    "heroImageUrl": "URL de l'image d'en-tête",
     "heroImageHint": "Affichée dans le bandeau. Laissez vide pour un dégradé.",
-    "isFeatured": "Afficher sur la homepage",
+    "isFeatured": "Afficher sur la page d'accueil",
     "isFeaturedHint": "Section « Destinations populaires » du site public (max. 4).",
     "geographyIntro": "Coordonnées du centre de la destination pour la carte statique.",
     "latitudeHint": "Optionnel, -90 à 90",
     "longitudeHint": "Optionnel, -180 à 180",
-    "mapPreview": "Aperçu carte",
+    "mapPreview": "Aperçu de la carte",
     "openStreetMap": "Ouvrir dans OpenStreetMap"
   },
   "detail": {
@@ -50,6 +50,7 @@
     "editButton": "Modifier la destination",
     "backLink": "Retour aux destinations",
     "subtitle": "Identité, géographie et points d'intérêt.",
+    "featuredBadge": "Page d'accueil",
     "tabsAria": "Sections de la destination",
     "tabs": {
       "informations": "Informations",
@@ -94,14 +95,14 @@
       },
       "packages": {
         "label": "Forfaits",
-        "subtitle": "Packages incluant des produits locaux"
+        "subtitle": "Forfaits incluant des produits locaux"
       }
     }
   },
   "stats": {
     "destinations": {
       "label": "Destinations",
-      "subtitle": "Villes et régions catalogue"
+      "subtitle": "Villes et régions du catalogue"
     },
     "pois": {
       "label": "Points d'intérêt",
