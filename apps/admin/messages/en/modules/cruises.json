@@ -199,19 +199,19 @@
   "stats": {
     "sailings": {
       "label": "Departures",
-      "subtitle": "Cruises programmées"
+      "subtitle": "Scheduled cruises"
     },
     "ships": {
       "label": "Ships",
-      "subtitle": "Flotte catalogue"
+      "subtitle": "Fleet catalog"
     },
     "lines": {
       "label": "Lines",
-      "subtitle": "Airlines de croisière"
+      "subtitle": "Cruise companies"
     },
     "ports": {
       "label": "Ports",
-      "subtitle": "Ports of call référencées"
+      "subtitle": "Listed ports of call"
     }
   }
 }
