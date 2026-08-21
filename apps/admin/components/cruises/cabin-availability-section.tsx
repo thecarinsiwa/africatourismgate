@@ -23,12 +23,15 @@ type CabinAvailabilitySectionProps = {
   sailingId: string;
   shipId: string;
   itineraryId: string;
+  /** Sans bordure supérieure — usage dans un onglet. */
+  embedded?: boolean;
 };
 
 export function CabinAvailabilitySection({
   sailingId,
   shipId,
   itineraryId,
+  embedded = false,
 }: CabinAvailabilitySectionProps) {
   const { croisieres: getCroisieresErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.cruises.sections.cabinAvailability');
@@ -212,10 +215,20 @@ export function CabinAvailabilitySection({
   );
 
   return (
-    <section className="mt-12 space-y-6 border-t border-atg-border pt-10">
+    <section
+      className={
+        embedded
+          ? 'space-y-6'
+          : 'mt-12 space-y-6 border-t border-atg-border pt-10'
+      }
+    >
       <div>
-        <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
-        <p className="mt-1 text-sm text-atg-muted">{t('intro')}</p>
+        {embedded ? null : (
+          <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
+        )}
+        <p className={embedded ? 'text-sm text-atg-muted' : 'mt-1 text-sm text-atg-muted'}>
+          {t('intro')}
+        </p>
         {stopColumns.length > 0 ? (
           <p className="mt-3 text-sm text-atg-fg">
             <span className="font-medium text-atg-muted">{t('stopsLabel')}</span>

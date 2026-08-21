@@ -101,7 +101,9 @@
       "itinerary": "Itinerary",
       "departureDate": "Departure date",
       "itineraryOption": "{name} ({shipName}) — {nights} nights",
-      "validation": "Itinerary and departure date are required."
+      "validation": "Itinerary and departure date are required.",
+      "fallbackShip": "Unknown ship",
+      "noItinerariesHint": "No itineraries available. Create one from a ship page."
     },
     "itinerary": {
       "new": "New itinerary",
@@ -154,10 +156,18 @@
   "detail": {
     "shipTitle": "Edit ship",
     "sailingTitle": "Edit sailing",
-    "backToSailings": "Back to sailings",
-    "backToShips": "← Back to ships",
+    "sailingSubtitle": "Itinerary, departure date and bookable cabins.",
+    "backToSailings": "Back to cruises",
+    "backToShips": "Back to ships",
     "escalesTitle": "Ports of call",
     "backToShip": "Back to ship",
+    "viewShip": "View ship",
+    "viewItinerary": "View ports of call",
+    "tabsAria": "Sailing sections",
+    "tabs": {
+      "sailing": "Sailing",
+      "cabins": "Cabins"
+    },
     "timelineAria": "Ports of call timeline"
   },
   "sections": {

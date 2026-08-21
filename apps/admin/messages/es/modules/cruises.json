@@ -101,7 +101,9 @@
       "itinerary": "Itinerario",
       "departureDate": "Fecha de salida",
       "itineraryOption": "{name} ({shipName}) — {nights} noches",
-      "validation": "El itinerario y la fecha de salida son obligatorios."
+      "validation": "El itinerario y la fecha de salida son obligatorios.",
+      "fallbackShip": "Barco desconocido",
+      "noItinerariesHint": "Ningún itinerario disponible. Cree uno desde la ficha de un barco."
     },
     "itinerary": {
       "new": "Nuevo itinerario",
@@ -154,10 +156,18 @@
   "detail": {
     "shipTitle": "Editar barco",
     "sailingTitle": "Editar salida",
-    "backToSailings": "Volver a salidas",
-    "backToShips": "← Volver a barcos",
+    "sailingSubtitle": "Itinerario, fecha de salida y cabinas reservables.",
+    "backToSailings": "Volver a cruceros",
+    "backToShips": "Volver a barcos",
     "escalesTitle": "Escalas",
     "backToShip": "Volver al barco",
+    "viewShip": "Ver barco",
+    "viewItinerary": "Ver escalas",
+    "tabsAria": "Secciones de la salida",
+    "tabs": {
+      "sailing": "Salida",
+      "cabins": "Cabinas"
+    },
     "timelineAria": "Esquema de escalas"
   },
   "sections": {
