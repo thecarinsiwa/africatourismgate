@@ -116,6 +116,8 @@
       "addItem": "Add a service",
       "newItem": "New service",
       "empty": "No services in this package.",
+      "searchPlaceholder": "Search a service…",
+      "searchEmpty": "No services match your search.",
       "removeTitle": "Remove from package",
       "removeConfirm": "\"{label}\" will be removed from the package.",
       "removeConfirmButton": "Remove",

@@ -116,6 +116,8 @@
       "addItem": "Ajouter une prestation",
       "newItem": "Nouvelle prestation",
       "empty": "Aucune prestation dans ce forfait.",
+      "searchPlaceholder": "Rechercher une prestation…",
+      "searchEmpty": "Aucune prestation ne correspond à votre recherche.",
       "removeTitle": "Retirer du forfait",
       "removeConfirm": "« {label} » sera retiré du forfait.",
       "removeConfirmButton": "Retirer",

@@ -10,6 +10,7 @@ import {
   DataTable,
   DataTableActionButton,
   DataTableActions,
+  Input,
   Modal,
   type ColumnDef,
 } from '@africatourismgate/ui';
@@ -22,7 +23,11 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { formatMoney } from '../../lib/format-money';
-import { usePackageItemTypeOptions } from '../../lib/i18n/use-module-labels';
+import {
+  usePackageItemTypeLabels,
+  usePackageItemTypeOptions,
+} from '../../lib/i18n/use-module-labels';
+import { getPackageItemTypeLabel } from '../../lib/package-item-type';
 import { PackageCompositionBanner } from './package-composition-banner';
 import { PackageItemTypeIcon } from './package-item-type-icon';
 import { PackagePreviewCard } from './package-preview-card';
@@ -46,6 +51,7 @@ export function PackageItemsSection({
   const tCommon = useTranslations('modules.common');
   const tActions = useTranslations('common.actions');
   const itemTypeOptions = usePackageItemTypeOptions();
+  const itemTypeLabels = usePackageItemTypeLabels();
   const typeId = useId();
   const itemId = useId();
   const [detail, setDetail] = useState<PackageDetail | null>(null);
@@ -54,6 +60,7 @@ export function PackageItemsSection({
     | { status: 'error'; message: string }
     | { status: 'ready' }
   >({ status: 'loading' });
+  const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [itemType, setItemType] = useState<PackageItemType>('property');
   const [selectedItemId, setSelectedItemId] = useState('');
@@ -230,6 +237,19 @@ export function PackageItemsSection({
   const items = detail?.items ?? [];
   const pricing = detail?.pricing;
   const pkg = detail?.package;
+  const hasSearch = search.trim().length > 0;
+  const filteredItems = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    if (!query) return items;
+    return items.filter((item) => {
+      const typeLabel = getPackageItemTypeLabel(item.itemType, itemTypeLabels);
+      const haystack = [item.label, typeLabel, item.itemType, item.currency]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+      return haystack.includes(query);
+    });
+  }, [items, itemTypeLabels, search]);
   const selectClass =
     'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg';
 
@@ -341,6 +361,18 @@ export function PackageItemsSection({
           <div className="min-w-0 space-y-4 self-start">
             <PackageCompositionBanner items={items} />
 
+            {state.status === 'ready' && items.length > 0 ? (
+              <div className="max-w-md">
+                <Input
+                  type="search"
+                  placeholder={t('searchPlaceholder')}
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  aria-label={t('searchPlaceholder')}
+                />
+              </div>
+            ) : null}
+
             {state.status === 'error' ? (
               <p role="alert" className="text-sm text-red-600 dark:text-red-400">
                 {state.message}
@@ -349,10 +381,12 @@ export function PackageItemsSection({
               <Card variant="dashboard" padding="none" className="h-fit overflow-hidden">
                 <DataTable
                   columns={columns}
-                  data={items}
+                  data={filteredItems}
                   isLoading={state.status === 'loading'}
-                  emptyMessage={t('empty')}
+                  emptyMessage={hasSearch ? t('searchEmpty') : t('empty')}
+                  emptyVariant={hasSearch ? 'search' : 'default'}
                   getRowId={(r) => r.id}
+                  aria-label={t('title')}
                 />
               </Card>
             )}

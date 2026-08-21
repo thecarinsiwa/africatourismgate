@@ -116,6 +116,8 @@
       "addItem": "Añadir un servicio",
       "newItem": "Nuevo servicio",
       "empty": "Ningún servicio en este paquete.",
+      "searchPlaceholder": "Buscar un servicio…",
+      "searchEmpty": "Ningún servicio coincide con su búsqueda.",
       "removeTitle": "Quitar del paquete",
       "removeConfirm": "«{label}» será retirado del paquete.",
       "removeConfirmButton": "Quitar",
