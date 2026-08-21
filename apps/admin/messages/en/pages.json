@@ -254,7 +254,9 @@
         "description": "Link an existing itinerary to a departure date."
       },
       "lignes": {
-        "description": "Cruise line directory."
+        "title": "Cruise lines",
+        "description": "Cruise line directory.",
+        "backLabel": "Back to sailings"
       },
       "ports": {
         "description": "Port directory."

@@ -254,7 +254,9 @@
         "description": "Associez un itinéraire existant à une date de départ."
       },
       "lignes": {
-        "description": "Référentiel des compagnies / lignes."
+        "title": "Lignes de croisière",
+        "description": "Référentiel des compagnies / lignes.",
+        "backLabel": "Retour aux départs"
       },
       "ports": {
         "description": "Référentiel des escales."

@@ -254,7 +254,9 @@
         "description": "Vincule un itinerario existente a una fecha de salida."
       },
       "lignes": {
-        "description": "Directorio de líneas de crucero."
+        "title": "Líneas de crucero",
+        "description": "Directorio de líneas de crucero.",
+        "backLabel": "Volver a salidas"
       },
       "ports": {
         "description": "Directorio de puertos."
