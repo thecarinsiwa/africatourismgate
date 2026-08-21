@@ -134,11 +134,33 @@
       "emptySearch": "Ninguna aerolínea coincide con esta búsqueda.",
       "searchPlaceholder": "Buscar por código IATA o nombre…",
       "searchAria": "Buscar aerolíneas",
+      "ariaLabel": "Lista de aerolíneas",
       "iataCode": "Código IATA",
+      "logo": "Logo",
+      "logoHint": "JPEG, PNG o WebP, máx. 5 MB.",
+      "logoUpload": "Elegir imagen",
+      "logoRemove": "Quitar logo",
+      "viewGrid": "Cuadrícula",
+      "viewTable": "Tabla",
+      "viewModeAria": "Modo de visualización",
       "deleteConfirm": "¿Eliminar « {name} »?",
       "deleteTitle": "Eliminar aerolínea",
       "deleteConfirmButton": "Eliminar",
-      "cancel": "Cancelar"
+      "cancel": "Cancelar",
+      "stats": {
+        "total": {
+          "label": "Aerolíneas",
+          "subtitle": "Directorio IATA"
+        },
+        "withLogo": {
+          "label": "Con logo",
+          "subtitle": "Identidad visual"
+        },
+        "withoutLogo": {
+          "label": "Sin logo",
+          "subtitle": "Por completar"
+        }
+      }
     },
     "airports": {
       "new": "Nuevo aeropuerto",

@@ -227,6 +227,8 @@
   },
   "toast": {
     "saved": "Guardado",
+    "created": "Creado",
+    "deleted": "Eliminado",
     "saveError": "Error al guardar",
     "deleteError": "Error al eliminar",
     "availabilitySaved": "Disponibilidad guardada",

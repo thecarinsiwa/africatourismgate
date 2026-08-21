@@ -227,6 +227,8 @@
   },
   "toast": {
     "saved": "Saved",
+    "created": "Created",
+    "deleted": "Deleted",
     "saveError": "Save error",
     "deleteError": "Delete error",
     "availabilitySaved": "Availability saved",

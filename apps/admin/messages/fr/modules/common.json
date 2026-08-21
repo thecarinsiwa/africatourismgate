@@ -227,6 +227,8 @@
   },
   "toast": {
     "saved": "Enregistré",
+    "created": "Créé",
+    "deleted": "Supprimé",
     "saveError": "Erreur d'enregistrement",
     "deleteError": "Erreur de suppression",
     "availabilitySaved": "Disponibilité enregistrée",
