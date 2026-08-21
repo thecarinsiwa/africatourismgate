@@ -10,6 +10,7 @@ import {
   DataTable,
   DataTableActionButton,
   DataTableActions,
+  Modal,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type {
@@ -236,7 +237,9 @@ export function PackageItemsSection({
     <>
       <AlertDialog
         open={!!confirmTarget}
-        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        onOpenChange={(open) => {
+          if (!open) setConfirmTarget(null);
+        }}
         title={t('removeTitle')}
         description={confirmTarget ? t('removeConfirm', { label: confirmTarget.label }) : ''}
         confirmLabel={t('removeConfirmButton')}
@@ -245,120 +248,134 @@ export function PackageItemsSection({
         loading={!!deletingId}
         onConfirm={() => void handleDeleteConfirm()}
       />
-    <section
-      className={cn(
-        'space-y-6',
-        embedded ? '' : 'mt-12 border-t border-atg-border pt-10',
-      )}
-    >
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
-          <p className="mt-1 text-sm text-atg-muted">{t('intro')}</p>
-        </div>
-        {!showForm ? (
-          <Button type="button" onClick={() => setShowForm(true)}>
-            {t('addItem')}
-          </Button>
-        ) : null}
-      </div>
 
-      {detail && pricing && pkg ? (
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
-          <PackagePricingRecap
-            pricing={pricing}
-            itemCount={items.length}
-            className="max-w-none"
-          />
-          <PackagePreviewCard
-            pkg={pkg}
-            itemCount={items.length}
-            pricing={pricing}
-            className="lg:sticky lg:top-6"
-          />
-        </div>
-      ) : null}
-
-      <PackageCompositionBanner items={items} />
-
-      {showForm ? (
-        <Card variant="dashboard" className="max-w-2xl">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <h3 className="text-sm font-medium">{t('newItem')}</h3>
-            {formError ? (
-              <p role="alert" className="text-sm text-red-600">
-                {formError}
-              </p>
-            ) : null}
-            <div>
-              <label htmlFor={typeId} className="mb-2 block text-sm font-medium">
-                {tCommon('columns.type')}
-              </label>
-              <div className="flex items-center gap-3">
-                <PackageItemTypeIcon itemType={itemType} size="md" />
-                <select
-                  id={typeId}
-                  className={cn(selectClass, 'min-w-0 flex-1')}
-                  value={itemType}
-                  onChange={(e) => setItemType(e.target.value as PackageItemType)}
-                >
-                  {itemTypeOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            <div>
-              <label htmlFor={itemId} className="mb-2 block text-sm font-medium">
-                {tCommon('columns.product')}
-              </label>
+      <Modal
+        open={showForm}
+        onOpenChange={(open) => {
+          if (!open && !submitting) resetForm();
+        }}
+        title={t('newItem')}
+        showClose={!submitting}
+        closeAriaLabel={tActions('close')}
+        className="max-w-lg"
+      >
+        <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4">
+          {formError ? (
+            <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+              {formError}
+            </p>
+          ) : null}
+          <div>
+            <label htmlFor={typeId} className="mb-2 block text-sm font-medium text-atg-fg">
+              {tCommon('columns.type')}
+            </label>
+            <div className="flex items-center gap-3">
+              <PackageItemTypeIcon itemType={itemType} size="md" />
               <select
-                id={itemId}
-                className={selectClass}
-                value={selectedItemId}
-                onChange={(e) => setSelectedItemId(e.target.value)}
-                disabled={catalogLoading}
+                id={typeId}
+                className={cn(selectClass, 'min-w-0 flex-1')}
+                value={itemType}
+                onChange={(e) => setItemType(e.target.value as PackageItemType)}
+                disabled={submitting}
               >
-                <option value="">
-                  {catalogLoading ? tCommon('loading') : tCommon('select.chooseDash')}
-                </option>
-                {catalog.map((o) => (
-                  <option key={o.id} value={o.id}>
-                    {o.label}
+                {itemTypeOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
                   </option>
                 ))}
               </select>
             </div>
-            <div className="flex gap-3">
-              <Button type="submit" loading={submitting}>
-                {tActions('create')}
-              </Button>
-              <Button type="button" variant="outline" onClick={resetForm}>
-                {tActions('cancel')}
-              </Button>
-            </div>
-          </form>
-        </Card>
-      ) : null}
+          </div>
+          <div>
+            <label htmlFor={itemId} className="mb-2 block text-sm font-medium text-atg-fg">
+              {tCommon('columns.product')}
+            </label>
+            <select
+              id={itemId}
+              className={selectClass}
+              value={selectedItemId}
+              onChange={(e) => setSelectedItemId(e.target.value)}
+              disabled={catalogLoading || submitting}
+            >
+              <option value="">
+                {catalogLoading ? tCommon('loading') : tCommon('select.chooseDash')}
+              </option>
+              {catalog.map((o) => (
+                <option key={o.id} value={o.id}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex flex-wrap gap-3 pt-2">
+            <Button type="submit" loading={submitting}>
+              {tActions('create')}
+            </Button>
+            <Button type="button" variant="outline" onClick={resetForm} disabled={submitting}>
+              {tActions('cancel')}
+            </Button>
+          </div>
+        </form>
+      </Modal>
 
-      {state.status === 'error' ? (
-        <p role="alert" className="text-sm text-red-600">
-          {state.message}
-        </p>
-      ) : (
-        <Card variant="dashboard" padding="none">
-          <DataTable
-            columns={columns}
-            data={items}
-            isLoading={state.status === 'loading'}
-            emptyMessage={t('empty')}
-            getRowId={(r) => r.id}
-          />
-        </Card>
-      )}
-    </section>
+      <section
+        className={cn('space-y-6', embedded ? '' : 'mt-12 border-t border-atg-border pt-10')}
+      >
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            {!embedded ? (
+              <>
+                <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
+                <p className="mt-1 text-sm text-atg-muted">{t('intro')}</p>
+              </>
+            ) : (
+              <h3 className="text-sm font-semibold text-atg-fg">{t('title')}</h3>
+            )}
+          </div>
+          <Button type="button" onClick={() => setShowForm(true)}>
+            {t('addItem')}
+          </Button>
+        </div>
+
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)] lg:items-start xl:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
+          <div className="min-w-0 space-y-4">
+            <PackageCompositionBanner items={items} />
+
+            {state.status === 'error' ? (
+              <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+                {state.message}
+              </p>
+            ) : (
+              <Card variant="dashboard" padding="none" className="overflow-hidden">
+                <DataTable
+                  columns={columns}
+                  data={items}
+                  isLoading={state.status === 'loading'}
+                  emptyMessage={t('empty')}
+                  getRowId={(r) => r.id}
+                />
+              </Card>
+            )}
+          </div>
+
+          <aside className="min-w-0 space-y-4 lg:sticky lg:top-6">
+            {detail && pricing && pkg ? (
+              <>
+                <PackagePricingRecap
+                  pricing={pricing}
+                  itemCount={items.length}
+                  className="max-w-none"
+                />
+                <PackagePreviewCard
+                  pkg={pkg}
+                  itemCount={items.length}
+                  pricing={pricing}
+                />
+              </>
+            ) : null}
+          </aside>
+        </div>
+      </section>
     </>
   );
 }

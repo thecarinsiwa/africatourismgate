@@ -111,11 +111,11 @@
   },
   "sections": {
     "items": {
-      "title": "Items du forfait",
-      "intro": "Produits combinés (hébergement, vol, activité, etc.).",
-      "addItem": "Ajouter un item",
-      "newItem": "Nouvel item",
-      "empty": "Hastacun item dans ce forfait.",
+      "title": "Servicios incluidos",
+      "intro": "Productos combinados (alojamiento, vuelo, actividad, etc.).",
+      "addItem": "Añadir un servicio",
+      "newItem": "Nuevo servicio",
+      "empty": "Ningún servicio en este paquete.",
       "removeTitle": "Quitar del paquete",
       "removeConfirm": "«{label}» será retirado del paquete.",
       "removeConfirmButton": "Quitar",
@@ -123,27 +123,27 @@
       "flightLabel": "Vuelo {flightNumber}"
     },
     "composition": {
-      "title": "Composition",
-      "summary": "{productCount} produit(s) inclus",
-      "summaryWithTypes": "{productCount} produit(s) inclus · {typeCount} types",
-      "ariaLabel": "Composition du forfait"
+      "title": "Composición",
+      "summary": "{productCount} servicio(s) incluido(s)",
+      "summaryWithTypes": "{productCount} servicio(s) · {typeCount} tipos",
+      "ariaLabel": "Composición del paquete"
     },
     "pricingRecap": {
-      "title": "Récapitulatif tarifaire",
-      "empty": "Ajoutez des items pour calculer le prix du forfait.",
-      "separatePrice": "Precio séparé",
-      "packagePrice": "Precio forfait",
-      "separatePriceAria": "Precio des composants achetés séparément",
-      "savings": "Économie de {amount} par rapport à l'achat séparé des composants."
+      "title": "Tarificación",
+      "empty": "Añada servicios para calcular el precio del paquete.",
+      "separatePrice": "Precio por separado",
+      "packagePrice": "Precio del paquete",
+      "separatePriceAria": "Precio si los componentes se compran por separado",
+      "savings": "Ahorro de {amount} respecto a comprar los componentes por separado."
     },
     "preview": {
-      "ariaLabel": "Vista previa client du forfait",
-      "header": "Vista previa client",
+      "ariaLabel": "Vista previa del paquete para el cliente",
+      "header": "Vista previa cliente",
       "eyebrow": "Paquete",
-      "includedCount": "{count} produit(s) inclus",
-      "discountOnBundle": "Descuento de {percent}% sur le bundle",
-      "suggestedDuration": "Desderée suggérée : {days} jour(s)",
-      "packagePrice": "Precio forfait"
+      "includedCount": "{count} servicio(s) incluido(s)",
+      "discountOnBundle": "Descuento del {percent}% en el paquete",
+      "suggestedDuration": "Duración sugerida: {days} día(s)",
+      "packagePrice": "Precio del paquete"
     }
   },
   "stats": {

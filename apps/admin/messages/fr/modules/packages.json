@@ -111,11 +111,11 @@
   },
   "sections": {
     "items": {
-      "title": "Items du forfait",
+      "title": "Prestations incluses",
       "intro": "Produits combinés (hébergement, vol, activité, etc.).",
-      "addItem": "Ajouter un item",
-      "newItem": "Nouvel item",
-      "empty": "Aucun item dans ce forfait.",
+      "addItem": "Ajouter une prestation",
+      "newItem": "Nouvelle prestation",
+      "empty": "Aucune prestation dans ce forfait.",
       "removeTitle": "Retirer du forfait",
       "removeConfirm": "« {label} » sera retiré du forfait.",
       "removeConfirmButton": "Retirer",
@@ -124,13 +124,13 @@
     },
     "composition": {
       "title": "Composition",
-      "summary": "{productCount} produit(s) inclus",
-      "summaryWithTypes": "{productCount} produit(s) inclus · {typeCount} types",
+      "summary": "{productCount} prestation(s) incluse(s)",
+      "summaryWithTypes": "{productCount} prestation(s) · {typeCount} types",
       "ariaLabel": "Composition du forfait"
     },
     "pricingRecap": {
-      "title": "Récapitulatif tarifaire",
-      "empty": "Ajoutez des items pour calculer le prix du forfait.",
+      "title": "Tarification",
+      "empty": "Ajoutez des prestations pour calculer le prix du forfait.",
       "separatePrice": "Prix séparé",
       "packagePrice": "Prix forfait",
       "separatePriceAria": "Prix des composants achetés séparément",
@@ -140,7 +140,7 @@
       "ariaLabel": "Aperçu client du forfait",
       "header": "Aperçu client",
       "eyebrow": "Forfait",
-      "includedCount": "{count} produit(s) inclus",
+      "includedCount": "{count} prestation(s) incluse(s)",
       "discountOnBundle": "Remise de {percent}% sur le bundle",
       "suggestedDuration": "Durée suggérée : {days} jour(s)",
       "packagePrice": "Prix forfait"
