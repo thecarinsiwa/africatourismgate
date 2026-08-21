@@ -132,7 +132,7 @@ export function FlightClassAvailabilityGrid({
       }
       setRows(map);
       onRowsChange?.(
-        [...map.values()].sort((a, b) => a.date.localeCompare(b.date)),
+        Array.from(map.values()).sort((a, b) => a.date.localeCompare(b.date)),
       );
       const nextDrafts = new Map<string, DayDraft>();
       for (const date of monthDays) {
