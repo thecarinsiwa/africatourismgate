@@ -40,6 +40,25 @@
       "categoryRequired": "Category is required."
     }
   },
+  "view": {
+    "title": "View vehicle",
+    "editButton": "Edit vehicle",
+    "notFound": "Vehicle not found.",
+    "infoTitle": "Information",
+    "imagesTitle": "Photos",
+    "imagesIntro": "{count, plural, =0 {No photos} one {# photo} other {# photos}}",
+    "imagesEmpty": "No photos for this vehicle.",
+    "carouselPrev": "Previous photo",
+    "carouselNext": "Next photo",
+    "carouselThumbs": "Photo thumbnails",
+    "carouselGoTo": "Go to photo {index}",
+    "carouselOpen": "Enlarge photo {index}",
+    "carouselViewerTitle": "Photo preview",
+    "carouselClose": "Close preview",
+    "availabilityIntro": "{count, plural, =0 {No slots} one {# slot} other {# slots}}",
+    "availabilitySearchPlaceholder": "Search slots…",
+    "availabilitySearchEmpty": "No slot matches this search."
+  },
   "detail": {
     "title": "Edit vehicle",
     "viewTitle": "View vehicle",
