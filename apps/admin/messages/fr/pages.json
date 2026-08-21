@@ -272,7 +272,8 @@
         },
         "nouveau": {
           "metaTitle": "Nouveau navire",
-          "description": "Créez un navire puis ajoutez itinéraires et cabines."
+          "description": "Créez un navire puis ajoutez itinéraires et cabines.",
+          "backLabel": "Retour aux navires"
         },
         "shipId": {
           "metaTitle": "Navire",

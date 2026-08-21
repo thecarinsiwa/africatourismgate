@@ -272,7 +272,8 @@
         },
         "nouveau": {
           "metaTitle": "Nuevo barco",
-          "description": "Cree un barco y luego añada itinerarios y cabinas."
+          "description": "Cree un barco y luego añada itinerarios y cabinas.",
+          "backLabel": "Volver a barcos"
         },
         "shipId": {
           "metaTitle": "Barco",

@@ -272,7 +272,8 @@
         },
         "nouveau": {
           "metaTitle": "New ship",
-          "description": "Create a ship then add itineraries and cabins."
+          "description": "Create a ship then add itineraries and cabins.",
+          "backLabel": "Back to ships"
         },
         "shipId": {
           "metaTitle": "Ship",
