@@ -11,30 +11,39 @@ import {
   DataTableActions,
   DataTablePagination,
   Input,
+  Modal,
+  useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { CruiseLine } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ReferentialListToolbar } from '../referential-list-toolbar';
 import { getApiClient } from '../../lib/auth/api';
+import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
+import { ListViewModeToggle } from '../list-view-mode-toggle';
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_MS = 300;
 
 type FormValues = { name: string };
+type ViewMode = 'grid' | 'table';
 const emptyForm: FormValues = { name: '' };
 
 export function CruiseLinesList() {
   const { croisieres: getCroisieresErrorMessage } = useAdminErrorMessages();
-  const tForm = useTranslations('modules.cruises.form.line');
-  const tFilters = useTranslations('modules.cruises.filters');
-  const tColumns = useTranslations('modules.common.columns');
+  const t = useTranslations('modules.cruises.referential.lines');
+  const tCommon = useTranslations('modules.common');
   const tPagination = useTranslations('modules.common.pagination');
   const tActions = useTranslations('common.actions');
+  const tToast = useTranslations('modules.common.toast');
+  const tDataTable = useTranslations('modules.common.dataTable');
+  const { toast } = useToast();
+  const paginationLabels = useDataTablePaginationLabels();
+
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
+  const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -83,6 +92,26 @@ export function CruiseLinesList() {
     return () => window.clearTimeout(timer);
   }, [searchInput]);
 
+  const viewModeOptions = useMemo(
+    () => [
+      { value: 'grid' as const, label: t('viewGrid') },
+      { value: 'table' as const, label: t('viewTable') },
+    ],
+    [t],
+  );
+
+  function openForm(line?: CruiseLine) {
+    if (line) {
+      setEditing(line);
+      setFormValues({ name: line.name });
+    } else {
+      setEditing(null);
+      setFormValues(emptyForm);
+    }
+    setFormError(null);
+    setShowForm(true);
+  }
+
   function resetForm() {
     setFormValues(emptyForm);
     setEditing(null);
@@ -95,15 +124,17 @@ export function CruiseLinesList() {
     setFormError(null);
     const name = formValues.name.trim();
     if (!name) {
-      setFormError(tForm('validation'));
+      setFormError(t('validation'));
       return;
     }
     setSubmitting(true);
     try {
       if (editing) {
         await getApiClient().updateCruiseLine(editing.id, { name });
+        toast({ variant: 'success', title: tToast('saved'), message: name });
       } else {
         await getApiClient().createCruiseLine({ name });
+        toast({ variant: 'success', title: tToast('created'), message: name });
       }
       resetForm();
       await load();
@@ -126,138 +157,200 @@ export function CruiseLinesList() {
     setDeletingId(line.id);
     try {
       await getApiClient().deleteCruiseLine(line.id);
+      toast({ variant: 'success', title: tToast('deleted'), message: line.name });
       await load();
     } catch (error) {
-      setDeleteError(getCroisieresErrorMessage(error));
+      const message = getCroisieresErrorMessage(error);
+      setDeleteError(message);
+      toast({ variant: 'error', title: tToast('deleteError'), message });
     } finally {
       setDeletingId(null);
     }
-  }, [confirmTarget, getCroisieresErrorMessage, load]);
+  }, [confirmTarget, getCroisieresErrorMessage, load, tToast, toast]);
+
+  const renderActions = useCallback(
+    (line: CruiseLine) => (
+      <DataTableActions>
+        <DataTableActionButton action="edit" onClick={() => openForm(line)} />
+        <DataTableActionButton
+          action="delete"
+          onClick={() => handleDeleteRequest(line)}
+          disabled={deletingId === line.id}
+          loading={deletingId === line.id}
+        />
+      </DataTableActions>
+    ),
+    [deletingId, handleDeleteRequest],
+  );
 
   const columns = useMemo<ColumnDef<CruiseLine, unknown>[]>(
     () => [
       {
         accessorKey: 'name',
-        header: tColumns('line'),
+        header: t('line'),
         cell: ({ row }) => (
           <span className="font-medium text-atg-fg">{row.original.name}</span>
         ),
       },
       {
         id: 'actions',
-        header: tColumns('actions'),
+        header: tCommon('columns.actions'),
         meta: { align: 'right' },
-        cell: ({ row }) => (
-          <DataTableActions>
-            <DataTableActionButton
-              action="edit"
-              onClick={() => {
-                setEditing(row.original);
-                setFormValues({ name: row.original.name });
-                setShowForm(true);
-              }}
-            />
-            <DataTableActionButton
-              action="delete"
-              onClick={() => handleDeleteRequest(row.original)}
-              disabled={deletingId === row.original.id}
-              loading={deletingId === row.original.id}
-            />
-          </DataTableActions>
-        ),
+        cell: ({ row }) => renderActions(row.original),
       },
     ],
-    [deletingId, handleDeleteRequest, tColumns, tForm],
+    [renderActions, t, tCommon],
   );
 
   const lines = state.status === 'ready' ? state.lines : [];
+  const emptyMessage = search.trim().length > 0 ? t('emptySearch') : t('emptyDefault');
 
   return (
     <>
       <AlertDialog
         open={!!confirmTarget}
-        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
-        title={tForm('deleteTitle')}
-        description={confirmTarget ? tForm('deleteConfirm', { name: confirmTarget.name }) : ''}
-        confirmLabel={tForm('deleteConfirmButton')}
-        cancelLabel={tForm('cancel')}
+        onOpenChange={(open) => {
+          if (!open) setConfirmTarget(null);
+        }}
+        title={t('deleteTitle')}
+        description={
+          confirmTarget ? t('deleteConfirm', { name: confirmTarget.name }) : ''
+        }
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
         variant="danger"
         loading={!!deletingId}
         error={deleteError}
         onConfirm={() => void handleDeleteConfirm()}
       />
-    <div className="space-y-6">
-      <ReferentialListToolbar
-        searchValue={searchInput}
-        onSearchChange={setSearchInput}
-        placeholder={tFilters('searchLine')}
-        ariaLabel={tActions('search')}
-        action={
-          !showForm ? (
-            <Button type="button" onClick={() => setShowForm(true)}>
-              {tForm('newShort')}
-            </Button>
-          ) : undefined
-        }
-      />
 
-      {showForm ? (
-        <Card variant="dashboard" className="max-w-lg">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <h3 className="text-sm font-medium">
-              {editing ? tForm('edit') : tForm('new')}
-            </h3>
+      <div className="space-y-6">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex min-w-0 flex-1 flex-col gap-4 sm:flex-row sm:items-center">
+            <div className="min-w-0 flex-1 sm:max-w-md">
+              <Input
+                type="search"
+                placeholder={t('searchPlaceholder')}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                aria-label={t('searchAria')}
+              />
+            </div>
+            <ListViewModeToggle
+              value={viewMode}
+              options={viewModeOptions}
+              onChange={setViewMode}
+              ariaLabel={t('viewModeAria')}
+            />
+          </div>
+          <Button type="button" onClick={() => openForm()}>
+            {t('new')}
+          </Button>
+        </div>
+
+        <Modal
+          open={showForm}
+          onOpenChange={(open) => {
+            if (!open && !submitting) resetForm();
+          }}
+          title={editing ? t('edit') : t('new')}
+          showClose={!submitting}
+          closeAriaLabel={tActions('close')}
+          className="max-w-lg"
+        >
+          <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4">
             {formError ? (
-              <p role="alert" className="text-sm text-red-600">
+              <p role="alert" className="text-sm text-red-600 dark:text-red-400">
                 {formError}
               </p>
             ) : null}
             <Input
-              label={tColumns('name')}
+              label={tCommon('columns.name')}
               value={formValues.name}
               onChange={(e) => setFormValues({ name: e.target.value })}
+              disabled={submitting}
               required
             />
-            <div className="flex gap-3">
+            <div className="flex justify-end gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={resetForm}
+                disabled={submitting}
+              >
+                {tActions('cancel')}
+              </Button>
               <Button type="submit" loading={submitting}>
                 {editing ? tActions('save') : tActions('create')}
               </Button>
-              <Button type="button" variant="outline" onClick={resetForm}>
-                {tActions('cancel')}
-              </Button>
             </div>
           </form>
-        </Card>
-      ) : null}
+        </Modal>
 
-      {state.status === 'error' ? (
-        <p role="alert" className="text-sm text-red-600">
-          {state.message}
-        </p>
-      ) : (
-        <>
-          <Card variant="dashboard" padding="none">
-            <DataTable
-              columns={columns}
-              data={lines}
-              isLoading={state.status === 'loading'}
-              emptyMessage={tForm('empty')}
-              getRowId={(r) => r.id}
-            />
-          </Card>
-          {state.status === 'ready' ? (
-            <DataTablePagination
-              page={page}
-              pageSize={PAGE_SIZE}
-              totalPages={state.totalPages}
-              totalItems={state.total}
-              itemLabel={tPagination('line')}
-              onPageChange={setPage}
-            />
-          ) : null}
-        </>
-      )}
-    </div>
+        {state.status === 'error' ? (
+          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+            {state.message}
+          </p>
+        ) : viewMode === 'table' ? (
+          <>
+            <Card variant="dashboard" padding="none" className="overflow-hidden">
+              <DataTable
+                columns={columns}
+                data={lines}
+                isLoading={state.status === 'loading'}
+                loadingMessage={tDataTable('loading')}
+                emptyMessage={emptyMessage}
+                emptyVariant={search.trim().length > 0 ? 'search' : 'default'}
+                getRowId={(r) => r.id}
+                aria-label={t('ariaLabel')}
+              />
+            </Card>
+            {state.status === 'ready' ? (
+              <DataTablePagination
+                page={page}
+                pageSize={PAGE_SIZE}
+                totalPages={state.totalPages}
+                totalItems={state.total}
+                itemLabel={tPagination('line')}
+                labels={paginationLabels}
+                onPageChange={setPage}
+              />
+            ) : null}
+          </>
+        ) : state.status === 'loading' ? (
+          <p className="text-sm text-atg-muted">{tCommon('loading')}</p>
+        ) : lines.length === 0 ? (
+          <p className="text-sm text-atg-muted">{emptyMessage}</p>
+        ) : (
+          <>
+            <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+              {lines.map((line) => (
+                <li key={line.id}>
+                  <Card variant="dashboard" className="flex h-full flex-col gap-3">
+                    <p className="min-w-0 flex-1 truncate font-medium text-atg-fg">
+                      {line.name}
+                    </p>
+                    <div className="mt-auto flex justify-end border-t border-atg-border pt-3">
+                      {renderActions(line)}
+                    </div>
+                  </Card>
+                </li>
+              ))}
+            </ul>
+            {state.status === 'ready' ? (
+              <DataTablePagination
+                page={page}
+                pageSize={PAGE_SIZE}
+                totalPages={state.totalPages}
+                totalItems={state.total}
+                itemLabel={tPagination('line')}
+                labels={paginationLabels}
+                onPageChange={setPage}
+              />
+            ) : null}
+          </>
+        )}
+      </div>
     </>
   );
 }

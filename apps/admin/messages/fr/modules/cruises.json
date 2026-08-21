@@ -4,6 +4,9 @@
     "viewList": "Liste",
     "viewCalendar": "Calendrier",
     "emptySailings": "Aucun départ programmé.",
+    "emptyFiltered": "Aucun départ ne correspond à ce filtre.",
+    "emptyShips": "Aucun navire.",
+    "ariaLabel": "Liste des départs de croisière",
     "deleteSailingTitle": "Supprimer le départ",
     "deleteSailingConfirm": "Le départ « {label} » sera supprimé définitivement.",
     "deleteSailingButton": "Supprimer",
@@ -21,9 +24,63 @@
   },
   "filters": {
     "line": "Filtrer par ligne",
+    "itinerary": "Itinéraire",
+    "allItineraries": "Tous les itinéraires",
     "searchShip": "Rechercher un navire…",
     "searchLine": "Rechercher une ligne…",
     "searchPort": "Rechercher par code ou nom…"
+  },
+  "referential": {
+    "lines": {
+      "new": "Nouvelle ligne",
+      "edit": "Modifier la ligne",
+      "line": "Ligne",
+      "emptyDefault": "Aucune ligne de croisière.",
+      "emptySearch": "Aucune ligne ne correspond à cette recherche.",
+      "searchPlaceholder": "Rechercher une ligne…",
+      "searchAria": "Rechercher une ligne",
+      "ariaLabel": "Liste des lignes de croisière",
+      "viewGrid": "Grille",
+      "viewTable": "Tableau",
+      "viewModeAria": "Mode d'affichage",
+      "validation": "Le nom de la ligne est obligatoire.",
+      "deleteTitle": "Supprimer la ligne",
+      "deleteConfirm": "La ligne « {name} » sera supprimée définitivement.",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler"
+    },
+    "ports": {
+      "new": "Nouveau port",
+      "edit": "Modifier le port",
+      "port": "Port",
+      "code": "Code",
+      "country": "Pays",
+      "emptyDefault": "Aucun port.",
+      "emptySearch": "Aucun port ne correspond à cette recherche.",
+      "searchPlaceholder": "Rechercher par code ou nom…",
+      "searchAria": "Rechercher un port",
+      "ariaLabel": "Liste des ports de croisière",
+      "viewGrid": "Grille",
+      "viewTable": "Tableau",
+      "viewModeAria": "Mode d'affichage",
+      "validation": "Code, nom et pays (ISO à 2 lettres) sont obligatoires.",
+      "deleteTitle": "Supprimer le port",
+      "deleteConfirm": "Le port « {name} » sera supprimé définitivement.",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler"
+    },
+    "ships": {
+      "emptyDefault": "Aucun navire.",
+      "emptySearch": "Aucun navire ne correspond aux filtres.",
+      "searchPlaceholder": "Rechercher un navire…",
+      "searchAria": "Rechercher un navire",
+      "ariaLabel": "Liste des navires",
+      "filterLine": "Filtrer par ligne",
+      "allLines": "Toutes les lignes",
+      "viewGrid": "Grille",
+      "viewTable": "Tableau",
+      "viewModeAria": "Mode d'affichage"
+    }
   },
   "form": {
     "ship": {
@@ -51,7 +108,7 @@
       "cancel": "Annuler",
       "validation": "Nom et durée (nuits) invalides."
     },
-    "port": {
+      "port": {
       "new": "Nouveau port de croisière",
       "edit": "Modifier le port",
       "countryIso": "Pays (ISO)",
@@ -59,7 +116,9 @@
       "deleteConfirm": "Le port « {name} » sera supprimé définitivement.",
       "deleteTitle": "Supprimer le port",
       "deleteConfirmButton": "Supprimer",
-      "cancel": "Annuler"
+      "cancel": "Annuler",
+      "validation": "Code, nom et pays (ISO à 2 lettres) sont obligatoires.",
+      "newShort": "Nouveau port"
     },
     "line": {
       "new": "Nouvelle ligne de croisière",
@@ -68,7 +127,9 @@
       "deleteConfirm": "La ligne « {name} » sera supprimée définitivement.",
       "deleteTitle": "Supprimer la ligne",
       "deleteConfirmButton": "Supprimer",
-      "cancel": "Annuler"
+      "cancel": "Annuler",
+      "validation": "Le nom de la ligne est obligatoire.",
+      "newShort": "Nouvelle ligne"
     },
     "cabin": {
       "new": "Nouvelle cabine",

@@ -4,6 +4,8 @@
     "viewList": "Lista",
     "viewCalendar": "Calendario",
     "emptySailings": "No hay salidas programadas.",
+    "emptyFiltered": "Ninguna salida coincide con este filtro.",
+    "ariaLabel": "Lista de salidas de crucero",
     "deleteSailingTitle": "Eliminar salida",
     "deleteSailingConfirm": "La salida \"{label}\" será eliminada permanentemente.",
     "deleteSailingButton": "Eliminar",
@@ -14,16 +16,70 @@
     "departure": "Salida",
     "itinerary": "Itinerario",
     "ship": "Barco",
-    "nights": "Nuits",
-    "line": "Ligne",
-    "year": "Année",
+    "nights": "Noches",
+    "line": "Línea",
+    "year": "Año",
     "port": "Puerto"
   },
   "filters": {
-    "line": "Filtrer par ligne",
-    "searchShip": "Rechercher un navire…",
-    "searchLine": "Rechercher une ligne…",
-    "searchPort": "Rechercher par code ou nom…"
+    "line": "Filtrar por línea",
+    "itinerary": "Itinerario",
+    "allItineraries": "Todos los itinerarios",
+    "searchShip": "Buscar barcos…",
+    "searchLine": "Buscar líneas…",
+    "searchPort": "Buscar por código o nombre…"
+  },
+  "referential": {
+    "lines": {
+      "new": "Nueva línea",
+      "edit": "Editar línea",
+      "line": "Línea",
+      "emptyDefault": "Ninguna línea de crucero.",
+      "emptySearch": "Ninguna línea coincide con esta búsqueda.",
+      "searchPlaceholder": "Buscar líneas…",
+      "searchAria": "Buscar una línea",
+      "ariaLabel": "Lista de líneas de crucero",
+      "viewGrid": "Cuadrícula",
+      "viewTable": "Tabla",
+      "viewModeAria": "Modo de vista",
+      "validation": "El nombre de la línea es obligatorio.",
+      "deleteTitle": "Eliminar línea",
+      "deleteConfirm": "La línea «{name}» será eliminada permanentemente.",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar"
+    },
+    "ports": {
+      "new": "Nuevo puerto",
+      "edit": "Editar puerto",
+      "port": "Puerto",
+      "code": "Código",
+      "country": "País",
+      "emptyDefault": "Ningún puerto.",
+      "emptySearch": "Ningún puerto coincide con esta búsqueda.",
+      "searchPlaceholder": "Buscar por código o nombre…",
+      "searchAria": "Buscar un puerto",
+      "ariaLabel": "Lista de puertos de crucero",
+      "viewGrid": "Cuadrícula",
+      "viewTable": "Tabla",
+      "viewModeAria": "Modo de vista",
+      "validation": "Código, nombre y país (ISO de 2 letras) son obligatorios.",
+      "deleteTitle": "Eliminar puerto",
+      "deleteConfirm": "El puerto «{name}» será eliminado permanentemente.",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar"
+    },
+    "ships": {
+      "emptyDefault": "Ningún barco.",
+      "emptySearch": "Ningún barco coincide con estos filtros.",
+      "searchPlaceholder": "Buscar barcos…",
+      "searchAria": "Buscar un barco",
+      "ariaLabel": "Lista de barcos",
+      "filterLine": "Filtrar por línea",
+      "allLines": "Todas las líneas",
+      "viewGrid": "Cuadrícula",
+      "viewTable": "Tabla",
+      "viewModeAria": "Modo de vista"
+    }
   },
   "form": {
     "ship": {
@@ -59,7 +115,9 @@
       "deleteConfirm": "El puerto «{name}» será eliminado permanentemente.",
       "deleteTitle": "Eliminar puerto",
       "deleteConfirmButton": "Eliminar",
-      "cancel": "Cancelar"
+      "cancel": "Cancelar",
+      "validation": "Código, nombre y país (ISO de 2 letras) son obligatorios.",
+      "newShort": "Nuevo puerto"
     },
     "line": {
       "new": "Nueva línea de crucero",
@@ -68,7 +126,9 @@
       "deleteConfirm": "La línea «{name}» será eliminada permanentemente.",
       "deleteTitle": "Eliminar línea",
       "deleteConfirmButton": "Eliminar",
-      "cancel": "Cancelar"
+      "cancel": "Cancelar",
+      "validation": "El nombre de la línea es obligatorio.",
+      "newShort": "Nueva línea"
     },
     "cabin": {
       "new": "Nueva cabina",
