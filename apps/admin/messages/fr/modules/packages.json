@@ -149,6 +149,20 @@
       "discountOnBundle": "Remise de {percent}% sur le bundle",
       "suggestedDuration": "Durée suggérée : {days} jour(s)",
       "packagePrice": "Prix forfait"
+    },
+    "publication": {
+      "title": "Visibilité du forfait",
+      "intro": "Contrôlez la publication sur le catalogue et la mise en avant sur la page d’accueil.",
+      "activeHint": "Un forfait actif est visible dans le catalogue public et réservable.",
+      "statusTitle": "État actuel",
+      "statusVisibility": "Catalogue",
+      "statusFeatured": "Page d’accueil",
+      "featuredOn": "Mis en avant",
+      "featuredOff": "Non mis en avant",
+      "previewActive": "Ce forfait apparaîtra dans les résultats et listes publiques.",
+      "previewInactive": "Ce forfait restera masqué du catalogue tant qu’il n’est pas activé.",
+      "saved": "Paramètres de publication enregistrés.",
+      "viewPackage": "Voir le forfait"
     }
   },
   "stats": {

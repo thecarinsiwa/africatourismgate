@@ -149,6 +149,20 @@
       "discountOnBundle": "Descuento del {percent}% en el paquete",
       "suggestedDuration": "Duración sugerida: {days} día(s)",
       "packagePrice": "Precio del paquete"
+    },
+    "publication": {
+      "title": "Visibilidad del paquete",
+      "intro": "Controle la publicación en el catálogo y el destaque en la página de inicio.",
+      "activeHint": "Un paquete activo es visible en el catálogo público y se puede reservar.",
+      "statusTitle": "Estado actual",
+      "statusVisibility": "Catálogo",
+      "statusFeatured": "Página de inicio",
+      "featuredOn": "Destacado",
+      "featuredOff": "No destacado",
+      "previewActive": "Este paquete aparecerá en los resultados y listados públicos.",
+      "previewInactive": "Este paquete permanecerá oculto del catálogo hasta que se active.",
+      "saved": "Ajustes de publicación guardados.",
+      "viewPackage": "Ver el paquete"
     }
   },
   "stats": {

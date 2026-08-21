@@ -149,6 +149,20 @@
       "discountOnBundle": "{percent}% discount on the bundle",
       "suggestedDuration": "Suggested duration: {days} day(s)",
       "packagePrice": "Package price"
+    },
+    "publication": {
+      "title": "Package visibility",
+      "intro": "Control catalogue publication and homepage featuring.",
+      "activeHint": "An active package is visible in the public catalogue and bookable.",
+      "statusTitle": "Current status",
+      "statusVisibility": "Catalogue",
+      "statusFeatured": "Homepage",
+      "featuredOn": "Featured",
+      "featuredOff": "Not featured",
+      "previewActive": "This package will appear in public results and listings.",
+      "previewInactive": "This package will stay hidden from the catalogue until activated.",
+      "saved": "Publication settings saved.",
+      "viewPackage": "View package"
     }
   },
   "stats": {
