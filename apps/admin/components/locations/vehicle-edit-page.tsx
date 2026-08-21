@@ -197,17 +197,14 @@ export function VehicleEditPage({ vehicleId }: VehicleEditPageProps) {
         </div>
       </div>
 
-      <div className="max-w-xl">
-        <VehicleSpecsGrid categoryName={categoryName} />
-      </div>
-
       <Tabs value={activeTab} onValueChange={handleTabChange}>
         <TabsList aria-label={t('tabsAria')}>
           <TabsTrigger value="vehicule">{t('tabs.vehicle')}</TabsTrigger>
           <TabsTrigger value="disponibilites">{t('tabs.availability')}</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="vehicule">
+        <TabsContent value="vehicule" className="space-y-4">
+          <VehicleSpecsGrid categoryName={categoryName} />
           <VehicleForm
             mode="edit"
             vehicleId={vehicleId}
