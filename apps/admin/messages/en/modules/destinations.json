@@ -31,8 +31,8 @@
       "publication": "Publication"
     },
     "slugHint": "Unique identifier (e.g. kinshasa).",
-    "countryCode": "Country code (ISO)",
-    "countryCodeHint": "2 letters, e.g. CD, KE, ZA.",
+    "countryCode": "Country",
+    "countryCodeHint": "Full country list (2-letter ISO code).",
     "heroImageUrl": "Hero image URL",
     "heroImageHint": "Shown in the banner. Leave empty for a gradient.",
     "isFeatured": "Show on homepage",
