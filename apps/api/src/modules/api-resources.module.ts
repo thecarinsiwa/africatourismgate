@@ -56,6 +56,7 @@ import { ActivityDescriptionAssetsModule } from './resources/activity-descriptio
 import { ActivitySchedulesModule } from './resources/activity-schedules/activity-schedules.module';
 import { PackagesModule } from './resources/packages/packages.module';
 import { PackageItemsModule } from './resources/package-items/package-items.module';
+import { PackageDescriptionAssetsModule } from './resources/package-description-assets/package-description-assets.module';
 import { BookingsModule } from './resources/bookings/bookings.module';
 import { BookingItemsModule } from './resources/booking-items/booking-items.module';
 import { BookingStatusHistoryModule } from './resources/booking-status-history/booking-status-history.module';
@@ -128,6 +129,7 @@ import { Module } from '@nestjs/common';
     ActivitySchedulesModule,
     PackagesModule,
     PackageItemsModule,
+    PackageDescriptionAssetsModule,
     BookingsModule,
     BookingItemsModule,
     BookingStatusHistoryModule,
