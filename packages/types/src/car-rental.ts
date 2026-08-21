@@ -45,6 +45,7 @@ export interface VehicleCategoriesListQuery {
   page?: number;
   limit?: number;
   search?: string;
+  hasExampleModel?: boolean;
 }
 
 export interface Vehicle {
