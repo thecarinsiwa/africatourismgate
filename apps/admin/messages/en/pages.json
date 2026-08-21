@@ -290,7 +290,11 @@
       }
     },
     "forfaits": {
+      "title": "Packages",
       "description": "Combined packages with discount and price calculated from included products.",
+      "actions": {
+        "new": "New package"
+      },
       "nouveau": {
         "metaTitle": "New package",
         "description": "Create the package then add items on the edit page."

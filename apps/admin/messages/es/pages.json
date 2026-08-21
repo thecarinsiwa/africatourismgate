@@ -290,7 +290,11 @@
       }
     },
     "forfaits": {
+      "title": "Paquetes",
       "description": "Paquetes combinados con descuento y precio calculado a partir de los productos incluidos.",
+      "actions": {
+        "new": "Nuevo paquete"
+      },
       "nouveau": {
         "metaTitle": "Nuevo paquete",
         "description": "Cree el paquete y luego añada elementos en la página de edición."

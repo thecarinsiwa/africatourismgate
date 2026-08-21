@@ -290,7 +290,11 @@
       }
     },
     "forfaits": {
+      "title": "Forfaits",
       "description": "Packages combinés avec remise et prix calculé à partir des produits inclus.",
+      "actions": {
+        "new": "Nouveau forfait"
+      },
       "nouveau": {
         "metaTitle": "Nouveau forfait",
         "description": "Créez le forfait puis ajoutez des items sur la page d’édition."
