@@ -187,7 +187,12 @@ export function DestinationEditPage({ destinationId }: DestinationEditPageProps)
         </TabsContent>
 
         <TabsContent value="pois">
-          <DestinationPoisSection destinationId={destinationId} embedded />
+          <DestinationPoisSection
+            destinationId={destinationId}
+            embedded
+            mapDefaultLatitude={destination.latitude}
+            mapDefaultLongitude={destination.longitude}
+          />
         </TabsContent>
       </Tabs>
     </div>

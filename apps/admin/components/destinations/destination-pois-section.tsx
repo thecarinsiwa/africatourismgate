@@ -17,6 +17,8 @@ import type { PointOfInterest } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import { parseDestinationCoord } from '../../lib/destination-coords';
+import { CoordinatePickerMap } from '../maps/coordinate-picker-map';
 
 type PoiFormValues = {
   name: string;
@@ -40,11 +42,16 @@ function parseCoord(value: string): number | undefined {
 type DestinationPoisSectionProps = {
   destinationId: string;
   embedded?: boolean;
+  /** Center the picker on the destination when POI coords are empty. */
+  mapDefaultLatitude?: string | number | null;
+  mapDefaultLongitude?: string | number | null;
 };
 
 export function DestinationPoisSection({
   destinationId,
   embedded = false,
+  mapDefaultLatitude,
+  mapDefaultLongitude,
 }: DestinationPoisSectionProps) {
   const { destinations: getDestinationsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.destinations.sections.pois');
@@ -180,6 +187,17 @@ export function DestinationPoisSection({
     }
   }
 
+  const handleCoordinatePick = useCallback((latitude: string, longitude: string) => {
+    setFormValues((prev) => ({ ...prev, latitude, longitude }));
+    setFieldErrors((prev) => ({ ...prev, latitude: undefined, longitude: undefined }));
+  }, []);
+
+  const mapDefaultCenter = useMemo(() => {
+    const latitude = parseDestinationCoord(mapDefaultLatitude) ?? 0;
+    const longitude = parseDestinationCoord(mapDefaultLongitude) ?? 20;
+    return { latitude, longitude };
+  }, [mapDefaultLatitude, mapDefaultLongitude]);
+
   const handleDeleteRequest = useCallback((poi: PointOfInterest) => {
     setConfirmTarget(poi);
   }, []);
@@ -277,7 +295,7 @@ export function DestinationPoisSection({
         title={editingPoi ? t('edit') : t('new')}
         showClose={!submitting}
         closeAriaLabel={tActions('close')}
-        className="max-w-lg"
+        className="max-w-2xl"
       >
         <form onSubmit={(e) => void handleSubmitPoi(e)} className="space-y-4">
           {formError ? (
@@ -329,6 +347,17 @@ export function DestinationPoisSection({
               disabled={submitting}
             />
           </div>
+          <CoordinatePickerMap
+            latitude={formValues.latitude}
+            longitude={formValues.longitude}
+            onCoordinateChange={handleCoordinatePick}
+            defaultLatitude={mapDefaultCenter.latitude}
+            defaultLongitude={mapDefaultCenter.longitude}
+            title={t('mapPicker')}
+            hint={t('mapPickerHint')}
+            ariaLabel={t('mapPickerAria')}
+            active={modalOpen}
+          />
           <div className="flex flex-wrap gap-3 pt-2">
             <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>
               {editingPoi ? tActions('save') : tActions('create')}
