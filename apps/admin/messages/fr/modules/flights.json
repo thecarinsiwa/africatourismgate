@@ -169,8 +169,12 @@
       "emptySearch": "Aucun aéroport ne correspond à cette recherche.",
       "searchPlaceholder": "Rechercher par IATA, nom ou ville…",
       "searchAria": "Rechercher un aéroport",
+      "ariaLabel": "Liste des aéroports",
       "airport": "Aéroport",
       "countryCode": "Code pays",
+      "viewGrid": "Grille",
+      "viewTable": "Tableau",
+      "viewModeAria": "Mode d'affichage",
       "latitudeHint": "Optionnel, -90 à 90",
       "longitudeHint": "Optionnel, -180 à 180",
       "mapAssistIntro": "Saisissez la latitude et la longitude pour prévisualiser l'aéroport sur la carte.",
@@ -184,6 +188,20 @@
       "cancel": "Annuler",
       "validation": {
         "required": "Tous les champs sont obligatoires."
+      },
+      "stats": {
+        "total": {
+          "label": "Aéroports",
+          "subtitle": "Référentiel mondial"
+        },
+        "withCoordinates": {
+          "label": "Avec coordonnées",
+          "subtitle": "Position sur la carte"
+        },
+        "withoutCoordinates": {
+          "label": "Sans coordonnées",
+          "subtitle": "À compléter"
+        }
       }
     }
   },
