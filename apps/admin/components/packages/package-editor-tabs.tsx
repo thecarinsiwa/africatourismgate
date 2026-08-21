@@ -222,22 +222,26 @@ export function PackageEditorTabs({ packageId, pkg, onPackageUpdated }: PackageE
         value="medias"
         className="rounded-xl border border-atg-border bg-atg-elevated/60 p-4 sm:p-6"
       >
-        <div className="space-y-6">
+        <div className="space-y-8">
           <PackageCoverImageSection
             packageId={packageId}
             coverImageUrl={pkg.coverImageUrl ?? null}
             onSaved={onPackageUpdated}
             refreshKey={galleryRefreshKey}
           />
-          <PackageImagesSection
-            packageId={packageId}
-            embedded
-            onChanged={handleSectionChanged}
-          />
-          <PackageDescriptionAssetsSection
-            packageId={packageId}
-            onChanged={handleSectionChanged}
-          />
+          <div className="border-t border-atg-border pt-6">
+            <PackageImagesSection
+              packageId={packageId}
+              embedded
+              onChanged={handleSectionChanged}
+            />
+          </div>
+          <div className="border-t border-atg-border pt-6">
+            <PackageDescriptionAssetsSection
+              packageId={packageId}
+              onChanged={handleSectionChanged}
+            />
+          </div>
         </div>
       </TabsContent>
 
