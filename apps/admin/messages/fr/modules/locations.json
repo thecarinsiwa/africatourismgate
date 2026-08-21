@@ -69,7 +69,12 @@
     "noLicensePlate": "Sans plaque",
     "photoGallery": "Galerie photos",
     "photoGalleryIntro": "{count, plural, =0 {Aucune photo} one {# photo} other {# photos}}",
-    "noPhotos": "Aucune photo pour ce véhicule."
+    "noPhotos": "Aucune photo pour ce véhicule.",
+    "tabsAria": "Sections du véhicule",
+    "tabs": {
+      "vehicle": "Véhicule",
+      "availability": "Disponibilités"
+    }
   },
   "sections": {
     "availability": {

@@ -69,7 +69,12 @@
     "noLicensePlate": "No license plate",
     "photoGallery": "Photo gallery",
     "photoGalleryIntro": "{count, plural, =0 {No photos} one {# photo} other {# photos}}",
-    "noPhotos": "No photos for this vehicle."
+    "noPhotos": "No photos for this vehicle.",
+    "tabsAria": "Vehicle sections",
+    "tabs": {
+      "vehicle": "Vehicle",
+      "availability": "Availability"
+    }
   },
   "sections": {
     "availability": {
