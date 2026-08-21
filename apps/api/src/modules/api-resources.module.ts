@@ -52,6 +52,7 @@ import { CruiseSailingsModule } from './resources/cruise-sailings/cruise-sailing
 import { CabinAvailabilityModule } from './resources/cabin-availability/cabin-availability.module';
 import { ActivityProvidersModule } from './resources/activity-providers/activity-providers.module';
 import { ActivitiesModule } from './resources/activities/activities.module';
+import { ActivityDescriptionAssetsModule } from './resources/activity-description-assets/activity-description-assets.module';
 import { ActivitySchedulesModule } from './resources/activity-schedules/activity-schedules.module';
 import { PackagesModule } from './resources/packages/packages.module';
 import { PackageItemsModule } from './resources/package-items/package-items.module';
@@ -123,6 +124,7 @@ import { Module } from '@nestjs/common';
     CabinAvailabilityModule,
     ActivityProvidersModule,
     ActivitiesModule,
+    ActivityDescriptionAssetsModule,
     ActivitySchedulesModule,
     PackagesModule,
     PackageItemsModule,
