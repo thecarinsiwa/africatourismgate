@@ -256,15 +256,19 @@
       "lignes": {
         "title": "Líneas de crucero",
         "description": "Directorio de líneas de crucero.",
-        "backLabel": "Volver a salidas"
+        "backLabel": "Volver a cruceros"
       },
       "ports": {
-        "description": "Directorio de puertos."
+        "title": "Puertos de crucero",
+        "description": "Directorio de puertos.",
+        "backLabel": "Volver a cruceros"
       },
       "navires": {
+        "title": "Barcos",
         "description": "Barcos, itinerarios, puertos y cabinas.",
+        "backLabel": "Volver a cruceros",
         "links": {
-          "backToSailings": "← Salidas"
+          "backToSailings": "← Cruceros"
         },
         "nouveau": {
           "metaTitle": "Nuevo barco",

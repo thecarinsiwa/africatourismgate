@@ -256,15 +256,19 @@
       "lignes": {
         "title": "Lignes de croisière",
         "description": "Référentiel des compagnies / lignes.",
-        "backLabel": "Retour aux départs"
+        "backLabel": "Retour aux croisières"
       },
       "ports": {
-        "description": "Référentiel des escales."
+        "title": "Ports de croisière",
+        "description": "Référentiel des escales.",
+        "backLabel": "Retour aux croisières"
       },
       "navires": {
+        "title": "Navires",
         "description": "Navires, itinéraires, escales et cabines.",
+        "backLabel": "Retour aux croisières",
         "links": {
-          "backToSailings": "← Départs"
+          "backToSailings": "← Croisières"
         },
         "nouveau": {
           "metaTitle": "Nouveau navire",

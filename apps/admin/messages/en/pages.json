@@ -256,15 +256,19 @@
       "lignes": {
         "title": "Cruise lines",
         "description": "Cruise line directory.",
-        "backLabel": "Back to sailings"
+        "backLabel": "Back to cruises"
       },
       "ports": {
-        "description": "Port directory."
+        "title": "Cruise ports",
+        "description": "Port directory.",
+        "backLabel": "Back to cruises"
       },
       "navires": {
+        "title": "Ships",
         "description": "Ships, itineraries, ports and cabins.",
+        "backLabel": "Back to cruises",
         "links": {
-          "backToSailings": "← Sailings"
+          "backToSailings": "← Cruises"
         },
         "nouveau": {
           "metaTitle": "New ship",

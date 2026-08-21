@@ -90,18 +90,18 @@
   },
   "form": {
     "ship": {
-      "submitCreate": "Créer le navire",
-      "line": "Ligne",
-      "shipName": "Apellido du navire",
-      "builtYear": "Année de construction (optionnel)",
-      "validation": "Ligne et nom du navire sont obligatoires."
+      "submitCreate": "Crear barco",
+      "line": "Línea",
+      "shipName": "Nombre del barco",
+      "builtYear": "Año de construcción (opcional)",
+      "validation": "La línea y el nombre del barco son obligatorios."
     },
     "sailing": {
-      "submitCreate": "Créer le départ",
+      "submitCreate": "Crear salida",
       "itinerary": "Itinerario",
-      "departureDate": "Fecha de départ",
-      "itineraryOption": "{name} ({shipName}) — {nights} nuits",
-      "validation": "Itinerario et date de départ sont obligatoires."
+      "departureDate": "Fecha de salida",
+      "itineraryOption": "{name} ({shipName}) — {nights} noches",
+      "validation": "El itinerario y la fecha de salida son obligatorios."
     },
     "itinerary": {
       "new": "Nuevo itinerario",
