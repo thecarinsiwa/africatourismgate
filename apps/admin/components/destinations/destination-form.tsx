@@ -4,13 +4,13 @@ import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import { Button, Checkbox, Input } from '@africatourismgate/ui';
 import type { CreateDestinationRequest, Destination } from '@africatourismgate/types';
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useCallback, useId, useMemo, useState } from 'react';
+import { useCallback, useId, useState } from 'react';
 import { hasValidDestinationCoords, parseDestinationCoord } from '../../lib/destination-coords';
 import { getApiClient } from '../../lib/auth/api';
-import { getIsoCountryOptions } from '../../lib/iso-countries';
 import { isValidSlug, slugifyName } from '../../lib/slug';
+import { CountryCodeCombobox } from './country-code-combobox';
 import { DestinationStaticMap } from './destination-static-map';
 
 export type DestinationFormValues = {
@@ -119,12 +119,9 @@ export function DestinationForm({
   const tValidation = useTranslations('modules.common.validation');
   const tActions = useTranslations('common.actions');
   const tLoading = useTranslations('common.loading');
-  const tSelect = useTranslations('modules.common.select');
-  const locale = useLocale();
   const router = useRouter();
   const countryId = useId();
   const descriptionId = useId();
-  const countryOptions = useMemo(() => getIsoCountryOptions(locale), [locale]);
   const [values, setValues] = useState<DestinationFormValues>(() =>
     initialDestination ? destinationToFormValues(initialDestination) : defaultValues,
   );
@@ -210,16 +207,6 @@ export function DestinationForm({
 
   const textareaClass =
     'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg placeholder:text-atg-muted/70 outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary';
-  const selectClass =
-    'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none focus:border-primary focus:ring-1 focus:ring-primary';
-
-  const countrySelectOptions = useMemo(() => {
-    const code = values.countryCode.trim().toUpperCase();
-    if (code && !countryOptions.some((option) => option.code === code)) {
-      return [{ code, label: code }, ...countryOptions];
-    }
-    return countryOptions;
-  }, [countryOptions, values.countryCode]);
 
   return (
     <form
@@ -256,30 +243,16 @@ export function DestinationForm({
               error={fieldErrors.slug}
               required
             />
-            <div>
-              <label htmlFor={countryId} className="mb-2 block text-sm font-medium text-atg-fg">
-                {t('countryCode')}
-              </label>
-              <select
-                id={countryId}
-                name="countryCode"
-                className={selectClass}
-                value={values.countryCode}
-                onChange={(e) => updateField('countryCode', e.target.value.toUpperCase())}
-                required
-              >
-                <option value="">{tSelect('chooseDash')}</option>
-                {countrySelectOptions.map((option) => (
-                  <option key={option.code} value={option.code}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              <p className="mt-1 text-sm text-atg-muted">{t('countryCodeHint')}</p>
-              {fieldErrors.countryCode ? (
-                <p className="mt-1 text-sm text-red-600">{fieldErrors.countryCode}</p>
-              ) : null}
-            </div>
+            <CountryCodeCombobox
+              id={countryId}
+              name="countryCode"
+              label={t('countryCode')}
+              value={values.countryCode}
+              onChange={(code) => updateField('countryCode', code)}
+              hint={t('countryCodeHint')}
+              error={fieldErrors.countryCode}
+              required
+            />
           </section>
 
           <section className="space-y-4">
