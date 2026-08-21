@@ -395,7 +395,6 @@ export function AirlinesList() {
               <p className="mt-1 text-xs text-atg-muted">{t('logoHint')}</p>
               <div className="mt-3 flex flex-wrap items-center gap-4">
                 {previewSrc ? (
-                  // eslint-disable-next-line @next/next/no-img-element -- blob / remote preview
                   <img
                     src={previewSrc}
                     alt=""
