@@ -10,6 +10,7 @@ import {
   DataTableActionButton,
   DataTableActions,
   Input,
+  Modal,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { PointOfInterest } from '@africatourismgate/types';
@@ -57,10 +58,11 @@ export function DestinationPoisSection({
     | { status: 'error'; message: string }
     | { status: 'ready'; pois: PointOfInterest[] }
   >({ status: 'loading' });
-  const [showForm, setShowForm] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const [editingPoi, setEditingPoi] = useState<PointOfInterest | null>(null);
   const [formValues, setFormValues] = useState<PoiFormValues>(emptyPoiForm);
   const [formError, setFormError] = useState<string | null>(null);
+  const [listError, setListError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof PoiFormValues, string>>>(
     {},
   );
@@ -86,6 +88,7 @@ export function DestinationPoisSection({
         limit: 100,
       });
       setState({ status: 'ready', pois: result.data });
+      setListError(null);
     } catch (error) {
       setState({ status: 'error', message: getDestinationsErrorMessage(error) });
     }
@@ -95,20 +98,23 @@ export function DestinationPoisSection({
     void load();
   }, [load]);
 
-  function resetForm() {
+  const resetForm = useCallback(() => {
     setFormValues(emptyPoiForm);
     setFieldErrors({});
     setFormError(null);
     setEditingPoi(null);
-    setShowForm(false);
-  }
+    setModalOpen(false);
+  }, []);
 
-  function openCreateForm() {
-    resetForm();
-    setShowForm(true);
-  }
+  const openCreateForm = useCallback(() => {
+    setEditingPoi(null);
+    setFormValues(emptyPoiForm);
+    setFieldErrors({});
+    setFormError(null);
+    setModalOpen(true);
+  }, []);
 
-  function openEditForm(poi: PointOfInterest) {
+  const openEditForm = useCallback((poi: PointOfInterest) => {
     setEditingPoi(poi);
     setFormValues({
       name: poi.name,
@@ -117,8 +123,8 @@ export function DestinationPoisSection({
     });
     setFieldErrors({});
     setFormError(null);
-    setShowForm(true);
-  }
+    setModalOpen(true);
+  }, []);
 
   function validatePoiForm(): boolean {
     const errors: Partial<Record<keyof PoiFormValues, string>> = {};
@@ -187,7 +193,7 @@ export function DestinationPoisSection({
       await getApiClient().deletePointOfInterest(poi.id);
       await load();
     } catch (error) {
-      setFormError(getDestinationsErrorMessage(error));
+      setListError(getDestinationsErrorMessage(error));
     } finally {
       setDeletingId(null);
     }
@@ -242,7 +248,7 @@ export function DestinationPoisSection({
         },
       },
     ],
-    [deletingId, formatCoord, handleDeleteRequest, tCommon],
+    [deletingId, formatCoord, handleDeleteRequest, openEditForm, tCommon],
   );
 
   const pois = state.status === 'ready' ? state.pois : [];
@@ -251,7 +257,9 @@ export function DestinationPoisSection({
     <>
       <AlertDialog
         open={!!confirmTarget}
-        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        onOpenChange={(open) => {
+          if (!open) setConfirmTarget(null);
+        }}
         title={t('deleteTitle')}
         description={confirmTarget ? t('deleteConfirm', { name: confirmTarget.name }) : ''}
         confirmLabel={t('deleteConfirmButton')}
@@ -260,115 +268,125 @@ export function DestinationPoisSection({
         loading={!!deletingId}
         onConfirm={() => void handleDeleteConfirm()}
       />
-    <section
-      className={
-        embedded ? 'space-y-6' : 'mt-12 space-y-6 border-t border-atg-border pt-10'
-      }
-    >
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          {embedded ? null : <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>}
-          <p className={embedded ? 'text-sm text-atg-muted' : 'mt-1 text-sm text-atg-muted'}>
-            {t('intro')}
-          </p>
-        </div>
-        {!showForm ? (
+
+      <Modal
+        open={modalOpen}
+        onOpenChange={(open) => {
+          if (!open && !submitting) resetForm();
+        }}
+        title={editingPoi ? t('edit') : t('new')}
+        showClose={!submitting}
+        closeAriaLabel={tActions('close')}
+        className="max-w-lg"
+      >
+        <form onSubmit={(e) => void handleSubmitPoi(e)} className="space-y-4">
+          {formError ? (
+            <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+              {formError}
+            </p>
+          ) : null}
+          <Input
+            label={tCommon('columns.name')}
+            name="poiName"
+            value={formValues.name}
+            onChange={(e) => {
+              setFormValues((prev) => ({ ...prev, name: e.target.value }));
+              setFieldErrors((prev) => ({ ...prev, name: undefined }));
+            }}
+            error={fieldErrors.name}
+            required
+            disabled={submitting}
+          />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Input
+              label={tCommon('form.latitude')}
+              name="latitude"
+              type="number"
+              step="any"
+              value={formValues.latitude}
+              onChange={(e) => {
+                setFormValues((prev) => ({ ...prev, latitude: e.target.value }));
+                setFieldErrors((prev) => ({ ...prev, latitude: undefined }));
+              }}
+              placeholder="-4.3058"
+              hint={tForm('latitudeHint')}
+              error={fieldErrors.latitude}
+              disabled={submitting}
+            />
+            <Input
+              label={tCommon('form.longitude')}
+              name="longitude"
+              type="number"
+              step="any"
+              value={formValues.longitude}
+              onChange={(e) => {
+                setFormValues((prev) => ({ ...prev, longitude: e.target.value }));
+                setFieldErrors((prev) => ({ ...prev, longitude: undefined }));
+              }}
+              placeholder="15.3000"
+              hint={tForm('longitudeHint')}
+              error={fieldErrors.longitude}
+              disabled={submitting}
+            />
+          </div>
+          <div className="flex flex-wrap gap-3 pt-2">
+            <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>
+              {editingPoi ? tActions('save') : tActions('create')}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={resetForm}
+              disabled={submitting}
+            >
+              {tActions('cancel')}
+            </Button>
+          </div>
+        </form>
+      </Modal>
+
+      <section
+        className={
+          embedded ? 'space-y-6' : 'mt-12 space-y-6 border-t border-atg-border pt-10'
+        }
+      >
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            {embedded ? null : (
+              <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
+            )}
+            <p className={embedded ? 'text-sm text-atg-muted' : 'mt-1 text-sm text-atg-muted'}>
+              {t('intro')}
+            </p>
+          </div>
           <Button type="button" onClick={openCreateForm}>
             {t('addPoi')}
           </Button>
+        </div>
+
+        {listError ? (
+          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+            {listError}
+          </p>
         ) : null}
-      </div>
 
-      {formError && !showForm ? (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {formError}
-        </p>
-      ) : null}
-
-      {showForm ? (
-        <Card variant="dashboard" className="max-w-2xl">
-          <form onSubmit={handleSubmitPoi} className="space-y-4">
-            <h3 className="text-sm font-medium text-atg-fg">
-              {editingPoi ? t('edit') : t('new')}
-            </h3>
-            {formError ? (
-              <p
-                role="alert"
-                className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-400"
-              >
-                {formError}
-              </p>
-            ) : null}
-            <Input
-              label={tCommon('columns.name')}
-              name="poiName"
-              value={formValues.name}
-              onChange={(e) => {
-                setFormValues((prev) => ({ ...prev, name: e.target.value }));
-                setFieldErrors((prev) => ({ ...prev, name: undefined }));
-              }}
-              error={fieldErrors.name}
-              required
+        {state.status === 'error' ? (
+          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+            {state.message}
+          </p>
+        ) : (
+          <Card variant="dashboard" padding="none" className="overflow-hidden">
+            <DataTable
+              columns={columns}
+              data={pois}
+              isLoading={state.status === 'loading'}
+              emptyMessage={t('empty')}
+              getRowId={(row) => row.id}
+              aria-label={t('ariaLabel')}
             />
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Input
-                label={tCommon('form.latitude')}
-                name="latitude"
-                type="number"
-                step="any"
-                value={formValues.latitude}
-                onChange={(e) => {
-                  setFormValues((prev) => ({ ...prev, latitude: e.target.value }));
-                  setFieldErrors((prev) => ({ ...prev, latitude: undefined }));
-                }}
-                placeholder="-4.3058"
-                hint={tForm('latitudeHint')}
-                error={fieldErrors.latitude}
-              />
-              <Input
-                label={tCommon('form.longitude')}
-                name="longitude"
-                type="number"
-                step="any"
-                value={formValues.longitude}
-                onChange={(e) => {
-                  setFormValues((prev) => ({ ...prev, longitude: e.target.value }));
-                  setFieldErrors((prev) => ({ ...prev, longitude: undefined }));
-                }}
-                placeholder="15.3000"
-                hint={tForm('longitudeHint')}
-                error={fieldErrors.longitude}
-              />
-            </div>
-            <div className="flex flex-wrap gap-3">
-              <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>
-                {editingPoi ? tActions('save') : tActions('create')}
-              </Button>
-              <Button type="button" variant="outline" onClick={resetForm}>
-                {tActions('cancel')}
-              </Button>
-            </div>
-          </form>
-        </Card>
-      ) : null}
-
-      {state.status === 'error' ? (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {state.message}
-        </p>
-      ) : (
-        <Card variant="dashboard" padding="none" className="overflow-hidden">
-          <DataTable
-            columns={columns}
-            data={pois}
-            isLoading={state.status === 'loading'}
-            emptyMessage={t('empty')}
-            getRowId={(row) => row.id}
-            aria-label={t('ariaLabel')}
-          />
-        </Card>
-      )}
-    </section>
+          </Card>
+        )}
+      </section>
     </>
   );
 }
