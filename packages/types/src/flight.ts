@@ -55,6 +55,7 @@ export interface AirportsListQuery {
   page?: number;
   limit?: number;
   search?: string;
+  hasCoordinates?: boolean;
 }
 
 export interface Flight {
