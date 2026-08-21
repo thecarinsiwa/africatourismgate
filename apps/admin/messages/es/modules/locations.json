@@ -94,6 +94,11 @@
       "filterTo": "hasta",
       "status": "Estado",
       "empty": "Ninguna franja en este período.",
+      "searchPlaceholder": "Buscar franjas…",
+      "searchEmpty": "Ninguna franja coincide con esta búsqueda.",
+      "stats": {
+        "total": "Total"
+      },
       "deleteTitle": "Eliminar franja",
       "deleteConfirm": "Esta franja será eliminada permanentemente.",
       "deleteConfirmButton": "Eliminar",

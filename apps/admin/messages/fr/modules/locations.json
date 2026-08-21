@@ -94,6 +94,11 @@
       "filterTo": "au",
       "status": "Statut",
       "empty": "Aucun créneau sur cette période.",
+      "searchPlaceholder": "Rechercher un créneau…",
+      "searchEmpty": "Aucun créneau ne correspond à cette recherche.",
+      "stats": {
+        "total": "Total"
+      },
       "deleteTitle": "Supprimer le créneau",
       "deleteConfirm": "Ce créneau sera supprimé définitivement.",
       "deleteConfirmButton": "Supprimer",

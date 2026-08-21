@@ -94,6 +94,11 @@
       "filterTo": "to",
       "status": "Status",
       "empty": "No slots in this period.",
+      "searchPlaceholder": "Search slots…",
+      "searchEmpty": "No slot matches this search.",
+      "stats": {
+        "total": "Total"
+      },
       "deleteTitle": "Delete slot",
       "deleteConfirm": "This slot will be permanently deleted.",
       "deleteConfirmButton": "Delete",
