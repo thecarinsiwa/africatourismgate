@@ -410,6 +410,7 @@ export function ActivityItineraryStopsSection({
             title={t('mapPicker')}
             hint={t('mapPickerHint')}
             ariaLabel={t('mapPickerAria')}
+            active={showForm}
           />
           <Input
             label={t('description')}
