@@ -25,7 +25,7 @@ import { ListViewModeToggle } from '../list-view-mode-toggle';
 import { AirlineLogo } from './airline-logo-placeholder';
 import { AirlinesStatCards } from './airlines-stat-cards';
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_MS = 300;
 const LOGO_MAX_BYTES = 5 * 1024 * 1024;
 const ALLOWED_LOGO_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
