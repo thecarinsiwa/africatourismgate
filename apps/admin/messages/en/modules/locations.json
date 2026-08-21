@@ -102,13 +102,31 @@
       "emptySearch": "No agency matches this search.",
       "searchPlaceholder": "Search by name or address…",
       "searchAria": "Search agencies",
+      "ariaLabel": "Rental agencies list",
       "agency": "Agency",
       "address": "Address",
       "destinationOptional": "Destination (optional)",
+      "viewGrid": "Grid",
+      "viewTable": "Table",
+      "viewModeAria": "View mode",
       "deleteTitle": "Delete agency",
       "deleteConfirm": "Agency \"{name}\" will be permanently deleted.",
       "deleteConfirmButton": "Delete",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "stats": {
+        "total": {
+          "label": "Agencies",
+          "subtitle": "Rental locations"
+        },
+        "withAddress": {
+          "label": "With address",
+          "subtitle": "Location filled in"
+        },
+        "withDestination": {
+          "label": "With destination",
+          "subtitle": "Linked to a destination"
+        }
+      }
     }
   },
   "stats": {

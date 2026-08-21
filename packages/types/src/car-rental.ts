@@ -12,7 +12,7 @@ export interface RentalAgency {
 export interface CreateRentalAgencyRequest {
   name: string;
   destinationId?: string | null;
-  address?: string;
+  address?: string | null;
 }
 
 export type UpdateRentalAgencyRequest = Partial<CreateRentalAgencyRequest>;

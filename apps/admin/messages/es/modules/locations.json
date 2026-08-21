@@ -102,13 +102,31 @@
       "emptySearch": "Ninguna agencia coincide con esta búsqueda.",
       "searchPlaceholder": "Buscar por nombre o dirección…",
       "searchAria": "Buscar agencias",
+      "ariaLabel": "Lista de agencias de alquiler",
       "agency": "Agencia",
       "address": "Dirección",
       "destinationOptional": "Destino (opcional)",
+      "viewGrid": "Cuadrícula",
+      "viewTable": "Tabla",
+      "viewModeAria": "Modo de visualización",
       "deleteTitle": "Eliminar agencia",
       "deleteConfirm": "La agencia «{name}» será eliminada permanentemente.",
       "deleteConfirmButton": "Eliminar",
-      "cancel": "Cancelar"
+      "cancel": "Cancelar",
+      "stats": {
+        "total": {
+          "label": "Agencias",
+          "subtitle": "Puntos de alquiler"
+        },
+        "withAddress": {
+          "label": "Con dirección",
+          "subtitle": "Ubicación informada"
+        },
+        "withDestination": {
+          "label": "Con destino",
+          "subtitle": "Vinculadas a un destino"
+        }
+      }
     }
   },
   "stats": {
