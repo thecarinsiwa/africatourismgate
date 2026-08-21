@@ -152,12 +152,13 @@
     }
   },
   "detail": {
-    "shipTitle": "Modifier le navire",
-    "sailingTitle": "Modifier le départ",
-    "backToShips": "← Back aux navires",
+    "shipTitle": "Edit ship",
+    "sailingTitle": "Edit sailing",
+    "backToSailings": "Back to sailings",
+    "backToShips": "← Back to ships",
     "escalesTitle": "Ports of call",
-    "backToShip": "Back au navire",
-    "timelineAria": "Schéma des escales"
+    "backToShip": "Back to ship",
+    "timelineAria": "Ports of call timeline"
   },
   "sections": {
     "itineraryPorts": {

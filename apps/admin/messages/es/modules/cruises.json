@@ -152,12 +152,13 @@
     }
   },
   "detail": {
-    "shipTitle": "Modifier le navire",
-    "sailingTitle": "Modifier le départ",
-    "backToShips": "← Volver aux navires",
+    "shipTitle": "Editar barco",
+    "sailingTitle": "Editar salida",
+    "backToSailings": "Volver a salidas",
+    "backToShips": "← Volver a barcos",
     "escalesTitle": "Escalas",
-    "backToShip": "Volver au navire",
-    "timelineAria": "Schéma des escales"
+    "backToShip": "Volver al barco",
+    "timelineAria": "Esquema de escalas"
   },
   "sections": {
     "itineraryPorts": {

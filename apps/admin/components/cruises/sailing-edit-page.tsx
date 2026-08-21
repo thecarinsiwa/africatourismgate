@@ -3,9 +3,9 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import type { CruiseSailing, Itinerary, Ship } from '@africatourismgate/types';
-import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
+import { AdminPageBackLink } from '../admin-page-back-link';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
 import { buildCruiseBreadcrumbTail } from '../../lib/cruise-breadcrumbs';
@@ -77,12 +77,13 @@ export function SailingEditPage({ sailingId }: SailingEditPageProps) {
   if (state.status === 'error') {
     return (
       <div className="space-y-4">
-        <p role="alert" className="text-sm text-red-600">
+        <AdminPageBackLink
+          href="/produits/croisieres"
+          label={tDetail('backToSailings')}
+        />
+        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {state.message}
         </p>
-        <Link href="/produits/croisieres" className="text-sm font-medium text-primary">
-          {tCommon('back.toList')}
-        </Link>
       </div>
     );
   }
@@ -91,8 +92,12 @@ export function SailingEditPage({ sailingId }: SailingEditPageProps) {
   const departureLabel = sailing.departureDate.slice(0, 10);
 
   return (
-    <div>
-      <p className="mb-8 text-sm text-atg-muted">
+    <div className="space-y-6">
+      <AdminPageBackLink
+        href="/produits/croisieres"
+        label={tDetail('backToSailings')}
+      />
+      <p className="text-sm text-atg-muted">
         {departureLabel} · {itinerary.name} · {ship.name} ({itinerary.durationNights}{' '}
         {tColumns('nights')})
       </p>

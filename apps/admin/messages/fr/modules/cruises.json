@@ -155,6 +155,7 @@
   "detail": {
     "shipTitle": "Modifier le navire",
     "sailingTitle": "Modifier le départ",
+    "backToSailings": "Retour aux départs",
     "backToShips": "← Retour aux navires",
     "escalesTitle": "Escales",
     "backToShip": "Retour au navire",
