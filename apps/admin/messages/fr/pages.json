@@ -276,7 +276,7 @@
           "backLabel": "Retour aux navires"
         },
         "shipId": {
-          "metaTitle": "Navire",
+          "metaTitle": "Modifier le navire",
           "itineraires": {
             "itineraryId": {
               "metaTitle": "Escales itinéraire"

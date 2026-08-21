@@ -157,6 +157,7 @@
   },
   "detail": {
     "shipTitle": "Modifier le navire",
+    "shipSubtitle": "Identité, photos, itinéraires et cabines.",
     "sailingTitle": "Modifier le départ",
     "sailingSubtitle": "Itinéraire, date de départ et cabines réservables.",
     "backToSailings": "Retour aux croisières",
@@ -166,13 +167,29 @@
     "viewShip": "Voir le navire",
     "viewItinerary": "Voir les escales",
     "tabsAria": "Sections du départ",
+    "shipTabsAria": "Sections du navire",
     "tabs": {
       "sailing": "Départ",
-      "cabins": "Cabines"
+      "cabins": "Cabines",
+      "ship": "Navire",
+      "photos": "Photos",
+      "itineraries": "Itinéraires",
+      "shipCabins": "Cabines"
     },
     "timelineAria": "Schéma des escales"
   },
   "sections": {
+    "itineraries": {
+      "title": "Itinéraires",
+      "intro": "Parcours proposés sur ce navire (durée en nuits).",
+      "addItinerary": "Ajouter un itinéraire",
+      "stopsLink": "Escales"
+    },
+    "cabins": {
+      "title": "Cabines",
+      "intro": "Catégories de cabines et tarifs de base.",
+      "addCabin": "Ajouter une cabine"
+    },
     "itineraryPorts": {
       "day": "Jour",
       "arrivalTime": "Heure d'arrivée (HH:MM)",
@@ -183,7 +200,8 @@
       "deleteConfirm": "Cette escale sera supprimée définitivement.",
       "deleteTitle": "Supprimer l'escale",
       "deleteConfirmButton": "Supprimer",
-      "cancel": "Annuler"
+      "cancel": "Annuler",
+      "validation": "Port et numéro de jour sont obligatoires."
     },
     "cabinAvailability": {
       "title": "Cabines réservables",

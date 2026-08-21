@@ -276,7 +276,7 @@
           "backLabel": "Back to ships"
         },
         "shipId": {
-          "metaTitle": "Ship",
+          "metaTitle": "Edit ship",
           "itineraires": {
             "itineraryId": {
               "metaTitle": "Itinerary stops"

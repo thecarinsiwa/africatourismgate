@@ -156,6 +156,7 @@
   },
   "detail": {
     "shipTitle": "Edit ship",
+    "shipSubtitle": "Identity, photos, itineraries and cabins.",
     "sailingTitle": "Edit sailing",
     "sailingSubtitle": "Itinerary, departure date and bookable cabins.",
     "backToSailings": "Back to cruises",
@@ -165,13 +166,29 @@
     "viewShip": "View ship",
     "viewItinerary": "View ports of call",
     "tabsAria": "Sailing sections",
+    "shipTabsAria": "Ship sections",
     "tabs": {
       "sailing": "Sailing",
-      "cabins": "Cabins"
+      "cabins": "Cabins",
+      "ship": "Ship",
+      "photos": "Photos",
+      "itineraries": "Itineraries",
+      "shipCabins": "Cabins"
     },
     "timelineAria": "Ports of call timeline"
   },
   "sections": {
+    "itineraries": {
+      "title": "Itineraries",
+      "intro": "Routes offered on this ship (duration in nights).",
+      "addItinerary": "Add itinerary",
+      "stopsLink": "Ports of call"
+    },
+    "cabins": {
+      "title": "Cabins",
+      "intro": "Cabin categories and base rates.",
+      "addCabin": "Add cabin"
+    },
     "itineraryPorts": {
       "day": "Day",
       "arrivalTime": "Arrival time (HH:MM)",
@@ -182,7 +199,8 @@
       "deleteConfirm": "This port of call will be permanently deleted.",
       "deleteTitle": "Delete port of call",
       "deleteConfirmButton": "Delete",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "validation": "Port and day number are required."
     },
     "cabinAvailability": {
       "title": "Bookable cabins",
