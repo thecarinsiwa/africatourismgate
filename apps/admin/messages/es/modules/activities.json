@@ -78,8 +78,11 @@
     "schedulesIntro": "{count} franja(s) programada(s).",
     "itineraryStopsIntro": "{count} etapa(s) de itinerario.",
     "tabsAria": "Secciones de la actividad",
+    "subtitle": "Ficha de catálogo, medios, itinerario y franjas.",
     "tabs": {
       "activity": "Actividad",
+      "photos": "Fotos",
+      "attachments": "Adjuntos",
       "itinerary": "Itinerario",
       "schedules": "Franjas"
     }

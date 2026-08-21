@@ -49,11 +49,13 @@ const emptyForm: FormValues = {
 
 type ActivityDescriptionAssetsSectionProps = {
   activityId?: string;
+  embedded?: boolean;
   onChanged?: () => void;
 };
 
 export function ActivityDescriptionAssetsSection({
   activityId,
+  embedded = false,
   onChanged,
 }: ActivityDescriptionAssetsSectionProps) {
   const { activities: getActivitiesErrorMessage } = useAdminErrorMessages();
@@ -292,14 +294,22 @@ export function ActivityDescriptionAssetsSection({
         error={deleteError}
         onConfirm={() => void handleDeleteConfirm()}
       />
-    <Card variant="dashboard" className="mt-6 space-y-4">
+    <section
+      className={
+        embedded
+          ? 'space-y-4'
+          : 'mt-6 space-y-4 rounded-xl border border-atg-border bg-atg-elevated p-4 sm:p-6'
+      }
+    >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h3 className="text-sm font-semibold text-atg-fg">{t('title')}</h3>
-          <p className="mt-1 text-xs text-atg-muted">{t('hint')}</p>
+          <h3 className={embedded ? 'text-lg font-semibold text-atg-fg' : 'text-sm font-semibold text-atg-fg'}>
+            {t('title')}
+          </h3>
+          <p className={`mt-1 text-atg-muted ${embedded ? 'text-sm' : 'text-xs'}`}>{t('hint')}</p>
         </div>
         {activityId && !showForm ? (
-          <Button type="button" size="sm" onClick={() => setShowForm(true)}>
+          <Button type="button" onClick={() => setShowForm(true)}>
             {t('add')}
           </Button>
         ) : null}
@@ -398,7 +408,7 @@ export function ActivityDescriptionAssetsSection({
           </Card>
         )
       ) : null}
-    </Card>
+    </section>
     </>
   );
 }

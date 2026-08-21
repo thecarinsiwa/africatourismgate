@@ -78,8 +78,11 @@
     "schedulesIntro": "{count} créneau(x) programmé(s).",
     "itineraryStopsIntro": "{count} étape(s) d'itinéraire.",
     "tabsAria": "Sections de l'activité",
+    "subtitle": "Fiche catalogue, médias, itinéraire et créneaux.",
     "tabs": {
       "activity": "Activité",
+      "photos": "Photos",
+      "attachments": "Pièces jointes",
       "itinerary": "Itinéraire",
       "schedules": "Créneaux"
     }

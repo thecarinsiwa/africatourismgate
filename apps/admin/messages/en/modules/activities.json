@@ -78,8 +78,11 @@
     "schedulesIntro": "{count} scheduled slot(s).",
     "itineraryStopsIntro": "{count} itinerary stop(s).",
     "tabsAria": "Activity sections",
+    "subtitle": "Catalog details, media, itinerary and time slots.",
     "tabs": {
       "activity": "Activity",
+      "photos": "Photos",
+      "attachments": "Attachments",
       "itinerary": "Itinerary",
       "schedules": "Slots"
     }
