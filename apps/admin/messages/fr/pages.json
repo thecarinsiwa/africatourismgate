@@ -297,7 +297,8 @@
       },
       "nouveau": {
         "metaTitle": "Nouveau forfait",
-        "description": "Créez le forfait puis ajoutez des items sur la page d’édition."
+        "description": "Créez le forfait puis ajoutez des items sur la page d’édition.",
+        "backLabel": "Retour aux forfaits"
       },
       "id": {
         "metaTitle": "Modifier le forfait",

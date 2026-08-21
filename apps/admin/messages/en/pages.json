@@ -297,7 +297,8 @@
       },
       "nouveau": {
         "metaTitle": "New package",
-        "description": "Create the package then add items on the edit page."
+        "description": "Create the package then add items on the edit page.",
+        "backLabel": "Back to packages"
       },
       "id": {
         "metaTitle": "Edit package",

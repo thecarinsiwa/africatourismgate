@@ -297,7 +297,8 @@
       },
       "nouveau": {
         "metaTitle": "Nuevo paquete",
-        "description": "Cree el paquete y luego añada elementos en la página de edición."
+        "description": "Cree el paquete y luego añada elementos en la página de edición.",
+        "backLabel": "Volver a paquetes"
       },
       "id": {
         "metaTitle": "Editar paquete",
