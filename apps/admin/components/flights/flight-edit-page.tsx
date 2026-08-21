@@ -193,8 +193,15 @@ export function FlightEditPage({ flightId }: FlightEditPageProps) {
             initialFlight={flight}
             airlines={airlines}
             airports={airports}
+            identityAside={
+              <FlightImagesSection
+                flightId={flightId}
+                embedded
+                variant="aside"
+                altFallback={flight.flightNumber}
+              />
+            }
           />
-          <FlightImagesSection flightId={flightId} embedded />
         </TabsContent>
 
         <TabsContent value="classes">

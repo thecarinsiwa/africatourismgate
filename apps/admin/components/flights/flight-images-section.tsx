@@ -9,6 +9,7 @@ import {
   DataTable,
   DataTableActionButton,
   DataTableActions,
+  DataTableBadge,
   Input,
   Modal,
   type ColumnDef,
@@ -17,8 +18,10 @@ import type { FlightImage } from '@africatourismgate/types';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { AdminImageViewerModal } from '../admin-image-viewer-modal';
 import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
 import { getSession } from '../../lib/auth/session';
+import { FlightPhotosCarousel } from './flight-photos-carousel';
 
 const FLIGHT_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
 const ALLOWED_FLIGHT_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
@@ -34,9 +37,17 @@ const emptyForm: ImageFormValues = { url: '', caption: '', sortOrder: '0' };
 type FlightImagesSectionProps = {
   flightId: string;
   embedded?: boolean;
+  /** Panneau compact à droite du formulaire (carrousel + actions). */
+  variant?: 'default' | 'aside';
+  altFallback?: string;
 };
 
-export function FlightImagesSection({ flightId, embedded }: FlightImagesSectionProps) {
+export function FlightImagesSection({
+  flightId,
+  embedded,
+  variant = 'default',
+  altFallback,
+}: FlightImagesSectionProps) {
   const { vols: getVolsErrorMessage } = useAdminErrorMessages();
   const tGallery = useTranslations('modules.common.imagesGallery');
   const tCommon = useTranslations('modules.common');
@@ -56,6 +67,7 @@ export function FlightImagesSection({ flightId, embedded }: FlightImagesSectionP
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [confirmTarget, setConfirmTarget] = useState<FlightImage | null>(null);
+  const [viewerIndex, setViewerIndex] = useState<number | null>(null);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -65,7 +77,12 @@ export function FlightImagesSection({ flightId, embedded }: FlightImagesSectionP
         page: 1,
         limit: 100,
       });
-      setState({ status: 'ready', images: result.data });
+      setState({
+        status: 'ready',
+        images: [...result.data].sort(
+          (a, b) => a.sortOrder - b.sortOrder || a.createdAt.localeCompare(b.createdAt),
+        ),
+      });
     } catch (error) {
       setState({ status: 'error', message: getVolsErrorMessage(error) });
     }
@@ -84,7 +101,10 @@ export function FlightImagesSection({ flightId, embedded }: FlightImagesSectionP
   }
 
   function openCreate() {
-    resetForm();
+    setFormValues(emptyForm);
+    setEditing(null);
+    setFormError(null);
+    setUploading(false);
     setShowForm(true);
   }
 
@@ -98,6 +118,15 @@ export function FlightImagesSection({ flightId, embedded }: FlightImagesSectionP
     setShowForm(true);
     setFormError(null);
   }
+
+  const openViewer = useCallback(
+    (img: FlightImage) => {
+      if (state.status !== 'ready') return;
+      const index = state.images.findIndex((image) => image.id === img.id);
+      if (index >= 0) setViewerIndex(index);
+    },
+    [state],
+  );
 
   async function handleLocalImagePick(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -199,17 +228,19 @@ export function FlightImagesSection({ flightId, embedded }: FlightImagesSectionP
         id: 'preview',
         header: tCommon('columns.preview'),
         cell: ({ row }) => (
-          <Image
-            src={row.original.url}
-            alt=""
-            width={64}
-            height={40}
-            unoptimized
-            className="h-10 w-16 rounded object-cover"
-            onError={(e) => {
-              (e.target as HTMLImageElement).style.display = 'none';
-            }}
-          />
+          <button type="button" onClick={() => openViewer(row.original)} className="block">
+            <Image
+              src={row.original.url}
+              alt=""
+              width={64}
+              height={40}
+              unoptimized
+              className="h-10 w-16 rounded object-cover"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = 'none';
+              }}
+            />
+          </button>
         ),
       },
       {
@@ -255,7 +286,7 @@ export function FlightImagesSection({ flightId, embedded }: FlightImagesSectionP
         ),
       },
     ],
-    [deletingId, emptyDash, handleDeleteRequest, tCommon],
+    [deletingId, emptyDash, handleDeleteRequest, openViewer, tCommon],
   );
 
   const images = state.status === 'ready' ? state.images : [];
@@ -264,7 +295,9 @@ export function FlightImagesSection({ flightId, embedded }: FlightImagesSectionP
     <>
       <AlertDialog
         open={!!confirmTarget}
-        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        onOpenChange={(open) => {
+          if (!open) setConfirmTarget(null);
+        }}
         title={tGallery('deleteTitle')}
         description={tGallery('deleteConfirm')}
         confirmLabel={tGallery('deleteConfirmButton')}
@@ -274,20 +307,6 @@ export function FlightImagesSection({ flightId, embedded }: FlightImagesSectionP
         error={deleteError}
         onConfirm={() => void handleDeleteConfirm()}
       />
-    <section
-      className={
-        embedded ? 'space-y-6' : 'mt-12 space-y-6 border-t border-atg-border pt-10'
-      }
-    >
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="text-lg font-semibold text-atg-fg">{tGallery('title')}</h2>
-          <p className="mt-1 text-sm text-atg-muted">{tGallery('intro')}</p>
-        </div>
-        <Button type="button" onClick={openCreate}>
-          {tGallery('addPhoto')}
-        </Button>
-      </div>
 
       <Modal
         open={showForm}
@@ -369,22 +388,113 @@ export function FlightImagesSection({ flightId, embedded }: FlightImagesSectionP
         </form>
       </Modal>
 
-      {state.status === 'error' ? (
-        <p role="alert" className="text-sm text-red-600">
-          {state.message}
-        </p>
-      ) : (
-        <Card variant="dashboard" padding="none" className="overflow-hidden">
-          <DataTable
-            columns={columns}
-            data={images}
-            isLoading={state.status === 'loading'}
-            emptyMessage={tGallery('emptyDefault')}
-            getRowId={(row) => row.id}
-          />
+      <AdminImageViewerModal
+        open={viewerIndex !== null}
+        onOpenChange={(open) => {
+          if (!open) setViewerIndex(null);
+        }}
+        images={images}
+        index={viewerIndex ?? 0}
+        onIndexChange={setViewerIndex}
+        fallbackLabel={altFallback || tGallery('title')}
+      />
+
+      {variant === 'aside' ? (
+        <Card variant="dashboard" padding="sm">
+          <div className="flex items-center justify-between gap-2">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <h3 className="text-sm font-semibold text-atg-fg">{tGallery('title')}</h3>
+                {state.status === 'ready' ? (
+                  <DataTableBadge variant="muted">{images.length}</DataTableBadge>
+                ) : null}
+              </div>
+            </div>
+            <Button type="button" size="sm" onClick={openCreate}>
+              {tGallery('addPhoto')}
+            </Button>
+          </div>
+
+          <div className="mt-3">
+            {state.status === 'loading' ? (
+              <p className="text-sm text-atg-muted">{tCommon('dataTable.loading')}</p>
+            ) : state.status === 'error' ? (
+              <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+                {state.message}
+              </p>
+            ) : (
+              <>
+                <FlightPhotosCarousel
+                  images={images}
+                  altFallback={altFallback || tGallery('title')}
+                />
+                {images.length > 0 ? (
+                  <ul className="mt-3 max-h-40 space-y-1 overflow-y-auto">
+                    {images.map((image, index) => (
+                      <li
+                        key={image.id}
+                        className="flex items-center gap-2 rounded-md border border-atg-border px-2 py-1.5"
+                      >
+                        <button
+                          type="button"
+                          onClick={() => openViewer(image)}
+                          className="min-w-0 flex-1 truncate text-left text-xs text-atg-fg hover:text-primary"
+                        >
+                          {image.caption?.trim() || `#${image.sortOrder || index + 1}`}
+                        </button>
+                        <DataTableActions>
+                          <DataTableActionButton
+                            action="edit"
+                            onClick={() => openEdit(image)}
+                          />
+                          <DataTableActionButton
+                            action="delete"
+                            onClick={() => handleDeleteRequest(image)}
+                            disabled={deletingId === image.id}
+                            loading={deletingId === image.id}
+                          />
+                        </DataTableActions>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </>
+            )}
+          </div>
         </Card>
+      ) : (
+        <section
+          className={
+            embedded ? 'space-y-6' : 'mt-12 space-y-6 border-t border-atg-border pt-10'
+          }
+        >
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-atg-fg">{tGallery('title')}</h2>
+              <p className="mt-1 text-sm text-atg-muted">{tGallery('intro')}</p>
+            </div>
+            <Button type="button" onClick={openCreate}>
+              {tGallery('addPhoto')}
+            </Button>
+          </div>
+
+          {state.status === 'error' ? (
+            <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+              {state.message}
+            </p>
+          ) : (
+            <Card variant="dashboard" padding="none" className="overflow-hidden">
+              <DataTable
+                columns={columns}
+                data={images}
+                isLoading={state.status === 'loading'}
+                emptyMessage={tGallery('emptyDefault')}
+                getRowId={(row) => row.id}
+              />
+            </Card>
+          )}
+        </section>
       )}
-    </section>
     </>
   );
 }
