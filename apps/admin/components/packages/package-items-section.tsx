@@ -31,6 +31,7 @@ import {
 import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
 import { getPackageItemTypeLabel } from '../../lib/package-item-type';
 import { PackageCompositionBanner } from './package-composition-banner';
+import { PackageItemDetailModal } from './package-item-detail-modal';
 import { PackageItemTypeIcon } from './package-item-type-icon';
 import { PackagePreviewCard } from './package-preview-card';
 import { PackagePricingRecap } from './package-pricing-recap';
@@ -77,6 +78,7 @@ export function PackageItemsSection({
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [confirmTarget, setConfirmTarget] = useState<PackageItemEnriched | null>(null);
+  const [viewTarget, setViewTarget] = useState<PackageItemEnriched | null>(null);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -183,6 +185,10 @@ export function PackageItemsSection({
     setConfirmTarget(item);
   }, []);
 
+  const handleViewRequest = useCallback((item: PackageItemEnriched) => {
+    setViewTarget(item);
+  }, []);
+
   const handleDeleteConfirm = useCallback(async () => {
     if (!confirmTarget) return;
     const item = confirmTarget;
@@ -229,6 +235,10 @@ export function PackageItemsSection({
         cell: ({ row }) => (
           <DataTableActions>
             <DataTableActionButton
+              action="view"
+              onClick={() => handleViewRequest(row.original)}
+            />
+            <DataTableActionButton
               action="remove"
               onClick={() => handleDeleteRequest(row.original)}
               disabled={deletingId === row.original.id}
@@ -238,7 +248,7 @@ export function PackageItemsSection({
         ),
       },
     ],
-    [deletingId, handleDeleteRequest, tCommon],
+    [deletingId, handleDeleteRequest, handleViewRequest, tCommon],
   );
 
   const items = detail?.items ?? [];
@@ -290,6 +300,14 @@ export function PackageItemsSection({
         variant="danger"
         loading={!!deletingId}
         onConfirm={() => void handleDeleteConfirm()}
+      />
+
+      <PackageItemDetailModal
+        open={!!viewTarget}
+        item={viewTarget}
+        onOpenChange={(open) => {
+          if (!open) setViewTarget(null);
+        }}
       />
 
       <Modal
