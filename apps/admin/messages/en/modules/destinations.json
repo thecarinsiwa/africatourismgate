@@ -22,23 +22,23 @@
     "featured": "Homepage"
   },
   "form": {
-    "submitCreate": "Créer la destination",
-    "previewName": "Nouvelle destination",
+    "submitCreate": "Create destination",
+    "previewName": "New destination",
     "sections": {
       "identity": "Identity",
-      "presentation": "Présentation",
-      "geography": "Géographie"
+      "presentation": "Presentation",
+      "geography": "Geography"
     },
-    "slugHint": "Identifiant unique (ex. kinshasa).",
-    "countryCode": "Code pays (ISO)",
-    "countryCodeHint": "2 lettres, ex. CD, KE, ZA.",
-    "heroImageUrl": "URL image hero",
-    "heroImageHint": "Affichée dans le bandeau. Laissez vide pour un dégradé.",
+    "slugHint": "Unique identifier (e.g. kinshasa).",
+    "countryCode": "Country code (ISO)",
+    "countryCodeHint": "2 letters, e.g. CD, KE, ZA.",
+    "heroImageUrl": "Hero image URL",
+    "heroImageHint": "Shown in the banner. Leave empty for a gradient.",
     "isFeatured": "Show on homepage",
     "isFeaturedHint": "Popular Destinations section on the public site (max. 4).",
-    "geographyIntro": "Coordonnées du centre de la destination pour la carte statique.",
-    "latitudeHint": "Optionnel, -90 à 90",
-    "longitudeHint": "Optionnel, -180 à 180",
+    "geographyIntro": "Coordinates for the destination center on the static map.",
+    "latitudeHint": "Optional, -90 to 90",
+    "longitudeHint": "Optional, -180 to 180",
     "mapPreview": "Map preview",
     "openStreetMap": "Open in OpenStreetMap"
   },
@@ -75,30 +75,30 @@
     "related": {
       "properties": {
         "label": "Accommodations",
-        "subtitle": "Propertys rattachées"
+        "subtitle": "Linked properties"
       },
       "activities": {
-        "label": "Activitys",
-        "subtitle": "Expériences locales"
+        "label": "Activities",
+        "subtitle": "Local experiences"
       },
       "packages": {
         "label": "Packages",
-        "subtitle": "Packages incluant des produits locaux"
+        "subtitle": "Packages including local products"
       }
     }
   },
   "stats": {
     "destinations": {
       "label": "Destinations",
-      "subtitle": "Villes et régions catalogue"
+      "subtitle": "Cities and regions in the catalogue"
     },
     "pois": {
-      "label": "Points d'intérêt",
-      "subtitle": "Lieux remarquables liés"
+      "label": "Points of interest",
+      "subtitle": "Linked landmarks"
     },
     "countries": {
-      "label": "Country couverts",
-      "subtitle": "Codes ISO distincts"
+      "label": "Countries covered",
+      "subtitle": "Distinct ISO codes"
     }
   }
 }

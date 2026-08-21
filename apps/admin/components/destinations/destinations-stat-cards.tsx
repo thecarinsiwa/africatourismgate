@@ -36,7 +36,13 @@ async function countDistinctCountries(): Promise<number> {
   return countries.size;
 }
 
-export function DestinationsStatCards({ className }: { className?: string }) {
+export function DestinationsStatCards({
+  refreshKey = 0,
+  className,
+}: {
+  refreshKey?: number;
+  className?: string;
+}) {
   const { dashboardKpi: getDashboardKpiErrorMessage } = useAdminErrorMessages();
   const { canLoad, loading: permissionsLoading, shouldRender } = useModuleStatCards('destinations.read');
   const t = useTranslations('modules.destinations');
@@ -51,6 +57,12 @@ export function DestinationsStatCards({ className }: { className?: string }) {
 
     let cancelled = false;
     const client = getApiClient();
+
+    setCards({
+      destinations: { ...initialCardState },
+      pois: { ...initialCardState },
+      countries: { ...initialCardState },
+    });
 
     async function loadKpi(key: DestinationsKpiKey): Promise<KpiCardState> {
       try {
@@ -87,7 +99,7 @@ export function DestinationsStatCards({ className }: { className?: string }) {
     return () => {
       cancelled = true;
     };
-  }, [canLoad, getDashboardKpiErrorMessage, permissionsLoading]);
+  }, [canLoad, getDashboardKpiErrorMessage, permissionsLoading, refreshKey]);
 
   if (!shouldRender) {
     return null;
