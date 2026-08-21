@@ -58,6 +58,7 @@ function destinationToFormValues(destination: Destination): DestinationFormValue
 function toPayload(
   values: DestinationFormValues,
   mode: 'create' | 'edit',
+  options?: { omitImageUrl?: boolean },
 ): CreateDestinationRequest {
   const payload: CreateDestinationRequest = {
     name: values.name.trim(),
@@ -72,11 +73,13 @@ function toPayload(
     payload.description = undefined;
   }
 
-  const imageUrl = values.imageUrl.trim();
-  if (imageUrl) {
-    payload.imageUrl = imageUrl;
-  } else if (mode === 'edit') {
-    payload.imageUrl = null;
+  if (!options?.omitImageUrl) {
+    const imageUrl = values.imageUrl.trim();
+    if (imageUrl) {
+      payload.imageUrl = imageUrl;
+    } else if (mode === 'edit') {
+      payload.imageUrl = null;
+    }
   }
 
   const latTrimmed = values.latitude.trim();
@@ -97,6 +100,8 @@ type DestinationFormProps = {
   destinationId?: string;
   initialDestination?: Destination;
   onUpdated?: (destination: Destination) => void;
+  /** Hide hero URL field when a dedicated upload section handles it (edit page). */
+  hideHeroUrlField?: boolean;
 };
 
 export function DestinationForm({
@@ -104,6 +109,7 @@ export function DestinationForm({
   destinationId,
   initialDestination,
   onUpdated,
+  hideHeroUrlField = false,
 }: DestinationFormProps) {
   const { destinations: getDestinationsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.destinations.form');
@@ -181,7 +187,7 @@ export function DestinationForm({
     setSubmitting(true);
     try {
       const client = getApiClient();
-      const payload = toPayload(values, mode);
+      const payload = toPayload(values, mode, { omitImageUrl: hideHeroUrlField });
       if (mode === 'create') {
         const created = await client.createDestination(payload);
         router.push(`/produits/destinations/${created.id}?tab=pois`);
@@ -251,14 +257,16 @@ export function DestinationForm({
 
           <section className="space-y-4">
             <h3 className="text-sm font-semibold text-atg-fg">{t('sections.presentation')}</h3>
-            <Input
-              label={t('heroImageUrl')}
-              type="url"
-              value={values.imageUrl}
-              onChange={(e) => updateField('imageUrl', e.target.value)}
-              placeholder={tCommonForm('urlPlaceholder')}
-              hint={t('heroImageHint')}
-            />
+            {hideHeroUrlField ? null : (
+              <Input
+                label={t('heroImageUrl')}
+                type="url"
+                value={values.imageUrl}
+                onChange={(e) => updateField('imageUrl', e.target.value)}
+                placeholder={tCommonForm('urlPlaceholder')}
+                hint={t('heroImageHint')}
+              />
+            )}
             <div>
               <label htmlFor={descriptionId} className="mb-2 block text-sm font-medium text-atg-fg">
                 {tCommonForm('description')}

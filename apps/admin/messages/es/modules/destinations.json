@@ -70,6 +70,16 @@
   "hero": {
     "ariaLabel": "Destino {name}"
   },
+  "heroImage": {
+    "title": "Imagen de cabecera",
+    "hint": "Se muestra en el banner admin, las listas y el sitio público. JPEG, PNG o WebP, máx. 5 MB.",
+    "previewAlt": "Vista previa de la imagen de cabecera",
+    "empty": "Ninguna imagen de cabecera definida.",
+    "upload": "Subir una imagen",
+    "remove": "Quitar la imagen",
+    "saveUrl": "Guardar la URL",
+    "saving": "Guardando…"
+  },
   "sections": {
     "pois": {
       "title": "Puntos de interés",

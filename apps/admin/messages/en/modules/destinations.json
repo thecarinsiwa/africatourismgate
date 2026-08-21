@@ -70,6 +70,16 @@
   "hero": {
     "ariaLabel": "Destination {name}"
   },
+  "heroImage": {
+    "title": "Hero image",
+    "hint": "Shown in the admin banner, lists and public site. JPEG, PNG or WebP, max. 5 MB.",
+    "previewAlt": "Hero image preview",
+    "empty": "No hero image set.",
+    "upload": "Upload an image",
+    "remove": "Remove image",
+    "saveUrl": "Save URL",
+    "saving": "Saving…"
+  },
   "sections": {
     "pois": {
       "title": "Points of interest",

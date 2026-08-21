@@ -53,6 +53,10 @@ export function packageUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/packages/${filename}`;
 }
 
+export function destinationUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/destinations/${filename}`;
+}
+
 export function packageDescriptionAssetUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/packages/description-assets/${filename}`;
 }

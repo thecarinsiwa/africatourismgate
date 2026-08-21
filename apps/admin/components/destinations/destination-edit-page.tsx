@@ -20,6 +20,7 @@ import { AdminPageBackLink } from '../admin-page-back-link';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { getApiClient } from '../../lib/auth/api';
 import { DestinationForm } from './destination-form';
+import { DestinationHeroImageSection } from './destination-hero-image-section';
 import { DestinationPoisSection } from './destination-pois-section';
 import { DestinationRelatedStatCards } from './destination-related-stat-cards';
 import { DestinationThumbnail } from './destination-thumbnail';
@@ -170,11 +171,17 @@ export function DestinationEditPage({ destinationId }: DestinationEditPageProps)
           <TabsTrigger value="pois">{t('tabs.pois')}</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="informations">
+        <TabsContent value="informations" className="space-y-8">
+          <DestinationHeroImageSection
+            destinationId={destinationId}
+            imageUrl={destination.imageUrl}
+            onSaved={(updated) => setState({ status: 'ready', destination: updated })}
+          />
           <DestinationForm
             mode="edit"
             destinationId={destinationId}
             initialDestination={destination}
+            hideHeroUrlField
             onUpdated={(updated) => setState({ status: 'ready', destination: updated })}
           />
         </TabsContent>
