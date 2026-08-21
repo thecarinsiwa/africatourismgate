@@ -119,7 +119,8 @@
     "activity": "actividad",
     "employee": "empleado",
     "department": "departamento",
-    "date": "fecha"
+    "date": "fecha",
+    "service": "servicio"
   },
   "dataTable": {
     "loading": "Cargando…",

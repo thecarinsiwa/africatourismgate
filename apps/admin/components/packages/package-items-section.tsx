@@ -10,6 +10,7 @@ import {
   DataTable,
   DataTableActionButton,
   DataTableActions,
+  DataTablePagination,
   Input,
   Modal,
   type ColumnDef,
@@ -27,6 +28,7 @@ import {
   usePackageItemTypeLabels,
   usePackageItemTypeOptions,
 } from '../../lib/i18n/use-module-labels';
+import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
 import { getPackageItemTypeLabel } from '../../lib/package-item-type';
 import { PackageCompositionBanner } from './package-composition-banner';
 import { PackageItemTypeIcon } from './package-item-type-icon';
@@ -34,6 +36,8 @@ import { PackagePreviewCard } from './package-preview-card';
 import { PackagePricingRecap } from './package-pricing-recap';
 
 type CatalogOption = { id: string; label: string };
+
+const PAGE_SIZE = 2;
 
 type PackageItemsSectionProps = {
   packageId: string;
@@ -50,6 +54,8 @@ export function PackageItemsSection({
   const t = useTranslations('modules.packages.sections.items');
   const tCommon = useTranslations('modules.common');
   const tActions = useTranslations('common.actions');
+  const tPagination = useTranslations('modules.common.pagination');
+  const paginationLabels = useDataTablePaginationLabels();
   const itemTypeOptions = usePackageItemTypeOptions();
   const itemTypeLabels = usePackageItemTypeLabels();
   const typeId = useId();
@@ -61,6 +67,7 @@ export function PackageItemsSection({
     | { status: 'ready' }
   >({ status: 'loading' });
   const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
   const [showForm, setShowForm] = useState(false);
   const [itemType, setItemType] = useState<PackageItemType>('property');
   const [selectedItemId, setSelectedItemId] = useState('');
@@ -250,6 +257,22 @@ export function PackageItemsSection({
       return haystack.includes(query);
     });
   }, [items, itemTypeLabels, search]);
+  const totalPages = Math.max(1, Math.ceil(filteredItems.length / PAGE_SIZE));
+  const pageItems = useMemo(() => {
+    const start = (page - 1) * PAGE_SIZE;
+    return filteredItems.slice(start, start + PAGE_SIZE);
+  }, [filteredItems, page]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [search, packageId]);
+
+  useEffect(() => {
+    if (page > totalPages) {
+      setPage(totalPages);
+    }
+  }, [page, totalPages]);
+
   const selectClass =
     'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg';
 
@@ -378,17 +401,31 @@ export function PackageItemsSection({
                 {state.message}
               </p>
             ) : (
-              <Card variant="dashboard" padding="none" className="h-fit overflow-hidden">
-                <DataTable
-                  columns={columns}
-                  data={filteredItems}
-                  isLoading={state.status === 'loading'}
-                  emptyMessage={hasSearch ? t('searchEmpty') : t('empty')}
-                  emptyVariant={hasSearch ? 'search' : 'default'}
-                  getRowId={(r) => r.id}
-                  aria-label={t('title')}
-                />
-              </Card>
+              <div className="space-y-3">
+                <Card variant="dashboard" padding="none" className="h-fit overflow-hidden">
+                  <DataTable
+                    columns={columns}
+                    data={pageItems}
+                    isLoading={state.status === 'loading'}
+                    emptyMessage={hasSearch ? t('searchEmpty') : t('empty')}
+                    emptyVariant={hasSearch ? 'search' : 'default'}
+                    getRowId={(r) => r.id}
+                    aria-label={t('title')}
+                    loadingRows={PAGE_SIZE}
+                  />
+                </Card>
+                {state.status === 'ready' && filteredItems.length > 0 ? (
+                  <DataTablePagination
+                    page={page}
+                    pageSize={PAGE_SIZE}
+                    totalPages={totalPages}
+                    totalItems={filteredItems.length}
+                    itemLabel={tPagination('service')}
+                    onPageChange={setPage}
+                    labels={paginationLabels}
+                  />
+                ) : null}
+              </div>
             )}
           </div>
 
