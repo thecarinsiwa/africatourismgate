@@ -119,7 +119,11 @@
       "summary": "Vuelo {flightNumber} — {classLabel}: asientos y precio por fecha.",
       "tableTitle": "Fechas disponibles",
       "tableIntro": "Días con asientos y tarifa para esta clase de cabina.",
-      "tableEmpty": "Ninguna disponibilidad en este mes."
+      "tableEmpty": "Ninguna disponibilidad en este mes.",
+      "deleteTitle": "Eliminar disponibilidad",
+      "deleteConfirm": "¿Eliminar la disponibilidad del {date}? Esta acción es irreversible.",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar"
     }
   },
   "referential": {

@@ -119,7 +119,11 @@
       "summary": "Flight {flightNumber} — {classLabel}: seats and price by date.",
       "tableTitle": "Available dates",
       "tableIntro": "Days with seats and fare for this cabin class.",
-      "tableEmpty": "No availability for this month."
+      "tableEmpty": "No availability for this month.",
+      "deleteTitle": "Delete availability",
+      "deleteConfirm": "Delete availability for {date}? This cannot be undone.",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel"
     }
   },
   "referential": {

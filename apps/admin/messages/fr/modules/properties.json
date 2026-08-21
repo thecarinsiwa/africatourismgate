@@ -145,7 +145,11 @@
       "summary": "Chambre {roomName} — stock et prix par nuit ({currency}).",
       "tableTitle": "Dates disponibles",
       "tableIntro": "Liste des jours avec stock et tarif pour cette chambre.",
-      "tableEmpty": "Aucune disponibilité sur ce mois."
+      "tableEmpty": "Aucune disponibilité sur ce mois.",
+      "deleteTitle": "Supprimer la disponibilité",
+      "deleteConfirm": "Supprimer la disponibilité du {date} ? Cette action est irréversible.",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler"
     }
   },
   "amenitiesList": {

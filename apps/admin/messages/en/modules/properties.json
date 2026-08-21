@@ -145,7 +145,11 @@
       "summary": "Room {roomName} — stock and price per night ({currency}).",
       "tableTitle": "Available dates",
       "tableIntro": "Days with stock and fare for this room.",
-      "tableEmpty": "No availability for this month."
+      "tableEmpty": "No availability for this month.",
+      "deleteTitle": "Delete availability",
+      "deleteConfirm": "Delete availability for {date}? This cannot be undone.",
+      "deleteConfirmButton": "Delete",
+      "cancel": "Cancel"
     }
   },
   "amenitiesList": {

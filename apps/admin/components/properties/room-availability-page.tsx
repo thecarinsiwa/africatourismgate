@@ -3,7 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import type { RoomAvailability } from '@africatourismgate/types';
-import { useToast } from '@africatourismgate/ui';
+import { AlertDialog, useToast } from '@africatourismgate/ui';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
@@ -43,6 +43,8 @@ export function RoomAvailabilityPage({ propertyId, roomId }: RoomAvailabilityPag
   const [availabilityRows, setAvailabilityRows] = useState<RoomAvailability[]>([]);
   const [pendingEditDate, setPendingEditDate] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<RoomAvailability | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const backLabel = useMemo(() => {
     if (tPage.has?.('backLabel')) return tPage('backLabel');
@@ -74,29 +76,37 @@ export function RoomAvailabilityPage({ propertyId, roomId }: RoomAvailabilityPag
     setAvailabilityRows(rows);
   }, []);
 
-  const handleDeleteRow = useCallback(
-    async (row: RoomAvailability) => {
-      setDeletingId(row.id);
-      try {
-        await getApiClient().deleteRoomAvailability(row.id);
-        toast({
-          title: tToast('availabilityDeleted'),
-          message: formatDateLabel(row.date.slice(0, 10)),
-          variant: 'success',
-        });
-        setGridKey((k) => k + 1);
-      } catch (error) {
-        toast({
-          title: tToast('deleteError'),
-          message: getHebergementsErrorMessage(error),
-          variant: 'error',
-        });
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [getHebergementsErrorMessage, tToast, toast],
-  );
+  const handleDeleteRequest = useCallback((row: RoomAvailability) => {
+    setDeleteError(null);
+    setConfirmTarget(row);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const row = confirmTarget;
+    setDeletingId(row.id);
+    setDeleteError(null);
+    try {
+      await getApiClient().deleteRoomAvailability(row.id);
+      setConfirmTarget(null);
+      toast({
+        title: tToast('availabilityDeleted'),
+        message: formatDateLabel(row.date.slice(0, 10)),
+        variant: 'success',
+      });
+      setGridKey((k) => k + 1);
+    } catch (error) {
+      const message = getHebergementsErrorMessage(error);
+      setDeleteError(message);
+      toast({
+        title: tToast('deleteError'),
+        message,
+        variant: 'error',
+      });
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getHebergementsErrorMessage, tToast, toast]);
 
   useEffect(() => {
     let cancelled = false;
@@ -158,6 +168,27 @@ export function RoomAvailabilityPage({ propertyId, roomId }: RoomAvailabilityPag
 
   return (
     <div className="min-w-0 space-y-6">
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => {
+          if (!open && !deletingId) setConfirmTarget(null);
+        }}
+        title={tAvailability('deleteTitle')}
+        description={
+          confirmTarget
+            ? tAvailability('deleteConfirm', {
+                date: formatDateLabel(confirmTarget.date.slice(0, 10)),
+              })
+            : undefined
+        }
+        confirmLabel={tAvailability('deleteConfirmButton')}
+        cancelLabel={tAvailability('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
+
       <AdminPageBackLink href={propertyBackHref} label={backLabel} />
       <p className="text-sm text-atg-muted">
         {tAvailability.has?.('summary')
@@ -183,7 +214,7 @@ export function RoomAvailabilityPage({ propertyId, roomId }: RoomAvailabilityPag
               }
               setPendingEditDate(date);
             }}
-            onDelete={(row) => void handleDeleteRow(row)}
+            onDelete={handleDeleteRequest}
             deletingId={deletingId}
           />
         </div>

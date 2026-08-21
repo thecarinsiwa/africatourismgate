@@ -2,7 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Select, useToast } from '@africatourismgate/ui';
+import { Button, Select, AlertDialog, useToast } from '@africatourismgate/ui';
 import type { Room, RoomAvailability } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
@@ -35,6 +35,8 @@ export function PropertyAvailabilitySection({ propertyId }: PropertyAvailability
   const [availabilityRows, setAvailabilityRows] = useState<RoomAvailability[]>([]);
   const [pendingEditDate, setPendingEditDate] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<RoomAvailability | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const selectedRoomId =
     roomIdParam && rooms.some((r) => r.id === roomIdParam)
@@ -88,29 +90,37 @@ export function PropertyAvailabilitySection({ propertyId }: PropertyAvailability
     setAvailabilityRows(rows);
   }, []);
 
-  const handleDeleteRow = useCallback(
-    async (row: RoomAvailability) => {
-      setDeletingId(row.id);
-      try {
-        await getApiClient().deleteRoomAvailability(row.id);
-        toast({
-          title: tToast('availabilityDeleted'),
-          message: formatDateLabel(row.date.slice(0, 10)),
-          variant: 'success',
-        });
-        setGridKey((k) => k + 1);
-      } catch (err) {
-        toast({
-          title: tToast('deleteError'),
-          message: getHebergementsErrorMessage(err),
-          variant: 'error',
-        });
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [getHebergementsErrorMessage, tToast, toast],
-  );
+  const handleDeleteRequest = useCallback((row: RoomAvailability) => {
+    setDeleteError(null);
+    setConfirmTarget(row);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const row = confirmTarget;
+    setDeletingId(row.id);
+    setDeleteError(null);
+    try {
+      await getApiClient().deleteRoomAvailability(row.id);
+      setConfirmTarget(null);
+      toast({
+        title: tToast('availabilityDeleted'),
+        message: formatDateLabel(row.date.slice(0, 10)),
+        variant: 'success',
+      });
+      setGridKey((k) => k + 1);
+    } catch (err) {
+      const message = getHebergementsErrorMessage(err);
+      setDeleteError(message);
+      toast({
+        title: tToast('deleteError'),
+        message,
+        variant: 'error',
+      });
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getHebergementsErrorMessage, tToast, toast]);
 
   if (loading) {
     return <p className="text-sm text-atg-muted">{t('loadingRooms')}</p>;
@@ -147,6 +157,27 @@ export function PropertyAvailabilitySection({ propertyId }: PropertyAvailability
 
   return (
     <div className="min-w-0 space-y-8">
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => {
+          if (!open && !deletingId) setConfirmTarget(null);
+        }}
+        title={t('deleteTitle')}
+        description={
+          confirmTarget
+            ? t('deleteConfirm', {
+                date: formatDateLabel(confirmTarget.date.slice(0, 10)),
+              })
+            : undefined
+        }
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
+
       <div className="max-w-md">
         <Select
           label={t('room')}
@@ -183,7 +214,7 @@ export function PropertyAvailabilitySection({ propertyId }: PropertyAvailability
                 }
                 setPendingEditDate(date);
               }}
-              onDelete={(row) => void handleDeleteRow(row)}
+              onDelete={handleDeleteRequest}
               deletingId={deletingId}
             />
           </div>

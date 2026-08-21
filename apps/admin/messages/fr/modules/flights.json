@@ -119,7 +119,11 @@
       "summary": "Vol {flightNumber} — {classLabel} : sièges et prix par date.",
       "tableTitle": "Dates disponibles",
       "tableIntro": "Liste des jours avec sièges et tarif pour cette classe cabine.",
-      "tableEmpty": "Aucune disponibilité sur ce mois."
+      "tableEmpty": "Aucune disponibilité sur ce mois.",
+      "deleteTitle": "Supprimer la disponibilité",
+      "deleteConfirm": "Supprimer la disponibilité du {date} ? Cette action est irréversible.",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler"
     }
   },
   "referential": {

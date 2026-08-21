@@ -3,7 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import type { FlightClassAvailability } from '@africatourismgate/types';
-import { useToast } from '@africatourismgate/ui';
+import { AlertDialog, useToast } from '@africatourismgate/ui';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState } from 'react';
@@ -48,6 +48,8 @@ export function FlightClassAvailabilityPage({
   const [availabilityRows, setAvailabilityRows] = useState<FlightClassAvailability[]>([]);
   const [pendingEditDate, setPendingEditDate] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<FlightClassAvailability | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   useAdminEditPageMeta({
     ready: state.status === 'ready',
@@ -69,29 +71,37 @@ export function FlightClassAvailabilityPage({
     setAvailabilityRows(rows);
   }, []);
 
-  const handleDeleteRow = useCallback(
-    async (row: FlightClassAvailability) => {
-      setDeletingId(row.id);
-      try {
-        await getApiClient().deleteFlightClassAvailability(row.id);
-        toast({
-          title: tToast('availabilityDeleted'),
-          message: formatDateLabel(row.date.slice(0, 10)),
-          variant: 'success',
-        });
-        setGridKey((k) => k + 1);
-      } catch (error) {
-        toast({
-          title: tToast('deleteError'),
-          message: getVolsErrorMessage(error),
-          variant: 'error',
-        });
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [getVolsErrorMessage, tToast, toast],
-  );
+  const handleDeleteRequest = useCallback((row: FlightClassAvailability) => {
+    setDeleteError(null);
+    setConfirmTarget(row);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const row = confirmTarget;
+    setDeletingId(row.id);
+    setDeleteError(null);
+    try {
+      await getApiClient().deleteFlightClassAvailability(row.id);
+      setConfirmTarget(null);
+      toast({
+        title: tToast('availabilityDeleted'),
+        message: formatDateLabel(row.date.slice(0, 10)),
+        variant: 'success',
+      });
+      setGridKey((k) => k + 1);
+    } catch (error) {
+      const message = getVolsErrorMessage(error);
+      setDeleteError(message);
+      toast({
+        title: tToast('deleteError'),
+        message,
+        variant: 'error',
+      });
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getVolsErrorMessage, tToast, toast]);
 
   useEffect(() => {
     let cancelled = false;
@@ -152,6 +162,27 @@ export function FlightClassAvailabilityPage({
 
   return (
     <div className="min-w-0 space-y-8">
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => {
+          if (!open && !deletingId) setConfirmTarget(null);
+        }}
+        title={t('deleteTitle')}
+        description={
+          confirmTarget
+            ? t('deleteConfirm', {
+                date: formatDateLabel(confirmTarget.date.slice(0, 10)),
+              })
+            : undefined
+        }
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
+
       <AdminPageBackLink
         href={`/produits/vols/${flightId}?tab=classes`}
         label={t('backToFlight')}
@@ -177,7 +208,7 @@ export function FlightClassAvailabilityPage({
               }
               setPendingEditDate(date);
             }}
-            onDelete={(row) => void handleDeleteRow(row)}
+            onDelete={handleDeleteRequest}
             deletingId={deletingId}
           />
         </div>
