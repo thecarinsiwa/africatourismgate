@@ -1,13 +1,16 @@
 'use client';
 
 import { DestinationForm } from '../destinations/destination-form';
-import { AdminListPageHeader } from './admin-list-page-header';
+import { AdminIntroPage } from './admin-intro-page';
 
 export function NouvelleDestinationPageContent() {
   return (
-    <div>
-      <AdminListPageHeader routePath="produits/destinations/nouveau" titleKey="metaTitle" />
+    <AdminIntroPage
+      routePath="produits/destinations/nouveau"
+      backHref="/produits/destinations"
+      backLabelKey="backLabel"
+    >
       <DestinationForm mode="create" />
-    </div>
+    </AdminIntroPage>
   );
 }

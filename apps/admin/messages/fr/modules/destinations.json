@@ -27,7 +27,8 @@
     "sections": {
       "identity": "Identité",
       "presentation": "Présentation",
-      "geography": "Géographie"
+      "geography": "Géographie",
+      "publication": "Publication"
     },
     "slugHint": "Identifiant unique (ex. kinshasa).",
     "countryCode": "Code pays (ISO)",

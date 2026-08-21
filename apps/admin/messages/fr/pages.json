@@ -145,7 +145,8 @@
       },
       "nouveau": {
         "metaTitle": "Nouvelle destination",
-        "description": "Créez la destination puis ajoutez des points d'intérêt sur la page de modification."
+        "description": "Créez la destination puis ajoutez des points d'intérêt sur la page de modification.",
+        "backLabel": "Retour aux destinations"
       },
       "id": {
         "metaTitle": "Modifier la destination",

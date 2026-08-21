@@ -13,7 +13,6 @@ import { DestinationForm } from './destination-form';
 import { DestinationHeroBanner } from './destination-hero-banner';
 import { DestinationPoisSection } from './destination-pois-section';
 import { DestinationRelatedStatCards } from './destination-related-stat-cards';
-import { DestinationStaticMap } from './destination-static-map';
 
 type DestinationEditPageProps = {
   destinationId: string;
@@ -98,15 +97,7 @@ export function DestinationEditPage({ destinationId }: DestinationEditPageProps)
         mode="edit"
         destinationId={destinationId}
         initialDestination={destination}
-        showHeroPreview={false}
         onUpdated={(updated) => setState({ status: 'ready', destination: updated })}
-      />
-
-      <DestinationStaticMap
-        latitude={destination.latitude}
-        longitude={destination.longitude}
-        title={t('mapTitle')}
-        className="max-w-2xl"
       />
 
       <DestinationPoisSection destinationId={destinationId} />

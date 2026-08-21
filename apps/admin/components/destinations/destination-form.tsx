@@ -2,7 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Card, Checkbox, Input } from '@africatourismgate/ui';
+import { Button, Checkbox, Input } from '@africatourismgate/ui';
 import type { CreateDestinationRequest, Destination } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
@@ -10,7 +10,6 @@ import { useCallback, useId, useState } from 'react';
 import { hasValidDestinationCoords, parseDestinationCoord } from '../../lib/destination-coords';
 import { getApiClient } from '../../lib/auth/api';
 import { isValidSlug, slugifyName } from '../../lib/slug';
-import { DestinationHeroBanner } from './destination-hero-banner';
 import { DestinationStaticMap } from './destination-static-map';
 
 export type DestinationFormValues = {
@@ -97,7 +96,6 @@ type DestinationFormProps = {
   mode: 'create' | 'edit';
   destinationId?: string;
   initialDestination?: Destination;
-  showHeroPreview?: boolean;
   onUpdated?: (destination: Destination) => void;
 };
 
@@ -105,7 +103,6 @@ export function DestinationForm({
   mode,
   destinationId,
   initialDestination,
-  showHeroPreview = mode === 'create',
   onUpdated,
 }: DestinationFormProps) {
   const { destinations: getDestinationsErrorMessage } = useAdminErrorMessages();
@@ -117,6 +114,7 @@ export function DestinationForm({
   const tLoading = useTranslations('common.loading');
   const router = useRouter();
   const countryId = useId();
+  const descriptionId = useId();
   const [values, setValues] = useState<DestinationFormValues>(() =>
     initialDestination ? destinationToFormValues(initialDestination) : defaultValues,
   );
@@ -203,129 +201,129 @@ export function DestinationForm({
   const textareaClass =
     'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg placeholder:text-atg-muted/70 outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary';
 
-  const previewName = values.name.trim() || t('previewName');
-
   return (
-    <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
+    <form
+      onSubmit={(e) => void handleSubmit(e)}
+      className={mode === 'create' ? 'mx-auto w-full max-w-5xl space-y-6' : 'w-full space-y-6'}
+    >
       {formError ? (
-        <p
-          role="alert"
-          className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-400"
-        >
+        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {formError}
         </p>
       ) : null}
 
-      {showHeroPreview ? (
-        <DestinationHeroBanner
-          name={previewName}
-          slug={values.slug.trim() || undefined}
-          countryCode={values.countryCode.trim() || '—'}
-          imageUrl={values.imageUrl.trim() || null}
-        />
-      ) : null}
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)] lg:items-start xl:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
+        <div className="min-w-0 space-y-8">
+          <section className="space-y-4">
+            <h3 className="text-sm font-semibold text-atg-fg">{t('sections.identity')}</h3>
+            <Input
+              label={tCommonColumns('name')}
+              name="name"
+              value={values.name}
+              onChange={(e) => updateField('name', e.target.value)}
+              error={fieldErrors.name}
+              required
+            />
+            <Input
+              label={tCommonColumns('slug')}
+              name="slug"
+              value={values.slug}
+              onChange={(e) => {
+                setSlugTouched(true);
+                updateField('slug', e.target.value.toLowerCase());
+              }}
+              hint={t('slugHint')}
+              error={fieldErrors.slug}
+              required
+            />
+            <Input
+              label={t('countryCode')}
+              name="countryCode"
+              id={countryId}
+              value={values.countryCode}
+              onChange={(e) => updateField('countryCode', e.target.value.toUpperCase())}
+              maxLength={2}
+              hint={t('countryCodeHint')}
+              error={fieldErrors.countryCode}
+              required
+            />
+          </section>
 
-      <Card variant="dashboard" className="space-y-4">
-        <h3 className="text-sm font-semibold text-atg-fg">{t('sections.identity')}</h3>
-        <Input
-          label={tCommonColumns('name')}
-          name="name"
-          value={values.name}
-          onChange={(e) => updateField('name', e.target.value)}
-          error={fieldErrors.name}
-          required
-        />
-        <Input
-          label={tCommonColumns('slug')}
-          name="slug"
-          value={values.slug}
-          onChange={(e) => {
-            setSlugTouched(true);
-            updateField('slug', e.target.value.toLowerCase());
-          }}
-          hint={t('slugHint')}
-          error={fieldErrors.slug}
-          required
-        />
-        <Input
-          label={t('countryCode')}
-          name="countryCode"
-          id={countryId}
-          value={values.countryCode}
-          onChange={(e) => updateField('countryCode', e.target.value.toUpperCase())}
-          maxLength={2}
-          hint={t('countryCodeHint')}
-          error={fieldErrors.countryCode}
-          required
-        />
-      </Card>
-
-      <Card variant="dashboard" className="space-y-4">
-        <h3 className="text-sm font-semibold text-atg-fg">{t('sections.presentation')}</h3>
-        <Input
-          label={t('heroImageUrl')}
-          type="url"
-          value={values.imageUrl}
-          onChange={(e) => updateField('imageUrl', e.target.value)}
-          placeholder={tCommonForm('urlPlaceholder')}
-          hint={t('heroImageHint')}
-        />
-        <div>
-          <label htmlFor="description" className="mb-2 block text-sm font-medium text-atg-fg">
-            {tCommonForm('description')}
-          </label>
-          <textarea
-            id="description"
-            name="description"
-            rows={4}
-            value={values.description}
-            onChange={(e) => updateField('description', e.target.value)}
-            className={textareaClass}
-          />
+          <section className="space-y-4">
+            <h3 className="text-sm font-semibold text-atg-fg">{t('sections.presentation')}</h3>
+            <Input
+              label={t('heroImageUrl')}
+              type="url"
+              value={values.imageUrl}
+              onChange={(e) => updateField('imageUrl', e.target.value)}
+              placeholder={tCommonForm('urlPlaceholder')}
+              hint={t('heroImageHint')}
+            />
+            <div>
+              <label htmlFor={descriptionId} className="mb-2 block text-sm font-medium text-atg-fg">
+                {tCommonForm('description')}
+              </label>
+              <textarea
+                id={descriptionId}
+                name="description"
+                rows={5}
+                value={values.description}
+                onChange={(e) => updateField('description', e.target.value)}
+                className={textareaClass}
+              />
+            </div>
+          </section>
         </div>
-        <Checkbox
-          id="isFeatured"
-          name="isFeatured"
-          checked={values.isFeatured}
-          onChange={(e) => updateField('isFeatured', e.target.checked)}
-          label={t('isFeatured')}
-        />
-        <p className="text-sm text-atg-muted">{t('isFeaturedHint')}</p>
-      </Card>
 
-      <Card variant="dashboard" className="space-y-4">
-        <h3 className="text-sm font-semibold text-atg-fg">{t('sections.geography')}</h3>
-        <p className="text-sm text-atg-muted">{t('geographyIntro')}</p>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Input
-            label={tCommonForm('latitude')}
-            type="text"
-            inputMode="decimal"
-            value={values.latitude}
-            onChange={(e) => updateField('latitude', e.target.value)}
-            placeholder="-4.3058"
-            error={fieldErrors.latitude}
-          />
-          <Input
-            label={tCommonForm('longitude')}
-            type="text"
-            inputMode="decimal"
-            value={values.longitude}
-            onChange={(e) => updateField('longitude', e.target.value)}
-            placeholder="15.3000"
-            error={fieldErrors.longitude}
-          />
-        </div>
-        {hasValidDestinationCoords(values.latitude, values.longitude) ? (
-          <DestinationStaticMap
-            latitude={values.latitude}
-            longitude={values.longitude}
-            title={t('mapPreview')}
-          />
-        ) : null}
-      </Card>
+        <aside className="min-w-0 space-y-6 lg:sticky lg:top-6">
+          <section className="space-y-3">
+            <h3 className="text-sm font-semibold text-atg-fg">{t('sections.publication')}</h3>
+            <Checkbox
+              id="isFeatured"
+              name="isFeatured"
+              checked={values.isFeatured}
+              onChange={(e) => updateField('isFeatured', e.target.checked)}
+              label={t('isFeatured')}
+            />
+            <p className="text-xs text-atg-muted">{t('isFeaturedHint')}</p>
+          </section>
 
-      <div className="flex flex-wrap gap-3">
+          <section className="space-y-4">
+            <h3 className="text-sm font-semibold text-atg-fg">{t('sections.geography')}</h3>
+            <p className="text-xs text-atg-muted">{t('geographyIntro')}</p>
+            <Input
+              label={tCommonForm('latitude')}
+              type="text"
+              inputMode="decimal"
+              value={values.latitude}
+              onChange={(e) => updateField('latitude', e.target.value)}
+              placeholder="-4.3058"
+              hint={t('latitudeHint')}
+              error={fieldErrors.latitude}
+            />
+            <Input
+              label={tCommonForm('longitude')}
+              type="text"
+              inputMode="decimal"
+              value={values.longitude}
+              onChange={(e) => updateField('longitude', e.target.value)}
+              placeholder="15.3000"
+              hint={t('longitudeHint')}
+              error={fieldErrors.longitude}
+            />
+            {hasValidDestinationCoords(values.latitude, values.longitude) ? (
+              <DestinationStaticMap
+                latitude={values.latitude}
+                longitude={values.longitude}
+                title={t('mapPreview')}
+                compact
+              />
+            ) : null}
+          </section>
+        </aside>
+      </div>
+
+      <div className="flex flex-wrap gap-3 pt-2">
         <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>
           {mode === 'create' ? t('submitCreate') : tActions('save')}
         </Button>
