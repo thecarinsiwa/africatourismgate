@@ -126,21 +126,21 @@ export function VehicleSpecsGrid({ categoryName }: VehicleSpecsGridProps) {
   );
 
   return (
-    <div className="flex flex-wrap gap-3">
+    <div className="grid grid-cols-3 gap-2 sm:gap-3">
       {items.map((item) => (
         <Card
           key={item.label}
           variant="dashboard"
-          className="flex min-w-[9.5rem] flex-1 items-center gap-3 p-3 sm:max-w-[14rem] sm:flex-none"
+          className="flex min-w-0 items-center gap-2.5 p-2.5 sm:p-3"
         >
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-atg-surface text-primary ring-1 ring-atg-border/60">
             {item.icon}
           </span>
           <div className="min-w-0">
-            <p className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+            <p className="text-[10px] font-medium uppercase tracking-wide text-atg-muted sm:text-xs">
               {item.label}
             </p>
-            <p className="mt-0.5 text-sm font-semibold text-atg-fg">{item.value}</p>
+            <p className="mt-0.5 truncate text-sm font-semibold text-atg-fg">{item.value}</p>
           </div>
         </Card>
       ))}
