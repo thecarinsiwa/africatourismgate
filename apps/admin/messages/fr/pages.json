@@ -235,7 +235,14 @@
       }
     },
     "croisieres": {
+      "title": "Croisières",
       "description": "Départs programmés, itinéraires, cabines et disponibilités.",
+      "actions": {
+        "lines": "Lignes",
+        "ports": "Ports",
+        "ships": "Navires",
+        "new": "Nouveau départ"
+      },
       "links": {
         "ships": "Navires",
         "lines": "Lignes de croisière",

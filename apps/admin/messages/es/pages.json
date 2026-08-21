@@ -235,7 +235,14 @@
       }
     },
     "croisieres": {
+      "title": "Cruceros",
       "description": "Salidas programadas, itinerarios, cabinas y disponibilidad.",
+      "actions": {
+        "lines": "Líneas",
+        "ports": "Puertos",
+        "ships": "Barcos",
+        "new": "Nueva salida"
+      },
       "links": {
         "ships": "Barcos",
         "lines": "Líneas de crucero",

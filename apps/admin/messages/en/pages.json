@@ -235,7 +235,14 @@
       }
     },
     "croisieres": {
+      "title": "Cruises",
       "description": "Scheduled departures, itineraries, cabins and availability.",
+      "actions": {
+        "lines": "Lines",
+        "ports": "Ports",
+        "ships": "Ships",
+        "new": "New sailing"
+      },
       "links": {
         "ships": "Ships",
         "lines": "Cruise lines",
