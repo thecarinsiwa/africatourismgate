@@ -12,9 +12,11 @@ import type {
 } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useState, type ReactNode } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import { isRichTextEmpty } from '../../lib/rich-text';
 import { isValidSlug, slugifyName } from '../../lib/slug';
+import { RichTextEditor } from '../rich-text-editor';
 
 export type PropertyFormValues = {
   destinationId: string;
@@ -57,7 +59,9 @@ function toPayload(values: PropertyFormValues): CreatePropertyRequest {
     slug: values.slug.trim().toLowerCase(),
     propertyType: values.propertyType,
     ...(star !== undefined && Number.isFinite(star) ? { starRating: star } : {}),
-    ...(values.description.trim() ? { description: values.description.trim() } : {}),
+    ...(values.description.trim() && !isRichTextEmpty(values.description)
+      ? { description: values.description.trim() }
+      : {}),
     ...(values.addressLine.trim() ? { addressLine: values.addressLine.trim() } : {}),
   };
 }
@@ -66,9 +70,16 @@ type PropertyFormProps = {
   mode: 'create' | 'edit';
   propertyId?: string;
   initialProperty?: Property;
+  /** Affiché à droite de la carte Identité (ex. photos en édition). */
+  identityAside?: ReactNode;
 };
 
-export function PropertyForm({ mode, propertyId, initialProperty }: PropertyFormProps) {
+export function PropertyForm({
+  mode,
+  propertyId,
+  initialProperty,
+  identityAside,
+}: PropertyFormProps) {
   const { hebergements: getHebergementsErrorMessage } = useAdminErrorMessages();
   const tForm = useTranslations('modules.properties.form');
   const tValidation = useTranslations('modules.common.validation');
@@ -81,7 +92,6 @@ export function PropertyForm({ mode, propertyId, initialProperty }: PropertyForm
   const router = useRouter();
   const { toast } = useToast();
   const typeId = useId();
-  const descId = useId();
   const [destinations, setDestinations] = useState<Destination[]>([]);
   const [values, setValues] = useState<PropertyFormValues>(() =>
     initialProperty ? propertyToFormValues(initialProperty) : defaultValues,
@@ -178,7 +188,10 @@ export function PropertyForm({ mode, propertyId, initialProperty }: PropertyForm
   const starValue = values.starRating.trim() !== '' ? Number(values.starRating) : 0;
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
+    <form
+      onSubmit={handleSubmit}
+      className={identityAside ? 'w-full space-y-4' : 'w-full max-w-3xl space-y-4'}
+    >
       {formError ? (
         <p
           role="alert"
@@ -188,74 +201,78 @@ export function PropertyForm({ mode, propertyId, initialProperty }: PropertyForm
         </p>
       ) : null}
 
-      <Card variant="dashboard" className="space-y-4">
-        <h3 className="text-sm font-semibold text-atg-fg">{tForm('sections.identity')}</h3>
-        <Input
-          label={tForm('name')}
-          value={values.name}
-          onChange={(e) => updateField('name', e.target.value)}
-          error={fieldErrors.name}
-          required
-        />
-        <Input
-          label={tForm('slug')}
-          value={values.slug}
-          onChange={(e) => {
-            setSlugTouched(true);
-            updateField('slug', e.target.value.toLowerCase());
-          }}
-          error={fieldErrors.slug}
-          required
-        />
-        <Select
-          id={typeId}
-          label={tForm('type')}
-          value={values.propertyType}
-          onChange={(e) => updateField('propertyType', e.target.value as PropertyType)}
-          options={propertyTypeOptions}
-        />
-      </Card>
+      <div
+        className={
+          identityAside
+            ? 'grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)] lg:items-start xl:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]'
+            : undefined
+        }
+      >
+        <Card variant="dashboard" padding="sm">
+          <h3 className="text-sm font-semibold text-atg-fg">{tForm('sections.identity')}</h3>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+            <Input
+              label={tForm('name')}
+              value={values.name}
+              onChange={(e) => updateField('name', e.target.value)}
+              error={fieldErrors.name}
+              required
+            />
+            <Input
+              label={tForm('slug')}
+              value={values.slug}
+              onChange={(e) => {
+                setSlugTouched(true);
+                updateField('slug', e.target.value.toLowerCase());
+              }}
+              error={fieldErrors.slug}
+              required
+            />
+            <Select
+              id={typeId}
+              label={tForm('type')}
+              value={values.propertyType}
+              onChange={(e) => updateField('propertyType', e.target.value as PropertyType)}
+              options={propertyTypeOptions}
+            />
+            <Select
+              label={tForm('destination')}
+              value={values.destinationId}
+              onChange={(e) => updateField('destinationId', e.target.value)}
+              options={destinationOptions}
+              error={fieldErrors.destinationId}
+              required
+            />
+            <div className="sm:col-span-2">
+              <Input
+                label={tForm('address')}
+                value={values.addressLine}
+                onChange={(e) => updateField('addressLine', e.target.value)}
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <StarRatingInput
+                label={tForm('starRating')}
+                value={Number.isFinite(starValue) ? starValue : 0}
+                onChange={(v) => updateField('starRating', v > 0 ? String(v) : '')}
+                step={0.5}
+                hint={tForm('starRatingHint')}
+                error={fieldErrors.starRating}
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <RichTextEditor
+                label={tCommonForm('description')}
+                value={values.description}
+                onChange={(html) => updateField('description', html)}
+                contentClassName="min-h-[140px]"
+              />
+            </div>
+          </div>
+        </Card>
 
-      <Card variant="dashboard" className="space-y-4">
-        <h3 className="text-sm font-semibold text-atg-fg">{tForm('sections.location')}</h3>
-        <Select
-          label={tForm('destination')}
-          value={values.destinationId}
-          onChange={(e) => updateField('destinationId', e.target.value)}
-          options={destinationOptions}
-          error={fieldErrors.destinationId}
-          required
-        />
-        <Input
-          label={tForm('address')}
-          value={values.addressLine}
-          onChange={(e) => updateField('addressLine', e.target.value)}
-        />
-      </Card>
-
-      <Card variant="dashboard" className="space-y-4">
-        <h3 className="text-sm font-semibold text-atg-fg">{tForm('sections.classification')}</h3>
-        <StarRatingInput
-          label={tForm('starRating')}
-          value={Number.isFinite(starValue) ? starValue : 0}
-          onChange={(v) => updateField('starRating', v > 0 ? String(v) : '')}
-          step={0.5}
-          hint={tForm('starRatingHint')}
-          error={fieldErrors.starRating}
-        />
-        <div>
-          <label htmlFor={descId} className="mb-2 block text-sm font-medium text-atg-fg">
-            {tCommonForm('description')}
-          </label>
-          <textarea
-            id={descId}
-            rows={3}
-            value={values.description}
-            onChange={(e) => updateField('description', e.target.value)}
-            className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm"
-          />
-        </div>
-      </Card>
+        {identityAside ? <div className="min-w-0">{identityAside}</div> : null}
+      </div>
 
       <div className="flex flex-wrap gap-3">
         <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>

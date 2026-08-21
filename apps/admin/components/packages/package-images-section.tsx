@@ -5,18 +5,16 @@ import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 import {
   AlertDialog,
   Button,
-  Card,
-  DataTable,
-  DataTableActionButton,
-  DataTableActions,
   Input,
+  Modal,
   cn,
-  type ColumnDef,
 } from '@africatourismgate/ui';
 import type { PackageImage, PackageSuggestedImageGroup } from '@africatourismgate/types';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { AdminImageViewerModal } from '../admin-image-viewer-modal';
+import { AdminImagesGalleryGrid } from '../common/admin-images-gallery-grid';
 import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
 import { getSession } from '../../lib/auth/session';
 import { usePackageItemTypeLabels } from '../../lib/i18n/use-module-labels';
@@ -68,6 +66,7 @@ export function PackageImagesSection({
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [confirmTarget, setConfirmTarget] = useState<PackageImage | null>(null);
   const [addingSuggestionKey, setAddingSuggestionKey] = useState<string | null>(null);
+  const [viewerIndex, setViewerIndex] = useState<number | null>(null);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -129,6 +128,15 @@ export function PackageImagesSection({
     setFormError(null);
   }
 
+  const openViewer = useCallback(
+    (image: PackageImage) => {
+      const images = state.status === 'ready' ? state.images : [];
+      const index = images.findIndex((item) => item.id === image.id);
+      setViewerIndex(index >= 0 ? index : 0);
+    },
+    [state],
+  );
+
   async function handleLocalImagePick(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -150,16 +158,11 @@ export function PackageImagesSection({
       setFormError(null);
       const body = new FormData();
       body.append('file', file);
-      const response = await fetch(
-        `${resolveApiBaseUrl()}/packages/${packageId}/upload-image`,
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${session.accessToken}`,
-          },
-          body,
-        },
-      );
+      const response = await fetch(`${resolveApiBaseUrl()}/packages/${packageId}/upload-image`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${session.accessToken}` },
+        body,
+      });
       if (!response.ok) {
         throw new Error('Upload package image failed');
       }
@@ -256,82 +259,6 @@ export function PackageImagesSection({
     }
   }, [confirmTarget, getPackagesErrorMessage, load, onChanged]);
 
-  const columns = useMemo<ColumnDef<PackageImage, unknown>[]>(
-    () => [
-      {
-        id: 'preview',
-        header: tCommon('columns.preview'),
-        cell: ({ row }) => (
-          <Image
-            src={row.original.url}
-            alt=""
-            width={64}
-            height={40}
-            unoptimized
-            className="h-10 w-16 rounded object-cover"
-            onError={(e) => {
-              (e.target as HTMLImageElement).style.display = 'none';
-            }}
-          />
-        ),
-      },
-      {
-        accessorKey: 'url',
-        header: tCommon('columns.url'),
-        cell: ({ row }) => (
-          <a
-            href={row.original.url}
-            target="_blank"
-            rel="noreferrer"
-            className="max-w-xs truncate text-sm text-primary hover:underline"
-          >
-            {row.original.url}
-          </a>
-        ),
-      },
-      {
-        accessorKey: 'caption',
-        header: tCommon('columns.caption'),
-        cell: ({ row }) => (
-          <span className="text-sm text-atg-muted">{row.original.caption ?? emptyDash}</span>
-        ),
-      },
-      {
-        id: 'source',
-        header: tCommon('columns.source'),
-        cell: ({ row }) => (
-          <span className="text-sm text-atg-muted">
-            {row.original.sourcePackageItemId
-              ? tGallery('sourceIncluded')
-              : tGallery('sourceManual')}
-          </span>
-        ),
-      },
-      {
-        accessorKey: 'sortOrder',
-        header: tCommon('columns.sortOrder'),
-        meta: { align: 'center' },
-      },
-      {
-        id: 'actions',
-        header: tCommon('columns.actions'),
-        meta: { align: 'right' },
-        cell: ({ row }) => (
-          <DataTableActions>
-            <DataTableActionButton action="edit" onClick={() => openEdit(row.original)} />
-            <DataTableActionButton
-              action="delete"
-              onClick={() => handleDeleteRequest(row.original)}
-              disabled={deletingId === row.original.id}
-              loading={deletingId === row.original.id}
-            />
-          </DataTableActions>
-        ),
-      },
-    ],
-    [deletingId, emptyDash, handleDeleteRequest, tCommon, tGallery],
-  );
-
   const images = state.status === 'ready' ? state.images : [];
   const hasSuggestions = suggestions.some((group) => group.images.length > 0);
 
@@ -339,7 +266,9 @@ export function PackageImagesSection({
     <>
       <AlertDialog
         open={!!confirmTarget}
-        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        onOpenChange={(open) => {
+          if (!open) setConfirmTarget(null);
+        }}
         title={tGallery('deleteTitle')}
         description={tGallery('deleteConfirm')}
         confirmLabel={tGallery('deleteConfirmButton')}
@@ -349,184 +278,214 @@ export function PackageImagesSection({
         error={deleteError}
         onConfirm={() => void handleDeleteConfirm()}
       />
-    <section className={cn('space-y-6', embedded ? '' : 'border-t border-atg-border pt-10')}>
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="text-lg font-semibold text-atg-fg">{tGallery('titlePackage')}</h2>
-          <p className="mt-1 text-sm text-atg-muted">{tGallery('introPackage')}</p>
-        </div>
-        {!showForm ? (
+
+      <AdminImageViewerModal
+        open={viewerIndex !== null}
+        onOpenChange={(open) => {
+          if (!open) setViewerIndex(null);
+        }}
+        images={images}
+        index={viewerIndex ?? 0}
+        onIndexChange={setViewerIndex}
+        fallbackLabel={tGallery('titlePackage')}
+      />
+
+      <Modal
+        open={showForm}
+        onOpenChange={(open) => {
+          if (!open && !submitting && !uploading) resetForm();
+        }}
+        title={editing ? tGallery('editPhoto') : tGallery('newPhoto')}
+        showClose={!submitting && !uploading}
+        closeAriaLabel={tActions('close')}
+        className="max-w-lg"
+      >
+        <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4">
+          {formError ? (
+            <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+              {formError}
+            </p>
+          ) : null}
+          <div className="space-y-3">
+            <p className="text-xs font-medium text-atg-fg">{tCommon('form.image')}</p>
+            <div className="flex flex-wrap items-center gap-3">
+              <label className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10">
+                {uploading ? tCommon('form.uploading') : tCommon('form.chooseFile')}
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="hidden"
+                  onChange={(e) => void handleLocalImagePick(e)}
+                  disabled={uploading || submitting}
+                />
+              </label>
+              <span className="text-xs text-atg-muted">{tCommon('form.imageFormatHint')}</span>
+            </div>
+            {formValues.url.trim() ? (
+              <Image
+                src={formValues.url.trim()}
+                alt={formValues.caption.trim() || tCommon('columns.preview')}
+                width={320}
+                height={200}
+                unoptimized
+                className="h-40 w-full max-w-sm rounded-lg border border-atg-border object-cover"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                }}
+              />
+            ) : null}
+          </div>
+          <Input
+            label={tCommon('form.externalUrlOptional')}
+            type="url"
+            value={formValues.url}
+            onChange={(e) => setFormValues((p) => ({ ...p, url: e.target.value }))}
+            placeholder={tCommon('form.urlPlaceholder')}
+          />
+          <Input
+            label={tCommon('columns.caption')}
+            value={formValues.caption}
+            onChange={(e) => setFormValues((p) => ({ ...p, caption: e.target.value }))}
+          />
+          <Input
+            label={tCommon('form.displayOrder')}
+            type="number"
+            min={0}
+            value={formValues.sortOrder}
+            onChange={(e) => setFormValues((p) => ({ ...p, sortOrder: e.target.value }))}
+          />
+          <div className="flex flex-wrap gap-3 pt-2">
+            <Button type="submit" loading={submitting} disabled={uploading}>
+              {editing ? tActions('save') : tActions('create')}
+            </Button>
+            <Button type="button" variant="outline" onClick={resetForm} disabled={submitting}>
+              {tActions('cancel')}
+            </Button>
+          </div>
+        </form>
+      </Modal>
+
+      <section className={cn('space-y-6', embedded ? '' : 'border-t border-atg-border pt-10')}>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            {embedded ? (
+              <h3 className="text-sm font-semibold text-atg-fg">{tGallery('titlePackage')}</h3>
+            ) : (
+              <>
+                <h2 className="text-lg font-semibold text-atg-fg">{tGallery('titlePackage')}</h2>
+                <p className="mt-1 text-sm text-atg-muted">{tGallery('introPackage')}</p>
+              </>
+            )}
+          </div>
           <Button type="button" onClick={openCreate}>
             {tGallery('addPhoto')}
           </Button>
-        ) : null}
-      </div>
+        </div>
 
-      {formError ? (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {formError}
-        </p>
-      ) : null}
-
-      <div className="space-y-4">
-        <h3 className="text-sm font-medium text-atg-fg">{tGallery('suggestionsTitle')}</h3>
-        {suggestionsLoading ? (
-          <p className="text-sm text-atg-muted">{tGallery('suggestionsLoading')}</p>
-        ) : !hasSuggestions ? (
-          <p className="text-sm text-atg-muted">{tGallery('suggestionsEmpty')}</p>
-        ) : (
-          <div className="space-y-4">
-            {suggestions.map((group) =>
-              group.images.length === 0 ? null : (
-                <Card key={group.packageItemId} variant="dashboard" className="p-4">
-                  <div className="mb-3 flex items-center gap-2">
-                    <PackageItemTypeIcon itemType={group.itemType} />
-                    <div>
-                      <p className="text-sm font-medium text-atg-fg">{group.label}</p>
-                      <p className="text-xs text-atg-muted">
-                        {getPackageItemTypeLabel(group.itemType, itemTypeLabels)}
-                      </p>
+        <div className="space-y-3">
+          <h4 className="text-xs font-semibold uppercase tracking-wide text-atg-muted">
+            {tGallery('suggestionsTitle')}
+          </h4>
+          {suggestionsLoading ? (
+            <p className="text-sm text-atg-muted">{tGallery('suggestionsLoading')}</p>
+          ) : !hasSuggestions ? (
+            <p className="text-sm text-atg-muted">{tGallery('suggestionsEmpty')}</p>
+          ) : (
+            <div className="space-y-4">
+              {suggestions.map((group) =>
+                group.images.length === 0 ? null : (
+                  <div
+                    key={group.packageItemId}
+                    className="rounded-xl border border-atg-border bg-atg-elevated/40 p-3 sm:p-4"
+                  >
+                    <div className="mb-3 flex items-center gap-2">
+                      <PackageItemTypeIcon itemType={group.itemType} />
+                      <div>
+                        <p className="text-sm font-medium text-atg-fg">{group.label}</p>
+                        <p className="text-xs text-atg-muted">
+                          {getPackageItemTypeLabel(group.itemType, itemTypeLabels)}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+                      {group.images.map((image) => {
+                        const key = `${group.packageItemId}:${image.url}`;
+                        const alreadyAdded = existingUrls.has(image.url);
+                        const loading = addingSuggestionKey === key;
+                        return (
+                          <div
+                            key={key}
+                            className="overflow-hidden rounded-lg border border-atg-border bg-atg-elevated"
+                          >
+                            <Image
+                              src={image.url}
+                              alt={image.caption ?? group.label}
+                              width={160}
+                              height={120}
+                              unoptimized
+                              className="aspect-[4/3] w-full object-cover"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).style.display = 'none';
+                              }}
+                            />
+                            <div className="space-y-2 p-2">
+                              {image.caption ? (
+                                <p className="truncate text-xs text-atg-muted">{image.caption}</p>
+                              ) : null}
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant={alreadyAdded ? 'outline' : 'primary'}
+                                className="w-full"
+                                disabled={alreadyAdded || loading}
+                                loading={loading}
+                                onClick={() =>
+                                  void handleAddSuggestion(
+                                    group,
+                                    image.url,
+                                    image.caption,
+                                    image.sortOrder,
+                                  )
+                                }
+                              >
+                                {alreadyAdded
+                                  ? tGallery('alreadyAdded')
+                                  : tGallery('addFromSuggestion')}
+                              </Button>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-                    {group.images.map((image) => {
-                      const key = `${group.packageItemId}:${image.url}`;
-                      const alreadyAdded = existingUrls.has(image.url);
-                      const loading = addingSuggestionKey === key;
-                      return (
-                        <div
-                          key={key}
-                          className="overflow-hidden rounded-lg border border-atg-border"
-                        >
-                          <Image
-                            src={image.url}
-                            alt={image.caption ?? group.label}
-                            width={160}
-                            height={120}
-                            unoptimized
-                            className="aspect-[4/3] w-full object-cover"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).style.display = 'none';
-                            }}
-                          />
-                          <div className="space-y-2 p-2">
-                            {image.caption ? (
-                              <p className="truncate text-xs text-atg-muted">{image.caption}</p>
-                            ) : null}
-                            <Button
-                              type="button"
-                              size="sm"
-                              variant={alreadyAdded ? 'outline' : 'primary'}
-                              className="w-full"
-                              disabled={alreadyAdded || loading}
-                              loading={loading}
-                              onClick={() =>
-                                void handleAddSuggestion(
-                                  group,
-                                  image.url,
-                                  image.caption,
-                                  image.sortOrder,
-                                )
-                              }
-                            >
-                              {alreadyAdded
-                                ? tGallery('alreadyAdded')
-                                : tGallery('addFromSuggestion')}
-                            </Button>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </Card>
-              ),
-            )}
-          </div>
-        )}
-      </div>
-
-      {showForm ? (
-        <Card variant="dashboard" className="max-w-2xl">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <h3 className="text-sm font-medium">
-              {editing ? tGallery('editPhoto') : tGallery('newPhoto')}
-            </h3>
-            <div className="space-y-3">
-              <p className="text-xs font-medium text-atg-fg">{tCommon('form.image')}</p>
-              <div className="flex flex-wrap items-center gap-3">
-                <label className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10">
-                  {uploading ? tCommon('form.uploading') : tCommon('form.chooseFile')}
-                  <input
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp"
-                    className="hidden"
-                    onChange={(e) => void handleLocalImagePick(e)}
-                    disabled={uploading || submitting}
-                  />
-                </label>
-                <span className="text-xs text-atg-muted">{tCommon('form.imageFormatHint')}</span>
-              </div>
-              {formValues.url.trim() ? (
-                <Image
-                  src={formValues.url.trim()}
-                  alt={formValues.caption.trim() || tCommon('columns.preview')}
-                  width={320}
-                  height={200}
-                  unoptimized
-                  className="h-40 w-full max-w-sm rounded-lg border border-atg-border object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = 'none';
-                  }}
-                />
-              ) : null}
+                ),
+              )}
             </div>
-            <Input
-              label={tCommon('form.externalUrlOptional')}
-              type="url"
-              value={formValues.url}
-              onChange={(e) => setFormValues((p) => ({ ...p, url: e.target.value }))}
-              placeholder={tCommon('form.urlPlaceholder')}
-            />
-            <Input
-              label={tCommon('columns.caption')}
-              value={formValues.caption}
-              onChange={(e) => setFormValues((p) => ({ ...p, caption: e.target.value }))}
-            />
-            <Input
-              label={tCommon('form.displayOrder')}
-              type="number"
-              min={0}
-              value={formValues.sortOrder}
-              onChange={(e) => setFormValues((p) => ({ ...p, sortOrder: e.target.value }))}
-            />
-            <div className="flex gap-3">
-              <Button type="submit" loading={submitting} disabled={uploading}>
-                {editing ? tActions('save') : tActions('create')}
-              </Button>
-              <Button type="button" variant="outline" onClick={resetForm}>
-                {tActions('cancel')}
-              </Button>
-            </div>
-          </form>
-        </Card>
-      ) : null}
+          )}
+        </div>
 
-      {state.status === 'error' ? (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {state.message}
-        </p>
-      ) : (
-        <Card variant="dashboard" padding="none" className="overflow-hidden">
-          <DataTable
-            columns={columns}
-            data={images}
-            isLoading={state.status === 'loading'}
+        {state.status === 'error' ? (
+          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+            {state.message}
+          </p>
+        ) : (
+          <AdminImagesGalleryGrid
+            images={images}
+            ariaLabel={tGallery('titlePackage')}
             emptyMessage={tGallery('emptyPackage')}
-            getRowId={(row) => row.id}
+            isLoading={state.status === 'loading'}
+            loadingMessage={tGallery('loading')}
+            deletingId={deletingId}
+            emptyDash={emptyDash}
+            viewLabel={tGallery('viewerOpen')}
+            editLabel={tActions('edit')}
+            deleteLabel={tActions('delete')}
+            onView={openViewer}
+            onEdit={openEdit}
+            onDelete={handleDeleteRequest}
           />
-        </Card>
-      )}
-    </section>
+        )}
+      </section>
     </>
   );
 }

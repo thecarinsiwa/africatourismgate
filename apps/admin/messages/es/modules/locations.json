@@ -40,6 +40,25 @@
       "categoryRequired": "La categoría es obligatoria."
     }
   },
+  "view": {
+    "title": "Ver vehículo",
+    "editButton": "Editar vehículo",
+    "notFound": "Vehículo no encontrado.",
+    "infoTitle": "Información",
+    "imagesTitle": "Fotos",
+    "imagesIntro": "{count, plural, =0 {Ninguna foto} one {# foto} other {# fotos}}",
+    "imagesEmpty": "Ninguna foto para este vehículo.",
+    "carouselPrev": "Foto anterior",
+    "carouselNext": "Foto siguiente",
+    "carouselThumbs": "Miniaturas de fotos",
+    "carouselGoTo": "Ir a la foto {index}",
+    "carouselOpen": "Ampliar la foto {index}",
+    "carouselViewerTitle": "Vista previa de la foto",
+    "carouselClose": "Cerrar vista previa",
+    "availabilityIntro": "{count, plural, =0 {Ningún horario} one {# horario} other {# horarios}}",
+    "availabilitySearchPlaceholder": "Buscar horarios…",
+    "availabilitySearchEmpty": "Ningún horario coincide con esta búsqueda."
+  },
   "detail": {
     "title": "Editar vehículo",
     "viewTitle": "Ver vehículo",
@@ -50,7 +69,12 @@
     "noLicensePlate": "Sin matrícula",
     "photoGallery": "Galería de fotos",
     "photoGalleryIntro": "{count, plural, =0 {Ninguna foto} one {# foto} other {# fotos}}",
-    "noPhotos": "Ninguna foto para este vehículo."
+    "noPhotos": "Ninguna foto para este vehículo.",
+    "tabsAria": "Secciones del vehículo",
+    "tabs": {
+      "vehicle": "Vehículo",
+      "availability": "Disponibilidad"
+    }
   },
   "sections": {
     "availability": {
@@ -75,6 +99,11 @@
       "filterTo": "hasta",
       "status": "Estado",
       "empty": "Ninguna franja en este período.",
+      "searchPlaceholder": "Buscar franjas…",
+      "searchEmpty": "Ninguna franja coincide con esta búsqueda.",
+      "stats": {
+        "total": "Total"
+      },
       "deleteTitle": "Eliminar franja",
       "deleteConfirm": "Esta franja será eliminada permanentemente.",
       "deleteConfirmButton": "Eliminar",
@@ -89,11 +118,29 @@
       "emptySearch": "Ninguna categoría coincide con esta búsqueda.",
       "searchPlaceholder": "Buscar por nombre o modelo…",
       "searchAria": "Buscar categorías",
+      "ariaLabel": "Lista de categorías de vehículos",
       "exampleModel": "Modelo de ejemplo",
+      "viewGrid": "Cuadrícula",
+      "viewTable": "Tabla",
+      "viewModeAria": "Modo de visualización",
       "deleteTitle": "Eliminar categoría",
       "deleteConfirm": "La categoría «{name}» será eliminada permanentemente.",
       "deleteConfirmButton": "Eliminar",
-      "cancel": "Cancelar"
+      "cancel": "Cancelar",
+      "stats": {
+        "total": {
+          "label": "Categorías",
+          "subtitle": "Tipos de vehículos"
+        },
+        "withExampleModel": {
+          "label": "Con modelo",
+          "subtitle": "Ejemplo informado"
+        },
+        "withoutExampleModel": {
+          "label": "Sin modelo",
+          "subtitle": "Por completar"
+        }
+      }
     },
     "agencies": {
       "new": "Nueva agencia",
@@ -102,13 +149,31 @@
       "emptySearch": "Ninguna agencia coincide con esta búsqueda.",
       "searchPlaceholder": "Buscar por nombre o dirección…",
       "searchAria": "Buscar agencias",
+      "ariaLabel": "Lista de agencias de alquiler",
       "agency": "Agencia",
       "address": "Dirección",
       "destinationOptional": "Destino (opcional)",
+      "viewGrid": "Cuadrícula",
+      "viewTable": "Tabla",
+      "viewModeAria": "Modo de visualización",
       "deleteTitle": "Eliminar agencia",
       "deleteConfirm": "La agencia «{name}» será eliminada permanentemente.",
       "deleteConfirmButton": "Eliminar",
-      "cancel": "Cancelar"
+      "cancel": "Cancelar",
+      "stats": {
+        "total": {
+          "label": "Agencias",
+          "subtitle": "Puntos de alquiler"
+        },
+        "withAddress": {
+          "label": "Con dirección",
+          "subtitle": "Ubicación informada"
+        },
+        "withDestination": {
+          "label": "Con destino",
+          "subtitle": "Vinculadas a un destino"
+        }
+      }
     }
   },
   "stats": {

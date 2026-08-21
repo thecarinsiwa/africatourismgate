@@ -2,15 +2,16 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Select } from '@africatourismgate/ui';
-import type { Room } from '@africatourismgate/types';
+import { Button, Select, AlertDialog, useToast } from '@africatourismgate/ui';
+import type { Room, RoomAvailability } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { currentYearMonth } from '../../lib/availability-dates';
+import { currentYearMonth, formatDateLabel } from '../../lib/availability-dates';
 import { RoomAvailabilityBulkForm } from './room-availability-bulk-form';
 import { RoomAvailabilityGrid } from './room-availability-grid';
+import { RoomAvailabilityTable } from './room-availability-table';
 
 type PropertyAvailabilitySectionProps = {
   propertyId: string;
@@ -19,6 +20,8 @@ type PropertyAvailabilitySectionProps = {
 export function PropertyAvailabilitySection({ propertyId }: PropertyAvailabilitySectionProps) {
   const { hebergements: getHebergementsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.properties.sections.availability');
+  const tToast = useTranslations('modules.common.toast');
+  const { toast } = useToast();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -29,6 +32,11 @@ export function PropertyAvailabilitySection({ propertyId }: PropertyAvailability
   const [error, setError] = useState<string | null>(null);
   const [yearMonth, setYearMonth] = useState(currentYearMonth);
   const [gridKey, setGridKey] = useState(0);
+  const [availabilityRows, setAvailabilityRows] = useState<RoomAvailability[]>([]);
+  const [pendingEditDate, setPendingEditDate] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmTarget, setConfirmTarget] = useState<RoomAvailability | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const selectedRoomId =
     roomIdParam && rooms.some((r) => r.id === roomIdParam)
@@ -69,6 +77,7 @@ export function PropertyAvailabilitySection({ propertyId }: PropertyAvailability
       }
       const qs = params.toString();
       router.replace(`${pathname}?${qs}`, { scroll: false });
+      setAvailabilityRows([]);
     },
     [pathname, router, searchParams],
   );
@@ -76,6 +85,42 @@ export function PropertyAvailabilitySection({ propertyId }: PropertyAvailability
   const handleBulkApplied = useCallback(() => {
     setGridKey((k) => k + 1);
   }, []);
+
+  const handleRowsChange = useCallback((rows: RoomAvailability[]) => {
+    setAvailabilityRows(rows);
+  }, []);
+
+  const handleDeleteRequest = useCallback((row: RoomAvailability) => {
+    setDeleteError(null);
+    setConfirmTarget(row);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!confirmTarget) return;
+    const row = confirmTarget;
+    setDeletingId(row.id);
+    setDeleteError(null);
+    try {
+      await getApiClient().deleteRoomAvailability(row.id);
+      setConfirmTarget(null);
+      toast({
+        title: tToast('availabilityDeleted'),
+        message: formatDateLabel(row.date.slice(0, 10)),
+        variant: 'success',
+      });
+      setGridKey((k) => k + 1);
+    } catch (err) {
+      const message = getHebergementsErrorMessage(err);
+      setDeleteError(message);
+      toast({
+        title: tToast('deleteError'),
+        message,
+        variant: 'error',
+      });
+    } finally {
+      setDeletingId(null);
+    }
+  }, [confirmTarget, getHebergementsErrorMessage, tToast, toast]);
 
   if (loading) {
     return <p className="text-sm text-atg-muted">{t('loadingRooms')}</p>;
@@ -112,6 +157,27 @@ export function PropertyAvailabilitySection({ propertyId }: PropertyAvailability
 
   return (
     <div className="min-w-0 space-y-8">
+      <AlertDialog
+        open={!!confirmTarget}
+        onOpenChange={(open) => {
+          if (!open && !deletingId) setConfirmTarget(null);
+        }}
+        title={t('deleteTitle')}
+        description={
+          confirmTarget
+            ? t('deleteConfirm', {
+                date: formatDateLabel(confirmTarget.date.slice(0, 10)),
+              })
+            : undefined
+        }
+        confirmLabel={t('deleteConfirmButton')}
+        cancelLabel={t('cancel')}
+        variant="danger"
+        loading={!!deletingId}
+        error={deleteError}
+        onConfirm={() => void handleDeleteConfirm()}
+      />
+
       <div className="max-w-md">
         <Select
           label={t('room')}
@@ -130,13 +196,28 @@ export function PropertyAvailabilitySection({ propertyId }: PropertyAvailability
       </div>
 
       {selectedRoom ? (
-        <>
-          <RoomAvailabilityBulkForm
-            roomId={selectedRoom.id}
-            yearMonth={yearMonth}
-            defaultPriceCents={selectedRoom.basePriceCents}
-            onApplied={handleBulkApplied}
-          />
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,28rem)_minmax(0,1fr)] lg:items-start xl:grid-cols-[minmax(0,32rem)_minmax(0,1fr)]">
+          <div className="flex min-w-0 flex-col gap-6">
+            <RoomAvailabilityBulkForm
+              roomId={selectedRoom.id}
+              yearMonth={yearMonth}
+              defaultPriceCents={selectedRoom.basePriceCents}
+              onApplied={handleBulkApplied}
+            />
+            <RoomAvailabilityTable
+              rows={availabilityRows}
+              currency={selectedRoom.currency}
+              onEditDate={(date) => {
+                const ym = date.slice(0, 7);
+                if (ym !== yearMonth) {
+                  setYearMonth(ym);
+                }
+                setPendingEditDate(date);
+              }}
+              onDelete={handleDeleteRequest}
+              deletingId={deletingId}
+            />
+          </div>
           <RoomAvailabilityGrid
             key={`${selectedRoom.id}-${gridKey}`}
             roomId={selectedRoom.id}
@@ -144,8 +225,11 @@ export function PropertyAvailabilitySection({ propertyId }: PropertyAvailability
             defaultPriceCents={selectedRoom.basePriceCents}
             yearMonth={yearMonth}
             onYearMonthChange={setYearMonth}
+            onRowsChange={handleRowsChange}
+            pendingEditDate={pendingEditDate}
+            onPendingEditHandled={() => setPendingEditDate(null)}
           />
-        </>
+        </div>
       ) : null}
     </div>
   );

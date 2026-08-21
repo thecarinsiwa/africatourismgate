@@ -73,6 +73,7 @@
     "title": "Modifier l'hébergement",
     "backLink": "Retour aux hébergements",
     "backToList": "← Retour à la liste",
+    "viewButton": "Voir",
     "tabsAria": "Sections de l'hébergement",
     "tabs": {
       "infos": "Infos",
@@ -80,6 +81,26 @@
       "amenities": "Équipements",
       "availability": "Disponibilités"
     }
+  },
+  "view": {
+    "title": "Voir l'hébergement",
+    "editButton": "Modifier l'hébergement",
+    "notFound": "Hébergement introuvable.",
+    "infoTitle": "Informations",
+    "description": "Description",
+    "imagesTitle": "Photos",
+    "imagesIntro": "{count, plural, =0 {Aucune photo} one {# photo} other {# photos}}",
+    "imagesEmpty": "Aucune photo pour cet hébergement.",
+    "carouselPrev": "Photo précédente",
+    "carouselNext": "Photo suivante",
+    "carouselThumbs": "Miniatures des photos",
+    "carouselGoTo": "Aller à la photo {index}",
+    "carouselOpen": "Agrandir la photo {index}",
+    "carouselViewerTitle": "Aperçu de la photo",
+    "carouselClose": "Fermer l'aperçu",
+    "roomsIntro": "{count, plural, =0 {Aucune chambre} one {# chambre} other {# chambres}}",
+    "amenitiesIntro": "{count, plural, =0 {Aucun équipement} one {# équipement} other {# équipements}}",
+    "amenitiesEmpty": "Aucun équipement associé."
   },
   "sections": {
     "rooms": {
@@ -92,6 +113,8 @@
       "roomTypePlaceholder": "standard, suite…",
       "maxCapacity": "Capacité max.",
       "bedConfig": "Configuration lits",
+      "searchPlaceholder": "Rechercher une chambre…",
+      "searchEmpty": "Aucune chambre ne correspond à votre recherche.",
       "empty": "Aucune chambre.",
       "deleteConfirm": "Supprimer la chambre « {name} » ?",
       "deleteTitle": "Supprimer la chambre",
@@ -104,7 +127,11 @@
       "intro": "Sélectionnez les équipements disponibles pour cet hébergement.",
       "saveSelection": "Enregistrer la sélection",
       "emptyGlobal": "Aucun équipement global.",
-      "createLink": "Créer des équipements"
+      "createLink": "Créer des équipements",
+      "editAmenities": "Modifier la sélection",
+      "selectedCount": "{count, plural, =0 {Aucun sélectionné} one {# sélectionné} other {# sélectionnés}}",
+      "searchPlaceholder": "Rechercher un équipement…",
+      "searchEmpty": "Aucun équipement ne correspond à votre recherche."
     },
     "availability": {
       "title": "Disponibilités",
@@ -115,11 +142,20 @@
       "goToRoomsTab": "Aller à l'onglet Chambres",
       "roomMismatch": "Cette chambre n'appartient pas à cet hébergement.",
       "backToProperty": "Retour à l'hébergement",
-      "summary": "Chambre {roomName} — stock et prix par nuit ({currency})."
+      "summary": "Chambre {roomName} — stock et prix par nuit ({currency}).",
+      "tableTitle": "Dates disponibles",
+      "tableIntro": "Liste des jours avec stock et tarif pour cette chambre.",
+      "tableEmpty": "Aucune disponibilité sur ce mois.",
+      "deleteTitle": "Supprimer la disponibilité",
+      "deleteConfirm": "Supprimer la disponibilité du {date} ? Cette action est irréversible.",
+      "deleteConfirmButton": "Supprimer",
+      "cancel": "Annuler"
     }
   },
   "amenitiesList": {
     "newAmenity": "Nouvel équipement",
+    "editAmenity": "Modifier l'équipement",
+    "viewAmenity": "Détail de l'équipement",
     "empty": "Aucun équipement.",
     "searchPlaceholder": "Rechercher un équipement…",
     "deleteTitle": "Supprimer l'équipement",

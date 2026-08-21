@@ -118,7 +118,9 @@
     "loyaltyAccount": "comptes",
     "activity": "activité",
     "employee": "employé",
-    "department": "département"
+    "department": "département",
+    "date": "date",
+    "service": "prestation"
   },
   "dataTable": {
     "loading": "Chargement…",
@@ -148,6 +150,7 @@
   },
   "dates": {
     "createdAt": "Créée le",
+    "updatedAt": "Modifiée le",
     "expiresAt": "Expire le"
   },
   "select": {
@@ -220,10 +223,13 @@
     "selectProduct": "Sélectionnez un produit.",
     "invalidCabinCount": "Nombre de cabines invalide.",
     "datesRequired": "Les dates de début et de fin sont obligatoires.",
-    "iataAndNameRequired": "Code IATA (2 lettres) et nom sont obligatoires."
+    "iataAndNameRequired": "Code IATA (2 lettres) et nom sont obligatoires.",
+    "codeAndNameRequired": "Le code et le nom sont obligatoires."
   },
   "toast": {
     "saved": "Enregistré",
+    "created": "Créé",
+    "deleted": "Supprimé",
     "saveError": "Erreur d'enregistrement",
     "deleteError": "Erreur de suppression",
     "availabilitySaved": "Disponibilité enregistrée",
@@ -248,6 +254,8 @@
     "today": "Aujourd'hui",
     "bulkTitle": "Mise à jour groupée",
     "bulkIntro": "Définissez le stock et le prix pour toutes les dates de la plage sélectionnée.",
+    "bulkIntroSeats": "Définissez les sièges disponibles et le prix pour toutes les dates de la plage sélectionnée.",
+    "applyToRange": "Appliquer à la plage",
     "weekdays": {
       "mon": "lun.",
       "tue": "mar.",
@@ -261,6 +269,8 @@
     "stockUnits": "Stock (unités)",
     "availableSeats": "Sièges disponibles",
     "seatsAria": "Sièges {date}",
+    "priceAria": "Prix {date}",
+    "seatsShort": "{count} sièges",
     "unitsShort": "{count} u."
   },
   "imagesGallery": {
@@ -288,7 +298,14 @@
     "alreadyAdded": "Ajoutée",
     "addFromSuggestion": "Ajouter",
     "ariaLabel": "Galerie photos",
-    "loading": "Chargement de la galerie…"
+    "loading": "Chargement de la galerie…",
+    "viewerTitle": "Aperçu de la photo",
+    "viewerClose": "Fermer l'aperçu",
+    "viewerPrev": "Photo précédente",
+    "viewerNext": "Photo suivante",
+    "viewerOpen": "Agrandir la photo",
+    "maxPhotosHint": "Maximum {max} photos par chambre.",
+    "maxPhotosReached": "Limite atteinte : {max} photos maximum par chambre."
   },
   "flightClass": {
     "economy": "Économique",

@@ -14,6 +14,8 @@ type DestinationStaticMapProps = {
   title?: string;
   openMapsLabel?: string;
   className?: string;
+  /** Smaller map for side panels / sticky asides. */
+  compact?: boolean;
 };
 
 export function DestinationStaticMap({
@@ -22,6 +24,7 @@ export function DestinationStaticMap({
   title,
   openMapsLabel,
   className,
+  compact = false,
 }: DestinationStaticMapProps) {
   const t = useTranslations('modules.destinations');
   const mapTitle = title ?? t('form.mapPreview');
@@ -48,7 +51,7 @@ export function DestinationStaticMap({
         <iframe
           title={mapTitle}
           src={embedUrl}
-          className="h-56 w-full border-0 sm:h-64"
+          className={compact ? 'h-40 w-full border-0' : 'h-56 w-full border-0 sm:h-64'}
           loading="eager"
           referrerPolicy="no-referrer-when-downgrade"
         />

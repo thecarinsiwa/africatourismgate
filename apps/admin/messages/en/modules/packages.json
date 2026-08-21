@@ -2,7 +2,9 @@
   "list": {
     "newPackage": "New package",
     "emptyDefault": "No packages yet.",
+    "ariaLabel": "Packages list",
     "searchPlaceholder": "Search packages…",
+    "activeFilter": "Status",
     "deleteTitle": "Delete package",
     "deleteConfirm": "Package \"{name}\" will be permanently deleted.",
     "deleteConfirmButton": "Delete",
@@ -93,6 +95,19 @@
       }
     }
   },
+  "view": {
+    "title": "View package",
+    "notFound": "Package not found.",
+    "editButton": "Edit package",
+    "subtitle": "Detailed package sheet and included services.",
+    "infoTitle": "Information",
+    "imagesTitle": "Photos",
+    "imagesIntro": "{count} photo(s)",
+    "imagesEmpty": "No photos for this package.",
+    "packagePrice": "Package price",
+    "separatePrice": "Separate price",
+    "featuredBadge": "Featured"
+  },
   "coverImage": {
     "title": "Cover photo",
     "hint": "This image appears in package lists in the admin and on the public website.",
@@ -109,11 +124,16 @@
   },
   "sections": {
     "items": {
-      "title": "Items du forfait",
-      "intro": "Produits combinés (hébergement, vol, activité, etc.).",
-      "addItem": "Ajouter un item",
-      "newItem": "Nouvel item",
-      "empty": "Tocun item dans ce forfait.",
+      "title": "Included services",
+      "intro": "Combined products (accommodation, flight, activity, etc.).",
+      "addItem": "Add a service",
+      "newItem": "New service",
+      "empty": "No services in this package.",
+      "searchPlaceholder": "Search a service…",
+      "searchEmpty": "No services match your search.",
+      "viewTitle": "Service details",
+      "viewAddedAt": "Added on",
+      "openProduct": "Open product page",
       "removeTitle": "Remove from package",
       "removeConfirm": "\"{label}\" will be removed from the package.",
       "removeConfirmButton": "Remove",
@@ -122,26 +142,40 @@
     },
     "composition": {
       "title": "Composition",
-      "summary": "{productCount} produit(s) inclus",
-      "summaryWithTypes": "{productCount} produit(s) inclus · {typeCount} types",
-      "ariaLabel": "Composition du forfait"
+      "summary": "{productCount} included service(s)",
+      "summaryWithTypes": "{productCount} service(s) · {typeCount} types",
+      "ariaLabel": "Package composition"
     },
     "pricingRecap": {
-      "title": "Récapitulatif tarifaire",
-      "empty": "Ajoutez des items pour calculer le prix du forfait.",
-      "separatePrice": "Price séparé",
-      "packagePrice": "Price forfait",
-      "separatePriceAria": "Price des composants achetés séparément",
-      "savings": "Économie de {amount} par rapport à l'achat séparé des composants."
+      "title": "Pricing",
+      "empty": "Add services to calculate the package price.",
+      "separatePrice": "Separate price",
+      "packagePrice": "Package price",
+      "separatePriceAria": "Price if components are purchased separately",
+      "savings": "Save {amount} compared to buying components separately."
     },
     "preview": {
-      "ariaLabel": "Preview client du forfait",
-      "header": "Preview client",
+      "ariaLabel": "Customer package preview",
+      "header": "Customer preview",
       "eyebrow": "Package",
-      "includedCount": "{count} produit(s) inclus",
-      "discountOnBundle": "Discount de {percent}% sur le bundle",
-      "suggestedDuration": "Fromrée suggérée : {days} jour(s)",
-      "packagePrice": "Price forfait"
+      "includedCount": "{count} included service(s)",
+      "discountOnBundle": "{percent}% discount on the bundle",
+      "suggestedDuration": "Suggested duration: {days} day(s)",
+      "packagePrice": "Package price"
+    },
+    "publication": {
+      "title": "Package visibility",
+      "intro": "Control catalogue publication and homepage featuring.",
+      "activeHint": "An active package is visible in the public catalogue and bookable.",
+      "statusTitle": "Current status",
+      "statusVisibility": "Catalogue",
+      "statusFeatured": "Homepage",
+      "featuredOn": "Featured",
+      "featuredOff": "Not featured",
+      "previewActive": "This package will appear in public results and listings.",
+      "previewInactive": "This package will stay hidden from the catalogue until activated.",
+      "saved": "Publication settings saved.",
+      "viewPackage": "View package"
     }
   },
   "stats": {

@@ -665,6 +665,7 @@ CREATE TABLE `airlines` (
   `id` CHAR(36) NOT NULL,
   `iata_code` CHAR(2) NOT NULL,
   `name` VARCHAR(180) NOT NULL,
+  `logo_url` VARCHAR(512) DEFAULT NULL,
   `created_by_user_id` CHAR(36) DEFAULT NULL,
   `updated_by_user_id` CHAR(36) DEFAULT NULL,
   `deleted_by_user_id` CHAR(36) DEFAULT NULL,

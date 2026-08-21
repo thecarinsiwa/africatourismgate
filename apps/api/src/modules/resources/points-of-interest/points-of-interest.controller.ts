@@ -10,8 +10,8 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import { PointsOfInterest } from '../../../entities/generated';
+import { PointsOfInterestListQueryDto } from './dto/points-of-interest-list-query.dto';
 import { PointsOfInterestService } from './points-of-interest.service';
 
 @ApiTags('points-of-interest')
@@ -21,7 +21,7 @@ export class PointsOfInterestController {
 
   @Get()
   @ApiOperation({ summary: 'List points-of-interest' })
-  findAll(@Query() query: PaginationQueryDto) {
+  findAll(@Query() query: PointsOfInterestListQueryDto) {
     return this.service.findAll(query);
   }
 

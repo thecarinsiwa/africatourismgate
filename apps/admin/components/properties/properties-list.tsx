@@ -151,7 +151,7 @@ export function PropertiesList() {
         <DataTableActionButton
           action="view"
           label={tActions('view')}
-          href={`/hebergements/${property.id}`}
+          href={`/hebergements/${property.id}/voir`}
         />
         <DataTableActionButton
           action="edit"

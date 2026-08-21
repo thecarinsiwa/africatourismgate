@@ -2682,6 +2682,13 @@ export class ApiClient {
     return this.request<void>(`/airlines/${id}`, { method: 'DELETE' });
   }
 
+  uploadAirlineImage(id: string, body: FormData): Promise<{ url: string }> {
+    return this.request<{ url: string }>(`/airlines/${id}/upload-image`, {
+      method: 'POST',
+      body,
+    });
+  }
+
   listAirports(query?: AirportsListQuery): Promise<PaginatedResponse<Airport>> {
     return fetchPaginated<Airport>(this, '/airports', query);
   }

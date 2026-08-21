@@ -5,6 +5,12 @@
     "searchPlaceholder": "Search by name, slug or country…",
     "searchAria": "Search destinations",
     "ariaLabel": "Destinations list",
+    "viewGrid": "Grid",
+    "viewTable": "Table",
+    "viewModeAria": "Destinations display mode",
+    "featuredFilter": "Featured",
+    "featuredYes": "Homepage",
+    "featuredNo": "Not on homepage",
     "deleteTitle": "Delete destination",
     "deleteConfirm": "Destination \"{name}\" and its associated points of interest will be permanently deleted.",
     "deleteConfirmButton": "Delete",
@@ -16,37 +22,60 @@
     "featured": "Homepage"
   },
   "form": {
-    "submitCreate": "Créer la destination",
-    "previewName": "Nouvelle destination",
+    "submitCreate": "Create destination",
+    "previewName": "New destination",
     "sections": {
       "identity": "Identity",
-      "presentation": "Présentation",
-      "geography": "Géographie"
+      "presentation": "Presentation",
+      "geography": "Geography",
+      "publication": "Publication"
     },
-    "slugHint": "Identifiant unique (ex. kinshasa).",
-    "countryCode": "Code pays (ISO)",
-    "countryCodeHint": "2 lettres, ex. CD, KE, ZA.",
-    "heroImageUrl": "URL image hero",
-    "heroImageHint": "Affichée dans le bandeau. Laissez vide pour un dégradé.",
+    "slugHint": "Unique identifier (e.g. kinshasa).",
+    "countryCode": "Country",
+    "countryCodeHint": "Search by name or 2-letter ISO code.",
+    "countrySearchPlaceholder": "Search for a country…",
+    "countrySearchAria": "Search countries",
+    "countrySearchEmpty": "No country matches this search.",
+    "heroImageUrl": "Hero image URL",
+    "heroImageHint": "Shown in the banner. Leave empty for a gradient.",
     "isFeatured": "Show on homepage",
     "isFeaturedHint": "Popular Destinations section on the public site (max. 4).",
-    "geographyIntro": "Coordonnées du centre de la destination pour la carte statique.",
-    "latitudeHint": "Optionnel, -90 à 90",
-    "longitudeHint": "Optionnel, -180 à 180",
+    "geographyIntro": "Coordinates for the destination center on the static map.",
+    "latitudeHint": "Optional, -90 to 90",
+    "longitudeHint": "Optional, -180 to 180",
     "mapPreview": "Map preview",
     "openStreetMap": "Open in OpenStreetMap"
   },
   "detail": {
     "title": "Edit destination",
     "viewTitle": "View destination",
+    "viewButton": "View destination",
     "editButton": "Edit destination",
     "backLink": "Back to destinations",
+    "subtitle": "Identity, geography and points of interest.",
+    "featuredBadge": "Homepage",
+    "tabsAria": "Destination sections",
+    "tabs": {
+      "informations": "Information",
+      "pois": "Points of interest"
+    },
     "mapTitle": "Destination map",
     "description": "Description",
     "noDescription": "No description provided.",
     "notFound": "Destination not found."
   },
   "view": {
+    "title": "View destination",
+    "editButton": "Edit destination",
+    "subtitle": "Catalogue overview of the destination.",
+    "infoTitle": "Information",
+    "coordinates": "Coordinates",
+    "featuredNo": "Not featured",
+    "heroTitle": "Hero image",
+    "heroIntro": "Main visual for the destination.",
+    "heroAlt": "Hero image for {name}",
+    "heroEmpty": "No hero image.",
+    "mapEmpty": "No coordinates set for the map.",
     "poisTitle": "Points of interest",
     "poisIntro": "{count} point(s) of interest recorded",
     "poisEmpty": "No points of interest for this destination.",
@@ -55,8 +84,24 @@
   "hero": {
     "ariaLabel": "Destination {name}"
   },
+  "heroImage": {
+    "title": "Hero image",
+    "hint": "Shown in the admin banner, lists and public site. JPEG, PNG or WebP, max. 5 MB.",
+    "previewAlt": "Hero image preview",
+    "empty": "No hero image set.",
+    "upload": "Upload an image",
+    "remove": "Remove image",
+    "saveUrl": "Save URL",
+    "saving": "Saving…"
+  },
   "sections": {
     "pois": {
+      "title": "Points of interest",
+      "intro": "Landmarks linked to this destination.",
+      "addPoi": "Add a point of interest",
+      "mapPicker": "Map assistant",
+      "mapPickerHint": "Click the map or drag the marker to fill latitude and longitude automatically.",
+      "mapPickerAria": "Interactive map to pick coordinates",
       "new": "New point of interest",
       "edit": "Edit point of interest",
       "empty": "No points of interest for this destination.",
@@ -69,30 +114,30 @@
     "related": {
       "properties": {
         "label": "Accommodations",
-        "subtitle": "Propertys rattachées"
+        "subtitle": "Linked properties"
       },
       "activities": {
-        "label": "Activitys",
-        "subtitle": "Expériences locales"
+        "label": "Activities",
+        "subtitle": "Local experiences"
       },
       "packages": {
         "label": "Packages",
-        "subtitle": "Packages incluant des produits locaux"
+        "subtitle": "Packages including local products"
       }
     }
   },
   "stats": {
     "destinations": {
       "label": "Destinations",
-      "subtitle": "Villes et régions catalogue"
+      "subtitle": "Cities and regions in the catalogue"
     },
     "pois": {
-      "label": "Points d'intérêt",
-      "subtitle": "Lieux remarquables liés"
+      "label": "Points of interest",
+      "subtitle": "Linked landmarks"
     },
     "countries": {
-      "label": "Country couverts",
-      "subtitle": "Codes ISO distincts"
+      "label": "Countries covered",
+      "subtitle": "Distinct ISO codes"
     }
   }
 }

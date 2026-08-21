@@ -9,27 +9,42 @@ import {
   DataTable,
   DataTableActionButton,
   DataTableActions,
+  DataTableBadge,
   DataTablePagination,
+  Input,
+  Select,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { CruiseSailing, Itinerary, Ship } from '@africatourismgate/types';
 import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
+import { ListViewModeToggle } from '../list-view-mode-toggle';
 import { SailingsCalendarView } from './sailings-calendar-view';
+import { ShipThumbnail } from './ship-thumbnail';
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 10;
+const SEARCH_DEBOUNCE_MS = 300;
 
-type ViewMode = 'list' | 'calendar';
+type ViewMode = 'grid' | 'table' | 'calendar';
 
 export function SailingsList() {
   const { croisieres: getCroisieresErrorMessage } = useAdminErrorMessages();
   const locale = useLocale();
   const t = useTranslations('modules.cruises.list');
   const tColumns = useTranslations('modules.cruises.columns');
+  const tFilters = useTranslations('modules.cruises.filters');
   const tCommon = useTranslations('modules.common');
-  const [viewMode, setViewMode] = useState<ViewMode>('list');
+  const tDataTable = useTranslations('modules.common.dataTable');
+  const paginationLabels = useDataTablePaginationLabels();
+
+  const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [page, setPage] = useState(1);
+  const [searchInput, setSearchInput] = useState('');
+  const [search, setSearch] = useState('');
+  const [shipFilter, setShipFilter] = useState('');
+  const [itineraryFilter, setItineraryFilter] = useState('');
   const [itineraries, setItineraries] = useState<Itinerary[]>([]);
   const [ships, setShips] = useState<Ship[]>([]);
   const [state, setState] = useState<
@@ -73,6 +88,17 @@ export function SailingsList() {
       });
   }, []);
 
+  useEffect(() => {
+    const q = searchInput.trim();
+    const timer = window.setTimeout(() => {
+      setSearch((prev) => {
+        if (prev !== q) setPage(1);
+        return q;
+      });
+    }, SEARCH_DEBOUNCE_MS);
+    return () => window.clearTimeout(timer);
+  }, [searchInput]);
+
   const itineraryById = useMemo(
     () => new Map(itineraries.map((i) => [i.id, i])),
     [itineraries],
@@ -80,12 +106,49 @@ export function SailingsList() {
   const shipById = useMemo(() => new Map(ships.map((s) => [s.id, s])), [ships]);
   const emptyDash = tCommon('empty.dash');
 
+  const filteredItineraries = useMemo(() => {
+    if (!shipFilter) return itineraries;
+    return itineraries.filter((it) => it.shipId === shipFilter);
+  }, [itineraries, shipFilter]);
+
+  const shipOptions = useMemo(
+    () => [
+      { value: '', label: tFilters('allShips') },
+      ...ships.map((s) => ({ value: s.id, label: s.name })),
+    ],
+    [ships, tFilters],
+  );
+
+  const itineraryOptions = useMemo(
+    () => [
+      { value: '', label: tFilters('allItineraries') },
+      ...filteredItineraries.map((it) => {
+        const ship = shipById.get(it.shipId);
+        return {
+          value: it.id,
+          label: ship ? `${it.name} — ${ship.name}` : it.name,
+        };
+      }),
+    ],
+    [filteredItineraries, shipById, tFilters],
+  );
+
+  const viewModeOptions = useMemo(
+    () => [
+      { value: 'grid' as const, label: t('viewGrid') },
+      { value: 'table' as const, label: t('viewTable') },
+      { value: 'calendar' as const, label: t('viewCalendar') },
+    ],
+    [t],
+  );
+
   const load = useCallback(async () => {
     setState({ status: 'loading' });
     try {
       const result = await getApiClient().listCruiseSailings({
         page,
         limit: PAGE_SIZE,
+        itineraryId: itineraryFilter || undefined,
       });
       setState({
         status: 'ready',
@@ -96,12 +159,11 @@ export function SailingsList() {
     } catch (error) {
       setState({ status: 'error', message: getCroisieresErrorMessage(error) });
     }
-  }, [page, getCroisieresErrorMessage]);
+  }, [page, itineraryFilter, getCroisieresErrorMessage]);
 
   useEffect(() => {
-    if (viewMode === 'list') {
-      void load();
-    }
+    if (viewMode === 'calendar') return;
+    void load();
   }, [load, viewMode]);
 
   const handleDeleteRequest = useCallback((sailing: CruiseSailing) => {
@@ -131,6 +193,24 @@ export function SailingsList() {
       ? `${itinerary.name} — ${formatDate(confirmTarget.departureDate)}`
       : formatDate(confirmTarget.departureDate);
   }, [confirmTarget, formatDate, itineraryById]);
+
+  const renderSailingActions = useCallback(
+    (sailing: CruiseSailing) => (
+      <DataTableActions>
+        <DataTableActionButton
+          action="edit"
+          href={`/produits/croisieres/${sailing.id}`}
+        />
+        <DataTableActionButton
+          action="delete"
+          onClick={() => handleDeleteRequest(sailing)}
+          disabled={deletingId === sailing.id}
+          loading={deletingId === sailing.id}
+        />
+      </DataTableActions>
+    ),
+    [deletingId, handleDeleteRequest],
+  );
 
   const columns = useMemo<ColumnDef<CruiseSailing, unknown>[]>(
     () => [
@@ -173,28 +253,14 @@ export function SailingsList() {
         id: 'actions',
         header: tCommon('columns.actions'),
         meta: { align: 'right' },
-        cell: ({ row }) => (
-          <DataTableActions>
-            <DataTableActionButton
-              action="edit"
-              href={`/produits/croisieres/${row.original.id}`}
-            />
-            <DataTableActionButton
-              action="delete"
-              onClick={() => handleDeleteRequest(row.original)}
-              disabled={deletingId === row.original.id}
-              loading={deletingId === row.original.id}
-            />
-          </DataTableActions>
-        ),
+        cell: ({ row }) => renderSailingActions(row.original),
       },
     ],
     [
-      deletingId,
       emptyDash,
       formatDate,
-      handleDeleteRequest,
       itineraryById,
+      renderSailingActions,
       shipById,
       tColumns,
       tCommon,
@@ -203,11 +269,37 @@ export function SailingsList() {
 
   const sailings = state.status === 'ready' ? state.sailings : [];
 
+  const displayedSailings = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    return sailings.filter((sailing) => {
+      const itinerary = itineraryById.get(sailing.itineraryId);
+      const ship = itinerary ? shipById.get(itinerary.shipId) : undefined;
+
+      if (shipFilter && itinerary?.shipId !== shipFilter) return false;
+
+      if (!query) return true;
+      const haystack = [
+        formatDate(sailing.departureDate),
+        itinerary?.name ?? '',
+        ship?.name ?? '',
+        itinerary ? String(itinerary.durationNights) : '',
+      ]
+        .join(' ')
+        .toLowerCase();
+      return haystack.includes(query);
+    });
+  }, [formatDate, itineraryById, sailings, search, shipById, shipFilter]);
+
+  const hasActiveFilters = Boolean(search || shipFilter || itineraryFilter);
+  const emptyMessage = hasActiveFilters ? t('emptyFiltered') : t('emptySailings');
+
   return (
     <>
       <AlertDialog
         open={!!confirmTarget}
-        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        onOpenChange={(open) => {
+          if (!open) setConfirmTarget(null);
+        }}
         title={t('deleteSailingTitle')}
         description={t('deleteSailingConfirm', { label: confirmLabel })}
         confirmLabel={t('deleteSailingButton')}
@@ -217,59 +309,160 @@ export function SailingsList() {
         error={deleteError}
         onConfirm={() => void handleDeleteConfirm()}
       />
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex gap-2">
-          <Button
-            type="button"
-            variant={viewMode === 'list' ? 'primary' : 'outline'}
-            size="sm"
-            onClick={() => setViewMode('list')}
-          >
-            {t('viewList')}
-          </Button>
-          <Button
-            type="button"
-            variant={viewMode === 'calendar' ? 'primary' : 'outline'}
-            size="sm"
-            onClick={() => setViewMode('calendar')}
-          >
-            {t('viewCalendar')}
+
+      <div className="min-w-0 space-y-6">
+        <div className="flex min-w-0 flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div className="flex min-w-0 flex-1 flex-col gap-4 sm:flex-row sm:items-end">
+            <div className="min-w-0 flex-1 sm:max-w-md">
+              <Input
+                type="search"
+                placeholder={t('searchPlaceholder')}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                aria-label={t('searchAria')}
+              />
+            </div>
+            <div className="sm:w-52">
+              <Select
+                label={tFilters('ship')}
+                value={shipFilter}
+                options={shipOptions}
+                onChange={(e) => {
+                  const nextShip = e.target.value;
+                  setShipFilter(nextShip);
+                  setPage(1);
+                  if (itineraryFilter) {
+                    const it = itineraryById.get(itineraryFilter);
+                    if (nextShip && it && it.shipId !== nextShip) {
+                      setItineraryFilter('');
+                    }
+                  }
+                }}
+              />
+            </div>
+            <div className="sm:w-56">
+              <Select
+                label={tFilters('itinerary')}
+                value={itineraryFilter}
+                options={itineraryOptions}
+                onChange={(e) => {
+                  setItineraryFilter(e.target.value);
+                  setPage(1);
+                }}
+              />
+            </div>
+            <ListViewModeToggle
+              value={viewMode}
+              options={viewModeOptions}
+              onChange={setViewMode}
+              ariaLabel={t('viewModeAria')}
+            />
+          </div>
+          <Button href="/produits/croisieres/nouveau" className="lg:hidden">
+            {t('newSailing')}
           </Button>
         </div>
-        <Button href="/produits/croisieres/nouveau">{t('newSailing')}</Button>
-      </div>
 
-      {viewMode === 'calendar' ? (
-        <SailingsCalendarView itineraryById={itineraryById} shipById={shipById} />
-      ) : state.status === 'error' ? (
-        <p role="alert" className="text-sm text-red-600">
-          {state.message}
-        </p>
-      ) : (
-        <>
-          <Card variant="dashboard" padding="none">
-            <DataTable
-              columns={columns}
-              data={sailings}
-              isLoading={state.status === 'loading'}
-              emptyMessage={t('emptySailings')}
-              getRowId={(r) => r.id}
-            />
-          </Card>
-          {state.status === 'ready' ? (
-            <DataTablePagination
-              page={page}
-              pageSize={PAGE_SIZE}
-              totalPages={state.totalPages}
-              totalItems={state.total}
-              itemLabel={tCommon('pagination.sailing')}
-              onPageChange={setPage}
-            />
-          ) : null}
-        </>
-      )}
-    </div>
+        {viewMode === 'calendar' ? (
+          <SailingsCalendarView itineraryById={itineraryById} shipById={shipById} />
+        ) : state.status === 'error' ? (
+          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+            {state.message}
+          </p>
+        ) : viewMode === 'table' ? (
+          <>
+            <Card variant="dashboard" padding="none" className="overflow-hidden">
+              <DataTable
+                columns={columns}
+                data={displayedSailings}
+                isLoading={state.status === 'loading'}
+                loadingMessage={tDataTable('loading')}
+                emptyMessage={emptyMessage}
+                emptyVariant={hasActiveFilters ? 'search' : 'default'}
+                expandRowLabel={tDataTable('expandRow')}
+                collapseRowLabel={tDataTable('collapseRow')}
+                expandRowAriaLabel={tDataTable('expandRowAria')}
+                getRowId={(r) => r.id}
+                aria-label={t('ariaLabel')}
+              />
+            </Card>
+            {state.status === 'ready' ? (
+              <DataTablePagination
+                page={page}
+                pageSize={PAGE_SIZE}
+                totalPages={state.totalPages}
+                totalItems={state.total}
+                itemLabel={tCommon('pagination.sailing')}
+                labels={paginationLabels}
+                onPageChange={setPage}
+              />
+            ) : null}
+          </>
+        ) : state.status === 'loading' ? (
+          <p className="text-sm text-atg-muted">{tDataTable('loading')}</p>
+        ) : displayedSailings.length === 0 ? (
+          <p className="text-sm text-atg-muted">{emptyMessage}</p>
+        ) : (
+          <>
+            <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+              {displayedSailings.map((sailing) => {
+                const itinerary = itineraryById.get(sailing.itineraryId);
+                const ship = itinerary ? shipById.get(itinerary.shipId) : undefined;
+                const label =
+                  itinerary?.name ?? formatDate(sailing.departureDate) ?? t('fallbackDeparture');
+                return (
+                  <li key={sailing.id} className="min-w-0">
+                    <Card variant="dashboard" className="flex h-full flex-col gap-3">
+                      <div className="flex items-start gap-3">
+                        <ShipThumbnail
+                          shipId={ship?.id}
+                          label={ship?.name ?? label}
+                          size="md"
+                        />
+                        <div className="min-w-0 flex-1">
+                          <p className="tabular-nums text-sm font-semibold text-atg-fg">
+                            {formatDate(sailing.departureDate)}
+                          </p>
+                          <p className="mt-1 truncate text-sm font-medium text-atg-fg">
+                            {itinerary?.name ?? emptyDash}
+                          </p>
+                          <p className="mt-0.5 truncate text-xs text-atg-muted">
+                            {ship?.name ?? emptyDash}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between gap-2 rounded-lg bg-atg-surface/50 px-3 py-2">
+                        <span className="text-xs text-atg-muted">{tColumns('nights')}</span>
+                        {itinerary?.durationNights != null ? (
+                          <DataTableBadge variant="muted">
+                            {itinerary.durationNights}
+                          </DataTableBadge>
+                        ) : (
+                          <span className="text-sm text-atg-muted">{emptyDash}</span>
+                        )}
+                      </div>
+                      <div className="mt-auto flex justify-end border-t border-atg-border pt-3">
+                        {renderSailingActions(sailing)}
+                      </div>
+                    </Card>
+                  </li>
+                );
+              })}
+            </ul>
+            {state.status === 'ready' ? (
+              <DataTablePagination
+                page={page}
+                pageSize={PAGE_SIZE}
+                totalPages={state.totalPages}
+                totalItems={state.total}
+                itemLabel={tCommon('pagination.sailing')}
+                labels={paginationLabels}
+                onPageChange={setPage}
+              />
+            ) : null}
+          </>
+        )}
+      </div>
     </>
   );
 }

@@ -29,6 +29,10 @@ export function flightUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/flights/${filename}`;
 }
 
+export function airlineUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/airlines/${filename}`;
+}
+
 export function vehicleUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/vehicles/${filename}`;
 }
@@ -47,6 +51,10 @@ export function activityDescriptionAssetUploadUrl(filename: string): string {
 
 export function packageUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/packages/${filename}`;
+}
+
+export function destinationUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/destinations/${filename}`;
 }
 
 export function packageDescriptionAssetUploadUrl(filename: string): string {

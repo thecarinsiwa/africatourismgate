@@ -40,6 +40,25 @@
       "categoryRequired": "Category is required."
     }
   },
+  "view": {
+    "title": "View vehicle",
+    "editButton": "Edit vehicle",
+    "notFound": "Vehicle not found.",
+    "infoTitle": "Information",
+    "imagesTitle": "Photos",
+    "imagesIntro": "{count, plural, =0 {No photos} one {# photo} other {# photos}}",
+    "imagesEmpty": "No photos for this vehicle.",
+    "carouselPrev": "Previous photo",
+    "carouselNext": "Next photo",
+    "carouselThumbs": "Photo thumbnails",
+    "carouselGoTo": "Go to photo {index}",
+    "carouselOpen": "Enlarge photo {index}",
+    "carouselViewerTitle": "Photo preview",
+    "carouselClose": "Close preview",
+    "availabilityIntro": "{count, plural, =0 {No slots} one {# slot} other {# slots}}",
+    "availabilitySearchPlaceholder": "Search slots…",
+    "availabilitySearchEmpty": "No slot matches this search."
+  },
   "detail": {
     "title": "Edit vehicle",
     "viewTitle": "View vehicle",
@@ -50,7 +69,12 @@
     "noLicensePlate": "No license plate",
     "photoGallery": "Photo gallery",
     "photoGalleryIntro": "{count, plural, =0 {No photos} one {# photo} other {# photos}}",
-    "noPhotos": "No photos for this vehicle."
+    "noPhotos": "No photos for this vehicle.",
+    "tabsAria": "Vehicle sections",
+    "tabs": {
+      "vehicle": "Vehicle",
+      "availability": "Availability"
+    }
   },
   "sections": {
     "availability": {
@@ -75,6 +99,11 @@
       "filterTo": "to",
       "status": "Status",
       "empty": "No slots in this period.",
+      "searchPlaceholder": "Search slots…",
+      "searchEmpty": "No slot matches this search.",
+      "stats": {
+        "total": "Total"
+      },
       "deleteTitle": "Delete slot",
       "deleteConfirm": "This slot will be permanently deleted.",
       "deleteConfirmButton": "Delete",
@@ -89,11 +118,29 @@
       "emptySearch": "No category matches this search.",
       "searchPlaceholder": "Search by name or model…",
       "searchAria": "Search categories",
+      "ariaLabel": "Vehicle categories list",
       "exampleModel": "Example model",
+      "viewGrid": "Grid",
+      "viewTable": "Table",
+      "viewModeAria": "View mode",
       "deleteTitle": "Delete category",
       "deleteConfirm": "Category \"{name}\" will be permanently deleted.",
       "deleteConfirmButton": "Delete",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "stats": {
+        "total": {
+          "label": "Categories",
+          "subtitle": "Vehicle types"
+        },
+        "withExampleModel": {
+          "label": "With model",
+          "subtitle": "Example filled in"
+        },
+        "withoutExampleModel": {
+          "label": "Without model",
+          "subtitle": "To complete"
+        }
+      }
     },
     "agencies": {
       "new": "New agency",
@@ -102,13 +149,31 @@
       "emptySearch": "No agency matches this search.",
       "searchPlaceholder": "Search by name or address…",
       "searchAria": "Search agencies",
+      "ariaLabel": "Rental agencies list",
       "agency": "Agency",
       "address": "Address",
       "destinationOptional": "Destination (optional)",
+      "viewGrid": "Grid",
+      "viewTable": "Table",
+      "viewModeAria": "View mode",
       "deleteTitle": "Delete agency",
       "deleteConfirm": "Agency \"{name}\" will be permanently deleted.",
       "deleteConfirmButton": "Delete",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "stats": {
+        "total": {
+          "label": "Agencies",
+          "subtitle": "Rental locations"
+        },
+        "withAddress": {
+          "label": "With address",
+          "subtitle": "Location filled in"
+        },
+        "withDestination": {
+          "label": "With destination",
+          "subtitle": "Linked to a destination"
+        }
+      }
     }
   },
   "stats": {

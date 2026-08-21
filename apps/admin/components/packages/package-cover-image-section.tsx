@@ -2,7 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Card, Input } from '@africatourismgate/ui';
+import { Button, Input } from '@africatourismgate/ui';
 import type { Package, PackageImage } from '@africatourismgate/types';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
@@ -105,9 +105,7 @@ export function PackageCoverImageSection({
       body.append('file', file);
       const response = await fetch(`${resolveApiBaseUrl()}/packages/${packageId}/upload-image`, {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${session.accessToken}`,
-        },
+        headers: { Authorization: `Bearer ${session.accessToken}` },
         body,
       });
       if (!response.ok) {
@@ -135,118 +133,125 @@ export function PackageCoverImageSection({
   const previewUrl = (coverImageUrl ?? '').trim();
 
   return (
-    <Card variant="dashboard" padding="md" className="space-y-4">
+    <section className="space-y-4">
       <div>
-        <h3 className="text-base font-semibold text-atg-fg">{t('title')}</h3>
+        <h3 className="text-sm font-semibold text-atg-fg">{t('title')}</h3>
         <p className="mt-1 text-sm text-atg-muted">{t('hint')}</p>
       </div>
 
-      {previewUrl ? (
-        <div className="relative aspect-[16/9] w-full max-w-xl overflow-hidden rounded-lg border border-atg-border">
-          <Image
-            src={resolveMediaUrl(previewUrl)}
-            alt={t('previewAlt')}
-            fill
-            unoptimized
-            className="object-cover"
-            sizes="(max-width: 640px) 100vw, 480px"
-          />
-        </div>
-      ) : (
-        <div className="flex aspect-[16/9] w-full max-w-xl items-center justify-center rounded-lg border border-dashed border-atg-border bg-atg-muted/5 px-4 text-center text-sm text-atg-muted">
-          {t('empty')}
-        </div>
-      )}
-
-      <div className="flex flex-wrap items-center gap-3">
-        <label
-          htmlFor={coverFileInputId}
-          className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10"
-        >
-          {uploading || saving ? tCommonForm('uploading') : t('upload')}
-          <input
-            id={coverFileInputId}
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            className="hidden"
-            onChange={(e) => void handleCoverImagePick(e)}
-            disabled={uploading || saving}
-          />
-        </label>
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:items-start">
         {previewUrl ? (
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled={saving || uploading}
-            onClick={() => void saveCover(null)}
-          >
-            {t('remove')}
-          </Button>
-        ) : null}
-        <span className="text-xs text-atg-muted">{tCommonForm('imageFormatHint')}</span>
-      </div>
-
-      <form onSubmit={(e) => void handleUrlSave(e)} className="flex flex-col gap-3 sm:flex-row sm:items-end">
-        <div className="flex-1">
-          <Input
-            label={tCommonForm('externalUrlOptional')}
-            name="coverImageUrl"
-            type="url"
-            value={urlInput}
-            onChange={(e) => setUrlInput(e.target.value)}
-            placeholder={tCommonForm('urlPlaceholder')}
-          />
-        </div>
-        <Button type="submit" variant="outline" disabled={saving || uploading}>
-          {saving ? t('saving') : t('saveUrl')}
-        </Button>
-      </form>
-
-      {galleryImages.length > 0 ? (
-        <div className="space-y-2">
-          <p className="text-sm font-medium text-atg-fg">{t('pickFromGallery')}</p>
-          <div className="flex flex-wrap gap-2">
-            {galleryImages.map((image) => {
-              const isActive = previewUrl === image.url.trim();
-              return (
-                <button
-                  key={image.id}
-                  type="button"
-                  disabled={saving || uploading || isActive}
-                  onClick={() => void saveCover(image.url)}
-                  className="relative h-20 w-28 overflow-hidden rounded-md border border-atg-border transition hover:ring-2 hover:ring-primary disabled:opacity-60"
-                  title={image.caption ?? undefined}
-                >
-                  <Image
-                    src={resolveMediaUrl(image.url)}
-                    alt={image.caption ?? t('galleryThumbAlt')}
-                    fill
-                    unoptimized
-                    className="object-cover"
-                    sizes="112px"
-                  />
-                  {isActive ? (
-                    <span className="absolute inset-0 flex items-center justify-center bg-primary/30 text-xs font-semibold text-white">
-                      {t('current')}
-                    </span>
-                  ) : null}
-                </button>
-              );
-            })}
+          <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg border border-atg-border">
+            <Image
+              src={resolveMediaUrl(previewUrl)}
+              alt={t('previewAlt')}
+              fill
+              unoptimized
+              className="object-cover"
+              sizes="(max-width: 1024px) 100vw, 22rem"
+            />
           </div>
+        ) : (
+          <div className="flex aspect-[16/9] w-full items-center justify-center rounded-lg border border-dashed border-atg-border bg-atg-muted/5 px-4 text-center text-sm text-atg-muted">
+            {t('empty')}
+          </div>
+        )}
+
+        <div className="min-w-0 space-y-4">
+          <div className="flex flex-wrap items-center gap-3">
+            <label
+              htmlFor={coverFileInputId}
+              className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10"
+            >
+              {uploading || saving ? tCommonForm('uploading') : t('upload')}
+              <input
+                id={coverFileInputId}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="hidden"
+                onChange={(e) => void handleCoverImagePick(e)}
+                disabled={uploading || saving}
+              />
+            </label>
+            {previewUrl ? (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={saving || uploading}
+                onClick={() => void saveCover(null)}
+              >
+                {t('remove')}
+              </Button>
+            ) : null}
+            <span className="text-xs text-atg-muted">{tCommonForm('imageFormatHint')}</span>
+          </div>
+
+          <form
+            onSubmit={(e) => void handleUrlSave(e)}
+            className="flex flex-col gap-3 sm:flex-row sm:items-end"
+          >
+            <div className="flex-1">
+              <Input
+                label={tCommonForm('externalUrlOptional')}
+                name="coverImageUrl"
+                type="url"
+                value={urlInput}
+                onChange={(e) => setUrlInput(e.target.value)}
+                placeholder={tCommonForm('urlPlaceholder')}
+              />
+            </div>
+            <Button type="submit" variant="outline" disabled={saving || uploading}>
+              {saving ? t('saving') : t('saveUrl')}
+            </Button>
+          </form>
+
+          {galleryImages.length > 0 ? (
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-atg-fg">{t('pickFromGallery')}</p>
+              <div className="flex flex-wrap gap-2">
+                {galleryImages.map((image) => {
+                  const isActive = previewUrl === image.url.trim();
+                  return (
+                    <button
+                      key={image.id}
+                      type="button"
+                      disabled={saving || uploading || isActive}
+                      onClick={() => void saveCover(image.url)}
+                      className="relative h-16 w-24 overflow-hidden rounded-md border border-atg-border transition hover:ring-2 hover:ring-primary disabled:opacity-60"
+                      title={image.caption ?? undefined}
+                    >
+                      <Image
+                        src={resolveMediaUrl(image.url)}
+                        alt={image.caption ?? t('galleryThumbAlt')}
+                        fill
+                        unoptimized
+                        className="object-cover"
+                        sizes="96px"
+                      />
+                      {isActive ? (
+                        <span className="absolute inset-0 flex items-center justify-center bg-primary/30 text-[10px] font-semibold text-white">
+                          {t('current')}
+                        </span>
+                      ) : null}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ) : galleryLoading ? (
+            <p className="text-sm text-atg-muted">{tCommon('loading')}</p>
+          ) : (
+            <p className="text-sm text-atg-muted">{t('noGalleryImages')}</p>
+          )}
         </div>
-      ) : galleryLoading ? (
-        <p className="text-sm text-atg-muted">{tCommon('loading')}</p>
-      ) : (
-        <p className="text-sm text-atg-muted">{t('noGalleryImages')}</p>
-      )}
+      </div>
 
       {error ? (
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {error}
         </p>
       ) : null}
-    </Card>
+    </section>
   );
 }

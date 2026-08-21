@@ -10,8 +10,8 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import { Ships } from '../../../entities/generated';
+import { ShipsListQueryDto } from './dto/ships-list-query.dto';
 import { ShipsService } from './ships.service';
 
 @ApiTags('ships')
@@ -21,7 +21,7 @@ export class ShipsController {
 
   @Get()
   @ApiOperation({ summary: 'List ships' })
-  findAll(@Query() query: PaginationQueryDto) {
+  findAll(@Query() query: ShipsListQueryDto) {
     return this.service.findAll(query);
   }
 

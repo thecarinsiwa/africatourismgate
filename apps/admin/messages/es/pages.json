@@ -77,6 +77,9 @@
     },
     "id": {
       "metaTitle": "Editar alojamiento",
+      "voir": {
+        "metaTitle": "Ver alojamiento"
+      },
       "chambres": {
         "roomId": {
           "disponibilites": {
@@ -89,6 +92,7 @@
       }
     },
     "equipements": {
+      "title": "Equipamientos",
       "description": "Catálogo global reutilizable en alojamientos (Wi-Fi, piscina, etc.)."
     }
   },
@@ -119,7 +123,8 @@
       },
       "nouveau": {
         "metaTitle": "Nueva actividad",
-        "description": "Cree una experiencia y luego añada horarios en la página de edición."
+        "description": "Cree una experiencia y luego añada horarios en la página de edición.",
+        "backLabel": "Volver a actividades"
       },
       "fournisseurs": {
         "title": "Socios de actividades",
@@ -140,7 +145,8 @@
       },
       "nouveau": {
         "metaTitle": "Nuevo destino",
-        "description": "Cree el destino y luego añada puntos de interés en la página de edición."
+        "description": "Cree el destino y luego añada puntos de interés en la página de edición.",
+        "backLabel": "Volver a destinos"
       },
       "id": {
         "metaTitle": "Editar destino",
@@ -222,14 +228,23 @@
         "classes": {
           "classId": {
             "disponibilites": {
-              "metaTitle": "Disponibilidad de clase"
+              "metaTitle": "Disponibilidad de clase",
+              "title": "Disponibilidad de clase",
+              "description": "Asientos y precio por fecha para esta clase de cabina."
             }
           }
         }
       }
     },
     "croisieres": {
+      "title": "Cruceros",
       "description": "Salidas programadas, itinerarios, cabinas y disponibilidad.",
+      "actions": {
+        "lines": "Líneas",
+        "ports": "Puertos",
+        "ships": "Barcos",
+        "new": "Nueva salida"
+      },
       "links": {
         "ships": "Barcos",
         "lines": "Líneas de crucero",
@@ -241,22 +256,29 @@
         "description": "Vincule un itinerario existente a una fecha de salida."
       },
       "lignes": {
-        "description": "Directorio de líneas de crucero."
+        "title": "Líneas de crucero",
+        "description": "Directorio de líneas de crucero.",
+        "backLabel": "Volver a cruceros"
       },
       "ports": {
-        "description": "Directorio de puertos."
+        "title": "Puertos de crucero",
+        "description": "Directorio de puertos.",
+        "backLabel": "Volver a cruceros"
       },
       "navires": {
+        "title": "Barcos",
         "description": "Barcos, itinerarios, puertos y cabinas.",
+        "backLabel": "Volver a cruceros",
         "links": {
-          "backToSailings": "← Salidas"
+          "backToSailings": "← Cruceros"
         },
         "nouveau": {
           "metaTitle": "Nuevo barco",
-          "description": "Cree un barco y luego añada itinerarios y cabinas."
+          "description": "Cree un barco y luego añada itinerarios y cabinas.",
+          "backLabel": "Volver a barcos"
         },
         "shipId": {
-          "metaTitle": "Barco",
+          "metaTitle": "Editar barco",
           "itineraires": {
             "itineraryId": {
               "metaTitle": "Escalas del itinerario"
@@ -265,14 +287,19 @@
         }
       },
       "id": {
-        "metaTitle": "Salida"
+        "metaTitle": "Editar salida"
       }
     },
     "forfaits": {
+      "title": "Paquetes",
       "description": "Paquetes combinados con descuento y precio calculado a partir de los productos incluidos.",
+      "actions": {
+        "new": "Nuevo paquete"
+      },
       "nouveau": {
         "metaTitle": "Nuevo paquete",
-        "description": "Cree el paquete y luego añada elementos en la página de edición."
+        "description": "Cree el paquete y luego añada elementos en la página de edición.",
+        "backLabel": "Volver a paquetes"
       },
       "id": {
         "metaTitle": "Editar paquete",

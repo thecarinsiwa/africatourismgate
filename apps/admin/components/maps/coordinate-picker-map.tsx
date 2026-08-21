@@ -6,6 +6,7 @@ import {
   hasValidDestinationCoords,
   parseDestinationCoord,
 } from '../../lib/destination-coords';
+import { createLeafletMarkerIcon } from '../../lib/leaflet-marker-icon';
 
 type CoordinatePickerMapProps = {
   latitude: string;
@@ -97,13 +98,15 @@ export function CoordinatePickerMap({
         onChangeRef.current(formatCoord(lat), formatCoord(lng));
       };
 
+      const markerIcon = createLeafletMarkerIcon(L);
+
       const upsertMarker = (lat: number, lng: number) => {
         if (markerRef.current) {
           markerRef.current.setLatLng([lat, lng]);
           return;
         }
 
-        const marker = L.marker([lat, lng], { draggable: true });
+        const marker = L.marker([lat, lng], { draggable: true, icon: markerIcon });
         marker.on('dragend', () => {
           const position = marker.getLatLng();
           emitCoords(position.lat, position.lng);
@@ -169,7 +172,10 @@ export function CoordinatePickerMap({
         }
         markerRef.current.setLatLng([lat, lng]);
       } else {
-        const marker = L.marker([lat, lng], { draggable: true });
+        const marker = L.marker([lat, lng], {
+          draggable: true,
+          icon: createLeafletMarkerIcon(L),
+        });
         marker.on('dragend', () => {
           const position = marker.getLatLng();
           onChangeRef.current(formatCoord(position.lat), formatCoord(position.lng));

@@ -77,6 +77,9 @@
     },
     "id": {
       "metaTitle": "Edit accommodation",
+      "voir": {
+        "metaTitle": "View accommodation"
+      },
       "chambres": {
         "roomId": {
           "disponibilites": {
@@ -89,6 +92,7 @@
       }
     },
     "equipements": {
+      "title": "Amenities",
       "description": "Global catalog reused across accommodations (Wi-Fi, pool, etc.)."
     }
   },
@@ -119,7 +123,8 @@
       },
       "nouveau": {
         "metaTitle": "New activity",
-        "description": "Create an experience then add schedules on the edit page."
+        "description": "Create an experience then add schedules on the edit page.",
+        "backLabel": "Back to activities"
       },
       "fournisseurs": {
         "title": "Activity partners",
@@ -140,7 +145,8 @@
       },
       "nouveau": {
         "metaTitle": "New destination",
-        "description": "Create the destination then add points of interest on the edit page."
+        "description": "Create the destination then add points of interest on the edit page.",
+        "backLabel": "Back to destinations"
       },
       "id": {
         "metaTitle": "Edit destination",
@@ -222,14 +228,23 @@
         "classes": {
           "classId": {
             "disponibilites": {
-              "metaTitle": "Class availability"
+              "metaTitle": "Class availability",
+              "title": "Class availability",
+              "description": "Seats and price by date for this cabin class."
             }
           }
         }
       }
     },
     "croisieres": {
+      "title": "Cruises",
       "description": "Scheduled departures, itineraries, cabins and availability.",
+      "actions": {
+        "lines": "Lines",
+        "ports": "Ports",
+        "ships": "Ships",
+        "new": "New sailing"
+      },
       "links": {
         "ships": "Ships",
         "lines": "Cruise lines",
@@ -241,22 +256,29 @@
         "description": "Link an existing itinerary to a departure date."
       },
       "lignes": {
-        "description": "Cruise line directory."
+        "title": "Cruise lines",
+        "description": "Cruise line directory.",
+        "backLabel": "Back to cruises"
       },
       "ports": {
-        "description": "Port directory."
+        "title": "Cruise ports",
+        "description": "Port directory.",
+        "backLabel": "Back to cruises"
       },
       "navires": {
+        "title": "Ships",
         "description": "Ships, itineraries, ports and cabins.",
+        "backLabel": "Back to cruises",
         "links": {
-          "backToSailings": "← Sailings"
+          "backToSailings": "← Cruises"
         },
         "nouveau": {
           "metaTitle": "New ship",
-          "description": "Create a ship then add itineraries and cabins."
+          "description": "Create a ship then add itineraries and cabins.",
+          "backLabel": "Back to ships"
         },
         "shipId": {
-          "metaTitle": "Ship",
+          "metaTitle": "Edit ship",
           "itineraires": {
             "itineraryId": {
               "metaTitle": "Itinerary stops"
@@ -265,14 +287,19 @@
         }
       },
       "id": {
-        "metaTitle": "Sailing"
+        "metaTitle": "Edit sailing"
       }
     },
     "forfaits": {
+      "title": "Packages",
       "description": "Combined packages with discount and price calculated from included products.",
+      "actions": {
+        "new": "New package"
+      },
       "nouveau": {
         "metaTitle": "New package",
-        "description": "Create the package then add items on the edit page."
+        "description": "Create the package then add items on the edit page.",
+        "backLabel": "Back to packages"
       },
       "id": {
         "metaTitle": "Edit package",

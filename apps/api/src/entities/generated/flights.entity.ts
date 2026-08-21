@@ -11,6 +11,9 @@ export class Airlines extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'name', length: 180 })
   name!: string;
 
+  @Column({ type: 'varchar', name: 'logo_url', length: 512, nullable: true })
+  logoUrl!: string | null;
+
 }
 
 @Entity('airports')

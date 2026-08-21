@@ -10,6 +10,7 @@ import {
   DataTableActionButton,
   DataTableActions,
   Input,
+  Modal,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { ActivityItineraryStop } from '@africatourismgate/types';
@@ -146,8 +147,25 @@ export function ActivityItineraryStopsSection({
   }
 
   function openCreateForm() {
-    resetForm();
-    setFormValues((prev) => ({ ...prev, stopOrder: String(nextStopOrder) }));
+    setEditing(null);
+    setFieldErrors({});
+    setFormError(null);
+    setFormValues({ ...emptyForm, stopOrder: String(nextStopOrder) });
+    setShowForm(true);
+  }
+
+  function openEditForm(stop: ActivityItineraryStop) {
+    setEditing(stop);
+    setFormValues({
+      name: stop.name,
+      stopOrder: String(stop.stopOrder),
+      latitude: stop.latitude ?? '',
+      longitude: stop.longitude ?? '',
+      description: stop.description ?? '',
+      durationMinutes: stop.durationMinutes != null ? String(stop.durationMinutes) : '',
+    });
+    setFieldErrors({});
+    setFormError(null);
     setShowForm(true);
   }
 
@@ -297,23 +315,7 @@ export function ActivityItineraryStopsSection({
           <DataTableActions>
             <DataTableActionButton
               action="edit"
-              onClick={() => {
-                setEditing(row.original);
-                setFormValues({
-                  name: row.original.name,
-                  stopOrder: String(row.original.stopOrder),
-                  latitude: row.original.latitude ?? '',
-                  longitude: row.original.longitude ?? '',
-                  description: row.original.description ?? '',
-                  durationMinutes:
-                    row.original.durationMinutes != null
-                      ? String(row.original.durationMinutes)
-                      : '',
-                });
-                setFieldErrors({});
-                setFormError(null);
-                setShowForm(true);
-              }}
+              onClick={() => openEditForm(row.original)}
             />
             <DataTableActionButton
               action="delete"
@@ -325,14 +327,16 @@ export function ActivityItineraryStopsSection({
         ),
       },
     ],
-    [deletingId, emptyDash, formatCoord, formatDuration, handleDeleteRequest, t, tColumns, tCommon],
+    [deletingId, formatCoord, formatDuration, handleDeleteRequest, t, tColumns, tCommon],
   );
 
   return (
     <>
       <AlertDialog
         open={!!confirmTarget}
-        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        onOpenChange={(open) => {
+          if (!open) setConfirmTarget(null);
+        }}
         title={t('deleteTitle')}
         description={t('deleteConfirm')}
         confirmLabel={t('deleteConfirmButton')}
@@ -342,144 +346,161 @@ export function ActivityItineraryStopsSection({
         error={deleteError}
         onConfirm={() => void handleDeleteConfirm()}
       />
-    <div className="space-y-6">
-      {!embedded ? <h3 className="text-base font-semibold text-atg-fg">{t('title')}</h3> : null}
 
-      {activityDurationLabel || totalStopDurationLabel ? (
-        <p className="text-sm text-atg-muted">
-          {activityDurationLabel
-            ? t('durationSummaryActivity', { duration: activityDurationLabel })
-            : null}
-          {activityDurationLabel && totalStopDurationLabel ? ' · ' : null}
-          {totalStopDurationLabel
-            ? t('durationSummaryStops', { duration: totalStopDurationLabel })
-            : null}
-          {activityDurationMinutes != null &&
-          totalStopDurationMinutes > activityDurationMinutes ? (
-            <span className="mt-1 block text-atg-warning">
-              {t('durationExceedsActivity')}
-            </span>
+      <Modal
+        open={showForm}
+        onOpenChange={(open) => {
+          if (!open && !submitting) resetForm();
+        }}
+        title={editing ? t('edit') : t('new')}
+        showClose={!submitting}
+        closeAriaLabel={tActions('close')}
+        className="max-w-2xl"
+      >
+        <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4">
+          {formError ? (
+            <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+              {formError}
+            </p>
           ) : null}
-        </p>
-      ) : (
-        <p className="text-sm text-atg-muted">{t('durationHint')}</p>
-      )}
+          <Input
+            label={tCommon('columns.name')}
+            value={formValues.name}
+            onChange={(e) => setFormValues((prev) => ({ ...prev, name: e.target.value }))}
+            error={fieldErrors.name}
+            disabled={submitting}
+            required
+          />
+          <Input
+            label={t('order')}
+            type="number"
+            min={1}
+            value={formValues.stopOrder}
+            onChange={(e) => setFormValues((prev) => ({ ...prev, stopOrder: e.target.value }))}
+            error={fieldErrors.stopOrder}
+            disabled={submitting}
+            required
+          />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Input
+              label={tCommon('form.latitude')}
+              value={formValues.latitude}
+              onChange={(e) => setFormValues((prev) => ({ ...prev, latitude: e.target.value }))}
+              error={fieldErrors.latitude}
+              placeholder="-4.30580"
+              disabled={submitting}
+              required
+            />
+            <Input
+              label={tCommon('form.longitude')}
+              value={formValues.longitude}
+              onChange={(e) => setFormValues((prev) => ({ ...prev, longitude: e.target.value }))}
+              error={fieldErrors.longitude}
+              placeholder="15.30000"
+              disabled={submitting}
+              required
+            />
+          </div>
+          <CoordinatePickerMap
+            latitude={formValues.latitude}
+            longitude={formValues.longitude}
+            onCoordinateChange={handleCoordinatePick}
+            defaultLatitude={mapDefaultCenter.latitude}
+            defaultLongitude={mapDefaultCenter.longitude}
+            title={t('mapPicker')}
+            hint={t('mapPickerHint')}
+            ariaLabel={t('mapPickerAria')}
+            active={showForm}
+          />
+          <Input
+            label={t('description')}
+            value={formValues.description}
+            onChange={(e) => setFormValues((prev) => ({ ...prev, description: e.target.value }))}
+            disabled={submitting}
+          />
+          <Input
+            label={tCommon('form.durationMinutesOptional')}
+            type="number"
+            min={1}
+            value={formValues.durationMinutes}
+            onChange={(e) =>
+              setFormValues((prev) => ({ ...prev, durationMinutes: e.target.value }))
+            }
+            error={fieldErrors.durationMinutes}
+            hint={t('durationFieldHint')}
+            disabled={submitting}
+          />
+          <div className="flex flex-wrap gap-3 pt-2">
+            <Button type="submit" loading={submitting}>
+              {editing ? tActions('save') : tActions('create')}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={resetForm}
+              disabled={submitting}
+            >
+              {tActions('cancel')}
+            </Button>
+          </div>
+        </form>
+      </Modal>
 
-      {state.status === 'ready' && rows.length > 0 ? (
-        <ActivityItineraryStopsTimeline stops={rows} />
-      ) : null}
+      <div className="space-y-6">
+        {!embedded ? <h3 className="text-base font-semibold text-atg-fg">{t('title')}</h3> : null}
 
-      <div className="flex justify-end">
-        {!showForm ? (
+        {activityDurationLabel || totalStopDurationLabel ? (
+          <p className="text-sm text-atg-muted">
+            {activityDurationLabel
+              ? t('durationSummaryActivity', { duration: activityDurationLabel })
+              : null}
+            {activityDurationLabel && totalStopDurationLabel ? ' · ' : null}
+            {totalStopDurationLabel
+              ? t('durationSummaryStops', { duration: totalStopDurationLabel })
+              : null}
+            {activityDurationMinutes != null &&
+            totalStopDurationMinutes > activityDurationMinutes ? (
+              <span className="mt-1 block text-atg-warning">
+                {t('durationExceedsActivity')}
+              </span>
+            ) : null}
+          </p>
+        ) : (
+          <p className="text-sm text-atg-muted">{t('durationHint')}</p>
+        )}
+
+        {state.status === 'ready' && rows.length > 0 ? (
+          <ActivityItineraryStopsTimeline stops={rows} />
+        ) : null}
+
+        <div className="flex justify-end">
           <Button type="button" onClick={openCreateForm}>
             {t('add')}
           </Button>
-        ) : null}
+        </div>
+
+        {state.status === 'error' ? (
+          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+            {state.message}
+          </p>
+        ) : state.status === 'loading' ? (
+          <p className="text-sm text-atg-muted">{tCommon('loading')}</p>
+        ) : rows.length === 0 ? (
+          <Card variant="dashboard" className="py-12 text-center">
+            <p className="text-sm text-atg-muted">{t('empty')}</p>
+          </Card>
+        ) : (
+          <Card variant="dashboard" padding="none">
+            <DataTable
+              columns={columns}
+              data={rows}
+              isLoading={false}
+              emptyMessage={t('empty')}
+              getRowId={(row) => row.id}
+            />
+          </Card>
+        )}
       </div>
-
-      {showForm ? (
-        <Card variant="dashboard" className="max-w-2xl">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <h4 className="text-sm font-medium">{editing ? t('edit') : t('new')}</h4>
-            {formError ? (
-              <p role="alert" className="text-sm text-red-600">
-                {formError}
-              </p>
-            ) : null}
-            <Input
-              label={tCommon('columns.name')}
-              value={formValues.name}
-              onChange={(e) => setFormValues((prev) => ({ ...prev, name: e.target.value }))}
-              error={fieldErrors.name}
-              required
-            />
-            <Input
-              label={t('order')}
-              type="number"
-              min={1}
-              value={formValues.stopOrder}
-              onChange={(e) => setFormValues((prev) => ({ ...prev, stopOrder: e.target.value }))}
-              error={fieldErrors.stopOrder}
-              required
-            />
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Input
-                label={tCommon('form.latitude')}
-                value={formValues.latitude}
-                onChange={(e) => setFormValues((prev) => ({ ...prev, latitude: e.target.value }))}
-                error={fieldErrors.latitude}
-                placeholder="-4.30580"
-                required
-              />
-              <Input
-                label={tCommon('form.longitude')}
-                value={formValues.longitude}
-                onChange={(e) => setFormValues((prev) => ({ ...prev, longitude: e.target.value }))}
-                error={fieldErrors.longitude}
-                placeholder="15.30000"
-                required
-              />
-            </div>
-            <CoordinatePickerMap
-              latitude={formValues.latitude}
-              longitude={formValues.longitude}
-              onCoordinateChange={handleCoordinatePick}
-              defaultLatitude={mapDefaultCenter.latitude}
-              defaultLongitude={mapDefaultCenter.longitude}
-              title={t('mapPicker')}
-              hint={t('mapPickerHint')}
-              ariaLabel={t('mapPickerAria')}
-            />
-            <Input
-              label={t('description')}
-              value={formValues.description}
-              onChange={(e) => setFormValues((prev) => ({ ...prev, description: e.target.value }))}
-            />
-            <Input
-              label={tCommon('form.durationMinutesOptional')}
-              type="number"
-              min={1}
-              value={formValues.durationMinutes}
-              onChange={(e) =>
-                setFormValues((prev) => ({ ...prev, durationMinutes: e.target.value }))
-              }
-              error={fieldErrors.durationMinutes}
-              hint={t('durationFieldHint')}
-            />
-            <div className="flex gap-3">
-              <Button type="submit" loading={submitting}>
-                {editing ? tActions('save') : tActions('create')}
-              </Button>
-              <Button type="button" variant="outline" onClick={resetForm}>
-                {tActions('cancel')}
-              </Button>
-            </div>
-          </form>
-        </Card>
-      ) : null}
-
-      {state.status === 'error' ? (
-        <p role="alert" className="text-sm text-red-600">
-          {state.message}
-        </p>
-      ) : state.status === 'loading' ? (
-        <p className="text-sm text-atg-muted">{tCommon('loading')}</p>
-      ) : rows.length === 0 ? (
-        <Card variant="dashboard" className="py-12 text-center">
-          <p className="text-sm text-atg-muted">{t('empty')}</p>
-        </Card>
-      ) : (
-        <Card variant="dashboard" padding="none">
-          <DataTable
-            columns={columns}
-            data={rows}
-            isLoading={false}
-            emptyMessage={t('empty')}
-            getRowId={(row) => row.id}
-          />
-        </Card>
-      )}
-    </div>
     </>
   );
 }

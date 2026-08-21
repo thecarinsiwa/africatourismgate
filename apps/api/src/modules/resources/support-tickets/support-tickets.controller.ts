@@ -10,8 +10,8 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import { SupportTickets } from '../../../entities/generated';
+import { SupportTicketsListQueryDto } from './dto/support-tickets-list-query.dto';
 import { SupportTicketsService } from './support-tickets.service';
 
 @ApiTags('support-tickets')
@@ -21,7 +21,7 @@ export class SupportTicketsController {
 
   @Get()
   @ApiOperation({ summary: 'List support-tickets' })
-  findAll(@Query() query: PaginationQueryDto) {
+  findAll(@Query() query: SupportTicketsListQueryDto) {
     return this.service.findAll(query);
   }
 

@@ -78,11 +78,24 @@
     "schedulesIntro": "{count} créneau(x) programmé(s).",
     "itineraryStopsIntro": "{count} étape(s) d'itinéraire.",
     "tabsAria": "Sections de l'activité",
+    "subtitle": "Fiche catalogue, médias, itinéraire et créneaux.",
     "tabs": {
       "activity": "Activité",
+      "photos": "Photos",
+      "attachments": "Pièces jointes",
       "itinerary": "Itinéraire",
       "schedules": "Créneaux"
     }
+  },
+  "view": {
+    "title": "Voir l'activité",
+    "editButton": "Modifier l'activité",
+    "notFound": "Activité introuvable.",
+    "subtitle": "Aperçu catalogue de l'activité.",
+    "infoTitle": "Informations",
+    "imagesTitle": "Photos",
+    "imagesIntro": "{count, plural, =0 {Aucune photo} one {# photo} other {# photos}}",
+    "imagesEmpty": "Aucune photo pour cette activité."
   },
   "sections": {
     "schedules": {

@@ -10,6 +10,7 @@ import {
   DataTableActionButton,
   DataTableActions,
   Input,
+  Modal,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type {
@@ -49,11 +50,13 @@ const emptyForm: FormValues = {
 
 type ActivityDescriptionAssetsSectionProps = {
   activityId?: string;
+  embedded?: boolean;
   onChanged?: () => void;
 };
 
 export function ActivityDescriptionAssetsSection({
   activityId,
+  embedded = false,
   onChanged,
 }: ActivityDescriptionAssetsSectionProps) {
   const { activities: getActivitiesErrorMessage } = useAdminErrorMessages();
@@ -102,6 +105,12 @@ export function ActivityDescriptionAssetsSection({
     setShowForm(false);
     setFormValues(emptyForm);
     setFormError(null);
+    setUploading(false);
+  }
+
+  function openCreate() {
+    resetForm();
+    setShowForm(true);
   }
 
   async function handleFilePick(event: React.ChangeEvent<HTMLInputElement>) {
@@ -282,9 +291,15 @@ export function ActivityDescriptionAssetsSection({
     <>
       <AlertDialog
         open={!!confirmTarget}
-        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        onOpenChange={(open) => {
+          if (!open) setConfirmTarget(null);
+        }}
         title={t('deleteTitle')}
-        description={confirmTarget ? t('deleteConfirm', { name: confirmTarget.name ?? confirmTarget.url }) : ''}
+        description={
+          confirmTarget
+            ? t('deleteConfirm', { name: confirmTarget.name ?? confirmTarget.url })
+            : ''
+        }
         confirmLabel={t('deleteConfirmButton')}
         cancelLabel={t('cancel')}
         variant="danger"
@@ -292,29 +307,24 @@ export function ActivityDescriptionAssetsSection({
         error={deleteError}
         onConfirm={() => void handleDeleteConfirm()}
       />
-    <Card variant="dashboard" className="mt-6 space-y-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h3 className="text-sm font-semibold text-atg-fg">{t('title')}</h3>
-          <p className="mt-1 text-xs text-atg-muted">{t('hint')}</p>
-        </div>
-        {activityId && !showForm ? (
-          <Button type="button" size="sm" onClick={() => setShowForm(true)}>
-            {t('add')}
-          </Button>
-        ) : null}
-      </div>
 
-      {!activityId ? (
-        <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-200">
-          {t('saveFirst')}
-        </p>
-      ) : null}
+      <Modal
+        open={showForm}
+        onOpenChange={(open) => {
+          if (!open && !submitting && !uploading) resetForm();
+        }}
+        title={t('add')}
+        showClose={!submitting && !uploading}
+        closeAriaLabel={tActions('close')}
+        className="max-w-lg"
+      >
+        <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4">
+          {formError ? (
+            <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+              {formError}
+            </p>
+          ) : null}
 
-      {formError ? <p className="text-sm text-red-600 dark:text-red-400">{formError}</p> : null}
-
-      {activityId && showForm ? (
-        <form onSubmit={handleSubmit} className="space-y-3 rounded-lg border border-atg-border p-3">
           <div className="flex flex-wrap items-center gap-3">
             <label className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10">
               {uploading ? tCommon('form.uploading') : tCommon('form.chooseFile')}
@@ -334,6 +344,7 @@ export function ActivityDescriptionAssetsSection({
               label={t('fields.name')}
               value={formValues.name}
               onChange={(e) => setFormValues((prev) => ({ ...prev, name: e.target.value }))}
+              disabled={submitting}
             />
             <label className="text-sm">
               <span className="mb-1 block text-xs font-medium text-atg-fg">{t('fields.type')}</span>
@@ -345,6 +356,7 @@ export function ActivityDescriptionAssetsSection({
                     assetType: e.target.value as ActivityDescriptionAssetType,
                   }))
                 }
+                disabled={submitting}
                 className="min-h-[40px] w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm"
               >
                 <option value="image">{t('types.image')}</option>
@@ -360,6 +372,7 @@ export function ActivityDescriptionAssetsSection({
               value={formValues.url}
               onChange={(e) => setFormValues((prev) => ({ ...prev, url: e.target.value }))}
               placeholder={tCommon('form.urlPlaceholder')}
+              disabled={submitting}
             />
             <Input
               label={tCommon('form.displayOrder')}
@@ -367,38 +380,75 @@ export function ActivityDescriptionAssetsSection({
               min={0}
               value={formValues.sortOrder}
               onChange={(e) => setFormValues((prev) => ({ ...prev, sortOrder: e.target.value }))}
+              disabled={submitting}
             />
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-3 pt-2">
             <Button type="submit" loading={submitting} disabled={uploading}>
               {tActions('add')}
             </Button>
-            <Button type="button" variant="outline" onClick={resetForm}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={resetForm}
+              disabled={submitting || uploading}
+            >
               {tActions('cancel')}
             </Button>
           </div>
         </form>
-      ) : null}
+      </Modal>
 
-      {activityId ? (
-        state.status === 'error' ? (
-          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-            {state.message}
+      <section
+        className={
+          embedded
+            ? 'space-y-4'
+            : 'mt-6 space-y-4 rounded-xl border border-atg-border bg-atg-elevated p-4 sm:p-6'
+        }
+      >
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <h3
+              className={
+                embedded ? 'text-lg font-semibold text-atg-fg' : 'text-sm font-semibold text-atg-fg'
+              }
+            >
+              {t('title')}
+            </h3>
+            <p className={`mt-1 text-atg-muted ${embedded ? 'text-sm' : 'text-xs'}`}>{t('hint')}</p>
+          </div>
+          {activityId ? (
+            <Button type="button" onClick={openCreate}>
+              {t('add')}
+            </Button>
+          ) : null}
+        </div>
+
+        {!activityId ? (
+          <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-200">
+            {t('saveFirst')}
           </p>
-        ) : (
-          <Card variant="dashboard" padding="none" className="overflow-hidden">
-            <DataTable
-              columns={columns}
-              data={assets}
-              isLoading={state.status === 'loading'}
-              emptyMessage={t('empty')}
-              getRowId={(row) => row.id}
-            />
-          </Card>
-        )
-      ) : null}
-    </Card>
+        ) : null}
+
+        {activityId ? (
+          state.status === 'error' ? (
+            <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+              {state.message}
+            </p>
+          ) : (
+            <Card variant="dashboard" padding="none" className="overflow-hidden">
+              <DataTable
+                columns={columns}
+                data={assets}
+                isLoading={state.status === 'loading'}
+                emptyMessage={t('empty')}
+                getRowId={(row) => row.id}
+              />
+            </Card>
+          )
+        ) : null}
+      </section>
     </>
   );
 }

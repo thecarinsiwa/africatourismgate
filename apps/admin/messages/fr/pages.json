@@ -77,6 +77,9 @@
     },
     "id": {
       "metaTitle": "Modifier l'hébergement",
+      "voir": {
+        "metaTitle": "Voir l'hébergement"
+      },
       "chambres": {
         "roomId": {
           "disponibilites": {
@@ -89,6 +92,7 @@
       }
     },
     "equipements": {
+      "title": "Équipements",
       "description": "Catalogue global réutilisable sur les hébergements (Wi-Fi, piscine, etc.)."
     }
   },
@@ -119,7 +123,8 @@
       },
       "nouveau": {
         "metaTitle": "Nouvelle activité",
-        "description": "Créez une expérience puis ajoutez des créneaux sur la page d'édition."
+        "description": "Créez une expérience puis ajoutez des créneaux sur la page d'édition.",
+        "backLabel": "Retour aux activités"
       },
       "fournisseurs": {
         "title": "Partenaires d'activités",
@@ -140,7 +145,8 @@
       },
       "nouveau": {
         "metaTitle": "Nouvelle destination",
-        "description": "Créez la destination puis ajoutez des points d'intérêt sur la page de modification."
+        "description": "Créez la destination puis ajoutez des points d'intérêt sur la page de modification.",
+        "backLabel": "Retour aux destinations"
       },
       "id": {
         "metaTitle": "Modifier la destination",
@@ -222,14 +228,23 @@
         "classes": {
           "classId": {
             "disponibilites": {
-              "metaTitle": "Disponibilités classe"
+              "metaTitle": "Disponibilités classe",
+              "title": "Disponibilités classe",
+              "description": "Sièges et prix par date pour cette classe cabine."
             }
           }
         }
       }
     },
     "croisieres": {
+      "title": "Croisières",
       "description": "Départs programmés, itinéraires, cabines et disponibilités.",
+      "actions": {
+        "lines": "Lignes",
+        "ports": "Ports",
+        "ships": "Navires",
+        "new": "Nouveau départ"
+      },
       "links": {
         "ships": "Navires",
         "lines": "Lignes de croisière",
@@ -241,22 +256,29 @@
         "description": "Associez un itinéraire existant à une date de départ."
       },
       "lignes": {
-        "description": "Référentiel des compagnies / lignes."
+        "title": "Lignes de croisière",
+        "description": "Référentiel des compagnies / lignes.",
+        "backLabel": "Retour aux croisières"
       },
       "ports": {
-        "description": "Référentiel des escales."
+        "title": "Ports de croisière",
+        "description": "Référentiel des escales.",
+        "backLabel": "Retour aux croisières"
       },
       "navires": {
+        "title": "Navires",
         "description": "Navires, itinéraires, escales et cabines.",
+        "backLabel": "Retour aux croisières",
         "links": {
-          "backToSailings": "← Départs"
+          "backToSailings": "← Croisières"
         },
         "nouveau": {
           "metaTitle": "Nouveau navire",
-          "description": "Créez un navire puis ajoutez itinéraires et cabines."
+          "description": "Créez un navire puis ajoutez itinéraires et cabines.",
+          "backLabel": "Retour aux navires"
         },
         "shipId": {
-          "metaTitle": "Navire",
+          "metaTitle": "Modifier le navire",
           "itineraires": {
             "itineraryId": {
               "metaTitle": "Escales itinéraire"
@@ -265,14 +287,19 @@
         }
       },
       "id": {
-        "metaTitle": "Départ"
+        "metaTitle": "Modifier le départ"
       }
     },
     "forfaits": {
+      "title": "Forfaits",
       "description": "Packages combinés avec remise et prix calculé à partir des produits inclus.",
+      "actions": {
+        "new": "Nouveau forfait"
+      },
       "nouveau": {
         "metaTitle": "Nouveau forfait",
-        "description": "Créez le forfait puis ajoutez des items sur la page d’édition."
+        "description": "Créez le forfait puis ajoutez des items sur la page d’édition.",
+        "backLabel": "Retour aux forfaits"
       },
       "id": {
         "metaTitle": "Modifier le forfait",

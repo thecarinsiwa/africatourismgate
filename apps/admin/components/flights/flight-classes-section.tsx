@@ -9,6 +9,7 @@ import {
   DataTableActionButton,
   DataTableActions,
   Input,
+  Modal,
 } from '@africatourismgate/ui';
 import type { FlightClass, FlightClassName } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
@@ -88,6 +89,22 @@ export function FlightClassesSection({ flightId, embedded }: FlightClassesSectio
     setFormError(null);
   }
 
+  function openCreate() {
+    resetForm();
+    setShowForm(true);
+  }
+
+  function openEdit(flightClass: FlightClass) {
+    setEditing(flightClass);
+    setFormValues({
+      className: flightClass.className,
+      basePriceCents: String(flightClass.basePriceCents),
+      seatsTotal: String(flightClass.seatsTotal),
+    });
+    setShowForm(true);
+    setFormError(null);
+  }
+
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     setFormError(null);
@@ -120,16 +137,6 @@ export function FlightClassesSection({ flightId, embedded }: FlightClassesSectio
     } finally {
       setSubmitting(false);
     }
-  }
-
-  function openEdit(flightClass: FlightClass) {
-    setEditing(flightClass);
-    setFormValues({
-      className: flightClass.className,
-      basePriceCents: String(flightClass.basePriceCents),
-      seatsTotal: String(flightClass.seatsTotal),
-    });
-    setShowForm(true);
   }
 
   const handleDeleteRequest = useCallback((flightClass: FlightClass) => {
@@ -184,77 +191,87 @@ export function FlightClassesSection({ flightId, embedded }: FlightClassesSectio
         ) : (
           <p className="text-sm text-atg-muted">{t('intro')}</p>
         )}
-        {!showForm ? (
-          <Button type="button" onClick={() => setShowForm(true)}>
-            {t('addClass')}
-          </Button>
-        ) : null}
+        <Button type="button" onClick={openCreate}>
+          {t('addClass')}
+        </Button>
       </div>
 
-      {showForm ? (
-        <Card variant="dashboard" className="max-w-2xl">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <h3 className="text-sm font-medium">
-              {editing ? t('editClass') : t('newClass')}
-            </h3>
-            {formError ? (
-              <p role="alert" className="text-sm text-red-600">
-                {formError}
-              </p>
-            ) : null}
-            <div>
-              <label htmlFor={classSelectId} className="mb-2 block text-sm font-medium">
-                {t('cabinType')}
-              </label>
-              <select
-                id={classSelectId}
-                className={selectClass}
-                value={formValues.className}
-                onChange={(e) =>
-                  setFormValues((p) => ({
-                    ...p,
-                    className: e.target.value as FlightClassName,
-                  }))
-                }
-              >
-                {classOptions.map((o) => (
-                  <option key={o.value} value={o.value}>
-                    {o.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Input
-                label={tCommon('form.basePriceCents')}
-                type="number"
-                min={0}
-                value={formValues.basePriceCents}
-                onChange={(e) =>
-                  setFormValues((p) => ({ ...p, basePriceCents: e.target.value }))
-                }
-              />
-              <Input
-                label={t('totalSeats')}
-                type="number"
-                min={1}
-                value={formValues.seatsTotal}
-                onChange={(e) =>
-                  setFormValues((p) => ({ ...p, seatsTotal: e.target.value }))
-                }
-              />
-            </div>
-            <div className="flex gap-3">
-              <Button type="submit" loading={submitting}>
-                {editing ? tActions('save') : t('addClass')}
-              </Button>
-              <Button type="button" variant="outline" onClick={resetForm}>
-                {tActions('cancel')}
-              </Button>
-            </div>
-          </form>
-        </Card>
-      ) : null}
+      <Modal
+        open={showForm}
+        onOpenChange={(open) => {
+          if (!open && !submitting) resetForm();
+        }}
+        title={editing ? t('editClass') : t('newClass')}
+        showClose={!submitting}
+        closeAriaLabel={tActions('close')}
+        className="max-w-lg"
+      >
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {formError ? (
+            <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+              {formError}
+            </p>
+          ) : null}
+          <div>
+            <label htmlFor={classSelectId} className="mb-2 block text-sm font-medium">
+              {t('cabinType')}
+            </label>
+            <select
+              id={classSelectId}
+              className={selectClass}
+              value={formValues.className}
+              onChange={(e) =>
+                setFormValues((p) => ({
+                  ...p,
+                  className: e.target.value as FlightClassName,
+                }))
+              }
+              disabled={submitting}
+            >
+              {classOptions.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Input
+              label={tCommon('form.basePriceCents')}
+              type="number"
+              min={0}
+              value={formValues.basePriceCents}
+              onChange={(e) =>
+                setFormValues((p) => ({ ...p, basePriceCents: e.target.value }))
+              }
+              disabled={submitting}
+            />
+            <Input
+              label={t('totalSeats')}
+              type="number"
+              min={1}
+              value={formValues.seatsTotal}
+              onChange={(e) =>
+                setFormValues((p) => ({ ...p, seatsTotal: e.target.value }))
+              }
+              disabled={submitting}
+            />
+          </div>
+          <div className="flex gap-3 pt-1">
+            <Button type="submit" loading={submitting}>
+              {editing ? tActions('save') : t('addClass')}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={resetForm}
+              disabled={submitting}
+            >
+              {tActions('cancel')}
+            </Button>
+          </div>
+        </form>
+      </Modal>
 
       {state.status === 'error' ? (
         <p role="alert" className="text-sm text-red-600">

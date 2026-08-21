@@ -10,6 +10,9 @@ import {
   DataTable,
   DataTableActionButton,
   DataTableActions,
+  DataTablePagination,
+  Input,
+  Modal,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type {
@@ -21,13 +24,21 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { formatMoney } from '../../lib/format-money';
-import { usePackageItemTypeOptions } from '../../lib/i18n/use-module-labels';
+import {
+  usePackageItemTypeLabels,
+  usePackageItemTypeOptions,
+} from '../../lib/i18n/use-module-labels';
+import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
+import { getPackageItemTypeLabel } from '../../lib/package-item-type';
 import { PackageCompositionBanner } from './package-composition-banner';
+import { PackageItemDetailModal } from './package-item-detail-modal';
 import { PackageItemTypeIcon } from './package-item-type-icon';
 import { PackagePreviewCard } from './package-preview-card';
 import { PackagePricingRecap } from './package-pricing-recap';
 
 type CatalogOption = { id: string; label: string };
+
+const PAGE_SIZE = 2;
 
 type PackageItemsSectionProps = {
   packageId: string;
@@ -44,7 +55,10 @@ export function PackageItemsSection({
   const t = useTranslations('modules.packages.sections.items');
   const tCommon = useTranslations('modules.common');
   const tActions = useTranslations('common.actions');
+  const tPagination = useTranslations('modules.common.pagination');
+  const paginationLabels = useDataTablePaginationLabels();
   const itemTypeOptions = usePackageItemTypeOptions();
+  const itemTypeLabels = usePackageItemTypeLabels();
   const typeId = useId();
   const itemId = useId();
   const [detail, setDetail] = useState<PackageDetail | null>(null);
@@ -53,6 +67,8 @@ export function PackageItemsSection({
     | { status: 'error'; message: string }
     | { status: 'ready' }
   >({ status: 'loading' });
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
   const [showForm, setShowForm] = useState(false);
   const [itemType, setItemType] = useState<PackageItemType>('property');
   const [selectedItemId, setSelectedItemId] = useState('');
@@ -62,6 +78,7 @@ export function PackageItemsSection({
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [confirmTarget, setConfirmTarget] = useState<PackageItemEnriched | null>(null);
+  const [viewTarget, setViewTarget] = useState<PackageItemEnriched | null>(null);
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -168,6 +185,10 @@ export function PackageItemsSection({
     setConfirmTarget(item);
   }, []);
 
+  const handleViewRequest = useCallback((item: PackageItemEnriched) => {
+    setViewTarget(item);
+  }, []);
+
   const handleDeleteConfirm = useCallback(async () => {
     if (!confirmTarget) return;
     const item = confirmTarget;
@@ -214,6 +235,10 @@ export function PackageItemsSection({
         cell: ({ row }) => (
           <DataTableActions>
             <DataTableActionButton
+              action="view"
+              onClick={() => handleViewRequest(row.original)}
+            />
+            <DataTableActionButton
               action="remove"
               onClick={() => handleDeleteRequest(row.original)}
               disabled={deletingId === row.original.id}
@@ -223,12 +248,41 @@ export function PackageItemsSection({
         ),
       },
     ],
-    [deletingId, handleDeleteRequest, tCommon],
+    [deletingId, handleDeleteRequest, handleViewRequest, tCommon],
   );
 
   const items = detail?.items ?? [];
   const pricing = detail?.pricing;
   const pkg = detail?.package;
+  const hasSearch = search.trim().length > 0;
+  const filteredItems = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    if (!query) return items;
+    return items.filter((item) => {
+      const typeLabel = getPackageItemTypeLabel(item.itemType, itemTypeLabels);
+      const haystack = [item.label, typeLabel, item.itemType, item.currency]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+      return haystack.includes(query);
+    });
+  }, [items, itemTypeLabels, search]);
+  const totalPages = Math.max(1, Math.ceil(filteredItems.length / PAGE_SIZE));
+  const pageItems = useMemo(() => {
+    const start = (page - 1) * PAGE_SIZE;
+    return filteredItems.slice(start, start + PAGE_SIZE);
+  }, [filteredItems, page]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [search, packageId]);
+
+  useEffect(() => {
+    if (page > totalPages) {
+      setPage(totalPages);
+    }
+  }, [page, totalPages]);
+
   const selectClass =
     'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg';
 
@@ -236,7 +290,9 @@ export function PackageItemsSection({
     <>
       <AlertDialog
         open={!!confirmTarget}
-        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        onOpenChange={(open) => {
+          if (!open) setConfirmTarget(null);
+        }}
         title={t('removeTitle')}
         description={confirmTarget ? t('removeConfirm', { label: confirmTarget.label }) : ''}
         confirmLabel={t('removeConfirmButton')}
@@ -245,120 +301,172 @@ export function PackageItemsSection({
         loading={!!deletingId}
         onConfirm={() => void handleDeleteConfirm()}
       />
-    <section
-      className={cn(
-        'space-y-6',
-        embedded ? '' : 'mt-12 border-t border-atg-border pt-10',
-      )}
-    >
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
-          <p className="mt-1 text-sm text-atg-muted">{t('intro')}</p>
-        </div>
-        {!showForm ? (
-          <Button type="button" onClick={() => setShowForm(true)}>
-            {t('addItem')}
-          </Button>
-        ) : null}
-      </div>
 
-      {detail && pricing && pkg ? (
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-start">
-          <PackagePricingRecap
-            pricing={pricing}
-            itemCount={items.length}
-            className="max-w-none"
-          />
-          <PackagePreviewCard
-            pkg={pkg}
-            itemCount={items.length}
-            pricing={pricing}
-            className="lg:sticky lg:top-6"
-          />
-        </div>
-      ) : null}
+      <PackageItemDetailModal
+        open={!!viewTarget}
+        item={viewTarget}
+        onOpenChange={(open) => {
+          if (!open) setViewTarget(null);
+        }}
+      />
 
-      <PackageCompositionBanner items={items} />
-
-      {showForm ? (
-        <Card variant="dashboard" className="max-w-2xl">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <h3 className="text-sm font-medium">{t('newItem')}</h3>
-            {formError ? (
-              <p role="alert" className="text-sm text-red-600">
-                {formError}
-              </p>
-            ) : null}
-            <div>
-              <label htmlFor={typeId} className="mb-2 block text-sm font-medium">
-                {tCommon('columns.type')}
-              </label>
-              <div className="flex items-center gap-3">
-                <PackageItemTypeIcon itemType={itemType} size="md" />
-                <select
-                  id={typeId}
-                  className={cn(selectClass, 'min-w-0 flex-1')}
-                  value={itemType}
-                  onChange={(e) => setItemType(e.target.value as PackageItemType)}
-                >
-                  {itemTypeOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            <div>
-              <label htmlFor={itemId} className="mb-2 block text-sm font-medium">
-                {tCommon('columns.product')}
-              </label>
+      <Modal
+        open={showForm}
+        onOpenChange={(open) => {
+          if (!open && !submitting) resetForm();
+        }}
+        title={t('newItem')}
+        showClose={!submitting}
+        closeAriaLabel={tActions('close')}
+        className="max-w-lg"
+      >
+        <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4">
+          {formError ? (
+            <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+              {formError}
+            </p>
+          ) : null}
+          <div>
+            <label htmlFor={typeId} className="mb-2 block text-sm font-medium text-atg-fg">
+              {tCommon('columns.type')}
+            </label>
+            <div className="flex items-center gap-3">
+              <PackageItemTypeIcon itemType={itemType} size="md" />
               <select
-                id={itemId}
-                className={selectClass}
-                value={selectedItemId}
-                onChange={(e) => setSelectedItemId(e.target.value)}
-                disabled={catalogLoading}
+                id={typeId}
+                className={cn(selectClass, 'min-w-0 flex-1')}
+                value={itemType}
+                onChange={(e) => setItemType(e.target.value as PackageItemType)}
+                disabled={submitting}
               >
-                <option value="">
-                  {catalogLoading ? tCommon('loading') : tCommon('select.chooseDash')}
-                </option>
-                {catalog.map((o) => (
-                  <option key={o.id} value={o.id}>
-                    {o.label}
+                {itemTypeOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
                   </option>
                 ))}
               </select>
             </div>
-            <div className="flex gap-3">
-              <Button type="submit" loading={submitting}>
-                {tActions('create')}
-              </Button>
-              <Button type="button" variant="outline" onClick={resetForm}>
-                {tActions('cancel')}
-              </Button>
-            </div>
-          </form>
-        </Card>
-      ) : null}
+          </div>
+          <div>
+            <label htmlFor={itemId} className="mb-2 block text-sm font-medium text-atg-fg">
+              {tCommon('columns.product')}
+            </label>
+            <select
+              id={itemId}
+              className={selectClass}
+              value={selectedItemId}
+              onChange={(e) => setSelectedItemId(e.target.value)}
+              disabled={catalogLoading || submitting}
+            >
+              <option value="">
+                {catalogLoading ? tCommon('loading') : tCommon('select.chooseDash')}
+              </option>
+              {catalog.map((o) => (
+                <option key={o.id} value={o.id}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex flex-wrap gap-3 pt-2">
+            <Button type="submit" loading={submitting}>
+              {tActions('create')}
+            </Button>
+            <Button type="button" variant="outline" onClick={resetForm} disabled={submitting}>
+              {tActions('cancel')}
+            </Button>
+          </div>
+        </form>
+      </Modal>
 
-      {state.status === 'error' ? (
-        <p role="alert" className="text-sm text-red-600">
-          {state.message}
-        </p>
-      ) : (
-        <Card variant="dashboard" padding="none">
-          <DataTable
-            columns={columns}
-            data={items}
-            isLoading={state.status === 'loading'}
-            emptyMessage={t('empty')}
-            getRowId={(r) => r.id}
-          />
-        </Card>
-      )}
-    </section>
+      <section
+        className={cn('space-y-6', embedded ? '' : 'mt-12 border-t border-atg-border pt-10')}
+      >
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            {!embedded ? (
+              <>
+                <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
+                <p className="mt-1 text-sm text-atg-muted">{t('intro')}</p>
+              </>
+            ) : (
+              <h3 className="text-sm font-semibold text-atg-fg">{t('title')}</h3>
+            )}
+          </div>
+          <Button type="button" onClick={() => setShowForm(true)}>
+            {t('addItem')}
+          </Button>
+        </div>
+
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,18rem)] lg:items-start xl:grid-cols-[minmax(0,1fr)_minmax(0,20rem)]">
+          <div className="min-w-0 space-y-4 self-start">
+            <PackageCompositionBanner items={items} />
+
+            {state.status === 'ready' && items.length > 0 ? (
+              <div className="max-w-md">
+                <Input
+                  type="search"
+                  placeholder={t('searchPlaceholder')}
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  aria-label={t('searchPlaceholder')}
+                />
+              </div>
+            ) : null}
+
+            {state.status === 'error' ? (
+              <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+                {state.message}
+              </p>
+            ) : (
+              <div className="space-y-3">
+                <Card variant="dashboard" padding="none" className="h-fit overflow-hidden">
+                  <DataTable
+                    columns={columns}
+                    data={pageItems}
+                    isLoading={state.status === 'loading'}
+                    emptyMessage={hasSearch ? t('searchEmpty') : t('empty')}
+                    emptyVariant={hasSearch ? 'search' : 'default'}
+                    getRowId={(r) => r.id}
+                    aria-label={t('title')}
+                    loadingRows={PAGE_SIZE}
+                  />
+                </Card>
+                {state.status === 'ready' && filteredItems.length > 0 ? (
+                  <DataTablePagination
+                    page={page}
+                    pageSize={PAGE_SIZE}
+                    totalPages={totalPages}
+                    totalItems={filteredItems.length}
+                    itemLabel={tPagination('service')}
+                    onPageChange={setPage}
+                    labels={paginationLabels}
+                  />
+                ) : null}
+              </div>
+            )}
+          </div>
+
+          <aside className="min-w-0 space-y-3 self-start lg:sticky lg:top-6">
+            {detail && pricing && pkg ? (
+              <>
+                <PackagePricingRecap
+                  pricing={pricing}
+                  itemCount={items.length}
+                  size="sm"
+                  className="max-w-none"
+                />
+                <PackagePreviewCard
+                  pkg={pkg}
+                  itemCount={items.length}
+                  pricing={pricing}
+                  size="sm"
+                />
+              </>
+            ) : null}
+          </aside>
+        </div>
+      </section>
     </>
   );
 }

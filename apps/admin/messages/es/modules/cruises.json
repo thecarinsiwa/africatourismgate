@@ -2,8 +2,15 @@
   "list": {
     "newSailing": "Nueva salida",
     "viewList": "Lista",
+    "viewGrid": "Cuadrícula",
+    "viewTable": "Tabla",
     "viewCalendar": "Calendario",
+    "viewModeAria": "Modo de vista",
+    "searchPlaceholder": "Buscar salidas…",
+    "searchAria": "Buscar salidas",
     "emptySailings": "No hay salidas programadas.",
+    "emptyFiltered": "Ninguna salida coincide con este filtro.",
+    "ariaLabel": "Lista de salidas de crucero",
     "deleteSailingTitle": "Eliminar salida",
     "deleteSailingConfirm": "La salida \"{label}\" será eliminada permanentemente.",
     "deleteSailingButton": "Eliminar",
@@ -14,31 +21,90 @@
     "departure": "Salida",
     "itinerary": "Itinerario",
     "ship": "Barco",
-    "nights": "Nuits",
-    "line": "Ligne",
-    "year": "Année",
+    "nights": "Noches",
+    "line": "Línea",
+    "year": "Año",
     "port": "Puerto"
   },
   "filters": {
-    "line": "Filtrer par ligne",
-    "searchShip": "Rechercher un navire…",
-    "searchLine": "Rechercher une ligne…",
-    "searchPort": "Rechercher par code ou nom…"
+    "line": "Filtrar por línea",
+    "ship": "Barco",
+    "allShips": "Todos los barcos",
+    "itinerary": "Itinerario",
+    "allItineraries": "Todos los itinerarios",
+    "searchShip": "Buscar barcos…",
+    "searchLine": "Buscar líneas…",
+    "searchPort": "Buscar por código o nombre…"
+  },
+  "referential": {
+    "lines": {
+      "new": "Nueva línea",
+      "edit": "Editar línea",
+      "line": "Línea",
+      "emptyDefault": "Ninguna línea de crucero.",
+      "emptySearch": "Ninguna línea coincide con esta búsqueda.",
+      "searchPlaceholder": "Buscar líneas…",
+      "searchAria": "Buscar una línea",
+      "ariaLabel": "Lista de líneas de crucero",
+      "viewGrid": "Cuadrícula",
+      "viewTable": "Tabla",
+      "viewModeAria": "Modo de vista",
+      "validation": "El nombre de la línea es obligatorio.",
+      "deleteTitle": "Eliminar línea",
+      "deleteConfirm": "La línea «{name}» será eliminada permanentemente.",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar"
+    },
+    "ports": {
+      "new": "Nuevo puerto",
+      "edit": "Editar puerto",
+      "port": "Puerto",
+      "code": "Código",
+      "country": "País",
+      "emptyDefault": "Ningún puerto.",
+      "emptySearch": "Ningún puerto coincide con esta búsqueda.",
+      "searchPlaceholder": "Buscar por código o nombre…",
+      "searchAria": "Buscar un puerto",
+      "ariaLabel": "Lista de puertos de crucero",
+      "viewGrid": "Cuadrícula",
+      "viewTable": "Tabla",
+      "viewModeAria": "Modo de vista",
+      "validation": "Código, nombre y país (ISO de 2 letras) son obligatorios.",
+      "deleteTitle": "Eliminar puerto",
+      "deleteConfirm": "El puerto «{name}» será eliminado permanentemente.",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar"
+    },
+    "ships": {
+      "new": "Nuevo barco",
+      "emptyDefault": "Ningún barco.",
+      "emptySearch": "Ningún barco coincide con estos filtros.",
+      "searchPlaceholder": "Buscar barcos…",
+      "searchAria": "Buscar un barco",
+      "ariaLabel": "Lista de barcos",
+      "filterLine": "Filtrar por línea",
+      "allLines": "Todas las líneas",
+      "viewGrid": "Cuadrícula",
+      "viewTable": "Tabla",
+      "viewModeAria": "Modo de vista"
+    }
   },
   "form": {
     "ship": {
-      "submitCreate": "Créer le navire",
-      "line": "Ligne",
-      "shipName": "Apellido du navire",
-      "builtYear": "Année de construction (optionnel)",
-      "validation": "Ligne et nom du navire sont obligatoires."
+      "submitCreate": "Crear barco",
+      "line": "Línea",
+      "shipName": "Nombre del barco",
+      "builtYear": "Año de construcción (opcional)",
+      "validation": "La línea y el nombre del barco son obligatorios."
     },
     "sailing": {
-      "submitCreate": "Créer le départ",
+      "submitCreate": "Crear salida",
       "itinerary": "Itinerario",
-      "departureDate": "Fecha de départ",
-      "itineraryOption": "{name} ({shipName}) — {nights} nuits",
-      "validation": "Itinerario et date de départ sont obligatoires."
+      "departureDate": "Fecha de salida",
+      "itineraryOption": "{name} ({shipName}) — {nights} noches",
+      "validation": "El itinerario y la fecha de salida son obligatorios.",
+      "fallbackShip": "Barco desconocido",
+      "noItinerariesHint": "Ningún itinerario disponible. Cree uno desde la ficha de un barco."
     },
     "itinerary": {
       "new": "Nuevo itinerario",
@@ -59,7 +125,9 @@
       "deleteConfirm": "El puerto «{name}» será eliminado permanentemente.",
       "deleteTitle": "Eliminar puerto",
       "deleteConfirmButton": "Eliminar",
-      "cancel": "Cancelar"
+      "cancel": "Cancelar",
+      "validation": "Código, nombre y país (ISO de 2 letras) son obligatorios.",
+      "newShort": "Nuevo puerto"
     },
     "line": {
       "new": "Nueva línea de crucero",
@@ -68,7 +136,9 @@
       "deleteConfirm": "La línea «{name}» será eliminada permanentemente.",
       "deleteTitle": "Eliminar línea",
       "deleteConfirmButton": "Eliminar",
-      "cancel": "Cancelar"
+      "cancel": "Cancelar",
+      "validation": "El nombre de la línea es obligatorio.",
+      "newShort": "Nueva línea"
     },
     "cabin": {
       "new": "Nueva cabina",
@@ -85,14 +155,40 @@
     }
   },
   "detail": {
-    "shipTitle": "Modifier le navire",
-    "sailingTitle": "Modifier le départ",
-    "backToShips": "← Volver aux navires",
+    "shipTitle": "Editar barco",
+    "shipSubtitle": "Identidad, fotos, itinerarios y cabinas.",
+    "sailingTitle": "Editar salida",
+    "sailingSubtitle": "Itinerario, fecha de salida y cabinas reservables.",
+    "backToSailings": "Volver a cruceros",
+    "backToShips": "Volver a barcos",
     "escalesTitle": "Escalas",
-    "backToShip": "Volver au navire",
-    "timelineAria": "Schéma des escales"
+    "backToShip": "Volver al barco",
+    "viewShip": "Ver barco",
+    "viewItinerary": "Ver escalas",
+    "tabsAria": "Secciones de la salida",
+    "shipTabsAria": "Secciones del barco",
+    "tabs": {
+      "sailing": "Salida",
+      "cabins": "Cabinas",
+      "ship": "Barco",
+      "photos": "Fotos",
+      "itineraries": "Itinerarios",
+      "shipCabins": "Cabinas"
+    },
+    "timelineAria": "Esquema de escalas"
   },
   "sections": {
+    "itineraries": {
+      "title": "Itinerarios",
+      "intro": "Recorridos ofrecidos en este barco (duración en noches).",
+      "addItinerary": "Añadir itinerario",
+      "stopsLink": "Escalas"
+    },
+    "cabins": {
+      "title": "Cabinas",
+      "intro": "Categorías de cabina y tarifas base.",
+      "addCabin": "Añadir cabina"
+    },
     "itineraryPorts": {
       "day": "Día",
       "arrivalTime": "Hora de llegada (HH:MM)",
@@ -103,19 +199,20 @@
       "deleteConfirm": "Esta escala será eliminada permanentemente.",
       "deleteTitle": "Eliminar escala",
       "deleteConfirmButton": "Eliminar",
-      "cancel": "Cancelar"
+      "cancel": "Cancelar",
+      "validation": "El puerto y el número de día son obligatorios."
     },
     "cabinAvailability": {
-      "title": "Camarotes réservables",
-      "intro": "Stock et prix par catégorie pour ce départ.",
-      "stopsLabel": "Escalas : ",
-      "noStopsWarning": "Ninguna escale sur cet itinéraire — ajoutez-en depuis la fiche navire.",
-      "cabinMeta": "max {maxGuests} · base {basePrice}",
-      "cabinsAvailableAria": "Camarotes disponibles",
-      "priceCentsAria": "Precio en centimes",
-      "update": "Mettre à jour",
-      "makeBookable": "Rendre réservable",
-      "empty": "Ninguna cabine sur ce navire. Ajoutez des cabines sur la fiche navire."
+      "title": "Cabinas reservables",
+      "intro": "Stock y precio por categoría para esta salida.",
+      "stopsLabel": "Escalas: ",
+      "noStopsWarning": "Ninguna escala en este itinerario — añádalas desde la ficha del barco.",
+      "cabinMeta": "máx. {maxGuests} · base {basePrice}",
+      "cabinsAvailableAria": "Cabinas disponibles",
+      "priceCentsAria": "Precio en céntimos",
+      "update": "Actualizar",
+      "makeBookable": "Hacer reservable",
+      "empty": "Ninguna cabina en este barco. Añada cabinas desde la ficha del barco."
     }
   },
   "dialogs": {
@@ -125,25 +222,25 @@
     "cancel": "Cancelar"
   },
   "calendar": {
-    "ariaLabel": "Calendrier des départs — {month}",
-    "today": "Hastajourd'hui"
+    "ariaLabel": "Calendario de salidas — {month}",
+    "today": "Hoy"
   },
   "stats": {
     "sailings": {
       "label": "Salidas",
-      "subtitle": "Cruceros programmées"
+      "subtitle": "Cruceros programados"
     },
     "ships": {
       "label": "Barcos",
-      "subtitle": "Flotte catalogue"
+      "subtitle": "Catálogo de flota"
     },
     "lines": {
       "label": "Líneas",
-      "subtitle": "Aerolíneas de croisière"
+      "subtitle": "Compañías de crucero"
     },
     "ports": {
       "label": "Puertos",
-      "subtitle": "Escalas référencées"
+      "subtitle": "Escalas referenciadas"
     }
   }
 }

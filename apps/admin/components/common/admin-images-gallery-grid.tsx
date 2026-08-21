@@ -22,8 +22,10 @@ type AdminImagesGalleryGridProps<T extends AdminGalleryImage> = {
   loadingMessage?: string;
   deletingId?: string | null;
   emptyDash?: string;
+  viewLabel?: string;
   editLabel?: string;
   deleteLabel?: string;
+  onView?: (image: T) => void;
   onEdit: (image: T) => void;
   onDelete: (image: T) => void;
   className?: string;
@@ -37,8 +39,10 @@ export function AdminImagesGalleryGrid<T extends AdminGalleryImage>({
   loadingMessage,
   deletingId = null,
   emptyDash = '—',
+  viewLabel,
   editLabel,
   deleteLabel,
+  onView,
   onEdit,
   onDelete,
   className,
@@ -74,6 +78,14 @@ export function AdminImagesGalleryGrid<T extends AdminGalleryImage>({
             className="group overflow-hidden rounded-lg border border-atg-border bg-atg-elevated"
           >
             <div className="relative aspect-[4/3] w-full overflow-hidden">
+              {onView ? (
+                <button
+                  type="button"
+                  onClick={() => onView(image)}
+                  className="absolute inset-0 z-[1] cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"
+                  aria-label={viewLabel ?? alt}
+                />
+              ) : null}
               <Image
                 src={image.url}
                 alt={alt}
@@ -87,11 +99,20 @@ export function AdminImagesGalleryGrid<T extends AdminGalleryImage>({
               />
               <div
                 className={cn(
-                  'absolute inset-x-0 bottom-0 flex justify-end gap-1 bg-gradient-to-t from-black/70 to-transparent p-2',
+                  'absolute inset-x-0 bottom-0 z-[2] flex justify-end gap-1 bg-gradient-to-t from-black/70 to-transparent p-2',
                   'opacity-100 sm:opacity-0 sm:transition-opacity sm:group-hover:opacity-100 sm:group-focus-within:opacity-100',
                 )}
               >
                 <DataTableActions className="rounded-lg bg-black/40 p-0.5 backdrop-blur-sm">
+                  {onView ? (
+                    <DataTableActionButton
+                      action="view"
+                      label={viewLabel}
+                      onClick={() => onView(image)}
+                      disabled={isDeleting}
+                      className="text-white hover:bg-white/20 hover:text-white"
+                    />
+                  ) : null}
                   <DataTableActionButton
                     action="edit"
                     label={editLabel}

@@ -10,8 +10,8 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import { VehicleAvailability } from '../../../entities/generated';
+import { VehicleAvailabilityListQueryDto } from './dto/vehicle-availability-list-query.dto';
 import { VehicleAvailabilityService } from './vehicle-availability.service';
 
 @ApiTags('vehicle-availability')
@@ -21,7 +21,7 @@ export class VehicleAvailabilityController {
 
   @Get()
   @ApiOperation({ summary: 'List vehicle-availability' })
-  findAll(@Query() query: PaginationQueryDto) {
+  findAll(@Query() query: VehicleAvailabilityListQueryDto) {
     return this.service.findAll(query);
   }
 
@@ -39,7 +39,10 @@ export class VehicleAvailabilityController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update vehicle-availability' })
-  update(@Param('id') id: string, @Body() dto: DeepPartial<VehicleAvailability>) {
+  update(
+    @Param('id') id: string,
+    @Body() dto: DeepPartial<VehicleAvailability>,
+  ) {
     return this.service.update(id, dto);
   }
 

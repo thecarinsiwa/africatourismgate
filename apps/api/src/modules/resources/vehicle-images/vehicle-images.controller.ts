@@ -10,8 +10,8 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import { VehicleImages } from '../../../entities/generated';
+import { VehicleImagesListQueryDto } from './dto/vehicle-images-list-query.dto';
 import { VehicleImagesService } from './vehicle-images.service';
 
 @ApiTags('vehicle-images')
@@ -21,7 +21,7 @@ export class VehicleImagesController {
 
   @Get()
   @ApiOperation({ summary: 'List vehicle-images' })
-  findAll(@Query() query: PaginationQueryDto) {
+  findAll(@Query() query: VehicleImagesListQueryDto) {
     return this.service.findAll(query);
   }
 

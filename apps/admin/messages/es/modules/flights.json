@@ -24,6 +24,7 @@
     "pdfKpi": "Resumen KPI (PDF)",
     "pdfCatalog": "Catálogo (PDF)",
     "pdfBookings": "Reservas (PDF)",
+    "pdfDossier": "Exportar PDF",
     "dateFrom": "Fecha de inicio",
     "dateTo": "Fecha de fin",
     "periodRequired": "Indique un período para esta exportación.",
@@ -59,6 +60,23 @@
       "arrivalTimeRequired": "La hora de llegada es obligatoria."
     }
   },
+  "view": {
+    "title": "Ver vuelo",
+    "editButton": "Editar vuelo",
+    "notFound": "Vuelo no encontrado.",
+    "infoTitle": "Información",
+    "imagesTitle": "Fotos",
+    "imagesIntro": "{count, plural, =0 {Ninguna foto} one {# foto} other {# fotos}}",
+    "imagesEmpty": "Ninguna foto para este vuelo.",
+    "carouselPrev": "Foto anterior",
+    "carouselNext": "Foto siguiente",
+    "carouselThumbs": "Miniaturas de las fotos",
+    "carouselGoTo": "Ir a la foto {index}",
+    "carouselOpen": "Ampliar la foto {index}",
+    "carouselViewerTitle": "Vista previa de la foto",
+    "carouselClose": "Cerrar vista previa",
+    "classesIntro": "{count, plural, =0 {Ninguna clase de cabina} one {# clase de cabina} other {# clases de cabina}}"
+  },
   "detail": {
     "title": "Editar vuelo",
     "viewTitle": "Ver vuelo",
@@ -86,6 +104,8 @@
       "editClass": "Editar clase",
       "cabinType": "Tipo de cabina",
       "totalSeats": "Asientos totales",
+      "searchPlaceholder": "Buscar una clase…",
+      "searchEmpty": "Ninguna clase coincide con su búsqueda.",
       "empty": "Ninguna clase de cabina.",
       "deleteConfirm": "Esta clase de cabina será eliminada.",
       "deleteTitle": "Eliminar clase",
@@ -95,7 +115,15 @@
     "availability": {
       "title": "Disponibilidad",
       "backToFlight": "Volver al vuelo",
-      "classMismatch": "Esta clase no pertenece a este vuelo."
+      "classMismatch": "Esta clase no pertenece a este vuelo.",
+      "summary": "Vuelo {flightNumber} — {classLabel}: asientos y precio por fecha.",
+      "tableTitle": "Fechas disponibles",
+      "tableIntro": "Días con asientos y tarifa para esta clase de cabina.",
+      "tableEmpty": "Ninguna disponibilidad en este mes.",
+      "deleteTitle": "Eliminar disponibilidad",
+      "deleteConfirm": "¿Eliminar la disponibilidad del {date}? Esta acción es irreversible.",
+      "deleteConfirmButton": "Eliminar",
+      "cancel": "Cancelar"
     }
   },
   "referential": {
@@ -106,11 +134,33 @@
       "emptySearch": "Ninguna aerolínea coincide con esta búsqueda.",
       "searchPlaceholder": "Buscar por código IATA o nombre…",
       "searchAria": "Buscar aerolíneas",
+      "ariaLabel": "Lista de aerolíneas",
       "iataCode": "Código IATA",
+      "logo": "Logo",
+      "logoHint": "JPEG, PNG o WebP, máx. 5 MB.",
+      "logoUpload": "Elegir imagen",
+      "logoRemove": "Quitar logo",
+      "viewGrid": "Cuadrícula",
+      "viewTable": "Tabla",
+      "viewModeAria": "Modo de visualización",
       "deleteConfirm": "¿Eliminar « {name} »?",
       "deleteTitle": "Eliminar aerolínea",
       "deleteConfirmButton": "Eliminar",
-      "cancel": "Cancelar"
+      "cancel": "Cancelar",
+      "stats": {
+        "total": {
+          "label": "Aerolíneas",
+          "subtitle": "Directorio IATA"
+        },
+        "withLogo": {
+          "label": "Con logo",
+          "subtitle": "Identidad visual"
+        },
+        "withoutLogo": {
+          "label": "Sin logo",
+          "subtitle": "Por completar"
+        }
+      }
     },
     "airports": {
       "new": "Nuevo aeropuerto",
@@ -119,8 +169,12 @@
       "emptySearch": "Ningún aeropuerto coincide con esta búsqueda.",
       "searchPlaceholder": "Buscar por IATA, nombre o ciudad…",
       "searchAria": "Buscar aeropuertos",
+      "ariaLabel": "Lista de aeropuertos",
       "airport": "Aeropuerto",
       "countryCode": "Código de país",
+      "viewGrid": "Cuadrícula",
+      "viewTable": "Tabla",
+      "viewModeAria": "Modo de visualización",
       "latitudeHint": "Opcional, -90 a 90",
       "longitudeHint": "Opcional, -180 a 180",
       "mapAssistIntro": "Introduzca latitud y longitud para previsualizar el aeropuerto en el mapa.",
@@ -134,6 +188,20 @@
       "cancel": "Cancelar",
       "validation": {
         "required": "Todos los campos son obligatorios."
+      },
+      "stats": {
+        "total": {
+          "label": "Aeropuertos",
+          "subtitle": "Directorio mundial"
+        },
+        "withCoordinates": {
+          "label": "Con coordenadas",
+          "subtitle": "Posición en el mapa"
+        },
+        "withoutCoordinates": {
+          "label": "Sin coordenadas",
+          "subtitle": "Por completar"
+        }
       }
     }
   },

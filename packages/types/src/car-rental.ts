@@ -12,7 +12,7 @@ export interface RentalAgency {
 export interface CreateRentalAgencyRequest {
   name: string;
   destinationId?: string | null;
-  address?: string;
+  address?: string | null;
 }
 
 export type UpdateRentalAgencyRequest = Partial<CreateRentalAgencyRequest>;
@@ -22,6 +22,8 @@ export interface RentalAgenciesListQuery {
   limit?: number;
   search?: string;
   destinationId?: string;
+  hasAddress?: boolean;
+  hasDestination?: boolean;
 }
 
 export interface VehicleCategory {
@@ -34,7 +36,7 @@ export interface VehicleCategory {
 
 export interface CreateVehicleCategoryRequest {
   name: string;
-  exampleModel?: string;
+  exampleModel?: string | null;
 }
 
 export type UpdateVehicleCategoryRequest = Partial<CreateVehicleCategoryRequest>;
@@ -43,6 +45,7 @@ export interface VehicleCategoriesListQuery {
   page?: number;
   limit?: number;
   search?: string;
+  hasExampleModel?: boolean;
 }
 
 export interface Vehicle {

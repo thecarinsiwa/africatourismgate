@@ -10,8 +10,8 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import { FlightClasses } from '../../../entities/generated';
+import { FlightClassesListQueryDto } from './dto/flight-classes-list-query.dto';
 import { FlightClassesService } from './flight-classes.service';
 
 @ApiTags('flight-classes')
@@ -21,7 +21,7 @@ export class FlightClassesController {
 
   @Get()
   @ApiOperation({ summary: 'List flight-classes' })
-  findAll(@Query() query: PaginationQueryDto) {
+  findAll(@Query() query: FlightClassesListQueryDto) {
     return this.service.findAll(query);
   }
 

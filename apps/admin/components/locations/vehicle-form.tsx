@@ -2,7 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Input } from '@africatourismgate/ui';
+import { Button, Card, Input } from '@africatourismgate/ui';
 import type {
   CreateVehicleRequest,
   RentalAgency,
@@ -11,7 +11,7 @@ import type {
 } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useId, useState } from 'react';
+import { useCallback, useEffect, useId, useState, type ReactNode } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 
 export type VehicleFormValues = {
@@ -56,9 +56,15 @@ type VehicleFormProps = {
   mode: 'create' | 'edit';
   vehicleId?: string;
   initialVehicle?: Vehicle;
+  identityAside?: ReactNode;
 };
 
-export function VehicleForm({ mode, vehicleId, initialVehicle }: VehicleFormProps) {
+export function VehicleForm({
+  mode,
+  vehicleId,
+  initialVehicle,
+  identityAside,
+}: VehicleFormProps) {
   const { locations: getLocationsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.locations.form');
   const tActions = useTranslations('common.actions');
@@ -143,14 +149,8 @@ export function VehicleForm({ mode, vehicleId, initialVehicle }: VehicleFormProp
   const selectClass =
     'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none focus:border-primary focus:ring-1 focus:ring-primary';
 
-  return (
-    <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
-      {formError ? (
-        <p role="alert" className="text-sm text-red-600">
-          {formError}
-        </p>
-      ) : null}
-
+  const fields = (
+    <div className="space-y-6">
       <div>
         <label htmlFor={agencyId} className="mb-2 block text-sm font-medium text-atg-fg">
           {t('rentalAgency')}
@@ -220,6 +220,30 @@ export function VehicleForm({ mode, vehicleId, initialVehicle }: VehicleFormProp
           error={fieldErrors.currency}
         />
       </div>
+    </div>
+  );
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className={identityAside ? 'w-full space-y-4' : 'mx-auto max-w-2xl space-y-6'}
+    >
+      {formError ? (
+        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+          {formError}
+        </p>
+      ) : null}
+
+      {identityAside ? (
+        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)] lg:items-start xl:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
+          <Card variant="dashboard" padding="sm">
+            {fields}
+          </Card>
+          <div className="min-w-0">{identityAside}</div>
+        </div>
+      ) : (
+        fields
+      )}
 
       <div className="flex flex-wrap gap-3 pt-2">
         <Button type="submit" loading={submitting}>

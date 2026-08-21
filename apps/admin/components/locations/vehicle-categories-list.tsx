@@ -12,19 +12,24 @@ import {
   DataTablePagination,
   Input,
   Modal,
+  useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { VehicleCategory } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ReferentialListToolbar } from '../referential-list-toolbar';
 import { getApiClient } from '../../lib/auth/api';
+import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
 import { getVehicleCategoryIcon } from '../../lib/vehicle-category-icon-map';
+import { ListViewModeToggle } from '../list-view-mode-toggle';
+import { VehicleCategoriesStatCards } from './vehicle-categories-stat-cards';
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_MS = 300;
 
 type FormValues = { name: string; exampleModel: string };
+type CategoriesViewMode = 'grid' | 'table';
+
 const emptyForm: FormValues = { name: '', exampleModel: '' };
 
 export function VehicleCategoriesList() {
@@ -33,10 +38,17 @@ export function VehicleCategoriesList() {
   const tCommon = useTranslations('modules.common');
   const tPagination = useTranslations('modules.common.pagination');
   const tActions = useTranslations('common.actions');
+  const tToast = useTranslations('modules.common.toast');
+  const tDataTable = useTranslations('modules.common.dataTable');
+  const { toast } = useToast();
+  const paginationLabels = useDataTablePaginationLabels();
   const emptyDash = tCommon('empty.dash');
+
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
+  const [viewMode, setViewMode] = useState<CategoriesViewMode>('grid');
+  const [statsKey, setStatsKey] = useState(0);
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -85,6 +97,14 @@ export function VehicleCategoriesList() {
     return () => window.clearTimeout(timer);
   }, [searchInput]);
 
+  const viewModeOptions = useMemo(
+    () => [
+      { value: 'grid' as const, label: t('viewGrid') },
+      { value: 'table' as const, label: t('viewTable') },
+    ],
+    [t],
+  );
+
   function openForm(category?: VehicleCategory) {
     if (category) {
       setEditing(category);
@@ -116,18 +136,31 @@ export function VehicleCategoriesList() {
     }
     setSubmitting(true);
     try {
-      const body = {
-        name: formValues.name.trim(),
-        ...(formValues.exampleModel.trim()
-          ? { exampleModel: formValues.exampleModel.trim() }
-          : {}),
-      };
+      const name = formValues.name.trim();
+      const exampleModel = formValues.exampleModel.trim() || null;
       if (editing) {
-        await getApiClient().updateVehicleCategory(editing.id, body);
+        await getApiClient().updateVehicleCategory(editing.id, {
+          name,
+          exampleModel,
+        });
+        toast({
+          variant: 'success',
+          title: tToast('saved'),
+          message: name,
+        });
       } else {
-        await getApiClient().createVehicleCategory(body);
+        await getApiClient().createVehicleCategory({
+          name,
+          ...(exampleModel ? { exampleModel } : {}),
+        });
+        toast({
+          variant: 'success',
+          title: tToast('created'),
+          message: name,
+        });
       }
       resetForm();
+      setStatsKey((k) => k + 1);
       await load();
     } catch (error) {
       setFormError(getLocationsErrorMessage(error));
@@ -148,13 +181,36 @@ export function VehicleCategoriesList() {
     setDeletingId(category.id);
     try {
       await getApiClient().deleteVehicleCategory(category.id);
+      toast({
+        variant: 'success',
+        title: tToast('deleted'),
+        message: category.name,
+      });
+      setStatsKey((k) => k + 1);
       await load();
     } catch (error) {
-      setDeleteError(getLocationsErrorMessage(error));
+      const message = getLocationsErrorMessage(error);
+      setDeleteError(message);
+      toast({ variant: 'error', title: tToast('deleteError'), message });
     } finally {
       setDeletingId(null);
     }
-  }, [confirmTarget, getLocationsErrorMessage, load]);
+  }, [confirmTarget, getLocationsErrorMessage, load, tToast, toast]);
+
+  const renderActions = useCallback(
+    (category: VehicleCategory) => (
+      <DataTableActions>
+        <DataTableActionButton action="edit" onClick={() => openForm(category)} />
+        <DataTableActionButton
+          action="delete"
+          onClick={() => handleDeleteRequest(category)}
+          disabled={deletingId === category.id}
+          loading={deletingId === category.id}
+        />
+      </DataTableActions>
+    ),
+    [deletingId, handleDeleteRequest],
+  );
 
   const columns = useMemo<ColumnDef<VehicleCategory, unknown>[]>(
     () => [
@@ -178,20 +234,10 @@ export function VehicleCategoriesList() {
         id: 'actions',
         header: tCommon('columns.actions'),
         meta: { align: 'right' },
-        cell: ({ row }) => (
-          <DataTableActions>
-            <DataTableActionButton action="edit" onClick={() => openForm(row.original)} />
-            <DataTableActionButton
-              action="delete"
-              onClick={() => handleDeleteRequest(row.original)}
-              disabled={deletingId === row.original.id}
-              loading={deletingId === row.original.id}
-            />
-          </DataTableActions>
-        ),
+        cell: ({ row }) => renderActions(row.original),
       },
     ],
-    [deletingId, emptyDash, handleDeleteRequest, t, tCommon],
+    [emptyDash, renderActions, t, tCommon],
   );
 
   const categories = state.status === 'ready' ? state.categories : [];
@@ -201,9 +247,13 @@ export function VehicleCategoriesList() {
     <>
       <AlertDialog
         open={!!confirmTarget}
-        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        onOpenChange={(open) => {
+          if (!open) setConfirmTarget(null);
+        }}
         title={t('deleteTitle')}
-        description={confirmTarget ? t('deleteConfirm', { name: confirmTarget.name }) : ''}
+        description={
+          confirmTarget ? t('deleteConfirm', { name: confirmTarget.name }) : ''
+        }
         confirmLabel={t('deleteConfirmButton')}
         cancelLabel={t('cancel')}
         variant="danger"
@@ -211,86 +261,171 @@ export function VehicleCategoriesList() {
         error={deleteError}
         onConfirm={() => void handleDeleteConfirm()}
       />
-    <div className="space-y-6">
-      <ReferentialListToolbar
-        searchValue={searchInput}
-        onSearchChange={setSearchInput}
-        placeholder={t('searchPlaceholder')}
-        ariaLabel={t('searchAria')}
-        action={
+
+      <div className="space-y-6">
+        <VehicleCategoriesStatCards refreshKey={statsKey} />
+
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex min-w-0 flex-1 flex-col gap-4 sm:flex-row sm:items-center">
+            <div className="min-w-0 flex-1 sm:max-w-md">
+              <Input
+                type="search"
+                placeholder={t('searchPlaceholder')}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                aria-label={t('searchAria')}
+              />
+            </div>
+            <ListViewModeToggle
+              value={viewMode}
+              options={viewModeOptions}
+              onChange={setViewMode}
+              ariaLabel={t('viewModeAria')}
+            />
+          </div>
           <Button type="button" onClick={() => openForm()}>
             {t('new')}
           </Button>
-        }
-      />
+        </div>
 
-      <Modal
-        open={showForm}
-        onOpenChange={(open) => {
-          if (!open && !submitting) resetForm();
-        }}
-        title={editing ? t('edit') : t('new')}
-        showClose
-        className="max-w-lg"
-      >
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {formError ? (
-            <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-              {formError}
-            </p>
-          ) : null}
-          <Input
-            label={tCommon('columns.name')}
-            value={formValues.name}
-            onChange={(e) => setFormValues((p) => ({ ...p, name: e.target.value }))}
-          />
-          <Input
-            label={t('exampleModel')}
-            value={formValues.exampleModel}
-            onChange={(e) =>
-              setFormValues((p) => ({ ...p, exampleModel: e.target.value }))
-            }
-          />
-          <div className="flex justify-end gap-3">
-            <Button type="button" variant="outline" onClick={resetForm} disabled={submitting}>
-              {tActions('cancel')}
-            </Button>
-            <Button type="submit" loading={submitting}>
-              {editing ? tActions('save') : tActions('create')}
-            </Button>
-          </div>
-        </form>
-      </Modal>
+        <Modal
+          open={showForm}
+          onOpenChange={(open) => {
+            if (!open && !submitting) resetForm();
+          }}
+          title={editing ? t('edit') : t('new')}
+          showClose={!submitting}
+          closeAriaLabel={tActions('close')}
+          className="max-w-lg"
+        >
+          <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4">
+            {formError ? (
+              <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+                {formError}
+              </p>
+            ) : null}
 
-      {state.status === 'error' ? (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {state.message}
-        </p>
-      ) : (
-        <>
-          <Card variant="dashboard" padding="none">
-            <DataTable
-              columns={columns}
-              data={categories}
-              isLoading={state.status === 'loading'}
-              emptyMessage={emptyMessage}
-              emptyVariant={search.trim().length > 0 ? 'search' : 'default'}
-              getRowId={(r) => r.id}
+            <div className="flex items-center gap-3 rounded-xl border border-atg-border bg-atg-surface/50 px-4 py-3">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-atg-surface text-primary ring-1 ring-atg-border/60">
+                {getVehicleCategoryIcon(formValues.name || 'default', 'h-6 w-6')}
+              </span>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-semibold text-atg-fg">
+                  {formValues.name.trim() || tCommon('columns.category')}
+                </p>
+                <p className="mt-0.5 truncate text-xs text-atg-muted">
+                  {formValues.exampleModel.trim() || t('exampleModel')}
+                </p>
+              </div>
+            </div>
+
+            <Input
+              label={tCommon('columns.name')}
+              value={formValues.name}
+              onChange={(e) =>
+                setFormValues((p) => ({ ...p, name: e.target.value }))
+              }
+              disabled={submitting}
+              required
             />
-          </Card>
-          {state.status === 'ready' ? (
-            <DataTablePagination
-              page={page}
-              pageSize={PAGE_SIZE}
-              totalPages={state.totalPages}
-              totalItems={state.total}
-              itemLabel={tPagination('category')}
-              onPageChange={setPage}
+            <Input
+              label={t('exampleModel')}
+              value={formValues.exampleModel}
+              onChange={(e) =>
+                setFormValues((p) => ({ ...p, exampleModel: e.target.value }))
+              }
+              disabled={submitting}
             />
-          ) : null}
-        </>
-      )}
-    </div>
+            <div className="flex justify-end gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={resetForm}
+                disabled={submitting}
+              >
+                {tActions('cancel')}
+              </Button>
+              <Button type="submit" loading={submitting}>
+                {editing ? tActions('save') : tActions('create')}
+              </Button>
+            </div>
+          </form>
+        </Modal>
+
+        {state.status === 'error' ? (
+          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+            {state.message}
+          </p>
+        ) : viewMode === 'table' ? (
+          <>
+            <Card variant="dashboard" padding="none" className="overflow-hidden">
+              <DataTable
+                columns={columns}
+                data={categories}
+                isLoading={state.status === 'loading'}
+                loadingMessage={tDataTable('loading')}
+                emptyMessage={emptyMessage}
+                emptyVariant={search.trim().length > 0 ? 'search' : 'default'}
+                getRowId={(r) => r.id}
+                aria-label={t('ariaLabel')}
+              />
+            </Card>
+            {state.status === 'ready' ? (
+              <DataTablePagination
+                page={page}
+                pageSize={PAGE_SIZE}
+                totalPages={state.totalPages}
+                totalItems={state.total}
+                itemLabel={tPagination('category')}
+                labels={paginationLabels}
+                onPageChange={setPage}
+              />
+            ) : null}
+          </>
+        ) : state.status === 'loading' ? (
+          <p className="text-sm text-atg-muted">{tCommon('loading')}</p>
+        ) : categories.length === 0 ? (
+          <p className="text-sm text-atg-muted">{emptyMessage}</p>
+        ) : (
+          <>
+            <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+              {categories.map((category) => (
+                <li key={category.id}>
+                  <Card variant="dashboard" className="flex h-full flex-col gap-3">
+                    <div className="flex items-start gap-3">
+                      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-atg-surface text-primary ring-1 ring-atg-border/60">
+                        {getVehicleCategoryIcon(category.name, 'h-6 w-6')}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate font-medium text-atg-fg">
+                          {category.name}
+                        </p>
+                        <p className="mt-0.5 truncate text-xs text-atg-muted">
+                          {category.exampleModel ?? emptyDash}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="mt-auto flex justify-end border-t border-atg-border pt-3">
+                      {renderActions(category)}
+                    </div>
+                  </Card>
+                </li>
+              ))}
+            </ul>
+            {state.status === 'ready' ? (
+              <DataTablePagination
+                page={page}
+                pageSize={PAGE_SIZE}
+                totalPages={state.totalPages}
+                totalItems={state.total}
+                itemLabel={tPagination('category')}
+                labels={paginationLabels}
+                onPageChange={setPage}
+              />
+            ) : null}
+          </>
+        )}
+      </div>
     </>
   );
 }

@@ -78,11 +78,24 @@
     "schedulesIntro": "{count} franja(s) programada(s).",
     "itineraryStopsIntro": "{count} etapa(s) de itinerario.",
     "tabsAria": "Secciones de la actividad",
+    "subtitle": "Ficha de catálogo, medios, itinerario y franjas.",
     "tabs": {
       "activity": "Actividad",
+      "photos": "Fotos",
+      "attachments": "Adjuntos",
       "itinerary": "Itinerario",
       "schedules": "Franjas"
     }
+  },
+  "view": {
+    "title": "Ver actividad",
+    "editButton": "Editar actividad",
+    "notFound": "Actividad no encontrada.",
+    "subtitle": "Vista de catálogo de la actividad.",
+    "infoTitle": "Información",
+    "imagesTitle": "Fotos",
+    "imagesIntro": "{count, plural, =0 {Ninguna foto} one {# foto} other {# fotos}}",
+    "imagesEmpty": "Ninguna foto para esta actividad."
   },
   "sections": {
     "schedules": {
