@@ -87,6 +87,16 @@
       "schedules": "Franjas"
     }
   },
+  "view": {
+    "title": "Ver actividad",
+    "editButton": "Editar actividad",
+    "notFound": "Actividad no encontrada.",
+    "subtitle": "Vista de catálogo de la actividad.",
+    "infoTitle": "Información",
+    "imagesTitle": "Fotos",
+    "imagesIntro": "{count, plural, =0 {Ninguna foto} one {# foto} other {# fotos}}",
+    "imagesEmpty": "Ninguna foto para esta actividad."
+  },
   "sections": {
     "schedules": {
       "title": "Franjas horarias",

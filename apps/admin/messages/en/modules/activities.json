@@ -87,6 +87,16 @@
       "schedules": "Slots"
     }
   },
+  "view": {
+    "title": "View activity",
+    "editButton": "Edit activity",
+    "notFound": "Activity not found.",
+    "subtitle": "Catalog overview of this activity.",
+    "infoTitle": "Details",
+    "imagesTitle": "Photos",
+    "imagesIntro": "{count, plural, =0 {No photos} one {# photo} other {# photos}}",
+    "imagesEmpty": "No photos for this activity."
+  },
   "sections": {
     "schedules": {
       "title": "Time slots",

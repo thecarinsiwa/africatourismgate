@@ -87,6 +87,16 @@
       "schedules": "Créneaux"
     }
   },
+  "view": {
+    "title": "Voir l'activité",
+    "editButton": "Modifier l'activité",
+    "notFound": "Activité introuvable.",
+    "subtitle": "Aperçu catalogue de l'activité.",
+    "infoTitle": "Informations",
+    "imagesTitle": "Photos",
+    "imagesIntro": "{count, plural, =0 {Aucune photo} one {# photo} other {# photos}}",
+    "imagesEmpty": "Aucune photo pour cette activité."
+  },
   "sections": {
     "schedules": {
       "title": "Créneaux",
