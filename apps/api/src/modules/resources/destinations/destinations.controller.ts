@@ -11,6 +11,7 @@ import {
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DeepPartial } from 'typeorm';
 import { Destinations } from '../../../entities/generated';
+import { DestinationRelatedCountsDto } from './dto/destination-related-counts.dto';
 import { DestinationsListQueryDto } from './dto/destinations-list-query.dto';
 import { DestinationsService } from './destinations.service';
 
@@ -23,6 +24,14 @@ export class DestinationsController {
   @ApiOperation({ summary: 'List destinations' })
   findAll(@Query() query: DestinationsListQueryDto) {
     return this.service.findAll(query);
+  }
+
+  @Get(':id/related-counts')
+  @ApiOperation({
+    summary: 'Count properties, activities and packages linked to a destination',
+  })
+  getRelatedCounts(@Param('id') id: string): Promise<DestinationRelatedCountsDto> {
+    return this.service.getRelatedCounts(id);
   }
 
   @Get(':id')
