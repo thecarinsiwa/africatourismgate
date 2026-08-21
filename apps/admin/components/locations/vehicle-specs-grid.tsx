@@ -1,6 +1,5 @@
 'use client';
 
-import { Card } from '@africatourismgate/ui';
 import { useMemo } from 'react';
 import { useVehicleSpecLabels } from '../../lib/i18n/use-module-labels';
 import { resolveVehicleSpecs } from '../../lib/vehicle-category-specs';
@@ -126,24 +125,23 @@ export function VehicleSpecsGrid({ categoryName }: VehicleSpecsGridProps) {
   );
 
   return (
-    <div className="grid grid-cols-3 gap-2 sm:gap-3">
+    <ul className="grid grid-cols-3 gap-2 sm:gap-3" role="list">
       {items.map((item) => (
-        <Card
+        <li
           key={item.label}
-          variant="dashboard"
-          className="flex min-w-0 items-center gap-2.5 p-2.5 sm:p-3"
+          className="flex min-w-0 flex-col items-center gap-1.5 rounded-lg border border-atg-border/80 bg-atg-surface/60 px-2 py-3 text-center sm:px-3"
         >
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-atg-surface text-primary ring-1 ring-atg-border/60">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-atg-elevated text-primary ring-1 ring-atg-border/60">
             {item.icon}
           </span>
-          <div className="min-w-0">
-            <p className="text-[10px] font-medium uppercase tracking-wide text-atg-muted sm:text-xs">
-              {item.label}
-            </p>
-            <p className="mt-0.5 truncate text-sm font-semibold text-atg-fg">{item.value}</p>
-          </div>
-        </Card>
+          <p className="text-[10px] font-medium uppercase tracking-wide text-atg-muted">
+            {item.label}
+          </p>
+          <p className="w-full truncate text-sm font-semibold text-atg-fg" title={item.value}>
+            {item.value}
+          </p>
+        </li>
       ))}
-    </div>
+    </ul>
   );
 }

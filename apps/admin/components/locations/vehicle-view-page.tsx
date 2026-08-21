@@ -271,9 +271,9 @@ export function VehicleViewPage({ vehicleId }: VehicleViewPageProps) {
       </div>
 
       <Card variant="dashboard" padding="sm">
-        <div className="grid gap-6 lg:grid-cols-[minmax(18rem,max-content)_minmax(0,1fr)] lg:items-start">
+        <div className="grid gap-6 lg:grid-cols-2 lg:items-stretch xl:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)_minmax(0,17rem)]">
           {category ? (
-            <div className="min-w-0 lg:max-w-md">
+            <div className="flex min-w-0 flex-col justify-center">
               <VehicleSpecsGrid categoryName={category.name} />
             </div>
           ) : null}
@@ -281,68 +281,66 @@ export function VehicleViewPage({ vehicleId }: VehicleViewPageProps) {
           <div
             className={
               category
-                ? 'min-w-0 grid gap-6 lg:border-l lg:border-atg-border lg:pl-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,18rem)]'
-                : 'min-w-0 grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,18rem)]'
+                ? 'min-w-0 lg:border-l lg:border-atg-border lg:pl-6'
+                : 'min-w-0 lg:col-span-1 xl:col-span-1'
             }
           >
-            <div className="min-w-0">
-              <h3 className="text-sm font-semibold text-atg-fg">{tView('infoTitle')}</h3>
-              <dl className="mt-3 grid gap-x-6 gap-y-2.5 sm:grid-cols-2">
-                <ProfileField
-                  label={tForm('rentalAgency')}
-                  value={
-                    <span>
-                      {agency?.name ?? emptyDash}
-                      {agency?.address ? (
-                        <span className="mt-0.5 block text-xs font-normal text-atg-muted">
-                          {agency.address}
-                        </span>
-                      ) : null}
-                    </span>
-                  }
-                />
-                <ProfileField
-                  label={tForm('category')}
-                  value={
-                    <span>
-                      {category?.name ?? emptyDash}
-                      {category?.exampleModel ? (
-                        <span className="mt-0.5 block text-xs font-normal text-atg-muted">
-                          {category.exampleModel}
-                        </span>
-                      ) : null}
-                    </span>
-                  }
-                />
-                <ProfileField
-                  label={tForm('licensePlate')}
-                  value={vehicle.licensePlate ?? tDetail('noLicensePlate')}
-                />
-                <ProfileField
-                  label={tColumns('pricePerDay')}
-                  value={formatPrice(vehicle.dailyPriceCents, vehicle.currency)}
-                />
-                <ProfileField
-                  label={tDates('createdAt')}
-                  value={formatDateTime(vehicle.createdAt)}
-                />
-                <ProfileField
-                  label={tDates('updatedAt')}
-                  value={
-                    vehicle.updatedAt ? formatDateTime(vehicle.updatedAt) : emptyDash
-                  }
-                />
-              </dl>
-            </div>
+            <h3 className="text-sm font-semibold text-atg-fg">{tView('infoTitle')}</h3>
+            <dl className="mt-3 grid gap-x-6 gap-y-2.5 sm:grid-cols-2">
+              <ProfileField
+                label={tForm('rentalAgency')}
+                value={
+                  <span>
+                    {agency?.name ?? emptyDash}
+                    {agency?.address ? (
+                      <span className="mt-0.5 block text-xs font-normal text-atg-muted">
+                        {agency.address}
+                      </span>
+                    ) : null}
+                  </span>
+                }
+              />
+              <ProfileField
+                label={tForm('category')}
+                value={
+                  <span>
+                    {category?.name ?? emptyDash}
+                    {category?.exampleModel ? (
+                      <span className="mt-0.5 block text-xs font-normal text-atg-muted">
+                        {category.exampleModel}
+                      </span>
+                    ) : null}
+                  </span>
+                }
+              />
+              <ProfileField
+                label={tForm('licensePlate')}
+                value={vehicle.licensePlate ?? tDetail('noLicensePlate')}
+              />
+              <ProfileField
+                label={tColumns('pricePerDay')}
+                value={formatPrice(vehicle.dailyPriceCents, vehicle.currency)}
+              />
+              <ProfileField
+                label={tDates('createdAt')}
+                value={formatDateTime(vehicle.createdAt)}
+              />
+              <ProfileField
+                label={tDates('updatedAt')}
+                value={
+                  vehicle.updatedAt ? formatDateTime(vehicle.updatedAt) : emptyDash
+                }
+              />
+            </dl>
+          </div>
 
-            <div className="min-w-0 xl:border-l xl:border-atg-border xl:pl-6">
-              <h3 className="text-sm font-semibold text-atg-fg">{tView('imagesTitle')}</h3>
-              <p className="mt-0.5 text-xs text-atg-muted">
-                {tView('imagesIntro', { count: images.length })}
-              </p>
-              <div className="mt-2">
-                <VehiclePhotosCarousel images={images} altFallback={thumbnailLabel} />
-              </div>
+          <div className="min-w-0 lg:col-span-2 lg:border-t lg:border-atg-border lg:pt-6 xl:col-span-1 xl:border-l xl:border-t-0 xl:pl-6 xl:pt-0">
+            <h3 className="text-sm font-semibold text-atg-fg">{tView('imagesTitle')}</h3>
+            <p className="mt-0.5 text-xs text-atg-muted">
+              {tView('imagesIntro', { count: images.length })}
+            </p>
+            <div className="mt-2 max-w-sm xl:max-w-none">
+              <VehiclePhotosCarousel images={images} altFallback={thumbnailLabel} />
             </div>
           </div>
         </div>
