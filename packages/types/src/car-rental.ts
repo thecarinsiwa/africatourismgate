@@ -22,6 +22,8 @@ export interface RentalAgenciesListQuery {
   limit?: number;
   search?: string;
   destinationId?: string;
+  hasAddress?: boolean;
+  hasDestination?: boolean;
 }
 
 export interface VehicleCategory {
