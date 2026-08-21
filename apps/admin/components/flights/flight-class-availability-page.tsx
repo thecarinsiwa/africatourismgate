@@ -160,13 +160,27 @@ export function FlightClassAvailabilityPage({
         {t('summary', { flightNumber, classLabel })}
       </p>
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:items-start xl:grid-cols-[minmax(0,24rem)_minmax(0,1fr)]">
-        <FlightClassAvailabilityBulkForm
-          flightClassId={classId}
-          yearMonth={yearMonth}
-          defaultPriceCents={basePriceCents}
-          onApplied={handleBulkApplied}
-        />
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,28rem)_minmax(0,1fr)] lg:items-start xl:grid-cols-[minmax(0,32rem)_minmax(0,1fr)]">
+        <div className="flex min-w-0 flex-col gap-6">
+          <FlightClassAvailabilityBulkForm
+            flightClassId={classId}
+            yearMonth={yearMonth}
+            defaultPriceCents={basePriceCents}
+            onApplied={handleBulkApplied}
+          />
+          <FlightClassAvailabilityTable
+            rows={availabilityRows}
+            onEditDate={(date) => {
+              const ym = date.slice(0, 7);
+              if (ym !== yearMonth) {
+                setYearMonth(ym);
+              }
+              setPendingEditDate(date);
+            }}
+            onDelete={(row) => void handleDeleteRow(row)}
+            deletingId={deletingId}
+          />
+        </div>
         <FlightClassAvailabilityGrid
           key={gridKey}
           flightClassId={classId}
@@ -178,19 +192,6 @@ export function FlightClassAvailabilityPage({
           onPendingEditHandled={() => setPendingEditDate(null)}
         />
       </div>
-
-      <FlightClassAvailabilityTable
-        rows={availabilityRows}
-        onEditDate={(date) => {
-          const ym = date.slice(0, 7);
-          if (ym !== yearMonth) {
-            setYearMonth(ym);
-          }
-          setPendingEditDate(date);
-        }}
-        onDelete={(row) => void handleDeleteRow(row)}
-        deletingId={deletingId}
-      />
     </div>
   );
 }

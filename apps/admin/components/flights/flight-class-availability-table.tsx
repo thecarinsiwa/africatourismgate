@@ -46,7 +46,7 @@ export function FlightClassAvailabilityTable({
       {
         id: 'availableSeats',
         header: tCalendar('availableSeats'),
-        meta: { align: 'center' },
+        meta: { align: 'center', hideOnMobile: true },
         cell: ({ row }) => (
           <span className="inline-flex items-center justify-center rounded-md bg-atg-surface px-2 py-0.5 text-xs font-medium tabular-nums text-atg-fg">
             {row.original.availableSeats}
@@ -58,14 +58,9 @@ export function FlightClassAvailabilityTable({
         header: tColumns('price'),
         meta: { align: 'right' },
         cell: ({ row }) => (
-          <div className="text-right">
-            <p className="tabular-nums text-sm font-semibold text-atg-fg">
-              {formatPrice(row.original.priceCents, 'USD')}
-            </p>
-            <p className="mt-0.5 text-[11px] font-medium uppercase tracking-wide text-atg-muted">
-              USD
-            </p>
-          </div>
+          <span className="tabular-nums text-sm font-semibold text-atg-fg">
+            {formatPrice(row.original.priceCents, 'USD')}
+          </span>
         ),
       },
       {
@@ -96,12 +91,14 @@ export function FlightClassAvailabilityTable({
   );
 
   return (
-    <section className="space-y-4">
+    <section className="min-w-0 space-y-3">
       <div>
-        <h3 className="text-lg font-semibold text-atg-fg">{t('tableTitle')}</h3>
-        <p className="mt-1 text-sm text-atg-muted">{t('tableIntro')}</p>
+        <div className="flex flex-wrap items-center gap-2">
+          <h3 className="text-sm font-semibold text-atg-fg">{t('tableTitle')}</h3>
+        </div>
+        <p className="mt-0.5 text-xs text-atg-muted">{t('tableIntro')}</p>
       </div>
-      <Card variant="dashboard" padding="none" className="overflow-hidden">
+      <Card variant="dashboard" padding="none" className="max-h-[min(28rem,50vh)] overflow-auto">
         <DataTable
           columns={columns}
           data={rows}
