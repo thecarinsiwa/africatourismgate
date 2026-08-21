@@ -2,7 +2,12 @@
   "list": {
     "newSailing": "Nouveau départ",
     "viewList": "Liste",
+    "viewGrid": "Grille",
+    "viewTable": "Tableau",
     "viewCalendar": "Calendrier",
+    "viewModeAria": "Mode d'affichage",
+    "searchPlaceholder": "Rechercher un départ…",
+    "searchAria": "Rechercher un départ",
     "emptySailings": "Aucun départ programmé.",
     "emptyFiltered": "Aucun départ ne correspond à ce filtre.",
     "emptyShips": "Aucun navire.",
@@ -24,6 +29,8 @@
   },
   "filters": {
     "line": "Filtrer par ligne",
+    "ship": "Navire",
+    "allShips": "Tous les navires",
     "itinerary": "Itinéraire",
     "allItineraries": "Tous les itinéraires",
     "searchShip": "Rechercher un navire…",

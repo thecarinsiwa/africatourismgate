@@ -2,7 +2,12 @@
   "list": {
     "newSailing": "New sailing",
     "viewList": "List",
+    "viewGrid": "Grid",
+    "viewTable": "Table",
     "viewCalendar": "Calendar",
+    "viewModeAria": "View mode",
+    "searchPlaceholder": "Search sailings…",
+    "searchAria": "Search sailings",
     "emptySailings": "No sailings scheduled.",
     "emptyFiltered": "No sailing matches this filter.",
     "ariaLabel": "Cruise sailings list",
@@ -23,6 +28,8 @@
   },
   "filters": {
     "line": "Filter by line",
+    "ship": "Ship",
+    "allShips": "All ships",
     "itinerary": "Itinerary",
     "allItineraries": "All itineraries",
     "searchShip": "Search ships…",

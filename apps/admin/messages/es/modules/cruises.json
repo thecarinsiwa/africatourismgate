@@ -2,7 +2,12 @@
   "list": {
     "newSailing": "Nueva salida",
     "viewList": "Lista",
+    "viewGrid": "Cuadrícula",
+    "viewTable": "Tabla",
     "viewCalendar": "Calendario",
+    "viewModeAria": "Modo de vista",
+    "searchPlaceholder": "Buscar salidas…",
+    "searchAria": "Buscar salidas",
     "emptySailings": "No hay salidas programadas.",
     "emptyFiltered": "Ninguna salida coincide con este filtro.",
     "ariaLabel": "Lista de salidas de crucero",
@@ -23,6 +28,8 @@
   },
   "filters": {
     "line": "Filtrar por línea",
+    "ship": "Barco",
+    "allShips": "Todos los barcos",
     "itinerary": "Itinerario",
     "allItineraries": "Todos los itinerarios",
     "searchShip": "Buscar barcos…",
