@@ -247,6 +247,31 @@ export function DestinationViewPage({ destinationId }: DestinationViewPageProps)
                 <p className="mt-2 text-sm text-atg-muted">{t('noDescription')}</p>
               )}
             </div>
+
+            <div className="space-y-3">
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <h3 className="text-sm font-semibold text-atg-fg">{tView('poisTitle')}</h3>
+                  <DataTableBadge variant="muted">{pois.length}</DataTableBadge>
+                </div>
+                <p className="mt-1 text-xs text-atg-muted">
+                  {tView('poisIntro', { count: pois.length })}
+                </p>
+              </div>
+              <div className="overflow-hidden rounded-lg border border-atg-border">
+                <DataTable
+                  columns={poiColumns}
+                  data={pois}
+                  emptyMessage={tView('poisEmpty')}
+                  getRowId={(row) => row.id}
+                  aria-label={tView('poisAriaLabel')}
+                  loadingMessage={tCommon('dataTable.loading')}
+                  expandRowLabel={tCommon('dataTable.expandRow')}
+                  collapseRowLabel={tCommon('dataTable.collapseRow')}
+                  expandRowAriaLabel={tCommon('dataTable.expandRowAria')}
+                />
+              </div>
+            </div>
           </div>
 
           <div className="min-w-0 space-y-4 lg:border-l lg:border-atg-border lg:pl-6">
@@ -286,31 +311,6 @@ export function DestinationViewPage({ destinationId }: DestinationViewPageProps)
           </div>
         </div>
       </Card>
-
-      <section className="space-y-4">
-        <div>
-          <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-lg font-semibold text-atg-fg">{tView('poisTitle')}</h3>
-            <DataTableBadge variant="muted">{pois.length}</DataTableBadge>
-          </div>
-          <p className="mt-1 text-sm text-atg-muted">
-            {tView('poisIntro', { count: pois.length })}
-          </p>
-        </div>
-        <Card variant="dashboard" padding="none" className="overflow-hidden">
-          <DataTable
-            columns={poiColumns}
-            data={pois}
-            emptyMessage={tView('poisEmpty')}
-            getRowId={(row) => row.id}
-            aria-label={tView('poisAriaLabel')}
-            loadingMessage={tCommon('dataTable.loading')}
-            expandRowLabel={tCommon('dataTable.expandRow')}
-            collapseRowLabel={tCommon('dataTable.collapseRow')}
-            expandRowAriaLabel={tCommon('dataTable.expandRowAria')}
-          />
-        </Card>
-      </section>
 
       <div className="flex justify-end">
         <Button href={editHref} variant="outline">
