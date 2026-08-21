@@ -2,7 +2,9 @@
   "list": {
     "newPackage": "Nouveau forfait",
     "emptyDefault": "Aucun forfait pour le moment.",
+    "ariaLabel": "Liste des forfaits",
     "searchPlaceholder": "Rechercher un forfait…",
+    "activeFilter": "Statut",
     "deleteTitle": "Supprimer le forfait",
     "deleteConfirm": "Le forfait « {name} » sera supprimé définitivement.",
     "deleteConfirmButton": "Supprimer",

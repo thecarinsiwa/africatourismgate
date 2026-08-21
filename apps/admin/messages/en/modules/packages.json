@@ -2,7 +2,9 @@
   "list": {
     "newPackage": "New package",
     "emptyDefault": "No packages yet.",
+    "ariaLabel": "Packages list",
     "searchPlaceholder": "Search packages…",
+    "activeFilter": "Status",
     "deleteTitle": "Delete package",
     "deleteConfirm": "Package \"{name}\" will be permanently deleted.",
     "deleteConfirmButton": "Delete",

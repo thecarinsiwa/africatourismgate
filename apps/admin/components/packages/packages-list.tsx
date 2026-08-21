@@ -4,11 +4,11 @@ import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
   AlertDialog,
-  Button,
   Card,
   DataTable,
   DataTableActionButton,
   DataTableActions,
+  DataTableBadge,
   DataTablePagination,
   Input,
   type ColumnDef,
@@ -19,6 +19,7 @@ import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { resolveMediaUrl } from '../../lib/resolve-media-url';
+import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
 import { usePackageStatusLabels } from '../../lib/i18n/use-module-labels';
 
 const PAGE_SIZE = 20;
@@ -34,16 +35,22 @@ type PackageRow = Package & {
   imageUrl?: string | null;
 };
 
+type ActiveFilter = '' | '1' | '0';
+
 export function PackagesList() {
   const { packages: getPackagesErrorMessage } = useAdminErrorMessages();
   const tList = useTranslations('modules.packages.list');
   const tColumns = useTranslations('modules.packages.columns');
   const tCommonColumns = useTranslations('modules.common.columns');
   const tPagination = useTranslations('modules.common.pagination');
+  const tDataTable = useTranslations('modules.common.dataTable');
+  const tCommon = useTranslations('modules.common');
   const packageStatusLabels = usePackageStatusLabels();
+  const paginationLabels = useDataTablePaginationLabels();
   const tEmpty = useTranslations('modules.common.empty');
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
+  const [activeFilter, setActiveFilter] = useState<ActiveFilter>('');
   const [page, setPage] = useState(1);
   const [state, setState] = useState<
     | { status: 'loading' }
@@ -61,6 +68,11 @@ export function PackagesList() {
         page,
         limit: PAGE_SIZE,
         search: search || undefined,
+        ...(activeFilter === '1'
+          ? { active: true }
+          : activeFilter === '0'
+            ? { active: false }
+            : {}),
       });
       const details = await Promise.all(
         result.data.map((pkg) =>
@@ -83,7 +95,7 @@ export function PackagesList() {
     } catch (error) {
       setState({ status: 'error', message: getPackagesErrorMessage(error) });
     }
-  }, [page, search, getPackagesErrorMessage]);
+  }, [page, search, activeFilter, getPackagesErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -178,9 +190,11 @@ export function PackagesList() {
         header: tColumns('active'),
         meta: { align: 'center' },
         cell: ({ row }) =>
-          row.original.active === 1
-            ? packageStatusLabels.active
-            : packageStatusLabels.inactive,
+          row.original.active === 1 ? (
+            <DataTableBadge variant="success">{packageStatusLabels.active}</DataTableBadge>
+          ) : (
+            <DataTableBadge variant="muted">{packageStatusLabels.inactive}</DataTableBadge>
+          ),
       },
       {
         id: 'actions',
@@ -210,12 +224,16 @@ export function PackagesList() {
   );
 
   const packages = state.status === 'ready' ? state.packages : [];
+  const selectClass =
+    'w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg';
 
   return (
     <>
       <AlertDialog
         open={!!confirmTarget}
-        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        onOpenChange={(open) => {
+          if (!open) setConfirmTarget(null);
+        }}
         title={tList('deleteTitle')}
         description={confirmTarget ? tList('deleteConfirm', { name: confirmTarget.name }) : ''}
         confirmLabel={tList('deleteConfirmButton')}
@@ -225,47 +243,77 @@ export function PackagesList() {
         error={deleteError}
         onConfirm={() => void handleDeleteConfirm()}
       />
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex-1 sm:max-w-md">
-          <Input
-            type="search"
-            placeholder={tList('searchPlaceholder')}
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-          />
+      <div className="min-w-0 space-y-6">
+        <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-end">
+          <div className="min-w-0 flex-1 sm:max-w-md">
+            <Input
+              type="search"
+              placeholder={tList('searchPlaceholder')}
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              aria-label={tList('searchPlaceholder')}
+            />
+          </div>
+          <div className="min-w-0 sm:w-56">
+            <label className="mb-2 block text-sm font-medium text-atg-fg">
+              {tList('activeFilter')}
+            </label>
+            <select
+              value={activeFilter}
+              onChange={(e) => {
+                setActiveFilter(e.target.value as ActiveFilter);
+                setPage(1);
+              }}
+              className={selectClass}
+              aria-label={tList('activeFilter')}
+            >
+              <option value="">{tCommon('filters.all')}</option>
+              <option value="1">{packageStatusLabels.active}</option>
+              <option value="0">{packageStatusLabels.inactive}</option>
+            </select>
+          </div>
         </div>
-        <Button href="/produits/forfaits/nouveau">{tList('newPackage')}</Button>
-      </div>
 
-      {state.status === 'error' ? (
-        <p role="alert" className="text-sm text-red-600">
-          {state.message}
-        </p>
-      ) : (
-        <>
-          <Card variant="dashboard" padding="none" className="overflow-hidden">
-            <DataTable
-              columns={columns}
-              data={packages}
-              isLoading={state.status === 'loading'}
-              emptyMessage={tList('emptyDefault')}
-              getRowId={(row) => row.id}
-            />
-          </Card>
-          {state.status === 'ready' ? (
-            <DataTablePagination
-              page={page}
-              pageSize={PAGE_SIZE}
-              totalPages={state.totalPages}
-              totalItems={state.total}
-              itemLabel={tPagination('package')}
-              onPageChange={setPage}
-            />
-          ) : null}
-        </>
-      )}
-    </div>
+        {deleteError ? (
+          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+            {deleteError}
+          </p>
+        ) : null}
+
+        {state.status === 'error' ? (
+          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+            {state.message}
+          </p>
+        ) : (
+          <>
+            <Card variant="dashboard" padding="none" className="overflow-hidden">
+              <DataTable
+                columns={columns}
+                data={packages}
+                isLoading={state.status === 'loading'}
+                loadingMessage={tDataTable('loading')}
+                emptyMessage={tList('emptyDefault')}
+                expandRowLabel={tDataTable('expandRow')}
+                collapseRowLabel={tDataTable('collapseRow')}
+                expandRowAriaLabel={tDataTable('expandRowAria')}
+                getRowId={(row) => row.id}
+                aria-label={tList('ariaLabel')}
+              />
+            </Card>
+            {state.status === 'ready' ? (
+              <DataTablePagination
+                page={page}
+                pageSize={PAGE_SIZE}
+                totalPages={state.totalPages}
+                totalItems={state.total}
+                itemLabel={tPagination('package')}
+                labels={paginationLabels}
+                onPageChange={setPage}
+              />
+            ) : null}
+          </>
+        )}
+      </div>
     </>
   );
 }

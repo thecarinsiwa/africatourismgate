@@ -2,7 +2,9 @@
   "list": {
     "newPackage": "Nuevo paquete",
     "emptyDefault": "Ningún paquete por el momento.",
+    "ariaLabel": "Lista de paquetes",
     "searchPlaceholder": "Buscar paquetes…",
+    "activeFilter": "Estado",
     "deleteTitle": "Eliminar paquete",
     "deleteConfirm": "El paquete «{name}» será eliminado permanentemente.",
     "deleteConfirmButton": "Eliminar",
