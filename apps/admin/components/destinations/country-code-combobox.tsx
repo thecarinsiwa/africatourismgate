@@ -23,7 +23,7 @@ function normalizeSearch(value: string): string {
     .trim()
     .toLowerCase()
     .normalize('NFD')
-    .replace(/\p{M}/gu, '');
+    .replace(/[\u0300-\u036f]/g, '');
 }
 
 export function CountryCodeCombobox({
