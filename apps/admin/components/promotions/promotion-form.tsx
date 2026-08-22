@@ -270,7 +270,7 @@ export function PromotionForm({ mode, promotionId, initialPromotion }: Promotion
             name="discountValue"
             type="number"
             min="0.01"
-            step={values.discountType === 'percent' ? '1' : '0.01'}
+            step="0.01"
             max={values.discountType === 'percent' ? '100' : undefined}
             value={values.discountValue}
             onChange={(e) => updateField('discountValue', e.target.value)}
