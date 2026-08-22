@@ -67,5 +67,23 @@
   "usage": {
     "format": "{count} / {max}",
     "unlimitedMax": "∞"
+  },
+  "stats": {
+    "total": {
+      "label": "Codes promo",
+      "subtitle": "Tous les codes"
+    },
+    "active": {
+      "label": "Actifs",
+      "subtitle": "Utilisables au checkout"
+    },
+    "inactive": {
+      "label": "Inactifs",
+      "subtitle": "Désactivés manuellement"
+    },
+    "ongoing": {
+      "label": "En cours",
+      "subtitle": "Dans la période de validité"
+    }
   }
 }

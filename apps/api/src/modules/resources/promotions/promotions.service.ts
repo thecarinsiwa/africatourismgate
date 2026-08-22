@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import { Promotions } from '../../../entities/generated';
 import { CrudService } from '../../../common/crud/crud.service';
@@ -31,6 +31,18 @@ export class PromotionsService extends CrudService<Promotions> {
       );
     }
 
+    if (query.active !== undefined) {
+      qb.andWhere('promotion.active = :active', { active: query.active ? 1 : 0 });
+    }
+
+    if (query.hasDiscount === true) {
+      qb.andWhere('promotion.discountType IS NOT NULL');
+    } else if (query.hasDiscount === false) {
+      qb.andWhere('promotion.discountType IS NULL');
+    }
+
+    this.applyValidityFilter(qb, query.validity);
+
     qb.orderBy('promotion.createdAt', 'DESC')
       .skip((page - 1) * limit)
       .take(limit);
@@ -46,5 +58,26 @@ export class PromotionsService extends CrudService<Promotions> {
         totalPages: Math.ceil(total / limit) || 1,
       },
     };
+  }
+
+  private applyValidityFilter(
+    qb: SelectQueryBuilder<Promotions>,
+    validity?: PromotionsListQueryDto['validity'],
+  ): void {
+    if (!validity) return;
+
+    if (validity === 'ongoing') {
+      qb.andWhere(
+        '(promotion.validFrom IS NULL OR promotion.validFrom <= CURRENT_DATE()) AND (promotion.validUntil IS NULL OR promotion.validUntil >= CURRENT_DATE())',
+      );
+      return;
+    }
+
+    if (validity === 'upcoming') {
+      qb.andWhere('promotion.validFrom IS NOT NULL AND promotion.validFrom > CURRENT_DATE()');
+      return;
+    }
+
+    qb.andWhere('promotion.validUntil IS NOT NULL AND promotion.validUntil < CURRENT_DATE()');
   }
 }

@@ -87,5 +87,23 @@
     "createButton": "Crear promoción",
     "saveButton": "Guardar",
     "cancelButton": "Cancelar"
+  },
+  "stats": {
+    "total": {
+      "label": "Campañas",
+      "subtitle": "Todas las promociones"
+    },
+    "active": {
+      "label": "Activas",
+      "subtitle": "Campañas publicadas"
+    },
+    "inactive": {
+      "label": "Inactivas",
+      "subtitle": "Campañas desactivadas"
+    },
+    "withDiscount": {
+      "label": "Con descuento",
+      "subtitle": "Descuento aplicado en el checkout"
+    }
   }
 }

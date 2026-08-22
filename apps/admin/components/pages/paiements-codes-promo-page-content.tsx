@@ -2,15 +2,24 @@
 
 import { Button } from '@africatourismgate/ui';
 import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type { PromoCodesListFilter } from '../../config/promo-codes-kpi';
 import { getApiClient } from '../../lib/auth/api';
 import { PaymentsPromoSubnav } from '../payments/payments-promo-subnav';
 import { PromoCodesList } from '../promo-codes/promo-codes-list';
+import { PromoCodesStatCards } from '../promo-codes/promo-codes-stat-cards';
 import { AdminListPageHeader } from './admin-list-page-header';
 
 export function CodesPromoPageContent() {
   const t = useTranslations('pages.paiements.codes-promo');
   const [canWrite, setCanWrite] = useState(false);
+  const [listFilter, setListFilter] = useState<PromoCodesListFilter>({});
+  const listRef = useRef<HTMLDivElement>(null);
+
+  const handleListFilterChange = useCallback((filter: PromoCodesListFilter) => {
+    setListFilter(filter);
+    listRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -47,7 +56,14 @@ export function CodesPromoPageContent() {
           </div>
         }
       />
-      <PromoCodesList />
+      <PromoCodesStatCards
+        className="mb-6"
+        listFilter={listFilter}
+        onListFilterChange={handleListFilterChange}
+      />
+      <div ref={listRef}>
+        <PromoCodesList listFilter={listFilter} />
+      </div>
     </div>
   );
 }

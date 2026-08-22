@@ -15,10 +15,14 @@ export interface PromoCode {
   updatedAt: string | null;
 }
 
+export type PromoListValidityFilter = 'ongoing' | 'upcoming' | 'expired';
+
 export interface PromoCodesListQuery {
   page?: number;
   limit?: number;
   search?: string;
+  active?: boolean;
+  validity?: PromoListValidityFilter;
 }
 
 export interface CreatePromoCodeRequest {

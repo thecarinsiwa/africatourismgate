@@ -36,10 +36,16 @@ import {
   getPromoValidityState,
 } from '../../lib/promo-validity';
 
+import type { PromoCodesListFilter } from '../../config/promo-codes-kpi';
+
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
 
-export function PromoCodesList() {
+type PromoCodesListProps = {
+  listFilter: PromoCodesListFilter;
+};
+
+export function PromoCodesList({ listFilter }: PromoCodesListProps) {
   const { promoCodes: getPromoCodesErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.promoCodes.list');
   const tStatus = useTranslations('modules.promoCodes.status');
@@ -88,6 +94,7 @@ export function PromoCodesList() {
         page,
         limit: PAGE_SIZE,
         search: search || undefined,
+        ...listFilter,
       });
       setState({
         status: 'ready',
@@ -98,7 +105,11 @@ export function PromoCodesList() {
     } catch (error) {
       setState({ status: 'error', message: getPromoCodesErrorMessage(error) });
     }
-  }, [page, search, getPromoCodesErrorMessage]);
+  }, [page, search, listFilter, getPromoCodesErrorMessage]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [listFilter]);
 
   useEffect(() => {
     void load();
@@ -115,7 +126,9 @@ export function PromoCodesList() {
     return () => window.clearTimeout(timer);
   }, [searchInput]);
 
-  const activeFilterCount = search !== '' ? 1 : 0;
+  const hasKpiFilter =
+    listFilter.active !== undefined || listFilter.validity !== undefined;
+  const activeFilterCount = (search !== '' ? 1 : 0) + (hasKpiFilter ? 1 : 0);
   const hasFilters = activeFilterCount > 0;
 
   const handleClearFilters = useCallback(() => {
