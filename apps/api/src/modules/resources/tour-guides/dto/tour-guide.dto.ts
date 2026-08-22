@@ -37,6 +37,9 @@ export class TourGuideDto {
   @ApiPropertyOptional({ nullable: true })
   photoUrl!: string | null;
 
+  @ApiPropertyOptional({ nullable: true })
+  contactEmail!: string | null;
+
   @ApiProperty({ type: [String] })
   languages!: string[];
 
@@ -83,6 +86,7 @@ export function toTourGuideDto(
     displayName: guide.displayName,
     bio: guide.bio ?? null,
     photoUrl: guide.photoUrl ?? null,
+    contactEmail: guide.contactEmail ?? null,
     languages: Array.isArray(guide.languages) ? guide.languages : [],
     destinations: Array.isArray(guide.destinations) ? guide.destinations : [],
     status: guide.status,

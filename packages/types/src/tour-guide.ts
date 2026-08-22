@@ -102,6 +102,7 @@ export interface TourGuide {
   displayName: string;
   bio: string | null;
   photoUrl: string | null;
+  contactEmail: string | null;
   languages: string[];
   destinations: string[];
   status: TourGuideStatus;
@@ -134,6 +135,7 @@ export interface CreateTourGuideRequest {
   displayName: string;
   bio?: string;
   photoUrl?: string;
+  contactEmail?: string;
   languages: string[];
   destinations: string[];
   status?: TourGuideStatus;
@@ -146,6 +148,7 @@ export interface UpdateTourGuideRequest {
   displayName?: string;
   bio?: string | null;
   photoUrl?: string | null;
+  contactEmail?: string | null;
   languages?: string[];
   destinations?: string[];
   status?: TourGuideStatus;

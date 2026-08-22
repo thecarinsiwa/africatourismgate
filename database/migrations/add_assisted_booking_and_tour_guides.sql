@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS `tour_guides` (
   `display_name` VARCHAR(180) NOT NULL,
   `bio` TEXT DEFAULT NULL,
   `photo_url` VARCHAR(512) DEFAULT NULL,
+  `contact_email` VARCHAR(255) DEFAULT NULL,
   `languages` JSON NOT NULL,
   `destinations` JSON NOT NULL,
   `status` ENUM('active','inactive') NOT NULL DEFAULT 'active',

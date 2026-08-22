@@ -62,6 +62,8 @@
     "organizationId": "Organization",
     "organizationPlaceholder": "None (optional)",
     "displayName": "Display name",
+    "contactEmail": "Contact email",
+    "contactEmailHint": "Used for assignment notifications (required for external guides).",
     "bio": "Bio",
     "photoUrl": "Photo URL",
     "languages": "Languages spoken",

@@ -24,6 +24,9 @@ export class TourGuides extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'photo_url', length: 512, nullable: true })
   photoUrl!: string | null;
 
+  @Column({ type: 'varchar', name: 'contact_email', length: 255, nullable: true })
+  contactEmail!: string | null;
+
   @Column({ type: 'json', name: 'languages' })
   languages!: string[];
 

@@ -27,6 +27,7 @@ export type TourGuideFormValues = {
   userId: string;
   organizationId: string;
   displayName: string;
+  contactEmail: string;
   bio: string;
   photoUrl: string;
   languagesInput: string;
@@ -39,6 +40,7 @@ const defaultValues: TourGuideFormValues = {
   userId: '',
   organizationId: '',
   displayName: '',
+  contactEmail: '',
   bio: '',
   photoUrl: '',
   languagesInput: 'fr',
@@ -59,6 +61,7 @@ function guideToFormValues(guide: TourGuide): TourGuideFormValues {
     userId: guide.userId ?? '',
     organizationId: guide.organizationId ?? '',
     displayName: guide.displayName,
+    contactEmail: guide.contactEmail ?? '',
     bio: guide.bio ?? '',
     photoUrl: guide.photoUrl ?? '',
     languagesInput: guide.languages.join(', '),
@@ -76,6 +79,9 @@ function toCreatePayload(values: TourGuideFormValues): CreateTourGuideRequest {
     destinations: values.destinationIds,
     status: values.status,
     ...(values.type === 'internal' && values.userId ? { userId: values.userId } : {}),
+    ...(values.type === 'external' && values.contactEmail.trim()
+      ? { contactEmail: values.contactEmail.trim() }
+      : {}),
     ...(values.organizationId ? { organizationId: values.organizationId } : {}),
     ...(values.bio.trim() ? { bio: values.bio.trim() } : {}),
     ...(values.photoUrl.trim() ? { photoUrl: values.photoUrl.trim() } : {}),
@@ -91,6 +97,10 @@ function toUpdatePayload(values: TourGuideFormValues): UpdateTourGuideRequest {
     destinations: values.destinationIds,
     status: values.status,
     userId: values.type === 'internal' && values.userId ? values.userId : null,
+    contactEmail:
+      values.type === 'external' && values.contactEmail.trim()
+        ? values.contactEmail.trim()
+        : null,
     organizationId: values.organizationId ? values.organizationId : null,
     bio: values.bio.trim() ? values.bio.trim() : null,
     photoUrl: values.photoUrl.trim() ? values.photoUrl.trim() : null,
@@ -187,6 +197,15 @@ export function TourGuideForm({
     if (values.type === 'internal' && !values.userId) {
       errors.userId = 'required';
     }
+    if (values.type === 'external' && !values.contactEmail.trim()) {
+      errors.contactEmail = 'required';
+    } else if (
+      values.type === 'external' &&
+      values.contactEmail.trim() &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.contactEmail.trim())
+    ) {
+      errors.contactEmail = 'invalid';
+    }
     const languages = parseLanguagesInput(values.languagesInput);
     if (languages.length === 0) {
       errors.languagesInput = 'required';
@@ -261,6 +280,7 @@ export function TourGuideForm({
                 ...prev,
                 type: e.target.value as TourGuideType,
                 userId: e.target.value === 'external' ? '' : prev.userId,
+                contactEmail: e.target.value === 'internal' ? '' : prev.contactEmail,
               }))
             }
             className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg"
@@ -294,7 +314,17 @@ export function TourGuideForm({
               <p className="mt-1 text-xs text-red-600">{fieldErrors.userId}</p>
             ) : null}
           </div>
-        ) : null}
+        ) : (
+          <Input
+            label={t('contactEmail')}
+            name="contactEmail"
+            type="email"
+            value={values.contactEmail}
+            onChange={(e) => setValues((prev) => ({ ...prev, contactEmail: e.target.value }))}
+            hint={t('contactEmailHint')}
+            error={fieldErrors.contactEmail}
+          />
+        )}
 
         <div>
           <label htmlFor={orgId} className="mb-1 block text-sm font-medium text-atg-fg">

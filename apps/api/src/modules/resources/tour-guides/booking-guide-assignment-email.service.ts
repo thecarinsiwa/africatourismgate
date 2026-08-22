@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { BookingItems, TourGuides, Users } from '../../../entities/generated';
-import { resolvePdfLocale } from '../../email/booking-detail-pdf.labels';
+import { resolvePdfLocale, type BookingDetailPdfLocale } from '../../email/booking-detail-pdf.labels';
 import { EmailService } from '../../email/email.service';
 import { TourGuidesService } from './tour-guides.service';
 
@@ -70,7 +70,7 @@ export class BookingGuideAssignmentEmailService {
       visitStartDate,
       visitEndDate,
       adminUrl,
-      locale: resolvePdfLocale(recipient.preferredLanguage),
+      locale: resolveGuideLocale(guide, recipient.preferredLanguage),
       webUrl: process.env.NEXT_PUBLIC_WEB_URL,
     });
   }
@@ -78,21 +78,26 @@ export class BookingGuideAssignmentEmailService {
   private async resolveGuideRecipient(
     guide: TourGuides,
   ): Promise<{ email: string; preferredLanguage?: string | null } | null> {
-    if (!guide.userId) {
+    if (guide.userId) {
+      const user = await this.usersRepository.findOne({
+        where: { id: guide.userId, deletedAt: IsNull() },
+      });
+      if (!user?.email?.trim()) {
+        return null;
+      }
+
+      return {
+        email: user.email,
+        preferredLanguage: user.preferredLanguage,
+      };
+    }
+
+    const contactEmail = guide.contactEmail?.trim();
+    if (!contactEmail) {
       return null;
     }
 
-    const user = await this.usersRepository.findOne({
-      where: { id: guide.userId, deletedAt: IsNull() },
-    });
-    if (!user?.email?.trim()) {
-      return null;
-    }
-
-    return {
-      email: user.email,
-      preferredLanguage: user.preferredLanguage,
-    };
+    return { email: contactEmail };
   }
 }
 
@@ -114,4 +119,20 @@ function deriveVisitDates(items: BookingItems[]): {
     visitStartDate: startDates[0] ?? null,
     visitEndDate: endDates[endDates.length - 1] ?? null,
   };
+}
+
+function resolveGuideLocale(
+  guide: TourGuides,
+  preferredLanguage?: string | null,
+): BookingDetailPdfLocale {
+  if (preferredLanguage?.trim()) {
+    return resolvePdfLocale(preferredLanguage);
+  }
+
+  const firstLanguage = guide.languages?.[0]?.trim().slice(0, 2).toLowerCase();
+  if (firstLanguage === 'en' || firstLanguage === 'es' || firstLanguage === 'fr') {
+    return firstLanguage;
+  }
+
+  return 'fr';
 }

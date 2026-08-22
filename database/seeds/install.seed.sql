@@ -999,7 +999,7 @@ INSERT INTO `package_images` (
 -- CE-1: tour_guides (demo — 1 internal, 1 external)
 -- -----------------------------------------------------------------------------
 INSERT INTO `tour_guides` (
-  `id`, `type`, `user_id`, `organization_id`, `display_name`, `bio`, `photo_url`,
+  `id`, `type`, `user_id`, `organization_id`, `display_name`, `bio`, `photo_url`, `contact_email`,
   `languages`, `destinations`, `status`, `created_by_user_id`
 ) VALUES
 (
@@ -1009,6 +1009,7 @@ INSERT INTO `tour_guides` (
   '00000000-0000-4000-8000-000000000001',
   'Marie Kabila',
   'Guide senior spécialisée Kinshasa et région du Kongo Central. 8 ans d''expérience.',
+  NULL,
   NULL,
   '["fr","en","ln"]',
   '["00000000-0000-4000-8000-000000002001"]',
@@ -1023,6 +1024,7 @@ INSERT INTO `tour_guides` (
   'Jean-Pierre Mwamba',
   'Guide indépendant, circuits culturels et nature en RDC.',
   NULL,
+  'jean-pierre.mwamba@example.com',
   '["fr","sw"]',
   '["00000000-0000-4000-8000-000000002001"]',
   'active',

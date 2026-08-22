@@ -62,6 +62,8 @@
     "organizationId": "Organización",
     "organizationPlaceholder": "Ninguna (opcional)",
     "displayName": "Nombre mostrado",
+    "contactEmail": "Correo de contacto",
+    "contactEmailHint": "Se utiliza para las notificaciones de misión (obligatorio para guías externos).",
     "bio": "Biografía",
     "photoUrl": "URL de foto",
     "languages": "Idiomas hablados",
