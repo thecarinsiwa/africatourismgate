@@ -21,6 +21,18 @@
     "promotions": "Promotions"
   },
   "list": {
+    "tabs": {
+      "all": "Tous",
+      "pending": "En attente",
+      "succeeded": "Réussis",
+      "failed": "Échoués",
+      "refunded": "Remboursés",
+      "ariaLabel": "Filtrer par statut de paiement"
+    },
+    "filters": {
+      "search": "Rechercher par client, e-mail ou réservation…",
+      "searchAria": "Rechercher des paiements"
+    },
     "emptyDefault": "Aucun paiement pour le moment.",
     "emptyFiltered": "Aucun paiement ne correspond à vos critères.",
     "ariaLabel": "Liste des paiements",

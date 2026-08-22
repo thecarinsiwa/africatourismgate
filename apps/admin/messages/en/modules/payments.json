@@ -21,9 +21,21 @@
     "promotions": "Promotions"
   },
   "list": {
-    "emptyDefault": "Tocun paiement pour le moment.",
-    "emptyFiltered": "Tocun paiement ne correspond à vos critères.",
-    "ariaLabel": "Liste des paiements",
+    "tabs": {
+      "all": "All",
+      "pending": "Pending",
+      "succeeded": "Succeeded",
+      "failed": "Failed",
+      "refunded": "Refunded",
+      "ariaLabel": "Filter by payment status"
+    },
+    "filters": {
+      "search": "Search by client, email or booking…",
+      "searchAria": "Search payments"
+    },
+    "emptyDefault": "No payments yet.",
+    "emptyFiltered": "No payments match your criteria.",
+    "ariaLabel": "Payments list",
     "accessDenied": "Access denied: payments.read permission required.",
     "notFoundError": "Paiement introuvable.",
     "toast": {

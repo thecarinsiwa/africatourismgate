@@ -21,9 +21,21 @@
     "promotions": "Promociones"
   },
   "list": {
-    "emptyDefault": "Hastacun paiement pour le moment.",
-    "emptyFiltered": "Hastacun paiement ne correspond à vos critères.",
-    "ariaLabel": "Liste des paiements",
+    "tabs": {
+      "all": "Todos",
+      "pending": "Pendientes",
+      "succeeded": "Exitosos",
+      "failed": "Fallidos",
+      "refunded": "Reembolsados",
+      "ariaLabel": "Filtrar por estado de pago"
+    },
+    "filters": {
+      "search": "Buscar por cliente, e-mail o reserva…",
+      "searchAria": "Buscar pagos"
+    },
+    "emptyDefault": "Ningún pago por el momento.",
+    "emptyFiltered": "Ningún pago coincide con sus criterios.",
+    "ariaLabel": "Lista de pagos",
     "accessDenied": "Acceso denegado: se requiere el permiso payments.read.",
     "notFoundError": "Paiement introuvable.",
     "toast": {
