@@ -282,17 +282,6 @@ export function BookingGuidesSection({
         </p>
       ) : null}
 
-      <Card variant="dashboard" padding="none" className="overflow-hidden">
-        <DataTable
-          columns={columns}
-          data={assignments}
-          isLoading={loading}
-          emptyMessage={t('empty')}
-          getRowId={(row) => row.id}
-          aria-label={t('ariaLabel')}
-        />
-      </Card>
-
       {canWrite ? (
         <Card variant="dashboard" padding="md" className="space-y-4">
           <p className="text-sm font-medium text-atg-fg">{t('assignTitle')}</p>
@@ -344,6 +333,17 @@ export function BookingGuidesSection({
           ) : null}
         </Card>
       ) : null}
+
+      <Card variant="dashboard" padding="none" className="overflow-hidden">
+        <DataTable
+          columns={columns}
+          data={assignments}
+          isLoading={loading}
+          emptyMessage={t('empty')}
+          getRowId={(row) => row.id}
+          aria-label={t('ariaLabel')}
+        />
+      </Card>
     </section>
     </>
   );
