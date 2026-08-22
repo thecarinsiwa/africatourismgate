@@ -73,7 +73,15 @@
     "destinations": "Destinations couvertes",
     "destinationsHint": "Sélectionnez au moins une destination.",
     "destinationsEmpty": "Aucune destination disponible.",
-    "status": "Statut"
+    "status": "Statut",
+    "validation": {
+      "displayNameRequired": "Le nom affiché est obligatoire.",
+      "userIdRequired": "L'utilisateur lié est obligatoire pour un guide interne.",
+      "contactEmailRequired": "L'e-mail de contact est obligatoire pour un guide externe.",
+      "contactEmailInvalid": "Adresse e-mail invalide.",
+      "languagesRequired": "Indiquez au moins une langue.",
+      "destinationsRequired": "Sélectionnez au moins une destination."
+    }
   },
   "detail": {
     "title": "Modifier le guide",

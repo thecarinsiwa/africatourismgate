@@ -2,7 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Card, Input } from '@africatourismgate/ui';
+import { Button, Card, Input, Select, useToast } from '@africatourismgate/ui';
 import type {
   CreateTourGuideRequest,
   Destination,
@@ -122,11 +122,13 @@ export function TourGuideForm({
 }: TourGuideFormProps) {
   const { tourGuides: getTourGuidesErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.tourGuides.form');
+  const tToast = useTranslations('modules.common.toast');
   const typeLabels = useTourGuideTypeLabels();
   const statusLabels = useTourGuideStatusLabels();
   const router = useRouter();
+  const { toast } = useToast();
   const typeId = useId();
-  const userId = useId();
+  const userFieldId = useId();
   const orgId = useId();
   const statusId = useId();
 
@@ -171,6 +173,14 @@ export function TourGuideForm({
     };
   }, []);
 
+  const updateField = useCallback(
+    <K extends keyof TourGuideFormValues>(key: K, value: TourGuideFormValues[K]) => {
+      setValues((prev) => ({ ...prev, [key]: value }));
+      setFieldErrors((prev) => ({ ...prev, [key]: undefined }));
+    },
+    [],
+  );
+
   const userOptions = useMemo(() => {
     if (mode === 'edit' && initialGuide?.user) {
       const hasCurrent = users.some((u) => u.id === initialGuide.userId);
@@ -189,29 +199,64 @@ export function TourGuideForm({
     return users;
   }, [initialGuide, mode, users]);
 
+  const typeSelectOptions = useMemo(
+    () => [
+      { value: 'external', label: typeLabels.external },
+      { value: 'internal', label: typeLabels.internal },
+    ],
+    [typeLabels],
+  );
+
+  const statusSelectOptions = useMemo(
+    () => [
+      { value: 'active', label: statusLabels.active },
+      { value: 'inactive', label: statusLabels.inactive },
+    ],
+    [statusLabels],
+  );
+
+  const userSelectOptions = useMemo(
+    () => [
+      { value: '', label: t('userPlaceholder') },
+      ...userOptions.map((user) => ({
+        value: user.id,
+        label: `${user.firstName} ${user.lastName} (${user.email})`,
+      })),
+    ],
+    [t, userOptions],
+  );
+
+  const organizationSelectOptions = useMemo(
+    () => [
+      { value: '', label: t('organizationPlaceholder') },
+      ...organizations.map((org) => ({ value: org.id, label: org.name })),
+    ],
+    [organizations, t],
+  );
+
   function validate(): boolean {
     const errors: Partial<Record<keyof TourGuideFormValues, string>> = {};
     if (!values.displayName.trim()) {
-      errors.displayName = 'required';
+      errors.displayName = t('validation.displayNameRequired');
     }
     if (values.type === 'internal' && !values.userId) {
-      errors.userId = 'required';
+      errors.userId = t('validation.userIdRequired');
     }
     if (values.type === 'external' && !values.contactEmail.trim()) {
-      errors.contactEmail = 'required';
+      errors.contactEmail = t('validation.contactEmailRequired');
     } else if (
       values.type === 'external' &&
       values.contactEmail.trim() &&
       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.contactEmail.trim())
     ) {
-      errors.contactEmail = 'invalid';
+      errors.contactEmail = t('validation.contactEmailInvalid');
     }
     const languages = parseLanguagesInput(values.languagesInput);
     if (languages.length === 0) {
-      errors.languagesInput = 'required';
+      errors.languagesInput = t('validation.languagesRequired');
     }
     if (values.destinationIds.length === 0) {
-      errors.destinationIds = 'required';
+      errors.destinationIds = t('validation.destinationsRequired');
     }
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
@@ -234,10 +279,23 @@ export function TourGuideForm({
       } else if (guideId) {
         const updated = await client.updateTourGuide(guideId, toUpdatePayload(values));
         onUpdated?.(updated);
+        toast({
+          title: tToast('tourGuideSavedTitle'),
+          message: values.displayName.trim(),
+          variant: 'success',
+        });
         router.refresh();
       }
     } catch (error) {
-      setFormError(getTourGuidesErrorMessage(error));
+      const message = getTourGuidesErrorMessage(error);
+      setFormError(message);
+      if (mode === 'edit') {
+        toast({
+          title: tToast('saveError'),
+          message,
+          variant: 'error',
+        });
+      }
     } finally {
       setSubmitting(false);
     }
@@ -253,6 +311,7 @@ export function TourGuideForm({
           : [...prev.destinationIds, destinationId],
       };
     });
+    setFieldErrors((prev) => ({ ...prev, destinationIds: undefined }));
   }, []);
 
   return (
@@ -268,89 +327,67 @@ export function TourGuideForm({
           {t('sections.identity')}
         </h2>
 
-        <div>
-          <label htmlFor={typeId} className="mb-1 block text-sm font-medium text-atg-fg">
-            {t('type')}
-          </label>
-          <select
-            id={typeId}
-            value={values.type}
-            onChange={(e) =>
-              setValues((prev) => ({
-                ...prev,
-                type: e.target.value as TourGuideType,
-                userId: e.target.value === 'external' ? '' : prev.userId,
-                contactEmail: e.target.value === 'internal' ? '' : prev.contactEmail,
-              }))
-            }
-            className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg"
-          >
-            <option value="external">{typeLabels.external}</option>
-            <option value="internal">{typeLabels.internal}</option>
-          </select>
-          <p className="mt-1 text-xs text-atg-muted">{t('typeHint')}</p>
-        </div>
+        <Select
+          id={typeId}
+          label={t('type')}
+          hint={t('typeHint')}
+          value={values.type}
+          options={typeSelectOptions}
+          onChange={(e) => {
+            const nextType = e.target.value as TourGuideType;
+            setValues((prev) => ({
+              ...prev,
+              type: nextType,
+              userId: nextType === 'external' ? '' : prev.userId,
+              contactEmail: nextType === 'internal' ? '' : prev.contactEmail,
+            }));
+            setFieldErrors((prev) => ({
+              ...prev,
+              userId: undefined,
+              contactEmail: undefined,
+            }));
+          }}
+        />
 
         {values.type === 'internal' ? (
-          <div>
-            <label htmlFor={userId} className="mb-1 block text-sm font-medium text-atg-fg">
-              {t('userId')}
-            </label>
-            <select
-              id={userId}
-              value={values.userId}
-              onChange={(e) => setValues((prev) => ({ ...prev, userId: e.target.value }))}
-              className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg"
-            >
-              <option value="">{t('userPlaceholder')}</option>
-              {userOptions.map((user) => (
-                <option key={user.id} value={user.id}>
-                  {user.firstName} {user.lastName} ({user.email})
-                </option>
-              ))}
-            </select>
-            <p className="mt-1 text-xs text-atg-muted">{t('userIdHint')}</p>
-            {fieldErrors.userId ? (
-              <p className="mt-1 text-xs text-red-600">{fieldErrors.userId}</p>
-            ) : null}
-          </div>
+          <Select
+            id={userFieldId}
+            label={t('userId')}
+            hint={t('userIdHint')}
+            value={values.userId}
+            options={userSelectOptions}
+            onChange={(e) => updateField('userId', e.target.value)}
+            error={fieldErrors.userId}
+            required
+          />
         ) : (
           <Input
             label={t('contactEmail')}
             name="contactEmail"
             type="email"
             value={values.contactEmail}
-            onChange={(e) => setValues((prev) => ({ ...prev, contactEmail: e.target.value }))}
+            onChange={(e) => updateField('contactEmail', e.target.value)}
             hint={t('contactEmailHint')}
             error={fieldErrors.contactEmail}
+            required
           />
         )}
 
-        <div>
-          <label htmlFor={orgId} className="mb-1 block text-sm font-medium text-atg-fg">
-            {t('organizationId')}
-          </label>
-          <select
-            id={orgId}
-            value={values.organizationId}
-            onChange={(e) => setValues((prev) => ({ ...prev, organizationId: e.target.value }))}
-            className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg"
-          >
-            <option value="">{t('organizationPlaceholder')}</option>
-            {organizations.map((org) => (
-              <option key={org.id} value={org.id}>
-                {org.name}
-              </option>
-            ))}
-          </select>
-        </div>
+        <Select
+          id={orgId}
+          label={t('organizationId')}
+          value={values.organizationId}
+          options={organizationSelectOptions}
+          onChange={(e) => updateField('organizationId', e.target.value)}
+        />
 
         <Input
           label={t('displayName')}
           name="displayName"
           value={values.displayName}
-          onChange={(e) => setValues((prev) => ({ ...prev, displayName: e.target.value }))}
+          onChange={(e) => updateField('displayName', e.target.value)}
           error={fieldErrors.displayName}
+          required
         />
 
         <div>
@@ -361,7 +398,7 @@ export function TourGuideForm({
             id="bio"
             rows={4}
             value={values.bio}
-            onChange={(e) => setValues((prev) => ({ ...prev, bio: e.target.value }))}
+            onChange={(e) => updateField('bio', e.target.value)}
             className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg"
           />
         </div>
@@ -371,25 +408,16 @@ export function TourGuideForm({
           name="photoUrl"
           type="url"
           value={values.photoUrl}
-          onChange={(e) => setValues((prev) => ({ ...prev, photoUrl: e.target.value }))}
+          onChange={(e) => updateField('photoUrl', e.target.value)}
         />
 
-        <div>
-          <label htmlFor={statusId} className="mb-1 block text-sm font-medium text-atg-fg">
-            {t('status')}
-          </label>
-          <select
-            id={statusId}
-            value={values.status}
-            onChange={(e) =>
-              setValues((prev) => ({ ...prev, status: e.target.value as TourGuideStatus }))
-            }
-            className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg"
-          >
-            <option value="active">{statusLabels.active}</option>
-            <option value="inactive">{statusLabels.inactive}</option>
-          </select>
-        </div>
+        <Select
+          id={statusId}
+          label={t('status')}
+          value={values.status}
+          options={statusSelectOptions}
+          onChange={(e) => updateField('status', e.target.value as TourGuideStatus)}
+        />
       </Card>
 
       <Card variant="dashboard" padding="md" className="space-y-4">
@@ -401,9 +429,10 @@ export function TourGuideForm({
           label={t('languages')}
           name="languagesInput"
           value={values.languagesInput}
-          onChange={(e) => setValues((prev) => ({ ...prev, languagesInput: e.target.value }))}
+          onChange={(e) => updateField('languagesInput', e.target.value)}
           hint={t('languagesHint')}
           error={fieldErrors.languagesInput}
+          required
         />
 
         <div>
@@ -412,7 +441,11 @@ export function TourGuideForm({
           {destinations.length === 0 ? (
             <p className="text-sm text-atg-muted">{t('destinationsEmpty')}</p>
           ) : (
-            <div className="max-h-48 space-y-2 overflow-y-auto rounded-lg border border-atg-border p-3">
+            <div
+              className={`max-h-48 space-y-2 overflow-y-auto rounded-lg border p-3 ${
+                fieldErrors.destinationIds ? 'border-red-500' : 'border-atg-border'
+              }`}
+            >
               {destinations.map((destination) => (
                 <label key={destination.id} className="flex cursor-pointer items-center gap-2 text-sm">
                   <input
@@ -427,7 +460,7 @@ export function TourGuideForm({
             </div>
           )}
           {fieldErrors.destinationIds ? (
-            <p className="mt-1 text-xs text-red-600">{fieldErrors.destinationIds}</p>
+            <p className="mt-1 text-xs text-red-600 dark:text-red-400">{fieldErrors.destinationIds}</p>
           ) : null}
         </div>
       </Card>

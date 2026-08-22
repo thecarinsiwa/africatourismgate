@@ -73,7 +73,15 @@
     "destinations": "Destinos cubiertos",
     "destinationsHint": "Seleccione al menos un destino.",
     "destinationsEmpty": "No hay destinos disponibles.",
-    "status": "Estado"
+    "status": "Estado",
+    "validation": {
+      "displayNameRequired": "El nombre mostrado es obligatorio.",
+      "userIdRequired": "El usuario vinculado es obligatorio para guías internos.",
+      "contactEmailRequired": "El correo de contacto es obligatorio para guías externos.",
+      "contactEmailInvalid": "Dirección de correo inválida.",
+      "languagesRequired": "Indique al menos un idioma.",
+      "destinationsRequired": "Seleccione al menos un destino."
+    }
   },
   "detail": {
     "title": "Editar guía",

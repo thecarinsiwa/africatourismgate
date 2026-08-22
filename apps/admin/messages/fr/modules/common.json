@@ -248,6 +248,7 @@
     "deletedAmenity": "L'équipement « {name} » a été supprimé.",
     "deletedDestination": "La destination « {name} » a été supprimée.",
     "deletedTourGuide": "Le guide « {name} » a été retiré du catalogue.",
+    "tourGuideSavedTitle": "Guide enregistré",
     "deletedOrganization": "L'organisation « {name} » a été supprimée."
   },
   "availabilityCalendar": {

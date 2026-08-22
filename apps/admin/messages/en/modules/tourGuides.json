@@ -73,7 +73,15 @@
     "destinations": "Covered destinations",
     "destinationsHint": "Select at least one destination.",
     "destinationsEmpty": "No destinations available.",
-    "status": "Status"
+    "status": "Status",
+    "validation": {
+      "displayNameRequired": "Display name is required.",
+      "userIdRequired": "Linked user is required for internal guides.",
+      "contactEmailRequired": "Contact email is required for external guides.",
+      "contactEmailInvalid": "Invalid email address.",
+      "languagesRequired": "Enter at least one language.",
+      "destinationsRequired": "Select at least one destination."
+    }
   },
   "detail": {
     "title": "Edit guide",
