@@ -62,7 +62,10 @@ export function PromotionsPageContent() {
         onListFilterChange={handleListFilterChange}
       />
       <div ref={listRef}>
-        <PromotionsList listFilter={listFilter} />
+        <PromotionsList
+          listFilter={listFilter}
+          onListFilterChange={handleListFilterChange}
+        />
       </div>
     </div>
   );

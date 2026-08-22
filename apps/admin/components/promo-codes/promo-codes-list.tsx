@@ -44,9 +44,10 @@ const SEARCH_DEBOUNCE_MS = 300;
 
 type PromoCodesListProps = {
   listFilter: PromoCodesListFilter;
+  onListFilterChange?: (filter: PromoCodesListFilter) => void;
 };
 
-export function PromoCodesList({ listFilter }: PromoCodesListProps) {
+export function PromoCodesList({ listFilter, onListFilterChange }: PromoCodesListProps) {
   const { promoCodes: getPromoCodesErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.promoCodes.list');
   const tStatus = useTranslations('modules.promoCodes.status');
@@ -136,7 +137,8 @@ export function PromoCodesList({ listFilter }: PromoCodesListProps) {
     setSearchInput('');
     setSearch('');
     setPage(1);
-  }, []);
+    onListFilterChange?.({});
+  }, [onListFilterChange]);
 
   const handleDeleteRequest = useCallback((promo: PromoCode) => {
     setConfirmTarget(promo);

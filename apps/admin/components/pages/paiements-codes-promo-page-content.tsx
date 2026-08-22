@@ -62,7 +62,10 @@ export function CodesPromoPageContent() {
         onListFilterChange={handleListFilterChange}
       />
       <div ref={listRef}>
-        <PromoCodesList listFilter={listFilter} />
+        <PromoCodesList
+          listFilter={listFilter}
+          onListFilterChange={handleListFilterChange}
+        />
       </div>
     </div>
   );

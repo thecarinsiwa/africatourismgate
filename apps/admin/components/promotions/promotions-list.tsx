@@ -43,9 +43,10 @@ const SEARCH_DEBOUNCE_MS = 300;
 
 type PromotionsListProps = {
   listFilter: PromotionsListFilter;
+  onListFilterChange?: (filter: PromotionsListFilter) => void;
 };
 
-export function PromotionsList({ listFilter }: PromotionsListProps) {
+export function PromotionsList({ listFilter, onListFilterChange }: PromotionsListProps) {
   const { promotions: getPromotionsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.promotions.list');
   const tStatus = useTranslations('modules.promotions.status');
@@ -137,7 +138,8 @@ export function PromotionsList({ listFilter }: PromotionsListProps) {
     setSearchInput('');
     setSearch('');
     setPage(1);
-  }, []);
+    onListFilterChange?.({});
+  }, [onListFilterChange]);
 
   const handleDeleteRequest = useCallback((promo: Promotion) => {
     setConfirmTarget(promo);
