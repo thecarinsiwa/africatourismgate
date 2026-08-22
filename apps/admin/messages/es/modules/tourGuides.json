@@ -77,6 +77,12 @@
     "destinations": "Destinos cubiertos",
     "destinationsHint": "Seleccione al menos un destino.",
     "destinationsEmpty": "No hay destinos disponibles.",
+    "destinationsSearch": "Filtrar destinos…",
+    "previewPhoto": "Vista previa de la foto",
+    "previewNamePlaceholder": "Nombre del guía",
+    "selectedDestinations": "Destinos seleccionados",
+    "noDestinationsSelected": "Ningún destino seleccionado.",
+    "selectedCount": "{count, plural, =0 {Sin selección} one {# destino} other {# destinos}}",
     "status": "Estado",
     "validation": {
       "displayNameRequired": "El nombre mostrado es obligatorio.",
@@ -90,7 +96,14 @@
   "detail": {
     "title": "Editar guía",
     "backLink": "Volver a guías",
-    "viewButton": "Ver guía"
+    "viewButton": "Ver guía",
+    "subtitle": "Perfil, cobertura geográfica y misiones asignadas.",
+    "tabsAria": "Secciones del guía",
+    "tabs": {
+      "profile": "Perfil",
+      "coverage": "Cobertura",
+      "missions": "Misiones"
+    }
   },
   "view": {
     "title": "Ver guía",

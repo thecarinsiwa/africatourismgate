@@ -2,7 +2,17 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Card, Input, Select, useToast } from '@africatourismgate/ui';
+import {
+  Avatar,
+  Button,
+  Card,
+  cn,
+  DataTableBadge,
+  Input,
+  Select,
+  Textarea,
+  useToast,
+} from '@africatourismgate/ui';
 import type {
   CreateTourGuideRequest,
   Destination,
@@ -107,8 +117,12 @@ function toUpdatePayload(values: TourGuideFormValues): UpdateTourGuideRequest {
   };
 }
 
+type TourGuideFormSection = 'identity' | 'coverage' | 'all';
+
 type TourGuideFormProps = {
   mode: 'create' | 'edit';
+  layout?: 'narrow' | 'wide';
+  activeSection?: TourGuideFormSection;
   guideId?: string;
   initialGuide?: TourGuide;
   onUpdated?: (guide: TourGuide) => void;
@@ -116,6 +130,8 @@ type TourGuideFormProps = {
 
 export function TourGuideForm({
   mode,
+  layout = mode === 'edit' ? 'wide' : 'narrow',
+  activeSection = 'all',
   guideId,
   initialGuide,
   onUpdated,
@@ -131,6 +147,7 @@ export function TourGuideForm({
   const userFieldId = useId();
   const orgId = useId();
   const statusId = useId();
+  const destinationsSearchId = useId();
 
   const [values, setValues] = useState<TourGuideFormValues>(() =>
     initialGuide ? guideToFormValues(initialGuide) : defaultValues,
@@ -138,11 +155,16 @@ export function TourGuideForm({
   const [users, setUsers] = useState<User[]>([]);
   const [organizations, setOrganizations] = useState<OrganizationListItem[]>([]);
   const [destinations, setDestinations] = useState<Destination[]>([]);
+  const [destinationSearch, setDestinationSearch] = useState('');
   const [fieldErrors, setFieldErrors] = useState<
     Partial<Record<keyof TourGuideFormValues, string>>
   >({});
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  const showIdentity = activeSection === 'all' || activeSection === 'identity';
+  const showCoverage = activeSection === 'all' || activeSection === 'coverage';
+  const isWide = layout === 'wide';
 
   useEffect(() => {
     let cancelled = false;
@@ -199,6 +221,11 @@ export function TourGuideForm({
     return users;
   }, [initialGuide, mode, users]);
 
+  const linkedUser = useMemo(
+    () => userOptions.find((user) => user.id === values.userId),
+    [userOptions, values.userId],
+  );
+
   const typeSelectOptions = useMemo(
     () => [
       { value: 'external', label: typeLabels.external },
@@ -233,6 +260,26 @@ export function TourGuideForm({
     ],
     [organizations, t],
   );
+
+  const filteredDestinations = useMemo(() => {
+    const query = destinationSearch.trim().toLowerCase();
+    if (!query) return destinations;
+    return destinations.filter((destination) =>
+      destination.name.toLowerCase().includes(query),
+    );
+  }, [destinationSearch, destinations]);
+
+  const selectedDestinations = useMemo(
+    () =>
+      destinations.filter((destination) => values.destinationIds.includes(destination.id)),
+    [destinations, values.destinationIds],
+  );
+
+  const previewEmail =
+    linkedUser?.email ?? (values.contactEmail.trim() || 'guide@preview.local');
+  const previewFirstName =
+    linkedUser?.firstName ?? (values.displayName.trim() || 'Guide');
+  const previewLastName = linkedUser?.lastName ?? '';
 
   function validate(): boolean {
     const errors: Partial<Record<keyof TourGuideFormValues, string>> = {};
@@ -314,95 +361,80 @@ export function TourGuideForm({
     setFieldErrors((prev) => ({ ...prev, destinationIds: undefined }));
   }, []);
 
-  return (
-    <form onSubmit={(e) => void handleSubmit(e)} className="max-w-2xl space-y-6">
-      {formError ? (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {formError}
-        </p>
-      ) : null}
+  const identityFields = (
+    <div className="space-y-4">
+      <Select
+        id={typeId}
+        label={t('type')}
+        hint={t('typeHint')}
+        value={values.type}
+        options={typeSelectOptions}
+        onChange={(e) => {
+          const nextType = e.target.value as TourGuideType;
+          setValues((prev) => ({
+            ...prev,
+            type: nextType,
+            userId: nextType === 'external' ? '' : prev.userId,
+            contactEmail: nextType === 'internal' ? '' : prev.contactEmail,
+          }));
+          setFieldErrors((prev) => ({
+            ...prev,
+            userId: undefined,
+            contactEmail: undefined,
+          }));
+        }}
+      />
 
-      <Card variant="dashboard" padding="md" className="space-y-4">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-atg-muted">
-          {t('sections.identity')}
-        </h2>
-
+      {values.type === 'internal' ? (
         <Select
-          id={typeId}
-          label={t('type')}
-          hint={t('typeHint')}
-          value={values.type}
-          options={typeSelectOptions}
-          onChange={(e) => {
-            const nextType = e.target.value as TourGuideType;
-            setValues((prev) => ({
-              ...prev,
-              type: nextType,
-              userId: nextType === 'external' ? '' : prev.userId,
-              contactEmail: nextType === 'internal' ? '' : prev.contactEmail,
-            }));
-            setFieldErrors((prev) => ({
-              ...prev,
-              userId: undefined,
-              contactEmail: undefined,
-            }));
-          }}
-        />
-
-        {values.type === 'internal' ? (
-          <Select
-            id={userFieldId}
-            label={t('userId')}
-            hint={t('userIdHint')}
-            value={values.userId}
-            options={userSelectOptions}
-            onChange={(e) => updateField('userId', e.target.value)}
-            error={fieldErrors.userId}
-            required
-          />
-        ) : (
-          <Input
-            label={t('contactEmail')}
-            name="contactEmail"
-            type="email"
-            value={values.contactEmail}
-            onChange={(e) => updateField('contactEmail', e.target.value)}
-            hint={t('contactEmailHint')}
-            error={fieldErrors.contactEmail}
-            required
-          />
-        )}
-
-        <Select
-          id={orgId}
-          label={t('organizationId')}
-          value={values.organizationId}
-          options={organizationSelectOptions}
-          onChange={(e) => updateField('organizationId', e.target.value)}
-        />
-
-        <Input
-          label={t('displayName')}
-          name="displayName"
-          value={values.displayName}
-          onChange={(e) => updateField('displayName', e.target.value)}
-          error={fieldErrors.displayName}
+          id={userFieldId}
+          label={t('userId')}
+          hint={t('userIdHint')}
+          value={values.userId}
+          options={userSelectOptions}
+          onChange={(e) => updateField('userId', e.target.value)}
+          error={fieldErrors.userId}
           required
         />
+      ) : (
+        <Input
+          label={t('contactEmail')}
+          name="contactEmail"
+          type="email"
+          value={values.contactEmail}
+          onChange={(e) => updateField('contactEmail', e.target.value)}
+          hint={t('contactEmailHint')}
+          error={fieldErrors.contactEmail}
+          required
+        />
+      )}
 
-        <div>
-          <label htmlFor="bio" className="mb-1 block text-sm font-medium text-atg-fg">
-            {t('bio')}
-          </label>
-          <textarea
-            id="bio"
-            rows={4}
-            value={values.bio}
-            onChange={(e) => updateField('bio', e.target.value)}
-            className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg"
-          />
-        </div>
+      <Select
+        id={orgId}
+        label={t('organizationId')}
+        value={values.organizationId}
+        options={organizationSelectOptions}
+        onChange={(e) => updateField('organizationId', e.target.value)}
+      />
 
+      <Input
+        label={t('displayName')}
+        name="displayName"
+        value={values.displayName}
+        onChange={(e) => updateField('displayName', e.target.value)}
+        error={fieldErrors.displayName}
+        required
+      />
+
+      <Textarea
+        label={t('bio')}
+        name="bio"
+        rows={4}
+        value={values.bio}
+        onChange={(e) => updateField('bio', e.target.value)}
+      />
+
+      {!isWide || activeSection === 'all' ? (
         <Input
           label={t('photoUrl')}
           name="photoUrl"
@@ -410,60 +442,194 @@ export function TourGuideForm({
           value={values.photoUrl}
           onChange={(e) => updateField('photoUrl', e.target.value)}
         />
+      ) : null}
 
-        <Select
-          id={statusId}
-          label={t('status')}
-          value={values.status}
-          options={statusSelectOptions}
-          onChange={(e) => updateField('status', e.target.value as TourGuideStatus)}
-        />
-      </Card>
+      <Select
+        id={statusId}
+        label={t('status')}
+        value={values.status}
+        options={statusSelectOptions}
+        onChange={(e) => updateField('status', e.target.value as TourGuideStatus)}
+      />
+    </div>
+  );
 
-      <Card variant="dashboard" padding="md" className="space-y-4">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-atg-muted">
-          {t('sections.coverage')}
-        </h2>
+  const coverageFields = (
+    <div className="space-y-4">
+      <Input
+        label={t('languages')}
+        name="languagesInput"
+        value={values.languagesInput}
+        onChange={(e) => updateField('languagesInput', e.target.value)}
+        hint={t('languagesHint')}
+        error={fieldErrors.languagesInput}
+        required
+      />
 
-        <Input
-          label={t('languages')}
-          name="languagesInput"
-          value={values.languagesInput}
-          onChange={(e) => updateField('languagesInput', e.target.value)}
-          hint={t('languagesHint')}
-          error={fieldErrors.languagesInput}
-          required
-        />
-
-        <div>
-          <p className="mb-2 text-sm font-medium text-atg-fg">{t('destinations')}</p>
-          <p className="mb-3 text-xs text-atg-muted">{t('destinationsHint')}</p>
-          {destinations.length === 0 ? (
-            <p className="text-sm text-atg-muted">{t('destinationsEmpty')}</p>
-          ) : (
+      <div>
+        <p className="mb-1 text-sm font-medium text-atg-fg">{t('destinations')}</p>
+        <p className="mb-3 text-xs text-atg-muted">{t('destinationsHint')}</p>
+        {destinations.length === 0 ? (
+          <p className="text-sm text-atg-muted">{t('destinationsEmpty')}</p>
+        ) : (
+          <div className="space-y-3">
+            <Input
+              id={destinationsSearchId}
+              name="destinationsSearch"
+              type="search"
+              value={destinationSearch}
+              onChange={(e) => setDestinationSearch(e.target.value)}
+              placeholder={t('destinationsSearch')}
+              aria-label={t('destinationsSearch')}
+            />
             <div
-              className={`max-h-48 space-y-2 overflow-y-auto rounded-lg border p-3 ${
-                fieldErrors.destinationIds ? 'border-red-500' : 'border-atg-border'
-              }`}
+              className={cn(
+                'grid gap-2 sm:grid-cols-2 xl:grid-cols-3',
+                fieldErrors.destinationIds && 'rounded-lg ring-1 ring-red-500',
+              )}
             >
-              {destinations.map((destination) => (
-                <label key={destination.id} className="flex cursor-pointer items-center gap-2 text-sm">
-                  <input
-                    type="checkbox"
-                    checked={values.destinationIds.includes(destination.id)}
-                    onChange={() => toggleDestination(destination.id)}
-                    className="rounded border-atg-border"
-                  />
-                  <span>{destination.name}</span>
-                </label>
-              ))}
+              {filteredDestinations.length === 0 ? (
+                <p className="col-span-full text-sm text-atg-muted">{t('destinationsEmpty')}</p>
+              ) : (
+                filteredDestinations.map((destination) => {
+                  const selected = values.destinationIds.includes(destination.id);
+                  return (
+                    <button
+                      key={destination.id}
+                      type="button"
+                      onClick={() => toggleDestination(destination.id)}
+                      aria-pressed={selected}
+                      className={cn(
+                        'rounded-lg border px-3 py-2.5 text-left text-sm transition-colors',
+                        selected
+                          ? 'border-primary bg-primary/5 font-medium text-atg-fg'
+                          : 'border-atg-border bg-atg-elevated text-atg-muted hover:border-primary/40 hover:text-atg-fg',
+                      )}
+                    >
+                      {destination.name}
+                    </button>
+                  );
+                })
+              )}
             </div>
-          )}
-          {fieldErrors.destinationIds ? (
-            <p className="mt-1 text-xs text-red-600 dark:text-red-400">{fieldErrors.destinationIds}</p>
-          ) : null}
+          </div>
+        )}
+        {fieldErrors.destinationIds ? (
+          <p className="mt-1 text-xs text-red-600 dark:text-red-400">{fieldErrors.destinationIds}</p>
+        ) : null}
+      </div>
+    </div>
+  );
+
+  const identityAside = (
+    <aside className="min-w-0 space-y-4 lg:sticky lg:top-6">
+      <Card variant="dashboard" padding="md" className="space-y-4">
+        <h3 className="text-sm font-semibold text-atg-fg">{t('previewPhoto')}</h3>
+        <div className="flex flex-col items-center gap-3 text-center">
+          <Avatar
+            email={previewEmail}
+            firstName={previewFirstName}
+            lastName={previewLastName}
+            src={values.photoUrl.trim() || undefined}
+            size="lg"
+            label={values.displayName.trim() || previewFirstName}
+          />
+          <p className="text-sm font-medium text-atg-fg">
+            {values.displayName.trim() || t('previewNamePlaceholder')}
+          </p>
+          <DataTableBadge variant="muted">{typeLabels[values.type]}</DataTableBadge>
         </div>
+        <Input
+          label={t('photoUrl')}
+          name="photoUrl"
+          type="url"
+          value={values.photoUrl}
+          onChange={(e) => updateField('photoUrl', e.target.value)}
+        />
       </Card>
+    </aside>
+  );
+
+  const coverageAside = (
+    <aside className="min-w-0 space-y-4 lg:sticky lg:top-6">
+      <Card variant="dashboard" padding="md" className="space-y-3">
+        <h3 className="text-sm font-semibold text-atg-fg">{t('selectedDestinations')}</h3>
+        {selectedDestinations.length === 0 ? (
+          <p className="text-sm text-atg-muted">{t('noDestinationsSelected')}</p>
+        ) : (
+          <div className="flex flex-wrap gap-2">
+            {selectedDestinations.map((destination) => (
+              <DataTableBadge key={destination.id} variant="muted">
+                {destination.name}
+              </DataTableBadge>
+            ))}
+          </div>
+        )}
+        <p className="text-xs text-atg-muted">
+          {t('selectedCount', { count: selectedDestinations.length })}
+        </p>
+      </Card>
+    </aside>
+  );
+
+  const formClassName = cn(
+    'space-y-6',
+    isWide ? 'w-full' : 'max-w-2xl',
+  );
+
+  return (
+    <form onSubmit={(e) => void handleSubmit(e)} className={formClassName}>
+      {formError ? (
+        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+          {formError}
+        </p>
+      ) : null}
+
+      {isWide && showIdentity && !showCoverage ? (
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)] lg:items-start xl:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
+          <Card variant="dashboard" padding="md">
+            <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-atg-muted">
+              {t('sections.identity')}
+            </h2>
+            {identityFields}
+          </Card>
+          {identityAside}
+        </div>
+      ) : null}
+
+      {isWide && showCoverage && !showIdentity ? (
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)] lg:items-start xl:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
+          <Card variant="dashboard" padding="md">
+            <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-atg-muted">
+              {t('sections.coverage')}
+            </h2>
+            {coverageFields}
+          </Card>
+          {coverageAside}
+        </div>
+      ) : null}
+
+      {!isWide || activeSection === 'all' ? (
+        <>
+          {showIdentity ? (
+            <Card variant="dashboard" padding="md" className="space-y-4">
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-atg-muted">
+                {t('sections.identity')}
+              </h2>
+              {identityFields}
+            </Card>
+          ) : null}
+
+          {showCoverage ? (
+            <Card variant="dashboard" padding="md" className="space-y-4">
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-atg-muted">
+                {t('sections.coverage')}
+              </h2>
+              {coverageFields}
+            </Card>
+          ) : null}
+        </>
+      ) : null}
 
       <Button type="submit" variant="primary" loading={submitting}>
         {mode === 'create' ? t('submitCreate') : t('submitUpdate')}
