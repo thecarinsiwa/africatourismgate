@@ -9,6 +9,7 @@
     "deleteConfirmButton": "Supprimer",
     "cancel": "Annuler",
     "columns": {
+      "cover": "Couverture",
       "code": "Code",
       "discount": "Réduction",
       "validity": "Validité",
@@ -36,8 +37,19 @@
     "badge": "Code promo",
     "heroHint": "Saisi tel quel par le client au checkout.",
     "ariaLabel": "Code promo {code}",
+    "coverAlt": "Couverture du code {code}",
     "usageHint": "{count} utilisation(s) enregistrée(s)",
     "notFound": "Code promo introuvable."
+  },
+  "coverImage": {
+    "title": "Photo de couverture",
+    "hint": "Affichée sur le bandeau aperçu, la liste et la fiche code. JPEG, PNG ou WebP, max. 5 Mo.",
+    "previewAlt": "Aperçu de la photo de couverture",
+    "empty": "Aucune photo de couverture définie.",
+    "upload": "Téléverser une image",
+    "remove": "Retirer l'image",
+    "saveUrl": "Enregistrer l'URL",
+    "saving": "Enregistrement…"
   },
   "form": {
     "validation": {

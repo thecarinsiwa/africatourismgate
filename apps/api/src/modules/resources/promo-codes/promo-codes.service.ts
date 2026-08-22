@@ -75,11 +75,12 @@ export class PromoCodesService extends CrudService<PromoCodes> {
   }
 
   async create(dto: DeepPartial<PromoCodes>, actorUserId?: string): Promise<PromoCodes> {
-    if (dto.code != null) {
-      await this.assertCodeAvailable(String(dto.code));
+    const payload = this.normalizeCoverImage(dto);
+    if (payload.code != null) {
+      await this.assertCodeAvailable(String(payload.code));
     }
     try {
-      return await super.create(dto, actorUserId);
+      return await super.create(payload, actorUserId);
     } catch (error) {
       this.rethrowDuplicateCode(error);
       throw error;
@@ -91,15 +92,22 @@ export class PromoCodesService extends CrudService<PromoCodes> {
     dto: DeepPartial<PromoCodes>,
     actorUserId?: string,
   ): Promise<PromoCodes> {
-    if (dto.code != null) {
-      await this.assertCodeAvailable(String(dto.code), id);
+    const payload = this.normalizeCoverImage(dto);
+    if (payload.code != null) {
+      await this.assertCodeAvailable(String(payload.code), id);
     }
     try {
-      return await super.update(id, dto, actorUserId);
+      return await super.update(id, payload, actorUserId);
     } catch (error) {
       this.rethrowDuplicateCode(error);
       throw error;
     }
+  }
+
+  private normalizeCoverImage(dto: DeepPartial<PromoCodes>): DeepPartial<PromoCodes> {
+    if (dto.coverImageUrl === undefined) return dto;
+    const trimmed = typeof dto.coverImageUrl === 'string' ? dto.coverImageUrl.trim() : '';
+    return { ...dto, coverImageUrl: trimmed || null };
   }
 
   private async assertCodeAvailable(code: string, excludeId?: string): Promise<void> {

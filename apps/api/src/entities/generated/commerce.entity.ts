@@ -126,6 +126,9 @@ export class PromoCodes extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'code', length: 64 })
   code!: string;
 
+  @Column({ type: 'varchar', name: 'cover_image_url', length: 512, nullable: true })
+  coverImageUrl!: string | null;
+
   @Column({ name: 'discount_type', enum: ["percent","fixed_amount"] })
   discountType!: 'percent' | 'fixed_amount';
 

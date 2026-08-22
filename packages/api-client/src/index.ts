@@ -1114,6 +1114,13 @@ export class ApiClient {
     return this.request<void>(`/promo-codes/${id}`, { method: 'DELETE' });
   }
 
+  uploadPromoCodeImage(id: string, body: FormData): Promise<{ url: string }> {
+    return this.request<{ url: string }>(`/promo-codes/${id}/upload-image`, {
+      method: 'POST',
+      body,
+    });
+  }
+
   listPromotions(query?: PromotionsListQuery): Promise<PaginatedResponse<Promotion>> {
     return fetchPaginated<Promotion>(this, '/promotions', query);
   }

@@ -9,6 +9,7 @@
     "deleteConfirmButton": "Delete",
     "cancel": "Cancel",
     "columns": {
+      "cover": "Cover",
       "code": "Code",
       "discount": "Discount",
       "validity": "Validity",
@@ -36,8 +37,19 @@
     "badge": "Promo code",
     "heroHint": "Entered as-is by the customer at checkout.",
     "ariaLabel": "Promo code {code}",
+    "coverAlt": "Cover for code {code}",
     "usageHint": "{count} redemption(s) recorded",
     "notFound": "Promo code not found."
+  },
+  "coverImage": {
+    "title": "Cover photo",
+    "hint": "Shown on the preview banner, list and code page. JPEG, PNG or WebP, max. 5 MB.",
+    "previewAlt": "Cover photo preview",
+    "empty": "No cover photo set.",
+    "upload": "Upload an image",
+    "remove": "Remove image",
+    "saveUrl": "Save URL",
+    "saving": "Saving…"
   },
   "form": {
     "validation": {

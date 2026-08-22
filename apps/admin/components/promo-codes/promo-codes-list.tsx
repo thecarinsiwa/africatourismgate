@@ -17,6 +17,7 @@ import {
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { PromoCode } from '@africatourismgate/types';
+import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { PromoCodesListFilter } from '../../config/promo-codes-kpi';
@@ -30,6 +31,7 @@ import {
 } from '../../lib/i18n/use-module-labels';
 import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
 import { useHydrated } from '../../lib/i18n/use-hydrated';
+import { resolveMediaUrl } from '../../lib/resolve-media-url';
 import {
   formatPromoDiscountLabel,
   formatPromoUsageLabel,
@@ -63,6 +65,7 @@ export function PromoCodesList({ listFilter, onListFilterChange }: PromoCodesLis
   const paginationLabels = useDataTablePaginationLabels();
   const hydrated = useHydrated();
   const { toast } = useToast();
+  const emptyDash = tCommon('empty.dash');
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -166,6 +169,29 @@ export function PromoCodesList({ listFilter, onListFilterChange }: PromoCodesLis
 
   const columns = useMemo<ColumnDef<PromoCode, unknown>[]>(
     () => [
+      {
+        id: 'cover',
+        header: t('columns.cover'),
+        meta: { align: 'center' },
+        cell: ({ row }) => {
+          const imageUrl = row.original.coverImageUrl?.trim();
+          if (!imageUrl) {
+            return <span className="text-sm text-atg-muted">{emptyDash}</span>;
+          }
+          return (
+            <div className="relative mx-auto h-12 w-16 overflow-hidden rounded-md border border-atg-border">
+              <Image
+                src={resolveMediaUrl(imageUrl)}
+                alt=""
+                fill
+                unoptimized
+                className="object-cover"
+                sizes="64px"
+              />
+            </div>
+          );
+        },
+      },
       {
         accessorKey: 'code',
         header: t('columns.code'),
@@ -277,6 +303,7 @@ export function PromoCodesList({ listFilter, onListFilterChange }: PromoCodesLis
       deletingId,
       discountLabels,
       discountTypeLabels,
+      emptyDash,
       handleDeleteRequest,
       hydrated,
       t,

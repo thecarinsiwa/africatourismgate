@@ -1535,6 +1535,7 @@ CREATE TABLE `payments` (
 CREATE TABLE `promo_codes` (
   `id` CHAR(36) NOT NULL,
   `code` VARCHAR(64) NOT NULL,
+  `cover_image_url` VARCHAR(512) DEFAULT NULL,
   `discount_type` ENUM('percent','fixed_amount') NOT NULL DEFAULT 'percent',
   `discount_value` DECIMAL(12,2) NOT NULL,
   `valid_from` DATE NOT NULL,

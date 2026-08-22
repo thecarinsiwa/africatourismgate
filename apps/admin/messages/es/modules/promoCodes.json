@@ -9,6 +9,7 @@
     "deleteConfirmButton": "Eliminar",
     "cancel": "Cancelar",
     "columns": {
+      "cover": "Portada",
       "code": "Código",
       "discount": "Descuento",
       "validity": "Validez",
@@ -36,8 +37,19 @@
     "badge": "Código promo",
     "heroHint": "Introducido tal cual por el cliente en el checkout.",
     "ariaLabel": "Código promocional {code}",
+    "coverAlt": "Portada del código {code}",
     "usageHint": "{count} uso(s) registrado(s)",
     "notFound": "Código promocional no encontrado."
+  },
+  "coverImage": {
+    "title": "Foto de portada",
+    "hint": "Se muestra en el banner de vista previa, la lista y la ficha del código. JPEG, PNG o WebP, máx. 5 MB.",
+    "previewAlt": "Vista previa de la foto de portada",
+    "empty": "Ninguna foto de portada definida.",
+    "upload": "Subir una imagen",
+    "remove": "Quitar la imagen",
+    "saveUrl": "Guardar la URL",
+    "saving": "Guardando…"
   },
   "form": {
     "validation": {

@@ -10,6 +10,7 @@ import {
   cn,
 } from '@africatourismgate/ui';
 import type { PromoCode } from '@africatourismgate/types';
+import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { AdminPageBackLink } from '../admin-page-back-link';
@@ -24,6 +25,7 @@ import {
   usePromoValidityLabels,
 } from '../../lib/i18n/use-module-labels';
 import { useHydrated } from '../../lib/i18n/use-hydrated';
+import { resolveMediaUrl } from '../../lib/resolve-media-url';
 import {
   formatPromoDiscountLabel,
   formatPromoUsageLabel,
@@ -173,6 +175,7 @@ export function PromoCodeViewPage({ promoCodeId }: PromoCodeViewPageProps) {
     promoCode.discountType,
     discountTypeLabels,
   );
+  const coverUrl = promoCode.coverImageUrl?.trim() || null;
   const validityRange = formatPromoValidityRange(promoCode.validFrom, promoCode.validUntil);
   const validityState = hydrated
     ? getPromoValidityState(promoCode.validFrom, promoCode.validUntil)
@@ -205,7 +208,25 @@ export function PromoCodeViewPage({ promoCodeId }: PromoCodeViewPageProps) {
         aria-label={t('ariaLabel', { code: promoCode.code })}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-[#0f2744] via-[#163456] to-[#1a4a6e]" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10" />
+        {coverUrl ? (
+          <Image
+            src={resolveMediaUrl(coverUrl)}
+            alt={t('coverAlt', { code: promoCode.code })}
+            fill
+            unoptimized
+            priority
+            className="object-cover transition-transform duration-700 ease-out will-change-transform hover:scale-[1.02]"
+            sizes="100vw"
+          />
+        ) : null}
+        <div
+          className={cn(
+            'absolute inset-0',
+            coverUrl
+              ? 'bg-gradient-to-t from-[#0a1628]/95 via-[#0a1628]/55 to-[#0a1628]/20'
+              : 'bg-gradient-to-t from-black/40 via-transparent to-black/10',
+          )}
+        />
         <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-primary/20 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-20 left-1/3 h-48 w-48 rounded-full bg-sky-400/10 blur-3xl" />
 
