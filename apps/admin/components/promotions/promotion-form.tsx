@@ -235,95 +235,97 @@ export function PromotionForm({ mode, promotionId, initialPromotion }: Promotion
             />
           </Card>
 
-          <Card variant="dashboard" padding="md" className="space-y-4">
-            <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="grid gap-6 md:grid-cols-2 md:items-start">
+            <Card variant="dashboard" padding="md" className="space-y-4">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <h2 className="text-sm font-semibold uppercase tracking-wide text-atg-muted">
+                    {t('sections.discount')}
+                  </h2>
+                  <p className="mt-1 text-xs text-atg-muted">{t('sections.discountHint')}</p>
+                </div>
+                <Switch
+                  name="hasDiscount"
+                  checked={values.hasDiscount}
+                  onChange={(e) => updateField('hasDiscount', e.target.checked)}
+                  label={t('fields.hasDiscount')}
+                />
+              </div>
+
+              {values.hasDiscount ? (
+                <div className="space-y-4">
+                  <Select
+                    label={t('fields.discountType')}
+                    name="discountType"
+                    value={values.discountType}
+                    options={discountTypeOptions}
+                    onChange={(e) =>
+                      updateField('discountType', e.target.value as PromoCodeDiscountType)
+                    }
+                  />
+                  <Input
+                    label={
+                      values.discountType === 'percent'
+                        ? t('fields.discountValuePercent')
+                        : t('fields.discountValueFixed')
+                    }
+                    name="discountValue"
+                    type="number"
+                    min="0.01"
+                    step="0.01"
+                    max={values.discountType === 'percent' ? '100' : undefined}
+                    value={values.discountValue}
+                    onChange={(e) => updateField('discountValue', e.target.value)}
+                    hint={discountHint}
+                    error={fieldErrors.discountValue}
+                    required
+                  />
+                </div>
+              ) : (
+                <p className="rounded-lg border border-dashed border-atg-border bg-atg-surface/40 px-3 py-2.5 text-xs text-atg-muted">
+                  {t('sections.discountOff')}
+                </p>
+              )}
+            </Card>
+
+            <Card variant="dashboard" padding="md" className="space-y-4">
               <div>
                 <h2 className="text-sm font-semibold uppercase tracking-wide text-atg-muted">
-                  {t('sections.discount')}
+                  {t('sections.schedule')}
                 </h2>
-                <p className="mt-1 text-xs text-atg-muted">{t('sections.discountHint')}</p>
+                <p className="mt-1 text-xs text-atg-muted">{t('sections.scheduleHint')}</p>
               </div>
-              <Switch
-                name="hasDiscount"
-                checked={values.hasDiscount}
-                onChange={(e) => updateField('hasDiscount', e.target.checked)}
-                label={t('fields.hasDiscount')}
-              />
-            </div>
-
-            {values.hasDiscount ? (
-              <div className="grid gap-4 sm:grid-cols-2">
-                <Select
-                  label={t('fields.discountType')}
-                  name="discountType"
-                  value={values.discountType}
-                  options={discountTypeOptions}
-                  onChange={(e) =>
-                    updateField('discountType', e.target.value as PromoCodeDiscountType)
-                  }
+              <div className="space-y-4">
+                <Input
+                  label={t('fields.validFromOptional')}
+                  name="validFrom"
+                  type="date"
+                  value={values.validFrom}
+                  onChange={(e) => updateField('validFrom', e.target.value)}
+                  error={fieldErrors.validFrom}
                 />
                 <Input
-                  label={
-                    values.discountType === 'percent'
-                      ? t('fields.discountValuePercent')
-                      : t('fields.discountValueFixed')
-                  }
-                  name="discountValue"
+                  label={t('fields.validUntilOptional')}
+                  name="validUntil"
+                  type="date"
+                  value={values.validUntil}
+                  onChange={(e) => updateField('validUntil', e.target.value)}
+                  error={fieldErrors.validUntil}
+                />
+                <Input
+                  label={t('fields.maxRedemptions')}
+                  name="maxRedemptions"
                   type="number"
-                  min="0.01"
-                  step="0.01"
-                  max={values.discountType === 'percent' ? '100' : undefined}
-                  value={values.discountValue}
-                  onChange={(e) => updateField('discountValue', e.target.value)}
-                  hint={discountHint}
-                  error={fieldErrors.discountValue}
-                  required
+                  min="1"
+                  step="1"
+                  value={values.maxRedemptions}
+                  onChange={(e) => updateField('maxRedemptions', e.target.value)}
+                  hint={t('hints.maxRedemptions')}
+                  error={fieldErrors.maxRedemptions}
                 />
               </div>
-            ) : (
-              <p className="rounded-lg border border-dashed border-atg-border bg-atg-surface/40 px-3 py-2.5 text-xs text-atg-muted">
-                {t('sections.discountOff')}
-              </p>
-            )}
-          </Card>
-
-          <Card variant="dashboard" padding="md" className="space-y-4">
-            <div>
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-atg-muted">
-                {t('sections.schedule')}
-              </h2>
-              <p className="mt-1 text-xs text-atg-muted">{t('sections.scheduleHint')}</p>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Input
-                label={t('fields.validFromOptional')}
-                name="validFrom"
-                type="date"
-                value={values.validFrom}
-                onChange={(e) => updateField('validFrom', e.target.value)}
-                error={fieldErrors.validFrom}
-              />
-              <Input
-                label={t('fields.validUntilOptional')}
-                name="validUntil"
-                type="date"
-                value={values.validUntil}
-                onChange={(e) => updateField('validUntil', e.target.value)}
-                error={fieldErrors.validUntil}
-              />
-            </div>
-            <Input
-              label={t('fields.maxRedemptions')}
-              name="maxRedemptions"
-              type="number"
-              min="1"
-              step="1"
-              value={values.maxRedemptions}
-              onChange={(e) => updateField('maxRedemptions', e.target.value)}
-              hint={t('hints.maxRedemptions')}
-              error={fieldErrors.maxRedemptions}
-            />
-          </Card>
+            </Card>
+          </div>
 
           <Card variant="dashboard" padding="md" className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
