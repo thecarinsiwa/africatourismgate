@@ -181,7 +181,7 @@ export function PaymentDetailDrawer({
                 {t('sections.booking')}
               </h3>
               <Link
-                href={`/dashboard/bookings/${detail.bookingId}`}
+                href={`/reservations/${detail.bookingId}`}
                 className="inline-flex text-sm font-medium text-primary hover:underline"
               >
                 {t('fields.viewBooking')}

@@ -176,7 +176,7 @@ export function BookingItemsList() {
         header: tCommon('columns.booking'),
         cell: ({ row }) => (
           <Link
-            href={`/dashboard/bookings/${row.original.bookingId}`}
+            href={`/reservations/${row.original.bookingId}`}
             className="font-mono text-xs text-primary hover:underline"
           >
             {formatBookingRef(row.original.bookingId)}
@@ -204,7 +204,7 @@ export function BookingItemsList() {
           <DataTableActions>
             <DataTableActionButton
               action="view"
-              href={`/dashboard/bookings/${row.original.bookingId}`}
+              href={`/reservations/${row.original.bookingId}`}
             />
           </DataTableActions>
         ),

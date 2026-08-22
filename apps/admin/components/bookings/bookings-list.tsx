@@ -291,7 +291,7 @@ export function BookingsList() {
             <DataTableActionButton
               action="view"
               label={tActions('view')}
-              href={`/dashboard/bookings/${row.original.id}`}
+              href={`/reservations/${row.original.id}`}
             />
           </DataTableActions>
         ),
