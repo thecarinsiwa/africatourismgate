@@ -168,6 +168,16 @@ export interface ReviewBookingIdentityDocumentRequest {
   staffNote?: string;
 }
 
+export interface RequestIdentityDocumentUploadRequest {
+  travelerName: string;
+  staffNote?: string;
+  travelerIndex?: number;
+}
+
+export interface RequestIdentityDocumentUploadResponse {
+  sent: boolean;
+}
+
 export type BookingManifestSex = 'M' | 'F' | 'other';
 
 export interface BookingManifestEntry {

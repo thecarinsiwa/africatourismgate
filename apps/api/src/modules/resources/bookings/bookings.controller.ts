@@ -55,6 +55,10 @@ import {
   BookingIdentityDocumentDto,
   ReviewBookingIdentityDocumentDto,
 } from './dto/booking-identity-document.dto';
+import {
+  RequestIdentityDocumentUploadDto,
+  RequestIdentityDocumentUploadResponseDto,
+} from './dto/request-identity-document-upload.dto';
 import { BookingManifestService } from './booking-manifest.service';
 import {
   BookingManifestEntryDto,
@@ -290,6 +294,18 @@ export class BookingsController {
       documentType,
       file,
     );
+  }
+
+  @Post(':id/request-identity-document-upload')
+  @RequirePermissions('bookings.approve', 'bookings.write')
+  @ApiOperation({
+    summary: 'E-mail au client pour demander le dépôt d’une pièce d’identité (voyageur)',
+  })
+  requestIdentityDocumentUpload(
+    @Param('id') id: string,
+    @Body() dto: RequestIdentityDocumentUploadDto,
+  ): Promise<RequestIdentityDocumentUploadResponseDto> {
+    return this.bookingsService.requestIdentityDocumentUpload(id, dto);
   }
 
   @Post(':id/identity-documents/:documentId/approve')

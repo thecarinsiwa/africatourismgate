@@ -105,3 +105,10 @@ export type BookingStaffMessageEmailPayload = AssistedBookingEmailBase & {
 export type BookingPaymentReminderEmailPayload = AssistedBookingEmailBase & {
   paymentUrl: string;
 };
+
+export type BookingIdentityDocumentUploadRequestEmailPayload = AssistedBookingEmailBase & {
+  travelerName: string;
+  uploadUrl: string;
+  staffNote?: string | null;
+  locale?: 'fr' | 'en' | 'es';
+};

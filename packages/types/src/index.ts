@@ -241,6 +241,8 @@ export type {
   BookingIdentityDocumentStatus,
   BookingIdentityDocumentType,
   ReviewBookingIdentityDocumentRequest,
+  RequestIdentityDocumentUploadRequest,
+  RequestIdentityDocumentUploadResponse,
   BookingManifestEntry,
   BookingManifestSex,
   CreateBookingManifestEntryRequest,

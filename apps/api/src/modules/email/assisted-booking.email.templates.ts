@@ -8,6 +8,7 @@ import type {
   BookingRejectedEmailPayload,
   BookingRequestReceivedEmailPayload,
   BookingStaffMessageEmailPayload,
+  BookingIdentityDocumentUploadRequestEmailPayload,
 } from './email.types';
 
 function bookingRef(bookingId: string): string {
@@ -266,5 +267,85 @@ ${button(payload.paymentUrl, 'Payer maintenant', branding)}
     { webUrl: payload.webUrl },
   );
   const text = `Bonjour ${payload.firstName},\n\nRappel : votre réservation ${payload.bookingId.slice(0, 8)} (${formatMoney(payload.totalCents, payload.currency)}) attend toujours le paiement.\n\n${payload.paymentUrl}`;
+  return { subject, html, text };
+}
+
+const IDENTITY_UPLOAD_EMAIL_COPY: Record<
+  BookingDetailPdfLocale,
+  {
+    subject: string;
+    headline: string;
+    greeting: string;
+    intro: string;
+    travelerLabel: string;
+    noteLabel: string;
+    body: string;
+    cta: string;
+  }
+> = {
+  fr: {
+    subject: 'Pièce d’identité requise pour votre réservation',
+    headline: 'Document à déposer',
+    greeting: 'Bonjour',
+    intro:
+      'Pour finaliser le traitement de votre réservation, nous avons besoin d’une pièce d’identité pour le voyageur suivant :',
+    travelerLabel: 'Voyageur concerné',
+    noteLabel: 'Instructions de notre équipe',
+    body: 'Connectez-vous à votre espace client pour déposer une photo ou un scan lisible (passeport, carte d’identité ou autre pièce acceptée).',
+    cta: 'Déposer ma pièce d’identité',
+  },
+  en: {
+    subject: 'Identity document required for your booking',
+    headline: 'Document to upload',
+    greeting: 'Hello',
+    intro:
+      'To continue processing your booking, we need an identity document for the following traveler:',
+    travelerLabel: 'Traveler',
+    noteLabel: 'Instructions from our team',
+    body: 'Sign in to your account to upload a clear photo or scan (passport, national ID, or other accepted document).',
+    cta: 'Upload identity document',
+  },
+  es: {
+    subject: 'Documento de identidad requerido para su reserva',
+    headline: 'Documento a subir',
+    greeting: 'Hola',
+    intro:
+      'Para continuar con el tratamiento de su reserva, necesitamos un documento de identidad para el siguiente viajero:',
+    travelerLabel: 'Viajero',
+    noteLabel: 'Instrucciones de nuestro equipo',
+    body: 'Acceda a su cuenta para subir una foto o escaneo legible (pasaporte, documento de identidad u otro documento aceptado).',
+    cta: 'Subir documento de identidad',
+  },
+};
+
+export function renderBookingIdentityDocumentUploadRequestEmail(
+  payload: BookingIdentityDocumentUploadRequestEmailPayload,
+  branding: EmailBrandingValue,
+): { subject: string; html: string; text: string } {
+  const locale = payload.locale ?? 'fr';
+  const copy = IDENTITY_UPLOAD_EMAIL_COPY[locale];
+  const name = escapeHtml(payload.firstName.trim() || 'Client');
+  const traveler = escapeHtml(payload.travelerName.trim());
+  const subject = `${copy.subject} — ${payload.bookingId.slice(0, 8)}`;
+  const noteBlock = payload.staffNote?.trim()
+    ? `<p style="margin:16px 0;padding:12px 16px;background:#f4f6f5;border-radius:8px;border-left:4px solid #0d9488;line-height:1.6;"><strong>${escapeHtml(copy.noteLabel)} :</strong> ${escapeHtml(payload.staffNote.trim())}</p>`
+    : '';
+  const html = layout(
+    subject,
+    `<h1 style="margin:0 0 16px;font-size:22px;">${escapeHtml(copy.headline)}</h1>
+<p style="margin:0 0 16px;line-height:1.6;">${escapeHtml(copy.greeting)} ${name},</p>
+<p style="margin:0 0 16px;line-height:1.6;">${escapeHtml(copy.intro)}</p>
+<p style="margin:0 0 8px;line-height:1.6;"><strong>${escapeHtml(copy.travelerLabel)} :</strong> ${traveler}</p>
+<p style="margin:0 0 8px;line-height:1.6;"><strong>Réf. :</strong> ${bookingRef(payload.bookingId)}</p>
+${noteBlock}
+<p style="margin:0 0 16px;line-height:1.6;">${escapeHtml(copy.body)}</p>
+${button(payload.uploadUrl, copy.cta, branding)}`,
+    branding,
+    { webUrl: payload.webUrl },
+  );
+  const noteText = payload.staffNote?.trim()
+    ? `\n${copy.noteLabel} : ${payload.staffNote.trim()}\n`
+    : '';
+  const text = `${copy.greeting} ${payload.firstName},\n\n${copy.intro}\n${copy.travelerLabel} : ${payload.travelerName.trim()}\nRéf. : ${payload.bookingId.slice(0, 8)}${noteText}\n${copy.body}\n\n${payload.uploadUrl}`;
   return { subject, html, text };
 }

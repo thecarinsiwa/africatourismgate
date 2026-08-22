@@ -101,6 +101,8 @@ import type {
   BookingDetail,
   BookingIdentityDocument,
   ReviewBookingIdentityDocumentRequest,
+  RequestIdentityDocumentUploadRequest,
+  RequestIdentityDocumentUploadResponse,
   BookingManifestEntry,
   CreateBookingManifestEntryRequest,
   UpdateBookingManifestEntryRequest,
@@ -2597,6 +2599,16 @@ export class ApiClient {
     return this.request<BookingIdentityDocument>(
       `/bookings/${bookingId}/identity-documents/${documentId}/reject`,
       { method: 'POST', body: body ?? {} },
+    );
+  }
+
+  requestBookingIdentityDocumentUpload(
+    bookingId: string,
+    body: RequestIdentityDocumentUploadRequest,
+  ): Promise<RequestIdentityDocumentUploadResponse> {
+    return this.request<RequestIdentityDocumentUploadResponse>(
+      `/bookings/${bookingId}/request-identity-document-upload`,
+      { method: 'POST', body },
     );
   }
 
