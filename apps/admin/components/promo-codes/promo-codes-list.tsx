@@ -21,6 +21,7 @@ import { getApiClient } from '../../lib/auth/api';
 import {
   usePromoDiscountLabels,
   usePromoDiscountTypeLabels,
+  usePromoUsageLabels,
   usePromoValidityLabels,
 } from '../../lib/i18n/use-module-labels';
 import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
@@ -51,7 +52,7 @@ export function PromoCodesList({ listFilter }: PromoCodesListProps) {
   const tStatus = useTranslations('modules.promoCodes.status');
   const tCommon = useTranslations('modules.common');
   const tDataTable = useTranslations('modules.common.dataTable');
-  const tUsage = useTranslations('modules.promoCodes.usage');
+  const tUsage = usePromoUsageLabels();
   const discountLabels = usePromoDiscountLabels();
   const discountTypeLabels = usePromoDiscountTypeLabels();
   const validityLabels = usePromoValidityLabels();
@@ -222,8 +223,8 @@ export function PromoCodesList({ listFilter }: PromoCodesListProps) {
               {formatPromoUsageLabel(
                 promo.redemptionCount,
                 promo.maxRedemptions,
-                tUsage('format'),
-                tUsage('unlimitedMax'),
+                tUsage.format,
+                tUsage.unlimitedMax,
               )}
             </DataTableBadge>
           );

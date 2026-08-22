@@ -558,12 +558,23 @@ export function usePromoDiscountLabels(): PromoDiscountLabels {
     () => ({
       informative: t('discount.informative'),
       pending: t('discount.pending'),
-      percentFormat: t('discount.percentFormat'),
-      fixedFormat: t('discount.fixedFormat'),
+      percentFormat: t.raw('discount.percentFormat'),
+      fixedFormat: t.raw('discount.fixedFormat'),
       noDateLimit: t('validity.noDateLimit'),
-      fromDate: t('validity.fromDate'),
-      untilDate: t('validity.untilDate'),
-      range: t('validity.range'),
+      fromDate: t.raw('validity.fromDate'),
+      untilDate: t.raw('validity.untilDate'),
+      range: t.raw('validity.range'),
+    }),
+    [t],
+  );
+}
+
+export function usePromoUsageLabels() {
+  const t = useTranslations('modules.promoCodes.usage');
+  return useMemo(
+    () => ({
+      format: t.raw('format') as string,
+      unlimitedMax: t('unlimitedMax'),
     }),
     [t],
   );

@@ -18,7 +18,7 @@ import type { Promotion } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { usePromoDiscountLabels } from '../../lib/i18n/use-module-labels';
+import { usePromoDiscountLabels, usePromoUsageLabels } from '../../lib/i18n/use-module-labels';
 import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
 import {
   formatPromoUsageLabel,
@@ -45,7 +45,7 @@ export function PromotionsList({ listFilter }: PromotionsListProps) {
   const tStatus = useTranslations('modules.promotions.status');
   const tCommon = useTranslations('modules.common');
   const tDataTable = useTranslations('modules.common.dataTable');
-  const tUsage = useTranslations('modules.promoCodes.usage');
+  const tUsage = usePromoUsageLabels();
   const discountLabels = usePromoDiscountLabels();
   const paginationLabels = useDataTablePaginationLabels();
   const [searchInput, setSearchInput] = useState('');
@@ -192,8 +192,8 @@ export function PromotionsList({ listFilter }: PromotionsListProps) {
               {formatPromoUsageLabel(
                 promo.redemptionCount,
                 promo.maxRedemptions,
-                tUsage('format'),
-                tUsage('unlimitedMax'),
+                tUsage.format,
+                tUsage.unlimitedMax,
               )}
             </DataTableBadge>
           );

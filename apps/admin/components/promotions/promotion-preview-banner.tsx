@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import {
   usePromoDiscountLabels,
   usePromoDiscountTypeLabels,
+  usePromoUsageLabels,
   usePromoValidityLabels,
 } from '../../lib/i18n/use-module-labels';
 import { useHydrated } from '../../lib/i18n/use-hydrated';
@@ -53,7 +54,7 @@ export function PromotionPreviewBanner({
   const discountLabels = usePromoDiscountLabels();
   const validityLabels = usePromoValidityLabels();
   const discountTypeLabels = usePromoDiscountTypeLabels();
-  const tUsage = useTranslations('modules.promoCodes.usage');
+  const tUsage = usePromoUsageLabels();
   const hydrated = useHydrated();
 
   const displayName = name.trim() || t('preview.defaultName');
@@ -73,8 +74,8 @@ export function PromotionPreviewBanner({
       ? formatPromoUsageLabel(
           redemptionCount,
           maxRedemptions ?? null,
-          tUsage('format'),
-          tUsage('unlimitedMax'),
+          tUsage.format,
+          tUsage.unlimitedMax,
         )
       : '';
 
