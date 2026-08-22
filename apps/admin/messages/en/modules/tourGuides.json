@@ -15,6 +15,10 @@
     "internal": {
       "label": "Internal",
       "subtitle": "Linked to a user account"
+    },
+    "external": {
+      "label": "External",
+      "subtitle": "Providers without login"
     }
   },
   "list": {

@@ -338,8 +338,11 @@
     },
     "id": {
       "metaTitle": "Edit guide",
+      "description": "Update the guide profile, covered destinations and status.",
       "voir": {
-        "metaTitle": "View guide"
+        "metaTitle": "View guide",
+        "title": "View guide",
+        "description": "View profile, destinations and bookings assigned to this guide."
       }
     }
   },

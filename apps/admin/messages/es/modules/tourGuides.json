@@ -15,6 +15,10 @@
     "internal": {
       "label": "Internos",
       "subtitle": "Vinculados a una cuenta de usuario"
+    },
+    "external": {
+      "label": "Externos",
+      "subtitle": "Proveedores sin cuenta"
     }
   },
   "list": {

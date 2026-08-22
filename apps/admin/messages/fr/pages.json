@@ -338,8 +338,11 @@
     },
     "id": {
       "metaTitle": "Modifier le guide",
+      "description": "Mettez à jour le profil, les destinations couvertes et le statut du guide.",
       "voir": {
-        "metaTitle": "Voir le guide"
+        "metaTitle": "Voir le guide",
+        "title": "Voir le guide",
+        "description": "Consultez le profil, les destinations et les réservations assignées à ce guide."
       }
     }
   },

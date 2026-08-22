@@ -338,8 +338,11 @@
     },
     "id": {
       "metaTitle": "Editar guía",
+      "description": "Actualice el perfil, los destinos cubiertos y el estado del guía.",
       "voir": {
-        "metaTitle": "Ver guía"
+        "metaTitle": "Ver guía",
+        "title": "Ver guía",
+        "description": "Consulte el perfil, los destinos y las reservas asignadas a este guía."
       }
     }
   },

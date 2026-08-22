@@ -15,6 +15,10 @@
     "internal": {
       "label": "Internes",
       "subtitle": "Liés à un compte utilisateur"
+    },
+    "external": {
+      "label": "Externes",
+      "subtitle": "Prestataires sans compte"
     }
   },
   "list": {
