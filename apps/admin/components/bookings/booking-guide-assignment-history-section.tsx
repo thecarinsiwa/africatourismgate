@@ -7,7 +7,6 @@ import {
   Card,
   DataTable,
   DataTableBadge,
-  Skeleton,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { BookingGuideAssignmentHistoryItem } from '@africatourismgate/types';
