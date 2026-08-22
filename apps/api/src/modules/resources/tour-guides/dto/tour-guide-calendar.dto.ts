@@ -41,6 +41,9 @@ export class TourGuideCalendarDayGuideDto {
   @ApiPropertyOptional({ format: 'uuid' })
   bookingId?: string;
 
+  @ApiPropertyOptional({ format: 'uuid' })
+  assignmentId?: string;
+
   @ApiPropertyOptional({ enum: ['primary', 'secondary'] })
   role?: 'primary' | 'secondary';
 }
@@ -57,8 +60,14 @@ export class GuideAvailabilitySlotDto {
   @ApiProperty({ format: 'uuid' })
   guideId!: string;
 
-  @ApiProperty({ example: '2026-08-15' })
-  date!: string;
+  @ApiPropertyOptional({ example: '2026-08-15' })
+  date?: string;
+
+  @ApiProperty()
+  startDatetime!: string;
+
+  @ApiProperty()
+  endDatetime!: string;
 
   @ApiProperty({ enum: ['available', 'unavailable'] })
   status!: 'available' | 'unavailable';

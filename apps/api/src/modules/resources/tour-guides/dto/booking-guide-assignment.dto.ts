@@ -3,6 +3,7 @@ import { Type } from 'class-transformer';
 import {
   ArrayMinSize,
   IsArray,
+  IsDateString,
   IsEnum,
   IsNotEmpty,
   IsOptional,
@@ -25,15 +26,54 @@ export class AssignBookingGuideItemDto {
     message: 'Le rôle doit être primary ou secondary.',
   })
   role?: 'primary' | 'secondary';
+
+  @ApiProperty({ description: 'Début de la plage horaire (ISO 8601)' })
+  @IsDateString()
+  startDatetime!: string;
+
+  @ApiProperty({ description: 'Fin de la plage horaire (ISO 8601)' })
+  @IsDateString()
+  endDatetime!: string;
+
+  @ApiPropertyOptional({ maxLength: 500 })
+  @IsOptional()
+  @IsString()
+  @MaxLength(500, { message: 'Les notes ne peuvent pas dépasser 500 caractères.' })
+  notes?: string;
 }
 
 export class AssignBookingGuidesDto {
   @ApiProperty({ type: [AssignBookingGuideItemDto] })
   @IsArray()
-  @ArrayMinSize(1, { message: 'Au moins un guide doit être fourni.' })
+  @ArrayMinSize(1, { message: 'Au moins un créneau guide doit être fourni.' })
   @ValidateNested({ each: true })
   @Type(() => AssignBookingGuideItemDto)
   guides!: AssignBookingGuideItemDto[];
+}
+
+export class UpdateBookingGuideAssignmentDto {
+  @ApiPropertyOptional({ enum: ['primary', 'secondary'] })
+  @IsOptional()
+  @IsEnum(['primary', 'secondary'], {
+    message: 'Le rôle doit être primary ou secondary.',
+  })
+  role?: 'primary' | 'secondary';
+
+  @ApiPropertyOptional({ description: 'Début de la plage horaire (ISO 8601)' })
+  @IsOptional()
+  @IsDateString()
+  startDatetime?: string;
+
+  @ApiPropertyOptional({ description: 'Fin de la plage horaire (ISO 8601)' })
+  @IsOptional()
+  @IsDateString()
+  endDatetime?: string;
+
+  @ApiPropertyOptional({ maxLength: 500, nullable: true })
+  @IsOptional()
+  @IsString()
+  @MaxLength(500, { message: 'Les notes ne peuvent pas dépasser 500 caractères.' })
+  notes?: string | null;
 }
 
 export class RemoveBookingGuideDto {
@@ -61,6 +101,15 @@ export class BookingGuideAssignmentDto {
   role!: 'primary' | 'secondary';
 
   @ApiProperty()
+  startDatetime!: string;
+
+  @ApiProperty()
+  endDatetime!: string;
+
+  @ApiPropertyOptional({ nullable: true })
+  notes!: string | null;
+
+  @ApiProperty()
   assignedAt!: string;
 
   @ApiPropertyOptional({ format: 'uuid', nullable: true })
@@ -80,7 +129,21 @@ export function toBookingGuideAssignmentDto(
     bookingId: row.bookingId,
     guideId: row.guideId,
     role: row.role,
+    startDatetime: formatTimestamp(row.startDatetime),
+    endDatetime: formatTimestamp(row.endDatetime),
+    notes: row.notes ?? null,
     assignedAt: formatTimestamp(row.assignedAt),
     assignedByUserId: row.assignedByUserId ?? null,
+  };
+}
+
+export function assignmentHistorySnapshot(row: BookingGuideAssignments): Record<string, unknown> {
+  return {
+    bookingId: row.bookingId,
+    guideId: row.guideId,
+    role: row.role,
+    startDatetime: formatTimestamp(row.startDatetime),
+    endDatetime: formatTimestamp(row.endDatetime),
+    notes: row.notes ?? null,
   };
 }

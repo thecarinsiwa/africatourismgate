@@ -1,16 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, IsNull, Repository } from 'typeorm';
 import { newId } from '../../../common/utils/uuid';
 import {
   BookingGuideAssignments,
-  BookingItems,
   Bookings,
   GuideAvailability,
   TourGuides,
 } from '../../../entities/generated';
 import { enumerateMonthDays } from '../../public/accommodations/stay-dates.util';
-import { enumerateDates } from '../room-availability/room-availability-date.util';
 import {
   GuideAvailabilitySlotDto,
   TourGuideCalendarDayDetailDto,
@@ -21,6 +19,14 @@ import {
 import { TourGuideCalendarDayQueryDto } from './dto/tour-guide-calendar-day-query.dto';
 import { TourGuideCalendarSummaryQueryDto } from './dto/tour-guide-calendar-summary-query.dto';
 import { UpsertGuideAvailabilityDto } from './dto/upsert-guide-availability.dto';
+import { GuideScheduleConflictService } from './guide-schedule-conflict.service';
+import {
+  dayBounds,
+  formatScheduleInstant,
+  overlapsDay,
+  parseScheduleInstant,
+  resolveScheduleRange,
+} from './guide-schedule.util';
 import { TourGuidesService } from './tour-guides.service';
 
 const OCCUPIED_EXCLUDED_BOOKING_STATUSES = ['cancelled', 'refunded', 'draft'] as const;
@@ -33,9 +39,11 @@ type CalendarFilters = {
 type GuideDayStatus = 'available' | 'occupied' | 'unavailable';
 
 type GuideOccupancy = {
+  assignmentId: string;
   bookingId: string;
   role: BookingGuideAssignments['role'];
-  dates: Set<string>;
+  start: Date;
+  end: Date;
 };
 
 @Injectable()
@@ -47,9 +55,8 @@ export class GuideAvailabilityService {
     private readonly tourGuidesRepository: Repository<TourGuides>,
     @InjectRepository(BookingGuideAssignments)
     private readonly assignmentsRepository: Repository<BookingGuideAssignments>,
-    @InjectRepository(BookingItems)
-    private readonly bookingItemsRepository: Repository<BookingItems>,
     private readonly tourGuidesService: TourGuidesService,
+    private readonly scheduleConflictService: GuideScheduleConflictService,
   ) {}
 
   async getCalendarSummary(
@@ -71,12 +78,10 @@ export class GuideAvailabilityService {
     }
 
     const guideIds = guides.map((guide) => guide.id);
-    const unavailableByGuide = await this.loadUnavailableDatesByGuide(
-      guideIds,
-      days[0]!,
-      days[days.length - 1]!,
-    );
-    const occupancyByGuide = await this.loadOccupancyByGuide(guideIds, days[0]!, days[days.length - 1]!);
+    const rangeStart = dayBounds(days[0]!).start;
+    const rangeEnd = dayBounds(days[days.length - 1]!).end;
+    const unavailableByGuide = await this.loadUnavailableByGuide(guideIds, rangeStart, rangeEnd);
+    const occupancyByGuide = await this.loadOccupancyByGuide(guideIds, rangeStart, rangeEnd);
 
     const summaryDays: TourGuideCalendarSummaryDayDto[] = days.map((date) => {
       let available = 0;
@@ -118,8 +123,9 @@ export class GuideAvailabilityService {
     }
 
     const guideIds = guides.map((guide) => guide.id);
-    const unavailableByGuide = await this.loadUnavailableDatesByGuide(guideIds, date, date);
-    const occupancyByGuide = await this.loadOccupancyByGuide(guideIds, date, date);
+    const { start, end } = dayBounds(date);
+    const unavailableByGuide = await this.loadUnavailableByGuide(guideIds, start, end);
+    const occupancyByGuide = await this.loadOccupancyByGuide(guideIds, start, end);
 
     const guideRows: TourGuideCalendarDayGuideDto[] = guides.map((guide) => {
       const status = this.resolveGuideDayStatus(
@@ -128,7 +134,9 @@ export class GuideAvailabilityService {
         unavailableByGuide,
         occupancyByGuide,
       );
-      const occupancy = occupancyByGuide.get(guide.id)?.find((entry) => entry.dates.has(date));
+      const occupancy = occupancyByGuide
+        .get(guide.id)
+        ?.find((entry) => overlapsDay(entry.start, entry.end, date));
 
       return {
         guideId: guide.id,
@@ -136,7 +144,11 @@ export class GuideAvailabilityService {
         photoUrl: guide.photoUrl,
         status,
         ...(occupancy
-          ? { bookingId: occupancy.bookingId, role: occupancy.role }
+          ? {
+              bookingId: occupancy.bookingId,
+              assignmentId: occupancy.assignmentId,
+              role: occupancy.role,
+            }
           : {}),
       };
     });
@@ -152,45 +164,93 @@ export class GuideAvailabilityService {
     actorUserId: string,
   ): Promise<GuideAvailabilitySlotDto> {
     await this.tourGuidesService.requireActiveGuide(guideId);
-    const date = dto.date.slice(0, 10);
+    const { start, end } = resolveScheduleRange(dto);
 
     if (dto.status === 'available') {
-      const existing = await this.availabilityRepository.findOne({
-        where: { guideId, date },
-      });
-      if (existing) {
-        await this.availabilityRepository.softDelete(existing.id);
-        await this.availabilityRepository.update(existing.id, {
+      const overlapping = await this.findUnavailableOverlapping(guideId, start, end);
+      for (const row of overlapping) {
+        await this.availabilityRepository.softDelete(row.id);
+        await this.availabilityRepository.update(row.id, {
           deletedByUserId: actorUserId,
         });
       }
-      return { guideId, date, status: 'available' };
+      return this.toAvailabilitySlotDto(guideId, start, end, 'available');
     }
 
-    const existing = await this.availabilityRepository.findOne({
-      where: { guideId, date },
-      withDeleted: true,
-    });
-
-    if (existing) {
-      if (existing.deletedAt) {
-        await this.availabilityRepository.recover(existing);
-      }
-      existing.status = 'unavailable';
-      existing.updatedByUserId = actorUserId;
-      await this.availabilityRepository.save(existing);
-      return { guideId, date, status: 'unavailable' };
+    if (dto.availabilityId) {
+      return this.updateUnavailableSlot(guideId, dto.availabilityId, start, end, actorUserId);
     }
+
+    await this.scheduleConflictService.assertCanMarkUnavailable(guideId, start, end);
 
     const created = this.availabilityRepository.create({
       id: newId(),
       guideId,
-      date,
+      startDatetime: start,
+      endDatetime: end,
       status: 'unavailable',
       createdByUserId: actorUserId,
     });
     await this.availabilityRepository.save(created);
-    return { guideId, date, status: 'unavailable' };
+    return this.toAvailabilitySlotDto(guideId, start, end, 'unavailable');
+  }
+
+  private async updateUnavailableSlot(
+    guideId: string,
+    availabilityId: string,
+    start: Date,
+    end: Date,
+    actorUserId: string,
+  ): Promise<GuideAvailabilitySlotDto> {
+    const existing = await this.availabilityRepository.findOne({
+      where: { id: availabilityId, guideId, deletedAt: IsNull() },
+    });
+    if (!existing) {
+      throw new NotFoundException(
+        `Indisponibilité ${availabilityId} introuvable pour le guide ${guideId}.`,
+      );
+    }
+
+    await this.scheduleConflictService.assertCanMarkUnavailable(guideId, start, end, {
+      excludeAvailabilityId: existing.id,
+    });
+
+    existing.startDatetime = start;
+    existing.endDatetime = end;
+    existing.status = 'unavailable';
+    existing.updatedByUserId = actorUserId;
+    await this.availabilityRepository.save(existing);
+    return this.toAvailabilitySlotDto(guideId, start, end, 'unavailable');
+  }
+
+  private async findUnavailableOverlapping(
+    guideId: string,
+    start: Date,
+    end: Date,
+  ): Promise<GuideAvailability[]> {
+    return this.availabilityRepository
+      .createQueryBuilder('slot')
+      .where('slot.guideId = :guideId', { guideId })
+      .andWhere('slot.deletedAt IS NULL')
+      .andWhere('slot.status = :status', { status: 'unavailable' })
+      .andWhere('slot.startDatetime < :end', { end })
+      .andWhere('slot.endDatetime > :start', { start })
+      .getMany();
+  }
+
+  private toAvailabilitySlotDto(
+    guideId: string,
+    start: Date,
+    end: Date,
+    status: GuideAvailabilitySlotDto['status'],
+  ): GuideAvailabilitySlotDto {
+    return {
+      guideId,
+      date: formatScheduleInstant(start).slice(0, 10),
+      startDatetime: formatScheduleInstant(start),
+      endDatetime: formatScheduleInstant(end),
+      status,
+    };
   }
 
   private async listActiveGuides(filters: CalendarFilters): Promise<TourGuides[]> {
@@ -215,12 +275,12 @@ export class GuideAvailabilityService {
     return qb.getMany();
   }
 
-  private async loadUnavailableDatesByGuide(
+  private async loadUnavailableByGuide(
     guideIds: string[],
-    dateFrom: string,
-    dateTo: string,
-  ): Promise<Map<string, Set<string>>> {
-    const map = new Map<string, Set<string>>();
+    rangeStart: Date,
+    rangeEnd: Date,
+  ): Promise<Map<string, GuideAvailability[]>> {
+    const map = new Map<string, GuideAvailability[]>();
     if (guideIds.length === 0) return map;
 
     const rows = await this.availabilityRepository
@@ -228,14 +288,14 @@ export class GuideAvailabilityService {
       .where('slot.guideId IN (:...guideIds)', { guideIds })
       .andWhere('slot.deletedAt IS NULL')
       .andWhere('slot.status = :status', { status: 'unavailable' })
-      .andWhere('slot.date >= :dateFrom', { dateFrom })
-      .andWhere('slot.date <= :dateTo', { dateTo })
+      .andWhere('slot.startDatetime < :rangeEnd', { rangeEnd })
+      .andWhere('slot.endDatetime > :rangeStart', { rangeStart })
       .getMany();
 
     for (const row of rows) {
-      const dates = map.get(row.guideId) ?? new Set<string>();
-      dates.add(row.date.slice(0, 10));
-      map.set(row.guideId, dates);
+      const list = map.get(row.guideId) ?? [];
+      list.push(row);
+      map.set(row.guideId, list);
     }
 
     return map;
@@ -243,8 +303,8 @@ export class GuideAvailabilityService {
 
   private async loadOccupancyByGuide(
     guideIds: string[],
-    dateFrom: string,
-    dateTo: string,
+    rangeStart: Date,
+    rangeEnd: Date,
   ): Promise<Map<string, GuideOccupancy[]>> {
     const map = new Map<string, GuideOccupancy[]>();
     if (guideIds.length === 0) return map;
@@ -260,46 +320,20 @@ export class GuideAvailabilityService {
       .andWhere('booking.status NOT IN (:...excludedStatuses)', {
         excludedStatuses: [...OCCUPIED_EXCLUDED_BOOKING_STATUSES],
       })
+      .andWhere('assignment.startDatetime < :rangeEnd', { rangeEnd })
+      .andWhere('assignment.endDatetime > :rangeStart', { rangeStart })
       .getMany();
 
-    if (assignments.length === 0) return map;
-
-    const bookingIds = [...new Set(assignments.map((row) => row.bookingId))];
-    const items = await this.bookingItemsRepository.find({
-      where: { bookingId: In(bookingIds), deletedAt: IsNull() },
-    });
-    const itemsByBookingId = new Map<string, BookingItems[]>();
-    for (const item of items) {
-      const list = itemsByBookingId.get(item.bookingId) ?? [];
-      list.push(item);
-      itemsByBookingId.set(item.bookingId, list);
-    }
-
     for (const assignment of assignments) {
-      const bookingItems = itemsByBookingId.get(assignment.bookingId) ?? [];
-      const visitRange = deriveVisitDateRange(bookingItems);
-      if (!visitRange) continue;
-
-      let visitDates: string[];
-      try {
-        visitDates = enumerateDates(visitRange.start, visitRange.end);
-      } catch {
-        continue;
-      }
-
-      const dates = new Set<string>();
-      for (const date of visitDates) {
-        if (date >= dateFrom && date <= dateTo) {
-          dates.add(date);
-        }
-      }
-      if (dates.size === 0) continue;
-
+      const start = parseScheduleInstant(assignment.startDatetime);
+      const end = parseScheduleInstant(assignment.endDatetime);
       const entries = map.get(assignment.guideId) ?? [];
       entries.push({
+        assignmentId: assignment.id,
         bookingId: assignment.bookingId,
         role: assignment.role,
-        dates,
+        start,
+        end,
       });
       map.set(assignment.guideId, entries);
     }
@@ -310,32 +344,27 @@ export class GuideAvailabilityService {
   private resolveGuideDayStatus(
     guideId: string,
     date: string,
-    unavailableByGuide: Map<string, Set<string>>,
+    unavailableByGuide: Map<string, GuideAvailability[]>,
     occupancyByGuide: Map<string, GuideOccupancy[]>,
   ): GuideDayStatus {
     const occupancies = occupancyByGuide.get(guideId) ?? [];
-    if (occupancies.some((entry) => entry.dates.has(date))) {
+    if (occupancies.some((entry) => overlapsDay(entry.start, entry.end, date))) {
       return 'occupied';
     }
-    if (unavailableByGuide.get(guideId)?.has(date)) {
+
+    const unavailableSlots = unavailableByGuide.get(guideId) ?? [];
+    if (
+      unavailableSlots.some((slot) =>
+        overlapsDay(
+          parseScheduleInstant(slot.startDatetime),
+          parseScheduleInstant(slot.endDatetime),
+          date,
+        ),
+      )
+    ) {
       return 'unavailable';
     }
+
     return 'available';
   }
-}
-
-function deriveVisitDateRange(items: BookingItems[]): { start: string; end: string } | null {
-  const startDates = items
-    .map((item) => item.startDate?.slice(0, 10))
-    .filter((value): value is string => Boolean(value))
-    .sort();
-  const endDates = items
-    .map((item) => (item.endDate ?? item.startDate)?.slice(0, 10))
-    .filter((value): value is string => Boolean(value))
-    .sort();
-
-  const start = startDates[0];
-  const end = endDates[endDates.length - 1];
-  if (!start || !end) return null;
-  return { start, end };
 }

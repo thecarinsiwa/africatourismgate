@@ -159,14 +159,33 @@ export interface UpdateTourGuideRequest {
 export interface AssignBookingGuideItem {
   guideId: string;
   role?: BookingGuideRole;
+  startDatetime: string;
+  endDatetime: string;
+  notes?: string;
 }
 
 export interface AssignBookingGuidesRequest {
   guides: AssignBookingGuideItem[];
 }
 
+export interface UpdateBookingGuideAssignmentRequest {
+  role?: BookingGuideRole;
+  startDatetime?: string;
+  endDatetime?: string;
+  notes?: string | null;
+}
+
 export interface RemoveBookingGuideRequest {
   comment?: string;
+}
+
+export interface GuideScheduleConflict {
+  kind: 'assignment' | 'unavailability';
+  id: string;
+  guideId: string;
+  bookingId?: string;
+  startDatetime: string;
+  endDatetime: string;
 }
 
 export interface BookingGuideAssignment {
@@ -174,6 +193,9 @@ export interface BookingGuideAssignment {
   bookingId: string;
   guideId: string;
   role: BookingGuideRole;
+  startDatetime: string;
+  endDatetime: string;
+  notes: string | null;
   assignedAt: string;
   assignedByUserId: string | null;
 }
@@ -181,6 +203,8 @@ export interface BookingGuideAssignment {
 export interface TourGuideBookingListItem {
   assignmentId: string;
   role: BookingGuideRole;
+  startDatetime: string;
+  endDatetime: string;
   assignedAt: string;
   bookingId: string;
   status: BookingStatus;
@@ -244,12 +268,17 @@ export interface TourGuideCalendarDayQuery {
 }
 
 export interface UpsertGuideAvailabilityRequest {
-  date: string;
+  date?: string;
+  startDatetime?: string;
+  endDatetime?: string;
+  availabilityId?: string;
   status: GuideAvailabilityStatus;
 }
 
 export interface GuideAvailabilitySlot {
   guideId: string;
-  date: string;
+  date?: string;
+  startDatetime: string;
+  endDatetime: string;
   status: GuideAvailabilityStatus;
 }

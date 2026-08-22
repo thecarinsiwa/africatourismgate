@@ -1,6 +1,7 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
+  BookingGuideAssignmentHistory,
   BookingGuideAssignments,
   BookingItems,
   Bookings,
@@ -14,6 +15,7 @@ import { BookingsModule } from '../bookings/bookings.module';
 import { BookingGuideAssignmentEmailService } from './booking-guide-assignment-email.service';
 import { BookingGuideAssignmentsService } from './booking-guide-assignments.service';
 import { GuideAvailabilityService } from './guide-availability.service';
+import { GuideScheduleConflictService } from './guide-schedule-conflict.service';
 import { TourGuidesController } from './tour-guides.controller';
 import { TourGuidesService } from './tour-guides.service';
 
@@ -24,6 +26,7 @@ import { TourGuidesService } from './tour-guides.service';
       TourGuides,
       GuideAvailability,
       BookingGuideAssignments,
+      BookingGuideAssignmentHistory,
       Bookings,
       BookingItems,
       Users,
@@ -34,10 +37,16 @@ import { TourGuidesService } from './tour-guides.service';
   controllers: [TourGuidesController],
   providers: [
     TourGuidesService,
+    GuideScheduleConflictService,
     GuideAvailabilityService,
     BookingGuideAssignmentsService,
     BookingGuideAssignmentEmailService,
   ],
-  exports: [TourGuidesService, GuideAvailabilityService, BookingGuideAssignmentsService],
+  exports: [
+    TourGuidesService,
+    GuideScheduleConflictService,
+    GuideAvailabilityService,
+    BookingGuideAssignmentsService,
+  ],
 })
 export class TourGuidesModule {}

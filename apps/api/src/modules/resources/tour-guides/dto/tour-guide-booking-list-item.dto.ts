@@ -9,6 +9,12 @@ export class TourGuideBookingListItemDto {
   role!: BookingGuideAssignments['role'];
 
   @ApiProperty()
+  startDatetime!: string;
+
+  @ApiProperty()
+  endDatetime!: string;
+
+  @ApiProperty()
   assignedAt!: string;
 
   @ApiProperty({ format: 'uuid' })
@@ -52,6 +58,8 @@ export function toTourGuideBookingListItemDto(
   return {
     assignmentId: assignment.id,
     role: assignment.role,
+    startDatetime: formatTimestamp(assignment.startDatetime),
+    endDatetime: formatTimestamp(assignment.endDatetime),
     assignedAt: formatTimestamp(assignment.assignedAt),
     bookingId: booking.id,
     status: booking.status,
