@@ -3,6 +3,7 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
+  AlertDialog,
   Button,
   Card,
   DataTable,
@@ -55,6 +56,7 @@ export function BookingGuidesSection({
   const [error, setError] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [assigning, setAssigning] = useState(false);
+  const [assignConfirmOpen, setAssignConfirmOpen] = useState(false);
   const [removingGuideId, setRemovingGuideId] = useState<string | null>(null);
   const [confirmTarget, setConfirmTarget] = useState<string | null>(null);
   const [removeComment, setRemoveComment] = useState('');
@@ -95,7 +97,14 @@ export function BookingGuidesSection({
     return availableGuides.filter((guide) => !assignedIds.has(guide.id));
   }, [assignments, availableGuides]);
 
-  const handleAssign = useCallback(async () => {
+  const handleAssignRequest = useCallback(() => {
+    if (!selectedGuideId) {
+      return;
+    }
+    setAssignConfirmOpen(true);
+  }, [selectedGuideId]);
+
+  const handleAssignConfirm = useCallback(async () => {
     if (!selectedGuideId) {
       return;
     }
@@ -105,6 +114,7 @@ export function BookingGuidesSection({
       await getApiClient().assignBookingGuides(bookingId, {
         guides: [{ guideId: selectedGuideId, role: selectedRole }],
       });
+      setAssignConfirmOpen(false);
       setSelectedGuideId('');
       setSelectedRole('primary');
       await load();
@@ -213,8 +223,38 @@ export function BookingGuidesSection({
     return assignments.find((row) => row.guideId === confirmTarget)?.guideName ?? '';
   }, [assignments, confirmTarget]);
 
+  const selectedGuideName = useMemo(() => {
+    if (!selectedGuideId) return '';
+    return (
+      unassignedGuides.find((guide) => guide.id === selectedGuideId)?.displayName ??
+      availableGuides.find((guide) => guide.id === selectedGuideId)?.displayName ??
+      ''
+    );
+  }, [availableGuides, selectedGuideId, unassignedGuides]);
+
   return (
     <>
+      <AlertDialog
+        open={assignConfirmOpen}
+        onOpenChange={(open) => {
+          if (!assigning) {
+            setAssignConfirmOpen(open);
+          }
+        }}
+        title={t('assignConfirmTitle')}
+        description={
+          selectedGuideName
+            ? t('assignConfirmNamed', {
+                name: selectedGuideName,
+                role: roleLabels[selectedRole],
+              })
+            : t('assignConfirm')
+        }
+        confirmLabel={t('assignConfirmButton')}
+        cancelLabel={t('cancel')}
+        loading={assigning}
+        onConfirm={() => void handleAssignConfirm()}
+      />
       <Modal
         open={!!confirmTarget}
         onOpenChange={(open) => {
@@ -321,7 +361,7 @@ export function BookingGuidesSection({
             <Button
               type="button"
               variant="primary"
-              onClick={() => void handleAssign()}
+              onClick={handleAssignRequest}
               disabled={!selectedGuideId || assigning}
               loading={assigning}
             >
