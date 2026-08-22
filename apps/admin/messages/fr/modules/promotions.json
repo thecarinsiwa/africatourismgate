@@ -25,6 +25,7 @@
     "cancel": "Annuler",
     "columns": {
       "campaign": "Campagne",
+      "description": "Description",
       "discount": "Réduction",
       "validity": "Validité",
       "usage": "Utilisations",
