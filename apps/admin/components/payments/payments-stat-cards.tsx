@@ -2,14 +2,18 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { StatCard } from '@africatourismgate/ui';
-import Link from 'next/link';
+import { StatCard, cn } from '@africatourismgate/ui';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
-import { paymentsKpis, type PaymentsKpiKey } from '../../config/payments-kpi';
+import {
+  paymentsKpiStatusFilter,
+  paymentsKpis,
+  type PaymentsKpiKey,
+} from '../../config/payments-kpi';
 import { useModuleStatCards } from '../../lib/auth/use-module-stat-cards';
 import { getApiClient } from '../../lib/auth/api';
 import { formatCount, formatMoney } from '../../lib/format-money';
+import type { PaymentsStatusFilter } from './payments-list';
 
 type KpiCardState = {
   status: 'loading' | 'ready' | 'error';
@@ -19,7 +23,17 @@ type KpiCardState = {
 
 const initialCardState: KpiCardState = { status: 'loading' };
 
-export function PaymentsStatCards({ className }: { className?: string }) {
+type PaymentsStatCardsProps = {
+  className?: string;
+  statusFilter: PaymentsStatusFilter;
+  onStatusFilterChange: (filter: PaymentsStatusFilter) => void;
+};
+
+export function PaymentsStatCards({
+  className,
+  statusFilter,
+  onStatusFilterChange,
+}: PaymentsStatCardsProps) {
   const { dashboardKpi: getDashboardKpiErrorMessage } = useAdminErrorMessages();
   const { canLoad, loading: permissionsLoading, shouldRender } = useModuleStatCards('payments.read');
   const t = useTranslations('modules.payments');
@@ -90,6 +104,8 @@ export function PaymentsStatCards({ className }: { className?: string }) {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {paymentsKpis.map((kpi) => {
           const state = cards[kpi.key];
+          const kpiFilter = paymentsKpiStatusFilter[kpi.key];
+          const isActive = statusFilter === kpiFilter;
           const card = (
             <StatCard
               label={t(kpi.labelKey)}
@@ -102,19 +118,25 @@ export function PaymentsStatCards({ className }: { className?: string }) {
             />
           );
 
-          if ('href' in kpi && kpi.href && state.status === 'ready') {
-            return (
-              <Link
-                key={kpi.key}
-                href={kpi.href}
-                className="block rounded-xl transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-              >
-                {card}
-              </Link>
-            );
+          if (state.status !== 'ready') {
+            return <div key={kpi.key}>{card}</div>;
           }
 
-          return <div key={kpi.key}>{card}</div>;
+          return (
+            <button
+              key={kpi.key}
+              type="button"
+              aria-pressed={isActive}
+              onClick={() => onStatusFilterChange(kpiFilter)}
+              className={cn(
+                'block w-full rounded-xl text-left transition-opacity hover:opacity-90',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-atg-bg',
+                isActive && 'ring-2 ring-primary ring-offset-2 ring-offset-atg-bg',
+              )}
+            >
+              {card}
+            </button>
+          );
         })}
       </div>
     </div>

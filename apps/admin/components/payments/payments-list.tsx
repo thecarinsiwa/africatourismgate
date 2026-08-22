@@ -24,7 +24,7 @@ import type {
   RefundPaymentResponse,
 } from '@africatourismgate/types';
 import Link from 'next/link';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { exportCsv } from '../../lib/export-csv';
@@ -50,12 +50,20 @@ const SEARCH_DEBOUNCE_MS = 300;
 
 type StatusFilter = '' | PaymentStatus;
 
+export type PaymentsStatusFilter = StatusFilter;
+
 function formatBookingRef(bookingId: string): string {
   return `${bookingId.slice(0, 8)}…`;
 }
 
-export function PaymentsList() {
+type PaymentsListProps = {
+  statusFilter: PaymentsStatusFilter;
+  onStatusFilterChange: (filter: PaymentsStatusFilter) => void;
+};
+
+export function PaymentsList({ statusFilter, onStatusFilterChange }: PaymentsListProps) {
   const { payments: getPaymentsErrorMessage } = useAdminErrorMessages();
+  const locale = useLocale();
   const t = useTranslations('modules.payments.list');
   const tCommon = useTranslations('modules.common');
   const tDataTable = useTranslations('modules.common.dataTable');
@@ -69,7 +77,6 @@ export function PaymentsList() {
   const emptyDash = tCommon('empty.dash');
 
   const [page, setPage] = useState(1);
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('');
   const [organizationFilter, setOrganizationFilter] = useState('');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
@@ -218,6 +225,10 @@ export function PaymentsList() {
     void load();
   }, [load]);
 
+  useEffect(() => {
+    setPage(1);
+  }, [statusFilter]);
+
   const activeFilterCount = [
     search !== '',
     statusFilter !== '',
@@ -230,12 +241,12 @@ export function PaymentsList() {
   const handleClearFilters = useCallback(() => {
     setSearchInput('');
     setSearch('');
-    setStatusFilter('');
+    onStatusFilterChange('');
     setOrganizationFilter('');
     setDateFrom('');
     setDateTo('');
     setPage(1);
-  }, []);
+  }, [onStatusFilterChange]);
 
   const loadDetail = useCallback(
     async (id: string) => {
@@ -302,7 +313,7 @@ export function PaymentsList() {
         meta: { hideOnMobile: true },
         cell: ({ row }) => (
           <span className="whitespace-nowrap text-sm tabular-nums">
-            {formatPaymentDateTime(row.original.createdAt)}
+            {formatPaymentDateTime(row.original.createdAt, locale)}
           </span>
         ),
       },
@@ -403,6 +414,7 @@ export function PaymentsList() {
       providerLabels,
       tActions,
       tCommon,
+      locale,
     ],
   );
 
@@ -419,7 +431,7 @@ export function PaymentsList() {
       columns: [
         {
           header: tCommon('columns.date'),
-          value: (row) => formatPaymentDateTime(row.createdAt),
+          value: (row) => formatPaymentDateTime(row.createdAt, locale),
         },
         { header: tCommon('columns.client'), value: (row) => row.clientEmail },
         {
@@ -449,7 +461,7 @@ export function PaymentsList() {
       rows: payments,
     });
     toast({ variant: 'success', message: tExport('success') });
-  }, [emptyDash, orgNameById, paymentStatusLabels, payments, providerLabels, tCommon, tExport, toast]);
+  }, [emptyDash, locale, orgNameById, paymentStatusLabels, payments, providerLabels, tCommon, tExport, toast]);
 
   const showRefundAction = canRefund && detail !== null;
 
@@ -469,8 +481,7 @@ export function PaymentsList() {
             role="tab"
             aria-selected={statusFilter === tab.value}
             onClick={() => {
-              setStatusFilter(tab.value);
-              setPage(1);
+              onStatusFilterChange(tab.value);
             }}
           >
             {tab.label}

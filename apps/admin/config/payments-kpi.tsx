@@ -66,3 +66,14 @@ export const paymentsKpis = [
 ] as const;
 
 export type PaymentsKpiKey = (typeof paymentsKpis)[number]['key'];
+
+/** Statut appliqué à la liste lors d'un clic sur le KPI correspondant. */
+export const paymentsKpiStatusFilter: Record<
+  PaymentsKpiKey,
+  '' | 'pending' | 'succeeded'
+> = {
+  total: '',
+  succeeded: 'succeeded',
+  pending: 'pending',
+  revenue: 'succeeded',
+};
