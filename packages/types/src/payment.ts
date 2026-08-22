@@ -8,6 +8,7 @@ export interface PaymentsListQuery {
   organizationId?: string;
   dateFrom?: string;
   dateTo?: string;
+  search?: string;
 }
 
 export interface PaymentListItem {

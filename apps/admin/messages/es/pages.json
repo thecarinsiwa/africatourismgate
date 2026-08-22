@@ -354,27 +354,48 @@
     }
   },
   "paiements": {
+    "title": "Pagos",
     "description": "Transacciones y reembolsos Stripe (modo prueba). Filtre por estado, fechas y organización (super admin). Acceso: payments.read; reembolso: payments.write.",
+    "actions": {
+      "promoCodes": "Códigos promocionales",
+      "promotions": "Promociones"
+    },
     "codes-promo": {
+      "title": "Códigos promocionales",
+      "description": "Cree y gestione códigos utilizables en el checkout (vista previa web). Validación de fechas, unicidad y límite de usos. Acceso: promo_codes.read / write.",
+      "actions": {
+        "new": "Nuevo código promocional",
+        "promotions": "Promociones"
+      },
       "intro": "Códigos introducidos en el checkout (ej. BIENVENUE10). Complementa las promociones. Acceso: promo_codes.read / write.",
       "linkPromotions": "promociones",
       "nouveau": {
         "metaTitle": "Nuevo código promocional",
-        "description": "El código se normalizará en mayúsculas y podrá introducirse tal cual en el checkout."
+        "description": "El código se normalizará en mayúsculas y podrá introducirse tal cual en el checkout.",
+        "backLabel": "Volver a códigos promocionales"
       },
       "id": {
-        "metaTitle": "Editar código promocional"
+        "metaTitle": "Editar código promocional",
+        "backLabel": "Volver a códigos promocionales"
       }
     },
     "promotions": {
+      "title": "Promociones",
+      "description": "Campañas de marketing con descuento opcional (checkout vía promotionId). Complementa los códigos promocionales. Acceso: promo_codes.read / write.",
+      "actions": {
+        "new": "Nueva promoción",
+        "promoCodes": "Códigos promocionales"
+      },
       "intro": "Campañas de marketing con descuento opcional (checkout vía promotionId). Complementa los códigos promocionales. Acceso: promo_codes.read / write.",
       "linkPromoCodes": "códigos promocionales",
       "nouveau": {
         "metaTitle": "Nueva promoción",
-        "description": "Defina la campaña, el descuento opcional y las fechas de validez."
+        "description": "Defina la campaña, el descuento opcional y las fechas de validez.",
+        "backLabel": "Volver a promociones"
       },
       "id": {
-        "metaTitle": "Editar promoción"
+        "metaTitle": "Editar promoción",
+        "backLabel": "Volver a promociones"
       }
     }
   },

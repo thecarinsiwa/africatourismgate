@@ -4,13 +4,13 @@ import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
   AlertDialog,
-  Button,
   Card,
   DataTable,
   DataTableActionButton,
   DataTableActions,
   DataTableBadge,
   DataTablePagination,
+  FilterBar,
   Input,
   type ColumnDef,
 } from '@africatourismgate/ui';
@@ -18,7 +18,8 @@ import type { Promotion } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { usePromoDiscountLabels } from '../../lib/i18n/use-module-labels';
+import { usePromoDiscountLabels, usePromoUsageLabels } from '../../lib/i18n/use-module-labels';
+import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
 import {
   formatPromoUsageLabel,
   formatPromotionValidityDisplay,
@@ -29,16 +30,24 @@ import {
   promotionToPreviewProps,
 } from './promotion-preview-banner';
 
+import type { PromotionsListFilter } from '../../config/promotions-kpi';
+
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
 
-export function PromotionsList() {
+type PromotionsListProps = {
+  listFilter: PromotionsListFilter;
+};
+
+export function PromotionsList({ listFilter }: PromotionsListProps) {
   const { promotions: getPromotionsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.promotions.list');
   const tStatus = useTranslations('modules.promotions.status');
   const tCommon = useTranslations('modules.common');
-  const tUsage = useTranslations('modules.promoCodes.usage');
+  const tDataTable = useTranslations('modules.common.dataTable');
+  const tUsage = usePromoUsageLabels();
   const discountLabels = usePromoDiscountLabels();
+  const paginationLabels = useDataTablePaginationLabels();
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -76,6 +85,7 @@ export function PromotionsList() {
         page,
         limit: PAGE_SIZE,
         search: search || undefined,
+        ...listFilter,
       });
       setState({
         status: 'ready',
@@ -86,7 +96,11 @@ export function PromotionsList() {
     } catch (error) {
       setState({ status: 'error', message: getPromotionsErrorMessage(error) });
     }
-  }, [page, search, getPromotionsErrorMessage]);
+  }, [page, search, listFilter, getPromotionsErrorMessage]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [listFilter]);
 
   useEffect(() => {
     void load();
@@ -102,6 +116,19 @@ export function PromotionsList() {
     }, SEARCH_DEBOUNCE_MS);
     return () => window.clearTimeout(timer);
   }, [searchInput]);
+
+  const hasKpiFilter =
+    listFilter.active !== undefined ||
+    listFilter.validity !== undefined ||
+    listFilter.hasDiscount !== undefined;
+  const activeFilterCount = (search !== '' ? 1 : 0) + (hasKpiFilter ? 1 : 0);
+  const hasFilters = activeFilterCount > 0;
+
+  const handleClearFilters = useCallback(() => {
+    setSearchInput('');
+    setSearch('');
+    setPage(1);
+  }, []);
 
   const handleDeleteRequest = useCallback((promo: Promotion) => {
     setConfirmTarget(promo);
@@ -129,7 +156,7 @@ export function PromotionsList() {
         accessorKey: 'name',
         header: t('columns.campaign'),
         cell: ({ row }) => (
-          <div className="max-w-md space-y-2">
+          <div className="max-w-md min-w-0 space-y-2">
             <PromotionPreviewBanner
               {...promotionToPreviewProps(row.original)}
               compact
@@ -140,6 +167,7 @@ export function PromotionsList() {
       {
         id: 'validity',
         header: t('columns.validity'),
+        meta: { hideOnMobile: true },
         cell: ({ row }) => (
           <span className="whitespace-nowrap text-sm tabular-nums text-atg-muted">
             {formatPromotionValidityDisplay(
@@ -153,7 +181,7 @@ export function PromotionsList() {
       {
         id: 'usage',
         header: t('columns.usage'),
-        meta: { align: 'center' },
+        meta: { align: 'center', hideOnMobile: true },
         cell: ({ row }) => {
           const promo = row.original;
           return (
@@ -164,8 +192,8 @@ export function PromotionsList() {
               {formatPromoUsageLabel(
                 promo.redemptionCount,
                 promo.maxRedemptions,
-                tUsage('format'),
-                tUsage('unlimitedMax'),
+                tUsage.format,
+                tUsage.unlimitedMax,
               )}
             </DataTableBadge>
           );
@@ -209,13 +237,15 @@ export function PromotionsList() {
   const isLoading = state.status === 'loading';
   const isError = state.status === 'error';
   const promotions = state.status === 'ready' ? state.promotions : [];
-  const emptyMessage = search.trim() ? t('emptySearch') : t('emptyDefault');
+  const emptyMessage = hasFilters ? t('emptySearch') : t('emptyDefault');
 
   return (
     <>
       <AlertDialog
         open={!!confirmTarget}
-        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        onOpenChange={(open) => {
+          if (!open) setConfirmTarget(null);
+        }}
         title={t('deleteTitle')}
         description={confirmTarget ? t('deleteConfirm', { name: confirmTarget.name }) : ''}
         confirmLabel={t('deleteConfirmButton')}
@@ -225,54 +255,64 @@ export function PromotionsList() {
         error={deleteError}
         onConfirm={() => void handleDeleteConfirm()}
       />
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex-1 sm:max-w-md">
-          <Input
-            name="search"
-            type="search"
-            placeholder={t('searchPlaceholder')}
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            aria-label={t('searchAria')}
-          />
-        </div>
-        {canWrite ? (
-          <Button href="/paiements/promotions/nouveau">{t('newButton')}</Button>
-        ) : null}
+      <div className="space-y-6">
+        <FilterBar
+          mobileVariant="drawer"
+          activeCount={activeFilterCount}
+          onClear={handleClearFilters}
+          clearLabel={tCommon('filters.clearAll')}
+          applyLabel={tCommon('filters.apply')}
+          toggleLabel={tCommon('filters.toggle')}
+          filters={
+            <div className="min-w-[200px] flex-1 sm:max-w-md">
+              <Input
+                name="search"
+                type="search"
+                placeholder={t('searchPlaceholder')}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                aria-label={t('searchAria')}
+              />
+            </div>
+          }
+        />
+
+        {isError ? (
+          <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+            {state.message}
+          </p>
+        ) : (
+          <>
+            <Card variant="dashboard" padding="none" className="overflow-hidden">
+              <DataTable
+                columns={columns}
+                data={promotions}
+                isLoading={isLoading}
+                loadingMessage={tDataTable('loading')}
+                emptyMessage={emptyMessage}
+                emptyVariant={hasFilters ? 'search' : 'default'}
+                expandRowLabel={tDataTable('expandRow')}
+                collapseRowLabel={tDataTable('collapseRow')}
+                expandRowAriaLabel={tDataTable('expandRowAria')}
+                getRowId={(row) => row.id}
+                aria-label={t('tableAria')}
+              />
+            </Card>
+
+            {state.status === 'ready' ? (
+              <DataTablePagination
+                page={page}
+                pageSize={PAGE_SIZE}
+                totalPages={state.totalPages}
+                totalItems={state.total}
+                itemLabel={t('paginationItem')}
+                labels={paginationLabels}
+                onPageChange={setPage}
+              />
+            ) : null}
+          </>
+        )}
       </div>
-
-      {isError ? (
-        <p className="text-sm text-red-600 dark:text-red-400" role="alert">
-          {state.message}
-        </p>
-      ) : (
-        <>
-          <Card variant="dashboard" padding="none" className="overflow-hidden">
-            <DataTable
-              columns={columns}
-              data={promotions}
-              isLoading={isLoading}
-              emptyMessage={emptyMessage}
-              emptyVariant={search.trim() ? 'search' : 'default'}
-              getRowId={(row) => row.id}
-              aria-label={t('tableAria')}
-            />
-          </Card>
-
-          {state.status === 'ready' ? (
-            <DataTablePagination
-              page={page}
-              pageSize={PAGE_SIZE}
-              totalPages={state.totalPages}
-              totalItems={state.total}
-              itemLabel={t('paginationItem')}
-              onPageChange={setPage}
-            />
-        ) : null}
-      </>
-    )}
-    </div>
     </>
   );
 }

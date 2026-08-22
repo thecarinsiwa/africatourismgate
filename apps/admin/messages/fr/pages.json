@@ -354,27 +354,48 @@
     }
   },
   "paiements": {
+    "title": "Paiements",
     "description": "Transactions et remboursements Stripe (mode test). Filtres par statut, dates et organisation (super admin). Accès : payments.read ; remboursement : payments.write.",
+    "actions": {
+      "promoCodes": "Codes promo",
+      "promotions": "Promotions"
+    },
     "codes-promo": {
+      "title": "Codes promo",
+      "description": "Créez et gérez les codes utilisables dans le checkout (preview web). Validation des dates, unicité du code et plafond d'utilisations. Accès : promo_codes.read / write.",
+      "actions": {
+        "new": "Nouveau code promo",
+        "promotions": "Promotions"
+      },
       "intro": "Créez et gérez les codes utilisables dans le checkout (preview web). Validation des dates, unicité du code et plafond d'utilisations. Voir aussi les promotions. Accès : promo_codes.read / write.",
       "linkPromotions": "promotions",
       "nouveau": {
         "metaTitle": "Nouveau code promo",
-        "description": "Le code sera normalisé en majuscules et pourra être saisi tel quel dans le checkout."
+        "description": "Le code sera normalisé en majuscules et pourra être saisi tel quel dans le checkout.",
+        "backLabel": "Retour aux codes promo"
       },
       "id": {
-        "metaTitle": "Modifier le code promo"
+        "metaTitle": "Modifier le code promo",
+        "backLabel": "Retour aux codes promo"
       }
     },
     "promotions": {
+      "title": "Promotions",
+      "description": "Campagnes marketing avec réduction optionnelle (checkout via promotionId). Complémentaire aux codes promo. Accès : promo_codes.read / write.",
+      "actions": {
+        "new": "Nouvelle promotion",
+        "promoCodes": "Codes promo"
+      },
       "intro": "Campagnes marketing avec réduction optionnelle (checkout via promotionId). Complémentaire aux codes promo. Accès : promo_codes.read / write.",
       "linkPromoCodes": "codes promo",
       "nouveau": {
         "metaTitle": "Nouvelle promotion",
-        "description": "Définissez la campagne, la réduction éventuelle et les dates de validité."
+        "description": "Définissez la campagne, la réduction éventuelle et les dates de validité.",
+        "backLabel": "Retour aux promotions"
       },
       "id": {
-        "metaTitle": "Modifier la promotion"
+        "metaTitle": "Modifier la promotion",
+        "backLabel": "Retour aux promotions"
       }
     }
   },

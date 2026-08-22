@@ -9,63 +9,87 @@
     "deleteConfirmButton": "Eliminar",
     "cancel": "Cancelar",
     "columns": {
-      "code": "Code",
-      "discount": "Réduction",
-      "validity": "Validité",
-      "usage": "Utilisations",
+      "code": "Código",
+      "discount": "Descuento",
+      "validity": "Validez",
+      "usage": "Usos",
       "status": "Estado"
     },
-    "emptySearch": "Hastacun code promo ne correspond à votre recherche.",
-    "emptyDefault": "Hastacun code promo pour le moment.",
-    "searchPlaceholder": "Rechercher par code…",
-    "searchAria": "Rechercher un code promo",
-    "newButton": "Nouveau code promo",
-    "tableAria": "Liste des codes promo",
-    "paginationItem": "code promo"
+    "emptySearch": "Ningún código promocional coincide con su búsqueda.",
+    "emptyDefault": "Aún no hay códigos promocionales.",
+    "searchPlaceholder": "Buscar por código…",
+    "searchAria": "Buscar código promocional",
+    "newButton": "Nuevo código promocional",
+    "tableAria": "Lista de códigos promocionales",
+    "paginationItem": "código promocional"
   },
   "edit": {
-    "pageTitle": "Modifier le code promo"
+    "pageTitle": "Editar código promocional"
   },
   "form": {
     "validation": {
-      "codeRequired": "Le code est obligatoire.",
-      "codeFormat": "Lettres majuscules, chiffres, tirets et underscores uniquement.",
-      "discountPositive": "La valeur doit être positive.",
-      "percentMax": "Le pourcentage ne peut pas dépasser 100.",
-      "validFromRequired": "Fecha de début obligatoire.",
-      "validUntilRequired": "Fecha de fin obligatoire.",
-      "endAfterStart": "La date de fin doit être après la date de début.",
-      "maxRedemptionsInvalid": "Apellidobre d'utilisations max. invalide (entier ≥ 1)."
+      "codeRequired": "El código es obligatorio.",
+      "codeFormat": "Solo letras mayúsculas, números, guiones y guiones bajos.",
+      "discountPositive": "El valor debe ser positivo.",
+      "percentMax": "El porcentaje no puede superar 100.",
+      "validFromRequired": "La fecha de inicio es obligatoria.",
+      "validUntilRequired": "La fecha de fin es obligatoria.",
+      "endAfterStart": "La fecha de fin debe ser posterior a la de inicio.",
+      "maxRedemptionsInvalid": "Número máximo de usos no válido (entero ≥ 1)."
     },
     "fields": {
-      "code": "Code",
-      "discountType": "Tipo de réduction",
-      "discountTypePercent": "Pourcentage (%)",
-      "discountTypeFixed": "Importe fixe",
-      "discountValuePercent": "Pourcentage",
-      "discountValueFixed": "Importe fixe",
-      "validFrom": "Valide du",
-      "validUntil": "Valide au",
-      "maxRedemptions": "Utilisations max.",
-      "active": "Code actif (utilisable au checkout)"
+      "code": "Código",
+      "discountType": "Tipo de descuento",
+      "discountTypePercent": "Porcentaje (%)",
+      "discountTypeFixed": "Importe fijo",
+      "discountValuePercent": "Porcentaje",
+      "discountValueFixed": "Importe fijo",
+      "validFrom": "Válido desde",
+      "validUntil": "Válido hasta",
+      "maxRedemptions": "Usos máx.",
+      "active": "Código activo (utilizable en el checkout)"
     },
     "hints": {
-      "code": "Saisi en majuscules ; comparé sans distinction de casse au checkout.",
-      "discountPercent": "Pourcentage de réduction (ex. 20 pour −20 %).",
-      "discountFixed": "Importe fixe en unités monétaires (ex. 10 pour −10 USD).",
-      "maxRedemptions": "Laisser vide pour un nombre illimité."
+      "code": "Se introduce en mayúsculas; se compara sin distinguir mayúsculas en el checkout.",
+      "discountPercent": "Porcentaje de descuento (p. ej. 20 para −20 %).",
+      "discountFixed": "Importe fijo en unidades monetarias (p. ej. 10 para −10 USD).",
+      "maxRedemptions": "Dejar vacío para usos ilimitados."
     },
     "usage": {
-      "recorded": "Utilisations enregistrées :",
-      "unlimited": "(illimité)"
+      "recorded": "Usos registrados:",
+      "unlimited": "(ilimitado)"
     },
-    "saving": "Enregistrement…",
-    "createButton": "Créer le code promo",
+    "saving": "Guardando…",
+    "createButton": "Crear código promocional",
     "saveButton": "Guardar",
-    "cancelButton": "Annuler"
+    "cancelButton": "Cancelar",
+    "conflictModal": {
+      "title": "Código ya utilizado",
+      "description": "El código «{code}» ya existe. Elija otro código promocional.",
+      "confirm": "Entendido",
+      "close": "Cerrar"
+    }
   },
   "usage": {
     "format": "{count} / {max}",
     "unlimitedMax": "∞"
+  },
+  "stats": {
+    "total": {
+      "label": "Códigos promocionales",
+      "subtitle": "Todos los códigos"
+    },
+    "active": {
+      "label": "Activos",
+      "subtitle": "Utilizables en el checkout"
+    },
+    "inactive": {
+      "label": "Inactivos",
+      "subtitle": "Desactivados manualmente"
+    },
+    "ongoing": {
+      "label": "En curso",
+      "subtitle": "Dentro del periodo de validez"
+    }
   }
 }

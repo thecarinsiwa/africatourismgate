@@ -1,5 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString, MaxLength } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsBoolean, IsEnum, IsOptional, IsString, MaxLength } from 'class-validator';
 import { PaginationQueryDto } from '../../../../common/dto/pagination-query.dto';
 
 export class PromotionsListQueryDto extends PaginationQueryDto {
@@ -8,4 +9,21 @@ export class PromotionsListQueryDto extends PaginationQueryDto {
   @IsString()
   @MaxLength(180)
   search?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @Type(() => Boolean)
+  @IsBoolean()
+  active?: boolean;
+
+  @ApiPropertyOptional({ enum: ['ongoing', 'upcoming', 'expired'] })
+  @IsOptional()
+  @IsEnum(['ongoing', 'upcoming', 'expired'])
+  validity?: 'ongoing' | 'upcoming' | 'expired';
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @Type(() => Boolean)
+  @IsBoolean()
+  hasDiscount?: boolean;
 }

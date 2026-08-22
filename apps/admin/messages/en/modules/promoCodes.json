@@ -10,62 +10,86 @@
     "cancel": "Cancel",
     "columns": {
       "code": "Code",
-      "discount": "Réduction",
-      "validity": "Validité",
-      "usage": "Utilisations",
+      "discount": "Discount",
+      "validity": "Validity",
+      "usage": "Uses",
       "status": "Status"
     },
-    "emptySearch": "Tocun code promo ne correspond à votre recherche.",
-    "emptyDefault": "Tocun code promo pour le moment.",
-    "searchPlaceholder": "Rechercher par code…",
-    "searchAria": "Rechercher un code promo",
-    "newButton": "Nouveau code promo",
-    "tableAria": "Liste des codes promo",
-    "paginationItem": "code promo"
+    "emptySearch": "No promo codes match your search.",
+    "emptyDefault": "No promo codes yet.",
+    "searchPlaceholder": "Search by code…",
+    "searchAria": "Search promo codes",
+    "newButton": "New promo code",
+    "tableAria": "Promo codes list",
+    "paginationItem": "promo code"
   },
   "edit": {
-    "pageTitle": "Modifier le code promo"
+    "pageTitle": "Edit promo code"
   },
   "form": {
     "validation": {
-      "codeRequired": "Le code est obligatoire.",
-      "codeFormat": "Lettres majuscules, chiffres, tirets et underscores uniquement.",
-      "discountPositive": "La valeur doit être positive.",
-      "percentMax": "Le pourcentage ne peut pas dépasser 100.",
-      "validFromRequired": "Date de début obligatoire.",
-      "validUntilRequired": "Date de fin obligatoire.",
-      "endAfterStart": "La date de fin doit être après la date de début.",
-      "maxRedemptionsInvalid": "Namebre d'utilisations max. invalide (entier ≥ 1)."
+      "codeRequired": "Code is required.",
+      "codeFormat": "Uppercase letters, numbers, hyphens and underscores only.",
+      "discountPositive": "Value must be positive.",
+      "percentMax": "Percentage cannot exceed 100.",
+      "validFromRequired": "Start date is required.",
+      "validUntilRequired": "End date is required.",
+      "endAfterStart": "End date must be after start date.",
+      "maxRedemptionsInvalid": "Invalid max uses (integer ≥ 1)."
     },
     "fields": {
       "code": "Code",
-      "discountType": "Type de réduction",
-      "discountTypePercent": "Pourcentage (%)",
-      "discountTypeFixed": "Amount fixe",
-      "discountValuePercent": "Pourcentage",
-      "discountValueFixed": "Amount fixe",
-      "validFrom": "Valide du",
-      "validUntil": "Valide au",
-      "maxRedemptions": "Utilisations max.",
-      "active": "Code actif (utilisable au checkout)"
+      "discountType": "Discount type",
+      "discountTypePercent": "Percentage (%)",
+      "discountTypeFixed": "Fixed amount",
+      "discountValuePercent": "Percentage",
+      "discountValueFixed": "Fixed amount",
+      "validFrom": "Valid from",
+      "validUntil": "Valid until",
+      "maxRedemptions": "Max uses",
+      "active": "Active code (usable at checkout)"
     },
     "hints": {
-      "code": "Saisi en majuscules ; comparé sans distinction de casse au checkout.",
-      "discountPercent": "Pourcentage de réduction (ex. 20 pour −20 %).",
-      "discountFixed": "Amount fixe en unités monétaires (ex. 10 pour −10 USD).",
-      "maxRedemptions": "Laisser vide pour un nombre illimité."
+      "code": "Entered in uppercase; matched case-insensitively at checkout.",
+      "discountPercent": "Discount percentage (e.g. 20 for −20%).",
+      "discountFixed": "Fixed amount in currency units (e.g. 10 for −10 USD).",
+      "maxRedemptions": "Leave empty for unlimited uses."
     },
     "usage": {
-      "recorded": "Utilisations enregistrées :",
-      "unlimited": "(illimité)"
+      "recorded": "Recorded uses:",
+      "unlimited": "(unlimited)"
     },
-    "saving": "Enregistrement…",
-    "createButton": "Créer le code promo",
+    "saving": "Saving…",
+    "createButton": "Create promo code",
     "saveButton": "Save",
-    "cancelButton": "Annuler"
+    "cancelButton": "Cancel",
+    "conflictModal": {
+      "title": "Code already in use",
+      "description": "Promo code \"{code}\" already exists. Choose a different code.",
+      "confirm": "Got it",
+      "close": "Close"
+    }
   },
   "usage": {
     "format": "{count} / {max}",
     "unlimitedMax": "∞"
+  },
+  "stats": {
+    "total": {
+      "label": "Promo codes",
+      "subtitle": "All codes"
+    },
+    "active": {
+      "label": "Active",
+      "subtitle": "Usable at checkout"
+    },
+    "inactive": {
+      "label": "Inactive",
+      "subtitle": "Manually disabled"
+    },
+    "ongoing": {
+      "label": "Ongoing",
+      "subtitle": "Within validity period"
+    }
   }
 }

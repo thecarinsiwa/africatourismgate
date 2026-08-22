@@ -1,4 +1,11 @@
-export const paymentsKpis = [
+import type { PromotionsListQuery } from '@africatourismgate/types';
+
+export type PromotionsListFilter = Pick<
+  PromotionsListQuery,
+  'active' | 'validity' | 'hasDiscount'
+>;
+
+export const promotionsKpis = [
   {
     key: 'total',
     labelKey: 'stats.total.label',
@@ -10,15 +17,15 @@ export const paymentsKpis = [
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeWidth={1.75}
-          d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+          d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"
         />
       </svg>
     ),
   },
   {
-    key: 'succeeded',
-    labelKey: 'stats.succeeded.label',
-    subtitleKey: 'stats.succeeded.subtitle',
+    key: 'active',
+    labelKey: 'stats.active.label',
+    subtitleKey: 'stats.active.subtitle',
     iconClass: 'bg-atg-success-light text-atg-success',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -32,25 +39,25 @@ export const paymentsKpis = [
     ),
   },
   {
-    key: 'pending',
-    labelKey: 'stats.pending.label',
-    subtitleKey: 'stats.pending.subtitle',
-    iconClass: 'bg-atg-warning-light text-atg-warning',
+    key: 'inactive',
+    labelKey: 'stats.inactive.label',
+    subtitleKey: 'stats.inactive.subtitle',
+    iconClass: 'bg-atg-muted/20 text-atg-muted',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
         <path
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeWidth={1.75}
-          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+          d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
         />
       </svg>
     ),
   },
   {
-    key: 'revenue',
-    labelKey: 'stats.revenue.label',
-    subtitleKey: 'stats.revenue.subtitle',
+    key: 'withDiscount',
+    labelKey: 'stats.withDiscount.label',
+    subtitleKey: 'stats.withDiscount.subtitle',
     iconClass: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300',
     icon: (
       <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
@@ -65,15 +72,22 @@ export const paymentsKpis = [
   },
 ] as const;
 
-export type PaymentsKpiKey = (typeof paymentsKpis)[number]['key'];
+export type PromotionsKpiKey = (typeof promotionsKpis)[number]['key'];
 
-/** Statut appliqué à la liste lors d'un clic sur le KPI correspondant. */
-export const paymentsKpiStatusFilter: Record<
-  PaymentsKpiKey,
-  '' | 'pending' | 'succeeded'
-> = {
-  total: '',
-  succeeded: 'succeeded',
-  pending: 'pending',
-  revenue: 'succeeded',
+export const promotionsKpiListFilter: Record<PromotionsKpiKey, PromotionsListFilter> = {
+  total: {},
+  active: { active: true },
+  inactive: { active: false },
+  withDiscount: { hasDiscount: true },
 };
+
+export function promotionsFiltersMatch(
+  a: PromotionsListFilter,
+  b: PromotionsListFilter,
+): boolean {
+  return (
+    a.active === b.active &&
+    a.validity === b.validity &&
+    a.hasDiscount === b.hasDiscount
+  );
+}

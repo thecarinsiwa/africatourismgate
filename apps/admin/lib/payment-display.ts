@@ -25,9 +25,9 @@ export function formatPaymentProvider(
   return providerLabels[provider] ?? provider;
 }
 
-export function formatPaymentDateTime(iso: string): string {
+export function formatPaymentDateTime(iso: string, locale: string): string {
   try {
-    return new Date(iso).toLocaleString('fr-FR', {
+    return new Date(iso).toLocaleString(locale, {
       dateStyle: 'short',
       timeStyle: 'short',
     });

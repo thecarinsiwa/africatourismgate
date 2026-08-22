@@ -4,17 +4,17 @@
     "inactive": "Inactive"
   },
   "validity": {
-    "active": "En cours",
-    "upcoming": "À venir",
-    "expired": "Expiré",
-    "noDateLimit": "Sans limite de dates",
-    "fromDate": "À partir du {from}",
-    "untilDate": "Jusqu'au {until}",
+    "active": "Ongoing",
+    "upcoming": "Upcoming",
+    "expired": "Expired",
+    "noDateLimit": "No date limit",
+    "fromDate": "From {from}",
+    "untilDate": "Until {until}",
     "range": "{from} → {until}"
   },
   "discount": {
-    "informative": "Campagne informative",
-    "pending": "Réduction…",
+    "informative": "Informative campaign",
+    "pending": "Discount…",
     "percentFormat": "−{value} %",
     "fixedFormat": "−{value}"
   },
@@ -24,68 +24,86 @@
     "deleteConfirmButton": "Delete",
     "cancel": "Cancel",
     "columns": {
-      "campaign": "Campagne",
-      "validity": "Validité",
-      "usage": "Utilisations",
+      "campaign": "Campaign",
+      "validity": "Validity",
+      "usage": "Uses",
       "status": "Status"
     },
-    "emptySearch": "None promotion ne correspond à votre recherche.",
-    "emptyDefault": "None promotion pour le moment.",
-    "searchPlaceholder": "Rechercher par titre ou description…",
-    "searchAria": "Rechercher une promotion",
-    "newButton": "Nouvelle promotion",
-    "tableAria": "Liste des promotions",
+    "emptySearch": "No promotions match your search.",
+    "emptyDefault": "No promotions yet.",
+    "searchPlaceholder": "Search by title or description…",
+    "searchAria": "Search promotions",
+    "newButton": "New promotion",
+    "tableAria": "Promotions list",
     "paginationItem": "promotion"
   },
   "edit": {
-    "pageTitle": "Modifier la promotion"
+    "pageTitle": "Edit promotion"
   },
   "preview": {
-    "defaultName": "Nouvelle campagne",
-    "ariaLabel": "Preview promotion {name}",
+    "defaultName": "New campaign",
+    "ariaLabel": "Promotion preview {name}",
     "badge": "Promotion",
-    "usage": "Utilisations : {usage}"
+    "usage": "Uses: {usage}"
   },
   "form": {
     "info": {
-      "codesVsPromotions": "Les codes promo sont saisis par le client au checkout. Les promotions sont des campagnes visibles (bannières, pages) — la réduction peut être optionnelle.",
-      "managePromoCodesLink": "Gérer les codes promo",
-      "targetHint": "Cible produit / destination (optionnel, pour affichage marketing)."
+      "codesVsPromotions": "Promo codes are entered by the customer at checkout. Promotions are visible campaigns (banners, pages) — the discount may be optional.",
+      "managePromoCodesLink": "Manage promo codes",
+      "targetHint": "Product / destination target (optional, for marketing display)."
     },
     "validation": {
-      "nameRequired": "Le titre est obligatoire.",
-      "discountPositive": "La valeur doit être positive.",
-      "percentMax": "Le pourcentage ne peut pas dépasser 100.",
-      "endAfterStart": "La date de fin doit être après la date de début.",
-      "maxRedemptionsInvalid": "Namebre max. invalide (entier ≥ 1)."
+      "nameRequired": "Title is required.",
+      "discountPositive": "Value must be positive.",
+      "percentMax": "Percentage cannot exceed 100.",
+      "endAfterStart": "End date must be after start date.",
+      "maxRedemptionsInvalid": "Invalid max uses (integer ≥ 1)."
     },
     "fields": {
-      "name": "Title de la campagne",
-      "descriptionPlaceholder": "Ex. −20 % sur les hébergements…",
-      "hasDiscount": "Apply une réduction au checkout",
-      "discountType": "Type de réduction",
-      "discountTypePercent": "Pourcentage (%)",
-      "discountTypeFixed": "Amount fixe",
-      "discountValuePercent": "Pourcentage",
-      "discountValueFixed": "Amount fixe",
-      "validFromOptional": "Valide du (optionnel)",
-      "validUntilOptional": "Valide au (optionnel)",
-      "maxRedemptions": "Utilisations max.",
-      "active": "Campagne active"
+      "name": "Campaign title",
+      "descriptionPlaceholder": "E.g. −20% on accommodations…",
+      "hasDiscount": "Apply a discount at checkout",
+      "discountType": "Discount type",
+      "discountTypePercent": "Percentage (%)",
+      "discountTypeFixed": "Fixed amount",
+      "discountValuePercent": "Percentage",
+      "discountValueFixed": "Fixed amount",
+      "validFromOptional": "Valid from (optional)",
+      "validUntilOptional": "Valid until (optional)",
+      "maxRedemptions": "Max uses",
+      "active": "Active campaign"
     },
     "hints": {
-      "discountPercent": "Pourcentage (ex. 15 pour −15 %).",
-      "discountFixed": "Amount fixe en unités monétaires (ex. 10 pour −10 USD).",
-      "maxRedemptions": "Laisser vide pour illimité."
+      "discountPercent": "Percentage (e.g. 15 for −15%).",
+      "discountFixed": "Fixed amount in currency units (e.g. 10 for −10 USD).",
+      "maxRedemptions": "Leave empty for unlimited."
     },
     "usage": {
-      "label": "Utilisations :",
-      "unlimited": "(illimité)"
+      "label": "Uses:",
+      "unlimited": "(unlimited)"
     },
-    "checkoutId": "ID checkout :",
-    "saving": "Enregistrement…",
-    "createButton": "Créer la promotion",
+    "checkoutId": "Checkout ID:",
+    "saving": "Saving…",
+    "createButton": "Create promotion",
     "saveButton": "Save",
-    "cancelButton": "Annuler"
+    "cancelButton": "Cancel"
+  },
+  "stats": {
+    "total": {
+      "label": "Campaigns",
+      "subtitle": "All promotions"
+    },
+    "active": {
+      "label": "Active",
+      "subtitle": "Published campaigns"
+    },
+    "inactive": {
+      "label": "Inactive",
+      "subtitle": "Disabled campaigns"
+    },
+    "withDiscount": {
+      "label": "With discount",
+      "subtitle": "Discount applied at checkout"
+    }
   }
 }

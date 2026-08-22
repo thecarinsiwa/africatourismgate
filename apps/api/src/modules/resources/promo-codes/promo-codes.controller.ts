@@ -10,8 +10,8 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import { PromoCodes } from '../../../entities/generated';
+import { PromoCodesListQueryDto } from './dto/promo-codes-list-query.dto';
 import { PromoCodesService } from './promo-codes.service';
 
 @ApiTags('promo-codes')
@@ -21,8 +21,8 @@ export class PromoCodesController {
 
   @Get()
   @ApiOperation({ summary: 'List promo-codes' })
-  findAll(@Query() query: PaginationQueryDto) {
-    return this.service.findAll(query);
+  findAll(@Query() query: PromoCodesListQueryDto) {
+    return this.service.list(query);
   }
 
   @Get(':id')

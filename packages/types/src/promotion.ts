@@ -15,10 +15,15 @@ export interface Promotion {
   updatedAt: string | null;
 }
 
+import type { PromoListValidityFilter } from './promo-code.js';
+
 export interface PromotionsListQuery {
   page?: number;
   limit?: number;
   search?: string;
+  active?: boolean;
+  validity?: PromoListValidityFilter;
+  hasDiscount?: boolean;
 }
 
 export interface CreatePromotionRequest {
