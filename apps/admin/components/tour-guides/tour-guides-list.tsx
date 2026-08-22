@@ -130,7 +130,7 @@ export function TourGuidesList() {
       try {
         const client = getApiClient();
         const [destinationsResult, organizationsResult] = await Promise.all([
-          client.listDestinations({ page: 1, limit: 200 }),
+          client.listDestinations({ page: 1, limit: 100 }),
           client.listOrganizations({ page: 1, limit: 100 }),
         ]);
         if (!cancelled) {

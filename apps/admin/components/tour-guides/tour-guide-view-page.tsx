@@ -72,8 +72,14 @@ export function TourGuideViewPage({ guideId }: TourGuideViewPageProps) {
     try {
       const client = getApiClient();
       const guideData = await client.getTourGuide(guideId);
-      const [destinationsResult, organizationData] = await Promise.all([
-        client.listDestinations({ page: 1, limit: 200 }),
+      const [destinationRows, organizationData] = await Promise.all([
+        guideData.destinations.length > 0
+          ? Promise.all(
+              guideData.destinations.map((id) =>
+                client.getDestination(id).catch(() => null),
+              ),
+            )
+          : Promise.resolve([]),
         guideData.organizationId
           ? client.getOrganization(guideData.organizationId).catch(() => null)
           : Promise.resolve(null),
@@ -81,7 +87,9 @@ export function TourGuideViewPage({ guideId }: TourGuideViewPageProps) {
 
       setGuide(guideData);
       setOrganization(organizationData);
-      setDestinations(destinationsResult.data);
+      setDestinations(
+        destinationRows.filter((destination): destination is Destination => destination != null),
+      );
       setState({ status: 'ready' });
     } catch (error) {
       setState({ status: 'error', message: getTourGuidesErrorMessage(error) });
