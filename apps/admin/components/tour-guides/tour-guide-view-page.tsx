@@ -3,7 +3,6 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
-  Avatar,
   Button,
   Card,
   DataTableBadge,
@@ -21,6 +20,7 @@ import {
   useTourGuideTypeLabels,
 } from '../../lib/i18n/use-module-labels';
 import { GuideAssignedBookingsSection } from './guide-assigned-bookings-section';
+import { TourGuideAvatar } from './tour-guide-avatar';
 
 type TourGuideViewPageProps = {
   guideId: string;
@@ -37,32 +37,6 @@ function ProfileField({ label, value }: { label: string; value: React.ReactNode 
       <dt className="text-[11px] font-medium uppercase tracking-wide text-atg-muted">{label}</dt>
       <dd className="mt-0.5 break-words text-sm font-medium text-atg-fg">{value}</dd>
     </div>
-  );
-}
-
-function TourGuideAvatar({ guide }: { guide: TourGuide }) {
-  const user = guide.user;
-
-  if (user) {
-    return (
-      <Avatar
-        email={user.email}
-        firstName={user.firstName}
-        lastName={user.lastName}
-        src={guide.photoUrl}
-        size="lg"
-      />
-    );
-  }
-
-  return (
-    <Avatar
-      email={`${guide.id}@guide`}
-      firstName={guide.displayName}
-      src={guide.photoUrl}
-      size="lg"
-      label={guide.displayName}
-    />
   );
 }
 
@@ -170,7 +144,7 @@ export function TourGuideViewPage({ guideId }: TourGuideViewPageProps) {
       </div>
 
       <div className="flex flex-col gap-4 rounded-xl border border-atg-border bg-atg-elevated p-4 sm:flex-row sm:items-start">
-        <TourGuideAvatar guide={guide} />
+        <TourGuideAvatar guide={guide} size="lg" />
         <div className="min-w-0 flex-1 space-y-2">
           <h2 className="text-xl font-semibold text-atg-fg">{guide.displayName}</h2>
           <div className="flex flex-wrap items-center gap-2">

@@ -75,7 +75,8 @@
   },
   "detail": {
     "title": "Edit guide",
-    "backLink": "Back to guides"
+    "backLink": "Back to guides",
+    "viewButton": "View guide"
   },
   "view": {
     "title": "View guide",

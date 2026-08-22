@@ -75,7 +75,8 @@
   },
   "detail": {
     "title": "Modifier le guide",
-    "backLink": "Retour aux guides"
+    "backLink": "Retour aux guides",
+    "viewButton": "Voir le guide"
   },
   "view": {
     "title": "Voir le guide",

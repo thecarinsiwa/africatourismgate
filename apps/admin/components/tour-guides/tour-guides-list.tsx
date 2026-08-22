@@ -4,7 +4,6 @@ import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
   AlertDialog,
-  Avatar,
   Card,
   DataTable,
   DataTableActionButton,
@@ -27,6 +26,7 @@ import {
   useTourGuideTypeFilterOptions,
   useTourGuideTypeLabels,
 } from '../../lib/i18n/use-module-labels';
+import { TourGuideAvatar } from './tour-guide-avatar';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -38,32 +38,6 @@ const STATUS_VARIANTS: Record<TourGuideStatus, 'success' | 'muted'> = {
   active: 'success',
   inactive: 'muted',
 };
-
-function TourGuideAvatar({ guide }: { guide: TourGuide }) {
-  const user = guide.user;
-
-  if (user) {
-    return (
-      <Avatar
-        email={user.email}
-        firstName={user.firstName}
-        lastName={user.lastName}
-        src={guide.photoUrl}
-        size="md"
-      />
-    );
-  }
-
-  return (
-    <Avatar
-      email={`${guide.id}@guide`}
-      firstName={guide.displayName}
-      src={guide.photoUrl}
-      size="md"
-      label={guide.displayName}
-    />
-  );
-}
 
 export function TourGuidesList() {
   const { tourGuides: getTourGuidesErrorMessage } = useAdminErrorMessages();
