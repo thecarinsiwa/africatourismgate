@@ -5,6 +5,7 @@ import {
   BookingItems,
   Bookings,
   Destinations,
+  GuideAvailability,
   Organizations,
   TourGuides,
   Users,
@@ -12,6 +13,7 @@ import {
 import { BookingsModule } from '../bookings/bookings.module';
 import { BookingGuideAssignmentEmailService } from './booking-guide-assignment-email.service';
 import { BookingGuideAssignmentsService } from './booking-guide-assignments.service';
+import { GuideAvailabilityService } from './guide-availability.service';
 import { TourGuidesController } from './tour-guides.controller';
 import { TourGuidesService } from './tour-guides.service';
 
@@ -20,6 +22,7 @@ import { TourGuidesService } from './tour-guides.service';
     forwardRef(() => BookingsModule),
     TypeOrmModule.forFeature([
       TourGuides,
+      GuideAvailability,
       BookingGuideAssignments,
       Bookings,
       BookingItems,
@@ -31,9 +34,10 @@ import { TourGuidesService } from './tour-guides.service';
   controllers: [TourGuidesController],
   providers: [
     TourGuidesService,
+    GuideAvailabilityService,
     BookingGuideAssignmentsService,
     BookingGuideAssignmentEmailService,
   ],
-  exports: [TourGuidesService, BookingGuideAssignmentsService],
+  exports: [TourGuidesService, GuideAvailabilityService, BookingGuideAssignmentsService],
 })
 export class TourGuidesModule {}

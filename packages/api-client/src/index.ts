@@ -184,6 +184,12 @@ import type {
   UpdateTourGuideRequest,
   TourGuideBookingListItem,
   TourGuideBookingsListQuery,
+  TourGuideCalendarSummary,
+  TourGuideCalendarSummaryQuery,
+  TourGuideCalendarDayDetail,
+  TourGuideCalendarDayQuery,
+  UpsertGuideAvailabilityRequest,
+  GuideAvailabilitySlot,
   BlogPost,
   BlogPostsListQuery,
   CreateBlogPostRequest,
@@ -1346,6 +1352,40 @@ export class ApiClient {
       `/tour-guides/${guideId}/bookings`,
       query,
     );
+  }
+
+  getTourGuideCalendarSummary(
+    query: TourGuideCalendarSummaryQuery,
+  ): Promise<TourGuideCalendarSummary> {
+    const params = new URLSearchParams();
+    params.set('month', query.month);
+    if (query.destinationId) params.set('destinationId', query.destinationId);
+    if (query.organizationId) params.set('organizationId', query.organizationId);
+    const qs = params.toString();
+    return this.request<TourGuideCalendarSummary>(
+      `/tour-guides/calendar/summary?${qs}`,
+    );
+  }
+
+  getTourGuideCalendarDay(
+    query: TourGuideCalendarDayQuery,
+  ): Promise<TourGuideCalendarDayDetail> {
+    const params = new URLSearchParams();
+    params.set('date', query.date);
+    if (query.destinationId) params.set('destinationId', query.destinationId);
+    if (query.organizationId) params.set('organizationId', query.organizationId);
+    const qs = params.toString();
+    return this.request<TourGuideCalendarDayDetail>(`/tour-guides/calendar/day?${qs}`);
+  }
+
+  upsertGuideAvailability(
+    guideId: string,
+    body: UpsertGuideAvailabilityRequest,
+  ): Promise<GuideAvailabilitySlot> {
+    return this.request<GuideAvailabilitySlot>(`/tour-guides/${guideId}/availability`, {
+      method: 'PUT',
+      body,
+    });
   }
 
   listBlogPosts(

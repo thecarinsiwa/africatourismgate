@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   Query,
   UploadedFile,
   UseInterceptors,
@@ -29,9 +30,13 @@ import { AuthUserDto } from '../../auth/dto/auth-user.dto';
 import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
 import { BookingGuideAssignmentsService } from './booking-guide-assignments.service';
 import { CreateTourGuideDto } from './dto/create-tour-guide.dto';
+import { TourGuideCalendarDayQueryDto } from './dto/tour-guide-calendar-day-query.dto';
+import { TourGuideCalendarSummaryQueryDto } from './dto/tour-guide-calendar-summary-query.dto';
+import { UpsertGuideAvailabilityDto } from './dto/upsert-guide-availability.dto';
 import { TourGuideBookingsListQueryDto } from './dto/tour-guide-bookings-list-query.dto';
 import { TourGuidesListQueryDto } from './dto/tour-guides-list-query.dto';
 import { UpdateTourGuideDto } from './dto/update-tour-guide.dto';
+import { GuideAvailabilityService } from './guide-availability.service';
 import { TourGuidesService } from './tour-guides.service';
 
 const PHOTO_MAX_BYTES = 5 * 1024 * 1024;
@@ -45,6 +50,7 @@ export class TourGuidesController {
   constructor(
     private readonly service: TourGuidesService,
     private readonly bookingGuideAssignmentsService: BookingGuideAssignmentsService,
+    private readonly guideAvailabilityService: GuideAvailabilityService,
   ) {}
 
   @Get()
@@ -105,6 +111,31 @@ export class TourGuidesController {
       );
     }
     return { url: tourGuideUploadUrl(file.filename) };
+  }
+
+  @Get('calendar/summary')
+  @RequirePermissions('guides.read')
+  @ApiOperation({ summary: 'Synthèse calendrier : disponibilité des guides par jour' })
+  getCalendarSummary(@Query() query: TourGuideCalendarSummaryQueryDto) {
+    return this.guideAvailabilityService.getCalendarSummary(query);
+  }
+
+  @Get('calendar/day')
+  @RequirePermissions('guides.read')
+  @ApiOperation({ summary: 'Détail calendrier pour un jour (statut par guide)' })
+  getCalendarDay(@Query() query: TourGuideCalendarDayQueryDto) {
+    return this.guideAvailabilityService.getCalendarDay(query);
+  }
+
+  @Put(':guideId/availability')
+  @RequirePermissions('guides.write')
+  @ApiOperation({ summary: 'Définir la disponibilité d’un guide pour une date' })
+  upsertAvailability(
+    @Param('guideId') guideId: string,
+    @Body() dto: UpsertGuideAvailabilityDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.guideAvailabilityService.upsertAvailability(guideId, dto, user.id);
   }
 
   @Get(':id/bookings')

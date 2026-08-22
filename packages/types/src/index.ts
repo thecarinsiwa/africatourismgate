@@ -289,6 +289,16 @@ export type {
   RemoveBookingGuideRequest,
   TourGuideBookingListItem,
   TourGuideBookingsListQuery,
+  GuideCalendarDayStatus,
+  GuideAvailabilityStatus,
+  TourGuideCalendarSummaryDay,
+  TourGuideCalendarSummary,
+  TourGuideCalendarDayGuide,
+  TourGuideCalendarDayDetail,
+  TourGuideCalendarSummaryQuery,
+  TourGuideCalendarDayQuery,
+  UpsertGuideAvailabilityRequest,
+  GuideAvailabilitySlot,
 } from './tour-guide.js';
 
 export type {

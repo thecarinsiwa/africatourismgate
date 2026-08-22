@@ -199,3 +199,57 @@ export interface TourGuideBookingsListQuery {
   sortOrder?: 'asc' | 'desc';
   search?: string;
 }
+
+export type GuideCalendarDayStatus = 'available' | 'occupied' | 'unavailable';
+
+export type GuideAvailabilityStatus = 'available' | 'unavailable';
+
+export interface TourGuideCalendarSummaryDay {
+  date: string;
+  available: number;
+  occupied: number;
+  unavailable: number;
+  totalActive: number;
+}
+
+export interface TourGuideCalendarSummary {
+  month: string;
+  days: TourGuideCalendarSummaryDay[];
+}
+
+export interface TourGuideCalendarDayGuide {
+  guideId: string;
+  displayName: string;
+  photoUrl: string | null;
+  status: GuideCalendarDayStatus;
+  bookingId?: string;
+  role?: BookingGuideRole;
+}
+
+export interface TourGuideCalendarDayDetail {
+  date: string;
+  guides: TourGuideCalendarDayGuide[];
+}
+
+export interface TourGuideCalendarSummaryQuery {
+  month: string;
+  destinationId?: string;
+  organizationId?: string;
+}
+
+export interface TourGuideCalendarDayQuery {
+  date: string;
+  destinationId?: string;
+  organizationId?: string;
+}
+
+export interface UpsertGuideAvailabilityRequest {
+  date: string;
+  status: GuideAvailabilityStatus;
+}
+
+export interface GuideAvailabilitySlot {
+  guideId: string;
+  date: string;
+  status: GuideAvailabilityStatus;
+}
