@@ -135,7 +135,20 @@
     "legendUnavailable": "No disponibles",
     "activeGuidesCount": "{count, plural, one {# guía activo} other {# guías activos}}",
     "noActiveGuides": "Ningún guía activo coincide con estos filtros.",
-    "today": "Hoy"
+    "today": "Hoy",
+    "dayModal": {
+      "title": "Disponibilidad — {date}",
+      "intro": "Guías activos para este día. Los guías en misión no se pueden modificar aquí.",
+      "empty": "Ningún guía activo este día.",
+      "unavailableToggle": "No disponible",
+      "viewBooking": "Ver reserva",
+      "viewGuide": "Ver guía",
+      "status": {
+        "available": "Disponible",
+        "occupied": "En misión",
+        "unavailable": "No disponible"
+      }
+    }
   },
   "filters": {
     "type": "Tipo",

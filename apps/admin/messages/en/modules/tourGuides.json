@@ -135,7 +135,20 @@
     "legendUnavailable": "Unavailable",
     "activeGuidesCount": "{count, plural, one {# active guide} other {# active guides}}",
     "noActiveGuides": "No active guides match these filters.",
-    "today": "Today"
+    "today": "Today",
+    "dayModal": {
+      "title": "Availability — {date}",
+      "intro": "Active guides for this day. Guides on assignment cannot be edited here.",
+      "empty": "No active guides on this day.",
+      "unavailableToggle": "Unavailable",
+      "viewBooking": "View booking",
+      "viewGuide": "View guide",
+      "status": {
+        "available": "Available",
+        "occupied": "On assignment",
+        "unavailable": "Unavailable"
+      }
+    }
   },
   "filters": {
     "type": "Type",

@@ -26,6 +26,7 @@ import {
   weekdayOffset,
 } from '../../lib/availability-dates';
 import { getApiClient } from '../../lib/auth/api';
+import { TourGuideCalendarDayModal } from './tour-guide-calendar-day-modal';
 
 export function TourGuidesCalendarView() {
   const { tourGuides: getTourGuidesErrorMessage } = useAdminErrorMessages();
@@ -45,8 +46,27 @@ export function TourGuidesCalendarView() {
     | { status: 'error'; message: string }
     | { status: 'ready'; days: TourGuideCalendarSummaryDay[] }
   >({ status: 'loading' });
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [canWrite, setCanWrite] = useState(false);
 
   const monthLabel = useMemo(() => formatMonthLabel(yearMonth), [yearMonth]);
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const me = await getApiClient().getAuthMe();
+        if (!cancelled) {
+          setCanWrite(me.isSuperAdmin || me.permissions.includes('guides.write'));
+        }
+      } catch {
+        if (!cancelled) setCanWrite(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -266,11 +286,13 @@ export function TourGuidesCalendarView() {
                 const isToday = cell.date === new Date().toISOString().slice(0, 10);
 
                 return (
-                  <div
+                  <button
                     key={cell.date}
+                    type="button"
                     role="gridcell"
+                    onClick={() => setSelectedDate(cell.date)}
                     className={cn(
-                      'flex min-h-[5rem] flex-col rounded-lg border border-atg-border/60 bg-atg-elevated p-1.5 sm:min-h-[6rem] sm:p-2',
+                      'flex min-h-[5rem] flex-col rounded-lg border border-atg-border/60 bg-atg-elevated p-1.5 text-left transition-colors hover:border-primary/40 hover:bg-atg-surface sm:min-h-[6rem] sm:p-2',
                       isToday && 'ring-2 ring-primary/40',
                     )}
                   >
@@ -294,13 +316,25 @@ export function TourGuidesCalendarView() {
                         ) : null}
                       </div>
                     ) : null}
-                  </div>
+                  </button>
                 );
               })}
             </div>
           )}
         </Card>
       )}
+
+      <TourGuideCalendarDayModal
+        open={selectedDate != null}
+        onOpenChange={(open) => {
+          if (!open) setSelectedDate(null);
+        }}
+        date={selectedDate}
+        destinationId={destinationFilter || undefined}
+        organizationId={organizationFilter || undefined}
+        canWrite={canWrite}
+        onUpdated={() => void load()}
+      />
     </div>
   );
 }
