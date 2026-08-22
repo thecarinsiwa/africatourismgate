@@ -75,7 +75,6 @@ export const adminDashboardNavConfig: AdminNavEntryConfig[] = [
     iconKey: 'bookings',
     children: [
       { href: '/reservations', labelKey: 'bookings', iconKey: 'bookings' },
-      { href: '/reservations/lignes', labelKey: 'bookingLines', iconKey: 'list' },
       { href: '/guides', labelKey: 'tourGuides', iconKey: 'userCircle' },
     ],
   },

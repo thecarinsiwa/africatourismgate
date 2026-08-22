@@ -14,14 +14,9 @@ export function ReservationsPageContent() {
       <AdminListPageHeader
         routePath="reservations"
         actions={
-          <>
-            <Button href="/reservations/lignes" variant="outline">
-              {t('actions.lines')}
-            </Button>
-            <Button href="/guides" variant="outline">
-              {t('actions.guides')}
-            </Button>
-          </>
+          <Button href="/guides" variant="outline">
+            {t('actions.guides')}
+          </Button>
         }
       />
       <BookingsStatCards className="mb-6" />

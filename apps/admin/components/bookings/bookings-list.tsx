@@ -31,6 +31,7 @@ import {
 } from '../../lib/i18n/use-module-labels';
 import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
 import { exportCsv } from '../../lib/export-csv';
+import { BookingItemsListModal } from './booking-items-list-modal';
 
 const PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -61,6 +62,7 @@ export function BookingsList() {
   const tDataTable = useTranslations('modules.common.dataTable');
   const tActions = useTranslations('common.actions');
   const tExport = useTranslations('modules.common.exportCsv');
+  const tPages = useTranslations('pages.reservations');
   const tUsers = useTranslations('modules.users.filters');
   const statusLabels = useBookingStatusLabels();
   const statusOptions = useBookingStatusFilterOptions();
@@ -83,6 +85,7 @@ export function BookingsList() {
     | { status: 'error'; message: string }
     | { status: 'ready'; bookings: BookingListItem[]; total: number; totalPages: number }
   >({ status: 'loading' });
+  const [linesModalOpen, setLinesModalOpen] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -367,15 +370,25 @@ export function BookingsList() {
         applyLabel={tCommon('filters.apply')}
         toggleLabel={tCommon('filters.toggle')}
         actions={
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled={isLoading || bookings.length === 0}
-            onClick={handleExportCsv}
-          >
-            {tExport('button')}
-          </Button>
+          <>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setLinesModalOpen(true)}
+            >
+              {tPages('actions.lines')}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={isLoading || bookings.length === 0}
+              onClick={handleExportCsv}
+            >
+              {tExport('button')}
+            </Button>
+          </>
         }
         filters={
           <>
@@ -494,6 +507,8 @@ export function BookingsList() {
           ) : null}
         </>
       )}
+
+      <BookingItemsListModal open={linesModalOpen} onOpenChange={setLinesModalOpen} />
     </div>
   );
 }
