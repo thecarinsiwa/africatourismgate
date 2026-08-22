@@ -1,25 +1,14 @@
 'use client';
 
-import { TextLink } from '@africatourismgate/ui';
-import { useTranslations } from 'next-intl';
 import { PaymentsPromoSubnav } from '../payments/payments-promo-subnav';
 import { PromotionsList } from '../promotions/promotions-list';
-import { AdminPageIntro } from '../admin-page-intro';
+import { AdminListPageHeader } from './admin-list-page-header';
 
 export function PromotionsPageContent() {
-  const t = useTranslations('pages.paiements.promotions');
   return (
-    <div>
+    <div className="min-w-0">
       <PaymentsPromoSubnav />
-      <AdminPageIntro>
-        <p>
-          {t('intro')}{' '}
-          <TextLink href="/paiements/codes-promo" variant="primary" className="font-medium">
-            {t('linkPromoCodes')}
-          </TextLink>
-          .
-        </p>
-      </AdminPageIntro>
+      <AdminListPageHeader routePath="paiements/promotions" />
       <PromotionsList />
     </div>
   );

@@ -361,25 +361,33 @@
       "promotions": "Promotions"
     },
     "codes-promo": {
+      "title": "Promo codes",
+      "description": "Create and manage codes usable at checkout (web preview). Date validation, code uniqueness and usage limits. Access: promo_codes.read / write.",
       "intro": "Codes entered at checkout (e.g. WELCOME10). Complements promotions. Access: promo_codes.read / write.",
       "linkPromotions": "promotions",
       "nouveau": {
         "metaTitle": "New promo code",
-        "description": "The code will be uppercased and can be entered as-is at checkout."
+        "description": "The code will be uppercased and can be entered as-is at checkout.",
+        "backLabel": "Back to promo codes"
       },
       "id": {
-        "metaTitle": "Edit promo code"
+        "metaTitle": "Edit promo code",
+        "backLabel": "Back to promo codes"
       }
     },
     "promotions": {
+      "title": "Promotions",
+      "description": "Marketing campaigns with optional discount (checkout via promotionId). Complements promo codes. Access: promo_codes.read / write.",
       "intro": "Marketing campaigns with optional discount (checkout via promotionId). Complements promo codes. Access: promo_codes.read / write.",
       "linkPromoCodes": "promo codes",
       "nouveau": {
         "metaTitle": "New promotion",
-        "description": "Define the campaign, optional discount and validity dates."
+        "description": "Define the campaign, optional discount and validity dates.",
+        "backLabel": "Back to promotions"
       },
       "id": {
-        "metaTitle": "Edit promotion"
+        "metaTitle": "Edit promotion",
+        "backLabel": "Back to promotions"
       }
     }
   },
