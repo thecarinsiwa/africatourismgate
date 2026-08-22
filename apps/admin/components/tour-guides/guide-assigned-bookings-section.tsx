@@ -9,6 +9,7 @@ import {
   DataTableActions,
   DataTableBadge,
   DataTablePagination,
+  Input,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { TourGuideBookingListItem } from '@africatourismgate/types';
@@ -37,6 +38,7 @@ export function GuideAssignedBookingsSection({ guideId }: GuideAssignedBookingsS
   const { tourGuides: getTourGuidesErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.tourGuides.sections.bookings');
   const tCommon = useTranslations('modules.common');
+  const tCommonFilters = useTranslations('modules.common.filters');
   const tColumns = useTranslations('modules.common.columns');
   const tDataTable = useTranslations('modules.common.dataTable');
   const tActions = useTranslations('common.actions');
@@ -46,6 +48,8 @@ export function GuideAssignedBookingsSection({ guideId }: GuideAssignedBookingsS
   const paginationLabels = useDataTablePaginationLabels();
 
   const [page, setPage] = useState(1);
+  const [searchInput, setSearchInput] = useState('');
+  const [search, setSearch] = useState('');
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -57,6 +61,19 @@ export function GuideAssignedBookingsSection({ guideId }: GuideAssignedBookingsS
       }
   >({ status: 'loading' });
 
+  useEffect(() => {
+    const query = searchInput.trim();
+    const timer = window.setTimeout(() => {
+      setSearch((prev) => {
+        if (prev !== query) {
+          setPage(1);
+        }
+        return query;
+      });
+    }, 300);
+    return () => window.clearTimeout(timer);
+  }, [searchInput]);
+
   const load = useCallback(async () => {
     setState({ status: 'loading' });
     try {
@@ -64,6 +81,7 @@ export function GuideAssignedBookingsSection({ guideId }: GuideAssignedBookingsS
         page,
         limit: PAGE_SIZE,
         sortOrder: 'desc',
+        search: search || undefined,
       });
       setState({
         status: 'ready',
@@ -74,7 +92,7 @@ export function GuideAssignedBookingsSection({ guideId }: GuideAssignedBookingsS
     } catch (error) {
       setState({ status: 'error', message: getTourGuidesErrorMessage(error) });
     }
-  }, [getTourGuidesErrorMessage, guideId, page]);
+  }, [getTourGuidesErrorMessage, guideId, page, search]);
 
   useEffect(() => {
     void load();
@@ -169,6 +187,7 @@ export function GuideAssignedBookingsSection({ guideId }: GuideAssignedBookingsS
   const isLoading = state.status === 'loading';
   const isError = state.status === 'error';
   const rows = state.status === 'ready' ? state.rows : [];
+  const hasSearch = search.trim().length > 0;
 
   return (
     <section className="space-y-4">
@@ -183,13 +202,25 @@ export function GuideAssignedBookingsSection({ guideId }: GuideAssignedBookingsS
         </p>
       ) : (
         <>
+          <div className="max-w-md">
+            <Input
+              name="missionsSearch"
+              type="search"
+              placeholder={tCommonFilters('searchBookings')}
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              aria-label={tCommonFilters('searchBookingsAria')}
+            />
+          </div>
+
           <Card variant="dashboard" padding="none" className="overflow-hidden">
             <DataTable
               columns={columns}
               data={rows}
               isLoading={isLoading}
               loadingMessage={tDataTable('loading')}
-              emptyMessage={t('empty')}
+              emptyMessage={hasSearch ? t('emptySearch') : t('empty')}
+              emptyVariant={hasSearch ? 'search' : 'default'}
               getRowId={(row) => row.assignmentId}
               aria-label={t('ariaLabel')}
             />

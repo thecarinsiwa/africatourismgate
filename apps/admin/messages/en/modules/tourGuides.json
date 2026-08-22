@@ -121,6 +121,7 @@
       "role": "Role",
       "assignedAt": "Assigned on",
       "empty": "No assigned missions yet.",
+      "emptySearch": "No missions match your search.",
       "ariaLabel": "Guide assigned missions"
     }
   },

@@ -197,4 +197,5 @@ export interface TourGuideBookingsListQuery {
   page?: number;
   limit?: number;
   sortOrder?: 'asc' | 'desc';
+  search?: string;
 }

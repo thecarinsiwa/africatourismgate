@@ -47,6 +47,7 @@ export class BookingGuideAssignmentsService {
     const page = query.page ?? 1;
     const limit = query.limit ?? 20;
     const sortOrder = query.sortOrder ?? 'desc';
+    const search = query.search?.trim();
 
     const qb = this.assignmentsRepository
       .createQueryBuilder('assignment')
@@ -56,6 +57,18 @@ export class BookingGuideAssignmentsService {
         'booking.id = assignment.bookingId AND booking.deletedAt IS NULL',
       )
       .where('assignment.guideId = :guideId', { guideId });
+
+    if (search) {
+      qb.innerJoin(
+        Users,
+        'client',
+        'client.id = booking.userId AND client.deletedAt IS NULL',
+      );
+      qb.andWhere(
+        '(client.email LIKE :term OR client.firstName LIKE :term OR client.lastName LIKE :term OR booking.id LIKE :term)',
+        { term: `%${search}%` },
+      );
+    }
 
     const total = await qb.getCount();
 
