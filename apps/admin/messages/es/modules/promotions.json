@@ -46,12 +46,19 @@
   "view": {
     "title": "Ver promoción",
     "editButton": "Editar promoción",
-    "subtitle": "Vista de solo lectura de la campaña de marketing.",
-    "infoTitle": "Información",
+    "subtitle": "Detalles de la campaña de marketing.",
+    "infoTitle": "Campaña",
+    "descriptionTitle": "Descripción",
+    "noDescription": "Ninguna descripción indicada.",
+    "metaTitle": "Validez y seguimiento",
     "checkoutId": "ID de checkout",
     "coverTitle": "Foto de portada",
     "coverEmpty": "Ninguna foto de portada.",
+    "coverEmptyHint": "Añada una foto de portada desde la página de edición para enriquecer el banner.",
     "coverAlt": "Portada de {name}",
+    "discountInformative": "Campaña informativa",
+    "validityOpen": "Sin límite de fechas",
+    "usageHint": "{count} uso(s) registrado(s)",
     "notFound": "Promoción no encontrada."
   },
   "coverImage": {

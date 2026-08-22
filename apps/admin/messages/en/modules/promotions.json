@@ -46,12 +46,19 @@
   "view": {
     "title": "View promotion",
     "editButton": "Edit promotion",
-    "subtitle": "Read-only preview of the marketing campaign.",
-    "infoTitle": "Details",
+    "subtitle": "Marketing campaign details.",
+    "infoTitle": "Campaign",
+    "descriptionTitle": "Description",
+    "noDescription": "No description provided.",
+    "metaTitle": "Validity & tracking",
     "checkoutId": "Checkout ID",
     "coverTitle": "Cover photo",
     "coverEmpty": "No cover photo.",
+    "coverEmptyHint": "Add a cover photo from the edit page to enrich the banner.",
     "coverAlt": "Cover for {name}",
+    "discountInformative": "Informative campaign",
+    "validityOpen": "No date bounds",
+    "usageHint": "{count} redemption(s) recorded",
     "notFound": "Promotion not found."
   },
   "coverImage": {

@@ -46,12 +46,19 @@
   "view": {
     "title": "Voir la promotion",
     "editButton": "Modifier la promotion",
-    "subtitle": "Aperçu lecture seule de la campagne marketing.",
-    "infoTitle": "Informations",
+    "subtitle": "Détails de la campagne marketing.",
+    "infoTitle": "Campagne",
+    "descriptionTitle": "Description",
+    "noDescription": "Aucune description renseignée.",
+    "metaTitle": "Validité & suivi",
     "checkoutId": "ID checkout",
     "coverTitle": "Photo de couverture",
     "coverEmpty": "Aucune photo de couverture.",
+    "coverEmptyHint": "Ajoutez une photo de couverture depuis la page d’édition pour enrichir le bandeau.",
     "coverAlt": "Couverture de {name}",
+    "discountInformative": "Campagne informative",
+    "validityOpen": "Sans borne de dates",
+    "usageHint": "{count} utilisation(s) enregistrée(s)",
     "notFound": "Promotion introuvable."
   },
   "coverImage": {
