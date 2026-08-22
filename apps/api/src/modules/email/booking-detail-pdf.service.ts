@@ -95,6 +95,7 @@ export class BookingDetailPdfService {
         unitPriceCents: item.unitPriceCents,
         startDate: toDateOnlyString(item.startDate),
         endDate: toDateOnlyString(item.endDate),
+        schedule: enriched.itemSchedules.get(item.id) ?? null,
       })),
       travelers: manifest.map((entry) => ({
         fullName: entry.fullName,

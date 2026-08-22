@@ -8,6 +8,7 @@ export type BookingDetailPdfItem = {
   unitPriceCents: number;
   startDate: string | null;
   endDate: string | null;
+  schedule: string | null;
 };
 
 export type BookingDetailPdfTraveler = {
@@ -37,6 +38,7 @@ export type BookingDetailPdfItineraryGroup = {
 export type BookingDetailPdfGuide = {
   name: string;
   role: 'primary' | 'secondary';
+  schedule: string;
 };
 
 export type BookingDetailPdfPayment = {

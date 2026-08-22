@@ -33,6 +33,7 @@ import type {
   BookingDetailPdfItineraryStep,
   BookingDetailPdfPayment,
 } from './booking-detail-pdf.types';
+import { formatPdfScheduleRange } from './booking-detail-pdf.format';
 
 const STEP_LABELS: Record<
   BookingDetailPdfLocale,
@@ -95,18 +96,21 @@ export class BookingDetailPdfEnrichmentService {
     guides: BookingDetailPdfGuide[];
     itinerary: BookingDetailPdfItineraryGroup[];
     payments: BookingDetailPdfPayment[];
+    itemSchedules: Map<string, string>;
     bookingCreatedAt: string;
   }> {
-    const [guides, itinerary, payments] = await Promise.all([
-      this.loadGuides(bookingId),
+    const [guides, itinerary, payments, itemSchedules] = await Promise.all([
+      this.loadGuides(bookingId, locale),
       this.loadItinerary(detail.items, locale),
       this.loadPayments(bookingId),
+      this.loadItemSchedules(detail.items, locale),
     ]);
 
     return {
       guides,
       itinerary,
       payments,
+      itemSchedules,
       bookingCreatedAt:
         detail.booking.createdAt instanceof Date
           ? detail.booking.createdAt.toISOString()
@@ -114,10 +118,13 @@ export class BookingDetailPdfEnrichmentService {
     };
   }
 
-  private async loadGuides(bookingId: string): Promise<BookingDetailPdfGuide[]> {
+  private async loadGuides(
+    bookingId: string,
+    locale: BookingDetailPdfLocale,
+  ): Promise<BookingDetailPdfGuide[]> {
     const assignments = await this.guideAssignmentsRepository.find({
       where: { bookingId },
-      order: { assignedAt: 'ASC' },
+      order: { startDatetime: 'ASC' },
     });
     if (!assignments.length) {
       return [];
@@ -138,9 +145,127 @@ export class BookingDetailPdfEnrichmentService {
         return {
           name: guide.displayName,
           role: assignment.role,
+          schedule: formatPdfScheduleRange(
+            assignment.startDatetime,
+            assignment.endDatetime,
+            locale,
+          ),
         };
       })
       .filter((row): row is BookingDetailPdfGuide => row != null);
+  }
+
+  private async loadItemSchedules(
+    items: BookingItems[],
+    locale: BookingDetailPdfLocale,
+  ): Promise<Map<string, string>> {
+    const schedules = new Map<string, string>();
+    await Promise.all(
+      items.map(async (item) => {
+        const schedule = await this.resolveItemSchedule(item, locale);
+        if (schedule) {
+          schedules.set(item.id, schedule);
+        }
+      }),
+    );
+    return schedules;
+  }
+
+  private async resolveItemSchedule(
+    item: BookingItems,
+    locale: BookingDetailPdfLocale,
+  ): Promise<string | null> {
+    switch (item.itemType) {
+      case 'activity_schedule':
+        return this.resolveActivityScheduleTime(item.referenceId, locale);
+      case 'flight_class':
+        return this.resolveFlightClassSchedule(item.referenceId, locale);
+      case 'vehicle':
+        return this.resolveVehicleSchedule(item.referenceId, locale);
+      case 'cabin':
+        return this.resolveBookingItemDateSchedule(item, locale);
+      default:
+        return null;
+    }
+  }
+
+  private resolveBookingItemDateSchedule(
+    item: BookingItems,
+    locale: BookingDetailPdfLocale,
+  ): string | null {
+    const startDay = item.startDate?.slice(0, 10);
+    if (!startDay) {
+      return null;
+    }
+    const endDay = (item.endDate ?? item.startDate)!.slice(0, 10);
+    return formatPdfScheduleRange(
+      new Date(`${startDay}T00:00:00`),
+      new Date(`${endDay}T23:59:59`),
+      locale,
+    );
+  }
+
+  private async resolveActivityScheduleTime(
+    scheduleId: string,
+    locale: BookingDetailPdfLocale,
+  ): Promise<string | null> {
+    const schedule = await this.activitySchedulesRepository.findOne({
+      where: { id: scheduleId, deletedAt: IsNull() },
+    });
+    if (!schedule) {
+      return null;
+    }
+
+    const activity = await this.activitiesRepository.findOne({
+      where: { id: schedule.activityId, deletedAt: IsNull() },
+    });
+    const start =
+      schedule.startDatetime instanceof Date
+        ? schedule.startDatetime
+        : new Date(schedule.startDatetime);
+    const durationMinutes = activity?.durationMinutes ?? 0;
+    const end = new Date(start.getTime() + Math.max(durationMinutes, 1) * 60_000);
+
+    return formatPdfScheduleRange(start, end, locale);
+  }
+
+  private async resolveFlightClassSchedule(
+    flightClassId: string,
+    locale: BookingDetailPdfLocale,
+  ): Promise<string | null> {
+    const flightClass = await this.flightClassesRepository.findOne({
+      where: { id: flightClassId, deletedAt: IsNull() },
+    });
+    if (!flightClass) {
+      return null;
+    }
+
+    const flight = await this.flightsRepository.findOne({
+      where: { id: flightClass.flightId, deletedAt: IsNull() },
+    });
+    if (!flight) {
+      return null;
+    }
+
+    return formatPdfScheduleRange(flight.departureTime, flight.arrivalTime, locale);
+  }
+
+  private async resolveVehicleSchedule(
+    availabilityId: string,
+    locale: BookingDetailPdfLocale,
+  ): Promise<string | null> {
+    const availability = await this.vehicleAvailabilityRepository.findOne({
+      where: { id: availabilityId, deletedAt: IsNull() },
+    });
+    if (!availability) {
+      return null;
+    }
+
+    return formatPdfScheduleRange(
+      availability.startDatetime,
+      availability.endDatetime,
+      locale,
+    );
   }
 
   private async loadPayments(bookingId: string): Promise<BookingDetailPdfPayment[]> {

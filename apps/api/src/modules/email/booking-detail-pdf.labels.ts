@@ -16,6 +16,7 @@ export type BookingDetailPdfLabels = {
   colItem: string;
   colType: string;
   colDates: string;
+  colSchedule: string;
   colQty: string;
   colUnitPrice: string;
   colLineTotal: string;
@@ -32,6 +33,7 @@ export type BookingDetailPdfLabels = {
   guidesSection: string;
   colGuideName: string;
   colGuideRole: string;
+  colGuideSchedule: string;
   guideRolePrimary: string;
   guideRoleSecondary: string;
   summarySection: string;
@@ -69,6 +71,7 @@ const LABELS: Record<BookingDetailPdfLocale, BookingDetailPdfLabels> = {
     colItem: 'Prestation',
     colType: 'Type',
     colDates: 'Dates',
+    colSchedule: 'Horaires',
     colQty: 'Qté',
     colUnitPrice: 'Prix unit.',
     colLineTotal: 'Sous-total',
@@ -85,6 +88,7 @@ const LABELS: Record<BookingDetailPdfLocale, BookingDetailPdfLabels> = {
     guidesSection: 'Guides assignés',
     colGuideName: 'Guide',
     colGuideRole: 'Rôle',
+    colGuideSchedule: 'Plage horaire',
     guideRolePrimary: 'Principal',
     guideRoleSecondary: 'Secondaire',
     summarySection: 'Informations complémentaires',
@@ -128,6 +132,7 @@ const LABELS: Record<BookingDetailPdfLocale, BookingDetailPdfLabels> = {
     colItem: 'Service',
     colType: 'Type',
     colDates: 'Dates',
+    colSchedule: 'Schedule',
     colQty: 'Qty',
     colUnitPrice: 'Unit price',
     colLineTotal: 'Subtotal',
@@ -144,6 +149,7 @@ const LABELS: Record<BookingDetailPdfLocale, BookingDetailPdfLabels> = {
     guidesSection: 'Assigned guides',
     colGuideName: 'Guide',
     colGuideRole: 'Role',
+    colGuideSchedule: 'Time slot',
     guideRolePrimary: 'Lead',
     guideRoleSecondary: 'Secondary',
     summarySection: 'Additional information',
@@ -187,6 +193,7 @@ const LABELS: Record<BookingDetailPdfLocale, BookingDetailPdfLabels> = {
     colItem: 'Servicio',
     colType: 'Tipo',
     colDates: 'Fechas',
+    colSchedule: 'Horarios',
     colQty: 'Cant.',
     colUnitPrice: 'Precio unit.',
     colLineTotal: 'Subtotal',
@@ -203,6 +210,7 @@ const LABELS: Record<BookingDetailPdfLocale, BookingDetailPdfLabels> = {
     guidesSection: 'Guías asignados',
     colGuideName: 'Guía',
     colGuideRole: 'Rol',
+    colGuideSchedule: 'Franja horaria',
     guideRolePrimary: 'Principal',
     guideRoleSecondary: 'Secundario',
     summarySection: 'Información complementaria',

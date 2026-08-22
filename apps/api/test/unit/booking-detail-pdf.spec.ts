@@ -27,6 +27,7 @@ function sampleInput(locale: 'fr' | 'en' | 'es' = 'fr') {
         unitPriceCents: 30750,
         startDate: '2026-08-10',
         endDate: '2026-08-12',
+        schedule: 'sam. 10 août 2026 · 08:00 – 11:00',
       },
     ],
     travelers: [
@@ -44,7 +45,7 @@ function sampleInput(locale: 'fr' | 'en' | 'es' = 'fr') {
         ],
       },
     ],
-    guides: [{ name: 'Marie Kabila', role: 'primary' as const }],
+    guides: [{ name: 'Marie Kabila', role: 'primary' as const, schedule: 'lun. 11 août 2026 · 09:00 – 17:00' }],
     payments: [],
     bookingCreatedAt: '2026-07-01T10:00:00.000Z',
     visitStartDate: '2026-08-10',

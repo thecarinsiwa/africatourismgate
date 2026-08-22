@@ -3,60 +3,14 @@ import type { BookingDetailPdfInput } from './booking-detail-pdf.types';
 import { formatMoney } from './email.templates';
 import type { BookingDetailPdfLabels } from './booking-detail-pdf.labels';
 import { getBookingDetailPdfLabels } from './booking-detail-pdf.labels';
+import {
+  formatItemDateRange,
+  formatPdfDateTime,
+  formatVisitDate,
+} from './booking-detail-pdf.format';
 
 const PAGE_MARGIN = 48;
 const CONTENT_WIDTH = 595.28 - PAGE_MARGIN * 2;
-
-function toDateOnlyString(value: string | null | undefined): string | null {
-  if (!value?.trim()) {
-    return null;
-  }
-  const match = /^(\d{4}-\d{2}-\d{2})/.exec(value.trim());
-  return match ? match[1]! : value.slice(0, 10);
-}
-
-function formatPdfDate(iso: string, locale: BookingDetailPdfInput['locale']): string {
-  const tag = locale === 'en' ? 'en-US' : locale === 'es' ? 'es-ES' : 'fr-FR';
-  try {
-    return new Intl.DateTimeFormat(tag, {
-      dateStyle: 'long',
-      timeStyle: 'short',
-    }).format(new Date(iso));
-  } catch {
-    return iso;
-  }
-}
-
-function formatVisitDate(value: string | null, locale: BookingDetailPdfInput['locale']): string {
-  const dateOnly = toDateOnlyString(value);
-  if (!dateOnly) {
-    return '—';
-  }
-  const tag = locale === 'en' ? 'en-US' : locale === 'es' ? 'es-ES' : 'fr-FR';
-  try {
-    return new Intl.DateTimeFormat(tag, { dateStyle: 'medium' }).format(
-      new Date(`${dateOnly}T00:00:00Z`),
-    );
-  } catch {
-    return dateOnly;
-  }
-}
-
-function formatItemDates(
-  startDate: string | null,
-  endDate: string | null,
-  locale: BookingDetailPdfInput['locale'],
-): string {
-  const start = toDateOnlyString(startDate);
-  if (!start) {
-    return '—';
-  }
-  const end = toDateOnlyString(endDate);
-  if (!end || end === start) {
-    return formatVisitDate(start, locale);
-  }
-  return `${formatVisitDate(start, locale)} → ${formatVisitDate(end, locale)}`;
-}
 
 function itemTypeLabel(itemType: string, labels: BookingDetailPdfLabels): string {
   return labels.itemTypes[itemType] ?? itemType;
@@ -203,7 +157,7 @@ export function renderBookingDetailPdf(input: BookingDetailPdfInput): Promise<Bu
   doc
     .fillColor(mutedColor)
     .fontSize(9)
-    .text(`${labels.generatedOn} ${formatPdfDate(input.generatedAt, input.locale)}`, PAGE_MARGIN);
+    .text(`${labels.generatedOn} ${formatPdfDateTime(input.generatedAt, input.locale)}`, PAGE_MARGIN);
 
   drawKeyValue(doc, labels.reference, input.bookingId.slice(0, 8).toUpperCase(), mutedColor);
   drawKeyValue(
@@ -231,12 +185,13 @@ export function renderBookingDetailPdf(input: BookingDetailPdfInput): Promise<Bu
   drawSectionTitle(doc, labels.itemsSection, brandColor);
 
   const itemCols = [
-    { key: 'title', label: labels.colItem, width: 0.34 },
-    { key: 'type', label: labels.colType, width: 0.14 },
-    { key: 'dates', label: labels.colDates, width: 0.22 },
-    { key: 'qty', label: labels.colQty, width: 0.08 },
-    { key: 'unit', label: labels.colUnitPrice, width: 0.11 },
-    { key: 'total', label: labels.colLineTotal, width: 0.11 },
+    { key: 'title', label: labels.colItem, width: 0.28 },
+    { key: 'type', label: labels.colType, width: 0.12 },
+    { key: 'dates', label: labels.colDates, width: 0.14 },
+    { key: 'schedule', label: labels.colSchedule, width: 0.18 },
+    { key: 'qty', label: labels.colQty, width: 0.06 },
+    { key: 'unit', label: labels.colUnitPrice, width: 0.1 },
+    { key: 'total', label: labels.colLineTotal, width: 0.12 },
   ] as const;
 
   const tableLeft = PAGE_MARGIN;
@@ -270,7 +225,8 @@ export function renderBookingDetailPdf(input: BookingDetailPdfInput): Promise<Bu
     const cells = [
       item.title,
       itemTypeLabel(item.itemType, labels),
-      formatItemDates(item.startDate, item.endDate, input.locale),
+      formatItemDateRange(item.startDate, item.endDate, input.locale),
+      item.schedule?.trim() || '—',
       String(item.quantity),
       formatMoney(item.unitPriceCents, input.currency),
       formatMoney(lineTotal, input.currency),
@@ -393,8 +349,9 @@ export function renderBookingDetailPdf(input: BookingDetailPdfInput): Promise<Bu
     drawSectionTitle(doc, labels.guidesSection, brandColor);
 
     const guideCols = [
-      { label: labels.colGuideName, width: 0.65 },
-      { label: labels.colGuideRole, width: 0.35 },
+      { label: labels.colGuideName, width: 0.34 },
+      { label: labels.colGuideRole, width: 0.16 },
+      { label: labels.colGuideSchedule, width: 0.5 },
     ] as const;
 
     let gTop = doc.y;
@@ -416,7 +373,7 @@ export function renderBookingDetailPdf(input: BookingDetailPdfInput): Promise<Bu
     for (const guide of input.guides) {
       ensureSpace(doc, 18);
       const rowTop = doc.y;
-      const cells = [guide.name, guideRoleLabel(guide.role, labels)];
+      const cells = [guide.name, guideRoleLabel(guide.role, labels), guide.schedule];
       let cx = tableLeft;
       let rowHeight = 14;
       doc.fontSize(8.5).font('Helvetica').fillColor('#0f1a16');
@@ -435,7 +392,7 @@ export function renderBookingDetailPdf(input: BookingDetailPdfInput): Promise<Bu
   drawKeyValue(
     doc,
     labels.bookingCreatedAt,
-    formatPdfDate(input.bookingCreatedAt, input.locale),
+    formatPdfDateTime(input.bookingCreatedAt, input.locale),
     mutedColor,
   );
 
@@ -475,7 +432,7 @@ export function renderBookingDetailPdf(input: BookingDetailPdfInput): Promise<Bu
       ensureSpace(doc, 18);
       const rowTop = doc.y;
       const cells = [
-        formatPdfDate(payment.createdAt, input.locale),
+        formatPdfDateTime(payment.createdAt, input.locale),
         formatMoney(payment.amountCents, payment.currency),
         payment.status,
         payment.provider,
