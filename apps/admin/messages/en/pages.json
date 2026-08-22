@@ -363,6 +363,10 @@
     "codes-promo": {
       "title": "Promo codes",
       "description": "Create and manage codes usable at checkout (web preview). Date validation, code uniqueness and usage limits. Access: promo_codes.read / write.",
+      "actions": {
+        "new": "New promo code",
+        "promotions": "Promotions"
+      },
       "intro": "Codes entered at checkout (e.g. WELCOME10). Complements promotions. Access: promo_codes.read / write.",
       "linkPromotions": "promotions",
       "nouveau": {
@@ -378,6 +382,10 @@
     "promotions": {
       "title": "Promotions",
       "description": "Marketing campaigns with optional discount (checkout via promotionId). Complements promo codes. Access: promo_codes.read / write.",
+      "actions": {
+        "new": "New promotion",
+        "promoCodes": "Promo codes"
+      },
       "intro": "Marketing campaigns with optional discount (checkout via promotionId). Complements promo codes. Access: promo_codes.read / write.",
       "linkPromoCodes": "promo codes",
       "nouveau": {

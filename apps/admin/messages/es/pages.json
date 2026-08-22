@@ -363,6 +363,10 @@
     "codes-promo": {
       "title": "Códigos promocionales",
       "description": "Cree y gestione códigos utilizables en el checkout (vista previa web). Validación de fechas, unicidad y límite de usos. Acceso: promo_codes.read / write.",
+      "actions": {
+        "new": "Nuevo código promocional",
+        "promotions": "Promociones"
+      },
       "intro": "Códigos introducidos en el checkout (ej. BIENVENUE10). Complementa las promociones. Acceso: promo_codes.read / write.",
       "linkPromotions": "promociones",
       "nouveau": {
@@ -378,6 +382,10 @@
     "promotions": {
       "title": "Promociones",
       "description": "Campañas de marketing con descuento opcional (checkout vía promotionId). Complementa los códigos promocionales. Acceso: promo_codes.read / write.",
+      "actions": {
+        "new": "Nueva promoción",
+        "promoCodes": "Códigos promocionales"
+      },
       "intro": "Campañas de marketing con descuento opcional (checkout vía promotionId). Complementa los códigos promocionales. Acceso: promo_codes.read / write.",
       "linkPromoCodes": "códigos promocionales",
       "nouveau": {

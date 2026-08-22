@@ -363,6 +363,10 @@
     "codes-promo": {
       "title": "Codes promo",
       "description": "Créez et gérez les codes utilisables dans le checkout (preview web). Validation des dates, unicité du code et plafond d'utilisations. Accès : promo_codes.read / write.",
+      "actions": {
+        "new": "Nouveau code promo",
+        "promotions": "Promotions"
+      },
       "intro": "Créez et gérez les codes utilisables dans le checkout (preview web). Validation des dates, unicité du code et plafond d'utilisations. Voir aussi les promotions. Accès : promo_codes.read / write.",
       "linkPromotions": "promotions",
       "nouveau": {
@@ -378,6 +382,10 @@
     "promotions": {
       "title": "Promotions",
       "description": "Campagnes marketing avec réduction optionnelle (checkout via promotionId). Complémentaire aux codes promo. Accès : promo_codes.read / write.",
+      "actions": {
+        "new": "Nouvelle promotion",
+        "promoCodes": "Codes promo"
+      },
       "intro": "Campagnes marketing avec réduction optionnelle (checkout via promotionId). Complémentaire aux codes promo. Accès : promo_codes.read / write.",
       "linkPromoCodes": "codes promo",
       "nouveau": {
