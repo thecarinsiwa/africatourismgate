@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import { DeepPartial, Repository, SelectQueryBuilder } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import { Promotions } from '../../../entities/generated';
 import { CrudService } from '../../../common/crud/crud.service';
@@ -13,6 +13,18 @@ export class PromotionsService extends CrudService<Promotions> {
     private readonly promotionsRepository: Repository<Promotions>,
   ) {
     super(promotionsRepository);
+  }
+
+  override create(dto: DeepPartial<Promotions>, actorUserId?: string): Promise<Promotions> {
+    return super.create(this.normalizeCoverImage(dto), actorUserId);
+  }
+
+  override update(
+    id: string,
+    dto: DeepPartial<Promotions>,
+    actorUserId?: string,
+  ): Promise<Promotions> {
+    return super.update(id, this.normalizeCoverImage(dto), actorUserId);
   }
 
   async list(query: PromotionsListQueryDto): Promise<PaginatedResult<Promotions>> {
@@ -79,5 +91,11 @@ export class PromotionsService extends CrudService<Promotions> {
     }
 
     qb.andWhere('promotion.validUntil IS NOT NULL AND promotion.validUntil < CURRENT_DATE()');
+  }
+
+  private normalizeCoverImage(dto: DeepPartial<Promotions>): DeepPartial<Promotions> {
+    if (dto.coverImageUrl === undefined) return dto;
+    const trimmed = typeof dto.coverImageUrl === 'string' ? dto.coverImageUrl.trim() : '';
+    return { ...dto, coverImageUrl: trimmed || null };
   }
 }

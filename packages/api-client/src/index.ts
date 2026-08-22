@@ -1134,6 +1134,13 @@ export class ApiClient {
     return this.request<void>(`/promotions/${id}`, { method: 'DELETE' });
   }
 
+  uploadPromotionImage(id: string, body: FormData): Promise<{ url: string }> {
+    return this.request<{ url: string }>(`/promotions/${id}/upload-image`, {
+      method: 'POST',
+      body,
+    });
+  }
+
   countUsers(): Promise<number> {
     return fetchTotal(this, '/users');
   }

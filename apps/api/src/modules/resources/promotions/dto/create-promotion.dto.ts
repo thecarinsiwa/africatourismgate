@@ -28,6 +28,15 @@ export class CreatePromotionDto {
   @IsString()
   description?: string | null;
 
+  @ApiPropertyOptional({
+    description: 'URL de la photo de couverture (upload ou URL externe).',
+    nullable: true,
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(512)
+  coverImageUrl?: string | null;
+
   @ApiPropertyOptional({ enum: ['percent', 'fixed_amount'], nullable: true })
   @IsOptional()
   @IsIn(['percent', 'fixed_amount'])

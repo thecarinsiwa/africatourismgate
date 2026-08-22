@@ -10,6 +10,7 @@ import { AdminIntroPage } from '../pages/admin-intro-page';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { PaymentsPromoSubnav } from '../payments/payments-promo-subnav';
 import { getApiClient } from '../../lib/auth/api';
+import { PromotionCoverImageSection } from './promotion-cover-image-section';
 import { PromotionForm } from './promotion-form';
 
 type PromotionEditPageProps = {
@@ -80,14 +81,21 @@ export function PromotionEditPage({ promotionId }: PromotionEditPageProps) {
   const { promotion } = state;
 
   return (
-    <div className="min-w-0">
+    <div className="min-w-0 space-y-6">
       <PaymentsPromoSubnav />
       <AdminIntroPage
         routePath="paiements/promotions/id"
         backHref="/paiements/promotions"
         backLabelKey="backLabel"
       >
-        <PromotionForm mode="edit" promotionId={promotionId} initialPromotion={promotion} />
+        <div className="space-y-6">
+          <PromotionCoverImageSection
+            promotionId={promotionId}
+            coverImageUrl={promotion.coverImageUrl}
+            onSaved={(updated) => setState({ status: 'ready', promotion: updated })}
+          />
+          <PromotionForm mode="edit" promotionId={promotionId} initialPromotion={promotion} />
+        </div>
       </AdminIntroPage>
     </div>
   );

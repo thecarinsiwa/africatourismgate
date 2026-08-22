@@ -2,6 +2,7 @@
 
 import { DataTableBadge, cn } from '@africatourismgate/ui';
 import type { PromoCodeDiscountType } from '@africatourismgate/types';
+import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import {
   usePromoDiscountLabels,
@@ -10,6 +11,7 @@ import {
   usePromoValidityLabels,
 } from '../../lib/i18n/use-module-labels';
 import { useHydrated } from '../../lib/i18n/use-hydrated';
+import { resolveMediaUrl } from '../../lib/resolve-media-url';
 import {
   formatPromotionDiscountBadge,
   formatPromotionValidityDisplay,
@@ -23,6 +25,7 @@ import {
 export type PromotionPreviewBannerProps = {
   name: string;
   description?: string | null;
+  coverImageUrl?: string | null;
   hasDiscount: boolean;
   discountType?: PromoCodeDiscountType | null;
   discountValue?: string | number | null;
@@ -39,6 +42,7 @@ export type PromotionPreviewBannerProps = {
 export function PromotionPreviewBanner({
   name,
   description,
+  coverImageUrl,
   hasDiscount,
   discountType,
   discountValue,
@@ -58,6 +62,7 @@ export function PromotionPreviewBanner({
   const hydrated = useHydrated();
 
   const displayName = name.trim() || t('preview.defaultName');
+  const coverUrl = coverImageUrl?.trim() || null;
   const discountLabel = formatPromotionDiscountBadge(
     { hasDiscount, discountType, discountValue },
     discountLabels,
@@ -133,7 +138,25 @@ export function PromotionPreviewBanner({
           compact ? 'px-4 py-3' : 'px-5 py-5 sm:px-6 sm:py-6',
         )}
       >
-        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/10" />
+        {coverUrl ? (
+          <Image
+            src={resolveMediaUrl(coverUrl)}
+            alt=""
+            fill
+            unoptimized
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 42rem"
+            aria-hidden
+          />
+        ) : null}
+        <div
+          className={cn(
+            'absolute inset-0',
+            coverUrl
+              ? 'bg-gradient-to-t from-black/75 via-black/45 to-black/25'
+              : 'bg-gradient-to-t from-black/30 via-transparent to-black/10',
+          )}
+        />
 
         <div className="relative z-10 space-y-3">
           <div className="flex items-start justify-between gap-2">
@@ -192,6 +215,7 @@ export function PromotionPreviewBanner({
 export function promotionToPreviewProps(promo: {
   name: string;
   description: string | null;
+  coverImageUrl?: string | null;
   discountType: PromoCodeDiscountType | null;
   discountValue: string | null;
   validFrom: string | null;
@@ -204,6 +228,7 @@ export function promotionToPreviewProps(promo: {
   return {
     name: promo.name,
     description: promo.description,
+    coverImageUrl: promo.coverImageUrl ?? null,
     hasDiscount,
     discountType: promo.discountType,
     discountValue: promo.discountValue,

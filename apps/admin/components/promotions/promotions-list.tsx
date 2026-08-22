@@ -17,6 +17,7 @@ import {
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { Promotion } from '@africatourismgate/types';
+import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { PromotionsListFilter } from '../../config/promotions-kpi';
@@ -30,6 +31,7 @@ import {
 } from '../../lib/i18n/use-module-labels';
 import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
 import { useHydrated } from '../../lib/i18n/use-hydrated';
+import { resolveMediaUrl } from '../../lib/resolve-media-url';
 import {
   formatPromotionDiscountBadge,
   formatPromoUsageLabel,
@@ -170,6 +172,29 @@ export function PromotionsList({ listFilter, onListFilterChange }: PromotionsLis
   const columns = useMemo<ColumnDef<Promotion, unknown>[]>(
     () => [
       {
+        id: 'cover',
+        header: t('columns.cover'),
+        meta: { align: 'center' },
+        cell: ({ row }) => {
+          const imageUrl = row.original.coverImageUrl?.trim();
+          if (!imageUrl) {
+            return <span className="text-sm text-atg-muted">{emptyDash}</span>;
+          }
+          return (
+            <div className="relative mx-auto h-12 w-16 overflow-hidden rounded-md border border-atg-border">
+              <Image
+                src={resolveMediaUrl(imageUrl)}
+                alt=""
+                fill
+                unoptimized
+                className="object-cover"
+                sizes="64px"
+              />
+            </div>
+          );
+        },
+      },
+      {
         accessorKey: 'name',
         header: t('columns.campaign'),
         cell: ({ row }) => {
@@ -301,6 +326,7 @@ export function PromotionsList({ listFilter, onListFilterChange }: PromotionsLis
       deletingId,
       discountLabels,
       discountTypeLabels,
+      emptyDash,
       handleDeleteRequest,
       hydrated,
       t,

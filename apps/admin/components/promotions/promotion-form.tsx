@@ -241,6 +241,7 @@ export function PromotionForm({ mode, promotionId, initialPromotion }: Promotion
           <PromotionPreviewBanner
             name={values.name}
             description={values.description}
+            coverImageUrl={mode === 'edit' ? initialPromotion?.coverImageUrl : null}
             hasDiscount={values.hasDiscount}
             discountType={values.hasDiscount ? values.discountType : null}
             discountValue={values.hasDiscount ? values.discountValue : null}

@@ -24,6 +24,7 @@
     "deleteConfirmButton": "Delete",
     "cancel": "Cancel",
     "columns": {
+      "cover": "Cover",
       "campaign": "Campaign",
       "description": "Description",
       "discount": "Discount",
@@ -48,7 +49,20 @@
     "subtitle": "Read-only preview of the marketing campaign.",
     "infoTitle": "Details",
     "checkoutId": "Checkout ID",
+    "coverTitle": "Cover photo",
+    "coverEmpty": "No cover photo.",
+    "coverAlt": "Cover for {name}",
     "notFound": "Promotion not found."
+  },
+  "coverImage": {
+    "title": "Cover photo",
+    "hint": "Shown on the preview banner, list and campaign page. JPEG, PNG or WebP, max. 5 MB.",
+    "previewAlt": "Cover photo preview",
+    "empty": "No cover photo set.",
+    "upload": "Upload an image",
+    "remove": "Remove image",
+    "saveUrl": "Save URL",
+    "saving": "Saving…"
   },
   "preview": {
     "defaultName": "New campaign",

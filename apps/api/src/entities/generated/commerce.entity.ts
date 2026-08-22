@@ -160,6 +160,9 @@ export class Promotions extends BaseAuditEntity {
   @Column({ type: 'text', name: 'description', nullable: true })
   description!: string | null;
 
+  @Column({ type: 'varchar', name: 'cover_image_url', length: 512, nullable: true })
+  coverImageUrl!: string | null;
+
   @Column({ name: 'discount_type', enum: ["percent","fixed_amount"], nullable: true })
   discountType!: 'percent' | 'fixed_amount';
 

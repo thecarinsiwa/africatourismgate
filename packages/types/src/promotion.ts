@@ -4,6 +4,7 @@ export interface Promotion {
   id: string;
   name: string;
   description: string | null;
+  coverImageUrl: string | null;
   discountType: PromoCodeDiscountType | null;
   discountValue: string | null;
   validFrom: string | null;
@@ -29,6 +30,7 @@ export interface PromotionsListQuery {
 export interface CreatePromotionRequest {
   name: string;
   description?: string | null;
+  coverImageUrl?: string | null;
   discountType?: PromoCodeDiscountType | null;
   discountValue?: number | null;
   validFrom?: string | null;

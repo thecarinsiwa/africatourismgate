@@ -1560,6 +1560,7 @@ CREATE TABLE `promotions` (
   `id` CHAR(36) NOT NULL,
   `name` VARCHAR(180) NOT NULL,
   `description` TEXT,
+  `cover_image_url` VARCHAR(512) DEFAULT NULL,
   `discount_type` ENUM('percent','fixed_amount') DEFAULT NULL,
   `discount_value` DECIMAL(12,2) DEFAULT NULL,
   `valid_from` DATE DEFAULT NULL,

@@ -9,6 +9,7 @@ import {
   Skeleton,
 } from '@africatourismgate/ui';
 import type { Promotion } from '@africatourismgate/types';
+import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { AdminPageBackLink } from '../admin-page-back-link';
@@ -23,6 +24,7 @@ import {
   usePromoValidityLabels,
 } from '../../lib/i18n/use-module-labels';
 import { useHydrated } from '../../lib/i18n/use-hydrated';
+import { resolveMediaUrl } from '../../lib/resolve-media-url';
 import {
   formatPromotionDiscountBadge,
   formatPromoUsageLabel,
@@ -161,6 +163,24 @@ export function PromotionViewPage({ promotionId }: PromotionViewPageProps) {
       </div>
 
       <PromotionPreviewBanner {...promotionToPreviewProps(promotion)} />
+
+      <Card variant="dashboard" padding="md" className="space-y-4">
+        <h3 className="text-sm font-semibold text-atg-fg">{t('coverTitle')}</h3>
+        {promotion.coverImageUrl?.trim() ? (
+          <div className="relative aspect-[16/9] w-full max-w-2xl overflow-hidden rounded-lg border border-atg-border">
+            <Image
+              src={resolveMediaUrl(promotion.coverImageUrl.trim())}
+              alt={t('coverAlt', { name: promotion.name })}
+              fill
+              unoptimized
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 42rem"
+            />
+          </div>
+        ) : (
+          <p className="text-sm text-atg-muted">{t('coverEmpty')}</p>
+        )}
+      </Card>
 
       <Card variant="dashboard" padding="md" className="space-y-5">
         <div>

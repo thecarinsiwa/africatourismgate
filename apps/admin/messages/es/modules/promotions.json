@@ -24,6 +24,7 @@
     "deleteConfirmButton": "Eliminar",
     "cancel": "Cancelar",
     "columns": {
+      "cover": "Portada",
       "campaign": "Campaña",
       "description": "Descripción",
       "discount": "Descuento",
@@ -48,7 +49,20 @@
     "subtitle": "Vista de solo lectura de la campaña de marketing.",
     "infoTitle": "Información",
     "checkoutId": "ID de checkout",
+    "coverTitle": "Foto de portada",
+    "coverEmpty": "Ninguna foto de portada.",
+    "coverAlt": "Portada de {name}",
     "notFound": "Promoción no encontrada."
+  },
+  "coverImage": {
+    "title": "Foto de portada",
+    "hint": "Se muestra en el banner de vista previa, la lista y la ficha de campaña. JPEG, PNG o WebP, máx. 5 MB.",
+    "previewAlt": "Vista previa de la foto de portada",
+    "empty": "Ninguna foto de portada definida.",
+    "upload": "Subir una imagen",
+    "remove": "Quitar la imagen",
+    "saveUrl": "Guardar la URL",
+    "saving": "Guardando…"
   },
   "preview": {
     "defaultName": "Nueva campaña",
