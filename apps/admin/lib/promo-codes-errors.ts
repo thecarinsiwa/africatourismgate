@@ -4,6 +4,10 @@ import type { PromoCodesErrorMessages } from './i18n/admin-error-messages';
 
 export type { PromoCodesErrorMessages };
 
+export function isPromoCodeConflictError(error: unknown): boolean {
+  return error instanceof ApiHttpError && error.status === 409;
+}
+
 export function getPromoCodesErrorMessage(
   error: unknown,
   messages: PromoCodesErrorMessages,

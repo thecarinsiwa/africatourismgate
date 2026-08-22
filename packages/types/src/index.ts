@@ -68,6 +68,7 @@ export type {
   PromoCode,
   PromoCodeDiscountType,
   PromoCodesListQuery,
+  PromoListValidityFilter,
   UpdatePromoCodeRequest,
 } from './promo-code.js';
 

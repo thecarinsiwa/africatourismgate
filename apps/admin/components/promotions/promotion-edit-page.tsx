@@ -3,12 +3,14 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import type { Promotion } from '@africatourismgate/types';
-import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
+import { AdminPageBackLink } from '../admin-page-back-link';
+import { AdminIntroPage } from '../pages/admin-intro-page';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { PaymentsPromoSubnav } from '../payments/payments-promo-subnav';
 import { getApiClient } from '../../lib/auth/api';
+import { PromotionCoverImageSection } from './promotion-cover-image-section';
 import { PromotionForm } from './promotion-form';
 
 type PromotionEditPageProps = {
@@ -18,6 +20,7 @@ type PromotionEditPageProps = {
 export function PromotionEditPage({ promotionId }: PromotionEditPageProps) {
   const { promotions: getPromotionsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.promotions.edit');
+  const tPages = useTranslations('pages.paiements.promotions.id');
   const tCommon = useTranslations('modules.common');
   const [state, setState] = useState<
     | { status: 'loading' }
@@ -51,8 +54,11 @@ export function PromotionEditPage({ promotionId }: PromotionEditPageProps) {
 
   if (state.status === 'loading') {
     return (
-      <div>
+      <div className="min-w-0">
         <PaymentsPromoSubnav />
+        <div className="mb-4">
+          <AdminPageBackLink href="/paiements/promotions" label={tPages('backLabel')} />
+        </div>
         <p className="text-sm text-atg-muted">{tCommon('loading')}</p>
       </div>
     );
@@ -60,19 +66,14 @@ export function PromotionEditPage({ promotionId }: PromotionEditPageProps) {
 
   if (state.status === 'error') {
     return (
-      <div>
+      <div className="min-w-0">
         <PaymentsPromoSubnav />
-        <div className="space-y-4">
-          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-            {state.message}
-          </p>
-          <Link
-            href="/paiements/promotions"
-            className="text-sm font-medium text-primary hover:text-primary-hover"
-          >
-            {tCommon('back.toList')}
-          </Link>
+        <div className="mb-4">
+          <AdminPageBackLink href="/paiements/promotions" label={tPages('backLabel')} />
         </div>
+        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+          {state.message}
+        </p>
       </div>
     );
   }
@@ -80,9 +81,22 @@ export function PromotionEditPage({ promotionId }: PromotionEditPageProps) {
   const { promotion } = state;
 
   return (
-    <div>
+    <div className="min-w-0 space-y-6">
       <PaymentsPromoSubnav />
-      <PromotionForm mode="edit" promotionId={promotionId} initialPromotion={promotion} />
+      <AdminIntroPage
+        routePath="paiements/promotions/id"
+        backHref="/paiements/promotions"
+        backLabelKey="backLabel"
+      >
+        <div className="space-y-6">
+          <PromotionCoverImageSection
+            promotionId={promotionId}
+            coverImageUrl={promotion.coverImageUrl}
+            onSaved={(updated) => setState({ status: 'ready', promotion: updated })}
+          />
+          <PromotionForm mode="edit" promotionId={promotionId} initialPromotion={promotion} />
+        </div>
+      </AdminIntroPage>
     </div>
   );
 }

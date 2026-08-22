@@ -152,9 +152,19 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Codes promotionnels.',
     apiResource: 'promo-codes',
   },
+  'paiements/codes-promo/id/voir': {
+    title: 'Voir le code promo',
+    description: 'Aperçu lecture seule d’un code promotionnel.',
+    apiResource: 'promo-codes',
+  },
   'paiements/promotions': {
     title: 'Promotions',
     description: 'Campagnes et offres.',
+    apiResource: 'promotions',
+  },
+  'paiements/promotions/id/voir': {
+    title: 'Voir la promotion',
+    description: 'Aperçu lecture seule d’une campagne marketing.',
     apiResource: 'promotions',
   },
   'contenu/blog': {

@@ -9,6 +9,7 @@
     "deleteConfirmButton": "Supprimer",
     "cancel": "Annuler",
     "columns": {
+      "cover": "Couverture",
       "code": "Code",
       "discount": "Réduction",
       "validity": "Validité",
@@ -25,6 +26,30 @@
   },
   "edit": {
     "pageTitle": "Modifier le code promo"
+  },
+  "view": {
+    "title": "Voir le code promo",
+    "editButton": "Modifier le code promo",
+    "subtitle": "Détails du code utilisable au checkout.",
+    "infoTitle": "Code",
+    "metaTitle": "Validité & suivi",
+    "checkoutId": "ID",
+    "badge": "Code promo",
+    "heroHint": "Saisi tel quel par le client au checkout.",
+    "ariaLabel": "Code promo {code}",
+    "coverAlt": "Couverture du code {code}",
+    "usageHint": "{count} utilisation(s) enregistrée(s)",
+    "notFound": "Code promo introuvable."
+  },
+  "coverImage": {
+    "title": "Photo de couverture",
+    "hint": "Affichée sur le bandeau aperçu, la liste et la fiche code. JPEG, PNG ou WebP, max. 5 Mo.",
+    "previewAlt": "Aperçu de la photo de couverture",
+    "empty": "Aucune photo de couverture définie.",
+    "upload": "Téléverser une image",
+    "remove": "Retirer l'image",
+    "saveUrl": "Enregistrer l'URL",
+    "saving": "Enregistrement…"
   },
   "form": {
     "validation": {
@@ -62,10 +87,34 @@
     "saving": "Enregistrement…",
     "createButton": "Créer le code promo",
     "saveButton": "Enregistrer",
-    "cancelButton": "Annuler"
+    "cancelButton": "Annuler",
+    "conflictModal": {
+      "title": "Code déjà utilisé",
+      "description": "Le code « {code} » existe déjà. Choisissez un autre code promo.",
+      "confirm": "Compris",
+      "close": "Fermer"
+    }
   },
   "usage": {
     "format": "{count} / {max}",
     "unlimitedMax": "∞"
+  },
+  "stats": {
+    "total": {
+      "label": "Codes promo",
+      "subtitle": "Tous les codes"
+    },
+    "active": {
+      "label": "Actifs",
+      "subtitle": "Utilisables au checkout"
+    },
+    "inactive": {
+      "label": "Inactifs",
+      "subtitle": "Désactivés manuellement"
+    },
+    "ongoing": {
+      "label": "En cours",
+      "subtitle": "Dans la période de validité"
+    }
   }
 }

@@ -2,13 +2,16 @@
 
 import { DataTableBadge, cn } from '@africatourismgate/ui';
 import type { PromoCodeDiscountType } from '@africatourismgate/types';
+import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import {
   usePromoDiscountLabels,
   usePromoDiscountTypeLabels,
+  usePromoUsageLabels,
   usePromoValidityLabels,
 } from '../../lib/i18n/use-module-labels';
 import { useHydrated } from '../../lib/i18n/use-hydrated';
+import { resolveMediaUrl } from '../../lib/resolve-media-url';
 import {
   formatPromotionDiscountBadge,
   formatPromotionValidityDisplay,
@@ -22,6 +25,7 @@ import {
 export type PromotionPreviewBannerProps = {
   name: string;
   description?: string | null;
+  coverImageUrl?: string | null;
   hasDiscount: boolean;
   discountType?: PromoCodeDiscountType | null;
   discountValue?: string | number | null;
@@ -38,6 +42,7 @@ export type PromotionPreviewBannerProps = {
 export function PromotionPreviewBanner({
   name,
   description,
+  coverImageUrl,
   hasDiscount,
   discountType,
   discountValue,
@@ -53,10 +58,11 @@ export function PromotionPreviewBanner({
   const discountLabels = usePromoDiscountLabels();
   const validityLabels = usePromoValidityLabels();
   const discountTypeLabels = usePromoDiscountTypeLabels();
-  const tUsage = useTranslations('modules.promoCodes.usage');
+  const tUsage = usePromoUsageLabels();
   const hydrated = useHydrated();
 
   const displayName = name.trim() || t('preview.defaultName');
+  const coverUrl = coverImageUrl?.trim() || null;
   const discountLabel = formatPromotionDiscountBadge(
     { hasDiscount, discountType, discountValue },
     discountLabels,
@@ -73,10 +79,50 @@ export function PromotionPreviewBanner({
       ? formatPromoUsageLabel(
           redemptionCount,
           maxRedemptions ?? null,
-          tUsage('format'),
-          tUsage('unlimitedMax'),
+          tUsage.format,
+          tUsage.unlimitedMax,
         )
       : '';
+
+  const statusBadges = (
+    <>
+      <DataTableBadge
+        variant={active ? 'success' : 'muted'}
+        className={cn(
+          'shrink-0 ring-white/20',
+          active ? 'bg-emerald-500/20 text-white' : 'bg-white/10 text-white/80',
+        )}
+      >
+        {active ? t('status.active') : t('status.inactive')}
+      </DataTableBadge>
+      {validityState ? (
+        <DataTableBadge
+          variant={getPromoValidityBadgeVariant(validityState)}
+          className="shrink-0 bg-white/10 text-white ring-white/20"
+        >
+          {getPromoValidityLabel(validityState, validityLabels)}
+        </DataTableBadge>
+      ) : null}
+    </>
+  );
+
+  const discountBadges = (
+    <>
+      <span
+        className={cn(
+          'inline-flex shrink-0 items-center rounded-full bg-white/15 px-2.5 py-0.5 font-semibold text-white ring-1 ring-inset ring-white/25 backdrop-blur-sm',
+          compact ? 'text-[11px] tabular-nums' : 'text-xs tabular-nums',
+        )}
+      >
+        {discountLabel}
+      </span>
+      {hasDiscount && discountType ? (
+        <span className="inline-flex shrink-0 items-center rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-medium text-white/90 ring-1 ring-inset ring-white/20">
+          {getPromoDiscountTypeLabel(discountType, discountTypeLabels)}
+        </span>
+      ) : null}
+    </>
+  );
 
   return (
     <section
@@ -89,75 +135,77 @@ export function PromotionPreviewBanner({
       <div
         className={cn(
           'relative bg-gradient-to-br from-[#0f2744] via-[#163456] to-primary/80',
-          compact ? 'min-h-[88px] px-4 py-3' : 'min-h-[160px] px-6 py-6 sm:min-h-[200px] sm:px-8 sm:py-8',
+          compact ? 'px-4 py-3' : 'px-5 py-5 sm:px-6 sm:py-6',
         )}
       >
-        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/10" />
+        {coverUrl ? (
+          <Image
+            src={resolveMediaUrl(coverUrl)}
+            alt=""
+            fill
+            unoptimized
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 42rem"
+            aria-hidden
+          />
+        ) : null}
+        <div
+          className={cn(
+            'absolute inset-0',
+            coverUrl
+              ? 'bg-gradient-to-t from-black/75 via-black/45 to-black/25'
+              : 'bg-gradient-to-t from-black/30 via-transparent to-black/10',
+          )}
+        />
 
-        <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div className="min-w-0 flex-1 space-y-2">
+        <div className="relative z-10 space-y-3">
+          <div className="flex items-start justify-between gap-2">
             <p className="text-[10px] font-semibold uppercase tracking-wide text-white/70 sm:text-xs">
               {t('preview.badge')}
             </p>
-            <h2
+            <div className="flex max-w-[65%] flex-wrap justify-end gap-1.5">{statusBadges}</div>
+          </div>
+
+          <h2
+            className={cn(
+              'break-words font-bold leading-snug text-white',
+              compact ? 'text-base' : 'text-lg sm:text-xl',
+            )}
+          >
+            {displayName}
+          </h2>
+
+          {description?.trim() ? (
+            <p
               className={cn(
-                'font-bold leading-tight text-white',
-                compact ? 'text-base sm:text-lg' : 'text-xl sm:text-2xl',
+                'text-white/85',
+                compact ? 'line-clamp-1 text-xs' : 'line-clamp-2 text-sm leading-relaxed',
               )}
             >
-              {displayName}
-            </h2>
-            {description?.trim() && !compact ? (
-              <p className="line-clamp-2 text-sm text-white/85">{description.trim()}</p>
-            ) : description?.trim() && compact ? (
-              <p className="line-clamp-1 text-xs text-white/80">{description.trim()}</p>
-            ) : null}
-            <p className={cn('tabular-nums text-white/75', compact ? 'text-[11px]' : 'text-xs')}>
-              {validityText}
+              {description.trim()}
             </p>
+          ) : null}
+
+          <div className="flex flex-wrap items-center gap-1.5 gap-y-2 pt-0.5">
+            {discountBadges}
           </div>
 
-          <div className="flex flex-wrap items-center gap-1.5 sm:max-w-[220px] sm:justify-end">
-            <span
-              className={cn(
-                'inline-flex items-center rounded-full bg-white/15 px-2.5 py-0.5 font-semibold text-white ring-1 ring-inset ring-white/25 backdrop-blur-sm',
-                compact ? 'text-[11px] tabular-nums' : 'text-xs tabular-nums',
-              )}
-            >
-              {discountLabel}
-            </span>
-            {hasDiscount && discountType ? (
-              <span className="inline-flex items-center rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-medium text-white/90 ring-1 ring-inset ring-white/20">
-                {getPromoDiscountTypeLabel(discountType, discountTypeLabels)}
-              </span>
-            ) : null}
-            <DataTableBadge
-              variant={active ? 'success' : 'muted'}
-              className={cn(
-                'ring-white/20',
-                active
-                  ? 'bg-emerald-500/20 text-white'
-                  : 'bg-white/10 text-white/80',
-              )}
-            >
-              {active ? t('status.active') : t('status.inactive')}
-            </DataTableBadge>
-            {validityState ? (
-              <DataTableBadge
-                variant={getPromoValidityBadgeVariant(validityState)}
-                className="bg-white/10 text-white ring-white/20"
-              >
-                {getPromoValidityLabel(validityState, validityLabels)}
-              </DataTableBadge>
-            ) : null}
-          </div>
-        </div>
-
-        {showUsage && !compact ? (
-          <p className="relative z-10 mt-3 text-xs tabular-nums text-white/70">
-            {t('preview.usage', { usage: usageText })}
+          <p
+            className={cn(
+              'whitespace-nowrap tabular-nums text-white/75',
+              compact ? 'text-[11px]' : 'text-xs',
+            )}
+            title={validityText}
+          >
+            {validityText}
           </p>
-        ) : null}
+
+          {showUsage && !compact ? (
+            <p className="text-xs tabular-nums text-white/70">
+              {t('preview.usage', { usage: usageText })}
+            </p>
+          ) : null}
+        </div>
       </div>
     </section>
   );
@@ -167,6 +215,7 @@ export function PromotionPreviewBanner({
 export function promotionToPreviewProps(promo: {
   name: string;
   description: string | null;
+  coverImageUrl?: string | null;
   discountType: PromoCodeDiscountType | null;
   discountValue: string | null;
   validFrom: string | null;
@@ -179,6 +228,7 @@ export function promotionToPreviewProps(promo: {
   return {
     name: promo.name,
     description: promo.description,
+    coverImageUrl: promo.coverImageUrl ?? null,
     hasDiscount,
     discountType: promo.discountType,
     discountValue: promo.discountValue,

@@ -57,6 +57,14 @@ export function destinationUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/destinations/${filename}`;
 }
 
+export function promotionUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/promotions/${filename}`;
+}
+
+export function promoCodeUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/promo-codes/${filename}`;
+}
+
 export function packageDescriptionAssetUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/packages/description-assets/${filename}`;
 }

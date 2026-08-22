@@ -1,7 +1,7 @@
 {
   "status": {
-    "active": "Active",
-    "inactive": "Inactive"
+    "active": "Actif",
+    "inactive": "Inactif"
   },
   "validity": {
     "active": "En cours",
@@ -24,7 +24,10 @@
     "deleteConfirmButton": "Supprimer",
     "cancel": "Annuler",
     "columns": {
+      "cover": "Couverture",
       "campaign": "Campagne",
+      "description": "Description",
+      "discount": "Réduction",
       "validity": "Validité",
       "usage": "Utilisations",
       "status": "Statut"
@@ -40,6 +43,34 @@
   "edit": {
     "pageTitle": "Modifier la promotion"
   },
+  "view": {
+    "title": "Voir la promotion",
+    "editButton": "Modifier la promotion",
+    "subtitle": "Détails de la campagne marketing.",
+    "infoTitle": "Campagne",
+    "descriptionTitle": "Description",
+    "noDescription": "Aucune description renseignée.",
+    "metaTitle": "Validité & suivi",
+    "checkoutId": "ID checkout",
+    "coverTitle": "Photo de couverture",
+    "coverEmpty": "Aucune photo de couverture.",
+    "coverEmptyHint": "Ajoutez une photo de couverture depuis la page d’édition pour enrichir le bandeau.",
+    "coverAlt": "Couverture de {name}",
+    "discountInformative": "Campagne informative",
+    "validityOpen": "Sans borne de dates",
+    "usageHint": "{count} utilisation(s) enregistrée(s)",
+    "notFound": "Promotion introuvable."
+  },
+  "coverImage": {
+    "title": "Photo de couverture",
+    "hint": "Affichée sur le bandeau aperçu, la liste et la fiche campagne. JPEG, PNG ou WebP, max. 5 Mo.",
+    "previewAlt": "Aperçu de la photo de couverture",
+    "empty": "Aucune photo de couverture définie.",
+    "upload": "Téléverser une image",
+    "remove": "Retirer l'image",
+    "saveUrl": "Enregistrer l'URL",
+    "saving": "Enregistrement…"
+  },
   "preview": {
     "defaultName": "Nouvelle campagne",
     "ariaLabel": "Aperçu promotion {name}",
@@ -47,6 +78,19 @@
     "usage": "Utilisations : {usage}"
   },
   "form": {
+    "sections": {
+      "campaign": "Campagne",
+      "campaignHint": "Titre et texte visibles sur les bannières marketing.",
+      "discount": "Réduction",
+      "discountHint": "Optionnelle — laissez désactivé pour une campagne informative.",
+      "discountOff": "Aucune réduction au checkout : la campagne reste purement informative.",
+      "schedule": "Validité & limites",
+      "scheduleHint": "Dates optionnelles. Laissez vide pour une campagne sans borne temporelle.",
+      "publication": "Publication",
+      "publicationHint": "Contrôle l’affichage de la campagne côté clients.",
+      "preview": "Aperçu live",
+      "previewHint": "Mise à jour au fil de la saisie — aperçu du rendu campagne."
+    },
     "info": {
       "codesVsPromotions": "Les codes promo sont saisis par le client au checkout. Les promotions sont des campagnes visibles (bannières, pages) — la réduction peut être optionnelle.",
       "managePromoCodesLink": "Gérer les codes promo",
@@ -87,5 +131,23 @@
     "createButton": "Créer la promotion",
     "saveButton": "Enregistrer",
     "cancelButton": "Annuler"
+  },
+  "stats": {
+    "total": {
+      "label": "Campagnes",
+      "subtitle": "Toutes les promotions"
+    },
+    "active": {
+      "label": "Actives",
+      "subtitle": "Campagnes publiées"
+    },
+    "inactive": {
+      "label": "Inactives",
+      "subtitle": "Campagnes désactivées"
+    },
+    "withDiscount": {
+      "label": "Avec réduction",
+      "subtitle": "Remise appliquée au checkout"
+    }
   }
 }

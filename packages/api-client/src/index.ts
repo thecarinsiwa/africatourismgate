@@ -1114,6 +1114,13 @@ export class ApiClient {
     return this.request<void>(`/promo-codes/${id}`, { method: 'DELETE' });
   }
 
+  uploadPromoCodeImage(id: string, body: FormData): Promise<{ url: string }> {
+    return this.request<{ url: string }>(`/promo-codes/${id}/upload-image`, {
+      method: 'POST',
+      body,
+    });
+  }
+
   listPromotions(query?: PromotionsListQuery): Promise<PaginatedResponse<Promotion>> {
     return fetchPaginated<Promotion>(this, '/promotions', query);
   }
@@ -1132,6 +1139,13 @@ export class ApiClient {
 
   deletePromotion(id: string): Promise<void> {
     return this.request<void>(`/promotions/${id}`, { method: 'DELETE' });
+  }
+
+  uploadPromotionImage(id: string, body: FormData): Promise<{ url: string }> {
+    return this.request<{ url: string }>(`/promotions/${id}/upload-image`, {
+      method: 'POST',
+      body,
+    });
   }
 
   countUsers(): Promise<number> {

@@ -6,14 +6,15 @@ import { StatCard, cn } from '@africatourismgate/ui';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import {
-  paymentsKpiStatusFilter,
-  paymentsKpis,
-  type PaymentsKpiKey,
-} from '../../config/payments-kpi';
+  promoCodesFiltersMatch,
+  promoCodesKpiListFilter,
+  promoCodesKpis,
+  type PromoCodesKpiKey,
+  type PromoCodesListFilter,
+} from '../../config/promo-codes-kpi';
 import { useModuleStatCards } from '../../lib/auth/use-module-stat-cards';
 import { getApiClient } from '../../lib/auth/api';
-import { formatCount, formatMoney } from '../../lib/format-money';
-import type { PaymentsStatusFilter } from './payments-list';
+import { formatCount } from '../../lib/format-money';
 
 type KpiCardState = {
   status: 'loading' | 'ready' | 'error';
@@ -23,25 +24,26 @@ type KpiCardState = {
 
 const initialCardState: KpiCardState = { status: 'loading' };
 
-type PaymentsStatCardsProps = {
+type PromoCodesStatCardsProps = {
   className?: string;
-  statusFilter: PaymentsStatusFilter;
-  onStatusFilterChange: (filter: PaymentsStatusFilter) => void;
+  listFilter: PromoCodesListFilter;
+  onListFilterChange: (filter: PromoCodesListFilter) => void;
 };
 
-export function PaymentsStatCards({
+export function PromoCodesStatCards({
   className,
-  statusFilter,
-  onStatusFilterChange,
-}: PaymentsStatCardsProps) {
+  listFilter,
+  onListFilterChange,
+}: PromoCodesStatCardsProps) {
   const { dashboardKpi: getDashboardKpiErrorMessage } = useAdminErrorMessages();
-  const { canLoad, loading: permissionsLoading, shouldRender } = useModuleStatCards('payments.read');
-  const t = useTranslations('modules.payments');
-  const [cards, setCards] = useState<Record<PaymentsKpiKey, KpiCardState>>(() => ({
+  const { canLoad, loading: permissionsLoading, shouldRender } =
+    useModuleStatCards('promo_codes.read');
+  const t = useTranslations('modules.promoCodes');
+  const [cards, setCards] = useState<Record<PromoCodesKpiKey, KpiCardState>>(() => ({
     total: { ...initialCardState },
-    succeeded: { ...initialCardState },
-    pending: { ...initialCardState },
-    revenue: { ...initialCardState },
+    active: { ...initialCardState },
+    inactive: { ...initialCardState },
+    ongoing: { ...initialCardState },
   }));
 
   useEffect(() => {
@@ -50,25 +52,13 @@ export function PaymentsStatCards({
     let cancelled = false;
     const client = getApiClient();
 
-    async function loadKpi(key: PaymentsKpiKey): Promise<KpiCardState> {
+    async function loadKpi(key: PromoCodesKpiKey): Promise<KpiCardState> {
       try {
-        if (key === 'revenue') {
-          const revenue = await client.getSucceededPaymentsRevenue();
-          return {
-            status: 'ready',
-            displayValue: formatMoney(revenue.totalCents, revenue.currency),
-          };
-        }
-
-        const status =
-          key === 'total' ? undefined : key === 'succeeded' ? 'succeeded' : 'pending';
-
-        const result = await client.listPayments({
+        const result = await client.listPromoCodes({
           page: 1,
           limit: 1,
-          status,
+          ...promoCodesKpiListFilter[key],
         });
-
         return { status: 'ready', displayValue: formatCount(result.meta.total) };
       } catch (error) {
         return {
@@ -80,12 +70,12 @@ export function PaymentsStatCards({
 
     async function loadAll() {
       const results = await Promise.all(
-        paymentsKpis.map(async (kpi) => [kpi.key, await loadKpi(kpi.key)] as const),
+        promoCodesKpis.map(async (kpi) => [kpi.key, await loadKpi(kpi.key)] as const),
       );
 
       if (cancelled) return;
 
-      setCards(Object.fromEntries(results) as Record<PaymentsKpiKey, KpiCardState>);
+      setCards(Object.fromEntries(results) as Record<PromoCodesKpiKey, KpiCardState>);
     }
 
     void loadAll();
@@ -102,10 +92,10 @@ export function PaymentsStatCards({
   return (
     <div className={className}>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {paymentsKpis.map((kpi) => {
+        {promoCodesKpis.map((kpi) => {
           const state = cards[kpi.key];
-          const kpiFilter = paymentsKpiStatusFilter[kpi.key];
-          const isActive = statusFilter === kpiFilter;
+          const kpiFilter = promoCodesKpiListFilter[kpi.key];
+          const isActive = promoCodesFiltersMatch(listFilter, kpiFilter);
           const card = (
             <StatCard
               label={t(kpi.labelKey)}
@@ -127,7 +117,7 @@ export function PaymentsStatCards({
               key={kpi.key}
               type="button"
               aria-pressed={isActive}
-              onClick={() => onStatusFilterChange(kpiFilter)}
+              onClick={() => onListFilterChange(kpiFilter)}
               className={cn(
                 'block w-full rounded-xl text-left transition-opacity hover:opacity-90',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-atg-bg',
