@@ -42,6 +42,14 @@
   "edit": {
     "pageTitle": "Edit promotion"
   },
+  "view": {
+    "title": "View promotion",
+    "editButton": "Edit promotion",
+    "subtitle": "Read-only preview of the marketing campaign.",
+    "infoTitle": "Details",
+    "checkoutId": "Checkout ID",
+    "notFound": "Promotion not found."
+  },
   "preview": {
     "defaultName": "New campaign",
     "ariaLabel": "Promotion preview {name}",

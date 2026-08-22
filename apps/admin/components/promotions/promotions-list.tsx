@@ -278,6 +278,10 @@ export function PromotionsList({ listFilter, onListFilterChange }: PromotionsLis
           const promo = row.original;
           return (
             <DataTableActions>
+              <DataTableActionButton
+                action="view"
+                href={`/paiements/promotions/${promo.id}/voir`}
+              />
               <DataTableActionButton action="edit" href={`/paiements/promotions/${promo.id}`} />
               {canWrite ? (
                 <DataTableActionButton

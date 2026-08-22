@@ -395,7 +395,10 @@
       },
       "id": {
         "metaTitle": "Modifier la promotion",
-        "backLabel": "Retour aux promotions"
+        "backLabel": "Retour aux promotions",
+        "voir": {
+          "metaTitle": "Voir la promotion"
+        }
       }
     }
   },

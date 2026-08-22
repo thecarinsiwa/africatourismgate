@@ -42,6 +42,14 @@
   "edit": {
     "pageTitle": "Editar promoción"
   },
+  "view": {
+    "title": "Ver promoción",
+    "editButton": "Editar promoción",
+    "subtitle": "Vista de solo lectura de la campaña de marketing.",
+    "infoTitle": "Información",
+    "checkoutId": "ID de checkout",
+    "notFound": "Promoción no encontrada."
+  },
   "preview": {
     "defaultName": "Nueva campaña",
     "ariaLabel": "Vista previa de la promoción {name}",
