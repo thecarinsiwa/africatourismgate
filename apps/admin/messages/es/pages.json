@@ -310,7 +310,12 @@
     }
   },
   "reservations": {
+    "title": "Reservas",
     "description": "Lista paginada de reservas (datos API en vivo). Filtre por estado, fecha, cliente y organización. Requiere bookings.read.",
+    "actions": {
+      "lines": "Líneas de reserva",
+      "guides": "Guías turísticos"
+    },
     "lignes": {
       "description": "Tabla global de artículos por reserva (datos API en vivo). Filtre por tipo, estado de reserva e ID de reserva. Requiere bookings.read."
     }

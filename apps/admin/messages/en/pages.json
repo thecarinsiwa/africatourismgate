@@ -310,7 +310,12 @@
     }
   },
   "reservations": {
+    "title": "Bookings",
     "description": "Paginated booking list (live API data). Filter by status, date, customer and organization. Requires bookings.read.",
+    "actions": {
+      "lines": "Booking line items",
+      "guides": "Tour guides"
+    },
     "lignes": {
       "description": "Global line items per booking (live API data). Filter by type, booking status and booking ID. Requires bookings.read."
     }

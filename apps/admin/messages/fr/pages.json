@@ -310,7 +310,12 @@
     }
   },
   "reservations": {
+    "title": "Réservations",
     "description": "Liste paginée des réservations (données API live). Filtres par statut, date, client et organisation. Accès requis : bookings.read.",
+    "actions": {
+      "lines": "Lignes de réservation",
+      "guides": "Guides touristiques"
+    },
     "lignes": {
       "description": "Tableau global des articles par réservation (données API live). Filtres par type, statut de la réservation et identifiant booking. Accès requis : bookings.read."
     }
