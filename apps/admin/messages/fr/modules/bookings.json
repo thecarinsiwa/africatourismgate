@@ -304,8 +304,11 @@
     "assignButton": "Assigner",
     "noGuidesAvailable": "Tous les guides actifs sont déjà assignés.",
     "removeTitle": "Retirer le guide",
-    "removeConfirm": "Ce guide sera retiré de la réservation.",
-    "removeConfirmButton": "Retirer",
+    "removeConfirm": "Ce guide sera retiré de la réservation. Un e-mail de notification lui sera envoyé.",
+    "removeConfirmNamed": "« {name} » sera retiré de la réservation. Un e-mail de notification lui sera envoyé.",
+    "removeCommentLabel": "Message au guide",
+    "removeCommentHint": "Ce commentaire sera inclus dans l'e-mail de notification (optionnel).",
+    "removeConfirmButton": "Retirer et notifier",
     "cancel": "Annuler",
     "viewProfile": "Voir le profil",
     "columns": {

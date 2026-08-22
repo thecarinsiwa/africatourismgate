@@ -35,7 +35,7 @@ import { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
 import { CreateBookingReviewDto } from '../reviews/dto/create-booking-review.dto';
 import { TourGuidesModule } from '../tour-guides/tour-guides.module';
 import { BookingGuideAssignmentsService } from '../tour-guides/booking-guide-assignments.service';
-import { AssignBookingGuidesDto } from '../tour-guides/dto/booking-guide-assignment.dto';
+import { AssignBookingGuidesDto, RemoveBookingGuideDto } from '../tour-guides/dto/booking-guide-assignment.dto';
 import { BookingMessagesService } from './booking-messages.service';
 import { BookingMessageDto, BookingMessagesListDto } from './dto/booking-message.dto';
 import { BookingMessagesQueryDto } from './dto/booking-messages-query.dto';
@@ -155,8 +155,13 @@ export class BookingsController {
   async removeGuide(
     @Param('id') id: string,
     @Param('guideId') guideId: string,
+    @Body() dto: RemoveBookingGuideDto,
   ) {
-    await this.bookingGuideAssignmentsService.removeGuide(id, guideId);
+    await this.bookingGuideAssignmentsService.removeGuide(
+      id,
+      guideId,
+      dto?.comment,
+    );
   }
 
   @Get(':id/messages/unread-count')

@@ -6,7 +6,9 @@ import {
   IsEnum,
   IsNotEmpty,
   IsOptional,
+  IsString,
   IsUUID,
+  MaxLength,
   ValidateNested,
 } from 'class-validator';
 import { BookingGuideAssignments } from '../../../../entities/generated';
@@ -32,6 +34,17 @@ export class AssignBookingGuidesDto {
   @ValidateNested({ each: true })
   @Type(() => AssignBookingGuideItemDto)
   guides!: AssignBookingGuideItemDto[];
+}
+
+export class RemoveBookingGuideDto {
+  @ApiPropertyOptional({
+    description: 'Message transmis au guide lors du retrait de la mission',
+    maxLength: 2000,
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(2000, { message: 'Le commentaire ne peut pas dépasser 2000 caractères.' })
+  comment?: string;
 }
 
 export class BookingGuideAssignmentDto {

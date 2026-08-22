@@ -304,8 +304,11 @@
     "assignButton": "Assign",
     "noGuidesAvailable": "All active guides are already assigned.",
     "removeTitle": "Remove guide",
-    "removeConfirm": "This guide will be removed from the booking.",
-    "removeConfirmButton": "Remove",
+    "removeConfirm": "This guide will be removed from the booking. A notification email will be sent.",
+    "removeConfirmNamed": "“{name}” will be removed from the booking. A notification email will be sent.",
+    "removeCommentLabel": "Message to the guide",
+    "removeCommentHint": "This comment will be included in the notification email (optional).",
+    "removeConfirmButton": "Remove and notify",
     "cancel": "Cancel",
     "viewProfile": "View profile",
     "columns": {

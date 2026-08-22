@@ -286,6 +286,7 @@ export type {
   UpdateTourGuideRequest,
   AssignBookingGuideItem,
   AssignBookingGuidesRequest,
+  RemoveBookingGuideRequest,
 } from './tour-guide.js';
 
 export type {

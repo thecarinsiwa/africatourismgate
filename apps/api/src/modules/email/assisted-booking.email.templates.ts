@@ -10,6 +10,7 @@ import type {
   BookingStaffMessageEmailPayload,
   BookingIdentityDocumentUploadRequestEmailPayload,
   BookingGuideAssignmentEmailPayload,
+  BookingGuideRemovalEmailPayload,
 } from './email.types';
 
 function bookingRef(bookingId: string): string {
@@ -484,5 +485,103 @@ ${ctaBlock}`,
   const datesText = visitPeriod ? `\n${copy.datesLabel} : ${visitPeriod}` : '';
   const pdfText = payload.hasPdfAttachment ? copy.pdfNoteText : '';
   const text = `${copy.greeting} ${payload.guideName},\n\n${copy.intro}\nRéf. : ${payload.bookingId.slice(0, 8)}\n${copy.roleLabel} : ${roleLabel}${datesText}\n\n${itemListText(payload.itemTitles)}${pdfText}\n\n${copy.body}${payload.adminUrl ? `\n\n${payload.adminUrl}` : ''}`;
+  return { subject, html, text };
+}
+
+const GUIDE_REMOVAL_EMAIL_COPY: Record<
+  BookingDetailPdfLocale,
+  {
+    subject: string;
+    headline: string;
+    greeting: string;
+    intro: string;
+    roleLabel: string;
+    rolePrimary: string;
+    roleSecondary: string;
+    datesLabel: string;
+    commentLabel: string;
+    body: string;
+  }
+> = {
+  fr: {
+    subject: 'Mission retirée — réservation',
+    headline: 'Mission retirée',
+    greeting: 'Bonjour',
+    intro:
+      'Votre assignation comme guide sur la réservation suivante a été retirée par notre équipe :',
+    roleLabel: 'Rôle concerné',
+    rolePrimary: 'Guide principal',
+    roleSecondary: 'Guide secondaire',
+    datesLabel: 'Dates de visite',
+    commentLabel: 'Message de notre équipe',
+    body: 'Pour toute question, contactez l’équipe Africa Tourism Gate.',
+  },
+  en: {
+    subject: 'Assignment removed — booking',
+    headline: 'Assignment removed',
+    greeting: 'Hello',
+    intro: 'Your assignment as a guide on the following booking has been removed by our team:',
+    roleLabel: 'Affected role',
+    rolePrimary: 'Lead guide',
+    roleSecondary: 'Secondary guide',
+    datesLabel: 'Visit dates',
+    commentLabel: 'Message from our team',
+    body: 'If you have any questions, please contact the Africa Tourism Gate team.',
+  },
+  es: {
+    subject: 'Misión retirada — reserva',
+    headline: 'Misión retirada',
+    greeting: 'Hola',
+    intro:
+      'Su asignación como guía en la siguiente reserva ha sido retirada por nuestro equipo:',
+    roleLabel: 'Rol afectado',
+    rolePrimary: 'Guía principal',
+    roleSecondary: 'Guía secundario',
+    datesLabel: 'Fechas de visita',
+    commentLabel: 'Mensaje de nuestro equipo',
+    body: 'Para cualquier pregunta, contacte al equipo de Africa Tourism Gate.',
+  },
+};
+
+export function renderBookingGuideRemovalEmail(
+  payload: BookingGuideRemovalEmailPayload,
+  branding: EmailBrandingValue,
+): { subject: string; html: string; text: string } {
+  const locale = payload.locale ?? 'fr';
+  const copy = GUIDE_REMOVAL_EMAIL_COPY[locale];
+  const name = escapeHtml(payload.guideName.trim() || 'Guide');
+  const roleLabel =
+    payload.role === 'primary' ? copy.rolePrimary : copy.roleSecondary;
+  const visitPeriod = visitPeriodText(
+    payload.visitStartDate,
+    payload.visitEndDate,
+    locale,
+  );
+  const subject = `${copy.subject} — ${payload.bookingId.slice(0, 8)}`;
+  const datesBlock = visitPeriod
+    ? `<p style="margin:0 0 8px;line-height:1.6;"><strong>${escapeHtml(copy.datesLabel)} :</strong> ${escapeHtml(visitPeriod)}</p>`
+    : '';
+  const commentBlock = payload.comment?.trim()
+    ? `<p style="margin:16px 0;padding:12px 16px;background:#f4f6f5;border-radius:8px;border-left:4px solid #dc2626;line-height:1.6;"><strong>${escapeHtml(copy.commentLabel)} :</strong> ${escapeHtml(payload.comment.trim())}</p>`
+    : '';
+  const html = layout(
+    subject,
+    `<h1 style="margin:0 0 16px;font-size:22px;">${escapeHtml(copy.headline)}</h1>
+<p style="margin:0 0 16px;line-height:1.6;">${escapeHtml(copy.greeting)} ${name},</p>
+<p style="margin:0 0 16px;line-height:1.6;">${escapeHtml(copy.intro)}</p>
+<p style="margin:0 0 8px;line-height:1.6;"><strong>Réf. :</strong> ${bookingRef(payload.bookingId)}</p>
+<p style="margin:0 0 8px;line-height:1.6;"><strong>${escapeHtml(copy.roleLabel)} :</strong> ${escapeHtml(roleLabel)}</p>
+${datesBlock}
+${itemListHtml(payload.itemTitles)}
+${commentBlock}
+<p style="margin:0 0 16px;line-height:1.6;">${escapeHtml(copy.body)}</p>`,
+    branding,
+    { webUrl: payload.webUrl },
+  );
+  const datesText = visitPeriod ? `\n${copy.datesLabel} : ${visitPeriod}` : '';
+  const commentText = payload.comment?.trim()
+    ? `\n${copy.commentLabel} : ${payload.comment.trim()}\n`
+    : '';
+  const text = `${copy.greeting} ${payload.guideName},\n\n${copy.intro}\nRéf. : ${payload.bookingId.slice(0, 8)}\n${copy.roleLabel} : ${roleLabel}${datesText}\n\n${itemListText(payload.itemTitles)}${commentText}\n${copy.body}`;
   return { subject, html, text };
 }

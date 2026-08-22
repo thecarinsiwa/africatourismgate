@@ -304,8 +304,11 @@
     "assignButton": "Asignar",
     "noGuidesAvailable": "Todos los guías activos ya están asignados.",
     "removeTitle": "Quitar guía",
-    "removeConfirm": "Este guía será eliminado de la reserva.",
-    "removeConfirmButton": "Quitar",
+    "removeConfirm": "Este guía será eliminado de la reserva. Se le enviará un correo de notificación.",
+    "removeConfirmNamed": "« {name} » será eliminado de la reserva. Se le enviará un correo de notificación.",
+    "removeCommentLabel": "Mensaje al guía",
+    "removeCommentHint": "Este comentario se incluirá en el correo de notificación (opcional).",
+    "removeConfirmButton": "Quitar y notificar",
     "cancel": "Cancelar",
     "viewProfile": "Ver perfil",
     "columns": {

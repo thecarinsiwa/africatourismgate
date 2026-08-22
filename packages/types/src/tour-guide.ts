@@ -163,6 +163,10 @@ export interface AssignBookingGuidesRequest {
   guides: AssignBookingGuideItem[];
 }
 
+export interface RemoveBookingGuideRequest {
+  comment?: string;
+}
+
 export interface BookingGuideAssignment {
   id: string;
   bookingId: string;

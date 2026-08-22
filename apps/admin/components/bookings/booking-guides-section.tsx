@@ -3,13 +3,14 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
-  AlertDialog,
   Button,
   Card,
   DataTable,
   DataTableActionButton,
   DataTableActions,
   DataTableBadge,
+  Modal,
+  Textarea,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type {
@@ -56,6 +57,7 @@ export function BookingGuidesSection({
   const [assigning, setAssigning] = useState(false);
   const [removingGuideId, setRemovingGuideId] = useState<string | null>(null);
   const [confirmTarget, setConfirmTarget] = useState<string | null>(null);
+  const [removeComment, setRemoveComment] = useState('');
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -114,24 +116,31 @@ export function BookingGuidesSection({
   }, [bookingId, getBookingsErrorMessage, load, selectedGuideId, selectedRole]);
 
   const handleRemoveRequest = useCallback((guideId: string) => {
+    setRemoveComment('');
     setConfirmTarget(guideId);
   }, []);
 
   const handleRemoveConfirm = useCallback(async () => {
     if (!confirmTarget) return;
     const guideId = confirmTarget;
-    setConfirmTarget(null);
     setActionError(null);
     setRemovingGuideId(guideId);
     try {
-      await getApiClient().removeBookingGuide(bookingId, guideId);
+      const comment = removeComment.trim();
+      await getApiClient().removeBookingGuide(
+        bookingId,
+        guideId,
+        comment ? { comment } : {},
+      );
+      setConfirmTarget(null);
+      setRemoveComment('');
       await load();
     } catch (err) {
       setActionError(getBookingsErrorMessage(err));
     } finally {
       setRemovingGuideId(null);
     }
-  }, [bookingId, confirmTarget, getBookingsErrorMessage, load]);
+  }, [bookingId, confirmTarget, getBookingsErrorMessage, load, removeComment]);
 
   const columns = useMemo<ColumnDef<AssignmentRow, unknown>[]>(
     () => [
@@ -199,19 +208,63 @@ export function BookingGuidesSection({
     ],
   );
 
+  const confirmGuideName = useMemo(() => {
+    if (!confirmTarget) return '';
+    return assignments.find((row) => row.guideId === confirmTarget)?.guideName ?? '';
+  }, [assignments, confirmTarget]);
+
   return (
     <>
-      <AlertDialog
+      <Modal
         open={!!confirmTarget}
-        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
+        onOpenChange={(open) => {
+          if (!open && !removingGuideId) {
+            setConfirmTarget(null);
+            setRemoveComment('');
+          }
+        }}
         title={t('removeTitle')}
-        description={t('removeConfirm')}
-        confirmLabel={t('removeConfirmButton')}
-        cancelLabel={t('cancel')}
-        variant="danger"
-        loading={!!removingGuideId}
-        onConfirm={() => void handleRemoveConfirm()}
-      />
+        description={
+          confirmGuideName
+            ? t('removeConfirmNamed', { name: confirmGuideName })
+            : t('removeConfirm')
+        }
+        showClose
+        className="max-w-lg"
+      >
+        <div className="space-y-4">
+          <Textarea
+            label={t('removeCommentLabel')}
+            hint={t('removeCommentHint')}
+            value={removeComment}
+            onChange={(event) => setRemoveComment(event.target.value)}
+            rows={4}
+            maxLength={2000}
+          />
+          <div className="flex flex-wrap justify-end gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              disabled={!!removingGuideId}
+              onClick={() => {
+                setConfirmTarget(null);
+                setRemoveComment('');
+              }}
+            >
+              {t('cancel')}
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              className="!text-red-600 hover:!bg-red-50 dark:!text-red-400"
+              onClick={() => void handleRemoveConfirm()}
+              loading={!!removingGuideId}
+            >
+              {t('removeConfirmButton')}
+            </Button>
+          </div>
+        </div>
+      </Modal>
     <section className="space-y-3">
       {embedded ? null : (
         <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>

@@ -18,6 +18,8 @@ export class BookingGuideAssignmentEmailService {
   constructor(
     @InjectRepository(Users)
     private readonly usersRepository: Repository<Users>,
+    @InjectRepository(TourGuides)
+    private readonly tourGuidesRepository: Repository<TourGuides>,
     private readonly tourGuidesService: TourGuidesService,
     private readonly bookingEngine: BookingEngineService,
     private readonly manifestService: BookingManifestService,
@@ -34,6 +36,20 @@ export class BookingGuideAssignmentEmailService {
       const message = error instanceof Error ? error.message : String(error);
       this.logger.warn(
         `E-mail d'assignation guide non envoyé (${bookingId}/${guideId}) : ${message}`,
+      );
+    });
+  }
+
+  notifyGuideRemoved(
+    bookingId: string,
+    guideId: string,
+    role: BookingGuideRole,
+    comment?: string | null,
+  ): void {
+    void this.sendGuideRemoved(bookingId, guideId, role, comment).catch((error) => {
+      const message = error instanceof Error ? error.message : String(error);
+      this.logger.warn(
+        `E-mail de retrait guide non envoyé (${bookingId}/${guideId}) : ${message}`,
       );
     });
   }
@@ -117,6 +133,49 @@ export class BookingGuideAssignmentEmailService {
       },
       { attachments },
     );
+  }
+
+  private async sendGuideRemoved(
+    bookingId: string,
+    guideId: string,
+    role: BookingGuideRole,
+    comment?: string | null,
+  ): Promise<void> {
+    const guide = await this.tourGuidesRepository.findOne({
+      where: { id: guideId, deletedAt: IsNull() },
+    });
+    if (!guide) {
+      this.logger.warn(`Guide ${guideId} introuvable pour l'e-mail de retrait.`);
+      return;
+    }
+
+    const recipient = await this.resolveGuideRecipient(guide);
+    if (!recipient) {
+      this.logger.debug(
+        `Pas d'e-mail pour le guide ${guideId} (${guide.displayName}), notification de retrait ignorée.`,
+      );
+      return;
+    }
+
+    const detail = await this.bookingEngine.getBookingDetail(bookingId);
+    const itemTitles = detail.items
+      .map((item) => item.titleSnapshot?.trim())
+      .filter((title): title is string => Boolean(title));
+    const { visitStartDate, visitEndDate } = deriveVisitDates(detail.items);
+    const locale = resolveGuideLocale(guide, recipient.preferredLanguage);
+
+    await this.emailService.sendBookingGuideRemoval({
+      to: recipient.email,
+      guideName: guide.displayName,
+      bookingId,
+      role,
+      itemTitles,
+      visitStartDate,
+      visitEndDate,
+      comment: comment?.trim() || null,
+      locale,
+      webUrl: process.env.NEXT_PUBLIC_WEB_URL,
+    });
   }
 
   private async resolveGuideRecipient(

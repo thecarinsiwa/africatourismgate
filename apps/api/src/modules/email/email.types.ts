@@ -126,3 +126,16 @@ export type BookingGuideAssignmentEmailPayload = {
   webUrl?: string;
   hasPdfAttachment?: boolean;
 };
+
+export type BookingGuideRemovalEmailPayload = {
+  to: string;
+  guideName: string;
+  bookingId: string;
+  role: 'primary' | 'secondary';
+  itemTitles: string[];
+  visitStartDate?: string | null;
+  visitEndDate?: string | null;
+  comment?: string | null;
+  locale?: 'fr' | 'en' | 'es';
+  webUrl?: string;
+};

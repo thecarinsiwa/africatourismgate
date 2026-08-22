@@ -22,6 +22,7 @@ import {
   renderBookingStaffMessageEmail,
   renderBookingIdentityDocumentUploadRequestEmail,
   renderBookingGuideAssignmentEmail,
+  renderBookingGuideRemovalEmail,
 } from './assisted-booking.email.templates';
 import type {
   AbandonmentReminderEmailPayload,
@@ -37,6 +38,7 @@ import type {
   BookingStaffMessageEmailPayload,
   BookingIdentityDocumentUploadRequestEmailPayload,
   BookingGuideAssignmentEmailPayload,
+  BookingGuideRemovalEmailPayload,
   PasswordResetEmailPayload,
   SendMailResult,
   EmailAttachment,
@@ -216,6 +218,14 @@ export class EmailService implements OnModuleInit {
       text,
       attachments: options?.attachments,
     });
+  }
+
+  async sendBookingGuideRemoval(
+    payload: BookingGuideRemovalEmailPayload,
+  ): Promise<SendMailResult> {
+    const branding = await this.resolveBranding();
+    const { subject, html, text } = renderBookingGuideRemovalEmail(payload, branding);
+    return this.send('service', { to: payload.to, subject, html, text });
   }
 
   /** MVP : org plateforme seed ; fallback gracieux si résolution impossible. */

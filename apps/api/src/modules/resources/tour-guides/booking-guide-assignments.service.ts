@@ -90,6 +90,7 @@ export class BookingGuideAssignmentsService {
   async removeGuide(
     bookingId: string,
     guideId: string,
+    comment?: string | null,
   ): Promise<void> {
     await this.requireBooking(bookingId);
     const assignment = await this.assignmentsRepository.findOne({
@@ -100,6 +101,13 @@ export class BookingGuideAssignmentsService {
         `Aucune assignation du guide ${guideId} sur la réservation ${bookingId}.`,
       );
     }
+
+    this.guideAssignmentEmail.notifyGuideRemoved(
+      bookingId,
+      guideId,
+      assignment.role,
+      comment,
+    );
     await this.assignmentsRepository.delete(assignment.id);
   }
 

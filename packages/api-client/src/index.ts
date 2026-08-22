@@ -116,6 +116,7 @@ import type {
   BookingItemsListQuery,
   BookingGuideAssignment,
   AssignBookingGuidesRequest,
+  RemoveBookingGuideRequest,
   BookingListItem,
   BookingsListQuery,
   AdminReviewDetail,
@@ -2432,9 +2433,14 @@ export class ApiClient {
     });
   }
 
-  removeBookingGuide(bookingId: string, guideId: string): Promise<void> {
+  removeBookingGuide(
+    bookingId: string,
+    guideId: string,
+    body?: RemoveBookingGuideRequest,
+  ): Promise<void> {
     return this.request<void>(`/bookings/${bookingId}/guides/${guideId}`, {
       method: 'DELETE',
+      body: body ?? {},
     });
   }
 
