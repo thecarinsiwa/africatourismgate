@@ -233,6 +233,8 @@
       "rejectNotePlaceholder": "E.g. unreadable or expired document…"
     },
     "travelerName": "Traveler name",
+    "viewDocument": "View document",
+    "viewDocumentPending": "Document to review",
     "travelerAge": "Age",
     "travelerBasePrice": "Base price ({currency})",
     "travelerPrice": "Price ({currency})",

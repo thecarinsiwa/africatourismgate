@@ -3,11 +3,18 @@
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import { AlertDialog, Button, Card, Input, Skeleton, useToast } from '@africatourismgate/ui';
-import type { BookingItem, BookingManifestEntry, BookingStatus } from '@africatourismgate/types';
+import type {
+  BookingIdentityDocument,
+  BookingItem,
+  BookingManifestEntry,
+  BookingStatus,
+} from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import { documentForTravelerIndex } from '../../lib/booking-traveler-documents';
 import { formatMoney } from '../../lib/format-money';
+import { BookingTravelerDocumentModal } from './booking-traveler-document-modal';
 
 type TravelerDraft = {
   key: string;
@@ -24,6 +31,7 @@ type BookingAssistedApprovalPanelProps = {
   totalCents: number;
   currency: string;
   items: BookingItem[];
+  identityDocuments?: BookingIdentityDocument[];
   canApprove: boolean;
   manifestSyncKey?: number;
   onUpdated: () => Promise<void>;
@@ -140,6 +148,7 @@ export function BookingAssistedApprovalPanel({
   totalCents,
   currency,
   items,
+  identityDocuments = [],
   canApprove,
   manifestSyncKey = 0,
   onUpdated,
@@ -166,6 +175,9 @@ export function BookingAssistedApprovalPanel({
   const [visitDatesDirty, setVisitDatesDirty] = useState(false);
   const [approveDialogError, setApproveDialogError] = useState<string | null>(null);
   const [rejectDialogError, setRejectDialogError] = useState<string | null>(null);
+  const [documentModalTravelerIndex, setDocumentModalTravelerIndex] = useState<number | null>(
+    null,
+  );
 
   const initialVisitDates = useMemo(() => deriveVisitDatesFromItems(items), [items]);
   const hasVisitDates = initialVisitDates != null;
@@ -625,6 +637,22 @@ export function BookingAssistedApprovalPanel({
                       disabled={!editable || loading}
                       wrapperClassName="sm:col-span-2 lg:col-span-1 lg:[&>div:first-child]:sr-only lg:[&>div:first-child]:mb-0 lg:[&>div:first-child]:h-0"
                       inputClassName="py-2.5"
+                      labelExtra={
+                        canApprove ? (
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            disabled={loading}
+                            onClick={() => setDocumentModalTravelerIndex(index)}
+                          >
+                            {documentForTravelerIndex(identityDocuments, index)?.status ===
+                            'pending_review'
+                              ? t('viewDocumentPending')
+                              : t('viewDocument')}
+                          </Button>
+                        ) : undefined
+                      }
                     />
 
                     <Input
@@ -861,6 +889,23 @@ export function BookingAssistedApprovalPanel({
         onConfirm={() => void handleReject()}
         onCancel={() => setRejectDialogOpen(false)}
       />
+
+      {documentModalTravelerIndex != null ? (
+        <BookingTravelerDocumentModal
+          bookingId={bookingId}
+          travelerName={travelers[documentModalTravelerIndex]?.fullName ?? ''}
+          travelerIndex={documentModalTravelerIndex}
+          document={documentForTravelerIndex(identityDocuments, documentModalTravelerIndex)}
+          canReview={canApprove}
+          open
+          onOpenChange={(open) => {
+            if (!open) {
+              setDocumentModalTravelerIndex(null);
+            }
+          }}
+          onUpdated={onUpdated}
+        />
+      ) : null}
     </>
   );
 }

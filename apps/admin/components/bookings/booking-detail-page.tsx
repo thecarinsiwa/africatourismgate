@@ -444,6 +444,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
         totalCents={detail.totalCents}
         currency={detail.currency}
         items={detail.items}
+        identityDocuments={identityDocuments}
         canApprove={canApprove}
         manifestSyncKey={manifestSync}
         onUpdated={refreshDetail}

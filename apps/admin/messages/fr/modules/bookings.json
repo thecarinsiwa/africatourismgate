@@ -233,6 +233,8 @@
       "rejectNotePlaceholder": "Ex. document illisible ou expiré…"
     },
     "travelerName": "Nom du voyageur",
+    "viewDocument": "Voir le document",
+    "viewDocumentPending": "Document à valider",
     "travelerAge": "Âge",
     "travelerBasePrice": "Prix de base ({currency})",
     "travelerPrice": "Prix ({currency})",
