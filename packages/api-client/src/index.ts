@@ -116,6 +116,7 @@ import type {
   BookingItemsListQuery,
   BookingGuideAssignment,
   AssignBookingGuidesRequest,
+  UpdateBookingGuideAssignmentRequest,
   RemoveBookingGuideRequest,
   BookingListItem,
   BookingsListQuery,
@@ -188,6 +189,8 @@ import type {
   TourGuideCalendarSummaryQuery,
   TourGuideCalendarDayDetail,
   TourGuideCalendarDayQuery,
+  TourGuideAvailableQuery,
+  TourGuideAvailableItem,
   UpsertGuideAvailabilityRequest,
   GuideAvailabilitySlot,
   BlogPost,
@@ -1378,6 +1381,18 @@ export class ApiClient {
     return this.request<TourGuideCalendarDayDetail>(`/tour-guides/calendar/day?${qs}`);
   }
 
+  searchAvailableTourGuides(
+    query: TourGuideAvailableQuery,
+  ): Promise<TourGuideAvailableItem[]> {
+    const params = new URLSearchParams();
+    params.set('from', query.from);
+    params.set('to', query.to);
+    if (query.destinationId) params.set('destinationId', query.destinationId);
+    if (query.organizationId) params.set('organizationId', query.organizationId);
+    const qs = params.toString();
+    return this.request<TourGuideAvailableItem[]>(`/tour-guides/available?${qs}`);
+  }
+
   upsertGuideAvailability(
     guideId: string,
     body: UpsertGuideAvailabilityRequest,
@@ -2486,12 +2501,38 @@ export class ApiClient {
     });
   }
 
+  updateBookingGuideSlot(
+    bookingId: string,
+    assignmentId: string,
+    body: UpdateBookingGuideAssignmentRequest,
+  ): Promise<BookingGuideAssignment> {
+    return this.request<BookingGuideAssignment>(
+      `/bookings/${bookingId}/guides/${assignmentId}`,
+      {
+        method: 'PUT',
+        body,
+      },
+    );
+  }
+
+  removeBookingGuideSlot(
+    bookingId: string,
+    assignmentId: string,
+    body?: RemoveBookingGuideRequest,
+  ): Promise<void> {
+    return this.request<void>(`/bookings/${bookingId}/guides/${assignmentId}`, {
+      method: 'DELETE',
+      body: body ?? {},
+    });
+  }
+
+  /** @deprecated Préférez removeBookingGuideSlot pour un créneau unique. */
   removeBookingGuide(
     bookingId: string,
     guideId: string,
     body?: RemoveBookingGuideRequest,
   ): Promise<void> {
-    return this.request<void>(`/bookings/${bookingId}/guides/${guideId}`, {
+    return this.request<void>(`/bookings/${bookingId}/guides/by-guide/${guideId}`, {
       method: 'DELETE',
       body: body ?? {},
     });

@@ -46,6 +46,32 @@ export class TourGuideCalendarDayGuideDto {
 
   @ApiPropertyOptional({ enum: ['primary', 'secondary'] })
   role?: 'primary' | 'secondary';
+
+  @ApiProperty({ type: () => [GuideCalendarScheduleSlotDto] })
+  slots!: GuideCalendarScheduleSlotDto[];
+}
+
+export class GuideCalendarScheduleSlotDto {
+  @ApiProperty({ enum: ['assignment', 'unavailable'] })
+  type!: 'assignment' | 'unavailable';
+
+  @ApiProperty()
+  startDatetime!: string;
+
+  @ApiProperty()
+  endDatetime!: string;
+
+  @ApiPropertyOptional({ format: 'uuid' })
+  assignmentId?: string;
+
+  @ApiPropertyOptional({ format: 'uuid' })
+  bookingId?: string;
+
+  @ApiPropertyOptional({ enum: ['primary', 'secondary'] })
+  role?: 'primary' | 'secondary';
+
+  @ApiPropertyOptional({ format: 'uuid' })
+  availabilityId?: string;
 }
 
 export class TourGuideCalendarDayDetailDto {

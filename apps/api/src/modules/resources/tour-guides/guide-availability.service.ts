@@ -11,11 +11,13 @@ import {
 import { enumerateMonthDays } from '../../public/accommodations/stay-dates.util';
 import {
   GuideAvailabilitySlotDto,
+  GuideCalendarScheduleSlotDto,
   TourGuideCalendarDayDetailDto,
   TourGuideCalendarDayGuideDto,
   TourGuideCalendarSummaryDayDto,
   TourGuideCalendarSummaryDto,
 } from './dto/tour-guide-calendar.dto';
+import { TourGuideAvailableItemDto, TourGuideAvailableQueryDto } from './dto/tour-guide-available.dto';
 import { TourGuideCalendarDayQueryDto } from './dto/tour-guide-calendar-day-query.dto';
 import { TourGuideCalendarSummaryQueryDto } from './dto/tour-guide-calendar-summary-query.dto';
 import { UpsertGuideAvailabilityDto } from './dto/upsert-guide-availability.dto';
@@ -134,15 +136,20 @@ export class GuideAvailabilityService {
         unavailableByGuide,
         occupancyByGuide,
       );
-      const occupancy = occupancyByGuide
-        .get(guide.id)
-        ?.find((entry) => overlapsDay(entry.start, entry.end, date));
+      const occupancies = occupancyByGuide.get(guide.id) ?? [];
+      const occupancy = occupancies.find((entry) => overlapsDay(entry.start, entry.end, date));
+      const slots = this.buildDaySlots(
+        date,
+        occupancies,
+        unavailableByGuide.get(guide.id) ?? [],
+      );
 
       return {
         guideId: guide.id,
         displayName: guide.displayName,
         photoUrl: guide.photoUrl,
         status,
+        slots,
         ...(occupancy
           ? {
               bookingId: occupancy.bookingId,
@@ -156,6 +163,72 @@ export class GuideAvailabilityService {
     guideRows.sort((left, right) => left.displayName.localeCompare(right.displayName, 'fr'));
 
     return { date, guides: guideRows };
+  }
+
+  async listAvailableGuides(
+    query: TourGuideAvailableQueryDto,
+  ): Promise<TourGuideAvailableItemDto[]> {
+    const { start, end } = this.scheduleConflictService.parseRange(query.from, query.to);
+    const guideIds = await this.scheduleConflictService.listAvailableGuideIds(start, end, {
+      destinationId: query.destinationId,
+      organizationId: query.organizationId,
+    });
+    if (guideIds.length === 0) {
+      return [];
+    }
+
+    const guides = await this.tourGuidesRepository.find({
+      where: { id: In(guideIds) },
+      order: { displayName: 'ASC' },
+    });
+    const guideById = new Map(guides.map((guide) => [guide.id, guide]));
+
+    return guideIds
+      .map((id) => guideById.get(id))
+      .filter((guide): guide is TourGuides => guide != null)
+      .map((guide) => ({
+        id: guide.id,
+        displayName: guide.displayName,
+        photoUrl: guide.photoUrl,
+        type: guide.type,
+        languages: guide.languages,
+        destinations: guide.destinations,
+      }));
+  }
+
+  private buildDaySlots(
+    date: string,
+    occupancies: GuideOccupancy[],
+    unavailableSlots: GuideAvailability[],
+  ): GuideCalendarScheduleSlotDto[] {
+    const slots: GuideCalendarScheduleSlotDto[] = [];
+
+    for (const entry of occupancies) {
+      if (!overlapsDay(entry.start, entry.end, date)) continue;
+      slots.push({
+        type: 'assignment',
+        startDatetime: formatScheduleInstant(entry.start),
+        endDatetime: formatScheduleInstant(entry.end),
+        assignmentId: entry.assignmentId,
+        bookingId: entry.bookingId,
+        role: entry.role,
+      });
+    }
+
+    for (const row of unavailableSlots) {
+      const start = parseScheduleInstant(row.startDatetime);
+      const end = parseScheduleInstant(row.endDatetime);
+      if (!overlapsDay(start, end, date)) continue;
+      slots.push({
+        type: 'unavailable',
+        startDatetime: formatScheduleInstant(start),
+        endDatetime: formatScheduleInstant(end),
+        availabilityId: row.id,
+      });
+    }
+
+    slots.sort((left, right) => left.startDatetime.localeCompare(right.startDatetime));
+    return slots;
   }
 
   async upsertAvailability(

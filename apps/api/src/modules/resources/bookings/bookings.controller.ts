@@ -35,7 +35,11 @@ import { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
 import { CreateBookingReviewDto } from '../reviews/dto/create-booking-review.dto';
 import { TourGuidesModule } from '../tour-guides/tour-guides.module';
 import { BookingGuideAssignmentsService } from '../tour-guides/booking-guide-assignments.service';
-import { AssignBookingGuidesDto, RemoveBookingGuideDto } from '../tour-guides/dto/booking-guide-assignment.dto';
+import {
+  AssignBookingGuidesDto,
+  RemoveBookingGuideDto,
+  UpdateBookingGuideAssignmentDto,
+} from '../tour-guides/dto/booking-guide-assignment.dto';
 import { BookingMessagesService } from './booking-messages.service';
 import { BookingMessageDto, BookingMessagesListDto } from './dto/booking-message.dto';
 import { BookingMessagesQueryDto } from './dto/booking-messages-query.dto';
@@ -140,7 +144,7 @@ export class BookingsController {
 
   @Post(':id/guides')
   @RequirePermissions('bookings.write')
-  @ApiOperation({ summary: 'Assign one or more tour guides to a booking' })
+  @ApiOperation({ summary: 'Assign one or more tour guide slots to a booking' })
   assignGuides(
     @Param('id') id: string,
     @Body() dto: AssignBookingGuidesDto,
@@ -149,9 +153,41 @@ export class BookingsController {
     return this.bookingGuideAssignmentsService.assignGuides(id, dto, user.id);
   }
 
-  @Delete(':id/guides/:guideId')
+  @Put(':id/guides/:assignmentId')
   @RequirePermissions('bookings.write')
-  @ApiOperation({ summary: 'Remove a tour guide assignment from a booking' })
+  @ApiOperation({ summary: 'Update a tour guide assignment slot on a booking' })
+  updateGuideSlot(
+    @Param('id') id: string,
+    @Param('assignmentId') assignmentId: string,
+    @Body() dto: UpdateBookingGuideAssignmentDto,
+    @CurrentUser() user: AuthUserDto,
+  ) {
+    return this.bookingGuideAssignmentsService.updateAssignment(
+      id,
+      assignmentId,
+      dto,
+      user.id,
+    );
+  }
+
+  @Delete(':id/guides/:assignmentId')
+  @RequirePermissions('bookings.write')
+  @ApiOperation({ summary: 'Remove a tour guide assignment slot from a booking' })
+  async removeGuideSlot(
+    @Param('id') id: string,
+    @Param('assignmentId') assignmentId: string,
+    @Body() dto: RemoveBookingGuideDto,
+  ) {
+    await this.bookingGuideAssignmentsService.removeAssignment(
+      id,
+      assignmentId,
+      dto?.comment,
+    );
+  }
+
+  @Delete(':id/guides/by-guide/:guideId')
+  @RequirePermissions('bookings.write')
+  @ApiOperation({ summary: 'Remove all assignment slots for a guide on a booking' })
   async removeGuide(
     @Param('id') id: string,
     @Param('guideId') guideId: string,

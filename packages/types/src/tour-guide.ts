@@ -247,12 +247,40 @@ export interface TourGuideCalendarDayGuide {
   photoUrl: string | null;
   status: GuideCalendarDayStatus;
   bookingId?: string;
+  assignmentId?: string;
   role?: BookingGuideRole;
+  slots: GuideCalendarScheduleSlot[];
+}
+
+export interface GuideCalendarScheduleSlot {
+  type: 'assignment' | 'unavailable';
+  startDatetime: string;
+  endDatetime: string;
+  assignmentId?: string;
+  bookingId?: string;
+  role?: BookingGuideRole;
+  availabilityId?: string;
 }
 
 export interface TourGuideCalendarDayDetail {
   date: string;
   guides: TourGuideCalendarDayGuide[];
+}
+
+export interface TourGuideAvailableQuery {
+  from: string;
+  to: string;
+  destinationId?: string;
+  organizationId?: string;
+}
+
+export interface TourGuideAvailableItem {
+  id: string;
+  displayName: string;
+  photoUrl: string | null;
+  type: TourGuideType;
+  languages: string[];
+  destinations: string[];
 }
 
 export interface TourGuideCalendarSummaryQuery {

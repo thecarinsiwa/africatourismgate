@@ -32,6 +32,7 @@ import { BookingGuideAssignmentsService } from './booking-guide-assignments.serv
 import { CreateTourGuideDto } from './dto/create-tour-guide.dto';
 import { TourGuideCalendarDayQueryDto } from './dto/tour-guide-calendar-day-query.dto';
 import { TourGuideCalendarSummaryQueryDto } from './dto/tour-guide-calendar-summary-query.dto';
+import { TourGuideAvailableQueryDto } from './dto/tour-guide-available.dto';
 import { UpsertGuideAvailabilityDto } from './dto/upsert-guide-availability.dto';
 import { TourGuideBookingsListQueryDto } from './dto/tour-guide-bookings-list-query.dto';
 import { TourGuidesListQueryDto } from './dto/tour-guides-list-query.dto';
@@ -122,9 +123,16 @@ export class TourGuidesController {
 
   @Get('calendar/day')
   @RequirePermissions('guides.read')
-  @ApiOperation({ summary: 'Détail calendrier pour un jour (statut par guide)' })
+  @ApiOperation({ summary: 'Détail calendrier pour un jour (statut et créneaux par guide)' })
   getCalendarDay(@Query() query: TourGuideCalendarDayQueryDto) {
     return this.guideAvailabilityService.getCalendarDay(query);
+  }
+
+  @Get('available')
+  @RequirePermissions('guides.read')
+  @ApiOperation({ summary: 'Guides disponibles sur une plage horaire' })
+  listAvailableGuides(@Query() query: TourGuideAvailableQueryDto) {
+    return this.guideAvailabilityService.listAvailableGuides(query);
   }
 
   @Put(':guideId/availability')

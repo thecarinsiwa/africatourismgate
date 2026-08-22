@@ -297,8 +297,11 @@ export type {
   TourGuideCalendarSummary,
   TourGuideCalendarDayGuide,
   TourGuideCalendarDayDetail,
+  GuideCalendarScheduleSlot,
   TourGuideCalendarSummaryQuery,
   TourGuideCalendarDayQuery,
+  TourGuideAvailableQuery,
+  TourGuideAvailableItem,
   UpsertGuideAvailabilityRequest,
   GuideAvailabilitySlot,
 } from './tour-guide.js';
