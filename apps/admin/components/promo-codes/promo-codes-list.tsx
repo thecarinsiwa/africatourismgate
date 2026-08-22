@@ -254,6 +254,10 @@ export function PromoCodesList({ listFilter, onListFilterChange }: PromoCodesLis
           const promo = row.original;
           return (
             <DataTableActions>
+              <DataTableActionButton
+                action="view"
+                href={`/paiements/codes-promo/${promo.id}/voir`}
+              />
               <DataTableActionButton action="edit" href={`/paiements/codes-promo/${promo.id}`} />
               {canWrite ? (
                 <DataTableActionButton
