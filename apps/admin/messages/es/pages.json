@@ -354,7 +354,12 @@
     }
   },
   "paiements": {
+    "title": "Pagos",
     "description": "Transacciones y reembolsos Stripe (modo prueba). Filtre por estado, fechas y organización (super admin). Acceso: payments.read; reembolso: payments.write.",
+    "actions": {
+      "promoCodes": "Códigos promocionales",
+      "promotions": "Promociones"
+    },
     "codes-promo": {
       "intro": "Códigos introducidos en el checkout (ej. BIENVENUE10). Complementa las promociones. Acceso: promo_codes.read / write.",
       "linkPromotions": "promociones",

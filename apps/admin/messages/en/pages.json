@@ -354,7 +354,12 @@
     }
   },
   "paiements": {
+    "title": "Payments",
     "description": "Stripe transactions and refunds (test mode). Filter by status, dates and organization (super admin). Access: payments.read; refund: payments.write.",
+    "actions": {
+      "promoCodes": "Promo codes",
+      "promotions": "Promotions"
+    },
     "codes-promo": {
       "intro": "Codes entered at checkout (e.g. WELCOME10). Complements promotions. Access: promo_codes.read / write.",
       "linkPromotions": "promotions",

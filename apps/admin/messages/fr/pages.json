@@ -354,7 +354,12 @@
     }
   },
   "paiements": {
+    "title": "Paiements",
     "description": "Transactions et remboursements Stripe (mode test). Filtres par statut, dates et organisation (super admin). Accès : payments.read ; remboursement : payments.write.",
+    "actions": {
+      "promoCodes": "Codes promo",
+      "promotions": "Promotions"
+    },
     "codes-promo": {
       "intro": "Créez et gérez les codes utilisables dans le checkout (preview web). Validation des dates, unicité du code et plafond d'utilisations. Voir aussi les promotions. Accès : promo_codes.read / write.",
       "linkPromotions": "promotions",
