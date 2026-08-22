@@ -320,6 +320,9 @@
       "title": "Lignes de réservation",
       "description": "Tableau global des articles par réservation (données API live). Filtres par type, statut de la réservation et identifiant booking. Accès requis : bookings.read.",
       "backLabel": "Retour aux réservations"
+    },
+    "id": {
+      "metaTitle": "Détail réservation"
     }
   },
   "guides": {

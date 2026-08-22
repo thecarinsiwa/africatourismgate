@@ -320,6 +320,9 @@
       "title": "Booking line items",
       "description": "Global line items per booking (live API data). Filter by type, booking status and booking ID. Requires bookings.read.",
       "backLabel": "Back to bookings"
+    },
+    "id": {
+      "metaTitle": "Booking detail"
     }
   },
   "guides": {

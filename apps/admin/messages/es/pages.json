@@ -320,6 +320,9 @@
       "title": "Líneas de reserva",
       "description": "Tabla global de artículos por reserva (datos API en vivo). Filtre por tipo, estado de reserva e ID de reserva. Requiere bookings.read.",
       "backLabel": "Volver a reservas"
+    },
+    "id": {
+      "metaTitle": "Detalle de reserva"
     }
   },
   "guides": {
