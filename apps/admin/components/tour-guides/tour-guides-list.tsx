@@ -66,6 +66,8 @@ export function TourGuidesList() {
   const t = useTranslations('modules.tourGuides.list');
   const tColumns = useTranslations('modules.tourGuides.columns');
   const tFilters = useTranslations('modules.tourGuides.filters');
+  const tDestColumns = useTranslations('modules.destinations.columns');
+  const tUsersFilters = useTranslations('modules.users.filters');
   const tCommon = useTranslations('modules.common');
   const tCommonFilters = useTranslations('modules.common.filters');
   const tDataTable = useTranslations('modules.common.dataTable');
@@ -538,7 +540,7 @@ export function TourGuidesList() {
               </div>
               <div className="w-full sm:w-48">
                 <Select
-                  label={tFilters('destination')}
+                  label={tDestColumns('destination')}
                   value={destinationFilter}
                   options={destinationOptions}
                   onChange={(e) => {
@@ -549,7 +551,7 @@ export function TourGuidesList() {
               </div>
               <div className="w-full sm:w-48">
                 <Select
-                  label={tFilters('organization')}
+                  label={tUsersFilters('organization')}
                   value={organizationFilter}
                   options={organizationOptions}
                   onChange={(e) => {
