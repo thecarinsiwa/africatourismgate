@@ -88,6 +88,8 @@ export function resolveCheckoutBookingMode(input: {
   return 'assisted';
 }
 
+import type { BookingStatus } from './booking.js';
+
 export type TourGuideType = 'internal' | 'external';
 
 export type TourGuideStatus = 'active' | 'inactive';
@@ -174,4 +176,25 @@ export interface BookingGuideAssignment {
   role: BookingGuideRole;
   assignedAt: string;
   assignedByUserId: string | null;
+}
+
+export interface TourGuideBookingListItem {
+  assignmentId: string;
+  role: BookingGuideRole;
+  assignedAt: string;
+  bookingId: string;
+  status: BookingStatus;
+  totalCents: number;
+  currency: string;
+  createdAt: string;
+  clientEmail: string;
+  clientFirstName: string;
+  clientLastName: string;
+  organizationId: string | null;
+}
+
+export interface TourGuideBookingsListQuery {
+  page?: number;
+  limit?: number;
+  sortOrder?: 'asc' | 'desc';
 }

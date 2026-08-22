@@ -182,6 +182,8 @@ import type {
   TourGuidesListQuery,
   CreateTourGuideRequest,
   UpdateTourGuideRequest,
+  TourGuideBookingListItem,
+  TourGuideBookingsListQuery,
   BlogPost,
   BlogPostsListQuery,
   CreateBlogPostRequest,
@@ -1333,6 +1335,17 @@ export class ApiClient {
 
   deleteTourGuide(id: string): Promise<void> {
     return this.request<void>(`/tour-guides/${id}`, { method: 'DELETE' });
+  }
+
+  listTourGuideBookings(
+    guideId: string,
+    query?: TourGuideBookingsListQuery,
+  ): Promise<PaginatedResponse<TourGuideBookingListItem>> {
+    return fetchPaginated<TourGuideBookingListItem>(
+      this,
+      `/tour-guides/${guideId}/bookings`,
+      query,
+    );
   }
 
   listBlogPosts(

@@ -12,7 +12,9 @@ import { ApiForbiddenResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { AuthUserDto } from '../../auth/dto/auth-user.dto';
 import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
+import { BookingGuideAssignmentsService } from './booking-guide-assignments.service';
 import { CreateTourGuideDto } from './dto/create-tour-guide.dto';
+import { TourGuideBookingsListQueryDto } from './dto/tour-guide-bookings-list-query.dto';
 import { TourGuidesListQueryDto } from './dto/tour-guides-list-query.dto';
 import { UpdateTourGuideDto } from './dto/update-tour-guide.dto';
 import { TourGuidesService } from './tour-guides.service';
@@ -21,13 +23,26 @@ import { TourGuidesService } from './tour-guides.service';
 @ApiForbiddenResponse({ description: 'Permission manquante' })
 @Controller('tour-guides')
 export class TourGuidesController {
-  constructor(private readonly service: TourGuidesService) {}
+  constructor(
+    private readonly service: TourGuidesService,
+    private readonly bookingGuideAssignmentsService: BookingGuideAssignmentsService,
+  ) {}
 
   @Get()
   @RequirePermissions('guides.read')
   @ApiOperation({ summary: 'Liste paginée des guides touristiques' })
   findAll(@Query() query: TourGuidesListQueryDto) {
     return this.service.list(query);
+  }
+
+  @Get(':id/bookings')
+  @RequirePermissions('guides.read')
+  @ApiOperation({ summary: 'Liste paginée des réservations assignées à un guide' })
+  listBookings(
+    @Param('id') id: string,
+    @Query() query: TourGuideBookingsListQueryDto,
+  ) {
+    return this.bookingGuideAssignmentsService.listByGuideId(id, query);
   }
 
   @Get(':id')
