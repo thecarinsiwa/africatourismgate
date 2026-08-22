@@ -86,8 +86,10 @@ bookings
 booking_status_history
 booking_items
 booking_guide_assignments
+booking_guide_assignment_history
 booking_messages
 tour_guides
+guide_availability
 payments
 promo_codes
 promotions

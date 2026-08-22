@@ -1369,15 +1369,58 @@ CREATE TABLE `booking_guide_assignments` (
   `booking_id` CHAR(36) NOT NULL,
   `guide_id` CHAR(36) NOT NULL,
   `role` ENUM('primary','secondary') NOT NULL DEFAULT 'primary',
+  `start_datetime` DATETIME NOT NULL,
+  `end_datetime` DATETIME NOT NULL,
+  `notes` VARCHAR(500) DEFAULT NULL,
   `assigned_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `assigned_by_user_id` CHAR(36) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_booking_guide` (`booking_id`, `guide_id`),
   KEY `idx_booking_guide_assignments_booking` (`booking_id`),
   KEY `idx_booking_guide_assignments_guide` (`guide_id`),
+  KEY `idx_bga_guide_schedule` (`guide_id`, `start_datetime`, `end_datetime`),
   CONSTRAINT `fk_booking_guide_assignments_booking` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_booking_guide_assignments_guide` FOREIGN KEY (`guide_id`) REFERENCES `tour_guides` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_booking_guide_assignments_user` FOREIGN KEY (`assigned_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `guide_availability` (
+  `id` CHAR(36) NOT NULL,
+  `guide_id` CHAR(36) NOT NULL,
+  `start_datetime` DATETIME NOT NULL,
+  `end_datetime` DATETIME NOT NULL,
+  `status` ENUM('available','unavailable') NOT NULL DEFAULT 'unavailable',
+  `created_by_user_id` CHAR(36) DEFAULT NULL,
+  `updated_by_user_id` CHAR(36) DEFAULT NULL,
+  `deleted_by_user_id` CHAR(36) DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` DATETIME DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_guide_availability_guide_schedule` (`guide_id`, `start_datetime`, `end_datetime`),
+  KEY `idx_guide_availability_deleted_at` (`deleted_at`),
+  CONSTRAINT `fk_guide_availability_guide` FOREIGN KEY (`guide_id`) REFERENCES `tour_guides` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_guide_availability_created_by` FOREIGN KEY (`created_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_guide_availability_updated_by` FOREIGN KEY (`updated_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_guide_availability_deleted_by` FOREIGN KEY (`deleted_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `booking_guide_assignment_history` (
+  `id` CHAR(36) NOT NULL,
+  `assignment_id` CHAR(36) NOT NULL,
+  `booking_id` CHAR(36) NOT NULL,
+  `guide_id` CHAR(36) NOT NULL,
+  `action` ENUM('created','updated','deleted') NOT NULL,
+  `snapshot` JSON NOT NULL,
+  `actor_user_id` CHAR(36) DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_bga_history_assignment` (`assignment_id`),
+  KEY `idx_bga_history_booking` (`booking_id`),
+  KEY `idx_bga_history_guide` (`guide_id`),
+  KEY `idx_bga_history_created` (`created_at`),
+  CONSTRAINT `fk_bga_history_booking` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_bga_history_guide` FOREIGN KEY (`guide_id`) REFERENCES `tour_guides` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_bga_history_actor` FOREIGN KEY (`actor_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `booking_messages` (

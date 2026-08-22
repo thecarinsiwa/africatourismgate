@@ -206,10 +206,10 @@ export class TourGuides extends BaseAuditEntity {
   contactEmail!: string | null;
 
   @Column({ type: 'json', name: 'languages' })
-  languages!: string[];
+  languages!: Record<string, unknown>;
 
   @Column({ type: 'json', name: 'destinations' })
-  destinations!: string[];
+  destinations!: Record<string, unknown>;
 
   @Column({ name: 'status', enum: ["active","inactive"] })
   status!: 'active' | 'inactive';
@@ -230,6 +230,15 @@ export class BookingGuideAssignments {
   @Column({ name: 'role', enum: ["primary","secondary"] })
   role!: 'primary' | 'secondary';
 
+  @Column({ type: 'datetime', name: 'start_datetime' })
+  startDatetime!: Date;
+
+  @Column({ type: 'datetime', name: 'end_datetime' })
+  endDatetime!: Date;
+
+  @Column({ type: 'varchar', name: 'notes', length: 500, nullable: true })
+  notes!: string | null;
+
   @Column({ type: 'datetime', name: 'assigned_at' })
   assignedAt!: Date;
 
@@ -246,11 +255,43 @@ export class GuideAvailability extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'guide_id', length: 36 })
   guideId!: string;
 
-  @Column({ type: 'date', name: 'date' })
-  date!: string;
+  @Column({ type: 'datetime', name: 'start_datetime' })
+  startDatetime!: Date;
 
-  @Column({ name: 'status', enum: ['available', 'unavailable'], default: 'available' })
+  @Column({ type: 'datetime', name: 'end_datetime' })
+  endDatetime!: Date;
+
+  @Column({ name: 'status', enum: ["available","unavailable"] })
   status!: 'available' | 'unavailable';
+
+}
+
+@Entity('booking_guide_assignment_history')
+export class BookingGuideAssignmentHistory {
+  @PrimaryColumn('uuid', { name: 'id', length: 36 })
+  id!: string;
+
+  @Column({ type: 'varchar', name: 'assignment_id', length: 36 })
+  assignmentId!: string;
+
+  @Column({ type: 'varchar', name: 'booking_id', length: 36 })
+  bookingId!: string;
+
+  @Column({ type: 'varchar', name: 'guide_id', length: 36 })
+  guideId!: string;
+
+  @Column({ name: 'action', enum: ["created","updated","deleted"] })
+  action!: 'created' | 'updated' | 'deleted';
+
+  @Column({ type: 'json', name: 'snapshot' })
+  snapshot!: Record<string, unknown>;
+
+  @Column({ type: 'varchar', name: 'actor_user_id', length: 36, nullable: true })
+  actorUserId!: string | null;
+
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
+  createdAt!: Date;
+
 }
 
 @Entity('booking_messages')
