@@ -25,13 +25,15 @@
     "searchAria": "Rechercher un guide",
     "ariaLabel": "Liste des guides touristiques",
     "deleteTitle": "Supprimer le guide",
-    "deleteConfirm": "Le guide « {name} » sera supprimé définitivement.",
+    "deleteConfirm": "Le guide « {name} » sera retiré du catalogue (suppression logique).",
     "deleteConfirmButton": "Supprimer",
     "cancel": "Annuler"
   },
   "columns": {
     "name": "Nom",
     "type": "Type",
+    "destinations": "Destinations",
+    "organization": "Organisation",
     "languages": "Langues",
     "status": "Statut"
   },
@@ -99,6 +101,8 @@
   "filters": {
     "type": "Type",
     "status": "Statut",
+    "destination": "Destination",
+    "organization": "Organisation",
     "all": "Tous"
   }
 }

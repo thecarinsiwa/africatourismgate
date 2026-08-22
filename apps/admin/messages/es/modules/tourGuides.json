@@ -25,13 +25,15 @@
     "searchAria": "Buscar guías",
     "ariaLabel": "Lista de guías turísticos",
     "deleteTitle": "Eliminar guía",
-    "deleteConfirm": "El guía «{name}» será eliminado permanentemente.",
+    "deleteConfirm": "El guía « {name} » será retirado del catálogo (eliminación lógica).",
     "deleteConfirmButton": "Eliminar",
     "cancel": "Cancelar"
   },
   "columns": {
     "name": "Nombre",
     "type": "Tipo",
+    "destinations": "Destinos",
+    "organization": "Organización",
     "languages": "Idiomas",
     "status": "Estado"
   },
@@ -99,6 +101,8 @@
   "filters": {
     "type": "Tipo",
     "status": "Estado",
+    "destination": "Destino",
+    "organization": "Organización",
     "all": "Todos"
   }
 }

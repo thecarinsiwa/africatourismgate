@@ -247,7 +247,7 @@
     "deletedEmployee": "Employee « {label} » has been deleted.",
     "deletedAmenity": "Amenity « {name} » has been deleted.",
     "deletedDestination": "Destination « {name} » has been deleted.",
-    "deletedTourGuide": "Tour guide « {name} » has been deleted.",
+    "deletedTourGuide": "Tour guide \"{name}\" has been removed from the catalog.",
     "deletedOrganization": "Organization « {name} » has been deleted."
   },
   "availabilityCalendar": {

@@ -25,13 +25,15 @@
     "searchAria": "Search guides",
     "ariaLabel": "Tour guides list",
     "deleteTitle": "Delete guide",
-    "deleteConfirm": "Guide \"{name}\" will be permanently deleted.",
+    "deleteConfirm": "Guide \"{name}\" will be removed from the catalog (soft delete).",
     "deleteConfirmButton": "Delete",
     "cancel": "Cancel"
   },
   "columns": {
     "name": "Name",
     "type": "Type",
+    "destinations": "Destinations",
+    "organization": "Organization",
     "languages": "Languages",
     "status": "Status"
   },
@@ -99,6 +101,8 @@
   "filters": {
     "type": "Type",
     "status": "Status",
+    "destination": "Destination",
+    "organization": "Organization",
     "all": "All"
   }
 }

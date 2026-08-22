@@ -247,7 +247,7 @@
     "deletedEmployee": "El empleado « {label} » ha sido eliminado.",
     "deletedAmenity": "El equipamiento « {name} » ha sido eliminado.",
     "deletedDestination": "El destino « {name} » ha sido eliminado.",
-    "deletedTourGuide": "El guía « {name} » ha sido eliminado.",
+    "deletedTourGuide": "El guía « {name} » ha sido retirado del catálogo.",
     "deletedOrganization": "La organización « {name} » ha sido eliminada."
   },
   "availabilityCalendar": {
