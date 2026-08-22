@@ -26,7 +26,7 @@ import { ActivityDescriptionAssetsSection } from './activity-description-assets-
 import { ActivityMetaBadges } from './activity-meta-badges';
 import { ActivitySchedulesSection } from './activity-schedules-section';
 import { ActivityItineraryStopsSection } from './activity-itinerary-stops-section';
-import { ActivityThumbnail } from './activity-thumbnail';
+import { ActivityThumbnail, pickMainActivityImageUrl } from './activity-thumbnail';
 
 type ActivityEditPageProps = {
   activityId: string;
@@ -52,7 +52,7 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
-    | { status: 'ready'; activity: Activity; providerName: string | null }
+    | { status: 'ready'; activity: Activity; providerName: string | null; coverImageUrl: string | null }
   >({ status: 'loading' });
 
   useAdminEditPageMeta({
@@ -67,15 +67,18 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
       try {
         const client = getApiClient();
         const activity = await client.getActivity(activityId);
-        let providerName: string | null = null;
-        try {
-          const provider = await client.getActivityProvider(activity.providerId);
-          providerName = provider.name;
-        } catch {
-          providerName = null;
-        }
+        const [imagesResult, providerResult] = await Promise.all([
+          client.listActivityImages({ activityId, page: 1, limit: 100 }).catch(() => ({ data: [] })),
+          client.getActivityProvider(activity.providerId).catch(() => null),
+        ]);
+        const providerName = providerResult?.name ?? null;
         if (!cancelled) {
-          setState({ status: 'ready', activity, providerName });
+          setState({
+            status: 'ready',
+            activity,
+            providerName,
+            coverImageUrl: pickMainActivityImageUrl(imagesResult.data),
+          });
         }
       } catch (error) {
         if (!cancelled) {
@@ -102,12 +105,25 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
     [pathname, router, searchParams],
   );
 
+  const reloadCoverImage = useCallback(async () => {
+    try {
+      const result = await getApiClient().listActivityImages({ activityId, page: 1, limit: 100 });
+      setState((current) =>
+        current.status === 'ready'
+          ? { ...current, coverImageUrl: pickMainActivityImageUrl(result.data) }
+          : current,
+      );
+    } catch {
+      /* conserve la vignette actuelle */
+    }
+  }, [activityId]);
+
   if (state.status === 'loading') {
     return (
       <div className="space-y-6">
         <Skeleton className="h-5 w-40" />
         <div className="flex items-center gap-4 rounded-xl border border-atg-border bg-atg-elevated p-4">
-          <Skeleton className="h-12 w-16 rounded-lg" />
+          <Skeleton className="h-24 w-32 rounded-lg sm:h-28 sm:w-36" />
           <div className="space-y-2">
             <Skeleton className="h-6 w-48" />
             <Skeleton className="h-4 w-32" />
@@ -136,7 +152,7 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
     );
   }
 
-  const { activity, providerName } = state;
+  const { activity, providerName, coverImageUrl } = state;
 
   return (
     <div className="space-y-6">
@@ -152,7 +168,12 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
       </div>
 
       <div className="flex flex-col gap-4 rounded-xl border border-atg-border bg-atg-elevated p-4 sm:flex-row sm:items-start">
-        <ActivityThumbnail activityId={activityId} label={activity.title} size="md" />
+        <ActivityThumbnail
+          activityId={activityId}
+          label={activity.title}
+          size="lg"
+          imageUrl={coverImageUrl}
+        />
         <div className="min-w-0 flex-1 space-y-2">
           <h2 className="text-xl font-semibold text-atg-fg">{activity.title}</h2>
           <div className="flex flex-wrap items-center gap-2">
@@ -198,10 +219,21 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
                     nextProviderName = null;
                   }
                 }
-                setState({
-                  status: 'ready',
-                  activity: updated,
-                  providerName: nextProviderName,
+                setState((current) => {
+                  if (current.status !== 'ready') {
+                    return {
+                      status: 'ready',
+                      activity: updated,
+                      providerName: nextProviderName,
+                      coverImageUrl: null,
+                    };
+                  }
+                  return {
+                    status: 'ready',
+                    activity: updated,
+                    providerName: nextProviderName,
+                    coverImageUrl: current.coverImageUrl,
+                  };
                 });
               })();
             }}
@@ -209,7 +241,11 @@ export function ActivityEditPage({ activityId }: ActivityEditPageProps) {
         </TabsContent>
 
         <TabsContent value="photos">
-          <ActivityImagesSection activityId={activityId} embedded />
+          <ActivityImagesSection
+            activityId={activityId}
+            embedded
+            onImagesChanged={() => void reloadCoverImage()}
+          />
         </TabsContent>
 
         <TabsContent value="pieces">

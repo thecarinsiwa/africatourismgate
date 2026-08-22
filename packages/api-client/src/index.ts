@@ -101,6 +101,8 @@ import type {
   BookingDetail,
   BookingIdentityDocument,
   ReviewBookingIdentityDocumentRequest,
+  RequestIdentityDocumentUploadRequest,
+  RequestIdentityDocumentUploadResponse,
   BookingManifestEntry,
   CreateBookingManifestEntryRequest,
   UpdateBookingManifestEntryRequest,
@@ -114,6 +116,9 @@ import type {
   BookingItemsListQuery,
   BookingGuideAssignment,
   AssignBookingGuidesRequest,
+  UpdateBookingGuideAssignmentRequest,
+  RemoveBookingGuideRequest,
+  BookingGuideAssignmentHistoryItem,
   BookingListItem,
   BookingsListQuery,
   AdminReviewDetail,
@@ -179,6 +184,16 @@ import type {
   TourGuidesListQuery,
   CreateTourGuideRequest,
   UpdateTourGuideRequest,
+  TourGuideBookingListItem,
+  TourGuideBookingsListQuery,
+  TourGuideCalendarSummary,
+  TourGuideCalendarSummaryQuery,
+  TourGuideCalendarDayDetail,
+  TourGuideCalendarDayQuery,
+  TourGuideAvailableQuery,
+  TourGuideAvailableItem,
+  UpsertGuideAvailabilityRequest,
+  GuideAvailabilitySlot,
   BlogPost,
   BlogPostsListQuery,
   CreateBlogPostRequest,
@@ -1332,6 +1347,65 @@ export class ApiClient {
     return this.request<void>(`/tour-guides/${id}`, { method: 'DELETE' });
   }
 
+  listTourGuideBookings(
+    guideId: string,
+    query?: TourGuideBookingsListQuery,
+  ): Promise<PaginatedResponse<TourGuideBookingListItem>> {
+    return fetchPaginated<TourGuideBookingListItem>(
+      this,
+      `/tour-guides/${guideId}/bookings`,
+      query,
+    );
+  }
+
+  getTourGuideCalendarSummary(
+    query: TourGuideCalendarSummaryQuery,
+  ): Promise<TourGuideCalendarSummary> {
+    const params = new URLSearchParams();
+    params.set('month', query.month);
+    if (query.destinationId) params.set('destinationId', query.destinationId);
+    if (query.organizationId) params.set('organizationId', query.organizationId);
+    if (query.guideId) params.set('guideId', query.guideId);
+    const qs = params.toString();
+    return this.request<TourGuideCalendarSummary>(
+      `/tour-guides/calendar/summary?${qs}`,
+    );
+  }
+
+  getTourGuideCalendarDay(
+    query: TourGuideCalendarDayQuery,
+  ): Promise<TourGuideCalendarDayDetail> {
+    const params = new URLSearchParams();
+    params.set('date', query.date);
+    if (query.destinationId) params.set('destinationId', query.destinationId);
+    if (query.organizationId) params.set('organizationId', query.organizationId);
+    if (query.guideId) params.set('guideId', query.guideId);
+    const qs = params.toString();
+    return this.request<TourGuideCalendarDayDetail>(`/tour-guides/calendar/day?${qs}`);
+  }
+
+  searchAvailableTourGuides(
+    query: TourGuideAvailableQuery,
+  ): Promise<TourGuideAvailableItem[]> {
+    const params = new URLSearchParams();
+    params.set('from', query.from);
+    params.set('to', query.to);
+    if (query.destinationId) params.set('destinationId', query.destinationId);
+    if (query.organizationId) params.set('organizationId', query.organizationId);
+    const qs = params.toString();
+    return this.request<TourGuideAvailableItem[]>(`/tour-guides/available?${qs}`);
+  }
+
+  upsertGuideAvailability(
+    guideId: string,
+    body: UpsertGuideAvailabilityRequest,
+  ): Promise<GuideAvailabilitySlot> {
+    return this.request<GuideAvailabilitySlot>(`/tour-guides/${guideId}/availability`, {
+      method: 'PUT',
+      body,
+    });
+  }
+
   listBlogPosts(
     query?: BlogPostsListQuery,
   ): Promise<PaginatedResponse<BlogPost>> {
@@ -2430,9 +2504,48 @@ export class ApiClient {
     });
   }
 
-  removeBookingGuide(bookingId: string, guideId: string): Promise<void> {
-    return this.request<void>(`/bookings/${bookingId}/guides/${guideId}`, {
+  updateBookingGuideSlot(
+    bookingId: string,
+    assignmentId: string,
+    body: UpdateBookingGuideAssignmentRequest,
+  ): Promise<BookingGuideAssignment> {
+    return this.request<BookingGuideAssignment>(
+      `/bookings/${bookingId}/guides/${assignmentId}`,
+      {
+        method: 'PUT',
+        body,
+      },
+    );
+  }
+
+  removeBookingGuideSlot(
+    bookingId: string,
+    assignmentId: string,
+    body?: RemoveBookingGuideRequest,
+  ): Promise<void> {
+    return this.request<void>(`/bookings/${bookingId}/guides/${assignmentId}`, {
       method: 'DELETE',
+      body: body ?? {},
+    });
+  }
+
+  listBookingGuideAssignmentHistory(
+    bookingId: string,
+  ): Promise<BookingGuideAssignmentHistoryItem[]> {
+    return this.request<BookingGuideAssignmentHistoryItem[]>(
+      `/bookings/${bookingId}/guides/history`,
+    );
+  }
+
+  /** @deprecated Préférez removeBookingGuideSlot pour un créneau unique. */
+  removeBookingGuide(
+    bookingId: string,
+    guideId: string,
+    body?: RemoveBookingGuideRequest,
+  ): Promise<void> {
+    return this.request<void>(`/bookings/${bookingId}/guides/by-guide/${guideId}`, {
+      method: 'DELETE',
+      body: body ?? {},
     });
   }
 
@@ -2597,6 +2710,16 @@ export class ApiClient {
     return this.request<BookingIdentityDocument>(
       `/bookings/${bookingId}/identity-documents/${documentId}/reject`,
       { method: 'POST', body: body ?? {} },
+    );
+  }
+
+  requestBookingIdentityDocumentUpload(
+    bookingId: string,
+    body: RequestIdentityDocumentUploadRequest,
+  ): Promise<RequestIdentityDocumentUploadResponse> {
+    return this.request<RequestIdentityDocumentUploadResponse>(
+      `/bookings/${bookingId}/request-identity-document-upload`,
+      { method: 'POST', body },
     );
   }
 

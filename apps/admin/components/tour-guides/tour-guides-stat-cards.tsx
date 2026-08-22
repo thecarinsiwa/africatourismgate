@@ -28,6 +28,7 @@ export function TourGuidesStatCards({ className }: { className?: string }) {
     active: { ...initialCardState },
     inactive: { ...initialCardState },
     internal: { ...initialCardState },
+    external: { ...initialCardState },
   }));
 
   useEffect(() => {
@@ -58,10 +59,18 @@ export function TourGuidesStatCards({ className }: { className?: string }) {
           });
           return { status: 'ready', displayValue: formatCount(result.meta.total) };
         }
+        if (key === 'internal') {
+          const result = await client.listTourGuides({
+            page: 1,
+            limit: 1,
+            type: 'internal',
+          });
+          return { status: 'ready', displayValue: formatCount(result.meta.total) };
+        }
         const result = await client.listTourGuides({
           page: 1,
           limit: 1,
-          type: 'internal',
+          type: 'external',
         });
         return { status: 'ready', displayValue: formatCount(result.meta.total) };
       } catch (error) {
@@ -95,7 +104,7 @@ export function TourGuidesStatCards({ className }: { className?: string }) {
 
   return (
     <div className={className}>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
         {tourGuidesKpis.map((kpi) => {
           const state = cards[kpi.key];
           return (

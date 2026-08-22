@@ -20,6 +20,9 @@ import {
   renderBookingRejectedEmail,
   renderBookingRequestReceivedEmail,
   renderBookingStaffMessageEmail,
+  renderBookingIdentityDocumentUploadRequestEmail,
+  renderBookingGuideAssignmentEmail,
+  renderBookingGuideRemovalEmail,
 } from './assisted-booking.email.templates';
 import type {
   AbandonmentReminderEmailPayload,
@@ -33,6 +36,9 @@ import type {
   BookingRejectedEmailPayload,
   BookingRequestReceivedEmailPayload,
   BookingStaffMessageEmailPayload,
+  BookingIdentityDocumentUploadRequestEmailPayload,
+  BookingGuideAssignmentEmailPayload,
+  BookingGuideRemovalEmailPayload,
   PasswordResetEmailPayload,
   SendMailResult,
   EmailAttachment,
@@ -185,6 +191,40 @@ export class EmailService implements OnModuleInit {
   ): Promise<SendMailResult> {
     const branding = await this.resolveBranding();
     const { subject, html, text } = renderBookingPaymentReminderEmail(payload, branding);
+    return this.send('service', { to: payload.to, subject, html, text });
+  }
+
+  async sendBookingIdentityDocumentUploadRequest(
+    payload: BookingIdentityDocumentUploadRequestEmailPayload,
+  ): Promise<SendMailResult> {
+    const branding = await this.resolveBranding();
+    const { subject, html, text } = renderBookingIdentityDocumentUploadRequestEmail(
+      payload,
+      branding,
+    );
+    return this.send('service', { to: payload.to, subject, html, text });
+  }
+
+  async sendBookingGuideAssignment(
+    payload: BookingGuideAssignmentEmailPayload,
+    options?: { attachments?: EmailAttachment[] },
+  ): Promise<SendMailResult> {
+    const branding = await this.resolveBranding();
+    const { subject, html, text } = renderBookingGuideAssignmentEmail(payload, branding);
+    return this.send('service', {
+      to: payload.to,
+      subject,
+      html,
+      text,
+      attachments: options?.attachments,
+    });
+  }
+
+  async sendBookingGuideRemoval(
+    payload: BookingGuideRemovalEmailPayload,
+  ): Promise<SendMailResult> {
+    const branding = await this.resolveBranding();
+    const { subject, html, text } = renderBookingGuideRemovalEmail(payload, branding);
     return this.send('service', { to: payload.to, subject, html, text });
   }
 

@@ -2,6 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   ArrayMinSize,
   IsArray,
+  IsEmail,
   IsEnum,
   IsNotEmpty,
   IsOptional,
@@ -48,6 +49,17 @@ export class CreateTourGuideDto {
   @IsString()
   @MaxLength(512)
   photoUrl?: string;
+
+  @ApiPropertyOptional({
+    example: 'guide@example.com',
+    maxLength: 255,
+    description: 'Obligatoire pour un guide externe',
+  })
+  @ValidateIf((dto: CreateTourGuideDto) => dto.type === 'external')
+  @IsNotEmpty({ message: "L'e-mail de contact est obligatoire pour un guide externe." })
+  @IsEmail({}, { message: "L'adresse e-mail de contact doit être valide." })
+  @MaxLength(255)
+  contactEmail?: string;
 
   @ApiProperty({ type: [String], example: ['fr', 'en'] })
   @IsArray({ message: 'Les langues doivent être un tableau.' })

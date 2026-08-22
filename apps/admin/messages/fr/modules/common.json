@@ -24,7 +24,9 @@
     "searchByEmailOrName": "Rechercher par e-mail ou nom…",
     "searchByEmailOrNameAria": "Rechercher par e-mail ou nom",
     "searchByNameOrSlug": "Rechercher par nom ou slug…",
-    "searchByNameOrSlugAria": "Rechercher par nom ou slug"
+    "searchByNameOrSlugAria": "Rechercher par nom ou slug",
+    "searchBookings": "Rechercher par client, e-mail ou réf.…",
+    "searchBookingsAria": "Rechercher des réservations"
   },
   "columns": {
     "user": "Utilisateur",
@@ -245,7 +247,8 @@
     "deletedEmployee": "L'employé « {label} » a été supprimé.",
     "deletedAmenity": "L'équipement « {name} » a été supprimé.",
     "deletedDestination": "La destination « {name} » a été supprimée.",
-    "deletedTourGuide": "Le guide « {name} » a été supprimé.",
+    "deletedTourGuide": "Le guide « {name} » a été retiré du catalogue.",
+    "tourGuideSavedTitle": "Guide enregistré",
     "deletedOrganization": "L'organisation « {name} » a été supprimée."
   },
   "availabilityCalendar": {

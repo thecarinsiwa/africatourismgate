@@ -8,6 +8,9 @@ import type {
   BookingRejectedEmailPayload,
   BookingRequestReceivedEmailPayload,
   BookingStaffMessageEmailPayload,
+  BookingIdentityDocumentUploadRequestEmailPayload,
+  BookingGuideAssignmentEmailPayload,
+  BookingGuideRemovalEmailPayload,
 } from './email.types';
 
 function bookingRef(bookingId: string): string {
@@ -266,5 +269,319 @@ ${button(payload.paymentUrl, 'Payer maintenant', branding)}
     { webUrl: payload.webUrl },
   );
   const text = `Bonjour ${payload.firstName},\n\nRappel : votre réservation ${payload.bookingId.slice(0, 8)} (${formatMoney(payload.totalCents, payload.currency)}) attend toujours le paiement.\n\n${payload.paymentUrl}`;
+  return { subject, html, text };
+}
+
+const IDENTITY_UPLOAD_EMAIL_COPY: Record<
+  BookingDetailPdfLocale,
+  {
+    subject: string;
+    headline: string;
+    greeting: string;
+    intro: string;
+    travelerLabel: string;
+    noteLabel: string;
+    body: string;
+    cta: string;
+  }
+> = {
+  fr: {
+    subject: 'Pièce d’identité requise pour votre réservation',
+    headline: 'Document à déposer',
+    greeting: 'Bonjour',
+    intro:
+      'Pour finaliser le traitement de votre réservation, nous avons besoin d’une pièce d’identité pour le voyageur suivant :',
+    travelerLabel: 'Voyageur concerné',
+    noteLabel: 'Instructions de notre équipe',
+    body: 'Connectez-vous à votre espace client pour déposer une photo ou un scan lisible (passeport, carte d’identité ou autre pièce acceptée).',
+    cta: 'Déposer ma pièce d’identité',
+  },
+  en: {
+    subject: 'Identity document required for your booking',
+    headline: 'Document to upload',
+    greeting: 'Hello',
+    intro:
+      'To continue processing your booking, we need an identity document for the following traveler:',
+    travelerLabel: 'Traveler',
+    noteLabel: 'Instructions from our team',
+    body: 'Sign in to your account to upload a clear photo or scan (passport, national ID, or other accepted document).',
+    cta: 'Upload identity document',
+  },
+  es: {
+    subject: 'Documento de identidad requerido para su reserva',
+    headline: 'Documento a subir',
+    greeting: 'Hola',
+    intro:
+      'Para continuar con el tratamiento de su reserva, necesitamos un documento de identidad para el siguiente viajero:',
+    travelerLabel: 'Viajero',
+    noteLabel: 'Instrucciones de nuestro equipo',
+    body: 'Acceda a su cuenta para subir una foto o escaneo legible (pasaporte, documento de identidad u otro documento aceptado).',
+    cta: 'Subir documento de identidad',
+  },
+};
+
+export function renderBookingIdentityDocumentUploadRequestEmail(
+  payload: BookingIdentityDocumentUploadRequestEmailPayload,
+  branding: EmailBrandingValue,
+): { subject: string; html: string; text: string } {
+  const locale = payload.locale ?? 'fr';
+  const copy = IDENTITY_UPLOAD_EMAIL_COPY[locale];
+  const name = escapeHtml(payload.firstName.trim() || 'Client');
+  const traveler = escapeHtml(payload.travelerName.trim());
+  const subject = `${copy.subject} — ${payload.bookingId.slice(0, 8)}`;
+  const noteBlock = payload.staffNote?.trim()
+    ? `<p style="margin:16px 0;padding:12px 16px;background:#f4f6f5;border-radius:8px;border-left:4px solid #0d9488;line-height:1.6;"><strong>${escapeHtml(copy.noteLabel)} :</strong> ${escapeHtml(payload.staffNote.trim())}</p>`
+    : '';
+  const html = layout(
+    subject,
+    `<h1 style="margin:0 0 16px;font-size:22px;">${escapeHtml(copy.headline)}</h1>
+<p style="margin:0 0 16px;line-height:1.6;">${escapeHtml(copy.greeting)} ${name},</p>
+<p style="margin:0 0 16px;line-height:1.6;">${escapeHtml(copy.intro)}</p>
+<p style="margin:0 0 8px;line-height:1.6;"><strong>${escapeHtml(copy.travelerLabel)} :</strong> ${traveler}</p>
+<p style="margin:0 0 8px;line-height:1.6;"><strong>Réf. :</strong> ${bookingRef(payload.bookingId)}</p>
+${noteBlock}
+<p style="margin:0 0 16px;line-height:1.6;">${escapeHtml(copy.body)}</p>
+${button(payload.uploadUrl, copy.cta, branding)}`,
+    branding,
+    { webUrl: payload.webUrl },
+  );
+  const noteText = payload.staffNote?.trim()
+    ? `\n${copy.noteLabel} : ${payload.staffNote.trim()}\n`
+    : '';
+  const text = `${copy.greeting} ${payload.firstName},\n\n${copy.intro}\n${copy.travelerLabel} : ${payload.travelerName.trim()}\nRéf. : ${payload.bookingId.slice(0, 8)}${noteText}\n${copy.body}\n\n${payload.uploadUrl}`;
+  return { subject, html, text };
+}
+
+const GUIDE_ASSIGNMENT_EMAIL_COPY: Record<
+  BookingDetailPdfLocale,
+  {
+    subject: string;
+    headline: string;
+    greeting: string;
+    intro: string;
+    roleLabel: string;
+    rolePrimary: string;
+    roleSecondary: string;
+    datesLabel: string;
+    body: string;
+    cta: string;
+    pdfNote: string;
+    pdfNoteText: string;
+  }
+> = {
+  fr: {
+    subject: 'Nouvelle mission — réservation assignée',
+    headline: 'Mission assignée',
+    greeting: 'Bonjour',
+    intro: 'Vous avez été assigné(e) comme guide sur la réservation suivante :',
+    roleLabel: 'Votre rôle',
+    rolePrimary: 'Guide principal',
+    roleSecondary: 'Guide secondaire',
+    datesLabel: 'Dates de visite',
+    body: 'Consultez le détail de la réservation dans l’espace d’administration pour préparer l’accompagnement.',
+    cta: 'Voir la réservation',
+    pdfNote:
+      'Un récapitulatif détaillé de la réservation est joint à ce message au format PDF.',
+    pdfNoteText:
+      '\nUn récapitulatif PDF détaillé de la réservation est joint à ce message.',
+  },
+  en: {
+    subject: 'New assignment — booking assigned to you',
+    headline: 'Assignment confirmed',
+    greeting: 'Hello',
+    intro: 'You have been assigned as a guide on the following booking:',
+    roleLabel: 'Your role',
+    rolePrimary: 'Lead guide',
+    roleSecondary: 'Secondary guide',
+    datesLabel: 'Visit dates',
+    body: 'Review the booking details in the admin area to prepare for the trip.',
+    cta: 'View booking',
+    pdfNote: 'A detailed PDF summary of the booking is attached to this email.',
+    pdfNoteText: '\nA detailed PDF summary of the booking is attached to this email.',
+  },
+  es: {
+    subject: 'Nueva misión — reserva asignada',
+    headline: 'Misión asignada',
+    greeting: 'Hola',
+    intro: 'Ha sido asignado/a como guía en la siguiente reserva:',
+    roleLabel: 'Su rol',
+    rolePrimary: 'Guía principal',
+    roleSecondary: 'Guía secundario',
+    datesLabel: 'Fechas de visita',
+    body: 'Consulte el detalle de la reserva en el espacio de administración para preparar el acompañamiento.',
+    cta: 'Ver reserva',
+    pdfNote:
+      'Se adjunta a este mensaje un resumen detallado de la reserva en formato PDF.',
+    pdfNoteText:
+      '\nSe adjunta un resumen PDF detallado de la reserva a este mensaje.',
+  },
+};
+
+function formatVisitDate(iso: string, locale: BookingDetailPdfLocale): string {
+  const parts = iso.slice(0, 10).split('-').map(Number);
+  if (parts.length !== 3 || parts.some((n) => Number.isNaN(n))) {
+    return iso;
+  }
+  const [year, month, day] = parts;
+  const date = new Date(year, month - 1, day);
+  const tag = locale === 'en' ? 'en-GB' : locale === 'es' ? 'es-ES' : 'fr-FR';
+  return date.toLocaleDateString(tag, { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+function visitPeriodText(
+  start: string | null | undefined,
+  end: string | null | undefined,
+  locale: BookingDetailPdfLocale,
+): string | null {
+  if (!start?.trim()) {
+    return null;
+  }
+  const startLabel = formatVisitDate(start, locale);
+  if (end?.trim() && end !== start) {
+    return `${startLabel} – ${formatVisitDate(end, locale)}`;
+  }
+  return startLabel;
+}
+
+export function renderBookingGuideAssignmentEmail(
+  payload: BookingGuideAssignmentEmailPayload,
+  branding: EmailBrandingValue,
+): { subject: string; html: string; text: string } {
+  const locale = payload.locale ?? 'fr';
+  const copy = GUIDE_ASSIGNMENT_EMAIL_COPY[locale];
+  const name = escapeHtml(payload.guideName.trim() || 'Guide');
+  const roleLabel =
+    payload.role === 'primary' ? copy.rolePrimary : copy.roleSecondary;
+  const visitPeriod = visitPeriodText(
+    payload.visitStartDate,
+    payload.visitEndDate,
+    locale,
+  );
+  const subject = `${copy.subject} — ${payload.bookingId.slice(0, 8)}`;
+  const datesBlock = visitPeriod
+    ? `<p style="margin:0 0 8px;line-height:1.6;"><strong>${escapeHtml(copy.datesLabel)} :</strong> ${escapeHtml(visitPeriod)}</p>`
+    : '';
+  const ctaBlock = payload.adminUrl
+    ? button(payload.adminUrl, copy.cta, branding)
+    : '';
+  const pdfBlock = payload.hasPdfAttachment
+    ? `<p style="margin:0 0 16px;line-height:1.6;font-size:14px;color:#5c6d66;">${escapeHtml(copy.pdfNote)}</p>`
+    : '';
+  const html = layout(
+    subject,
+    `<h1 style="margin:0 0 16px;font-size:22px;">${escapeHtml(copy.headline)}</h1>
+<p style="margin:0 0 16px;line-height:1.6;">${escapeHtml(copy.greeting)} ${name},</p>
+<p style="margin:0 0 16px;line-height:1.6;">${escapeHtml(copy.intro)}</p>
+<p style="margin:0 0 8px;line-height:1.6;"><strong>Réf. :</strong> ${bookingRef(payload.bookingId)}</p>
+<p style="margin:0 0 8px;line-height:1.6;"><strong>${escapeHtml(copy.roleLabel)} :</strong> ${escapeHtml(roleLabel)}</p>
+${datesBlock}
+${itemListHtml(payload.itemTitles)}
+${pdfBlock}
+<p style="margin:0 0 16px;line-height:1.6;">${escapeHtml(copy.body)}</p>
+${ctaBlock}`,
+    branding,
+    { webUrl: payload.webUrl },
+  );
+  const datesText = visitPeriod ? `\n${copy.datesLabel} : ${visitPeriod}` : '';
+  const pdfText = payload.hasPdfAttachment ? copy.pdfNoteText : '';
+  const text = `${copy.greeting} ${payload.guideName},\n\n${copy.intro}\nRéf. : ${payload.bookingId.slice(0, 8)}\n${copy.roleLabel} : ${roleLabel}${datesText}\n\n${itemListText(payload.itemTitles)}${pdfText}\n\n${copy.body}${payload.adminUrl ? `\n\n${payload.adminUrl}` : ''}`;
+  return { subject, html, text };
+}
+
+const GUIDE_REMOVAL_EMAIL_COPY: Record<
+  BookingDetailPdfLocale,
+  {
+    subject: string;
+    headline: string;
+    greeting: string;
+    intro: string;
+    roleLabel: string;
+    rolePrimary: string;
+    roleSecondary: string;
+    datesLabel: string;
+    commentLabel: string;
+    body: string;
+  }
+> = {
+  fr: {
+    subject: 'Mission retirée — réservation',
+    headline: 'Mission retirée',
+    greeting: 'Bonjour',
+    intro:
+      'Votre assignation comme guide sur la réservation suivante a été retirée par notre équipe :',
+    roleLabel: 'Rôle concerné',
+    rolePrimary: 'Guide principal',
+    roleSecondary: 'Guide secondaire',
+    datesLabel: 'Dates de visite',
+    commentLabel: 'Message de notre équipe',
+    body: 'Pour toute question, contactez l’équipe Africa Tourism Gate.',
+  },
+  en: {
+    subject: 'Assignment removed — booking',
+    headline: 'Assignment removed',
+    greeting: 'Hello',
+    intro: 'Your assignment as a guide on the following booking has been removed by our team:',
+    roleLabel: 'Affected role',
+    rolePrimary: 'Lead guide',
+    roleSecondary: 'Secondary guide',
+    datesLabel: 'Visit dates',
+    commentLabel: 'Message from our team',
+    body: 'If you have any questions, please contact the Africa Tourism Gate team.',
+  },
+  es: {
+    subject: 'Misión retirada — reserva',
+    headline: 'Misión retirada',
+    greeting: 'Hola',
+    intro:
+      'Su asignación como guía en la siguiente reserva ha sido retirada por nuestro equipo:',
+    roleLabel: 'Rol afectado',
+    rolePrimary: 'Guía principal',
+    roleSecondary: 'Guía secundario',
+    datesLabel: 'Fechas de visita',
+    commentLabel: 'Mensaje de nuestro equipo',
+    body: 'Para cualquier pregunta, contacte al equipo de Africa Tourism Gate.',
+  },
+};
+
+export function renderBookingGuideRemovalEmail(
+  payload: BookingGuideRemovalEmailPayload,
+  branding: EmailBrandingValue,
+): { subject: string; html: string; text: string } {
+  const locale = payload.locale ?? 'fr';
+  const copy = GUIDE_REMOVAL_EMAIL_COPY[locale];
+  const name = escapeHtml(payload.guideName.trim() || 'Guide');
+  const roleLabel =
+    payload.role === 'primary' ? copy.rolePrimary : copy.roleSecondary;
+  const visitPeriod = visitPeriodText(
+    payload.visitStartDate,
+    payload.visitEndDate,
+    locale,
+  );
+  const subject = `${copy.subject} — ${payload.bookingId.slice(0, 8)}`;
+  const datesBlock = visitPeriod
+    ? `<p style="margin:0 0 8px;line-height:1.6;"><strong>${escapeHtml(copy.datesLabel)} :</strong> ${escapeHtml(visitPeriod)}</p>`
+    : '';
+  const commentBlock = payload.comment?.trim()
+    ? `<p style="margin:16px 0;padding:12px 16px;background:#f4f6f5;border-radius:8px;border-left:4px solid #dc2626;line-height:1.6;"><strong>${escapeHtml(copy.commentLabel)} :</strong> ${escapeHtml(payload.comment.trim())}</p>`
+    : '';
+  const html = layout(
+    subject,
+    `<h1 style="margin:0 0 16px;font-size:22px;">${escapeHtml(copy.headline)}</h1>
+<p style="margin:0 0 16px;line-height:1.6;">${escapeHtml(copy.greeting)} ${name},</p>
+<p style="margin:0 0 16px;line-height:1.6;">${escapeHtml(copy.intro)}</p>
+<p style="margin:0 0 8px;line-height:1.6;"><strong>Réf. :</strong> ${bookingRef(payload.bookingId)}</p>
+<p style="margin:0 0 8px;line-height:1.6;"><strong>${escapeHtml(copy.roleLabel)} :</strong> ${escapeHtml(roleLabel)}</p>
+${datesBlock}
+${itemListHtml(payload.itemTitles)}
+${commentBlock}
+<p style="margin:0 0 16px;line-height:1.6;">${escapeHtml(copy.body)}</p>`,
+    branding,
+    { webUrl: payload.webUrl },
+  );
+  const datesText = visitPeriod ? `\n${copy.datesLabel} : ${visitPeriod}` : '';
+  const commentText = payload.comment?.trim()
+    ? `\n${copy.commentLabel} : ${payload.comment.trim()}\n`
+    : '';
+  const text = `${copy.greeting} ${payload.guideName},\n\n${copy.intro}\nRéf. : ${payload.bookingId.slice(0, 8)}\n${copy.roleLabel} : ${roleLabel}${datesText}\n\n${itemListText(payload.itemTitles)}${commentText}\n${copy.body}`;
   return { subject, html, text };
 }

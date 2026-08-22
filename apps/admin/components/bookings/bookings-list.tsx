@@ -31,8 +31,10 @@ import {
 } from '../../lib/i18n/use-module-labels';
 import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
 import { exportCsv } from '../../lib/export-csv';
+import { BookingItemsListModal } from './booking-items-list-modal';
 
 const PAGE_SIZE = 10;
+const SEARCH_DEBOUNCE_MS = 300;
 
 type StatusFilter = '' | BookingStatus;
 
@@ -56,9 +58,11 @@ export function BookingsList() {
   const locale = useLocale();
   const t = useTranslations('modules.bookings.list');
   const tCommon = useTranslations('modules.common');
+  const tCommonFilters = useTranslations('modules.common.filters');
   const tDataTable = useTranslations('modules.common.dataTable');
   const tActions = useTranslations('common.actions');
   const tExport = useTranslations('modules.common.exportCsv');
+  const tPages = useTranslations('pages.reservations');
   const tUsers = useTranslations('modules.users.filters');
   const statusLabels = useBookingStatusLabels();
   const statusOptions = useBookingStatusFilterOptions();
@@ -72,6 +76,8 @@ export function BookingsList() {
   const [organizationFilter, setOrganizationFilter] = useState('');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
+  const [searchInput, setSearchInput] = useState('');
+  const [search, setSearch] = useState('');
   const [organizations, setOrganizations] = useState<OrganizationListItem[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [state, setState] = useState<
@@ -79,6 +85,7 @@ export function BookingsList() {
     | { status: 'error'; message: string }
     | { status: 'ready'; bookings: BookingListItem[]; total: number; totalPages: number }
   >({ status: 'loading' });
+  const [linesModalOpen, setLinesModalOpen] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -105,6 +112,19 @@ export function BookingsList() {
       cancelled = true;
     };
   }, []);
+
+  useEffect(() => {
+    const query = searchInput.trim();
+    const timer = window.setTimeout(() => {
+      setSearch((prev) => {
+        if (prev !== query) {
+          setPage(1);
+        }
+        return query;
+      });
+    }, SEARCH_DEBOUNCE_MS);
+    return () => window.clearTimeout(timer);
+  }, [searchInput]);
 
   const orgNameById = useMemo(() => {
     const map = new Map<string, string>();
@@ -148,6 +168,7 @@ export function BookingsList() {
         dateFrom: dateFrom || undefined,
         dateTo: dateTo || undefined,
         sortOrder,
+        search: search || undefined,
       });
       setState({
         status: 'ready',
@@ -158,13 +179,14 @@ export function BookingsList() {
     } catch (error) {
       setState({ status: 'error', message: getBookingsErrorMessage(error) });
     }
-  }, [page, statusFilter, userFilter, organizationFilter, dateFrom, dateTo, sortOrder, getBookingsErrorMessage]);
+  }, [page, statusFilter, userFilter, organizationFilter, dateFrom, dateTo, sortOrder, search, getBookingsErrorMessage]);
 
   useEffect(() => {
     void load();
   }, [load]);
 
   const activeFilterCount = [
+    search !== '',
     statusFilter !== '',
     userFilter !== '',
     organizationFilter !== '',
@@ -182,6 +204,8 @@ export function BookingsList() {
   );
 
   const handleClearFilters = useCallback(() => {
+    setSearchInput('');
+    setSearch('');
     setStatusFilter('');
     setUserFilter('');
     setOrganizationFilter('');
@@ -270,7 +294,7 @@ export function BookingsList() {
             <DataTableActionButton
               action="view"
               label={tActions('view')}
-              href={`/dashboard/bookings/${row.original.id}`}
+              href={`/reservations/${row.original.id}`}
             />
           </DataTableActions>
         ),
@@ -346,18 +370,38 @@ export function BookingsList() {
         applyLabel={tCommon('filters.apply')}
         toggleLabel={tCommon('filters.toggle')}
         actions={
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled={isLoading || bookings.length === 0}
-            onClick={handleExportCsv}
-          >
-            {tExport('button')}
-          </Button>
+          <>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setLinesModalOpen(true)}
+            >
+              {tPages('actions.lines')}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={isLoading || bookings.length === 0}
+              onClick={handleExportCsv}
+            >
+              {tExport('button')}
+            </Button>
+          </>
         }
         filters={
           <>
+            <div className="min-w-[200px] flex-1 sm:max-w-md">
+              <Input
+                name="search"
+                type="search"
+                placeholder={tCommonFilters('searchBookings')}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                aria-label={tCommonFilters('searchBookingsAria')}
+              />
+            </div>
             <div className="w-full sm:w-48">
               <Select
                 label={tCommon('columns.status')}
@@ -463,6 +507,8 @@ export function BookingsList() {
           ) : null}
         </>
       )}
+
+      <BookingItemsListModal open={linesModalOpen} onOpenChange={setLinesModalOpen} />
     </div>
   );
 }

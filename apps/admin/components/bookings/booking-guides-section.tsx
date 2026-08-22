@@ -10,80 +10,253 @@ import {
   DataTableActionButton,
   DataTableActions,
   DataTableBadge,
+  Input,
+  Modal,
+  Textarea,
   type ColumnDef,
 } from '@africatourismgate/ui';
+import { parseApiErrorMessage } from '@africatourismgate/api-client';
 import type {
   BookingGuideAssignment,
   BookingGuideRole,
+  BookingItem,
   TourGuide,
+  TourGuideAvailableItem,
 } from '@africatourismgate/types';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
+import Link from 'next/link';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { useBookingGuideRoleLabels } from '../../lib/i18n/use-module-labels';
+import { deriveBookingVisitWindow, isDatetimeLocalWithinWindow } from '../../lib/booking-visit-window';
+import { BookingGuideAssignmentHistorySection } from './booking-guide-assignment-history-section';
+import { fromDatetimeLocalValue, toDatetimeLocalValue } from '../../lib/flight-datetime';
+import {
+  parseGuideScheduleConflictError,
+  type ParsedGuideScheduleConflictError,
+} from '../../lib/guide-schedule-errors';
+import { useBookingGuideRoleLabels, useFormatDateTime } from '../../lib/i18n/use-module-labels';
 
 type AssignmentRow = BookingGuideAssignment & {
   guideName: string;
 };
 
-type BookingGuidesSectionProps = {
-  bookingId: string;
-  canWrite: boolean;
+type SlotFormValues = {
+  startDatetime: string;
+  endDatetime: string;
+  guideId: string;
+  role: BookingGuideRole;
+  notes: string;
 };
 
-function formatDateTime(iso: string): string {
+const emptyForm: SlotFormValues = {
+  startDatetime: '',
+  endDatetime: '',
+  guideId: '',
+  role: 'primary',
+  notes: '',
+};
+
+async function listAllActiveTourGuides(): Promise<TourGuide[]> {
+  const client = getApiClient();
+  const first = await client.listTourGuides({ page: 1, limit: 100, status: 'active' });
+  const rows = [...first.data];
+  for (let page = 2; page <= first.meta.totalPages; page += 1) {
+    const next = await client.listTourGuides({ page, limit: 100, status: 'active' });
+    rows.push(...next.data);
+  }
+  return rows;
+}
+
+type BookingGuidesSectionProps = {
+  bookingId: string;
+  items: BookingItem[];
+  canWrite: boolean;
+  embedded?: boolean;
+};
+
+function formatSlotRange(startIso: string, endIso: string, locale: string): string {
   try {
-    return new Date(iso).toLocaleString('fr-FR', {
-      dateStyle: 'short',
-      timeStyle: 'short',
-    });
+    const start = new Date(startIso);
+    const end = new Date(endIso);
+    const sameDay = startIso.slice(0, 10) === endIso.slice(0, 10);
+    const timeFmt: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit' };
+    const dateFmt: Intl.DateTimeFormatOptions = {
+      day: 'numeric',
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit',
+    };
+    const intlLocale = locale.startsWith('en') ? 'en-US' : locale.startsWith('es') ? 'es-ES' : 'fr-FR';
+    if (sameDay) {
+      const day = start.toLocaleDateString(intlLocale, { weekday: 'short', day: 'numeric', month: 'short' });
+      const from = start.toLocaleTimeString(intlLocale, timeFmt);
+      const to = end.toLocaleTimeString(intlLocale, timeFmt);
+      return `${day} · ${from} – ${to}`;
+    }
+    return `${start.toLocaleString(intlLocale, dateFmt)} → ${end.toLocaleString(intlLocale, dateFmt)}`;
   } catch {
-    return iso;
+    return `${startIso} – ${endIso}`;
   }
 }
 
-export function BookingGuidesSection({ bookingId, canWrite }: BookingGuidesSectionProps) {
+function GuideScheduleConflictAlert({
+  error,
+  t,
+  formatDateTime,
+}: {
+  error: ParsedGuideScheduleConflictError;
+  t: ReturnType<typeof useTranslations<'modules.bookings.guides'>>;
+  formatDateTime: (value: string) => string;
+}) {
+  return (
+    <div
+      role="alert"
+      className="rounded-lg border border-amber-300/60 bg-amber-50 p-3 text-sm text-amber-950 dark:border-amber-700/50 dark:bg-amber-950/30 dark:text-amber-100"
+    >
+      <p className="font-medium">{error.message}</p>
+      {error.conflicts.length > 0 ? (
+        <ul className="mt-2 space-y-1.5">
+          {error.conflicts.map((conflict) => (
+            <li key={`${conflict.kind}-${conflict.id}`} className="text-xs">
+              <span className="font-medium">
+                {conflict.kind === 'assignment'
+                  ? t('conflicts.assignment')
+                  : t('conflicts.unavailability')}
+              </span>
+              {' · '}
+              {formatDateTime(conflict.startDatetime)} – {formatDateTime(conflict.endDatetime)}
+              {conflict.bookingId ? (
+                <>
+                  {' · '}
+                  <Link
+                    href={`/reservations/${conflict.bookingId}`}
+                    className="underline hover:no-underline"
+                  >
+                    {t('conflicts.viewBooking')}
+                  </Link>
+                </>
+              ) : null}
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </div>
+  );
+}
+
+export function BookingGuidesSection({
+  bookingId,
+  items,
+  canWrite,
+  embedded = false,
+}: BookingGuidesSectionProps) {
+  const locale = useLocale();
   const { bookings: getBookingsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.bookings.guides');
   const tCommon = useTranslations('modules.common');
   const tActions = useTranslations('common.actions');
   const roleLabels = useBookingGuideRoleLabels();
+  const formatDateTime = useFormatDateTime();
+
+  const visitWindow = useMemo(() => deriveBookingVisitWindow(items), [items]);
+
   const guideSelectId = useId();
   const roleSelectId = useId();
 
   const [assignments, setAssignments] = useState<AssignmentRow[]>([]);
-  const [availableGuides, setAvailableGuides] = useState<TourGuide[]>([]);
-  const [selectedGuideId, setSelectedGuideId] = useState('');
-  const [selectedRole, setSelectedRole] = useState<BookingGuideRole>('primary');
+  const [guideDirectory, setGuideDirectory] = useState<Map<string, string>>(new Map());
+  const [availableForSlot, setAvailableForSlot] = useState<TourGuideAvailableItem[]>([]);
+  const [searchingGuides, setSearchingGuides] = useState(false);
+  const [formValues, setFormValues] = useState<SlotFormValues>(emptyForm);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [conflictError, setConflictError] = useState<ParsedGuideScheduleConflictError | null>(null);
   const [assigning, setAssigning] = useState(false);
-  const [removingGuideId, setRemovingGuideId] = useState<string | null>(null);
-  const [confirmTarget, setConfirmTarget] = useState<string | null>(null);
+  const [assignConfirmOpen, setAssignConfirmOpen] = useState(false);
+  const [removingAssignmentId, setRemovingAssignmentId] = useState<string | null>(null);
+  const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
+  const [removeComment, setRemoveComment] = useState('');
+  const [editTarget, setEditTarget] = useState<AssignmentRow | null>(null);
+  const [editValues, setEditValues] = useState<SlotFormValues>(emptyForm);
+  const [savingEdit, setSavingEdit] = useState(false);
+  const [editConflict, setEditConflict] = useState<ParsedGuideScheduleConflictError | null>(null);
+
+  const formStartBounds = useMemo(() => {
+    if (!visitWindow) return null;
+    return {
+      min: visitWindow.minDatetimeLocal,
+      max: formValues.endDatetime || visitWindow.maxDatetimeLocal,
+    };
+  }, [formValues.endDatetime, visitWindow]);
+
+  const formEndBounds = useMemo(() => {
+    if (!visitWindow) return null;
+    return {
+      min: formValues.startDatetime || visitWindow.minDatetimeLocal,
+      max: visitWindow.maxDatetimeLocal,
+    };
+  }, [formValues.startDatetime, visitWindow]);
+
+  const editStartBounds = useMemo(() => {
+    if (!visitWindow) return null;
+    return {
+      min: visitWindow.minDatetimeLocal,
+      max: editValues.endDatetime || visitWindow.maxDatetimeLocal,
+    };
+  }, [editValues.endDatetime, visitWindow]);
+
+  const editEndBounds = useMemo(() => {
+    if (!visitWindow) return null;
+    return {
+      min: editValues.startDatetime || visitWindow.minDatetimeLocal,
+      max: visitWindow.maxDatetimeLocal,
+    };
+  }, [editValues.startDatetime, visitWindow]);
+
+  const resolveActionError = useCallback(
+    (err: unknown): string => {
+      const conflict = parseGuideScheduleConflictError(err);
+      if (conflict) {
+        setConflictError(conflict);
+        return conflict.message;
+      }
+      setConflictError(null);
+      const parsed = parseApiErrorMessage(
+        err && typeof err === 'object' && 'body' in err
+          ? (err as { body: unknown }).body
+          : undefined,
+      );
+      if (parsed) return parsed;
+      return getBookingsErrorMessage(err);
+    },
+    [getBookingsErrorMessage],
+  );
 
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       const client = getApiClient();
-      const [assignmentRows, guidesResult] = await Promise.all([
+      const [assignmentRows, guides] = await Promise.all([
         client.listBookingGuides(bookingId),
-        client.listTourGuides({ page: 1, limit: 100, status: 'active' }),
+        listAllActiveTourGuides(),
       ]);
 
-      const guideById = new Map(guidesResult.data.map((guide) => [guide.id, guide]));
-      setAvailableGuides(guidesResult.data);
+      const directory = new Map(guides.map((guide) => [guide.id, guide.displayName]));
+      setGuideDirectory(directory);
       setAssignments(
-        assignmentRows.map((row) => ({
-          ...row,
-          guideName: guideById.get(row.guideId)?.displayName ?? row.guideId.slice(0, 8),
-        })),
+        assignmentRows
+          .map((row) => ({
+            ...row,
+            guideName: directory.get(row.guideId) ?? row.guideId.slice(0, 8),
+          }))
+          .sort((left, right) => left.startDatetime.localeCompare(right.startDatetime)),
       );
     } catch (err) {
       setError(getBookingsErrorMessage(err));
       setAssignments([]);
-      setAvailableGuides([]);
+      setGuideDirectory(new Map());
     } finally {
       setLoading(false);
     }
@@ -93,50 +266,166 @@ export function BookingGuidesSection({ bookingId, canWrite }: BookingGuidesSecti
     void load();
   }, [load]);
 
-  const unassignedGuides = useMemo(() => {
-    const assignedIds = new Set(assignments.map((row) => row.guideId));
-    return availableGuides.filter((guide) => !assignedIds.has(guide.id));
-  }, [assignments, availableGuides]);
+  const slotRangeIso = useMemo(() => {
+    if (!formValues.startDatetime || !formValues.endDatetime) return null;
+    try {
+      const from = fromDatetimeLocalValue(formValues.startDatetime);
+      const to = fromDatetimeLocalValue(formValues.endDatetime);
+      if (new Date(from) >= new Date(to)) return null;
+      return { from, to };
+    } catch {
+      return null;
+    }
+  }, [formValues.endDatetime, formValues.startDatetime]);
 
-  const handleAssign = useCallback(async () => {
-    if (!selectedGuideId) {
+  useEffect(() => {
+    if (!slotRangeIso) {
+      setAvailableForSlot([]);
       return;
     }
+
+    let cancelled = false;
+    const timer = window.setTimeout(() => {
+      setSearchingGuides(true);
+      void getApiClient()
+        .searchAvailableTourGuides({ from: slotRangeIso.from, to: slotRangeIso.to })
+        .then((guides) => {
+          if (!cancelled) {
+            setAvailableForSlot(guides);
+            setFormValues((current) =>
+              current.guideId && guides.some((guide) => guide.id === current.guideId)
+                ? current
+                : { ...current, guideId: '' },
+            );
+          }
+        })
+        .catch(() => {
+          if (!cancelled) setAvailableForSlot([]);
+        })
+        .finally(() => {
+          if (!cancelled) setSearchingGuides(false);
+        });
+    }, 350);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [slotRangeIso]);
+
+  const handleAssignRequest = useCallback(() => {
+    if (!formValues.guideId || !slotRangeIso || !visitWindow) return;
+    if (
+      !isDatetimeLocalWithinWindow(formValues.startDatetime, visitWindow) ||
+      !isDatetimeLocalWithinWindow(formValues.endDatetime, visitWindow)
+    ) {
+      setActionError(t('validation.outsideVisitWindow'));
+      return;
+    }
+    setConflictError(null);
+    setAssignConfirmOpen(true);
+  }, [formValues, slotRangeIso, t, visitWindow]);
+
+  const handleAssignConfirm = useCallback(async () => {
+    if (!formValues.guideId || !slotRangeIso) return;
     setActionError(null);
+    setConflictError(null);
     setAssigning(true);
     try {
       await getApiClient().assignBookingGuides(bookingId, {
-        guides: [{ guideId: selectedGuideId, role: selectedRole }],
+        guides: [
+          {
+            guideId: formValues.guideId,
+            role: formValues.role,
+            startDatetime: slotRangeIso.from,
+            endDatetime: slotRangeIso.to,
+            notes: formValues.notes.trim() || undefined,
+          },
+        ],
       });
-      setSelectedGuideId('');
-      setSelectedRole('primary');
+      setAssignConfirmOpen(false);
+      setFormValues(emptyForm);
+      setAvailableForSlot([]);
       await load();
     } catch (err) {
-      setActionError(getBookingsErrorMessage(err));
+      setActionError(resolveActionError(err));
     } finally {
       setAssigning(false);
     }
-  }, [bookingId, getBookingsErrorMessage, load, selectedGuideId, selectedRole]);
+  }, [bookingId, formValues, load, resolveActionError, slotRangeIso]);
 
-  const handleRemoveRequest = useCallback((guideId: string) => {
-    setConfirmTarget(guideId);
+  const openEdit = useCallback((row: AssignmentRow) => {
+    setEditTarget(row);
+    setEditValues({
+      startDatetime: toDatetimeLocalValue(row.startDatetime),
+      endDatetime: toDatetimeLocalValue(row.endDatetime),
+      guideId: row.guideId,
+      role: row.role,
+      notes: row.notes ?? '',
+    });
+    setEditConflict(null);
   }, []);
 
-  const handleRemoveConfirm = useCallback(async () => {
-    if (!confirmTarget) return;
-    const guideId = confirmTarget;
-    setConfirmTarget(null);
+  const handleEditSave = useCallback(async () => {
+    if (!editTarget || !visitWindow) return;
+    setSavingEdit(true);
+    setEditConflict(null);
     setActionError(null);
-    setRemovingGuideId(guideId);
     try {
-      await getApiClient().removeBookingGuide(bookingId, guideId);
+      if (
+        !isDatetimeLocalWithinWindow(editValues.startDatetime, visitWindow) ||
+        !isDatetimeLocalWithinWindow(editValues.endDatetime, visitWindow)
+      ) {
+        setActionError(t('validation.outsideVisitWindow'));
+        return;
+      }
+      const startDatetime = fromDatetimeLocalValue(editValues.startDatetime);
+      const endDatetime = fromDatetimeLocalValue(editValues.endDatetime);
+      if (new Date(startDatetime) >= new Date(endDatetime)) {
+        setActionError(t('validation.endAfterStart'));
+        return;
+      }
+      await getApiClient().updateBookingGuideSlot(bookingId, editTarget.id, {
+        role: editValues.role,
+        startDatetime,
+        endDatetime,
+        notes: editValues.notes.trim() || null,
+      });
+      setEditTarget(null);
       await load();
     } catch (err) {
-      setActionError(getBookingsErrorMessage(err));
+      const conflict = parseGuideScheduleConflictError(err);
+      if (conflict) {
+        setEditConflict(conflict);
+      } else {
+        setActionError(getBookingsErrorMessage(err));
+      }
     } finally {
-      setRemovingGuideId(null);
+      setSavingEdit(false);
     }
-  }, [bookingId, confirmTarget, getBookingsErrorMessage, load]);
+  }, [bookingId, editTarget, editValues, getBookingsErrorMessage, load, t, visitWindow]);
+
+  const handleRemoveConfirm = useCallback(async () => {
+    if (!confirmRemoveId) return;
+    setActionError(null);
+    setConflictError(null);
+    setRemovingAssignmentId(confirmRemoveId);
+    try {
+      const comment = removeComment.trim();
+      await getApiClient().removeBookingGuideSlot(
+        bookingId,
+        confirmRemoveId,
+        comment ? { comment } : {},
+      );
+      setConfirmRemoveId(null);
+      setRemoveComment('');
+      await load();
+    } catch (err) {
+        setActionError(getBookingsErrorMessage(err));
+    } finally {
+      setRemovingAssignmentId(null);
+    }
+  }, [bookingId, confirmRemoveId, getBookingsErrorMessage, load, removeComment]);
 
   const columns = useMemo<ColumnDef<AssignmentRow, unknown>[]>(
     () => [
@@ -146,13 +435,19 @@ export function BookingGuidesSection({ bookingId, canWrite }: BookingGuidesSecti
         cell: ({ row }) => (
           <div className="flex flex-col">
             <span className="font-medium text-atg-fg">{row.original.guideName}</span>
-            <a
-              href={`/guides/${row.original.guideId}`}
-              className="text-xs text-primary hover:underline"
-            >
+            <Link href={`/guides/${row.original.guideId}`} className="text-xs text-primary hover:underline">
               {t('viewProfile')}
-            </a>
+            </Link>
           </div>
+        ),
+      },
+      {
+        id: 'schedule',
+        header: t('columns.schedule'),
+        cell: ({ row }) => (
+          <span className="text-sm text-atg-fg">
+            {formatSlotRange(row.original.startDatetime, row.original.endDatetime, locale)}
+          </span>
         ),
       },
       {
@@ -162,6 +457,13 @@ export function BookingGuidesSection({ bookingId, canWrite }: BookingGuidesSecti
           <DataTableBadge variant={row.original.role === 'primary' ? 'default' : 'muted'}>
             {roleLabels[row.original.role]}
           </DataTableBadge>
+        ),
+      },
+      {
+        accessorKey: 'notes',
+        header: t('columns.notes'),
+        cell: ({ row }) => (
+          <span className="text-sm text-atg-muted">{row.original.notes?.trim() || '—'}</span>
         ),
       },
       {
@@ -180,11 +482,19 @@ export function BookingGuidesSection({ bookingId, canWrite }: BookingGuidesSecti
               cell: ({ row }: { row: { original: AssignmentRow } }) => (
                 <DataTableActions>
                   <DataTableActionButton
+                    action="edit"
+                    label={tActions('edit')}
+                    onClick={() => openEdit(row.original)}
+                  />
+                  <DataTableActionButton
                     action="delete"
                     label={tActions('delete')}
-                    onClick={() => handleRemoveRequest(row.original.guideId)}
-                    disabled={removingGuideId === row.original.guideId}
-                    loading={removingGuideId === row.original.guideId}
+                    onClick={() => {
+                      setRemoveComment('');
+                      setConfirmRemoveId(row.original.id);
+                    }}
+                    disabled={removingAssignmentId === row.original.id}
+                    loading={removingAssignmentId === row.original.id}
                   />
                 </DataTableActions>
               ),
@@ -194,8 +504,10 @@ export function BookingGuidesSection({ bookingId, canWrite }: BookingGuidesSecti
     ],
     [
       canWrite,
-      handleRemoveRequest,
-      removingGuideId,
+      formatDateTime,
+      locale,
+      openEdit,
+      removingAssignmentId,
       roleLabels,
       t,
       tActions,
@@ -203,97 +515,341 @@ export function BookingGuidesSection({ bookingId, canWrite }: BookingGuidesSecti
     ],
   );
 
+  const selectedGuideName = useMemo(() => {
+    if (!formValues.guideId) return '';
+    return (
+      availableForSlot.find((guide) => guide.id === formValues.guideId)?.displayName ??
+      guideDirectory.get(formValues.guideId) ??
+      ''
+    );
+  }, [availableForSlot, formValues.guideId, guideDirectory]);
+
+  const confirmRemoveRow = useMemo(
+    () => assignments.find((row) => row.id === confirmRemoveId) ?? null,
+    [assignments, confirmRemoveId],
+  );
+
+  const canSubmitAssign =
+    Boolean(formValues.guideId && slotRangeIso && visitWindow) &&
+    !assigning &&
+    !searchingGuides;
+
   return (
     <>
       <AlertDialog
-        open={!!confirmTarget}
-        onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}
-        title={t('removeTitle')}
-        description={t('removeConfirm')}
-        confirmLabel={t('removeConfirmButton')}
+        open={assignConfirmOpen}
+        onOpenChange={(open) => {
+          if (!assigning) setAssignConfirmOpen(open);
+        }}
+        title={t('assignConfirmTitle')}
+        description={
+          selectedGuideName && slotRangeIso
+            ? t('assignConfirmNamed', {
+                name: selectedGuideName,
+                role: roleLabels[formValues.role],
+                schedule: formatSlotRange(slotRangeIso.from, slotRangeIso.to, locale),
+              })
+            : t('assignConfirm')
+        }
+        confirmLabel={t('assignConfirmButton')}
         cancelLabel={t('cancel')}
-        variant="danger"
-        loading={!!removingGuideId}
-        onConfirm={() => void handleRemoveConfirm()}
+        loading={assigning}
+        onConfirm={() => void handleAssignConfirm()}
       />
-    <section className="space-y-3">
-      <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
 
-      {error ? (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {error}
-        </p>
-      ) : null}
-
-      {actionError ? (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {actionError}
-        </p>
-      ) : null}
-
-      <Card variant="dashboard" padding="none" className="overflow-hidden">
-        <DataTable
-          columns={columns}
-          data={assignments}
-          isLoading={loading}
-          emptyMessage={t('empty')}
-          getRowId={(row) => row.id}
-          aria-label={t('ariaLabel')}
-        />
-      </Card>
-
-      {canWrite ? (
-        <Card variant="dashboard" padding="md" className="space-y-4">
-          <p className="text-sm font-medium text-atg-fg">{t('assignTitle')}</p>
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-            <div className="flex-1">
-              <label htmlFor={guideSelectId} className="mb-1 block text-xs font-medium text-atg-muted">
-                {t('selectGuide')}
-              </label>
-              <select
-                id={guideSelectId}
-                value={selectedGuideId}
-                onChange={(e) => setSelectedGuideId(e.target.value)}
-                className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg"
-              >
-                <option value="">{t('selectPlaceholder')}</option>
-                {unassignedGuides.map((guide) => (
-                  <option key={guide.id} value={guide.id}>
-                    {guide.displayName}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="sm:w-40">
-              <label htmlFor={roleSelectId} className="mb-1 block text-xs font-medium text-atg-muted">
-                {t('selectRole')}
-              </label>
-              <select
-                id={roleSelectId}
-                value={selectedRole}
-                onChange={(e) => setSelectedRole(e.target.value as BookingGuideRole)}
-                className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg"
-              >
-                <option value="primary">{roleLabels.primary}</option>
-                <option value="secondary">{roleLabels.secondary}</option>
-              </select>
-            </div>
+      <Modal
+        open={!!confirmRemoveId}
+        onOpenChange={(open) => {
+          if (!open && !removingAssignmentId) {
+            setConfirmRemoveId(null);
+            setRemoveComment('');
+          }
+        }}
+        title={t('removeTitle')}
+        description={
+          confirmRemoveRow
+            ? t('removeConfirmNamed', {
+                name: confirmRemoveRow.guideName,
+                schedule: formatSlotRange(
+                  confirmRemoveRow.startDatetime,
+                  confirmRemoveRow.endDatetime,
+                  locale,
+                ),
+              })
+            : t('removeConfirm')
+        }
+        showClose
+        className="max-w-lg"
+      >
+        <div className="space-y-4">
+          <Textarea
+            label={t('removeCommentLabel')}
+            hint={t('removeCommentHint')}
+            value={removeComment}
+            onChange={(event) => setRemoveComment(event.target.value)}
+            rows={4}
+            maxLength={2000}
+          />
+          <div className="flex flex-wrap justify-end gap-2">
             <Button
               type="button"
-              variant="primary"
-              onClick={() => void handleAssign()}
-              disabled={!selectedGuideId || assigning}
-              loading={assigning}
+              variant="outline"
+              disabled={!!removingAssignmentId}
+              onClick={() => {
+                setConfirmRemoveId(null);
+                setRemoveComment('');
+              }}
             >
-              {t('assignButton')}
+              {t('cancel')}
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              className="!text-red-600 hover:!bg-red-50 dark:!text-red-400"
+              onClick={() => void handleRemoveConfirm()}
+              loading={!!removingAssignmentId}
+            >
+              {t('removeConfirmButton')}
             </Button>
           </div>
-          {unassignedGuides.length === 0 && !loading ? (
-            <p className="text-xs text-atg-muted">{t('noGuidesAvailable')}</p>
+        </div>
+      </Modal>
+
+      <Modal
+        open={!!editTarget}
+        onOpenChange={(open) => {
+          if (!open && !savingEdit) setEditTarget(null);
+        }}
+        title={t('editSlotTitle')}
+        description={editTarget ? t('editSlotDescription', { name: editTarget.guideName }) : undefined}
+        showClose
+        className="max-w-2xl"
+      >
+        <div className="space-y-4">
+          {editConflict ? (
+            <GuideScheduleConflictAlert error={editConflict} t={t} formatDateTime={formatDateTime} />
           ) : null}
+          {visitWindow ? (
+            <p className="text-xs text-atg-muted">
+              {t('visitWindowHint', {
+                start: visitWindow.startDate,
+                end: visitWindow.endDate,
+              })}
+            </p>
+          ) : null}
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Input
+              label={t('fields.startDatetime')}
+              type="datetime-local"
+              value={editValues.startDatetime}
+              min={editStartBounds?.min}
+              max={editStartBounds?.max}
+              onChange={(event) =>
+                setEditValues((current) => ({ ...current, startDatetime: event.target.value }))
+              }
+              required
+            />
+            <Input
+              label={t('fields.endDatetime')}
+              type="datetime-local"
+              value={editValues.endDatetime}
+              min={editEndBounds?.min}
+              max={editEndBounds?.max}
+              onChange={(event) =>
+                setEditValues((current) => ({ ...current, endDatetime: event.target.value }))
+              }
+              required
+            />
+          </div>
+          <div className="sm:w-48">
+            <label htmlFor={`${guideSelectId}-edit-role`} className="mb-1 block text-xs font-medium text-atg-muted">
+              {t('selectRole')}
+            </label>
+            <select
+              id={`${guideSelectId}-edit-role`}
+              value={editValues.role}
+              onChange={(event) =>
+                setEditValues((current) => ({
+                  ...current,
+                  role: event.target.value as BookingGuideRole,
+                }))
+              }
+              className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg"
+            >
+              <option value="primary">{roleLabels.primary}</option>
+              <option value="secondary">{roleLabels.secondary}</option>
+            </select>
+          </div>
+          <Textarea
+            label={t('fields.notes')}
+            hint={t('fields.notesHint')}
+            value={editValues.notes}
+            onChange={(event) => setEditValues((current) => ({ ...current, notes: event.target.value }))}
+            rows={3}
+            maxLength={500}
+          />
+          <div className="flex justify-end gap-2">
+            <Button type="button" variant="outline" disabled={savingEdit} onClick={() => setEditTarget(null)}>
+              {t('cancel')}
+            </Button>
+            <Button type="button" loading={savingEdit} onClick={() => void handleEditSave()}>
+              {tActions('save')}
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      <section className="space-y-3">
+        {embedded ? null : (
+          <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
+        )}
+
+        {error ? (
+          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+            {error}
+          </p>
+        ) : null}
+
+        {actionError ? (
+          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+            {actionError}
+          </p>
+        ) : null}
+
+        {conflictError ? (
+          <GuideScheduleConflictAlert error={conflictError} t={t} formatDateTime={formatDateTime} />
+        ) : null}
+
+        {canWrite ? (
+          visitWindow ? (
+          <Card variant="dashboard" padding="md" className="space-y-4">
+            <div>
+              <p className="text-sm font-medium text-atg-fg">{t('assignTitle')}</p>
+              <p className="mt-1 text-xs text-atg-muted">{t('assignHint')}</p>
+              <p className="mt-1 text-xs text-atg-muted">
+                {t('visitWindowHint', {
+                  start: visitWindow.startDate,
+                  end: visitWindow.endDate,
+                })}
+              </p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Input
+                label={t('fields.startDatetime')}
+                type="datetime-local"
+                value={formValues.startDatetime}
+                min={formStartBounds?.min}
+                max={formStartBounds?.max}
+                onChange={(event) =>
+                  setFormValues((current) => ({ ...current, startDatetime: event.target.value }))
+                }
+                required
+              />
+              <Input
+                label={t('fields.endDatetime')}
+                type="datetime-local"
+                value={formValues.endDatetime}
+                min={formEndBounds?.min}
+                max={formEndBounds?.max}
+                onChange={(event) =>
+                  setFormValues((current) => ({ ...current, endDatetime: event.target.value }))
+                }
+                required
+              />
+            </div>
+            {!slotRangeIso && formValues.startDatetime && formValues.endDatetime ? (
+              <p className="text-xs text-amber-700 dark:text-amber-300">{t('validation.endAfterStart')}</p>
+            ) : null}
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+              <div className="flex-1">
+                <label htmlFor={guideSelectId} className="mb-1 block text-xs font-medium text-atg-muted">
+                  {t('selectGuide')}
+                  {searchingGuides ? ` (${t('searchingGuides')})` : null}
+                </label>
+                <select
+                  id={guideSelectId}
+                  value={formValues.guideId}
+                  onChange={(event) =>
+                    setFormValues((current) => ({ ...current, guideId: event.target.value }))
+                  }
+                  disabled={!slotRangeIso || searchingGuides}
+                  className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg disabled:opacity-60"
+                >
+                  <option value="">
+                    {!slotRangeIso ? t('selectTimesFirst') : t('selectPlaceholder')}
+                  </option>
+                  {availableForSlot.map((guide) => (
+                    <option key={guide.id} value={guide.id}>
+                      {guide.displayName}
+                    </option>
+                  ))}
+                </select>
+                {slotRangeIso && !searchingGuides && availableForSlot.length === 0 ? (
+                  <p className="mt-1 text-xs text-atg-muted">{t('noGuidesForSlot')}</p>
+                ) : null}
+              </div>
+              <div className="sm:w-40">
+                <label htmlFor={roleSelectId} className="mb-1 block text-xs font-medium text-atg-muted">
+                  {t('selectRole')}
+                </label>
+                <select
+                  id={roleSelectId}
+                  value={formValues.role}
+                  onChange={(event) =>
+                    setFormValues((current) => ({
+                      ...current,
+                      role: event.target.value as BookingGuideRole,
+                    }))
+                  }
+                  className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm text-atg-fg"
+                >
+                  <option value="primary">{roleLabels.primary}</option>
+                  <option value="secondary">{roleLabels.secondary}</option>
+                </select>
+              </div>
+            </div>
+            <Textarea
+              label={t('fields.notes')}
+              hint={t('fields.notesHint')}
+              value={formValues.notes}
+              onChange={(event) =>
+                setFormValues((current) => ({ ...current, notes: event.target.value }))
+              }
+              rows={2}
+              maxLength={500}
+            />
+            <div className="flex justify-end">
+              <Button
+                type="button"
+                variant="primary"
+                onClick={handleAssignRequest}
+                disabled={!canSubmitAssign}
+                loading={assigning}
+              >
+                {t('assignButton')}
+              </Button>
+            </div>
+          </Card>
+          ) : (
+            <Card variant="dashboard" padding="md">
+              <p className="text-sm text-atg-muted">{t('noVisitDates')}</p>
+            </Card>
+          )
+        ) : null}
+
+        <Card variant="dashboard" padding="none" className="overflow-hidden">
+          <DataTable
+            columns={columns}
+            data={assignments}
+            isLoading={loading}
+            emptyMessage={t('empty')}
+            getRowId={(row) => row.id}
+            aria-label={t('ariaLabel')}
+          />
         </Card>
-      ) : null}
-    </section>
+
+        <BookingGuideAssignmentHistorySection bookingId={bookingId} embedded />
+      </section>
     </>
   );
 }

@@ -73,6 +73,10 @@ export function teamMemberUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/about/team/${filename}`;
 }
 
+export function tourGuideUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/tour-guides/${filename}`;
+}
+
 export function aboutResourceUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/about/resources/${filename}`;
 }

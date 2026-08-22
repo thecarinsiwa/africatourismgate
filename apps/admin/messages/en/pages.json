@@ -310,23 +310,47 @@
     }
   },
   "reservations": {
+    "title": "Bookings",
     "description": "Paginated booking list (live API data). Filter by status, date, customer and organization. Requires bookings.read.",
+    "actions": {
+      "lines": "Booking line items",
+      "guides": "Tour guides"
+    },
     "lignes": {
-      "description": "Global line items per booking (live API data). Filter by type, booking status and booking ID. Requires bookings.read."
+      "title": "Booking line items",
+      "description": "Global line items per booking (live API data). Filter by type, booking status and booking ID. Requires bookings.read.",
+      "backLabel": "Back to bookings"
+    },
+    "id": {
+      "metaTitle": "Booking detail"
     }
   },
   "guides": {
     "title": "Tour guides",
     "description": "Catalog of internal and external guides. Filter by type, status and search by name.",
     "actions": {
-      "new": "New guide"
+      "new": "New guide",
+      "calendar": "Calendar"
     },
     "nouveau": {
       "metaTitle": "New tour guide",
-      "description": "Create a guide profile, then assign guides from the booking detail page."
+      "description": "Create a guide profile, then assign guides from the booking detail page.",
+      "backLabel": "Back to tour guides"
     },
     "id": {
-      "metaTitle": "Edit guide"
+      "metaTitle": "Edit guide",
+      "description": "Update the guide profile, covered destinations and status.",
+      "voir": {
+        "metaTitle": "View guide",
+        "title": "View guide",
+        "description": "View profile, destinations and bookings assigned to this guide."
+      }
+    },
+    "calendrier": {
+      "metaTitle": "Guides calendar",
+      "title": "Calendar",
+      "description": "Monthly view of active guide availability (available, on mission, unavailable).",
+      "backLabel": "Back to tour guides"
     }
   },
   "paiements": {

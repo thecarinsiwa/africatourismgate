@@ -16,13 +16,36 @@ export type BookingDetailPdfLabels = {
   colItem: string;
   colType: string;
   colDates: string;
+  colSchedule: string;
   colQty: string;
   colUnitPrice: string;
   colLineTotal: string;
+  itinerarySection: string;
   travelersSection: string;
+  colTravelerIndex: string;
   colTraveler: string;
   colAge: string;
+  colSex: string;
+  colNationality: string;
+  colIdNumber: string;
   colTravelerPrice: string;
+  colTravelerNotes: string;
+  guidesSection: string;
+  colGuideName: string;
+  colGuideRole: string;
+  colGuideSchedule: string;
+  guideRolePrimary: string;
+  guideRoleSecondary: string;
+  summarySection: string;
+  bookingCreatedAt: string;
+  paymentsSection: string;
+  colPaymentDate: string;
+  colPaymentAmount: string;
+  colPaymentStatus: string;
+  colPaymentProvider: string;
+  sexM: string;
+  sexF: string;
+  sexOther: string;
   total: string;
   nextStepsSection: string;
   nextStepsBody: string;
@@ -44,17 +67,40 @@ const LABELS: Record<BookingDetailPdfLocale, BookingDetailPdfLabels> = {
     visitPeriod: 'Période de visite',
     visitFrom: 'Départ',
     visitTo: 'Retour',
-    itemsSection: 'Prestations réservées',
+    itemsSection: 'Lignes de réservation',
     colItem: 'Prestation',
     colType: 'Type',
     colDates: 'Dates',
+    colSchedule: 'Horaires',
     colQty: 'Qté',
     colUnitPrice: 'Prix unit.',
     colLineTotal: 'Sous-total',
-    travelersSection: 'Voyageurs et tarifs',
+    itinerarySection: 'Itinéraire',
+    travelersSection: 'Liste des voyageurs',
+    colTravelerIndex: 'N°',
     colTraveler: 'Voyageur',
     colAge: 'Âge',
+    colSex: 'Sexe',
+    colNationality: 'Nationalité',
+    colIdNumber: 'N° document',
     colTravelerPrice: 'Montant',
+    colTravelerNotes: 'Notes',
+    guidesSection: 'Guides assignés',
+    colGuideName: 'Guide',
+    colGuideRole: 'Rôle',
+    colGuideSchedule: 'Plage horaire',
+    guideRolePrimary: 'Principal',
+    guideRoleSecondary: 'Secondaire',
+    summarySection: 'Informations complémentaires',
+    bookingCreatedAt: 'Réservation créée le',
+    paymentsSection: 'Paiements enregistrés',
+    colPaymentDate: 'Date',
+    colPaymentAmount: 'Montant',
+    colPaymentStatus: 'Statut',
+    colPaymentProvider: 'Fournisseur',
+    sexM: 'H',
+    sexF: 'F',
+    sexOther: 'Autre',
     total: 'Total',
     nextStepsSection: 'Prochaines étapes',
     nextStepsBody:
@@ -82,17 +128,40 @@ const LABELS: Record<BookingDetailPdfLocale, BookingDetailPdfLabels> = {
     visitPeriod: 'Visit period',
     visitFrom: 'Departure',
     visitTo: 'Return',
-    itemsSection: 'Booked services',
+    itemsSection: 'Booking lines',
     colItem: 'Service',
     colType: 'Type',
     colDates: 'Dates',
+    colSchedule: 'Schedule',
     colQty: 'Qty',
     colUnitPrice: 'Unit price',
     colLineTotal: 'Subtotal',
-    travelersSection: 'Travelers and pricing',
+    itinerarySection: 'Itinerary',
+    travelersSection: 'Traveler list',
+    colTravelerIndex: '#',
     colTraveler: 'Traveler',
     colAge: 'Age',
+    colSex: 'Sex',
+    colNationality: 'Nationality',
+    colIdNumber: 'ID no.',
     colTravelerPrice: 'Amount',
+    colTravelerNotes: 'Notes',
+    guidesSection: 'Assigned guides',
+    colGuideName: 'Guide',
+    colGuideRole: 'Role',
+    colGuideSchedule: 'Time slot',
+    guideRolePrimary: 'Lead',
+    guideRoleSecondary: 'Secondary',
+    summarySection: 'Additional information',
+    bookingCreatedAt: 'Booking created on',
+    paymentsSection: 'Recorded payments',
+    colPaymentDate: 'Date',
+    colPaymentAmount: 'Amount',
+    colPaymentStatus: 'Status',
+    colPaymentProvider: 'Provider',
+    sexM: 'M',
+    sexF: 'F',
+    sexOther: 'Other',
     total: 'Total',
     nextStepsSection: 'Next steps',
     nextStepsBody:
@@ -120,17 +189,40 @@ const LABELS: Record<BookingDetailPdfLocale, BookingDetailPdfLabels> = {
     visitPeriod: 'Período de visita',
     visitFrom: 'Salida',
     visitTo: 'Regreso',
-    itemsSection: 'Servicios reservados',
+    itemsSection: 'Líneas de reserva',
     colItem: 'Servicio',
     colType: 'Tipo',
     colDates: 'Fechas',
+    colSchedule: 'Horarios',
     colQty: 'Cant.',
     colUnitPrice: 'Precio unit.',
     colLineTotal: 'Subtotal',
-    travelersSection: 'Viajeros y tarifas',
+    itinerarySection: 'Itinerario',
+    travelersSection: 'Lista de viajeros',
+    colTravelerIndex: 'N.º',
     colTraveler: 'Viajero',
     colAge: 'Edad',
+    colSex: 'Sexo',
+    colNationality: 'Nacionalidad',
+    colIdNumber: 'N.º documento',
     colTravelerPrice: 'Importe',
+    colTravelerNotes: 'Notas',
+    guidesSection: 'Guías asignados',
+    colGuideName: 'Guía',
+    colGuideRole: 'Rol',
+    colGuideSchedule: 'Franja horaria',
+    guideRolePrimary: 'Principal',
+    guideRoleSecondary: 'Secundario',
+    summarySection: 'Información complementaria',
+    bookingCreatedAt: 'Reserva creada el',
+    paymentsSection: 'Pagos registrados',
+    colPaymentDate: 'Fecha',
+    colPaymentAmount: 'Importe',
+    colPaymentStatus: 'Estado',
+    colPaymentProvider: 'Proveedor',
+    sexM: 'H',
+    sexF: 'M',
+    sexOther: 'Otro',
     total: 'Total',
     nextStepsSection: 'Próximos pasos',
     nextStepsBody:

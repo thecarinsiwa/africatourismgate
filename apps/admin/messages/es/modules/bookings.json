@@ -26,6 +26,8 @@
     "filters": {
       "client": "Cliente"
     },
+    "searchPlaceholder": "Buscar por cliente, correo o ref.…",
+    "searchAria": "Buscar reservas",
     "tabs": {
       "ariaLabel": "Filtros rápidos por estado",
       "all": "Todas",
@@ -62,6 +64,23 @@
       "organization": "Organización",
       "total": "Total",
       "createdAt": "Creada el"
+    },
+    "summary": {
+      "createdAt": "Creada el {date}",
+      "unreadMessages": "{count, plural, one {# mensaje del cliente sin leer} other {# mensajes del cliente sin leer}}"
+    },
+    "tabs": {
+      "ariaLabel": "Secciones complementarias",
+      "manifest": "Manifiesto",
+      "guides": "Guías",
+      "documents": "Documentos de identidad",
+      "documentsPending": "Documentos de identidad ({count})",
+      "history": "Historial"
+    },
+    "actionsBar": {
+      "ariaLabel": "Acciones sobre la reserva",
+      "statusModalDescription": "Elija el nuevo estado y un motivo opcional para el historial.",
+      "cancelModalDescription": "Indique un motivo de cancelación si es necesario."
     },
     "actions": {
       "changeStatus": "Cambiar el estado",
@@ -192,7 +211,30 @@
     "totalHint": "Ajuste el total si es necesario antes de aprobar.",
     "totalOverrideHint": "Calculado automáticamente a partir de los precios por viajero. Edite para aplicar un total manual.",
     "travelersTitle": "Desglose del pago por viajero",
+    "travelersCount": "{count, plural, one {# viajero} other {# viajeros}}",
+    "travelerNumber": "Viajero {number}",
+    "documentModal": {
+      "title": "Documento — {name}",
+      "description": "Documento de identidad de este viajero (asociación por orden de envío).",
+      "empty": "Ningún documento depositado para este viajero.",
+      "previewError": "No se puede mostrar el documento.",
+      "requestByEmail": "Solicitar envío por correo",
+      "requestByEmailSuccess": "Correo de solicitud enviado al cliente.",
+      "emailNotSent": "No se pudo enviar el correo (dirección del cliente no encontrada).",
+      "emailNoteLabel": "Mensaje al cliente (opcional)",
+      "emailNotePlaceholder": "Ej. suba una foto nítida del pasaporte…",
+      "travelerNameRequired": "El nombre del viajero es obligatorio para enviar la solicitud.",
+      "approve": "Validar documento",
+      "reject": "Rechazar",
+      "rejectSuccess": "Documento rechazado.",
+      "rejectDialogTitle": "Rechazar documento",
+      "rejectDialogDescription": "El cliente podrá subir una nueva versión desde su cuenta.",
+      "rejectNoteLabel": "Motivo (opcional)",
+      "rejectNotePlaceholder": "Ej. documento ilegible o caducado…"
+    },
     "travelerName": "Nombre del viajero",
+    "viewDocument": "Ver documento",
+    "viewDocumentPending": "Documento por validar",
     "travelerAge": "Edad",
     "travelerBasePrice": "Precio base ({currency})",
     "travelerPrice": "Precio ({currency})",
@@ -253,23 +295,77 @@
   },
   "guides": {
     "title": "Guías asignados",
-    "empty": "Ningún guía asignado a esta reserva.",
-    "ariaLabel": "Guías asignados a la reserva",
-    "assignTitle": "Asignar un guía",
-    "selectGuide": "Guía",
-    "selectPlaceholder": "Elegir un guía activo…",
+    "empty": "Ningún turno de guía asignado a esta reserva.",
+    "ariaLabel": "Turnos de guía asignados a la reserva",
+    "assignTitle": "Añadir un turno",
+    "assignHint": "Indique el horario y elija un guía disponible en ese intervalo.",
+    "selectGuide": "Guía disponible",
+    "selectPlaceholder": "Elegir un guía…",
+    "selectTimesFirst": "Indique primero los horarios",
+    "searchingGuides": "buscando…",
     "selectRole": "Rol",
-    "assignButton": "Asignar",
-    "noGuidesAvailable": "Todos los guías activos ya están asignados.",
-    "removeTitle": "Quitar guía",
-    "removeConfirm": "Este guía será eliminado de la reserva.",
-    "removeConfirmButton": "Quitar",
+    "assignButton": "Asignar turno",
+    "assignConfirmTitle": "¿Asignar este turno?",
+    "assignConfirm": "El guía seleccionado será programado en el intervalo indicado y recibirá un correo.",
+    "assignConfirmNamed": "« {name} » intervendrá como guía {role} ({schedule}). Se enviará un correo de notificación.",
+    "assignConfirmButton": "Asignar y notificar",
+    "noGuidesForSlot": "Ningún guía disponible en este intervalo horario.",
+    "noGuidesAvailable": "Ningún guía activo disponible.",
+    "visitWindowHint": "Turnos permitidos del {start} al {end} (inclusive).",
+    "noVisitDates": "Esta reserva no tiene fechas — no se puede asignar un guía.",
+    "editSlotTitle": "Editar turno",
+    "editSlotDescription": "Ajuste los horarios de « {name} ». Los conflictos se verifican al guardar.",
+    "removeTitle": "Quitar turno",
+    "removeConfirm": "Este turno será eliminado. El guía recibirá un correo de notificación.",
+    "removeConfirmNamed": "El turno de « {name} » ({schedule}) será eliminado. Se enviará un correo al guía.",
+    "removeCommentLabel": "Mensaje al guía",
+    "removeCommentHint": "Este comentario se incluirá en el correo de notificación (opcional).",
+    "removeConfirmButton": "Quitar y notificar",
     "cancel": "Cancelar",
     "viewProfile": "Ver perfil",
+    "validation": {
+      "endAfterStart": "La hora de fin debe ser posterior a la hora de inicio.",
+      "outsideVisitWindow": "El turno debe estar dentro del periodo de la reserva."
+    },
+    "fields": {
+      "startDatetime": "Inicio",
+      "endDatetime": "Fin",
+      "notes": "Notas",
+      "notesHint": "Ej. conductor, visita al mercado… (opcional)"
+    },
+    "conflicts": {
+      "assignment": "Misión",
+      "unavailability": "Indisponibilidad",
+      "viewBooking": "Ver reserva"
+    },
     "columns": {
       "guide": "Guía",
+      "schedule": "Intervalo horario",
       "role": "Rol",
+      "notes": "Notas",
       "assignedAt": "Asignado el"
+    },
+    "history": {
+      "title": "Historial de asignaciones",
+      "titleShort": "Historial",
+      "description": "Registro de creaciones, modificaciones y eliminaciones de turnos de guía.",
+      "expand": "Mostrar historial",
+      "collapse": "Ocultar historial",
+      "empty": "Ningún evento registrado para esta reserva.",
+      "ariaLabel": "Historial de turnos de guía",
+      "actions": {
+        "created": "Creación",
+        "updated": "Modificación",
+        "deleted": "Eliminación"
+      },
+      "columns": {
+        "when": "Fecha",
+        "action": "Acción",
+        "guide": "Guía",
+        "schedule": "Intervalo",
+        "role": "Rol",
+        "actor": "Por"
+      }
     }
   },
   "stats": {

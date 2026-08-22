@@ -8,12 +8,45 @@ export type BookingDetailPdfItem = {
   unitPriceCents: number;
   startDate: string | null;
   endDate: string | null;
+  schedule: string | null;
 };
 
 export type BookingDetailPdfTraveler = {
   fullName: string;
   age?: number | null;
+  sex?: 'M' | 'F' | 'other' | null;
+  nationality?: string | null;
+  idNumber?: string | null;
   priceCents?: number | null;
+  conditions?: string | null;
+  comment?: string | null;
+  other?: string | null;
+};
+
+export type BookingDetailPdfItineraryStep = {
+  order: number;
+  label: string;
+  detail?: string | null;
+};
+
+export type BookingDetailPdfItineraryGroup = {
+  title: string;
+  itemType: string;
+  steps: BookingDetailPdfItineraryStep[];
+};
+
+export type BookingDetailPdfGuide = {
+  name: string;
+  role: 'primary' | 'secondary';
+  schedule: string;
+};
+
+export type BookingDetailPdfPayment = {
+  amountCents: number;
+  currency: string;
+  status: string;
+  provider: string;
+  createdAt: string;
 };
 
 export type BookingDetailPdfInput = {
@@ -28,6 +61,10 @@ export type BookingDetailPdfInput = {
   };
   items: BookingDetailPdfItem[];
   travelers: BookingDetailPdfTraveler[];
+  itinerary: BookingDetailPdfItineraryGroup[];
+  guides: BookingDetailPdfGuide[];
+  payments: BookingDetailPdfPayment[];
+  bookingCreatedAt: string;
   visitStartDate: string | null;
   visitEndDate: string | null;
   chatUrl: string;

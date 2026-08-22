@@ -168,6 +168,16 @@ export interface ReviewBookingIdentityDocumentRequest {
   staffNote?: string;
 }
 
+export interface RequestIdentityDocumentUploadRequest {
+  travelerName: string;
+  staffNote?: string;
+  travelerIndex?: number;
+}
+
+export interface RequestIdentityDocumentUploadResponse {
+  sent: boolean;
+}
+
 export type BookingManifestSex = 'M' | 'F' | 'other';
 
 export interface BookingManifestEntry {
@@ -361,6 +371,8 @@ export interface BookingsListQuery {
   dateTo?: string;
   /** Tri par date de création (`createdAt`). */
   sortOrder?: 'asc' | 'desc';
+  /** Recherche client (email, nom) ou préfixe d’identifiant booking. */
+  search?: string;
 }
 
 export interface BookingItemListItem {

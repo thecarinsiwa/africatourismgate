@@ -88,6 +88,8 @@ export function resolveCheckoutBookingMode(input: {
   return 'assisted';
 }
 
+import type { BookingStatus } from './booking.js';
+
 export type TourGuideType = 'internal' | 'external';
 
 export type TourGuideStatus = 'active' | 'inactive';
@@ -102,6 +104,7 @@ export interface TourGuide {
   displayName: string;
   bio: string | null;
   photoUrl: string | null;
+  contactEmail: string | null;
   languages: string[];
   destinations: string[];
   status: TourGuideStatus;
@@ -134,6 +137,7 @@ export interface CreateTourGuideRequest {
   displayName: string;
   bio?: string;
   photoUrl?: string;
+  contactEmail?: string;
   languages: string[];
   destinations: string[];
   status?: TourGuideStatus;
@@ -146,6 +150,7 @@ export interface UpdateTourGuideRequest {
   displayName?: string;
   bio?: string | null;
   photoUrl?: string | null;
+  contactEmail?: string | null;
   languages?: string[];
   destinations?: string[];
   status?: TourGuideStatus;
@@ -154,10 +159,33 @@ export interface UpdateTourGuideRequest {
 export interface AssignBookingGuideItem {
   guideId: string;
   role?: BookingGuideRole;
+  startDatetime: string;
+  endDatetime: string;
+  notes?: string;
 }
 
 export interface AssignBookingGuidesRequest {
   guides: AssignBookingGuideItem[];
+}
+
+export interface UpdateBookingGuideAssignmentRequest {
+  role?: BookingGuideRole;
+  startDatetime?: string;
+  endDatetime?: string;
+  notes?: string | null;
+}
+
+export interface RemoveBookingGuideRequest {
+  comment?: string;
+}
+
+export interface GuideScheduleConflict {
+  kind: 'assignment' | 'unavailability';
+  id: string;
+  guideId: string;
+  bookingId?: string;
+  startDatetime: string;
+  endDatetime: string;
 }
 
 export interface BookingGuideAssignment {
@@ -165,6 +193,146 @@ export interface BookingGuideAssignment {
   bookingId: string;
   guideId: string;
   role: BookingGuideRole;
+  startDatetime: string;
+  endDatetime: string;
+  notes: string | null;
   assignedAt: string;
   assignedByUserId: string | null;
+}
+
+export interface TourGuideBookingListItem {
+  assignmentId: string;
+  role: BookingGuideRole;
+  startDatetime: string;
+  endDatetime: string;
+  assignedAt: string;
+  bookingId: string;
+  status: BookingStatus;
+  totalCents: number;
+  currency: string;
+  createdAt: string;
+  clientEmail: string;
+  clientFirstName: string;
+  clientLastName: string;
+  organizationId: string | null;
+}
+
+export interface TourGuideBookingsListQuery {
+  page?: number;
+  limit?: number;
+  sortOrder?: 'asc' | 'desc';
+  search?: string;
+}
+
+export type GuideCalendarDayStatus = 'available' | 'occupied' | 'unavailable';
+
+export type GuideAvailabilityStatus = 'available' | 'unavailable';
+
+export interface TourGuideCalendarSummaryDay {
+  date: string;
+  available: number;
+  occupied: number;
+  unavailable: number;
+  totalActive: number;
+}
+
+export interface TourGuideCalendarSummary {
+  month: string;
+  days: TourGuideCalendarSummaryDay[];
+}
+
+export interface TourGuideCalendarDayGuide {
+  guideId: string;
+  displayName: string;
+  photoUrl: string | null;
+  status: GuideCalendarDayStatus;
+  bookingId?: string;
+  assignmentId?: string;
+  role?: BookingGuideRole;
+  slots: GuideCalendarScheduleSlot[];
+}
+
+export interface GuideCalendarScheduleSlot {
+  type: 'assignment' | 'unavailable';
+  startDatetime: string;
+  endDatetime: string;
+  assignmentId?: string;
+  bookingId?: string;
+  role?: BookingGuideRole;
+  availabilityId?: string;
+}
+
+export interface TourGuideCalendarDayDetail {
+  date: string;
+  guides: TourGuideCalendarDayGuide[];
+}
+
+export interface TourGuideAvailableQuery {
+  from: string;
+  to: string;
+  destinationId?: string;
+  organizationId?: string;
+}
+
+export interface TourGuideAvailableItem {
+  id: string;
+  displayName: string;
+  photoUrl: string | null;
+  type: TourGuideType;
+  languages: string[];
+  destinations: string[];
+}
+
+export interface TourGuideCalendarSummaryQuery {
+  month: string;
+  destinationId?: string;
+  organizationId?: string;
+  guideId?: string;
+}
+
+export interface TourGuideCalendarDayQuery {
+  date: string;
+  destinationId?: string;
+  organizationId?: string;
+  guideId?: string;
+}
+
+export interface UpsertGuideAvailabilityRequest {
+  date?: string;
+  startDatetime?: string;
+  endDatetime?: string;
+  availabilityId?: string;
+  status: GuideAvailabilityStatus;
+}
+
+export interface GuideAvailabilitySlot {
+  guideId: string;
+  date?: string;
+  startDatetime: string;
+  endDatetime: string;
+  status: GuideAvailabilityStatus;
+}
+
+export type BookingGuideAssignmentHistoryAction = 'created' | 'updated' | 'deleted';
+
+export interface BookingGuideAssignmentHistorySnapshot {
+  bookingId: string;
+  guideId: string;
+  role: BookingGuideRole;
+  startDatetime: string;
+  endDatetime: string;
+  notes: string | null;
+}
+
+export interface BookingGuideAssignmentHistoryItem {
+  id: string;
+  assignmentId: string;
+  bookingId: string;
+  guideId: string;
+  action: BookingGuideAssignmentHistoryAction;
+  snapshot: BookingGuideAssignmentHistorySnapshot;
+  actorUserId: string | null;
+  actorDisplayName: string | null;
+  guideDisplayName: string | null;
+  createdAt: string;
 }

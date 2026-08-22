@@ -27,6 +27,7 @@ function sampleInput(locale: 'fr' | 'en' | 'es' = 'fr') {
         unitPriceCents: 30750,
         startDate: '2026-08-10',
         endDate: '2026-08-12',
+        schedule: 'sam. 10 août 2026 · 08:00 – 11:00',
       },
     ],
     travelers: [
@@ -34,6 +35,19 @@ function sampleInput(locale: 'fr' | 'en' | 'es' = 'fr') {
       { fullName: 'Jean Dupont', age: 36, priceCents: 30750 },
       { fullName: 'Léa Dupont', age: 8, priceCents: 30750 },
     ],
+    itinerary: [
+      {
+        title: 'Safari 3 jours — Parc national',
+        itemType: 'activity_schedule',
+        steps: [
+          { order: 1, label: 'Accueil au camp', detail: 'Briefing sécurité' },
+          { order: 2, label: 'Safari matinal' },
+        ],
+      },
+    ],
+    guides: [{ name: 'Marie Kabila', role: 'primary' as const, schedule: 'lun. 11 août 2026 · 09:00 – 17:00' }],
+    payments: [],
+    bookingCreatedAt: '2026-07-01T10:00:00.000Z',
     visitStartDate: '2026-08-10',
     visitEndDate: '2026-08-12',
     chatUrl: 'https://example.com/account/reservations/chat',

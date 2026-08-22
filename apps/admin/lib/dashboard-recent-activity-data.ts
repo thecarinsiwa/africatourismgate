@@ -78,7 +78,7 @@ function mapBooking(booking: BookingListItem): DashboardActivityBookingItem {
     type: 'booking',
     id: booking.id,
     createdAt: booking.createdAt,
-    href: `/dashboard/bookings/${booking.id}`,
+    href: `/reservations/${booking.id}`,
     clientLabel: formatClientLabel(booking),
     status: booking.status,
     amountCents: booking.totalCents,

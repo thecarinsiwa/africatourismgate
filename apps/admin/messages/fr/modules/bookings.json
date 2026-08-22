@@ -26,6 +26,8 @@
     "filters": {
       "client": "Client"
     },
+    "searchPlaceholder": "Rechercher par client, e-mail ou réf.…",
+    "searchAria": "Rechercher des réservations",
     "tabs": {
       "ariaLabel": "Filtres rapides par statut",
       "all": "Toutes",
@@ -62,6 +64,23 @@
       "organization": "Organisation",
       "total": "Total",
       "createdAt": "Créée le"
+    },
+    "summary": {
+      "createdAt": "Créée le {date}",
+      "unreadMessages": "{count, plural, one {# message client non lu} other {# messages client non lus}}"
+    },
+    "tabs": {
+      "ariaLabel": "Sections complémentaires",
+      "manifest": "Manifeste",
+      "guides": "Guides",
+      "documents": "Pièces d'identité",
+      "documentsPending": "Pièces d'identité ({count})",
+      "history": "Historique"
+    },
+    "actionsBar": {
+      "ariaLabel": "Actions sur la réservation",
+      "statusModalDescription": "Choisissez le nouveau statut et un motif optionnel pour l'historique.",
+      "cancelModalDescription": "Indiquez un motif d'annulation si nécessaire."
     },
     "actions": {
       "changeStatus": "Changer le statut",
@@ -192,7 +211,30 @@
     "totalHint": "Ajustez le total si nécessaire avant approbation.",
     "totalOverrideHint": "Calculé automatiquement à partir des prix voyageurs. Modifiez pour forcer un total manuel.",
     "travelersTitle": "Détail du paiement par voyageur",
+    "travelersCount": "{count, plural, one {# voyageur} other {# voyageurs}}",
+    "travelerNumber": "Voyageur {number}",
+    "documentModal": {
+      "title": "Document — {name}",
+      "description": "Pièce d’identité associée à ce voyageur (association par ordre de dépôt).",
+      "empty": "Aucun document déposé pour ce voyageur.",
+      "previewError": "Impossible d’afficher le document.",
+      "requestByEmail": "Demander l’envoi par e-mail",
+      "requestByEmailSuccess": "E-mail de demande envoyé au client.",
+      "emailNotSent": "L’e-mail n’a pas pu être envoyé (adresse client introuvable).",
+      "emailNoteLabel": "Message au client (optionnel)",
+      "emailNotePlaceholder": "Ex. merci de déposer une photo nette du passeport…",
+      "travelerNameRequired": "Le nom du voyageur est obligatoire pour envoyer la demande.",
+      "approve": "Valider le document",
+      "reject": "Refuser",
+      "rejectSuccess": "Document refusé.",
+      "rejectDialogTitle": "Refuser le document",
+      "rejectDialogDescription": "Le client pourra déposer une nouvelle version depuis son espace.",
+      "rejectNoteLabel": "Motif (optionnel)",
+      "rejectNotePlaceholder": "Ex. document illisible ou expiré…"
+    },
     "travelerName": "Nom du voyageur",
+    "viewDocument": "Voir le document",
+    "viewDocumentPending": "Document à valider",
     "travelerAge": "Âge",
     "travelerBasePrice": "Prix de base ({currency})",
     "travelerPrice": "Prix ({currency})",
@@ -253,23 +295,77 @@
   },
   "guides": {
     "title": "Guides assignés",
-    "empty": "Aucun guide assigné à cette réservation.",
-    "ariaLabel": "Guides assignés à la réservation",
-    "assignTitle": "Assigner un guide",
-    "selectGuide": "Guide",
-    "selectPlaceholder": "Choisir un guide actif…",
+    "empty": "Aucun créneau guide assigné à cette réservation.",
+    "ariaLabel": "Créneaux guides assignés à la réservation",
+    "assignTitle": "Ajouter un créneau",
+    "assignHint": "Indiquez la plage horaire, puis choisissez un guide disponible sur ce créneau.",
+    "selectGuide": "Guide disponible",
+    "selectPlaceholder": "Choisir un guide…",
+    "selectTimesFirst": "Renseignez d'abord les horaires",
+    "searchingGuides": "recherche…",
     "selectRole": "Rôle",
-    "assignButton": "Assigner",
-    "noGuidesAvailable": "Tous les guides actifs sont déjà assignés.",
-    "removeTitle": "Retirer le guide",
-    "removeConfirm": "Ce guide sera retiré de la réservation.",
-    "removeConfirmButton": "Retirer",
+    "assignButton": "Assigner le créneau",
+    "assignConfirmTitle": "Assigner ce créneau ?",
+    "assignConfirm": "Le guide sélectionné sera mobilisé sur la plage horaire indiquée et recevra un e-mail.",
+    "assignConfirmNamed": "« {name} » interviendra comme guide {role} ({schedule}). Un e-mail lui sera envoyé.",
+    "assignConfirmButton": "Assigner et notifier",
+    "noGuidesForSlot": "Aucun guide disponible sur cette plage horaire.",
+    "noGuidesAvailable": "Aucun guide actif disponible.",
+    "visitWindowHint": "Créneaux autorisés du {start} au {end} (inclus).",
+    "noVisitDates": "Cette réservation n'a pas de dates — assignation de guides impossible.",
+    "editSlotTitle": "Modifier le créneau",
+    "editSlotDescription": "Ajustez les horaires de « {name} ». Les conflits seront vérifiés à l'enregistrement.",
+    "removeTitle": "Retirer le créneau",
+    "removeConfirm": "Ce créneau sera supprimé. Un e-mail de notification sera envoyé au guide.",
+    "removeConfirmNamed": "Le créneau de « {name} » ({schedule}) sera retiré. Un e-mail lui sera envoyé.",
+    "removeCommentLabel": "Message au guide",
+    "removeCommentHint": "Ce commentaire sera inclus dans l'e-mail de notification (optionnel).",
+    "removeConfirmButton": "Retirer et notifier",
     "cancel": "Annuler",
     "viewProfile": "Voir le profil",
+    "validation": {
+      "endAfterStart": "L'heure de fin doit être postérieure à l'heure de début.",
+      "outsideVisitWindow": "Le créneau doit être compris dans la période de la réservation."
+    },
+    "fields": {
+      "startDatetime": "Début",
+      "endDatetime": "Fin",
+      "notes": "Notes",
+      "notesHint": "Ex. chauffeur, visite marché… (optionnel)"
+    },
+    "conflicts": {
+      "assignment": "Mission",
+      "unavailability": "Indisponibilité",
+      "viewBooking": "Voir la réservation"
+    },
     "columns": {
       "guide": "Guide",
+      "schedule": "Plage horaire",
       "role": "Rôle",
+      "notes": "Notes",
       "assignedAt": "Assigné le"
+    },
+    "history": {
+      "title": "Historique des assignations",
+      "titleShort": "Historique",
+      "description": "Journal des créations, modifications et suppressions de créneaux guides.",
+      "expand": "Afficher l'historique",
+      "collapse": "Masquer l'historique",
+      "empty": "Aucun événement enregistré pour cette réservation.",
+      "ariaLabel": "Historique des créneaux guides",
+      "actions": {
+        "created": "Création",
+        "updated": "Modification",
+        "deleted": "Suppression"
+      },
+      "columns": {
+        "when": "Date",
+        "action": "Action",
+        "guide": "Guide",
+        "schedule": "Plage horaire",
+        "role": "Rôle",
+        "actor": "Par"
+      }
     }
   },
   "stats": {

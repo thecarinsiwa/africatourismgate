@@ -2,6 +2,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
   ArrayMinSize,
   IsArray,
+  IsEmail,
   IsEnum,
   IsOptional,
   IsString,
@@ -43,6 +44,12 @@ export class UpdateTourGuideDto {
   @IsString()
   @MaxLength(512)
   photoUrl?: string | null;
+
+  @ApiPropertyOptional({ maxLength: 255, nullable: true })
+  @IsOptional()
+  @IsEmail({}, { message: "L'adresse e-mail de contact doit être valide." })
+  @MaxLength(255)
+  contactEmail?: string | null;
 
   @ApiPropertyOptional({ type: [String] })
   @IsOptional()

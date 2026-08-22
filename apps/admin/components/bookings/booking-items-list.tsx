@@ -9,7 +9,9 @@ import {
   DataTableActions,
   DataTableBadge,
   DataTablePagination,
+  FilterBar,
   Input,
+  Select,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type {
@@ -19,7 +21,7 @@ import type {
 } from '@africatourismgate/types';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import {
   BOOKING_STATUS_VARIANTS,
@@ -35,6 +37,7 @@ import { BookingItemCatalogLink } from './booking-item-catalog-link';
 import { BookingItemTypeIcon } from './booking-item-type-icon';
 
 const PAGE_SIZE = 10;
+const BOOKING_ID_DEBOUNCE_MS = 300;
 
 type StatusFilter = '' | BookingStatus;
 type ItemTypeFilter = '' | BookingItemType;
@@ -53,19 +56,21 @@ export function BookingItemsList() {
   const { bookings: getBookingsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.bookings.itemsList');
   const tCommon = useTranslations('modules.common');
+  const tDataTable = useTranslations('modules.common.dataTable');
   const statusLabels = useBookingStatusLabels();
   const statusFilterOptions = useBookingStatusFilterOptions();
   const itemTypeOptions = useBookingItemTypeOptions();
   const emptyDash = tCommon('empty.dash');
 
-  const itemTypeFilterId = useId();
-  const statusFilterId = useId();
-  const bookingIdFilterId = useId();
+  const itemTypeSelectOptions = useMemo(
+    () => [{ value: '', label: tCommon('filters.all') }, ...itemTypeOptions],
+    [itemTypeOptions, tCommon],
+  );
 
   const [page, setPage] = useState(1);
-  const [filterTick, setFilterTick] = useState(0);
   const [itemTypeFilter, setItemTypeFilter] = useState<ItemTypeFilter>('');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('');
+  const [bookingIdInput, setBookingIdInput] = useState('');
   const [bookingIdFilter, setBookingIdFilter] = useState('');
   const [state, setState] = useState<
     | { status: 'loading' }
@@ -73,8 +78,20 @@ export function BookingItemsList() {
     | { status: 'ready'; items: BookingItemListItem[]; total: number; totalPages: number }
   >({ status: 'loading' });
 
+  useEffect(() => {
+    const query = bookingIdInput.trim();
+    const timer = window.setTimeout(() => {
+      setBookingIdFilter((prev) => {
+        if (prev !== query) {
+          setPage(1);
+        }
+        return query;
+      });
+    }, BOOKING_ID_DEBOUNCE_MS);
+    return () => window.clearTimeout(timer);
+  }, [bookingIdInput]);
+
   const load = useCallback(async () => {
-    void filterTick;
     setState({ status: 'loading' });
     try {
       const result = await getApiClient().listBookingItems({
@@ -82,7 +99,7 @@ export function BookingItemsList() {
         limit: PAGE_SIZE,
         itemType: itemTypeFilter || undefined,
         status: statusFilter || undefined,
-        bookingId: bookingIdFilter.trim() || undefined,
+        bookingId: bookingIdFilter || undefined,
       });
       setState({
         status: 'ready',
@@ -93,15 +110,25 @@ export function BookingItemsList() {
     } catch (error) {
       setState({ status: 'error', message: getBookingsErrorMessage(error) });
     }
-  }, [page, itemTypeFilter, statusFilter, bookingIdFilter, filterTick, getBookingsErrorMessage]);
+  }, [page, itemTypeFilter, statusFilter, bookingIdFilter, getBookingsErrorMessage]);
 
   useEffect(() => {
     void load();
   }, [load]);
 
-  const applyFilters = useCallback(() => {
+  const activeFilterCount = [
+    itemTypeFilter !== '',
+    statusFilter !== '',
+    bookingIdFilter !== '',
+  ].filter(Boolean).length;
+  const hasFilters = activeFilterCount > 0;
+
+  const handleClearFilters = useCallback(() => {
+    setItemTypeFilter('');
+    setStatusFilter('');
+    setBookingIdInput('');
+    setBookingIdFilter('');
     setPage(1);
-    setFilterTick((tick) => tick + 1);
   }, []);
 
   const columns = useMemo<ColumnDef<BookingItemListItem, unknown>[]>(
@@ -149,7 +176,7 @@ export function BookingItemsList() {
         header: tCommon('columns.booking'),
         cell: ({ row }) => (
           <Link
-            href={`/dashboard/bookings/${row.original.bookingId}`}
+            href={`/reservations/${row.original.bookingId}`}
             className="font-mono text-xs text-primary hover:underline"
           >
             {formatBookingRef(row.original.bookingId)}
@@ -177,7 +204,7 @@ export function BookingItemsList() {
           <DataTableActions>
             <DataTableActionButton
               action="view"
-              href={`/dashboard/bookings/${row.original.bookingId}`}
+              href={`/reservations/${row.original.bookingId}`}
             />
           </DataTableActions>
         ),
@@ -189,80 +216,55 @@ export function BookingItemsList() {
   const isLoading = state.status === 'loading';
   const isError = state.status === 'error';
   const items = state.status === 'ready' ? state.items : [];
-  const hasFilters =
-    itemTypeFilter !== '' || statusFilter !== '' || bookingIdFilter.trim() !== '';
   const emptyMessage = hasFilters ? t('emptyFiltered') : t('emptyDefault');
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:flex-wrap lg:items-end">
-        <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end">
-          <div>
-            <label
-              htmlFor={itemTypeFilterId}
-              className="mb-2 block text-sm font-medium text-atg-fg"
-            >
-              {t('filters.type')}
-            </label>
-            <select
-              id={itemTypeFilterId}
-              value={itemTypeFilter}
-              onChange={(e) => setItemTypeFilter(e.target.value as ItemTypeFilter)}
-              className="w-full min-w-[180px] rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
-            >
-              <option value="">{tCommon('filters.all')}</option>
-              {itemTypeOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label htmlFor={statusFilterId} className="mb-2 block text-sm font-medium text-atg-fg">
-              {t('filters.bookingStatus')}
-            </label>
-            <select
-              id={statusFilterId}
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
-              className="w-full min-w-[200px] rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
-            >
-              <option value="">{tCommon('filters.all')}</option>
-              {statusFilterOptions
-                .filter((option) => option.value !== '')
-                .map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-            </select>
-          </div>
-          <div>
-            <label
-              htmlFor={bookingIdFilterId}
-              className="mb-2 block text-sm font-medium text-atg-fg"
-            >
-              {t('filters.bookingId')}
-            </label>
-            <Input
-              id={bookingIdFilterId}
-              type="text"
-              value={bookingIdFilter}
-              onChange={(e) => setBookingIdFilter(e.target.value)}
-              placeholder={t('filters.bookingIdPlaceholder')}
-              className="min-w-[280px] font-mono text-sm"
-            />
-          </div>
-          <button
-            type="button"
-            onClick={applyFilters}
-            className="rounded-lg bg-primary px-4 py-3 text-sm font-medium text-white transition-opacity hover:opacity-90"
-          >
-            {tCommon('filters.apply')}
-          </button>
-        </div>
-      </div>
+      <FilterBar
+        mobileVariant="drawer"
+        activeCount={activeFilterCount}
+        onClear={handleClearFilters}
+        clearLabel={tCommon('filters.clearAll')}
+        applyLabel={tCommon('filters.apply')}
+        toggleLabel={tCommon('filters.toggle')}
+        filters={
+          <>
+            <div className="w-full sm:w-48">
+              <Select
+                label={t('filters.type')}
+                value={itemTypeFilter}
+                options={itemTypeSelectOptions}
+                onChange={(e) => {
+                  setItemTypeFilter(e.target.value as ItemTypeFilter);
+                  setPage(1);
+                }}
+              />
+            </div>
+            <div className="w-full sm:w-56">
+              <Select
+                label={t('filters.bookingStatus')}
+                value={statusFilter}
+                options={statusFilterOptions}
+                onChange={(e) => {
+                  setStatusFilter(e.target.value as StatusFilter);
+                  setPage(1);
+                }}
+              />
+            </div>
+            <div className="w-full sm:min-w-[280px] sm:max-w-md sm:flex-1">
+              <Input
+                label={t('filters.bookingId')}
+                name="bookingId"
+                type="search"
+                value={bookingIdInput}
+                onChange={(e) => setBookingIdInput(e.target.value)}
+                placeholder={t('filters.bookingIdPlaceholder')}
+                className="font-mono text-sm"
+              />
+            </div>
+          </>
+        }
+      />
 
       {isError ? (
         <p className="text-sm text-red-600 dark:text-red-400" role="alert">
@@ -275,6 +277,7 @@ export function BookingItemsList() {
               columns={columns}
               data={items}
               isLoading={isLoading}
+              loadingMessage={tDataTable('loading')}
               emptyMessage={emptyMessage}
               emptyVariant={hasFilters ? 'search' : 'default'}
               getRowId={(row) => row.id}

@@ -8,7 +8,7 @@ import {
   BOOKING_STATUS_VARIANTS,
   getBookingStatusLabel,
 } from '../../lib/booking-status';
-import { useBookingStatusLabels } from '../../lib/i18n/use-module-labels';
+import { useBookingStatusLabels, useFormatDateTime } from '../../lib/i18n/use-module-labels';
 
 const CANONICAL_STEPS: BookingStatus[] = ['draft', 'pending_payment', 'confirmed'];
 const TERMINAL_STATUSES = new Set<BookingStatus>(['cancelled', 'refunded']);
@@ -19,18 +19,9 @@ export type BookingStatusTimelineProps = {
   currentStatus: BookingStatus;
   history: BookingStatusHistoryEntry[];
   className?: string;
+  showProgress?: boolean;
+  showHistory?: boolean;
 };
-
-function formatDateTime(iso: string): string {
-  try {
-    return new Date(iso).toLocaleString('fr-FR', {
-      dateStyle: 'short',
-      timeStyle: 'short',
-    });
-  } catch {
-    return iso;
-  }
-}
 
 function collectReachedStatuses(
   currentStatus: BookingStatus,
@@ -96,6 +87,7 @@ function StepNode({
   showConnector,
   connectorCompleted,
   statusLabels,
+  formatDateTime,
 }: {
   step: BookingStatus;
   state: StepState;
@@ -103,6 +95,7 @@ function StepNode({
   showConnector?: boolean;
   connectorCompleted?: boolean;
   statusLabels: ReturnType<typeof useBookingStatusLabels>;
+  formatDateTime: (iso: string) => string;
 }) {
   const label = getBookingStatusLabel(step, statusLabels);
 
@@ -151,10 +144,12 @@ function HistoryItem({
   entry,
   statusLabels,
   emptyDash,
+  formatDateTime,
 }: {
   entry: BookingStatusHistoryEntry;
   statusLabels: ReturnType<typeof useBookingStatusLabels>;
   emptyDash: string;
+  formatDateTime: (iso: string) => string;
 }) {
   const t = useTranslations('modules.bookings.timeline');
   const fromLabel = entry.fromStatus
@@ -190,11 +185,14 @@ export function BookingStatusTimeline({
   currentStatus,
   history,
   className,
+  showProgress = true,
+  showHistory = true,
 }: BookingStatusTimelineProps) {
   const t = useTranslations('modules.bookings.timeline');
   const tCommon = useTranslations('modules.common');
   const statusLabels = useBookingStatusLabels();
   const emptyDash = tCommon('empty.dash');
+  const formatDateTime = useFormatDateTime();
 
   const reached = useMemo(
     () => collectReachedStatuses(currentStatus, history),
@@ -211,8 +209,13 @@ export function BookingStatusTimeline({
 
   const isTerminal = TERMINAL_STATUSES.has(currentStatus);
 
+  if (!showProgress && !showHistory) {
+    return null;
+  }
+
   return (
-    <div className={cn('space-y-6', className)}>
+    <div className={cn(showProgress && showHistory ? 'space-y-6' : undefined, className)}>
+      {showProgress ? (
       <div role="group" aria-label={t('progressAria')}>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-0">
           {CANONICAL_STEPS.map((step, index) => {
@@ -234,6 +237,7 @@ export function BookingStatusTimeline({
                   showConnector={index < CANONICAL_STEPS.length - 1}
                   connectorCompleted={connectorCompleted}
                   statusLabels={statusLabels}
+                  formatDateTime={formatDateTime}
                 />
                 {index < CANONICAL_STEPS.length - 1 ? (
                   <div
@@ -260,8 +264,9 @@ export function BookingStatusTimeline({
           </div>
         ) : null}
       </div>
+      ) : null}
 
-      {sortedHistory.length > 0 ? (
+      {showHistory && sortedHistory.length > 0 ? (
         <div>
           <h3 className="mb-2 text-sm font-semibold text-atg-fg">{t('history')}</h3>
           <ul className="m-0 list-none p-0" aria-label={t('historyAria')}>
@@ -271,13 +276,14 @@ export function BookingStatusTimeline({
                 entry={entry}
                 statusLabels={statusLabels}
                 emptyDash={emptyDash}
+                formatDateTime={formatDateTime}
               />
             ))}
           </ul>
         </div>
-      ) : (
+      ) : showHistory ? (
         <p className="text-sm text-atg-muted">{t('historyEmpty')}</p>
-      )}
+      ) : null}
     </div>
   );
 }

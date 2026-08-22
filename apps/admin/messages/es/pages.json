@@ -310,23 +310,47 @@
     }
   },
   "reservations": {
+    "title": "Reservas",
     "description": "Lista paginada de reservas (datos API en vivo). Filtre por estado, fecha, cliente y organización. Requiere bookings.read.",
+    "actions": {
+      "lines": "Líneas de reserva",
+      "guides": "Guías turísticos"
+    },
     "lignes": {
-      "description": "Tabla global de artículos por reserva (datos API en vivo). Filtre por tipo, estado de reserva e ID de reserva. Requiere bookings.read."
+      "title": "Líneas de reserva",
+      "description": "Tabla global de artículos por reserva (datos API en vivo). Filtre por tipo, estado de reserva e ID de reserva. Requiere bookings.read.",
+      "backLabel": "Volver a reservas"
+    },
+    "id": {
+      "metaTitle": "Detalle de reserva"
     }
   },
   "guides": {
     "title": "Guías turísticos",
     "description": "Catálogo de guías internos y externos. Filtre por tipo, estado y búsqueda por nombre.",
     "actions": {
-      "new": "Nuevo guía"
+      "new": "Nuevo guía",
+      "calendar": "Calendario"
     },
     "nouveau": {
       "metaTitle": "Nuevo guía turístico",
-      "description": "Cree un perfil de guía y asígnelo desde el detalle de la reserva."
+      "description": "Cree un perfil de guía y asígnelo desde el detalle de la reserva.",
+      "backLabel": "Volver a guías turísticos"
     },
     "id": {
-      "metaTitle": "Editar guía"
+      "metaTitle": "Editar guía",
+      "description": "Actualice el perfil, los destinos cubiertos y el estado del guía.",
+      "voir": {
+        "metaTitle": "Ver guía",
+        "title": "Ver guía",
+        "description": "Consulte el perfil, los destinos y las reservas asignadas a este guía."
+      }
+    },
+    "calendrier": {
+      "metaTitle": "Calendario de guías",
+      "title": "Calendario",
+      "description": "Vista mensual de la disponibilidad de guías activos (disponibles, en misión, no disponibles).",
+      "backLabel": "Volver a guías turísticos"
     }
   },
   "paiements": {

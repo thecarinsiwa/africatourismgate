@@ -15,6 +15,10 @@
     "internal": {
       "label": "Internos",
       "subtitle": "Vinculados a una cuenta de usuario"
+    },
+    "external": {
+      "label": "Externos",
+      "subtitle": "Proveedores sin cuenta"
     }
   },
   "list": {
@@ -25,13 +29,15 @@
     "searchAria": "Buscar guías",
     "ariaLabel": "Lista de guías turísticos",
     "deleteTitle": "Eliminar guía",
-    "deleteConfirm": "El guía «{name}» será eliminado permanentemente.",
+    "deleteConfirm": "El guía « {name} » será retirado del catálogo (eliminación lógica).",
     "deleteConfirmButton": "Eliminar",
     "cancel": "Cancelar"
   },
   "columns": {
     "name": "Nombre",
     "type": "Tipo",
+    "destinations": "Destinos",
+    "organization": "Organización",
     "languages": "Idiomas",
     "status": "Estado"
   },
@@ -62,22 +68,125 @@
     "organizationId": "Organización",
     "organizationPlaceholder": "Ninguna (opcional)",
     "displayName": "Nombre mostrado",
+    "contactEmail": "Correo de contacto",
+    "contactEmailHint": "Se utiliza para las notificaciones de misión (obligatorio para guías externos).",
     "bio": "Biografía",
     "photoUrl": "URL de foto",
+    "uploadPhoto": "Elegir una foto",
     "languages": "Idiomas hablados",
     "languagesHint": "Códigos ISO separados por comas (ej. fr, en, sw).",
     "destinations": "Destinos cubiertos",
     "destinationsHint": "Seleccione al menos un destino.",
     "destinationsEmpty": "No hay destinos disponibles.",
-    "status": "Estado"
+    "destinationsSearch": "Filtrar destinos…",
+    "previewPhoto": "Vista previa de la foto",
+    "previewNamePlaceholder": "Nombre del guía",
+    "selectedDestinations": "Destinos seleccionados",
+    "noDestinationsSelected": "Ningún destino seleccionado.",
+    "selectedCount": "{count, plural, =0 {Sin selección} one {# destino} other {# destinos}}",
+    "status": "Estado",
+    "validation": {
+      "displayNameRequired": "El nombre mostrado es obligatorio.",
+      "userIdRequired": "El usuario vinculado es obligatorio para guías internos.",
+      "contactEmailRequired": "El correo de contacto es obligatorio para guías externos.",
+      "contactEmailInvalid": "Dirección de correo inválida.",
+      "languagesRequired": "Indique al menos un idioma.",
+      "destinationsRequired": "Seleccione al menos un destino."
+    }
   },
   "detail": {
     "title": "Editar guía",
-    "backLink": "Volver a guías"
+    "backLink": "Volver a guías",
+    "viewButton": "Ver guía",
+    "subtitle": "Perfil, cobertura geográfica y misiones asignadas.",
+    "tabsAria": "Secciones del guía",
+    "tabs": {
+      "profile": "Perfil",
+      "coverage": "Cobertura",
+      "missions": "Misiones"
+    }
+  },
+  "view": {
+    "title": "Ver guía",
+    "editButton": "Editar guía",
+    "notFound": "Guía no encontrado.",
+    "subtitle": "Perfil, planning y misiones asignadas.",
+    "infoTitle": "Información",
+    "contactEmail": "Correo de contacto",
+    "linkedUser": "Cuenta de usuario",
+    "openFullCalendar": "Calendario global",
+    "inactiveHint": "Guía inactivo — el planning sigue siendo consultable.",
+    "tabsAria": "Secciones del guía",
+    "tabs": {
+      "profile": "Perfil",
+      "schedule": "Planning",
+      "missions": "Misiones"
+    },
+    "schedule": {
+      "title": "Planning",
+      "intro": "Disponibilidades y turnos de misión. Haga clic en un día para ver el detalle horario o marcar una indisponibilidad.",
+      "ariaLabel": "Planning del guía — {month}"
+    }
+  },
+  "sections": {
+    "bookings": {
+      "title": "Misiones asignadas",
+      "intro": "Reservas a las que está asignado este guía, por turno horario.",
+      "schedule": "Intervalo horario",
+      "role": "Rol",
+      "assignedAt": "Asignado el",
+      "empty": "Ninguna misión asignada por el momento.",
+      "emptySearch": "Ninguna misión coincide con su búsqueda.",
+      "ariaLabel": "Misiones asignadas al guía"
+    }
+  },
+  "calendar": {
+    "ariaLabel": "Calendario de disponibilidad — {month}",
+    "availableShort": "{count} disp.",
+    "occupiedShort": "{count} ocup.",
+    "unavailableShort": "{count} no disp.",
+    "legendAvailable": "Disponibles",
+    "legendOccupied": "Ocupados (misiones)",
+    "legendUnavailable": "No disponibles",
+    "legendTimelineAssignment": "Turno de misión",
+    "legendTimelineUnavailable": "Turno no disponible",
+    "activeGuidesCount": "{count, plural, one {# guía activo} other {# guías activos}}",
+    "noActiveGuides": "Ningún guía activo coincide con estos filtros.",
+    "today": "Hoy",
+    "dayModal": {
+      "title": "Disponibilidad — {date}",
+      "intro": "Planning horario de los guías activos. Las misiones aparecen en ámbar y las indisponibilidades en gris.",
+      "empty": "Ningún guía activo este día.",
+      "viewBooking": "Ver reserva",
+      "viewGuide": "Ver guía",
+      "addUnavailability": "Marcar no disponible",
+      "clearUnavailability": "Quitar indisponibilidad",
+      "unavailabilityFormTitle": "Intervalo de indisponibilidad",
+      "startTime": "Inicio",
+      "endTime": "Fin",
+      "saveUnavailability": "Guardar",
+      "validation": {
+        "endAfterStart": "La hora de fin debe ser posterior a la de inicio."
+      },
+      "conflictAssignment": "Conflicto con una misión existente",
+      "conflictUnavailable": "Conflicto con una indisponibilidad existente",
+      "status": {
+        "available": "Disponible",
+        "occupied": "En misión",
+        "unavailable": "No disponible"
+      }
+    },
+    "timeline": {
+      "assignment": "Misión",
+      "unavailable": "No disponible",
+      "empty": "Sin turnos este día"
+    }
   },
   "filters": {
     "type": "Tipo",
     "status": "Estado",
+    "destination": "Destino",
+    "organization": "Organización",
     "all": "Todos"
   }
 }

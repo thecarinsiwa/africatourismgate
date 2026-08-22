@@ -182,7 +182,7 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
     ? tDetail(reviewEntityTypeKey(review.entityType))
     : review.entityType;
   const formattedEntity = formatReviewEntity(review, entityTypeLabel);
-  const bookingHref = `/dashboard/bookings/${
+  const bookingHref = `/reservations/${
     review.entityType === 'tour_guide' ? review.bookingId : review.entityId
   }`;
 

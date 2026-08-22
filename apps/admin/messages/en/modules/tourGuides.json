@@ -15,6 +15,10 @@
     "internal": {
       "label": "Internal",
       "subtitle": "Linked to a user account"
+    },
+    "external": {
+      "label": "External",
+      "subtitle": "Providers without login"
     }
   },
   "list": {
@@ -25,13 +29,15 @@
     "searchAria": "Search guides",
     "ariaLabel": "Tour guides list",
     "deleteTitle": "Delete guide",
-    "deleteConfirm": "Guide \"{name}\" will be permanently deleted.",
+    "deleteConfirm": "Guide \"{name}\" will be removed from the catalog (soft delete).",
     "deleteConfirmButton": "Delete",
     "cancel": "Cancel"
   },
   "columns": {
     "name": "Name",
     "type": "Type",
+    "destinations": "Destinations",
+    "organization": "Organization",
     "languages": "Languages",
     "status": "Status"
   },
@@ -62,22 +68,125 @@
     "organizationId": "Organization",
     "organizationPlaceholder": "None (optional)",
     "displayName": "Display name",
+    "contactEmail": "Contact email",
+    "contactEmailHint": "Used for assignment notifications (required for external guides).",
     "bio": "Bio",
     "photoUrl": "Photo URL",
+    "uploadPhoto": "Choose a photo",
     "languages": "Languages spoken",
     "languagesHint": "ISO codes separated by commas (e.g. fr, en, sw).",
     "destinations": "Covered destinations",
     "destinationsHint": "Select at least one destination.",
     "destinationsEmpty": "No destinations available.",
-    "status": "Status"
+    "destinationsSearch": "Filter destinations…",
+    "previewPhoto": "Photo preview",
+    "previewNamePlaceholder": "Guide name",
+    "selectedDestinations": "Selected destinations",
+    "noDestinationsSelected": "No destination selected.",
+    "selectedCount": "{count, plural, =0 {No selection} one {# destination} other {# destinations}}",
+    "status": "Status",
+    "validation": {
+      "displayNameRequired": "Display name is required.",
+      "userIdRequired": "Linked user is required for internal guides.",
+      "contactEmailRequired": "Contact email is required for external guides.",
+      "contactEmailInvalid": "Invalid email address.",
+      "languagesRequired": "Enter at least one language.",
+      "destinationsRequired": "Select at least one destination."
+    }
   },
   "detail": {
     "title": "Edit guide",
-    "backLink": "Back to guides"
+    "backLink": "Back to guides",
+    "viewButton": "View guide",
+    "subtitle": "Profile, geographic coverage and assigned missions.",
+    "tabsAria": "Guide sections",
+    "tabs": {
+      "profile": "Profile",
+      "coverage": "Coverage",
+      "missions": "Missions"
+    }
+  },
+  "view": {
+    "title": "View guide",
+    "editButton": "Edit guide",
+    "notFound": "Guide not found.",
+    "subtitle": "Profile, schedule and assigned missions.",
+    "infoTitle": "Information",
+    "contactEmail": "Contact email",
+    "linkedUser": "Linked user account",
+    "openFullCalendar": "Global calendar",
+    "inactiveHint": "Inactive guide — schedule remains viewable.",
+    "tabsAria": "Guide sections",
+    "tabs": {
+      "profile": "Profile",
+      "schedule": "Schedule",
+      "missions": "Missions"
+    },
+    "schedule": {
+      "title": "Schedule",
+      "intro": "Availability and mission slots. Click a day for hourly detail or to mark unavailability.",
+      "ariaLabel": "Guide schedule — {month}"
+    }
+  },
+  "sections": {
+    "bookings": {
+      "title": "Assigned missions",
+      "intro": "Bookings this guide is assigned to, by time slot.",
+      "schedule": "Time range",
+      "role": "Role",
+      "assignedAt": "Assigned on",
+      "empty": "No assigned missions yet.",
+      "emptySearch": "No missions match your search.",
+      "ariaLabel": "Guide assigned missions"
+    }
+  },
+  "calendar": {
+    "ariaLabel": "Availability calendar — {month}",
+    "availableShort": "{count} avail.",
+    "occupiedShort": "{count} busy",
+    "unavailableShort": "{count} unavail.",
+    "legendAvailable": "Available",
+    "legendOccupied": "Busy (assignments)",
+    "legendUnavailable": "Unavailable",
+    "legendTimelineAssignment": "Assignment slot",
+    "legendTimelineUnavailable": "Unavailable slot",
+    "activeGuidesCount": "{count, plural, one {# active guide} other {# active guides}}",
+    "noActiveGuides": "No active guides match these filters.",
+    "today": "Today",
+    "dayModal": {
+      "title": "Availability — {date}",
+      "intro": "Hourly schedule for active guides. Assignments appear in amber, unavailability in gray.",
+      "empty": "No active guides on this day.",
+      "viewBooking": "View booking",
+      "viewGuide": "View guide",
+      "addUnavailability": "Mark unavailable",
+      "clearUnavailability": "Clear unavailability",
+      "unavailabilityFormTitle": "Unavailable time range",
+      "startTime": "Start",
+      "endTime": "End",
+      "saveUnavailability": "Save",
+      "validation": {
+        "endAfterStart": "End time must be after start time."
+      },
+      "conflictAssignment": "Conflicts with an existing assignment",
+      "conflictUnavailable": "Conflicts with existing unavailability",
+      "status": {
+        "available": "Available",
+        "occupied": "On assignment",
+        "unavailable": "Unavailable"
+      }
+    },
+    "timeline": {
+      "assignment": "Assignment",
+      "unavailable": "Unavailable",
+      "empty": "No slots on this day"
+    }
   },
   "filters": {
     "type": "Type",
     "status": "Status",
+    "destination": "Destination",
+    "organization": "Organization",
     "all": "All"
   }
 }

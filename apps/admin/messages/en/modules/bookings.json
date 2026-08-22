@@ -26,6 +26,8 @@
     "filters": {
       "client": "Customer"
     },
+    "searchPlaceholder": "Search by customer, email or ref…",
+    "searchAria": "Search bookings",
     "tabs": {
       "ariaLabel": "Quick status filters",
       "all": "All",
@@ -62,6 +64,23 @@
       "organization": "Organization",
       "total": "Total",
       "createdAt": "Created on"
+    },
+    "summary": {
+      "createdAt": "Created on {date}",
+      "unreadMessages": "{count, plural, one {# unread customer message} other {# unread customer messages}}"
+    },
+    "tabs": {
+      "ariaLabel": "Additional sections",
+      "manifest": "Manifest",
+      "guides": "Guides",
+      "documents": "Identity documents",
+      "documentsPending": "Identity documents ({count})",
+      "history": "History"
+    },
+    "actionsBar": {
+      "ariaLabel": "Booking actions",
+      "statusModalDescription": "Choose the new status and an optional reason for the history.",
+      "cancelModalDescription": "Provide a cancellation reason if needed."
     },
     "actions": {
       "changeStatus": "Change status",
@@ -192,7 +211,30 @@
     "totalHint": "Adjust the total if needed before approval.",
     "totalOverrideHint": "Auto-calculated from traveler prices. Edit to apply a manual override.",
     "travelersTitle": "Payment breakdown by traveler",
+    "travelersCount": "{count, plural, one {# traveler} other {# travelers}}",
+    "travelerNumber": "Traveler {number}",
+    "documentModal": {
+      "title": "Document — {name}",
+      "description": "Identity document for this traveler (matched by upload order).",
+      "empty": "No document uploaded for this traveler.",
+      "previewError": "Unable to display the document.",
+      "requestByEmail": "Request upload by email",
+      "requestByEmailSuccess": "Request email sent to the customer.",
+      "emailNotSent": "The email could not be sent (customer address not found).",
+      "emailNoteLabel": "Message to customer (optional)",
+      "emailNotePlaceholder": "E.g. please upload a clear passport photo…",
+      "travelerNameRequired": "Traveler name is required to send the request.",
+      "approve": "Approve document",
+      "reject": "Reject",
+      "rejectSuccess": "Document rejected.",
+      "rejectDialogTitle": "Reject document",
+      "rejectDialogDescription": "The customer can upload a new version from their account.",
+      "rejectNoteLabel": "Reason (optional)",
+      "rejectNotePlaceholder": "E.g. unreadable or expired document…"
+    },
     "travelerName": "Traveler name",
+    "viewDocument": "View document",
+    "viewDocumentPending": "Document to review",
     "travelerAge": "Age",
     "travelerBasePrice": "Base price ({currency})",
     "travelerPrice": "Price ({currency})",
@@ -253,23 +295,77 @@
   },
   "guides": {
     "title": "Assigned guides",
-    "empty": "No guides assigned to this booking.",
-    "ariaLabel": "Guides assigned to booking",
-    "assignTitle": "Assign a guide",
-    "selectGuide": "Guide",
-    "selectPlaceholder": "Choose an active guide…",
+    "empty": "No guide slots assigned to this booking.",
+    "ariaLabel": "Guide slots assigned to booking",
+    "assignTitle": "Add a slot",
+    "assignHint": "Set the time range, then pick a guide available for that slot.",
+    "selectGuide": "Available guide",
+    "selectPlaceholder": "Choose a guide…",
+    "selectTimesFirst": "Enter times first",
+    "searchingGuides": "searching…",
     "selectRole": "Role",
-    "assignButton": "Assign",
-    "noGuidesAvailable": "All active guides are already assigned.",
-    "removeTitle": "Remove guide",
-    "removeConfirm": "This guide will be removed from the booking.",
-    "removeConfirmButton": "Remove",
+    "assignButton": "Assign slot",
+    "assignConfirmTitle": "Assign this slot?",
+    "assignConfirm": "The selected guide will be scheduled for the time range and receive an email.",
+    "assignConfirmNamed": "“{name}” will serve as {role} guide ({schedule}). A notification email will be sent.",
+    "assignConfirmButton": "Assign and notify",
+    "noGuidesForSlot": "No guides available for this time range.",
+    "noGuidesAvailable": "No active guides available.",
+    "visitWindowHint": "Allowed slots from {start} through {end} (inclusive).",
+    "noVisitDates": "This booking has no dates — guide assignment is not available.",
+    "editSlotTitle": "Edit slot",
+    "editSlotDescription": "Adjust times for “{name}”. Conflicts are checked on save.",
+    "removeTitle": "Remove slot",
+    "removeConfirm": "This slot will be removed. The guide will receive a notification email.",
+    "removeConfirmNamed": "The slot for “{name}” ({schedule}) will be removed. A notification email will be sent.",
+    "removeCommentLabel": "Message to the guide",
+    "removeCommentHint": "This comment will be included in the notification email (optional).",
+    "removeConfirmButton": "Remove and notify",
     "cancel": "Cancel",
     "viewProfile": "View profile",
+    "validation": {
+      "endAfterStart": "End time must be after start time.",
+      "outsideVisitWindow": "The slot must fall within the booking period."
+    },
+    "fields": {
+      "startDatetime": "Start",
+      "endDatetime": "End",
+      "notes": "Notes",
+      "notesHint": "E.g. driver, market tour… (optional)"
+    },
+    "conflicts": {
+      "assignment": "Assignment",
+      "unavailability": "Unavailable",
+      "viewBooking": "View booking"
+    },
     "columns": {
       "guide": "Guide",
+      "schedule": "Time range",
       "role": "Role",
+      "notes": "Notes",
       "assignedAt": "Assigned at"
+    },
+    "history": {
+      "title": "Assignment history",
+      "titleShort": "History",
+      "description": "Log of guide slot creates, updates, and deletions.",
+      "expand": "Show history",
+      "collapse": "Hide history",
+      "empty": "No events recorded for this booking.",
+      "ariaLabel": "Guide slot history",
+      "actions": {
+        "created": "Created",
+        "updated": "Updated",
+        "deleted": "Deleted"
+      },
+      "columns": {
+        "when": "When",
+        "action": "Action",
+        "guide": "Guide",
+        "schedule": "Time range",
+        "role": "Role",
+        "actor": "By"
+      }
     }
   },
   "stats": {
