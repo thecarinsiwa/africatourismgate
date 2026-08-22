@@ -2,7 +2,14 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Input } from '@africatourismgate/ui';
+import {
+  Button,
+  Card,
+  Input,
+  Select,
+  Switch,
+  Textarea,
+} from '@africatourismgate/ui';
 import type {
   CreatePromotionRequest,
   PromoCodeDiscountType,
@@ -11,7 +18,7 @@ import type {
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useCallback, useId, useState } from 'react';
+import { useCallback, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { usePromoDiscountTypeLabels } from '../../lib/i18n/use-module-labels';
 import { PromotionPreviewBanner } from './promotion-preview-banner';
@@ -82,9 +89,7 @@ export function PromotionForm({ mode, promotionId, initialPromotion }: Promotion
   const tCommon = useTranslations('modules.common.form');
   const discountTypeLabels = usePromoDiscountTypeLabels();
   const router = useRouter();
-  const discountTypeId = useId();
-  const hasDiscountId = useId();
-  const activeId = useId();
+  const descriptionId = useId();
   const [values, setValues] = useState<PromotionFormValues>(() =>
     initialPromotion ? promotionToFormValues(initialPromotion) : defaultValues,
   );
@@ -93,6 +98,14 @@ export function PromotionForm({ mode, promotionId, initialPromotion }: Promotion
   >({});
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  const discountTypeOptions = useMemo(
+    () => [
+      { value: 'percent', label: discountTypeLabels.percent },
+      { value: 'fixed_amount', label: discountTypeLabels.fixed_amount },
+    ],
+    [discountTypeLabels],
+  );
 
   const updateField = useCallback(
     <K extends keyof PromotionFormValues>(key: K, value: PromotionFormValues[K]) => {
@@ -163,16 +176,26 @@ export function PromotionForm({ mode, promotionId, initialPromotion }: Promotion
       ? t('hints.discountPercent')
       : t('hints.discountFixed');
 
+  const previewMaxRedemptions =
+    mode === 'edit' && initialPromotion?.maxRedemptions != null
+      ? initialPromotion.maxRedemptions
+      : values.maxRedemptions.trim()
+        ? Number(values.maxRedemptions)
+        : null;
+
   return (
-    <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
-      <div className="rounded-lg border border-atg-border bg-atg-elevated/50 px-4 py-3 text-sm text-atg-muted">
+    <form
+      onSubmit={(e) => void handleSubmit(e)}
+      className="mx-auto w-full max-w-5xl space-y-6"
+    >
+      <div className="rounded-xl border border-atg-border/80 bg-gradient-to-br from-atg-elevated via-atg-elevated to-primary/5 px-4 py-3.5 text-sm text-atg-muted sm:px-5">
         <p>
           {t('info.codesVsPromotions')}{' '}
           <Link href="/paiements/codes-promo" className="font-medium text-primary hover:underline">
             {t('info.managePromoCodesLink')}
           </Link>
         </p>
-        <p className="mt-2">{t('info.targetHint')}</p>
+        <p className="mt-1.5 text-xs sm:text-sm">{t('info.targetHint')}</p>
       </div>
 
       {formError ? (
@@ -184,172 +207,187 @@ export function PromotionForm({ mode, promotionId, initialPromotion }: Promotion
         </p>
       ) : null}
 
-      <PromotionPreviewBanner
-        name={values.name}
-        description={values.description}
-        hasDiscount={values.hasDiscount}
-        discountType={values.hasDiscount ? values.discountType : null}
-        discountValue={values.hasDiscount ? values.discountValue : null}
-        validFrom={values.validFrom || null}
-        validUntil={values.validUntil || null}
-        active={values.active}
-        redemptionCount={mode === 'edit' ? initialPromotion?.redemptionCount : undefined}
-        maxRedemptions={
-          mode === 'edit' && initialPromotion?.maxRedemptions != null
-            ? initialPromotion.maxRedemptions
-            : values.maxRedemptions.trim()
-              ? Number(values.maxRedemptions)
-              : null
-        }
-      />
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] lg:items-start">
+        <div className="min-w-0 space-y-6">
+          <Card variant="dashboard" padding="md" className="space-y-4">
+            <div>
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-atg-muted">
+                {t('sections.campaign')}
+              </h2>
+              <p className="mt-1 text-xs text-atg-muted">{t('sections.campaignHint')}</p>
+            </div>
+            <Input
+              label={t('fields.name')}
+              name="name"
+              value={values.name}
+              onChange={(e) => updateField('name', e.target.value)}
+              error={fieldErrors.name}
+              required
+            />
+            <Textarea
+              id={descriptionId}
+              label={tCommon('description')}
+              name="description"
+              rows={4}
+              value={values.description}
+              onChange={(e) => updateField('description', e.target.value)}
+              placeholder={t('fields.descriptionPlaceholder')}
+            />
+          </Card>
 
-      <Input
-        label={t('fields.name')}
-        name="name"
-        value={values.name}
-        onChange={(e) => updateField('name', e.target.value)}
-        error={fieldErrors.name}
-        required
-      />
+          <Card variant="dashboard" padding="md" className="space-y-4">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-atg-muted">
+                  {t('sections.discount')}
+                </h2>
+                <p className="mt-1 text-xs text-atg-muted">{t('sections.discountHint')}</p>
+              </div>
+              <Switch
+                name="hasDiscount"
+                checked={values.hasDiscount}
+                onChange={(e) => updateField('hasDiscount', e.target.checked)}
+                label={t('fields.hasDiscount')}
+              />
+            </div>
 
-      <div>
-        <label htmlFor="description" className="mb-2 block text-sm font-medium text-atg-fg">
-          {tCommon('description')}
-        </label>
-        <textarea
-          id="description"
-          name="description"
-          rows={4}
-          value={values.description}
-          onChange={(e) => updateField('description', e.target.value)}
-          placeholder={t('fields.descriptionPlaceholder')}
-          className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg placeholder:text-atg-muted/70 outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
-        />
-      </div>
+            {values.hasDiscount ? (
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Select
+                  label={t('fields.discountType')}
+                  name="discountType"
+                  value={values.discountType}
+                  options={discountTypeOptions}
+                  onChange={(e) =>
+                    updateField('discountType', e.target.value as PromoCodeDiscountType)
+                  }
+                />
+                <Input
+                  label={
+                    values.discountType === 'percent'
+                      ? t('fields.discountValuePercent')
+                      : t('fields.discountValueFixed')
+                  }
+                  name="discountValue"
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  max={values.discountType === 'percent' ? '100' : undefined}
+                  value={values.discountValue}
+                  onChange={(e) => updateField('discountValue', e.target.value)}
+                  hint={discountHint}
+                  error={fieldErrors.discountValue}
+                  required
+                />
+              </div>
+            ) : (
+              <p className="rounded-lg border border-dashed border-atg-border bg-atg-surface/40 px-3 py-2.5 text-xs text-atg-muted">
+                {t('sections.discountOff')}
+              </p>
+            )}
+          </Card>
 
-      <div className="flex items-center gap-3">
-        <input
-          id={hasDiscountId}
-          type="checkbox"
-          checked={values.hasDiscount}
-          onChange={(e) => updateField('hasDiscount', e.target.checked)}
-          className="h-4 w-4 rounded border-atg-border text-primary focus:ring-primary"
-        />
-        <label htmlFor={hasDiscountId} className="text-sm font-medium text-atg-fg">
-          {t('fields.hasDiscount')}
-        </label>
-      </div>
+          <Card variant="dashboard" padding="md" className="space-y-4">
+            <div>
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-atg-muted">
+                {t('sections.schedule')}
+              </h2>
+              <p className="mt-1 text-xs text-atg-muted">{t('sections.scheduleHint')}</p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Input
+                label={t('fields.validFromOptional')}
+                name="validFrom"
+                type="date"
+                value={values.validFrom}
+                onChange={(e) => updateField('validFrom', e.target.value)}
+                error={fieldErrors.validFrom}
+              />
+              <Input
+                label={t('fields.validUntilOptional')}
+                name="validUntil"
+                type="date"
+                value={values.validUntil}
+                onChange={(e) => updateField('validUntil', e.target.value)}
+                error={fieldErrors.validUntil}
+              />
+            </div>
+            <Input
+              label={t('fields.maxRedemptions')}
+              name="maxRedemptions"
+              type="number"
+              min="1"
+              step="1"
+              value={values.maxRedemptions}
+              onChange={(e) => updateField('maxRedemptions', e.target.value)}
+              hint={t('hints.maxRedemptions')}
+              error={fieldErrors.maxRedemptions}
+            />
+          </Card>
 
-      {values.hasDiscount ? (
-        <>
-          <div>
-            <label
-              htmlFor={discountTypeId}
-              className="mb-2 block text-sm font-medium text-atg-fg"
-            >
-              {t('fields.discountType')}
-            </label>
-            <select
-              id={discountTypeId}
-              value={values.discountType}
-              onChange={(e) =>
-                updateField('discountType', e.target.value as PromoCodeDiscountType)
-              }
-              className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
-            >
-              <option value="percent">{discountTypeLabels.percent}</option>
-              <option value="fixed_amount">{discountTypeLabels.fixed_amount}</option>
-            </select>
+          <Card variant="dashboard" padding="md" className="space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-atg-muted">
+                  {t('sections.publication')}
+                </h2>
+                <p className="mt-1 text-xs text-atg-muted">{t('sections.publicationHint')}</p>
+              </div>
+              <Switch
+                name="active"
+                checked={values.active}
+                onChange={(e) => updateField('active', e.target.checked)}
+                label={t('fields.active')}
+              />
+            </div>
+
+            {mode === 'edit' && initialPromotion ? (
+              <div className="space-y-2 rounded-lg border border-atg-border/70 bg-atg-surface/50 px-3 py-2.5 text-sm text-atg-muted">
+                <p>
+                  {t('usage.label')}{' '}
+                  <strong className="text-atg-fg">{initialPromotion.redemptionCount}</strong>
+                  {initialPromotion.maxRedemptions != null
+                    ? ` / ${initialPromotion.maxRedemptions}`
+                    : ` ${t('usage.unlimited')}`}
+                </p>
+                <p>
+                  {t('checkoutId')}{' '}
+                  <code className="break-all rounded bg-atg-elevated px-1.5 py-0.5 font-mono text-xs text-atg-fg">
+                    {initialPromotion.id}
+                  </code>
+                </p>
+              </div>
+            ) : null}
+          </Card>
+
+          <div className="flex flex-wrap gap-3 border-t border-atg-border/60 pt-4">
+            <Button type="submit" loading={submitting} loadingText={t('saving')}>
+              {mode === 'create' ? t('createButton') : t('saveButton')}
+            </Button>
+            <Button type="button" variant="outline" href="/paiements/promotions">
+              {t('cancelButton')}
+            </Button>
           </div>
-          <Input
-            label={
-              values.discountType === 'percent'
-                ? t('fields.discountValuePercent')
-                : t('fields.discountValueFixed')
-            }
-            name="discountValue"
-            type="number"
-            min="0.01"
-            step="0.01"
-            max={values.discountType === 'percent' ? '100' : undefined}
-            value={values.discountValue}
-            onChange={(e) => updateField('discountValue', e.target.value)}
-            hint={discountHint}
-            error={fieldErrors.discountValue}
-            required
-          />
-        </>
-      ) : null}
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Input
-          label={t('fields.validFromOptional')}
-          name="validFrom"
-          type="date"
-          value={values.validFrom}
-          onChange={(e) => updateField('validFrom', e.target.value)}
-          error={fieldErrors.validFrom}
-        />
-        <Input
-          label={t('fields.validUntilOptional')}
-          name="validUntil"
-          type="date"
-          value={values.validUntil}
-          onChange={(e) => updateField('validUntil', e.target.value)}
-          error={fieldErrors.validUntil}
-        />
-      </div>
-
-      <Input
-        label={t('fields.maxRedemptions')}
-        name="maxRedemptions"
-        type="number"
-        min="1"
-        step="1"
-        value={values.maxRedemptions}
-        onChange={(e) => updateField('maxRedemptions', e.target.value)}
-        hint={t('hints.maxRedemptions')}
-        error={fieldErrors.maxRedemptions}
-      />
-
-      {mode === 'edit' && initialPromotion ? (
-        <div className="space-y-2 text-sm text-atg-muted">
-          <p>
-            {t('usage.label')}{' '}
-            <strong className="text-atg-fg">{initialPromotion.redemptionCount}</strong>
-            {initialPromotion.maxRedemptions != null
-              ? ` / ${initialPromotion.maxRedemptions}`
-              : ` ${t('usage.unlimited')}`}
-          </p>
-          <p>
-            {t('checkoutId')}{' '}
-            <code className="break-all rounded bg-atg-surface px-1.5 py-0.5 font-mono text-xs text-atg-fg">
-              {initialPromotion.id}
-            </code>
-          </p>
         </div>
-      ) : null}
 
-      <div className="flex items-center gap-3">
-        <input
-          id={activeId}
-          type="checkbox"
-          checked={values.active}
-          onChange={(e) => updateField('active', e.target.checked)}
-          className="h-4 w-4 rounded border-atg-border text-primary focus:ring-primary"
-        />
-        <label htmlFor={activeId} className="text-sm font-medium text-atg-fg">
-          {t('fields.active')}
-        </label>
-      </div>
-
-      <div className="flex flex-wrap gap-3 pt-2">
-        <Button type="submit" loading={submitting} loadingText={t('saving')}>
-          {mode === 'create' ? t('createButton') : t('saveButton')}
-        </Button>
-        <Button type="button" variant="outline" href="/paiements/promotions">
-          {t('cancelButton')}
-        </Button>
+        <aside className="min-w-0 space-y-3 lg:sticky lg:top-6">
+          <p className="text-xs font-semibold uppercase tracking-wide text-atg-muted">
+            {t('sections.preview')}
+          </p>
+          <PromotionPreviewBanner
+            name={values.name}
+            description={values.description}
+            hasDiscount={values.hasDiscount}
+            discountType={values.hasDiscount ? values.discountType : null}
+            discountValue={values.hasDiscount ? values.discountValue : null}
+            validFrom={values.validFrom || null}
+            validUntil={values.validUntil || null}
+            active={values.active}
+            redemptionCount={mode === 'edit' ? initialPromotion?.redemptionCount : undefined}
+            maxRedemptions={previewMaxRedemptions}
+          />
+          <p className="text-xs leading-relaxed text-atg-muted">{t('sections.previewHint')}</p>
+        </aside>
       </div>
     </form>
   );

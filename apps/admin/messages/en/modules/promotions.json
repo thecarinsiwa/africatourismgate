@@ -49,6 +49,19 @@
     "usage": "Uses: {usage}"
   },
   "form": {
+    "sections": {
+      "campaign": "Campaign",
+      "campaignHint": "Title and copy shown on marketing banners.",
+      "discount": "Discount",
+      "discountHint": "Optional — leave off for an informative campaign.",
+      "discountOff": "No checkout discount: the campaign stays purely informative.",
+      "schedule": "Validity & limits",
+      "scheduleHint": "Optional dates. Leave empty for a campaign with no time bounds.",
+      "publication": "Publication",
+      "publicationHint": "Controls whether the campaign is shown to customers.",
+      "preview": "Live preview",
+      "previewHint": "Updates as you type — campaign render preview."
+    },
     "info": {
       "codesVsPromotions": "Promo codes are entered by the customer at checkout. Promotions are visible campaigns (banners, pages) — the discount may be optional.",
       "managePromoCodesLink": "Manage promo codes",

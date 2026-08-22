@@ -49,6 +49,19 @@
     "usage": "Utilisations : {usage}"
   },
   "form": {
+    "sections": {
+      "campaign": "Campagne",
+      "campaignHint": "Titre et texte visibles sur les bannières marketing.",
+      "discount": "Réduction",
+      "discountHint": "Optionnelle — laissez désactivé pour une campagne informative.",
+      "discountOff": "Aucune réduction au checkout : la campagne reste purement informative.",
+      "schedule": "Validité & limites",
+      "scheduleHint": "Dates optionnelles. Laissez vide pour une campagne sans borne temporelle.",
+      "publication": "Publication",
+      "publicationHint": "Contrôle l’affichage de la campagne côté clients.",
+      "preview": "Aperçu live",
+      "previewHint": "Mise à jour au fil de la saisie — aperçu du rendu campagne."
+    },
     "info": {
       "codesVsPromotions": "Les codes promo sont saisis par le client au checkout. Les promotions sont des campagnes visibles (bannières, pages) — la réduction peut être optionnelle.",
       "managePromoCodesLink": "Gérer les codes promo",

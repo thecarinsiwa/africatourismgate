@@ -49,6 +49,19 @@
     "usage": "Usos: {usage}"
   },
   "form": {
+    "sections": {
+      "campaign": "Campaña",
+      "campaignHint": "Título y texto visibles en los banners de marketing.",
+      "discount": "Descuento",
+      "discountHint": "Opcional — déjelo desactivado para una campaña informativa.",
+      "discountOff": "Sin descuento en el checkout: la campaña permanece puramente informativa.",
+      "schedule": "Validez y límites",
+      "scheduleHint": "Fechas opcionales. Déjelas vacías para una campaña sin límite temporal.",
+      "publication": "Publicación",
+      "publicationHint": "Controla la visibilidad de la campaña para los clientes.",
+      "preview": "Vista previa en vivo",
+      "previewHint": "Se actualiza al escribir — vista previa del renderizado de la campaña."
+    },
     "info": {
       "codesVsPromotions": "Los códigos promocionales los introduce el cliente en el checkout. Las promociones son campañas visibles (banners, páginas) — el descuento puede ser opcional.",
       "managePromoCodesLink": "Gestionar códigos promocionales",
