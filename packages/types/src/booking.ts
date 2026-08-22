@@ -361,6 +361,8 @@ export interface BookingsListQuery {
   dateTo?: string;
   /** Tri par date de création (`createdAt`). */
   sortOrder?: 'asc' | 'desc';
+  /** Recherche client (email, nom) ou préfixe d’identifiant booking. */
+  search?: string;
 }
 
 export interface BookingItemListItem {

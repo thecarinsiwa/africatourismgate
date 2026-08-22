@@ -155,15 +155,26 @@ export class BookingsService extends CrudService<Bookings> {
         dateTo: `${scopedQuery.dateTo}T23:59:59.999Z`,
       });
     }
-    if (scopedQuery.organizationId) {
+
+    const search = scopedQuery.search?.trim();
+    const needsClientJoin = Boolean(scopedQuery.organizationId || search);
+    if (needsClientJoin) {
       qb.innerJoin(
         Users,
         'client',
         'client.id = booking.userId AND client.deletedAt IS NULL',
       );
+    }
+    if (scopedQuery.organizationId) {
       qb.andWhere('client.organizationId = :organizationId', {
         organizationId: scopedQuery.organizationId,
       });
+    }
+    if (search) {
+      qb.andWhere(
+        '(client.email LIKE :term OR client.firstName LIKE :term OR client.lastName LIKE :term OR booking.id LIKE :term)',
+        { term: `%${search}%` },
+      );
     }
 
     qb.orderBy('booking.createdAt', scopedQuery.sortOrder === 'asc' ? 'ASC' : 'DESC')

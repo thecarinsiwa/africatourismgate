@@ -26,6 +26,8 @@
     "filters": {
       "client": "Client"
     },
+    "searchPlaceholder": "Rechercher par client, e-mail ou réf.…",
+    "searchAria": "Rechercher des réservations",
     "tabs": {
       "ariaLabel": "Filtres rapides par statut",
       "all": "Toutes",

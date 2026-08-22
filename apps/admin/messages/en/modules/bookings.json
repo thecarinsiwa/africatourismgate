@@ -26,6 +26,8 @@
     "filters": {
       "client": "Customer"
     },
+    "searchPlaceholder": "Search by customer, email or ref…",
+    "searchAria": "Search bookings",
     "tabs": {
       "ariaLabel": "Quick status filters",
       "all": "All",

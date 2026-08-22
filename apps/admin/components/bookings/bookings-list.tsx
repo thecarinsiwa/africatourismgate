@@ -33,6 +33,7 @@ import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labe
 import { exportCsv } from '../../lib/export-csv';
 
 const PAGE_SIZE = 10;
+const SEARCH_DEBOUNCE_MS = 300;
 
 type StatusFilter = '' | BookingStatus;
 
@@ -72,6 +73,8 @@ export function BookingsList() {
   const [organizationFilter, setOrganizationFilter] = useState('');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
+  const [searchInput, setSearchInput] = useState('');
+  const [search, setSearch] = useState('');
   const [organizations, setOrganizations] = useState<OrganizationListItem[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [state, setState] = useState<
@@ -105,6 +108,19 @@ export function BookingsList() {
       cancelled = true;
     };
   }, []);
+
+  useEffect(() => {
+    const query = searchInput.trim();
+    const timer = window.setTimeout(() => {
+      setSearch((prev) => {
+        if (prev !== query) {
+          setPage(1);
+        }
+        return query;
+      });
+    }, SEARCH_DEBOUNCE_MS);
+    return () => window.clearTimeout(timer);
+  }, [searchInput]);
 
   const orgNameById = useMemo(() => {
     const map = new Map<string, string>();
@@ -148,6 +164,7 @@ export function BookingsList() {
         dateFrom: dateFrom || undefined,
         dateTo: dateTo || undefined,
         sortOrder,
+        search: search || undefined,
       });
       setState({
         status: 'ready',
@@ -158,13 +175,14 @@ export function BookingsList() {
     } catch (error) {
       setState({ status: 'error', message: getBookingsErrorMessage(error) });
     }
-  }, [page, statusFilter, userFilter, organizationFilter, dateFrom, dateTo, sortOrder, getBookingsErrorMessage]);
+  }, [page, statusFilter, userFilter, organizationFilter, dateFrom, dateTo, sortOrder, search, getBookingsErrorMessage]);
 
   useEffect(() => {
     void load();
   }, [load]);
 
   const activeFilterCount = [
+    search !== '',
     statusFilter !== '',
     userFilter !== '',
     organizationFilter !== '',
@@ -182,6 +200,8 @@ export function BookingsList() {
   );
 
   const handleClearFilters = useCallback(() => {
+    setSearchInput('');
+    setSearch('');
     setStatusFilter('');
     setUserFilter('');
     setOrganizationFilter('');
@@ -358,6 +378,16 @@ export function BookingsList() {
         }
         filters={
           <>
+            <div className="min-w-[200px] flex-1 sm:max-w-md">
+              <Input
+                name="search"
+                type="search"
+                placeholder={t('searchPlaceholder')}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                aria-label={t('searchAria')}
+              />
+            </div>
             <div className="w-full sm:w-48">
               <Select
                 label={tCommon('columns.status')}

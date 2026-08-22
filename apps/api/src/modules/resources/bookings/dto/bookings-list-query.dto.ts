@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsDateString, IsIn, IsOptional, IsUUID } from 'class-validator';
+import { IsDateString, IsIn, IsOptional, IsString, IsUUID, MaxLength } from 'class-validator';
 import { PaginationQueryDto } from '../../../../common/dto/pagination-query.dto';
 import type { Bookings } from '../../../../entities/generated';
 
@@ -42,4 +42,12 @@ export class BookingsListQueryDto extends PaginationQueryDto {
   @IsOptional()
   @IsIn(['asc', 'desc'])
   sortOrder?: 'asc' | 'desc';
+
+  @ApiPropertyOptional({
+    description: 'Search by client email, name or booking id prefix',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(200)
+  search?: string;
 }
