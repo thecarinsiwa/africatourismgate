@@ -19,6 +19,7 @@ import { parseApiErrorMessage } from '@africatourismgate/api-client';
 import type {
   BookingGuideAssignment,
   BookingGuideRole,
+  TourGuide,
   TourGuideAvailableItem,
 } from '@africatourismgate/types';
 import { useLocale, useTranslations } from 'next-intl';
@@ -52,6 +53,17 @@ const emptyForm: SlotFormValues = {
   role: 'primary',
   notes: '',
 };
+
+async function listAllActiveTourGuides(): Promise<TourGuide[]> {
+  const client = getApiClient();
+  const first = await client.listTourGuides({ page: 1, limit: 100, status: 'active' });
+  const rows = [...first.data];
+  for (let page = 2; page <= first.meta.totalPages; page += 1) {
+    const next = await client.listTourGuides({ page, limit: 100, status: 'active' });
+    rows.push(...next.data);
+  }
+  return rows;
+}
 
 type BookingGuidesSectionProps = {
   bookingId: string;
@@ -187,12 +199,12 @@ export function BookingGuidesSection({
     setError(null);
     try {
       const client = getApiClient();
-      const [assignmentRows, guidesResult] = await Promise.all([
+      const [assignmentRows, guides] = await Promise.all([
         client.listBookingGuides(bookingId),
-        client.listTourGuides({ page: 1, limit: 200, status: 'active' }),
+        listAllActiveTourGuides(),
       ]);
 
-      const directory = new Map(guidesResult.data.map((guide) => [guide.id, guide.displayName]));
+      const directory = new Map(guides.map((guide) => [guide.id, guide.displayName]));
       setGuideDirectory(directory);
       setAssignments(
         assignmentRows
