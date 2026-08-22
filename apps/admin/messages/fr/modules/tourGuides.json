@@ -77,6 +77,24 @@
     "title": "Modifier le guide",
     "backLink": "Retour aux guides"
   },
+  "view": {
+    "title": "Voir le guide",
+    "editButton": "Modifier le guide",
+    "notFound": "Guide introuvable.",
+    "subtitle": "Profil et missions assignées.",
+    "infoTitle": "Informations",
+    "contactEmail": "E-mail de contact"
+  },
+  "sections": {
+    "bookings": {
+      "title": "Missions assignées",
+      "intro": "Réservations auxquelles ce guide est assigné.",
+      "role": "Rôle",
+      "assignedAt": "Assigné le",
+      "empty": "Aucune mission assignée pour le moment.",
+      "ariaLabel": "Missions assignées au guide"
+    }
+  },
   "filters": {
     "type": "Type",
     "status": "Statut",

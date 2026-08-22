@@ -307,6 +307,11 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Créer un profil guide touristique.',
     apiResource: 'tour-guides',
   },
+  'guides/id/voir': {
+    title: 'Voir le guide',
+    description: 'Profil guide et missions assignées.',
+    apiResource: 'tour-guides',
+  },
   organisations: {
     title: 'Organisations',
     description: 'Partenaires et entités.',

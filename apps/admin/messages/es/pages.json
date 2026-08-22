@@ -337,7 +337,10 @@
       "backLabel": "Volver a guías turísticos"
     },
     "id": {
-      "metaTitle": "Editar guía"
+      "metaTitle": "Editar guía",
+      "voir": {
+        "metaTitle": "Ver guía"
+      }
     }
   },
   "paiements": {

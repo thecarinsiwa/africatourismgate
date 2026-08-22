@@ -77,6 +77,24 @@
     "title": "Edit guide",
     "backLink": "Back to guides"
   },
+  "view": {
+    "title": "View guide",
+    "editButton": "Edit guide",
+    "notFound": "Guide not found.",
+    "subtitle": "Profile and assigned missions.",
+    "infoTitle": "Information",
+    "contactEmail": "Contact email"
+  },
+  "sections": {
+    "bookings": {
+      "title": "Assigned missions",
+      "intro": "Bookings this guide is assigned to.",
+      "role": "Role",
+      "assignedAt": "Assigned on",
+      "empty": "No assigned missions yet.",
+      "ariaLabel": "Guide assigned missions"
+    }
+  },
   "filters": {
     "type": "Type",
     "status": "Status",

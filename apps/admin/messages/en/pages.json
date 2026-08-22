@@ -337,7 +337,10 @@
       "backLabel": "Back to tour guides"
     },
     "id": {
-      "metaTitle": "Edit guide"
+      "metaTitle": "Edit guide",
+      "voir": {
+        "metaTitle": "View guide"
+      }
     }
   },
   "paiements": {
