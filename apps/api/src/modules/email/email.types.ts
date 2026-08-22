@@ -124,4 +124,5 @@ export type BookingGuideAssignmentEmailPayload = {
   adminUrl?: string;
   locale?: 'fr' | 'en' | 'es';
   webUrl?: string;
+  hasPdfAttachment?: boolean;
 };

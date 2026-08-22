@@ -205,10 +205,17 @@ export class EmailService implements OnModuleInit {
 
   async sendBookingGuideAssignment(
     payload: BookingGuideAssignmentEmailPayload,
+    options?: { attachments?: EmailAttachment[] },
   ): Promise<SendMailResult> {
     const branding = await this.resolveBranding();
     const { subject, html, text } = renderBookingGuideAssignmentEmail(payload, branding);
-    return this.send('service', { to: payload.to, subject, html, text });
+    return this.send('service', {
+      to: payload.to,
+      subject,
+      html,
+      text,
+      attachments: options?.attachments,
+    });
   }
 
   /** MVP : org plateforme seed ; fallback gracieux si résolution impossible. */

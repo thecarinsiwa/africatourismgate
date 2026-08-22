@@ -364,6 +364,8 @@ const GUIDE_ASSIGNMENT_EMAIL_COPY: Record<
     datesLabel: string;
     body: string;
     cta: string;
+    pdfNote: string;
+    pdfNoteText: string;
   }
 > = {
   fr: {
@@ -377,6 +379,10 @@ const GUIDE_ASSIGNMENT_EMAIL_COPY: Record<
     datesLabel: 'Dates de visite',
     body: 'Consultez le détail de la réservation dans l’espace d’administration pour préparer l’accompagnement.',
     cta: 'Voir la réservation',
+    pdfNote:
+      'Un récapitulatif détaillé de la réservation est joint à ce message au format PDF.',
+    pdfNoteText:
+      '\nUn récapitulatif PDF détaillé de la réservation est joint à ce message.',
   },
   en: {
     subject: 'New assignment — booking assigned to you',
@@ -389,6 +395,8 @@ const GUIDE_ASSIGNMENT_EMAIL_COPY: Record<
     datesLabel: 'Visit dates',
     body: 'Review the booking details in the admin area to prepare for the trip.',
     cta: 'View booking',
+    pdfNote: 'A detailed PDF summary of the booking is attached to this email.',
+    pdfNoteText: '\nA detailed PDF summary of the booking is attached to this email.',
   },
   es: {
     subject: 'Nueva misión — reserva asignada',
@@ -401,6 +409,10 @@ const GUIDE_ASSIGNMENT_EMAIL_COPY: Record<
     datesLabel: 'Fechas de visita',
     body: 'Consulte el detalle de la reserva en el espacio de administración para preparar el acompañamiento.',
     cta: 'Ver reserva',
+    pdfNote:
+      'Se adjunta a este mensaje un resumen detallado de la reserva en formato PDF.',
+    pdfNoteText:
+      '\nSe adjunta un resumen PDF detallado de la reserva a este mensaje.',
   },
 };
 
@@ -451,6 +463,9 @@ export function renderBookingGuideAssignmentEmail(
   const ctaBlock = payload.adminUrl
     ? button(payload.adminUrl, copy.cta, branding)
     : '';
+  const pdfBlock = payload.hasPdfAttachment
+    ? `<p style="margin:0 0 16px;line-height:1.6;font-size:14px;color:#5c6d66;">${escapeHtml(copy.pdfNote)}</p>`
+    : '';
   const html = layout(
     subject,
     `<h1 style="margin:0 0 16px;font-size:22px;">${escapeHtml(copy.headline)}</h1>
@@ -460,12 +475,14 @@ export function renderBookingGuideAssignmentEmail(
 <p style="margin:0 0 8px;line-height:1.6;"><strong>${escapeHtml(copy.roleLabel)} :</strong> ${escapeHtml(roleLabel)}</p>
 ${datesBlock}
 ${itemListHtml(payload.itemTitles)}
+${pdfBlock}
 <p style="margin:0 0 16px;line-height:1.6;">${escapeHtml(copy.body)}</p>
 ${ctaBlock}`,
     branding,
     { webUrl: payload.webUrl },
   );
   const datesText = visitPeriod ? `\n${copy.datesLabel} : ${visitPeriod}` : '';
-  const text = `${copy.greeting} ${payload.guideName},\n\n${copy.intro}\nRéf. : ${payload.bookingId.slice(0, 8)}\n${copy.roleLabel} : ${roleLabel}${datesText}\n\n${itemListText(payload.itemTitles)}\n\n${copy.body}${payload.adminUrl ? `\n\n${payload.adminUrl}` : ''}`;
+  const pdfText = payload.hasPdfAttachment ? copy.pdfNoteText : '';
+  const text = `${copy.greeting} ${payload.guideName},\n\n${copy.intro}\nRéf. : ${payload.bookingId.slice(0, 8)}\n${copy.roleLabel} : ${roleLabel}${datesText}\n\n${itemListText(payload.itemTitles)}${pdfText}\n\n${copy.body}${payload.adminUrl ? `\n\n${payload.adminUrl}` : ''}`;
   return { subject, html, text };
 }

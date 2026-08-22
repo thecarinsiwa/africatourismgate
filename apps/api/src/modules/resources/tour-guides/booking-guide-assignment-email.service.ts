@@ -2,8 +2,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { BookingItems, TourGuides, Users } from '../../../entities/generated';
+import { BookingDetailPdfService } from '../../email/booking-detail-pdf.service';
 import { resolvePdfLocale, type BookingDetailPdfLocale } from '../../email/booking-detail-pdf.labels';
 import { EmailService } from '../../email/email.service';
+import { BookingEngineService } from '../bookings/booking-engine.service';
+import { BookingManifestService } from '../bookings/booking-manifest.service';
 import { TourGuidesService } from './tour-guides.service';
 
 type BookingGuideRole = 'primary' | 'secondary';
@@ -15,9 +18,10 @@ export class BookingGuideAssignmentEmailService {
   constructor(
     @InjectRepository(Users)
     private readonly usersRepository: Repository<Users>,
-    @InjectRepository(BookingItems)
-    private readonly bookingItemsRepository: Repository<BookingItems>,
     private readonly tourGuidesService: TourGuidesService,
+    private readonly bookingEngine: BookingEngineService,
+    private readonly manifestService: BookingManifestService,
+    private readonly bookingDetailPdf: BookingDetailPdfService,
     private readonly emailService: EmailService,
   ) {}
 
@@ -48,31 +52,71 @@ export class BookingGuideAssignmentEmailService {
       return;
     }
 
-    const items = await this.bookingItemsRepository.find({
-      where: { bookingId, deletedAt: IsNull() },
-      order: { startDate: 'ASC', createdAt: 'ASC' },
+    const detail = await this.bookingEngine.getBookingDetail(bookingId);
+    const bookingCustomer = await this.usersRepository.findOne({
+      where: { id: detail.booking.userId, deletedAt: IsNull() },
     });
 
-    const itemTitles = items
+    const itemTitles = detail.items
       .map((item) => item.titleSnapshot?.trim())
       .filter((title): title is string => Boolean(title));
 
-    const { visitStartDate, visitEndDate } = deriveVisitDates(items);
+    const { visitStartDate, visitEndDate } = deriveVisitDates(detail.items);
     const adminBase = process.env.NEXT_PUBLIC_ADMIN_URL?.replace(/\/$/, '');
     const adminUrl = adminBase ? `${adminBase}/reservations/${bookingId}` : undefined;
+    const locale = resolveGuideLocale(guide, recipient.preferredLanguage);
+    const webUrl = process.env.NEXT_PUBLIC_WEB_URL;
 
-    await this.emailService.sendBookingGuideAssignment({
-      to: recipient.email,
-      guideName: guide.displayName,
-      bookingId,
-      role,
-      itemTitles,
-      visitStartDate,
-      visitEndDate,
-      adminUrl,
-      locale: resolveGuideLocale(guide, recipient.preferredLanguage),
-      webUrl: process.env.NEXT_PUBLIC_WEB_URL,
-    });
+    let attachments:
+      | Array<{ filename: string; content: Buffer; contentType: string }>
+      | undefined;
+    let hasPdfAttachment = false;
+
+    try {
+      const manifest = await this.manifestService.listForBooking(bookingId);
+      const pdf = await this.bookingDetailPdf.generate({
+        detail,
+        manifest,
+        customer: {
+          firstName: bookingCustomer?.firstName ?? 'Client',
+          lastName: bookingCustomer?.lastName ?? '',
+          email: bookingCustomer?.email ?? recipient.email,
+          preferredLanguage: locale,
+          organizationId: bookingCustomer?.organizationId ?? null,
+        },
+        webUrl,
+      });
+      attachments = [
+        {
+          filename: pdf.filename,
+          content: pdf.buffer,
+          contentType: 'application/pdf',
+        },
+      ];
+      hasPdfAttachment = true;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      this.logger.warn(
+        `PDF récapitulatif non généré pour l'assignation guide (${bookingId}/${guideId}) : ${message}`,
+      );
+    }
+
+    await this.emailService.sendBookingGuideAssignment(
+      {
+        to: recipient.email,
+        guideName: guide.displayName,
+        bookingId,
+        role,
+        itemTitles,
+        visitStartDate,
+        visitEndDate,
+        adminUrl,
+        locale,
+        webUrl,
+        hasPdfAttachment,
+      },
+      { attachments },
+    );
   }
 
   private async resolveGuideRecipient(

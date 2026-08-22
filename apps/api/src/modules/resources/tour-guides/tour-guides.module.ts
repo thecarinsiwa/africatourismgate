@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   BookingGuideAssignments,
@@ -9,6 +9,7 @@ import {
   TourGuides,
   Users,
 } from '../../../entities/generated';
+import { BookingsModule } from '../bookings/bookings.module';
 import { BookingGuideAssignmentEmailService } from './booking-guide-assignment-email.service';
 import { BookingGuideAssignmentsService } from './booking-guide-assignments.service';
 import { TourGuidesController } from './tour-guides.controller';
@@ -16,6 +17,7 @@ import { TourGuidesService } from './tour-guides.service';
 
 @Module({
   imports: [
+    forwardRef(() => BookingsModule),
     TypeOrmModule.forFeature([
       TourGuides,
       BookingGuideAssignments,
