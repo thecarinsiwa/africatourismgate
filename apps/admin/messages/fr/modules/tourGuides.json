@@ -125,6 +125,18 @@
       "ariaLabel": "Missions assignées au guide"
     }
   },
+  "calendar": {
+    "ariaLabel": "Calendrier de disponibilité — {month}",
+    "availableShort": "{count} dispo",
+    "occupiedShort": "{count} occupés",
+    "unavailableShort": "{count} indispo",
+    "legendAvailable": "Disponibles",
+    "legendOccupied": "Occupés (missions)",
+    "legendUnavailable": "Indisponibles",
+    "activeGuidesCount": "{count, plural, one {# guide actif} other {# guides actifs}}",
+    "noActiveGuides": "Aucun guide actif pour ces filtres.",
+    "today": "Aujourd'hui"
+  },
   "filters": {
     "type": "Type",
     "status": "Statut",

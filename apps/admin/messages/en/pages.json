@@ -329,7 +329,8 @@
     "title": "Tour guides",
     "description": "Catalog of internal and external guides. Filter by type, status and search by name.",
     "actions": {
-      "new": "New guide"
+      "new": "New guide",
+      "calendar": "Calendar"
     },
     "nouveau": {
       "metaTitle": "New tour guide",
@@ -344,6 +345,12 @@
         "title": "View guide",
         "description": "View profile, destinations and bookings assigned to this guide."
       }
+    },
+    "calendrier": {
+      "metaTitle": "Guides calendar",
+      "title": "Calendar",
+      "description": "Monthly view of active guide availability (available, on mission, unavailable).",
+      "backLabel": "Back to tour guides"
     }
   },
   "paiements": {

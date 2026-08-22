@@ -125,6 +125,18 @@
       "ariaLabel": "Guide assigned missions"
     }
   },
+  "calendar": {
+    "ariaLabel": "Availability calendar — {month}",
+    "availableShort": "{count} avail.",
+    "occupiedShort": "{count} busy",
+    "unavailableShort": "{count} unavail.",
+    "legendAvailable": "Available",
+    "legendOccupied": "Busy (assignments)",
+    "legendUnavailable": "Unavailable",
+    "activeGuidesCount": "{count, plural, one {# active guide} other {# active guides}}",
+    "noActiveGuides": "No active guides match these filters.",
+    "today": "Today"
+  },
   "filters": {
     "type": "Type",
     "status": "Status",

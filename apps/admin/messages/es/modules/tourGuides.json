@@ -125,6 +125,18 @@
       "ariaLabel": "Misiones asignadas al guía"
     }
   },
+  "calendar": {
+    "ariaLabel": "Calendario de disponibilidad — {month}",
+    "availableShort": "{count} disp.",
+    "occupiedShort": "{count} ocup.",
+    "unavailableShort": "{count} no disp.",
+    "legendAvailable": "Disponibles",
+    "legendOccupied": "Ocupados (misiones)",
+    "legendUnavailable": "No disponibles",
+    "activeGuidesCount": "{count, plural, one {# guía activo} other {# guías activos}}",
+    "noActiveGuides": "Ningún guía activo coincide con estos filtros.",
+    "today": "Hoy"
+  },
   "filters": {
     "type": "Tipo",
     "status": "Estado",

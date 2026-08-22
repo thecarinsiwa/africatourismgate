@@ -34,11 +34,16 @@ export function GuidesPageContent() {
       <AdminListPageHeader
         routePath="guides"
         actions={
-          canWrite ? (
-            <Button href="/guides/nouveau" variant="primary">
-              {t('actions.new')}
+          <div className="flex flex-wrap gap-2">
+            <Button href="/guides/calendrier" variant="outline">
+              {t('actions.calendar')}
             </Button>
-          ) : null
+            {canWrite ? (
+              <Button href="/guides/nouveau" variant="primary">
+                {t('actions.new')}
+              </Button>
+            ) : null}
+          </div>
         }
       />
       <TourGuidesStatCards className="mb-6" />

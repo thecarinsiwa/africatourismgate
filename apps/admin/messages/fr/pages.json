@@ -329,7 +329,8 @@
     "title": "Guides touristiques",
     "description": "Catalogue des guides internes et externes. Filtres par type, statut et recherche par nom.",
     "actions": {
-      "new": "Nouveau guide"
+      "new": "Nouveau guide",
+      "calendar": "Calendrier"
     },
     "nouveau": {
       "metaTitle": "Nouveau guide touristique",
@@ -344,6 +345,12 @@
         "title": "Voir le guide",
         "description": "Consultez le profil, les destinations et les réservations assignées à ce guide."
       }
+    },
+    "calendrier": {
+      "metaTitle": "Calendrier guides",
+      "title": "Calendrier",
+      "description": "Vue mensuelle de la disponibilité des guides actifs (disponibles, occupés par mission, indisponibles).",
+      "backLabel": "Retour aux guides"
     }
   },
   "paiements": {

@@ -317,6 +317,11 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Profil guide, destinations couvertes et missions assignées.',
     apiResource: 'tour-guides',
   },
+  'guides/calendrier': {
+    title: 'Calendrier guides',
+    description: 'Disponibilité mensuelle des guides actifs.',
+    apiResource: 'tour-guides',
+  },
   organisations: {
     title: 'Organisations',
     description: 'Partenaires et entités.',

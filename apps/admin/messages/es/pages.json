@@ -329,7 +329,8 @@
     "title": "Guías turísticos",
     "description": "Catálogo de guías internos y externos. Filtre por tipo, estado y búsqueda por nombre.",
     "actions": {
-      "new": "Nuevo guía"
+      "new": "Nuevo guía",
+      "calendar": "Calendario"
     },
     "nouveau": {
       "metaTitle": "Nuevo guía turístico",
@@ -344,6 +345,12 @@
         "title": "Ver guía",
         "description": "Consulte el perfil, los destinos y las reservas asignadas a este guía."
       }
+    },
+    "calendrier": {
+      "metaTitle": "Calendario de guías",
+      "title": "Calendario",
+      "description": "Vista mensual de la disponibilidad de guías activos (disponibles, en misión, no disponibles).",
+      "backLabel": "Volver a guías turísticos"
     }
   },
   "paiements": {
