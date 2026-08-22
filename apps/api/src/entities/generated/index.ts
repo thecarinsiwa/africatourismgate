@@ -16,6 +16,7 @@ export { ActivityItineraryStops } from './misc.entity';
 export { PackageImages } from './misc.entity';
 export { TourGuides } from './misc.entity';
 export { BookingGuideAssignments } from './misc.entity';
+export { GuideAvailability } from './misc.entity';
 export { BookingMessages } from './misc.entity';
 export { Organizations } from './organizations.entity';
 export { OrganizationSettings } from './organizations.entity';

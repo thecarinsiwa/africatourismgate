@@ -58,6 +58,21 @@ export class BookingGuideAssignments {
   assignedByUserId!: string | null;
 }
 
+@Entity('guide_availability')
+export class GuideAvailability extends BaseAuditEntity {
+  @PrimaryColumn('uuid', { name: 'id', length: 36 })
+  id!: string;
+
+  @Column({ type: 'varchar', name: 'guide_id', length: 36 })
+  guideId!: string;
+
+  @Column({ type: 'date', name: 'date' })
+  date!: string;
+
+  @Column({ name: 'status', enum: ['available', 'unavailable'], default: 'available' })
+  status!: 'available' | 'unavailable';
+}
+
 @Entity('booking_messages')
 export class BookingMessages extends BaseAuditEntity {
   @PrimaryColumn('uuid', { name: 'id', length: 36 })
