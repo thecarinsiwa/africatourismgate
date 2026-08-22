@@ -62,7 +62,13 @@
     "saving": "Enregistrement…",
     "createButton": "Créer le code promo",
     "saveButton": "Enregistrer",
-    "cancelButton": "Annuler"
+    "cancelButton": "Annuler",
+    "conflictModal": {
+      "title": "Code déjà utilisé",
+      "description": "Le code « {code} » existe déjà. Choisissez un autre code promo.",
+      "confirm": "Compris",
+      "close": "Fermer"
+    }
   },
   "usage": {
     "format": "{count} / {max}",

@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import { DeepPartial, QueryFailedError, Repository, SelectQueryBuilder } from 'typeorm';
 import { PaginatedResult } from '../../../common/dto/pagination-query.dto';
 import { PromoCodes } from '../../../entities/generated';
 import { CrudService } from '../../../common/crud/crud.service';
 import { PromoCodesListQueryDto } from './dto/promo-codes-list-query.dto';
+
+const PROMO_CODE_CONFLICT_MESSAGE = 'Ce code promo existe déjà.';
 
 @Injectable()
 export class PromoCodesService extends CrudService<PromoCodes> {
@@ -70,5 +72,59 @@ export class PromoCodesService extends CrudService<PromoCodes> {
     }
 
     qb.andWhere('promoCode.validUntil < CURRENT_DATE()');
+  }
+
+  async create(dto: DeepPartial<PromoCodes>, actorUserId?: string): Promise<PromoCodes> {
+    if (dto.code != null) {
+      await this.assertCodeAvailable(String(dto.code));
+    }
+    try {
+      return await super.create(dto, actorUserId);
+    } catch (error) {
+      this.rethrowDuplicateCode(error);
+      throw error;
+    }
+  }
+
+  async update(
+    id: string,
+    dto: DeepPartial<PromoCodes>,
+    actorUserId?: string,
+  ): Promise<PromoCodes> {
+    if (dto.code != null) {
+      await this.assertCodeAvailable(String(dto.code), id);
+    }
+    try {
+      return await super.update(id, dto, actorUserId);
+    } catch (error) {
+      this.rethrowDuplicateCode(error);
+      throw error;
+    }
+  }
+
+  private async assertCodeAvailable(code: string, excludeId?: string): Promise<void> {
+    const normalized = code.trim().toUpperCase();
+    const qb = this.promoCodesRepository
+      .createQueryBuilder('promoCode')
+      .where('UPPER(promoCode.code) = :code', { code: normalized })
+      .andWhere('promoCode.deletedAt IS NULL');
+
+    if (excludeId) {
+      qb.andWhere('promoCode.id != :excludeId', { excludeId });
+    }
+
+    const existing = await qb.getOne();
+    if (existing) {
+      throw new ConflictException(PROMO_CODE_CONFLICT_MESSAGE);
+    }
+  }
+
+  private rethrowDuplicateCode(error: unknown): void {
+    if (
+      error instanceof QueryFailedError &&
+      (error.driverError as { code?: string })?.code === 'ER_DUP_ENTRY'
+    ) {
+      throw new ConflictException(PROMO_CODE_CONFLICT_MESSAGE);
+    }
   }
 }

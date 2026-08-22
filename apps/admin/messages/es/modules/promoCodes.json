@@ -62,7 +62,13 @@
     "saving": "Guardando…",
     "createButton": "Crear código promocional",
     "saveButton": "Guardar",
-    "cancelButton": "Cancelar"
+    "cancelButton": "Cancelar",
+    "conflictModal": {
+      "title": "Código ya utilizado",
+      "description": "El código «{code}» ya existe. Elija otro código promocional.",
+      "confirm": "Entendido",
+      "close": "Cerrar"
+    }
   },
   "usage": {
     "format": "{count} / {max}",

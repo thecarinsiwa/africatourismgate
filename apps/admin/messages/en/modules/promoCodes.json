@@ -62,7 +62,13 @@
     "saving": "Saving…",
     "createButton": "Create promo code",
     "saveButton": "Save",
-    "cancelButton": "Cancel"
+    "cancelButton": "Cancel",
+    "conflictModal": {
+      "title": "Code already in use",
+      "description": "Promo code \"{code}\" already exists. Choose a different code.",
+      "confirm": "Got it",
+      "close": "Close"
+    }
   },
   "usage": {
     "format": "{count} / {max}",

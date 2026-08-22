@@ -2,7 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Input } from '@africatourismgate/ui';
+import { Button, Input, Modal } from '@africatourismgate/ui';
 import type {
   CreatePromoCodeRequest,
   PromoCode,
@@ -12,6 +12,7 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useId, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import { isPromoCodeConflictError } from '../../lib/promo-codes-errors';
 import { usePromoDiscountTypeLabels } from '../../lib/i18n/use-module-labels';
 
 export type PromoCodeFormValues = {
@@ -82,6 +83,7 @@ export function PromoCodeForm({ mode, promoCodeId, initialPromoCode }: PromoCode
     Partial<Record<keyof PromoCodeFormValues, string>>
   >({});
   const [formError, setFormError] = useState<string | null>(null);
+  const [conflictModalOpen, setConflictModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const updateField = useCallback(
@@ -149,7 +151,13 @@ export function PromoCodeForm({ mode, promoCodeId, initialPromoCode }: PromoCode
         router.refresh();
       }
     } catch (error) {
-      setFormError(getPromoCodesErrorMessage(error));
+      const message = getPromoCodesErrorMessage(error);
+      if (isPromoCodeConflictError(error)) {
+        setConflictModalOpen(true);
+        setFieldErrors((prev) => ({ ...prev, code: message }));
+      } else {
+        setFormError(message);
+      }
     } finally {
       setSubmitting(false);
     }
@@ -161,7 +169,25 @@ export function PromoCodeForm({ mode, promoCodeId, initialPromoCode }: PromoCode
       : t('hints.discountFixed');
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
+    <>
+      <Modal
+        open={conflictModalOpen}
+        onOpenChange={setConflictModalOpen}
+        title={t('conflictModal.title')}
+        description={t('conflictModal.description', {
+          code: values.code.trim().toUpperCase() || '—',
+        })}
+        showClose
+        closeAriaLabel={t('conflictModal.close')}
+      >
+        <div className="flex justify-end pt-2">
+          <Button type="button" onClick={() => setConflictModalOpen(false)}>
+            {t('conflictModal.confirm')}
+          </Button>
+        </div>
+      </Modal>
+
+      <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
       {formError ? (
         <p
           role="alert"
@@ -281,5 +307,6 @@ export function PromoCodeForm({ mode, promoCodeId, initialPromoCode }: PromoCode
         </Button>
       </div>
     </form>
+    </>
   );
 }
