@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -7,8 +8,22 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
-import { ApiForbiddenResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import {
+  ApiBody,
+  ApiConsumes,
+  ApiForbiddenResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
+import { diskStorage } from 'multer';
+import { randomUUID } from 'node:crypto';
+import { existsSync, mkdirSync } from 'node:fs';
+import { extname, join } from 'node:path';
+import { tourGuideUploadUrl } from '../../../common/utils/public-asset-url';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { AuthUserDto } from '../../auth/dto/auth-user.dto';
 import { RequirePermissions } from '../../rbac/decorators/require-permissions.decorator';
@@ -18,6 +33,10 @@ import { TourGuideBookingsListQueryDto } from './dto/tour-guide-bookings-list-qu
 import { TourGuidesListQueryDto } from './dto/tour-guides-list-query.dto';
 import { UpdateTourGuideDto } from './dto/update-tour-guide.dto';
 import { TourGuidesService } from './tour-guides.service';
+
+const PHOTO_MAX_BYTES = 5 * 1024 * 1024;
+const ALLOWED_PHOTO_MIMES = new Set(['image/jpeg', 'image/png', 'image/webp']);
+const ALLOWED_PHOTO_EXTENSIONS = new Set(['.jpg', '.jpeg', '.png', '.webp']);
 
 @ApiTags('tour-guides')
 @ApiForbiddenResponse({ description: 'Permission manquante' })
@@ -33,6 +52,59 @@ export class TourGuidesController {
   @ApiOperation({ summary: 'Liste paginée des guides touristiques' })
   findAll(@Query() query: TourGuidesListQueryDto) {
     return this.service.list(query);
+  }
+
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: { type: 'string', format: 'binary' },
+      },
+      required: ['file'],
+    },
+  })
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: (_req, _file, cb) => {
+          const uploadDir = join(process.cwd(), 'uploads', 'tour-guides');
+          if (!existsSync(uploadDir)) {
+            mkdirSync(uploadDir, { recursive: true });
+          }
+          cb(null, uploadDir);
+        },
+        filename: (_req, file, cb) => {
+          const extension = extname(file.originalname || '').toLowerCase();
+          cb(null, `${Date.now()}-${randomUUID()}${extension}`);
+        },
+      }),
+      limits: { fileSize: PHOTO_MAX_BYTES },
+      fileFilter: (_req, file, cb) => {
+        const extension = extname(file.originalname || '').toLowerCase();
+        if (
+          !ALLOWED_PHOTO_MIMES.has(file.mimetype) ||
+          !ALLOWED_PHOTO_EXTENSIONS.has(extension)
+        ) {
+          cb(null, false);
+          return;
+        }
+        cb(null, true);
+      },
+    }),
+  )
+  @Post('upload-photo')
+  @RequirePermissions('guides.write')
+  @ApiOperation({ summary: 'Upload d’une photo de guide (JPEG, PNG ou WebP, max 5 Mo)' })
+  uploadPhoto(
+    @UploadedFile() file: Express.Multer.File | undefined,
+  ): { url: string } {
+    if (!file) {
+      throw new BadRequestException(
+        'Fichier image requis (JPEG, PNG ou WebP, max 5 Mo).',
+      );
+    }
+    return { url: tourGuideUploadUrl(file.filename) };
   }
 
   @Get(':id/bookings')

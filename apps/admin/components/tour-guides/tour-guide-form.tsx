@@ -26,7 +26,9 @@ import type {
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
-import { getApiClient } from '../../lib/auth/api';
+import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
+import { getSession } from '../../lib/auth/session';
+import { resolveMediaUrl } from '../../lib/resolve-media-url';
 import {
   useTourGuideStatusLabels,
   useTourGuideTypeLabels,
@@ -57,6 +59,9 @@ const defaultValues: TourGuideFormValues = {
   destinationIds: [],
   status: 'active',
 };
+
+const PHOTO_MAX_BYTES = 5 * 1024 * 1024;
+const ALLOWED_PHOTO_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
 function parseLanguagesInput(input: string): string[] {
   return input
@@ -139,6 +144,8 @@ export function TourGuideForm({
   const { tourGuides: getTourGuidesErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.tourGuides.form');
   const tToast = useTranslations('modules.common.toast');
+  const tCommonForm = useTranslations('modules.common.form');
+  const tValidation = useTranslations('modules.common.validation');
   const typeLabels = useTourGuideTypeLabels();
   const statusLabels = useTourGuideStatusLabels();
   const router = useRouter();
@@ -148,6 +155,7 @@ export function TourGuideForm({
   const orgId = useId();
   const statusId = useId();
   const destinationsSearchId = useId();
+  const photoFileInputId = useId();
 
   const [values, setValues] = useState<TourGuideFormValues>(() =>
     initialGuide ? guideToFormValues(initialGuide) : defaultValues,
@@ -161,6 +169,7 @@ export function TourGuideForm({
   >({});
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
   const showIdentity = activeSection === 'all' || activeSection === 'identity';
   const showCoverage = activeSection === 'all' || activeSection === 'coverage';
@@ -281,6 +290,47 @@ export function TourGuideForm({
     linkedUser?.firstName ?? (values.displayName.trim() || 'Guide');
   const previewLastName = linkedUser?.lastName ?? '';
 
+  const photoPreviewSrc = values.photoUrl.trim()
+    ? resolveMediaUrl(values.photoUrl.trim())
+    : undefined;
+
+  async function handlePhotoPick(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    try {
+      if (!ALLOWED_PHOTO_TYPES.has(file.type)) {
+        setFieldErrors((prev) => ({ ...prev, photoUrl: tValidation('imageFormat') }));
+        return;
+      }
+      if (file.size > PHOTO_MAX_BYTES) {
+        setFieldErrors((prev) => ({ ...prev, photoUrl: tValidation('imageTooLarge') }));
+        return;
+      }
+      const session = getSession();
+      if (!session?.accessToken) {
+        setFieldErrors((prev) => ({ ...prev, photoUrl: tValidation('sessionExpiredRetry') }));
+        return;
+      }
+      setUploadingPhoto(true);
+      const body = new FormData();
+      body.append('file', file);
+      const response = await fetch(`${resolveApiBaseUrl()}/tour-guides/upload-photo`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${session.accessToken}` },
+        body,
+      });
+      if (!response.ok) throw new Error('Upload failed');
+      const payload = (await response.json()) as { url?: string };
+      if (!payload.url) throw new Error('Invalid upload response');
+      updateField('photoUrl', payload.url);
+    } catch {
+      setFieldErrors((prev) => ({ ...prev, photoUrl: tValidation('uploadFailed') }));
+    } finally {
+      setUploadingPhoto(false);
+      event.target.value = '';
+    }
+  }
+
   function validate(): boolean {
     const errors: Partial<Record<keyof TourGuideFormValues, string>> = {};
     if (!values.displayName.trim()) {
@@ -361,6 +411,34 @@ export function TourGuideForm({
     setFieldErrors((prev) => ({ ...prev, destinationIds: undefined }));
   }, []);
 
+  const photoFields = (
+    <div className="space-y-3">
+      <label
+        htmlFor={photoFileInputId}
+        className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10"
+      >
+        {uploadingPhoto ? tCommonForm('uploading') : t('uploadPhoto')}
+        <input
+          id={photoFileInputId}
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          className="hidden"
+          onChange={(e) => void handlePhotoPick(e)}
+          disabled={uploadingPhoto || submitting}
+        />
+      </label>
+      <Input
+        label={tCommonForm('externalUrlOptional')}
+        name="photoUrl"
+        type="url"
+        value={values.photoUrl}
+        onChange={(e) => updateField('photoUrl', e.target.value)}
+        error={fieldErrors.photoUrl}
+        disabled={uploadingPhoto}
+      />
+    </div>
+  );
+
   const identityFields = (
     <div className="space-y-4">
       <Select
@@ -434,15 +512,7 @@ export function TourGuideForm({
         onChange={(e) => updateField('bio', e.target.value)}
       />
 
-      {!isWide || activeSection === 'all' ? (
-        <Input
-          label={t('photoUrl')}
-          name="photoUrl"
-          type="url"
-          value={values.photoUrl}
-          onChange={(e) => updateField('photoUrl', e.target.value)}
-        />
-      ) : null}
+      {!isWide || activeSection === 'all' ? photoFields : null}
 
       <Select
         id={statusId}
@@ -530,7 +600,7 @@ export function TourGuideForm({
             email={previewEmail}
             firstName={previewFirstName}
             lastName={previewLastName}
-            src={values.photoUrl.trim() || undefined}
+            src={photoPreviewSrc}
             size="lg"
             label={values.displayName.trim() || previewFirstName}
           />
@@ -539,13 +609,7 @@ export function TourGuideForm({
           </p>
           <DataTableBadge variant="muted">{typeLabels[values.type]}</DataTableBadge>
         </div>
-        <Input
-          label={t('photoUrl')}
-          name="photoUrl"
-          type="url"
-          value={values.photoUrl}
-          onChange={(e) => updateField('photoUrl', e.target.value)}
-        />
+        {photoFields}
       </Card>
     </aside>
   );

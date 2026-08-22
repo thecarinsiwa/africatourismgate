@@ -72,6 +72,7 @@
     "contactEmailHint": "Used for assignment notifications (required for external guides).",
     "bio": "Bio",
     "photoUrl": "Photo URL",
+    "uploadPhoto": "Choose a photo",
     "languages": "Languages spoken",
     "languagesHint": "ISO codes separated by commas (e.g. fr, en, sw).",
     "destinations": "Covered destinations",

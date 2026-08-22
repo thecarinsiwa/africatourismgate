@@ -72,6 +72,7 @@
     "contactEmailHint": "Se utiliza para las notificaciones de misión (obligatorio para guías externos).",
     "bio": "Biografía",
     "photoUrl": "URL de foto",
+    "uploadPhoto": "Elegir una foto",
     "languages": "Idiomas hablados",
     "languagesHint": "Códigos ISO separados por comas (ej. fr, en, sw).",
     "destinations": "Destinos cubiertos",
