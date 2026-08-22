@@ -10,14 +10,14 @@
     "cash": "Efectivo"
   },
   "refundLabels": {
-    "partial": "Remboursement partiel",
-    "full": "Remboursement total",
-    "generic": "Remboursement"
+    "partial": "Reembolso parcial",
+    "full": "Reembolso total",
+    "generic": "Reembolso"
   },
   "subnav": {
-    "ariaLabel": "Navigation paiements et promotions",
+    "ariaLabel": "Navegación pagos y promociones",
     "transactions": "Transacciones",
-    "promoCodes": "Codes promo",
+    "promoCodes": "Códigos promocionales",
     "promotions": "Promociones"
   },
   "list": {
@@ -37,19 +37,19 @@
     "emptyFiltered": "Ningún pago coincide con sus criterios.",
     "ariaLabel": "Lista de pagos",
     "accessDenied": "Acceso denegado: se requiere el permiso payments.read.",
-    "notFoundError": "Paiement introuvable.",
+    "notFoundError": "Pago no encontrado.",
     "toast": {
-      "refundSuccessTitle": "Remboursement effectué",
-      "refundSuccessMessage": "{amount} remboursé avec succès."
+      "refundSuccessTitle": "Reembolso realizado",
+      "refundSuccessMessage": "{amount} reembolsado con éxito."
     }
   },
   "detail": {
-    "title": "Détail du paiement",
+    "title": "Detalle del pago",
     "sections": {
       "summary": "Resumen",
-      "stripeIds": "Identifiants Stripe",
+      "stripeIds": "Identificadores Stripe",
       "booking": "Reserva",
-      "refundHistory": "Historial des remboursements"
+      "refundHistory": "Historial de reembolsos"
     },
     "fields": {
       "amount": "Importe",
@@ -57,55 +57,55 @@
       "method": "Método",
       "date": "Fecha",
       "client": "Cliente",
-      "stripePaymentIntent": "Payment Intent Stripe",
-      "internalPaymentId": "ID paiement (interne)",
-      "viewBooking": "Voir la réservation",
-      "stripeStatus": "Stripe : {status}"
+      "stripePaymentIntent": "Payment Intent de Stripe",
+      "internalPaymentId": "ID de pago (interno)",
+      "viewBooking": "Ver reserva",
+      "stripeStatus": "Stripe: {status}"
     },
-    "refundHistoryEmpty": "Hastacun remboursement enregistré.",
+    "refundHistoryEmpty": "Ningún reembolso registrado.",
     "cancelBookingFirst": "Reembolso Stripe: cancele primero la reserva."
   },
   "refundModal": {
-    "title": "Confirmer le remboursement",
-    "description": "Remboursement Stripe — maximum remboursable : {maxAmount}.",
-    "refundTypeLegend": "Tipo de remboursement",
+    "title": "Confirmar reembolso",
+    "description": "Reembolso Stripe — máximo reembolsable: {maxAmount}.",
+    "refundTypeLegend": "Tipo de reembolso",
     "refundTypeTotal": "Total ({amount})",
     "refundTypePartial": "Parcial",
-    "partialAmountLabel": "Importe partiel ({currency})",
-    "partialAmountPlaceholder": "Ex. 10,00",
-    "partialAmountHint": "Maximum : {maxAmount}",
-    "reasonLabel": "Raison du remboursement",
-    "reasonPlaceholder": "Ex. Cancelación client, erreur de facturation…",
-    "reasonHint": "Minimum {minLength} caractères (usage interne, non envoyé à Stripe).",
+    "partialAmountLabel": "Importe parcial ({currency})",
+    "partialAmountPlaceholder": "Ej. 10,00",
+    "partialAmountHint": "Máximo: {maxAmount}",
+    "reasonLabel": "Motivo del reembolso",
+    "reasonPlaceholder": "Ej. Cancelación del cliente, error de facturación…",
+    "reasonHint": "Mínimo {minLength} caracteres (uso interno, no enviado a Stripe).",
     "preview": "Vista previa",
-    "previewRefunded": "Importe remboursé",
-    "previewRemaining": "Reste remboursable",
+    "previewRefunded": "Importe reembolsado",
+    "previewRemaining": "Resto reembolsable",
     "previewReason": "Motivo",
-    "confirm": "Confirmer le remboursement",
+    "confirm": "Confirmar reembolso",
     "validation": {
-      "reasonMinLength": "La raison doit contenir au moins {minLength} caractères.",
-      "noRefundableAmount": "Hastacun montant remboursable restant.",
-      "partialAmountRequired": "Indiquez un montant partiel.",
-      "partialAmountInvalid": "Importe partiel invalide.",
-      "partialAmountExceeds": "Le montant ne peut pas dépasser {maxAmount}."
+      "reasonMinLength": "El motivo debe contener al menos {minLength} caracteres.",
+      "noRefundableAmount": "No queda importe reembolsable.",
+      "partialAmountRequired": "Indique un importe parcial.",
+      "partialAmountInvalid": "Importe parcial no válido.",
+      "partialAmountExceeds": "El importe no puede superar {maxAmount}."
     }
   },
   "stats": {
     "total": {
       "label": "Transacciones",
-      "subtitle": "Todos les paiements"
+      "subtitle": "Todos los pagos"
     },
     "succeeded": {
       "label": "Exitosos",
-      "subtitle": "Pagos encaissés"
+      "subtitle": "Pagos cobrados"
     },
     "pending": {
-      "label": "Pendiente",
-      "subtitle": "Pagos pending"
+      "label": "Pendientes",
+      "subtitle": "Pagos pendientes"
     },
     "revenue": {
       "label": "Ingresos",
-      "subtitle": "Total paiements réussis"
+      "subtitle": "Total de pagos exitosos"
     }
   }
 }
