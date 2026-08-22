@@ -211,6 +211,8 @@
     "totalHint": "Ajuste el total si es necesario antes de aprobar.",
     "totalOverrideHint": "Calculado automáticamente a partir de los precios por viajero. Edite para aplicar un total manual.",
     "travelersTitle": "Desglose del pago por viajero",
+    "travelersCount": "{count, plural, one {# viajero} other {# viajeros}}",
+    "travelerNumber": "Viajero {number}",
     "travelerName": "Nombre del viajero",
     "travelerAge": "Edad",
     "travelerBasePrice": "Precio base ({currency})",

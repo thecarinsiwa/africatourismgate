@@ -2,7 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { AlertDialog, Button, Card, Input, useToast } from '@africatourismgate/ui';
+import { AlertDialog, Button, Card, Input, Skeleton, useToast } from '@africatourismgate/ui';
 import type { BookingItem, BookingManifestEntry, BookingStatus } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
@@ -105,6 +105,33 @@ function createEmptyTraveler(defaultPrice = '', basePriceCents?: number | null):
     price: defaultPrice,
     basePriceCents: basePriceCents ?? null,
   };
+}
+
+function ReadOnlyMoneyField({
+  label,
+  value,
+  compact,
+}: {
+  label: string;
+  value: string;
+  compact?: boolean;
+}) {
+  return (
+    <div>
+      <p
+        className={
+          compact
+            ? 'mb-1 text-xs font-medium uppercase tracking-wide text-atg-muted lg:sr-only lg:mb-0 lg:h-0 lg:overflow-hidden'
+            : 'mb-2 text-sm font-medium text-atg-fg'
+        }
+      >
+        {label}
+      </p>
+      <p className="flex h-[42px] items-center rounded-lg border border-atg-border/70 bg-atg-muted/10 px-3 text-sm tabular-nums text-atg-muted">
+        {value}
+      </p>
+    </div>
+  );
 }
 
 export function BookingAssistedApprovalPanel({
@@ -491,109 +518,201 @@ export function BookingAssistedApprovalPanel({
 
   function renderTravelerPricingEditor(editable: boolean) {
     if (manifestLoading) {
-      return <p className="text-sm text-atg-muted">{t('loadingTravelers')}</p>;
+      return (
+        <div className="overflow-hidden rounded-xl border border-atg-border">
+          <div className="border-b border-atg-border bg-atg-muted/10 px-4 py-3">
+            <Skeleton className="h-5 w-56" />
+          </div>
+          <div className="space-y-0 divide-y divide-atg-border">
+            <div className="px-4 py-4">
+              <Skeleton className="h-20 w-full rounded-lg" />
+            </div>
+            <div className="px-4 py-4">
+              <Skeleton className="h-20 w-full rounded-lg" />
+            </div>
+          </div>
+          <div className="border-t border-atg-border bg-atg-muted/5 px-4 py-4">
+            <Skeleton className="ml-auto h-14 w-full max-w-sm rounded-lg" />
+          </div>
+        </div>
+      );
     }
 
     return (
-      <div className="space-y-3">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <h3 className="text-sm font-semibold text-atg-fg">{t('travelersTitle')}</h3>
+      <div className="overflow-hidden rounded-xl border border-atg-border bg-atg-surface/20">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-atg-border bg-atg-muted/10 px-4 py-3">
+          <div>
+            <h3 className="text-sm font-semibold text-atg-fg">{t('travelersTitle')}</h3>
+            {travelers.length > 0 ? (
+              <p className="mt-0.5 text-xs text-atg-muted">
+                {t('travelersCount', { count: travelers.length })}
+              </p>
+            ) : null}
+          </div>
           {editable ? (
-            <Button type="button" size="sm" variant="outline" onClick={addTraveler}>
+            <Button type="button" size="sm" variant="outline" onClick={addTraveler} disabled={loading}>
               {t('addTraveler')}
             </Button>
           ) : null}
         </div>
 
         {travelers.length === 0 ? (
-          <p className="text-sm text-atg-muted">{t('noTravelersHint')}</p>
-        ) : (
-          <div className="space-y-3">
-            {travelers.map((traveler) => (
-              <div
-                key={traveler.key}
-                className="space-y-3 rounded-lg border border-atg-border bg-atg-surface/50 p-3"
+          <div className="border-b border-dashed border-atg-border/80 px-4 py-10 text-center">
+            <p className="text-sm text-atg-muted">{t('noTravelersHint')}</p>
+            {editable ? (
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                className="mt-4"
+                onClick={addTraveler}
+                disabled={loading}
               >
-                <Input
-                  label={t('travelerName')}
-                  name={`traveler-name-${traveler.key}`}
-                  value={traveler.fullName}
-                  onChange={(e) => updateTraveler(traveler.key, { fullName: e.target.value })}
-                  disabled={!editable || loading}
-                />
-                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[6rem_minmax(7rem,1fr)_minmax(7rem,1fr)_auto]">
-                  <Input
-                    label={t('travelerAge')}
-                    name={`traveler-age-${traveler.key}`}
-                    type="number"
-                    min={0}
-                    max={150}
-                    value={traveler.age}
-                    onChange={(e) => updateTraveler(traveler.key, { age: e.target.value })}
-                    disabled={!editable || loading}
-                  />
-                  <div className="min-w-0">
-                    <p className="mb-1 text-sm font-medium text-atg-fg">
-                      {t('travelerBasePrice', { currency })}
-                    </p>
-                    <p className="flex h-11 items-center rounded-lg border border-atg-border bg-atg-muted/20 px-3 text-sm tabular-nums text-atg-muted">
-                      {traveler.basePriceCents != null
-                        ? formatMoney(traveler.basePriceCents, currency)
-                        : '—'}
-                    </p>
-                  </div>
-                  <Input
-                    label={t('travelerPrice', { currency })}
-                    name={`traveler-price-${traveler.key}`}
-                    type="text"
-                    inputMode="decimal"
-                    value={traveler.price}
-                    onChange={(e) => updateTraveler(traveler.key, { price: e.target.value })}
-                    disabled={!editable || loading}
-                  />
-                  {editable && travelers.length > 1 ? (
-                    <div className="flex items-end sm:col-span-2 lg:col-span-1">
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="outline"
-                        className="!border-red-300 !text-red-700 dark:!text-red-400"
-                        onClick={() => removeTraveler(traveler.key)}
-                        disabled={loading}
-                      >
-                        {t('removeTraveler')}
-                      </Button>
-                    </div>
-                  ) : null}
-                </div>
-              </div>
-            ))}
+                {t('addTraveler')}
+              </Button>
+            ) : null}
           </div>
+        ) : (
+          <>
+            <div
+              className="hidden border-b border-atg-border bg-atg-muted/5 px-4 py-2 lg:grid lg:grid-cols-[2.25rem_minmax(0,1fr)_5rem_7rem_7rem_5.5rem] lg:items-center lg:gap-3"
+              aria-hidden
+            >
+              <span />
+              <span className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+                {t('travelerName')}
+              </span>
+              <span className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+                {t('travelerAge')}
+              </span>
+              <span className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+                {t('travelerBasePrice', { currency })}
+              </span>
+              <span className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+                {t('travelerPrice', { currency })}
+              </span>
+              <span />
+            </div>
+
+            <ul className="divide-y divide-atg-border">
+              {travelers.map((traveler, index) => (
+                <li key={traveler.key} className="px-4 py-4">
+                  <div className="mb-3 flex items-center gap-2 lg:hidden">
+                    <span
+                      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold tabular-nums text-primary"
+                      aria-hidden
+                    >
+                      {index + 1}
+                    </span>
+                    <span className="text-sm font-medium text-atg-fg">
+                      {t('travelerNumber', { number: index + 1 })}
+                    </span>
+                  </div>
+
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[2.25rem_minmax(0,1fr)_5rem_7rem_7rem_5.5rem] lg:items-end lg:gap-3">
+                    <span
+                      className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold tabular-nums text-primary lg:flex"
+                      aria-hidden
+                    >
+                      {index + 1}
+                    </span>
+
+                    <Input
+                      label={t('travelerName')}
+                      name={`traveler-name-${traveler.key}`}
+                      value={traveler.fullName}
+                      onChange={(e) => updateTraveler(traveler.key, { fullName: e.target.value })}
+                      disabled={!editable || loading}
+                      wrapperClassName="sm:col-span-2 lg:col-span-1 lg:[&>div:first-child]:sr-only lg:[&>div:first-child]:mb-0 lg:[&>div:first-child]:h-0"
+                      inputClassName="py-2.5"
+                    />
+
+                    <Input
+                      label={t('travelerAge')}
+                      name={`traveler-age-${traveler.key}`}
+                      type="number"
+                      min={0}
+                      max={150}
+                      value={traveler.age}
+                      onChange={(e) => updateTraveler(traveler.key, { age: e.target.value })}
+                      disabled={!editable || loading}
+                      wrapperClassName="lg:[&>div:first-child]:sr-only lg:[&>div:first-child]:mb-0 lg:[&>div:first-child]:h-0"
+                      inputClassName="py-2.5"
+                    />
+
+                    <ReadOnlyMoneyField
+                      label={t('travelerBasePrice', { currency })}
+                      compact
+                      value={
+                        traveler.basePriceCents != null
+                          ? formatMoney(traveler.basePriceCents, currency)
+                          : '—'
+                      }
+                    />
+
+                    <Input
+                      label={t('travelerPrice', { currency })}
+                      name={`traveler-price-${traveler.key}`}
+                      type="text"
+                      inputMode="decimal"
+                      value={traveler.price}
+                      onChange={(e) => updateTraveler(traveler.key, { price: e.target.value })}
+                      disabled={!editable || loading}
+                      wrapperClassName="lg:[&>div:first-child]:sr-only lg:[&>div:first-child]:mb-0 lg:[&>div:first-child]:h-0"
+                      inputClassName="py-2.5 tabular-nums"
+                    />
+
+                    {editable && travelers.length > 1 ? (
+                      <div className="flex items-end sm:col-span-2 lg:col-span-1 lg:justify-end">
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="ghost"
+                          className="!text-red-600 hover:!bg-red-50 dark:!text-red-400"
+                          onClick={() => removeTraveler(traveler.key)}
+                          disabled={loading}
+                        >
+                          {t('removeTraveler')}
+                        </Button>
+                      </div>
+                    ) : (
+                      <span className="hidden lg:block" aria-hidden />
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </>
         )}
 
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div className="rounded-lg border border-atg-border bg-atg-muted/10 px-4 py-3">
-            <p className="text-xs font-medium uppercase tracking-wide text-atg-muted">
-              {t('subtotalLabel')}
-            </p>
-            <p className="mt-1 text-lg font-semibold tabular-nums text-atg-fg">
-              {formatCentsToMoney(subtotalCents)} {currency}
-            </p>
+        <div className="border-t border-atg-border bg-atg-muted/5 px-4 py-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-end">
+            <div className="rounded-lg border border-atg-border/70 bg-atg-elevated px-4 py-3 sm:min-w-[11rem] sm:text-right">
+              <p className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+                {t('subtotalLabel')}
+              </p>
+              <p className="mt-1 text-xl font-semibold tabular-nums text-atg-fg">
+                {formatMoney(subtotalCents, currency)}
+              </p>
+            </div>
+            <div className="w-full sm:max-w-xs">
+              <Input
+                label={t('totalLabel', { currency })}
+                name="adjustedTotal"
+                type="text"
+                inputMode="decimal"
+                value={adjustedTotal}
+                onChange={(e) => {
+                  setTotalTouched(true);
+                  setAdjustedTotal(e.target.value);
+                  setPricingDirty(true);
+                }}
+                hint={t('totalOverrideHint')}
+                disabled={loading || !editable}
+                inputClassName="py-2.5 tabular-nums font-semibold"
+              />
+            </div>
           </div>
-          <Input
-            label={t('totalLabel', { currency })}
-            name="adjustedTotal"
-            type="text"
-            inputMode="decimal"
-            value={adjustedTotal}
-            onChange={(e) => {
-              setTotalTouched(true);
-              setAdjustedTotal(e.target.value);
-              setPricingDirty(true);
-            }}
-            hint={t('totalOverrideHint')}
-            disabled={loading}
-          />
         </div>
       </div>
     );

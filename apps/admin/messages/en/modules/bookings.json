@@ -211,6 +211,8 @@
     "totalHint": "Adjust the total if needed before approval.",
     "totalOverrideHint": "Auto-calculated from traveler prices. Edit to apply a manual override.",
     "travelersTitle": "Payment breakdown by traveler",
+    "travelersCount": "{count, plural, one {# traveler} other {# travelers}}",
+    "travelerNumber": "Traveler {number}",
     "travelerName": "Traveler name",
     "travelerAge": "Age",
     "travelerBasePrice": "Base price ({currency})",
