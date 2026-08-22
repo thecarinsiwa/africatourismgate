@@ -66,9 +66,11 @@ type BookingDetailPageProps = {
 function BookingDetailSkeleton() {
   return (
     <div className="space-y-6">
-      <Skeleton className="h-36 w-full rounded-xl" />
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(280px,1fr)]">
+        <Skeleton className="h-36 w-full rounded-xl" />
+        <Skeleton className="h-36 w-full rounded-xl" />
+      </div>
       <Skeleton className="h-48 w-full rounded-xl" />
-      <Skeleton className="h-32 w-full rounded-xl" />
       <Skeleton className="h-56 w-full rounded-xl" />
     </div>
   );
@@ -369,57 +371,72 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
         </p>
       ) : null}
 
-      <Card variant="dashboard" padding="md" className="space-y-4">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div className="min-w-0 space-y-1">
-            <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-xl font-semibold text-atg-fg">
-                {clientName || client.email}
-              </h2>
-              <DataTableBadge variant={BOOKING_STATUS_VARIANTS[booking.status]}>
-                {getBookingStatusLabel(booking.status, statusLabels)}
-              </DataTableBadge>
-            </div>
-            <p className="text-sm">
-              <a
-                href={`mailto:${client.email}`}
-                className="font-medium text-primary hover:underline"
-              >
-                {client.email}
-              </a>
-            </p>
-            {client.organizationName ? (
-              <p className="text-sm text-atg-muted">{client.organizationName}</p>
-            ) : null}
-            <p className="font-mono text-xs text-atg-muted">
-              {t('reference', { idPrefix: formatBookingRef(booking.id) })}
-            </p>
-            {unreadMessageCount > 0 ? (
-              <p className="text-sm font-medium text-primary">
-                {t('summary.unreadMessages', { count: unreadMessageCount })}
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(280px,1fr)] lg:items-start">
+        <Card variant="dashboard" padding="md" className="min-w-0 space-y-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0 space-y-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <h2 className="text-xl font-semibold text-atg-fg">
+                  {clientName || client.email}
+                </h2>
+                <DataTableBadge variant={BOOKING_STATUS_VARIANTS[booking.status]}>
+                  {getBookingStatusLabel(booking.status, statusLabels)}
+                </DataTableBadge>
+              </div>
+              <p className="text-sm">
+                <a
+                  href={`mailto:${client.email}`}
+                  className="font-medium text-primary hover:underline"
+                >
+                  {client.email}
+                </a>
               </p>
-            ) : null}
+              {client.organizationName ? (
+                <p className="text-sm text-atg-muted">{client.organizationName}</p>
+              ) : null}
+              <p className="font-mono text-xs text-atg-muted">
+                {t('reference', { idPrefix: formatBookingRef(booking.id) })}
+              </p>
+              {unreadMessageCount > 0 ? (
+                <p className="text-sm font-medium text-primary">
+                  {t('summary.unreadMessages', { count: unreadMessageCount })}
+                </p>
+              ) : null}
+            </div>
+            <div className="shrink-0 text-left sm:text-right">
+              <p className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+                {t('clientFields.total')}
+              </p>
+              <p className="tabular-nums text-2xl font-semibold text-atg-fg">
+                {formatMoney(detail.totalCents, detail.currency)}
+              </p>
+              <p className="mt-1 text-sm tabular-nums text-atg-muted">
+                {t('summary.createdAt', { date: formatDateTime(booking.createdAt) })}
+              </p>
+            </div>
           </div>
-          <div className="shrink-0 text-left sm:text-right">
-            <p className="text-xs font-medium uppercase tracking-wide text-atg-muted">
-              {t('clientFields.total')}
-            </p>
-            <p className="tabular-nums text-2xl font-semibold text-atg-fg">
-              {formatMoney(detail.totalCents, detail.currency)}
-            </p>
-            <p className="mt-1 text-sm tabular-nums text-atg-muted">
-              {t('summary.createdAt', { date: formatDateTime(booking.createdAt) })}
-            </p>
-          </div>
-        </div>
 
-        <BookingStatusTimeline
-          currentStatus={booking.status}
-          history={detail.statusHistory}
-          showHistory={false}
-          className="border-t border-atg-border pt-4"
-        />
-      </Card>
+          <BookingStatusTimeline
+            currentStatus={booking.status}
+            history={detail.statusHistory}
+            showHistory={false}
+            className="border-t border-atg-border pt-4"
+          />
+        </Card>
+
+        <section className="min-w-0 space-y-3">
+          <h2 className="text-lg font-semibold text-atg-fg">{t('sections.payments')}</h2>
+          <Card variant="dashboard" padding="none" className="overflow-hidden">
+            <DataTable
+              columns={paymentColumns}
+              data={detail.payments}
+              emptyMessage={t('paymentsEmpty')}
+              getRowId={(row) => row.id}
+              aria-label={t('paymentsAriaLabel')}
+            />
+          </Card>
+        </section>
+      </div>
 
       <BookingAssistedApprovalPanel
         bookingId={bookingId}
@@ -441,19 +458,6 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
             emptyMessage={t('linesEmpty')}
             getRowId={(row) => row.id}
             aria-label={t('linesAriaLabel')}
-          />
-        </Card>
-      </section>
-
-      <section className="space-y-3">
-        <h2 className="text-lg font-semibold text-atg-fg">{t('sections.payments')}</h2>
-        <Card variant="dashboard" padding="none" className="overflow-hidden">
-          <DataTable
-            columns={paymentColumns}
-            data={detail.payments}
-            emptyMessage={t('paymentsEmpty')}
-            getRowId={(row) => row.id}
-            aria-label={t('paymentsAriaLabel')}
           />
         </Card>
       </section>
