@@ -376,7 +376,10 @@
       },
       "id": {
         "metaTitle": "Edit promo code",
-        "backLabel": "Back to promo codes"
+        "backLabel": "Back to promo codes",
+        "voir": {
+          "metaTitle": "View promo code"
+        }
       }
     },
     "promotions": {

@@ -26,6 +26,19 @@
   "edit": {
     "pageTitle": "Editar código promocional"
   },
+  "view": {
+    "title": "Ver código promocional",
+    "editButton": "Editar código promocional",
+    "subtitle": "Detalles del código utilizable en el checkout.",
+    "infoTitle": "Código",
+    "metaTitle": "Validez y seguimiento",
+    "checkoutId": "ID",
+    "badge": "Código promo",
+    "heroHint": "Introducido tal cual por el cliente en el checkout.",
+    "ariaLabel": "Código promocional {code}",
+    "usageHint": "{count} uso(s) registrado(s)",
+    "notFound": "Código promocional no encontrado."
+  },
   "form": {
     "validation": {
       "codeRequired": "El código es obligatorio.",

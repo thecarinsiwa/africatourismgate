@@ -26,6 +26,19 @@
   "edit": {
     "pageTitle": "Edit promo code"
   },
+  "view": {
+    "title": "View promo code",
+    "editButton": "Edit promo code",
+    "subtitle": "Details of the code usable at checkout.",
+    "infoTitle": "Code",
+    "metaTitle": "Validity & tracking",
+    "checkoutId": "ID",
+    "badge": "Promo code",
+    "heroHint": "Entered as-is by the customer at checkout.",
+    "ariaLabel": "Promo code {code}",
+    "usageHint": "{count} redemption(s) recorded",
+    "notFound": "Promo code not found."
+  },
   "form": {
     "validation": {
       "codeRequired": "Code is required.",

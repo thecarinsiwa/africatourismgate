@@ -376,7 +376,10 @@
       },
       "id": {
         "metaTitle": "Modifier le code promo",
-        "backLabel": "Retour aux codes promo"
+        "backLabel": "Retour aux codes promo",
+        "voir": {
+          "metaTitle": "Voir le code promo"
+        }
       }
     },
     "promotions": {
