@@ -4,6 +4,7 @@ import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import {
   AlertDialog,
+  Button,
   Card,
   DataTable,
   DataTableActionButton,
@@ -12,12 +13,15 @@ import {
   DataTablePagination,
   FilterBar,
   Input,
+  useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { PromoCode } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import type { PromoCodesListFilter } from '../../config/promo-codes-kpi';
 import { getApiClient } from '../../lib/auth/api';
+import { exportCsv } from '../../lib/export-csv';
 import {
   usePromoDiscountLabels,
   usePromoDiscountTypeLabels,
@@ -37,8 +41,6 @@ import {
   getPromoValidityState,
 } from '../../lib/promo-validity';
 
-import type { PromoCodesListFilter } from '../../config/promo-codes-kpi';
-
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
 
@@ -53,12 +55,14 @@ export function PromoCodesList({ listFilter, onListFilterChange }: PromoCodesLis
   const tStatus = useTranslations('modules.promoCodes.status');
   const tCommon = useTranslations('modules.common');
   const tDataTable = useTranslations('modules.common.dataTable');
+  const tExport = useTranslations('modules.common.exportCsv');
   const tUsage = usePromoUsageLabels();
   const discountLabels = usePromoDiscountLabels();
   const discountTypeLabels = usePromoDiscountTypeLabels();
   const validityLabels = usePromoValidityLabels();
   const paginationLabels = useDataTablePaginationLabels();
   const hydrated = useHydrated();
+  const { toast } = useToast();
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -284,6 +288,62 @@ export function PromoCodesList({ listFilter, onListFilterChange }: PromoCodesLis
   const promoCodes = state.status === 'ready' ? state.promoCodes : [];
   const emptyMessage = hasFilters ? t('emptySearch') : t('emptyDefault');
 
+  const handleExportCsv = useCallback(() => {
+    if (promoCodes.length === 0) return;
+    const date = new Date().toISOString().slice(0, 10);
+    exportCsv({
+      filename: `codes-promo-${date}.csv`,
+      columns: [
+        {
+          header: t('columns.code'),
+          value: (row) => row.code,
+        },
+        {
+          header: t('columns.discount'),
+          value: (row) => formatPromoDiscountLabel(row, discountLabels),
+        },
+        {
+          header: tCommon('columns.type'),
+          value: (row) => getPromoDiscountTypeLabel(row.discountType, discountTypeLabels),
+        },
+        {
+          header: t('columns.validity'),
+          value: (row) => formatPromoValidityRange(row.validFrom, row.validUntil),
+        },
+        {
+          header: t('columns.usage'),
+          value: (row) =>
+            formatPromoUsageLabel(
+              row.redemptionCount,
+              row.maxRedemptions,
+              tUsage.format,
+              tUsage.unlimitedMax,
+            ),
+        },
+        {
+          header: t('columns.status'),
+          value: (row) => (row.active === 1 ? tStatus('active') : tStatus('inactive')),
+        },
+        {
+          header: 'ID',
+          value: (row) => row.id,
+        },
+      ],
+      rows: promoCodes,
+    });
+    toast({ variant: 'success', message: tExport('success') });
+  }, [
+    discountLabels,
+    discountTypeLabels,
+    promoCodes,
+    t,
+    tCommon,
+    tExport,
+    tStatus,
+    tUsage,
+    toast,
+  ]);
+
   return (
     <>
       <AlertDialog
@@ -308,6 +368,17 @@ export function PromoCodesList({ listFilter, onListFilterChange }: PromoCodesLis
           clearLabel={tCommon('filters.clearAll')}
           applyLabel={tCommon('filters.apply')}
           toggleLabel={tCommon('filters.toggle')}
+          actions={
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={isLoading || promoCodes.length === 0}
+              onClick={handleExportCsv}
+            >
+              {tExport('button')}
+            </Button>
+          }
           filters={
             <div className="min-w-[200px] flex-1 sm:max-w-md">
               <Input
