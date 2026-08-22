@@ -9,6 +9,7 @@ import { newId } from '../../../common/utils/uuid';
 import {
   BookingGuideAssignmentHistory,
   BookingGuideAssignments,
+  BookingItems,
   Bookings,
   TourGuides,
   Users,
@@ -30,7 +31,11 @@ import {
 } from './dto/tour-guide-booking-list-item.dto';
 import { TourGuideBookingsListQueryDto } from './dto/tour-guide-bookings-list-query.dto';
 import { GuideScheduleConflictService } from './guide-schedule-conflict.service';
-import { parseScheduleInstant } from './guide-schedule.util';
+import {
+  assertWithinVisitWindow,
+  deriveVisitWindowFromItems,
+  parseScheduleInstant,
+} from './guide-schedule.util';
 import { TourGuidesService } from './tour-guides.service';
 import { BookingGuideAssignmentEmailService } from './booking-guide-assignment-email.service';
 
@@ -43,6 +48,8 @@ export class BookingGuideAssignmentsService {
     private readonly historyRepository: Repository<BookingGuideAssignmentHistory>,
     @InjectRepository(Bookings)
     private readonly bookingsRepository: Repository<Bookings>,
+    @InjectRepository(BookingItems)
+    private readonly bookingItemsRepository: Repository<BookingItems>,
     @InjectRepository(Users)
     private readonly usersRepository: Repository<Users>,
     @InjectRepository(TourGuides)
@@ -211,6 +218,7 @@ export class BookingGuideAssignmentsService {
       );
 
       await this.scheduleConflictService.assertAssignable(item.guideId, start, end);
+      await this.assertSlotWithinBookingWindow(bookingId, start, end);
 
       const created = this.assignmentsRepository.create({
         id: newId(),
@@ -255,6 +263,7 @@ export class BookingGuideAssignmentsService {
       nextEnd,
       { excludeAssignmentId: assignment.id },
     );
+    await this.assertSlotWithinBookingWindow(bookingId, nextStart, nextEnd);
 
     assignment.startDatetime = nextStart;
     assignment.endDatetime = nextEnd;
@@ -333,6 +342,22 @@ export class BookingGuideAssignmentsService {
       throw new NotFoundException(`Réservation ${bookingId} introuvable.`);
     }
     return booking;
+  }
+
+  private async assertSlotWithinBookingWindow(
+    bookingId: string,
+    slotStart: Date,
+    slotEnd: Date,
+  ): Promise<void> {
+    const items = await this.bookingItemsRepository.find({
+      where: { bookingId, deletedAt: IsNull() },
+      select: ['startDate', 'endDate'],
+    });
+    const window = deriveVisitWindowFromItems(items);
+    if (!window) {
+      return;
+    }
+    assertWithinVisitWindow(window, slotStart, slotEnd);
   }
 
   private async recordHistory(

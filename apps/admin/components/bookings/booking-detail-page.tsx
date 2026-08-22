@@ -488,7 +488,12 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
           </TabsContent>
 
           <TabsContent value="guides">
-            <BookingGuidesSection bookingId={bookingId} canWrite={canWrite} embedded />
+            <BookingGuidesSection
+              bookingId={bookingId}
+              items={detail.items}
+              canWrite={canWrite}
+              embedded
+            />
           </TabsContent>
 
           <TabsContent value="documents">

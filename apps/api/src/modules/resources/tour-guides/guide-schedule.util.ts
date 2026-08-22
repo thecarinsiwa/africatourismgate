@@ -67,3 +67,38 @@ export function overlapsDay(
   const { start, end } = dayBounds(date);
   return intervalsOverlap(slotStart, slotEnd, start, end);
 }
+
+export function deriveVisitWindowFromItems(
+  items: Array<{ startDate: string | null; endDate?: string | null }>,
+): { start: Date; end: Date; startDate: string; endDate: string } | null {
+  const dated = items.filter((item) => item.startDate);
+  if (dated.length === 0) {
+    return null;
+  }
+
+  const starts = dated.map((item) => item.startDate!.slice(0, 10)).sort();
+  const ends = dated
+    .map((item) => (item.endDate ?? item.startDate)!.slice(0, 10))
+    .sort();
+  const startDate = starts[0]!;
+  const endDate = ends[ends.length - 1]!;
+
+  return {
+    startDate,
+    endDate,
+    start: dayBounds(startDate).start,
+    end: dayBounds(endDate).end,
+  };
+}
+
+export function assertWithinVisitWindow(
+  window: { start: Date; end: Date },
+  slotStart: Date,
+  slotEnd: Date,
+): void {
+  if (slotStart < window.start || slotEnd > window.end) {
+    throw new BadRequestException(
+      'Le créneau doit être compris dans la période de la réservation.',
+    );
+  }
+}

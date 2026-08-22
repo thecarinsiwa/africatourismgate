@@ -311,6 +311,8 @@
     "assignConfirmButton": "Assign and notify",
     "noGuidesForSlot": "No guides available for this time range.",
     "noGuidesAvailable": "No active guides available.",
+    "visitWindowHint": "Allowed slots from {start} through {end} (inclusive).",
+    "noVisitDates": "This booking has no dates — guide assignment is not available.",
     "editSlotTitle": "Edit slot",
     "editSlotDescription": "Adjust times for “{name}”. Conflicts are checked on save.",
     "removeTitle": "Remove slot",
@@ -322,7 +324,8 @@
     "cancel": "Cancel",
     "viewProfile": "View profile",
     "validation": {
-      "endAfterStart": "End time must be after start time."
+      "endAfterStart": "End time must be after start time.",
+      "outsideVisitWindow": "The slot must fall within the booking period."
     },
     "fields": {
       "startDatetime": "Start",

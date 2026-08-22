@@ -19,6 +19,7 @@ import { parseApiErrorMessage } from '@africatourismgate/api-client';
 import type {
   BookingGuideAssignment,
   BookingGuideRole,
+  BookingItem,
   TourGuide,
   TourGuideAvailableItem,
 } from '@africatourismgate/types';
@@ -26,6 +27,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import { deriveBookingVisitWindow, isDatetimeLocalWithinWindow } from '../../lib/booking-visit-window';
 import { BookingGuideAssignmentHistorySection } from './booking-guide-assignment-history-section';
 import { fromDatetimeLocalValue, toDatetimeLocalValue } from '../../lib/flight-datetime';
 import {
@@ -67,6 +69,7 @@ async function listAllActiveTourGuides(): Promise<TourGuide[]> {
 
 type BookingGuidesSectionProps = {
   bookingId: string;
+  items: BookingItem[];
   canWrite: boolean;
   embedded?: boolean;
 };
@@ -143,6 +146,7 @@ function GuideScheduleConflictAlert({
 
 export function BookingGuidesSection({
   bookingId,
+  items,
   canWrite,
   embedded = false,
 }: BookingGuidesSectionProps) {
@@ -153,6 +157,9 @@ export function BookingGuidesSection({
   const tActions = useTranslations('common.actions');
   const roleLabels = useBookingGuideRoleLabels();
   const formatDateTime = useFormatDateTime();
+
+  const visitWindow = useMemo(() => deriveBookingVisitWindow(items), [items]);
+
   const guideSelectId = useId();
   const roleSelectId = useId();
 
@@ -174,6 +181,38 @@ export function BookingGuidesSection({
   const [editValues, setEditValues] = useState<SlotFormValues>(emptyForm);
   const [savingEdit, setSavingEdit] = useState(false);
   const [editConflict, setEditConflict] = useState<ParsedGuideScheduleConflictError | null>(null);
+
+  const formStartBounds = useMemo(() => {
+    if (!visitWindow) return null;
+    return {
+      min: visitWindow.minDatetimeLocal,
+      max: formValues.endDatetime || visitWindow.maxDatetimeLocal,
+    };
+  }, [formValues.endDatetime, visitWindow]);
+
+  const formEndBounds = useMemo(() => {
+    if (!visitWindow) return null;
+    return {
+      min: formValues.startDatetime || visitWindow.minDatetimeLocal,
+      max: visitWindow.maxDatetimeLocal,
+    };
+  }, [formValues.startDatetime, visitWindow]);
+
+  const editStartBounds = useMemo(() => {
+    if (!visitWindow) return null;
+    return {
+      min: visitWindow.minDatetimeLocal,
+      max: editValues.endDatetime || visitWindow.maxDatetimeLocal,
+    };
+  }, [editValues.endDatetime, visitWindow]);
+
+  const editEndBounds = useMemo(() => {
+    if (!visitWindow) return null;
+    return {
+      min: editValues.startDatetime || visitWindow.minDatetimeLocal,
+      max: visitWindow.maxDatetimeLocal,
+    };
+  }, [editValues.startDatetime, visitWindow]);
 
   const resolveActionError = useCallback(
     (err: unknown): string => {
@@ -275,10 +314,17 @@ export function BookingGuidesSection({
   }, [slotRangeIso]);
 
   const handleAssignRequest = useCallback(() => {
-    if (!formValues.guideId || !slotRangeIso) return;
+    if (!formValues.guideId || !slotRangeIso || !visitWindow) return;
+    if (
+      !isDatetimeLocalWithinWindow(formValues.startDatetime, visitWindow) ||
+      !isDatetimeLocalWithinWindow(formValues.endDatetime, visitWindow)
+    ) {
+      setActionError(t('validation.outsideVisitWindow'));
+      return;
+    }
     setConflictError(null);
     setAssignConfirmOpen(true);
-  }, [formValues.guideId, slotRangeIso]);
+  }, [formValues, slotRangeIso, t, visitWindow]);
 
   const handleAssignConfirm = useCallback(async () => {
     if (!formValues.guideId || !slotRangeIso) return;
@@ -321,11 +367,18 @@ export function BookingGuidesSection({
   }, []);
 
   const handleEditSave = useCallback(async () => {
-    if (!editTarget) return;
+    if (!editTarget || !visitWindow) return;
     setSavingEdit(true);
     setEditConflict(null);
     setActionError(null);
     try {
+      if (
+        !isDatetimeLocalWithinWindow(editValues.startDatetime, visitWindow) ||
+        !isDatetimeLocalWithinWindow(editValues.endDatetime, visitWindow)
+      ) {
+        setActionError(t('validation.outsideVisitWindow'));
+        return;
+      }
       const startDatetime = fromDatetimeLocalValue(editValues.startDatetime);
       const endDatetime = fromDatetimeLocalValue(editValues.endDatetime);
       if (new Date(startDatetime) >= new Date(endDatetime)) {
@@ -350,7 +403,7 @@ export function BookingGuidesSection({
     } finally {
       setSavingEdit(false);
     }
-  }, [bookingId, editTarget, editValues, getBookingsErrorMessage, load, t]);
+  }, [bookingId, editTarget, editValues, getBookingsErrorMessage, load, t, visitWindow]);
 
   const handleRemoveConfirm = useCallback(async () => {
     if (!confirmRemoveId) return;
@@ -477,7 +530,9 @@ export function BookingGuidesSection({
   );
 
   const canSubmitAssign =
-    Boolean(formValues.guideId && slotRangeIso) && !assigning && !searchingGuides;
+    Boolean(formValues.guideId && slotRangeIso && visitWindow) &&
+    !assigning &&
+    !searchingGuides;
 
   return (
     <>
@@ -574,11 +629,21 @@ export function BookingGuidesSection({
           {editConflict ? (
             <GuideScheduleConflictAlert error={editConflict} t={t} formatDateTime={formatDateTime} />
           ) : null}
+          {visitWindow ? (
+            <p className="text-xs text-atg-muted">
+              {t('visitWindowHint', {
+                start: visitWindow.startDate,
+                end: visitWindow.endDate,
+              })}
+            </p>
+          ) : null}
           <div className="grid gap-4 sm:grid-cols-2">
             <Input
               label={t('fields.startDatetime')}
               type="datetime-local"
               value={editValues.startDatetime}
+              min={editStartBounds?.min}
+              max={editStartBounds?.max}
               onChange={(event) =>
                 setEditValues((current) => ({ ...current, startDatetime: event.target.value }))
               }
@@ -588,6 +653,8 @@ export function BookingGuidesSection({
               label={t('fields.endDatetime')}
               type="datetime-local"
               value={editValues.endDatetime}
+              min={editEndBounds?.min}
+              max={editEndBounds?.max}
               onChange={(event) =>
                 setEditValues((current) => ({ ...current, endDatetime: event.target.value }))
               }
@@ -654,16 +721,25 @@ export function BookingGuidesSection({
         ) : null}
 
         {canWrite ? (
+          visitWindow ? (
           <Card variant="dashboard" padding="md" className="space-y-4">
             <div>
               <p className="text-sm font-medium text-atg-fg">{t('assignTitle')}</p>
               <p className="mt-1 text-xs text-atg-muted">{t('assignHint')}</p>
+              <p className="mt-1 text-xs text-atg-muted">
+                {t('visitWindowHint', {
+                  start: visitWindow.startDate,
+                  end: visitWindow.endDate,
+                })}
+              </p>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <Input
                 label={t('fields.startDatetime')}
                 type="datetime-local"
                 value={formValues.startDatetime}
+                min={formStartBounds?.min}
+                max={formStartBounds?.max}
                 onChange={(event) =>
                   setFormValues((current) => ({ ...current, startDatetime: event.target.value }))
                 }
@@ -673,6 +749,8 @@ export function BookingGuidesSection({
                 label={t('fields.endDatetime')}
                 type="datetime-local"
                 value={formValues.endDatetime}
+                min={formEndBounds?.min}
+                max={formEndBounds?.max}
                 onChange={(event) =>
                   setFormValues((current) => ({ ...current, endDatetime: event.target.value }))
                 }
@@ -752,6 +830,11 @@ export function BookingGuidesSection({
               </Button>
             </div>
           </Card>
+          ) : (
+            <Card variant="dashboard" padding="md">
+              <p className="text-sm text-atg-muted">{t('noVisitDates')}</p>
+            </Card>
+          )
         ) : null}
 
         <Card variant="dashboard" padding="none" className="overflow-hidden">
