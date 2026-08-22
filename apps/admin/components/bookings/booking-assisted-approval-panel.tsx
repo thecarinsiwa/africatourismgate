@@ -587,13 +587,14 @@ export function BookingAssistedApprovalPanel({
         ) : (
           <>
             <div
-              className="hidden border-b border-atg-border bg-atg-muted/5 px-4 py-2 lg:grid lg:grid-cols-[2.25rem_minmax(0,1fr)_5rem_7rem_7rem_5.5rem] lg:items-center lg:gap-3"
+              className="hidden border-b border-atg-border bg-atg-muted/5 px-4 py-2 lg:grid lg:grid-cols-[2.25rem_minmax(0,1fr)_auto_5rem_7rem_7rem_5.5rem] lg:items-center lg:gap-3"
               aria-hidden
             >
               <span />
               <span className="text-xs font-medium uppercase tracking-wide text-atg-muted">
                 {t('travelerName')}
               </span>
+              <span className="hidden lg:block" aria-hidden />
               <span className="text-xs font-medium uppercase tracking-wide text-atg-muted">
                 {t('travelerAge')}
               </span>
@@ -621,7 +622,7 @@ export function BookingAssistedApprovalPanel({
                     </span>
                   </div>
 
-                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[2.25rem_minmax(0,1fr)_5rem_7rem_7rem_5.5rem] lg:items-end lg:gap-3">
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[2.25rem_minmax(0,1fr)_auto_5rem_7rem_7rem_5.5rem] lg:items-end lg:gap-3">
                     <span
                       className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold tabular-nums text-primary lg:flex"
                       aria-hidden
@@ -637,23 +638,27 @@ export function BookingAssistedApprovalPanel({
                       disabled={!editable || loading}
                       wrapperClassName="sm:col-span-2 lg:col-span-1 lg:[&>div:first-child]:sr-only lg:[&>div:first-child]:mb-0 lg:[&>div:first-child]:h-0"
                       inputClassName="py-2.5"
-                      labelExtra={
-                        canApprove ? (
-                          <Button
-                            type="button"
-                            size="sm"
-                            variant="outline"
-                            disabled={loading}
-                            onClick={() => setDocumentModalTravelerIndex(index)}
-                          >
-                            {documentForTravelerIndex(identityDocuments, index)?.status ===
-                            'pending_review'
-                              ? t('viewDocumentPending')
-                              : t('viewDocument')}
-                          </Button>
-                        ) : undefined
-                      }
                     />
+
+                    {canApprove ? (
+                      <div className="flex items-end sm:col-span-2 lg:col-span-1 lg:justify-start">
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          className="w-full whitespace-nowrap sm:w-auto"
+                          disabled={loading}
+                          onClick={() => setDocumentModalTravelerIndex(index)}
+                        >
+                          {documentForTravelerIndex(identityDocuments, index)?.status ===
+                          'pending_review'
+                            ? t('viewDocumentPending')
+                            : t('viewDocument')}
+                        </Button>
+                      </div>
+                    ) : (
+                      <span className="hidden lg:block" aria-hidden />
+                    )}
 
                     <Input
                       label={t('travelerAge')}
