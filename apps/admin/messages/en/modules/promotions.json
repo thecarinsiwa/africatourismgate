@@ -25,6 +25,7 @@
     "cancel": "Cancel",
     "columns": {
       "campaign": "Campaign",
+      "discount": "Discount",
       "validity": "Validity",
       "usage": "Uses",
       "status": "Status"

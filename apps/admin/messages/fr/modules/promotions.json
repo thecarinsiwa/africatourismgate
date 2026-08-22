@@ -1,7 +1,7 @@
 {
   "status": {
-    "active": "Active",
-    "inactive": "Inactive"
+    "active": "Actif",
+    "inactive": "Inactif"
   },
   "validity": {
     "active": "En cours",
@@ -25,6 +25,7 @@
     "cancel": "Annuler",
     "columns": {
       "campaign": "Campagne",
+      "discount": "Réduction",
       "validity": "Validité",
       "usage": "Utilisations",
       "status": "Statut"

@@ -17,20 +17,26 @@ import {
 import type { Promotion } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import type { PromotionsListFilter } from '../../config/promotions-kpi';
 import { getApiClient } from '../../lib/auth/api';
-import { usePromoDiscountLabels, usePromoUsageLabels } from '../../lib/i18n/use-module-labels';
-import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
 import {
+  usePromoDiscountLabels,
+  usePromoDiscountTypeLabels,
+  usePromoUsageLabels,
+  usePromoValidityLabels,
+} from '../../lib/i18n/use-module-labels';
+import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
+import { useHydrated } from '../../lib/i18n/use-hydrated';
+import {
+  formatPromotionDiscountBadge,
   formatPromoUsageLabel,
   formatPromotionValidityDisplay,
+  getPromoDiscountTypeLabel,
+  getPromotionValidityState,
   getPromoUsageBadgeVariant,
+  getPromoValidityBadgeVariant,
+  getPromoValidityLabel,
 } from '../../lib/promo-validity';
-import {
-  PromotionPreviewBanner,
-  promotionToPreviewProps,
-} from './promotion-preview-banner';
-
-import type { PromotionsListFilter } from '../../config/promotions-kpi';
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
@@ -47,7 +53,10 @@ export function PromotionsList({ listFilter }: PromotionsListProps) {
   const tDataTable = useTranslations('modules.common.dataTable');
   const tUsage = usePromoUsageLabels();
   const discountLabels = usePromoDiscountLabels();
+  const discountTypeLabels = usePromoDiscountTypeLabels();
+  const validityLabels = usePromoValidityLabels();
   const paginationLabels = useDataTablePaginationLabels();
+  const hydrated = useHydrated();
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -155,28 +164,72 @@ export function PromotionsList({ listFilter }: PromotionsListProps) {
       {
         accessorKey: 'name',
         header: t('columns.campaign'),
-        cell: ({ row }) => (
-          <div className="max-w-md min-w-0 space-y-2">
-            <PromotionPreviewBanner
-              {...promotionToPreviewProps(row.original)}
-              compact
-            />
-          </div>
-        ),
+        cell: ({ row }) => {
+          const promo = row.original;
+          const description = promo.description?.trim();
+          return (
+            <div className="min-w-0 max-w-md">
+              <span className="block truncate font-medium text-atg-fg">{promo.name}</span>
+              {description ? (
+                <p className="line-clamp-1 text-xs text-atg-muted">{description}</p>
+              ) : null}
+            </div>
+          );
+        },
+      },
+      {
+        id: 'discount',
+        header: t('columns.discount'),
+        cell: ({ row }) => {
+          const promo = row.original;
+          const hasDiscount = promo.discountType != null && promo.discountValue != null;
+          return (
+            <div className="flex flex-wrap items-center gap-1.5">
+              <DataTableBadge variant="default" className="tabular-nums">
+                {formatPromotionDiscountBadge(
+                  {
+                    hasDiscount,
+                    discountType: promo.discountType,
+                    discountValue: promo.discountValue,
+                  },
+                  discountLabels,
+                )}
+              </DataTableBadge>
+              {hasDiscount && promo.discountType ? (
+                <DataTableBadge variant="muted">
+                  {getPromoDiscountTypeLabel(promo.discountType, discountTypeLabels)}
+                </DataTableBadge>
+              ) : null}
+            </div>
+          );
+        },
       },
       {
         id: 'validity',
         header: t('columns.validity'),
         meta: { hideOnMobile: true },
-        cell: ({ row }) => (
-          <span className="whitespace-nowrap text-sm tabular-nums text-atg-muted">
-            {formatPromotionValidityDisplay(
-              row.original.validFrom,
-              row.original.validUntil,
-              discountLabels,
-            )}
-          </span>
-        ),
+        cell: ({ row }) => {
+          const promo = row.original;
+          const validityState = hydrated
+            ? getPromotionValidityState(promo.validFrom, promo.validUntil)
+            : null;
+          return (
+            <div className="flex flex-col gap-1.5">
+              <span className="whitespace-nowrap text-sm tabular-nums text-atg-muted">
+                {formatPromotionValidityDisplay(
+                  promo.validFrom,
+                  promo.validUntil,
+                  discountLabels,
+                )}
+              </span>
+              {validityState ? (
+                <DataTableBadge variant={getPromoValidityBadgeVariant(validityState)}>
+                  {getPromoValidityLabel(validityState, validityLabels)}
+                </DataTableBadge>
+              ) : null}
+            </div>
+          );
+        },
       },
       {
         id: 'usage',
@@ -231,7 +284,19 @@ export function PromotionsList({ listFilter }: PromotionsListProps) {
         },
       },
     ],
-    [canWrite, deletingId, discountLabels, handleDeleteRequest, t, tCommon, tStatus, tUsage],
+    [
+      canWrite,
+      deletingId,
+      discountLabels,
+      discountTypeLabels,
+      handleDeleteRequest,
+      hydrated,
+      t,
+      tCommon,
+      tStatus,
+      tUsage,
+      validityLabels,
+    ],
   );
 
   const isLoading = state.status === 'loading';
