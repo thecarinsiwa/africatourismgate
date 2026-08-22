@@ -58,25 +58,33 @@ function formatTimestamp(value: string | Date | null | undefined): string {
   return String(value);
 }
 
+function parseSnapshot(
+  raw: Record<string, unknown>,
+  row: BookingGuideAssignmentHistory,
+): BookingGuideAssignmentHistorySnapshotDto {
+  const role = raw.role === 'secondary' ? 'secondary' : 'primary';
+  return {
+    bookingId: String(raw.bookingId ?? row.bookingId),
+    guideId: String(raw.guideId ?? row.guideId),
+    role,
+    startDatetime: formatTimestamp(raw.startDatetime as string | Date | null | undefined),
+    endDatetime: formatTimestamp(raw.endDatetime as string | Date | null | undefined),
+    notes: raw.notes == null ? null : String(raw.notes),
+  };
+}
+
 export function toBookingGuideAssignmentHistoryItemDto(
   row: BookingGuideAssignmentHistory,
   extras?: { guideDisplayName?: string | null; actorDisplayName?: string | null },
 ): BookingGuideAssignmentHistoryItemDto {
-  const snapshot = row.snapshot as BookingGuideAssignmentHistorySnapshotDto;
+  const snapshot = parseSnapshot(row.snapshot ?? {}, row);
   return {
     id: row.id,
     assignmentId: row.assignmentId,
     bookingId: row.bookingId,
     guideId: row.guideId,
     action: row.action,
-    snapshot: {
-      bookingId: String(snapshot.bookingId ?? row.bookingId),
-      guideId: String(snapshot.guideId ?? row.guideId),
-      role: snapshot.role ?? 'primary',
-      startDatetime: formatTimestamp(snapshot.startDatetime),
-      endDatetime: formatTimestamp(snapshot.endDatetime),
-      notes: snapshot.notes ?? null,
-    },
+    snapshot,
     actorUserId: row.actorUserId ?? null,
     actorDisplayName: extras?.actorDisplayName ?? null,
     guideDisplayName: extras?.guideDisplayName ?? null,
