@@ -13,7 +13,7 @@ import {
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { TourGuideBookingListItem } from '@africatourismgate/types';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import {
@@ -32,9 +32,39 @@ const PAGE_SIZE = 10;
 
 type GuideAssignedBookingsSectionProps = {
   guideId: string;
+  embedded?: boolean;
 };
 
-export function GuideAssignedBookingsSection({ guideId }: GuideAssignedBookingsSectionProps) {
+function formatSlotRange(startIso: string, endIso: string, locale: string): string {
+  try {
+    const start = new Date(startIso);
+    const end = new Date(endIso);
+    const sameDay = startIso.slice(0, 10) === endIso.slice(0, 10);
+    const intlLocale = locale.startsWith('en') ? 'en-US' : locale.startsWith('es') ? 'es-ES' : 'fr-FR';
+    const timeFmt: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit' };
+    const dateFmt: Intl.DateTimeFormatOptions = {
+      day: 'numeric',
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit',
+    };
+    if (sameDay) {
+      const day = start.toLocaleDateString(intlLocale, { weekday: 'short', day: 'numeric', month: 'short' });
+      const from = start.toLocaleTimeString(intlLocale, timeFmt);
+      const to = end.toLocaleTimeString(intlLocale, timeFmt);
+      return `${day} · ${from} – ${to}`;
+    }
+    return `${start.toLocaleString(intlLocale, dateFmt)} → ${end.toLocaleString(intlLocale, dateFmt)}`;
+  } catch {
+    return `${startIso} – ${endIso}`;
+  }
+}
+
+export function GuideAssignedBookingsSection({
+  guideId,
+  embedded = false,
+}: GuideAssignedBookingsSectionProps) {
+  const locale = useLocale();
   const { tourGuides: getTourGuidesErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.tourGuides.sections.bookings');
   const tCommon = useTranslations('modules.common');
@@ -101,11 +131,11 @@ export function GuideAssignedBookingsSection({ guideId }: GuideAssignedBookingsS
   const columns = useMemo<ColumnDef<TourGuideBookingListItem, unknown>[]>(
     () => [
       {
-        accessorKey: 'createdAt',
-        header: tColumns('date'),
+        id: 'schedule',
+        header: t('schedule'),
         cell: ({ row }) => (
-          <span className="whitespace-nowrap text-sm tabular-nums">
-            {formatDateTime(row.original.createdAt)}
+          <span className="whitespace-nowrap text-sm tabular-nums text-atg-fg">
+            {formatSlotRange(row.original.startDatetime, row.original.endDatetime, locale)}
           </span>
         ),
       },
@@ -176,6 +206,7 @@ export function GuideAssignedBookingsSection({ guideId }: GuideAssignedBookingsS
     ],
     [
       formatDateTime,
+      locale,
       roleLabels,
       statusLabels,
       t,
@@ -191,10 +222,12 @@ export function GuideAssignedBookingsSection({ guideId }: GuideAssignedBookingsS
 
   return (
     <section className="space-y-4">
-      <div>
-        <h3 className="text-sm font-semibold text-atg-fg">{t('title')}</h3>
-        <p className="mt-0.5 text-xs text-atg-muted">{t('intro')}</p>
-      </div>
+      {embedded ? null : (
+        <div>
+          <h3 className="text-sm font-semibold text-atg-fg">{t('title')}</h3>
+          <p className="mt-0.5 text-xs text-atg-muted">{t('intro')}</p>
+        </div>
+      )}
 
       {isError ? (
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">

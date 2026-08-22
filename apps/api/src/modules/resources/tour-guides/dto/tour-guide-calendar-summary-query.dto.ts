@@ -17,4 +17,9 @@ export class TourGuideCalendarSummaryQueryDto {
   @IsOptional()
   @IsUUID('4')
   organizationId?: string;
+
+  @ApiPropertyOptional({ format: 'uuid', description: 'Filtrer par guide (vue fiche)' })
+  @IsOptional()
+  @IsUUID('4')
+  guideId?: string;
 }

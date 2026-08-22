@@ -110,14 +110,29 @@
     "title": "Ver guía",
     "editButton": "Editar guía",
     "notFound": "Guía no encontrado.",
-    "subtitle": "Perfil y misiones asignadas.",
+    "subtitle": "Perfil, planning y misiones asignadas.",
     "infoTitle": "Información",
-    "contactEmail": "Correo de contacto"
+    "contactEmail": "Correo de contacto",
+    "linkedUser": "Cuenta de usuario",
+    "openFullCalendar": "Calendario global",
+    "inactiveHint": "Guía inactivo — el planning sigue siendo consultable.",
+    "tabsAria": "Secciones del guía",
+    "tabs": {
+      "profile": "Perfil",
+      "schedule": "Planning",
+      "missions": "Misiones"
+    },
+    "schedule": {
+      "title": "Planning",
+      "intro": "Disponibilidades y turnos de misión. Haga clic en un día para ver el detalle horario o marcar una indisponibilidad.",
+      "ariaLabel": "Planning del guía — {month}"
+    }
   },
   "sections": {
     "bookings": {
       "title": "Misiones asignadas",
-      "intro": "Reservas a las que está asignado este guía.",
+      "intro": "Reservas a las que está asignado este guía, por turno horario.",
+      "schedule": "Intervalo horario",
       "role": "Rol",
       "assignedAt": "Asignado el",
       "empty": "Ninguna misión asignada por el momento.",

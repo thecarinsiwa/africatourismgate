@@ -36,6 +36,7 @@ const OCCUPIED_EXCLUDED_BOOKING_STATUSES = ['cancelled', 'refunded', 'draft'] as
 type CalendarFilters = {
   destinationId?: string;
   organizationId?: string;
+  guideId?: string;
 };
 
 type GuideDayStatus = 'available' | 'occupied' | 'unavailable';
@@ -327,6 +328,13 @@ export class GuideAvailabilityService {
   }
 
   private async listActiveGuides(filters: CalendarFilters): Promise<TourGuides[]> {
+    if (filters.guideId) {
+      const guide = await this.tourGuidesRepository.findOne({
+        where: { id: filters.guideId, deletedAt: IsNull() },
+      });
+      return guide ? [guide] : [];
+    }
+
     const qb = this.tourGuidesRepository
       .createQueryBuilder('guide')
       .where('guide.deletedAt IS NULL')

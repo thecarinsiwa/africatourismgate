@@ -42,6 +42,7 @@ type TourGuideCalendarDayModalProps = {
   date: string | null;
   destinationId?: string;
   organizationId?: string;
+  guideId?: string;
   canWrite: boolean;
   onUpdated: () => void;
 };
@@ -69,6 +70,7 @@ export function TourGuideCalendarDayModal({
   date,
   destinationId,
   organizationId,
+  guideId,
   canWrite,
   onUpdated,
 }: TourGuideCalendarDayModalProps) {
@@ -99,18 +101,23 @@ export function TourGuideCalendarDayModal({
         date,
         destinationId,
         organizationId,
+        guideId,
       });
+      const guides = detail.guides.map((guide) => ({
+        ...guide,
+        slots: guide.slots ?? [],
+      }));
       setState({
         status: 'ready',
-        guides: detail.guides.map((guide) => ({
-          ...guide,
-          slots: guide.slots ?? [],
-        })),
+        guides,
       });
+      if (guideId && guides.length === 1) {
+        setExpandedGuideId(guides[0]!.guideId);
+      }
     } catch (error) {
       setState({ status: 'error', message: getTourGuidesErrorMessage(error) });
     }
-  }, [date, destinationId, getTourGuidesErrorMessage, organizationId]);
+  }, [date, destinationId, getTourGuidesErrorMessage, guideId, organizationId]);
 
   useEffect(() => {
     if (!open || !date) {

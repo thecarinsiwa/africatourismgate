@@ -1365,6 +1365,7 @@ export class ApiClient {
     params.set('month', query.month);
     if (query.destinationId) params.set('destinationId', query.destinationId);
     if (query.organizationId) params.set('organizationId', query.organizationId);
+    if (query.guideId) params.set('guideId', query.guideId);
     const qs = params.toString();
     return this.request<TourGuideCalendarSummary>(
       `/tour-guides/calendar/summary?${qs}`,
@@ -1378,6 +1379,7 @@ export class ApiClient {
     params.set('date', query.date);
     if (query.destinationId) params.set('destinationId', query.destinationId);
     if (query.organizationId) params.set('organizationId', query.organizationId);
+    if (query.guideId) params.set('guideId', query.guideId);
     const qs = params.toString();
     return this.request<TourGuideCalendarDayDetail>(`/tour-guides/calendar/day?${qs}`);
   }

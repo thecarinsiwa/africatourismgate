@@ -287,12 +287,14 @@ export interface TourGuideCalendarSummaryQuery {
   month: string;
   destinationId?: string;
   organizationId?: string;
+  guideId?: string;
 }
 
 export interface TourGuideCalendarDayQuery {
   date: string;
   destinationId?: string;
   organizationId?: string;
+  guideId?: string;
 }
 
 export interface UpsertGuideAvailabilityRequest {

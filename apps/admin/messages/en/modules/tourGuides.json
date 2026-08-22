@@ -110,14 +110,29 @@
     "title": "View guide",
     "editButton": "Edit guide",
     "notFound": "Guide not found.",
-    "subtitle": "Profile and assigned missions.",
+    "subtitle": "Profile, schedule and assigned missions.",
     "infoTitle": "Information",
-    "contactEmail": "Contact email"
+    "contactEmail": "Contact email",
+    "linkedUser": "Linked user account",
+    "openFullCalendar": "Global calendar",
+    "inactiveHint": "Inactive guide — schedule remains viewable.",
+    "tabsAria": "Guide sections",
+    "tabs": {
+      "profile": "Profile",
+      "schedule": "Schedule",
+      "missions": "Missions"
+    },
+    "schedule": {
+      "title": "Schedule",
+      "intro": "Availability and mission slots. Click a day for hourly detail or to mark unavailability.",
+      "ariaLabel": "Guide schedule — {month}"
+    }
   },
   "sections": {
     "bookings": {
       "title": "Assigned missions",
-      "intro": "Bookings this guide is assigned to.",
+      "intro": "Bookings this guide is assigned to, by time slot.",
+      "schedule": "Time range",
       "role": "Role",
       "assignedAt": "Assigned on",
       "empty": "No assigned missions yet.",
