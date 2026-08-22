@@ -34,7 +34,7 @@ import { formatDurationMinutes } from '../../lib/flight-datetime';
 import { ActivityMetaBadges } from './activity-meta-badges';
 import { ActivityItineraryStopsTimeline } from './activity-itinerary-stops-timeline';
 import { ActivityPhotosCarousel } from './activity-photos-carousel';
-import { ActivityThumbnail } from './activity-thumbnail';
+import { ActivityThumbnail, pickMainActivityImageUrl } from './activity-thumbnail';
 
 type ActivityViewPageProps = {
   activityId: string;
@@ -230,7 +230,12 @@ export function ActivityViewPage({ activityId }: ActivityViewPageProps) {
       </div>
 
       <div className="flex flex-col gap-4 rounded-xl border border-atg-border bg-atg-elevated p-4 sm:flex-row sm:items-start">
-        <ActivityThumbnail activityId={activityId} label={activity.title} size="md" />
+        <ActivityThumbnail
+          activityId={activityId}
+          label={activity.title}
+          size="lg"
+          imageUrl={pickMainActivityImageUrl(images)}
+        />
         <div className="min-w-0 flex-1 space-y-2">
           <h2 className="text-xl font-semibold text-atg-fg">{activity.title}</h2>
           <div className="flex flex-wrap items-center gap-2">

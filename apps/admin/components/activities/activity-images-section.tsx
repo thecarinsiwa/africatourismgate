@@ -11,6 +11,7 @@ import { AdminImagesGalleryGrid } from '../common/admin-images-gallery-grid';
 import { AdminImageViewerModal } from '../admin-image-viewer-modal';
 import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
 import { getSession } from '../../lib/auth/session';
+import { resolveMediaUrl } from '../../lib/resolve-media-url';
 
 const ACTIVITY_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
 const ALLOWED_ACTIVITY_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
@@ -26,9 +27,14 @@ const emptyForm: ImageFormValues = { url: '', caption: '', sortOrder: '0' };
 type ActivityImagesSectionProps = {
   activityId: string;
   embedded?: boolean;
+  onImagesChanged?: () => void;
 };
 
-export function ActivityImagesSection({ activityId, embedded }: ActivityImagesSectionProps) {
+export function ActivityImagesSection({
+  activityId,
+  embedded,
+  onImagesChanged,
+}: ActivityImagesSectionProps) {
   const { activities: getActivitiesErrorMessage } = useAdminErrorMessages();
   const tGallery = useTranslations('modules.common.imagesGallery');
   const tCommon = useTranslations('modules.common');
@@ -165,6 +171,7 @@ export function ActivityImagesSection({ activityId, embedded }: ActivityImagesSe
       }
       resetForm();
       await load();
+      onImagesChanged?.();
     } catch (error) {
       setFormError(getActivitiesErrorMessage(error));
     } finally {
@@ -185,12 +192,13 @@ export function ActivityImagesSection({ activityId, embedded }: ActivityImagesSe
     try {
       await getApiClient().deleteActivityImage(img.id);
       await load();
+      onImagesChanged?.();
     } catch (error) {
       setDeleteError(getActivitiesErrorMessage(error));
     } finally {
       setDeletingId(null);
     }
-  }, [confirmTarget, getActivitiesErrorMessage, load]);
+  }, [confirmTarget, getActivitiesErrorMessage, load, onImagesChanged]);
 
   const images = state.status === 'ready' ? state.images : [];
 
@@ -262,7 +270,7 @@ export function ActivityImagesSection({ activityId, embedded }: ActivityImagesSe
             </div>
             {formValues.url.trim() ? (
               <Image
-                src={formValues.url.trim()}
+                src={resolveMediaUrl(formValues.url.trim())}
                 alt={formValues.caption.trim() || tColumns('preview')}
                 width={320}
                 height={200}

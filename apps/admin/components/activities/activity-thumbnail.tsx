@@ -1,29 +1,41 @@
 'use client';
 
+import type { ActivityImage } from '@africatourismgate/types';
 import { cn, SidebarActivityIcon } from '@africatourismgate/ui';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
-import { getSession } from '../../lib/auth/session';
+import { getApiClient } from '../../lib/auth/api';
+import { resolveMediaUrl } from '../../lib/resolve-media-url';
 
 type ActivityThumbnailProps = {
   activityId: string;
   label: string;
-  size?: 'sm' | 'md';
+  size?: 'sm' | 'md' | 'lg';
   className?: string;
+  /** Photo principale (première par ordre d'affichage). Si fournie, aucun chargement API. */
+  imageUrl?: string | null;
+  /** Force le rechargement lorsque les photos changent (mode autonome). */
+  refreshKey?: number;
 };
 
 const sizeClasses = {
   sm: 'h-10 w-14',
   md: 'h-12 w-16',
+  lg: 'h-24 w-32 sm:h-28 sm:w-36',
 };
 
-function resolveImageUrl(url: string): string {
-  if (url.startsWith('http://') || url.startsWith('https://')) {
-    return url;
-  }
-  const base = resolveApiBaseUrl();
-  return `${base}${url.startsWith('/') ? '' : '/'}${url}`;
+const sizeHints = {
+  sm: '56px',
+  md: '64px',
+  lg: '(max-width: 640px) 128px, 144px',
+};
+
+export function pickMainActivityImageUrl(images: ActivityImage[]): string | null {
+  if (images.length === 0) return null;
+  const sorted = [...images].sort(
+    (left, right) => left.sortOrder - right.sortOrder || left.createdAt.localeCompare(right.createdAt),
+  );
+  return sorted[0]?.url ?? null;
 }
 
 export function ActivityThumbnail({
@@ -31,28 +43,37 @@ export function ActivityThumbnail({
   label,
   size = 'md',
   className,
+  imageUrl: controlledImageUrl,
+  refreshKey = 0,
 }: ActivityThumbnailProps) {
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const isControlled = controlledImageUrl !== undefined;
+  const [fetchedImageUrl, setFetchedImageUrl] = useState<string | null>(null);
   const [imageFailed, setImageFailed] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!isControlled);
 
   useEffect(() => {
+    if (isControlled) {
+      setLoading(false);
+      setImageFailed(false);
+      return;
+    }
+
     let cancelled = false;
 
     async function load() {
+      setLoading(true);
       try {
         const result = await getApiClient().listActivityImages({
           activityId,
           page: 1,
-          limit: 1,
+          limit: 100,
         });
         if (cancelled) return;
-        const first = [...result.data].sort((a, b) => a.sortOrder - b.sortOrder)[0];
-        setImageUrl(first?.url ?? null);
+        setFetchedImageUrl(pickMainActivityImageUrl(result.data));
         setImageFailed(false);
       } catch {
         if (!cancelled) {
-          setImageUrl(null);
+          setFetchedImageUrl(null);
           setImageFailed(false);
         }
       } finally {
@@ -64,10 +85,10 @@ export function ActivityThumbnail({
     return () => {
       cancelled = true;
     };
-  }, [activityId]);
+  }, [activityId, isControlled, refreshKey]);
 
-  const session = getSession();
-  const imgSrc = imageUrl && !imageFailed ? resolveImageUrl(imageUrl) : null;
+  const rawUrl = isControlled ? controlledImageUrl : fetchedImageUrl;
+  const imgSrc = rawUrl && !imageFailed ? resolveMediaUrl(rawUrl) : null;
 
   return (
     <div
@@ -78,28 +99,23 @@ export function ActivityThumbnail({
         className,
       )}
       title={label}
-      aria-hidden
     >
       {loading ? (
-        <span className="absolute inset-0 animate-pulse bg-atg-border/40" />
+        <span className="absolute inset-0 animate-pulse bg-atg-border/40" aria-hidden />
       ) : imgSrc ? (
         <Image
           src={imgSrc}
           alt={label}
           fill
           className="object-cover"
-          sizes={size === 'sm' ? '56px' : '64px'}
+          sizes={sizeHints[size]}
           unoptimized
+          priority={size === 'lg'}
           onError={() => setImageFailed(true)}
-          {...(session?.accessToken
-            ? {
-                loader: ({ src }) => src,
-              }
-            : {})}
         />
       ) : (
-        <span className="flex h-full w-full items-center justify-center text-primary/70">
-          <SidebarActivityIcon className={size === 'sm' ? 'h-4 w-4' : 'h-5 w-5'} />
+        <span className="flex h-full w-full items-center justify-center text-primary/70" aria-hidden>
+          <SidebarActivityIcon className={size === 'lg' ? 'h-8 w-8' : size === 'sm' ? 'h-4 w-4' : 'h-5 w-5'} />
         </span>
       )}
     </div>
