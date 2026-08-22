@@ -110,6 +110,30 @@ function drawKeyValue(
     .text(` ${value}`, { width: CONTENT_WIDTH });
 }
 
+function sexLabel(
+  sex: BookingDetailPdfInput['travelers'][number]['sex'],
+  labels: BookingDetailPdfLabels,
+): string {
+  if (sex === 'M') return labels.sexM;
+  if (sex === 'F') return labels.sexF;
+  if (sex === 'other') return labels.sexOther;
+  return '—';
+}
+
+function travelerNotes(traveler: BookingDetailPdfInput['travelers'][number]): string {
+  return [traveler.conditions, traveler.comment, traveler.other]
+    .map((value) => value?.trim())
+    .filter(Boolean)
+    .join(' · ');
+}
+
+function guideRoleLabel(
+  role: BookingDetailPdfInput['guides'][number]['role'],
+  labels: BookingDetailPdfLabels,
+): string {
+  return role === 'primary' ? labels.guideRolePrimary : labels.guideRoleSecondary;
+}
+
 export function renderBookingDetailPdf(input: BookingDetailPdfInput): Promise<Buffer> {
   const labels = getBookingDetailPdfLabels(input.locale);
   const brandColor = primaryColor(input.branding);
@@ -265,13 +289,51 @@ export function renderBookingDetailPdf(input: BookingDetailPdfInput): Promise<Bu
     doc.y = rowTop + rowHeight + 4;
   }
 
+  if (input.itinerary.length > 0) {
+    drawSectionTitle(doc, labels.itinerarySection, brandColor);
+
+    for (const group of input.itinerary) {
+      ensureSpace(doc, 24);
+      doc
+        .fillColor('#0f1a16')
+        .fontSize(10)
+        .font('Helvetica-Bold')
+        .text(group.title, PAGE_MARGIN, doc.y, { width: CONTENT_WIDTH });
+      doc.moveDown(0.25);
+
+      for (const step of group.steps) {
+        ensureSpace(doc, 16);
+        const line = `${step.order}. ${step.label}`;
+        doc
+          .fillColor('#0f1a16')
+          .fontSize(9)
+          .font('Helvetica')
+          .text(line, PAGE_MARGIN + 8, doc.y, { width: CONTENT_WIDTH - 8 });
+        if (step.detail?.trim()) {
+          doc
+            .fillColor(mutedColor)
+            .fontSize(8)
+            .text(step.detail.trim(), PAGE_MARGIN + 16, doc.y, { width: CONTENT_WIDTH - 16 });
+        }
+        doc.moveDown(0.15);
+      }
+
+      doc.moveDown(0.35);
+    }
+  }
+
   if (input.travelers.length > 0) {
     drawSectionTitle(doc, labels.travelersSection, brandColor);
 
     const travelerCols = [
-      { label: labels.colTraveler, width: 0.55 },
-      { label: labels.colAge, width: 0.15 },
-      { label: labels.colTravelerPrice, width: 0.3 },
+      { label: labels.colTravelerIndex, width: 0.05 },
+      { label: labels.colTraveler, width: 0.22 },
+      { label: labels.colAge, width: 0.07 },
+      { label: labels.colSex, width: 0.07 },
+      { label: labels.colNationality, width: 0.14 },
+      { label: labels.colIdNumber, width: 0.14 },
+      { label: labels.colTravelerPrice, width: 0.11 },
+      { label: labels.colTravelerNotes, width: 0.2 },
     ] as const;
 
     let tTop = doc.y;
@@ -290,7 +352,7 @@ export function renderBookingDetailPdf(input: BookingDetailPdfInput): Promise<Bu
       .stroke();
     doc.moveDown(0.3);
 
-    for (const traveler of input.travelers) {
+    input.travelers.forEach((traveler, index) => {
       ensureSpace(doc, 18);
       const rowTop = doc.y;
       const age =
@@ -299,15 +361,133 @@ export function renderBookingDetailPdf(input: BookingDetailPdfInput): Promise<Bu
         traveler.priceCents != null
           ? formatMoney(traveler.priceCents, input.currency)
           : '—';
-      const cells = [traveler.fullName, age, price];
+      const notes = travelerNotes(traveler) || '—';
+      const cells = [
+        String(index + 1),
+        traveler.fullName,
+        age,
+        sexLabel(traveler.sex, labels),
+        traveler.nationality?.trim() || '—',
+        traveler.idNumber?.trim() || '—',
+        price,
+        notes,
+      ];
+      let cx = tableLeft;
+      let rowHeight = 14;
+      doc.fontSize(7.5).font('Helvetica').fillColor('#0f1a16');
+      cells.forEach((cell, colIndex) => {
+        const width = CONTENT_WIDTH * travelerCols[colIndex]!.width;
+        const height = doc.heightOfString(cell, { width });
+        rowHeight = Math.max(rowHeight, height);
+        doc.text(cell, cx, rowTop, {
+          width,
+          align: colIndex === 6 ? 'right' : 'left',
+        });
+        cx += width;
+      });
+      doc.y = rowTop + rowHeight + 4;
+    });
+  }
+
+  if (input.guides.length > 0) {
+    drawSectionTitle(doc, labels.guidesSection, brandColor);
+
+    const guideCols = [
+      { label: labels.colGuideName, width: 0.65 },
+      { label: labels.colGuideRole, width: 0.35 },
+    ] as const;
+
+    let gTop = doc.y;
+    let gx = tableLeft;
+    doc.fontSize(8).font('Helvetica-Bold').fillColor(mutedColor);
+    for (const col of guideCols) {
+      const width = CONTENT_WIDTH * col.width;
+      doc.text(col.label, gx, gTop, { width, lineBreak: false });
+      gx += width;
+    }
+    doc.y = gTop + 14;
+    doc
+      .strokeColor('#d4d4d8')
+      .moveTo(tableLeft, doc.y)
+      .lineTo(tableLeft + CONTENT_WIDTH, doc.y)
+      .stroke();
+    doc.moveDown(0.3);
+
+    for (const guide of input.guides) {
+      ensureSpace(doc, 18);
+      const rowTop = doc.y;
+      const cells = [guide.name, guideRoleLabel(guide.role, labels)];
       let cx = tableLeft;
       let rowHeight = 14;
       doc.fontSize(8.5).font('Helvetica').fillColor('#0f1a16');
-      cells.forEach((cell, index) => {
-        const width = CONTENT_WIDTH * travelerCols[index]!.width;
+      cells.forEach((cell, colIndex) => {
+        const width = CONTENT_WIDTH * guideCols[colIndex]!.width;
         const height = doc.heightOfString(cell, { width });
         rowHeight = Math.max(rowHeight, height);
-        doc.text(cell, cx, rowTop, { width, align: index === 2 ? 'right' : 'left' });
+        doc.text(cell, cx, rowTop, { width });
+        cx += width;
+      });
+      doc.y = rowTop + rowHeight + 4;
+    }
+  }
+
+  drawSectionTitle(doc, labels.summarySection, brandColor);
+  drawKeyValue(
+    doc,
+    labels.bookingCreatedAt,
+    formatPdfDate(input.bookingCreatedAt, input.locale),
+    mutedColor,
+  );
+
+  if (input.payments.length > 0) {
+    ensureSpace(doc, 20);
+    doc
+      .fillColor(mutedColor)
+      .fontSize(9)
+      .font('Helvetica-Bold')
+      .text(labels.paymentsSection, PAGE_MARGIN, doc.y, { width: CONTENT_WIDTH });
+    doc.moveDown(0.35);
+
+    const paymentCols = [
+      { label: labels.colPaymentDate, width: 0.28 },
+      { label: labels.colPaymentAmount, width: 0.2 },
+      { label: labels.colPaymentStatus, width: 0.22 },
+      { label: labels.colPaymentProvider, width: 0.3 },
+    ] as const;
+
+    let pTop = doc.y;
+    let px = tableLeft;
+    doc.fontSize(8).font('Helvetica-Bold').fillColor(mutedColor);
+    for (const col of paymentCols) {
+      const width = CONTENT_WIDTH * col.width;
+      doc.text(col.label, px, pTop, { width, lineBreak: false });
+      px += width;
+    }
+    doc.y = pTop + 14;
+    doc
+      .strokeColor('#d4d4d8')
+      .moveTo(tableLeft, doc.y)
+      .lineTo(tableLeft + CONTENT_WIDTH, doc.y)
+      .stroke();
+    doc.moveDown(0.3);
+
+    for (const payment of input.payments) {
+      ensureSpace(doc, 18);
+      const rowTop = doc.y;
+      const cells = [
+        formatPdfDate(payment.createdAt, input.locale),
+        formatMoney(payment.amountCents, payment.currency),
+        payment.status,
+        payment.provider,
+      ];
+      let cx = tableLeft;
+      let rowHeight = 14;
+      doc.fontSize(8).font('Helvetica').fillColor('#0f1a16');
+      cells.forEach((cell, colIndex) => {
+        const width = CONTENT_WIDTH * paymentCols[colIndex]!.width;
+        const height = doc.heightOfString(cell, { width });
+        rowHeight = Math.max(rowHeight, height);
+        doc.text(cell, cx, rowTop, { width, align: colIndex === 1 ? 'right' : 'left' });
         cx += width;
       });
       doc.y = rowTop + rowHeight + 4;
