@@ -57,6 +57,7 @@ export function BookingsList() {
   const locale = useLocale();
   const t = useTranslations('modules.bookings.list');
   const tCommon = useTranslations('modules.common');
+  const tCommonFilters = useTranslations('modules.common.filters');
   const tDataTable = useTranslations('modules.common.dataTable');
   const tActions = useTranslations('common.actions');
   const tExport = useTranslations('modules.common.exportCsv');
@@ -382,10 +383,10 @@ export function BookingsList() {
               <Input
                 name="search"
                 type="search"
-                placeholder={t('searchPlaceholder')}
+                placeholder={tCommonFilters('searchBookings')}
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                aria-label={t('searchAria')}
+                aria-label={tCommonFilters('searchBookingsAria')}
               />
             </div>
             <div className="w-full sm:w-48">
