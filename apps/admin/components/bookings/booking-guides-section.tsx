@@ -29,9 +29,14 @@ type AssignmentRow = BookingGuideAssignment & {
 type BookingGuidesSectionProps = {
   bookingId: string;
   canWrite: boolean;
+  embedded?: boolean;
 };
 
-export function BookingGuidesSection({ bookingId, canWrite }: BookingGuidesSectionProps) {
+export function BookingGuidesSection({
+  bookingId,
+  canWrite,
+  embedded = false,
+}: BookingGuidesSectionProps) {
   const { bookings: getBookingsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.bookings.guides');
   const tCommon = useTranslations('modules.common');
@@ -208,7 +213,9 @@ export function BookingGuidesSection({ bookingId, canWrite }: BookingGuidesSecti
         onConfirm={() => void handleRemoveConfirm()}
       />
     <section className="space-y-3">
-      <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
+      {embedded ? null : (
+        <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
+      )}
 
       {error ? (
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">

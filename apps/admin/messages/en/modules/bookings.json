@@ -65,6 +65,23 @@
       "total": "Total",
       "createdAt": "Created on"
     },
+    "summary": {
+      "createdAt": "Created on {date}",
+      "unreadMessages": "{count, plural, one {# unread customer message} other {# unread customer messages}}"
+    },
+    "tabs": {
+      "ariaLabel": "Additional sections",
+      "manifest": "Manifest",
+      "guides": "Guides",
+      "documents": "Identity documents",
+      "documentsPending": "Identity documents ({count})",
+      "history": "History"
+    },
+    "actionsBar": {
+      "ariaLabel": "Booking actions",
+      "statusModalDescription": "Choose the new status and an optional reason for the history.",
+      "cancelModalDescription": "Provide a cancellation reason if needed."
+    },
     "actions": {
       "changeStatus": "Change status",
       "statusReason": "Reason (history)",

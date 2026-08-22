@@ -65,6 +65,23 @@
       "total": "Total",
       "createdAt": "Creada el"
     },
+    "summary": {
+      "createdAt": "Creada el {date}",
+      "unreadMessages": "{count, plural, one {# mensaje del cliente sin leer} other {# mensajes del cliente sin leer}}"
+    },
+    "tabs": {
+      "ariaLabel": "Secciones complementarias",
+      "manifest": "Manifiesto",
+      "guides": "Guías",
+      "documents": "Documentos de identidad",
+      "documentsPending": "Documentos de identidad ({count})",
+      "history": "Historial"
+    },
+    "actionsBar": {
+      "ariaLabel": "Acciones sobre la reserva",
+      "statusModalDescription": "Elija el nuevo estado y un motivo opcional para el historial.",
+      "cancelModalDescription": "Indique un motivo de cancelación si es necesario."
+    },
     "actions": {
       "changeStatus": "Cambiar el estado",
       "statusReason": "Motivo (historial)",

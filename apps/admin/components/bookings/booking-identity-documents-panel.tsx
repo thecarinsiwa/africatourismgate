@@ -14,6 +14,7 @@ type Props = {
   documents: BookingIdentityDocument[];
   canReview: boolean;
   onUpdated: () => Promise<void>;
+  embedded?: boolean;
 };
 
 export function BookingIdentityDocumentsPanel({
@@ -21,6 +22,7 @@ export function BookingIdentityDocumentsPanel({
   documents,
   canReview,
   onUpdated,
+  embedded = false,
 }: Props) {
   const { bookings: getBookingsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.bookings.identityDocuments');
@@ -71,12 +73,14 @@ export function BookingIdentityDocumentsPanel({
     }
   }
 
-  return (
-    <Card variant="dashboard" padding="md" className="space-y-4">
-      <div>
-        <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
-        <p className="mt-1 text-sm text-atg-muted">{t('subtitle')}</p>
-      </div>
+  const content = (
+    <>
+      {embedded ? null : (
+        <div>
+          <h2 className="text-lg font-semibold text-atg-fg">{t('title')}</h2>
+          <p className="mt-1 text-sm text-atg-muted">{t('subtitle')}</p>
+        </div>
+      )}
 
       {error ? (
         <p className="text-sm text-red-600 dark:text-red-400" role="alert">
@@ -208,6 +212,16 @@ export function BookingIdentityDocumentsPanel({
           </Button>
         </div>
       </Modal>
+    </>
+  );
+
+  if (embedded) {
+    return <div className="space-y-4">{content}</div>;
+  }
+
+  return (
+    <Card variant="dashboard" padding="md" className="space-y-4">
+      {content}
     </Card>
   );
 }

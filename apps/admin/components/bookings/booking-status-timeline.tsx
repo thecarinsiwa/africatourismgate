@@ -19,6 +19,8 @@ export type BookingStatusTimelineProps = {
   currentStatus: BookingStatus;
   history: BookingStatusHistoryEntry[];
   className?: string;
+  showProgress?: boolean;
+  showHistory?: boolean;
 };
 
 function collectReachedStatuses(
@@ -183,6 +185,8 @@ export function BookingStatusTimeline({
   currentStatus,
   history,
   className,
+  showProgress = true,
+  showHistory = true,
 }: BookingStatusTimelineProps) {
   const t = useTranslations('modules.bookings.timeline');
   const tCommon = useTranslations('modules.common');
@@ -205,8 +209,13 @@ export function BookingStatusTimeline({
 
   const isTerminal = TERMINAL_STATUSES.has(currentStatus);
 
+  if (!showProgress && !showHistory) {
+    return null;
+  }
+
   return (
-    <div className={cn('space-y-6', className)}>
+    <div className={cn(showProgress && showHistory ? 'space-y-6' : undefined, className)}>
+      {showProgress ? (
       <div role="group" aria-label={t('progressAria')}>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-0">
           {CANONICAL_STEPS.map((step, index) => {
@@ -255,8 +264,9 @@ export function BookingStatusTimeline({
           </div>
         ) : null}
       </div>
+      ) : null}
 
-      {sortedHistory.length > 0 ? (
+      {showHistory && sortedHistory.length > 0 ? (
         <div>
           <h3 className="mb-2 text-sm font-semibold text-atg-fg">{t('history')}</h3>
           <ul className="m-0 list-none p-0" aria-label={t('historyAria')}>
@@ -271,9 +281,9 @@ export function BookingStatusTimeline({
             ))}
           </ul>
         </div>
-      ) : (
+      ) : showHistory ? (
         <p className="text-sm text-atg-muted">{t('historyEmpty')}</p>
-      )}
+      ) : null}
     </div>
   );
 }

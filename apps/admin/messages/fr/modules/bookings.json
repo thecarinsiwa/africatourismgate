@@ -65,6 +65,23 @@
       "total": "Total",
       "createdAt": "Créée le"
     },
+    "summary": {
+      "createdAt": "Créée le {date}",
+      "unreadMessages": "{count, plural, one {# message client non lu} other {# messages client non lus}}"
+    },
+    "tabs": {
+      "ariaLabel": "Sections complémentaires",
+      "manifest": "Manifeste",
+      "guides": "Guides",
+      "documents": "Pièces d'identité",
+      "documentsPending": "Pièces d'identité ({count})",
+      "history": "Historique"
+    },
+    "actionsBar": {
+      "ariaLabel": "Actions sur la réservation",
+      "statusModalDescription": "Choisissez le nouveau statut et un motif optionnel pour l'historique.",
+      "cancelModalDescription": "Indiquez un motif d'annulation si nécessaire."
+    },
     "actions": {
       "changeStatus": "Changer le statut",
       "statusReason": "Motif (historique)",
