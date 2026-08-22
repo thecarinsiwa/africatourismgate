@@ -40,6 +40,7 @@ import {
   RemoveBookingGuideDto,
   UpdateBookingGuideAssignmentDto,
 } from '../tour-guides/dto/booking-guide-assignment.dto';
+import { BookingGuideAssignmentHistoryItemDto } from '../tour-guides/dto/booking-guide-assignment-history.dto';
 import { BookingMessagesService } from './booking-messages.service';
 import { BookingMessageDto, BookingMessagesListDto } from './dto/booking-message.dto';
 import { BookingMessagesQueryDto } from './dto/booking-messages-query.dto';
@@ -140,6 +141,13 @@ export class BookingsController {
   @ApiOperation({ summary: 'List guides assigned to a booking' })
   listGuides(@Param('id') id: string) {
     return this.bookingGuideAssignmentsService.listByBookingId(id);
+  }
+
+  @Get(':id/guides/history')
+  @RequirePermissions('bookings.read')
+  @ApiOperation({ summary: 'Assignment history for booking guide slots' })
+  listGuideAssignmentHistory(@Param('id') id: string): Promise<BookingGuideAssignmentHistoryItemDto[]> {
+    return this.bookingGuideAssignmentsService.listHistoryByBookingId(id);
   }
 
   @Post(':id/guides')

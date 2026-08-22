@@ -341,6 +341,28 @@
       "role": "Role",
       "notes": "Notes",
       "assignedAt": "Assigned at"
+    },
+    "history": {
+      "title": "Assignment history",
+      "titleShort": "History",
+      "description": "Log of guide slot creates, updates, and deletions.",
+      "expand": "Show history",
+      "collapse": "Hide history",
+      "empty": "No events recorded for this booking.",
+      "ariaLabel": "Guide slot history",
+      "actions": {
+        "created": "Created",
+        "updated": "Updated",
+        "deleted": "Deleted"
+      },
+      "columns": {
+        "when": "When",
+        "action": "Action",
+        "guide": "Guide",
+        "schedule": "Time range",
+        "role": "Role",
+        "actor": "By"
+      }
     }
   },
   "stats": {

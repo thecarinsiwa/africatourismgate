@@ -25,6 +25,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import { BookingGuideAssignmentHistorySection } from './booking-guide-assignment-history-section';
 import { fromDatetimeLocalValue, toDatetimeLocalValue } from '../../lib/flight-datetime';
 import {
   parseGuideScheduleConflictError,
@@ -751,6 +752,8 @@ export function BookingGuidesSection({
             aria-label={t('ariaLabel')}
           />
         </Card>
+
+        <BookingGuideAssignmentHistorySection bookingId={bookingId} embedded />
       </section>
     </>
   );

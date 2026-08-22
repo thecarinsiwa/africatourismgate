@@ -341,6 +341,28 @@
       "role": "Rôle",
       "notes": "Notes",
       "assignedAt": "Assigné le"
+    },
+    "history": {
+      "title": "Historique des assignations",
+      "titleShort": "Historique",
+      "description": "Journal des créations, modifications et suppressions de créneaux guides.",
+      "expand": "Afficher l'historique",
+      "collapse": "Masquer l'historique",
+      "empty": "Aucun événement enregistré pour cette réservation.",
+      "ariaLabel": "Historique des créneaux guides",
+      "actions": {
+        "created": "Création",
+        "updated": "Modification",
+        "deleted": "Suppression"
+      },
+      "columns": {
+        "when": "Date",
+        "action": "Action",
+        "guide": "Guide",
+        "schedule": "Plage horaire",
+        "role": "Rôle",
+        "actor": "Par"
+      }
     }
   },
   "stats": {

@@ -10,6 +10,7 @@ import {
   BookingGuideAssignmentHistory,
   BookingGuideAssignments,
   Bookings,
+  TourGuides,
   Users,
 } from '../../../entities/generated';
 import {
@@ -19,6 +20,10 @@ import {
   toBookingGuideAssignmentDto,
   UpdateBookingGuideAssignmentDto,
 } from './dto/booking-guide-assignment.dto';
+import {
+  BookingGuideAssignmentHistoryItemDto,
+  toBookingGuideAssignmentHistoryItemDto,
+} from './dto/booking-guide-assignment-history.dto';
 import {
   toTourGuideBookingListItemDto,
   TourGuideBookingListItemDto,
@@ -40,6 +45,8 @@ export class BookingGuideAssignmentsService {
     private readonly bookingsRepository: Repository<Bookings>,
     @InjectRepository(Users)
     private readonly usersRepository: Repository<Users>,
+    @InjectRepository(TourGuides)
+    private readonly tourGuidesRepository: Repository<TourGuides>,
     private readonly tourGuidesService: TourGuidesService,
     private readonly guideAssignmentEmail: BookingGuideAssignmentEmailService,
     private readonly scheduleConflictService: GuideScheduleConflictService,
@@ -125,6 +132,48 @@ export class BookingGuideAssignmentsService {
       order: { startDatetime: 'ASC' },
     });
     return rows.map(toBookingGuideAssignmentDto);
+  }
+
+  async listHistoryByBookingId(
+    bookingId: string,
+  ): Promise<BookingGuideAssignmentHistoryItemDto[]> {
+    await this.requireBooking(bookingId);
+    const rows = await this.historyRepository.find({
+      where: { bookingId },
+      order: { createdAt: 'DESC' },
+    });
+    if (rows.length === 0) {
+      return [];
+    }
+
+    const guideIds = [...new Set(rows.map((row) => row.guideId))];
+    const actorIds = [
+      ...new Set(rows.map((row) => row.actorUserId).filter((id): id is string => Boolean(id))),
+    ];
+
+    const guides =
+      guideIds.length > 0
+        ? await this.tourGuidesRepository.find({ where: { id: In(guideIds) } })
+        : [];
+    const actors =
+      actorIds.length > 0
+        ? await this.usersRepository.find({ where: { id: In(actorIds) } })
+        : [];
+
+    const guideById = new Map(guides.map((guide) => [guide.id, guide]));
+    const actorById = new Map(actors.map((user) => [user.id, user]));
+
+    return rows.map((row) => {
+      const guide = guideById.get(row.guideId);
+      const actor = row.actorUserId ? actorById.get(row.actorUserId) : undefined;
+      const actorDisplayName = actor
+        ? [actor.firstName, actor.lastName].filter(Boolean).join(' ').trim() || actor.email
+        : null;
+      return toBookingGuideAssignmentHistoryItemDto(row, {
+        guideDisplayName: guide?.displayName ?? null,
+        actorDisplayName,
+      });
+    });
   }
 
   async assignGuides(

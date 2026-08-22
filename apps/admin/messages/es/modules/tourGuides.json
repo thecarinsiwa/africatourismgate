@@ -133,21 +133,38 @@
     "legendAvailable": "Disponibles",
     "legendOccupied": "Ocupados (misiones)",
     "legendUnavailable": "No disponibles",
+    "legendTimelineAssignment": "Turno de misión",
+    "legendTimelineUnavailable": "Turno no disponible",
     "activeGuidesCount": "{count, plural, one {# guía activo} other {# guías activos}}",
     "noActiveGuides": "Ningún guía activo coincide con estos filtros.",
     "today": "Hoy",
     "dayModal": {
       "title": "Disponibilidad — {date}",
-      "intro": "Guías activos para este día. Los guías en misión no se pueden modificar aquí.",
+      "intro": "Planning horario de los guías activos. Las misiones aparecen en ámbar y las indisponibilidades en gris.",
       "empty": "Ningún guía activo este día.",
-      "unavailableToggle": "No disponible",
       "viewBooking": "Ver reserva",
       "viewGuide": "Ver guía",
+      "addUnavailability": "Marcar no disponible",
+      "clearUnavailability": "Quitar indisponibilidad",
+      "unavailabilityFormTitle": "Intervalo de indisponibilidad",
+      "startTime": "Inicio",
+      "endTime": "Fin",
+      "saveUnavailability": "Guardar",
+      "validation": {
+        "endAfterStart": "La hora de fin debe ser posterior a la de inicio."
+      },
+      "conflictAssignment": "Conflicto con una misión existente",
+      "conflictUnavailable": "Conflicto con una indisponibilidad existente",
       "status": {
         "available": "Disponible",
         "occupied": "En misión",
         "unavailable": "No disponible"
       }
+    },
+    "timeline": {
+      "assignment": "Misión",
+      "unavailable": "No disponible",
+      "empty": "Sin turnos este día"
     }
   },
   "filters": {

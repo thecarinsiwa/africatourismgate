@@ -310,3 +310,27 @@ export interface GuideAvailabilitySlot {
   endDatetime: string;
   status: GuideAvailabilityStatus;
 }
+
+export type BookingGuideAssignmentHistoryAction = 'created' | 'updated' | 'deleted';
+
+export interface BookingGuideAssignmentHistorySnapshot {
+  bookingId: string;
+  guideId: string;
+  role: BookingGuideRole;
+  startDatetime: string;
+  endDatetime: string;
+  notes: string | null;
+}
+
+export interface BookingGuideAssignmentHistoryItem {
+  id: string;
+  assignmentId: string;
+  bookingId: string;
+  guideId: string;
+  action: BookingGuideAssignmentHistoryAction;
+  snapshot: BookingGuideAssignmentHistorySnapshot;
+  actorUserId: string | null;
+  actorDisplayName: string | null;
+  guideDisplayName: string | null;
+  createdAt: string;
+}

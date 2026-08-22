@@ -341,6 +341,28 @@
       "role": "Rol",
       "notes": "Notas",
       "assignedAt": "Asignado el"
+    },
+    "history": {
+      "title": "Historial de asignaciones",
+      "titleShort": "Historial",
+      "description": "Registro de creaciones, modificaciones y eliminaciones de turnos de guía.",
+      "expand": "Mostrar historial",
+      "collapse": "Ocultar historial",
+      "empty": "Ningún evento registrado para esta reserva.",
+      "ariaLabel": "Historial de turnos de guía",
+      "actions": {
+        "created": "Creación",
+        "updated": "Modificación",
+        "deleted": "Eliminación"
+      },
+      "columns": {
+        "when": "Fecha",
+        "action": "Acción",
+        "guide": "Guía",
+        "schedule": "Intervalo",
+        "role": "Rol",
+        "actor": "Por"
+      }
     }
   },
   "stats": {

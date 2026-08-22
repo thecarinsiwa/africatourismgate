@@ -195,6 +195,14 @@ export function TourGuidesCalendarView() {
           <span className="h-2.5 w-2.5 rounded-full bg-atg-muted" aria-hidden />
           {t('legendUnavailable')}
         </span>
+        <span className="hidden items-center gap-1.5 sm:inline-flex">
+          <span className="h-2.5 w-6 rounded-sm bg-amber-400" aria-hidden />
+          {t('legendTimelineAssignment')}
+        </span>
+        <span className="hidden items-center gap-1.5 sm:inline-flex">
+          <span className="h-2.5 w-6 rounded-sm bg-atg-muted/70" aria-hidden />
+          {t('legendTimelineUnavailable')}
+        </span>
         {state.status === 'ready' ? (
           <span className="text-atg-muted">
             {t('activeGuidesCount', { count: totalActiveGuides })}

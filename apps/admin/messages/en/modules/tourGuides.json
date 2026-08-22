@@ -133,21 +133,38 @@
     "legendAvailable": "Available",
     "legendOccupied": "Busy (assignments)",
     "legendUnavailable": "Unavailable",
+    "legendTimelineAssignment": "Assignment slot",
+    "legendTimelineUnavailable": "Unavailable slot",
     "activeGuidesCount": "{count, plural, one {# active guide} other {# active guides}}",
     "noActiveGuides": "No active guides match these filters.",
     "today": "Today",
     "dayModal": {
       "title": "Availability — {date}",
-      "intro": "Active guides for this day. Guides on assignment cannot be edited here.",
+      "intro": "Hourly schedule for active guides. Assignments appear in amber, unavailability in gray.",
       "empty": "No active guides on this day.",
-      "unavailableToggle": "Unavailable",
       "viewBooking": "View booking",
       "viewGuide": "View guide",
+      "addUnavailability": "Mark unavailable",
+      "clearUnavailability": "Clear unavailability",
+      "unavailabilityFormTitle": "Unavailable time range",
+      "startTime": "Start",
+      "endTime": "End",
+      "saveUnavailability": "Save",
+      "validation": {
+        "endAfterStart": "End time must be after start time."
+      },
+      "conflictAssignment": "Conflicts with an existing assignment",
+      "conflictUnavailable": "Conflicts with existing unavailability",
       "status": {
         "available": "Available",
         "occupied": "On assignment",
         "unavailable": "Unavailable"
       }
+    },
+    "timeline": {
+      "assignment": "Assignment",
+      "unavailable": "Unavailable",
+      "empty": "No slots on this day"
     }
   },
   "filters": {

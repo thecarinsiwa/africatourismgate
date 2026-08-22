@@ -118,6 +118,7 @@ import type {
   AssignBookingGuidesRequest,
   UpdateBookingGuideAssignmentRequest,
   RemoveBookingGuideRequest,
+  BookingGuideAssignmentHistoryItem,
   BookingListItem,
   BookingsListQuery,
   AdminReviewDetail,
@@ -2524,6 +2525,14 @@ export class ApiClient {
       method: 'DELETE',
       body: body ?? {},
     });
+  }
+
+  listBookingGuideAssignmentHistory(
+    bookingId: string,
+  ): Promise<BookingGuideAssignmentHistoryItem[]> {
+    return this.request<BookingGuideAssignmentHistoryItem[]>(
+      `/bookings/${bookingId}/guides/history`,
+    );
   }
 
   /** @deprecated Préférez removeBookingGuideSlot pour un créneau unique. */

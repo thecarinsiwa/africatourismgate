@@ -304,6 +304,9 @@ export type {
   TourGuideAvailableItem,
   UpsertGuideAvailabilityRequest,
   GuideAvailabilitySlot,
+  BookingGuideAssignmentHistoryAction,
+  BookingGuideAssignmentHistorySnapshot,
+  BookingGuideAssignmentHistoryItem,
 } from './tour-guide.js';
 
 export type {
