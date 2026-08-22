@@ -330,7 +330,8 @@
     },
     "nouveau": {
       "metaTitle": "Nuevo guía turístico",
-      "description": "Cree un perfil de guía y asígnelo desde el detalle de la reserva."
+      "description": "Cree un perfil de guía y asígnelo desde el detalle de la reserva.",
+      "backLabel": "Volver a guías turísticos"
     },
     "id": {
       "metaTitle": "Editar guía"

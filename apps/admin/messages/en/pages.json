@@ -330,7 +330,8 @@
     },
     "nouveau": {
       "metaTitle": "New tour guide",
-      "description": "Create a guide profile, then assign guides from the booking detail page."
+      "description": "Create a guide profile, then assign guides from the booking detail page.",
+      "backLabel": "Back to tour guides"
     },
     "id": {
       "metaTitle": "Edit guide"

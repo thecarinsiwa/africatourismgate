@@ -1,13 +1,16 @@
 'use client';
 
 import { TourGuideForm } from '../tour-guides/tour-guide-form';
-import { AdminListPageHeader } from './admin-list-page-header';
+import { AdminIntroPage } from './admin-intro-page';
 
 export function GuidesNouveauPageContent() {
   return (
-    <div>
-      <AdminListPageHeader routePath="guides/nouveau" titleKey="metaTitle" />
+    <AdminIntroPage
+      routePath="guides/nouveau"
+      backHref="/guides"
+      backLabelKey="backLabel"
+    >
       <TourGuideForm mode="create" />
-    </div>
+    </AdminIntroPage>
   );
 }

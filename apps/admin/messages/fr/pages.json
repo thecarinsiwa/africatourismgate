@@ -330,7 +330,8 @@
     },
     "nouveau": {
       "metaTitle": "Nouveau guide touristique",
-      "description": "Créez un profil guide puis assignez-le aux réservations depuis la fiche réservation."
+      "description": "Créez un profil guide puis assignez-le aux réservations depuis la fiche réservation.",
+      "backLabel": "Retour aux guides"
     },
     "id": {
       "metaTitle": "Modifier le guide"
