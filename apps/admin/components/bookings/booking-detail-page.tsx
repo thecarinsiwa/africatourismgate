@@ -33,6 +33,7 @@ import {
 import { formatMoney } from '../../lib/format-money';
 import {
   useBookingStatusLabels,
+  useFormatDateTime,
   usePaymentProviderLabels,
   usePaymentStatusLabels,
 } from '../../lib/i18n/use-module-labels';
@@ -45,17 +46,6 @@ import { BookingIdentityDocumentsPanel } from './booking-identity-documents-pane
 import { BookingManifestSection } from './booking-manifest-section';
 import { BookingMessagesSection } from './booking-messages-section';
 import { BookingStatusTimeline } from './booking-status-timeline';
-
-function formatDateTime(iso: string): string {
-  try {
-    return new Date(iso).toLocaleString('fr-FR', {
-      dateStyle: 'short',
-      timeStyle: 'medium',
-    });
-  } catch {
-    return iso;
-  }
-}
 
 function formatBookingRef(id: string): string {
   return id.slice(0, 8);
@@ -93,6 +83,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   const paymentStatusLabels = usePaymentStatusLabels();
   const providerLabels = usePaymentProviderLabels();
   const emptyDash = tCommon('empty.dash');
+  const formatDateTime = useFormatDateTime('mediumTime');
 
   const [canWrite, setCanWrite] = useState(false);
   const [canApprove, setCanApprove] = useState(false);
@@ -308,7 +299,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
           formatPaymentProvider(row.original.provider, providerLabels, emptyDash),
       },
     ],
-    [emptyDash, paymentStatusLabels, providerLabels, tCommon],
+    [emptyDash, formatDateTime, paymentStatusLabels, providerLabels, tCommon],
   );
 
   if (state.status === 'loading' && !detail) {

@@ -8,7 +8,7 @@ import {
   BOOKING_STATUS_VARIANTS,
   getBookingStatusLabel,
 } from '../../lib/booking-status';
-import { useBookingStatusLabels } from '../../lib/i18n/use-module-labels';
+import { useBookingStatusLabels, useFormatDateTime } from '../../lib/i18n/use-module-labels';
 
 const CANONICAL_STEPS: BookingStatus[] = ['draft', 'pending_payment', 'confirmed'];
 const TERMINAL_STATUSES = new Set<BookingStatus>(['cancelled', 'refunded']);
@@ -20,17 +20,6 @@ export type BookingStatusTimelineProps = {
   history: BookingStatusHistoryEntry[];
   className?: string;
 };
-
-function formatDateTime(iso: string): string {
-  try {
-    return new Date(iso).toLocaleString('fr-FR', {
-      dateStyle: 'short',
-      timeStyle: 'short',
-    });
-  } catch {
-    return iso;
-  }
-}
 
 function collectReachedStatuses(
   currentStatus: BookingStatus,
@@ -96,6 +85,7 @@ function StepNode({
   showConnector,
   connectorCompleted,
   statusLabels,
+  formatDateTime,
 }: {
   step: BookingStatus;
   state: StepState;
@@ -103,6 +93,7 @@ function StepNode({
   showConnector?: boolean;
   connectorCompleted?: boolean;
   statusLabels: ReturnType<typeof useBookingStatusLabels>;
+  formatDateTime: (iso: string) => string;
 }) {
   const label = getBookingStatusLabel(step, statusLabels);
 
@@ -151,10 +142,12 @@ function HistoryItem({
   entry,
   statusLabels,
   emptyDash,
+  formatDateTime,
 }: {
   entry: BookingStatusHistoryEntry;
   statusLabels: ReturnType<typeof useBookingStatusLabels>;
   emptyDash: string;
+  formatDateTime: (iso: string) => string;
 }) {
   const t = useTranslations('modules.bookings.timeline');
   const fromLabel = entry.fromStatus
@@ -195,6 +188,7 @@ export function BookingStatusTimeline({
   const tCommon = useTranslations('modules.common');
   const statusLabels = useBookingStatusLabels();
   const emptyDash = tCommon('empty.dash');
+  const formatDateTime = useFormatDateTime();
 
   const reached = useMemo(
     () => collectReachedStatuses(currentStatus, history),
@@ -234,6 +228,7 @@ export function BookingStatusTimeline({
                   showConnector={index < CANONICAL_STEPS.length - 1}
                   connectorCompleted={connectorCompleted}
                   statusLabels={statusLabels}
+                  formatDateTime={formatDateTime}
                 />
                 {index < CANONICAL_STEPS.length - 1 ? (
                   <div
@@ -271,6 +266,7 @@ export function BookingStatusTimeline({
                 entry={entry}
                 statusLabels={statusLabels}
                 emptyDash={emptyDash}
+                formatDateTime={formatDateTime}
               />
             ))}
           </ul>

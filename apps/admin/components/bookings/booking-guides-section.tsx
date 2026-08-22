@@ -20,7 +20,7 @@ import type {
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
-import { useBookingGuideRoleLabels } from '../../lib/i18n/use-module-labels';
+import { useBookingGuideRoleLabels, useFormatDateTime } from '../../lib/i18n/use-module-labels';
 
 type AssignmentRow = BookingGuideAssignment & {
   guideName: string;
@@ -31,23 +31,13 @@ type BookingGuidesSectionProps = {
   canWrite: boolean;
 };
 
-function formatDateTime(iso: string): string {
-  try {
-    return new Date(iso).toLocaleString('fr-FR', {
-      dateStyle: 'short',
-      timeStyle: 'short',
-    });
-  } catch {
-    return iso;
-  }
-}
-
 export function BookingGuidesSection({ bookingId, canWrite }: BookingGuidesSectionProps) {
   const { bookings: getBookingsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.bookings.guides');
   const tCommon = useTranslations('modules.common');
   const tActions = useTranslations('common.actions');
   const roleLabels = useBookingGuideRoleLabels();
+  const formatDateTime = useFormatDateTime();
   const guideSelectId = useId();
   const roleSelectId = useId();
 
@@ -194,6 +184,7 @@ export function BookingGuidesSection({ bookingId, canWrite }: BookingGuidesSecti
     ],
     [
       canWrite,
+      formatDateTime,
       handleRemoveRequest,
       removingGuideId,
       roleLabels,

@@ -2,10 +2,11 @@
 
 import type { BookingMessage } from '@africatourismgate/types';
 import { ConversationChat, DraggableFab, BookingChatFabIcon, Modal, useToast } from '@africatourismgate/ui';
-import { useTranslations } from 'next-intl';
+import { useFormatter, useTranslations } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+import { useFormatDateTime } from '../../lib/i18n/use-module-labels';
 
 const POLL_INTERVAL_MS = 20_000;
 const FAB_STORAGE_KEY = 'atg-admin-booking-chat-fab-position';
@@ -16,30 +17,6 @@ type BookingMessagesSectionProps = {
   initialUnreadCount?: number;
 };
 
-function formatDateTime(iso: string): string {
-  try {
-    return new Date(iso).toLocaleString('fr-FR', {
-      dateStyle: 'short',
-      timeStyle: 'short',
-    });
-  } catch {
-    return iso;
-  }
-}
-
-function formatDateSeparator(iso: string): string {
-  try {
-    return new Date(iso).toLocaleDateString('fr-FR', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    });
-  } catch {
-    return iso;
-  }
-}
-
 export function BookingMessagesSection({
   bookingId,
   canWrite,
@@ -48,6 +25,23 @@ export function BookingMessagesSection({
   const { bookings: getBookingsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.bookings.messages');
   const { toast } = useToast();
+  const format = useFormatter();
+  const formatDateTime = useFormatDateTime();
+  const formatDateSeparator = useCallback(
+    (iso: string) => {
+      try {
+        return format.dateTime(new Date(iso), {
+          weekday: 'long',
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        });
+      } catch {
+        return iso;
+      }
+    },
+    [format],
+  );
 
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<BookingMessage[]>([]);
