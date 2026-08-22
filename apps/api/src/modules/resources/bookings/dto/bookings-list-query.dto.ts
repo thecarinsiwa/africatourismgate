@@ -5,6 +5,7 @@ import type { Bookings } from '../../../../entities/generated';
 
 const BOOKING_STATUSES = [
   'draft',
+  'pending_approval',
   'pending_payment',
   'confirmed',
   'cancelled',

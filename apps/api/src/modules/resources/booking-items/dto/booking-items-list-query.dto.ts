@@ -14,6 +14,7 @@ const ITEM_TYPES = [
 
 const BOOKING_STATUSES = [
   'draft',
+  'pending_approval',
   'pending_payment',
   'confirmed',
   'cancelled',
