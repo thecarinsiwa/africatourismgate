@@ -10,6 +10,7 @@ import {
   DataTableBadge,
   Select,
   Skeleton,
+  Textarea,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type {
@@ -19,7 +20,7 @@ import type {
   BookingStatus,
 } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
 import { AdminPageBackLink } from '../admin-page-back-link';
 import { getApiClient } from '../../lib/auth/api';
@@ -60,6 +61,9 @@ function formatBookingRef(id: string): string {
   return id.slice(0, 8);
 }
 
+const actionErrorClassName =
+  'rounded-lg border border-red-500 bg-red-500/5 px-3 py-2 text-sm text-red-600 dark:border-red-500/50 dark:bg-red-500/10 dark:text-red-400';
+
 type BookingDetailPageProps = {
   bookingId: string;
 };
@@ -90,9 +94,6 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   const providerLabels = usePaymentProviderLabels();
   const emptyDash = tCommon('empty.dash');
 
-  const statusReasonId = useId();
-  const cancelReasonId = useId();
-
   const [canWrite, setCanWrite] = useState(false);
   const [canApprove, setCanApprove] = useState(false);
   const [detail, setDetail] = useState<BookingAdminDetail | null>(null);
@@ -117,7 +118,10 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   useAdminEditPageMeta({
     ready: state.status === 'ready' && detail != null,
     title: t('title'),
-    entityLabel: detail?.booking.id,
+    entityLabel:
+      detail != null
+        ? t('reference', { idPrefix: formatBookingRef(detail.booking.id) })
+        : undefined,
   });
 
   const load = useCallback(async () => {
@@ -309,7 +313,7 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
 
   if (state.status === 'loading' && !detail) {
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-6">
         <AdminPageBackLink href="/reservations" label={t('backLink')} />
         <BookingDetailSkeleton />
       </div>
@@ -318,9 +322,9 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
 
   if (state.status === 'error') {
     return (
-      <div className="space-y-4">
+      <div className="min-w-0 space-y-4">
         <AdminPageBackLink href="/reservations" label={t('backLink')} />
-        <p role="alert" className="text-sm text-red-600">
+        <p role="alert" className={actionErrorClassName}>
           {state.message}
         </p>
       </div>
@@ -344,11 +348,11 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
   const trimmedStatusReason = statusReason.trim();
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <AdminPageBackLink href="/reservations" label={t('backLink')} />
 
       {actionError ? (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+        <p role="alert" className={actionErrorClassName}>
           {actionError}
         </p>
       ) : null}
@@ -365,30 +369,40 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
             <p className="mb-4 font-mono text-xs text-atg-muted">
               {t('reference', { idPrefix: formatBookingRef(booking.id) })}
             </p>
-            <dl className="space-y-3 text-sm">
-              <div>
-                <dt className="text-atg-muted">{t('clientFields.email')}</dt>
+            <dl className="divide-y divide-atg-border text-sm">
+              <div className="grid gap-1 py-3 first:pt-0">
+                <dt className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+                  {t('clientFields.email')}
+                </dt>
                 <dd className="font-medium text-atg-fg">{client.email}</dd>
               </div>
-              <div>
-                <dt className="text-atg-muted">{t('clientFields.name')}</dt>
-                <dd>
+              <div className="grid gap-1 py-3">
+                <dt className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+                  {t('clientFields.name')}
+                </dt>
+                <dd className="font-medium text-atg-fg">
                   {client.firstName} {client.lastName}
                 </dd>
               </div>
-              <div>
-                <dt className="text-atg-muted">{t('clientFields.organization')}</dt>
-                <dd>{client.organizationName ?? emptyDash}</dd>
+              <div className="grid gap-1 py-3">
+                <dt className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+                  {t('clientFields.organization')}
+                </dt>
+                <dd className="text-atg-fg">{client.organizationName ?? emptyDash}</dd>
               </div>
-              <div>
-                <dt className="text-atg-muted">{t('clientFields.total')}</dt>
+              <div className="grid gap-1 py-3">
+                <dt className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+                  {t('clientFields.total')}
+                </dt>
                 <dd className="tabular-nums text-base font-semibold text-atg-fg">
                   {formatMoney(detail.totalCents, detail.currency)}
                 </dd>
               </div>
-              <div>
-                <dt className="text-atg-muted">{t('clientFields.createdAt')}</dt>
-                <dd className="tabular-nums">{formatDateTime(booking.createdAt)}</dd>
+              <div className="grid gap-1 py-3">
+                <dt className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+                  {t('clientFields.createdAt')}
+                </dt>
+                <dd className="tabular-nums text-atg-fg">{formatDateTime(booking.createdAt)}</dd>
               </div>
             </dl>
           </Card>
@@ -430,15 +444,12 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
                     options={statusOptions}
                     onChange={(e) => setNewStatus(e.target.value as BookingStatus)}
                   />
-                  <label htmlFor={statusReasonId} className="block text-sm font-medium text-atg-fg">
-                    {t('actions.statusReason')}
-                  </label>
-                  <textarea
-                    id={statusReasonId}
+                  <Textarea
+                    name="statusReason"
+                    label={t('actions.statusReason')}
                     rows={2}
                     value={statusReason}
                     onChange={(e) => setStatusReason(e.target.value)}
-                    className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg"
                     placeholder={t('actions.statusReasonPlaceholder')}
                   />
                   <Button
@@ -457,15 +468,12 @@ export function BookingDetailPage({ bookingId }: BookingDetailPageProps) {
               {canCancel ? (
                 <div className="space-y-3 border-t border-atg-border pt-6">
                   <h3 className="text-sm font-semibold text-atg-fg">{t('actions.cancellation')}</h3>
-                  <label htmlFor={cancelReasonId} className="block text-sm font-medium text-atg-fg">
-                    {t('actions.cancelReason')}
-                  </label>
-                  <textarea
-                    id={cancelReasonId}
+                  <Textarea
+                    name="cancelReason"
+                    label={t('actions.cancelReason')}
                     rows={3}
                     value={cancelReason}
                     onChange={(e) => setCancelReason(e.target.value)}
-                    className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg"
                     placeholder={t('actions.cancelReasonPlaceholder')}
                   />
                   <Button
