@@ -112,3 +112,16 @@ export type BookingIdentityDocumentUploadRequestEmailPayload = AssistedBookingEm
   staffNote?: string | null;
   locale?: 'fr' | 'en' | 'es';
 };
+
+export type BookingGuideAssignmentEmailPayload = {
+  to: string;
+  guideName: string;
+  bookingId: string;
+  role: 'primary' | 'secondary';
+  itemTitles: string[];
+  visitStartDate?: string | null;
+  visitEndDate?: string | null;
+  adminUrl?: string;
+  locale?: 'fr' | 'en' | 'es';
+  webUrl?: string;
+};

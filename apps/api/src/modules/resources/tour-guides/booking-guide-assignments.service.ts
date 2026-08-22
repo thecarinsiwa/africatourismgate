@@ -16,6 +16,7 @@ import {
   toBookingGuideAssignmentDto,
 } from './dto/booking-guide-assignment.dto';
 import { TourGuidesService } from './tour-guides.service';
+import { BookingGuideAssignmentEmailService } from './booking-guide-assignment-email.service';
 
 @Injectable()
 export class BookingGuideAssignmentsService {
@@ -25,6 +26,7 @@ export class BookingGuideAssignmentsService {
     @InjectRepository(Bookings)
     private readonly bookingsRepository: Repository<Bookings>,
     private readonly tourGuidesService: TourGuidesService,
+    private readonly guideAssignmentEmail: BookingGuideAssignmentEmailService,
   ) {}
 
   async listByBookingId(bookingId: string): Promise<BookingGuideAssignmentDto[]> {
@@ -79,6 +81,7 @@ export class BookingGuideAssignmentsService {
       });
       const saved = await this.assignmentsRepository.save(created);
       results.push(toBookingGuideAssignmentDto(saved));
+      this.guideAssignmentEmail.notifyGuideAssigned(bookingId, item.guideId, role);
     }
 
     return results;
