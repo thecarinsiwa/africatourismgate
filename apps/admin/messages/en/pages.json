@@ -479,6 +479,7 @@
       },
       "id": {
         "metaTitle": "Edit GAP page",
+        "description": "Update content, images and publication status.",
         "backLabel": "Back to pages"
       }
     },

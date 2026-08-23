@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Input, Select, Textarea } from '@africatourismgate/ui';
+import { Button, Card, Input, Select, Textarea } from '@africatourismgate/ui';
 import type {
   CreateGapPageRequest,
   GapPage,
@@ -284,6 +284,7 @@ export function GapPageForm({ mode, pageId, initialPage }: GapPageFormProps) {
   const canAddMore = values.coverImageUrls.length < MAX_PAGE_IMAGES;
 
   return (
+    <Card className="p-6">
     <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
       <div className="rounded-lg border border-atg-border bg-atg-elevated/50 px-4 py-3 text-sm text-atg-muted">
         <p>{t('info.sectionLocaleUnique')}</p>
@@ -343,6 +344,7 @@ export function GapPageForm({ mode, pageId, initialPage }: GapPageFormProps) {
         onChange={(html) => updateField('content', html)}
         placeholder={t('fields.contentPlaceholder')}
         contentClassName="min-h-[280px]"
+        readOnly={!canWrite}
       />
       {fieldErrors.content ? (
         <p className="mt-1 text-sm text-red-600 dark:text-red-400">{fieldErrors.content}</p>
@@ -479,11 +481,14 @@ export function GapPageForm({ mode, pageId, initialPage }: GapPageFormProps) {
           <Button type="submit" loading={submitting} loadingText={t('saving')} disabled={busy}>
             {mode === 'create' ? t('createButton') : t('saveButton')}
           </Button>
-          <Button type="button" variant="outline" href="/gap/pages">
-            {t('cancelButton')}
-          </Button>
+          {mode === 'create' ? (
+            <Button type="button" variant="outline" href="/gap/pages">
+              {t('cancelButton')}
+            </Button>
+          ) : null}
         </div>
       ) : null}
     </form>
+    </Card>
   );
 }

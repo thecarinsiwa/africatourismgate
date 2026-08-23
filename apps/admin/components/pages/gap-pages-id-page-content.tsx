@@ -16,7 +16,9 @@ export function GapPagesIdPageContent({ id }: GapPagesIdPageContentProps) {
         backHref="/gap/pages"
         backLabelKey="backLabel"
       >
-        <GapPageEditPage pageId={id} />
+        <div className="min-w-0">
+          <GapPageEditPage pageId={id} />
+        </div>
       </AdminIntroPage>
     </GapAccessShell>
   );

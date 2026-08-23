@@ -479,6 +479,7 @@
       },
       "id": {
         "metaTitle": "Modificar la página GAP",
+        "description": "Actualice el contenido, las imágenes y el estado de publicación.",
         "backLabel": "Volver a páginas"
       }
     },
