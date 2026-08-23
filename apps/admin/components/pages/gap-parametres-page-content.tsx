@@ -4,7 +4,7 @@ import { useId, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { GapAccessShell } from '../gap/gap-access-shell';
 import { GapSiteSettingsForm } from '../gap/gap-site-settings-form';
-import { AdminIntroPage } from './admin-intro-page';
+import { AdminListPageHeader } from './admin-list-page-header';
 
 export function GapParametresPageContent() {
   const t = useTranslations('modules.gap.parametres');
@@ -14,7 +14,8 @@ export function GapParametresPageContent() {
 
   return (
     <GapAccessShell>
-      <AdminIntroPage routePath="gap/parametres">
+      <div className="min-w-0">
+        <AdminListPageHeader routePath="gap/parametres" />
         <div className="space-y-8">
           <div className="max-w-xs">
             <label htmlFor={localeFilterId} className="mb-1 block text-sm font-medium">
@@ -33,7 +34,7 @@ export function GapParametresPageContent() {
           </div>
           <GapSiteSettingsForm locale={locale} />
         </div>
-      </AdminIntroPage>
+      </div>
     </GapAccessShell>
   );
 }
