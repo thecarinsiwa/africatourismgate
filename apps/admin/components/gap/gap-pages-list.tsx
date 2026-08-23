@@ -22,7 +22,7 @@ import { getApiClient } from '../../lib/auth/api';
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 import { GapPageDetailModal } from './gap-page-detail-modal';
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_MS = 300;
 
 function formatDateTime(iso: string | null): string {
