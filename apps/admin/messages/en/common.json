@@ -16,7 +16,8 @@
     "filter": "Filter",
     "close": "Close",
     "confirm": "Confirm",
-    "view": "View"
+    "view": "View",
+    "retry": "Try again"
   },
   "loading": {
     "default": "Loading…",
@@ -29,6 +30,7 @@
     "noMatch": "No matches for your search"
   },
   "errors": {
+    "networkTitle": "Unable to reach the API",
     "network": "Unable to reach the API. Check that the server is running.",
     "networkShort": "Unable to reach the server. Check your connection.",
     "forbidden": "You do not have permission to perform this action.",

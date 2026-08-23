@@ -2,19 +2,20 @@
 
 import {
   AlertDialog,
-  Button,
   Card,
   DataTable,
   DataTableActionButton,
   DataTableActions,
   DataTableBadge,
   DataTablePagination,
+  FilterBar,
   Input,
+  Select,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { GapImpactStat, GapStatus } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import { useGapPermissions } from '../../lib/gap/use-gap-permissions';
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
@@ -30,14 +31,11 @@ export function GapImpactStatsList() {
   const tStatus = useTranslations('modules.about.status');
   const tLocale = useTranslations('modules.about.locale');
   const tCommon = useTranslations('modules.common');
-  const statusFilterId = useId();
-  const localeFilterId = useId();
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<'' | GapStatus>('');
   const [localeFilter, setLocaleFilter] = useState('');
-  const [filterTick, setFilterTick] = useState(0);
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -66,7 +64,7 @@ export function GapImpactStatsList() {
     } catch (error) {
       setState({ status: 'error', message: getGapErrorMessage(error) });
     }
-  }, [page, search, statusFilter, localeFilter, filterTick, getGapErrorMessage]);
+  }, [page, search, statusFilter, localeFilter, getGapErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -179,7 +177,38 @@ export function GapImpactStatsList() {
   );
 
   const stats = state.status === 'ready' ? state.stats : [];
-  const hasActiveFilters = Boolean(statusFilter || localeFilter);
+  const activeFilterCount = [
+    search.trim().length > 0,
+    statusFilter !== '',
+    localeFilter !== '',
+  ].filter(Boolean).length;
+  const hasActiveFilters = activeFilterCount > 0;
+
+  const statusOptions = useMemo(
+    () => [
+      { value: '', label: tCommon('filters.all') },
+      { value: 'draft', label: tStatus('draft') },
+      { value: 'published', label: tStatus('published') },
+    ],
+    [tCommon, tStatus],
+  );
+  const localeOptions = useMemo(
+    () => [
+      { value: '', label: tCommon('filters.all') },
+      { value: 'fr', label: tLocale('fr') },
+      { value: 'en', label: tLocale('en') },
+      { value: 'es', label: tLocale('es') },
+    ],
+    [tCommon, tLocale],
+  );
+
+  const handleClearFilters = useCallback(() => {
+    setSearchInput('');
+    setSearch('');
+    setStatusFilter('');
+    setLocaleFilter('');
+    setPage(1);
+  }, []);
 
   return (
     <>
@@ -196,68 +225,48 @@ export function GapImpactStatsList() {
         onConfirm={() => void handleDeleteConfirm()}
       />
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:items-end">
-          <div className="flex-1 sm:max-w-md">
-            <Input
-              type="search"
-              placeholder={t('searchPlaceholder')}
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-            />
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label
-                htmlFor={statusFilterId}
-                className="mb-1 block text-xs font-medium text-atg-muted"
-              >
-                {tCommon('columns.status')}
-              </label>
-              <select
-                id={statusFilterId}
+      <FilterBar
+        mobileVariant="drawer"
+        activeCount={activeFilterCount}
+        onClear={handleClearFilters}
+        clearLabel={tCommon('filters.clearAll')}
+        applyLabel={tCommon('filters.apply')}
+        toggleLabel={tCommon('filters.toggle')}
+        filters={
+          <>
+            <div className="min-w-[200px] flex-1 sm:max-w-md">
+              <Input
+                type="search"
+                placeholder={t('searchPlaceholder')}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+              />
+            </div>
+            <div className="w-full sm:w-40">
+              <Select
+                label={tCommon('columns.status')}
                 value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value as '' | GapStatus)}
-                className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm"
-              >
-                <option value="">{tCommon('filters.all')}</option>
-                <option value="draft">{tStatus('draft')}</option>
-                <option value="published">{tStatus('published')}</option>
-              </select>
+                options={statusOptions}
+                onChange={(e) => {
+                  setStatusFilter(e.target.value as '' | GapStatus);
+                  setPage(1);
+                }}
+              />
             </div>
-            <div>
-              <label
-                htmlFor={localeFilterId}
-                className="mb-1 block text-xs font-medium text-atg-muted"
-              >
-                {t('columns.locale')}
-              </label>
-              <select
-                id={localeFilterId}
+            <div className="w-full sm:w-40">
+              <Select
+                label={t('columns.locale')}
                 value={localeFilter}
-                onChange={(e) => setLocaleFilter(e.target.value)}
-                className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm"
-              >
-                <option value="">{tCommon('filters.all')}</option>
-                <option value="fr">{tLocale('fr')}</option>
-                <option value="en">{tLocale('en')}</option>
-                <option value="es">{tLocale('es')}</option>
-              </select>
+                options={localeOptions}
+                onChange={(e) => {
+                  setLocaleFilter(e.target.value);
+                  setPage(1);
+                }}
+              />
             </div>
-          </div>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => {
-              setPage(1);
-              setFilterTick((n) => n + 1);
-            }}
-          >
-            {tCommon('filters.apply')}
-          </Button>
-        </div>
-        {canWrite ? <Button href="/gap/impact/nouveau">{t('newButton')}</Button> : null}
-      </div>
+          </>
+        }
+      />
 
       {state.status === 'error' ? (
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">

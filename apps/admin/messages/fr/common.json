@@ -16,7 +16,8 @@
     "filter": "Filtrer",
     "close": "Fermer",
     "confirm": "Confirmer",
-    "view": "Voir"
+    "view": "Voir",
+    "retry": "Réessayer"
   },
   "loading": {
     "default": "Chargement…",
@@ -29,6 +30,7 @@
     "noMatch": "Aucune correspondance pour votre recherche"
   },
   "errors": {
+    "networkTitle": "Connexion à l’API impossible",
     "network": "Impossible de joindre l’API. Vérifiez que le serveur est démarré.",
     "networkShort": "Impossible de joindre le serveur. Vérifiez votre connexion.",
     "forbidden": "Vous n’avez pas la permission d’effectuer cette action.",

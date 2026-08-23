@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Input, Textarea } from '@africatourismgate/ui';
+import { Button, Card, Input, Select, Textarea } from '@africatourismgate/ui';
 import type {
   CreateGapPageRequest,
   GapPage,
@@ -10,7 +10,7 @@ import type {
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useCallback, useId, useState } from 'react';
+import { useCallback, useId, useMemo, useState } from 'react';
 import { isValidMediaUrl, toDatetimeLocalValue } from '../../lib/about/form-utils';
 import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
 import { getSession } from '../../lib/auth/session';
@@ -106,11 +106,28 @@ export function GapPageForm({ mode, pageId, initialPage }: GapPageFormProps) {
   const tLocale = useTranslations('modules.about.locale');
   const tStatus = useTranslations('modules.about.status');
   const router = useRouter();
-  const statusId = useId();
-  const localeId = useId();
-  const sectionId = useId();
   const coverInputId = useId();
   const externalImageId = useId();
+
+  const sectionOptions = useMemo(
+    () => GAP_PAGE_SECTION_KEYS.map((key) => ({ value: key, label: tSections(key) })),
+    [tSections],
+  );
+  const statusOptions = useMemo(
+    () => [
+      { value: 'draft', label: tStatus('draft') },
+      { value: 'published', label: tStatus('published') },
+    ],
+    [tStatus],
+  );
+  const localeOptions = useMemo(
+    () => [
+      { value: 'fr', label: tLocale('fr') },
+      { value: 'en', label: tLocale('en') },
+      { value: 'es', label: tLocale('es') },
+    ],
+    [tLocale],
+  );
   const [values, setValues] = useState<GapPageFormValues>(() =>
     initialPage ? gapPageToFormValues(initialPage) : defaultValues,
   );
@@ -267,6 +284,7 @@ export function GapPageForm({ mode, pageId, initialPage }: GapPageFormProps) {
   const canAddMore = values.coverImageUrls.length < MAX_PAGE_IMAGES;
 
   return (
+    <Card className="p-6">
     <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
       <div className="rounded-lg border border-atg-border bg-atg-elevated/50 px-4 py-3 text-sm text-atg-muted">
         <p>{t('info.sectionLocaleUnique')}</p>
@@ -283,25 +301,19 @@ export function GapPageForm({ mode, pageId, initialPage }: GapPageFormProps) {
       ) : null}
 
       <div>
-        <label htmlFor={sectionId} className="mb-2 block text-sm font-medium text-atg-fg">
-          {t('fields.section')}
-        </label>
         {mode === 'edit' ? (
-          <p className="text-sm text-atg-muted">{tSections(values.sectionKey)}</p>
+          <>
+            <p className="mb-2 block text-sm font-medium text-atg-fg">{t('fields.section')}</p>
+            <p className="text-sm text-atg-muted">{tSections(values.sectionKey)}</p>
+          </>
         ) : (
-          <select
-            id={sectionId}
+          <Select
+            label={t('fields.section')}
             value={values.sectionKey}
+            options={sectionOptions}
             onChange={(e) => updateField('sectionKey', e.target.value as GapPageSectionKey)}
             disabled={!canWrite}
-            className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
-          >
-            {GAP_PAGE_SECTION_KEYS.map((key) => (
-              <option key={key} value={key}>
-                {tSections(key)}
-              </option>
-            ))}
-          </select>
+          />
         )}
       </div>
 
@@ -332,6 +344,7 @@ export function GapPageForm({ mode, pageId, initialPage }: GapPageFormProps) {
         onChange={(html) => updateField('content', html)}
         placeholder={t('fields.contentPlaceholder')}
         contentClassName="min-h-[280px]"
+        readOnly={!canWrite}
       />
       {fieldErrors.content ? (
         <p className="mt-1 text-sm text-red-600 dark:text-red-400">{fieldErrors.content}</p>
@@ -437,37 +450,20 @@ export function GapPageForm({ mode, pageId, initialPage }: GapPageFormProps) {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <label htmlFor={statusId} className="mb-2 block text-sm font-medium text-atg-fg">
-            {tCommon('columns.status')}
-          </label>
-          <select
-            id={statusId}
-            value={values.status}
-            onChange={(e) => updateField('status', e.target.value as GapStatus)}
-            disabled={!canWrite}
-            className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
-          >
-            <option value="draft">{tStatus('draft')}</option>
-            <option value="published">{tStatus('published')}</option>
-          </select>
-        </div>
-        <div>
-          <label htmlFor={localeId} className="mb-2 block text-sm font-medium text-atg-fg">
-            {t('fields.locale')}
-          </label>
-          <select
-            id={localeId}
-            value={values.locale}
-            onChange={(e) => updateField('locale', e.target.value)}
-            disabled={!canWrite}
-            className="w-full rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
-          >
-            <option value="fr">{tLocale('fr')}</option>
-            <option value="en">{tLocale('en')}</option>
-            <option value="es">{tLocale('es')}</option>
-          </select>
-        </div>
+        <Select
+          label={tCommon('columns.status')}
+          value={values.status}
+          options={statusOptions}
+          onChange={(e) => updateField('status', e.target.value as GapStatus)}
+          disabled={!canWrite}
+        />
+        <Select
+          label={t('fields.locale')}
+          value={values.locale}
+          options={localeOptions}
+          onChange={(e) => updateField('locale', e.target.value)}
+          disabled={!canWrite}
+        />
       </div>
 
       <Input
@@ -485,11 +481,14 @@ export function GapPageForm({ mode, pageId, initialPage }: GapPageFormProps) {
           <Button type="submit" loading={submitting} loadingText={t('saving')} disabled={busy}>
             {mode === 'create' ? t('createButton') : t('saveButton')}
           </Button>
-          <Button type="button" variant="outline" href="/gap/pages">
-            {t('cancelButton')}
-          </Button>
+          {mode === 'create' ? (
+            <Button type="button" variant="outline" href="/gap/pages">
+              {t('cancelButton')}
+            </Button>
+          ) : null}
         </div>
       ) : null}
     </form>
+    </Card>
   );
 }

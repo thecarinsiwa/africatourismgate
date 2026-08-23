@@ -71,6 +71,7 @@ CREATE TABLE IF NOT EXISTS `gap_impact_stats` (
   `label` VARCHAR(120) NOT NULL,
   `value_display` VARCHAR(64) NOT NULL,
   `description` TEXT DEFAULT NULL,
+  `image_url` VARCHAR(1024) DEFAULT NULL,
   `color_key` ENUM('primary', 'secondary') NOT NULL DEFAULT 'primary',
   `sort_order` INT NOT NULL DEFAULT 0,
   `status` ENUM('draft', 'published') NOT NULL DEFAULT 'draft',

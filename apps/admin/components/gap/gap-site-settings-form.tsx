@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Card, Input, Textarea } from '@africatourismgate/ui';
+import { Button, Card, Input, Select, Textarea } from '@africatourismgate/ui';
 import type {
   CreateGapSiteSettingsRequest,
   GapSiteLink,
@@ -9,7 +9,7 @@ import type {
 } from '@africatourismgate/types';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useId, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { isValidMediaUrl } from '../../lib/about/form-utils';
 import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
 import { getSession } from '../../lib/auth/session';
@@ -94,7 +94,14 @@ export function GapSiteSettingsForm({ locale }: GapSiteSettingsFormProps) {
   const heroInputId = useId();
   const heroImageUrlId = useId();
   const heroImageAltId = useId();
-  const statusId = useId();
+
+  const statusOptions = useMemo(
+    () => [
+      { value: 'draft', label: tStatus('draft') },
+      { value: 'published', label: tStatus('published') },
+    ],
+    [tStatus],
+  );
 
   const loadSettings = useCallback(async () => {
     setLoading(true);
@@ -300,23 +307,15 @@ export function GapSiteSettingsForm({ locale }: GapSiteSettingsFormProps) {
               <p className="mt-1 text-sm text-destructive">{fieldErrors.title}</p>
             ) : null}
           </div>
-          <div>
-            <label htmlFor={statusId} className="mb-1 block text-sm font-medium">
-              {tCommon('columns.status')}
-            </label>
-            <select
-              id={statusId}
-              value={values.status}
-              onChange={(e) =>
-                setValues((prev) => ({ ...prev, status: e.target.value as GapStatus }))
-              }
-              disabled={!canWrite}
-              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-            >
-              <option value="draft">{tStatus('draft')}</option>
-              <option value="published">{tStatus('published')}</option>
-            </select>
-          </div>
+          <Select
+            label={tCommon('columns.status')}
+            value={values.status}
+            options={statusOptions}
+            onChange={(e) =>
+              setValues((prev) => ({ ...prev, status: e.target.value as GapStatus }))
+            }
+            disabled={!canWrite}
+          />
         </div>
 
         <Textarea

@@ -66,6 +66,11 @@ import { PromotionsModule } from './resources/promotions/promotions.module';
 import { ReviewsModule } from './resources/reviews/reviews.module';
 import { SupportTicketsModule } from './resources/support-tickets/support-tickets.module';
 import { SupportMessagesModule } from './resources/support-messages/support-messages.module';
+import { GapPagesModule } from './resources/gap-pages/gap-pages.module';
+import { GapActivitiesModule } from './resources/gap-activities/gap-activities.module';
+import { GapImpactStatsModule } from './resources/gap-impact-stats/gap-impact-stats.module';
+import { GapMediaItemsModule } from './resources/gap-media-items/gap-media-items.module';
+import { GapSiteSettingsModule } from './resources/gap-site-settings/gap-site-settings.module';
 
 import { Module } from '@nestjs/common';
 
@@ -139,6 +144,11 @@ import { Module } from '@nestjs/common';
     ReviewsModule,
     SupportTicketsModule,
     SupportMessagesModule,
+    GapPagesModule,
+    GapActivitiesModule,
+    GapImpactStatsModule,
+    GapMediaItemsModule,
+    GapSiteSettingsModule,
   ],
 })
 export class ApiResourcesModule {}

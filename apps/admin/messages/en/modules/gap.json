@@ -230,7 +230,8 @@
     "form": {
       "validation": {
         "labelRequired": "Label is required.",
-        "valueRequired": "Displayed value is required."
+        "valueRequired": "Displayed value is required.",
+        "imageUrlInvalid": "The image URL must be valid."
       },
       "fields": {
         "label": "Label",
@@ -238,6 +239,9 @@
         "valueDisplayPlaceholder": "e.g. 12,000+",
         "description": "Description (optional)",
         "descriptionPlaceholder": "Add a formatted description…",
+        "image": "Photo (optional)",
+        "imagePreviewAlt": "Photo preview",
+        "removeImage": "Remove photo",
         "colorKey": "Color",
         "sortOrder": "Display order",
         "locale": "Language"

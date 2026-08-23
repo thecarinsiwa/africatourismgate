@@ -1,7 +1,6 @@
 'use client';
 
 import type { GapPage } from '@africatourismgate/types';
-import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
@@ -52,14 +51,9 @@ export function GapPageEditPage({ pageId }: GapPageEditPageProps) {
 
   if (state.status === 'error') {
     return (
-      <div className="space-y-4">
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {state.message}
-        </p>
-        <Link href="/gap/pages" className="text-sm font-medium text-primary">
-          {tCommon('back.toList')}
-        </Link>
-      </div>
+      <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+        {state.message}
+      </p>
     );
   }
 

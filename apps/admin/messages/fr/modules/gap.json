@@ -230,7 +230,8 @@
     "form": {
       "validation": {
         "labelRequired": "Le libellé est obligatoire.",
-        "valueRequired": "La valeur affichée est obligatoire."
+        "valueRequired": "La valeur affichée est obligatoire.",
+        "imageUrlInvalid": "L'URL de l'image doit être valide."
       },
       "fields": {
         "label": "Libellé",
@@ -238,6 +239,9 @@
         "valueDisplayPlaceholder": "ex. 12 000+",
         "description": "Description (optionnel)",
         "descriptionPlaceholder": "Ajoutez une description formatée…",
+        "image": "Photo (optionnel)",
+        "imagePreviewAlt": "Aperçu de la photo",
+        "removeImage": "Retirer la photo",
         "colorKey": "Couleur",
         "sortOrder": "Ordre d'affichage",
         "locale": "Langue"
