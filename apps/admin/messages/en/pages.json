@@ -463,10 +463,15 @@
   },
   "gap": {
     "parametres": {
+      "title": "GAP settings",
       "description": "Title, subtitle and hero banner for the Gorilla Ambassadors program per language. Access: gap.read / gap.write."
     },
     "pages": {
+      "title": "GAP pages",
       "description": "Institutional GAP program pages (About, objectives, UNESCO). Access: gap.read / gap.write.",
+      "actions": {
+        "new": "New page"
+      },
       "nouveau": {
         "metaTitle": "New GAP page",
         "description": "Create a page for a GAP program section.",
@@ -478,18 +483,27 @@
       }
     },
     "activites": {
+      "title": "GAP activities",
       "description": "Activities and initiatives of the Gorilla Ambassadors program. Access: gap.read / gap.write.",
+      "actions": {
+        "new": "New activity"
+      },
       "nouveau": {
         "metaTitle": "New GAP activity",
         "description": "Add an activity to the program.",
         "backLabel": "Back to activities"
       },
       "id": {
-        "metaTitle": "Edit GAP activity"
+        "metaTitle": "Edit GAP activity",
+        "backLabel": "Back to activities"
       }
     },
     "impact": {
+      "title": "GAP impact",
       "description": "Impact statistics displayed on the GAP site. Access: gap.read / gap.write.",
+      "actions": {
+        "new": "New statistic"
+      },
       "nouveau": {
         "metaTitle": "New impact stat",
         "description": "Add an impact statistic.",
@@ -501,7 +515,11 @@
       }
     },
     "medias": {
+      "title": "GAP media",
       "description": "Photo and video gallery for the GAP program. Access: gap.read / gap.write.",
+      "actions": {
+        "new": "New media"
+      },
       "nouveau": {
         "metaTitle": "New GAP media",
         "description": "Add an image or video.",
