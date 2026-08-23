@@ -231,7 +231,9 @@
       "validation": {
         "labelRequired": "Le libellé est obligatoire.",
         "valueRequired": "La valeur affichée est obligatoire.",
-        "imageUrlInvalid": "L'URL de l'image doit être valide."
+        "imageUrlInvalid": "L'URL de l'image doit être valide.",
+        "localesRequired": "Sélectionnez au moins une langue.",
+        "partialCreateFailed": "Création partielle : échec pour {locales}. Les autres langues ont été créées."
       },
       "fields": {
         "label": "Libellé",
@@ -244,10 +246,13 @@
         "removeImage": "Retirer la photo",
         "colorKey": "Couleur",
         "sortOrder": "Ordre d'affichage",
-        "locale": "Langue"
+        "locale": "Langue",
+        "locales": "Langues",
+        "localesHint": "Une statistique sera créée pour chaque langue cochée (même contenu)."
       },
       "saving": "Enregistrement…",
       "createButton": "Créer la statistique",
+      "createBulkButton": "Créer {count} statistiques",
       "saveButton": "Enregistrer",
       "cancelButton": "Annuler"
     }

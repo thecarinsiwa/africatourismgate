@@ -231,7 +231,9 @@
       "validation": {
         "labelRequired": "La etiqueta es obligatoria.",
         "valueRequired": "El valor mostrado es obligatorio.",
-        "imageUrlInvalid": "La URL de la imagen debe ser válida."
+        "imageUrlInvalid": "La URL de la imagen debe ser válida.",
+        "localesRequired": "Seleccione al menos un idioma.",
+        "partialCreateFailed": "Creación parcial: error en {locales}. Los demás idiomas se crearon."
       },
       "fields": {
         "label": "Etiqueta",
@@ -244,10 +246,13 @@
         "removeImage": "Quitar la foto",
         "colorKey": "Color",
         "sortOrder": "Orden de visualización",
-        "locale": "Idioma"
+        "locale": "Idioma",
+        "locales": "Idiomas",
+        "localesHint": "Se creará una estadística por cada idioma marcado (mismo contenido)."
       },
       "saving": "Guardando…",
       "createButton": "Crear la estadística",
+      "createBulkButton": "Crear {count} estadísticas",
       "saveButton": "Guardar",
       "cancelButton": "Cancelar"
     }
