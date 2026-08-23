@@ -53,6 +53,7 @@ export type PublicGapImpactStatDto = {
   label: string;
   valueDisplay: string;
   description: string | null;
+  imageUrl: string | null;
   colorKey: 'primary' | 'secondary';
   sortOrder: number;
   locale: string;
@@ -390,6 +391,7 @@ export class PublicGapService {
       label: stat.label,
       valueDisplay: stat.valueDisplay,
       description: stat.description,
+      imageUrl: stat.imageUrl,
       colorKey: stat.colorKey,
       sortOrder: stat.sortOrder,
       locale: stat.locale,

@@ -18,6 +18,9 @@ export class GapImpactStats extends BaseAuditEntity {
   @Column({ type: 'text', name: 'description', nullable: true })
   description!: string | null;
 
+  @Column({ type: 'varchar', name: 'image_url', length: 1024, nullable: true })
+  imageUrl!: string | null;
+
   @Column({
     name: 'color_key',
     type: 'enum',

@@ -65,6 +65,7 @@ export interface GapImpactStat extends AuditFields {
   label: string;
   valueDisplay: string;
   description: string | null;
+  imageUrl: string | null;
   colorKey: GapImpactStatColorKey;
   sortOrder: number;
   status: GapStatus;
@@ -129,6 +130,7 @@ export interface PublicGapImpactStat {
   label: string;
   valueDisplay: string;
   description: string | null;
+  imageUrl: string | null;
   colorKey: GapImpactStatColorKey;
   sortOrder: number;
   locale: string;
@@ -230,6 +232,7 @@ export interface CreateGapImpactStatRequest {
   label: string;
   valueDisplay: string;
   description?: string | null;
+  imageUrl?: string | null;
   colorKey: GapImpactStatColorKey;
   sortOrder?: number;
   status?: GapStatus;

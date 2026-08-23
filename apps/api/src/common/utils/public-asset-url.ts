@@ -101,6 +101,10 @@ export function gapActivityUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/gap/activities/${filename}`;
 }
 
+export function gapImpactStatUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/gap/impact/${filename}`;
+}
+
 export function gapPageUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/gap/pages/${filename}`;
 }
