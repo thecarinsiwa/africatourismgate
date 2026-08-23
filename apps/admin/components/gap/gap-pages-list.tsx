@@ -20,6 +20,7 @@ import { GAP_PAGE_SECTION_KEYS } from '../../lib/gap/constants';
 import { useGapPermissions } from '../../lib/gap/use-gap-permissions';
 import { getApiClient } from '../../lib/auth/api';
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+import { AdminNetworkErrorModal } from '../admin-network-error-modal';
 import { GapPageDetailModal } from './gap-page-detail-modal';
 
 const PAGE_SIZE = 10;
@@ -57,6 +58,7 @@ export function GapPagesList() {
     | { status: 'error'; message: string }
     | { status: 'ready'; pages: GapPage[]; total: number; totalPages: number }
   >({ status: 'loading' });
+  const [networkModalOpen, setNetworkModalOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [confirmTarget, setConfirmTarget] = useState<GapPage | null>(null);
@@ -73,6 +75,7 @@ export function GapPagesList() {
         locale: localeFilter || undefined,
         sectionKey: sectionFilter || undefined,
       });
+      setNetworkModalOpen(false);
       setState({
         status: 'ready',
         pages: result.data,
@@ -80,7 +83,9 @@ export function GapPagesList() {
         totalPages: result.meta.totalPages,
       });
     } catch (error) {
+      const isNetwork = error instanceof TypeError;
       setState({ status: 'error', message: getGapErrorMessage(error) });
+      if (isNetwork) setNetworkModalOpen(true);
     }
   }, [page, search, statusFilter, localeFilter, sectionFilter, getGapErrorMessage]);
 
@@ -259,6 +264,12 @@ export function GapPagesList() {
           if (!open) setViewTarget(null);
         }}
         canWrite={canWrite}
+      />
+      <AdminNetworkErrorModal
+        open={networkModalOpen}
+        onOpenChange={setNetworkModalOpen}
+        onRetry={() => void load()}
+        retrying={state.status === 'loading'}
       />
     <div className="space-y-6">
       <FilterBar

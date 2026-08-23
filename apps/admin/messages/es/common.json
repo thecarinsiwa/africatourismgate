@@ -16,7 +16,8 @@
     "filter": "Filtrar",
     "close": "Cerrar",
     "confirm": "Confirmar",
-    "view": "Ver"
+    "view": "Ver",
+    "retry": "Reintentar"
   },
   "loading": {
     "default": "Cargando…",
@@ -29,6 +30,7 @@
     "noMatch": "Ninguna coincidencia para su búsqueda"
   },
   "errors": {
+    "networkTitle": "No se pudo conectar con la API",
     "network": "No se pudo conectar con la API. Compruebe que el servidor esté en ejecución.",
     "networkShort": "No se pudo conectar con el servidor. Compruebe su conexión.",
     "forbidden": "No tiene permiso para realizar esta acción.",
