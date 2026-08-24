@@ -1,12 +1,12 @@
 'use client';
 
-import { SupportTicketsList } from '../support/support-tickets-list';
 import { AdminIntroPage } from './admin-intro-page';
+import { ContenuTicketsTabPanel } from './contenu-tickets-tab-panel';
 
 export function TicketsPageContent() {
   return (
     <AdminIntroPage routePath="contenu/tickets">
-      <SupportTicketsList />
+      <ContenuTicketsTabPanel />
     </AdminIntroPage>
   );
 }

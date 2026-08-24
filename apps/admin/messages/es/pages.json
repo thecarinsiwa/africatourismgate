@@ -454,6 +454,15 @@
         "metaTitle": "Detalle de ticket"
       }
     },
+    "support": {
+      "title": "Soporte",
+      "description": "Tickets de asistencia y mensajes de clientes. Filtre por estado y prioridad. Acceso: support_tickets.read / support_tickets.write.",
+      "tabsAria": "Secciones de soporte",
+      "tabs": {
+        "tickets": "Tickets",
+        "messages": "Mensajes"
+      }
+    },
     "avis": {
       "description": "Modere valoraciones y comentarios de clientes. Filtre por nota, propiedad y estado. Acciones: aprobar, ocultar o eliminar. Acceso: reviews.read / reviews.write.",
       "id": {

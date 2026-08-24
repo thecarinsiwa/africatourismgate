@@ -454,6 +454,15 @@
         "metaTitle": "Ticket detail"
       }
     },
+    "support": {
+      "title": "Support",
+      "description": "Support tickets and customer messages. Filter by status and priority. Access: support_tickets.read / support_tickets.write.",
+      "tabsAria": "Support sections",
+      "tabs": {
+        "tickets": "Tickets",
+        "messages": "Messages"
+      }
+    },
     "avis": {
       "description": "Moderate customer ratings and comments. Filter by score, property and status. Actions: approve, hide or delete. Access: reviews.read / reviews.write.",
       "id": {

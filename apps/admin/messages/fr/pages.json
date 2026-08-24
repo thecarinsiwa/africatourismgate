@@ -454,6 +454,15 @@
         "metaTitle": "Détail ticket"
       }
     },
+    "support": {
+      "title": "Support",
+      "description": "Tickets d'assistance et messages clients. Filtres par statut et priorité. Accès : support_tickets.read / support_tickets.write.",
+      "tabsAria": "Sections support",
+      "tabs": {
+        "tickets": "Tickets",
+        "messages": "Messages"
+      }
+    },
     "avis": {
       "description": "Modération des notes et commentaires clients. Filtres par note, propriété et statut. Actions : approuver, masquer ou supprimer. Accès : reviews.read / reviews.write.",
       "id": {
