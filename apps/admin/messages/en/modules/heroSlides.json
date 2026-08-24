@@ -47,6 +47,11 @@
   "edit": {
     "pageTitle": "Edit slide"
   },
+  "detail": {
+    "title": "Slide detail",
+    "close": "Close",
+    "edit": "Edit"
+  },
   "form": {
     "info": {
       "carouselHint": "Slide displayed in the homepage carousel. A wide image (16:9) is recommended."

@@ -47,6 +47,11 @@
   "edit": {
     "pageTitle": "Modifier la diapositive"
   },
+  "detail": {
+    "title": "Détail de la diapositive",
+    "close": "Fermer",
+    "edit": "Modifier"
+  },
   "form": {
     "info": {
       "carouselHint": "Diapositive affichée dans le carrousel de la page d'accueil. Une image large (16:9) est recommandée."
