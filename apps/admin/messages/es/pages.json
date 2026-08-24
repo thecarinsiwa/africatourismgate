@@ -429,6 +429,18 @@
         "backLabel": "Volver al hero"
       }
     },
+    "pourquoi-nous": {
+      "nouveau": {
+        "metaTitle": "Nueva tarjeta Por qué elegirnos",
+        "description": "Añada una tarjeta a la sección Por qué elegirnos.",
+        "backLabel": "Volver a Por qué elegirnos"
+      },
+      "id": {
+        "metaTitle": "Editar tarjeta Por qué elegirnos",
+        "description": "Actualice el título, la descripción, el icono y el estado de publicación.",
+        "backLabel": "Volver a Por qué elegirnos"
+      }
+    },
     "clients-satisfaits": {
       "nouveau": {
         "metaTitle": "Nueva estadística clientes satisfechos",

@@ -225,7 +225,9 @@ export function WhyUsItemsList({ locale }: WhyUsItemsListProps) {
         </div>
 
         {canWrite ? (
-          <Button href="/contenu/pourquoi-nous/nouveau">{t('newButton')}</Button>
+          <Button href={`/contenu/pourquoi-nous/nouveau?locale=${encodeURIComponent(locale)}`}>
+            {t('newButton')}
+          </Button>
         ) : null}
       </div>
 

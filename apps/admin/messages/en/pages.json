@@ -429,6 +429,18 @@
         "backLabel": "Back to hero"
       }
     },
+    "pourquoi-nous": {
+      "nouveau": {
+        "metaTitle": "New Why us card",
+        "description": "Add a card to the Why choose us section.",
+        "backLabel": "Back to Why us"
+      },
+      "id": {
+        "metaTitle": "Edit Why us card",
+        "description": "Update title, description, icon and publication status.",
+        "backLabel": "Back to Why us"
+      }
+    },
     "clients-satisfaits": {
       "nouveau": {
         "metaTitle": "New happy customers stat",

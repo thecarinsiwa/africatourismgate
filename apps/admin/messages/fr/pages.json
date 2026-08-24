@@ -429,6 +429,18 @@
         "backLabel": "Retour au hero"
       }
     },
+    "pourquoi-nous": {
+      "nouveau": {
+        "metaTitle": "Nouvelle carte Pourquoi nous",
+        "description": "Ajoutez une carte à la section Pourquoi nous choisir.",
+        "backLabel": "Retour à Pourquoi nous"
+      },
+      "id": {
+        "metaTitle": "Modifier la carte Pourquoi nous",
+        "description": "Mettez à jour le titre, la description, l'icône et le statut de publication.",
+        "backLabel": "Retour à Pourquoi nous"
+      }
+    },
     "clients-satisfaits": {
       "nouveau": {
         "metaTitle": "Nouvelle statistique clients satisfaits",

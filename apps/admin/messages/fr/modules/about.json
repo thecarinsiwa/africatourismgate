@@ -287,6 +287,9 @@
         "pageTitle": "Modifier la carte"
       },
       "form": {
+        "info": {
+          "sectionHint": "Carte affichée dans la section « Pourquoi nous choisir » de la page d'accueil."
+        },
         "validation": {
           "titleRequired": "Le titre est obligatoire.",
           "descriptionRequired": "La description est obligatoire.",
@@ -296,6 +299,7 @@
           "title": "Titre",
           "description": "Description",
           "linkUrl": "Lien",
+          "linkUrlHint": "Lien interne ou externe ouvert depuis la carte (ex. /about/who-we-are).",
           "iconKey": "Icône",
           "sortOrder": "Ordre d'affichage",
           "locale": "Langue"

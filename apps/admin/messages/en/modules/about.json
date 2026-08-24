@@ -287,6 +287,9 @@
         "pageTitle": "Edit card"
       },
       "form": {
+        "info": {
+          "sectionHint": "Card displayed in the homepage « Why choose us » section."
+        },
         "validation": {
           "titleRequired": "Title is required.",
           "descriptionRequired": "Description is required.",
@@ -296,6 +299,7 @@
           "title": "Title",
           "description": "Description",
           "linkUrl": "Link",
+          "linkUrlHint": "Internal or external link opened from the card (e.g. /about/who-we-are).",
           "iconKey": "Icon",
           "sortOrder": "Display order",
           "locale": "Language"

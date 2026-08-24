@@ -287,6 +287,9 @@
         "pageTitle": "Modificar tarjeta"
       },
       "form": {
+        "info": {
+          "sectionHint": "Tarjeta mostrada en la sección «Por qué elegirnos» de la página de inicio."
+        },
         "validation": {
           "titleRequired": "El título es obligatorio.",
           "descriptionRequired": "La descripción es obligatoria.",
@@ -296,6 +299,7 @@
           "title": "Título",
           "description": "Descripción",
           "linkUrl": "Enlace",
+          "linkUrlHint": "Enlace interno o externo abierto desde la tarjeta (p. ej. /about/who-we-are).",
           "iconKey": "Icono",
           "sortOrder": "Orden de visualización",
           "locale": "Idioma"

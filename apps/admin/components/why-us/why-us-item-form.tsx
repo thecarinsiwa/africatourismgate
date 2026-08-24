@@ -2,7 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Input } from '@africatourismgate/ui';
+import { Button, Card, Input, Select, Textarea } from '@africatourismgate/ui';
 import type {
   CreateWhyUsItemRequest,
   WhyUsIconKey,
@@ -11,8 +11,12 @@ import type {
 } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useCallback, useId, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import { usePermissions } from '../../lib/auth/use-permissions';
+import { useContentLocaleOptions } from '../../lib/content/use-content-locale-options';
+
+export const WHY_US_HUB_HREF = '/contenu/site?tab=why-us';
 
 const ICON_KEYS: WhyUsIconKey[] = ['globe', 'search', 'booking', 'support'];
 
@@ -65,6 +69,7 @@ type WhyUsItemFormProps = {
   itemId?: string;
   initialItem?: WhyUsItem;
   defaultLocale?: string;
+  cancelHref?: string;
 };
 
 export function WhyUsItemForm({
@@ -72,22 +77,17 @@ export function WhyUsItemForm({
   itemId,
   initialItem,
   defaultLocale = 'fr',
+  cancelHref = WHY_US_HUB_HREF,
 }: WhyUsItemFormProps) {
   const { about: getAboutErrorMessage } = useAdminErrorMessages();
+  const { hasPermission, isSuperAdmin } = usePermissions();
+  const canWrite = isSuperAdmin || hasPermission('content.write');
   const t = useTranslations('modules.about.whyUs.items.form');
   const tIcons = useTranslations('modules.about.whyUs.icons');
   const tCommon = useTranslations('modules.common');
-  const tLocale = useTranslations('modules.about.locale');
   const tStatus = useTranslations('modules.about.status');
+  const localeOptions = useContentLocaleOptions('modules.about.locale');
   const router = useRouter();
-
-  const titleId = useId();
-  const descriptionId = useId();
-  const linkUrlId = useId();
-  const iconKeyId = useId();
-  const sortOrderId = useId();
-  const statusId = useId();
-  const localeId = useId();
 
   const [values, setValues] = useState<WhyUsItemFormValues>(() =>
     initialItem ? itemToFormValues(initialItem) : { ...defaultValues, locale: defaultLocale },
@@ -97,6 +97,20 @@ export function WhyUsItemForm({
   >({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+
+  const iconOptions = useMemo(
+    () => ICON_KEYS.map((key) => ({ value: key, label: tIcons(key) })),
+    [tIcons],
+  );
+
+  const statusOptions = useMemo(
+    () =>
+      (['draft', 'published'] as const).map((status) => ({
+        value: status,
+        label: tStatus(status),
+      })),
+    [tStatus],
+  );
 
   const updateField = useCallback(
     <K extends keyof WhyUsItemFormValues>(key: K, value: WhyUsItemFormValues[K]) => {
@@ -117,6 +131,7 @@ export function WhyUsItemForm({
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    if (!canWrite) return;
     if (!validate()) return;
 
     setSaving(true);
@@ -129,9 +144,11 @@ export function WhyUsItemForm({
       if (mode === 'create') {
         const created = await client.createWhyUsItem(payload);
         router.push(`/contenu/pourquoi-nous/${created.id}`);
+        router.refresh();
       } else if (itemId) {
         await client.updateWhyUsItem(itemId, payload);
-        router.push('/contenu/pourquoi-nous');
+        router.push(cancelHref);
+        router.refresh();
       }
     } catch (error) {
       setSubmitError(getAboutErrorMessage(error));
@@ -141,133 +158,101 @@ export function WhyUsItemForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
-      <div>
-        <label htmlFor={titleId} className="mb-1 block text-sm font-medium">
-          {t('fields.title')}
-        </label>
+    <Card className="p-6">
+      <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
+        <div className="rounded-lg border border-atg-border bg-atg-elevated/50 px-4 py-3 text-sm text-atg-muted">
+          <p>{t('info.sectionHint')}</p>
+        </div>
+
+        {submitError ? (
+          <p
+            role="alert"
+            className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-400"
+          >
+            {submitError}
+          </p>
+        ) : null}
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Select
+            label={t('fields.locale')}
+            value={values.locale}
+            options={localeOptions}
+            onChange={(e) => updateField('locale', e.target.value)}
+            disabled={!canWrite}
+          />
+          <Select
+            label={tCommon('columns.status')}
+            value={values.status}
+            options={statusOptions}
+            onChange={(e) => updateField('status', e.target.value as WhyUsItemStatus)}
+            disabled={!canWrite}
+          />
+        </div>
+
         <Input
-          id={titleId}
+          label={t('fields.title')}
           value={values.title}
           onChange={(e) => updateField('title', e.target.value)}
-          aria-invalid={Boolean(fieldErrors.title)}
+          error={fieldErrors.title}
+          required
+          disabled={!canWrite}
         />
-        {fieldErrors.title ? (
-          <p className="mt-1 text-sm text-destructive">{fieldErrors.title}</p>
-        ) : null}
-      </div>
 
-      <div>
-        <label htmlFor={descriptionId} className="mb-1 block text-sm font-medium">
-          {t('fields.description')}
-        </label>
-        <textarea
-          id={descriptionId}
+        <Textarea
+          label={t('fields.description')}
+          rows={4}
           value={values.description}
           onChange={(e) => updateField('description', e.target.value)}
-          rows={4}
-          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-          aria-invalid={Boolean(fieldErrors.description)}
+          error={fieldErrors.description}
+          required
+          disabled={!canWrite}
         />
-        {fieldErrors.description ? (
-          <p className="mt-1 text-sm text-destructive">{fieldErrors.description}</p>
-        ) : null}
-      </div>
 
-      <div>
-        <label htmlFor={linkUrlId} className="mb-1 block text-sm font-medium">
-          {t('fields.linkUrl')}
-        </label>
         <Input
-          id={linkUrlId}
+          label={t('fields.linkUrl')}
           value={values.linkUrl}
           onChange={(e) => updateField('linkUrl', e.target.value)}
           placeholder="/about/who-we-are"
-          aria-invalid={Boolean(fieldErrors.linkUrl)}
+          hint={t('fields.linkUrlHint')}
+          error={fieldErrors.linkUrl}
+          required
+          disabled={!canWrite}
         />
-        {fieldErrors.linkUrl ? (
-          <p className="mt-1 text-sm text-destructive">{fieldErrors.linkUrl}</p>
-        ) : null}
-      </div>
 
-      <div>
-        <label htmlFor={iconKeyId} className="mb-1 block text-sm font-medium">
-          {t('fields.iconKey')}
-        </label>
-        <select
-          id={iconKeyId}
-          value={values.iconKey}
-          onChange={(e) => updateField('iconKey', e.target.value as WhyUsIconKey)}
-          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-        >
-          {ICON_KEYS.map((key) => (
-            <option key={key} value={key}>
-              {tIcons(key)}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-3">
-        <div>
-          <label htmlFor={sortOrderId} className="mb-1 block text-sm font-medium">
-            {t('fields.sortOrder')}
-          </label>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Select
+            label={t('fields.iconKey')}
+            value={values.iconKey}
+            options={iconOptions}
+            onChange={(e) => updateField('iconKey', e.target.value as WhyUsIconKey)}
+            disabled={!canWrite}
+          />
           <Input
-            id={sortOrderId}
+            label={t('fields.sortOrder')}
             type="number"
             min={0}
             value={values.sortOrder}
             onChange={(e) => updateField('sortOrder', e.target.value)}
+            disabled={!canWrite}
           />
         </div>
 
-        <div>
-          <label htmlFor={statusId} className="mb-1 block text-sm font-medium">
-            {tCommon('columns.status')}
-          </label>
-          <select
-            id={statusId}
-            value={values.status}
-            onChange={(e) => updateField('status', e.target.value as WhyUsItemStatus)}
-            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-          >
-            <option value="draft">{tStatus('draft')}</option>
-            <option value="published">{tStatus('published')}</option>
-          </select>
+        <div className="flex flex-wrap gap-3">
+          {canWrite ? (
+            <Button type="submit" disabled={saving}>
+              {saving
+                ? t('saving')
+                : mode === 'create'
+                  ? t('createButton')
+                  : t('saveButton')}
+            </Button>
+          ) : null}
+          <Button type="button" variant="outline" href={cancelHref}>
+            {t('cancelButton')}
+          </Button>
         </div>
-
-        <div>
-          <label htmlFor={localeId} className="mb-1 block text-sm font-medium">
-            {t('fields.locale')}
-          </label>
-          <select
-            id={localeId}
-            value={values.locale}
-            onChange={(e) => updateField('locale', e.target.value)}
-            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-          >
-            <option value="fr">{tLocale('fr')}</option>
-            <option value="en">{tLocale('en')}</option>
-            <option value="es">{tLocale('es')}</option>
-          </select>
-        </div>
-      </div>
-
-      {submitError ? <p className="text-sm text-destructive">{submitError}</p> : null}
-
-      <div className="flex flex-wrap gap-3">
-        <Button type="submit" disabled={saving}>
-          {saving
-            ? t('saving')
-            : mode === 'create'
-              ? t('createButton')
-              : t('saveButton')}
-        </Button>
-        <Button type="button" variant="outline" href="/contenu/pourquoi-nous">
-          {t('cancelButton')}
-        </Button>
-      </div>
-    </form>
+      </form>
+    </Card>
   );
 }
