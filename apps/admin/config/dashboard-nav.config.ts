@@ -106,16 +106,14 @@ export const adminDashboardNavConfig: AdminNavEntryConfig[] = [
     iconKey: 'headset',
     children: [
       { href: '/contenu/blog', labelKey: 'blog', iconKey: 'document' },
-      { href: '/contenu/a-propos/pages', labelKey: 'aboutPages', iconKey: 'document' },
-      { href: '/contenu/a-propos/equipe', labelKey: 'aboutTeam', iconKey: 'users' },
-      { href: '/contenu/a-propos/timeline', labelKey: 'aboutTimeline', iconKey: 'document' },
-      { href: '/contenu/a-propos/ressources', labelKey: 'aboutResources', iconKey: 'document' },
-      { href: '/contenu/pourquoi-nous', labelKey: 'whyUs', iconKey: 'document' },
-      { href: '/contenu/hero', labelKey: 'heroSlides', iconKey: 'document' },
-      { href: '/contenu/clients-satisfaits', labelKey: 'happyCustomers', iconKey: 'document' },
+      { href: '/contenu/site', labelKey: 'sitePresentation', iconKey: 'globe' },
       { href: '/contenu/avis', labelKey: 'reviews', iconKey: 'star', badgeKey: 'pendingReviews' },
-      { href: '/contenu/tickets', labelKey: 'supportTickets', iconKey: 'ticket', badgeKey: 'openSupportTickets' },
-      { href: '/contenu/messages', labelKey: 'supportMessages', iconKey: 'chat' },
+      {
+        href: '/contenu/support',
+        labelKey: 'supportHub',
+        iconKey: 'headset',
+        badgeKey: 'openSupportTickets',
+      },
     ],
   },
   {

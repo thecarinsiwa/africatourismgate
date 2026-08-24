@@ -177,6 +177,21 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Rédiger un article de blog.',
     apiResource: 'blog-posts',
   },
+  'contenu/site': {
+    title: 'Site & présentation',
+    description: 'Contenu institutionnel et vitrine du site public.',
+    apiResource: 'about-pages',
+  },
+  'contenu/support': {
+    title: 'Support',
+    description: 'Tickets d’assistance et messages clients.',
+    apiResource: 'support-tickets',
+  },
+  'contenu/avis': {
+    title: 'Avis',
+    description: 'Notes et commentaires clients.',
+    apiResource: 'reviews',
+  },
   'contenu/a-propos/pages': {
     title: 'Pages À propos',
     description: 'Pages institutionnelles du site public.',
@@ -292,25 +307,10 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Ajouter une image ou une vidéo.',
     apiResource: 'gap-media-items',
   },
-  'contenu/avis': {
-    title: 'Avis',
-    description: 'Notes et commentaires clients.',
-    apiResource: 'reviews',
-  },
   'contenu/tickets': {
     title: 'Tickets support',
     description: 'Demandes d’assistance.',
     apiResource: 'support-tickets',
-  },
-  'contenu/support': {
-    title: 'Support',
-    description: 'Tickets d’assistance et messages clients.',
-    apiResource: 'support-tickets',
-  },
-  'contenu/site': {
-    title: 'Site & présentation',
-    description: 'Contenu institutionnel et vitrine du site public.',
-    apiResource: 'about-pages',
   },
   'contenu/messages': {
     title: 'Messages support',
