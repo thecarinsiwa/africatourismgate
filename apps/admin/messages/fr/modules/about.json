@@ -219,6 +219,9 @@
       "pageTitle": "Modifier la ressource"
     },
     "form": {
+      "info": {
+        "sectionHint": "Document ou lien affiché dans la section Ressources de la page À propos."
+      },
       "validation": {
         "fileFormat": "Format non accepté (PDF ou image).",
         "fileTooLarge": "Fichier trop volumineux (max 10 Mo).",
@@ -231,6 +234,7 @@
         "title": "Titre",
         "description": "Description",
         "file": "Fichier",
+        "removeFile": "Retirer le fichier",
         "externalUrl": "Lien externe",
         "sortOrder": "Ordre d'affichage",
         "publishedAtOptional": "Date de publication (optionnel)",
@@ -238,7 +242,8 @@
       },
       "hints": {
         "fileFormat": "PDF, JPEG, PNG ou WebP — max 10 Mo.",
-        "externalUrl": "Lien vers un document hébergé ailleurs (optionnel si fichier uploadé)."
+        "externalUrl": "Lien vers un document hébergé ailleurs (optionnel si fichier uploadé).",
+        "publishedAt": "Laissez vide pour utiliser la date courante à la publication."
       },
       "saving": "Enregistrement…",
       "createButton": "Créer la ressource",

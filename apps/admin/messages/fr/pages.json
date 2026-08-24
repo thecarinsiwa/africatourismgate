@@ -478,10 +478,13 @@
         "description": "Rapports financiers et ressources médias téléchargeables. Accès : content.read / content.write.",
         "nouveau": {
           "metaTitle": "Nouvelle ressource",
-          "description": "Ajoutez un document ou une ressource média."
+          "description": "Ajoutez un document ou une ressource média téléchargeable.",
+          "backLabel": "Retour aux ressources"
         },
         "id": {
-          "metaTitle": "Modifier la ressource"
+          "metaTitle": "Modifier la ressource",
+          "description": "Mettez à jour le fichier, le lien et le statut de publication.",
+          "backLabel": "Retour aux ressources"
         }
       }
     },

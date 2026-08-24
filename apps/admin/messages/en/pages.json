@@ -478,10 +478,13 @@
         "description": "Financial reports and downloadable media resources. Access: content.read / content.write.",
         "nouveau": {
           "metaTitle": "New resource",
-          "description": "Add a document or media resource."
+          "description": "Add a downloadable document or media resource.",
+          "backLabel": "Back to resources"
         },
         "id": {
-          "metaTitle": "Edit resource"
+          "metaTitle": "Edit resource",
+          "description": "Update file, link and publication status.",
+          "backLabel": "Back to resources"
         }
       }
     },

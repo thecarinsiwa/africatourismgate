@@ -478,10 +478,13 @@
         "description": "Informes financieros y recursos multimedia descargables. Acceso: content.read / content.write.",
         "nouveau": {
           "metaTitle": "Nuevo recurso",
-          "description": "Añada un documento o recurso multimedia."
+          "description": "Añada un documento o recurso multimedia descargable.",
+          "backLabel": "Volver a recursos"
         },
         "id": {
-          "metaTitle": "Editar recurso"
+          "metaTitle": "Editar recurso",
+          "description": "Actualice el archivo, el enlace y el estado de publicación.",
+          "backLabel": "Volver a recursos"
         }
       }
     },

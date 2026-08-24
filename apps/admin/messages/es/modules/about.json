@@ -219,6 +219,9 @@
       "pageTitle": "Editar recurso"
     },
     "form": {
+      "info": {
+        "sectionHint": "Documento o enlace mostrado en la sección Recursos de la página Acerca de."
+      },
       "validation": {
         "fileFormat": "Formato no admitido (PDF o imagen).",
         "fileTooLarge": "Archivo demasiado grande (máx. 10 MB).",
@@ -231,6 +234,7 @@
         "title": "Título",
         "description": "Descripción",
         "file": "Archivo",
+        "removeFile": "Quitar archivo",
         "externalUrl": "Enlace externo",
         "sortOrder": "Orden de visualización",
         "publishedAtOptional": "Fecha de publicación (opcional)",
@@ -238,7 +242,8 @@
       },
       "hints": {
         "fileFormat": "PDF, JPEG, PNG o WebP — máx. 10 MB.",
-        "externalUrl": "Enlace a un documento alojado en otro sitio (opcional si hay archivo)."
+        "externalUrl": "Enlace a un documento alojado en otro sitio (opcional si hay archivo).",
+        "publishedAt": "Dejar vacío para usar la fecha actual al publicar."
       },
       "saving": "Guardando…",
       "createButton": "Crear recurso",

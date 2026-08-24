@@ -219,6 +219,9 @@
       "pageTitle": "Edit resource"
     },
     "form": {
+      "info": {
+        "sectionHint": "Document or link displayed in the About page Resources section."
+      },
       "validation": {
         "fileFormat": "Unsupported format (PDF or image).",
         "fileTooLarge": "File too large (max 10 MB).",
@@ -231,6 +234,7 @@
         "title": "Title",
         "description": "Description",
         "file": "File",
+        "removeFile": "Remove file",
         "externalUrl": "External link",
         "sortOrder": "Display order",
         "publishedAtOptional": "Publication date (optional)",
@@ -238,7 +242,8 @@
       },
       "hints": {
         "fileFormat": "PDF, JPEG, PNG or WebP — max 10 MB.",
-        "externalUrl": "Link to a document hosted elsewhere (optional if file uploaded)."
+        "externalUrl": "Link to a document hosted elsewhere (optional if file uploaded).",
+        "publishedAt": "Leave empty to use the current date when publishing."
       },
       "saving": "Saving…",
       "createButton": "Create resource",
