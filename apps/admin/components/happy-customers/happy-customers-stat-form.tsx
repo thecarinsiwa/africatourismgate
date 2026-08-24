@@ -2,7 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Input } from '@africatourismgate/ui';
+import { Button, Card, Input, Select } from '@africatourismgate/ui';
 import type {
   CreateHappyCustomersStatRequest,
   HappyCustomersColorKey,
@@ -11,10 +11,19 @@ import type {
 } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useCallback, useId, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import { useContentLocaleOptions } from '../../lib/content/use-content-locale-options';
+import { usePermissions } from '../../lib/auth/use-permissions';
+
+export const HAPPY_CUSTOMERS_STATS_HUB_HREF = '/contenu/site?tab=happy-customers';
 
 const COLOR_KEYS: HappyCustomersColorKey[] = ['primary', 'secondary'];
+
+const COLOR_BAR_CLASS: Record<HappyCustomersColorKey, string> = {
+  primary: 'bg-primary',
+  secondary: 'bg-secondary',
+};
 
 export type HappyCustomersStatFormValues = {
   label: string;
@@ -57,11 +66,18 @@ function toPayload(values: HappyCustomersStatFormValues): CreateHappyCustomersSt
   };
 }
 
+function clampPercent(value: string): number {
+  const percent = Number.parseInt(value, 10);
+  if (!Number.isFinite(percent)) return 0;
+  return Math.min(100, Math.max(0, percent));
+}
+
 type HappyCustomersStatFormProps = {
   mode: 'create' | 'edit';
   statId?: string;
   initialStat?: HappyCustomersStat;
   defaultLocale?: string;
+  cancelHref?: string;
 };
 
 export function HappyCustomersStatForm({
@@ -69,21 +85,17 @@ export function HappyCustomersStatForm({
   statId,
   initialStat,
   defaultLocale = 'fr',
+  cancelHref = HAPPY_CUSTOMERS_STATS_HUB_HREF,
 }: HappyCustomersStatFormProps) {
   const { about: getAboutErrorMessage } = useAdminErrorMessages();
+  const { hasPermission, isSuperAdmin } = usePermissions();
+  const canWrite = isSuperAdmin || hasPermission('content.write');
   const t = useTranslations('modules.about.happyCustomers.stats.form');
   const tColors = useTranslations('modules.about.happyCustomers.colors');
   const tCommon = useTranslations('modules.common');
-  const tLocale = useTranslations('modules.about.locale');
   const tStatus = useTranslations('modules.about.status');
+  const localeOptions = useContentLocaleOptions('modules.about.locale');
   const router = useRouter();
-
-  const labelId = useId();
-  const percentValueId = useId();
-  const colorKeyId = useId();
-  const sortOrderId = useId();
-  const statusId = useId();
-  const localeId = useId();
 
   const [values, setValues] = useState<HappyCustomersStatFormValues>(() =>
     initialStat ? statToFormValues(initialStat) : { ...defaultValues, locale: defaultLocale },
@@ -93,6 +105,22 @@ export function HappyCustomersStatForm({
   >({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+
+  const colorOptions = useMemo(
+    () => COLOR_KEYS.map((key) => ({ value: key, label: tColors(key) })),
+    [tColors],
+  );
+
+  const statusOptions = useMemo(
+    () =>
+      (['draft', 'published'] as const).map((status) => ({
+        value: status,
+        label: tStatus(status),
+      })),
+    [tStatus],
+  );
+
+  const previewPercent = clampPercent(values.percentValue);
 
   const updateField = useCallback(
     <K extends keyof HappyCustomersStatFormValues>(key: K, value: HappyCustomersStatFormValues[K]) => {
@@ -115,6 +143,7 @@ export function HappyCustomersStatForm({
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    if (!canWrite) return;
     if (!validate()) return;
 
     setSaving(true);
@@ -127,9 +156,11 @@ export function HappyCustomersStatForm({
       if (mode === 'create') {
         const created = await client.createHappyCustomersStat(payload);
         router.push(`/contenu/clients-satisfaits/${created.id}`);
+        router.refresh();
       } else if (statId) {
         await client.updateHappyCustomersStat(statId, payload);
-        router.push('/contenu/clients-satisfaits');
+        router.push(cancelHref);
+        router.refresh();
       }
     } catch (error) {
       setSubmitError(getAboutErrorMessage(error));
@@ -139,116 +170,110 @@ export function HappyCustomersStatForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
-      <div>
-        <label htmlFor={labelId} className="mb-1 block text-sm font-medium">
-          {t('fields.label')}
-        </label>
+    <Card className="p-6">
+      <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
+        <div className="rounded-lg border border-atg-border bg-atg-elevated/50 px-4 py-3 text-sm text-atg-muted">
+          <p>{t('info.sectionHint')}</p>
+        </div>
+
+        {submitError ? (
+          <p
+            role="alert"
+            className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-400"
+          >
+            {submitError}
+          </p>
+        ) : null}
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Select
+            label={t('fields.locale')}
+            value={values.locale}
+            options={localeOptions}
+            onChange={(e) => updateField('locale', e.target.value)}
+            disabled={!canWrite}
+          />
+          <Select
+            label={tCommon('columns.status')}
+            value={values.status}
+            options={statusOptions}
+            onChange={(e) => updateField('status', e.target.value as HappyCustomersStatus)}
+            disabled={!canWrite}
+          />
+        </div>
+
         <Input
-          id={labelId}
+          label={t('fields.label')}
           value={values.label}
           onChange={(e) => updateField('label', e.target.value)}
-          aria-invalid={Boolean(fieldErrors.label)}
+          error={fieldErrors.label}
+          required
+          disabled={!canWrite}
         />
-        {fieldErrors.label ? (
-          <p className="mt-1 text-sm text-destructive">{fieldErrors.label}</p>
-        ) : null}
-      </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <label htmlFor={percentValueId} className="mb-1 block text-sm font-medium">
-            {t('fields.percentValue')}
-          </label>
+        <div className="grid gap-4 sm:grid-cols-2">
           <Input
-            id={percentValueId}
+            label={t('fields.percentValue')}
             type="number"
             min={0}
             max={100}
             value={values.percentValue}
             onChange={(e) => updateField('percentValue', e.target.value)}
-            aria-invalid={Boolean(fieldErrors.percentValue)}
+            error={fieldErrors.percentValue}
+            required
+            disabled={!canWrite}
           />
-          {fieldErrors.percentValue ? (
-            <p className="mt-1 text-sm text-destructive">{fieldErrors.percentValue}</p>
-          ) : null}
-        </div>
-
-        <div>
-          <label htmlFor={colorKeyId} className="mb-1 block text-sm font-medium">
-            {t('fields.colorKey')}
-          </label>
-          <select
-            id={colorKeyId}
+          <Select
+            label={t('fields.colorKey')}
             value={values.colorKey}
+            options={colorOptions}
             onChange={(e) => updateField('colorKey', e.target.value as HappyCustomersColorKey)}
-            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-          >
-            {COLOR_KEYS.map((key) => (
-              <option key={key} value={key}>
-                {tColors(key)}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-3">
-        <div>
-          <label htmlFor={sortOrderId} className="mb-1 block text-sm font-medium">
-            {t('fields.sortOrder')}
-          </label>
-          <Input
-            id={sortOrderId}
-            type="number"
-            min={0}
-            value={values.sortOrder}
-            onChange={(e) => updateField('sortOrder', e.target.value)}
+            disabled={!canWrite}
           />
         </div>
 
-        <div>
-          <label htmlFor={statusId} className="mb-1 block text-sm font-medium">
-            {tCommon('columns.status')}
-          </label>
-          <select
-            id={statusId}
-            value={values.status}
-            onChange={(e) => updateField('status', e.target.value as HappyCustomersStatus)}
-            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-          >
-            <option value="draft">{tStatus('draft')}</option>
-            <option value="published">{tStatus('published')}</option>
-          </select>
+        <div className="rounded-lg border border-atg-border bg-atg-surface/50 p-4">
+          <p className="mb-3 text-xs font-medium uppercase tracking-wide text-atg-muted">
+            {t('fields.preview')}
+          </p>
+          <div className="mb-1.5 flex items-center justify-between gap-3">
+            <span className="text-sm font-semibold text-atg-fg">
+              {values.label.trim() || t('fields.previewLabelPlaceholder')}
+            </span>
+            <span
+              className={`text-sm font-bold ${values.colorKey === 'secondary' ? 'text-secondary' : 'text-primary'}`}
+            >
+              {previewPercent}%
+            </span>
+          </div>
+          <div className="h-2.5 w-full overflow-hidden rounded-full bg-atg-muted/20">
+            <div
+              className={`h-full rounded-full transition-all ${COLOR_BAR_CLASS[values.colorKey]}`}
+              style={{ width: `${previewPercent}%` }}
+            />
+          </div>
         </div>
 
-        <div>
-          <label htmlFor={localeId} className="mb-1 block text-sm font-medium">
-            {t('fields.locale')}
-          </label>
-          <select
-            id={localeId}
-            value={values.locale}
-            onChange={(e) => updateField('locale', e.target.value)}
-            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-          >
-            <option value="fr">{tLocale('fr')}</option>
-            <option value="en">{tLocale('en')}</option>
-            <option value="es">{tLocale('es')}</option>
-          </select>
+        <Input
+          label={t('fields.sortOrder')}
+          type="number"
+          min={0}
+          value={values.sortOrder}
+          onChange={(e) => updateField('sortOrder', e.target.value)}
+          disabled={!canWrite}
+        />
+
+        <div className="flex flex-wrap gap-3">
+          {canWrite ? (
+            <Button type="submit" disabled={saving}>
+              {saving ? t('saving') : mode === 'create' ? t('createButton') : t('saveButton')}
+            </Button>
+          ) : null}
+          <Button type="button" variant="outline" href={cancelHref}>
+            {t('cancelButton')}
+          </Button>
         </div>
-      </div>
-
-      {submitError ? <p className="text-sm text-destructive">{submitError}</p> : null}
-
-      <div className="flex flex-wrap gap-3">
-        <Button type="submit" disabled={saving}>
-          {saving ? t('saving') : mode === 'create' ? t('createButton') : t('saveButton')}
-        </Button>
-        <Button type="button" variant="outline" href="/contenu/clients-satisfaits">
-          {t('cancelButton')}
-        </Button>
-      </div>
-    </form>
+      </form>
+    </Card>
   );
 }

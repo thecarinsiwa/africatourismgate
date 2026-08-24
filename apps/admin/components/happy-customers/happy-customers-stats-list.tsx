@@ -232,7 +232,9 @@ export function HappyCustomersStatsList({ locale }: HappyCustomersStatsListProps
         </div>
 
         {canWrite ? (
-          <Button href="/contenu/clients-satisfaits/nouveau">{t('newButton')}</Button>
+          <Button href={`/contenu/clients-satisfaits/nouveau?locale=${encodeURIComponent(locale)}`}>
+            {t('newButton')}
+          </Button>
         ) : null}
       </div>
 

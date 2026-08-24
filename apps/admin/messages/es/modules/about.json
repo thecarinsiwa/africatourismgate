@@ -352,6 +352,9 @@
         "pageTitle": "Modificar estadística"
       },
       "form": {
+        "info": {
+          "sectionHint": "Barra de satisfacción mostrada en la sección «Clientes satisfechos» del sitio público."
+        },
         "validation": {
           "labelRequired": "La etiqueta es obligatoria.",
           "percentInvalid": "El porcentaje debe estar entre 0 y 100."
@@ -361,7 +364,9 @@
           "percentValue": "Porcentaje (%)",
           "colorKey": "Color de la barra",
           "sortOrder": "Orden de visualización",
-          "locale": "Idioma"
+          "locale": "Idioma",
+          "preview": "Vista previa en el sitio",
+          "previewLabelPlaceholder": "Etiqueta de la barra"
         },
         "saving": "Guardando…",
         "createButton": "Añadir estadística",

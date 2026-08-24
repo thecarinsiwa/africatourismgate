@@ -352,6 +352,9 @@
         "pageTitle": "Edit stat"
       },
       "form": {
+        "info": {
+          "sectionHint": "Satisfaction bar displayed in the public site's Happy Customers section."
+        },
         "validation": {
           "labelRequired": "Label is required.",
           "percentInvalid": "Percentage must be between 0 and 100."
@@ -361,7 +364,9 @@
           "percentValue": "Percentage (%)",
           "colorKey": "Bar color",
           "sortOrder": "Display order",
-          "locale": "Language"
+          "locale": "Language",
+          "preview": "Site preview",
+          "previewLabelPlaceholder": "Bar label"
         },
         "saving": "Saving…",
         "createButton": "Add stat",

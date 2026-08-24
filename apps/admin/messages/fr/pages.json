@@ -425,8 +425,20 @@
       },
       "id": {
         "metaTitle": "Modifier la diapositive hero",
-        "description": "Mettez à jour le contenu, l'image et le statut de publication.",
+        "description": "Mettez à jour le libellé, le pourcentage et le statut de publication.",
         "backLabel": "Retour au hero"
+      }
+    },
+    "clients-satisfaits": {
+      "nouveau": {
+        "metaTitle": "Nouvelle statistique clients satisfaits",
+        "description": "Ajoutez une barre de satisfaction à la section Clients satisfaits.",
+        "backLabel": "Retour aux clients satisfaits"
+      },
+      "id": {
+        "metaTitle": "Modifier la statistique clients satisfaits",
+        "description": "Mettez à jour le libellé, le pourcentage et le statut de publication.",
+        "backLabel": "Retour aux clients satisfaits"
       }
     },
     "a-propos": {

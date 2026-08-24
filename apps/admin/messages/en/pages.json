@@ -429,6 +429,18 @@
         "backLabel": "Back to hero"
       }
     },
+    "clients-satisfaits": {
+      "nouveau": {
+        "metaTitle": "New happy customers stat",
+        "description": "Add a satisfaction bar to the Happy Customers section.",
+        "backLabel": "Back to happy customers"
+      },
+      "id": {
+        "metaTitle": "Edit happy customers stat",
+        "description": "Update label, percentage and publication status.",
+        "backLabel": "Back to happy customers"
+      }
+    },
     "a-propos": {
       "pages": {
         "description": "Institutional site pages (Who we are, governance, etc.). Access: content.read / content.write.",

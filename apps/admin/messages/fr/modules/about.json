@@ -352,6 +352,9 @@
         "pageTitle": "Modifier la statistique"
       },
       "form": {
+        "info": {
+          "sectionHint": "Barre de satisfaction affichée dans la section « Clients satisfaits » du site public."
+        },
         "validation": {
           "labelRequired": "Le libellé est obligatoire.",
           "percentInvalid": "Le pourcentage doit être entre 0 et 100."
@@ -361,7 +364,9 @@
           "percentValue": "Pourcentage (%)",
           "colorKey": "Couleur de la barre",
           "sortOrder": "Ordre d'affichage",
-          "locale": "Langue"
+          "locale": "Langue",
+          "preview": "Aperçu sur le site",
+          "previewLabelPlaceholder": "Libellé de la barre"
         },
         "saving": "Enregistrement…",
         "createButton": "Ajouter la statistique",

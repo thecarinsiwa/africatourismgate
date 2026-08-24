@@ -429,6 +429,18 @@
         "backLabel": "Volver al hero"
       }
     },
+    "clients-satisfaits": {
+      "nouveau": {
+        "metaTitle": "Nueva estadística clientes satisfechos",
+        "description": "Añada una barra de satisfacción a la sección Clientes satisfechos.",
+        "backLabel": "Volver a clientes satisfechos"
+      },
+      "id": {
+        "metaTitle": "Editar estadística clientes satisfechos",
+        "description": "Actualice la etiqueta, el porcentaje y el estado de publicación.",
+        "backLabel": "Volver a clientes satisfechos"
+      }
+    },
     "a-propos": {
       "pages": {
         "description": "Páginas institucionales del sitio (Quiénes somos, gobernanza, etc.). Acceso: content.read / content.write.",
