@@ -317,13 +317,21 @@
     },
     "section": {
       "heading": "Contenu de la section",
+      "validation": {
+        "imageUrlRequired": "L'image est obligatoire.",
+        "imageUrlInvalid": "L'URL de l'image doit être valide."
+      },
       "fields": {
         "title": "Titre",
         "subtitle": "Sous-titre",
         "paragraph1": "Premier paragraphe",
         "paragraph2": "Deuxième paragraphe",
-        "imageUrl": "URL de l'image",
+        "image": "Image de la section",
+        "imageUrl": "URL de l'image (alternative)",
         "imageAlt": "Texte alternatif de l'image",
+        "imagePreviewAlt": "Aperçu de la section",
+        "removeImage": "Retirer l'image",
+        "imageUploadHint": "JPEG, PNG ou WebP — max. 5 Mo",
         "badgeValue": "Valeur du badge",
         "badgeLabel": "Libellé du badge"
       },

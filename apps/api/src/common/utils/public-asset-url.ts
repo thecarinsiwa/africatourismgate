@@ -117,6 +117,10 @@ export function heroSlideUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/hero/slides/${filename}`;
 }
 
+export function happyCustomersSectionUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/happy-customers/sections/${filename}`;
+}
+
 function getApiPublicOrigin(): string {
   return getApiBaseUrl().replace(/\/api$/, '');
 }
