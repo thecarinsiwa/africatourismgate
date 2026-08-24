@@ -463,6 +463,20 @@
         "messages": "Messages"
       }
     },
+    "site": {
+      "title": "Site & presentation",
+      "description": "Institutional and marketing content for the public site: about pages, team, hero, testimonials. Access: content.read / content.write.",
+      "tabsAria": "Site sections",
+      "tabs": {
+        "aboutPages": "About",
+        "aboutTeam": "Team",
+        "aboutTimeline": "Timeline",
+        "aboutResources": "Resources",
+        "whyUs": "Why us",
+        "hero": "Hero",
+        "happyCustomers": "Happy customers"
+      }
+    },
     "avis": {
       "description": "Moderate customer ratings and comments. Filter by score, property and status. Actions: approve, hide or delete. Access: reviews.read / reviews.write.",
       "id": {

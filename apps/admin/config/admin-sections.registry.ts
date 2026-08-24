@@ -307,6 +307,11 @@ export const adminSectionsRegistry: Record<string, AdminSectionMeta> = {
     description: 'Tickets d’assistance et messages clients.',
     apiResource: 'support-tickets',
   },
+  'contenu/site': {
+    title: 'Site & présentation',
+    description: 'Contenu institutionnel et vitrine du site public.',
+    apiResource: 'about-pages',
+  },
   'contenu/messages': {
     title: 'Messages support',
     description: 'Échanges sur les tickets.',

@@ -463,6 +463,20 @@
         "messages": "Messages"
       }
     },
+    "site": {
+      "title": "Site & présentation",
+      "description": "Contenu institutionnel et vitrine du site public : pages À propos, équipe, hero, témoignages. Accès : content.read / content.write.",
+      "tabsAria": "Sections du site",
+      "tabs": {
+        "aboutPages": "À propos",
+        "aboutTeam": "Équipe",
+        "aboutTimeline": "Frise",
+        "aboutResources": "Ressources",
+        "whyUs": "Pourquoi nous",
+        "hero": "Hero",
+        "happyCustomers": "Clients satisfaits"
+      }
+    },
     "avis": {
       "description": "Modération des notes et commentaires clients. Filtres par note, propriété et statut. Actions : approuver, masquer ou supprimer. Accès : reviews.read / reviews.write.",
       "id": {

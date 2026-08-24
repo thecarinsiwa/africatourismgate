@@ -463,6 +463,20 @@
         "messages": "Mensajes"
       }
     },
+    "site": {
+      "title": "Sitio y presentación",
+      "description": "Contenido institucional y de vitrina del sitio público: páginas sobre nosotros, equipo, hero, testimonios. Acceso: content.read / content.write.",
+      "tabsAria": "Secciones del sitio",
+      "tabs": {
+        "aboutPages": "Sobre nosotros",
+        "aboutTeam": "Equipo",
+        "aboutTimeline": "Línea de tiempo",
+        "aboutResources": "Recursos",
+        "whyUs": "Por qué elegirnos",
+        "hero": "Hero",
+        "happyCustomers": "Clientes satisfechos"
+      }
+    },
     "avis": {
       "description": "Modere valoraciones y comentarios de clientes. Filtre por nota, propiedad y estado. Acciones: aprobar, ocultar o eliminar. Acceso: reviews.read / reviews.write.",
       "id": {
