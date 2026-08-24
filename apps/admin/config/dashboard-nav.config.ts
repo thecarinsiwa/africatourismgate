@@ -110,7 +110,7 @@ export const adminDashboardNavConfig: AdminNavEntryConfig[] = [
       { href: '/contenu/avis', labelKey: 'reviews', iconKey: 'star', badgeKey: 'pendingReviews' },
       {
         href: '/contenu/support',
-        labelKey: 'supportHub',
+        labelKey: 'support',
         iconKey: 'headset',
         badgeKey: 'openSupportTickets',
       },

@@ -84,6 +84,18 @@ function resolveLinkLabel(link: AdminNavLinkConfig, tNav: (key: string) => strin
   return tNav(`links.${link.labelKey}`);
 }
 
+function translateNavLinkLabel(tNav: (key: string) => string, labelKey: string): string {
+  const messageKey = `links.${labelKey}`;
+  const value = tNav(messageKey);
+  // next-intl renvoie le chemin complet si la clé est absente du bundle messages.
+  if (value === `nav.${messageKey}` || value === messageKey) {
+    if (labelKey === 'support' || labelKey === 'supportHub') {
+      return 'Support';
+    }
+  }
+  return value;
+}
+
 export function buildAdminBreadcrumbRoutes(
   tNav: (key: string) => string,
 ): { href: string; label: string }[] {
@@ -111,7 +123,7 @@ export function buildAdminDashboardNav(tNav: (key: string) => string): SidebarNa
       defaultOpen: entry.defaultOpen,
       children: entry.children.map((child) => ({
         href: child.href,
-        label: tNav(`links.${child.labelKey}`),
+        label: translateNavLinkLabel(tNav, child.labelKey),
         icon: resolveIcon(child.iconKey),
       })),
     };
