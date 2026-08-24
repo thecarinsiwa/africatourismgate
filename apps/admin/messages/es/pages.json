@@ -534,9 +534,12 @@
       }
     },
     "avis": {
+      "title": "Reseñas",
       "description": "Modere valoraciones y comentarios de clientes. Filtre por nota, propiedad y estado. Acciones: aprobar, ocultar o eliminar. Acceso: reviews.read / reviews.write.",
       "id": {
-        "metaTitle": "Detalle de reseña"
+        "metaTitle": "Detalle de reseña",
+        "description": "Consulte el contexto, el comentario y las acciones de moderación.",
+        "backLabel": "Volver a las reseñas"
       }
     }
   },

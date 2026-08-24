@@ -534,9 +534,12 @@
       }
     },
     "avis": {
+      "title": "Avis",
       "description": "Modération des notes et commentaires clients. Filtres par note, propriété et statut. Actions : approuver, masquer ou supprimer. Accès : reviews.read / reviews.write.",
       "id": {
-        "metaTitle": "Détail avis"
+        "metaTitle": "Détail avis",
+        "description": "Consultez le contexte, le commentaire et les actions de modération.",
+        "backLabel": "Retour aux avis"
       }
     }
   },

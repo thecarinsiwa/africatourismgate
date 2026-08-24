@@ -534,9 +534,12 @@
       }
     },
     "avis": {
+      "title": "Reviews",
       "description": "Moderate customer ratings and comments. Filter by score, property and status. Actions: approve, hide or delete. Access: reviews.read / reviews.write.",
       "id": {
-        "metaTitle": "Review detail"
+        "metaTitle": "Review detail",
+        "description": "View context, comment and moderation actions.",
+        "backLabel": "Back to reviews"
       }
     }
   },

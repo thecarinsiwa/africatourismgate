@@ -12,14 +12,17 @@ import {
   DataTableBadge,
   DataTablePagination,
   EmptyState,
+  FilterBar,
+  Select,
   StarRatingDisplay,
   useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { AdminReviewListItem, Property, ReviewStatus } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
-import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
+import { usePermissions } from '../../lib/auth/use-permissions';
 import {
   useFormatDateTime,
   useReviewStatusFilterOptions,
@@ -31,6 +34,7 @@ import {
 } from '../../lib/review-display';
 
 const PAGE_SIZE = 20;
+const DEFAULT_STATUS: ReviewStatus = 'pending';
 
 export function ReviewsList() {
   const { reviews: getReviewsErrorMessage } = useAdminErrorMessages();
@@ -43,18 +47,15 @@ export function ReviewsList() {
   const formatDateTime = useFormatDateTime();
   const statusLabels = useReviewStatusLabels();
   const statusOptions = useReviewStatusFilterOptions();
+  const { hasPermission, isSuperAdmin } = usePermissions();
+  const canWrite = isSuperAdmin || hasPermission('reviews.write');
   const { toast } = useToast();
-  const ratingFilterId = useId();
-  const propertyFilterId = useId();
-  const statusFilterId = useId();
 
   const [page, setPage] = useState(1);
-  const [filterTick, setFilterTick] = useState(0);
   const [ratingFilter, setRatingFilter] = useState('');
   const [propertyFilter, setPropertyFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'' | ReviewStatus>('pending');
+  const [statusFilter, setStatusFilter] = useState<'' | ReviewStatus>(DEFAULT_STATUS);
   const [properties, setProperties] = useState<Property[]>([]);
-  const [canWrite, setCanWrite] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
   const [actingId, setActingId] = useState<string | null>(null);
   const [pendingDelete, setPendingDelete] = useState<AdminReviewListItem | null>(null);
@@ -63,25 +64,6 @@ export function ReviewsList() {
     | { status: 'error'; message: string }
     | { status: 'ready'; reviews: AdminReviewListItem[]; total: number; totalPages: number }
   >({ status: 'loading' });
-
-  useEffect(() => {
-    let cancelled = false;
-    void getApiClient()
-      .getAuthMe()
-      .then((me) => {
-        if (!cancelled) {
-          setCanWrite(
-            me.isSuperAdmin || me.permissions.includes('reviews.write'),
-          );
-        }
-      })
-      .catch(() => {
-        if (!cancelled) setCanWrite(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -100,7 +82,6 @@ export function ReviewsList() {
   }, []);
 
   const load = useCallback(async () => {
-    void filterTick;
     setState({ status: 'loading' });
     try {
       const result = await getApiClient().listReviews({
@@ -119,16 +100,11 @@ export function ReviewsList() {
     } catch (error) {
       setState({ status: 'error', message: getReviewsErrorMessage(error) });
     }
-  }, [page, ratingFilter, propertyFilter, statusFilter, filterTick, getReviewsErrorMessage]);
+  }, [page, ratingFilter, propertyFilter, statusFilter, getReviewsErrorMessage]);
 
   useEffect(() => {
     void load();
   }, [load]);
-
-  const applyFilters = useCallback(() => {
-    setPage(1);
-    setFilterTick((t) => t + 1);
-  }, []);
 
   const runAction = useCallback(
     async (
@@ -178,6 +154,35 @@ export function ReviewsList() {
   }, [pendingDelete, runAction]);
 
   const emptyDash = tCommon('empty.dash');
+
+  const ratingOptions = useMemo(
+    () => [
+      { value: '', label: tCommon('filters.allFeminine') },
+      ...[5, 4, 3, 2, 1].map((n) => ({ value: String(n), label: `${n}/5` })),
+    ],
+    [tCommon],
+  );
+
+  const propertyOptions = useMemo(
+    () => [
+      { value: '', label: tCommon('filters.allFeminine') },
+      ...properties.map((p) => ({ value: p.id, label: p.name })),
+    ],
+    [properties, tCommon],
+  );
+
+  const activeFilterCount = [
+    ratingFilter !== '',
+    propertyFilter !== '',
+    statusFilter !== DEFAULT_STATUS,
+  ].filter(Boolean).length;
+
+  const handleClearFilters = useCallback(() => {
+    setRatingFilter('');
+    setPropertyFilter('');
+    setStatusFilter(DEFAULT_STATUS);
+    setPage(1);
+  }, []);
 
   const columns = useMemo<ColumnDef<AdminReviewListItem, unknown>[]>(
     () => [
@@ -313,79 +318,56 @@ export function ReviewsList() {
   const isLoading = state.status === 'loading';
   const isError = state.status === 'error';
   const reviews = state.status === 'ready' ? state.reviews : [];
-  const hasFilters =
-    ratingFilter !== '' ||
-    propertyFilter !== '' ||
-    statusFilter !== 'pending';
+  const hasFilters = activeFilterCount > 0;
   const isEmpty = state.status === 'ready' && state.total === 0;
 
   return (
     <div className="space-y-6">
-      <Card className="p-4">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div>
-            <label htmlFor={ratingFilterId} className="mb-1 block text-xs font-medium text-atg-muted">
-              {tColumns('rating')}
-            </label>
-            <select
-              id={ratingFilterId}
-              value={ratingFilter}
-              onChange={(e) => setRatingFilter(e.target.value)}
-              className="w-full rounded-lg border border-atg-border bg-atg-surface px-3 py-2 text-sm text-atg-fg"
-            >
-              <option value="">{tCommon('filters.allFeminine')}</option>
-              {[5, 4, 3, 2, 1].map((n) => (
-                <option key={n} value={String(n)}>
-                  {n}/5
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label
-              htmlFor={propertyFilterId}
-              className="mb-1 block text-xs font-medium text-atg-muted"
-            >
-              {tList('columns.property')}
-            </label>
-            <select
-              id={propertyFilterId}
-              value={propertyFilter}
-              onChange={(e) => setPropertyFilter(e.target.value)}
-              className="w-full rounded-lg border border-atg-border bg-atg-surface px-3 py-2 text-sm text-atg-fg"
-            >
-              <option value="">{tCommon('filters.allFeminine')}</option>
-              {properties.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label htmlFor={statusFilterId} className="mb-1 block text-xs font-medium text-atg-muted">
-              {tColumns('status')}
-            </label>
-            <select
-              id={statusFilterId}
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as '' | ReviewStatus)}
-              className="w-full rounded-lg border border-atg-border bg-atg-surface px-3 py-2 text-sm text-atg-fg"
-            >
-              {statusOptions.map((option) => (
-                <option key={option.value || 'all'} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex items-end">
-            <Button type="button" onClick={applyFilters} className="w-full sm:w-auto">
-              {tCommon('filters.apply')}
-            </Button>
-          </div>
-        </div>
-      </Card>
+      <FilterBar
+        mobileVariant="drawer"
+        activeCount={activeFilterCount}
+        onClear={handleClearFilters}
+        clearLabel={tCommon('filters.clearAll')}
+        applyLabel={tCommon('filters.apply')}
+        toggleLabel={tCommon('filters.toggle')}
+        filters={
+          <>
+            <div className="w-full sm:w-40">
+              <Select
+                label={tColumns('rating')}
+                value={ratingFilter}
+                options={ratingOptions}
+                onChange={(e) => {
+                  setRatingFilter(e.target.value);
+                  setPage(1);
+                }}
+              />
+            </div>
+            <div className="w-full sm:w-56">
+              <Select
+                label={tList('columns.property')}
+                value={propertyFilter}
+                options={propertyOptions}
+                onChange={(e) => {
+                  setPropertyFilter(e.target.value);
+                  setPage(1);
+                }}
+              />
+            </div>
+            <div className="w-full sm:w-44">
+              <Select
+                label={tColumns('status')}
+                value={statusFilter}
+                options={statusOptions}
+                onChange={(e) => {
+                  setStatusFilter(e.target.value as '' | ReviewStatus);
+                  setPage(1);
+                }}
+              />
+            </div>
+          </>
+        }
+      />
 
       {actionError ? (
         <p className="text-sm text-red-600 dark:text-red-400" role="alert">

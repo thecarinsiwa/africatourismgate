@@ -7,6 +7,7 @@ import {
   Button,
   Card,
   DataTableBadge,
+  Skeleton,
   StarRatingDisplay,
   useToast,
 } from '@africatourismgate/ui';
@@ -15,14 +16,17 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
-import { AdminPageBackLink } from '../admin-page-back-link';
 import { useAdminEditPageMeta } from '../use-admin-edit-page-meta';
+import { AdminIntroPage } from '../pages/admin-intro-page';
 import { getApiClient } from '../../lib/auth/api';
+import { usePermissions } from '../../lib/auth/use-permissions';
 import { useFormatDateTime, useReviewStatusLabels } from '../../lib/i18n/use-module-labels';
 import {
   formatReviewEntity,
   reviewStatusVariants,
 } from '../../lib/review-display';
+
+const AVIS_LIST_HREF = '/contenu/avis';
 
 function reviewEntityTypeKey(entityType: string): string {
   return `entityTypes.${entityType}`;
@@ -50,9 +54,10 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
   const tLoading = useTranslations('common.loading');
   const formatDateTime = useFormatDateTime('long');
   const statusLabels = useReviewStatusLabels();
+  const { hasPermission, isSuperAdmin } = usePermissions();
+  const canWrite = isSuperAdmin || hasPermission('reviews.write');
   const router = useRouter();
   const { toast } = useToast();
-  const [canWrite, setCanWrite] = useState(false);
   const [acting, setActing] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
@@ -84,25 +89,6 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
   useEffect(() => {
     void load();
   }, [load]);
-
-  useEffect(() => {
-    let cancelled = false;
-    void getApiClient()
-      .getAuthMe()
-      .then((me) => {
-        if (!cancelled) {
-          setCanWrite(
-            me.isSuperAdmin || me.permissions.includes('reviews.write'),
-          );
-        }
-      })
-      .catch(() => {
-        if (!cancelled) setCanWrite(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   const runModerationAction = useCallback(
     async (action: 'approve' | 'hide') => {
@@ -148,7 +134,7 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
         title: t('toast.deleted.title'),
         message: t('toast.deleted.message'),
       });
-      router.push('/contenu/avis');
+      router.push(AVIS_LIST_HREF);
       return true;
     } catch (error) {
       setActionError(getReviewsErrorMessage(error));
@@ -160,17 +146,29 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
   const emptyDash = tCommon('empty.dash');
 
   if (state.status === 'loading') {
-    return <p className="text-sm text-atg-muted">{tLoading('page')}</p>;
+    return (
+      <AdminIntroPage
+        routePath="contenu/avis/id"
+        backHref={AVIS_LIST_HREF}
+        backLabelKey="backLabel"
+      >
+        <Skeleton className="h-96 w-full max-w-4xl" />
+        <p className="sr-only">{tCommon('loading')}</p>
+      </AdminIntroPage>
+    );
   }
 
   if (state.status === 'error') {
     return (
-      <div className="space-y-4">
-        <AdminPageBackLink href="/contenu/avis" label={tDetail('backLink')} />
+      <AdminIntroPage
+        routePath="contenu/avis/id"
+        backHref={AVIS_LIST_HREF}
+        backLabelKey="backLabel"
+      >
         <p className="text-sm text-red-600 dark:text-red-400" role="alert">
           {state.message}
         </p>
-      </div>
+      </AdminIntroPage>
     );
   }
 
@@ -187,19 +185,22 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
   }`;
 
   return (
-    <div className={showActions ? 'space-y-6 pb-24' : 'space-y-6'}>
-      <AdminPageBackLink href="/contenu/avis" label={tDetail('backLink')} />
+    <AdminIntroPage
+      routePath="contenu/avis/id"
+      backHref={AVIS_LIST_HREF}
+      backLabelKey="backLabel"
+    >
+      <div className={showActions ? 'min-w-0 space-y-6 pb-24' : 'min-w-0 space-y-6'}>
+        {actionError ? (
+          <p
+            className="rounded-lg border border-red-500 bg-red-500/5 px-3 py-2 text-sm text-red-600 dark:border-red-500/50 dark:bg-red-500/10 dark:text-red-400"
+            role="alert"
+          >
+            {actionError}
+          </p>
+        ) : null}
 
-      {actionError ? (
-        <p
-          className="rounded-lg border border-red-500 bg-red-500/5 px-3 py-2 text-sm text-red-600 dark:border-red-500/50 dark:bg-red-500/10 dark:text-red-400"
-          role="alert"
-        >
-          {actionError}
-        </p>
-      ) : null}
-
-      <div className="grid gap-6 lg:grid-cols-[minmax(280px,1fr)_minmax(0,1.6fr)] lg:items-start">
+        <div className="grid gap-6 lg:grid-cols-[minmax(280px,1fr)_minmax(0,1.6fr)] lg:items-start">
           <Card variant="dashboard" padding="md" className="lg:sticky lg:top-4">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
               <h2 className="text-lg font-semibold text-atg-fg">{tDetail('sections.context')}</h2>
@@ -317,71 +318,72 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
               <p className="text-sm italic text-atg-muted">{tDetail('noComment')}</p>
             )}
           </Card>
-      </div>
-
-      {showActions ? (
-        <div
-          className="sticky bottom-0 z-20 border-t border-atg-border bg-atg-bg/95 px-4 py-3 backdrop-blur"
-          role="region"
-          aria-label={tDetail('moderationActionsAria')}
-        >
-          <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
-            {canApprove ? (
-              <Button
-                type="button"
-                disabled={acting}
-                loading={acting}
-                loadingText={tLoading('default')}
-                className="w-full sm:w-auto"
-                onClick={() => void runModerationAction('approve')}
-              >
-                {t('actions.approve')}
-              </Button>
-            ) : null}
-            {canHide ? (
-              <Button
-                type="button"
-                variant="secondary"
-                disabled={acting}
-                loading={acting}
-                loadingText={tLoading('default')}
-                className="w-full sm:w-auto"
-                onClick={() => void runModerationAction('hide')}
-              >
-                {t('actions.hide')}
-              </Button>
-            ) : null}
-            <Button
-              type="button"
-              variant="ghost"
-              disabled={acting}
-              onClick={() => setDeleteDialogOpen(true)}
-              className="w-full sm:w-auto !text-red-600 hover:!bg-red-50 dark:!text-red-400"
-            >
-              {t('actions.delete')}
-            </Button>
-          </div>
         </div>
-      ) : null}
 
-      <AlertDialog
-        open={deleteDialogOpen}
-        onOpenChange={(open) => {
-          if (!acting) setDeleteDialogOpen(open);
-        }}
-        title={t('deleteDialog.title')}
-        description={t('deleteDialog.description')}
-        confirmLabel={t('actions.delete')}
-        cancelLabel={tActions('cancel')}
-        variant="danger"
-        loading={acting}
-        onConfirm={() => {
-          void runDelete().then((ok) => {
-            if (ok) setDeleteDialogOpen(false);
-          });
-        }}
-        onCancel={() => setDeleteDialogOpen(false)}
-      />
-    </div>
+        {showActions ? (
+          <div
+            className="sticky bottom-0 z-20 border-t border-atg-border bg-atg-bg/95 px-4 py-3 backdrop-blur"
+            role="region"
+            aria-label={tDetail('moderationActionsAria')}
+          >
+            <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
+              {canApprove ? (
+                <Button
+                  type="button"
+                  disabled={acting}
+                  loading={acting}
+                  loadingText={tLoading('default')}
+                  className="w-full sm:w-auto"
+                  onClick={() => void runModerationAction('approve')}
+                >
+                  {t('actions.approve')}
+                </Button>
+              ) : null}
+              {canHide ? (
+                <Button
+                  type="button"
+                  variant="secondary"
+                  disabled={acting}
+                  loading={acting}
+                  loadingText={tLoading('default')}
+                  className="w-full sm:w-auto"
+                  onClick={() => void runModerationAction('hide')}
+                >
+                  {t('actions.hide')}
+                </Button>
+              ) : null}
+              <Button
+                type="button"
+                variant="ghost"
+                disabled={acting}
+                onClick={() => setDeleteDialogOpen(true)}
+                className="w-full sm:w-auto !text-red-600 hover:!bg-red-50 dark:!text-red-400"
+              >
+                {t('actions.delete')}
+              </Button>
+            </div>
+          </div>
+        ) : null}
+
+        <AlertDialog
+          open={deleteDialogOpen}
+          onOpenChange={(open) => {
+            if (!acting) setDeleteDialogOpen(open);
+          }}
+          title={t('deleteDialog.title')}
+          description={t('deleteDialog.description')}
+          confirmLabel={t('actions.delete')}
+          cancelLabel={tActions('cancel')}
+          variant="danger"
+          loading={acting}
+          onConfirm={() => {
+            void runDelete().then((ok) => {
+              if (ok) setDeleteDialogOpen(false);
+            });
+          }}
+          onCancel={() => setDeleteDialogOpen(false)}
+        />
+      </div>
+    </AdminIntroPage>
   );
 }
