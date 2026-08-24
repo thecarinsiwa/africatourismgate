@@ -250,7 +250,11 @@ export function TimelineMilestonesList() {
           </Button>
         </div>
         {canWrite ? (
-          <Button href="/contenu/a-propos/timeline/nouveau">{t('newButton')}</Button>
+          <Button
+            href={`/contenu/a-propos/timeline/nouveau?locale=${encodeURIComponent(localeFilter || 'fr')}`}
+          >
+            {t('newButton')}
+          </Button>
         ) : null}
       </div>
 

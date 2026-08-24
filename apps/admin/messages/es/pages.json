@@ -474,6 +474,19 @@
           "metaTitle": "Editar miembro"
         }
       },
+      "timeline": {
+        "description": "Hitos de la línea de tiempo del sitio. Acceso: content.read / content.write.",
+        "nouveau": {
+          "metaTitle": "Nuevo hito",
+          "description": "Añada un hito a la línea de tiempo.",
+          "backLabel": "Volver a la línea de tiempo"
+        },
+        "id": {
+          "metaTitle": "Editar hito",
+          "description": "Actualice el período, el contenido, la imagen y el estado de publicación.",
+          "backLabel": "Volver a la línea de tiempo"
+        }
+      },
       "ressources": {
         "description": "Informes financieros y recursos multimedia descargables. Acceso: content.read / content.write.",
         "nouveau": {

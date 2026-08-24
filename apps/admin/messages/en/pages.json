@@ -474,6 +474,19 @@
           "metaTitle": "Edit team member"
         }
       },
+      "timeline": {
+        "description": "About page chronological timeline milestones. Access: content.read / content.write.",
+        "nouveau": {
+          "metaTitle": "New milestone",
+          "description": "Add a milestone to the chronological timeline.",
+          "backLabel": "Back to timeline"
+        },
+        "id": {
+          "metaTitle": "Edit milestone",
+          "description": "Update period, content, image and publication status.",
+          "backLabel": "Back to timeline"
+        }
+      },
       "ressources": {
         "description": "Financial reports and downloadable media resources. Access: content.read / content.write.",
         "nouveau": {

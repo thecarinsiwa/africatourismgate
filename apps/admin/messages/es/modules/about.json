@@ -130,6 +130,9 @@
       "pageTitle": "Editar hito"
     },
     "form": {
+      "info": {
+        "sectionHint": "Hito mostrado en la línea de tiempo de la página Acerca de."
+      },
       "validation": {
         "periodLabelRequired": "La etiqueta del período es obligatoria.",
         "periodTitleRequired": "El título del período es obligatorio.",
@@ -148,9 +151,14 @@
         "content": "Contenido",
         "image": "Imagen",
         "imagePreviewAlt": "Vista previa de imagen",
+        "removeImage": "Quitar imagen",
         "linkUrl": "Enlace (URL)",
         "sortOrder": "Orden de visualización",
         "locale": "Idioma"
+      },
+      "hints": {
+        "imageUpload": "JPEG, PNG o WebP — máx. 5 MB",
+        "linkUrl": "Enlace opcional a una página o recurso asociado."
       },
       "saving": "Guardando…",
       "createButton": "Añadir hito",

@@ -474,6 +474,19 @@
           "metaTitle": "Modifier le membre"
         }
       },
+      "timeline": {
+        "description": "Jalons de la frise chronologique du site. Accès : content.read / content.write.",
+        "nouveau": {
+          "metaTitle": "Nouveau jalon",
+          "description": "Ajoutez un jalon à la frise chronologique.",
+          "backLabel": "Retour à la frise"
+        },
+        "id": {
+          "metaTitle": "Modifier le jalon",
+          "description": "Mettez à jour la période, le contenu, l'image et le statut de publication.",
+          "backLabel": "Retour à la frise"
+        }
+      },
       "ressources": {
         "description": "Rapports financiers et ressources médias téléchargeables. Accès : content.read / content.write.",
         "nouveau": {

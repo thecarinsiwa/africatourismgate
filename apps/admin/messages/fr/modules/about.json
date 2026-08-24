@@ -130,6 +130,9 @@
       "pageTitle": "Modifier le jalon"
     },
     "form": {
+      "info": {
+        "sectionHint": "Jalon affiché dans la frise chronologique de la page À propos."
+      },
       "validation": {
         "periodLabelRequired": "Le libellé de période est obligatoire.",
         "periodTitleRequired": "Le titre de période est obligatoire.",
@@ -148,9 +151,14 @@
         "content": "Contenu",
         "image": "Image",
         "imagePreviewAlt": "Aperçu de l'image",
+        "removeImage": "Retirer l'image",
         "linkUrl": "Lien (URL)",
         "sortOrder": "Ordre d'affichage",
         "locale": "Langue"
+      },
+      "hints": {
+        "imageUpload": "JPEG, PNG ou WebP — max. 5 Mo",
+        "linkUrl": "Lien optionnel vers une page ou une ressource associée."
       },
       "saving": "Enregistrement…",
       "createButton": "Ajouter le jalon",

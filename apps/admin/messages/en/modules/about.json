@@ -130,6 +130,9 @@
       "pageTitle": "Edit milestone"
     },
     "form": {
+      "info": {
+        "sectionHint": "Milestone displayed in the About page chronological timeline."
+      },
       "validation": {
         "periodLabelRequired": "Period label is required.",
         "periodTitleRequired": "Period title is required.",
@@ -148,9 +151,14 @@
         "content": "Content",
         "image": "Image",
         "imagePreviewAlt": "Image preview",
+        "removeImage": "Remove image",
         "linkUrl": "Link (URL)",
         "sortOrder": "Display order",
         "locale": "Language"
+      },
+      "hints": {
+        "imageUpload": "JPEG, PNG or WebP — max 5 MB",
+        "linkUrl": "Optional link to a related page or resource."
       },
       "saving": "Saving…",
       "createButton": "Add milestone",
