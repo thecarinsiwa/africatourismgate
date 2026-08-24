@@ -186,6 +186,9 @@
       "pageTitle": "Edit team member"
     },
     "form": {
+      "info": {
+        "sectionHint": "Profile shown in the Team section of the About page."
+      },
       "validation": {
         "nameRequired": "Name is required.",
         "roleRequired": "Role is required.",
@@ -197,8 +200,12 @@
         "bio": "Bio",
         "photo": "Photo",
         "photoPreviewAlt": "Photo preview",
+        "removePhoto": "Remove photo",
         "sortOrder": "Display order",
         "locale": "Language"
+      },
+      "hints": {
+        "photoUpload": "JPEG, PNG or WebP — max. 5 MB"
       },
       "saving": "Saving…",
       "createButton": "Add member",

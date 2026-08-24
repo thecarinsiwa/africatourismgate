@@ -468,10 +468,13 @@
         "description": "Team members shown on the public site. Access: content.read / content.write.",
         "nouveau": {
           "metaTitle": "New team member",
-          "description": "Add a team member."
+          "description": "Add a team member shown on the public site.",
+          "backLabel": "Back to team"
         },
         "id": {
-          "metaTitle": "Edit team member"
+          "metaTitle": "Edit team member",
+          "description": "Update profile, photo and publication status.",
+          "backLabel": "Back to team"
         }
       },
       "timeline": {

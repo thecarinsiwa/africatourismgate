@@ -468,10 +468,13 @@
         "description": "Membres de l'équipe affichés sur le site public. Accès : content.read / content.write.",
         "nouveau": {
           "metaTitle": "Nouveau membre",
-          "description": "Ajoutez un membre à l'équipe."
+          "description": "Ajoutez un membre à l'équipe affichée sur le site.",
+          "backLabel": "Retour à l'équipe"
         },
         "id": {
-          "metaTitle": "Modifier le membre"
+          "metaTitle": "Modifier le membre",
+          "description": "Mettez à jour le profil, la photo et le statut de publication.",
+          "backLabel": "Retour à l'équipe"
         }
       },
       "timeline": {

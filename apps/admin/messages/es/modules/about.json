@@ -186,6 +186,9 @@
       "pageTitle": "Editar miembro"
     },
     "form": {
+      "info": {
+        "sectionHint": "Perfil mostrado en la sección Equipo de la página Acerca de."
+      },
       "validation": {
         "nameRequired": "El nombre es obligatorio.",
         "roleRequired": "El rol es obligatorio.",
@@ -197,8 +200,12 @@
         "bio": "Biografía",
         "photo": "Foto",
         "photoPreviewAlt": "Vista previa de foto",
+        "removePhoto": "Quitar la foto",
         "sortOrder": "Orden de visualización",
         "locale": "Idioma"
+      },
+      "hints": {
+        "photoUpload": "JPEG, PNG o WebP — máx. 5 MB"
       },
       "saving": "Guardando…",
       "createButton": "Añadir miembro",
