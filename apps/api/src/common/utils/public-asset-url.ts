@@ -113,6 +113,10 @@ export function gapSiteSettingsUploadUrl(filename: string): string {
   return `${getApiBaseUrl()}/uploads/gap/settings/${filename}`;
 }
 
+export function heroSlideUploadUrl(filename: string): string {
+  return `${getApiBaseUrl()}/uploads/hero/slides/${filename}`;
+}
+
 function getApiPublicOrigin(): string {
   return getApiBaseUrl().replace(/\/api$/, '');
 }

@@ -1,10 +1,12 @@
 'use client';
 
 import type { HeroSlide } from '@africatourismgate/types';
+import { Skeleton } from '@africatourismgate/ui';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 import { getApiClient } from '../../lib/auth/api';
+import { AdminIntroPage } from '../pages/admin-intro-page';
 import { HeroSlideForm } from './hero-slide-form';
 
 type HeroSlideEditPageProps = {
@@ -14,7 +16,6 @@ type HeroSlideEditPageProps = {
 export function HeroSlideEditPage({ slideId }: HeroSlideEditPageProps) {
   const { about: getAboutErrorMessage } = useAdminErrorMessages();
   const tCommonForm = useTranslations('modules.common.form');
-  const t = useTranslations('modules.heroSlides.edit');
   const [state, setState] = useState<
     | { status: 'loading' }
     | { status: 'error'; message: string }
@@ -37,17 +38,41 @@ export function HeroSlideEditPage({ slideId }: HeroSlideEditPageProps) {
   }, [getAboutErrorMessage, slideId]);
 
   if (state.status === 'loading') {
-    return <p className="text-sm text-muted-foreground">{tCommonForm('loading')}</p>;
+    return (
+      <AdminIntroPage
+        routePath="contenu/hero/id"
+        backHref="/contenu/site?tab=hero"
+        backLabelKey="backLabel"
+      >
+        <Skeleton className="h-96 w-full max-w-2xl" />
+        <p className="sr-only">{tCommonForm('loading')}</p>
+      </AdminIntroPage>
+    );
   }
 
   if (state.status === 'error') {
-    return <p className="text-sm text-destructive">{state.message}</p>;
+    return (
+      <AdminIntroPage
+        routePath="contenu/hero/id"
+        backHref="/contenu/site?tab=hero"
+        backLabelKey="backLabel"
+      >
+        <p role="alert" className="text-sm text-destructive">
+          {state.message}
+        </p>
+      </AdminIntroPage>
+    );
   }
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold">{t('pageTitle')}</h1>
-      <HeroSlideForm mode="edit" slideId={slideId} initialSlide={state.slide} />
-    </div>
+    <AdminIntroPage
+      routePath="contenu/hero/id"
+      backHref="/contenu/site?tab=hero"
+      backLabelKey="backLabel"
+    >
+      <div className="min-w-0">
+        <HeroSlideForm mode="edit" slideId={slideId} initialSlide={state.slide} />
+      </div>
+    </AdminIntroPage>
   );
 }

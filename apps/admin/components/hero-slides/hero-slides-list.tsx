@@ -222,7 +222,11 @@ export function HeroSlidesList({ locale }: HeroSlidesListProps) {
           </select>
         </div>
 
-        {canWrite ? <Button href="/contenu/hero/nouveau">{t('newButton')}</Button> : null}
+        {canWrite ? (
+          <Button href={`/contenu/hero/nouveau?locale=${encodeURIComponent(locale)}`}>
+            {t('newButton')}
+          </Button>
+        ) : null}
       </div>
 
       {state.status === 'error' ? (

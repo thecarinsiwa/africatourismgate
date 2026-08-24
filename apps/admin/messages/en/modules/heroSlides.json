@@ -48,19 +48,27 @@
     "pageTitle": "Edit slide"
   },
   "form": {
+    "info": {
+      "carouselHint": "Slide displayed in the homepage carousel. A wide image (16:9) is recommended."
+    },
     "validation": {
       "subtitleRequired": "Subtitle is required.",
       "titleRequired": "Title is required.",
       "descriptionRequired": "Description is required.",
-      "imageUrlRequired": "Image URL is required.",
+      "imageUrlRequired": "Image is required.",
+      "imageUrlInvalid": "Invalid image URL.",
       "imageAltRequired": "Alt text is required."
     },
     "fields": {
       "subtitle": "Subtitle",
       "title": "Title",
       "description": "Description",
-      "imageUrl": "Image URL",
+      "image": "Background image",
+      "imageUrl": "Image URL (alternative)",
       "imageAlt": "Image alt text",
+      "imagePreviewAlt": "Slide preview",
+      "removeImage": "Remove image",
+      "imageUploadHint": "JPEG, PNG or WebP — max 5 MB",
       "href": "Link (optional)",
       "hrefHint": "Internal or external link on the title. Leave empty for no link.",
       "sortOrder": "Display order",

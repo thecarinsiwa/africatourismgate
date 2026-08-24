@@ -416,6 +416,19 @@
         "metaTitle": "Modifier l'article"
       }
     },
+    "hero": {
+      "description": "Diapositives du carrousel de la page d'accueil. Accès : content.read / content.write.",
+      "nouveau": {
+        "metaTitle": "Nouvelle diapositive hero",
+        "description": "Ajoutez une diapositive au carrousel de la page d'accueil.",
+        "backLabel": "Retour au hero"
+      },
+      "id": {
+        "metaTitle": "Modifier la diapositive hero",
+        "description": "Mettez à jour le contenu, l'image et le statut de publication.",
+        "backLabel": "Retour au hero"
+      }
+    },
     "a-propos": {
       "pages": {
         "description": "Pages institutionnelles du site (Qui nous sommes, gouvernance, etc.). Accès : content.read / content.write.",

@@ -48,19 +48,27 @@
     "pageTitle": "Editar diapositiva"
   },
   "form": {
+    "info": {
+      "carouselHint": "Diapositiva mostrada en el carrusel de la página de inicio. Se recomienda una imagen ancha (16:9)."
+    },
     "validation": {
       "subtitleRequired": "El subtítulo es obligatorio.",
       "titleRequired": "El título es obligatorio.",
       "descriptionRequired": "La descripción es obligatoria.",
-      "imageUrlRequired": "La URL de la imagen es obligatoria.",
+      "imageUrlRequired": "La imagen es obligatoria.",
+      "imageUrlInvalid": "URL de imagen no válida.",
       "imageAltRequired": "El texto alternativo es obligatorio."
     },
     "fields": {
       "subtitle": "Subtítulo",
       "title": "Título",
       "description": "Descripción",
-      "imageUrl": "URL de la imagen",
+      "image": "Imagen de fondo",
+      "imageUrl": "URL de la imagen (alternativa)",
       "imageAlt": "Texto alternativo de la imagen",
+      "imagePreviewAlt": "Vista previa de la diapositiva",
+      "removeImage": "Quitar imagen",
+      "imageUploadHint": "JPEG, PNG o WebP — máx. 5 MB",
       "href": "Enlace (opcional)",
       "hrefHint": "Enlace interno o externo en el título. Déjelo vacío si no hay enlace.",
       "sortOrder": "Orden de visualización",

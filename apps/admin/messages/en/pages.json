@@ -416,6 +416,19 @@
         "metaTitle": "Edit post"
       }
     },
+    "hero": {
+      "description": "Homepage carousel slides. Access: content.read / content.write.",
+      "nouveau": {
+        "metaTitle": "New hero slide",
+        "description": "Add a slide to the homepage carousel.",
+        "backLabel": "Back to hero"
+      },
+      "id": {
+        "metaTitle": "Edit hero slide",
+        "description": "Update content, image and publication status.",
+        "backLabel": "Back to hero"
+      }
+    },
     "a-propos": {
       "pages": {
         "description": "Institutional site pages (Who we are, governance, etc.). Access: content.read / content.write.",

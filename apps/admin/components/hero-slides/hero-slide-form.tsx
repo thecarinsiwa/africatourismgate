@@ -2,12 +2,23 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Input, Textarea } from '@africatourismgate/ui';
+import { Button, Card, Input, Select, Textarea } from '@africatourismgate/ui';
 import type { CreateHeroSlideRequest, HeroSlide, HeroSlideStatus } from '@africatourismgate/types';
+import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useCallback, useId, useState } from 'react';
-import { getApiClient } from '../../lib/auth/api';
+import { useCallback, useId, useMemo, useState } from 'react';
+import { isValidMediaUrl } from '../../lib/about/form-utils';
+import { getApiClient, resolveApiBaseUrl } from '../../lib/auth/api';
+import { getSession } from '../../lib/auth/session';
+import { useContentLocaleOptions } from '../../lib/content/use-content-locale-options';
+import { usePermissions } from '../../lib/auth/use-permissions';
+import { resolveMediaUrl } from '../../lib/resolve-media-url';
+
+export const HERO_SLIDES_HUB_HREF = '/contenu/site?tab=hero';
+
+const IMAGE_MAX_BYTES = 5 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
 export type HeroSlideFormValues = {
   subtitle: string;
@@ -67,6 +78,7 @@ type HeroSlideFormProps = {
   slideId?: string;
   initialSlide?: HeroSlide;
   defaultLocale?: string;
+  cancelHref?: string;
 };
 
 export function HeroSlideForm({
@@ -74,23 +86,20 @@ export function HeroSlideForm({
   slideId,
   initialSlide,
   defaultLocale = 'fr',
+  cancelHref = HERO_SLIDES_HUB_HREF,
 }: HeroSlideFormProps) {
   const { about: getAboutErrorMessage } = useAdminErrorMessages();
+  const { hasPermission, isSuperAdmin } = usePermissions();
+  const canWrite = isSuperAdmin || hasPermission('content.write');
   const t = useTranslations('modules.heroSlides.form');
   const tCommon = useTranslations('modules.common');
-  const tLocale = useTranslations('modules.heroSlides.locale');
+  const tCommonForm = useTranslations('modules.common.form');
+  const tValidation = useTranslations('modules.common.validation');
   const tStatus = useTranslations('modules.heroSlides.status');
+  const localeOptions = useContentLocaleOptions('modules.heroSlides.locale');
   const router = useRouter();
 
-  const subtitleId = useId();
-  const titleId = useId();
-  const descriptionId = useId();
-  const imageUrlId = useId();
-  const imageAltId = useId();
-  const hrefId = useId();
-  const sortOrderId = useId();
-  const statusId = useId();
-  const localeId = useId();
+  const imageInputId = useId();
 
   const [values, setValues] = useState<HeroSlideFormValues>(() =>
     initialSlide ? slideToFormValues(initialSlide) : { ...defaultValues, locale: defaultLocale },
@@ -100,6 +109,16 @@ export function HeroSlideForm({
   >({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+
+  const statusOptions = useMemo(
+    () =>
+      (['draft', 'published'] as const).map((status) => ({
+        value: status,
+        label: tStatus(status),
+      })),
+    [tStatus],
+  );
 
   const updateField = useCallback(
     <K extends keyof HeroSlideFormValues>(key: K, value: HeroSlideFormValues[K]) => {
@@ -109,12 +128,60 @@ export function HeroSlideForm({
     [],
   );
 
+  async function handleImageUpload(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
+        setFieldErrors((prev) => ({ ...prev, imageUrl: tValidation('imageFormat') }));
+        return;
+      }
+      if (file.size > IMAGE_MAX_BYTES) {
+        setFieldErrors((prev) => ({ ...prev, imageUrl: tValidation('imageTooLarge') }));
+        return;
+      }
+      const session = getSession();
+      if (!session?.accessToken) {
+        setFieldErrors((prev) => ({
+          ...prev,
+          imageUrl: tValidation('sessionExpiredRetry'),
+        }));
+        return;
+      }
+
+      setUploadingImage(true);
+      setFieldErrors((prev) => ({ ...prev, imageUrl: undefined }));
+      const body = new FormData();
+      body.append('file', file);
+      const response = await fetch(`${resolveApiBaseUrl()}/hero-slides/upload-image`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${session.accessToken}` },
+        body,
+      });
+      if (!response.ok) throw new Error('Upload failed');
+      const payload = (await response.json()) as { url?: string };
+      if (!payload.url) throw new Error('Invalid upload response');
+      updateField('imageUrl', payload.url);
+    } catch {
+      setFieldErrors((prev) => ({ ...prev, imageUrl: tValidation('uploadFailed') }));
+    } finally {
+      setUploadingImage(false);
+      event.target.value = '';
+    }
+  }
+
   const validate = (): boolean => {
     const errors: Partial<Record<keyof HeroSlideFormValues, string>> = {};
     if (!values.subtitle.trim()) errors.subtitle = t('validation.subtitleRequired');
     if (!values.title.trim()) errors.title = t('validation.titleRequired');
     if (!values.description.trim()) errors.description = t('validation.descriptionRequired');
-    if (!values.imageUrl.trim()) errors.imageUrl = t('validation.imageUrlRequired');
+    const imageUrl = values.imageUrl.trim();
+    if (!imageUrl) {
+      errors.imageUrl = t('validation.imageUrlRequired');
+    } else if (!isValidMediaUrl(imageUrl)) {
+      errors.imageUrl = t('validation.imageUrlInvalid');
+    }
     if (!values.imageAlt.trim()) errors.imageAlt = t('validation.imageAltRequired');
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
@@ -122,6 +189,7 @@ export function HeroSlideForm({
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    if (!canWrite) return;
     if (!validate()) return;
 
     setSaving(true);
@@ -134,9 +202,11 @@ export function HeroSlideForm({
       if (mode === 'create') {
         const created = await client.createHeroSlide(payload);
         router.push(`/contenu/hero/${created.id}`);
+        router.refresh();
       } else if (slideId) {
         await client.updateHeroSlide(slideId, payload);
-        router.push('/contenu/hero');
+        router.push(cancelHref);
+        router.refresh();
       }
     } catch (error) {
       setSubmitError(getAboutErrorMessage(error));
@@ -145,147 +215,162 @@ export function HeroSlideForm({
     }
   };
 
+  const busy = saving || uploadingImage;
+
   return (
-    <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
-      <div>
-        <label htmlFor={subtitleId} className="mb-1 block text-sm font-medium">
-          {t('fields.subtitle')}
-        </label>
-        <Input
-          id={subtitleId}
-          value={values.subtitle}
-          onChange={(e) => updateField('subtitle', e.target.value)}
-          aria-invalid={Boolean(fieldErrors.subtitle)}
-        />
-        {fieldErrors.subtitle ? (
-          <p className="mt-1 text-sm text-destructive">{fieldErrors.subtitle}</p>
+    <Card className="p-6">
+      <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
+        <div className="rounded-lg border border-atg-border bg-atg-elevated/50 px-4 py-3 text-sm text-atg-muted">
+          <p>{t('info.carouselHint')}</p>
+        </div>
+
+        {submitError ? (
+          <p
+            role="alert"
+            className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-400"
+          >
+            {submitError}
+          </p>
         ) : null}
-      </div>
 
-      <div>
-        <label htmlFor={titleId} className="mb-1 block text-sm font-medium">
-          {t('fields.title')}
-        </label>
-        <Input
-          id={titleId}
-          value={values.title}
-          onChange={(e) => updateField('title', e.target.value)}
-          aria-invalid={Boolean(fieldErrors.title)}
-        />
-        {fieldErrors.title ? (
-          <p className="mt-1 text-sm text-destructive">{fieldErrors.title}</p>
-        ) : null}
-      </div>
-
-      <Textarea
-        id={descriptionId}
-        label={t('fields.description')}
-        rows={4}
-        value={values.description}
-        onChange={(e) => updateField('description', e.target.value)}
-        error={fieldErrors.description}
-      />
-
-      <div>
-        <label htmlFor={imageUrlId} className="mb-1 block text-sm font-medium">
-          {t('fields.imageUrl')}
-        </label>
-        <Input
-          id={imageUrlId}
-          value={values.imageUrl}
-          onChange={(e) => updateField('imageUrl', e.target.value)}
-          placeholder="https://..."
-          aria-invalid={Boolean(fieldErrors.imageUrl)}
-        />
-        {fieldErrors.imageUrl ? (
-          <p className="mt-1 text-sm text-destructive">{fieldErrors.imageUrl}</p>
-        ) : null}
-      </div>
-
-      <div>
-        <label htmlFor={imageAltId} className="mb-1 block text-sm font-medium">
-          {t('fields.imageAlt')}
-        </label>
-        <Input
-          id={imageAltId}
-          value={values.imageAlt}
-          onChange={(e) => updateField('imageAlt', e.target.value)}
-          aria-invalid={Boolean(fieldErrors.imageAlt)}
-        />
-        {fieldErrors.imageAlt ? (
-          <p className="mt-1 text-sm text-destructive">{fieldErrors.imageAlt}</p>
-        ) : null}
-      </div>
-
-      <div>
-        <label htmlFor={hrefId} className="mb-1 block text-sm font-medium">
-          {t('fields.href')}
-        </label>
-        <Input
-          id={hrefId}
-          value={values.href}
-          onChange={(e) => updateField('href', e.target.value)}
-          placeholder="/hotels?destination=Marrakech"
-        />
-        <p className="mt-1 text-sm text-atg-muted">{t('fields.hrefHint')}</p>
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-3">
-        <div>
-          <label htmlFor={sortOrderId} className="mb-1 block text-sm font-medium">
-            {t('fields.sortOrder')}
-          </label>
-          <Input
-            id={sortOrderId}
-            type="number"
-            min={0}
-            value={values.sortOrder}
-            onChange={(e) => updateField('sortOrder', e.target.value)}
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Select
+            label={t('fields.locale')}
+            value={values.locale}
+            options={localeOptions}
+            onChange={(e) => updateField('locale', e.target.value)}
+            disabled={!canWrite}
+          />
+          <Select
+            label={tCommon('columns.status')}
+            value={values.status}
+            options={statusOptions}
+            onChange={(e) => updateField('status', e.target.value as HeroSlideStatus)}
+            disabled={!canWrite}
           />
         </div>
 
-        <div>
-          <label htmlFor={statusId} className="mb-1 block text-sm font-medium">
-            {tCommon('columns.status')}
-          </label>
-          <select
-            id={statusId}
-            value={values.status}
-            onChange={(e) => updateField('status', e.target.value as HeroSlideStatus)}
-            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-          >
-            <option value="draft">{tStatus('draft')}</option>
-            <option value="published">{tStatus('published')}</option>
-          </select>
+        <Input
+          label={t('fields.subtitle')}
+          value={values.subtitle}
+          onChange={(e) => updateField('subtitle', e.target.value)}
+          error={fieldErrors.subtitle}
+          required
+          disabled={!canWrite}
+        />
+
+        <Input
+          label={t('fields.title')}
+          value={values.title}
+          onChange={(e) => updateField('title', e.target.value)}
+          error={fieldErrors.title}
+          required
+          disabled={!canWrite}
+        />
+
+        <Textarea
+          label={t('fields.description')}
+          rows={4}
+          value={values.description}
+          onChange={(e) => updateField('description', e.target.value)}
+          error={fieldErrors.description}
+          required
+          disabled={!canWrite}
+        />
+
+        <div className="space-y-3">
+          <p className="text-sm font-medium text-atg-fg">{t('fields.image')}</p>
+          {values.imageUrl.trim() ? (
+            <div className="space-y-2">
+              <Image
+                src={resolveMediaUrl(values.imageUrl.trim())}
+                alt={values.imageAlt.trim() || t('fields.imagePreviewAlt')}
+                width={960}
+                height={400}
+                unoptimized
+                className="h-44 w-full max-w-xl rounded-lg border border-atg-border object-cover"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                }}
+              />
+              {canWrite ? (
+                <button
+                  type="button"
+                  onClick={() => updateField('imageUrl', '')}
+                  className="text-xs font-medium text-red-600 hover:underline dark:text-red-400"
+                >
+                  {t('fields.removeImage')}
+                </button>
+              ) : null}
+            </div>
+          ) : null}
+          {canWrite ? (
+            <div className="flex flex-wrap items-center gap-3">
+              <label
+                htmlFor={imageInputId}
+                className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10"
+              >
+                {uploadingImage ? tCommonForm('uploading') : tCommonForm('chooseFile')}
+                <input
+                  id={imageInputId}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="sr-only"
+                  disabled={busy}
+                  onChange={handleImageUpload}
+                />
+              </label>
+              <span className="text-xs text-atg-muted">{t('fields.imageUploadHint')}</span>
+            </div>
+          ) : null}
+          <Input
+            label={t('fields.imageUrl')}
+            value={values.imageUrl}
+            onChange={(e) => updateField('imageUrl', e.target.value)}
+            placeholder="https://..."
+            error={fieldErrors.imageUrl}
+            disabled={!canWrite}
+          />
         </div>
 
-        <div>
-          <label htmlFor={localeId} className="mb-1 block text-sm font-medium">
-            {t('fields.locale')}
-          </label>
-          <select
-            id={localeId}
-            value={values.locale}
-            onChange={(e) => updateField('locale', e.target.value)}
-            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-          >
-            <option value="fr">{tLocale('fr')}</option>
-            <option value="en">{tLocale('en')}</option>
-            <option value="es">{tLocale('es')}</option>
-          </select>
+        <Input
+          label={t('fields.imageAlt')}
+          value={values.imageAlt}
+          onChange={(e) => updateField('imageAlt', e.target.value)}
+          error={fieldErrors.imageAlt}
+          required
+          disabled={!canWrite}
+        />
+
+        <Input
+          label={t('fields.href')}
+          value={values.href}
+          onChange={(e) => updateField('href', e.target.value)}
+          placeholder="/hotels?destination=Marrakech"
+          hint={t('fields.hrefHint')}
+          disabled={!canWrite}
+        />
+
+        <Input
+          label={t('fields.sortOrder')}
+          type="number"
+          min={0}
+          value={values.sortOrder}
+          onChange={(e) => updateField('sortOrder', e.target.value)}
+          disabled={!canWrite}
+        />
+
+        <div className="flex flex-wrap gap-3">
+          {canWrite ? (
+            <Button type="submit" disabled={busy}>
+              {busy ? t('saving') : mode === 'create' ? t('createButton') : t('saveButton')}
+            </Button>
+          ) : null}
+          <Button type="button" variant="outline" href={cancelHref}>
+            {t('cancelButton')}
+          </Button>
         </div>
-      </div>
-
-      {submitError ? <p className="text-sm text-destructive">{submitError}</p> : null}
-
-      <div className="flex flex-wrap gap-3">
-        <Button type="submit" disabled={saving}>
-          {saving ? t('saving') : mode === 'create' ? t('createButton') : t('saveButton')}
-        </Button>
-        <Button type="button" variant="outline" href="/contenu/hero">
-          {t('cancelButton')}
-        </Button>
-      </div>
-    </form>
+      </form>
+    </Card>
   );
 }
