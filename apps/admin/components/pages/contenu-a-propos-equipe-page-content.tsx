@@ -1,14 +1,12 @@
 'use client';
 
-import { TeamMembersList } from '../about/team-members-list';
-import { AboutStatCards } from '../about/about-stat-cards';
 import { AdminIntroPage } from './admin-intro-page';
+import { ContenuAboutTeamTabPanel } from './contenu-about-team-tab-panel';
 
 export function ContenuAProposEquipePageContent() {
   return (
     <AdminIntroPage routePath="contenu/a-propos/equipe">
-      <AboutStatCards className="mb-6" section="team" />
-      <TeamMembersList />
+      <ContenuAboutTeamTabPanel />
     </AdminIntroPage>
   );
 }
