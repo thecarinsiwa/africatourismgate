@@ -507,7 +507,9 @@
     "tickets": {
       "description": "Demandes d'assistance clients. Filtres par statut et priorité. Accès : support_tickets.read / support_tickets.write.",
       "id": {
-        "metaTitle": "Détail ticket"
+        "metaTitle": "Détail ticket",
+        "description": "Consultez le fil de discussion et mettez à jour le statut ou la priorité.",
+        "backLabel": "Retour au support"
       }
     },
     "support": {
@@ -517,6 +519,10 @@
       "tabs": {
         "tickets": "Tickets",
         "messages": "Messages"
+      },
+      "messages": {
+        "emptyTitle": "Messagerie unifiée à venir",
+        "emptyDescription": "Les échanges hors tickets seront centralisés ici. En attendant, gérez les conversations depuis l'onglet Tickets."
       }
     },
     "site": {

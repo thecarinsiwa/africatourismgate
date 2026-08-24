@@ -507,7 +507,9 @@
     "tickets": {
       "description": "Customer support requests. Filter by status and priority. Access: support_tickets.read / support_tickets.write.",
       "id": {
-        "metaTitle": "Ticket detail"
+        "metaTitle": "Ticket detail",
+        "description": "Review the conversation thread and update status or priority.",
+        "backLabel": "Back to support"
       }
     },
     "support": {
@@ -517,6 +519,10 @@
       "tabs": {
         "tickets": "Tickets",
         "messages": "Messages"
+      },
+      "messages": {
+        "emptyTitle": "Unified messaging coming soon",
+        "emptyDescription": "Non-ticket conversations will be centralized here. For now, manage threads from the Tickets tab."
       }
     },
     "site": {

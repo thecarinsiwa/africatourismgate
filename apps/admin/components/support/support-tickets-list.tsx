@@ -28,26 +28,22 @@ import {
   useSupportTicketStatusLabels,
 } from '../../lib/i18n/use-module-labels';
 import {
-  formatSupportTicketAssignee,
   supportTicketPriorityVariants,
   supportTicketStatusVariants,
 } from '../../lib/support-ticket-display';
 
 const PAGE_SIZE = 20;
+const DEFAULT_STATUS: SupportTicketStatus = 'open';
 
 type SupportTicketInboxItemProps = {
   ticket: AdminSupportTicketListItem;
 };
 
 function SupportTicketInboxItem({ ticket }: SupportTicketInboxItemProps) {
-  const t = useTranslations('modules.support');
   const tCommon = useTranslations('modules.common');
   const formatDateTime = useFormatDateTime();
   const statusLabels = useSupportTicketStatusLabels();
   const priorityLabels = useSupportTicketPriorityLabels();
-  const unassignedLabel = t('assignee.unassigned');
-  const assignee = formatSupportTicketAssignee(null, unassignedLabel);
-  const isUnassigned = assignee === unassignedLabel;
   const emptyDash = tCommon('empty.dash');
 
   return (
@@ -79,12 +75,6 @@ function SupportTicketInboxItem({ ticket }: SupportTicketInboxItemProps) {
         <DataTableBadge variant={supportTicketPriorityVariants[ticket.priority]}>
           {priorityLabels[ticket.priority]}
         </DataTableBadge>
-        <span className="text-xs text-atg-muted">
-          {t('list.assignedLabel')}{' '}
-          <span className={isUnassigned ? 'italic text-atg-muted' : 'text-atg-fg'}>
-            {assignee}
-          </span>
-        </span>
       </div>
     </Link>
   );
@@ -121,7 +111,7 @@ export function SupportTicketsList() {
   const priorityOptions = useSupportTicketPriorityFilterOptions();
 
   const [page, setPage] = useState(1);
-  const [statusFilter, setStatusFilter] = useState<'' | SupportTicketStatus>('');
+  const [statusFilter, setStatusFilter] = useState<'' | SupportTicketStatus>(DEFAULT_STATUS);
   const [priorityFilter, setPriorityFilter] = useState<'' | SupportTicketPriority>('');
   const [state, setState] = useState<
     | { status: 'loading' }
@@ -158,10 +148,13 @@ export function SupportTicketsList() {
     void load();
   }, [load]);
 
-  const activeFilterCount = [statusFilter !== '', priorityFilter !== ''].filter(Boolean).length;
+  const activeFilterCount = [
+    statusFilter !== DEFAULT_STATUS,
+    priorityFilter !== '',
+  ].filter(Boolean).length;
 
   const handleClearFilters = useCallback(() => {
-    setStatusFilter('');
+    setStatusFilter(DEFAULT_STATUS);
     setPriorityFilter('');
     setPage(1);
   }, []);

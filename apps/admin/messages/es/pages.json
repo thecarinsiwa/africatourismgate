@@ -507,7 +507,9 @@
     "tickets": {
       "description": "Solicitudes de asistencia al cliente. Filtre por estado y prioridad. Acceso: support_tickets.read / support_tickets.write.",
       "id": {
-        "metaTitle": "Detalle de ticket"
+        "metaTitle": "Detalle de ticket",
+        "description": "Consulte el hilo de conversación y actualice el estado o la prioridad.",
+        "backLabel": "Volver al soporte"
       }
     },
     "support": {
@@ -517,6 +519,10 @@
       "tabs": {
         "tickets": "Tickets",
         "messages": "Mensajes"
+      },
+      "messages": {
+        "emptyTitle": "Mensajería unificada próximamente",
+        "emptyDescription": "Las conversaciones fuera de tickets se centralizarán aquí. Mientras tanto, gestione los hilos desde la pestaña Tickets."
       }
     },
     "site": {
