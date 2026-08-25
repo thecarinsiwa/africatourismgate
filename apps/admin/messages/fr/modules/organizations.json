@@ -77,8 +77,14 @@
     "tabsAria": "Sections de l'organisation",
     "tabs": {
       "infos": "Infos",
-      "users": "Utilisateurs",
+      "users": "Employés",
       "settings": "Paramètres"
+    },
+    "meta": {
+      "currency": "Devise",
+      "contact": "Contact",
+      "website": "Site web",
+      "createdAt": "Créée le"
     },
     "settingsIntro": "Configuration de l'organisation : coordonnées, locale, réservation et branding."
   },

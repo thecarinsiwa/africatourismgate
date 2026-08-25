@@ -77,8 +77,14 @@
     "tabsAria": "Secciones de la organización",
     "tabs": {
       "infos": "Info",
-      "users": "Usuarios",
+      "users": "Empleados",
       "settings": "Ajustes"
+    },
+    "meta": {
+      "currency": "Moneda",
+      "contact": "Contacto",
+      "website": "Sitio web",
+      "createdAt": "Creada el"
     },
     "settingsIntro": "Configuración de la organización: datos de contacto, idioma, reservas y marca."
   },

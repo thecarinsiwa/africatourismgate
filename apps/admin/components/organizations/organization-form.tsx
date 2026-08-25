@@ -10,7 +10,7 @@ import type {
 } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { useCallback, useId, useMemo, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { getApiClient } from '../../lib/auth/api';
 import {
   useAccountStatusLabels,
@@ -152,6 +152,14 @@ export function OrganizationForm({
   );
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (!initialOrganization) return;
+    setValues(organizationToFormValues(initialOrganization));
+    setSlugTouched(true);
+    setFieldErrors({});
+    setFormError(null);
+  }, [initialOrganization]);
 
   const statusOptions = useMemo(
     () => [
@@ -370,13 +378,35 @@ export function OrganizationForm({
         </div>
       </Card>
 
-      <div className="flex flex-wrap gap-3 pt-2">
+      <div
+        className={
+          mode === 'edit'
+            ? 'sticky bottom-0 z-10 -mx-1 flex flex-wrap gap-3 border-t border-atg-border bg-atg-bg/95 px-1 py-3 backdrop-blur'
+            : 'flex flex-wrap gap-3 pt-2'
+        }
+      >
         <Button type="submit" loading={submitting} loadingText={tLoading('submit')}>
           {mode === 'create' ? t('submitCreate') : t('submitEdit')}
         </Button>
-        <Button type="button" variant="outline" href="/organisations">
-          {tActions('cancel')}
-        </Button>
+        {mode === 'create' ? (
+          <Button type="button" variant="outline" href="/organisations">
+            {tActions('cancel')}
+          </Button>
+        ) : initialOrganization ? (
+          <Button
+            type="button"
+            variant="outline"
+            disabled={submitting}
+            onClick={() => {
+              setValues(organizationToFormValues(initialOrganization));
+              setSlugTouched(true);
+              setFieldErrors({});
+              setFormError(null);
+            }}
+          >
+            {tActions('cancel')}
+          </Button>
+        ) : null}
       </div>
     </form>
   );

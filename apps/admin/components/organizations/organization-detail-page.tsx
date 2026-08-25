@@ -4,12 +4,14 @@ import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import type { Organization, OrganizationListItem } from '@africatourismgate/types';
 import {
+  Card,
   DataTableBadge,
   Skeleton,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
+  TextLink,
 } from '@africatourismgate/ui';
 import { useTranslations } from 'next-intl';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
@@ -22,6 +24,7 @@ import { getApiClient } from '../../lib/auth/api';
 import { usePermissions } from '../../lib/auth/use-permissions';
 import {
   useAccountStatusLabels,
+  useFormatDateTime,
   useOrganizationLegalFormOptions,
 } from '../../lib/i18n/use-module-labels';
 import {
@@ -50,6 +53,7 @@ export function OrganizationDetailPage({ organizationId }: OrganizationDetailPag
   const tCommon = useTranslations('modules.common');
   const accountStatusLabels = useAccountStatusLabels();
   const legalFormOptions = useOrganizationLegalFormOptions();
+  const formatDateTime = useFormatDateTime();
   const { hasPermission, isSuperAdmin, loading: permissionsLoading } = usePermissions();
   const canReadSettings =
     !permissionsLoading && (isSuperAdmin || hasPermission('organization_settings.read'));
@@ -159,15 +163,10 @@ export function OrganizationDetailPage({ organizationId }: OrganizationDetailPag
         routePath="organisations/id"
         backHref={ORGANISATIONS_HUB_HREF}
         backLabelKey="backLabel"
+        suppressDescription
       >
         <div className="min-w-0 space-y-6">
-          <div className="flex items-center gap-4">
-            <Skeleton className="h-14 w-14 rounded-lg" />
-            <div className="space-y-2">
-              <Skeleton className="h-5 w-48" />
-              <Skeleton className="h-4 w-32" />
-            </div>
-          </div>
+          <Skeleton className="h-28 w-full max-w-3xl" />
           <Skeleton className="h-10 w-full max-w-md" />
           <Skeleton className="h-64 w-full" />
           <p className="sr-only">{tCommon('loading')}</p>
@@ -182,6 +181,7 @@ export function OrganizationDetailPage({ organizationId }: OrganizationDetailPag
         routePath="organisations/id"
         backHref={ORGANISATIONS_HUB_HREF}
         backLabelKey="backLabel"
+        suppressDescription
       >
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {state.message}
@@ -193,36 +193,95 @@ export function OrganizationDetailPage({ organizationId }: OrganizationDetailPag
   const { organization } = state;
   const legalFormLabel = formatOrganizationLegalForm(organization.legalForm, legalFormOptions);
   const showSettingsTab = canReadSettings;
+  const emptyDash = tCommon('empty.dash');
+  const websiteHref = organization.website?.trim();
 
   return (
     <AdminIntroPage
       routePath="organisations/id"
       backHref={ORGANISATIONS_HUB_HREF}
       backLabelKey="backLabel"
+      suppressDescription
     >
       <div className="min-w-0 space-y-6">
-        <div className="flex flex-wrap items-center gap-4">
-          <OrganizationLogo
-            name={organization.name}
-            logoUrl={organization.logoUrl}
-            size="lg"
-          />
-          <div className="min-w-0 flex-1">
-            <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-xl font-semibold text-atg-fg">{organization.name}</h2>
-              <DataTableBadge variant={organizationStatusVariants[organization.status]}>
-                {accountStatusLabels[organization.status]}
-              </DataTableBadge>
-              {organization.legalForm ? (
-                <DataTableBadge variant="muted">{legalFormLabel}</DataTableBadge>
-              ) : null}
+        <Card variant="dashboard" padding="md" className="overflow-hidden">
+          <div className="flex flex-wrap items-start gap-4">
+            <OrganizationLogo
+              name={organization.name}
+              logoUrl={organization.logoUrl}
+              size="lg"
+            />
+            <div className="min-w-0 flex-1 space-y-3">
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <h2 className="text-xl font-semibold text-atg-fg">{organization.name}</h2>
+                  <DataTableBadge variant={organizationStatusVariants[organization.status]}>
+                    {accountStatusLabels[organization.status]}
+                  </DataTableBadge>
+                  {organization.legalForm ? (
+                    <DataTableBadge variant="muted">{legalFormLabel}</DataTableBadge>
+                  ) : null}
+                </div>
+                <p className="mt-1 font-mono text-sm text-atg-muted">{organization.slug}</p>
+              </div>
+
+              <dl className="grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-3">
+                <div>
+                  <dt className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+                    {t('meta.currency')}
+                  </dt>
+                  <dd className="mt-0.5 font-medium tabular-nums text-atg-fg">
+                    {organization.currency}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+                    {t('meta.contact')}
+                  </dt>
+                  <dd className="mt-0.5 text-atg-fg">
+                    {organization.contactEmail?.trim() || emptyDash}
+                    {organization.contactPhone?.trim() ? (
+                      <span className="mt-0.5 block text-atg-muted">
+                        {organization.contactPhone.trim()}
+                      </span>
+                    ) : null}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+                    {t('meta.website')}
+                  </dt>
+                  <dd className="mt-0.5">
+                    {websiteHref ? (
+                      <TextLink
+                        href={websiteHref}
+                        variant="primary"
+                        className="break-all font-medium"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {websiteHref.replace(/^https?:\/\//i, '')}
+                      </TextLink>
+                    ) : (
+                      <span className="text-atg-fg">{emptyDash}</span>
+                    )}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-xs font-medium uppercase tracking-wide text-atg-muted">
+                    {t('meta.createdAt')}
+                  </dt>
+                  <dd className="mt-0.5 tabular-nums text-atg-fg">
+                    {formatDateTime(organization.createdAt)}
+                  </dd>
+                </div>
+              </dl>
             </div>
-            <p className="mt-1 font-mono text-sm text-atg-muted">{organization.slug}</p>
           </div>
-        </div>
+        </Card>
 
         <Tabs value={activeTab} onValueChange={handleTabChange}>
-          <TabsList aria-label={t('tabsAria')}>
+          <TabsList aria-label={t('tabsAria')} className="h-auto flex-wrap">
             <TabsTrigger value="infos">{t('tabs.infos')}</TabsTrigger>
             <TabsTrigger value="users">{t('tabs.users')}</TabsTrigger>
             {showSettingsTab ? (
@@ -230,7 +289,7 @@ export function OrganizationDetailPage({ organizationId }: OrganizationDetailPag
             ) : null}
           </TabsList>
 
-          <TabsContent value="infos">
+          <TabsContent value="infos" className="pt-2">
             <OrganizationForm
               mode="edit"
               organizationId={organizationId}
@@ -239,12 +298,12 @@ export function OrganizationDetailPage({ organizationId }: OrganizationDetailPag
             />
           </TabsContent>
 
-          <TabsContent value="users">
+          <TabsContent value="users" className="pt-2">
             <EmployeesList lockedOrganizationId={organizationId} embedded />
           </TabsContent>
 
           {showSettingsTab ? (
-            <TabsContent value="settings">
+            <TabsContent value="settings" className="pt-2">
               <p className="mb-6 text-sm text-atg-muted">{t('settingsIntro')}</p>
               <OrganizationSettingsForm
                 organizationId={organizationId}

@@ -13,13 +13,15 @@ import {
   DataTableActions,
   DataTableBadge,
   DataTablePagination,
+  FilterBar,
   Input,
+  Select,
   useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
 import type { Employee, EmployeeStatus, OrganizationListItem } from '@africatourismgate/types';
 import Link from 'next/link';
-import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { getApiClient } from '../../lib/auth/api';
 
@@ -65,9 +67,6 @@ export function EmployeesList({
   const tToast = useTranslations('modules.common.toast');
   const statusLabels = useEmployeeStatusLabels();
   const { toast } = useToast();
-  const statusFilterId = useId();
-  const orgFilterId = useId();
-  const departmentFilterId = useId();
   const emptyDash = tCommon('empty.dash');
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
@@ -391,6 +390,53 @@ export function EmployeesList({
     ? `${confirmTarget.user?.email ?? confirmTarget.employeeCode ?? confirmTarget.id}`
     : '';
 
+  const statusOptions = useMemo(
+    () => [
+      { value: '', label: tCommonFilters('all') },
+      { value: 'active', label: statusLabels.active },
+      { value: 'on_leave', label: statusLabels.on_leave },
+      { value: 'terminated', label: statusLabels.terminated },
+    ],
+    [statusLabels, tCommonFilters],
+  );
+
+  const organizationOptions = useMemo(
+    () => [
+      { value: '', label: tCommonFilters('allFeminine') },
+      ...organizations.map((org) => ({ value: org.id, label: org.name })),
+    ],
+    [organizations, tCommonFilters],
+  );
+
+  const departmentOptions = useMemo(
+    () => [
+      {
+        value: '',
+        label: departmentsOrganizationId
+          ? tCommonFilters('all')
+          : tFilters('departmentNeedsOrganization'),
+      },
+      ...departments.map((department) => ({ value: department, label: department })),
+    ],
+    [departments, departmentsOrganizationId, tCommonFilters, tFilters],
+  );
+
+  const activeFilterCount = [
+    search.trim().length > 0,
+    statusFilter !== '',
+    departmentFilter !== '',
+    !lockedOrganizationId && organizationFilter !== '',
+  ].filter(Boolean).length;
+
+  const handleClearFilters = useCallback(() => {
+    setSearchInput('');
+    setSearch('');
+    setStatusFilter('');
+    setOrganizationFilter('');
+    setDepartmentFilter('');
+    setPage(1);
+  }, []);
+
   return (
     <>
       <AlertDialog
@@ -406,93 +452,69 @@ export function EmployeesList({
         onConfirm={() => void handleDeleteConfirm()}
       />
     <div className={embedded ? 'space-y-4' : 'space-y-6'}>
-      <div className="flex flex-col gap-4 lg:flex-row lg:flex-wrap lg:items-end lg:justify-between">
-        <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end">
-          <div className="min-w-[200px] flex-1 sm:max-w-md">
-            <Input
-              name="search"
-              type="search"
-              placeholder={tList('searchPlaceholder')}
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              aria-label={tList('searchAria')}
-            />
-          </div>
-          <div>
-            <label htmlFor={statusFilterId} className="mb-2 block text-sm font-medium text-atg-fg">
-              {tFilters('status')}
-            </label>
-            <select
-              id={statusFilterId}
-              value={statusFilter}
-              onChange={(e) => {
-                setStatusFilter(e.target.value as StatusFilter);
-                setPage(1);
-              }}
-              className="w-full min-w-[140px] rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
-            >
-              <option value="">{tCommonFilters('all')}</option>
-              <option value="active">{statusLabels.active}</option>
-              <option value="on_leave">{statusLabels.on_leave}</option>
-              <option value="terminated">{statusLabels.terminated}</option>
-            </select>
-          </div>
-          {!lockedOrganizationId ? (
-            <div>
-              <label htmlFor={orgFilterId} className="mb-2 block text-sm font-medium text-atg-fg">
-                {tFilters('organization')}
-              </label>
-              <select
-                id={orgFilterId}
-                value={organizationFilter}
+      <FilterBar
+        mobileVariant="drawer"
+        activeCount={activeFilterCount}
+        onClear={handleClearFilters}
+        clearLabel={tCommonFilters('clearAll')}
+        applyLabel={tCommonFilters('apply')}
+        toggleLabel={tCommonFilters('toggle')}
+        actions={<Button href={newEmployeeHref}>{tNav('links.newEmployee')}</Button>}
+        filters={
+          <>
+            <div className="min-w-[200px] flex-1 sm:max-w-md">
+              <Input
+                name="search"
+                type="search"
+                placeholder={tList('searchPlaceholder')}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                aria-label={tList('searchAria')}
+              />
+            </div>
+            <div className="w-full sm:w-40">
+              <Select
+                label={tFilters('status')}
+                value={statusFilter}
+                options={statusOptions}
                 onChange={(e) => {
-                  setOrganizationFilter(e.target.value);
-                  setDepartmentFilter('');
+                  setStatusFilter(e.target.value as StatusFilter);
                   setPage(1);
                 }}
-                className="w-full min-w-[180px] rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary"
-              >
-                <option value="">{tCommonFilters('allFeminine')}</option>
-                {organizations.map((org) => (
-                  <option key={org.id} value={org.id}>
-                    {org.name}
-                  </option>
-                ))}
-              </select>
+              />
             </div>
-          ) : null}
-          <div>
-            <label htmlFor={departmentFilterId} className="mb-2 block text-sm font-medium text-atg-fg">
-              {tFilters('department')}
-            </label>
-            <select
-              id={departmentFilterId}
-              value={departmentFilter}
-              onChange={(e) => {
-                setDepartmentFilter(e.target.value);
-                setPage(1);
-              }}
-              disabled={!departmentsOrganizationId}
-              title={
-                !departmentsOrganizationId ? tFilters('departmentNeedsOrganization') : undefined
-              }
-              className="w-full min-w-[160px] rounded-lg border border-atg-border bg-atg-elevated px-4 py-3 text-sm text-atg-fg outline-none transition-colors focus:border-primary focus:ring-1 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              <option value="">
-                {departmentsOrganizationId
-                  ? tCommonFilters('all')
-                  : tFilters('departmentNeedsOrganization')}
-              </option>
-              {departments.map((department) => (
-                <option key={department} value={department}>
-                  {department}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-        <Button href={newEmployeeHref}>{tNav('links.newEmployee')}</Button>
-      </div>
+            {!lockedOrganizationId ? (
+              <div className="w-full sm:w-52">
+                <Select
+                  label={tFilters('organization')}
+                  value={organizationFilter}
+                  options={organizationOptions}
+                  onChange={(e) => {
+                    setOrganizationFilter(e.target.value);
+                    setDepartmentFilter('');
+                    setPage(1);
+                  }}
+                />
+              </div>
+            ) : null}
+            <div className="w-full sm:w-48">
+              <Select
+                label={tFilters('department')}
+                value={departmentFilter}
+                options={departmentOptions}
+                disabled={!departmentsOrganizationId}
+                title={
+                  !departmentsOrganizationId ? tFilters('departmentNeedsOrganization') : undefined
+                }
+                onChange={(e) => {
+                  setDepartmentFilter(e.target.value);
+                  setPage(1);
+                }}
+              />
+            </div>
+          </>
+        }
+      />
 
       {deleteError ? (
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">
