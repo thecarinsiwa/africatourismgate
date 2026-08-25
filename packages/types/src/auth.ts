@@ -39,6 +39,12 @@ export interface LogoutResponse {
 export interface LoginRequest {
   email: string;
   password: string;
+  clientInstanceId?: string;
+}
+
+export interface UnlockSessionRequest {
+  password: string;
+  refreshToken: string;
 }
 
 export interface RegisterRequest {

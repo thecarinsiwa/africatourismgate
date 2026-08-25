@@ -23,6 +23,7 @@ export type {
   RegisterRequest,
   ResetPasswordRequest,
   ResetPasswordResponse,
+  UnlockSessionRequest,
   UserStatus,
   VerifyOperationRequest,
 } from './auth.js';

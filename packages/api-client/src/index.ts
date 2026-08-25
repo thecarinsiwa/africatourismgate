@@ -302,6 +302,7 @@ import type {
   ForgotPasswordResponse,
   LoginRequest,
   LogoutResponse,
+  UnlockSessionRequest,
   Organization,
   OrganizationListItem,
   OrganizationsListQuery,
@@ -442,6 +443,7 @@ export type {
   ForgotPasswordResponse,
   LoginRequest,
   LogoutResponse,
+  UnlockSessionRequest,
   PaginatedResponse,
   PaginationMeta,
   PaymentListItem,
@@ -709,6 +711,22 @@ export class ApiClient {
     return this.request<LogoutResponse>('/auth/logout', {
       method: 'POST',
       body: { refreshToken },
+      skipAuth: true,
+    });
+  }
+
+  touchSession(refreshToken: string): Promise<LogoutResponse> {
+    return this.request<LogoutResponse>('/auth/touch', {
+      method: 'POST',
+      body: { refreshToken },
+      skipAuth: true,
+    });
+  }
+
+  unlockSession(body: UnlockSessionRequest): Promise<AuthTokens> {
+    return this.request<AuthTokens>('/auth/unlock', {
+      method: 'POST',
+      body,
       skipAuth: true,
     });
   }

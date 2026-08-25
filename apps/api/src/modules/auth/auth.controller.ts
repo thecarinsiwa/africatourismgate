@@ -44,6 +44,7 @@ import { LoginDto } from './dto/login.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { RegisterDto } from './dto/register.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { UnlockSessionDto } from './dto/unlock-session.dto';
 import { ResetPasswordResponseDto } from './dto/reset-password-response.dto';
 import { AuthMeDto } from './dto/auth-me.dto';
 import { AuthUserDto } from './dto/auth-user.dto';
@@ -217,9 +218,36 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Obtain new access and refresh tokens' })
   @ApiOkResponse({ type: AuthTokensResponseDto })
-  @ApiUnauthorizedResponse({ description: 'Invalid or expired refresh token' })
+  @ApiUnauthorizedResponse({ description: 'Invalid or expired refresh token, or session locked due to inactivity (code SESSION_LOCKED)' })
   refresh(@Body() dto: RefreshTokenDto): Promise<AuthTokensResponseDto> {
     return this.authService.refresh(dto.refreshToken);
+  }
+
+  @Post('touch')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Update session last activity (client idle heartbeat)',
+  })
+  @ApiOkResponse({ type: LogoutResponseDto })
+  @ApiUnauthorizedResponse({
+    description:
+      'Invalid or expired refresh token, or session locked due to inactivity (code SESSION_LOCKED)',
+  })
+  touch(@Body() dto: RefreshTokenDto): Promise<LogoutResponseDto> {
+    return this.authService.touchSession(dto.refreshToken);
+  }
+
+  @Post('unlock')
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ login: { limit: 5, ttl: 60_000 } })
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Unlock an idle-locked session with password' })
+  @ApiOkResponse({ type: AuthTokensResponseDto })
+  @ApiUnauthorizedResponse({
+    description: 'Invalid password, refresh token, or inactive account',
+  })
+  unlock(@Body() dto: UnlockSessionDto): Promise<AuthTokensResponseDto> {
+    return this.authService.unlockSession(dto.password, dto.refreshToken);
   }
 
   @Post('logout')
