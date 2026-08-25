@@ -32,6 +32,7 @@ export function UserRoleAssignmentForm({
 }: UserRoleAssignmentFormProps) {
   const { rbac: getRbacErrorMessage } = useAdminErrorMessages();
   const tRoles = useTranslations('modules.users.roles');
+  const tRoleNames = useTranslations('modules.rbac.roleNames');
   const tLoading = useTranslations('common.loading');
   const scopeTypeLabels = useRbacScopeTypeLabels();
   const [userId, setUserId] = useState(defaultUserId);
@@ -69,15 +70,25 @@ export function UserRoleAssignmentForm({
   const roleOptions = useMemo(
     () => [
       { value: '', label: tRoles('selectPlaceholder') },
-      ...roles.map((role) => ({
-        value: role.id,
-        label: `${role.name} (${role.code})`,
-      })),
+      ...roles.map((role) => {
+        const hasTranslated =
+          typeof tRoleNames.has === 'function' ? tRoleNames.has(role.code) : false;
+        const displayName = hasTranslated ? tRoleNames(role.code) : role.name;
+        return {
+          value: role.id,
+          label: `${displayName} (${role.code})`,
+        };
+      }),
     ],
-    [tRoles, roles],
+    [tRoles, tRoleNames, roles],
   );
 
   const selectedRole = roles.find((r) => r.id === roleId);
+  const selectedRoleDisplayName = selectedRole
+    ? typeof tRoleNames.has === 'function' && tRoleNames.has(selectedRole.code)
+      ? tRoleNames(selectedRole.code)
+      : selectedRole.name
+    : '';
   const isSuperAdminRole = selectedRole?.code === 'super_admin';
 
   useEffect(() => {
@@ -270,7 +281,7 @@ export function UserRoleAssignmentForm({
         onOpenChange={setSuperAdminDialogOpen}
         title={tRoles('superAdminConfirmTitle')}
         description={tRoles('superAdminConfirm', {
-          roleName: selectedRole?.name ?? 'super_admin',
+          roleName: selectedRoleDisplayName || 'super_admin',
         })}
         confirmLabel={tRoles('superAdminConfirmButton')}
         cancelLabel={tRoles('cancel')}

@@ -114,6 +114,13 @@
       "saveFailedTitle": "Error al guardar"
     }
   },
+  "roleNames": {
+    "super_admin": "Superadministrador",
+    "org_admin": "Administrador de organización",
+    "support": "Agente de soporte",
+    "customer": "Cliente",
+    "gap_coordinator": "Coordinador GAP"
+  },
   "assignments": {
     "loading": "Cargando asignaciones…",
     "empty": "Ninguna asignación activa.",

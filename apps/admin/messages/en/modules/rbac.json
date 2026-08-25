@@ -114,6 +114,13 @@
       "saveFailedTitle": "Save failed"
     }
   },
+  "roleNames": {
+    "super_admin": "Super administrator",
+    "org_admin": "Organization administrator",
+    "support": "Support agent",
+    "customer": "Customer",
+    "gap_coordinator": "GAP coordinator"
+  },
   "assignments": {
     "loading": "Loading assignments…",
     "empty": "No active assignments.",

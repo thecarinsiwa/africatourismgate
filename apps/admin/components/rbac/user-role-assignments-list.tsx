@@ -22,6 +22,7 @@ import { useTranslations } from 'next-intl';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRbacScopeDisplayLabels } from '../../lib/i18n/use-module-labels';
+import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
 import { formatAssignmentScope } from '../../lib/rbac-display';
 import { getApiClient } from '../../lib/auth/api';
 import { RoleBadge } from './role-badge';
@@ -37,6 +38,7 @@ export function UserRoleAssignmentsList() {
   const tFilter = useTranslations('modules.users.userIdFilter');
   const tActions = useTranslations('common.actions');
   const scopeLabels = useRbacScopeDisplayLabels();
+  const paginationLabels = useDataTablePaginationLabels();
   const { toast } = useToast();
   const router = useRouter();
   const pathname = usePathname();
@@ -226,7 +228,7 @@ export function UserRoleAssignmentsList() {
           return (
             <DataTableActions className="opacity-90 transition-opacity group-hover:opacity-100">
               <DataTableActionButton
-                action="delete"
+                action="revoke"
                 label={t('revoke')}
                 onClick={() => setPendingRevoke(assignment)}
                 disabled={busy}
@@ -289,6 +291,7 @@ export function UserRoleAssignmentsList() {
               columns={columns}
               data={assignments}
               isLoading={isLoading}
+              loadingMessage={t('loading')}
               emptyMessage={
                 hasActiveFilters ? t('emptyTableSearch') : t('emptyTableDefault')
               }
@@ -305,6 +308,7 @@ export function UserRoleAssignmentsList() {
               totalPages={state.totalPages}
               totalItems={state.total}
               itemLabel={t('paginationItem')}
+              labels={paginationLabels}
               onPageChange={setPage}
             />
           ) : null}

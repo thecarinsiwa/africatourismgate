@@ -114,6 +114,13 @@
       "saveFailedTitle": "Échec de l'enregistrement"
     }
   },
+  "roleNames": {
+    "super_admin": "Super administrateur",
+    "org_admin": "Administrateur d'organisation",
+    "support": "Agent support",
+    "customer": "Client",
+    "gap_coordinator": "Coordinateur GAP"
+  },
   "assignments": {
     "loading": "Chargement des assignations…",
     "empty": "Aucune assignation active.",
