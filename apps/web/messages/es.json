@@ -110,5 +110,27 @@
     "intro": "Varias campañas de donación están disponibles según el contexto. Elija la que corresponda a su compromiso.",
     "allCampaigns": "Todas las campañas",
     "empty": "No hay campañas de donación disponibles por el momento."
+  },
+  "blog": {
+    "metaTitle": "Blog de viajes en África",
+    "metaDescription": "Consejos, guías e inspiración para planificar su próximo viaje a África con Africa Tourism Gate.",
+    "heroTitle": "Blog de viajes",
+    "heroSubtitle": "Guías, consejos e inspiración para viajar por África.",
+    "readMore": "Leer más",
+    "loading": "Cargando artículos…",
+    "loadError": "No se pudo cargar el blog. Compruebe que la API esté en ejecución.",
+    "retry": "Reintentar",
+    "noResults": "No hay artículos publicados",
+    "noResultsHint": "Vuelva pronto para descubrir nuevo contenido.",
+    "localeFallback": "No hay artículos en su idioma por ahora — se muestran los disponibles en otros idiomas.",
+    "backToBlog": "Volver al blog",
+    "publishedOn": "Publicado el",
+    "breadcrumbHome": "Inicio",
+    "breadcrumbBlog": "Blog de viajes",
+    "categoryBadge": "Guía de viaje",
+    "readingTime": "{minutes} min de lectura",
+    "articlesCount": "{count, plural, one {# artículo} other {# artículos}}",
+    "relatedArticles": "También leer",
+    "relatedArticlesHint": "Más ideas para preparar su próximo viaje a África."
   }
 }

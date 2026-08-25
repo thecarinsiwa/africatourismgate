@@ -10,16 +10,14 @@ import { ActivitiesMapSection } from '../components/home/activities-map-section'
 import { CustomerReviewsCarousel } from '../components/home/customer-reviews-carousel';
 import { GapImpactSection } from '../components/home/gap-impact-section';
 
+import { getWebApiUrl } from '../lib/api/get-api-url';
+
 type PublicBranding = {
   displayName?: string;
 };
 
 async function getPublicDisplayName(): Promise<string> {
-  const defaultApiUrl =
-    process.env.NODE_ENV === 'production'
-      ? 'https://app-africatourismgate.org/api'
-      : 'http://localhost:3000/api';
-  const apiUrl = (process.env.NEXT_PUBLIC_API_URL ?? defaultApiUrl).replace(/\/$/, '');
+  const apiUrl = getWebApiUrl();
 
   try {
     const response = await fetch(`${apiUrl}/organization-settings/public/branding`, {

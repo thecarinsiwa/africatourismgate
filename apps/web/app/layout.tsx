@@ -19,6 +19,7 @@ import { ContactProvider } from '../components/contact-provider';
 import { DonationProvider } from '../components/donation-provider';
 import { Providers } from '../components/providers';
 import { getPublicDonationsForLocale } from '../lib/api/public-donations';
+import { getWebApiUrl } from '../lib/api/get-api-url';
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -26,14 +27,7 @@ const montserrat = Montserrat({
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_WEB_URL ?? 'http://localhost:3002';
-const defaultApiUrl =
-  process.env.NODE_ENV === 'production'
-    ? 'https://app-africatourismgate.org/api'
-    : 'http://localhost:3000/api';
-const apiUrl = (process.env.NEXT_PUBLIC_API_URL ?? defaultApiUrl).replace(
-  /\/$/,
-  '',
-);
+const apiUrl = getWebApiUrl();
 
 const themeInitScript = `
   try {

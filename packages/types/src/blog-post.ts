@@ -6,6 +6,7 @@ export interface BlogPost extends AuditFields {
   id: string;
   title: string;
   slug: string;
+  translationKey: string;
   excerpt: string | null;
   content: string;
   coverImageUrl: string | null;
@@ -18,6 +19,8 @@ export interface PublicBlogPostListItem {
   id: string;
   title: string;
   slug: string;
+  /** Links FR/EN/ES translations when present (falls back to publishedAt). */
+  translationKey?: string;
   excerpt: string | null;
   coverImageUrl: string | null;
   publishedAt: string | null;
@@ -31,6 +34,7 @@ export interface PublicBlogPostDetail extends PublicBlogPostListItem {
 export interface CreateBlogPostRequest {
   title: string;
   slug: string;
+  translationKey?: string;
   excerpt?: string | null;
   content: string;
   coverImageUrl?: string | null;

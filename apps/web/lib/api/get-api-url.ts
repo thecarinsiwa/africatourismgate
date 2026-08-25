@@ -1,5 +1,5 @@
 const PRODUCTION_API_URL = 'https://app-africatourismgate.org/api';
-const DEFAULT_DEV_API_PORT = '3010';
+const DEFAULT_DEV_API_PORT = '3000';
 
 /** Base URL for API calls from apps/web (browser + SSR). */
 export function getWebApiUrl(): string {

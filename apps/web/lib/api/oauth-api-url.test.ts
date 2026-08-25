@@ -4,7 +4,7 @@ import { isProxiedDevApiUrl, getOAuthApiBaseUrl } from './oauth-api-url';
 
 test('isProxiedDevApiUrl detects proxied dev API URL', () => {
   assert.equal(isProxiedDevApiUrl('http://localhost:3002/api'), true);
-  assert.equal(isProxiedDevApiUrl('http://localhost:3000/api'), false);
+  assert.equal(isProxiedDevApiUrl('http://localhost:3010/api'), false);
   assert.equal(
     isProxiedDevApiUrl('https://app-africatourismgate.org/api'),
     false,

@@ -65,14 +65,19 @@ export function HappyCustomers() {
 
   useEffect(() => {
     let cancelled = false;
-    void getPublicHappyCustomersForLocale(locale).then(
-      ({ content: fetched, usedLocaleFallback: fallback }) => {
+    void getPublicHappyCustomersForLocale(locale)
+      .then(({ content: fetched, usedLocaleFallback: fallback }) => {
         if (!cancelled) {
           setContent(fetched);
           setUsedLocaleFallback(fallback);
         }
-      },
-    );
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setContent(null);
+          setUsedLocaleFallback(false);
+        }
+      });
     return () => {
       cancelled = true;
     };

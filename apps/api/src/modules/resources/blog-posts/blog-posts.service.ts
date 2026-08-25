@@ -18,7 +18,11 @@ export class BlogPostsService extends CrudService<BlogPosts> {
   }
 
   createFromDto(dto: CreateBlogPostDto, actorUserId?: string): Promise<BlogPosts> {
-    return super.create(this.toEntityPayload(dto), actorUserId);
+    const payload = this.toEntityPayload(dto);
+    if (!payload.translationKey && payload.slug) {
+      payload.translationKey = payload.slug;
+    }
+    return super.create(payload, actorUserId);
   }
 
   updateFromDto(
@@ -33,6 +37,16 @@ export class BlogPostsService extends CrudService<BlogPosts> {
     dto: CreateBlogPostDto | UpdateBlogPostDto,
   ): DeepPartial<BlogPosts> {
     const payload: DeepPartial<BlogPosts> = { ...dto };
+
+    const slug = dto.slug?.trim().toLowerCase();
+    if (slug) {
+      payload.slug = slug;
+    }
+
+    const translationKey = dto.translationKey?.trim().toLowerCase();
+    if (translationKey) {
+      payload.translationKey = translationKey;
+    }
 
     if (dto.publishedAt !== undefined) {
       payload.publishedAt =

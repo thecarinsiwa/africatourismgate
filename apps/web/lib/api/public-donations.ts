@@ -4,12 +4,9 @@ import type {
   PublicDonationsPayload,
 } from '@africatourismgate/types';
 
-const defaultApiUrl =
-  process.env.NODE_ENV === 'production'
-    ? 'https://app-africatourismgate.org/api'
-    : 'http://localhost:3000/api';
+import { getWebApiUrl } from './get-api-url';
 
-const apiUrl = (process.env.NEXT_PUBLIC_API_URL ?? defaultApiUrl).replace(/\/$/, '');
+const apiUrl = getWebApiUrl();
 
 async function fetchPublic<T>(path: string): Promise<T> {
   const res = await fetch(`${apiUrl}${path}`, {

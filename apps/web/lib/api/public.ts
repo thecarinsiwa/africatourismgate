@@ -438,6 +438,12 @@ export async function getPackageResolvedLines(
 }
 
 export type { PublicBlogPostDetail, PublicBlogPostListItem, PublicBlogPostsListQuery };
+import {
+  findBlogSiblings,
+  localizeBlogPosts,
+  pickBlogPostForLocale,
+} from '../blog/locale';
+import { applyBlogDetailLocaleFallback, resolveBlogApiSlug } from '../blog/fallback-posts';
 
 function buildBlogQuery(params: PublicBlogPostsListQuery): string {
   const qs = new URLSearchParams();
@@ -457,7 +463,7 @@ export async function browseBlogPosts(
   );
 }
 
-/** Prefer posts in `locale`, then fall back to all published posts. */
+/** One article per translation group, in the requested locale. */
 export async function browseBlogPostsForLocale(
   locale: string,
   params: Omit<PublicBlogPostsListQuery, 'locale'> = {},
@@ -466,28 +472,34 @@ export async function browseBlogPostsForLocale(
   usedLocaleFallback: boolean;
 }> {
   try {
-    const localized = await browseBlogPosts({ ...params, locale });
-    if (localized.data.length > 0) {
-      const allMatchLocale = localized.data.every((post) => post.locale === locale);
-      return { response: localized, usedLocaleFallback: !allMatchLocale };
-    }
-  } catch {
-    /* try without locale filter below */
-  }
+    const limit = params.limit ?? 50;
+    const all = await browseBlogPosts({ ...params, limit: Math.max(limit, 100) });
+    const { data, usedLocaleFallback } = localizeBlogPosts(all.data, locale);
+    const page = params.page ?? 1;
+    const offset = (page - 1) * limit;
+    const pageData = data.slice(offset, offset + limit);
 
-  const all = await browseBlogPosts(params);
-  const localizedPosts = all.data.filter((post) => post.locale === locale);
-  if (localizedPosts.length > 0) {
     return {
-      response: { ...all, data: localizedPosts },
+      response: {
+        data: pageData,
+        meta: {
+          total: data.length,
+          page,
+          limit,
+          totalPages: Math.ceil(data.length / limit) || 1,
+        },
+      },
+      usedLocaleFallback,
+    };
+  } catch {
+    return {
+      response: {
+        data: [],
+        meta: { total: 0, page: 1, limit: params.limit ?? 50, totalPages: 0 },
+      },
       usedLocaleFallback: false,
     };
   }
-
-  return {
-    response: all,
-    usedLocaleFallback: all.data.length > 0,
-  };
 }
 
 export async function getBlogPostBySlug(
@@ -500,20 +512,27 @@ export async function getBlogPostBySlug(
   );
 }
 
-/** Resolve by slug in `locale`, then without locale filter. */
+/** Resolve translated article for `locale` (same logical post, localized content). */
 export async function getBlogPostBySlugForLocale(
   slug: string,
   locale?: string,
 ): Promise<PublicBlogPostDetail> {
+  const apiSlug = resolveBlogApiSlug(slug) ?? slug;
+  const anchor = await getBlogPostBySlug(apiSlug);
   if (!locale) {
-    return getBlogPostBySlug(slug);
+    return anchor;
   }
 
-  try {
-    return await getBlogPostBySlug(slug, locale);
-  } catch {
-    return getBlogPostBySlug(slug);
+  const all = await browseBlogPosts({ limit: 100 });
+  const siblings = findBlogSiblings(all.data, anchor);
+  const match = pickBlogPostForLocale(siblings, locale);
+
+  let detail = anchor;
+  if (match && match.locale === locale && match.slug !== apiSlug) {
+    detail = await getBlogPostBySlug(match.slug);
   }
+
+  return applyBlogDetailLocaleFallback(detail, locale);
 }
 
 export type { PublicAboutPage, PublicAboutResource, PublicTeamMember };
