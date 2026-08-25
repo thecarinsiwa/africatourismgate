@@ -1,13 +1,20 @@
 {
   "list": {
     "newUser": "Nouvel utilisateur",
-    "emptyDefault": "Aucun utilisateur pour le moment.",
-    "emptyFiltered": "Aucun utilisateur ne correspond à vos critères.",
+    "emptyDefault": "Aucun utilisateur interne pour le moment.",
+    "emptyFiltered": "Aucun utilisateur interne ne correspond à vos critères.",
+    "emptyClients": "Aucun compte client pour le moment.",
+    "emptyFilteredClients": "Aucun compte client ne correspond à vos critères.",
     "ariaLabel": "Liste des utilisateurs",
     "deleteConfirm": "L'utilisateur « {email} » sera supprimé. Cette action est réversible en base de données.",
     "deleteTitle": "Supprimer l'utilisateur",
     "deleteConfirmButton": "Supprimer",
-    "cancel": "Annuler"
+    "cancel": "Annuler",
+    "tabs": {
+      "ariaLabel": "Type de compte utilisateur",
+      "internal": "Internes",
+      "client": "Clients"
+    }
   },
   "filters": {
     "status": "Statut",

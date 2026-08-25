@@ -11,6 +11,7 @@ import { BCRYPT_ROUNDS } from '../../auth/auth.constants';
 import { AuthUserDto } from '../../auth/dto/auth-user.dto';
 import { EmailService } from '../../email/email.service';
 import { resolvePdfLocale } from '../../email/booking-detail-pdf.labels';
+import { SEED_ROLE_CUSTOMER_ID } from '../../auth/auth.constants';
 import { UsersListQueryDto } from './dto/users-list-query.dto';
 
 type UserWriteDto = DeepPartial<Users> & { password?: string };
@@ -113,6 +114,49 @@ export class UsersService extends CrudService<Users> {
         'ura_none',
         'ura_none.user_id = user.id AND ura_none.revoked_at IS NULL AND ura_none.deleted_at IS NULL',
       ).andWhere('ura_none.id IS NULL');
+    }
+
+    if (query.audience === 'client') {
+      qb.andWhere(
+        `EXISTS (
+          SELECT 1 FROM user_role_assignments ura_client
+          WHERE ura_client.user_id = user.id
+            AND ura_client.role_id = :customerRoleId
+            AND ura_client.revoked_at IS NULL
+            AND ura_client.deleted_at IS NULL
+        )`,
+        { customerRoleId: SEED_ROLE_CUSTOMER_ID },
+      ).andWhere(
+        `NOT EXISTS (
+          SELECT 1 FROM user_role_assignments ura_staff
+          WHERE ura_staff.user_id = user.id
+            AND ura_staff.role_id != :customerRoleId
+            AND ura_staff.revoked_at IS NULL
+            AND ura_staff.deleted_at IS NULL
+        )`,
+        { customerRoleId: SEED_ROLE_CUSTOMER_ID },
+      );
+    }
+
+    if (query.audience === 'internal') {
+      qb.andWhere(
+        `(
+          NOT EXISTS (
+            SELECT 1 FROM user_role_assignments ura_internal_none
+            WHERE ura_internal_none.user_id = user.id
+              AND ura_internal_none.revoked_at IS NULL
+              AND ura_internal_none.deleted_at IS NULL
+          )
+          OR EXISTS (
+            SELECT 1 FROM user_role_assignments ura_internal_staff
+            WHERE ura_internal_staff.user_id = user.id
+              AND ura_internal_staff.role_id != :customerRoleId
+              AND ura_internal_staff.revoked_at IS NULL
+              AND ura_internal_staff.deleted_at IS NULL
+          )
+        )`,
+        { customerRoleId: SEED_ROLE_CUSTOMER_ID },
+      );
     }
 
     const search = query.search?.trim();

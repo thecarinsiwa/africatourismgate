@@ -1,13 +1,20 @@
 {
   "list": {
     "newUser": "New user",
-    "emptyDefault": "No users yet.",
-    "emptyFiltered": "No users match your filters.",
+    "emptyDefault": "No internal users yet.",
+    "emptyFiltered": "No internal users match your filters.",
+    "emptyClients": "No customer accounts yet.",
+    "emptyFilteredClients": "No customer accounts match your filters.",
     "ariaLabel": "User list",
     "deleteConfirm": "User « {email} » will be deleted. This action is reversible in the database.",
     "deleteTitle": "Delete user",
     "deleteConfirmButton": "Delete",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "tabs": {
+      "ariaLabel": "User account type",
+      "internal": "Internal",
+      "client": "Customers"
+    }
   },
   "filters": {
     "status": "Status",

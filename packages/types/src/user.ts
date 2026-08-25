@@ -38,4 +38,6 @@ export interface UsersListQuery extends PaginationQuery {
   roleId?: string;
   search?: string;
   withoutRole?: boolean;
+  /** `internal` = staff/admin accounts; `client` = customer-only accounts. */
+  audience?: 'internal' | 'client';
 }

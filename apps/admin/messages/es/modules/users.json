@@ -1,13 +1,20 @@
 {
   "list": {
     "newUser": "Nuevo usuario",
-    "emptyDefault": "Ningún usuario por el momento.",
-    "emptyFiltered": "Ningún usuario coincide con tus criterios.",
+    "emptyDefault": "Ningún usuario interno por el momento.",
+    "emptyFiltered": "Ningún usuario interno coincide con tus criterios.",
+    "emptyClients": "Ninguna cuenta de cliente por el momento.",
+    "emptyFilteredClients": "Ninguna cuenta de cliente coincide con tus criterios.",
     "ariaLabel": "Lista de usuarios",
     "deleteConfirm": "El usuario « {email} » será eliminado. Esta acción es reversible en la base de datos.",
     "deleteTitle": "Eliminar usuario",
     "deleteConfirmButton": "Eliminar",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "tabs": {
+      "ariaLabel": "Tipo de cuenta de usuario",
+      "internal": "Internos",
+      "client": "Clientes"
+    }
   },
   "filters": {
     "status": "Estado",
