@@ -5,18 +5,20 @@ import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 import {
   AlertDialog,
   Avatar,
-  Button,
   Card,
+  DataTable,
+  DataTableActionButton,
+  DataTableActions,
   DataTablePagination,
   EmptyState,
   FilterBar,
   Select,
-  Skeleton,
   useToast,
+  type ColumnDef,
 } from '@africatourismgate/ui';
 import type { User, UserRoleAssignment } from '@africatourismgate/types';
 import Link from 'next/link';
-import { useLocale, useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRbacScopeDisplayLabels } from '../../lib/i18n/use-module-labels';
@@ -26,17 +28,10 @@ import { RoleBadge } from './role-badge';
 import { RbacSubnav } from './rbac-subnav';
 import { UserRoleAssignmentForm } from './user-role-assignment-form';
 
-const PAGE_SIZE = 50;
-
-type UserAssignmentGroup = {
-  userId: string;
-  user: UserRoleAssignment['user'];
-  assignments: UserRoleAssignment[];
-};
+const PAGE_SIZE = 20;
 
 export function UserRoleAssignmentsList() {
   const { rbac: getRbacErrorMessage } = useAdminErrorMessages();
-  const locale = useLocale();
   const t = useTranslations('modules.rbac.assignments');
   const tCommon = useTranslations('modules.common');
   const tFilter = useTranslations('modules.users.userIdFilter');
@@ -136,34 +131,6 @@ export function UserRoleAssignmentsList() {
     void load();
   }, [load]);
 
-  const groupedByUser = useMemo<UserAssignmentGroup[]>(() => {
-    if (state.status !== 'ready') return [];
-
-    const groups = new Map<string, UserAssignmentGroup>();
-    for (const assignment of state.assignments) {
-      const existing = groups.get(assignment.userId);
-      if (existing) {
-        existing.assignments.push(assignment);
-      } else {
-        groups.set(assignment.userId, {
-          userId: assignment.userId,
-          user: assignment.user,
-          assignments: [assignment],
-        });
-      }
-    }
-
-    return Array.from(groups.values()).sort((a, b) => {
-      const nameA = a.user
-        ? `${a.user.lastName} ${a.user.firstName}`.toLowerCase()
-        : a.userId;
-      const nameB = b.user
-        ? `${b.user.lastName} ${b.user.firstName}`.toLowerCase()
-        : b.userId;
-      return nameA.localeCompare(nameB, locale);
-    });
-  }, [state, locale]);
-
   const confirmRevoke = useCallback(async () => {
     if (!pendingRevoke) return;
     setRevokingId(pendingRevoke.id);
@@ -187,9 +154,96 @@ export function UserRoleAssignmentsList() {
     }
   }, [pendingRevoke, load, toast, t, getRbacErrorMessage]);
 
+  const columns = useMemo<ColumnDef<UserRoleAssignment, unknown>[]>(
+    () => [
+      {
+        id: 'user',
+        header: t('columns.user'),
+        cell: ({ row }) => {
+          const assignment = row.original;
+          const user = assignment.user;
+          if (!user) {
+            return (
+              <span className="font-mono text-xs text-atg-muted">
+                {assignment.userId.slice(0, 8)}…
+              </span>
+            );
+          }
+          return (
+            <div className="flex min-w-0 items-center gap-2.5">
+              <Avatar
+                email={user.email}
+                firstName={user.firstName}
+                lastName={user.lastName}
+                size="sm"
+              />
+              <div className="min-w-0">
+                <Link
+                  href={`/utilisateurs/${assignment.userId}/voir`}
+                  className="block truncate font-medium text-atg-fg hover:text-primary hover:underline"
+                >
+                  {user.firstName} {user.lastName}
+                </Link>
+                <p className="truncate text-xs text-atg-muted">{user.email}</p>
+              </div>
+            </div>
+          );
+        },
+      },
+      {
+        id: 'role',
+        header: t('columns.role'),
+        cell: ({ row }) => {
+          const role = row.original.role;
+          if (!role) {
+            return (
+              <RoleBadge code={row.original.roleId.slice(0, 8)} />
+            );
+          }
+          return <RoleBadge code={role.code} name={role.name} />;
+        },
+      },
+      {
+        id: 'scope',
+        header: t('columns.scope'),
+        cell: ({ row }) => (
+          <span className="text-sm text-atg-muted">
+            {formatAssignmentScope(
+              row.original.scopeType,
+              scopeLabels,
+              row.original.scopeId,
+            )}
+          </span>
+        ),
+      },
+      {
+        id: 'actions',
+        header: tCommon('columns.actions'),
+        meta: { align: 'right' },
+        cell: ({ row }) => {
+          const assignment = row.original;
+          const busy = revokingId === assignment.id;
+          return (
+            <DataTableActions className="opacity-90 transition-opacity group-hover:opacity-100">
+              <DataTableActionButton
+                action="delete"
+                label={t('revoke')}
+                onClick={() => setPendingRevoke(assignment)}
+                disabled={busy}
+                loading={busy}
+              />
+            </DataTableActions>
+          );
+        },
+      },
+    ],
+    [revokingId, scopeLabels, t, tCommon],
+  );
+
   const isLoading = state.status === 'loading';
   const isError = state.status === 'error';
-  const isEmpty = state.status === 'ready' && groupedByUser.length === 0;
+  const assignments = state.status === 'ready' ? state.assignments : [];
+  const isEmpty = state.status === 'ready' && assignments.length === 0;
   const hasActiveFilters = activeFilterCount > 0;
 
   return (
@@ -221,13 +275,7 @@ export function UserRoleAssignmentsList() {
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">
           {state.message}
         </p>
-      ) : isLoading ? (
-        <div className="space-y-3">
-          <Skeleton className="h-28 w-full" />
-          <Skeleton className="h-28 w-full" />
-          <p className="sr-only">{t('loading')}</p>
-        </div>
-      ) : isEmpty ? (
+      ) : isEmpty && !isLoading ? (
         <EmptyState
           title={hasActiveFilters ? t('emptyTitleSearch') : t('emptyTitleDefault')}
           description={
@@ -236,68 +284,19 @@ export function UserRoleAssignmentsList() {
         />
       ) : (
         <>
-          <div className="space-y-3">
-            {groupedByUser.map((group) => (
-              <Card key={group.userId} variant="dashboard" padding="md" className="space-y-3">
-                <div className="flex items-start gap-3">
-                  {group.user ? (
-                    <>
-                      <Avatar
-                        email={group.user.email}
-                        firstName={group.user.firstName}
-                        lastName={group.user.lastName}
-                        size="md"
-                      />
-                      <div className="min-w-0">
-                        <Link
-                          href={`/utilisateurs/${group.userId}/voir`}
-                          className="font-medium text-atg-fg hover:text-primary hover:underline"
-                        >
-                          {group.user.firstName} {group.user.lastName}
-                        </Link>
-                        <p className="truncate text-sm text-atg-muted">{group.user.email}</p>
-                      </div>
-                    </>
-                  ) : (
-                    <p className="font-mono text-sm text-atg-muted">{group.userId}</p>
-                  )}
-                </div>
-
-                <ul className="flex flex-wrap gap-2">
-                  {group.assignments.map((assignment) => (
-                    <li
-                      key={assignment.id}
-                      className="flex flex-wrap items-center gap-2 rounded-lg border border-atg-border bg-atg-surface/40 px-3 py-2"
-                    >
-                      {assignment.role ? (
-                        <RoleBadge code={assignment.role.code} name={assignment.role.name} />
-                      ) : (
-                        <RoleBadge code={assignment.roleId.slice(0, 8)} />
-                      )}
-                      <span className="text-xs text-atg-muted">
-                        {formatAssignmentScope(
-                          assignment.scopeType,
-                          scopeLabels,
-                          assignment.scopeId,
-                        )}
-                      </span>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="h-auto px-1.5 py-0.5 text-xs font-medium text-red-600 hover:text-red-700 dark:text-red-400"
-                        disabled={revokingId === assignment.id}
-                        loading={revokingId === assignment.id}
-                        onClick={() => setPendingRevoke(assignment)}
-                      >
-                        {t('revoke')}
-                      </Button>
-                    </li>
-                  ))}
-                </ul>
-              </Card>
-            ))}
-          </div>
+          <Card variant="dashboard" padding="none" className="overflow-hidden">
+            <DataTable
+              columns={columns}
+              data={assignments}
+              isLoading={isLoading}
+              emptyMessage={
+                hasActiveFilters ? t('emptyTableSearch') : t('emptyTableDefault')
+              }
+              emptyVariant={hasActiveFilters ? 'search' : 'default'}
+              getRowId={(row) => row.id}
+              aria-label={t('ariaLabel')}
+            />
+          </Card>
 
           {state.status === 'ready' && state.totalPages > 1 ? (
             <DataTablePagination

@@ -121,7 +121,15 @@
     "emptyTitleDefault": "Ninguna asignación activa",
     "emptyDescriptionSearch": "Este usuario no tiene un rol activo, o pruebe otro filtro.",
     "emptyDescriptionDefault": "Asigne un rol arriba para empezar.",
+    "emptyTableSearch": "Ninguna asignación coincide con el filtro.",
+    "emptyTableDefault": "Ninguna asignación activa.",
+    "ariaLabel": "Lista de asignaciones de roles",
     "paginationItem": "asignación",
+    "columns": {
+      "user": "Usuario",
+      "role": "Rol",
+      "scope": "Ámbito"
+    },
     "revoke": "Revocar",
     "revokeDialog": {
       "title": "Revocar asignación",

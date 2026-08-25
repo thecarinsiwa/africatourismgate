@@ -9,10 +9,16 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { DeepPartial } from 'typeorm';
-import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
-import { UserRoleAssignments } from '../../../entities/generated';
+import { UserRoleAssignmentsListQueryDto } from './dto/user-role-assignments-list-query.dto';
 import { UserRoleAssignmentsService } from './user-role-assignments.service';
+
+class CreateUserRoleAssignmentBodyDto {
+  userId!: string;
+  roleId!: string;
+  scopeType!: 'global' | 'property' | 'agency' | 'support_queue';
+  scopeId?: string | null;
+  expiresAt?: string | null;
+}
 
 @ApiTags('user-role-assignments')
 @Controller('user-role-assignments')
@@ -21,26 +27,32 @@ export class UserRoleAssignmentsController {
 
   @Get()
   @ApiOperation({ summary: 'List user-role-assignments' })
-  findAll(@Query() query: PaginationQueryDto) {
-    return this.service.findAll(query);
+  findAll(@Query() query: UserRoleAssignmentsListQueryDto) {
+    return this.service.findAllEnriched(query);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get user-role-assignments by id' })
   findOne(@Param('id') id: string) {
-    return this.service.findOne(id);
+    return this.service.findOneEnriched(id);
   }
 
   @Post()
   @ApiOperation({ summary: 'Create user-role-assignments' })
-  create(@Body() dto: DeepPartial<UserRoleAssignments>) {
-    return this.service.create(dto);
+  create(@Body() dto: CreateUserRoleAssignmentBodyDto) {
+    return this.service.createAssignment({
+      userId: dto.userId,
+      roleId: dto.roleId,
+      scopeType: dto.scopeType,
+      scopeId: dto.scopeId,
+      expiresAt: dto.expiresAt,
+    });
   }
 
-  @Patch(':id')
-  @ApiOperation({ summary: 'Update user-role-assignments' })
-  update(@Param('id') id: string, @Body() dto: DeepPartial<UserRoleAssignments>) {
-    return this.service.update(id, dto);
+  @Patch(':id/revoke')
+  @ApiOperation({ summary: 'Revoke a user-role-assignment' })
+  revoke(@Param('id') id: string) {
+    return this.service.revoke(id);
   }
 
   @Delete(':id')

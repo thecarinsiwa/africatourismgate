@@ -121,7 +121,15 @@
     "emptyTitleDefault": "No active assignments",
     "emptyDescriptionSearch": "This user has no active role, or try another filter.",
     "emptyDescriptionDefault": "Assign a role above to get started.",
+    "emptyTableSearch": "No assignments match the filter.",
+    "emptyTableDefault": "No active assignments.",
+    "ariaLabel": "Role assignments list",
     "paginationItem": "assignment",
+    "columns": {
+      "user": "User",
+      "role": "Role",
+      "scope": "Scope"
+    },
     "revoke": "Revoke",
     "revokeDialog": {
       "title": "Revoke assignment",

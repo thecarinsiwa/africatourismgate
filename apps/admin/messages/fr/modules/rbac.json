@@ -121,7 +121,15 @@
     "emptyTitleDefault": "Aucune assignation active",
     "emptyDescriptionSearch": "Cet utilisateur n'a pas de rôle actif, ou essayez un autre filtre.",
     "emptyDescriptionDefault": "Assignez un rôle ci-dessus pour commencer.",
+    "emptyTableSearch": "Aucune assignation ne correspond au filtre.",
+    "emptyTableDefault": "Aucune assignation active.",
+    "ariaLabel": "Liste des assignations de rôles",
     "paginationItem": "assignation",
+    "columns": {
+      "user": "Utilisateur",
+      "role": "Rôle",
+      "scope": "Périmètre"
+    },
     "revoke": "Révoquer",
     "revokeDialog": {
       "title": "Révoquer l'assignation",
