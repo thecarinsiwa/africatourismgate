@@ -94,12 +94,20 @@
     "loading": "Chargement de la matrice…",
     "descriptionReadOnly": "Rôle système : consultation seule.",
     "descriptionEditable": "Cochez les permissions accordées à ce rôle, regroupées par domaine.",
+    "readOnlyBadge": "Lecture seule",
+    "selectedCount": "{selected} / {total} sélectionnées",
+    "domainCount": "{selected}/{total}",
+    "selectDomain": "Tout sélectionner",
+    "searchPlaceholder": "Filtrer un domaine ou une permission…",
+    "searchEmpty": "Aucun domaine ne correspond à votre recherche.",
+    "empty": "Aucune permission disponible.",
     "columns": {
       "scope": "Périmètre"
     },
     "wholeDomain": "Tout le domaine",
     "perAction": "Par action",
     "ariaToggleDomain": "Tout {domain} — {action}",
+    "ariaToggleDomainAll": "Sélectionner toutes les permissions de {domain}",
     "toast": {
       "savedTitle": "Permissions enregistrées",
       "savedMessage": "La matrice du rôle a été mise à jour.",

@@ -90,20 +90,28 @@
     }
   },
   "matrix": {
-    "title": "Matrice des permissions",
-    "loading": "Chargement de la matrice…",
-    "descriptionReadOnly": "Role système : consultation seule.",
-    "descriptionEditable": "Cochez les permissions accordées à ce rôle, regroupées par domaine.",
+    "title": "Permission matrix",
+    "loading": "Loading matrix…",
+    "descriptionReadOnly": "System role: read-only.",
+    "descriptionEditable": "Select the permissions granted to this role, grouped by domain.",
+    "readOnlyBadge": "Read-only",
+    "selectedCount": "{selected} / {total} selected",
+    "domainCount": "{selected}/{total}",
+    "selectDomain": "Select all",
+    "searchPlaceholder": "Filter a domain or permission…",
+    "searchEmpty": "No domains match your search.",
+    "empty": "No permissions available.",
     "columns": {
-      "scope": "Périmètre"
+      "scope": "Scope"
     },
-    "wholeDomain": "Tout le domaine",
-    "perAction": "Par action",
-    "ariaToggleDomain": "Tout {domain} — {action}",
+    "wholeDomain": "Whole domain",
+    "perAction": "Per action",
+    "ariaToggleDomain": "All {domain} — {action}",
+    "ariaToggleDomainAll": "Select all permissions for {domain}",
     "toast": {
-      "savedTitle": "Permissions enregistrées",
-      "savedMessage": "La matrice du rôle a été mise à jour.",
-      "saveFailedTitle": "Échec de l'enregistrement"
+      "savedTitle": "Permissions saved",
+      "savedMessage": "The role matrix has been updated.",
+      "saveFailedTitle": "Save failed"
     }
   },
   "assignments": {

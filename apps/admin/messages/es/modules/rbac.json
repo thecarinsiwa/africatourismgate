@@ -90,20 +90,28 @@
     }
   },
   "matrix": {
-    "title": "Matrice des permissions",
-    "loading": "Chargement de la matrice…",
-    "descriptionReadOnly": "Rol système : consultation seule.",
-    "descriptionEditable": "Cochez les permissions accordées à ce rôle, regroupées par domaine.",
+    "title": "Matriz de permisos",
+    "loading": "Cargando la matriz…",
+    "descriptionReadOnly": "Rol del sistema: solo lectura.",
+    "descriptionEditable": "Marque los permisos concedidos a este rol, agrupados por dominio.",
+    "readOnlyBadge": "Solo lectura",
+    "selectedCount": "{selected} / {total} seleccionados",
+    "domainCount": "{selected}/{total}",
+    "selectDomain": "Seleccionar todo",
+    "searchPlaceholder": "Filtrar un dominio o permiso…",
+    "searchEmpty": "Ningún dominio coincide con su búsqueda.",
+    "empty": "No hay permisos disponibles.",
     "columns": {
-      "scope": "Périmètre"
+      "scope": "Ámbito"
     },
-    "wholeDomain": "Tout le domaine",
-    "perAction": "Par action",
-    "ariaToggleDomain": "Tout {domain} — {action}",
+    "wholeDomain": "Todo el dominio",
+    "perAction": "Por acción",
+    "ariaToggleDomain": "Todo {domain} — {action}",
+    "ariaToggleDomainAll": "Seleccionar todos los permisos de {domain}",
     "toast": {
-      "savedTitle": "Permissions enregistrées",
-      "savedMessage": "La matrice du rôle a été mise à jour.",
-      "saveFailedTitle": "Échec de l'enregistrement"
+      "savedTitle": "Permisos guardados",
+      "savedMessage": "La matriz del rol se ha actualizado.",
+      "saveFailedTitle": "Error al guardar"
     }
   },
   "assignments": {
