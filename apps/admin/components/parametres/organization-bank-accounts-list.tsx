@@ -23,8 +23,8 @@ import { useUnsavedChangesGuard } from '../rbac/use-unsaved-changes-guard';
 import { OrganizationOrgSelector } from '../organizations/organization-org-selector';
 import { BankAccountsStatCards } from './bank-accounts-stat-cards';
 import { OrganizationBankAccountCreateModal } from './organization-bank-account-create-modal';
+import { OrganizationBankAccountEditModal } from './organization-bank-account-edit-modal';
 import { ParametresPageLayout } from './parametres-subnav';
-import { OrganizationBankAccountForm } from './organization-bank-account-form';
 import {
   resolveInitialOrganizationId,
 } from './organization-settings-form';
@@ -48,10 +48,10 @@ export function OrganizationBankAccountsList() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<OrganizationBankAccount | null>(null);
-  const [formDirty, setFormDirty] = useState(false);
+  const [editFormDirty, setEditFormDirty] = useState(false);
   const [createFormDirty, setCreateFormDirty] = useState(false);
   const { dialogOpen, setDialogOpen, requestAction, confirmDiscard, cancelDiscard } =
-    useUnsavedChangesGuard(formDirty || createFormDirty);
+    useUnsavedChangesGuard(editFormDirty || createFormDirty);
 
   useSetAdminPageMeta({ title: tBank('page.title') });
 
@@ -126,19 +126,19 @@ export function OrganizationBankAccountsList() {
         setEditing(null);
         setCreating(false);
         setCreateFormDirty(false);
-        setFormDirty(false);
+        setEditFormDirty(false);
         const params = new URLSearchParams(searchParams.toString());
         params.set('organizationId', id);
         router.replace(`/parametres/comptes?${params.toString()}`);
         void loadAccounts(id, isSuperAdmin);
       };
-      if (formDirty || createFormDirty) {
+      if (editFormDirty || createFormDirty) {
         requestAction(applyChange);
         return;
       }
       applyChange();
     },
-    [router, searchParams, loadAccounts, isSuperAdmin, formDirty, createFormDirty, requestAction],
+    [router, searchParams, loadAccounts, isSuperAdmin, editFormDirty, createFormDirty, requestAction],
   );
 
   const handleCreateModalOpenChange = useCallback(
@@ -158,6 +158,38 @@ export function OrganizationBankAccountsList() {
       setCreateFormDirty(false);
     },
     [createFormDirty, requestAction],
+  );
+
+  const handleEditModalOpenChange = useCallback(
+    (open: boolean) => {
+      if (open) return;
+      if (editFormDirty) {
+        requestAction(() => {
+          setEditing(null);
+          setEditFormDirty(false);
+        });
+        return;
+      }
+      setEditing(null);
+      setEditFormDirty(false);
+    },
+    [editFormDirty, requestAction],
+  );
+
+  const handleEditRequest = useCallback(
+    (account: OrganizationBankAccount) => {
+      const openEdit = () => {
+        setCreating(false);
+        setCreateFormDirty(false);
+        setEditing(account);
+      };
+      if (creating && createFormDirty) {
+        requestAction(openEdit);
+        return;
+      }
+      openEdit();
+    },
+    [creating, createFormDirty, requestAction],
   );
 
   const handleDeleteRequest = useCallback((account: OrganizationBankAccount) => {
@@ -227,10 +259,7 @@ export function OrganizationBankAccountsList() {
           <DataTableActions>
             <DataTableActionButton
               action="edit"
-              onClick={() => {
-                setCreating(false);
-                setEditing(row.original);
-              }}
+              onClick={() => handleEditRequest(row.original)}
             />
             <DataTableActionButton
               action="delete"
@@ -241,7 +270,7 @@ export function OrganizationBankAccountsList() {
         ),
       },
     ],
-    [deletingId, handleDeleteRequest, tBank, tCommon],
+    [deletingId, handleDeleteRequest, handleEditRequest, tBank, tCommon],
   );
 
   if (accessError) {
@@ -272,7 +301,7 @@ export function OrganizationBankAccountsList() {
     <>
       <ParametresPageLayout
         onSubnavNavigate={
-          formDirty || createFormDirty ? (_href, proceed) => requestAction(proceed) : undefined
+          editFormDirty || createFormDirty ? (_href, proceed) => requestAction(proceed) : undefined
         }
       >
         <div className="min-w-0 space-y-6">
@@ -301,51 +330,39 @@ export function OrganizationBankAccountsList() {
             />
           ) : null}
 
-        {editing && organizationId ? (
-          <div className="mb-8">
-            <OrganizationBankAccountForm
-              organizationId={organizationId}
-              isSuperAdmin={isSuperAdmin}
-              account={editing}
-              onSuccess={() => {
-                setEditing(null);
-                setFormDirty(false);
-                void loadAccounts(organizationId, isSuperAdmin);
-              }}
-              onCancel={() => {
-                if (formDirty) {
-                  requestAction(() => {
-                    setEditing(null);
-                    setFormDirty(false);
-                  });
-                  return;
-                }
-                setEditing(null);
-                setFormDirty(false);
-              }}
-              onDirtyChange={setFormDirty}
-            />
-          </div>
-        ) : null}
-
         {!loading && !listError ? (
           <DataTable columns={columns} data={accounts} emptyMessage={tBank('list.empty')} />
         ) : null}
         </div>
       </ParametresPageLayout>
       {organizationId ? (
-        <OrganizationBankAccountCreateModal
-          open={creating}
-          organizationId={organizationId}
-          isSuperAdmin={isSuperAdmin}
-          onOpenChange={handleCreateModalOpenChange}
-          onDirtyChange={setCreateFormDirty}
-          onSuccess={() => {
-            setCreating(false);
-            setCreateFormDirty(false);
-            void loadAccounts(organizationId, isSuperAdmin);
-          }}
-        />
+        <>
+          <OrganizationBankAccountCreateModal
+            open={creating}
+            organizationId={organizationId}
+            isSuperAdmin={isSuperAdmin}
+            onOpenChange={handleCreateModalOpenChange}
+            onDirtyChange={setCreateFormDirty}
+            onSuccess={() => {
+              setCreating(false);
+              setCreateFormDirty(false);
+              void loadAccounts(organizationId, isSuperAdmin);
+            }}
+          />
+          <OrganizationBankAccountEditModal
+            open={!!editing}
+            account={editing}
+            organizationId={organizationId}
+            isSuperAdmin={isSuperAdmin}
+            onOpenChange={handleEditModalOpenChange}
+            onDirtyChange={setEditFormDirty}
+            onSuccess={() => {
+              setEditing(null);
+              setEditFormDirty(false);
+              void loadAccounts(organizationId, isSuperAdmin);
+            }}
+          />
+        </>
       ) : null}
       <AlertDialog
         open={dialogOpen}
