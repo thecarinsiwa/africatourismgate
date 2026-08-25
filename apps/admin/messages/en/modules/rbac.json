@@ -124,14 +124,22 @@
   "assignments": {
     "loading": "Loading assignments…",
     "empty": "No active assignments.",
-    "emptyTitleSearch": "No assignments for this user",
+    "emptyTitleSearch": "No assignments match the filters",
     "emptyTitleDefault": "No active assignments",
-    "emptyDescriptionSearch": "This user has no active role, or try another filter.",
+    "emptyDescriptionSearch": "Try another user, role, or scope.",
     "emptyDescriptionDefault": "Assign a role above to get started.",
-    "emptyTableSearch": "No assignments match the filter.",
+    "emptyTableSearch": "No assignments match the filters.",
     "emptyTableDefault": "No active assignments.",
     "ariaLabel": "Role assignments list",
     "paginationItem": "assignment",
+    "filters": {
+      "user": "User",
+      "role": "Role",
+      "scope": "Scope",
+      "allUsers": "All users",
+      "allRoles": "All roles",
+      "allScopes": "All scopes"
+    },
     "columns": {
       "user": "User",
       "role": "Role",

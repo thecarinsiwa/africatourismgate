@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsBoolean, IsOptional, IsUUID } from 'class-validator';
+import { IsBoolean, IsEnum, IsOptional, IsUUID } from 'class-validator';
 import { PaginationQueryDto } from '../../../../common/dto/pagination-query.dto';
 
 export class UserRoleAssignmentsListQueryDto extends PaginationQueryDto {
@@ -13,6 +13,11 @@ export class UserRoleAssignmentsListQueryDto extends PaginationQueryDto {
   @IsOptional()
   @IsUUID('4')
   roleId?: string;
+
+  @ApiPropertyOptional({ enum: ['global', 'property', 'agency', 'support_queue'] })
+  @IsOptional()
+  @IsEnum(['global', 'property', 'agency', 'support_queue'])
+  scopeType?: 'global' | 'property' | 'agency' | 'support_queue';
 
   @ApiPropertyOptional({ default: false })
   @IsOptional()

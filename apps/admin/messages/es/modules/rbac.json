@@ -124,14 +124,22 @@
   "assignments": {
     "loading": "Cargando asignaciones…",
     "empty": "Ninguna asignación activa.",
-    "emptyTitleSearch": "Ninguna asignación para este usuario",
+    "emptyTitleSearch": "Ninguna asignación coincide con los filtros",
     "emptyTitleDefault": "Ninguna asignación activa",
-    "emptyDescriptionSearch": "Este usuario no tiene un rol activo, o pruebe otro filtro.",
+    "emptyDescriptionSearch": "Pruebe otro usuario, rol o ámbito.",
     "emptyDescriptionDefault": "Asigne un rol arriba para empezar.",
-    "emptyTableSearch": "Ninguna asignación coincide con el filtro.",
+    "emptyTableSearch": "Ninguna asignación coincide con los filtros.",
     "emptyTableDefault": "Ninguna asignación activa.",
     "ariaLabel": "Lista de asignaciones de roles",
     "paginationItem": "asignación",
+    "filters": {
+      "user": "Usuario",
+      "role": "Rol",
+      "scope": "Ámbito",
+      "allUsers": "Todos los usuarios",
+      "allRoles": "Todos los roles",
+      "allScopes": "Todos los ámbitos"
+    },
     "columns": {
       "user": "Usuario",
       "role": "Rol",

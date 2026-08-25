@@ -124,14 +124,22 @@
   "assignments": {
     "loading": "Chargement des assignations…",
     "empty": "Aucune assignation active.",
-    "emptyTitleSearch": "Aucune assignation pour cet utilisateur",
+    "emptyTitleSearch": "Aucune assignation ne correspond aux filtres",
     "emptyTitleDefault": "Aucune assignation active",
-    "emptyDescriptionSearch": "Cet utilisateur n'a pas de rôle actif, ou essayez un autre filtre.",
+    "emptyDescriptionSearch": "Essayez un autre utilisateur, rôle ou périmètre.",
     "emptyDescriptionDefault": "Assignez un rôle ci-dessus pour commencer.",
-    "emptyTableSearch": "Aucune assignation ne correspond au filtre.",
+    "emptyTableSearch": "Aucune assignation ne correspond aux filtres.",
     "emptyTableDefault": "Aucune assignation active.",
     "ariaLabel": "Liste des assignations de rôles",
     "paginationItem": "assignation",
+    "filters": {
+      "user": "Utilisateur",
+      "role": "Rôle",
+      "scope": "Périmètre",
+      "allUsers": "Tous les utilisateurs",
+      "allRoles": "Tous les rôles",
+      "allScopes": "Tous les périmètres"
+    },
     "columns": {
       "user": "Utilisateur",
       "role": "Rôle",

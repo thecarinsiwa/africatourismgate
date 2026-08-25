@@ -16,12 +16,15 @@ import {
   useToast,
   type ColumnDef,
 } from '@africatourismgate/ui';
-import type { User, UserRoleAssignment } from '@africatourismgate/types';
+import type { Role, ScopeType, User, UserRoleAssignment } from '@africatourismgate/types';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useRbacScopeDisplayLabels } from '../../lib/i18n/use-module-labels';
+import {
+  useRbacScopeDisplayLabels,
+  useRbacScopeTypeLabels,
+} from '../../lib/i18n/use-module-labels';
 import { useDataTablePaginationLabels } from '../../lib/i18n/use-pagination-labels';
 import { formatAssignmentScope } from '../../lib/rbac-display';
 import { getApiClient } from '../../lib/auth/api';
@@ -30,14 +33,20 @@ import { RbacSubnav } from './rbac-subnav';
 import { UserRoleAssignmentForm } from './user-role-assignment-form';
 
 const PAGE_SIZE = 10;
+const SCOPE_TYPES: ScopeType[] = ['global', 'property', 'agency', 'support_queue'];
+
+function isScopeType(value: string): value is ScopeType {
+  return (SCOPE_TYPES as string[]).includes(value);
+}
 
 export function UserRoleAssignmentsList() {
   const { rbac: getRbacErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.rbac.assignments');
   const tCommon = useTranslations('modules.common');
-  const tFilter = useTranslations('modules.users.userIdFilter');
+  const tRoleNames = useTranslations('modules.rbac.roleNames');
   const tActions = useTranslations('common.actions');
   const scopeLabels = useRbacScopeDisplayLabels();
+  const scopeTypeLabels = useRbacScopeTypeLabels();
   const paginationLabels = useDataTablePaginationLabels();
   const { toast } = useToast();
   const router = useRouter();
@@ -45,7 +54,13 @@ export function UserRoleAssignmentsList() {
   const searchParams = useSearchParams();
 
   const [userIdFilter, setUserIdFilter] = useState(() => searchParams.get('userId') ?? '');
+  const [roleIdFilter, setRoleIdFilter] = useState(() => searchParams.get('roleId') ?? '');
+  const [scopeTypeFilter, setScopeTypeFilter] = useState(() => {
+    const value = searchParams.get('scopeType') ?? '';
+    return isScopeType(value) ? value : '';
+  });
   const [users, setUsers] = useState<User[]>([]);
+  const [roles, setRoles] = useState<Role[]>([]);
   const [page, setPage] = useState(1);
   const [state, setState] = useState<
     | { status: 'loading' }
@@ -61,53 +76,102 @@ export function UserRoleAssignmentsList() {
   const [pendingRevoke, setPendingRevoke] = useState<UserRoleAssignment | null>(null);
 
   useEffect(() => {
-    setUserIdFilter(searchParams.get('userId') ?? '');
+    const userId = searchParams.get('userId') ?? '';
+    const roleId = searchParams.get('roleId') ?? '';
+    const scopeTypeRaw = searchParams.get('scopeType') ?? '';
+    setUserIdFilter(userId);
+    setRoleIdFilter(roleId);
+    setScopeTypeFilter(isScopeType(scopeTypeRaw) ? scopeTypeRaw : '');
   }, [searchParams]);
 
   useEffect(() => {
     let cancelled = false;
-    void getApiClient()
-      .listUsers({ page: 1, limit: 100, status: 'active' })
-      .then((result) => {
-        if (!cancelled) setUsers(result.data);
+    void Promise.all([
+      getApiClient().listUsers({ page: 1, limit: 100, status: 'active' }),
+      getApiClient().listRoles({ page: 1, limit: 100, includeSystem: true }),
+    ])
+      .then(([usersResult, rolesResult]) => {
+        if (cancelled) return;
+        setUsers(usersResult.data);
+        setRoles(rolesResult.data);
       })
       .catch(() => {
-        if (!cancelled) setUsers([]);
+        if (cancelled) return;
+        setUsers([]);
+        setRoles([]);
       });
     return () => {
       cancelled = true;
     };
   }, []);
 
-  const userOptions = useMemo(
-    () => [
-      { value: '', label: tFilter('allUsers') },
-      ...users.map((user) => ({
-        value: user.id,
-        label: `${user.firstName} ${user.lastName} — ${user.email}`,
-      })),
-    ],
-    [tFilter, users],
+  const roleDisplayName = useCallback(
+    (role: Role) => {
+      const hasTranslated =
+        typeof tRoleNames.has === 'function' ? tRoleNames.has(role.code) : false;
+      return hasTranslated ? tRoleNames(role.code) : role.name;
+    },
+    [tRoleNames],
   );
 
-  const syncUserId = useCallback(
-    (userId: string) => {
+  const roleOptions = useMemo(
+    () => [
+      { value: '', label: t('filters.allRoles') },
+      ...roles.map((role) => ({
+        value: role.id,
+        label: `${roleDisplayName(role)} (${role.code})`,
+      })),
+    ],
+    [roleDisplayName, roles, t],
+  );
+
+  const scopeOptions = useMemo(
+    () => [
+      { value: '', label: t('filters.allScopes') },
+      ...SCOPE_TYPES.map((value) => ({
+        value,
+        label: scopeTypeLabels[value],
+      })),
+    ],
+    [scopeTypeLabels, t],
+  );
+
+  const syncFilters = useCallback(
+    (next: { userId?: string; roleId?: string; scopeType?: string }) => {
+      const userId = next.userId ?? userIdFilter;
+      const roleId = next.roleId ?? roleIdFilter;
+      const scopeType = next.scopeType ?? scopeTypeFilter;
+
       setUserIdFilter(userId);
+      setRoleIdFilter(roleId);
+      setScopeTypeFilter(isScopeType(scopeType) ? scopeType : '');
       setPage(1);
+
       const params = new URLSearchParams(searchParams.toString());
       if (userId) params.set('userId', userId);
       else params.delete('userId');
+      if (roleId) params.set('roleId', roleId);
+      else params.delete('roleId');
+      if (scopeType && isScopeType(scopeType)) params.set('scopeType', scopeType);
+      else params.delete('scopeType');
+
       const qs = params.toString();
       router.replace(qs ? `${pathname}?${qs}` : pathname);
     },
-    [pathname, router, searchParams],
+    [pathname, roleIdFilter, router, scopeTypeFilter, searchParams, userIdFilter],
   );
 
   const handleClearFilters = useCallback(() => {
-    syncUserId('');
-  }, [syncUserId]);
+    setUserIdFilter('');
+    setRoleIdFilter('');
+    setScopeTypeFilter('');
+    setPage(1);
+    router.replace(pathname);
+  }, [pathname, router]);
 
-  const activeFilterCount = userIdFilter ? 1 : 0;
+  const activeFilterCount = [userIdFilter, roleIdFilter, scopeTypeFilter].filter(
+    Boolean,
+  ).length;
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -117,6 +181,8 @@ export function UserRoleAssignmentsList() {
         limit: PAGE_SIZE,
         includeRevoked: false,
         userId: userIdFilter || undefined,
+        roleId: roleIdFilter || undefined,
+        scopeType: isScopeType(scopeTypeFilter) ? scopeTypeFilter : undefined,
       });
       setState({
         status: 'ready',
@@ -127,7 +193,7 @@ export function UserRoleAssignmentsList() {
     } catch (error) {
       setState({ status: 'error', message: getRbacErrorMessage(error) });
     }
-  }, [page, userIdFilter, getRbacErrorMessage]);
+  }, [page, userIdFilter, roleIdFilter, scopeTypeFilter, getRbacErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -198,9 +264,7 @@ export function UserRoleAssignmentsList() {
         cell: ({ row }) => {
           const role = row.original.role;
           if (!role) {
-            return (
-              <RoleBadge code={row.original.roleId.slice(0, 8)} />
-            );
+            return <RoleBadge code={row.original.roleId.slice(0, 8)} />;
           }
           return <RoleBadge code={role.code} name={role.name} />;
         },
@@ -261,14 +325,38 @@ export function UserRoleAssignmentsList() {
         applyLabel={tCommon('filters.apply')}
         toggleLabel={tCommon('filters.toggle')}
         filters={
-          <div className="w-full sm:max-w-md">
-            <Select
-              label={tFilter('label')}
-              value={userIdFilter}
-              options={userOptions}
-              onChange={(e) => syncUserId(e.target.value)}
-            />
-          </div>
+          <>
+            <div className="w-full sm:max-w-xs">
+              <Select
+                label={t('filters.user')}
+                value={userIdFilter}
+                options={[
+                  { value: '', label: t('filters.allUsers') },
+                  ...users.map((user) => ({
+                    value: user.id,
+                    label: `${user.firstName} ${user.lastName} — ${user.email}`,
+                  })),
+                ]}
+                onChange={(e) => syncFilters({ userId: e.target.value })}
+              />
+            </div>
+            <div className="w-full sm:max-w-xs">
+              <Select
+                label={t('filters.role')}
+                value={roleIdFilter}
+                options={roleOptions}
+                onChange={(e) => syncFilters({ roleId: e.target.value })}
+              />
+            </div>
+            <div className="w-full sm:max-w-xs">
+              <Select
+                label={t('filters.scope')}
+                value={scopeTypeFilter}
+                options={scopeOptions}
+                onChange={(e) => syncFilters({ scopeType: e.target.value })}
+              />
+            </div>
+          </>
         }
       />
 

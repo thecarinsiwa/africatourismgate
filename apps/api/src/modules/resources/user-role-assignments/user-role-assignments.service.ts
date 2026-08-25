@@ -60,6 +60,9 @@ export class UserRoleAssignmentsService extends CrudService<UserRoleAssignments>
     if (query.roleId) {
       qb.andWhere('ura.roleId = :roleId', { roleId: query.roleId });
     }
+    if (query.scopeType) {
+      qb.andWhere('ura.scopeType = :scopeType', { scopeType: query.scopeType });
+    }
     if (!includeRevoked) {
       qb.andWhere('ura.revokedAt IS NULL');
       qb.andWhere('(ura.expiresAt IS NULL OR ura.expiresAt > :now)', {

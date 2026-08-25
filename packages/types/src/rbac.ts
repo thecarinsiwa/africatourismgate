@@ -83,6 +83,7 @@ export interface CreateUserRoleAssignmentRequest {
 export interface UserRoleAssignmentsListQuery extends PaginationQuery {
   userId?: string;
   roleId?: string;
+  scopeType?: ScopeType;
   includeRevoked?: boolean;
 }
 
