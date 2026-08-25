@@ -394,7 +394,7 @@ export function useRbacScopeDisplayLabels(): RbacScopeDisplayLabels {
       property: t('property'),
       agency: t('agency'),
       support_queue: t('support_queue'),
-      withId: t('withId'),
+      withId: ({ label, idPrefix }) => t('withId', { label, idPrefix }),
     }),
     [t],
   );
