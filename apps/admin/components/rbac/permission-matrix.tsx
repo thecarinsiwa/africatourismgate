@@ -283,7 +283,7 @@ export function PermissionMatrix({
             {search.trim() ? t('searchEmpty') : t('empty')}
           </p>
         ) : (
-          <div className="space-y-3">
+          <div className="grid gap-3 md:grid-cols-2 md:items-start">
             {filteredGroups.map((group) => {
               const selection = domainSelectionState(group);
               const groupSelected = group.permissions.filter((permission) =>
@@ -328,7 +328,7 @@ export function PermissionMatrix({
                     ) : null}
                   </div>
 
-                  <ul className="grid gap-1.5 p-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  <ul className="grid grid-cols-1 gap-1.5 p-2">
                     {group.permissions.map((permission) => {
                       const isSelected = selectedIds.has(permission.id);
                       const actionLabel = formatPermissionAction(

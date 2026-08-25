@@ -116,7 +116,7 @@ export function RoleForm({ mode, roleId, initialRole }: RoleFormProps) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <RbacSubnav
         onNavigate={matrixDirty ? (_href, proceed) => requestAction(proceed) : undefined}
       />
@@ -191,7 +191,7 @@ export function RoleForm({ mode, roleId, initialRole }: RoleFormProps) {
           <div
             className={
               mode === 'edit'
-                ? 'sticky bottom-0 z-10 -mx-1 flex flex-wrap gap-3 border-t border-atg-border bg-atg-bg/95 px-1 py-3 backdrop-blur'
+                ? 'sticky bottom-0 z-10 flex flex-wrap gap-3 border-t border-atg-border bg-atg-bg/95 py-3 backdrop-blur'
                 : 'flex flex-wrap gap-3 pt-1'
             }
           >
