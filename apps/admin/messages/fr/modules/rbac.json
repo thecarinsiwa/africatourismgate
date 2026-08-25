@@ -136,6 +136,8 @@
       "user": "Utilisateur",
       "role": "Rôle",
       "scope": "Périmètre",
+      "search": "Recherche",
+      "searchPlaceholder": "Rechercher par nom, e-mail ou rôle…",
       "allUsers": "Tous les utilisateurs",
       "allRoles": "Tous les rôles",
       "allScopes": "Tous les périmètres"

@@ -54,6 +54,23 @@ export class UserRoleAssignmentsService extends CrudService<UserRoleAssignments>
       .skip((page - 1) * limit)
       .take(limit);
 
+    const search = query.search?.trim();
+    if (search) {
+      qb.leftJoin(Users, 'user', 'user.id = ura.userId')
+        .leftJoin(Roles, 'role', 'role.id = ura.roleId')
+        .andWhere(
+          `(
+            user.email LIKE :search
+            OR user.firstName LIKE :search
+            OR user.lastName LIKE :search
+            OR CONCAT(user.firstName, ' ', user.lastName) LIKE :search
+            OR role.code LIKE :search
+            OR role.name LIKE :search
+          )`,
+          { search: `%${search}%` },
+        );
+    }
+
     if (query.userId) {
       qb.andWhere('ura.userId = :userId', { userId: query.userId });
     }

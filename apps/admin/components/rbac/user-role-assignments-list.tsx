@@ -12,6 +12,7 @@ import {
   DataTablePagination,
   EmptyState,
   FilterBar,
+  Input,
   Select,
   useToast,
   type ColumnDef,
@@ -33,6 +34,7 @@ import { RbacSubnav } from './rbac-subnav';
 import { UserRoleAssignmentForm } from './user-role-assignment-form';
 
 const PAGE_SIZE = 10;
+const SEARCH_DEBOUNCE_MS = 300;
 const SCOPE_TYPES: ScopeType[] = ['global', 'property', 'agency', 'support_queue'];
 
 function isScopeType(value: string): value is ScopeType {
@@ -59,6 +61,8 @@ export function UserRoleAssignmentsList() {
     const value = searchParams.get('scopeType') ?? '';
     return isScopeType(value) ? value : '';
   });
+  const [searchInput, setSearchInput] = useState('');
+  const [search, setSearch] = useState('');
   const [users, setUsers] = useState<User[]>([]);
   const [roles, setRoles] = useState<Role[]>([]);
   const [page, setPage] = useState(1);
@@ -83,6 +87,17 @@ export function UserRoleAssignmentsList() {
     setRoleIdFilter(roleId);
     setScopeTypeFilter(isScopeType(scopeTypeRaw) ? scopeTypeRaw : '');
   }, [searchParams]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setSearch((prev) => {
+        const q = searchInput.trim();
+        if (prev !== q) setPage(1);
+        return q;
+      });
+    }, SEARCH_DEBOUNCE_MS);
+    return () => window.clearTimeout(timer);
+  }, [searchInput]);
 
   useEffect(() => {
     let cancelled = false;
@@ -162,6 +177,8 @@ export function UserRoleAssignmentsList() {
   );
 
   const handleClearFilters = useCallback(() => {
+    setSearchInput('');
+    setSearch('');
     setUserIdFilter('');
     setRoleIdFilter('');
     setScopeTypeFilter('');
@@ -169,9 +186,12 @@ export function UserRoleAssignmentsList() {
     router.replace(pathname);
   }, [pathname, router]);
 
-  const activeFilterCount = [userIdFilter, roleIdFilter, scopeTypeFilter].filter(
-    Boolean,
-  ).length;
+  const activeFilterCount = [
+    search.trim().length > 0,
+    userIdFilter,
+    roleIdFilter,
+    scopeTypeFilter,
+  ].filter(Boolean).length;
 
   const load = useCallback(async () => {
     setState({ status: 'loading' });
@@ -180,6 +200,7 @@ export function UserRoleAssignmentsList() {
         page,
         limit: PAGE_SIZE,
         includeRevoked: false,
+        search: search || undefined,
         userId: userIdFilter || undefined,
         roleId: roleIdFilter || undefined,
         scopeType: isScopeType(scopeTypeFilter) ? scopeTypeFilter : undefined,
@@ -193,7 +214,7 @@ export function UserRoleAssignmentsList() {
     } catch (error) {
       setState({ status: 'error', message: getRbacErrorMessage(error) });
     }
-  }, [page, userIdFilter, roleIdFilter, scopeTypeFilter, getRbacErrorMessage]);
+  }, [page, search, userIdFilter, roleIdFilter, scopeTypeFilter, getRbacErrorMessage]);
 
   useEffect(() => {
     void load();
@@ -328,6 +349,15 @@ export function UserRoleAssignmentsList() {
         toggleLabel={tCommon('filters.toggle')}
         filters={
           <>
+            <div className="w-full sm:min-w-[220px] sm:max-w-sm">
+              <Input
+                label={t('filters.search')}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                placeholder={t('filters.searchPlaceholder')}
+                aria-label={t('filters.searchPlaceholder')}
+              />
+            </div>
             <div className="w-full sm:max-w-xs">
               <Select
                 label={t('filters.user')}
