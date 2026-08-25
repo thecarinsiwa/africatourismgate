@@ -52,12 +52,12 @@
       "addresses": "Direccións",
       "paymentMethods": "Métodos de pago",
       "sessions": "Sesións",
-      "roles": "Rols"
+      "roles": "Roles"
     }
   },
   "userIdFilter": {
     "label": "Usuario",
-    "allUsers": "Todos les utilisateurs"
+    "allUsers": "Todos los usuarios"
   },
   "addresses": {
     "emptyDefault": "Ninguna dirección registrada.",
@@ -131,18 +131,18 @@
     "user": "Usuario",
     "role": "Rol",
     "selectPlaceholder": "Seleccionar…",
-    "scope": "Ámbito (scope)",
+    "scope": "Ámbito",
     "scopeId": "ID del ámbito (UUID)",
     "scopeIdHint": "Ej. ID de propiedad, agencia o cola de soporte.",
-    "expiresAt": "Expiración (opcional)",
-    "superAdminWarning": "Reservado a super administradores — ámbito forzado a Global.",
-    "superAdminConfirmTitle": "Confirmar asignación super-admin",
-    "superAdminConfirm": "El usuario recibirá el rol «{roleName}» y acceso completo a la plataforma.",
+    "expiresAt": "Caducidad (opcional)",
+    "superAdminWarning": "Reservado a superadministradores — ámbito forzado a Global.",
+    "superAdminConfirmTitle": "Confirmar asignación de superadministrador",
+    "superAdminConfirm": "El usuario recibirá el rol « {roleName} » y acceso completo a la plataforma.",
     "superAdminConfirmButton": "Confirmar",
     "cancel": "Cancelar",
     "validation": {
       "userAndRoleRequired": "El usuario y el rol son obligatorios.",
-      "scopeIdRequired": "El identificador de ámbito es obligatorio para este ámbito."
+      "scopeIdRequired": "El identificador de ámbito es obligatorio para este tipo."
     },
     "scopeTypes": {
       "global": "Global",

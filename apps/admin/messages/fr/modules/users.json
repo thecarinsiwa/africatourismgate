@@ -131,9 +131,9 @@
     "user": "Utilisateur",
     "role": "Rôle",
     "selectPlaceholder": "Sélectionner…",
-    "scope": "Périmètre (scope)",
-    "scopeId": "ID du scope (UUID)",
-    "scopeIdHint": "Ex. ID propriété, agence ou file support.",
+    "scope": "Périmètre",
+    "scopeId": "ID du périmètre (UUID)",
+    "scopeIdHint": "Ex. ID propriété, agence ou file d'attente support.",
     "expiresAt": "Expiration (optionnel)",
     "superAdminWarning": "Réservé aux super administrateurs — périmètre forcé à Global.",
     "superAdminConfirmTitle": "Confirmer l'attribution super-admin",
@@ -142,19 +142,19 @@
     "cancel": "Annuler",
     "validation": {
       "userAndRoleRequired": "Utilisateur et rôle sont obligatoires.",
-      "scopeIdRequired": "L'identifiant de scope est obligatoire pour ce périmètre."
+      "scopeIdRequired": "L'identifiant de périmètre est obligatoire pour ce type."
     },
     "scopeTypes": {
       "global": "Global",
       "property": "Propriété",
       "agency": "Agence",
-      "support_queue": "File support"
+      "support_queue": "File d'attente support"
     },
     "scopeDisplay": {
       "global": "Global",
       "property": "Établissement",
       "agency": "Agence",
-      "support_queue": "File support",
+      "support_queue": "File d'attente support",
       "withId": "{label} · {idPrefix}…"
     },
     "revokeDialog": {
