@@ -1,4 +1,6 @@
 -- Link blog post translations (one logical article per translation_key × locale).
+-- Runs after add_blog_posts2_i18n.sql (numeric suffix avoids localeCompare ordering).
+
 ALTER TABLE `blog_posts`
   ADD COLUMN `translation_key` VARCHAR(180) NULL AFTER `slug`;
 

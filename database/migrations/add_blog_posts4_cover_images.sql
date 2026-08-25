@@ -1,4 +1,6 @@
--- Cover images for seed blog posts (idempotent)
+-- Cover images for seed blog posts (idempotent).
+-- Runs after add_blog_posts3_translation_key.sql.
+
 UPDATE `blog_posts`
 SET `cover_image_url` = 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Masai_Mara_National_Reserve_2019.jpg/1280px-Masai_Mara_National_Reserve_2019.jpg'
 WHERE `slug` = 'decouvrir-kenya-masai-mara'
