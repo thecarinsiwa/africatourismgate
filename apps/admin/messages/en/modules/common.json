@@ -362,12 +362,12 @@
       "global": "Global",
       "property": "Property",
       "agency": "Agency",
-      "support_queue": "File support"
+      "support_queue": "Support queue"
     },
     "global": "Global",
-    "property": "Établissement",
+    "property": "Property",
     "agency": "Agency",
-    "support_queue": "File support",
+    "support_queue": "Support queue",
     "withId": "{label} · {idPrefix}…"
   },
   "richTextImage": {

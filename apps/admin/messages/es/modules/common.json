@@ -362,12 +362,12 @@
       "global": "Global",
       "property": "Propiedad",
       "agency": "Agencia",
-      "support_queue": "File support"
+      "support_queue": "Cola de soporte"
     },
     "global": "Global",
-    "property": "Établissement",
+    "property": "Establecimiento",
     "agency": "Agencia",
-    "support_queue": "File support",
+    "support_queue": "Cola de soporte",
     "withId": "{label} · {idPrefix}…"
   },
   "richTextImage": {

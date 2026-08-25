@@ -1,16 +1,16 @@
 {
   "subnav": {
-    "ariaLabel": "Navigation RBAC",
-    "roles": "Rols",
-    "permissions": "Permissions",
-    "assignments": "Assignations",
-    "audit": "Hastadit"
+    "ariaLabel": "Navegación RBAC",
+    "roles": "Roles",
+    "permissions": "Permisos",
+    "assignments": "Asignaciones",
+    "audit": "Auditoría"
   },
   "unsavedChanges": {
-    "title": "Modifications non enregistrées",
-    "description": "Des changements n'ont pas été enregistrés. Quitter sans sauvegarder ?",
-    "confirm": "Quitter sans enregistrer",
-    "cancel": "Continuer l'édition"
+    "title": "Cambios no guardados",
+    "description": "Hay cambios sin guardar. ¿Salir sin guardar?",
+    "confirm": "Salir sin guardar",
+    "cancel": "Seguir editando"
   },
   "permissionDomains": {
     "amenities": "Equipamientos",
@@ -20,28 +20,28 @@
     "employees": "Empleados",
     "departments": "Departamentos",
     "flights": "Vuelos",
-    "loyalty": "Fidélité",
-    "organizations": "Organizacións",
+    "loyalty": "Fidelidad",
+    "organizations": "Organizaciones",
     "payments": "Pagos",
-    "permissions": "Permissions",
-    "promo_codes": "Codes promo",
+    "permissions": "Permisos",
+    "promo_codes": "Códigos promo",
     "properties": "Alojamientos",
     "promotions": "Promociones",
-    "reviews": "Avis",
-    "roles": "Rols",
-    "support": "Support",
+    "reviews": "Reseñas",
+    "roles": "Roles",
+    "support": "Soporte",
     "users": "Usuarios",
-    "vehicles": "Locations",
-    "activities": "Actividads",
+    "vehicles": "Alquileres",
+    "activities": "Actividades",
     "packages": "Paquetes",
     "gap": "GAP (Gorilla Ambassadors Program)"
   },
   "permissionActions": {
-    "read": "Lecture",
-    "write": "Écriture",
-    "delete": "Suppression",
-    "manage": "Gestion",
-    "approve": "Approbation"
+    "read": "Lectura",
+    "write": "Escritura",
+    "delete": "Eliminación",
+    "manage": "Gestión",
+    "approve": "Aprobación"
   },
   "roles": {
     "searchPlaceholder": "Buscar por código o nombre…",
@@ -81,12 +81,12 @@
     }
   },
   "permissions": {
-    "intro": "Catalogue des permissions (lecture seule). Modifiez les droits via la matrice sur chaque rôle.",
-    "searchPlaceholder": "Rechercher…",
-    "empty": "Ninguna permission.",
-    "paginationItem": "permission",
+    "intro": "Catálogo de permisos (solo lectura). Edite los derechos desde la matriz de cada rol.",
+    "searchPlaceholder": "Buscar…",
+    "empty": "Ningún permiso.",
+    "paginationItem": "permiso",
     "columns": {
-      "resource": "Ressource"
+      "resource": "Recurso"
     }
   },
   "matrix": {
@@ -115,52 +115,52 @@
     }
   },
   "assignments": {
-    "loading": "Chargement des assignations…",
-    "empty": "Ninguna assignation active.",
-    "revoke": "Révoquer",
+    "loading": "Cargando asignaciones…",
+    "empty": "Ninguna asignación activa.",
+    "revoke": "Revocar",
     "revokeDialog": {
-      "title": "Révoquer l'assignation",
-      "description": "Retirer ce rôle pour l'utilisateur sur ce périmètre ?"
+      "title": "Revocar asignación",
+      "description": "¿Quitar este rol al usuario en este ámbito?"
     },
     "toast": {
-      "revokedTitle": "Assignation révoquée",
-      "revokedMessage": "Le rôle a été retiré pour cet utilisateur.",
-      "revokeFailedTitle": "Échec de la révocation"
+      "revokedTitle": "Asignación revocada",
+      "revokedMessage": "El rol se ha quitado a este usuario.",
+      "revokeFailedTitle": "Error al revocar"
     }
   },
   "audit": {
-    "checkingAccess": "Vérification des droits…",
-    "accessDenied": "Cette page est réservée au super administrateur. Connectez-vous avec admin@africatourismgate.local ou un compte disposant du rôle super_admin.",
-    "empty": "Hastacun événement pour ces critères.",
-    "paginationItem": "événement",
+    "checkingAccess": "Comprobando permisos…",
+    "accessDenied": "Esta página está reservada al superadministrador. Inicie sesión con admin@africatourismgate.local o una cuenta con el rol super_admin.",
+    "empty": "Ningún evento para estos criterios.",
+    "paginationItem": "evento",
     "hideDetail": "Ocultar detalle",
     "showDetailJson": "Ver detalle JSON",
     "detailModalTitle": "Detalle JSON del evento",
     "actorFallback": "Actor: {actorId}…",
-    "targetLabel": "Cible",
+    "targetLabel": "Objetivo",
     "ipLabel": "IP",
     "filters": {
-      "eventType": "Tipo d'événement",
-      "actorUser": "Usuario (acteur)"
+      "eventType": "Tipo de evento",
+      "actorUser": "Usuario (actor)"
     },
     "toast": {
-      "loadFailedTitle": "Erreur de chargement"
+      "loadFailedTitle": "Error de carga"
     },
     "eventTypes": {
-      "role_created": "Rol créé",
-      "role_updated": "Rol modifié",
-      "role_deleted": "Rol supprimé",
-      "permission_created": "Permission créée",
-      "permission_updated": "Permission modifiée",
-      "permission_deleted": "Permission supprimée",
-      "role_permission_granted": "Permission accordée au rôle",
-      "role_permission_revoked": "Permission retirée du rôle",
-      "user_role_granted": "Rol assigné",
-      "user_role_revoked": "Rol révoqué",
-      "user_role_extended": "Assignation prolongée",
-      "impersonation_started": "Impersonation démarrée",
-      "impersonation_ended": "Impersonation terminée",
-      "permission_denied": "Accès refusé"
+      "role_created": "Rol creado",
+      "role_updated": "Rol modificado",
+      "role_deleted": "Rol eliminado",
+      "permission_created": "Permiso creado",
+      "permission_updated": "Permiso modificado",
+      "permission_deleted": "Permiso eliminado",
+      "role_permission_granted": "Permiso concedido al rol",
+      "role_permission_revoked": "Permiso retirado del rol",
+      "user_role_granted": "Rol asignado",
+      "user_role_revoked": "Rol revocado",
+      "user_role_extended": "Asignación prolongada",
+      "impersonation_started": "Suplantación iniciada",
+      "impersonation_ended": "Suplantación finalizada",
+      "permission_denied": "Acceso denegado"
     }
   }
 }
