@@ -663,6 +663,8 @@
     }
   },
   "parametres": {
+    "title": "Configuración",
+    "description": "Configuración de la organización: contacto, idioma, reservas y marca.",
     "metaTitle": "Configuración",
     "comptes": {
       "metaTitle": "Cuentas bancarias"

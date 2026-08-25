@@ -1,64 +1,64 @@
 {
   "nav": {
-    "ariaLabel": "Navigation paramètres",
+    "ariaLabel": "Settings navigation",
     "settings": "Settings",
     "emails": "Emails",
     "donations": "Donations",
-    "bankAccounts": "Comptes bancaires"
+    "bankAccounts": "Bank accounts"
   },
   "page": {
     "title": "Settings",
     "intro": "Organization settings: contact details, locale, booking and branding.",
-    "denied": "Vous n'avez pas la permission de consulter les paramètres."
+    "denied": "You do not have permission to view settings."
   },
   "unsaved": {
-    "title": "Modifications non enregistrées",
-    "description": "Des changements n'ont pas été enregistrés. Quitter sans sauvegarder ?",
-    "confirm": "Quitter sans enregistrer",
-    "cancel": "Continuer l'édition"
+    "title": "Unsaved changes",
+    "description": "Some changes have not been saved. Leave without saving?",
+    "confirm": "Leave without saving",
+    "cancel": "Continue editing"
   },
   "form": {
     "loading": "Loading…",
-    "dirty": "Modifications non enregistrées",
-    "clean": "None modification en attente",
-    "cancel": "Annuler",
-    "saving": "Enregistrement…",
+    "dirty": "Unsaved changes",
+    "clean": "No pending changes",
+    "cancel": "Cancel",
+    "saving": "Saving…",
     "save": "Save",
     "upload": {
-      "invalidImage": "Veuillez sélectionner une image valide.",
-      "tooLarge": "Image trop lourde (max 2 MB)."
+      "invalidImage": "Please select a valid image.",
+      "tooLarge": "Image too large (max 2 MB)."
     },
     "validation": {
-      "contactEmailInvalid": "L'e-mail de contact doit être valide.",
-      "currencyInvalid": "La devise doit comporter 3 lettres (ex. USD, CDF).",
-      "holdMinutesInvalid": "Fromrée de retenue invalide (entier positif).",
-      "displayNameRequired": "Le nom affiché est obligatoire.",
-      "loyaltyRateInvalid": "Le taux de points doit être un entier positif ou nul.",
-      "programCodeInvalid": "Le code programme est obligatoire (32 caractères max)."
+      "contactEmailInvalid": "Contact email must be valid.",
+      "currencyInvalid": "Currency must be 3 letters (e.g. USD, CDF).",
+      "holdMinutesInvalid": "Invalid hold duration (positive integer).",
+      "displayNameRequired": "Display name is required.",
+      "loyaltyRateInvalid": "Points rate must be a non-negative integer.",
+      "programCodeInvalid": "Program code is required (max 32 characters)."
     },
     "sections": {
       "contact": {
-        "title": "Coordonnées",
-        "description": "Affichées dans le bandeau et le pied de page du site public.",
+        "title": "Contact details",
+        "description": "Shown in the public site header and footer.",
         "phone": "Phone",
-        "email": "Email de contact",
-        "location": "Address / localisation",
-        "locationPlaceholder": "Kinshasa, RD Congo",
-        "facebookUrl": "URL Facebook",
-        "twitterUrl": "URL X / Twitter",
-        "instagramUrl": "URL Instagram",
+        "email": "Contact email",
+        "location": "Address / location",
+        "locationPlaceholder": "Kinshasa, DR Congo",
+        "facebookUrl": "Facebook URL",
+        "twitterUrl": "X / Twitter URL",
+        "instagramUrl": "Instagram URL",
         "currency": "Currency"
       },
       "locale": {
         "title": "Locale",
-        "language": "Langue",
-        "timezone": "Fuseau horaire"
+        "language": "Language",
+        "timezone": "Timezone"
       },
       "booking": {
         "title": "Booking",
-        "holdMinutes": "Fromrée de retenue (minutes)",
-        "allowGuestCheckout": "Totoriser la commande invité",
-        "modesTitle": "Mode per vertical",
+        "holdMinutes": "Hold duration (minutes)",
+        "allowGuestCheckout": "Allow guest checkout",
+        "modesTitle": "Mode by vertical",
         "modesDescription": "Immediate: Stripe payment at checkout. Assisted: request pending staff approval.",
         "modeImmediate": "Immediate (payment)",
         "modeAssisted": "Assisted (request)",
@@ -72,149 +72,149 @@
         }
       },
       "loyalty": {
-        "title": "Fidélité OneKey",
-        "description": "Points crédités après paiement confirmé : floor(montant en centimes / 100) × taux ci-dessous.",
-        "enabled": "Activer le crédit de points OneKey",
-        "pointsPerMajorUnit": "Points par unité majeure de devise",
-        "programCode": "Code programme"
+        "title": "OneKey loyalty",
+        "description": "Points credited after confirmed payment: floor(amount in cents / 100) × rate below.",
+        "enabled": "Enable OneKey point credit",
+        "pointsPerMajorUnit": "Points per major currency unit",
+        "programCode": "Program code"
       },
       "branding": {
         "title": "Branding",
-        "displayName": "Name affiché",
-        "primaryColor": "Couleur primaire",
-        "primaryColorHint": "Couleur dominante de l'interface (boutons, liens, accents).",
-        "secondaryColor": "Couleur secondaire",
-        "secondaryColorHint": "Couleur d'accompagnement (badges, éléments secondaires).",
-        "logoUrl": "URL du logo",
-        "uploading": "Upload en cours…",
-        "chooseLogo": "Choisir un logo local",
+        "displayName": "Display name",
+        "primaryColor": "Primary color",
+        "primaryColorHint": "Dominant interface color (buttons, links, accents).",
+        "secondaryColor": "Secondary color",
+        "secondaryColorHint": "Supporting color (badges, secondary elements).",
+        "logoUrl": "Logo URL",
+        "uploading": "Uploading…",
+        "chooseLogo": "Choose a local logo",
         "logoFormatHint": "PNG/JPG/SVG/WebP, max 2 MB",
-        "faviconUrl": "URL de l'icône (favicon)",
-        "chooseFavicon": "Choisir une icône locale",
+        "faviconUrl": "Favicon URL",
+        "chooseFavicon": "Choose a local icon",
         "faviconFormatHint": "PNG/ICO/SVG, max 2 MB"
       },
       "authVisual": {
-        "title": "Panneau connexion"
+        "title": "Sign-in panel"
       }
     },
     "preview": {
-      "title": "Preview live",
-      "description": "Le rendu se met a jour instantanement, sans sauvegarde.",
-      "logoAlt": "Logo organisation",
+      "title": "Live preview",
+      "description": "The preview updates instantly, without saving.",
+      "logoAlt": "Organization logo",
       "adminBadge": "Admin",
-      "primaryButton": "Bouton principal"
+      "primaryButton": "Primary button"
     }
   },
   "colorPalette": {
-    "contrastWarning": "Contraste insuffisant avec le texte blanc : {ratio} (minimum {min} pour WCAG AA). Les boutons et liens actifs peuvent être difficiles à lire.",
-    "currentAria": "Couleur actuelle ({value})",
-    "currentTitle": "Couleur enregistrée — {value}",
-    "currentLabel": "Actuelle",
-    "selection": "Sélection :",
+    "contrastWarning": "Insufficient contrast with white text: {ratio} (minimum {min} for WCAG AA). Active buttons and links may be hard to read.",
+    "currentAria": "Current color ({value})",
+    "currentTitle": "Saved color — {value}",
+    "currentLabel": "Current",
+    "selection": "Selection:",
     "swatches": {
-      "atg-primary": "Vert ATG",
-      "atg-primary-hover": "Vert foncé",
-      "atg-primary-light": "Vert clair",
-      "forest": "Forêt",
-      "emerald": "Émeraude",
-      "teal": "Sarcelle",
-      "atg-secondary": "Secondaire ATG",
+      "atg-primary": "ATG green",
+      "atg-primary-hover": "Dark green",
+      "atg-primary-light": "Light green",
+      "forest": "Forest",
+      "emerald": "Emerald",
+      "teal": "Teal",
+      "atg-secondary": "ATG secondary",
       "lime": "Lime",
-      "gold": "Or",
-      "amber": "Ambre",
-      "sunset": "Coucher de soleil",
-      "ocean": "Océan",
+      "gold": "Gold",
+      "amber": "Amber",
+      "sunset": "Sunset",
+      "ocean": "Ocean",
       "indigo": "Indigo",
-      "slate": "Ardoise",
-      "earth": "Terre",
-      "burgundy": "Bordeaux"
+      "slate": "Slate",
+      "earth": "Earth",
+      "burgundy": "Burgundy"
     }
   },
   "authVisual": {
-    "description": "Icônes décoratives affichées sur le panneau vert de connexion / inscription.",
-    "reset": "Réinitialiser",
-    "add": "Ajouter une icône",
-    "empty": "None icône configurée. Ajoutez-en une ou réinitialisez les valeurs par défaut.",
-    "iconLabel": "Icône {n}",
-    "remove": "Supprimer",
+    "description": "Decorative icons shown on the green sign-in / sign-up panel.",
+    "reset": "Reset",
+    "add": "Add an icon",
+    "empty": "No icon configured. Add one or reset to defaults.",
+    "iconLabel": "Icon {n}",
+    "remove": "Remove",
     "type": "Type",
     "position": "Position",
-    "size": "Taille",
-    "opacity": "Opacité ({n}%)",
-    "imageUrl": "URL de l'image",
-    "uploading": "Upload en cours…",
-    "chooseImage": "Choisir une image locale",
+    "size": "Size",
+    "opacity": "Opacity ({n}%)",
+    "imageUrl": "Image URL",
+    "uploading": "Uploading…",
+    "chooseImage": "Choose a local image",
     "preview": "Preview",
     "presets": {
-      "pin": "Épingle (localisation)",
-      "compass": "Boussole",
+      "pin": "Pin (location)",
+      "compass": "Compass",
       "globe": "Globe",
-      "star": "Étoile",
-      "custom": "Image personnalisée"
+      "star": "Star",
+      "custom": "Custom image"
     },
     "positions": {
-      "bottom-right": "Bas droite",
-      "top-right": "Haut droite",
-      "bottom-left": "Bas gauche",
-      "top-left": "Haut gauche"
+      "bottom-right": "Bottom right",
+      "top-right": "Top right",
+      "bottom-left": "Bottom left",
+      "top-left": "Top left"
     },
     "sizes": {
-      "sm": "Petite",
-      "md": "Moyenne",
-      "lg": "Grande"
+      "sm": "Small",
+      "md": "Medium",
+      "lg": "Large"
     }
   },
   "emails": {
     "page": {
       "title": "Emails",
-      "intro": "Personnalisez l'apparence des e-mails transactionnels (bienvenue, confirmation de réservation).",
-      "denied": "Vous n'avez pas la permission de consulter les paramètres e-mail."
+      "intro": "Customize the look of transactional emails (welcome, booking confirmation).",
+      "denied": "You do not have permission to view email settings."
     },
     "form": {
       "validation": {
-        "displayNameRequired": "Le nom affiché est obligatoire."
+        "displayNameRequired": "Display name is required."
       },
-      "success": "Settings e-mail enregistrés.",
+      "success": "Email settings saved.",
       "upload": {
-        "invalidImage": "Veuillez sélectionner une image valide.",
-        "tooLarge": "Image trop lourde (max 2 MB).",
-        "failed": "Échec de l'upload du logo. Réessayez."
+        "invalidImage": "Please select a valid image.",
+        "tooLarge": "Image too large (max 2 MB).",
+        "failed": "Logo upload failed. Try again."
       },
-      "displayName": "Name affiché",
-      "logoUrl": "URL du logo",
-      "chooseLogo": "Choisir un logo local",
+      "displayName": "Display name",
+      "logoUrl": "Logo URL",
+      "chooseLogo": "Choose a local logo",
       "logoFormatHint": "PNG/JPG/SVG/WebP, max 2 MB",
-      "logoPreview": "Preview du logo",
-      "primaryColor": "Couleur primaire",
-      "primaryColorHint": "Couleur dominante des e-mails (en-têtes, boutons).",
-      "secondaryColor": "Couleur secondaire",
-      "secondaryColorHint": "Couleur d'accompagnement (optionnel).",
-      "footerText": "Texte de pied de page",
-      "footerPlaceholder": "© Africa Tourism Gate — All droits réservés",
-      "welcomeSubject": "Sujet — e-mail de bienvenue",
-      "welcomeSubjectPlaceholder": "Bienvenue chez {displayName}",
-      "welcomeSubjectHint": "Variables : {displayName}",
-      "bookingSubject": "Sujet — confirmation de réservation",
-      "bookingSubjectPlaceholder": "Confirmation de réservation — {ref}",
-      "bookingSubjectHint": "Variables : {ref}, {displayName}",
-      "previewTemplate": "Modèle à prévisualiser",
-      "templateWelcome": "Bienvenue (création de compte)",
-      "templateBooking": "Confirmation de réservation",
-      "previewing": "Prévisualisation…",
-      "previewButton": "Prévisualiser",
+      "logoPreview": "Logo preview",
+      "primaryColor": "Primary color",
+      "primaryColorHint": "Dominant email color (headers, buttons).",
+      "secondaryColor": "Secondary color",
+      "secondaryColorHint": "Supporting color (optional).",
+      "footerText": "Footer text",
+      "footerPlaceholder": "© Africa Tourism Gate — All rights reserved",
+      "welcomeSubject": "Subject — welcome email",
+      "welcomeSubjectPlaceholder": "Welcome to {displayName}",
+      "welcomeSubjectHint": "Variables: {displayName}",
+      "bookingSubject": "Subject — booking confirmation",
+      "bookingSubjectPlaceholder": "Booking confirmation — {ref}",
+      "bookingSubjectHint": "Variables: {ref}, {displayName}",
+      "previewTemplate": "Template to preview",
+      "templateWelcome": "Welcome (account creation)",
+      "templateBooking": "Booking confirmation",
+      "previewing": "Previewing…",
+      "previewButton": "Preview",
       "save": "Save",
-      "cancel": "Annuler",
-      "saving": "Enregistrement…",
-      "dirty": "Modifications non enregistrées",
-      "clean": "None modification en attente",
-      "readOnlyHint": "Vous pouvez consulter ces paramètres mais pas les modifier (permission organization_settings.write requise)."
+      "cancel": "Cancel",
+      "saving": "Saving…",
+      "dirty": "Unsaved changes",
+      "clean": "No pending changes",
+      "readOnlyHint": "You can view these settings but not edit them (organization_settings.write permission required)."
     },
     "preview": {
-      "closeAria": "Fermer la prévisualisation",
-      "title": "Prévisualisation",
-      "subject": "Sujet :",
-      "close": "Fermer",
-      "iframeTitle": "Preview e-mail"
+      "closeAria": "Close preview",
+      "title": "Preview",
+      "subject": "Subject:",
+      "close": "Close",
+      "iframeTitle": "Email preview"
     }
   },
   "bankAccounts": {
@@ -241,29 +241,29 @@
     },
     "form": {
       "validation": {
-        "bankNameRequired": "Le nom de la banque est obligatoire.",
-        "accountNameRequired": "Le nom du compte est obligatoire.",
-        "accountNumberRequired": "Le numéro de compte est obligatoire.",
-        "accountNumberNoMask": "Saisissez le numéro complet (sans masque).",
-        "currencyInvalid": "La devise doit comporter 3 lettres (ex. USD, CDF)."
+        "bankNameRequired": "Bank name is required.",
+        "accountNameRequired": "Account name is required.",
+        "accountNumberRequired": "Account number is required.",
+        "accountNumberNoMask": "Enter the full number (without mask).",
+        "currencyInvalid": "Currency must be 3 letters (e.g. USD, CDF)."
       },
-      "editTitle": "Modifier le compte",
-      "createTitle": "Nouveau compte bancaire",
-      "bankName": "Banque",
-      "accountName": "Name du compte",
-      "accountNumberEdit": "Numéro de compte (laisser vide pour conserver)",
-      "accountNumberCreate": "Numéro de compte / IBAN",
-      "storedValue": "Valeur enregistrée: {masked}",
+      "editTitle": "Edit account",
+      "createTitle": "New bank account",
+      "bankName": "Bank",
+      "accountName": "Account name",
+      "accountNumberEdit": "Account number (leave blank to keep)",
+      "accountNumberCreate": "Account number / IBAN",
+      "storedValue": "Stored value: {masked}",
       "swiftBic": "SWIFT / BIC",
       "currency": "Currency",
-      "isDefault": "Compte par défaut",
-      "update": "Mettre à jour",
-      "create": "Créer",
-      "cancel": "Annuler",
+      "isDefault": "Default account",
+      "update": "Update",
+      "create": "Create",
+      "cancel": "Cancel",
       "save": "Save",
-      "saving": "Enregistrement…",
-      "dirty": "Modifications non enregistrées",
-      "clean": "None modification en attente"
+      "saving": "Saving…",
+      "dirty": "Unsaved changes",
+      "clean": "No pending changes"
     }
   },
   "donations": {

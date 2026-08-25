@@ -663,6 +663,8 @@
     }
   },
   "parametres": {
+    "title": "Settings",
+    "description": "Organization configuration: contact details, locale, booking and branding.",
     "metaTitle": "Settings",
     "comptes": {
       "metaTitle": "Bank accounts"

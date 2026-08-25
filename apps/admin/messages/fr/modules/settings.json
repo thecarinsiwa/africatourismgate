@@ -98,8 +98,8 @@
       }
     },
     "preview": {
-      "title": "Preview live",
-      "description": "Le rendu se met a jour instantanement, sans sauvegarde.",
+      "title": "Aperçu en direct",
+      "description": "Le rendu se met à jour instantanément, sans sauvegarde.",
       "logoAlt": "Logo organisation",
       "adminBadge": "Admin",
       "primaryButton": "Bouton principal"

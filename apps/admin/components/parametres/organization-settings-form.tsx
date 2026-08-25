@@ -2,7 +2,7 @@
 
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
-import { Button, Input } from '@africatourismgate/ui';
+import { Button, Card, Input, Select } from '@africatourismgate/ui';
 import type {
   AuthVisualDecorIcon,
   AuthVisualSettingValue,
@@ -198,7 +198,26 @@ export function OrganizationSettingsForm({
 }: OrganizationSettingsFormProps) {
   const { organizationSettings: getOrganizationSettingsErrorMessage } = useAdminErrorMessages();
   const t = useTranslations('modules.settings.form');
+  const tLanguage = useTranslations('language');
   const tValidation = useTranslations('modules.common.validation');
+
+  const languageOptions = useMemo(
+    () => [
+      { value: 'fr', label: tLanguage('fr') },
+      { value: 'en', label: tLanguage('en') },
+      { value: 'es', label: tLanguage('es') },
+    ],
+    [tLanguage],
+  );
+
+  const bookingModeOptions = useMemo(
+    () => [
+      { value: 'immediate', label: t('sections.booking.modeImmediate') },
+      { value: 'assisted', label: t('sections.booking.modeAssisted') },
+    ],
+    [t],
+  );
+
   const router = useRouter();
   const orgTheme = useOrganizationThemeOptional();
   const [values, setValues] = useState<SettingsFormValues>(defaultValues);
@@ -522,15 +541,17 @@ export function OrganizationSettingsForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
-        <div className="space-y-8">
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,20rem)] lg:items-start">
+        <div className="space-y-6">
           {isSuperAdmin && organizations.length > 0 && onOrganizationIdChange ? (
-            <OrganizationOrgSelector
-              id="org-select"
-              organizations={organizations}
-              value={organizationId}
-              onChange={onOrganizationIdChange}
-            />
+            <Card variant="dashboard" padding="sm" className="space-y-4">
+              <OrganizationOrgSelector
+                id="org-select"
+                organizations={organizations}
+                value={organizationId}
+                onChange={onOrganizationIdChange}
+              />
+            </Card>
           ) : null}
 
           {formError ? (
@@ -542,237 +563,261 @@ export function OrganizationSettingsForm({
             </p>
           ) : null}
 
-          <section className="space-y-4">
-        <h2 className="text-lg font-semibold text-atg-fg">{t('sections.contact.title')}</h2>
-        <p className="text-sm text-atg-muted">{t('sections.contact.description')}</p>
-        <Input
-          label={t('sections.contact.phone')}
-          type="tel"
-          value={values.contactPhone}
-          onChange={(e) => updateField('contactPhone', e.target.value)}
-          placeholder="+243 815 000 000"
-        />
-        <Input
-          label={t('sections.contact.email')}
-          type="email"
-          value={values.contactEmail}
-          onChange={(e) => updateField('contactEmail', e.target.value)}
-          error={fieldErrors.contactEmail}
-        />
-        <Input
-          label={t('sections.contact.location')}
-          value={values.location}
-          onChange={(e) => updateField('location', e.target.value)}
-          placeholder={t('sections.contact.locationPlaceholder')}
-        />
-        <Input
-          label={t('sections.contact.facebookUrl')}
-          type="url"
-          value={values.facebookUrl}
-          onChange={(e) => updateField('facebookUrl', e.target.value)}
-          placeholder="https://www.facebook.com/..."
-        />
-        <Input
-          label={t('sections.contact.twitterUrl')}
-          type="url"
-          value={values.twitterUrl}
-          onChange={(e) => updateField('twitterUrl', e.target.value)}
-          placeholder="https://x.com/..."
-        />
-        <Input
-          label={t('sections.contact.instagramUrl')}
-          type="url"
-          value={values.instagramUrl}
-          onChange={(e) => updateField('instagramUrl', e.target.value)}
-          placeholder="https://www.instagram.com/..."
-        />
-        <Input
-          label={t('sections.contact.currency')}
-          value={values.currency}
-          onChange={(e) => updateField('currency', e.target.value.toUpperCase())}
-          error={fieldErrors.currency}
-          maxLength={3}
-        />
-          </section>
+          <Card variant="dashboard" padding="sm" className="space-y-4">
+            <div>
+              <h2 className="text-base font-semibold text-atg-fg">{t('sections.contact.title')}</h2>
+              <p className="mt-1 text-sm text-atg-muted">{t('sections.contact.description')}</p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Input
+                label={t('sections.contact.phone')}
+                type="tel"
+                value={values.contactPhone}
+                onChange={(e) => updateField('contactPhone', e.target.value)}
+                placeholder="+243 815 000 000"
+              />
+              <Input
+                label={t('sections.contact.email')}
+                type="email"
+                value={values.contactEmail}
+                onChange={(e) => updateField('contactEmail', e.target.value)}
+                error={fieldErrors.contactEmail}
+              />
+            </div>
+            <Input
+              label={t('sections.contact.location')}
+              value={values.location}
+              onChange={(e) => updateField('location', e.target.value)}
+              placeholder={t('sections.contact.locationPlaceholder')}
+            />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Input
+                label={t('sections.contact.facebookUrl')}
+                type="url"
+                value={values.facebookUrl}
+                onChange={(e) => updateField('facebookUrl', e.target.value)}
+                placeholder="https://www.facebook.com/..."
+              />
+              <Input
+                label={t('sections.contact.twitterUrl')}
+                type="url"
+                value={values.twitterUrl}
+                onChange={(e) => updateField('twitterUrl', e.target.value)}
+                placeholder="https://x.com/..."
+              />
+              <Input
+                label={t('sections.contact.instagramUrl')}
+                type="url"
+                value={values.instagramUrl}
+                onChange={(e) => updateField('instagramUrl', e.target.value)}
+                placeholder="https://www.instagram.com/..."
+              />
+              <Input
+                label={t('sections.contact.currency')}
+                value={values.currency}
+                onChange={(e) => updateField('currency', e.target.value.toUpperCase())}
+                error={fieldErrors.currency}
+                maxLength={3}
+              />
+            </div>
+          </Card>
 
-          <section className="space-y-4">
-        <h2 className="text-lg font-semibold text-atg-fg">{t('sections.locale.title')}</h2>
-        <Input
-          label={t('sections.locale.language')}
-          value={values.language}
-          onChange={(e) => updateField('language', e.target.value)}
-        />
-        <Input
-          label={t('sections.locale.timezone')}
-          value={values.timezone}
-          onChange={(e) => updateField('timezone', e.target.value)}
-        />
-          </section>
+          <Card variant="dashboard" padding="sm" className="space-y-4">
+            <h2 className="text-base font-semibold text-atg-fg">{t('sections.locale.title')}</h2>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Select
+                label={t('sections.locale.language')}
+                options={
+                  languageOptions.some((option) => option.value === values.language)
+                    ? languageOptions
+                    : [
+                        ...languageOptions,
+                        { value: values.language, label: values.language },
+                      ]
+                }
+                value={values.language}
+                onChange={(e) => updateField('language', e.target.value)}
+              />
+              <Input
+                label={t('sections.locale.timezone')}
+                value={values.timezone}
+                onChange={(e) => updateField('timezone', e.target.value)}
+              />
+            </div>
+          </Card>
 
-          <section className="space-y-4">
-        <h2 className="text-lg font-semibold text-atg-fg">{t('sections.booking.title')}</h2>
-        <Input
-          label={t('sections.booking.holdMinutes')}
-          type="number"
-          min={0}
-          value={values.holdMinutes}
-          onChange={(e) => updateField('holdMinutes', e.target.value)}
-          error={fieldErrors.holdMinutes}
-        />
-        <label className="flex items-center gap-2 text-sm text-atg-fg">
-          <input
-            type="checkbox"
-            checked={values.allowGuestCheckout}
-            onChange={(e) => updateField('allowGuestCheckout', e.target.checked)}
-            className="rounded border-atg-border"
-          />
-          {t('sections.booking.allowGuestCheckout')}
-        </label>
-        <div className="space-y-3 border-t border-atg-border pt-4">
-          <p className="text-sm font-medium text-atg-fg">{t('sections.booking.modesTitle')}</p>
-          <p className="text-xs text-atg-muted">{t('sections.booking.modesDescription')}</p>
-          <div className="space-y-2">
-            {BOOKING_ITEM_TYPE_KEYS.map((itemType) => (
-              <label
-                key={itemType}
-                className="flex flex-col gap-1 text-sm text-atg-fg sm:flex-row sm:items-center sm:justify-between"
-              >
-                <span>{t(`sections.booking.itemTypes.${itemType}`)}</span>
-                <select
-                  value={values.itemTypeModes[itemType]}
-                  onChange={(e) =>
-                    updateField('itemTypeModes', {
-                      ...values.itemTypeModes,
-                      [itemType]: e.target.value as BookingMode,
-                    })
-                  }
-                  className="w-full rounded-lg border border-atg-border bg-atg-elevated px-3 py-2 text-sm sm:w-48"
-                >
-                  <option value="immediate">{t('sections.booking.modeImmediate')}</option>
-                  <option value="assisted">{t('sections.booking.modeAssisted')}</option>
-                </select>
+          <Card variant="dashboard" padding="sm" className="space-y-4">
+            <h2 className="text-base font-semibold text-atg-fg">{t('sections.booking.title')}</h2>
+            <Input
+              label={t('sections.booking.holdMinutes')}
+              type="number"
+              min={0}
+              value={values.holdMinutes}
+              onChange={(e) => updateField('holdMinutes', e.target.value)}
+              error={fieldErrors.holdMinutes}
+            />
+            <label className="flex items-center gap-2 text-sm text-atg-fg">
+              <input
+                type="checkbox"
+                checked={values.allowGuestCheckout}
+                onChange={(e) => updateField('allowGuestCheckout', e.target.checked)}
+                className="rounded border-atg-border"
+              />
+              {t('sections.booking.allowGuestCheckout')}
+            </label>
+            <div className="space-y-3 border-t border-atg-border pt-4">
+              <p className="text-sm font-medium text-atg-fg">{t('sections.booking.modesTitle')}</p>
+              <p className="text-xs text-atg-muted">{t('sections.booking.modesDescription')}</p>
+              <div className="space-y-3">
+                {BOOKING_ITEM_TYPE_KEYS.map((itemType) => (
+                  <Select
+                    key={itemType}
+                    label={t(`sections.booking.itemTypes.${itemType}`)}
+                    options={bookingModeOptions}
+                    value={values.itemTypeModes[itemType]}
+                    onChange={(e) =>
+                      updateField('itemTypeModes', {
+                        ...values.itemTypeModes,
+                        [itemType]: e.target.value as BookingMode,
+                      })
+                    }
+                  />
+                ))}
+              </div>
+            </div>
+          </Card>
+
+          <Card variant="dashboard" padding="sm" className="space-y-4">
+            <div>
+              <h2 className="text-base font-semibold text-atg-fg">{t('sections.loyalty.title')}</h2>
+              <p className="mt-1 text-sm text-atg-muted">{t('sections.loyalty.description')}</p>
+            </div>
+            <label className="flex items-center gap-2 text-sm text-atg-fg">
+              <input
+                type="checkbox"
+                checked={values.loyaltyEnabled}
+                onChange={(e) => updateField('loyaltyEnabled', e.target.checked)}
+                className="rounded border-atg-border"
+              />
+              {t('sections.loyalty.enabled')}
+            </label>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Input
+                label={t('sections.loyalty.pointsPerMajorUnit')}
+                type="number"
+                min={0}
+                value={values.loyaltyPointsPerMajorUnit}
+                onChange={(e) => updateField('loyaltyPointsPerMajorUnit', e.target.value)}
+                error={fieldErrors.loyaltyPointsPerMajorUnit}
+              />
+              <Input
+                label={t('sections.loyalty.programCode')}
+                value={values.loyaltyProgramCode}
+                onChange={(e) =>
+                  updateField('loyaltyProgramCode', e.target.value.toUpperCase())
+                }
+                error={fieldErrors.loyaltyProgramCode}
+                maxLength={32}
+              />
+            </div>
+          </Card>
+
+          <Card variant="dashboard" padding="sm" className="space-y-4">
+            <h2 className="text-base font-semibold text-atg-fg">{t('sections.branding.title')}</h2>
+            <Input
+              label={t('sections.branding.displayName')}
+              value={values.displayName}
+              onChange={(e) => updateField('displayName', e.target.value)}
+              error={fieldErrors.displayName}
+            />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <BrandColorPaletteField
+                label={t('sections.branding.primaryColor')}
+                hint={t('sections.branding.primaryColorHint')}
+                value={values.primaryColor}
+                onChange={(hex) => updateField('primaryColor', hex)}
+              />
+              <BrandColorPaletteField
+                label={t('sections.branding.secondaryColor')}
+                hint={t('sections.branding.secondaryColorHint')}
+                value={values.secondaryColor}
+                onChange={(hex) => updateField('secondaryColor', hex)}
+              />
+            </div>
+            <Input
+              label={t('sections.branding.logoUrl')}
+              value={values.logoUrl}
+              onChange={(e) => updateField('logoUrl', e.target.value)}
+              placeholder="https://..."
+            />
+            <div className="flex flex-wrap items-center gap-3">
+              <label className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-elevated">
+                {uploadingField === 'logoUrl'
+                  ? t('sections.branding.uploading')
+                  : t('sections.branding.chooseLogo')}
+                <input
+                  type="file"
+                  accept={BRANDING_LOGO_ACCEPT}
+                  className="hidden"
+                  onChange={(e) => void handleLocalImagePick(e, 'logoUrl')}
+                  disabled={uploadingField !== null}
+                />
               </label>
-            ))}
-          </div>
-        </div>
-          </section>
-
-          <section className="space-y-4">
-        <h2 className="text-lg font-semibold text-atg-fg">{t('sections.loyalty.title')}</h2>
-        <p className="text-sm text-atg-muted">{t('sections.loyalty.description')}</p>
-        <label className="flex items-center gap-2 text-sm text-atg-fg">
-          <input
-            type="checkbox"
-            checked={values.loyaltyEnabled}
-            onChange={(e) => updateField('loyaltyEnabled', e.target.checked)}
-            className="rounded border-atg-border"
-          />
-          {t('sections.loyalty.enabled')}
-        </label>
-        <Input
-          label={t('sections.loyalty.pointsPerMajorUnit')}
-          type="number"
-          min={0}
-          value={values.loyaltyPointsPerMajorUnit}
-          onChange={(e) => updateField('loyaltyPointsPerMajorUnit', e.target.value)}
-          error={fieldErrors.loyaltyPointsPerMajorUnit}
-        />
-        <Input
-          label={t('sections.loyalty.programCode')}
-          value={values.loyaltyProgramCode}
-          onChange={(e) =>
-            updateField('loyaltyProgramCode', e.target.value.toUpperCase())
-          }
-          error={fieldErrors.loyaltyProgramCode}
-          maxLength={32}
-        />
-          </section>
-
-          <section className="space-y-4">
-        <h2 className="text-lg font-semibold text-atg-fg">{t('sections.branding.title')}</h2>
-        <Input
-          label={t('sections.branding.displayName')}
-          value={values.displayName}
-          onChange={(e) => updateField('displayName', e.target.value)}
-          error={fieldErrors.displayName}
-        />
-        <BrandColorPaletteField
-          label={t('sections.branding.primaryColor')}
-          hint={t('sections.branding.primaryColorHint')}
-          value={values.primaryColor}
-          onChange={(hex) => updateField('primaryColor', hex)}
-        />
-        <BrandColorPaletteField
-          label={t('sections.branding.secondaryColor')}
-          hint={t('sections.branding.secondaryColorHint')}
-          value={values.secondaryColor}
-          onChange={(hex) => updateField('secondaryColor', hex)}
-        />
-        <Input
-          label={t('sections.branding.logoUrl')}
-          value={values.logoUrl}
-          onChange={(e) => updateField('logoUrl', e.target.value)}
-          placeholder="https://..."
-        />
-        <div className="flex items-center gap-3">
-          <label className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10">
-            {uploadingField === 'logoUrl' ? t('sections.branding.uploading') : t('sections.branding.chooseLogo')}
-            <input
-              type="file"
-              accept={BRANDING_LOGO_ACCEPT}
-              className="hidden"
-              onChange={(e) => void handleLocalImagePick(e, 'logoUrl')}
-              disabled={uploadingField !== null}
+              <span className="text-xs text-atg-muted">{t('sections.branding.logoFormatHint')}</span>
+            </div>
+            <Input
+              label={t('sections.branding.faviconUrl')}
+              value={values.faviconUrl}
+              onChange={(e) => updateField('faviconUrl', e.target.value)}
+              placeholder="https://..."
             />
-          </label>
-          <span className="text-xs text-atg-muted">{t('sections.branding.logoFormatHint')}</span>
-        </div>
-        <Input
-          label={t('sections.branding.faviconUrl')}
-          value={values.faviconUrl}
-          onChange={(e) => updateField('faviconUrl', e.target.value)}
-          placeholder="https://..."
-        />
-        <div className="flex items-center gap-3">
-          <label className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-muted/10">
-            {uploadingField === 'faviconUrl' ? t('sections.branding.uploading') : t('sections.branding.chooseFavicon')}
-            <input
-              type="file"
-              accept={BRANDING_FAVICON_ACCEPT}
-              className="hidden"
-              onChange={(e) => void handleLocalImagePick(e, 'faviconUrl')}
-              disabled={uploadingField !== null}
-            />
-          </label>
-          <span className="text-xs text-atg-muted">{t('sections.branding.faviconFormatHint')}</span>
-        </div>
-          </section>
+            <div className="flex flex-wrap items-center gap-3">
+              <label className="inline-flex cursor-pointer items-center rounded-md border border-atg-border px-3 py-2 text-xs font-medium text-atg-fg hover:bg-atg-elevated">
+                {uploadingField === 'faviconUrl'
+                  ? t('sections.branding.uploading')
+                  : t('sections.branding.chooseFavicon')}
+                <input
+                  type="file"
+                  accept={BRANDING_FAVICON_ACCEPT}
+                  className="hidden"
+                  onChange={(e) => void handleLocalImagePick(e, 'faviconUrl')}
+                  disabled={uploadingField !== null}
+                />
+              </label>
+              <span className="text-xs text-atg-muted">
+                {t('sections.branding.faviconFormatHint')}
+              </span>
+            </div>
+          </Card>
 
-          <section className="space-y-4">
-        <h2 className="text-lg font-semibold text-atg-fg">{t('sections.authVisual.title')}</h2>
-        <AuthVisualIconsField
-          icons={values.authVisualIcons}
-          onChange={(authVisualIcons) => updateField('authVisualIcons', authVisualIcons)}
-          onUploadImage={handleAuthVisualImageUpload}
-          uploadingIndex={uploadingAuthIconIndex}
-        />
-          </section>
+          <Card variant="dashboard" padding="sm" className="space-y-4">
+            <h2 className="text-base font-semibold text-atg-fg">{t('sections.authVisual.title')}</h2>
+            <AuthVisualIconsField
+              icons={values.authVisualIcons}
+              onChange={(authVisualIcons) => updateField('authVisualIcons', authVisualIcons)}
+              onUploadImage={handleAuthVisualImageUpload}
+              uploadingIndex={uploadingAuthIconIndex}
+            />
+          </Card>
         </div>
 
         <aside className="lg:sticky lg:top-6">
-          <div className="rounded-xl border border-atg-border bg-atg-bg p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-atg-muted">
-              {t('preview.title')}
-            </p>
-            <p className="mt-1 text-sm text-atg-muted">{t('preview.description')}</p>
+          <Card variant="dashboard" padding="sm" className="space-y-3">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-atg-muted">
+                {t('preview.title')}
+              </p>
+              <p className="mt-1 text-sm text-atg-muted">{t('preview.description')}</p>
+            </div>
 
-            <div className="mt-4 overflow-hidden rounded-lg border border-atg-border bg-atg-surface">
+            <div className="overflow-hidden rounded-lg border border-atg-border bg-atg-surface">
               <div
                 className="flex items-center justify-between px-3 py-2 text-white"
                 style={{ backgroundColor: brandingPreview.primaryColor }}
               >
                 <div className="flex items-center gap-2">
                   {brandingPreview.logoUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element -- preview URL may be absolute/upload
                     <img
                       src={brandingPreview.logoUrl}
                       alt={t('preview.logoAlt')}
@@ -808,11 +853,11 @@ export function OrganizationSettingsForm({
                 </div>
               </div>
             </div>
-          </div>
+          </Card>
         </aside>
       </div>
 
-      <div className="sticky bottom-0 z-20 border-t border-atg-border bg-atg-bg/95 px-4 py-3 backdrop-blur">
+      <div className="sticky bottom-0 z-20 -mx-1 border-t border-atg-border bg-atg-bg/95 px-4 py-3 backdrop-blur">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-sm font-medium text-atg-fg">
             {isDirty ? t('dirty') : t('clean')}

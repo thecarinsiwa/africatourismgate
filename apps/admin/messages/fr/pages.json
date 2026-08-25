@@ -663,6 +663,8 @@
     }
   },
   "parametres": {
+    "title": "Paramètres",
+    "description": "Configuration de l'organisation : coordonnées, locale, réservation et branding.",
     "metaTitle": "Paramètres",
     "comptes": {
       "metaTitle": "Comptes bancaires"

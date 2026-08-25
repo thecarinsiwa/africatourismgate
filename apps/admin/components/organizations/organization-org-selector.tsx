@@ -1,12 +1,9 @@
 'use client';
 
-import { cn } from '@africatourismgate/ui';
+import { SearchableSelect } from '@africatourismgate/ui';
 import type { Organization } from '@africatourismgate/types';
 import { useTranslations } from 'next-intl';
-import { useId } from 'react';
-
-export const organizationOrgSelectClassName =
-  'w-full rounded-lg border border-atg-border bg-atg-bg px-3 py-2 text-sm text-atg-fg focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary';
+import { useId, useMemo } from 'react';
 
 type OrganizationOrgSelectorProps = {
   organizations: Pick<Organization, 'id' | 'name'>[];
@@ -28,32 +25,35 @@ export function OrganizationOrgSelector({
   disabled = false,
 }: OrganizationOrgSelectorProps) {
   const t = useTranslations('modules.organizations.selector');
+  const tSelect = useTranslations('modules.common.select');
   const generatedId = useId();
   const selectId = idProp ?? generatedId;
   const label = labelProp ?? t('defaultLabel');
+
+  const options = useMemo(
+    () =>
+      organizations.map((org) => ({
+        value: org.id,
+        label: org.name,
+      })),
+    [organizations],
+  );
 
   if (organizations.length === 0) {
     return null;
   }
 
   return (
-    <div className={className}>
-      <label htmlFor={selectId} className="mb-1 block text-sm font-medium text-atg-fg">
-        {label}
-      </label>
-      <select
-        id={selectId}
-        className={cn(organizationOrgSelectClassName, disabled && 'cursor-not-allowed opacity-60')}
-        value={value}
-        disabled={disabled}
-        onChange={(e) => onChange(e.target.value)}
-      >
-        {organizations.map((org) => (
-          <option key={org.id} value={org.id}>
-            {org.name}
-          </option>
-        ))}
-      </select>
-    </div>
+    <SearchableSelect
+      id={selectId}
+      className={className}
+      label={label}
+      options={options}
+      value={value}
+      onChange={onChange}
+      disabled={disabled}
+      searchPlaceholder={tSelect('searchPlaceholder')}
+      emptyMessage={tSelect('empty')}
+    />
   );
 }
