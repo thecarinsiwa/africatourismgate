@@ -107,11 +107,22 @@ export class UserSessions extends BaseAuditEntity {
   @Column({ type: 'varchar', name: 'user_id', length: 36 })
   userId!: string;
 
+  @Column({
+    type: 'varchar',
+    name: 'client_instance_id',
+    length: 36,
+    nullable: true,
+  })
+  clientInstanceId!: string | null;
+
   @Column({ type: 'varchar', name: 'refresh_token_hash', length: 255 })
   refreshTokenHash!: string;
 
   @Column({ type: 'datetime', name: 'expires_at' })
   expiresAt!: Date;
+
+  @Column({ type: 'datetime', name: 'last_activity_at', nullable: true })
+  lastActivityAt!: Date | null;
 
 }
 

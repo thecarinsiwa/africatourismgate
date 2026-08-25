@@ -111,8 +111,10 @@ CREATE TABLE `departments` (
 CREATE TABLE `user_sessions` (
   `id` CHAR(36) NOT NULL,
   `user_id` CHAR(36) NOT NULL,
+  `client_instance_id` CHAR(36) DEFAULT NULL,
   `refresh_token_hash` VARCHAR(255) NOT NULL,
   `expires_at` DATETIME NOT NULL,
+  `last_activity_at` DATETIME DEFAULT NULL,
   `created_by_user_id` CHAR(36) DEFAULT NULL,
   `updated_by_user_id` CHAR(36) DEFAULT NULL,
   `deleted_by_user_id` CHAR(36) DEFAULT NULL,
@@ -121,6 +123,7 @@ CREATE TABLE `user_sessions` (
   `deleted_at` DATETIME DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_user_sessions_user` (`user_id`),
+  KEY `idx_user_sessions_client_instance` (`user_id`, `client_instance_id`, `deleted_at`),
   KEY `idx_user_sessions_deleted_at` (`deleted_at`),
   CONSTRAINT `fk_user_sessions_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_user_sessions_created_by` FOREIGN KEY (`created_by_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL,
