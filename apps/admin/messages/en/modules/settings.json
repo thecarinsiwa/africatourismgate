@@ -323,6 +323,7 @@
       "fields": {
         "title": "Title",
         "description": "Description",
+        "descriptionPlaceholder": "Describe the donation campaign…",
         "contextNote": "Context / circumstances",
         "contextNotePlaceholder": "E.g. emergency, rainy season, back to school",
         "buttonLabel": "Button label",

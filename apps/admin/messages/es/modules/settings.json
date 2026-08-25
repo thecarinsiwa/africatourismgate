@@ -323,6 +323,7 @@
       "fields": {
         "title": "Título",
         "description": "Descripción",
+        "descriptionPlaceholder": "Describa la campaña de donación…",
         "contextNote": "Contexto / circunstancias",
         "contextNotePlaceholder": "Ej. emergencia, temporada de lluvias",
         "buttonLabel": "Etiqueta del botón",

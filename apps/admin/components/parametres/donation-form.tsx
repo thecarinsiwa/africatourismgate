@@ -6,8 +6,11 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useCallback, useId, useState } from 'react';
 import { isValidMediaUrl } from '../../lib/about/form-utils';
+import { isRichTextEmpty } from '../../lib/rich-text';
 import { getApiClient } from '../../lib/auth/api';
 import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
+import { RichTextContent } from '../rich-text-content';
+import { RichTextEditor } from '../rich-text-editor';
 
 export type DonationFormValues = {
   title: string;
@@ -56,7 +59,7 @@ function donationToFormValues(donation: Donation): DonationFormValues {
 function toPayload(values: DonationFormValues): CreateDonationRequest {
   return {
     title: values.title.trim(),
-    description: values.description.trim() || null,
+    description: !isRichTextEmpty(values.description) ? values.description : null,
     contextNote: values.contextNote.trim() || null,
     buttonLabel: values.buttonLabel.trim(),
     url: values.url.trim(),
@@ -99,7 +102,6 @@ export function DonationForm({
   const [saving, setSaving] = useState(false);
 
   const titleId = useId();
-  const descriptionId = useId();
   const contextNoteId = useId();
   const buttonLabelId = useId();
   const urlId = useId();
@@ -204,19 +206,20 @@ export function DonationForm({
           />
         </div>
 
-        <div>
-          <label htmlFor={descriptionId} className="mb-1 block text-sm font-medium">
-            {t('fields.description')}
-          </label>
-          <textarea
-            id={descriptionId}
+        {canWrite ? (
+          <RichTextEditor
+            label={t('fields.description')}
             value={values.description}
-            onChange={(e) => updateField('description', e.target.value)}
-            disabled={!canWrite}
-            rows={4}
-            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+            onChange={(html) => updateField('description', html)}
+            placeholder={t('fields.descriptionPlaceholder')}
+            contentClassName="min-h-[160px]"
           />
-        </div>
+        ) : values.description.trim() && !isRichTextEmpty(values.description) ? (
+          <div>
+            <p className="mb-1 text-sm font-medium">{t('fields.description')}</p>
+            <RichTextContent html={values.description} />
+          </div>
+        ) : null}
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
