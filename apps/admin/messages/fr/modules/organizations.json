@@ -86,6 +86,14 @@
       "website": "Site web",
       "createdAt": "Créée le"
     },
+    "logo": {
+      "change": "Changer",
+      "changeHint": "Choisir un logo (JPEG, PNG, WebP, GIF ou SVG — max. 2 Mo)",
+      "uploading": "Upload…",
+      "uploadSuccess": "Logo mis à jour.",
+      "invalidFormat": "Format accepté : JPEG, PNG, WebP, GIF ou SVG.",
+      "tooLarge": "Image trop lourde (max. 2 Mo)."
+    },
     "settingsIntro": "Configuration de l'organisation : coordonnées, locale, réservation et branding."
   },
   "selector": {

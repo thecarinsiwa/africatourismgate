@@ -32,7 +32,7 @@ import {
   organizationStatusVariants,
 } from '../../lib/organization-display';
 import { OrganizationForm } from './organization-form';
-import { OrganizationLogo } from './organization-logo';
+import { OrganizationLogoField } from './organization-logo-field';
 
 const ORGANISATIONS_HUB_HREF = '/organisations';
 
@@ -57,6 +57,8 @@ export function OrganizationDetailPage({ organizationId }: OrganizationDetailPag
   const { hasPermission, isSuperAdmin, loading: permissionsLoading } = usePermissions();
   const canReadSettings =
     !permissionsLoading && (isSuperAdmin || hasPermission('organization_settings.read'));
+  const canWriteSettings =
+    !permissionsLoading && (isSuperAdmin || hasPermission('organization_settings.write'));
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -206,10 +208,12 @@ export function OrganizationDetailPage({ organizationId }: OrganizationDetailPag
       <div className="min-w-0 space-y-6">
         <Card variant="dashboard" padding="md" className="overflow-hidden">
           <div className="flex flex-wrap items-start gap-4">
-            <OrganizationLogo
+            <OrganizationLogoField
+              organizationId={organizationId}
               name={organization.name}
-              logoUrl={organization.logoUrl}
-              size="lg"
+              organizationLogoUrl={organization.logoUrl}
+              canWrite={canWriteSettings}
+              isSuperAdmin={isSuperAdmin}
             />
             <div className="min-w-0 flex-1 space-y-3">
               <div>
