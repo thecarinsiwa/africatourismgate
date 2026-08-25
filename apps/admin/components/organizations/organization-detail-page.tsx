@@ -4,6 +4,7 @@ import { useAdminErrorMessages } from '../../lib/i18n/use-admin-error-messages';
 
 import type { Organization, OrganizationListItem } from '@africatourismgate/types';
 import {
+  Button,
   Card,
   DataTableBadge,
   Skeleton,
@@ -216,17 +217,26 @@ export function OrganizationDetailPage({ organizationId }: OrganizationDetailPag
               isSuperAdmin={isSuperAdmin}
             />
             <div className="min-w-0 flex-1 space-y-3">
-              <div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <h2 className="text-xl font-semibold text-atg-fg">{organization.name}</h2>
-                  <DataTableBadge variant={organizationStatusVariants[organization.status]}>
-                    {accountStatusLabels[organization.status]}
-                  </DataTableBadge>
-                  {organization.legalForm ? (
-                    <DataTableBadge variant="muted">{legalFormLabel}</DataTableBadge>
-                  ) : null}
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h2 className="text-xl font-semibold text-atg-fg">{organization.name}</h2>
+                    <DataTableBadge variant={organizationStatusVariants[organization.status]}>
+                      {accountStatusLabels[organization.status]}
+                    </DataTableBadge>
+                    {organization.legalForm ? (
+                      <DataTableBadge variant="muted">{legalFormLabel}</DataTableBadge>
+                    ) : null}
+                  </div>
+                  <p className="mt-1 font-mono text-sm text-atg-muted">{organization.slug}</p>
                 </div>
-                <p className="mt-1 font-mono text-sm text-atg-muted">{organization.slug}</p>
+                <Button
+                  href={`/organisations/${organizationId}/voir`}
+                  variant="outline"
+                  className="shrink-0 self-start"
+                >
+                  {t('viewButton')}
+                </Button>
               </div>
 
               <dl className="grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-3">

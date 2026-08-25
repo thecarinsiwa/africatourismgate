@@ -74,6 +74,9 @@
   },
   "detail": {
     "title": "Organización",
+    "viewTitle": "Ver organización",
+    "editButton": "Editar",
+    "viewButton": "Ver",
     "tabsAria": "Secciones de la organización",
     "tabs": {
       "infos": "Info",
